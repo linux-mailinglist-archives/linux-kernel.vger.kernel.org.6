@@ -1,396 +1,121 @@
-Return-Path: <linux-kernel+bounces-247273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5874F92CD5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:45:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F2992CD46
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1E31C23824
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:45:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA7E281629
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CE11494C1;
-	Wed, 10 Jul 2024 08:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CC712A177;
+	Wed, 10 Jul 2024 08:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ypoI9GOS"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fctuXaPG"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A3813DDC0
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD684D535;
+	Wed, 10 Jul 2024 08:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720601075; cv=none; b=DTQROokfT6v1n/n3OKuppTTFDCPd4DlrLGsiFJP0TtpkypxMAgmYPxEDrsU8/OjH9V5nNgohEaI099yURPwazWDBmlarb1xA4CW2yrUpgLTmPBPYdqSru7xaUsOQevYUrSGKzsox8tYjoN4ZNCYh+7B1Qofh5xLgrfZc5R6muDA=
+	t=1720600961; cv=none; b=diGbVho7gWEOTmJyUWGft2YyJYzB/i21tHHJ4Waa0YIPOiFWYInsVlXBsqNud1+bVXqnAdMh9hq1wO0SoUGfSrXdXsoBxB9XXRlkgv6hdgwAD7oPPNJFQyUAg8zJ5+r6vQhkKY4s0nyfiGSxVXRrN1QWPzgtHFOCRg4khUsxSzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720601075; c=relaxed/simple;
-	bh=3PIe7piaWVFGpw8MubkhAAz6xi+0WnfUt+cBmrfaOkc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jJavjaJZ0JmUzsoXAzpoFFAN6BrIWcNzQvMoir7WsqgCa3/hoFhO5Jh59s4MckHnxro71qhx/oUCQqIjyPx5ZLKMIgeQza3laFh5w3Z80uBgNB8RbdXW6NQMkaS/ogGcr3aj+ran/ZkISMdZ5HTjVeKr7DehxmXJXUTUarfpw90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ypoI9GOS; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52caebc6137so4398157e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 01:44:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720601070; x=1721205870; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=47Gk9uLeoKD+iHQflXhvTs6O72DyKgkXk5UBuYrhpP4=;
-        b=ypoI9GOSikdvijyrTWPNuwc7xK3stFudFHMVqtMcwHUNtfmr94SAHrzCW1KKMOS2KD
-         IqlZPeB1DQ4hBQYNZ57nnkZ4JYTOVuNS5BXzvqZivvh9ro/aa6kyanJAHws9jPbYDWum
-         DvqyC82zJuPBtMdhmK0lXrDevAN9n1wTzqRQVEGfoX7bfapULH90utXZEmijeBTyCbDs
-         WQ7S3KdoVOlUcGb35Cd6LCixXlXI7hPQ+TT5sFn4H6eBXNAJvjlhCoeWbWHaascOQLKg
-         nHzwpWPwtlvlxyPYott7u5eIEjPqo7QDyZSmNZmcrxbSbla841n5VR2DdV8THW/F3FST
-         kGig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720601070; x=1721205870;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=47Gk9uLeoKD+iHQflXhvTs6O72DyKgkXk5UBuYrhpP4=;
-        b=hq4bjHMlHF2wQrhaBxYfGiztC+vE7S6nho5Jc5YmP+BJ7PrWIL5yLWOSUUU5qcoDtM
-         VYHHZY8D0KVgh4m4EKbXHc/kTOQ5Z0g9NGFNr7Sbga31MYlDj/Ty08T8AaUNsEPtoDVb
-         juRxj5RLA7VnYtpxAaW4YLZGMJ0uzruho19/V+rApfnPvWm/RZQdYLcjBmOUMlOqCLml
-         RTNI36yMmL0H0HDF8qZf1XyzXiVVfni9ehZxbA8eLz/ZN2qX+/Tb59XGTZmPBY1eje8m
-         wOJ7iLe0vBFd7awT0FjeTrZDpxRlL3rNMVnukjEWNCWO4HHD9hksS+ZjifarVzb/yx1q
-         EbCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnw/5LlAHltyyZNDHCmCg1F39Ct7anSdWefsGcipp0lcPRRJf1lrSYaMSbhFo5WIYKB4KVTuSsQ8Ai767paaQDouiGAhTRU3/U27jz
-X-Gm-Message-State: AOJu0Yyc9kY1fgu6tIIP9+bLh9D1s9yWZjxhRtipefD0v5rcuvb8PqaQ
-	XT/SizGSjsCDES0YqTaNkhqoSa4x+6GzV+tu00TfTp61+5TLRj0V4Xpj8UeFV5o=
-X-Google-Smtp-Source: AGHT+IFOVpXXsCfwrwmObjem3DaqnWGhUl8p+VXfPqdcHT1FuMo/8WZ/pkPJhrg21nrbgAJMh2dJfw==
-X-Received: by 2002:a19:644b:0:b0:52c:e0ce:2d32 with SMTP id 2adb3069b0e04-52eb99a0790mr2219255e87.36.1720601070408;
-        Wed, 10 Jul 2024 01:44:30 -0700 (PDT)
-Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa06ffsm4700403f8f.77.2024.07.10.01.44.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 01:44:30 -0700 (PDT)
-From: Rayyan Ansari <rayyan.ansari@linaro.org>
-To: linux-arm-msm@vger.kernel.org
-Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH 3/3] ARM: dts: qcom: ipq4019: adhere to pinctrl dtschema
-Date: Wed, 10 Jul 2024 09:41:11 +0100
-Message-ID: <20240710084250.11342-4-rayyan.ansari@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240710084250.11342-1-rayyan.ansari@linaro.org>
-References: <20240710084250.11342-1-rayyan.ansari@linaro.org>
+	s=arc-20240116; t=1720600961; c=relaxed/simple;
+	bh=/cSixCFKERN/J7DRtssnHK2SWpy1fqsCyCoIL53VSHw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BWDpAHeruqOgKcKb6RwtHc+N3y6YJIx/CGuc3mzFLIR4mEVpsdJQ2+g5510PqTu4rr43/Oeucn8EHvqMAJRl0v4pN/w6qTLTnGdftnLCeir002F7T2dzLbalHxrXAGrYEQmFI3a/5SBmAemWP6Lb/Iap244d93BYyCZzmFNoJ68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=fctuXaPG; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 54ca3f843e9811efb5b96b43b535fdb4-20240710
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=00qi1vCjVrBTnoMM1ymQIUcx+b2b5UPxjpcAqXcyXco=;
+	b=fctuXaPG4XNC8Fosfr6HyRUpTLneQC6ks+9KSIYTKQFaeHHUw2ZBUvuf1BIwkHcXh8mBdYzrs2yI4FeXbkn41uthyGpoV9+lpGC+Uw7hXCGEeMgMRyh2u8K5EVTGGBt6Lf7C4klTOQhGjHM/OW0I6phTVfl44eIAsm2UA5/xPHY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:1ec12272-4b5e-483a-b3fa-59c4e5725506,IP:0,U
+	RL:0,TC:0,Content:35,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:35
+X-CID-META: VersionHash:ba885a6,CLOUDID:5683490d-46b0-425a-97d3-4623fe284021,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 54ca3f843e9811efb5b96b43b535fdb4-20240710
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <shun-yi.wang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1828831548; Wed, 10 Jul 2024 16:42:25 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 10 Jul 2024 01:42:24 -0700
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 10 Jul 2024 16:42:24 +0800
+From: Shun-yi Wang <shun-yi.wang@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+	<linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<jason-ch.chen@mediatek.com>, <yaya.chang@mediatek.com>,
+	<teddy.chen@mediatek.com>, shun-yi.wang <shun-yi.wang@mediatek.com>
+Subject: [PATCH RFC 0/1] Support CMA regions
+Date: Wed, 10 Jul 2024 16:41:59 +0800
+Message-ID: <20240710084200.6561-1-shun-yi.wang@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-Pass dt_binding_check for qcom,ipq4019-pinctrl.yaml.
+From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
 
-Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
----
- .../boot/dts/qcom/qcom-ipq4018-ap120c-ac.dtsi | 34 ++++++++-----------
- .../boot/dts/qcom/qcom-ipq4018-jalapeno.dts   | 27 ++++++---------
- .../boot/dts/qcom/qcom-ipq4019-ap.dk01.1.dtsi | 26 +++++---------
- .../boot/dts/qcom/qcom-ipq4019-ap.dk04.1.dtsi | 14 ++++----
- .../dts/qcom/qcom-ipq4019-ap.dk07.1-c1.dts    |  8 ++---
- .../dts/qcom/qcom-ipq4019-ap.dk07.1-c2.dts    |  2 +-
- .../boot/dts/qcom/qcom-ipq4019-ap.dk07.1.dtsi |  6 ++--
- 7 files changed, 50 insertions(+), 67 deletions(-)
+In order to reserve specific Contiguous Memory Allocator (CMA) regions 
+for hardware use. When the name of the reserved region contains "cma", 
+then a corresponding CMA heap is added.
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq4018-ap120c-ac.dtsi b/arch/arm/boot/dts/qcom/qcom-ipq4018-ap120c-ac.dtsi
-index da67d55fa557..0d23c03fae33 100644
---- a/arch/arm/boot/dts/qcom/qcom-ipq4018-ap120c-ac.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq4018-ap120c-ac.dtsi
-@@ -28,46 +28,42 @@ key-reset {
- };
- 
- &tlmm {
--	i2c0_pins: i2c0_pinmux {
--		mux_i2c {
--			function = "blsp_i2c0";
--			pins = "gpio58", "gpio59";
--			drive-strength = <16>;
--			bias-disable;
--		};
-+	i2c0_pins: i2c0-state {
-+		function = "blsp_i2c0";
-+		pins = "gpio58", "gpio59";
-+		drive-strength = <16>;
-+		bias-disable;
- 	};
- 
--	mdio_pins: mdio_pinmux {
--		mux_mdio {
-+	mdio_pins: mdio-state {
-+		mdio-pins {
- 			pins = "gpio53";
- 			function = "mdio";
- 			bias-pull-up;
- 		};
- 
--		mux_mdc {
-+		mdc-pins {
- 			pins = "gpio52";
- 			function = "mdc";
- 			bias-pull-up;
- 		};
- 	};
- 
--	serial0_pins: serial0_pinmux {
--		mux_uart {
--			pins = "gpio60", "gpio61";
--			function = "blsp_uart0";
--			bias-disable;
--		};
-+	serial0_pins: serial0-state {
-+		pins = "gpio60", "gpio61";
-+		function = "blsp_uart0";
-+		bias-disable;
- 	};
- 
--	spi0_pins: spi0_pinmux {
--		mux_spi {
-+	spi0_pins: spi0-state {
-+		spi0-pins {
- 			function = "blsp_spi0";
- 			pins = "gpio55", "gpio56", "gpio57";
- 			drive-strength = <12>;
- 			bias-disable;
- 		};
- 
--		mux_cs {
-+		spi0-cs-pins {
- 			function = "gpio";
- 			pins = "gpio54", "gpio4";
- 			drive-strength = <2>;
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq4018-jalapeno.dts b/arch/arm/boot/dts/qcom/qcom-ipq4018-jalapeno.dts
-index 365fbac417fd..ac3b30072a22 100644
---- a/arch/arm/boot/dts/qcom/qcom-ipq4018-jalapeno.dts
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq4018-jalapeno.dts
-@@ -11,40 +11,35 @@ / {
- };
- 
- &tlmm {
--	mdio_pins: mdio_pinmux {
--		pinmux_1 {
-+	mdio_pins: mdio-state {
-+		mdio-pins {
- 			pins = "gpio53";
- 			function = "mdio";
-+			bias-pull-up;
- 		};
- 
--		pinmux_2 {
-+		mdc-pins {
- 			pins = "gpio52";
- 			function = "mdc";
--		};
--
--		pinconf {
--			pins = "gpio52", "gpio53";
- 			bias-pull-up;
- 		};
- 	};
- 
--	serial_pins: serial_pinmux {
--		mux {
--			pins = "gpio60", "gpio61";
--			function = "blsp_uart0";
--			bias-disable;
--		};
-+	serial_pins: serial-state{
-+		pins = "gpio60", "gpio61";
-+		function = "blsp_uart0";
-+		bias-disable;
- 	};
- 
--	spi_0_pins: spi_0_pinmux {
--		pin {
-+	spi_0_pins: spi-0-state {
-+		spi0-pins {
- 			function = "blsp_spi0";
- 			pins = "gpio55", "gpio56", "gpio57";
- 			drive-strength = <2>;
- 			bias-disable;
- 		};
- 
--		pin_cs {
-+		spi0-cs-pins {
- 			function = "gpio";
- 			pins = "gpio54", "gpio59";
- 			drive-strength = <2>;
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk01.1.dtsi b/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk01.1.dtsi
-index f7ac8f9d0b6f..efbe89dd4793 100644
---- a/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk01.1.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk01.1.dtsi
-@@ -34,30 +34,22 @@ &prng {
- };
- 
- &tlmm {
--	serial_pins: serial_pinmux {
--		mux {
--			pins = "gpio60", "gpio61";
--			function = "blsp_uart0";
--			bias-disable;
--		};
-+	serial_pins: serial-state {
-+		pins = "gpio60", "gpio61";
-+		function = "blsp_uart0";
-+		bias-disable;
- 	};
- 
--	spi_0_pins: spi_0_pinmux {
--		pinmux {
--			function = "blsp_spi0";
--			pins = "gpio55", "gpio56", "gpio57";
--		};
--		pinmux_cs {
--			function = "gpio";
--			pins = "gpio54";
--		};
--		pinconf {
-+	spi_0_pins: spi-0-state {
-+		spi0-pins {
- 			pins = "gpio55", "gpio56", "gpio57";
-+			function = "blsp_spi0";
- 			drive-strength = <12>;
- 			bias-disable;
- 		};
--		pinconf_cs {
-+		spi0-cs-pins {
- 			pins = "gpio54";
-+			function = "gpio";
- 			drive-strength = <2>;
- 			bias-disable;
- 			output-high;
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk04.1.dtsi b/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk04.1.dtsi
-index 374af6dd360a..91e296d2ea82 100644
---- a/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk04.1.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk04.1.dtsi
-@@ -24,26 +24,26 @@ memory {
- 
- 	soc {
- 		pinctrl@1000000 {
--			serial_0_pins: serial0-pinmux {
-+			serial_0_pins: serial0-state {
- 				pins = "gpio16", "gpio17";
- 				function = "blsp_uart0";
- 				bias-disable;
- 			};
- 
--			serial_1_pins: serial1-pinmux {
-+			serial_1_pins: serial1-state {
- 				pins = "gpio8", "gpio9",
- 					"gpio10", "gpio11";
- 				function = "blsp_uart1";
- 				bias-disable;
- 			};
- 
--			spi_0_pins: spi-0-pinmux {
--				pinmux {
-+			spi_0_pins: spi-0-state {
-+				spi0-pins {
- 					function = "blsp_spi0";
- 					pins = "gpio13", "gpio14", "gpio15";
- 					bias-disable;
- 				};
--				pinmux_cs {
-+				spi0-cs-pins {
- 					function = "gpio";
- 					pins = "gpio12";
- 					bias-disable;
-@@ -51,13 +51,13 @@ pinmux_cs {
- 				};
- 			};
- 
--			i2c_0_pins: i2c-0-pinmux {
-+			i2c_0_pins: i2c-0-state {
- 				pins = "gpio20", "gpio21";
- 				function = "blsp_i2c0";
- 				bias-disable;
- 			};
- 
--			nand_pins: nand-pins {
-+			nand_pins: nand-state {
- 				pins = "gpio53", "gpio55", "gpio56",
- 					"gpio57", "gpio58", "gpio59",
- 					"gpio60", "gpio62", "gpio63",
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1-c1.dts b/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1-c1.dts
-index ea2987fcbff8..41c5874f6f97 100644
---- a/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1-c1.dts
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1-c1.dts
-@@ -19,20 +19,20 @@ spi@78b6000 {
- 		};
- 
- 		pinctrl@1000000 {
--			serial_1_pins: serial1-pinmux {
-+			serial_1_pins: serial1-state {
- 				pins = "gpio8", "gpio9",
- 					"gpio10", "gpio11";
- 				function = "blsp_uart1";
- 				bias-disable;
- 			};
- 
--			spi_0_pins: spi-0-pinmux {
--				pinmux {
-+			spi_0_pins: spi-0-state {
-+				spi0-pins {
- 					function = "blsp_spi0";
- 					pins = "gpio13", "gpio14", "gpio15";
- 					bias-disable;
- 				};
--				pinmux_cs {
-+				spio-cs-pins {
- 					function = "gpio";
- 					pins = "gpio12";
- 					bias-disable;
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1-c2.dts b/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1-c2.dts
-index bd3553dd2070..67ee99d69757 100644
---- a/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1-c2.dts
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1-c2.dts
-@@ -9,7 +9,7 @@ / {
- 
- 	soc {
- 		pinctrl@1000000 {
--			serial_1_pins: serial1-pinmux {
-+			serial_1_pins: serial1-state {
- 				pins = "gpio8", "gpio9";
- 				function = "blsp_uart1";
- 				bias-disable;
-diff --git a/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1.dtsi b/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1.dtsi
-index 7ef635997efa..cc88cf5f0d9b 100644
---- a/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-ipq4019-ap.dk07.1.dtsi
-@@ -24,19 +24,19 @@ chosen {
- 
- 	soc {
- 		pinctrl@1000000 {
--			serial_0_pins: serial0-pinmux {
-+			serial_0_pins: serial0-state {
- 				pins = "gpio16", "gpio17";
- 				function = "blsp_uart0";
- 				bias-disable;
- 			};
- 
--			i2c_0_pins: i2c-0-pinmux {
-+			i2c_0_pins: i2c-0-state {
- 				pins = "gpio20", "gpio21";
- 				function = "blsp_i2c0";
- 				bias-disable;
- 			};
- 
--			nand_pins: nand-pins {
-+			nand_pins: nand-state {
- 				pins = "gpio53", "gpio55", "gpio56",
- 				       "gpio57", "gpio58", "gpio59",
- 				       "gpio60", "gpio62", "gpio63",
+In the DTS (Device Tree Source), we may have several memory regions 
+with different names, e.g.,
+&scp {
+	...
+	memory-region = <&mem_reserved_1>, <&mem_reserved_2>;
+};
+
+mem_reserved_1: xxx-xxx-region {
+	...
+};
+mem_reserved_2: xxx-xxx-cma-region {
+	...
+};
+
+When the name of the region contains "cma", a corresponding heap 
+allocator is added by cma_heap_add().
+However, we are unsure if using the name "cma" as an identifier
+is a good practice.
+I sincerely hope that you can provide me some suggestions, thanks.
+Especially within the segment of '#ifdef CONFIG_DMA_BUF_HEAPS_CMA'
+
+Note: The cma_heap_add() is introduced from this patch:
+dma-buf: heaps: Introduce cma_heap_add() for non-default CMA heap
+
+shun-yi.wang (1):
+  remoteproc: mediatek: Support reserved CMA regions
+
+ drivers/remoteproc/mtk_scp.c | 38 ++++++++++++++++++++++++++++--------
+ 1 file changed, 30 insertions(+), 8 deletions(-)
+
 -- 
-2.45.2
+2.18.0
 
 
