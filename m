@@ -1,159 +1,207 @@
-Return-Path: <linux-kernel+bounces-247389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B31092CECE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:05:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529F092CED3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C32B1C232FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:05:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08ACD287F79
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B1A18FA36;
-	Wed, 10 Jul 2024 10:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643BB18FA36;
+	Wed, 10 Jul 2024 10:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DNVbx2ud"
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bL0BN0sR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bA4KwbV5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p0wzvfRu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HrqZ3W00"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DFB8288F;
-	Wed, 10 Jul 2024 10:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5801B86F3;
+	Wed, 10 Jul 2024 10:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720605915; cv=none; b=QZb35relbCYmMAJo6P3PFbMzWhTWX3Ip3mdJWkyqzvLdD6AyhNgvQ0Ub3tPTX6JQqTFlo5uKpjBsdgrWjIye7kF5TVm86SdeqTImDlnde5qqfdhxiVllpNsStIc10mSpRoAa9cX5I/ZD+y4Jqzm/QsvlW/iPHfV297Yq8nKz1Vo=
+	t=1720605929; cv=none; b=nfLGrQeAlxyt+QcD+5AS32Kp9U22CebL0zX9qpc1AE0dCCFe5BoaLhvk4rw+F+SCBeq+jQPbdqXhTe7ekASlSXuwANncnNkSfg9CGa+kyaDHvFpCZfawf9VaEoQK6HiVCzXiA9NyTsZ25q0ZQM6dSk43MM1vYhxG53ZfXF2M19g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720605915; c=relaxed/simple;
-	bh=6XjeGM1uoLScdRWcAjqr9FYRJeKY3sUp1jjgMn0Q/rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MUdStzwzI4H9K1OAnwHKylLzlTS8JFTqGNcgiYCKu/u3cQpVuuiOwlxlEo6Ebitc802mc8NbooWAqZr65oxny7NpWr6C5qJpOJWvWefkC0XzDHvRdBQrx1fsKdrcN9ixKXcJH+8WgvNP4kO8uXWq7X0VR/+jkH77EVDoacQmlds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DNVbx2ud; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJtlB1RbmzSKT;
-	Wed, 10 Jul 2024 12:05:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720605910;
-	bh=58eL5zKFVrJFUT+TpbxjO2RgasvOa3v7FdFqIaHbAZ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DNVbx2udibxVu+14OKvyFsM2tte1G7+GSl8Z+NOcHcVVvvBg1ydxpZsw6h/1RkTaN
-	 ejzvZofhsiG9dNul4ThaAxY28YALObLrSzblZ8Zjk8uwQdQKc/EuaduylSGnGw3pZ7
-	 LEta7bCt/CqWCCKmMGDr9F+uKDtZtEAT6JChcVeQ=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJtl848ghzL4p;
-	Wed, 10 Jul 2024 12:05:08 +0200 (CEST)
-Date: Wed, 10 Jul 2024 12:05:05 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] binfmt_elf: Fail execution of shared objects with
- ELIBEXEC (was: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to
- execveat(2))
-Message-ID: <20240710.Lu2thiemeil2@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
- <20240706.poo9ahd3La9b@digikod.net>
- <871q46bkoz.fsf@oldenburg.str.redhat.com>
- <20240708.zooj9Miaties@digikod.net>
- <878qybet6t.fsf_-_@oldenburg.str.redhat.com>
+	s=arc-20240116; t=1720605929; c=relaxed/simple;
+	bh=uZxAF7XgQqF1Sg+dYcymPO7TahFggn/RlM3shTrDiWY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Xyw4H+NvvvmIMz8UUrG7202NVA4oYGlJtvQXwspvorQNhu6mmtwosURHQu3XX2p4SQU1u8UqBJ+LU42j14LiS2Q6YurxA/1OcYby5a6SikfcCXMqLVx1dEfa5GutBl+oxHZ4/o9kAUkn6dqaqZyq708LoefOWr54bCjxtgv0ZRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bL0BN0sR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bA4KwbV5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p0wzvfRu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HrqZ3W00; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D03E11F822;
+	Wed, 10 Jul 2024 10:05:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720605925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AtL6vijXehWhaAedbqt4n8Gq7UnfDWoxWKhwbH6Yqwk=;
+	b=bL0BN0sRuIlV9IS0L05LSKrwq7oDelOmcW3+PTt+x9+MRo4rygeHpWwHZLULxE3+wNlPd6
+	UBShK9bOcw7VoWU7qwTZmR1SzlipQjhmzHfM+ekciaXn+qP7zBauUsFQ3jBgW4Mtt45AN3
+	NbNMfInkzzauz5WPBCorHfeuOkvARYU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720605925;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AtL6vijXehWhaAedbqt4n8Gq7UnfDWoxWKhwbH6Yqwk=;
+	b=bA4KwbV5ZiSzKslzk8pXyDa/OnlZqcX/OQDNyJ4h4Hu8U+ra3pv/ij3vNg4fRkxzIrOeGq
+	+FVl3yp+2QlQlmBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720605924; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AtL6vijXehWhaAedbqt4n8Gq7UnfDWoxWKhwbH6Yqwk=;
+	b=p0wzvfRuApLW/RWhWIId8cY0wJplKR83JTiPxLO9BAtB3uP5S54lEP/hzXFtXq4LBgVmLh
+	CzwNgdmUGPyyYImxBu5dAcT81G3x0EneND412bYz76S6Yx9Axt1GVMxHLEAVnjOdCbIPNo
+	qT/N056Jfw0INIeNMd1aI3bJAjWHt+4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720605924;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AtL6vijXehWhaAedbqt4n8Gq7UnfDWoxWKhwbH6Yqwk=;
+	b=HrqZ3W00whQfH41bHoBlBwE0UbrpHyNdLYN4ECI4PHeUEHs+cAB4d2kk5wZuQ/Cu5Adamb
+	AWApoCNm5VEG5kCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9B478137D2;
+	Wed, 10 Jul 2024 10:05:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id A1iNJeRcjmbyZAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 10 Jul 2024 10:05:24 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	javier.carrasco.cruz@gmail.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kent.overstreet@linux.dev,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	lists@nerdbynature.de,
+	lstoakes@gmail.com,
+	martin.lau@linux.dev,
+	peter.ujfalusi@intel.com,
+	regressions@lists.linux.dev,
+	sdf@google.com,
+	sheharyaar48@gmail.com,
+	song@kernel.org,
+	surenb@google.com,
+	vbabka@suse.cz,
+	yonghong.song@linux.dev
+Subject: [PATCH for 6.10] bpf: fix order of args in call to bpf_map_kvcalloc
+Date: Wed, 10 Jul 2024 12:05:22 +0200
+Message-ID: <20240710100521.15061-2-vbabka@suse.cz>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <CAADnVQK_ftwe5Dxtc0bopeDg2ku=GrFYrMOUWHLnXaK1bqoXXA@mail.gmail.com>
+References: <CAADnVQK_ftwe5Dxtc0bopeDg2ku=GrFYrMOUWHLnXaK1bqoXXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <878qybet6t.fsf_-_@oldenburg.str.redhat.com>
-X-Infomaniak-Routing: alpha
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,iogearbox.net,gmail.com,google.com,linux.dev,nerdbynature.de,intel.com,lists.linux.dev,suse.cz];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Score: -1.30
+X-Spam-Level: 
 
-On Mon, Jul 08, 2024 at 06:37:14PM +0200, Florian Weimer wrote:
-> * Mickaël Salaün:
-> 
-> > On Sat, Jul 06, 2024 at 05:32:12PM +0200, Florian Weimer wrote:
-> >> * Mickaël Salaün:
-> >> 
-> >> > On Fri, Jul 05, 2024 at 08:03:14PM +0200, Florian Weimer wrote:
-> >> >> * Mickaël Salaün:
-> >> >> 
-> >> >> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
-> >> >> > allowed for execution.  The main use case is for script interpreters and
-> >> >> > dynamic linkers to check execution permission according to the kernel's
-> >> >> > security policy. Another use case is to add context to access logs e.g.,
-> >> >> > which script (instead of interpreter) accessed a file.  As any
-> >> >> > executable code, scripts could also use this check [1].
-> >> >> 
-> >> >> Some distributions no longer set executable bits on most shared objects,
-> >> >> which I assume would interfere with AT_CHECK probing for shared objects.
-> >> >
-> >> > A file without the execute permission is not considered as executable by
-> >> > the kernel.  The AT_CHECK flag doesn't change this semantic.  Please
-> >> > note that this is just a check, not a restriction.  See the next patch
-> >> > for the optional policy enforcement.
-> >> >
-> >> > Anyway, we need to define the policy, and for Linux this is done with
-> >> > the file permission bits.  So for systems willing to have a consistent
-> >> > execution policy, we need to rely on the same bits.
-> >> 
-> >> Yes, that makes complete sense.  I just wanted to point out the odd
-> >> interaction with the old binutils bug and the (sadly still current)
-> >> kernel bug.
-> >> 
-> >> >> Removing the executable bit is attractive because of a combination of
-> >> >> two bugs: a binutils wart which until recently always set the entry
-> >> >> point address in the ELF header to zero, and the kernel not checking for
-> >> >> a zero entry point (maybe in combination with an absent program
-> >> >> interpreter) and failing the execve with ELIBEXEC, instead of doing the
-> >> >> execve and then faulting at virtual address zero.  Removing the
-> >> >> executable bit is currently the only way to avoid these confusing
-> >> >> crashes, so I understand the temptation.
-> >> >
-> >> > Interesting.  Can you please point to the bug report and the fix?  I
-> >> > don't see any ELIBEXEC in the kernel.
-> >> 
-> >> The kernel hasn't been fixed yet.  I do think this should be fixed, so
-> >> that distributions can bring back the executable bit.
-> >
-> > Can you please point to the mailing list discussion or the bug report?
-> 
-> I'm not sure if this was ever reported upstream as an RFE to fail with
-> ELIBEXEC.  We have downstream bug report:
-> 
->   Prevent executed .so files with e_entry == 0 from attempting to become
->   a process.
->   <https://bugzilla.redhat.com/show_bug.cgi?id=2004942>
+From: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
 
-Thanks for the info.
+The original function call passed size of smap->bucket before the number of
+buckets which raises the error 'calloc-transposed-args' on compilation.
 
-> 
-> I've put together a patch which seems to work, see below.
-> 
-> I don't think there's any impact on AT_CHECK with execveat because that
-> mode will never get to this point.
+Vlastimil Babka added:
 
-Correct, that is not an issue for AT_CHECK use cases.
+The order of parameters can be traced back all the way to 6ac99e8f23d4
+("bpf: Introduce bpf sk local storage") accross several refactorings,
+and that's why the commit is used as a Fixes: tag.
+
+In v6.10-rc1, a different commit 2c321f3f70bc ("mm: change inlined
+allocation helpers to account at the call site") however exposed the
+order of args in a way that gcc-14 has enough visibility to start
+warning about it, because (in !CONFIG_MEMCG case) bpf_map_kvcalloc is
+then a macro alias for kvcalloc instead of a static inline wrapper.
+
+To sum up the warning happens when the following conditions are all met:
+
+- gcc-14 is used (didn't see it with gcc-13)
+- commit 2c321f3f70bc is present
+- CONFIG_MEMCG is not enabled in .config
+- CONFIG_WERROR turns this from a compiler warning to error
+
+Fixes: 6ac99e8f23d4 ("bpf: Introduce bpf sk local storage")
+Reviewed-by: Andrii Nakryiko <andrii@kernel.org>
+Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ kernel/bpf/bpf_local_storage.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_storage.c
+index 976cb258a0ed..c938dea5ddbf 100644
+--- a/kernel/bpf/bpf_local_storage.c
++++ b/kernel/bpf/bpf_local_storage.c
+@@ -782,8 +782,8 @@ bpf_local_storage_map_alloc(union bpf_attr *attr,
+ 	nbuckets = max_t(u32, 2, nbuckets);
+ 	smap->bucket_log = ilog2(nbuckets);
+ 
+-	smap->buckets = bpf_map_kvcalloc(&smap->map, sizeof(*smap->buckets),
+-					 nbuckets, GFP_USER | __GFP_NOWARN);
++	smap->buckets = bpf_map_kvcalloc(&smap->map, nbuckets,
++					 sizeof(*smap->buckets), GFP_USER | __GFP_NOWARN);
+ 	if (!smap->buckets) {
+ 		err = -ENOMEM;
+ 		goto free_smap;
+-- 
+2.45.2
+
 
