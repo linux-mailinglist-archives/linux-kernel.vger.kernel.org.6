@@ -1,139 +1,110 @@
-Return-Path: <linux-kernel+bounces-247082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0624F92CAF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE7D92CAF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:24:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D2E1F2319B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F64E1F239A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1ECF6F31C;
-	Wed, 10 Jul 2024 06:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EB77E799;
+	Wed, 10 Jul 2024 06:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MFd1WkVz"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZdgWQnjA"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A666F2F9
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BBD6214D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592621; cv=none; b=nJmrN0ZnpDczp0rhVTg7J/HEIH06FNfH5JAjUwkWDIluUH4EvQXNjViQ4x31pDSjHfnaRktQTX1OesuNG6nymlqR42jOCwBIvt1hsk/fei00mUMpDCwtKh2Gi1xmeA0Lw/1q4AmcORY7oh2tULFMMJbvlr4we5y9emMpAEgwrow=
+	t=1720592630; cv=none; b=WJaV9Vx+xZUZiPsow6RJyraggiZP0qAncqMFjmQ4Vo/HregqgQQ2sXyE+4l/NFYC+98Qnav8cu2NEYY+LBH9IGpslFMB0rm8qK+2QTuLpXtW/0JE5sOPlIfrfWz3hBYz1IGmta8o9vXQGiPtUFCoBTsP/5H7pe2htU1ytxXnN2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592621; c=relaxed/simple;
-	bh=Vh2PxRkX6tPQ21qX4H/N8GPRCj89j3ozdiQOdbkgRcU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=crQMl3XhBi1LDVKh8Bc9CErp6EdjRYJ4NX7Xomt8F56yGse0vCWwWhMWCjZ8IiZKTgvKHxC9PDhCM2ttc6Mgo45CGm7GH2q8pup1YvyXcQZTLnXWCuFCKEhFzf9oL2NeLkaoBqTYYbwc/FVGDrgwnUYLS/XOSRZzapu8jeOEG7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MFd1WkVz; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-80fa2957fa0so701400241.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:23:39 -0700 (PDT)
+	s=arc-20240116; t=1720592630; c=relaxed/simple;
+	bh=2ExBjp6eN3FPXcKcpWWDLscGBWA4b76f/uZOXmim2N8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dHlAAj0bP46zNqcaDybk5cH/9W8xdJG663GjzmRUMThglNkxBs7liqG0KLwamQkE12ixPfNGhQQ9GZRY0hfYy+r7JIxUgJQhbeK2T/QlUAW3tXDVrT9moQunIBLil5/YBV+h/d7ERxpNt2zYL0skKeTw9iZ9jrg/LBHv54i8wXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZdgWQnjA; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ea333534cso550788e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:23:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720592618; x=1721197418; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rfO/tubJkRWNsflDwLIYJeDnbtKjZsGMZyxTOtYX+yQ=;
-        b=MFd1WkVzRL3huC4Mc1CQJiSA5Fko0AaapOI6/24TKwagSD6PKkjgKM90gBjIW353zO
-         vTRH/8rTRi4Sy5Cxe0FGTZyrMkM9OhkPgA5SoMey/J5c73UXPzq00wAR9/8XqKsRlrtf
-         NlnLKLn4ZqikWRhVtQQ2c8j/IazkIpKgx0WdmlqNhah9G6wk9QdSKqmXPePkMZMNaXtk
-         xnQRMT6G4SXLEtZQfvnX74HmHNh3qkVyrbPkzmJI7ZI8ge+yfQ9VjGDuooRRr0Tatp0p
-         Ow2JYU7V4a68CPQ+y6in76UUtv8CtdXoH7h4vX683sFqHkgULRFDZP/jpniaw0MShTaO
-         ZgWg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1720592626; x=1721197426; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aaMgpjLtshlSuccsY94xnC39ysm4NveDbvjcS0K2xos=;
+        b=ZdgWQnjAGAjT0kx2E2RPQBu5buxG4yhUfKycpS8BlYuz8DfMm8xpjPtavV9oWmiWJ7
+         gFpkAK4pMqPl4NyE0wKlCX3rUaOpjrHkplC0b6M86/XkeLJbQA17x8wSdUpzwBF3Lv5T
+         nCG0U2qweXL4tCO140XmlY/Zh/FjNSCzjBKlbjOYYRx7l7GMzUJ8HCTgSsg+YKGioWkf
+         qht0+oYOauAof0vO3vvqVs4AumurUnQ4QL9NXNr/BosL3apVhlF4oetdzFaGF0rx4101
+         mG2m+EdCUSKAFhGL4n9PmdFjt9zejN60CEZN1piwho1weWLy/RrgUPLG+GhLvgVKKZkn
+         LwCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720592618; x=1721197418;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rfO/tubJkRWNsflDwLIYJeDnbtKjZsGMZyxTOtYX+yQ=;
-        b=izA9qrpQJrq12/6lp+Fji32EuDoH+rC4CGCL/YMwmPCE1ve1tcTmvO1NXW4u4i4lmk
-         EKGFEr0nw0mG05IrEnnO/oZQ8hPdwYPFHrF+qyuPLW/DG1vwl8DZzsosNxNns2BjldtN
-         wacpnaDnUai6F34zCpsCGyfDxnexlfeDSraUhkBAVNRhYIyBwnnFtk6KVy77/JaAYuzI
-         zmf+Aucm+f0EK53++0POL0/OTD1H/T102LHxp6mZglyBhxLvF2syqOx1CmsZ8u3JggIe
-         7gz/Z43s0ZP7CKvGszQRMsdpjVMlG1Ox54WlTIUuU732NaHmqV9O0xUWvxJQW/jpS+MM
-         gxPw==
-X-Gm-Message-State: AOJu0YxXyr77r6NOLuobtGKjKGq9ijgq9treMOlMomu6vLjjAz9ot6HR
-	3hPVLIhhierssczz2lWeStfqcVQ2q7nNlEYo7VNVn3yhwMd1ZvITpdCMHrmAn+DAqGDEeUw8rXL
-	QMuUhT5qzho9U/RtosrnH5Vi1mQHvl9HW27Eia8ZshqqA1/i/GD+5QQ==
-X-Google-Smtp-Source: AGHT+IHHBbLJpcxImsi97rq9EoasWijE1hp+uHEFhkSG2ol4YRtSD65QsSk4l3zo4kM3na3TwQ5YhMfh0rPcDkFpGiM=
-X-Received: by 2002:a05:6102:26d1:b0:48f:6581:c16c with SMTP id
- ada2fe7eead31-490320f2e96mr4920436137.6.1720592617827; Tue, 09 Jul 2024
- 23:23:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720592626; x=1721197426;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aaMgpjLtshlSuccsY94xnC39ysm4NveDbvjcS0K2xos=;
+        b=P3G3mDdyozD4phfVGceosglRhhU6HGDdU5rg4AmuKHS/nzs9J6NpfJyi7Ih1YAQyd8
+         ZiPyHxqyHTnIfIxSAcT+MIBZcTIPoMZe4eZxxTG7Om6oVtfYhgyo88c1xAO3KcLvJ7lQ
+         VNHxKRAfy5rfJy8teKEM7smbbdWRwJE3lD+TrBHZDxPmLU/757o+jf1A+NkWDRQBPt+r
+         VF5v6zGGN7cod/j0UC4TwSTX5Dw55lMtAfIeRFfZr9ZO82BbsIfhSSCCfr1GwR2Ri+cw
+         IixGpYXoUz0W2E4hZ6f+FMG4vIvwflz8houaFVt1U9rzJ5vAHYB5l3yrSQqEXtmwPXRl
+         lxtw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4K6054Tt4DX8JDF98XMnBtpoMH1zsHzxuqUo6J4Pfrn+KIEFrBH8mv3D5XXD1VoASigo5QzN8Ajdr+Xx01iz6/sjH9SeWRMUEozZS
+X-Gm-Message-State: AOJu0Yz71oAajjBex3WWGBh56B12eMMbLIGnooQ3RGg2ckGAE1M43FSR
+	WZnPOJmgBCTto5Af/ns2rh5jQhtnSJlFJjVuiIpsrlt9lscnAkFZnYJQBndyBiTtUx3qOSNPRX3
+	qlOE770dy
+X-Google-Smtp-Source: AGHT+IFlGzk+ziq0kKEQlWJT079So9ORXMEJrPoAk/r5OlFGCWYbLUSqSqXOiUN2s3UKCzBcI1MMzg==
+X-Received: by 2002:ac2:488f:0:b0:52e:a008:8f4c with SMTP id 2adb3069b0e04-52eb99fa612mr2239467e87.6.1720592625609;
+        Tue, 09 Jul 2024 23:23:45 -0700 (PDT)
+Received: from [127.0.0.1] (87-52-80-167-dynamic.dk.customer.tdc.net. [87.52.80.167])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb90670b6sm463892e87.197.2024.07.09.23.23.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 23:23:45 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: asml.silence@gmail.com, Thorsten Blum <thorsten.blum@toblux.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240710010520.384009-2-thorsten.blum@toblux.com>
+References: <20240710010520.384009-2-thorsten.blum@toblux.com>
+Subject: Re: [PATCH] io_uring/napi: Remove unnecessary s64 cast
+Message-Id: <172059262476.380385.7447707428260655880.b4-ty@kernel.dk>
+Date: Wed, 10 Jul 2024 00:23:44 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 10 Jul 2024 11:53:26 +0530
-Message-ID: <CA+G9fYsptR8VoPA0TBV0qeCy7TX2EHyD4v-EMsVbomeS5yVSLg@mail.gmail.com>
-Subject: mips-gic-timer.c:180:11: error: call to undeclared function 'read_gic_redir_counter'
-To: open list <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org, 
-	lkft-triage@lists.linaro.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Serge Semin <Sergey.Semin@baikalelectronics.ru>, 
-	Serge Semin <fancer.lancer@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-The arch mips builds failed on Linux next-20240709 tag due to below
-build warnings / errors [1] with clang-18 and gcc-12 / gcc-8.
 
-This is started from Linux next-20240709.
-  GOOD: next-20240703
-  BAD: next-20240709
+On Wed, 10 Jul 2024 03:05:21 +0200, Thorsten Blum wrote:
+> Since the do_div() macro casts the divisor to u32 anyway, remove the
+> unnecessary s64 cast and fix the following Coccinelle/coccicheck
+> warning reported by do_div.cocci:
+> 
+>   WARNING: do_div() does a 64-by-32 division, please consider using div64_s64 instead
+> 
+> 
+> [...]
 
-Build details,
--------
-kernel: 6.10.0-rc7
-git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-git_ref: master
-git_sha: 82d01fe6ee52086035b201cfa1410a3b04384257
-git_describe: next-20240709
-Test details: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240709
+Applied, thanks!
 
-Regressions (compared to build next-20240703)
-------------------------------------------------------------------------
+[1/1] io_uring/napi: Remove unnecessary s64 cast
+      commit: f7c696a56cc7d70515774a24057b473757ec6089
 
-mips:
-  build:
-    * clang-18-allnoconfig
-    * clang-nightly-defconfig
-    * gcc-8-allnoconfig
-    * gcc-12-malta_defconfig
-    * clang-18-tinyconfig
-    * gcc-12-defconfig
-    * clang-nightly-allnoconfig
-    * gcc-12-tinyconfig
-    * gcc-8-malta_defconfig
-    * gcc-12-allnoconfig
-    * clang-18-defconfig
-    * gcc-8-tinyconfig
-    * clang-nightly-tinyconfig
-    * gcc-8-defconfig
+Best regards,
+-- 
+Jens Axboe
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Build warnings / errors [2]:
----------
-drivers/clocksource/mips-gic-timer.c:180:11: error: call to undeclared
-function 'read_gic_redir_counter'; ISO C99 and later do not support
-implicit function declarations [-Wimplicit-function-declaration]
-  180 |                 count = read_gic_redir_counter();
-      |                         ^
-drivers/clocksource/mips-gic-timer.c:184:7: error: call to undeclared
-function 'read_gic_redir_counter_32h'; ISO C99 and later do not
-support implicit function declarations
-[-Wimplicit-function-declaration]
-  184 |         hi = read_gic_redir_counter_32h();
-      |              ^
 
-Links:
-----
-[1] https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240709/testrun/24543079/suite/build/test/clang-18-defconfig/log
-[2] https://storage.tuxsuite.com/public/linaro/lkft/builds/2j0Ox1y8pT9eOUt60DNHQZjFjD1/
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
