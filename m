@@ -1,289 +1,320 @@
-Return-Path: <linux-kernel+bounces-247015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C0192C9F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:44:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50AC292C9FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50151C2297F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:44:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96CE5B243AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA9F3FB01;
-	Wed, 10 Jul 2024 04:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B101242ABE;
+	Wed, 10 Jul 2024 04:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pas7lENJ"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eC2QD35c"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA661EEF8
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 04:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366CD29CE6;
+	Wed, 10 Jul 2024 04:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720586680; cv=none; b=blblvkcDqwvLYB9vZQCtWLECBEj7Z0mpMhJFUSEKkQIfq0Ry32qmlmA6rwViAW1s1mNXPI3HzvgssSlcgWytrUJWHyt4cewpH2tSAym1gTR/MRKQ/bqmMbWI8FkHO4htN98Xg2RvsCv8tw/p0qTlLrQyylLmzTOn97tvR8pi8GY=
+	t=1720586756; cv=none; b=DlV/KGkCcXmdPiyAqOkfb4gbNHqBzRnAGYn+iExY4+CCtGysQOhG1PPvdKhctAoPiaEWvJZrz66f5CaUNekevHyW5kYQtc8+YXl+VMYqMwRc+bPq82FYA65qGyto8cy4YEgx8ng/0tRC+uJBC3Imid+i1JzIJEte0uKxfYJ4WNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720586680; c=relaxed/simple;
-	bh=/1DIAnSM+aFxWhpzQpOdgN687Tss4bIVrP3TTlRfQ64=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gMQ/I0Pze6igwu3Uut9oupItpKZvkDwVBkaM3W682LzIC7HWo7R15Kiz6zUtMkk+g3smFeBS1qPpiyaYP5QTvSAvW3oNC9B1DIxFsm+RDtbc6K3IZV8IqoDPGIKBO+kdHNFYwnSeyNHViUldC06e2VYx6vO+1Ei/v8VRRuOjoLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pas7lENJ; arc=none smtp.client-ip=209.85.222.51
+	s=arc-20240116; t=1720586756; c=relaxed/simple;
+	bh=upzHT+jYkh6/SZegi4wrmofTUtqgtVCKeRasrQtirO0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=osM9w1GVaBdCtJa2W7JxIVNUVk5LBJZ0qlhhwf83CfahlTkrcQWYcP7lDei7dcxweQ2k2iB4/OpsMqmBGBXhcwJt1NEUkNaAqe7TcN8CLmkptqtCU862lh1uVOjGQskBUw/vGOUIAwqMfhtD2OJvOTEePlFANZxSFURrv9MX6pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eC2QD35c; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-8102193c82bso1442859241.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 21:44:38 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fb05b0be01so35080275ad.2;
+        Tue, 09 Jul 2024 21:45:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720586677; x=1721191477; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720586754; x=1721191554; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y53NzQgMOK0rpI6ftnaa6VX6nvsG1CSTn7iwk/7Hdp8=;
-        b=Pas7lENJpg8DNibDSj4VRauQRzb2elwRwvxr/YJ2tGuwnWq6ZEOA+ouMi+A5MVDRrt
-         hzxV+wurC1qdtS6vXIwefXi3YmGKmTeGQm34qr0C81t2B1pAsTV0/m3y7fVGD+ByJLU0
-         /ZApmlF8pqVrl3vEOe0khEZECFjmpwg5zppxDhA086PwG86k7/9uI7sMlqqahfkJNk30
-         czzKA4PPyoOchrHyXKIksa1W97Egha3+XPlxm84IT7KlTjmzd3KoJXSXFB8hVzGr95fK
-         pE+rf7LJoW9KuCgntgVxTBungndOg1jbkWQLiPLEaTwHIYoOUxqLdlmEsnIjGNNqK1sF
-         CkRQ==
+        bh=WGdCz4dekPI8GbQLbF7pYbrDYm1q6fTyOuhQ9mCfYKY=;
+        b=eC2QD35cfoYaD0ni7+ySnfF1hNsVWMGCV9H4NhuzXYJW9oyO1/GS2aikbuK4qNythM
+         XRHTC21V+LJIKryF1f9APXEUZU2sLSpRBuq1oRakblX2bPgvY0Yqy/8o2WS/VNIf/VRe
+         hfWC3YqYTqFqijiU9RNFFtq9ea3rq7jlKlRdN7oOmYSXo4tCsrQICgIP6K6W3dI0b/HF
+         ALLbPIPHzXwfOD6jkNf6zGEFYMkg5UE5mBpvFxtszjtTgwO66MnUZSIJLCv7+hwqR+/B
+         ZWb0aTGzjEdlE4aepWPtfiVyU65NZf6AhJovQERD2BzWv3OoHlYVVygpd+glQ2azSg6E
+         WHfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720586677; x=1721191477;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720586754; x=1721191554;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=y53NzQgMOK0rpI6ftnaa6VX6nvsG1CSTn7iwk/7Hdp8=;
-        b=cpNeBSgr8XF4qOAiZFhgO6Xw2cLuVoa9l8jqif3DKrc++eM+Q0bNaUCgwYy3SUiGmg
-         rhJ7N/G3SsErKSFUhAjwvZxYIQVoD+TAr1m1vYkMrFlOdVOW/cobCr3A+3LMaJAZaZZ5
-         tJIi2aUQBgLcqw8DSxW/iI3o/6g2fwxof3HRqdHHu0FHHWxAVbX+VH1OmC3+slVeMtZ6
-         eNNBivR53fWZxou3kOAOtMbYH9HqWwIHFopt3oaN0Y2hBUVgx1ItvpuHJJ3iNC+Dp4iE
-         kooyCmbZ4MBU8owYfBoKnngsqioLnx/l/0qdCn33oJH0wbjySqbjw0iqeVy9CVexLa2a
-         9zfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1/OrNtXDCH+U4yLfMgv5KoMGbFBj3MKf0Y75ahhHHwNEBeJRXpoCEGNVeDSd18hqyRCp6rMexXgP7SGhLP0WLOsDBq1dRpDVFw24W
-X-Gm-Message-State: AOJu0Yw3fFsz8Tcoworzq6QZAGMBzbuzp6gFWETT7HK6m8hwsqgmhXVw
-	aXtJAAIQw5eSkDmpi38zRrox9J075bcynCZVgfOt7whl3wG/9zsmlmdOOJGRfTqB666y3wPCAXe
-	3ZI1sGHgwEhL2Z+qWnHwPFUPbRIM=
-X-Google-Smtp-Source: AGHT+IGxRAGjwgygmRWdYGw6icPX2MCh/jShZgkxGy5unZ57KvTs89yesiUcVhrx3Kk30qHOjWE3bwPBNrFc0vB5sHE=
-X-Received: by 2002:a05:6102:c86:b0:48c:3174:e8a5 with SMTP id
- ada2fe7eead31-490322109fbmr5848222137.29.1720586677210; Tue, 09 Jul 2024
- 21:44:37 -0700 (PDT)
+        bh=WGdCz4dekPI8GbQLbF7pYbrDYm1q6fTyOuhQ9mCfYKY=;
+        b=nHgWEBHsYQ4du8e7es/GriDpOWAb/mR9nJapiwxn621/UYeEKHFL/kbzWreJOILXyT
+         UPSNUsJQ/Dhz+etimzMCgtxLD0/48OWTplWEt3+UZ8ZYA0W1fjLoZvI09D3fE594kqsF
+         naVDPPdbc/UHhwrD+T+P8HawlZSj94N6+85GmobG4SgyNYRfmTOdTMZfqf8u6/O5IA6f
+         mRLkREe73umfjG4Q1e9RvQwUDNC7MEjFxoN4JuZHoDX3M3Rot2mEcoyOrdy4tFlUIQyd
+         HSJ/LzpIfdgHawEYqguHpzx63y5uk+Hg9yVHKS2fNUi5OhoAv/Fjs1qnZm+ZzLaihzfc
+         GW6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWdYSdFCOUn2w2wlHWpHKYPYw/5n8b3FTT7V7Z1OHuYiVOVhE2N87hs258Dc5dN6801uBiPP1cQOgxG1jLh+L4Meyi1CIbQFxI6k+cnOCoxwz8b7HJagOFxWR3YNbaf3jfs
+X-Gm-Message-State: AOJu0YxnLwBcMgzCUa436tHQjkHkWzI8C6+TcnbEPa6YYRuReQr6p2YX
+	Rp5eEXBVAdP3wSxnL2o//7KzHHdVup7hD99YK5J11+PwmUXgeMR5
+X-Google-Smtp-Source: AGHT+IE3k4WNlxBuk8joGdVc29dj/O1MsPLMoSsoB/VdOrMItsHHtVNHwhDUCbUNY4iabl/92OnEIA==
+X-Received: by 2002:a17:903:2288:b0:1fb:72ed:420a with SMTP id d9443c01a7336-1fbb6d42b9fmr39684945ad.16.1720586754137;
+        Tue, 09 Jul 2024 21:45:54 -0700 (PDT)
+Received: from MSCND1355B05.fareast.nevint.com ([117.128.58.94])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a122cfsm25020705ad.5.2024.07.09.21.45.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 21:45:53 -0700 (PDT)
+From: Zqiang <qiang.zhang1211@gmail.com>
+To: paulmck@kernel.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org,
+	urezki@gmail.com,
+	boqun.feng@gmail.com
+Cc: qiang.zhang1211@gmail.com,
+	rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] rcu-tasks: Fix access non-existent percpu rtpcp variable in rcu_tasks_need_gpcb()
+Date: Wed, 10 Jul 2024 12:45:42 +0800
+Message-Id: <20240710044542.444-1-qiang.zhang1211@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240709142312.372b20d49c6a97ecd2cd9904@linux-foundation.org>
- <20240710033212.36497-1-21cnbao@gmail.com> <dc2c3395-e514-40ad-b9d8-b76cf04ba0df@redhat.com>
- <CAGsJ_4zkt5wKk-JhEpZgqpQgNK--50jwpZFK4E_eXgBpKkMKmQ@mail.gmail.com> <9d77dc44-f61c-4e52-938f-c268daf0e169@redhat.com>
-In-Reply-To: <9d77dc44-f61c-4e52-938f-c268daf0e169@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 10 Jul 2024 16:44:25 +1200
-Message-ID: <CAGsJ_4z6kv=KhZ=DY-puG0uVosEPWx2=CNH0TGBG4W9tZoW+NA@mail.gmail.com>
-Subject: Re: [PATCH v7] mm: shrink skip folio mapped by an exiting process
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, justinjiang@vivo.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, opensource.kernel@vivo.com, 
-	willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 4:04=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 10.07.24 06:02, Barry Song wrote:
-> > On Wed, Jul 10, 2024 at 3:59=E2=80=AFPM David Hildenbrand <david@redhat=
-.com> wrote:
-> >>
-> >> On 10.07.24 05:32, Barry Song wrote:
-> >>> On Wed, Jul 10, 2024 at 9:23=E2=80=AFAM Andrew Morton <akpm@linux-fou=
-ndation.org> wrote:
-> >>>>
-> >>>> On Tue,  9 Jul 2024 20:31:15 +0800 Zhiguo Jiang <justinjiang@vivo.co=
-m> wrote:
-> >>>>
-> >>>>> The releasing process of the non-shared anonymous folio mapped sole=
-ly by
-> >>>>> an exiting process may go through two flows: 1) the anonymous folio=
- is
-> >>>>> firstly is swaped-out into swapspace and transformed into a swp_ent=
-ry
-> >>>>> in shrink_folio_list; 2) then the swp_entry is released in the proc=
-ess
-> >>>>> exiting flow. This will result in the high cpu load of releasing a
-> >>>>> non-shared anonymous folio mapped solely by an exiting process.
-> >>>>>
-> >>>>> When the low system memory and the exiting process exist at the sam=
-e
-> >>>>> time, it will be likely to happen, because the non-shared anonymous
-> >>>>> folio mapped solely by an exiting process may be reclaimed by
-> >>>>> shrink_folio_list.
-> >>>>>
-> >>>>> This patch is that shrink skips the non-shared anonymous folio sole=
-ly
-> >>>>> mapped by an exting process and this folio is only released directl=
-y in
-> >>>>> the process exiting flow, which will save swap-out time and allevia=
-te
-> >>>>> the load of the process exiting.
-> >>>>
-> >>>> It would be helpful to provide some before-and-after runtime
-> >>>> measurements, please.  It's a performance optimization so please let=
-'s
-> >>>> see what effect it has.
-> >>>
-> >>> Hi Andrew,
-> >>>
-> >>> This was something I was curious about too, so I created a small test=
- program
-> >>> that allocates and continuously writes to 256MB of memory. Using QEMU=
-, I set
-> >>> up a small machine with only 300MB of RAM to trigger kswapd.
-> >>>
-> >>> qemu-system-aarch64 -M virt,gic-version=3D3,mte=3Doff -nographic \
-> >>>    -smp cpus=3D4 -cpu max \
-> >>>    -m 300M -kernel arch/arm64/boot/Image
-> >>>
-> >>> The test program will be randomly terminated by its subprocess to tri=
-gger
-> >>> the use case of this patch.
-> >>>
-> >>> #include <stdio.h>
-> >>> #include <stdlib.h>
-> >>> #include <unistd.h>
-> >>> #include <string.h>
-> >>> #include <sys/types.h>
-> >>> #include <sys/wait.h>
-> >>> #include <time.h>
-> >>> #include <signal.h>
-> >>>
-> >>> #define MEMORY_SIZE (256 * 1024 * 1024)
-> >>>
-> >>> unsigned char *memory;
-> >>>
-> >>> void allocate_and_write_memory()
-> >>> {
-> >>>       memory =3D (unsigned char *)malloc(MEMORY_SIZE);
-> >>>       if (memory =3D=3D NULL) {
-> >>>           perror("malloc");
-> >>>           exit(EXIT_FAILURE);
-> >>>       }
-> >>>
-> >>>       while (1)
-> >>>           memset(memory, 0x11, MEMORY_SIZE);
-> >>> }
-> >>>
-> >>> int main()
-> >>> {
-> >>>       pid_t pid;
-> >>>       srand(time(NULL));
-> >>>
-> >>>       pid =3D fork();
-> >>>
-> >>>       if (pid < 0) {
-> >>>           perror("fork");
-> >>>           exit(EXIT_FAILURE);
-> >>>       }
-> >>>
-> >>>       if (pid =3D=3D 0) {
-> >>>           int delay =3D (rand() % 10000) + 10000;
-> >>>           usleep(delay * 1000);
-> >>>
-> >>>        /* kill parent when it is busy on swapping */
-> >>>           kill(getppid(), SIGKILL);
-> >>>           _exit(0);
-> >>>       } else {
-> >>>           allocate_and_write_memory();
-> >>>
-> >>>           wait(NULL);
-> >>>
-> >>>           free(memory);
-> >>>       }
-> >>>
-> >>>       return 0;
-> >>> }
-> >>>
-> >>> I tracked the number of folios that could be redundantly
-> >>> swapped out by adding a simple counter as shown below:
-> >>>
-> >>> @@ -879,6 +880,9 @@ static bool folio_referenced_one(struct folio *fo=
-lio,
-> >>>                       check_stable_address_space(vma->vm_mm)) &&
-> >>>                       folio_test_swapbacked(folio) &&
-> >>>                       !folio_likely_mapped_shared(folio)) {
-> >>> +                       static long i, size;
-> >>> +                       size +=3D folio_size(folio);
-> >>> +                       pr_err("index: %d skipped folio:%lx total siz=
-e:%d\n", i++, (unsigned long)folio, size);
-> >>>                           pra->referenced =3D -1;
-> >>>                           page_vma_mapped_walk_done(&pvmw);
-> >>>                           return false;
-> >>>
-> >>>
-> >>> This is what I have observed:
-> >>>
-> >>> / # /home/barry/develop/linux/skip_swap_out_test
-> >>> [   82.925645] index: 0 skipped folio:fffffdffc0425400 total size:655=
-36
-> >>> [   82.925960] index: 1 skipped folio:fffffdffc0425800 total size:131=
-072
-> >>> [   82.927524] index: 2 skipped folio:fffffdffc0425c00 total size:196=
-608
-> >>> [   82.928649] index: 3 skipped folio:fffffdffc0426000 total size:262=
-144
-> >>> [   82.929383] index: 4 skipped folio:fffffdffc0426400 total size:327=
-680
-> >>> [   82.929995] index: 5 skipped folio:fffffdffc0426800 total size:393=
-216
-> >>> ...
-> >>> [   88.469130] index: 6112 skipped folio:fffffdffc0390080 total size:=
-97230848
-> >>> [   88.469966] index: 6113 skipped folio:fffffdffc038d000 total size:=
-97296384
-> >>> [   89.023414] index: 6114 skipped folio:fffffdffc0366cc0 total size:=
-97300480
-> >>>
-> >>> I observed that this patch effectively skipped 6114 folios (either 4K=
-B or 64KB
-> >>> mTHP), potentially reducing the swap-out by up to 92MB (97,300,480 by=
-tes) during
-> >>> the process exit.
-> >>>
-> >>> Despite the numerous mistakes Zhiguo made in sending this patch, it i=
-s still
-> >>> quite valuable. Please consider pulling his v9 into the mm tree for t=
-esting.
-> >>
-> >> BTW, we dropped the folio_test_anon() check, but what about shmem? The=
-y
-> >> also do __folio_set_swapbacked()?
-> >
-> > my point is that the purpose is skipping redundant swap-out, if shmem i=
-s single
-> > mapped, they could be also skipped.
->
-> But they won't get necessarily *freed* when unmapping them. They might
-> just continue living in tmpfs? where some other process might just map
-> them later?
->
+For kernels built with CONFIG_FORCE_NR_CPUS=y, the nr_cpu_ids is
+defined as NR_CPUS instead of the number of possible cpus, this
+will cause the following system panic:
 
-You're correct. I overlooked this aspect, focusing on swap and thinking of =
-shmem
-solely in terms of swap.
+smpboot: Allowing 4 CPUs, 0 hotplug CPUs
+...
+setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr_cpu_ids:512 nr_node_ids:1
+...
+BUG: unable to handle page fault for address: ffffffff9911c8c8
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+Oops: 0000 [#1] PREEMPT SMP PTI
+CPU: 0 PID: 15 Comm: rcu_tasks_trace Tainted: G W
+6.6.21 #1 5dc7acf91a5e8e9ac9dcfc35bee0245691283ea6
+RIP: 0010:rcu_tasks_need_gpcb+0x25d/0x2c0
+RSP: 0018:ffffa371c00a3e60 EFLAGS: 00010082
+CR2: ffffffff9911c8c8 CR3: 000000040fa20005 CR4: 00000000001706f0
+Call Trace:
+<TASK>
+? __die+0x23/0x80
+? page_fault_oops+0xa4/0x180
+? exc_page_fault+0x152/0x180
+? asm_exc_page_fault+0x26/0x40
+? rcu_tasks_need_gpcb+0x25d/0x2c0
+? __pfx_rcu_tasks_kthread+0x40/0x40
+rcu_tasks_one_gp+0x69/0x180
+rcu_tasks_kthread+0x94/0xc0
+kthread+0xe8/0x140
+? __pfx_kthread+0x40/0x40
+ret_from_fork+0x34/0x80
+? __pfx_kthread+0x40/0x40
+ret_from_fork_asm+0x1b/0x80
+</TASK>
 
-> IMHO, there is a big difference here between anon and shmem. (well,
-> anon_shmem would actually be different :) )
+Considering that there may be holes in the CPU numbers, use the
+maximum possible cpu number, instead of nr_cpu_ids, for configuring
+enqueue and dequeue limits.
 
-Even though anon_shmem behaves similarly to anonymous memory when
-releasing memory, it doesn't seem worth the added complexity?
+Closes: https://lore.kernel.org/linux-input/CALMA0xaTSMN+p4xUXkzrtR5r6k7hgoswcaXx7baR_z9r5jjskw@mail.gmail.com/T/#u
+Reported-by: Zhixu Liu <zhixu.liu@gmail.com>
+Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+---
+ kernel/rcu/tasks.h | 80 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 51 insertions(+), 29 deletions(-)
 
-So unfortunately it seems Zhiguo still needs v10 to take folio_test_anon()
-back? Sorry for my bad, Zhiguo.
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index 2b1d6abf3ba3..12d63ce84cc9 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -49,6 +49,7 @@ struct rcu_tasks_percpu {
+ 	struct list_head rtp_blkd_tasks;
+ 	struct list_head rtp_exit_list;
+ 	int cpu;
++	int index;
+ 	struct rcu_tasks *rtpp;
+ };
+ 
+@@ -110,6 +111,7 @@ struct rcu_tasks {
+ 	call_rcu_func_t call_func;
+ 	unsigned int wait_state;
+ 	struct rcu_tasks_percpu __percpu *rtpcpu;
++	struct rcu_tasks_percpu **rtpcp_array;
+ 	int percpu_enqueue_shift;
+ 	int percpu_enqueue_lim;
+ 	int percpu_dequeue_lim;
+@@ -182,6 +184,8 @@ module_param(rcu_task_collapse_lim, int, 0444);
+ static int rcu_task_lazy_lim __read_mostly = 32;
+ module_param(rcu_task_lazy_lim, int, 0444);
+ 
++static int rcu_task_cpu_ids;
++
+ /* RCU tasks grace-period state for debugging. */
+ #define RTGS_INIT		 0
+ #define RTGS_WAIT_WAIT_CBS	 1
+@@ -245,6 +249,8 @@ static void cblist_init_generic(struct rcu_tasks *rtp)
+ 	int cpu;
+ 	int lim;
+ 	int shift;
++	int maxcpu;
++	int index = 0;
+ 
+ 	if (rcu_task_enqueue_lim < 0) {
+ 		rcu_task_enqueue_lim = 1;
+@@ -254,14 +260,9 @@ static void cblist_init_generic(struct rcu_tasks *rtp)
+ 	}
+ 	lim = rcu_task_enqueue_lim;
+ 
+-	if (lim > nr_cpu_ids)
+-		lim = nr_cpu_ids;
+-	shift = ilog2(nr_cpu_ids / lim);
+-	if (((nr_cpu_ids - 1) >> shift) >= lim)
+-		shift++;
+-	WRITE_ONCE(rtp->percpu_enqueue_shift, shift);
+-	WRITE_ONCE(rtp->percpu_dequeue_lim, lim);
+-	smp_store_release(&rtp->percpu_enqueue_lim, lim);
++	rtp->rtpcp_array = kcalloc(num_possible_cpus(), sizeof(struct rcu_tasks_percpu *), GFP_KERNEL);
++	BUG_ON(!rtp->rtpcp_array);
++
+ 	for_each_possible_cpu(cpu) {
+ 		struct rcu_tasks_percpu *rtpcp = per_cpu_ptr(rtp->rtpcpu, cpu);
+ 
+@@ -273,14 +274,29 @@ static void cblist_init_generic(struct rcu_tasks *rtp)
+ 		INIT_WORK(&rtpcp->rtp_work, rcu_tasks_invoke_cbs_wq);
+ 		rtpcp->cpu = cpu;
+ 		rtpcp->rtpp = rtp;
++		rtpcp->index = index;
++		rtp->rtpcp_array[index] = rtpcp;
++		index++;
+ 		if (!rtpcp->rtp_blkd_tasks.next)
+ 			INIT_LIST_HEAD(&rtpcp->rtp_blkd_tasks);
+ 		if (!rtpcp->rtp_exit_list.next)
+ 			INIT_LIST_HEAD(&rtpcp->rtp_exit_list);
++		maxcpu = cpu;
+ 	}
+ 
+-	pr_info("%s: Setting shift to %d and lim to %d rcu_task_cb_adjust=%d.\n", rtp->name,
+-			data_race(rtp->percpu_enqueue_shift), data_race(rtp->percpu_enqueue_lim), rcu_task_cb_adjust);
++	rcu_task_cpu_ids = maxcpu + 1;
++	if (lim > rcu_task_cpu_ids)
++		lim = rcu_task_cpu_ids;
++	shift = ilog2(rcu_task_cpu_ids / lim);
++	if (((rcu_task_cpu_ids - 1) >> shift) >= lim)
++		shift++;
++	WRITE_ONCE(rtp->percpu_enqueue_shift, shift);
++	WRITE_ONCE(rtp->percpu_dequeue_lim, lim);
++	smp_store_release(&rtp->percpu_enqueue_lim, lim);
++
++	pr_info("%s: Setting shift to %d and lim to %d rcu_task_cb_adjust=%d rcu_task_cpu_ids=%d.\n",
++			rtp->name, data_race(rtp->percpu_enqueue_shift), data_race(rtp->percpu_enqueue_lim),
++			rcu_task_cb_adjust, rcu_task_cpu_ids);
+ }
+ 
+ // Compute wakeup time for lazy callback timer.
+@@ -348,7 +364,7 @@ static void call_rcu_tasks_generic(struct rcu_head *rhp, rcu_callback_t func,
+ 			rtpcp->rtp_n_lock_retries = 0;
+ 		}
+ 		if (rcu_task_cb_adjust && ++rtpcp->rtp_n_lock_retries > rcu_task_contend_lim &&
+-		    READ_ONCE(rtp->percpu_enqueue_lim) != nr_cpu_ids)
++		    READ_ONCE(rtp->percpu_enqueue_lim) != rcu_task_cpu_ids)
+ 			needadjust = true;  // Defer adjustment to avoid deadlock.
+ 	}
+ 	// Queuing callbacks before initialization not yet supported.
+@@ -368,10 +384,10 @@ static void call_rcu_tasks_generic(struct rcu_head *rhp, rcu_callback_t func,
+ 	raw_spin_unlock_irqrestore_rcu_node(rtpcp, flags);
+ 	if (unlikely(needadjust)) {
+ 		raw_spin_lock_irqsave(&rtp->cbs_gbl_lock, flags);
+-		if (rtp->percpu_enqueue_lim != nr_cpu_ids) {
++		if (rtp->percpu_enqueue_lim != rcu_task_cpu_ids) {
+ 			WRITE_ONCE(rtp->percpu_enqueue_shift, 0);
+-			WRITE_ONCE(rtp->percpu_dequeue_lim, nr_cpu_ids);
+-			smp_store_release(&rtp->percpu_enqueue_lim, nr_cpu_ids);
++			WRITE_ONCE(rtp->percpu_dequeue_lim, rcu_task_cpu_ids);
++			smp_store_release(&rtp->percpu_enqueue_lim, rcu_task_cpu_ids);
+ 			pr_info("Switching %s to per-CPU callback queuing.\n", rtp->name);
+ 		}
+ 		raw_spin_unlock_irqrestore(&rtp->cbs_gbl_lock, flags);
+@@ -444,6 +460,8 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rtp)
+ 
+ 	dequeue_limit = smp_load_acquire(&rtp->percpu_dequeue_lim);
+ 	for (cpu = 0; cpu < dequeue_limit; cpu++) {
++		if (!cpu_possible(cpu))
++			continue;
+ 		struct rcu_tasks_percpu *rtpcp = per_cpu_ptr(rtp->rtpcpu, cpu);
+ 
+ 		/* Advance and accelerate any new callbacks. */
+@@ -481,7 +499,7 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rtp)
+ 	if (rcu_task_cb_adjust && ncbs <= rcu_task_collapse_lim) {
+ 		raw_spin_lock_irqsave(&rtp->cbs_gbl_lock, flags);
+ 		if (rtp->percpu_enqueue_lim > 1) {
+-			WRITE_ONCE(rtp->percpu_enqueue_shift, order_base_2(nr_cpu_ids));
++			WRITE_ONCE(rtp->percpu_enqueue_shift, order_base_2(rcu_task_cpu_ids));
+ 			smp_store_release(&rtp->percpu_enqueue_lim, 1);
+ 			rtp->percpu_dequeue_gpseq = get_state_synchronize_rcu();
+ 			gpdone = false;
+@@ -496,7 +514,9 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rtp)
+ 			pr_info("Completing switch %s to CPU-0 callback queuing.\n", rtp->name);
+ 		}
+ 		if (rtp->percpu_dequeue_lim == 1) {
+-			for (cpu = rtp->percpu_dequeue_lim; cpu < nr_cpu_ids; cpu++) {
++			for (cpu = rtp->percpu_dequeue_lim; cpu < rcu_task_cpu_ids; cpu++) {
++				if (!cpu_possible(cpu))
++					continue;
+ 				struct rcu_tasks_percpu *rtpcp = per_cpu_ptr(rtp->rtpcpu, cpu);
+ 
+ 				WARN_ON_ONCE(rcu_segcblist_n_cbs(&rtpcp->cblist));
+@@ -511,30 +531,32 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rtp)
+ // Advance callbacks and invoke any that are ready.
+ static void rcu_tasks_invoke_cbs(struct rcu_tasks *rtp, struct rcu_tasks_percpu *rtpcp)
+ {
+-	int cpu;
+-	int cpunext;
+ 	int cpuwq;
+ 	unsigned long flags;
+ 	int len;
++	int index;
+ 	struct rcu_head *rhp;
+ 	struct rcu_cblist rcl = RCU_CBLIST_INITIALIZER(rcl);
+ 	struct rcu_tasks_percpu *rtpcp_next;
+ 
+-	cpu = rtpcp->cpu;
+-	cpunext = cpu * 2 + 1;
+-	if (cpunext < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
+-		rtpcp_next = per_cpu_ptr(rtp->rtpcpu, cpunext);
+-		cpuwq = rcu_cpu_beenfullyonline(cpunext) ? cpunext : WORK_CPU_UNBOUND;
+-		queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
+-		cpunext++;
+-		if (cpunext < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
+-			rtpcp_next = per_cpu_ptr(rtp->rtpcpu, cpunext);
+-			cpuwq = rcu_cpu_beenfullyonline(cpunext) ? cpunext : WORK_CPU_UNBOUND;
++	index = rtpcp->index * 2 + 1;
++	if (index < num_possible_cpus()) {
++		rtpcp_next = rtp->rtpcp_array[index];
++		if (rtpcp_next->cpu < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
++			cpuwq = rcu_cpu_beenfullyonline(rtpcp_next->cpu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
+ 			queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
++			index++;
++			if (index < num_possible_cpus()) {
++				rtpcp_next = rtp->rtpcp_array[index];
++				if (rtpcp_next->cpu < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
++					cpuwq = rcu_cpu_beenfullyonline(rtpcp_next->cpu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
++					queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
++				}
++			}
+ 		}
+ 	}
+ 
+-	if (rcu_segcblist_empty(&rtpcp->cblist) || !cpu_possible(cpu))
++	if (rcu_segcblist_empty(&rtpcp->cblist))
+ 		return;
+ 	raw_spin_lock_irqsave_rcu_node(rtpcp, flags);
+ 	rcu_segcblist_advance(&rtpcp->cblist, rcu_seq_current(&rtp->tasks_gp_seq));
+-- 
+2.17.1
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
-
-Thanks
-Barry
 
