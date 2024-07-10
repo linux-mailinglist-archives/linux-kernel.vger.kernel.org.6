@@ -1,125 +1,131 @@
-Return-Path: <linux-kernel+bounces-247860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1086792D5B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:05:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D8C92D720
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41F4D1C212EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:05:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E896B20BC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFEC194C73;
-	Wed, 10 Jul 2024 16:04:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7927C194156;
-	Wed, 10 Jul 2024 16:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9269119884D;
+	Wed, 10 Jul 2024 17:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PeRkyYyM"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F4C197A8F;
+	Wed, 10 Jul 2024 17:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720627497; cv=none; b=hOGPImG4+F9+IlXfrPfSSLqomQWJkO+sJRqv9LsPx6kycuz8MchTe3RZrLPzdljfWHo1p6+TSnBHanz17pYgT0CwnZwMPM5/zFbzxlIHDBNrshQsYcNYv+saMYvqv4HLLd9uEU1bGDyYqyO4fDm8OjU4g/EKDIv97+tAn45R8hI=
+	t=1720631124; cv=none; b=AEKdb0bcVawgj2W32O1MFL1SHy+giNRabv1ENOjz/+ZBcvdUQlCApcoC8ruUETGLkd9d4qpn4x3SS/9xLa5174hAnEvxPkDm32tGvEpM/XORYv6j3czbh+yNYzBCl+b2dFLMFPn0oFf/SyXbDq0iDgEdHw0VGhQDezlb/vYV6cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720627497; c=relaxed/simple;
-	bh=ZT+vmHSzj0V3TRaEXdahnczrOE+RLfpcX61gANIuHEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CYPhFIiXjyslKYRaSu70txVO8ReKUU/FTq48SunyFcutmc4Dz/JZiT40ohZBuGERe5F2aP5XGaXjdSHr0qbdCemjshD7gkvCsx1kcqSG8Yq25ZcMgVzsQ8Vp6Bv0hRanihmQ8jWx9nzagXatwNWGUulgnwaQ9ujDz/uegcVwTc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C43A367;
-	Wed, 10 Jul 2024 09:05:19 -0700 (PDT)
-Received: from [10.57.8.115] (unknown [10.57.8.115])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 548B43F762;
-	Wed, 10 Jul 2024 09:04:50 -0700 (PDT)
-Message-ID: <862c600c-6803-4c25-8234-c8d056e94f23@arm.com>
-Date: Wed, 10 Jul 2024 17:04:48 +0100
+	s=arc-20240116; t=1720631124; c=relaxed/simple;
+	bh=DivAuN9Tev4Maxk4zvRjQrWJU/UN/KuYnVUsWHN29nU=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZdQy/vXVZ8CEIphIn5zx4+I970ENfaFZ19qKYxbYAjSB3vx3U3HUFBSRYD3RxuNq5b/lkBJhiI58KEtTXywdXY1ddltTEhr3sZkOWXPnMB4Tu0nljpmAAAePga+mDC35yklaI87S5h64SCDKnpnvKFBOyfmvUe3Fm9fAG4fX4NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PeRkyYyM; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4266182a9d7so65845e9.0;
+        Wed, 10 Jul 2024 10:05:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720631122; x=1721235922; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lf6wxeNP5rK6TuMa1Z/51uQTbc6tetQ+fMrkDHy9xyU=;
+        b=PeRkyYyMFy1N7DV+X1L9m7HQGUDt4ZTmrIHS497Coqrr+1kq7OIsw4inUuqxvDbyan
+         A3JOssErBT/uWMMTE4mMo0jpQicXaV4ZP4u/uUhiJY/fGjuQBcKQmnwQ8rR87XVg8dIF
+         Gcr9txHkKRDyqUV3hI3CJeRRQuU7wKJg0Pd4yz/zrhlx3t3mH3oSWcHnXMMjT+5DZdI8
+         tcYQBxBa8LoCJArfnIJOV1UwA/5+nlRa7bXO7YevEceKDlRw583mgYXJYOEbSQHRwV/H
+         m2s7MqQw6FuNWSVmyyCpcA1hiReBQnFS7qobbjH/Ro0xhwJZhn8yDc8bbd11joeLTmqk
+         PfGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720631122; x=1721235922;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:subject:cc:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lf6wxeNP5rK6TuMa1Z/51uQTbc6tetQ+fMrkDHy9xyU=;
+        b=oR1PjPtTg74u/uF8A6m2g/LX/U4Ztnfg5uk6k3R808tRWhKk3gwSo9Lb+sTWc8TP05
+         oelREgoHFwaahj10Op+nlU2FbzNX32zqltrr75gDG7Lsd7eXxZql+CaH5Bqi3vIVovlG
+         sxH86bGLIRoTjXPEPRdG/B3rZ1AHLIRKwB8zPxCYFL1rqTL4oNRP9B/e/ZWN/uP1GcPc
+         1grC0hH32X/GKXg/nn10kDLrA8PJyB6EQVNaECIcn5m3nYzDw5D397C2UinpJV47Xcub
+         +dZfdTP0+OkYIortLqji25MajbOQrPaoC6KVNtX52t29wLyutcLOc3FzFxfDJpgFW9Pl
+         pK8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXOTl7DujhFlH/aQQG5YgT5/GCnPCfwO5/fbcHoCYlTV7QlFlC0XOPRn9UmZzHqj4yZOepUK+GF4mKwcouCLOS3c6oxianOYJVJr4t1ein33vSyAsvpJSUaU9b2gDSkYc5ztFpT3FCXig==
+X-Gm-Message-State: AOJu0YwHyKXhTHophOjejr8ANhY4JFuRgXF1/MbuYOXYmAF5vukjiSf8
+	3yZ9XmNgB9vDs2zJVLX6khRu6x5QTPmv9wcG0baiGitNWCqgaoojGupBAQ==
+X-Google-Smtp-Source: AGHT+IFLmNmpPoqAsNJ2teY32VoTDsyUODifPBc1xHItlWqr17TABKnadt6UXpNnkjxpqjGOkroGGQ==
+X-Received: by 2002:a05:600c:3218:b0:426:4978:65f0 with SMTP id 5b1f17b1804b1-426707e2f88mr41610235e9.18.1720631121236;
+        Wed, 10 Jul 2024 10:05:21 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f74159csm87166325e9.42.2024.07.10.10.05.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 10:05:20 -0700 (PDT)
+Message-ID: <668ebf50.050a0220.4aa0d.31b3@mx.google.com>
+X-Google-Original-Message-ID: <Zo5ie2ldBMrJab3u@Ansuel-XPS.>
+Date: Wed, 10 Jul 2024 12:29:15 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Lee Jones <lee@kernel.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-leds@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 3/3] leds: leds-lp55xx: Convert mutex lock/unlock to
+ guard API
+References: <20240626221520.2846-1-ansuelsmth@gmail.com>
+ <20240626221520.2846-3-ansuelsmth@gmail.com>
+ <493f3160-90be-4c02-a0d8-bedb630e5f1c@web.de>
+ <20240710165528.GH501857@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/15] arm64: mm: Avoid TLBI when marking pages as
- valid
-To: Will Deacon <will@kernel.org>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-9-steven.price@arm.com>
- <20240709115754.GD13242@willie-the-truck>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240709115754.GD13242@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240710165528.GH501857@google.com>
 
-On 09/07/2024 12:57, Will Deacon wrote:
-> On Mon, Jul 01, 2024 at 10:54:58AM +0100, Steven Price wrote:
->> When __change_memory_common() is purely setting the valid bit on a PTE
->> (e.g. via the set_memory_valid() call) there is no need for a TLBI as
->> either the entry isn't changing (the valid bit was already set) or the
->> entry was invalid and so should not have been cached in the TLB.
->>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> v4: New patch
->> ---
->>  arch/arm64/mm/pageattr.c | 8 +++++++-
->>  1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
->> index 0e270a1c51e6..547a9e0b46c2 100644
->> --- a/arch/arm64/mm/pageattr.c
->> +++ b/arch/arm64/mm/pageattr.c
->> @@ -60,7 +60,13 @@ static int __change_memory_common(unsigned long start, unsigned long size,
->>  	ret = apply_to_page_range(&init_mm, start, size, change_page_range,
->>  					&data);
->>  
->> -	flush_tlb_kernel_range(start, start + size);
->> +	/*
->> +	 * If the memory is being made valid without changing any other bits
->> +	 * then a TLBI isn't required as a non-valid entry cannot be cached in
->> +	 * the TLB.
->> +	 */
->> +	if (pgprot_val(set_mask) != PTE_VALID || pgprot_val(clear_mask))
->> +		flush_tlb_kernel_range(start, start + size);
->>  	return ret;
+On Wed, Jul 10, 2024 at 05:55:28PM +0100, Lee Jones wrote:
+> On Wed, 10 Jul 2024, Markus Elfring wrote:
 > 
-> Can you elaborate on when this actually happens, please? It feels like a
-> case of "Doctor, it hurts when I do this" rather than something we should
-> be trying to short-circuit in the low-level code.
+> > …
+> > > +++ b/drivers/leds/leds-lp5521.c
+> > …
+> > > @@ -185,9 +186,9 @@ static ssize_t lp5521_selftest(struct device *dev,
+> > >  	struct lp55xx_chip *chip = led->chip;
+> > >  	int ret;
+> > >
+> > > -	mutex_lock(&chip->lock);
+> > > +	guard(mutex, &chip->lock);
+> > 
+> > How did you come to the conclusion to try such a syntax variant out?
+> > 
+> > Would the following statement (with additional parentheses) be more appropriate?
+> > 
+> > 	guard(mutex)(&chip->lock);
+> 
+> Yes, that's the fix.
+> 
+> I'm more concerned with how untested patches came to being submitted.
+>
 
-This is for the benefit of the following patch. When transitioning a
-page between shared and private we need to change the IPA (to set/clear
-the top bit). This requires a break-before-make - see
-__set_memory_enc_dec() in the following patch.
+Hi Lee,
+profoundly sorry for the happening... Obviusly something went wrong in
+me changing branch and the driver wasn't actually compiled in the
+test... 
 
-The easiest way of implementing the code was to just call
-__change_memory_common() twice - once to make the entry invalid and then
-again to make it valid with the new IPA. But that led to a double TLBI
-which Catalin didn't like[1].
+Also with the comments from Markus I tought this needed more changes and
+I leaved out for a bit, so again I'm really sorry that this manage to
+reach next.
 
-So this patch removes the unnecessary second TLBI by detecting that
-we're just making the entry valid. Or at least it would if I hadn't
-screwed up...
+What is the next step? Any way I can pose a fix on this and apologize for
+the situation?
 
-I should have changed the following patch to ensure that the second call
-to __change_memory_common was only setting the PTE_VALID bit and not
-changing anything else (so that the TLBI could be skipped) and forgot to
-do that. So thanks for making me take a look at this again!
-
-Thanks,
-Steve
-
-[1] https://lore.kernel.org/lkml/Zmc3euO2YGh-g9Th@arm.com/
+-- 
+	Ansuel
 
