@@ -1,172 +1,145 @@
-Return-Path: <linux-kernel+bounces-247738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0F492D3CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:06:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0A992D3D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7221C232E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:06:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DA991C23419
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEE3194082;
-	Wed, 10 Jul 2024 14:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91190193467;
+	Wed, 10 Jul 2024 14:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="b1QSu0yR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l/UJxZbD"
-Received: from flow2-smtp.messagingengine.com (flow2-smtp.messagingengine.com [103.168.172.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RwjItfZm"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE952193453;
-	Wed, 10 Jul 2024 14:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8A219007E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720620391; cv=none; b=oVkrnHfATG7StPK/uYc4DDM7Bo3V3RmE1CUaUHX3EGMTgJcwKaxOATNokq71n12HkolHaId7ZA3LVCc6f7oGbtdL0P69SB1GmtWhsx6vtfNPbrTXLZQiQF9RKRzDVhGTH2GHa8wUeHa8d7IyfNyv8ae2nGNq6XK1nV7hYUfZwoU=
+	t=1720620454; cv=none; b=kPMM36sDJhoyfzUXgeWtQC0gz4+EvqjCAYUiOeED0yYQQZaq0jjv2stXRUt8JjCO5GNep8c3/vH+pmawA0ACGR0Up5zkfpRw56SCzegGCFidjNOz91ICt7ChSGJ6eAGB0zV6hzCAATidZrDVpAgb3lIZFZ1jg0QMRMoj4O0onlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720620391; c=relaxed/simple;
-	bh=MLXBuqKlLfNGgq9/cmxPtB7IYgDifqCjYyvR42wX/UQ=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=oFYEf/GhLqBkYrQTCfUC4wwYyYJobGKSgdk8dBO7Q0s9Z/n8S4rlnms+Qpbo1fb3Z50GhgbZP19+SLpDRm0OEA2BKJ4TyD2xKe9ydMn6DIYlkaeZVJO8ea8FsdTABpU39ES5v7oDCYEoHG6IrFNqnmZvz8WyyO+bX/Th/hrhESQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=b1QSu0yR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l/UJxZbD; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailflow.nyi.internal (Postfix) with ESMTP id B9B1820041E;
-	Wed, 10 Jul 2024 10:06:28 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 10 Jul 2024 10:06:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1720620388;
-	 x=1720627588; bh=FPzIeyUoxgy/zsvmREOhCT66sbHOjXoV3rwrfvjo/oM=; b=
-	b1QSu0yRwxmUk4T9e11CNmCLrSiiiDvCTM+p6gNGgF4NyrNSLVIOHkUZBUOxpgxl
-	d9vXjGnvw1RIRFEnGbndv/NcsmA2GLHmGzS5rJQPxTUIVRHIc5YsWzN3YlDlG8/w
-	vwY2PFDGlan7ERoJa/sElHU/md+4c0p5HPfL6l9s8ZmMuKw48t/vLeQtyNT7xGQA
-	08JzF7ADIoyXkY9zBh7hy27GqOe5iBkl5T6KQBAg4I7sSnV3Bx0wxfh4IffSCDrD
-	EIVAL8hHH2Si9T8S7nGauN4LncCjezn9OQ+3j17vNfQLsEMR2BpYb0oenTLEqeam
-	BkMUq/IWBWnOKLgWug2rTQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720620388; x=
-	1720627588; bh=FPzIeyUoxgy/zsvmREOhCT66sbHOjXoV3rwrfvjo/oM=; b=l
-	/UJxZbDwRbte/g2yuSkS7yviFUoG8LxQcRmLaiOWFtKAn6XFD9z5i8BhgFiwj0y8
-	29JjOMIc2w4FtrW9IR6h2qT2CtX2uPI+r/FHtrpLoTkSoPbJe3J1cehcgwZANS3t
-	XYMJKq7TPb5u/bjrOem4WITUkAc4LfU2b5bDaz8AwaT3QByZ35D8ZMjHSS1yi35y
-	36/dyXCkN+nwX8HvtBeT3ddkLpikQS8EZ4XXcTy6LBfF5l17hW9zP7dZMzOmMwhD
-	XVJREG2So1zHmWfmY5D9lvTGvCqcKkIECCEfL0l0Epvm0v8FzfUmUtTmU/hw+Ez6
-	qJJNz78tvzr+wlzfmgwog==
-X-ME-Sender: <xms:YZWOZnV51EQeUhqFAlZ7tF76IbGPDn0AZ7wRftLLqANLQ8M0Tit2-g>
-    <xme:YZWOZvnwaOkIlW8JDpVJ4uVPdX-o79KWjlklZpPYf1atbq30ICIdwRgOUhrJ5p-D2
-    Q0py9B8mmaXogLqMVM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfedvgdduvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
-    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:YZWOZjaoGrXUw2M4_1y1ixokbMZsjZ3j3fcIkHhdLxC9KxWjE7s4BQ>
-    <xmx:YZWOZiWPJTo6_33m1wPp7E5VWb0uw6xuIw-rKVLCCKI-iKqUbc-UEw>
-    <xmx:YZWOZhn1-MjLOZ3xu0SsbEEBMly36iOA_myUgrsipjQv0pKFdaMeCQ>
-    <xmx:YZWOZvdtJ2DdefwHMUz8i_IkZzQem-fWQbBtb87UMDnBEk3or4GmNA>
-    <xmx:ZJWOZilNKpqeyxqgV0ZboZyCiXV66jXIKgbBPX_yaK6wioTafD0Okj0c>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 213BBB6008F; Wed, 10 Jul 2024 10:06:25 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1720620454; c=relaxed/simple;
+	bh=cc9CIi6FXqHyC+RzNiFyiXUQnHUWe7bMpSfnjFA8YDQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R7Pi0By/Q/RQWlotjYWsxZpYAuS/2OLvXlRWr7zFZtaBiFaCeSXVUo1inLtQDtw2CoVFAiTGAxi89N9xIKFKtJQwbwjURtiGpRr7KMUCWgo2WW6CHwlC6vCheGN5YP4H8V8uiVS9q3Lai9R6gtrcFuc/o+vHrg6JZ35BNC7eT7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RwjItfZm; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58be2b8b6b2so8074620a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720620451; x=1721225251; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OrPbTUJ3Ty6Uw7Wpl3J3nMIjvJ0SNXzbgRdLrpj8Nn0=;
+        b=RwjItfZmR8T2nX40cB1ewVEL0owyYuzEscXkP207Zi3dio2FCJCmRxr/D4kkvOivLK
+         iYzAP39OxnolB26LqU29W8Rdr+0a2ewvdWs1BlhWjSADsH7smb2g/+m9/62iwzolVGjH
+         imXGo4vAOlDhJvD2uhe+RFJ+BosEH49JHHdPWp+RYLlGXPNAouzKCPSalntmftYcZn6+
+         W2CESmprLiTCVRlqZze7IvCwJk05C6dBGKLChrmBW81iiV8m0iev0JX45u+ZsCl4246N
+         kCowxETeCpFPXCGKxQPhe4HZnYNvdSZq6kKX5kgDT0bYe5h8pYbepeG10WBPIb4ZcwVh
+         FrAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720620451; x=1721225251;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OrPbTUJ3Ty6Uw7Wpl3J3nMIjvJ0SNXzbgRdLrpj8Nn0=;
+        b=sFwcMTblVJv9Ds8SnHZNjh9UeH0d1VIbzd6nkJRL0oyXw8PD2Dpt0Dp/PRzTSDqAUo
+         JMdi/jJUFt/O+2QYqjZvrAWWYapFuT8RYigjrAu8v20VuoyjFGyJIjkGNPEmaAYTOA44
+         +fse/27+qT1mFmqcja+7A5GF8GFh9t1beTopolqoYk3vH/vj0vnUWB+4kw6lrAtm0BXl
+         eF7Z6hTNjTYEAj7DElTWeGMcv6nRmzqCvkq1fz3N7gPPch3yAsWCngp1imwz+2LyjOyU
+         j+6h8KwtRldVixUDLX//Dhf/Og4UzN4hsmgI4y64lWyg12I3v8CWBdAHUj4rFp7ptc54
+         ZIbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCtu52IceXg4p3LYw5BreWGGbcgWfyhVKhBn3t0W9ZsfsGQJiONAH98kF6/4G0G0zkjj21xo0ZnjX+0N13MgMPF4I6/VHU3pW5Y1BW
+X-Gm-Message-State: AOJu0YwDdU1tXXlNGwyX+yn4Zh7UJ5bX1pEtROx7a9nxHSmhGnR8n5pC
+	hm/ii9/bwrMCHnL4nXcxvjfN6408zcCYhtU7NpSytKEiQ8FeomSgCBFpwNdehPU=
+X-Google-Smtp-Source: AGHT+IHurdb6yUA+njBCJHvTGjZgbz0YaqcO15oMamk2z/YBtajmPDVIJgwUgYr/Buvf0dALlsiHgQ==
+X-Received: by 2002:a17:907:7f12:b0:a77:de2a:aef8 with SMTP id a640c23a62f3a-a780b8848f2mr489159466b.58.1720620450533;
+        Wed, 10 Jul 2024 07:07:30 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6e380asm164919466b.90.2024.07.10.07.07.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 07:07:29 -0700 (PDT)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Date: Wed, 10 Jul 2024 16:07:23 +0200
+Subject: [PATCH] arm64: dts: qcom: x1e80100: Fix up BAR spaces
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <64662665-929e-4d95-a9ac-c8f66bd83168@app.fastmail.com>
-In-Reply-To: 
- <CAMRc=McvRLeCTTXgC_OD5z5OAxQ0pZ46dTKP8XO+T-LkXKgRfQ@mail.gmail.com>
-References: 
- <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
- <20240701-b4-v6-10-topic-usbc-tcpci-v1-5-3fd5f4a193cc@pengutronix.de>
- <27cf3056-5c7b-4759-b03a-1fa9b785611e@app.fastmail.com>
- <CAMRc=McvRLeCTTXgC_OD5z5OAxQ0pZ46dTKP8XO+T-LkXKgRfQ@mail.gmail.com>
-Date: Wed, 10 Jul 2024 16:06:03 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Bartosz Golaszewski" <brgl@bgdev.pl>
-Cc: "Andrew Lunn" <andrew@lunn.ch>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Vignesh Raghavendra" <vigneshr@ti.com>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>, imx@lists.linux.dev,
- "Tony Lindgren" <tony@atomide.com>,
- "Marco Felsch" <m.felsch@pengutronix.de>,
- "Thierry Reding" <thierry.reding@gmail.com>,
- linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org,
- "Miquel Raynal" <miquel.raynal@bootlin.com>,
- "WANG Xuerui" <kernel@xen0n.name>, "Fabio Estevam" <festevam@gmail.com>,
- linux-aspeed@lists.ozlabs.org, "Richard Weinberger" <richard@nod.at>,
- "Gregory Clement" <gregory.clement@bootlin.com>,
- "Huacai Chen" <chenhuacai@kernel.org>,
- "Magnus Damm" <magnus.damm@gmail.com>,
- "Russell King" <linux@armlinux.org.uk>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Jon Hunter" <jonathanh@nvidia.com>, "Joel Stanley" <joel@jms.id.au>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- "Andrew Jeffery" <andrew@codeconstruct.com.au>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- "Sascha Hauer" <s.hauer@pengutronix.de>,
- =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Vladimir Zapolskiy" <vz@mleia.com>, loongarch@lists.linux.dev,
- linux-tegra@vger.kernel.org, Linux-OMAP <linux-omap@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- linux-mips@vger.kernel.org,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- linuxppc-dev@lists.ozlabs.org,
- "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
- linux-kernel@vger.kernel.org,
- Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
- "Dinh Nguyen" <dinguyen@kernel.org>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Shawn Guo" <shawnguo@kernel.org>, openbmc@lists.ozlabs.org
-Subject: Re: [PATCH 5/9] ARM: defconfig: convert to MTD_EEPROM_AT24
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAJqVjmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDc0MD3ZL8gsxk3aTEotzEPF1T80RTozTzlFRDA2MloJaCotS0zAqwcdG
+ xtbUA1YTriV4AAAA=
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
+ Abel Vesa <abel.vesa@linaro.org>, Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720620448; l=1670;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=cc9CIi6FXqHyC+RzNiFyiXUQnHUWe7bMpSfnjFA8YDQ=;
+ b=FB7jlFH8cVFiVYY2u5QGIChbNO6811dlOa65eIlzsuHli/YWU7ZRgTWY59tnrEiCZ8Y4ETQck
+ KNTG4R1PR0kCp1NQGNLNPHEVrduQOM/S/jTZYlcgZf22JiE5hVC/j+S
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Wed, Jul 10, 2024, at 14:59, Bartosz Golaszewski wrote:
-> On Wed, Jul 10, 2024 at 2:49=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
-wrote:
->>
->> On Mon, Jul 1, 2024, at 15:53, Marco Felsch wrote:
->> > The EEPROM_AT24 Kconfig symbol is marked as deprecated. Make use of=
- the
->> > new Kconfig symbol to select the I2C EEPROM driver support.
->> >
->> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
->> > ---
->> >  arch/arm/configs/aspeed_g4_defconfig   | 2 +-
->> >  arch/arm/configs/aspeed_g5_defconfig   | 2 +-
->> >  arch/arm/configs/at91_dt_defconfig     | 2 +-
->> >  arch/arm/configs/axm55xx_defconfig     | 2 +-
->> >  arch/arm/configs/davinci_all_defconfig | 2 +-
->> >  arch/arm/configs/imx_v4_v5_defconfig   | 2 +-
->> >  arch/arm/configs/imx_v6_v7_defconfig   | 2 +-
->> >  arch/arm/configs/ixp4xx_defconfig      | 2 +-
->> >  arch/arm/configs/keystone_defconfig    | 2 +-
->> >  arch/arm/configs/lpc18xx_defconfig     | 2 +-
->>
->> Applied to soc/defconfig, thanks
->
-> No! Why? This is still being discussed and it's not clear it will even
-> make it upstream.
+The 32-bit BAR spaces are reaching outside their assigned register
+regions. Shrink them to match their actual sizes.
+While at it, unify the style.
 
-Ok, dropped again, thanks for catching this.
+Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-     Arnd
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 7bca5fcd7d52..bc5b4f5ea127 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -2895,9 +2895,9 @@ pcie6a: pci@1bf8000 {
+ 				    "mhi";
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+-			ranges = <0x01000000 0 0x00000000 0 0x70200000 0 0x100000>,
+-				 <0x02000000 0 0x70300000 0 0x70300000 0 0x3d00000>;
+-			bus-range = <0 0xff>;
++			ranges = <0x01000000 0x0 0x00000000 0x0 0x70200000 0x0 0x100000>,
++				 <0x02000000 0x0 0x70300000 0x0 0x70300000 0x0 0x1d00000>;
++			bus-range = <0x00 0xff>;
+ 
+ 			dma-coherent;
+ 
+@@ -3016,8 +3016,8 @@ pcie4: pci@1c08000 {
+ 				    "mhi";
+ 			#address-cells = <3>;
+ 			#size-cells = <2>;
+-			ranges = <0x01000000 0 0x00000000 0 0x7c200000 0 0x100000>,
+-				 <0x02000000 0 0x7c300000 0 0x7c300000 0 0x3d00000>;
++			ranges = <0x01000000 0x0 0x00000000 0x0 0x7c200000 0x0 0x100000>,
++				 <0x02000000 0x0 0x7c300000 0x0 0x7c300000 0x0 0x1d00000>;
+ 			bus-range = <0x00 0xff>;
+ 
+ 			dma-coherent;
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240710-topic-barman-57a52f7de103
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
 
