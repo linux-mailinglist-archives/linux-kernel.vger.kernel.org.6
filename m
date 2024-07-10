@@ -1,400 +1,292 @@
-Return-Path: <linux-kernel+bounces-246855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C702892C80B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:47:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C21792C80D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 583A5283D9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:47:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C9ACB22059
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B8C5680;
-	Wed, 10 Jul 2024 01:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68AB8BF7;
+	Wed, 10 Jul 2024 01:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="JR60qzRS"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2083.outbound.protection.outlook.com [40.107.117.83])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="h+ydiMLv"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012006.outbound.protection.outlook.com [52.101.66.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123043D62
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 01:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D275664;
+	Wed, 10 Jul 2024 01:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.6
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720576015; cv=fail; b=HqRL3MCbCp6rzjICtbm+rNP+NwAswTZYgsQCdRyFirMu7fJ/Gty89t7Pq/B0w/3Mng0sixWUOCIZtHH9R+a6cSWgDplZ7EOtfXO1oIiNtd7jDb2bxiW7YORYYnlpzWnntp2bFaOWhVijJlVEJLrM4nRwht5Wu/ceNZIAx49x/vI=
+	t=1720576043; cv=fail; b=rydMAA9uUxpBaRinSOmQ5Hm1/8ZJJmlQba44De3vomu67nSRXEdkIeQi5JDX5Bcd9L3whjhX8w89iL1g6XZclPd9GRi+gyeV118kNpwEz6CW8FGE62gjwHYrpq6B+RiVMT8ZXBYO+HzdP5SnWuv13yOX+vcX91ZIQzzGqBBxpZw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720576015; c=relaxed/simple;
-	bh=Cf006/jkxWUnVlt9+SfEJestXyuzYFVdfb6rxVnFneY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Jv6tjNU/YlnJtFjiRxzkKX1LYfjx98ET7tTsfgp2lcH45gsFobQau+iALH5ckUIj15MlahhShBl2BtKhbukYwdbe8qUvALd6nlTVwgfJ/1yGi0oAR4o1JeBmJas3HsgvNMRxmqmXUpJ4YgtwlypG5CSBJjIk3463NaYxZI8uziM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=JR60qzRS; arc=fail smtp.client-ip=40.107.117.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	s=arc-20240116; t=1720576043; c=relaxed/simple;
+	bh=hIfOF3DKUUHh3zMqSJuhK9UJZ9O5s/I9IxRKKljNmFI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MuSsoudmyYS6fJ8yYDWTUUUrW5BGsIqo7WG0ddgWQo5lhiXVr0555/PZQIIyq/a6Z0pVDFgZX6q6iq3oUg6Mer5qYkRFAF8ZbnxCki1qbIRRNQiBehEJNsbUb4eQn9O1mxvLtLsL35y7XhnPqPWYRQcmk1GMSM3/xvrFjPM+oE0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=h+ydiMLv; arc=fail smtp.client-ip=52.101.66.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dAk0hGnMjtutRCkJvdhnUUiGQOFUzn7uzvjd2plfaagEYab0AokZivwK8G6f53uPPbNs0UjcUSY0Tjk4GyE9a8tCyVigTRLlmF3BY2xQKsrWQ+vv6VgfIXvtTMY5uoPIHygunHECY79amL6Jwx0ayCYQETMH2Ge0+pzdu8YmlaEvEoNiNqjCrSZp8xoUeTXG17PIexJbFDlAwI6ohv2W+toMf+dsiIktn19XsUIJIlF5oXx14jW+oaY1QpdWXUH0sHri+KtABIFFl1MQJ60IjjFi1pn4OOHb84Ox/OyCeMw0+d7meUAxWl5sb4cXOfeQI3FHlw7ycF54QE8SfguW5w==
+ b=PX+bqWVlvzpnkTFXZZn06WyF9p0MYbzBk8vLrtwxGUYf0vdg3AezNoSufzv3UusnnU47MtRF2hfBQoAXOk3NU2dmF5BQbUWqcCrOZTip5iTL1+pcCP5I3ajm0mvP7Oo6KpL3rKCyq5sUtwut9XxXrcyC4Yug9rHysubnohUNw2clDJoOlncwYrlDE5tf/c6stG//rfHRYXJs3hanbdI1Q4jw5Wi+yGmFiF/MToX1m7ugJS2DOk7CUl7+jOye96EWUk7HurjMW4tGG/tf/0RC2aHNoOTj8BqSTzeKbwk4cxByUtbLgvCQQa9ak0HtI7HEJ9gPXF0oY50aMW9VWj2BxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E406nukCGtXb9p6GrS4AqYBq9xFBETEkTPz6l84F7Bw=;
- b=gQCM4jzcBGAFuFXkmLZY+0a4vq5vnH96X1O7IzJCWkLe2+aRKoWPZ7R/qLUxTckB7pzF7jRpjtCegO7RMWbVwz3O29cB3NWv13qsjiuGoC0phN7KXUWwwKms/o7tMU4EvB1MiD21gr+n7xUXqqHP2aX7kx2SRBCRZjC8jVJeWRJ6A7oclwQvn3LCPggRKGz/UNSpBGZ8Y3ER9bqAY2HabDM2amCNRRmHphjuyyLWvdcbAJv5Ytc+tWqwDH3bmEUJeFRyPGhIx0S6L0GzyYV9HKrFUuNTTqkZH50w83rUvfrcZfNygjZIHqrXTDIl60Hjst/ReYuaDDeIMZKQyoK7Mg==
+ bh=qy2rC/lErRkftUa/mDgR4GalRQ6MpKk0GEwf4folX+Q=;
+ b=BmYk7TkBG0Ykgk5rv7kIzYGrYo8d7eY4xMnWU9/0GI8odgEIn8eNKm5qSPIibSGCRY7eys4XDzUKYaBlzTtQ075pusX/1s+yNyzx3nxh2722LQKZFzESsriLK7YP3J9tyajDpjOpPtvvhyQGj7Wz61z6t4SFtCf4cFeulcT6yQ+Ry3IcWTlSdo//W90icjF/SMv+1IG39gq44RoENMaldS9qDohVRGRvaIRZtakf4QJEVFMSZzW06tFGekiJXmTf4o0W6NKP8w3ifxAINmDxhbjmqr/CZSS2m7ZQXMER0pyZKIgMrlUvRMXT8oZPJLDew1DNJyRz2JozckBaqjMgZw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E406nukCGtXb9p6GrS4AqYBq9xFBETEkTPz6l84F7Bw=;
- b=JR60qzRSGAmd2Z6sAhb1EQ6sKnJNDXi9VZ58r3+/v7WVR+YGz/ziEfiZxnhbjaQ627b1PZ2ML7VID5yTAuxNan/xE3xsr8kXCZh/rQ9RJ9I9omWuC/nkyg07dwKYoAC9XZmMO+UuRePXoqH3XKjK9z4S3sR+66+DUdh/d4DbyiAwxsRHW0qkq81TVnyYLo9VmJ4SoMqgtoANUc7BHVTXIfxpzA8b6NHCL1D23aq+THzwyt3IWHaCr8wclVo4WFlvcIX+2ZW/hFoXosr64Zkrm7EcJa+U6w63VDa2L35bNb6BA/Gy2UeMejePUaSsehgUwtg+XEX832gb+NpwUEk0hA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from JH0PR06MB6849.apcprd06.prod.outlook.com (2603:1096:990:47::12)
- by SEYPR06MB5400.apcprd06.prod.outlook.com (2603:1096:101:8d::6) with
+ bh=qy2rC/lErRkftUa/mDgR4GalRQ6MpKk0GEwf4folX+Q=;
+ b=h+ydiMLvlz0BTJLncWsZo8MlZ0e51KYsV4THe6vPsp5l9h8kObWyQR41o620Snr2hRPp8wlsI1UTMZEjbMbWkrcj11eaKVJ+JrH92LF3gXFJWKg3ez7+UQMFohpKSrUJttmfEjBOGg7sWCzocP77ofSkxDRsVz+7TLu5HQPLzEA=
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
+ by AM9PR04MB8178.eurprd04.prod.outlook.com (2603:10a6:20b:3e3::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Wed, 10 Jul
- 2024 01:46:46 +0000
-Received: from JH0PR06MB6849.apcprd06.prod.outlook.com
- ([fe80::ed24:a6cd:d489:c5ed]) by JH0PR06MB6849.apcprd06.prod.outlook.com
- ([fe80::ed24:a6cd:d489:c5ed%3]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
- 01:46:46 +0000
-Message-ID: <863b2400-5def-4bd2-8195-d71ce91f1c99@vivo.com>
-Date: Wed, 10 Jul 2024 09:46:40 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] mm: shrink skip folio mapped by an exiting process
-To: Barry Song <baohua@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
- Matthew Wilcox <willy@infradead.org>, opensource.kernel@vivo.com
-References: <20240709123115.117-1-justinjiang@vivo.com>
- <CAGsJ_4x1+T9+=WydkjsQmetGFOqzkOvhqQim5UOzytof5XHQ_g@mail.gmail.com>
-From: zhiguojiang <justinjiang@vivo.com>
-In-Reply-To: <CAGsJ_4x1+T9+=WydkjsQmetGFOqzkOvhqQim5UOzytof5XHQ_g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TYCP301CA0053.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:400:384::20) To JH0PR06MB6849.apcprd06.prod.outlook.com
- (2603:1096:990:47::12)
+ 2024 01:47:18 +0000
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257%4]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
+ 01:47:17 +0000
+From: David Lin <yu-hao.lin@nxp.com>
+To: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"briannorris@chromium.org" <briannorris@chromium.org>, "kvalo@kernel.org"
+	<kvalo@kernel.org>, "francesco@dolcini.it" <francesco@dolcini.it>, Pete Hsieh
+	<tsung-hsien.hsieh@nxp.com>, Rafael Beims <rafael.beims@toradex.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: RE: [PATCH v11 0/2] wifi: mwifiex: add code to support host mlme
+Thread-Topic: [PATCH v11 0/2] wifi: mwifiex: add code to support host mlme
+Thread-Index: AQHazcJ9oDCg+GgGMkqUSOf86PFchbHvOSrA
+Date: Wed, 10 Jul 2024 01:47:17 +0000
+Message-ID:
+ <PA4PR04MB9638BD3D09017A786FC3DAECD1A42@PA4PR04MB9638.eurprd04.prod.outlook.com>
+References: <20240704033001.603419-1-yu-hao.lin@nxp.com>
+In-Reply-To: <20240704033001.603419-1-yu-hao.lin@nxp.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|AM9PR04MB8178:EE_
+x-ms-office365-filtering-correlation-id: f8fce4f3-784a-4ddb-672f-08dca0823b35
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?hrRf+qh1v588HKN+Woh+6zwqOmFq0sckZCS/R0tFDkI4WUrzRlYiJBf2lR8L?=
+ =?us-ascii?Q?nW7MwGdFeBg87Mj0mfMgUUMet3jXOS/S4Z2SJhXvsTGIfKlniSiP6fhkeNQN?=
+ =?us-ascii?Q?rLtPlr0dcc6q3GBZVwZqlv4y0tAJ4LJPAliy2RXaeEoaOV9smzUp5Dma/OXS?=
+ =?us-ascii?Q?Ki4hV76O8wqa6r9feaW1mbEUit0PiqPuIS0Fwhy2DPe3zW5jThQqw8qCB8yP?=
+ =?us-ascii?Q?2H55KCTR1lopvZC6iitjhrO+3E6MI5IIMMPoc4yzozpzXS2s81hx6x4C61xl?=
+ =?us-ascii?Q?V4VOBHuguB0hf8tNz5qO4NaLyQxBrZ7lgSjxxTjPAlzpZdB5tagdkn9fszlC?=
+ =?us-ascii?Q?ax2I0aNrXwplwwSoBms3tPxVHtpFljZkjUZDi8kqrF3bX1UfjiiY41w00mn0?=
+ =?us-ascii?Q?tkZhj+BOIXyNadLPQ+YFZ0r8w98ln5nO6tsjxSU2OXKaFxk0t0JPg1fuet/E?=
+ =?us-ascii?Q?lIONx7Efp+ETCbaCcvbb9p+yFLVm+TBp0pis//koM4lNkXMDLsl4QrIoOWST?=
+ =?us-ascii?Q?IojooZOuoDN8c21Cl4s03mRKvM7HDyRdIJNfqpJMusoAxlTaPkPnTp4b8I1F?=
+ =?us-ascii?Q?tBELsCPDBWMW3n3qaL7A4MVr3//mexnlu5rdM6BuAoG7RoQSefhUhPVDVCzG?=
+ =?us-ascii?Q?vwh1pwqTdKpUr04SnpUFsJDcCsrbE4XxHSr9Q3ghlkKvC/0ipatfEQUZw8LR?=
+ =?us-ascii?Q?tV23WY0kOX7CQzCnnwgGrVv8/52NuJvh83vztJviP5lRaKIto9ayDezmRc5t?=
+ =?us-ascii?Q?2xGxx87YRoJfCVc9iKlUBEFhMatsO66bIAACxdIR0jjhPvh54sQj/8znb9sW?=
+ =?us-ascii?Q?yeRolXU1m7LduhVTBLKCqEBJ/lQie/nON8SXIjfQvb6K9vOiJDCC2/fzoLDg?=
+ =?us-ascii?Q?q5Ol+CGZDXEYV6nbQaF/BvyxLgKIUmfpGnavgO7vaX4VbAFzGhdFh+oE2wI9?=
+ =?us-ascii?Q?bwDQfmYDUXcvAFBTNSvKfn8TusGp4IK7TKqz4CU12dsXLGw4JE1qQ1Rqbw1n?=
+ =?us-ascii?Q?XZpJFY4fXBbstKl1a8Q+6hNrV389+LiB7qoMYShip/OiYWtU30FyMZ+aOtzK?=
+ =?us-ascii?Q?8R0OgJFyUb0eXeLC9BLmc3LNgi7cGINwQ+sFn3CxZFKHefikYoZ3iGbnR0TK?=
+ =?us-ascii?Q?7IhnWsloVzPzGLVk+5fDqOwGfgBxfce5lrkyX0ieCcw9hlixc9TnjN2rp1HY?=
+ =?us-ascii?Q?xIgorBvqOZ3qUNbMIHrU2xOBfM9iASAV1lkHkOrzd8DOU2Ygn8dT49szd2yh?=
+ =?us-ascii?Q?kOJct2ShDL1Nj/IuXYQikqloWEQpPXnyw6oavNdCKTNp7mBroaZulLRoURcm?=
+ =?us-ascii?Q?ic/yxAl3K3uj8NmtPlhjeAUdEbPQPQLYxYUZoBk6MX1o+HkTCUQeslAkuUw6?=
+ =?us-ascii?Q?IljhdyMZw5yDvM9ZbKRWwEIXSs2MBuq5Tu7ehxK3djwddCT/FA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?o9PbQ8CQR5cfJjbNTzBlbZOZjGm0XNuCvAM2ieiG3A/lMv7WjL/TSesQ5G5o?=
+ =?us-ascii?Q?NN02TQytgSpWvSPQI89NYLpXFHdG5HV33O/i5UNO380YAYi1NvW7cWwG5und?=
+ =?us-ascii?Q?kfpNHr96hz7lvF67GyrEIxiOaeiqdcyrWbMJNgwlMhe250Eei39beLA9XuUb?=
+ =?us-ascii?Q?tjE3B0/rhRGYfPFuNJeRNUGLq/oWpHBhopRBGxID+pitT6APqrWuHBvrARCz?=
+ =?us-ascii?Q?wQosct7v0ZL5zzneh5g8flCCqNbobb9OjZbA1cS/M+gpGB4xkW/nsKMehIkp?=
+ =?us-ascii?Q?9nqVCMHczhxvQCE9lv2oEwxy8p6oW3M9UVLKLI3ydEQ6Q5y/VYNMvqCrUV2n?=
+ =?us-ascii?Q?L4E72mQBjk6qIAQqEUpuHRxnKNT+N9+v+7xFpZWxKis9RNwguo7HEZ6Wwnbr?=
+ =?us-ascii?Q?kPacjBOi6ixfkEgDRfmJyAcwm0FXi6sYaZsLW6YZwkxgdRSHD65XC8NRuvtA?=
+ =?us-ascii?Q?HNu+HkYAoNr40X1Ok2mllhnbn76ymkvD7jylE7G57UBmGXoT10DI5r0+TCnx?=
+ =?us-ascii?Q?+16uRbK7+dZ+fakiAlrXYcJVaaUv1ktAj4AqoNR7BjkI/x7X/JKSBhtOIHXp?=
+ =?us-ascii?Q?AdTaRS5oS1xyecsYbZ5TYLY/wLBN/d0o1cqTPW+7oczXb5nA+ExN9I/9QyYg?=
+ =?us-ascii?Q?XXtybFmQvt7IRL0/OJuM4qUT/h70fyrC7QTF8lDtp8tTmNaREvohS9eEcbrd?=
+ =?us-ascii?Q?81TS9PoP8+sF68T7AbZ/e8ZtEABsjuRQbAU+LjUOXCiEJiia+IiBe4R2RBvL?=
+ =?us-ascii?Q?wAghSpYkteM4DjU9UAyLenUCZIYq4NrO1n8cPb4XXSnD8NICzNf/6b9r/tIr?=
+ =?us-ascii?Q?FZKo/GX6XqT+Yr8xwk6h0ua08sCiZkYwSUFhEq3Ue5Vty4LkwD+pfkuHBMEl?=
+ =?us-ascii?Q?lnj5+ONG5V/PjZZsJnnIwI7ZRit6bP6Z8Wf0KoBsbH+w3KEPullKdJK/LhHu?=
+ =?us-ascii?Q?U7TBue6rkJ8daqhbTCZFR6n8pj/y70vw2QBrOdAjHVsNOXKWQNTy2HndhDsw?=
+ =?us-ascii?Q?KL/bRHyZeZrQqezaIK5NAOqfE6dEYrRoECf/JTkQxjJb1z329qMSC0tCGNqb?=
+ =?us-ascii?Q?nV1KTp/mTVWparmYRMe2hSG4rSV39kmrDH1MfKgfGwABO2IS42ga3AHeejfm?=
+ =?us-ascii?Q?1o/tO2+vvJYqTi/Eyefkqsh7QHQZoit/tx+k77CFVFrOVgJNPgLIyDyjhLTs?=
+ =?us-ascii?Q?mUDPDoXI3D/1NK1dCaoieJvjfkFxJ93/U70SYM9KSXvFSjwLJhVqbgrZLsE6?=
+ =?us-ascii?Q?R13PrPpVzdaI/f680AiG1ONa3OFXTz+jfTBntyeN5m+QZk+mZE2jXisGdmx8?=
+ =?us-ascii?Q?+wgH5CVaiJdWtKzwmASYjGrfKZe2tNrZBlIce0kimUWzdJA6pIuQ5Q4uwltB?=
+ =?us-ascii?Q?v679XQ1gybIs1t5Kq8Bj5lppA2HL5bpJwOXIZORmsqmA7UFs6IEu3ywjCVPL?=
+ =?us-ascii?Q?mQ73J/YvyZUKAT+HmZjlwrtAcoMIZv0IeI1ZP3mSrD4mqv09kRS7ZzbdLWXM?=
+ =?us-ascii?Q?GR9xoAvM9p9Ik5GNBhTViCbP9yXlmZUcQgy4NM4QgI9EMBzCeY6dgqB+/nNB?=
+ =?us-ascii?Q?Z0SxdS6W/zR+h2V7CChG5O+PPEzXiki4fPdVdBVJ?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: JH0PR06MB6849:EE_|SEYPR06MB5400:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1245805d-d19f-4f74-8977-08dca0822813
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|52116014|1800799024|38350700014|43062017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YmE2bzc1SThWVHkxNDRDVjR2K3NLOGlRak5ZOTcreGVJREk1UmowZWNOR0My?=
- =?utf-8?B?bXRoRHRoWDFlbmo1ckdLU0lETTFmNXFOaTZNcHFkbXpWdjRSMWhMZlBiMWVy?=
- =?utf-8?B?WGVsc01tcyttMUhMbjdMUUVUVlJFY0N2ZDhHZWx5L2pnM0RDN05oSll4cjRW?=
- =?utf-8?B?TEh4djQ1aXI0dnBJQ24vZTFrWm9DZEJlNHVwcVpJdFJKbzJVRzlJZFpvZFd5?=
- =?utf-8?B?bXdBNlByMFhpMFNiMVNYLzJ0OFdoemJmVklya0NaaENyNGFwL0o3V2VJbVZQ?=
- =?utf-8?B?ZXZWUFJ1Q24zeFdmdzRMellKd1VONjhRV3ozUUpKVm5DYWVaRkNvQnVTY2pJ?=
- =?utf-8?B?VFRjRnNsZm1JVGxwWkxtQkN0c2Y1Q29uaEhIaDBicjZRaW1HaEVFMXdNSnBt?=
- =?utf-8?B?cHNaZFlrT2pQYXk3N0NvRjZhNUdmZXlRVndNMFJnYk9yWXdDay9PcXFRaXd4?=
- =?utf-8?B?dHZEZ2JHSnp2YzE3QW5pNGZYZkV6ZzlJQmFldjVRWkVxMnNMd2RNblRsZllI?=
- =?utf-8?B?b3FZckNNQkhoQ01aSDU0d1M0TTloeS85SE8xcmdxK1lMbE5Ba1diWFhnKzUy?=
- =?utf-8?B?czMzM1BCVVlmbWRDTWhWVVVMM2JGakliYUEweXo5UzNabjlUUzR5dFE0K01m?=
- =?utf-8?B?bm5hSHJKbUJBZUtKYTZJd2FDRXJORDlGWUNDdlN1RGdISDV3d3hGT0VGNmox?=
- =?utf-8?B?aExycEJQS0JQR0dzSWtMZEl1ZTdXcWV5dStyQWNIUFNZeDlvRytXZnRpNkFZ?=
- =?utf-8?B?Ykc2bXZ6UVlnUEZFZW1BbDdtMnZoMDZUbkpzM045UExoQ2hTVEgvdWV5bWZJ?=
- =?utf-8?B?c2pLYjVycXNHakFQTFFpNW9welNIblRwSlh4TkZGMjcvUnhCQUM2SENpRTNW?=
- =?utf-8?B?cjVPS25pQXdKRWNaaVdwRlJlUERCWWRxMjJVbFE3WnNaRGxmclhkYTlKbEJW?=
- =?utf-8?B?YzFuNkI5NWR4SWpwaXVCL0pUSnVYcWdIV2dsazRwdlZFSVhndjIyaWFBU015?=
- =?utf-8?B?RTZreHdQNVhNZlRKc3F0RHdjNkppOTBIMVl3N3pFc0JzWHE5S2l1bzcvbTNW?=
- =?utf-8?B?YTZzM1RNUnhjdzZBWmFZdXdjNFppSktoR1FMaHIvSnN5ZnJraE1rNk1EZ1Qr?=
- =?utf-8?B?bWQ5b3Q1Y2R4bElIdmdHNkNQdDd5YmJNbW9Nek1PVFFBTDlQQ1RlVTQvOWJ1?=
- =?utf-8?B?NlZqZUxCMm9LWllhaTBETDhaVXh5YUp1UTQzZU1mVHpZQTA2N2t0SlIza0tQ?=
- =?utf-8?B?U1l3a1EyWXIwUHFoTkdLTDVJZDExOUdlamdRc1c5c1JTYXFGbEJud3pna2tl?=
- =?utf-8?B?dmRMZnZ5RUh5WW5iblh0cTU0NlRZSHJMbGtseFV5LzkwdVRLSi9ZVkRRK1dm?=
- =?utf-8?B?TmtUZzVPb2FRTG0wVmEwUzBSb1c3Z2M0UmV2L3RadFdqWlc4U0g0TFN5aWFZ?=
- =?utf-8?B?VzZKa0R5R0tRK2lES3JFNFZkNW51UGYrUVhDeDBKSWtlSzkvNThrTW1sVy9Z?=
- =?utf-8?B?ckxvWm5Ld2dXYlViQjFZNDkvWHFsdEljajlQTS9pN25TR0w2NFc1UG5yTHNk?=
- =?utf-8?B?bmhDa3JUalhORVBFYW02bkxtaE5BR2I0UGFseDVDamxFdWR5SEsvSlU4cEZa?=
- =?utf-8?B?RTdDMXVxaWo1Yzl5TmxFRkdReHNIOEdZNW5VZWt4ZnNwclpLSXVQM3lCV3BW?=
- =?utf-8?B?ZHF2SDlvNEVtenQ2RVJtdjlObzg5ZDlKNHhEcU13S1VnWHhNeDFLVHQ1bXZX?=
- =?utf-8?B?MDY2OUx0YTdUS0FXdVg2YkUvazAwVXBoeW5Mei8zaDhsalg2Wnk3V2ViUHdn?=
- =?utf-8?B?eEFad3hVaVYwWlZOZHN1Ym11SzFiUHRNMC85dlBTazBnZWROUm11N0lxMU9Y?=
- =?utf-8?Q?v8AIeXmoGgqDI?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR06MB6849.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(1800799024)(38350700014)(43062017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZjRxa3RPaTdjSGFtK2pGVHhoeU1IYy9WZmFZTDBEcEV0K3dhWk1lRDdXbElQ?=
- =?utf-8?B?cFNqSExYOWFTdVNkVmlsSVZPem94aTRHamRoUGhKeGJ5NVFaeW8yYWJCdGdM?=
- =?utf-8?B?WFFSZS9yKzB1YmtSdXp4UlF0V01yMVlTVHpCRElVdndPaHFoRTlZNHhMWEF6?=
- =?utf-8?B?ejdpVGlScW40ZkVnYUZEMEJMdVFZUng2MU14d1paWlA1N0lkMUtTcnEvZzZ2?=
- =?utf-8?B?K1BEakZkYytidmZuR3Y0dmpqb3hiaTRPMWFXdDlzRzBDTHU1RStqNnpCZytF?=
- =?utf-8?B?MDJyYkdlV0Z5UkpTYnRBb2hhWWVGb05pYTlPREZiK0xMUmwxQ1lSVXJkRUFs?=
- =?utf-8?B?N1l2RHVUbGRvcjFpNVZHUVVoOVl5M2J1aXg3dFNYWWZjTDFTcE83Q052bjA4?=
- =?utf-8?B?cFFYckxKRXVNWmJQdnNpbDhtenQ2N2lOTHo2SmpvNGRlZGpxRSsySjB2WTJI?=
- =?utf-8?B?V0hmN1hjV04wSUhRWXVaVW5WMW1hc2VtNUY1eG9jUlBhVWk4dVRWOUZXclU3?=
- =?utf-8?B?dUR6MnYrMFdUZG9vYitvUGI0dXlvOExaNnBVOTAvclBtVGhTRkhOQWs5ejBC?=
- =?utf-8?B?SFFhOXEvcnp0aTNHbGJhc21OV0NtU3A5c3pUd2hMeFRMS0FnWmxYOUdNWmtP?=
- =?utf-8?B?amtGUm9mRDc0M1ZXM2RaUVVwSWpPYzAxeUxZd2UvSDNrd1ltUml2OGhHc0lB?=
- =?utf-8?B?Ym5kbWI0RlFvRjJWamlpQjFKM1NMMGladGRFSlFXbWtVUjdWNW5VRFJDQUpQ?=
- =?utf-8?B?RUxUbEtvTThxTUdTN0dDOGgwWnJqU09mWGhmdERQejR5Wm1xWTh3SHdJbm9N?=
- =?utf-8?B?RUtuSUd5dEYzcHNXSjNnQW1QTit2UE5sZ1VFVWo4QVpNVzlwN20wc1ZSL0Y0?=
- =?utf-8?B?dStrTktOamJKam4rbTdPOEVxNHJpQ3lvT0JtSHhqbHI3emR1YW1hb0FZNGtu?=
- =?utf-8?B?REV1Zk5NWS8ycDU4OTVlZEhSZWxFbUdXYlZLZ3huZEJXQzhLR2xBNHFPcWx5?=
- =?utf-8?B?LzZoQUVOWU94ajM0T0hFYzRibkFHWlFxVkEzbXZWQi9UM3F6Nm92R3cyYUgw?=
- =?utf-8?B?N1hXaFlXWnFrbDRHcjdhQVhhdDlKdENybjIvNUJjL3N0Um81WklVOHdsWFkw?=
- =?utf-8?B?VENieCt0VW9oemxEakhQNmtRN21CeUs5dWozaG1QcjkvZ2RwWGkzQXc5cHVW?=
- =?utf-8?B?TUpSUzlNZW1SMVdaaEtzMENUU0xvc0lqUnBMSFVNVFhUenRGUWd1dlZhdGNZ?=
- =?utf-8?B?TjFwOE1WYVI4N3RVU1QwSlZVNE9IM1JjRjhYTlpJSnZ0eG9MWFJuQmFvZDJ3?=
- =?utf-8?B?S1Ayek5lVm0yT0FFT2tYT2IwL3BsVXJ1VXFWVElId1ZQRjZvN01zLzlITnZ4?=
- =?utf-8?B?Um42bFpTUXl4NWhmRnVmZ3VEUFdaWUxmN1c1dHRVMnNOczF1TzNxWi92ZnJK?=
- =?utf-8?B?K1lPMWphbklCSldnK2lOTUx5YmZtbXRHMmhiQ3lsL3RZaWhtQW9EbkY1N3hU?=
- =?utf-8?B?akFFcFM5U2tING1nZ0pMa1Q1dndBUTR1WGR5SDhVK3BYUnZzcW9EekpHeVVO?=
- =?utf-8?B?eGFpTGY5UVB0TyszYkNwaERkcU05OXBUMXRvbXk1UUR4Z012T055T2c3MTRh?=
- =?utf-8?B?WmowdmExOCt3TUZRa3Mrd2JrRFJXUFYwREd4NU50TEZpVVd6aGlFWFBuRVVS?=
- =?utf-8?B?SmFLWjNJazY4R2l0UnhHbFF1aHB0SW5vd3VjRjE1UHQ3S2FtcmNUT1kyaENm?=
- =?utf-8?B?NDVaZnpXeGMxdnU3VTUzd0ozc2Z6VjZtUit0bFlJaVV3cE5oM2daYkozeS9P?=
- =?utf-8?B?QUhjQ2d2enJzRjB4eUlHZ0wzdGFMV2lrTEYyTkpFRzIra0pOWEJNOU1tMEsw?=
- =?utf-8?B?WnBhc0ZHR1NiRm5YdlZxQW93cnRGSEp6L2YyQml4QXJZVnlKVE1PNGVnR1VW?=
- =?utf-8?B?S3llS1F4MndvTzlNL01hL3h0NzFFWTNiUVgrU01YZmFlMnNwSEFva0RVcEt1?=
- =?utf-8?B?OXZmK3lMeG1jdmFybVdWVEhJUWFya0l6UkF1ekFWZWV3eDUrRklkdEJBZkFD?=
- =?utf-8?B?WklpTHEwMWZQOWhuTldoQUhYZWVaQ3dnRUlrQ0w4SUFWdE1PTFpJcnFpZ1BD?=
- =?utf-8?Q?xM1Ji+tnpPilr4Se/4l5d/pyD?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1245805d-d19f-4f74-8977-08dca0822813
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR06MB6849.apcprd06.prod.outlook.com
+X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 01:46:46.0029
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8fce4f3-784a-4ddb-672f-08dca0823b35
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2024 01:47:17.9042
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DPgbIN4xW5hkMy4lDNpMj89Skv2d5rl3eO9QcUYWfOFdA7iLp5k9bK+RBje6TsWtl6OK0EruCe2rQe6H81BJIg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5400
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WYWtlGD7XFAr087oIUFDcb0HDnfcCc9feyIyRG2Z9d2uH+x1Ei01c0ii7T4BzGAtzQu4+u3s49ZI6rMQ2J9ddw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8178
 
+Hi Kalle,
 
+I found the state of this patch series had been changed to "Deferred".
 
-在 2024/7/9 21:02, Barry Song 写道:
-> On Tue, Jul 9, 2024 at 8:31 PM Zhiguo Jiang <justinjiang@vivo.com> wrote:
->> The releasing process of the non-shared anonymous folio mapped solely by
->> an exiting process may go through two flows: 1) the anonymous folio is
->> firstly is swaped-out into swapspace and transformed into a swp_entry
->> in shrink_folio_list; 2) then the swp_entry is released in the process
->> exiting flow. This will result in the high cpu load of releasing a
->> non-shared anonymous folio mapped solely by an exiting process.
->>
->> When the low system memory and the exiting process exist at the same
->> time, it will be likely to happen, because the non-shared anonymous
->> folio mapped solely by an exiting process may be reclaimed by
->> shrink_folio_list.
->>
->> This patch is that shrink skips the non-shared anonymous folio solely
->> mapped by an exting process and this folio is only released directly in
->> the process exiting flow, which will save swap-out time and alleviate
->> the load of the process exiting.
->>
->> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
-> You should have collected tags such as reviewed-by, acked-by you got in v6
-> while sending v7.
->
-> Again,
-> Acked-by: Barry Song <baohua@kernel.org>
-Yes, it is alreadly included in patch v7.
+Since this patch series had been reviewed for a long period of time and
+reviewed, tested, and acked by members from community. I wonder what
+else should I do to let it be merged to mainline Linux kernel?
 
-Thanks
-Zhiguo
->
->> ---
->>
->> Change log:
->> v6->v7:
->> 1.Modify tab indentation to space indentation of the continuation
->> lines of the condition.
->> v5->v6:
->> 1.Move folio_likely_mapped_shared() under the PTL.
->> 2.Add check_stable_address_space() to replace MMF_OOM_SKIP.
->> 3.Remove folio_test_anon(folio).
->> v4->v5:
->> 1.Further modify to skip non-shared anonymous folio only.
->> 2.Update comments for pra->referenced = -1.
->> v3->v4:
->> 1.Modify to skip only the non-shared anonymous folio mapped solely
->> by an exiting process.
->> v2->v3:
->> Nothing.
->> v1->v2:
->> 1.The VM_EXITING added in v1 patch is removed, because it will fail
->> to compile in 32-bit system.
->>
->>
->> Comments from participants and my responses:
->> [v6->v7]:
->> 1.Matthew Wilcox <willy@infradead.org>
->> You told me you'd fix the indentation.  You cannot indent both the
->> continuation lines of the condition and the body of the if by one tab
->> each!
->> -->
->> Modify tab indentation to space indentation of the continuation
->> lines of the condition.
->>
->> [v5->v6]:
->> 1.David Hildenbrand <david@redhat.com>
->> I'm currently working on moving all folio_likely_mapped_shared() under
->> the PTL, where we are then sure that the folio is actually mapped by
->> this process (e.g., no concurrent unmapping poisslbe). Can we do the
->> same here directly?
->> -->
->> You are right. we might use page_vma_mapped_walk_done() to bail out.
->> (Barry Song)
->>
->> 2.Barry Song <baohua@kernel.org>
->> By the way, I am not convinced that using test_bit(MMF_OOM_SKIP,
->> &vma->vm_mm->flags) is correct (I think it is wrong). And exit_mmap()
->> automatically has MMF_OOM_SKIP. What is the purpose of this check?
->> Is there a better way to determine if a process is an OOM target?
->> What about check_stable_address_space() ?
->> -->
->> Sorry, I overlook the situation with if (is_global_init(p)),
->> MMF_OOM_SKIP is indeed not suitable. It seems feasible for
->> check_stable_address_space() replacing MMF_OOM_SKIP.
->> check_stable_address_space() can indicate oom kill, and
->> !atomic_read(&vma->vm_mm->mm_users) can indicate the normal
->> process exiting.
->>
->> I also think we actually can remove "folio_test_anon(folio)".
->> -->
->> Yes, update in patch v6.
->>
->> [v4->v5]:
->> 1.Barry Song <baohua@kernel.org>
->> I don't think this is correct. folio_likely_mapped_shared() is almost
->> "correct" but not always.
->> Please explain why you set  pra->referenced =  -1. Please address all
->> comments before you send a new version.
->> -->
->> Update in patch v5.
->>
->> 2.Matthew Wilcox <willy@infradead.org>
->> How is the file folio similar?  File folios are never written to swap,
->> and they'll be written back from the page cache whenever the filesystem
->> decides it's a good time to do so.
->> -->
->> What do you mean is that the file folio will not have any relevant
->> identifier left in memory after it is reclamed in the shrink flow,
->> and it will not be released again during an exiting process? If that's
->> the case, I think we only need the anon folio is skipped here.
->>
->> [v3->v4]:
->> 1.Barry Song <baohua@kernel.org>
->> This is clearly version 3, as you previously sent version 2, correct?
->> -->
->> Yes.
->>
->> Could you please describe the specific impact on users, including user
->> experience and power consumption? How serious is this problem?
->> -->
->> At present, I do not have a suitable method to accurately measure the
->> optimization benefit datas of this modifications, but I believe it
->> theoretically has some benefits.
->> Launching large memory app (for example, starting the camera) in multiple
->> backend scenes may result in the high cpu load of the exiting processes.
->>
->> Applications?
->> -->
->> Yes, when system is low memory, it more likely to occur.
->>
->> I'm not completely convinced this patch is correct, but it appears to be
->> heading in the right direction. Therefore, I expect to see new versions
->> rather than it being dead.
->> You changed the file mode to 755, which is incorrect.
->> -->
->> Solved.
->>
->> Why use -1? Is this meant to simulate lock contention to keep the folio
->> without activating it? Please do have some comments to explain why.
->> I'm not convinced this change is appropriate for shared folios. It seems
->> more suitable for exclusive folios used solely by the exiting process.
->> -->
->> The skiped folios are FOLIOREF_KEEP and added into inactive lru, beacase
->> the folios will be freed soon in the exiting process flow.
->> Yes, the shared folios can not be simply skipped. I have made relevant
->> modifications in patch v4 and please help to further review.
->> https://lore.kernel.org/linux-mm/20240708031517.856-1-justinjiang@vivo.com/
->>
->> 2.David Hildenbrand <david@redhat.com>
->> but what if it is shared among multiple processes and only one of them
->> is exiting?
->> -->
->> Modify to skip only the non-shared anonymous folio mapped solely
->> by an exiting process in next version v4.
->>
->> [v2->v3:]
->> Nothing.
->>
->> [v1->v2]:
->> 1.Matthew Wilcox <willy@infradead.org>
->> What testing have you done of this patch?  How often does it happen?
->> Are there particular workloads that benefit from this?  (I'm not sure
->> what "mutil backed-applications" are?)
->> And I do mean specifically of this patch, because to my eyes it
->> shouldn't even compile. Except on 32-bit where it'll say "warning:
->> integer constant out of range".
->> -->
->> Yes, I have tested. When the low system memory and the exiting process
->> exist at the same time, it will happen. This modification can alleviate
->> the load of the exiting process.
->> "mutil backed-applications" means that there are a large number of
->> the backend applications in the system.
->> The VM_EXITING added in v1 patch is removed, because it will fail
->> to compile in 32-bit system.
->>
->>   mm/rmap.c   | 14 ++++++++++++++
->>   mm/vmscan.c |  7 ++++++-
->>   2 files changed, 20 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/rmap.c b/mm/rmap.c
->> index 88156deb46a6..bb9954773cce 100644
->> --- a/mm/rmap.c
->> +++ b/mm/rmap.c
->> @@ -877,6 +877,20 @@ static bool folio_referenced_one(struct folio *folio,
->>                          continue;
->>                  }
->>
->> +               /*
->> +                * Skip the non-shared swapbacked folio mapped solely by
->> +                * the exiting or OOM-reaped process. This avoids redundant
->> +                * swap-out followed by an immediate unmap.
->> +                */
->> +               if ((!atomic_read(&vma->vm_mm->mm_users) ||
->> +                   check_stable_address_space(vma->vm_mm)) &&
->> +                   folio_test_swapbacked(folio) &&
->> +                   !folio_likely_mapped_shared(folio)) {
->> +                       pra->referenced = -1;
->> +                       page_vma_mapped_walk_done(&pvmw);
->> +                       return false;
->> +               }
->> +
->>                  if (pvmw.pte) {
->>                          if (lru_gen_enabled() &&
->>                              pte_young(ptep_get(pvmw.pte))) {
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index 80f9a486cf27..1d5f78a3dbeb 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -863,7 +863,12 @@ static enum folio_references folio_check_references(struct folio *folio,
->>          if (vm_flags & VM_LOCKED)
->>                  return FOLIOREF_ACTIVATE;
->>
->> -       /* rmap lock contention: rotate */
->> +       /*
->> +        * There are two cases to consider.
->> +        * 1) Rmap lock contention: rotate.
->> +        * 2) Skip the non-shared swapbacked folio mapped solely by
->> +        *    the exiting or OOM-reaped process.
->> +        */
->>          if (referenced_ptes == -1)
->>                  return FOLIOREF_KEEP;
->>
->> --
->> 2.39.0
->>
+David
+
+> From: David Lin <yu-hao.lin@nxp.com>
+> Sent: Thursday, July 4, 2024 11:30 AM
+> To: linux-wireless@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; briannorris@chromium.org;
+> kvalo@kernel.org; francesco@dolcini.it; Pete Hsieh
+> <tsung-hsien.hsieh@nxp.com>; David Lin <yu-hao.lin@nxp.com>; Rafael Beims
+> <rafael.beims@toradex.com>; Francesco Dolcini
+> <francesco.dolcini@toradex.com>
+> Subject: [PATCH v11 0/2] wifi: mwifiex: add code to support host mlme
+>=20
+> With host mlme:
+> Tested-by: <rafael.beims@toradex.com> #Verdin AM62 IW416 SD Without host
+> mlme:
+> Tested-by: Francesco Dolcini <francesco.dolcini@toradex.com> # 88W8997-SD
+>=20
+> This series add host based MLME support to the mwifiex driver, this enabl=
+es
+> WPA3 support in both client and AP mode.
+> To enable WPA3, a firmware with corresponding V2 Key API support is
+> required.
+> The feature is currently only enabled on NXP IW416 (SD8978), and it was
+> internally validated by NXP QA team. Other NXP Wi-Fi chips supported in
+> current mwifiex are not affected by this change.
+>=20
+> v11:
+>    - add proper and useful comment for mwifiex_cfg80211_probe_client().
+>    - modify 'mwifiex_mgmt_stypes' to allow multi-adapters with different
+>      setting of host_mlme_enbaled.
+>=20
+> v10:
+>    - Use eth_broadcast_addr() to set the broadcast address.
+>    - Add comment for constant used for the length of FW special 4 address
+>      management header.
+>    - Check host_mlme_enabled to decide if creating host_mlme_workqueue
+>      or not.
+>    - Use cpu_to_le16 instead of casting via (__force __le16).
+>    - Change the abbreviation "disasso" to "disassoc" of the printout mess=
+age.
+>=20
+> v9:
+>    - Remove redundent code.
+>    - Remove unnecessary goto target.
+>=20
+> v8:
+>    - Separate 6/12 from patch v7.
+>      As it's a bug fix not part of host MLME feature.
+>    - Rearrnage MLME feature into 2 patches:
+>      a. Add host based MLME support for STA mode.
+>      b. Add host based MLME support for AP mode.
+>=20
+> v7:
+>    - Fix regression: Downlink throughput degraded by 70% in AP mode.
+>    - Fix issue: On STAUT, kernel Oops occurs when there is no association
+>      response from AP.
+>    - Fix issue: On STAUT, if AP leaves abruptly and deauth is missing,
+>      STA can't connect to AP anymore.
+>    - Fix regression: STA can't connect to AP when host_mlme is disabled
+>      (impact all chips).
+>    - Address reviewer comments.
+>=20
+> v6:
+>    - Correct mailing sequence.
+>=20
+> v5:
+>    - Add host base MLME support to enable WPA3 functionalities for both
+>      STA and AP mode.
+>    - This feature (WPA3) required a firmware with corresponding Key API V=
+2
+>      support.
+>    - QA validation and regression have been covered for IW416.
+>    - This feature (WPA3) is currently enabled and verified only for IW416=
+.
+>    - Changelogs since patch V4:
+>      a. Add WPA3 support for AP mode.
+>      b. Bug fix: In WPA3 STA mode, deice gets disconnected from AP
+>         when group rekey occurs.
+>      c. Bug fix: STAUT doesn't send WMM IE in association request when
+>         associate to a WMM-AP.
+>=20
+> v4:
+>    - Refine code segment per review comment.
+>    - Add API to check firmware encryption key command version when
+>      host_mlme is enabled.
+>=20
+> v3:
+>    - Cleanup commit message.
+>=20
+> v2:
+>    - Fix checkpatch error (pwe[1] -> pwe[0]).
+>    - Move module parameter 'host_mlme' to mwifiex_sdio_device structure.
+>      Default only enable for IW416.
+>    - Disable advertising NL80211_FEATURE_SAE if host_mlme is not enabled.
+>=20
+> David Lin (2):
+>   wifi: mwifiex: add host mlme for client mode
+>   wifi: mwifiex: add host mlme for AP mode
+>=20
+>  .../net/wireless/marvell/mwifiex/cfg80211.c   | 404 +++++++++++++++++-
+>  drivers/net/wireless/marvell/mwifiex/cmdevt.c |  27 ++
+>  drivers/net/wireless/marvell/mwifiex/decl.h   |  23 +
+>  drivers/net/wireless/marvell/mwifiex/fw.h     |  54 +++
+>  drivers/net/wireless/marvell/mwifiex/init.c   |   6 +
+>  drivers/net/wireless/marvell/mwifiex/ioctl.h  |   5 +
+>  drivers/net/wireless/marvell/mwifiex/join.c   |  66 ++-
+>  drivers/net/wireless/marvell/mwifiex/main.c   |  62 +++
+>  drivers/net/wireless/marvell/mwifiex/main.h   |  17 +
+>  drivers/net/wireless/marvell/mwifiex/scan.c   |   6 +
+>  drivers/net/wireless/marvell/mwifiex/sdio.c   |  13 +
+>  drivers/net/wireless/marvell/mwifiex/sdio.h   |   2 +
+>  .../wireless/marvell/mwifiex/sta_cmdresp.c    |   2 +
+>  .../net/wireless/marvell/mwifiex/sta_event.c  |  36 +-
+>  .../net/wireless/marvell/mwifiex/sta_ioctl.c  |   2 +-
+>  drivers/net/wireless/marvell/mwifiex/sta_tx.c |   9 +-
+>  .../net/wireless/marvell/mwifiex/uap_cmd.c    | 171 ++++++++
+>  drivers/net/wireless/marvell/mwifiex/util.c   | 104 +++++
+>  18 files changed, 992 insertions(+), 17 deletions(-)
+>=20
+>=20
+> base-commit: 347bf38330c2971230d8206eb8b37ed36b54982d
+> --
+> 2.34.1
 
 
