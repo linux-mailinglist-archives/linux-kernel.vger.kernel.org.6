@@ -1,97 +1,122 @@
-Return-Path: <linux-kernel+bounces-246828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D645592C7B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:55:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B49092C7BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 768B9B22C08
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:55:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C27B1C221C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6547A4A0F;
-	Wed, 10 Jul 2024 00:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FA94A04;
+	Wed, 10 Jul 2024 00:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHn1xkxh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtxNH/Ic"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B214A04;
-	Wed, 10 Jul 2024 00:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05164A07;
+	Wed, 10 Jul 2024 00:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720572927; cv=none; b=JEDlfqRDwyF9jsWmaN7aDFjNl19vbimATPRI2Tw25mwgOnNFeKYCn5W1iuQq7VHMhETsYhOSgQK8Y04bRZt9O1rXTcF76/dImaUqyyflRfA8prmxJ80uEkX2QOTLfDjATBlXr2Nt5rsC1RxWF5vK96VUUJ8n4jRqrVbWxvSuVss=
+	t=1720573049; cv=none; b=b87q6TiYAmwERkfFD9ZkGOR+qAIyTrkG//eXLzSpG8VfnYVV00tu1jATn9e/8MbcmAsBFSDEphU1toZF7UjULLAHHzNs70m6mMOeNycUlsqBPiJEkSGdKJnT1DHo/2fa8JVuHqAWs2glQgELkJa3NhNDwkB6HJS089yT4jwDnjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720572927; c=relaxed/simple;
-	bh=bitPg8LD4gcptSNxQJP5YQUYZFMEYZzkW1TRSoUqBFY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CtdMZsq6qEL04TXdz4Km0SUU/pBXyES1l67a21Ej4Mlqjqek4Mbw21BR1sSBw72N5W0SxPHjhLxG9LR8cLiN355YFIC7jMThvc3fF8AC+hrF9EW2XzQovugEJsbVdtEWTyLnUk4MEkjsnAkU/D/0DySKMNbh6/Z/8p4w0QkLJSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHn1xkxh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58FB9C3277B;
-	Wed, 10 Jul 2024 00:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720572926;
-	bh=bitPg8LD4gcptSNxQJP5YQUYZFMEYZzkW1TRSoUqBFY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OHn1xkxhzgNFs/A5esmTp5dqfG4QCJKvPs5hbYcZ6xrWoGosRGawuXCfcH8npeEEU
-	 MxZ1ludRolX7Tufd+C2q9DTrC0SPGxpV9Y6WkDuT2OlIwgOhpqUXYoUQ5MTbKKUnTp
-	 6UwTPtjMQc8YFQImqSt5GgTWZA7KWjx0CmjUFJvapbYIGapkJtgoPjz79EiguR4Tyn
-	 1PMN/i9OUkqT4YIoLrJmmRyqHRv+RqMIMjdGgEMa5n2DR2D55AK5/Vvr3I5mIaKgZK
-	 RtOrjmWsUR9aLfzC3pASheaF+hd3OFZcX9fiHcFmVDSwOMvPJuIUj4itutUz4Szqnk
-	 Z+xkYOazL0EZA==
-Date: Wed, 10 Jul 2024 09:55:20 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, mingo@kernel.org, andrii@kernel.org,
- linux-kernel@vger.kernel.org, rostedt@goodmis.org, oleg@redhat.com,
- jolsa@kernel.org, clm@meta.com, paulmck@kernel.org, bpf
- <bpf@vger.kernel.org>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-Message-Id: <20240710095520.e6cbfa6efac9bd79f248b111@kernel.org>
-In-Reply-To: <20240709090304.GG27299@noisy.programming.kicks-ass.net>
-References: <20240708091241.544262971@infradead.org>
-	<20240709075651.122204f1358f9f78d1e64b62@kernel.org>
-	<CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
-	<20240709090304.GG27299@noisy.programming.kicks-ass.net>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720573049; c=relaxed/simple;
+	bh=B2IJUWG+gIY1F0/nl3PBsnRoD1Lqo2RSfjArrbG8HaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jC/ziSWjCQUjxs01FbjGrCWoS+UQGerTJ25t6OiLXpKzOJUiZlaGcw/HoLYnqti2mPrFw//ykdAN7NMz1yp2RHPe4gm6DbPlK9Zve/jJw2b1YBjjjJJrR6bhkecCkEdZthThnlKsWCRysYnSZNrU0a9kUW+9LHg6NsztnBTbv3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtxNH/Ic; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7036815bde7so1764372a34.3;
+        Tue, 09 Jul 2024 17:57:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720573045; x=1721177845; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2YqcG/O7UO17pKVeqS9vSTR5z7c3JMkKO7hnG3tldC4=;
+        b=dtxNH/IcflGUjibj8v5KNdAAa8moMxLqmGzniUtyEy+mc341k0Q4xZdRlrw9gommVe
+         H85eLboWFDkB4bxKvZ6VzMUMHJdibrQbcmJymDLBfTcAUl36ruILpnYRraBNgTI2OCxU
+         JrnsylFTP7wNaOVxC1fjXLwl/aSYkHMlxaBf8556sAuk+9ejtF35TvJ2lEDYiOo3PHVE
+         NIFe87cybBZIAyBZB5jF0F+6XfD90yR296Qoq1A3B3rQ6iK5OBHGsUbym0wJCBtL5Qik
+         5dCjPMtkZJ3k8wwHp/iatBCz9s0kiA2stk5n7c2GdtywVI9fkTskLUSsmfmd4JaMAItb
+         I+nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720573045; x=1721177845;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2YqcG/O7UO17pKVeqS9vSTR5z7c3JMkKO7hnG3tldC4=;
+        b=eysRH6HjzLzluBYmsF0hA0s2v6hbT9jVu7WndOqiaq3J+10ZhY+dJPGknt1/pObp49
+         V3I+2zqgIJoSMPOqz3cDfWdMqnC1svgA9S0wOJXzG7VHj8BKrMIASJIoJY9EPFnqgEkW
+         gODatId87czaL50qSgc/ZeplQsLlcT8uBWBgU6EDPM6JPafihZ9HPAwjh+M+1xF71ArT
+         dvmny2XDhZ6MVO6BQJx+hWiFaljtYp7aQQZr0EXMmMOZUwY68Wcv4oksIWRTnscFNe9H
+         GZEs9FZX+RrITuwdAONS7OLzSJ1lncgj09WtqNP8lxBu+i28+UMYPuPJb2WKZxjLUtAv
+         LYMw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9o9QQCClpcHwIKO6YdXLaO75o7B4ZIroQVjHtUIoPI810EWpmxTbqcZ22bCEihVoOxmIaK6pTq6ZyuWVD7lTw9+5tnV8AbYR4oYSq
+X-Gm-Message-State: AOJu0YydSTC5TC6XFo9yUz/bw9tQyAZ/wC29WHSIUgv2aAkgeEkIllDW
+	X8HGeQVs5DfRsA3Yb9ASzC1ZF0/TiMpr+lh5/NIBANyHg0n4477q
+X-Google-Smtp-Source: AGHT+IGCdW4ebx+zL0Pukp6i4b9YkL+Fx//qJ6Wqq2XyXbYfl7OoNWXIXyjdewNDL0PDLXDB5jkExw==
+X-Received: by 2002:a05:6830:1648:b0:704:4938:e4fb with SMTP id 46e09a7af769-7044938e726mr933070a34.24.1720573045525;
+        Tue, 09 Jul 2024 17:57:25 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b438c70a4sm2467638b3a.83.2024.07.09.17.57.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 17:57:25 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 9 Jul 2024 14:57:24 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Julian Orth <ju.orth@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 2/2] kernel: rerun task_work while freezing in
+ get_signal()
+Message-ID: <Zo3cdEMZVOJcseWm@slm.duckdns.org>
+References: <cover.1720534425.git.asml.silence@gmail.com>
+ <149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com>
 
-On Tue, 9 Jul 2024 11:03:04 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, Jul 09, 2024 at 03:27:19PM +0100, Pavel Begunkov wrote:
+> io_uring can asynchronously add a task_work while the task is getting
+> freezed. TIF_NOTIFY_SIGNAL will prevent the task from sleeping in
+> do_freezer_trap(), and since the get_signal()'s relock loop doesn't
+> retry task_work, the task will spin there not being able to sleep
+> until the freezing is cancelled / the task is killed / etc.
+> 
+> Cc: stable@vger.kernel.org
+> Link: https://github.com/systemd/systemd/issues/33626
+> Fixes: 12db8b690010c ("entry: Add support for TIF_NOTIFY_SIGNAL")
+> Reported-by: Julian Orth <ju.orth@gmail.com>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-> On Mon, Jul 08, 2024 at 05:25:14PM -0700, Andrii Nakryiko wrote:
-> 
-> > Ramping this up to 16 threads shows that mmap_rwsem is getting more
-> > costly, up to 45% of CPU. SRCU is also growing a bit slower to 19% of
-> > CPU. Is this expected? (I'm not familiar with the implementation
-> > details)
-> 
-> SRCU getting more expensive is a bit unexpected, it's just a per-cpu
-> inc/dec and a full barrier.
-> 
-> > P.S. Would you be able to rebase your patches on top of latest
-> > probes/for-next, which include Jiri's sys_uretprobe changes. Right now
-> > uretprobe benchmarks are quite unrepresentative because of that.
-> 
-> What branch is that? kernel/events/ stuff usually goes through tip, no?
+I haven't looked at the signal code for too long to be all that useful but
+the problem described and the patch does make sense to me. FWIW,
 
-I'm handling uprobe patches in linux-trace tree, because it's a kind of
-probes in the kernel. Actually that is not clarified that the uprobe is
-handled by which tree. I had asked to handle kprobes in linux-trace, but
-uprobes might not be clear. Is that OK for you to handle uprobes on
-linux-trace?
+Acked-by: Tejun Heo <tj@kernel.org>
 
-Thank you,
+Maybe note that this is structured specifically to ease backport and we need
+further cleanups? It's not great that this is special cased in
+do_freezer_trap() instead of being integrated into the outer loop.
+
+Thanks.
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+tejun
 
