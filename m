@@ -1,169 +1,485 @@
-Return-Path: <linux-kernel+bounces-248617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D01D92DFC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:49:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC4BB92DFCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC681F22C85
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76EBA1F23908
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D089F823DE;
-	Thu, 11 Jul 2024 05:49:31 +0000 (UTC)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE39D824AD;
+	Thu, 11 Jul 2024 05:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="NPzhzzEx"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80932119;
-	Thu, 11 Jul 2024 05:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEA582C6C;
+	Thu, 11 Jul 2024 05:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720676971; cv=none; b=bGqoLCMSfIdDnOrwxdfkq3D8NOobS7VeBhzPW3dBiI86TxU8UfRqeI0XZVBReGEtWJhD9av8Fpj/2/CUz9k10xA3Lv6lMkdmqFMLk+5/IAloQvp/KxTULCvy1nX5sWJzWHoW0e+N0hXu05KrXTEEJJDENBSC863xBwy50ZtNWNM=
+	t=1720676999; cv=none; b=C3hbgtl07aOxGO/+o9MZedOKm3j0M/CJ+0B0J5mo+GpZzB2vlC3b3Cf7c0ixQqpFL9eaEco4tFIIkTbyxUJtktbd7u7IJvevcRntWtjGdnahkQfdq6II64komJbZRmqx1WPxxaquXXy8FYHCSIvfgYNaa9rP50tL+1yBfx5xySU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720676971; c=relaxed/simple;
-	bh=TtAx04AsrPmMaDmOaZr4TKNIJz6OqZOHS2TCRopxtTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c2z1AbZ2vKjTKqbwFyDZ713tMplvbziNxjtBrzY9BX6sm3fRLnKSaK6kuqKe+Den/F5jgOoOrXqZC1EX9Wz2DYYFBCpUYeywOnIf0Z+wRuE8GTWBkA6EvmJhOP5KanD0WjWX2mrbqd6T2AERzOEWoSmUp0or+UeG+YwEeHHainY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4266edee10cso2865995e9.2;
-        Wed, 10 Jul 2024 22:49:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720676968; x=1721281768;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=00fvTifDFvVnBcJ6kYHawNRR9wAbk1H4q78FlXcE1x8=;
-        b=V+cUfUNOOMXl0iuR/7nFB6kyM0TO6Nz50Ouxqwa2YCvbn2XNtwICFWrZhCuxM0zVmX
-         y9/wyLGd6Foq8/mStmb+ejqgak+EzLS/fc5xUErRHpJ7fZzIE8a7LW0A6NNvLJQJ3p97
-         mgiOudtDiPNOg/YYa0D8q/RKMWZqs8NWy9NPRfOkpJ56XcjPDM0fYnc+cigO4DPmp58V
-         oxM6Mj5PHvUnkR/0BnW09kk0nN2zVygiG6I3WdYUnXSYMv3/n42KT7lTU9tmg73OkVZ5
-         BJI7AeHDi5Sx8w/PR/T0W0h0QUxfdW9XvnmF1ztHurrTR5/d44763jkUAjjdBK/QUqmv
-         wotQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJD0tLmNvs9P/vWLkdkXpCvCQq7Pfc86qOutWLKXIkLT9IrNbMFI80yvtZ84SGMw/2ojdjxz1zVpuk7MdzHvSoB1yRLn8Rh0mE+UL1Qsx2Svb0TLSSRc712Ouaf9YHiPDtUIPi
-X-Gm-Message-State: AOJu0Yzjf/nrnWapOF8KfINEbdBkB8e4APn3FjB6OuND5rDm5LA62wvQ
-	u/ii/gcIOhEsQKy91IE1pcMyPqIZFYsaUgqIMZblM439r/Jk+HKc
-X-Google-Smtp-Source: AGHT+IH1S2Mwi4vybh74mjAke/u9DirvmqwbDrxa8I/YMOrjllCOm2I5dAsxnn2JZZan2yI74IuS1w==
-X-Received: by 2002:a05:600c:6c51:b0:426:5e55:199a with SMTP id 5b1f17b1804b1-426707e3149mr44363655e9.23.1720676967885;
-        Wed, 10 Jul 2024 22:49:27 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427165c69f0sm80270865e9.30.2024.07.10.22.49.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 22:49:27 -0700 (PDT)
-Message-ID: <e321400f-0b76-4fdf-8773-cbad8a47baba@kernel.org>
-Date: Thu, 11 Jul 2024 07:49:25 +0200
+	s=arc-20240116; t=1720676999; c=relaxed/simple;
+	bh=M/V3SQwFAC+N3b9R1xYCW1/+5N9M1fvCTWPhzwxgn4g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3Zt/0qr5djkrIXXi4oh7XXgZhONYEzkbr95Hngd/5ojXmSy/Nf3/RkhEq3zI0+69fIHvEjNOHT6VNHRpQuCKUcTt8c2ZZZheo9KI4lYRBwB3G87d/+3uP/JTL7U9vDuBiIQ4qT4tGGge/BCRBpUceLXR8WFi79B/GAhowbAmio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=NPzhzzEx; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B2TWQR017183;
+	Wed, 10 Jul 2024 22:49:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=DwDuKWxxb0IWtUOEYIin1VmfT
+	pRsoFJEW8p6hNC9vhc=; b=NPzhzzExBntxuJtZ+ljGz4H49uDwNwvtQn7PQ/2iz
+	wD115E+/Ze3KtwAEeFt5eRCox9Av3T1Z2tW8codR9j9T4J7cD++nkvJXY0yYUo45
+	WGDKIP+Wl4nsaU08E8s+TlEJtPMISu4l8ldg1bci1d3WCLCr3/dKr/TeNPhIXySm
+	j76+JW+0g7Ss82NXmmVIq7pJrI7qVyapXfGWjrg5D80igswTPLIlXDv5MRp+mHLv
+	/ovyeeLKg8vHfP4o9RK+aUiM9yo/cVW1zKLK4fjz28kTTRS959OMntdTgpWCaDLT
+	Ip4AUzWW033/TTeYDHrMZysAmAHJhd2wmb4wPIxkV46SA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 409wmdbayn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 22:49:39 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 10 Jul 2024 22:49:38 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 10 Jul 2024 22:49:38 -0700
+Received: from hyd1403.caveonetworks.com (unknown [10.29.37.84])
+	by maili.marvell.com (Postfix) with SMTP id 17E523F7045;
+	Wed, 10 Jul 2024 22:49:33 -0700 (PDT)
+Date: Thu, 11 Jul 2024 11:19:32 +0530
+From: Linu Cherian <lcherian@marvell.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+CC: <mike.leach@linaro.org>, <james.clark@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <coresight@lists.linaro.org>,
+        <linux-kernel@vger.kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gcherian@marvell.com>, Anil Kumar Reddy <areddy3@marvell.com>,
+        Tanmay Jagdale <tanmay@marvell.com>
+Subject: Re: [PATCH v9 5/7] coresight: tmc: Add support for reading crash data
+Message-ID: <20240711054932.GA264176@hyd1403.caveonetworks.com>
+References: <20240605081725.622953-1-lcherian@marvell.com>
+ <20240605081725.622953-6-lcherian@marvell.com>
+ <df91af49-383b-4686-8b5c-3e9b0b9b2a18@arm.com>
+ <20240620014827.GA125816@hyd1403.caveonetworks.com>
+ <6476fa2e-b7db-4bc2-a7a6-26b32af6c9f3@arm.com>
+ <20240703042952.GA256716@hyd1403.caveonetworks.com>
+ <dc97b56e-e40f-42e0-953d-b216400cbbb8@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] x86/entry_32: Use stack segment selector for VERW
- operand
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Uros Bizjak <ubizjak@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, x86@kernel.org,
- Robert Gill <rtgill82@gmail.com>, Jari Ruusu <jariruusu@protonmail.com>,
- Brian Gerst <brgerst@gmail.com>,
- "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
- antonio.gomez.iglesias@linux.intel.com, daniel.sneddon@linux.intel.com,
- stable@vger.kernel.org
-References: <20240710-fix-dosemu-vm86-v4-1-aa6464e1de6f@linux.intel.com>
- <8551ef61-71fb-18f3-a8a8-6c7c3ed731e6@gmail.com>
- <20240710231609.rbxd7m5mjk53rthl@desk>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20240710231609.rbxd7m5mjk53rthl@desk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <dc97b56e-e40f-42e0-953d-b216400cbbb8@arm.com>
+X-Proofpoint-GUID: DJjAQgt6fKzx1GCS0h2Vpa3DAVDGX0Fj
+X-Proofpoint-ORIG-GUID: DJjAQgt6fKzx1GCS0h2Vpa3DAVDGX0Fj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_02,2024-07-10_01,2024-05-17_01
 
-On 11. 07. 24, 1:16, Pawan Gupta wrote:
-> On Wed, Jul 10, 2024 at 11:50:50PM +0200, Uros Bizjak wrote:
-...
->>> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
->>> index d3a814efbff6..d54f6002e5a0 100644
->>> --- a/arch/x86/entry/entry_32.S
->>> +++ b/arch/x86/entry/entry_32.S
->>> @@ -253,6 +253,16 @@
->>>    .Lend_\@:
->>>    .endm
->>> +/*
->>> + * Safer version of CLEAR_CPU_BUFFERS that uses %ss to reference VERW operand
->>> + * mds_verw_sel. This ensures VERW will not #GP for an arbitrary user %ds.
->>> + */
->>> +.macro CLEAR_CPU_BUFFERS_SAFE
->>> +	ALTERNATIVE "jmp .Lskip_verw\@", "", X86_FEATURE_CLEAR_CPU_BUF
->>> +	verw	%ss:_ASM_RIP(mds_verw_sel)
->>> +.Lskip_verw\@:
->>> +.endm
->>
->> Why not simply:
->>
->> .macro CLEAR_CPU_BUFFERS_SAFE
->> 	ALTERNATIVE "", __stringify(verw %ss:_ASM_RIP(mds_verw_sel)),
->> X86_FEATURE_CLEAR_CPU_BUF
->> .endm
+Hi Suzuki,
+
+On 2024-07-03 at 15:09:42, Suzuki K Poulose (suzuki.poulose@arm.com) wrote:
+> On 03/07/2024 05:29, Linu Cherian wrote:
+> > 
+> > Hi Suzuki,
+> > 
+> > Sorry for the late reply.
+> > 
+> > On 2024-06-21 at 16:24:45, Suzuki K Poulose (suzuki.poulose@arm.com) wrote:
+> > > On 20/06/2024 02:48, Linu Cherian wrote:
+> > > > On 2024-06-10 at 22:04:16, Suzuki K Poulose (suzuki.poulose@arm.com) wrote:
+> > > > > On 05/06/2024 09:17, Linu Cherian wrote:
+> > > > > > * Introduce a new mode CS_MODE_READ_CRASHDATA for reading trace
+> > > > > >      captured in previous crash/watchdog reset.
+> > > > > > 
+> > > > > 
+> > > > > I am still not convinced if we really need this new mode. We should :
+> > > > > 
+> > > > > 1) Register the new misc device to expose the "reserved" saved trace
+> > > > > data, only when the metadata is crc checked and it indicates "valid"
+> > > > > trace data.
+> > > > 
+> > > > Ack.
+> > > > 
+> > > > > 
+> > > > > 2) Always allow reading from the "reserved" buffer when the above file
+> > > > > is opened. At open(), once again check if the mdata.valid is true (see
+> > > > > below), if not, return -EIO.
+> > > > > 
+> > > > > 3) Whenever we use the buffer in "RESERVE" for a session, also set the
+> > > > > mdata.valid == false. This would prevent any further read from the
+> > > > > /dev/crash_xxx device. Which makes sense, as the data is lost.
+> > > > > 
+> > > > 
+> > > > Well, how about the below changes
+> > > > a. Clear the valid bit only upon user request so that, user is free to do
+> > > > multiple reads of crashdata buffer.
+> > > 
+> > > I don't see the need for it. With the proposed changes as long as we
+> > > don't overwrite the trace using RESERVE mode, the user can read it and
+> > > they don't need to explicitly clear the field.
+> > > 
+> > > The current changes do not prevent the user from overwriting the buffer
+> > > any way using the RESERVE mode. And we can get rid of the "READ CRASH"
+> > > mode.
+> > 
+> > Okay Agree. I misunderstood your previous comment.
+> > 
+> > 
+> > > 
+> > > > Clearing the mdata.valid can be triggered using a write to the file like
+> > > > echo 0 > /dev/crash_tmc_etxx.
+> > > > 
+> > > > b. In order to prevent the buffer overwrite, when mdata.valid = true
+> > > >      * ETR sink mode: dont allow the user to change the buffer mode to "RESERVE"
+> > > >      * ETB sink mode: dont copy panic trace data to reserve buffer during
+> > > >        kernel panic.
+> > > 
+> > > Why ? It is the users responsibility (I would add inittab job to capture the
+> > > trace) to collect the trace, before you start using the "reserve"
+> > > mode.
+> > > 
+> > > You may additionally prevent the mode change to "RESERVE" if someone has
+> > > opened the /dev/crashxxx.
+> > 
+> > Agree.
+> > 
+> > > 
+> > > > 
+> > > > > This way, you don't need to dance with a new mode always provide the
+> > > > > reserve buffer contents, if it is valid (with an ongoing RESERVE mode)
+> > > > > invalidating the buffer and the change is much much simpler.
+> > > > > 
+> > > > 
+> > > > In general, we tried to reuse the existing normal trace buffer read operations
+> > > > for the crash data reads as well. Hence we need a way to special case the crash data
+> > > > reads in few places like for eg. tmc_etr/etb_get_sysfs_trace.
+> > > 
+> > > I understand, but that is unnecessarily complicating the existing
+> > > framework.
+> > > 
+> > > > 
+> > > > Its not clear to me if you are suggesting to write parallel independent
+> > > > functions to manage the crash device reads OR its just about relying on
+> > > > drvdata->crash_mdata.valid to special case the common read functions insead
+> > > > of csdev->mode ? Please clarify.
+> > > 
+> > > Use parallel independent functions to read from crash device. No new
+> > > mode. All we need to do when someone opens the /dev/crash--:
+> > > 
+> > > 1) See if the metdata.valid == true
+> > > 2) Block further "mode" changes to RESERV_BUF. Hold a refcount
+> > > 3) Provide the buffer from crash buffer.
+> > > 4) Upon close()=> drop the refcount from (2)
+> > > 
+> > > Related question, does anyone need the "metdata" ? e.g. flush status ?
+> > > Or do we think that only the trace data is required ?
+> > > 
+> > 
+> > Only trace data would be required similar to how the sysfs reads are
+> > done. Currently metadata is consumed only by the driver at the time of
+> > buffer read for calculating offsets etc.
 > 
-> We can do it this way as well. But, there are stable kernels that don't
-> support relocations in ALTERNATIVEs. The way it is done in current patch
-> can be backported without worrying about which kernels support relocations.
+> How about, other info: e.g., was there a flush failure ? The trace data may
+> not be reliable if there was flush failure. We could leave it to the
+> user to figure out from the trace read ?
+> 
 
-This sounds weird. There are code bases without ALTERNATIVE support at 
-all. Will you expand ALTERNATIVE into some cmp & jmp here due to that? No.
+Just trying to understand, only the last few trace data bytes left over in internal buffer
+would be lost. Correct ? OR Do you think there is a possiblity of more serious corruption
+to make the whole trace data unreliable with flush failure(w.r.t ETR sink case). 
 
-Instead, you can send this "backport" to stable for older kernels later, 
-once a proper patch is merged.
+But regardless of how flush failure affects the trace data, agree that it would be better to
+give the user the complete picture of trace data status. Either we can export the complete
+register dump(from metadata) through sysfs or we could just print a
+warning to the user indicating that there was a flush failure at the
+time of crashdata read by the user. 
 
-thanks,
--- 
-js
-suse labs
+Would be simpler to add the flush failure notification warning.
 
+
+> > 
+> > > 
+> > > 
+> > > > 
+> > > > 
+> > > > > 
+> > > > > > * Add special device files for reading ETR/ETF crash data.
+> > > > > > 
+> > > > > > * User can read the crash data as below
+> > > > > > 
+> > > > > >      For example, for reading crash data from tmc_etf sink
+> > > > > > 
+> > > > > >      #dd if=/dev/crash_tmc_etfXX of=~/cstrace.bin
+> > > > > > 
+> > > > > > Signed-off-by: Anil Kumar Reddy <areddy3@marvell.com>
+> > > > > > Signed-off-by: Tanmay Jagdale <tanmay@marvell.com>
+> > > > > > Signed-off-by: Linu Cherian <lcherian@marvell.com>
+> > > > > > ---
+> > > > > > Changelog from v8:
+> > > > > > * Added missing exit path in __tmc_probe
+> > > > > > * Few whitespace fixes and a checkpatch fix.
+> > > > > > 
+> > > > > >     .../coresight/coresight-etm4x-core.c          |   1 +
+> > > > > >     .../hwtracing/coresight/coresight-tmc-core.c  | 150 ++++++++++++++++-
+> > > > > >     .../hwtracing/coresight/coresight-tmc-etf.c   |  72 +++++++++
+> > > > > >     .../hwtracing/coresight/coresight-tmc-etr.c   | 151 +++++++++++++++++-
+> > > > > >     drivers/hwtracing/coresight/coresight-tmc.h   |  11 +-
+> > > > > >     include/linux/coresight.h                     |  13 ++
+> > > > > >     6 files changed, 390 insertions(+), 8 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> > > > > > index a0bdfabddbc6..7924883476c6 100644
+> > > > > > --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> > > > > > +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> > > > > > @@ -1011,6 +1011,7 @@ static void etm4_disable(struct coresight_device *csdev,
+> > > > > >     	switch (mode) {
+> > > > > >     	case CS_MODE_DISABLED:
+> > > > > > +	case CS_MODE_READ_CRASHDATA:
+> > > > > >     		break;
+> > > > > >     	case CS_MODE_SYSFS:
+> > > > > >     		etm4_disable_sysfs(csdev);
+> > > > > > diff --git a/drivers/hwtracing/coresight/coresight-tmc-core.c b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > > > > > index daad08bc693d..0c145477ba66 100644
+> > > > > > --- a/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > > > > > +++ b/drivers/hwtracing/coresight/coresight-tmc-core.c
+> > > > > > @@ -106,6 +106,60 @@ u32 tmc_get_memwidth_mask(struct tmc_drvdata *drvdata)
+> > > > > >     	return mask;
+> > > > > >     }
+> > > > > > +int tmc_read_prepare_crashdata(struct tmc_drvdata *drvdata)
+> > > > > > +{
+> > > > > > +	int ret = 0;
+> > > > > > +	struct tmc_crash_metadata *mdata;
+> > > > > > +	struct coresight_device *csdev = drvdata->csdev;
+> > > > > > +
+> > > > > > +	if (!drvdata->crash_mdata.vaddr) {
+> > > > > > +		ret = -ENOMEM;
+> > > > > > +		goto out;
+> > > > > > +	}
+> > > > > > +
+> > > > > > +	mdata = drvdata->crash_mdata.vaddr;
+> > > > > > +	/* Check data integrity of metadata */
+> > > > > > +	if (mdata->crc32_mdata != find_crash_metadata_crc(mdata)) {
+> > > > > > +		dev_dbg(&drvdata->csdev->dev,
+> > > > > > +			"CRC mismatch in tmc crash metadata\n");
+> > > > > > +		ret = -EINVAL;
+> > > > > 
+> > > > > After the comments above, if at all we retain this, please use -EIO
+> > > > 
+> > > > 
+> > > > Ack.
+> > > > 
+> > > > > 
+> > > > > > +		goto out;
+> > > > > > +	}
+> > > > > > +	/* Check data integrity of tracedata */
+> > > > > > +	if (mdata->crc32_tdata != find_crash_tracedata_crc(drvdata, mdata)) {
+> > > > > > +		dev_dbg(&drvdata->csdev->dev,
+> > > > > > +			"CRC mismatch in tmc crash tracedata\n");
+> > > > > > +		ret = -EINVAL;
+> > > > > 
+> > > > > Same here, -EIO
+> > > > 
+> > > > Ack.
+> > > > 
+> > > > > 
+> > > > > > +		goto out;
+> > > > > > +	}
+> > > > > > +	/* Check for valid metadata */
+> > > > > > +	if (!mdata->valid) {
+> > > > > > +		dev_dbg(&drvdata->csdev->dev,
+> > > > > > +			"Data invalid in tmc crash metadata\n");
+> > > > > > +		ret = -EINVAL;
+> > > > > > +		goto out;
+> > > > > > +	}
+> > > > > 
+> > > > > -ENXIO
+> > > > 
+> > > > Ack.
+> > > > 
+> > > > > 
+> > > > > 
+> > > > > > +	/* Sink specific crashdata mode preparation */
+> > > > > > +	ret = crashdata_ops(csdev)->prepare(csdev);
+> > > > > > +	if (ret)
+> > > > > > +		goto out;
+> > > > > > +
+> > > > > > +	if (mdata->sts & 0x1)
+> > > > > 
+> > > > > If at all we need this, please use TMC_STS_FULL instead of hard coding
+> > > > > numbers.
+> > > > 
+> > > > 
+> > > > Ack.
+> > > > 
+> > > > 
+> > > > > 
+> > > > > > +		coresight_insert_barrier_packet(drvdata->buf);
+> > > > > > +
+> > > > > > +out:
+> > > > > > +	return ret;
+> > > > > > +}
+> > > > > > +
+> > > > > > +int tmc_read_unprepare_crashdata(struct tmc_drvdata *drvdata)
+> > > > > > +{
+> > > > > > +	struct coresight_device *csdev = drvdata->csdev;
+> > > > > > +
+> > > > > > +	/* Sink specific crashdata mode preparation */
+> > > > > > +	return crashdata_ops(csdev)->unprepare(csdev);
+> > > > > > +}
+> > > > > > +
+> > > > > >     static int tmc_read_prepare(struct tmc_drvdata *drvdata)
+> > > > > >     {
+> > > > > >     	int ret = 0;
+> > > > > > @@ -156,6 +210,9 @@ static int tmc_open(struct inode *inode, struct file *file)
+> > > > > >     	struct tmc_drvdata *drvdata = container_of(file->private_data,
+> > > > > >     						   struct tmc_drvdata, miscdev);
+> > > > > > +	if (coresight_get_mode(drvdata->csdev) == CS_MODE_READ_CRASHDATA)
+> > > > > > +		return -EBUSY;
+> > > > > > +
+> > > > > >     	ret = tmc_read_prepare(drvdata);
+> > > > > >     	if (ret)
+> > > > > >     		return ret;
+> > > > > > @@ -180,13 +237,12 @@ static inline ssize_t tmc_get_sysfs_trace(struct tmc_drvdata *drvdata,
+> > > > > >     	return -EINVAL;
+> > > > > >     }
+> > > > > > -static ssize_t tmc_read(struct file *file, char __user *data, size_t len,
+> > > > > > -			loff_t *ppos)
+> > > > > > +static ssize_t tmc_read_common(struct tmc_drvdata *drvdata, char __user *data,
+> > > > > > +			       size_t len, loff_t *ppos)
+> > > > > >     {
+> > > > > >     	char *bufp;
+> > > > > >     	ssize_t actual;
+> > > > > > -	struct tmc_drvdata *drvdata = container_of(file->private_data,
+> > > > > > -						   struct tmc_drvdata, miscdev);
+> > > > > > +
+> > > > > >     	actual = tmc_get_sysfs_trace(drvdata, *ppos, len, &bufp);
+> > > > > >     	if (actual <= 0)
+> > > > > >     		return 0;
+> > > > > > @@ -203,6 +259,15 @@ static ssize_t tmc_read(struct file *file, char __user *data, size_t len,
+> > > > > >     	return actual;
+> > > > > >     }
+> > > > > > +static ssize_t tmc_read(struct file *file, char __user *data, size_t len,
+> > > > > > +			loff_t *ppos)
+> > > > > > +{
+> > > > > > +	struct tmc_drvdata *drvdata = container_of(file->private_data,
+> > > > > > +						   struct tmc_drvdata, miscdev);
+> > > > > > +
+> > > > > > +	return tmc_read_common(drvdata, data, len, ppos);
+> > > > > > +}
+> > > > > > +
+> > > > > >     static int tmc_release(struct inode *inode, struct file *file)
+> > > > > >     {
+> > > > > >     	int ret;
+> > > > > > @@ -225,6 +290,61 @@ static const struct file_operations tmc_fops = {
+> > > > > >     	.llseek		= no_llseek,
+> > > > > >     };
+> > > > > > +static int tmc_crashdata_open(struct inode *inode, struct file *file)
+> > > > > > +{
+> > > > > > +	int ret;
+> > > > > > +	struct tmc_drvdata *drvdata = container_of(file->private_data,
+> > > > > > +						   struct tmc_drvdata,
+> > > > > > +						   crashdev);
+> > > > > > +
+> > > > > > +	if (!coresight_take_mode(drvdata->csdev, CS_MODE_READ_CRASHDATA))
+> > > > > > +		return -EBUSY;
+> > > > > > +
+> > > > > > +	ret = tmc_read_prepare(drvdata);
+> > > > > > +	if (ret) {
+> > > > > > +		coresight_set_mode(drvdata->csdev, CS_MODE_DISABLED);
+> > > > > > +		return ret;
+> > > > > > +	}
+> > > > > > +
+> > > > > > +	nonseekable_open(inode, file);
+> > > > > 
+> > > > > 
+> > > > > As mentioned in the beginning, please use "mdata.valid" to deny any open
+> > > > > requests and that way you could simplify most of the code and make a single
+> > > > > function to handle all of the crash device handling.
+> > > > 
+> > > > Did you meant using drvdata->crash_mdata.valid to special case common
+> > > > functions instead of relying on csdev->mode ? Please clarify.
+> > > 
+> > > You may reuse "code" for reading from a buffer. But please do not use a
+> > > mode to switch buffer. Instead, you could refactor common "code" to a
+> > > function and pass appropriate buffer to the function.
+> > 
+> > Okay. Got it. Will rework accordingly.
+> > 
+> > > 
+> > > > 
+> > > > > 
+> > > > > 
+> > > > > > +
+> > > > > > +	dev_dbg(&drvdata->csdev->dev, "%s: successfully opened\n", __func__);
+> > > > > > +	return 0;
+> > > > > > +}
+> > > > > > +
+> > > > > > +static ssize_t tmc_crashdata_read(struct file *file, char __user *data,
+> > > > > > +				  size_t len, loff_t *ppos)
+> > > > > > +{
+> > > > > > +	struct tmc_drvdata *drvdata = container_of(file->private_data,
+> > > > > > +						   struct tmc_drvdata,
+> > > > > > +						   crashdev);
+> > > > > > +
+> > > > > > +	return tmc_read_common(drvdata, data, len, ppos);
+> > > > > 
+> > > > > Simply provide the reserve buffer data, instead of creating ETB / ETR
+> > > > > specific handling.
+> > > > 
+> > > > The differences between tmc_etb/etr_get_sysfs_trace applies to crash
+> > > > data reads as well. So its not clear to me why we dont need ETB/ETR specific handling.
+> > > 
+> > > My point is they all read from the "drvdata->crashbuf" isn't ? If you have a
+> > > crash_buf_fops, that would apply to ETB/ETR/ETFs as they all have
+> > > the data stored in the reserved buffer area. It doesn't matter for crash
+> > > buf. For sysfs trace it is different, because the trace data is at different
+> > > places. ETB has in internal SRAM, ETR has in RAM etc.
+> > > 
+> > 
+> > The difference that i was trying to point out was on the offset part.
+> > For ETB sink mode, the start offset is always 0 and for ETR its based on RWP
+> > and hence the changes. So my understanding is that we still need to have
+> > seperate functions for tmc_etb/etr_get_sysfs_trace while reading from
+> > the reserved buffer area. CMIIWH.
+> 
+> We don't. We simply use a single function:
+> 
+> /*
+>  * Read from crash_buf @size bytes from @offset and copy to @target_buf
+>  * @mdata describes the metadata for the crash buffer.
+>  *
+>  */
+> tmc_read_crash_buf(crash_buf, mdata, offset, size, target_buf)
+> {
+> 	real_offset = mdata.first_byte; // RRP for ETR. 0 for ETB
+> 	real_size = mdata.size; // Size for the total buffer.
+> 
+> 	to_read = min(size, real_size - real_offset);
+> 
+> 	copy_from(crash_buf + real_offset), to_read bytes => target_buf
+> }
+> 
+
+Okay, will rework for a common function that takes care of the offset related
+changes as suggested.
+
+> Suzuki
+> 
+> 
+> 
 
