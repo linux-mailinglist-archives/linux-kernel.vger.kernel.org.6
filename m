@@ -1,124 +1,147 @@
-Return-Path: <linux-kernel+bounces-249454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE78592EBF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:49:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3183E92EBFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AE8E1F24A1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:49:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86590B23698
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD4516C868;
-	Thu, 11 Jul 2024 15:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327BB16C86D;
+	Thu, 11 Jul 2024 15:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEfV6QDW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfBp3l6R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A607D8479;
-	Thu, 11 Jul 2024 15:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BE68479;
+	Thu, 11 Jul 2024 15:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720712950; cv=none; b=ZlI4yHbvWzgbp160x3mDsOFNKCQu8joQT/SpSpdWPkCwnzTbFyfH3CoPcZz+GEJcGPN07A+TachmMU0WKTlyZs6ysn7kJlP5XjboKABeg5xuN01DlpyWtJtYUu8dn5hYIxRlJTC9lcn4+ArxHJsHXq4Wed2vceVxzt5FEmenVkU=
+	t=1720713081; cv=none; b=mKZZShUB41uMTVpAlgNHHpmzMbkEil7R1P8R9wZHpYMpYLPWdfyWH39AAY5LYdTKtoZPZSrhApLPjnn9AIgVWVQB5KESC9W2xtBQD50Argos6XhMr+EWyjlfo80LyljnjYD9XDQbPFNiEOAZXR78Z8un/Ch6stXM+1bkUxg5XDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720712950; c=relaxed/simple;
-	bh=ZuSNhp04Wh6EW5lLCQ+g2TTMsPvkJdMs1uzOY5TVPg0=;
+	s=arc-20240116; t=1720713081; c=relaxed/simple;
+	bh=Kdn4yBHek2NTiF7hAs11T2gTBUI2nFR7JGBd9fLx2MY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sot1Csse3v4aV+0oq2rtEjZDn5vikZT+38xvpxEmVuqJcphfEqiQvMIhX6zxfBBN56FphWK/HTgTBIbCIjX4/4cyasomfesjnlnvx29Zm8C9czpdTiRkC+t3kN3PD3SzsudgcT3G43vjG/KXCcHgUurTVtxxlem8y2I5FWWVFFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iEfV6QDW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1555CC116B1;
-	Thu, 11 Jul 2024 15:49:09 +0000 (UTC)
+	 To:Cc:Content-Type; b=nc8js9N49Kdu4oqKXJMTQ9UxocYOlDBp7LBXd/Mytck6gH3R2P4C1xb5tX/2lXZ4r2qorc+0QsmvDVe9t6tgY8IJgXTpysHzjQ98L3ms01cRyQ3SG/Jim7W6tByH9+a7WER9EGMoUmazpHtqmDg2zpUjumhmZO7x1kfTYb8nRqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfBp3l6R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F93EC4AF0B;
+	Thu, 11 Jul 2024 15:51:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720712949;
-	bh=ZuSNhp04Wh6EW5lLCQ+g2TTMsPvkJdMs1uzOY5TVPg0=;
+	s=k20201202; t=1720713081;
+	bh=Kdn4yBHek2NTiF7hAs11T2gTBUI2nFR7JGBd9fLx2MY=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iEfV6QDWwbMnp9Ta0Jer7ufy7zKuRm0UWvkJW72QY10t6ps7bgp01pqrrI/nPJYK4
-	 aMRh9ZF/IE1zLE2CWaaFQqoH87euXHgcVDUCI8FRHQLRzl0Hn5cM5pGTcdcuB1ubWY
-	 7C0umyGH23O1dml7/cbWgv+m1S0Z5bC39W80eVrXz6QNggeVgiL7GVN5GGQXoSyNXO
-	 x9/a5jfhts/AMfl6Y1Ah/Pvl+GppiyWxzLsd7vdSq8U1uD/hk7ObzadMOrVkHQ6wWX
-	 mp+jdOGkXJyV7+IWDlVnAzxY48Ah5kvgicHHgUyI46+s+fRE2+Q7aNoVeQ82HxcNNS
-	 L2NSAQhoN06lw==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eecd2c6432so11605361fa.3;
-        Thu, 11 Jul 2024 08:49:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUW9zY4hS3Hy6ZeU7MOU82G0a8spyWi5/aC/0zLpGwnf5vRZVKbylW6XdREkqbiccwcq/UWcIGkPmJ/yHWmQNX9xFULm21MEZJHn0iB8dANj8LwT4cK0kjyZNiNgKLFjsd2QKYi16L32qabJV9wj9Gm9fzkFkNdSHiRfDS5fenQBz6wiDnihtCXEkhVkj72Stg1cU4E/Uz/+QgItjGPLvQUMxBH00QRzw2Wws/GQPFel2fKM1XaYTFGgm98lax1gPK2ng0RcA==
-X-Gm-Message-State: AOJu0YwSRB64OocGoCX4QpnlwOISrumaBTll7EA6guk3/CZt1EFo3ieX
-	KbK7aaB012u8ansLH4ahJZKtqofXQQ5Q8ngH0L6ofJ0V/NwLw54QcY8i4KAniByWV424Hwhu6+g
-	aNi7+pUQsBDHV2ZCJNv3STweS75c=
-X-Google-Smtp-Source: AGHT+IF7NQdXn1ehcZ9BG8DZDkjb0sOdI+MsrOYGuBrT+fO/aduK2xqVz6OBibzkuFUSmSL45H3g6KQ3ZY2sharGRnY=
-X-Received: by 2002:a2e:8ed3:0:b0:2ee:4d37:91df with SMTP id
- 38308e7fff4ca-2eeb30fef50mr68275581fa.27.1720712947779; Thu, 11 Jul 2024
- 08:49:07 -0700 (PDT)
+	b=UfBp3l6R84Er64lHrZ1+8IF9Xw6KD1q9Q82537YVxCbY0JmVUAWe/9DYpjS/XjLa0
+	 WIQ32JUL7Jdj2/DxWMIgU2gHGLOYhhuET58fy/87CX7nAPM/98lyJ3oAE36dFW8jh1
+	 Z/LYm8V5mOLF9vhtGRuKaGDDy+VZvQwJq7KwYcNn94BjCV4yVgzmyWya8WORlibYsq
+	 c3vyO0eBulE1WXIxJWR3zEJpK0Dm0/L7lYfO0pgvbQTjAhTOzg1TSemTkf3PCE9BM+
+	 V7ZFlgcyL8Cp38U8UAi1lLbQuKl1kM0XzbT9i/hYm89MeHxrQVFmHyBTBOswitS37s
+	 b4cVPtT2FiWZg==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e97e5a84bso1513114e87.2;
+        Thu, 11 Jul 2024 08:51:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUvg40gpMuu69toi5iXnKTThfGwz/sOw1yIZxQokh6x5WuBnsmKPhuFhzd8ZQ3tMHtftKixzmeuDsr1k1aYn+iGxlWRc3l31CIw3sy2npSCOgkXTkh0aHBXMIepZI4jpLYWkFFgLJmsFhDvLxHnOBB3MryHADOUbz/bNjhXMmZ8irYSvz1bRMotIG+Q1548HRhvnSi/jguDUcLxtrcGzagE2EG5UwKzZYEEBKDo4BBX9U6MqmyenqkOnvgyEfa+cmyLNTio
+X-Gm-Message-State: AOJu0YxpK3edfNUKQ25ziARP2xbXR8ySaXF5Xv8n/gnRjnhmg56TyKYI
+	D/5uM1eJF6DFonsLa26om+O9odnsdWhc2Ge1yfUfHwUfjZmHetNTf+ytss34zcbc4GadrhKgL0n
+	5pXhj15WhHz/FjsI0FrXiEwraMg==
+X-Google-Smtp-Source: AGHT+IElxwI3DTbhcXoQnMJVlvwdauqS5RzGBQrc6N5zhGBYTcZbAbeLzaogiu4kSAPR8XV9dXyCGWkOpYxcz6H0KgM=
+X-Received: by 2002:a05:6512:b18:b0:52c:dd25:9ac6 with SMTP id
+ 2adb3069b0e04-52eb99a3439mr7754037e87.29.1720713079582; Thu, 11 Jul 2024
+ 08:51:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704143611.2979589-1-arnd@kernel.org> <20240704143611.2979589-3-arnd@kernel.org>
-In-Reply-To: <20240704143611.2979589-3-arnd@kernel.org>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 12 Jul 2024 00:48:30 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATLVY1xtSMVMro-KMQVPgVHoiRKGX33ajCg8ZU0-EZS2w@mail.gmail.com>
-Message-ID: <CAK7LNATLVY1xtSMVMro-KMQVPgVHoiRKGX33ajCg8ZU0-EZS2w@mail.gmail.com>
-Subject: Re: [PATCH 02/17] csky: drop asm/gpio.h wrapper
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Vineet Gupta <vgupta@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Christian Brauner <brauner@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-openrisc@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
+ <20240710-gs101-non-essential-clocks-2-v3-1-5dcb8d040d1c@linaro.org>
+In-Reply-To: <20240710-gs101-non-essential-clocks-2-v3-1-5dcb8d040d1c@linaro.org>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 11 Jul 2024 09:51:06 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLsZAEx-c_12RPcR+HCjPcA_d12oKgZ7frX2Wo47sGTnA@mail.gmail.com>
+Message-ID: <CAL_JsqLsZAEx-c_12RPcR+HCjPcA_d12oKgZ7frX2Wo47sGTnA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: serial: samsung: fix maxItems for
+ gs101 & document earlycon requirements
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 4, 2024 at 11:36=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
-te:
+On Wed, Jul 10, 2024 at 7:29=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@l=
+inaro.org> wrote:
 >
-> From: Arnd Bergmann <arnd@arndb.de>
+> While gs101 needs exactly two clocks for the UART, the schema doesn't
+> currently limit the maximum number to this and instead the default of
+> five from this schema is applied.
 >
-> The asm/gpio.h header is gone now that all architectures just use
-> gpiolib, and so the redirect is no longer valid.
+> Update the schema accordingly.
 >
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Also, as pointed out in [1] before, the hand-over between earlycon and
+> serial console is fragile due to clocking issues, at least on Google
+> Tensor gs101. Therefore, document the clocking requirements for
+> earlycon in the description for posterity, so the information is not
+> lost.
+>
+> Link: https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783a=
+e.camel@linaro.org/ [1]
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 > ---
-
-
-Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
-
-
->  arch/csky/include/asm/Kbuild | 1 -
->  1 file changed, 1 deletion(-)
+>  Documentation/devicetree/bindings/serial/samsung_uart.yaml | 14 ++++++++=
+++++++
+>  1 file changed, 14 insertions(+)
 >
-> diff --git a/arch/csky/include/asm/Kbuild b/arch/csky/include/asm/Kbuild
-> index 1117c28cb7e8..13ebc5e34360 100644
-> --- a/arch/csky/include/asm/Kbuild
-> +++ b/arch/csky/include/asm/Kbuild
-> @@ -1,7 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  generic-y +=3D asm-offsets.h
->  generic-y +=3D extable.h
-> -generic-y +=3D gpio.h
->  generic-y +=3D kvm_para.h
->  generic-y +=3D mcs_spinlock.h
->  generic-y +=3D qrwlock.h
-> --
-> 2.39.2
->
+> diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b=
+/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> index 0f0131026911..2435c3d92158 100644
+> --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
+> @@ -145,6 +145,20 @@ allOf:
+>          - samsung,uart-fifosize
+>        properties:
+>          reg-io-width: false
 
+blank line between properties
 
---=20
-Best Regards
-Masahiro Yamada
+> +        clocks:
+> +          description: |
+> +            Note that for earlycon to work, the respective ipclk and pcl=
+k need
+> +            to be running! The bootloader normally leaves them enabled, =
+but the
+> +            serial driver will start handling those clocks before the co=
+nsole
+> +            driver takes over from earlycon, breaking earlycon. If early=
+con is
+> +            required, please revert the patch "clk: samsung: gs101: don'=
+t mark
+> +            non-essential (UART) clocks critical" locally first to mark =
+them
+> +            CLK_IS_CRITICAL and avoid this problem.
+
+That's a whole bunch of details that are Linux specific which have
+little to do with the binding.
+
+> +          maxItems: 2
+> +        clock-names:
+> +          items:
+> +            - const: uart
+> +            - const: clk_uart_baud0
+
+Which clock is pclk and ipclk? 'baud' would be sufficient for the
+name. 'clk_' and 'uart' are redundant because it's all clocks and they
+are all for the uart.
+
+Rob
 
