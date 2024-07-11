@@ -1,198 +1,220 @@
-Return-Path: <linux-kernel+bounces-249744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCCF192EF40
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:58:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6D292EF41
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487031F223E8
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EFE81C225FD
 	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD2E16EB5B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB7916EB5E;
 	Thu, 11 Jul 2024 18:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNlLmHTl"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aAveHYsW"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5A874297;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEFD161939;
 	Thu, 11 Jul 2024 18:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720724317; cv=none; b=JRSBfAQUQzewUNnmJ+n+3hPP1o+0IeUWWpsWtRxThebFg0snYaSkMjfu4xOx3QVR2QHRuC20V2dIkf+ie6zAzLCMY//yOrp6De2+DVZ/SVG1SR55qWlc0EuuGZLx3ymZks+lYkO5boWzu64aFhwj6m0IILV3kSDxfKMq6KyyUjk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720724317; cv=fail; b=mLZx+WibyW23t9fWjgI3xNogaJwKx7SKla2iuG7YZ889TOAt0P4IAV8LgMJVx6UqsHrD5A2D2+EjC7EolQ2ugxegzqIOD+lX5MNwNI7+cYS3XKB/5SRBj+wKd9W/ITVILDU+bXsMyXbIQ64adNnVAnxg+muU8xWELCxf3XHfz+g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720724317; c=relaxed/simple;
-	bh=lTJyaO3NRh1SLmZ3yrTny929BvkSro0S61px1Myed5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HhoLmtn+JLIdGafX01OiH2g+6GohaDjYOgPi3DDvg8uzAtd0jqRRAJR+8UQ1/Oz3F+g6nM+3fFBH122Gt15rpm2fZpppYYF8rQB2S6StgcPC+oLNnJORMizGVXRuzPk5b8Zkvlsaq3mrrJXaMrsWNSU0Y7wTbgQnUq3LUsOHQD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNlLmHTl; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-58bac81f3f9so1603651a12.2;
-        Thu, 11 Jul 2024 11:58:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720724314; x=1721329114; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7BPXidIi57y7av2TEkb5R0zgpsgd6KdF8/DSPaJwaQ8=;
-        b=hNlLmHTl5r+v24odrwNK2Oug2conLzA6Y9/P2HbintnfFj6UeQvo8daqZfW6MWN2bD
-         RWzrtoNinKMB1ozayr0Tut0pJ2/w9tih+cfdpU/JIugJr+hEPIsa14z7cDTh6ZJGliii
-         cvWhUPrY40gFbcuwctUUBRSuuuC2Pxkw2+OkiwYekE0GQFkmJoLCvFUzk/A58KVd8O3s
-         BvlwcaTNtHXxZ6GC6Yuk8b6O+TTq0IL/V913mMm9vpyHETEGjvw96GTaiOdj2UW6xp5q
-         81czuC7FfkVsmIwTSzf8pQ3vDK+wZmWXz7jr7xBAxKG5BmA0kCITJF7ypS3I+4lGl1Tg
-         rkiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720724314; x=1721329114;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7BPXidIi57y7av2TEkb5R0zgpsgd6KdF8/DSPaJwaQ8=;
-        b=RHibCS5Qe0jUhd0rNh6yIflYhbRadyFF0pq4CwWp3asZBdqLn2IvO5yGZaSjiozRFb
-         0O7LVgwyLT8iKCwrmNQ5+ASBDitdNhIiGpotM+FB1+zYPxSsKbo25TQTyXt4Lfq4kRNR
-         9wNrrj/aWU5CieZ8CCvJ3nq1TCD+3U1mrxLANULd6QiM72PKlSsrnTmMin20GcDr2eYO
-         cl4qVDZP2Bo95mrZwiRIB1JjIL5tI5iaWUKQmMVmIp3HvtrmtOtxxvXqV482fGXeOUeH
-         d0UDZKbdBKaabsymeLJLfZqyahngnaEYUBdUnCSNQ1tkllTIooKMHRdZTQy4r/yI3eE4
-         JvUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/Rg1f1g1RETKaBGvQ+1xkcfs3x2Lp+6E1qJQBB46A3X4vKGoTghFyZN3RFZzNYx0JtJIAeM8M4DRNJRTbEjOQoT5+KBRSu68G9Gt3FtXOqoVW26JGDhw2rpMLVS8u7RVbSczWkAgOOQ==
-X-Gm-Message-State: AOJu0YzujKXwV+tzk0gp0k4Ypkr4kSX86vvR5kEKa6HycPlzZ7ZOe6TA
-	ULAikUYY1f7Eem+hzuZT1MLJUfzINHPUPqjBdKXw7BXVP5LuQEMULwjlEIYqhdWZdEkGuT2pBgI
-	weuBqE3AOixO3AMei6I+1NHQvKA==
-X-Google-Smtp-Source: AGHT+IHUue7KlCkosbibWLlrwqSbPA31mFvvX7MrL47CNXsBcvVqQiOnEkanbSXVw3FeHULhCh5GuIhNrpSRu3Msg64=
-X-Received: by 2002:a05:6402:34d5:b0:57c:a49f:ddd4 with SMTP id
- 4fb4d7f45d1cf-594b9ee10d4mr6979931a12.17.1720724313998; Thu, 11 Jul 2024
- 11:58:33 -0700 (PDT)
+	bh=vKfLMQ5f1nWper2uwr8Mczd6tzjCRR8F7lUxowV8OJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K57AK1VBDvZk5Kf1XHHgDbC/ie6gNWkjpuXO3IrErBgN+ZDCeQCljTNa2YvLvnJiHt+k+1Lbs3IZU2KCOq8wXR8OsgE+lLHy8FsjCHJqOC1MQ44kMFfd5paBApL1vBkj6bdXaaAyIKRgUu7u4Jw7PWKpg2BqZxBaP7DYQ1cSewU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aAveHYsW; arc=fail smtp.client-ip=40.107.93.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aLYvJH1KsoQ+T3FEVlBd8O5PiEwy379HgoRUd03piFbeWyDyOZecBfztTpHwl0HJOUhybuqeulJOKEKbRt0hqfautJQF8zwnRB7CKei7WZgyj84paFLYVokpclzmyg/LxH2JHHdotZbMgmzLlkxaMfG7fBSR7obVKhW9MCBkZXWGw4kWmFOKMZGNfo0hEWdrSZjWQ4x2LKPxjUKA2Byt1lQWcGOODlD3zAsqwT//B3PnbLYb9sWd+J2kYzDyKjLOATNyVGRTNLjuup/1q2AemWcpcBzMkEpvCcT234RYHt9mm29ZZXZmnN9mSb7gMRIG7Tw10ORdfQ0EHjGDdswcKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rYW4qCJlRg0iiKuYN3BbOdlCivjGeJarApHFPyYOrJ8=;
+ b=cRWVAT8xe3o9uYDQdFk5NHWVOWmo0vBDoN+hXtPQZ6q7LdIwMrFWm1pQz61K2/GRuN2RYb7ZSGOE5ruBuzxEx5UePBDydhiyrxysAo4gNOKYomXK9jDA7VcynpZd1ns0buT0yTZ0XB9HgFj/qieLVDEpbNjGUszgAaHBLvcKiOlR7z1EAgLt1ij6BHKH1V3I9qG4j8XTf2dzdhlIISLiLQe9WxNTc4w5Wb/5X+/+xMd4K/QyVmWl7dPVfQRut8WDoK8vEwFP5AADpnywOGwiMpj8IK14sfpCT3Acrziy0IFXgXMKi/BxY6ec+C3fVfzK+ikPeXAYUdgBrKQYaJLuUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rYW4qCJlRg0iiKuYN3BbOdlCivjGeJarApHFPyYOrJ8=;
+ b=aAveHYsW6CMlGOZfBrPK4yCpAEy4Q8G8IugnoVE6eLdJ0qkAd47h9kURw1F0ICQ1+Yk6rhDmW7nvhcsTcedtB5WWPEUlDzcjG4Y+4CGWl8XhTkrUWVB2Hc8j4R6BlLsFO+A9gMP+E8RcL0uWiBLE9REawqJeRfSjuLVK4SL9tgE=
+Received: from DM6PR10CA0019.namprd10.prod.outlook.com (2603:10b6:5:60::32) by
+ SA3PR12MB7924.namprd12.prod.outlook.com (2603:10b6:806:313::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7741.36; Thu, 11 Jul 2024 18:58:29 +0000
+Received: from DS3PEPF0000C37F.namprd04.prod.outlook.com
+ (2603:10b6:5:60:cafe::9c) by DM6PR10CA0019.outlook.office365.com
+ (2603:10b6:5:60::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23 via Frontend
+ Transport; Thu, 11 Jul 2024 18:58:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DS3PEPF0000C37F.mail.protection.outlook.com (10.167.23.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7762.17 via Frontend Transport; Thu, 11 Jul 2024 18:58:29 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 11 Jul
+ 2024 13:58:27 -0500
+Received: from [172.25.198.154] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 11 Jul 2024 13:58:24 -0500
+Message-ID: <eda06f77-14b3-4503-9a86-c55092ccf5b7@amd.com>
+Date: Thu, 11 Jul 2024 14:58:24 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240629103914.161530-1-erezgeva@nwtime.org> <20240629103914.161530-4-erezgeva@nwtime.org>
- <1c457520-07b7-4bde-b040-e8bca959a4f5@linaro.org> <CANeKEMOODBNZA6efh0E0Ga_KaVs5Y3WLcUftRhNwYHhnXO=GNw@mail.gmail.com>
- <CANeKEMO42rJt5Ob4_HDcZ3eEMvuMOPvRaFaLwL8SA65NtxSV7A@mail.gmail.com>
- <1d56c3b2-7adf-45b9-a509-956340f3f17b@linaro.org> <CANeKEMMe-Onpn7xWQHgWz1Ps_uQPEMa7HrKA00HpoKjG+DCJNQ@mail.gmail.com>
- <3bafcbea-6aa5-43ca-9d12-3916be3fe03d@linaro.org> <CANeKEMM02-Jvb8Pd0fZJFnRg-hsAW+hckYWm11tZZXNMPSPJ=w@mail.gmail.com>
- <9b45cc73-2251-4085-af95-7ccd00dd6d3b@linaro.org> <CANeKEMP+mRefYZNb+TuBmOD7dC6=7Rg7D1EcfnjJoiaeaV28SQ@mail.gmail.com>
- <875xtd48ps.fsf@geanix.com>
-In-Reply-To: <875xtd48ps.fsf@geanix.com>
-From: Erez <erezgeva2@gmail.com>
-Date: Thu, 11 Jul 2024 20:57:57 +0200
-Message-ID: <CANeKEMNJ3_ET5pQo2wg7_GSLX+vE+dqW-CV=v2DnG10xcgSdzQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] dt-bindings: mtd: macronix,mx25l12833f: add
- SPI-NOR chip
-To: Esben Haabendal <esben@geanix.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, Jaime Liao <jaimeliao@mxic.com.tw>, leoyu@mxic.com.tw, 
-	Alvin Zhou <alvinzhou@mxic.com.tw>, Julien Su <juliensu@mxic.com.tw>, 
-	Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
-	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-kernel@vger.kernel.org, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 4/6] x86: PCI: preserve IORESOURCE_STARTALIGN
+ alignment
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	<x86@kernel.org>, <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240711184035.GA287904@bhelgaas>
+Content-Language: en-US
+From: Stewart Hildebrand <stewart.hildebrand@amd.com>
+In-Reply-To: <20240711184035.GA287904@bhelgaas>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB03.amd.com: stewart.hildebrand@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37F:EE_|SA3PR12MB7924:EE_
+X-MS-Office365-Filtering-Correlation-Id: 35c71255-17c0-49aa-9068-08dca1db7404
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|7416014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RG5yd1RZTDBieWlyNXlMWGVBRUx1akxUZy9HeC91cEo3cEM5S29JNGc2MTVV?=
+ =?utf-8?B?dFFsRGlvU3VnSDRNWmFLeXBKTEFWZzRlamM0Y3NIdEN4enVCc2tKSXhBalhQ?=
+ =?utf-8?B?V1RRK1pTK3BIK1g2djErNlBmM2NBUjhSUjhNVldLQk1abTRpeXVuU1k2N2lZ?=
+ =?utf-8?B?Y215VWI2NVFoWlJMa0t2ZlR4V3FBQXcrYU1hNFZvL1VIaldEM082UkdlRklW?=
+ =?utf-8?B?cUV2Q2NyVlM4cUI5aUxlME1tS0hpN2JIaEFqM0VIVk9nRTRwTlcycHQrNk5Q?=
+ =?utf-8?B?d213MXc1TkM1QTJheWJmMEY5MWNGODhXbzBxSHZVZlVSY21hVGU2blpiLy84?=
+ =?utf-8?B?cGhSOVo2KzJ3SktVLzk2d0FHNVRwM0R4RjhpYWhPWFZpUGlYUkpYMHcvNUpJ?=
+ =?utf-8?B?RXBuSDg4ZUZlT0VrcWVDbVkrdldxdUVzRTF5T0R5VjZsbVAvWHltc0NIYjhj?=
+ =?utf-8?B?eUxKNlRqL3NHd3JQNVBjNTZsZDgzTHFLWWE3Rk5rMkI2Z1owaE00QVl3M3Jw?=
+ =?utf-8?B?Lzl5QTgzeW1BM2Y4bk5uRHZpaktqcEhiQWhzMW1RMFZYWVphbVdlcytTZTNx?=
+ =?utf-8?B?ZGxwZnprRTZ3ZnZxWDFOVnFWYStYanQydW12U2hzQTRyTzczSHJna0xiWUhv?=
+ =?utf-8?B?d0dkOTVWd2pqR3YzeDlUdTQxQmVzU1MxYjFVVjVJOTJmd2o4cy96ekdOSkUv?=
+ =?utf-8?B?OW04L3RYUVpzc2dCdUw2Wko5RHMyV0h2d2NESlBtTFo2K2Ric1VZcWo5WnhI?=
+ =?utf-8?B?QWxOS055TGRlVWZoVUFuY2RmODcxVGFoWkpqUVhjcyt2d3ZwbXhpMU45dHZU?=
+ =?utf-8?B?QXpvMjFmMkNZdWxhM0x0MlJYdmIxNGd0Q09XRS91c1lUejFwcjdhenJEcnFt?=
+ =?utf-8?B?QVgwYzZTQVBSSitYVUxhaVJaaGJKbEZOVm1lN1BLV1c1VUlTNTdZdFFoajJ2?=
+ =?utf-8?B?SFNLdUh4SEp3UkYyUG4yK0JXTmZpV01iSTB6VGFoVlN0eUR6azk2QUcraVV4?=
+ =?utf-8?B?ZFVPeHZrVVd0SjhsWFNLdUxJdDk4THh2eVlWbDYzUlFzMmdsK1RrYU5OL2RR?=
+ =?utf-8?B?SS9WeXA5dlhYV2IwRndFcVFzeFBLVEd6TEVGb3AyTExiSm9nY1Z5RmpHbFRJ?=
+ =?utf-8?B?ZDVsQjdyb0FnZGZ0cy9RQUx5UjlXNFlzVG50cUlWR1FGTDQ0czRMRURiSTB6?=
+ =?utf-8?B?RVJRbmdrT0tVcURDbStheklodFFqeVpOdG91N2dkMk5BU1VHRzZSNzZ1N0dD?=
+ =?utf-8?B?SmF3U2VaWmpaeUZDSFNEdmJrZDNGU3RXbHNrTlFhT0hRWHBTMWNTMFdiV1Ay?=
+ =?utf-8?B?TUZRQjFLSW0ycmdVUTVxbVo4Mmd4eXRZNHBtV2JTZmh5cG5XT1RoKys4dGtM?=
+ =?utf-8?B?b1d6ZVZJWk85ZDdLamhiSWE5Vng3TS9lRzV3Mm9FWlVFNEw0U2szODRPNWxT?=
+ =?utf-8?B?ZVlnSlByK1hYT0g4eW12ZktRZnhoYk81WW5TUDFJOVNDNVpVR2UzdjZobW1V?=
+ =?utf-8?B?Nithcmp5RmUwVjZDc1IrbVY4K1dKRm9pUlNOaE80ZlJITW1MbTZJZm1JaU04?=
+ =?utf-8?B?TERzVXJmTlk4RGNyQ25YN2JGMzVhWkpvVDF2Ris2U1RQeGhrRWp6MGQ2Yzli?=
+ =?utf-8?B?U2NvelNnZy96Zyt6eGd1UjdZaGlRMVZ1WEhPL3A4NWxWeTZMa1llL0s0ZHlo?=
+ =?utf-8?B?QStYTTUxMUNtaTZVb1pWWnlabEFBWUl5YUJERUFHa3ZGSkhaaS9YWU5zdDRQ?=
+ =?utf-8?B?eEMyWjErYVQzeGpMY1ozRSt4cjk5VTNrYm9EZmR0SGdBLzNCbWNSeGtHZktD?=
+ =?utf-8?B?NllkZncyUWlsMVdweW9tZkkwREJDTkE5VXNINzJDMUg5Z044M0ZXRTRsbHlT?=
+ =?utf-8?B?R3kvSEZ0M0FtMzRBUDJkZVhMVkdVWFF2L2d6Mmsvd3hoc2ZpN25TcUNxU2VJ?=
+ =?utf-8?Q?WkvydgxVhpH8ojahgVL18j4uMUKkCamp?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 18:58:29.3164
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 35c71255-17c0-49aa-9068-08dca1db7404
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF0000C37F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7924
 
-Yes, I think we should.
+On 7/11/24 14:40, Bjorn Helgaas wrote:
+> On Wed, Jul 10, 2024 at 06:49:42PM -0400, Stewart Hildebrand wrote:
+>> On 7/10/24 17:24, Bjorn Helgaas wrote:
+>>> On Wed, Jul 10, 2024 at 12:16:24PM -0400, Stewart Hildebrand wrote:
+>>>> On 7/9/24 12:19, Bjorn Helgaas wrote:
+>>>>> On Tue, Jul 09, 2024 at 09:36:01AM -0400, Stewart Hildebrand wrote:
+>>>>>> Currently, it's not possible to use the IORESOURCE_STARTALIGN flag on
+>>>>>> x86 due to the alignment being overwritten in
+>>>>>> pcibios_allocate_dev_resources(). Make one small change in arch/x86 to
+>>>>>> make it work on x86.
+>>>>>
+>>>>> Is this a regression?  I didn't look up when IORESOURCE_STARTALIGN was
+>>>>> added, but likely it was for some situation on x86, so presumably it
+>>>>> worked at one time.  If something broke it in the meantime, it would
+>>>>> be nice to identify the commit that broke it.
+>>>>
+>>>> No, I don't have reason to believe it's a regression.
+>>>>
+>>>> IORESOURCE_STARTALIGN was introduced in commit 884525655d07 ("PCI: clean
+>>>> up resource alignment management").
+>>>
+>>> Ah, OK.  IORESOURCE_STARTALIGN is used for bridge windows, which don't
+>>> need to be aligned on their size as BARs do.  It would be terrible if
+>>> that usage was broken, which is why I was alarmed by the idea of it
+>>> not working on x86> 
+>>> But this patch is only relevant for BARs.  I was a little confused
+>>> about IORESOURCE_STARTALIGN for a BAR, but I guess the point is to
+>>> force alignment on *more* than the BAR's size, e.g., to prevent
+>>> multiple BARs from being put in the same page.
+>>>
+>>> Bottom line, this would need to be a little more specific so it
+>>> doesn't suggest that IORESOURCE_STARTALIGN for windows is broken.
+>>
+>> I'll make the commit message clearer.
+>>
+>>> IIUC, the main purpose of the series is to align all BARs to at least
+>>> 4K.  I don't think the series relies on IORESOURCE_STARTALIGN to do
+>>> that.
+>>
+>> Yes, it does rely on IORESOURCE_STARTALIGN for BARs.
+> 
+> Oh, I missed that, sorry.  The only places I see that set
+> IORESOURCE_STARTALIGN are pci_request_resource_alignment(), which is
+> where I got the "pci=resource_alignment=..." connection, and
+> pbus_size_io(), pbus_size_mem(), and pci_bus_size_cardbus(), which are
+> for bridge windows, AFAICS.
+> 
+> Doesn't the >= 4K alignment in this series hinge on the
+> pcibios_default_alignment() change?
 
-Reading the specification provided publicly by Macronix.
-For all the JEDEC IDs with the no SFDP flag in drivers/mtd/spi-nor/macronix.c
-All of them have a new version or a new chip with the same JEDEC ID
-that supports SFDP.
-There are 2 chips that Macronix does not provide spec. in public.
-I can ask Macronix technical support on these 2 chips.
+Yep
 
-Erez
+> It looks like that would force at
+> least 4K alignment independent of IORESOURCE_STARTALIGN.
 
-"RDID"    "Part."         "Size"              "Status"          "SFDP
-status according to spec. or new chip replacing with same RDID and
-SFDP supported according to spec."
-c22012  MX25L2005(A)  SZ_256K =  2Mb    EOL             MX25L2006E
-c22013  MX25L4005A    SZ_512K =  4Mb    EOL             MX25L4006E
-c22533  MX25U4035     SZ_512K =  4Mb    EOL             MX25U4033E
-c22534  MX25U8035     SZ_1M   =  8Mb    EOL             MX25U8033E
-c22016  MX25L3205D    SZ_4M   =  32Mb   EOL             MX25L3233F
-c22017  MX25L6405D    SZ_8M   =  64Mb   EOL             MX25L6406E / MX25L6433F
-c22018  MX25L12805D   SZ_16M  =  128Mb  EOL             MX25L12833F
-c22538  MX25U12835F   SZ_16M  =  128Mb  EOL             MX25U12832F
-c2253a  MX66U51235F   SZ_64M  =  512Mb  EOL             MX25U51245G
-c22532  MX25U2033E    SZ_256K =  2Mb    EOL             Have-SFDP!
-c22010  MX25L512E     SZ_64K  =  512Kb  NO_REC          Have-SFDP!
-c22015  MX25L1606E    SZ_2M   =  16Mb   NO_REC          Have-SFDP!
-c22536  MX25U3235F    SZ_4M   =  32Mb   NO_REC          Have-SFDP!
-c22816  MX25R3235F    SZ_4M   =  32Mb   NO_REC          Have-SFDP!
-c22537  MX25U6435F    SZ_8M   =  64Mb   NO_REC          Have-SFDP!
-c22019  MX25L25635E   SZ_32M  =  256Mb  NO_REC          Have-SFDP!
-c22539  MX25U25635F   SZ_32M  =  256Mb  NO_REC          Have-SFDP!
-c2201a  MX66L51235F   SZ_64M  =  512Mb  NO_REC          Have-SFDP!
-c2253a  MX25U51245G   SZ_64M  =  512Mb  PROD            Have-SFDP!
-c22314  MX25V8035F    SZ_1M   =  8Mb    PROD            Have-SFDP!
-c22815  MX25R1635F    SZ_2M   =  16Mb   PROD            Have-SFDP!
-c2201b  MX66L1G45G    SZ_128M =  1Gb    PROD            Have-SFDP!
-c2253c  MX66U2G45G    SZ_256M =  2Gb    PROD            Have-SFDP!
-c2261b  MX66L1G55G    SZ_128M =  1Gb    NO_REC          Spec. is not public
-c29e16  MX25L3255E    SZ_4M   =  32Mb   PROD            Spec. is not public
+Changing pcibios_default_alignment() (without pci=resource_alignment=
+specified) results in IORESOURCE_STARTALIGN.
 
-EOL     End of Life
-PROD    Production
-NO_REC  Not recommend
+>>> But there's an issue with "pci=resource_alignment=..." that you
+>>> noticed sort of incidentally, and this patch fixes that?
+>>
+>> No, pci=resource_alignment= results in IORESOURCE_SIZEALIGN, which
+>> breaks pcitest. And we'd like pcitest to work properly for PCI
+>> passthrough validation with Xen, hence the need for
+>> IORESOURCE_STARTALIGN.
 
-
-On Wed, 10 Jul 2024 at 16:34, Esben Haabendal <esben@geanix.com> wrote:
->
-> Erez <erezgeva2@gmail.com> writes:
->
-> > On Wed, 3 Jul 2024 at 09:12, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
-> >> On 7/3/24 12:16 AM, Erez wrote:
-> >>> On Tue, 2 Jul 2024 at 07:00, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
-> >>>
-> >>> The table below uses fixed width characters.
-> >>>
-> >>> ID      Part.         Size              Status          SFDP status
-> >>> according to spec.
-> >>>                                                         New chip with
-> >>> SFDP for EOL
-> >>> c22012  MX25L2005(A)  SZ_256K =  2Mb    EOL             MX25L2006E
-> >>> c22532  MX25U2033E    SZ_256K =  2Mb    EOL
-> >>> c22013  MX25L4005A    SZ_512K =  4Mb    EOL
-> >>> c22533  MX25U4035     SZ_512K =  4Mb    EOL
-> >>> c22534  MX25U8035     SZ_1M   =  8Mb    EOL
-> >>> c22016  MX25L3205D    SZ_4M   =  32Mb   EOL             MX25L3233F
-> >>> c29e16  MX25L3255E    SZ_4M   =  32Mb   EOL
-> >>> c22017  MX25L6405D    SZ_8M   =  64Mb   EOL
-> >>> c22018  MX25L12805D   SZ_16M  =  128Mb  EOL             MX25L12833F
-> >>> c22538  MX25U12835F   SZ_16M  =  128Mb  EOL
-> >>> c2253a  MX66U51235F   SZ_64M  =  512Mb  EOL             MX25U51245G
-> >>> c22010  MX25L512E     SZ_64K  =  512Kb  NO_REC          Have-SFDP!
-> >>> c22015  MX25L1606E    SZ_2M   =  16Mb   NO_REC          Have-SFDP!
-> >>> c22536  MX25U3235F    SZ_4M   =  32Mb   NO_REC          Have-SFDP!
-> >>> c22816  MX25R3235F    SZ_4M   =  32Mb   NO_REC          Have-SFDP!
-> >>> c22537  MX25U6435F    SZ_8M   =  64Mb   NO_REC          Have-SFDP!
-> >>> c22019  MX25L25635E   SZ_32M  =  256Mb  NO_REC          Have-SFDP!
-> >>> c22539  MX25U25635F   SZ_32M  =  256Mb  NO_REC          Have-SFDP!
-> >>> c2201a  MX66L51235F   SZ_64M  =  512Mb  NO_REC          Have-SFDP!
-> >>> c2261b  MX66L1G55G    SZ_128M =  1Gb    NO_REC          Spec. is not public
-> >>> c22314  MX25V8035F    SZ_1M   =  8Mb    PROD            Have-SFDP!
-> >>> c22815  MX25R1635F    SZ_2M   =  16Mb   PROD            Have-SFDP!
-> >>> c2201b  MX66L1G45G    SZ_128M =  1Gb    PROD            Have-SFDP!
-> >>> c2253c  MX66U2G45G    SZ_256M =  2Gb    PROD            Have-SFDP!
-> >>> c2253a  MX25U51245G   SZ_64M  =  512Mb  PROD            Have-SFDP!
-> >>>
-> >>> EOL     End of Life
-> >>> PROD    Normal Production
-> >>> NO_REC  Not recommend for new design
-> >>>
-> >>>
-> >>
-> >> not sure what you want me to do with these.
-> >
-> > That we can read SFDP for all chips from Macronix.
-> > Only old chips before 2010 do not have SFDP.
->
-> So, should we try and identify new chips (with SFDP) that re-use the ID of all the
-> above mentioned EOL chips that does not have SFDP?
->
-> As I read the communication from Macronix, then we should expect new
-> chips re-using the ID for all of them. It is just a matter of digging.
->
-> /Esben
 
