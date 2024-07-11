@@ -1,61 +1,50 @@
-Return-Path: <linux-kernel+bounces-249325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF1492EA0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:58:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E941C92EA13
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E34A1C2302E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:58:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C4A5B24734
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3331607BA;
-	Thu, 11 Jul 2024 13:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="c898+ChK"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0314015F3E0;
-	Thu, 11 Jul 2024 13:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A101662E4;
+	Thu, 11 Jul 2024 13:59:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E801161314
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720706273; cv=none; b=TENYEW9gWRxwuU6L56dsMNpstWW2SMS8+NUp9tLCczvd0W/EQccVvbfzQ78ZXeQYkusLMWDRTMdfN+LwkzPVjT9GujO3NYmwn6cou3q4Mbc2BBd8QGW6Wx812z/gMe7DWSFr7PAlPg3J5IDe0xEvO3l3rhHQ2c7Z9oRe9v6HhRo=
+	t=1720706395; cv=none; b=YcokNRn9XRXqo3t16pabD5rxcLob6pQYOP0d939HywldiN08++ZgO0EpipmZU6HLVFVqhYWQdx6k/dsfxSp4B6iANMdr4FGWpouF0GpoE84fTLUWtXS0JvFXWpvBB+kmRZntlPMdTMYkYR7vLssjzzSdEFX0t92RHILyG7jFk6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720706273; c=relaxed/simple;
-	bh=FHjXagEOOatSTXHhRfY7EqmXYum8oi62qXxXqpjMlDo=;
+	s=arc-20240116; t=1720706395; c=relaxed/simple;
+	bh=7dV4ckuhGGV0wUAI/+cK+Tifo24B23NojR32tXkLDiA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dXqwFcMjAYkcTMZRZ77lxan7cx6OZJFEEMuky/M/rb5vhJRR1YJrDILLpwYDumZ0vF5gIQ2IGcSfmdqnv6aSPCa4SbbH3mVNGrkObUzwPckBxiT+/VGXH4mEzh+33wdVdRUMYhVjAqYF38V+0Lpb1zHcRSvdOe0iIyAg2hNn4HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=c898+ChK; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=fl5kx1AxQh8VD4yRJOY5bQMMZzHh+JbSzPl/YALeKdY=; b=c898+ChKR6Hz9ZFTBjyIOPuwEG
-	BldMiz/OukbdVJJ3ar56/30vBPMUdKjT1/xx9zLVoOVcO69JEcMYbjVERODW0CghjSBeMclNiyKSm
-	LZnFW6yt/Kjkf6SNmjTUQfalWcBLqeYD7katX9IzaDyYK37N66ksYqeiWiC8L9M0by8w=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sRuIn-002K0F-RA; Thu, 11 Jul 2024 15:57:41 +0200
-Date: Thu, 11 Jul 2024 15:57:41 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Simon Horman <horms@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH v2 1/2] net: pse-pd: Do not return EOPNOSUPP if config is
- null
-Message-ID: <45632fed-1669-4d75-bdcd-16d79275e50e@lunn.ch>
-References: <20240710114232.257190-1-kory.maincent@bootlin.com>
- <20240711084300.GA8788@kernel.org>
- <20240711105326.1a5b6b0b@kmaincent-XPS-13-7390>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YZxLeBkju56OQmBCaGIdoJbbFWLFYjlyDIzoUqrM3qkhPkEoRoZhEdYnCaN1udZDfERr1iOyBgZMAQoTht2s0VQdUvF6JsjZy7lbA59O6GMyHixewtTzpR/Y8U0sKkNHZr/vjSUKQPVkF7DTOV6+ju7kmCnPUTGZaiVK91Pvx9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B094DFEC;
+	Thu, 11 Jul 2024 07:00:18 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 727983F766;
+	Thu, 11 Jul 2024 06:59:50 -0700 (PDT)
+Date: Thu, 11 Jul 2024 15:59:19 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
+	vincent.guittot@linaro.org, vanshikonda@os.amperecomputing.com,
+	sumitg@nvidia.com, yang@os.amperecomputing.com,
+	lihuisong@huawei.com, viresh.kumar@linaro.org, rafael@kernel.org
+Subject: Re: [PATCH v6 0/4] Add support for AArch64 AMUv1-based
+ arch_freq_get_on_cpu
+Message-ID: <Zo_lN8jdgADwqvor@arm.com>
+References: <20240603082154.3830591-1-beata.michalska@arm.com>
+ <ZowdalL3DfkHtaCg@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,26 +53,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240711105326.1a5b6b0b@kmaincent-XPS-13-7390>
+In-Reply-To: <ZowdalL3DfkHtaCg@arm.com>
 
-> > 1. As fixes, with fixes tags (good!), this patchset seems like it is
-> >    appropriate for net rather than net-next. And indeed it applies
-> >    to net but not net-next. However, the absence of a target tree
-> >    confuses our CI which failed to apply the patchset to net-next.
-> > 
-> >    Probably this means it should be reposted, targeted at net.
-> > 
-> >    Subject: [Patch v3 net x/y] ...
-> > 
-> >    See: https://docs.kernel.org/process/maintainer-netdev.html
+Hi Catalin,
+
+On Mon, Jul 08, 2024 at 06:10:02PM +0100, Catalin Marinas wrote:
+> Hi Beata,
 > 
-> Oops indeed sorry, forgot to add the net prefix.
+> On Mon, Jun 03, 2024 at 09:21:50AM +0100, Beata Michalska wrote:
+> > Introducing arm64 specific version of arch_freq_get_on_cpu, cashing on
+> > existing implementation for FIE and AMUv1 support: the frequency scale
+> > factor, updated on each sched tick, serves as a base for retrieving
+> > the frequency for a given CPU, representing an average frequency
+> > reported between the ticks - thus its accuracy is limited.
+> > 
+> > The changes have been rather lightly (due to some limitations) tested on
+> > an FVP model. Note that some small discrepancies have been observed while
+> > testing (on the model) and this is currently being investigated, though it
+> > should not have any significant impact on the overall results.
+> 
+> What's the plan with this series? Are you still investigating those
+> discrepancies or is it good to go?
+>
+Overall it should be good to go with small caveat:
+as per discussion [1] we might need to provide new sysfs attribute exposing an
+average frequency instead of plugging new code under existing cpuinfo_cur_freq.
+This is to avoid messing up with other archs and make a clean distinction on
+which attribute provides what information. 
+As such, the arch_freq_get_on_cpu implementation provided within this series
+[PATCH v6 3/4] will most probably be shifted to a new function.
 
-B4 is nice with this:
+Hopefully will be able to send those changes soon.
 
-b4 prep --set-prefixes net
+---
+[1] https://lore.kernel.org/all/ZmrB_DqtmVpvG30l@arm.com/
+---
+BR
+Beata
 
-And it should then remember for all versions of the patchset.
-
-    Andrew
+> -- 
+> Catalin
 
