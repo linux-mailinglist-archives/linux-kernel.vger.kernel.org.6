@@ -1,182 +1,249 @@
-Return-Path: <linux-kernel+bounces-248745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7290C92E16A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:58:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4B4E92E16D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276B22825A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:58:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ADE0282DC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DACF14D283;
-	Thu, 11 Jul 2024 07:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8016F14B978;
+	Thu, 11 Jul 2024 08:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WzMJQ9Xa"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zaX0cv4U"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD5E4CB23
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6943D0D0
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720684681; cv=none; b=rvNV44Fi3fF1jHlb1ThhRYtY5roLwmBeMrcv0a9llZxD8wo4His3rIyc/PztTDHt7w71urHpNtci9Tfk/qXZIvKlXbfJ3mGHilLhpxAA4I8CDcANGsPUYkMaXOw6JQQqeTnKs50sN5P+SAo5AJhnK0DYkPDP1+8WZlPA1wBryZY=
+	t=1720684830; cv=none; b=AkrBFfI5HBJZnoiDDY+g0jOnqWAyBXERfW6XQ9ZU0RLF9gmFCgf3CRdTSiwm7JgJR5ZZq+tnhBEtFUfmhq4bR+tznhEbog8edeRnJsvH1Tqg7hu921xyjIdS9zsvmZwjFKFt9+djbuPgcWfcpC1S+KXKCuCucCaUR4y9PMy1JY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720684681; c=relaxed/simple;
-	bh=Jl7LbtNor/AZBViMkDaQwErv9uJgZebfqcmGpbq16aM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jaBCtU9jHDLW/d9i9Wczhtlr1FggQwB6Pj5WoxuXIDo3W8JVXgpvqzD0ny8hsdYycl1YOkVOD5jcuICJSb1yNHCWc+uItxTCdj+MQFc9TA4K9Nn95La+TQzK6YEWcvJMjgglDOvYFTiKxIdr/E9DLD3bJ4bo0KxTrRxt1xUz5kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WzMJQ9Xa; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1720684830; c=relaxed/simple;
+	bh=StERRhxfed9oXpWj6KwTEYPY/WFQ87CBanMoWJMaZ5I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vd4rbAY2c3kzl+3OOBcdLPcqSUl0GB9X+4bVdbh4FKL//9KMOWhLuxt4mufMC4Ab88/kmkLJLLvY7BBPkK5N9aignG94ldboTkpE+z496cx7O7Hf8BShINNIoMu+eBiAntm6MbXw7TRlq/xJE1q2pJ8Zdoic6zGudx61DjTORLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zaX0cv4U; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so3323315e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:57:59 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fbe6f83957so234325ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:00:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720684678; x=1721289478; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=AgM361BYAq0iGbtkT3hQE7bNR8KxM3q/tLCmdGxIpCw=;
-        b=WzMJQ9Xanv3Ei7VL7UUI0vBdZAdHdaxJUKYTbV2fZnUy+8w3V+KhGiHgdaSbK7Yscx
-         pFwasuMTOiH0E9EtDYUuk+VAfbgaI8jlkFRshD4cGATOhXwOtUtQeIFB+l7+UMAdLj1Y
-         7xdO+cfoA7OQ8SxcNn4W2/uLog22hhGfc7JQrO6JONXW2q09xq6cVs/DxyJb9azweduR
-         /H1yv/Mcso3stU+bj+97tWLLAK89wNOZYMCtrodUHpgHUv5qNpQjyxWLUTRCCZkQlUFu
-         5c/dP+FurVvWmFQXZCCe4gYUm60Z2KD2KaqJT4rWzrBeUIJLyvTFrGJ5ZDNdsprAl4hs
-         Umnw==
+        d=linaro.org; s=google; t=1720684828; x=1721289628; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pIkeP93WkzYbza9jdVyJyr2UB0/JFViqS0uge4UddcQ=;
+        b=zaX0cv4U+y9tVCDV4RcRm1VB71/05+PTZFVT8Y9qM7a6ufjhh/+gjsCwpdkHq0a2KS
+         J1XXLIVJ6VTIyAUhsuLISGVh0E2Kk4qA/SNXEZ4YnbX5GfSKcrykIbx5ETxJuXKbMGb+
+         1zUAZjCiynuG6M3zBHYFCKtbPEmL+zqQhwFLv3yjunkm19l5DJY/qm+szGKek6QfpiQR
+         RAXx8kACJOx8lPRWu/eFZXVepZEXTBOa+fBO7fcs4N1Yan3SsDrGTZ7athg5w7dYy3JL
+         n9QddTz7OGDFpdiaucdLbPZTxT3SeIt8p87B5nC+V59TvhLISEOVo+DubuYFymEtqDDh
+         67VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720684678; x=1721289478;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1720684828; x=1721289628;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AgM361BYAq0iGbtkT3hQE7bNR8KxM3q/tLCmdGxIpCw=;
-        b=Y1KBb2ThxyNUNThFPbCto0vbhnNz3wlr6oBGe02z4M0z3vCuo02646E3n+J7iMG8Pi
-         fYQljP0SGZWMpfQ4J4iLSN5XHedV6wVrNowhw+JhLLYWZLj0ygbUxwZK2Ww3tDrkP4ne
-         Q2cSmu14fsEtK+JtRGu3OImFDzhPQ0WpEzvbj6+TtJRsqO8OoGcUDFCLcaHiXSeVSO+6
-         Oy2l/DcKWMu38pEgndmd2Ogj7geKygMTe2yCwaKiQj6nqO3D9YtdUtZagYrLkhwQFqcM
-         8d+VlFb8HOdGomXM4cn7aDgJIqL5ipcHtJ+xp5uuZGDnbHkMuMcTOtCRHx12VhwKYIas
-         fTzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQhnycXZqxWb8UCidRbKDauKmNpslmbsJp874O3RtuPe+5Xa2Qm/0miYaB5aQCK5ne8kt5ZY54aQFNhq6M4auFocvWsoRH/t1eU+og
-X-Gm-Message-State: AOJu0YxIs8vSmrCcQTI8q3DCUHTCDUXhMCZsQ/xYnM06WB0Q3IU2a0c/
-	yNoQJv34Vp31vJm+078QNE2gb8dPqwD09Z9zpw7VDgTdoqnr7nYd7fVDHTxXUvdNtw+BHLxmbaK
-	e
-X-Google-Smtp-Source: AGHT+IHB0si76JZ9j6zbyRH35zyC5sWwKCluZCNVAxjobcDbOXwmVjBdrHMP2I2PmEw7TjfC4Y+S2Q==
-X-Received: by 2002:a05:600c:5584:b0:426:6252:61d9 with SMTP id 5b1f17b1804b1-427981c524amr13627265e9.11.1720684678022;
-        Thu, 11 Jul 2024 00:57:58 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f07dasm107187775e9.12.2024.07.11.00.57.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 00:57:57 -0700 (PDT)
-Message-ID: <b288d373-a1bc-46b9-9a08-4d949d1bd2bc@linaro.org>
-Date: Thu, 11 Jul 2024 09:57:55 +0200
+        bh=pIkeP93WkzYbza9jdVyJyr2UB0/JFViqS0uge4UddcQ=;
+        b=p07WLZVb1OcYX37W2DIV7xMQfVAIj5u5GqblMgGrVPMhS/XYA6IEElHSQBIS6gh6pL
+         HHb+WkbDSA0neIIKzCNECMeRNcoiPpFofLYt7kvFPksSodjWP73edX9yc8s/SIa5sXkq
+         CQi36WrVKQQ3qlRwWpSrkk8USqwaZbR+OpZsh1YgBpHdUTjNkqwWRhejwRIbiiHGbsW1
+         gddvEoQWkwrGHowSGNfps1EKzvQQwS7/EM/8M/Io0nDxzcElNDBbz6NgxOnRkjxmrWK6
+         fkYiJFjttRmodE3gXyMvxRaGhD/JjBtczfduxFDWdHQ28daFjCdY+ktXjFYXGGjv51Pa
+         yV0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwGkUYdcd/SrikFw8VqhNBqxIQENnA6SsUHkFVXAFna5bJazDzYggOfTHV2tomsrM3dTvfhaCkOcRsvYoBJXLhOzRdBKWRUNjhv6ye
+X-Gm-Message-State: AOJu0YyjiaNK8Q2bb1zsRtwia8Tq2fXUx+t1G/+0gxmj0EuF98dd+fDz
+	GDb5b8av1WkhLDuSpyQ7VGJlo0qqQmd2/Q4gYD72397EUADvMdZ/ONC0sYZekikCz4ciKy/kB3c
+	TNZZ7QIJa4kkmJy2+bfqnbMFlPKD1+ews+edDFV6AN1hQOtWSnJ4=
+X-Google-Smtp-Source: AGHT+IGsK3yu8EB7hCFy7J2LMnkGFcTEypOET9A72YEnoQtyJZJyfwnN8UeMGVz4tia2MQgfgqD7e2bXBClxFmllzqs=
+X-Received: by 2002:a17:902:e5d2:b0:1f9:fb48:7cf9 with SMTP id
+ d9443c01a7336-1fbb6efaad1mr69917125ad.63.1720684828137; Thu, 11 Jul 2024
+ 01:00:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: non-dt-devices: document ltr,ltrf216a used
- via ACPI PRP0001
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Marek Vasut <marex@denx.de>,
- Jonathan Cameron <jic23@kernel.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-References: <20240709084401.21108-1-krzysztof.kozlowski@linaro.org>
- <20240709170248.GA3803124-robh@kernel.org>
- <CAL_JsqL-wLzHmYN9Lntth3TKgpjfj3jxoGD5T49gSkDSMR=S_Q@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAL_JsqL-wLzHmYN9Lntth3TKgpjfj3jxoGD5T49gSkDSMR=S_Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240710090210.41856-1-kprateek.nayak@amd.com> <20240710090210.41856-3-kprateek.nayak@amd.com>
+In-Reply-To: <20240710090210.41856-3-kprateek.nayak@amd.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 11 Jul 2024 10:00:15 +0200
+Message-ID: <CAKfTPtCNJUC-gNNPkEBRT5a2UVcPUHLdzUJ+-egZGQ5ihnU0Kw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] sched/core: Introduce SM_IDLE and an idle re-entry
+ fast-path in __schedule()
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Imran Khan <imran.f.khan@oracle.com>, 
+	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, Rik van Riel <riel@surriel.com>, 
+	Tejun Heo <tj@kernel.org>, Cruz Zhao <CruzZhao@linux.alibaba.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Joel Fernandes <joel@joelfernandes.org>, 
+	Zqiang <qiang.zhang1211@gmail.com>, Julia Lawall <julia.lawall@inria.fr>, 
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 09/07/2024 22:48, Rob Herring wrote:
-> On Tue, Jul 9, 2024 at 11:15 AM Rob Herring <robh@kernel.org> wrote:
->>
->> On Tue, Jul 09, 2024 at 10:44:01AM +0200, Krzysztof Kozlowski wrote:
->>> There is a device in the wild with non-updatable firmware coming with
->>> ACPI tables with rejected "ltr,ltrf216a" compatible.  Linux kernel still
->>> supports this device via ACPI PRP0001, however the compatible was never
->>> accepted to bindings.  Lack of bindings causes checkpatch.pl warning
->>> about undocumented compatible.
->>
->> Why do we care? For checkpatch.pl I really don't. That hack check I
->> wrote makes any string in binding docs a documented compatible. I have a
->> better check using the schema written, but that would make checkpatch
->> dependent on dtschema tools. So maybe just time to drop this check from
->> checkpatch as we have other ways to check and track this.
+On Wed, 10 Jul 2024 at 11:03, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
+>
+> From: Peter Zijlstra <peterz@infradead.org>
+>
+> Since commit b2a02fc43a1f ("smp: Optimize
+> send_call_function_single_ipi()") an idle CPU in TIF_POLLING_NRFLAG mode
+> can be pulled out of idle by setting TIF_NEED_RESCHED flag to service an
+> IPI without actually sending an interrupt. Even in cases where the IPI
+> handler does not queue a task on the idle CPU, do_idle() will call
+> __schedule() since need_resched() returns true in these cases.
+>
+> Introduce and use SM_IDLE to identify call to __schedule() from
+> schedule_idle() and shorten the idle re-entry time by skipping
+> pick_next_task() when nr_running is 0 and the previous task is the idle
+> task.
+>
+> With the SM_IDLE fast-path, the time taken to complete a fixed set of
+> IPIs using ipistorm improves significantly. Following are the numbers
+> from a dual socket 3rd Generation EPYC system (2 x 64C/128T) (boost on,
+> C2 disabled) running ipistorm between CPU8 and CPU16:
+>
+> cmdline: insmod ipistorm.ko numipi=100000 single=1 offset=8 cpulist=8 wait=1
+>
+>    ==================================================================
+>    Test          : ipistorm (modified)
+>    Units         : Normalized runtime
+>    Interpretation: Lower is better
+>    Statistic     : AMean
+>    ==================================================================
+>    kernel:                              time [pct imp]
+>    tip:sched/core                       1.00 [baseline]
+>    tip:sched/core + SM_IDLE             0.25 [75.11%]
+>
+> [ kprateek: Commit log and testing ]
+>
+> Link: https://lore.kernel.org/lkml/20240615012814.GP8774@noisy.programming.kicks-ass.net/
+> Not-yet-signed-off-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> ---
+>  kernel/sched/core.c | 38 +++++++++++++++++++-------------------
+>  1 file changed, 19 insertions(+), 19 deletions(-)
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 1e0c77eac65a..417d3ebbdf60 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -6343,19 +6343,12 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+>   * Constants for the sched_mode argument of __schedule().
+>   *
+>   * The mode argument allows RT enabled kernels to differentiate a
+> - * preemption from blocking on an 'sleeping' spin/rwlock. Note that
+> - * SM_MASK_PREEMPT for !RT has all bits set, which allows the compiler to
+> - * optimize the AND operation out and just check for zero.
+> + * preemption from blocking on an 'sleeping' spin/rwlock.
+>   */
+> -#define SM_NONE                        0x0
+> -#define SM_PREEMPT             0x1
+> -#define SM_RTLOCK_WAIT         0x2
+> -
+> -#ifndef CONFIG_PREEMPT_RT
+> -# define SM_MASK_PREEMPT       (~0U)
+> -#else
+> -# define SM_MASK_PREEMPT       SM_PREEMPT
+> -#endif
+> +#define SM_IDLE                        (-1)
+> +#define SM_NONE                        0
+> +#define SM_PREEMPT             1
+> +#define SM_RTLOCK_WAIT         2
+>
+>  /*
+>   * __schedule() is the main scheduler function.
+> @@ -6396,11 +6389,12 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+>   *
+>   * WARNING: must be called with preemption disabled!
+>   */
+> -static void __sched notrace __schedule(unsigned int sched_mode)
+> +static void __sched notrace __schedule(int sched_mode)
+>  {
+>         struct task_struct *prev, *next;
+>         unsigned long *switch_count;
+>         unsigned long prev_state;
+> +       bool preempt = sched_mode > 0;
+>         struct rq_flags rf;
+>         struct rq *rq;
+>         int cpu;
+> @@ -6409,13 +6403,13 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+>         rq = cpu_rq(cpu);
+>         prev = rq->curr;
+>
+> -       schedule_debug(prev, !!sched_mode);
+> +       schedule_debug(prev, preempt);
+>
+>         if (sched_feat(HRTICK) || sched_feat(HRTICK_DL))
+>                 hrtick_clear(rq);
+>
+>         local_irq_disable();
+> -       rcu_note_context_switch(!!sched_mode);
+> +       rcu_note_context_switch(preempt);
+>
+>         /*
+>          * Make sure that signal_pending_state()->signal_pending() below
+> @@ -6449,7 +6443,12 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+>          * that we form a control dependency vs deactivate_task() below.
+>          */
+>         prev_state = READ_ONCE(prev->__state);
+> -       if (!(sched_mode & SM_MASK_PREEMPT) && prev_state) {
+> +       if (sched_mode == SM_IDLE) {
+> +               if (!rq->nr_running) {
+> +                       next = prev;
+> +                       goto picked;
+> +               }
+> +       } else if (!preempt && prev_state) {
 
-People still use checkpatch - both to actually test patches before
-sending and also to fix random existing issues.
+With CONFIG_PREEMPT_RT, it was only for SM_PREEMPT but not for SM_RTLOCK_WAIT
 
->>
->> However, I do care about 'make dt_compatible_check'. Besides these ACPI
->> cases, there's a bunch of cases that we'll never have schemas for. Like
->> everything from Sparc... Old PowerMac stuff... So I would like to
->> 'document' them just to exclude from dt_compatible_check. So perhaps
->> this should be generalized.
-
-Sure, I can rewrite it to more generic.
-
-> 
-> Here's my list of what's really not documented. It's just a grep of
-> the bindings of each compatible found by 'make dt_compatible_check'.
-> Probably anything with SUNW, ibm, amcc, or mpc5 is never going to be
-> documented.
-> 
-> There are some false positives such as cases documented like "fsl,<chip>-guts".
-
-I'll come with something, maybe incomplete but it could grow later.
-
-Best regards,
-Krzysztof
-
+>                 if (signal_pending_state(prev_state, prev)) {
+>                         WRITE_ONCE(prev->__state, TASK_RUNNING);
+>                 } else {
+> @@ -6483,6 +6482,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+>         }
+>
+>         next = pick_next_task(rq, prev, &rf);
+> +picked:
+>         clear_tsk_need_resched(prev);
+>         clear_preempt_need_resched();
+>  #ifdef CONFIG_SCHED_DEBUG
+> @@ -6523,7 +6523,7 @@ static void __sched notrace __schedule(unsigned int sched_mode)
+>                 migrate_disable_switch(rq, prev);
+>                 psi_sched_switch(prev, next, !task_on_rq_queued(prev));
+>
+> -               trace_sched_switch(sched_mode & SM_MASK_PREEMPT, prev, next, prev_state);
+> +               trace_sched_switch(preempt, prev, next, prev_state);
+>
+>                 /* Also unlocks the rq: */
+>                 rq = context_switch(rq, prev, next, &rf);
+> @@ -6599,7 +6599,7 @@ static void sched_update_worker(struct task_struct *tsk)
+>         }
+>  }
+>
+> -static __always_inline void __schedule_loop(unsigned int sched_mode)
+> +static __always_inline void __schedule_loop(int sched_mode)
+>  {
+>         do {
+>                 preempt_disable();
+> @@ -6644,7 +6644,7 @@ void __sched schedule_idle(void)
+>          */
+>         WARN_ON_ONCE(current->__state);
+>         do {
+> -               __schedule(SM_NONE);
+> +               __schedule(SM_IDLE);
+>         } while (need_resched());
+>  }
+>
+> --
+> 2.34.1
+>
 
