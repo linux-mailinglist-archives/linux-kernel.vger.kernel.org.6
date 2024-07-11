@@ -1,198 +1,100 @@
-Return-Path: <linux-kernel+bounces-248970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651B892E48C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:25:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5479992E450
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CBC11C20DD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12F5F28232F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6A5158DAA;
-	Thu, 11 Jul 2024 10:23:41 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA1E1586F5;
+	Thu, 11 Jul 2024 10:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPbXmwf+"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267B72209B;
-	Thu, 11 Jul 2024 10:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689064779E;
+	Thu, 11 Jul 2024 10:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720693420; cv=none; b=vBzhHDp1B3LAWnSPygtl93n4lDDVElCT6+pjJhTJzRM/+LuuP2fL33sBeqajcivSQLffRCzOxurv1LDPSNc63pe/ZZWpceUVsJE30bzqStCPBja28HZ/zSFS565f4hpxcSOsOmknO+um6SfOacZ7maLQQeiM6Ad8wUn/fCVwMUA=
+	t=1720693040; cv=none; b=Y74QxowV/CtG+eHjtSsyKcgqxXFwo9XgnDkqspN10OFNoTG2P6jQGTRQWzOFcx7w01sRLTj89ff5VZwOywsnVXw4XvEqNq38rbSktiZ1RynP8xekMqOXa/ThnTcUtsFm/WLrNnxoT+OTS+R1MRhpzK47HTfNSP8GCS3FkHIVbIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720693420; c=relaxed/simple;
-	bh=mRiJQf8HlUUGHS/Aw8yW+dJgWms8uN86w7mo04vnImw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NEKOBHygYjY0mjZUmRfpu0j6PZVd7suMg9bl3gH7j1/w9LXLeXXQMEKUd6M9thIyHBgLuZGJUKIUfPPCCRnu3ASJfULVNK0EuSYDeCdcrDwDJMVcCFPIoUcHOMFXbkqhhZ/aS4B8SXUJzTy+LeV6Cao4NrrJUAbKE0sBqRcPeXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WKW1P1dvfzQkjL;
-	Thu, 11 Jul 2024 18:19:37 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 246CF1401E0;
-	Thu, 11 Jul 2024 18:23:34 +0800 (CST)
-Received: from hulk-vt.huawei.com (10.67.174.26) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 11 Jul 2024 18:23:33 +0800
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<corbet@lwn.net>, <haitao.huang@linux.intel.com>, <rdunlap@infradead.org>,
-	<kamalesh.babulal@oracle.com>
-CC: <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] cgroup/misc: Introduce misc.events.local
-Date: Thu, 11 Jul 2024 10:14:57 +0000
-Message-ID: <20240711101457.2963104-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720693040; c=relaxed/simple;
+	bh=/SH2t526dhX39mtIBzC9dl7zRsTEaWsVBT9qJQAA7Pg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pj8luQcfnKexplDVsyH17v58AXVT3bnT6WuVCVeRGtnhCkzHBmBHYWGnFwMugGPRdEqUCDeDZm/rzVmDZWPcymN8HsfsGZJISwaOoemjieLA1k7a5zZ8jEWEUcECzwbYOTTz+D8pOhcdGjrxW0wfT54CDBy93dQXr3NO181P2OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPbXmwf+; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5c66b53232aso332412eaf.1;
+        Thu, 11 Jul 2024 03:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720693038; x=1721297838; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/SH2t526dhX39mtIBzC9dl7zRsTEaWsVBT9qJQAA7Pg=;
+        b=fPbXmwf+yxxnhW6apUj8r8AwhaVAe4lmwovYpyt89dMK6NofKIZvaZY54unTWOJ6+d
+         rAU5NjzfAX1cs+U0umN5w+ZVWQWKY4Y0ApagyhyPWEKtsZZKCProb4hDCo3EKY78AiON
+         Doci3h4fioEcwtRJr5AXZSs2n95m8LwFLYIMPcntEEUHviZQVrJ5xxTSKLsPeNfEIQuE
+         ibtx/Ea6mRS6PDNAT0YIZOAS01z4VT9HrPEF2HMIvKHpTjkUwW85Ys2brR4ptTwrZ6ft
+         nF7kcwqNvVWzIcw9u59kbnwSMZe1msb5hwg3+NI6LRaVptpvvsz4s1NweUbPXvcgWuyr
+         FP0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720693038; x=1721297838;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/SH2t526dhX39mtIBzC9dl7zRsTEaWsVBT9qJQAA7Pg=;
+        b=Lm7b8D6lsYEvPBR/+A6l6VQjxzL9W2YnhxK4Ky4u3DNyqLzUhY8NY4McahDMlA54o7
+         wHhuScBXsGcp3rScOkuiAW1Waw+20vt0YT6uuvUJv2RipOoknBOBDntDx55aBAcVRo9t
+         NsiwbQH8FqTcodcat6Sox3xuJucOdIwGgInZbexHp5X9CEpSwkInonL6GbfhiobjPVPj
+         UCKZn7h8L+nv7SjlQ52vTE171mGKdCS57OCwxYbUhNy/CDCFTVn3V/0EObOuw6dXHI/h
+         99xZsbEruAJyARCW/tfqmJXi14dMxao2H7+djeyrl7ilUNeA/KbVKJLhedB/ql2ZDPWl
+         I06g==
+X-Forwarded-Encrypted: i=1; AJvYcCVbCDvojo2LKncRy3XOMDb7mpKHhs8dBFwrLTflvd6JI/PH8jFCb01esuU4IJI0kvf1fggmkQTFhtwgfu2CO4tyWfqHPhamWNpa6FrEK7l0rcgz4LRGwJeKGYnHODq8lOTR0was0xSQwA==
+X-Gm-Message-State: AOJu0YwIi+1LZAj8AHX98FLCwIGVSVW8MYdCldI4ZRBaCk08VrIuhEGs
+	q9vwUv9cx35eMUR7ALlR7c+Ek8NgC/O78Jy+1j7sMBh2U3J7IkN/9+p/oA2qd5ti+8jNMf0xVb/
+	hPPPtsdyIlNU197b+bizy3slnOys=
+X-Google-Smtp-Source: AGHT+IHE0CUu5uCHf8wuz70NvrhLwZ46PB/m2KnHmeab6LkAZaTxoQqnxGgC50x0jjH9cWOx4W08eoAx0h6xKooKYdU=
+X-Received: by 2002:a4a:1d02:0:b0:5c4:10df:c479 with SMTP id
+ 006d021491bc7-5c68e0a1392mr8324798eaf.2.1720693038361; Thu, 11 Jul 2024
+ 03:17:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+References: <20240711060939.1128-1-linux.amoon@gmail.com> <a8c1f49e-bf25-4fd3-a16f-13088f75767f@kwiboo.se>
+ <CANAwSgQCn3jgiruiLs0cu-C+DguLtnk=msboAh8jNSF4P28gjA@mail.gmail.com> <2017670.43MJ0K8Myn@bagend>
+In-Reply-To: <2017670.43MJ0K8Myn@bagend>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 11 Jul 2024 15:47:02 +0530
+Message-ID: <CANAwSgQjTc7_DFyTSx8VSMmr69tYM=iSVc51RxgRoasj8Stgrg@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add missing pinctrl for PCIe30x4 node
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Jonas Karlman <jonas@kwiboo.se>, linux-rockchip@lists.infradead.org, 
+	Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Currently the event counting provided by misc.events is hierarchical,
-it's not practical if user is only concerned with events of a
-specified cgroup. Therefore, introduce misc.events.local collect events
-specific to the given cgroup.
+Hi Diederik,
 
-This is analogous to memory.events.local and pids.events.local.
+On Thu, 11 Jul 2024 at 15:35, Diederik de Haas <didi.debian@cknow.org> wrote:
+>
+> On Thursday, 11 July 2024 11:09:48 CEST Anand Moon wrote:
+> > Ok but it is better to update this in rk3588s-pinctrl.dtsi
+>
+> It's probably better to base your patch(es) on Heiko's 'for-next' (or 'v6.11-
+> armsoc/dts64') branch as that file no longer exists there
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- Documentation/admin-guide/cgroup-v2.rst |  5 ++++
- include/linux/misc_cgroup.h             |  3 ++
- kernel/cgroup/misc.c                    | 39 +++++++++++++++++++++----
- 3 files changed, 41 insertions(+), 6 deletions(-)
+Ok.
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index adf77ed92687..6c6075ed4aa5 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -2692,6 +2692,11 @@ Miscellaneous controller provides 3 interface files. If two misc resources (res_
- 		The number of times the cgroup's resource usage was
- 		about to go over the max boundary.
- 
-+  misc.events.local
-+        Similar to misc.events but the fields in the file are local to the
-+        cgroup i.e. not hierarchical. The file modified event generated on
-+        this file reflects only the local events.
-+
- Migration and Ownership
- ~~~~~~~~~~~~~~~~~~~~~~~
- 
-diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
-index 618392d41975..49eef10c8e59 100644
---- a/include/linux/misc_cgroup.h
-+++ b/include/linux/misc_cgroup.h
-@@ -40,6 +40,7 @@ struct misc_res {
- 	atomic64_t watermark;
- 	atomic64_t usage;
- 	atomic64_t events;
-+	atomic64_t events_local;
- };
- 
- /**
-@@ -53,6 +54,8 @@ struct misc_cg {
- 
- 	/* misc.events */
- 	struct cgroup_file events_file;
-+	/* misc.events.local */
-+	struct cgroup_file events_local_file;
- 
- 	struct misc_res res[MISC_CG_RES_TYPES];
- };
-diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
-index b92daf5d234d..0e26068995a6 100644
---- a/kernel/cgroup/misc.c
-+++ b/kernel/cgroup/misc.c
-@@ -134,6 +134,17 @@ static void misc_cg_update_watermark(struct misc_res *res, u64 new_usage)
- 	}
- }
- 
-+static void misc_cg_event(enum misc_res_type type, struct misc_cg *cg)
-+{
-+	atomic64_inc(&cg->res[type].events_local);
-+	cgroup_file_notify(&cg->events_local_file);
-+
-+	for (; parent_misc(cg); cg = parent_misc(cg)) {
-+		atomic64_inc(&cg->res[type].events);
-+		cgroup_file_notify(&cg->events_file);
-+	}
-+}
-+
- /**
-  * misc_cg_try_charge() - Try charging the misc cgroup.
-  * @type: Misc res type to charge.
-@@ -177,10 +188,7 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount)
- 	return 0;
- 
- err_charge:
--	for (j = i; j; j = parent_misc(j)) {
--		atomic64_inc(&j->res[type].events);
--		cgroup_file_notify(&j->events_file);
--	}
-+	misc_cg_event(type, i);
- 
- 	for (j = cg; j != i; j = parent_misc(j))
- 		misc_cg_cancel_charge(type, j, amount);
-@@ -368,20 +376,33 @@ static int misc_cg_capacity_show(struct seq_file *sf, void *v)
- 	return 0;
- }
- 
--static int misc_events_show(struct seq_file *sf, void *v)
-+static int __misc_events_show(struct seq_file *sf, bool local)
- {
- 	struct misc_cg *cg = css_misc(seq_css(sf));
- 	u64 events;
- 	int i;
- 
- 	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
--		events = atomic64_read(&cg->res[i].events);
-+		if (local)
-+			events = atomic64_read(&cg->res[i].events_local);
-+		else
-+			events = atomic64_read(&cg->res[i].events);
- 		if (READ_ONCE(misc_res_capacity[i]) || events)
- 			seq_printf(sf, "%s.max %llu\n", misc_res_name[i], events);
- 	}
- 	return 0;
- }
- 
-+static int misc_events_show(struct seq_file *sf, void *v)
-+{
-+	return __misc_events_show(sf, false);
-+}
-+
-+static int misc_events_local_show(struct seq_file *sf, void *v)
-+{
-+	return __misc_events_show(sf, true);
-+}
-+
- /* Misc cgroup interface files */
- static struct cftype misc_cg_files[] = {
- 	{
-@@ -409,6 +430,12 @@ static struct cftype misc_cg_files[] = {
- 		.file_offset = offsetof(struct misc_cg, events_file),
- 		.seq_show = misc_events_show,
- 	},
-+	{
-+		.name = "events.local",
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+		.file_offset = offsetof(struct misc_cg, events_local_file),
-+		.seq_show = misc_events_local_show,
-+	},
- 	{}
- };
- 
--- 
-2.34.1
-
+Thanks
+-Anand
 
