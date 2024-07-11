@@ -1,71 +1,109 @@
-Return-Path: <linux-kernel+bounces-249956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FF792F224
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:39:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F8592F227
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBD981C22934
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E39528302A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAD61A0703;
-	Thu, 11 Jul 2024 22:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB821A01CB;
+	Thu, 11 Jul 2024 22:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqHbgFo6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="vHJnRjKR"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739F41586C4;
-	Thu, 11 Jul 2024 22:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E18415098E;
+	Thu, 11 Jul 2024 22:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720737583; cv=none; b=DlYN60mKVkjqfrEEeE3e1+yTFNt6uki8kee7stXj5EIHeF3na2f19aSAMj7H+EiNqugaArDHZXZxJ1Wci4MdMyKqKw4gvcqBwyxbJl5o1uzoFNoLgC/DDp4ritM2DktcHJaF/1JIXMlhbxPxKUsclPy9YN4TzuCV3aBwTmj/O1w=
+	t=1720737652; cv=none; b=kcQz5eu56BZcu88iycxqXFElbmQJjKuXqt1qfsyzJdd0P30EycIiUXRKgrJGznT7Ibv2ZE04wNiJgIemjKEXKQ02q9p4okLw6hSvaXAXm0JRshHcSmHOlhK8E/NrS7o/9VYrT83uG+VSZRMiSpSW5aee+2tBI7ga74IN6IW5qHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720737583; c=relaxed/simple;
-	bh=9MA98ezOcJ8m0SPoCcJhX7TcuGhLFmrZ88pnNoswD4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IEmR1UmQt0lwTHLfhXgfMaNfU4J4kjFcIyJygGbsDkdtzWKIy4KSZMtF5Fh4JhgPyuxYCCLmZBQQ2fnMstvzAPtSHelmJKDz5VEOfRIEKJ5KBbfjSs2i8rlweKWdiqks72mmzYQw6/kZWlvItb601LBPgO3LAA+5sF8hwdi4I04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqHbgFo6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C1F9C116B1;
-	Thu, 11 Jul 2024 22:39:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720737583;
-	bh=9MA98ezOcJ8m0SPoCcJhX7TcuGhLFmrZ88pnNoswD4Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QqHbgFo6FBjYd3vf0XsaB1S7IXL5FRHdtuMq6qxbVMCIYTFflJgZWBIUma8V0kLwE
-	 WScb1iSOXtA7BQbw27GFkbrnfa0ZygU9MXeM9JJ/pFcyAOHJb1kACf/cRPhZU4PctE
-	 dZRH85OnDDBnGGqrD936b2HMDd/8BcghZIAIabdJxKeRlO9FtxBmFaMu/a2yWKCXd2
-	 vjOnO5HLGSwg0Md6F8JNlrmumcxPGD8a9WtlvvPZpDM2a4zXYeO0IAoytwek23dXIM
-	 bwcy2t2fLFSd/nNQ2VgGmQZdXgkxOqwAr9Oq6u3n13xtQg+rl4qaCTPZifEkwNC95l
-	 8AvwcsJ7FDg/w==
-Date: Thu, 11 Jul 2024 15:39:41 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Richard Gobert <richardbgobert@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- idosch@nvidia.com, amcohen@nvidia.com, petrm@nvidia.com, gnault@redhat.com,
- jbenc@redhat.com, b.galvani@gmail.com, martin.lau@kernel.org,
- daniel@iogearbox.net, aahila@google.com, liuhangbin@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, horms@kernel.org
-Subject: Re: [PATCH net-next v3 0/2] net: add local address bind support to
- vxlan and geneve
-Message-ID: <20240711153941.752b597c@kernel.org>
-In-Reply-To: <20240711131411.10439-1-richardbgobert@gmail.com>
-References: <20240711131411.10439-1-richardbgobert@gmail.com>
+	s=arc-20240116; t=1720737652; c=relaxed/simple;
+	bh=hch1hVyncmSj7D/5Bx7h0CmAiQeGL5v30lm8t05ZU2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CMHeWP/zQPaaVhMtIRxlV99hnqDzNIEKDfiIGZMLWZg9nfKxe2GzUU/lSbUftW12kTQdSff6eEQcg3R0pEc7TmDxURJqMQOKtVfVa3g8H7W29QwcTm3K+yuNZXnXrnND0x5kXQQYKG0gwHvRlF9+HyFeoeP4eGI8fOblRH7b7uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=vHJnRjKR; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720737648;
+	bh=RC9arhDT8QyOQ67j3vBwckbx+FMSk5SG6l8EWiKCtGE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=vHJnRjKRxUGfUtioUcrTIXtUXoXch9ziGS5Q7236P/p42S1Fsxh1WrURtbI7UBeBe
+	 +7DVnz4dUCngBnvKtjJ7iS9Eo4eeYENJYj6NFHfYI3VHRACKik6NSCSgMiRr50JycZ
+	 cxzrtcRBzCyAkgR8JBzsLGBc3rhDV4oM/NwS8S4pfikRkU59rgXEl4MiwogQ2zbXYK
+	 euyaWSMh5UBPkZr3WhvIQj/DL2bhcYf2HKiSOq2S3f446APl+OyGLd5mWK1ozoHt/k
+	 +JJcCh0h8/Q0Q3hKnmV6p+ykrRqSYTQxLGBwu9y65kjLXHJ+F1qU6yvjJsD1SXaw+u
+	 JsT5d/1hmyK8A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKqSc4s14z4x12;
+	Fri, 12 Jul 2024 08:40:48 +1000 (AEST)
+Date: Fri, 12 Jul 2024 08:40:47 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tejun Heo <tj@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the workqueues tree
+Message-ID: <20240712084047.7121fa76@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/0jmE83kj3VSvD=uE.o/0eDX";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/0jmE83kj3VSvD=uE.o/0eDX
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 11 Jul 2024 15:14:09 +0200 Richard Gobert wrote:
-> This series adds local address bind support to both vxlan
-> and geneve sockets.
+Hi all,
 
-I think that this breaks a lot of vxlan related subtests:
-https://netdev.bots.linux.dev/contest.html?pw-n=0&branch=net-next-2024-07-11--15-00&pw-n=0&pass=0
+Commits
+
+  aacff6ebea30 ("workqueue: Rename wq_update_pod() to unbound_wq_update_pwq=
+()")
+  09827e6f1295 ("workqueue: Remove the arguments @hotplug_cpu and @online f=
+rom wq_update_pod()")
+  bc8d14a48a35 ("workqueue: Remove the argument @cpu_going_down from wq_cal=
+c_pod_cpumask()")
+  cbea25234674 ("workqueue: Remove the unneeded cpumask empty check in wq_c=
+alc_pod_cpumask()")
+  49d94fbe1f8c ("workqueue: Remove cpus_read_lock() from apply_wqattrs_lock=
+()")
+  e5265846a49b ("workqueue: Simplify wq_calc_pod_cpumask() with wq_online_c=
+pumask")
+  1b366099b179 ("workqueue: Add wq_online_cpumask")
+
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0jmE83kj3VSvD=uE.o/0eDX
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQX28ACgkQAVBC80lX
+0Gy7rwf/SDaPEE5fcrmJGfLdIuhv78C3IjuFn6YMLWclHgP+naZ9gPgKi8GS7d6U
+ZOkDEekM+6hpcWFy0Rswok2dSihbvtxCPbPVNxB4pPBQXBNjuvBUBc/56p5+zRWt
+ISdmmVAjCNbJNLkG1Df9clWCzB3Joz8iEHKQ++l3Inoz5R5Fb0kY/Wksj9/uhX04
+tYKlQE5GkoIBuL8eGaG/RDPlF4iiZxESg5kIDoVSfKYi7wNGjnnOTZwkmoVvMt+D
+pbw7FuVOAsP+GqPBPPxTw0D409RaNxg1HU4v/7i2rWPOB6BIAsKMNCqTT/yViCfB
+tQuyBCiou6TLnmbpzJDURO+FPLpe7Q==
+=tscm
+-----END PGP SIGNATURE-----
+
+--Sig_/0jmE83kj3VSvD=uE.o/0eDX--
 
