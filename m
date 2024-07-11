@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-248572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1486E92DF28
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:45:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B53692DF2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4626B1C2187D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:45:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6361F225D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65B64963F;
-	Thu, 11 Jul 2024 04:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637E647F7F;
+	Thu, 11 Jul 2024 04:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ucg8wWPp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IDOvfxpq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DDC376E4
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDA5376E4
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720673109; cv=none; b=cShxjdCG4Wm5fbhiMizj53jkAX6XNl8H7G+1Y8S+8B23MfjIct1T0kw5a5Ytf7ZVVITJhaZOd18c2ryO+4oYqYY04ZsD+dieSdMAov0nz6DmyxzfLywgVCUrlLVY003AP3fRfYvroAosiAgeOm/IeTPgxAKGFEIc1x106gt+N8s=
+	t=1720673213; cv=none; b=F8zeZrRJweEsfYWPGB35ev7eLvtItAoxiOe4HMUVIdf2kw5cJbcKAnGUzSx39LpQJVatDNTtsKk5CZ0O5hWeLotsbn1XQca91o/dulAKghBRZTLZj5Z9Gc3mfYsnx4InMEe8PRURwbJ62gZEbrLAbUtO24KECnzDARNnDbhEQAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720673109; c=relaxed/simple;
-	bh=SLE8iv1gS/925bWtDCRkm6vcnRWpUcxElWCPVPn23FQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tAKuJOqEdnxr0ktmLMX0fSudXitaIGRT50FgXL2q+NfapHvBT8bTuaU5WJYsZIO20zTweDeb9I4Bw75irfKyRvFqYn4Mc+L3/IFyRFyeY8Jc4wwow4TYJMMsgd4ZLXBybA/uRioIOV6pnByKHqU8l4K3JaOwRxEDQHwwx4SC2zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ucg8wWPp; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720673106; x=1752209106;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SLE8iv1gS/925bWtDCRkm6vcnRWpUcxElWCPVPn23FQ=;
-  b=Ucg8wWPpspoAv8fFOCZBaRcxUZNsWY8h03MzCwsfh0xj3L7WRVKrqcHK
-   94wY0iI0u1DXd4JQsILuL7OWeSEW2CL+kkiXzacZEZYgCNpiot5my3Qqu
-   PqYIMuHLTIs5MjpECoh6ocNWQGiPaUe/vtcLEiqRd9lS+yoTPOUi2tag4
-   Jh6Ce056I/SRSF+2MOoWNYqiLFcDhe+ZvkPA+4GYWgHstYq/fkKFCo5qO
-   fADB9Ki+CG0GqP5zhLCRlKpHnxZyxYFqdZo9UPB+FZR+91ZFzUSrwWiHs
-   FWuvk5W1ktuEmG8wwRuQusZgyRE3fdNE+8lqUnx52ebHJgD+6V8eZErbB
-   A==;
-X-CSE-ConnectionGUID: OVd4Rpe+T+qZEHOljQAJGA==
-X-CSE-MsgGUID: mcWytCB3QOyVe0oCyMbVaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="21903977"
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="21903977"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 21:45:05 -0700
-X-CSE-ConnectionGUID: E6ssgs+dSTayW9Q3JUCXmg==
-X-CSE-MsgGUID: NY4EQmyVSNaQ1mBLcLGioQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="53613772"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa004.jf.intel.com with ESMTP; 10 Jul 2024 21:45:02 -0700
-Message-ID: <9b3b05c0-b43a-4a56-b885-f79ef9efb38b@linux.intel.com>
-Date: Thu, 11 Jul 2024 12:42:11 +0800
+	s=arc-20240116; t=1720673213; c=relaxed/simple;
+	bh=+KvGXzUeKuygJalFcpujZdXr7PyCpNIHgikBySpTKi8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J9BkDeuEf1EKtHBYiHWzVUQqMmdZcOAN3lQ0AETNgoKwb0/ovY4UnSDS/93pSdoPHIZGuo20SZjNmyTChyKj+pqjwY47icbLdG5/yrKWqrwxobj84pBTmAZRrc5GcFXOhAtBoAxYOI61poM3/1N8E0BcxozCZI3cRjDIKf792Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IDOvfxpq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720673210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lyfoEy9OwqFj0Sb+Bhj1Pj43zQ7mqRzrMZDAP0advz0=;
+	b=IDOvfxpqxjczOhH/zd/+Qy4hyuRyayKTN3njLu9bW5MswWBsQB2obCDFH0K08qmXbHiElu
+	MAaScmj6JC9YTR2+kTdBbofPa4bTW3bcpbt9epZUXS3SNi2ybKJXf0uJkvQIHvz4dmDUtg
+	QBlGDW/U1FZ48eiQOVgIsuo9H2vvp2E=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-459-uJPOl7pdOPmKtZHngS5pJw-1; Thu, 11 Jul 2024 00:46:44 -0400
+X-MC-Unique: uJPOl7pdOPmKtZHngS5pJw-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1faf6103680so2780345ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:46:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720673203; x=1721278003;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lyfoEy9OwqFj0Sb+Bhj1Pj43zQ7mqRzrMZDAP0advz0=;
+        b=Mgq0jBrj16+D/TgKKEyKGcQSFBFWjHsd3bZaGwO15zrj9xmjnQmXTmVreXxs835h7Q
+         X34l4vdHXw02hC/yf63BY9JWOWtOfzv92eOi/u7ZFHGpRa/INDyDwvC/OuOItrMi0Gt7
+         Ua+tAJ7ZlbqpeW8c0+B6Up94kGWRXazYy7wMp82rcrCkxwYXUuOXvWnQ3/vGsXu0BZpX
+         Z+KgGgWLjWQrYOzv/LeiMU0RQz84ZRBG3pXJgWLgnBrPjHvb00ECjZ0Xpb0OqDjIhptc
+         V/LKB4F4FlKNetL31eSKdU8YctaaiPHeQskjMeIIreFmOhFWVbbCxYMVRFMe0MkM0vyV
+         3PVA==
+X-Gm-Message-State: AOJu0YxJCI08v1xoPF9eCENUqGoi9bOxMhp6prdfqto0H9OMq0Jc/yWl
+	qOLkE6DtxcxwD7OtjaO2iWnDle75RI5Y6tcGA+q5EcHtReigU0kOeABIplWTk8yTjoATsItib+C
+	TvJd5CJwHYKrZsH/ajDyKciVUg9tUD0T7QwOSEHEMv5q+S1oVLloxcvxGjVPkBg==
+X-Received: by 2002:a17:903:11ce:b0:1fb:365:5e0 with SMTP id d9443c01a7336-1fbb6d25264mr61312145ad.14.1720673203588;
+        Wed, 10 Jul 2024 21:46:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGr8a+/UDzIKV6GoLXWla7TLTJFMgLIA7t+hPHot2H8qf5AANpsyZ+2DJbcMumnXPLtOqmfpg==
+X-Received: by 2002:a17:903:11ce:b0:1fb:365:5e0 with SMTP id d9443c01a7336-1fbb6d25264mr61311985ad.14.1720673203056;
+        Wed, 10 Jul 2024 21:46:43 -0700 (PDT)
+Received: from [172.20.2.228] ([4.28.11.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a2c055sm42643835ad.104.2024.07.10.21.46.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 21:46:42 -0700 (PDT)
+Message-ID: <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
+Date: Thu, 11 Jul 2024 06:46:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,80 +81,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] iommu: Convert response code from failure to invalid
-To: "Tian, Kevin" <kevin.tian@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Nicolin Chen <nicolinc@nvidia.com>,
- "Liu, Yi L" <yi.l.liu@intel.com>
-References: <20240710083341.44617-1-baolu.lu@linux.intel.com>
- <20240710083341.44617-4-baolu.lu@linux.intel.com>
- <BN9PR11MB5276EC68D1BBB52C9E6DDE558CA42@BN9PR11MB5276.namprd11.prod.outlook.com>
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+ tglx@linutronix.de, linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
+ x86@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+References: <20240709130513.98102-1-Jason@zx2c4.com>
+ <20240709130513.98102-2-Jason@zx2c4.com>
+ <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
+ <9b400450-46bc-41c7-9e89-825993851101@redhat.com>
+ <Zo8q7ePlOearG481@zx2c4.com> <Zo9gXAlF-82_EYX1@zx2c4.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB5276EC68D1BBB52C9E6DDE558CA42@BN9PR11MB5276.namprd11.prod.outlook.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zo9gXAlF-82_EYX1@zx2c4.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/10/24 5:56 PM, Tian, Kevin wrote:
->> From: Lu Baolu <baolu.lu@linux.intel.com>
->> Sent: Wednesday, July 10, 2024 4:34 PM
+On 11.07.24 06:32, Jason A. Donenfeld wrote:
+> On Thu, Jul 11, 2024 at 02:44:29AM +0200, Jason A. Donenfeld wrote:
+>> Hi David,
 >>
->> In the iopf deliver path, iommu_report_device_fault() currently responds
->> a code of "Response Failure" to the hardware if it can't find a suitable
->> iopf-capable domain where the page faults should be handled. The Response
->> Failure is defined in PCI spec (section 10.4.2.1) as a catastrophic error,
->> and the device will disable PRI for the function.
+>> On Wed, Jul 10, 2024 at 06:05:34AM +0200, David Hildenbrand wrote:
+>>> BTW, do we have to handle the folio_set_swapbacked() in sort_folio() as well?
+>>>
+>>>
+>>> 	/* dirty lazyfree */
+>>> 	if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio)) {
+>>> 		success = lru_gen_del_folio(lruvec, folio, true);
+>>> 		VM_WARN_ON_ONCE_FOLIO(!success, folio);
+>>> 		folio_set_swapbacked(folio);
+>>> 		lruvec_add_folio_tail(lruvec, folio);
+>>> 		return true;
+>>> 	}
+>>>
+>>> Maybe more difficult because we don't have a VMA here ... hmm
+>>>
+>>> IIUC, we have to make sure that no folio_set_swapbacked() would ever get
+>>> performed on these folios, correct?
 >>
->> Failing to dispatch a set of fault messages is not a catastrophic error
->> and the iommu core has no code to recover the PRI once it is disabled.
+>> Hmmm, I'm trying to figure out what to do here, and if we have to do
+>> something. All three conditions in that if statement will be true for a
+>> folio in a droppable mapping. That's supposed to match MADV_FREE
+>> mappings.
 >>
->> Replace it with a response code of "Invalid Response".
+>> What is the context of this, though? It's scanning pages for good ones
+>> to evict into swap, right? So if it encounters one that's an MADV_FREE
+>> page, it actually just wants to delete it, rather than sending it to
+>> swap. So it looks like it does just that, and then sets the swapbacked
+>> bit back to true, in case the folio is used for something differnet
+>> later?
 >>
->> Fixes: b554e396e51c ("iommu: Make iopf_group_response() return void")
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   drivers/iommu/io-pgfault.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+>> If that's correct, then I don't think we need to do anything for this
+>> one.
 >>
->> diff --git a/drivers/iommu/io-pgfault.c b/drivers/iommu/io-pgfault.c
->> index cd679c13752e..b8270ee5dcdb 100644
->> --- a/drivers/iommu/io-pgfault.c
->> +++ b/drivers/iommu/io-pgfault.c
->> @@ -229,7 +229,7 @@ void iommu_report_device_fault(struct device *dev,
->> struct iopf_fault *evt)
->>   err_abort:
->>   	dev_warn_ratelimited(dev, "iopf with pasid %d aborted\n",
->>   			     fault->prm.pasid);
->> -	iopf_group_response(group, IOMMU_PAGE_RESP_FAILURE);
->> +	iopf_group_response(group, IOMMU_PAGE_RESP_INVALID);
->>   	if (group == &abort_group)
->>   		__iopf_free_group(group);
->>   	else
+>> If that's not correct, then we'll need to propagate the droppableness
+>> to the folio level. But hopefully we don't need to do that.
 > 
-> this doesn't match the spec words on the use of INVALID:
+> Looks like that's not correct. This is for pages that have been dirtied
+> since calling MADV_FREE. So, hm.
 > 
->    One or more pages within the associated PRG do not exist or
->    requests access privilege(s) that cannot be granted. Unless the
->    page mapping associated with the Function is altered, re-issuance
->    of the associated request will never result in success.
-> 
-> this situation is not related to the permission of page mapping. Instead
-> it's a global problem applying to all functions submitting page requests
-> at this moment.
-> 
-> Though using FAILURE affects more functions sharing the PRI interface,
-> it also proactively avoids adding more in-fly requests to worsen the
-> low memory situation.
-> 
-> So none of the options looks perfect to me, but the existing code
-> responding FAILURE is more aligned to the spec?
 
-Fair enough. Perhaps we can keep the existing code as-is unless any real
-issues arise.
+Maybe we can find ways of simply never marking these pages dirty, so we 
+don't have to special-case that code where we don't really have a VMA at 
+hand?
 
-Thanks,
-baolu
+-- 
+Cheers,
+
+David / dhildenb
+
 
