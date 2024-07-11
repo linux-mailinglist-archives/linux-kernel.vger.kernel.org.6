@@ -1,110 +1,171 @@
-Return-Path: <linux-kernel+bounces-249699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFF992EEB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:19:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDB992EEB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3BB12892C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:19:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2011F1F21FD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28A416DC29;
-	Thu, 11 Jul 2024 18:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D593B16DECB;
+	Thu, 11 Jul 2024 18:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jkSK/D/7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="u4IMIUbP"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6A516D4FA
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92AA16D9CD
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720721982; cv=none; b=X/tdwg+rBvUwlD/a3VBabfcDGU8D/CE48+n+Ogz6fVUoD7dcfEPq111n5cOFCeNpettGh0njkzMX5dsLjS/YxEbz5gDj3T9i7t1m8xWHVrWqMTIQWL3BmG1ch7Djm8dmYeqJ03Xin64xyTNzuujcvLHevh5SASXZc4mlkpAdg0U=
+	t=1720721994; cv=none; b=Sl0aml1e2oSY9CvnGyIiakF3EOa+q7E7S7PrqaGAW6hhMIqvyrimYECPShzOPgGjvD+ve/LiTZFLwKiZURnXdtbMuSWHLsZdJ8h+1hSR+exFbZR85MmBGeRYF1PLxWO+GysxbLJuMXW4Bs64TrmjIS0Vb9pjtKP1u9DbQIH+IaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720721982; c=relaxed/simple;
-	bh=Eclwa3uElrMZeDtYKr10AnmVJlksudtD8oE64F0dyLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=InsgNsuqo00Oj5wfCzWpFidE0v2Do8bWAO1jYrs6aJbwhTt0NO2lr6VBxg9LQ3q1y2iSHs3AzHJ2fQAiHXVALJvG344sZtR0iWu7KNGsf+a5/lWQ7pFAzlf5m/lRU2cF10N8yWVI6ptX+YpupbPAHHLdN0cPXWSdqCjFmDjW/xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkSK/D/7; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720721980; x=1752257980;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Eclwa3uElrMZeDtYKr10AnmVJlksudtD8oE64F0dyLU=;
-  b=jkSK/D/7DpTJHNV/O9JyvwTjomyix1TTIaxxUJLQVuFiOQ/Z0DoMfzgK
-   NFPIsNii3MnSGni3isyierucuUNPJymBk+zQHRRnsj6KHrG6haou9HmX9
-   p2WKxBmDxGfVSLo7+1e8gdO+bHytvGxND9UDUHku9NCvAEaYmbJnaYlH8
-   NVyiEmDiEzfdB/IDvuCYVAO2oh6iL1dQkOINht2jZGlZEWisp52W7vaHv
-   LYUwJPw6cGI/rQe27bbrX7GLl4MiMG34gS450dMNDz1EhRYz1FJ0FstwA
-   4BGnszxkDo70eQxhJyCt+r5gvnRbFa2BxiiTwC4iQsK2757Etv0UXuACW
-   w==;
-X-CSE-ConnectionGUID: GELFaxZcSI6z6HIJYQFmeQ==
-X-CSE-MsgGUID: Z5VD0JhnQ9+Ym55zCNmddg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="28722309"
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="28722309"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 11:19:40 -0700
-X-CSE-ConnectionGUID: 8XpkcuTsTFOZvUpmG+p84Q==
-X-CSE-MsgGUID: F04CnuUeRIeHL6ey5UK3sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="48394020"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 11 Jul 2024 11:19:39 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sRyOF-000Zds-3C;
-	Thu, 11 Jul 2024 18:19:35 +0000
-Date: Fri, 12 Jul 2024 02:19:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20240710-cbc 12/13]
- ./usr/include/linux/ethtool.h:1644:15: error: unknown type name 'offsetof'
-Message-ID: <202407120212.LWwEpZgQ-lkp@intel.com>
+	s=arc-20240116; t=1720721994; c=relaxed/simple;
+	bh=VyJlcToMzx0LCINy0+uJWpolFnNw4aIb6nYGbE5ueCE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tinBSmilaSWe7peo6c1X2/nhh0MlWjAyL7rFgJAo9tRVPc75HI03p2QR3G2WGsSxiY3Tl0Pq+sLPMebc67CIHnbbjeKuV9FM4ki1v+0Zq/Tgei9EDSeeNxHciTtQBC59mQb0owZuGGIYFUFsFlXmvu9OYTRaNN5i6MF7XbGCxUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=u4IMIUbP; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5010a.ext.cloudfilter.net ([10.0.29.199])
+	by cmsmtp with ESMTPS
+	id RtP5s8K6QVpzpRyOWsapSN; Thu, 11 Jul 2024 18:19:52 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id RyOVsoM36vtoqRyOVs106a; Thu, 11 Jul 2024 18:19:51 +0000
+X-Authority-Analysis: v=2.4 cv=Ffcxxo+6 c=1 sm=1 tr=0 ts=66902247
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8 a=aq3Cxmdmga5VZ6caJNIA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=Fp8MccfUoT0GBdDC_Lng:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=d2Jmflu5nudn962vuPToAaUdux6l93VZQyfYfG0Szu4=; b=u4IMIUbPOI9t9d0Sw5kcQCxavT
+	/z0/MAe79wOBuhqjjb+/h9gmmkEdpjXbca1p7jz2DtnPTLASE8ajywfiDugYXVAqgBBzjAEAvrg/p
+	WbVpGHr1aeJa27gAREp7OJ+xn2sBZxOm5quZGQ3MKFnnVQxJF+avMCJ4UbV1xjPTzxy9F2ppWDtaW
+	Ib2Zd8bdObJh6tQLvvJWKtKcXPYv8hoYdAeHAD/sM5vKOpeghdpitfItbInSSVve776CtmX7LiCvB
+	fHBG9uwMRKGNOh++pJ57S89DGk/gWsYOZgAQMyxtpvRPAPTQsaJZr7E9sIo7n5zcdWP1oQJi1DBPt
+	3cYo7WYw==;
+Received: from [201.172.173.139] (port=35998 helo=[192.168.15.4])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sRyOU-002NJ6-1u;
+	Thu, 11 Jul 2024 13:19:50 -0500
+Message-ID: <382327b5-780e-4d04-8901-a7dae0ca6a2f@embeddedor.com>
+Date: Thu, 11 Jul 2024 12:19:49 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] scsi: message: fusion: struct _CONFIG_PAGE_IOC_4:
+ Replace 1-element array with flexible array
+To: Kees Cook <kees@kernel.org>, Sathya Prakash <sathya.prakash@broadcom.com>
+Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+ Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240711172432.work.523-kees@kernel.org>
+ <20240711172821.123936-6-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240711172821.123936-6-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sRyOU-002NJ6-1u
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:35998
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 61
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfJaaf2J62DfAk37AnNix50fLL+gSBtySHu9Kek/nMB27IgiLx7opmxvuYasK9taF5/7dUB9+MPiHpbliM1DYTMDOJlEBII/e4rmntLd5nVfIGhe40X2P
+ qhBTuOnLAOGMqi8vjEiJRSW5vJjGC0UQ171oyOnsrELSbU7A/fBwfKuQb+IjNzaOlhDjub9uKTUFM1NmK6ejFAOraCY+2ecE4pPOYN0MM9Clpcu2Jo8035b4
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240710-cbc
-head:   73efb8d9b6a2ba4b07021861a1760ec742ddf432
-commit: d2fc97b383bbbdff9312f7993dbc9fd9d44bf379 [12/13] ethtool: Avoid -Wflex-array-member-not-at-end warning
-config: i386-buildonly-randconfig-001-20240711 (https://download.01.org/0day-ci/archive/20240712/202407120212.LWwEpZgQ-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240712/202407120212.LWwEpZgQ-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407120212.LWwEpZgQ-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+On 11/07/24 11:28, Kees Cook wrote:
+> Replace the deprecated[1] use of a 1-element array in
+> struct _CONFIG_PAGE_IOC_4 with a modern flexible array.
+> 
+> Additionally add __counted_by annotation since SEP is only ever accessed
+> after updating ACtiveSEP:
+> 
+> lsi/mpi_cnfg.h:    IOC_4_SEP                   SEP[] __counted_by(ActiveSEP);  /* 08h */
+> mptsas.c:        ii = IOCPage4Ptr->ActiveSEP++;
+> mptsas.c:        IOCPage4Ptr->SEP[ii].SEPTargetID = id;
+> mptsas.c:        IOCPage4Ptr->SEP[ii].SEPBus = channel;
+> 
+> No binary differences are present after this conversion.
+> 
+> Link: https://github.com/KSPP/linux/issues/79 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-   In file included from <command-line>:
->> ./usr/include/linux/ethtool.h:1644:15: error: unknown type name 'offsetof'
-    1644 | static_assert(offsetof(struct ethtool_dump, data) ==
-         |               ^~~~~~~~
-   ./usr/include/linux/ethtool.h:22:1: note: 'offsetof' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
-      21 | #include <limits.h> /* for INT_MAX */
-     +++ |+#include <stddef.h>
-      22 | 
->> ./usr/include/linux/ethtool.h:1646:15: error: expected declaration specifiers or '...' before string constant
-    1646 |               "struct member outside of __struct_group()");
-         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
+Thanks!
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Gustavo
+
+> ---
+> Cc: Sathya Prakash <sathya.prakash@broadcom.com>
+> Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+> Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: MPT-FusionLinux.pdl@broadcom.com
+> Cc: linux-scsi@vger.kernel.org
+> Cc: linux-hardening@vger.kernel.org
+> ---
+>   drivers/message/fusion/lsi/mpi_cnfg.h | 10 +---------
+>   1 file changed, 1 insertion(+), 9 deletions(-)
+> 
+> diff --git a/drivers/message/fusion/lsi/mpi_cnfg.h b/drivers/message/fusion/lsi/mpi_cnfg.h
+> index bac49c162165..1167a16d8fb4 100644
+> --- a/drivers/message/fusion/lsi/mpi_cnfg.h
+> +++ b/drivers/message/fusion/lsi/mpi_cnfg.h
+> @@ -1077,21 +1077,13 @@ typedef struct _IOC_4_SEP
+>   } IOC_4_SEP, MPI_POINTER PTR_IOC_4_SEP,
+>     Ioc4Sep_t, MPI_POINTER pIoc4Sep_t;
+>   
+> -/*
+> - * Host code (drivers, BIOS, utilities, etc.) should leave this define set to
+> - * one and check Header.PageLength at runtime.
+> - */
+> -#ifndef MPI_IOC_PAGE_4_SEP_MAX
+> -#define MPI_IOC_PAGE_4_SEP_MAX              (1)
+> -#endif
+> -
+>   typedef struct _CONFIG_PAGE_IOC_4
+>   {
+>       CONFIG_PAGE_HEADER          Header;                         /* 00h */
+>       U8                          ActiveSEP;                      /* 04h */
+>       U8                          MaxSEP;                         /* 05h */
+>       U16                         Reserved1;                      /* 06h */
+> -    IOC_4_SEP                   SEP[MPI_IOC_PAGE_4_SEP_MAX];    /* 08h */
+> +    IOC_4_SEP                   SEP[] __counted_by(ActiveSEP);  /* 08h */
+>   } CONFIG_PAGE_IOC_4, MPI_POINTER PTR_CONFIG_PAGE_IOC_4,
+>     IOCPage4_t, MPI_POINTER pIOCPage4_t;
+>   
 
