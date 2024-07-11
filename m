@@ -1,157 +1,95 @@
-Return-Path: <linux-kernel+bounces-249175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DFD292E7FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:11:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA49192E802
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AF811F2186C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:11:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743E11F2146A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080FF15B145;
-	Thu, 11 Jul 2024 12:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D7115CD78;
+	Thu, 11 Jul 2024 12:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fHTEuUOv"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="Owb2RnTI"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF11E1459E3;
-	Thu, 11 Jul 2024 12:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF7C15CD42;
+	Thu, 11 Jul 2024 12:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720699851; cv=none; b=jYvrtRA5vN0Kc0pgnuqZltdsWjE/GTxeKdIAMqZCXXiAbYiXnXVRK61Sp+15wMKp9HEoTIJTDS2lGvoYb1yEiJ3Hzf9JYDh0OzzQgc4BLsih18IfesN7aXDHjjAnolp8flLJO7RlOBMUaXURIEuZ0yNgI8zo2MPyRpcIvianm1U=
+	t=1720699861; cv=none; b=TaXh0I6x7/+pzlnFG0Qpbq/KCBD8yDbCowjKGcL/lpFbyzOv4a/B/Fy4amYD3vBniTXBq5qLr0aZ9Rkr6FAq6Y/hKRezQxK98w5B5/X+d3RJYR4dcbWAoX+m5UeE61BDhyjRRe2uI1IPoepSKZ4Lmu249Iu9FbhPD5LOKOwkkmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720699851; c=relaxed/simple;
-	bh=XJwBrfIcWqjEPYahjyYBt4DTy6v62wPnyh8cd2LRczw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WpEIM/IVO0lveeR1Vh7cVO7eCOR/zkihJ7L1g0AZbKVXv5ycSSmLs1qOcvwUY2bHEGzp8BM6WLP6nthZzQXo9PCadZkEUHCUZoObJxRRmk83daQn6AqOd/LjRbuA8c4jhzfNSr+O24+AtHfjy3Di7eJhjbbK6bhwPHxEELVsSfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fHTEuUOv; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720699848;
-	bh=XJwBrfIcWqjEPYahjyYBt4DTy6v62wPnyh8cd2LRczw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fHTEuUOvUidwBEshRx8+oT12TKqyvganJ1dmVNZ5X63+aNrAQ0ENfIdsD48KEsLq1
-	 vqIASHgM7OmxMsEdS64bEDov74nHX6F7GtLaEG5n7ryS50TAe/Ud5q39U4ZgIFeqh9
-	 ulkoKhDaOV+cjKBFBZoIDE5ZJqipa4m1qC818o8ky4MBU8DskODNN+C8Pw1limtHts
-	 +mQ1m4G7mHQk7JmnbkhGSt67+jAB3Arkzbz2xr/GPlPt7Dx5g4xYKNGLXCxz8Pra5z
-	 wivHG1QdoCaVWgr6BzRiLHuQI73N7layJ3JwhHsOgUFjW6yXp9PrIXZUSsmNf45m9C
-	 10+hYQDVgQQiA==
-Received: from shreeya.shreeya (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: shreeya)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D103237812FA;
-	Thu, 11 Jul 2024 12:10:45 +0000 (UTC)
-From: Shreeya Patel <shreeya.patel@collabora.com>
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	shuah@kernel.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	Shreeya Patel <shreeya.patel@collabora.com>
-Subject: [PATCH] kselftest: cpufreq: Add RTC wakeup alarm
-Date: Thu, 11 Jul 2024 17:40:33 +0530
-Message-Id: <20240711121033.3569948-1-shreeya.patel@collabora.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1720699861; c=relaxed/simple;
+	bh=Z20/sCF5g3WtCr9/UKphITxI8tzAAYNyK+hrlF3OdIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CBJZKD/gTcikO0iPAEkX0M536SuluquMdCso3dgV2S57NxZr6G72OjFeBeNY0TEcf685+mWT8Dv+F+4FH7bhh6aoNRpsd+eJ2FH2+VCSuTpcJCKS1IQ7EJIt2XcMnFpmtm2dyrqW7XNo+y1Px4kLsWLMi3wZGaiZrJJC+zuZlgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=Owb2RnTI; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4WKYTg6vNSz1DPkZ;
+	Thu, 11 Jul 2024 14:10:47 +0200 (CEST)
+Received: from [192.168.0.25] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4WKYTg4L2Cz1DPkS;
+	Thu, 11 Jul 2024 14:10:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1720699847;
+	bh=ZhVrQsILYydXW0I2ququWpuLnNjaS/9rHPIQZwxhGVg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=Owb2RnTI4WtlRVyr6Ifmq2UuJsDQ0Jy/+UHIK1DEPPc6T8Ur+snybV/lYlHfnj2+i
+	 5gLSAbx00ic+HOv9w8TcC5cyn7mTu/OixRbiLP1JZlg46Pw6Ypdry63CLW+CIlqc+h
+	 /E0N/7a6Z8OxZoQS/gdJEEcKhB9xw1W02wzS4NqA=
+Message-ID: <5aa81417-9fe3-41e5-ac75-8dac52d02c64@gaisler.com>
+Date: Thu, 11 Jul 2024 14:10:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sbus: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ "David S. Miller" <davem@davemloft.net>
+Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20240619-md-sparc-drivers-sbus-char-v1-1-85acadb8f789@quicinc.com>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20240619-md-sparc-drivers-sbus-char-v1-1-85acadb8f789@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add RTC wakeup alarm for devices to resume after specific time interval.
-This improvement in the test will help in enabling this test
-in the CI systems and will eliminate the need of manual intervention
-for resuming back the devices after suspend/hibernation.
+On 2024-06-19 16:07, Jeff Johnson wrote:
+> With ARCH=sparc, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/sbus/char/envctrl.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/sbus/char/flash.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/sbus/char/uctrl.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/sbus/char/bbc.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/sbus/char/bbc_i2c.c | 1 +
+>  drivers/sbus/char/envctrl.c | 1 +
+>  drivers/sbus/char/flash.c   | 1 +
+>  drivers/sbus/char/uctrl.c   | 1 +
+>  4 files changed, 4 insertions(+)
 
-Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
----
- tools/testing/selftests/cpufreq/cpufreq.sh | 24 ++++++++++++++++++++++
- tools/testing/selftests/cpufreq/main.sh    | 13 +++++++++++-
- 2 files changed, 36 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/cpufreq/cpufreq.sh b/tools/testing/selftests/cpufreq/cpufreq.sh
-index a8b1dbc0a3a5..a0f5b944a8fe 100755
---- a/tools/testing/selftests/cpufreq/cpufreq.sh
-+++ b/tools/testing/selftests/cpufreq/cpufreq.sh
-@@ -231,6 +231,30 @@ do_suspend()
- 
- 		for i in `seq 1 $2`; do
- 			printf "Starting $1\n"
-+
-+			if [ "$3" = "rtc" ]; then
-+				now=$(date +%s)
-+				wakeup_time=$((now + 15)) # Wake up after 15 seconds
-+
-+				echo $wakeup_time > /sys/class/rtc/rtc0/wakealarm
-+
-+				if [ $? -ne 0 ]; then
-+					printf "Failed to set RTC wake alarm\n"
-+					return 1
-+				fi
-+
-+				# Enable the RTC as a wakeup source
-+				echo enabled > /sys/class/rtc/rtc0/device/power/wakeup
-+
-+				if [ $? -ne 0 ]; then
-+					printf "Failed to set RTC wake alarm\n"
-+					return 1
-+				fi
-+
-+				# Reset the wakeup alarm
-+				echo 0 > /sys/class/rtc/rtc0/wakealarm
-+			fi
-+
- 			echo $filename > $SYSFS/power/state
- 			printf "Came out of $1\n"
- 
-diff --git a/tools/testing/selftests/cpufreq/main.sh b/tools/testing/selftests/cpufreq/main.sh
-index a0eb84cf7167..f12ff7416e41 100755
---- a/tools/testing/selftests/cpufreq/main.sh
-+++ b/tools/testing/selftests/cpufreq/main.sh
-@@ -24,6 +24,8 @@ helpme()
- 	[-t <basic: Basic cpufreq testing
- 	     suspend: suspend/resume,
- 	     hibernate: hibernate/resume,
-+	     suspend_rtc: suspend/resume back using the RTC wakeup alarm,
-+	     hibernate_rtc: hibernate/resume back using the RTC wakeup alarm,
- 	     modtest: test driver or governor modules. Only to be used with -d or -g options,
- 	     sptest1: Simple governor switch to produce lockdep.
- 	     sptest2: Concurrent governor switch to produce lockdep.
-@@ -76,7 +78,8 @@ parse_arguments()
- 				helpme
- 				;;
- 
--			t) # --func_type (Function to perform: basic, suspend, hibernate, modtest, sptest1/2/3/4 (default: basic))
-+			t) # --func_type (Function to perform: basic, suspend, hibernate,
-+			   # suspend_rtc, hibernate_rtc, modtest, sptest1/2/3/4 (default: basic))
- 				FUNC=$OPTARG
- 				;;
- 
-@@ -121,6 +124,14 @@ do_test()
- 		do_suspend "hibernate" 1
- 		;;
- 
-+		"suspend_rtc")
-+                do_suspend "suspend" 1 rtc
-+                ;;
-+
-+                "hibernate_rtc")
-+                do_suspend "hibernate" 1 rtc
-+                ;;
-+
- 		"modtest")
- 		# Do we have modules in place?
- 		if [ -z $DRIVER_MOD ] && [ -z $GOVERNOR_MOD ]; then
--- 
-2.39.2
+Reviewed-by: Andreas Larsson <andreas@gaisler.com>
+
+Picking this up to my for-next.
+
+Thanks,
+Andreas
 
 
