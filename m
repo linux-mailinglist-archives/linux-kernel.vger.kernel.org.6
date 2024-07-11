@@ -1,724 +1,127 @@
-Return-Path: <linux-kernel+bounces-249293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD5292E98F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:32:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DB292E993
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 608E21C21540
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:32:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91CC7282310
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC4315ECED;
-	Thu, 11 Jul 2024 13:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOSfd26U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831B615F402;
+	Thu, 11 Jul 2024 13:33:05 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC2C4CE09;
-	Thu, 11 Jul 2024 13:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A12D4CE09;
+	Thu, 11 Jul 2024 13:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720704724; cv=none; b=tz3DJn5P629Q6vOcm2gwIFbxDXFB9hLfa5Y0u0vOzoGd7ZIhhktkuI6D8PBj0YbhW71xgMQnOFGKXN7cYSBbdCDzHRA6JCWwd15DTXC88dkIrxeXJSA4KrRgKQX3uFzO7ZRX65wtUf78nZl2olPEuByAknI/P0lViUcizc02X4c=
+	t=1720704785; cv=none; b=VVWIU60/voQWtRG6misuzy8M7hpxMEhn7LMbXy+xQFJ9GyqkWe+SifaGxdMsAyu0SL3h3fnK0DJBZNIuIMDwGBO7W6+cecV8ALIvEqTphU/oKIXVRE4QxJ5Uv+zHQyp39b+AtZx0U++qNnRWR5rkP0O6UCD7zjgiOfmtV8tb5qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720704724; c=relaxed/simple;
-	bh=E2JFJChgR6SYN7VvQ0Zsh/Ba2zODl10+/v1/8FOzLB4=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=qtHPgw/4+VeOjIdQexHnYQDZ4qjOAxGuk2NFh1iRIp/zLoVuS6jm1gWa/Sho3w/w99D+JQ1tCFltMbD5JGtm5CAM7zS6sGAkCluz+akjMmDi4WhkELXje2IhhrhAWqhnxquMn+4CfQpxeYuO1m68IMCkZl3yC/2ULv9QFZTINFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOSfd26U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB98C116B1;
-	Thu, 11 Jul 2024 13:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720704724;
-	bh=E2JFJChgR6SYN7VvQ0Zsh/Ba2zODl10+/v1/8FOzLB4=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=OOSfd26UyvGbBskF1EdHmCd/hU8tQ263ut3qFCp6kbFvtMOwiXrsksVM1T/O2vOPp
-	 IKtexmbmRYK4BiLEC84zKp2xsUI7AS1G3Me+Zy4w4NjBMt41FyvM6eOs5mCu4nsLaH
-	 gCweSMskbrXBPBttLvBXhiI2kZBLEGy/p+4zBXvgAJZsbZ45sYnNA+wqWJrr5x1dZI
-	 Whs1mIRieccNXpBSKVvO2w2iTD8vQ5/vTbQ2dr0Acy06xhw+7VMplmb4Rqkii+5H3k
-	 0MAQ6tq++Mu11R9RMX5/Jy6erYzyXsbAsjNBJt7PI7/QIf3MtCpxFswyrB++VnL1o0
-	 9mIH3NooitTEg==
-Date: Thu, 11 Jul 2024 07:32:03 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1720704785; c=relaxed/simple;
+	bh=Avkb30PRdUlac2ai5AaEn9yduRB8QqSAkcEZ2aaOQ18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nnWrFBg0dDEzF8PATwCGrV0xebolIbFzj6tbd+tGWAABe62f8NMa73qgm8PLo12exoYsTSoYcFmthIbstkVQQ1O6qqirZgjhH3GtZ6Dq16kKnxygFsAZ6ZJzMcEskLhJfUFRqu16tgUOQOdbY0Dzz6dwDsQAVk4+xPRfjpZV9l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WKbCv5VSRzQlMm;
+	Thu, 11 Jul 2024 21:28:59 +0800 (CST)
+Received: from kwepemf200016.china.huawei.com (unknown [7.202.181.9])
+	by mail.maildlp.com (Postfix) with ESMTPS id C7830140361;
+	Thu, 11 Jul 2024 21:32:56 +0800 (CST)
+Received: from [10.108.234.194] (10.108.234.194) by
+ kwepemf200016.china.huawei.com (7.202.181.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 11 Jul 2024 21:32:55 +0800
+Message-ID: <4f9d5881-11e6-4064-ab69-ca6ef81582b3@huawei.com>
+Date: Thu, 11 Jul 2024 21:32:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
- linux-iio@vger.kernel.org, Michael Hennerich <michael.hennerich@analog.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org, 
- =?utf-8?q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>, 
- Dimitri Fedrau <dima.fedrau@gmail.com>
-In-Reply-To: <20240711114221.62386-4-kimseer.paller@analog.com>
-References: <20240711114221.62386-1-kimseer.paller@analog.com>
- <20240711114221.62386-4-kimseer.paller@analog.com>
-Message-Id: <172070472328.2037442.12046185046472232081.robh@kernel.org>
-Subject: Re: [PATCH v6 3/6] dt-bindings: iio: dac: Generalize DAC common
- properties
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] ext4: fix fast commit inode enqueueing during a full
+ journal commit
+To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>, Theodore Ts'o
+	<tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>, Jan Kara <jack@suse.cz>,
+	Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240711083520.6751-1-luis.henriques@linux.dev>
+Content-Language: en-US
+From: "wangjianjian (C)" <wangjianjian3@huawei.com>
+In-Reply-To: <20240711083520.6751-1-luis.henriques@linux.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemf200016.china.huawei.com (7.202.181.9)
 
-
-On Thu, 11 Jul 2024 19:42:18 +0800, Kim Seer Paller wrote:
-> Introduce a generalized DAC binding that can be used by DACs that have
-> similar properties adding output-range-microamp and output-range-microvolt.
+On 2024/7/11 16:35, Luis Henriques (SUSE) wrote:
+> When a full journal commit is on-going, any fast commit has to be enqueued
+> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
+> is done only once, i.e. if an inode is already queued in a previous fast
+> commit entry it won't be enqueued again.  However, if a full commit starts
+> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
+> be done into FC_Q_STAGING.  And this is not being done in function
+> ext4_fc_track_template().
 > 
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> This patch fixes the issue by re-enqueuing an inode into the STAGING queue
+> during the fast commit clean-up callback if it has a tid (i_sync_tid)
+> greater than the one being handled.  The STAGING queue will then be spliced
+> back into MAIN.
+> 
+> This bug was found using fstest generic/047.  This test creates several 32k
+> bytes files, sync'ing each of them after it's creation, and then shutting
+> down the filesystem.  Some data may be loss in this operation; for example a
+> file may have it's size truncated to zero.
+> 
+> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 > ---
->  .../devicetree/bindings/iio/dac/dac.yaml      | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/dac.yaml
+> Hi!
 > 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/addac/adi,ad74413r.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,max11410.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,max11410.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,max11410.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/xlnx,zynqmp-ams.example.dtb: channel@30: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/xlnx,zynqmp-ams.example.dtb: channel@31: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/xlnx,zynqmp-ams.example.dtb: channel@38: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads1015.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads1015.example.dtb: channel@4: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.example.dtb: channel@4: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.example.dtb: channel@5: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.example.dtb: channel@6: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads131e08.example.dtb: channel@7: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/microchip,pac1934.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/microchip,pac1934.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/microchip,pac1934.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/microchip,pac1934.example.dtb: channel@4: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads7924.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads7924.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads7924.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,ads7924.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/microchip,mcp3564.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/microchip,mcp3564.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/microchip,mcp3564.example.dtb: channel@11: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/microchip,mcp3564.example.dtb: channel@22: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/microchip,mcp3564.example.dtb: channel@23: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7292.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7292.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7292.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7292.example.dtb: channel@4: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7292.example.dtb: channel@5: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7292.example.dtb: channel@6: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7292.example.dtb: channel@7: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad4130.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad4130.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad4130.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad4130.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad4130.example.dtb: channel@4: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.example.dtb: channel@4: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.example.dtb: channel@5: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.example.dtb: channel@6: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/ti,tsc2046.example.dtb: channel@7: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7124.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7124.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7124.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/adi,ad7124.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/maxim,max34408.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/maxim,max34408.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/allwinner,sun20i-d1-gpadc.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/allwinner,sun20i-d1-gpadc.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.example.dtb: channel@39: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.example.dtb: channel@9: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.example.dtb: channel@a: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.example.dtb: channel@e: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.example.dtb: channel@f: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.example.dtb: channel@44: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.example.dtb: channel@47: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.example.dtb: channel@4: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.example.dtb: channel@5: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.example.dtb: channel@6: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.example.dtb: channel@7: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.example.dtb: channel@13: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.example.dtb: channel@14: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/adc/st,stm32-adc.example.dtb: channel@15: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/afe/current-sense-shunt.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/frequency/adi,admfm2000.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/frequency/adi,admfm2000.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ltc2688.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ltc2688.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5755.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5755.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5755.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5755.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.example.dtb: channel@4: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5770r.example.dtb: channel@5: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@4: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@5: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@6: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@7: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad5592r.example.dtb: channel@6: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.example.dtb: channel@16: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.example.dtb: channel@17: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,cpm1-scc-qmc.example.dtb: channel@19: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/ti,tmp421.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/ti,tmp421.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/nuvoton,nct7802.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/nuvoton,nct7802.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/nuvoton,nct7802.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/nuvoton,nct7802.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/adi,ltc2991.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/adi,ltc2991.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/adi,ltc2991.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/adi,ltc2991.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/ti,tmp464.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/ti,tmp464.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/ti,tmp464.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/national,lm90.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/national,lm90.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/national,lm90.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/adi,ltc2992.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/adi,ltc2992.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/gateworks-gsc.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/gateworks-gsc.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/gateworks-gsc.example.dtb: channel@b: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.example.dtb: channel@6: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.example.dtb: channel@4f: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/fsl,imx8qxp-csr.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/fsl,imx8qxp-csr.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-ldb.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-ldb.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pixel-combiner.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/bridge/fsl,imx8qxp-pixel-combiner.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/iqs269a.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/iqs269a.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/iqs269a.example.dtb: channel@2: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/iqs269a.example.dtb: channel@3: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/iqs269a.example.dtb: channel@4: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/iqs269a.example.dtb: channel@5: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/iqs269a.example.dtb: channel@6: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/input/iqs269a.example.dtb: channel@7: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/bus/fsl,imx8qxp-pixel-link-msi-bus.example.dtb: channel@0: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/bus/fsl,imx8qxp-pixel-link-msi-bus.example.dtb: channel@1: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/thermal/qcom-spmi-adc-tm-hc.example.dtb: channel@4c: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/thermal/qcom-spmi-adc-tm5.example.dtb: channel@4f: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/thermal/qcom-spmi-adc-tm5.example.dtb: channel@44: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/thermal/qcom-spmi-adc-tm5.example.dtb: channel@147: 'oneOf' conditional failed, one must be fixed:
-	'output-range-microamp' is a required property
-	'output-range-microvolt' is a required property
-	from schema $id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240711114221.62386-4-kimseer.paller@analog.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+> v4 of this patch enqueues the inode into STAGING *only* if the current tid
+> is non-zero.  It will be zero when doing an fc commit, and this would mean
+> to always re-enqueue the inode.  This fixes the regressions caught by Ted
+> in v3 with fstests generic/472 generic/496 generic/643.
+> 
+> Also, since 2nd patch of v3 has already been merged, I've rebased this patch
+> to be applied on top of it.
+> 
+>   fs/ext4/fast_commit.c | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+> index 3926a05eceee..facbc8dbbaa2 100644
+> --- a/fs/ext4/fast_commit.c
+> +++ b/fs/ext4/fast_commit.c
+> @@ -1290,6 +1290,16 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
+>   				       EXT4_STATE_FC_COMMITTING);
+>   		if (tid_geq(tid, iter->i_sync_tid))
+>   			ext4_fc_reset_inode(&iter->vfs_inode);
+> +		} else if (tid) {
+> +			/*
+> +			 * If the tid is valid (i.e. non-zero) re-enqueue the
+one quick question about tid, if one disk is using long time and its tid 
+  get wrapped to 0, is it a valid seq? I don't find code handling this 
+situation.
+> +			 * inode into STAGING, which will then be splice back
+> +			 * into MAIN
+> +			 */
+> +			list_add_tail(&EXT4_I(&iter->vfs_inode)->i_fc_list,
+> +				      &sbi->s_fc_q[FC_Q_STAGING]);
+> +		}
+> +
+>   		/* Make sure EXT4_STATE_FC_COMMITTING bit is clear */
+>   		smp_mb();
+>   #if (BITS_PER_LONG < 64)
+> 
+-- 
+Regards
 
 
