@@ -1,191 +1,99 @@
-Return-Path: <linux-kernel+bounces-249491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB5292EC63
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:11:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277ED92EC67
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837D71F24C9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:11:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D06671F24D06
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE14F16D31B;
-	Thu, 11 Jul 2024 16:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472F116CD15;
+	Thu, 11 Jul 2024 16:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pNMks953"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKgJRwIh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745B416B392
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8320016B392;
+	Thu, 11 Jul 2024 16:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720714297; cv=none; b=mZohLvXqXtspHSWnRHx6mU3QuZvHoldrRIl47y58N3G7jErIVT3qmnPB3rR/r/mwSIPc31Kj/HTlUGB+Z2K0aved/4V/OauHdpW4UxMukpxWdBJc0Y3qLZ3oQ1hfPJNDEJ3qeFcdYYTTOknghjOkvKpdfL93SdFMkk/2gGrrEvw=
+	t=1720714334; cv=none; b=NiXdK7i/PK859xpOyP1EhwFU9AnbZWZanKTVuVGIfRyYG793rNIKe/BqIxVP157T3R5VCWbQ7y4jjQH+zwbc+riqyhqgVTBzt+4Us3+LIuPH+a9aTQRI4caObKyXxCAIZHXx1ynDyG3ngl+RDXo6VRpFCDpSYJZhP0mfm2HFH+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720714297; c=relaxed/simple;
-	bh=RRwESqfur9hjuj4i+nTtpR38U3Kz44Xajo3B8ZD7Kg4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WUY1Y1cW4Qzlk/w7rFvfXf57fLwfl+liuiS7YgABHfkhY+vZvuGrbf42FgmIxVU8UrS1ZZ9KMHMajbDNtxoMvNjhmEQlcb6CumS71FZwh/hkmkT+HIJTEnT1p2gW1YCRqvuba8kWrlYUP2duqyw+ekodaPH3pSPoQZgM9DEh57M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pNMks953; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d9234b77dfso478136b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720714294; x=1721319094; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XoNnDXcZA2Pho5pGFkRE/EwXRyBHfQQdctIQQyizVyE=;
-        b=pNMks953QGk94QoHHKD0Lce0pwov1e4tScjATNeUNi8BzhU2pO288Al9WySil0ub4G
-         2kJYizs93Wfb/DWiJPI0Q0DFCsIUaAEWgbkBrPbMPlOW3FvbJkVXaioCYJl6qPVCWqc0
-         4Jt5vt50oCfbt1T4rgs/lODz/yDq1oHdoHsI1HUO1yxCGkvRJEjTb3DvRU3f2JjBvNy/
-         zvvbnvYcU/9h9T80DGT/BkmzEsf1UtCovL6AV42jcazxnv7MS+EXM1gydXLs6VUfwfI/
-         43cirTu0qvFQXnEbW0QbrAaPCWSz3eO9DDw19vAzsTs86ZCsBznTC8dhTC11fmtIPx1z
-         hCiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720714294; x=1721319094;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XoNnDXcZA2Pho5pGFkRE/EwXRyBHfQQdctIQQyizVyE=;
-        b=g6q07SJgouGCEaMg2KRLku2GPkDMyRs62WDX8vKeEQn0knnyXEV3L1yie00veq1hLc
-         gG63Csg1YjfpoLB26N8CLS7pIri4tRqpPJmGYFOxeZLI1uy3qxIvIbMXlrH7jRat9v3c
-         ll4vFH27wmF9PTLptw1zInmlwepFVMaLmvo/02kFrY5oUaJOtm1oCuuLJXePDlr8h1+9
-         a8XPhvq5GKvpzV2sDCabR/lBp/1hXClcrdX67oIPc5ddQYlLUmorpm7CFcK+iAbSqHAB
-         MZnCeeKkIv7z4uDviPEWuBGABfrxHuaBquiQV36qVMm5jup38NcPeFemaQPj+ff0nK1Z
-         Ri6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXP+tLeUqaNNIHTgAVTxzYqUPUWWGI2Re/zLgzZcqbN/mx3M302/fGiRdOfJWL1rqrrBJ6wV+tZJFvo9YkLBNFYzM9WnesqsQCSsKg3
-X-Gm-Message-State: AOJu0Yz1jLsRx1/nidR6ZQTzp7aHFkE6o1FdqHXo1zxi3bbX2BihxStc
-	1iCqf6xNtbHQ89UqpsHp2d46aTUq55emkSwL1RDCjdUwED8SHJdmeIlYp7kv0/gk/VRxnGwELSx
-	Z
-X-Google-Smtp-Source: AGHT+IG5JmkBdbNyGrb7Fgc/ruuuW4qvTAb5wDj98aD29n/TX0gIJrTNfnFqyrY1biP0mOEFCNiCCA==
-X-Received: by 2002:a05:6808:15a3:b0:3da:a16e:1764 with SMTP id 5614622812f47-3daa16e1f72mr1604710b6e.4.1720714294529;
-        Thu, 11 Jul 2024 09:11:34 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70374f882f0sm1251113a34.39.2024.07.11.09.11.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 09:11:34 -0700 (PDT)
-Message-ID: <14695107-a119-4f68-b55a-509cbcf8a64a@baylibre.com>
-Date: Thu, 11 Jul 2024 11:11:33 -0500
+	s=arc-20240116; t=1720714334; c=relaxed/simple;
+	bh=vDhm4iKUhB3g5WYPqXvLPS4hLGM8VplEQMGAsbyCkEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fCmifenK9Bq7AfX6OKTkNtB9TSR8StxkTYtBDO/+vZiWpNgv+K8kpIxBOURXo3+kC7MCYx4EJthfJKNNAGvoe5Os5dlRT3yIJPDdHKwYlbiiKNCI4m4mz8dn/dIXCCLlKGb1RG4FMfedpxrs9QEFSnsH0iJ7Rar+ITgbWW3vq8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKgJRwIh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BBA9C116B1;
+	Thu, 11 Jul 2024 16:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720714334;
+	bh=vDhm4iKUhB3g5WYPqXvLPS4hLGM8VplEQMGAsbyCkEw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IKgJRwIhs1DxJsnIDW1XFs/XqXJ85ch+U8aMK0q0GD0pOVZ1B8BkefqWY8YLItxbY
+	 UO0jpyURbrtaWDa0QlbCtHUdF6YDcvlOHWkXxTUi+SB0G9bKYO3vNoBeo/G5SZtUC4
+	 lzu7rHIScDEgYeYH0V4+HA6xKfHOK5QfmSX785nNfw2YcSZht7+4II+9e7A/k8X4GF
+	 +QSDHFFZ4HL+0TAI/4U35OBuje9l2Hl8wJo7EWqvF5w7xi5yZ1UUhcig+ShxQg8tax
+	 d0oYNtiVeV0JSOYOHb+Yjum6mHCNEE067XEOc+aCyo/x9jPNXaA9MHKXU3NlFXOXkb
+	 mtGZ8misgBGnw==
+Date: Thu, 11 Jul 2024 17:12:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Ian Abbott <abbotti@mev.co.uk>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RESEND PATCH] rtc: ds1343: Force SPI chip select to be active
+ high
+Message-ID: <37049fbe-6a7f-49df-a093-2f4f7351592e@sirena.org.uk>
+References: <20240710175246.3560207-1-abbotti@mev.co.uk>
+ <20240710184053c34201f0@mail.local>
+ <2b0e8a6c-f89e-4d71-a816-9da46ea695eb@mev.co.uk>
+ <bd7c0eb9-bcb6-42e3-8be6-3d07452e3fd5@sirena.org.uk>
+ <6f122282-1675-497f-bc2f-0bbfba6640aa@mev.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] iio: adc: ad4695: Add driver for AD4695 and
- similar ADCs
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Ramona Gradinariu <ramona.gradinariu@analog.com>
-References: <20240624-iio-adc-ad4695-v3-0-a22c302f06bf@baylibre.com>
- <20240624-iio-adc-ad4695-v3-2-a22c302f06bf@baylibre.com>
- <20240629202003.1b72f0d0@jic23-huawei>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240629202003.1b72f0d0@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XjwW/yTPZkLPBfeP"
+Content-Disposition: inline
+In-Reply-To: <6f122282-1675-497f-bc2f-0bbfba6640aa@mev.co.uk>
+X-Cookie: Individualists unite!
 
-On 6/29/24 2:20 PM, Jonathan Cameron wrote:
-> On Mon, 24 Jun 2024 17:01:54 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
-> 
 
-...
+--XjwW/yTPZkLPBfeP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->> +
->> +/**
->> + * ad4695_read_one_sample - Read a single sample using single-cycle mode
->> + * @st: The AD4695 state
->> + * @address: The address of the channel to read
->> + *
->> + * Upon return, the sample will be stored in the raw_data field of @st.
->> + *
->> + * Context: can sleep, must be called with iio_device_claim_direct held
->> + * Return: 0 on success, a negative error code on failure
->> + */
->> +static int ad4695_read_one_sample(struct ad4695_state *st, unsigned int address)
->> +{
->> +	struct spi_transfer xfer[2] = { };
->> +	int ret;
->> +
->> +	ret = ad4695_set_single_cycle_mode(st, address);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Setting the first channel to the temperature channel isn't supported
->> +	 * in single-cycle mode, so we have to do an extra xfer to read the
->> +	 * temperature.
->> +	 */
->> +	if (address == AD4695_CMD_TEMP_CHAN) {
->> +		/* We aren't reading, so we can make this a short xfer. */
-> I'd be tempted to let the compiler figure out it can combine storage for xfer and
-> do something like
-> 		struct spi_transfer xfer[2] = {
-> 			{
-> 				.bits_per_word = 8,
-> 				.tx_buf = ...
-> 
-> 			}, {
-> 			},
-> 		};
-> 
-> 		st->cnv_cmd2 = ...
-> etc
-> 
-> Advantage is that it is clearly structured data.   Up to you though to
-> decide if this is worth doing. I don't care that much!
-> 
-> 
->> +		st->cnv_cmd2 = AD4695_CMD_TEMP_CHAN << 3;
->> +		xfer[0].bits_per_word = 8;
->> +		xfer[0].tx_buf = &st->cnv_cmd2;
->> +		xfer[0].len = 1;
->> +		xfer[0].cs_change = 1;
->> +		xfer[0].cs_change_delay.value = AD4695_T_CONVERT_NS;
->> +		xfer[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
->> +
->> +		/* Then read the result and exit conversion mode. */
->> +		st->cnv_cmd = AD4695_CMD_EXIT_CNV_MODE << 11;
->> +		xfer[1].bits_per_word = 16;
->> +		xfer[1].tx_buf = &st->cnv_cmd;
->> +		xfer[1].rx_buf = &st->raw_data;
->> +		xfer[1].len = 2;
->> +
->> +		return spi_sync_transfer(st->spi, xfer, 2);
->> +	}
-> 
-> then an else here to reduce the scope of another xfer structure.
+On Thu, Jul 11, 2024 at 04:29:07PM +0100, Ian Abbott wrote:
 
-Tempting, but then I risk the complaint of else after return. :-)
+> Regarding `spi-cs-high` in the device tree, what about the compatibility
+> table for `spi-cs-high` and `cs-gpio` active level in
+> "Documentation/devicetree/bindings/spi/spi-controller.yaml"?
 
-I also realized that the second xfer above is the same as the one
-below, so could skip the return here and avoid some duplicated code
-(just need to add an index variable instead of hard-coding xfer[0]).
+Specifying spi-cs-high should be equivalent to setting the mode in the
+driver, it's just a redundant way of saying the same thing.
 
-> 
->> +
->> +	/*
->> +	 * The conversion has already been done and we just have to read the
->> +	 * result and exit conversion mode.
->> +	 */
->> +	st->cnv_cmd = AD4695_CMD_EXIT_CNV_MODE << 11;
->> +	xfer[0].bits_per_word = 16;
->> +	xfer[0].tx_buf = &st->cnv_cmd;
->> +	xfer[0].rx_buf = &st->raw_data;
->> +	xfer[0].len = 2;
->> +
->> +	return spi_sync_transfer(st->spi, xfer, 1);
->> +}
+--XjwW/yTPZkLPBfeP
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaQBFcACgkQJNaLcl1U
+h9CGJAf/c51MoOBzHFY//zUxIpeTgnJGKUmKPEYKHU7ChwWW4lT+r591AY0ZXH26
+la0QF+IJVfDu0DnedCc9v/6+nBZMRrbuZOTLsYsr00+81/zlJc0Hccc1j0zmm7HH
+lQd8+HzTtPJ58wbVgI/hAebpa16+bUTEJOu+Q3HLl4/XZs3IdHrO3ZJJFcrFadNN
+EvL0HxIH5RgDlV9cPyFv0w+qADJv3L+tT6pxfhwjjlebEuVCfAPARGGeBD79gMtj
+bloPG5AFKhwjv7eurs++K3XsaO4D3f+ztW5e+cJt3YbomXZWhWkm5PCMtik+W8O+
+dolfsWp/5CA2O5/8V6moGqF2RWgoWA==
+=0+8q
+-----END PGP SIGNATURE-----
+
+--XjwW/yTPZkLPBfeP--
 
