@@ -1,187 +1,153 @@
-Return-Path: <linux-kernel+bounces-248957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4C992E465
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:21:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6401092E453
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69085B214D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1920B1F22645
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB9315B12D;
-	Thu, 11 Jul 2024 10:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C29158A1E;
+	Thu, 11 Jul 2024 10:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t4Pb4xmu"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ut13nFWH"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D673158D96
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9AF157A59
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720693233; cv=none; b=HfwBSwSOxGjplaaoJVep4RvnxmGDwkExyAEhUWnidI8189dV0cTM5skc9jz7oPl23Po6/LxJrmnaioy4MBT3vn53tNnMPh/JIut/ZF5i2fG+X2gWeN20ChVnebYpGlkZhQibpta3xGFXZfi7l6AL8QC13GDJF2gQDZwkJxtMzeI=
+	t=1720693204; cv=none; b=fmjBzehgUXaKndJjnqQQSTt9lnn7HAj4vx1kJKo95PDMgzkxFDkwO9Jn7sqbUwpXFBhSSt0Orb7QSehQjRlost+24JzfSeCJd4ZcUFPGfzFq8xk7zismmVtqcgg171rtepUa63Em92waBN/JODqsKumHjCakgroH+65fcqkIxuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720693233; c=relaxed/simple;
-	bh=atFigx0T1LVGe14ZAvm1oql6R4jmd8118+NKg9FdPio=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jfv5f6x+ArVy1IFI+hZPXYSGYPY31y2dACHm8ynP5oMTvd0NP9zS8ATnUwtxEk2L7UALOtZqYo2zn7jToaSOROY150nVARi3SOd42IddRgFARbhQ9jCpuqGuB5t5rvyX2cWhGVJIB2hcExRGXuX94my7MgKMGuyHggYu7X8TP7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t4Pb4xmu; arc=none smtp.client-ip=209.85.219.173
+	s=arc-20240116; t=1720693204; c=relaxed/simple;
+	bh=Te0Lw1oxuPXepV/5h7IQuALOgj6ZhURsQxOt9/IHXPc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lhiCbTh1/zJf7zKKAmvR0zAQKGtJAQFR2zn4viMiqo74yhJjeib65NQgjZ2Enc+t97urIbBP5ZJhhyj35Z66LqM7cfPS9a+mKLRB8EDUAgsIqTXmUHlFbuFVIVqozBqF4zlzIUX1kmfT42Ppsssv1PeVyUBgOQhLNe3TFxA6xgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ut13nFWH; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e04f1bcbf84so740909276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:20:30 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4277a5ed48bso4983605e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:20:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720693229; x=1721298029; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wx798dgzG8dNc2c2k8oAMTgPjHa/fzRaZJmr2infrms=;
-        b=t4Pb4xmuSY5alFYOA8oE1QyVdRFxmh2bC5/n2kXQ/l8cuRPp80OqEt4IkvkTl7KrbD
-         KsDDlWbQ9jHgVVAIyvS2m+ABUIPQ1iNjh18lxNouIqCuR0KIPRv2Ntp0tT3u8CHYwaGW
-         EY/YG1niDPSwFRevNFSAlccl8koVImHZ8S/ZU9WjXXPQ63hob6UmQV6diMUNgoiSMv6v
-         Y+PaxgSy7OXkNJpWoUttWt9c4O5Znh7FpAUzkdO4v5xQfsgUt3aL/1aTPGp8Lc+FnJ2A
-         aa0XNHMqj/Byg1O08VJoltZRac8w5lQqRSNEwDhzabknF4tiXF1bODdUUUwZDAHUFw87
-         pfkw==
+        d=linaro.org; s=google; t=1720693201; x=1721298001; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NpEPOR+4bYifIxXAHWhUoDP3ysZA8Zm0c8+Ht0LO1TA=;
+        b=ut13nFWHV2SFSwyKg8eMtIyLnzLTRCi947pSOL7+KHsC5u2iDwVmceEU/6JlRjuJDe
+         7BY5tGwCaMt8xF4Q3jkblU/PGGIplgIMi6tQ8GoB9f4eb+L3aUc1Ohx+LvgTfaJeo0OQ
+         owuJ4zVqr/RUbYqoCpgnWL4Qf+OOHnVfnh1j4ZpNuUcSfPTqLfohIYsMwCunWl1BmG9P
+         PuNCHOpi8JHYFC6I0gwtLHX06L53lZgIrVZg3jDpQjLaihUuP5vwYy8w4sJ8u8ECqJB3
+         o0G5jOnxryXXYzY5iQvstsKlkUFCJAuQoullZpLhnn61XhJ4cRj9/q/UydjaV9yF7mXq
+         cLuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720693229; x=1721298029;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1720693201; x=1721298001;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Wx798dgzG8dNc2c2k8oAMTgPjHa/fzRaZJmr2infrms=;
-        b=BLEuzKmUrc0xqnskMbCG5eYtawWWhRtvXOVy5Sqg8zydazwp8Bl5R7gmMtRZ5WQR4s
-         Ttal8BAzZ+9RsUsDXVDPqUNDLg43wy6RaASQ3PrxSyX0R1oqHmPsYBJhKbtGVqHqyHWZ
-         bITsGi0lCDw6z+mLWmrNb22BEIY+LKEvcY9hNtiBYUW9jQDQHJGFvgplRvvhe6tjkuSp
-         yQDM0dJQTL9aFpGYTNCYeUmo53elHZ26SCdE/a8tc7of0nhx18wXBUf3Q5B2c5dHe2gM
-         3bX4px4rUu9ZB/d6KGRbc+B2hpjalD+yVJQV+8WbrTe6FclcIMCo8A/LU+rgUMus9+Sy
-         pH8w==
-X-Forwarded-Encrypted: i=1; AJvYcCW3IOya0ACvSc4iTmbvttQyrElA7ULmDm89P0iFmoXGcGujqnKLvEu5tLanFTf3ZKRVcrHvx11nbo9nNfpy0y99XSkt3k0/VGqr54Rg
-X-Gm-Message-State: AOJu0YwxDv333OPlBtPCZIPCgUtpjfASjMYF3Qml/pylsPoGtqRCvIpL
-	KQc7amJk5HS7F7OWgmwdoRLFLb0S2CaVmthacIICMfeU3MVAY8chzsf+ikARqvWmJ1FLMK6CgcI
-	2mExALbWqp1lTdJl0MNsHs6GwZH5BJhJdqnU6xg==
-X-Google-Smtp-Source: AGHT+IFGTZUKBH76h5uq4mjZBsgTm0ziinY4pRCuByE2zxYdVCK/mzXjbYiNoXBWXVtpl0KBz7KVFr7oFeDOJY8Bfro=
-X-Received: by 2002:a25:d882:0:b0:dc2:5553:ca12 with SMTP id
- 3f1490d57ef6-e041b059302mr8762819276.14.1720693229469; Thu, 11 Jul 2024
- 03:20:29 -0700 (PDT)
+        bh=NpEPOR+4bYifIxXAHWhUoDP3ysZA8Zm0c8+Ht0LO1TA=;
+        b=r60h4CFBKzvwezofz6mAi7YOrpkfgSVRgqQBd8SLGt25wZAKz5DkV5/Jm96r6lgrtU
+         vmz7zcN5u1WHClL2gyv6YSR2k6NgHjW7ZPhTIUD40MCIYE/7jbSbS2ra+ZsPD9Yt0Hjk
+         1kSqIt/6GdLYpcAp4A3oUDMnIbe3vWN4Ip5OEpgBg54bvf2O2sL3gzJeF8XblyEHqeMZ
+         eXpTpnL57tPxAyiHKUFdEvelTIoiFIEfN17QPHenI9JkO4Gdqm2vxpxmKZTBon06lYyN
+         l1mV32vWAYo8Hqs3SHNj3c//vqyT4amHHnLhTebP2JbWye5MLlKFIOJsRQEFv4TYhpLs
+         EF7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXE/SXxmhQ3eKqGqbXTdMVu+3QCsNWVq3jXbnbFTSj5/KylkMIAP6JKmu70KqRBc63XqHU0dP1YDJiDMkU6i1kZitL/D4O2Dnf5E1lU
+X-Gm-Message-State: AOJu0YwiPLiFRjFaazqClBtWHkC12QpNB3T6sYgIAIWoIa00CkW6UJ1O
+	rGzgvhEO1ZaAa1/1GL4e1b4C1qsLH30nP6wmQydXX4rtTYY3jn0dvCS5K48EI7A=
+X-Google-Smtp-Source: AGHT+IHhAvNQpxxxtu0l2TiI7e2EheLMZqNQ9j5p+6ozwhs2ZYLmXamkgwEmDJBnpLYODpEJcUMVEQ==
+X-Received: by 2002:a7b:cd1a:0:b0:426:4f47:6037 with SMTP id 5b1f17b1804b1-426707d7914mr50144105e9.19.1720693201030;
+        Thu, 11 Jul 2024 03:20:01 -0700 (PDT)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266e861339sm125270025e9.12.2024.07.11.03.20.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 03:20:00 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH 0/2] media: ov5675: Fixup ov5675 reset failures
+Date: Thu, 11 Jul 2024 11:20:00 +0100
+Message-Id: <20240711-linux-next-ov5675-v1-0-69e9b6c62c16@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619140849.368580-1-ulf.hansson@linaro.org>
- <20240619140849.368580-4-ulf.hansson@linaro.org> <20240626063321.3x4cvyj7yiks5f3p@vireshk-i7>
-In-Reply-To: <20240626063321.3x4cvyj7yiks5f3p@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 11 Jul 2024 12:19:53 +0200
-Message-ID: <CAPDyKFqY_mNnaT8j4vCXxYtARkGb_bkvcwKkyXcLPwW+gutO8Q@mail.gmail.com>
-Subject: Re: [PATCH 3/7] OPP: Rework _set_required_devs() to manage a single
- device per call
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANCxj2YC/x3MSwqAMAwA0atI1gZStVa8irjwEzUgVVqVgvTuF
+ pdvMfOCZyfsoc1ecPyIl8MmqDyDaRvsyihzMhRUVGQU4S72Dmg5XHg8ujYaaxqJm3Iy5aIgdaf
+ jRcL/7PoYP2HfoWBjAAAA
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
+ Jacopo Mondi <jacopo@jmondi.org>
+Cc: Johan Hovold <johan@kernel.org>, 
+ Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-13183
 
-On Wed, 26 Jun 2024 at 08:33, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 19-06-24, 16:08, Ulf Hansson wrote:
-> > @@ -2494,36 +2495,68 @@ static int _opp_set_required_devs(struct opp_table *opp_table,
-> >               return -EINVAL;
-> >       }
-> >
-> > -     /* Another device that shares the OPP table has set the required devs ? */
-> > -     if (opp_table->required_devs[0])
-> > -             return 0;
-> > +     /* Genpd core takes care of propagation to parent genpd */
-> > +     if (opp_table->is_genpd) {
->
-> A genpd can have non-genpd devices in the required OPPs and so this
-> isn't sufficient. What we were ignoring earlier was genpd having
-> another genpd as required opp.
+One long running saga for me on the Lenovo X13s is the occasional failure
+to either probe or subsequently bring-up the ov5675 main RGB sensor on the
+laptop.
 
-Unless I am mistaken, I don't think that is a scenario we should care
-about here.
+Initially I suspected the PMIC for this part as the PMIC is using a new
+interface on an I2C bus instead of an SPMI bus. In particular I thought
+perhaps the I2C write to PMIC had completed but the regulator output hadn't
+become stable from the perspective of the SoC. This however doesn't appear
+to be the case - I can introduce a delay of milliseconds on the PMIC path
+without resolving the sensor reset problem.
 
-_opp_set_required_dev() is being called for a device that is about to
-be attached to its corresponding genpd.
+Secondly I thought about reset pin polarity or drive-strength but, again
+playing about with both didn't yield decent results.
 
-Yes, in some cases, we attach a genpd provider's device to its
-genpd-parent, but that is not to control the required-opps.
+I also played with the duration of reset to no avail.
 
->
-> > +             dev_err(dev, "%s: Operation not supported for genpds\n", __func__);
-> > +             return -EOPNOTSUPP;
-> > +     }
-> >
-> >       for (i = 0; i < opp_table->required_opp_count; i++) {
-> > -             /* Genpd core takes care of propagation to parent genpd */
-> > -             if (required_devs[i] && opp_table->is_genpd &&
-> > -                 opp_table->required_opp_tables[i]->is_genpd) {
-> > -                     dev_err(dev, "%s: Operation not supported for genpds\n", __func__);
-> > -                     return -EOPNOTSUPP;
-> > -             }
-> > +             struct opp_table *table = opp_table->required_opp_tables[i];
-> > +
-> > +             /*
-> > +              * The OPP table should be available at this point. If not, it's
-> > +              * not the one we are looking for.
-> > +              */
-> > +             if (IS_ERR(table))
-> > +                     continue;
-> > +
-> > +             /* Move to the next available index. */
-> > +             if (opp_table->required_devs[i])
-> > +                     continue;
-> >
-> > -             opp_table->required_devs[i] = required_devs[i];
-> > +             /*
-> > +              * We need to compare the nodes for the OPP tables, rather than
-> > +              * the OPP tables themselves, as we may have separate instances.
-> > +              */
-> > +             if (required_opp_table->np == table->np) {
-> > +
->
-> We don't keep such empty lines in OPP core generally at this place.
+The error manifested as an I2C write timeout to the sensor which indicated
+that the chip likely hadn't come out reset. An intermittent fault appearing
+in perhaps 1/10 or 1/20 reset cycles.
 
-Yep, let me drop it!
+Looking at the expression of the reset we see that there is a minimum time
+expressed in XVCLK cycles between reset completion and first I2C
+transaction to the sensor. The specification calls out the minimum delay @
+8192 XVCLK cycles and the ov5675 driver meets that timing almost exactly.
 
->
-> > +                     /* Cross check the OPP tables and fix it if needed. */
->
-> Copy the bigger comment from_opp_attach_genpd() here too. It helps
-> understanding why required_opp_tables entry is getting replaced.
+A little too exactly - testing finally showed that we were too racy with
+respect to the minimum quiescence between reset completion and first
+command to the chip.
 
-Right, makes sense!
+Fixing this error I choose to base the fix again on the number of clocks
+but to also support any clock rate the chip could support by moving away
+from a define to reading and using the XVCLK.
 
->
-> > +                     if (required_opp_table != table) {
-> > +                             dev_pm_opp_put_opp_table(table);
-> > +                             _get_opp_table_kref(required_opp_table);
-> > +                             opp_table->required_opp_tables[i] = required_opp_table;
-> > +                     }
-> > +
-> > +                     opp_table->required_devs[i] = required_dev;
-> > +
-> > +                     /*
-> > +                      * Add the required_dev as a user of the OPP table, so
-> > +                      * we can call dev_pm_opp_set_opp() on it directly.
-> > +                      */
-> > +                     if (!_add_opp_dev(required_dev, required_opp_table)) {
-> > +                             dev_err(dev, "Failed to add the device to the required OPP table\n");
-> > +                             return -ENOMEM;
-> > +                     }
-> > +
-> > +                     return i;
-> > +             }
-> >       }
->
-> --
-> viresh
+True enough only 19.2 MHz is currently supported but for the hypothetical
+case where some other frequency is supported in the future, I wanted the
+fix introduced in this series to still hold.
 
-Kind regards
-Uffe
+Hence this series:
+
+1. Allows for any clock rate to be used in the valid range for the reset.
+2. Elongates the post-reset period based on clock cycles which can now
+vary.
+
+Patch #2 can still be backported to stable irrespective of patch #1.
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (2):
+      media: ov5675: Derive delay cycles from the clock rate reported
+      media: ov5675: Elongate reset to first transaction minimum gap
+
+ drivers/media/i2c/ov5675.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
+---
+base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
+change-id: 20240710-linux-next-ov5675-60b0e83c73f1
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
 
