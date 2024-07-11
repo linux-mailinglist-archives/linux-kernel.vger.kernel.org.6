@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-249670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647CC92EE5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:08:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBF192EE5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 202A0284D38
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:08:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAC4D1C209FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C11117D358;
-	Thu, 11 Jul 2024 18:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B76217D355;
+	Thu, 11 Jul 2024 18:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lCs4POAJ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A62cr04h"
 Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A5717CA08
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F2316EB4E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720720875; cv=none; b=jB1R2e/0IZ3uwu04DPZpMgOGhoD2bdq8BwVvXkpDwHt4bryw2KX9ipKKiQN6SDthh3/JzdDEVNl9UmJcGO+pKZP79Q4RXpxSrn3qanNS43PNolUh40oxH5kVDMbDdtsyIHtUB7ThOg93ChiohYgXrziA+fMseMKZVnQQkRrsWVQ=
+	t=1720720877; cv=none; b=WlawUJiJ6YFmG+d5wF15LBXwAfVoTRLJGy1gNy9XFs9Cav0JhRFel/aRbmbdcaXhWwl026Q9k5rpO6MTMF8jayOUOI7YmfZIINZldBQ1R+8liis+qMtol5NckzoZHaJa/RQ+DXH/Ile5INu7HXDEOk1kJVuiJlEqtXT1JtmuHYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720720875; c=relaxed/simple;
-	bh=nog9HAZnBs/Uc6gA5S1tlyf5AbSf3UPE1Jgj8toxgcs=;
+	s=arc-20240116; t=1720720877; c=relaxed/simple;
+	bh=sUheNSIamO8SvMj19zBLNxCVmjvlLRxDlh7AUAyjtXE=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=c6dge4w4ZyEA9ZQdt1xJ2sk+MvG5xhwNxMp3sNOsvOELXvrLtzWuAGvay9dvf5xH/yaKxXIuJ95sCYyzbTTwgsegXCh56RLOAK/BKBLdzuUppUmVqRBKU3Xtzok10Vq8sFIHhVb5V7uDkjXmWNyyA/bbD2FaYoMXc4WtPaM7FW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lCs4POAJ; arc=none smtp.client-ip=209.85.128.201
+	 To:Content-Type; b=ml853xuOMgYeZ6dhOSPtPPbe06gJBvj2yp5NyRrIJgSWdwcLVLV5p7Rm9KkTTNG7s/+Ql+1TvVRtvXYGjGlyC3Xdlez8zckhaLG/Tphh5A9rws3YccWmyK1tooZ3/FC6SwjzmyJn4XFwrO+sDZZqEXpOhlFygKV4sDer1YQihaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A62cr04h; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-650f5b28822so20068857b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:01:13 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6511c587946so20063057b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:01:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720720873; x=1721325673; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720720875; x=1721325675; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7XS/BS2tmrMYCpclJsc0ik1l+h9pEP1QMQPO1IiW0Pw=;
-        b=lCs4POAJlsu4lHu8o6Cpj5wY+cmdM3j2tAykT+Vs8iwDkaHVDsK9wav8wV11w5FvJh
-         Pl/CBDkBe1JNSOs33g95vkrsri5oCyVm/uGwuwLqIPFx8i/s8v+Q+3bwghDXyuhqcjEh
-         7jZ0yHGWJ67/xud9KoMW255OUtL4n0XtCOZOHTrcXm291R+p3trBB2X8WSnhjihQ49p6
-         Lh+6ZOuqeGbjRLrfEQQHnzENxb/z7LxKc6nypBCd+5fmHoumKkB0u6hZr+FzCOBVxbkS
-         uP4fiO6QTPfpFUGSwJk3ab4p0IdiJmtcNz/SG6o0cL+KJFNnfnjRn0wgiCFkOjzd1tD6
-         bGuA==
+        bh=DzgUQ0L67yHK9ZgYOmZnLIT3MZDT9EVRhOxDmj12OGQ=;
+        b=A62cr04hkQQibp8J0OdcECSoPMzacbWQ/GxOr3Az4CjlWJJe12QTN8OUPgQSRlkVhF
+         ENyvH1fbqpWq/A5FViAXBwUCHsV9FXQgC4lYX/GN33y6VApwYa9+vs47xiH+vOozn6Vq
+         rff/IzHvuo8VlT29alNRbdHzWcyBDzAUo3SeZ5o2OuOSDioa/57NMBFsh2bGG7WChNdB
+         fjSEbn5wUDbv3BCVnukhWLAOn5EygM+uc9LV9ttxFn7GAwO7tYNBK+3cy7wPfra5io+o
+         TWDdF2QH0Nchz4oAL5oZ/OZWPaYGZiZy22rBGWNTXxy4tMQlC3ak5HoPtTJU7bGVq2Sd
+         2NxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720720873; x=1721325673;
+        d=1e100.net; s=20230601; t=1720720875; x=1721325675;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7XS/BS2tmrMYCpclJsc0ik1l+h9pEP1QMQPO1IiW0Pw=;
-        b=kC3k6HRSfl0mB9TnhIYOCJDLmBLutH8wXHEXsqEPSEG3v2EJUaFoT14899S2AbF1DB
-         uXa1v7Bf0eroVBZq8tc/YD4EF5mksGvVzB4YeZ4jGXQQrMkLRZP6yPsO9j3/07hk+0Ut
-         vqkiyNrZb03fJecndIkXqpczg76WojjOw+r7syQj1fgqTr8IJyovPxKPMPSkwNOxoyPn
-         eNYqRChqa/XEk0gffXrwnp5ikarW2UL7aIHZKt5zOiebARAz8n9Oq28CjVePsWY5/8uf
-         MNNwGz1XowlS8LcZ7pHFMwOF6GIB5wgHoFVlXqzZpCsBkCDhSen+lgwhDKGqRV1eYThE
-         7yCw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+CLORi9tFrmMvgbncscCt5Zaa8kJruCf0fHSMOBXqXnU5rFLrwf107dO1kwInJIwXe1h5Sgy9h4XqWVgPCuXJt32vxQpkSVPlD6iP
-X-Gm-Message-State: AOJu0YwXo3JAZ486IP2Ur+UJ3/jhotyWgUJ70oDq/UageMAiiAgXt8kL
-	iUMXbyz3VIXz6Ok8uZ+TsOKIYhMskUSlZJs6RfVfd+5W1O9b5oVyWIvm+DOfJvJmmbRM0myh2VE
-	Ka+POIw==
-X-Google-Smtp-Source: AGHT+IFkKG3IgwMxEt/Bk8goVcLqtdaHlpvAh6+KBMB2W8t4X5lnBMdhP8W48LriLi67E/9Scm+C0af9WkpB
+        bh=DzgUQ0L67yHK9ZgYOmZnLIT3MZDT9EVRhOxDmj12OGQ=;
+        b=RBUdPxM/wjK3Llq7wzCEsaLmYEpBaBtw2g+r2iyPHtzFCh8tzzUdQ+DOF4T5AJaAki
+         F2UJch4S6reWKp2j+SRhmKWMEOTGdDnDDW0wqUl2gVsEne7ZzHg0f1I7yaQQl7RRw4Y1
+         2YM6f2KkwyosrjUf3MTUeEx4VLIZwsbjdS96n2iCJlkY7m9STfXTw+ROzI+ZJrWFX5q5
+         QOLb3CFwsmDEfMmEiJ5dd0RYe0Hcy4/Mf0BIFuMSwy7HST7A1ijinGQsl2GyEU2mQvUo
+         St3/v5J6QY+l7LZdfk7+C8+YJz5BDzyc5FHYfvWttBSTreTlp2mS0yTcKNCbzNuzWjcI
+         Z+TA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDphCJ7WMnCKM/oaLBg74td0HonrI+oIMfNJ6Md1jKr2Jl5kN1tpeeqp54zV8yddCkDy7KiROKfCOgM8I/6adM6ZQhiRgxpTLVdZun
+X-Gm-Message-State: AOJu0YxOyboNXyUWHNN+4HYSSjj9eDLuRrVZ/WfvaDKuwdzeZ7hzWTDL
+	hN92hJdR+DtTDCfgcGqMMyVuO2oPua6jHUK+MEePkp+Bdtb6ssFMlzOfaNp1tOEj1JrqIBl2NrT
+	llrF9kQ==
+X-Google-Smtp-Source: AGHT+IF6ZsAvtsfjEpCo3Gdjx73peL+tpHFo6fSjhaKLM0gD5zmtULo0VxwhlOW9Ohb+tLATOGzcVSe0U1oD
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:bd08:a1e0:c497:32db])
  (user=irogers job=sendgmr) by 2002:a05:6902:2403:b0:e03:554e:f396 with SMTP
- id 3f1490d57ef6-e041b05b915mr366236276.6.1720720873191; Thu, 11 Jul 2024
- 11:01:13 -0700 (PDT)
-Date: Thu, 11 Jul 2024 11:00:07 -0700
+ id 3f1490d57ef6-e041b05b915mr366242276.6.1720720875256; Thu, 11 Jul 2024
+ 11:01:15 -0700 (PDT)
+Date: Thu, 11 Jul 2024 11:00:08 -0700
 In-Reply-To: <20240711180008.188906-1-irogers@google.com>
-Message-Id: <20240711180008.188906-28-irogers@google.com>
+Message-Id: <20240711180008.188906-29-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240711180008.188906-1-irogers@google.com>
 X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Subject: [PATCH v4 27/28] perf tool: Remove perf_tool__fill_defaults
+Subject: [PATCH v4 28/28] perf session: Constify tool
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -94,159 +94,60 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
-Now all tools are fully initialized prior to use it has no use so
-remove.
+Make tool const now that all uses are const and
+perf_tool__fill_defaults won't be used. The aim is to better capture
+that sessions don't mutate tools.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/session.c |  6 ---
- tools/perf/util/tool.c    | 89 ---------------------------------------
- tools/perf/util/tool.h    |  1 -
- 3 files changed, 96 deletions(-)
+ tools/perf/util/session.c | 6 +++---
+ tools/perf/util/session.h | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 5359ee055c85..ad5da61d2330 100644
+index ad5da61d2330..0c7cc092887d 100644
 --- a/tools/perf/util/session.c
 +++ b/tools/perf/util/session.c
-@@ -1776,8 +1776,6 @@ static int __perf_session__process_pipe_events(struct perf_session *session)
- 	void *p;
- 	bool update_prog = false;
- 
--	perf_tool__fill_defaults(tool);
--
- 	/*
- 	 * If it's from a file saving pipe data (by redirection), it would have
- 	 * a file name other than "-".  Then we can get the total size and show
-@@ -2201,8 +2199,6 @@ static int __perf_session__process_events(struct perf_session *session)
+@@ -1765,7 +1765,7 @@ static int __perf_session__process_decomp_events(struct perf_session *session);
+ static int __perf_session__process_pipe_events(struct perf_session *session)
+ {
+ 	struct ordered_events *oe = &session->ordered_events;
+-	struct perf_tool *tool = session->tool;
++	const struct perf_tool *tool = session->tool;
+ 	struct ui_progress prog;
+ 	union perf_event *event;
+ 	uint32_t size, cur_size = 0;
+@@ -2195,7 +2195,7 @@ static int __perf_session__process_events(struct perf_session *session)
+ 		.in_place_update = session->data->in_place_update,
+ 	};
+ 	struct ordered_events *oe = &session->ordered_events;
+-	struct perf_tool *tool = session->tool;
++	const struct perf_tool *tool = session->tool;
  	struct ui_progress prog;
  	int err;
  
--	perf_tool__fill_defaults(tool);
--
- 	if (rd.data_size == 0)
- 		return -1;
- 
-@@ -2255,8 +2251,6 @@ static int __perf_session__process_dir_events(struct perf_session *session)
- 	u64 total_size = perf_data__size(session->data);
- 	struct reader *rd;
- 
--	perf_tool__fill_defaults(tool);
--
- 	ui_progress__init_size(&prog, total_size, "Processing events...");
- 
- 	nr_readers = 1;
-diff --git a/tools/perf/util/tool.c b/tools/perf/util/tool.c
-index a4ca16e5eefe..3b7f390f26eb 100644
---- a/tools/perf/util/tool.c
-+++ b/tools/perf/util/tool.c
-@@ -288,95 +288,6 @@ void perf_tool__init(struct perf_tool *tool, bool ordered_events)
- 	tool->finished_init = process_event_op2_stub;
- }
- 
--void perf_tool__fill_defaults(struct perf_tool *tool)
--{
--	if (tool->sample == NULL)
--		tool->sample = process_event_sample_stub;
--	if (tool->mmap == NULL)
--		tool->mmap = process_event_stub;
--	if (tool->mmap2 == NULL)
--		tool->mmap2 = process_event_stub;
--	if (tool->comm == NULL)
--		tool->comm = process_event_stub;
--	if (tool->namespaces == NULL)
--		tool->namespaces = process_event_stub;
--	if (tool->cgroup == NULL)
--		tool->cgroup = process_event_stub;
--	if (tool->fork == NULL)
--		tool->fork = process_event_stub;
--	if (tool->exit == NULL)
--		tool->exit = process_event_stub;
--	if (tool->lost == NULL)
--		tool->lost = perf_event__process_lost;
--	if (tool->lost_samples == NULL)
--		tool->lost_samples = perf_event__process_lost_samples;
--	if (tool->aux == NULL)
--		tool->aux = perf_event__process_aux;
--	if (tool->itrace_start == NULL)
--		tool->itrace_start = perf_event__process_itrace_start;
--	if (tool->context_switch == NULL)
--		tool->context_switch = perf_event__process_switch;
--	if (tool->ksymbol == NULL)
--		tool->ksymbol = perf_event__process_ksymbol;
--	if (tool->bpf == NULL)
--		tool->bpf = perf_event__process_bpf;
--	if (tool->text_poke == NULL)
--		tool->text_poke = perf_event__process_text_poke;
--	if (tool->aux_output_hw_id == NULL)
--		tool->aux_output_hw_id = perf_event__process_aux_output_hw_id;
--	if (tool->read == NULL)
--		tool->read = process_event_sample_stub;
--	if (tool->throttle == NULL)
--		tool->throttle = process_event_stub;
--	if (tool->unthrottle == NULL)
--		tool->unthrottle = process_event_stub;
--	if (tool->attr == NULL)
--		tool->attr = process_event_synth_attr_stub;
--	if (tool->event_update == NULL)
--		tool->event_update = process_event_synth_event_update_stub;
--	if (tool->tracing_data == NULL)
--		tool->tracing_data = process_event_synth_tracing_data_stub;
--	if (tool->build_id == NULL)
--		tool->build_id = process_event_op2_stub;
--	if (tool->finished_round == NULL) {
--		if (tool->ordered_events)
--			tool->finished_round = perf_event__process_finished_round;
--		else
--			tool->finished_round = process_finished_round_stub;
--	}
--	if (tool->id_index == NULL)
--		tool->id_index = process_event_op2_stub;
--	if (tool->auxtrace_info == NULL)
--		tool->auxtrace_info = process_event_op2_stub;
--	if (tool->auxtrace == NULL)
--		tool->auxtrace = process_event_auxtrace_stub;
--	if (tool->auxtrace_error == NULL)
--		tool->auxtrace_error = process_event_op2_stub;
--	if (tool->thread_map == NULL)
--		tool->thread_map = process_event_thread_map_stub;
--	if (tool->cpu_map == NULL)
--		tool->cpu_map = process_event_cpu_map_stub;
--	if (tool->stat_config == NULL)
--		tool->stat_config = process_event_stat_config_stub;
--	if (tool->stat == NULL)
--		tool->stat = process_stat_stub;
--	if (tool->stat_round == NULL)
--		tool->stat_round = process_stat_round_stub;
--	if (tool->time_conv == NULL)
--		tool->time_conv = process_event_time_conv_stub;
--	if (tool->feature == NULL)
--		tool->feature = process_event_op2_stub;
--	if (tool->compressed == NULL) {
--#ifdef HAVE_ZSTD_SUPPORT
--		tool->compressed = perf_session__process_compressed_event;
--#else
--		tool->compressed = perf_session__process_compressed_event_stub;
--#endif
--	}
--	if (tool->finished_init == NULL)
--		tool->finished_init = process_event_op2_stub;
--}
--
- bool perf_tool__compressed_is_stub(const struct perf_tool *tool)
+@@ -2245,7 +2245,7 @@ static int __perf_session__process_events(struct perf_session *session)
+ static int __perf_session__process_dir_events(struct perf_session *session)
  {
- 	return tool->compressed == perf_session__process_compressed_event_stub;
-diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-index fb7e32d98dda..0874e7924687 100644
---- a/tools/perf/util/tool.h
-+++ b/tools/perf/util/tool.h
-@@ -89,7 +89,6 @@ struct perf_tool {
- };
- 
- void perf_tool__init(struct perf_tool *tool, bool ordered_events);
--void perf_tool__fill_defaults(struct perf_tool *tool);
- 
- bool perf_tool__compressed_is_stub(const struct perf_tool *tool);
- 
+ 	struct perf_data *data = session->data;
+-	struct perf_tool *tool = session->tool;
++	const struct perf_tool *tool = session->tool;
+ 	int i, ret, readers, nr_readers;
+ 	struct ui_progress prog;
+ 	u64 total_size = perf_data__size(session->data);
+diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+index 7f69baeae7fb..7c8dd6956330 100644
+--- a/tools/perf/util/session.h
++++ b/tools/perf/util/session.h
+@@ -43,7 +43,7 @@ struct perf_session {
+ 	u64			one_mmap_offset;
+ 	struct ordered_events	ordered_events;
+ 	struct perf_data	*data;
+-	struct perf_tool	*tool;
++	const struct perf_tool	*tool;
+ 	u64			bytes_transferred;
+ 	u64			bytes_compressed;
+ 	struct zstd_data	zstd_data;
 -- 
 2.45.2.993.g49e7a77208-goog
 
