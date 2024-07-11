@@ -1,131 +1,111 @@
-Return-Path: <linux-kernel+bounces-249335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C079492EA34
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:05:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73A2592EA36
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D09F1F22442
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:05:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8881D1C231D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7492D16133C;
-	Thu, 11 Jul 2024 14:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A689B16130C;
+	Thu, 11 Jul 2024 14:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNnqMghO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8IQucsp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFE614BFA2;
-	Thu, 11 Jul 2024 14:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB7D1607A0;
+	Thu, 11 Jul 2024 14:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720706690; cv=none; b=Y4hOKLr8pNKbUAL3t38FWKiTXT90KxvqnDG15PPKO7pgwzijtju4yOoNYqL+7QynFao4TrZHsVROUwd9XegaHqYhFcOCd+qHH2vmHnx8oFU5x9PJ/rZrE9RgOmYwPAhRaVArP+kridAPWkJkE3XELYk8+qkSnyGRL77szfKued4=
+	t=1720706719; cv=none; b=cDpe6vw/qcnavr9/3F+mticQdD4Ib4B49fZDRuh9YigCeZy6LgTLtQJA7OJm41WPbMdiyCn4A8+/cnr+LP4BUCVxc2iNN4JRpvPObgZ1UKwR2ldoZxk2XA1McKYRp/cgrmisW5svCxlw5lWWzaaZx66+/uRpBqR6J+/nVVfQfc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720706690; c=relaxed/simple;
-	bh=6FKCONExnD/KNoizVW6GlpBz8h/1JwDcxOS8N1c8ER0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h+O/WeS+eWFy9uNFpcspP8PgXLnADuBZiQTWwrCJn1ULDF1ZRapaoHNIIFzRO6iHIsgVtOQNmdY+pxReN8JdppblFMXUrxJu3BriolSybMtO2C2pOCjiiP9ljpt0ITSMsFVwiSabApZSFEJtP0RZh2rQB+JVSos1OEsQnXMl//w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNnqMghO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F7AAC4AF0C;
-	Thu, 11 Jul 2024 14:04:47 +0000 (UTC)
+	s=arc-20240116; t=1720706719; c=relaxed/simple;
+	bh=UYWdRu1rIaVIcVKllXBQPhDX2SQaDw4JQacRmQbuguY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GpiXyPzeGHlMG6QoGAMRlVzlmif0RCxcX6PNnULM2nnBTQYq7y35ngG7ILzxmeYfKt13vAs7ixBjF9ybvyjYbkagcZyV8QPAsn2dXb3pM9XbNsGypuF+Xi9HNzRa9lCAV5eABwcJHx57eYPzc33FJAgxXxjVbPYO2XC1tA86eYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8IQucsp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 517EBC4AF0C;
+	Thu, 11 Jul 2024 14:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720706690;
-	bh=6FKCONExnD/KNoizVW6GlpBz8h/1JwDcxOS8N1c8ER0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CNnqMghOku+1hFsfj1MHWpCchPbx8di+ywiAyLGlVlW3y9pcoP+5grGDDyMBg6FJb
-	 ClZIt/tyDVWtbPKrH7l+piNb/ih3SUwG8ovAxwxrGpV1n6kQAjAwpchArflkpEaAHl
-	 V+k9DgpHahCzGDymRBoyZv8qDTY9+BnCQPnByejaiK2EyxVYLondk2dc46yPtKJ97n
-	 H1N7z02IImIHEhf8a+rSqt1JO7lS+reX00oA8krDno0Ec57ZTjSNM+hdtRwMm/+G4w
-	 1170vZLWpz6Lhq8FCfJmUB9DyyWdot9+PPzw+y3lLOnJW3kcLh95edArhEfO2lPFPt
-	 7gyGuB8mvLA4A==
-Message-ID: <3d95237c-e171-4db8-9d7e-1feeb73f063e@kernel.org>
-Date: Thu, 11 Jul 2024 16:04:44 +0200
+	s=k20201202; t=1720706718;
+	bh=UYWdRu1rIaVIcVKllXBQPhDX2SQaDw4JQacRmQbuguY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y8IQucspU+bY04KNRG1/lreddTSKxG0ipYr3ZrhhmM0gQxQZjNngWKv6TO6+E9Lxk
+	 SrJjWm7AGp1oEYG0NZjUG4EpPdm/R1MRUrrCZFSBrVOkG4u2dwpU7imq1ip3z1IME+
+	 jVIm0VCwjOkzDHkk6CppK85gM7KPJgYxpVVIclc0ttDGaw/BNGgLyqFD4S08/PnSHk
+	 vBnlLNlMhI3tj5Gw6F87jxUZWf0xO/KFeBdxGbhsFr6yZ0SnjK0+Mh36uG/YxT9HwJ
+	 0vIFkCeUzyNA8YlPP8CbiUd4TDnozOyD7djLIAsQgU6R1xxcd9RscgHhEr5rLb5q1B
+	 JtGl2NRAdc+5Q==
+Date: Thu, 11 Jul 2024 10:05:17 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>
+Cc: Mikulas Patocka <mpatocka@redhat.com>,
+	Alasdair G Kergon <agk@redhat.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the device-mapper tree
+Message-ID: <Zo_mnW5NcRBkWejT@kernel.org>
+References: <20240711121729.0d71308e@canb.auug.org.au>
+ <947e6d6b-f798-4f04-b6d7-d18ad550db66@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] ARM: dts: qcom: apq8064: adhere to pinctrl
- dtschema
-To: Rayyan Ansari <rayyan.ansari@linaro.org>, linux-arm-msm@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Rob Herring <robh@kernel.org>
-References: <20240711110545.31641-2-rayyan.ansari@linaro.org>
- <20240711110545.31641-5-rayyan.ansari@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240711110545.31641-5-rayyan.ansari@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <947e6d6b-f798-4f04-b6d7-d18ad550db66@kernel.dk>
 
-On 11/07/2024 13:01, Rayyan Ansari wrote:
-> Pass dtbs_check for qcom,apq8064-pinctrl.yaml.
+On Thu, Jul 11, 2024 at 12:16:20AM -0600, Jens Axboe wrote:
+> On 7/10/24 8:17 PM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > The following commit is also in the block tree as a different commit
+> > (but the same patch):
+> > 
+> >   e87621ac68fe ("dm: Refactor is_abnormal_io()")
+> > 
+> > This is commit
+> > 
+> >   ae7e965b36e3 ("dm: Refactor is_abnormal_io()")
+> > 
+> > in the block tree.
+
+Hi Stephen,
+
+I've fixed this.  But FYI, you didn't send mail to Mikulas who was the
+committer in this instance.
+ 
+> Looks like the dm tree is re-applying patches yesterday rather
+> than pulling in the dependency?
 > 
-> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
-> ---
-> v1 -> v2: split previous 2 commits from this patch, corrected commit message
+> https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-6.11&id=e87621ac68fec9086d9f0af4fe96594dd8e07fbb
 > 
->  .../boot/dts/qcom/qcom-apq8064-cm-qs600.dts   |  25 +-
->  .../boot/dts/qcom/qcom-apq8064-ifc6410.dts    |  25 +-
->  arch/arm/boot/dts/qcom/qcom-apq8064-pins.dtsi | 350 +++++++-----------
->  .../qcom-apq8064-sony-xperia-lagan-yuga.dts   |  10 +-
->  arch/arm/boot/dts/qcom/qcom-apq8064.dtsi      |  34 +-
->  5 files changed, 166 insertions(+), 278 deletions(-)
-> 
+> why?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Really good question.
 
-Best regards,
-Krzysztof
+Mikulas has been handling DM for the 6.11 development cycle.  But I've
+helped answer question and such along the way.  We actually had a
+meeting on Tuesday to discuss outstanding patches (in patchwork) and
+specifically discussed this very patch.  At the time I said I would
+get with you to make sure you were the one to pick up Damien's 5
+patches (which included what is now commit e87621ac68fe in block).  I
+specifically said that the entire series should go through block
+because even if DM picked up the one "dm: Refactor is_abnormal_io()"
+it'd cause problems because block would then depend on DM for a simple
+prep commit needed for later a patch in series.
 
+Anyway, I later saw you had already picked up Damien's series and had
+no need to reach out to you, I noted as much to a group chat at Red
+Hat (Mikulas included).  So not really sure what happened.
+
+Sorry for the noise/trouble.
+
+Mike
 
