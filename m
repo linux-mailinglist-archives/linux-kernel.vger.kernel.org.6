@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-249105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CC0792E6BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:32:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F1E92E6BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD868283F67
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:32:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9698284EB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC8015ECCE;
-	Thu, 11 Jul 2024 11:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BC615EFAF;
+	Thu, 11 Jul 2024 11:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gxzGKVt0"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="B2kumLOo"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56226156225
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1AA156225
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720697235; cv=none; b=V/3w/5puiR07WPutD2EfPDYW8KbE0rdwElt55oYHTQE49+JjO131E7+vziL6nbKG6diszWEWGApfhokmWCraNH2ekQZlUlP4JWRPE3iUTKwionqXpTNRs1Cr3z5Zoqy0h7oM6Uw38o1SoCVv+E6UUbqEi69rFEqBz6UjZnVCTLI=
+	t=1720697291; cv=none; b=m7ABnQAUpuIuRggTrgM4BwTp4MRT4HOZR1Ela8y5yUrJFmCu9ckfO58T0/4hHmKXnh3KJKp1tc5Bm/j9VDuZkgxTh5SPJlOsL0hlKlBkHr197YgwOgwI0vbLjiFP/4eK9BYs1n+NtOkmIthLZVL0hE9ZxQOyC79ID7fNNT5gWrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720697235; c=relaxed/simple;
-	bh=yYEpV6mgz8Ga+AjpAiMeT63sbhybaoeCYkwkqiyqnac=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=maiLSeAymNpBurDHFIAk2Ey9LPLJ9dd4dhBhuuV+Jz7sJDExYgj4m5ru+xK4brVNIObhyDR+QZ5P6qI714+lc54gQo9ahDwNyrW92r9ldo9sPzNaaut7g5Y7bUnPhosaNtppyGKWcGtPKmD6d6SFImlaUsfL8H5uhD2QIC3n4lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gxzGKVt0; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720697232;
-	bh=yYEpV6mgz8Ga+AjpAiMeT63sbhybaoeCYkwkqiyqnac=;
-	h=From:Date:Subject:To:Cc:From;
-	b=gxzGKVt0luCl6OOlv0XQK3+THNu/Uhyz5wMbAEccZfD0XM0QT7SuJjenzhqIVKNoh
-	 aUIJd4h7GapobNbaX/77BoMfw2ho1mCc+oBMnFt8K40mKw2TXs9WV9vLTxblXghEqF
-	 j4g4eVNTJy/tLRcOC+qPVsDzrN1vTuo3brD1YeD1g+OKfamKswz+aPCOCTrtzJKElE
-	 H3GnJE5i10k9BNQW7MPxmBmb+Sf6qv95DNEJ9LBNuF84XH2BbaNF4shu9YKVfSlyaH
-	 PaQ96RWNwN7a9DAoZxoGejHxJ3jdIlBWhjYlAjFHXEbyz27zONq3R9m1zJQH3ghulT
-	 CeYTimGF7bV+w==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 4DAF63781185;
-	Thu, 11 Jul 2024 11:27:12 +0000 (UTC)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Thu, 11 Jul 2024 14:26:55 +0300
-Subject: [PATCH] drm/bridge-connector: Fix double free in error handling
- paths
+	s=arc-20240116; t=1720697291; c=relaxed/simple;
+	bh=ue/D6aaMj20smtKi2jAbMVRAEMMLERO+XAiZ94XCja4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ryeR4Sleyj1IIjgdq7Psu42ztXok19aPsLsab3nVqg76Og3n1eyGvIjoI2P1uQVfXHu1RBrfEPfWOg8KiXXcEYIUOnj0kThLsxBSE52u/1M/KVaFnNMg08YedVmo72d70giR1bZwPHP+2lDQKl/HkCmvotNEf/EW9vJSjX/5WKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=B2kumLOo; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44ad1c9fb04so3899981cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:28:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720697286; x=1721302086; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=n4IagqgBEWB1oo5Cqg5iaPlJgTTeYOkk6mC1e1sE7v8=;
+        b=B2kumLOoBZfQagH4WlbhIsn9jGu5A1BZzCWcEW/vunpuURyNNk+6+a6b2BDitqk8Uk
+         Vx6sL7JUYuphwYkssiTDthhCRzgKmB1ED69ZcE5sRfDs3Dx6TKddhStqkna/1jp66L1h
+         Yz2y2xz79H9CW42YAzbgMCg9rBUsmsXQG2PwYL6kp5TolIR8j3Zd0M7qWA1gEiY8soDV
+         ur4QEFIvEGYjtuRmEWFH0XPu3eElYrHIWzNRHwYGT7dikNOKdMeI8AkWdxSm/MLfZH4q
+         RbXXZS0206wWcHSzjKi7xuceR8HKVJHM3VlUOk2VBxB35q2lffge5I0APCsl/DbO372U
+         XOQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720697286; x=1721302086;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n4IagqgBEWB1oo5Cqg5iaPlJgTTeYOkk6mC1e1sE7v8=;
+        b=kFp3DdzmZegSy/MsMjERGs7V9xkDFv7VVvWJjx5gleEn2mwX+E9IQDlXeVf8j7JjLo
+         ih1xh7DDO+iKATRc9ixSEQj9qaQuLHJuROxrirFlPZ7F951AXJl72bJ9WbB+QBYXMy8l
+         tn/dgF1LNN7xyBKtT3V0vlCfhekMqHXc5pLFQxn9T3WQVAfM4UXJebwLf7WFzgc5S30a
+         Fy8R8VY3QuvpMUray+XY8zOYLLi6kcU/xAKcNXVgHOXP8iGW890ihQ3GOZ6AUHIrEX4e
+         erMSMU3yJ9lCYD7Yz54dYOBSZ2I/HDGQre6bERowmDFYuKXVDTn5VGQDPiuuFbyLz+Fo
+         adkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZqLw4ME5YPvotv2Sklm7Da0K0W8tSTzh5xITq86ocFTYN5enGA0qur0AJGMxBPgbY3yZAtUquz+fRpPqjcYin5Hi1xTiBlZuPYis1
+X-Gm-Message-State: AOJu0Yy9/2X4mkJH6Rk1FGLEOsI/yv8LhCevaNCw8fapCaJlpLUiGpn+
+	9xNg8ZV4AxBzuCMFylFcKytm3aoOfvPz+AMzWVONCa5e/9Pkk2C2EkyQyXKfSK8=
+X-Google-Smtp-Source: AGHT+IGWL63JOeSzdCwUk8BUGlsc844oQVV8aJNmtUwKqG3hECJfCelzieYR6PSvclWPksawC9mUZA==
+X-Received: by 2002:ac8:5910:0:b0:447:bf9c:3ea8 with SMTP id d75a77b69052e-447faadc5dbmr90068481cf.65.1720697286688;
+        Thu, 11 Jul 2024 04:28:06 -0700 (PDT)
+Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b3d293sm29021281cf.25.2024.07.11.04.28.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 04:28:06 -0700 (PDT)
+From: Trevor Gamblin <tgamblin@baylibre.com>
+To: Michael Hennerich <michael.hennerich@analog.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Trevor Gamblin <tgamblin@baylibre.com>,
+	linux-pwm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pwm: axi-pwmgen: add .max_register to regmap
+Date: Thu, 11 Jul 2024 07:28:01 -0400
+Message-ID: <20240711112803.3942189-1-tgamblin@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240711-bridge-connector-fix-dbl-free-v1-1-d558b2d0eb93@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAH7Bj2YC/x2M0QqDMAwAf0XyvEDbFWT+iviwNqkGRiupyED89
- 4U93h3cBZ1VuMM0XKB8SpdWDfxjgLy968ooZAzBhehG7zGpkNncauV8NMUiX6T0waLM+CJ6hlh
- cCqMDe+zK1v//ebnvH4bFYfJvAAAA
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.0
+Content-Transfer-Encoding: 8bit
 
-The recent switch to drmm allocation in drm_bridge_connector_init() may
-cause double free on bridge_connector in some of the error handling
-paths.
+This was missed in the basic driver and is useful for debug, so add it.
 
-Drop the explicit kfree() calls on bridge_connector.
-
-Fixes: c12907be57b1 ("drm/bridge-connector: switch to using drmm allocations")
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
 ---
- drivers/gpu/drm/drm_bridge_connector.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/pwm/pwm-axi-pwmgen.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/drm_bridge_connector.c b/drivers/gpu/drm/drm_bridge_connector.c
-index 0869b663f17e..a4fbf1eb7ac5 100644
---- a/drivers/gpu/drm/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/drm_bridge_connector.c
-@@ -443,10 +443,8 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 			panel_bridge = bridge;
- 	}
+diff --git a/drivers/pwm/pwm-axi-pwmgen.c b/drivers/pwm/pwm-axi-pwmgen.c
+index aac4f395497b..3ad60edf20a5 100644
+--- a/drivers/pwm/pwm-axi-pwmgen.c
++++ b/drivers/pwm/pwm-axi-pwmgen.c
+@@ -51,6 +51,7 @@ static const struct regmap_config axi_pwmgen_regmap_config = {
+ 	.reg_bits = 32,
+ 	.reg_stride = 4,
+ 	.val_bits = 32,
++	.max_register = 0xFC,
+ };
  
--	if (connector_type == DRM_MODE_CONNECTOR_Unknown) {
--		kfree(bridge_connector);
-+	if (connector_type == DRM_MODE_CONNECTOR_Unknown)
- 		return ERR_PTR(-EINVAL);
--	}
- 
- 	if (bridge_connector->bridge_hdmi)
- 		ret = drmm_connector_hdmi_init(drm, connector,
-@@ -461,10 +459,8 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 		ret = drmm_connector_init(drm, connector,
- 					  &drm_bridge_connector_funcs,
- 					  connector_type, ddc);
--	if (ret) {
--		kfree(bridge_connector);
-+	if (ret)
- 		return ERR_PTR(ret);
--	}
- 
- 	drm_connector_helper_add(connector, &drm_bridge_connector_helper_funcs);
- 
-
----
-base-commit: 1eb586a9782cde8e5091b9de74603e0a8386b09e
-change-id: 20240711-bridge-connector-fix-dbl-free-9dd324f0b270
+ static int axi_pwmgen_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+-- 
+2.45.2
 
 
