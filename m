@@ -1,82 +1,115 @@
-Return-Path: <linux-kernel+bounces-249998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85CD692F2CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:48:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEEEF92F2CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:51:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 285DAB23471
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:48:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F800B213ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2548E16E884;
-	Thu, 11 Jul 2024 23:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FE41A0734;
+	Thu, 11 Jul 2024 23:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdQdYcGe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTzQaDsv"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657466EB7C;
-	Thu, 11 Jul 2024 23:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223086EB7C;
+	Thu, 11 Jul 2024 23:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720741703; cv=none; b=rsUEh5SVfftK21JCGlSVgpOGdP09h3hlA3ZnIQPsfuKA9cY/wQplmRIqigo9KaIHXb3dKgsGimbIPMGKfyA+iF9nsUg2TylArnTLGRp9xmuwgNnScYVzfuZcVAcHgL3IEvZE5vmT/aOUhpRQrTuQXhckTinPDcUMhilo/5NWViQ=
+	t=1720741903; cv=none; b=LPVlO96Ya3QC9wUx1xNJuB/7pyFrxGT0+4Bk6r30fgBWx8K/Yzt7x2kNma/+K5WOdiazxplU41Z8byUohaSPUd3myvH+wkhlwgkJW+j2UBnmqKpXK9TRA4zPBFdvGvITA5md2g3tnuZIgBzXdfwKE4j7i9G+AzgTpQNboKaMKRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720741703; c=relaxed/simple;
-	bh=P8s+d9RaUcVBTYM7WleDb/g6oCcf+IbbjjLZjfg98NY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lv4wgDIXU2lmpbKkS1OT7beMU2k639fKO8Da0hDGLuIKb8HyqqVmLtvxqf74pT3irvYxMKyGgeSfSxP9C73ZQdrwh/78joRKa1KymlzTSZedYRnUbIsdLYybtv1jOP/EL1MDR/HI2qxwaYtkDKqEqLEMPdASPImpr19v9JuyYMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BdQdYcGe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19D19C4AF09;
-	Thu, 11 Jul 2024 23:48:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720741702;
-	bh=P8s+d9RaUcVBTYM7WleDb/g6oCcf+IbbjjLZjfg98NY=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=BdQdYcGetQdpLaeWZKMgVDq8z45XLPWJUiPfB7me3RHxzFdK37dEc6NnAM3nX80w+
-	 IRUvFjJJXyqD7DtmIE6gsdrVdKjqVxzqbjXYUp5mf1NkvMG6yb8ptcWxDbCBsV/28h
-	 Pccy0TUDT2onu0MEtvZNLbFAtJsPZJVJqXZ2GCF1gDrBEd/A9/uE4Hc7DIVFO83k4/
-	 Kzzat6P2CpEsPTYQ21QhdbqnQBfwEQ8N4kS2/4FnaCxg5u4UIgPXEOKML7pv4+2l8r
-	 8Jjc9ukPsNwXS7BqYfdr+7AQ35ySfpAXtHnAp3JInw3JUlCCPVu50qGDJc9aSUH6DK
-	 Fmf8YP0zJ0psw==
-Date: Fri, 12 Jul 2024 01:48:18 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: rcar: ensure Gen3+ reset does not disturb local
- targets
-Message-ID: <x3vki7j7ulld6jz4vqv2mfg6xbhcr6yliod5fnmqmw3jvu5rra@julwoep6ayct>
-References: <20240711083043.8334-2-wsa+renesas@sang-engineering.com>
- <ZpBL90Ko-B9oxCLK@shikoro>
+	s=arc-20240116; t=1720741903; c=relaxed/simple;
+	bh=yLuenXi7mNTZLGlPoQmf3M2TZQJUdq3ySkuvd61rF2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p5TNySFunyaghGpHVzVC2s3Tgjct4WIopHWTmt2cUTSjP5mI+i99YluHVwMmpGkHyscAFOa7JaoyNkv0PmjCwWMzLdUV4NMjTZcGkY3J+0XwntFKUyRcrAMCFdbiKuMvUgbtRoJl7YYQ+lbZaxj0P7BErDWTEMOCbQ1AhkoZpC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTzQaDsv; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4279c924ca6so4856925e9.0;
+        Thu, 11 Jul 2024 16:51:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720741900; x=1721346700; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5rNOkKqKSlXdOxVSuCJmj91KdmRmhTrpa/Yg8kLQxJg=;
+        b=PTzQaDsvpxiKLgA2sTFYuydEsWznDjJzNR68+i+XXBhm5OsPH43P7UEDkloF5gs0C/
+         6MuIT/fHIQuNwZ4f9DfHPx+25UAC3ZxoOIoo3lRVHi6ZIsJmQ7/9s9Vgj5vkjHSRi9NA
+         yU1BR77EreYQHaB0uIhM0HCPlVcTmYrc2g8sfBCWQRi1NR/C1A9ThxdjAmHalarVyokQ
+         i9LOUmb8frg+o4c9GsNyh82FACPO3P9c03poU2Ln3eKiEkWhPtxCNnBodknw2TN9/XDY
+         V/AcrFJsKuyr/vIRZuRb/S2sRughH65m5VkWVUwwh+sIxO2/wehsaTzO5HZZ/AE0ama3
+         SkhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720741900; x=1721346700;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5rNOkKqKSlXdOxVSuCJmj91KdmRmhTrpa/Yg8kLQxJg=;
+        b=pPAfDYb4YuR2/8Ba4bickuejoqA6sZl8b4jmQhZolLwIOCK20HVdlhbjd1ED3sqfda
+         jWAmN+Svy1icNs2hrNwBYV3J37vUEq8RRPYl6D7JOMb6lBdfOgq9UZ0HCf78UJF135yI
+         1fEvDMDqHuD58dD9i4EykfZpX5H7LeMm8stBYGJD5fI+2/LfiUnZBWPdv8O5E85JseUU
+         ayOPkYRROe60Q+9eqTzNzLt/2+PyPsKeEKRTa/RZnoqgUYX3SoPYR9ft9dKdBKsto91k
+         MaufzLsqKxta2aaw33QzSdM5d+qBSnAokZqGkSqIy9TNZ53H98PBk/mhMsBJZxQDMuia
+         WtSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvdHv5d0V3N96gj+Eyu70uWTq3wggZ9mqX5O74S3v5vzCU8w+ds8/Vf7gI6evrzQ5j5PfmM1sQf0X79gAlLHbuiq2S8ByEQ4jOSHZ9jCenzg8ZaV84AfhH1dZhhhGLzBkVLQchwopFNXw5o8ghIOPITuNEJ+8uzUgGNgSZcfDYbdU+Oh8i2wdkOky6xTgaTTwGqRvzig==
+X-Gm-Message-State: AOJu0YzlvCaCAXI9ilVhC3Sn7jCPwwTYtD9KjweDucQbWOU7AAnf4B1s
+	/bMTeoM4X+Z0HaOFx2yt4ZmZriXp6rejamNo4TcqPOxRLyqB+vFqMrl2QLzHWjLpvSNhV8OZHQk
+	bEpzH/8JahKLyiRa7X3Y+M7iinVjicmEF
+X-Google-Smtp-Source: AGHT+IFrtwMZGSser2pdLEMHu9/BZwtIElLY0d4iYbH3J9P9LMSwb1QRp/owr34MzeIK2Dss6VDWbjorwxkpYt37c8M=
+X-Received: by 2002:a05:6000:1887:b0:367:89fc:bc11 with SMTP id
+ ffacd0b85a97d-367cea4625emr9022935f8f.10.1720741900251; Thu, 11 Jul 2024
+ 16:51:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpBL90Ko-B9oxCLK@shikoro>
+References: <20240712083603.10cbdec3@canb.auug.org.au>
+In-Reply-To: <20240712083603.10cbdec3@canb.auug.org.au>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 11 Jul 2024 16:51:28 -0700
+Message-ID: <CAADnVQKVC4NGsEU0X3XJmmCot40Vvik-9KNFU07F=VBF-4UVRQ@mail.gmail.com>
+Subject: Re: linux-next: duplicate patch in the bpf-next tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, David Miller <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
+On Thu, Jul 11, 2024 at 3:36=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Hi all,
+>
+> The following commit is also in the net tree as a different commit
+> (but the same patch):
+>
+>   6f130e4d4a5f ("bpf: Fix order of args in call to bpf_map_kvcalloc")
+>
+> This is commit
+>
+>   af253aef183a ("bpf: fix order of args in call to bpf_map_kvcalloc")
+>
+> in the net tree.
 
-On Thu, Jul 11, 2024 at 11:17:43PM GMT, Wolfram Sang wrote:
-> On Thu, Jul 11, 2024 at 10:30:44AM +0200, Wolfram Sang wrote:
-> > R-Car Gen3+ needs a reset before every controller transfer. That erases
-> > configuration of a potentially in parallel running local target
-> > instance. To avoid this disruption, avoid controller transfers if a
-> > local target is running. Also, disable SMBusHostNotify because it
-> > requires being a controller and local target at the same time.
-> > 
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> 
-> Fixes: 3b770017b03a ("i2c: rcar: handle RXDMA HW behaviour on Gen3")
+Argh.
+So the fix was applied to bpf-next back in May and the same people
+come back to complain in July that it's somehow still broken and must be
+fixed in Linus's tree.
+So the new patch was applied to bpf and pulled to net
+and on the way to Linus now.
 
-I was about to ask.
-
-Pushed to i2c/i2c-host-fixes.
-
-Thanks,
-Andi
+We will ffwd bpf-next in a day or so, if git cannot handle it,
+we will revert from bpf-next.
+Sigh.
 
