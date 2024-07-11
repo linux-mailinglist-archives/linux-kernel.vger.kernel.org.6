@@ -1,110 +1,84 @@
-Return-Path: <linux-kernel+bounces-249853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C3C92F0BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:10:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6091292F0B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF5F282173
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:10:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0651C28222E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326F419FA6A;
-	Thu, 11 Jul 2024 21:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F8D19F489;
+	Thu, 11 Jul 2024 21:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QjuwKNon"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fg1qpoyF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CF32836A
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9617919F470;
+	Thu, 11 Jul 2024 21:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720732217; cv=none; b=HqCgmoxDOd3iKAiLpkPuk57HgQKcfQgKy8YPWF2Oi+izZkgvUVzBHo93jUmjyRd/OWZ5AOQPu6iNjoYEn+yPGr3SylAjDlegHOBlPbu5hbyMUj6p9pd3VuVwKZg2nLk3qWuGnHg+hJVhUBzy9saMEbg6DIhkbfIT1MPa0TWQwL0=
+	t=1720732216; cv=none; b=ca1VsfMUVLBtXjLnTocLwDYfi8/q+YTpZyX7vf4T2e4yoXLnt6Bo+C1lkrybh2qn1B6ezV4tza/Dn3ZTjDhUe9YD9fq3bVDCkX3DJh4o99O244x+uPaHN/nUEOATdVDccSkUSHxYmZGzzVBNyZEoZX8dQQrFyMDxkOxqvqlo5Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720732217; c=relaxed/simple;
-	bh=GhoB4jdgPLUvG7kwGn5zgnlxuoDT8WRMMgSEmZbJmj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WshlIvjQXZ9Wsz0DGtITN8BrAfOdqYzaqcuYwz6lsUe/uiCTiYj6zKSVbQ9IDoYY+65dVGug2QbEiN/C82fSAhBReRRIS2VGCBP8MmQw751LdwCyoCZEODzEpy61MDRHWUrPwot17Pj+ye8XCk2okDIgweZb5S5M2JftAeqsZys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QjuwKNon; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-64b5617ba47so12953257b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720732215; x=1721337015; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GQEjnhPJsBKTlnL+AnULLgLA6phEDmk5N6W4l5c5JDY=;
-        b=QjuwKNonZ2HHRTPkI7gzboeMAeLWoyvXN8gGBauvvQq7FJ7vet7tyUIrdD6asDTQNM
-         0pTfNIkaFVLg7opKH0UZWlGUrfGAEc5rdg/8rAvJxONwhIPU4JsISGKHOFKZuxLdduCi
-         6Zh7LBq0egYWA5TMjDIpAcbOyiP1eUqmBt/VTlxd79wnT8pOptAUfSoft80uoRV5qkrB
-         glVudhuHzkNfGxmoLRudHbZNLXiM023GhClw/EYEeVDoGchQCRnNra4rElFmPjPmW2Qz
-         J3eR8dfljm55++56szk689D+ruQLQQpyctRjuDqyUNNMogtEYD7YJdXPDSh6YvboR/np
-         eY5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720732215; x=1721337015;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GQEjnhPJsBKTlnL+AnULLgLA6phEDmk5N6W4l5c5JDY=;
-        b=ppS3Zg/konAIm7qSPioRI4tnUAdrNL0DjkeGddU/NvskusP6A5hmCCKJAfuwmBpt4J
-         noFaoCgnVaGnsXijNEbXGBBVxRqL9HiMwZCXfdr1JiOQAvXMoL8qylBagjXTxa+fj4wY
-         1NsfZe34evqOCnDwLdt5HPvzFjlR2X24BwAhJcG7FPSHqeZ9IYoOnNe+y4P5PPoHscC9
-         SdaGfdeNQuE3s1mcZtvvB9rjLvKo3HrWECpLonAmVpvUFGTf+mGnwMRAPJ0f3FSlmuOp
-         pT5BsaJsISzRCgxZZgxH+I2W7nuaHUiUuC72LhN4uIMoDz+6DGOdXHrUBE28lnBiGVQo
-         qq3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWRDib09/5KNJP9B1a8NTJUYPiLqK2/BPkpWvYyR8sAwIRMcbL9ofpHg+GS6OY1x8WzTAMO707R2SbHhGPxiaKvFrbl3d3Df46q2qvy
-X-Gm-Message-State: AOJu0YwhNXZXSpESjBjkal/PCau/guJIcY3Tv+2cgiAvovz0RnIYz29Y
-	brCiGwf3aTSZSH8JVJ9YxYSUacMP44cw6P+xb2jq20NFBMV3VjgeeoS/pRALXJ6wZSuJvx+FVUT
-	GC8gX8KnSFK5Bn5Q5LDeDaXaWHFS7UmqogmmU
-X-Google-Smtp-Source: AGHT+IFk850plTl6FfUzJCerB2fJLct5MptmpXAlnhVn1xmW8r2nJvcEpPHxKRke7LUllx6inZ7id5LhARS4bwB6VMg=
-X-Received: by 2002:a0d:d083:0:b0:643:673d:2f8a with SMTP id
- 00721157ae682-658ef34aa9dmr92055537b3.30.1720732215050; Thu, 11 Jul 2024
- 14:10:15 -0700 (PDT)
+	s=arc-20240116; t=1720732216; c=relaxed/simple;
+	bh=UTRCsaBAwJ27kZVR9fIIRwXN90jfM8+V9iZaFILqX6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9WYLR5Os80DBpZaLN1FbE0mCh0bTY2gO3bZjuo9qDI0hqo5rqRfs7ww6ZoFU0pMcZXfOSOVU9r8x+LDWNklFD6uDHRwFm37UffmefkGYS8TrCr+F83fsgpYC+ugh2Fqx7LuF+j7K3YKrEoUQBkcBmEistwv8QNkHU3vaT+KVCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fg1qpoyF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A88C116B1;
+	Thu, 11 Jul 2024 21:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720732216;
+	bh=UTRCsaBAwJ27kZVR9fIIRwXN90jfM8+V9iZaFILqX6w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fg1qpoyFsQsZrFT8A+dixSkFvTM5ZfE0Hp7w0ZFs0Xl8bcAgcnD+LiDcpL48sTUxc
+	 NPWK5QxB2Wl19mLRAiQoan5+RuEBD9LbYpIeADvWqA5JHAbkfX62eZ3n/PJKzrLA3s
+	 LW7GSkmfmGZU/t/i1Xk4+YjjER1lLb6SaI5V3Bm2Kq+sv6a1dhzYBKJbouk0k+WqBe
+	 MvcBNj0FgF7uYizy4j6hWkboC2ne4UsP1bn0iWiGqb0z4DZT1xVZYjObb1crrT8PDW
+	 ogjih0CB5u8zSOxth5PqynhrwXpBgpPUBCFsLE/Y0cORU+OMgQG/UZS2proTJ/tlTm
+	 D/JTH9wG56EUQ==
+Date: Thu, 11 Jul 2024 15:10:14 -0600
+From: Rob Herring <robh@kernel.org>
+To: Igor Prusov <ivprusov@salutedevices.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, prusovigor@gmail.com,
+	kernel@salutedevices.com, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] ASoC: Add NTP8918 and NTP8835 codecs support
+Message-ID: <20240711211014.GA3008651-robh@kernel.org>
+References: <20240709221203.92167-1-ivprusov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703025605.63628-1-guocanfeng@uniontech.com>
-In-Reply-To: <20240703025605.63628-1-guocanfeng@uniontech.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 11 Jul 2024 17:10:04 -0400
-Message-ID: <CAHC9VhQ8y8fYeLz8KHXVNrLmp3cLZtUPHsagf3fym3gJvoTs3A@mail.gmail.com>
-Subject: Re: [PATCH] selinux: Streamline type determination in security_compute_sid
-To: Canfeng Guo <guocanfeng@uniontech.com>
-Cc: stephen.smalley.work@gmail.com, omosnace@redhat.com, 
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709221203.92167-1-ivprusov@salutedevices.com>
 
-On Tue, Jul 2, 2024 at 10:56=E2=80=AFPM Canfeng Guo <guocanfeng@uniontech.c=
-om> wrote:
->
-> Simplifies the logic for determining the security context type in
-> security_compute_sid, enhancing readability and efficiency.
->
-> Consolidates default type assignment logic next to type transition
-> checks, removing redundancy and improving code flow.
->
-> Signed-off-by: Canfeng Guo <guocanfeng@uniontech.com>
-> ---
-> v2:
->    Modify the format to follow the generally accepted style for
->    multi-line comments in the Linux kernel.
-> ---
->  security/selinux/ss/services.c | 36 ++++++++++++++++++----------------
->  1 file changed, 19 insertions(+), 17 deletions(-)
+On Wed, Jul 10, 2024 at 01:11:57AM +0300, Igor Prusov wrote:
+> This series adds support for two NeoFidelity amplifiers. For both
+> amplifiers vendor provides software for equalizer and filters
+> configuration, which generates firmware files with registers values.
+> Since in both cases those files have same encoding, a common helper
+> module is added to get firmware via request_firmware() API and set
+> registers values.
+> 
+> V1: https://lore.kernel.org/all/20240709172834.9785-1-ivprusov@salutedevices.com/
+> 
+> V1 -> V2:
+>  - Fix dt_binding_check errors
 
-Thanks for the revised patch, it looks good to me, but it is too late
-in the development cycle to merge it into the selinux/dev branch; I'm
-going to merge it into selinux/dev-staging for testing and I'll move
-it to the selinux/dev branch after the upcoming merge window closes.
+Please implement the comments on v1. Please don't send new versions 
+right away and give people time to review. We're not all on the same 
+timezone, get busy on other tasks, take vacation, etc.
 
---=20
-paul-moore.com
+Rob
 
