@@ -1,71 +1,47 @@
-Return-Path: <linux-kernel+bounces-249929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA9A92F1CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B352C92F1CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4CA91C22164
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:19:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E51851C227C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B8E19FA62;
-	Thu, 11 Jul 2024 22:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523B21A00FE;
+	Thu, 11 Jul 2024 22:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b="m30wEy/W"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rJ2PcQ/L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB4B12FF6E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B2C12FF6E;
+	Thu, 11 Jul 2024 22:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720736377; cv=none; b=J1fNTYV17P6ELJU7IayLqGM4pK/LFCukR0zwnK9DWfaB3vWNvnn8/s5EJJheM8LnPZGlQEYfWEQIA2w0OcS87CZjbN/91vqqlEENdle739tYme7gctuwuW3XwT/KR8CoAaeHRHd0zmxOuPFk7OHDtnoqELyu2LKsuKTS1aqD9OQ=
+	t=1720736541; cv=none; b=QqCjsOVUfnyTYkcasOp/DjU3dfz/wHWgUkzXUhJt3xv1aMwm+v909b4mlMbt1wjoLlgzJjdwXSaRBqoTvJru2qk0JhYkcendjUNwbvjica3dCMUKJL+ATPQgcOA5Z06/3wvdmwo0k41GHcaxc2PT/7uLxWlGeoIms3+2TXFTME0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720736377; c=relaxed/simple;
-	bh=I0xFXeyyipJTT/A496hnd34viJchK4bAqhfPNZ1TxHc=;
+	s=arc-20240116; t=1720736541; c=relaxed/simple;
+	bh=S8+sMbBaIXU0ECLByTpf+s/x+2jnhjByGTthrbm8Src=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PnHNnycIR4PgmMlttWEX8H6FvGMzVtFQSbQ+rBDZmb5EQvuxmyKXpJoe7xSAH6byLAnikcYP5VNMcI8YNbf6y7oG/GGGwSRzqPiiG1XdwGTpgQ0sdR2HM6JB6qtIYNkpoRxk3JybBrBoo6MmEKG5sM7hD/4qhX1qIAbQJqUg42Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr; spf=pass smtp.mailfrom=smile.fr; dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b=m30wEy/W; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smile.fr
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4267345e746so9322435e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:19:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smile.fr; s=google; t=1720736373; x=1721341173; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=KNCS/l67ZFh8/AsWtobABnj+gHm1+P2YaXJjG8kotm4=;
-        b=m30wEy/Wy/OvotfmHn7Wmwe0hbbqKqq0+iiaIXBiFh53sIRM/NtaOLNa3/hgC6C/uw
-         SF08kWQWTQXF2VmYDcY4cEpupf5cHmPIu7nazvGrAcVk0rqImRJ/WnI0rc3MM0YqTAEt
-         QrGOSdJMTt47S1alSvXwP35xoeGbsjWCReevM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720736373; x=1721341173;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KNCS/l67ZFh8/AsWtobABnj+gHm1+P2YaXJjG8kotm4=;
-        b=xQbRfYBqoq44Qbae/YK7EMgRDyJt5aaSRaKrL2WUDKuGeLwUkLVuvegr6aIjlLfO/3
-         Fdqt7x/oGzy2Cb4AhYCoaXmxhzodOr7BpQyBi60kDZKasImZ/JGmKmP987YKMYwc9J7D
-         UbQP0nzXgEojlg1GtIT+Wtgmalzi1k7JHFZhhwt3GB2nHZ4pE5h9FWpO6HEmiqtpugri
-         pXLZNhe85tkwxkbaVnb5Ev/ysiyg+SqwHLa5NhYWjCeuvU14CWQSpd5ImAY01vXg7jS5
-         R9ai++95THxYyoIyInGlqBS/GIyETZeX1OKKSTpuRIBKUlfwcyFVA/QzD4pX4wRPhJ4E
-         FLbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUkGQ435keWv0h2Oxqw2SIHRwD45QtYCkReGey6szDvOdQ+6RxmCiM9FsjSm2m8LQ21gwL+1Opb1loTypAzdFDtxBzGQshJRI92DHs
-X-Gm-Message-State: AOJu0Yxc670SguU+GRhPniQu63+sqkkCS29QsUGoVma/Z8+HA4WcFxP6
-	TIQzy0J1DbmOMXI+KJ/zo6Hr9IE5k1/gtzAA2nqimd8ImC8V6EppXTJf79lhvV8=
-X-Google-Smtp-Source: AGHT+IGKz/YBt/YNmXGSMlZsyMwRV/jL0zSb83rdpYccUG4n2naQoDOcWoIUH891b61ch9E/m51DEg==
-X-Received: by 2002:a05:600c:4982:b0:426:6314:3336 with SMTP id 5b1f17b1804b1-426708fa8bbmr61928035e9.36.1720736372619;
-        Thu, 11 Jul 2024 15:19:32 -0700 (PDT)
-Received: from [192.168.0.22] (53.1.159.89.rev.sfr.net. [89.159.1.53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8902csm8794961f8f.51.2024.07.11.15.19.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 15:19:32 -0700 (PDT)
-Message-ID: <f2044667-e235-4abc-924e-3615c60681f1@smile.fr>
-Date: Fri, 12 Jul 2024 00:19:30 +0200
+	 In-Reply-To:Content-Type; b=LpiUGt3HIWMqBWot0o9ShONG8NTCKid1csPNTpERXZqisNLiIrGbTfvP3LInUCjQ3o8/uObN/F8hKtdFS00KX5pXFDwQz4roBFPg29Ike4m4xEuzLIeNuam/sYZuwVP2kLQekIwcyvu5b7I2m4AZI4Xa4haz+JzIUHQCbGcnhoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rJ2PcQ/L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EBA4C116B1;
+	Thu, 11 Jul 2024 22:22:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720736541;
+	bh=S8+sMbBaIXU0ECLByTpf+s/x+2jnhjByGTthrbm8Src=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rJ2PcQ/LzXpmbirXp5OuVsmjJDftpqEkzZhvxdMx2G8fLf1mdu5XPjzwyGdO8fj0z
+	 pYg9jTYDNKedG7Jn4Mtg3L7VntrayFs6CXbvhkpYP+JRvnWEZFp2y92gvf5h2Efwq9
+	 ViHY6kmiqdCZRoP6DSvOiwZRRm3dNt7lIv+t+u3Cr6pWF2Up4NqzjH2LeSpdxSg0YB
+	 rKDf4vkYcmobjxeF3wOYr10qtXw9iMjS/2u6Nqwo03gZ9m/btSWUDddqfibTvFEgw+
+	 suTykYe7PfNSGiu6uarlYin7jWT1GiM+tCw/p9ctUCWaLFQCjXx4a93mtahnqGRnMD
+	 s3tvpbLGfzBlQ==
+Message-ID: <0c2dac55-d20e-4132-be62-0623900a62e1@kernel.org>
+Date: Fri, 12 Jul 2024 07:22:19 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,57 +49,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator: core: Set the fwnode for regulator_dev
-To: Saravana Kannan <saravanak@google.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20240711212514.2372780-1-yoann.congal@smile.fr>
- <CAGETcx--FNpz3o5TiZ3T6UkMHKBUjD8cwHR6eQAjM-U86=p_Eg@mail.gmail.com>
+Subject: Re: [PATCH v5 5.10/5.15] ata: libata-scsi: check cdb length for
+ VARIABLE_LENGTH_CMD commands
+To: Artem Sadovnikov <ancowi69@gmail.com>
+Cc: Niklas Cassel <cassel@kernel.org>, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20240711151546.341491-1-ancowi69@gmail.com>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-From: Yoann Congal <yoann.congal@smile.fr>
-Organization: Smile ECS
-In-Reply-To: <CAGETcx--FNpz3o5TiZ3T6UkMHKBUjD8cwHR6eQAjM-U86=p_Eg@mail.gmail.com>
+Organization: Western Digital Research
+In-Reply-To: <20240711151546.341491-1-ancowi69@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Le 11/07/2024 à 23:29, Saravana Kannan a écrit :
-> On Thu, Jul 11, 2024 at 2:25 PM Yoann Congal <yoann.congal@smile.fr> wrote:
->>
->> From: Yoann Congal <yoann.congal@smile.fr>
->>
->> After commit 3fb16866b51d ("driver core: fw_devlink: Make cycle
->> detection more robust"), fw_devlink prints an error when consumer
->> devices don't have their fwnode set. This used to be ignored silently.
->>
->> Set the fwnode in regulator_dev so fw_devlink can find them and properly
->> track their dependencies.
->>
->> This fixes errors like this:
->>   stpmic1-regulator 5c002000.i2c:stpmic@33:regulators: Failed to create device link (0x180) with 2-0033
->>
->> NB: This is similar to the commit a26cc2934331 ("drm/mipi-dsi: Set the
->> fwnode for mipi_dsi_device") applied to the regulator framework.
->>
->> Cc: Saravana Kannan <saravanak@google.com>
->> Cc: stable@vger.kernel.org # 5.13.x
->> Fixes: 63c7c9e16c8e ("regulator: core: Get and put regulator of_node")
->> Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+On 7/12/24 00:15, Artem Sadovnikov wrote:
+> Fuzzing of 5.10 stable branch reports a slab-out-of-bounds error in
+> ata_scsi_pass_thru.
 > 
-> The change is valid but the problem is that managed device links don't
-> work correctly for "class" type devices. So, we can't merge this
-> change yet.
+> The error is fixed in 5.18 by commit ce70fd9a551a ("scsi: core: Remove the
+> cmd field from struct scsi_request") upstream.
+> 
+> The problem is that the length of the received SCSI command is not
+> validated if scsi_op == VARIABLE_LENGTH_CMD. It can lead to out-of-bounds
+> reading if the user sends a request with SCSI command of length less than
+> 32.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> 
+> Signed-off-by: Artem Sadovnikov <ancowi69@gmail.com>
+> Signed-off-by: Mikhail Ivanov <iwanov-23@bk.ru>
+> Signed-off-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
 
-I was totally unaware of that.
+Looks good, so please feel free to add:
 
-> So, for now, we shouldn't land this. Are you not seeing probing issues
-> when you do this? Or significant changes/delays in probing?
+Acked-by: Damien Le Moal <dlemoal@kernel.org>
 
-I just checked my logs : No probing issue nor noticeable delay.
+However, you did not address this patch to linux-stable and Greg, so it will go
+nowhere as is since I cannot apply that to stable. So please check:
 
-Thanks for your answer, I'll drop this for now.
+Documentation/process/stable-kernel-rules.rst
 
-Regards,
+and see "option 2".
+
+> ---
+>  drivers/ata/libata-scsi.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> index 36f32fa052df..4397986db053 100644
+> --- a/drivers/ata/libata-scsi.c
+> +++ b/drivers/ata/libata-scsi.c
+> @@ -3949,6 +3949,9 @@ static unsigned int ata_scsi_var_len_cdb_xlat(struct ata_queued_cmd *qc)
+>  	const u8 *cdb = scmd->cmnd;
+>  	const u16 sa = get_unaligned_be16(&cdb[8]);
+>  
+> +	if (scmd->cmd_len != 32)
+> +		return 1;
+> +
+>  	/*
+>  	 * if service action represents a ata pass-thru(32) command,
+>  	 * then pass it to ata_scsi_pass_thru handler.
+
 -- 
-Yoann Congal
-Smile ECS - Tech Expert
+Damien Le Moal
+Western Digital Research
+
 
