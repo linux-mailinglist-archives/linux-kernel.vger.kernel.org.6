@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-249947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2821A92F1F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:31:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A52C892F1F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A756E1F26AEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:31:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC501F26E05
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C22A1A08AF;
-	Thu, 11 Jul 2024 22:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE9C1A0712;
+	Thu, 11 Jul 2024 22:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DrdWg0/U"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eQkGZH53"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CD91A01CD
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13C815098E;
+	Thu, 11 Jul 2024 22:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720736965; cv=none; b=GqfG8GruQWhN/DhfNH+WCPj9mObzKJljlHRHyY0iPRG9OKRSRwfSlpYa+Plw10y6ApQfMEV/5fFSDIr050c2wOYg6BMZXl6qcBzLmM8NcPYtcZi0vZXcIu07GCbnDbE6RWBnqKkw10GyZwK8L3lwX+3F+rbNoO4n5r2IUeMxqK8=
+	t=1720737040; cv=none; b=JKa6sFzOok8ErQRLEgpGoLn/822c7vQgYQfJAsXTl3NGtPJnxXtV2LiIwxz2yKr1P+xwx9sSndmLULD3KU/IDMsioI7GL45sRUTmR7ltJwU1IwPgDZpkX+VnxmuTwWgWZilM2naHBYhiLzKa06i9v9fEVuFcBv2WE/587PmRCn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720736965; c=relaxed/simple;
-	bh=WWkBDQdzh3njbJuzudzTlTiHwd4ekS0EVCYXKrvOnJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OjoV7lBk+Ky9uStzm0fVKHuPCLBeALD3ixOC4c3HaeI8fAmjlNp+z33pIBxHiQLXd6Y0KOag9wIoD872gMtxBe6IIvpae71RZfD//6GU7yw1sxVB+sWyP2DREVzXA9RPHXjKs+xO4i/z4ydw6lFFKuKnXDVjsMXLzngZ4lbYcHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DrdWg0/U; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720736962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8suwGbZaDEfaEhHxk+SPcUQE6Zt9W0rGkYpluhSm8MY=;
-	b=DrdWg0/U4ZStQqd/g66Jp8WMutS4F30KBl4UOf6nal999oRjmPiMls/vL0w1k6LOMVR8BQ
-	Gi1rQoTY5/O93M5etSslUX8+ZPWTOVzqrfH/KdAInSnK3CPwpXBpnMXDYarVKj3EEgrtoS
-	ZTi3IT+EkSlbSTBaGbk9RFKB24Rj/Ck=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-670-vHT826Z0O8y0TvWPgk1ULQ-1; Thu, 11 Jul 2024 18:29:21 -0400
-X-MC-Unique: vHT826Z0O8y0TvWPgk1ULQ-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-70b0a02f2d1so1208904b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:29:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720736960; x=1721341760;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8suwGbZaDEfaEhHxk+SPcUQE6Zt9W0rGkYpluhSm8MY=;
-        b=nSh4eI5nztT2bI7mLJ29F3Xh+8JoEO3zRNbzB8+v7zKa9HlZzlATgkxUwGwOnlH9GX
-         wPm0qZrBd10fJ3q0mCdHiuF0z2Ia9ZdtYS7tlnRCS7YhNie9PmMXgV0GhRkmEj91gMTf
-         yiOCPG4njwrPrC6VrZPUyj+KcMDPZB2pTNcwCqq3ZdlQ9m9VLtktjkioNMCJycoZE+MX
-         8BGS9PxyMwl8BJa5PLbIMsE+dd8Y/fPKh75Q7pxWLdoZYa26X86E7q/8ZlXEkuque1JZ
-         RndY9on4ZugQHMCdVdKF4gwTcZoyUIMuHpDY93K6Vc4IiIiGOcTEJ2CTO687loM+8wp0
-         /63w==
-X-Forwarded-Encrypted: i=1; AJvYcCXJXl+Wdgbb1O/tBMexN6OzEAnmGU4lqxpyaIVQWxIWxy2wXscKwEdmRtzeA2fx7KT1/IvP2dfdXYYn1v/Ftqq2Tqy05/YPxzdJ/rbb
-X-Gm-Message-State: AOJu0Yz+WigspxxWdNu9egsn/OqP8SJhOjweVtc6gLw8MGm/RMZSwZ2O
-	8lCoEs2G1GRNUxln4zFoR34wmE4tRJ/VrLMjUQFBlQQMEIV8Cyn+rCkkcsvrZeg1hqGk3h6CpOT
-	Bg1VPU5Ndfsf5eIzdz5Bf8XbKMuHZo2Pr6eiAaNdS/PIJdIxcyqYO2e8/iIASlg==
-X-Received: by 2002:a05:6a00:1387:b0:705:a600:31da with SMTP id d2e1a72fcca58-70b435f628bmr11966945b3a.23.1720736960234;
-        Thu, 11 Jul 2024 15:29:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgxrcFMxU09Qc3/IvccbRFptfU3EUxrhjacGDTiDAHwqY4HWSq/pqfbnxMnMrO7ubxDKoWlw==
-X-Received: by 2002:a05:6a00:1387:b0:705:a600:31da with SMTP id d2e1a72fcca58-70b435f628bmr11966921b3a.23.1720736959751;
-        Thu, 11 Jul 2024 15:29:19 -0700 (PDT)
-Received: from [172.20.2.228] ([4.28.11.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b438ed892sm6365205b3a.96.2024.07.11.15.29.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 15:29:19 -0700 (PDT)
-Message-ID: <5a875a3a-2243-4eab-856f-bc53ccfec3ea@redhat.com>
-Date: Fri, 12 Jul 2024 00:29:17 +0200
+	s=arc-20240116; t=1720737040; c=relaxed/simple;
+	bh=pUc/vap2hH0RXSmRacWVhQXdqKkWXpFXzBZZAR7Rb+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hTDq6gRNSorRiCiiIDI1FekqDwnk60ob1wCNEEp3K6eOtIdiIFeogsgOqF7UBpmsT1UWT6iQHSdQL2h/J4lDgNLfKfKmvwR0/s72g3qQXf01XN18JmpiyZbbjysgOVyYDQU4g773rGI55KAKkFBAX0Xg9FH39CP+8y2JTLbEfWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eQkGZH53; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720737039; x=1752273039;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pUc/vap2hH0RXSmRacWVhQXdqKkWXpFXzBZZAR7Rb+Y=;
+  b=eQkGZH53B6CtKPmYeXGs5XgaIILV//hxAryNsTIcdB37d+N0ExLTwBTg
+   LQVPAx0urjhJc+3YYX3Zy7R1TKUGxTlTcWCW7gD77fdN3EFJqcUsozIzY
+   pIrHwPCKg1SgndtuV4HEXcp/T8sY/6E+ltTIgwDVVhTLxLxomLR/Qugni
+   n7mfZzNIahztfZt/NY9FFpOevVgYLLCe72hY7u+0KJLyOPJMbOJgaXAze
+   FRa79fGB832+XpWvVZTXfoqm2hpDCpQegqaUuGie54AziXXhQbW3qTTiL
+   oSE9HT/qqPAQuOYmW8SCkOYk7hkQ7WHrnk/SyAeYQG7Qx9ZNf3Z2/jnKv
+   Q==;
+X-CSE-ConnectionGUID: Ro5Hf7ZFRQKzctoUZtVgFw==
+X-CSE-MsgGUID: +EjAXw1bQiS3ph8xPMW9IQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="28830606"
+X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
+   d="scan'208";a="28830606"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 15:30:38 -0700
+X-CSE-ConnectionGUID: GfOzNDmMSoGQDY6CfG5tlg==
+X-CSE-MsgGUID: 3tsDK+TjTyW6sjrNIh/kuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
+   d="scan'208";a="49129533"
+Received: from unknown (HELO [10.124.221.144]) ([10.124.221.144])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 15:30:38 -0700
+Message-ID: <4bba0c20-0cd0-4c1a-abf0-511ba6940a57@intel.com>
+Date: Thu, 11 Jul 2024 15:30:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,182 +66,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
- lazily freeable mappings
-From: David Hildenbrand <david@redhat.com>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev, tglx@linutronix.de
-Cc: linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
- Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
- Christian Brauner <brauner@kernel.org>,
- David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-References: <20240709130513.98102-1-Jason@zx2c4.com>
- <20240709130513.98102-2-Jason@zx2c4.com>
- <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
+Subject: Re: [PATCH 0/6] Introduce CET supervisor state support
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "Yang, Weijiang" <weijiang.yang@intel.com>,
+ "seanjc@google.com" <seanjc@google.com>, "x86@kernel.org" <x86@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>
+Cc: "john.allen@amd.com" <john.allen@amd.com>,
+ "peterz@infradead.org" <peterz@infradead.org>, "Gao, Chao"
+ <chao.gao@intel.com>, "mlevitsk@redhat.com" <mlevitsk@redhat.com>
+References: <20240531090331.13713-1-weijiang.yang@intel.com>
+ <67c5a358-0e40-4b2f-b679-33dd0dfe73fb@intel.com>
+ <1c2fd06e-2e97-4724-80ab-8695aa4334e7@intel.com>
+ <7df3637c85517f5bc4e3583249f919c1b809f370.camel@intel.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <7df3637c85517f5bc4e3583249f919c1b809f370.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10.07.24 05:27, David Hildenbrand wrote:
-> On 09.07.24 15:05, Jason A. Donenfeld wrote:
->> The vDSO getrandom() implementation works with a buffer allocated with a
->> new system call that has certain requirements:
+On 7/11/24 15:11, Edgecombe, Rick P wrote:
+> On Thu, 2024-07-11 at 13:58 -0700, Dave Hansen wrote:
+>> So we're down to choosing between
 >>
->> - It shouldn't be written to core dumps.
->>     * Easy: VM_DONTDUMP.
->> - It should be zeroed on fork.
->>     * Easy: VM_WIPEONFORK.
+>>  * $BYTES space in 'struct fpu' (on hardware supporting CET-S)
 >>
->> - It shouldn't be written to swap.
->>     * Uh-oh: mlock is rlimited.
->>     * Uh-oh: mlock isn't inherited by forks.
+>> or
 >>
->> It turns out that the vDSO getrandom() function has three really nice
->> characteristics that we can exploit to solve this problem:
+>>  * ~100 loc
 >>
->> 1) Due to being wiped during fork(), the vDSO code is already robust to
->>      having the contents of the pages it reads zeroed out midway through
->>      the function's execution.
->>
->> 2) In the absolute worst case of whatever contingency we're coding for,
->>      we have the option to fallback to the getrandom() syscall, and
->>      everything is fine.
->>
->> 3) The buffers the function uses are only ever useful for a maximum of
->>      60 seconds -- a sort of cache, rather than a long term allocation.
->>
->> These characteristics mean that we can introduce VM_DROPPABLE, which
->> has the following semantics:
->>
->> a) It never is written out to swap.
->> b) Under memory pressure, mm can just drop the pages (so that they're
->>      zero when read back again).
->> c) It is inherited by fork.
->> d) It doesn't count against the mlock budget, since nothing is locked.
->>
->> This is fairly simple to implement, with the one snag that we have to
->> use 64-bit VM_* flags, but this shouldn't be a problem, since the only
->> consumers will probably be 64-bit anyway.
->>
->> This way, allocations used by vDSO getrandom() can use:
->>
->>       VM_DROPPABLE | VM_DONTDUMP | VM_WIPEONFORK | VM_NORESERVE
->>
->> And there will be no problem with using memory when not in use, not
->> wiping on fork(), coredumps, or writing out to swap.
->>
->> In order to let vDSO getrandom() use this, expose these via mmap(2) as
->> MAP_DROPPABLE.
->>
->> Finally, the provided self test ensures that this is working as desired.
+>> $BYTES is 24, right?  Did I get anything wrong?
 > 
-> Acked-by: David Hildenbrand <david@redhat.com>
+> Do we know what the actual memory use is? It would increases the size asked of
+> of the allocator by 24 bytes, but what amount of memory actually gets reserved?
 > 
-> 
-> I'll try to think of some corner cases we might be missing.
+> It is sometimes a slab allocated buffer, and sometimes a vmalloc, right? I'm not
+> sure about slab sizes, but for vmalloc if the increase doesn't cross a page
+> size, it will be the same size allocation in reality. Or if it is close to a
+> page size already, it might use a whole extra 4096 bytes.
 
-Sorry that I keep coming up with corner cases :) But these should be easy to handle:
+Man, I hope I don't have this all mixed up in my head.  Wouldn't be the
+first time.  I _think_ you might be confusing thread_info and
+thread_struct, though.  I know I've gotten them confused before.
 
-1) We should disallow KSM.
+But we get to the 'struct fpu' via:
 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index df6bae3a5a2c..d6744183ba41 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -713,7 +713,7 @@ static bool vma_ksm_compatible(struct vm_area_struct *vma)
-  {
-         if (vma->vm_flags & (VM_SHARED  | VM_MAYSHARE   | VM_PFNMAP  |
-                              VM_IO      | VM_DONTEXPAND | VM_HUGETLB |
--                            VM_MIXEDMAP))
-+                            VM_MIXEDMAP | VM_DROPPABLE))
-                 return false;           /* just ignore the advice */
-  
-         if (vma_is_dax(vma))
+	current->thread.fpu
 
+Where current is a 'task_struct' which is in /proc/slabinfo and 'struct
+thread_struct thread' and 'struct fpu' are embedded in 'task_struct',
+not allocated on their own:
 
-We don't want to suddenly get pages that are swapbacked.
+	task_struct         2958   3018  10048  3 8 ...
 
+So my current task_struct is 10048 bytes and 3 of them fit in each
+8-page slab, leaving 2624 bytes to spare.
 
-2) We should disable userfaultfd
+I don't think we're too dainty about adding thing to task_struct.  Are we?
 
-diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index 05d59f74fc88..a12bcf042551 100644
---- a/include/linux/userfaultfd_k.h
-+++ b/include/linux/userfaultfd_k.h
-@@ -218,6 +218,9 @@ static inline bool vma_can_userfault(struct vm_area_struct *vma,
-  {
-         vm_flags &= __VM_UFFD_FLAGS;
-  
-+       if (vm_flags & VM_DROPPABLE)
-+               return false;
-+
-         if ((vm_flags & VM_UFFD_MINOR) &&
-             (!is_vm_hugetlb_page(vma) && !vma_is_shmem(vma)))
-                 return false;
+> So we might be looking at a situation where some tasks get an entire extra page
+> allocated per task, and some get no difference. And only the average is 24 bytes
+> increase.
 
-
-Otherwise someone could place swapbacked pages in there (using UFFDIO_MOVE)
-I think. But conceptually, I don't think userfaultfd might not make sense at
-all with uffd. And if there are good reasons for it in the future, we could
-enable the parts that make sense.
-
-
-I think other places like khugepaged should handle it correctly (not set
-swapbacked) due to your changes to folio_add_new_anon_rmap().
-
--- 
-Cheers,
-
-David / dhildenb
-
+I think you're right here, at least when it comes to large weirdly-sized
+slabs.  But _so_ many things affect task_struct that I've never seen
+anyone sweat it too much.
 
