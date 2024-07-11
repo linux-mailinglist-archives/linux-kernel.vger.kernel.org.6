@@ -1,172 +1,88 @@
-Return-Path: <linux-kernel+bounces-249880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853F592F112
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:24:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EED92F115
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B61D81C228C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:24:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 681591F2438A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE6619F47B;
-	Thu, 11 Jul 2024 21:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB0319F47B;
+	Thu, 11 Jul 2024 21:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ImcPSGDu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DREV2l0k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197BC8BFC;
-	Thu, 11 Jul 2024 21:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A288BFC;
+	Thu, 11 Jul 2024 21:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720733043; cv=none; b=Qk2zb5tVb+xVhgGHV0jgDVj64ygYiH54J6V4zZpyzKqvdLO2NWUXPHtnhRRZlHl2nLaVLvNbw9AoLRsLG4m9EGDmq1r88wS21xh2fI9FhkYftToeMsuyQ5WLavgR24F1021zknG80QLZEgx+ZNcqj8OZ9vqAOAzpT0bWie859IU=
+	t=1720733101; cv=none; b=MBOxtoR+dPnUrPlChkUAXw4WOorob0DvAHyqPL3K0McpJSynhU2pyG+6tsMovQTxYb8V7Xz+nKjMgOphp1u9qwR3/iilrf/AVjETG23NFsdY9LFmcrX/6bvE1hPJ3pP3lvyulFODREgSqIJUL4eyEeInRnSXnLPv6m88XJ33JtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720733043; c=relaxed/simple;
-	bh=tONXDGQEnzgYHvUIcdVRKmZ+qkXQZBDcbzc9cL4jKGo=;
+	s=arc-20240116; t=1720733101; c=relaxed/simple;
+	bh=kq8pr4okGvGrj4gNPhJ+8x7z/fJOCIcvHjdaUUfNYbE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S+3j8sbXSCZ0JLdKbohWnlK3TRrVWb+pzRgE6XQC1+YZv+X6WJl/nvYKg3ALYmJYvs/3ziQF7sH6QqrIbb9PD2YPm9gkuK5Cajl/cZ/A3UPYEogxDZ7Cdo62Eja+tGtkL/91iIQKcTe9wHTduHNWqkMm+mjHEKXLIK8acmDDDx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ImcPSGDu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F616C116B1;
-	Thu, 11 Jul 2024 21:24:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=X4x8+56MysQZEFJeTDvbp/40kF6UA7MgKzivl1ncC9Perxi3ZuBpH3s2vjk4eUS2TSnBjW/7Qn+fYWvycNxPA+bMgbkCsKdqOnDquXNKKy34wzpwSwxlKUcXwDxWGvNrJpK2vWd+q7SC1JbKFAWB5QCVyqez5tgQSc0qGmbVZd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DREV2l0k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4B1C116B1;
+	Thu, 11 Jul 2024 21:25:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720733042;
-	bh=tONXDGQEnzgYHvUIcdVRKmZ+qkXQZBDcbzc9cL4jKGo=;
+	s=k20201202; t=1720733100;
+	bh=kq8pr4okGvGrj4gNPhJ+8x7z/fJOCIcvHjdaUUfNYbE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ImcPSGDuw5KT0wetwjjqwxxtGD2PO6zwpd0vgJjp27ozbSehM+XktxefFnU6Kmx0F
-	 eUWFW0/YI4NRf5gI1kHldqAKE+Q2yET1RehrqVs/cKPCUVElf+MN34JAwpWq3CSmZc
-	 S3Ym7DJa3obJcIhd36Gjf+Nha/A4tsA2mp9BL0aKNTGziPOt36k1Ts/U6wkFIIEf/y
-	 YaggNnpqpYN2J8GH3hzKoTJSbjqWD8S06B2GDe8+iHG325t7yvQ7MTbHexHsIJcSp6
-	 zMLebEGx86b+IJyup/Zz83eBLuD1sW0kyga3G4NIXGIbLrXuD4DNl09+24pwSGPeR4
-	 UEQviRVu1kzDw==
-Date: Thu, 11 Jul 2024 15:23:59 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
+	b=DREV2l0kP9B9m5OSkZlC8KzX1BkGPoFSGHwwoXuCrc3XyZnhOT428S530pb/hDgsm
+	 gBZ3LgXKjLMXi5RcleYVNG/eXq5a3BBTKDLffBODuJY2y8Mgn+BH+gLoi+tGE42K7w
+	 o52gm0Z3jr92f16aK5s1I2lGwgXAHPZr9Xa1XmTeJSnUq1V0ftj3Z2JzVKg3z/t+rg
+	 Es5JagFVM5tFsTI4UbTwy8MRkWwUoUO0NGMTCRrH5kbvsAz2+RgPxTThT+TMmX0R/G
+	 B/lqXcY3foaFUQtF5DRTbmATxGw6/0zKi1XmCyTRLuILreSJVP0dKgwMU8/0LkJ2yG
+	 hB0WVsHyOIgcA==
+Date: Thu, 11 Jul 2024 15:24:59 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: serial: samsung: fix maxItems for
- gs101 & document earlycon requirements
-Message-ID: <20240711212359.GA3023490-robh@kernel.org>
-References: <20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
- <20240710-gs101-non-essential-clocks-2-v3-1-5dcb8d040d1c@linaro.org>
- <CAL_JsqLsZAEx-c_12RPcR+HCjPcA_d12oKgZ7frX2Wo47sGTnA@mail.gmail.com>
- <e2f4a37e7c31d26449125a6265239c88162a1085.camel@linaro.org>
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Cyril Brulebois <kibi@debian.org>,
+	bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>, jim2101024@gmail.com,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 01/12] dt-bindings: PCI: Change brcmstb YAML maintainer
+Message-ID: <172073309845.3035345.4782814760487454161.robh@kernel.org>
+References: <20240710221630.29561-1-james.quinlan@broadcom.com>
+ <20240710221630.29561-2-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e2f4a37e7c31d26449125a6265239c88162a1085.camel@linaro.org>
+In-Reply-To: <20240710221630.29561-2-james.quinlan@broadcom.com>
 
-On Thu, Jul 11, 2024 at 05:09:50PM +0100, André Draszik wrote:
-> Hi Rob,
+
+On Wed, 10 Jul 2024 18:16:15 -0400, Jim Quinlan wrote:
+> Nicolas has not been active for a while.  It also makes
+> sense for a Broadcom employee to be the maintainer as
+> many of the details are privy to Broadcom.
 > 
-> On Thu, 2024-07-11 at 09:51 -0600, Rob Herring wrote:
-> > On Wed, Jul 10, 2024 at 7:29 AM André Draszik <andre.draszik@linaro.org> wrote:
-> > > --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> > > +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> > > @@ -145,6 +145,20 @@ allOf:
-> > >          - samsung,uart-fifosize
-> > >        properties:
-> > >          reg-io-width: false
-> > 
-> > blank line between properties
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> ---
+>  Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Do mean before clocks: below and before clock-names: below? 
 
-Yes.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-> We don't do that normally,
-> at least none of the bindings I looked at do that. Or did I misunderstand?
-
-That style is pretty universal. If in doubt, look at example-schema.yaml 
-for best practices. The exception is only for cases like this:
-
-  foo: true
-  bar: true
-
-> > > +        clocks:
-> > > +          description: |
-> > > +            Note that for earlycon to work, the respective ipclk and pclk need
-> > > +            to be running! The bootloader normally leaves them enabled, but the
-> > > +            serial driver will start handling those clocks before the console
-> > > +            driver takes over from earlycon, breaking earlycon. If earlycon is
-> > > +            required, please revert the patch "clk: samsung: gs101: don't mark
-> > > +            non-essential (UART) clocks critical" locally first to mark them
-> > > +            CLK_IS_CRITICAL and avoid this problem.
-> > 
-> > That's a whole bunch of details that are Linux specific which have
-> > little to do with the binding.
-> 
-> You're right - I had been asked to add this to the binding and didn't consider
-> that. I think I found a much better alternative in the meantime and this
-> description can go away.
-
-I hope so because asking someone to revert a patch to use earlycon is 
-not a great experience. I wouldn't want to use that platform.
-
-> 
-> > > +          maxItems: 2
-> > > +        clock-names:
-> > > +          items:
-> > > +            - const: uart
-> > > +            - const: clk_uart_baud0
-> > 
-> > Which clock is pclk and ipclk?
-> 
-> uart is pclk, clk_uart_baud0 is ipclk.
-> 
-> > 'baud' would be sufficient for the
-> > name. 'clk_' and 'uart' are redundant because it's all clocks and they
-> > are all for the uart.
-> 
-> TBH, this patch is just following the existing style & names as already exist for
-> various other SoCs in this same file. Furthermore, up until this patch the default
-> from this file applies, which is:
-> 
->   clock-names:
->     description: N = 0 is allowed for SoCs without internal baud clock mux.
->     minItems: 2
->     items:
->       - const: uart
->       - pattern: '^clk_uart_baud[0-3]$'
->       - pattern: '^clk_uart_baud[0-3]$'
->       - pattern: '^clk_uart_baud[0-3]$'
->       - pattern: '^clk_uart_baud[0-3]$'
-
-Then don't duplicate it. Ideally, the names are defined at the top level 
-and the conditional schema just limits the number of clocks, and this is 
-an example of why we want it that way. I have no context to see if this 
-is consistent or not.
-
-> 
-> so of course the existing gs101 DTs had followed this scheme. Other SoCs that are
-> described in this same binding also keep the name as per the default in case
-> they limit the maximum number like this patch does.
-> 
-> Changing the name now would be a bit disruptive and make gs101 differ from other
-> Exynos SoCs in this respect, I'd rather not :-)
-
-Agreed.
-
-Rob
 
