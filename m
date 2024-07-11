@@ -1,103 +1,129 @@
-Return-Path: <linux-kernel+bounces-249928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 530FD92F1C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:14:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA9A92F1CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2E2B1F21DB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:13:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4CA91C22164
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BAB1A00F7;
-	Thu, 11 Jul 2024 22:13:53 +0000 (UTC)
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B8E19FA62;
+	Thu, 11 Jul 2024 22:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b="m30wEy/W"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0BB42AB5;
-	Thu, 11 Jul 2024 22:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB4B12FF6E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720736032; cv=none; b=kErs0B/dkhh8nEFMC2fIq+3F9Du/58I4obxyn7XkVTW9EBeeCXR5lwWcmzRFV+y/QG7Lhif6acNKlK0d4wGKPX1wc0Bab6yGoSahjfdnNrkYLNQv2RWLWiQPCLaSimsiYxyvPNojVxA+s+wMx4DBstfdP8YgK1IR95OePJmtV4A=
+	t=1720736377; cv=none; b=J1fNTYV17P6ELJU7IayLqGM4pK/LFCukR0zwnK9DWfaB3vWNvnn8/s5EJJheM8LnPZGlQEYfWEQIA2w0OcS87CZjbN/91vqqlEENdle739tYme7gctuwuW3XwT/KR8CoAaeHRHd0zmxOuPFk7OHDtnoqELyu2LKsuKTS1aqD9OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720736032; c=relaxed/simple;
-	bh=cHna4k26ioqiXPXuUKIMzpJZE3gkKYyiH7P4BVkC3Mk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
-	 References:In-Reply-To; b=t28gJ2kj2gvdbwPAA/P6luwtpD1plgXF11Et58P9S3rp5DA8keBxlhw/RoAm3xq1CMYWkcdwh/io2JSUhiFzxrsco9KgJ0gErEZLAUOnVkNGNJAOdzG9lunX1bgqb+fetCSP8IF0CEjxIwsnZgwUS34cTJRSsd9dcrNmNVr3zBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id CE2D83A00;
-	Fri, 12 Jul 2024 00:13:47 +0200 (CEST)
+	s=arc-20240116; t=1720736377; c=relaxed/simple;
+	bh=I0xFXeyyipJTT/A496hnd34viJchK4bAqhfPNZ1TxHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PnHNnycIR4PgmMlttWEX8H6FvGMzVtFQSbQ+rBDZmb5EQvuxmyKXpJoe7xSAH6byLAnikcYP5VNMcI8YNbf6y7oG/GGGwSRzqPiiG1XdwGTpgQ0sdR2HM6JB6qtIYNkpoRxk3JybBrBoo6MmEKG5sM7hD/4qhX1qIAbQJqUg42Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr; spf=pass smtp.mailfrom=smile.fr; dkim=pass (1024-bit key) header.d=smile.fr header.i=@smile.fr header.b=m30wEy/W; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=smile.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smile.fr
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4267345e746so9322435e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile.fr; s=google; t=1720736373; x=1721341173; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=KNCS/l67ZFh8/AsWtobABnj+gHm1+P2YaXJjG8kotm4=;
+        b=m30wEy/Wy/OvotfmHn7Wmwe0hbbqKqq0+iiaIXBiFh53sIRM/NtaOLNa3/hgC6C/uw
+         SF08kWQWTQXF2VmYDcY4cEpupf5cHmPIu7nazvGrAcVk0rqImRJ/WnI0rc3MM0YqTAEt
+         QrGOSdJMTt47S1alSvXwP35xoeGbsjWCReevM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720736373; x=1721341173;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KNCS/l67ZFh8/AsWtobABnj+gHm1+P2YaXJjG8kotm4=;
+        b=xQbRfYBqoq44Qbae/YK7EMgRDyJt5aaSRaKrL2WUDKuGeLwUkLVuvegr6aIjlLfO/3
+         Fdqt7x/oGzy2Cb4AhYCoaXmxhzodOr7BpQyBi60kDZKasImZ/JGmKmP987YKMYwc9J7D
+         UbQP0nzXgEojlg1GtIT+Wtgmalzi1k7JHFZhhwt3GB2nHZ4pE5h9FWpO6HEmiqtpugri
+         pXLZNhe85tkwxkbaVnb5Ev/ysiyg+SqwHLa5NhYWjCeuvU14CWQSpd5ImAY01vXg7jS5
+         R9ai++95THxYyoIyInGlqBS/GIyETZeX1OKKSTpuRIBKUlfwcyFVA/QzD4pX4wRPhJ4E
+         FLbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUkGQ435keWv0h2Oxqw2SIHRwD45QtYCkReGey6szDvOdQ+6RxmCiM9FsjSm2m8LQ21gwL+1Opb1loTypAzdFDtxBzGQshJRI92DHs
+X-Gm-Message-State: AOJu0Yxc670SguU+GRhPniQu63+sqkkCS29QsUGoVma/Z8+HA4WcFxP6
+	TIQzy0J1DbmOMXI+KJ/zo6Hr9IE5k1/gtzAA2nqimd8ImC8V6EppXTJf79lhvV8=
+X-Google-Smtp-Source: AGHT+IGKz/YBt/YNmXGSMlZsyMwRV/jL0zSb83rdpYccUG4n2naQoDOcWoIUH891b61ch9E/m51DEg==
+X-Received: by 2002:a05:600c:4982:b0:426:6314:3336 with SMTP id 5b1f17b1804b1-426708fa8bbmr61928035e9.36.1720736372619;
+        Thu, 11 Jul 2024 15:19:32 -0700 (PDT)
+Received: from [192.168.0.22] (53.1.159.89.rev.sfr.net. [89.159.1.53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8902csm8794961f8f.51.2024.07.11.15.19.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 15:19:32 -0700 (PDT)
+Message-ID: <f2044667-e235-4abc-924e-3615c60681f1@smile.fr>
+Date: Fri, 12 Jul 2024 00:19:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: core: Set the fwnode for regulator_dev
+To: Saravana Kannan <saravanak@google.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20240711212514.2372780-1-yoann.congal@smile.fr>
+ <CAGETcx--FNpz3o5TiZ3T6UkMHKBUjD8cwHR6eQAjM-U86=p_Eg@mail.gmail.com>
+Content-Language: en-US
+From: Yoann Congal <yoann.congal@smile.fr>
+Organization: Smile ECS
+In-Reply-To: <CAGETcx--FNpz3o5TiZ3T6UkMHKBUjD8cwHR6eQAjM-U86=p_Eg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 12 Jul 2024 00:13:45 +0200
-Message-Id: <D2N20HB4BIC4.O13SZINCMJ9P@kernel.org>
-To: "Erez" <erezgeva2@gmail.com>
-Subject: Re: [PATCH v2 3/4] dt-bindings: mtd: macronix,mx25l12833f: add
- SPI-NOR chip
-Cc: "Esben Haabendal" <esben@geanix.com>, "Tudor Ambarus"
- <tudor.ambarus@linaro.org>, "Jaime Liao" <jaimeliao@mxic.com.tw>,
- <leoyu@mxic.com.tw>, "Alvin Zhou" <alvinzhou@mxic.com.tw>, "Julien Su"
- <juliensu@mxic.com.tw>, "Erez Geva" <erezgeva@nwtime.org>,
- <linux-mtd@lists.infradead.org>, "Pratyush Yadav" <pratyush@kernel.org>,
- <linux-kernel@vger.kernel.org>, "Miquel Raynal"
- <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>, <devicetree@vger.kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20240629103914.161530-1-erezgeva@nwtime.org>
- <20240629103914.161530-4-erezgeva@nwtime.org>
- <1c457520-07b7-4bde-b040-e8bca959a4f5@linaro.org>
- <CANeKEMOODBNZA6efh0E0Ga_KaVs5Y3WLcUftRhNwYHhnXO=GNw@mail.gmail.com>
- <CANeKEMO42rJt5Ob4_HDcZ3eEMvuMOPvRaFaLwL8SA65NtxSV7A@mail.gmail.com>
- <1d56c3b2-7adf-45b9-a509-956340f3f17b@linaro.org>
- <CANeKEMMe-Onpn7xWQHgWz1Ps_uQPEMa7HrKA00HpoKjG+DCJNQ@mail.gmail.com>
- <3bafcbea-6aa5-43ca-9d12-3916be3fe03d@linaro.org>
- <CANeKEMM02-Jvb8Pd0fZJFnRg-hsAW+hckYWm11tZZXNMPSPJ=w@mail.gmail.com>
- <9b45cc73-2251-4085-af95-7ccd00dd6d3b@linaro.org>
- <CANeKEMP+mRefYZNb+TuBmOD7dC6=7Rg7D1EcfnjJoiaeaV28SQ@mail.gmail.com>
- <875xtd48ps.fsf@geanix.com>
- <CANeKEMNJ3_ET5pQo2wg7_GSLX+vE+dqW-CV=v2DnG10xcgSdzQ@mail.gmail.com>
- <D2MZ405LVTN8.3LTVN3KTUD6A3@kernel.org>
- <CANeKEMNtXb4ZV7kcLbHY+Mti6dPV9UZ2wTyUq5z0qtmtNNqSVA@mail.gmail.com>
-In-Reply-To: <CANeKEMNtXb4ZV7kcLbHY+Mti6dPV9UZ2wTyUq5z0qtmtNNqSVA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri Jul 12, 2024 at 12:09 AM CEST, Erez wrote:
-> On Thu, 11 Jul 2024 at 21:57, Michael Walle <mwalle@kernel.org> wrote:
-> >
-> > Hi Erez,
-> >
-> > No top posting please, see also
-> > https://subspace.kernel.org/etiquette.html
->
-> It was a single question. Which I think can be answered in one reply.
-> In cases where there are different parts in the mail, it makes sense
-> to avoid top posting.
-> I do not believe we need to be pedantic.
-> The guidance is not holy, it is aimed to make communication more comprehe=
-nsive.
->
-> >
-> > On Thu Jul 11, 2024 at 8:57 PM CEST, Erez wrote:
-> > > Yes, I think we should.
+Le 11/07/2024 à 23:29, Saravana Kannan a écrit :
+> On Thu, Jul 11, 2024 at 2:25 PM Yoann Congal <yoann.congal@smile.fr> wrote:
+>>
+>> From: Yoann Congal <yoann.congal@smile.fr>
+>>
+>> After commit 3fb16866b51d ("driver core: fw_devlink: Make cycle
+>> detection more robust"), fw_devlink prints an error when consumer
+>> devices don't have their fwnode set. This used to be ignored silently.
+>>
+>> Set the fwnode in regulator_dev so fw_devlink can find them and properly
+>> track their dependencies.
+>>
+>> This fixes errors like this:
+>>   stpmic1-regulator 5c002000.i2c:stpmic@33:regulators: Failed to create device link (0x180) with 2-0033
+>>
+>> NB: This is similar to the commit a26cc2934331 ("drm/mipi-dsi: Set the
+>> fwnode for mipi_dsi_device") applied to the regulator framework.
+>>
+>> Cc: Saravana Kannan <saravanak@google.com>
+>> Cc: stable@vger.kernel.org # 5.13.x
+>> Fixes: 63c7c9e16c8e ("regulator: core: Get and put regulator of_node")
+>> Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+> 
+> The change is valid but the problem is that managed device links don't
+> work correctly for "class" type devices. So, we can't merge this
+> change yet.
 
-Regarding top posting, what was the question here?
+I was totally unaware of that.
 
-I don't see any context. So don't expect any reply from me.
+> So, for now, we shouldn't land this. Are you not seeing probing issues
+> when you do this? Or significant changes/delays in probing?
 
--michael
+I just checked my logs : No probing issue nor noticeable delay.
+
+Thanks for your answer, I'll drop this for now.
+
+Regards,
+-- 
+Yoann Congal
+Smile ECS - Tech Expert
 
