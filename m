@@ -1,280 +1,149 @@
-Return-Path: <linux-kernel+bounces-249895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C565192F14C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:45:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3F192F14A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52C921F24667
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:45:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 265B01F231A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2891A00C1;
-	Thu, 11 Jul 2024 21:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD5B1A00EB;
+	Thu, 11 Jul 2024 21:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T9CFpLHU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qYulYDrM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D90F14BF90;
-	Thu, 11 Jul 2024 21:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A7519FA9A;
+	Thu, 11 Jul 2024 21:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720734317; cv=none; b=o/UDlXRBXK5RPu+Aa2gRWklQl97UHO5vprJ1WGcXV/QIhPrArnKRZSmQuamwrAWzAh+3sqgkELfKLGiHCb/FMn7FyX1SlmHdoyZD572JpGKOXDgwQoadI0oWvxAt2FJJNVMXiIeCoD6nLrCweaoyBSLUsycLTorRN3oQsCQypuI=
+	t=1720734304; cv=none; b=HopyppNB4Pegm/FJB+X19smGqKDQa7gymwpjJwLzXs9HKqoF0f+62hi/FWcIsyLhJ2zIkGuIYtUuozyVP4uRLUpcgtd7drLmZkW/h4zs/xgD+nWf/ZBIVY/1xLSq2Yca+z5GpdSKQkLX2Ipwsw61fBsztdrg/wH9Na5Tmvx7ZRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720734317; c=relaxed/simple;
-	bh=cwHESjd4NVht/H1+eJKWICsv4jM/PHuJfU0I8cuU7Go=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KaHE96YDsNkhe9UujHdWhLFUVe7firK5e0xyz8eS4SzPOQuGa8/d6HwNOpvlgwBvkqYrBpFBGEaTrKbfPrVlPlgaxYsjsE0K0uNIMkfDZesC9kK13kr8uR85VgZiRB52x0D/V0/zMhI8C/VDYA+vl8rACavSl6EzuESAD+iRNHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T9CFpLHU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BILd4C032378;
-	Thu, 11 Jul 2024 21:44:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=oWSIWagKjg2eCW1Dq+4n8W
-	GvZ6FVFhOoGpu8AKm5PwM=; b=T9CFpLHUkbYOpzg/UlBEihGlST0rPPjb15WiI2
-	68MlIDEIPrz2qU9v2wn/5dasEDRDGLQKIAdQK5SIFCIGeXcC9DI2z5E4RXrYMTRC
-	Eqh/o9bvAef61oxl+WpzUWr6LSQZeEJT1j7gdjmwsowDzN/rnsQuZYNGWdyBhipK
-	Y3qRcVT5xgj11nDxUHpcHNn0cH5vY3elzp728v0XSVky6E+J+RTdV+6XaNnJ0cMC
-	4cd2lWkMduEINbcIYuKB+KjnZClzdXB2FWF+Yqk7eOpzLVFKh/lD1YVtGe/NQLRD
-	e18uUQQfLUbLBqOqZ4tifMGzOLPcfd8OxdwW3ZPt1im/V8Jw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ac0ghtk2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 21:44:54 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BLir8b014827
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 21:44:53 GMT
-Received: from hu-obabatun-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 11 Jul 2024 14:44:50 -0700
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-To: <glaubitz@physik.fu-berlin.de>, <ysato@users.sourceforge.jp>,
-        <dalias@libc.org>
-CC: <linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <robh+dt@kernel.org>, <kernel@quicinc.com>,
-        Oreoluwa Babatunde
-	<quic_obabatun@quicinc.com>
-Subject: [PATCH v4] sh: Restructure setup code to reserve memory regions earlier
-Date: Thu, 11 Jul 2024 14:44:38 -0700
-Message-ID: <20240711214438.3920702-1-quic_obabatun@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720734304; c=relaxed/simple;
+	bh=y4QCjrZp9udTHrKwao6/0x3F9ZJopGjZZ/0G6cebUoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBafdQhwmY3O9X0S4poyWArAQ60EiShGHXyHV4sDAa5Vc1mxgELAmQ9j9jdWwhzJaiXZo5Nd5+am0PfR8WZd56MRsKCgvvs6I+yd1FsV4w/yo1uEDmR0T4xPtLJhfETZdDDYrPX5ewk15p3ez1geR64fvRNlUUunXKPWX3mU/mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qYulYDrM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=Q7XTOdv/1NFK+VQFz08tWfPZaB/5T1Gst3uridfDy8E=; b=qYulYDrM5a+mSSnWjHLULZz/hV
+	oUxfKtOT1hcAbmxkqvrP10YQFASm2zRWpnNxxYNJtvZWOPlRGbtW+eOOcZ2dBESs1J4ZUyQs15b8a
+	GJAclUyRyEEiWwUp50qeWHmd7p6mk4FWPWI/JEFQejdTtvlzIsE48U9gbX/LJa8CyuxEskKygJcKI
+	aSwRuOnXrtmuRlbsy9eE1sTdvqgLUq0VfyE+wYVFal4lUfsD5uspAtEXIDRNhMbppxBr42qYjtKGx
+	ctYGGDemDT4SUngr/kkHGoFn5rWcCzTMnEDBYfDOFwgi1Y+ooK95kWDkTq02SqdVquNUXd8/pI5an
+	Egb4H2FA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sS1at-0000000Bgtl-13Yx;
+	Thu, 11 Jul 2024 21:44:51 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9B44230050D; Thu, 11 Jul 2024 23:44:50 +0200 (CEST)
+Date: Thu, 11 Jul 2024 23:44:50 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Mirsad Todorovac <mtodorovac69@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Peter Collingbourne <pcc@google.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] x86/syscall: Avoid memcpy() for ia32
+ syscall_get_arguments()
+Message-ID: <20240711214450.GG27299@noisy.programming.kicks-ass.net>
+References: <20240708202202.work.477-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: SjsFabd5WvJ8cJ1mmhNYeh6fn7Md0FX8
-X-Proofpoint-GUID: SjsFabd5WvJ8cJ1mmhNYeh6fn7Md0FX8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_16,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
- mlxscore=0 impostorscore=0 clxscore=1011 suspectscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110152
+In-Reply-To: <20240708202202.work.477-kees@kernel.org>
 
-The unflatten_device_tree() function contains a call to
-memblock_alloc(). This is a problem because this allocation is done
-before any of the reserved memory regions are set aside in
-paging_init().
-As a result, there is a possibility for memblock to unknowingly allocate
-from any of the memory regions that are meant to be reserved.
+On Mon, Jul 08, 2024 at 01:22:06PM -0700, Kees Cook wrote:
+> Modern (fortified) memcpy() prefers to avoid writing (or reading) beyond
+> the end of the addressed destination (or source) struct member:
+> 
+> In function ‘fortify_memcpy_chk’,
+>     inlined from ‘syscall_get_arguments’ at ./arch/x86/include/asm/syscall.h:85:2,
+>     inlined from ‘populate_seccomp_data’ at kernel/seccomp.c:258:2,
+>     inlined from ‘__seccomp_filter’ at kernel/seccomp.c:1231:3:
+> ./include/linux/fortify-string.h:580:25: error: call to ‘__read_overflow2_field’ declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Werror=attribute-warning]
+>   580 |                         __read_overflow2_field(q_size_field, size);
+>       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> As already done for x86_64 and compat mode, do not use memcpy() to
+> extract syscall arguments from struct pt_regs but rather just perform
+> direct assignments. Binary output differences are negligible, and actually
+> ends up using less stack space:
+> 
+> -       sub    $0x84,%esp
+> +       sub    $0x6c,%esp
+> 
+> and less text size:
+> 
+>    text    data     bss     dec     hex filename
+>   10794     252       0   11046    2b26 gcc-32b/kernel/seccomp.o.stock
+>   10714     252       0   10966    2ad6 gcc-32b/kernel/seccomp.o.after
+> 
+> Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+> Closes: https://lore.kernel.org/lkml/9b69fb14-df89-4677-9c82-056ea9e706f5@gmail.com/
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: x86@kernel.org
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Brian Gerst <brgerst@gmail.com>
+> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+> Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> Cc: Peter Collingbourne <pcc@google.com>
+> ---
+>  arch/x86/include/asm/syscall.h | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
+> index 2fc7bc3863ff..7c488ff0c764 100644
+> --- a/arch/x86/include/asm/syscall.h
+> +++ b/arch/x86/include/asm/syscall.h
+> @@ -82,7 +82,12 @@ static inline void syscall_get_arguments(struct task_struct *task,
+>  					 struct pt_regs *regs,
+>  					 unsigned long *args)
+>  {
+> -	memcpy(args, &regs->bx, 6 * sizeof(args[0]));
+> +	args[0] = regs->bx;
+> +	args[1] = regs->cx;
+> +	args[2] = regs->dx;
+> +	args[3] = regs->si;
+> +	args[4] = regs->di;
+> +	args[5] = regs->bp;
+>  }
 
-Hence, restructure the setup code to set aside reserved memory
-regions before any allocations are done using memblock.
+Just for my education on things foritfy; would something like:
 
-Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
----
-v4:
-- Rebase patch ontop of v6.10-rc1 as requested by Maintainer.
-- Add missing include in arch/sh/kernel/setup.c
+void syscall_get_arguments(struct pt_regs *regs, unsigned long args[6])
+{
+        memcpy(args, (typeof(args))&regs->bx, 6*sizeof(args[0]));
+}
 
-v3:
-https://lore.kernel.org/all/20240520175802.2002183-1-quic_obabatun@quicinc.com/
-- Instead of moving all of paging_init(), move only the parts
-  that are responsible for setting aside the reserved memory
-  regions.
-
-v2:
-https://lore.kernel.org/all/20240423233150.74302-1-quic_obabatun@quicinc.com/
-- Add Rob Herrings Reviewed-by.
-- cc Andrew Morton to assist with merging this for sh architecture.
-  Similar change made for loongarch and openrisc in v1 have already
-  been merged.
-
-v1:
-https://lore.kernel.org/all/1707524971-146908-4-git-send-email-quic_obabatun@quicinc.com/
- arch/sh/include/asm/setup.h |  1 -
- arch/sh/kernel/setup.c      | 44 ++++++++++++++++++++++++++++++++++++-
- arch/sh/mm/init.c           | 44 -------------------------------------
- 3 files changed, 43 insertions(+), 46 deletions(-)
-
-diff --git a/arch/sh/include/asm/setup.h b/arch/sh/include/asm/setup.h
-index 84bb23a771f3..f8b814fb1c7f 100644
---- a/arch/sh/include/asm/setup.h
-+++ b/arch/sh/include/asm/setup.h
-@@ -19,7 +19,6 @@
- #define COMMAND_LINE ((char *) (PARAM+0x100))
- 
- void sh_mv_setup(void);
--void check_for_initrd(void);
- void per_cpu_trap_init(void);
- void sh_fdt_init(phys_addr_t dt_phys);
- 
-diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
-index 620e5cf8ae1e..8477491f4ffd 100644
---- a/arch/sh/kernel/setup.c
-+++ b/arch/sh/kernel/setup.c
-@@ -35,6 +35,7 @@
- #include <asm/io.h>
- #include <asm/page.h>
- #include <asm/elf.h>
-+#include <asm/kexec.h>
- #include <asm/sections.h>
- #include <asm/irq.h>
- #include <asm/setup.h>
-@@ -114,7 +115,7 @@ static int __init early_parse_mem(char *p)
- }
- early_param("mem", early_parse_mem);
- 
--void __init check_for_initrd(void)
-+static void __init check_for_initrd(void)
- {
- #ifdef CONFIG_BLK_DEV_INITRD
- 	unsigned long start, end;
-@@ -172,6 +173,42 @@ void __init check_for_initrd(void)
- #endif
- }
- 
-+static void __init early_reserve_mem(void)
-+{
-+	unsigned long start_pfn;
-+	u32 zero_base = (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
-+	u32 start = zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
-+
-+	/*
-+	 * Partially used pages are not usable - thus
-+	 * we are rounding upwards:
-+	 */
-+	start_pfn = PFN_UP(__pa(_end));
-+
-+	/*
-+	 * Reserve the kernel text and Reserve the bootmem bitmap. We do
-+	 * this in two steps (first step was init_bootmem()), because
-+	 * this catches the (definitely buggy) case of us accidentally
-+	 * initializing the bootmem allocator with an invalid RAM area.
-+	 */
-+	memblock_reserve(start, (PFN_PHYS(start_pfn) + PAGE_SIZE - 1) - start);
-+
-+	/*
-+	 * Reserve physical pages below CONFIG_ZERO_PAGE_OFFSET.
-+	 */
-+	if (CONFIG_ZERO_PAGE_OFFSET != 0)
-+		memblock_reserve(zero_base, CONFIG_ZERO_PAGE_OFFSET);
-+
-+	/*
-+	 * Handle additional early reservations
-+	 */
-+	check_for_initrd();
-+	reserve_crashkernel();
-+
-+	if (sh_mv.mv_mem_reserve)
-+		sh_mv.mv_mem_reserve();
-+}
-+
- #ifndef CONFIG_GENERIC_CALIBRATE_DELAY
- void calibrate_delay(void)
- {
-@@ -319,9 +356,14 @@ void __init setup_arch(char **cmdline_p)
- 
- 	sh_mv_setup();
- 
-+	sh_mv.mv_mem_init();
-+
- 	/* Let earlyprintk output early console messages */
- 	sh_early_platform_driver_probe("earlyprintk", 1, 1);
- 
-+	/* set aside reserved memory regions */
-+	early_reserve_mem();
-+
- #ifdef CONFIG_OF_EARLY_FLATTREE
- #ifdef CONFIG_USE_BUILTIN_DTB
- 	unflatten_and_copy_device_tree();
-diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-index bf1b54055316..4559f5bea782 100644
---- a/arch/sh/mm/init.c
-+++ b/arch/sh/mm/init.c
-@@ -242,55 +242,11 @@ static void __init do_init_bootmem(void)
- 	sparse_init();
- }
- 
--static void __init early_reserve_mem(void)
--{
--	unsigned long start_pfn;
--	u32 zero_base = (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
--	u32 start = zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
--
--	/*
--	 * Partially used pages are not usable - thus
--	 * we are rounding upwards:
--	 */
--	start_pfn = PFN_UP(__pa(_end));
--
--	/*
--	 * Reserve the kernel text and Reserve the bootmem bitmap. We do
--	 * this in two steps (first step was init_bootmem()), because
--	 * this catches the (definitely buggy) case of us accidentally
--	 * initializing the bootmem allocator with an invalid RAM area.
--	 */
--	memblock_reserve(start, (PFN_PHYS(start_pfn) + PAGE_SIZE - 1) - start);
--
--	/*
--	 * Reserve physical pages below CONFIG_ZERO_PAGE_OFFSET.
--	 */
--	if (CONFIG_ZERO_PAGE_OFFSET != 0)
--		memblock_reserve(zero_base, CONFIG_ZERO_PAGE_OFFSET);
--
--	/*
--	 * Handle additional early reservations
--	 */
--	check_for_initrd();
--	reserve_crashkernel();
--}
--
- void __init paging_init(void)
- {
- 	unsigned long max_zone_pfns[MAX_NR_ZONES];
- 	unsigned long vaddr, end;
- 
--	sh_mv.mv_mem_init();
--
--	early_reserve_mem();
--
--	/*
--	 * Once the early reservations are out of the way, give the
--	 * platforms a chance to kick out some memory.
--	 */
--	if (sh_mv.mv_mem_reserve)
--		sh_mv.mv_mem_reserve();
--
- 	memblock_enforce_memory_limit(memory_limit);
- 	memblock_allow_resize();
- 
--- 
-2.34.1
-
+work?
 
