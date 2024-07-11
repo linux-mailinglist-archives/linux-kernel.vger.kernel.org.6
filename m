@@ -1,133 +1,206 @@
-Return-Path: <linux-kernel+bounces-249542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B8892ED08
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:49:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79A592ED0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCCA01F22CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9CF71C21780
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D34716D4DE;
-	Thu, 11 Jul 2024 16:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F5416D4FC;
+	Thu, 11 Jul 2024 16:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3bXjZw8"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqih9oiK"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8348E84047;
-	Thu, 11 Jul 2024 16:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849C016D4D2;
+	Thu, 11 Jul 2024 16:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720716538; cv=none; b=hWgZ/7MAaAsuwq8DNf13OVMY9FysKnoiTpfF33lg515k06JNaeCrlJIsa3e+Nb7mNG9ZQfQ5yVblgkx9Dg2xGUQLfI+FBkDSkhgwhiPVHDnlWIYODt5Dp8+mCZ+MlS0sI3u3FTNlOUgWmglFDs73jhvvomPpmEpzKbeNvioLvRk=
+	t=1720716589; cv=none; b=ow/DEkiAjn9+FnsSQv7457F3XrcxyiG7QGb1j6BCh/9jw/ziHnd1VgYCgnX/xYRMmZzHYPqUSRED9OcVJxB6h+OC+N+0aQKSScR+Ew+f5V+IXvBMQUMKsxneyLhQaqa2x/bufF7yLjsAal/3E/hsrDTWHT8nuZO8C7CaZ7cJzqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720716538; c=relaxed/simple;
-	bh=73ZIG9KmkYiAhggQE4JH+gw0xEUz2iC+N+OJETReESc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s2J9zka26tS0CfibUDE536HM4wy+T/dv3uTbtzUvyeCkZNpgDbiOz/xLdnGMD+4e3oZgKcH8//4Jx5kJW8WNEjBHHSMn48+SZFGu+1+WSLjz63c2IBMwRyCfgCHDQ5LNDU2OSdC8HSSlqRBa5KrIGnz/HTXxeNaWiKaMz54q3sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3bXjZw8; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1720716589; c=relaxed/simple;
+	bh=9Xsl1MdtyQXkQBqLyqYxifW4nwCeZkftpWPaJudny1Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rSSAXIixjU5x0vPu1fjYsCvFkmM01RAbeh2WGoY6Qv1UNTnubrGTxkmuY6+VB0H0uOeIbbqPNEwhuRQ5gfY7p6Yx6/QzuCLKfg28nwL35gyfHpez89LUYFAxGwX/vL5vTLuk5ZFx/0n+zkfaLA/CTF1a6a/u7lQM27dMI0S65OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cqih9oiK; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so1394697a12.3;
-        Thu, 11 Jul 2024 09:48:56 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4279c924ca6so2672195e9.0;
+        Thu, 11 Jul 2024 09:49:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720716535; x=1721321335; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iEZsA+JEWanK57qEMYDbE1caMCR1HD9S3b8hhmYN9Oo=;
-        b=B3bXjZw8q5r+qwjrEdDCbhNjya+xxE0sF4rtO6VzxJ98mD3lvg4kHhvklpVepdxjoP
-         h1JSx07zuK0jPE15+kS86KlaiCPyia3csEHkneDYDOcakbdnJWqTQZ6Gsyt55Ddm8zGm
-         0ppc6ia3VdpI84TxCV2u7sCkf0qJFsG/zNY0sUykMgrGSh3uhPosAK9vJq/coqDxNu52
-         q70MoN9VCrLSFeaCiTtz5i62cxrqo0hH7hUddhGAoYnKqu4gQLG0MvBWiDChxlEaQ/G+
-         xLeGNgXAFafd4svJCfoPc+/9NsXoRlCcSKffjRZfNf1EeWX/ygdp+ZdEdwgavPVXRdm2
-         BQAQ==
+        d=gmail.com; s=20230601; t=1720716586; x=1721321386; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ajPnXMpJ4/AzzbvVdXpfE2ZBxYyBVXFGIzlJOg2lq+Q=;
+        b=cqih9oiKYA4tJYNfozp9Q6BakEvGiPKHLEL+hJPxKeIyW/62W7tYZYd9SZdaL6eA9q
+         HpbjjdhXZxqPT4PuTZ7sP/VYxsDNx2UYFAyuw6E89EIF6nb89zf1GYO6PoZFnCPsWzaD
+         C7aq6+3aA/lildcMB4hA6FS7dpa0I7xDxj203afHAytE9ni3eSVUw0weO0GMMa0QUz0r
+         ctV1MC9w5bdOkFZOxiXRxX/rs/IUMaSPDuGQJoDfKsnhBj1dau8fjuxf6hBl/BNUw108
+         4FFNivOyGlpeLwbVY4aZ0SoeBd39hv5cdtm4nax0DFpInFE36NG+YLF308WnbX3y5/ch
+         3ryA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720716535; x=1721321335;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iEZsA+JEWanK57qEMYDbE1caMCR1HD9S3b8hhmYN9Oo=;
-        b=MIPoL+0dmU+mJIZwa8+LyfqqCoFMtMzMnY4IVLI4CytMKhinaFEwcPjuF19oEXCA8r
-         Opl2f99ZtDQ2TQ+fWhKIsWS138d7LaGm5s02rb4ZF0m3NTMkoZsud9Fv1EOm4386FCZk
-         ljwTDwLS3+j2XcEjyRFdGwzbkJkRKhjQJJHWqHPZ2pHWYkQ35nLU+q4D1kr/5VGUlMi4
-         ePy3zrzZ+6l6M4hrKxbFVKQ33afbYZ14v6SlEgDTrEPnDEYDG2t7yUxDqW1GD6z3moMh
-         GD3kqD4UiFOUO++aOrsESMFKyigl+DjU0P1ERcCODhVGdDL/3JmLwOKhBlagjiZXuluq
-         KSVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWIsA8EkbXCk6xXiPkoyV5IM6KpCpSp0p4ZM0m0i3u9kHtGe8G90ckz+Itc5wZEsmH1Ja1f8gdQw9JN8pvDIrhUu98AvhYM7Pxni8=
-X-Gm-Message-State: AOJu0YwWEwsV3m/efrbHL4LQNAOnvM+vxDxsFdMMZpOIM2ELwGGRKjHi
-	XS2Da3zM7hpmgsXzQR51Ht+MpVscbEDj07BcUkwzTitCUZXQLwGO
-X-Google-Smtp-Source: AGHT+IFMW06wAwwEUvlp048oJpfkaauaUhl40CXY1F07ftga56DZRibkuT4YWyNJJr0/tYkHk68Rxg==
-X-Received: by 2002:a17:906:d29b:b0:a77:c330:ad9d with SMTP id a640c23a62f3a-a780b8826cdmr683873666b.61.1720716534517;
-        Thu, 11 Jul 2024 09:48:54 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-43-148.xnet.hr. [88.207.43.148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff07esm270724666b.111.2024.07.11.09.48.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 09:48:54 -0700 (PDT)
-Message-ID: <3ac07aff-4ac4-4649-86ec-6175dd516162@gmail.com>
-Date: Thu, 11 Jul 2024 18:48:53 +0200
+        d=1e100.net; s=20230601; t=1720716586; x=1721321386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ajPnXMpJ4/AzzbvVdXpfE2ZBxYyBVXFGIzlJOg2lq+Q=;
+        b=pfzkQ9GOSIOXcJ2ZnluM3fabl0jTi3aq/Ye0wmUVPm4ch7/9Xkf68wOmNEZf8k2Zs5
+         FyzhXt1wGyfe+JbQu2pejj1mA6gq1Ywyyr7AzMLThiUgNxdvCRjZrGBetecbcnBKJiW1
+         +WPVK0IA0mcJXzQl6L28+G6NWtneBLuKYOhZddNrnWqdd8iKvrlQSLLGwD5nPgTxgHhp
+         fMhMYUFM2DJkRzV0D5zFrHPjMKUSAjEikrJL18cBmOfrUvfwD/MmIGhx6c0vZTSdxw19
+         BJqH9/LvZLKSXMqZyC/If1LbJmsyf7qktZE4moaOBW/MgG26+YUOtdRvO6un39AJddiO
+         QiGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ7LFTYRj1IH5SNltU0FdrXN85igHLYaJLmL8vGY8GflvQvI8AW83q60eYon3B8m4K1n6nI6mYPiGh+BTwcC+9NkID3NUnVhF2hH3pX+XAeQSttB7IhNpwxziVDhvTajLGA1Bc
+X-Gm-Message-State: AOJu0YzZXUnNLXs3nTFD8oLTVQi0ooejM33gHzhnrlPNB6DYTRUIzZFO
+	hTCN2FOjNnkj8nL253elU+fDbYM7Nt422tgyadHFBA0zpSXmuiEvaIB++rnCdoTG4S9k588V8Jj
+	gUCShrh39K/2kc3Xt6cIXq3OvE+Rweg==
+X-Google-Smtp-Source: AGHT+IFc7HUmEYXtlKgYDkVH3yjImijWEKyv1u8Kb7VsEAdpWPEY4UjSG0hV/MtfvCkDNjOpqFv4+gWq457GVJJ4Ezo=
+X-Received: by 2002:a05:6000:2ab:b0:367:437f:1784 with SMTP id
+ ffacd0b85a97d-367cea46275mr9552545f8f.7.1720716585630; Thu, 11 Jul 2024
+ 09:49:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Input: twl4030-pwrbutton - fix kernel-doc warning
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <Zo3QE00GqCrA3M9b@google.com>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <Zo3QE00GqCrA3M9b@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240625135216.47007-1-linyunsheng@huawei.com>
+ <20240625135216.47007-7-linyunsheng@huawei.com> <12a8b9ddbcb2da8431f77c5ec952ccfb2a77b7ec.camel@gmail.com>
+ <808be796-6333-c116-6ecb-95a39f7ad76e@huawei.com> <a026c32218cabc7b6dc579ced1306aefd7029b10.camel@gmail.com>
+ <f4ff5a42-9371-bc54-8523-b11d8511c39a@huawei.com> <96b04ebb7f46d73482d5f71213bd800c8195f00d.camel@gmail.com>
+ <5daed410-063b-4d86-b544-d1a85bd86375@huawei.com>
+In-Reply-To: <5daed410-063b-4d86-b544-d1a85bd86375@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Thu, 11 Jul 2024 09:49:09 -0700
+Message-ID: <CAKgT0UdJPcnfOJ=-1ZzXbiFiA=8a0z_oVBgQC-itKB1HWBU+yA@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 06/13] mm: page_frag: reuse existing space for
+ 'size' and 'pfmemalloc'
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/10/24 02:04, Dmitry Torokhov wrote:
-> Do not use kernel-doc style for comment describing contents of the
-> source file, as it trips the script:
-> 
->   scripts/kernel-doc -none   drivers/input/misc/twl4030-pwrbutton.c
-> drivers/input/misc/twl4030-pwrbutton.c:2: info: Scanning doc for function twl4030
-> drivers/input/misc/twl4030-pwrbutton.c:33: warning: expecting prototype for twl4030(). Prototype was for PWR_PWRON_IRQ() instead
-> 1 warnings
-> 
-> Also remove file name from the same comment - it it not the best idea
-> to have it as they tend to get stale when sources get moved or renamed.
-> 
-> Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/misc/twl4030-pwrbutton.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/misc/twl4030-pwrbutton.c b/drivers/input/misc/twl4030-pwrbutton.c
-> index e3ee0638ffba..f85cc289c053 100644
-> --- a/drivers/input/misc/twl4030-pwrbutton.c
-> +++ b/drivers/input/misc/twl4030-pwrbutton.c
-> @@ -1,5 +1,5 @@
-> -/**
-> - * twl4030-pwrbutton.c - TWL4030 Power Button Input Driver
-> +/*
-> + * TWL4030 Power Button Input Driver
->   *
->   * Copyright (C) 2008-2009 Nokia Corporation
->   *
+On Thu, Jul 11, 2024 at 1:16=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> On 2024/7/10 23:28, Alexander H Duyck wrote:
 
-Tested, finally:
+...
 
-  CC      drivers/input/misc/tps65219-pwrbutton.o
-  CC      drivers/input/misc/twl4030-pwrbutton.o
-  CC      drivers/hwmon/pmbus/max15301.o
+> >>
+> >> Yes, agreed. It would be good to be more specific about how to avoid
+> >> the above problem using a signed negative number for 'remaining' as
+> >> I am not sure how it can be done yet.
+> >>
+> >
+> > My advice would be to go back to patch 3 and figure out how to do this
+> > re-ordering without changing the alignment behaviour. The old code
+> > essentially aligned both the offset and fragsz by combining the two and
+> > then doing the alignment. Since you are doing a count up setup you will
+>
+> I am not sure I understand 'aligned both the offset and fragsz ' part, as
+> 'fragsz' being aligned or not seems to depend on last caller' align_mask,
+> for the same page_frag_cache instance, suppose offset =3D 32768 initially=
+ for
+> the old code:
+> Step 1: __page_frag_alloc_align() is called with fragsz=3D7 and align_mas=
+k=3D~0u
+>        the offset after this is 32761, the true fragsz is 7 too.
+>
+> Step 2: __page_frag_alloc_align() is called with fragsz=3D7 and align_mas=
+k=3D-16
+>         the offset after this is 32752, the true fragsz is 9, which does
+>         not seems to be aligned.
 
-Compiled w/o warnings.
+I was referring to my original code before this patchset. I was doing
+the subtraction of the fragsz first, and then aligning which would end
+up padding the end of the frame as it was adding to the total size by
+pulling the offset down *after* I had already subtracted fragsz. The
+result was that I was always adding additional room depending on the
+setting of the fragsz and how it related to the alignment. After
+changing the code to realign on the start of the next frag the fragsz
+is at the mercy of the next caller's alignment. In the event that the
+caller didn't bother to align the fragsz by the align mask before hand
+they can end up with a scenario that might result in false sharing.
 
-Thanks!
+> The above is why I added the below paragraph in the doc to make the seman=
+tic
+> more explicit:
+> "Depending on different aligning requirement, the page_frag API caller ma=
+y call
+> page_frag_alloc*_align*() to ensure the returned virtual address or offse=
+t of
+> the page is aligned according to the 'align/alignment' parameter. Note th=
+e size
+> of the allocated fragment is not aligned, the caller needs to provide an =
+aligned
+> fragsz if there is an alignment requirement for the size of the fragment.=
+"
+>
+> And existing callers of page_frag aligned API does seems to follow the ab=
+ove
+> rule last time I checked.
+>
+> Or did I miss something obvious here?
 
-Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+No you didn't miss anything. It is just that there is now more
+potential for error than there was before.
 
-Best regards,
-Mirsad Todorovac
+> > need to align the remaining, then add fragsz, and then I guess you
+> > could store remaining and then subtract fragsz from your final virtual
+> > address to get back to where the starting offset is actually located.
+>
+> remaining =3D __ALIGN_KERNEL_MASK(nc->remaining, ~align_mask);
+> remaining +=3D fragsz;
+> nc->remaining =3D remaining;
+> return encoded_page_address(nc->encoded_va) + (size + remaining) - fragsz=
+;
+>
+> If yes, I am not sure what is the point of doing the above yet, it
+> just seem to make thing more complicated and harder to understand.
+
+That isn't right. I am not sure why you are adding size + remaining or
+what those are supposed to represent.
+
+The issue was that the "remaining" ends up being an unaligned value as
+you were starting by aligning it and then adding fragsz. So by
+subtracting fragsz you can get back to the aliglined start. What this
+patch was doing before was adding the raw unaligned nc->remaining at
+the end of the function.
+
+> >
+> > Basically your "remaining" value isn't a safe number to use for an
+> > offset since it isn't aligned to your starting value at any point.
+>
+> Does using 'aligned_remaining' local variable to make it more obvious
+> seem reasonable to you?
+
+No, as the value you are storing above isn't guaranteed to be aligned.
+If you stored it before adding fragsz then it would be aligned.
+
+> >
+> > As far as the negative value, it is more about making it easier to keep
+> > track of what is actually going on. Basically we can use regular
+> > pointer math and as such I suspect the compiler is having to do extra
+> > instructions to flip your value negative before it can combine the
+> > values via something like the LEA (load effective address) assembler
+> > call.
+>
+> I am not an asm expert here, I am not sure I understand the optimization
+> trick here.
+
+The LEA instruction takes a base address adds 1/2/4/8 times a multiple
+and then a fixed offset all in one function and provides an address as
+an output. The general idea is that you could look at converting
+things such that you are putting together the page address +
+remaining*1 + PAGE_SIZE. Basically what I was getting at is that
+addition works, but it doesn't do negative values for the multiple.
 
