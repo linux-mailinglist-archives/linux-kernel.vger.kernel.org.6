@@ -1,96 +1,106 @@
-Return-Path: <linux-kernel+bounces-248820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00CAD92E267
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:34:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED0692E26D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:34:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 311221C20E40
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14EDF1F23494
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD6D157A74;
-	Thu, 11 Jul 2024 08:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB6C15E5C1;
+	Thu, 11 Jul 2024 08:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKe0I392"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+BFthFN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38811155A34;
-	Thu, 11 Jul 2024 08:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611FF158A07;
+	Thu, 11 Jul 2024 08:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720686674; cv=none; b=FWlA8EfDBw32/UnbkcBy8w5b5uxamO7IHk6l5yA/S9ctjtvpyn2ixa2/bxl7y0MU+OqFZ7dvL0g2eA+IBJX0+OfnT3JvGZuViYQxc4FhPswCIBUUY7vUDZxhuekdOgXK8X6o7IdziMDOhtTaR9k2NZ0h8e+WLHSsb9rax/smbvU=
+	t=1720686685; cv=none; b=cc4MfBygCVfJx2gMxOvqG2PczQav/wtdov/IgiOH1iQqL/rWm/071lqLI2dR3oGlqBuuNWugqpPrusp/XzTo/ilvGRWOBA5NB05+W6EplWKEl/rkpOhitQUydIQm9kqloLE6Vvt5fu/hyz2ba0un03K9i9bhXQreHtToioHQ4ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720686674; c=relaxed/simple;
-	bh=aC3Xr9tS22ND23vxAONRN3pa/zO5+j1Y/oCN8be4Ids=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=phSEfK3tk+vrwtA/ujSIzxf7dzh427drR6p7OzuT3Q2fptvV8yRRsHRleIKkLo9TyZou2k4aK6heuinnij50vmewONzl1MD0321yUEZQ/UZvon8arPpVGwwGZhFdbq2UBjg4rQcDU1PXsgp7ZrmNPB+wW6RYvVFsPqYuvUBCIjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKe0I392; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A5D0FC4AF0A;
-	Thu, 11 Jul 2024 08:31:13 +0000 (UTC)
+	s=arc-20240116; t=1720686685; c=relaxed/simple;
+	bh=CzpDF9rUCAKXfcLza4LnMhJrSgTVXHqETsPHBZ/ibwY=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=X+czYegM7hm1HDIKgv4XTR3ald9a3+11DOHMRWMOAMP79T/bSP6Yxd+sfHxAz5pcawMgjpKz5AdBWzoEOcO8TEiEYrMAmgCZFtSnxKU79DoBYrKgqZAiBUy7kDlilgsPkU+oXp/a1QHNLb7S4CpLLPyJtUgwrWXp1kTEbXn1E9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k+BFthFN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD828C116B1;
+	Thu, 11 Jul 2024 08:31:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720686673;
-	bh=aC3Xr9tS22ND23vxAONRN3pa/zO5+j1Y/oCN8be4Ids=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KKe0I3923FdDqHvWUh6oX1FOOD0dAUqy3ws6sX7bdqT35X6RXXENDNezfvhpMpy1f
-	 l3wQILHmbnyV+LlHM/enz2pMHEiuPFzgKF/Lz0ai3Y7hFXbjeELAdIzf00WVueKWWX
-	 bQyxoAObhQDriQ/U+8dAQ695ia3III3rJZwJ/3bBEmc4jlJUcgT0mjt9CkdemnqKWw
-	 Nen4ezEB1djRqweqe/S/tLmZ6zj8NnjsezDXXgvK245mjiCoSBCF/EZdjGOx3gw5a/
-	 hrP2rkD/32xnFY4XRHDVDdOGpTKyJB+5vrAqeZ1pGKUX/jwhDn1z4RaxnK8Eq60elK
-	 fN4xRQX0lqubQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9200BC433E9;
-	Thu, 11 Jul 2024 08:31:13 +0000 (UTC)
+	s=k20201202; t=1720686684;
+	bh=CzpDF9rUCAKXfcLza4LnMhJrSgTVXHqETsPHBZ/ibwY=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=k+BFthFNbu5T/SoTxqOHIp1h8w7JUSrHdc7CYFGFDhiz0MW9gx4zkooZkpw2ZXchX
+	 s9PpqtQpM/JEx9cMAvyvRg+B6YBlDR2n5a4U4i4qdXoiZSOsGaDyYG2H6bQ7T4LYc2
+	 BitSbIuaMt0DpjnlATTMoQBV7qfl1ZEDNVafg55OWHkRRgrY32Zx+GcY+PAIa4wko9
+	 dizQ2JiOv/tSnCZNh9dCpLlTCNYxEJ0kiOFCIiKVw0gZ9ggdIwaA0hD7/adG2GlPof
+	 uAYSkvAzgNPqxsclW6vSpt3PzUXJR1nmgQ/xL+OS4shIApjQGjMU7b+N1hjQ2lt7M6
+	 P7+RPW8N4M3SA==
+Date: Thu, 11 Jul 2024 02:31:22 -0600
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 net] net: ethernet: mtk-star-emac: set mac_managed_pm when
- probing
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172068667359.28697.10752199531087262735.git-patchwork-notify@kernel.org>
-Date: Thu, 11 Jul 2024 08:31:13 +0000
-References: <20240708065210.4178980-1-jianhui.lee@canonical.com>
-In-Reply-To: <20240708065210.4178980-1-jianhui.lee@canonical.com>
-To: Jian Hui Lee <jianhui.lee@canonical.com>
-Cc: nbd@nbd.name, sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com,
- lorenzo@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, f.fainelli@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: conor+dt@kernel.org, krzk+dt@kernel.org, quic_kriskura@quicinc.com, 
+ linux-kernel@vger.kernel.org, johan+linaro@kernel.org, andersson@kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, 
+ konrad.dybcio@linaro.org, gregkh@linuxfoundation.org, 
+ devicetree@vger.kernel.org, quic_wcheng@quicinc.com
+In-Reply-To: <20240711065615.2720367-1-quic_varada@quicinc.com>
+References: <20240711065615.2720367-1-quic_varada@quicinc.com>
+Message-Id: <172068668209.928451.13962575882186553669.robh@kernel.org>
+Subject: Re: [PATCH v0 1/2] dt-bindings: usb: qcom,dwc3: Add minItems for
+ interrupt info
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Mon,  8 Jul 2024 14:52:09 +0800 you wrote:
-> The below commit introduced a warning message when phy state is not in
-> the states: PHY_HALTED, PHY_READY, and PHY_UP.
-> commit 744d23c71af3 ("net: phy: Warn about incorrect mdio_bus_phy_resume() state")
+On Thu, 11 Jul 2024 12:26:14 +0530, Varadarajan Narayanan wrote:
+> IPQ5332 has only three interrupts. Update min items
+> accordingly for interrupt names to fix the following
+> dt_binding_check errors.
 > 
-> mtk-star-emac doesn't need mdiobus suspend/resume. To fix the warning
-> message during resume, indicate the phy resume/suspend is managed by the
-> mac when probing.
+> 	interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
 > 
-> [...]
+> Fixes: a5c7592366af ("dt-bindings: usb: qcom,dwc3: add SC8280XP binding")
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-Here is the summary with links:
-  - [v2,net] net: ethernet: mtk-star-emac: set mac_managed_pm when probing
-    https://git.kernel.org/netdev/net/c/8c6790b5c25d
+My bot found errors running 'make dt_binding_check' on your patch:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+yamllint warnings/errors:
 
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml: allOf:12:then:properties:interrupt-names: {'minItems': 3, 'maxItems': 4, 'items': [{'const': 'pwr_event'}, {'const': 'dp_hs_phy_irq'}, {'const': 'dm_hs_phy_irq'}, {'const': 'ss_phy_irq'}]} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240711065615.2720367-1-quic_varada@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
