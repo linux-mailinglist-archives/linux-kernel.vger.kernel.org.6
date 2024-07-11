@@ -1,140 +1,198 @@
-Return-Path: <linux-kernel+bounces-249811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB7792F028
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:11:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985BB92F048
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17DD81C21779
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:11:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E74F9B22A9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF2B19E83C;
-	Thu, 11 Jul 2024 20:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BF119EEB3;
+	Thu, 11 Jul 2024 20:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C1/NzMWf"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="kZIcqYJ7"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CF318E20;
-	Thu, 11 Jul 2024 20:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C03A16DC1E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720728699; cv=none; b=u4GI89vjhcGz8sqPOmYg8MxseUucIRUK7CvP6dPibIrNA54rgsDStbhvAnqtXsivge4zWIGKS045Os+RCexy4eglOh2SdKe2qcskWtI/u6FaGKt5JM0FK5vUaLCoXA0Y+mtBUYjlhJVEToa/hZyNIL4ay8lvXyxxvZt2bgSzoXQ=
+	t=1720729521; cv=none; b=fuUsEosUKR+DcXcXqe1gQl1iy7S+N8EQvyTslBKMywFVFrGXBjbnZfdpxLPmnr4Jn0KAadRvbLwWRf3VKaGL2xFnOiXDxnfth2a6DHCN0YAEY1/5wJh+p0CsEpM415QEwl6iQR6bYsMx6mXs9w4MBwUWAxSF7l/0URJJroZ/bdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720728699; c=relaxed/simple;
-	bh=a4IaAwMHzvt/g9ptiPrgRWeIx0HREljSiORyiBGvSl4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=I71blgCOSDCvF0WSdFtcZHG29mKDjoTQ1DCoLPmbLNWHVE3gAr3c2fVtw9DfZ4/FuAcPsb+q7DSAdZhGkJ828mLVLXjrxPP39ODh4yvCvDjFFIKVsitjAYj61HJYSiRZ3XPJSdZHfBqURHUeoY/FuDd12Z23EDlKELbh/UCHV68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=C1/NzMWf; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BJtWjY012893;
-	Thu, 11 Jul 2024 20:11:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id; s=corp-2023-11-20; bh=bPDFKO
-	mAM620KQJrPcT369nPFBjX//sGP3qTkmP3d2A=; b=C1/NzMWfXwsRJ1co8XM3iB
-	lkf/lG+JzmFYUGsIoXmOOf+nUXcRKFbCgkkQ9W+nUWmM1sWjJDFT8Hn3DDp7dcqK
-	oHoFBL6IV32v5DZpQb7c8IVHbHPplYDXR0vR4kagu7Z06cBPmwgSULUEC1mlKqoq
-	PsEARxP3MzilJyTF4arGpCN23HbGaP3biylgPJCydLdiV1T1bZbkAEQKoyx0FtsG
-	kHkMEytnHAyEKUz6lYVwy3f/OHvak6+fbYe/GUNwK4B41jWCLmOB5zLTqLIma4Uy
-	bulHu6sU1vOMP5MnUwQOhj48vpJuiJwQLhKSIPalS0EVy97ui4CGGgDYJmLAtpMw
-	==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 406wkcjchj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 20:11:33 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46BJHofv028793;
-	Thu, 11 Jul 2024 20:11:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 409vv5gadw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO);
-	Thu, 11 Jul 2024 20:11:33 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46BKBWkE010359;
-	Thu, 11 Jul 2024 20:11:32 GMT
-Received: from pp-thinkcentre-m82.us.oracle.com (dhcp-10-132-95-245.usdhcp.oraclecorp.com [10.132.95.245])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 409vv5gadb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO);
-	Thu, 11 Jul 2024 20:11:32 +0000
-From: Prakash Sangappa <prakash.sangappa@oracle.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dhowells@redhat.com, viro@zeniv.linux.org.uk
-Subject: [PATCH] vfs: ensure mount source is set to "none" if empty string specified
-Date: Thu, 11 Jul 2024 13:24:22 -0700
-Message-Id: <1720729462-30935-1-git-send-email-prakash.sangappa@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_14,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0 spamscore=0
- mlxlogscore=999 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
- definitions=main-2407110140
-X-Proofpoint-ORIG-GUID: XngfTtqeEw_i6NTOO5Emtq2AGre32dMl
-X-Proofpoint-GUID: XngfTtqeEw_i6NTOO5Emtq2AGre32dMl
+	s=arc-20240116; t=1720729521; c=relaxed/simple;
+	bh=8bclKTm0mQjAtWAC6LCIUWGn+6C2ewID31E27vLw+5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LKLjh8rt4FWkjT6oPkFJGAxkgS5NY1Tk5eqmoYRYKCyuD9uj486adwlcW4lXx35w8covbYVqK1ZQyNMP59HAYkEuqzLW+ePQuRsdCgENXUXCNSZBCjC8Pz2L6FHx7vMcl4uJhRZk4/LPLxudldr6K5kH7li9Tcxed6c7Fp1l0cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=kZIcqYJ7; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-75e7e110e89so831062a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:25:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720729520; x=1721334320; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iMO3QJaNwKPEg2fkW9ocZ2ZzNc4qbi0eB4IVGf7OvXg=;
+        b=kZIcqYJ7b/9cyKAWeBRIyVZIhogyPJn8VDyodMfD2HELSbV08Tu+Q7tbPuSFGUrhzc
+         rz8pduoj3KReGbpNaAHHy5tJ12s3N5lZsGOk1tTxoYSHx6WBgi5VQYGubna81BPclV1E
+         gOxIMmJe6QVt2RTnpYY+fPHo/t7TvhZOm3iJ6iuLWLuqKygFYhIltmJcGTDugrIzR3e0
+         UoZ+ciLmDuTpLhAo7bArPSAlC6AIX0RF4PzdrMnSE5qkXJXupAntI0qeHY4PF1VSee18
+         mcVA4qPU6ovg8yY/4PThpcBdig3Nc1IedfTaBScqOfy2tDqoopdABkO1PXHB/A8kvoG6
+         xOrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720729520; x=1721334320;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iMO3QJaNwKPEg2fkW9ocZ2ZzNc4qbi0eB4IVGf7OvXg=;
+        b=EpioF6PEFCj81EWNCCZvBvNCyidZY8qB0rz8UC/sbaQi1ddEZmlHWljUGCiVsCLhbW
+         nJ1GZPBlcR4SlFW7kBgSG5whTcVw3H2Sw6/Z5eou+F3d82qXQKGUtP3Y06wHhaotu+1g
+         bWNJXURDc3MNMttbYKWtQBrXunDcBAVjnRcxd1pPJdZVpaKq01xxhPOlAvWrUaDPeSoq
+         jnu2+fr17So8vNxh8oh7Ff+ojGHXaW954XZVfzVmhWOyNDonx7uL08Bhfy/+sdEMdetu
+         IB5duT8+HjIPQ3z/mwoiQsRSQlLUOUjNFtFoz+sZwWmKX/lPjWqDSaCcI+aF4A45b2RA
+         A8Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyB746paFhBx+PbwW5SArwtIGuJ/UWJO+x1reo7VqFpZf3zbk3wgcuDCxjuV/QzJMoUd2XFHoJUU8HbW6vrRifFYsLDjvQqhbo1zU+
+X-Gm-Message-State: AOJu0YwXlmVlLrqv8ichpfnpSDHS3P0cBnXZVsA9MCJJksU3i69jznAz
+	fv4xUk0XsffTCiQEa4akGmpr7chYB4FKOoPTTvtxsNylPdH4sQjUHHigc+62SAA=
+X-Google-Smtp-Source: AGHT+IGd8D3/XoSU3Ju/bMAEpeWWMsStCF3C8xFRAptThUUyXilcXDIM/pIU++epptacQ5dkqr485g==
+X-Received: by 2002:a05:6a21:1690:b0:1c0:e322:e8c5 with SMTP id adf61e73a8af0-1c29821b544mr9879373637.26.1720729519712;
+        Thu, 11 Jul 2024 13:25:19 -0700 (PDT)
+Received: from [10.4.10.38] (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ad3460sm54408745ad.295.2024.07.11.13.25.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 13:25:19 -0700 (PDT)
+Message-ID: <ed410b0f-0062-4fbb-97e0-86fd492fb5ca@rivosinc.com>
+Date: Thu, 11 Jul 2024 16:25:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/8] RISC-V: Check scalar unaligned access on all CPUs
+To: Evan Green <evan@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
+ <cleger@rivosinc.com>, Andrew Jones <ajones@ventanamicro.com>,
+ Charlie Jenkins <charlie@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>,
+ Andy Chiu <andy.chiu@sifive.com>, Eric Biggers <ebiggers@google.com>,
+ Greentime Hu <greentime.hu@sifive.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, Heiko Stuebner <heiko@sntech.de>,
+ Costa Shulyupin <costa.shul@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+ Anup Patel <apatel@ventanamicro.com>, Zong Li <zong.li@sifive.com>,
+ Sami Tolvanen <samitolvanen@google.com>,
+ Ben Dooks <ben.dooks@codethink.co.uk>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Erick Archer <erick.archer@gmx.com>, Joel Granados <j.granados@samsung.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, stable@vger.kernel.org
+References: <20240625005001.37901-1-jesse@rivosinc.com>
+ <20240625005001.37901-4-jesse@rivosinc.com>
+ <CALs-HsvE9PzTrhVO0umh3KaJuLQLdk-h8sYKBg7XA4a-MXAmOg@mail.gmail.com>
+Content-Language: en-US
+From: Jesse Taube <jesse@rivosinc.com>
+In-Reply-To: <CALs-HsvE9PzTrhVO0umh3KaJuLQLdk-h8sYKBg7XA4a-MXAmOg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Due to changes from commit 0f89589a8c6f1033cb847a606517998efb0da8ee
-mount source devname is no longer getting set to 'none' if an empty
-source string is passed. Therefore /proc/<PID>/mountinfo will have a
-empty string for source devname instead of 'none'.
 
-This is due to following change in this commit
-in vfs_parse_fs_string()
 
--       if (v_size > 0) {
-+       if (value) {
-                param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
-                if (!param.string)
-                        return -ENOMEM;
-+               param.type = fs_value_is_string;
-        }
+On 7/10/24 11:55, Evan Green wrote:
+> On Mon, Jun 24, 2024 at 5:51 PM Jesse Taube <jesse@rivosinc.com> wrote:
+>>
+>> Originally, the check_unaligned_access_emulated_all_cpus function
+>> only checked the boot hart. This fixes the function to check all
+>> harts.
+>>
+>> Fixes: 71c54b3d169d ("riscv: report misaligned accesses emulation to hwprobe")
+>> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+>> Cc: stable@vger.kernel.org
+>> ---
+>> V1 -> V2:
+>>   - New patch
+>> V2 -> V3:
+>>   - Split patch
+>> ---
+>>   arch/riscv/kernel/traps_misaligned.c | 23 ++++++-----------------
+>>   1 file changed, 6 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/traps_misaligned.c
+>> index b62d5a2f4541..8fadbe00dd62 100644
+>> --- a/arch/riscv/kernel/traps_misaligned.c
+>> +++ b/arch/riscv/kernel/traps_misaligned.c
+>> @@ -526,31 +526,17 @@ int handle_misaligned_store(struct pt_regs *regs)
+>>          return 0;
+>>   }
+>>
+>> -static bool check_unaligned_access_emulated(int cpu)
+>> +static void check_unaligned_access_emulated(struct work_struct *unused)
+>>   {
+>> +       int cpu = smp_processor_id();
+>>          long *mas_ptr = per_cpu_ptr(&misaligned_access_speed, cpu);
+>>          unsigned long tmp_var, tmp_val;
+>> -       bool misaligned_emu_detected;
+>>
+>>          *mas_ptr = RISCV_HWPROBE_MISALIGNED_UNKNOWN;
+>>
+>>          __asm__ __volatile__ (
+>>                  "       "REG_L" %[tmp], 1(%[ptr])\n"
+>>                  : [tmp] "=r" (tmp_val) : [ptr] "r" (&tmp_var) : "memory");
+>> -
+>> -       misaligned_emu_detected = (*mas_ptr == RISCV_HWPROBE_MISALIGNED_EMULATED);
+>> -       /*
+>> -        * If unaligned_ctl is already set, this means that we detected that all
+>> -        * CPUS uses emulated misaligned access at boot time. If that changed
+>> -        * when hotplugging the new cpu, this is something we don't handle.
+>> -        */
+>> -       if (unlikely(unaligned_ctl && !misaligned_emu_detected)) {
+>> -               pr_crit("CPU misaligned accesses non homogeneous (expected all emulated)\n");
+>> -               while (true)
+>> -                       cpu_relax();
+>> -       }
+> 
+> This chunk was meant to detect and refuse to run on a system where a
+> heterogeneous CPU is hotplugged into a previously homogenous system.
+> The commit message doesn't mention this change, how come you
+> deleted it?
 
-That results in fc->source, which is copied from param.string, to point
-to an empty string instead of it being NULL. So, alloc_vfsmnt() called
-from vfs_create_mount() would be passed the empty string in fc->source
-not 'none'.
+Sorry for the long wait.
+I do not remember why I removed this.
+Your right it shouldn't be removed, I added it back.
 
-This patch fix checks if fc->source is an empty string in the call to
-alloc_vfsmnt() and passes 'none'.
-
-The issue can be easily reproduced.
- #mount -t tmpfs "" /tmp/tdir
- #grep "/tmp/tdir" /proc/$$/mountinfo
-
-With the fix
-506 103 0:48 / /tmp/tdir rw,relatime shared:268 - tmpfs none rw,...
-
-Without the fix
-506 103 0:48 / /tmp/tdir rw,relatime shared:268 - tmpfs rw,...
-
-Signed-off-by: Prakash Sangappa <prakash.sangappa@oracle.com>
----
- fs/namespace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 5a51315..409b48c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1100,7 +1100,8 @@ struct vfsmount *vfs_create_mount(struct fs_context *fc)
- 	if (!fc->root)
- 		return ERR_PTR(-EINVAL);
- 
--	mnt = alloc_vfsmnt(fc->source ?: "none");
-+	mnt = alloc_vfsmnt(fc->source && strlen(fc->source) > 0 ?
-+			   fc->source : "none");
- 	if (!mnt)
- 		return ERR_PTR(-ENOMEM);
- 
--- 
-2.7.4
-
+Thanks,
+Jesse Taube
+> 
+> 
+>> -
+>> -       return misaligned_emu_detected;
+>>   }
+>>
+>>   bool check_unaligned_access_emulated_all_cpus(void)
+>> @@ -562,8 +548,11 @@ bool check_unaligned_access_emulated_all_cpus(void)
+>>           * accesses emulated since tasks requesting such control can run on any
+>>           * CPU.
+>>           */
+>> +       schedule_on_each_cpu(check_unaligned_access_emulated);
+>> +
+>>          for_each_online_cpu(cpu)
+>> -               if (!check_unaligned_access_emulated(cpu))
+>> +               if (per_cpu(misaligned_access_speed, cpu)
+>> +                   != RISCV_HWPROBE_MISALIGNED_EMULATED)
+>>                          return false;
+>>
+>>          unaligned_ctl = true;
+>> --
+>> 2.45.2
+>>
 
