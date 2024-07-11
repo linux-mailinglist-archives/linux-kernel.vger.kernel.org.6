@@ -1,109 +1,192 @@
-Return-Path: <linux-kernel+bounces-248848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5616692E2A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:45:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6237B92E1EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0E7D1F22654
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:45:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8667D1C220B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44B8153581;
-	Thu, 11 Jul 2024 08:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD58152789;
+	Thu, 11 Jul 2024 08:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="jQqR5yg6"
-Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FrOSLsjq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B554315B;
-	Thu, 11 Jul 2024 08:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A5B84DFF;
+	Thu, 11 Jul 2024 08:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720687513; cv=none; b=F6kBioAA4u+r4fxHm8b+32KTrMTnrsx1EPNCm+nafTBLn7A+dnjyVJ+/8i0n4g0F+zms878HobRDy/sTHSCSNxbBAXXwgMzvv0hqh2G3vSMzWV6S7OcYTsFyzdH8En7ypz2Ey2pRjJMmOBmrWd/Lx4hoxz3wSz0SgQPlO31zRYo=
+	t=1720685964; cv=none; b=UEXh/ffx+LR4jys9aa+PZ4QBAEgCvbNBBuzTIx6J5jEqOGdKlF6ijLxzHcQ4OHH6DjcReDCdNpbjYgRzX7BGanc6XNTCCyLHoIMlxRt/WGB3i3vJcfsS44QENLHmthZB5mCeJOw7lk4Uox/hwwEtyBi7uF9Pkrkc9QOSyT6dsLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720687513; c=relaxed/simple;
-	bh=QRGxbfH+3SeKRG16yQOvBXWdakQh0M8wwO69vXLtBIc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:To:From:Cc:
-	 References:In-Reply-To; b=kNcyEVdKSpBG+9pqn8039PVyyZ/1VYpq6gRMjCnqAcskOTRdA7+B+sfWjoFtSubkNqZ3jPkkG0kyex8inwqRsGUUPDzmEp75hxsWNHvBv6wI2ae6lz7Chg3t56BD7SkLudwuOEoteakwaWr1XWaTe+VkcTDcGEo4U9fAO/Fxpf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=jQqR5yg6; arc=none smtp.client-ip=195.113.20.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
-	s=submission; t=1720685852; x=1721985852;
-	bh=Ls7RNbnmxHwm0IM0YhzLBLizkdiPlt+11EedtmZU+3k=; h=From;
-	b=jQqR5yg65sj8UpliFuByNMMGwzvR1CSXBc80hFLXtB02fQckgr/codwkbToD8dccv
-	 lMgXuGngFliqna6YO5PN1W6VQqxVVXFCh+uSKzQ7Wc5T+szbBqZUHiT8UvJPkj895y
-	 ylG05nbvZu4C45fY++oEI7b0NiRzOrar5QgSMXBjYqYWJZ37VBD/hF2eg1CFIArK64
-	 i5bRFwxYYQDWzNpe6+44UkL+X5Dc9p/Zk4k8nQhbGiunZB56Y+FYHPvsjgqypm3gkO
-	 5lH6oLZqJ4nJfaFjEYRtpJ8ymHZHlcgb/mImq8OfVBGExgimVeiLpxREyJmzWh4sF4
-	 QjkHQ4pq7NNIA==
-Received: from localhost (internet5.mraknet.com [185.200.108.250])
-	(authenticated)
-	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 46B8HVSV030720
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 10:17:32 +0200 (CEST)
-	(envelope-from balejk@matfyz.cz)
+	s=arc-20240116; t=1720685964; c=relaxed/simple;
+	bh=YdS730IoGZkqSsEaROsIU5sPMwoeLFyrlQ3TRFzWw2A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l+pEjwseYbhcXdFVVqp/X5ADCOydwhM/SKpmWN8ds74UdCy12Pbrrt4kpCw2oZqBsZU5cFGKEbupQb+k5eY6Ac9GO/EuI4kQQIe3TW0oFPxquS/M5F4tir629+3PcG4pKs1GFBmc7nzQUiqR/qk1aObJBNRcJEPBJoFocssX9KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FrOSLsjq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B4mmRs016386;
+	Thu, 11 Jul 2024 08:18:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=OAx9bejEu4tuB2DuaKFWyvCDpqnDDZTBlgKcsRJyo6Y=; b=Fr
+	OSLsjqF96kYbK+5o96jI/Ud7BRCH+DNvH+Jg4b8TJGj73ZK6W4fG2oTlOrLe9y3S
+	oFQRkdpxXa6hKXkK2pRvRt3EGiVK5uZlkX5IzOgzgYoOkQReZxrV+8tDxMqYBL3F
+	lc+rSB3HHeSsLT0pMuUcGpHcT8g6qfq2hL2vWIVuAMkPBO40Xr2VB9fsncoCBQGC
+	nvENIf+vSnI0D04juDSHDtY9OqrP11o6Qxrcd8vgqR3FEsISWmhZ3yrHciWpvhBT
+	I3OZ9UV9eFFi56z2Mgc1nN6Y/y/aLclpy6QqpQ496PcXpDKm+6hmnoQZffnptFPm
+	GnT2jxYYGohQSMvVUetg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406y3hk8ev-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 08:18:48 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46B8IlfG004931
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 08:18:47 GMT
+Received: from taozha2-gv.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 11 Jul 2024 01:18:43 -0700
+From: Tao Zhang <quic_taozha@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Leo Yan
+	<leo.yan@linux.dev>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: Tao Zhang <quic_taozha@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH v2 0/3] Add source filtering for multi-port output
+Date: Thu, 11 Jul 2024 16:17:47 +0800
+Message-ID: <20240711081750.21792-1-quic_taozha@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 11 Jul 2024 10:17:31 +0200
-Message-Id: <D2MK87FSAP8Y.N9JBG2R7IBQX@matfyz.cz>
-Subject: Re: [PATCH] MAINTAINERS: repair file entry in MARVELL 88PM886 PMIC
- DRIVER
-To: "Lukas Bulwahn" <lbulwahn@redhat.com>, "Lee Jones" <lee@kernel.org>
-From: "Karel Balej" <balejk@matfyz.cz>
-Cc: <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Lukas Bulwahn" <lukas.bulwahn@redhat.com>
-References: <20240711065140.140703-1-lukas.bulwahn@redhat.com>
-In-Reply-To: <20240711065140.140703-1-lukas.bulwahn@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: rmCNo0K1LOOu2NKcGfFIeSlW31zgNoSZ
+X-Proofpoint-GUID: rmCNo0K1LOOu2NKcGfFIeSlW31zgNoSZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_04,2024-07-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ clxscore=1011 mlxlogscore=999 impostorscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110057
 
-Lukas Bulwahn, 2024-07-11T08:51:40+02:00:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->
-> Commit f53d3efa366b ("MAINTAINERS: Add myself for Marvell 88PM886 PMIC")
-> adds a file entry referring to drivers/regulators/88pm886-regulator.c,
-> but the directory is actually called drivers/regulator. Note that there i=
-s
-> no 's' at the end.
->
-> Hence, ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about=
- a
-> broken reference.
->
-> Repair the file entry in the MARVELL 88PM886 PMIC DRIVER section.
->
-> Fixes: f53d3efa366b ("MAINTAINERS: Add myself for Marvell 88PM886 PMIC")
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3eab44bd1010..bb7b5ecbc0b9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13495,7 +13495,7 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/mfd/marvell,88pm886-a1.yaml
->  F:	drivers/input/misc/88pm886-onkey.c
->  F:	drivers/mfd/88pm886.c
-> -F:	drivers/regulators/88pm886-regulator.c
-> +F:	drivers/regulator/88pm886-regulator.c
->  F:	include/linux/mfd/88pm886.h
-> =20
->  MARVELL ARMADA 3700 PHY DRIVERS
-> --=20
-> 2.45.2
+In our hardware design, by combining a funnel and a replicator, it
+implement a hardware device with one-to-one correspondence between
+output ports and input ports. The programming usage on this device
+is the same as funnel. The software uses a funnel and a static
+replicator to implement the driver of this device. Since original
+funnels only support a single output connection and original
+replicator only support a single input connection, the code needs
+to be modified to support this new feature. The following is a
+typical topology diagram of multi-port output mechanism.
+|----------|     |---------|     |----------|   |---------|
+|  TPDM 0  |     | Source0 |     | Source 1 |   | TPDM 1  |
+|----------|     |---------|     |----------|   |---------|
+      |                |                |             |
+      |                |                |             |
+      |      --------- |                |             |
+      |      |                          |             |
+      |      |                          |             |
+      |      |                          |             |
+   \-------------/ ----------------------             |
+    \  Funnel 0 /  |                                  |
+     -----------   |     ------------------------------
+          |        |     |
+          |        |     |
+        \------------------/
+         \    Funnel 1    /     ----|
+          \--------------/          |
+                  |                 |----> Combine a funnel and a
+                  |                 |      static replicator
+          /-----------------\       |
+         /    replicator 0   \  ----|
+        /---------------------\
+             |     |      |
+             |     |      |-----------|
+             |     |---------|        |
+             |               |TPDM0   |TPDM1
+             |            \-----------------/
+             |             \   TPDA 0      /
+             |              \-------------/
+             |                    |
+             |                    |
+             |Source0/1           |
+          \-------------------------------/
+           \           Funnel 2          /
+            \---------------------------/
 
-Thank you for the fix and sorry for the trouble.
 
-Reviewed-by: Karel Balej <balejk@matfyz.cz>
+Changes in V2:
+1. Change the reference for endpoint property in dt-binding.
+-- Krzysztof Kozlowski
+2. Change the property name "filter_src" to "filter-src".
+-- Krzysztof Kozlowski
+3. Fix the errors in running 'make dt_binding_check'.
+-- Rob Herring
+4. Pass in the source parameter instead of path.
+-- Suzuki K Poulose
+5. Reset the "filter_src_dev" if the "src" csdev is being removed.
+-- Suzuki K Poulose
+6. Add a warning if the "filter_src_dev" is of not the
+type DEV_TYPE_SOURCE.
+-- Suzuki K Poulose
+7. Optimize the procedure for handling all possible cases.
+-- Suzuki K Poulose
 
-K. B.
+Changes in V1:
+1. Add a static replicator connect to a funnel to implement the
+correspondence between the output ports and the input ports on
+funnels.
+-- Suzuki K Poulose
+2. Add filter_src_dev and filter_src_dev phandle to
+"coresight_connection" struct, and populate them if there is one.
+-- Suzuki K Poulose
+3. To look at the phandle and then fixup/remove the filter_src
+device in fixup/remove connections.
+-- Suzuki K Poulose
+4. When TPDA reads DSB/CMB element size, it is implemented by
+looking up filter src device in the connections.
+-- Suzuki K Poulose
+
+Tao Zhang (3):
+  dt-bindings: arm: qcom,coresight-static-replicator: Add property for
+    source filtering
+  coresight: Add source filtering for multi-port output
+  coresight-tpda: Optimize the function of reading element size
+
+ .../arm/arm,coresight-static-replicator.yaml  |  19 ++-
+ drivers/hwtracing/coresight/coresight-core.c  | 125 ++++++++++++++++--
+ .../hwtracing/coresight/coresight-platform.c  |  18 +++
+ drivers/hwtracing/coresight/coresight-tpda.c  |   3 +-
+ include/linux/coresight.h                     |   5 +
+ 5 files changed, 155 insertions(+), 15 deletions(-)
+
+-- 
+2.17.1
+
 
