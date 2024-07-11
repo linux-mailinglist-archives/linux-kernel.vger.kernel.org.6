@@ -1,264 +1,155 @@
-Return-Path: <linux-kernel+bounces-248824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6EC92E273
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:35:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA36692E271
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FF10B2534A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:35:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6C31C211CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19A01514D1;
-	Thu, 11 Jul 2024 08:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91408158D6F;
+	Thu, 11 Jul 2024 08:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xe/SvgyA"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IxKOdkJu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091CB1509BC
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2966E155CA5
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720686727; cv=none; b=g8KZK0XQ3rl+SMz7NjVCM73A7qSn39Oj0D8r3OBvg97zjwISd5Wo3NPiywGGQ+xfm8F9DuMKGgcnDdmEproHr8c7OFTyFKPmFNPywQTdCiEZoNtdiioIgqQojkx2Ql6zwKa3cgbFkX8Rj5Pf/MepemgJiYkofPL93V3FAjwgHQ0=
+	t=1720686698; cv=none; b=B2PGEAWOJA5FK9ZgBrgBagudusbllJOLX/uaLSm2o5rfP7iTVcYjiTEFW6dbPP4TGFuMZuwz+hxCW/xo47gyg0FS6DagbMtUHkdMAAHuolXMXocDOrOXH2LjYwzw6Rn2DXAOitF0ULNo4Nb3OoWy+fu+J23GsaXjN2+cL5a1T5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720686727; c=relaxed/simple;
-	bh=Q9IroUVK2JqRYrIfw5alHwnQixrL2oKDXVExImqaZZU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rL/tm7l3ExexEMywaavzU6hKpD+MsY/J+xviDyEbXHVHjPBPSa5P6Ii7/XErFtQULfkBIXbg8z8O+eMbtPVGwwQFkNQV0s+HeFqtOADj3z+QVhry0yGOKyOO7HHNqYbhbrAtiXOf7w2OjeBsnoXXWwUYTBSTd2cPMOtwZMNfB1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xe/SvgyA; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-447df43324fso153101cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:32:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720686725; x=1721291525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YWHIbu+cvMagxFrDg1eyheaCUlAQDPbuPi2dpyEJyRM=;
-        b=xe/SvgyA5r4jK6JBtYBXEt0FLciQINJjJffDPCxM3qFzYh7BmjxOeTJySFjoZ7ZmX3
-         0l+yP/ZuBIV+Y3GnF9lXhIrrZc6kwdp135XwyNazwfnTc6CyyXfeej1BdXNWAhWPkF5y
-         cbRMk8nNFD/4voeSj465mN8E8gHfJDLr2gipNKtIhfCNLV/GxL5+2zZ5mYMiL7SOc+j4
-         oe85jkijTbYH4bbvzKfDkmWswyhMb6eMO1YD330H84RntdpTdH4zGmJ2zBi4AtENIFwE
-         XuvbVFYoR2FhMvfq5HqoKA1BifXy5EClOvT5zXh9zvf0e1EaNEmvr6svSeQyBSyfdfV4
-         oe8g==
+	s=arc-20240116; t=1720686698; c=relaxed/simple;
+	bh=J309idn94l6LfM69hofwVk6z9S7VT1vK5PVzSR4ifFE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eiMy4PrWh1o0ppPOWpRPGfHW2EgunhfE4r9wunzEW2mFiMbt+J6oyyRSiTYpgiJsx8NQftIcADZ5ge0pl/X3Zz81Ah72Uv88MYrQ7FMM/OxmukuYV+iLcIGv4P7X1ioPZMRgXxx61EKtn+2caxKANUhOSCRIjQ78YzjUfkrOZVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IxKOdkJu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720686696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xsavuo7VjN4IgYGRQOpxjo6n2SWYiH9JroTE1iXSFAY=;
+	b=IxKOdkJuuRUvFke+nipPaPBht/9CuajOQiN0BoLQXmy1hlWpQaHDVNZXoNohzCeq6Q7Oi3
+	DivqyyEUZME3313TD39bPHyfuQJhIbE8wPCRaIS7b6ULrWtd7edIjzcS8i377k+twBz/UK
+	mPFfzVrUwMFuyUG0ImcbT4X+GrXO7rQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-600-XsPmoLVlOuO_US59wkgpIg-1; Thu, 11 Jul 2024 04:31:34 -0400
+X-MC-Unique: XsPmoLVlOuO_US59wkgpIg-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4256667ebf9so4522455e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:31:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720686725; x=1721291525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YWHIbu+cvMagxFrDg1eyheaCUlAQDPbuPi2dpyEJyRM=;
-        b=vlo+rkZjTqTFhYtER5KhRiA/QGAG3BmUTiD4iIkZrx1EO6VXPTAg5iMtWLijHeNJIS
-         jQVGGHjU03KObfZs7DpHC936D1tfilBxn2GOwCtNB6khnBk0nRv0WOQywntGTkJbul0J
-         r3TypRp03aShK1ohS6t+xqnSq2A7p6CZ79FVuG4/LrLJpbr6AlOOnhrJy4FvSboy8G4Q
-         Mr3lbyOkRDm9+eO2A5VQtXgPcPkPeoQIhgIoPHWpj/CHuQyZ8sC/M8853RxTC6QLHbtH
-         UGQ8vkuTsURwZkPwJ9CjikgxqQVbE1wCvbuUTVRErb3L1qyQe/Cti1HoGTg9DrOCuX43
-         R/mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbKkAyVz3ZyVxvqzSybMGSZFvQIW5NvmIdJgvoMCsmKuXFHQA9Za1tEk9//YWa+uyDQkePoMkXzVAFOPBTO/LvI8ozOA+yFwAUnKw0
-X-Gm-Message-State: AOJu0Ywb+L+YO+0K2tbwxZPZKYghBwVol9J2TQ/su+UJjv3PrnsGLaaZ
-	RORgqbg81YbdWoHu0bj7km+gbnbbiy9dOtvPB1I6fCxxobnaSxL8b1+xsfiVkb7uDtgjQqyGmTT
-	yhmuFpuJvpJpoGReFc/qJ2xq1QVHZtDOJRDgm
-X-Google-Smtp-Source: AGHT+IGNqoML5kFUzVyQW8QnecFL6JZ0uDikh8HvHvIwDxa22nsavjslwHT/oJO6b3GimZSsoJkxgY4rNb48ZWdPxNw=
-X-Received: by 2002:ac8:73ca:0:b0:447:e01a:de95 with SMTP id
- d75a77b69052e-44d07cc7faemr2510091cf.0.1720686724500; Thu, 11 Jul 2024
- 01:32:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720686693; x=1721291493;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xsavuo7VjN4IgYGRQOpxjo6n2SWYiH9JroTE1iXSFAY=;
+        b=oN1TPsCAyPKTDd9T2pNNg401B+cPr3OBGlMf0EQRmxO3kH5myKylUfcvi19D+V2AFf
+         dcxxxScZcj2c4IBbygWF0+QiP8IV0Yye6FonqELpH5NamCyRsld+9hCoDJC4C61dDSxR
+         shScK0QVAglSVNZv19mFFqmJ/6yxoWTqTBkZqP950gWJFu2HBhoJfaDd9JLOX30mhIXI
+         2dVwIYjtuJXGdCztmxFiPT9gH8JxvST4eqfHXGSVBfduF8YNtyDYAmmSSbeqf+p8vgnH
+         GfGht2xmwm7Qb+t0vHaRdoWvMFit4MLvJdzaCzIgQspb1c02Yc7YOBdu/lm9xEZPZf3t
+         /sjg==
+X-Gm-Message-State: AOJu0YxbCyqa3CzhFdv2vHOI9sCICzbwDiSVZO08yMgMkoa5UVVm8z6G
+	vVlsDE95QLnqoUWFfVMzI6gwTlSl8XPq41XAuST67/p/e390lxiuuTaXnygEIhMgzr0hRYsGLPZ
+	qE38GtPFPiHUcYfXpY4YwJgTIPBc26y/v1OFgruEdRKJbFK2TmB7cJFwP+BqitA==
+X-Received: by 2002:a05:600c:41d1:b0:426:5d37:67f0 with SMTP id 5b1f17b1804b1-426707cbd7amr47937325e9.13.1720686693632;
+        Thu, 11 Jul 2024 01:31:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHEsGmNWWpKzLdjjvHa8Oly0TKggOk/fmTsEbwHHsuebuNMp1P87hEdumnvEl9dAnc+GlyWXw==
+X-Received: by 2002:a05:600c:41d1:b0:426:5d37:67f0 with SMTP id 5b1f17b1804b1-426707cbd7amr47937135e9.13.1720686693017;
+        Thu, 11 Jul 2024 01:31:33 -0700 (PDT)
+Received: from ?IPV6:2003:cf:d74b:1cd5:1c4c:c09:d73b:c07d? (p200300cfd74b1cd51c4c0c09d73bc07d.dip0.t-ipconnect.de. [2003:cf:d74b:1cd5:1c4c:c09:d73b:c07d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa0613sm7165414f8f.88.2024.07.11.01.31.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 01:31:32 -0700 (PDT)
+Message-ID: <8268c602-7852-4d5b-86de-54b0a38cf244@redhat.com>
+Date: Thu, 11 Jul 2024 10:31:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240113094436.2506396-1-sunnanyong@huawei.com>
- <ZbKjHHeEdFYY1xR5@arm.com> <d1671959-74a4-8ea5-81f0-539df8d9c0f0@huawei.com>
- <ZcN7P0CGUOOgki71@arm.com> <CAOUHufYo=SQmpaYA3ThrdHcY9fQfFmycriSvOX1iuC4Y=Gj7Xg@mail.gmail.com>
- <ZogV9Iag4mxe6enx@arm.com> <CAOUHufYwoTTsRBF_wWZU_jWzb8e6FF=vN8UKtVHBeXLBkwHWzA@mail.gmail.com>
- <Zo68DP6siXfb6ZBR@arm.com> <CAOUHufZC0Jn=bTpc0JhqONXbYXgyBOVZ4j8bbKSJWv1dOSmQEA@mail.gmail.com>
- <Zo8LTaP-6-zIcc9v@arm.com> <CAOUHufawuXOifhrULx6mC0Kv0_sbjT0y16QMePiw=gH9b6xxAw@mail.gmail.com>
-In-Reply-To: <CAOUHufawuXOifhrULx6mC0Kv0_sbjT0y16QMePiw=gH9b6xxAw@mail.gmail.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Thu, 11 Jul 2024 02:31:25 -0600
-Message-ID: <CAOUHufb3CHLCo54fZcPSG+mrXD-kRsa0Foi8=vL5=q+YHpQ+Rg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] A Solution to Re-enable hugetlb vmemmap optimize
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Nanyong Sun <sunnanyong@huawei.com>, will@kernel.org, mike.kravetz@oracle.com, 
-	muchun.song@linux.dev, akpm@linux-foundation.org, anshuman.khandual@arm.com, 
-	willy@infradead.org, wangkefeng.wang@huawei.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] virtio-fs: Add 'file' mount option
+To: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
+ Miklos Szeredi <mszeredi@redhat.com>, German Maglione
+ <gmaglione@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Vivek Goyal <vgoyal@redhat.com>
+References: <20240709111918.31233-1-hreitz@redhat.com>
+ <20240710172828.GB542210@dynamic-pd01.res.v6.highway.a1.net>
+Content-Language: en-US
+From: Hanna Czenczek <hreitz@redhat.com>
+In-Reply-To: <20240710172828.GB542210@dynamic-pd01.res.v6.highway.a1.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 10, 2024 at 5:07=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote:
->
-> On Wed, Jul 10, 2024 at 4:29=E2=80=AFPM Catalin Marinas <catalin.marinas@=
-arm.com> wrote:
-> >
-> > On Wed, Jul 10, 2024 at 11:12:01AM -0600, Yu Zhao wrote:
-> > > On Wed, Jul 10, 2024 at 10:51=E2=80=AFAM Catalin Marinas
-> > > <catalin.marinas@arm.com> wrote:
-> > > > On Fri, Jul 05, 2024 at 11:41:34AM -0600, Yu Zhao wrote:
-> > > > > On Fri, Jul 5, 2024 at 9:49=E2=80=AFAM Catalin Marinas <catalin.m=
-arinas@arm.com> wrote:
-> > > > > > If I did the maths right, for a 2MB hugetlb page, we have about=
- 8
-> > > > > > vmemmap pages (32K). Once we split a 2MB vmemap range,
-> > > > >
-> > > > > Correct.
-> > > > >
-> > > > > > whatever else
-> > > > > > needs to be touched in this range won't require a stop_machine(=
-).
-> > > > >
-> > > > > There might be some misunderstandings here.
-> > > > >
-> > > > > To do HVO:
-> > > > > 1. we split a PMD into 512 PTEs;
-> > > > > 2. for every 8 PTEs:
-> > > > >   2a. we allocate an order-0 page for PTE #0;
-> > > > >   2b. we remap PTE #0 *RW* to this page;
-> > > > >   2c. we remap PTEs #1-7 *RO* to this page;
-> > > > >   2d. we free the original order-3 page.
-> > > >
-> > > > Thanks. I now remember why we reverted such support in 060a2c92d1b6
-> > > > ("arm64: mm: hugetlb: Disable HUGETLB_PAGE_OPTIMIZE_VMEMMAP"). The =
-main
-> > > > problem is that point 2c also changes the output address of the PTE
-> > > > (and the content of the page slightly). The architecture requires a
-> > > > break-before-make in such scenario, though it would have been nice =
-if it
-> > > > was more specific on what could go wrong.
-> > > >
-> > > > We can do point 1 safely if we have FEAT_BBM level 2. For point 2, =
-I
-> > > > assume these 8 vmemmap pages may be accessed and that's why we can'=
-t do
-> > > > a break-before-make safely.
-> > >
-> > > Correct
-> > >
-> > > > I was wondering whether we could make the
-> > > > PTEs RO first and then change the output address but we have anothe=
-r
-> > > > rule that the content of the page should be the same. I don't think
-> > > > entries 1-7 are identical to entry 0 (though we could ask the archi=
-tects
-> > > > for clarification here). Also, can we guarantee that nothing writes=
- to
-> > > > entry 0 while we would do such remapping?
-> > >
-> > > Yes, it's already guaranteed.
-> > >
-> > > > We know entries 1-7 won't be
-> > > > written as we mapped them as RO but entry 0 contains the head page.
-> > > > Maybe it's ok to map it RO temporarily until the newly allocated hu=
-getlb
-> > > > page is returned.
-> > >
-> > > We can do that. I don't understand how this could elide BBM. After th=
-e
-> > > above, we would still need to do:
-> > > 3. remap entry 0 from RO to RW, mapping the `struct page` page that
-> > > will be shared with entry 1-7.
-> > > 4. remap entry 1-7 from their respective `struct page` pages to that
-> > > of entry 0, while they remain RO.
-> >
-> > The Arm ARM states that we need a BBM if we change the output address
-> > and: the old or new mappings are RW *or* the content of the page
-> > changes. Ignoring the latter (page content), we can turn the PTEs RO
-> > first without changing the pfn followed by changing the pfn while they
-> > are RO. Once that's done, we make entry 0 RW and, of course, with
-> > additional TLBIs between all these steps.
->
-> Aha! This is easy to do -- I just made the RO guaranteed, as I
-> mentioned earlier.
->
-> Just to make sure I fully understand the workflow:
->
-> 1. Split a RW PMD into 512 RO PTEs, pointing to the same 2MB `struct page=
-` area.
-> 2. TLBI once, after pmd_populate_kernel()
-> 3. Remap PTE 1-7 to the 4KB `struct page` area of PTE 0, for every 8
-> PTEs, while they remain RO.
-> 4. TLBI once, after set_pte_at() on PTE 1-7.
-> 5. Change PTE 0 from RO to RW, pointing to the same 4KB `struct page` are=
-a.
-> 6. TLBI once, after set_pte_at() on PTE 0.
->
-> No BBM required, regardless of FEAT_BBM level 2.
+On 10.07.24 19:28, Stefan Hajnoczi wrote:
+> On Tue, Jul 09, 2024 at 01:19:16PM +0200, Hanna Czenczek wrote:
+>> Hi,
+>>
+>> We want to be able to mount filesystems that just consist of one regular
+>> file via virtio-fs, i.e. no root directory, just a file as the root
+>> node.
+>>
+>> While that is possible via FUSE itself (through the 'rootmode' mount
+>> option, which is automatically set by the fusermount help program to
+>> match the mount point's inode mode), there is no virtio-fs option yet
+>> that would allow changing the rootmode from S_IFDIR to S_IFREG.
+>>
+>> To do that, this series introduces a new 'file' mount option that does
+>> precisely that.  Alternatively, we could provide the same 'rootmode'
+>> option that FUSE has, but as laid out in patch 1's commit description,
+>> that option is a bit cumbersome for virtio-fs (in a way that it is not
+>> for FUSE), and its usefulness as a more general option is limited.
+>>
+>>
+>> Hanna Czenczek (2):
+>>    virtio-fs: Add 'file' mount option
+>>    virtio-fs: Document 'file' mount option
+>>
+>>   fs/fuse/virtio_fs.c                    | 9 ++++++++-
+>>   Documentation/filesystems/virtiofs.rst | 5 ++++-
+>>   2 files changed, 12 insertions(+), 2 deletions(-)
+>>
+>> -- 
+>> 2.45.1
+>>
+> Looks good to me. Maybe add the 'file' option to FUSE as well to keep
+> them in sync (eventually rootmode could be exposed to virtiofs too, if
+> necessary)?
 
-I just studied D8.16.1 from the reference manual, and it seems to me:
-1. We still need either FEAT_BBM or BBM to split PMD.
-2. We still need BBM when we change PTE 1-7, because even if they
-remain RO, the content of the `struct page` page at the new location
-does not match that at the old location.
+I don’t think this option makes much sense for FUSE, like Josef has 
+said; it would just duplicate a subset of 'rootmode', and because FUSE 
+filesystems are rarely mounted by hand, I don’t think anyone would ever 
+use it.
 
-> Is this correct?
->
-> > Can we leave entry 0 RO? This
-> > would save an additional TLBI.
->
-> Unfortunately we can't. Otherwise we wouldn't be able to, e.g., grab a
-> refcnt on any hugeTLB pages.
->
-> > Now, I wonder if all this is worth it. What are the scenarios where the
-> > 8 PTEs will be accessed? The vmemmap range corresponding to a 2MB
-> > hugetlb page for example is pretty well defined - 8 x 4K pages, aligned=
-.
+If it were important to keep them in sync, I’d rather have virtio-fs 
+provide 'rootmode' instead.  Personally, I don’t think it’s that 
+important, and I’d rather have a simple '-o file' instead of '-o 
+rootmode=0100000' (hope I counted the 0s right) for a filesystem that is 
+actually not rarely mounted by hand.
 
-One of the fundamental assumptions in core MM is that anyone can
-read or try to grab (write) a refcnt from any `struct page`. Those
-speculative PFN walkers include memory compaction, etc.
+If we ever do find out that we want to support other root modes than 
+S_IFREG and S_IFDIR, we will probably want 'rootmode' for virtio-fs, 
+too, yes.  But I can’t see that right now.
 
+> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-> > > > If we could get the above work, it would be a lot simpler than thin=
-king
-> > > > of stop_machine() or other locks to wait for such remapping.
-> > >
-> > > Steps 3/4 would not require BBM somehow?
-> >
-> > If we ignore the 'content' requirement, I think we could skip the BBM
-> > but we need to make sure we don't change the permission and pfn at the
-> > same time.
->
-> Gotcha.
->
-> > > > > To do de-HVO:
-> > > > > 1. for every 8 PTEs:
-> > > > >   1a. we allocate 7 order-0 pages.
-> > > > >   1b. we remap PTEs #1-7 *RW* to those pages, respectively.
-> > > >
-> > > > Similar problem in 1.b, changing the output address. Here we could =
-force
-> > > > the content to be the same
-> > >
-> > > I don't follow the "the content to be the same" part. After HVO, we h=
-ave:
-> > >
-> > > Entry 0 -> `struct page` page A, RW
-> > > Entry 1 -> `struct page` page A, RO
-> > > ...
-> > > Entry 7 -> `struct page` page A, RO
-> > >
-> > > To de-HVO, we need to make them:
-> > >
-> > > Entry 0 -> `struct page` page A, RW
-> > > Entry 1 -> `struct page` page B, RW
-> > > ...
-> > > Entry 7 -> `struct page` page H, RW
-> > >
-> > > I assume the same content means PTE_0 =3D=3D PTE_1/.../7?
-> >
-> > That's the content of the page at the corresponding pfn before and afte=
-r
-> > the pte change. I'm pretty sure the Arm ARM states this in case the
-> > hardware starts a load (e.g. unaligned) from one page and completes it
-> > from another, the software should not see any difference. But for the
-> > fields we care about in struct page, I assume they'd be the same (or
-> > that we just don't care about inconsistencies during this transient
-> > period).
->
-> Thanks for the explanation. I'll cook up something if my understanding
-> above is correct.
+Thanks!
+
+Hanna
+
 
