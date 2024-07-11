@@ -1,148 +1,99 @@
-Return-Path: <linux-kernel+bounces-249361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D984092EA9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:22:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7262992EA95
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163F81C2138F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:22:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D4791F23065
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2575816A94B;
-	Thu, 11 Jul 2024 14:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6F71662FA;
+	Thu, 11 Jul 2024 14:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Vp9D4zD2"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWl3dqbi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C431684A6;
-	Thu, 11 Jul 2024 14:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBE115AD99;
+	Thu, 11 Jul 2024 14:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720707705; cv=none; b=stouBE3NOawH0IQ5tXFHnvl8LEaY5k5O4rPHnVdBay6ur9T5ja4/Ya9EJxmbOZEqacV+V+I7h9g0xMqhT0u0IXE5An980en96HhYP19k12TW1FfO5fXa+KnUQY1MaFGXCfwZkcWDhImsuho39ppakbC809CaUrlT6ADEI20+tZI=
+	t=1720707672; cv=none; b=uElEEHaiceMkZTL+PKgHmLWD09FgFB5Q0ZUVMVxY9Z9QTzYzjKygzrHdjeFoelu0NCgClooMWVyreFgi0DmjDpGrjBloJn3xb2+z69sAhGeBZhfxbq+jjduOO07nryLD9CvbI06li/L6B+yDcGN8NYK/StXvnvnS7IzBYchbgUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720707705; c=relaxed/simple;
-	bh=9rv9sMOJTNaVCAXVckZJpszdBHzLkx+Y2phucmuy4AY=;
+	s=arc-20240116; t=1720707672; c=relaxed/simple;
+	bh=EVzV5gygTBPaMO6VawoS8jAqq4SBfpcm8pnxcTObV1Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZSSttIltXb1gb1KCSmDTnuqrG279UypoasjP1G8N9YTwC7WxkNlr0HQsbqns4fzwMQeFw8UyS5vummjcp4qmMhGarSOYX35Kupyf16yGDfVidzy9Df6pS6M6gnOW58tfI8vK345PCkeWUfoGjyT9lGihlcOHE+VcmX69JkPid8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Vp9D4zD2; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BDxDbF029159;
-	Thu, 11 Jul 2024 14:21:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:content-transfer-encoding:in-reply-to; s=pp1; bh=H
-	y7Ow+QuFzjJ8HpKXMdsxifcalcMak4d4YwFzu94KDM=; b=Vp9D4zD2DTnztFWPx
-	4JTvWSirWHljxahtUil6FV8CbRXG1/dxWfsR7npfISHY7xqnCT9AXNnmaI/Uwhs6
-	MAzRkUwjMyCscFRPllshORjUcTwq/GLaqdE/uxMgax9zcB0sGWVL0iABn97JX7Kd
-	5Z/GaRQjSwKV11UEdgXzjHxYYl4HzNW7E4svVSXwIWkUs5X8DwbRx4uBDdy97QEX
-	L75H8hTMxkpU5f/tVBsm0Me+PbMk+e7TexD58x/Hlsgl6KRoztQOuBn0DtoZdRou
-	DbqIWoFscwSUGowvCdRuJEPFBdlYeOpwCy2ciRs1ElR+DFZYVIzjOm2P4x0xE+ov
-	nmEEQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40agrb02d5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 14:21:30 +0000 (GMT)
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46BELU10031657;
-	Thu, 11 Jul 2024 14:21:30 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40agrb02cy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 14:21:30 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46BBDMKW024698;
-	Thu, 11 Jul 2024 14:21:29 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 407g8uhdqy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 14:21:29 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46BELNvx15335856
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 14:21:25 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5D6542004D;
-	Thu, 11 Jul 2024 14:21:23 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AE0B220040;
-	Thu, 11 Jul 2024 14:21:14 +0000 (GMT)
-Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.195.44.247])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 11 Jul 2024 14:21:14 +0000 (GMT)
-Date: Thu, 11 Jul 2024 19:51:06 +0530
-From: Amit Machhiwal <amachhiw@linux.ibm.com>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm-ppc@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
-        Vaibhav Jain <vaibhav@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
-        Kowshik Jois B S <kowsjois@linux.ibm.com>
-Subject: Re: [PATCH] PCI: Fix crash during pci_dev hot-unplug on pseries KVM
- guest
-Message-ID: <qcidmczsjdhaqz7hy3cqnpkjiaulxi7277ayzly3zyrrdbcr4w@5s4x5cgd3xk2>
-Mail-Followup-To: Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm-ppc@vger.kernel.org, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>, 
-	Vaibhav Jain <vaibhav@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, 
-	Kowshik Jois B S <kowsjois@linux.ibm.com>
-References: <20240703141634.2974589-1-amachhiw@linux.ibm.com>
- <CAL_JsqL9hg8Hze4oOP1R55yVXBfTKE=RfwdBraNHiO71K21uNA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUHyQDasvs9yWMhM+J9ocSAJ/P+Tj1BKJiJ96luNhxyCpVy3I5qHP1RV7u3xXFF6H+0/lWeDcR/dSXfEh5Dcv1FIKM++Si1acq1kCI6ocgM8iiVxpvELm6ZfgGwNHPd9UUBd3UeikpmGUFaWJcaac/coRGmxrlsOVVw8/GmBVzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWl3dqbi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BCB8C116B1;
+	Thu, 11 Jul 2024 14:21:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720707672;
+	bh=EVzV5gygTBPaMO6VawoS8jAqq4SBfpcm8pnxcTObV1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tWl3dqbi9l+exogGQkFYJPdgJPRrrVZpD0UcL4MrMsZUXBgE3ElcD+bsnupXR79oU
+	 EQZjriJdpTO+K1qwW705WnrtgosmqrvzWsAEcnFipurNpabVjL34Q2f8QtVfoj5mRz
+	 1Bub1oz7Qym7t0v2sTB5fE7iQp+RnMjenW+cX2JSK9+6vZ5W7c5oGJIPralU1QA6tG
+	 PqXWq3DyaqkhRuzUcxxeLTQ20lBBckYsPFklx+RVXpaqDdQG/aB1p650lp9KVJNCJ5
+	 P1VbCfuK4xWLCUkIIa70qlJNUY7dSJzA6UprdnDF0Mb4A8EflIuBO5mh0ZCUjqpqY6
+	 EwSnnmddgyLkA==
+Date: Thu, 11 Jul 2024 15:21:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Ian Abbott <abbotti@mev.co.uk>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RESEND PATCH] rtc: ds1343: Force SPI chip select to be active
+ high
+Message-ID: <bd7c0eb9-bcb6-42e3-8be6-3d07452e3fd5@sirena.org.uk>
+References: <20240710175246.3560207-1-abbotti@mev.co.uk>
+ <20240710184053c34201f0@mail.local>
+ <2b0e8a6c-f89e-4d71-a816-9da46ea695eb@mev.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="X16MSWMy47KogHCw"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqL9hg8Hze4oOP1R55yVXBfTKE=RfwdBraNHiO71K21uNA@mail.gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: OdiQBSyMmWoj7PQSjzWTRMr86YEyO3b6
-X-Proofpoint-ORIG-GUID: vNxGWtVZgWNpTeQ951TVzKXP0lr4nCmh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_09,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 mlxscore=0 spamscore=0 mlxlogscore=664 priorityscore=1501
- adultscore=0 bulkscore=0 phishscore=0 clxscore=1015 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110099
+In-Reply-To: <2b0e8a6c-f89e-4d71-a816-9da46ea695eb@mev.co.uk>
+X-Cookie: Individualists unite!
 
-Hi Rob,
 
-On 2024/07/11 06:20 AM, Rob Herring wrote:
-> On Wed, Jul 3, 2024 at 8:17 AM Amit Machhiwal <amachhiw@linux.ibm.com> wrote:
-> >
-> > With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
-> > of a PCI device attached to a PCI-bridge causes following kernel Oops on
-> > a pseries KVM guest:
-> 
-> Can I ask why you have this option on in the first place? Do you have
-> a use for it or it's just a case of distros turn on every kconfig
-> option.
+--X16MSWMy47KogHCw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes, this option is turned on in Ubuntu's distro kernel config where the issue
-was originally reported, while Fedora is keeping this turned off.
+On Thu, Jul 11, 2024 at 03:05:01PM +0100, Ian Abbott wrote:
 
-    root@ubuntu:~# cat /boot/config-6.8.0-38-generic | grep PCI_DYN
-    CONFIG_PCI_DYNAMIC_OF_NODES=y
+> I think the devicetree node for the RTC device ought to be setting
+> `spi-cs-high` but cannot do so at the moment because the driver clobbers it.
 
-    root@fedora:~# cat /boot/config-6.9.7-200.fc40.ppc64le | grep PCI_DYN
-    # CONFIG_PCI_DYNAMIC_OF_NODES is not set
+Specifying spi-cs-high in the device tree should almost always be
+redundant or a mistake, if the device needs a high chip select then we
+already know that from the compatible.  The property is adding nothing
+but potential confusion, in the normal course of affairs the driver
+should just specify the configuration it needs for the bus.
 
-Thanks,
-Amit
+--X16MSWMy47KogHCw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Rob
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaP6lMACgkQJNaLcl1U
+h9C4hgf+I5lbIHVNYT9X+IHAW9VbWGC3NJG/GzSxonaA+chDK4FHyDlJU/ZnEtj0
+8Dftfoy2RAMOivQp0mK9VQHoo9M/pEeBhzmFzaY6cOc2mKEDVrWgZQ+KLP2VWgBp
+HhS89oe8vRv4z+ivGoa2Y6ErOYxFAZuizjkBRGeNLmt6lnb4TGFbbANAgCLm0MI3
+BYn2NM4qtLXUE0wsvd0qV92v1V7t1Mo6JWG+hrv0+32EHuFkacBtvKIniR9z2aHz
+IhqJHjnfy0zWcNKeDy0BfTUUGe/MpP3BTDbMrntmZVBbet3gYSS3Toqfkq0LiVIb
+sXxp0DE+qpmQC/lewp0gn0PKJ/TJEA==
+=1sxe
+-----END PGP SIGNATURE-----
+
+--X16MSWMy47KogHCw--
 
