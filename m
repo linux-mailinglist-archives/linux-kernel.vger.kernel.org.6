@@ -1,103 +1,123 @@
-Return-Path: <linux-kernel+bounces-248453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22E7B92DD56
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:20:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2470692DD5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FA331C214D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:20:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2621F238E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDC9323D;
-	Thu, 11 Jul 2024 00:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABDC23CE;
+	Thu, 11 Jul 2024 00:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="WsuWE1Od"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="ZK7DQ3Cr"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1556B10E4;
-	Thu, 11 Jul 2024 00:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E4D1C27
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720657250; cv=none; b=LUe69XlllwbUcbe81hZRW0ZkV2bxBQSCAg9CT4dQixQrt9uW+8YzSokNyvYVROSN1FcaqhGmxwpGdm2qqPr8ght613Q/iNxDDjDL+5KH7wpGP0Ud5rmo6vuSqrR4oxjPBmIsDbLBgSK58/2l5VEfuhMMurofiwt3/gIDSW0HzJA=
+	t=1720657346; cv=none; b=pCw9elkn7nl4tpx52O+4IJ8UIECfR6/CYS/CqGyrHCpO9t7RAjaliTLKDjFMp3s6lSESODCa2SaS9glij+pQOusCxBZICu2Fp0J4y+7J+gHNtZjm0OVY49twv6plYZ8yFIQTpjc9oIWSIaNPkWru0gjOvXm+jvOJ9HxADnfk6u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720657250; c=relaxed/simple;
-	bh=lu/ws/DouonfeddoseW9iBrWtLyCko/q8qWnUuEmw/8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=M8arzNnqJIX+Nep2do/Z92O1ERyLLziFZ9jz7pzTU9HWvk2raJOJXctITchsrilDLZbJ+PLihoX5s2h4di+9yfi9E/8/jWr4HuH0A6/FH61QdsENhZ/KdrnQYkCjOp03sfj3AaC7s7e2S5DOcp0SpgdfwsOFlTmqhYjd0MbFs1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=WsuWE1Od; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46B0KcchE2661981, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1720657238; bh=lu/ws/DouonfeddoseW9iBrWtLyCko/q8qWnUuEmw/8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=WsuWE1OdricOI9CChaHcsG7RoQoeBapbiroVDgKOLFxJ8yLV2psVkU1JjhvoIHoc2
-	 oseIbbg4HWNXufWxKBqJM0JdZ2oJfQnAC5Es+jDVZS32NeRzMuTyU5cmyCJ4NtwfT/
-	 f3WwgLDmjYZ+SR+U29ZFv3AHBe5DCEgNJgvNCo/sMy955kL6KwOE08AVzdULrA30ry
-	 DA9xwGr6tKstG2AP7rhodc19zdyFtE+q0mhtaO68SjZNwa1RYBxaNuDr/m1Ihx9cym
-	 8kH1Ob3izSGQkjHEyKAugtvAAdmGxmoC8NE9zx2n6lg1s1a7enjNvwO8tVysGWafk2
-	 mX95jRlkmxyQA==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46B0KcchE2661981
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 08:20:38 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 11 Jul 2024 08:20:38 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 11 Jul 2024 08:20:38 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Thu, 11 Jul 2024 08:20:38 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>,
-        "Jes.Sorensen@gmail.com"
-	<Jes.Sorensen@gmail.com>,
-        "kvalo@kernel.org" <kvalo@kernel.org>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] wifi: rtl8xxxu: Use swap() to improve rtl8xxxu_switch_ports()
-Thread-Topic: [PATCH] wifi: rtl8xxxu: Use swap() to improve
- rtl8xxxu_switch_ports()
-Thread-Index: AQHa0vuWToKzpFUEyEuHSaxW2LVN77HwqioQ
-Date: Thu, 11 Jul 2024 00:20:37 +0000
-Message-ID: <d1f56e9441ac452996a91f0b535c9e82@realtek.com>
-References: <20240710190047.709843-2-thorsten.blum@toblux.com>
-In-Reply-To: <20240710190047.709843-2-thorsten.blum@toblux.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1720657346; c=relaxed/simple;
+	bh=uM7smPu8AfGRj92cmn1JT/2eh3d2v25xWfIq0PU7kic=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=idSX30O2XK2TTKJ0kew48LKbnrOEKi9LPbzlEh9jz2wp5PZ8upmaJYlQ6+D9ciu23+PkNG39ZD+gB34UUvwrqnpD66SF9o/MYlVRmN3AFTILAq47Z2/XiULKdORYpKWzAAJalXgaSnkxOMys/w5KF2PU1rluV5KB1Z+x7nbcXRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=ZK7DQ3Cr; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4267345e746so2113765e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1720657343; x=1721262143; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bywnTVppmfzQzszhkit49QhinE78akXE7sjmxioQWq4=;
+        b=ZK7DQ3Cr2dG9Z75MnAUeZTt5RLBzqbxi9VtK0fna3RxHpnrN12DmgEdB0DFvHWNcv+
+         lqwUy56JG/FrrpNPIEYKTxyU7CEtGykQdlHs0xpOrOTRza3JJ4nJVfu8+3Lu/hVRGLjA
+         MgXbZpsJsIeuz2ilou174k6PaAHhzozAh1qcoYdmCG3vIt2hX9PCyxeogjVZxIQzp67q
+         msXaHNMv9rIqE5uFYD6IIY34J4VwQcZqhIdj6J5L44CuIg3GQJ2gZjpNviEpj0Q+Meej
+         4AyZ2Bq2FUDl+RMJElspDLp6xxcRAT/EQEgRqePOZlldKghReHMZPsQhDeMq4uv0DbjK
+         QTBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720657343; x=1721262143;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bywnTVppmfzQzszhkit49QhinE78akXE7sjmxioQWq4=;
+        b=lpyDlypnXMRmGHVhyuFQ3aPloIARlcjIsy60cHbqMP41JPi0yP6oQBokrRKD0Dd9Ty
+         IZuZNBUQw0ZU6mFfgttwMNbz4TX3JBEi7KBzT4EoLHK1o15vxdpQUjHjWYK+XLM2qNJS
+         01rDoo+41R3t1TI/QhaxUtM08rpSgm2bUN9PdyKuag7xyrV8n17iZH5lBPPQ1JMCyRF4
+         9i8CQyegP6kni4ZBVXS/7oU8MBYAdK8L1ChhUKVstGA/fcvJFxOJzO5SSZ/Z9PFEPm/Z
+         MA+O96x6PuamtUy1rRkq3KWPMeggtwA12UPCP7q5A6jDso/OpVm9kXJrbmbgc4nr59ct
+         B5gA==
+X-Gm-Message-State: AOJu0Yyu8qwjkmTTv/oCVoFzLWi18aIILZx6zcKbr7xML1p4HTCzHyOk
+	gtE+f4Xnt55qMuCdKxxPE9SnzSBBydda+qevmGSTngsvM1CbPWI1piUAQbjVj8k=
+X-Google-Smtp-Source: AGHT+IHqxrvLUW2J/54k8gQvzCID5HUCiDcf8dmMNnBG0HTWZkK2wt/V7dSoO2/ZLFTHC7bNTNgVAw==
+X-Received: by 2002:a05:600c:11c8:b0:426:607c:1863 with SMTP id 5b1f17b1804b1-426707e365fmr43997305e9.21.1720657342591;
+        Wed, 10 Jul 2024 17:22:22 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fca8bsm263977855e9.47.2024.07.10.17.22.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 17:22:22 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: akpm@linux-foundation.org,
+	mhiramat@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] bootconfig: Remove duplicate included header file linux/bootconfig.h
+Date: Thu, 11 Jul 2024 02:21:53 +0200
+Message-ID: <20240711002152.800028-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thorsten Blum <thorsten.blum@toblux.com> wrote:
-> Use the swap() macro to simplify the rtl8xxxu_switch_ports() function
-> and improve its readability. Remove the local variable vif.
->=20
-> Fixes the following Coccinelle/coccicheck warning reported by
-> swap.cocci:
->=20
->   WARNING opportunity for swap()
->=20
-> Compile-tested only.
->=20
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+The header file linux/bootconfig.h is included whether __KERNEL__ is
+defined or not.
 
-The same patch [1] has been applied.=20
+Include it only once before the #ifdef/#else/#endif preprocessor
+directives and remove the following make includecheck warning:
 
-[1] https://patch.msgid.link/20240619024017.53246-1-jiapeng.chong@linux.ali=
-baba.com
+  linux/bootconfig.h is included more than once
+
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ lib/bootconfig.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/bootconfig.c b/lib/bootconfig.c
+index 97f8911ea339..297871455db5 100644
+--- a/lib/bootconfig.c
++++ b/lib/bootconfig.c
+@@ -4,8 +4,9 @@
+  * Masami Hiramatsu <mhiramat@kernel.org>
+  */
+ 
+-#ifdef __KERNEL__
+ #include <linux/bootconfig.h>
++
++#ifdef __KERNEL__
+ #include <linux/bug.h>
+ #include <linux/ctype.h>
+ #include <linux/errno.h>
+@@ -33,7 +34,6 @@ const char * __init xbc_get_embedded_bootconfig(size_t *size)
+  * However, if you change this file, please make sure the tools/bootconfig
+  * has no issue on building and running.
+  */
+-#include <linux/bootconfig.h>
+ #endif
+ 
+ /*
+-- 
+2.45.2
 
 
