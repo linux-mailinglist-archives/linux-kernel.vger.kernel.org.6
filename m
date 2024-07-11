@@ -1,133 +1,161 @@
-Return-Path: <linux-kernel+bounces-249990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C03B92F2B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:40:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD3C92F2B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCD841C2204F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:40:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BC65B21B4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BECA15ADAF;
-	Thu, 11 Jul 2024 23:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB7416D9A0;
+	Thu, 11 Jul 2024 23:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="iW+4FIKE"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IB6uPHY9"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2441115ADA1
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B612E15A84E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720741195; cv=none; b=i9cnWppE2osGMC0HexUiGnnU0ljHALpwhiYtP1gyAWDLTYxzgdK9GE87PDYE7Gh0E1tmat5I2SjSk1jBHaKbpIsKvBKyYG/mkwZ0QnCMdE8+VeYQS8QngLE1G/mW3JzcYGabr5HG8zc4AbU0UNiIpIKtF3ZzwbRMmEujKpp591o=
+	t=1720741286; cv=none; b=P4DCPid/heyhyYuUPpyL8UeiBOZckokt84zlRFjY65XyiuPU6BKs1lIK8ZqIZwdpK7NdtGo1ujw3U6SZ0cSYibry3jDvXZNuuY9elkiCGouVQlxhSiTWonwNIdNyzDo7H8u6xmlBcSmDaccaVRvBxL8QcD4TyINLBg/WbErrWcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720741195; c=relaxed/simple;
-	bh=AaZXRsdVn2tvLYsDOVlyTZEChQrM/esAH6DERNhXAfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HgcaMlOV2mDkvwIpW5Ps8T5XE2lR7+uHPBchpyAJJMR3t5vWIjR6/CbVEL8daqhK23w4XDoWkyHYbbxkY9qjzS0Lhme0IZ30tV0Gq5YEshQ+gfPtU4XuhEf3ymBQmzWxuBpguvQQIRRv3hWPwQ5eGxMpe+cpdH7z4Q09QEDXNqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=iW+4FIKE; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-79f08b01ba6so125874185a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:39:53 -0700 (PDT)
+	s=arc-20240116; t=1720741286; c=relaxed/simple;
+	bh=ZdwiAaNOEcsQ1iawVne670iRqDXG2wC8RCl2vG0f8s4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eqK2HzdtjgESvHoqeG9ucX86D4sF6r2MUAsb0phNdc2iKG2vviu+6z3zS9cYbQA6axtI+CQHpCuf4oyiLd9o9eupo+pcAfm3b9hIW/I5s6jBUl8Ys+AP+ey4ThIxs4LlDmIPBfs74EDbZcjw+ybOb86+elrmzOilrj3tDsqrsxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IB6uPHY9; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77baa87743so171036766b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:41:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1720741193; x=1721345993; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IFVrrIHp8Vup92boS3hFd9PYBN8YKvRYBK43QitxZkA=;
-        b=iW+4FIKEGd08RFlmgSFOOdNtvyCAWPy2i9oEVeAJQ6so5vE724dY0nbS4dWSOKGpAd
-         iyL+WEl3sXHZC7COphR9jtVeravFTAOjdgTqp5zVXeAnEXOOO8iKQYFGqaBFsVIGdESk
-         Es75IV/7Z8fT+d/PMNOuNilgsOhcxWmlM4wKBCBKRxfNeN2O5OJ8/xh3S834u+SqADuB
-         RcMYHHS7YI63o75kjPKkpw91J8zZiCsUc4fi2zy6RXpgs5WnjN48OfUNn8yI/GcTgHkN
-         Ghrj9weTNR33yf9get0MliPAINB2TO+tH9v7n5EX3EiUBDSJ+oWzi4LUMGr/EK1rHFw+
-         8hwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720741193; x=1721345993;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1720741283; x=1721346083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IFVrrIHp8Vup92boS3hFd9PYBN8YKvRYBK43QitxZkA=;
-        b=tKLPhSl56r8jAoPdjKVNWDI1l2mUu6u7U4Xt1p4ZYEqBvUZH7h8ZGOpcDIo6P5canp
-         67BCbfYV0aqT+Y3sZcHKu8T6lzdH/PSKjheYCQ6mEd2vY5gFgU7J4CsViU+O8HNyro4L
-         OK3Gz5mI9OqFeuz1bN8LQrfURvld8JejhnWSwv58mYcIumvIF0S/wPjj+IR226d2p+zL
-         fmtll1Y0wRSaGRYJEQXf+Brb9OWEAlLjNDQZzITdY54pseae6LPfwVvtuX1Cuj3ClaON
-         ddx1Ru5qmkIIxEiTUW/PDDOT0lMvzX475Ja8OWZ02rmlxWf98C1a323GoLgwR4kF3ZLH
-         myKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzgDS5dzvauc7KJPo0M3WPBh89BZt6TDF47Sfr7RgGejfMFXAdivToyxWSSgbwvGfT9cs/4Epw3iihgg2SP4AJckcjOd+Ayarv8CL5
-X-Gm-Message-State: AOJu0YytbJUmnq/SyOW6RKSh7SRhr0fWdcOGS9qgx72q4dC8mJ3iF3Ax
-	upwHRJI6aoO8EhctvE+2SwYprH9J/k71lUidhrUPk3RY9jplLfFZnefy7HGnG0k=
-X-Google-Smtp-Source: AGHT+IEvE6NFq20imkRuEEO3x8KpVY70FapRhLgTh97KHKQPOyxmkDqYb4gFKM6bc2M6nmkv7zlTvQ==
-X-Received: by 2002:a05:620a:4611:b0:795:60ba:76e9 with SMTP id af79cd13be357-7a152fbcbfcmr290215985a.4.1720741193036;
-        Thu, 11 Jul 2024 16:39:53 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f18ff827csm341798685a.4.2024.07.11.16.39.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 16:39:51 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sS3OA-00FTEK-Qs;
-	Thu, 11 Jul 2024 20:39:50 -0300
-Date: Thu, 11 Jul 2024 20:39:50 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] iommufd: Add check on user response code
-Message-ID: <20240711233950.GU14050@ziepe.ca>
-References: <20240710083341.44617-1-baolu.lu@linux.intel.com>
- <20240710083341.44617-3-baolu.lu@linux.intel.com>
+        bh=pfuHNi5R9KMj0UxFnDquGekhSFTlViomrJL3yZ6eHpI=;
+        b=IB6uPHY9b3oD5sCw2UHcPFkbTlKmi4/7xOElYQ8683WO3DaPYW2eSl7j0xLwm7Rt8V
+         MQxnsZXhMYO0X42+P9zjHyFXVBvCNlFybjPHGijzQb3dpwPqx1/fISZQyeT9ROE1t7DN
+         cly7UhAEE2irDxu9+vEfzlhFvQHt8euTxRCKE/VS1MDcieh35mL9ph5m1rHp4O3uyaIg
+         UdQ33LbDBZZQg4GosPxXYQ9s2WTZgj2myGFFEqBvA7PTpF8tpT2fLyZQq+3yl/CcSUOK
+         64jzmYVsKdcFyxYm83i54rUY2z2NjLeOsGbEW8ZHhhq8Ufnm+F1gcy3s41I1andsrITP
+         Ja7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720741283; x=1721346083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pfuHNi5R9KMj0UxFnDquGekhSFTlViomrJL3yZ6eHpI=;
+        b=Pv/c64hEAwSlgb+Wjfipbsa+0DPS/w/1/dsWC1+uYzyMjkOUbaHuA/eqpZq5fMQHVj
+         pwwCIfUxIPDLDP/T8YzrWiz14GlzSavIV7hiQ5X7kNq0cmXP513vp3vcfVEKiPQIAgtj
+         3S+3BsN/WKHgxdv75XadQNgGUOQgYl+lZEr07cm43kQr29WJ+2+5Ck14z/mZkRWBk/rp
+         B1Yf88l193qcnVzVFoQFLAuI6wLZ0ZyBm/qvzFxnpaBVMVJ4t7SJdW/rdmcBzduQUxHh
+         mf/2T3f8Vayg8eFV719VN9UoK4yLtgXAZIVRsuHOX9oUK1gZTVHxqoPiaqeakOY9YEqb
+         sQmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeZCZV6V/5jKOEgKwch6GsWPdekIchxWouNzc6Cp6IKCv8kM1V3IOYhXgiwUmr+ngglK9WWGpfrk8byfPviVDOp4B2q1GPvz1aP5u2
+X-Gm-Message-State: AOJu0Yzk1ENqnmFHpHuOxY7/BmWThJTHv9WpN1KkDtDRn5jBPjiMV3a7
+	geobio9jlUHqM3uc56LP7YDT8vLa5OC+KZnPYfMhuQ9awQOi7TuxcOJK/ELNavt1+Tuptxzd/U0
+	V3QJjP4Snx5J3DXjezUoQJA2q75l9v2JXzOYu
+X-Google-Smtp-Source: AGHT+IFND8OJ4Hc6Luty4DujmFBUJFFOnOhkbf4bXVfGHjmUWdjIMHEqzQfgESAoCPprxuNTe9hiEGwJ28pFonfz9vc=
+X-Received: by 2002:a17:907:d93:b0:a75:20f7:2c71 with SMTP id
+ a640c23a62f3a-a780b6ff667mr1002583166b.38.1720741282837; Thu, 11 Jul 2024
+ 16:41:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710083341.44617-3-baolu.lu@linux.intel.com>
+References: <20240710234222.2333120-1-jthoughton@google.com> <20240710234222.2333120-5-jthoughton@google.com>
+In-Reply-To: <20240710234222.2333120-5-jthoughton@google.com>
+From: David Matlack <dmatlack@google.com>
+Date: Thu, 11 Jul 2024 16:40:54 -0700
+Message-ID: <CALzav=dfpy=BSZD4hOVMFSrfxgc5OhDjZHek7CzMDYRqTBALwg@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/18] KVM: Fail __gfn_to_hva_many for userfault gfns.
+To: James Houghton <jthoughton@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, Peter Xu <peterx@redhat.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 04:33:40PM +0800, Lu Baolu wrote:
-> The response code from user space is only allowed to be SUCCESS or
-> INVALID. All other values are treated by the device as a response
-> code of Response Failure according to PCI spec, section 10.4.2.1.
-> This response disables the Page Request Interface for the Function.
-> 
-> Add a check in iommufd_fault_fops_write() to avoid invalid response
-> code.
-> 
-> Fixes: 07838f7fd529 ("iommufd: Add iommufd fault object")
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+On Wed, Jul 10, 2024 at 4:42=E2=80=AFPM James Houghton <jthoughton@google.c=
+om> wrote:
+>
+> Add gfn_has_userfault() that (1) checks that KVM Userfault is enabled,
+> and (2) that our particular gfn is a userfault gfn.
+>
+> Check gfn_has_userfault() as part of __gfn_to_hva_many to prevent
+> gfn->hva translations for userfault gfns.
+>
+> Signed-off-by: James Houghton <jthoughton@google.com>
 > ---
->  drivers/iommu/iommufd/fault.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
-> index 54d6cd20a673..044b9b97da31 100644
-> --- a/drivers/iommu/iommufd/fault.c
-> +++ b/drivers/iommu/iommufd/fault.c
-> @@ -305,6 +305,12 @@ static ssize_t iommufd_fault_fops_write(struct file *filep, const char __user *b
->  		if (rc)
->  			break;
->  
-> +		if (response.code != IOMMUFD_PAGE_RESP_SUCCESS &&
-> +		    response.code != IOMMUFD_PAGE_RESP_INVALID) {
-> +			rc = -EINVAL;
-> +			break;
-> +		}
+>  include/linux/kvm_host.h | 12 ++++++++++++
+>  virt/kvm/kvm_main.c      |  3 +++
+>  2 files changed, 15 insertions(+)
+>
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index c1eb59a3141b..4cca896fb44a 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -140,6 +140,7 @@ static inline bool is_noslot_pfn(kvm_pfn_t pfn)
+>
+>  #define KVM_HVA_ERR_BAD                (PAGE_OFFSET)
+>  #define KVM_HVA_ERR_RO_BAD     (PAGE_OFFSET + PAGE_SIZE)
+> +#define KVM_HVA_ERR_USERFAULT  (PAGE_OFFSET + 2 * PAGE_SIZE)
+>
+>  static inline bool kvm_is_error_hva(unsigned long addr)
+>  {
+> @@ -2493,4 +2494,15 @@ static inline bool kvm_userfault_enabled(struct kv=
+m *kvm)
+>  #endif
+>  }
+>
+> +static inline bool gfn_has_userfault(struct kvm *kvm, gfn_t gfn)
+> +{
+> +#ifdef CONFIG_KVM_USERFAULT
+> +       return kvm_userfault_enabled(kvm) &&
+> +               (kvm_get_memory_attributes(kvm, gfn) &
+> +                KVM_MEMORY_ATTRIBUTE_USERFAULT);
+> +#else
+> +       return false;
+> +#endif
+> +}
+> +
+>  #endif
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index ffa452a13672..758deb90a050 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -2686,6 +2686,9 @@ static unsigned long __gfn_to_hva_many(const struct=
+ kvm_memory_slot *slot, gfn_t
+>         if (memslot_is_readonly(slot) && write)
+>                 return KVM_HVA_ERR_RO_BAD;
+>
+> +       if (gfn_has_userfault(slot->kvm, gfn))
+> +               return KVM_HVA_ERR_USERFAULT;
 
+You missed the "many" part :)
 
-I added this:
+Speaking of, to do this you'll need to convert all callers that pass
+in nr_pages to actually set the number of pages they need. Today KVM
+just checks from gfn to the end of the slot and returns the total
+number of pages via nr_pages. i.e. We could end up checking (and async
+fetching) the entire slot!
 
-		static_assert(IOMMUFD_PAGE_RESP_SUCCESS ==
-			      IOMMU_PAGE_RESP_SUCCESS);
-		static_assert(IOMMUFD_PAGE_RESP_INVALID ==
-			      IOMMU_PAGE_RESP_INVALID);
-
-As well
-
-Jason
+> +
+>         if (nr_pages)
+>                 *nr_pages =3D slot->npages - (gfn - slot->base_gfn);
+>
+> --
+> 2.45.2.993.g49e7a77208-goog
+>
 
