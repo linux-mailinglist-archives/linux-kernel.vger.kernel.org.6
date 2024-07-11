@@ -1,114 +1,112 @@
-Return-Path: <linux-kernel+bounces-248692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72CB992E0CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:27:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8BE92E0DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C9BD283646
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:27:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D6BE1F22339
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13EB1487EA;
-	Thu, 11 Jul 2024 07:27:05 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18760148FE8;
+	Thu, 11 Jul 2024 07:31:29 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAB313B597
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED454EB55
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720682825; cv=none; b=pPF+YmIQVoXFt3sjwuIi0k1ty+ItYdZRDxaJzNhUjsXYfjZbfTzlyg4XyrESwuDH+FFWc5uRKPoY4VzMFfB+5vUE3XkCCNsUzyWWr9s5WgAWADN8GuS5AW/XP9Vb2OvLTI3ONgqYz/rJ6bfGGJUSBTjrpV5tZBh6rJHC3Ql6fHg=
+	t=1720683088; cv=none; b=s53XwmCh/v7NU5h10BzoQa1AD/XeL4Lqq/GDieWT0YwIBbdwiiUIaPI7Z6SsV5+K8KUczoopSFBUJaN5iDxcDK5qC6+oz7xFaG8YqUhC4JOVLvrpgoAhsMZjP8el3+3fN3MIpg0oUlMlkcXmuOSNJv6dyVfTrplNB5/Em5cCU9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720682825; c=relaxed/simple;
-	bh=LooyK1nesgxXPrZ4cwneopS5lVW518hX1UEmAKtwnlU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dk/vfx31/uSAtyuxFW1FjkK5T4B4CX/9teV0wM6Y98QCby/Qg3R5StTzSya9pZDPbJdiz0Q/Av0e/S3sfzCJ6NdHLwmMPoKeH+Xo8u6Y+jHZ5JY3FCVmnfjqfPTsv/51OiSwWc/h2FQAwX7SQfJWkNQy0p6sfqYsmv1LzmdNuM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WKR4v3nspzxW4p;
-	Thu, 11 Jul 2024 15:22:23 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id A2067180087;
-	Thu, 11 Jul 2024 15:26:59 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 11 Jul
- 2024 15:26:59 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <bhe@redhat.com>, <vgoyal@redhat.com>, <dyoung@redhat.com>,
-	<akpm@linux-foundation.org>, <kexec@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] crash: Fix x86_32 memory reserve dead loop retry bug
-Date: Thu, 11 Jul 2024 15:31:18 +0800
-Message-ID: <20240711073118.1289866-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720683088; c=relaxed/simple;
+	bh=2ykrV+db0A9oXfPwOZSh0YWS78FhI0FWtnZN5Z6XYCg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Spr0H6g5u6v5tbff9HIUvVyYbGMEkbukaNMArhMPe6vBT6QkTB8zbRJQYM6fdJRJPuUw4jwICuPrL1edWYViP53+zFz85vxlSf6Atj8zWuKRzrY+0X2O+T1LUWC+8NGuffOiOArhedQLaQJ/pAhrFZqres9+8tJkLhIqq6uNJRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-80627fd1a81so45340539f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:31:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720683085; x=1721287885;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IxiJdl4VtQvTNmrKCocRbqkV0SinbYelbc+wAZLmHNQ=;
+        b=gI1gdO5Bba718qExaWqQAD9pq88iKZDOSQr/1JOqkoEjxJDaczaf1J0oRucFgSKFKi
+         YSgnHTtjK6pxJ3w+LebZoWW0gjV1M4Xjk02Ebozdxo+Jchnyl+5z02LmCLwokjV6dVU/
+         fvtLv/aHfewpNaEnb4wcaPOCqkrGwPG4slHCsPlIt3fCdz0f0X2/NBs+DrZLUiYUXod3
+         +gMxcg/wXvlCbViq5dg9jr/IhHsQukUiDqoHqAjuksKJcfoN9HfV8gvDAbjtdkptbvJH
+         oFFqn+2vX4pNIwt8IfMMSTjA7n0cPPFcPnlRYZlrHL1vtDGSO6Knvl7s/V0xZCZf7sTs
+         s22A==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ34pyavk5/hnUCFlgOO2Y33gDEb1t3iD4+bjOTV4AQNSeEgUBQRSfnM+xdO/MUonr2v88dGX33tayyAKTk4BtbmfzFZdibld0LPA6
+X-Gm-Message-State: AOJu0Yy7mgv5kG3LDdO12hWYqQ7U/cVyA8K7uiCLrmRs8+UQ6fD4LH3G
+	3jto94un/alsRQ2k8pQRoXfeZC5GB7JaDWc0vhkYm1U/zzmdCGORwnL8Dm9Mh+r3xUPxTVoy9kU
+	x+YbiF6irrk7kuh9sAe9GBhqh/ts5nCADz/JzEYrdYWddNBIpzdadIwQ=
+X-Google-Smtp-Source: AGHT+IFWckUCxHgwYGtn24fWh3b9Aa1oJyYIW3pH83j2rqWMToR0Qm4RcwrF2vzeHHitwxBvKQan6wwAGETGzhd46Y1AOmGtVRh0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+X-Received: by 2002:a05:6638:34a4:b0:4ba:f3bd:3523 with SMTP id
+ 8926c6da1cb9f-4c1bdedeac6mr126608173.2.1720683085409; Thu, 11 Jul 2024
+ 00:31:25 -0700 (PDT)
+Date: Thu, 11 Jul 2024 00:31:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000013c187061cf3c09c@google.com>
+Subject: [syzbot] Monthly bluetooth report (Jul 2024)
+From: syzbot <syzbot+listf73783798eb5d74d411e@syzkaller.appspotmail.com>
+To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, marcel@holtmann.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On x86_32 Qemu machine with 1GB memory, the cmdline "crashkernel=1G,high"
-will cause system stall as below:
+Hello bluetooth maintainers/developers,
 
-	ACPI: Reserving FACP table memory at [mem 0x3ffe18b8-0x3ffe192b]
-	ACPI: Reserving DSDT table memory at [mem 0x3ffe0040-0x3ffe18b7]
-	ACPI: Reserving FACS table memory at [mem 0x3ffe0000-0x3ffe003f]
-	ACPI: Reserving APIC table memory at [mem 0x3ffe192c-0x3ffe19bb]
-	ACPI: Reserving HPET table memory at [mem 0x3ffe19bc-0x3ffe19f3]
-	ACPI: Reserving WAET table memory at [mem 0x3ffe19f4-0x3ffe1a1b]
-	143MB HIGHMEM available.
-	879MB LOWMEM available.
-	  mapped low ram: 0 - 36ffe000
-	  low ram: 0 - 36ffe000
-	 (stall here)
+This is a 31-day syzbot report for the bluetooth subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/bluetooth
 
-The reason is that the CRASH_ADDR_LOW_MAX is equal to CRASH_ADDR_HIGH_MAX
-on x86_32, the first high crash kernel memory reservation will fail, then
-go into the "retry" loop and never came out as below.
+During the period, 10 new issues were detected and 1 were fixed.
+In total, 53 issues are still open and 64 have been fixed so far.
 
--> reserve_crashkernel_generic() and high is true
- -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
-    -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly
-       (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
+Some of the still happening issues:
 
-Fix it by change the out check condition.
+Ref  Crashes Repro Title
+<1>  21879   Yes   possible deadlock in rfcomm_sk_state_change
+                   https://syzkaller.appspot.com/bug?extid=d7ce59b06b3eb14fd218
+<2>  13079   Yes   possible deadlock in rfcomm_dlc_exists
+                   https://syzkaller.appspot.com/bug?extid=b69a625d06e8ece26415
+<3>  5305    Yes   WARNING in hci_conn_timeout
+                   https://syzkaller.appspot.com/bug?extid=2446dd3cb07277388db6
+<4>  3382    Yes   KASAN: slab-use-after-free Read in __hci_req_sync
+                   https://syzkaller.appspot.com/bug?extid=27209997e4015fb4702e
+<5>  3246    Yes   WARNING in call_timer_fn
+                   https://syzkaller.appspot.com/bug?extid=6fb78d577e89e69602f9
+<6>  680     Yes   general protection fault in skb_release_data (2)
+                   https://syzkaller.appspot.com/bug?extid=ccfa5775bc1bda21ddd1
+<7>  411     Yes   KASAN: slab-use-after-free Read in sk_skb_reason_drop
+                   https://syzkaller.appspot.com/bug?extid=f115fcf7e49b2ebc902d
+<8>  250     Yes   general protection fault in lock_sock_nested
+                   https://syzkaller.appspot.com/bug?extid=d3ccfb78a0dc16ffebe3
+<9>  249     Yes   KASAN: slab-use-after-free Write in sco_sock_timeout
+                   https://syzkaller.appspot.com/bug?extid=4c0d0c4cde787116d465
+<10> 120     Yes   KASAN: slab-use-after-free Read in skb_release_head_state
+                   https://syzkaller.appspot.com/bug?extid=d863bc2d28ef7ff42984
 
-After this patch, it print:
-	cannot allocate crashkernel (size:0x40000000)
-
-Fixes: 9c08a2a139fe ("x86: kdump: use generic interface to simplify crashkernel reservation code")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
-v2:
-- Peel off the other two patches.
-- Update the commit message and fix tag.
----
- kernel/crash_reserve.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-index 5b2722a93a48..5073ae205f79 100644
---- a/kernel/crash_reserve.c
-+++ b/kernel/crash_reserve.c
-@@ -421,7 +421,7 @@ void __init reserve_crashkernel_generic(char *cmdline,
- 		 * For crashkernel=size[KMG],high, if the first attempt was
- 		 * for high memory, fall back to low memory.
- 		 */
--		if (high && search_end == CRASH_ADDR_HIGH_MAX) {
-+		if (high && search_base == CRASH_ADDR_LOW_MAX) {
- 			search_end = CRASH_ADDR_LOW_MAX;
- 			search_base = 0;
- 			goto retry;
--- 
-2.34.1
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
