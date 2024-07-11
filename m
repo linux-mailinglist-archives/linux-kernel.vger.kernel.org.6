@@ -1,219 +1,142 @@
-Return-Path: <linux-kernel+bounces-248885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AA592E32F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:14:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45E992E332
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D221F2379B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:14:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60B73B218F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DA5155726;
-	Thu, 11 Jul 2024 09:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5226415572D;
+	Thu, 11 Jul 2024 09:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="irtaYPnl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h7C7NGTU"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482CD653;
-	Thu, 11 Jul 2024 09:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720689282; cv=fail; b=HXufZv97nfxjgr7sfuvWKvDKIffU+2n+rpZUkOLX4+v5Z9TN0KopqNLbLAsBqJ7vvWuYryYWEmP6UJxzMWYrT4adGmwpUD8MeUkqkobBchtVb7ZhsapE8m2IrA3GuscmCUpEKdzDtLs7GVLGM68ZtaYY5bBcROEWC2PfXK2nTMY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720689282; c=relaxed/simple;
-	bh=rRWisK9jo88701lgtq0xqSn0a3q8YQvYaGJkQA3Rjiw=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HiuswwP9EQEhFomRnFhJWDdkc/FxMYNeexB+XZ33Jooe11MZClZC6SgpYPalrW9CQAtKX9tGNwUrfst+g4refUZ9hYd8Y3Rn15opURNXylhARfnTL6h1grw2Ww4NSLgSORyMyqLNnSevdJTbwB+LOi/7cCrfkWH2+2KpxwcSfzM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=irtaYPnl; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720689280; x=1752225280;
-  h=message-id:date:subject:to:references:from:in-reply-to:
-   content-transfer-encoding:mime-version;
-  bh=rRWisK9jo88701lgtq0xqSn0a3q8YQvYaGJkQA3Rjiw=;
-  b=irtaYPnlnqEjwuqqxqBEbhmXgZYAyyddWsewMz7nsaS/8+OtyI3Gjm8t
-   /HZqZFWU57QBesTfUN20pHSHIZv+wpkT4FsHd2aYIpDmEr3XhPVb7ADQV
-   h2mY6kyINz4upxjJF0PpsbDJuxEfkLd7S74xqy3deZrEFk1T2ZpGvOcdY
-   ndBroeHNXaRZIw+O/OfPcGtZn/tKjYjnb1CdyvY1PMyuzrhP5F7oCgmsC
-   i+VLt30YIpCAiPThbmnndG/bM8pi3Wti8Sn63u7n36S8da1z9tRM4tHDu
-   w0OC3uGpFBzlCTToU/qOwDeYqIC4VMoTE3nLZ/hXJhzhNKqukj6kJkHcx
-   w==;
-X-CSE-ConnectionGUID: fhrusCDASbyzosPRYFDSZA==
-X-CSE-MsgGUID: FuQ/MlfETPut3X9/2DcjBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="21928653"
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="21928653"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 02:14:39 -0700
-X-CSE-ConnectionGUID: eP54PizySzmvL58eDH4cbA==
-X-CSE-MsgGUID: OGtqSSMtS2G75y5tBMqCWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="48939905"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Jul 2024 02:14:39 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 11 Jul 2024 02:14:38 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 11 Jul 2024 02:14:37 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 11 Jul 2024 02:14:37 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 11 Jul 2024 02:14:37 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yf8NuoFFNOum6NxfMmtETfA/EgeZFvnDafC2gazOa6gKGBtlePnIr0DC1BRZeMpOftvoUBcv2DZQnPWnK0heXWRK0wkF2itgOJ7iYmKGWNS/nhF8jBrEnC73gDAJMTsyQJjsvSweJenYqhKC7dKrQpnftOl6CpHermto7yp4cHfgHFhVecKf5NhJAMJMEl+E4ucnviiPDoLZBLwY0AjprWm1mdk6otMYDc3VvigVpdpq+sr+w+4trMZhaqa3UCjMHykz2oJ/Tj2JL3ara4abQssO7kMkJY/mY3MLuCfceebKZlgv1lZu7r9alPbpUcPqNsxcovRarwXlzMGBFP8Qxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rRWisK9jo88701lgtq0xqSn0a3q8YQvYaGJkQA3Rjiw=;
- b=BT5upyyBpYPaZ3wvScsbXlD9CkdWOt2x3UsiAIRQNNLHp6G1TERCGAmQTEgC1Au644sib9AY3v8kucMxO/9BFfzHHAkrj6EQil41WxXuRLK/hXyE/ME00h9jde6TNTzKmODMtGazoOWnF0Jp1Oiz6S1SjMotOukGUOBaXGBqQm6NbQuYaafSOJfYL8wrfXyGkmjXHE7TTg2ph3S1YWB7ZZP967bVXzqn29dw4qwJMHXpZ0NpVV9Un5W48wU/hssliPc4ShFrAh0AbWEOxYx6CwR+oIUD1yrdEvbtDmV+Vti7oIItqWq9j/5WUWLoXJSQB34Oaj6FwivyugDEjJhCJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6053.namprd11.prod.outlook.com (2603:10b6:510:1d1::8)
- by SJ0PR11MB5938.namprd11.prod.outlook.com (2603:10b6:a03:42d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.20; Thu, 11 Jul
- 2024 09:14:35 +0000
-Received: from PH7PR11MB6053.namprd11.prod.outlook.com
- ([fe80::4a36:b210:9d85:d13b]) by PH7PR11MB6053.namprd11.prod.outlook.com
- ([fe80::4a36:b210:9d85:d13b%7]) with mapi id 15.20.7762.016; Thu, 11 Jul 2024
- 09:14:35 +0000
-Message-ID: <1d339c92-edd3-4373-93f5-a612db452277@intel.com>
-Date: Thu, 11 Jul 2024 17:14:26 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: delete entry for Conghui Chen
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Viresh Kumar
-	<viresh.kumar@linaro.org>, <linux-i2c@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240706144150.2668-2-wsa+renesas@sang-engineering.com>
- <20240708061937.p7lhz7eho4dh5bv7@vireshk-i7> <Zo-cGVD_mvezDMoZ@shikoro>
-Content-Language: en-US
-From: "Chen, Jian Jun" <jian.jun.chen@intel.com>
-In-Reply-To: <Zo-cGVD_mvezDMoZ@shikoro>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR01CA0010.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::12) To PH7PR11MB6053.namprd11.prod.outlook.com
- (2603:10b6:510:1d1::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EA115279A;
+	Thu, 11 Jul 2024 09:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720689297; cv=none; b=r66LIA2PswtDIPVPmChb4C/99hUq/WHdEiMsyKN2lfAl0lX6Mx4wBeVFwPOiJSyz1Wq34SesxvIyqEtqWt1d9k5EHS42GA5yYgjFSdxIltiUL7YPh9nVP8k8cbzlqZj+UVEJYzCrwed3PXea7BgzvY3zTHB7LVhVtgUFq0UN8Dg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720689297; c=relaxed/simple;
+	bh=jRL12pSR7nFD1GOyXrNM8OZHY88t8+G32DLgDdf7alM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lzHYY3Y2ab33Wmixh2geUfZJYhc2v0BxaYksH0lxW5DLYAzab2lxCBVURk8ZnbjHiy/NQA4GqZNAh5kM2LyDWgtHTV4yjGjAofRhOF8jhn2g4A5Wewf7XDg3w3RfX8QWDc16vqSWr1Mj9t364X5cmwEFplOqizTQqtv349GpalQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h7C7NGTU; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720689294;
+	bh=jRL12pSR7nFD1GOyXrNM8OZHY88t8+G32DLgDdf7alM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h7C7NGTUZJJ4XSlQLWg9xIFx2MBR2kxeIb6LpmyMOwAmqqiLm8TYHzP2z9No4fvUz
+	 lRl0dCNeiz4ol+Vj5WUpZXucwLyzL0jQi5HdKgEL4QejAfjVKliEh6o/QDvXySkk1f
+	 UcyzqucgiWtI+OFKGxh18aXfq/sNMyfGW1iSX6dpBL5Fb57+739WYl1lnynEVPR/sZ
+	 vrzDxVd/YSW3xx77oBcM9g2soXI4kPZGs5BluBZxnA1atajYLzTzdTkeJvjKKkTfyd
+	 Y+2QNSTMkR+UvurfEKzL4A2bfGxQGOd15mbskKCOcVJu29j6qu6VTdELM9HciZScUr
+	 wWyUbCVbH9k/w==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 661A337821DB;
+	Thu, 11 Jul 2024 09:14:53 +0000 (UTC)
+Message-ID: <11d6aa8e-841d-4c84-8a49-e8915fc80587@collabora.com>
+Date: Thu, 11 Jul 2024 11:14:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6053:EE_|SJ0PR11MB5938:EE_
-X-MS-Office365-Filtering-Correlation-Id: 271847cf-7379-4534-4304-08dca189e218
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bGlySGFlZ3ByMGtIZHQrbHVoV1dkK2dCRXZQakovclZGS2xJdzBuV21mLzVv?=
- =?utf-8?B?Nm1RQ1ZyZHZza1lZcU5YLzBqN2NHMUp0Tnc4Z3BLWjVMSHQ5VDhHZXJFdGR3?=
- =?utf-8?B?eWhUVjFZZDRLQVlxbDlvek9wQlBDYU82U0l2dEkwNTliVXVrYmRLdDVGbkNq?=
- =?utf-8?B?bGZtelFqUVJlK0l5T2RkQ3JWT0xrYjNVeGxvZHowR204bVpBVCtFeDFmWDFj?=
- =?utf-8?B?QTJwbkRXQjBucXg5QU9aVHhVUDJaUy84cWYraENza1N4YWlaVThwUUw3VXRH?=
- =?utf-8?B?NFlUU0ZKb1pUa2NZREVDQzJYd1hKVWxOcGN0cWNmQjlDU1ZHKzZVTExwQjlv?=
- =?utf-8?B?a00wQUsxeGF6TFVxRzJGSjZrcDZLbUpDQ1kvd2RhaWU3Z21KbHJ2UGRSUlB1?=
- =?utf-8?B?c25EbUNKRHB5UURHTkhzMkxna0dZL1doSjh4cTBRNWU5cGdSZ0ZKalNweXds?=
- =?utf-8?B?bmlUb2o5MDQweXBXdlIrbVJINm9KWjZYR0VvUDRJL1JqZGM1WGM4bHN3RmZI?=
- =?utf-8?B?WU5WdjBaVWgzdXdXa1YwU1hNRUZJRVRISTRDdCtFNG1kRTdxdnM3cWo5NlRP?=
- =?utf-8?B?azNneVRTUHlmdWJYV0ZuRTZoU1RnS0VFTFlBRVZtUW1DSUtGaWFLd2xiVWVa?=
- =?utf-8?B?dUl6Q1M1Ty8xRC9ybEdZMXdKNlE2akNrYW9nN3JveGRRQWpsdkhXOTloOEZL?=
- =?utf-8?B?elFJelpDSXo1ODZzSWdMRmtVdE5xS0VFT1pjenhhR3VuWGV0c2dNUmN4V0xL?=
- =?utf-8?B?SXRpeGNhQ1VFMHE1THAzc25kNElMV2kyMmZ0ZzNDNzJweWk2K2tmL3lzMGtB?=
- =?utf-8?B?UG90NzNjV0tSVlVkUWRqOWZTNFU2a1RzeEhoczdrZjduV1QwNEJsUFlSS2lm?=
- =?utf-8?B?YWRyaThVNlRvQlh2dVRVYkluRTI0cmxveEd4YnEzZzNVNldIVm4rTS9OU1BQ?=
- =?utf-8?B?M3BFbzBCSWJEMmZmblN5Vy9MaVNPUUVmTlkxN0NYQzdta1BHT3U0M3hzMURo?=
- =?utf-8?B?MWZpMDRyWktvVjU0am13S2pIaDhlcXNoZGQweFZwWURqTGpyRVk0anh4S2xz?=
- =?utf-8?B?UkFOdTM0Q2RoVnFkS0EwT010U0JWSHJTcDBLc29rbDNnNVRMdTVVeklrcnRV?=
- =?utf-8?B?WUxET3gvbzUraWVuR1VBSUtmRUx0VXRLUVVBVnV2TlZsaDBZRm5oaXp1b1c3?=
- =?utf-8?B?ZVl2alQxVlUxdEU1Z2hFcFRsalAraHYwRkp1QmYrTWxFQWhaNUJrZWVmL0lM?=
- =?utf-8?B?R3R2Y0JDODRBNDJSQ29razdoR2traHBsak13YnE4ZnIvdjdPS1VOSUZ6MkN2?=
- =?utf-8?B?UE1xS0VRZWNnTjdxU0Z2UVpBMER0dkd5WWZzZjFoZXJJYWFmZ3JPRnJZOXlR?=
- =?utf-8?B?djVQbjhxa2JHL05RQjdKbFF1SGVnbHREOEFVVlg5bTQwbHNqNmNWVTIxMjdT?=
- =?utf-8?B?VHAyeWVNQk1EczVpSE40YlNOM1BuQ3Z6dTU5VW9sS0k5U3huUU8zNm42QlVG?=
- =?utf-8?B?UThMR3hEbnVhTUVWRTZMUjRxWHZnenE1QlIraWx0MHJHWjErdTJOSnZVM1hu?=
- =?utf-8?B?K3BkOFg5cnBKZ2FtTnA0cVl4MjE5UXk4R1JpeTRNRWFpM2FzeGVWbHVSRkZj?=
- =?utf-8?B?SW9KYTlJdXMxYVZTSXFDWG5URlBoWDk3WnRVbEhxY1NNYW1IV3RoU0FSOXFE?=
- =?utf-8?B?UHo2NDByaS9oQmhJeWdGOWJ0bmtnNE8wbzRzd1pVdnQ5ZWRlODdkNy9WUFlt?=
- =?utf-8?B?Zjh3Z254VnFWbUROS1M4NjFUZmllcXMvTFBWQ2FnaUUxS3hsQW1TcTdTM2Jw?=
- =?utf-8?B?MWF1SDZQZ3JxTVI4c0dXdz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6053.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V3hQandiY3F5eUJqZWcrRW5TamFWY2p0WU1OUnBaYmYvYVhHNU9pTlF2cUJo?=
- =?utf-8?B?dG1ybmVmdm4zWW1nNWxHUS9KV1ROM1JpamhFK3RPbzN6b3BNMlhyZ2MrN01K?=
- =?utf-8?B?UWM3R1FlOUNXSGZ1am13KzVpU0xXdFd5V2FCSldCZVRBeTlhZVM3R3k1MTVT?=
- =?utf-8?B?Z2RlVklNLzc3L1MyYThIc1VJUUR6MGhpNlM0QS9wbEVNUkxXRDhnNElXOVVR?=
- =?utf-8?B?aUJPeFRCQ3YyT2FuNUd1VHBJRHhYMVBBVkVCZDI3Nkpsekl4K2dDVEg0eGc4?=
- =?utf-8?B?eitVdTR4cURmanBaSzk4TnJldnZEc3FOc1Q3NHJPZGhVR1NqN1ZKbGVSK1o1?=
- =?utf-8?B?cUFQaU1GWkgrdHlQVjFTdktIY0I3NWduREhtQnFNTERkT0Y1b1pIeFdZM3g3?=
- =?utf-8?B?Qk1xV3BReWRkMzl2V3ZiRTJ5RkU3K0IweXA2bGFQdXpXUnlNVmdHR0laeDFq?=
- =?utf-8?B?RkhpdnlRMTVkZitZOG94MmVSbng3Y1NVWXp4ZkdlSmMwUE5vK1IyaEhiTFds?=
- =?utf-8?B?V09CUTRYT1RRTXNlZHBNYWJVaWY5cXdiYVdWWnFRR0Q3YVJaMnhGZmJjcmpl?=
- =?utf-8?B?WUd4Ty94aVZsaEgrZGZGYm1NRmkzdzlrYlVrQlc3Y3cxek8wWS94TGxSUDJV?=
- =?utf-8?B?cEh4bEplbjVDWkc0clZGdHFMMW5jMHlEY2UwbHBVWGVPcHRRUFZVVnNmODhQ?=
- =?utf-8?B?eXlaQjk2WTE5bTN2MFRmUDMzb1BISVRXM3hOeXlmN0QvYXBLUC9WaUttVTNC?=
- =?utf-8?B?a1hmWElHc2ZaODkvazVvZEZha1dKY0V0bFdrMmMzVkpBY24wejU1M2dFMnpq?=
- =?utf-8?B?RU1zK2R5SzNodWNFMTBwcnY2YU01V1ZwV2tJN3NOR21JRzlsVlIrZytXV1Z6?=
- =?utf-8?B?d3dFTU51VHZsdVBOYzdOWnJlNTZnQmRwcXpGZFRGL2tPdEplQS9lRVp6YWVw?=
- =?utf-8?B?STMxelVkK3MxVEZPeVFqemNaWXhSbFdiY25Da21FMDBlZ3dVOUVvd3k1YzdO?=
- =?utf-8?B?d0F4Zmk0bDRXSlJpRTJ0dEhRNlJoWEVnU3p5Qmw4QTNCNi9XaktqcFRNSHU4?=
- =?utf-8?B?bEo0L2JJendlRFdqMXd2dVlpaVNTVThYZUduUXh5YmNtS3RyKzRlR0ZFdysy?=
- =?utf-8?B?Skg3U1dzLzMrcDc2VmI1VXVLaDRLeGxHTS94TUlFTS9nMVVQdjIrQjQzK0M4?=
- =?utf-8?B?VUxweDhQRk9PZzdIUTFYWklMSmN0UDJGZXVMc2V4OHZ0dUtiQk96RUxPSURC?=
- =?utf-8?B?ZnVmcGJWQklaN0o5eis4d2IyZ0dvOWJxbktjaXVZVktKbktva2JZUmF6Rk1l?=
- =?utf-8?B?WCtVZDFsemFXZjdjMjkrMWh6czNLMTBRa3c0Y3U4OUhrMUV5bGx2WW1QeE0w?=
- =?utf-8?B?WHdSb2ROOHRjQ0RhU3ZnbUliUmZSd3l3d29EQW5OVS83a01MZGlKaFhiOEJ0?=
- =?utf-8?B?TmRWSXYrMko0dHp0TUNCQUVDWXdsVmVmalkyWGRNNEI0MUhYWGQwTXZmaUp5?=
- =?utf-8?B?WTB2amxrZjJ2ZHJyd2hweVZ2dDRoRDh5NUFSNFFzNGVhM2VJTjFzUDEreC9z?=
- =?utf-8?B?QzRzSk4zKzJ1NmRVMTB1RW01eUNSUXZHbndtMXQxdGlqdk4vbnlMdmtTSXhJ?=
- =?utf-8?B?UWhMdGxXTklOMHBIL0RFbkQ0YkRuaWFMSGQvY0VPNjh3MjhTUk50Mkw0Wlk0?=
- =?utf-8?B?cWIwZ2tEOEpUNks0R0pZUDNKR2NtUjN6RHl2MnI1MjdKeExnMDhQcEVGdXNB?=
- =?utf-8?B?Q29mSFNBcWFXby9FMDVDOWI2MEZaRmErTWIzY3RoMjZxei9tZHN6VCt4aTBt?=
- =?utf-8?B?R1dnS285T21iUEV5NGRtUzhCYVdrMFFyKzc3bFZ4RFh4bXJoRlRtZkNhL01y?=
- =?utf-8?B?eTJ2ZkdzcDhWcFBmQlJ5blZJZTlYYTVaYkdHSXNNRmZJK0JDWUlPaEhuM21z?=
- =?utf-8?B?aWpXeERDZHB0ZEIxenpYVVNOVHRXUjNhVFlqdkRGcERwMlZ6VGRmNHI5MmJM?=
- =?utf-8?B?OUJ2aEMvM25NMjROeURZK29BRWd6ZnF5NmJKR3lBaHJqeC9TenhJT1lKWG5n?=
- =?utf-8?B?YU5ZZldVYUg3RTVQb0dabkNEUUdJWFVMRHI5OHJZYk1wZEV3encyOG8rZ3c2?=
- =?utf-8?B?V1dzeXFMeXpkdEhuVDRXdkVxVGVkR3lNNnR1blorZ1NDalpxQm41VUY2dUNr?=
- =?utf-8?B?SlE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 271847cf-7379-4534-4304-08dca189e218
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6053.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 09:14:35.8750
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: d3dpSfttaTVi6305W3gScZ+GzemtClwece9Q0rYk4Vx4sFTkI004LJHYeeXgmT1CVgBWhg/77umQk2newtnTtQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5938
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: Probe failure of usb controller @11290000 on MT8195 after
+ next-20231221
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel@collabora.com,
+ Macpaul Lin <macpaul.lin@mediatek.com>,
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
+References: <9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano>
+ <064935d8-fbda-4eda-b013-8c8fc63b561c@collabora.com>
+ <375b2345-657a-4b8f-b5e3-dc16784ffde9@notapiano>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <375b2345-657a-4b8f-b5e3-dc16784ffde9@notapiano>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Il 10/07/24 21:15, Nícolas F. R. A. Prado ha scritto:
+> On Fri, Jan 19, 2024 at 10:12:07AM +0100, AngeloGioacchino Del Regno wrote:
+>> Il 18/01/24 19:36, Nícolas F. R. A. Prado ha scritto:
+>>> Hi,
+>>>
+>>> KernelCI has identified a failure in the probe of one of the USB controllers on
+>>> the MT8195-Tomato Chromebook [1]:
+>>>
+>>> [   16.336840] xhci-mtk 11290000.usb: uwk - reg:0x400, version:104
+>>> [   16.337081] xhci-mtk 11290000.usb: xHCI Host Controller
+>>> [   16.337093] xhci-mtk 11290000.usb: new USB bus registered, assigned bus number 5
+>>> [   16.357114] xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
+>>> [   16.357119] xhci-mtk 11290000.usb: can't setup: -110
+>>> [   16.357128] xhci-mtk 11290000.usb: USB bus 5 deregistered
+>>> [   16.359484] xhci-mtk: probe of 11290000.usb failed with error -110
+>>>
+>>> A previous message [2] suggests that a force-mode phy property that has been
+>>> merged might help with addressing the issue, however it's not clear to me how,
+>>> given that the controller at 1129000 uses a USB2 phy and the phy driver patch
+>>> only looks for the property on USB3 phys.
+>>>
+>>> Worth noting that the issue doesn't always happen. For instance the test did
+>>> pass for next-20240110 and then failed again on today's next [3]. But it does
+>>> seem that the issue was introduced, or at least became much more likely, between
+>>> next-20231221 and next-20240103, given that it never happened out of 10 runs
+>>> before, and after that has happened 5 out of 7 times.
+>>>
+>>> Note: On the Tomato Chromebook specifically this USB controller is not connected
+>>> to anything.
+>>>
+>>> [1] https://linux.kernelci.org/test/case/id/659ce3506673076a8c52a428/
+>>> [2] https://lore.kernel.org/all/239def9b-437b-9211-7844-af4332651df0@mediatek.com/
+>>> [3] https://linux.kernelci.org/test/case/id/65a8c66ee89acb56ac52a405/
+>>>
+>>> Thanks,
+>>> Nícolas
+>>
+>> Hey Nícolas,
+>>
+>> I wonder if this is happening because of async probe... I have seen those happening
+>> once in a (long) while on MT8186 as well with the same kind of flakiness and I am
+>> not even able to reproduce anymore.
+>>
+>> For MT8195 Tomato, I guess we can simply disable that controller without any side
+>> effects but, at the same time, I'm not sure that this would be the right thing to
+>> do in this case.
+>>
+>> Besides, the controller at 11290000 is the only one that doesn't live behind MTU3,
+>> but I don't know if that can ring any bell....
+> 
+> An update on this issue: it looks like it only happens if "xhci-mtk
+> 11290000.usb" probes before "mtk-pcie-gen3 112f8000.pcie". What they have in
+> common is that both of those nodes use phys that share the same t-phy block:
+> pcie uses the usb3 phy while xhci uses the usb2 phy. So it seems that some of
+> the initialization done by the pcie controller might be implicitly needed by the
+> usb controller.
+> 
+> This should help to narrow down the issue and find a proper fix for it.
+> 
 
-On 2024/7/11 16:47, Wolfram Sang wrote:
->> May be we can add Jian as "R:" here to keep someone from Intel in loop ?
-> Yes, it would surely be nice to have someone from Intel in the loop. As
-> Jian did not respond up to now, I suggest to add him with a seperate
-> patch, though. Let's get rid of the bounce first.
+This gave me a couple ideas to try... and it looks like I have resolved this issue.
 
-Sorry but I missed the previous mail.
+A commit will follow soon.
 
-I'm honored to be as a reviewer.
-
+Thank you!
+Angelo
 
