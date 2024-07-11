@@ -1,111 +1,231 @@
-Return-Path: <linux-kernel+bounces-248965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211B292E481
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:24:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB2992E478
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F709B20AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:24:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C901C20A82
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACE115AAD3;
-	Thu, 11 Jul 2024 10:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA5A1591F3;
+	Thu, 11 Jul 2024 10:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="y1XJBL3K"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kl5jJqhB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D698314F9E5;
-	Thu, 11 Jul 2024 10:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BAD14F9E5;
+	Thu, 11 Jul 2024 10:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720693394; cv=none; b=XPjihaMef2SHiKRyBCaP8ZMhyRR/VtDRfqrSOku9c+63Wq+DFJwTwWqyvk3hP+aYoVaItYzAxaX+Uq3xHGuan36OrTsGESKxOUgFOj7D7nLEHRvIfKVsSTojBWvZBa2wu0SiGgGXFneqk2VB21nVCd2XmWYhsyyvMjfI8NG4G3s=
+	t=1720693346; cv=none; b=rUFvWRExDe0ZT5NWlSG8GWdLviEgOPCFbMRGWoa25wclJRlOuNQxSaMKMe8ldlB19wxzuzcAcjcioW7vk88b8V6o71CPd4/HbGatTRiEierCwwNyRzPEjncF8VQT3pwsU0pu3zOqn7OvT3twT/L/c/qUW6vqvGvUtKfCSw3yLQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720693394; c=relaxed/simple;
-	bh=jiUij3wRRe5sE48zPdwi6+NvzYyJIr+GpOYj/SVthjg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kukFgLSFPCnZXIlcL5RpSxNLPK2JM231BpiR0vRJua5+8/Sx6GvTGY7cZeEC0b4flAEegKbTISwEZyio3kNGEoupnv+O5BqGyiisrZEqxdsoryhTFE9FuxvEVkJRmxtXwVBeZtfkG3B5nOXrpB82tN0XUCyzbMJO/wyF06wb3JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=y1XJBL3K; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1720693392; x=1752229392;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=jiUij3wRRe5sE48zPdwi6+NvzYyJIr+GpOYj/SVthjg=;
-  b=y1XJBL3KSMWGLvHs7/6W9TNacKUBOHCjSfNKOXOpzdQfyZrcYFIKCo9W
-   Luhh5rp/d6G95PmUQYRdYJsW97mDeKu4eFGmhlAb927UQGkfJtSjrhbO7
-   YWSC+ys/bN+UaTkNAw6QooMGPx14lQoDjwi2D6bN1NUyWM+ocwEOR/D0g
-   c71GVoGFct3NxBYLJRYLGjoLLyzFpMgP1qPAQPLtgq6nzh3aTKDIQeb2N
-   G2jnL5mt5KmdR6FWbJwsLWydnnU7kl9Om7vI2ONCBwdvWrMBo9adzOQ87
-   AVt7gnx3/9AAcL32WkvhTq1sx0XTPb49V2Hvrh27DawQxtFfC0A9DFYOW
-   Q==;
-X-CSE-ConnectionGUID: WkJ7eC8TQierunlUA02PGQ==
-X-CSE-MsgGUID: S6X149yARRuVdHRhEe6r5w==
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="196511501"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Jul 2024 03:23:11 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 11 Jul 2024 03:23:08 -0700
-Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 11 Jul 2024 03:23:05 -0700
-From: <daire.mcnamara@microchip.com>
-To: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <conor.dooley@microchip.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <daire.mcnamara@microchip.com>,
-	<ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH v7 3/3] dt-bindings: PCI: microchip,pcie-host: allow dma-noncoherent
-Date: Thu, 11 Jul 2024 11:22:19 +0100
-Message-ID: <20240711102218.2895429-5-daire.mcnamara@microchip.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240711102218.2895429-2-daire.mcnamara@microchip.com>
-References: <20240711102218.2895429-2-daire.mcnamara@microchip.com>
+	s=arc-20240116; t=1720693346; c=relaxed/simple;
+	bh=EyWzKZsfMO/99Gx/qMNlFvM30nWMnlAjusAD8RQXwQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eDq0pvE3JxH8Hyl9K6kfLSygsIOi8t92EwBxzha3FVzXttTswCbUt1pwhwZnFNoCbaAefDH/nnc25EkWgKvW29GXmJK7ZERjOR8BTzk2Fw4zYv8Ty6+FmrKF/hE+e/KYW3Svo6HecfZsyYCKvzWZXeFu9miAs6cgkEuRSz3IUkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kl5jJqhB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65D39C116B1;
+	Thu, 11 Jul 2024 10:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720693346;
+	bh=EyWzKZsfMO/99Gx/qMNlFvM30nWMnlAjusAD8RQXwQ4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Kl5jJqhBhTHW8QtePtDMuRT5zxJ2kzc1klnKTdYZpbVnH93KJqizGC8IHB4fLYonk
+	 Hcmxe9EbfMcVTXyfN9xStZT3SxFPWXfQCLincHnAo6UKR0x4zttXieN5Cds8EFn4RY
+	 k4h2gorWjKoFE71dg4PWRTtmE03daranfhvXJbuELRmXA5AUNVp/l3ZCXbzYsSc20D
+	 7h4AfDaIKZBdfjDB7FdLp44qqypw7+SPHMlh3Wg1eeWshnxQQbyY5svIYVv9MjWOmq
+	 1eNvDnbDAY0kXSKA6f4og6HrI3ooMXKYEtNcB2bnLRQZCMEc7EluBRTjFhtvOFoe8/
+	 dvpbSnoGuLyng==
+Message-ID: <e6b1c275-9a56-4b1b-becd-89a01cfb51c5@kernel.org>
+Date: Thu, 11 Jul 2024 19:22:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] ata: ahci_imx: Clean up code by using i.MX8Q HSIO
+ PHY driver
+To: Richard Zhu <hongxing.zhu@nxp.com>, tj@kernel.org, cassel@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com
+Cc: linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, kernel@pengutronix.de
+References: <1720685518-20190-1-git-send-email-hongxing.zhu@nxp.com>
+ <1720685518-20190-3-git-send-email-hongxing.zhu@nxp.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <1720685518-20190-3-git-send-email-hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On 7/11/24 17:11, Richard Zhu wrote:
+> Clean up code by using PHY interface.
+> 
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
 
-PolarFire SoC may be configured in a way that requires non-coherent DMA
-handling. On RISC-V, buses are coherent by default & the dma-noncoherent
-property is required to denote buses or devices that are non-coherent.
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+> +	ret = phy_init(imxpriv->cali_phy0);
+> +	if (ret) {
+> +		dev_err(dev, "cali PHY init failed\n");
+>  		return ret;
+>  	}
+> -	ret = clk_prepare_enable(imxpriv->phy_pclk1);
+> -	if (ret < 0) {
+> -		dev_err(dev, "can't enable phy_pclk1.\n");
+> -		goto disable_phy_pclk0;
+> +	ret = phy_power_on(imxpriv->cali_phy0);
+> +	if (ret) {
+> +		dev_err(dev, "cali PHY power on failed\n");
+> +		goto err_cali_phy0_power_on;
 
-diff --git a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-index f7a3c2636355..c84e1ae20532 100644
---- a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-+++ b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-@@ -52,6 +52,8 @@ properties:
-     items:
-       pattern: '^fic[0-3]$'
- 
-+  dma-noncoherent: true
-+
-   interrupts:
-     minItems: 1
-     items:
+Very confusing lable name. "goto err_phy_exit;" would be better.
+
+>  	}
+> -	ret = clk_prepare_enable(imxpriv->epcs_tx_clk);
+> -	if (ret < 0) {
+> -		dev_err(dev, "can't enable epcs_tx_clk.\n");
+> -		goto disable_phy_pclk1;
+> +	ret = phy_init(imxpriv->cali_phy1);
+> +	if (ret) {
+> +		dev_err(dev, "cali PHY1 init failed\n");
+> +		goto err_cali_phy1_init;
+
+Same here. The usual thing to do is to have a label name descriptive of what is
+going to be done at the label definition, so phy1 power off in this case. That
+also corresponds to undoing the previous operation, which makes reading the code
+and checking it less confusing.
+
+>  	}
+> -	ret = clk_prepare_enable(imxpriv->epcs_rx_clk);
+> -	if (ret < 0) {
+> -		dev_err(dev, "can't enable epcs_rx_clk.\n");
+> -		goto disable_epcs_tx_clk;
+> +	ret = phy_power_on(imxpriv->cali_phy1);
+> +	if (ret) {
+> +		dev_err(dev, "cali PHY1 power on failed\n");
+> +		goto err_cali_phy1_power_on;
+
+same here.
+
+>  	}
+> -	ret = clk_prepare_enable(imxpriv->phy_apbclk);
+> -	if (ret < 0) {
+> -		dev_err(dev, "can't enable phy_apbclk.\n");
+> -		goto disable_epcs_rx_clk;
+> +	ret = phy_init(imxpriv->sata_phy);
+> +	if (ret) {
+> +		dev_err(dev, "sata PHY init failed\n");
+> +		goto err_sata_phy_init;
+
+And here too. And many other labels after that.
+
+[...]
+
+> -	imxpriv->phy_apbclk = devm_clk_get(dev, "phy_apbclk");
+> -	if (IS_ERR(imxpriv->phy_apbclk)) {
+> -		dev_err(dev, "can't get phy_apbclk clock.\n");
+> -		return PTR_ERR(imxpriv->phy_apbclk);
+> +	if (!(dev->bus_dma_limit)) {
+> +		dev->bus_dma_limit = DMA_BIT_MASK(32);
+> +		dev_dbg(dev, "imx8qm sata only supports 32bit dma.\n");
+
+I do not think this is a useful debug message.
+
+>  	}
+>  
+> -	/* Fetch GPIO, then enable the external OSC */
+> -	imxpriv->clkreq_gpiod = devm_gpiod_get_optional(dev, "clkreq",
+> -				GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+> -	if (IS_ERR(imxpriv->clkreq_gpiod))
+> -		return PTR_ERR(imxpriv->clkreq_gpiod);
+> -	if (imxpriv->clkreq_gpiod)
+> -		gpiod_set_consumer_name(imxpriv->clkreq_gpiod, "SATA CLKREQ");
+> -
+> +	imxpriv->sata_phy = devm_phy_get(dev, "sata-phy");
+> +	if (IS_ERR(imxpriv->sata_phy))
+> +		return dev_err_probe(dev, PTR_ERR(imxpriv->sata_phy),
+> +				     "failed to get sata_phy\n");
+> +
+> +	imxpriv->cali_phy0 = devm_phy_get(dev, "cali-phy0");
+> +	if (IS_ERR(imxpriv->cali_phy0))
+> +		return dev_err_probe(dev, PTR_ERR(imxpriv->cali_phy0),
+> +				     "failed to get cali_phy0\n");
+> +	imxpriv->cali_phy1 = devm_phy_get(dev, "cali-phy1");
+> +	if (IS_ERR(imxpriv->cali_phy1))
+> +		return dev_err_probe(dev, PTR_ERR(imxpriv->cali_phy1),
+> +				     "failed to get cali_phy1\n");
+>  	return 0;
+>  }
+>  
+> @@ -1077,12 +877,6 @@ static int imx_ahci_probe(struct platform_device *pdev)
+>  		return PTR_ERR(imxpriv->sata_ref_clk);
+>  	}
+>  
+> -	imxpriv->ahb_clk = devm_clk_get(dev, "ahb");
+> -	if (IS_ERR(imxpriv->ahb_clk)) {
+> -		dev_err(dev, "can't get ahb clock.\n");
+
+s/can't/Failed to/
+
+and drop the period.
+
+> -		return PTR_ERR(imxpriv->ahb_clk);
+> -	}
+> -
+>  	if (imxpriv->type == AHCI_IMX6Q || imxpriv->type == AHCI_IMX6QP) {
+>  		u32 reg_value;
+>  
+> @@ -1142,11 +936,8 @@ static int imx_ahci_probe(struct platform_device *pdev)
+>  		goto disable_clk;
+>  
+>  	/*
+> -	 * Configure the HWINIT bits of the HOST_CAP and HOST_PORTS_IMPL,
+> -	 * and IP vendor specific register IMX_TIMER1MS.
+> -	 * Configure CAP_SSS (support stagered spin up).
+> -	 * Implement the port0.
+> -	 * Get the ahb clock rate, and configure the TIMER1MS register.
+> +	 * Configure the HWINIT bits of the HOST_CAP and HOST_PORTS_IMPL.
+> +	 * Set CAP_SSS (support stagered spin up) and Implement the port0.
+>  	 */
+>  	reg_val = readl(hpriv->mmio + HOST_CAP);
+>  	if (!(reg_val & HOST_CAP_SSS)) {
+> @@ -1159,8 +950,19 @@ static int imx_ahci_probe(struct platform_device *pdev)
+>  		writel(reg_val, hpriv->mmio + HOST_PORTS_IMPL);
+>  	}
+>  
+> -	reg_val = clk_get_rate(imxpriv->ahb_clk) / 1000;
+> -	writel(reg_val, hpriv->mmio + IMX_TIMER1MS);
+> +	if (imxpriv->type != AHCI_IMX8QM) {
+> +		/*
+> +		 * Get AHB clock rate and configure the vendor specified
+> +		 * TIMER1MS register on i.MX53, i.MX6Q and i.MX6QP only.
+> +		 */
+> +		imxpriv->ahb_clk = devm_clk_get(dev, "ahb");
+> +		if (IS_ERR(imxpriv->ahb_clk)) {
+> +			dev_err(dev, "can't get ahb clock.\n");
+
+Same here.
+
+> +			goto disable_sata;
+> +		}
+> +		reg_val = clk_get_rate(imxpriv->ahb_clk) / 1000;
+> +		writel(reg_val, hpriv->mmio + IMX_TIMER1MS);
+> +	}
+>  
+>  	ret = ahci_platform_init_host(pdev, hpriv, &ahci_imx_port_info,
+>  				      &ahci_platform_sht);
+
 -- 
-2.34.1
+Damien Le Moal
+Western Digital Research
 
 
