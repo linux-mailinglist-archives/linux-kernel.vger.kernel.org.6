@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-248871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09DE92E2FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D07992E2F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BC85B263AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:03:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5A15B22A44
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5AB15747D;
-	Thu, 11 Jul 2024 09:03:23 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14EE14F9E4;
-	Thu, 11 Jul 2024 09:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F2C1552E1;
+	Thu, 11 Jul 2024 09:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cGJ5E1pv"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D961653
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720688602; cv=none; b=PrufNmmCweEECoPqmpdSgjkm+WPpwQYtOp7fFBjx76N5H7R5/WbY5Raz/Wy4YNVLKHAYc03xsZS4bqfvmNR8oWAVm8jDcuTLVlPwU03nlDe5QuAH+bLMFATZ0aM1tHu+XJ68pIcPIcSMiHbkEtNAHVfjiGNbooXZPpEL1umLB8Y=
+	t=1720688515; cv=none; b=J725KAdxDQNKLJKqJEO08js61o6nh3mBOjXj3Pg4jgmuNdKbkh6zAXoaq/wTVsdaDl4v9ThqQPPsmWXaE2zLVQAHK5hBYuSF4oDScO1uC26rC8nKLqWOj7aRtY63C/jgO66TPelhSn+F25v9CiImmA1HOA5r3kvtbuQ5HdqOGtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720688602; c=relaxed/simple;
-	bh=h+bFswsSxVaFt1iKIu4yyXHcgUnXCYAcJSNUl/rr1OU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UTqaVSKjl4j+6x2NkGFjhhi+ZZ8H8ldDo0iESNFY36AwwBdPLO6yjUYbY0YEBUu3vfH5/GFG7QMK57dhswzZkQJ8aUsPYDHtNW9Gtbj1RgpK/wGNIoqDncT2wQvWT1jZNL2a1gclBzxyNItXj4VRSp1L/klTTQdyL9HABSCENGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WKTJy1xLsz4f3l1d;
-	Thu, 11 Jul 2024 17:02:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 2E1171A0170;
-	Thu, 11 Jul 2024 17:03:11 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP2 (Coremail) with SMTP id Syh0CgB34YbMn49msI0qBw--.62219S6;
-	Thu, 11 Jul 2024 17:03:10 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: tj@kernel.org,
-	josef@toxicpanda.com,
-	bvanassche@acm.org,
-	jack@suse.cz,
-	axboe@kernel.dk
-Cc: cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org,
+	s=arc-20240116; t=1720688515; c=relaxed/simple;
+	bh=lINr88gczmWj3d2leTgdQ31biQ3osRE/EoZDr9FFRPw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OATIiSR2xHoUo9Qx3+dwYwxJimwLTzDXiuuh0vdumItXrRcanJiIxGcxYdW+chadlJ5SR9cQxtfX4WLvi0bSWIW7iFKuWF5qFEoQv/BvQZ2mdprPcRPYk+gNum506fquiduN/8wW/UUfUv62mc1udwXpyusozjp0rLtyf6kve4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cGJ5E1pv; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=lCt6G
+	meRArF+8nUi6YqN2qNoWrWjqPoXRRKGa+JcmaQ=; b=cGJ5E1pvgWniLR7qe03g7
+	t73P+5lb1lZ1BwaJDUwGcdk+8XHcITbKKJ3i7r7ByUHVjNHkPglwgYc2sASzwWpd
+	SSJdQ4xJQnn/bWK5qpLKK9fY7dAbOr98Dn1OBOBtyck6YqDNOheE0XpzvFKKENpz
+	g11etsTzAb06CEhBw0XvAA=
+Received: from localhost.localdomain (unknown [111.48.69.247])
+	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wCXb29Qn49mDOmHBA--.34288S2;
+	Thu, 11 Jul 2024 17:01:05 +0800 (CST)
+From: oushixiong1025@163.com
+To: Dave Airlie <airlied@redhat.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH 2/2] blk-ioprio: remove per-disk structure
-Date: Thu, 11 Jul 2024 17:00:59 +0800
-Message-Id: <20240711090059.3998565-3-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240711090059.3998565-1-yukuai1@huaweicloud.com>
-References: <20240711090059.3998565-1-yukuai1@huaweicloud.com>
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm/ast: add multiple connectors support
+Date: Thu, 11 Jul 2024 17:01:02 +0800
+Message-Id: <20240711090102.352213-1-oushixiong1025@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,176 +58,204 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgB34YbMn49msI0qBw--.62219S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw1kGw15JFW5tw1Uuw48JFb_yoWrWw4xpF
-	43GrsIkFZYgF1IgF4DGa18Ar1Syw4UK348JayrGw4Fyr17Ary0g3WUCrs3AFWrAFW7CFW3
-	Ar1FqrWUCF48ArDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
-	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUHbyAUUUUU
-	=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-CM-TRANSID:_____wCXb29Qn49mDOmHBA--.34288S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3JF45Kw1DJFyfJF15CFyxGrg_yoWxtrW7pr
+	W8trZavr48XrsxWFn8AF4kGrnIyF9FyayUtr1rWw4a9w1kGw1DAF48Jrs8Za4DGrZ5AFyU
+	JanFqF47C3WUuw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j5BMtUUUUU=
+X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXRQZD2XAmK5qkwAAs1
 
-From: Yu Kuai <yukuai3@huawei.com>
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-ioprio works on the blk-cgroup level, all disks in the same cgroup
-are the same, and the struct ioprio_blkg doesn't have anything in it.
-Hence register the policy is enough, because cpd_alloc/free_fn will
-be handled for each blk-cgroup, and there is no need to activate the
-policy for disk.
+[WHY]
+The AST2600 tx_chip_types will be detected as AST_TX_DP, but some BMC
+boards that use AST2600 use the VGA interface instead of the DP interface.
+In this case, it will use Virtual connector as the DP is disconnected.
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+[HOW]
+Allows multiple physical connectors to exist at the same time.
+
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 ---
- block/blk-cgroup.c |  8 --------
- block/blk-ioprio.c | 45 ---------------------------------------------
- block/blk-ioprio.h |  9 ---------
- 3 files changed, 62 deletions(-)
+ drivers/gpu/drm/ast/ast_drv.h  |  6 ++++-
+ drivers/gpu/drm/ast/ast_main.c |  8 +++----
+ drivers/gpu/drm/ast/ast_mode.c | 40 ++++++++++++++++++++--------------
+ 3 files changed, 33 insertions(+), 21 deletions(-)
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 37e6cc91d576..c7d00d95d499 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -1458,7 +1458,6 @@ int blkcg_init_disk(struct gendisk *disk)
- 	struct request_queue *q = disk->queue;
- 	struct blkcg_gq *new_blkg, *blkg;
- 	bool preloaded;
+diff --git a/drivers/gpu/drm/ast/ast_drv.h b/drivers/gpu/drm/ast/ast_drv.h
+index ba3d86973995..e326124b3fec 100644
+--- a/drivers/gpu/drm/ast/ast_drv.h
++++ b/drivers/gpu/drm/ast/ast_drv.h
+@@ -150,9 +150,13 @@ static inline struct ast_plane *to_ast_plane(struct drm_plane *plane)
+  * BMC
+  */
+ 
++#define MAX_CONNECTORS 2
++
+ struct ast_bmc_connector {
+ 	struct drm_connector base;
+-	struct drm_connector *physical_connector;
++
++	struct drm_connector *physical_connectors[MAX_CONNECTORS];
++	int count;
+ };
+ 
+ static inline struct ast_bmc_connector *
+diff --git a/drivers/gpu/drm/ast/ast_main.c b/drivers/gpu/drm/ast/ast_main.c
+index 0637abb70361..428529749ae6 100644
+--- a/drivers/gpu/drm/ast/ast_main.c
++++ b/drivers/gpu/drm/ast/ast_main.c
+@@ -85,7 +85,7 @@ static void ast_detect_tx_chip(struct ast_device *ast, bool need_post)
+ 	if (!need_post) {
+ 		jreg = ast_get_index_reg_mask(ast, AST_IO_VGACRI, 0xa3, 0xff);
+ 		if (jreg & 0x80)
+-			ast->tx_chip_types = AST_TX_SIL164_BIT;
++			ast->tx_chip_types |= AST_TX_SIL164_BIT;
+ 	}
+ 
+ 	if (IS_AST_GEN4(ast) || IS_AST_GEN5(ast) || IS_AST_GEN6(ast)) {
+@@ -97,7 +97,7 @@ static void ast_detect_tx_chip(struct ast_device *ast, bool need_post)
+ 		jreg = ast_get_index_reg_mask(ast, AST_IO_VGACRI, 0xd1, 0xff);
+ 		switch (jreg) {
+ 		case 0x04:
+-			ast->tx_chip_types = AST_TX_SIL164_BIT;
++			ast->tx_chip_types |= AST_TX_SIL164_BIT;
+ 			break;
+ 		case 0x08:
+ 			ast->dp501_fw_addr = drmm_kzalloc(dev, 32*1024, GFP_KERNEL);
+@@ -110,12 +110,12 @@ static void ast_detect_tx_chip(struct ast_device *ast, bool need_post)
+ 			}
+ 			fallthrough;
+ 		case 0x0c:
+-			ast->tx_chip_types = AST_TX_DP501_BIT;
++			ast->tx_chip_types |= AST_TX_DP501_BIT;
+ 		}
+ 	} else if (IS_AST_GEN7(ast)) {
+ 		if (ast_get_index_reg_mask(ast, AST_IO_VGACRI, 0xD1, TX_TYPE_MASK) ==
+ 		    ASTDP_DPMCU_TX) {
+-			ast->tx_chip_types = AST_TX_ASTDP_BIT;
++			ast->tx_chip_types |= AST_TX_ASTDP_BIT;
+ 			ast_dp_launch(&ast->base);
+ 		}
+ 	}
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index 6695af70768f..31a49d32e506 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -1717,7 +1717,8 @@ static int ast_bmc_connector_helper_detect_ctx(struct drm_connector *connector,
+ 					       bool force)
+ {
+ 	struct ast_bmc_connector *bmc_connector = to_ast_bmc_connector(connector);
+-	struct drm_connector *physical_connector = bmc_connector->physical_connector;
++	struct drm_connector *physical_connector;
++	int i, count = bmc_connector->count;
+ 
+ 	/*
+ 	 * Most user-space compositors cannot handle more than one connected
+@@ -1730,10 +1731,13 @@ static int ast_bmc_connector_helper_detect_ctx(struct drm_connector *connector,
+ 	 *        than one connector per CRTC. The BMC should always be connected.
+ 	 */
+ 
+-	if (physical_connector && physical_connector->status == connector_status_disconnected)
+-		return connector_status_connected;
++	for (i = 0; i < count; i++) {
++		physical_connector = bmc_connector->physical_connectors[i];
++		if (physical_connector && physical_connector->status == connector_status_connected)
++			return connector_status_disconnected;
++	}
+ 
+-	return connector_status_disconnected;
++	return connector_status_connected;
+ }
+ 
+ static int ast_bmc_connector_helper_get_modes(struct drm_connector *connector)
+@@ -1756,10 +1760,11 @@ static const struct drm_connector_funcs ast_bmc_connector_funcs = {
+ 
+ static int ast_bmc_connector_init(struct drm_device *dev,
+ 				  struct ast_bmc_connector *bmc_connector,
+-				  struct drm_connector *physical_connector)
++				  struct drm_connector **physical_connector,
++				  int count)
+ {
+ 	struct drm_connector *connector = &bmc_connector->base;
 -	int ret;
++	int i, ret;
  
- 	new_blkg = blkg_alloc(&blkcg_root, disk, GFP_KERNEL);
- 	if (!new_blkg)
-@@ -1478,15 +1477,8 @@ int blkcg_init_disk(struct gendisk *disk)
- 	if (preloaded)
- 		radix_tree_preload_end();
+ 	ret = drm_connector_init(dev, connector, &ast_bmc_connector_funcs,
+ 				 DRM_MODE_CONNECTOR_VIRTUAL);
+@@ -1768,13 +1773,16 @@ static int ast_bmc_connector_init(struct drm_device *dev,
  
--	ret = blk_ioprio_init(disk);
--	if (ret)
--		goto err_destroy_all;
--
+ 	drm_connector_helper_add(connector, &ast_bmc_connector_helper_funcs);
+ 
+-	bmc_connector->physical_connector = physical_connector;
++	for (i = 0; i < count; i++)
++		bmc_connector->physical_connectors[i] = physical_connector[i];
++	bmc_connector->count = count;
+ 
  	return 0;
- 
--err_destroy_all:
--	blkg_destroy_all(disk);
--	return ret;
- err_unlock:
- 	spin_unlock_irq(&q->queue_lock);
- 	if (preloaded)
-diff --git a/block/blk-ioprio.c b/block/blk-ioprio.c
-index ae52b418e984..8fff7ccc0ac7 100644
---- a/block/blk-ioprio.c
-+++ b/block/blk-ioprio.c
-@@ -49,14 +49,6 @@ static const char *policy_name[] = {
- 
- static struct blkcg_policy ioprio_policy;
- 
--/**
-- * struct ioprio_blkg - Per (cgroup, request queue) data.
-- * @pd: blkg_policy_data structure.
-- */
--struct ioprio_blkg {
--	struct blkg_policy_data pd;
--};
--
- /**
-  * struct ioprio_blkcg - Per cgroup data.
-  * @cpd: blkcg_policy_data structure.
-@@ -67,11 +59,6 @@ struct ioprio_blkcg {
- 	enum prio_policy	 prio_policy;
- };
- 
--static inline struct ioprio_blkg *pd_to_ioprio(struct blkg_policy_data *pd)
--{
--	return pd ? container_of(pd, struct ioprio_blkg, pd) : NULL;
--}
--
- static struct ioprio_blkcg *blkcg_to_ioprio_blkcg(struct blkcg *blkcg)
- {
- 	return container_of(blkcg_to_cpd(blkcg, &ioprio_policy),
-@@ -108,25 +95,6 @@ static ssize_t ioprio_set_prio_policy(struct kernfs_open_file *of, char *buf,
- 	return nbytes;
  }
  
--static struct blkg_policy_data *
--ioprio_alloc_pd(struct gendisk *disk, struct blkcg *blkcg, gfp_t gfp)
--{
--	struct ioprio_blkg *ioprio_blkg;
--
--	ioprio_blkg = kzalloc(sizeof(*ioprio_blkg), gfp);
--	if (!ioprio_blkg)
--		return NULL;
--
--	return &ioprio_blkg->pd;
--}
--
--static void ioprio_free_pd(struct blkg_policy_data *pd)
--{
--	struct ioprio_blkg *ioprio_blkg = pd_to_ioprio(pd);
--
--	kfree(ioprio_blkg);
--}
--
- static struct blkcg_policy_data *ioprio_alloc_cpd(gfp_t gfp)
+ static int ast_bmc_output_init(struct ast_device *ast,
+-			       struct drm_connector *physical_connector)
++			       struct drm_connector **physical_connector,
++			       int count)
  {
- 	struct ioprio_blkcg *blkcg;
-@@ -169,9 +137,6 @@ static struct blkcg_policy ioprio_policy = {
+ 	struct drm_device *dev = &ast->base;
+ 	struct drm_crtc *crtc = &ast->crtc;
+@@ -1790,7 +1798,7 @@ static int ast_bmc_output_init(struct ast_device *ast,
+ 		return ret;
+ 	encoder->possible_crtcs = drm_crtc_mask(crtc);
  
- 	.cpd_alloc_fn	= ioprio_alloc_cpd,
- 	.cpd_free_fn	= ioprio_free_cpd,
--
--	.pd_alloc_fn	= ioprio_alloc_pd,
--	.pd_free_fn	= ioprio_free_pd,
- };
+-	ret = ast_bmc_connector_init(dev, bmc_connector, physical_connector);
++	ret = ast_bmc_connector_init(dev, bmc_connector, physical_connector, count);
+ 	if (ret)
+ 		return ret;
  
- void blkcg_set_ioprio(struct bio *bio)
-@@ -209,16 +174,6 @@ void blkcg_set_ioprio(struct bio *bio)
- 		bio->bi_ioprio = prio;
- }
- 
--void blk_ioprio_exit(struct gendisk *disk)
--{
--	blkcg_deactivate_policy(disk, &ioprio_policy);
--}
--
--int blk_ioprio_init(struct gendisk *disk)
--{
--	return blkcg_activate_policy(disk, &ioprio_policy);
--}
--
- static int __init ioprio_init(void)
+@@ -1852,8 +1860,8 @@ static const struct drm_mode_config_funcs ast_mode_config_funcs = {
+ int ast_mode_config_init(struct ast_device *ast)
  {
- 	return blkcg_policy_register(&ioprio_policy);
-diff --git a/block/blk-ioprio.h b/block/blk-ioprio.h
-index b6afb8e80de0..9265143f9bc9 100644
---- a/block/blk-ioprio.h
-+++ b/block/blk-ioprio.h
-@@ -9,17 +9,8 @@ struct request_queue;
- struct bio;
+ 	struct drm_device *dev = &ast->base;
+-	struct drm_connector *physical_connector = NULL;
+-	int ret;
++	struct drm_connector *physical_connector[MAX_CONNECTORS] = {NULL};
++	int count, ret;
  
- #ifdef CONFIG_BLK_CGROUP_IOPRIO
--int blk_ioprio_init(struct gendisk *disk);
--void blk_ioprio_exit(struct gendisk *disk);
- void blkcg_set_ioprio(struct bio *bio);
- #else
--static inline int blk_ioprio_init(struct gendisk *disk)
--{
--	return 0;
--}
--static inline void blk_ioprio_exit(struct gendisk *disk)
--{
--}
- static inline void blkcg_set_ioprio(struct bio *bio)
- {
- }
+ 	ret = drmm_mutex_init(dev, &ast->modeset_lock);
+ 	if (ret)
+@@ -1897,27 +1905,27 @@ int ast_mode_config_init(struct ast_device *ast)
+ 		ret = ast_vga_output_init(ast);
+ 		if (ret)
+ 			return ret;
+-		physical_connector = &ast->output.vga.connector;
++		physical_connector[count++] = &ast->output.vga.connector;
+ 	}
+ 	if (ast->tx_chip_types & AST_TX_SIL164_BIT) {
+ 		ret = ast_sil164_output_init(ast);
+ 		if (ret)
+ 			return ret;
+-		physical_connector = &ast->output.sil164.connector;
++		physical_connector[count++] = &ast->output.sil164.connector;
+ 	}
+ 	if (ast->tx_chip_types & AST_TX_DP501_BIT) {
+ 		ret = ast_dp501_output_init(ast);
+ 		if (ret)
+ 			return ret;
+-		physical_connector = &ast->output.dp501.connector;
++		physical_connector[count++] = &ast->output.dp501.connector;
+ 	}
+ 	if (ast->tx_chip_types & AST_TX_ASTDP_BIT) {
+ 		ret = ast_astdp_output_init(ast);
+ 		if (ret)
+ 			return ret;
+-		physical_connector = &ast->output.astdp.connector;
++		physical_connector[count++] = &ast->output.astdp.connector;
+ 	}
+-	ret = ast_bmc_output_init(ast, physical_connector);
++	ret = ast_bmc_output_init(ast, physical_connector, count);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
-2.39.2
+2.25.1
 
 
