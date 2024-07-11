@@ -1,107 +1,164 @@
-Return-Path: <linux-kernel+bounces-249808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5332B92F022
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:07:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57FF92F023
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8417E1C21001
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:07:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA0F1F22B4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499F319EEA1;
-	Thu, 11 Jul 2024 20:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0465E19E831;
+	Thu, 11 Jul 2024 20:08:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="lgQNcIYt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="EK8dBtGk"
+Received: from msa.smtpout.orange.fr (out-67.smtpout.orange.fr [193.252.22.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B61718E20;
-	Thu, 11 Jul 2024 20:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDF519E811
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720728457; cv=none; b=AonPkOUaKw/TiaA2Xalt7PPy/IhbqWH4AUprgpZ+PpXHm2QyIvMIArocSGKYJ8qKM+ekk1kClf+5jqYBDJWH32Op4abVWWy/W6JsgVKqYaEbFEx40iSuiH5E3knvfERyEBh7lo4WChkGCAsToz+6x77GoUK1VSuexkPLvHQ4GoA=
+	t=1720728500; cv=none; b=pM2HfnHLEcg8RSbNi3fk1Ca0HPWpUg/Q6GeY//7+XPwe6PkW2wIkALGDqwEtvHRebk4DS0E6LSLNyy9MW2HhE9ssmcIPCMEX5M0/bnAu/fMJ1ho7jIhAJw2RJbRBI1AVlwC5otgxvqYkWwvg+rTtgWc4Pwq8yxE/ndHIxLWqeDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720728457; c=relaxed/simple;
-	bh=EM/GUu+kJS5WyLavGs3+u7kMvso4te/aW/5UoAntXwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KIJ5323jYkwT9TrcA/W8Xq1+9j3yPhKHZMLvNRPDeG9LijbMvGetT/ekQuAaYj6UrSwvgzZf4pxAYLxN649x2cM8TtkiHS3RLLszhz6yS4gaSL8D9cefvuNmx2+YMNO3Hq84fkfiGbFtX8ppAfwuUOF5MOQifbwOBgHE9oZ1ow8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=lgQNcIYt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72243C116B1;
-	Thu, 11 Jul 2024 20:07:35 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="lgQNcIYt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1720728453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DNdo2jHrY/IOSCFrJ93vxKtkJPtxtIos5+7ObgdaWQc=;
-	b=lgQNcIYtqgWSPoe7Cx4AcSLb9J+QfSbCUixBhBJvYlxEE1Lzsyh6WkLBb6U/EWGhY0760F
-	1SNYJbibFL67nsr+nkaJKo9u0ehTmV2CCIByy0wQFwW6RK6nqdnXn4dJNCeTU6WJVq8fcw
-	m+k5ajRjjWlfcvMXDyCJC2EbqnJdNVo=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id a218a39f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 11 Jul 2024 20:07:33 +0000 (UTC)
-Date: Thu, 11 Jul 2024 22:07:30 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, tglx@linutronix.de,
-	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
-	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
- lazily freeable mappings
-Message-ID: <ZpA7gvIvxNRkd6hp@zx2c4.com>
-References: <20240709130513.98102-1-Jason@zx2c4.com>
- <20240709130513.98102-2-Jason@zx2c4.com>
- <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
- <9b400450-46bc-41c7-9e89-825993851101@redhat.com>
- <Zo8q7ePlOearG481@zx2c4.com>
- <Zo9gXAlF-82_EYX1@zx2c4.com>
- <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
- <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
- <ZpAR0CgLc28gEkV3@zx2c4.com>
- <CAHk-=whGE_w46zVk=7S0zOcWv4Dp3EYtuJtzU92ab3pSnnmpHw@mail.gmail.com>
+	s=arc-20240116; t=1720728500; c=relaxed/simple;
+	bh=PIPcWl2CCifRuXxshHehTo5Do8qmkIKVdlPoP/OrbmI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P1R8u7Bm/g55b54IDylCuYH4xE5yoYgEO/6tkATX+ZlZ74SJc8G4I+sFP5iFRDBTC+cwvRXe8eojaXC9f1yyRH867zTmJ7wgaXMlx1autvAiR5S3P9mgQdo1yLykPVdnrBj03IBhydOoMriOg0ESdNbOUPoV3bmCzrZdVIkaYNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=EK8dBtGk; arc=none smtp.client-ip=193.252.22.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id S057sIhAPxIArS057smIeO; Thu, 11 Jul 2024 22:08:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720728489;
+	bh=x71vc1uHNRWmKQBrU2DUPCSyE3jpac++ydkmAi7B0qw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=EK8dBtGkRHsKpG/puprpm8hFYxgT2JlkAeGLHV+vQtLqpZ1WsLjDuyu/p/gcgdsHr
+	 slQEvDmEKDYmLU1X6U/NvKiBqKnxkf7F37quYcvvXxB8/Q+uyyHxYMZVISmFE0fPno
+	 FE9W7UFOi/n/81En2jAOxqTPH6iaDx/3uDWAMKDH3uZ0943BedhTBOp3meRg2NQcSA
+	 tbh3HY6YxPchnRIy9boORukqYoGWPrm2UjPUo9aalz3R5IdgjtoAjim3h1ItxSdLBO
+	 StPVD5Upix9mfzBOVSybvXls58wwmUt89QOgh+G8M+Qj2/uEa5z8CvZucZ94fCpNyZ
+	 7kiQHdsz0hdOQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 11 Jul 2024 22:08:09 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <45f04f18-0f17-46a3-a8ba-21d1819e560a@wanadoo.fr>
+Date: Thu, 11 Jul 2024 22:07:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whGE_w46zVk=7S0zOcWv4Dp3EYtuJtzU92ab3pSnnmpHw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 10/13] fs/configfs: Add a callback to determine
+ attribute visibility
+To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Dan Williams <dan.j.williams@intel.com>, Michael Roth
+ <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
+ Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>
+References: <cover.1717600736.git.thomas.lendacky@amd.com>
+ <e555c8740a263fab9f83b2cbb44da1af49a2813c.1717600736.git.thomas.lendacky@amd.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <e555c8740a263fab9f83b2cbb44da1af49a2813c.1717600736.git.thomas.lendacky@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
-
-On Thu, Jul 11, 2024 at 10:57:17AM -0700, Linus Torvalds wrote:
-> May I suggest a slightly different approach: do what we did for "pte_mkwrite()".
+Le 05/06/2024 à 17:18, Tom Lendacky a écrit :
+> In order to support dynamic decisions as to whether an attribute should be
+> created, add a callback that returns a bool to indicate whether the
+> attribute should be displayed. If no callback is registered, the attribute
+> is displayed by default.
 > 
-> It needed the vma too, for not too dissimilar reasons: special dirty
-> bit handling for the shadow stack. See
+> Cc: Joel Becker <jlbec@evilplan.org>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Co-developed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+> ---
+>   fs/configfs/dir.c        | 10 ++++++++++
+>   include/linux/configfs.h |  3 +++
+>   2 files changed, 13 insertions(+)
+> 
+> diff --git a/fs/configfs/dir.c b/fs/configfs/dir.c
+> index 18677cd4e62f..43d6bde1adcc 100644
+> --- a/fs/configfs/dir.c
+> +++ b/fs/configfs/dir.c
+> @@ -580,6 +580,7 @@ static void detach_attrs(struct config_item * item)
+>   static int populate_attrs(struct config_item *item)
+>   {
+>   	const struct config_item_type *t = item->ci_type;
+> +	struct configfs_group_operations *ops;
+>   	struct configfs_attribute *attr;
+>   	struct configfs_bin_attribute *bin_attr;
+>   	int error = 0;
+> @@ -587,14 +588,23 @@ static int populate_attrs(struct config_item *item)
+>   
+>   	if (!t)
+>   		return -EINVAL;
+> +
+> +	ops = t->ct_group_ops;
+> +
+>   	if (t->ct_attrs) {
+>   		for (i = 0; (attr = t->ct_attrs[i]) != NULL; i++) {
+> +			if (ops && ops->is_visible && !ops->is_visible(item, attr, i))
+> +				continue;
+> +
+>   			if ((error = configfs_create_file(item, attr)))
+>   				break;
+>   		}
+>   	}
+>   	if (t->ct_bin_attrs) {
+>   		for (i = 0; (bin_attr = t->ct_bin_attrs[i]) != NULL; i++) {
+> +			if (ops && ops->is_bin_visible && !ops->is_bin_visible(item, bin_attr, i))
+> +				continue;
+> +
+>   			error = configfs_create_bin_file(item, bin_attr);
+>   			if (error)
+>   				break;
+> diff --git a/include/linux/configfs.h b/include/linux/configfs.h
+> index 2606711adb18..c771e9d0d0b9 100644
+> --- a/include/linux/configfs.h
+> +++ b/include/linux/configfs.h
+> @@ -216,6 +216,9 @@ struct configfs_group_operations {
+>   	struct config_group *(*make_group)(struct config_group *group, const char *name);
+>   	void (*disconnect_notify)(struct config_group *group, struct config_item *item);
+>   	void (*drop_item)(struct config_group *group, struct config_item *item);
+> +	bool (*is_visible)(struct config_item *item, struct configfs_attribute *attr, int n);
+> +	bool (*is_bin_visible)(struct config_item *item, struct configfs_bin_attribute *attr,
 
-Thanks for the suggestion. That seems pretty clean.
+Hi,
 
-It still needs to avoid setting swapbacked in the first place, but
-ensuring that it's never dirty means it won't get turned back on.
+Should/could this take a *const* struct configfs_bin_attribute * and a 
+const struct config_item *?
 
-The first patch renames pte_dirty() to pte_dirty_novma(). The second
-patch adds an inline function, pte_dirty(pte, vma) that just forwards
-the pte to pte_dirty_novma(), and then converts callers that have a vma
-available to pass to call pte_dirty(). And then the VM_DROPPABLE patch
-simply adds the `&& !(vma->vm_flags & VM_DROPPABLE)` condition to
-pte_dirty().
+I'm currently looking if if is feasible to constify struct 
+configfs_attribute and co.
 
-I put these in https://git.zx2c4.com/linux-rng/log/ per usual, and I'll
-post a new version to the list not before long (unless objections).
+In my investigation, I arrived on this new API.
+So, if it makes sense to constify the attr argument, it would avoid some 
+later work if.
 
-Jason
+Just my 2c
+
+CJ
+
+
+
+> +			       int n);
+>   };
+>   
+>   struct configfs_subsystem {
+
 
