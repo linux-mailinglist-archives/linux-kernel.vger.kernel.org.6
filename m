@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-249890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F82C92F136
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:38:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34EEA92F139
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:39:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1AF1C22A01
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:38:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3EA4283632
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781A119FA72;
-	Thu, 11 Jul 2024 21:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3305819F462;
+	Thu, 11 Jul 2024 21:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dol8757m"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bt8wYhhR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6205A12F385
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6633612F385;
+	Thu, 11 Jul 2024 21:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720733923; cv=none; b=cz5Tfs+ysXLydKzkG7KEQeqopgCLDF+15vMIHEkXsn7apxcPD64rmJ80Cl9BYIf+L+kj3Hjgq4YDplLXYUYLhbADdVu5iotmpGrlcJVdaPIhinf+b0OOSIqbEU36F7mPRxW/QK/t4SAa43D3GpCLQ8J+/lxnJbIrAaZd1Cqwggc=
+	t=1720733928; cv=none; b=Cr01HC3t3ogOaa7lKV63gG6blDZMkejYJVikftjPlKBr0GwY/O+Dx1HferHy5UvIZJRbeujTTURUi2AY97FrSasgfPNE5OUnjNM69g25zLNDJ/m+4IHC2YgO6eJ09pDTKwOZITyAfFifOe29XLaSGwC/XURKoKbCMKSrbO7eGK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720733923; c=relaxed/simple;
-	bh=f0wFiFq5dAE7dnpF6Vm0E8ke0Etl9xk5YcgJu9cdznM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t7eVb33mxYi5PzCFJ7sDeEIIrgZ3AWkH8ttRoxD7pjGifnf+cMuYPRVBDx1Z92PlgjU8x1DDertNK6ffy9a11XqM9DcCbBa0n2uZUQYW9zJmqbuKLmF894itDMbwxeUJZ4pejyEzxwZjhUKTHpNtNvvwxdMNwRE/AdQX8Bk8mx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dol8757m; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-64789495923so13183947b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720733921; x=1721338721; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f0wFiFq5dAE7dnpF6Vm0E8ke0Etl9xk5YcgJu9cdznM=;
-        b=dol8757m30o8e3h8AAGCZV5KwjowtM7VkCqxdJkBhdGVizvMgGDXP/vZu2X4zt59QR
-         cnA2ZSaqY+6V7wPLBbFB1aTfCoGKK6GnDQw0GP0HMzOBBH3ztyzv7Qz/XkWx4g5VKGm4
-         m8YiJF8n437BmjiSxaK3AX+1tyCH+7jaVXv1O9nRbRbF9IpZ8pX+DLIpM7Gv4J5nz/z8
-         nN6AYmz8+REn8Tg9ybUIMeqn2OMb0YfRmv94xtEFgL5g3xKR75ca1/9NoFNh+mIPRu0o
-         ZfLrn4BIywWVqNvPbuV/DtTsCehY9RMHrhNcJmnOKOl6KqDxg7i3+xE3Dg7oB/qHAE4r
-         A3eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720733921; x=1721338721;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f0wFiFq5dAE7dnpF6Vm0E8ke0Etl9xk5YcgJu9cdznM=;
-        b=LavzAM5ifUYC1yv0dfeeXmfVyTWLsBj5fShxQ+KJKy8TFivNLaDaZ5MM2vucWFlACl
-         mSOjQ4/lav3IBxOY5jOgOeEQDsBPk039TsqRZkZ0n9Il15cb+zHT4Zv4yA4DvuvyY3gd
-         IKGYRDOn/iFn40iffSzGBiQANotPv/feskVMqIUn5ypcjm8uMJdekCUiVphaN/BE/pxm
-         hLM2u6CpIf2mJWV3i4Y+9WSaXH1LeGilchW8BSdq4SCIwjZQHh9wa3TyLl8NztX00NSV
-         aYORGmE2Q9yZ+3Doky3KLXoyaSdxfe7ohOOqTuCa/EaXctD6YgV/6d+27YzikQRng08+
-         Qr+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXaiAhxQvGEegBUjUmzSf4ff2H81jNKVmn2VQODpym/kAiWSFKWdi3XDNFEmgiRIQJjNOo+3aSkGnZUxfR8JgrOU2vYtXHe6qWBRLal
-X-Gm-Message-State: AOJu0YwZX8pC4E2N7j3MR3HZe3UXdIXS3aWw29UfIWJUsGHlnX97jvJ6
-	8duL0fDZQYCkBCD8W9cBEK5jyOnwLRbqX/CHpAlaFMJSdA00ABm3tEmqMwiUkkb+wM0Qt9H2HNJ
-	gy2DWMIH1CHV5xdwR+u9ReWrOpo5xUJmEHAoSXkOSEOQXTUXDsg==
-X-Google-Smtp-Source: AGHT+IEy1pyt1fAB4JX4uVbAqGclWCC30idjb8WmdUApyesOAiZMyd3u1Ss45XXknzvuW3NpMSfe7bkeXK7gQR+K5Es=
-X-Received: by 2002:a81:9181:0:b0:64b:a3f0:5eee with SMTP id
- 00721157ae682-658eed5e01amr100627527b3.17.1720733920975; Thu, 11 Jul 2024
- 14:38:40 -0700 (PDT)
+	s=arc-20240116; t=1720733928; c=relaxed/simple;
+	bh=mSHQDPosDfKU1D8H0/EEVCf/SnYHDoua5Vn7yYsQoaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mcuKUIkkqzXeqEXJba4B/pilISja2++KQ/WsbPrmwbSpj0mi26x88gb63HA7FZYL8V4k4B0G+sfeMcxvaPE82W1agYCf3TL4u63Ff4j2h0utEMNiXujki/E/0KF0p9FDzTyvaGRZuhN14HqUBEX/A3oQg8k2gtmhdRdfvvzNq10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bt8wYhhR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6A68C116B1;
+	Thu, 11 Jul 2024 21:38:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720733928;
+	bh=mSHQDPosDfKU1D8H0/EEVCf/SnYHDoua5Vn7yYsQoaI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bt8wYhhRbsosxOUHAr4wDJBsjg3BaM5IZoZjxxYP8i0a4X2nFfm9xppaKEZGRXy3a
+	 yNpyUZb53OjU6IIlVGvz9LXD0F59CkCDsvVFl+7RNVwvx2/h9kFzSuXMYnfiaNJYpH
+	 lEcEJEzY9RiWHksrSEcs8TGrw5/DhkAYXBWlsPzW9KMIA4jdfm1kVvrO38FxKNkZvk
+	 oKiSPNucdCf31BR5MqSSV4+D0bqf/DYnDk9YPFKA7J7kvKO6mua7QM7MTOK/MDjUqN
+	 eDFG/jpcnVLMy7awKcKZQ1HdPrqqp2q9eJRjKZnIKqgGQhrA2b1ALt3URP78rCnlHi
+	 A3YHVLJ7jPfpQ==
+Date: Thu, 11 Jul 2024 15:38:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Shawn Guo <shawnguo@kernel.org>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH 3/3] arm64: dts: layerscape: move dwc3 usb under glue
+ layer node
+Message-ID: <20240711213846.GA3049961-robh@kernel.org>
+References: <20240710-ls-dwc-v1-0-62f8cbed31d7@nxp.com>
+ <20240710-ls-dwc-v1-3-62f8cbed31d7@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711204626.1669138-1-surenb@google.com> <20240711140742.b2c536fb4de2800534a99980@linux-foundation.org>
-In-Reply-To: <20240711140742.b2c536fb4de2800534a99980@linux-foundation.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 11 Jul 2024 14:38:27 -0700
-Message-ID: <CAJuCfpFC3OLimU8q1m9tJh8UoRePb2Gw6Ezbrt-fOGBrKwzyUg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] alloc_tag: Export memory allocation profiling symbols
- used by modules
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710-ls-dwc-v1-3-62f8cbed31d7@nxp.com>
 
-On Thu, Jul 11, 2024 at 2:07=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Thu, 11 Jul 2024 13:46:26 -0700 Suren Baghdasaryan <surenb@google.com>=
- wrote:
->
-> > Export mem_alloc_profiling_key, page_ext_get() and page_ext_set() symbo=
-ls
-> > as they can be used by modules (mem_alloc_profiling_key is used indirec=
-tly
-> > via mem_alloc_profiling_enabled()).
->
-> Thanks, I'll add
->
-> Fixes: 22d407b164ff ("lib: add allocation tagging support for memory allo=
-cation profiling").
+On Wed, Jul 10, 2024 at 07:02:24PM -0400, Frank Li wrote:
+> New usb glue layer driver support enable dma-coherent. So put dwc3 usb node
+> under glue layer node and enable dma-coherent.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 43 ++++++++++++++++----------
+>  1 file changed, 26 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> index 70b8731029c4e..24b937032480f 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+> @@ -615,24 +615,33 @@ gpio3: gpio@2320000 {
+>  			little-endian;
+>  		};
+>  
+> -		usb0: usb@3100000 {
+> -			compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
+> -			reg = <0x0 0x3100000 0x0 0x10000>;
+> -			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+> -			snps,dis_rxdet_inp3_quirk;
+> -			snps,quirk-frame-length-adjustment = <0x20>;
+> -			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+> -			status = "disabled";
+> -		};
+> +		usb {
+> +			compatible = "fsl,ls1028a-dwc3";
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges;
 
-Perfect. Thank you!
+No, the existing way is preferred unless you have actual glue/wrapper 
+registers. Plus this breaks compatibility.
+
+> +
+> +			usb0: usb@3100000 {
+> +				compatible = "snps,dwc3";
+> +				reg = <0x0 0x3100000 0x0 0x10000>;
+> +				interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+> +				dma-coherent;
+> +				snps,dis_rxdet_inp3_quirk;
+> +				snps,quirk-frame-length-adjustment = <0x20>;
+> +				snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
+> +				status = "disabled";
+> +			};
 
