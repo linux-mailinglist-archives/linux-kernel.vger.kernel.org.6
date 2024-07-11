@@ -1,117 +1,137 @@
-Return-Path: <linux-kernel+bounces-249617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174DD92EDE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:35:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0278492EDEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBA78281E7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:35:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61FD3B21398
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D16A16DC13;
-	Thu, 11 Jul 2024 17:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7163916D9BC;
+	Thu, 11 Jul 2024 17:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aIPJ9u0h"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ur5z5g7v"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077D415ECCA;
-	Thu, 11 Jul 2024 17:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6E447F7F
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 17:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720719324; cv=none; b=XwVIBtYQvdQ4Ss76+WvZu1j0LS+UZrm56XxMUaBz9Hpx3b9lAdde9Bjfc+3o0t1cJvIXZKijUCHQpdWdSHBtEoHKXwpU57OZBnJ4uTS1Em2dZj08SowFLsbcaUoz4aF2rA7yEoWdqdR/j+8gvTb7CNugvaHSr6l80EdaN083Mbk=
+	t=1720719371; cv=none; b=ge7S4Wk/m9SgrO9UpjPGxxZ6+jiW5h6IoybJGwH4p5UuD/PjqDR9lcKs1tB7cqGJpneRIIMqqbaGsDDCOO6i93EU1VlSH1dl4w5Shxp76mZ5OVO6GSSQ/7BhO+TKCFHPba0s+Kxgm3w3K7f/GInVyukVHqHTKS/JS2/JrJoFA/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720719324; c=relaxed/simple;
-	bh=Yq5IPf1HRPSyNRcPOhcfpmbjqBQXjhii33FKiak2WP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nsj1By/WVpNtXvRK7wxyf2NOsJNGkAe8j2Ngrj3Qtxo6N1fGs7/rnmlfUcsk6OfWX1wKIOhn+4vWdzxaIyKn8FS5e0EvLCr7AX44BKxfOLvLlfQFCPmVjmWteSDnaO6FyWpZ25GdlWqjgfLz1M+oqM+OHYFo8R2FH1hpnpY/X2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aIPJ9u0h; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BD2LO7007421;
-	Thu, 11 Jul 2024 17:35:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qNPf0d2xbAM8URqvKSWu8WshjIdAJFLq2jdFkPgYo2k=; b=aIPJ9u0hBoZUGZ+C
-	VjBCfdT242yhcU/dTCGwU7+4+BnGthPusUwd4F3vFc5uIx7iCl9jRy2LWoROt4hE
-	+Wc1xz4FfRurvOUa8D2mVAhz+koE+cY3BVP0twdzj9erzfokvRQhZY4BPb8f/oMT
-	yzIDrnkyoA213a+7LQDmL+/jVRQXv6zqfkal8vNyTwTvFcSvzCf84bzb7YgNXB3e
-	esz+2F1bsaUBE1YSh+rXZAZm2OrkDVcSCtDG84yHaQRJaITJzDhhnIgTGZJL42Dx
-	Jk25llWRhsO4WiH0M5Su2wnn345sC0uiyr9Lmct7x4pepz9ksQGSO8/rZYIWU2K2
-	BMQQoA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4091jdqcvp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 17:35:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BHZGAt031757
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 17:35:16 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 10:35:15 -0700
-Message-ID: <f623ca12-6911-48d0-8706-483f38a99b13@quicinc.com>
-Date: Thu, 11 Jul 2024 10:35:15 -0700
+	s=arc-20240116; t=1720719371; c=relaxed/simple;
+	bh=qgnDUmxmdB7sDyrvknKXFjaBh7F9m3LBqmnRIfkwF3o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MhUPSD9ZB9UfN2tSWJcsncxpp/Z+ZSMSlAwRmjLDiICz2z5V6ndsS+C//hR2i9nKFFU7NFTY4GJD4YnDSjTDj3YRahp5PlmZfsSwxtas8pxAVJi5HSdtMVVRogPFIZiaNVHxGYs0aFBi437MgCVRxt9iyEfR8KT8uq7IPFDGhrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ur5z5g7v; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720719369;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PqZ5Lq7rcqKvViuzmKy6ImpdE7S1OOOZU2S6RM0SUzQ=;
+	b=Ur5z5g7vK5QgSyL2HXSHfgF6TqPMWSyshL9zpNtcY3phj8KlpG5SOsH8s+Bgvt6zhTqdZv
+	6w2hrkEypdn1i6qkhpiqJhwaFHDY3Lw7hvyU2j7pLM2ob+dAk7VtHRqi9E47VxlT6qiAjR
+	thyy1ld2orOqsK7f9jRg93Q2YqAj9xk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-651-dCoNFGvtMIiFF6F1X3SULg-1; Thu, 11 Jul 2024 13:36:07 -0400
+X-MC-Unique: dCoNFGvtMIiFF6F1X3SULg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4266a2e94e3so2193985e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:36:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720719366; x=1721324166;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PqZ5Lq7rcqKvViuzmKy6ImpdE7S1OOOZU2S6RM0SUzQ=;
+        b=lmKa75X3sg/tbmWwUfBdwGR8bWvVTrihPT9EyJPBZdOTvbKvA9k019eIHY+a4D8zbO
+         8P5cCh52MLLZDXgj6YnRpKerC5PQQ3Y1oHN0sDZxRP6wBQvWd3roDrhRgSEDNT/JKJvJ
+         Xl6rBjh88G8JcqdwvbGgZ+x9gVCMWBBMhVYLRhwYTc/Ka1ZeGFLglQg+co2bZpGSD+Na
+         jYzZMFL9DEIV/0RI61MuKivn1gNDSwm+2x9fUn08SEUd/ZwO/dD762Rd8TFtvQFA5ZND
+         ap5oUCATXqijNLNoMS2R0+H+fSpusK9LRR6Bw5cuGTI/NC9QfbAXSL3idKdJuRrtxmHS
+         Sl9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXHYX0EUMVPLsK86BD2hXZU2HbCkiFOTwbePryX+HupfGn0vV3E2WizbI+QpuJn6+Z6Uj4PRbwZQa8foKAFrHoIC6x0ZCFW5lx180y1
+X-Gm-Message-State: AOJu0YyBx5d7l9AesAIiey8kXmUYVzUd2n5NMjCCByrHeEvKVzNFimSf
+	DBiYhmDqT1A7w9P5PXRNZeFbV5r45P7nSSA6b9NbojINj0U7ZmMCEZ60/5mXMHzQ3p/hipLzumG
+	MS5nYogDEiXAxI0rhh6NiaKpk8oPrKqNcnr1ad39+oHB5OduJEmkKV3M7LoUA/A==
+X-Received: by 2002:a5d:6489:0:b0:367:9614:fdf7 with SMTP id ffacd0b85a97d-367f0545ecdmr2325014f8f.0.1720719366378;
+        Thu, 11 Jul 2024 10:36:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGMfYTkbrTlZRWFy2Gd9pQVj1zME06oiFKdU2+UjDpE1fDMi5oLmElwlTGgF4rW+HmuC4lNjw==
+X-Received: by 2002:a5d:6489:0:b0:367:9614:fdf7 with SMTP id ffacd0b85a97d-367f0545ecdmr2325000f8f.0.1720719366016;
+        Thu, 11 Jul 2024 10:36:06 -0700 (PDT)
+Received: from pstanner-thinkpadt14sgen1.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e19dsm8242836f8f.15.2024.07.11.10.36.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 10:36:05 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Philipp Stanner <pstanner@redhat.com>
+Subject: [PATCH] drm/nouveau: Improve variable names in nouveau_sched_init()
+Date: Thu, 11 Jul 2024 19:35:51 +0200
+Message-ID: <20240711173551.76148-1-pstanner@redhat.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/adfs: add MODULE_DESCRIPTION
-To: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Jan Kara <jack@suse.cz>
-References: <20240523-md-adfs-v1-1-364268e38370@quicinc.com>
- <20240524-zumal-butterbrot-015b2a21efd5@brauner>
- <20240527164022.GE2118490@ZenIV>
- <20240528-gehemmt-umziehen-510568bb05ac@brauner>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240528-gehemmt-umziehen-510568bb05ac@brauner>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: B8dvNRnMd4KtbiTIJfnGVLX6N3pIlPeZ
-X-Proofpoint-ORIG-GUID: B8dvNRnMd4KtbiTIJfnGVLX6N3pIlPeZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_12,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 malwarescore=0 mlxlogscore=846
- mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1011 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407110122
+Content-Transfer-Encoding: 8bit
 
-On 5/28/24 03:00, Christian Brauner wrote:
-> On Mon, May 27, 2024 at 05:40:22PM +0100, Al Viro wrote:
->> On Fri, May 24, 2024 at 03:13:04PM +0200, Christian Brauner wrote:
->>> On Thu, 23 May 2024 06:58:01 -0700, Jeff Johnson wrote:
->>>> Fix the 'make W=1' issue:
->>>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/adfs/adfs.o
->>>>
->>>>
->>>
->>> Sure, why not.
->>
->> Might make sense to move those into a separate branch, IMO (and feel
->> free to slap ACKed-by: Al Viro <viro@zeniv.linux.org.uk> on those -
->> AFAICS all of them look reasonable).
-> 
-> Thanks! Added Acks to all of them and about to push it to
-> #vfs.module.description.
+nouveau_sched_init() uses the function drm_sched_init(). The latter
+function has parameters called "hang_limit" and "timeout" in its API
+documentation.
 
-Following up since I don't see this in linux-next and hope to have all 
-of these warnings fixed tree-wide in 6.11.
+nouveau_sched_init(), however, defines a variable called
+"job_hang_limit" which is passed to drm_sched_init()'s "timeout"
+parameter. The actual "hang_limit" parameter is directly set to 0.
 
-/jeff
+Define a new variable and rename the existing one to make naming
+congruent with the function API.
+
+Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+---
+ drivers/gpu/drm/nouveau/nouveau_sched.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
+index 32fa2e273965..ee1f49056737 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_sched.c
++++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
+@@ -404,7 +404,8 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
+ {
+ 	struct drm_gpu_scheduler *drm_sched = &sched->base;
+ 	struct drm_sched_entity *entity = &sched->entity;
+-	long job_hang_limit = msecs_to_jiffies(NOUVEAU_SCHED_JOB_TIMEOUT_MS);
++	const long timeout = msecs_to_jiffies(NOUVEAU_SCHED_JOB_TIMEOUT_MS);
++	const unsigned int hang_limit = 0;
+ 	int ret;
+ 
+ 	if (!wq) {
+@@ -418,7 +419,7 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
+ 
+ 	ret = drm_sched_init(drm_sched, &nouveau_sched_ops, wq,
+ 			     NOUVEAU_SCHED_PRIORITY_COUNT,
+-			     credit_limit, 0, job_hang_limit,
++			     credit_limit, hang_limit, timeout,
+ 			     NULL, NULL, "nouveau_sched", drm->dev->dev);
+ 	if (ret)
+ 		goto fail_wq;
+-- 
+2.45.0
+
 
