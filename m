@@ -1,120 +1,88 @@
-Return-Path: <linux-kernel+bounces-248956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F152892E463
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:21:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9290C92E46C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A68DE282797
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:21:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C65D1F229D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF54C158DA1;
-	Thu, 11 Jul 2024 10:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZ9Bmm+v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A251586D5;
-	Thu, 11 Jul 2024 10:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9702158A17;
+	Thu, 11 Jul 2024 10:21:03 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0159157A59;
+	Thu, 11 Jul 2024 10:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720693230; cv=none; b=oFuluiGp6/zqihi4fNoHLuN4dVVpWnNqZcfYqJVuCyeCUc4IsbRh95CRf8a5N6NHep70pr3RjWToF4dBYkTn7q3FSPwlYONa90RA6CArcdbdApT5ZXZjoRkx7mV0DBLhz0NIbSWaZTgSs/GF38x/ZDLSUEYOVCswgo04cu+tKA0=
+	t=1720693263; cv=none; b=cY9JxxhDzBYqajFD5qgdPTWff/eOoIaX9KO/Df7JkegFa7UC4l7bDVxNFiv4kgrcC14yjTeCie04bS5+jkYsQ3ETzOjsgAprmzVtdVqS/3zdhOKIICQT7Yp64dDQFoZxAT7+q8KMTupUgJ/WOQfp6T+3JYY6ZGJUlO1DvcjcCAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720693230; c=relaxed/simple;
-	bh=KuLkmPep0FgB/b9onjhI7XMc1imfQqx3j5EA9FWI9tY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=XrkKGi3TWwAde03xsCnXQ4GYP25PDZByLx9+8MHLef/Xe/+GR29LNltrPi0IIo4ip27gmls5b5iXJZGHtXIQ5eEv6eTW9CNT2kB8ybR+Hdce3GBHuXuHJp3f91oPWQ8XqOof38+n7TPEPDaDUw7ppuT982DopgQoyeeMUX7p1JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZ9Bmm+v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A3F1AC32786;
-	Thu, 11 Jul 2024 10:20:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720693229;
-	bh=KuLkmPep0FgB/b9onjhI7XMc1imfQqx3j5EA9FWI9tY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=WZ9Bmm+vb36W/NTCnTCuq/j+PDx9P1TZ969KcaxpR/PkSO0pu+nnLnXpBnXSC3FU4
-	 em6I1UMOSt9RhLmaWnrCf76FvfMuO1LKJDqHNF1yjOcWHp3mWNO5IvkzeZRmoI/OT5
-	 AaxV4cdzJlI4cPbuCXX4ngZ4PDCOPr21mdcyM8i94rYCN5MmZD53AL7f5JtVbJp88U
-	 QI6qd00Ob7F9IHNK9p0X41750xmXWyySnUIP2QVKXg4pChcW9+j/3EUBkZzkM9PmaF
-	 sIdRCHm4g+zSKRKEUu1sfvlOndXPCKr6vBq/TA81jetYwILl87p+1KcfVKTo9iNIWb
-	 gNQtiyvdK9r2w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9340CC433E9;
-	Thu, 11 Jul 2024 10:20:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720693263; c=relaxed/simple;
+	bh=hncl9QviZuWKAdztx7PuMEvcvja4nPPgccko85HZQ6o=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=sfAlwGbwTkEAzjV2QALz3st0T+4Az4b7cRymuhdrAwogF3wLIgJEgJqqNB7fVaDXJ7GNuAsD1PQpHezb+9RYXmKEMrSlc0BnfYuLn3QQwSAd2U5F9lO5/kLZCBrs0l2SYZpIGTkkPHv1SQAVTGEhgxkMDc4RoQKcyiRhITesVw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 8ADB392009C; Thu, 11 Jul 2024 12:20:51 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 84DCB92009B;
+	Thu, 11 Jul 2024 11:20:51 +0100 (BST)
+Date: Thu, 11 Jul 2024 11:20:51 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, 
+    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+    =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+Subject: Re: [PATCH v3] MIPS: Implement ieee754 NAN2008 emulation mode
+In-Reply-To: <a8741e38-837b-4fbb-8656-1e6d50bdfcc0@app.fastmail.com>
+Message-ID: <alpine.DEB.2.21.2407110315170.38148@angie.orcam.me.uk>
+References: <20240612-mips_ieee754_emul-v3-1-2c21b450abdb@flygoat.com> <Zn1FuxNw2CUttzdg@alpha.franken.de> <9cc26415-9cbc-47fa-a132-7d8c000874a4@app.fastmail.com> <alpine.DEB.2.21.2406272053180.43454@angie.orcam.me.uk> <fbd421a6-cf37-49ab-bdbe-6128a7cae8be@app.fastmail.com>
+ <Zoz6+YmUk7CBsNFw@alpha.franken.de> <7797a7b2-1bb2-4c45-b65d-678f685dfa3d@app.fastmail.com> <Zo457UgAkhbAgm2R@alpha.franken.de> <alpine.DEB.2.21.2407101015120.38148@angie.orcam.me.uk> <a8741e38-837b-4fbb-8656-1e6d50bdfcc0@app.fastmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] net/sched: Fix UAF when resolving a clash
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172069322959.11889.7076340448823741973.git-patchwork-notify@kernel.org>
-Date: Thu, 11 Jul 2024 10:20:29 +0000
-References: <20240710053747.13223-1-chengen.du@canonical.com>
-In-Reply-To: <20240710053747.13223-1-chengen.du@canonical.com>
-To: Chengen Du <chengen.du@canonical.com>
-Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- ozsh@nvidia.com, paulb@nvidia.com, marcelo.leitner@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- gerald.yang@canonical.com
+Content-Type: text/plain; charset=US-ASCII
 
-Hello:
+On Thu, 11 Jul 2024, Jiaxun Yang wrote:
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Wed, 10 Jul 2024 13:37:47 +0800 you wrote:
-> KASAN reports the following UAF:
+> >> that's just one case, what about NaN2008 binaries on a legacy MIPS CPU ?
+> >
+> >  It would be good to check with hard-float QEMU configured for writable 
+> > FCSR.NAN2008 (which is one way original code was verified) that things 
+> > have not regressed.  And also what happens if once our emulation has 
+> > triggered for the unsupported FCSR.NAN2008 mode, an attempt is made to 
+> > flip the mode bit via ptrace(2), e.g. under GDB, which I reckon our 
+> > emulation permits for non-legacy CPUs (and which I think should not be 
+> > allowed under the new setting).
 > 
->  BUG: KASAN: slab-use-after-free in tcf_ct_flow_table_process_conn+0x12b/0x380 [act_ct]
->  Read of size 1 at addr ffff888c07603600 by task handler130/6469
-> 
->  Call Trace:
->   <IRQ>
->   dump_stack_lvl+0x48/0x70
->   print_address_description.constprop.0+0x33/0x3d0
->   print_report+0xc0/0x2b0
->   kasan_report+0xd0/0x120
->   __asan_load1+0x6c/0x80
->   tcf_ct_flow_table_process_conn+0x12b/0x380 [act_ct]
->   tcf_ct_act+0x886/0x1350 [act_ct]
->   tcf_action_exec+0xf8/0x1f0
->   fl_classify+0x355/0x360 [cls_flower]
->   __tcf_classify+0x1fd/0x330
->   tcf_classify+0x21c/0x3c0
->   sch_handle_ingress.constprop.0+0x2c5/0x500
->   __netif_receive_skb_core.constprop.0+0xb25/0x1510
->   __netif_receive_skb_list_core+0x220/0x4c0
->   netif_receive_skb_list_internal+0x446/0x620
->   napi_complete_done+0x157/0x3d0
->   gro_cell_poll+0xcf/0x100
->   __napi_poll+0x65/0x310
->   net_rx_action+0x30c/0x5c0
->   __do_softirq+0x14f/0x491
->   __irq_exit_rcu+0x82/0xc0
->   irq_exit_rcu+0xe/0x20
->   common_interrupt+0xa1/0xb0
->   </IRQ>
->   <TASK>
->   asm_common_interrupt+0x27/0x40
-> 
-> [...]
+> PTrace is working as expected (reflects emulated value).
 
-Here is the summary with links:
-  - [net,v3] net/sched: Fix UAF when resolving a clash
-    https://git.kernel.org/netdev/net/c/26488172b029
+ Yes, sure for reads, but how about *writing* to the bit?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> The actual switchable NaN hardware (M5150, P5600) uses a dedicated Config7
+> bit rather than writable FCSR.NAN2008 to control NaN2008 mode. This is undocumented
+> and not present on some RTL releases. FCSR.NAN2008 is R/O as per The MIPS32 Instruction
+> Set Manual. This renders the purposed test pointless.
 
+ Yes, for R6 and arguably R5, but not for R3.  Architecture specification 
+revisions 3.50 through 5.02 define FCSR.NAN2008 (and also FCSR.ABS2008) as 
+either R/O or R/W, at the implementer's discretion, so it is a conforming 
+implementation to have these bits writable and our FPU emulator reflects 
+it.  I won't go into the details here as to why the later revisions of the 
+specification have been restricted to the R/O implementation only.
 
+ NB architecture specification revisions 3.50 through 5.01 also have the 
+FCSR.MAC2008 bit defined, removed altogether later on.
+
+  Maciej
 
