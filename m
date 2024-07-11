@@ -1,230 +1,121 @@
-Return-Path: <linux-kernel+bounces-248544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432AB92DEB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DA892DEC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA3328113E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB6D0284F6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D4FE572;
-	Thu, 11 Jul 2024 03:06:32 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643D122F14;
+	Thu, 11 Jul 2024 03:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="j0bpZVfU"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1574DDA5
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC9C653;
+	Thu, 11 Jul 2024 03:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720667191; cv=none; b=aTaYeKxY5T7RKjDT8ipu3LjvLoKNYGnMtNThxcKKO7zrptGWJrCtrfZrbop5xojwSTMEAIGP+wHmPwzJvc/Sxxb1I8KW9ZsMVf9T/YB1XWjwdaYK1J+93tD4s+FA8OJBowCFn7NVufg7ppeFLi6liZwawEmDeCS1ELUXXvqsl2Q=
+	t=1720667367; cv=none; b=fsQ0KEuVEUoWK1xLouxJfSoY9c/9hqjUmOd8Z0tREzfaRw+1RzjMxqTksxrSRy7Utzi+kLlAHIQqhRqltH2nS3ExiKZcr/go8sFr5GIwfSPzD9/XhpAjYw2BhlScUusx9m6FI8doVkzINJ3Qvr9ahTu4BiCLBLGQ2x1inOM1a5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720667191; c=relaxed/simple;
-	bh=ys7dqiSsvOVoRvdqZF368aThiGUEj6VRkSTul1V1LmU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oqTeCUlIKoXOoxX7G6nkEZzEoYMK2jcy07SIELbO7dOkUWy26f7j50HFvKUZZASD5hM9QhMiHeR0/iN24HKLhRYHsvr1zUm79+qdF0hcOrQJKZpr5wbIknSFrw+bJJE1m2kACxedIxCY26eIbaobPOzpHfhfrD8xduXF9EXkYU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WKKJ626rNz1T67t;
-	Thu, 11 Jul 2024 11:01:42 +0800 (CST)
-Received: from dggpemd200001.china.huawei.com (unknown [7.185.36.224])
-	by mail.maildlp.com (Postfix) with ESMTPS id B88AF140390;
-	Thu, 11 Jul 2024 11:06:25 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemd200001.china.huawei.com
- (7.185.36.224) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 11 Jul
- 2024 11:06:25 +0800
-From: Wang Zhaolong <wangzhaolong1@huawei.com>
-To: <richard@nod.at>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<wangzhaolong1@huawei.com>, <yi.zhang@huawei.com>, <chengzhihao1@huawei.com>
-Subject: [RFC 1/1] ubifs: avoid deadlock when deleting an inode with xattr
-Date: Thu, 11 Jul 2024 11:06:24 +0800
-Message-ID: <20240711030624.266440-2-wangzhaolong1@huawei.com>
-X-Mailer: git-send-email 2.34.3
-In-Reply-To: <20240711030624.266440-1-wangzhaolong1@huawei.com>
-References: <20240711030624.266440-1-wangzhaolong1@huawei.com>
+	s=arc-20240116; t=1720667367; c=relaxed/simple;
+	bh=nnGWHQdOE6A7vWDzQDyuDhaSsU8Um0cpmGvSiXGvIng=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bMLLoYY5oQ1xhj7vrZxAaPZjJ5ot+80qWbkb987JjDQHatEHCBKxcg7QYpa6UjbxeiC4OM6YXo6GrXcuKYWZ7B0PWzgjHoy2zWmytNYtxGgWoauFpg+skgoQtQXSJTatUX5TvjczzInxUHHsnuWJR0kIWLdG51KaYX0n87QtE1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=j0bpZVfU; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B1SeE7029616;
+	Thu, 11 Jul 2024 03:09:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-type:content-transfer-encoding; s=
+	corp-2023-11-20; bh=mVZGnVfJuUUVJ48rZlL7JFo1gTtm/7sW1vQWinmG8zQ=; b=
+	j0bpZVfUZnJww+6XhsoVlmNMxlpX5Rixeyt1ap1AcqkrFm/zR57vKicJqsnULgeB
+	XMp0psHHBU1kiMUlGhtjnprK7aYWjk/d6bcJrq+FFr3TH2Lq6ZSLKQcYtuZFCDN8
+	Da8GCBjBeSsstcjqZR1lzq17kc7Z3sit4iUmRsN5cxr81mlcIoOmvJ95GzGgETmJ
+	WmAYZ4g+lOXGjxzTZZ7gT5frnlD9oGjSwnnIEGkKpii/P51s4DeR93a2if+3egD0
+	dnbrpLriu6GntLBzalmoo3o5VlLbhjKeGW2bCYpdz9hVlUCC+3PQOO6AHyPFQBwA
+	ZZO7hXHu9Ug3a9oZOAdJ3w==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 406wgq0p88-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 03:09:17 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46B1Zsg2008796;
+	Thu, 11 Jul 2024 03:09:16 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 409vv3x4c9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 03:09:16 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46B39D9j006490;
+	Thu, 11 Jul 2024 03:09:15 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 409vv3x4ar-2;
+	Thu, 11 Jul 2024 03:09:15 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Ram Prakash Gupta <quic_rampraka@quicinc.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
+        quic_pragalla@quicinc.com, quic_nitirawa@quicinc.com
+Subject: Re: [PATCH V2 0/2] Suspend clk scaling when there is no request
+Date: Wed, 10 Jul 2024 23:08:33 -0400
+Message-ID: <172066369902.698281.9935677312111229941.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240627083756.25340-1-quic_rampraka@quicinc.com>
+References: <20240627083756.25340-1-quic_rampraka@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemd200001.china.huawei.com (7.185.36.224)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-10_20,2024-07-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=767 bulkscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407110020
+X-Proofpoint-ORIG-GUID: DEGif5EgnZnE2v25jtB5d3eUC5M8W9ga
+X-Proofpoint-GUID: DEGif5EgnZnE2v25jtB5d3eUC5M8W9ga
 
-When an inode with extended attributes is deleted, UBIFS needs to delete
-the xattr inode as well. Currently, it uses ubifs_iget() to get the xattr
-inode, which may block if the inode is under deletion. This can lead to
-deadlocks if the inode deletion is waiting for the completion of the xattr
-inode deletion.
+On Thu, 27 Jun 2024 14:07:54 +0530, Ram Prakash Gupta wrote:
 
-To avoid this deadlock, this patch makes the following changes:
+> Currently ufs clk scaling is getting suspended only when the
+> clks are scaled down, but next when high load is generated its
+> adding a huge amount of latency in scaling up the clk and complete
+> the request post that.
+> 
+> Now if the scaling is suspended in its existing state, and when high
+> load is generated it is helping improve the random performance KPI by
+> 28%. So suspending the scaling when there is no request. And the clk
+> would be put in low scaled state when the actual request load is low.
+> 
+> [...]
 
-1. Replace ubifs_iget() with find_inode_nowait() when getting the xattr inode
-   in ubifs_jnl_write_inode(). find_inode_nowait() will not block if the inode
-   is under deletion.
+Applied to 6.11/scsi-queue, thanks!
 
-2. If find_inode_nowait() finds the inode in cache, clear the nlink and pack
-   the inode immediately to avoid losing inode info.
+[1/2] scsi: ufs: Suspend clk scaling on no request
+      https://git.kernel.org/mkp/scsi/c/50183ac2cfb5
+[2/2] scsi: ufs: qcom: Enable suspending clk scaling on no request
+      https://git.kernel.org/mkp/scsi/c/ed7dac86f140
 
-3. If find_inode_nowait() cannot find the inode in cache (returns NULL), read
-   the inode directly from the media using ubifs_tnc_lookup(), clear the nlink,
-   prepare the inode and pack it.
-
-4. Add a new function ubifs_match_ino() to be used as the match callback for
-   find_inode_nowait().
-
-5. Replace ilookup() with find_inode_nowait() in ubifs_evict_xattr_inode() to
-   avoid subsequent blocking during inode eviction.
-
-With the above changes, the xattr inode deletion will not block waiting for
-the host inode deletion, thus avoiding the deadlock.
-
-Signed-off-by: Wang Zhaolong <wangzhaolong1@huawei.com>
----
- fs/ubifs/journal.c | 42 ++++++++++++++++++++++++++++++++++--------
- fs/ubifs/super.c   | 15 +++++++++++++++
- fs/ubifs/ubifs.h   |  1 +
- fs/ubifs/xattr.c   | 12 +++++++-----
- 4 files changed, 57 insertions(+), 13 deletions(-)
-
-diff --git a/fs/ubifs/journal.c b/fs/ubifs/journal.c
-index 74aee92433d7..7aba91d31a15 100644
---- a/fs/ubifs/journal.c
-+++ b/fs/ubifs/journal.c
-@@ -1007,6 +1007,8 @@ int ubifs_jnl_write_inode(struct ubifs_info *c, const struct inode *inode)
- 		struct fscrypt_name nm = {0};
- 		struct inode *xino;
- 		struct ubifs_dent_node *xent, *pxent = NULL;
-+		struct ubifs_ino_node *xino_node;
-+		union ubifs_key xkey;
- 
- 		if (ui->xattr_cnt > ubifs_xattr_max_cnt(c)) {
- 			err = -EPERM;
-@@ -1029,22 +1031,46 @@ int ubifs_jnl_write_inode(struct ubifs_info *c, const struct inode *inode)
- 			fname_name(&nm) = xent->name;
- 			fname_len(&nm) = le16_to_cpu(xent->nlen);
- 
--			xino = ubifs_iget(c->vfs_sb, le64_to_cpu(xent->inum));
-+			xino = find_inode_nowait(c->vfs_sb, le64_to_cpu(xent->inum),
-+					ubifs_match_ino, NULL);
- 			if (IS_ERR(xino)) {
- 				err = PTR_ERR(xino);
- 				ubifs_err(c, "dead directory entry '%s', error %d",
- 					  xent->name, err);
--				ubifs_ro_mode(c, err);
- 				kfree(pxent);
- 				kfree(xent);
- 				goto out_release;
-+			} else if (xino) {
-+				/* Found xattr inode in cache, pack it in order not to lose node info */
-+				ubifs_assert(c, ubifs_inode(xino)->xattr);
-+				clear_nlink(xino);
-+				pack_inode(c, ino, xino, 0);
-+				ino = (void *)ino + UBIFS_INO_NODE_SZ;
-+				iput(xino);
-+			} else {
-+				/* Can't grab inode in cache, read it directly from the media */
-+				xino_node = kmalloc(UBIFS_MAX_INO_NODE_SZ, GFP_NOFS);
-+				if (!ino) {
-+					err = -ENOMEM;
-+					kfree(pxent);
-+					kfree(xent);
-+					goto out_release;
-+				}
-+				ino_key_init(c, &xkey, le64_to_cpu(xent->inum));
-+				err = ubifs_tnc_lookup(c, &xkey, xino_node);
-+				if (err) {
-+					kfree(xino_node);
-+					kfree(pxent);
-+					kfree(xent);
-+					goto out_release;
-+				}
-+
-+				xino_node->nlink = cpu_to_le32(0);
-+				ubifs_prep_grp_node(c, xino_node, UBIFS_INO_NODE_SZ, 0);
-+				memcpy(ino, xino_node, UBIFS_INO_NODE_SZ);
-+				ino = (void *)ino + UBIFS_INO_NODE_SZ;
-+				kfree(xino_node);
- 			}
--			ubifs_assert(c, ubifs_inode(xino)->xattr);
--
--			clear_nlink(xino);
--			pack_inode(c, ino, xino, 0);
--			ino = (void *)ino + UBIFS_INO_NODE_SZ;
--			iput(xino);
- 
- 			kfree(pxent);
- 			pxent = xent;
-diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
-index 291583005dd1..1de523fb6ee6 100644
---- a/fs/ubifs/super.c
-+++ b/fs/ubifs/super.c
-@@ -100,6 +100,21 @@ static int validate_inode(struct ubifs_info *c, const struct inode *inode)
- 	return err;
- }
- 
-+int ubifs_match_ino(struct inode *inode, unsigned long ino, void *data)
-+{
-+	if (inode->i_ino != ino)
-+		return 0;
-+
-+	inode = igrab(inode);
-+	if (!inode)
-+		return -1;
-+
-+	if (inode->i_state & I_NEW)
-+		return -1;
-+
-+	return 1;
-+}
-+
- struct inode *ubifs_iget(struct super_block *sb, unsigned long inum)
- {
- 	int err;
-diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index 1f3ea879d93a..d75bf5878515 100644
---- a/fs/ubifs/ubifs.h
-+++ b/fs/ubifs/ubifs.h
-@@ -2077,6 +2077,7 @@ static inline int ubifs_init_security(struct inode *dentry,
- 
- /* super.c */
- struct inode *ubifs_iget(struct super_block *sb, unsigned long inum);
-+int ubifs_match_ino(struct inode *inode, unsigned long ino, void *data);
- 
- /* recovery.c */
- int ubifs_recover_master_node(struct ubifs_info *c);
-diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
-index 0847db521984..e3d001e69fdf 100644
---- a/fs/ubifs/xattr.c
-+++ b/fs/ubifs/xattr.c
-@@ -585,11 +585,13 @@ void ubifs_evict_xattr_inode(struct ubifs_info *c, ino_t xattr_inum)
- {
- 	struct inode *inode;
- 
--	inode = ilookup(c->vfs_sb, xattr_inum);
--	if (inode) {
--		clear_nlink(inode);
--		iput(inode);
--	}
-+	inode = find_inode_nowait(c->vfs_sb, xattr_inum,
-+			ubifs_match_ino, NULL);
-+	if (IS_ERR_OR_NULL(inode))
-+		return;
-+
-+	clear_nlink(inode);
-+	iput(inode);
- }
- 
- static int ubifs_xattr_remove(struct inode *host, const char *name)
 -- 
-2.34.3
-
+Martin K. Petersen	Oracle Linux Engineering
 
