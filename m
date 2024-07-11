@@ -1,124 +1,98 @@
-Return-Path: <linux-kernel+bounces-249951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3239B92F216
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:36:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0464D92F21A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 647BC1C227D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:36:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B113B20D98
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7F11A0724;
-	Thu, 11 Jul 2024 22:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD5A1A01B3;
+	Thu, 11 Jul 2024 22:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ks8ELnCm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BuL1cyuy"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33AD15531B;
-	Thu, 11 Jul 2024 22:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DBA145B09;
+	Thu, 11 Jul 2024 22:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720737379; cv=none; b=W4cgAYu4DikQyXLpCSN7iU8RZLjpd9UP9wHtmgdMZp84w/2um9Qunc4NACokUYxylgxizLwZ3j8Cy3YPR4IID7UylV30afDND68IdxHaUGTtkHuqLtD1kHB7iWUptsH/SAJ6/vpirZCF/WEX6+Nf46uCRPq8dSQWjEut8f5F+xI=
+	t=1720737484; cv=none; b=BR6xMlu+lvUx4EeQtYdftxTnDv9+7KcRLOCGv32ScDEb+QYLNLX2A41MnkrQpFs0yOKpiJxb1nuNRkSzh3PBR6JZ1IeAnlLiAvjTcVQpx5SvYpL8bJxyXfFwBLia5IZ8/wEslCs5FQ9HFQBs+F46XYbbzwPZ2IIpw0n6xIDqJEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720737379; c=relaxed/simple;
-	bh=pirreVvy4JZn8lrnWfmD1cwECwdJ1hvtT3Z1k6qiOwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NnhZTnCig2g4Cq4v/dhrr8UN9q9j2REX7/kRmmCWpifZWtjDn328hN6MJqB/HSbQS2Zq8akYoS2p/IgtLua8XWnYDiXVi3w6wKbOwqksqHTfBSCxVvQfYB0UKHlY56oZyc/s/W/+6irT8iwdUnZ5YVeodyakl5M+9lBkFo0iHxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ks8ELnCm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B487C32782;
-	Thu, 11 Jul 2024 22:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720737379;
-	bh=pirreVvy4JZn8lrnWfmD1cwECwdJ1hvtT3Z1k6qiOwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ks8ELnCmsBZ4ZxMYxC8SuWAARCYiWRJZth0Zyt2UkPp/K/lMnmocSf81YBl6SiiNT
-	 9EmZM/rP13whx+pEGYHjq33WVwsaXcFI04u4h0Xdp3CHgQbxHRS5T/cwQSPlutGUPQ
-	 w/XSc9Y3yIO6s3CTlWHuiUuS72Xs1FDIT1kTTUyj+ex6Je0OVJTO3FRoYn2+haZdle
-	 H4A1enmwEcV7wAyyeTpVcElD1vWsHCgmL4cP6H8t/BSFhWxXaUhMPRbtpMFaPLNtZO
-	 sMs6hSmwYtuq5Fah4gfxcu5YiQFlKM6XDscniSMdF/dEBhjbQIOdx09ch5PTd3NBs/
-	 /A5ym9rdYGSIA==
-Date: Thu, 11 Jul 2024 16:36:18 -0600
-From: Rob Herring <robh@kernel.org>
-To: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jay Buddhabhatti <jay.buddhabhatti@amd.com>,
-	Dhaval Shah <dhaval.r.shah@amd.com>,
-	Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	saikrishna12468@gmail.com, git@amd.com
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: Add support for Xilinx Versal
- platform
-Message-ID: <20240711223618.GA3237343-robh@kernel.org>
-References: <20240711103317.891813-1-sai.krishna.potthuri@amd.com>
- <20240711103317.891813-2-sai.krishna.potthuri@amd.com>
+	s=arc-20240116; t=1720737484; c=relaxed/simple;
+	bh=CoNZbP9OQ+LKL0jagX9qDIpckuUefL6zlyLvgzt0ZVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=emhWOsFbaOUEjI+gkmhhVZU+7LBeQusdedAz4P8nzhH8I01zEtUU1XIsDnioNHXxr8avaputkCT0MCioBH/yiBzFlEqCkFuGdDbrJcLKXL+z18kk2NO9xO74fr37SY8wl5Afd6jKmz7sg37hp+I6rvoAtsMio9IkoVpLa6MYUbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BuL1cyuy; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720737480;
+	bh=NrOnfdF4Y/4ef0yGhUGiaSB3gjgVLlJAR0yi6h0AOkY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BuL1cyuy/H9GVIf4CVTM7Vk/5KWMvNN+MTteKW4qU982HeGahcdOTjSy0QN9BN+N+
+	 Wcmshv88M2nT2c6FFEQne2VeidxKynVc3h4QewtwJ+07mtmPeoZXCLNdavyw0kWd2V
+	 Upik9COz12KcdrTWuyAQ85PWCdjo0BTY1cwOt68FtSQxgI8oYw8pjIEhIsrI8N/Mid
+	 rl6ib/7gHNCH4D+EQ6HcCC99mwABR2RJg6WtHFLP0zz6SpATfp+Ryc4QXpWTVGZTBM
+	 nlBONxEutJX3MiBwCexC6Bh8el0bCiRZkFXbFk8yz+vASqzqboeuw4IraXXJJmBXB3
+	 4q99neMGFgpeA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKqPN5z05z4w2F;
+	Fri, 12 Jul 2024 08:38:00 +1000 (AEST)
+Date: Fri, 12 Jul 2024 08:38:00 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the device-mapper
+ tree
+Message-ID: <20240712083800.3e118900@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711103317.891813-2-sai.krishna.potthuri@amd.com>
+Content-Type: multipart/signed; boundary="Sig_/D=.iKKo=cCzWDMThpFSCxbr";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Jul 11, 2024 at 04:03:15PM +0530, Sai Krishna Potthuri wrote:
-> Add Xilinx Versal compatible string and corresponding groups, function and
-> pins properties to support pin controller features on Versal platform.
-> 
-> Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-> ---
->  .../bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml | 509 +++++++++++-------
->  1 file changed, 329 insertions(+), 180 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
-> index ce66fd15ff9c..68c378b17f49 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
-> @@ -28,7 +28,9 @@ description: |
->  
->  properties:
->    compatible:
-> -    const: xlnx,zynqmp-pinctrl
-> +    enum:
-> +      - xlnx,zynqmp-pinctrl
-> +      - xlnx,versal-pinctrl
->  
->  patternProperties:
->    '^(.*-)?(default|gpio-grp)$':
-> @@ -46,196 +48,334 @@ patternProperties:
->              description:
->                List of pins to select (either this or "groups" must be specified)
->              items:
-> -              pattern: '^MIO([0-9]|[1-6][0-9]|7[0-7])$'
-> +              allOf:
-> +                - if:
-> +                    properties:
-> +                      compatible:
-> +                        contains:
-> +                          const: xlnx,zynqmp-pinctrl
-> +                  then:
-> +                    pattern: '^MIO([0-9]|[1-6][0-9]|7[0-7])$'
-> +                  else:
-> +                    pattern: '^((LPD|PMC)_)?MIO([0-9]|[1-6][0-9]|7[0-7])$'
+--Sig_/D=.iKKo=cCzWDMThpFSCxbr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Did you test whether this works? It doesn't because the schema is 
-nonsense. The schema applies to a property's value, but the "if" schema 
-applies to a node. And it's not even the node you are at, but the parent 
-node. IOW, there is no "compatible" in this node.
+Hi all,
 
-The 'else' schema covers both cases, so I'd just change the pattern and 
-be done with it.
+Commit
 
-However, based on the rest of the patch, you should just do a new schema 
-doc. There's little overlap of the values.
+  a96fa275449b ("dm: introduce the target flag mempool_needs_integrity")
 
-Rob
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/D=.iKKo=cCzWDMThpFSCxbr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQXsgACgkQAVBC80lX
+0GxZdAf/Y8MpRN/OCiUZYfSRcszKNG1qs50zmHFDxok0qz9EvDp6CEQ3+Ax8OiwF
+KHcL79kjqq2704H7Fs0PModSzcu6XqkEuKYRo23t4SU9C2vwBubnLbjFZPkyFAvp
+LoXSQqpwobQXsMqGt2ZV/ygHJKc+MFFzNzgGcfTIa8SUDhP+1Q/g3l2PjtGi552T
+YolRevKafNiqd1mvxFTz44dTfAXMr9T5jSlxGOfSOf5RrAlVt7b1NO+ZiiEBCVrQ
+TlhvDy4Hx8wcSngW6y8zUW+73KkKNCodEZuW+BfwaLIoC0EEXy1fN2gS54mutNfh
+IXRf/K30bUYE/qyW2g17IT8R/T8yMA==
+=1JuE
+-----END PGP SIGNATURE-----
+
+--Sig_/D=.iKKo=cCzWDMThpFSCxbr--
 
