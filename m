@@ -1,157 +1,120 @@
-Return-Path: <linux-kernel+bounces-248567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A96E92DF1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:29:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B57D392DF21
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F81F1F22E31
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:29:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B0F284146
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F893BBE2;
-	Thu, 11 Jul 2024 04:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD004779E;
+	Thu, 11 Jul 2024 04:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y44MJ1+U"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="hK6/BNkb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E95038398;
-	Thu, 11 Jul 2024 04:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0320664D;
+	Thu, 11 Jul 2024 04:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720672166; cv=none; b=pa6J2wzqNNM6MHOLJNoXrX9YtIQcH3eJBXVd4dHJS/vD3PculPwZ/RhrmfSUmRTjT0BZs9D+10xv3VhzUaPs4y3p64vv5RVmJJxHjHQphFQAL7k3y2fQuC06QaDZUK3/SNa/Y4nF2ou3Ru2pX6IrwusBts6UXRPnSFyTmsHsG7M=
+	t=1720672355; cv=none; b=hVWrwOolUBGcXfOZOY44UrkuELWqWDQ/PyGlvXk6sPQHG+XFTHUW0aqdNs1JXZU2WhReO55/HYMaV6hpQqnrikiKruj/lca71FTGUn8wg6lvR12n/iaLRJ/6+qkXOjFfk7nfkV5WmCiHTdc3DmgEB284KEi5z+DnxeqPbREDreA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720672166; c=relaxed/simple;
-	bh=t1Uux8oEDRjkQ1yaLaSr6zlDLKDvyg7LrLpCDTcxao4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fc8WsO4IqkMttWkXLc8QV7Yqak352295J/6n1ZV/1ERyFZg8N22VMDvscrD06NhpuqDDLz7CKwJHHYVTOgwH/Fqc9CgReHgRB+ZZbcll/3HI4+jb2J7/DOr9AYuig6X39wnr3WSTSlBr90tCeYE8uwLj3MhNFYJuXutTbdNNt5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y44MJ1+U; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-24c0dbd2866so254251fac.0;
-        Wed, 10 Jul 2024 21:29:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720672164; x=1721276964; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pm5wKSqcAJyUHz8lRZSzAcGOp5jdkpoDCLTobJAaN2E=;
-        b=Y44MJ1+UpTytxG3A68xR5nfkD9Vf0VYn/akTiS8nn+fH/lmbx5ugtVu4JjArxpudtz
-         oFG9IpHAgMOzPdg2VS/S7knITzEnlo0SGyne3XR2C6ENq31kq7XSfAjyyug7JFxlWrVf
-         URnGytdjd3JFYEpnlbF8echoizZsMAVxyXLX5HUQUqs8Juorl7S+xLzye4gn+JFCQzxh
-         A/tWLxgpa9ZRB0GBa/OXdsJUB4YQqmZvBa8UFGCfqGDFVjQmt9X9YdPn9eSnIJ9W/zuq
-         zcjC5r+6ng2n+JChAX43QTAlHZNm00j/dNKDMdxJff2Pa3pclBCI/lDFVOux+PzBP97E
-         Yy/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720672164; x=1721276964;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pm5wKSqcAJyUHz8lRZSzAcGOp5jdkpoDCLTobJAaN2E=;
-        b=AqtwVjBhRp5oiTUqV0WYH9QLIjDwGSxQHL2V7eHOe6h8f0fPSkZNYwv7Ubf4lI/2wR
-         K3FyXT7zkvy1wIbiyLJIN2Ow5EqEULsi+iAiwu93lQ5xxiOEA7frH2NESOWcy/zSpg/d
-         YZ/h8NsAnPXp3qQIA14tOrcI9uDUp1H1PWvT6//X6yqjfrOmghhDmougPclKsR9jwlky
-         mcmgAbTtk6gsEQHMuRngcrDpo6kXgPV//fFjg4hN1/984XEgJ2lJpO+lq6HlB9TEYsRp
-         I5l9FXhDJyy0Y8UtRM8oG5qe6OD4IUhhbf1NfF61JKjBujSQuVmYg2xMkRw1GMqbChl8
-         FjEA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1YjvDuWa0Jkhi+2ruVWlZWLtJfhOYEbl3MBX1J/JWj7w3yYCc8tU8/E76zeWyMfO1eb7sLr+I2DfpxyjUS7s4ktCwRh8NZyIgDdqnxEDxVlnsV34CJJl5kfXD/5aekuAzYwyS
-X-Gm-Message-State: AOJu0YxM239k3xJ+PUZJBsi2DzW6EdkgtfnIdIT5sMil9PlGs0YP2e1E
-	UR9QgqFS67vIBMkxJVkFW+1FmG2AGxZdhhEHTCLx8walJcqONRfz
-X-Google-Smtp-Source: AGHT+IGgEU91R8zFIOKM0r/MONCxqdOFQvD5dhzSPqMckp8oZPJ65oonJxNJYPaD7L9TGhNZnTPHCg==
-X-Received: by 2002:a05:6871:54c:b0:25e:1ca6:6d09 with SMTP id 586e51a60fabf-25eae76455amr6319946fac.8.1720672163638;
-        Wed, 10 Jul 2024 21:29:23 -0700 (PDT)
-Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25eaa2a1e76sm1520640fac.50.2024.07.10.21.29.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 21:29:23 -0700 (PDT)
-From: Pei Li <peili.dev@gmail.com>
-Date: Wed, 10 Jul 2024 21:29:21 -0700
-Subject: [PATCH v2] btrfs: Fix slab-use-after-free Read in add_ra_bio_pages
+	s=arc-20240116; t=1720672355; c=relaxed/simple;
+	bh=PgQXgRM6be8Wrz5n3qFnroBhMTZ8tyBF9PgE2xsLWXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VeIfPWdl6gB7p39roJ3OYRZkyNwVcv25XnR0BWAfy4LxOhEtB8biJoR/ywCsnmbHTAg5Tv3eTtdZasS60OORKOTM1v5UTvEbJrtSnu2QuyCgUAmoERc6ipSaRnEE4OcIAGFGpIHvsSDLa750f4Fgw5iNNiN73ebkZs3Qgu0YI8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=hK6/BNkb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC670C116B1;
+	Thu, 11 Jul 2024 04:32:32 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="hK6/BNkb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1720672351;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bUM3Y4D20BWlPnBgrUFDE9T3dbKAyxe2+cRLVwadkjE=;
+	b=hK6/BNkbjum1DdKhPbNaqS+k6MZP/K0HHkkVrVh2FOZaI9BTUGc8N9R3fJyjk1bY3L3/oQ
+	mBJ2DOBMKD1ZCZLey6e8H38+z4FWQ+CowlExwdglfmBzvOHeWg7GWEG1CiJcyFv+hFueg1
+	J7XZBZBxrAykIOV8BoMokWlCcLtv3w0=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 36f7f89a (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 11 Jul 2024 04:32:30 +0000 (UTC)
+Date: Thu, 11 Jul 2024 06:32:28 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <Zo9gXAlF-82_EYX1@zx2c4.com>
+References: <20240709130513.98102-1-Jason@zx2c4.com>
+ <20240709130513.98102-2-Jason@zx2c4.com>
+ <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
+ <9b400450-46bc-41c7-9e89-825993851101@redhat.com>
+ <Zo8q7ePlOearG481@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240710-bug11-v2-1-e7bc61f32e5d@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAKBfj2YC/13MQQ7CIBCF4as0sxbDkCa0rryH6WJAoJPYYqAST
- cPdxS5d/i8v3w7ZJXYZLt0OyRXOHNcW6tSBnWkNTvC9NSipeqlRCvMKiIIGsjiQN1r10L7P5Dy
- /D+c2tZ45bzF9Drbgb/0XCorGkFRq1N4YO17DQvw427jAVGv9AhUwBrCaAAAA
-To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
- David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, skhan@linuxfoundation.org, 
- syzkaller-bugs@googlegroups.com, 
- linux-kernel-mentees@lists.linuxfoundation.org, 
- syzbot+853d80cba98ce1157ae6@syzkaller.appspotmail.com, 
- Pei Li <peili.dev@gmail.com>
-X-Mailer: b4 0.15-dev-13183
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720672162; l=1993;
- i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
- bh=t1Uux8oEDRjkQ1yaLaSr6zlDLKDvyg7LrLpCDTcxao4=;
- b=Ydee9F0C2BZyLYbU961DAb4oTQybaAXaVrKguzna5nItNECSYvuCipHlPkeSYRpdTvhzf7AtV
- Zh2UhB0tjFHCDTu8Mo8oRwAfpeRo4rutm+njiteOHhJIKNfUfxQ1JWX
-X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
- pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zo8q7ePlOearG481@zx2c4.com>
 
-We are accessing the start and len field in em after it is free'd.
+On Thu, Jul 11, 2024 at 02:44:29AM +0200, Jason A. Donenfeld wrote:
+> Hi David,
+> 
+> On Wed, Jul 10, 2024 at 06:05:34AM +0200, David Hildenbrand wrote:
+> > BTW, do we have to handle the folio_set_swapbacked() in sort_folio() as well?
+> > 
+> > 
+> > 	/* dirty lazyfree */
+> > 	if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio)) {
+> > 		success = lru_gen_del_folio(lruvec, folio, true);
+> > 		VM_WARN_ON_ONCE_FOLIO(!success, folio);
+> > 		folio_set_swapbacked(folio);
+> > 		lruvec_add_folio_tail(lruvec, folio);
+> > 		return true;
+> > 	}
+> > 
+> > Maybe more difficult because we don't have a VMA here ... hmm
+> > 
+> > IIUC, we have to make sure that no folio_set_swapbacked() would ever get
+> > performed on these folios, correct?
+> 
+> Hmmm, I'm trying to figure out what to do here, and if we have to do
+> something. All three conditions in that if statement will be true for a
+> folio in a droppable mapping. That's supposed to match MADV_FREE
+> mappings.
+> 
+> What is the context of this, though? It's scanning pages for good ones
+> to evict into swap, right? So if it encounters one that's an MADV_FREE
+> page, it actually just wants to delete it, rather than sending it to
+> swap. So it looks like it does just that, and then sets the swapbacked
+> bit back to true, in case the folio is used for something differnet
+> later?
+> 
+> If that's correct, then I don't think we need to do anything for this
+> one.
+> 
+> If that's not correct, then we'll need to propagate the droppableness
+> to the folio level. But hopefully we don't need to do that.
 
-This patch moves the line accessing the free'd values in em before
-they were free'd so we won't access free'd memory.
-
-Reported-by: syzbot+853d80cba98ce1157ae6@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=853d80cba98ce1157ae6
-Signed-off-by: Pei Li <peili.dev@gmail.com>
----
-Syzbot reported the following error:
-BUG: KASAN: slab-use-after-free in add_ra_bio_pages.constprop.0.isra.0+0xf03/0xfb0 fs/btrfs/compression.c:529
-
-This is because we are reading the values from em right after freeing it
-before through free_extent_map(em).
-
-This patch moves the line accessing the free'd values in em before
-they were free'd so we won't access free'd memory.
-
-Fixes: 6a4049102055 ("btrfs: subpage: make add_ra_bio_pages() compatible")
----
-Changes in v2:
-- Adapt Qu's suggestion to move the read-after-free line before freeing
-- Cc stable kernel
-- Link to v1: https://lore.kernel.org/r/20240710-bug11-v1-1-aa02297fbbc9@gmail.com
----
- fs/btrfs/compression.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 6441e47d8a5e..f271df10ef1c 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -514,6 +514,8 @@ static noinline int add_ra_bio_pages(struct inode *inode,
- 			put_page(page);
- 			break;
- 		}
-+		add_size = min(em->start + em->len, page_end + 1) - cur;
-+
- 		free_extent_map(em);
- 
- 		if (page->index == end_index) {
-@@ -526,7 +528,6 @@ static noinline int add_ra_bio_pages(struct inode *inode,
- 			}
- 		}
- 
--		add_size = min(em->start + em->len, page_end + 1) - cur;
- 		ret = bio_add_page(orig_bio, page, add_size, offset_in_page(cur));
- 		if (ret != add_size) {
- 			unlock_extent(tree, cur, page_end, NULL);
-
----
-base-commit: 563a50672d8a86ec4b114a4a2f44d6e7ff855f5b
-change-id: 20240710-bug11-a8ac18afb724
-
-Best regards,
--- 
-Pei Li <peili.dev@gmail.com>
-
+Looks like that's not correct. This is for pages that have been dirtied
+since calling MADV_FREE. So, hm.
 
