@@ -1,71 +1,67 @@
-Return-Path: <linux-kernel+bounces-249686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D9A92EE85
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:12:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E38892EE87
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD1AD285C49
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:12:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9645283795
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3227816DEC8;
-	Thu, 11 Jul 2024 18:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7245416E878;
+	Thu, 11 Jul 2024 18:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SnRwqLGo"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="T9oIzlQu"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6909228FF
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BB916D9DD
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720721520; cv=none; b=BzhvGtpsQkFMyciyquZSNBnv9g6z7JIWBeeLvmeYcRYTMuuPRNOSMdlOCF9+2OkhfXd05HXkd5iAyNPOzEFdTM4M4qnGvIRBSQwQXkVGiLnxIB2k2BRtX3udfIwS79bmEc/j5mLj2jEpEWnFVVBY7qT1kU9f+cSjuxBOAT3dqn4=
+	t=1720721536; cv=none; b=vFTKTSj8WatnCFZGoNBogVOL9Zm5g7Kz/jN9MrpOL5oyGve/MLbrMZAavlP1PT9WrQQ35RHCLlT/lJUCgr76KJiL1JtHoRu1Msp49N0ay9V45TRR4IrU+O0mXKAfUIPeSbUZrEPP1aprV6xBiadzFHMW5C5f8NWRAkfwpbq3iGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720721520; c=relaxed/simple;
-	bh=yiNlWxQFIuLiXCiNDpxh5pHm79njqFKOXJHZpDPyfrA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=POOaPi5WcnDpnmkMOA5FByG4X/TsE0L5hFbVCJpVLLFxiiBgh4cncVrCx8hYrI6XniN+RTfjIu3Q1737g5jNgdroyntVgzOgZFQIWK0AJkNlh5bN8L+H/UaTFAso1RDOQ9V+6OHeBSe++h8YmkYCVOqvASpdRKB9l7ZofT7jb0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SnRwqLGo; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42797289c8bso8533015e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720721517; x=1721326317; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AOTuIDCHHw4nroDu5tmJN8OsvPxrrZZ1giv5r6s8f+4=;
-        b=SnRwqLGo3aZeSc8kot9O1nbi9G3ZsJX55Iy9d2lqrWR/6xzzapysUhrsa2HpCO9lEt
-         iQmJ1We9w1/Mo6dB0NZdTXjvvLvVEoncS66qdLzzSIr7pv78RGFPsikCYXMjFW8SGmJw
-         KEoCSKhBw1pZVH5n62PXPQIQDZMpwqOEWqhHzAYj4KsZVrEmOrqMzQLKcSaGruutPaxx
-         hQlq/nGMwa9yGKh0aOO5FSFo0YXCDicYNHZmVOqkHN+WQFI7S5mlXwk8AC02tzvXCsnH
-         KUl7W89GOp46f9JnKTEXiNa3jRMIgWUpzSomQJ5rTq81jzln+E6/2DBPHybiiJ3sQEGM
-         h4eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720721517; x=1721326317;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AOTuIDCHHw4nroDu5tmJN8OsvPxrrZZ1giv5r6s8f+4=;
-        b=Qcpe1QBCGJuhb2yYZZO4sYsyUxtGSv3RZ3gULn+82wmtaxpxCTkrx3W7DfCMU51DL1
-         UPoHqCeEIksJQSP1B9qCOwkuIvZvCIgtJvxMVrkNujCTPg0OB3T1+8dXel16BUQfYSAe
-         L8p/xzX7dyb34WReKwQpSgG1P2CMg+cdYJLrLBbSgsemza5HXs1MmQ5gosJKHXGGn8Jy
-         r5Q7tbxA9L23GcEfB4O8B52YXvY8YMllCJMjHLNOWAylKvB3Mwvw4ZB4RgORiKpuHj9f
-         h/KietCKCASLkbOWInqdPF4Ggbdy2mZS9et/7TCE6QYmWX+WmYFY4RF6WIMh28ylsEz4
-         GGfA==
-X-Gm-Message-State: AOJu0Yw0MFPmBTzpKaUIL1h0ZiksRFS24sQn0dgfZOqs9ZnZcFin9S1T
-	4utFW9lqJQTkdppdLf/wmrXWdI37USLscrFVmDhI5v0LQjIFpoBQvbDMEPMAImc=
-X-Google-Smtp-Source: AGHT+IF1eQ/H2vUY/f8Y42sES0su+RPX3cSYOuyo7qd9TYVB2AS3ugNpLDgulyPkoyT2lolTwb3Hyg==
-X-Received: by 2002:a7b:c3d8:0:b0:426:5ee5:3130 with SMTP id 5b1f17b1804b1-426705ce998mr53078015e9.3.1720721516769;
-        Thu, 11 Jul 2024 11:11:56 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:4ac5:b5bb:35db:3edf? ([2a05:6e02:1041:c10:4ac5:b5bb:35db:3edf])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4266f6e0b6bsm125864275e9.3.2024.07.11.11.11.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 11:11:56 -0700 (PDT)
-Message-ID: <e646d66e-5fb6-46cb-9e65-44bdf67d5d8a@linaro.org>
-Date: Thu, 11 Jul 2024 20:11:55 +0200
+	s=arc-20240116; t=1720721536; c=relaxed/simple;
+	bh=qjZ95FdfR8fibhKaYFGQ8xUQGhsqJZDQmhdEuQus4R0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IyGLJYH94bWeJiPX2YxQVNOJlnbuyK7QoXMuEH8FPa6LFtKTgpa8TKlBWw6kkiCrCiYXI5ZPY9/ztOxe5iN3uhoVFuQt1IHVC20viMTqsh6sEsXpuo0YnL2Z56vGbYr4SUXLJ7MJyrJnDzpH8tgfNGGDWq6kr3ksOVMe9obNPzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=T9oIzlQu; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
+	by cmsmtp with ESMTPS
+	id RvgzsaDHq1zuHRyH8sQkZ6; Thu, 11 Jul 2024 18:12:14 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id RyH7s96k3rcQSRyH7scQAX; Thu, 11 Jul 2024 18:12:13 +0000
+X-Authority-Analysis: v=2.4 cv=T92KTeKQ c=1 sm=1 tr=0 ts=6690207d
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8 a=TAdm9UboAgj19sWw0poA:9
+ a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=Fp8MccfUoT0GBdDC_Lng:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KoZkARx5lnZczAYRCAa+zb47+ShE8UYwk3OAblehdv8=; b=T9oIzlQuDG6LFtao7OafX47RD/
+	rku3zaOU+3dgu/SjQIERBdkH3G5kJ6xIRWvKymghT5xghbxmpFZMcx9NOnHiaVNhYOQMK32Ppxc6s
+	i3Z/MIUohxb+9IyP3HOQ2BubMR+yzOhDiakYAViNh+v/MVu9h/sDQYxJ2RkXbcjwuK41WgdO9MJNv
+	3slaPdPTilSQY2xYgbSmu84whFUb1aJ0AuBQGOzDOZuBjQXCmiy8a3Ex8j7GuqiuNJGqRYOkWomkH
+	mcXd3s0uHxQsW3SGfRNLp6JylwibXXJ8vJ1TTwkcrbZD3VlfPYrr10wFKpxWtiSKOEEwMgbCd/1Ir
+	vyCNs0pg==;
+Received: from [201.172.173.139] (port=53488 helo=[192.168.15.4])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sRyH6-002DoA-1p;
+	Thu, 11 Jul 2024 13:12:12 -0500
+Message-ID: <f1d60f01-5059-4c1a-a00e-c7d523f28784@embeddedor.com>
+Date: Thu, 11 Jul 2024 12:12:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,111 +69,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] scsi: message: fusion: struct _RAID_VOL0_SETTINGS:
+ Replace 1-element array with flexible array
+To: Kees Cook <kees@kernel.org>, Sathya Prakash <sathya.prakash@broadcom.com>
+Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+ Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240711172432.work.523-kees@kernel.org>
+ <20240711172821.123936-1-kees@kernel.org>
 Content-Language: en-US
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Chris Packham <chris.packham@alliedtelesis.co.nz>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>, Li kunyu <kunyu@nfschina.com>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [GIT PULL] timer drivers for v6.11-rc1
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240711172821.123936-1-kees@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sRyH6-002DoA-1p
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:53488
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfLceAQvPvPpROzrt2rE8rdoV9CW+SqAHf38PPuhtYFty48UBRQ/3Q867iBirTKF5POu1N/cZRr1cpPMRzB8c0z8CwMDLEADPRb3AUpxEgdIrOvl7AgRc
+ dXmJAghBraHa2RYc3WIUkhaxS6RsCpgcpOcjl/6iB+ZDQ1cSdlcnFja6yuK3k6dGf0KFzAUyFGxDh9wiXoX6/qtXXHfbcULc5SfVf7ccbbN/49tHADcdt2oq
 
 
-Hi Thomas,
 
-please consider pulling the following changes since commit 
-746770499be55cf375a108a321a818b238182446:
+On 11/07/24 11:28, Kees Cook wrote:
+> Replace the deprecated[1] use of a 1-element array in
+> struct _RAID_VOL0_SETTINGS with a modern flexible array.
+> 
+> Additionally add __counted_by annotation since PhysDisk is only ever
+> accessed via a loops bounded by NumPhysDisks:
+> 
+> lsi/mpi_cnfg.h:    RAID_VOL0_PHYS_DISK     PhysDisk[] __counted_by(NumPhysDisks); /* 28h */
+> mptbase.c:	for (i = 0; i < buffer->NumPhysDisks; i++) {
+> mptbase.c:		    buffer->PhysDisk[i].PhysDiskNum, &phys_disk) != 0)
+> mptsas.c:	for (i = 0; i < buffer->NumPhysDisks; i++) {
+> mptsas.c:		    buffer->PhysDisk[i].PhysDiskNum, &phys_disk) != 0)
+> mptsas.c:	for (i = 0; i < buffer->NumPhysDisks; i++) {
+> mptsas.c:		    buffer->PhysDisk[i].PhysDiskNum, &phys_disk) != 0)
+> 
+> No binary differences are present after this conversion.
+> 
+> Link: https://github.com/KSPP/linux/issues/79 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-   timers/migration: Fix grammar in comment (2024-07-04 20:24:57 +0200)
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-which are available in the Git repository at:
-
-   https://git.linaro.org/people/daniel.lezcano/linux.git 
-tags/timers-v6.11-rc1
-
-for you to fetch changes up to 8b77f4b8dc81aeb73107b169cb9c6e06c15d297e:
-
-   clocksource/drivers/realtek: Add timer driver for rtl-otto platforms 
-(2024-07-10 09:41:20 +0200)
-
-Thanks
-
-   -- Daniel
-
-----------------------------------------------------------------
-- Remove unnecessary local variables initialization as they will be
-   initialized in the code path anyway right after on the ARM arch
-   timer and the ARM global timer (Li kunyu)
-
-- Fix a race condition in the interrupt leading to a deadlock on the
-   SH CMT driver. Note that this fix was not tested on the platform
-   using this timer but the fix seems reasonable enough to be picked
-   confidently (Niklas Söderlund)
-
-- Increase the rating of the gic-timer and use the configured width
-   clocksource register on the MIPS architecture (Jiaxun Yang)
-
-- Add the DT bindings for the TMU on the Renesas platforms (Geert
-   Uytterhoeven)
-
-- Add the DT bindings for the SOPHGO SG2002 clint on RiscV (Thomas
-   Bonnefille)
-
-- Add the rtl-otto timer driver along with the DT bindings for the
-   Realtek platform (Chris Packham)
-
-----------------------------------------------------------------
-Chris Packham (2):
-       dt-bindings: timer: Add schema for realtek,otto-timer
-       clocksource/drivers/realtek: Add timer driver for rtl-otto platforms
-
-Geert Uytterhoeven (3):
-       dt-bindings: timer: renesas,tmu: Add R-Mobile APE6 support
-       dt-bindings: timer: renesas,tmu: Add RZ/G1 support
-       dt-bindings: timer: renesas,tmu: Add R-Car Gen2 support
-
-Jiaxun Yang (2):
-       clocksource/drivers/mips-gic-timer: Refine rating computation
-       clocksource/drivers/mips-gic-timer: Correct sched_clock width
-
-Li kunyu (2):
-       clocksource/drivers/arm_arch_timer: Remove unnecessary ‘0’ values 
-from irq
-       clocksource/driver/arm_global_timer: Remove unnecessary ‘0’ 
-values from err
-
-Niklas Söderlund (1):
-       clocksource/drivers/sh_cmt: Address race condition for clock events
-
-Thomas Bonnefille (1):
-       dt-bindings: timer: Add SOPHGO SG2002 clint
-
-  .../bindings/timer/realtek,otto-timer.yaml         |  63 +++++
-  .../devicetree/bindings/timer/renesas,tmu.yaml     |  12 +
-  .../devicetree/bindings/timer/sifive,clint.yaml    |   1 +
-  drivers/clocksource/Kconfig                        |  10 +
-  drivers/clocksource/Makefile                       |   1 +
-  drivers/clocksource/arm_arch_timer.c               |   2 +-
-  drivers/clocksource/arm_global_timer.c             |   2 +-
-  drivers/clocksource/mips-gic-timer.c               |  20 +-
-  drivers/clocksource/sh_cmt.c                       |  13 +-
-  drivers/clocksource/timer-rtl-otto.c               | 291 
-+++++++++++++++++++++
-  include/linux/cpuhotplug.h                         |   1 +
-  11 files changed, 405 insertions(+), 11 deletions(-)
-  create mode 100644 
-Documentation/devicetree/bindings/timer/realtek,otto-timer.yaml
-  create mode 100644 drivers/clocksource/timer-rtl-otto.c
-
-
+Thanks!
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Gustavo
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> ---
+> Cc: Sathya Prakash <sathya.prakash@broadcom.com>
+> Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+> Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: MPT-FusionLinux.pdl@broadcom.com
+> Cc: linux-scsi@vger.kernel.org
+> Cc: linux-hardening@vger.kernel.org
+> ---
+>   drivers/message/fusion/lsi/mpi_cnfg.h | 10 +---------
+>   1 file changed, 1 insertion(+), 9 deletions(-)
+> 
+> diff --git a/drivers/message/fusion/lsi/mpi_cnfg.h b/drivers/message/fusion/lsi/mpi_cnfg.h
+> index 3770cb1cff7d..f59a741ef21c 100644
+> --- a/drivers/message/fusion/lsi/mpi_cnfg.h
+> +++ b/drivers/message/fusion/lsi/mpi_cnfg.h
+> @@ -2295,14 +2295,6 @@ typedef struct _RAID_VOL0_SETTINGS
+>   #define MPI_RAID_HOT_SPARE_POOL_6                       (0x40)
+>   #define MPI_RAID_HOT_SPARE_POOL_7                       (0x80)
+>   
+> -/*
+> - * Host code (drivers, BIOS, utilities, etc.) should leave this define set to
+> - * one and check Header.PageLength at runtime.
+> - */
+> -#ifndef MPI_RAID_VOL_PAGE_0_PHYSDISK_MAX
+> -#define MPI_RAID_VOL_PAGE_0_PHYSDISK_MAX        (1)
+> -#endif
+> -
+>   typedef struct _CONFIG_PAGE_RAID_VOL_0
+>   {
+>       CONFIG_PAGE_HEADER      Header;         /* 00h */
+> @@ -2321,7 +2313,7 @@ typedef struct _CONFIG_PAGE_RAID_VOL_0
+>       U8                      DataScrubRate;  /* 25h */
+>       U8                      ResyncRate;     /* 26h */
+>       U8                      InactiveStatus; /* 27h */
+> -    RAID_VOL0_PHYS_DISK     PhysDisk[MPI_RAID_VOL_PAGE_0_PHYSDISK_MAX];/* 28h */
+> +    RAID_VOL0_PHYS_DISK     PhysDisk[] __counted_by(NumPhysDisks); /* 28h */
+>   } CONFIG_PAGE_RAID_VOL_0, MPI_POINTER PTR_CONFIG_PAGE_RAID_VOL_0,
+>     RaidVolumePage0_t, MPI_POINTER pRaidVolumePage0_t;
+>   
 
