@@ -1,119 +1,87 @@
-Return-Path: <linux-kernel+bounces-248838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2944892E28C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:38:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E9392E23F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D25541F2113E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:38:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26795284671
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A8E1586CF;
-	Thu, 11 Jul 2024 08:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0AF152178;
+	Thu, 11 Jul 2024 08:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="gAGyHnh1";
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="KtBs9Wnt"
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SX17Fvi2"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00001581F0;
-	Thu, 11 Jul 2024 08:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB65C152166;
+	Thu, 11 Jul 2024 08:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720686999; cv=none; b=Z0NvOAsBb1pPYcyYp65eoH52bMoTM0SRyU+6QndpUAkFoyBorkXtADE5Pnt9NIrB3iENuVPdfHGqQl5uFTQhzfbpdursGrF6DFJWl5pW3T+vdBtaGft4FYL9RBZI5XWcSl4bgBZ19WuNwXAhWj6L/nsCkRYNf8ZVCLEp7+lG+FM=
+	t=1720686464; cv=none; b=gqc9Ze7TC7RiMLoJMFZC+57FuBnjkEH88Js8kOVM/DlGVRoa0PYG/XnI9xwG0quGxRBbe62rBlTTAteLqhLkk+xO8fTUSmz6VoEVWWifx+gTon0KS305W6nDiwlznFuBKK7zZ65HdzGJVBkEokakyz+BSTfaRZrZ/R9mOrgnhhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720686999; c=relaxed/simple;
-	bh=1bwqFinbtDkxAjW+8WZSgeF63cbN78DWBNtyGL2nQlw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lxIiIfX3E4lw6MuDnPVqQIwJqqZdN1HlsZxaE7+WQRyizQqiC6dY1w4mkW29Gp8Xyxd49n/o7j6rk2CBw+3u7e61hYxFpOEosHTnfVSGzZp/ce4exIBeOIp54V4pm2oLtkaNBslZvI2vFSrsQotOp6g9ygCj+NmFMWgmBwa69wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=gAGyHnh1; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=KtBs9Wnt; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 96F1F1D43;
-	Thu, 11 Jul 2024 08:19:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1720685961;
-	bh=2lEB1CwnPIAdMdowq8U5BKOPAzNq4douQboeJQ9Bho0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=gAGyHnh1h1+4+vr9qI1qCl99UqNtF0br+qa85Zr50J/O7EBPbyG5jNgqK16M5ygXQ
-	 R2dRxUbK1HiWAEF4Nwrb9ry21sfVmMWfjRRKMHWA4/NYx9Lug4fMgiCC96Vx9nO07/
-	 AB97AY7Tt+z84+I3yQ+IW5h8Y+61MmO3osicS+UY=
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 0EB6621C8;
-	Thu, 11 Jul 2024 08:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1720686452;
-	bh=2lEB1CwnPIAdMdowq8U5BKOPAzNq4douQboeJQ9Bho0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=KtBs9Wntn8bYdopHYHiA5ajMgyd/L1KY+9R+rk6AyT8pnNGYcl/lCzSW+/DgWkcj+
-	 lmkEe+gQ+xfI+Zd24CxKqHbm0+Y4tqc40bm8OhOL5y++qP9HIjNkE4/NWRD/QB3fbC
-	 Ay99ORjmdIhoL7Rp8djm7rgbBqP4rjricDMm0Wcs=
-Received: from [192.168.211.91] (192.168.211.91) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Thu, 11 Jul 2024 11:27:31 +0300
-Message-ID: <216de662-023a-4a94-8b07-d2affb72aeb5@paragon-software.com>
-Date: Thu, 11 Jul 2024 11:27:30 +0300
+	s=arc-20240116; t=1720686464; c=relaxed/simple;
+	bh=QLkc0syHmfrJ4ooILR0YbhQf2XqmWSHnQs/1IzydFT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n8WJFcBQSBWapKyneruJmTepKSJNSayqIQbIESECgifTkMiCgltwgt42tdlIuDk7XCZA8f1nSUK4rgEUm6re5LFeF8Lk4btXy5zmkNuBGPcb+YrLs5gw5aynHzOYrx3+bD/bsZUKfbjw57ivACuruhecvMAZ0CjWYLaCBv9JmMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SX17Fvi2; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zKpNKzwctbeTnY3N4R5E5wRN5p6CTobDSc8wD1nLfFg=; b=SX17Fvi2VRqdsTaVNibFtbV4pi
+	LIdgXbYzqeeXRveI3+F2hA29TmLO9uRv8uCfSGNLtKz3ai827zPP4a4dOuuCiIaBx7JTgkliDFwVA
+	cnnH2UOAF5doHsbfmroT/9AOWF1eWT+VPrOYLBGHa1fODjuRJWI4kOdCqwoj252hlt6rthkjjhdSI
+	MQ1KZLw2T3jmX1q65vzoHqMgCWuWSa0Ujl/2g3kMsMwCo06oSwI2yy4BV1Fd77GChxnGa9CYcZI5O
+	8wvf0/cHn5I2zRJWNcM6kt/3keU9JZpxbQqBIH8chYhlvD4/NRaCpQrNw1fbsR14Fbqv3EE67fMDt
+	C920SOyQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRp9M-0000000Alir-4AQG;
+	Thu, 11 Jul 2024 08:27:37 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9A436300848; Thu, 11 Jul 2024 10:27:36 +0200 (CEST)
+Date: Thu, 11 Jul 2024 10:27:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: andrii@kernel.org, mhiramat@kernel.org, clm@meta.com, jolsa@kernel.org,
+	mingo@kernel.org, paulmck@kernel.org, rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] uprobes: future cleanups for review
+Message-ID: <20240711082736.GG4587@noisy.programming.kicks-ass.net>
+References: <20240710140017.GA1074@redhat.com>
+ <20240710163022.GA13298@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
-To: Dmitry Vyukov <dvyukov@google.com>, Lizhi Xu <lizhi.xu@windriver.com>
-CC: <linux-kernel@vger.kernel.org>, <ntfs3@lists.linux.dev>,
-	<linux-fsdevel@vger.kernel.org>,
-	<syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>, Kees Cook <keescook@google.com>
-References: <CACT4Y+ZWjUE6-q1YF=ZaPjKgGZBw4JLD1v2DphSgCAVf1RzE8g@mail.gmail.com>
- <20240705135250.3587041-1-lizhi.xu@windriver.com>
- <CACT4Y+YrjD=3Tn6o4FJFefDYsOCbUFWahPUp87PXXcHQsr0xXg@mail.gmail.com>
-Content-Language: en-US
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <CACT4Y+YrjD=3Tn6o4FJFefDYsOCbUFWahPUp87PXXcHQsr0xXg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710163022.GA13298@redhat.com>
 
-On 08.07.2024 09:54, Dmitry Vyukov wrote:
-> On Fri, 5 Jul 2024 at 15:52, Lizhi Xu <lizhi.xu@windriver.com> wrote:
->> On Thu, 4 Jul 2024 15:44:02 +0200, Dmitry Vyukov wrote:
->>>> index 53629b1f65e9..a435df98c2b1 100644
->>>> --- a/fs/ntfs3/record.c
->>>> +++ b/fs/ntfs3/record.c
->>>> @@ -243,14 +243,14 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
->>>>                  off += asize;
->>>>          }
->>>>
->>>> -       asize = le32_to_cpu(attr->size);
->>>> -
->>>>          /* Can we use the first field (attr->type). */
->>>>          if (off + 8 > used) {
->>>>                  static_assert(ALIGN(sizeof(enum ATTR_TYPE), 8) == 8);
->>>>                  return NULL;
->>>>          }
->>>>
->>>> +       asize = le32_to_cpu(attr->size);
->>>> +
->>>>          if (attr->type == ATTR_END) {
->>>>                  /* End of enumeration. */
->>>>                  return NULL;
->>> Hi Lizhi,
->>>
->>> I don't see this fix mailed as a patch. Do you plan to submit it officially?
->> Hi Dmitry Vyukov,
->> Here: https://lore.kernel.org/all/20240202033334.1784409-1-lizhi.xu@windriver.com
-> I don't see this patch merged upstream.  Was it lost? Perhaps it needs
-> to be resent.
-Hi, Lizhi, Dmitry, This patch is indeed not present in either the 
-upstream or our repository. I will retest it and figure out why I didn't 
-add it. Around the same time, I was making changes to mi_enum_attr, so I 
-might have mixed something up. Thanks for your attention! Regards,
-Konstantin
+On Wed, Jul 10, 2024 at 06:30:22PM +0200, Oleg Nesterov wrote:
+> On 07/10, Oleg Nesterov wrote:
+> >
+> > Peter, these simple cleanups should not conflict with your changes,
+> > but I can resend them later if it causes any inconvenience.
+> 
+> In fact I would like to push 2 more cleanups before the more significant
+> changes, but they certainly conflict with your ongoing work, albeit only
+> textually.
+> 
+> Let me send the patches for review anyway, perhaps you can take at least
+> the 1st one.
+> 
+> 3/3 is only compile tested so far. Andrii, can you take a look?
+
+I was going to post a new version today, but I can wait and rebase on
+top of / include these 5 patches (or more, these things tend to grow).
+
 
