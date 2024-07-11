@@ -1,144 +1,110 @@
-Return-Path: <linux-kernel+bounces-248953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6034692E45A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:20:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDFB92E460
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 923E41C2074E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:20:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D219B2125F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60461158DD4;
-	Thu, 11 Jul 2024 10:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B96215ADB4;
+	Thu, 11 Jul 2024 10:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AeDeOfgq"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="UndiOja3"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1601158878
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA53515A87C;
+	Thu, 11 Jul 2024 10:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720693206; cv=none; b=fkT9Bdv60auqH6AOMilQW0edDMboGox+4Mh4PzuNohgioHUxQOlsC+WIFMcguSN1qtgsVZvzl00NO+3ny2pd/CPu/kIFXY92jjAAPag8Kiqkfls0/FrXKGPtRtehPnOYK+Yd6+SamOdOJUPbKzj8IyAP2UN47tlCkon49VjppFo=
+	t=1720693215; cv=none; b=ujvTVVb95uEIftOOgkDx+HjaIkFljkqPrTwf8C0yENCpODfDFwwESO3GCUpMrXmO+wGhnRUq5v3rEJfTi4941niBMj7s3UYXxhYOIWJww2tqkqCsU6+F02ML35eKie8AEhZjfxDNTiWXZ/yE+7hwXKbGiP3mi1J+t+K1HLcXyU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720693206; c=relaxed/simple;
-	bh=bKIdUuVmWv5FJkFDtu2H6clQsAHCUTFbn8+qyaw6hHg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XIhadfy9u2zjCmWeNLoWlf8LeFHRu000RLOZrqhKwdAguHwxBWN68OoMwjPnDAMa83TfbuDyj+E25XptSp0NnsJsYMRnykLAp5kxv7P9E1Ksh/c0vqclpfYhI57fPb82B9vu7GAj3Fqn821GW4hZCNHF6ZzJOj2Sc+5d6y3ixzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AeDeOfgq; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4279c10a40eso1271055e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720693203; x=1721298003; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jw6bLyA4dVnYszcIqA96Q05ikE6tm67ysRPS44gZ2Bo=;
-        b=AeDeOfgqmtP6YqYtgTpYNinb9oqMQl3i7j38vK4+io3o2BdQ00xqcjagYE4jzCULnB
-         E4zK8QAZ7vgI18tg4Wl9bxBcVnzYW/fUdzoUskWQc+r5st4WQBPQ18QdyrnbNCK/CkK9
-         9by3L7M9izvLBeYybfLp7EGrHzIkly9reeppj256TLUcJTas4KaaYGDeL6blF2Xj67po
-         7JmFAm3A3hjbGCAd7Q45WmwhiU9R7cNAbVHuzPXOMnlorAPMeRcyY1KCUJmq8r2iA7vm
-         Jmdj+/wNpcM5s0aaCWbWTgk2OVrKksnQfoAsrNXjLVa1Ng0pN2u+TS64yQ0ie+9HuytJ
-         lUbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720693203; x=1721298003;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jw6bLyA4dVnYszcIqA96Q05ikE6tm67ysRPS44gZ2Bo=;
-        b=Ycx5Un20uRaWf6wfFQuOHEMoSH3GendkQosjBwmqXQBa/Rvu6qklSj9joaM34fJZno
-         /34NcLn07Usp57E4E7O6dgyuKKMYNj+l1U8pmlwBl6FDf8YBjNgjn00FJXO1x5zeCPCf
-         ZByz5Wlw2JLpsP8hWUUT9Gp0Z12X/pywWFPuHoiieHffmTLdhu5DtW6pQpGjyJt9bZo4
-         EtnbOWHLiSxVF1ACKC+YYgOtDJWOcERhU5EpkCdGfuQF+9/ovPsfJ6FBD/azwWEfVeLq
-         IW83Uh1Nn5+Ai8Vti0cIvzzd7JyIv3iCUCbr3N8yFVF6DwT/x/RJQLTo7ze16Odf1QFM
-         5Qsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTpBxt3u8q1qY2yjjo+E1FTUX2VycMFHZchB2BYxcfijDrLDyhf8JIVZnUxYWQixJEc10qdxKV9VkOz7GC9mlZbIC02Dby4r2ss3Cf
-X-Gm-Message-State: AOJu0Yw8BlOzImDesI/fzwaoVGZI5Oc6+KMmuRYRi44SH87n++d/1Q+2
-	Jii7d1+TxB9/dbHCkmLB99kysuv7LiL7QZQ+jvG1nkKtwoeQT30Rqs9JvxkHSaA=
-X-Google-Smtp-Source: AGHT+IEPG6ALVrKC0vxITNNnj0AxUU2b5IhohOK+zwxcy7Y2DoKsbVYQ4rwu1v3iMbA9+oXaQb0Gcw==
-X-Received: by 2002:a05:600c:228f:b0:426:668f:5eca with SMTP id 5b1f17b1804b1-426706c6878mr52146665e9.7.1720693203327;
-        Thu, 11 Jul 2024 03:20:03 -0700 (PDT)
-Received: from [127.0.1.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266e861339sm125270025e9.12.2024.07.11.03.20.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 03:20:02 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Thu, 11 Jul 2024 11:20:02 +0100
-Subject: [PATCH 2/2] media: ov5675: Elongate reset to first transaction
- minimum gap
+	s=arc-20240116; t=1720693215; c=relaxed/simple;
+	bh=bXkbx4XI9S8xRoGMmjvhk/F6NhSDbNwIV9TJqHXo5uA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ry2zm9QOKddlQL1DQ2nSmRykQfMNQpmTeDyblndBsbxgdQQ2rqMsIxZRggt/gWA1B9mvrMbyYy6ANMwS4pnjS+RiQw26uQYIhUraTEnFhwXo9eC/hpUElgGNvqmSApc/QPDUbfGxR/aXU8LVGApSQGQouDo/jiMDYmXdYNo7fdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=UndiOja3; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 952ffbbb51c44c8d; Thu, 11 Jul 2024 12:20:05 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 9C185A05B88;
+	Thu, 11 Jul 2024 12:20:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1720693205;
+	bh=bXkbx4XI9S8xRoGMmjvhk/F6NhSDbNwIV9TJqHXo5uA=;
+	h=From:To:Cc:Subject:Date;
+	b=UndiOja3SPB9b5Tn/U6FgzBq5jzVoLISHeHDa+v4TXNX/lJQFZqDNz61/EFcy7euU
+	 QWTq5RnaDd970QEn9NjBAMb4eZ/4QwYXOptIOn7SJMWadxiO7/SELsyLhWDLfTUxuN
+	 uoOecNFLxAonU1iSSyIVoPyhTLwf2e858tQAHXfwLIlIinKjvGFCkeEB+zFA5dZW4h
+	 mGfMPw6axU69raDv4ICEi5dydH1Ae4iK8vOgvX7yXUFE6bdS2+jrEdTha14JivxWFP
+	 gqXnkjR4e+pXfxFsOI2KE3CH5837cKYF1W9tEtMuL/2YJAQmtdrWj+/iLf3DMgq0Ae
+	 t5pPNrySDfN1g==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux ACPI <linux-acpi@vger.kernel.org>,
+ Stefan Seyfried <stefan.seyfried@googlemail.com>
+Subject: [PATCH v1] irq: Set IRQF_COND_ONESHOT in request_irq()
+Date: Thu, 11 Jul 2024 12:20:04 +0200
+Message-ID: <5800834.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240711-linux-next-ov5675-v1-2-69e9b6c62c16@linaro.org>
-References: <20240711-linux-next-ov5675-v1-0-69e9b6c62c16@linaro.org>
-In-Reply-To: <20240711-linux-next-ov5675-v1-0-69e9b6c62c16@linaro.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
- Jacopo Mondi <jacopo@jmondi.org>
-Cc: Johan Hovold <johan@kernel.org>, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, stable@vger.kernel.org
-X-Mailer: b4 0.15-dev-13183
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrfeeggddvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepgedprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgvfhgrnhdrshgvhihfrhhivggusehgohho
+ ghhlvghmrghilhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
 
-The ov5675 specification says that the gap between XSHUTDN deassert and the
-first I2C transaction should be a minimum of 8192 XVCLK cycles.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Right now we use a usleep_rage() that gives a sleep time of between about
-430 and 860 microseconds.
+The callers of request_irq() don't care about IRQF_ONESHOT because they
+don't provide threaded handlers, but if they happen to share the IRQ
+with the ACPI SCI, which has a threaded handler and sets IRQF_ONESHOT,
+request_irq() will fail for them due to a flags mismatch.
 
-On the Lenovo X13s we have observed that in about 1/20 cases the current
-timing is too tight and we start transacting before the ov5675's reset
-cycle completes, leading to I2C bus transaction failures.
+Address this by making request_irq() add IRQF_COND_ONESHOT to the flags
+passed to request_threaded_irq() for all of its callers.
 
-The reset racing is sometimes triggered at initial chip probe but, more
-usually on a subsequent power-off/power-on cycle e.g.
-
-[   71.451662] ov5675 24-0010: failed to write reg 0x0103. error = -5
-[   71.451686] ov5675 24-0010: failed to set plls
-
-The current quiescence period we have is too tight, doubling the minimum
-appears to fix the issue observed on X13s.
-
-Fixes: 49d9ad719e89 ("media: ov5675: add device-tree support and support runtime PM")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Fixes: 7a36b901a6eb ("ACPI: OSL: Use a threaded interrupt handler for SCI")
+Closes: https://lore.kernel.org/lkml/205bd84a-fe8e-4963-968e-0763285f35ba@message-id.googlemail.com
+Reported-by: Stefan Seyfried <stefan.seyfried@googlemail.com>
+Tested-by: Stefan Seyfried <stefan.seyfried@googlemail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/media/i2c/ov5675.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ include/linux/interrupt.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
-index 92bd35133a5d..0498f8f3064d 100644
---- a/drivers/media/i2c/ov5675.c
-+++ b/drivers/media/i2c/ov5675.c
-@@ -1018,8 +1018,13 @@ static int ov5675_power_on(struct device *dev)
- 
- 	gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
- 
--	/* 8192 xvclk cycles prior to the first SCCB transation */
--	usleep_range(delay_us, delay_us * 2);
-+	/* The spec calls for a minimum delay of 8192 XVCLK cycles prior to
-+	 * transacting on the I2C bus, which translates to about 430
-+	 * microseconds at 19.2 MHz.
-+	 * Testing shows the range 8192 - 16384 cycles to be unreliable.
-+	 * Grant a more liberal 2x -3x clock cycle grace time.
-+	 */
-+	usleep_range(delay_us * 2, delay_us * 3);
- 
- 	return 0;
+Index: linux-pm/include/linux/interrupt.h
+===================================================================
+--- linux-pm.orig/include/linux/interrupt.h
++++ linux-pm/include/linux/interrupt.h
+@@ -168,7 +168,8 @@ static inline int __must_check
+ request_irq(unsigned int irq, irq_handler_t handler, unsigned long flags,
+ 	    const char *name, void *dev)
+ {
+-	return request_threaded_irq(irq, handler, NULL, flags, name, dev);
++	return request_threaded_irq(irq, handler, NULL,
++				    flags | IRQF_COND_ONESHOT, name, dev);
  }
+ 
+ extern int __must_check
 
--- 
-2.45.2
+
 
 
