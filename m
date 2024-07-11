@@ -1,100 +1,86 @@
-Return-Path: <linux-kernel+bounces-248960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 571DE92E46E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:22:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0356A92E470
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 004191F2213C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:22:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69495B217B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFEB15A862;
-	Thu, 11 Jul 2024 10:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606EE15ADA4;
+	Thu, 11 Jul 2024 10:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSEZov2p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjIkTiBu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD34C157A59;
-	Thu, 11 Jul 2024 10:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2147157A59;
+	Thu, 11 Jul 2024 10:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720693276; cv=none; b=ILRiH0vuxyTB1SXsuYuJlZw1I4UsITGIuKwBw8fNurgdYb7t5CMQOBS5ABx1lQTEckN1RmpMwQSzDfN6n/ZM24wZrr6mtyueCyQHdVOVjohJpxyxK672w9ohOaFE5mhs8yIHif7L7LmR41GmUOHEglANS/1RvrR42xEnlVoGUxg=
+	t=1720693280; cv=none; b=FKnL6yLxsLYFa2Equ4ZHtvFtJQ8etjGkbmFQDTTMArUEEDkjNx9e036b5RzRPdYiXy9hPlVwHmqGU8nGghMUFGWDgba2XmeCuPwsk06uVG312tXBRb9C4oEvkRlbgODgn/le+U0JjRPxybt2TSLpzkW3/ZrNt1m5gBQ5D+fcmH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720693276; c=relaxed/simple;
-	bh=j25o/Qob8Alr59DZNCfHMzseZ54egNEwBktZQ1r19VY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cG8etz0N2OeXKwFl90GCw5Y2Hu9u8xVto9iYZkniEkph6gvf+AUYiYv9czvCajQ8raJTXQUyqcYvgtMlDavZN2Rj4995bmFHt3eK9C+5PxRRr8nAKbz3m9gRk/wF495/YZnkpekhjulcgbon7Hl4+0mOe4PRSWpcZpAC3PDWl6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSEZov2p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A88C4AF0A;
-	Thu, 11 Jul 2024 10:21:16 +0000 (UTC)
+	s=arc-20240116; t=1720693280; c=relaxed/simple;
+	bh=QcQ0uibM7EwQ7o/FHK5UXHNCLMrQ9cs3EDuWA5Tleeo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b63UXuRoXFWdV687DNktIB/LJZJV/mc9IWEwsMu5SFhqo0bKYI8+7tXFmwz5n/fBxwLkubnSlkIIrBaGc68UBxuEl5IweRedv9zE30nSIk0B4N/5E4CAlL+Jt3zDzt2xl85ZWrqBAsBz1gbWeRXDlRh4l0puSmwixyU9WEWxDNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjIkTiBu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBF79C4AF07;
+	Thu, 11 Jul 2024 10:21:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720693276;
-	bh=j25o/Qob8Alr59DZNCfHMzseZ54egNEwBktZQ1r19VY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tSEZov2pJZobOIzBI4XqvCzRsVTYy/x6GTxotfnYw/sZT0sJTuvpsYxsP5zZgWZOg
-	 BNPIuyOViW5b4Td348Q4/40ttTm9aYTRVWpuz6EEARhnRgOdRNQOC88Mp7tYl0LBPa
-	 /Qjf/GrfSuKogEXi+PQgn8+jai8Z9VED9cjKZ9/NIJG0lVtNoy18NUp+0M0Kfwhu3G
-	 aF94ISNk8WFQ7kmi024K0ivzMpgUF9g3tuaBKimY4DOFe2ixiCXB3x+WwZ2Mfl4qzO
-	 4lx5QLqO3mJ1Un5I89kcRFxitSpnWalg1lsf0/9d3zDR9vGPqUoxOLtRfz+uqQwVoC
-	 WHZOGfuTbXEtA==
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3d92ab6f34cso35541b6e.1;
-        Thu, 11 Jul 2024 03:21:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXjlb8eYeqGTNmezj3BJjnjBfRmgxetIaPcSpByarJLIY0NqLBDiFYCL7kkESGiTUztRKktcWFgSUdWRKwtSoot+rOeCMWelgnElPjFePXp3IiywD4hHflcWIOAiVQDJUqjhDD6ufK/pQ==
-X-Gm-Message-State: AOJu0Yx5AkLNe77XqMh3x8CHGEx5qWB0FPFh3BwfNC+PUwcsGC4PeJ9g
-	F26GFXaKNlEFALlX99KjIp1Fx6rUkP6FEVwdCEzVC2EemQFTBd1vS0WNsa9kytMJMU/k0859hon
-	GpDa4ZyZt2HzQ5Qy11peV8RAsh+8=
-X-Google-Smtp-Source: AGHT+IEsVVvCwqVOuMCI3ObNf4O5mY0G1M8NrIcjumiF91h349aZaObr1EVuFSCYNUdWfhBpzuv0lSDIx2YjeZbJzs8=
-X-Received: by 2002:a05:6870:d88f:b0:25e:1817:e4a8 with SMTP id
- 586e51a60fabf-2603aa6fe26mr2050001fac.4.1720693275603; Thu, 11 Jul 2024
- 03:21:15 -0700 (PDT)
+	s=k20201202; t=1720693280;
+	bh=QcQ0uibM7EwQ7o/FHK5UXHNCLMrQ9cs3EDuWA5Tleeo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IjIkTiBu6kfCs4PM7aSws5NgW5r3xl4kbLC+f38PAVvigy/RSeQfze0KB8hbuviqK
+	 zZXnC9drQVINaI5Vk6Sumwzs1q/m/frpSYR7VTONlOO5xmohkzPSsRRwDe3T+smn3F
+	 TGAjVsQSL0AihfUN68jHi9GuNsc7wpmOGQNB/AZOgKqCKd0Jg7H13g5mCjnR3Sdo3X
+	 hc4x8F2YGvepUaDsp61Mg7fPhcrtPkLfk2GLd5p1cQ9nvhWsXEGC6FjbSQH7s817vS
+	 wXaY5qbiYi+YbqGJUbAuzGBOEvmyiOJdyfGh4DRTyZzQx7KIWpjT/wqJSgT3ygrlAO
+	 agk35CPbF548g==
+Date: Thu, 11 Jul 2024 12:21:16 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 32/60] i2c: mv64xxx: reword according to newest
+ specification
+Message-ID: <6lnet5zr6giafoanwmqpcvkf5yzeyobvx4tnxz5pp5bnrmo6gx@csglsnqjmfrk>
+References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+ <20240706112116.24543-33-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <205bd84a-fe8e-4963-968e-0763285f35ba@message-id.googlemail.com>
- <67d74985-7be5-4e29-aab2-97a08208ca3f@intel.com> <CAJZ5v0i0jJBDqYjp+9_Bmhhf67SrWNXaRY1ZfDx6GEKfCLcGVQ@mail.gmail.com>
- <454710cf-38b4-459a-8b5f-e40bcd7f20e8@message-id.googlemail.com>
-In-Reply-To: <454710cf-38b4-459a-8b5f-e40bcd7f20e8@message-id.googlemail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 11 Jul 2024 12:21:02 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gjpkDiiP0ogc956E=pEY_jSeuXRgNONWQe0D4yO3mXEw@mail.gmail.com>
-Message-ID: <CAJZ5v0gjpkDiiP0ogc956E=pEY_jSeuXRgNONWQe0D4yO3mXEw@mail.gmail.com>
-Subject: Re: Regression in 6.8 from "ACPI: OSL: Use a threaded interrupt
- handler for SCI"
-To: Stefan Seyfried <stefan.seyfried@googlemail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	"Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240706112116.24543-33-wsa+renesas@sang-engineering.com>
 
-Hi Stefan,
+Hi Wolfram,
 
-On Thu, Jul 11, 2024 at 7:04=E2=80=AFAM Stefan Seyfried
-<stefan.seyfried@googlemail.com> wrote:
->
-> Hi Rafael,
->
-> Am 10.07.24 um 15:13 schrieb Rafael J. Wysocki:
-> > On Mon, Jul 8, 2024 at 3:51=E2=80=AFPM Wysocki, Rafael J
-> > <rafael.j.wysocki@intel.com> wrote:
-> >>
-> >
-> > So can you please check if the attached patch helps?
->
-> Yes, everything works perfectly fine with that applied.
->
-> Thanks and best regards,
->
+> diff --git a/drivers/i2c/busses/i2c-mv64xxx.c b/drivers/i2c/busses/i2c-mv64xxx.c
+> index dc160cbc3155..29f94efedf60 100644
+> --- a/drivers/i2c/busses/i2c-mv64xxx.c
+> +++ b/drivers/i2c/busses/i2c-mv64xxx.c
+> @@ -89,8 +89,8 @@ enum {
+>  	MV64XXX_I2C_STATE_WAITING_FOR_RESTART,
+>  	MV64XXX_I2C_STATE_WAITING_FOR_ADDR_1_ACK,
+>  	MV64XXX_I2C_STATE_WAITING_FOR_ADDR_2_ACK,
+> -	MV64XXX_I2C_STATE_WAITING_FOR_SLAVE_ACK,
+> -	MV64XXX_I2C_STATE_WAITING_FOR_SLAVE_DATA,
+> +	MV64XXX_I2C_STATE_WAITING_FOR_TARGET_ACK,
+> +	MV64XXX_I2C_STATE_WAITING_FOR_TARGET_DATA,
+>  };
 
-Thanks for testing!
+OK, I managed to check and I couldn't find any definition about
+the driver's state.
 
-Patch submitted, let's see what Thomas has to say about it.
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 
-Cheers, Rafael
+Thanks,
+Andi
 
