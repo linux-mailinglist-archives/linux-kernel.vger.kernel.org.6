@@ -1,274 +1,152 @@
-Return-Path: <linux-kernel+bounces-249182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A57B92E821
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:19:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A738E92E81C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60E03B24647
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D811D1C238E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E13215CD78;
-	Thu, 11 Jul 2024 12:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B6315D5BE;
+	Thu, 11 Jul 2024 12:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KK7LuUy+"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pn8Yq6Nx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9286615E5DF
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085B414C5A1;
+	Thu, 11 Jul 2024 12:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720700233; cv=none; b=UID6sxQGAg9Z2DL72axJQq51FHVfj9aIzl/vKYgFrq8VXJgEgqTfJbukda12HSGshPs5eUwv6HHteGmst9DyULd0ePIEmSenFTGc9nNU6E3WhrKYgg9XChXe0Ft7OMJwcCjPK0LL1S79Vpp2lgZoTcl6PYExIKEXQtkfVDt7QO8=
+	t=1720700264; cv=none; b=qm2IG7vVngzZ+nSaBKkNxM4kqJQ2XPz7u0H5zzxYagoC2k7xxgCQ1SA/WwBU10Y5I8fPv5JKPF4GDfdvQoY99afFT0cm8ULjC4Yzvp/dlAqAe5OXjeXLDC3smOJijJ4F8rchNf1dXnGQfFlPOJOSZNkYOqoU874Nj3ghmM/Ls38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720700233; c=relaxed/simple;
-	bh=LylSGN00CZycrIeZtCZWrilto+Oh9Zgg0qJLpjORVCA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=t3QZW2x+P5sZlyJ6EmVGxBN6NBJkHDRjNj1ujgKr4cTiDP8m3rR7vSRW59xAjomj/VTKxHxeLK8eAjz5xEQs9CqpVm8Zoxk4D8dmRS1gWy5HiB2bOxR+bx4U4cfTncLtwSaughJXfWSOueZdawRt8HQ2Xj+eEtQlqZwVwRmZBQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KK7LuUy+; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70b6003c3d2so501652b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:17:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1720700231; x=1721305031; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zNUgfMo2gXZSNLPHfh654aj1KCXo46JCf2k9E+T7+E0=;
-        b=KK7LuUy+DBSzLjLX10CbOSk3k555My2TQvb9zodLgY7dCbEGe6XkgA/6vtkyZqmWXh
-         cljPNDwaETAJYPd8Hz4Bkqqry/FvvVN9fmzEtPOz9r92yOIgX+yMwvEAc0G80zAKUcD+
-         LzohAkmFSEWr5MenVgG3kzLakMUPFiNikVz5A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720700231; x=1721305031;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNUgfMo2gXZSNLPHfh654aj1KCXo46JCf2k9E+T7+E0=;
-        b=aGCEKjK7NI0Y2yfgiwgo6vdo6h9ETM+KbfzkPv0/echiiP2UM6zSYgzOFFIsSeEu+4
-         piCAqPXRvJsgmefC41flQEqFsZdwDYNxRiMMdu7OkkfhwQnqysNeVSRh1F/uSOiJxW3D
-         Jfp68Ib5rKKJ7MVGiIYDpGv1CHnvGeMu9OIvAIVRmYsXVxU0mFwsap2j0UYzTJyk0eLE
-         4Vwl1rCjwaaTWMNZ48EmcyHhKhyB9UxeMqHqz5GuQXJ1cTezGhHkmEe2MJ10Vr3VRNo+
-         pR4XTApnrnJz1SVr4LuOgDRDteOKc+Fg78e4XEwhTE0QQJ40SzWQYezEhiZKtteeSVzC
-         zO6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWsUmsS50bS9vA5GtsAA21IOv+a+te3ZeJZaBnI/h671No4wtmQuVTPHe44MvcaOEVIa60bkKr+ivd6YHN3/tPP/mFm5Gk0/ZX8Q2Pm
-X-Gm-Message-State: AOJu0YwiQySZkWV4U20/wJHKFiUkA0pDAieyMDE0uRRL/kKo9+PLrr9B
-	pbvUXuvJRxPm5p+sK+aKTX7Z4KUl9xOwJ/musGVCLGtYNwScMzw+dEcCXQ5ezBVx+UbKTV1PyyT
-	6c5lI
-X-Google-Smtp-Source: AGHT+IFNkZ5F02HmXU6UCANTg5DiTRJQwTFLrtdtbLiaqEloiR+jcdq1tO98nmpNd2EYHR1M29lc+Q==
-X-Received: by 2002:a05:6a20:734c:b0:1c0:f6b7:a897 with SMTP id adf61e73a8af0-1c2982285f2mr9806840637.32.1720700230784;
-        Thu, 11 Jul 2024 05:17:10 -0700 (PDT)
-Received: from akaher-virtual-machine.eng.vmware.com ([66.170.99.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a10111sm49211985ad.20.2024.07.11.05.17.08
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Jul 2024 05:17:10 -0700 (PDT)
-From: Ajay Kaher <ajay.kaher@broadcom.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org
-Cc: mark.rutland@arm.com,
-	rostedt@goodmis.org,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	yangjihong1@huawei.com,
-	zegao2021@gmail.com,
-	leo.yan@linux.dev,
-	asmadeus@codewreck.org,
-	siyanteng@loongson.cn,
-	sunhaiyong@loongson.cn,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ajay.kaher@broadcom.com,
-	alexey.makhalov@broadcom.com,
-	vasavi.sirnapalli@broadcom.com
-Subject: [PATCH RFC 3/3] perf/report: add off-cpu samples
-Date: Thu, 11 Jul 2024 17:46:19 +0530
-Message-Id: <1720700179-22839-4-git-send-email-ajay.kaher@broadcom.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1720700179-22839-1-git-send-email-ajay.kaher@broadcom.com>
-References: <1720700179-22839-1-git-send-email-ajay.kaher@broadcom.com>
+	s=arc-20240116; t=1720700264; c=relaxed/simple;
+	bh=V8ATJ6Xx5N5Bku7Mvd49jTeUfTO682e6YmL0bwqtHMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DHYjQf+pdCKIjckpsHZnGYrJj9aKrXYEo9zP2eHs9bGIGuqs8ticTOB5dNwiE2gsZ2uQx2NNu7msHVXYki9MLi0ceGoFpQaxMZOEog7HeQ9yGexf9QPE4Za/hYDUJOs4QF2gKujF89YazEPRkIrNPP0v4KNVUenUmcBwDIy7Vd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pn8Yq6Nx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 574D4C116B1;
+	Thu, 11 Jul 2024 12:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720700263;
+	bh=V8ATJ6Xx5N5Bku7Mvd49jTeUfTO682e6YmL0bwqtHMQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Pn8Yq6NxseRcYNSbLgTH4MS0sBnAPrLnv6vO7RJJ27mOwzsnA+tiDI8wpGWp+79qE
+	 vGh0r/Q0SxwnK4BicS2S0iVcPUx1yC0ZXbdtQCOoFeYND2mHVLbSV14PAP0/yIvCdu
+	 0OEamTz1l6vFbhJCtoaSIx0Aa/esv7Ur60wXrKS67OhUV4tz8la5DTQUsiPqp4DQpL
+	 0hxh6pCfTI9Sywrfu7qp8kyzHCuc5wXVBS9HO/QnbPFXPARH3ha4t+UY5l3jY/lVKp
+	 ViAAu6qnToGvxjJH4h5/rIQakVNuFN3U+vSlj+s5Nw+/WfiJIxwkAF3IidgXr3PVqQ
+	 9igC+XPBG96VA==
+Message-ID: <08b57750-536c-4dbb-9688-fa0622b0bbb3@kernel.org>
+Date: Thu, 11 Jul 2024 14:17:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/13] media: qcom: camss: Add CSID Gen3 support for
+ SM8550
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Yongsheng Li <quic_yon@quicinc.com>
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <20240709160656.31146-10-quic_depengs@quicinc.com>
+ <1da50dd1-b170-4775-94fc-19a10b7f9c47@kernel.org>
+ <4c8095dd-4f96-4b0e-9282-8bdfb5badbc3@quicinc.com>
+ <9255b3e4-874c-4919-b50a-919cf0f42f75@kernel.org>
+ <064baf66-eecd-4982-864f-50b86b104ff6@quicinc.com>
+ <4c26e896-69fa-413b-ace3-39c9698dd6aa@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <4c26e896-69fa-413b-ace3-39c9698dd6aa@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-off-cpu samples represent the time period for which the target
-process not occupying the cpu cycles.
+On 11/07/2024 14:00, Bryan O'Donoghue wrote:
+> On 11/07/2024 12:41, Depeng Shao wrote:
+>>>> Yes, these are some sequences to initialize the HW.
+>>>
+>>> Hm? It's like you ignore the problem and just answer with whatever to
+>>> shut up the reviewer. Instead of replying with the same, address the
+>>> problem. Why ordering is not a problem here?
+>>>
+>>
+>> Sorry, I didn't mean that, was trying to understand the problem, then 
+>> just sent out the mail by mistake.
+>> Do you mean we should use writel to ensure the strict sequences?
+>> Thanks for catching this problem, this problem is also in the the 
+>> existing camss driver. I will check all of them in this series, but the 
+>> problem in some existing camss drivers, maybe Bryan from Linaro can help 
+>> to fix them, since I don't have these devices to verify the modifications.
+> 
+> _relaxed is used I'm sure because that's what's always been used and 
+> what downstream does.
+> 
+> Is there a good reason for it ? None that I can think of.
+> 
+> Krzysztof is right, there's no good reason to use relaxed() here at all, 
+> you should drop it.
+> 
 
-In following example, perf has collected 15 off-cpu samples and
-program was running on cpu for 27%:
+In many cases relaxed will be fine, but in few might lead to tricky to
+debug issues thus people introducing msleep() or other workarounds.
+Usually init sequences are "sequences" for a reason, but of course here
+maybe it does not matter.
 
-Samples: 24 of 'task-clock:ppp', 15 of 'offcpu', Event count: ~9150831908 (73% offcpu)
-+73.77%    73.77%  a.out    libc.so.6    [.] clock_nanosleep      <-- off-cpu sample
-+24.04%    24.04%  a.out    [vdso]       [.] __vdso_gettimeofday  <-- on-cpu sample
-
-Signed-off-by: Ajay Kaher <ajay.kaher@broadcom.com>
-
----
- tools/perf/util/events_stats.h |  2 ++
- tools/perf/util/evsel.c        |  2 ++
- tools/perf/util/hist.c         | 31 ++++++++++++++++++++++++++++---
- tools/perf/util/hist.h         |  1 +
- tools/perf/util/sample.h       |  1 +
- 5 files changed, 34 insertions(+), 3 deletions(-)
-
-diff --git a/tools/perf/util/events_stats.h b/tools/perf/util/events_stats.h
-index 8fecc9fbaecc..7bb3cf1ab835 100644
---- a/tools/perf/util/events_stats.h
-+++ b/tools/perf/util/events_stats.h
-@@ -44,8 +44,10 @@ struct events_stats {
- 
- struct hists_stats {
- 	u64 total_period;
-+	u64 total_period_off_cpu;
- 	u64 total_non_filtered_period;
- 	u32 nr_samples;
-+	u64 nr_samples_off_cpu;
- 	u32 nr_non_filtered_samples;
- 	u32 nr_lost_samples;
- };
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 8ba890a5ac6e..ea41586474e3 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1146,6 +1146,7 @@ void evsel__config(struct evsel *evsel, struct record_opts *opts,
- 	attr->write_backward = opts->overwrite ? 1 : 0;
- 	attr->read_format   = PERF_FORMAT_LOST;
- 
-+	evsel__set_sample_bit(evsel, CPU);
- 	evsel__set_sample_bit(evsel, IP);
- 	evsel__set_sample_bit(evsel, TID);
- 
-@@ -2438,6 +2439,7 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
- 			u.val32[0] = bswap_32(u.val32[0]);
- 		}
- 
-+		data->off_cpu = u.val32[1];
- 		data->cpu = u.val32[0];
- 		array++;
- 	}
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 2e9e193179dd..251333e0b021 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -23,6 +23,7 @@
- #include "thread.h"
- #include "block-info.h"
- #include "ui/progress.h"
-+#include "ui/util.h"
- #include <errno.h>
- #include <math.h>
- #include <inttypes.h>
-@@ -725,6 +726,7 @@ __hists__add_entry(struct hists *hists,
- 		.socket	 = al->socket,
- 		.cpu	 = al->cpu,
- 		.cpumode = al->cpumode,
-+		.off_cpu = sample->off_cpu,
- 		.ip	 = al->addr,
- 		.level	 = al->level,
- 		.code_page_size = sample->code_page_size,
-@@ -1076,6 +1078,8 @@ iter_add_single_cumulative_entry(struct hist_entry_iter *iter,
- 	callchain_cursor_commit(get_tls_callchain_cursor());
- 
- 	hists__inc_nr_samples(hists, he->filtered);
-+	if (sample->off_cpu)
-+		++hists->stats.nr_samples_off_cpu;
- 
- 	return err;
- }
-@@ -1740,6 +1744,7 @@ void hists__reset_stats(struct hists *hists)
- {
- 	hists->nr_entries = 0;
- 	hists->stats.total_period = 0;
-+	hists->stats.total_period_off_cpu = 0;
- 
- 	hists__reset_filter_stats(hists);
- }
-@@ -1757,6 +1762,9 @@ void hists__inc_stats(struct hists *hists, struct hist_entry *h)
- 
- 	hists->nr_entries++;
- 	hists->stats.total_period += h->stat.period;
-+
-+	if (h->off_cpu)
-+		hists->stats.total_period_off_cpu += h->stat.period;
- }
- 
- static void hierarchy_recalc_total_periods(struct hists *hists)
-@@ -2745,14 +2753,20 @@ int __hists__scnprintf_title(struct hists *hists, char *bf, size_t size, bool sh
- 	struct thread *thread = hists->thread_filter;
- 	int socket_id = hists->socket_filter;
- 	unsigned long nr_samples = hists->stats.nr_samples;
-+	unsigned long nr_samples_off_cpu = hists->stats.nr_samples_off_cpu;
- 	u64 nr_events = hists->stats.total_period;
-+	int nr_events_off_cpu_percentage = (hists->stats.total_period_off_cpu * 100) / nr_events;
- 	struct evsel *evsel = hists_to_evsel(hists);
- 	const char *ev_name = evsel__name(evsel);
- 	char buf[512], sample_freq_str[64] = "";
-+	char oncpu_str[128] = "";
-+	char offcpu_str[128] = "";
-+	char offcpu_percentage_str[128] = "";
- 	size_t buflen = sizeof(buf);
- 	char ref[30] = " show reference callgraph, ";
- 	bool enable_ref = false;
- 
-+
- 	if (symbol_conf.filter_relative) {
- 		nr_samples = hists->stats.nr_non_filtered_samples;
- 		nr_events = hists->stats.total_non_filtered_period;
-@@ -2785,10 +2799,21 @@ int __hists__scnprintf_title(struct hists *hists, char *bf, size_t size, bool sh
- 		scnprintf(sample_freq_str, sizeof(sample_freq_str), " %d Hz,", evsel->core.attr.sample_freq);
- 
- 	nr_samples = convert_unit(nr_samples, &unit);
-+
-+	scnprintf(oncpu_str, sizeof(oncpu_str), "%lu%c of '%s',",
-+		  nr_samples - nr_samples_off_cpu, unit, ev_name);
-+
-+	if (evsel->core.attr.off_cpu) {
-+		scnprintf(offcpu_str, sizeof(offcpu_str), "%lu%c of '%s',",
-+			  nr_samples_off_cpu, unit, "offcpu");
-+		scnprintf(offcpu_percentage_str, sizeof(offcpu_percentage_str),
-+			  "(%d%% offcpu)", nr_events_off_cpu_percentage);
-+	}
-+
- 	printed = scnprintf(bf, size,
--			   "Samples: %lu%c of event%s '%s',%s%sEvent count (approx.): %" PRIu64,
--			   nr_samples, unit, evsel->core.nr_members > 1 ? "s" : "",
--			   ev_name, sample_freq_str, enable_ref ? ref : " ", nr_events);
-+			    "Samples: %s %s %s%sEvent count: ~%" PRIu64 " %s",
-+			    oncpu_str, offcpu_str, sample_freq_str, enable_ref ? ref : " ",
-+			    nr_events, offcpu_percentage_str);
- 
- 
- 	if (hists->uid_filter_str)
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 8fb3bdd29188..c64a07ce92fb 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -236,6 +236,7 @@ struct hist_entry {
- 	/* We are added by hists__add_dummy_entry. */
- 	bool			dummy;
- 	bool			leaf;
-+	bool			off_cpu;
- 
- 	char			level;
- 	u8			filtered;
-diff --git a/tools/perf/util/sample.h b/tools/perf/util/sample.h
-index 70b2c3135555..59b0951f4718 100644
---- a/tools/perf/util/sample.h
-+++ b/tools/perf/util/sample.h
-@@ -109,6 +109,7 @@ struct perf_sample {
- 		u16 retire_lat;
- 	};
- 	bool no_hw_idx;		/* No hw_idx collected in branch_stack */
-+	bool off_cpu;
- 	char insn[MAX_INSN];
- 	void *raw_data;
- 	struct ip_callchain *callchain;
--- 
-2.39.0
+Best regards,
+Krzysztof
 
 
