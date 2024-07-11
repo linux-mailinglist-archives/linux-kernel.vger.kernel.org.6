@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-249283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A6092E96F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:25:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 079FC92E977
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 387F7289B5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38F541C22677
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B435C160883;
-	Thu, 11 Jul 2024 13:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B47515EFB8;
+	Thu, 11 Jul 2024 13:25:32 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8544615E5CD;
-	Thu, 11 Jul 2024 13:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1B715ECDB;
+	Thu, 11 Jul 2024 13:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720704286; cv=none; b=Lq7KbPCT5dLXlN/ykZzAz4stsO8oNcNB5VdbGpXg86DmQFq1kYTtrKZrsgJioYgIms8+wSr2pnjssgq1vfA3cPIJd+oBasOK8ZafGgbURv8F5iY0Gu3uYijC4XckcG2V/9TrNPeNnvZaQhGdHLm/9If3k+2+668RsP41WPeJPWQ=
+	t=1720704331; cv=none; b=TUG2y3edrmj9YYDVocAxe5leAts80cCCif6lRcNvS+7/fZCOE/qC+ItUyA4z08/GjLxEabtFw1olw/4OGVtWHAiprh0cL8+7AUupI+GVqjDEbdTQUZYg06XJULm7cVmLsrH5jnkF2oVH2ZoHljWV27P96YeE0gDwTPcYDup7okw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720704286; c=relaxed/simple;
-	bh=NbE9x6Xf/jq9TnQJ4Rb5fku1CzVanp9X9CpEqwMhFwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVhmbk+Ut3y6kDLyKfBlctVlDUZRuH5jP9jDuyMIGIGkxEtBnPnP7U03pnNBn8BTzTU4Xxw/WEJdejABd2WMzdf5yQK4aPB7BUslifMMCHPHmFSrSAqzWqApinmc2xA7uwP/bLXGleK8XgwVVUCO2PeDJtB/5U8GvgfWfE8D2Z8=
+	s=arc-20240116; t=1720704331; c=relaxed/simple;
+	bh=9lnylkJI3VcnqkZ07Ys/34YoTSZS84BQBBbwjQq2eBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p0BK/nB9W/FtZUyNKieKDOum6ytKnC0P5zyO66J3crxexsxl5ce+dYmX6qb7y05zZoBh1kISpCybxP94OEXWtZR++CHYDuiHLBrppvWJgm1zc4XwQmN6co2GYeOOO2WpWs9XQS4JYN1pn//vCGBRrkRXzERplnyB3daTtDsF5gA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26760FEC;
-	Thu, 11 Jul 2024 06:25:09 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3792E3F766;
-	Thu, 11 Jul 2024 06:24:40 -0700 (PDT)
-Date: Thu, 11 Jul 2024 14:24:37 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v5 4/7] firmware: arm_scmi: add initial support for i.MX
- MISC protocol
-Message-ID: <Zo_dFcoBkC8X6u44@pluto>
-References: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
- <20240621-imx95-bbm-misc-v2-v5-4-b85a6bf778cb@nxp.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37CADFEC;
+	Thu, 11 Jul 2024 06:25:55 -0700 (PDT)
+Received: from [10.57.74.191] (unknown [10.57.74.191])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4C193F766;
+	Thu, 11 Jul 2024 06:25:27 -0700 (PDT)
+Message-ID: <5d285a7e-d762-4c8c-8128-bb3b543f6423@arm.com>
+Date: Thu, 11 Jul 2024 14:25:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621-imx95-bbm-misc-v2-v5-4-b85a6bf778cb@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] coresight-tpda: Optimize the function of reading
+ element size
+Content-Language: en-GB
+To: Tao Zhang <quic_taozha@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20240711081750.21792-1-quic_taozha@quicinc.com>
+ <20240711081750.21792-4-quic_taozha@quicinc.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20240711081750.21792-4-quic_taozha@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 21, 2024 at 03:04:39PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 11/07/2024 09:17, Tao Zhang wrote:
+> Since the new funnel device supports multi-port output scenarios,
+> there may be more than one TPDM connected to one TPDA. In this
+> way, when reading the element size of the TPDM, TPDA driver needs
+> to find the expected TPDM corresponding to the filter source.
+> When TPDA finds a TPDM or a filter source from a input connection,
+> it will read the Devicetree to get the expected TPDM's element
+> size.
 > 
-> i.MX95 System Manager(SM) firmware includes a SCMI vendor protocol, SCMI
-> MISC protocol which includes controls that are misc settings/actions that
-> must be exposed from the SM to agents. They are device specific and are
-> usually define to access bit fields in various mix block control modules,
-> IOMUX_GPR, and other General Purpose registers, Control Status Registers
-> owned by the SM.
+> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+> ---
+>   drivers/hwtracing/coresight/coresight-tpda.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
+> index bfca103f9f84..4936ba4a7625 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpda.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
+> @@ -110,6 +110,8 @@ static int tpda_get_element_size(struct tpda_drvdata *drvdata,
+>   		    csdev->pdata->in_conns[i]->dest_port != inport)
+>   			continue;
+>   
+> +		if (csdev->pdata->in_conns[i]->filter_src_dev)
+> +			in = csdev->pdata->in_conns[i]->filter_src_dev;
 
-Hi,
+Actually, this may not be complete, if the device was removed. Also add
+a comment here.
 
-LGTM,
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+		/*
+		 * If this port has a hardcoded filter, use the source
+		 * device directly.
+		 */
+		if (csdev->pdata->in_conns[i]->filter_src_fwnode) {
+			in = csdev->pdata->in_conns[i]->filter_src_dev;
+			if (!in)
+				continue;
+		}
 
-Thanks,
-Cristian
+
+Suzuki
+
+>   		if (coresight_device_is_tpdm(in)) {
+>   			if (drvdata->dsb_esize || drvdata->cmb_esize)
+>   				return -EEXIST;
+> @@ -124,7 +126,6 @@ static int tpda_get_element_size(struct tpda_drvdata *drvdata,
+>   		}
+>   	}
+>   
+> -
+
+>   	return rc;
+>   }
+>   
+
 
