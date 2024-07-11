@@ -1,95 +1,199 @@
-Return-Path: <linux-kernel+bounces-249801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0724492F005
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:57:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E2492F007
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F6D81F21533
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E15CC1F228EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5377519E82B;
-	Thu, 11 Jul 2024 19:57:24 +0000 (UTC)
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7100F19E832;
+	Thu, 11 Jul 2024 19:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qptw++qi"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1979B450FA;
-	Thu, 11 Jul 2024 19:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9DF19E822
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720727843; cv=none; b=SVCcL/2YMlc4vQrFba5iXlib38LN90gP28MCCilsIFfWyRs/f8Plbzz9+kHmUGbkI6oSmC5onl0IpWLh1IgY5M+pV9IGBKGZo3m1hV8CKtyOzhqbbXVYXg3aMWGCp0yaLI1xD/VSnq4w6ksZymNX+og1ig7lrt/nbj7KU8K9Jos=
+	t=1720727977; cv=none; b=Zi+SmBkZZX+TDlLf18rKhj5nwsUntJTlp0CB3H5GfuSwdDFKprW2SOyV47947rXo6wLZkzXkypMGXvhOk1+Wg244zJQYqImyTDlcaECOTM5lAuK8STKy4vGvkMxZl2sdgv3Vja4pi5HNccJ50JL9W+z8vdv8bR2ks/vkwLo8V/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720727843; c=relaxed/simple;
-	bh=jKLIKzkKA3Yux1VKw/7LF7+AkuB0/6yE9JFIkqxZHvs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=VIqQyjvGCtI52ecySFHVGlEI9FgYS7kTxr+Y0wpwmRr/bfNCO5hW0SxsVGgb7y0/gtAc6SQSNWCBUM3htj7DKQ24Tz+pZuOqbQvvt53r4A5JOIvIwFQOMm6h7R1BdDk4VcxE36K/+owCarU1S7H3S/Hnon6wd302bhYnEX5PbNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id D28A739F8;
-	Thu, 11 Jul 2024 21:57:18 +0200 (CEST)
+	s=arc-20240116; t=1720727977; c=relaxed/simple;
+	bh=EwcI560szzXCbpyfgDyYof692YXwxRMkFI4AdQM+lcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fiBiv3MAIxX4Zh5Itl+wyuObuCzJGVNuXkXa6JAnexhV5hrY1zo1SAMtuWozpyqOA1/uheGI4KNohZZQug6DoYZg28brfZUE8uo+bDV8Cfm+EvFywt6NaW2I/CzNvHb0GGsZLRs6lSrQAMZo1AVN84jQDeNa6XqwivLW1P/Ec4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qptw++qi; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-447df43324fso1671cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:59:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720727975; x=1721332775; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=usQgq2qcD076ORgLl9lg0b15V7evrXBpIxDm3sw86OY=;
+        b=qptw++qixRwPsC5loItR03SgoDryBucQvldLH8j3mPnYCa8Jl8M3xp2NHqaIJCioDB
+         B1d05m+xuXwQc29IaOwe1MvIxtyUmzeIe/ZsJbe22tAdezD8FdnXYz32lpCHKwnkdq9n
+         ykah1rR7z3JUj8z3KXcnqtzTUpDtjXBHcIKL6nh5awf/Pg9Ut5+NulBBPsNCxFGmOIGL
+         nDvVnNyNuicZ/lK2O5ZdcXh/UCQi6lNN3Gbi6E8p6tKKQN/M464qxYfoOc7HFM+cZxPp
+         MhWyBLccduYxNp4FQvot/iwxDOkicyeW2xly7PAAKFW77W9ipQOp3iQzOhLnb8UvhdJ+
+         uOcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720727975; x=1721332775;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=usQgq2qcD076ORgLl9lg0b15V7evrXBpIxDm3sw86OY=;
+        b=B4Xnae+w41YDlLatXR9qQ5+0OhXXrQBilUMyoWoqOH/9GNGoPCIa3nSJKCQuzMOQcp
+         N9iIPWKMle4/Q0RYJKku2fWOKocFOYgJLs9ONkAYffbCgE87JJz8s8oo7eRkA6Jp8t5o
+         3eCXG+xpegR8JW3UO+PQPbfNxyXZlUZKWK0vGrrCnqkCOqmzCiJtsBrm7owQJlpwHZ8e
+         5lZPlTT+/g+6CLj00Lk5lZHV+EYoODbVl5SL8zJtAnE+GuGjy1rNl7rIi4t3sXx0QvsT
+         A2WrRH86dQSRjB8ohHJGk2s/p8sB1hREdTJ+RztaO0dTPaycuaDFcr7m2kjI1mNNUbYM
+         L5Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKyDd3SY8M4YbABJ+wdlPcSFkml9YhT1H5H0qC0CRbdq4yzm9qFAmB8526LYtSXvCzRf8ykzjyn8mOogEZtZipffyMtUehg9KIjvtp
+X-Gm-Message-State: AOJu0Yx1TU5FNIEaRwisU2sM3Ix1GDcC/kvLI1je0FtoOXW5QXGDCtO6
+	3ECCeLxt12LCfeakaWaArAdQx1HGqjzhQyRQoq487WhUW2w1THuhwT8va5Ppu0r0QyPaZ0bJvsw
+	8+7QCBN0UUajmGHfOx+unEvSx71/GTlLQ9J1H
+X-Google-Smtp-Source: AGHT+IEM7irFssvF1uct5oQd7x7Vaba9daG5UqSQAd7zGLlxjvcWer92aqHngywJVogpDpoHiV+PdmFmORbjnMYXigE=
+X-Received: by 2002:ac8:7193:0:b0:447:d555:7035 with SMTP id
+ d75a77b69052e-44e793e6f9dmr475651cf.13.1720727974558; Thu, 11 Jul 2024
+ 12:59:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
+ <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
+ <ZpAR0CgLc28gEkV3@zx2c4.com> <ZpATx21F_01SBRnO@zx2c4.com> <98798483-dfcd-451e-94bb-57d830bf68d8@redhat.com>
+ <54b6de32-f127-4928-9f4a-acb8653e5c81@redhat.com> <ZpAcWvij59AzUD9u@zx2c4.com>
+ <ZpAc118_U7p3u2gZ@zx2c4.com> <ZpAfigBHfHdVeyNO@zx2c4.com> <8586b19c-2e14-4164-888f-8c3b86f3f963@redhat.com>
+ <ZpAqbh3TnB9hIRRh@zx2c4.com> <443146f4-9db8-4a19-91f1-b6822fad8ce8@redhat.com>
+ <1c8632b4-06a5-49da-be0c-6fc7ac2b3257@redhat.com> <2c464271-1c61-4cd8-bd4e-4bd8aa01fa00@redhat.com>
+ <CAOUHufYsxCb=taWWfUbuzi1Hmmug=ThQMoTjsxrtFkt=UXEu6w@mail.gmail.com> <da3ea234-d6dd-4809-b2f5-fbfedacb9748@redhat.com>
+In-Reply-To: <da3ea234-d6dd-4809-b2f5-fbfedacb9748@redhat.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Thu, 11 Jul 2024 13:58:57 -0600
+Message-ID: <CAOUHufZuMdN31WnbwctyFv+o8nAfVBaiHZa9Ud_cz6QAoNQHxw@mail.gmail.com>
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
+To: David Hildenbrand <david@redhat.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de, 
+	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, "Carlos O'Donell" <carlos@redhat.com>, 
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
+	Christian Brauner <brauner@kernel.org>, David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 11 Jul 2024 21:57:18 +0200
-Message-Id: <D2MZ405LVTN8.3LTVN3KTUD6A3@kernel.org>
-Subject: Re: [PATCH v2 3/4] dt-bindings: mtd: macronix,mx25l12833f: add
- SPI-NOR chip
-Cc: "Tudor Ambarus" <tudor.ambarus@linaro.org>, "Jaime Liao"
- <jaimeliao@mxic.com.tw>, <leoyu@mxic.com.tw>, "Alvin Zhou"
- <alvinzhou@mxic.com.tw>, "Julien Su" <juliensu@mxic.com.tw>, "Erez Geva"
- <erezgeva@nwtime.org>, <linux-mtd@lists.infradead.org>, "Pratyush Yadav"
- <pratyush@kernel.org>, <linux-kernel@vger.kernel.org>, "Miquel Raynal"
- <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>, <devicetree@vger.kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Erez" <erezgeva2@gmail.com>, "Esben Haabendal" <esben@geanix.com>
-X-Mailer: aerc 0.16.0
-References: <20240629103914.161530-1-erezgeva@nwtime.org>
- <20240629103914.161530-4-erezgeva@nwtime.org>
- <1c457520-07b7-4bde-b040-e8bca959a4f5@linaro.org>
- <CANeKEMOODBNZA6efh0E0Ga_KaVs5Y3WLcUftRhNwYHhnXO=GNw@mail.gmail.com>
- <CANeKEMO42rJt5Ob4_HDcZ3eEMvuMOPvRaFaLwL8SA65NtxSV7A@mail.gmail.com>
- <1d56c3b2-7adf-45b9-a509-956340f3f17b@linaro.org>
- <CANeKEMMe-Onpn7xWQHgWz1Ps_uQPEMa7HrKA00HpoKjG+DCJNQ@mail.gmail.com>
- <3bafcbea-6aa5-43ca-9d12-3916be3fe03d@linaro.org>
- <CANeKEMM02-Jvb8Pd0fZJFnRg-hsAW+hckYWm11tZZXNMPSPJ=w@mail.gmail.com>
- <9b45cc73-2251-4085-af95-7ccd00dd6d3b@linaro.org>
- <CANeKEMP+mRefYZNb+TuBmOD7dC6=7Rg7D1EcfnjJoiaeaV28SQ@mail.gmail.com>
- <875xtd48ps.fsf@geanix.com>
- <CANeKEMNJ3_ET5pQo2wg7_GSLX+vE+dqW-CV=v2DnG10xcgSdzQ@mail.gmail.com>
-In-Reply-To: <CANeKEMNJ3_ET5pQo2wg7_GSLX+vE+dqW-CV=v2DnG10xcgSdzQ@mail.gmail.com>
 
-Hi Erez,
-
-No top posting please, see also
-https://subspace.kernel.org/etiquette.html
-
-On Thu Jul 11, 2024 at 8:57 PM CEST, Erez wrote:
-> Yes, I think we should.
+On Thu, Jul 11, 2024 at 1:53=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
 >
-> Reading the specification provided publicly by Macronix.
-> For all the JEDEC IDs with the no SFDP flag in drivers/mtd/spi-nor/macron=
-ix.c
-> All of them have a new version or a new chip with the same JEDEC ID
-> that supports SFDP.
-> There are 2 chips that Macronix does not provide spec. in public.
-> I can ask Macronix technical support on these 2 chips.
+> On 11.07.24 21:49, Yu Zhao wrote:
+> > On Thu, Jul 11, 2024 at 1:20=E2=80=AFPM David Hildenbrand <david@redhat=
+.com> wrote:
+> >>
+> >> On 11.07.24 21:18, David Hildenbrand wrote:
+> >>> On 11.07.24 20:56, David Hildenbrand wrote:
+> >>>> On 11.07.24 20:54, Jason A. Donenfeld wrote:
+> >>>>> On Thu, Jul 11, 2024 at 08:24:07PM +0200, David Hildenbrand wrote:
+> >>>>>>> And PG_large_rmappable seems to only be used for hugetlb branches=
+.
+> >>>>>>
+> >>>>>> It should be set for THP/large folios.
+> >>>>>
+> >>>>> And it's tested too, apparently.
+> >>>>>
+> >>>>> Okay, well, how disappointing is this below? Because I'm running ou=
+t of
+> >>>>> tricks for flag reuse.
+> >>>>>
+> >>>>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.=
+h
+> >>>>> index b9e914e1face..c1ea49a7f198 100644
+> >>>>> --- a/include/linux/page-flags.h
+> >>>>> +++ b/include/linux/page-flags.h
+> >>>>> @@ -110,6 +110,7 @@ enum pageflags {
+> >>>>>              PG_workingset,
+> >>>>>              PG_error,
+> >>>>>              PG_owner_priv_1,        /* Owner use. If pagecache, fs=
+ may use*/
+> >>>>> +   PG_owner_priv_2,
+> >>>>
+> >>>> Oh no, no new page flags please :)
+> >>>>
+> >>>> Maybe just follow what Linux suggested: pass vma to pte_dirty() and
+> >>>> always return false for these special VMAs.
+> >>>
+> >>> ... or look into removing that one case that gives us headake.
+> >>>
+> >>> No idea what would happen if we do the following:
+> >>>
+> >>> CCing Yu Zhao.
+> >>>
+> >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> >>> index 0761f91b407f..d1dfbd4fd38d 100644
+> >>> --- a/mm/vmscan.c
+> >>> +++ b/mm/vmscan.c
+> >>> @@ -4280,14 +4280,9 @@ static bool sort_folio(struct lruvec *lruvec, =
+struct folio *folio, struct scan_c
+> >>>                    return true;
+> >>>            }
+> >>>
+> >>> -       /* dirty lazyfree */
+> >>> -       if (type =3D=3D LRU_GEN_FILE && folio_test_anon(folio) && fol=
+io_test_dirty(folio)) {
+> >>> -               success =3D lru_gen_del_folio(lruvec, folio, true);
+> >>> -               VM_WARN_ON_ONCE_FOLIO(!success, folio);
+> >>> -               folio_set_swapbacked(folio);
+> >>> -               lruvec_add_folio_tail(lruvec, folio);
+> >>> -               return true;
+> >>> -       }
+> >>> +       /* lazyfree: we may not be allowed to set swapbacked: MAP_DRO=
+PPABLE */
+> >>> +       if (type =3D=3D LRU_GEN_FILE && folio_test_anon(folio) && fol=
+io_test_dirty(folio))
+> >>> +               return false;
+> >
+> > This is an optimization to avoid an unnecessary trip to
+> > shrink_folio_list(), so it's safe to delete the entire 'if' block, and
+> > that would be preferable than leaving a dangling 'if'.
+>
+> Great, thanks.
+>
+> >
+> >> Note that something is unclear to me: are we maybe running into that
+> >> code also if folio_set_swapbacked() is already set and we are not in t=
+he
+> >> lazyfree path (in contrast to what is documented)?
+> >
+> > Not sure what you mean: either rmap sees pte_dirty() and does
+> > folio_mark_dirty() and then folio_set_swapbacked(); or MGLRU does the
+> > same sequence, with the first two steps in walk_pte_range() and the
+> > last one here.
+>
+> Let me rephrase:
+>
+> Checking for lazyfree is
+>
+> "folio_test_anon(folio) && !folio_test_swapbacked(folio)"
+>
+> Testing for dirtied lazyfree is
+>
+> "folio_test_anon(folio) && !folio_test_swapbacked(folio) &&
+>   folio_test)dirty(folio)"
+>
+> So I'm wondering about the missing folio_test_swapbacked() test.
 
-We don't add flashes we cannot test.
-
--michael
+It's not missing: type =3D=3D LRU_GEN_FILE means folio_is_file_lru(),
+which in turn means !folio_test_swapbacked().
 
