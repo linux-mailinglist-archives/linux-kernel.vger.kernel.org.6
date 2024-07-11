@@ -1,341 +1,181 @@
-Return-Path: <linux-kernel+bounces-249354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF9892EA80
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:19:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED60692EA85
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7B31F2333C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A06D0281EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4E21649C6;
-	Thu, 11 Jul 2024 14:19:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E031B15AD99;
-	Thu, 11 Jul 2024 14:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5D21649C6;
+	Thu, 11 Jul 2024 14:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B4fKK69+"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4734915AD99
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720707545; cv=none; b=Yu5fOrrtTaG4RX0SVKQAExk3zgkfvVT2ZigkpBsJzOe6dLDr8xnUFYLlJOaYg9q/qJqZYQ69AUH3xyxHxPmQM1IkmiUjpTYpiKnfMmk1qDWu59l63lTJYgsQXGFxTuLDwLYSTkvVFgWyT8j8ry7CpYgMU1jKSVrVabVrW/SXIfU=
+	t=1720707607; cv=none; b=mlu+sBdZY3rVWQ2X3VI3R4nmTULk/NUFLYV7ofVEbjeQd1T5b9Icoh0zxr4SglQ6J4nxTQ9sosVcueiQxrAKg+GT+v2qkCX6w/BuR6BHx53lQnxoCHmrE25U05vdz3qno3biJHLobnbEVTKbdVgwd5kf78bBOdyV0Leuw1aMTng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720707545; c=relaxed/simple;
-	bh=UqPbGCUYjGyEh6y/xNgn0aI3KQYasiL1GulTu/YZe4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TpbN1unLQITe/YEnJayy2ysGLbupB4qyuNVxGD8LIEF1Y0ayrN6XIfnEFx3TLmC/z4k4XFLWOT1uflszNwfoDdWs7bNjENfNmO70i7a2QgTnQ+RH2EizQaKZj5Y+TFleBvtyKzsArDCCqdnf/IZ2KrxJrq2LNDqQkNmZujZzw7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 835D3FEC;
-	Thu, 11 Jul 2024 07:19:28 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B61A3F766;
-	Thu, 11 Jul 2024 07:19:00 -0700 (PDT)
-Date: Thu, 11 Jul 2024 15:18:58 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"james.quinlan@broadcom.com" <james.quinlan@broadcom.com>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-	"etienne.carriere@st.com" <etienne.carriere@st.com>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	"michal.simek@amd.com" <michal.simek@amd.com>,
-	"quic_sibis@quicinc.com" <quic_sibis@quicinc.com>,
-	"quic_nkela@quicinc.com" <quic_nkela@quicinc.com>,
-	"ptosi@google.com" <ptosi@google.com>,
-	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
-	"souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>
-Subject: Re: [PATCH v2 3/8] firmware: arm_scmi: Add support for standalone
- transport drivers
-Message-ID: <Zo_p0jMOh3cimNig@pluto>
-References: <20240710173153.4060457-1-cristian.marussi@arm.com>
- <20240710173153.4060457-4-cristian.marussi@arm.com>
- <PAXPR04MB845936D3FE063B7009B3F45088A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1720707607; c=relaxed/simple;
+	bh=+hIY6jEEHY+QzykeVvjms7qfTGWHP59V5+6Y4tJ3yKs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z7yS0zBxFITn9NTDRahCRSKht2ywnE9dtR86SnwBMhT/FwAqlPWS6R+gqJg9gK5UvEmhNkblX1nuLJzXbBiwfvPIXBcwbSp1nVtI4qRHFsIxS12pR5YWXHJWZ4drp0uBiUj52MK6109eCr0EQVewcLi654ZmhaaxbGkc4rJrLX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B4fKK69+; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58bac81f40bso1376974a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720707603; x=1721312403; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=o3npd6EQvPKgtV4//EqEfrX3c75XqGVaZsV1QiKxfuw=;
+        b=B4fKK69+CRAu1noe+uvQPknNc3N9myp1pIWy0dK7w/pGG7pmDrqg6UbG+bSt991SR/
+         ngQ9++5bZk3Y+IUAHqSzc8FideYnh/JhqXePAlN+ISS0AJBmKETCp+R4sTNKIcVl/Nyo
+         GO9JZTmWn0/n6BQNfuzj7eItXQtKlqFvRBRTPsNuGSxc+bdsdWcOYzIjV54Y1xfJRa/l
+         Tm0aFMo1FWPyd8zWTDqWaULWbbp8sG9DFxHFtd/4BEPg8aL4/hc2u4bJPIsah5pCNG0d
+         j0WPeVsoBGN84veei1+TWbmycfM5bZ/KcbOdRhJK5j8oE2/58lo1kvvc0uux7huS4jT3
+         iHhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720707603; x=1721312403;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o3npd6EQvPKgtV4//EqEfrX3c75XqGVaZsV1QiKxfuw=;
+        b=lx6l8jsPK8H3Oga5H8pm9hNRJxM0m5vcDZDDx+41iquGWTP/I/E6IuJCPnWonDoZfb
+         759jRYEGQqrMBu8ML9L8vyMINV3AUZ8Z9FpwjLYMzN8Wp40t53D4d2LF3iDYkGkyTYSL
+         jtJRVHaNWXC9IPEUP9XbO9IUQ0NrUSdJqrD2lSchujHW/DE+QmbD8bEreMNupljxNg4W
+         n/dLKd7FTSjFATEau5IcJQMU0405m/2dzR1hLF1AADdCVd04LF1KV5HeIgi0CtgOSzjk
+         vdYWlEaP2Aw6wMNxyo2RzSI/LEh8oxdhe6VfpEiWOC8CbYm/8E24zqvd7yK5dKyzDy3Q
+         Scnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtksSbPDeWMEM/UgOCgx/y2KoIbBEdxpx4qmTSYdrt7aetJLJVtpZ+yNLXBCyOMDAYqXx8b9JWnhandbnRhX39M9/Ptf+hXOWuogP3
+X-Gm-Message-State: AOJu0YwoF4iyhdEGk7kkCXuFbrcgI12TyziVTttjETG1jhUgagi929g+
+	QnOasfSIQru5FCAQR1h87vVPAGXgon6FWrs6TmaUHEFpN57QbgKnls5QoZIUmq0LpipOt2CPP8r
+	cMu8dnBBoCJCK7ZuLe8ebKLxhJ3mlmnT9/WHI6A==
+X-Google-Smtp-Source: AGHT+IE5YvixzSQthswNAQ80xQ/qshZBUGeuPv0J87cnzFcQKMSwoY8hFu9XvKRCoFQLhJKzWznYERboE6rsk2B8lPk=
+X-Received: by 2002:a05:6402:13d6:b0:58b:b864:ec77 with SMTP id
+ 4fb4d7f45d1cf-594bcab03a8mr7502600a12.39.1720707603305; Thu, 11 Jul 2024
+ 07:20:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB845936D3FE063B7009B3F45088A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240710084200.6561-1-shun-yi.wang@mediatek.com> <20240710084200.6561-2-shun-yi.wang@mediatek.com>
+In-Reply-To: <20240710084200.6561-2-shun-yi.wang@mediatek.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Thu, 11 Jul 2024 08:19:52 -0600
+Message-ID: <CANLsYkw8vanrYi0jvP+1jfZWrYBtTuXSJ5xywJYUDLhyRQUrWw@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/1] remoteproc: mediatek: Support reserved CMA regions
+To: Shun-yi Wang <shun-yi.wang@mediatek.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com, jason-ch.chen@mediatek.com, 
+	yaya.chang@mediatek.com, teddy.chen@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 11, 2024 at 12:54:51PM +0000, Peng Fan wrote:
-> > Subject: [PATCH v2 3/8] firmware: arm_scmi: Add support for
-> > standalone transport drivers
-> > 
+On Wed, 10 Jul 2024 at 02:42, Shun-yi Wang <shun-yi.wang@mediatek.com> wrote:
+>
+> From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
+>
+> In order to reserve specific Contiguous Memory Allocator (CMA) regions
+> for hardware use. When the name of the reserved region contains "cma",
+> then a corresponding CMA heap is added.
+>
+> Signed-off-by: shun-yi.wang <shun-yi.wang@mediatek.com>
+> ---
+>  drivers/remoteproc/mtk_scp.c | 38 ++++++++++++++++++++++++++++--------
+>  1 file changed, 30 insertions(+), 8 deletions(-)
+>
 
-Hi Peng,
+I'm not sure what to do with this patch...  Is it a superset of your
+other patch [1]?  And if so why is it labelled as an RFC?
 
-> > Extend the core SCMI stack with structures and methods to allow for
-> > transports to be split out as standalone drivers, while still supporting
-> > old style transports, defined as built into the SCMI core stack.
-> > 
-> > No functional change.
-> > 
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> > ---
-> > NOTE: old style transport support will be removed later in this series.
-> > 
-> > v1 --> v2
-> > - fixed comit message
-> > ---
-> >  drivers/firmware/arm_scmi/common.h | 84
-> > ++++++++++++++++++++++++++++++
-> > drivers/firmware/arm_scmi/driver.c | 44 +++++++++++++++-
-> >  drivers/firmware/arm_scmi/msg.c    |  5 ++
-> >  drivers/firmware/arm_scmi/shmem.c  |  5 ++
-> >  4 files changed, 136 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/common.h
-> > b/drivers/firmware/arm_scmi/common.h
-> > index 8e5751aaa600..4af06810eb39 100644
-> > --- a/drivers/firmware/arm_scmi/common.h
-> > +++ b/drivers/firmware/arm_scmi/common.h
-> > @@ -349,6 +349,8 @@ struct scmi_shared_mem_operations {
-> >  				     bool tx, struct resource *res);  };
-> > 
-> > +const struct scmi_shared_mem_operations
-> > +*scmi_shared_mem_operations_get(void);
-> > +
-> >  /* declarations for message passing transports */  struct
-> > scmi_msg_payld;
-> > 
-> > @@ -376,6 +378,88 @@ struct scmi_message_operations {
-> >  				   size_t max_len, struct scmi_xfer
-> > *xfer);  };
-> > 
-> > +const struct scmi_message_operations
-> > +*scmi_message_operations_get(void);
-> > +
-> > +/**
-> > + * struct scmi_transport_core_operations  - Transpoert core
-> > operations
-> > + *
-> > + * @bad_message_trace: An helper to report a
-> > malformed/unexpected
-> > +message
-> > + * @rx_callback: Callback to report received messages
-> > + * @shmem: Datagram operations for shared memory based
-> > transports
-> > + * @msg: Datagram operations for message based transports  */
-> > struct
-> > +scmi_transport_core_operations {
-> > +	void (*bad_message_trace)(struct scmi_chan_info *cinfo,
-> > +				  u32 msg_hdr, enum scmi_bad_msg
-> > err);
-> > +	void (*rx_callback)(struct scmi_chan_info *cinfo, u32 msg_hdr,
-> > +			    void *priv);
-> > +	const struct scmi_shared_mem_operations *shmem;
-> > +	const struct scmi_message_operations *msg; };
-> > +
-> > +/**
-> > + * struct scmi_transport  - A structure representing a configured
-> > +transport
-> > + *
-> > + * @supplier: Device representimng the transport and acting as a
-> > supplier for
-> > + *	      the core SCMI stack
-> > + * @desc: Transport descriptor
-> > + * @core_ops: A pointer to a pointer used by the core SCMI stack to
-> > make the
-> > + *	      core transport operations accessible to the transports.
-> > + */
-> > +struct scmi_transport {
-> > +	struct device *supplier;
-> > +	const struct scmi_desc *desc;
-> > +	struct scmi_transport_core_operations **core_ops; };
-> > +
-> > +#define DEFINE_SCMI_TRANSPORT_DRIVER(__trans, __match_table,
-> > __core_ptr)\
-> > +static int __trans##_probe(struct platform_device *pdev)		\
-> > +{
-> > 	\
-> > +	struct scmi_transport *scmi_trans;
-> > 	\
-> > +	struct platform_device *scmi_pdev;
-> > 	\
-> > +	struct device *dev = &pdev->dev;				\
-> > +
-> > 	\
-> > +	scmi_trans = devm_kzalloc(dev, sizeof(*scmi_trans),
-> > GFP_KERNEL);\
-> > +	if (!scmi_trans)						\
-> > +		return -ENOMEM;
-> > 		\
-> > +
-> > 	\
-> > +	scmi_pdev = devm_kzalloc(dev, sizeof(*scmi_pdev),
-> > GFP_KERNEL);	\
-> > +	if (!scmi_pdev)
-> > 	\
-> > +		return -ENOMEM;
-> > 		\
-> > +
-> > 	\
-> > +	scmi_trans->supplier = dev;
-> > 	\
-> > +	scmi_trans->desc = &__trans##_desc;
-> > 	\
-> > +	scmi_trans->core_ops = __core_ptr;
-> > 	\
-> > +
-> > 	\
-> > +	scmi_pdev->name = "arm-scmi";
-> > 	\
-> > +	scmi_pdev->id = PLATFORM_DEVID_AUTO;
-> > 		\
-> > +	scmi_pdev->dev.platform_data = scmi_trans;
-> > 	\
-> > +
-> > 	\
-> > +	device_set_of_node_from_dev(&scmi_pdev->dev, dev);
-> > 	\
-> > +
-> > 	\
-> > +	dev_set_drvdata(dev, scmi_pdev);
-> > 	\
-> > +
-> > 	\
-> > +	return platform_device_register(scmi_pdev);
-> > 	\
-> > +}
-> > 	\
-> > +
-> > 	\
-> > +static void __trans##_remove(struct platform_device *pdev)
-> > 	\
-> > +{
-> > 	\
-> > +	struct platform_device *scmi_pdev;
-> > 	\
-> > +
-> > 	\
-> > +	scmi_pdev = dev_get_drvdata(&pdev->dev);
-> > 	\
-> > +
-> > 	\
-> > +	platform_device_unregister(scmi_pdev);
-> > 	\
-> > +}
-> > 	\
-> > +
-> > 	\
-> > +static struct platform_driver __trans##_driver = {			\
-> > +	.driver = {
-> > 	\
-> > +		   .name = #__trans "_transport",			\
-> > +		   .of_match_table = __match_table,
-> > 	\
-> > +		   },
-> > 	\
-> > +	.probe = __trans##_probe,
-> > 	\
-> > +	.remove_new = __trans##_remove,
-> > 		\
-> > +}
-> > +
-> >  extern const struct scmi_shared_mem_operations scmi_shmem_ops;
-> > extern const struct scmi_message_operations scmi_msg_ops;
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/driver.c
-> > b/drivers/firmware/arm_scmi/driver.c
-> > index 6b6957f4743f..a1892d4d8c69 100644
-> > --- a/drivers/firmware/arm_scmi/driver.c
-> > +++ b/drivers/firmware/arm_scmi/driver.c
-> > @@ -194,6 +194,11 @@ struct scmi_info {
-> >  #define bus_nb_to_scmi_info(nb)	container_of(nb, struct
-> > scmi_info, bus_nb)
-> >  #define req_nb_to_scmi_info(nb)	container_of(nb, struct
-> > scmi_info, dev_req_nb)
-> > 
-> > +static struct scmi_transport_core_operations scmi_trans_core_ops = {
-> > +	.bad_message_trace = scmi_bad_message_trace,
-> > +	.rx_callback = scmi_rx_callback,
-> > +};
-> > +
-> >  static unsigned long
-> >  scmi_vendor_protocol_signature(unsigned int protocol_id, char
-> > *vendor_id,
-> >  			       char *sub_vendor_id, u32 impl_ver) @@
-> > -2950,6 +2955,28 @@ static int scmi_debugfs_raw_mode_setup(struct
-> > scmi_info *info)
-> >  	return ret;
-> >  }
-> > 
-> > +static const struct scmi_desc *scmi_transport_lookup(struct device
-> > +*dev) {
-> > +	struct scmi_transport *trans;
-> > +
-> > +	trans = dev_get_platdata(dev);
-> > +	if (!trans || !trans->desc || !trans->supplier || !trans-
-> > >core_ops)
-> > +		return NULL;
-> > +
-> > +	if (!device_link_add(dev, trans->supplier,
-> > DL_FLAG_AUTOREMOVE_CONSUMER)) {
-> 
-> Just wonder why this is needed?
-
-Oh, that is absolutely needed, because it unleashes the power of device_link ! 
-(..and I jus discovered this myself only recently :P ...)..if I got your
-question right....
-
-...and that, together with the AUTOREMOVE_CONSUMER flag, means in other words
-that the transport device is linked as a supplier to the consumer SCMI core
-stack devices, and as a consequence you are absolutely free to abruptly
-unload/unbind the transport driver at any time and be sure that before that
-can happen the full SCMI stack will be FULLY UNBOUND too...so stopping any
-SCMI communication before the transport module is unloaded/unbound....
-
-...and this, more importantly, happens without ME having to write ANY line of
-code :P....just thanks to the device_link core magic...
-
-...or at least this is my understanding and 
-
-> > +		dev_err(dev,
-> > +			"Adding link to supplier transport device
-> > failed\n");
-> > +		return NULL;
-> > +	}
-> > +
-> > +	/* Provide core transport ops */
-> > +	*trans->core_ops = &scmi_trans_core_ops;
-> > +
-> > +	dev_info(dev, "Using %s\n", dev_driver_string(trans->supplier));
-> > +
-> > +	return trans->desc;
-> > +}
-> > +
-> >  static int scmi_probe(struct platform_device *pdev)  {
-> >  	int ret;
-> > @@ -2962,8 +2989,14 @@ static int scmi_probe(struct
-> > platform_device *pdev)
-> >  	struct device_node *child, *np = dev->of_node;
-> > 
-> >  	desc = of_device_get_match_data(dev);
-> > -	if (!desc)
-> > -		return -EINVAL;
-> > +	if (!desc) {
-> > +		desc = scmi_transport_lookup(dev);
-> 
-> from the code, It is not actually a lookup operation.
-> How about scmi_transport_setup?
-> 
-
-Oh, yes...funny thing is that it is how exactly I DID called this
-function initially....then I spotted that there was already a similar
-__scmi_trancport_setup() helper in the legacy code that I removed, so I
-tried to use another more distinct name....I could go back to
-scmi_transport_setup indeed..
+Please read the documentation on submitting patches [2] and subscribe
+to the remoteproc mailing list to give you an idea of the patch
+workflow that is expected.
 
 Thanks,
-Cristian
+Mathieu
+
+[1]. [PATCH 1/1] remoteproc: mediatek: Support multiple reserved memory regions
+[2]. https://elixir.bootlin.com/linux/latest/source/Documentation/process/submitting-patches.rst
+
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index e744c07507ee..ca0a4a52ece9 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -4,6 +4,7 @@
+>
+>  #include <asm/barrier.h>
+>  #include <linux/clk.h>
+> +#include <linux/dma-heap.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/err.h>
+>  #include <linux/interrupt.h>
+> @@ -1006,22 +1007,43 @@ EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
+>
+>  static int scp_map_memory_region(struct mtk_scp *scp)
+>  {
+> -       int ret;
+> +       int ret, i, err;
+>         const struct mtk_scp_sizes_data *scp_sizes;
+> +       struct device_node *node = scp->dev->of_node;
+> +       struct of_phandle_iterator it;
+> +
+> +       i = 0;
+> +       of_for_each_phandle(&it, err, node, "memory-region", NULL, 0) {
+> +               ret = of_reserved_mem_device_init_by_idx(scp->dev, node, i);
+> +
+> +               if (ret) {
+> +                       dev_err(scp->dev, "failed to assign memory-region: %s\n",
+> +                               it.node->name);
+> +                       of_node_put(it.node);
+> +                       return -ENOMEM;
+> +               }
+> +
+> +#ifdef CONFIG_DMABUF_HEAPS_CMA
+> +               if (strstr(it.node->name, "cma")) {
+> +                       /* Reserved cma memory region */
+> +                       ret = dma_heap_add_cma(scp->dev);
+> +                       if (ret) {
+> +                               dev_err(scp->dev, "Failed to add reserved cma");
+> +                               of_node_put(it.node);
+> +                               return ret;
+> +                       }
+> +               }
+> +#endif /* CONFIG_DMABUF_HEAPS_CMA */
+>
+> -       ret = of_reserved_mem_device_init(scp->dev);
+> +               i++;
+> +       }
+>
+>         /* reserved memory is optional. */
+> -       if (ret == -ENODEV) {
+> +       if (!i) {
+>                 dev_info(scp->dev, "skipping reserved memory initialization.");
+>                 return 0;
+>         }
+>
+> -       if (ret) {
+> -               dev_err(scp->dev, "failed to assign memory-region: %d\n", ret);
+> -               return -ENOMEM;
+> -       }
+> -
+>         /* Reserved SCP code size */
+>         scp_sizes = scp->data->scp_sizes;
+>         scp->cpu_addr = dma_alloc_coherent(scp->dev, scp_sizes->max_dram_size,
+> --
+> 2.18.0
+>
 
