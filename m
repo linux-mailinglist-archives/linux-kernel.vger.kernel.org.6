@@ -1,185 +1,122 @@
-Return-Path: <linux-kernel+bounces-249426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63E192EB87
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:19:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FA092EB89
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 709021F2382D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:19:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DB38282FEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA0916C853;
-	Thu, 11 Jul 2024 15:18:36 +0000 (UTC)
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905A716B38E;
+	Thu, 11 Jul 2024 15:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vod8Zieg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C1AAD39;
-	Thu, 11 Jul 2024 15:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2FDAD39;
+	Thu, 11 Jul 2024 15:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720711116; cv=none; b=b7cXxq5Zya8j9wDD1tncRpelPlk0sjQZ85w0aIJdaEZNlxGH6AHliEzRbIlZMPei1LQcpcoe5DGI32c1fA/288DiyH4mvTxfPYrk2Dq/03kyRe3xQ61rshwIHtAeITUMMGcc/AOn0Tpb5wenIjl7ox6UQAuavZjuYmoITFrLFCg=
+	t=1720711134; cv=none; b=jjtkAXjy/gb6hA9FbnV/1bAebLMwLENCR5yt0kYxcqiIJ04SCzRWc8s2iiJVJULIZ+W4MD426i/ga4s3Dtg19O7y/k8N5BIqTuB5d3Xmu6BL/z1mUb9piBjVO9J8bnEE7uY3k97NqNY7hN2rmICpVEwDp7ARZ5H1ntnFooaUkfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720711116; c=relaxed/simple;
-	bh=Tq1oeU1YPdBdfADF26/cofRUjx0OrnlvxD8M3h1GQwk=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=WJBJtWYa5mUKnnp+03LMTQoigWG5RcEiuJfTJY9aSMm+ckyA/F9BtAtGMa6DWaQUn0AqvaT9fwUYn2IU+120r8e3pG9alx1fgGsEU+J9lDJsQVEAaJPdZjjKqn+P+HExP83p8a//lK98+rhSHKoTnEHiC3AeFH6KUycLPOoDk+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id 29DAF3782207;
-	Thu, 11 Jul 2024 15:18:32 +0000 (UTC)
-From: "Shreeya Patel" <shreeya.patel@collabora.com>
-In-Reply-To: <CAJZ5v0gYj5MfwVZihiJEFUWohRmKjudOEExpYgew0Fg4Cu+whA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240711121033.3569948-1-shreeya.patel@collabora.com> <CAJZ5v0gYj5MfwVZihiJEFUWohRmKjudOEExpYgew0Fg4Cu+whA@mail.gmail.com>
-Date: Thu, 11 Jul 2024 16:18:31 +0100
-Cc: viresh.kumar@linaro.org, shuah@kernel.org, linux-pm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com
-To: =?utf-8?q?Rafael_J=2E_Wysocki?= <rafael@kernel.org>
+	s=arc-20240116; t=1720711134; c=relaxed/simple;
+	bh=lgCOm4ajbDC2WkfLf4CQCsarvwNbzKn4RzkwvqZn7DU=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=UsJYwcYYBmxZhlhbGlb4KLgNEuuyTaRRekGYhstN8PXjRMIRbUB536UNLaOfHN09lkTkQX0EzaqCzb4XNw+WDQiigBu9ARtGixVXdJT/6GChZ+4xSZNMljEjdgwfbUAMajrWRKv2PSowyhIlvK4Zf0pguURPAJ0zvz+OFT+k3qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vod8Zieg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11AF8C116B1;
+	Thu, 11 Jul 2024 15:18:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720711134;
+	bh=lgCOm4ajbDC2WkfLf4CQCsarvwNbzKn4RzkwvqZn7DU=;
+	h=From:To:Subject:Date:From;
+	b=Vod8ZiegXAS+eCiFiA43QsxWkAF/BzmyEwLYmS7RVWpJcK0w9RQdWpdiqFL8KaoV9
+	 NEEGpnz7pdk9LnQyW0rLLbt4AZeTEP9fr3ZQLyYc7GsPfybfudZ1y+NIwNmKhkpoLK
+	 IFXOGPBM+hySYlni/Cz56k8OQRr+yz9xU9FcfNF7cgXURK8AFxE5ZX0AhrSSmKFihf
+	 crVzC9tGc5U3+HIqOBKco07HiYdRimdnv567fBWdvLBrIMXv/Cl18XkexN1B+umB1d
+	 u16P4vzgQNPQqlMjLWNYGEn6VpH8wMuvQSdcExkwmgQj2Altc4g33pmIaSmqpYN9U0
+	 Au8wWBr2wJAKg==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Puranjay Mohan <puranjay12@gmail.com>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf] bpf, arm64: fix trampoline for BPF_TRAMP_F_CALL_ORIG
+Date: Thu, 11 Jul 2024 15:18:38 +0000
+Message-Id: <20240711151838.43469-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2e667d-668ff800-1-22d70300@133606496>
-Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?kselftest=3A?==?utf-8?q?_cpufreq=3A?= 
- Add RTC wakeup alarm
-User-Agent: SOGoMail 5.10.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thursday, July 11, 2024 17:43 IST, "Rafael J. Wysocki" <rafael@kerne=
-l.org> wrote:
+When BPF_TRAMP_F_CALL_ORIG is set, the trampoline calls
+__bpf_tramp_enter() and __bpf_tramp_exit() functions, passing them the
+struct bpf_tramp_image *im pointer as an argument in R0.
 
-Hi,
+The trampoline generation code uses emit_addr_mov_i64() to emit
+instructions for moving the bpf_tramp_image address into R0, but
+emit_addr_mov_i64() assumes the address to be in the vmalloc() space and
+uses only 48 bits. Because bpf_tramp_image is allocated using kzalloc(),
+its address can use more than 48-bits, in this case the trampoline
+will pass an invalid address to __bpf_tramp_enter/exit() causing a
+kernel crash.
 
-> On Thu, Jul 11, 2024 at 2:10=E2=80=AFPM Shreeya Patel
-> <shreeya.patel@collabora.com> wrote:
-> >
-> > Add RTC wakeup alarm for devices to resume after specific time inte=
-rval.
-> > This improvement in the test will help in enabling this test
-> > in the CI systems and will eliminate the need of manual interventio=
-n
-> > for resuming back the devices after suspend/hibernation.
->=20
-> Why don't you use rtcwake for this?
->=20
+Fix this by using emit_a64_mov_i64() in place of emit_addr_mov_i64() as
+it can work with addresses that are greater than 48-bits.
 
-You are right, using rtcwake would have been better here.
-I'll send a v2 with the changes
+Fixes: efc9909fdce0 ("bpf, arm64: Add bpf trampoline for arm64")
+Closes: https://lore.kernel.org/all/SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com/
+Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+---
+ arch/arm64/net/bpf_jit_comp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
-Thanks,
-Shreeya Patel
-
-> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> > ---
-> >  tools/testing/selftests/cpufreq/cpufreq.sh | 24 ++++++++++++++++++=
-++++
-> >  tools/testing/selftests/cpufreq/main.sh    | 13 +++++++++++-
-> >  2 files changed, 36 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/tools/testing/selftests/cpufreq/cpufreq.sh b/tools/tes=
-ting/selftests/cpufreq/cpufreq.sh
-> > index a8b1dbc0a3a5..a0f5b944a8fe 100755
-> > --- a/tools/testing/selftests/cpufreq/cpufreq.sh
-> > +++ b/tools/testing/selftests/cpufreq/cpufreq.sh
-> > @@ -231,6 +231,30 @@ do=5Fsuspend()
-> >
-> >                 for i in `seq 1 $2`; do
-> >                         printf "Starting $1\n"
-> > +
-> > +                       if [ "$3" =3D "rtc" ]; then
-> > +                               now=3D$(date +%s)
-> > +                               wakeup=5Ftime=3D$((now + 15)) # Wak=
-e up after 15 seconds
-> > +
-> > +                               echo $wakeup=5Ftime > /sys/class/rt=
-c/rtc0/wakealarm
-> > +
-> > +                               if [ $? -ne 0 ]; then
-> > +                                       printf "Failed to set RTC w=
-ake alarm\n"
-> > +                                       return 1
-> > +                               fi
-> > +
-> > +                               # Enable the RTC as a wakeup source
-> > +                               echo enabled > /sys/class/rtc/rtc0/=
-device/power/wakeup
-> > +
-> > +                               if [ $? -ne 0 ]; then
-> > +                                       printf "Failed to set RTC w=
-ake alarm\n"
-> > +                                       return 1
-> > +                               fi
-> > +
-> > +                               # Reset the wakeup alarm
-> > +                               echo 0 > /sys/class/rtc/rtc0/wakeal=
-arm
-> > +                       fi
-> > +
-> >                         echo $filename > $SYSFS/power/state
-> >                         printf "Came out of $1\n"
-> >
-> > diff --git a/tools/testing/selftests/cpufreq/main.sh b/tools/testin=
-g/selftests/cpufreq/main.sh
-> > index a0eb84cf7167..f12ff7416e41 100755
-> > --- a/tools/testing/selftests/cpufreq/main.sh
-> > +++ b/tools/testing/selftests/cpufreq/main.sh
-> > @@ -24,6 +24,8 @@ helpme()
-> >         [-t <basic: Basic cpufreq testing
-> >              suspend: suspend/resume,
-> >              hibernate: hibernate/resume,
-> > +            suspend=5Frtc: suspend/resume back using the RTC wakeu=
-p alarm,
-> > +            hibernate=5Frtc: hibernate/resume back using the RTC w=
-akeup alarm,
-> >              modtest: test driver or governor modules. Only to be u=
-sed with -d or -g options,
-> >              sptest1: Simple governor switch to produce lockdep.
-> >              sptest2: Concurrent governor switch to produce lockdep=
-.
-> > @@ -76,7 +78,8 @@ parse=5Farguments()
-> >                                 helpme
-> >                                 ;;
-> >
-> > -                       t) # --func=5Ftype (Function to perform: ba=
-sic, suspend, hibernate, modtest, sptest1/2/3/4 (default: basic))
-> > +                       t) # --func=5Ftype (Function to perform: ba=
-sic, suspend, hibernate,
-> > +                          # suspend=5Frtc, hibernate=5Frtc, modtes=
-t, sptest1/2/3/4 (default: basic))
-> >                                 FUNC=3D$OPTARG
-> >                                 ;;
-> >
-> > @@ -121,6 +124,14 @@ do=5Ftest()
-> >                 do=5Fsuspend "hibernate" 1
-> >                 ;;
-> >
-> > +               "suspend=5Frtc")
-> > +                do=5Fsuspend "suspend" 1 rtc
-> > +                ;;
-> > +
-> > +                "hibernate=5Frtc")
-> > +                do=5Fsuspend "hibernate" 1 rtc
-> > +                ;;
-> > +
-> >                 "modtest")
-> >                 # Do we have modules in place?
-> >                 if [ -z $DRIVER=5FMOD ] && [ -z $GOVERNOR=5FMOD ]; =
-then
-> > --
-> > 2.39.2
-> >
-> >
-> =5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=
-=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F=5F
-> Kernel mailing list -- kernel@mailman.collabora.com
-> To unsubscribe send an email to kernel-leave@mailman.collabora.com
-> This list is managed by https://mailman.collabora.com
+diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
+index 720336d28856..1bf483ec971d 100644
+--- a/arch/arm64/net/bpf_jit_comp.c
++++ b/arch/arm64/net/bpf_jit_comp.c
+@@ -2141,7 +2141,7 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 	emit(A64_STR64I(A64_R(20), A64_SP, regs_off + 8), ctx);
+ 
+ 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+-		emit_addr_mov_i64(A64_R(0), (const u64)im, ctx);
++		emit_a64_mov_i64(A64_R(0), (const u64)im, ctx);
+ 		emit_call((const u64)__bpf_tramp_enter, ctx);
+ 	}
+ 
+@@ -2185,7 +2185,7 @@ static int prepare_trampoline(struct jit_ctx *ctx, struct bpf_tramp_image *im,
+ 
+ 	if (flags & BPF_TRAMP_F_CALL_ORIG) {
+ 		im->ip_epilogue = ctx->ro_image + ctx->idx;
+-		emit_addr_mov_i64(A64_R(0), (const u64)im, ctx);
++		emit_a64_mov_i64(A64_R(0), (const u64)im, ctx);
+ 		emit_call((const u64)__bpf_tramp_exit, ctx);
+ 	}
+ 
+-- 
+2.40.1
 
 
