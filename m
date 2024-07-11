@@ -1,194 +1,236 @@
-Return-Path: <linux-kernel+bounces-249888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA5792F12F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:34:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81AD892F12E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4773C1C22987
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:34:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE262B212BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72631A01B0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229E01A01A6;
 	Thu, 11 Jul 2024 21:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="UpoFHxGy"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11021133.outbound.protection.outlook.com [52.101.62.133])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RNzKOSyj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DE819FA80
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.133
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720733636; cv=fail; b=kPT9HgD7RFFgqwa7zmNRDLp+qlgOaRUX+Vwluf+WHypTfsY6FWchKIDjKWr4FPYob8y12BRmRkzm+36Ap58wBrHOOUaBkGqev5fuJ60NxX7PGkFtvHDZljIXc1OWD4/wjTpgfQ/EMnTkkwaHM/aLb6kKrafmqo2yvWJ6Wosldv4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C5B19F461
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720733636; cv=none; b=tvoqDz2uqt+16WQDnx3Joi8XcrvvP3GmBm8mM47+AjrhqqP86eXhiDhvQy4+KMmulY1Qv7C0Z0dB6mLuxvX5LC9U0uJvuyKh0HIVQobHaS8yrAQNZkonMf7gucBT/PQUNDl1sPLXqqsr8wa8Zs6SnKJQpeqPWQr7Zd2o0l329Rc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720733636; c=relaxed/simple;
-	bh=i1RtDpXP9JrzF8skk5aBFLBL//sa5zWs2As7nYsNneU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=WhJVe/+MjkThvaVbToXdfoJHoL6+k+4p0MC3ucA0nWu67YY5yTciycOBKPss7CvNKyPxJ2BJVfy61eogZIDzP0PafAzf8oFGPNlSmXWfZLpJHs4D0GIi1wb8MmVheFyPe/cC9uGLQWE4WLxEQXzfV+3UG+tiPlDpuZItBTDMkUU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=UpoFHxGy; arc=fail smtp.client-ip=52.101.62.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b1GiuwCnyRiTeAoINPHJRWINK59z2m9LN7+e92Kx60ruf0wzrQ6TbIx1Fnho3nTJe/kWmrEAdcG8Z+HkTPUn3lwVM760vBijzP8Q5yDGq2L+M09QzvkVEjlD88XGpDYhmCwCe6CI+ePxVHKOYj5X9YhoUzF7Hhk2n5gNMVZiSs/yn127IpRVKmRNAoe2kaBxobNhueKaNng0sPissvba9QypmgjBRtERd9JG25IUWk/Sm5OxVDxt+bJMe7SvmaDN/nKkZiBYwj8/PShtnucS09Lh5uYaGnyesiDUin/3QvMI/U0IMBZvsRtIGqVHxvqnE8aZUtSvyh/ywVKC3qpjAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ukh9gk9ncvzxKog4GPzuNAs4ohNkUomqvl8v7RiiVBk=;
- b=BDULRqYgVQ5Dvf5xrC6wxj3XtvMw67jlL9//isI+Qss+CU/T3uEkZk60QCFdLKVAjSj8rAy31xFnpLma1ZaMX7XzCXzHgMgCKw3EkR5RjN2+YmAC8jUypd2bvt37NAFiPkPz+70w6r3iuZ4orYNHxzQiN748lygWgPtwlfvrJf3JuwVIwORC0+k2CmHo+yDL+OEVdZmpOLmRasrX20OfJKS/91DZX/38haX0B/7yjWAFvHNlD7bk4n5fsVho2JmDVD17S7Sg2WSFrY1wxPhE58py2v7f9a0vlCI1ADSfPdPx2t8B3nauhHXOmfhzu/IAOOZ5hPNJAWu72/uC11myMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ukh9gk9ncvzxKog4GPzuNAs4ohNkUomqvl8v7RiiVBk=;
- b=UpoFHxGys722u5A3QkKqa25uaH7VspDfInXtTBhF1thWifmay/vOFiUUQmP2LiBMls6JpdJ14vgcToC2cMeptuvEPjWyVxyuf7gc3pBAYfY3nGIFMfyp5AHQG7lDOjnenqPldZIyPqPnXcgBrv0Ob5cLa/cSd0On4CtSX8kkuuw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from BN0PR01MB6862.prod.exchangelabs.com (2603:10b6:408:161::11) by
- PH0PR01MB6165.prod.exchangelabs.com (2603:10b6:510:16::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7762.20; Thu, 11 Jul 2024 21:33:50 +0000
-Received: from BN0PR01MB6862.prod.exchangelabs.com
- ([fe80::8a1e:34a8:2ad9:7f83]) by BN0PR01MB6862.prod.exchangelabs.com
- ([fe80::8a1e:34a8:2ad9:7f83%3]) with mapi id 15.20.7762.020; Thu, 11 Jul 2024
- 21:33:50 +0000
-From: Carl Worth <carl@os.amperecomputing.com>
-To: James Morse <james.morse@arm.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre
- <reinette.chatre@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, H Peter Anvin
- <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>, James Morse
- <james.morse@arm.com>, shameerali.kolothum.thodi@huawei.com, D Scott
- Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>, Xin
- Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com, David Hildenbrand
- <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>, Dave Martin
- <dave.martin@arm.com>, Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
-Subject: Re: [PATCH v3 23/38] x86/resctrl: Allow an architecture to disable
- pseudo lock
-In-Reply-To: <20240614150033.10454-24-james.morse@arm.com>
-References: <20240614150033.10454-1-james.morse@arm.com>
- <20240614150033.10454-24-james.morse@arm.com>
-Date: Thu, 11 Jul 2024 14:33:41 -0700
-Message-ID: <87frsfd362.fsf@rasp.cworth.amperemail.amperecomputing.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR02CA0008.namprd02.prod.outlook.com
- (2603:10b6:303:16d::27) To BN0PR01MB6862.prod.exchangelabs.com
- (2603:10b6:408:161::11)
+	bh=TrvfVsxFxkfG3CbvoFQgedFk5JHpPhXLX37ab8sPnlY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rVTBDEP2f03TPXs+0xgAnZ4Y8JPkPXosyGnk1g9oRRXYp15BAeLB+GTpHkV5vFd2faQvJM0XxX5lNDXhhcDS6y5Sa0BhXnxK29Dc4RGW3fQ8aU/CS1be35BhBTc59ngvJUE6AhNiln61JF4p4TksTNromBJIpj7LFxsOTUv6VEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RNzKOSyj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720733633;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=219lIAcvA7w+sSpZLZf099JtfoSJ9jRz/h7DHoP3yqk=;
+	b=RNzKOSyjTriSz+2DIunQtMJRz2tbxU2BKPul0AnZVYPMpWRXv2a29vfaYs/lETGdGwIEmT
+	yyBJUhxskHHQql1zR4JCFXfyZWBTB/3Remegv/2hWn7HW8lfmfpUOkXXd2FbENgKfOtbmG
+	lk2OV+Uxjyr5ZlyZat6Ajqk46B9KjR0=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-TwYJffRyOcCLZyd27y6c_w-1; Thu, 11 Jul 2024 17:33:51 -0400
+X-MC-Unique: TwYJffRyOcCLZyd27y6c_w-1
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-70af524f6b9so1023423b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:33:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720733631; x=1721338431;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=219lIAcvA7w+sSpZLZf099JtfoSJ9jRz/h7DHoP3yqk=;
+        b=Eqii83qBEpzeNhWQ9NLLf+H32I/lWsuiorRGfalfaAGecU1N/vZ6axHxCoZu73/gZ5
+         RA3umQUquCEzhz/Ora+3BUO4wK80krgL26h+XFzrvzcgwyigKtVTYFQtY1ENzQOFTeV1
+         9Ukg9OiKq9JmNwpqhz4w4vGSm/nMTEMA5kxS6EZyRinop4efVHuK2XMJ2cbmtJfJO1dB
+         ups2gltLR0WD9eCXoJGXmW4LSn2ODAy3uy9XUCv0aJpqewoOpjZGX0uNvfBfVdb8UfBo
+         OUlWnuwtNiyNAY5JGQwObJewZuKt1agnkHlRpJB7bFmQ3He+jnaqzd6e+2KoICaE8zc/
+         Y3rg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9MAGIBk4bShKOTYYx20f8dwYXbpoSrIWjSxPRsEmZgOpnK60W7lnTH/g0cDtLg96Y70i4imfE5786499VvVZXf4y/786VTdNodx6i
+X-Gm-Message-State: AOJu0Yw91sEdwxR5GQZ093xjTmN8ztwKiBRDnhWwq4yxH4fy/CK0Gxyr
+	yeFv0OkNpJn2wNytvjtx64pwwQciZyKEHYTYFwpWKGZd30/9cLk1rHluDWnPocsnghaVQp5ypd6
+	cc373fER73Q/Sk1sM7P1FJdVgT/v0mG+mczVLu40G+pR1GodYDuiTpgl4xM9xu/sHsPqgu8mm
+X-Received: by 2002:a05:6a00:23d5:b0:706:6c38:31f3 with SMTP id d2e1a72fcca58-70b43538665mr10390210b3a.8.1720733630505;
+        Thu, 11 Jul 2024 14:33:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtilW6Oy1FkkMUoO1+Zz+4/UURSKtlBsEUQhFqOcBShJGklujlaJCWSbde9Mrk6SD1Lebztw==
+X-Received: by 2002:a05:6a00:23d5:b0:706:6c38:31f3 with SMTP id d2e1a72fcca58-70b43538665mr10390186b3a.8.1720733630017;
+        Thu, 11 Jul 2024 14:33:50 -0700 (PDT)
+Received: from [172.20.2.228] ([4.28.11.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b54edbc49sm3641353b3a.22.2024.07.11.14.33.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 14:33:49 -0700 (PDT)
+Message-ID: <92a2dc30-6e48-44ea-9cde-693b911f200d@redhat.com>
+Date: Thu, 11 Jul 2024 23:33:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR01MB6862:EE_|PH0PR01MB6165:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e880c0d-4a5b-4461-125e-08dca1f1275d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WS68MEfWXSEpumn+tgxaekVZFvAph7UZ9WrMlVID1Vs6lWQl9NWypDnRNc/c?=
- =?us-ascii?Q?h4aTgkTAYdCt6InVTOmI2uNO5tgY6VHSR1OvRyXxNdMKLCGO8M+8H/NhtDwh?=
- =?us-ascii?Q?dj2kohRC2qw0GneU7wf6Wl5Gd/wJWn9XpUrZShG4bPdgKG0QkU6SZDoA7fpj?=
- =?us-ascii?Q?7rqRcCHv1pCvRPA9vlVVjyMwujDsB2chpVWEIwUxicIMkumFhp7tFDAeeR0v?=
- =?us-ascii?Q?LbwnU01LB0CB8NxuRtDfv/RQLehzR5wJcIPdFft1KOx0pOpdSkXq1IXJHxiK?=
- =?us-ascii?Q?UpHXAXKG4H7c3T5te92PRonT2N5jAiMZK8nd3hcDWwe2hVfsIhTgPCp4rM5G?=
- =?us-ascii?Q?Uh9+zkd53xLaXXLR3hPrqlUClHRRzXGa6US2HGapECksoH3bOEN2W9sss7W/?=
- =?us-ascii?Q?Zc6prc8pgBTZCK+B1rMxXPkS5UTi/Wu/fPPuG8+BJ1oixm/hhuTUc4tJ7jDw?=
- =?us-ascii?Q?68xDjdDJ/8tyWyWMf0XiwfaOBoE+VL9eCnDGM8x3e+Yc1CNXMK+ILOMp7bC/?=
- =?us-ascii?Q?SyMT7/DjIEIS6eXiEwG67h6k3GLqH7Gkhgb3OWu3AtTUZGQILU/zB7ajYdOh?=
- =?us-ascii?Q?5t34r+jdOjuPeAC6olIQkNGh2aqbgqaU/hwSkTvuWMN4b8R2rGgnMJMV8QWZ?=
- =?us-ascii?Q?eoFnrdY8pyBY0TDHQJ4X2Q7yWyYR79JonuQf4SJm2Hcn5BfIXeIwl6HNA6na?=
- =?us-ascii?Q?QKv7AXpWlhMocQAtoNO9zcbn3nNVV4xjfeUcnRy0MqFUo1qiOz/9c4n0zd0o?=
- =?us-ascii?Q?9Uw82jp/ZAg3Y9Yh0u4idYlRpEIpOsOtBv2vjVvCKZKuzj+O0cSKjN3wmx3z?=
- =?us-ascii?Q?hfbXvHj3l/8e095NqAxTRPJ4GkI4MFVhvonfGIGfc00rPTTrGFzkBCBURWBS?=
- =?us-ascii?Q?lRSQNN2vbmlrpiH9wMhAPcf0wmQaTqvQCvaUv6gV2GtSLwwP6SFvvFxbdQsq?=
- =?us-ascii?Q?YBExWrPX1FGbDQHAfUQCxYu6hzSPHdmksTw5vLIdp30oquw3nBYiYpNENit1?=
- =?us-ascii?Q?2UzBbXg1mdUX9zufzeP0ee6j188r8Gnqa9eF2YSpAqUVsAEYwWDdItgApoHV?=
- =?us-ascii?Q?FIwigEUINJKABxBSyemMkTY0OJzLhffngjyvf9y6ueqQAheEeSV6gAZOzAEW?=
- =?us-ascii?Q?AFdX+SvEWD9e8KJQ4ZXMMQYFZnREQ2YSsJBY3dRS8D9R8hoXmxirumUgn78A?=
- =?us-ascii?Q?lpxH+qaqwY2UHJBPC8zOMZLzfMToJNASLbahmonjUQOi/19aDTceieOFEcbx?=
- =?us-ascii?Q?eQtHHMga5hFiJOVveFgmvLQvcSrKkGQlOMc8WP20CU8h8Hi7vrfjAx6DUuyK?=
- =?us-ascii?Q?/YC64Col1PyNbEibot9OrZRmsQW5aGgEqTID2t2eGYbALLRZYJk5ncwgFY0j?=
- =?us-ascii?Q?lR5DJD/NJ0Ro35CgoxKnABW3xdpojrrTXkW5DeZoJmwUPOxs+Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR01MB6862.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7Gwna9BHgHOzzyVOo6QHFtljKK/wWRz51TAP6OzfsC3M7ShEHCikcoy2N1JF?=
- =?us-ascii?Q?0AMR1v3B6iigCZsYjEe+KRl9MTsxhWCz1N88aEYrzO+I6047blGUxS83BY3B?=
- =?us-ascii?Q?eS49h5ibA1Rt6aWvQPBcVF+hgnQ8osG+u+rV19Z2eO7Fm4crUyPCUg2vUrw/?=
- =?us-ascii?Q?NMMD6o2Rtk4Sj6530w6xdcPK9JuQBO1NEnotejvHkCluJtM/JJRCm+EweUI4?=
- =?us-ascii?Q?AzL4luED6gXa35T8NwOdw4txqw6p5gOl+Wn7UhddL7Xvip6eCWd441b0iwHd?=
- =?us-ascii?Q?f1SsWMFrurtnduLCq7WGk4y8z9XtTK2uR6RAqYDQOmGNlht2S5BghsX1TBPT?=
- =?us-ascii?Q?wuJNR8hRwESEw41MzMN1iX7Gb9ICs5hn/W10g8+utStcJISsBOVZlWdm3A+M?=
- =?us-ascii?Q?XQDGI9mPMjpaWMbfE82ElueTo1gGiVSsmJyTQA1Bcn1818ML1zYRYq8jet8R?=
- =?us-ascii?Q?iDorQFKarsTWPhbLFSx0ttAiAMa5OOvjD2KmYwE/HAzkWZ/2VOUSL+n8NCK6?=
- =?us-ascii?Q?JnE5du5ZHquYT17bJl2XqUViK7ZCOEb9yVfsr7VB7WxADd12A4jeaOrptsMC?=
- =?us-ascii?Q?rAAjlSECgSmRR++c8BmQA7hVNoTpJNlvOGtI3uVKXhfaBTx5qlfab0RSmnt2?=
- =?us-ascii?Q?sxnEnuDW7iwaNBOz78ST/jp+VJJdpbNDFCo6a1swEeayH8DAqzNRosBvz/gA?=
- =?us-ascii?Q?ClRg5cXec4s/qzrjMD65gimA+6tivllDkcB4+cIxRf3K/Ockfa23ZfSDGxID?=
- =?us-ascii?Q?uI7QZdRthwCJFDbzPI7XSZs/y6npHc6U/z/h969kUwxXJ74Yo+8RTdyXpglv?=
- =?us-ascii?Q?aJcjYB26/0rSKqW7f0Q9SSrLY4GCK3/Hpx6EHgE4pM48YoLkc4+m2pQsPCtQ?=
- =?us-ascii?Q?Hwvhqp9LrWSbweySGKmLZgBnWjNP2LxjZfsZyLg/t0dfLdZcFfxFexi9CsPA?=
- =?us-ascii?Q?pdBXVjNURjog33LqdRNYqZMe0HQFVFkR6HyeKqyNhPnKIOI34QY6ePFW1zpE?=
- =?us-ascii?Q?gh04PPVftNlH+OP86IpCXL5WZK+MVVcP+ADQogpkYDDGsMw6SsU99E7ZakZ+?=
- =?us-ascii?Q?OQn7msKBq6YjZvkYEOFU8dI77aBJ+EMQjXVXa7Bg2sd2IEI6cG5Yhn7m1eer?=
- =?us-ascii?Q?7wM58dm0feBc7Cb/+c+to0zSaWMxw27Iv9GyrBCmqjnV68aBfTiKm1NtePqn?=
- =?us-ascii?Q?SGKtVUuFjHpt+l0zeEpW+DmDAbuyray8scpKnGfnVKVnU4gRN9ELQrm/xoBH?=
- =?us-ascii?Q?nmQtXV7U0eTnHJIn+hMNbrDPLah4FFKnIDP+uNrzDMe9z5wXh7R7S9yXYw4S?=
- =?us-ascii?Q?bE8JroZWIfyz46QCQqfOcnTIdb3VAr9ZOC7bnfCrgSg5Clj/BYePPj+wozHs?=
- =?us-ascii?Q?pZoqKtPSGKohXLEPNaLyRIiFngCiLHL0gx+nY7G0G//COfsvk3kruukTeAlc?=
- =?us-ascii?Q?MY9D7639uEKuOgTkDHLYvmovn2r+7FitiXbez4lUodDjtaL9qDn3moJ7Rjdm?=
- =?us-ascii?Q?UpynKO9k6wLxwSShR/642edHMLn4bvvrloMXEF8sTdAr5GfiuulzR7aNiYwD?=
- =?us-ascii?Q?iSuLTlqX3167w56pnROWOVaImoTJGDyBLYJtDcQ7v2l1bVLh5M1klquw21qL?=
- =?us-ascii?Q?fdk/OhjsZM6oPUkMjh49yB0=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e880c0d-4a5b-4461-125e-08dca1f1275d
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR01MB6862.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 21:33:50.1121
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gY5hKe8zisbJli5cokfnWEOjXfpXWvF8Gp3rVRgZdDm+7yKe2XQhpqpeTCvizp5Mj3K1ACVYcCOrP4QsA2uZWZYWQhWScAUI7fOpx5CuxxM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB6165
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: Fix mmap_assert_locked() in follow_pte()
+To: Pei Li <peili.dev@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com,
+ linux-kernel-mentees@lists.linuxfoundation.org,
+ syzbot+35a4414f6e247f515443@syzkaller.appspotmail.com
+References: <20240710-bug12-v1-1-0e5440f9b8d3@gmail.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240710-bug12-v1-1-0e5440f9b8d3@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-James Morse <james.morse@arm.com> writes:
-> diff --git a/arch/x86/kernel/cpu/resctrl/Makefile b/arch/x86/kernel/cpu/resctrl/Makefile
-> index 4a06c37b9cf1..0c13b0befd8a 100644
-> --- a/arch/x86/kernel/cpu/resctrl/Makefile
-> +++ b/arch/x86/kernel/cpu/resctrl/Makefile
-> @@ -1,4 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -obj-$(CONFIG_X86_CPU_RESCTRL)	+= core.o rdtgroup.o monitor.o
-> -obj-$(CONFIG_X86_CPU_RESCTRL)	+= ctrlmondata.o pseudo_lock.o
-> +obj-$(CONFIG_X86_CPU_RESCTRL)		+= core.o rdtgroup.o monitor.o
-> +obj-$(CONFIG_X86_CPU_RESCTRL)		+= ctrlmondata.o
-> +obj-$(CONFIG_RESCTRL_FS_PSEUDO_LOCK)	+= pseudo_lock.o
->  CFLAGS_pseudo_lock.o = -I$(src)
+On 11.07.24 07:13, Pei Li wrote:
+> This patch fixes this warning by acquiring read lock before entering
+> untrack_pfn() while write lock is not held.
+> 
+> syzbot has tested the proposed patch and the reproducer did not
+> trigger any issue.
+> 
+> Reported-by: syzbot+35a4414f6e247f515443@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=35a4414f6e247f515443
+> Tested-by: syzbot+35a4414f6e247f515443@syzkaller.appspotmail.com
+> Signed-off-by: Pei Li <peili.dev@gmail.com>
+> ---
+> Syzbot reported the following warning in follow_pte():
+> 
+> WARNING: CPU: 3 PID: 5192 at include/linux/rwsem.h:195 rwsem_assert_held include/linux/rwsem.h:195 [inline]
+> WARNING: CPU: 3 PID: 5192 at include/linux/rwsem.h:195 mmap_assert_locked include/linux/mmap_lock.h:65 [inline]
+> WARNING: CPU: 3 PID: 5192 at include/linux/rwsem.h:195 follow_pte+0x414/0x4c0 mm/memory.c:5980
+> 
+> This is because we are assuming that mm->mmap_lock should be held when
+> entering follow_pte(). This is added in commit c5541ba378e3 (mm:
+> follow_pte() improvements).
+> 
+> However, in the following call stack, we are not acquring the lock:
+>   follow_phys arch/x86/mm/pat/memtype.c:957 [inline]
+>   get_pat_info+0xf2/0x510 arch/x86/mm/pat/memtype.c:991
+>   untrack_pfn+0xf7/0x4d0 arch/x86/mm/pat/memtype.c:1104
+>   unmap_single_vma+0x1bd/0x2b0 mm/memory.c:1819
+>   zap_page_range_single+0x326/0x560 mm/memory.c:1920
 
-Now that pseudo_lock.c is only conditionally compiled, the work it's
-doing to define tracepoints, (that is, #define CREATE_TRACE_POINTS),
-should be moved to monitor.c which is unconditionally compiled.
+That implies that unmap_vmas() is called without the mmap lock in read 
+mode, correct?
 
-And then, the CFLAGS line above should be adjusted to apply to
-the compilation of monitor.c, that is:
+Do we know how this happens?
 
-CFLAGS_monitor.o = -I$(src)
+* exit_mmap() holds the mmap lock in read mode
+* unmap_region is documented to hold the mmap lock in read mode
 
-Without these changes, compiling without CONFIG_RESCTRL_FS_PSEUDO_LOCK
-will fail due to undefined tracepoint functions.
+> 
+> In zap_page_range_single(), we passed mm_wr_locked as false, as we do
+> not expect write lock to be held.
+> In the special case where vma->vm_flags is set as VM_PFNMAP, we are
+> hitting untrack_pfn() which eventually calls into follow_phys.
+> 
+> This patch fixes this warning by acquiring read lock before entering
+> untrack_pfn() while write lock is not held.
+> 
+> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> 
+> Tested on:
+> 
+> commit:         9d9a2f29 Merge tag 'mm-hotfixes-stable-2024-07-10-13-1..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13be8021980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3456bae478301dc8
+> dashboard link: https://syzkaller.appspot.com/bug?extid=35a4414f6e247f515443
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> patch:          https://syzkaller.appspot.com/x/patch.diff?x=145e3441980000
+> 
+> Note: testing is done by a robot and is best-effort only.
+> ---
+>   mm/memory.c | 9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/memory.c b/mm/memory.c
+> index d10e616d7389..75d7959b835b 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -1815,9 +1815,16 @@ static void unmap_single_vma(struct mmu_gather *tlb,
+>   	if (vma->vm_file)
+>   		uprobe_munmap(vma, start, end);
+>   
+> -	if (unlikely(vma->vm_flags & VM_PFNMAP))
+> +	if (unlikely(vma->vm_flags & VM_PFNMAP)) {
+> +		if (!mm_wr_locked)
+> +			mmap_read_lock(vma->vm_mm);
+> +
+>   		untrack_pfn(vma, 0, 0, mm_wr_locked);
+>   
+> +		if (!mm_wr_locked)
+> +			mmap_read_unlock(vma->vm_mm);
+> +	}
+> +
+>   	if (start != end) {
+>   		if (unlikely(is_vm_hugetlb_page(vma))) {
 
--Carl
+I'm not sure if this is the right fix. I like to understand how we end 
+up without the mmap lock at least in read mode in that path?
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
