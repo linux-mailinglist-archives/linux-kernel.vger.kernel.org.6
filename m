@@ -1,111 +1,116 @@
-Return-Path: <linux-kernel+bounces-249753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B7392EF56
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 960E092EF58
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC8C51C2279E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:09:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B5D1C22517
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2DB16EBE0;
-	Thu, 11 Jul 2024 19:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075DA16EB6E;
+	Thu, 11 Jul 2024 19:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XihkwQLB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+slZ+Wj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5989B288B5;
-	Thu, 11 Jul 2024 19:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B4A288B5;
+	Thu, 11 Jul 2024 19:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720724934; cv=none; b=rYZlwtKnsSVXyjutyr/T5fmNF/tJtDjw+2EAjVLBG8JqiOS/s+hCEZlEzA7iukttqduPaVVj+oB6SwteIbfMSHMsyt6xa5nnJzzfvTjHgfMvz+RZMiIC2k6Rc6T8iSRnE0k3beUayhNZ0JfGKvvgRRV3Qj+o6t3uYyOCozuATF0=
+	t=1720725092; cv=none; b=sLT7yi59px/SJEpF9u8kNsvpRlCKZzmfo9E+6LRKRrSFEth2lEZf/oyePs9468X7wb8rFSj1aaWY9/EpSjGn/7Y1bNlbPOt58gteuf7zXfbR+z33LuHAhwOdmYTrUy8tJZu0ldF3VhylMo0Lf+rfncyzJQciMSBZFiXAStsAHlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720724934; c=relaxed/simple;
-	bh=PkPQTbw7deeaqSIA2QxrV/rg07ycTK/FjG1yjB7MJ2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6T6XHaTaAmN8dCnEBXO3T6pJwL2gKE9BufpShEagyvdSLL8yr0ms4J3eRP+Q+YCVMKTndotpL0m//QMiNdK6/3QF55N2/WS7AvXAnUReGMaTWDmuHk4v9k3yoGjKuu81i9YoIZVqZgPqTglgLezFFxRKXKLQVh+NXUWPFuvUJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XihkwQLB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 484EBC116B1;
-	Thu, 11 Jul 2024 19:08:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720724933;
-	bh=PkPQTbw7deeaqSIA2QxrV/rg07ycTK/FjG1yjB7MJ2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XihkwQLBuUN2nyJf4R0G/cEvacuTpXd+vUa2F/roD3Dxy54MUdghDUrbpTAs0Hxot
-	 28l0OAiwgRxbtCcyAL0H/FetkhAJEJNM8ViyiyhqwFF0/TNwUUpVqb+scSxRml2WqU
-	 ZyuctrXpC7kQZZ65ZVnaDs5hezpPhS3HqJxIEHFE=
-Date: Thu, 11 Jul 2024 21:08:48 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Simon Horman <horms@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	UNGLinuxDriver@microchip.com,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v3 6/7] mfd: Add support for LAN966x PCI device
-Message-ID: <2024071113-motocross-escalator-e034@gregkh>
-References: <20240627091137.370572-1-herve.codina@bootlin.com>
- <20240627091137.370572-7-herve.codina@bootlin.com>
- <20240711152952.GL501857@google.com>
- <20240711184438.65446cc3@bootlin.com>
+	s=arc-20240116; t=1720725092; c=relaxed/simple;
+	bh=fC+K0Jq67ClJ86d/w9LHhdxavRr/5N6FP9gQXxeov60=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k1iWSyMSa9DctYHAfdcXOngyGZYfrtSPgnzoqSPG9rzC54iW3Iw5KlCgF0Obz8+JtQ7WpbVZrEo47X2w8dQy94LFQY9f1Vmk+AaaZOczY5vSdulS6b8CRmY2J1cUbBxOAut+n0olO54AIc2ixS/kq2O/2QZx/QUDzrke7fV8knE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+slZ+Wj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A03DC116B1;
+	Thu, 11 Jul 2024 19:11:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720725091;
+	bh=fC+K0Jq67ClJ86d/w9LHhdxavRr/5N6FP9gQXxeov60=;
+	h=From:Date:Subject:To:Cc:From;
+	b=D+slZ+Wj2Msp1JulHkHQ78oUMxQSVhlk8Q2Iz1FtSO7hzDFXeDkeGEe4McD1y7i1D
+	 V+JSegt/l5SlF31EkzdUQiYSmIW/ruDZqCRyQIoiD/9wY1Ukr0XgeYcs/+8ipecdu2
+	 BvSF/sBZzfumQTlemXB0fW/k9630xRB4uNXsBkxQ0aveHFU8mIBszclzn0sEn4T35n
+	 X5IeqJG56Az3hbzef0hDV0cjF7+wrKn3wgeLLbr+IHqwx+o/JWB6iynOR+m7N2o0ob
+	 tBAEpg9oWygMtcrlo5ALC8wLISUjhw3hCJZ+BaCYs83asoJf6yv51nkEgVcJ3VaPbw
+	 cnBdPNwHsSQFQ==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Thu, 11 Jul 2024 15:11:13 -0400
+Subject: [PATCH] nfsd: remove unneeded EEXIST error check in
+ nfsd_do_file_acquire
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711184438.65446cc3@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240711-nfsd-next-v1-1-f9f944500503@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAFAukGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDc0ND3by04hTdvNSKEt1kyxRD8zQzs1SjpBQloPqCotS0zAqwWdGxtbU
+ AYE97FVsAAAA=
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Youzhong Yang <youzhong@gmail.com>, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1113; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=fC+K0Jq67ClJ86d/w9LHhdxavRr/5N6FP9gQXxeov60=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmkC5fL3+S7+8H+AWwFkjGAKKqQKQcf7/3KIE09
+ ou1rr/We/iJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZpAuXwAKCRAADmhBGVaC
+ FWAgD/4myJRLy6cu9TMrZSN+i98scxYhyYHbBj7Zx6xa+fuT7OMfjL1/vdDBIX1mMW0DyQitQRV
+ b1JvtSRwB9nftytYP3hfWinBt9dU0Xxr6hQ54jXp+h3kcOf3E++G/B73BWOhXF2dXRAprs9YpLu
+ LNrRAJ5vpEfqCsvLT36PfiYhWs/+uSerDDBRIjqnocmf+LZVyVuVgfKPQNi5PpJOgrWEWGa+WZv
+ xSl/2DDa5sceah7vaUgfRAepiTmW4SZr4/uY00mYnsQhXQ1bVnoe+r9wNjvwxif9sqwDzvlc7tU
+ /grGADpJ6CzkH0LdODLzPR/Gz10EWYOjslrGm81itl4nTIFSkq4YPkI5jz4H/pl2/4DwDyF4BTL
+ Cvl//rorBDlkOoQ+Aa1/+gnFKzsSdwyR63ShQCkcDc73vkFvSwJz3TmBs6wWbIZXojABbluhnpz
+ 9ZnXhmlaHrKFkYH4XXpDbQ8q7tldysqhy8zScMI/7dvoHTMgLil5Ne6TLRj2DwxzSE8e+q8CDtM
+ mn5KwfpzmD7p7sGqPrYLb2WhWFoe38zOy9f/1UFsHKBDvGbuKBi7MIAVl29z4ZvZ0bb90+MKUpk
+ bcwGnpLxJ9ESQVMa+Kza48dmI+yT1w7IzWqpvQrBzOjmVxNtJ9XK3B054QPZq0UrX2JD9f8VYhf
+ 7H2NKTV0Hv12P/Q==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Thu, Jul 11, 2024 at 06:44:38PM +0200, Herve Codina wrote:
-> Hi Lee,
-> 
-> On Thu, 11 Jul 2024 16:29:52 +0100
-> Lee Jones <lee@kernel.org> wrote:
-> 
-> > On Thu, 27 Jun 2024, Herve Codina wrote:
-> > 
-> > > Add a PCI driver that handles the LAN966x PCI device using a device-tree
-> > > overlay. This overlay is applied to the PCI device DT node and allows to
-> > > describe components that are present in the device.
-> > > 
-> > > The memory from the device-tree is remapped to the BAR memory thanks to
-> > > "ranges" properties computed at runtime by the PCI core during the PCI
-> > > enumeration.
-> > > 
-> > > The PCI device itself acts as an interrupt controller and is used as the
-> > > parent of the internal LAN966x interrupt controller to route the
-> > > interrupts to the assigned PCI INTx interrupt.  
-> > 
-> > Not entirely sure why this is in MFD.
-> 
-> This PCI driver purpose is to instanciate many other drivers using a DT
-> overlay. I think MFD is the right subsystem.
+Given that we do the search and insertion while holding the i_lock, I
+don't think it's possible for us to get EEXIST here. Remove this case.
 
-Please use the aux bus for that, that is what is was specifically
-designed for, and what it is being used for today.
+Cc: Youzhong Yang <youzhong@gmail.com>
+Fixes: c6593366c0bf ("nfsd: don't kill nfsd_files because of lease break error")
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+This is replacement for PATCH 1/3 in the series I sent yesterday. I
+think it makes sense to just eliminate this case.
+---
+ fs/nfsd/filecache.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-thanks,
+diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+index f84913691b78..b9dc7c22242c 100644
+--- a/fs/nfsd/filecache.c
++++ b/fs/nfsd/filecache.c
+@@ -1038,8 +1038,6 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	if (likely(ret == 0))
+ 		goto open_file;
+ 
+-	if (ret == -EEXIST)
+-		goto retry;
+ 	trace_nfsd_file_insert_err(rqstp, inode, may_flags, ret);
+ 	status = nfserr_jukebox;
+ 	goto construction_err;
 
-greg k-h
+---
+base-commit: ec1772c39fa8dd85340b1a02040806377ffbff27
+change-id: 20240711-nfsd-next-c9d17f66e2bd
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
