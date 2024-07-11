@@ -1,66 +1,46 @@
-Return-Path: <linux-kernel+bounces-249694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E6B92EEA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:17:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADC1A92EEAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE0F287F50
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE9A11C21A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D176C16DC36;
-	Thu, 11 Jul 2024 18:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C5916DC1E;
+	Thu, 11 Jul 2024 18:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="P/4wmUY/"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF0586AFA
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WDZu3iFy"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417D186AFA
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720721845; cv=none; b=F3dLj2bN2tREU4gF8U8GOvNA4Zqja4cDNilWMAheRCOJnqJckstHcML5twsVyMEDu9MZMdPOyInsUQoZOKBypWXPQtofL4iLOZEPtHXJlRvwn1h2eDbpE0CxNNJS0STG1gN6T4J0z8dD7hu2M4HGTKoM3fNkKFlp+5rhx7TdziQ=
+	t=1720721853; cv=none; b=J2XJ+yrvs29nAaY4edNYjqNjM1RpXhkqio6/mJ/Vk6Y+i+A2Jzo+51RwEfOKdMT0I9kOR37Fo1H0MBKHyxUCSFbiTg//AZWqqgrBqxsE9gDkN3yFZxhr+YDEyBDDALND0rNpX6w1uRX+eaemJuLCt6ePO9yx0dzHl6n7+PKBbpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720721845; c=relaxed/simple;
-	bh=m9ci2yNa+HxZGAZvkfWqviCIyVM2pW4WE+34Zzg+gqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bQ6S7TwfGLB70eLUa6e12TsuP1jUuOTq3TjaeVSHuRt4ydmWSN25WN1PZ6fwFbv4aAajxfbLbHWur9V0tE2RmoP3pRwDZW/HQ8euhCnFT/QKRK81s82CzBeAttxfMqxzjhV96a9/fNpklX2fLEUmxKDEKVSoXjflhMJOJ3ENpFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=P/4wmUY/; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
-	by cmsmtp with ESMTPS
-	id RszWslZRmjnP5RyM6sYOso; Thu, 11 Jul 2024 18:17:22 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id RyM5siGWYuKXMRyM5sm0ho; Thu, 11 Jul 2024 18:17:21 +0000
-X-Authority-Analysis: v=2.4 cv=ANnGoFku c=1 sm=1 tr=0 ts=669021b1
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8 a=3O__t03nxoAqBYxMqfAA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=Fp8MccfUoT0GBdDC_Lng:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=cTwOtyCJTb+GvXLybnV8tGTSn4CH7/gLVA4lCx4WiTk=; b=P/4wmUY/P4LpzNzOsc1r+nvWpl
-	3RH8EJ6Rkhd/+TcqiYRE0Xk9aHodGsKBYK2GUIpIg7OQZgjTseVzFyKlfPWLm+280WHVw2pNQTmfX
-	TpzCBQ3SUIh/+kL30JWnlsfJ3+sQ2lcChEM7JVA5fOMitHmRgppCYt8I4A+bs/lfOeh+p5RWc3pRf
-	XmBGn7hlomOtTVYmQDNFA9o8qylOe/u7i5d/NK8KeS45lHonKDo5xifw+9Qu0OVMIT2jmrCVDfGbI
-	YVJGWEyx89RgQA4djr5zcZIwtvhdwfg/Zlvy22Sp4xcQ2jSXzbD3m9v2wEKUA9yw7pGxCqXWN5F2X
-	A5SxdVDQ==;
-Received: from [201.172.173.139] (port=34668 helo=[192.168.15.4])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sRyM4-002KJg-1p;
-	Thu, 11 Jul 2024 13:17:20 -0500
-Message-ID: <359fbd37-67a6-4a1b-81b9-f551c5205a54@embeddedor.com>
-Date: Thu, 11 Jul 2024 12:17:19 -0600
+	s=arc-20240116; t=1720721853; c=relaxed/simple;
+	bh=iuMBBhYlCOjZOpIFYeaHzJHApG0BTYNilpVypGgywA0=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GaD1GIWLktHK3GajWqb1yGvwl0exfvAO8xpPN4BLwifsUgBuzI/SPpdN7MEd+PfFUIGCDgeIRfN99NHiY6DEux9huxO6MbV85f5DdFDkJBFt9ZoXAd5uISxstJAevvAWMGCvl+LXyIFR1kZ2xgwtdpTxkcQjBaoQdrOGnbPrp3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WDZu3iFy; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.49.54] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id DEE8620B7165;
+	Thu, 11 Jul 2024 11:17:30 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DEE8620B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1720721851;
+	bh=+z283ws4ObwqjiEHX5vgO9Pe10pByZ7UcBYqlb7oBbU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=WDZu3iFyrQV0MTbppIIc3oSSkU+Hzv9GeME6W3cIBGcs2UmDHqkha/4CHbTmO0fGi
+	 cjXFejIs99CBCeeWf8HKRuWsQxoGAHAgANj9ArJAyB1xhGJwgejJ5Hg1HU5rBvWjZd
+	 sl0r5tmfoZld6dcw79CAE7UXnqA/p6e6feqVeBnY=
+Message-ID: <0e665ec4-2449-4140-b1ad-41ae01bf3592@linux.microsoft.com>
+Date: Thu, 11 Jul 2024 11:17:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,118 +48,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] scsi: message: fusion: struct _CONFIG_PAGE_IOC_2:
- Replace 1-element array with flexible array
-To: Kees Cook <kees@kernel.org>, Sathya Prakash <sathya.prakash@broadcom.com>
-Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
- Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240711172432.work.523-kees@kernel.org>
- <20240711172821.123936-4-kees@kernel.org>
+Cc: eahariha@linux.microsoft.com, Leon Romanovsky <leonro@nvidia.com>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [PATCH 2/2] dma: Add IOMMU static calls with clear default ops
+To: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org>
+ <f2b699aea8fff5589a674da2a567fd593ed2d386.1720693745.git.leon@kernel.org>
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240711172821.123936-4-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <f2b699aea8fff5589a674da2a567fd593ed2d386.1720693745.git.leon@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sRyM4-002KJg-1p
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:34668
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 43
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfI9SfOptxWDbxkbopECgZ3pu6uJ77cIIKIQbC0sglsRPasYAJB5rxWbhuc8ENPWpVCWEfuwOcLRC+54Ea+GEiLFy/tS1GU8TleM4KiTBncPNZImPube3
- Op7T6Va9wKei6vWZKClXdBF71+W+Br/Gc7q6SJj0zdAhz/tqfiBRllBUBTkww66a2bj9yIMregidYqmttMSgw7eQskTB5yKJi42z+IRFs80/6nySF5gd7Wpg
 
-
-
-On 11/07/24 11:28, Kees Cook wrote:
-> Replace the deprecated[1] use of a 1-element array in
-> struct _CONFIG_PAGE_IOC_2 with a modern flexible array.
+On 7/11/2024 3:38 AM, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
 > 
-> Additionally add __counted_by annotation since RaidVolume is only ever
-> accessed from loops controlled by NumActiveVolumes:
-> 
-> lsi/mpi_cnfg.h:    CONFIG_PAGE_IOC_2_RAID_VOL  RaidVolume[] __counted_by(NumActiveVolumes); /* 0Ch */
-> mptbase.c:      for (i = 0; i < pIoc2->NumActiveVolumes ; i++)
-> mptbase.c:                  pIoc2->RaidVolume[i].VolumeBus,
-> mptbase.c:                  pIoc2->RaidVolume[i].VolumeID);
-> mptsas.c:               for (i = 0; i < ioc->raid_data.pIocPg2->NumActiveVolumes; i++) {
-> mptsas.c:                                       RaidVolume[i].VolumeID) {
-> mptsas.c:                                       RaidVolume[i].VolumeBus;
-> mptsas.c:       for (i = 0; i < ioc->raid_data.pIocPg2->NumActiveVolumes; i++) {
-> mptsas.c:                   ioc->raid_data.pIocPg2->RaidVolume[i].VolumeID, 0);
-> mptsas.c:                   ioc->raid_data.pIocPg2->RaidVolume[i].VolumeID);
-> mptsas.c:                   ioc->raid_data.pIocPg2->RaidVolume[i].VolumeID, 0);
-> mptsas.c:               for (i = 0; i < ioc->raid_data.pIocPg2->NumActiveVolumes; i++) {
-> mptsas.c:                       if (ioc->raid_data.pIocPg2->RaidVolume[i].VolumeID ==
-> mptsas.c:       for (i = 0; i < ioc->raid_data.pIocPg2->NumActiveVolumes; i++)
-> mptsas.c:               if (ioc->raid_data.pIocPg2->RaidVolume[i].VolumeID == id)
-> mptspi.c:       for (i=0; i < ioc->raid_data.pIocPg2->NumActiveVolumes; i++) {
-> mptspi.c:               if (ioc->raid_data.pIocPg2->RaidVolume[i].VolumeID == id) {
-> 
-> No binary differences are present after this conversion.
-> 
-> Link: https://github.com/KSPP/linux/issues/79 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
+> Most of the IOMMU drivers are using the same DMA operations, which are
+> default ones implemented in drivers/iomem/dma-iomem.c. So it makes sense
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+s/iomem/iommu?
 
-Thanks
--- 
-Gustavo
-
+> to properly set them as a default with direct call without need to
+> perform function pointer dereference.
+> 
+> During system initialization, the IOMMU driver can set its own DMA and
+> in such case, the default DMA operations will be overridden.
+> 
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
 > ---
-> Cc: Sathya Prakash <sathya.prakash@broadcom.com>
-> Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-> Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> Cc: MPT-FusionLinux.pdl@broadcom.com
-> Cc: linux-scsi@vger.kernel.org
-> Cc: linux-hardening@vger.kernel.org
-> ---
->   drivers/message/fusion/lsi/mpi_cnfg.h | 10 +---------
->   1 file changed, 1 insertion(+), 9 deletions(-)
+>  MAINTAINERS               |  1 +
+>  drivers/iommu/dma-iommu.c | 24 +++++++-------
+>  include/linux/iommu-dma.h | 50 +++++++++++++++++++++++++++++
+>  kernel/dma/iommu.h        | 67 +++++++++++++++++++++++++++++++++++++++
+>  kernel/dma/mapping.c      |  9 +++---
+>  5 files changed, 134 insertions(+), 17 deletions(-)
+>  create mode 100644 include/linux/iommu-dma.h
+>  create mode 100644 kernel/dma/iommu.h
 > 
-> diff --git a/drivers/message/fusion/lsi/mpi_cnfg.h b/drivers/message/fusion/lsi/mpi_cnfg.h
-> index e30132b57ae7..7713c74e515b 100644
-> --- a/drivers/message/fusion/lsi/mpi_cnfg.h
-> +++ b/drivers/message/fusion/lsi/mpi_cnfg.h
-> @@ -1018,14 +1018,6 @@ typedef struct _CONFIG_PAGE_IOC_2_RAID_VOL
->   
->   #define MPI_IOCPAGE2_FLAG_VOLUME_INACTIVE           (0x08)
->   
-> -/*
-> - * Host code (drivers, BIOS, utilities, etc.) should leave this define set to
-> - * one and check Header.PageLength at runtime.
-> - */
-> -#ifndef MPI_IOC_PAGE_2_RAID_VOLUME_MAX
-> -#define MPI_IOC_PAGE_2_RAID_VOLUME_MAX      (1)
-> -#endif
-> -
->   typedef struct _CONFIG_PAGE_IOC_2
->   {
->       CONFIG_PAGE_HEADER          Header;                              /* 00h */
-> @@ -1034,7 +1026,7 @@ typedef struct _CONFIG_PAGE_IOC_2
->       U8                          MaxVolumes;                          /* 09h */
->       U8                          NumActivePhysDisks;                  /* 0Ah */
->       U8                          MaxPhysDisks;                        /* 0Bh */
-> -    CONFIG_PAGE_IOC_2_RAID_VOL  RaidVolume[MPI_IOC_PAGE_2_RAID_VOLUME_MAX];/* 0Ch */
-> +    CONFIG_PAGE_IOC_2_RAID_VOL  RaidVolume[] __counted_by(NumActiveVolumes); /* 0Ch */
->   } CONFIG_PAGE_IOC_2, MPI_POINTER PTR_CONFIG_PAGE_IOC_2,
->     IOCPage2_t, MPI_POINTER pIOCPage2_t;
->   
+
+<snip>
 
