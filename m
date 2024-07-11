@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-248897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902EF92E362
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:24:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 128D692E369
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24381C20C09
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:24:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C6D1C219A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF7315574C;
-	Thu, 11 Jul 2024 09:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F191C155A52;
+	Thu, 11 Jul 2024 09:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="ylW4lySg"
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eGJAbTId"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAD812C559;
-	Thu, 11 Jul 2024 09:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C211553BC
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720689859; cv=none; b=r7Uz+rEpHfsHTX1wjbqe9cKky2t8DeGErbq5VSjlO/xGbC97FhO1/lqxpbmRiWzAUQN7Mh72hfGnFe2tZOppRNy0a6mTbWKFKYvJ/k5uV0NOWfKa8WixUlLRzJvfadINklcvoDTcT0osNx7dNiD/f+38Cp+nGNx4jedIRNMckFs=
+	t=1720690095; cv=none; b=roF8R4fpZlu0JFThGxHy9kPZ6kv8s12JP0bAB8CeuEDE2OkHzXPr1oUzw8XkaXOgsA7QhrFt6Wju0Uc95BQE871nkI5PT5W0zzNzLXQuFM1xBcX27kvica6w/APaZEPRZLCobFJiQyppIfHQLFx0aI7z1KOpOHFvgi/k0zYEsH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720689859; c=relaxed/simple;
-	bh=9NjQY4CFdRSSUMACoTljrQZ0Eu6KQjt/PB+PShVspRE=;
-	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
-	 In-Reply-To; b=e+arHWYKnZzQcRUW8lbVMj3XDF8iduVuRIRrk88Ollp+92RfC2IbLAFUBdSBUuZBfi46V8bXEivMyz54ey8EZI9n0rei6dsbxW+cFZi7d2hOi8HbOcJLLcCvjJ0WlPncD45xAH572FCFKQIzqOyJX0MtXz5494C/MfmY23RnWcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=ylW4lySg; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [213.135.10.150])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id EBB993B6D;
-	Thu, 11 Jul 2024 11:24:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1720689849;
+	s=arc-20240116; t=1720690095; c=relaxed/simple;
+	bh=37/pqm4xjgo9ExMfXcLghTZ1XLu8IiG2BqNv6q2i5U4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HiADWC4dl1Y7VaeoMxPJE5MGVWyaZNvRM1Sx+RYJL6poEiqdFl6Lx/7Pyms0nfpwYiz8Yvc9t0+gPiER/8sAYHrxLboc/qndqG2GFbMgIzl+l5sihOJsmZpkuxlk0ZWdywJvOk44dV8ZiIDhK9mEeZ0AvUQ5UdKYpUkVr9nfSB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eGJAbTId; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720690092;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
-	 references:references; bh=9NjQY4CFdRSSUMACoTljrQZ0Eu6KQjt/PB+PShVspRE=;
-	b=ylW4lySgGjMOXcWA3D57Rlg3dbXLsLi6lD8Ujp4QTPKR3fGsa7gtjsmw8eqrWbYAJ48HgC
-	+GbmuDCeNgyCqRkhsRYQ8litN8fDDEM/99hNMyzOA3TNVMp/ppxC6XcOMDXJivVBYuLrOQ
-	E7N8boUaduoWml1xbC3bK2bPL0qZogEV2AfD5xg05036jXZ7ASzfsshNXTWAmg3W1anF/w
-	mF2eigXeK3ys5PkY/YoOIsCWoKvZ8FqFeY+jFWU6M9lgeedMWSxCh+lEzri4FF2kV0YFY2
-	bZ7Zj8nF/1j0J3vm+TP1jlg0TE8wKRxmP+/0S8f8MoS2g7KdZab2gOLsWYeMPw==
-Content-Type: multipart/signed;
- boundary=bd03c224a37c17e60929764b4547fa19bcf92c44aa38a8278f30359b2966;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 11 Jul 2024 11:24:06 +0200
-Message-Id: <D2MLN7389BYY.1HZAQPLQNKU5T@walle.cc>
-To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- <chunkuang.hu@kernel.org>, <ck.hu@mediatek.com>
-Subject: Re: [PATCH v8 0/3] drm/mediatek: Add support for OF graphs
-Cc: <robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
- <conor+dt@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
- <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
- <mripard@kernel.org>, <tzimmermann@suse.de>, <matthias.bgg@gmail.com>,
- <shawn.sung@mediatek.com>, <yu-chang.lee@mediatek.com>,
- <jitao.shi@mediatek.com>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <linux-mediatek@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>, <wenst@chromium.org>,
- <kernel@collabora.com>, <sui.jingfeng@linux.dev>
-From: "Michael Walle" <michael@walle.cc>
-X-Mailer: aerc 0.16.0
-References: <20240618101726.110416-1-angelogioacchino.delregno@collabora.com> <d84f1469-e82a-42de-94a0-8ee0da0cba02@collabora.com> <eef10e9f-dac5-4a05-a79c-f8026f27f051@collabora.com>
-In-Reply-To: <eef10e9f-dac5-4a05-a79c-f8026f27f051@collabora.com>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y8dTeOHlu53W6N0+wG7vI6REcOmgYVWMDG4bNhHFz/s=;
+	b=eGJAbTIdOWYUL6gNFQQbs0SgfdzblvbMQMlYxCF4lchkv2ejHVJ/C/tNvNzEGyniWXaEhB
+	Q5WCekZTU4QMASCmckfWznBe9oTtm7R8bvu9qGVaxpqiPDtNFPu39me7t+xOfAR7eMyP0O
+	33Y65zPOHhiqBV6nRDA8F8qDHSfASdA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-542-NTnX1kYTNkWtjl-oX-l2zA-1; Thu,
+ 11 Jul 2024 05:28:03 -0400
+X-MC-Unique: NTnX1kYTNkWtjl-oX-l2zA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E66D0196E094;
+	Thu, 11 Jul 2024 09:28:01 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.32])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E64061955E70;
+	Thu, 11 Jul 2024 09:27:57 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 11 Jul 2024 11:26:24 +0200 (CEST)
+Date: Thu, 11 Jul 2024 11:26:19 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org
+Cc: clm@meta.com, jolsa@kernel.org, mingo@kernel.org, paulmck@kernel.org,
+	rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] uprobes: make uprobe_register() return struct uprobe
+ *
+Message-ID: <20240711092619.GA18031@redhat.com>
+References: <20240710140017.GA1074@redhat.com>
+ <20240710163022.GA13298@redhat.com>
+ <20240710163133.GD13298@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710163133.GD13298@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
---bd03c224a37c17e60929764b4547fa19bcf92c44aa38a8278f30359b2966
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On 07/10, Oleg Nesterov wrote:
+>
+> -void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
+> +void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
+>  {
+> -	struct uprobe *uprobe;
+> -
+> -	uprobe = find_uprobe(inode, offset);
+> -	if (WARN_ON(!uprobe))
+> -		return;
+> -
+>  	down_write(&uprobe->register_rwsem);
+>  	__uprobe_unregister(uprobe, uc);
+>  	up_write(&uprobe->register_rwsem);
+> -	put_uprobe(uprobe);
 
-Hi,
+OK, this is obviously wrong, needs get_uprobe/put_uprobe. __uprobe_unregister()
+can free this uprobe, so up_write(&uprobe->register_rwsem) is not safe.
 
-> > We've got a bunch of series that are waiting for this to get upstreamed=
-, including
-> > the addition of support for MT8365-EVK (already on mailing lists), MT83=
-95 Radxa
-> > NIO 12L, MT8395 Kontron SBC i1200 (not on mailing lists yet, waiting fo=
-r this to
-> > get merged), other than some other conversion commits for other MediaTe=
-k DTs from
-> > myself.
+I'll send V2 on top of Peter's new version.
 
-Yes this is the missing piece to finally get DisplayPort output
-working on our board.
+Oleg.
 
--michael
-
---bd03c224a37c17e60929764b4547fa19bcf92c44aa38a8278f30359b2966
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZo+ktxEcbWljaGFlbEB3
-YWxsZS5jYwAKCRASJzzuPgIf+IKuAX91bBhsZ9n70IFStgrv2BIU/wzvYey5zSMd
-wdN4kUkgilUQZFMEdQBBI9Rre4soOOABgKV3nro9rwqC5Qu3/YjtsfR4y9YZMmWS
-dVPja70ZNJ1cDuh4I+gD19+V0Q4xPsz6ZQ==
-=B681
------END PGP SIGNATURE-----
-
---bd03c224a37c17e60929764b4547fa19bcf92c44aa38a8278f30359b2966--
 
