@@ -1,55 +1,85 @@
-Return-Path: <linux-kernel+bounces-249989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479A292F2AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:39:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C03B92F2B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB55C1F22291
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:39:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCD841C2204F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47AA115EFC4;
-	Thu, 11 Jul 2024 23:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BECA15ADAF;
+	Thu, 11 Jul 2024 23:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HqtAbveb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="iW+4FIKE"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE8976034;
-	Thu, 11 Jul 2024 23:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2441115ADA1
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720741142; cv=none; b=pXUmp9EYq+KhRQk0XL+zJ6fbpp8ipctfqk3/HvpSZASFNx/TowG8BNcRBFaMCw6tiDTTMxtDRgl3/S9f6+6ISs/UqENmWz7895Cm1Bpc8BdDjwEXKTTkxg4MaNXDs/aFTlwEGIPaomusqaXZ4qf8woLCBew/p/u212nkifIbbtc=
+	t=1720741195; cv=none; b=i9cnWppE2osGMC0HexUiGnnU0ljHALpwhiYtP1gyAWDLTYxzgdK9GE87PDYE7Gh0E1tmat5I2SjSk1jBHaKbpIsKvBKyYG/mkwZ0QnCMdE8+VeYQS8QngLE1G/mW3JzcYGabr5HG8zc4AbU0UNiIpIKtF3ZzwbRMmEujKpp591o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720741142; c=relaxed/simple;
-	bh=Yk7HUr5GQdgB02Nt1DDc0rXfh22Cpu2JKupZSKBHLOs=;
+	s=arc-20240116; t=1720741195; c=relaxed/simple;
+	bh=AaZXRsdVn2tvLYsDOVlyTZEChQrM/esAH6DERNhXAfI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0PpAVftiIfvx2J5vk4crOUfkmHS+s8Vvr0OsNVqiqTxuJJjRtff/MeKeR0E8KY3Np2xpBYOnAyTrkWjnh62Xbhj6NORkNjOh7DqGDXf1YWrP0mrzEXvPVIZBj6XhIFNwMFMpIXxzHSgVRcd5rG3KoGrPuHukeVZA77yeSHJZr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HqtAbveb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DACDC116B1;
-	Thu, 11 Jul 2024 23:39:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720741142;
-	bh=Yk7HUr5GQdgB02Nt1DDc0rXfh22Cpu2JKupZSKBHLOs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HqtAbvebFFypxquvSGVV1iT8R+y1E80OfCi1Ddu3BRDWHaHTTB6AK1ON9gSgiHJP6
-	 QhG6b8Ur/3LW4S27kYkQRDN6MioPoE1W8ZMovrWCEAwQHiOuPHHhcq/M8vGieMT6+L
-	 tBPWvdhgI+nlKBd9DbSKXqiFdh4jy0/tEV0yqYlKvwrAS6m38PE/fOCGcNV0G6r9J4
-	 ynlNkCklFbQ8TuCCqs5TCmLcjTZ9ngG7YzOt9uqDSwmBpJHDx9l1Nynm2am1/NM0MN
-	 65sLeiDpPEAMNJVNMYjJyeARKhK+pJvKZ3v1zCHHRG3M0X4GkjBp/85c+rtkoh9f+b
-	 j7KEvxWaMyTkA==
-Date: Fri, 12 Jul 2024 01:38:58 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: nicolas.ferre@microchip.com
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: i2c: at91: Add sama7d65 compatible string
-Message-ID: <pivsmeqh26bdicgonegmrnmrzvzojznizewbmo3nseesx6lllj@mnxk7ot4b4mp>
-References: <20240710162615.332888-1-nicolas.ferre@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HgcaMlOV2mDkvwIpW5Ps8T5XE2lR7+uHPBchpyAJJMR3t5vWIjR6/CbVEL8daqhK23w4XDoWkyHYbbxkY9qjzS0Lhme0IZ30tV0Gq5YEshQ+gfPtU4XuhEf3ymBQmzWxuBpguvQQIRRv3hWPwQ5eGxMpe+cpdH7z4Q09QEDXNqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=iW+4FIKE; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-79f08b01ba6so125874185a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:39:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1720741193; x=1721345993; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IFVrrIHp8Vup92boS3hFd9PYBN8YKvRYBK43QitxZkA=;
+        b=iW+4FIKEGd08RFlmgSFOOdNtvyCAWPy2i9oEVeAJQ6so5vE724dY0nbS4dWSOKGpAd
+         iyL+WEl3sXHZC7COphR9jtVeravFTAOjdgTqp5zVXeAnEXOOO8iKQYFGqaBFsVIGdESk
+         Es75IV/7Z8fT+d/PMNOuNilgsOhcxWmlM4wKBCBKRxfNeN2O5OJ8/xh3S834u+SqADuB
+         RcMYHHS7YI63o75kjPKkpw91J8zZiCsUc4fi2zy6RXpgs5WnjN48OfUNn8yI/GcTgHkN
+         Ghrj9weTNR33yf9get0MliPAINB2TO+tH9v7n5EX3EiUBDSJ+oWzi4LUMGr/EK1rHFw+
+         8hwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720741193; x=1721345993;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IFVrrIHp8Vup92boS3hFd9PYBN8YKvRYBK43QitxZkA=;
+        b=tKLPhSl56r8jAoPdjKVNWDI1l2mUu6u7U4Xt1p4ZYEqBvUZH7h8ZGOpcDIo6P5canp
+         67BCbfYV0aqT+Y3sZcHKu8T6lzdH/PSKjheYCQ6mEd2vY5gFgU7J4CsViU+O8HNyro4L
+         OK3Gz5mI9OqFeuz1bN8LQrfURvld8JejhnWSwv58mYcIumvIF0S/wPjj+IR226d2p+zL
+         fmtll1Y0wRSaGRYJEQXf+Brb9OWEAlLjNDQZzITdY54pseae6LPfwVvtuX1Cuj3ClaON
+         ddx1Ru5qmkIIxEiTUW/PDDOT0lMvzX475Ja8OWZ02rmlxWf98C1a323GoLgwR4kF3ZLH
+         myKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzgDS5dzvauc7KJPo0M3WPBh89BZt6TDF47Sfr7RgGejfMFXAdivToyxWSSgbwvGfT9cs/4Epw3iihgg2SP4AJckcjOd+Ayarv8CL5
+X-Gm-Message-State: AOJu0YytbJUmnq/SyOW6RKSh7SRhr0fWdcOGS9qgx72q4dC8mJ3iF3Ax
+	upwHRJI6aoO8EhctvE+2SwYprH9J/k71lUidhrUPk3RY9jplLfFZnefy7HGnG0k=
+X-Google-Smtp-Source: AGHT+IEvE6NFq20imkRuEEO3x8KpVY70FapRhLgTh97KHKQPOyxmkDqYb4gFKM6bc2M6nmkv7zlTvQ==
+X-Received: by 2002:a05:620a:4611:b0:795:60ba:76e9 with SMTP id af79cd13be357-7a152fbcbfcmr290215985a.4.1720741193036;
+        Thu, 11 Jul 2024 16:39:53 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f18ff827csm341798685a.4.2024.07.11.16.39.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 16:39:51 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sS3OA-00FTEK-Qs;
+	Thu, 11 Jul 2024 20:39:50 -0300
+Date: Thu, 11 Jul 2024 20:39:50 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] iommufd: Add check on user response code
+Message-ID: <20240711233950.GU14050@ziepe.ca>
+References: <20240710083341.44617-1-baolu.lu@linux.intel.com>
+ <20240710083341.44617-3-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,20 +88,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710162615.332888-1-nicolas.ferre@microchip.com>
+In-Reply-To: <20240710083341.44617-3-baolu.lu@linux.intel.com>
 
-Hi Nicolas,
-
-On Wed, Jul 10, 2024 at 06:26:15PM GMT, nicolas.ferre@microchip.com wrote:
-> From: Nicolas Ferre <nicolas.ferre@microchip.com>
+On Wed, Jul 10, 2024 at 04:33:40PM +0800, Lu Baolu wrote:
+> The response code from user space is only allowed to be SUCCESS or
+> INVALID. All other values are treated by the device as a response
+> code of Response Failure according to PCI spec, section 10.4.2.1.
+> This response disables the Page Request Interface for the Function.
 > 
-> Add compatible string for sama7d65. Like sama7g5, it currently binds to
-> "microchip,sam9x60-i2c" compatible string for this driver.
+> Add a check in iommufd_fault_fops_write() to avoid invalid response
+> code.
 > 
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Fixes: 07838f7fd529 ("iommufd: Add iommufd fault object")
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  drivers/iommu/iommufd/fault.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
+> index 54d6cd20a673..044b9b97da31 100644
+> --- a/drivers/iommu/iommufd/fault.c
+> +++ b/drivers/iommu/iommufd/fault.c
+> @@ -305,6 +305,12 @@ static ssize_t iommufd_fault_fops_write(struct file *filep, const char __user *b
+>  		if (rc)
+>  			break;
+>  
+> +		if (response.code != IOMMUFD_PAGE_RESP_SUCCESS &&
+> +		    response.code != IOMMUFD_PAGE_RESP_INVALID) {
+> +			rc = -EINVAL;
+> +			break;
+> +		}
 
-pushed to i2c/i2c-host.
 
-Thanks,
-Andi
+I added this:
+
+		static_assert(IOMMUFD_PAGE_RESP_SUCCESS ==
+			      IOMMU_PAGE_RESP_SUCCESS);
+		static_assert(IOMMUFD_PAGE_RESP_INVALID ==
+			      IOMMU_PAGE_RESP_INVALID);
+
+As well
+
+Jason
 
