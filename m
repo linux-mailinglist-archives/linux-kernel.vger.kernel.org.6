@@ -1,110 +1,131 @@
-Return-Path: <linux-kernel+bounces-248836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4FE192E285
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03DB392E293
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693FD28A36E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:37:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4271281F21
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4364156F39;
-	Thu, 11 Jul 2024 08:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CFF1514E3;
+	Thu, 11 Jul 2024 08:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmnNML4I"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="V5xQMwzf"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B752B155A24
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5E61448DD;
+	Thu, 11 Jul 2024 08:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720686948; cv=none; b=ImVvG0xfRL6y+UcksVkwCdIwBY2ahQWFZbM52M6WQiGk+mTA1opS4DOEwodkEqa2kVRHWdo2E6+rQ+4aAjmIqUWu06hqL8YPGKV9uczQC571D+P5mcDuLgav9gNgShZwuzBJEfSKlzyvmPNoWaa2VcLpQbp+ml5MDhu9ZAqzQvM=
+	t=1720687253; cv=none; b=IMShgKk9XMoVeR6HrYaMqpjehZJf8X4OXvDR78op0BMVZxVP5sdNkVJfdP4ddvZqUUURdrl+CKfu7Vas2DOSM/U2rXSuFEspwCoqb8pYfJxmHEw2vDe7sd80+9hYZ9U9H1TuEdOEwH+3bz7nUnTTLxcWRzNCM7Eq6fIIhYFNQj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720686948; c=relaxed/simple;
-	bh=eVrzFQh2gzasohNtJrVRYNU4IlzKN8XLynoUq7Ij4uI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HVU6gsniQUZkb8fip1sQhBa2UKzPR132oYKYMU203+h5mTkULhPhsxqW2SU2bzO8UJI1lmqTf5fS3d4ormbPmcnnmNQZQvDb0Vq+l/TqdQYEdcn4Hv89Mp3JLzF3wzN7pByz7bWW2Hwa7iGCI8W5HrJuDfkWfrM2peQHUdn6k4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmnNML4I; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c96170d23eso525440a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720686946; x=1721291746; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qq8kwvZKqPvz6y5zTKRIEuAEAuvxbyjF4fZE1ScwzjY=;
-        b=CmnNML4I6CseQlSQb9FM07nl1yw6xpCUJW/4U6VlpnU0Ty0QmPdLtha02WNLguz/WM
-         4YdGBt0lM3UA30ajHuiFqiTC16xdHYIgm28SyWaVeNrqnqZqy2yiiBGAZw6TxPT47fEn
-         lIQgqJFGJCu5QS0KLDVryzYMhS8WLR+AfcCMLMv1jR1GJNi7HXfAFyOPXA/zLzkR6TWE
-         JrEWYeyVol9ZIwaKsmd+l/rebdcGIeD6ABX/Sx5V01sDOTyorRJ4k9ffJAf/rJkQCdaO
-         x5cNefCrji30OE2BTtORTYqUWxJliU1h3ucDU/t18IorNPwyomjhN6vqEKBl8yaOyfw0
-         i0MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720686946; x=1721291746;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qq8kwvZKqPvz6y5zTKRIEuAEAuvxbyjF4fZE1ScwzjY=;
-        b=m/KHnOWFLH8U56Q/5xjjoECbSLpwOMwNHQkOjE4xfBP7qAXlH/Hl9R5kfASHgz0CE+
-         e4LqZxZZibo/ti2JFGw3Lh7E5kf3RLLAC5heZomfyr+cI6tYOZA97woxDo2/yayhO67v
-         q4MP4Q1MB8hBfmoiCFZeO1zIxVjHDqyHOtYno35QsJhSerDtg+GmBhbUvFGK+gxNzpaV
-         fNnMbxzsraKOHHVAx1qlcOdM5NMtTLBaIYhnu2GNP6fci8czvByRS3kC0PUFmSW1pBRP
-         ecGxE3inEwIkrayfrG4GybUgR4oUnHnyI5iogxZauGFaorHRbPqgU4V8bMG6OZJqD6gf
-         tRXw==
-X-Gm-Message-State: AOJu0YwLZvEsqJVp5hzvzMcieYkAo7uxEDFoT4q+4xuRCRTeCaLZU4Bt
-	GD9LLIY2XnvWpZvppOPJ6cOOOSqD5nFetCmQ5OtvsftqSnZ2r2+rC/FmmA==
-X-Google-Smtp-Source: AGHT+IGUt6WETC4rSEgAs5YuoG2vVIdNcXGM8Z3YHTLFZ7MSQqVNZVFNLu7K3+WPmzye3AnrP6ybKg==
-X-Received: by 2002:a17:90b:120c:b0:2c9:64fb:1c7e with SMTP id 98e67ed59e1d1-2ca35c32e30mr6510506a91.14.1720686945637;
-        Thu, 11 Jul 2024 01:35:45 -0700 (PDT)
-Received: from localhost ([47.89.225.180])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca34e6a252sm5084517a91.14.2024.07.11.01.35.44
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Jul 2024 01:35:45 -0700 (PDT)
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
-	Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH] workqueue: Simplify pool_allowed_cpus()
-Date: Thu, 11 Jul 2024 16:38:31 +0800
-Message-Id: <20240711083831.4273-1-jiangshanlai@gmail.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
+	s=arc-20240116; t=1720687253; c=relaxed/simple;
+	bh=famdeh/OSzA9p1L4c3FAr90cpd1FQcpHTzNbdVcKP9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oRAV/AzvSNeGSz+A4tAfxyYGBUBBknY+iVpIiv1MZ/8aXP9RrJdj9ndLY0QjB5yYtMNw3/8ua3iNfsd4tDA+3YA7+M9HkQKOk7gJjUK/8Mk0dz/WAZlUe6LuwMb5ei45dkUeCIgML9bLVqK+Q518KhU24wuhG1OeqNJICfQTZyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=V5xQMwzf; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BD2F41BF208;
+	Thu, 11 Jul 2024 08:40:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720687249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cwCbGQFVAAOUEBl/l41/SRNr5G86ZeOQCV7PhWW1kmc=;
+	b=V5xQMwzf3KW7VsUiDr8qVD51hka5jIX8IBwf5OFJyzhtPCw8jVElKP7jWzgdkWH9OLeDHI
+	e2Y+d9BxMpid82HrKD2DySGiGd4ZNOQi2VB6WzKx4tIYrGZ1IPEvbgFiZj2Lyz0A0y0XNg
+	ETjzSRj4VPqKotp6R8Y5XZpaDW4KCWzpjaVK++fsS2/BlrDYdKemBq0S9Kz4ojWjaXwBQx
+	ArnEi2z9+X9aanMxPh5j+mL8jCBTt+OoCqCIxO+GhDvWG6eHseJQw47RaDnI/Muvhcx5te
+	/b5IdvmMIAAWeFGBUfLFX2KOXPdNs4/cqpGid9zBk+J0GVql8WawTgW6Kjk1KA==
+Message-ID: <2672a3b6-6457-4460-9e86-895923b80cdc@bootlin.com>
+Date: Thu, 11 Jul 2024 10:40:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] leds: pca9532: Use PWM1 for hardware blinking
+To: Lee Jones <lee@kernel.org>
+Cc: Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>,
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Christopher Cordahi <christophercordahi@nanometrics.ca>
+References: <20240617143910.154546-1-bastien.curutchet@bootlin.com>
+ <20240617143910.154546-3-bastien.curutchet@bootlin.com>
+ <b88d211f-3c5b-4428-bd94-3d089c56ed22@bootlin.com>
+ <20240711083050.GK501857@google.com>
+Content-Language: en-US
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+In-Reply-To: <20240711083050.GK501857@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+Hi Lee,
 
-For cpu worker pools, attrs->affn_strict is true; attrs->__pod_cpumask
-and attrs->cpumask are the same.  Skip the pool->cpu test
-in pool_allowed_cpus() and use pool->attrs->__pod_cpumask.
+On 7/11/24 10:30, Lee Jones wrote:
+> On Wed, 10 Jul 2024, Bastien Curutchet wrote:
+> 
+>> Hi Lee,
+>>
+>> On 6/17/24 16:39, Bastien Curutchet wrote:
+>>
+>>> +static int pca9532_update_hw_blink(struct pca9532_led *led,
+>>> +				   unsigned long delay_on, unsigned long delay_off)
+>>> +{
+>>> +	struct pca9532_data *data = i2c_get_clientdata(led->client);
+>>> +	unsigned int psc;
+>>> +	int i;
+>>> +
+>>> +	/* Look for others LEDs that already use PWM1 */
+>>> +	for (i = 0; i < data->chip_info->num_leds; i++) {
+>>> +		struct pca9532_led *other = &data->leds[i];
+>>> +
+>>> +		if (other == led)
+>>> +			continue;
+>>> +
+>>> +		if (other->state == PCA9532_PWM1) {
+>>> +			if (other->ldev.blink_delay_on != delay_on ||
+>>> +			    other->ldev.blink_delay_off != delay_off) {
+>>> +				dev_err(&led->client->dev,
+>>> +					"HW can handle only one blink configuration at a time\n");
+>>
+>> I'm having some second thoughts about this dev_err().
+>>
+>> It was dev_dbg() in V1, but based on your suggestion, I changed it to
+>> dev_err() because an error was returned after.
+>>
+>> I've worked more with this patch since it got applied, these error messages
+>> appear frequently, though they don’t seem to be 'real' errors to me as the
+>> software callback is used afterwards and the LED blinks at the expected
+>> period.
+>>
+>> Don't you think a dev_dbg() would be more appropriate in this case ? Or
+>> perhaps a comment instead of a message ?
+> 
+> If it's not an error, then don't return an error message.
+> 
+> Maybe drop the message for a comment and return -EBUSY instead?
+> 
 
-Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
----
- kernel/workqueue.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+OK I'll do this, thank you.
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 8b2a0fe4a85e..5d362290c2e8 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -2646,7 +2646,7 @@ static struct worker *alloc_worker(int node)
- 
- static cpumask_t *pool_allowed_cpus(struct worker_pool *pool)
- {
--	if (pool->cpu < 0 && pool->attrs->affn_strict)
-+	if (pool->attrs->affn_strict)
- 		return pool->attrs->__pod_cpumask;
- 	else
- 		return pool->attrs->cpumask;
--- 
-2.19.1.6.gb485710b
+>>> +				return -EINVAL;
+>>> +			}
+>>> +		}
+>>> +	}
+>>> +
 
+Best regards,
+Bastien
 
