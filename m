@@ -1,171 +1,123 @@
-Return-Path: <linux-kernel+bounces-249133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E792C92E771
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:50:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D6392E773
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248851C21CBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:50:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 575D81C23434
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0227158D8F;
-	Thu, 11 Jul 2024 11:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BCB15B125;
+	Thu, 11 Jul 2024 11:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QsAFGrTa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CjuOTmGc"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775FE2904;
-	Thu, 11 Jul 2024 11:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D3E15820E;
+	Thu, 11 Jul 2024 11:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720698641; cv=none; b=mUmE8F1Ep03QyO+psM2FQqv3jcSJUndVmE91ar/iLoWECcqUIVOy5/+pniY0W1qxdN14537Ug6H90dGUbdtxSYXpOUmJscCdVtcqZbgRtfrRGySh+Tp63tGnRJTmeS1UofJRPKkCkzJggycNATAyQmB1Bevir7gkqQseIEG0LY4=
+	t=1720698703; cv=none; b=Hp4oTEeziFlu+8pB4eXtVpBpM3GgmirX30Dpem44DNfiYQyNoplwYiHojHyBNUd8xRYtYt4ULIOqUWYqQ6DNVew2E2Xy6xY3gjcUrh1CMGnE57drUw2ALfiIBK/oXmw5FH1AUNstK8QVqgO/GcdUT0hfb9G0jmE76WY9kKmFCqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720698641; c=relaxed/simple;
-	bh=zhGBVttiVu6iyO0JmAAPRwCToWBzxlnb/qyZuGhxfOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J6YQxETSpKTpem4Jos9pEhEqs/dsUrG4u1iwwVs0bta/BKCzumZZZreJ+IyFEupYUztbOCZxmRRe/4j1NbdsHGztu1pjznv0pN+Nv0M1N+ZGFmT2UDMPupKJKkqo1GvlB0AOv5C+Dt2gCau098baBJZyaq4uDqme93xKUx3eA7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QsAFGrTa; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720698640; x=1752234640;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zhGBVttiVu6iyO0JmAAPRwCToWBzxlnb/qyZuGhxfOM=;
-  b=QsAFGrTaA6MbjgebBCPgagBKa2VKpneKawtwdNp+toeGzTCZk7duRhgK
-   CIrZEG19ccjo4HyJqSVz9GaccGJFBSRTfLOMblbyb0ETAQ8vDItvFxuQa
-   OuC+KcHnZ0zi5nplnHTMud6OegDcc78UKRkkx29TfBoJKsQBybYyHSbs6
-   3i9EcNGTHEzdv53xW/6vswTFOeYhl0GeXN4K4C9qsgzEE24FYBeV16GBs
-   gDgnzyrRmfwNfjbmITXGXOENX2ool3iUWh7Ve6j4h5x7gs3NB/jKn5+1W
-   cOMKOmpTxy41IIW+2oMAt3C/wGLMX4YNsnc57cCkocSdN/8Ty/qm/MIaD
-   Q==;
-X-CSE-ConnectionGUID: mjluKvxJQSejJmJ5IbclRg==
-X-CSE-MsgGUID: ylxBAJJZS6y+PAbVhMbGDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="18211443"
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="18211443"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 04:50:39 -0700
-X-CSE-ConnectionGUID: P4W/58xTR4agRM6PuFkhqw==
-X-CSE-MsgGUID: smrXDWcKQROleRzT8/TSyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="79665436"
-Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.74.239]) ([10.247.74.239])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 04:50:33 -0700
-Message-ID: <6bb1ba4a-41ba-4bc1-9c4b-abfb27944891@linux.intel.com>
-Date: Thu, 11 Jul 2024 18:50:26 +0700
+	s=arc-20240116; t=1720698703; c=relaxed/simple;
+	bh=ucFrtL2gfjqV/c9AnCqRKLXAq1ujHVF98cnp+SY1VWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ubL64qS5JIN581UZFK17rThnKwHpOULWnuPcpTW3a2NSQaR0KWAANBjA9wltfJIL/k7OndrWi6KRDRzGhtXN8peatwKAlmQjElQMQl3Q8JlPQaD/G2A7lV10mU2aUf3otZc12z9d+wWIGGcX6kfQsB8ZXTgZZYxcndDX+Vzctfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CjuOTmGc; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cxjY6RuKkVBvnWP6/j3ZkXH4A7CjxPaXbnE4ia7U018=; b=CjuOTmGcSItVqRAm5Q500eJiDo
+	7I9fjGSWOsyEowDdifFzf+CO5UjT93aUWgVDTwOEQaSyC/9eaenJsncnKZafukUaSeaWD+jDqarxq
+	GAjq8UoW2sTnxYSqRTjgjmcU/yapxdJ37vjJeWytSZ2b1F+kTq+VL8G2KT7gwz57KJL9M8A/nmCJ3
+	Kj5qZTVoHIAITPl7Z8rypdEYOLA52VOig+NLekxf+Q0V9GBg3GcQy0uzsUHADc6ha2oK0RW1uq1eN
+	4sa/fItDw2nTD8wJKKLzSLPwOjlC7KEg8M+AxyWOqiw4MNDueUEA5sFExX3j5Obx1qwrurtwuBqUZ
+	cvrkhDTg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRsKZ-000000015sZ-3OMo;
+	Thu, 11 Jul 2024 11:51:24 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6BB7D30050D; Thu, 11 Jul 2024 13:51:23 +0200 (CEST)
+Date: Thu, 11 Jul 2024 13:51:23 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.ibm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH V8 01/12] perf/core: Add aux_pause, aux_resume,
+ aux_start_paused
+Message-ID: <20240711115123.GK4587@noisy.programming.kicks-ass.net>
+References: <20240628065111.59718-1-adrian.hunter@intel.com>
+ <20240628065111.59718-2-adrian.hunter@intel.com>
+ <20240701102644.GA20127@noisy.programming.kicks-ass.net>
+ <68796741-f49f-447f-b707-fe4f8391fc17@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-net v2 2/3] igc: Fix reset adapter logics when tx mode
- change
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>, Simon Horman <horms@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- Paul Menzel <pmenzel@molgen.mpg.de>, Sasha Neftin <sasha.neftin@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
- <20240707125318.3425097-3-faizal.abdul.rahim@linux.intel.com>
- <87o774u807.fsf@intel.com>
-Content-Language: en-US
-From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
-In-Reply-To: <87o774u807.fsf@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68796741-f49f-447f-b707-fe4f8391fc17@intel.com>
 
-Hi Vinicius,
-
-On 11/7/2024 6:44 am, Vinicius Costa Gomes wrote:
-> Faizal Rahim <faizal.abdul.rahim@linux.intel.com> writes:
+On Thu, Jul 11, 2024 at 01:42:33PM +0300, Adrian Hunter wrote:
+> On 1/07/24 13:26, Peter Zijlstra wrote:
+> > On Fri, Jun 28, 2024 at 09:51:00AM +0300, Adrian Hunter wrote:
+> > 
+> >> Add aux_paused to struct perf_event for AUX area events to keep track of
+> >> the "paused" state. aux_paused is initialized to aux_start_paused.
+> > 	
+> >> @@ -798,6 +810,9 @@ struct perf_event {
+> >>  	/* for aux_output events */
+> >>  	struct perf_event		*aux_event;
+> >>  
+> >> +	/* for AUX area events */
+> >> +	unsigned int			aux_paused;
+> >> +
+> >>  	void (*destroy)(struct perf_event *);
+> >>  	struct rcu_head			rcu_head;
+> >>  
+> > 
+> > Should this not be part of struct hw_perf_event for whatever hw event
+> > implements this AUX stuff?
+> > 
+> > In fact, I would expect PERF_HES_PAUSED or something to go in
+> > perf_event::hw::state.
 > 
->> Following the "igc: Fix TX Hang issue when QBV Gate is close" changes,
->> remaining issues with the reset adapter logic in igc_tsn_offload_apply()
->> have been observed:
->>
->> 1. The reset adapter logics for i225 and i226 differ, although they should
->>     be the same according to the guidelines in I225/6 HW Design Section
->>     7.5.2.1 on software initialization during tx mode changes.
->> 2. The i225 resets adapter every time, even though tx mode doesn't change.
->>     This occurs solely based on the condition  igc_is_device_id_i225() when
->>     calling schedule_work().
->> 3. i226 doesn't reset adapter for tsn->legacy tx mode changes. It only
->>     resets adapter for legacy->tsn tx mode transitions.
->> 4. qbv_count introduced in the patch is actually not needed; in this
->>     context, a non-zero value of qbv_count is used to indicate if tx mode
->>     was unconditionally set to tsn in igc_tsn_enable_offload(). This could
->>     be replaced by checking the existing register
->>     IGC_TQAVCTRL_TRANSMIT_MODE_TSN bit.
->>
->> This patch resolves all issues and enters schedule_work() to reset the
->> adapter only when changing tx mode. It also removes reliance on qbv_count.
->>
->> qbv_count field will be removed in a future patch.
->>
->> Test ran:
->>
->> 1. Verify reset adapter behaviour in i225/6:
->>     a) Enrol a new GCL
->>        Reset adapter observed (tx mode change legacy->tsn)
->>     b) Enrol a new GCL without deleting qdisc
->>        No reset adapter observed (tx mode remain tsn->tsn)
->>     c) Delete qdisc
->>        Reset adapter observed (tx mode change tsn->legacy)
->>
->> 2. Tested scenario from "igc: Fix TX Hang issue when QBV Gate is closed"
->>     to confirm it remains resolved.
->>
->> Fixes: 175c241288c0 ("igc: Fix TX Hang issue when QBV Gate is closed")
->> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
->> Reviewed-by: Simon Horman <horms@kernel.org>
->> ---
+> Sorry for the slow reply due to vacation.
 > 
-> There were a quite a few bugs, some of them my fault, on this part of
-> the code, changing between the modes in the hardware.
-> 
-> So I would like some confirmation that ETF offloading/LaunchTime was
-> also tested with this change. Just to be sure.
-> 
-> But code-wise, looks good:
-> 
-> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> 
-> 
-> Cheers,
+> There doesn't seem to be anything preventing pause/resume from
+> "racing" (PMI vs task context) with changes in the aux event state,
+> so aux_paused must be separate from perf_event::hw::state.
 
+So normally, context switching perf would be under pmu_disable(), which
+should ensure no PMI happens while we're reprogramming the PMU.
 
-Tested etf with offload, looks like working correctly.
+That said, I think for the aux case we have perf_event_stop() that can
+race vs PMI, so yeah, bummer.
 
-1. mqprio
-tc qdisc add dev enp1s0 handle 100: parent root mqprio num_tc 3 \
-map 2 2 1 0 2 2 2 2 2 2 2 2 2 2 2 2 \
-queues 1@0 1@1 2@2 \
-hw 0
-
-No reset adapter observed.
-
-2. etf with offload
-tc qdisc replace dev enp1s0 parent 100:1 etf \
-clockid CLOCK_TAI delta 300000 offload
-
-Reset adapter observed (tx mode legacy -> tsn).
-
-3. delete qdisc
-tc qdisc delete dev enp1s0 parent root handle 100
-
-Reset adapter observed (tx mode tsn -> legacy).
-
+Sticking it in hw_perf_event would be good though. Also perhaps add a
+comment about exactly why this cannot be in ::state.
 
