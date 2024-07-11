@@ -1,86 +1,72 @@
-Return-Path: <linux-kernel+bounces-249274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED16092E923
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:19:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F386292E935
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE6F5B25AEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:17:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68BC9B21FC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4096A15AAD3;
-	Thu, 11 Jul 2024 13:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DD715E5D0;
+	Thu, 11 Jul 2024 13:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6+2Cwc3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VICHXETS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B6F15EFB8;
-	Thu, 11 Jul 2024 13:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969401514ED
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720703805; cv=none; b=I+NNbqhDth08z89HrzJ4X6JJQUfj8eXIZZg/RukhRJIgJUwHY78xxrZxJADm9e2olk7zcNop3+r6tYOGiHxRzOPGPbUV4CoAuRjO5OTlGeoi9OoZKHkRM9X4CKMpp1L9whrNT14rsYj52BPUt4OMXEpbon3t3/2NY+gmHqo+apg=
+	t=1720704070; cv=none; b=WtBi5OLIlW3uw6PsYijvTgwrk2cZjSuWbgOyST6aEqLxE6YCTRcx5dzZ6VRCbnZ+ePT3vu7IJKamLroIteZt+pg4LmUWIqDQBm3F1MtxjS7WMV2xFgxQR4liY85Kn86z8L/WYIUKSBfC8ZReFKKgt3ELPaf9CftJ6Wf3rgHsIWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720703805; c=relaxed/simple;
-	bh=r4dU6vqYjav3VvaXX3Sjsxc+xsxGdgu1+j2zgdtBir0=;
+	s=arc-20240116; t=1720704070; c=relaxed/simple;
+	bh=Uy9I9T/tN9JJUlWQ/p6H0LUGVt6skO0x/JqhCMzMy7Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJa5EmFW7FfxjZDQ0owg66GiXK8Q0Z49ZQTBz4vGbDLyilX7H6EoG7RnouTomFaF7KGabZZt8QJLLTbO5x/ggfHYDW4KHZMKQ1qri4+FFN945p1P59IN2WEwOWstZtbJIsnzv+7jcTOUeC+8vEA1NpvTdPzADWKy07qDZxSlqC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6+2Cwc3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DEA8C4AF07;
-	Thu, 11 Jul 2024 13:16:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720703804;
-	bh=r4dU6vqYjav3VvaXX3Sjsxc+xsxGdgu1+j2zgdtBir0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p6+2Cwc3E4O2uSx+DH2Km80jUBJZO8J64ERrKxq9KkUeFczRflG9OflmEO510OaXv
-	 45jt2cHUGxBY/BUC0Z9hW6R8nyC6DamtRdsZkHJARIg7E3kp7GzysSngCujqlP3VWR
-	 TPqx6sTZQOFskGr1UzbUnP1+s/mtIHMsYSvjvwH86bewjS89AL3t0A4IeTK4ozMmE9
-	 VfQlqnSZYJdUae8LIwJEfllYADu4Q5SdM6BISkS88tS/ThyaimP+0SKo9mM2mVW7a1
-	 WrZ7yUkx93n0H/pTz8Qc0943VkrKQagoUfasatX2jprIFXJOAYW6pqWFKD3Q2FcVk5
-	 vMsq9BOw/f7RA==
-Date: Thu, 11 Jul 2024 15:16:40 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>, Andrew Lunn <andrew@lunn.ch>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, asahi@lists.linux.dev, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Baruch Siach <baruch@tkos.co.il>, Bence =?utf-8?B?Q3PDs2vDoXM=?= <bence98@sch.bme.hu>, 
-	Benson Leung <bleung@chromium.org>, Binbin Zhou <zhoubinbin@loongson.cn>, 
-	Chen-Yu Tsai <wens@csie.org>, Chris Brandt <chris.brandt@renesas.com>, 
-	Chris Packham <chris.packham@alliedtelesis.co.nz>, chrome-platform@lists.linux.dev, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Conghui Chen <conghui.chen@intel.com>, 
-	Eddie James <eajames@linux.ibm.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Hans de Goede <hdegoede@redhat.com>, 
-	Hans Hu <hanshu@zhaoxin.com>, Hector Martin <marcan@marcan.st>, 
-	Heiko Stuebner <heiko@sntech.de>, Jean Delvare <jdelvare@suse.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jochen Friedrich <jochen@scram.de>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Kamal Dasu <kamal.dasu@broadcom.com>, 
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Michael Shych <michaelsh@nvidia.com>, openbmc@lists.ozlabs.org, 
-	Orson Zhai <orsonzhai@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Peter Korsgaard <peter@korsgaard.com>, 
-	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>, Ray Jui <rjui@broadcom.com>, Robert Richter <rric@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Scott Branden <sbranden@broadcom.com>, Stefan Roese <sr@denx.de>, 
-	Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>, 
-	Thor Thayer <thor.thayer@linux.intel.com>, Till Harbaum <till@harbaum.org>, 
-	Vadim Pasternak <vadimp@nvidia.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	virtualization@lists.linux.dev, Vladimir Zapolskiy <vz@mleia.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>
-Subject: Re: [PATCH v2 00/60] i2c: reword first drivers according to newest
- specification
-Message-ID: <nbi3fngfcipt35gzguk2mh4zzh3vy5a5gsk7dti5smm2iimytl@drm7p2iqsinp>
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WycMeCGVnyJbTplDHC4NXY7iQ+ExV/lEcU/O0D+gl051vQx+9S2ftwukJvbHtOsXimwx8y223+GRJ9Y/I4Nd2Hzh8M3Q/BF/aNjyAFLq7NCyEkfxR8/zrrqdewGgnULPxOYipq9lwQ51/iOjt6QBw09uYXu6W5SdTGgcl/2+HZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VICHXETS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720704068;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zCgO4S5Trmscfbn2cBjRYOQFsKPBWlxEUZ+TlU9yQ9Q=;
+	b=VICHXETSQvJvNbg7/+ebFO0wez0tlbYT7jaYmbvDGGMrAODUJIlw8fRL8K4VQKbmwJprYx
+	bVV6aH3e9tW4raV04p9zf2079QdncNKdf86d2oNSGlR51gCRJpY2WvgPCNq5DJNI6GTW0b
+	FZTjDYWCRUR+MsDfjoYJuMOnYmyPcIE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-119-IDrcX-ZUOW-EIF2bPrWOaA-1; Thu,
+ 11 Jul 2024 09:21:03 -0400
+X-MC-Unique: IDrcX-ZUOW-EIF2bPrWOaA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 306381955BC7;
+	Thu, 11 Jul 2024 13:21:01 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.32])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 39A7019560AA;
+	Thu, 11 Jul 2024 13:20:56 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 11 Jul 2024 15:19:24 +0200 (CEST)
+Date: Thu, 11 Jul 2024 15:19:19 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
+	mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com,
+	paulmck@kernel.org
+Subject: Re: [PATCH v2 11/11] perf/uprobe: Add uretprobe timer
+Message-ID: <20240711131918.GC16902@redhat.com>
+References: <20240711110235.098009979@infradead.org>
+ <20240711110401.412779774@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,188 +75,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20240711110401.412779774@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi Wolfram,
+Not sure I read this patch correctly, but at first glance it looks
+suspicious..
 
-pushed in i2c/i2c-host.
+On 07/11, Peter Zijlstra wrote:
+>
+> +static void return_instance_timer(struct timer_list *timer)
+> +{
+> +	struct uprobe_task *utask = container_of(timer, struct uprobe_task, ri_timer);
+> +	task_work_add(utask->task, &utask->ri_task_work, TWA_SIGNAL);
+> +}
 
-Thanks for this big work, at the end it turned out quite nice and
-I'm happy of the outcome!
+What if utask->task sleeps in TASK_STOPPED/TASK_TRACED state before
+return from the ret-probed function?
 
-Thanks
-Andi
+In this case it won't react to TWA_SIGNAL until debugger or SIGCONT
+wakes it up.
 
-On Sat, Jul 06, 2024 at 01:20:00PM GMT, Wolfram Sang wrote:
-> Start changing the wording of the I2C main header wrt. the newest I2C
-> v7 and SMBus 3.2 specifications and replace "master/slave" with more
-> appropriate terms. This first step renames the members of struct
-> i2c_algorithm. Once all in-tree users are converted, the anonymous union
-> will go away again. All this work will also pave the way for finally
-> seperating the monolithic header into more fine-grained headers like
-> "i2c/clients.h" etc. So, this is not a simple renaming-excercise but
-> also a chance to update the I2C core to recent Linux standards.
-> 
-> Changes since v1:
-> 
-> * changed wording according to the terminology we agreed on and defined
->   upstream. That means consistent use of "controller/target", and no
->   more "host/client". I added "local/remote target" where necessary.
-> * added tags which I kept despite some changes in wording. The approach
->   and code changes (if necessary) did not change.
-> * rebased to Andi's for-next branch
-> * this series only contains patches which convert the drivers fully. If
->   all goes well, no more updates for them are needed. The previous
->   series converted all users of "master_xfer". But to avoid tons of
->   incremental patches to one driver, I will incrementally improve i2c.h
->   and see which drivers can be fully converted step-by-step.
-> * do not mention I3C specs in commit messages, not really relevant here
-> 
-> Please note that I am not super strict with the 80 char limit. And, as
-> agreed, I did not convert occasions where old terminology is used in
-> register names or bits etc. or in function names outside of the I2C
-> realm.
-> 
-> The outcome is that before this series 115 drivers use old terminology,
-> after this only 54. Hooray.
-> 
-> And a comment to all janitors: Do not convert I2C drivers outside of
-> drivers/i2c yet. Let us first gain experience here and present the
-> well-tested results of what we figured out to other maintainers then.
-> This ensures they have to deal with way less patch revisions.
-> 
-> Thanks and happy hacking!
-> 
-> 
-> Wolfram Sang (60):
->   i2c: reword i2c_algorithm according to newest specification
->   i2c: ali15x3: reword according to newest specification
->   i2c: altera: reword according to newest specification
->   i2c: au1550: reword according to newest specification
->   i2c: bcm-kona: reword according to newest specification
->   i2c: bcm2835: reword according to newest specification
->   i2c: brcmstb: reword according to newest specification
->   i2c: cht-wc: reword according to newest specification
->   i2c: cp2615: reword according to newest specification
->   i2c: cros-ec-tunnel: reword according to newest specification
->   i2c: davinci: reword according to newest specification
->   i2c: digicolor: reword according to newest specification
->   i2c: diolan-u2c: reword according to newest specification
->   i2c: dln2: reword according to newest specification
->   i2c: fsi: reword according to newest specification
->   i2c: gpio: reword according to newest specification
->   i2c: highlander: reword according to newest specification
->   i2c: hisi: reword according to newest specification
->   i2c: hix5hd2: reword according to newest specification
->   i2c: i801: reword according to newest specification
->   i2c: ibm_iic: reword according to newest specification
->   i2c: iop3xx: reword according to newest specification
->   i2c: isch: reword according to newest specification
->   i2c: jz4780: reword according to newest specification
->   i2c: kempld: reword according to newest specification
->   i2c: ljca: reword according to newest specification
->   i2c: lpc2k: reword according to newest specification
->   i2c: ls2x: reword according to newest specification
->   i2c: mlxcpld: reword according to newest specification
->   i2c: mpc: reword according to newest specification
->   i2c: mt7621: reword according to newest specification
->   i2c: mv64xxx: reword according to newest specification
->   i2c: ocores: reword according to newest specification
->   i2c: octeon: reword according to newest specification
->   i2c: opal: reword according to newest specification
->   i2c: owl: reword according to newest specification
->   i2c: pasemi: reword according to newest specification
->   i2c: piix4: reword according to newest specification
->   i2c: powermac: reword according to newest specification
->   i2c: pxa-pci: reword according to newest specification
->   i2c: riic: reword according to newest specification
->   i2c: rk3x: reword according to newest specification
->   i2c: robotfuzz-osif: reword according to newest specification
->   i2c: rzv2m: reword according to newest specification
->   i2c: sis5595: reword according to newest specification
->   i2c: sprd: reword according to newest specification
->   i2c: stm32f4: reword according to newest specification
->   i2c: sun6i-p2wi: reword according to newest specification
->   i2c: taos-evm: reword according to newest specification
->   i2c: tegra-bpmp: reword according to newest specification
->   i2c: thunderx-pcidrv: reword according to newest specification
->   i2c: tiny-usb: reword according to newest specification
->   i2c: uniphier-f: reword according to newest specification
->   i2c: uniphier: reword according to newest specification
->   i2c: viperboard: reword according to newest specification
->   i2c: viai2c: reword according to newest specification
->   i2c: nvidia-gpu: reword according to newest specification
->   i2c: virtio: reword according to newest specification
->   i2c: cpm: reword according to newest specification
->   i2c: st: reword according to newest specification
-> 
->  drivers/i2c/busses/i2c-ali15x3.c         |  2 +-
->  drivers/i2c/busses/i2c-altera.c          |  4 +-
->  drivers/i2c/busses/i2c-au1550.c          | 15 +++----
->  drivers/i2c/busses/i2c-bcm-kona.c        | 13 +++---
->  drivers/i2c/busses/i2c-bcm2835.c         | 10 ++---
->  drivers/i2c/busses/i2c-brcmstb.c         | 11 +++--
->  drivers/i2c/busses/i2c-cht-wc.c          |  8 ++--
->  drivers/i2c/busses/i2c-cp2615.c          |  8 ++--
->  drivers/i2c/busses/i2c-cpm.c             |  4 +-
->  drivers/i2c/busses/i2c-cros-ec-tunnel.c  |  4 +-
->  drivers/i2c/busses/i2c-davinci.c         | 17 ++++---
->  drivers/i2c/busses/i2c-digicolor.c       |  6 +--
->  drivers/i2c/busses/i2c-diolan-u2c.c      |  2 +-
->  drivers/i2c/busses/i2c-dln2.c            |  4 +-
->  drivers/i2c/busses/i2c-fsi.c             | 56 ++++++++++++------------
->  drivers/i2c/busses/i2c-gpio.c            |  8 ++--
->  drivers/i2c/busses/i2c-highlander.c      |  2 +-
->  drivers/i2c/busses/i2c-hisi.c            |  8 ++--
->  drivers/i2c/busses/i2c-hix5hd2.c         |  6 +--
->  drivers/i2c/busses/i2c-i801.c            | 12 ++---
->  drivers/i2c/busses/i2c-ibm_iic.c         | 27 +++++-------
->  drivers/i2c/busses/i2c-iop3xx.c          | 15 +++----
->  drivers/i2c/busses/i2c-isch.c            |  2 +-
->  drivers/i2c/busses/i2c-jz4780.c          |  4 +-
->  drivers/i2c/busses/i2c-kempld.c          |  4 +-
->  drivers/i2c/busses/i2c-ljca.c            | 20 ++++-----
->  drivers/i2c/busses/i2c-lpc2k.c           | 10 ++---
->  drivers/i2c/busses/i2c-ls2x.c            | 11 +++--
->  drivers/i2c/busses/i2c-mlxcpld.c         | 14 +++---
->  drivers/i2c/busses/i2c-mpc.c             |  4 +-
->  drivers/i2c/busses/i2c-mt7621.c          | 26 +++++------
->  drivers/i2c/busses/i2c-mv64xxx.c         | 12 ++---
->  drivers/i2c/busses/i2c-nvidia-gpu.c      |  7 ++-
->  drivers/i2c/busses/i2c-ocores.c          |  8 ++--
->  drivers/i2c/busses/i2c-octeon-core.c     |  6 +--
->  drivers/i2c/busses/i2c-octeon-core.h     |  4 +-
->  drivers/i2c/busses/i2c-octeon-platdrv.c  |  2 +-
->  drivers/i2c/busses/i2c-opal.c            | 10 ++---
->  drivers/i2c/busses/i2c-owl.c             | 12 ++---
->  drivers/i2c/busses/i2c-pasemi-core.c     |  6 +--
->  drivers/i2c/busses/i2c-piix4.c           |  2 +-
->  drivers/i2c/busses/i2c-powermac.c        | 14 +++---
->  drivers/i2c/busses/i2c-pxa-pci.c         |  2 +-
->  drivers/i2c/busses/i2c-riic.c            |  8 ++--
->  drivers/i2c/busses/i2c-rk3x.c            | 20 ++++-----
->  drivers/i2c/busses/i2c-robotfuzz-osif.c  |  4 +-
->  drivers/i2c/busses/i2c-rzv2m.c           | 12 ++---
->  drivers/i2c/busses/i2c-sis5595.c         |  2 +-
->  drivers/i2c/busses/i2c-sprd.c            | 16 +++----
->  drivers/i2c/busses/i2c-st.c              |  8 ++--
->  drivers/i2c/busses/i2c-stm32f4.c         |  8 ++--
->  drivers/i2c/busses/i2c-sun6i-p2wi.c      | 20 ++++-----
->  drivers/i2c/busses/i2c-taos-evm.c        |  2 +-
->  drivers/i2c/busses/i2c-tegra-bpmp.c      |  4 +-
->  drivers/i2c/busses/i2c-thunderx-pcidrv.c |  2 +-
->  drivers/i2c/busses/i2c-tiny-usb.c        |  6 +--
->  drivers/i2c/busses/i2c-uniphier-f.c      | 26 +++++------
->  drivers/i2c/busses/i2c-uniphier.c        | 15 +++----
->  drivers/i2c/busses/i2c-viai2c-common.c   |  2 +-
->  drivers/i2c/busses/i2c-viai2c-wmt.c      |  8 ++--
->  drivers/i2c/busses/i2c-viai2c-zhaoxin.c  | 12 ++---
->  drivers/i2c/busses/i2c-viperboard.c      | 10 ++---
->  drivers/i2c/busses/i2c-virtio.c          |  2 +-
->  include/linux/i2c.h                      | 24 +++++++---
->  64 files changed, 313 insertions(+), 320 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
+---------------------------------------------------------------------------
+And it seems that even task_work_add() itself is not safe...
+
+Suppose we have 2 ret-probed functions
+
+	void f2() { ... }
+	void f1() { ...; f2(); }
+
+A task T calls f1(), hits the bp, and calls prepare_uretprobe() which does
+
+	mod_timer(&utask->ri_timer, jiffies + HZ);
+
+Then later it calls f2() and the pending timer expires after it enters the
+kernel, but before the next prepare_uretprobe() -> mod_timer().
+
+In this case ri_task_work is already queued and the timer is pending again.
+
+Now. Even if T goes to the exit_to_user_mode_loop() path immediately, in
+theory nothing can guarantee that it will call get_signal/task_work_run
+in less than 1 second, it can be preempted.
+
+But T can sleep in xol_take_insn_slot() before return from handle_swbp(),
+and this is not so theoretical.
+
+Oleg.
+
 
