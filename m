@@ -1,162 +1,123 @@
-Return-Path: <linux-kernel+bounces-249199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA11792E85F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:34:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2379D92E866
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275041F2278F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:34:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64673B21DDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8272715F301;
-	Thu, 11 Jul 2024 12:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAED15B98E;
+	Thu, 11 Jul 2024 12:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="WYMHyBRd"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="xVLMbgGS"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17ACD15ECF9
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938E214F9DA;
+	Thu, 11 Jul 2024 12:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720701257; cv=none; b=UYQnL5jvKZ+++Um31/54xAeL6iu/vpIElEFdmBIYAGdQ42Ynyalm8M/GiUlIcPHlBtjgWFGKHAiJtC9ZSrHyHHhgbZWy0w3fC54RvNIVoqK8yAB4g494jsslwJauCF5FTOQjxZ6jAagMsKX8ZkhGwUaCcz1mNxlOTUt7ZWPrl+0=
+	t=1720701548; cv=none; b=C/J56d8Oil4CdyIy7Q1z0+8VnEO4tFBHqhwonTPrVKZaMueC8ADHuLIfLi5SA+jWFDI9+J8du33l6yhUM0YkQuLPmntlsxlAb49EBAno3JcAgYbjUBL+bY4pyw6/X/CVDyomcPGwAh2foLWpk4NB+vTJbc2PUQjAdPA7mS+AJnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720701257; c=relaxed/simple;
-	bh=Lnw6WVCoDGYqJbevISOZOc2dPUdG1/4V1rq5VXcFSC0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gizBtaY4QqzufdbgZCmbXi9jgphRmtJyDoK5VgD8WT3nyitI+7dEUCAW/p+bWC1hXIDU5IGLSgbB2xouFzk4K2OUTu+/Vblj4TVwcmItLbIZ/CHZVXQi32gAGgM5rHRvICkMgTEOugY6EkQZPEgMrtgE7cK1TNvXbfRC738ID/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=WYMHyBRd; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so5151185e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:34:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1720701254; x=1721306054; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7TMSDdjSHMMbfEYs+qwLdoVucqWbdqXw+KkemXAy9e8=;
-        b=WYMHyBRdD+WcpJEKJhfjq24G/cxaxKn+6PbBsHZ/frENsbH+MQgqMgB3lmuEZvIv/T
-         BiGUfJASyaz0NtJ2e4G5eajoltVHGceerqVAbkCc5/VliQKjTHXg3k0UXJLCTWKJUIC4
-         QNNnyTQetHRc+3abPeVq2GFzR9Lz2OXdwWdYqmink4LFNYEYYV1D7HYWsxAGfMDfe0i+
-         ZnBtHCN0ghD2FFijBXEHWfxgNwoXRweEPrLRL3CwqbwOBpuHGhfdHtnM7uTJzXm1YZbU
-         aJZiTIMN9vEwlJzTUK4OYFpVynKMswCrvgoTuartJOk+sxHjvW4Kolv2yikrdnBgt+I3
-         5TtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720701254; x=1721306054;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7TMSDdjSHMMbfEYs+qwLdoVucqWbdqXw+KkemXAy9e8=;
-        b=mzu3jFkml4JaGiPFXDs32qjBbskhXUE8CuWshyoP3CFxKpWOhVEjuXhAlwgZFwNYfj
-         F9laSpwqQYPocDYgTyV4xiGVGkSfx+mV2PgD6nFvNGOVjWCzjA+MR0Oig+5uqEYwNL93
-         RACOEshYlmT4lQQOLAPlbvKTkbb+ov76KoEAloaLUXWL2TvVZoXC3+51MU+sqTKybVWK
-         eiOsQUlYgv9xS9JCOB/9vw1vntZJzJtXUUBIH7kDFtbTrTeDqvaXHAIlFq0bIGa0Qzi6
-         r/4GRE2K/0yVLTUxCIoij/sRynkqBYR2Px/U4RbjD0UngTw46hucELn+JZZDPOuRtioQ
-         O7JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHPRA4VVxUn/nQzI9zpOfeQLC5GfTB86+89xelf0xy0IZ10AokybylvpNbojmJ7jUQZ5dPW1/6+TpI68JB0bhSU5+bgcD/Kyi1JBj6
-X-Gm-Message-State: AOJu0Yy3OCBjWyUGqQKB6kFlhsv0JBLXvZqfR4CFeS64WDf82bm2Fx1G
-	6r+W6ZiQbfeNf4BRbOi8/matG9p7vphd6w1SgLgK1AZZvx0+ZBJsYSwtX9lpoBM=
-X-Google-Smtp-Source: AGHT+IG3ie0L2yQcBYNCkX1wFuOkYRefHCR78VISFx6nmwufdVRAZ+HS8zHmnFUi0sv7+fPHPwtL+g==
-X-Received: by 2002:a05:600c:3b93:b0:426:5b19:d2b3 with SMTP id 5b1f17b1804b1-427981e0751mr26099585e9.14.1720701254480;
-        Thu, 11 Jul 2024 05:34:14 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f741fa6sm118583955e9.45.2024.07.11.05.34.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 05:34:14 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: vkoul@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	biju.das.jz@bp.renesas.com
-Cc: dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 3/3] arm64: dts: renesas: r9a08g045: Add DMAC node
-Date: Thu, 11 Jul 2024 15:34:05 +0300
-Message-Id: <20240711123405.2966302-4-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1720701548; c=relaxed/simple;
+	bh=I/o1l6qvwXUbNEK4rsgFm0M1JrYLAhwSlyVUEfpyT/0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QhSoK09w4NyJd1XauzrGwwUyppwnJOgIUOfvX7y+UDj/xkB1AvSvsCkjtTAjnDIkbLmlGMuvemxh/+dNXDBp4yjlfAHUZjTlf7qaoG3AGwhgEQ8Aqmrl19vT1NpKIHTq67hWPc3HYHbdPlBvLUhHNc4I1xNm9o4J7K62SN7WN7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=xVLMbgGS reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 6849db892b77d304; Thu, 11 Jul 2024 14:39:03 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B5172A035E7;
+	Thu, 11 Jul 2024 14:39:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1720701543;
+	bh=I/o1l6qvwXUbNEK4rsgFm0M1JrYLAhwSlyVUEfpyT/0=;
+	h=From:To:Cc:Subject:Date;
+	b=xVLMbgGSMSTEsvROmhkucOXPheRx8dCDqEiijG/TKr1ufG/rSGSzafcsHuZGfVucz
+	 1lCNbbYcYwdJSyx5lmGfOc2cUFxBDGKsX406hk+mmHAImiPdLVfGatYXCdaN2USjJa
+	 ofDSMYVF+cGhJdfaOuCauw3grG9jq3j7B78vxYTML0ZM2zJb53QxoC07qx7w70JzSP
+	 5aDqwiCAlc8b+h1UJZ/Kba9ojsXqcsRWOMjapNVTng+ktCrgxRNWc1/1xG/ek7sXQZ
+	 CkuGsgAkwzOGk8ZYIgrgDrawVFaG08+9th7gWi7CmFxm/yifHMYFoA5v2x3hYLzZxm
+	 DrX16h8Hgad3w==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>
+Subject:
+ [PATCH v3] thermal: core: Add sanity checks for polling_delay and
+ passive_delay
+Date: Thu, 11 Jul 2024 14:39:02 +0200
+Message-ID: <5802156.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrfeeggdehhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghr
+ mhdrtghomh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Add DMAC node.
+If polling_delay is nonzero and passive_delay is greater than
+polling_delay, the thermal zone temperature will be updated less
+often when tz->passive is nonzero, which is not as expected.  Make
+the thermal zone registration fail with -EINVAL in that case as
+this is a clear thermal zone configuration mistake.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+If polling_delay is nonzero and passive_delay is 0, which is regarded
+as a valid thermal zone configuration, the thermal zone will use polling
+except when tz->passive is nonzero.  However, the expected behavior in
+that case is to continue temperature polling with the same delay value
+regardless of tz->passive, so set passive_delay to the polling_delay
+value then.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 38 ++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index 741c9226581f..b9114d1714c9 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -363,6 +363,44 @@ irqc: interrupt-controller@11050000 {
- 			resets = <&cpg R9A08G045_IA55_RESETN>;
- 		};
+This supersedes
+
+https://lore.kernel.org/linux-pm/4940808.31r3eYUQgx@rjwysocki.net/
+
+---
+ drivers/thermal/thermal_core.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -1391,6 +1391,14 @@ thermal_zone_device_register_with_trips(
+ 	if (num_trips > 0 && !trips)
+ 		return ERR_PTR(-EINVAL);
  
-+		dmac: dma-controller@11820000 {
-+			compatible = "renesas,r9a08g045-dmac",
-+				     "renesas,rz-dmac";
-+			reg = <0 0x11820000 0 0x10000>,
-+			      <0 0x11830000 0 0x10000>;
-+			interrupts = <GIC_SPI 111 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 112 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 113 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 114 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 115 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 116 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 117 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 118 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 119 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 120 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 121 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 123 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 124 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 125 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 126 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 127 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14", "ch15";
-+			clocks = <&cpg CPG_MOD R9A08G045_DMAC_ACLK>,
-+				 <&cpg CPG_MOD R9A08G045_DMAC_PCLK>;
-+			clock-names = "main", "register";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A08G045_DMAC_ARESETN>,
-+				 <&cpg R9A08G045_DMAC_RST_ASYNC>;
-+			reset-names = "arst", "rst_async";
-+			#dma-cells = <1>;
-+			dma-channels = <16>;
-+		};
++	if (polling_delay) {
++		if (passive_delay > polling_delay)
++			return ERR_PTR(-EINVAL);
 +
- 		sdhi0: mmc@11c00000  {
- 			compatible = "renesas,sdhi-r9a08g045", "renesas,rzg2l-sdhi";
- 			reg = <0x0 0x11c00000 0 0x10000>;
--- 
-2.39.2
++		if (!passive_delay)
++			passive_delay = polling_delay;
++	}
++
+ 	if (!thermal_class)
+ 		return ERR_PTR(-ENODEV);
+ 
+
+
 
 
