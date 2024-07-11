@@ -1,111 +1,119 @@
-Return-Path: <linux-kernel+bounces-249780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A847992EFB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:35:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6820A92EFBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54E111F23428
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:35:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2285828103B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C0A16F826;
-	Thu, 11 Jul 2024 19:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD4216EB77;
+	Thu, 11 Jul 2024 19:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="G4FCmE10"
-Received: from msa.smtpout.orange.fr (msa-211.smtpout.orange.fr [193.252.23.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VpcJPowK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ozWgs7f6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6D616F0E9
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A21016E866
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720726506; cv=none; b=a6AmLV8rUoiiq64bK0MnzhU1YRV6kIUNoi2i+LendAd1NO5rOaC5rcRMMhT/vuQTLD6DMaBgrCVJ6RWbF72TuaH95+OmyPcrBbY5GxEwDyuo2rc8k8uaUJN3A/jpEMjSYQq/eWXrU2Jg1TI/2W8J9rDhKNAtRMB0iRr02epLM4E=
+	t=1720726591; cv=none; b=MKXVDkOTwbliWXcprY22xeK7Uyfrl7TNhg3x2B4qLsCwa2AkDt9LT/HVTyCTG/yltA1g8909efH4FMKyZOvLoNoFTN9piSAC5vLl1Z6tpI8VgrO1oT+iI4OEVqYr5Z4P9meF2QVACbpzL0s2IKyVhMs8FJYXuzW0J1wqLk07uhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720726506; c=relaxed/simple;
-	bh=x68ESisQH80WW9Hmoe5cxe8M7THJVffjZhGe8eKvGQw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FAHd6m71jGkd18WJyJUXEyAlejWzW0YUgQnQGpO1xbq6apKMTqomlyIL3OkOCVcpG5KgCkJbYr/eg2HrwwVkRkM2/Q92fOjGhMWu4JHJj87/ZsHcOUrrxjeShcsmWbWQze/P0ZV+W8dNDC1qxmFFY90+iUAGta4ZiMFihlEFR+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=G4FCmE10; arc=none smtp.client-ip=193.252.23.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.. ([77.131.3.214])
-	by smtp.orange.fr with ESMTPA
-	id RzZBsCMFrj4pfRzZHsIiSB; Thu, 11 Jul 2024 21:35:03 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720726503;
-	bh=+R7FMy9AXoamPmQBHl0PouZlAVVAloz2ln5nMlCPFco=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=G4FCmE10keN47ZT0oy7vcEVw+P05COp971q569t5kqgym7lD3ENBPU+VwI9cntx/z
-	 8dSrndaG7iv76mVM2IFztFqCb2qAkQxgXmkP4zqZVUAIeEufn8LHOKY7roFiDPX8cr
-	 zPjaAm3PLkMLfkHAH3XnOLIgptNnUnIv0BkilwdDbOVmaT5eQQx1MxFzDu+0CrEfKI
-	 3ophi6NDVNA9LE02ljoqzR2wTMy+rbdO79oU5RB+06pGlNFUDN1ioCU5p/fjoXYmdh
-	 LuQgx9ZgX2eK+x9d40YpbLS9p8SyhhG/1dgwZqNY3FfttuZr8FXZTesBvHN1JQp3be
-	 I+aJFk5GhtzRw==
-X-ME-Helo: fedora..
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 11 Jul 2024 21:35:03 +0200
-X-ME-IP: 77.131.3.214
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: vkoul@kernel.org,
-	kishon@kernel.org
-Cc: linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/3] phy: cadence: Sierra: Constify a u32[]
-Date: Thu, 11 Jul 2024 21:34:54 +0200
-Message-ID: <43d881d52e3c1632ad197d4c2c18b6c481a13b24.1720723132.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1720723132.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1720723132.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1720726591; c=relaxed/simple;
+	bh=wnIFmPgQdOkUwrIhSX78uJDe/F6CrKKaJ6+BERPJ+yU=;
+	h=From:To:Cc:Subject:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type; b=jKy5KE0dNRuukeboF16jkSJ0trCEsczku3mDLxqXsfMl0bN+i+FWDgDHAg9OCsUv5fFKE3lYhnWH7+sxlmCp6SJRm/RRTM7591XIKExNAdzq3odFe3rSywnSgzdmVxsz3HC7Cv1W985m1bMGxRughliM+6T2BOBD6t7FjXiLy9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=fail (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VpcJPowK reason="signature verification failed"; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ozWgs7f6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720726588; h=from:from:reply-to:subject:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type; bh=ZcW1sCT7Y/KTj2JrkUFAgD+IvUD8m9u/4no75G6nark=;
+	b=VpcJPowKwHxXRqgLvO60dZoIcXCiyOeMH+HfcXEnBp5JfXfJ/KHoPChDKCoagGPsEBOaBK
+	mh75A4+vWbUSa0fz7LuReAG2k1GiHlhL29M62mimn4YDoHqb1shfCvE4u36FFMdPXiedS9
+	jftdKl/y/ruXY69b8TOdSDUEdNVF6e1evhWOn46gHTjI1p/xf+dHhV83r4HZjgV2U6oHhM
+	Bz20VcOskCnRMxWgkI3ZwWb82fTUJm7IDQREdXsB4b2cyDc6H97s8wvzoSbqrWSogorc8J
+	XKQf5vqLqO5c3U07dzRXmTagNFHkjbGSvTbhMeZUZvNeDVBp1qWLdoQxk2MAbA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720726588; h=from:from:reply-to:subject:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type; bh=ZcW1sCT7Y/KTj2JrkUFAgD+IvUD8m9u/4no75G6nark=;
+	b=ozWgs7f6VOq05HlocFsXXZqohwtYuHNYhJ/yPMkV8zfY4swe1SX8vBClT3TQUxk9Pxc60R
+	9Ke5QjhxBnhij3BA==
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Andrew Morton <akpm@linuxfoundation.org>, Peter Zijlstra
+ <peterz@infradead.org>, x86@kernel.org
+Subject: [PATCH] watchdog/perf: Properly initialize the turbo mode timestamp
+ and rearm counter
+Subject: 
+Date: Thu, 11 Jul 2024 21:36:27 +0200
+Message-ID: <87msmnu3es.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-'cdns_sierra_pll_mux_table' is not modified in this driver.
-And it is only used as a "const u32 *".
+For systems on which the performance counter can expire early due to turbo
+modes it the watchdog handler has a safety net in place which validates
+that since the last watchdog event there has at least 4/5th of the watchdog
+period elapsed.
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+This works only reliably after the first watchdog event because the per CPU
+variable which holds the timestamp of the last event is never initialized.
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  60937	   3894	     16	  64847	   fd4f	drivers/phy/cadence/phy-cadence-sierra.o
+So a first spurious event will validate against a timestamp of 0 which
+results in a delta which is likely to be way over the 4/5 threshold of
+the period. As this might happen before the first watchdog hrtimer event
+increments the watchdog counter, this can lead to false positives.
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  60897	   3878	     16	  64791	   fd17	drivers/phy/cadence/phy-cadence-sierra.o
+Fix this by initializing the timestamp before enabling the hardware
+event. Reset the rearm counter as well, as that might be non zero after
+the watchdog was disabled and reenabled.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Fixes: 7edaeb6841df ("kernel/watchdog: Prevent false positives with turbo modes")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
 ---
-Compile tested-only.
----
- drivers/phy/cadence/phy-cadence-sierra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/watchdog_perf.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
-index 947492c8f381..3010c9f24136 100644
---- a/drivers/phy/cadence/phy-cadence-sierra.c
-+++ b/drivers/phy/cadence/phy-cadence-sierra.c
-@@ -310,7 +310,7 @@ static const struct clk_parent_data pll_mux_parent_data[][SIERRA_NUM_CMN_PLLC_PA
- 	},
- };
+--- a/kernel/watchdog_perf.c
++++ b/kernel/watchdog_perf.c
+@@ -75,11 +75,15 @@ static bool watchdog_check_timestamp(voi
+ 	__this_cpu_write(last_timestamp, now);
+ 	return true;
+ }
+-#else
+-static inline bool watchdog_check_timestamp(void)
++
++static void watchdog_init_timestamp(void)
+ {
+-	return true;
++	__this_cpu_write(nmi_rearmed, 0);
++	__this_cpu_write(last_timestamp, ktime_get_mono_fast_ns());
+ }
++#else
++static inline bool watchdog_check_timestamp(void) { return true; }
++static inline void watchdog_init_timestamp(void) { }
+ #endif
  
--static u32 cdns_sierra_pll_mux_table[][SIERRA_NUM_CMN_PLLC_PARENTS] = {
-+static const u32 cdns_sierra_pll_mux_table[][SIERRA_NUM_CMN_PLLC_PARENTS] = {
- 	[CMN_PLLLC] = { 0, 1 },
- 	[CMN_PLLLC1] = { 1, 0 },
- };
--- 
-2.45.2
-
+ static struct perf_event_attr wd_hw_attr = {
+@@ -161,6 +165,7 @@ void watchdog_hardlockup_enable(unsigned
+ 	if (!atomic_fetch_inc(&watchdog_cpus))
+ 		pr_info("Enabled. Permanently consumes one hw-PMU counter.\n");
+ 
++	watchdog_init_timestamp();
+ 	perf_event_enable(this_cpu_read(watchdog_ev));
+ }
+ 
 
