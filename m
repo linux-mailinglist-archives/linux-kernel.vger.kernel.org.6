@@ -1,110 +1,71 @@
-Return-Path: <linux-kernel+bounces-249846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FE592F0A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:06:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA1492F0A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3C6A1C21AEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:06:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D7D5282067
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C21619EEC6;
-	Thu, 11 Jul 2024 21:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414E119EEC5;
+	Thu, 11 Jul 2024 21:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ps4HShvB"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="D9zNZG6k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F1315533B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5216C2836A
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720731969; cv=none; b=ao8CBHfIePkUIWtspdwM9hvXbkuxNhW8WeVKVm4VxWVVb8ugMeASvAqb+cXyJmODaSPXW14JRjJuOd24YWYemRoHBBdYSApTuS+Mow9og6/mmdzDZCy59dpm/q2khTZMfDQLhoHqjbN+Y91eaCBFF4P17BKUDFLz24cRmBHtzkY=
+	t=1720732063; cv=none; b=XkwChwoBzsb+0lrFs7Nxr3FPyAJqVXPNJLWr6h32j59djPZaMsFpeqQgpRWgYXd79bpBZlgUk/kFWYvdWYfcIEK78V3oom+SxZ7UCwObem0GuWbcAKZlx2miXavIVCzjHr0I6ENclnKhGI7Y1Py14hS36upG+wivzgk7i3hBOPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720731969; c=relaxed/simple;
-	bh=Nx/AxM36fpHvMgG+8HA/vzGe51U+wThqDVz8KLb7ZOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RPK2cVZUmqvMpxwxJ/gNLQvwqtXkFAPIprV/CSKV7OHYcNT0dK3Re4cQ2xcA9gy2Bt706/5P3ziAT0I6uWzOpkt5aWNAOdHS9PEZ49dGjF78X2qvkP9jULu70Gd7q/HRDJcr/4C7c3SehJ7SRWtR+DWs0cIjanDXyemxcSimMuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ps4HShvB; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70af3d9169bso1288731b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:06:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720731967; x=1721336767; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PYiIUWDkAPciWMZf4h71Th1E3BZWOt3UHL7ervzA1Yk=;
-        b=Ps4HShvBFqUMs8cFDd1WBZTE4aKiKYsW0vhsA1Fi6ocVWuPxPdUUI5+VPOza8jvGI7
-         iAnm2ygYGtB+qQrFvaku51mfoJhNxCFiHDGA5lW4QRmEA7aTsK7Hy/BflatiVZZ0RwHb
-         Q1gwW71piBWYpMvlGR9ayTMz//KAGG7e2ZxEcjN3/eRFVn0Wvtm2a8ry4bqY+8zwrsNv
-         YC1qADRJtDxnXBC6M4S2io5shxMGsiI4qxYPNGMb81HuS6LM9AlHQSRmTeUtlrTYeqYm
-         dwIOiOfKAHTr+DGgPTuOrLnkuz1R2homeIQqbIL6GtXiFTM2nBfYd5Z8Ngto5QTN0MWa
-         yEHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720731967; x=1721336767;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PYiIUWDkAPciWMZf4h71Th1E3BZWOt3UHL7ervzA1Yk=;
-        b=gmcLDwLrkMT9SymE5wIMBOmHvBesHUSsxkau4m+1eBAfsIPXa+5l6q35mRodV3b5zo
-         BiekEbX/3ytzethRWtIJ3aS/MhC3YHarklVP424tw2inpdFBVbld1xh5Wtu/HahPUeOE
-         ol9yWCaIYiW1JZ50mDZu6+vyuoyWbKIgrFWApHSQnXaWa3JOEr4hTPnSrmxVOQgc8vZj
-         SwIfnxv/FaHg2Z2a88wzF+v6fmXKM3s90mN111Y81HdkTrHzldZv1QHm9dRP4Jmhp5c6
-         X91/zkxMqUtcMFnKQARAVLrJgnVs2Te+0yasS6CRQ42d5OzLi//bNtZ8vuyf0hBdaA2q
-         GYyA==
-X-Gm-Message-State: AOJu0YzyU3oGZwS34mlWsQTCoiZu0m7i3ZsIKPbCRluDE2FFaGnLuBDN
-	VRbOmn9E5sbfV8wL7+EibqEfAUZ5eiwUdZlx/xWesAH/cX+iTR07
-X-Google-Smtp-Source: AGHT+IFUaNRlWbTUQ7P+eX0nFhgyBAXy0yNJ3FH5SVdgi7W0aRoHe0SdL8k7dK+mueYpZy/SsNE2Qg==
-X-Received: by 2002:a05:6a00:b87:b0:705:9b04:71b with SMTP id d2e1a72fcca58-70b43664bd9mr10725485b3a.31.1720731967479;
-        Thu, 11 Jul 2024 14:06:07 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-77d60117b61sm4784747a12.22.2024.07.11.14.06.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 14:06:07 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Thu, 11 Jul 2024 11:06:05 -1000
-From: Tejun Heo <tj@kernel.org>
-To: void@manifault.com
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	schatzberg.dan@gmail.com, mingo@redhat.com, peterz@infradead.org,
-	changwoo@igalia.com, righi.andrea@gmail.com
-Subject: Re: [PATCH 1/6] sched: Move struct balance_callback definition upward
-Message-ID: <ZpBJPRf5lnXxccH6@slm.duckdns.org>
-References: <20240711011434.1421572-1-tj@kernel.org>
- <20240711011434.1421572-2-tj@kernel.org>
+	s=arc-20240116; t=1720732063; c=relaxed/simple;
+	bh=hUkzMfgfk3Jb5blmtmmKkdb94ztGlZaEz0LGll+XSww=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=L1kRknneDNz1CpNiHDKC0Bcbsf3W5jrkc5EYFJefrWQhk3i3uRdmrEybBbAOOfN7jRm9aa1J9lQQrdbtIaIntt7ZwCGAqZLqz6iJ0Xf44sb/dzWjQMeLFyPsbxfsq0KWXUUkUF46bvyZac2orUO8uMe7NVt8pnGkaujOtqo1zak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=D9zNZG6k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B303EC116B1;
+	Thu, 11 Jul 2024 21:07:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1720732063;
+	bh=hUkzMfgfk3Jb5blmtmmKkdb94ztGlZaEz0LGll+XSww=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D9zNZG6kCkB0zqQElMgduLONUwogGrZPIfZm+8fV9KoEvX+M7uWRGym/lxiE/JW/A
+	 Kzq6oBdUpTZ/KSoj7QgNFhvjKjQiuhLtNAMMMV8k8eIxucic0TEkDoLFH60na78DD5
+	 JJI8eEvHQ/cCLXLLR3S5lUxrMo3b/fnu7pfTZIx0=
+Date: Thu, 11 Jul 2024 14:07:42 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com,
+ souravpanda@google.com, keescook@chromium.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel test robot
+ <lkp@intel.com>
+Subject: Re: [PATCH 1/1] alloc_tag: Export memory allocation profiling
+ symbols used by modules
+Message-Id: <20240711140742.b2c536fb4de2800534a99980@linux-foundation.org>
+In-Reply-To: <20240711204626.1669138-1-surenb@google.com>
+References: <20240711204626.1669138-1-surenb@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711011434.1421572-2-tj@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, 11 Jul 2024 13:46:26 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
 
-On Wed, Jul 10, 2024 at 03:13:58PM -1000, Tejun Heo wrote:
-> Move struct balance_callback definition upward so that it's visible to
-> class-specific rq struct definitions. This will be used to embed a struct
-> balance_callback in struct scx_rq.
-> 
-> No functional changes.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Acked-by: David Vernet <void@manifault.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
+> Export mem_alloc_profiling_key, page_ext_get() and page_ext_set() symbols
+> as they can be used by modules (mem_alloc_profiling_key is used indirectly
+> via mem_alloc_profiling_enabled()).
 
-Unless there are objections, as this is really trivial, I'll apply it
-together with other patches. Please holler if there are any concerns.
+Thanks, I'll add
 
-Thanks.
-
--- 
-tejun
+Fixes: 22d407b164ff ("lib: add allocation tagging support for memory allocation profiling").
 
