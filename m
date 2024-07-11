@@ -1,330 +1,351 @@
-Return-Path: <linux-kernel+bounces-249750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 976F592EF4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:03:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A5692EF4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228F01F21F37
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:03:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75AE5B2262B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F62715F40D;
-	Thu, 11 Jul 2024 19:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mIZ09Hrj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D08516EB63;
+	Thu, 11 Jul 2024 19:03:58 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F3F15E5CD;
-	Thu, 11 Jul 2024 19:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B23E15F40D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720724627; cv=none; b=m+t//vjlnXPCQlwCYmswesTZC5lKfXMnJIDoEenhd5UOIxvFjJ256bbteGpSvnk5hGgnaAfLz0LHAcaDNyd+ODz7hOs6R6HJSQ3YC+A8u0GaBlkZr9DRVEGP85SPKb63c57QKoNur/xTPyNVITJMTikR5Lc87wWlR7H02zf5rec=
+	t=1720724637; cv=none; b=a/qXRbq2KX6W4PrlEyNhsXj/9Ex1TFPNOw6ICLeyvsr3pCSBERiHSiK99zIq4Fi9SXIZaH2tCMzxBsHBkZORtP5rIaOuHt1qEukN8RcE4g/q7iBguoyV/Mo9KO1iCpyYLu+0JaV5T37sq30K79HzpUzb995+Hw4ZBtcfibUsb0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720724627; c=relaxed/simple;
-	bh=KjDHsBomUHrlcuMySZ8NJg7L3Q0FPnsN62pBzRy47t0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIQ1i1l72R5NUCa5AS5JN8kTigbdlvfYutXLIAdVyC6JzIjk/nz/lgNIDomB13yColNlVFW9bv7aXd3LAET5UEgxkTzGT680k66QmZaVqUgYyJdQZ8quz5n/8lNFbXU7dqCQ14W5SMMmZVAFPCYvKb6sqiNPJNsPdAkIYEebAT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mIZ09Hrj; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720724625; x=1752260625;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KjDHsBomUHrlcuMySZ8NJg7L3Q0FPnsN62pBzRy47t0=;
-  b=mIZ09Hrjb1u9iUwYNZlLNYzs7f2Olat/9jaKCCdgdNO2lXxwqsL+TCoN
-   rBEgxvQWiSvCT9S0Un/Rqxo1Y01BzbxU7y+NlMBR7B3RUfQ4ygZI4CIzj
-   QPYI6ajpU/Yweaa62TNzrK/+G9Kc3ujjh6f6gkhJlAIoZDaVT+kYdJQjf
-   90FaW9PL2iSnnzUP2AOE+YnnpBq6Rh6r/W8kpqknkERsJHiWzyb3vUVOf
-   s/yFnElDA5vB2DbDhHi1Y/JkbQDfYyMcb2Cf63KCpyA7zjqKMeyi8QDNG
-   zmMzwTAI7bRj1NQ9zm9yxl1x2njrWt+giXuIGKK+vrR5jE3Xbpj3FjLzc
-   Q==;
-X-CSE-ConnectionGUID: agBPXJaVSo+fqvIALCMzEw==
-X-CSE-MsgGUID: KEOFaHguS56XPfW8mtwlsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="17753626"
-X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
-   d="scan'208";a="17753626"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 12:03:45 -0700
-X-CSE-ConnectionGUID: 8bj9pQiWR/6B/B20EEpk+A==
-X-CSE-MsgGUID: ulTMRKI8TFan/Xihp4bMsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
-   d="scan'208";a="79358047"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 11 Jul 2024 12:03:42 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sRz4s-000ZiI-29;
-	Thu, 11 Jul 2024 19:03:38 +0000
-Date: Fri, 12 Jul 2024 03:03:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jerome Brunet <jbrunet@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Jan Dakinevich <jan.dakinevich@salutedevices.com>,
-	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
-Message-ID: <202407120208.ub5kh5K1-lkp@intel.com>
-References: <20240710162526.2341399-8-jbrunet@baylibre.com>
+	s=arc-20240116; t=1720724637; c=relaxed/simple;
+	bh=Iid+3GBeJAdaquca/Q8nirP3UQOVJc4EBe7DYXF6ig8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tGQMcmwD0ZYBhPD6TdpV9mUhkIXToT05W29o5Q8tTCew7lc85eOEtdoXJsV2ANAlJH6tmy8Mmkjp4uT9zV3v1saQFdnX1qx8mToOO+8XMSXHDN6A44FuAKv4Y8gffc/YNqUKWBUI8z5zE9hbOsXmEPC6hV+WIbi/PFv2Fgalgrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A775C116B1;
+	Thu, 11 Jul 2024 19:03:55 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] arm64 updates for 6.11
+Date: Thu, 11 Jul 2024 20:03:53 +0100
+Message-Id: <20240711190353.3248426-1-catalin.marinas@arm.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710162526.2341399-8-jbrunet@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Jerome,
+Hi Linus,
 
-kernel test robot noticed the following build errors:
+I'm about to go on holiday for two weeks, so here's an early pull
+request for 6.11. The biggest part is the virtual CPU hotplug that
+touches ACPI, irqchip. We also have some GICv3 optimisation for
+pseudo-NMIs that has been queued via the arm64 tree. Otherwise the usual
+perf updates, kselftest, various small cleanups. There's a minor
+conflict currently in -next with the kvmarm tree but it's trivial (in
+arch/arm64/include/asm/esr.h).
 
-[auto build test ERROR on pza/reset/next]
-[also build test ERROR on clk/clk-next linus/master v6.10-rc7 next-20240711]
-[cannot apply to pza/imx-drm/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I'll check emails occasionally during the merging window but if there's
+anything urgent, Will can take over.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/reset-amlogic-convert-driver-to-regmap/20240711-055833
-base:   https://git.pengutronix.de/git/pza/linux reset/next
-patch link:    https://lore.kernel.org/r/20240710162526.2341399-8-jbrunet%40baylibre.com
-patch subject: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240712/202407120208.ub5kh5K1-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240712/202407120208.ub5kh5K1-lkp@intel.com/reproduce)
+Thanks.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407120208.ub5kh5K1-lkp@intel.com/
+The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
 
-All errors (new ones prefixed by >>):
+  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
 
-   In file included from drivers/reset/reset-meson.c:8:
-   In file included from include/linux/auxiliary_bus.h:11:
-   In file included from include/linux/device.h:32:
-   In file included from include/linux/device/driver.h:21:
-   In file included from include/linux/module.h:19:
-   In file included from include/linux/elf.h:6:
-   In file included from arch/s390/include/asm/elf.h:173:
-   In file included from arch/s390/include/asm/mmu_context.h:11:
-   In file included from arch/s390/include/asm/pgalloc.h:18:
-   In file included from include/linux/mm.h:2253:
-   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     501 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     508 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     520 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     529 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from drivers/reset/reset-meson.c:11:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from drivers/reset/reset-meson.c:11:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from drivers/reset/reset-meson.c:11:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
->> drivers/reset/reset-meson.c:272:1: error: redefinition of '__inittest'
-     272 | module_auxiliary_driver(meson_reset_aux_driver);
-         | ^
-   include/linux/auxiliary_bus.h:245:2: note: expanded from macro 'module_auxiliary_driver'
-     245 |         module_driver(__auxiliary_driver, auxiliary_driver_register, auxiliary_driver_unregister)
-         |         ^
-   include/linux/device/driver.h:261:3: note: expanded from macro 'module_driver'
-     261 | } \
-         |   ^
-   include/linux/module.h:131:42: note: expanded from macro '\
-   module_init'
-     131 |         static inline initcall_t __maybe_unused __inittest(void)                \
-         |                                                 ^
-   drivers/reset/reset-meson.c:232:1: note: previous definition is here
-     232 | module_platform_driver(meson_reset_pltf_driver);
-         | ^
-   include/linux/platform_device.h:303:2: note: expanded from macro 'module_platform_driver'
-     303 |         module_driver(__platform_driver, platform_driver_register, \
-         |         ^
-   include/linux/device/driver.h:261:3: note: expanded from macro 'module_driver'
-     261 | } \
-         |   ^
-   include/linux/module.h:131:42: note: expanded from macro '\
-   module_init'
-     131 |         static inline initcall_t __maybe_unused __inittest(void)                \
-         |                                                 ^
->> drivers/reset/reset-meson.c:272:1: error: redefinition of 'init_module'
-     272 | module_auxiliary_driver(meson_reset_aux_driver);
-         | ^
-   include/linux/auxiliary_bus.h:245:2: note: expanded from macro 'module_auxiliary_driver'
-     245 |         module_driver(__auxiliary_driver, auxiliary_driver_register, auxiliary_driver_unregister)
-         |         ^
-   include/linux/device/driver.h:261:3: note: expanded from macro 'module_driver'
-     261 | } \
-         |   ^
-   include/linux/module.h:133:6: note: expanded from macro '\
-   module_init'
-     133 |         int init_module(void) __copy(initfn)                    \
-         |             ^
-   drivers/reset/reset-meson.c:232:1: note: previous definition is here
-     232 | module_platform_driver(meson_reset_pltf_driver);
-         | ^
-   include/linux/platform_device.h:303:2: note: expanded from macro 'module_platform_driver'
-     303 |         module_driver(__platform_driver, platform_driver_register, \
-         |         ^
-   include/linux/device/driver.h:261:3: note: expanded from macro 'module_driver'
-     261 | } \
-         |   ^
-   include/linux/module.h:133:6: note: expanded from macro '\
-   module_init'
-     133 |         int init_module(void) __copy(initfn)                    \
-         |             ^
->> drivers/reset/reset-meson.c:272:1: error: redefinition of '__exittest'
-     272 | module_auxiliary_driver(meson_reset_aux_driver);
-         | ^
-   include/linux/auxiliary_bus.h:245:2: note: expanded from macro 'module_auxiliary_driver'
-     245 |         module_driver(__auxiliary_driver, auxiliary_driver_register, auxiliary_driver_unregister)
-         |         ^
-   include/linux/device/driver.h:266:3: note: expanded from macro 'module_driver'
-     266 | } \
-         |   ^
-   include/linux/module.h:139:42: note: expanded from macro '\
-   module_exit'
-     139 |         static inline exitcall_t __maybe_unused __exittest(void)                \
-         |                                                 ^
-   drivers/reset/reset-meson.c:232:1: note: previous definition is here
-     232 | module_platform_driver(meson_reset_pltf_driver);
-         | ^
-   include/linux/platform_device.h:303:2: note: expanded from macro 'module_platform_driver'
-     303 |         module_driver(__platform_driver, platform_driver_register, \
-         |         ^
-   include/linux/device/driver.h:266:3: note: expanded from macro 'module_driver'
-     266 | } \
-         |   ^
-   include/linux/module.h:139:42: note: expanded from macro '\
-   module_exit'
-     139 |         static inline exitcall_t __maybe_unused __exittest(void)                \
-         |                                                 ^
->> drivers/reset/reset-meson.c:272:1: error: redefinition of 'cleanup_module'
-     272 | module_auxiliary_driver(meson_reset_aux_driver);
-         | ^
-   include/linux/auxiliary_bus.h:245:2: note: expanded from macro 'module_auxiliary_driver'
-     245 |         module_driver(__auxiliary_driver, auxiliary_driver_register, auxiliary_driver_unregister)
-         |         ^
-   include/linux/device/driver.h:266:3: note: expanded from macro 'module_driver'
-     266 | } \
-         |   ^
-   include/linux/module.h:141:7: note: expanded from macro '\
-   module_exit'
-     141 |         void cleanup_module(void) __copy(exitfn)                \
-         |              ^
-   drivers/reset/reset-meson.c:232:1: note: previous definition is here
-     232 | module_platform_driver(meson_reset_pltf_driver);
-         | ^
-   include/linux/platform_device.h:303:2: note: expanded from macro 'module_platform_driver'
-     303 |         module_driver(__platform_driver, platform_driver_register, \
-         |         ^
-   include/linux/device/driver.h:266:3: note: expanded from macro 'module_driver'
-     266 | } \
-         |   ^
-   include/linux/module.h:141:7: note: expanded from macro '\
-   module_exit'
-     141 |         void cleanup_module(void) __copy(exitfn)                \
-         |              ^
-   drivers/reset/reset-meson.c:292:5: error: redefinition of 'devm_meson_rst_aux_register'
-     292 | int devm_meson_rst_aux_register(struct device *dev,
-         |     ^
-   include/soc/amlogic/meson-auxiliary-reset.h:15:19: note: previous definition is here
-      15 | static inline int devm_meson_rst_aux_register(struct device *dev,
-         |                   ^
-   17 warnings and 5 errors generated.
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-upstream
 
-vim +/__inittest +272 drivers/reset/reset-meson.c
+for you to fetch changes up to 4f3a6c4de7d932be94cde2c52ae58feeec9c9dbf:
 
-   267	
-   268	static struct auxiliary_driver meson_reset_aux_driver = {
-   269		.probe		= meson_reset_aux_probe,
-   270		.id_table	= meson_reset_aux_ids,
-   271	};
- > 272	module_auxiliary_driver(meson_reset_aux_driver);
-   273	
+  Merge branch 'for-next/vcpu-hotplug' into for-next/core (2024-07-11 19:10:02 +0100)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+----------------------------------------------------------------
+arm64 updates for 6.11:
+
+* Virtual CPU hotplug support for arm64 ACPI systems
+
+* cpufeature infrastructure cleanups and making the FEAT_ECBHB ID bits
+  visible to guests
+
+* CPU errata: expand the speculative SSBS workaround to more CPUs
+
+* arm64 ACPI:
+
+  - acpi=nospcr option to disable SPCR as default console for arm64
+
+  - Move some ACPI code (cpuidle, FFH) to drivers/acpi/arm64/
+
+* GICv3, use compile-time PMR values: optimise the way regular IRQs are
+  masked/unmasked when GICv3 pseudo-NMIs are used, removing the need for
+  a static key in fast paths by using a priority value chosen
+  dynamically at boot time
+
+* arm64 perf updates:
+
+  - Rework of the IMX PMU driver to enable support for I.MX95
+
+  - Enable support for tertiary match groups in the CMN PMU driver
+
+  - Initial refactoring of the CPU PMU code to prepare for the fixed
+    instruction counter introduced by Arm v9.4
+
+  - Add missing PMU driver MODULE_DESCRIPTION() strings
+
+  - Hook up DT compatibles for recent CPU PMUs
+
+* arm64 kselftest updates:
+
+  - Kernel mode NEON fp-stress
+
+  - Cleanups, spelling mistakes
+
+* arm64 Documentation update with a minor clarification on TBI
+
+* Miscellaneous:
+
+  - Fix missing IPI statistics
+
+  - Implement raw_smp_processor_id() using thread_info rather than a
+    per-CPU variable (better code generation)
+
+  - Make MTE checking of in-kernel asynchronous tag faults conditional
+    on KASAN being enabled
+
+  - Minor cleanups, typos
+
+----------------------------------------------------------------
+Andre Przywara (2):
+      dt-bindings: arm: pmu: Add new Cortex and Neoverse cores
+      perf: pmuv3: Add new Cortex and Neoverse PMUs
+
+Anshuman Khandual (3):
+      arm64/mm: Stop using ESR_ELx_FSC_TYPE during fault
+      KVM: arm64: Replace custom macros with fields from ID_AA64PFR0_EL1
+      arm64/cpufeature: Replace custom macros with fields from ID_AA64PFR0_EL1
+
+Catalin Marinas (3):
+      irqchip/gic-v3: Fix 'broken_rdists' unused warning when !SMP and !ACPI
+      Merge branches 'for-next/cpufeature', 'for-next/misc', 'for-next/kselftest', 'for-next/mte', 'for-next/errata', 'for-next/acpi', 'for-next/gic-v3-pmr' and 'for-next/doc', remote-tracking branch 'arm64/for-next/perf' into for-next/core
+      Merge branch 'for-next/vcpu-hotplug' into for-next/core
+
+Colin Ian King (1):
+      kselftest/arm64: Fix a couple of spelling mistakes
+
+Dev Jain (1):
+      kselftest/arm64: Fix redundancy of a testcase
+
+Gavin Shan (1):
+      arm64: Kconfig: Fix dependencies to enable ACPI_HOTPLUG_CPU
+
+Ilkka Koskinen (2):
+      perf/arm-cmn: Decouple wp_config registers from filter group number
+      perf/arm-cmn: Enable support for tertiary match group
+
+James Morse (7):
+      ACPI: processor: Register deferred CPUs from acpi_processor_get_info()
+      ACPI: Add post_eject to struct acpi_scan_handler for cpu hotplug
+      arm64: acpi: Move get_cpu_for_acpi_id() to a header
+      irqchip/gic-v3: Don't return errors from gic_acpi_match_gicc()
+      irqchip/gic-v3: Add support for ACPI's disabled but 'online capable' CPUs
+      arm64: document virtual CPU hotplug's expectations
+      cpumask: Add enabled cpumask for present CPUs that can be brought online
+
+Jean-Philippe Brucker (1):
+      arm64: psci: Ignore DENIED CPUs
+
+Jeff Johnson (2):
+      ARM64: reloc_test: add missing MODULE_DESCRIPTION() macro
+      perf: add missing MODULE_DESCRIPTION() macros
+
+Jinjie Ruan (1):
+      arm64: smp: Fix missing IPI statistics
+
+Jonathan Cameron (11):
+      ACPI: processor: Simplify initial onlining to use same path for cold and hotplug
+      cpu: Do not warn on arch_register_cpu() returning -EPROBE_DEFER
+      ACPI: processor: Drop duplicated check on _STA (enabled + present)
+      ACPI: processor: Return an error if acpi_processor_get_info() fails in processor_add()
+      ACPI: processor: Fix memory leaks in error paths of processor_add()
+      ACPI: processor: Move checks and availability of acpi_processor earlier
+      ACPI: processor: Add acpi_get_processor_handle() helper
+      ACPI: scan: switch to flags for acpi_scan_check_and_detach()
+      arm64: acpi: Harden get_cpu_for_acpi_id() against missing CPU entry
+      arm64: arch_register_cpu() variant to check if an ACPI handle is now available.
+      arm64: Kconfig: Enable hotplug CPU on arm64 if ACPI_PROCESSOR is enabled.
+
+Kevin Brodsky (1):
+      Documentation: arm64: Update memory.rst for TBI
+
+Liu Wei (1):
+      ACPI: Add acpi=nospcr to disable ACPI SPCR as default console on ARM64
+
+Mark Brown (1):
+      kselftest/arm64: Include kernel mode NEON in fp-stress
+
+Mark Rutland (10):
+      arm64: cputype: Add Cortex-X3 definitions
+      arm64: cputype: Add Cortex-A720 definitions
+      arm64: cputype: Add Cortex-X925 definitions
+      arm64: errata: Unify speculative SSBS errata logic
+      arm64: errata: Expand speculative SSBS workaround
+      wordpart.h: Add REPEAT_BYTE_U32()
+      irqchip/gic-common: Remove sync_access callback
+      irqchip/gic-v3: Make distributor priorities variables
+      irqchip/gic-v3: Detect GICD_CTRL.DS and SCR_EL3.FIQ earlier
+      arm64: irqchip/gic-v3: Select priorities at boot time
+
+Mike Rapoport (IBM) (1):
+      arm64: Kconfig: fix typo in __builtin_return_adddress
+
+Muhammad Usama Anjum (2):
+      selftests: arm64: tags_test: conform test to TAP output
+      selftests: arm64: tags: remove the result script
+
+Nianyao Tang (1):
+      arm64/cpufeatures/kvm: Add ARMv8.9 FEAT_ECBHB bits in ID_AA64MMFR1 register
+
+Peter Collingbourne (1):
+      arm64: mte: Make mte_check_tfsr_*() conditional on KASAN instead of MTE
+
+Puranjay Mohan (2):
+      arm64/arch_timer: include <linux/percpu.h>
+      arm64: implement raw_smp_processor_id() using thread_info
+
+Rob Herring (Arm) (5):
+      perf: arm_pmuv3: Avoid assigning fixed cycle counter with threshold
+      perf: arm_pmuv3: Drop unnecessary IS_ENABLED(CONFIG_ARM64) check
+      perf/arm: Move 32-bit PMU drivers to drivers/perf/
+      perf: arm_v6/7_pmu: Drop non-DT probe support
+      perf: arm_pmuv3: Include asm/arm_pmuv3.h from linux/perf/arm_pmuv3.h
+
+Seongsu Park (1):
+      arm64: Cleanup __cpu_set_tcr_t0sz()
+
+Sudeep Holla (3):
+      ACPI: arm64: Sort entries alphabetically
+      arm64: cpuidle: Move ACPI specific code into drivers/acpi/arm64/
+      arm64: FFH: Move ACPI specific code into drivers/acpi/arm64/
+
+Xu Yang (6):
+      dt-bindings: perf: fsl-imx-ddr: Add i.MX95 compatible
+      perf: imx_perf: add macro definitions for parsing config attr
+      perf: imx_perf: let the driver manage the counter usage rather the user
+      perf: imx_perf: refactor driver for imx93
+      perf: imx_perf: fix counter start and config sequence
+      perf: imx_perf: add support for i.MX95 platform
+
+Youwan Wang (1):
+      ACPI / amba: Drop unnecessary check for registered amba_dummy_clk
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu |   6 +
+ Documentation/admin-guide/kernel-parameters.txt    |  10 +-
+ Documentation/arch/arm64/cpu-hotplug.rst           |  79 +++++
+ Documentation/arch/arm64/index.rst                 |   1 +
+ Documentation/arch/arm64/memory.rst                |  42 ++-
+ Documentation/arch/arm64/silicon-errata.rst        |  16 +-
+ Documentation/devicetree/bindings/arm/pmu.yaml     |   6 +
+ .../devicetree/bindings/perf/fsl-imx-ddr.yaml      |   3 +
+ arch/arm/kernel/Makefile                           |   2 -
+ arch/arm64/Kconfig                                 |  41 +--
+ arch/arm64/include/asm/acpi.h                      |  12 +
+ arch/arm64/include/asm/arch_gicv3.h                |  15 -
+ arch/arm64/include/asm/arch_timer.h                |   2 +-
+ arch/arm64/include/asm/arm_pmuv3.h                 |   2 +-
+ arch/arm64/include/asm/cpucaps.h                   |   2 +-
+ arch/arm64/include/asm/cpufeature.h                |   4 +-
+ arch/arm64/include/asm/cputype.h                   |   6 +
+ arch/arm64/include/asm/esr.h                       |  33 +-
+ arch/arm64/include/asm/mmu_context.h               |   4 +-
+ arch/arm64/include/asm/mte.h                       |   4 +-
+ arch/arm64/include/asm/ptrace.h                    |  33 +-
+ arch/arm64/include/asm/smp.h                       |  13 +-
+ arch/arm64/include/asm/sysreg.h                    |   4 -
+ arch/arm64/kernel/Makefile                         |   1 -
+ arch/arm64/kernel/acpi.c                           | 129 ++------
+ arch/arm64/kernel/acpi_numa.c                      |  11 -
+ arch/arm64/kernel/cpu_errata.c                     |  17 +-
+ arch/arm64/kernel/cpufeature.c                     |   5 +-
+ arch/arm64/kernel/image-vars.h                     |   5 -
+ arch/arm64/kernel/proton-pack.c                    |   2 +-
+ arch/arm64/kernel/psci.c                           |   2 +-
+ arch/arm64/kernel/reloc_test_core.c                |   1 +
+ arch/arm64/kernel/smp.c                            |  74 ++++-
+ arch/arm64/kvm/hyp/include/nvhe/fixed_config.h     |  10 +-
+ arch/arm64/kvm/hyp/nvhe/pkvm.c                     |   4 +-
+ arch/arm64/kvm/hyp/nvhe/sys_regs.c                 |   2 +-
+ arch/arm64/kvm/pmu-emul.c                          |   1 -
+ drivers/acpi/acpi_processor.c                      | 145 +++++----
+ drivers/acpi/arm64/Makefile                        |   6 +-
+ drivers/acpi/arm64/amba.c                          |   6 +-
+ .../arm64/kernel => drivers/acpi/arm64}/cpuidle.c  |   4 -
+ drivers/acpi/arm64/ffh.c                           | 107 +++++++
+ drivers/acpi/processor_core.c                      |   3 +-
+ drivers/acpi/processor_driver.c                    |  43 +--
+ drivers/acpi/scan.c                                |  47 ++-
+ drivers/base/cpu.c                                 |  12 +-
+ drivers/irqchip/irq-gic-common.c                   |  22 +-
+ drivers/irqchip/irq-gic-common.h                   |   7 +-
+ drivers/irqchip/irq-gic-v3-its.c                   |  11 +-
+ drivers/irqchip/irq-gic-v3.c                       | 282 ++++++++--------
+ drivers/irqchip/irq-gic.c                          |  10 +-
+ drivers/irqchip/irq-hip04.c                        |   6 +-
+ drivers/perf/Kconfig                               |  12 +
+ drivers/perf/Makefile                              |   3 +
+ drivers/perf/arm-ccn.c                             |   1 +
+ drivers/perf/arm-cmn.c                             | 116 +++++--
+ drivers/perf/arm_cspmu/ampere_cspmu.c              |   1 +
+ drivers/perf/arm_cspmu/arm_cspmu.c                 |   1 +
+ drivers/perf/arm_cspmu/nvidia_cspmu.c              |   1 +
+ drivers/perf/arm_pmuv3.c                           |  26 +-
+ .../perf_event_v6.c => drivers/perf/arm_v6_pmu.c   |  20 +-
+ .../perf_event_v7.c => drivers/perf/arm_v7_pmu.c   |  13 +-
+ .../perf/arm_xscale_pmu.c                          |   3 -
+ drivers/perf/cxl_pmu.c                             |   1 +
+ drivers/perf/fsl_imx8_ddr_perf.c                   |   1 +
+ drivers/perf/fsl_imx9_ddr_perf.c                   | 354 +++++++++++++++------
+ drivers/perf/hisilicon/hisi_uncore_pmu.c           |   1 +
+ drivers/perf/marvell_cn10k_ddr_pmu.c               |   1 +
+ include/acpi/acpi_bus.h                            |   1 +
+ include/acpi/processor.h                           |   2 +-
+ include/linux/acpi.h                               |  12 +-
+ include/linux/cpumask.h                            |  25 ++
+ include/linux/irqchip/arm-gic-common.h             |   4 -
+ include/linux/irqchip/arm-gic-v3-prio.h            |  52 +++
+ include/linux/irqchip/arm-gic-v3.h                 |   2 +-
+ include/linux/perf/arm_pmuv3.h                     |   2 +
+ include/linux/wordpart.h                           |   8 +
+ kernel/cpu.c                                       |   3 +
+ tools/testing/selftests/arm64/abi/ptrace.c         |   2 +-
+ tools/testing/selftests/arm64/fp/.gitignore        |   1 +
+ tools/testing/selftests/arm64/fp/Makefile          |   1 +
+ tools/testing/selftests/arm64/fp/fp-stress.c       |  26 +-
+ tools/testing/selftests/arm64/fp/kernel-test.c     | 324 +++++++++++++++++++
+ tools/testing/selftests/arm64/tags/Makefile        |   1 -
+ .../testing/selftests/arm64/tags/run_tags_test.sh  |  12 -
+ tools/testing/selftests/arm64/tags/tags_test.c     |  10 +-
+ 86 files changed, 1606 insertions(+), 752 deletions(-)
+ create mode 100644 Documentation/arch/arm64/cpu-hotplug.rst
+ rename {arch/arm64/kernel => drivers/acpi/arm64}/cpuidle.c (97%)
+ create mode 100644 drivers/acpi/arm64/ffh.c
+ rename arch/arm/kernel/perf_event_v6.c => drivers/perf/arm_v6_pmu.c (95%)
+ rename arch/arm/kernel/perf_event_v7.c => drivers/perf/arm_v7_pmu.c (99%)
+ rename arch/arm/kernel/perf_event_xscale.c => drivers/perf/arm_xscale_pmu.c (99%)
+ create mode 100644 include/linux/irqchip/arm-gic-v3-prio.h
+ create mode 100644 tools/testing/selftests/arm64/fp/kernel-test.c
+ delete mode 100755 tools/testing/selftests/arm64/tags/run_tags_test.sh
 
