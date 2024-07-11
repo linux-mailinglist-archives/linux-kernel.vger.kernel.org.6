@@ -1,118 +1,97 @@
-Return-Path: <linux-kernel+bounces-249583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4661C92ED90
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D8AC92ED93
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0EFF286373
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:12:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4725B286BB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC7D16DC2F;
-	Thu, 11 Jul 2024 17:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD60916D9C1;
+	Thu, 11 Jul 2024 17:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eErcjg89"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUngXAXl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBF616D9BB
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 17:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD05450FA;
+	Thu, 11 Jul 2024 17:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720717930; cv=none; b=NwLL1fRZFZNyPA94F+q84EdQePOpNRHKfRfFtxA2y4ElBmQQ2PTrr7aAAQwSq8W96CSY1oZQSEl5KM3xNfXZkkq2/Oxb9ame+Y26bD2BRFIS0Hpz8bRJfkBjD407sGgWIKFE5wb24po6F0n2FbS1MoqOUaOk/i1mj3zbfKDZKs0=
+	t=1720717991; cv=none; b=I7HpscrldIdx2tcTH5JvqO0Deq5p3fcIDGmy0ci+dYkQO9/6AIwO3z0SlBuO44L96E85H+Y6ZJS3sB/MBm7mvqC5T9UF5kGMuJMZdIhk4RBjPqNqs9uvuhZSiiiYw4gC2Rutvqx1ulK1fZHw4F6cbGntHQoHHXLZ11l47zynZBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720717930; c=relaxed/simple;
-	bh=2HM6DhaEhQrcUyMacVH6uBp9Qj5OKw2eJBzcomJN0jI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nIr9Ke88lwdGCC5xP3pj21/fF/K4QA7p/A72GxwVyTaH3+3y36qjF4n9JMpC7ISaWkJweLa21yPbcOzoXLOuSnBqEkeP7eeLtGAt2qpgfIyuT0KdDdKVKHlrymmBck4rFyB6FbkTwDpSMG36sbvjEy8jM0hYz9PHbo8c55giKio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eErcjg89; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c97ff39453so905677a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:12:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720717928; x=1721322728; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S7ATwGtwViTmozQaBAkspz+JskSYJvpU6R7YfK3j+hI=;
-        b=eErcjg89TOXBN+JIx9+cOTE7Iiw5OPUZjkc4OZKIrHW+b+zuRBW0gIjaiWWoP5pMWQ
-         KK+MItgOMZM0d+PtrUVmY9BSAjuHAgpM26SvPNT9Rt3HPb9FnVDcKhshKw97qoHSLQy8
-         ZG0Xe9qzJzT5UJBLHT+F3Ox06lLAd6wRqRP32WJAaQ7/J6VaRv8b7KPZwD7H77QaW1MY
-         qYUIKMXGbA+pt7NuSGEXdVVflOvs8Qdij3oIpyv6j4S+fpSwgxXyAq8xSNlU/YQQPNXg
-         tJuUSCGuSyP2R7NwMJgAvX5+c16+r13RMiFfGf2TYDRWgCfh98j1lMlKZmZOagPkbVPi
-         ci9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720717928; x=1721322728;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S7ATwGtwViTmozQaBAkspz+JskSYJvpU6R7YfK3j+hI=;
-        b=ae+3Z2F/6c08eSIwtW8O2YV7NtuST7WJplGeIDZcpXqNoIQq87M571x0Ca8o929s+f
-         1CUN6pEoSEfyi3g/vutBdYVxFFn1yiPdvOMwm/agI5bRiOFIfM9Ee/oN7/W2dc+lB8A2
-         JWTo3I78V6KBKucM04uXEHvxOe7naizSA56TzCi2EZUyoXwF05Lu4j1p+WyjaV6om658
-         HNtoVdyd0Om7/HhZm64D8df1WW5A9XAPMqS5JjfsPOxXhtrlAzObJFGlJ6EVXXSb+inS
-         R7Xwwz4YoV92WUq7vZ1WRxrEQTaH4wtFTCGCXti3LNPXU10A8mCVl/Hb86u63epqmuCe
-         LILA==
-X-Gm-Message-State: AOJu0YxeYVDGg//gSeyC4zwH7AhK7ba/jMMWDsHdz8FiCdxkoTtWRfVt
-	6fAScFOe34SP5WPGJieHGiyehNKjrJmkjOY4XSGOSmUFSWF0e4s+
-X-Google-Smtp-Source: AGHT+IFctpaKdFkGjPJRPrnAIlA0rjLwClna0yjrWCmMAC6baLVz20QSkJGp42/jOdtoDmbvOp2VuA==
-X-Received: by 2002:a17:90a:f007:b0:2c9:96fc:ac52 with SMTP id 98e67ed59e1d1-2ca35c72dcemr8627379a91.26.1720717926980;
-        Thu, 11 Jul 2024 10:12:06 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca888286d1sm3048576a91.45.2024.07.11.10.12.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 10:12:06 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Thu, 11 Jul 2024 07:12:05 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	Lai Jiangshan <jiangshan.ljs@antgroup.com>
-Subject: Re: [PATCH 0/7] Add wq_online_cpumask and remove cpus_read_lock()
- from apply_wqattrs_lock()
-Message-ID: <ZpASZbR_bYzYEKcX@slm.duckdns.org>
-References: <20240711083547.3981-1-jiangshanlai@gmail.com>
+	s=arc-20240116; t=1720717991; c=relaxed/simple;
+	bh=xaKsQpF71MSFmC0xsITNp3M5gYzUZlBQesDbEER8aRE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z2QwcZzUw0c+OANfUiHVc28XFOKZWyTjfVfQwjNho04NoInx2LVYTDiCnzqeKecGe895DyqPUj04FgG2kiDSMyjH8M+waCf3e8++kT50xj9teN/Ru870YWGJkh/mtRTYHacDK90IxJn1IMKsrVMzUi19B8QcXwcC1lfRzjt2XMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUngXAXl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A419CC116B1;
+	Thu, 11 Jul 2024 17:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720717990;
+	bh=xaKsQpF71MSFmC0xsITNp3M5gYzUZlBQesDbEER8aRE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nUngXAXlBPFuZAJ7YrQh1lA8I7U2wZ3rMquELhfTAjK5H6al2vkjY35knKCZizZp8
+	 FrtoBKgBSM7mpfRTA/fT2musgNKf9ncvxZkFNz2vwUcLuAyN8dsQTEq0OQiuWRkpXG
+	 4HpQK/2vyT03C8XqX2Kknw89oNeYf1cxNuvy6ZgoGwQnFSuM8HY421g+1+8hnnjgoW
+	 ToI91YFhcpY0ydPlqhK/SW/8+iuT+P8BUcT5RPKm5/qb70elLGDnX2NVT+lhtMpum7
+	 seBacQqZEZ9oKLaI6OzjwRtm51Q3V6jAqAmU2aCtsTdaS/5phcI2yZbCzOPqJbeyjY
+	 qNeQbX5Jw9nTA==
+From: Kees Cook <kees@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Peng Liu <liupeng256@huawei.com>,
+	"Dr. Thomas Orgis" <thomas.orgis@uni-hamburg.de>,
+	Ismael Luceno <ismael@iodev.co.uk>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] tsacct: Replace strncpy() with strscpy()
+Date: Thu, 11 Jul 2024 10:13:09 -0700
+Message-Id: <20240711171308.work.995-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711083547.3981-1-jiangshanlai@gmail.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=942; i=kees@kernel.org; h=from:subject:message-id; bh=xaKsQpF71MSFmC0xsITNp3M5gYzUZlBQesDbEER8aRE=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmkBKlYLWBH+hNVujXhbheeiLsYWDV5guB5thjH umH2hIqAcSJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZpASpQAKCRCJcvTf3G3A Jok0EACNE8GTbsRAEKnflQ2G8v+TvQZ62CugkWiPe6oYsvwxU/nlLWyxp8x6JchhoSeag6R5Bfl l8rte8qbEAZejHnWR2Jk6hCvBqRzjRV1WyPAEr5h16yIhHrgzUiYt/3dR+FZnCI+LNFECDOGrhf aOUhG//mvSvf/82+qNGQrpG/viMWn4r7aDgyqM12tHaZjlwdBX080NrC3RoaI/IQLiMvVHFlPFg aNJJ/Zv6T6J6CzWnUnkIAbUL1+MufQcMbYb4+HZCydJkHUvg/0UlFMTUIJwY6rtzreO59taW2er yjZ+H7dVqcd4ivgv5/grkNjGeCTz02EPA+LMrsiSbNwsif3ZG49AFyOr0tXClJ5guv2iBXhpT/O Vw+Myv6USPnK6m+hit3DOEjYp++wyH/gr4oZV1+JnNgFRv0py8n9jHDqQXp6FfosyRu6T5bgyA0 Xc4GLd5pHkyHuLHSgDOvd1Q2kkj89bFuuPOy+LNZbhn1MrxOKNYKj/CNc+Vdlwx7QycVbPUQguB 0qsld82RCzqzZlPVrp7SfNlfvQkd2N8ymJz1DquhN/ppz0O/0h339VpeECvmYpJ0a46dxnqK6Ja uIENPbTD58USqSWxVwAk8ELPKkqsswe4E89199K5ADzgxlIvGgQftTSSvcZpHTz+P8g3F9gAx8j UJKnZENKvww8zq
+ Q==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 04:35:40PM +0800, Lai Jiangshan wrote:
-> From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
-> 
-> The new wq_online_mask mirrors the cpu_online_mask except during
-> hotplugging; specifically, it differs between the hotplugging stages
-> of workqueue_offline_cpu() and workqueue_online_cpu(), during which
-> the transitioning CPU is not represented in the mask.
-> 
-> With wq_online_cpumask, cpus_read_lock() is unneeded for wqattrs changes.
-> 
-> 
-> Lai Jiangshan (7):
->   workqueue: Add wq_online_cpumask
->   workqueue: Simplify wq_calc_pod_cpumask() with wq_online_cpumask
->   workqueue: Remove cpus_read_lock() from apply_wqattrs_lock()
->   workqueue: Remove the unneeded cpumask empty check in
->     wq_calc_pod_cpumask()
->   workqueue: Remove the argument @cpu_going_down from
->     wq_calc_pod_cpumask()
->   workqueue: Remove the arguments @hotplug_cpu and @online from
->     wq_update_pod()
->   workqueue: Rename wq_update_pod() to unbound_wq_update_pwq()
+Replace the deprecated[1] use of strncpy() in bacct_add_tsk(). Since this
+is UAPI, include trailing padding in the copy.
 
-Applied 1-7 to wq/for-6.11. I updated a changelog to clarify why the change
-is needed.
+Link: https://github.com/KSPP/linux/issues/90 [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Peng Liu <liupeng256@huawei.com>
+Cc: "Dr. Thomas Orgis" <thomas.orgis@uni-hamburg.de>
+Cc: Ismael Luceno <ismael@iodev.co.uk>
+---
+ kernel/tsacct.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks.
-
+diff --git a/kernel/tsacct.c b/kernel/tsacct.c
+index 4252f0645b9e..16b283f9d831 100644
+--- a/kernel/tsacct.c
++++ b/kernel/tsacct.c
+@@ -76,7 +76,7 @@ void bacct_add_tsk(struct user_namespace *user_ns,
+ 	stats->ac_minflt = tsk->min_flt;
+ 	stats->ac_majflt = tsk->maj_flt;
+ 
+-	strncpy(stats->ac_comm, tsk->comm, sizeof(stats->ac_comm));
++	strscpy_pad(stats->ac_comm, tsk->comm);
+ }
+ 
+ 
 -- 
-tejun
+2.34.1
+
 
