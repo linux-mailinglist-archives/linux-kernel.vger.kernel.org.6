@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-248580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B3B92DF3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:58:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6869D92DF43
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 079EA1F23544
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:58:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F21E1F2333A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F0754916;
-	Thu, 11 Jul 2024 04:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8D94F1F8;
+	Thu, 11 Jul 2024 05:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d2r500OM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="VJfX1Awu"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1577A29CF0;
-	Thu, 11 Jul 2024 04:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0B320312
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720673913; cv=none; b=eLBZF1Bjs5ikxH7Cc1nPm/fEm8AJ8ajSO7C9Fv4omwKs+NExUHtnL9KTg2JjToRdF/8fFN4rZSZ1FIN0o9SWKQiaji9XHrP01pUEbwNDrkGG33GxOau5Kg4415hQVvXS5NIVXcmiI5H1gxw0oLPz5+FgVxfz6ENq3D/rVCpc0Es=
+	t=1720674012; cv=none; b=EPxLhvPrwv7+Dj64r9wNMvbFXWjfG/bBELnbJr7wE4JdFl6mwKxUmLi1+VpZNVk3Es6KQ1ADR2+01SLUY9M64dv8Cp3g3+aVRhWfUkUMwSGInvT4NzTu2u2qQGucwZ0lbBuQMOSkoB43WrYe1J6xTIjBt0fyPOX5RHFrXiQQhFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720673913; c=relaxed/simple;
-	bh=d87vYux2oYnYK80Z/hqKA457vpsQNT+AIQcJKMK6NbQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YplIKy6F4Gw9awuPmyhp0fb4HTA5M1GNHPleermHPm15E0j3ZephWA/xIRpNVuryzQMPAOxkZWuTFJlkOMzz82N1fgWRNhcHIQVLzxKdswbWd+8D6X5Td0LJ2nqu4agijcUL23Knmxd26HSPawpvPm6bD8/OnO+oj+kqeltdbkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d2r500OM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B4mucc008113;
-	Thu, 11 Jul 2024 04:58:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=QfexAfiFTGJbsV6Jlp1wIh2D
-	0ABmelrFAt2LL9NkLGc=; b=d2r500OM1kEgbdT7lgvsRYvg6u164GQXn1UeQe2s
-	6r9L5GadhK0Zi56M8+9dMFbC4tg8yfgj8Z7HP0ldGd/ep6rEImhMSQCzdhsAiUiJ
-	u4fcSxx9NVODKCxuD7gQ6dch9ZcaSSZsIzSVmV4gUvOB99CNLhw6SwvnM56AfBI8
-	ZMQqS9NVVlyuqpGGVQAS2qO6saig6WEpam+yfTT3g/uAvzGWWTnMYQmnI43TdaLV
-	k8SzwFObPJdtVyntsrKcBRsP/irW+PmfNr8fSIy7UpNQMtdnslhDsDigzBtGJVMD
-	fKbIW7y+ikN3DrqZhBG6YnbklV4KzBLYls1umljOhjDt6g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wg43gm4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 04:58:12 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46B4wCLD004693
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 04:58:12 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 10 Jul 2024 21:58:04 -0700
-Date: Thu, 11 Jul 2024 10:28:00 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ilia.lin@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
-        <quic_rjendra@quicinc.com>, <danila@jiaxyga.com>,
-        <neil.armstrong@linaro.org>, <otto.pflueger@abscue.de>,
-        <abel.vesa@linaro.org>, <luca@z3ntu.xyz>, <geert+renesas@glider.be>,
-        <stephan.gerhold@kernkonzept.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Praveenkumar I
-	<quic_ipkumar@quicinc.com>
-Subject: Re: [PATCH v6 8/9] soc: qcom: cpr3: Add IPQ9574 definitions
-Message-ID: <Zo9mWMUJiTJoj2b+@hu-varada-blr.qualcomm.com>
-References: <20240710061102.1323550-1-quic_varada@quicinc.com>
- <20240710061102.1323550-9-quic_varada@quicinc.com>
- <4c3ada32-1476-4d98-89d7-7b2ffa0f9a65@linaro.org>
+	s=arc-20240116; t=1720674012; c=relaxed/simple;
+	bh=0j1hQ2vmfDpFBABfK0ocm0liUHRX0hPyVO6arXnqsV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RInvFDzFZJR163Zpp/Ac5sm9UXwHaxdTyAem6y99zUYcL/D+XTS385AB3ZO+cO3X43YzI9diniUly/ZflLAHTdAlnjNQ2u34kBe/Qad1E1LCby7DpgLnRgXxm9SOCZtdYtUYAkJ5abwl5cRk0P5giMo/cYWzjaERA5murFnYm7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=VJfX1Awu; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D8CA02C0372;
+	Thu, 11 Jul 2024 17:00:00 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1720674000;
+	bh=pZveZXlJyMwauPW4aLQrWYnyZv6abHginb4De52CZ/Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VJfX1Awuompbdv/eOapKYF8x9Z359AycC8DLthgA6GBqAYkij2gVRpUHTiX+3ACeD
+	 XTM26Aq8xrcAf4Sr4++zVtdSTxCQYVUYFzx1XiHV311UmDGKn4GLYky5G5Xe9oKVkJ
+	 mS/cTIsX8Vn1pTX1p74QUTXvkY6AMpchN1rwqCpxz5gBCnSNYyAjngIYAJwoMPSIll
+	 Gf51rjnEnTmopV3v8t7JDxkqm1keE2FkmHoM+CC7lGLe3WXjE/rM5/rzCu+ADd8XWU
+	 DCiyjZMDe3EI0WeiiAJHcNCDGFi8zTucMMl9VPxvTKjUyJGtEt2L6VMU3OSTbQ26Oj
+	 O9r67znmHxFYg==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B668f66d00001>; Thu, 11 Jul 2024 17:00:00 +1200
+Received: from elliota2-dl.ws.atlnz.lc (elliota-dl.ws.atlnz.lc [10.33.23.28])
+	by pat.atlnz.lc (Postfix) with ESMTP id A2B0C13ED5A;
+	Thu, 11 Jul 2024 17:00:00 +1200 (NZST)
+Received: by elliota2-dl.ws.atlnz.lc (Postfix, from userid 1775)
+	id 9CB8A3C0681; Thu, 11 Jul 2024 17:00:00 +1200 (NZST)
+From: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
+To: davem@davemloft.net
+Cc: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>,
+	Roopa Prabhu <roopa@nvidia.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Tobias Waldekranz <tobias@waldekranz.com>,
+	bridge@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v2] net: bridge: mst: Check vlan state for egress decision
+Date: Thu, 11 Jul 2024 16:59:25 +1200
+Message-ID: <20240711045926.756958-1-elliot.ayrey@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <4c3ada32-1476-4d98-89d7-7b2ffa0f9a65@linaro.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GILWLXyo901De_1Xy6p6ZkeSDHKiScW7
-X-Proofpoint-GUID: GILWLXyo901De_1Xy6p6ZkeSDHKiScW7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_02,2024-07-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=995 clxscore=1015 impostorscore=0 malwarescore=0 mlxscore=0
- bulkscore=0 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110031
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=PIKs+uqC c=1 sm=1 tr=0 ts=668f66d0 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=4kmOji7k6h8A:10 a=VwQbUJbxAAAA:8 a=kEPFZq6BU9ta2gAs10EA:9 a=3ZKOabzyN94A:10 a=AjGcO6oz07-iQ99wixmX:22
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Wed, Jul 10, 2024 at 01:12:19PM +0200, Konrad Dybcio wrote:
-> On 10.07.2024 8:11 AM, Varadarajan Narayanan wrote:
-> > From: Praveenkumar I <quic_ipkumar@quicinc.com>
-> >
-> > * Add thread, scaling factor, CPR descriptor defines to enable
-> >   CPR on IPQ9574.
-> >
-> > * Skip 'acc' usage since IPQ9574 does not have acc
-> >
-> > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
->
-> [...]
->
-> >
-> >  	/* CPRh disallows MEM-ACC access from the HLOS */
-> > -	if (!(data->acc_desc || desc->cpr_type == CTRL_TYPE_CPRH))
-> > +	if (!(data->acc_desc || desc->cpr_type == CTRL_TYPE_CPRH ||
-> > +	      of_device_is_compatible(dev->of_node, "qcom,ipq9574-cpr4")))
-> >  		return dev_err_probe(dev, -EINVAL, "Invalid ACC data\n");
->
-> This is something I'd also like to fold into v16.. perhaps
->
-> if (data->acc_desc && desc->cpr_type == CTRL_TYPE_CPRH)
->
-> could work instead? this way we trust the programmer that
-> acc_desc's presence/absence is intentional and only throw and
-> error if it's present with type == CPRH
+If a port is blocking in the common instance but forwarding in an MST
+instance, traffic egressing the bridge will be dropped because the
+state of the common instance is overriding that of the MST instance.
 
-I tried this change and it works for ipq9574.
+Fix this by skipping the port state check in MST mode to allow
+checking the vlan state via br_allowed_egress(). This is similar to
+what happens in br_handle_frame_finish() when checking ingress
+traffic, which was introduced in the change below.
 
-Thanks
-Varada
+Fixes: ec7328b59176 ("net: bridge: mst: Multiple Spanning Tree (MST) mode=
+")
+Signed-off-by: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
+---
+
+v2:
+  - Restructure the MST mode check to make it read better
+v1: https://lore.kernel.org/all/20240705030041.1248472-1-elliot.ayrey@all=
+iedtelesis.co.nz/
+
+ net/bridge/br_forward.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/bridge/br_forward.c b/net/bridge/br_forward.c
+index d97064d460dc..e63d6f6308f8 100644
+--- a/net/bridge/br_forward.c
++++ b/net/bridge/br_forward.c
+@@ -25,8 +25,8 @@ static inline int should_deliver(const struct net_bridg=
+e_port *p,
+=20
+ 	vg =3D nbp_vlan_group_rcu(p);
+ 	return ((p->flags & BR_HAIRPIN_MODE) || skb->dev !=3D p->dev) &&
+-		p->state =3D=3D BR_STATE_FORWARDING && br_allowed_egress(vg, skb) &&
+-		nbp_switchdev_allowed_egress(p, skb) &&
++		(br_mst_is_enabled(p->br) || state =3D=3D BR_STATE_FORWARDING) &&
++		br_allowed_egress(vg, skb) && nbp_switchdev_allowed_egress(p, skb) &&
+ 		!br_skb_isolated(p, skb);
+ }
+=20
+--=20
+2.45.2
+
 
