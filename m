@@ -1,123 +1,144 @@
-Return-Path: <linux-kernel+bounces-248454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2470692DD5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:22:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8C992DD5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2621F238E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:22:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77610282D53
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABDC23CE;
-	Thu, 11 Jul 2024 00:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EDA23D7;
+	Thu, 11 Jul 2024 00:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="ZK7DQ3Cr"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MTpPN5R6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E4D1C27
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1821C14;
+	Thu, 11 Jul 2024 00:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720657346; cv=none; b=pCw9elkn7nl4tpx52O+4IJ8UIECfR6/CYS/CqGyrHCpO9t7RAjaliTLKDjFMp3s6lSESODCa2SaS9glij+pQOusCxBZICu2Fp0J4y+7J+gHNtZjm0OVY49twv6plYZ8yFIQTpjc9oIWSIaNPkWru0gjOvXm+jvOJ9HxADnfk6u8=
+	t=1720657621; cv=none; b=HWS9N96wifThCwJR4qcqhEAe9hVIqGn8zmr/Xz9u75Ywk/c4NaMTagOs4ZjicsFbzADp50reDeTcRepsK4r1O1znKIG84jXnqXCZcLsQ8n/kDAxrjRjSWMQNezR3x2RZagyMc4aYYrlQ65ZI+RBXaGuvZS2HX50JAMI8lMoVUt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720657346; c=relaxed/simple;
-	bh=uM7smPu8AfGRj92cmn1JT/2eh3d2v25xWfIq0PU7kic=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=idSX30O2XK2TTKJ0kew48LKbnrOEKi9LPbzlEh9jz2wp5PZ8upmaJYlQ6+D9ciu23+PkNG39ZD+gB34UUvwrqnpD66SF9o/MYlVRmN3AFTILAq47Z2/XiULKdORYpKWzAAJalXgaSnkxOMys/w5KF2PU1rluV5KB1Z+x7nbcXRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=ZK7DQ3Cr; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4267345e746so2113765e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:22:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1720657343; x=1721262143; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bywnTVppmfzQzszhkit49QhinE78akXE7sjmxioQWq4=;
-        b=ZK7DQ3Cr2dG9Z75MnAUeZTt5RLBzqbxi9VtK0fna3RxHpnrN12DmgEdB0DFvHWNcv+
-         lqwUy56JG/FrrpNPIEYKTxyU7CEtGykQdlHs0xpOrOTRza3JJ4nJVfu8+3Lu/hVRGLjA
-         MgXbZpsJsIeuz2ilou174k6PaAHhzozAh1qcoYdmCG3vIt2hX9PCyxeogjVZxIQzp67q
-         msXaHNMv9rIqE5uFYD6IIY34J4VwQcZqhIdj6J5L44CuIg3GQJ2gZjpNviEpj0Q+Meej
-         4AyZ2Bq2FUDl+RMJElspDLp6xxcRAT/EQEgRqePOZlldKghReHMZPsQhDeMq4uv0DbjK
-         QTBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720657343; x=1721262143;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bywnTVppmfzQzszhkit49QhinE78akXE7sjmxioQWq4=;
-        b=lpyDlypnXMRmGHVhyuFQ3aPloIARlcjIsy60cHbqMP41JPi0yP6oQBokrRKD0Dd9Ty
-         IZuZNBUQw0ZU6mFfgttwMNbz4TX3JBEi7KBzT4EoLHK1o15vxdpQUjHjWYK+XLM2qNJS
-         01rDoo+41R3t1TI/QhaxUtM08rpSgm2bUN9PdyKuag7xyrV8n17iZH5lBPPQ1JMCyRF4
-         9i8CQyegP6kni4ZBVXS/7oU8MBYAdK8L1ChhUKVstGA/fcvJFxOJzO5SSZ/Z9PFEPm/Z
-         MA+O96x6PuamtUy1rRkq3KWPMeggtwA12UPCP7q5A6jDso/OpVm9kXJrbmbgc4nr59ct
-         B5gA==
-X-Gm-Message-State: AOJu0Yyu8qwjkmTTv/oCVoFzLWi18aIILZx6zcKbr7xML1p4HTCzHyOk
-	gtE+f4Xnt55qMuCdKxxPE9SnzSBBydda+qevmGSTngsvM1CbPWI1piUAQbjVj8k=
-X-Google-Smtp-Source: AGHT+IHqxrvLUW2J/54k8gQvzCID5HUCiDcf8dmMNnBG0HTWZkK2wt/V7dSoO2/ZLFTHC7bNTNgVAw==
-X-Received: by 2002:a05:600c:11c8:b0:426:607c:1863 with SMTP id 5b1f17b1804b1-426707e365fmr43997305e9.21.1720657342591;
-        Wed, 10 Jul 2024 17:22:22 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fca8bsm263977855e9.47.2024.07.10.17.22.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 17:22:22 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: akpm@linux-foundation.org,
-	mhiramat@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] bootconfig: Remove duplicate included header file linux/bootconfig.h
-Date: Thu, 11 Jul 2024 02:21:53 +0200
-Message-ID: <20240711002152.800028-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720657621; c=relaxed/simple;
+	bh=UULG4kMeS44p/RRr8g5q9aIR1TLkUQFBx3QaxoMQq4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V9kiQI4+PMdCwMKCCsquwlb0Tuh1oHMwoXjUK9YsLozXCh8N82FDdU+xDBAZ48fW3z5KtTML78j3zx8fMiDSFRkm9kSQgMM/ocAB16Z67dl7ZpAEwE0fVZcb9EV+GiM86Rm7z87r/ZcWBuPVel0qh33yPUQ0hYj5K1LiTBdh5eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MTpPN5R6; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720657619; x=1752193619;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UULG4kMeS44p/RRr8g5q9aIR1TLkUQFBx3QaxoMQq4Y=;
+  b=MTpPN5R62N9+H9sRrGSrBzCEMJJUex7sQeYuiSmhyv3mmW/kzTGu4zCD
+   c/4qGA/Xbm5CbWD3uRahphUSOztMvWVlUWvVX5kf5DC2bs0fTMB9XfTTO
+   /HVVlOM5I9bbc9NPLuDCrFHGU67ijDT13euhUjKETXW4YjSMe7nVpZ601
+   PtmzzXHUQsdnMFtEOyioZBfILsiSUaLRm9uv5bzHqzHdrghdDJZJyOy13
+   uuiBGbYC7T5cBztvmxDkDzSebygYn0EG3t1lddWPeTJDXyl0JNDGlA+CA
+   n7QoCiOBh6vuGtN0/txS3lnfbghDG5vtmbffS+tN25eC+ait4bfxlBi/f
+   A==;
+X-CSE-ConnectionGUID: 5MXozepuTzGp/vaKvMRLRw==
+X-CSE-MsgGUID: lQiHLWqnSZamLc/yJqzUdg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="21886745"
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="21886745"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 17:26:58 -0700
+X-CSE-ConnectionGUID: Lo3xxtleTIesld7r1eYkWQ==
+X-CSE-MsgGUID: pJOn2XBiRYOcqGdRYH9Q9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="48470956"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.72.164])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 17:26:58 -0700
+Date: Wed, 10 Jul 2024 17:26:55 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Robert Richter <rrichter@amd.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Address translation for HDM decoding
+Message-ID: <Zo8mz6uyQBCxsuJ3@aschofie-mobl2>
+References: <20240701174754.967954-1-rrichter@amd.com>
+ <Zo8hJm7y9VIwhiDk@aschofie-mobl2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zo8hJm7y9VIwhiDk@aschofie-mobl2>
 
-The header file linux/bootconfig.h is included whether __KERNEL__ is
-defined or not.
+On Wed, Jul 10, 2024 at 05:02:46PM -0700, Alison Schofield wrote:
+> On Mon, Jul 01, 2024 at 07:47:48PM +0200, Robert Richter wrote:
+> > Default expectation of Linux is that HPA == SPA, which means that
+> > hardware addresses in the decoders are the same as the kernel sees
+> > them. However, there are platforms where this is not the case and an
+> > address translation between decoder's (HPA) and the system's physical
+> > addresses (SPA) is needed.
+> > 
+> > This series implements address translation for HDM decoding. The
+> > implementation follows the rule that the representation of hardware
+> > address ranges in the kernel are all SPA. If decoder registers (HDM
+> > decoder cap or register range) are not SPA, a base offset must be
+> > applied. Translation happens when accessing the registers back and
+> > forth. After a read access an address will be converted to SPA and
+> > before a write access the programmed address is translated from an
+> > SPA. The decoder register access can be easily encapsulated by address
+> > translation and thus there are only a few places where translation is
+> > needed and the code must be changed. This is implemented in patch #2,
+> > patch #1 is a prerequisite.
+> > 
+> > Address translation is restricted to platforms that need it. As such a
+> > platform check is needed and a flag is introduced for this (patch #3).
+> > 
+> > For address translation the base offset must be determined for the
+> > memory domain. Depending on the platform there are various options for
+> > this. The address range in the CEDT's CFWMS entry of the CXL host
+> > bridge can be used to determine the decoder's base address (patch
+> > #4). This is enabled for AMD Zen4 platforms (patch #5).
+> 
+> 
+> Hi Robert,
+> 
+> This HPA->SPA work needs to be done for addresses reported directly by
+> devices, ie DPAs in poison and other events - right?
+> 
+> For the XOR case, we discover the need for HPA->SPA while parsing the
+> CFMWS and add a cxl_hpa_to_spa_fn to the struct cxl_root_decoder. Later,
+> when the driver wants to translate a DPA (to include in a TRACE_EVENT)
+> it uses that 'extra mile' HPA->SPA function.
+> 
+> See Patch 2 in this series:
+> https://lore.kernel.org/cover.1719980933.git.alison.schofield@intel.com/T/#m9206e1f872ef252dbb54ce7f0365f0b267179fda
 
-Include it only once before the #ifdef/#else/#endif preprocessor
-directives and remove the following make includecheck warning:
+Better link:
+https://lore.kernel.org/linux-cxl/cover.1719980933.git.alison.schofield@intel.com/
 
-  linux/bootconfig.h is included more than once
-
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- lib/bootconfig.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/lib/bootconfig.c b/lib/bootconfig.c
-index 97f8911ea339..297871455db5 100644
---- a/lib/bootconfig.c
-+++ b/lib/bootconfig.c
-@@ -4,8 +4,9 @@
-  * Masami Hiramatsu <mhiramat@kernel.org>
-  */
- 
--#ifdef __KERNEL__
- #include <linux/bootconfig.h>
-+
-+#ifdef __KERNEL__
- #include <linux/bug.h>
- #include <linux/ctype.h>
- #include <linux/errno.h>
-@@ -33,7 +34,6 @@ const char * __init xbc_get_embedded_bootconfig(size_t *size)
-  * However, if you change this file, please make sure the tools/bootconfig
-  * has no issue on building and running.
-  */
--#include <linux/bootconfig.h>
- #endif
- 
- /*
--- 
-2.45.2
-
+> 
+> It seems the Zen4 extra mile is a simple offset from the base calc.
+> Do you think a zen4 hpa->spa function will fit in with what I've done?
+> 
+> FWIW I took this code for a spin through cxl-test on it's own and combined
+> w the xor address tranlation patch set and no collisions, all humming along
+> nicely (for non-zen config).
+> 
+> --Alison
+> 
+> > 
+> snip
+> > 
+> 
 
