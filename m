@@ -1,109 +1,153 @@
-Return-Path: <linux-kernel+bounces-248924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1235292E3EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:58:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D4B92E3ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0B09280E3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:58:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A4B328165F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC23157A55;
-	Thu, 11 Jul 2024 09:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4756B157491;
+	Thu, 11 Jul 2024 09:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJMqlAFo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjUl7Uzb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583A74206C;
-	Thu, 11 Jul 2024 09:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829B315747C;
+	Thu, 11 Jul 2024 09:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720691892; cv=none; b=ucKp7LovD6iBcJK2Cf0iObI0ovKrgiBRZaMkxdZKb20/7TF5XdRQuJYqPW4oG0YBe5QlyRyjEHISrajP1Gbiq5bfyujxLk8OsmyfckYw30Ua1XxS4ztrU4eoDuatD15sAtI0IL4KB4Ql2BLYQEXZU8RWCFoB7+RoVXI1tyLw8GA=
+	t=1720691922; cv=none; b=uIbfBMmGDYayGa+6OmOi195EFy4sbZPGFnorJeBd0NbQHEJinHJa9cNw2D+YI5u6lTuRh0JMLYkltGulxhapMKTFXfoX5OgDLj/IFw5RnfUVv1a9B/1H/nmqatQcGy5QDUEUqwWtkOsL+3Reh1EHaVDlLFfKlmcuKksAjIP2oWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720691892; c=relaxed/simple;
-	bh=ncnxaFRqorC/TSjbe7bjM9rmO5kPpfSobbD+7/XQVc4=;
+	s=arc-20240116; t=1720691922; c=relaxed/simple;
+	bh=WuvcPyYCPZVdObRzkt1wRjrxvRBYyt8oPc8M1YvBhVY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGlX7feyWoSIUYHU+zWQi4HFY3TbHOoVumnZ2cKXoosfr8DW0XnsEDtxxxuHvr39aNSCae2cjrWVRg8zAkjujU3VTgiOT+irqhpSiDF7bq/wPrOz6RaUHo+oFlmupUYKdm7gSFwviHMikH7ucQBOen3jhZ4Zb1jjBWnfTrhZdb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJMqlAFo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E13C116B1;
-	Thu, 11 Jul 2024 09:58:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GR3l3lT9JGYC3oN04gq6HcwX0vzVzBAbQQiwV/flVkhszYRlSEkwGtUu5CJDt/2FOhvF+3u5/zgjzmSV9KQoQ7V1UMrxpwezCAM6VGWCKy8Q0zaAwN0z1nzjNCs+7CmUaOP1fh0kqXMWbD9SNbG2uvgZE3MhwwOFBbBSx14ssdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjUl7Uzb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B68C116B1;
+	Thu, 11 Jul 2024 09:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720691891;
-	bh=ncnxaFRqorC/TSjbe7bjM9rmO5kPpfSobbD+7/XQVc4=;
+	s=k20201202; t=1720691922;
+	bh=WuvcPyYCPZVdObRzkt1wRjrxvRBYyt8oPc8M1YvBhVY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OJMqlAFoTSxTo3Ttae/tkII9VmnIZRsQoAWxJKyXP5VXFqYl0H+a9Wo8eihLjvP5d
-	 ZWsdQaXtVG24qneYwPNaShxPDfGmQUWUQptk5muRvIsr5BPEQSM4tUqPsvCRxv5FBR
-	 23PTxIbBrzSaWOOo00cmjG6tpaCDY4mNVy/tbP+QWpgm/LRDqpXqtu1UcYtJMkGgB+
-	 D2Ea1ve3U/OhdWZf1YIseCeVX3QyPfYnpnHrislIDJtFGKJhEG8xBsOwHRj3gn2r+7
-	 7aiRQi9kPXBSfSg3bvEfv7fmX0qKahiJXWqdgbx3jyhxbkp5QyoegBZsXlIgLlOq68
-	 cF7c0XMGxTrXg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sRqYy-000000007Fh-0vN5;
-	Thu, 11 Jul 2024 11:58:08 +0200
-Date: Thu, 11 Jul 2024 11:58:08 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe
-Message-ID: <Zo-ssBBDbHRLtAwG@hovoldconsulting.com>
-References: <20240711090250.20827-1-johan+linaro@kernel.org>
- <f7e74a6f-0548-4caa-a8fc-8180c619c9aa@linaro.org>
+	b=fjUl7UzbTkgcD0Civgq2Uxe04S1u/b2s/CouNh2KieybTTl/KucwfS3DvVk/9bw6s
+	 rx26o1bt0Ua9bmgwSefq3HyJAPZkdTdd0vDQ053QjgqP2uz5juuvweRlmwtyaxS2Sl
+	 XoqaIkWf9Y4SPs4YL8+82EvPZyOJUscsGyEx1elWOlPohA5xqJMOc2y05BkbFtfs6S
+	 72wgve9PkMUu/qF2QDn3QBJNOJfV25IQa9ktYi3U7+r0PDopXyfhTBms6Xgc3TKV42
+	 MC8lowyAZwxe95VnPCIAyZm5gK/nOlXnaC3XfrghD/+y6Vys7qtIpJ6FLWHUP9bKIh
+	 JuFdcwI7la6HA==
+Date: Thu, 11 Jul 2024 10:58:34 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Manikandan.M@microchip.com, Hari.PrasathGE@microchip.com,
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org,
+	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se, jernej.skrabec@gmail.com, airlied@gmail.com,
+	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux@armlinux.org.uk,
+	Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, arnd@arndb.de, Jason@zx2c4.com,
+	palmer@rivosinc.com, mpe@ellerman.id.au, rdunlap@infradead.org,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/4] drm/bridge: add Microchip DSI controller support for
+ sam9x7 SoC series
+Message-ID: <20240711-freezing-decrease-4807d5d62f2a@spud>
+References: <20240704084837.168075-1-manikandan.m@microchip.com>
+ <20240704084837.168075-3-manikandan.m@microchip.com>
+ <9ef5a1ba-e404-46e0-8513-5fffbfb5618b@kernel.org>
+ <aeaeb5d4-5e55-4a7a-bce7-fa207ebf0616@microchip.com>
+ <4c1b7af7-e53c-492a-9c41-40cad78f7666@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EWu0S0GtGVx/Ra1x"
+Content-Disposition: inline
+In-Reply-To: <4c1b7af7-e53c-492a-9c41-40cad78f7666@kernel.org>
+
+
+--EWu0S0GtGVx/Ra1x
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f7e74a6f-0548-4caa-a8fc-8180c619c9aa@linaro.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 11:54:15AM +0200, Konrad Dybcio wrote:
-> On 11.07.2024 11:02 AM, Johan Hovold wrote:
-> > The DWC PCIe controller can be used with its internal MSI controller or
-> > with an external one such as the GICv3 Interrupt Translation Service
-> > (ITS).
-> > 
-> > Add the msi-map properties needed to use the GIC ITS. This will also
-> > make Linux switch to the ITS implementation, which allows for assigning
-> > affinity to individual MSIs.
-> > 
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > ---
-> 
-> X1E CRD throws tons of correctable errors with this on PCIe6a:
-> 
-> [    9.358915] pcieport 0007:00:00.0: PCIe Bus Error: severity=Correctable, type=Physical Layer, (Receiver ID)
-> [    9.358916] pcieport 0007:00:00.0:   device [17cb:0111] error status/mask=00000001/0000e000
-> [    9.358917] pcieport 0007:00:00.0:    [ 0] RxErr                 
-> [    9.358921] pcieport 0007:00:00.0: AER: Multiple Correctable error message received from 0007:00:00.0
-> [    9.358952] pcieport 0007:00:00.0: AER: found no error details for 0007:00:00.0
-> [    9.358953] pcieport 0007:00:00.0: AER: Multiple Correctable error message received from 0007:00:00.0
-> [    9.359003] pcieport 0007:00:00.0: AER: found no error details for 0007:00:00.0
-> [    9.359004] pcieport 0007:00:00.0: AER: Multiple Correctable error message received from 0007:01:00.0
-> [    9.359008] pcieport 0007:00:00.0: PCIe Bus Error: severity=Correctable, type=Physical Layer, (Transmitter ID)
-> [    9.359009] pcieport 0007:00:00.0:   device [17cb:0111] error status/mask=00001001/0000e000
-> [    9.359010] pcieport 0007:00:00.0:    [ 0] RxErr                 
-> [    9.359011] pcieport 0007:00:00.0:    [12] Timeout  
+On Thu, Jul 11, 2024 at 11:05:37AM +0200, Krzysztof Kozlowski wrote:
+> On 11/07/2024 10:30, Manikandan.M@microchip.com wrote:
+> > Hi Krzysztof,
+> >=20
+> > On 04/07/24 4:27 pm, Krzysztof Kozlowski wrote:
+> >> EXTERNAL EMAIL: Do not click links or open attachments unless you know=
+ the content is safe
+> >>
+> >> On 04/07/2024 10:48, Manikandan Muralidharan wrote:
+> >>> Add the Microchip's DSI controller wrapper driver that uses
+> >>> the Synopsys DesignWare MIPI DSI host controller bridge.
+> >>>
+> >>> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> >>> ---
+> >>
+> >>
+> >> ...
+> >>
+> >>> +
+> >>> +#define HSTT(_maxfreq, _c_lp2hs, _c_hs2lp, _d_lp2hs, _d_hs2lp)      =
+ \
+> >>> +{                                    \
+> >>> +     .maxfreq =3D _maxfreq,            \
+> >>> +     .timing =3D {                     \
+> >>> +             .clk_lp2hs =3D _c_lp2hs,  \
+> >>> +             .clk_hs2lp =3D _c_hs2lp,  \
+> >>> +             .data_lp2hs =3D _d_lp2hs, \
+> >>> +             .data_hs2lp =3D _d_hs2lp, \
+> >>> +     }                               \
+> >>> +}
+> >>> +
+> >>> +struct hstt hstt_table[] =3D {
+> >>
+> >> So more globals? No.
+> >=20
+> > In the sam9x7 datasheet, the high speed transition time for data and
+> > clock lane at different freq for the DSI controller ranges are tabulated
+> > with constant values.
+> > I referred other similar platforms for the functionality and found=20
+> > similar way of implementation,  only a few had equations to derive the=
+=20
+> > low power and high speed timings.I am not able to come up with a more=
+=20
+> > efficient method. If there is something I am missing, please suggest.
+> > TIA
+>=20
+> Yeah, this should not be a global. Nothing above suggests it.
 
-What branch are you using? Abel reported seeing this with his branch
-which has a few work-in-progress patches that try to enable 4-lane PCIe.
+I think what Krzysztof is suggesting here is use of the static
+keyword...
 
-There are no errors with my wip branch based on rc7, and I have the same
-drive as Abel.
+>=20
+> BTW, no W=3D1 clang warnings? Are you sure?
+>=20
+> Best regards,
+> Krzysztof
+>=20
 
-Also note that the errors happen also without this patch applied, they
-are just being reported now.
+--EWu0S0GtGVx/Ra1x
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Johan
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZo+sygAKCRB4tDGHoIJi
+0gtxAQD5lJOy/q4aES6K9CjXBUSnOWaI63qOFMdQ616WHgo78wD9FOHchUgSltnR
+kDI6geXp0AJKzlBkFd7UwEarIdbUJAc=
+=Ikhe
+-----END PGP SIGNATURE-----
+
+--EWu0S0GtGVx/Ra1x--
 
