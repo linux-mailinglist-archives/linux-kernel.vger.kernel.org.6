@@ -1,201 +1,124 @@
-Return-Path: <linux-kernel+bounces-249110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8AB592E6C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:33:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A3192E6C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2401F27D64
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:33:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 011AC280C31
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BABA155A52;
-	Thu, 11 Jul 2024 11:32:42 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4210D15B149;
+	Thu, 11 Jul 2024 11:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UboI2HkV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C65502A9
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C4013C3D5;
+	Thu, 11 Jul 2024 11:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720697562; cv=none; b=JvhaZ+jAJQUu1HPfFBcyYb04jgeIVQ1TIJLf6ZecKjfZPeTpf4p2La7rYotcHHJcmTj6nOpQs29qss2wHj9zwiN05QQrbZbiESNaL9uu8rWm4S5RWO+kCOt2paW/Hmla6aRND3r++2SJhI9V9eei4p+NzjusSFC/tkX3Z41nPDM=
+	t=1720697583; cv=none; b=VmxmxZD5lFNrLxUDIc3v5rbrKJ6KTUYnZyvwsKtm62yVo04JeeouiAp2vK3Lz0esvrMEi016usYIOtOLpWgsnkNyDtXyGjzoBWytcFcuWsgS1sYFX1BQsEmKc+BVku34r/PcT8tlYAM6uX/atR1YCth/L1YAZOKsQ9/mS2vePYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720697562; c=relaxed/simple;
-	bh=0JwR7lEGUDpJ/jwrkFfRyuMt3+odb34udPxer4bnFv8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Iob/Bl+zZ3JJVDnsk+UNIXdbMLh1KW/9JBaRr6n2txbW3rGFYGx1faDd5L2dUI2MP1AgW4JKDvJDqhEmAizdacZcdjOaztnqrNNJC71hTvKPZB9mKfZCfnTMaJJN0/rmcxgwGXNWzjqb7M4FDyCxbODuLCIsHrS223Iy4rhxoq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3f0dd2003f7911ef93f4611109254879-20240711
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:7e923a69-7783-4b3c-8c14-1eab052d89ce,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:0ca1cc0f3b7f0a80bcdb1949449e7252,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:1
-	1|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
-X-UUID: 3f0dd2003f7911ef93f4611109254879-20240711
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <jianghaoran@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1737779477; Thu, 11 Jul 2024 19:32:25 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 2855A16002097;
-	Thu, 11 Jul 2024 19:32:25 +0800 (CST)
-X-ns-mid: postfix-668FC2C9-10389610098
-Received: from [172.30.60.215] (unknown [172.30.60.215])
-	by node4.com.cn (NSMail) with ESMTPA id 32A6E16002096;
-	Thu, 11 Jul 2024 11:32:24 +0000 (UTC)
-Message-ID: <e913863b2d54d69a19cb278e4c25377fabeb1963.camel@kylinos.cn>
-Subject: Re: [PATCH] mm/mmap: Align the length parameter of munmap with
- hugepage size
-From: Haoran Jiang <jianghaoran@kylinos.cn>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, vbabka@suse.cz, 
-	Liam.Howlett@oracle.com, akpm@linux-foundation.org
-Date: Thu, 11 Jul 2024 19:32:23 +0800
-In-Reply-To: <96c9fe70-f787-42e2-b2e7-4ccad0d2e805@lucifer.local>
-References: <20240710054558.1959243-1-jianghaoran@kylinos.cn>
-	 <96c9fe70-f787-42e2-b2e7-4ccad0d2e805@lucifer.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.0-1build2 
+	s=arc-20240116; t=1720697583; c=relaxed/simple;
+	bh=kVs5hOR2FzBP3GEd8SYwMmGIonKLK+U1/m7op4XI8Wo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r8COyAfcdoyPnPO+otjiNZ2dzQJQrOC1g8AwIiFlC4fczqSMDyhDQ7++cpAGU6D3AvL8I2eLdCb6v1gz4PRrq7E4LC97rzzzTtOgyZ4gT0jzEa4LQCY9Jgg3xUkq1eL5JpLK4LQm80/llMgQyIVdD70bFg2upll6HTm+HVYlrW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UboI2HkV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B4mph6008773;
+	Thu, 11 Jul 2024 11:32:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=3h70n+wTPt2q93enaQM4qP
+	ebLgMvxWzu2rSFpos/UiI=; b=UboI2HkVBc7zzSzkEYYZ6+HQfZsTLQRBwp3jBl
+	NHGr9UyDbhuwTsAOyz0h2BRJI/ZtiDuY5l5eHe2mDFB4uI7LWzykvGmq8JKu8bGc
+	+2HnA3jj3DUCyMwdpBIHEDwKor4G0efkCzBtPVRoXHxGdl840WsdmAqOVv42Sluh
+	pO/YjxKcpQ23X0+Hpu6TX1gl0bBbvymV4Vv6gdz8eZuegjunBU6ey2XVBYzlSXHV
+	3H35fA5nHLPKcGDM2DvIymuHRvSP0ZTsRKuW6rvST8GgBhmtwDjWwfwmailxWkys
+	P2pwQ8gcwuDC2uTqbRp5ykurYpurf3TmgvF0uJ+o7oPYZTLw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x51cdcd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 11:32:56 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BBWuMS011979
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 11:32:56 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 11 Jul 2024 04:32:50 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <konrad.dybcio@linaro.org>,
+        <djakov@kernel.org>, <quic_wcheng@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-pm@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v2 0/4] Add interconnect driver for IPQ5332 SoC
+Date: Thu, 11 Jul 2024 17:02:35 +0530
+Message-ID: <20240711113239.3063546-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: G9a88L5X6-B4_NShCkQE_T9espEbs5nI
+X-Proofpoint-ORIG-GUID: G9a88L5X6-B4_NShCkQE_T9espEbs5nI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_06,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=566 mlxscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110082
 
-On Wed, 2024-07-10 at 09:24 +0100, Lorenzo Stoakes wrote:
-> On Wed, Jul 10, 2024 at 01:45:58PM GMT, Haoran Jang wrote:
-> > From: Haoran Jiang <jianghaoran@kylinos.cn>
-> >=20
-> > munmap hugepge mappings, if the length of the range to munmap
-> > is not aligned with hugepage size,munmap will fail.
-> > In the hugetlb_vm_op_split function, an error will be returned
-> > if startaddr+len is not hugepage size aligned.
-> >=20
-> > before this patch:
-> > in "tools/testing/selftests/mm/hugepage-mremap.c"
-> > modify DEFAULT_LENGTH_MB to 3M,compile and run,
-> > the following error message is displayed
-> >=20
-> > -------------------------
-> > running ./hugepage-mremap
-> > -------------------------
-> > TAP version 13
-> > 1..1
-> > Map haddr: Returned address is 0x7eaa40000000
-> > Map daddr: Returned address is 0x7daa40000000
-> > Map vaddr: Returned address is 0x7faa40000000
-> > Address returned by mmap() =3D 0x7cb34b000000
-> > Mremap: Returned address is 0x7faa40000000
-> > First hex is 0
-> > First hex is 3020100
-> > Bail out! mremap: Expected failure, but call succeeded
-> >=20
-> > Signed-off-by: Haoran Jiang <jianghaoran@kylinos.cn>
-> > ---
-> > =C2=A0mm/mmap.c | 10 +++++++++-
-> > =C2=A01 file changed, 9 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index 83b4682ec85c..0b3a60bf9b6f 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -2733,7 +2733,15 @@ int do_vmi_munmap(struct vma_iterator *vmi,
-> > struct mm_struct *mm,
-> > =C2=A0	if ((offset_in_page(start)) || start > TASK_SIZE || len >
-> > TASK_SIZE-start)
-> > =C2=A0		return -EINVAL;
-> >=20
-> > -	end =3D start + PAGE_ALIGN(len);
-> > +	vma =3D find_vma(mm, start);
-> > +	if (!vma) {
-> > +		if (unlock)
-> > +			mmap_write_unlock(mm);
-> > +		return 0;
-> > +	}
->=20
-> I really don't like this, firstly we're duplicating the VMA lookup
-> (we
-> vma_find() below), and we fail to use the iterator here, and also we
-> are
-> duplicating the unlock logic.
->=20
-> Also the semantics seem wrong, we are looking for a VMA that ends at
-> or
-> after start, so you're just checking to see if start is past the last
-> VMA
-> in the mm aren't you?
->=20
-> This doesn't seem to be accomplishing anything too useful, unless I'm
-> missing something?
->=20
-> > +
-> > +	end =3D start + ALIGN(len, vma_kernel_pagesize(vma));
-> > +
->=20
-> This seems to be the 'action' part of the change, but I'm concerned
-> this is
-> completely broken, because you're using the result of find_vma()
-> passed
-> into vma_kernel_pagesize() which could find a VMA _after_ the input
-> range,
-> and end up unmapping a far wider range...
->=20
-> I'm also wondering if we should be doing some hugetlb-specific logic
-> here,
-> or whether that belongs elsewhere?
->=20
-> Liam can chime in on that.
->=20
-> > =C2=A0	if (end =3D=3D start)
-> > =C2=A0		return -EINVAL;
-> >=20
-> > --
-> > 2.43.0
-> >=20
-1, While performing an MMAP operation,The length aligned with hugepage
-size.
+Enable icc-clk based interconnect driver for IPQ5332. This is
+similar to IPQ9574's icc-clk based driver.
 
-unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
-			      unsigned long prot, unsigned long flags,
-			      unsigned long fd, unsigned long pgoff)
-{
-    ...
-    if (is_file_hugepages(file)) {
-	len =3D ALIGN(len, huge_page_size(hstate_file(file)));
-    ...
-}
+dt_bindings_check and dtbs_check passed.
 
-2,During the munmap, do_vmi_align_munmap->__split_vma(vmi, next, end,
-0)->hugetlb_vm_op_split.It will determine whether the end address is
-aligned with  hugepage size, and if the end address is not aligned,=20
-return fail. Is there expect the application to align the length?
+Ensured that icc_sync_state is called and relevant clocks are
+disabled.
+v2: Removed dependency as it is merged
+    dt-bindings update to accommodate USB clock names change
+    Use icc-clk for USB also
 
- hugetlb_vm_op_split(struct vm_area_struct *vma, unsigned long addr)
- {
- 	if (addr & ~(huge_page_mask(hstate_vma(vma))))
-		return -EINVAL;
-=20
- }
+v1:
+Dependency:
+[1] https://lore.kernel.org/linux-arm-msm/20240430064214.2030013-1-quic_varada@quicinc.com/
 
-3,Or after the vma_find (vmi, end), recalculate the end address ?
+Varadarajan Narayanan (4):
+  dt-bindings: interconnect: Add Qualcomm IPQ5332 support
+  dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details
+  clk: qcom: ipq5332: Use icc-clk for enabling NoC related clocks
+  arm64: dts: qcom: ipq5332: Add icc provider ability to gcc
 
-ex:
-vma =3D vma_find(vmi, end);
-...
-if (is_vm_hugetlb_page(vma))
-{
-	hugepage_size =3D huge_page_size(hstate_vma(vma));
-	end =3D start + ALIGN(len, hugepage_size);
-}
+ .../bindings/clock/qcom,ipq5332-gcc.yaml      |  2 +
+ .../devicetree/bindings/usb/qcom,dwc3.yaml    | 17 ++++++-
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  7 ++-
+ drivers/clk/qcom/gcc-ipq5332.c                | 36 +++++++++++++--
+ .../dt-bindings/interconnect/qcom,ipq5332.h   | 46 +++++++++++++++++++
+ 5 files changed, 100 insertions(+), 8 deletions(-)
+ create mode 100644 include/dt-bindings/interconnect/qcom,ipq5332.h
+
+-- 
+2.34.1
+
 
