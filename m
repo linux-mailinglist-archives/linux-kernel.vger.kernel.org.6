@@ -1,111 +1,104 @@
-Return-Path: <linux-kernel+bounces-249616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4856792EDE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:32:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB6E92EDE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 040CB283B4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D18928112C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C235F16EB48;
-	Thu, 11 Jul 2024 17:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEF316D9DE;
+	Thu, 11 Jul 2024 17:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="AI76M2CN"
-Received: from msa.smtpout.orange.fr (msa-211.smtpout.orange.fr [193.252.23.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jw5cLUDZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C9116E89C
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 17:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BCA16C852
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 17:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720719114; cv=none; b=OMGGX4QkIA0vRq2zQ9ZxQGw4lCBCkWvzlcZilUgOBR+KmmIM0IoV6Q73niRkjQSZu0PK2GuAPJhrtux8PhyHj2zY6W0uaQRlqCYvD6yOfqZFYx3F0ewjUPzSEIcBq/bFRsL7iuBku9u342vUbNVImwj0SID0i7Px3din4PqRx6o=
+	t=1720719339; cv=none; b=qfR2BrrheK6iU9k3KkB68/HpmrdJuIXttD9S8F+D5YEfoOXOSqtDJJ75+4nBx7ta9JdRskCG01Bugjr4ib1yfDYoZ5yffMfH0cpH9dFYMZ7yheRv0xk+NEXM14bxc1YK12iFz1nNXI66Q3t00LiSElgtg9hCIThRJWzSejh39nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720719114; c=relaxed/simple;
-	bh=I1lh+9PWxnRfpKf5KyMuGtWHTLzEMQ4QrU/SElqg0lw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BTdDiMUttHWVV4dPD9IFUJP+DiRhrsZ+LBPe7bQ7aMXtsJJEQsE9ko0VJhx0OeNmqgoDS89hgGADGiPu7d/HFBv/pBL1GRdQ1s3mqNgf0AVUqfxe6GjtqrbvG3iHWlMx0UkTE2IU9O6JXEzc5p7Jiae8Zvtjrx1AJ2FCWNDgdyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=AI76M2CN; arc=none smtp.client-ip=193.252.23.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id RxdPsAr1uHTrpRxdwsVM6q; Thu, 11 Jul 2024 19:31:45 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720719105;
-	bh=CYDBY2pWQO+vL7jUvHWkdq6VSa180NCvhyL35LhJ4nw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=AI76M2CNz/N0+vD1wQnHuPFx3lNMObmO+djuwzVfE+tEFcf41Gc4mxZ9lWQE9ygtD
-	 73FG9DaAXzSrSVqCt89PNak4DHz0jBDk30k0SQPUwuFp4OUY4dNL6dRqZgZY7bHvl3
-	 QC1PoyOOivnLhNtxvWk4PKNNK/uYCzZK29IdIHHlW7Qrd1JvZo5qs7hMgA+qF/v7GL
-	 ZkG6rTisyxlvedh1MOALNEIgyV8CSOIEvPboywkMMUGQd0+urlO5JSrcLr3LwN5C5S
-	 RyQ/qcicJIM+8VJcyUlehJBjc4gKwl1VNBX7gMrJuTc3Ld/hAoUqyjlkjFOS6YGyil
-	 FHdESRH/i/nug==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 11 Jul 2024 19:31:45 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: vkoul@kernel.org,
-	kishon@kernel.org
-Cc: linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 4/4] phy: cadence-torrent: Constify a u32[]
-Date: Thu, 11 Jul 2024 19:31:09 +0200
-Message-ID: <34e23ceb6b7b7eb730ee8deee21d231b504dc65f.1720718240.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1720718240.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1720718240.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1720719339; c=relaxed/simple;
+	bh=R5km20ASh4eaKlWT6/715jDhOrK6keRoOMzJVdyXJQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=b5/AaiMbjxudYD9Gi4VHS61pCqDNoF4IGSB1qVquBhjvXpOntHVU5t+X5a1ZNlmTCH+D7ZptjxVdpvTy/kZvKrsDAhzcXO25HYsF2zGNMlvXn4/rEkLbLkBBfpgFNzeqzAiQemOstp9bcBJTpRDQNzpnqojYSV22Q2fvrXo41yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jw5cLUDZ; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720719337; x=1752255337;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=R5km20ASh4eaKlWT6/715jDhOrK6keRoOMzJVdyXJQY=;
+  b=Jw5cLUDZ7aJUyzPH9D7reto2i8f6apDoAlVtnvxY80TLKOLmY6cnv/y7
+   RmcRSk5t7qSALoOxBEjVemieFw7Xp6odQArSXGRDXfDlw3XUm+N5RWhmH
+   FqZthPJ8V8iZQ2FYIBgwbp1DL3SplI/eveu3kUCB+4PofnGSIQMebBlLe
+   uKPjqmW8WDarui9CDWnUn/4TyIUtuPFmnZvaCrn8jw4Bue2h5jlki1Hft
+   7fuBHCMAhyXzzPOlPyuDz6jytfAtz5chVoZON7JyxCvCToK1GdrXw0NsM
+   QNNloKY9+d3wJ7iiHMcJY7rNaPkHt0CY+nScSEzcO4lqWh2Z8nz+oI7aR
+   A==;
+X-CSE-ConnectionGUID: uB+Bp8c2TDWYix2BoGWlVQ==
+X-CSE-MsgGUID: xngH4l4KSwydJgVF0VuPnw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="18077382"
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="18077382"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 10:35:37 -0700
+X-CSE-ConnectionGUID: c2tAOJTcR/CTm8c21bMSeQ==
+X-CSE-MsgGUID: vTK45dQXSW+nogg7DM45qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="48613152"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 11 Jul 2024 10:35:37 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sRxhd-000ZaG-1q;
+	Thu, 11 Jul 2024 17:35:33 +0000
+Date: Fri, 12 Jul 2024 01:34:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: ERROR: modpost: "__delay" [drivers/net/mdio/mdio-cavium.ko]
+ undefined!
+Message-ID: <202407120131.drjdyGUX-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-'cdns_torrent_refclk_driver_mux_table' is not modified in this driver.
-And it is only used as a "const u32 *".
+Hi Masahiro,
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+First bad commit (maybe != root cause):
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  93578	   4798	     16	  98392	  18058	drivers/phy/cadence/phy-cadence-torrent.o
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9d9a2f29aefdadc86e450308ff056017a209c755
+commit: f73edc8951b2de515b5ecc8a357ccd47dd41077e kbuild: unify two modpost invocations
+date:   1 year, 9 months ago
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20240712/202407120131.drjdyGUX-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240712/202407120131.drjdyGUX-lkp@intel.com/reproduce)
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  93606	   4790	     16	  98412	  1806c	drivers/phy/cadence/phy-cadence-torrent.o
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407120131.drjdyGUX-lkp@intel.com/
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only.
----
- drivers/phy/cadence/phy-cadence-torrent.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-diff --git a/drivers/phy/cadence/phy-cadence-torrent.c b/drivers/phy/cadence/phy-cadence-torrent.c
-index e99fa19aafb2..098c141c28c2 100644
---- a/drivers/phy/cadence/phy-cadence-torrent.c
-+++ b/drivers/phy/cadence/phy-cadence-torrent.c
-@@ -285,7 +285,7 @@ static const int refclk_driver_parent_index[] = {
- 	CDNS_TORRENT_RECEIVED_REFCLK
- };
- 
--static u32 cdns_torrent_refclk_driver_mux_table[] = { 1, 0 };
-+static const u32 cdns_torrent_refclk_driver_mux_table[] = { 1, 0 };
- 
- enum cdns_torrent_phy_type {
- 	TYPE_NONE,
+>> ERROR: modpost: "__delay" [drivers/net/mdio/mdio-cavium.ko] undefined!
+
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
