@@ -1,59 +1,54 @@
-Return-Path: <linux-kernel+bounces-249857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FF892F0C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:13:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85DD192F0C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A54C1F226C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D0A281BBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677F019EEDF;
-	Thu, 11 Jul 2024 21:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21EF19F499;
+	Thu, 11 Jul 2024 21:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKohomAq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAx7V/K/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1851509BC;
-	Thu, 11 Jul 2024 21:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4A619F469;
+	Thu, 11 Jul 2024 21:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720732416; cv=none; b=mX4r751FJWGhbSZ0V3PYDH62uqGXsAEW2wHEWdRgdDjFqNCCR6ozX8i+pBRwPrF/uCSnygOZU+bf5Sf3eMBbiR6mmloVQX/1GiB2RTwDO2HzPX0ff0YfaGc7/jQKeTcgqgngCT+d7RWvHhX1muDdXWbHJ1EPmPt3KW1yR2bFGn0=
+	t=1720732420; cv=none; b=rcNYRlqdxkHFBH4s76JvQAHpNUmQn5X20KE5dbXW0ailr53HaHMTvaOTl6VJJrSE1JENdpQSsr3bcv7h66LlqpDHFsN6zDXkrfCZ2J8h6fWHd294h9f9FuiT5NBecbCSr8DY6xil6jAlxyPqjH6DojWcuiDa4t2fQjX5uqlhKy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720732416; c=relaxed/simple;
-	bh=zD3H2nNg/pVAuxwarSoosSrcXFyYiiavlKTZ20sCeM0=;
+	s=arc-20240116; t=1720732420; c=relaxed/simple;
+	bh=Ws6Is+XY+GPsWr4+glUXgcS3bKlK71FHCFwR8f4r89U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+4rZebtr5BPCuik5jGrNTLzTMKpD2A4i3shmr00ZeKJb5M9B2IWX3kJegKSk2hVhoZaRHYVq+RU5P/PZHFzQFMFNfMfyZDnCIu6RPOrtIVn9h7ee16zKkEwO/h81F0A/TTABb0J2x1DpiH8ZnuWVpY0tYo/IK7gCe8LkcsR9Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKohomAq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03340C116B1;
-	Thu, 11 Jul 2024 21:13:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZMLAtHX0uoDGNnRbNKXXyKDdlyjuI0GeKBt4k3Y/fQFWU0BJl8UjwHwLqpCco1V+jnDxIZiAzGvQzp+Ql52LgnO8u1SqTnsiPYuCrm2ZK7GjKjdOZjU6VOexnXwTotq6U3brB4LM4Wr2aNflP1bGZfXisgyPIpM2MsnrN+s5RgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAx7V/K/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F2AEC4AF09;
+	Thu, 11 Jul 2024 21:13:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720732416;
-	bh=zD3H2nNg/pVAuxwarSoosSrcXFyYiiavlKTZ20sCeM0=;
+	s=k20201202; t=1720732419;
+	bh=Ws6Is+XY+GPsWr4+glUXgcS3bKlK71FHCFwR8f4r89U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IKohomAqoc4gxipkRO1NgxAokKA94Gmr8tOd2ACAmsEj27nT89p91hNF3B/Ba15m5
-	 BokRn8jrE7DZ5UpFkC+yZJ4B21K1265XiHkcFaFj+QfTd0ydjtJVUp/y7z7YRepd0o
-	 ssB0uFPV14oMw58KotNoUISsF+Dz+liGFUSuZEOqYFXLhJY/a9n1nYWRnSRfqrkS8O
-	 PH8feg45iCzaqaalMckvM4D6v2i79rAmDIHsP1KqBZVNbmeyvWtkAohtiAAVd0ZTqX
-	 pdVEP+U+l246KAY3vm7mzDQa/B+aY5ZMlsDg+xE+GnsbV+EOJ3rstuj9PFC/At4R9D
-	 lkTts2tve+/Lg==
-Date: Thu, 11 Jul 2024 15:13:34 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, bert@biot.com,
-	sander@svanheule.net, daniel.lezcano@linaro.org,
-	paulburton@kernel.org, kabel@kernel.org, tsbogend@alpha.franken.de,
-	conor+dt@kernel.org, peterz@infradead.org, john@phrozen.org,
-	linux-kernel@vger.kernel.org, krzk+dt@kernel.org,
-	tglx@linutronix.de, mail@birger-koblitz.de, ericwouds@gmail.com
-Subject: Re: [PATCH v5 06/10] dt-bindings: interrupt-controller:
- realtek,rtl-intc: Add rtl9300-intc
-Message-ID: <172073241371.3019767.1008127650947227633.robh@kernel.org>
-References: <20240710043524.1535151-1-chris.packham@alliedtelesis.co.nz>
- <20240710043524.1535151-7-chris.packham@alliedtelesis.co.nz>
+	b=WAx7V/K/j/9156Ne/5x5y9FPwJtZSEakKH6VRNKFfpgHXuzDYtyxU1AGKkoUpEK2i
+	 3dlt7OurTzXDFO5XrEAvsOBWe0xH0JMr8O0ID1z+bWPE0lAnqKmH0rX4vhAW7VtmHs
+	 3H7V6wtb5rJfN28GwkC1Gh+hEXpSCHK/FdyeMeZznB3Un2VNuPV4sjIMQNDjddlrXZ
+	 tnUfwemlsTXCRR3ATBKanZlto3yOKHPTAfE6lkyhOaukPl0ZU7eI0dQ0+G/pdyFC7C
+	 Y87RaprGkZdHH68VUsgRa55D+01cmJ160DwcIEc8Sw/aY6BcJqcH7isrzBzRliUHFS
+	 vWqJ+bV7+PD6g==
+Date: Thu, 11 Jul 2024 14:13:37 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Cc: masahiroy@kernel.org, nicolas@fjasle.eu, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: rpm-pkg: avoid the warnings with dtb's listed
+ twice
+Message-ID: <20240711211337.GA1816765@thelio-3990X>
+References: <20240711164935.1369686-1-jtornosm@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,36 +57,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710043524.1535151-7-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20240711164935.1369686-1-jtornosm@redhat.com>
 
-
-On Wed, 10 Jul 2024 16:35:20 +1200, Chris Packham wrote:
-> Add a compatible string for the interrupt controller found on the
-> rtl930x SoCs. The interrupt controller has registers for VPE1 so these
-> are added as a second reg cell.
+On Thu, Jul 11, 2024 at 06:49:19PM +0200, Jose Ignacio Tornos Martinez wrote:
+> After 8d1001f7bdd0 (kbuild: rpm-pkg: fix build error with CONFIG_MODULES=n),
+> the following warning "warning: File listed twice: *.dtb" is appearing for
+> every dtb file that is included.
+> The reason is that the commented commit already adds the folder
+> /lib/modules/%{KERNELRELEASE} in kernel.list file so the folder
+> /lib/modules/%{KERNELRELEASE}/dtb is no longer necessary, just remove it.
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+
+Guess I'm not looking back in my build logs...
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
+
 > ---
+>  scripts/package/kernel.spec | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> Notes:
->     Changes in v5:
->     - set reg::minItems = 2 when compatible == "rtl9300-intc"
->     Changes in v4:
->     - None
->     Changes in v3:
->     - Add reg::minItems where required
->     Changes in v3:
->     - Use items to describe the regs property
->     Changes in v2:
->     - Set reg:maxItems to 2 to allow for VPE1 registers on the rtl9300. Add
->       a condition to enforce the old limit on other SoCs.
->     - Connor and Krzysztof offered acks on v1 but I think the changes here
->       are big enough to void those.
+> diff --git a/scripts/package/kernel.spec b/scripts/package/kernel.spec
+> index 4b7df76076c4..74355ff0e106 100644
+> --- a/scripts/package/kernel.spec
+> +++ b/scripts/package/kernel.spec
+> @@ -83,7 +83,6 @@ ln -fns /usr/src/kernels/%{KERNELRELEASE} %{buildroot}/lib/modules/%{KERNELRELEA
+>  	done
+>  
+>  	if [ -d "%{buildroot}/lib/modules/%{KERNELRELEASE}/dtb" ];then
+> -		echo "/lib/modules/%{KERNELRELEASE}/dtb"
+>  		find "%{buildroot}/lib/modules/%{KERNELRELEASE}/dtb" -printf "%%%ghost /boot/dtb-%{KERNELRELEASE}/%%P\n"
+>  	fi
+>  
+> -- 
+> 2.45.2
 > 
->  .../realtek,rtl-intc.yaml                     | 20 ++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
 
