@@ -1,115 +1,109 @@
-Return-Path: <linux-kernel+bounces-249999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEEEF92F2CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:51:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B4D992F2D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:53:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F800B213ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:51:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 270761F2358F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FE41A0734;
-	Thu, 11 Jul 2024 23:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5361A0719;
+	Thu, 11 Jul 2024 23:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTzQaDsv"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S+/L+bZg"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223086EB7C;
-	Thu, 11 Jul 2024 23:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37EC6EB7C
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720741903; cv=none; b=LPVlO96Ya3QC9wUx1xNJuB/7pyFrxGT0+4Bk6r30fgBWx8K/Yzt7x2kNma/+K5WOdiazxplU41Z8byUohaSPUd3myvH+wkhlwgkJW+j2UBnmqKpXK9TRA4zPBFdvGvITA5md2g3tnuZIgBzXdfwKE4j7i9G+AzgTpQNboKaMKRA=
+	t=1720741987; cv=none; b=Qi9dmllR49m9T0CIvQi1n63LY5BXVEp3C3/1jcXVCVXR7pS14e1+VXbe5pML6JOgeZFYkJmKIKuHW43nsx3M1siOrveIfPVgRRUI/UwyUNgTNQIDQgINZD7I/Q/FPY2pg3Clr4/+UpnwZzn1YnHAQfyfUrefPLq84XM509YEWME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720741903; c=relaxed/simple;
-	bh=yLuenXi7mNTZLGlPoQmf3M2TZQJUdq3ySkuvd61rF2s=;
+	s=arc-20240116; t=1720741987; c=relaxed/simple;
+	bh=eHwJddF+i82eOhfzBTfbWQn49KtPf7X+mrBUinBbdfU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p5TNySFunyaghGpHVzVC2s3Tgjct4WIopHWTmt2cUTSjP5mI+i99YluHVwMmpGkHyscAFOa7JaoyNkv0PmjCwWMzLdUV4NMjTZcGkY3J+0XwntFKUyRcrAMCFdbiKuMvUgbtRoJl7YYQ+lbZaxj0P7BErDWTEMOCbQ1AhkoZpC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTzQaDsv; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4279c924ca6so4856925e9.0;
-        Thu, 11 Jul 2024 16:51:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=l3NivrjAXyLC3AZpW0AX6ki588tbzzjBs1iY61KEiT4d/x/plsNDi++6GdTeYA2VHBaeTBEPdHJ2sPomoJQjkwAH4K5THGdY2E1kSjEcyyy+YxhwaZ0xgvZ+hOVDxw6uBdW45LoSM/xc03yfipiE7IYBA00tMrDs4E/U333iOfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S+/L+bZg; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a77ec5d3b0dso194178266b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720741900; x=1721346700; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720741984; x=1721346784; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5rNOkKqKSlXdOxVSuCJmj91KdmRmhTrpa/Yg8kLQxJg=;
-        b=PTzQaDsvpxiKLgA2sTFYuydEsWznDjJzNR68+i+XXBhm5OsPH43P7UEDkloF5gs0C/
-         6MuIT/fHIQuNwZ4f9DfHPx+25UAC3ZxoOIoo3lRVHi6ZIsJmQ7/9s9Vgj5vkjHSRi9NA
-         yU1BR77EreYQHaB0uIhM0HCPlVcTmYrc2g8sfBCWQRi1NR/C1A9ThxdjAmHalarVyokQ
-         i9LOUmb8frg+o4c9GsNyh82FACPO3P9c03poU2Ln3eKiEkWhPtxCNnBodknw2TN9/XDY
-         V/AcrFJsKuyr/vIRZuRb/S2sRughH65m5VkWVUwwh+sIxO2/wehsaTzO5HZZ/AE0ama3
-         SkhQ==
+        bh=J1ii8KLMLxRl5UF5VTiJZsw30BNj3HWI5MJg1fOCFrg=;
+        b=S+/L+bZgkdvJz05Cm9iyiIJDNm355VyPSA9HsiMLiZePQFhWs/DcuEv9Z0lRvRBJXp
+         guoj09t5IIQW2MpNUCgrlm5qgH3wF6HThmSWHv0ELUuBD5V0vSRXXX5U5Vbmb614S1lF
+         9XgXKONT+TSjTnLj/MJxJUSV3h6nWye1mLgO9OK6JEsGV8r+hymtICdfta7Cb1GWWAhO
+         OppbjFfIfhJZ86SzrewF/axThpXAlVYvncLP7Qz60FObvN80dBBPn69O8VeuiS+WRT8y
+         +cRp2OSB2287rjKizRLGuA1nSo6RaI2FiaEIdA26v6OudFPv/q8yfkFmYNHlkzuhM+gP
+         5v2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720741900; x=1721346700;
+        d=1e100.net; s=20230601; t=1720741984; x=1721346784;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5rNOkKqKSlXdOxVSuCJmj91KdmRmhTrpa/Yg8kLQxJg=;
-        b=pPAfDYb4YuR2/8Ba4bickuejoqA6sZl8b4jmQhZolLwIOCK20HVdlhbjd1ED3sqfda
-         jWAmN+Svy1icNs2hrNwBYV3J37vUEq8RRPYl6D7JOMb6lBdfOgq9UZ0HCf78UJF135yI
-         1fEvDMDqHuD58dD9i4EykfZpX5H7LeMm8stBYGJD5fI+2/LfiUnZBWPdv8O5E85JseUU
-         ayOPkYRROe60Q+9eqTzNzLt/2+PyPsKeEKRTa/RZnoqgUYX3SoPYR9ft9dKdBKsto91k
-         MaufzLsqKxta2aaw33QzSdM5d+qBSnAokZqGkSqIy9TNZ53H98PBk/mhMsBJZxQDMuia
-         WtSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvdHv5d0V3N96gj+Eyu70uWTq3wggZ9mqX5O74S3v5vzCU8w+ds8/Vf7gI6evrzQ5j5PfmM1sQf0X79gAlLHbuiq2S8ByEQ4jOSHZ9jCenzg8ZaV84AfhH1dZhhhGLzBkVLQchwopFNXw5o8ghIOPITuNEJ+8uzUgGNgSZcfDYbdU+Oh8i2wdkOky6xTgaTTwGqRvzig==
-X-Gm-Message-State: AOJu0YzlvCaCAXI9ilVhC3Sn7jCPwwTYtD9KjweDucQbWOU7AAnf4B1s
-	/bMTeoM4X+Z0HaOFx2yt4ZmZriXp6rejamNo4TcqPOxRLyqB+vFqMrl2QLzHWjLpvSNhV8OZHQk
-	bEpzH/8JahKLyiRa7X3Y+M7iinVjicmEF
-X-Google-Smtp-Source: AGHT+IFrtwMZGSser2pdLEMHu9/BZwtIElLY0d4iYbH3J9P9LMSwb1QRp/owr34MzeIK2Dss6VDWbjorwxkpYt37c8M=
-X-Received: by 2002:a05:6000:1887:b0:367:89fc:bc11 with SMTP id
- ffacd0b85a97d-367cea4625emr9022935f8f.10.1720741900251; Thu, 11 Jul 2024
- 16:51:40 -0700 (PDT)
+        bh=J1ii8KLMLxRl5UF5VTiJZsw30BNj3HWI5MJg1fOCFrg=;
+        b=pySRpNMvBYoqxmuuF60eEYds2+mFK6dUpbdY4dJfl228qonL0C3Fu70d5WvxHOXNeb
+         u1lMnCTjt5lcsZbbkFxeaSQoJAFqFD6szL4v444ESgnDO0DzDHEDCnLf5n/IgI1jyPn/
+         jt4Kl7gQBDxGx5LkpXHU7k31NMaER687SG1eEMdQ9Oh568Qs/CX7KM7GNHlXTe44Ylzk
+         QWcKoS+LdVKpTVZHMwoM8rqEIKOJK/YvqejIZPH3+YX78O4ZsjO2OMiq/Mnyi0Hh27UX
+         ivt3/7uP3YP6rB0Y44qBHu1bnsBvTXt57e8QzhtlFz30+O9ljd+PvUmk2ywcc+Ih2Glv
+         PhJw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9rGUlcrfVe3qWY0pHDGTNXCmgToYl++HPsNrzqnZT/MAayCuCpG9bIPQzj/d4Yagl6/RhU19Zi7o83wy0GE8N70o8cLLh+q5U90Ri
+X-Gm-Message-State: AOJu0YweWaAqgAn2ehHFPoQ+P8vvfyC+HpPIA46x7L8XSKB0QjXLz46j
+	mwP7X3pOJAGJxnh+i3XnluN8L5TUHllOgfqprcP89AAap0fanAQ7CJR0S+p7eoX31xaKfiwH0SV
+	xZjwmdUCm0uzFGXPeohua7meHqvIU6feLIVMx
+X-Google-Smtp-Source: AGHT+IGg/L+LIOLGS8JdBlkXQAM9OjIKvUIv0USQWI0ixWzGE8fSPNkcsknZoKiaKzNv9LECa/JaMTAQzxubG6QsFVs=
+X-Received: by 2002:a17:906:cc9a:b0:a77:c7d7:5ece with SMTP id
+ a640c23a62f3a-a780b701683mr557985866b.35.1720741984043; Thu, 11 Jul 2024
+ 16:53:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712083603.10cbdec3@canb.auug.org.au>
-In-Reply-To: <20240712083603.10cbdec3@canb.auug.org.au>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 11 Jul 2024 16:51:28 -0700
-Message-ID: <CAADnVQKVC4NGsEU0X3XJmmCot40Vvik-9KNFU07F=VBF-4UVRQ@mail.gmail.com>
-Subject: Re: linux-next: duplicate patch in the bpf-next tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, David Miller <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, bpf <bpf@vger.kernel.org>, 
-	Networking <netdev@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240710234222.2333120-1-jthoughton@google.com> <20240710234222.2333120-15-jthoughton@google.com>
+In-Reply-To: <20240710234222.2333120-15-jthoughton@google.com>
+From: David Matlack <dmatlack@google.com>
+Date: Thu, 11 Jul 2024 16:52:38 -0700
+Message-ID: <CALzav=d=LaVCFTLxzJD8C_=6+fxjsoLxdKOnxKBgn_QdNDOoXw@mail.gmail.com>
+Subject: Re: [RFC PATCH 14/18] KVM: Add asynchronous userfaults, KVM_READ_USERFAULT
+To: James Houghton <jthoughton@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, Peter Xu <peterx@redhat.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 3:36=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
+On Wed, Jul 10, 2024 at 4:42=E2=80=AFPM James Houghton <jthoughton@google.c=
+om> wrote:
 >
-> Hi all,
->
-> The following commit is also in the net tree as a different commit
-> (but the same patch):
->
->   6f130e4d4a5f ("bpf: Fix order of args in call to bpf_map_kvcalloc")
->
-> This is commit
->
->   af253aef183a ("bpf: fix order of args in call to bpf_map_kvcalloc")
->
-> in the net tree.
+> +       case KVM_READ_USERFAULT: {
+> +               struct kvm_fault fault;
+> +               gfn_t gfn;
+> +
+> +               r =3D kvm_vm_ioctl_read_userfault(kvm, &gfn);
+> +               if (r)
+> +                       goto out;
+> +
+> +               fault.address =3D gfn;
+> +
+> +               /* TODO: if this fails, this gfn is lost. */
+> +               r =3D -EFAULT;
+> +               if (copy_to_user(&fault, argp, sizeof(fault)))
 
-Argh.
-So the fix was applied to bpf-next back in May and the same people
-come back to complain in July that it's somehow still broken and must be
-fixed in Linus's tree.
-So the new patch was applied to bpf and pulled to net
-and on the way to Linus now.
-
-We will ffwd bpf-next in a day or so, if git cannot handle it,
-we will revert from bpf-next.
-Sigh.
+You could do the copy under the spin_lock() with
+copy_to_user_nofault() to avoid losing gfn.
 
