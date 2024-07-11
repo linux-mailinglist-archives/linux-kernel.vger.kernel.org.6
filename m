@@ -1,184 +1,84 @@
-Return-Path: <linux-kernel+bounces-249859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0F892F0CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:14:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BAAD92F0CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78605B22B40
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:14:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC63728407E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D1D19F468;
-	Thu, 11 Jul 2024 21:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1312219F464;
+	Thu, 11 Jul 2024 21:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cakBVmqj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OwaEH00l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F3F51004;
-	Thu, 11 Jul 2024 21:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E9D51004;
+	Thu, 11 Jul 2024 21:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720732462; cv=none; b=f3bVLfjctUrD15fLd2j5XHYRe/S6WpRJ++Qs2rLVV0EorKEJFmepMw3QAtLjnFS34Znx0PsyMIykRsqgHLTAkyfqC513QXgaDxPz9BILd+MQYrW2D4gWJRpRWCNdqtUzWRVAdGVb9cFS5CwD6OjRE3YhtcONGhpdR7kWVjcDo3s=
+	t=1720732474; cv=none; b=m1liY7xuY98dnmN1EnSsSAf9HQesv9ZJwTjVpO5Ak187GWnAgtHI6eISG8wETEuZHJESy1rTP9NtrFGLKlUvFPi1tljFpHN2gMaA1e37cn0JxlxN9i+KQ+uWICl6DhzYRikkIx9/ah5WHzYRhiO4olGwUx1eznpfp38ItgmUt8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720732462; c=relaxed/simple;
-	bh=W2hf6xC3VFwwfj1PmmS3ARCLCbbL+jcjKAxdaPfr4jo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aImR3xFa8+2sZqZvmK6LJt3U4w/Ln9HVySNw4YuldINnHJ+zMsWYCWmNALw3PcKPPvUlGKIMDj0eqDq78FVJWtlD9xD3iavix0gpQeh0wZaQ5chGs354HCUDYAcqtjXZe6t+3sGVvKaASNxunUGLCbXX7snDbHmHPfvA1B37H/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cakBVmqj; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720732461; x=1752268461;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=W2hf6xC3VFwwfj1PmmS3ARCLCbbL+jcjKAxdaPfr4jo=;
-  b=cakBVmqj1+pOmAKPoAUapNI4LuM5uIsDwZ4r5MhI5rSRwbnTV6ApfAx7
-   qk0bk8xTEr3SCWd1dGdLg4XrAUTkibQZCfisulwyE00X3n+rH4RyONgAX
-   jyFszv/USYJJxHrFbCHkJZboJPEuOqHDW9/2/0igdEytoaX7D6CXOwh37
-   Fsqe54Imb+7F3r5z/hdWanBGTG5GSvLq7AZZKEc1s1FMc5z54PfmVIt+7
-   irRvaDw7mNxsaLPp6rARQaayJdQtY4wdXHkREvMpHCHoLBZVszKWO0qto
-   XhWN+dZcdbIiGDilVzasBfh8NLcpMoVv3PtimstYQKYyXyWbHaJrkN5r1
-   Q==;
-X-CSE-ConnectionGUID: 3HVoAmlCROmItBYwpOkzEQ==
-X-CSE-MsgGUID: 8LFzu2QmTGydyFu5zEKpIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="29300097"
-X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
-   d="scan'208";a="29300097"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 14:14:20 -0700
-X-CSE-ConnectionGUID: nbw7fb/RRtild7EulLGtBA==
-X-CSE-MsgGUID: gZ3v31NMRtybnAkf//dHHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
-   d="scan'208";a="53627003"
-Received: from hsuanchi-mobl1.amr.corp.intel.com (HELO peluse-desk5) ([10.213.173.245])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 14:14:20 -0700
-Date: Thu, 11 Jul 2024 14:14:18 -0700
-From: Paul E Luse <paul.e.luse@linux.intel.com>
-To: Mateusz =?UTF-8?B?Sm/FhGN6eWs=?= <mat.jonczyk@o2.pl>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Song Liu <song@kernel.org>, Yu Kuai
- <yukuai3@huawei.com>, Xiao Ni <xni@redhat.com>, Mariusz Tkaczyk
- <mariusz.tkaczyk@linux.intel.com>
-Subject: Re: [PATCH] md/raid1: set max_sectors during early return from
- choose_slow_rdev()
-Message-ID: <20240711141418.196c8b04@peluse-desk5>
-In-Reply-To: <20240711202316.10775-1-mat.jonczyk@o2.pl>
-References: <349e4894-b6ea-6bc4-b040-4a816b6960ab@huaweicloud.com>
-	<20240711202316.10775-1-mat.jonczyk@o2.pl>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; aarch64-redhat-linux-gnu)
+	s=arc-20240116; t=1720732474; c=relaxed/simple;
+	bh=PqmkKClzKA9/SBnHkaebvSMhSF4dVf6/yT6uauqZ1ac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MllbonL/9cApT60aoVWQ34c6MurI2JW/GH1SOaD6OmYOCwoCO5yPBPyqYl9Bx7xMl21xW3SOboGzNKFFwUrUtwLeVflPpBBkrGm4oEwc62uNRRKuuzL3LyVRj5ZCKwlw7ugo93d4EobUkEjkEFCOs9Z8X35eWpcz9oJB4r0DBQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OwaEH00l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6926C116B1;
+	Thu, 11 Jul 2024 21:14:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720732473;
+	bh=PqmkKClzKA9/SBnHkaebvSMhSF4dVf6/yT6uauqZ1ac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OwaEH00lPYizGDKn3Lj426vXvs6iS3F3txCwEPg5beVfkBvD61hOq1JKCd1ngTNsN
+	 XWu+VztjQPRqlkgQeFN1wOnBvlwvq6LNriLsQmFIBKKvTo9rc+SkAGBTl9ZXEFzKFG
+	 7MXRi+f1EA1TxV67rs7xvM0CgJwVJD6lZO5rDvfd69tV8avxM05k+5n7ach+cUVUti
+	 E6rVlxpW4vjtGQpmS0vgoBxdkDZ6zN+DcBHP2yR2+MiAeQkK5MxarHPOtl7UDG2cCy
+	 W/Zht9tvzw6GoSsEmIBur7LTi0ZYritzCsDbO2Ps3nZYdp5YY3PfWZ+GbF9hOLM89F
+	 U9q+Xi8IwMJdg==
+Date: Thu, 11 Jul 2024 15:14:32 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
+	patches@opensource.cirrus.com, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	alsa-devel@alsa-project.org, David Rhodes <david.rhodes@cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
+	Daniel Baluta <daniel.baluta@nxp.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: dt-bindings: cirrus,cs42xx8: Convert to dtschema
+Message-ID: <172073247178.3021175.15222505507624018342.robh@kernel.org>
+References: <20240710072756.99765-1-animeshagarwal28@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710072756.99765-1-animeshagarwal28@gmail.com>
 
-On Thu, 11 Jul 2024 22:23:16 +0200
-Mateusz Jo=C5=84czyk <mat.jonczyk@o2.pl> wrote:
 
-> Linux 6.9+ is unable to start a degraded RAID1 array with one drive,
-> when that drive has a write-mostly flag set. During such an attempt,
-> the following assertion in bio_split() is hit:
->=20
-
-Nice catch and good patch :)  Kwai?
-
--Paul
-
-> 	BUG_ON(sectors <=3D 0);
->=20
-> Call Trace:
-> 	? bio_split+0x96/0xb0
-> 	? exc_invalid_op+0x53/0x70
-> 	? bio_split+0x96/0xb0
-> 	? asm_exc_invalid_op+0x1b/0x20
-> 	? bio_split+0x96/0xb0
-> 	? raid1_read_request+0x890/0xd20
-> 	? __call_rcu_common.constprop.0+0x97/0x260
-> 	raid1_make_request+0x81/0xce0
-> 	? __get_random_u32_below+0x17/0x70
-> 	? new_slab+0x2b3/0x580
-> 	md_handle_request+0x77/0x210
-> 	md_submit_bio+0x62/0xa0
-> 	__submit_bio+0x17b/0x230
-> 	submit_bio_noacct_nocheck+0x18e/0x3c0
-> 	submit_bio_noacct+0x244/0x670
->=20
-> After investigation, it turned out that choose_slow_rdev() does not
-> set the value of max_sectors in some cases and because of it,
-> raid1_read_request calls bio_split with sectors =3D=3D 0.
->=20
-> Fix it by filling in this variable.
->=20
-> This bug was introduced in
-> commit dfa8ecd167c1 ("md/raid1: factor out choose_slow_rdev() from
-> read_balance()") but apparently hidden until
-> commit 0091c5a269ec ("md/raid1: factor out helpers to choose the best
-> rdev from read_balance()") shortly thereafter.
->=20
-> Cc: stable@vger.kernel.org # 6.9.x+
-> Signed-off-by: Mateusz Jo=C5=84czyk <mat.jonczyk@o2.pl>
-> Fixes: dfa8ecd167c1 ("md/raid1: factor out choose_slow_rdev() from
-> read_balance()") Cc: Song Liu <song@kernel.org>
-> Cc: Yu Kuai <yukuai3@huawei.com>
-> Cc: Paul Luse <paul.e.luse@linux.intel.com>
-> Cc: Xiao Ni <xni@redhat.com>
-> Cc: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-> Link:
-> https://lore.kernel.org/linux-raid/20240706143038.7253-1-mat.jonczyk@o2.p=
-l/
->=20
-> --
->=20
-> Tested on both Linux 6.10 and 6.9.8.
->=20
-> Inside a VM, mdadm testsuite for RAID1 on 6.10 did not find any
-> problems: ./test --dev=3Dloop --no-error --raidtype=3Draid1
-> (on 6.9.8 there was one failure, caused by external bitmap support not
-> compiled in).
->=20
-> Notes:
-> - I was reliably getting deadlocks when adding / removing devices
->   on such an array - while the array was loaded with fsstress with 20
->   concurrent processes. When the array was idle or loaded with
-> fsstress with 8 processes, no such deadlocks happened in my tests.
->   This occurred also on unpatched Linux 6.8.0 though, but not on
->   6.1.97-rc1, so this is likely an independent regression (to be
->   investigated).
-> - I was also getting deadlocks when adding / removing the bitmap on
-> the array in similar conditions - this happened on Linux 6.1.97-rc1
->   also though. fsstress with 8 concurrent processes did cause it only
->   once during many tests.
-> - in my testing, there was once a problem with hot adding an
->   internal bitmap to the array:
-> 	mdadm: Cannot add bitmap while array is resyncing or
-> reshaping etc. mdadm: failed to set internal bitmap.
->   even though no such reshaping was happening according to
-> /proc/mdstat. This seems unrelated, though.
+On Wed, 10 Jul 2024 12:57:52 +0530, Animesh Agarwal wrote:
+> Convert the Cirrus Logic CS42448/CS42888 audio CODEC bindings to DT
+> schema format. Set power supply properties to required only for CS42888.
+> 
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 > ---
->  drivers/md/raid1.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 7b8a71ca66dd..82f70a4ce6ed 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -680,6 +680,7 @@ static int choose_slow_rdev(struct r1conf *conf,
-> struct r1bio *r1_bio, len =3D r1_bio->sectors;
->  		read_len =3D raid1_check_read_range(rdev, this_sector,
-> &len); if (read_len =3D=3D r1_bio->sectors) {
-> +			*max_sectors =3D read_len;
->  			update_read_sectors(conf, disk, this_sector,
-> read_len); return disk;
->  		}
->=20
-> base-commit: 256abd8e550ce977b728be79a74e1729438b4948
+>  .../bindings/sound/cirrus,cs42xx8.yaml        | 81 +++++++++++++++++++
+>  .../devicetree/bindings/sound/cs42xx8.txt     | 34 --------
+>  2 files changed, 81 insertions(+), 34 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/sound/cirrus,cs42xx8.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/sound/cs42xx8.txt
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
