@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-249569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 050A892ED6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:05:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DD092ED6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C5328B16A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0C341F2333D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C975B16D9AD;
-	Thu, 11 Jul 2024 17:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670D716D32D;
+	Thu, 11 Jul 2024 17:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VweLSb3c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nV9EEKVc"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052CD450FA;
-	Thu, 11 Jul 2024 17:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F07C450FA;
+	Thu, 11 Jul 2024 17:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720717497; cv=none; b=Z4cw74cet8dMyVNYtrBRiVa9q8KYQ0D0f+lLVTJKuvsb6rRx4j1jevS7LSksrAW1Oy8OuYDFuOUe4fC8IP7x7K3hzHbE4ELpieoBwAjRvvoue5IHZ8FSNkwNrfJSx78V1OEm9OHNMmxj7vmL+84kjvOnzVbY+a9ZW4Gamn4vXYU=
+	t=1720717546; cv=none; b=C44D2LDztawTE7X3hMxl3WZdvKBq8a5wnWblyJtu72aOoC+4PfBcqriF0FxHn9kdAd+3I7AfsBGLLkNml/ItNoUlnVaIX90Sxc40agehlDQbu20/C9gJg8nFBKK/fh5j47W1bB3bzPvKFmziayqyn+zcrwON+BOcxoV/xwMO8tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720717497; c=relaxed/simple;
-	bh=8bA1Af5JkTKsPfzcax7n6cvmceZSVM+9DQAXTzJTRpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hVkl1p7txz8RPwZbPiaNiOZ0Yf3uFAKQIGGh3y/lEoKZrL9Qkw2P5X0p66L9zZr+uO4V8pGUIjdUCGxTbzJ0VROoXOxTLhSjjzeWRiKRuiHHtvqo/H9jnDble+acZve3gyaRKMNzVGmEcikkowmR4Pr+A75dkYC55gAL4KaHKFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VweLSb3c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56B3EC116B1;
-	Thu, 11 Jul 2024 17:04:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720717496;
-	bh=8bA1Af5JkTKsPfzcax7n6cvmceZSVM+9DQAXTzJTRpc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VweLSb3cn8veFY/O7cKAlfEIwL3f2HLsE7eAtPdboROuKAnEbFm8vDuj3NQQ0noao
-	 dN7r3qfljVRi538GReGxRpj/BZP6uhySPravw3Uif9gWH09HvlUsmyMNqhJWCN2tiY
-	 x0gVO7rJZxk8OL2BbRGPUUPmGfyW/FA4bQ35Lco/dQlFGfQ1t+daYbjcQ0dezjNRcQ
-	 Js4nQR/KKCirmE+Yn0JLq6WCIHpsGVNO4Taf0Lk16eAsHo+vvB9oWCGeMwhv1D6zbn
-	 irDjHcQbE+kCucOfJrocRzdzuxEnojQ+F1ZaM4ay4bcSKmAVQUE04h07Ef6Et2QUwQ
-	 VbuDzDmJbTkxQ==
-Date: Thu, 11 Jul 2024 12:04:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
-	quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com,
-	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
-	quic_parass@quicinc.com
-Subject: Re: [PATCH v6 3/5] PCI: qcom-ep: Add wake up host op to
- dw_pcie_ep_ops
-Message-ID: <20240711170454.GA287440@bhelgaas>
+	s=arc-20240116; t=1720717546; c=relaxed/simple;
+	bh=zirD51PSiEvEJN4GnLz46WQQHxQFe6ThDzNZ3IeuwV8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s/hF+YIB7x2dCpqi+vqtIkPj2ylTGzueUQq2uIX4bFkj8eWN5bZtB6KwmKZogGQkyBYZpodasYIFRIxG8VM64lqHSOoyOikH5PRXq3i1l4Q2HIzLg9eu2ydXskhh5Fi8aol8Bu1mi3kg6gbCwmRaKUzFxbAE2bQBlgC7nPZdFnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nV9EEKVc; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-643f3130ed1so10456757b3.2;
+        Thu, 11 Jul 2024 10:05:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720717544; x=1721322344; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f7BOUH+Frg8/o22BzECLe2KrvGshFw+RFE2s5ErKK6c=;
+        b=nV9EEKVcl+pVdfm/5orF+pFSjK9V5tCdiGTvuLgmpAAFtG5d6vyGLkfX2l+t/omyAK
+         aLmlWXGvhwqHNTddKKbE31z6EPzNgDvvkGW/D9bJfArSc/b7uX1SnFF2BUXsBy8bvdVm
+         saeZruRiapl8uNxgT5mHlRl7SQPt43ouBTSt8f0nf5LdDY4oeYFTzvzkzf/V18LaA1Kh
+         9qIHvGJTKYBhrq6nKOWj1Xcp7J7B2hDxNE3s9wd5gG8pfMGBZ04zSkzOhNHi9QY2I+Wt
+         B/wU+yywE2iALLq57m1CZPly8FyQ2dUyxrI3q8L7LMshwsWMm3+R7TV6zr/CKMi/PKNs
+         KhPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720717544; x=1721322344;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f7BOUH+Frg8/o22BzECLe2KrvGshFw+RFE2s5ErKK6c=;
+        b=G8DAG6HVE4DekmF5jhdOarz9qH0Gas8ETOkNZkS3jj/gYa4NflLhWroqB1aYZckT9R
+         m3uz1RD7YGQ0A3QLzruwVUoWDhMh+BpV5b7AUykrg0wBCynnWA2aMMYhqBx6uiP9aSt9
+         DMZB8To1eayXRwaOd7zXYUy2Vqx13ARcNj739aL+Lr0musIKn17Tl9Z8L8EA6MIkKntl
+         tzULNgu2oZ+tRU32u7qB0x8Ug8rTH7mdPbdVIlmZgLaHVYgLFGyKEwTwWX/TQ+ps/SZ9
+         3VREDbLLJxmVcUwWelwKPWj8bSDz1YP7B5HAdVIBI5FZUGj7ioUxhSYGrX8NmKRIBrIf
+         3LVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQhrBveLeXJj4ByCk0Og8V3PrnRQaNMaxnL4uGhNby8G4P5UK/FAcvcbDzUFpRDPb4JAWUZIXcrXVLm32LLiWUqa2Fu/AgsIV1tWTxC13eNyZ0w9R0qHBewWOCQRyOjmFpz5hknwcj
+X-Gm-Message-State: AOJu0YwLk1m/rmpPI52ApJhodISCWyJJFdcuODzfAsguAUFyDbdy6JBP
+	Y/bZX1N//SG58D/8T5+kdOqpIaNaE+4idGxdWiuh1tblcpaQJxAPOLF/ofpDgzXtqOEVummiQF4
+	YI6YyIIyH9DUCARWSZhQe95Ltzg0=
+X-Google-Smtp-Source: AGHT+IGuASaOvUD1rcYMSp2/a1PpVttmq/tgjh0wRfwM2GDkFLUWeCKjo4e9ytlLCGb2+dTrfLq22lKr5Cq7/TFZTlg=
+X-Received: by 2002:a0d:ee84:0:b0:64b:1f4e:409f with SMTP id
+ 00721157ae682-658f08cc3fdmr93728917b3.49.1720717544293; Thu, 11 Jul 2024
+ 10:05:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710-wakeup_host-v6-3-ef00f31ea38d@quicinc.com>
+References: <20240710-nfsd-next-v1-0-21fca616ac53@kernel.org> <20240710-nfsd-next-v1-1-21fca616ac53@kernel.org>
+In-Reply-To: <20240710-nfsd-next-v1-1-21fca616ac53@kernel.org>
+From: Youzhong Yang <youzhong@gmail.com>
+Date: Thu, 11 Jul 2024 13:05:33 -0400
+Message-ID: <CADpNCvYknMBXf+V=vBLkjOMhTFRN-3o2R9A2c5J4POuaD49kMw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] nfsd: fix refcount leak when failing to hash nfsd_file
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 04:46:10PM +0530, Krishna chaitanya chundru wrote:
-> Add wakeup host op to dw_pcie_ep_ops to wake up host.
-> If the wakeup type is PME, then trigger inband PME by writing to the PARF
-> PARF_PM_CTRL register, otherwise toggle #WAKE.
+Shouldn't we have fh_put(fhp) before 'retry'?
 
-Wrap into single paragraph or add blank line between.
-
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+On Wed, Jul 10, 2024 at 9:06=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> At this point, we have a new nf that we couldn't properly insert into
+> the hashtable. Just free it before retrying, since it was never hashed.
+>
+> Fixes: c6593366c0bf ("nfsd: don't kill nfsd_files because of lease break =
+error")
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  drivers/pci/controller/dwc/pcie-qcom-ep.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> index 627a33a1c5ca..d17e8542d07a 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> @@ -97,6 +97,7 @@
->  /* PARF_PM_CTRL register fields */
->  #define PARF_PM_CTRL_REQ_EXIT_L1		BIT(1)
->  #define PARF_PM_CTRL_READY_ENTR_L23		BIT(2)
-> +#define PARF_PM_CTRL_XMT_PME			BIT(4)
->  #define PARF_PM_CTRL_REQ_NOT_ENTR_L1		BIT(5)
->  
->  /* PARF_MHI_CLOCK_RESET_CTRL fields */
-> @@ -817,10 +818,34 @@ static void qcom_pcie_ep_init(struct dw_pcie_ep *ep)
->  		dw_pcie_ep_reset_bar(pci, bar);
->  }
->  
-> +static bool qcom_pcie_ep_wakeup_host(struct dw_pcie_ep *ep, u8 func_no, bool send_pme)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +	struct qcom_pcie_ep *pcie_ep = to_pcie_ep(pci);
-> +	struct device *dev = pci->dev;
-> +	u32 val;
-> +
-> +	if (send_pme) {
-> +		dev_dbg(dev, "Waking up the host using PME\n");
-> +		val = readl_relaxed(pcie_ep->parf + PARF_PM_CTRL);
-> +		writel_relaxed(val | PARF_PM_CTRL_XMT_PME, pcie_ep->parf + PARF_PM_CTRL);
-> +		writel_relaxed(val, pcie_ep->parf + PARF_PM_CTRL);
-> +
-> +	} else {
-> +		dev_dbg(dev, "Waking up the host by toggling WAKE#\n");
-> +		gpiod_set_value_cansleep(pcie_ep->wake, 1);
-> +		usleep_range(WAKE_DELAY_US, WAKE_DELAY_US + 500);
-
-PCIe r6.0, sec 5.3.3.2, says
-
-  When WAKE# is used as a wakeup mechanism, once WAKE# has been
-  asserted, the asserting Function must continue to drive the signal
-  low until main power has been restored to the component as indicated
-  by Fundamental Reset going inactive.
-
-That doesn't seem compatible with a simple delay as you have here.
-
-> +		gpiod_set_value_cansleep(pcie_ep->wake, 0);
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  static const struct dw_pcie_ep_ops pci_ep_ops = {
->  	.init = qcom_pcie_ep_init,
->  	.raise_irq = qcom_pcie_ep_raise_irq,
->  	.get_features = qcom_pcie_epc_get_features,
-> +	.wakeup_host = qcom_pcie_ep_wakeup_host,
->  };
->  
->  static int qcom_pcie_ep_probe(struct platform_device *pdev)
-> 
-> -- 
-> 2.42.0
-> 
+>  fs/nfsd/filecache.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+> index f84913691b78..4fb5e8546831 100644
+> --- a/fs/nfsd/filecache.c
+> +++ b/fs/nfsd/filecache.c
+> @@ -1038,8 +1038,10 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struc=
+t svc_fh *fhp,
+>         if (likely(ret =3D=3D 0))
+>                 goto open_file;
+>
+> -       if (ret =3D=3D -EEXIST)
+> +       if (ret =3D=3D -EEXIST) {
+> +               nfsd_file_free(nf);
+>                 goto retry;
+> +       }
+>         trace_nfsd_file_insert_err(rqstp, inode, may_flags, ret);
+>         status =3D nfserr_jukebox;
+>         goto construction_err;
+>
+> --
+> 2.45.2
+>
 
