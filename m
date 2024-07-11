@@ -1,83 +1,125 @@
-Return-Path: <linux-kernel+bounces-250005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6829592F2E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:58:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C8192F2E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F23284012
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 841F51C2200B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52361A073B;
-	Thu, 11 Jul 2024 23:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7901A072B;
+	Thu, 11 Jul 2024 23:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sl9OEyLb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Df3jB+S1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90EC15AAD9;
-	Thu, 11 Jul 2024 23:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDC519EEA1;
+	Thu, 11 Jul 2024 23:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720742326; cv=none; b=TmahoUjRdSvVZ3X/llJxHXbjdsDCjRN6UZYGj3dbn8C3QFzRMccmRPyDu0+vBDBChTe++iWNLR6wnRWGRHG+pymFtYgZXllqRn6PCkJbKtIJe2bdpGugLrNHb+SSIcvT+if3n9zaQQct9/q9CCp0ohc01tJewLvcmDVVxJehPKU=
+	t=1720742345; cv=none; b=Vu3KK8cVnDBXgCghXI2WJjXu2qAnfXE7dKh8JjYCukvcyfR53KuPcI0WuYcVBOAeDX7pqf1Ba2lSM1UP60WXzVF3yfIHtskwHTQLC6D0UPFCP0UY+D+gc4mHi+GxLyPvXlAwYd/AMVogt8IKcfwh267c0hY0h2ulddDpAHPL/QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720742326; c=relaxed/simple;
-	bh=ktsn/j9zoy17I5McpCAkdJifL+uddoJ55SLYw0XUFqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=doNrTu3EPchMEN4G6/daP+pflktF0wTREiw4pL11fNrqeDF/IU2t7lGyeqmreLrAhAbsUBXl7LMZydEDFnJ8moAb5y+fiECGROL+kDCfJAlXn2gWM44O5Bh+S5TP7P+nNkAUNafYyND4j4DY9ryWIiwkmd2IWoMHBMORinufeHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sl9OEyLb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD8BBC116B1;
-	Thu, 11 Jul 2024 23:58:44 +0000 (UTC)
+	s=arc-20240116; t=1720742345; c=relaxed/simple;
+	bh=jI0uNcry8t+1nyBi0zSF4vK3Pl/McEJtidzu+dcB4is=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=tmY9WEmmW2Ib22wrwkRSLks8s79TLQ9kDiDB880zb8uPR9lh0gPBX6XodECCmsKNVFEBVrgg/NJlC8bj3VF0rq7d05xFhneHtAdxeim79hUc4F5CMnm2YTIMFFZjVA+NVQmWJUoyLeFbDk74fWmAS+g9m1TNJCm1ZIW2pNfa2gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Df3jB+S1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8086EC32782;
+	Thu, 11 Jul 2024 23:59:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720742325;
-	bh=ktsn/j9zoy17I5McpCAkdJifL+uddoJ55SLYw0XUFqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Sl9OEyLbt8GPnUbgcKiLQ9sRjF3DLxyCtjs7yZ2E9G788UcU7+IaHGXo+PL2A52f6
-	 e1FOW6F0kVfKJdQBoqthVj94pK57Yg3uRVurQoYDWJM5l8Am1RIapu2QpZF7ZjeMfP
-	 ouEOtt7kJE57+tYupql2WOu+9c39tbBO6wC2AB85KOcPvVbqepz0rLKzKhZsRIpqT3
-	 5AUNklHXG4hR1MK3Fs3nokhNg5daNoAxgeTsMycvRBJXDvDzCwdQUwb9uqMSns0u6D
-	 2JBtth3uFht/OlSBseKFwqQbB726SiNuB0n03IhCghVmXJzQHsN+KCAKsPzrYO+ykP
-	 YUnEe53zsv1vw==
-Date: Fri, 12 Jul 2024 01:58:42 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: George Stark <gnstark@salutedevices.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com, 
-	martin.blumenstingl@googlemail.com, glaroque@baylibre.com, rafael@kernel.org, 
-	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, b.galvani@gmail.com, 
-	mmkurbanov@sberdevices.ru, linux-i2c@vger.kernel.org, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@salutedevices.com
-Subject: Re: [PATCH v2 1/3] dt-bindings: i2c: amlogic,meson6-i2c: add
- optional power-domains
-Message-ID: <ca2zfkqajyco5bfjyr4xde67hypcn3gl4s4vlvlte6uljpnw44@6eqhqmodul67>
-References: <20240710223214.2348418-1-gnstark@salutedevices.com>
- <20240710223214.2348418-2-gnstark@salutedevices.com>
+	s=k20201202; t=1720742345;
+	bh=jI0uNcry8t+1nyBi0zSF4vK3Pl/McEJtidzu+dcB4is=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Df3jB+S1ZkE+4Pheqzz32FNA4pYESihgna20uAr1IUAHPAQe7aKzIxmJFnZKYOqMc
+	 9KWwc88X1q2UXbdbkmSKECtZBnG7rBKTy8Rulvo8qYnXJrkxEGPt5TaE9P+8K711Cu
+	 hpRccwzIQlA0DpS0HZfp2ibxmKYRRT8EQOBqKFjKkaYNvEP0PbuFPjm2ggJ9Pa7gzG
+	 ATQgsx6NuO17vKB+aD1DEQisrLNPDGbK3DjGYO4FyUdTUpU2hKsisFhCmydjNRsQlb
+	 NlNvHSqceuPVpGNhXxXEYhs0CCa/yASwjNlSrgnmkVca5CUL9a0rNdefoCnuTcuICL
+	 F56epgP5VhPhQ==
+Date: Fri, 12 Jul 2024 08:59:00 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jiri
+ Olsa <olsajiri@gmail.com>, mingo@kernel.org, andrii@kernel.org,
+ linux-kernel@vger.kernel.org, oleg@redhat.com, clm@meta.com,
+ paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-Id: <20240712085900.94069c2fad2c4bc15cd34951@kernel.org>
+In-Reply-To: <20240711134703.715e6361@gandalf.local.home>
+References: <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+	<20240709090304.GG27299@noisy.programming.kicks-ass.net>
+	<Zo0KX1P8L3Yt4Z8j@krava>
+	<20240709101634.GJ27299@noisy.programming.kicks-ass.net>
+	<20240710071046.e032ee74903065bddba9a814@kernel.org>
+	<20240710101003.GV27299@noisy.programming.kicks-ass.net>
+	<20240710235616.5a9142faf152572db62d185c@kernel.org>
+	<CAEf4BzZGHGxsqNWSBu3B79ZNEM6EruiqSD4vT-O=_RzsBeKP0w@mail.gmail.com>
+	<20240711085118.GH4587@noisy.programming.kicks-ass.net>
+	<20240712001718.e00caa0a3cb410dc19f169c2@kernel.org>
+	<20240711152238.GB3285@noisy.programming.kicks-ass.net>
+	<20240711134703.715e6361@gandalf.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710223214.2348418-2-gnstark@salutedevices.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi George,
+On Thu, 11 Jul 2024 13:47:03 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On Thu, Jul 11, 2024 at 01:32:12AM GMT, George Stark wrote:
-> On newer SoCs, the I2C hardware can require a power domain to operate.
-> Since the same compatible is used for older and newer SoCs make
-> power-domains property optional.
+> On Thu, 11 Jul 2024 17:22:38 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> Signed-off-by: George Stark <gnstark@salutedevices.com>
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > +UPROBES
+> > > +M:	Masami Hiramatsu <mhiramat@kernel.org>
+> > > +M:	Oleg Nesterov <oleg@redhat.com>
+> > > +M:	Peter Zijlstra <peterz@infradead.org>
+> > > +L:	linux-kernel@vger.kernel.org
+> > > +L:	linux-trace-kernel@vger.kernel.org
+> > > +S:	Maintained
+> > > +Q:	https://patchwork.kernel.org/project/linux-trace-kernel/list/
+> > > +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+> > > +F:	include/linux/uprobes.h
+> > > +F:	kernel/events/uprobes.c  
+> > 
+> > Maybe no Q/T. Neither Oleg nor me have write access to that git tree.
 
-Just this one pushed to i2c/i2c-host.
+Aah right...
 
-Thanks,
-Andi
+> > 
+> > Also, I think you want:
+> > 
+> > F: arch/*/kernel/uprobes.c 
+> > F: arch/*/kernel/probes/uprobes.c 
+> > F: arch/*/include/asm/uprobes.h
+
+OK, I confirmed it covers all arch.
+
+> > This is just to ensure get_maintainers.sh gets our email addresses for
+> > all uprobes stuff.
+> 
+> Agreed. As those files can go through other trees, it's best not to add
+> linux-trace.git nor patchwork to MAINTAINERS file. It's just there to make
+> sure the proper people are Cc'd.
+
+OK, let me update it.
+
+Thank you!
+
+> 
+> -- Steve
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
