@@ -1,215 +1,124 @@
-Return-Path: <linux-kernel+bounces-249326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E484992EA11
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:00:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF35592EA16
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 211251C22AC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:00:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FE37B2221E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9432161305;
-	Thu, 11 Jul 2024 13:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8D4160887;
+	Thu, 11 Jul 2024 14:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXyDIA12"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQuGXK4v"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193BD15F3E0;
-	Thu, 11 Jul 2024 13:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C956D14BFA2;
+	Thu, 11 Jul 2024 14:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720706393; cv=none; b=M3Iz5hWKCix9mzJEVHcH1jHtB2j36fcyfZkNq794wrP9TyXivuaXxizYra1DHPXRylyHynBCwlux25FQUfpYGd4CSg/tG8mFnFCu7Si2i35773W+wLvRg35DJyZq48WDbfWcPDodq0ti/SJSGtYC0RxYMeumfPaV1muh1nBKxxU=
+	t=1720706449; cv=none; b=ixJaziWfQ0OmUnYtoBTUavX5lTLvSm3OqGyRC+LCsyEAGOH027kTdp08SdjKBqLo0DA8AEHiGaUSVkM3y76JiQbl+NNtMviS6fqGDKXN/cCCwgtc8QDONyjsff4Fmz0sry/O6b42ejq9WZhGapnkp93cIQfD0DSTwRUU9XZjSH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720706393; c=relaxed/simple;
-	bh=FHtR7Le/pcFbduWry3sn6ZwXUjgZS7NcvdrZwRRZGEg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=jC4Xjdrmldb7gepHGUA8fDN44gxpPioE9f5BUnq48tVN+pN4tMsUiQaS2gj7IYyPAhPvsRnT16jrQN/rxPEbuzg1jLUPH5cn4t21n1WcNwyoyIW1V80wAx60VWzdkKsVEHOlU+8aedaPvr3O6G04nQ7tlwP3RaMNoT4d2Jac6c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PXyDIA12; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 714C1C116B1;
-	Thu, 11 Jul 2024 13:59:49 +0000 (UTC)
+	s=arc-20240116; t=1720706449; c=relaxed/simple;
+	bh=v6S/vPhexI0x/jZZefTx2eflhLTX1D20zwHbs7IUE4A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ngq81FWJgKG6eZ7U8f2EKYE14wMjSzVKwUXlgc1KmZPXdbQfG8S75FKUeongdLzTFimU050ls+QUvmknhsM6R7li2YYEcEIWPoSPmvUzROsPfcHKEOv2VzU3Rrz0VhpoG9UBaIZ0UZ5a6JRPe1rYHCXpBv3AIMXFaDvX8fxdv9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQuGXK4v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BB46C116B1;
+	Thu, 11 Jul 2024 14:00:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720706392;
-	bh=FHtR7Le/pcFbduWry3sn6ZwXUjgZS7NcvdrZwRRZGEg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PXyDIA12BIDFwWzR+Yr9MQsWSRU9BqpNwJifNM2hUeMA1DVnKnI69fGvJJdf19LEL
-	 1tFi858EvgUoqXYhTePpH8PLUw+WrcufDHcua5GlKmv6OLDdN2pCuZuymCIQkXyve6
-	 SzzvjNNe/XBrWo+qaIkoTxJ1lKKz9O/Jpzfaoajgt3ULb1DmzcStoGCbfiRPL09WcF
-	 RiZMNUUpJeYFCEpC48K308j1njvKbKgsbJm04obvEW6/Fr0PPeKWeghKQZxzsjrPbB
-	 sonLIm6x/l4tq212o49Z5DD5YL503RbCxrH8kl9Cr6oajVYmGROIv2XVGnsYeFdaYh
-	 4FVg+LvUSZISg==
-Date: Thu, 11 Jul 2024 22:59:47 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com,
- paulmck@kernel.org
-Subject: Re: [PATCH v2 04/11] perf/uprobe: RCU-ify find_uprobe()
-Message-Id: <20240711225947.72717378bc039555f9345814@kernel.org>
-In-Reply-To: <20240711110400.635302571@infradead.org>
-References: <20240711110235.098009979@infradead.org>
-	<20240711110400.635302571@infradead.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1720706449;
+	bh=v6S/vPhexI0x/jZZefTx2eflhLTX1D20zwHbs7IUE4A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=jQuGXK4vMfYhGkWjnOBfCrYDXpIO9ttKLfbdoVn4cBbstbPFv+ud5HT/zc5TboGQs
+	 1jgMLCg05LRuFUqRprlYo7cLXmQqd8mJT/pB8yV8HIv7uXd26oRIO5RuH/8wKEJnUv
+	 MYQqcC4KavoLf/lrAYJP7Zv4hc8s2BfSLwWGsZKkILLadlyd9iXKOn2gimaK0/8bCE
+	 H6RsNs3aqccdyimbJb3qwG2x+v1K+cZsnKDlC6iAm7r5msGjO1/tuykkMvjp2l+cVy
+	 z0nuwGwoO2RidJiIonOn3/7CWiIAKwA5b0h+1+rmPDCkots4Sj+MQN0wF40R8RU7cL
+	 z3DySNJkm6IZg==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Manu Bretelle <chantra@meta.com>, Daniel Borkmann
+ <daniel@iogearbox.net>, KP Singh <kpsingh@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Mykola Lysenko <mykolal@meta.com>, Alexei Starovoitov
+ <ast@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, "John
+ Fastabend" <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@google.com>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Shuah Khan
+ <shuah@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Florent
+ Revest <revest@google.com>
+Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
+In-Reply-To: <SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com>
+References: <20240705145009.32340-1-puranjay@kernel.org>
+ <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
+ <mb61pjzhwvshc.fsf@kernel.org>
+ <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
+ <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net>
+ <mb61ped836gn7.fsf@kernel.org>
+ <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
+ <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
+ <890d23f2-636e-12d1-31cc-eb6469f2a9ac@iogearbox.net>
+ <SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com>
+Date: Thu, 11 Jul 2024 14:00:26 +0000
+Message-ID: <mb61p5xtcyqo5.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-On Thu, 11 Jul 2024 13:02:39 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+--=-=-=
+Content-Type: text/plain
 
-> With handle_swbp() triggering concurrently on (all) CPUs, tree_lock
-> becomes a bottleneck. Avoid treelock by doing RCU lookups of the
-> uprobe.
-> 
 
-Looks good to me.
+Hi,
+I was able find the root cause of this bug and will send a fix soon!
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Unable to handle kernel paging request at virtual address ffff0000c2a80e68
+
+We are running this test on Qemu with '-cpu max', this means 52-bit
+virtual addresses are being used.
+
+The trampolines generation code has the following two lines:
+
+		emit_addr_mov_i64(A64_R(0), (const u64)im, ctx);
+		emit_call((const u64)__bpf_tramp_enter, ctx);
+
+here the address of struct bpf_tramp_image is moved to R0 and passed as
+an argument to __bpf_tramp_enter().
+
+emit_addr_mov_i64() assumes that the address passed to it is in the
+vmalloc space and uses at most 48 bits. It sets all the remaining bits
+to 1.
+
+but struct bpf_tramp_image is allocated using kzalloc() and when 52-bit
+VAs are used, its address is not guaranteed to be 48-bit, therefore we
+see this bug, where  0xfff[0]0000c2a80e68 is converted to
+0xfff[f]0000c2a80e68 when the trampoline is generated.
+
+The fix would be use emit_a64_mov_i64() for moving this address into R0.
 
 Thanks,
+Puranjay
 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/events/uprobes.c |   49 +++++++++++++++++++++++++++++++++++++++---------
->  1 file changed, 40 insertions(+), 9 deletions(-)
-> 
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -40,6 +40,7 @@ static struct rb_root uprobes_tree = RB_
->  #define no_uprobe_events()	RB_EMPTY_ROOT(&uprobes_tree)
->  
->  static DEFINE_RWLOCK(uprobes_treelock);	/* serialize rbtree access */
-> +static seqcount_rwlock_t uprobes_seqcount = SEQCNT_RWLOCK_ZERO(uprobes_seqcount, &uprobes_treelock);
->  
->  #define UPROBES_HASH_SZ	13
->  /* serialize uprobe->pending_list */
-> @@ -54,6 +55,7 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem)
->  struct uprobe {
->  	struct rb_node		rb_node;	/* node in the rb tree */
->  	refcount_t		ref;
-> +	struct rcu_head		rcu;
->  	struct rw_semaphore	register_rwsem;
->  	struct rw_semaphore	consumer_rwsem;
->  	struct list_head	pending_list;
-> @@ -587,12 +589,25 @@ set_orig_insn(struct arch_uprobe *auprob
->  			*(uprobe_opcode_t *)&auprobe->insn);
->  }
->  
-> +static struct uprobe *try_get_uprobe(struct uprobe *uprobe)
-> +{
-> +	if (refcount_inc_not_zero(&uprobe->ref))
-> +		return uprobe;
-> +	return NULL;
-> +}
-> +
->  static struct uprobe *get_uprobe(struct uprobe *uprobe)
->  {
->  	refcount_inc(&uprobe->ref);
->  	return uprobe;
->  }
->  
-> +static void uprobe_free_rcu(struct rcu_head *rcu)
-> +{
-> +	struct uprobe *uprobe = container_of(rcu, struct uprobe, rcu);
-> +	kfree(uprobe);
-> +}
-> +
->  static void put_uprobe(struct uprobe *uprobe)
->  {
->  	if (refcount_dec_and_test(&uprobe->ref)) {
-> @@ -604,7 +619,7 @@ static void put_uprobe(struct uprobe *up
->  		mutex_lock(&delayed_uprobe_lock);
->  		delayed_uprobe_remove(uprobe, NULL);
->  		mutex_unlock(&delayed_uprobe_lock);
-> -		kfree(uprobe);
-> +		call_rcu(&uprobe->rcu, uprobe_free_rcu);
->  	}
->  }
->  
-> @@ -653,10 +668,10 @@ static struct uprobe *__find_uprobe(stru
->  		.inode = inode,
->  		.offset = offset,
->  	};
-> -	struct rb_node *node = rb_find(&key, &uprobes_tree, __uprobe_cmp_key);
-> +	struct rb_node *node = rb_find_rcu(&key, &uprobes_tree, __uprobe_cmp_key);
->  
->  	if (node)
-> -		return get_uprobe(__node_2_uprobe(node));
-> +		return try_get_uprobe(__node_2_uprobe(node));
->  
->  	return NULL;
->  }
-> @@ -667,20 +682,32 @@ static struct uprobe *__find_uprobe(stru
->   */
->  static struct uprobe *find_uprobe(struct inode *inode, loff_t offset)
->  {
-> -	struct uprobe *uprobe;
-> +	unsigned int seq;
->  
-> -	read_lock(&uprobes_treelock);
-> -	uprobe = __find_uprobe(inode, offset);
-> -	read_unlock(&uprobes_treelock);
-> +	guard(rcu)();
->  
-> -	return uprobe;
-> +	do {
-> +		seq = read_seqcount_begin(&uprobes_seqcount);
-> +		struct uprobe *uprobe = __find_uprobe(inode, offset);
-> +		if (uprobe) {
-> +			/*
-> +			 * Lockless RB-tree lookups are prone to false-negatives.
-> +			 * If they find something, it's good. If they do not find,
-> +			 * it needs to be validated.
-> +			 */
-> +			return uprobe;
-> +		}
-> +	} while (read_seqcount_retry(&uprobes_seqcount, seq));
-> +
-> +	/* Really didn't find anything. */
-> +	return NULL;
->  }
->  
->  static struct uprobe *__insert_uprobe(struct uprobe *uprobe)
->  {
->  	struct rb_node *node;
->  
-> -	node = rb_find_add(&uprobe->rb_node, &uprobes_tree, __uprobe_cmp);
-> +	node = rb_find_add_rcu(&uprobe->rb_node, &uprobes_tree, __uprobe_cmp);
->  	if (node)
->  		return get_uprobe(__node_2_uprobe(node));
->  
-> @@ -702,7 +729,9 @@ static struct uprobe *insert_uprobe(stru
->  	struct uprobe *u;
->  
->  	write_lock(&uprobes_treelock);
-> +	write_seqcount_begin(&uprobes_seqcount);
->  	u = __insert_uprobe(uprobe);
-> +	write_seqcount_end(&uprobes_seqcount);
->  	write_unlock(&uprobes_treelock);
->  
->  	return u;
-> @@ -936,7 +965,9 @@ static void delete_uprobe(struct uprobe
->  		return;
->  
->  	write_lock(&uprobes_treelock);
-> +	write_seqcount_begin(&uprobes_seqcount);
->  	rb_erase(&uprobe->rb_node, &uprobes_tree);
-> +	write_seqcount_end(&uprobes_seqcount);
->  	write_unlock(&uprobes_treelock);
->  	RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
->  	put_uprobe(uprobe);
-> 
-> 
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZo/lexQccHVyYW5qYXlA
+a2VybmVsLm9yZwAKCRCwwPkjG3B2nSWSAP40+KBbPkhEalekcuIWtipqJNWvWOv+
+HFovg3WjvmzQHQEApqvzcBklqoFjElN4F2mFoRixDur/X4XPbsFfhUiUoAY=
+=0Kvm
+-----END PGP SIGNATURE-----
+--=-=-=--
 
