@@ -1,131 +1,181 @@
-Return-Path: <linux-kernel+bounces-249496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03EBA92EC70
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:16:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C97FF92EC76
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C6F6B242CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:16:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A6C31F24C93
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E94316CD15;
-	Thu, 11 Jul 2024 16:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7F816CD1E;
+	Thu, 11 Jul 2024 16:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhMXRI0u"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="V/GStYAB"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C98155CB8;
-	Thu, 11 Jul 2024 16:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AFE15FCED
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720714554; cv=none; b=NYNr9Hs6ws0DpWIbCMsd1bj3VTKqqKZ7A2pHOARGEWGA5aBU8/YSqXJFmMEXm+MU5wwWkAfDNHXbowt8eWj6OmQ5DYn/RhuUCtYM7+xru3m7rNLiLuYimkp7OQd/v1+609gYVH2Hs5l2aZgW1tC4hsGbWQeGX+RP32V+hRG+yKs=
+	t=1720714663; cv=none; b=gPMG7/TI+VFLMzVTV2tQsImIBd9wA3v9D9LWxJk3ZW61MuEGemUzu6MaEHP60zDmDHvL4Xqb2qjXys/s+xq2BUFYlFlWhfgrj8VFhp53W1BTkDgxZwgBma4jbv/rWwyJrOZ+bSLWWriJQt9WUsEWO9qZrbnKf64BsTI2u8HS4vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720714554; c=relaxed/simple;
-	bh=nu4E+KG9xuPTzxWlnYTkEQF4+5J5OTZxHGatiEDscYA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FzbWmtJs3/+VQWOYjJ2+glZMTF1pp/lfm95odM2bN5DQnpY9uRLJvJpRyIqG+6T6WrpOvcVdNK1WNkXIkv1yPOGXghkQcnQjseFLoX9pv5GIZ7zWQXjeL5QcHJjHRUO6Rpa5AUEjrUEoXd+LLMUQBX+slO8ML+Nnj9euCDxFg9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhMXRI0u; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720714552; x=1752250552;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=nu4E+KG9xuPTzxWlnYTkEQF4+5J5OTZxHGatiEDscYA=;
-  b=DhMXRI0u1LRtD6MsfSwQSBtRv2Ui830u1omWKtfNbqUcZQJY/lY3RUwt
-   z0LeU22jg5unc8bhG3kaii2t7lJZ1fVnq5/Ni1BeZEvVMjFcRm1ZlgNDF
-   OrFAASAnIKhdzDO4s1JLm6O00sahncFQs8shQ4AYH6MRRSxt+MN6LURZh
-   VvxYGTPD2oLtc6aM/5RsR8XE1dmr/z0sYg7aNVazlsgz0JnSoxe3U4ShZ
-   lxW5DMv/VS0cWSZZAstqvU2/MiKx9bSbkkn6lpSj2oiXnV4VKRzX5ifSh
-   UpvB3/21yk/JxeyOpSEPva4O2x1nUQsPjb7NmbkQqDSeOs/DV//hzU0Fx
-   g==;
-X-CSE-ConnectionGUID: rps1EfeuTripT+iN6Kg5mg==
-X-CSE-MsgGUID: 0+dMQ5nSQvOmgzTB6cie5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="18256354"
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="18256354"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 09:15:50 -0700
-X-CSE-ConnectionGUID: jY/+j+1lTM+b/+U45mdZ6Q==
-X-CSE-MsgGUID: SXO4woDFR5i9HztP026IJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="53559170"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by orviesa005.jf.intel.com with ESMTP; 11 Jul 2024 09:15:49 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@kernel.org,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com,
-	linux-kernel@vger.kernel.org
-Cc: Kan Liang <kan.liang@linux.intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] perf/x86/intel: Fix ARCH_PERFMON_NUM_COUNTER_LEAF
-Date: Thu, 11 Jul 2024 09:16:36 -0700
-Message-Id: <20240711161636.1428705-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1720714663; c=relaxed/simple;
+	bh=icmjqQVU09TQsUQ4NSbJkvLGbPtBAoNUWY+Hh+IPwAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BERzHyOlrrKHbemgjW29dZ52kH54x1eusLotcaYtIr585qFGIcNI+LdhgZGTbbeAZdAUwVWHkSCdQI4xbNMXJx77rGDjIgkHAZ7iVeiM2kOxs8P0bW9vouQ9qM3+RiVFdLxBs5v5m0pW2HmHgTHdIDNQOQah9tu2Ty7fDlXnX5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=V/GStYAB; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5001a.ext.cloudfilter.net ([10.0.29.139])
+	by cmsmtp with ESMTPS
+	id RvcksoPmXg2lzRwUHsK6Pm; Thu, 11 Jul 2024 16:17:41 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id RwUGsjpqM6MrpRwUHs0yJH; Thu, 11 Jul 2024 16:17:41 +0000
+X-Authority-Analysis: v=2.4 cv=SJGJV/vH c=1 sm=1 tr=0 ts=669005a5
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8 a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8
+ a=rOUgymgbAAAA:8 a=Gf48L2LQQ7vtOYgXLocA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=Fp8MccfUoT0GBdDC_Lng:22 a=zSyb8xVVt2t83sZkrLMb:22
+ a=MP9ZtiD8KjrkvI0BhSjB:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=QFayY9OLIsbCjng76Xlt7fbWEqnvChhgZ71hG8FAC/U=; b=V/GStYAB19o5YMk7XKHDAAu+1X
+	Wy94kL5iwT13UmhXrVm8RbDLKrtjyfFYZh2nb8QTIzl6oZ5mcWBRDDAlEaNohZ7u9yEpXZtaDZB7/
+	aDeBp3gfE1gp615+qxhnIrKJynKRhYFdGhIkdvNhm3UuDtsLgvHCDEoqxvgTlBfOjyhedww9FrINo
+	bs+f9HxckPxl0OJviOSmY+gJryfoDv0hr+sWHLBgZl78ant8ePyHT6oR7spK0aRt7irzUD3om5Vfk
+	GDc6MF96qN8kwFrR6lvNC1wOD+03mLKGTb7paGlrf0btj4e+aJ8JzjrN0YKFnMDKEirTAvbWn0TLX
+	UmciDfRA==;
+Received: from [201.172.173.139] (port=56410 helo=[192.168.15.4])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sRwUF-004Ium-0A;
+	Thu, 11 Jul 2024 11:17:39 -0500
+Message-ID: <bd2f6ce6-f6c9-4aac-b34f-d9c55cefd17d@embeddedor.com>
+Date: Thu, 11 Jul 2024 10:17:37 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] scsi: mpi3mr: struct
+ mpi3_event_data_pcie_topology_change_list: Replace 1-element array with
+ flexible array
+To: Kees Cook <kees@kernel.org>,
+ Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
+Cc: Kashyap Desai <kashyap.desai@broadcom.com>,
+ Sumit Saxena <sumit.saxena@broadcom.com>,
+ Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Ranjan Kumar <ranjan.kumar@broadcom.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, mpi3mr-linuxdrv.pdl@broadcom.com,
+ linux-scsi@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240711155446.work.681-kees@kernel.org>
+ <20240711155637.3757036-2-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240711155637.3757036-2-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sRwUF-004Ium-0A
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:56410
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfMq5aLU57g0F/0j3JApIfiLF6QW1Rwa88fPzv/NvN3p+xzU1AaBZh/vvBQ91oB4XhBiW9cT+U7UZ4JzJvs/e5BdmWB68oqdyRsyws0R9FevdeWgS6nZ1
+ uyNHXj16kjjtGq2vM1HjR8bMC1vtiUNhh/rERk4bBK2sEnizrWomf4UT8qipu3ywTNyWnsVRVKmM01y+OJuAT82rSOxaoiWOB40+3gAaIaPjSj+jJ48pz1Yt
 
-From: Kan Liang <kan.liang@linux.intel.com>
 
-The EAX of the CPUID Leaf 023H enumerates the mask of valid sub-leaves.
-To tell the availability of the sub-leaf 1 (enumerate the counter mask),
-perf should check the bit 1 (0x2) of EAS, rather than bit 0 (0x1).
 
-The error is not user-visible on bare metal. Because the sub-leaf 0 and
-the sub-leaf 1 are always available. However, it may bring issues in a
-virtualization environment when a VMM only enumerates the sub-leaf 0.
+On 11/07/24 09:56, Kees Cook wrote:
+> Replace the deprecated[1] use of a 1-element array in
+> struct mpi3_event_data_pcie_topology_change_list with a modern
+> flexible array.
+> 
+> Additionally add __counted_by annotation since port_entry is only ever
+> accessed in loops controlled by num_entries. For example:
+> 
+>          for (i = 0; i < event_data->num_entries; i++) {
+>                  handle =
+>                      le16_to_cpu(event_data->port_entry[i].attached_dev_handle);
+> 
+> No binary differences are present after this conversion.
+> 
+> Link: https://github.com/KSPP/linux/issues/79 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Fixes: eb467aaac21e ("perf/x86/intel: Support Architectural PerfMon Extension leaf")
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Cc: stable@vger.kernel.org
----
- arch/x86/events/intel/core.c      | 4 ++--
- arch/x86/include/asm/perf_event.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index cd8f2db6cdf6..3fb81f7b618c 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -4842,8 +4842,8 @@ static void update_pmu_cap(struct x86_hybrid_pmu *pmu)
- 	if (ebx & ARCH_PERFMON_EXT_EQ)
- 		pmu->config_mask |= ARCH_PERFMON_EVENTSEL_EQ;
- 
--	if (sub_bitmaps & ARCH_PERFMON_NUM_COUNTER_LEAF_BIT) {
--		cpuid_count(ARCH_PERFMON_EXT_LEAF, ARCH_PERFMON_NUM_COUNTER_LEAF,
-+	if (sub_bitmaps & ARCH_PERFMON_NUM_COUNTER_LEAF) {
-+		cpuid_count(ARCH_PERFMON_EXT_LEAF, ARCH_PERFMON_NUM_COUNTER_LEAF_BIT,
- 			    &eax, &ebx, &ecx, &edx);
- 		pmu->cntr_mask64 = eax;
- 		pmu->fixed_cntr_mask64 = ebx;
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 91b73571412f..41ace8431e01 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -190,7 +190,7 @@ union cpuid10_edx {
- #define ARCH_PERFMON_EXT_UMASK2			0x1
- #define ARCH_PERFMON_EXT_EQ			0x2
- #define ARCH_PERFMON_NUM_COUNTER_LEAF_BIT	0x1
--#define ARCH_PERFMON_NUM_COUNTER_LEAF		0x1
-+#define ARCH_PERFMON_NUM_COUNTER_LEAF		BIT(ARCH_PERFMON_NUM_COUNTER_LEAF_BIT)
- 
- /*
-  * Intel Architectural LBR CPUID detection/enumeration details:
+Thanks
 -- 
-2.38.1
+Gustavo
 
+> ---
+> Cc: Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
+> Cc: Kashyap Desai <kashyap.desai@broadcom.com>
+> Cc: Sumit Saxena <sumit.saxena@broadcom.com>
+> Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: Ranjan Kumar <ranjan.kumar@broadcom.com>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: mpi3mr-linuxdrv.pdl@broadcom.com
+> Cc: linux-scsi@vger.kernel.org
+> Cc: linux-hardening@vger.kernel.org
+> ---
+>   drivers/scsi/mpi3mr/mpi/mpi30_ioc.h | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/scsi/mpi3mr/mpi/mpi30_ioc.h b/drivers/scsi/mpi3mr/mpi/mpi30_ioc.h
+> index ae74fccc65b8..c9fa0d69b75f 100644
+> --- a/drivers/scsi/mpi3mr/mpi/mpi30_ioc.h
+> +++ b/drivers/scsi/mpi3mr/mpi/mpi30_ioc.h
+> @@ -542,9 +542,6 @@ struct mpi3_event_data_pcie_enumeration {
+>   #define MPI3_EVENT_PCIE_ENUM_ES_MAX_SWITCHES_EXCEED         (0x40000000)
+>   #define MPI3_EVENT_PCIE_ENUM_ES_MAX_DEVICES_EXCEED          (0x20000000)
+>   #define MPI3_EVENT_PCIE_ENUM_ES_RESOURCES_EXHAUSTED         (0x10000000)
+> -#ifndef MPI3_EVENT_PCIE_TOPO_PORT_COUNT
+> -#define MPI3_EVENT_PCIE_TOPO_PORT_COUNT         (1)
+> -#endif
+>   struct mpi3_event_pcie_topo_port_entry {
+>   	__le16             attached_dev_handle;
+>   	u8                 port_status;
+> @@ -585,7 +582,7 @@ struct mpi3_event_data_pcie_topology_change_list {
+>   	u8                                     switch_status;
+>   	u8                                     io_unit_port;
+>   	__le32                                 reserved0c;
+> -	struct mpi3_event_pcie_topo_port_entry     port_entry[MPI3_EVENT_PCIE_TOPO_PORT_COUNT];
+> +	struct mpi3_event_pcie_topo_port_entry     port_entry[] __counted_by(num_entries);
+>   };
+>   
+>   #define MPI3_EVENT_PCIE_TOPO_SS_NO_PCIE_SWITCH          (0x00)
 
