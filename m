@@ -1,249 +1,114 @@
-Return-Path: <linux-kernel+bounces-249091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DA092E690
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBE492E6A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6272E1F2186A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:27:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3638E1F260B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DD715B147;
-	Thu, 11 Jul 2024 11:22:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D471607B7;
+	Thu, 11 Jul 2024 11:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IrkFdZvI"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RhXgsXmc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A431915ECCF
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A55215B10A;
+	Thu, 11 Jul 2024 11:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720696956; cv=none; b=QhAdXak+Gq6XoYBC2dseaRkrgdgedcJPwkrnqLi5+XdH4NrJtIBSHVWAP1eATNCbTm2hEus5cXvjTvxe5ztqDV8eKYQQ4gnFe0wLDBtVjQs9seo2xXkzWfb4mnMdORPvcaRD3s68h4Ius6Vocu/Rkz5dn04+Sq8s2Er0zRQyUe0=
+	t=1720697061; cv=none; b=fl8DVLZUH8nx5ZOzyMRCEVP98N+jltAK7HkmZn51sZKwg2D/o1AYVB/3FdnOK12g7LaY++6mE2beZfuuZfCcu8pRUJ8KI3dXTgg87cUgY5yFUCo7Gn9XiQJ/ul+noBnkoGATMSyimUv7W50KyHtYdClgPLOl6J3cgJjutyP/da4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720696956; c=relaxed/simple;
-	bh=oBDnAag5gQlhrAcOgNYYluUSpvZY5u+u2lJdb7p7nfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G9tJFS+vHdVOX37wWQFKqO6hJULLorPPFzy0KzUAokm3SCP8Emmsvd1XWbvTFks2naEfRUeq7+dgXioL3hdhEoMPm6OpubJUj1ItibsBUagAIurFDCLtkIu2cJZuc33WMtR9pRZbnArSdBaeqmnwEtsE/OOqR4/2LskIZ4mSPXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IrkFdZvI; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ec61eeed8eso9050211fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:22:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720696952; x=1721301752; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZRrUzB1pBpPbCjosy572/8SxcZFgnM7FQHnyffhGyG0=;
-        b=IrkFdZvIxHP0OyROexXgabKbNlMDKnnMwb0JQRfhAFCBOmPdZ2AILejoMasGBVzwiW
-         JCTlYW6uoZZ8jPFbi5V2WpWxBPEk/HfvgcR0kEoLavWDgPCaQXhWSo9X+6rXjjmtws+x
-         Ce2d3DXV29gaHnASpfjDrVZagHwHSqcX9sIDfmAo4j5u2DBlDIvWSkrvhfBSRZQyU3KU
-         5RUyZI4K3YVLS70VThxB12AYTxgblH5VFi1fsNINOadttD0XLLCcdnLCLDFhNRus1oAZ
-         lAPWOZ7h+AvlTtXuRiU1XIyc/8gzZpvryqH+eykeLjQvB3d27P7iGrTyw4Xkcbmlqm+t
-         qanA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720696952; x=1721301752;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZRrUzB1pBpPbCjosy572/8SxcZFgnM7FQHnyffhGyG0=;
-        b=Z4WP451gQW5unDxEPrH/pBmtIrDO8X/cU0Tvav85Kaw89w2gOk+JzHJwlXJAJ+7YBq
-         ZiXqKa9kFqMP3+VhGN1T878HGUruRK3eCoGlgiIEew6+DbHFJAta28wX+qqEyOxgnPxK
-         D34Ildtqb5VZXCayNu4v0R9c88j4sD6u3GcegcLYr+oq58/OFVK8nxCXxbjFFyW9AgPY
-         jYqYPxvERGtWb3AOnw2p5G14BFA2k1Ls6RsSIjsl6kkcQelh3dHONrWEaAxJKAMPTBEL
-         GzDI4hh1iEgtgZT8Ner479NdYgy4pWL+5K9lHFnQKvHLCgLYZDNt68fMz7XFFspQjWbv
-         6DSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWstV4i1a+MZZLpsDUQm4rH7O1gIjFDTUU+XhYMfTs7NtebCg/sOAHrzKXqyIcDfAc1MOU8nOBTYpefKnNWgkiWzEyD7SrCm1o0f1eo
-X-Gm-Message-State: AOJu0YxR/rEFvHZj3DTW0PagN1Pvf4wrn4b0OVIsuyS1pYwLN0Wf0JtQ
-	3eUehReh6tdgtE++wMTf95aBjA5Hz2xPK07a19PemTNNmbqpy8r6rGyqaGmUdZA=
-X-Google-Smtp-Source: AGHT+IHe5/f+cNlVXJfd3IJFg2qfPezKjG2oDodKbnqowuFTS/9Cv35Wjs9n9ATrOYrBf/wOUzZj5Q==
-X-Received: by 2002:a2e:7307:0:b0:2ee:6cda:637b with SMTP id 38308e7fff4ca-2eeb318aaa8mr51695021fa.35.1720696951745;
-        Thu, 11 Jul 2024 04:22:31 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279bc37c05sm11595235e9.35.2024.07.11.04.22.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 04:22:31 -0700 (PDT)
-Message-ID: <aa20591f-3939-4776-9025-b8d7159f4c63@linaro.org>
-Date: Thu, 11 Jul 2024 12:22:30 +0100
+	s=arc-20240116; t=1720697061; c=relaxed/simple;
+	bh=o/2EvU8Ne6JzHNgJUsH762dUzuzFgrow+gSs4PLwHAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dVCG390ZOtH78aqh67JdihcxlsWW8VgyXt8RUMv4bYP22X0RA591+VksCD/PKEFEmNTrAxZIi394DMtqWJQs+NkN1a5hkVtpoUyYTjWytssBR0EKiQ/rE8VQWkRZlqKeyb44JGJd/tlZBB5TsLW62N2VDXoQyRVcM04CRrrVDy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RhXgsXmc; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720697061; x=1752233061;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=o/2EvU8Ne6JzHNgJUsH762dUzuzFgrow+gSs4PLwHAA=;
+  b=RhXgsXmcnjKzr6B4rYihs3tmDxiz6p9GyMYYOEhCW4+RZ2y/k+t2FmrO
+   mde0V+TzEc6RdR8uD0UbUnwVcDhpzI1G70rSv+kk4wdw4mi+WkYNt6S+G
+   j1XJVwC46t2C32+OyX4FITIKoiPAyPImD2HkLDNwG8IL5u8YXJN4wh/GH
+   /z5eOs4n1VfxI3BAWj5hO98qfvyMeSgQgultvGfvIlGD1VlCbv5nsMv84
+   xJVJahtl6gkt6dls86A6johukKB4Fw2N5AzS6y56lqz2RfJjIxRArqS0z
+   2ITiQyA3gtJk9J7vfw8ojTkYdO7HKP7dOChBHvMQWpl9wrRRDigt4Hdx4
+   w==;
+X-CSE-ConnectionGUID: sEzytX45QsSQMMOCGfcjsQ==
+X-CSE-MsgGUID: mq5Q3y7SS0aOhso5V7gbjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="40582706"
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="40582706"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 04:24:20 -0700
+X-CSE-ConnectionGUID: VsJm3oa9S3yZ6uUi3Zm8Fw==
+X-CSE-MsgGUID: VrbT04LEQ3+kl1RHWDS/FA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="49178595"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.246.252])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 04:24:12 -0700
+Date: Thu, 11 Jul 2024 13:24:09 +0200
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Zhenyu Wang <zhenyuw@linux.intel.com>,
+	Zhi Wang <zhi.wang.linux@gmail.com>,
+	"open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS" <intel-gfx@lists.freedesktop.org>,
+	"open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS" <intel-xe@lists.freedesktop.org>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:INTEL GVT-g DRIVERS (Intel GPU Virtualization)" <intel-gvt-dev@lists.freedesktop.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+	"open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
+	Zhi Wang <zhiwang@kernel.org>
+Subject: Re: [PATCH v4 3/6] drm/i915: Make I2C terminology more inclusive
+Message-ID: <Zo_A2Ykh3-YI7Nff@ashyti-mobl2.lan>
+References: <20240711052734.1273652-1-eahariha@linux.microsoft.com>
+ <20240711052734.1273652-4-eahariha@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: ov5675: Elongate reset to first transaction
- minimum gap
-To: Quentin Schulz <quentin.schulz@cherry.de>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Jacopo Mondi <jacopo@jmondi.org>
-Cc: Johan Hovold <johan@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240711-linux-next-ov5675-v1-0-69e9b6c62c16@linaro.org>
- <20240711-linux-next-ov5675-v1-2-69e9b6c62c16@linaro.org>
- <fcd0db64-6104-47a6-a482-6aa3eec702bc@cherry.de>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <fcd0db64-6104-47a6-a482-6aa3eec702bc@cherry.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711052734.1273652-4-eahariha@linux.microsoft.com>
 
-On 11/07/2024 11:40, Quentin Schulz wrote:
-> Hi Bryan,
+Hi Easwar,
+
+On Thu, Jul 11, 2024 at 05:27:31AM +0000, Easwar Hariharan wrote:
+> I2C v7, SMBus 3.2, and I3C 1.1.1 specifications have replaced "master/slave"
+> with more appropriate terms. Inspired by Wolfram's series to fix drivers/i2c/,
+> fix the terminology for users of I2C_ALGOBIT bitbanging interface, now that
+> the approved verbiage exists in the specification.
 > 
-> On 7/11/24 12:20 PM, Bryan O'Donoghue wrote:
->> The ov5675 specification says that the gap between XSHUTDN deassert 
->> and the
->> first I2C transaction should be a minimum of 8192 XVCLK cycles.
->>
->> Right now we use a usleep_rage() that gives a sleep time of between about
->> 430 and 860 microseconds.
->>
->> On the Lenovo X13s we have observed that in about 1/20 cases the current
->> timing is too tight and we start transacting before the ov5675's reset
->> cycle completes, leading to I2C bus transaction failures.
->>
->> The reset racing is sometimes triggered at initial chip probe but, more
->> usually on a subsequent power-off/power-on cycle e.g.
->>
->> [   71.451662] ov5675 24-0010: failed to write reg 0x0103. error = -5
->> [   71.451686] ov5675 24-0010: failed to set plls
->>
->> The current quiescence period we have is too tight, doubling the minimum
->> appears to fix the issue observed on X13s.
->>
->> Fixes: 49d9ad719e89 ("media: ov5675: add device-tree support and 
->> support runtime PM")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> ---
->>   drivers/media/i2c/ov5675.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
->> index 92bd35133a5d..0498f8f3064d 100644
->> --- a/drivers/media/i2c/ov5675.c
->> +++ b/drivers/media/i2c/ov5675.c
->> @@ -1018,8 +1018,13 @@ static int ov5675_power_on(struct device *dev)
->>       gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
->> -    /* 8192 xvclk cycles prior to the first SCCB transation */
->> -    usleep_range(delay_us, delay_us * 2);
->> +    /* The spec calls for a minimum delay of 8192 XVCLK cycles prior to
->> +     * transacting on the I2C bus, which translates to about 430
->> +     * microseconds at 19.2 MHz.
->> +     * Testing shows the range 8192 - 16384 cycles to be unreliable.
->> +     * Grant a more liberal 2x -3x clock cycle grace time.
->> +     */
->> +    usleep_range(delay_us * 2, delay_us * 3);
-> 
-> Would it make sense to have power_off have the same logic? We do a 
-> usleep_range of those same values currently, so keeping them in sync 
-> seems to make sense to me.
+> Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Acked-by: Zhi Wang <zhiwang@kernel.org>
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
-I have no evidence to suggest there's a problem on the shutdown path, 
-that's why I left the quiescence period as-is there.
+good job! Thanks for taking care of this!
 
-> Also, I'm wondering if it isn't an issue with the gpio not being high 
-> right after gpoiod_set_value_cansleep() returns, i.e. the time it 
-> actually takes for the HW to reach the IO level that means "high" for 
-> the camera. And that this increased sleep is just a way to mitigate that?
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
 
-No, that's not what I found.
-
-I tried changing
-
-         usleep_range(2000, 2200);
-
-to
-         usleep_range(200000, 220000);
-
-but could still elicit the I2C transaction failure. If the time it took 
-for the GPIO to hit logical 1 were the issue then multiplying the reset 
-time by 100 would certainly account for that.
-
-// BOD set the chip into reset
-         gpiod_set_value_cansleep(ov5675->reset_gpio, 1);
-
-// BOD apply power
-         ret = regulator_bulk_enable(OV5675_NUM_SUPPLIES, ov5675->supplies);
-         if (ret) {
-                 clk_disable_unprepare(ov5675->xvclk);
-                 return ret;
-         }
-
-         /* Reset pulse should be at least 2ms and reset gpio released 
-only once
-          * regulators are stable.
-          */
-
-// BOD spec specifies 2 milliseconds here not a count of XVCLKs
-         usleep_range(2000, 2200);
-
-         gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
-
-// BOD spec calls for a _minimum_ of 8192 XVCLK cycles before I2C
-         /* 8192 xvclk cycles prior to the first SCCB transation */
-         usleep_range(delay_us, delay_us * 2);
-
-The issue is initiating an I2C transaction too early _after_ reset 
-completion not the duration of that reset.
-
-As I stated in the cover letter, I tried a longer reset duration, a 
-higher drive-strength on the GPIO as well as I didn't put in my cover 
-letter, inverting the logic of the GPIO reset, which unsurprisingly 
-didn't work.
-
-No matter how long we hold the chip in reset, unless we give more grace 
-time _subsequent_ to the reset before initiating an I2C transaction, we 
-will encounter transaction failures.
-
-This is a fairly common and logical fault if you think about it.
-
-XVCLK is providing a clock to the ov5675 core to "do stuff" whatever 
-that stuff is. Bring up an internal firmware, lock a fundamental PLL - 
-whatever.
-
-If we start an I2C transaction before the hypothetical internal core has 
-booted up then - meh no bueno we'll get no transaction response.
-
-That's the error - speaking too soon.
-
-A little like myself in the mornings, cranky before I've had my coffee 
-and unresponsive.
-
-;)
-
-> With this patch we essentially postpone the power_on by another 430ms 
-> making it almost a full second before we can start using the camera. 
-> That's quite a lot I think? We don't have a usecase right now that 
-> requires this to be blazing fast (and we anyway would need at the very 
-> least 430ms), so take this remark as what it is, a remark.
-
-Not a full second, a millisecond.
-
-8/10ths of 1 millisecond instead of 4/10ths of one millisecond.
-
-19.2MHz is 52.083333333333 nanoseconds per clock
-
-52.083333333333 * 8192 => 426666 nanoseconds => 0.426666 milliseconds or 
-426.6 microseconds
-
-So our post reset quiesence minimum @ 19.2MHz moves from 426.6 
-microseconds to 853.
-
-> The change looks fine to me even though it feels like a band-aid patch.
-
-I mean it's not a second - if you feel very strongly that 426 
-milliseconds * 2 is wrong, I guess I could add some more complex logic 
-however I like this simple fix for backporting.
-
----
-bod
+Thanks,
+Andi
 
