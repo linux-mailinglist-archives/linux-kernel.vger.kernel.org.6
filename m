@@ -1,132 +1,201 @@
-Return-Path: <linux-kernel+bounces-249109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFCE92E6C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:33:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8AB592E6C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4081C22D7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:33:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2401F27D64
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E522E15FA8B;
-	Thu, 11 Jul 2024 11:29:08 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BABA155A52;
+	Thu, 11 Jul 2024 11:32:42 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF4E1591E2;
-	Thu, 11 Jul 2024 11:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C65502A9
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720697348; cv=none; b=tk9LYRcC7spDRJAY94pcy0B+of9mXadzayaeH1O7LmrOWinSPHktlrLSB9NqNDJcdPMwQeBz/+Tmcu+CHEhoTBk97fe7r4Gy5gH1SU8oRxKbEMIBrVKz8yhlI/Hj9bfMDdLwrYvqOPURmR3yFbegO6xD5mK1Kf86j9aSNF5rUDY=
+	t=1720697562; cv=none; b=JvhaZ+jAJQUu1HPfFBcyYb04jgeIVQ1TIJLf6ZecKjfZPeTpf4p2La7rYotcHHJcmTj6nOpQs29qss2wHj9zwiN05QQrbZbiESNaL9uu8rWm4S5RWO+kCOt2paW/Hmla6aRND3r++2SJhI9V9eei4p+NzjusSFC/tkX3Z41nPDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720697348; c=relaxed/simple;
-	bh=El4eX6/oaBBEXxAVVLSzLu3U0qCVTLODUHr1DjsAVPU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mAqAmnuRbi+N31QpCRrGIJk97rsugjMhgabDBQIOoedwyuX7HLB7sDUw+v1g2Wv3+GZnQ4ns/3TDS4EGk5lX1DQlsUsVE/rK2OR43/8kVZzQepK+m2wudnYuNzBuvFVoocDa6s6S9QrQgZOo6jUGbIOUgYMbNQ3oKHHdN4U0Jlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 11174FF809;
-	Thu, 11 Jul 2024 11:28:56 +0000 (UTC)
-Message-ID: <41bfecdd-b301-4129-bebe-ee8211a2e1d4@ovn.org>
-Date: Thu, 11 Jul 2024 13:28:56 +0200
+	s=arc-20240116; t=1720697562; c=relaxed/simple;
+	bh=0JwR7lEGUDpJ/jwrkFfRyuMt3+odb34udPxer4bnFv8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Iob/Bl+zZ3JJVDnsk+UNIXdbMLh1KW/9JBaRr6n2txbW3rGFYGx1faDd5L2dUI2MP1AgW4JKDvJDqhEmAizdacZcdjOaztnqrNNJC71hTvKPZB9mKfZCfnTMaJJN0/rmcxgwGXNWzjqb7M4FDyCxbODuLCIsHrS223Iy4rhxoq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 3f0dd2003f7911ef93f4611109254879-20240711
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:7e923a69-7783-4b3c-8c14-1eab052d89ce,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:0ca1cc0f3b7f0a80bcdb1949449e7252,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,URL:1
+	1|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
+X-UUID: 3f0dd2003f7911ef93f4611109254879-20240711
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <jianghaoran@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1737779477; Thu, 11 Jul 2024 19:32:25 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 2855A16002097;
+	Thu, 11 Jul 2024 19:32:25 +0800 (CST)
+X-ns-mid: postfix-668FC2C9-10389610098
+Received: from [172.30.60.215] (unknown [172.30.60.215])
+	by node4.com.cn (NSMail) with ESMTPA id 32A6E16002096;
+	Thu, 11 Jul 2024 11:32:24 +0000 (UTC)
+Message-ID: <e913863b2d54d69a19cb278e4c25377fabeb1963.camel@kylinos.cn>
+Subject: Re: [PATCH] mm/mmap: Align the length parameter of munmap with
+ hugepage size
+From: Haoran Jiang <jianghaoran@kylinos.cn>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, vbabka@suse.cz, 
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org
+Date: Thu, 11 Jul 2024 19:32:23 +0800
+In-Reply-To: <96c9fe70-f787-42e2-b2e7-4ccad0d2e805@lucifer.local>
+References: <20240710054558.1959243-1-jianghaoran@kylinos.cn>
+	 <96c9fe70-f787-42e2-b2e7-4ccad0d2e805@lucifer.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.0-1build2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: dev@openvswitch.org, linux-kernel@vger.kernel.org,
- Eric Dumazet <edumazet@google.com>, linux-kselftest@vger.kernel.org,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- i.maximets@ovn.org
-Subject: Re: [ovs-dev] [PATCH net-next v2] selftests: openvswitch: retry
- instead of sleep
-To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
-References: <20240710090500.1655212-1-amorenoz@redhat.com>
-Content-Language: en-US
-From: Ilya Maximets <i.maximets@ovn.org>
-Autocrypt: addr=i.maximets@ovn.org; keydata=
- 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
-In-Reply-To: <20240710090500.1655212-1-amorenoz@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: i.maximets@ovn.org
 
-On 7/10/24 11:04, Adrian Moreno wrote:
-> There are a couple of places where the test script "sleep"s to wait for
-> some external condition to be met.
-> 
-> This is error prone, specially in slow systems (identified in CI by
-> "KSFT_MACHINE_SLOW=yes").
-> 
-> To fix this, add a "ovs_wait" function that tries to execute a command
-> a few times until it succeeds. The timeout used is set to 5s for
-> "normal" systems and doubled if a slow CI machine is detected.
-> 
-> This should make the following work:
-> 
-> $ vng --build  \
->     --config tools/testing/selftests/net/config \
->     --config kernel/configs/debug.config
-> 
-> $ vng --run . --user root -- "make -C tools/testing/selftests/ \
->     KSFT_MACHINE_SLOW=yes TARGETS=net/openvswitch run_tests"
-> 
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
->  .../selftests/net/openvswitch/openvswitch.sh  | 45 +++++++++++++++----
->  .../selftests/net/openvswitch/ovs-dpctl.py    |  1 +
->  2 files changed, 38 insertions(+), 8 deletions(-)
+On Wed, 2024-07-10 at 09:24 +0100, Lorenzo Stoakes wrote:
+> On Wed, Jul 10, 2024 at 01:45:58PM GMT, Haoran Jang wrote:
+> > From: Haoran Jiang <jianghaoran@kylinos.cn>
+> >=20
+> > munmap hugepge mappings, if the length of the range to munmap
+> > is not aligned with hugepage size,munmap will fail.
+> > In the hugetlb_vm_op_split function, an error will be returned
+> > if startaddr+len is not hugepage size aligned.
+> >=20
+> > before this patch:
+> > in "tools/testing/selftests/mm/hugepage-mremap.c"
+> > modify DEFAULT_LENGTH_MB to 3M,compile and run,
+> > the following error message is displayed
+> >=20
+> > -------------------------
+> > running ./hugepage-mremap
+> > -------------------------
+> > TAP version 13
+> > 1..1
+> > Map haddr: Returned address is 0x7eaa40000000
+> > Map daddr: Returned address is 0x7daa40000000
+> > Map vaddr: Returned address is 0x7faa40000000
+> > Address returned by mmap() =3D 0x7cb34b000000
+> > Mremap: Returned address is 0x7faa40000000
+> > First hex is 0
+> > First hex is 3020100
+> > Bail out! mremap: Expected failure, but call succeeded
+> >=20
+> > Signed-off-by: Haoran Jiang <jianghaoran@kylinos.cn>
+> > ---
+> > =C2=A0mm/mmap.c | 10 +++++++++-
+> > =C2=A01 file changed, 9 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/mm/mmap.c b/mm/mmap.c
+> > index 83b4682ec85c..0b3a60bf9b6f 100644
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -2733,7 +2733,15 @@ int do_vmi_munmap(struct vma_iterator *vmi,
+> > struct mm_struct *mm,
+> > =C2=A0	if ((offset_in_page(start)) || start > TASK_SIZE || len >
+> > TASK_SIZE-start)
+> > =C2=A0		return -EINVAL;
+> >=20
+> > -	end =3D start + PAGE_ALIGN(len);
+> > +	vma =3D find_vma(mm, start);
+> > +	if (!vma) {
+> > +		if (unlock)
+> > +			mmap_write_unlock(mm);
+> > +		return 0;
+> > +	}
+>=20
+> I really don't like this, firstly we're duplicating the VMA lookup
+> (we
+> vma_find() below), and we fail to use the iterator here, and also we
+> are
+> duplicating the unlock logic.
+>=20
+> Also the semantics seem wrong, we are looking for a VMA that ends at
+> or
+> after start, so you're just checking to see if start is past the last
+> VMA
+> in the mm aren't you?
+>=20
+> This doesn't seem to be accomplishing anything too useful, unless I'm
+> missing something?
+>=20
+> > +
+> > +	end =3D start + ALIGN(len, vma_kernel_pagesize(vma));
+> > +
+>=20
+> This seems to be the 'action' part of the change, but I'm concerned
+> this is
+> completely broken, because you're using the result of find_vma()
+> passed
+> into vma_kernel_pagesize() which could find a VMA _after_ the input
+> range,
+> and end up unmapping a far wider range...
+>=20
+> I'm also wondering if we should be doing some hugetlb-specific logic
+> here,
+> or whether that belongs elsewhere?
+>=20
+> Liam can chime in on that.
+>=20
+> > =C2=A0	if (end =3D=3D start)
+> > =C2=A0		return -EINVAL;
+> >=20
+> > --
+> > 2.43.0
+> >=20
+1, While performing an MMAP operation,The length aligned with hugepage
+size.
 
-Seem like we don't have a signal from CI for some reason yet,
-but I tested this locally and it seem to work fine.  Either
-way it's a better way of doing things than sleep'n'hope.
+unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
+			      unsigned long prot, unsigned long flags,
+			      unsigned long fd, unsigned long pgoff)
+{
+    ...
+    if (is_file_hugepages(file)) {
+	len =3D ALIGN(len, huge_page_size(hstate_file(file)));
+    ...
+}
 
-Reviewed-by: Ilya Maximets <i.maximets@ovn.org>
+2,During the munmap, do_vmi_align_munmap->__split_vma(vmi, next, end,
+0)->hugetlb_vm_op_split.It will determine whether the end address is
+aligned with  hugepage size, and if the end address is not aligned,=20
+return fail. Is there expect the application to align the length?
+
+ hugetlb_vm_op_split(struct vm_area_struct *vma, unsigned long addr)
+ {
+ 	if (addr & ~(huge_page_mask(hstate_vma(vma))))
+		return -EINVAL;
+=20
+ }
+
+3,Or after the vma_find (vmi, end), recalculate the end address ?
+
+ex:
+vma =3D vma_find(vmi, end);
+...
+if (is_vm_hugetlb_page(vma))
+{
+	hugepage_size =3D huge_page_size(hstate_vma(vma));
+	end =3D start + ALIGN(len, hugepage_size);
+}
 
