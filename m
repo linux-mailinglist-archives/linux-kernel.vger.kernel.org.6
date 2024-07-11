@@ -1,69 +1,70 @@
-Return-Path: <linux-kernel+bounces-249894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3F192F14A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:45:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9186192F14D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 265B01F231A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4A691C22B49
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD5B1A00EB;
-	Thu, 11 Jul 2024 21:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57F91A01B3;
+	Thu, 11 Jul 2024 21:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qYulYDrM"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHNiSSJH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A7519FA9A;
-	Thu, 11 Jul 2024 21:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DF516EB56;
+	Thu, 11 Jul 2024 21:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720734304; cv=none; b=HopyppNB4Pegm/FJB+X19smGqKDQa7gymwpjJwLzXs9HKqoF0f+62hi/FWcIsyLhJ2zIkGuIYtUuozyVP4uRLUpcgtd7drLmZkW/h4zs/xgD+nWf/ZBIVY/1xLSq2Yca+z5GpdSKQkLX2Ipwsw61fBsztdrg/wH9Na5Tmvx7ZRw=
+	t=1720734323; cv=none; b=hJTO9D5XA/GSwdePXpBUWxWt8Grh3DKc4uLNq95pyKKqJfpU1vuqETdpwetz4eB1pKMBQHMEYFI4pktemaX/uSUikDOIOWTiznwPHsou36qlujhSeJ35hC1dFkql+CNNp3va+WdB2eNZzg0/y6Uowg0wKgxc5lHdLz8rNoxnZFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720734304; c=relaxed/simple;
-	bh=y4QCjrZp9udTHrKwao6/0x3F9ZJopGjZZ/0G6cebUoc=;
+	s=arc-20240116; t=1720734323; c=relaxed/simple;
+	bh=QVmj/Jbr30TXFGjMEZ9oiBF6UaF2jDj0AmtSMk7HJBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBafdQhwmY3O9X0S4poyWArAQ60EiShGHXyHV4sDAa5Vc1mxgELAmQ9j9jdWwhzJaiXZo5Nd5+am0PfR8WZd56MRsKCgvvs6I+yd1FsV4w/yo1uEDmR0T4xPtLJhfETZdDDYrPX5ewk15p3ez1geR64fvRNlUUunXKPWX3mU/mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qYulYDrM; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=Q7XTOdv/1NFK+VQFz08tWfPZaB/5T1Gst3uridfDy8E=; b=qYulYDrM5a+mSSnWjHLULZz/hV
-	oUxfKtOT1hcAbmxkqvrP10YQFASm2zRWpnNxxYNJtvZWOPlRGbtW+eOOcZ2dBESs1J4ZUyQs15b8a
-	GJAclUyRyEEiWwUp50qeWHmd7p6mk4FWPWI/JEFQejdTtvlzIsE48U9gbX/LJa8CyuxEskKygJcKI
-	aSwRuOnXrtmuRlbsy9eE1sTdvqgLUq0VfyE+wYVFal4lUfsD5uspAtEXIDRNhMbppxBr42qYjtKGx
-	ctYGGDemDT4SUngr/kkHGoFn5rWcCzTMnEDBYfDOFwgi1Y+ooK95kWDkTq02SqdVquNUXd8/pI5an
-	Egb4H2FA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sS1at-0000000Bgtl-13Yx;
-	Thu, 11 Jul 2024 21:44:51 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9B44230050D; Thu, 11 Jul 2024 23:44:50 +0200 (CEST)
-Date: Thu, 11 Jul 2024 23:44:50 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Mirsad Todorovac <mtodorovac69@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Peter Collingbourne <pcc@google.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] x86/syscall: Avoid memcpy() for ia32
- syscall_get_arguments()
-Message-ID: <20240711214450.GG27299@noisy.programming.kicks-ass.net>
-References: <20240708202202.work.477-kees@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhehuT326sV/9x7ulmVomkQLSbqkZOkyhEfu2eVF69K0z63qwbJ3eFGqJTdYA44QYXSy+4ngcFMlnf5pc32Pc/4M+DgvrBQyYrLeTFrOBQUl2u4mnzoYCLxt/4zXWVYOHcU2oMUCHEbAVQskwhNtnbaD7X1p+jAtvwBvqw8NhBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHNiSSJH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D2C9C116B1;
+	Thu, 11 Jul 2024 21:45:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720734323;
+	bh=QVmj/Jbr30TXFGjMEZ9oiBF6UaF2jDj0AmtSMk7HJBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bHNiSSJHuadX559D3gF/y0dVwskMq4a0uKW4LCf2RvIxv0aULq1J7jOgt5R1w35XR
+	 Rg7qbvT0TqhSmMnpLDJe7VaqGngrUHhAv9GSkoy050dKIXWsu3y7vhG204D6wxJOaD
+	 qvxcilkROIt+iwiGxPHk4pxmvQdi6gDDOgdsSdX8x1N4ZpfDI4IoE9BwVb9YW9v4zD
+	 W6MahICQo1+kcc/vgOlR9fFx6XQWNDXef6ezaD8YP4d6n5HGuNJRz9/9veiWlFdxWr
+	 9UmoeUtF9J9p0CeHkrG0ha6VDLq1oFYHWQh9AXtpit6HQags+qYr4V0FWq5gyDT4Jt
+	 LXPBTf1y3tD5Q==
+Date: Thu, 11 Jul 2024 14:45:18 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Wang, Weilin" <weilin.wang@intel.com>
+Cc: Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"Hunter, Adrian" <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Taylor, Perry" <perry.taylor@intel.com>,
+	"Alt, Samantha" <samantha.alt@intel.com>,
+	"Biggers, Caleb" <caleb.biggers@intel.com>
+Subject: Re: [RFC PATCH v16 8/8] perf test: Add test for Intel TPEBS counting
+ mode
+Message-ID: <ZpBSbjF3QP81_637@google.com>
+References: <20240706232956.304944-1-weilin.wang@intel.com>
+ <20240706232956.304944-9-weilin.wang@intel.com>
+ <CAM9d7chhVAG9wpWdQM4DRriM_kp9vjFj=_ak1+0qyO-sRdXs4w@mail.gmail.com>
+ <CO6PR11MB563567A7804F50AD5AA1F708EEDB2@CO6PR11MB5635.namprd11.prod.outlook.com>
+ <CAM9d7cgrX=hL_Y16ZrPr6NOsd2ApOWdDP2bWDSNcK2yp4Skn3A@mail.gmail.com>
+ <CO6PR11MB5635F6A59A405ED9CB63B8B0EEDB2@CO6PR11MB5635.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,77 +74,188 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708202202.work.477-kees@kernel.org>
+In-Reply-To: <CO6PR11MB5635F6A59A405ED9CB63B8B0EEDB2@CO6PR11MB5635.namprd11.prod.outlook.com>
 
-On Mon, Jul 08, 2024 at 01:22:06PM -0700, Kees Cook wrote:
-> Modern (fortified) memcpy() prefers to avoid writing (or reading) beyond
-> the end of the addressed destination (or source) struct member:
-> 
-> In function ‘fortify_memcpy_chk’,
->     inlined from ‘syscall_get_arguments’ at ./arch/x86/include/asm/syscall.h:85:2,
->     inlined from ‘populate_seccomp_data’ at kernel/seccomp.c:258:2,
->     inlined from ‘__seccomp_filter’ at kernel/seccomp.c:1231:3:
-> ./include/linux/fortify-string.h:580:25: error: call to ‘__read_overflow2_field’ declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Werror=attribute-warning]
->   580 |                         __read_overflow2_field(q_size_field, size);
->       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> As already done for x86_64 and compat mode, do not use memcpy() to
-> extract syscall arguments from struct pt_regs but rather just perform
-> direct assignments. Binary output differences are negligible, and actually
-> ends up using less stack space:
-> 
-> -       sub    $0x84,%esp
-> +       sub    $0x6c,%esp
-> 
-> and less text size:
-> 
->    text    data     bss     dec     hex filename
->   10794     252       0   11046    2b26 gcc-32b/kernel/seccomp.o.stock
->   10714     252       0   10966    2ad6 gcc-32b/kernel/seccomp.o.after
-> 
-> Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-> Closes: https://lore.kernel.org/lkml/9b69fb14-df89-4677-9c82-056ea9e706f5@gmail.com/
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: x86@kernel.org
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Brian Gerst <brgerst@gmail.com>
-> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-> Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> Cc: Peter Collingbourne <pcc@google.com>
-> ---
->  arch/x86/include/asm/syscall.h | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
-> index 2fc7bc3863ff..7c488ff0c764 100644
-> --- a/arch/x86/include/asm/syscall.h
-> +++ b/arch/x86/include/asm/syscall.h
-> @@ -82,7 +82,12 @@ static inline void syscall_get_arguments(struct task_struct *task,
->  					 struct pt_regs *regs,
->  					 unsigned long *args)
->  {
-> -	memcpy(args, &regs->bx, 6 * sizeof(args[0]));
-> +	args[0] = regs->bx;
-> +	args[1] = regs->cx;
-> +	args[2] = regs->dx;
-> +	args[3] = regs->si;
-> +	args[4] = regs->di;
-> +	args[5] = regs->bp;
->  }
+Hello,
 
-Just for my education on things foritfy; would something like:
+On Tue, Jul 09, 2024 at 06:23:51AM +0000, Wang, Weilin wrote:
+> > On Mon, Jul 8, 2024 at 9:58 PM Wang, Weilin <weilin.wang@intel.com>
+> > wrote:
+> > >
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: Namhyung Kim <namhyung@kernel.org>
+> > > > Sent: Monday, July 8, 2024 9:44 PM
+> > > > To: Wang, Weilin <weilin.wang@intel.com>
+> > > > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
+> > > > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
+> > > > <mingo@redhat.com>; Alexander Shishkin
+> > > > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Hunter,
+> > > > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.com>;
+> > > > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylor,
+> > Perry
+> > > > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>;
+> > Biggers,
+> > > > Caleb <caleb.biggers@intel.com>
+> > > > Subject: Re: [RFC PATCH v16 8/8] perf test: Add test for Intel TPEBS
+> > counting
+> > > > mode
+> > > >
+> > > > Hello Weilin,
+> > > >
+> > > > On Sat, Jul 6, 2024 at 4:30 PM <weilin.wang@intel.com> wrote:
+> > > > >
+> > > > > From: Weilin Wang <weilin.wang@intel.com>
+> > > > >
+> > > > > Intel TPEBS sampling mode is supported through perf record. The
+> > counting
+> > > > mode
+> > > > > code uses perf record to capture retire_latency value and use it in metric
+> > > > > calculation. This test checks the counting mode code.
+> > > > >
+> > > > > Signed-off-by: Weilin Wang <weilin.wang@intel.com>
+> > > > > ---
+> > > > >  .../perf/tests/shell/test_stat_intel_tpebs.sh  | 18
+> > ++++++++++++++++++
+> > > > >  1 file changed, 18 insertions(+)
+> > > > >  create mode 100755 tools/perf/tests/shell/test_stat_intel_tpebs.sh
+> > > > >
+> > > > > diff --git a/tools/perf/tests/shell/test_stat_intel_tpebs.sh
+> > > > b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
+> > > > > new file mode 100755
+> > > > > index 000000000000..fea8cb1b8367
+> > > > > --- /dev/null
+> > > > > +++ b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
+> > > > > @@ -0,0 +1,18 @@
+> > > > > +#!/bin/bash
+> > > > > +# test Intel TPEBS counting mode
+> > > > > +# SPDX-License-Identifier: GPL-2.0
+> > > > > +
+> > > > > +set -e
+> > > > > +
+> > > > > +# Use this event for testing because it should exist in all platforms
+> > > > > +event=cache-misses:R
+> > > > > +
+> > > > > +# Without this cmd option, default value or zero is returned
+> > > > > +echo "Testing without --record-tpebs"
+> > > > > +result=$(perf stat -e "$event" true 2>&1)
+> > > > > +[[ "$result" =~ $event ]] || exit 1
+> > > > > +
+> > > > > +# In platforms that do not support TPEBS, it should execute without
+> > error.
+> > > > > +echo "Testing with --record-tpebs"
+> > > > > +result=$(perf stat -e "$event" --record-tpebs -a sleep 0.01 2>&1)
+> > > >
+> > > > It never finishes on my AMD machine.
+> > > >
+> > > Hi Namhyung,
+> > >
+> > > Do you see any message while it executes? Is the perf record forked
+> > successfully
+> > > but failed to return?
+> > 
+> > I don't know.. all I can get is like below:
+> > 
+> > $ sudo ./perf test tpebs -vv
+> > 121: test Intel TPEBS counting mode:
+> > --- start ---
+> > test child forked, pid 583475
+> > Testing without --record-tpebs
+> > Testing with --record-tpebs
+> > ^C
+> 
+> I think the problem is that the forked "perf record" encountered error, which 
+> caused the control fifo failed to send a "ACK" back and the PIPE hanged.
+> 
+> Could you please try out the diff below and see if the test would finish?
+> 
+> As for the "perf record" error, I think it might because of the fake 
+> event(cache-misses:R) cannot be supported in AMD. Could you please test run
+> a "perf stat -e cache-misses:R --record-tpebs true" and see if it complains about
+> the event?
 
-void syscall_get_arguments(struct pt_regs *regs, unsigned long args[6])
-{
-        memcpy(args, (typeof(args))&regs->bx, 6*sizeof(args[0]));
-}
+So I tried the below patch and it worked.
 
-work?
+  $ ./perf test -v tpebs
+  121: test Intel TPEBS counting mode:
+  --- start ---
+  test child forked, pid 2190174
+  Testing without --record-tpebs
+  Testing with --record-tpebs
+  ---- end(-1) ----
+  121: test Intel TPEBS counting mode                                  : FAILED!
+
+It would be better if it can skip rather than fail on
+non-supported machines.
+
+Also I saw this message when I run the command manually.
+
+  $ ./perf stat -e cache-misses:R --record-tpebs -v true
+  Control descriptor is not initialized
+  Retire_latency of event cache-misses:R is required
+  Prepare perf record for retire_latency
+  Error:
+  The cache-misses:pu event is not supported.
+  incompatible file format
+  incompatible file format (rerun with -v to learn more)
+  failed: did not received an ack
+  cache-misses:R: 0 1 1
+  
+   Performance counter stats for 'true':
+  
+                   0      cache-misses:R                                                        
+  
+         0.000004939 seconds time elapsed
+  
+         0.000000000 seconds user
+         0.000000000 seconds sys
+
+I'm not sure why it showed the incompatible file format message.
+
+> 
+> diff --git a/tools/perf/util/intel-tpebs.c b/tools/perf/util/intel-tpebs.c
+> index a0585a6571b5..5b8e104f36f1 100644
+> --- a/tools/perf/util/intel-tpebs.c
+> +++ b/tools/perf/util/intel-tpebs.c
+> @@ -263,6 +263,7 @@ int tpebs_start(struct evlist *evsel_list)
+>         }
+>  
+>         if (tpebs_event_size > 0) {
+> +               struct pollfd pollfd = { .events = POLLIN, };
+>                 int control_fd[2], ack_fd[2], len;
+>                 char ack_buf[8];
+>  
+> @@ -297,6 +298,19 @@ int tpebs_start(struct evlist *evsel_list)
+>                         goto out;
+>                 }
+>  
+> +               /* wait for an ack */
+> +               pollfd.fd = ack_fd[0];
+> +
+> +               if (!poll(&pollfd, 1, 2000)) {
+
+Is it 2 seconds?  Any specific reason for the value?
+At least we need a comment to explain the value (or just saying it's a
+random one).
+
+Thanks,
+Namhyung
+
+
+> +                       pr_err("failed: perf record ack timeout\n");
+> +                       goto out;
+> +               }
+> +
+> +               if (!(pollfd.revents & POLLIN)) {
+> +                       pr_err("failed: did not received an ack\n");
+> +                       goto out;
+> +               }
+> +
+>                 ret = read(ack_fd[0], ack_buf, sizeof(ack_buf));
+>                 if (ret > 0)
+>                         ret = strcmp(ack_buf, "ack\n");
+> 
+> Thanks,
+> Weilin
 
