@@ -1,128 +1,133 @@
-Return-Path: <linux-kernel+bounces-249541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E120892ED05
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:47:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B8892ED08
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E71E1C21900
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:47:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCCA01F22CED
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F90F16D4E3;
-	Thu, 11 Jul 2024 16:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D34716D4DE;
+	Thu, 11 Jul 2024 16:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDAEbHv5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3bXjZw8"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37622381AD;
-	Thu, 11 Jul 2024 16:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8348E84047;
+	Thu, 11 Jul 2024 16:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720716432; cv=none; b=jo3h5pS+SLdj05IQzQ4K2Oj/Hp8q2HncgHkWweENmSDH6zHf+SqTduvgmNPSsdqE7+I7bMRxo79O9Xztoz3sN/7VlvYqP2ttgiGhGYxp5+l7ZgzA0jcDYEcEXPyyO9arudbKS/zV8vFNXWaMjK15pWSIwJcvQXZDXIV1sib/bcU=
+	t=1720716538; cv=none; b=hWgZ/7MAaAsuwq8DNf13OVMY9FysKnoiTpfF33lg515k06JNaeCrlJIsa3e+Nb7mNG9ZQfQ5yVblgkx9Dg2xGUQLfI+FBkDSkhgwhiPVHDnlWIYODt5Dp8+mCZ+MlS0sI3u3FTNlOUgWmglFDs73jhvvomPpmEpzKbeNvioLvRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720716432; c=relaxed/simple;
-	bh=zjKGt7H07M4pHCU9lW4ij/982X9n70FZYJhQRgYo+h0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=CwTA9g2xKZX9hvZmD/x5sFP+CimRiH0ljJXUg52t5raBDW3WYxIAHxVmiMYKj4SJkpP71io/YhjMr88980DZOEhfpUVNsZ8g+I7G3GpQaj9lwkNTN46eoF8yh8cBOjwdjHgrC/Y0F8+5j5Si337emO71ayd07qgSxHIHkEqsR6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDAEbHv5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83252C4AF07;
-	Thu, 11 Jul 2024 16:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720716431;
-	bh=zjKGt7H07M4pHCU9lW4ij/982X9n70FZYJhQRgYo+h0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=uDAEbHv5tSBif6DWfuyRc6xa2Jjph3rGHMIE7faBVxp3oCT1EN0M8FD/RbJC0uvVm
-	 K/AaQLW6f7vyAJTlPnH6z8TVSz7VymQHE/i1ayxIBMQBli3frcs+zHD1xwj+DT3/gQ
-	 UCdZ0HAcir/EkpkMVQ81V/lblG/5KbfkUjzDwmWu6LsOGonfwiVA8Y+rztE9WtFSWC
-	 XF7d2txz9ewDXWu8nrCcai+VaV3qUgMKxB0nh6IsGTntMH+9PuoZIPbfU27kkAxX++
-	 v4H/5qWR7VnDpgndnOMWO5E5DypfDq4g7h5aQzd0Zg3/4CNZnrDsaGB3AnaPgO5DHh
-	 j0vJ+bTv/Ru5A==
-Date: Thu, 11 Jul 2024 11:47:09 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
-	quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com,
-	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
-	quic_parass@quicinc.com
-Subject: Re: [PATCH v6 5/5] bus: mhi: ep: wake up host if the MHI state is in
- M3
-Message-ID: <20240711164709.GA286955@bhelgaas>
+	s=arc-20240116; t=1720716538; c=relaxed/simple;
+	bh=73ZIG9KmkYiAhggQE4JH+gw0xEUz2iC+N+OJETReESc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s2J9zka26tS0CfibUDE536HM4wy+T/dv3uTbtzUvyeCkZNpgDbiOz/xLdnGMD+4e3oZgKcH8//4Jx5kJW8WNEjBHHSMn48+SZFGu+1+WSLjz63c2IBMwRyCfgCHDQ5LNDU2OSdC8HSSlqRBa5KrIGnz/HTXxeNaWiKaMz54q3sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3bXjZw8; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so1394697a12.3;
+        Thu, 11 Jul 2024 09:48:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720716535; x=1721321335; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iEZsA+JEWanK57qEMYDbE1caMCR1HD9S3b8hhmYN9Oo=;
+        b=B3bXjZw8q5r+qwjrEdDCbhNjya+xxE0sF4rtO6VzxJ98mD3lvg4kHhvklpVepdxjoP
+         h1JSx07zuK0jPE15+kS86KlaiCPyia3csEHkneDYDOcakbdnJWqTQZ6Gsyt55Ddm8zGm
+         0ppc6ia3VdpI84TxCV2u7sCkf0qJFsG/zNY0sUykMgrGSh3uhPosAK9vJq/coqDxNu52
+         q70MoN9VCrLSFeaCiTtz5i62cxrqo0hH7hUddhGAoYnKqu4gQLG0MvBWiDChxlEaQ/G+
+         xLeGNgXAFafd4svJCfoPc+/9NsXoRlCcSKffjRZfNf1EeWX/ygdp+ZdEdwgavPVXRdm2
+         BQAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720716535; x=1721321335;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iEZsA+JEWanK57qEMYDbE1caMCR1HD9S3b8hhmYN9Oo=;
+        b=MIPoL+0dmU+mJIZwa8+LyfqqCoFMtMzMnY4IVLI4CytMKhinaFEwcPjuF19oEXCA8r
+         Opl2f99ZtDQ2TQ+fWhKIsWS138d7LaGm5s02rb4ZF0m3NTMkoZsud9Fv1EOm4386FCZk
+         ljwTDwLS3+j2XcEjyRFdGwzbkJkRKhjQJJHWqHPZ2pHWYkQ35nLU+q4D1kr/5VGUlMi4
+         ePy3zrzZ+6l6M4hrKxbFVKQ33afbYZ14v6SlEgDTrEPnDEYDG2t7yUxDqW1GD6z3moMh
+         GD3kqD4UiFOUO++aOrsESMFKyigl+DjU0P1ERcCODhVGdDL/3JmLwOKhBlagjiZXuluq
+         KSVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWIsA8EkbXCk6xXiPkoyV5IM6KpCpSp0p4ZM0m0i3u9kHtGe8G90ckz+Itc5wZEsmH1Ja1f8gdQw9JN8pvDIrhUu98AvhYM7Pxni8=
+X-Gm-Message-State: AOJu0YwWEwsV3m/efrbHL4LQNAOnvM+vxDxsFdMMZpOIM2ELwGGRKjHi
+	XS2Da3zM7hpmgsXzQR51Ht+MpVscbEDj07BcUkwzTitCUZXQLwGO
+X-Google-Smtp-Source: AGHT+IFMW06wAwwEUvlp048oJpfkaauaUhl40CXY1F07ftga56DZRibkuT4YWyNJJr0/tYkHk68Rxg==
+X-Received: by 2002:a17:906:d29b:b0:a77:c330:ad9d with SMTP id a640c23a62f3a-a780b8826cdmr683873666b.61.1720716534517;
+        Thu, 11 Jul 2024 09:48:54 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-43-148.xnet.hr. [88.207.43.148])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff07esm270724666b.111.2024.07.11.09.48.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 09:48:54 -0700 (PDT)
+Message-ID: <3ac07aff-4ac4-4649-86ec-6175dd516162@gmail.com>
+Date: Thu, 11 Jul 2024 18:48:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710-wakeup_host-v6-5-ef00f31ea38d@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Input: twl4030-pwrbutton - fix kernel-doc warning
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <Zo3QE00GqCrA3M9b@google.com>
+Content-Language: en-US
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+In-Reply-To: <Zo3QE00GqCrA3M9b@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 10, 2024 at 04:46:12PM +0530, Krishna chaitanya chundru wrote:
-> If the MHI state is in M3 then most probably the host kept the
-> device in D3 hot or D3 cold, due to that endpoint transactions will not
-> reach the host, endpoint needs to wakes up the host to bring the host
-> to D0 which eventually bring back the MHI state to M0.
-
-s/needs to wakes up/needs to wake up/
-
-s/D3 hot/D3hot/
-s/D3 cold/D3cold/
-to match other uses and make grep more effective.
-
-> while queueing packets if the MHI state is in M3 wakeup host to bring
-> back link to M0.
-
-s/while/While/
-s/MHI state is in M3/MHI is in M3/ (twice)
-
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  drivers/bus/mhi/ep/main.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+On 7/10/24 02:04, Dmitry Torokhov wrote:
+> Do not use kernel-doc style for comment describing contents of the
+> source file, as it trips the script:
 > 
-> diff --git a/drivers/bus/mhi/ep/main.c b/drivers/bus/mhi/ep/main.c
-> index b3eafcf2a2c5..b8713e5c1e1a 100644
-> --- a/drivers/bus/mhi/ep/main.c
-> +++ b/drivers/bus/mhi/ep/main.c
-> @@ -25,6 +25,26 @@ static DEFINE_IDA(mhi_ep_cntrl_ida);
->  static int mhi_ep_create_device(struct mhi_ep_cntrl *mhi_cntrl, u32 ch_id);
->  static int mhi_ep_destroy_device(struct device *dev, void *data);
->  
-> +static int mhi_ep_wake_host(struct mhi_ep_cntrl *mhi_cntrl)
-> +{
-> +	enum mhi_state state;
-> +	bool mhi_reset;
-> +	u32 count = 0;
-> +
-> +	mhi_cntrl->wakeup_host(mhi_cntrl);
-> +
-> +	/* Wait for Host to set the M0 state */
-> +	while (count++ < M0_WAIT_COUNT) {
-> +		msleep(M0_WAIT_DELAY_MS);
+>   scripts/kernel-doc -none   drivers/input/misc/twl4030-pwrbutton.c
+> drivers/input/misc/twl4030-pwrbutton.c:2: info: Scanning doc for function twl4030
+> drivers/input/misc/twl4030-pwrbutton.c:33: warning: expecting prototype for twl4030(). Prototype was for PWR_PWRON_IRQ() instead
+> 1 warnings
+> 
+> Also remove file name from the same comment - it it not the best idea
+> to have it as they tend to get stale when sources get moved or renamed.
+> 
+> Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/input/misc/twl4030-pwrbutton.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/input/misc/twl4030-pwrbutton.c b/drivers/input/misc/twl4030-pwrbutton.c
+> index e3ee0638ffba..f85cc289c053 100644
+> --- a/drivers/input/misc/twl4030-pwrbutton.c
+> +++ b/drivers/input/misc/twl4030-pwrbutton.c
+> @@ -1,5 +1,5 @@
+> -/**
+> - * twl4030-pwrbutton.c - TWL4030 Power Button Input Driver
+> +/*
+> + * TWL4030 Power Button Input Driver
+>   *
+>   * Copyright (C) 2008-2009 Nokia Corporation
+>   *
 
-Tangent: the "M0_WAIT_DELAY_MS" name suggests that is the maximum
-delay, but it seems the actual maximum delay is
-M0_WAIT_DELAY_MS * M0_WAIT_COUNT.
+Tested, finally:
 
-Tangent 2: unless there's a reason to be different, it would be nice
-to use the same loop structure as the similar delay in mhi_ep_enable().
+  CC      drivers/input/misc/tps65219-pwrbutton.o
+  CC      drivers/input/misc/twl4030-pwrbutton.o
+  CC      drivers/hwmon/pmbus/max15301.o
 
-> +		mhi_ep_mmio_get_mhi_state(mhi_cntrl, &state, &mhi_reset);
-> +		if (state == MHI_STATE_M0)
-> +			return 0;
-> +	}
-> +
-> +	return -ENODEV;
-> +}
+Compiled w/o warnings.
+
+Thanks!
+
+Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+
+Best regards,
+Mirsad Todorovac
 
