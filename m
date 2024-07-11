@@ -1,171 +1,152 @@
-Return-Path: <linux-kernel+bounces-248770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA9D92E1C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:14:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE3D92E1C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 109A7B20D6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:14:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B62D2830F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155D815279A;
-	Thu, 11 Jul 2024 08:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EEB81553B1;
+	Thu, 11 Jul 2024 08:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e32/Jtfc"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fRhRq6t4"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D975614A601;
-	Thu, 11 Jul 2024 08:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAA0155312
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720685617; cv=none; b=GsYgCJtBtuTAlwUr/C8gCQ/Z5oXuj6Q+t3JdB/oeqvoOg4s57KGhqxjFwIQY24nbLnZU40sJ+5/fKId7MZMg+LXFckGtaSoV8mlp1Bg9gIN1GHVwpJegcCqf4y6MhSqWI6N6QdJ/QYJlKv0xECXpQExkNp8nweElzn3m9rT1ID4=
+	t=1720685624; cv=none; b=ByGl41W1k8BGawUhjNgvPiD1x4IHk6XbvQaWsE+6tcClX7Rn7CFiCL0a5ewufYP3M6kAaNSYRUXx6yeSo3jxvixEhseTeHLhZcCzYXAxz1S/0II5lj6L5ri9xFFN5WuA9SAgu2r5PBjcK/8VdZarUQVvP3k+0ACmxjpYLl1SQig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720685617; c=relaxed/simple;
-	bh=xsG4j8CUM95pevTZX83N2m0JtsePZz3hLlfpPlr4wKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efdy6vDwX88G5L2iQ2jxeAg9bDO7dpDRQt8aBPhcZPQXB52Od6ZnG4qaJFWQuVQr1Tgb/rIKfZ4nNTspXXLoS+k4s5MKBQ+pNsO8Vw0uH59CqP2/ELtNmT7rWtknZnO8BENv3bqrLrTChrFvGvvKD4aXrrYG5SskNl6LvymPWaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e32/Jtfc; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=60rL9HOaet6vlUzwQrfSKu77VABHNI32SxBnaB3w5cU=; b=e32/JtfceHqCWcvBeGyYpWTATg
-	D3/hTYRoWVcR1zO5HI67cewxepVSWuwZZ0k9hIXtNI4rSFVTN1WSZ+/wcuOx26UPaYRUo0F75uf0R
-	D5A7ZoZGkbM9t+Qw06DJQiRBJuNntVye7JqYZl+GOQOsYz1dLKszDJGoAQweVHgv4X7Ag2xx0PXm/
-	RBd9N7T174wp/Dfewj9LTvJntoj8f3TLfs6dsUXp1/+Qw5FngxuOFtugs24UxuucOEG8ucdoAYwll
-	atQjPQivw1uy46YLS7b7yi75lU1zbymPYcMB1XoVT4qy6UitgV3wEwqtUZzXSVKJjyk5PmT2Dq2VW
-	65RHdjcw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRovW-0000000Ak7d-17YF;
-	Thu, 11 Jul 2024 08:13:18 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id DFA3830050D; Thu, 11 Jul 2024 10:13:17 +0200 (CEST)
-Date: Thu, 11 Jul 2024 10:13:17 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>,
-	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Tony Luck <tony.luck@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Breno Leitao <leitao@debian.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Yian Chen <yian.chen@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
-	Juergen Gross <jgross@suse.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
-	Huang Shijie <shijie@os.amperecomputing.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v4 02/16] x86/asm: Introduce inline memcpy and memset
-Message-ID: <20240711081317.GD4587@noisy.programming.kicks-ass.net>
-References: <20240710160655.3402786-1-alexander.shishkin@linux.intel.com>
- <20240710160655.3402786-3-alexander.shishkin@linux.intel.com>
+	s=arc-20240116; t=1720685624; c=relaxed/simple;
+	bh=eI/hajbdA+0Rm/p6P9F4jJIv5qhR/mAL+TsDqW7Y3as=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=co3BHuk9dQIQ5v9n5LoH/rTpydEAbYslIYPGNpWaZcpZkyCyJK/PajyL8XadW0inQlayp+nKLFqNeaIVpdof9kPBqhvoPmjL8LENJ40OKDMWyFcR21ZEzpcaE3lfcLIB0wxmSCefM2G0oasiF+EwLU8nhfoYVPt7sQDou8WuMFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fRhRq6t4; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-58ba3e38027so618499a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:13:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720685621; x=1721290421; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvTe9WRrtDlz1Jy2LpZjEQGJotsWMz6Pvf+dzDrN3iE=;
+        b=fRhRq6t46btwedVqHYka3HYI/ehBxGMR+tySNwBUxkpJIrEm7F1hbs7A0kOsjsZkA3
+         swJOYY5gC8JRpLWEjDxXyZjorpzlawH1foga9+fzXs0QE5RP3Ahz7CqTEItjOVT22e2D
+         8V9ovE0UQjyfhvLNqXZZhNU3Ogroe11U6oY3cwvIjc7uPXEvGSz8/mL/1cQlflIPJctY
+         2DUZB4KZ609Tg9MQLPG1SWr1EGmqn9EmnvuqMFw+uiRfvHeCYOD5K3ndQmA0vvnQE+p7
+         L3IWveHuzED3ACijODlYSEIjq1iO7ahB7H17HjjAHDEUp8ITJqRABc3WquKDXBl9NKFM
+         cW1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720685621; x=1721290421;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IvTe9WRrtDlz1Jy2LpZjEQGJotsWMz6Pvf+dzDrN3iE=;
+        b=h+XgFwg9vSqglTlUv46jNKpLpck4hze/EWBD/ranyEta6cMvawwD446wSpmZHhbMEA
+         Fugkg5VtTJAQZKoAU2SfxsK+BHqVItzak50pagUA/IO3Mo3Cjxp/HKrOzlDk+ml1pnzQ
+         c7f44iEii2xbyjmpHctO+4EQSI5Vw9GPcMAZjeey0Ck8JZN8ah4ctXc5Uk6pOrssODwN
+         I8mAISDJ31gF3yazhVXmq1DJdFZDnlTB+1JLUC/LY4Sd7aWPeCqzyCxtzoldL1LC3Qjn
+         6TTaStG6OedwSgAX4koTfEE/rf0SDsZgURGlU1+o4favmQX1O8KsSzM4217vzt4x23qh
+         tarw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpXAOO/vYOiFGJlw/WbzgSctbJKnV3jvXpAa3Ozob1zAat45RqNq878lH4y10BU3Qx73TKs2Rp1coHYY+7zL2K+muPSpeFb8aLWP9k
+X-Gm-Message-State: AOJu0Ywj8BbL0ojsJdspwF4aTeXaPy3BMN3fXe51BJJrVwFX4/B/SbZj
+	1133T3q+jE7S8mmp09dIvX/ik4vVSuY6sAW3/U/iUXpwmbcT7X8zZJ9wE4pkQnZ9n/ub0vrVV6Q
+	T
+X-Google-Smtp-Source: AGHT+IH0DQ63yM5AH6DvvXzYYY41PJu/2xwyhi0Q2SOrjQgcllimfZ5GRDL0RyenxtLJEbGV6Jl+ag==
+X-Received: by 2002:a17:906:245a:b0:a72:518e:7c8b with SMTP id a640c23a62f3a-a780b689fb3mr601415066b.11.1720685620585;
+        Thu, 11 Jul 2024 01:13:40 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a856251sm234228466b.185.2024.07.11.01.13.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 01:13:40 -0700 (PDT)
+Message-ID: <069282eb-d891-4537-bdc0-85de17b5e61f@linaro.org>
+Date: Thu, 11 Jul 2024 10:13:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710160655.3402786-3-alexander.shishkin@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drivers/clocksource/qcom: Add missing iounmap() on error
+ when reading clock frequency.
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+To: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240710110813.GA15351@bnew-VirtualBox>
+ <2a3561cc-c6b3-4823-b488-fc8ebc53e1a6@linaro.org>
+ <20240711054934.GA37910@bnew-VirtualBox>
+ <793b70b2-d6c1-4e4b-96a5-8a257837eafb@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <793b70b2-d6c1-4e4b-96a5-8a257837eafb@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 10, 2024 at 07:06:38PM +0300, Alexander Shishkin wrote:
-> From: Peter Zijlstra <peterz@infradead.org>
+On 11.07.2024 10:11 AM, Konrad Dybcio wrote:
+> On 11.07.2024 7:49 AM, Ankit Agrawal wrote:
+>> On Wed, Jul 10, 2024 at 01:54:01PM +0200, Konrad Dybcio wrote:
+>>> On 10.07.2024 1:08 PM, Ankit Agrawal wrote:
+
+[...]
+
 > 
-> Provide inline memcpy and memset functions that can be used instead of
-> the GCC builtins whenever necessary.
+> Ohh right source_base is a global variable.. perhaps the original patch
+> here makes more sense given we definitely don't wanna unmap that..
 > 
-> Code posted by Peter Zijlstra <peterz@infradead.org>.
-
-We haz a tag for that:
-
-Originally-by: Peter Zijlstra <peterz@infradead.org>
-
-> Link: https://lore.kernel.org/lkml/Y759AJ%2F0N9fqwDED@hirez.programming.kicks-ass.net/
-> [Missing Signed-off-by from PeterZ]
-
-There, lemme fix that for you:
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-
-> Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
-> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> ---
->  arch/x86/include/asm/string.h | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+> So I'd say let's go with this one after all
 > 
-> diff --git a/arch/x86/include/asm/string.h b/arch/x86/include/asm/string.h
-> index c3c2c1914d65..9cb5aae7fba9 100644
-> --- a/arch/x86/include/asm/string.h
-> +++ b/arch/x86/include/asm/string.h
-> @@ -1,6 +1,32 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_STRING_H
-> +#define _ASM_X86_STRING_H
-> +
->  #ifdef CONFIG_X86_32
->  # include <asm/string_32.h>
->  #else
->  # include <asm/string_64.h>
->  #endif
-> +
-> +static __always_inline void *__inline_memcpy(void *to, const void *from, size_t len)
-> +{
-> +	void *ret = to;
-> +
-> +	asm volatile("rep movsb"
-> +		     : "+D" (to), "+S" (from), "+c" (len)
-> +		     : : "memory");
-> +	return ret;
-> +}
-> +
-> +static __always_inline void *__inline_memset(void *s, int v, size_t n)
-> +{
-> +	void *ret = s;
-> +
-> +	asm volatile("rep stosb"
-> +		     : "+D" (s), "+c" (n)
-> +		     : "a" ((uint8_t)v)
-> +		     : "memory");
-> +	return ret;
-> +}
-> +
-> +#endif /* _ASM_X86_STRING_H */
-> -- 
-> 2.43.0
-> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+We should probably also check if msm_timer_init() succeeds and unmap
+if that fails.. we can just check the return value of that function
+and if it's non-zero, call iounmap
+
+Konrad
 
