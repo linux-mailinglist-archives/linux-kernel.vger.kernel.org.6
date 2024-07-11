@@ -1,107 +1,192 @@
-Return-Path: <linux-kernel+bounces-249739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE9D92EF33
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:52:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9292992EF38
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4D38B211F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9AA5B20DA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE8116EB40;
-	Thu, 11 Jul 2024 18:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DB416EB4B;
+	Thu, 11 Jul 2024 18:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YVEPqzg8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="klUTpteH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E042BD04
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D691428FF;
+	Thu, 11 Jul 2024 18:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720723911; cv=none; b=oGZOtxdoxRCZZ9qj0btUSBmMCCJQqP/dewC3Qh3smSe+tj1GixUraCh6AyWD3/q1NxmYECGhI74dM6ZCvl6jWOo9CZFqLOZbq4VkXPoiXD/tWx1phK9xSmjOxkPx4a81rrcRlvL22D31B78pvfFc6W5fdWDsgFPX5fuSFriUPS8=
+	t=1720724086; cv=none; b=oPJO4Ebu0mLgYIzxfBT1F2ixcoMDjnNVQiCSW34bzLg9lqXDS9A6G+BXUP1lQCUxwgxJc4iJ69+oA0S4MLgy7bLGZpDQs78NZpprtCjXDZ5gv7bl24JbCRu6uQGXGqvD4QGRGszKtPtqduc+TUmg/6gGwVKXn9c0b/G18zHrMHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720723911; c=relaxed/simple;
-	bh=kJgnyZJmTIZWiaq/8wgNOqqligyS0aPHx4XJaiekigI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XxSYzZNfS3HScLaGau36XgCj2kgmfIfkdfTTmTYe706Dn5T9xwsBrr7zLhp8P7+t3D00VciUwfM9+ugfuNGUp7wcFSf2Xm0rWN9Fu/74lZqyx/sBJvCuh0oU3imrOrEZX88NcCe4M7qixCeIcZLhcHQOwJWq/Aa/mic6Zj1kxzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YVEPqzg8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720723909;
+	s=arc-20240116; t=1720724086; c=relaxed/simple;
+	bh=MfPVZ8SwNsg2b1Wx75ro72PafLeZUyS8oV4KCinIHoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aztRwZsAhsTzxcPqT23UInCVAPsJ3FzXpyzmIJiAkyC2a2vPgnWKsyW6+2PTR3FxF9c1jHxYoK5kHxBijB5k/F/LfKK2sxMWZ/ma3EQh8H5MTN8u/nda23pdCCVkYnPxkomYluJJd8kbuYYhPN4CIYLBMpqK05EwWXR1USlwBAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=klUTpteH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF5ACC116B1;
+	Thu, 11 Jul 2024 18:54:43 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="klUTpteH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1720724082;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=L+8VkDMg5rXcNaGpGB1C4wflAad1p4QYwIpbR6K358E=;
-	b=YVEPqzg89rsMQdwTX48jMCWH+nzIk41KDE+azYLGRzxkNTqcYL9t8bTg8Y3dO8mmH1t648
-	vnNh9C2TxjUMp1C17MqHrCDXWhU5CHNn0dyEia8AeXxF1pEZU7Jb0Wg4ea8W9pmPw86/Kg
-	+41WbNLgzVrmP4qWlVrt3cAlfB4GZ4k=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-315-G3BpfuwMO1C38ZL0D_ljRw-1; Thu,
- 11 Jul 2024 14:51:44 -0400
-X-MC-Unique: G3BpfuwMO1C38ZL0D_ljRw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 991CE1958B0E;
-	Thu, 11 Jul 2024 18:51:41 +0000 (UTC)
-Received: from [10.22.64.119] (unknown [10.22.64.119])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8C85D1955F40;
-	Thu, 11 Jul 2024 18:51:39 +0000 (UTC)
-Message-ID: <e5348a85-22eb-48a6-876d-3180de5c7171@redhat.com>
-Date: Thu, 11 Jul 2024 14:51:38 -0400
+	bh=hF+3z5UiUkBzxLE2MWTvPzkBeBx1F35CrkpoATtAvH0=;
+	b=klUTpteHhlYFjt5i9Uxa+JDW827nLqbHIXxDsRFWVsoUOdmLhVZKq87UIao1H1qXD+1hCf
+	7sRdozUl1084JtxXpTDHU+UvtkKFrmYC8MLe84dz2Zx+NJlm8gCXpk7NOjYQ0ZVcXxptiK
+	lp4bYSdKO+ttMb3gE2qxqRWRG8dq3GA=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ff525a5f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 11 Jul 2024 18:54:40 +0000 (UTC)
+Date: Thu, 11 Jul 2024 20:54:38 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <ZpAqbh3TnB9hIRRh@zx2c4.com>
+References: <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
+ <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
+ <ZpAR0CgLc28gEkV3@zx2c4.com>
+ <ZpATx21F_01SBRnO@zx2c4.com>
+ <98798483-dfcd-451e-94bb-57d830bf68d8@redhat.com>
+ <54b6de32-f127-4928-9f4a-acb8653e5c81@redhat.com>
+ <ZpAcWvij59AzUD9u@zx2c4.com>
+ <ZpAc118_U7p3u2gZ@zx2c4.com>
+ <ZpAfigBHfHdVeyNO@zx2c4.com>
+ <8586b19c-2e14-4164-888f-8c3b86f3f963@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] cgroup: Show # of subsystem CSSes in cgroup.stat
-To: Tejun Heo <tj@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Zefan Li <lizefan.x@bytedance.com>,
- Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kamalesh Babulal <kamalesh.babulal@oracle.com>,
- Roman Gushchin <roman.gushchin@linux.dev>
-References: <20240710182353.2312025-1-longman@redhat.com>
- <20240711134927.GB456706@cmpxchg.org>
- <4e1078d6-6970-4eea-8f73-56a3815794b5@redhat.com>
- <ZpAT_xu0oXjQsKM7@slm.duckdns.org>
- <76e70789-986a-44c2-bfdc-d636f425e5ae@redhat.com>
- <ZpAoD7_o8bf6yVGr@slm.duckdns.org>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <ZpAoD7_o8bf6yVGr@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8586b19c-2e14-4164-888f-8c3b86f3f963@redhat.com>
 
+On Thu, Jul 11, 2024 at 08:24:07PM +0200, David Hildenbrand wrote:
+> > And PG_large_rmappable seems to only be used for hugetlb branches.
+> 
+> It should be set for THP/large folios.
 
-On 7/11/24 14:44, Tejun Heo wrote:
-> Hello,
->
-> On Thu, Jul 11, 2024 at 01:39:38PM -0400, Waiman Long wrote:
->> On 7/11/24 13:18, Tejun Heo wrote:
-> ...
->> Currently, I use the for_each_css() macro for iteration. If you mean
->> displaying all the possible cgroup subsystems even if they are not enabled
->> for the current cgroup, I will have to manually do the iteration.
-> Just wrapping it with for_each_subsys() should do, no? for_each_css() won't
-> iterate anything if css doesn't exist for the cgroup.
+And it's tested too, apparently.
 
-OK, I wasn't sure if you were asking to list all the possible cgroup v2 
-cgroup subsystems even if they weren't enabled in the current cgroup. 
-Apparently, that is the case. I prefer it that way too.
+Okay, well, how disappointing is this below? Because I'm running out of
+tricks for flag reuse.
 
-Thanks,
-Longman
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index b9e914e1face..c1ea49a7f198 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -110,6 +110,7 @@ enum pageflags {
+ 	PG_workingset,
+ 	PG_error,
+ 	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
++	PG_owner_priv_2,
+ 	PG_arch_1,
+ 	PG_reserved,
+ 	PG_private,		/* If pagecache, has fs-private data */
+@@ -190,6 +191,9 @@ enum pageflags {
+ 	/* At least one page in this folio has the hwpoison flag set */
+ 	PG_has_hwpoisoned = PG_error,
+ 	PG_large_rmappable = PG_workingset, /* anon or file-backed */
++
++	/* Zero page under memory pressure. */
++	PG_droppable = PG_owner_priv_2,
+ };
+ 
+ #define PAGEFLAGS_MASK		((1UL << NR_PAGEFLAGS) - 1)
+@@ -549,6 +553,8 @@ PAGEFLAG(Private, private, PF_ANY)
+ PAGEFLAG(Private2, private_2, PF_ANY) TESTSCFLAG(Private2, private_2, PF_ANY)
+ PAGEFLAG(OwnerPriv1, owner_priv_1, PF_ANY)
+ 	TESTCLEARFLAG(OwnerPriv1, owner_priv_1, PF_ANY)
++PAGEFLAG(OwnerPriv2, owner_priv_2, PF_ANY)
++	TESTCLEARFLAG(OwnerPriv2, owner_priv_2, PF_ANY)
+ 
+ /*
+  * Only test-and-set exist for PG_writeback.  The unconditional operators are
+@@ -640,6 +646,8 @@ FOLIO_TEST_CLEAR_FLAG_FALSE(young)
+ FOLIO_FLAG_FALSE(idle)
+ #endif
+ 
++FOLIO_FLAG(droppable, FOLIO_SECOND_PAGE)
++
+ /*
+  * PageReported() is used to track reported free pages within the Buddy
+  * allocator. We can use the non-atomic version of the test and set
+diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
+index b63d211bd141..986551588805 100644
+--- a/include/trace/events/mmflags.h
++++ b/include/trace/events/mmflags.h
+@@ -108,6 +108,7 @@
+ 	DEF_PAGEFLAG_NAME(active),					\
+ 	DEF_PAGEFLAG_NAME(workingset),					\
+ 	DEF_PAGEFLAG_NAME(owner_priv_1),				\
++	DEF_PAGEFLAG_NAME(owner_priv_2),				\
+ 	DEF_PAGEFLAG_NAME(arch_1),					\
+ 	DEF_PAGEFLAG_NAME(reserved),					\
+ 	DEF_PAGEFLAG_NAME(private),					\
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 1f9b5a9cb121..73b4052b2f82 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1403,6 +1403,8 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
+ 	 */
+ 	if (!(vma->vm_flags & VM_DROPPABLE))
+ 		__folio_set_swapbacked(folio);
++	else
++		folio_set_droppable(folio);
+ 	__folio_set_anon(folio, vma, address, true);
+ 
+ 	if (likely(!folio_test_large(folio))) {
+@@ -1852,7 +1854,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 				      * ones can be dropped even if they've
+ 				      * been dirtied.
+ 				      */
+-				     (vma->vm_flags & VM_DROPPABLE))) {
++				      folio_test_droppable(folio))) {
+ 					dec_mm_counter(mm, MM_ANONPAGES);
+ 					goto discard;
+ 				}
+@@ -1866,7 +1868,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 				 * Unlike MADV_FREE mappings, VM_DROPPABLE ones
+ 				 * never get swap backed on failure to drop.
+ 				 */
+-				if (!(vma->vm_flags & VM_DROPPABLE))
++				if (!folio_test_droppable(folio))
+ 					folio_set_swapbacked(folio);
+ 				ret = false;
+ 				page_vma_mapped_walk_done(&pvmw);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 2e34de9cd0d4..41340f2a12c7 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -4266,7 +4266,8 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
+ 	}
+ 
+ 	/* dirty lazyfree */
+-	if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio)) {
++	if (type == LRU_GEN_FILE && folio_test_anon(folio) &&
++	    folio_test_dirty(folio) && !folio_test_droppable(folio)) {
+ 		success = lru_gen_del_folio(lruvec, folio, true);
+ 		VM_WARN_ON_ONCE_FOLIO(!success, folio);
+ 		folio_set_swapbacked(folio);
 
 
