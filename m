@@ -1,351 +1,242 @@
-Return-Path: <linux-kernel+bounces-249751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A5692EF4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:04:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C7092EF51
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75AE5B2262B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 652311F219F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D08516EB63;
-	Thu, 11 Jul 2024 19:03:58 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FF716EB63;
+	Thu, 11 Jul 2024 19:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ObawRis2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B23E15F40D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F025015F40D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720724637; cv=none; b=a/qXRbq2KX6W4PrlEyNhsXj/9Ex1TFPNOw6ICLeyvsr3pCSBERiHSiK99zIq4Fi9SXIZaH2tCMzxBsHBkZORtP5rIaOuHt1qEukN8RcE4g/q7iBguoyV/Mo9KO1iCpyYLu+0JaV5T37sq30K79HzpUzb995+Hw4ZBtcfibUsb0s=
+	t=1720724885; cv=none; b=jlZd8VdKi14R7LGIF045MZgrPSE/Vh1wnGi6GfQ2yujv8sZVNEvE5YWziTcyZ2jmr7jg5ncjyvpuxHs6pg5K1+p8dETphuAeu0IR5YpiQ1RRxzunCAewhgCU8IEmi+PGHsmtU5El1X+hqL9GwALtynmynca62V3RWnTMRafAnTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720724637; c=relaxed/simple;
-	bh=Iid+3GBeJAdaquca/Q8nirP3UQOVJc4EBe7DYXF6ig8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tGQMcmwD0ZYBhPD6TdpV9mUhkIXToT05W29o5Q8tTCew7lc85eOEtdoXJsV2ANAlJH6tmy8Mmkjp4uT9zV3v1saQFdnX1qx8mToOO+8XMSXHDN6A44FuAKv4Y8gffc/YNqUKWBUI8z5zE9hbOsXmEPC6hV+WIbi/PFv2Fgalgrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A775C116B1;
-	Thu, 11 Jul 2024 19:03:55 +0000 (UTC)
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Will Deacon <will@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] arm64 updates for 6.11
-Date: Thu, 11 Jul 2024 20:03:53 +0100
-Message-Id: <20240711190353.3248426-1-catalin.marinas@arm.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1720724885; c=relaxed/simple;
+	bh=6kogFYB4OR6TKsjTDplZW+tTdaQ1xknBPxEFwwPmg10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IUxSLzzLtsn+pY+JOwsB77ucFsKb5htRHxNUCcfa/Lkcg1QPgfxDGNn5dGE220jvIlX+i4uNGeS9xTy+Rs3Tji8GCBZ72tnYm0zGda+NZ3uBHYPmfhQ1/GU4I1OMOniVf0GfW8xqAzWiw9YLqB26duhq1N+UyT4xd2JD+P8Z8t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ObawRis2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720724883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gN118Bf0dMZbC4SSR++jWEtpRjXul+fiQ4mzACL/3FA=;
+	b=ObawRis2vBF78jXezbOA56QmKFIqowiR8wX3PW7yQtdE2DGBLaAsics7x/E5XIJg/FOMEN
+	tAAHC2hFBHfLaNmV5j2Q7cUpGrxwV5eEMmHw7KaYJ10X9GanNB1CRsrfJkYtv+ceEUSpCy
+	fimS70wM46WgNvQl4BGHszK3cBucfko=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-402-AtDnKLViNw-aeTkK8XStyg-1; Thu, 11 Jul 2024 15:08:01 -0400
+X-MC-Unique: AtDnKLViNw-aeTkK8XStyg-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-70b0bb79c49so1228245b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:08:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720724880; x=1721329680;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gN118Bf0dMZbC4SSR++jWEtpRjXul+fiQ4mzACL/3FA=;
+        b=lxb9jUxY3l0NtDo7mppJxhtaQeQYs2Xy4qJgZ0VpwvGQlfyEpE4idmFNkmXt/Ln3to
+         Qr4pJmspTRHZ94bJX8eYECf11wA6y48KSMjJrE5zR4PODcvXSC7uStdv5TZJTf+nS2i2
+         6oUBi5poB7+0zigns1Pc6oocSBYUglt5Sn7PZDApKfixkg3+sNhZpkEwFDErC52sTaho
+         ZQiz3x09U8voAG/G+INNH+TOHcfIj7ARYsvXj7yWtfYZ7ZbQwRyt0ifJfsniS8JaUDLp
+         7qfgOLm5useN72NrmbWXehJxm9C97tZrwTjzyNkmYWOnO4M4N0IM/whZJGmeB6abMrNY
+         upJQ==
+X-Gm-Message-State: AOJu0YzkLt5DecK/tmEr8jm9Lo1b9EPlyjrYr3jTP+r7Ty/r4da5mAye
+	IRNauBpn5qQLw1d5koTdXx9y1h3VL1rDPWovtf8HO3vTfyAsl0GTeXp9nzdeiH8v98V3pWJ2TDN
+	vsi4/GzAV00vubjS20VRf3S6AGAeqzT5WiYcNJkt0Rtze0+14mIWqAZq5JXgSLg==
+X-Received: by 2002:a05:6a00:1c9a:b0:70a:ffc2:ab with SMTP id d2e1a72fcca58-70b4364ff01mr9404100b3a.26.1720724880281;
+        Thu, 11 Jul 2024 12:08:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHjeNGhXBJQW4LrMH9bg1VvNK4tctYuPaCd5OYA1ndZsyAlmuQ3OEsDQ9sB1zzDupJjW1PUQ==
+X-Received: by 2002:a05:6a00:1c9a:b0:70a:ffc2:ab with SMTP id d2e1a72fcca58-70b4364ff01mr9404072b3a.26.1720724879837;
+        Thu, 11 Jul 2024 12:07:59 -0700 (PDT)
+Received: from [10.35.209.243] ([208.115.86.72])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4398002bsm6224007b3a.148.2024.07.11.12.07.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 12:07:59 -0700 (PDT)
+Message-ID: <37da7835-0d76-463e-b074-455e405b138b@redhat.com>
+Date: Thu, 11 Jul 2024 21:07:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+ tglx@linutronix.de, linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
+ x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+References: <20240709130513.98102-1-Jason@zx2c4.com>
+ <20240709130513.98102-2-Jason@zx2c4.com>
+ <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
+ <9b400450-46bc-41c7-9e89-825993851101@redhat.com>
+ <Zo8q7ePlOearG481@zx2c4.com> <Zo9gXAlF-82_EYX1@zx2c4.com>
+ <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
+ <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
+ <ZpAR0CgLc28gEkV3@zx2c4.com>
+ <CAHk-=whGE_w46zVk=7S0zOcWv4Dp3EYtuJtzU92ab3pSnnmpHw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAHk-=whGE_w46zVk=7S0zOcWv4Dp3EYtuJtzU92ab3pSnnmpHw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+On 11.07.24 19:57, Linus Torvalds wrote:
+> On Thu, 11 Jul 2024 at 10:09, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>>
+>> When I was working on this patchset this year with the syscall, this is
+>> similar somewhat to the initial approach I was taking with setting up a
+>> special mapping. It turned into kind of a mess and I couldn't get it
+>> working. There's a lot of functionality built around anonymous pages
+>> that would need to be duplicated (I think?).
+> 
+> Yeah, I was kind of assuming that. You'd need to handle VM_DROPPABLE
+> in the fault path specially, the way we currently split up based on
+> vma_is_anonymous(), eg
+> 
+>          if (vma_is_anonymous(vmf->vma))
+>                  return do_anonymous_page(vmf);
+>          else
+>                  return do_fault(vmf);
+> 
+> in do_pte_missing() etc.
+> 
+> I don't actually think it would be too hard, but it's a more
+> "conceptual" change, and it's probably not worth it.
+> 
+>> Alright, an hour later of fiddling, and it doesn't actually work (yet?)
+>> -- the selftest fails. A diff follows below.
+> 
+> May I suggest a slightly different approach: do what we did for "pte_mkwrite()".
+> 
+> It needed the vma too, for not too dissimilar reasons: special dirty
+> bit handling for the shadow stack. See
+> 
+>    bb3aadf7d446 ("x86/mm: Start actually marking _PAGE_SAVED_DIRTY")
+>    b497e52ddb2a ("x86/mm: Teach pte_mkwrite() about stack memory")
+> 
+> and now we have "pte_mkwrite_novma()" with the old semantics for the
+> legacy cases that didn't get converted - whether it's because the
+> architecture doesn't have the issue, or because it's a kernel pte.
+> 
+> And the conversion was actually quite pain-free, because we have
+> 
+>    #ifndef pte_mkwrite
+>    static inline pte_t pte_mkwrite(pte_t pte, struct vm_area_struct *vma)
+>    {
+>          return pte_mkwrite_novma(pte);
+>    }
+>    #endif
+> 
+> so all any architecture that didn't want this needed to do was to
+> rename their pte_mkwrite() to pte_mkwrite_novma() and they were done.
+> In fact, that was done first as basically semantically no-op patches:
+> 
+>     2f0584f3f4bd ("mm: Rename arch pte_mkwrite()'s to pte_mkwrite_novma()")
+>     6ecc21bb432d ("mm: Move pte/pmd_mkwrite() callers with no VMA to _novma()")
+>     161e393c0f63 ("mm: Make pte_mkwrite() take a VMA")
+> 
+> which made this all very pain-free (and was largely a sed script, I think).
+> 
+>> -                   !pte_dirty(pte) && !PageDirty(page))
+>> +                   !pte_dirty(pte) && !PageDirty(page) &&
+>> +                   !(vma->vm_flags & VM_DROPPABLE))
+> 
+> So instead of this kind of thing, we'd have
+> 
+>> -                   !pte_dirty(pte) && !PageDirty(page))
+>> +                   !pte_dirty(pte, vma) && !PageDirty(page) &&
+> 
+> and the advantage here is that you can't miss anybody by mistake. The
+> compiler will be very unhappy if you don't pass in the vma, and then
+> any places that would be converted to "pte_dirty_novma()"
+> 
+> We don't actually have all that many users of pte_dirty(), so it
+> doesn't look too nasty. And if we make the pte_dirty() semantics
+> depend on the vma, I really think we should do it the same way we did
+> pte_mkwrite().
 
-I'm about to go on holiday for two weeks, so here's an early pull
-request for 6.11. The biggest part is the virtual CPU hotplug that
-touches ACPI, irqchip. We also have some GICv3 optimisation for
-pseudo-NMIs that has been queued via the arm64 tree. Otherwise the usual
-perf updates, kselftest, various small cleanups. There's a minor
-conflict currently in -next with the kvmarm tree but it's trivial (in
-arch/arm64/include/asm/esr.h).
+We also have these folio_mark_dirty() calls, for example in 
+unpin_user_pages_dirty_lock(). Hm ... so preventing the folio from 
+getting dirtied is likely shaky.
 
-I'll check emails occasionally during the merging window but if there's
-anything urgent, Will can take over.
+I guess we need a way to just reliably identify these folios :/.
 
-Thanks.
+-- 
+Cheers,
 
-The following changes since commit 83a7eefedc9b56fe7bfeff13b6c7356688ffa670:
+David / dhildenb
 
-  Linux 6.10-rc3 (2024-06-09 14:19:43 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-upstream
-
-for you to fetch changes up to 4f3a6c4de7d932be94cde2c52ae58feeec9c9dbf:
-
-  Merge branch 'for-next/vcpu-hotplug' into for-next/core (2024-07-11 19:10:02 +0100)
-
-----------------------------------------------------------------
-arm64 updates for 6.11:
-
-* Virtual CPU hotplug support for arm64 ACPI systems
-
-* cpufeature infrastructure cleanups and making the FEAT_ECBHB ID bits
-  visible to guests
-
-* CPU errata: expand the speculative SSBS workaround to more CPUs
-
-* arm64 ACPI:
-
-  - acpi=nospcr option to disable SPCR as default console for arm64
-
-  - Move some ACPI code (cpuidle, FFH) to drivers/acpi/arm64/
-
-* GICv3, use compile-time PMR values: optimise the way regular IRQs are
-  masked/unmasked when GICv3 pseudo-NMIs are used, removing the need for
-  a static key in fast paths by using a priority value chosen
-  dynamically at boot time
-
-* arm64 perf updates:
-
-  - Rework of the IMX PMU driver to enable support for I.MX95
-
-  - Enable support for tertiary match groups in the CMN PMU driver
-
-  - Initial refactoring of the CPU PMU code to prepare for the fixed
-    instruction counter introduced by Arm v9.4
-
-  - Add missing PMU driver MODULE_DESCRIPTION() strings
-
-  - Hook up DT compatibles for recent CPU PMUs
-
-* arm64 kselftest updates:
-
-  - Kernel mode NEON fp-stress
-
-  - Cleanups, spelling mistakes
-
-* arm64 Documentation update with a minor clarification on TBI
-
-* Miscellaneous:
-
-  - Fix missing IPI statistics
-
-  - Implement raw_smp_processor_id() using thread_info rather than a
-    per-CPU variable (better code generation)
-
-  - Make MTE checking of in-kernel asynchronous tag faults conditional
-    on KASAN being enabled
-
-  - Minor cleanups, typos
-
-----------------------------------------------------------------
-Andre Przywara (2):
-      dt-bindings: arm: pmu: Add new Cortex and Neoverse cores
-      perf: pmuv3: Add new Cortex and Neoverse PMUs
-
-Anshuman Khandual (3):
-      arm64/mm: Stop using ESR_ELx_FSC_TYPE during fault
-      KVM: arm64: Replace custom macros with fields from ID_AA64PFR0_EL1
-      arm64/cpufeature: Replace custom macros with fields from ID_AA64PFR0_EL1
-
-Catalin Marinas (3):
-      irqchip/gic-v3: Fix 'broken_rdists' unused warning when !SMP and !ACPI
-      Merge branches 'for-next/cpufeature', 'for-next/misc', 'for-next/kselftest', 'for-next/mte', 'for-next/errata', 'for-next/acpi', 'for-next/gic-v3-pmr' and 'for-next/doc', remote-tracking branch 'arm64/for-next/perf' into for-next/core
-      Merge branch 'for-next/vcpu-hotplug' into for-next/core
-
-Colin Ian King (1):
-      kselftest/arm64: Fix a couple of spelling mistakes
-
-Dev Jain (1):
-      kselftest/arm64: Fix redundancy of a testcase
-
-Gavin Shan (1):
-      arm64: Kconfig: Fix dependencies to enable ACPI_HOTPLUG_CPU
-
-Ilkka Koskinen (2):
-      perf/arm-cmn: Decouple wp_config registers from filter group number
-      perf/arm-cmn: Enable support for tertiary match group
-
-James Morse (7):
-      ACPI: processor: Register deferred CPUs from acpi_processor_get_info()
-      ACPI: Add post_eject to struct acpi_scan_handler for cpu hotplug
-      arm64: acpi: Move get_cpu_for_acpi_id() to a header
-      irqchip/gic-v3: Don't return errors from gic_acpi_match_gicc()
-      irqchip/gic-v3: Add support for ACPI's disabled but 'online capable' CPUs
-      arm64: document virtual CPU hotplug's expectations
-      cpumask: Add enabled cpumask for present CPUs that can be brought online
-
-Jean-Philippe Brucker (1):
-      arm64: psci: Ignore DENIED CPUs
-
-Jeff Johnson (2):
-      ARM64: reloc_test: add missing MODULE_DESCRIPTION() macro
-      perf: add missing MODULE_DESCRIPTION() macros
-
-Jinjie Ruan (1):
-      arm64: smp: Fix missing IPI statistics
-
-Jonathan Cameron (11):
-      ACPI: processor: Simplify initial onlining to use same path for cold and hotplug
-      cpu: Do not warn on arch_register_cpu() returning -EPROBE_DEFER
-      ACPI: processor: Drop duplicated check on _STA (enabled + present)
-      ACPI: processor: Return an error if acpi_processor_get_info() fails in processor_add()
-      ACPI: processor: Fix memory leaks in error paths of processor_add()
-      ACPI: processor: Move checks and availability of acpi_processor earlier
-      ACPI: processor: Add acpi_get_processor_handle() helper
-      ACPI: scan: switch to flags for acpi_scan_check_and_detach()
-      arm64: acpi: Harden get_cpu_for_acpi_id() against missing CPU entry
-      arm64: arch_register_cpu() variant to check if an ACPI handle is now available.
-      arm64: Kconfig: Enable hotplug CPU on arm64 if ACPI_PROCESSOR is enabled.
-
-Kevin Brodsky (1):
-      Documentation: arm64: Update memory.rst for TBI
-
-Liu Wei (1):
-      ACPI: Add acpi=nospcr to disable ACPI SPCR as default console on ARM64
-
-Mark Brown (1):
-      kselftest/arm64: Include kernel mode NEON in fp-stress
-
-Mark Rutland (10):
-      arm64: cputype: Add Cortex-X3 definitions
-      arm64: cputype: Add Cortex-A720 definitions
-      arm64: cputype: Add Cortex-X925 definitions
-      arm64: errata: Unify speculative SSBS errata logic
-      arm64: errata: Expand speculative SSBS workaround
-      wordpart.h: Add REPEAT_BYTE_U32()
-      irqchip/gic-common: Remove sync_access callback
-      irqchip/gic-v3: Make distributor priorities variables
-      irqchip/gic-v3: Detect GICD_CTRL.DS and SCR_EL3.FIQ earlier
-      arm64: irqchip/gic-v3: Select priorities at boot time
-
-Mike Rapoport (IBM) (1):
-      arm64: Kconfig: fix typo in __builtin_return_adddress
-
-Muhammad Usama Anjum (2):
-      selftests: arm64: tags_test: conform test to TAP output
-      selftests: arm64: tags: remove the result script
-
-Nianyao Tang (1):
-      arm64/cpufeatures/kvm: Add ARMv8.9 FEAT_ECBHB bits in ID_AA64MMFR1 register
-
-Peter Collingbourne (1):
-      arm64: mte: Make mte_check_tfsr_*() conditional on KASAN instead of MTE
-
-Puranjay Mohan (2):
-      arm64/arch_timer: include <linux/percpu.h>
-      arm64: implement raw_smp_processor_id() using thread_info
-
-Rob Herring (Arm) (5):
-      perf: arm_pmuv3: Avoid assigning fixed cycle counter with threshold
-      perf: arm_pmuv3: Drop unnecessary IS_ENABLED(CONFIG_ARM64) check
-      perf/arm: Move 32-bit PMU drivers to drivers/perf/
-      perf: arm_v6/7_pmu: Drop non-DT probe support
-      perf: arm_pmuv3: Include asm/arm_pmuv3.h from linux/perf/arm_pmuv3.h
-
-Seongsu Park (1):
-      arm64: Cleanup __cpu_set_tcr_t0sz()
-
-Sudeep Holla (3):
-      ACPI: arm64: Sort entries alphabetically
-      arm64: cpuidle: Move ACPI specific code into drivers/acpi/arm64/
-      arm64: FFH: Move ACPI specific code into drivers/acpi/arm64/
-
-Xu Yang (6):
-      dt-bindings: perf: fsl-imx-ddr: Add i.MX95 compatible
-      perf: imx_perf: add macro definitions for parsing config attr
-      perf: imx_perf: let the driver manage the counter usage rather the user
-      perf: imx_perf: refactor driver for imx93
-      perf: imx_perf: fix counter start and config sequence
-      perf: imx_perf: add support for i.MX95 platform
-
-Youwan Wang (1):
-      ACPI / amba: Drop unnecessary check for registered amba_dummy_clk
-
- Documentation/ABI/testing/sysfs-devices-system-cpu |   6 +
- Documentation/admin-guide/kernel-parameters.txt    |  10 +-
- Documentation/arch/arm64/cpu-hotplug.rst           |  79 +++++
- Documentation/arch/arm64/index.rst                 |   1 +
- Documentation/arch/arm64/memory.rst                |  42 ++-
- Documentation/arch/arm64/silicon-errata.rst        |  16 +-
- Documentation/devicetree/bindings/arm/pmu.yaml     |   6 +
- .../devicetree/bindings/perf/fsl-imx-ddr.yaml      |   3 +
- arch/arm/kernel/Makefile                           |   2 -
- arch/arm64/Kconfig                                 |  41 +--
- arch/arm64/include/asm/acpi.h                      |  12 +
- arch/arm64/include/asm/arch_gicv3.h                |  15 -
- arch/arm64/include/asm/arch_timer.h                |   2 +-
- arch/arm64/include/asm/arm_pmuv3.h                 |   2 +-
- arch/arm64/include/asm/cpucaps.h                   |   2 +-
- arch/arm64/include/asm/cpufeature.h                |   4 +-
- arch/arm64/include/asm/cputype.h                   |   6 +
- arch/arm64/include/asm/esr.h                       |  33 +-
- arch/arm64/include/asm/mmu_context.h               |   4 +-
- arch/arm64/include/asm/mte.h                       |   4 +-
- arch/arm64/include/asm/ptrace.h                    |  33 +-
- arch/arm64/include/asm/smp.h                       |  13 +-
- arch/arm64/include/asm/sysreg.h                    |   4 -
- arch/arm64/kernel/Makefile                         |   1 -
- arch/arm64/kernel/acpi.c                           | 129 ++------
- arch/arm64/kernel/acpi_numa.c                      |  11 -
- arch/arm64/kernel/cpu_errata.c                     |  17 +-
- arch/arm64/kernel/cpufeature.c                     |   5 +-
- arch/arm64/kernel/image-vars.h                     |   5 -
- arch/arm64/kernel/proton-pack.c                    |   2 +-
- arch/arm64/kernel/psci.c                           |   2 +-
- arch/arm64/kernel/reloc_test_core.c                |   1 +
- arch/arm64/kernel/smp.c                            |  74 ++++-
- arch/arm64/kvm/hyp/include/nvhe/fixed_config.h     |  10 +-
- arch/arm64/kvm/hyp/nvhe/pkvm.c                     |   4 +-
- arch/arm64/kvm/hyp/nvhe/sys_regs.c                 |   2 +-
- arch/arm64/kvm/pmu-emul.c                          |   1 -
- drivers/acpi/acpi_processor.c                      | 145 +++++----
- drivers/acpi/arm64/Makefile                        |   6 +-
- drivers/acpi/arm64/amba.c                          |   6 +-
- .../arm64/kernel => drivers/acpi/arm64}/cpuidle.c  |   4 -
- drivers/acpi/arm64/ffh.c                           | 107 +++++++
- drivers/acpi/processor_core.c                      |   3 +-
- drivers/acpi/processor_driver.c                    |  43 +--
- drivers/acpi/scan.c                                |  47 ++-
- drivers/base/cpu.c                                 |  12 +-
- drivers/irqchip/irq-gic-common.c                   |  22 +-
- drivers/irqchip/irq-gic-common.h                   |   7 +-
- drivers/irqchip/irq-gic-v3-its.c                   |  11 +-
- drivers/irqchip/irq-gic-v3.c                       | 282 ++++++++--------
- drivers/irqchip/irq-gic.c                          |  10 +-
- drivers/irqchip/irq-hip04.c                        |   6 +-
- drivers/perf/Kconfig                               |  12 +
- drivers/perf/Makefile                              |   3 +
- drivers/perf/arm-ccn.c                             |   1 +
- drivers/perf/arm-cmn.c                             | 116 +++++--
- drivers/perf/arm_cspmu/ampere_cspmu.c              |   1 +
- drivers/perf/arm_cspmu/arm_cspmu.c                 |   1 +
- drivers/perf/arm_cspmu/nvidia_cspmu.c              |   1 +
- drivers/perf/arm_pmuv3.c                           |  26 +-
- .../perf_event_v6.c => drivers/perf/arm_v6_pmu.c   |  20 +-
- .../perf_event_v7.c => drivers/perf/arm_v7_pmu.c   |  13 +-
- .../perf/arm_xscale_pmu.c                          |   3 -
- drivers/perf/cxl_pmu.c                             |   1 +
- drivers/perf/fsl_imx8_ddr_perf.c                   |   1 +
- drivers/perf/fsl_imx9_ddr_perf.c                   | 354 +++++++++++++++------
- drivers/perf/hisilicon/hisi_uncore_pmu.c           |   1 +
- drivers/perf/marvell_cn10k_ddr_pmu.c               |   1 +
- include/acpi/acpi_bus.h                            |   1 +
- include/acpi/processor.h                           |   2 +-
- include/linux/acpi.h                               |  12 +-
- include/linux/cpumask.h                            |  25 ++
- include/linux/irqchip/arm-gic-common.h             |   4 -
- include/linux/irqchip/arm-gic-v3-prio.h            |  52 +++
- include/linux/irqchip/arm-gic-v3.h                 |   2 +-
- include/linux/perf/arm_pmuv3.h                     |   2 +
- include/linux/wordpart.h                           |   8 +
- kernel/cpu.c                                       |   3 +
- tools/testing/selftests/arm64/abi/ptrace.c         |   2 +-
- tools/testing/selftests/arm64/fp/.gitignore        |   1 +
- tools/testing/selftests/arm64/fp/Makefile          |   1 +
- tools/testing/selftests/arm64/fp/fp-stress.c       |  26 +-
- tools/testing/selftests/arm64/fp/kernel-test.c     | 324 +++++++++++++++++++
- tools/testing/selftests/arm64/tags/Makefile        |   1 -
- .../testing/selftests/arm64/tags/run_tags_test.sh  |  12 -
- tools/testing/selftests/arm64/tags/tags_test.c     |  10 +-
- 86 files changed, 1606 insertions(+), 752 deletions(-)
- create mode 100644 Documentation/arch/arm64/cpu-hotplug.rst
- rename {arch/arm64/kernel => drivers/acpi/arm64}/cpuidle.c (97%)
- create mode 100644 drivers/acpi/arm64/ffh.c
- rename arch/arm/kernel/perf_event_v6.c => drivers/perf/arm_v6_pmu.c (95%)
- rename arch/arm/kernel/perf_event_v7.c => drivers/perf/arm_v7_pmu.c (99%)
- rename arch/arm/kernel/perf_event_xscale.c => drivers/perf/arm_xscale_pmu.c (99%)
- create mode 100644 include/linux/irqchip/arm-gic-v3-prio.h
- create mode 100644 tools/testing/selftests/arm64/fp/kernel-test.c
- delete mode 100755 tools/testing/selftests/arm64/tags/run_tags_test.sh
 
