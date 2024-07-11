@@ -1,185 +1,149 @@
-Return-Path: <linux-kernel+bounces-249134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9EB892E772
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:51:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5433092E775
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F4A7B22655
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:51:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FFF82861D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93AD1156F2D;
-	Thu, 11 Jul 2024 11:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8331C157469;
+	Thu, 11 Jul 2024 11:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTaUHIxg"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="LqcQmOhE"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6885D2904
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A9E156C61
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720698699; cv=none; b=fpoPmDGyUJUO+awA9bOC+EN578T8x1IAgo0DUiCW1PhXpuuW9+0/z0nTBkDE73gLTIsFFbctvh9HZUEv/4Ms2aXEBGEhiGS+ozbOM5igp1QMplF56CFIJ5tOqDtqycNsZ1DGxfeUby9JqwxbjVEHp4iQ3eJNY7gH4srazOLPIeM=
+	t=1720698740; cv=none; b=hxJZlNuEFGSxeAzjBH5oAKARmA7o5lKp18ClqtZcJn/t7uVYGIQG1CjUqjq7Sy1yCYTugdnEwGF0XlMSDkeXQSe+C39u1ueFwBn8pVBQCOr42pWfTBGr5Ha28Omn3x97VxKIpx3UWKEe+CsdQvqVbmfL5Vft4/BPySXlEQRLiRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720698699; c=relaxed/simple;
-	bh=hIGxdsVsxLIgmob+0fE5KxXGXuFHJzLVCg6wQsfjRVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gTaDc8RLUz9aqE+t2vVUzvXbbo2gCm6HwbsAEE1Z8xueqtUImoCgKm1EBpn2Gt5UBB/XhxHKFCU5eADpsbfJyA3uAjzpXNyA8LLFcVWWlmHUiV8SUkcRr6RZ5HvvOHoSkifHiOX7UMqzbOuZNRpOh9XB923eN+sYWLUxzbVMNxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTaUHIxg; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c96187b3d1so591177a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:51:38 -0700 (PDT)
+	s=arc-20240116; t=1720698740; c=relaxed/simple;
+	bh=zWdcfiTIyyPAuOM52fLQggpwTWoly0MTLKNObUuKJ2w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J3Ba1e3Pto2fbhrEz+P1QUP2btbRt4WV2hmwc5Zr0SRP7Ye8zaTlU0l7bQ+ItLQKl/wiFlopPQ7gZTYOPqnlxwIULwqSS95jREKxOUeFzavvK2oy33sh6sNEMHkk2KB2edQInFlksUmr2LZOiYX+TyBoUYDQ4eC3owVvT9yoB2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=LqcQmOhE; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so5265515e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:52:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720698698; x=1721303498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aJJrseQEfg3j3LJ1tOzOpDcKnIMoClUQKxX10P83OEY=;
-        b=PTaUHIxgUbUMh42t5fCI1ON0pT/W8pEloHox8nqZbaeqiBhBnlQAZNRu7nXQviwge6
-         Bn2lM1CnRbNEgPmjQjdMhvX4A6MEL98r/WjZx0xydgc2kEk5zoidakrasWsN5srrQkZY
-         bupNa6992grb/vOcXHuxqRk6bMqKt2YwrT9Q50ZsN5pTIB224nX+beH6MvItS43aODoR
-         dVV9FeCsM+yPkK5tBPZUZZi/4j/bB4ilYgyxsv2PovwYGino7topIzDbGdbadglO1zVD
-         DAPQJnrRYSwL+mwXgVB7DiuYlL+uOgLwbRiBDpH3puB9Dodwl9xJg8qWyfJmcFDTJFV2
-         Qc9g==
+        d=tuxon.dev; s=google; t=1720698737; x=1721303537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AReyoq8j0UYL28c9GONhdzqknSDiTsmJyCU02ojVz8Q=;
+        b=LqcQmOhEfI5QUc9UptUSejeuVDJRCIz1fjVx6RV8WwHxv8MnpGnrKd1OKq6AQNu1Js
+         uio/9+8cY9W3mrvVVpw/pvrRngYUBeQi+xwv6qTOy/9/Irg4SFeTWPIPuW/q5n7KLTgZ
+         HA3EezxzPXrHzlfqZnUjddNbzVWXq56RJ8vAOZDcjMMtjFbsS1y992sJ9ns4Lbgakcab
+         xOaNu/Ur9dvyikbqJRCSWUNWCTI97izwyT5s458L/0bahC5LEbV0XT7arN9/8X3zg7g+
+         HSZ+2aRt2JB63nSuKParW6WV3j+nv/F+7lTstcbwubvkWquE+qvjRIsv53IKvq6mjoQB
+         2zAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720698698; x=1721303498;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aJJrseQEfg3j3LJ1tOzOpDcKnIMoClUQKxX10P83OEY=;
-        b=Ttumnhkw6hg0LyEm8HquAHfIKmLbi4GPAOP9SBGbozaS/zttrEniDnaNsBTrdk4NCz
-         jjb9JOgLplkpreyo9WPi8oFsznJVrGLGcFuzTl7gt1mmKYHW9tZMjGvT8P/trhLSmjSq
-         X8u3rqIjdAOd1TMfCIWL/vqFKbUjggF7dhFlJXoNHKQmWQu9Ze5fvv9kmCw3XvrtInJN
-         KhHTl6B8rq16fsOSEjhBnhF4xJ892XSL464r55DLpI4yjoVwbCQlN5ZhWxdcEV3NnG8Q
-         LS2cp/mOPekSjdQ7HEJgjaJBmU8N4KcrDmlNYqPZMd1f+nC0k2kyvU9N1px09fwtOZ0b
-         jBjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfx38wrxTRR+JPCBjv4kwjoP+1bzRlQL4bMASUfmz7S9i0qNinFyxlo/zEfOB0zdTF9WDUw9HI+Vgw1Hq1CVfM4X5SxQTdZiFlzbbe
-X-Gm-Message-State: AOJu0YzaE4iDY7CSXDejW+J3A6mv8pRKv90KLXmoZmBAGP/5Sk8mm1g0
-	paLbiY6vHt8CPhuN7p72HrvrMmDg74/A4DAanYsADdtjrC1kaKAx
-X-Google-Smtp-Source: AGHT+IEHNNn4a8XKmxXct+hWuMn/VO2hl+aQXm6B1er+w5jDgCHCa7OkH5FnK4dd5BvS+GN1rLzMNA==
-X-Received: by 2002:a17:90a:7e0e:b0:2c9:7e9c:9637 with SMTP id 98e67ed59e1d1-2ca35c2a6dcmr6426513a91.13.1720698697629;
-        Thu, 11 Jul 2024 04:51:37 -0700 (PDT)
-Received: from [192.168.255.10] ([43.132.141.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca34e854ddsm5505815a91.25.2024.07.11.04.51.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 04:51:37 -0700 (PDT)
-Message-ID: <a0990d1f-ef25-4eae-98e5-6e65c8643313@gmail.com>
-Date: Thu, 11 Jul 2024 19:51:33 +0800
+        d=1e100.net; s=20230601; t=1720698737; x=1721303537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AReyoq8j0UYL28c9GONhdzqknSDiTsmJyCU02ojVz8Q=;
+        b=u06BdMniGZjQ3Uc26UPIdZZ2IJW62jWGHhbngadXs+RaKlcHWzK9ffTymAKylWn0p+
+         CINEs0Qp4u1dAsTePPSxnXSJ2/OPLodcSA2P1ZIysc/RntZfechkPIbql3sLXTq1RmNt
+         ByJv+W52YzXnFwX4FOgw3aMQCvJABGaayDIwEhmPNAWKcAjEPZBkqhrKFgnJO8DWkQ57
+         ycyi1+Vj2qSRM8SPxC9wN10ZosNakVqE8vIz2kzaA0CgTc4y81jfjWIfRip540gEYqvM
+         aluzjRr1kttMywo9YRoj9KxmZeqfaZJjMoAZgp3995jTbZp5hR0q+7AcOI/RIDKWDcoZ
+         w97w==
+X-Forwarded-Encrypted: i=1; AJvYcCVO0RvvZFgeXAIvif9t1QvvztFt5SCelU2GdIr0ZHD0PKxksqPeR83qX4hpKO6H/5Mrw371/nFgv67+COwhbaWctwjn2SekMuFnFw1T
+X-Gm-Message-State: AOJu0YwwRrkzv5zuUyiT1kzT+XplsuY6XE19dVnNFb/Aj22rRPnE0SIs
+	J/xWuCntG0icy2phO/y9rdEyJpjwonNxTWWj6V/pGn403m/nIG0ySEylERhkXe8=
+X-Google-Smtp-Source: AGHT+IGdLSdp5aZa1rJO1UP5f+gQwkUgUvwswdqEDXPCExjrog+7nUhfU+Oi8UbcqLZhvZJFGluzTg==
+X-Received: by 2002:a05:600c:54e6:b0:426:5b22:4d61 with SMTP id 5b1f17b1804b1-426707e355dmr56946085e9.22.1720698737418;
+        Thu, 11 Jul 2024 04:52:17 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde891cesm7615728f8f.62.2024.07.11.04.52.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 04:52:16 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: chris.brandt@renesas.com,
+	andi.shyti@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	p.zabel@pengutronix.de,
+	wsa+renesas@sang-engineering.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v3 00/11] i2c: riic: Add support for Renesas RZ/G3S
+Date: Thu, 11 Jul 2024 14:51:56 +0300
+Message-Id: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] mm/memcg: alignment memcg_data define condition
-To: Vlastimil Babka <vbabka@suse.cz>, alexs@kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>, Yoann Congal
- <yoann.congal@smile.fr>, Masahiro Yamada <masahiroy@kernel.org>,
- Petr Mladek <pmladek@suse.com>, Suren Baghdasaryan <surenb@google.com>
-References: <20240710054336.190410-1-alexs@kernel.org>
- <42afbce8-7746-438f-ba3a-c997a2c702e5@suse.cz>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <42afbce8-7746-438f-ba3a-c997a2c702e5@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
+Hi,
 
-On 7/11/24 4:13 PM, Vlastimil Babka wrote:
-> On 7/10/24 7:43 AM, alexs@kernel.org wrote:
->> From: "Alex Shi (Tencent)" <alexs@kernel.org>
->>
->> commit 21c690a349ba ("mm: introduce slabobj_ext to support slab object
->> extensions") changed the folio/page->memcg_data define condition from
->> MEMCG to SLAB_OBJ_EXT. And selected SLAB_OBJ_EXT for MEMCG, just for
->> SLAB_MATCH(memcg_data, obj_exts), even no other relationship between them.
->>
->> Above action make memcg_data exposed and include SLAB_OBJ_EXT for
->> !MEMCG. That's incorrect in logcial and pay on code size.
->>
->> As Vlastimil Babka suggested, let's add _unused_slab_obj_ext for
->> SLAB_MATCH for slab.obj_exts while !MEMCG. That could resolve the match
->> issue, clean up the feature logical. And decouple the SLAB_OBJ_EXT from
->> MEMCG in next patch.
->>
->> Signed-off-by: Alex Shi (Tencent) <alexs@kernel.org>
->> Cc: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Yoann Congal <yoann.congal@smile.fr>
->> Cc: Masahiro Yamada <masahiroy@kernel.org>
->> Cc: Petr Mladek <pmladek@suse.com>
->> Cc: Suren Baghdasaryan <surenb@google.com>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> ---
->> v1->v3: take Vlastimil's suggestion and move SLAB_OBJ_EXT/MEMCG decouple
->> to 2nd patch.
->> ---
->>  include/linux/mm_types.h | 8 ++++++--
->>  mm/slab.h                | 4 ++++
->>  2 files changed, 10 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->> index ef09c4eef6d3..4ac3abc673d3 100644
->> --- a/include/linux/mm_types.h
->> +++ b/include/linux/mm_types.h
->> @@ -180,8 +180,10 @@ struct page {
->>  	/* Usage count. *DO NOT USE DIRECTLY*. See page_ref.h */
->>  	atomic_t _refcount;
->>  
->> -#ifdef CONFIG_SLAB_OBJ_EXT
->> +#ifdef CONFIG_MEMCG
->>  	unsigned long memcg_data;
->> +#elif defined(CONFIG_SLAB_OBJ_EXT)
->> +	unsigned long _unused_slab_obj_ext;
->>  #endif
->>  
->>  	/*
->> @@ -343,8 +345,10 @@ struct folio {
->>  			};
->>  			atomic_t _mapcount;
->>  			atomic_t _refcount;
->> -#ifdef CONFIG_SLAB_OBJ_EXT
->> +#ifdef CONFIG_MEMCG
->>  			unsigned long memcg_data;
->> +#elif defined(CONFIG_SLAB_OBJ_EXT)
->> +			unsigned long _unused_slab_obj_ext;
->>  #endif
->>  #if defined(WANT_PAGE_VIRTUAL)
->>  			void *virtual;
->> diff --git a/mm/slab.h b/mm/slab.h
->> index 3586e6183224..8ffdd4f315f8 100644
->> --- a/mm/slab.h
->> +++ b/mm/slab.h
->> @@ -98,7 +98,11 @@ SLAB_MATCH(flags, __page_flags);
->>  SLAB_MATCH(compound_head, slab_cache);	/* Ensure bit 0 is clear */
->>  SLAB_MATCH(_refcount, __page_refcount);
->>  #ifdef CONFIG_SLAB_OBJ_EXT
->> +#ifdef CONFIG_MEMCG
->>  SLAB_MATCH(memcg_data, obj_exts);
->> +#else
->> +SLAB_MATCH(_unused_slab_obj_ext, obj_exts);
->> +#endif
->>  #endif
-> 
-> Why not also #ifdef / #elif like above, instead of this nesting?
+Series adds I2C support for the Renesas RZ/G3S SoC.
 
-Uh, it works too if MEMCG/SLAB_OBJ_EXT decoupled.
-but right, it could be written with #ifdef/#elif.
+Series is split as follows:
+- patch 01-03/12   - add some cleanups on RIIC driver
+- patch 04/12      - enable runtime autosuspend support on the RIIC driver
+- patch 05/12      - add suspend to RAM support on the RIIC driver
+- patch 06/12      - prepares for the addition of fast mode plus
+- patch 07/12      - updates the I2C documentation for the RZ/G3S SoC
+- patch 08/12      - add fast mode plus support on the RIIC driver
+- patches 09-11/11 - device tree support
 
-Thanks
-Alex
-> 
->>  #undef SLAB_MATCH
->>  static_assert(sizeof(struct slab) <= sizeof(struct page));
-> 
+Thank you,
+Claudiu Beznea
+
+Changes in v3:
+- dropped patch "clk: renesas: r9a08g045: Add clock, reset and power
+  domain support for I2C" as it was already integrated
+- addressed review comments
+
+Changes in v2:
+- change the i2c clock names to match the documentation
+- update commit description for patch "i2c: riic: Use temporary
+  variable for struct device"
+- addressed review comments
+- dropped renesas,riic-no-fast-mode-plus DT property and associated code
+
+Claudiu Beznea (11):
+  i2c: riic: Use temporary variable for struct device
+  i2c: riic: Call pm_runtime_get_sync() when need to access registers
+  i2c: riic: Use pm_runtime_resume_and_get()
+  i2c: riic: Enable runtime PM autosuspend support
+  i2c: riic: Add suspend/resume support
+  i2c: riic: Define individual arrays to describe the register offsets
+  dt-bindings: i2c: renesas,riic: Document the R9A08G045 support
+  i2c: riic: Add support for fast mode plus
+  arm64: dts: renesas: r9a08g045: Add I2C nodes
+  arm64: dts: renesas: rzg3s-smarc: Enable i2c0 node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable i2c1 node
+
+ .../devicetree/bindings/i2c/renesas,riic.yaml |   4 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  88 +++++++
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   5 +
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |   7 +
+ drivers/i2c/busses/i2c-riic.c                 | 220 ++++++++++++------
+ 5 files changed, 255 insertions(+), 69 deletions(-)
+
+-- 
+2.39.2
+
 
