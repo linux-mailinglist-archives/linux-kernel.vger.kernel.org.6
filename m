@@ -1,190 +1,155 @@
-Return-Path: <linux-kernel+bounces-249710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E9992EED8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:24:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 001DF92EEDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 646101C210F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:24:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DB532812E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76B716DED6;
-	Thu, 11 Jul 2024 18:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D0716DECC;
+	Thu, 11 Jul 2024 18:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GK1hsOHE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L0sUrWL7"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868EE16DEAE
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202EB200A9
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720722257; cv=none; b=cuhxtAWB8BR71h9fkuSMsxMzzYFGGBthN3ADxuUTdcaPpVK2KLVsI9WBRBcdniu/OxD5lKW6AsmocPF07DK44bH+PhDRVvpBFYckkLjMl8JzTD44YERongrVsV89f+T8o6NOjdZO24+o0FGzYuIYwP1DqnfuCrT2ZYXC+tBfsY8=
+	t=1720722480; cv=none; b=HvFKpV2SYNSO7GWV9sILrUCZRQSvpqudCeEuJvy2IM61TDryeLlEfstNHEAhqatuFJxhslgkb8f0wz1ib4PxYG/qtY90nAGy3zj7X+afMQi3rLeBicFWaxPjcSUk/EF7dqPlSdj8vBX9ksy/JLPLxNCrBRpQ0wR2tubSP9rFspU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720722257; c=relaxed/simple;
-	bh=4yc6TTybyvbq7r+wQzEg9hfuNL618Dtw76lL5URUVIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uCv5Hs1DCVrBcwI+T2YT2+r55k8FZ9GrnTRLwca5NYYcvnoYDx/sqidwNeJ8KgSrm+4FYWgSwdI1yfADhZTuP0TUqCt913xA3CY8vPCgcubOITz/yYuj7j2Wts47lon7XBkDIxEGvm4D6qN3nYa7sCqdVFOF/iaYpyzhdcFO5fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GK1hsOHE; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1720722480; c=relaxed/simple;
+	bh=Lua3LKUXFd4xVRTS2QXlOUR9sZ/HRIG3LaRWVWB1ptk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQP5hURWunO8agKxR1cpwbdtxdn3Wm2t7tgyQod8+UM/23nVElzFh4CK3qvVvKj4lA08LHritvv3cqcbbl7wv+w9iMGSxcKjy+eP7Bw9LBywBww6bi5MbFZXu90wSO108wlavBexre6K0RtbAA0EaOzcrdmkKf5fsJgUtxOC4vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L0sUrWL7; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720722254;
+	s=mimecast20190719; t=1720722478;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Cm66rg1XZxCCsZjKT6Mp2kABO5AQZLpHZVrfTgemS9w=;
-	b=GK1hsOHEGbRL2l0VWNNkiYWIVEYrB2FMDE4UQ5aK5J+oNLllvZytnzLrlmZfXgtegjfvze
-	c+dT+yMDjPpCqsjV+HL4+F8EFSq9Z9jWvlfNUJ0xpX4jhSNnwJsGR8+WxlbnJPqPE9DjHd
-	USeAj2jzkJF4dbGThmOdxIjlM0eLDaw=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-12-kG2VqM04NZ-LWeRSHQ9hGg-1; Thu, 11 Jul 2024 14:24:12 -0400
-X-MC-Unique: kG2VqM04NZ-LWeRSHQ9hGg-1
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-70b1e0a2c59so1796251b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:24:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720722250; x=1721327050;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Cm66rg1XZxCCsZjKT6Mp2kABO5AQZLpHZVrfTgemS9w=;
-        b=LiTt4UTVZ8m/ei4V5vxFOJgMoqyD7/hNeZ6muIFhp3frvP7NuSJz8ifzDcL4Tjl7J0
-         HKc+TPOPvGvcQEDM1VcslRmaYqeC6PXrtUsMux89w/wimF2yzUeLa7dgBNIgyW6zjK1k
-         ZYpE+6C82BAU5+Ra8gARCZ6HcKPrxRpFz2rYX76/nZFpQ6lay8VyRHOpn+Bo07Yvjz18
-         5H65KhTkPZlS8CTWk2Yo4AYQg5fqno3EcYEPFySh0VEIIlZxI684iAt3LNE5/tCTA9RO
-         Z2dtcHcVyp6mKIgn3FXZqHTZs/Zr+bATuHbMOCpcg0TS1nsT9DK3f2d14yRDW5v3mOgt
-         2jDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXt5xDOiCVnZcNoHf4H7aoH1roobxUSYkYnIZfvii7gOPCm214viXoAxTgzWTjJXJ87TH/81eO9Yfn4YBztnEk2Sr7EmI1zrk0zK8T+
-X-Gm-Message-State: AOJu0Yy9OLkWVSWV3oFHEvLtowucDTYqjhPI9lol4QetrkjKi5IbHI5c
-	c31rqn0lzuDaIW72lRLlTDG1HZuru58klycjqyceou4wOUQ9LrDYefQfXF2/wGb3rE20sQtEaf4
-	OsH1flaAtEOX1NRObRPdM59qi+AehTicbO3dYSV7Kgs7AJbz+l1TAdvKL1k4Uvw==
-X-Received: by 2002:a05:6a20:4328:b0:1c0:ebca:963d with SMTP id adf61e73a8af0-1c3becb2121mr586159637.4.1720722250572;
-        Thu, 11 Jul 2024 11:24:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG4jCYKJblZyB+FBweYmfvmonb9H5CH5xNShBFvfLtVj6t3jF8KoVnfT8+Sq9FycQr3reRt/w==
-X-Received: by 2002:a05:6a20:4328:b0:1c0:ebca:963d with SMTP id adf61e73a8af0-1c3becb2121mr586130637.4.1720722250166;
-        Thu, 11 Jul 2024 11:24:10 -0700 (PDT)
-Received: from [10.35.209.243] ([208.115.86.68])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439b70b4sm6003781b3a.185.2024.07.11.11.24.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 11:24:09 -0700 (PDT)
-Message-ID: <8586b19c-2e14-4164-888f-8c3b86f3f963@redhat.com>
-Date: Thu, 11 Jul 2024 20:24:07 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bd4UHj9VAgwr6mSYNAHZvQwEcc9OS5JWplfkFQM4iNI=;
+	b=L0sUrWL7Q0e4zeHtdnAWRRSMibqPWzxuDPVxJX3+vLwpNBOtgrP/rmnKuD56arvnQZEfYT
+	veJ5Y5yfp+hTmcvav6GzJ/9K5Fl94xa2L5mIgnI3Xb4uCM6jdrL1QzdE/edU3KCdeK6pLs
+	QBk0ZHBbl8oA6LiJMx2Wv0i4dv2ogFw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-G-f8Fo2ANhmyXZrfikp55g-1; Thu,
+ 11 Jul 2024 14:27:50 -0400
+X-MC-Unique: G-f8Fo2ANhmyXZrfikp55g-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 910DB1955F41;
+	Thu, 11 Jul 2024 18:27:48 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.32])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8178619560AE;
+	Thu, 11 Jul 2024 18:27:44 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 11 Jul 2024 20:26:11 +0200 (CEST)
+Date: Thu, 11 Jul 2024 20:26:06 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org,
+	clm@meta.com, jolsa@kernel.org, mingo@kernel.org,
+	paulmck@kernel.org, rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] uprobes: make uprobe_register() return struct uprobe
+ *
+Message-ID: <20240711182606.GA29154@redhat.com>
+References: <20240710140017.GA1074@redhat.com>
+ <20240710163022.GA13298@redhat.com>
+ <20240710163133.GD13298@redhat.com>
+ <20240711092619.GA18031@redhat.com>
+ <CAEf4Bzb0ErnW0o09fk2TCJnY3LNW7U4aB0YcUJqKjfNH+m-uyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
- lazily freeable mappings
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de,
- linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
- Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
- Christian Brauner <brauner@kernel.org>,
- David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-References: <Zo8q7ePlOearG481@zx2c4.com> <Zo9gXAlF-82_EYX1@zx2c4.com>
- <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
- <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
- <ZpAR0CgLc28gEkV3@zx2c4.com> <ZpATx21F_01SBRnO@zx2c4.com>
- <98798483-dfcd-451e-94bb-57d830bf68d8@redhat.com>
- <54b6de32-f127-4928-9f4a-acb8653e5c81@redhat.com>
- <ZpAcWvij59AzUD9u@zx2c4.com> <ZpAc118_U7p3u2gZ@zx2c4.com>
- <ZpAfigBHfHdVeyNO@zx2c4.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZpAfigBHfHdVeyNO@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4Bzb0ErnW0o09fk2TCJnY3LNW7U4aB0YcUJqKjfNH+m-uyA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 11.07.24 20:08, Jason A. Donenfeld wrote:
-> On Thu, Jul 11, 2024 at 07:56:39PM +0200, Jason A. Donenfeld wrote:
->> On Thu, Jul 11, 2024 at 07:54:34PM +0200, Jason A. Donenfeld wrote:
->>> On Thu, Jul 11, 2024 at 07:27:27PM +0200, David Hildenbrand wrote:
->>>>> PG_owner_priv_1 maps to PG_swapcache? :)
->>>>
->>>> Maybe the combination !swapbacked && swapcache could be used to indicate
->>>> such folios. (we will never set swapbacked)
->>>>
->>>> But likely we have to be a bit careful here. We don't want
->>>> folio_test_swapcache() to return for folios that ... are not in the
->>>> swapcache.
->>>
->>> I was thinking that too, but I'm afraid it's going to be another
->>> whack-a-mole nightmare. Even for things like task_mmu in procfs that
->>> show stats, that's going to be wonky.
->>>
->>> Any other flags we can overload that aren't going to be already used in
->>> our case?
->>
->> PG_error / folio_set_error seems unused in the non-IO case.
-> 
+On 07/11, Andrii Nakryiko wrote:
+>
+> On Thu, Jul 11, 2024 at 2:28 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > On 07/10, Oleg Nesterov wrote:
+> > >
+> > > -void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
+> > > +void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
+> > >  {
+> > > -     struct uprobe *uprobe;
+> > > -
+> > > -     uprobe = find_uprobe(inode, offset);
+> > > -     if (WARN_ON(!uprobe))
+> > > -             return;
+> > > -
+> > >       down_write(&uprobe->register_rwsem);
+> > >       __uprobe_unregister(uprobe, uc);
+> > >       up_write(&uprobe->register_rwsem);
+> > > -     put_uprobe(uprobe);
+> >
+> > OK, this is obviously wrong, needs get_uprobe/put_uprobe. __uprobe_unregister()
+> > can free this uprobe, so up_write(&uprobe->register_rwsem) is not safe.
+>
+> uprobe_register(), given it returns an uprobe instance to the caller
+> should keep refcount on it (it belongs to uprobe_consumer).
 
-Note that Willy is about to remove PG_error IIRC.
+Of course. And again, this patch doesn't change the curent behaviour.
 
-> And PG_large_rmappable seems to only be used for hugetlb branches.
+> That's
+> what I did for my patches, are you going to do that as well?
+>
+> We basically do the same thing, just interfaces look a bit different.
 
-It should be set for THP/large folios.
+Not sure. Well I do not really know, I didn't read your series to the
+end, sorry ;) The same for V1/V2 from Peter so far.
 
--- 
-Cheers,
+But let me say this just in case... With or without this change,
+currently uprobe_consumer doesn't have an "individual" ref to uprobe.
+The fact that uprobe->consumers != NULL adds a reference.
 
-David / dhildenb
+Lets not discuss if this is good or bad right now, this cleanup is
+only cleanup.
+
+------------------------------------------------------------------------
+Now, let me add another "just in case" note to explain what I am going
+to do in V2.
+
+So. this patch should turn uprobe_unregister() into something like
+
+	void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
+	{
+		// Ugly !!!! please kill me!!!
+		get_uprobe(uprobe);
+		down_write(&uprobe->register_rwsem);
+		__uprobe_unregister(uprobe, uc);
+		up_write(&uprobe->register_rwsem);
+		put_uprobe(uprobe);
+	}
+
+to simplify this change. And the next (simple) patch will kill these
+get_uprobe + put_uprobe, we just need to shift the (possibly) final
+put_uprobe() from delete_uprobe() to unregister().
+
+But of course, I will recheck before I send V2.
+
+Oleg.
 
 
