@@ -1,117 +1,205 @@
-Return-Path: <linux-kernel+bounces-249423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3C992EB7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:18:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D738A92EB7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EB1BB20F9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:18:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D6AB2833AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9239616C87F;
-	Thu, 11 Jul 2024 15:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6F016C841;
+	Thu, 11 Jul 2024 15:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="flYVZI5d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJSl9ozq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E0616C86F
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965602F46;
+	Thu, 11 Jul 2024 15:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720711047; cv=none; b=YfedaFT/ci5NsmkTDDpzHwMVC6W3ZeyUQI1kVDiNUtooFhRqZSgjKxRKPXc7Peq/09s5bkl7iqadK6QR6u61mdhME7H5nd6pZjPfYH+Spg8F0Xu63DdM4I7j5zosuL6KXSSToGAVwFzLOQMFsjejZUWuJ65mN0xbFD7njb44aLU=
+	t=1720711043; cv=none; b=spCUvtFnKJdzs3Xe2pOQ+qT07VEN9gBdeBRZPf8Ln6VaPhodj9TJ/tpk6FbrtkLFhlclKSu3wFCJ11gvztcvAfwKkqNidFG2BkAqTjgQEPl1CFmq1BQv7vPX6ZCiXPTPDuuH54TL689uTc+hv2nKM7FPoYGa+ic9Wfz7fcBauEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720711047; c=relaxed/simple;
-	bh=1oergYkWXTm94y5+7ZzuMTJoIeNgn0N1IrJVu94BCi0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sB6XYSDuclkEElj2u2icZOzsVHqCvSAAClDCUHrp99UGTD7dSf+kkNxw/lN74s+2LzOrfjCKdZzn9PE80icsObhe+qar1XXADugU2baN/fVwUbm3+V9oLINhcbvm8RbOs88ocIhS9gVYfXRrOgYDNKt5zHsI8X/ShesBergVpjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=flYVZI5d; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720711045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=putu84WQ0rdP2ZeyMOIhOvpzMiIiotZXLet2mvMCZ2Y=;
-	b=flYVZI5di2L8ka+havXLH2rs4OXoj+nZp8ans5xgJMknpp5EayPzmNQaIwSLJxdTHIiHCy
-	pWgRE/glUT8i02/HxpvpwxBbsuvVU9GE2CBvNAp3lXu3FbkcBSJOvdNj7BOfA7SsShyZCG
-	6tV2T5aofJ/yv+RJAvxgkeRG1OQPv9U=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-602-hnxNToyFPdKo8fdvXgjQTA-1; Thu,
- 11 Jul 2024 11:17:22 -0400
-X-MC-Unique: hnxNToyFPdKo8fdvXgjQTA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A12BD196E08E;
-	Thu, 11 Jul 2024 15:17:19 +0000 (UTC)
-Received: from localhost (unknown [10.22.32.84])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6498719560AA;
-	Thu, 11 Jul 2024 15:17:18 +0000 (UTC)
-Date: Thu, 11 Jul 2024 12:17:17 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Jeff Brady <jeffreyjbrady@gmail.com>,
-	Luis Goncalves <lgoncalv@redhat.com>
-Subject: [ANNOUNCE] 5.10.221-rt113
-Message-ID: <Zo_3fcnMWknpZ6Ml@uudg.org>
+	s=arc-20240116; t=1720711043; c=relaxed/simple;
+	bh=9tuPgrGaLzzwSIZwwsq7dFKr4uHlsHjiKC4b/mlictU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=onIe+5ChewYEyrkgj/BRu9AHa35BYMbnZNhIsFaIz8C/BheB0pLgV7DTmt2y9hH0YsSaoJFSVf4lpPjIkSQcKc28l664xgxuTbGZypZpFqw14c43llO9B+AoEiWJJlA9208/OJAdGqLgVXbTjOoTSzPtE6+4TDwFoxcD9lv3Xcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJSl9ozq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 741D2C116B1;
+	Thu, 11 Jul 2024 15:17:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720711043;
+	bh=9tuPgrGaLzzwSIZwwsq7dFKr4uHlsHjiKC4b/mlictU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZJSl9ozq5pHkLQ3ukz6dMcWMLs1Mw/OM5QUY3tnRR3vwuHCRYbkdAy4uvo/9wHVsi
+	 zzryHvN4xH3wzQwk8I0iZUSLWqsBDzmBhGJZ59xZV4gnxUfsO6H2ypCyTD+fZsYcpA
+	 jvuegg0u2DHz32KzdNVmEkYUoIrW+rfsJulDRyTI0BhALeWZyMC7T6Mj3j6Hsf3vPT
+	 LhezJBdFCsrcqEwBaWEjnKvTrKa+h6oyYcFKtVFLm/M9q+1OBfHdeHc0sO3TyadSjN
+	 ikaFO3aeZ59rszmZQ1gEJwa7dNM9O0jnRbXyUsPeNlnFvyiY+7Jyg3i7ohyyOlqjDO
+	 l/z15sDyqQH2A==
+Date: Fri, 12 Jul 2024 00:17:18 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Jiri Olsa <olsajiri@gmail.com>, mingo@kernel.org,
+ andrii@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+ oleg@redhat.com, clm@meta.com, paulmck@kernel.org, bpf
+ <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-Id: <20240712001718.e00caa0a3cb410dc19f169c2@kernel.org>
+In-Reply-To: <20240711085118.GH4587@noisy.programming.kicks-ass.net>
+References: <20240708091241.544262971@infradead.org>
+	<20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+	<CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+	<20240709090304.GG27299@noisy.programming.kicks-ass.net>
+	<Zo0KX1P8L3Yt4Z8j@krava>
+	<20240709101634.GJ27299@noisy.programming.kicks-ass.net>
+	<20240710071046.e032ee74903065bddba9a814@kernel.org>
+	<20240710101003.GV27299@noisy.programming.kicks-ass.net>
+	<20240710235616.5a9142faf152572db62d185c@kernel.org>
+	<CAEf4BzZGHGxsqNWSBu3B79ZNEM6EruiqSD4vT-O=_RzsBeKP0w@mail.gmail.com>
+	<20240711085118.GH4587@noisy.programming.kicks-ass.net>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello RT-list!
+On Thu, 11 Jul 2024 10:51:18 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-I'm pleased to announce the 5.10.221-rt113 stable release.
+> On Wed, Jul 10, 2024 at 11:40:17AM -0700, Andrii Nakryiko wrote:
+> > On Wed, Jul 10, 2024 at 7:56 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > >
+> > > On Wed, 10 Jul 2024 12:10:03 +0200
+> > > Peter Zijlstra <peterz@infradead.org> wrote:
+> > >
+> > > > On Wed, Jul 10, 2024 at 07:10:46AM +0900, Masami Hiramatsu wrote:
+> > > >
+> > > > > > FFS :-/ That touches all sorts and doesn't have any perf ack on. Masami
+> > > > > > what gives?
+> > > > >
+> > > > > This is managing *probes and related dynamic trace-events. Those has been
+> > > > > moved from tip. Could you also add linux-trace-kernel@vger ML to CC?
+> > > >
+> > > > ./scripts/get_maintainer.pl -f kernel/events/uprobes.c
+> > > >
+> > > > disagrees with that, also things like:
+> > > >
+> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git/commit/?h=probes/for-next&id=4a365eb8a6d9940e838739935f1ce21f1ec8e33f
+> > > >
+> > > > touch common perf stuff, and very much would require at least an ack
+> > > > from the perf folks.
+> > >
+> > > Hmm, indeed. I'm OK to pass those patches (except for trace_uprobe things)
+> > > to -tip if you can.
+> > >
+> > > >
+> > > > Not cool.
+> > >
+> > 
+> > You were aware of this patch and cc'ed personally (just like
+> > linux-perf-users@vger.kernel.org) on all revisions of it. I addressed
+> > your concerns in [0], you went silent after that and patches were
+> > sitting idle for more than a month.
+> 
+> Yeah, I remember seeing it. But I was surprised it got applied. If I'm
+> tardy -- this can happen, more so of late since I'm still recovering
+> from injury and I get far more email than I could hope to process in a
+> work day -- please ping.
 
-This release is just an update to the new stable 5.10.221
-version and no RT specific changes have been made.
+I also forgot to ping you. I'll ask you next time.
 
-You can get this release via the git tree at:
+> 
+> (also, being 'forced' into using a split keyboard means I'm also
+> re-learning how to type, further slowing me down -- training muscle
+> memory takes a while)
+> 
+> Taking patches that touch other trees is fairly common, but in all those
+> cases an ACK is 'required'.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+OK, should I wait for your Ack for other patches on probes/for-next?
 
-  branch: v5.10-rt
-  Head SHA1: ea80a8cd61dcdda428f61d90b3ace2c4d7682d2c
+> 
+> (also also, I'm not the only maintainer there)
+> 
+> > But regardless, if you'd like me to do any adjustments, please let me know.
+> > 
+> >   [0] https://lore.kernel.org/all/CAEf4Bzazi7YMz9n0V46BU7xthQjNdQL_zma5vzgCm_7C-_CvmQ@mail.gmail.com/
+> > 
+> 
+> I'll check, it might be fine, its just the surprise of having it show up
+> in some random tree that set me off.
+> 
+> > > Yeah, the probe things are boundary.
+> > > BTW, IMHO, there could be dependency issues on *probes. Those are usually used
+> > > by ftrace/perf/bpf, which are managed by different trees. This means a series
+> > > can span multiple trees. Mutually reviewing is the solution?
+> > >
+> > 
+> > I agree, there is no one best tree for stuff like this. So as long as
+> > relevant people and mailing lists are CC'ed we hopefully should be
+> > fine?
+> 
+> Typically, yeah, that should work just fine.
+> 
+> But if Masami wants to do uprobes, then it might be prudent to add a
+> MAINTAINERS entry for it. 
+> 
+> A solution might be to add a UPROBES entry and add masami, oleg (if he
+> wants) and myself as maintainers -- did I forget anyone? Git seems to
+> suggest it's mostly been Oleg carrying this thing.
 
-Or to build 5.10.221-rt113 directly, the following patches should be applied:
+That sounds good for me. Like this?
 
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
+From 87dfb9c0e7660e83debd69a0c7e28bc61d214fa8 Mon Sep 17 00:00:00 2001
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Date: Fri, 12 Jul 2024 00:08:30 +0900
+Subject: [PATCH] MAINTAINERS: Add uprobes entry
 
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.221.xz
+Add uprobes entry to MAINTAINERS and move its maintenance on the linux-trace
+tree as same as other probes.
 
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.221-rt113.patch.xz
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ MAINTAINERS | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Signing key fingerprint:
+diff --git a/MAINTAINERS b/MAINTAINERS
+index da5352dbd4f3..7f6285d98b39 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -23105,6 +23105,18 @@ F:	drivers/mtd/ubi/
+ F:	include/linux/mtd/ubi.h
+ F:	include/uapi/mtd/ubi-user.h
+ 
++UPROBES
++M:	Masami Hiramatsu <mhiramat@kernel.org>
++M:	Oleg Nesterov <oleg@redhat.com>
++M:	Peter Zijlstra <peterz@infradead.org>
++L:	linux-kernel@vger.kernel.org
++L:	linux-trace-kernel@vger.kernel.org
++S:	Maintained
++Q:	https://patchwork.kernel.org/project/linux-trace-kernel/list/
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
++F:	include/linux/uprobes.h
++F:	kernel/events/uprobes.c
++
+ USB "USBNET" DRIVER FRAMEWORK
+ M:	Oliver Neukum <oneukum@suse.com>
+ L:	netdev@vger.kernel.org
+-- 
+2.34.1
 
-  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
 
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Luis
-
+Thanks,
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
