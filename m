@@ -1,84 +1,163 @@
-Return-Path: <linux-kernel+bounces-249933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C49A92F1D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:26:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0CD192F1DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39D061C22A0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:26:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549BD1F22FB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D071A0737;
-	Thu, 11 Jul 2024 22:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBBB1A08B0;
+	Thu, 11 Jul 2024 22:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MEf9jkbY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L/9QjLxz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ADA16EB4E;
-	Thu, 11 Jul 2024 22:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8ABE1A00FE
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720736804; cv=none; b=QOLcetGt7ik5hQ/P7PAMgXzUW5O3ZlD3D56fUVqmTQkUzeBeU6kV79OCsIOeQE7pQjJ6cqAt+6wIONo/DCXct6qT/BT4Zv8KfGwg3ohWUEF92GLWIgm9kHtgHA5LxlgjQcJSI0KGPZzbl5BDhHFVzdo4+0GeuHDNLHQcykfWV7E=
+	t=1720736884; cv=none; b=a1hOom8CLxT3QcbQBHUQin6hDjmd02eb3MAAspJGwYzGvvc0VDmsvn9O6UVZJbtmWXFKGvZVRK2cEuSg8OPPvNcQgbB3wMCyMa5x3RxS3+bo344KHVPv331FiItlC8L6UjcQeJfLkb0Qu2W2NL0aptVfuqqbaYGVsu9Fy+Fj0Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720736804; c=relaxed/simple;
-	bh=O5Lu1SvgEihQTdfVuAhZT7Z5p37GJ0Ldh17gb9IRAW4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SY4e0fqFBLhq9MXFU9pvEBHG91YZbkDONn5pOIW6sTWGLXeLqIjv3soJOr8ydobEkU0+Gg0ZWGACF8KcbumOoJHxnhkWBXkIEfGaYX0DWSsix8h8Q9E1YVAckYZfr3tgTnuzGUMnSDwDiQkzm57Q7AWZtTRP+F/tQ9H9p/FAICM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MEf9jkbY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CB34C116B1;
-	Thu, 11 Jul 2024 22:26:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720736803;
-	bh=O5Lu1SvgEihQTdfVuAhZT7Z5p37GJ0Ldh17gb9IRAW4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MEf9jkbYDuMVQz9Ezn5AA5EljEEh4wcYuw1bRiJU03abdJvLn90YXcjuG6Tcm+pXl
-	 aNosTejMAsIw/V+iJvkv1w26AgKBQsVU9pqymjNRIJwQYh2KekiWmebxBcTAXPK2AA
-	 bQmSE4iHCR0BoWA63EUjtyPZO7DYUd1ZlnvoedfKoOTYNjL9nT5I0XedfcrTpKkRgP
-	 Nmrr8aWJM3wgqpbFn+lcVC31Z1GIOpWlbxCzLT+Q5wdSFoTIdyvS4+PubjNdYkywQq
-	 5MsdkPaQ2GsjerIVqwo6hVG+i6kfC8B5So/GaiR9vth1CjJ6jDH14Z8pQDigZ541vO
-	 kccbH+sOYDl2w==
-Date: Thu, 11 Jul 2024 16:26:42 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: shawnguo@kernel.org, festevam@gmail.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-	dlemoal@kernel.org, kernel@pengutronix.de, tj@kernel.org,
-	s.hauer@pengutronix.de, krzk+dt@kernel.org, imx@lists.linux.dev,
-	cassel@kernel.org, conor+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 1/4] dt-bindings: ata: Add i.MX8QM AHCI compatible
- string
-Message-ID: <172073680147.3233842.13674968436579281799.robh@kernel.org>
-References: <1720685518-20190-1-git-send-email-hongxing.zhu@nxp.com>
- <1720685518-20190-2-git-send-email-hongxing.zhu@nxp.com>
+	s=arc-20240116; t=1720736884; c=relaxed/simple;
+	bh=f3630Vzc1r91ymNj3NqDjNRznUNWNoTaS9DusDbuMeg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ISD+AYlz5992nWBSaLUuLP19otqD70BM2IyWn/Y2mbnTCBeOs04avqKw8rCtcrlEeFgIDuLbUfmHhnHSNsNZDfcOHVLCNCFwt67hraT2h+335uaCUEkGRthkRPHbkEn9kuYsyHt6khZvFSLNj55dQb9fsKkcKNZTtHha6hReq7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L/9QjLxz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720736881;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GRaWiXvRWFa9Ve6tZcyVHtL4d6UYKXRciWOsNEopzA8=;
+	b=L/9QjLxzQ133pjOfmrHnx3aiSL3414+3EmE7yBV2FDdjh+ntvwM+27IjiOTiuf0okdoC4D
+	EVr914ZfAOe56IlD5VpmhgtBPGfBzT7GwP12TS72OI1smDO/j4k9CzrXyYox/PtxYsbNvE
+	an8ZYqowyZ+papzj2jSuNm0IQqrIl8Y=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-163-ZoHG-xItPVCiZ_XaQu750A-1; Thu,
+ 11 Jul 2024 18:27:57 -0400
+X-MC-Unique: ZoHG-xItPVCiZ_XaQu750A-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B3412196E090;
+	Thu, 11 Jul 2024 22:27:56 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 056BE1955F68;
+	Thu, 11 Jul 2024 22:27:55 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: seanjc@google.com,
+	michael.roth@amd.com
+Subject: [PATCH 00/12] KVM: guest_memfd: lazy preparation of pages + prefault support for SEV-SNP
+Date: Thu, 11 Jul 2024 18:27:43 -0400
+Message-ID: <20240711222755.57476-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1720685518-20190-2-git-send-email-hongxing.zhu@nxp.com>
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+There are a few issues with the implementation of SEV page "preparation"
+and KVM_SEV_SNP_LAUNCH_UPDATE:
 
-On Thu, 11 Jul 2024 16:11:55 +0800, Richard Zhu wrote:
-> Add i.MX8QM AHCI "fsl,imx8qm-ahci" compatible strings.
-> 
-> i.MX8QM AHCI SATA doesn't require AHB clock rate to set the vendor
-> specified TIMER1MS register. ahb clock is not required by i.MX8QM AHCI.
-> 
-> Update the description of clocks in the dt-binding accordingly.
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> ---
->  .../devicetree/bindings/ata/imx-sata.yaml     | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
-> 
+- doing fallocate() before KVM_SEV_SNP_LAUNCH_UPDATE will cause the latter to fail.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+- checking that only private pages are passed to KVM_SEV_SNP_LAUNCH_UPDATE
+  is done in the guts of vendor code, as is the check that pages are not
+  passed twice.  This goes against the idea of putting as much common
+  code as possible in kvm_gmem_populate(), for example it returns -EINVAL
+  if the page is already assigned.
+
+- clearing the page is unnecessary if the firmware will overwrite it
+
+- the "prepare" bool argument is kinda gross
+
+The important observation here is that the two paths that initialize the
+contents of the folio are mutually exclusive: either the folio is populated
+with unencrypted data by userspace, or it is zeroed because userspace did
+not do anything beyond fallocate().  But in the latter there's no need to
+zero and prepare the page at the time of fallocate(): it can be done instead
+when the guest actually uses the page.
+
+Pulling all the zero-and-prepare code into kvm_gmem_get_pfn() separates the
+flows more clearly, but how do you recognize folios that haven't been
+prepared yet?  The answer is to use the up-to-date flag; there is a
+limited attempt to use it right now, but it only concerns itself with
+the folio having been cleared.  Instead after this series the flag is set
+for folios that went through either kvm_gmem_populate() or that have been
+mapped into the guest once (and thus went through kvm_arch_gmem_prepare(),
+on architectures where that is a thing).
+
+As a bonus, KVM knows exactly which guest is mapping a page, and thus
+the preparation code does not have to iterate through all bound
+instances of "struct kvm".
+
+There is an easy way vendor-independent way to obtain the previous
+behavior if desired, and that is simply to do KVM_PRE_FAULT_MEMORY after
+KVM_SEV_SNP_LAUNCH_FINISH.
+
+(Credit for the idea goes to Sean Christopherson, though none of his
+tentative implementation is in these patches).
+
+The bulk of the changes is in patches 6, 9 and 12.  Everything else is
+small preparatory changes; many patches in the first half for example try
+to use struct folio more instead of struct page and pfns, which is useful
+when we finally extend the code region before folio_unlock() into callers
+of kvm_gmem_get_folio().  There's also a couple cleanup in the middle,
+mostly patches 4 and 8.
+
+Sorry about the delay sending these out.  This should probably be in 6.11
+but will not necessarily go in during the merge window, depending on how
+review goes.
+
+Tested with the SEV-SNP smoke test that was just posted, and by booting
+a Linux guest.
+
+Paolo
+
+Paolo Bonzini (12):
+  KVM: guest_memfd: return folio from __kvm_gmem_get_pfn()
+  KVM: guest_memfd: delay folio_mark_uptodate() until after successful
+    preparation
+  KVM: guest_memfd: do not go through struct page
+  KVM: rename CONFIG_HAVE_KVM_GMEM_* to CONFIG_HAVE_KVM_ARCH_GMEM_*
+  KVM: guest_memfd: return locked folio from __kvm_gmem_get_pfn
+  KVM: guest_memfd: delay kvm_gmem_prepare_folio() until the memory is
+    passed to the guest
+  KVM: guest_memfd: make kvm_gmem_prepare_folio() operate on a single
+    struct kvm
+  KVM: remove kvm_arch_gmem_prepare_needed()
+  KVM: guest_memfd: move check for already-populated page to common code
+  KVM: cleanup and add shortcuts to kvm_range_has_memory_attributes()
+  KVM: extend kvm_range_has_memory_attributes() to check subset of
+    attributes
+  KVM: guest_memfd: let kvm_gmem_populate() operate only on private gfns
+
+ arch/x86/kvm/Kconfig     |   4 +-
+ arch/x86/kvm/mmu/mmu.c   |   2 +-
+ arch/x86/kvm/svm/sev.c   |   9 +-
+ arch/x86/kvm/x86.c       |   9 +-
+ include/linux/kvm_host.h |   9 +-
+ virt/kvm/Kconfig         |   4 +-
+ virt/kvm/guest_memfd.c   | 209 +++++++++++++++++++++++----------------
+ virt/kvm/kvm_main.c      |  73 +++++++-------
+ 8 files changed, 171 insertions(+), 148 deletions(-)
+
+-- 
+2.43.0
 
 
