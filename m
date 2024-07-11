@@ -1,57 +1,60 @@
-Return-Path: <linux-kernel+bounces-249968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0E692F24D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:53:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 776CC92F252
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4D91F2219D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:53:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214FD1F226C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243991A0719;
-	Thu, 11 Jul 2024 22:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB031A071F;
+	Thu, 11 Jul 2024 22:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRJgImUw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCTampXI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFCF14C596;
-	Thu, 11 Jul 2024 22:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5F319FA96;
+	Thu, 11 Jul 2024 22:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720738412; cv=none; b=M/R90M4Y8My8MI88bvr2R/gpWUTlQsXA0Jwv/2wdbhduqLijwXHF3Led75n/3SdZTh8rjgwWn9iwdFzIKYJtgEqzHMEzIEwlneQopU1DsKueGYHknGFNF2dxV11kLsdmc9NQTqyZk+Up92Ns9WExPLjD3VDGCCBDPKLZ2iZ+Z1Q=
+	t=1720738427; cv=none; b=uElyiG7mDBWX4h+OcJ/Tnon7VC0EEo1w0Fmlp5u0bNE3HZ+CyJ7AyJgPbL1Vtl2X38sPwqoXgyqC/47v0/libc0mg9tSQuuYpGtI4zhd1mPvWD+JcIQ1vScBZuV86S02ce56AYYBJ8QT6A7LKQmRX+b23c5gSgsf/ZwoSOGHmzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720738412; c=relaxed/simple;
-	bh=ofndv/zw9XA0mWAXytFcHbCoYH5AfpN6Z0ZOKdwE13A=;
+	s=arc-20240116; t=1720738427; c=relaxed/simple;
+	bh=XI0JQ5+wMzOU7+T9tpSRMedqhV5Ai9rJgS5QcKd8d6U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r1/E+vLJPZEygSOCutMlIlgNj01o1cAbblsHiGFc9tP7HeWm422Bijm1l+PlHG09moi8prdcID3Osmr04FnkenMXa5bS6qFd1IkjIzgoB24d5VoG38ol5kfOHFzWi5vYAfEZAHzePZrR9KSo1b3gbhVkc5ok/Cw2vWFojD2e15M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRJgImUw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C869CC116B1;
-	Thu, 11 Jul 2024 22:53:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=A/vDEVmLoXjDyHEGLx583eeYQUlznRDFKjTLBG+AgbeqP9SyeHcU3reoTeESE+sVlpPgVYNuUk264MpUqC8XEbhXAfHZ52gIEFlnPLZ1P7OMbaAx0jLXFEGfnNP5YJzY+DjSgWmLTWEGKzWw0ucqnhD6Td6ndWiuelml4ZfVSdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCTampXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68108C32782;
+	Thu, 11 Jul 2024 22:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720738412;
-	bh=ofndv/zw9XA0mWAXytFcHbCoYH5AfpN6Z0ZOKdwE13A=;
+	s=k20201202; t=1720738426;
+	bh=XI0JQ5+wMzOU7+T9tpSRMedqhV5Ai9rJgS5QcKd8d6U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XRJgImUwXxRDU4ZFiXi5TbBPoo/9R57ohVP4ma6bhp6yugygPbTIi6lkE2KJUdaO1
-	 YSOk8NhLPUjCCvdarb7p7291ZHdwotBmbDycfEPGRB8qSRe/hXSXe9mKx/CkGkCURv
-	 D8yW0cn8Gy2Mak5S+5/ykyBBduPjk6Wiw6XN8DtCC7mVpD/UWLFefkCUuFD0e3xcau
-	 LVtShkDHPdYpJLQe1wfhHaZYKWElMbolQsoEYI7Jmh/n/9TV6whQxbVTfHnByoSFQV
-	 C9MC+WJUs1v3x+kS4g3J/s6u4zpp8Atmylm2/p/GfGpyn/ZKP8ddPdZmyh1patBbwT
-	 oOpbFES2lnEjQ==
-Date: Thu, 11 Jul 2024 16:53:30 -0600
+	b=vCTampXID1ylnvLTVA6LVYE3FtZ8sabDqQulHG+WSBEzOzwZ0boAeW1pNVVi3b5rA
+	 S5a/au/367ajASu4EO7UgcfvAfVk25eu8Ytacf9nZ1zGAHJJ/AUwy7lCPrsvBOdsdK
+	 zsus4btiyF5dYTsxDfoDx42IOEcRSi3g4xhfTvOdOtEKqi2cCYJxp68OhWBBvW8frT
+	 slIGWeFxNGUy9x7tTjJVogCEieZnj4REmfRRwl/s+wUIUPpL1F+uGwBZZAQ4Ttmm+s
+	 lE3AdZFCT53XpbKooUyfkCxVcD6Yn2ecAi/YUF5j1SJGTSqbU7Wyn9TNBvN9Fgnhnq
+	 YXh5h22R+8sXA==
+Date: Thu, 11 Jul 2024 16:53:45 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Rayyan Ansari <rayyan.ansari@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>
-Subject: Re: [PATCH] dt-bindings: phy: drop obsolete qcom,usb-8x16-phy
- bindings
-Message-ID: <172073837103.3268845.15106965323950109239.robh@kernel.org>
-References: <20240711122016.41806-1-rayyan.ansari@linaro.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: devicetree@vger.kernel.org, geert+renesas@glider.be,
+	conor+dt@kernel.org, linux-renesas-soc@vger.kernel.org,
+	mturquette@baylibre.com, vkoul@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	biju.das.jz@bp.renesas.com, sboyd@kernel.org,
+	dmaengine@vger.kernel.org, krzk+dt@kernel.org,
+	linux-clk@vger.kernel.org, magnus.damm@gmail.com
+Subject: Re: [PATCH 2/3] dt-bindings: dma: rz-dmac: Document RZ/G3S SoC
+Message-ID: <172073842432.3270356.13976305487495641614.robh@kernel.org>
+References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240711123405.2966302-3-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,22 +63,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240711122016.41806-1-rayyan.ansari@linaro.org>
+In-Reply-To: <20240711123405.2966302-3-claudiu.beznea.uj@bp.renesas.com>
 
 
-On Thu, 11 Jul 2024 13:20:14 +0100, Rayyan Ansari wrote:
-> Remove the bindings for the Qualcomm 8x16 PHY driver that was dropped
-> in commit 4756f35fdf14 ("usb: phy: remove phy-qcom-8x16-usb.c") in 2017.
+On Thu, 11 Jul 2024 15:34:04 +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
+> Document the Renesas RZ/G3S DMAC block. This is identical to the one found
+> on the RZ/G2L SoC.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  .../bindings/phy/qcom,usb-8x16-phy.txt        | 76 -------------------
->  1 file changed, 76 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/phy/qcom,usb-8x16-phy.txt
+>  Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Deleted files are an automatic Reviewed-by. ;)
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
