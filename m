@@ -1,86 +1,77 @@
-Return-Path: <linux-kernel+bounces-248839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A18C92E28D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:38:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FE192E285
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2DB31F23F1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693FD28A36E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5458152E13;
-	Thu, 11 Jul 2024 08:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4364156F39;
+	Thu, 11 Jul 2024 08:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SGJoH+0+"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmnNML4I"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB501514E0
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B752B155A24
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720687031; cv=none; b=Y0y7Wu2OKvsoBFNIhxrlSSO1ZMF4jpXfG5UwwmSOyZrAvwThM27mvJNyJMVXXmC+ovAubtiIi8p8Ct2grlzODprjjGkWSVM9fFmYLXQ2O1dEgEjbrwXwWVUGSqt4p7SRX/RXk79eo0un1TzOeM4kpLLCx293SKp4emJcIkK7jZs=
+	t=1720686948; cv=none; b=ImVvG0xfRL6y+UcksVkwCdIwBY2ahQWFZbM52M6WQiGk+mTA1opS4DOEwodkEqa2kVRHWdo2E6+rQ+4aAjmIqUWu06hqL8YPGKV9uczQC571D+P5mcDuLgav9gNgShZwuzBJEfSKlzyvmPNoWaa2VcLpQbp+ml5MDhu9ZAqzQvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720687031; c=relaxed/simple;
-	bh=eRTxtAd+aiBxKhHy1Ms0fpAkVKz89XTsYBJnSiH/vNE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tBD9p+UQTVwo2DiEYI+TXw8/C6hIPPHWol3RsCAo08Dlgzv3zFjThM4IXk7y+/c51XPhvG733WwlzN0BvYrdY9e1+9V1EzsKtvcJ1vsbM8nc5P34Js8YKNmkjy1RFNT+oyMYU+xsMk4G1PU4Rora3GxgX4bmNjdUGC7Fb9w7+QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SGJoH+0+; arc=none smtp.client-ip=209.85.210.177
+	s=arc-20240116; t=1720686948; c=relaxed/simple;
+	bh=eVrzFQh2gzasohNtJrVRYNU4IlzKN8XLynoUq7Ij4uI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HVU6gsniQUZkb8fip1sQhBa2UKzPR132oYKYMU203+h5mTkULhPhsxqW2SU2bzO8UJI1lmqTf5fS3d4ormbPmcnnmNQZQvDb0Vq+l/TqdQYEdcn4Hv89Mp3JLzF3wzN7pByz7bWW2Hwa7iGCI8W5HrJuDfkWfrM2peQHUdn6k4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmnNML4I; arc=none smtp.client-ip=209.85.216.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b0013cf33so590709b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:37:09 -0700 (PDT)
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c96170d23eso525440a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:35:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720687029; x=1721291829; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720686946; x=1721291746; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=atTBjk9wptxxVtf7Y3tfuR/uu7YgNKVETKoQtx0qD6Y=;
-        b=SGJoH+0+ZY2QD6cm6zXev81p7oML/r0l8OdsYhns+LVIEKnKvhthk/Auy0JMm2ukoU
-         AvhG5Hqa2h+7uPxgFJJ7ytnFA3HPEf8/ZtPR2GZV3MOwHjTyNlBUiA8nDxpDvISsnYjO
-         JqYfhfdcNNpxJuZuKh62o/7oYDLr/PwarsfHtVJMZCnVxZTDeKodYa9SrKqSsSuWBYPJ
-         jV9Svfr/EpiG3UKYE2gndigZTeq7vFwBpwyGgsByig6plhIcZZ+vMxzoc/cBNobUL1aa
-         AePgsXEnBw92x2OoBuIMsqYCx4xjKCV2FcB2lqly50cToqwU2zlrO8Usw8aPQ8hJUSXB
-         KZoA==
+        bh=qq8kwvZKqPvz6y5zTKRIEuAEAuvxbyjF4fZE1ScwzjY=;
+        b=CmnNML4I6CseQlSQb9FM07nl1yw6xpCUJW/4U6VlpnU0Ty0QmPdLtha02WNLguz/WM
+         4YdGBt0lM3UA30ajHuiFqiTC16xdHYIgm28SyWaVeNrqnqZqy2yiiBGAZw6TxPT47fEn
+         lIQgqJFGJCu5QS0KLDVryzYMhS8WLR+AfcCMLMv1jR1GJNi7HXfAFyOPXA/zLzkR6TWE
+         JrEWYeyVol9ZIwaKsmd+l/rebdcGIeD6ABX/Sx5V01sDOTyorRJ4k9ffJAf/rJkQCdaO
+         x5cNefCrji30OE2BTtORTYqUWxJliU1h3ucDU/t18IorNPwyomjhN6vqEKBl8yaOyfw0
+         i0MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720687029; x=1721291829;
+        d=1e100.net; s=20230601; t=1720686946; x=1721291746;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=atTBjk9wptxxVtf7Y3tfuR/uu7YgNKVETKoQtx0qD6Y=;
-        b=POtMv2PC4n+jfxrybMRYc2YI+NnJ/ryJfVYuIPxyBKPGEhzdxl45EUgYQiHdV4JPqC
-         concZUb3dN/zfxUVDUaVscIjUUTMFDw9T0l/anUB8RhlkcnHyV3fwh77uklx+/o+Lbvw
-         vysrh07+rttEzbNcZWtHE3r9pnsNgLz3j3XL1Ig+WxcUJR69SIYW5IFaT8zDBq0Oj3yN
-         5V9rCFEobHWPWFmaG2EyBK0YwpTChaSqBW8LhbdGeCshiPqGreAoX5723nYjEE+XpBKc
-         B1IBG6kJt92CgeA8WEQqyiH4kAZDP9Ue1pJ4PgmfyPsECkQ9gzfgRX8QjeAc2P61zocM
-         nVJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXehV8LoC5HibAyTJdGrnBvgCBc4r5/MFQAJJq36HAGxZfTTc9udiEWx3l8gHAnC9vuZdCHZ1sQagi/8oVKD659UIZenmFPeOzWt+9S
-X-Gm-Message-State: AOJu0Yz385LXuZxF3nsiaKFCzQJTizMiYsEs4Rs4dCMIPCynVi4b04XY
-	tycsllf6VSPgXtcJLvMHjkSnOJq+TuaN2xK+K0HlY1h/x/GXhfj3
-X-Google-Smtp-Source: AGHT+IFigDR87HJX5Kkn2JMv3ufTLyQ4WVF4QUdRKgricWGF9fAUSAIYjx5H538G8KVh9siAZ6puwg==
-X-Received: by 2002:a05:6a20:729a:b0:1c0:f323:1bd8 with SMTP id adf61e73a8af0-1c29820667cmr8967595637.7.1720687028971;
-        Thu, 11 Jul 2024 01:37:08 -0700 (PDT)
-Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ad3837sm45535835ad.300.2024.07.11.01.37.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 01:37:08 -0700 (PDT)
-Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id 913E3805EE;
-	Thu, 11 Jul 2024 16:46:31 +0800 (CST)
-From: Cheng Ming Lin <linchengming884@gmail.com>
-To: miquel.raynal@bootlin.com,
-	vigneshr@ti.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: richard@nod.at,
-	alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] mtd: spinand: macronix: Fixed warning: Function paramteter or member not described
-Date: Thu, 11 Jul 2024 16:36:11 +0800
-Message-Id: <20240711083611.364431-1-linchengming884@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        bh=qq8kwvZKqPvz6y5zTKRIEuAEAuvxbyjF4fZE1ScwzjY=;
+        b=m/KHnOWFLH8U56Q/5xjjoECbSLpwOMwNHQkOjE4xfBP7qAXlH/Hl9R5kfASHgz0CE+
+         e4LqZxZZibo/ti2JFGw3Lh7E5kf3RLLAC5heZomfyr+cI6tYOZA97woxDo2/yayhO67v
+         q4MP4Q1MB8hBfmoiCFZeO1zIxVjHDqyHOtYno35QsJhSerDtg+GmBhbUvFGK+gxNzpaV
+         fNnMbxzsraKOHHVAx1qlcOdM5NMtTLBaIYhnu2GNP6fci8czvByRS3kC0PUFmSW1pBRP
+         ecGxE3inEwIkrayfrG4GybUgR4oUnHnyI5iogxZauGFaorHRbPqgU4V8bMG6OZJqD6gf
+         tRXw==
+X-Gm-Message-State: AOJu0YwLZvEsqJVp5hzvzMcieYkAo7uxEDFoT4q+4xuRCRTeCaLZU4Bt
+	GD9LLIY2XnvWpZvppOPJ6cOOOSqD5nFetCmQ5OtvsftqSnZ2r2+rC/FmmA==
+X-Google-Smtp-Source: AGHT+IGUt6WETC4rSEgAs5YuoG2vVIdNcXGM8Z3YHTLFZ7MSQqVNZVFNLu7K3+WPmzye3AnrP6ybKg==
+X-Received: by 2002:a17:90b:120c:b0:2c9:64fb:1c7e with SMTP id 98e67ed59e1d1-2ca35c32e30mr6510506a91.14.1720686945637;
+        Thu, 11 Jul 2024 01:35:45 -0700 (PDT)
+Received: from localhost ([47.89.225.180])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca34e6a252sm5084517a91.14.2024.07.11.01.35.44
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Jul 2024 01:35:45 -0700 (PDT)
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
+	Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH] workqueue: Simplify pool_allowed_cpus()
+Date: Thu, 11 Jul 2024 16:38:31 +0800
+Message-Id: <20240711083831.4273-1-jiangshanlai@gmail.com>
+X-Mailer: git-send-email 2.19.1.6.gb485710b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,64 +80,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
 
-Fixed the warnings: Function paramteter or member 'xxx' not described
+For cpu worker pools, attrs->affn_strict is true; attrs->__pod_cpumask
+and attrs->cpumask are the same.  Skip the pool->cpu test
+in pool_allowed_cpus() and use pool->attrs->__pod_cpumask.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407110520.pbPnrOlM-lkp@intel.com/
-Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
 ---
- drivers/mtd/nand/spi/macronix.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ kernel/workqueue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
-index c61f1ba31f0c..ea956933e8a1 100644
---- a/drivers/mtd/nand/spi/macronix.c
-+++ b/drivers/mtd/nand/spi/macronix.c
-@@ -101,12 +101,16 @@ static int mx35lf1ge4ab_ecc_get_status(struct spinand_device *spinand,
- }
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 8b2a0fe4a85e..5d362290c2e8 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -2646,7 +2646,7 @@ static struct worker *alloc_worker(int node)
  
- /**
-+ * write_Plane_Select_bit_in_cadd - Write Plane Select bit to the column address
-+ * @spinand: SPI NAND device
-+ * @req: NAND I/O request object
-+ * @column: the column address
-+ *
-  * Macronix serial NAND flash with a two-plane structure
-- * should insert Plane Select bit to the column address
-+ * should insert Plane Select bit into the column address
-  * during the write_to_cache operation.
-- * Additionally, MX35{U,F}2G14AC also need to insert Plane
-- * Select bit to the column address during the read_from_cache
-- * operation.
-+ *
-+ * Return: the column address after insertion of Plane Select bit
-  */
- static unsigned int write_Plane_Select_bit_in_cadd(struct spinand_device *spinand,
- 			const struct nand_page_io_req *req, unsigned int column)
-@@ -116,6 +120,17 @@ static unsigned int write_Plane_Select_bit_in_cadd(struct spinand_device *spinan
- 	return column | (req->pos.plane << fls(nanddev_page_size(nand)));
- }
- 
-+/**
-+ * read_Plane_Select_bit_in_cadd - Write Plane Select bit to the column address
-+ * @spinand: SPI NAND device
-+ * @req: NAND I/O request object
-+ * @column: the column address
-+ *
-+ * MX35{U,F}2G14AC also need to insert Plane Select bit
-+ * into the column address during the read_from_cache operation.
-+ *
-+ * Return: the column address after insertion of Plane Select bit
-+ */
- static u16 read_Plane_Select_bit_in_cadd(struct spinand_device *spinand,
- 			const struct nand_page_io_req *req, u16 column)
+ static cpumask_t *pool_allowed_cpus(struct worker_pool *pool)
  {
-
-base-commit: 6000ef48e571f49a636b0c51494c1326ff9b7736
-prerequisite-patch-id: 5cea93c94f6237a2f8f51397ba76187952ef45b2
+-	if (pool->cpu < 0 && pool->attrs->affn_strict)
++	if (pool->attrs->affn_strict)
+ 		return pool->attrs->__pod_cpumask;
+ 	else
+ 		return pool->attrs->cpumask;
 -- 
-2.25.1
+2.19.1.6.gb485710b
 
 
