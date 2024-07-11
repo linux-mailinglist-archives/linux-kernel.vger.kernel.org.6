@@ -1,132 +1,230 @@
-Return-Path: <linux-kernel+bounces-249622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABA392EDF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:38:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5645792EDF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4A41C21ACE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:38:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6E501F23696
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867B816DC14;
-	Thu, 11 Jul 2024 17:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00B516D9BC;
+	Thu, 11 Jul 2024 17:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oe9j52uy"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QyDn/AfX"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5030916D9BC
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 17:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7869642AB5
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 17:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720719495; cv=none; b=FjVsaNqYsXQV1e0OCEqUuOnb8nZ69nnasN6sBkHoP8KAaTnYFBYEnnrQoWJF8rAFhrUVlcRzB6GKDz7ULF4eMT1Qi6gKyKacaLLTba5SwKyBmbRLaOmpe3UbTETOYl5aX0Yy6rARTuGEbples/1Kfd6Y5NKDqFUd2l4LNr35qRk=
+	t=1720719562; cv=none; b=tH7FP3FJy6dZNXDbOsUcYSTK8hRi+KtJdEcjyTua7ZNXYO2UbfhHoRJO9CdsbkA75/bqM5xQeL13QQZ8IcJjA8SDBWeYaMh1wNUAe+E8j+xqYiT3F1cpy8yZBRE0EAvhfoklkDiweChvKIdKfBC9Em2I1pgmrIsa1ysdwtRtSOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720719495; c=relaxed/simple;
-	bh=5Xgl+EcOjT7f93shPiHRMJ4pO5M75AEYdIGVDYwpN8M=;
+	s=arc-20240116; t=1720719562; c=relaxed/simple;
+	bh=r4ZdT9eOdG1rIogC82ewixN2xUXKOsCM0E7oZyhLPA4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QlRvjYLCN+JF+S7SIs6q91GRWajPE2Bkb1ZLSIMZsUkE2Nwi4VkYa+Qe4E4fC2clmjuzQ2RzRSd8TSJZpict0y4Zs7EwmBWqKWVP09glRcUTMStEjV6Q/SQx+FNjZ31GENPT5WsouQA5dGLKa7K6YOUwjXKxBzzb/WRl+G1djUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oe9j52uy; arc=none smtp.client-ip=209.85.208.53
+	 To:Cc:Content-Type; b=syeiXvtt87UNC71RQboxuQGXWRZkPIFXkPFU1m4lBirlQsNaa7S44hAQO3u/vN1A9akMUxU/IHFLSS/cTFiyYB8Cp1zx0R9Fg1jJfLnLroTKGBKKqdTzNG+kY+oLBOoMvrL57sgAnvQQx+VwrURlw1bvgtYggBS56R0o10lTg9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QyDn/AfX; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58ce966a1d3so278a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:38:13 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-447f8aa87bfso18941cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:39:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720719492; x=1721324292; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720719559; x=1721324359; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kmi5HLcqE6fK5ySS3lyqzl4ypWFtv4L42PctvT1OoP0=;
-        b=oe9j52uyDrHceb9y99ZhuiWajBBOOb0Vu5p4YsdN8JRq9bMms36Ydg9DebfagfNYFp
-         2bb8egBjYqI+xW7EYeBcnd68Br5gRMChOOnv1uqkpO/NzNAN1bdURs9I1Ys8TSpUaFUB
-         GK9K/LdgpHQT24rwAzYds0+QH0TmzpcXFL/v7MaLkVVEOTer+y6D3tDqGPyJCuvrEBY8
-         XXCOUzLIJGfg8/lRf2OZr7daWAW25E/BcHRFh8ZBjgx0FxsEAfmQUDDc658XqYyVrbzV
-         Xk3n+MfAS1xGB9VXYXXzajf/EM9AjqCa/EMP7xGfTCwggDaU48a3latx5Cg8Bu017uWV
-         qMzQ==
+        bh=/LH8mU+M+sCWnR9+Ca+ARV1BNg1CNNL62rL9vAcSPBM=;
+        b=QyDn/AfXD8ZXj0mhreqAow11ecag39lmPiS1JMFEC4BJU1UCtW8+oN01cfCxJQDks7
+         5xwO8OiHJCpOQVX8cPB1xXrTwG2aXz5bCvhwmaut9Ivo9zmU1zighQGMbE9HdNUdbF53
+         L8ao/AVo8ANkvnxv1gXJguIGoZLQkEsLKfRL0XxdGDeMHW4NjqwnSlEjn2TbcIapwJ7f
+         iRmdcvRrad7afiqZ0hjqxJHEKRw6k9xdL9tupfSHZuyO3QuNq0yWxpVbtbuYgeaFK2WZ
+         L+RPcCgSM6x3oc1gdBIjp0GeUqtqcf4qCdKlJ6Ykty7z+pu+1LeehGeavGlNO1XLdIjk
+         HI2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720719492; x=1721324292;
+        d=1e100.net; s=20230601; t=1720719559; x=1721324359;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kmi5HLcqE6fK5ySS3lyqzl4ypWFtv4L42PctvT1OoP0=;
-        b=MgRyF8xlMXkZyWbWiOZ2Yc7F6TbNzdnQ+47jWOs2f95hxIBNX9naRlAWgtEMaxvdLJ
-         dOlqr1YsZhJiaXOyJFYB8Glgd1v6pENLoO21tlBSQ4Tf2DZdymBvi155vqtbdVaVp5WW
-         oVK5FU3gGCRE3MpW1Dfhs/l2GrIT8MsbQYAa1u38+ESEt54Xau7ef0MkPwkSidlCEwDU
-         sCv3oiyZZ/jIcDRbiP5lZce/JSm2T6qu0eU8231rYuzuDMb+IgyuhazBvVfRY2Lli6Q7
-         4Haxr5bEZ0nA8DE/5khu9n+EhPRrP1aDLWgPi3HtRDUk+ow6OAgfrrPC7riPpXkNpdfK
-         fZ5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVB8V33MT4aRCuLQFLTgcwqe4mbCo98gnN67vfPbmSYZUDtF8vcoPY6PEn+Gsr2dS6mXXlsLM5XtPoOVn7MB7q2XwwwSUCBNhVaA34+
-X-Gm-Message-State: AOJu0YylwxjBFHlzpGpivYNx+KQsIe2HjFk1VP/U2FHVP7gmwe/Xwfq8
-	rOllVrmDQ/x6pE0cLX383Q5gvZu+Z3j7v/0JaKytVhWA2ld0mqD7LfCuWBkjdHP4OpyimysyEYs
-	I8oa8/WaUb/6xAveAn9abwkRZbHmzYhxsud4V
-X-Google-Smtp-Source: AGHT+IH7ZVeKGtFW1ffbCmLAUEv4AqAX1Zjzfy/SAWoRHxzSGzNdtgnfN009pJNeMEQH46pIXGbzCkhrPdNrgHUru00=
-X-Received: by 2002:a05:6402:51cc:b0:58b:b1a0:4a2d with SMTP id
- 4fb4d7f45d1cf-5997b09fef9mr1782a12.1.1720719492339; Thu, 11 Jul 2024 10:38:12
- -0700 (PDT)
+        bh=/LH8mU+M+sCWnR9+Ca+ARV1BNg1CNNL62rL9vAcSPBM=;
+        b=xVnK2uI/1hu3jgUSK29rAgnyxQjdxZKbDfO1zh3n7ozvWTE+rNq86owwqX5waOEQd5
+         btmBUdo38HvOUUrMHjNwVp6byjyz5jK24gsb0V9zny2a1oKovke/4zLU6QLcurfUOhtA
+         CNDiVoCg2fqQpohO+xjmfcncEoobPtEtSrRKIAYGC73X1V2jlxmlZaIpIvGMXWnzKIuz
+         QUHgTOTsYjz3K0vifjxes627wrHgIMNgBD5uqBRGumEieWX207MXzPKwoeVGZdAYbSkj
+         rWg6ZirWL10+Q3pFKmRA6RIwdEQPBnK0uRPpJkQWRoZ64Onn7oPDWxt0gzT52g27+yP4
+         kVlg==
+X-Forwarded-Encrypted: i=1; AJvYcCX683CJgdhY4S2RXP7g3DLkGEfzAWd/evksSv9H1+Py0e1d4LDcixFqF/knJfnGH55g9uKVDtmhLab93K38dTFFSlcd9hJsVT4vA3nm
+X-Gm-Message-State: AOJu0YybqR+h1QnVLcwzHmIb/18uBEGOnubfban1ihnz9W8acNBlH6Sb
+	1j6WNCG+t4nDdWLkAaTEHGt+c/dXJ/ssUPHjyRY/Tf8mdDnMIV1zhJ6IgDuprDdEqRFrQb7WjE2
+	DiS4ylbBlV1Xl23fBO2OTXGakXVaqsAncxanJ
+X-Google-Smtp-Source: AGHT+IGhpAkKikX9WUeBj1u9fTmUMy9VLmxdlbU7nnkRl24NRs3MGy0QS8vyqtirWUKAa1YhY3F14tnsHnAw8L2LYas=
+X-Received: by 2002:ac8:7943:0:b0:447:e393:fed1 with SMTP id
+ d75a77b69052e-44d3555cbd2mr3314221cf.7.1720719559055; Thu, 11 Jul 2024
+ 10:39:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711171652.work.887-kees@kernel.org>
-In-Reply-To: <20240711171652.work.887-kees@kernel.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 11 Jul 2024 10:38:01 -0700
-Message-ID: <CANn89iKqZD68w1QtM3ztL_X290tj_EGyWRvFrhyAz-=T+GkogQ@mail.gmail.com>
-Subject: Re: [PATCH] net/ipv4: Replace tcp_ca_get_name_by_key()'s strncpy()
- with strscpy()
-To: Kees Cook <kees@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <d1671959-74a4-8ea5-81f0-539df8d9c0f0@huawei.com>
+ <ZcN7P0CGUOOgki71@arm.com> <CAOUHufYo=SQmpaYA3ThrdHcY9fQfFmycriSvOX1iuC4Y=Gj7Xg@mail.gmail.com>
+ <ZogV9Iag4mxe6enx@arm.com> <CAOUHufYwoTTsRBF_wWZU_jWzb8e6FF=vN8UKtVHBeXLBkwHWzA@mail.gmail.com>
+ <Zo68DP6siXfb6ZBR@arm.com> <CAOUHufZC0Jn=bTpc0JhqONXbYXgyBOVZ4j8bbKSJWv1dOSmQEA@mail.gmail.com>
+ <Zo8LTaP-6-zIcc9v@arm.com> <CAOUHufawuXOifhrULx6mC0Kv0_sbjT0y16QMePiw=gH9b6xxAw@mail.gmail.com>
+ <CAOUHufb3CHLCo54fZcPSG+mrXD-kRsa0Foi8=vL5=q+YHpQ+Rg@mail.gmail.com> <Zo_EiIm4ylNqO2ZR@arm.com>
+In-Reply-To: <Zo_EiIm4ylNqO2ZR@arm.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Thu, 11 Jul 2024 11:38:40 -0600
+Message-ID: <CAOUHufZKBkiHQFMvkmoMSX88SdjZ12+FFwtfGJtKAqvMXxJS+g@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] A Solution to Re-enable hugetlb vmemmap optimize
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Nanyong Sun <sunnanyong@huawei.com>, will@kernel.org, mike.kravetz@oracle.com, 
+	muchun.song@linux.dev, akpm@linux-foundation.org, anshuman.khandual@arm.com, 
+	willy@infradead.org, wangkefeng.wang@huawei.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 10:16=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+On Thu, Jul 11, 2024 at 5:39=E2=80=AFAM Catalin Marinas <catalin.marinas@ar=
+m.com> wrote:
 >
-> Replace the deprecated[1] use of strncpy() in tcp_ca_get_name_by_key().
-> The only caller passes the results to nla_put_string(), so trailing
-> padding is not needed.
+> On Thu, Jul 11, 2024 at 02:31:25AM -0600, Yu Zhao wrote:
+> > On Wed, Jul 10, 2024 at 5:07=E2=80=AFPM Yu Zhao <yuzhao@google.com> wro=
+te:
+> > > On Wed, Jul 10, 2024 at 4:29=E2=80=AFPM Catalin Marinas <catalin.mari=
+nas@arm.com> wrote:
+> > > > The Arm ARM states that we need a BBM if we change the output addre=
+ss
+> > > > and: the old or new mappings are RW *or* the content of the page
+> > > > changes. Ignoring the latter (page content), we can turn the PTEs R=
+O
+> > > > first without changing the pfn followed by changing the pfn while t=
+hey
+> > > > are RO. Once that's done, we make entry 0 RW and, of course, with
+> > > > additional TLBIs between all these steps.
+> > >
+> > > Aha! This is easy to do -- I just made the RO guaranteed, as I
+> > > mentioned earlier.
+> > >
+> > > Just to make sure I fully understand the workflow:
+> > >
+> > > 1. Split a RW PMD into 512 RO PTEs, pointing to the same 2MB `struct =
+page` area.
 >
-> Since passing "buffer" decays it to a pointer, the size can't be
-> trivially determined by the compiler. ca->name is the same length,
-> so strscpy() won't fail (when ca->name is NUL-terminated). Include the
-> length explicitly instead of using the 2-argument strscpy().
->
-> Link: https://github.com/KSPP/linux/issues/90 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: David Ahern <dsahern@kernel.org>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: netdev@vger.kernel.org
-> ---
->  net/ipv4/tcp_cong.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/net/ipv4/tcp_cong.c b/net/ipv4/tcp_cong.c
-> index 28ffcfbeef14..2a303a7cba59 100644
-> --- a/net/ipv4/tcp_cong.c
-> +++ b/net/ipv4/tcp_cong.c
-> @@ -203,9 +203,10 @@ char *tcp_ca_get_name_by_key(u32 key, char *buffer)
->
->         rcu_read_lock();
->         ca =3D tcp_ca_find_key(key);
-> -       if (ca)
-> -               ret =3D strncpy(buffer, ca->name,
-> -                             TCP_CA_NAME_MAX);
-> +       if (ca) {
-> +               strscpy(buffer, ca->name, TCP_CA_NAME_MAX);
-> +               ret =3D buffer;
-> +       }
->         rcu_read_unlock();
->
+> I don't think we can turn all of them RO here since some of those 512
+> PTEs are not related to the hugetlb page. So you'd need to keep them RW
+> but preserving the pfn so that there's no actual translation change. I
+> think that's covered by FEAT_BBM level 2. Basically this step should be
+> only about breaking up a PMD block entry into a table entry.
 
-Ok, but what about tcp_get_default_congestion_control() ?
+Ack.
 
-Thanks.
+> > > 2. TLBI once, after pmd_populate_kernel()
+> > > 3. Remap PTE 1-7 to the 4KB `struct page` area of PTE 0, for every 8
+> > >    PTEs, while they remain RO.
+>
+> You may need some intermediate step to turn these PTEs read-only since
+> step 1 should leave them RW. Also, if we want to free and order-3 page
+> here, it might be better to allocate an order 0 even for PTE entry 0 (I
+> had the impression that's what the core code does, I haven't checked).
+
+Ack.
+
+> > > 4. TLBI once, after set_pte_at() on PTE 1-7.
+> > > 5. Change PTE 0 from RO to RW, pointing to the same 4KB `struct page`=
+ area.
+> > > 6. TLBI once, after set_pte_at() on PTE 0.
+> > >
+> > > No BBM required, regardless of FEAT_BBM level 2.
+> >
+> > I just studied D8.16.1 from the reference manual, and it seems to me:
+> > 1. We still need either FEAT_BBM or BBM to split PMD.
+>
+> Yes.
+
+Also, I want to confirm my understanding of "changing table size" from
+the reference manual: in our case, it means splitting a PMD into 512
+PTEs with the same permission and OA. If we change the permission *or*
+OA, we still need to do BBM even with FEAT_BBM level 2. Is this
+correct?
+
+> > 2. We still need BBM when we change PTE 1-7, because even if they
+> > remain RO, the content of the `struct page` page at the new location
+> > does not match that at the old location.
+>
+> Yes, in theory, the data at the new pfn should be the same. We could try
+> to get clarification from the architects on what could go wrong but I
+> suspect it's some atomicity is not guarantee if you read the data (the
+> CPU getting confused whether to read from the old or the new page).
+>
+> Otherwise, since after all these steps PTEs 1-7 point to the same data
+> as PTE 0, before step 3 we could copy the data in page 0 over to the
+> other 7 pages while entries 1-7 are still RO. The remapping afterwards
+> would be fully compliant.
+
+Correct -- we do need to copy to make it fully compliant because the
+core MM doesn't guarantee that. The core MM only guarantees fields (of
+struct page) required for speculative PFN walkers to function
+correctly have the same value for all tail pages within a compound
+page. Non-correctness related fields in theory can have different
+values for those tail pages.
+
+> > > > Can we leave entry 0 RO? This would save an additional TLBI.
+> > >
+> > > Unfortunately we can't. Otherwise we wouldn't be able to, e.g., grab =
+a
+> > > refcnt on any hugeTLB pages.
+>
+> OK, fair enough.
+>
+> > > > Now, I wonder if all this is worth it. What are the scenarios where=
+ the
+> > > > 8 PTEs will be accessed? The vmemmap range corresponding to a 2MB
+> > > > hugetlb page for example is pretty well defined - 8 x 4K pages, ali=
+gned.
+> >
+> > One of the fundamental assumptions in core MM is that anyone can
+> > read or try to grab (write) a refcnt from any `struct page`. Those
+> > speculative PFN walkers include memory compaction, etc.
+>
+> But how does this work if PTEs 1-7 are RO? Do those walkers detect it's
+> a tail page and skip it.
+
+Correct.
+
+> Actually, if they all point to the same vmemmap
+> page, how can one distinguish a tail page via PTE 1 from the head page
+> via PTE 0?
+
+Two of the correctness related fields are page->_refcount and
+page->compound_head:
+1. _refcount is the only one that can be speculatively updated.
+Speculative walkers are not allowed to update other fields unless they
+can grab a refcount. All tail pages must have zero refcount.
+2. compound_head speculatively indicates whether a page is head or
+tail, and if it's tail, its head can be extracted by compound_head().
+Since a head can have non-zero refcount, after PTEs 1-7 are remapped
+to PTE 0, we need a way to prevent speculative walkers from mistaking
+the first tail for each PTE 1-7 for the head and trying to grab their
+refcount. This is done by page_is_fake_head() returning true, which
+relies on the following sequence on.
+On the writer side:
+2a. init compound_head
+2b. reset _refcount to 0
+2c. synchronize_rcu()
+2d. remap PTEs 1-7 to PTE 0
+2e. inc _refcount
+Speculative readers of the first tails respectively at PTEs 1-7 either
+see refcount being 0 or page_is_fake_head() being true.
+
+> BTW, I'll be on holiday from tomorrow for two weeks and won't be able to
+> follow up on this thread (and likely to forget all the discussion by the
+> time I get back ;)).
+
+Thanks for the heads-up!
 
