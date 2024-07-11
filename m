@@ -1,252 +1,229 @@
-Return-Path: <linux-kernel+bounces-248856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1819692E2C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:52:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 883AC92E2CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BEB71C22E14
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:52:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A75431C22D64
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F681552E3;
-	Thu, 11 Jul 2024 08:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9BA15534E;
+	Thu, 11 Jul 2024 08:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zErAJkpP"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2084.outbound.protection.outlook.com [40.107.243.84])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FOcENf3t"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4728A12BF02;
-	Thu, 11 Jul 2024 08:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720687928; cv=fail; b=LBxjs0/OxjGpGPuxJmR78M6SPfMPPMT6vS9IoQUz++uea6cuhfYq05ivW2IrpccBa+hiT1z7LNxZnd1avTWVqbHpe4dzCoTCrZdV8q9gtqN9iMmg3xJAs5U3XQKFwAG8OApAiZ9Se8FhHVgcVLWpbhAqO25Gg64IzM1hpei+ICs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720687928; c=relaxed/simple;
-	bh=8yKK/Hgs7BP/J32vmscNxeYlL7JoJPJav21ozi8xEKA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SjUxIslWGrTWq+rO9mQKtzyq1o4RhCW997VEMukFmzvJs+EUTrdtdWBCQmnQUDQQsnb8FYedBdnLNDlnOwYUfUOLnKhMnWaRRweXzXgIpiak/u84BHsDEWW7QXYJXpthM9yXL/+eBu66etuAI3qcEkUAnioF2uWDlMstUBJjGBc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zErAJkpP; arc=fail smtp.client-ip=40.107.243.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BNQIjaJhcb2P2NQdFMM7JpJlIiMFWsGAneqozTkbVrevjDWD0eDyjblpm1vqxLG3rU/AR2DoR9wzeEnTuEVi12Oi1QVeTW6FuGSd40iUJZdR0PMcXSh2xlvFy1ucuUCpjOmcExeq3abwlfIR2XltOaK2qXbpLfJyEqkRZsllqrN7vEAnB4epTQYnhLa3bxxkZ3GEkS3UVMGYoOfgHHcLCeTTNuTHnKnxjBpPsKG3hCS5fh0RCVKjcvuHjlDN5HRlFKmg/bLNPt8/6gmjgTNltdLOE1oD79wxk5b9yxh3yEKwn/niEwf7UnCBp6jq5cIyi+OFlb0RhOBGb+G1gnLumg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vv0RBLPoTTKa2bz+sJmpb3xcz8rg61OMTLHTrOGv41k=;
- b=smLL7/dIZdqdtUIeWB4Ye0xJDQ6qzHkw43INPcZs+EAy04AnZ3ODbTshCpS6tgeF/h2cBnDNUmBadUYY7y1hxHv7p04OHduybfKFEOtUZ24ktf28KnU0O5QsMFX0W/ArF3dDgFrndEmcrbAA63mNgf1i6smYs4k+gCiM7qrJEOa4DNJUSFGPT26kgQyAqKrGzMOz/QORfHMOl+e+mJa1UtxH2KVroiCnxs7ja0FCEFv3BAnxrCTWrPmt8A3A6YRvoQfGNlGWZulGa3hAd4iuZiDiu2Dxal0YNYvYGJWojsHw1cJ7U7QKJKAckrehu7oJ+diZCK1V4nLuU/EdQD+rMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vv0RBLPoTTKa2bz+sJmpb3xcz8rg61OMTLHTrOGv41k=;
- b=zErAJkpPgao0LuDvvFobn4pwYGY92E6DkXUKOE0QWesKG38osxpjNnVHiNyUG6wQPUCZg6DET8GvdxghXvcnxTFmCu9DWYugLuVWBQ4vgdwOOLPC7d9gUUxuD1GNWFlMBATeJzi04/f+qRNZI6JVfcP43QziDw7wOjP9Q6Ic+Jw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
- by PH7PR12MB7454.namprd12.prod.outlook.com (2603:10b6:510:20d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Thu, 11 Jul
- 2024 08:52:03 +0000
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39%4]) with mapi id 15.20.7741.033; Thu, 11 Jul 2024
- 08:52:03 +0000
-Message-ID: <735ced48-969e-4a62-8506-667a7491f4c9@amd.com>
-Date: Thu, 11 Jul 2024 14:21:41 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] KVM SVM: Add Bus Lock Detect support
-To: Sean Christopherson <seanjc@google.com>, Jim Mattson <jmattson@google.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, pbonzini@redhat.com, thomas.lendacky@amd.com,
- hpa@zytor.com, rmk+kernel@armlinux.org.uk, peterz@infradead.org,
- james.morse@arm.com, lukas.bulwahn@gmail.com, arjan@linux.intel.com,
- j.granados@samsung.com, sibs@chinatelecom.cn, nik.borisov@suse.com,
- michael.roth@amd.com, nikunj.dadhania@amd.com, babu.moger@amd.com,
- x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com,
- manali.shukla@amd.com, Ravi Bangoria <ravi.bangoria@amd.com>
-References: <20240429060643.211-1-ravi.bangoria@amd.com>
- <20240429060643.211-4-ravi.bangoria@amd.com> <Zl5jqwWO4FyawPHG@google.com>
- <e1c29dd4-2eb9-44fe-abf2-f5ca0e84e2a6@amd.com> <ZmB_hl7coZ_8KA8Q@google.com>
- <59381f4f-94de-4933-9dbd-f0fbdc5d5e4a@amd.com> <Zmj88z40oVlqKh7r@google.com>
- <0b74d069-51ed-4e5e-9d76-6b1a60e689df@amd.com>
- <CALMp9eRet6+v8Y1Q-i6mqPm4hUow_kJNhmVHfOV8tMfuSS=tVg@mail.gmail.com>
- <Zo6RxnGJrxh9mi7g@google.com>
-Content-Language: en-US
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-In-Reply-To: <Zo6RxnGJrxh9mi7g@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN2PR01CA0133.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:6::18) To PH7PR12MB6588.namprd12.prod.outlook.com
- (2603:10b6:510:210::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE38152179
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720688017; cv=none; b=rwJ12aJzMO90pCGBR/+sY8iXEdsGLkrYGgQR2pBVwEynkr7yEPd9EDwJFlz0urfUopiK6PoRMtf8C6/g8HKAYJtzClkuZxyqZLqcihEn9K9zxC3vQE6FfznOXrgYk5DwKDdRJK+VdVS/ZEh33IsitMxeu2aFJ9vlxUQ8LLc3BaA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720688017; c=relaxed/simple;
+	bh=xGG5n1lQeDs3+JsfijPpdC3i/+8zt2yDgkuSigJZuzU=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=sfoZUB3bAWgcZDDU93EXOB8vOKg/QKGyp+VulcqaiIRuPSo2PgkWl5+DoRT34/ZpQ9+MygYU/glN8cvT8RHycHbySAXji5NlZPxGOxyHxxReRjWeu+My3/vAxDGG+szH8tRRZI6gUyqlasy4AJ3GHm5Eeo0K5qilYZ7r+WstdMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FOcENf3t; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240711085325epoutp023f7442e58d85599a4b8ab177bc65c46c~hHJ-KSqfH0616606166epoutp02B
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:53:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240711085325epoutp023f7442e58d85599a4b8ab177bc65c46c~hHJ-KSqfH0616606166epoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720688005;
+	bh=G+iH+bNNifKzGTzyhpwByRBo4Xe6Ll3424gWu5Icpmg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=FOcENf3tsRSRbpwVGqPGF7P1HKNZEyNN3FoJeA/tKNvAm42s/m2QggQvI48Zy2TwW
+	 cVNtCVFIuo+4pRm+Dactkl3NzNCKI5xGA2QdPNiz46nB0INVKR/gwJ+Jdu81VkOz3D
+	 709mrLtsuz3ZEl+QzLQSzReGxjbkODw0p5nuUAzk=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20240711085324epcas1p48a245672ab6e0607e4f36ac88e0a465b~hHJ_Mxdai2448424484epcas1p46;
+	Thu, 11 Jul 2024 08:53:24 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.38.243]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WKT5v5w2xz4x9Px; Thu, 11 Jul
+	2024 08:53:23 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	65.B7.09910.38D9F866; Thu, 11 Jul 2024 17:53:23 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240711085323epcas1p21fceadec1a5ad178ff88bc14005e8eb1~hHJ9OrPPZ1810118101epcas1p2-;
+	Thu, 11 Jul 2024 08:53:23 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240711085323epsmtrp2b32000bced57386e44e13c6aa7e1cf1d~hHJ9N2d7p1185211852epsmtrp2i;
+	Thu, 11 Jul 2024 08:53:23 +0000 (GMT)
+X-AuditID: b6c32a38-a3fff700000226b6-5e-668f9d8373e0
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	92.8A.19057.28D9F866; Thu, 11 Jul 2024 17:53:23 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240711085322epsmtip2c3ee411e640bffc3a33055c836f56e60~hHJ9A4Sy62046820468epsmtip2m;
+	Thu, 11 Jul 2024 08:53:22 +0000 (GMT)
+From: "Sungjong Seo" <sj1557.seo@samsung.com>
+To: "'Dongliang Cui'" <dongliang.cui@unisoc.com>, <linkinjeon@kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc: <niuzhiguo84@gmail.com>, <hao_hao.wang@unisoc.com>,
+	<ke.wang@unisoc.com>, "'Zhiguo Niu'" <zhiguo.niu@unisoc.com>,
+	<sj1557.seo@samsung.com>
+In-Reply-To: <20240705081514.1901580-1-dongliang.cui@unisoc.com>
+Subject: RE: [PATCH] exfat: check disk status during buffer write
+Date: Thu, 11 Jul 2024 17:53:22 +0900
+Message-ID: <459601dad36f$c913a770$5b3af650$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|PH7PR12MB7454:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f8462e0-7521-4a54-091a-08dca186bbee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QXprenp0cUVkWVlKaXVKcW10V3A5OGJaTDFoYnJSQ1MxeVhpNXU1Tkg1Sm8x?=
- =?utf-8?B?cGs2WUpxVnBFUFBnL0hIWGJJcExpdlYyVDdoOHJvRFVVZHBvN0xvNGlPQXk5?=
- =?utf-8?B?ZU8wcytlZDF1VVBSQ2ZIWndkcFNhTXJCUm0rZXI3cWxDQVNWVGYwQU1BUE5E?=
- =?utf-8?B?Qk1FUEJSVmV5WmhPNW9JQ0VDZW5zY3dNZFZ4ZmY3SllRMCtnVU1ZYlRyc0Ro?=
- =?utf-8?B?UHMvelQ2amRLcDFlUlRvVjB6SEp5NnZvK0xxZEpPdm1MNEoxc3JsUTdsbWk5?=
- =?utf-8?B?a2dsQXlzN3h2Rmo3ODdaRnlBM012OGo4NjV2Q0ZSQ0k1ODIyUU5pTzM2U1dh?=
- =?utf-8?B?RWZ0M25xQjVOOExxcS9kOU9XeUIwcENpeGl5bzJqOEgveXpUMHZLL2xoR2Fi?=
- =?utf-8?B?RW5nVU9KUWRlK0tObFpzTVBCeEVDS3Y1TnhrNHBpOXA1UVhxeFo3WVR3SHJ0?=
- =?utf-8?B?d1FHQWlJQTFCMUhNYXgyM21Ja1lYaG9KZDhnYmlyOUE0NW5RYmZnWWM0QTRr?=
- =?utf-8?B?YWtYTTYxb3QxMi8veGNJdk51b3N3d0FEdzloa1JaOFpYWTd0eURQNEFBWm5v?=
- =?utf-8?B?NU44MU4yaE1TUXpnem5pbHhzQ29sWGIwOXhaL1hsOU9UVWoyZmYyUGxxUmt6?=
- =?utf-8?B?MUVhVzRmNGxHblF2MFp6dTBTa3NsNU1HbFhBd1I0V0xjeEtsWXlxZTFsZGNU?=
- =?utf-8?B?SHNnYmZQYXVrelVVdDcxUHBEMUNKUGMvLzhheWpKZUtUMlNGN1dpU0VMWVRB?=
- =?utf-8?B?TGFzMWNteElvQXpMYm50bncySkh1M01ONEpGbGhLVUpRcjJLSXJlNUxzZlJw?=
- =?utf-8?B?UXNsd0ppcWZJYVdNa0tDbEdlN2M0M2ZERjJhZUNoWEYvcnhVZ2w1cmNkbW5K?=
- =?utf-8?B?Y0t5Ukl0bFhKRGVNSzJ1Z3h3dFFDT3lDeTU1cDJuSmdaSFBDYUd1Wk9DNXlu?=
- =?utf-8?B?UTM1dEdITXp6QitEVDkzbmJ1dXo3UjdUSXBNSHhHMVVtOFRieG42WVl3L0pw?=
- =?utf-8?B?TGg4b1Faa2JDb2FueG5ubStkaEs3UzhQRkRRUnBsb0hSU2dnM2hFQ1J0WjRZ?=
- =?utf-8?B?SFhJTUZpUWxIYWQ1SjZheCs4eFZEZjF4c2YxTTZaUmVXQmlkemwzMXplRkZq?=
- =?utf-8?B?RWRKQll3VjQrbFNjOEtRa3ZmUk5QZEhsZmtkZU1hNXpIQmlESmRIZnMra3FJ?=
- =?utf-8?B?eHREYTRIOFZtQm5LVWR3S3ZvZFM5TERhQVdKRHYxZ1dieXZLTTVPZnNVbFVz?=
- =?utf-8?B?bGI1NnVnVlBncDhVU1M4MWhXVHR4Zm50ckt6czZaWkF4TG5McEJibUxEcGY0?=
- =?utf-8?B?TEpEdXJBVzIyMEorMlZaUmdFUVlaa0tQakdNeUFTb1BFOFMzUkVocEdRdWxM?=
- =?utf-8?B?WmVVR0VDckJCbXhxUFFSSDU5TituOE1KbXFVZkRFbnlITUNxMTdQaktFQXdQ?=
- =?utf-8?B?blBvUTJKYmFCNzd5eXNWSzJIeDFtVHFzaTF3eWxCOG4yRmFMeEN3RkJwdlJY?=
- =?utf-8?B?Nm5ZM2N6RDJOdi9qK3ZMYUtNUENaSG9aOWMxcDZyK1dXbzhvanNETGxjV09X?=
- =?utf-8?B?VCtSVm9ZaHF5M2l1Q3Q2bEpnOERJRGFzclVKNi9mTUo5TjB1eWpsbmNubzl1?=
- =?utf-8?B?T3c4Ri9oWTdGRXBDQVFDMHV3TDJqSFRGZ1hRSWt1WVNPekdDQk9tclRpd0M1?=
- =?utf-8?B?bVBOYjhuRktScHVFaDBWak1hQjVsN1crUHhsRmtScklTNnY1ZHJmck9TcXpU?=
- =?utf-8?Q?DBvIG4kijqA040w/Qk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NVBiSzRnY2VBRnpudUpZUFlMeC9jVGNMVWRTNHc1bzFuNklrMUgzUFNsNS9P?=
- =?utf-8?B?ekF6YU1Uc200WkFyZHRYNnBKbDdibC9ySHgyVWJHMk5QUFVPYUZvRnU0WjR2?=
- =?utf-8?B?ZTJBQmFpeElqNjBsTHJCVVJSWERBQTlkUm1keFpoaGgybGFTOEh3UjdRRlBj?=
- =?utf-8?B?Y1JPVk1EQ0x6bUxseXhFdk1vOW90SVlSdm04VlBLK2RYcG1kYXBRUlVuME9k?=
- =?utf-8?B?TXJtU0h6a1ZuYWJzWlV3UE13WnlzSk44Y3ZiMEdzZW42VXN2TXpMWThwUGM1?=
- =?utf-8?B?a2JHdkZwT0dGUG10aCtleTVaMll4Qys3Q1I5RTlzQ2ZKSEsxcEsySVFEcGxz?=
- =?utf-8?B?cFdvZkVPaG5mOHFIWDM0cE5wRUFNVmhuaFpWcWVveWNaNnBzeHc0WFJva1Vq?=
- =?utf-8?B?NGRDNEJHZE0xLzhjYWdsMGJyYVpMaFljcnlQMm05ZnBWWlYwRVNjTG05djRw?=
- =?utf-8?B?ejNkVnB5THllNzJ4ZmtrRGtZQ210VjRYcGNqekxCaE1rYmFRZEszSk41MWE4?=
- =?utf-8?B?SkJ3T2NsN3RKT2J0Y3dYd21XSDM4bHd1MGtuUTRINmtYQThrUWt0Um1QaUN1?=
- =?utf-8?B?ZVlkVDJ2bkc3b3NSOXQvanRxZUwvc1NMSDJuOTc1VzZIcnU0R0ZjUU1BZWhJ?=
- =?utf-8?B?QWNtSFYweTEyWGNwemtCaE9zZUp6L05CM2daQmN1NUhkZHBJRXpmU3E4VTIr?=
- =?utf-8?B?aE1nbURPdnhXdXY5UzlDOWNjQmwxK3ZTOC9vVUtBa0Z5bmFJK2x4c3BCcGEr?=
- =?utf-8?B?cmdEL0F5a3pIR2dlVXBKTHFKK01PNzg4anRVTXlQUWpjWTdzMk16WEdDSytx?=
- =?utf-8?B?bGViU3FiSWxnU0VJbkJQbW5JeDN0TWpBTjV0QnVNNXRTRDF5VDJmTUFTRHlq?=
- =?utf-8?B?WDVwQVBvKzJBSXlFK3l1QmRsOEpyOHI4Ulo1bVdhQjUyQm1aZi8xUnk2aVY2?=
- =?utf-8?B?Qmg4V0ZRYTBQL1pnYUF5N2RLOXVDQ2k2cTc5YTZPN2FURmZ1UDNNZXlpOENr?=
- =?utf-8?B?YVpCQkRrTzhDK0VTbVV0Q0FGWm1QU1Vua1k2YzVDd1hHdFY2UTlNNmcwTDM1?=
- =?utf-8?B?TnZOaVNHeUQ1ZE9GR09XeHFpYS8wWXZWTWoramErKzJuQXBLRTJHSlczeDgx?=
- =?utf-8?B?UG80czJQSDVhdjVvMy9rOHozK2txN3dZMlhYRUw5VFZ1Tmx3akl2U1FGSnhH?=
- =?utf-8?B?TlhIYUkzOFFub01VR1dYMUtFSlJjbzBIeEtMVE9OZ25teEo3YTVFM083Zy90?=
- =?utf-8?B?bm1yK3haQ1UwdTFXUFJsWjdYQ0FoKytRcXB0V21Zc25YZm9XTXkwRUkzU0ht?=
- =?utf-8?B?Q29kZGhCVXV0b1F4bk91U3U4MVp2M095U0lpcm5hMlh5emxPMENSVThwLzU0?=
- =?utf-8?B?eFQ0RDRJV2MxTTN1WDZ4dlhkcnowd3Yzd0J6WlpnZHM3aERObG1pOU9jaWdW?=
- =?utf-8?B?cFdnUFJYTTFXM3VZSVlMVk5mM0VXczN3WUxQNjdtRkFNZzJpMzM1eW5FV0dF?=
- =?utf-8?B?K2lKS0tiOVYweCtoQkxBeGY2cHJCUmphOWpjU0p0Ym4rZ0xTcVE2TGhaRnRY?=
- =?utf-8?B?bTltNitnUk92eFd4ZEY4Sko2dHk4dnRwU2J0dUNHYkxXckJxcEk0ZlhWWWht?=
- =?utf-8?B?VHIwZzRyV3R0UCswYTVmaWpFcUllZXBWK1luanZRVHN3bjhVWkpYODYwWVE1?=
- =?utf-8?B?NEd0QkFQaUNXcEpGM1BBL2pFMTZpV2l1YW9rSW11WnFpNTFHZzlCSHArL01Y?=
- =?utf-8?B?MzhrRG0rTVNucTB6WmpDWEFobUR4TDFFZ1A4d2xXZGxZK1paNXdMMjB1REVm?=
- =?utf-8?B?SUc1bmwvMFkxR1M5L0dJOGQ0ZXlOQ3RPNlZidXI1dUE5RHBsaXVpMitzZWJo?=
- =?utf-8?B?ZEhwNnRYRW56cjJKWEUvdGVIRVpSeXEwOEx2bm1INXFhUnJ2TEFQSGFoRCtT?=
- =?utf-8?B?MW9FNGV2Q3BOL29nRGQvS2QwSkIwUWpDbk54cERXNjV4SlUzKzZ4RWVmRytO?=
- =?utf-8?B?eDBMaEJsOGZCOUNtYXZQNUw1T01vY01Vd3pPS3lYcGdJek0yZ0VzZGxEQ1lj?=
- =?utf-8?B?cTJyNmxnZmJ6UytMMWhybkhObWltVkRHVVlhdG53Y2h0WFRDM0Y5QXlMVkgy?=
- =?utf-8?Q?E4ficYA5/l8wos2GolRzQgTyw?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f8462e0-7521-4a54-091a-08dca186bbee
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 08:52:03.4410
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fH+Iv+I7RWXLIDoYRzVJ3yEbGiMvKRmnlF8W3m0iYK5zz9URIa49+mVp9VJC18a8vg2Sjum64YrYlT3QLLGToQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7454
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQFvSNYXJxba5FWmGrAfktx9bhOlrwHMkk5tsrngrWA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJJsWRmVeSWpSXmKPExsWy7bCmgW7z3P40g5v/NSxebn7LbDH/8xM2
+	i0d77jFZTJy2lNliz96TLBaXd81hs3h94CGzxZZ/R1gtpj49xurA6bFz1l12j02rOtk8+ras
+	YvQ43H6W3ePzJrkA1qgGRpvEouSMzLJUhdS85PyUzLx0W6XQEDddCyWFjPziElulaENDIz1D
+	A3M9IyMjPVOjWCsjUyWFvMTcVFulCl2oXiWFouQCoNrcymKgATmpelBxveLUvBSHrPxSkC/0
+	ihNzi0vz0vWS83OVFMoSc0qBRijpJ3xjzDj3cR1bwTHpiod3jjE2MHaJdTFyckgImEj0X7/P
+	3sXIxSEksINRomXPOSjnE6NE+6d7LBDON0aJL6eOscO0NJzfygiR2MsoceLhEyaQhJDAS0aJ
+	/u05IDabgK7Ekxs/mUGKRAR6GCUeNG8Cc5gFJjFKNNyYBDaKU8BBYu7VO2C2sICjxLN/l1lA
+	bBYBVYkHm2+D2bwClhKth+8yQtiCEidnPgGLMwvIS2x/O4cZ4iQFid2fjrKC2CICVhKLL26E
+	qhGRmN3ZBrZYQmAth8S0L2tZIBpcJGYduwLVLCzx6vgWqN+kJD6/28sG0dDNKHH84zuohhmM
+	Eks6HCBse4nm1magIg6gDZoS63fpQyzjk3j3tYcVokRQ4vS1bmaQEgkBXomONiGIsIrE9w87
+	WWBWXflxlWkCo9IsJK/NQvLaLCQvzEJYtoCRZRWjWGpBcW56arFhgQlylG9iBKdiLYsdjHPf
+	ftA7xMjEwXiIUYKDWUmEd/6N7jQh3pTEyqrUovz4otKc1OJDjMnAwJ7ILCWanA/MBnkl8YZm
+	ZpYWlkYmhsZmhoaEhU0sDUzMjEwsjC2NzZTEec9cKUsVEkhPLEnNTk0tSC2C2cLEwSnVwBQU
+	zrHhyMYnoXaz1/2LbatoOX+RR2DBngiufbz+H+S6on/vXjM1eM3kefciN8yc8zv+WfvicLXl
+	CerPt329oxDL0u7CYTzp++llz+bUMG5Q3ZYpGHBi5vljC7N3vqxZFf+3oHsN1xeDdF6ZU+0T
+	5auMDn2TSp46yZFlUZ3SQUG9X7+kfUTVWhi7kgy36Yp4/l7J2m+zIaFbS++aUpaO87yVTsvv
+	L0gsEXiytsE55bRz1EHfTnWuAvVVsnkpiaypUvPr9OIFeCPfl+0Xuvrhxq8Q2b/zBZVXSe55
+	M/Veauix9Qrel7KW72ZbrbZrzhIWwVuGnbvlt8o8j22dpSH3bO+8mbu8NJ9k2x1NKn2z/pcS
+	S3FGoqEWc1FxIgB0/vkhfAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphkeLIzCtJLcpLzFFi42LZdlhJXrd5bn+aQU8vs8XLzW+ZLeZ/fsJm
+	8WjPPSaLidOWMlvs2XuSxeLyrjlsFq8PPGS22PLvCKvF1KfHWB04PXbOusvusWlVJ5tH35ZV
+	jB6H28+ye3zeJBfAGsVlk5Kak1mWWqRvl8CVce7jOraCY9IVD+8cY2xg7BLrYuTkkBAwkWg4
+	v5Wxi5GLQ0hgN6NE8+8lrF2MHEAJKYmD+zQhTGGJw4eLIUqeM0qs/byVCaSXTUBX4smNn8wg
+	CRGBCYwS55c/AnOYBaYxSjyb95ENomUio8Sy9U3sIC2cAg4Sc6/eAbOFBRwlnv27zAJiswio
+	SjzYfBvM5hWwlGg9fJcRwhaUODnzCQvIGcwCehJtG8HCzALyEtvfzmGG+EBBYveno6wgtoiA
+	lcTiixtZIGpEJGZ3tjFPYBSehWTSLIRJs5BMmoWkYwEjyypGydSC4tz03GLDAqO81HK94sTc
+	4tK8dL3k/NxNjOAI09Lawbhn1Qe9Q4xMHIyHGCU4mJVEeOff6E4T4k1JrKxKLcqPLyrNSS0+
+	xCjNwaIkzvvtdW+KkEB6YklqdmpqQWoRTJaJg1OqgenI5lnfa+Z7cpa6Nbilv/4v+ie/oiDx
+	TtqVbm9bPqaLaUovJ6x1+/XvD+uarfp3X7z33TJtHW/DN4cvXuwHvlxvSzvL4jidI+6b6dKL
+	c6sW74hKFi5s8r2tkPbrDK8xu87RcsOy2tl2e/Q2zdwX9+uL7I/b/Wv6Eu5+5TxkeF8nss5N
+	5uKtT3dnzHVbpsX+4YO6vZ73vbjzDOH3Z/cy7c8QUxB+IqGbLP5lU1zY8Q+bHp5ZkHxI4PnL
+	nbldAuxz3m/Km+EyxYbll7Xnz4Zy5+m+2TxhQj9VxU4+iTRieya8OqBjN9fBp5YPu/66Zkgy
+	fNn2JZ917bWrwZUqt61ZPD/36jWpLqwK/aCj8K1V5okSS3FGoqEWc1FxIgAe++YbHwMAAA==
+X-CMS-MailID: 20240711085323epcas1p21fceadec1a5ad178ff88bc14005e8eb1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-ArchiveUser: EV
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240705081528epcas1p32c38cfb39dae65109bbfbd405a9852b2
+References: <CGME20240705081528epcas1p32c38cfb39dae65109bbfbd405a9852b2@epcas1p3.samsung.com>
+	<20240705081514.1901580-1-dongliang.cui@unisoc.com>
 
-On 10-Jul-24 7:22 PM, Sean Christopherson wrote:
-> On Tue, Jul 09, 2024, Jim Mattson wrote:
->> On Tue, Jul 9, 2024 at 7:25 PM Ravi Bangoria <ravi.bangoria@amd.com> wrote:
->>>
->>> Sean,
->>>
->>> Apologies for the delay. I was waiting for Bus Lock Threshold patches to be
->>> posted upstream:
->>>
->>>   https://lore.kernel.org/r/20240709175145.9986-1-manali.shukla@amd.com
->>>
->>> On 12-Jun-24 7:12 AM, Sean Christopherson wrote:
->>>> On Wed, Jun 05, 2024, Ravi Bangoria wrote:
->>>>> On 6/5/2024 8:38 PM, Sean Christopherson wrote:
->>>>>> Some of the problems on Intel were due to the awful FMS-based feature detection,
->>>>>> but those weren't the only hiccups.  E.g. IIRC, we never sorted out what should
->>>>>> happen if both the host and guest want bus-lock #DBs.
->>>>>
->>>>> I've to check about vcpu->guest_debug part, but keeping that aside, host and
->>>>> guest can use Bus Lock Detect in parallel because, DEBUG_CTL MSR and DR6
->>>>> register are save/restored in VMCB, hardware cause a VMEXIT_EXCEPTION_1 for
->>>>> guest #DB(when intercepted) and hardware raises #DB on host when it's for the
->>>>> host.
->>>>
->>>> I'm talking about the case where the host wants to do something in response to
->>>> bus locks that occurred in the guest.  E.g. if the host is taking punitive action,
->>>> say by stalling the vCPU, then the guest kernel could bypass that behavior by
->>>> enabling bus lock detect itself.
->>>>
->>>> Maybe it's moot point in practice, since it sounds like Bus Lock Threshold will
->>>> be available at the same time.
->>>>
->>>> Ugh, and if we wanted to let the host handle guest-induced #DBs, we'd need code
->>>> to keep Bus Lock Detect enabled in the guest since it resides in DEBUG_CTL.  Bah.
->>>>
->>>> So I guess if the vcpu->guest_debug part is fairly straightforward, it probably
->>>> makes to virtualize Bus Lock Detect because the only reason not to virtualize it
->>>> would actually require more work/code in KVM.
->>>
->>> KVM forwards #DB to Qemu when vcpu->guest_debug is set and it's Qemu's
->>> responsibility to re-inject exception when Bus Lock Trap is enabled
->>> inside the guest. I realized that it is broken so I've prepared a
->>> Qemu patch, embedding it at the end.
->>>
->>>> I'd still love to see Bus Lock Threshold support sooner than later though :-)
->>>
->>> With Bus Lock Threshold enabled, I assume the changes introduced by this
->>> patch plus Qemu fix are sufficient to support Bus Lock Trap inside the
->>> guest?
->>
->> In any case, it seems that commit 76ea438b4afc ("KVM: X86: Expose bus
->> lock debug exception to guest") prematurely advertised the presence of
->> X86_FEATURE_BUS_LOCK to userspace on non-Intel platforms. We should
->> probably either accept these changes or fix up that commit. Either
->> way, something should be done for all active branches back to v5.15.
+> We found that when writing a large file through buffer write,
+> if the disk is inaccessible, exFAT does not return an error
+> normally, which leads to the writing process not stopping properly.
 > 
-> Drat.  Yeah, we need a patch to clear BUS_LOCK_DETECT in svm_set_cpu_caps(), marked
-> for stable@.  Then this series can remove that clearing.
+> To easily reproduce this issue, you can follow the steps below:
 > 
-> At least I caught it for CET[*]!  It'd be nice to not have to rely on humans to
-> detect potential issues like this, but I can't think of a way to programmatically
-> handle this situation without incurring an annoying amount of overhead and/or
-> duplicate code between VMX and SVM.
+> 1. format a device to exFAT and then mount (with a full disk erase)
+> 2. dd if=/dev/zero of=/exfat_mount/test.img bs=1M count=8192
+> 3. eject the device
 > 
-> [*] https://lore.kernel.org/all/ZjLRnisdUgeYgg8i@google.com
+> You may find that the dd process does not stop immediately and may
+> continue for a long time.
+> 
+> We compared it with the FAT, where FAT would prompt an EIO error and
+> immediately stop the dd operation.
+> 
+> The root cause of this issue is that when the exfat_inode contains the
+> ALLOC_NO_FAT_CHAIN flag, exFAT does not need to access the disk to
+> look up directory entries or the FAT table (whereas FAT would do)
+> every time data is written. Instead, exFAT simply marks the buffer as
+> dirty and returns, delegating the writeback operation to the writeback
+> process.
+> 
+> If the disk cannot be accessed at this time, the error will only be
+> returned to the writeback process, and the original process will not
+> receive the error, so it cannot be returned to the user side.
+> 
+> Therefore, we think that when writing files with ALLOC_NO_FAT_CHAIN,
+> it is necessary to continuously check the status of the disk.
+> 
+> When the disk cannot be accessed normally, an error should be returned
+> to stop the writing process.
+> 
+> Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> ---
+>  fs/exfat/exfat_fs.h | 5 +++++
+>  fs/exfat/inode.c    | 5 +++++
+>  2 files changed, 10 insertions(+)
+> 
+> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+> index ecc5db952deb..c5f5a7a8b672 100644
+> --- a/fs/exfat/exfat_fs.h
+> +++ b/fs/exfat/exfat_fs.h
+> @@ -411,6 +411,11 @@ static inline unsigned int
+> exfat_sector_to_cluster(struct exfat_sb_info *sbi,
+>  		EXFAT_RESERVED_CLUSTERS;
+>  }
+> 
+> +static inline bool exfat_check_disk_error(struct block_device *bdev)
+> +{
+> +	return blk_queue_dying(bdev_get_queue(bdev));
+Why don't you check it like ext4?
 
-Sure, I'll add a patch and respin the series.
+static int block_device_ejected(struct super_block *sb)
+{
+       struct inode *bd_inode = sb->s_bdev->bd_inode;
+       struct backing_dev_info *bdi = inode_to_bdi(bd_inode);
 
-Thanks,
-Ravi
+       return bdi->dev == NULL;
+}
+> +}
+> +
+>  static inline bool is_valid_cluster(struct exfat_sb_info *sbi,
+>  		unsigned int clus)
+>  {
+> diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+> index dd894e558c91..efd02c1c83a6 100644
+> --- a/fs/exfat/inode.c
+> +++ b/fs/exfat/inode.c
+> @@ -147,6 +147,11 @@ static int exfat_map_cluster(struct inode *inode,
+> unsigned int clu_offset,
+>  	*clu = last_clu = ei->start_clu;
+> 
+>  	if (ei->flags == ALLOC_NO_FAT_CHAIN) {
+> +		if (exfat_check_disk_error(sb->s_bdev)) {
+> +			exfat_fs_error(sb, "device inaccessiable!\n");
+> +			return -EIO;
+This patch looks useful when using removable storage devices.
+BTW, in case of "ei->flags != ALLOC_NO_FAT_CHAIN", There could be
+the same problem if it can be found from lru_cache. So, it would be nice
+to check disk_error regardless ei->flags. Also, Calling exfat_fs_error()
+seems unnecessary. Instead, let's return -ENODEV instead of -EIO.
+I believe that these errors will be handled on exfat_get_block()
+
+Thanks.
+> +		}
+> +
+>  		if (clu_offset > 0 && *clu != EXFAT_EOF_CLUSTER) {
+>  			last_clu += clu_offset - 1;
+> 
+> --
+> 2.25.1
+
+
 
