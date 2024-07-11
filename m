@@ -1,228 +1,260 @@
-Return-Path: <linux-kernel+bounces-248743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA99592E165
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:55:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0F192E168
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47F5C1F2167B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7531F21B9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22B814C5B3;
-	Thu, 11 Jul 2024 07:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IuapxxYu"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E939414B955;
+	Thu, 11 Jul 2024 07:57:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45C614AD3A
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A55F4963F
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720684513; cv=none; b=Uxd0PGsua0XzZ+5ORgKq2XSRj9NseaXFAQg6+XdTeHEKMaKhARx3G/CDPvtJSAcYBjcKwt7wJJEt39jNhxob27U6IntDH0lSFWTqTR3GR41ss92PB1xQ1ngrYd9n1JCW0ool6hIh430wznmoU/wItNwiL2Qup/QxXlYZD9vjXMM=
+	t=1720684626; cv=none; b=NkG7Wj2LJnLc8G95Eonw/v3CMSqFbRhWRup4ko470Kr9utOAtZQyuxrfOoVAUk1D4jzC1FNwyEnra7BSuwsctI5lXouCuwQV9l8l7upuBUqhrc47Iw9PpRWNcGGs2uqoDeibIBkKrPqA0c3BKeDxlNs44CqbWqPsvhZVpKe7IG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720684513; c=relaxed/simple;
-	bh=8jDLQTzauzvrw7anQAcZaNhH5egayNSj4cFpkPdsKMY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hIHOW3eO9DWnLY8kZlXw0aUkJiU1Lqj5NJg0wodHVvYW6wuWBOTYTChdtKIFOX5IvUm88O3Qhniue/TV+D62z6byZvlkdAVoa+6KUnpZRPxt2f1ruAr4Xl3X/uYcMbLQCrzFAHR0vCsBiaTWrLt7GydBcvPb3Q+w6lBu+WgPf5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IuapxxYu; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so7336101fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:55:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1720684509; x=1721289309; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ytnPWmLi+VjCJfLaY7mUCubtk44P/QoUJC6G6/ZS2Q=;
-        b=IuapxxYulJ0slT3lQNhxURWu4OCvWpUdxzTD7vjQjfzXw00OgZYL0e3uoZwNiCbsfp
-         dpFqNBtyccq6E3arOKh85otkao6I7xBldEPSsKGoGSnYPY8GIIkrv/bpMJ/SgojiL8ln
-         ZYh2MvjzGqV/kEU2tyIoUYKcObATBhy4fx0zkG1CQoEKv0VdZOKC6JOTZ4/GUaOY0eW2
-         xn+nbcoLARtF2zOUqxOauPRRINXtwu0h/AoRzXuaiNDEC6Yx0JjDrHzHZNV2czwEieg0
-         MOdtTnhwdWAqQ3/1LaenVtJpEruXFqd6AyWT4mqPBMLqZY62woG9f+zj6qkMM0lvYyRQ
-         MeCA==
+	s=arc-20240116; t=1720684626; c=relaxed/simple;
+	bh=lmShxM/64hherYa6LYBoyjARgfMMmc6X3kUymo9v7Rs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kVJd5LP5e7oeLvKkLeLdv/F5zJINlHQIGN7wa5osCz3+bHwuG+n+OwxS9dzOxFD1pJVTBD+lwYNcHgT/FsyfRkes9ppuQ7kyRF3PxrUfsujyAb1vP13EvWvrVbKjlnJQBm1Hlh7OUZajxnYFVyAHqbR0xvtc9xvl33k9Sg1mbZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7fc9fc043eeso63691239f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:57:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720684509; x=1721289309;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1ytnPWmLi+VjCJfLaY7mUCubtk44P/QoUJC6G6/ZS2Q=;
-        b=Ehep8lHjC+VXZJEjcVGEt9xXUjG83ohwcqQnjd66M/goK7LCMQpRgkXt5m5p8d8QYY
-         d1+1iZeBef55bsfVssLZ6508ApLG0RA+wpSD8+lzBY1eZygBnR2JfHjT9LyMRkCjK2UQ
-         SVaci4nxSsobOIicsmQUHXNvoaPgVEjPWUGKK1Voz37q7KCnpVMd8MmQawhbQC8GfoEL
-         HKKtooCyfPLAaj/v+toHcNaNJB+9Mxa5PJrCoulM7aBNKrbwRD8to21b/lFFiSzie7sV
-         zujzdPEGo2ySQxGuEOxXicrGwrCV9r5c7OW669tjE58BRG/MGXPzI0d3ybBetPrOwEA2
-         4vrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgHkNfibs3bfVnlNBl9U8W2XpAPUO8LmghOsFlN4GAZmfyQzJ4i8vnyI3xDjk02+7nzh28U2RP5r7QyCpsmTKhjujrjzDI0eDaHdbL
-X-Gm-Message-State: AOJu0YwH7wIDSWvSn0nmT8g4VCe2KVFQz7aJzk0YwXq4FzfcHgtZ44HV
-	1JGyzWrvwGsmd/MBSXQttCOd6FFV5SzQEi7DOzwDY5VUbIbeDFAy+HxWWgLW52M=
-X-Google-Smtp-Source: AGHT+IEdIlPYfa3nZV1IRf1EkCk1e9IErBMYZoW+RYY9oS+Rt5tR0zUE04xwE09IA22Ct2Wqz2xCVQ==
-X-Received: by 2002:a2e:3315:0:b0:2ec:565f:ef56 with SMTP id 38308e7fff4ca-2eeb30b4d38mr50186091fa.7.1720684508413;
-        Thu, 11 Jul 2024 00:55:08 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ad129asm44561715ad.269.2024.07.11.00.55.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 00:55:07 -0700 (PDT)
-Message-ID: <5838503b-a4aa-4023-901b-99d637cadac4@suse.com>
-Date: Thu, 11 Jul 2024 17:25:02 +0930
+        d=1e100.net; s=20230601; t=1720684624; x=1721289424;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9398RJINYcC+tCW2A411cep3yNYukxMzqadN+n1VPgg=;
+        b=Ts8Pwq7KISCA5+q/gFN3y+RsdOoEanIjKnulRtLFqDndJcuvutbMqUFDg4tfsDK59a
+         KF03sOA4mMr/RxMJc3gL6yGcgnASYdkjupnHnl5msimWXSwTFRlB+29Anpghf419VkK7
+         ZJXPm/nUK4gGU7ijYIIJIiQjKTHpMijIBPI3RcpYNw6yqYwSSJkKvySdboXi0opO2mBc
+         lqDpvzyy6TVWlmU0guzVNh7at657xVtxz0oC9Qa+Jk/iFxgYMLHdEFQ8e0ndIH1LIn2X
+         bKCn9x0OvtL3VbDGdhSnJPq4k0OO0+kxvotqCDIWMiUecoJxJQPlmLZNVq5iyBKZMU4x
+         X2JA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkb5YPInZP/E4AYRG9WL6Gl5NILecBnai3S8njD4WK7yWRTtU3zIUD6DSQsrRmCbZ400vy10iWWAyh35jysU3W0Uf1lSVIU5ScrMBQ
+X-Gm-Message-State: AOJu0YzXn4Vl2HeN7Qu7QK3xfHoYFr7yYEgCH1p5x/6O2JWMjspiLJ7e
+	zGaIEN4wwIsqRFA/hP8FHpnLbCrzqlToqvRcWTjLEZyregmpLeWboNjcoF9LABzDubjE+E+4gF1
+	bi+8p+jFWVAp/fLCOD8p0nT+/aO7djNLZT1NyafO+izT8abJ+5SVoH1U=
+X-Google-Smtp-Source: AGHT+IGWAJQLHt9DsvgXErnHEjDPjdQ1njoJj2hzadAq1rp0rpVA3U2AAtxvFjarhNRqJ6BRfCs2P6+BAjUOM9C2NUJoKDJg776z
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] btrfs: update stripe_extent delete loop
- assumptions
-From: Qu Wenruo <wqu@suse.com>
-To: Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Filipe Manana <fdmanana@suse.com>,
- Johannes Thumshirn <johannes.thumshirn@wdc.com>
-References: <20240711-b4-rst-updates-v2-0-d7b8113d88b7@kernel.org>
- <20240711-b4-rst-updates-v2-3-d7b8113d88b7@kernel.org>
- <08b5cf14-8b00-4a19-ae98-e83e83357688@suse.com>
- <ca001842-92f4-46ff-80ee-e7a8a97fc433@suse.com>
-Content-Language: en-US
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJVBQkNOgemAAoJEMI9kfOh
- Jf6oapEH/3r/xcalNXMvyRODoprkDraOPbCnULLPNwwp4wLP0/nKXvAlhvRbDpyx1+Ht/3gW
- p+Klw+S9zBQemxu+6v5nX8zny8l7Q6nAM5InkLaD7U5OLRgJ0O1MNr/UTODIEVx3uzD2X6MR
- ECMigQxu9c3XKSELXVjTJYgRrEo8o2qb7xoInk4mlleji2rRrqBh1rS0pEexImWphJi+Xgp3
- dxRGHsNGEbJ5+9yK9Nc5r67EYG4bwm+06yVT8aQS58ZI22C/UeJpPwcsYrdABcisd7dddj4Q
- RhWiO4Iy5MTGUD7PdfIkQ40iRcQzVEL1BeidP8v8C4LVGmk4vD1wF6xTjQRKfXHOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJuBQkNOge/AAoJEMI9kfOhJf6o
- rq8H/3LJmWxL6KO2y/BgOMYDZaFWE3TtdrlIEG8YIDJzIYbNIyQ4lw61RR+0P4APKstsu5VJ
- 9E3WR7vfxSiOmHCRIWPi32xwbkD5TwaA5m2uVg6xjb5wbdHm+OhdSBcw/fsg19aHQpsmh1/Q
- bjzGi56yfTxxt9R2WmFIxe6MIDzLlNw3JG42/ark2LOXywqFRnOHgFqxygoMKEG7OcGy5wJM
- AavA+Abj+6XoedYTwOKkwq+RX2hvXElLZbhYlE+npB1WsFYn1wJ22lHoZsuJCLba5lehI+//
- ShSsZT5Tlfgi92e9P7y+I/OzMvnBezAll+p/Ly2YczznKM5tV0gboCWeusM=
-In-Reply-To: <ca001842-92f4-46ff-80ee-e7a8a97fc433@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:2582:b0:4b9:ad20:51f7 with SMTP id
+ 8926c6da1cb9f-4c0b29715f7mr460854173.1.1720684623822; Thu, 11 Jul 2024
+ 00:57:03 -0700 (PDT)
+Date: Thu, 11 Jul 2024 00:57:03 -0700
+In-Reply-To: <7bc3c0f4-d611-4328-b456-a7d2ac0ff4b9@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c617c3061cf41b01@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
+From: syzbot <syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-out-of-bounds Read in mi_enum_attr
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in mi_enum_attr+0x84b/0x9e0 fs/ntfs3/record.c:246
+Read of size 4 at addr ffff888068a97345 by task syz-executor.4/9900
+
+CPU: 1 PID: 9900 Comm: syz-executor.4 Not tainted 6.10.0-rc1-syzkaller-00042-gbde63e8eae5d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ mi_enum_attr+0x84b/0x9e0 fs/ntfs3/record.c:246
+ mi_find_attr+0x1c5/0x2b0 fs/ntfs3/record.c:353
+ ni_find_attr+0x390/0x8d0 fs/ntfs3/frecord.c:202
+ ntfs_readlink_hlp+0xa5/0xc70 fs/ntfs3/inode.c:1960
+ ntfs_get_link+0x79/0x110 fs/ntfs3/inode.c:2106
+ pick_link+0x631/0xd50
+ step_into+0xca9/0x1080 fs/namei.c:1874
+ open_last_lookups fs/namei.c:3597 [inline]
+ path_openat+0x18ef/0x3280 fs/namei.c:3804
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_open fs/open.c:1428 [inline]
+ __se_sys_open fs/open.c:1424 [inline]
+ __x64_sys_open+0x225/0x270 fs/open.c:1424
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5e9bc7cda9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f5e9c9930c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f5e9bdac050 RCX: 00007f5e9bc7cda9
+RDX: 0000000000000065 RSI: 0000000000000080 RDI: 0000000020000440
+RBP: 00007f5e9bcc947a R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f5e9bdac050 R15: 00007fff3591b788
+ </TASK>
+
+Allocated by task 9815:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ kmalloc_trace_noprof+0x19c/0x2c0 mm/slub.c:4152
+ kmalloc_noprof include/linux/slab.h:660 [inline]
+ ntfs_get_link+0x63/0x110 fs/ntfs3/inode.c:2102
+ pick_link+0x631/0xd50
+ step_into+0xca9/0x1080 fs/namei.c:1874
+ open_last_lookups fs/namei.c:3597 [inline]
+ path_openat+0x18ef/0x3280 fs/namei.c:3804
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_open fs/open.c:1428 [inline]
+ __se_sys_open fs/open.c:1424 [inline]
+ __x64_sys_open+0x225/0x270 fs/open.c:1424
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 9815:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2195 [inline]
+ slab_free mm/slub.c:4436 [inline]
+ kfree+0x149/0x360 mm/slub.c:4557
+ do_delayed_call include/linux/delayed_call.h:28 [inline]
+ put_link fs/namei.c:1025 [inline]
+ open_last_lookups fs/namei.c:3596 [inline]
+ path_openat+0x180d/0x3280 fs/namei.c:3804
+ do_filp_open+0x235/0x490 fs/namei.c:3834
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
+ do_sys_open fs/open.c:1420 [inline]
+ __do_sys_open fs/open.c:1428 [inline]
+ __se_sys_open fs/open.c:1424 [inline]
+ __x64_sys_open+0x225/0x270 fs/open.c:1424
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888068a96000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 837 bytes to the right of
+ allocated 4096-byte region [ffff888068a96000, ffff888068a97000)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x68a90
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000040 ffff888014c42140 ffffea000087be00 dead000000000002
+raw: 0000000000000000 0000000000040004 00000001ffffefff 0000000000000000
+head: 00fff00000000040 ffff888014c42140 ffffea000087be00 dead000000000002
+head: 0000000000000000 0000000000040004 00000001ffffefff 0000000000000000
+head: 00fff00000000003 ffffea0001a2a401 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0x1d2820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL), pid 5079, tgid 5079 (kworker/0:3), ts 179614011412, free_ts 179293511077
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
+ prep_new_page mm/page_alloc.c:1476 [inline]
+ get_page_from_freelist+0x2e2d/0x2ee0 mm/page_alloc.c:3402
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4660
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2264
+ allocate_slab+0x5a/0x2e0 mm/slub.c:2427
+ new_slab mm/slub.c:2480 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3666
+ __slab_alloc+0x58/0xa0 mm/slub.c:3756
+ __slab_alloc_node mm/slub.c:3809 [inline]
+ slab_alloc_node mm/slub.c:3988 [inline]
+ __do_kmalloc_node mm/slub.c:4120 [inline]
+ kmalloc_node_track_caller_noprof+0x281/0x440 mm/slub.c:4141
+ kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:597
+ __alloc_skb+0x1f3/0x440 net/core/skbuff.c:666
+ alloc_skb include/linux/skbuff.h:1308 [inline]
+ nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:748 [inline]
+ nsim_dev_trap_report drivers/net/netdevsim/dev.c:805 [inline]
+ nsim_dev_trap_report_work+0x254/0xaa0 drivers/net/netdevsim/dev.c:850
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+page last free pid 6810 tgid 6808 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1088 [inline]
+ free_unref_page+0xd19/0xea0 mm/page_alloc.c:2565
+ discard_slab mm/slub.c:2526 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:2994
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3069
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4306
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3940 [inline]
+ slab_alloc_node mm/slub.c:4000 [inline]
+ kmalloc_trace_noprof+0x132/0x2c0 mm/slub.c:4147
+ kmalloc_noprof include/linux/slab.h:660 [inline]
+ kzalloc_noprof include/linux/slab.h:778 [inline]
+ fnd_get fs/ntfs3/ntfs_fs.h:672 [inline]
+ dir_search_u+0x16a/0x3a0 fs/ntfs3/dir.c:246
+ ntfs_extend_init+0x27a/0x530 fs/ntfs3/fsntfs.c:250
+ ntfs_fill_super+0x4213/0x4830 fs/ntfs3/super.c:1523
+ get_tree_bdev+0x3f7/0x570 fs/super.c:1615
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1780
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+
+Memory state around the buggy address:
+ ffff888068a97200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888068a97280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888068a97300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                           ^
+ ffff888068a97380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888068a97400: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
 
+Tested on:
 
-在 2024/7/11 17:14, Qu Wenruo 写道:
-> 
-> 
-> 在 2024/7/11 16:25, Qu Wenruo 写道:
->>
->>
->> 在 2024/7/11 15:51, Johannes Thumshirn 写道:
->>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>>
->>> btrfs_delete_raid_extent() was written under the assumption, that it's
->>> call-chain always passes a start, length tuple that matches a single
->>> extent. But btrfs_delete_raid_extent() is called by
->>> do_free_extent_acounting() which in term is called by > 
->>> __btrfs_free_extent().
->>
->> But from the call site __btrfs_free_extent(), it is still called for a 
->> single extent.
->>
->> Or we will get an error and abort the current transaction.
-> 
-> Or does it mean, one data extent can have multiple RST entries?
-> 
-> Is that a non-zoned RST specific behavior?
-> As I still remember that we split ordered extents for zoned devices, so 
-> that it should always have one extent for each split OE.
+commit:         bde63e8e fs/ntfs3: Fix formatting, change comments, re..
+git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c9e87e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e4430a9c6b8c7af4
+dashboard link: https://syzkaller.appspot.com/bug?extid=a426cde6dee8c2884b0b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-
-OK, it's indeed an RST specific behavior (at least for RST with 
-non-zoned devices).
-
-I can have the following layout:
-
-         item 15 key (258 EXTENT_DATA 419430400) itemoff 15306 itemsize 53
-                 generation 10 type 1 (regular)
-                 extent data disk byte 1808793600 nr 117440512
-                 extent data offset 0 nr 117440512 ram 117440512
-                 extent compression 0 (none)
-
-Which is a large data extent with 112MiB length.
-
-Meanwhile for the RST entries there are 3 split ones:
-
-         item 13 key (1808793600 RAID_STRIPE 33619968) itemoff 15835 
-itemsize 32
-                         stripe 0 devid 2 physical 1787822080
-                         stripe 1 devid 1 physical 1808793600
-         item 14 key (1842413568 RAID_STRIPE 58789888) itemoff 15803 
-itemsize 32
-                         stripe 0 devid 2 physical 1821442048
-                         stripe 1 devid 1 physical 1842413568
-         item 15 key (1901203456 RAID_STRIPE 25030656) itemoff 15771 
-itemsize 32
-                         stripe 0 devid 2 physical 1880231936
-                         stripe 1 devid 1 physical 1901203456
-
-So yes, it's possible to have multiple RST entries for a single data 
-extent, it's no longer the old zoned behavior.
-
-In that case, the patch looks fine to me.
-
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-
-Thanks,
-Qu
-
-
-> 
-> Thanks,
-> Qu
->>
->>>
->>> But this call-chain passes in a start address and a length that can
->>> possibly match multiple on-disk extents.
->>
->> Mind to give a more detailed example on this?
->>
->> Thanks,
->> Qu
->>
->>>
->>> To make this possible, we have to adjust the start and length of each
->>> btree node lookup, to not delete beyond the requested range.
->>>
->>> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>> ---
->>>   fs/btrfs/raid-stripe-tree.c | 5 +++++
->>>   1 file changed, 5 insertions(+)
->>>
->>> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
->>> index fd56535b2289..6f65be334637 100644
->>> --- a/fs/btrfs/raid-stripe-tree.c
->>> +++ b/fs/btrfs/raid-stripe-tree.c
->>> @@ -66,6 +66,11 @@ int btrfs_delete_raid_extent(struct 
->>> btrfs_trans_handle *trans, u64 start, u64 le
->>>           if (ret)
->>>               break;
->>> +        start += key.offset;
->>> +        length -= key.offset;
->>> +        if (length == 0)
->>> +            break;
->>> +
->>>           btrfs_release_path(path);
->>>       }
->>>
->>
-> 
+Note: no patches were applied.
 
