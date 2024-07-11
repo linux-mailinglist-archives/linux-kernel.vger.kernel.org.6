@@ -1,67 +1,76 @@
-Return-Path: <linux-kernel+bounces-249520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AFB592ECAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:27:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5144B92ECAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB98B1C21869
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:27:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C98C61F22007
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D25216D321;
-	Thu, 11 Jul 2024 16:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C68916D320;
+	Thu, 11 Jul 2024 16:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="dyD5K72Z"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="B4vXUIKc"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2048.outbound.protection.outlook.com [40.107.237.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4D716C437
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720715249; cv=none; b=SaM4wsqLI0WVekSQ7yutcpUUY5kIj/tTYJqzG3Qn3DS6gkdfxIpkIA1Ez8SuzfuqVWdYbOreN3jXFy9WtSkYWvypDB2GJH7tFXwL+S9wG2N2SrFgV5/+j69C7TyfbCx7vFXTHkM3Le8PnqyX7S+YtwhnaK+1pHFd5St8oyem17k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720715249; c=relaxed/simple;
-	bh=7Npujt/HI+JKoyoMEPQGekvvaq3PC5E7qr0zDHfpoCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YgvLirv7NCsRSSrwyYFpLoQYYxvwvdcrjxUa5+K+U9If8PkEPhL1K1J1JYmb3iLVXSqif+nv1gM/EaSkY4htSig7smAphA9qD1UU8NvvsMNPQeX5AgxEz33vD8Le5PTTwbKd06EKDSMsSc+7I6/yRDiQyRtDFlaSpGNuVTBxZzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=dyD5K72Z; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
-	by cmsmtp with ESMTPS
-	id RiAHsWjO01zuHRwddsPguO; Thu, 11 Jul 2024 16:27:21 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id RwdcsHgyURn6WRwddsPOjf; Thu, 11 Jul 2024 16:27:21 +0000
-X-Authority-Analysis: v=2.4 cv=KbTUsxYD c=1 sm=1 tr=0 ts=669007e9
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8 a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8
- a=RC4BnwySBbfqoxRRKE4A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=Fp8MccfUoT0GBdDC_Lng:22 a=zSyb8xVVt2t83sZkrLMb:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=7RxJ21FjXXoxPmpAMaOPM/NGSLf98n+q9lHoeiSK3rU=; b=dyD5K72ZxHOe6gUh2eDT6OikmS
-	HaefSlR5n3lItPNf/YZG8LYP+WW3DhL/VqHZ29sVoI21Rcu+V6bNQzKIhgC5yHr13annwFe9lruDw
-	a8NnenPgMuozXZTp0EUiE4V7uYfVkItc5NuEwaKbRycIz8su2FXcL469cWwDgkDaGeiAuwdbaOnSd
-	pFD3X8lYPY4bGEUKwQG1X4ddUA2+ivBotRvV5USBr2fkBFOJ5A+RvwG4VSUjFR5RIRHASUHuqxUfr
-	JMk2Uv83iPuSHRF225vTQi350Pfh0A9BFDJ3KLkrGxP7yrXpMflTTnwRx0PMkYAejhM/aYTDBdRS1
-	OuqoetpA==;
-Received: from [201.172.173.139] (port=40030 helo=[192.168.15.4])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sRwdc-0006S7-0x;
-	Thu, 11 Jul 2024 11:27:20 -0500
-Message-ID: <b819d9bd-8b29-4c09-a1f9-f8ec30e4495a@embeddedor.com>
-Date: Thu, 11 Jul 2024 10:27:18 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4E216CD12;
+	Thu, 11 Jul 2024 16:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720715284; cv=fail; b=kuvn3ydf/cCH/bGul3nBULVpeKP1pVK2BuRRZsYn7Ekbg9GF3BFXOOHHLkSAU4UJOmu15hX/qsahXqomWfcLvVE5OgCR6fTf30nTUmb1hYjOjqDBXFOMfc/C2sXLmuGty1sgBE2rvt1VUlFJXZLnD/itU9Sy/8JIYqjt1aX/LPI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720715284; c=relaxed/simple;
+	bh=YQpEC/qiBQroa3mm1E3KI5PbV+xGPjIZrAFY7CCxWqQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cz8F/ZKLtzmRrjFiKMYrZYAx3M66Kd1yQKgZl2bIdWgJC/mHa8u3sXneHq+RrsP0dFX21dud+YOYj0TuOBsmQKLsoGLFT3hxEaRNWha9ukRHgaOFtmXrKX1j3ZpSkEAvXM1FwjmNinG2E1o+l9frJDI2VXUp00WKygUzGC7w+kU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=B4vXUIKc; arc=fail smtp.client-ip=40.107.237.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ugAL/1omO5WSo3BzAXDObfA4NqNgBaPgN5C3FXvB5AZQwpmBkodev2IAu1AyG/3pbls7jmYVOdUnZdhZ9+WOzK+m/t2WcMLyDEyqqgUFUV95/LvhAqbGGqeirnsfc5UVZy/2hOJIlA65Gdpq5X/mnd5CGQ2lDAgg/D2MeivV+mST1yUwWCYeKJCLDTQesSroQr0bRQIrZ+O52wSlBuLITJrPDMZugKwYSpLI0k2jC+fzEbb8Z6vXOXx1kJP8pKJYWhFdpmoaYP6PfvqX5o5dpcpGXw8a6z2blNF/2+sdQqA5A/g8bS75WShFm1kdrDrtqq9826dlts2WuhHwrBwVpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ttBJGxeYpuClpbEojPLyU39jatLusNucKMm4ywTf4gE=;
+ b=TNvlrpBGsgcEWHSNvUkmsRfCa7BAwaHD5gT/+RPSqXFpHfGi1kwHGk8hgvZhvdXCh2aU4Wbuz3JHUFtPNvP3a6DFDHSUVruL7tS1qzxaRxOAtHpdrMffJSyNCiVeX62Tf0LFckD7IfDHw7Jj1qh8/BfIdRjPfGJqt4um1QfLobguGFCgqUxt63cluJmS5/lVez3begKeY185sbit+CGJC8zua3qTcqfScIbVPfEOZxav0nKD5PS+JLrydzsiXVnj2Fm4w7FQTKmJ2wDBEpiDNzzbzP2AHijGKCmYIC/HvSo7cR1P8653W1D5IPYjad/ewKYRzf4SASknm66LeEbm8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ttBJGxeYpuClpbEojPLyU39jatLusNucKMm4ywTf4gE=;
+ b=B4vXUIKcaGx1MGIIXd1svGVLVgOv6Vqi2ahE8CcGhPF4pGRO97O+hVl0r7BOdW5YEB4vuoZCSJvXrfxL3F2D7hoKoo8CpV/VdGTtzdP7UWjTtP9kQF4HHBPHI+PUhf2Yr5I2X6gQkGITQ/MRPHvZ/Akyc0BNlzgFhgRnXjxLpgk=
+Received: from PH8PR22CA0018.namprd22.prod.outlook.com (2603:10b6:510:2d1::24)
+ by SN7PR12MB6766.namprd12.prod.outlook.com (2603:10b6:806:26a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.21; Thu, 11 Jul
+ 2024 16:27:58 +0000
+Received: from SN1PEPF00036F42.namprd05.prod.outlook.com
+ (2603:10b6:510:2d1:cafe::a0) by PH8PR22CA0018.outlook.office365.com
+ (2603:10b6:510:2d1::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23 via Frontend
+ Transport; Thu, 11 Jul 2024 16:27:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF00036F42.mail.protection.outlook.com (10.167.248.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7762.17 via Frontend Transport; Thu, 11 Jul 2024 16:27:58 +0000
+Received: from [10.236.30.66] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 11 Jul
+ 2024 11:27:57 -0500
+Message-ID: <7a449bc1-8ae6-4242-a8ce-df917042a1a6@amd.com>
+Date: Thu, 11 Jul 2024 11:27:57 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,84 +78,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: megaraid_sas: struct MR_LD_VF_MAP: Replace
- 1-element arrays with flexible arrays
-To: Kees Cook <kees@kernel.org>, Kashyap Desai <kashyap.desai@broadcom.com>
-Cc: Sumit Saxena <sumit.saxena@broadcom.com>,
- Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
- Chandrakanth patil <chandrakanth.patil@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20240711155823.work.778-kees@kernel.org>
+Subject: Re: [RFC 2/5] selftests: KVM: Decouple SEV ioctls from asserts
+To: Peter Gonda <pgonda@google.com>
+CC: <kvm@vger.kernel.org>, <shuah@kernel.org>, <thomas.lendacky@amd.com>,
+	<michael.roth@amd.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240710220540.188239-1-pratikrajesh.sampat@amd.com>
+ <20240710220540.188239-3-pratikrajesh.sampat@amd.com>
+ <CAMkAt6pYAKzEVkKV1iriQei3opD9j3M4bM3-0yB4sX1wss+jsQ@mail.gmail.com>
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240711155823.work.778-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Sampat, Pratik Rajesh" <pratikrajesh.sampat@amd.com>
+In-Reply-To: <CAMkAt6pYAKzEVkKV1iriQei3opD9j3M4bM3-0yB4sX1wss+jsQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sRwdc-0006S7-0x
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:40030
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 58
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfL6ycp2z882YsnvfwjiiaGuJIj7B6EdHmr/tpedpzNvlx8hSjOBouWuj1lx8/Tg3fXfQ0vl73ljfI2O6z+kGiafrh9Jygf1vp2iw3Mzl96mmmfeXfAl5
- kJlreHdDQlK8X6rjLuYeTt28zzWV9KjeivsZbSJli+uj3Jm5YWqnoHXbYKScCU5zwOFilFXUiDkZF3p5VjBc7/r3HQ0o7ixPzgXLjXuFiAIbN4uo/qRmKDn8
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F42:EE_|SN7PR12MB6766:EE_
+X-MS-Office365-Filtering-Correlation-Id: d2be62a2-7b77-41fb-bd5d-08dca1c66d2e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q3pTM3dKcERCZ1BudnZRaW5uSGVKbENyOWVQY29yclZqdTZ1MzdGNHNYT1Rt?=
+ =?utf-8?B?SWJoUFl6dHBheEhmT2xUOFBnMWYybTdLcTBpU0h6aFVqTE13bGo4UHJ3amhN?=
+ =?utf-8?B?U3I5S29rRFRMc3RjcGVONG9GL0ErNmZZQVRCWWo3Wlg4bGNIQUh3SGNaS2Fp?=
+ =?utf-8?B?NlEwL1JFMTRmWnhRZ3paNkNjOWNjNzcyMjQzb0xzM0Qvd0FNZHNnd3h0VlUz?=
+ =?utf-8?B?SDkzKzdlR1JZRnhJeDdDSkxRVnR6NG84dnNhWWRUSHdEYmlOQ0MwL3N4cmpU?=
+ =?utf-8?B?S0tNOGNSa21pOFRzaTJFTU54SXVxYTQxSkIrNG9xTlZBTjFLZlhGclBaQTVw?=
+ =?utf-8?B?M0V6amgzZWlZdTNmY2kyKzJTVCt3dnlBaTJDRm1tbUFaVCtmM2RKcWowSUEv?=
+ =?utf-8?B?RlI2ZUtmK0xud2RvSkRIdFpwbExHUTkrVjlUYkZ0Z3JvaWwxeS9WcVhnQmRG?=
+ =?utf-8?B?UXlIU2lLWEQ1ZFhPd3cxOTExQUtJWjZnMHhOempJazdtWlZKSTJwcGRjNHdI?=
+ =?utf-8?B?bitXQmdGMC9GbFRUdGt4d3lQK2lVRnZYZGNKSFhlM0FscVJJY01CR0NlZzJC?=
+ =?utf-8?B?eXh3YUZCN2M4YUxzYVA1dHVPTDNTZWk4QU9ZWExGMklkeGt2cTVvdzRJUnpI?=
+ =?utf-8?B?a0tHRm9uNWk1RHhOS0s1MkI5bEtPMWFKV3YrRU0wbkhjbnRPMjRCbkZkK2FV?=
+ =?utf-8?B?a2x2d0tWdjhObDhqOEdYam1COXg2bGdzcVlsRS9XN2tCUi9LNkRVa0QxamFW?=
+ =?utf-8?B?RmJieEJtV0N4cWtWdnFLNS9ZT2pGMEZLK0NlLzloUVBkK0VkZFR3Vmw0TDQz?=
+ =?utf-8?B?OVpXR0o2MVJMd2pBQTkyczFnS0dONGdrZzRnNHNsZjlNK1hjU2VnNFhMNWV6?=
+ =?utf-8?B?L3JxUXJzajRuRDNmVHdUZWVoMUVPL2M5L1grcHJOK1NldHdDemF6VXFMT1Fh?=
+ =?utf-8?B?QWtIZ2luVlVJRkZTUWorMVhqZ0Vwam9wc2dXWnBtVllsQk1NaURidzErcjd2?=
+ =?utf-8?B?UW5CekErMW5mTWczWDMzOTErc2xlbmlsUFVvMEFUaTV3cEJna3ArbjRSZnJM?=
+ =?utf-8?B?TWpDaWdicklsZ1J4azRvd0N3Z1BSUmZXSGNuSVhCK091ZllaWmRxNjVyWkQz?=
+ =?utf-8?B?RlRSeU02YUVRdmxZc2YzelUxMTZTUUlPSmc3a3A2QTVrOEZTWDNOUFJrSm5R?=
+ =?utf-8?B?d3JMQmhWVkZaZ1VFc3lvS0FLampoOEw5RlRQcHo5SkFkeWxDRGVoUXYzN0w5?=
+ =?utf-8?B?L2IrSDR6VFc5dkNURFZ4UnAxL2E0QXp6RDZUZXh3WWdqVUhRMHJkVkNwZVFH?=
+ =?utf-8?B?VStja2lqcGJ2bENEM0hVcHp1TzNsbkhMRExnTCtMZlNnZUJnR2Y0MkFibWR6?=
+ =?utf-8?B?VUFQTnM1TDB6bllrRnkyLzhUTkgyTmdoai91MkhYeUNtOU9UQjFNcXg0Z3Y4?=
+ =?utf-8?B?TGlGWDZ4cXFCZTBCSzMwS09ZSGdKQnVub2xLMEY3Q0V1YWZHallVR0JXL3hY?=
+ =?utf-8?B?d2x3Z2IwK0drVkU3MHdrakxqQml6UVlYRHRRQ0g3aVE1a2E1TlN6ZitSaGpT?=
+ =?utf-8?B?MHpLam1wWnBESVNpbmV6S2NWeWJOWlRwMEdneTVuK3lCNUNxWGlNWUVYZUdi?=
+ =?utf-8?B?bzlGM0x3dGR0b3JkSlhSTEpMM0lobXY2U2RhY1Ztb0tJcWVmWkM0RTU5djhm?=
+ =?utf-8?B?YTd1SEhxcEtRUU9sUmlEamRMZ3R5ZDRPV2IzUEJFTXhXUlpIZnd6OUJ6Zkl6?=
+ =?utf-8?B?QU1XbVZwRkwyclhwSUtobzRTVUZXcDZ6K1JJeFhLaTk2RWl0aWF2OEpZRU85?=
+ =?utf-8?B?R2tOZ0hSVEEwVnFrMHdNUWNNdERZWEVxT2lZaDBSN25SR0d5b2k2UDdJY2d5?=
+ =?utf-8?B?d0lZaHZacG9mRHVyTlNrMTV0aS8yWDMzakwvcDl2ejVBTWoranM0a0RBSlh2?=
+ =?utf-8?Q?u/Rl9kb2go/BAkH0MkHZYnTX38AI9HLA?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 16:27:58.4331
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2be62a2-7b77-41fb-bd5d-08dca1c66d2e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F42.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6766
 
 
 
-On 11/07/24 09:58, Kees Cook wrote:
-> Replace the deprecated[1] use of a 1-element array in
-> struct MR_LD_VF_MAP with a modern flexible array.
+On 7/11/2024 11:11 AM, Peter Gonda wrote:
+>> +int sev_vm_launch_update(struct kvm_vm *vm, uint32_t policy)
+>> +{
+>> +       struct userspace_mem_region *region;
+>> +       int ctr, ret;
+>>
+>> +       hash_for_each(vm->regions.slot_hash, ctr, region, slot_node) {
+>> +               ret = encrypt_region(vm, region, 0);
+>> +               if (ret)
+>> +                       return ret;
+>> +       }
+>>         if (policy & SEV_POLICY_ES)
+>>                 vm_sev_ioctl(vm, KVM_SEV_LAUNCH_UPDATE_VMSA, NULL);
 > 
-> No binary differences are present after this conversion.
-> 
-> Link: https://github.com/KSPP/linux/issues/79 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
+> Adding the sev-es policy bit for negative testing is a bit confusing,
+> but I guess it works. For negative testing should we be more explicit?
+> Ditto for other usages of `policy` simply to toggle sev-es features.
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+You're right. Although it works because the way we want for negative
+testing it does go by exercising a different path meant for a different
+policy.
 
-Thanks
--- 
-Gustavo
-
-> ---
-> Cc: Kashyap Desai <kashyap.desai@broadcom.com>
-> Cc: Sumit Saxena <sumit.saxena@broadcom.com>
-> Cc: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-> Cc: Chandrakanth patil <chandrakanth.patil@broadcom.com>
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-> Cc: megaraidlinux.pdl@broadcom.com
-> Cc: linux-scsi@vger.kernel.org
-> ---
->   drivers/scsi/megaraid/megaraid_sas.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/megaraid/megaraid_sas.h b/drivers/scsi/megaraid/megaraid_sas.h
-> index 5680c6cdb221..84cf77c48c0d 100644
-> --- a/drivers/scsi/megaraid/megaraid_sas.h
-> +++ b/drivers/scsi/megaraid/megaraid_sas.h
-> @@ -2473,7 +2473,7 @@ struct MR_LD_VF_MAP {
->   	union MR_LD_REF ref;
->   	u8 ldVfCount;
->   	u8 reserved[6];
-> -	u8 policy[1];
-> +	u8 policy[];
->   };
->   
->   struct MR_LD_VF_AFFILIATION {
+Maybe I can refactor the old code to all test for type instead like I
+have done with the rest of the patchset just so that we are more
+explicit. Would that fare any better?
 
