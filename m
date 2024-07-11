@@ -1,136 +1,173 @@
-Return-Path: <linux-kernel+bounces-249908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3A992F16D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:58:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9487B92F16F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DAFF1F25658
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A1D1F259B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FD51A00EC;
-	Thu, 11 Jul 2024 21:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD171A00DF;
+	Thu, 11 Jul 2024 21:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cAjmkSfu"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="xbF7c+RW"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6EB38F83
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFF91A00DE
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720735131; cv=none; b=gmLYCfLvmk1O9u6m2oLRmJYNW7gwyspSKNMBglAUcSMDeIA2G8T94D6U/f1Gu4kHh7ucJp4xmhkBIH6EgdLBI2CXznXy18dsQcK3UCxlvIzMGlK6sBEX7kCVl9Y4D60wbyHN07SSgvDNBfxLU2ywyyyVyQ2Fmv4/8r6KgqzbhtM=
+	t=1720735147; cv=none; b=JEX753GrjR28KulY0h35bMyl4joyHlDoh5CPE6PVuWME1ZYlAX13Qa7fYxssbT3bgwkGr8nkuIPUm1bTJ3W60So2Im2oR3FXZd/ItqP/A4Yiss2gjz631ovXwHJlrlhb7LJRYGUKt2oMxRFp+zRNI3VtwdM15Kb3ZX2aTdcWFcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720735131; c=relaxed/simple;
-	bh=FA8rurZAujgc19PD/q0qvrBhAi2huUDq19HfgpAZxRQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a5N6KnQXbBBSl+ZbK9xbDcEwJC9Prce1jRuQtN/BQ4XYRsCGdrjZkda4dWnJlkvIZxYJzPoBPEps+Y4haKsmX/dxkefIm4KBXFsNQrv6yWkuOd0bO5HdblntXSd/g7Y3o/aKAg1HXMyRhLnogl025bVnqsszVB4BEzZ1of+awv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cAjmkSfu; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-447df43324fso39161cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:58:50 -0700 (PDT)
+	s=arc-20240116; t=1720735147; c=relaxed/simple;
+	bh=HOG3wYdYaZAZL/0D4w5yHwPQ5t9WN+pCQCO4qB9lyik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pjy0EzEyGkmUDwFY+N4sAnB54Tov3Z6xF6hHLKsyztH2ogzzzE6MhJ4H14iKuZnVACaSfWnWy6DRIruPD/echV7Sub0MDyngBJE+6mtzL+Mt3fdZdW/wCwUdnk0mbBo8qzCMdOVN0dHVh91kYYIrlZQIP42n/qopMiJs/O+aN5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=xbF7c+RW; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70b0bc1ef81so1068963b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720735129; x=1721339929; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WnYOe1dJG5+d+L3aqlBxYsGPG+LDmnP2wQAV+RTmgZI=;
-        b=cAjmkSfua2dfCU+sYh2XS15j1Hl4zIcTULvAjVLPF8VvxEACnVZ1cFrY6thrAQQTdy
-         lQtewdjHNtkVtieTQZ/+Px6XOFCPm3zCvIlEBlacoL9rijsmkXAJZMvWm3FVrvYmVfps
-         3wfe0E+OzbBt7KLLScWS6J+6+L/LFHbYwOVZnKkvWqA/g1nYRfJTUtS5EIXcCGzuZSF+
-         BgQZMncF4I0xaU6fDvZW052MudMwU24qgzxBETakPnMbL7GMbrFXQ9dsMBEyVc8a9KwO
-         3p2z6PKYJK/TEbpKaeI8cBBScV7t3dl4nyWfY37bViiImelQhXvQm6lfzg+aTxh65h4q
-         ohRQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720735146; x=1721339946; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/kw+IcYp8bgUiJbh37Eb+rjf6jAd1bzt2laJrXIeEks=;
+        b=xbF7c+RWElPVM/a/9XU+PMfIUJ/+DQpmCtqplvdzsZdMQW0hPcXTv6GY1I8Gc96McK
+         Hu+9LjVTlci01bsycifHjys+itAroanqdiD2tJ0gAHNiSvjSR6a95ZCEoPOjhkP04YXz
+         vtbUx6m/ilv6MQ2YNUcu1IQzSaVQZAu9A4GZvtxH/si3V6BwVYxMKqZ1utUQOKRROZDJ
+         fZNtia1stFWpt/bdyOuRx34uHsxcq9VGpk1IxzunIKzuQesTNMZvXt7RL3H24ErxdHmo
+         Tqn2HTKCPy3aMLiZjonYFdmvP8nzCDmPexKAdAcIKCAm5gzUQDru7g5yPTePltvXKI6f
+         56iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720735129; x=1721339929;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WnYOe1dJG5+d+L3aqlBxYsGPG+LDmnP2wQAV+RTmgZI=;
-        b=PogMZrTkREXAq54YLTnFg83KvgC6G2AKp4SxuU9lz2SxG0QUrk3dMgK361oilPGp5Z
-         fCFhX+jB38jcUywyUhbNpDAGEfrdng3W4ofKEZAVc5gW6ACrXrT++JylUNi0QK7LOqe7
-         TvNCA28Yjp8VO5IJT/XPymb+sUS0QhIQcFds7NPZFFiWErqM39CAPMpNWpt+YYIbdor0
-         p3346aF9TDgNaVFBdp+t8s/EFAO9p/JI/d7Kp2TxJWCtzW7Dm1xyhcBp/Sw8pIuovs8u
-         PDBcF4BBBPmIlvBNkVkLqoMulKbFYi+L95cvB8CgUNoEKNHIMzzQbfGZmPq10iVEiGfo
-         m0sA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvm4XpzUm4ABQEYE0lcOBDjNKxkelKFwy/L9daDn2X1sZLXo9bg4VdcV5FfnET4tUhcs+a2sZ0gknUcz/XDE2X7PYZV5dL6O0vvl7x
-X-Gm-Message-State: AOJu0Yz8WruX4jw1Sr1El62K0trAZYvqynePRLXYzZKM+/psMr90FTEh
-	ObI+q45Lxf1u0m9yCivXPhRkyltQ+ugV9roidtv6aSscB+Fx5ggTTI7I+3TpeiLyYGTC46R0CMY
-	B1bSHseBL9ir2jEZdK8EEwY7w2MzPBWM7zTEu
-X-Google-Smtp-Source: AGHT+IELqWv5DEQWx38sI2VPsWnfcnaJgBIGYKNZMWEGKlbGp4EDsVqCEuin4magvXGBDti3fGOMeO+hfnwUiVNYQ7A=
-X-Received: by 2002:ac8:60d0:0:b0:447:e5df:e1be with SMTP id
- d75a77b69052e-44e7350fe53mr1078961cf.8.1720735128225; Thu, 11 Jul 2024
- 14:58:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720735146; x=1721339946;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/kw+IcYp8bgUiJbh37Eb+rjf6jAd1bzt2laJrXIeEks=;
+        b=rsHLlWF6ciAzwLT7C4KJBQMy0k0gNDCuTq5CXk20NQcEGPAK+ByyNcpVG0YAsC80uE
+         3CCWeFw4BJ2GLu7jNL0A6cFaH5c52znRlmXrK55Uc/FPUgYfudUFrgz0z5vLrbpbyXXx
+         GK/VutpPsKaVECg8nhKRxAQLWJTQbrX2Kogsog7a74VMPAGyW+rGL7vKUqc/zu2H24oS
+         7jFBfWx4kljoYMao+w1V2VdYcrqWcxP6hpyzHUtkvDSQIk8YJVoBy3HvccdL9jPrZn0j
+         FKGsNr3Mt+YYPHr0dB7vhyXBiQKRGipLrYEXfmW6zheaH2O7B9Nj6l+cSUgkYProeZl+
+         IWWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAAyeq/wMJ8YFhJoo9YsVTRj74vVm/bSedT2ihDPTjIoQYhG5F9U9GdQqg/KnR5vw3hWUTfQ0eaJheQMWC8RkEAo5D+VAgPvwFg2jM
+X-Gm-Message-State: AOJu0YztQ1fPASpHvZullOMbX69O4pDl2G7Z5sYHsmPdwsMXhbiv3NEI
+	gAKqUbvq8PYJ2EOTBKKxdrCuto5JfdslB617T+mDiYtc1kvBRnzipL1qEZhgv9o=
+X-Google-Smtp-Source: AGHT+IFQBa/vIEx5Z0khrKTKGJiYkqA2a1gi0Teh5Yh2zckpKKSH2Er9zsMFqmnL0nQM5VYY6+YdWQ==
+X-Received: by 2002:a05:6a00:846:b0:706:58a8:f686 with SMTP id d2e1a72fcca58-70b43678a11mr12384423b3a.32.1720735145519;
+        Thu, 11 Jul 2024 14:59:05 -0700 (PDT)
+Received: from jesse-desktop.. (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43898b10sm6169431b3a.7.2024.07.11.14.58.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 14:59:05 -0700 (PDT)
+From: Jesse Taube <jesse@rivosinc.com>
+To: linux-riscv@lists.infradead.org
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Evan Green <evan@rivosinc.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Jesse Taube <jesse@rivosinc.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Xiao Wang <xiao.w.wang@intel.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	Eric Biggers <ebiggers@google.com>,
+	Greentime Hu <greentime.hu@sifive.com>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Costa Shulyupin <costa.shul@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Zong Li <zong.li@sifive.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Ben Dooks <ben.dooks@codethink.co.uk>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Erick Archer <erick.archer@gmx.com>,
+	Joel Granados <j.granados@samsung.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v4 0/7] RISC-V: Detect and report speed of unaligned vector accesses
+Date: Thu, 11 Jul 2024 17:58:39 -0400
+Message-ID: <20240711215846.834365-1-jesse@rivosinc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1720700179-22839-1-git-send-email-ajay.kaher@broadcom.com>
-In-Reply-To: <1720700179-22839-1-git-send-email-ajay.kaher@broadcom.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 11 Jul 2024 14:58:36 -0700
-Message-ID: <CAP-5=fVwZfV+gNWcmEtRnkOtrvozMdXPVrZ37COHkf4BX1VPgw@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/3] perf: add logic to collect off-cpu samples
-To: Ajay Kaher <ajay.kaher@broadcom.com>, chu howard <howardchu95@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, rostedt@goodmis.org, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, yangjihong1@huawei.com, zegao2021@gmail.com, 
-	leo.yan@linux.dev, asmadeus@codewreck.org, siyanteng@loongson.cn, 
-	sunhaiyong@loongson.cn, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, alexey.makhalov@broadcom.com, 
-	vasavi.sirnapalli@broadcom.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 5:16=E2=80=AFAM Ajay Kaher <ajay.kaher@broadcom.com=
-> wrote:
->
-> Add --off-cpu-kernel option to capture off-cpu sample alongwith on-cpu
-> samples.
->
-> off-cpu samples represent time spent by task when it was on wait queue
-> (schedule out to waiting for events, blocked on I/O, locks, timers,
-> paging/swapping, etc)
->
-> Refer following links for more details:
-> https://lpc.events/event/17/contributions/1556/
-> https://www.youtube.com/watch?v=3DsF2faKGRnjs
+Adds support for detecting and reporting the speed of unaligned vector
+accesses on RISC-V CPUs. Adds vec_misaligned_speed key to the hwprobe
+adds Zicclsm to cpufeature and fixes the check for scalar unaligned
+emulated all CPUs. The vec_misaligned_speed key keeps the same format
+as the scalar unaligned access speed key.
 
-Hi Ajay,
+This set does not emulate unaligned vector accesses on CPUs that do not
+support them. Only reports if userspace can run them and speed of
+unaligned vector accesses if supported.
 
-I wonder if Howard's improvements (not landed) for `perf record
---off-cpu` would solve this problem for you?
-https://lore.kernel.org/lkml/20240424024805.144759-1-howardchu95@gmail.com/
-Or is that approach problematic due to the use of BPF?
+If Zicclsm is present, the kernel will set both scalar and vector unaligned access speed to FAST.
 
-Thanks,
-Ian
+This patch requires the following patche to be applied first:
+RISC-V: fix vector insn load/store width mask
+https://lore.kernel.org/all/20240606182800.415831-1-jesse@rivosinc.com/
 
-> Ajay Kaher (3):
->   perf/core: add logic to collect off-cpu sample
->   perf/record: add options --off-cpu-kernel
->   perf/report: add off-cpu samples
->
->  include/linux/perf_event.h            | 16 ++++++++++++++
->  include/uapi/linux/perf_event.h       |  3 ++-
->  kernel/events/core.c                  | 27 ++++++++++++++++++-----
->  tools/include/uapi/linux/perf_event.h |  3 ++-
->  tools/perf/builtin-record.c           |  2 ++
->  tools/perf/util/events_stats.h        |  2 ++
->  tools/perf/util/evsel.c               |  4 ++++
->  tools/perf/util/hist.c                | 31 ++++++++++++++++++++++++---
->  tools/perf/util/hist.h                |  1 +
->  tools/perf/util/record.h              |  1 +
->  tools/perf/util/sample.h              |  1 +
->  11 files changed, 81 insertions(+), 10 deletions(-)
->
-> --
-> 2.39.0
->
+V1 -> V2:
+ - New patch: dt-bindings: riscv: Add Zicclsm ISA extension description.
+ - New patch: RISC-V: Check scalar unaligned access on all CPUs
+ - New patch: RISC-V: hwprobe: Document unaligned vector perf
+V2 -> V3:
+ - New patch: RISC-V: Replace RISCV_MISALIGNED with RISCV_SCALAR_MISALIGNED
+ - Split patch: RISC-V: Check scalar unaligned access on all CPUs
+ - New patch: RISC-V: Check Zicclsm to set unaligned access speed
+V3 -> V4:
+ - Drop patch: RISC-V: Check Zicclsm to set unaligned access speed
+
+Jesse Taube (7):
+  RISC-V: Add Zicclsm to cpufeature and hwprobe
+  dt-bindings: riscv: Add Zicclsm ISA extension description.
+  RISC-V: Check scalar unaligned access on all CPUs
+  RISC-V: Replace RISCV_MISALIGNED with RISCV_SCALAR_MISALIGNED
+  RISC-V: Detect unaligned vector accesses supported
+  RISC-V: Report vector unaligned access speed hwprobe
+  RISC-V: hwprobe: Document unaligned vector perf key
+
+ Documentation/arch/riscv/hwprobe.rst          |  21 +++
+ .../devicetree/bindings/riscv/extensions.yaml |   7 +
+ arch/riscv/Kconfig                            |  57 ++++++-
+ arch/riscv/include/asm/cpufeature.h           |   7 +-
+ arch/riscv/include/asm/entry-common.h         |  11 --
+ arch/riscv/include/asm/hwcap.h                |   1 +
+ arch/riscv/include/asm/hwprobe.h              |   2 +-
+ arch/riscv/include/asm/vector.h               |   1 +
+ arch/riscv/include/uapi/asm/hwprobe.h         |   6 +
+ arch/riscv/kernel/Makefile                    |   3 +-
+ arch/riscv/kernel/copy-unaligned.h            |   5 +
+ arch/riscv/kernel/cpufeature.c                |   1 +
+ arch/riscv/kernel/fpu.S                       |   4 +-
+ arch/riscv/kernel/sys_hwprobe.c               |  42 +++++
+ arch/riscv/kernel/traps_misaligned.c          | 134 ++++++++++++++--
+ arch/riscv/kernel/unaligned_access_speed.c    | 148 +++++++++++++++++-
+ arch/riscv/kernel/vec-copy-unaligned.S        |  58 +++++++
+ arch/riscv/kernel/vector.c                    |   2 +-
+ 18 files changed, 472 insertions(+), 38 deletions(-)
+ create mode 100644 arch/riscv/kernel/vec-copy-unaligned.S
+
+-- 
+2.45.2
+
 
