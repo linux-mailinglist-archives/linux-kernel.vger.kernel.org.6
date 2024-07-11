@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-249349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A4DD92EA67
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:11:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4292092EA42
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 203BE281B20
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:11:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5E7E1F22BDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5009116132B;
-	Thu, 11 Jul 2024 14:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEEE16133C;
+	Thu, 11 Jul 2024 14:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="VHAOMFo+"
-Received: from smtp84.ord1d.emailsrvr.com (smtp84.ord1d.emailsrvr.com [184.106.54.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Nhe0sg3r"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D6716133E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8AA14BFA2
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720707107; cv=none; b=qfa4sfJeHG1dfu8+cFR+Ai26VjiGg2v/N05I53e+TDHFrnS0nEYkHHRypnp9gP5CIBoJvKM2Oh/hUUsY6vqLSZp5QHhwGAIE8wE1bozqoJdFCqym+3uaD8IrjH8c/KooKXTpKMep9fKszT780+4R2ESzqKGH4AywK/u4TAg4wOM=
+	t=1720706817; cv=none; b=usnChkf0npTSp5INqTvJqn31z5N992RfA+s6Ig1FWCs3y+OfE2TJ4ZA15+eJpqDFDp78gLLZH0CWceEjS5o91RVY7PyOcTdXqykKHOEDHwBhoueqrmkjBwoGDjpQRsbnDvAIPpJZm0k2SksmaImlNLdMQm8sQ+y5GbQ3NamzZXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720707107; c=relaxed/simple;
-	bh=OeRk1i3qXAV0YYxYZJgE3KI4JCMawZqmzQ8mGpGAIpM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lht9ucsz/wfgdRoqvaW08BfjcQH2wiXQJ1RhtR05em82HxmaXShslD5kUYZwaRIfUkDke5V4FJe8o3mJo3ohueOE946fdg7yxez43Gg3FXMtyTP/0+8YefhnWnbi4/bon+hCRjI8unt+oABE3sLycA6C/papO/MtNQw0x1DMezU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=VHAOMFo+; arc=none smtp.client-ip=184.106.54.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1720706703;
-	bh=OeRk1i3qXAV0YYxYZJgE3KI4JCMawZqmzQ8mGpGAIpM=;
-	h=Date:Subject:To:From:From;
-	b=VHAOMFo+dHgN6BbZY1sDnkVD+85dRNaqQ+aKOxMAw3kI2HS4hXYvumPf5gAw3u72Y
-	 Z6KpJGvU2rVBa7yhiSSBj5VKean9IhYrDM+kr/0ZTFfccgb7aUQvCWESutT763ClbF
-	 Q/dZt7vOjAlfLp28gW20f5chwz2UHB3q92EKoKzQ=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp11.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 83E6760182;
-	Thu, 11 Jul 2024 10:05:02 -0400 (EDT)
-Message-ID: <2b0e8a6c-f89e-4d71-a816-9da46ea695eb@mev.co.uk>
-Date: Thu, 11 Jul 2024 15:05:01 +0100
+	s=arc-20240116; t=1720706817; c=relaxed/simple;
+	bh=/LJntVGckN7+Mm5JjaItmJFTbNIfdKRitOyh9FjN9jU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cZ1f+IFcccxv7nv8HRSCXfLzIFN0p3/A0GVU8fk+st/9Iw4ygih9KM08QdPi+uFTf08M9I8+8uVsQbEKAWugTlUJECSUGahEZoVHC2LlFq37/bwo0nK2pjjW/qhNosjLxku3sqaI8cekP9MzdGg4pf95qkK0s4gr9nC7EhyReMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Nhe0sg3r; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-64b29539d87so8497297b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:06:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1720706815; x=1721311615; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uIPNti1s2/HNmMC/IZjSDG03fTpEhLPjzEULCFaJzl8=;
+        b=Nhe0sg3r/l3FHItlCMjROPPUsneIdDc6em4U5k7ZIEOCx0msnePDvV/fRqcCkgv81V
+         ZH1WRBN5Yqmz6Op/RLZwjC46s9JfIGgbrUkulQL2EpZ8DEMPL2Oe858VV4vcfHhCCryx
+         +8U8UJ7D5MhMcY3cuO49vswggdZKYqplQzX7+5+chfldDOtPeBKwSDNC7IsdejJ7JujR
+         8H5Fzbl/1d9xLHm76UUfB78hnmh55UNE/0ZjaADqTFfau4rCvgtXItS0NgRB6NYFcbPl
+         HUPqkdMS039iNj0eXLEP41eRth+FkNQDIPHTRJQySfB+6aJiR3Y5SCCRbRtbvAqEDAWq
+         0hPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720706815; x=1721311615;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uIPNti1s2/HNmMC/IZjSDG03fTpEhLPjzEULCFaJzl8=;
+        b=f6Ku/rkbWdWz025q9UPdkzJlGJLXRRJto9/+YxLgXa9kG4zgAkGssnE3ZWOoSfFyKV
+         LVjGAlaQKfZd3U77Rwi7aI98VAPhyol8qbJ10b+2gQSBiHCFmuHG/0TxxDL5tdMm1r7i
+         J/Hd36Kbyv9/dmpBTKvP9/Hb9C9MH9kmVfyglaEmkXQsyatA3zWUVYKmuEuErnbuWApz
+         dghA15PhYg0xaADw7w7enK0Fx/2wVjSW+Gt4x1zfsfrpVTz9ITv9qcFtLY3akc82ZBJv
+         v9uFQUv8VwnZIlEJNxUTtOW6/V2onuhrQedp8b1CwSdRMghRpZfErfaJBVHTe7KRbvc/
+         ob2g==
+X-Forwarded-Encrypted: i=1; AJvYcCULUywDIPov3c3BeTyNSetxV+qEnDZ2LlMVdaUL7AHEVhdg+kqvKDJVToFy+S6TYM2uPXKJd1XDODwB/obxkpNF4WRowV9R1VHsxKDj
+X-Gm-Message-State: AOJu0YzRgk0h7Uy1Q/B002rSL82FpoCgKBVANaMqrJri/VQuGbv6EDLI
+	kFzCtAqpNYLvZnA7Y4vP7q/M5qVM/udlKYVUibaSbEuEQw8GBtMhihOvU8Fen3ppQklnYhseomI
+	yy3VajiBdMwDBslWntsoUy44AWMEos0gk4g+A
+X-Google-Smtp-Source: AGHT+IFuspm27tfeFqYCo1mM1up+6/KBdHFCOyNzTDo6zxPKaW5nKhYAVDWMkqQ6+wQZpi4uFLUZhsZMyCfRvdjmzo8=
+X-Received: by 2002:a05:690c:3385:b0:62f:2553:d3b3 with SMTP id
+ 00721157ae682-658ef3414eemr119351847b3.29.1720706814862; Thu, 11 Jul 2024
+ 07:06:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] rtc: ds1343: Force SPI chip select to be active
- high
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
- Mark Brown <broonie@kernel.org>
-References: <20240710175246.3560207-1-abbotti@mev.co.uk>
- <20240710184053c34201f0@mail.local>
-Content-Language: en-GB
-From: Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-In-Reply-To: <20240710184053c34201f0@mail.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Classification-ID: daa3b8eb-56e6-455d-9215-420ec447232e-1-1
+References: <00000000000076ba3b0617f65cc8@google.com> <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net> <20240516.doyox6Iengou@digikod.net>
+ <20240627.Voox5yoogeum@digikod.net> <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+ <eb168f2f-948b-4a3b-9237-92902f0c7438@I-love.SAKURA.ne.jp>
+In-Reply-To: <eb168f2f-948b-4a3b-9237-92902f0c7438@I-love.SAKURA.ne.jp>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 11 Jul 2024 10:06:43 -0400
+Message-ID: <CAHC9VhQUqJkWxhe5KukPOVQMnOhcOH5E+BJ4_b3Qn6edsL5YJQ@mail.gmail.com>
+Subject: Re: [syzbot] [lsm?] general protection fault in hook_inode_free_security
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Kees Cook <keescook@chromium.org>, 
+	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, jmorris@namei.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Greetings,
+On Wed, Jul 10, 2024 at 8:32=E2=80=AFPM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2024/06/28 3:28, Paul Moore wrote:
+> > It's also worth mentioning that while we always allocate i_security in
+> > security_inode_alloc() right now, I can see a world where we allocate
+> > the i_security field based on need using the lsm_blob_size info (maybe
+> > that works today?  not sure how kmem_cache handled 0 length blobs?).
+> > The result is that there might be a legitimate case where i_security
+> > is NULL, yet we still want to call into the LSM using the
+> > inode_free_security() implementation hook.
+>
+> As a LKM-based LSM user, I don't like dependency on the lsm_blob_size inf=
+o.
+>
+> Since LKM-based LSM users cannot use lsm_blob_size due to __ro_after_init=
+,
+> LKM-based LSM users depend on individual LSM hooks being called even if
+> i_security is NULL. How do we provide hooks for AV/EDR which cannot be
+> built into vmlinux (due to distributor's support policy) ? They cannot be
+> benefited from infrastructure-managed security blobs.
 
-On 10/07/2024 19:40, Alexandre Belloni wrote:
-> Hello,
-> 
-> On 10/07/2024 18:52:07+0100, Ian Abbott wrote:
->> Commit 3b52093dc917 ("rtc: ds1343: Do not hardcode SPI mode flags")
->> bit-flips (^=) the existing SPI_CS_HIGH setting in the SPI mode during
->> device probe.  This will set it to the wrong value if the spi-cs-high
->> property has been set in the devicetree node.  Just force it to be set
->> active high and get rid of some commentary that attempted to explain why
->> flipping the bit was the correct choice.
->>
->> Fixes: 3b52093dc917 ("rtc: ds1343: Do not hardcode SPI mode flags")
->> Cc: <stable@vger.kernel.org> # 5.6+
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Mark Brown <broonie@kernel.org>
->> Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
->> ---
->>   drivers/rtc/rtc-ds1343.c | 9 +++------
->>   1 file changed, 3 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/rtc/rtc-ds1343.c b/drivers/rtc/rtc-ds1343.c
->> index ed5a6ba89a3e..484b5756b55c 100644
->> --- a/drivers/rtc/rtc-ds1343.c
->> +++ b/drivers/rtc/rtc-ds1343.c
->> @@ -361,13 +361,10 @@ static int ds1343_probe(struct spi_device *spi)
->>   	if (!priv)
->>   		return -ENOMEM;
->>   
->> -	/* RTC DS1347 works in spi mode 3 and
->> -	 * its chip select is active high. Active high should be defined as
->> -	 * "inverse polarity" as GPIO-based chip selects can be logically
->> -	 * active high but inverted by the GPIO library.
->> +	/*
->> +	 * RTC DS1347 works in spi mode 3 and its chip select is active high.
->>   	 */
->> -	spi->mode |= SPI_MODE_3;
->> -	spi->mode ^= SPI_CS_HIGH;
->> +	spi->mode |= SPI_MODE_3 | SPI_CS_HIGH;
-> 
-> Linus being the gpio maintainer and Mark being the SPI maintainer, I'm
-> pretty sure this was correct at the time.
+As stated many times in the past, the LSM framework as well as the
+Linux kernel in general, does not provide the same level of
+consideration to out-of-tree code that it does to upstream, mainline
+code.  My policy on this remains the same as last time we talked:
+while I have no goal to make things difficult for out-of-tree code, I
+will not sacrifice the continued development and maintenance of
+existing upstream code in favor of out-of-tree code.
 
-I'm not convinced.  What value of `spi->mode & SPI_CS_HIGH` do you think 
-the device should end up using?  (I think it should end up using 
-`SPI_CS_HIGH`, which was the case before commit 3b52093dc917, because 
-the RTC chip requires active high CS.)  What do you think the value of 
-`spi->mode & SPI_CS_HIGH` will be *before* the `^=` operation? (For 
-devicetree, that depends on the `spi-cs-high` property.)
-
-I think the devicetree node for the RTC device ought to be setting 
-`spi-cs-high` but cannot do so at the moment because the driver clobbers it.
-
-> Are you sure you are not missing an active high/low flag on a gpio
-> definition?
-
-The CS might be internal to the SPI controller, not using a GPIO line 
-(`cs-gpios` property).  SPI peripheral device drivers shouldn't care if 
-CS is using GPIO or not.
-
-> 
->>   	spi->bits_per_word = 8;
->>   	res = spi_setup(spi);
->>   	if (res)
->> -- 
->> 2.43.0
->>
-> 
-
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
--=( registered in England & Wales.  Regd. number: 02862268.  )=-
--=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
--=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
-
+--=20
+paul-moore.com
 
