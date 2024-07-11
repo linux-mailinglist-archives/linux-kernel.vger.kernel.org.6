@@ -1,166 +1,199 @@
-Return-Path: <linux-kernel+bounces-249499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA9F92EC78
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:18:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95E792EC7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 912781C217A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:18:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDFAC1C21D14
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C6616CD23;
-	Thu, 11 Jul 2024 16:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF6916CD1A;
+	Thu, 11 Jul 2024 16:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="uMKW2xnU"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sci.fi header.i=@sci.fi header.b="PU8kL0jB"
+Received: from fgw20-4.mail.saunalahti.fi (fgw20-4.mail.saunalahti.fi [62.142.5.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229C78BFD
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364B58F72
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720714695; cv=none; b=V1GtP8XzFcwQ7XZ33FG4T6eIsjEz/sDt9dyct3N+Rwa8zJ2uaAU1pZsnm/MiyGr2Iq64d3yJZ/db0VHMvrAuOQ2/q8VzOMvuENFmWdZUTN5ljRwgk6/G4uEjpWj7svq73SeRwbIlgDK9NKdCRiTv5ruMqUocjQiUi8TkhIGPrUQ=
+	t=1720714747; cv=none; b=jcolGlod3OUfZ74csjJRbkPqY/HyCd2rnOowVXzJ2qy3N4RqWtaCSc/Qa7C1Bojx28055dfGZjA/3Fi4uqsDdMyQ+P1jiVvmheiFFpXdZTWPrqHYdBFyfABUn37+OLNTk3QxLdV8GB87MpQx8Z+6HucbUNHceRBmi2VXBcItQcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720714695; c=relaxed/simple;
-	bh=N3rDyLx52pO2BwM167/qhJZ+hV8rtvMa1SuTipsLRA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K3kPH4j7eluBwqvuewDPA+KC1rKK8e84IueqrcG6Mg55fodQqnuy/ushac+yFBYod0Pe8h45cfNb2Xi8Pv2AkaPIiZbEosruSTEtt7IDedS98eJDEolYjDHnx96nvRNgm2gtzx/4KTUACw2kKfbcQSyMUNV+6+ulY/YD1OVzheQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=uMKW2xnU; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6005a.ext.cloudfilter.net ([10.0.30.201])
-	by cmsmtp with ESMTPS
-	id RqapsmqTwg2lzRwUnsK6jF; Thu, 11 Jul 2024 16:18:14 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id RwUnsRYF8RBkMRwUnsWCQH; Thu, 11 Jul 2024 16:18:13 +0000
-X-Authority-Analysis: v=2.4 cv=CbPD56rl c=1 sm=1 tr=0 ts=669005c5
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8 a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8
- a=ieX9XyvoytEcL3Xr2ukA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=Fp8MccfUoT0GBdDC_Lng:22 a=zSyb8xVVt2t83sZkrLMb:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=I2NUgmT42oAokrukvToywtMJ4UZZ7x+Khfv2d+jZ0j4=; b=uMKW2xnUjWsLRpU7vB9fRKVvlz
-	Ekz0mXvpOAVZN/aZcVWXOv/weU77Dh6vYK2wk13zNyvS/SbNtaDlwQt+W3t8L1TN5mTKMF/KP1UFM
-	oBQ6L5ca8e/2jnwBbJE/Hw/SLFVi5J44w92Bmoy9jgK+u5CXUFQJoGhOkLfrjL26kDg4bhPcKQ8k8
-	DuO3kJSRieGnxAtL8dVBY6VbONJ/pvawhsiJu1MJFUpf+6TlnzJxSUoyNWCg0ixZdmEc/WoMFS7v3
-	3iqj5RGpWHlTezo8rXgh+JfU+stIp/EM9U0fuHkJnDzeIyhH5C2tfv3zTmDNLHRo54ASOe1IwopsT
-	INEW+76Q==;
-Received: from [201.172.173.139] (port=51936 helo=[192.168.15.4])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sRwUm-004JcF-04;
-	Thu, 11 Jul 2024 11:18:12 -0500
-Message-ID: <67e48181-611d-498c-abba-634b8f63ef25@embeddedor.com>
-Date: Thu, 11 Jul 2024 10:18:10 -0600
+	s=arc-20240116; t=1720714747; c=relaxed/simple;
+	bh=zCAjZ21UoUMwBBB1qyvpP4jCRL8vy3sea2sCKrtiIH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OjYtafzvp+Pghx1TQIq5JGfMClOjI7PNx2CUeUL6LQ8IzltrB+yQvuse+CXpIMdnnfSAMNTN1yj8zLxSpoc0RzYfwiJYDYVqNH/Np1VzNLWf9pze83yic68PVFWSXiz9il57miYmau+Q5X0D7mOJKV9oKtZKQZycS78rPa7m+N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sci.fi; spf=pass smtp.mailfrom=sci.fi; dkim=pass (2048-bit key) header.d=sci.fi header.i=@sci.fi header.b=PU8kL0jB; arc=none smtp.client-ip=62.142.5.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sci.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sci.fi
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=sci.fi; s=elisa1;
+	h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
+	 message-id:subject:cc:to:from:date:feedback-id:from:to:cc:reply-to:subject:
+	 date:in-reply-to:references:list-archive:list-subscribe:list-unsubscribe:
+	 content-type:content-transfer-encoding:message-id;
+	bh=QLwqgHRZ6lSOojwMebwwsVWAh74G0Lu0nm5wRXcRVSI=;
+	b=PU8kL0jBK8cZIcMZFYjysq11i8gTTRmK+OaD5MQ5ojwXdHGIxiqM+mzN7t9y6ADyZU0q/VsJ9ia5j
+	 VImah3lSvSFSXoKGGmHA2EyGWAcQzNj89Lxvr9YVCo0NBmeMKaEkT5Paif0HbDY4Lmyk4kv/UIhgb1
+	 kV6tTwPfXwJ8xIaKdcRG8Y+Bl8pVvd1Zj+JB5RV1Fc8EYGkIu/PKjU+MQdsOFKAR5Ij+KxYaGKn7y4
+	 uvXXHkPhdeKwm8wIE/XY7s6pojAh0QLHrTO5oaCi7E8C3AobFlKn2vjjfzUY6IfUKG6QuFVsrE3tBR
+	 1SyqVnUE+H7MUJrA3q2p0kLOiVXtn2Q==
+Feedback-ID: 91b3a81a:25bf58:smtpa:elisa
+Received: from sci.fi (89-27-49-32.bb.dnainternet.fi [89.27.49.32])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTPSA
+	id 44a41fc4-3fa1-11ef-8dbd-005056bd6ce9;
+	Thu, 11 Jul 2024 19:18:55 +0300 (EEST)
+Date: Thu, 11 Jul 2024 19:18:54 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <syrjala@sci.fi>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] Input: ati-remote2 - use driver core to instantiate
+ device attributes
+Message-ID: <ZpAF7gqeF589IkTA@sci.fi>
+Mail-Followup-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <syrjala@sci.fi>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <Zo8gaF_lKPAfcye1@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] scsi: mpi3mr: struct mpi3_sas_io_unit_page0: Replace
- 1-element array with flexible array
-To: Kees Cook <kees@kernel.org>,
- Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
-Cc: Kashyap Desai <kashyap.desai@broadcom.com>,
- Sumit Saxena <sumit.saxena@broadcom.com>,
- Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Ranjan Kumar <ranjan.kumar@broadcom.com>, mpi3mr-linuxdrv.pdl@broadcom.com,
- linux-scsi@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240711155446.work.681-kees@kernel.org>
- <20240711155637.3757036-3-kees@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240711155637.3757036-3-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sRwUm-004JcF-04
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:51936
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 30
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfH7lBjoeqUV8DxVW2f6BqNuSqdEfZm74Re6R+u7w8AWaWHb9pAnMVGCrBvRGHtxtytWp0QcMITEjpZDakqVfhP3bzzuGfjW/3F27dde/RRpqQbf+Sdm1
- 7RYCIpW1hirAiCpiZxKOMvB5kVFBaCqsOBRBNzIN4WOU/w472dNe4Z/RTt+oGxpZWS+d/fGa5Jvqz+eSvBcZP9Bwevk42xBCVarxqKX8yadRhLufkjxs0Say
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zo8gaF_lKPAfcye1@google.com>
 
-
-
-On 11/07/24 09:56, Kees Cook wrote:
-> Replace the deprecated[1] use of a 1-element array in
-> struct mpi3_sas_io_unit_page0 with a modern flexible array.
+On Wed, Jul 10, 2024 at 04:59:36PM -0700, Dmitry Torokhov wrote:
+> Instead of manually creating driver-specific device attributes
+> set struct usb_driver->dev_groups pointer to have the driver core
+> do it.
 > 
-> No binary differences are present after this conversion.
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/input/misc/ati_remote2.c | 50 +++++++++++---------------------
+>  1 file changed, 17 insertions(+), 33 deletions(-)
 > 
-> Link: https://github.com/KSPP/linux/issues/79 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
+> diff --git a/drivers/input/misc/ati_remote2.c b/drivers/input/misc/ati_remote2.c
+> index 946bf75aa106..795f69edb4b2 100644
+> --- a/drivers/input/misc/ati_remote2.c
+> +++ b/drivers/input/misc/ati_remote2.c
+> @@ -204,26 +204,7 @@ struct ati_remote2 {
+>  	unsigned int mode_mask;
+>  };
+>  
+> -static int ati_remote2_probe(struct usb_interface *interface, const struct usb_device_id *id);
+> -static void ati_remote2_disconnect(struct usb_interface *interface);
+> -static int ati_remote2_suspend(struct usb_interface *interface, pm_message_t message);
+> -static int ati_remote2_resume(struct usb_interface *interface);
+> -static int ati_remote2_reset_resume(struct usb_interface *interface);
+> -static int ati_remote2_pre_reset(struct usb_interface *interface);
+> -static int ati_remote2_post_reset(struct usb_interface *interface);
+> -
+> -static struct usb_driver ati_remote2_driver = {
+> -	.name       = "ati_remote2",
+> -	.probe      = ati_remote2_probe,
+> -	.disconnect = ati_remote2_disconnect,
+> -	.id_table   = ati_remote2_id_table,
+> -	.suspend    = ati_remote2_suspend,
+> -	.resume     = ati_remote2_resume,
+> -	.reset_resume = ati_remote2_reset_resume,
+> -	.pre_reset  = ati_remote2_pre_reset,
+> -	.post_reset = ati_remote2_post_reset,
+> -	.supports_autosuspend = 1,
+> -};
+> +static struct usb_driver ati_remote2_driver;
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Would be easier to see what's actually happening if
+the rearrangement of the forward declarations was a
+separate patch.
 
-Thanks
+Otherwise lgtm
+Reviewed-by: Ville Syrjälä <syrjala@sci.fi>
+
+>  
+>  static int ati_remote2_submit_urbs(struct ati_remote2 *ar2)
+>  {
+> @@ -791,10 +772,7 @@ static struct attribute *ati_remote2_attrs[] = {
+>  	&dev_attr_mode_mask.attr,
+>  	NULL,
+>  };
+> -
+> -static struct attribute_group ati_remote2_attr_group = {
+> -	.attrs = ati_remote2_attrs,
+> -};
+> +ATTRIBUTE_GROUPS(ati_remote2);
+>  
+>  static int ati_remote2_probe(struct usb_interface *interface, const struct usb_device_id *id)
+>  {
+> @@ -861,13 +839,9 @@ static int ati_remote2_probe(struct usb_interface *interface, const struct usb_d
+>  
+>  	strlcat(ar2->name, "ATI Remote Wonder II", sizeof(ar2->name));
+>  
+> -	r = sysfs_create_group(&udev->dev.kobj, &ati_remote2_attr_group);
+> -	if (r)
+> -		goto fail3;
+> -
+>  	r = ati_remote2_input_init(ar2);
+>  	if (r)
+> -		goto fail4;
+> +		goto fail3;
+>  
+>  	usb_set_intfdata(interface, ar2);
+>  
+> @@ -875,8 +849,6 @@ static int ati_remote2_probe(struct usb_interface *interface, const struct usb_d
+>  
+>  	return 0;
+>  
+> - fail4:
+> -	sysfs_remove_group(&udev->dev.kobj, &ati_remote2_attr_group);
+>   fail3:
+>  	ati_remote2_urb_cleanup(ar2);
+>   fail2:
+> @@ -900,8 +872,6 @@ static void ati_remote2_disconnect(struct usb_interface *interface)
+>  
+>  	input_unregister_device(ar2->idev);
+>  
+> -	sysfs_remove_group(&ar2->udev->dev.kobj, &ati_remote2_attr_group);
+> -
+>  	ati_remote2_urb_cleanup(ar2);
+>  
+>  	usb_driver_release_interface(&ati_remote2_driver, ar2->intf[1]);
+> @@ -1032,4 +1002,18 @@ static int ati_remote2_post_reset(struct usb_interface *interface)
+>  	return r;
+>  }
+>  
+> +static struct usb_driver ati_remote2_driver = {
+> +	.name       = "ati_remote2",
+> +	.probe      = ati_remote2_probe,
+> +	.disconnect = ati_remote2_disconnect,
+> +	.dev_groups = ati_remote2_groups,
+> +	.id_table   = ati_remote2_id_table,
+> +	.suspend    = ati_remote2_suspend,
+> +	.resume     = ati_remote2_resume,
+> +	.reset_resume = ati_remote2_reset_resume,
+> +	.pre_reset  = ati_remote2_pre_reset,
+> +	.post_reset = ati_remote2_post_reset,
+> +	.supports_autosuspend = 1,
+> +};
+> +
+>  module_usb_driver(ati_remote2_driver);
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
+> 
+> -- 
+> Dmitry
+
 -- 
-Gustavo
-
-> ---
-> Cc: Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
-> Cc: Kashyap Desai <kashyap.desai@broadcom.com>
-> Cc: Sumit Saxena <sumit.saxena@broadcom.com>
-> Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-> Cc: Ranjan Kumar <ranjan.kumar@broadcom.com>
-> Cc: mpi3mr-linuxdrv.pdl@broadcom.com
-> Cc: linux-scsi@vger.kernel.org
-> ---
->   drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h b/drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h
-> index 6a19e17eb1a7..66cca35d8e52 100644
-> --- a/drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h
-> +++ b/drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h
-> @@ -1565,16 +1565,13 @@ struct mpi3_sas_io_unit0_phy_data {
->   	__le32             reserved10;
->   };
->   
-> -#ifndef MPI3_SAS_IO_UNIT0_PHY_MAX
-> -#define MPI3_SAS_IO_UNIT0_PHY_MAX           (1)
-> -#endif
->   struct mpi3_sas_io_unit_page0 {
->   	struct mpi3_config_page_header         header;
->   	__le32                             reserved08;
->   	u8                                 num_phys;
->   	u8                                 init_status;
->   	__le16                             reserved0e;
-> -	struct mpi3_sas_io_unit0_phy_data      phy_data[MPI3_SAS_IO_UNIT0_PHY_MAX];
-> +	struct mpi3_sas_io_unit0_phy_data      phy_data[];
->   };
->   
->   #define MPI3_SASIOUNIT0_PAGEVERSION                          (0x00)
+Ville Syrjälä
+syrjala@sci.fi
+http://www.sci.fi/~syrjala/
 
