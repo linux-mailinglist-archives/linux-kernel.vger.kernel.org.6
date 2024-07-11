@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-249039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC7992E568
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:07:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8DB92E56B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5848CB23379
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:07:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DFE3B236BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5C115AAD9;
-	Thu, 11 Jul 2024 11:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DD215A876;
+	Thu, 11 Jul 2024 11:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gzKPQJOh"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vaJrJB1G"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A8A14A4E5
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E163014A4E5
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720696041; cv=none; b=Qjoui+X97j7ftd3rkW8mQB3Ugf1UoJizjgltmgVpCHRqEO6FOcxV2D5gk2hQOYb+naMeFNdL2EiVY96Ajh/NCETvvuNrSiVLNH3dvVuKH4kgrArlzlAL/WLAu1yr1c5BeiJbvjYe160jjMWEIYMPslpPcmzquAhnPI2db7RchlM=
+	t=1720696048; cv=none; b=c6GimtlS6HY/X7979G+DDOs8zS6aQfgIJRFebyXHQkhKhXJil1/BWwSFU4H/hsDmWRU+xbrVlQCv5mdk35Yjy5KLs/BmTThdJzDfMctRzcKEBRhbTnaEIXUZpdXzC6PPBFJCNV+f/BYpL2zw2O/dOP2jHUCXldOEfve9nJVNNVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720696041; c=relaxed/simple;
-	bh=wnWDB5nejne8Pd/cb6YS18Vh8Y2+qTrhoxUlqW4sty4=;
+	s=arc-20240116; t=1720696048; c=relaxed/simple;
+	bh=bdr7Qv4L5tPrAAQGniWMZ8aXQvkLhJUYw2j8R49nvvA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bCy5p65LI0qVlfj1zmoziCfWeld7LzqWkHoGxoac7HXUPN3Q8CyABt2FT/X4aeHHfWRbKwV4KIQJgahJV6n5bK0doSOiaw5wiFVQIxKzMMB9rim1kdzbMX9mxb1iepDB1So9tl/mHKjnQdwTvNDVbfBT+JP/dksGiyqUNlQKIJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gzKPQJOh; arc=none smtp.client-ip=209.85.167.44
+	 MIME-Version; b=Q8wzHC6rsSAkHz58SBrFnssHdpmjcJFyMURLZF9BR30SmuEMW062+KOqMsDKQ57QRp/x5x9DrXEQyYvNEQbddlNvj3ZBctTc0hz9q2tsMJoZVphCXfemEd0kDxRmH1azeY7tMeeT0lhzijon3RqPiaJ5wgCOXjLrXf3235rnclc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vaJrJB1G; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52ea34ffcdaso879339e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:07:19 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ea5dc3c79so1060832e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:07:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720696038; x=1721300838; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720696045; x=1721300845; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qYQspj63P8cbNmxsmkFzZLYMMBvuBKUGyS24iSaOQ/0=;
-        b=gzKPQJOhwWyTH5sM5CSMlLQurXralCs/dpAXjrpmJjwvfQFXA1RsVw9STGueczkQhM
-         Z4h57pF7xg1c4h3DM3piKXM/c3+HSJJXQtnb+xe4tbuaCTlGwWma4oOOnD8rHy1oX90N
-         5klG9u33O3veS7m/WaKnWL8vPEaNgv7WoibeIBZ6m08O1qG4L9yYGPTtXiD/WLfGfkxR
-         dUT8RPZfdrHjkGnX5a8POM49sOz+dJpPkl/D+FUXKAw3EBaUxXdWKHRttOJ7xaEUrBT2
-         rnDWwb4aS55Qkzzdzu5ipPXhHr3T5u2gZiIL3dQQNI5lcaZwDFZq5VvSQV3mnJdlVY3A
-         w5dg==
+        bh=6k1josUYaKJccQAezOxNpgtIgEzdm1ySywjOhe1mBcI=;
+        b=vaJrJB1G7wb7w+HUtMIbTteYET+PQu+4CqLkWSA6RJM7ssqE+gEopsU9Uy/Cy1A9Pm
+         fTolW5VgtmdpAmlxWvPlPtZQ0TEvLw/LWPScIdavgSYYUoTUFPlFhrYbRyONc6WooxxY
+         A4jKFiLcxXqupayovqhKyWd7OjDTpTn0MSE9HBeIy8g0Lrf0kCrjnrK225LX7vi+21L6
+         IRLnOtVcH0eTJinyQn2HqOD05zpvSGIhPFgy9CTJRl+zqhMdcmNLQ6On5xce9YtX8IEU
+         T6qrpVUgTusu+OSNrtRdaa4mlrmfLV3I3mthFEGeQQ3kVuTiPU6Kwa+DgWZOdlsAsQD+
+         Bw1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720696038; x=1721300838;
+        d=1e100.net; s=20230601; t=1720696045; x=1721300845;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qYQspj63P8cbNmxsmkFzZLYMMBvuBKUGyS24iSaOQ/0=;
-        b=Dw1zsPpP21VlfFvhuZxaHyhfruEB8acyA9zPb2yvZn5VyihElFSi81JX/U7ZREBsFz
-         VownduKRHctiDvP9thMymWWhLBf5cChdUnitnbf7uKqiDU7/FR02K0fkUrXO+3v/Qrro
-         NHnLymJ8eAsgKNDMJOhmJ4fX4H1n2a/sf/QgPIyvnq40U8jDB9yTTjxojQH6T4i7gyFI
-         NMhWMM8yrdXO9wBnjaS83FBALKRfg+QVOkIUGVKm7usQ7yf2zW399KM8VHteeGMwmRMB
-         85IqtYxjf+6VWUTkqLXZqsn9xg3iqDgVtlpDaYO400OQbS42YofQtgTZ0KRpOMDuv8lG
-         0hbg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4E6w0jUn/9h/yayRIoT13WzFVMxEgVitrhvdaF6S1V6gDPvtqTm/J5ogSrANl3e2DJ0pVeltPpdbokgK8RH+L+zlQAeI6oUge2GN2
-X-Gm-Message-State: AOJu0Yw+lWdOv/UyD05TwCevKOMr0m+W/uuYSfPlhvrlywbWbEU5e51m
-	hswVM/Ul5nwM9OBEJ6hDuiw80tVND6mn1VVLKL4zMW+6Bx1hN1fTg+0QB41n9vHEbYVx/M9HNgr
-	U
-X-Google-Smtp-Source: AGHT+IEmiTexL9y2JU6kpSqK/FycmvWYPZBv93UvuVGYDXAgHhf7NjFAX/K7loJT0/eeCqfQQrujig==
-X-Received: by 2002:a05:6512:5c4:b0:52c:dd0c:4c57 with SMTP id 2adb3069b0e04-52eb99954bdmr4009491e87.27.1720696037889;
-        Thu, 11 Jul 2024 04:07:17 -0700 (PDT)
+        bh=6k1josUYaKJccQAezOxNpgtIgEzdm1ySywjOhe1mBcI=;
+        b=dCyQ1H8WWNckVvlqkYYWljEO1FGTaHtPYzU6bcqeVxsa18J9IXZDRzbJ7vNiNfohae
+         BuRs3ReAwjBs3YPSIxTAAc9GeYyzLpSZurVmZL7pcK9we/NJoa3BZt0FHHvskKwZmnfT
+         2wEuWQ7RBSBGnyUJfszDIPZRaTmAN1rtbXwHmrOqsY8LrZPCv5ACHs8tJq+vpnxE4egM
+         a5l5NFpJOck6e8628nbvh9sL1MiutGVcVkC58P1Mdas9qOC9aePrDcLMhpIablgwJqcb
+         0sdRXoK+9fk/ErFP0XkAjUop+xkcqVe5aCN2Z3gv6KpVQcgefvnMz7q5LbH5p4u9vZYp
+         gHQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvo22bbFq1vdJ/adgZIlJLKQsavAP0qWvZ7SeKKqAM5YhWMLu8fzd0x4KfFLIG23ul1kACNdBd35WZW/e0Ifo/uHtd4Ij/tTBpZueV
+X-Gm-Message-State: AOJu0Yy/HjSFUM9fv2uflF7IEZbP+knOIkkPpUZGPZRtcr648lHJbrcF
+	WvFx+FrqrL9kT3EoAcecuWg2AdD0K4XefPUNX2r/IPEbgk6mCS6slg8t46gU9ec=
+X-Google-Smtp-Source: AGHT+IFJMwFpxedQ55eq8RkosPMI/H4P5xWD6f2RDmkSUZbsv9Lc5g+x23KiZbvtlWcYM7Bm3nhFtQ==
+X-Received: by 2002:a05:6512:e92:b0:52c:dfa0:dca0 with SMTP id 2adb3069b0e04-52eb99d323bmr6542914e87.43.1720696045231;
+        Thu, 11 Jul 2024 04:07:25 -0700 (PDT)
 Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e097bsm115686685e9.6.2024.07.11.04.07.15
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e097bsm115686685e9.6.2024.07.11.04.07.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 04:07:15 -0700 (PDT)
+        Thu, 11 Jul 2024 04:07:24 -0700 (PDT)
 From: Rayyan Ansari <rayyan.ansari@linaro.org>
 To: linux-arm-msm@vger.kernel.org
 Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
@@ -77,9 +76,9 @@ Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 1/5] ARM: dts: qcom: apq8064-pins: correct error in drive-strength property
-Date: Thu, 11 Jul 2024 12:01:38 +0100
-Message-ID: <20240711110545.31641-3-rayyan.ansari@linaro.org>
+Subject: [PATCH v2 2/5] ARM: dts: qcom: asus,nexus7-flo: remove duplicate pinctrl handle in i2c nodes
+Date: Thu, 11 Jul 2024 12:01:39 +0100
+Message-ID: <20240711110545.31641-4-rayyan.ansari@linaro.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240711110545.31641-2-rayyan.ansari@linaro.org>
 References: <20240711110545.31641-2-rayyan.ansari@linaro.org>
@@ -91,66 +90,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The "drive-strength" property was incorrectly spelt as "drive-strengh".
-Correct this.
+Remove duplicate handle to i2c pins in the device tree, as they are
+already set in qcom-apq8064.dtsi.
 
 Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
 ---
-v1 -> v2: split from main apq8064 patch
+v1 -> v2: split from main apq8064 patch 
 
- arch/arm/boot/dts/qcom/qcom-apq8064-pins.dtsi | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064-pins.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064-pins.dtsi
-index 7c545c50847b..107fc19f1331 100644
---- a/arch/arm/boot/dts/qcom/qcom-apq8064-pins.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-apq8064-pins.dtsi
-@@ -11,19 +11,19 @@ pios {
- 	sdcc1_pins: sdcc1-pin-active {
- 		clk {
- 			pins = "sdc1_clk";
--			drive-strengh = <16>;
-+			drive-strength = <16>;
- 			bias-disable;
- 		};
+diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts b/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts
+index d460743fbb94..947183992850 100644
+--- a/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts
++++ b/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts
+@@ -125,8 +125,6 @@ &gsbi1 {
+ &gsbi1_i2c {
+ 	status = "okay";
+ 	clock-frequency = <200000>;
+-	pinctrl-0 = <&i2c1_pins>;
+-	pinctrl-names = "default";
  
- 		cmd {
- 			pins = "sdc1_cmd";
--			drive-strengh = <10>;
-+			drive-strength = <10>;
- 			bias-pull-up;
- 		};
+ 	eeprom@52 {
+ 		compatible = "atmel,24c128";
+@@ -148,8 +146,6 @@ &gsbi3 {
  
- 		data {
- 			pins = "sdc1_data";
--			drive-strengh = <10>;
-+			drive-strength = <10>;
- 			bias-pull-up;
- 		};
- 	};
-@@ -31,19 +31,19 @@ data {
- 	sdcc3_pins: sdcc3-pin-active {
- 		clk {
- 			pins = "sdc3_clk";
--			drive-strengh = <8>;
-+			drive-strength = <8>;
- 			bias-disable;
- 		};
+ &gsbi3_i2c {
+ 	clock-frequency = <200000>;
+-	pinctrl-0 = <&i2c3_pins>;
+-	pinctrl-names = "default";
+ 	status = "okay";
  
- 		cmd {
- 			pins = "sdc3_cmd";
--			drive-strengh = <8>;
-+			drive-strength = <8>;
- 			bias-pull-up;
- 		};
- 
- 		data {
- 			pins = "sdc3_data";
--			drive-strengh = <8>;
-+			drive-strength = <8>;
- 			bias-pull-up;
- 		};
- 	};
+ 	trackpad@10 {
 -- 
 2.45.2
 
