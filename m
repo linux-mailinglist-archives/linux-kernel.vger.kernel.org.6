@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-248591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D03CE92DF5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:19:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE78092DF69
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549511F2273C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D18901C2140E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5405821A;
-	Thu, 11 Jul 2024 05:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B295A110;
+	Thu, 11 Jul 2024 05:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BZlrQIN+"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="jP/aHPb4"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BBC1C3D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A55E1C3D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720675190; cv=none; b=SF/BhXkoOlAGEnRfJTsxd7VzZFMqMaAewEvcUMWOV73CCBwDJGrGWc7Eqxmn/mkngVgHuo/aour3eEHkoFVASF2kLOdw2P6AnZ1xAzvTDtg4aMaZo1hW35CPhD7qrtyty7cxwXo9Q9X0ynFxhJfet0GERx69/vlMRlSSbySW4o4=
+	t=1720675562; cv=none; b=efF4FMS1JEeGeenLGE3LawLQsILsHmfO1uIeODuQHUt3rHJqCxsnN7l6uF5xVdOvRsYYO+Drz8n1oM3Qidz7SNa0RTN+z80ZwCQIcxoT30n/Y66q9GhlFJQK98vn8ncop7MogwHc4ikruq1HlZuInuog7XcajzgQlJ/8/CuDa8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720675190; c=relaxed/simple;
-	bh=zXANq2ty6zFHjX5qfTffhY7FXpVnwL/CRnXKrdcn/zE=;
+	s=arc-20240116; t=1720675562; c=relaxed/simple;
+	bh=QrG6QX4SYngEj+BhzmIkD3hsK1M5pDpt0Q2rr1pJcpI=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=PdMnRXHDSDC2s4NgU3aHLJl8LOnQvmXa4i/uUtPyCwP4Bj+/6mzvlxP01f9xJHsjexpAnvOYur1yhCz0VwiL+2vsqIJ/nWxQb5mPD92O3pQUFlOV+ZlwzdFnBpOP5eP4j9udVN2zFoZV2dRs5F4paAvrIbsS4S7Uq1hrN8WYHDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BZlrQIN+; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=Y/TMy2r74XDL0yeCgbZ2SvE60CCwbQaQPDcATzpTZf5OgNMT0kHim7+GprjfyDRQrIu+6oO79xyWZP1bgSeiXP1+6aQyRl/RkgT8HleGOgh3dFnCEN1MBczlfZ/eIuyuCjq9gfQSCgofYKfxqkmAx3J49o1HWzM2AmbesLbebPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=jP/aHPb4; arc=none smtp.client-ip=203.254.224.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240711051944epoutp02d6a650e89255bbf8d4e82760ecce4f4d~hEPbLWDl22388523885epoutp02w
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:19:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240711051944epoutp02d6a650e89255bbf8d4e82760ecce4f4d~hEPbLWDl22388523885epoutp02w
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240711052557epoutp0441ef726ed226c1f4fcd7ff31c7b91da4~hEU2CdsQn1666416664epoutp04-
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:25:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240711052557epoutp0441ef726ed226c1f4fcd7ff31c7b91da4~hEU2CdsQn1666416664epoutp04-
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720675184;
-	bh=FaXfwVv7F7bstL5whS5p0F9Y3saXeyxNh9uAI5iTpxI=;
+	s=mail20170921; t=1720675557;
+	bh=47qwGYFiW4KnEVF6xAAGa2SWr3EReswlU/tDHImZ5PA=;
 	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=BZlrQIN+KGtaHaQ7I8rOJh6cQIlR5lu0dMPEpyaVzjmZYwkY28jrPgjPc1PBDJwAP
-	 B/uZ73eYOnK9itG64+p4aapIbhCKFJweEYUTsC4oJkYZ3DYBmLFxeLzq0PsjQgZ+ie
-	 4J5TkHiP4wc/rpc4LfkYf1WyZ9XcOKwQzfPpY2aw=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20240711051944epcas1p4401afdc67e3cb7b1decbbfd934b53356~hEPaqW1cN3104931049epcas1p4D;
-	Thu, 11 Jul 2024 05:19:44 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.36.132]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4WKNMM1XXPz4x9QC; Thu, 11 Jul
-	2024 05:19:43 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	89.C9.09622.E6B6F866; Thu, 11 Jul 2024 14:19:43 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240711051942epcas1p4d8db4336ff88378f42d15de09d938786~hEPZRBBfB0125401254epcas1p4j;
-	Thu, 11 Jul 2024 05:19:42 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240711051942epsmtrp154598df129129cc6689c791e960aa6f9~hEPZQXqd71474114741epsmtrp19;
-	Thu, 11 Jul 2024 05:19:42 +0000 (GMT)
-X-AuditID: b6c32a37-e17ff70000002596-83-668f6b6e2639
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	DA.1E.19057.E6B6F866; Thu, 11 Jul 2024 14:19:42 +0900 (KST)
-Received: from sfoonkim02 (unknown [10.113.222.42]) by epsmtip2.samsung.com
+	b=jP/aHPb4F6KMIj22jb8QKzmISdcj9GbilbnSEdcDceR8F0b6Gs1HszsiqeWb63/7K
+	 Z4wKi/hFpb0nm3RpvHl5peOKYwMJqgrOieOrjrPShQwreahYyO7RAeGpcQH8vNuqn3
+	 y/A7GP5iuL3Z3X+TiGQDpvOoPI8LCFF3+y+4Ydik=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+	20240711052555epcas1p304ae0d9346be4ae674f93b73cd622b46~hEU035iQD1972019720epcas1p39;
+	Thu, 11 Jul 2024 05:25:55 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.38.234]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WKNVV3jrPz4x9QB; Thu, 11 Jul
+	2024 05:25:54 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+	42.1F.09561.2EC6F866; Thu, 11 Jul 2024 14:25:54 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240711052553epcas1p2b1ba57b6552ef0b5e8fcf866de32d20e~hEUyz0qw_2900829008epcas1p2F;
+	Thu, 11 Jul 2024 05:25:53 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240711052553epsmtrp298de9a77ac9b4dda35ac1dd24df70ebd~hEUyzHEId2207222072epsmtrp2h;
+	Thu, 11 Jul 2024 05:25:53 +0000 (GMT)
+X-AuditID: b6c32a39-b63ff70000002559-af-668f6ce21d84
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	34.07.07412.1EC6F866; Thu, 11 Jul 2024 14:25:53 +0900 (KST)
+Received: from sfoonkim02 (unknown [10.113.222.42]) by epsmtip1.samsung.com
 	(KnoxPortal) with ESMTPA id
-	20240711051942epsmtip20b38b9ccfdcbc77b5028134ea39fd4ae~hEPY7x47q2123921239epsmtip2B;
-	Thu, 11 Jul 2024 05:19:42 +0000 (GMT)
+	20240711052553epsmtip17fd478f6506d4aa0d149b71aaeb8d539~hEUykx7Yo0829308293epsmtip1i;
+	Thu, 11 Jul 2024 05:25:53 +0000 (GMT)
 From: "Sung-hun Kim" <sfoon.kim@samsung.com>
-To: "'David Hildenbrand'" <david@redhat.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Cc: <sungguk.na@samsung.com>, <sw0312.kim@samsung.com>, <sebuns@gmail.com>,
-	"'Chengming Zhou'" <chengming.zhou@linux.dev>, <akpm@linux-foundation.org>
-In-Reply-To: <254bf3e0-0056-4593-94ee-8431a1bfc430@redhat.com>
+To: "'Andrew Morton'" <akpm@linux-foundation.org>
+Cc: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<sungguk.na@samsung.com>, <sw0312.kim@samsung.com>, <sebuns@gmail.com>,
+	"'Stefan	Roesch'" <shr@devkernel.io>
+In-Reply-To: <20240620134752.9a63c12403282c0c7e728764@linux-foundation.org>
 Subject: RE: [PATCH v2] mm: ksm: Consider the number of ksm_mm_slot in the
  general_profit calculation
-Date: Thu, 11 Jul 2024 14:19:42 +0900
-Message-ID: <0fe501dad351$ef692cb0$ce3b8610$@samsung.com>
+Date: Thu, 11 Jul 2024 14:25:53 +0900
+Message-ID: <0fe601dad352$cca07de0$65e179a0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,41 +85,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGcuK2mUct4l8vOyf6OuFEls7CcWwIwXU5MAZluS6iyTt558A==
+Thread-Index: AQGcuK2mUct4l8vOyf6OuFEls7CcWwIwXU5MAt0bt+WyRMcJsA==
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGJsWRmVeSWpSXmKPExsWy7bCmgW5+dn+awYNWJos569ewWWw884nV
-	4uv6X8wWl3fNYbO4t+Y/q0XzhZeMFjvmHWS0mDH5JZsDh8fOWXfZPTZ9msTucWLGbxaPhQ1T
-	mT3e77vK5tG3ZRWjx+dNcgHsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koK
-	eYm5qbZKLj4Bum6ZOUBXKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAv0ihNz
-	i0vz0vXyUkusDA0MjEyBChOyMx4cfspScE27Yt+lG0wNjPOUuxg5OCQETCRuzkzrYuTiEBLY
-	wSgx891SZgjnE6PE2qOnoZxvjBLTj55k72LkBOton9HCCJHYyyhxas5CqKoXjBKLmy4xg1Sx
-	CehILPuxCswWEUiRWNh0ih2kiFlgBqPE3GndrCAJTgE7iSnPDoHZwgLpEgu3bwNbwSKgKnH5
-	+m0wm1fAUuLYgYlMELagxMmZT1hAbGYBeYntb+cwQ5ykIPHz6TJWkIdEBJwkpt+2gigRkZjd
-	2QZ2nITAWg6J7hOHWSHqXSRetV1jgrCFJV4d3wL1mpTEy/42dkjAVEtMfc4N0dvCKPHv5X6o
-	XmOJ/UsnM4HUMAtoSqzfpQ+xi0/i3dceVohWXomONiGIamWJxwebWSBsSYmv+65DbfWQaPq9
-	nWkCo+IsJI/NQvLYLCQfzEJYtoCRZRWjWGpBcW56arFhgTE8spPzczcxghOslvkOxmlvP+gd
-	YmTiYDzEKMHBrCTCO/9Gd5oQb0piZVVqUX58UWlOavEhRlNgUE9klhJNzgem+LySeEMTSwMT
-	MyNjEwtDM0Mlcd4zV8pShQTSE0tSs1NTC1KLYPqYODilGpiCF6xfo781ylfs+xwbJvufjlp2
-	bHk8QnVGTB2OYUYiyS9P/I1enBVpIK7JmLx4ltlEXv8XnS8yTp9a5GVzsFFU4LyW5r8HFqVd
-	3M8sS9ceu7Mvx5dZq7FgzxRV33OXsp1TVKM4lnXfePV2EkOsxpxgdhuTAzu930YGrXv6KD/4
-	XqNDpOm6Tee5mQsyvUI+qk9hfFAXFvupbu9unxfRBypPpVZMSc62Os/OrHLs+BQ27e18oeFr
-	kq54XZJk3Zj3Kac76+ye407MHK7LZyot2R+93Mvp7cySp5ZMqiuDZkw5pDGV//GyP5PlKq43
-	h+1q1uc72TX3z6b0hnkyizmEvdyWT1Y/0rV5evcJs+Sb3UosxRmJhlrMRcWJAMZpmtg5BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSvG5edn+awbzZChZz1q9hs9h45hOr
-	xdf1v5gtLu+aw2Zxb81/VovmCy8ZLXbMO8hoMWPySzYHDo+ds+6ye2z6NInd48SM3yweCxum
-	Mnu833eVzaNvyypGj8+b5ALYo7hsUlJzMstSi/TtErgyHhx+ylJwTbti36UbTA2M85S7GDk5
-	JARMJNpntDB2MXJxCAnsZpT4/nMuE0RCUmLOugVACQ4gW1ji8OFiiJpnjBJLlp1mAalhE9CR
-	WPZjFTOILSKQJrFu1gpWEJtZYB6jxNSlYhAN+xklDsy/CjaUU8BOYsqzQ6wgQ4UFUiWuT/YE
-	CbMIqEpcvn6bHcTmFbCUOHZgIhOELShxcuYTFoiZ2hK9D1sZIWx5ie1v5zBD3Kkg8fPpMrCR
-	IgJOEtNvW0GUiEjM7mxjnsAoPAvJpFlIJs1CMmkWkpYFjCyrGCVTC4pz03OLDQuM8lLL9YoT
-	c4tL89L1kvNzNzGCI01LawfjnlUf9A4xMnEwHmKU4GBWEuGdf6M7TYg3JbGyKrUoP76oNCe1
-	+BCjNAeLkjjvt9e9KUIC6YklqdmpqQWpRTBZJg5OqQYma/vUo3p3Tm3ap+bWmZa5kX3uxpvn
-	Gecxeu535/vzXbNYSe/0j7nrzrrKOLZPWOOlHcW3feviP/eb7fW+NjHpTKndo7DgzDuFRxOu
-	fOFb19lcpaE0i83U4VPAi9x171f1fLvTwqPGIdgldGpzLcPRI9kTXs0z+WfoxTHpPOefuOqu
-	u16bfpfM5G29yPv/5m8lXSnZhffTJvDcMXLbYjFJ7vyj2CcaHMsv6n5e1uD3+GzN3EfSz0X3
-	xrHXBnLVKiz+zCJ9tL4lu4n9eK//+p+X1WvlVh83i1vd+lt/No/e6vkyXaf+ubF5F+xUbP20
-	8Z2/6M9tUtYG0/c8XqR83Duz6MPfB9/c2KO0BdefYdw+W4mlOCPRUIu5qDgRAJYtdTgjAwAA
-X-CMS-MailID: 20240711051942epcas1p4d8db4336ff88378f42d15de09d938786
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmnu6jnP40gzNNUhZz1q9hs7i8aw6b
+	xb01/1ktmi+8ZLRY0bOe0WLHvIOMFjMmv2RzYPf40vyXyWPnrLvsHps+TWL3ODHjN4tH35ZV
+	jB6fN8kFsEVl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6
+	ZeYA3aKkUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAt0CtOzC0uzUvXy0stsTI0
+	MDAyBSpMyM74eruPvWA5V8X9c/+ZGhincHQxcnJICJhIfD77hrWLkYtDSGAHo8Snqe2MEM4n
+	RonjE3YwgVQJCXxjlLjxsR6mY92P2ewQRXsZJToWnoVyXjBKbNjxGayDTUBHYtmPVcwgtoiA
+	ocS9PefBipgFVjFKvL3SywiS4BTwluj+MhOsSFggXWLh9m3sIDaLgKrE9beNrCA2r4ClxMSm
+	DWwQtqDEyZlPWEBsZgF5ie1v5zBDnKQg8fPpMlaIZU4Sh3atYIeoEZGY3dnGDLJYQmAuh8T1
+	9lksEA0uEgef34BqFpZ4dXwLO4QtJfH53V6gZRxAdrXE1OfcEL0tjBL/Xu5nhagxlti/dDIT
+	SA2zgKbE+l36ELv4JN597WGFaOWV6GgTgqhWlnh8sBlqq6TE133XmSBsD4mm39uZJjAqzkLy
+	2Swkn81C8sEshGULGFlWMYqlFhTnpqcWGxaYwmM7OT93EyM4nWpZ7mCc/vaD3iFGJg7GQ4wS
+	HMxKIrzzb3SnCfGmJFZWpRblxxeV5qQWH2I0BYb1RGYp0eR8YELPK4k3NLE0MDEzMjaxMDQz
+	VBLnPXOlLFVIID2xJDU7NbUgtQimj4mDU6qBqXKh0nyD1tT+x4w7JNhTHG8c2LBG75J9dvmN
+	5PDOXYv2Xn8XI2V8Sj/j9fr2h/N8Am+1KC6Re3PtzZKNT1sXv8hcsdOwakbYDNkjjgvm9G1I
+	kO7pk7DJfuB9/YSB9tSfvKlbXj++OE3m2sND52srO+a9uKas+lTnudCJI79aNLRrbTfyfEmt
+	/ZLM80Ijs3xh3K5D6xYt4HbPqjnhOqexxd821umver2Cc2PqnW3zityc5zGFTr+4fbvJRR5m
+	jxMz9RbK3t+8qP/cXg2ht0aPPsY+XDrFLuvjVWfRTfX/lz6xPHBRxmjRR2a+tWaJ/1/JlHEe
+	C2b8GvH0ELNO/e/LW6IZv3kxqHJvLNV/sGj13VIlluKMREMt5qLiRACOoMK6MAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJTvdhTn+awYOdGhZz1q9hs7i8aw6b
+	xb01/1ktmi+8ZLRY0bOe0WLHvIOMFjMmv2RzYPf40vyXyWPnrLvsHps+TWL3ODHjN4tH35ZV
+	jB6fN8kFsEVx2aSk5mSWpRbp2yVwZXy93cdesJyr4v65/0wNjFM4uhg5OSQETCTW/ZjN3sXI
+	xSEksJtR4snjhcwQCUmJOesWMHYxcgDZwhKHDxdD1DxjlFg9/yRYDZuAjsSyH6vAbBEBQ4l7
+	e86zg9jMAhsYJdo310E0nGGU2HD2BBNIglPAW6L7y0xmkKHCAqkS1yd7goRZBFQlrr9tZAWx
+	eQUsJSY2bWCDsAUlTs58wgJSziygJ9G2kRFivLzE9rdzoM5UkPj5dBkrxAlOEod2rYA6QURi
+	dmcb8wRG4VlIJs1CmDQLyaRZSDoWMLKsYpRMLSjOTc9NNiwwzEst1ytOzC0uzUvXS87P3cQI
+	jiktjR2M9+b/0zvEyMTBeIhRgoNZSYR3/o3uNCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8hjNm
+	pwgJpCeWpGanphakFsFkmTg4pRqYJlfOWxP95I9SXu2ju7f/z11y1SQ5NOQcg4zfzFnuX9yk
+	OxWuS3f6nC7S/iW6JOxpuWsuf0zQseRt/1adEfu5YeL+gMd3i1UUbux4zVK2r9H37cH1V7UW
+	GPHs2hfepfppr8t0xuZ3VVf2tnmYNpRk9TFvtnymFldy42+jb49d9PubeYkn/iTpGdaGa7Ws
+	3bIwbXLsogcpjAEXmUMZklVcqpW4vF9sdZPdrfNyhUDRvkvxLZJ9edvXO+8patmdET9ZJan8
+	2IT52868f1ZfNsUt6KtVTwubqp4i4y2VWT2sMTb/TLaY3fx5eTGvzIx2rlsrDjpq1a6JNV7k
+	ZOnBp5fhx38zcS/31n3pT5ye7gtXYinOSDTUYi4qTgQAoVzStxgDAAA=
+X-CMS-MailID: 20240711052553epcas1p2b1ba57b6552ef0b5e8fcf866de32d20e
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 101P
@@ -128,39 +128,11 @@ X-CFilter-Loop: Reflected
 X-CMS-RootMailID: 20240620043920epcas1p1b57dce789304aa96fd83e5b2b194d244
 References: <CGME20240620043920epcas1p1b57dce789304aa96fd83e5b2b194d244@epcas1p1.samsung.com>
 	<20240620043914.249768-1-sfoon.kim@samsung.com>
-	<254bf3e0-0056-4593-94ee-8431a1bfc430@redhat.com>
+	<20240620134752.9a63c12403282c0c7e728764@linux-foundation.org>
 
-Hello,
-I'm sorry for late reply, because there was an issue in the mail system of my company.
-
-In my humble opinion, this problem can be considered due to the objective of the value 
-that can be gotten through general_profit.
-I think that there is no problem in getting the more accurate value through general_profit
-because it involves only negligible overhead due to the accounting of allocated metadata.
-Even the difference is small, it could affect the decision in the use of KSM on the 
-memory-restricted device.
-Since KSM only wastes the CPU time to find identical pages if the gain is small, so more
-accurate information is needed to decide whether KSM is used or not.
-Even though ksm_mm_slot and ksm_stable_node occupy few pages (or tens of pages), if KSM
-found small amount of pages_sharing, it can affect the gained profit.
-Because of that, I think that including other metadata in general_profit calculation is
-not a big problem if tracking such metadata causes negligible overhead.
-
-It's my mistake in omitting the consideration of ksm_stable_node. The patch should include
-the calculation of the amount of ksm_stable_node.
-
-Best regards,
-Sung-hun Kim
-
-> -----Original Message-----
-> From: David Hildenbrand <david@redhat.com>
-> Sent: Friday, June 21, 2024 4:38 AM
-> To: Sung-hun Kim <sfoon.kim@samsung.com>; akpm@linux-foundation.org; linux-mm@kvack.org; linux-
-> kernel@vger.kernel.org
-> Cc: sungguk.na@samsung.com; sw0312.kim@samsung.com; sebuns@gmail.com
-> Subject: Re: [PATCH v2] mm: ksm: Consider the number of ksm_mm_slot in the general_profit calculation
 > 
-> On 20.06.24 06:39, Sung-hun Kim wrote:
+> On Thu, 20 Jun 2024 13:39:14 +0900 Sung-hun Kim <sfoon.kim@samsung.com> wrote:
+> 
 > > The current version of KSM does not take into account the number of
 > > used ksm_mm_slot. Therefore, when users want to obtain profits of KSM,
 > > KSM omits the memory used for allocating ksm_mm_slots.
@@ -168,97 +140,30 @@ Sung-hun Kim
 > > This patch introduces a new variable to keep track of the number of
 > > allocated ksm_mm_slots. By doing so, KSM will be able to provide a
 > > more accurate number of the gains made.
+> >
 > 
-> If you take a look at the calculation explained in Documentation/admin-guide/mm/ksm.rst, we only care
-> about rmap_items, which can grow rather substantially in size.
+> By how much does the improve the accuracy?  In other words, how much difference does this make?
 > 
-> We also don't consider other metadata, such as the size of the stable nodes etc. So why should the
-> ksm_mm_slots matter that much that we should track them and account them?
-> 
-> Any real life examples where this is relevant / a problem.
-> 
-> >
-> > Signed-off-by: Sung-hun Kim <sfoon.kim@samsung.com>
-> > ---
-> > Changelog in V2:
-> > - Add an MMF_VM_MERGEABLE flag check in ksm_process_profit for
-> > untracked processes
-> > ---
-> >   mm/ksm.c | 13 +++++++++++--
-> >   1 file changed, 11 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/mm/ksm.c b/mm/ksm.c
-> > index 34c4820e0d3d..c8ced991ccda 100644
-> > --- a/mm/ksm.c
-> > +++ b/mm/ksm.c
-> > @@ -267,6 +267,9 @@ static unsigned long ksm_pages_unshared;
-> >   /* The number of rmap_items in use: to calculate pages_volatile */
-> >   static unsigned long ksm_rmap_items;
-> >
-> > +/* The number of ksm_mm_slot in use */ static atomic_long_t
-> > +ksm_mm_slots = ATOMIC_LONG_INIT(0);
-> > +
-> >   /* The number of stable_node chains */
-> >   static unsigned long ksm_stable_node_chains;
-> >
-> > @@ -1245,6 +1248,7 @@ static int unmerge_and_remove_all_rmap_items(void)
-> >   			spin_unlock(&ksm_mmlist_lock);
-> >
-> >   			mm_slot_free(mm_slot_cache, mm_slot);
-> > +			atomic_long_dec(&ksm_mm_slots);
-> >   			clear_bit(MMF_VM_MERGEABLE, &mm->flags);
-> >   			clear_bit(MMF_VM_MERGE_ANY, &mm->flags);
-> >   			mmdrop(mm);
-> > @@ -2717,6 +2721,7 @@ static struct ksm_rmap_item *scan_get_next_rmap_item(struct page **page)
-> >   		spin_unlock(&ksm_mmlist_lock);
-> >
-> >   		mm_slot_free(mm_slot_cache, mm_slot);
-> > +		atomic_long_dec(&ksm_mm_slots);
-> >   		clear_bit(MMF_VM_MERGEABLE, &mm->flags);
-> >   		clear_bit(MMF_VM_MERGE_ANY, &mm->flags);
-> >   		mmap_read_unlock(mm);
-> > @@ -3000,6 +3005,7 @@ int __ksm_enter(struct mm_struct *mm)
-> >   		list_add_tail(&slot->mm_node, &ksm_scan.mm_slot->slot.mm_node);
-> >   	spin_unlock(&ksm_mmlist_lock);
-> >
-> > +	atomic_long_inc(&ksm_mm_slots);
-> >   	set_bit(MMF_VM_MERGEABLE, &mm->flags);
-> >   	mmgrab(mm);
-> >
-> > @@ -3042,6 +3048,7 @@ void __ksm_exit(struct mm_struct *mm)
-> >
-> >   	if (easy_to_free) {
-> >   		mm_slot_free(mm_slot_cache, mm_slot);
-> > +		atomic_long_dec(&ksm_mm_slots);
-> >   		clear_bit(MMF_VM_MERGE_ANY, &mm->flags);
-> >   		clear_bit(MMF_VM_MERGEABLE, &mm->flags);
-> >   		mmdrop(mm);
-> > @@ -3374,7 +3381,8 @@ static void wait_while_offlining(void)
-> >   long ksm_process_profit(struct mm_struct *mm)
-> >   {
-> >   	return (long)(mm->ksm_merging_pages + mm_ksm_zero_pages(mm)) * PAGE_SIZE -
-> > -		mm->ksm_rmap_items * sizeof(struct ksm_rmap_item);
-> > +		mm->ksm_rmap_items * sizeof(struct ksm_rmap_item) -
-> > +		(test_bit(MMF_VM_MERGEABLE, &mm->flags) ? sizeof(struct
-> > +ksm_mm_slot) : 0);
-> >   }
-> >   #endif /* CONFIG_PROC_FS */
-> >
+
+I think it makes only small difference. (few kilobytes for hundreds of processes)
+
+
 > > @@ -3672,7 +3680,8 @@ static ssize_t general_profit_show(struct kobject *kobj,
-> >   	long general_profit;
+> >  	long general_profit;
 > >
-> >   	general_profit = (ksm_pages_sharing + atomic_long_read(&ksm_zero_pages)) * PAGE_SIZE -
+> >  	general_profit = (ksm_pages_sharing + atomic_long_read(&ksm_zero_pages)) * PAGE_SIZE -
 > > -				ksm_rmap_items * sizeof(struct ksm_rmap_item);
 > > +				ksm_rmap_items * sizeof(struct ksm_rmap_item) -
 > > +				atomic_long_read(&ksm_mm_slots) * sizeof(struct ksm_mm_slot);
 > >
-> >   	return sysfs_emit(buf, "%ld\n", general_profit);
-> >   }
+> >  	return sysfs_emit(buf, "%ld\n", general_profit);
 > 
-> --
-> Cheers,
-> 
-> David / dhildenb
+> This assumes perfect slab packing, no?   Should it use ksize()?
 
+Ah, thanks for your recommendation. It should be fixed.
+
+
+Best regards,
+Sung-hun Kim
 
 
