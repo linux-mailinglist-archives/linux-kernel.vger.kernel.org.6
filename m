@@ -1,230 +1,122 @@
-Return-Path: <linux-kernel+bounces-249211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE9792E88E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:50:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5997592E890
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14492283FFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:50:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B36B1C21F06
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07D915ECEC;
-	Thu, 11 Jul 2024 12:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487BC15D5A4;
+	Thu, 11 Jul 2024 12:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZ3toTfq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="hYfq4Al9"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB52315DBD8;
-	Thu, 11 Jul 2024 12:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD6F1E892
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720702204; cv=none; b=D36+87KYQGA5oOHx861yQnsz22SrejUDFN77VyIJqll+pzBZmTinT4rp1WylF2SfSjPa0yrlgqaiKTE36t4ZPUZ7xk5emlc8NQw6388nv5l9dRgPdSd8DGTEgOJZZsM/UoE9O/yFWjCPYCdE+kRaFHk6zPso+gYw/hs/tUAD9vY=
+	t=1720702428; cv=none; b=p+YYzfQZ+kOaVqSlGWvMR31ansQCK7agymKRteBGR91cachFI2Eqn/l+9lnFEvZiUjs8f9B5eWAev41YQsj2AR7uJQBknmQjY4dvArsQjmUrKP7GzrQ5qkw65B/5wQalFN+kMdUjJLDOQGwz0dRi/vD0Ybh150IXDp97CeB8fy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720702204; c=relaxed/simple;
-	bh=LChaZQrDDIvn0psEh8DZJO9LEOgGVb1xHMb/crsN88M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EuiCQNxF9ge+4cOGg7LkGv6mfFOewUZi+eR4AcxoZwZ1Yc0yRnymWViZrieBy39MPHNY8voZFFSfDoXvhuAP+v52K+mkAZIax+zOHJz4gWutPEfRCJoooLX0CDV3FULpClP04RLc1EVac6vOvJnw0yj93EZ+GaQTButRHhfuRPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZ3toTfq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3E2B4C4AF0A;
-	Thu, 11 Jul 2024 12:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720702204;
-	bh=LChaZQrDDIvn0psEh8DZJO9LEOgGVb1xHMb/crsN88M=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bZ3toTfq37IOsGeGswVa2TiiC3WZnEZPBakMzYZBaSP+dHzanLvdSYBDihohKZ+/G
-	 NPzrFkun/bDfo/sTxarufr4Mu8jDj1MhzJImWOHjAIaIb0E9FnWOZJJxcTAWDUxrKk
-	 EInjlRq3rSGQmEMH5nFBEivvyq0qIr7pu3vBi5zqQsGo6EYEBBdc3Vu2qwjDI6QYp1
-	 8v5B3dfxSatal9gl/YZQm6Fcb+LtBUjFhrhoYx9OIzJ/ImPQgrJjN3eJ8Lq09Iwtxk
-	 ZaDEMarBQ0HQw7sKN7NWiWXdaDPDSFJnijZI9USbWKviaXcEOGpk5JcFq09b/x/EYX
-	 0+D88HXVUSKkg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B48BC3DA4D;
-	Thu, 11 Jul 2024 12:50:04 +0000 (UTC)
-From: Pieterjan Camerlynck via B4 Relay <devnull+pieterjanca.gmail.com@kernel.org>
-Date: Thu, 11 Jul 2024 14:49:51 +0200
-Subject: [PATCH v4 2/2] leds: leds-pca995x: Add support for NXP PCA9956B
+	s=arc-20240116; t=1720702428; c=relaxed/simple;
+	bh=lD6TbuiZ6k70yL928P+MNROtXO3M/N4zfZwxfNzyfE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sjecGWLYr8qfVQiEubzPPKfOmLPyz1/T/oBz+9qxvY/UEwx8tN2bUng9EE86XbIITmKbolp/o23DaWM1v1VxiQPoHfsCnsJUgTnMbbvxIAXwjXdgzAqVE8oTBqFckMj4lRmvtLaRXADWdUw8wgVkg+xzTp9kUoM4o2qi60+WZAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=hYfq4Al9; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id 4F7721E53BD;
+	Thu, 11 Jul 2024 14:53:35 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1720702415; bh=P0PSLu8WPQEzhXJpUAj3fWhxFWbRpRvdGMV58iTV82k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hYfq4Al9Dd1KJwLPJILIFL4GAOgwsTSArV1x1DIi6erZKeMa1BzwA/0b9zga2qO6Q
+	 wsaCGmoLVAuYR97Uslvcm02osX2iJx7//agx0lqsV69Y9rW2SpMqUGG92+SNbg1/bj
+	 H0wV3naa1QnEDWKuasT6RCmYqZiwtYfU+Y12kcBTfTaPEAjV5tb9AoEeNrcZsDZTb5
+	 55FKB7QKZTMn8nPxCDJbVxW/+NiZkMkpKzmI8fL+o96k1ni926vheIVV94rhYeyGcx
+	 YRKWWDQc7DTRUN/kxxYPDu9E59NIMBoDkH8MPcpo70QS9LGFIkVhq3mSePcDZiCS3F
+	 Q/It4+1AzykFg==
+Date: Thu, 11 Jul 2024 14:53:30 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: sunying@isrc.iscas.ac.cn
+Cc: ebiederm@xmission.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, kexec@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ zhuhengbo@iscas.ac.cn
+Subject: Re: [PATCH v1] riscv/kexec_file: Fix relocation type R_RISCV_ADD16
+ and R_RISCV_SUB16 unknown
+Message-ID: <20240711145330.6625c200@mordecai.tesarici.cz>
+In-Reply-To: <20240711083236.2859632-1-sunying@isrc.iscas.ac.cn>
+References: <20240711083236.2859632-1-sunying@isrc.iscas.ac.cn>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240711-pca995x-v4-2-702a67148065@gmail.com>
-References: <20240711-pca995x-v4-0-702a67148065@gmail.com>
-In-Reply-To: <20240711-pca995x-v4-0-702a67148065@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Isai Gaspar <isaiezequiel.gaspar@nxp.com>, Marek Vasut <marex@denx.de>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Pieterjan Camerlynck <pieterjanca@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720702203; l=4852;
- i=pieterjanca@gmail.com; s=20240709; h=from:subject:message-id;
- bh=T4iJuBVE1eU6/XQMFNfp3e4U02iQNfiueccUGicFjdY=;
- b=dM5AR45rO16uxS9wb8YOLntCo6aQIxBImqozba3Dg5YYianG3AQ1qdQexYHr4ixwL5o9kv4HK
- ZJ9CqNClfIdAtpZsdPIMFR7Tj0yPx2FJkWxBWfdzJlyvyp92JhA2JlN
-X-Developer-Key: i=pieterjanca@gmail.com; a=ed25519;
- pk=gSAHfvqQjVhNa1MhUClqbt7d3S+fviKz6FdQVaWFRyM=
-X-Endpoint-Received: by B4 Relay for pieterjanca@gmail.com/20240709 with
- auth_id=182
-X-Original-From: Pieterjan Camerlynck <pieterjanca@gmail.com>
-Reply-To: pieterjanca@gmail.com
 
-From: Pieterjan Camerlynck <pieterjanca@gmail.com>
+On Thu, 11 Jul 2024 08:32:36 +0000
+sunying@isrc.iscas.ac.cn wrote:
 
-Add support for PCA9956B chip, which belongs to the same family.
+> From: Ying Sun <sunying@isrc.iscas.ac.cn>
+> 
+> Runs on the kernel with CONFIG_RISCV_ALTERNATIVE enabled:
+>   kexec -sl vmlinux
+> 
+> Error:
+>   kexec_image: Unknown rela relocation: 34
+>   kexec_image: Error loading purgatory ret=-8
+> and
+>   kexec_image: Unknown rela relocation: 38
+>   kexec_image: Error loading purgatory ret=-8
+> 
+> The purgatory code uses the 16-bit addition and subtraction relocation
+> type, but not handled, resulting in kexec_file_load failure.
+> So add handle to arch_kexec_apply_relocations_add().
+> 
+> Tested on RISC-V64 Qemu-virt, issue fixed.
+> 
+> Co-developed-by: Petr Tesarik <petr@tesarici.cz>
+> Signed-off-by: Petr Tesarik <petr@tesarici.cz>
 
-This chip features 24 instead of 16 outputs, so add a chipdef struct to
-deal with the different register layouts.
+Let me confirm I have seen this, and it is correct.
 
-Reviewed-by: Marek Vasut <marex@denx.de>
-Signed-off-by: Pieterjan Camerlynck <pieterjanca@gmail.com>
----
- drivers/leds/leds-pca995x.c | 59 ++++++++++++++++++++++++++++++---------------
- 1 file changed, 39 insertions(+), 20 deletions(-)
+Petr T
 
-diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-index 78215dff1499..686b77772cce 100644
---- a/drivers/leds/leds-pca995x.c
-+++ b/drivers/leds/leds-pca995x.c
-@@ -19,10 +19,6 @@
- #define PCA995X_MODE1			0x00
- #define PCA995X_MODE2			0x01
- #define PCA995X_LEDOUT0			0x02
--#define PCA9955B_PWM0			0x08
--#define PCA9952_PWM0			0x0A
--#define PCA9952_IREFALL			0x43
--#define PCA9955B_IREFALL		0x45
- 
- /* Auto-increment disabled. Normal mode */
- #define PCA995X_MODE1_CFG		0x00
-@@ -34,17 +30,38 @@
- #define PCA995X_LDRX_MASK		0x3
- #define PCA995X_LDRX_BITS		2
- 
--#define PCA995X_MAX_OUTPUTS		16
-+#define PCA995X_MAX_OUTPUTS		24
- #define PCA995X_OUTPUTS_PER_REG		4
- 
- #define PCA995X_IREFALL_FULL_CFG	0xFF
- #define PCA995X_IREFALL_HALF_CFG	(PCA995X_IREFALL_FULL_CFG / 2)
- 
--#define PCA995X_TYPE_NON_B		0
--#define PCA995X_TYPE_B			1
--
- #define ldev_to_led(c)	container_of(c, struct pca995x_led, ldev)
- 
-+struct pca995x_chipdef {
-+	unsigned int num_leds;
-+	u8 pwm_base;
-+	u8 irefall;
-+};
-+
-+static const struct pca995x_chipdef pca9952_chipdef = {
-+	.num_leds	= 16,
-+	.pwm_base	= 0x0a,
-+	.irefall	= 0x43,
-+};
-+
-+static const struct pca995x_chipdef pca9955b_chipdef = {
-+	.num_leds	= 16,
-+	.pwm_base	= 0x08,
-+	.irefall	= 0x45,
-+};
-+
-+static const struct pca995x_chipdef pca9956b_chipdef = {
-+	.num_leds	= 24,
-+	.pwm_base	= 0x0a,
-+	.irefall	= 0x40,
-+};
-+
- struct pca995x_led {
- 	unsigned int led_no;
- 	struct led_classdev ldev;
-@@ -54,7 +71,7 @@ struct pca995x_led {
- struct pca995x_chip {
- 	struct regmap *regmap;
- 	struct pca995x_led leds[PCA995X_MAX_OUTPUTS];
--	int btype;
-+	const struct pca995x_chipdef *chipdef;
- };
- 
- static int pca995x_brightness_set(struct led_classdev *led_cdev,
-@@ -62,10 +79,11 @@ static int pca995x_brightness_set(struct led_classdev *led_cdev,
- {
- 	struct pca995x_led *led = ldev_to_led(led_cdev);
- 	struct pca995x_chip *chip = led->chip;
-+	const struct pca995x_chipdef *chipdef = chip->chipdef;
- 	u8 ledout_addr, pwmout_addr;
- 	int shift, ret;
- 
--	pwmout_addr = (chip->btype ? PCA9955B_PWM0 : PCA9952_PWM0) + led->led_no;
-+	pwmout_addr = chipdef->pwm_base + led->led_no;
- 	ledout_addr = PCA995X_LEDOUT0 + (led->led_no / PCA995X_OUTPUTS_PER_REG);
- 	shift = PCA995X_LDRX_BITS * (led->led_no % PCA995X_OUTPUTS_PER_REG);
- 
-@@ -104,11 +122,12 @@ static int pca995x_probe(struct i2c_client *client)
- 	struct fwnode_handle *led_fwnodes[PCA995X_MAX_OUTPUTS] = { 0 };
- 	struct fwnode_handle *np, *child;
- 	struct device *dev = &client->dev;
-+	const struct pca995x_chipdef *chipdef;
- 	struct pca995x_chip *chip;
- 	struct pca995x_led *led;
--	int i, btype, reg, ret;
-+	int i, reg, ret;
- 
--	btype = (unsigned long)device_get_match_data(&client->dev);
-+	chipdef = device_get_match_data(&client->dev);
- 
- 	np = dev_fwnode(dev);
- 	if (!np)
-@@ -118,7 +137,7 @@ static int pca995x_probe(struct i2c_client *client)
- 	if (!chip)
- 		return -ENOMEM;
- 
--	chip->btype = btype;
-+	chip->chipdef = chipdef;
- 	chip->regmap = devm_regmap_init_i2c(client, &pca995x_regmap);
- 	if (IS_ERR(chip->regmap))
- 		return PTR_ERR(chip->regmap);
-@@ -170,21 +189,21 @@ static int pca995x_probe(struct i2c_client *client)
- 		return ret;
- 
- 	/* IREF Output current value for all LEDn outputs */
--	return regmap_write(chip->regmap,
--			    btype ? PCA9955B_IREFALL : PCA9952_IREFALL,
--			    PCA995X_IREFALL_HALF_CFG);
-+	return regmap_write(chip->regmap, chipdef->irefall, PCA995X_IREFALL_HALF_CFG);
- }
- 
- static const struct i2c_device_id pca995x_id[] = {
--	{ "pca9952", .driver_data = (kernel_ulong_t)PCA995X_TYPE_NON_B },
--	{ "pca9955b", .driver_data = (kernel_ulong_t)PCA995X_TYPE_B },
-+	{ "pca9952", .driver_data = (kernel_ulong_t)&pca9952_chipdef },
-+	{ "pca9955b", .driver_data = (kernel_ulong_t)&pca9955b_chipdef },
-+	{ "pca9956b", .driver_data = (kernel_ulong_t)&pca9956b_chipdef },
- 	{}
- };
- MODULE_DEVICE_TABLE(i2c, pca995x_id);
- 
- static const struct of_device_id pca995x_of_match[] = {
--	{ .compatible = "nxp,pca9952",  .data = (void *)PCA995X_TYPE_NON_B },
--	{ .compatible = "nxp,pca9955b", .data = (void *)PCA995X_TYPE_B },
-+	{ .compatible = "nxp,pca9952", .data = &pca9952_chipdef },
-+	{ .compatible = "nxp,pca9955b", . data = &pca9955b_chipdef },
-+	{ .compatible = "nxp,pca9956b", .data = &pca9956b_chipdef },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, pca995x_of_match);
-
--- 
-2.45.2
-
+> Signed-off-by: Ying Sun <sunying@isrc.iscas.ac.cn>
+> ---
+>  arch/riscv/kernel/elf_kexec.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/riscv/kernel/elf_kexec.c b/arch/riscv/kernel/elf_kexec.c
+> index 11c0d2e0becf..3c37661801f9 100644
+> --- a/arch/riscv/kernel/elf_kexec.c
+> +++ b/arch/riscv/kernel/elf_kexec.c
+> @@ -451,6 +451,12 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+>  			*(u32 *)loc = CLEAN_IMM(CJTYPE, *(u32 *)loc) |
+>  				 ENCODE_CJTYPE_IMM(val - addr);
+>  			break;
+> +		case R_RISCV_ADD16:
+> +			*(u16 *)loc += val;
+> +			break;
+> +		case R_RISCV_SUB16:
+> +			*(u16 *)loc -= val;
+> +			break;
+>  		case R_RISCV_ADD32:
+>  			*(u32 *)loc += val;
+>  			break;
 
 
