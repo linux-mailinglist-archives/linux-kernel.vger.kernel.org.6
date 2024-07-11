@@ -1,104 +1,141 @@
-Return-Path: <linux-kernel+bounces-248605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B473F92DFA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:36:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD02A92DFA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50E22B21871
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:36:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B751F21E6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B736577119;
-	Thu, 11 Jul 2024 05:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BBA78C67;
+	Thu, 11 Jul 2024 05:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G/nGESmn"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MBEmQ77T"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1444F2C861;
-	Thu, 11 Jul 2024 05:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFAE76034;
+	Thu, 11 Jul 2024 05:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720676166; cv=none; b=bK0ZNNR7Ut+UajyL6WgrFjUDeA0hYlfNWs/6HawtmPOU7Ff9ACZRMX30Gn1GkU1Hoj6w38hq7bO9+ds1wivzZdikc+E7IaSA2tH1PGnDiaUtGe1FsDK/zIgpLqmrkw0FNRjv4ihOMQrqTJX8Tw6TcJmzJUlXloxO4i3TmoEzOrI=
+	t=1720676223; cv=none; b=B4eB6HhpaiG59DNkwS19rcIBTh5DzVsnGUfglhNrJJ62EzD2R0htl2aJe3A8wN7VkFZQHjC6t82pKnyYXKxg8VZI4iyHRlGxbovOG78wZ8m2IjDrAE3k/PXtORSmX6kJ5chJ3Jwuq8xqC9KUDRWMQ1tFZxjn8kFRiZVKc+x9nPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720676166; c=relaxed/simple;
-	bh=lzZFdRxVXIbFDXrCfk/E4/E90AcbEdg4s+ZsJsqHQAY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgrdr/5LJdtt6Jn7Z2lCJbdXQbOVutW4w51/hxJ1Wt40C3ttl/4WvwYhZtpYVoV6zMV/4y3u4iknpf1vuAUwI6Er2Zbt3hsc9I/lldTdUGI0QJq9uj+BE447puWWBiW22LA5+TwXW6Y9ebCf+5gQ2AuR8GELUzzeTzwt6IVfw/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=G/nGESmn; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46B5ZZlS042745;
-	Thu, 11 Jul 2024 00:35:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720676135;
-	bh=ZTl/h2uPc91FIYXu15lNn+bB1kHydzL1SHPX9n7xbnI=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=G/nGESmnvAWslFpVIrc06f93IHWwIrvn91IbVtZWL6V6cQJa6y0CqbAX04G3nVoGC
-	 tm/br4JQEPGuGuVurKFLO1ACze/PPQDmDBg8njQxii2BqcAzXtWqMIdsG08GNFRcIz
-	 xTPKQhABdbin+YP2VxKpMtGKbVhAIvd0i7UcyVjs=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46B5ZZb6113198
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 11 Jul 2024 00:35:35 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 11
- Jul 2024 00:35:34 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 11 Jul 2024 00:35:34 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46B5ZXNn105937;
-	Thu, 11 Jul 2024 00:35:34 -0500
-Date: Thu, 11 Jul 2024 11:05:33 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Andrew Halaney <ahalaney@redhat.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        "Tero
- Kristo" <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Philipp
- Zabel" <p.zabel@pengutronix.de>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>, <mranostay@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-j784s4-evm: Consolidate serdes0
- references
-Message-ID: <0569049b-89fc-4914-9f78-a2f0f4824c43@ti.com>
-References: <20240710-k3-j784s4-evm-serdes0-cleanup-v1-0-03850fe33922@redhat.com>
- <20240710-k3-j784s4-evm-serdes0-cleanup-v1-2-03850fe33922@redhat.com>
+	s=arc-20240116; t=1720676223; c=relaxed/simple;
+	bh=RY7j047eHSucxb/myX4oFbdM21wmMkFAciMa0GJ9Sjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WBbqNwZBJQeOoetSv8Uu/d2/hBCh7ekS0wbkraYEkBcC8aH7x2d4bOnV9L6nyRTaHy+FHR92jjgVYFFWWPbfLd8oyl7VDFtRicvUbDCTcTSKe3d5v+yyC/LOXrym+KllA6WU67lN8T/LoOrpfVYd3i4li3H1+Gmw+DLMMKy61Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MBEmQ77T; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720676222; x=1752212222;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=RY7j047eHSucxb/myX4oFbdM21wmMkFAciMa0GJ9Sjg=;
+  b=MBEmQ77TcJE2FQ2rFVd+3LgeRVRGR59HHs3yPWRnYeLaftPRBVgy2h8D
+   ngHl8IkCpn9oI33JB4sIrM+QQZA31yx099dqGvyT/JGY6YAGpyS0v2H8n
+   ns/F4K0Ax4xV/6uUeD9UeB4O4se9BTOkVl6uBx//ir8i2EiNg4Fz9lQVl
+   T/3vlwkxeeCFUS5Y/TEKhmmrW5QQVLWcOKld5Jsiaxlpz4uHfxlEH5VcY
+   FRl9TznEhhbc2zDkbt9XIOYGv8WeCve87FkdbCGBFgs5KilBkI4pZqyLU
+   SmsuMgGwRL5XbqPNw6D9d6CM9DhPJOPU2GOO61ktQjmvPWxYAMiJfBY06
+   w==;
+X-CSE-ConnectionGUID: wTi1zaBaSLCRJy225tXhww==
+X-CSE-MsgGUID: L2TTcFzbQ3GEzl0LJhJahw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="21796781"
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="21796781"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 22:37:02 -0700
+X-CSE-ConnectionGUID: aLeeabu9ST2cGkFNx8MHtA==
+X-CSE-MsgGUID: bdHrqi43RLynhMs56uwD2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="53267014"
+Received: from taofen1x-mobl1.ccr.corp.intel.com (HELO [10.238.11.85]) ([10.238.11.85])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 22:36:58 -0700
+Message-ID: <cd52fe00-b57b-495c-b55c-54fd381f7c66@linux.intel.com>
+Date: Thu, 11 Jul 2024 13:36:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240710-k3-j784s4-evm-serdes0-cleanup-v1-2-03850fe33922@redhat.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/7] KVM: x86: Implement
+ kvm_arch_vcpu_pre_fault_memory()
+To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Cc: isaku.yamahata@intel.com, seanjc@google.com, xiaoyao.li@intel.com
+References: <20240710174031.312055-1-pbonzini@redhat.com>
+ <20240710174031.312055-7-pbonzini@redhat.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20240710174031.312055-7-pbonzini@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 10, 2024 at 10:36:14AM -0500, Andrew Halaney wrote:
-> Subnodes were added to serdes0 in two different spots (due to independent
-> development of their consumer usage). Let's go ahead and combine those
-> into one reference for readability's sake.
-> 
-> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
 
-This patch could probably be squashed into the previous one.
-Irrespective of that,
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+On 7/11/2024 1:40 AM, Paolo Bonzini wrote:
+> Wire KVM_PRE_FAULT_MEMORY ioctl to __kvm_mmu_do_page_fault() to populate guest
 
+__kvm_mmu_do_page_fault() -> kvm_mmu_do_page_fault()
+
+
+
+> memory.  It can be called right after KVM_CREATE_VCPU creates a vCPU,
+> since at that point kvm_mmu_create() and kvm_init_mmu() are called and
+> the vCPU is ready to invoke the KVM page fault handler.
+>
+> The helper function kvm_mmu_map_tdp_page take care of the logic to
+
+kvm_mmu_map_tdp_page -> kvm_tdp_map_page()?
+
+
+
+> process RET_PF_* return values and convert them to success or errno.
+>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Message-ID: <9b866a0ae7147f96571c439e75429a03dcb659b6.1712785629.git.isaku.yamahata@intel.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>   arch/x86/kvm/Kconfig   |  1 +
+>   arch/x86/kvm/mmu/mmu.c | 73 ++++++++++++++++++++++++++++++++++++++++++
+>   arch/x86/kvm/x86.c     |  3 ++
+>   3 files changed, 77 insertions(+)
+>
+> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> index 80e5afde69f4..4287a8071a3a 100644
+> --- a/arch/x86/kvm/Kconfig
+> +++ b/arch/x86/kvm/Kconfig
+> @@ -44,6 +44,7 @@ config KVM
+>   	select KVM_VFIO
+>   	select HAVE_KVM_PM_NOTIFIER if PM
+>   	select KVM_GENERIC_HARDWARE_ENABLING
+> +	select KVM_GENERIC_PRE_FAULT_MEMORY
+>   	select KVM_WERROR if WERROR
+>   	help
+>   	  Support hosting fully virtualized guest machines using hardware
 [...]
+> index ba0ad76f53bc..a6968eadd418 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -4705,6 +4705,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>   	case KVM_CAP_MEMORY_FAULT_INFO:
+>   		r = 1;
+>   		break;
+> +	case KVM_CAP_PRE_FAULT_MEMORY:
+> +		r = tdp_enabled;
+> +		break;
+If !CONFIG_KVM_GENERIC_PRE_FAULT_MEMORY, this should return 0.
 
-Regards,
-Siddharth.
+>   	case KVM_CAP_EXIT_HYPERCALL:
+>   		r = KVM_EXIT_HYPERCALL_VALID_MASK;
+>   		break;
+
 
