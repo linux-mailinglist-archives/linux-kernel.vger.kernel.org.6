@@ -1,111 +1,102 @@
-Return-Path: <linux-kernel+bounces-249163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D6592E7EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:07:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D53992E7F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 555E0B26494
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:01:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44A3D2821F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E0D15B119;
-	Thu, 11 Jul 2024 12:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5394515B119;
+	Thu, 11 Jul 2024 12:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CIOFdd0u"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jPpuFEBS"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871561459E3;
-	Thu, 11 Jul 2024 12:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DD41459E3;
+	Thu, 11 Jul 2024 12:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720699303; cv=none; b=KFQNAcYHotdAAlAoVruVdPtgzIYwLMd0cREHnb1ythkJTIM/1Qttqqzvo9DZM4jjIxlUzyh4BzhmHkgHRfmoJhlcw+dRTEV7AoP8iBoOzfvpbiJ3+LWfYO30ogTUIgvADDRXpdlF+bYfe8ITl/Rl+LFJEzCSd3wL50DQvhiha6o=
+	t=1720699635; cv=none; b=siMLL2M6BpCZCwCEsQVUsDLymTsdIM+zldn/PPWQYeDX9UB7ob2Ep0Dq4JvyBDTtIwVHiMOrRJ3rhimVgHdxiqV3Pkn7dhGb43w/al4n0nw7zdKUXgRChyzQ5sejgaK9YG3U6u8GEwEJF4/CAwQnhODdpQvjvYTCPFvFcbvqMoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720699303; c=relaxed/simple;
-	bh=WuVND/BDHPDs8gG5gKbEqtgY6sJmyF3wZFI1d6YTNSc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c6bRIhVLcVjsicQuOD0XDVhiHn82OO9RdOMsmuVEu1HoRrY6pfBWwe5PuLsVpJdgcG5rck/oTV2fYbTk857VTotwieLFE74C0r3lyH9GsuVbUdsWU/n1YHeYq0UkLkPcuTRXz2HVvGH13wZkRAFbbTwpuKucogwwA2t7m/f5Vcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CIOFdd0u; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id F04EE1BF20D;
-	Thu, 11 Jul 2024 12:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720699292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=NJ/L8L7uVdhtBuiKH/ZGxWRX+or+RkLjY/G9rb3I/D8=;
-	b=CIOFdd0uICHQrmw+K0R2vftbLHyNIso3dwnhAk54puXadQmjr/nEA74IYtZC188r6agurH
-	RqftisLcSCHZREAFo37zWiFXc+y4SDknVhQTA29K37reVurdM/jaMqMCiXHUL7jzNdZoFG
-	O0lVmYyai9Pd7C9YTh29B5Lew5HdkyAC0kL3QtT289d20cUGmyaz9YitfpZ+JAfvu7HM3F
-	Pwhdve6mx0IIypCSGhji+T42OXPA9n/4QvArcyR5DGGVj8tZTK/6NUbqiZdZrTHWX4dd/X
-	XCqTtjNLXgEGLLk94xSYKwn1uViobTwVdYtElnXU+0ZvM06nhAI+/KvwJIIk3g==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-To: Riku Voipio <riku.voipio@iki.fi>,
-	Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>
-Subject: [PATCH v3 0/4] leds: pca9532: Use hardware for blinking LEDs
-Date: Thu, 11 Jul 2024 14:01:25 +0200
-Message-ID: <20240711120129.100248-1-bastien.curutchet@bootlin.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1720699635; c=relaxed/simple;
+	bh=lLMLnjBynYhZUXz+S4tKFZLOvZPOmoclTxjeDESK5Sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RxpC3dbTgBKMPXJBkwaktZmuRtToad+MFivLf8V+Yt3/Fe4S6vX26h8qz0+zQw84Z/xEApMNnjeFWMLyK8GwnJ+j0zmiHlo7jXwVHzW/DHWqDbG8tEhBWDYVanFIk5rigpsQMng+qSoO6geLVpRgMlmASfX447XfyasWK2WSGe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jPpuFEBS; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sq/HVJ4Fr4lluTVPg3YHH5DQYCCk9RTZxt3ePPZVqgE=; b=jPpuFEBSUjKGbjh+lYHn7+fKWm
+	cZ5V0IPiBp8MWYmRMoE2MOsHTtXNyJAEPYK1nZZ0R6HDInzzSSJV7dG5iiVVvHFkz5LVRzgPeFJ2W
+	ZRAcV05NiuazxGfPdejtdZ4FS84WjVr+4OpP3larWFc97t1Vfng/atEB9jQ8qOsJvWMZcYVBgisKt
+	cljVOlPVAwGUq0V5LNbMveZPLG3qOernLEFdl01/3eKROV+QXIyh45yytIyl532qENyQlOebdDMo2
+	g0BrzSnU7kntB1QNWQr2rIZ+9a+d/V+WOBdDW41kbcupPQKqaO4WcbUMUxL9A2atPatJzT/NL2vWr
+	U+Exxc+Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRsZo-0000000166m-1bHt;
+	Thu, 11 Jul 2024 12:07:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0172930050D; Thu, 11 Jul 2024 14:07:07 +0200 (CEST)
+Date: Thu, 11 Jul 2024 14:07:07 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, clm@meta.com,
+	paulmck@kernel.org
+Subject: Re: [PATCH v2 01/11] perf/uprobe: Re-indent labels
+Message-ID: <20240711120707.GL4587@noisy.programming.kicks-ass.net>
+References: <20240711110235.098009979@infradead.org>
+ <20240711110400.309670567@infradead.org>
+ <Zo_IzLWMXOzu34pT@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: bastien.curutchet@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zo_IzLWMXOzu34pT@krava>
 
-Hi all,
+On Thu, Jul 11, 2024 at 01:58:04PM +0200, Jiri Olsa wrote:
+> On Thu, Jul 11, 2024 at 01:02:36PM +0200, Peter Zijlstra wrote:
+> 
+> SNIP
+> 
+> > @@ -1159,7 +1159,7 @@ static int __uprobe_register(struct inod
+> >  	if (!IS_ALIGNED(ref_ctr_offset, sizeof(short)))
+> >  		return -EINVAL;
+> >  
+> > - retry:
+> > +retry:
+> >  	uprobe = alloc_uprobe(inode, offset, ref_ctr_offset);
+> >  	if (!uprobe)
+> >  		return -ENOMEM;
+> > @@ -1468,7 +1468,7 @@ static int xol_add_vma(struct mm_struct
+> >  	ret = 0;
+> >  	/* pairs with get_xol_area() */
+> >  	smp_store_release(&mm->uprobes_state.xol_area, area); /* ^^^ */
+> > - fail:
+> > +fail:
+> >  	mmap_write_unlock(mm);
+> >  
+> >  	return ret;
+> > @@ -1512,7 +1512,7 @@ static struct xol_area *__create_xol_are
+> >  	kfree(area->bitmap);
+> >   free_area:
+> 
+> hi,
+> missed this one and another one few lines before that ;-)
 
-This series aims to use hardware more often to blink LEDs.
-
-The pca9532_set_blink() rejects asymmetric delays. So the core's software
-fallback is almost always used when we want to blink a LED. Removing
-this restriction revealed some conflicts between setting brightness and
-blinking as the same PWM (PWM0) configuration is used by all LEDs for
-both brightness and blinking.
-
-Make use of the second available PWM (PWM1) to blink LEDs. This PWM1 was
-reserved for beepers so hardware blinking is explicitly disabled if at
-least one LED is used to drive a beeper to avoid conflicts.
-
-Tested with PCA9532
-
-Changes in v2:
- * Add defines to get rid of magic numbers
- * Replace every 'led' by 'LED'
- * Use dev_err() when returning errors
- * Remove unused struct pca9532_data from patch 2 to add it on patch 3
-   where it's actually used
-
-Changes in v3 (in PATCH 2/4):
- * Drop dev_err() messages for comments
- * Replace a -EINVAL with a -EBUSY
-
-[v1] : https://lore.kernel.org/all/20240527125940.155260-1-bastien.curutchet@bootlin.com/
-[v2] : https://lore.kernel.org/all/20240617143910.154546-1-bastien.curutchet@bootlin.com/
-
-Bastien Curutchet (4):
-  leds: pca9532: Use defines to select PWM instance
-  leds: pca9532: Use PWM1 for hardware blinking
-  leds: pca9532: Explicitly disable hardware blink when PWM1 is
-    unavailable
-  leds: pca9532: Change default blinking frequency to 1Hz
-
- drivers/leds/leds-pca9532.c | 80 ++++++++++++++++++++++++++++---------
- 1 file changed, 62 insertions(+), 18 deletions(-)
-
--- 
-2.45.0
-
+Bah, _ isn't in [[:alnum:]]. I'll go fix.
 
