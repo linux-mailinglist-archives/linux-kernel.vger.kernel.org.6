@@ -1,173 +1,85 @@
-Return-Path: <linux-kernel+bounces-249550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 798BA92ED2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:56:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6A192ED2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2920F28506F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:56:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8387528601E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CEF16D4FB;
-	Thu, 11 Jul 2024 16:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E8F16D4F4;
+	Thu, 11 Jul 2024 16:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="eG2O+ml2"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gC8G0XaH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F364416D4EC
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD26416CD39;
+	Thu, 11 Jul 2024 16:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720716963; cv=none; b=fGcQPvbepMWWfBy5+NR3l3Uln/BSvOU60EqgTKmoL7DT1sObZBh3rJBohF2CBXFOkjM49qUTdnuFD383x74aAdXE6tOTyJZdJ/Z6nX0zzuDZAer0cvuARjQ78QoooeOMKUgCP+mzYZrlpM/HXmBhhfg3hTM/4SctNfP6ANI/6GE=
+	t=1720716979; cv=none; b=nt20iitGh8O1Rx4Dm7AcJoT2mt3C15ZxvsRJl9Y82PrsO3Pp5J0UEoNBWYWEdYtXMnCaezZKLr4X+j+4uG/cG0UApjDdjmlU4DzHc0toAAUHB3jFs9zOGoNlODVrOAl7svsPrSzF/h26PmHkGLhLgpAYvF75w8uWD6pmkq9J3X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720716963; c=relaxed/simple;
-	bh=2iYVbONDaBq6JV/7qJFLtv3UBiUya7pvZXvPB51GSE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P3ygoDjaDBhJ4LaB7dZA+QcsOrd5kkT1zlzVJhGGDRVCMO7zyAnAHnXRXSeDp7p64hnrbAtO9RnnAOoB09Vz7WOZlgWaMCblcLLEchyLTlb9tSe6+g2CjYDcjDNTmMRDX4Q/ULBdVuxPfZ31IYFRkbWu8s+UqmLhr9j7JPWfAmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=eG2O+ml2; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5007a.ext.cloudfilter.net ([10.0.29.141])
-	by cmsmtp with ESMTPS
-	id RvrasoUYQg2lzRx5NsKSib; Thu, 11 Jul 2024 16:56:01 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id Rx5Lsuq5jTnvcRx5Msr3Ms; Thu, 11 Jul 2024 16:56:00 +0000
-X-Authority-Analysis: v=2.4 cv=c9StQw9l c=1 sm=1 tr=0 ts=66900ea0
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8 a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8
- a=BgCAbCOdkOygMcBay5MA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=Fp8MccfUoT0GBdDC_Lng:22 a=zSyb8xVVt2t83sZkrLMb:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=olFfmXh0pIyFs0WXsAhOmo1AA3OqVFBo3TyzIH79O9Y=; b=eG2O+ml2DqwWw7JzxJY+7gGZ4h
-	AjfNziXEI5gLZAqEkFp2iWJ76A8GJPxlfuHlhYpYFQtR+E6MOlPhYIqvdvoaEo8v5h/LfND7yNaCC
-	QFamol47XUYDjlCeP+FSzXYt/hxAF0HoFKA0TvoTRSJhZ4fJDOKE2N4EdED+A7Z+GKoj7kKcW8161
-	MCT0YtBEblKFOKi54OXKh/bAA24+f4vW0ApQxwmdzcefYRuSvOIi3vPfvghUbpMk3F+FQPr+/LigX
-	gBSOeDJBe1wXfMDgubgC3Xs8C9tu8l+0NxFu08AIi2H3ymJoZb7PWVwQCsjKys0QBS3jKILBt/8ud
-	tqIxptSQ==;
-Received: from [201.172.173.139] (port=55332 helo=[192.168.15.4])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sRx5L-000eHk-10;
-	Thu, 11 Jul 2024 11:55:59 -0500
-Message-ID: <58418596-5d8f-4bec-9d4c-64ed8ef0ff9e@embeddedor.com>
-Date: Thu, 11 Jul 2024 10:55:57 -0600
+	s=arc-20240116; t=1720716979; c=relaxed/simple;
+	bh=J2KGe6N9vuh1r0d6oyilC4ZZOD6P1XoN9qwVxXKfAEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Scpx6VtwuvKCu6A1/GP47ugpi0kIxo3S0EG+squ9hE8li4VcKxyKUPEoLQQOGzQRNR7c9ZSbna0I/jIj2B9M2FUgbZCB4p/PUUZ/pIGE4RqjG+4hgnbCNTUWB+u9iEu7kiYevvMkbhvyzNjimbcyAEE++CftK/GK1lxAgO49KxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gC8G0XaH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C1DC116B1;
+	Thu, 11 Jul 2024 16:56:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720716979;
+	bh=J2KGe6N9vuh1r0d6oyilC4ZZOD6P1XoN9qwVxXKfAEk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gC8G0XaHHj0/YsNliAwpI7dr2QLw/AzFuKFrnQD5AXazPEnUapXefdRyCRH14fOXy
+	 Hn75jZg2TlBXsh9TH3wP/8VBsB8Kn4FyhPlLr8AI/FUvXhQjmYXumaKxBEVjHCliaD
+	 FjEtTJhzfn8vMxCZQjDrTrNqq9vMMWiu7b6a3UJES8NSxahtpRVKFiVyzOZ8Bx8/Ei
+	 bkmAm/kyS9mRoYU9gjHNe7O/JAOLZTWkZSyGYwQfayLKLrZyT6okH/6Jr1z4xuusJ+
+	 2MtF9amScndzR5EjL3OjORVcYFTQ/zApbgIbRXTu15etQ1JUv20NwXpnkYa/ra5uma
+	 Zz9pcAYCXp+hQ==
+Date: Thu, 11 Jul 2024 09:56:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>
+Cc: "Kamil =?UTF-8?B?SG9yw6Fr?= (2N)" <kamilh@axis.com>,
+ <florian.fainelli@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
+ <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 1/4] net: phy: bcm54811: New link mode for
+ BroadR-Reach
+Message-ID: <20240711095617.4100e7fa@kernel.org>
+In-Reply-To: <20240708102716.1246571-2-kamilh@axis.com>
+References: <20240708102716.1246571-1-kamilh@axis.com>
+	<20240708102716.1246571-2-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: megaraid_sas: struct MR_HOST_DEVICE_LIST: Replace
- 1-element array with flexible array
-To: Kees Cook <kees@kernel.org>, Kashyap Desai <kashyap.desai@broadcom.com>
-Cc: Sumit Saxena <sumit.saxena@broadcom.com>,
- Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
- Chandrakanth patil <chandrakanth.patil@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20240711155841.work.839-kees@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240711155841.work.839-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sRx5L-000eHk-10
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:55332
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 69
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJBfVDvNASWw8fGgIOYUxT03V/5aPgetThMryLT6PTA7elgmpQC/9GadNEud4ILsrCR4MRfx9b99bITk6lK8Kz+1E4aVt8QEY16AFpb0SHa4ytpeD4Ar
- IYcd5wZo274pNc1KiPpwEzf2rHd3KK5rh0BHrCdH2B+4YxcI5kLtulyDSwovUw/B/50VXKDR8ICTOuXoTo7U9bisjkE8IVPCMgc6+nYcJwYB7pgkrGz5uMCN
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 11/07/24 09:58, Kees Cook wrote:
-> Replace the deprecated[1] use of a 1-element array in
-> struct MR_HOST_DEVICE_LIST with a modern flexible array.
-> 
-> One binary difference appears in megasas_host_device_list_query():
-> 
->          struct MR_HOST_DEVICE_LIST *ci;
-> 	...
->          ci = instance->host_device_list_buf;
-> 	...
->          memset(ci, 0, sizeof(*ci));
-> 
-> The memset() clears only the non-flexible array fields. Looking at the
-> rest of the function, this appears to be fine: firmware is using this
-> region to communicate with the kernel, so it likely never made sense to
-> clear the first MR_HOST_DEVICE_LIST_ENTRY.
-
-Yeah, clearing that fist entry seems odd/buggy. So, this patch is probably
-even fixing a bug. :)
-
-> 
-> Link: https://github.com/KSPP/linux/issues/79 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-
-Thanks
--- 
-Gustavo
-
+On Mon, 8 Jul 2024 12:27:13 +0200 Kamil Hor=C3=A1k (2N) wrote:
+> Introduce a new link mode necessary for 10 MBit single-pair
+> connection in BroadR-Reach mode on bcm5481x PHY by Broadcom.
+> This new link mode, 10baseT1BRR, is known as 1BR10 in the Broadcom
+> terminology. Another link mode to be used is 1BR100 and it is already
+> present as 100baseT1, because Broadcom's 1BR100 became 100baseT1
+> (IEEE 802.3bw).
+>=20
+> Signed-off-by: Kamil Hor=C3=A1k (2N) <kamilh@axis.com>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 > ---
-> Cc: Kashyap Desai <kashyap.desai@broadcom.com>
-> Cc: Sumit Saxena <sumit.saxena@broadcom.com>
-> Cc: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
-> Cc: Chandrakanth patil <chandrakanth.patil@broadcom.com>
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-> Cc: megaraidlinux.pdl@broadcom.com
-> Cc: linux-scsi@vger.kernel.org
-> ---
->   drivers/scsi/megaraid/megaraid_sas.h | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/megaraid/megaraid_sas.h b/drivers/scsi/megaraid/megaraid_sas.h
-> index 84cf77c48c0d..088cc40ae866 100644
-> --- a/drivers/scsi/megaraid/megaraid_sas.h
-> +++ b/drivers/scsi/megaraid/megaraid_sas.h
-> @@ -814,12 +814,12 @@ struct MR_HOST_DEVICE_LIST {
->   	__le32			size;
->   	__le32			count;
->   	__le32			reserved[2];
-> -	struct MR_HOST_DEVICE_LIST_ENTRY	host_device_list[1];
-> +	struct MR_HOST_DEVICE_LIST_ENTRY	host_device_list[] __counted_by_le(count);
->   } __packed;
->   
->   #define HOST_DEVICE_LIST_SZ (sizeof(struct MR_HOST_DEVICE_LIST) +	       \
->   			      (sizeof(struct MR_HOST_DEVICE_LIST_ENTRY) *      \
-> -			      (MEGASAS_MAX_PD + MAX_LOGICAL_DRIVES_EXT - 1)))
-> +			      (MEGASAS_MAX_PD + MAX_LOGICAL_DRIVES_EXT)))
->   
->   
->   /*
+>  drivers/net/phy/phy-core.c   | 3 ++-
+>  include/uapi/linux/ethtool.h | 1 +
+>  net/ethtool/common.c         | 3 +++
+
+> +	ETHTOOL_LINK_MODE_10baseT1BRR_Full_BIT		 =3D 102,
+
+Could we get an ack from phylib maintainers for the new mode?
 
