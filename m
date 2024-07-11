@@ -1,300 +1,298 @@
-Return-Path: <linux-kernel+bounces-249472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700C892EC2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:00:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2047192EC30
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91A411C23622
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:59:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 831B5B256D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AC916D4FA;
-	Thu, 11 Jul 2024 15:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9261016C86A;
+	Thu, 11 Jul 2024 16:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RilZTT6o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nFhDw+we";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="PJx4ivRK"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2741642B;
-	Thu, 11 Jul 2024 15:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720713544; cv=none; b=J8N0b2Nf8kl1udAgGOt9VmqmILYq8sZLyLF/fjOAKf7QXOl1jq2Xva4KLyLpeGZYA20goED1R1rfVEisTce8WWbG1Byh6ecOCAiwR25+HwamCsQhT4XKSetdPTSQQuKKtRn4QXWXCv+iQK08BnvtEVmynR4+nDsitm/wIb88H/g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720713544; c=relaxed/simple;
-	bh=1iLtZj+CaSFvlN0D+8+pdkXrtfvKV5SmTmwUWZ1gvV0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=THgJNlrMH2AirPc8jYoSpWKU+G6hLdFwNzXdUtIc+uwB3HU5aPy8ein3/ZSjLztPnKvCVWJMg+zQkiNtM9ODY670BBBMUm0pVXh9YhyIfmvDpx1wocxE+E4vFz5B/vExT8l4mTtGvJWiLG+WJ0AcTTEq6zXnSpdeXQPI6EI+5vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RilZTT6o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE46C116B1;
-	Thu, 11 Jul 2024 15:59:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720713543;
-	bh=1iLtZj+CaSFvlN0D+8+pdkXrtfvKV5SmTmwUWZ1gvV0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=RilZTT6oQtB3tiFj/GIIBLC/ZRyo/VwTLg6HQJgTA712ulSCbnbRO4v0zINaanpUK
-	 ABZ8d+FUa1TePSU4UhYsEfvQh60kgDvbI4e/j/tlO+tAjM9R6/soCKIEYBMlPHBcWv
-	 cGrbjS0JEruStBXVgumxtfdnFeSH36LKmMd22fRmlYCDZprXXbDV2Gmz3IWyAAiiZZ
-	 hfkUQtRkrfRR6JUGbHe0VYIov2586luk7489V92JJ/E/qguhEy5iuGlQIJ57vMOrsc
-	 SUNeO2WIhbtrjGUoFyl/SiU9RRRQ6zQvzunSnGG3mjtAxql0i2eB1qXakgTalIYLOO
-	 sPbQM9506Agzg==
-Message-ID: <95a135dcec10423b9bcb9f53a1420d80b4afdba7.camel@kernel.org>
-Subject: Re: [PATCH v5 6/9] xfs: switch to multigrain timestamps
-From: Jeff Layton <jlayton@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Chandan Babu R
- <chandan.babu@oracle.com>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,  Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Jonathan
- Corbet <corbet@lwn.net>,  Dave Chinner <david@fromorbit.com>, Andi Kleen
- <ak@linux.intel.com>, Christoph Hellwig <hch@infradead.org>,  Uros Bizjak
- <ubizjak@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, Arnd
- Bergmann <arnd@arndb.de>,  Randy Dunlap <rdunlap@infradead.org>,
- kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-  linux-doc@vger.kernel.org
-Date: Thu, 11 Jul 2024 11:58:59 -0400
-In-Reply-To: <20240711150920.GU1998502@frogsfrogsfrogs>
-References: <20240711-mgtime-v5-0-37bb5b465feb@kernel.org>
-	 <20240711-mgtime-v5-6-37bb5b465feb@kernel.org>
-	 <20240711150920.GU1998502@frogsfrogsfrogs>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F5315CD79
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720713606; cv=fail; b=A2SUp27A/+PMPL2C5mlbeDQ+4RPsLmF5IDuuGUa7lXDDl3YZsC4K5xSCzEyOn9QloA6gY7nywxoy4sjqZWDTkZgxoMr4sJaeDWYXG3/hGVA6w9KHy9WIRe/DYlFBZ2eLUe2mxXprsMKYvNe2C00IlBXpZfPT1GVSyVtItmzXCqo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720713606; c=relaxed/simple;
+	bh=HnpzzCgazamn3ZBXEYydXBtxQ6o+XQJ+VApdIvVStPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=mCmmWF/bkvcLk/0OCTJz++NRKncAJXnn+8xasQB5IQG1RebNMWPlFat5Sv73V4XSLR8RPf1V/Ni/vA0cSSeFriE6Tfhp3T/8bPlxsrk+X2OVnOx3pOhOdLv1XuoOpjsOO8LDObAzm2s+uPtAF+2wdVHwIbxljk5gmhZe+ERGKk0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nFhDw+we; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=PJx4ivRK; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BFBZlF008221;
+	Thu, 11 Jul 2024 15:59:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:content-transfer-encoding:in-reply-to:mime-version; s=
+	corp-2023-11-20; bh=ShDvrSd+viRNeBNU+FfjoOh2yPOx+MwVBfECN1HdLFc=; b=
+	nFhDw+wesxA97vWBSI6F4yOMsMqSIzMl17kJDLl8PoTPampHdM+5URTfqAUqmJya
+	KRhP/OApoJn6E9UzTAd5y6AItqsgSiOYUsAooJ+nJn/ISZBg87JxUNHkSyUnAf6H
+	UbXKI4bTdI8vR3o2hKoAmLi2kawIuST3ZyUwuqvEnwpOphgmCctoShkzshuK9+b7
+	aTXiCUbb01eiq7Irfa6wf+ICzGUJJxJCHMwqe44Ci/VkLQoudaT+fnZ09K7i4scd
+	e6RJH8c9j8tBJV5xWUH4PbL3lacC14W2E6j9wgeGFhWfdIwe8Ej+nxRfGZ6Kp0Ea
+	8mYIIoMoxFVQEqdXJNlDMw==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 406wkya2wb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 15:59:34 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46BEcqXe030101;
+	Thu, 11 Jul 2024 15:59:32 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2041.outbound.protection.outlook.com [104.47.66.41])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 409vvbf8sc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 15:59:32 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xzUL2fdxJAp2XWENB5yh/mwxBn7aWpZH5dWSqMiiAoD93JiyaMlwUfuyk7k4ouGH9pCAJVbVkKGqxLoVUszm9KLvhaHjMe8j0+WodxUBzOksyqH+dnH7hlZj4zsOkHBt4KSYjDJLnJtc73q+dDpV+Wa31/VQRGt2uP+Qg4jm4O6oAjYfV1vTIHtu91pnLa4CM4a6BKUfQwH8XSQKl4wGQBQ4LPQ2IhNWYleSFhtHWRBDf+2hCFdbO0MLjRoxdbRsmt4u2j5InT/kXdALYVkvHjPrBYB9pKuLljWoC0XLnRkW7W8CcWBFNmfiQXay5deHlZamzLLEf/zP7522DFZX5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ShDvrSd+viRNeBNU+FfjoOh2yPOx+MwVBfECN1HdLFc=;
+ b=BN8Ew9Am/hkZU+siKIqejE8cFQnCG7zL011frD1EpbPkw3xJEit0jsru6njNwhW+sW2VDOf+uF+R5PJ2qMfFk/WkKI8iN+4U37ziw4t4GKNSItBBpWH+w3IB/iqI7we0S1ZTjNiqhTTzqWbeqVz2gcjfDQXJek0w7FwcOS5GnM9XfqJV993VuwOMrK9F5Wo8OUsl/O2F9GDUgdnXTZxhM3BBXb7b9cwNVCt2I/evUjp/AUvdsK36kCYlCArAwJGxNDJuc85jAJwhEcNsBrrGoGanpueXHfedGEqsHdwaHBty7Fw+/9xhHihZfYtuAQOlSy+SqcmghhfepGAxxNbZeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ShDvrSd+viRNeBNU+FfjoOh2yPOx+MwVBfECN1HdLFc=;
+ b=PJx4ivRKdhNs2vPe3DmCOd4EjxwE8nbApppejKkyXUioznqJRHffDtXPhVk6nhJ//jm9iBS2ZuMHXQOhyF9IHwU7XM/CKmQJV9Dwe5SCssfomL0+Zij77FprwYeDdLE1GcCH0bZJdNn7B3DagvS0tEcqBG/+W0yjRKia263hHZs=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by BN0PR10MB4967.namprd10.prod.outlook.com (2603:10b6:408:123::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22; Thu, 11 Jul
+ 2024 15:59:29 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7741.033; Thu, 11 Jul 2024
+ 15:59:29 +0000
+Date: Thu, 11 Jul 2024 11:59:25 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
+Cc: "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "sidhartha.kumar@oracle.com" <sidhartha.kumar@oracle.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kees Cook <kees@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Dmitry Safonov <dima@arista.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH v4 17/21] mm/mmap: Drop arch_unmap() call from all archs
+Message-ID: <6vhuf2uuaibrmtb47tqf6qm6ckpsvmxgrh776wyrpd4ezccrnr@vdbv7msydynk>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	LEROY Christophe <christophe.leroy2@cs-soprasteria.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, "sidhartha.kumar@oracle.com" <sidhartha.kumar@oracle.com>, 
+	"Paul E . McKenney" <paulmck@kernel.org>, Bert Karwatzki <spasswolf@web.de>, 
+	Jiri Olsa <olsajiri@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Kees Cook <kees@kernel.org>, Dave Hansen <dave.hansen@intel.com>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Dmitry Safonov <dima@arista.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>
+References: <20240710192250.4114783-1-Liam.Howlett@oracle.com>
+ <20240710192250.4114783-18-Liam.Howlett@oracle.com>
+ <3843b797-8e31-498c-adff-153f9568505e@cs-soprasteria.com>
+ <kuzulyzpa35xs7wevnklswchebc5xgnvtxpqly3wisfb7d34mp@npelpwy3h5wv>
+ <26f9353e-fe0e-4a2e-ae12-8021f0c7bf40@cs-soprasteria.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+In-Reply-To: <26f9353e-fe0e-4a2e-ae12-8021f0c7bf40@cs-soprasteria.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT1P288CA0006.CANP288.PROD.OUTLOOK.COM (2603:10b6:b01::19)
+ To DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|BN0PR10MB4967:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e2167fe-1502-42a8-ade9-08dca1c2721b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: 
+	=?iso-8859-1?Q?uG7RwWDC+2nYteS47tN19O8KWH/xKi7vqmO+nsGehBOj/qM5waUK1fZnyl?=
+ =?iso-8859-1?Q?iqpuCBlbXqAnK1Aom8LEb1Z5+Xg4aWuwwO4zUHQpSJD/tihaSIbX09g/72?=
+ =?iso-8859-1?Q?L0tOsHawac3Y0PJ++7GXUv/x9bgRjGfrvOWwF9CvXAuWf7aRCKKfadXhLd?=
+ =?iso-8859-1?Q?eJZq9pAJm1m1FVyXkLf7LZ+sRuvDVUyWxrFezDSTgKJwLrmpTr3qlUw8wB?=
+ =?iso-8859-1?Q?Ix4C5Q+RuckbWZZs6EbpTFcUGvdWybdaHY1KtlF0zW5S8LFSdK8uPVr1fe?=
+ =?iso-8859-1?Q?epMYkqb1Pzw+R+o7N8YlNBLMZCYuZ9y7Z3Y+r8aFj6kVjDRnAY+BTKgaVl?=
+ =?iso-8859-1?Q?GFmBWL7uPAgoN2jc1dPecRBIuORQgdzbKJcr7j3b4HYhxvy3o48Cg3+Kyb?=
+ =?iso-8859-1?Q?s2Jhz6vrwjDE+jixWj7rI1esuumvO+SgUd50TjPnzPs35IslJSteC+HXYG?=
+ =?iso-8859-1?Q?1TMIfugVSN4Gs9CSky4yNhdpqmp8/VF+hELSe7emT11mJkYferftU3kPFK?=
+ =?iso-8859-1?Q?dDu/edMZBLyvWvFKtsHMoLgZu71mqF8PD8dFAhfpdbNU8vhoP7auhmvWts?=
+ =?iso-8859-1?Q?lF1uTJOWD9f9KDpAgYtt5voIP02ew35daG16HNQlExz8bhsLUNRXjqxH1r?=
+ =?iso-8859-1?Q?Wnf4x5jhs1qvtIjXWfLviW1S7gFPygjwpMHucLIMpuMw/E+E1sPnnes3d3?=
+ =?iso-8859-1?Q?Z1sggAE/0nGxIXU+mUqbb+YH6BeZXQDS6WRQXu++OiA2LL9brYb/l2SZ53?=
+ =?iso-8859-1?Q?RHLoapbT3NxvKsCWYmyacWEHIKyH1a3isvN1WtmdG1AY8SQxKNWnSHtYVg?=
+ =?iso-8859-1?Q?gaLdJZBo2UddKv6EKKUXLTSVEPgqUBLCEEcO2CeryVPHtWM7XaxYPvP4zo?=
+ =?iso-8859-1?Q?aBEl5tEiKATcdTa2UrQjKaMU/hrtJZeyhO5+JK0sRqEwLTgD1yPQxhRwVu?=
+ =?iso-8859-1?Q?SjZj1wDqc566HubrW2g94KAOnJXp/i08I8KMZn23ITiKEKbELnUmNgBBIY?=
+ =?iso-8859-1?Q?lIzJNLc+wf+rZH+Sj0bz4yjHcmfPpm2PO6vlgMpOzrklNY+dE3Mgv9tnDV?=
+ =?iso-8859-1?Q?xn+tFiy1tvhfcy5Lu8vwRql51s6MEW/D7nrNzjwHFTvGSmSFns18OVE/+f?=
+ =?iso-8859-1?Q?DpuJm8+NEAwwkFY82ZRx1Vt+pU0ciVrP12lVhHRVET5EchUO1V89eyix8S?=
+ =?iso-8859-1?Q?7dAxNYjw1K5ye2SbFsDRFgM3PYQl4mP+oEv8mnbj0TGmioAg7fP97mI9VC?=
+ =?iso-8859-1?Q?4pzO6+bz5P7XFjz+Ne5gdqfoqdSWXhBYS2w4rDyuBTEzNo6xDeLwv9n5Lu?=
+ =?iso-8859-1?Q?RTFCiF8F4ckGSOxsApbmeRy5vi7Cz1AjMFm8uoyDCKbsFUI=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?iso-8859-1?Q?0p0ZPwDLeIzQaR5SqIxF37HbnzbQAkIy4wpvfDQSjtgWsHJf9yppfJ2trQ?=
+ =?iso-8859-1?Q?rWvHHr3UiCmKjtoPZ0IsqvvVY1vK43j+nVQDVOJYSYa79zGswpINHpq3+y?=
+ =?iso-8859-1?Q?+FKqC5IveUoVOxlwDZWK5UOc6Mu9IW4nGhUAtFNlp0u0fFn/WnbxyRqVBI?=
+ =?iso-8859-1?Q?53SfPcoPgiGm5RNFWtYpMnU3i6V2T4PDHRFVWkJnfpOXKs6ypyZ6BGLBy0?=
+ =?iso-8859-1?Q?y0mvF67mA8ITmPtf9mctwU0ybCSQkDvLuie+SSp0mnJwMo6ehqMWB+1Jxj?=
+ =?iso-8859-1?Q?MdGngPEehz8d1Dz5P0kCegpf+ckHcvo0qC9LHFAp13kYWMMGHThcR6Mg6e?=
+ =?iso-8859-1?Q?D1McX9bsva5eAkZr7RpQq0qEBsxaEYZ2UI0/dwWkeHxkyumdFj6gQ/tGBd?=
+ =?iso-8859-1?Q?dIBVlBa0Q89tYwktuLF+g0w2lNnpti6r8bYD1/px66SCzJ6NrfaIHKUDDZ?=
+ =?iso-8859-1?Q?JR9TXqTZWjvUIfvbR6A8W+EdHQ+chxbazOILJ0V31noOj/PJCMw3poB1m9?=
+ =?iso-8859-1?Q?Q/W1rR0CBBcrXrYSx9QKZBkWuz2H4peTrkiIvury/tHaQuA9g0klURVDgN?=
+ =?iso-8859-1?Q?KRCp9IkdiCgu42+wnc3kvLxz7IiorCuZSqG/+nZ/649zZvfPBLFcseP5ww?=
+ =?iso-8859-1?Q?Kh+P+dDUhAEoa7weRxNXo0MZ0APUzm6chu3PKgyJyI+x3DboYeLksOhukI?=
+ =?iso-8859-1?Q?f+AuJPK9d1QXQlNgCCo4f0KmGGYkvtVMZu6bc7FtkmjZaz1bIrBaPPceyW?=
+ =?iso-8859-1?Q?rZ8ynZ6INyttxtMSS7yi6kVmlrzwbvpRSJWxmKh8/9S/jPOVlmMxOZZFc/?=
+ =?iso-8859-1?Q?9xd8P2owpeaeCmUO5VHX0kYpP7lHtcj4SDL5twzMq4COHpNFl+XMK/L6v7?=
+ =?iso-8859-1?Q?XYJx/6K9LsidB3YQV+wMAqS4cIiP3PHrexN70Lhh6UGYhQYn9JAq3hN7x/?=
+ =?iso-8859-1?Q?442xxvmFXNzUX6tLri2gjmuQx5FRdexkkzS4eZ2i9dLE0Lca33TryAz0P8?=
+ =?iso-8859-1?Q?Kk84n0l2e39J2LxcKZCISsTFhXWP+C0IYKTNx+VrCTn7oyN4MJdCWNo/XI?=
+ =?iso-8859-1?Q?e2oCNkSiAkrz8FY/flw0lGm+Tg3BJ+uQ2Z4rNKTvq/ePEGv4WdthsiN2ka?=
+ =?iso-8859-1?Q?Rs9o2dekWm3zD7C5QW2VHdbYOpmIfXHd3oRNoLcZsrUcP7RrR9z2xWhBCd?=
+ =?iso-8859-1?Q?QdMUoG/H8xsTAjbag9bex5Wvvqbvx+2NqeUxGCH9wZq8I2kCxT0Ky5FQ5K?=
+ =?iso-8859-1?Q?bKSdlNJM6vBG4YXhxXqDPWrWMVa2I6IFPAbfwKP0kXOh4srIjxR12VIsAL?=
+ =?iso-8859-1?Q?SbTKZS6rwtfOcmKDpwhp0rDeAyzDNciTWRUoytOV+MvNed0hrH0xgcIPhI?=
+ =?iso-8859-1?Q?LkAkJknOWZoGp6tpXvtWGvfksbLgGZlnfFlX2FsB103swO90lhtWI54tDZ?=
+ =?iso-8859-1?Q?53Yvs3mpIoUlaMmbIp2jGD0yfSgm8qmhlP+XgmjViTiz1T0KWZ5LuGBO9H?=
+ =?iso-8859-1?Q?H62SgLG4x80j9ZeI4yKu+HjLo5jk72WvymFfNBwtfGgmWaAIJKrfGenFJi?=
+ =?iso-8859-1?Q?uYLTSLCHLwqCOy4CiRmhmmGhxQBEXQMU6qttlPxS3EnLFJ5DwtmoGMkNmS?=
+ =?iso-8859-1?Q?AXgARPbxX+dvvdhM026rH2lLeqwiNCmj9uupGdYAolLmcaU0FoWSuN/Q?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	GkF3YaMZcpJ5JDzDK+QTcLU80Ff1lpQYoxksWLxcxH6VWnsQTWtJz2/VmgyU9tGKe77EFerorvvZzpDMh0H7AVS753U8Q4zaR6dt+Ku+0y99lUi9gRwk9QpO1qVmnOOQ/R3oyA5gWnd2bx7FbS1toeldTjk/Gip8+0ATH3yqYhQhuk9RHKviNIfDhELf8lkKS+FUYzkrRwsKuWKvvn56vAglLf3e5Q6dVKJ5H0sSnZFs4d3AjWXAK83SsuPoBKFEk3vncQLezgXUi+r43Cow6VRmiYsRFPm7/N+vPJ0NisCI1UMdGCvHBBT392U+6XvIwIqY6kDRBuGH1OI4DqAZcvzUSHMGephm/FBI8MyJ/8YxXgcV66FKu/LVhAMo+jw8xBL+L1xCntRmi/G+EHd2mL6rxOxngaeZFcvKby+oyV0ZvOAVDDLCRbHHyw7+QANDY8GckOFcHfRPIJPjiwWEMAtnfmyW7N2wO9xFNSVGDjc/OVJCyk8DgaRplQVjnjOqnPm5U6aMluETFJjL8x26WiIcoYgTC6MrKHTpZRvtKaw4C1S35Rcr0vL0myS87EJWC+e6PTnz8F7OSMahC/OvZE1+a9AEN4nMQmJsDyFM4RE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e2167fe-1502-42a8-ade9-08dca1c2721b
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 15:59:29.1538
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ePdDkduIIz4StVh+VaUUscdB3fZ7tI23iph1wTZTvgJV9bMq5eDKkzAcr8LDSvcT3LflZ01bOh76BrnFqh7vlQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB4967
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_11,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ spamscore=0 phishscore=0 adultscore=0 malwarescore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407110111
+X-Proofpoint-ORIG-GUID: mQTLj6X0JrXz-bWitmVbYFgHAd1JQckY
+X-Proofpoint-GUID: mQTLj6X0JrXz-bWitmVbYFgHAd1JQckY
 
-On Thu, 2024-07-11 at 08:09 -0700, Darrick J. Wong wrote:
-> On Thu, Jul 11, 2024 at 07:08:10AM -0400, Jeff Layton wrote:
-> > Enable multigrain timestamps, which should ensure that there is an
-> > apparent change to the timestamp whenever it has been written after
-> > being actively observed via getattr.
-> >=20
-> > Also, anytime the mtime changes, the ctime must also change, and those
-> > are now the only two options for xfs_trans_ichgtime. Have that function
-> > unconditionally bump the ctime, and ASSERT that XFS_ICHGTIME_CHG is
-> > always set.
-> >=20
-> > Finally, stop setting STATX_CHANGE_COOKIE in getattr, since the ctime
-> > should give us better semantics now.
+* LEROY Christophe <christophe.leroy2@cs-soprasteria.com> [240711 04:28]:
 >=20
-> Following up on "As long as the fs isn't touching i_ctime_nsec directly,
-> you shouldn't need to worry about this" from:
-> https://lore.kernel.org/linux-xfs/cae5c28f172ac57b7eaaa98a00b23f342f01ba6=
-4.camel@kernel.org/
 >=20
-> xfs /does/ touch i_ctime_nsec directly when it's writing inodes to disk.
-> From xfs_inode_to_disk, see:
+> Le 11/07/2024 =E0 01:26, Liam R. Howlett a =E9crit :
+> > * LEROY Christophe <christophe.leroy2@cs-soprasteria.com> [240710 17:02=
+]:
+> >>
+> >>
+> >> Le 10/07/2024 =E0 21:22, Liam R. Howlett a =E9crit :
+> >>> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+> >>>
+> >>> The arch_unmap call was previously moved above the rbtree modificatio=
+ns
+> >>> in commit 5a28fc94c914 ("x86/mpx, mm/core: Fix recursive munmap()
+> >>> corruption").  The move was motivated by an issue with calling
+> >>> arch_unmap() after the rbtree was modified.
+> >>>
+> >>> Since the above commit, mpx was dropped from the kernel in 45fc24e89b=
+7c
+> >>> ("x86/mpx: remove MPX from arch/x86"), so the motivation for calling
+> >>> arch_unmap() prior to modifying the vma tree no longer exists
+> >>> (regardless of rbtree or maple tree implementations).
+> >>>
+> >>> Furthermore, the powerpc implementation is also no longer needed as p=
+er
+> >>> [1] and [2].  So the arch_unmap() function can be completely removed.
+> >>
+> >> I'm not sure to understand. Is it replaced by something else ?
+> >> We wanted to get rid of arch_unmap() but it was supposed to be replace=
+d
+> >> by some core function because the functionnality itself is still
+> >> required and indeed all the discussion around [2] demonstrated that no=
+t
+> >> only powerpc but at least arm and probably others needed to properly
+> >> clean-up reference to VDSO mappings on unmapping.
+> >>
+> >> So as mentioned by Michael you can't just drop that without replacing =
+it
+> >> by something else. We need the VDSO signal handling to properly fallba=
+ck
+> >> on stack-based trampoline when the VDSO trampoline gets mapped out.
+> >
+> > I'll address this after the part I missed..
 >=20
-> 	to->di_ctime =3D xfs_inode_to_disk_ts(ip, inode_get_ctime(inode));
->=20
-> AFAICT, inode_get_ctime itself remains unchanged, and still returns
-> inode->__i_ctime, right?=C2=A0 In which case it's returning a raw timespe=
-c64,
-> which can include the QUERIED flag in tv_nsec, right?
->=20
+> After ? What do you mean ? It needs to be addressed _before_ removing
+> arch_unmap()
 
-No, in the first patch in the series, inode_get_ctime becomes this:
+After the later comments in this email, sorry that wasn't clear.
 
-#define I_CTIME_QUERIED         ((u32)BIT(31))
+>=20
+> >
+> >>
+> >> Or did I miss something ?
+> >>
+> >
+> > I think I missed something in regards to what you need in ppc.
+>=20
+> It is not only powerpc. Powerpc is the only one doing it at the moment
+> but investigation has demonstrated that other architectures are affected.
+>=20
+> >
+> >  From what I understand, other platforms still map and use the vdso
+> > (context.vdso is set), but unmap_arch() does nothing.  It is only the
+> > powerpc version that clears the vdso pointer if it is unmapped.
+>=20
+> Yes on powerpc it works. On other platforms like arm it segfaults so it
+> should be fixed
+> (https://lore.kernel.org/lkml/87imd5h5kb.fsf@mpe.ellerman.id.au/)
+>=20
+> Could be fixed by properly implementing arch_unmap() on every arch, or
+> carry-on with Dmitry's series.
 
-static inline time64_t inode_get_ctime_sec(const struct inode *inode)
-{
-        return inode->i_ctime_sec;
-}
+Okay, I understand what you are saying now.  I'm not going to tackle
+that change within this series, so I'll just relocate the arch_munmap()
+back to where it was, after the removal of the vmas in v5.
 
-static inline long inode_get_ctime_nsec(const struct inode *inode)
-{
-        return inode->i_ctime_nsec & ~I_CTIME_QUERIED;
-}
+> I think you fully understand that it doesn't work as it is except on
+> powerpc. Again the goal should be to make it work on all architectures.
 
-static inline struct timespec64 inode_get_ctime(const struct inode *inode)
-{
-        struct timespec64 ts =3D { .tv_sec  =3D inode_get_ctime_sec(inode),
-                                 .tv_nsec =3D inode_get_ctime_nsec(inode) }=
-;
+Got it, thanks for clarifying.
 
-        return ts;
-}
-
-...which should ensure that you never store the QUERIED bit.
-
-> Now let's look at the consumer:
->=20
-> static inline xfs_timestamp_t
-> xfs_inode_to_disk_ts(
-> 	struct xfs_inode		*ip,
-> 	const struct timespec64		tv)
-> {
-> 	struct xfs_legacy_timestamp	*lts;
-> 	xfs_timestamp_t			ts;
->=20
-> 	if (xfs_inode_has_bigtime(ip))
-> 		return cpu_to_be64(xfs_inode_encode_bigtime(tv));
->=20
-> 	lts =3D (struct xfs_legacy_timestamp *)&ts;
-> 	lts->t_sec =3D cpu_to_be32(tv.tv_sec);
-> 	lts->t_nsec =3D cpu_to_be32(tv.tv_nsec);
->=20
-> 	return ts;
-> }
->=20
-> For the !bigtime case (aka before we added y2038 support) the queried
-> flag gets encoded into the tv_nsec field since xfs doesn't filter the
-> queried flag.
->=20
-> For the bigtime case, the timespec is turned into an absolute nsec count
-> since the xfs epoch (which is the minimum timestamp possible under the
-> old encoding scheme):
->=20
-> static inline uint64_t xfs_inode_encode_bigtime(struct timespec64 tv)
-> {
-> 	return xfs_unix_to_bigtime(tv.tv_sec) * NSEC_PER_SEC + tv.tv_nsec;
-> }
->=20
-> Here we'd also be mixing in the QUERIED flag, only now we've encoded a
-> time that's a second in the future.=C2=A0 I think the solution is to add =
-a:
->=20
-> static inline struct timespec64
-> inode_peek_ctime(const struct inode *inode)
-> {
-> 	return (struct timespec64){
-> 		.tv_sec =3D inode->__i_ctime.tv_sec,
-> 		.tv_nsec =3D inode->__i_ctime.tv_nsec & ~I_CTIME_QUERIED,
-> 	};
-> }
->=20
-> similar to what inode_peek_iversion does for iversion; and then
-> xfs_inode_to_disk can do:
->=20
-> 	to->di_ctime =3D xfs_inode_to_disk_ts(ip, inode_peek_ctime(inode));
->=20
-> which would prevent I_CTIME_QUERIED from going out to disk.
->=20
-> At load time, xfs_inode_from_disk uses inode_set_ctime_to_ts so I think
-> xfs won't accidentally introduce QUERIED when it's loading an inode from
-> disk.
->=20
->=20
-
-Also already done in this patchset:
-
-struct timespec64 inode_set_ctime_to_ts(struct inode *inode, struct timespe=
-c64 ts)
-{
-        inode->i_ctime_sec =3D ts.tv_sec;
-        inode->i_ctime_nsec =3D ts.tv_nsec & ~I_CTIME_QUERIED;
-        trace_inode_set_ctime_to_ts(inode, &ts);
-        return ts;
-}
-EXPORT_SYMBOL(inode_set_ctime_to_ts);
-
-Basically, we never want to store or fetch the QUERIED flag from disk,
-and since it's in an unused bit, we can just universally mask it off
-when dealing with "external" users of it.
-
-One caveat -- I am using the sign bit for the QUERIED flag, so I'm
-assuming that no one should ever pass inode_set_ctime_to_ts a negative
-tv_nsec value.
-
-Maybe I should add a WARN_ON_ONCE here to check for that? It seems
-nonsensical, but you never know...
-
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> > =C2=A0fs/xfs/libxfs/xfs_trans_inode.c |=C2=A0 6 +++---
-> > =C2=A0fs/xfs/xfs_iops.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 +++-------
-> > =C2=A0fs/xfs/xfs_super.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
-> > =C2=A03 files changed, 7 insertions(+), 11 deletions(-)
-> >=20
-> > diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_=
-inode.c
-> > index 69fc5b981352..1f3639bbf5f0 100644
-> > --- a/fs/xfs/libxfs/xfs_trans_inode.c
-> > +++ b/fs/xfs/libxfs/xfs_trans_inode.c
-> > @@ -62,12 +62,12 @@ xfs_trans_ichgtime(
-> > =C2=A0	ASSERT(tp);
-> > =C2=A0	xfs_assert_ilocked(ip, XFS_ILOCK_EXCL);
-> > =C2=A0
-> > -	tv =3D current_time(inode);
-> > +	/* If the mtime changes, then ctime must also change */
-> > +	ASSERT(flags & XFS_ICHGTIME_CHG);
-> > =C2=A0
-> > +	tv =3D inode_set_ctime_current(inode);
-> > =C2=A0	if (flags & XFS_ICHGTIME_MOD)
-> > =C2=A0		inode_set_mtime_to_ts(inode, tv);
-> > -	if (flags & XFS_ICHGTIME_CHG)
-> > -		inode_set_ctime_to_ts(inode, tv);
-> > =C2=A0	if (flags & XFS_ICHGTIME_CREATE)
-> > =C2=A0		ip->i_crtime =3D tv;
-> > =C2=A0}
-> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > index a00dcbc77e12..d25872f818fa 100644
-> > --- a/fs/xfs/xfs_iops.c
-> > +++ b/fs/xfs/xfs_iops.c
-> > @@ -592,8 +592,9 @@ xfs_vn_getattr(
-> > =C2=A0	stat->gid =3D vfsgid_into_kgid(vfsgid);
-> > =C2=A0	stat->ino =3D ip->i_ino;
-> > =C2=A0	stat->atime =3D inode_get_atime(inode);
-> > -	stat->mtime =3D inode_get_mtime(inode);
-> > -	stat->ctime =3D inode_get_ctime(inode);
-> > +
-> > +	fill_mg_cmtime(stat, request_mask, inode);
-> > +
-> > =C2=A0	stat->blocks =3D XFS_FSB_TO_BB(mp, ip->i_nblocks + ip->i_delayed=
-_blks);
-> > =C2=A0
-> > =C2=A0	if (xfs_has_v3inodes(mp)) {
-> > @@ -603,11 +604,6 @@ xfs_vn_getattr(
-> > =C2=A0		}
-> > =C2=A0	}
-> > =C2=A0
-> > -	if ((request_mask & STATX_CHANGE_COOKIE) && IS_I_VERSION(inode)) {
-> > -		stat->change_cookie =3D inode_query_iversion(inode);
-> > -		stat->result_mask |=3D STATX_CHANGE_COOKIE;
-> > -	}
-> > -
-> > =C2=A0	/*
-> > =C2=A0	 * Note: If you add another clause to set an attribute flag, ple=
-ase
-> > =C2=A0	 * update attributes_mask below.
-> > diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> > index 27e9f749c4c7..210481b03fdb 100644
-> > --- a/fs/xfs/xfs_super.c
-> > +++ b/fs/xfs/xfs_super.c
-> > @@ -2052,7 +2052,7 @@ static struct file_system_type xfs_fs_type =3D {
-> > =C2=A0	.init_fs_context	=3D xfs_init_fs_context,
-> > =C2=A0	.parameters		=3D xfs_fs_parameters,
-> > =C2=A0	.kill_sb		=3D xfs_kill_sb,
-> > -	.fs_flags		=3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-> > +	.fs_flags		=3D FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_MGTIME,
-> > =C2=A0};
-> > =C2=A0MODULE_ALIAS_FS("xfs");
-> > =C2=A0
-> >=20
-> > --=20
-> > 2.45.2
-> >=20
-
---=20
-Jeff Layton <jlayton@kernel.org>
+Regards,
+Liam
 
