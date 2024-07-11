@@ -1,84 +1,170 @@
-Return-Path: <linux-kernel+bounces-249852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6091292F0B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:10:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F7292F0BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0651C28222E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:10:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA352820EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F8D19F489;
-	Thu, 11 Jul 2024 21:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fg1qpoyF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9F61A00CF;
+	Thu, 11 Jul 2024 21:10:25 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9617919F470;
-	Thu, 11 Jul 2024 21:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753AA19F47B
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720732216; cv=none; b=ca1VsfMUVLBtXjLnTocLwDYfi8/q+YTpZyX7vf4T2e4yoXLnt6Bo+C1lkrybh2qn1B6ezV4tza/Dn3ZTjDhUe9YD9fq3bVDCkX3DJh4o99O244x+uPaHN/nUEOATdVDccSkUSHxYmZGzzVBNyZEoZX8dQQrFyMDxkOxqvqlo5Ss=
+	t=1720732225; cv=none; b=JKMREsGWzGKb6FmOSZEn/mW4Qz54fYk8PPg2uRHhrYk7VyxndJN9oUPMUHZ3+SFVSmUYgWM24+wb1wL/cm7CnvyzIRbuwuAwOlDzkDT6x2HDQS/CKM2j9QDpZOGAuSoQPANGobm1cunclyH3c7YrcB03ZRfps0X61AnTAO6LTu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720732216; c=relaxed/simple;
-	bh=UTRCsaBAwJ27kZVR9fIIRwXN90jfM8+V9iZaFILqX6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h9WYLR5Os80DBpZaLN1FbE0mCh0bTY2gO3bZjuo9qDI0hqo5rqRfs7ww6ZoFU0pMcZXfOSOVU9r8x+LDWNklFD6uDHRwFm37UffmefkGYS8TrCr+F83fsgpYC+ugh2Fqx7LuF+j7K3YKrEoUQBkcBmEistwv8QNkHU3vaT+KVCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fg1qpoyF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A88C116B1;
-	Thu, 11 Jul 2024 21:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720732216;
-	bh=UTRCsaBAwJ27kZVR9fIIRwXN90jfM8+V9iZaFILqX6w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Fg1qpoyFsQsZrFT8A+dixSkFvTM5ZfE0Hp7w0ZFs0Xl8bcAgcnD+LiDcpL48sTUxc
-	 NPWK5QxB2Wl19mLRAiQoan5+RuEBD9LbYpIeADvWqA5JHAbkfX62eZ3n/PJKzrLA3s
-	 LW7GSkmfmGZU/t/i1Xk4+YjjER1lLb6SaI5V3Bm2Kq+sv6a1dhzYBKJbouk0k+WqBe
-	 MvcBNj0FgF7uYizy4j6hWkboC2ne4UsP1bn0iWiGqb0z4DZT1xVZYjObb1crrT8PDW
-	 ogjih0CB5u8zSOxth5PqynhrwXpBgpPUBCFsLE/Y0cORU+OMgQG/UZS2proTJ/tlTm
-	 D/JTH9wG56EUQ==
-Date: Thu, 11 Jul 2024 15:10:14 -0600
-From: Rob Herring <robh@kernel.org>
-To: Igor Prusov <ivprusov@salutedevices.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, prusovigor@gmail.com,
-	kernel@salutedevices.com, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] ASoC: Add NTP8918 and NTP8835 codecs support
-Message-ID: <20240711211014.GA3008651-robh@kernel.org>
-References: <20240709221203.92167-1-ivprusov@salutedevices.com>
+	s=arc-20240116; t=1720732225; c=relaxed/simple;
+	bh=9O3dktKpo78cZcAPcDoMCi1+dE25j7QtQs6O2dVg4g4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=o0V10VzFGqocOjk0OZJfAhV+4JIhuNW0lUzKdfh7q64vyleYFtCrKnKaniEUtj7PNSEvgop6eEQOkXJFpec8yTUoHrvytVDZSJFpI5oObP+bIdwRp1yDeJzcYdHPoUDxXMxgehLrmaeScRnwzkmBjHqxMZB+OHg9hI1NwtcaMD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-38260829891so11045765ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:10:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720732222; x=1721337022;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JFtUl9rBQ7g1D4BdfUCEpKR18xXDWJqyv4KIADqXAII=;
+        b=UxjP6jLMjSPAfm13/MLXoyU7ih2P14BjvIpcj7gxmkXvU7K6jqrBgFdhRjHxPGUuhi
+         0OB/m6o3zlmRmYYuR/j0h8vlVVWf1arJb34x2UPkA7RMjfMhhAsisx1rDuVFdsVm+KtM
+         Ooorvv6Kig3gwZ9/tZ3waKoOXLcPzoccbdWNqkOn1izlJYbzdZIpUNM0oKuUnJnj57bL
+         KYCxFKb+Lo/WeULWGzjodLkG3+EmChXStxfr2Qnevr2vXs5pjEpFM+NvSiv7qh0KBec0
+         AypjNgm0BIKJ5IaXSXz/lpOeVrrkCX6z5flXg8KIOFn2pb9f3EAqe43p7Z1zdOJt/rMj
+         atFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUxKS55lFkWNw05N/8hwah87u7baDVREFzRnz3g8xeFRIN4qy/Fm9uSjqqzA/IXjKtmaZASopynOabu/o26Nx+C4arzIi8FGCvYWxQ
+X-Gm-Message-State: AOJu0Yy3EoBCB1Qb4kG7VWAvZRhVaNacOoKTzsZD+/tOYDKR5M3yuck7
+	3ebNj7BYkC2UXxBUqo7H3zHjEEJ2V7hIJed9KM5BZf9LKi1I9KUaRr6uy8kjEyiG8YYjyLp2YLh
+	4MiRghA/+iQGz0gyE1uFcvSpj6NqE2A1ns4PxeKZFgOOg6Pa+joHLP3k=
+X-Google-Smtp-Source: AGHT+IH298BxKap/ooBpbo8rE7DVtOncXQpXRWzeKODjJprECB17vSAvX4t8pckDp43eCsZyn2ebXG2/y6uwgNJwxebnsV2Ea9cC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709221203.92167-1-ivprusov@salutedevices.com>
+X-Received: by 2002:a05:6e02:11ab:b0:376:4736:8ff5 with SMTP id
+ e9e14a558f8ab-38a5417281bmr1563405ab.0.1720732222603; Thu, 11 Jul 2024
+ 14:10:22 -0700 (PDT)
+Date: Thu, 11 Jul 2024 14:10:22 -0700
+In-Reply-To: <000000000000eb54bf061cfd666a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e1d1a2061cff308e@google.com>
+Subject: Re: [syzbot] [net?] BUG: sleeping function called from invalid
+ context in synchronize_net
+From: syzbot <syzbot+9b277e2c2076e2661f61@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, jhs@mojatatu.com, 
+	jiri@resnulli.us, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
+	xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 10, 2024 at 01:11:57AM +0300, Igor Prusov wrote:
-> This series adds support for two NeoFidelity amplifiers. For both
-> amplifiers vendor provides software for equalizer and filters
-> configuration, which generates firmware files with registers values.
-> Since in both cases those files have same encoding, a common helper
-> module is added to get firmware via request_firmware() API and set
-> registers values.
-> 
-> V1: https://lore.kernel.org/all/20240709172834.9785-1-ivprusov@salutedevices.com/
-> 
-> V1 -> V2:
->  - Fix dt_binding_check errors
+syzbot has found a reproducer for the following issue on:
 
-Please implement the comments on v1. Please don't send new versions 
-right away and give people time to review. We're not all on the same 
-timezone, get busy on other tasks, take vacation, etc.
+HEAD commit:    523b23f0bee3 Add linux-next specific files for 20240710
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b62585980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=98dd8c4bab5cdce
+dashboard link: https://syzkaller.appspot.com/bug?extid=9b277e2c2076e2661f61
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=148611e1980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ec9585980000
 
-Rob
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/345bcd25ed2f/disk-523b23f0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a4508962d345/vmlinux-523b23f0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4ba5eb555639/bzImage-523b23f0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9b277e2c2076e2661f61@syzkaller.appspotmail.com
+
+BUG: sleeping function called from invalid context at net/core/dev.c:11239
+in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 1046, name: kworker/u8:5
+preempt_count: 0, expected: 0
+RCU nest depth: 1, expected: 0
+INFO: lockdep is turned off.
+CPU: 0 UID: 0 PID: 1046 Comm: kworker/u8:5 Not tainted 6.10.0-rc7-next-20240710-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: bond0 bond_mii_monitor
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ __might_resched+0x5d4/0x780 kernel/sched/core.c:8526
+ synchronize_net+0x1b/0x50 net/core/dev.c:11239
+ dev_deactivate_many+0x4a7/0xb10 net/sched/sch_generic.c:1371
+ dev_deactivate+0x184/0x280 net/sched/sch_generic.c:1397
+ linkwatch_do_dev+0x10a/0x170 net/core/link_watch.c:175
+ ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x1f1/0x3f0 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x49a/0x3170 drivers/net/bonding/bond_main.c:2826
+ process_one_work kernel/workqueue.c:3228 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3309
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3387
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+------------[ cut here ]------------
+Voluntary context switch within RCU read-side critical section!
+WARNING: CPU: 1 PID: 1046 at kernel/rcu/tree_plugin.h:330 rcu_note_context_switch+0xcf4/0xff0 kernel/rcu/tree_plugin.h:330
+Modules linked in:
+CPU: 1 UID: 0 PID: 1046 Comm: kworker/u8:5 Tainted: G        W          6.10.0-rc7-next-20240710-syzkaller #0
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: bond0 bond_mii_monitor
+RIP: 0010:rcu_note_context_switch+0xcf4/0xff0 kernel/rcu/tree_plugin.h:330
+Code: 00 ba 02 00 00 00 e8 bb 02 fe ff 4c 8b b4 24 80 00 00 00 eb 91 c6 05 a4 4f 1f 0e 01 90 48 c7 c7 e0 2d cc 8b e8 ad c5 da ff 90 <0f> 0b 90 90 e9 3b f4 ff ff 90 0f 0b 90 45 84 ed 0f 84 00 f4 ff ff
+RSP: 0018:ffffc900041cefc0 EFLAGS: 00010046
+RAX: 583d87a6c7750500 RBX: ffff88802123de44 RCX: ffff88802123da00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc900041cf110 R08: ffffffff815583f2 R09: fffffbfff1c39f8c
+R10: dffffc0000000000 R11: fffffbfff1c39f8c R12: ffff88802123da00
+R13: 0000000000000000 R14: 1ffff92000839e10 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5b6614bbe3 CR3: 0000000022676000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __schedule+0x348/0x4a60 kernel/sched/core.c:6491
+ __schedule_loop kernel/sched/core.c:6680 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6695
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6752
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ exp_funnel_lock kernel/rcu/tree_exp.h:329 [inline]
+ synchronize_rcu_expedited+0x451/0x830 kernel/rcu/tree_exp.h:967
+ dev_deactivate_many+0x4a7/0xb10 net/sched/sch_generic.c:1371
+ dev_deactivate+0x184/0x280 net/sched/sch_generic.c:1397
+ linkwatch_do_dev+0x10a/0x170 net/core/link_watch.c:175
+ ethtool_op_get_link+0x15/0x60 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x1f1/0x3f0 drivers/net/bonding/bond_main.c:757
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2604 [inline]
+ bond_mii_monitor+0x49a/0x3170 drivers/net/bonding/bond_main.c:2826
+ process_one_work kernel/workqueue.c:3228 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3309
+ worker_thread+0x86d/0xd40 kernel/workqueue.c:3387
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
