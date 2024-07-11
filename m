@@ -1,201 +1,260 @@
-Return-Path: <linux-kernel+bounces-248521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A1492DE56
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:22:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 177A992DE59
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B893F1F2235A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:22:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9933D1F22340
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D26D512;
-	Thu, 11 Jul 2024 02:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4918CDF60;
+	Thu, 11 Jul 2024 02:25:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E1RR5sUK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="r1QmLkDs";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="SrepWkyP"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86ED0D50F
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 02:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720664522; cv=none; b=QW/EfFzj13CuJc1G//fgojZFlNk43GVNzx3gtfCVNSwcNL78kq5L3MBUDpS+OVM0XDuQQIEDQNxSakjVnk5k2DfwmWYNb7rnMscaCIuxRuekHUpaz5/8vqFcOzTHe5H6s3AB2SssPAgjFTqaJmmHLDvdaFkozmHlgb94Q63VyiQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720664522; c=relaxed/simple;
-	bh=pA8BI3oTyYKOOaVgILZUdJ0293sHMEIW6UHPLXWD8Do=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=oCQTjT+VA6QkzLkl0y020gvm4UHyR8PBIeqn0faaDkfJNm+zgpXQeWhz+y0fAcNJHtlfNknZt7RNlUnNFDZUPGVgGrnlK8TQNabqLRwDC1SXpjXpCp93ZuGH+BEwHPehvaQM9u83N08SGqVrQkNT9DY1l1qe6pcNLTA4rI/Jg4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E1RR5sUK; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720664521; x=1752200521;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=pA8BI3oTyYKOOaVgILZUdJ0293sHMEIW6UHPLXWD8Do=;
-  b=E1RR5sUK0MhhfAciQ9Pd28rmdwgpkz5sKGvwUkhwyo0qtGtytUeadCdM
-   eA4tZX6KqQqIWfyLXWRHgTf0AD3U3cTsgWjQEHeOi1bKUCDJyEQThMPBb
-   B8Z/b4LqbZkdBT7vTHBmwXwByC46G3rW6uqKIwuYodnXzqrMeGIIQrWmt
-   co+ScQ1IMqVlokHCpkWgdaDatxXMGF7pev5JODDosgK2Zg1jfQwF9ltuL
-   r3ivscNGHjwlX76JVR/btYqw3UmxuUrEWykFM5LyW37D9ax17wtlBy6UO
-   OcIL7gFxHin0vrbA3++6GHh8XpYlwLF22uRsYiNNr1d7+Bnu+mXvgSXly
-   w==;
-X-CSE-ConnectionGUID: 10vesLn2RuGi62+RQ9w9bQ==
-X-CSE-MsgGUID: hahnsbgBT2SHk7N6ofj9tQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="40540036"
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="40540036"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 19:22:00 -0700
-X-CSE-ConnectionGUID: AA26cRu+ShyUf2iowkhOKA==
-X-CSE-MsgGUID: 3JpfVcbKR663TyCX61PHjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="71630234"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 10 Jul 2024 19:21:59 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sRjRU-000Yde-2c;
-	Thu, 11 Jul 2024 02:21:56 +0000
-Date: Thu, 11 Jul 2024 10:21:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [paulmck-rcu:for-neeraj.2024.07.10a 30/42]
- kernel/rcu/tree_stall.h:798:63: error: implicit declaration of function
- 'csd_lock_is_stuck'
-Message-ID: <202407111030.UYYhi3JZ-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1002DBE49;
+	Thu, 11 Jul 2024 02:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720664742; cv=fail; b=D+BgxxnXRor/TlRPNMgux48p3qlwa9IAR/3t3Tarth/WlUbXtqirqi5X1arMFb35finUuh5ELfci//CJXDQU1FozO6T2w5KmI8DS7PySf51rsifvECgH//pXZfp9W4aMgDtCOf8vx3efPEM6W1dd0rNeqA0l45tzC79ORE/13f0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720664742; c=relaxed/simple;
+	bh=2cJ6Iyd7Lvr2Cu8M0VpfUvKfjceF2TCjVtDuadnMuUg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VMA4OHKbWjRTuQxTaJA/47eAjCdBK0ow8Pwj8Na88G8VJ6Vv5wuBzXxJn4Z0zyPcKp4cDEg4xlJ38TAj2o0QiGt9fT/tiHpatoL1R8LXtnfpVeo15HGK6ZvGniq4vgJjA2gcnn4BQ18hazn5M9eIwHY3TFXzTfqcB11eInsFEk8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=r1QmLkDs; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=SrepWkyP; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: d975af543f2c11efb5b96b43b535fdb4-20240711
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=2cJ6Iyd7Lvr2Cu8M0VpfUvKfjceF2TCjVtDuadnMuUg=;
+	b=r1QmLkDshPZnygJt9ooJ20jFfY/nMd2VfjNA59iinRmzB30ETZcmtonT1gSe/BHEYzqJj7SfnjDBCmRVHxPGwLUw9cIhtDU8u3KeC42wtjmEkRRB5maKRyBMvoxkm8fymAeFwgvZ5DitocmIC6dDe6oc8AeX5p+DpIE+jXKt2Mw=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:2729b6c7-5d61-413f-bc3a-6572901e32a2,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:84522845-a117-4f46-a956-71ffeac67bfa,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: d975af543f2c11efb5b96b43b535fdb4-20240711
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <boy.wu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1810218930; Thu, 11 Jul 2024 10:25:33 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 11 Jul 2024 10:25:31 +0800
+Received: from SINPR02CU002.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 11 Jul 2024 10:25:31 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o2Fq9qhnMayCw0jPN0/P9uG2G+DSPtd5d2Lc8URr+el15O22Hx3+McqN/FULul2+DDdqqXlKI1ge2eUkXNSABd179libbgJ3BcEcCdG8k2C4Ssfvjs43Itk9Ms1fRhHRRqWFRIgZM+P/t+JPo2bIY4QcEzvYd0ZzvAlujxyFDOU1bmp9NXU9GfmuVX7nUp1c+Lq/7AEE9G+puZI2WIjior7Ip5qLosW/6eOj4PFrPgWtjUeLbdzqn3WkOVMA5c6R23+f0GFWn+GCdMbQsF+hX8vDUQtEfO9Bx+lZIzln47fxcAASG2U51yFhJ18J52daHUxnKZMoX0h9TCMlXsqgkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2cJ6Iyd7Lvr2Cu8M0VpfUvKfjceF2TCjVtDuadnMuUg=;
+ b=L1GekGE3meBZPo5OdUWNEqKbhS8ltvXX2tFBSYxLaYT2WsHfrUi/tQajRiVxn9W3yBapi8HiqAP4eJNWMXYdonvYmZosD/xuhqymvVq5BKV/Z/7mcNraYBr3vFg+c+UuWvfrru+ptT+vvg3+nnzzV7cq9iW1thJPwq3UDzVk7uF2x4Tp+DDbBxjgsY46X0FGZfOhX7l0PqxQeHk+kxPP/iHad1HXIQmRx/jg2TMgFtTNu7ZWWaCsKDFv/Gt53sPf3MR54VOhxY1RNjLo5aRFKWtzQ+n8GIhaN/DCyhA+A4e7ALYEKYm1bFEWyeuAZAV26SUBbMEHU5jwpn9G/UZGQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2cJ6Iyd7Lvr2Cu8M0VpfUvKfjceF2TCjVtDuadnMuUg=;
+ b=SrepWkyPW1mMUaNqGK3uLr0iSAZzQq2BElCj8DUFlLKN3sZHKDWzDedT6PuesK+lEoYJh2mVJQjRr/m3p39UIE5uXpj7esnnTfagdIZ0d0ldcnnCMX2btIPY/8VgMP9dP+/4Bq6Rl/Ckth4KbALBtZa+r9056ljLJRyZ2qu0rPs=
+Received: from TYZPR03MB7867.apcprd03.prod.outlook.com (2603:1096:400:465::7)
+ by TYSPR03MB7739.apcprd03.prod.outlook.com (2603:1096:400:42e::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.20; Thu, 11 Jul
+ 2024 02:25:29 +0000
+Received: from TYZPR03MB7867.apcprd03.prod.outlook.com
+ ([fe80::f95:7de7:753d:4b9]) by TYZPR03MB7867.apcprd03.prod.outlook.com
+ ([fe80::f95:7de7:753d:4b9%6]) with mapi id 15.20.7741.033; Thu, 11 Jul 2024
+ 02:25:29 +0000
+From: =?utf-8?B?Qm95IFd1ICjlkLPli4Poqrwp?= <Boy.Wu@mediatek.com>
+To: "tj@kernel.org" <tj@kernel.org>
+CC: "boris@bur.io" <boris@bur.io>, "linux-block@vger.kernel.org"
+	<linux-block@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "cgroups@vger.kernel.org"
+	<cgroups@vger.kernel.org>, "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>, "axboe@kernel.dk" <axboe@kernel.dk>,
+	=?utf-8?B?SXZlcmxpbiBXYW5nICjnjovoi7PpnJYp?= <Iverlin.Wang@mediatek.com>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>, "angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2] blk-cgroup: Replace u64_sync with blkg_stat_lock for
+ stats update
+Thread-Topic: [PATCH v2] blk-cgroup: Replace u64_sync with blkg_stat_lock for
+ stats update
+Thread-Index: AQHa0pBR30AINLT9pky6tv6t6Zyx7bHwh18AgABGsAA=
+Date: Thu, 11 Jul 2024 02:25:29 +0000
+Message-ID: <6114fbad7bce9b15806bb9fee25a1075ecb53dd1.camel@mediatek.com>
+References: <20240710061334.1888-1-boy.wu@mediatek.com>
+	 <Zo8HTD2AD-b51q0C@slm.duckdns.org>
+In-Reply-To: <Zo8HTD2AD-b51q0C@slm.duckdns.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB7867:EE_|TYSPR03MB7739:EE_
+x-ms-office365-filtering-correlation-id: 1cf5830d-8322-45b8-9ed4-08dca150bb61
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?RkNzOGVuOVgwcGowREF3UmpTQ1pyTFgyS2JabGtVSFFiRGxPblh3RExZQTBq?=
+ =?utf-8?B?RE54SzQ0K1VkdnhCaUNMQnhJaHZ6cWhLeDJjUm9MKy9RSmZiWHA4SzZBVEla?=
+ =?utf-8?B?RCtPZlNrejFlMDQzWk5yMmtFUDcwRUNRTTdiaU5PTlhXclZ5K3B3QWNNOS9W?=
+ =?utf-8?B?UjJOTXhITnJKTjZ5VDNhMFl6NncyV2pKUmJuaEw3enVoZnl1QUMwdlJTZm5y?=
+ =?utf-8?B?WDFjZ2daTzByZHBTbERCaFhVc205TE0wWkdjZ2Y5VXErMzNVaEttMUxTRk9j?=
+ =?utf-8?B?dnZjazU1TDkrYnp3SDhKT0Z0RDRMbGFXaTc1TGlzcVg5UjFWWVd5a3lzR1Yx?=
+ =?utf-8?B?a2FNNFdTcVlUTWRqSlZ1RG5teEE0S2NDdG50dEZvSDYzOGliQUNjV0ZGUlB5?=
+ =?utf-8?B?bTl0SFBER3BGbnhYamtVeFNJNVdKMUxwbzZacFpOdWxhOFVhK1VBVTcvdG51?=
+ =?utf-8?B?WkluRE8wci96MjQ0Q2VIcUYvQ3JReU9MMXlPd3RuV2lBT3ZhWG16SzVvdVFF?=
+ =?utf-8?B?TmoxS3FSaG9hY3JUSWQ5WEtOdUxuMU8zRW11TnZQazFpWGFsbG5qNWpIdU9m?=
+ =?utf-8?B?NFJUMkhFZUFGZy9XTnRqNHhpTUl5VTZvS091UUNrS1M4U2x3K1E1ajUwZ21r?=
+ =?utf-8?B?MkdrMzBzelJIN1VzU1dCOFNObEpkYkptMlc0bmJJNWxmUzFNOEJxOW1JQ0xr?=
+ =?utf-8?B?M2ExTUpFS0tXVVUxQklDVTRBd1NtdDFKeUp2aWY3REU0RWlTeFpzWlBzb3hz?=
+ =?utf-8?B?NWtOL2FiOWg3Tmp5Z1F1SU1KWHVxRGFNS1dCV2hwbWdFdTc0WnU2ZUtQVGZJ?=
+ =?utf-8?B?VFBGb1laOVNpSE1RNS94SE5KTzI2ckljelgwTHFUakZTZ0hHaVhvdy9STGFV?=
+ =?utf-8?B?alN1TmtEdmxLOWsrbVJ1QWV1TVBOL2FlaXp5aFVnQk9hUVNVc0tvZStna1Zz?=
+ =?utf-8?B?WVdQanN1WHVXVmlyY1BIY0FTZTdEcE5obFUyQ2IrZFd4eVFFTGI2NGZZM0dM?=
+ =?utf-8?B?ZUsybDhSVkFCQkUxcDF6V2pYMlVvUzg3YlNRSFZoNmFVV2t4S2FYTm5VSTF4?=
+ =?utf-8?B?Ri9DeGkvNmo4Unc4dXJ3aHNXZHVEYnZFNWIvcEJHM3c2eVFmTmRyUks4M3M4?=
+ =?utf-8?B?QmRuK21YQ2pxaWNvM2JCVW9UTGdxS3hCeUgycU43L253OXlJWEdLY1V0aFFm?=
+ =?utf-8?B?L0xicjJGbzlodEIzMEQyeXVnSWkyQ0JDMHNZR1RRb1ZwWFlkbWNtSW5vdGVR?=
+ =?utf-8?B?MlNCdTl5Qm9uQVpmSVVwWG1KRG1ORjkySXZyQjhuYk5PUVE4Rk9IeDFUZXBz?=
+ =?utf-8?B?dyt1WGoxWUM5REtvVmM4dkQ3cDZyRzBSZ1p2MUl5YjFmTFY1L0szTDVpNnZr?=
+ =?utf-8?B?azJlT3NiOVNyVlJXd0pnQWVPUWc5cldCeHMzTDVjTksxditZZjZTWnE5VnN2?=
+ =?utf-8?B?c2I0dzJUTVorQzRONkJlUjA3QzJJdVgzSnJDcFpxdzJUKzVxUGZSR2IyaCtt?=
+ =?utf-8?B?NDU3SWg2eHRNTGFCOGJKaXlEN0tYelJHTzBxbkx3TFpDeXhXVFl4NEhoL21X?=
+ =?utf-8?B?Ulg1THZKUHY0L0tQUTIrUENFSVVkQkRXMkhWN3NWd1ZOQnMxZjB4NlJKM3hO?=
+ =?utf-8?B?dnNFVVAzRm91VHVRYm9oSThaZUlaRVU5azhPQm90aGZtU21vdDBMeHMvSk9W?=
+ =?utf-8?B?a1FEOEZVaW53Wis5b012MlNnMjRGYmxvS0l4T21oMjBZVlhBbmxtN3UvUk42?=
+ =?utf-8?B?ZUYvbUU3R2J2QnRZb0xXMWk2bm9EMlpuU1dZdXQ1Z2xrZG5aQ1MzWDcvWEdk?=
+ =?utf-8?B?blUrbm9CeU5jZFFReFdlckhzZk9KZ0pjU3J5bGJ0aVgxUDBiS1MzQzRMT1RN?=
+ =?utf-8?B?WVpGVHNqWWtvTjB5NHVySW1EWmllb0w1MXdSZDZQaTFjYUE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7867.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dFZQQkNmZTJ0TGxIVDNJRXNjSzE5WjN4ZjI0c0E0SjFod1pzYXNCeHBDL3ZE?=
+ =?utf-8?B?QWN5VVozK3RjTDVFSklmZ1lyYVh0V0JKTTJMalcvOXoxK1BDb1R0WTk0eUw2?=
+ =?utf-8?B?YkFTTHU3d3NvLzk0NnAzZHlpa2JmcFBrWFRGUzdkamwrZE90bUhITU44S1J2?=
+ =?utf-8?B?b1duOTg1NWF3cWN6d0FPeEZQeGNyWTg4dEtySWZSQ0NrbUdZSHpPTUE1Q1RW?=
+ =?utf-8?B?T2lXMFdaR1l5N1dCcU5UTkw0UzdISzk2LzdtUW9KS1dacTJBd24zazlRUy8y?=
+ =?utf-8?B?ekNrRjUvYjduQUg2eU14bU9sMjJMMk5xNkd6YVovTFVLWm9aeHI5NTNlUFN1?=
+ =?utf-8?B?UVNIRFFkK0gvVGlIZlVmYUJZbGRBbW9kbmhCK0REL0RXSnZNMW9ac3FNeDRq?=
+ =?utf-8?B?OENyZ2kyYkpFL0N1S3dNQkw5OE1Rd09ueGRKMTZ5T1phR3c3NHV3U0lYL3VH?=
+ =?utf-8?B?eE92c0JLWDBlYzdWakdrVDNPTmRoZ0Q3cDhhdVlIdE1LK0dFUEZwUzdWMW51?=
+ =?utf-8?B?aGFlYjNWYTRMT1pMMmxtQ0s5SG14RnlCRmp2dGZJNWRROFV1TnpFU0M1Mmxm?=
+ =?utf-8?B?VVpSQlY3UDNNUkcvaUlUajVDN3FsQ2FOc2FSaDhPcVJ1Q3ZTOUt5K1BXalBq?=
+ =?utf-8?B?U0FHUlBzMXY4VWZ3NU1RaVdWVVdGY2RCcVRaRWhpd1ZaZWNlT1p4TVpaVkdO?=
+ =?utf-8?B?QzBta1lPZXBjODlMR1NqU2c0RkcyVnlSejRxelZIWEFBNnNWNkxlUGxpSDFC?=
+ =?utf-8?B?Slh1M2Q1SUM5eDZTejd1MVMrTGEyUXk3dDduUW00Nm5VaWlpOWhQTzRMY1BD?=
+ =?utf-8?B?WGdEUGZwcnJKTkF3MVJ0Nm5jUVFnWXJOY3dJYzZ2bytHbnh4c05xRFYxUlk1?=
+ =?utf-8?B?VkIvT2w2YnZlU2REMGZSWmd5YkM3Qlc2Kzc5WG96QXRZczA3YXZibGFydEQ3?=
+ =?utf-8?B?SHEzMjdEVkFPdytBb2Y0cm9lTlBhTWlRY3FpWkxqS0xmaWk1TXVhbXdIQ0o1?=
+ =?utf-8?B?cmJEeWZiaTdYU3hmYWtwTWFqVW9KWUd0NVdpaDIxeU8yTXZ3U3BrVE5TYnVE?=
+ =?utf-8?B?TVA2ZGw3elZUa05zeldKRkVsUFZxay9pc2cxKy9UTUZPRS9sUW96YlE2ZnR6?=
+ =?utf-8?B?TkRRaHFISjBqWTBocjRLTk5mT1NhRTR3UWQvQy9YODlDV09tNkxpdXZ0cllM?=
+ =?utf-8?B?clRjYkJBT0kwZ3Z2ZmdIUG9CdFl2dEVYSVZwUElBQjVVVlVUNnd0NnI0YnYx?=
+ =?utf-8?B?R3R1TTJybDFhTC9HLzEzdjNSazhpeXloR0FVWVY5a3FhdHVFb3E3Rng0M290?=
+ =?utf-8?B?anFGd2hhM2ZwYUYyVGRlVUg5aVo1amhhOWFQdEp5ZGVVZFBBM1NUTmtRQmZY?=
+ =?utf-8?B?TFJIejVsQnpVOUVVTzBRQ1RNOWJZT2lzZVNwSDB3cklDMzYrSjR1MTRWK3Mv?=
+ =?utf-8?B?UUlGNWJoUlVXd29pclhzRUttNmxibVBldE5lMnFheTR2QkJtOEJkc1VPaU1L?=
+ =?utf-8?B?bDhiSlZwWitiU2tvUStLUGFaK2hFWlJ4OGFXZXV3VmZHSmFRdVNEbWxneDdF?=
+ =?utf-8?B?dmtBNlhKSWptUHNCbEZjYi82TlVqZkJ5K0pTTGdwdUVEK3gvY0FlT2pQcXBI?=
+ =?utf-8?B?TDJUNytuNUJNODNsSzBJaFllbHE1R0VUaElKcGxhYzdjWnNzR29udTJUemli?=
+ =?utf-8?B?SUJZWEpzdzZaRTl1RkRZcmt6dzlWM0pIWlY5MXBmSlpIZVFGd1lBaXdZdkxN?=
+ =?utf-8?B?Q25hNGwxNFhOa1ZJb2xnalB1MStHZnNsei8wZ0JsenFkeWlNeGp5VHB1dmhW?=
+ =?utf-8?B?a0I0NmVBRERhN2ZWUStSVkhOWHhvb1FOcnBjNlFSOHdGV3c2OFVRVGVsRUlz?=
+ =?utf-8?B?dEFyenp2cnozT1Y2ZW5ydldIbHQwSXRhWElCWFlaeTB4bjlva0p5bTdZWlFu?=
+ =?utf-8?B?OVM3Uk5DRlJxTG1vcmM1NjZ0QUp3cEo3TndmOVpvV3ZGWEQ4NE9Hc2RYR2lr?=
+ =?utf-8?B?alJJUEs1TlBpcWNBek9FeG1zZVU5R3pmTEREK1BLK3d1dk1rSEJUNUZqL21o?=
+ =?utf-8?B?VUl0c3BhaWgrbW9PV3lFMnY2LzRlc2hOeldHczNXRFYycGdkSHJWZDlXRlMy?=
+ =?utf-8?B?a0FnMkw4MmxmWDBJSThNSzR0UUpZNkoxaE85RzhXMlkzazFtMm45dldIVE53?=
+ =?utf-8?B?Nmc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D32A76A652A6D24784E50560DDB04E52@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7867.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cf5830d-8322-45b8-9ed4-08dca150bb61
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2024 02:25:29.2899
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gjQ94PH3wv8erlFzASeh2r/H81g80AkrnUZ5deM7JA1YYdmjDq51YqllnKhHi1oae2qs1WAlJ8CE/pSAnXybVQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR03MB7739
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--21.959200-8.000000
+X-TMASE-MatchedRID: Q8pJWSpPf0PUL3YCMmnG4ia1MaKuob8PCJpCCsn6HCHBnyal/eRn3gzR
+	CsGHURLuwpcJm2NYlPAF6GY0Fb6yCpGpaLcbZyfwA9lly13c/gF+Mk6ACsw4JgqiCYa6w8tvG0m
+	bV40iq4548KYoXzhzGodWJS1n0O5+fa1p1ynKVeDhuXUWQoMQt4iuaoNXJrK/Vo+424uIBNLLJW
+	h+/6PrD8OsTQEt61AlW46EYm5LvvD6eJVowF9Ts+i9l247YAX38rPh3yI68clQTWaasNJff9v1a
+	CEawbZWJH/wDreljX8To7gobHptohnsS71Oo/Hw5gCHftmwEMJ9LQinZ4QefKU8D0b0qFy9mTDw
+	p0zM3zoqtq5d3cxkNQP90fJP9eHt
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--21.959200-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	0FD7754B973EF548089D6D6400A428365CC1285EA7422FD4A70302A323D4D8E62000:8
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-neeraj.2024.07.10a
-head:   6dfea2d3ac9e0874587c0c1d05fd829f520d5458
-commit: 3e7a44e2495502599af4ac67d39b9fbbd8217557 [30/42] rcu: Summarize RCU CPU stall warnings during CSD-lock stalls
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240711/202407111030.UYYhi3JZ-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240711/202407111030.UYYhi3JZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407111030.UYYhi3JZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from kernel/rcu/tree.c:5638:
-   kernel/rcu/tree_stall.h: In function 'check_cpu_stall':
->> kernel/rcu/tree_stall.h:798:63: error: implicit declaration of function 'csd_lock_is_stuck' [-Werror=implicit-function-declaration]
-     798 |                 if (READ_ONCE(csd_lock_suppress_rcu_stall) && csd_lock_is_stuck()) {
-         |                                                               ^~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/csd_lock_is_stuck +798 kernel/rcu/tree_stall.h
-
-   725	
-   726	static void check_cpu_stall(struct rcu_data *rdp)
-   727	{
-   728		bool self_detected;
-   729		unsigned long gs1;
-   730		unsigned long gs2;
-   731		unsigned long gps;
-   732		unsigned long j;
-   733		unsigned long jn;
-   734		unsigned long js;
-   735		struct rcu_node *rnp;
-   736	
-   737		lockdep_assert_irqs_disabled();
-   738		if ((rcu_stall_is_suppressed() && !READ_ONCE(rcu_kick_kthreads)) ||
-   739		    !rcu_gp_in_progress())
-   740			return;
-   741		rcu_stall_kick_kthreads();
-   742	
-   743		/*
-   744		 * Check if it was requested (via rcu_cpu_stall_reset()) that the FQS
-   745		 * loop has to set jiffies to ensure a non-stale jiffies value. This
-   746		 * is required to have good jiffies value after coming out of long
-   747		 * breaks of jiffies updates. Not doing so can cause false positives.
-   748		 */
-   749		if (READ_ONCE(rcu_state.nr_fqs_jiffies_stall) > 0)
-   750			return;
-   751	
-   752		j = jiffies;
-   753	
-   754		/*
-   755		 * Lots of memory barriers to reject false positives.
-   756		 *
-   757		 * The idea is to pick up rcu_state.gp_seq, then
-   758		 * rcu_state.jiffies_stall, then rcu_state.gp_start, and finally
-   759		 * another copy of rcu_state.gp_seq.  These values are updated in
-   760		 * the opposite order with memory barriers (or equivalent) during
-   761		 * grace-period initialization and cleanup.  Now, a false positive
-   762		 * can occur if we get an new value of rcu_state.gp_start and a old
-   763		 * value of rcu_state.jiffies_stall.  But given the memory barriers,
-   764		 * the only way that this can happen is if one grace period ends
-   765		 * and another starts between these two fetches.  This is detected
-   766		 * by comparing the second fetch of rcu_state.gp_seq with the
-   767		 * previous fetch from rcu_state.gp_seq.
-   768		 *
-   769		 * Given this check, comparisons of jiffies, rcu_state.jiffies_stall,
-   770		 * and rcu_state.gp_start suffice to forestall false positives.
-   771		 */
-   772		gs1 = READ_ONCE(rcu_state.gp_seq);
-   773		smp_rmb(); /* Pick up ->gp_seq first... */
-   774		js = READ_ONCE(rcu_state.jiffies_stall);
-   775		smp_rmb(); /* ...then ->jiffies_stall before the rest... */
-   776		gps = READ_ONCE(rcu_state.gp_start);
-   777		smp_rmb(); /* ...and finally ->gp_start before ->gp_seq again. */
-   778		gs2 = READ_ONCE(rcu_state.gp_seq);
-   779		if (gs1 != gs2 ||
-   780		    ULONG_CMP_LT(j, js) ||
-   781		    ULONG_CMP_GE(gps, js))
-   782			return; /* No stall or GP completed since entering function. */
-   783		rnp = rdp->mynode;
-   784		jn = jiffies + ULONG_MAX / 2;
-   785		self_detected = READ_ONCE(rnp->qsmask) & rdp->grpmask;
-   786		if (rcu_gp_in_progress() &&
-   787		    (self_detected || ULONG_CMP_GE(j, js + RCU_STALL_RAT_DELAY)) &&
-   788		    cmpxchg(&rcu_state.jiffies_stall, js, jn) == js) {
-   789			/*
-   790			 * If a virtual machine is stopped by the host it can look to
-   791			 * the watchdog like an RCU stall. Check to see if the host
-   792			 * stopped the vm.
-   793			 */
-   794			if (kvm_check_and_clear_guest_paused())
-   795				return;
-   796	
-   797			rcu_stall_notifier_call_chain(RCU_STALL_NOTIFY_NORM, (void *)j - gps);
- > 798			if (READ_ONCE(csd_lock_suppress_rcu_stall) && csd_lock_is_stuck()) {
-   799				pr_err("INFO: %s detected stall, but suppressed full report due to a stuck CSD-lock.\n", rcu_state.name);
-   800			} else if (self_detected) {
-   801				/* We haven't checked in, so go dump stack. */
-   802				print_cpu_stall(gps);
-   803			} else {
-   804				/* They had a few time units to dump stack, so complain. */
-   805				print_other_cpu_stall(gs2, gps);
-   806			}
-   807	
-   808			if (READ_ONCE(rcu_cpu_stall_ftrace_dump))
-   809				rcu_ftrace_dump(DUMP_ALL);
-   810	
-   811			if (READ_ONCE(rcu_state.jiffies_stall) == jn) {
-   812				jn = jiffies + 3 * rcu_jiffies_till_stall_check() + 3;
-   813				WRITE_ONCE(rcu_state.jiffies_stall, jn);
-   814			}
-   815		}
-   816	}
-   817	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+T24gV2VkLCAyMDI0LTA3LTEwIGF0IDEyOjEyIC0xMDAwLCBUZWp1biBIZW8gd3JvdGU6DQo+ICAJ
+IA0KPiBFeHRlcm5hbCBlbWFpbCA6IFBsZWFzZSBkbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBh
+dHRhY2htZW50cyB1bnRpbA0KPiB5b3UgaGF2ZSB2ZXJpZmllZCB0aGUgc2VuZGVyIG9yIHRoZSBj
+b250ZW50Lg0KPiAgSGVsbG8sDQo+IA0KPiBPbiBXZWQsIEp1bCAxMCwgMjAyNCBhdCAwMjoxMzoz
+NFBNICswODAwLCBib3kud3Ugd3JvdGU6DQo+IC4uLg0KPiA+IEBAIC05NTIsNyArOTUyLDYgQEAg
+c3RhdGljIHZvaWQgYmxrY2dfZmlsbF9yb290X2lvc3RhdHModm9pZCkNCj4gPiAgc3RydWN0IGJs
+a2NnX2dxICpibGtnID0gYmRldi0+YmRfZGlzay0+cXVldWUtPnJvb3RfYmxrZzsNCj4gPiAgc3Ry
+dWN0IGJsa2dfaW9zdGF0IHRtcDsNCj4gPiAgaW50IGNwdTsNCj4gPiAtdW5zaWduZWQgbG9uZyBm
+bGFnczsNCj4gPiAgDQo+ID4gIG1lbXNldCgmdG1wLCAwLCBzaXplb2YodG1wKSk7DQo+ID4gIGZv
+cl9lYWNoX3Bvc3NpYmxlX2NwdShjcHUpIHsNCj4gPiBAQCAtOTc0LDkgKzk3MywxMCBAQCBzdGF0
+aWMgdm9pZCBibGtjZ19maWxsX3Jvb3RfaW9zdGF0cyh2b2lkKQ0KPiA+ICBjcHVfZGtzdGF0cy0+
+c2VjdG9yc1tTVEFUX0RJU0NBUkRdIDw8IDk7DQo+ID4gIH0NCj4gPiAgDQo+ID4gLWZsYWdzID0g
+dTY0X3N0YXRzX3VwZGF0ZV9iZWdpbl9pcnFzYXZlKCZibGtnLT5pb3N0YXQuc3luYyk7DQo+ID4g
+KyNpZiBCSVRTX1BFUl9MT05HID09IDMyDQo+ID4gK2d1YXJkKHJhd19zcGlubG9ja19pcnFzYXZl
+KSgmYmxrZ19zdGF0X2xvY2spOw0KPiA+ICsjZW5kaWYNCj4gPiAgYmxrZ19pb3N0YXRfc2V0KCZi
+bGtnLT5pb3N0YXQuY3VyLCAmdG1wKTsNCj4gPiAtdTY0X3N0YXRzX3VwZGF0ZV9lbmRfaXJxcmVz
+dG9yZSgmYmxrZy0+aW9zdGF0LnN5bmMsIGZsYWdzKTsNCj4gDQo+IElzbid0IHRoZSBwcm9ibGVt
+IHNoYXJlZCBhY3Jvc3Mgb3RoZXIgYmxrZy0+aW9zdGF0LnN5bmMgdXNlcnMgdG9vPyANCg0KVGhl
+cmUgYXJlIHRocmVlIHBsYWNlcyBmb3IgaW9zdGF0IHVwZGF0ZSBzeW5jLg0KMS4gVGhlIHN5bmMg
+aW4gYmxrY2dfaW9zdGF0c191cGRhdGUgaXMgYWxyZWFkeSBwcm90ZWN0ZWQgYnkNCmJsa2dfc3Rh
+dF9sb2NrLg0KMi4gVGhlIHN5bmMgaW4gYmxrY2dfZmlsbF9yb290X2lvc3RhdHMgaXMgd2hlcmUg
+d2UgYWRkZWQgaXQgaW4gdGhlDQpwYXRjaC4NCjMuIFRoZSBzeW5jIGluIGJsa19jZ3JvdXBfYmlv
+X3N0YXJ0IGlzIHBlciBDUFUsIGFuZCBJIGRvbid0IHRoaW5rIGl0DQpjYXVzZXMgYSBjb25jdXJy
+ZW50IHByb2JsZW0uDQoNCj4gQWxzbywNCj4gbWF5YmUsIHdlIGNhbiBqdXN0IGdyYWIgdGhlIHNw
+aW5sb2NrIHdpdGhvdXQgdGVzdGluZyBmb3IgMzJiaXQuIGJsa2ctDQo+ID5pb3N0YXQNCj4gKHVu
+bGlrZSB0aGUgcGVyLWNwdSBjb3VudGVycGFydCkgaXNuJ3QgYWNjZXNzZWQgdGhhdCBmcmVxdWVu
+dGx5LCBzbw0KPiBrZWVwaW5nDQo+IGl0IHNpbXBsZSBhbmQgY29uc2lzdGVudCBwcm9iYWJseSBt
+YWtlcyBtb3JlIHNlbnNlLCByaWdodD8NCg0KSSBjYW4gcmVtb3ZlIHRoZSAzMmJpdCBvbmx5IGRl
+ZmluZSwgYnV0IEkgdGhpbmsgd2UgbmVlZCB0byBhZGQgYmFjayB0aGUNCnU2NCBzeW5jLCBiZWNh
+dXNlIHRoZSBzcGluIGxvY2sgYW5kIHRoZSB1NjQgc3luYyBzZXJ2ZSBkaWZmZXJlbnQNCnB1cnBv
+c2VzLiBUaGUgc3BpbiBsb2NrIGlzIGZvciBoYW5kbGluZyBjb25jdXJyZW50IHByb2JsZW1zIGZy
+b20NCmRpZmZlcmVudCBDUFVzIHVwZGF0aW5nIHN0YXRzLCBhbmQgdTY0IHN5bmMgaXMgZm9yIHVw
+ZGF0aW5nIDY0IGJpdHMNCmRhdGEgYW5kIGZldGNoaW5nIDY0IGJpdHMgZGF0YSBmcm9tIGRpZmZl
+cmVudCBDUFVzIGluIDMyYml0IFNNUA0Kc3lzdGVtcy4NCg0KPiANCj4gVGhhbmtzLg0KPiANCj4g
+LS0gDQo+IHRlanVuDQoNCi0tDQpib3kud3UNCg==
 
