@@ -1,124 +1,106 @@
-Return-Path: <linux-kernel+bounces-249004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8602692E4E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:37:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80FE792E4E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41448285272
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28DFD1F24337
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE791157A74;
-	Thu, 11 Jul 2024 10:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29A715748C;
+	Thu, 11 Jul 2024 10:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DTxGISw4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLGa3CUn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E77782D94;
-	Thu, 11 Jul 2024 10:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10D082D94;
+	Thu, 11 Jul 2024 10:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720694235; cv=none; b=cngtYjPP4jxkBhDTZFwnmr7GxdBqLX07SpSHF2uPKJ5OfFi7l4Obda7raFk9mWdo/Oe44v5v7z/yTg8gjfGLSR0xDip8MDmNDy9xNeff1vzepFO+1D1vG1NZgddNgchQISV4gQ3D5ZJEbCs5xzedlZS7Ksvf5g0Bp05+x8t2WIc=
+	t=1720694343; cv=none; b=feYm3QcAxHbTvxKK68oJA7wl/YsUmsQdDIz0t9ZA6EYSpPYItlBzdJvmeU2IwVPJOiYOWQ4L3UjwEZru1fbthcmSuHYI7CnYih8iEHSG1srD1BFApq/Fp/xuYIZjUMmZHT+1oEBSlX3/o92TegbuCYWYeSbjb4dzeBsmUwEtEwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720694235; c=relaxed/simple;
-	bh=DFEfePK8cAElLfJIiPmawLyu7JjbXJrgS7m+m6Pnd5Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NonNTTUFgG1viNBhs2uII1f0rVqO5sVEfjM9DMwibMd8HdMbVcsK6DvM+DdiinAyOCE1RUl+99vPprXMqdxcC5QQGqVWaPnzv63VJhRTKEE2nK8lsfN73PS+NYHRIt0keto51XYzr0dm+JKfB7HvqVmDSdrqObV4faEhVIe0w2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DTxGISw4; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720694234; x=1752230234;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DFEfePK8cAElLfJIiPmawLyu7JjbXJrgS7m+m6Pnd5Q=;
-  b=DTxGISw4HxEBg4N6eo2Y/r5Q5hTCl9vse9VjYw7Q9RkHup80RX6z8VPO
-   4wG2HK1RIbRGAZPEry/PnxcALaMrNLpilyaGWkphvaq+J1zISSeiL/BQf
-   JP6ZXP1+piRcqDX14LM7m15OSl6Q5guUaqfHJ8wlzC4bfkT+gXzKz/U4G
-   Y7Pfy/2U19ZZU47JsWkaCWbQOO/XNK/lWq4HhEnUNe96IwjiGrKKGDbLT
-   zpRDyl7/pqRoNLc7tlrdeyQTd6lWtXXsHg9wL/MhZuLPT0NDtwcjbdNAF
-   HqpwUr9SIfjIUDkbRa9N9C49H2JPs5q24FwrPDCoo9Cadk5n3o5YqScg6
-   g==;
-X-CSE-ConnectionGUID: cE3gteqFT1+i/6VXoueBlQ==
-X-CSE-MsgGUID: KMNCtYJhSp+jJ6vZI2b7Kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="29468679"
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="29468679"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 03:37:13 -0700
-X-CSE-ConnectionGUID: RTya0ugrQZuBYIYVmuGQgw==
-X-CSE-MsgGUID: KADa2dLDQ/mTpNQID6JOXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="49272803"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa008.jf.intel.com with ESMTP; 11 Jul 2024 03:37:02 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 0BAD329E; Thu, 11 Jul 2024 13:37:00 +0300 (EEST)
-Date: Thu, 11 Jul 2024 13:37:00 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Xiongwei Song <xiongwei.song@windriver.com>, 
-	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
-	Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, 
-	Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
-	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Yian Chen <yian.chen@intel.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
-Subject: Re: [PATCH v4 07/16] x86/cpu: Defer CR pinning setup until after EFI
- initialization
-Message-ID: <3dbaf7fm65xl6kou5fj4tzty7emsdecs3juu4rm7266pgzcfk3@z3mehcszkw7j>
-References: <20240710160655.3402786-1-alexander.shishkin@linux.intel.com>
- <20240710160655.3402786-8-alexander.shishkin@linux.intel.com>
- <20240711081153.GC4587@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1720694343; c=relaxed/simple;
+	bh=wX7XKlsj2cSApKllUPYiWI25YXU972l/vtIJA/ARJlE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qB36lA+93uirjqdH25fYAzJ/wJoOC/BxebnHPL4a+9m7gzWSZ1YadQKpfBZgDiGA8nPMjYThF0ThkIMVQk9uJavLtVXY2kTBt4/Nqwk+uY8UE98p99voo1lXxlESWIWYVJHzdPmfPfFCGOsEsRz6BgJUK7BkNiNHrstGW8Mxq1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLGa3CUn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA8AAC116B1;
+	Thu, 11 Jul 2024 10:39:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720694342;
+	bh=wX7XKlsj2cSApKllUPYiWI25YXU972l/vtIJA/ARJlE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bLGa3CUne0HSpwFa6QVKhiGVMIqlQVBd2IEZHNhzm+KxaWtC4TBsl7uQa5EjyOT7I
+	 lbF6OYNkY513o0RchffcbbNGpjplhujpoFbQ7P0zanzUeF3BHa+XMXLjXD6HAHqtKl
+	 4BOsycPah9ZC/ElC8a9VF8QjuXyVlOE2jRqezedetS10RvEKtqcKbRoCyYAKa/4vh5
+	 SY7LztD46IjO/bCWFHLiH/7tVM3AYpBZkNhrqbVb9dxAkV64stT6Tl6v//9nHs1Ill
+	 YeDNZDr/JxwkPFs+7/iTxaTksfsWzO0cTr93I4NmQ7ZR26H9wXgDHwtp6x0ltL7xR6
+	 /nCfKUVKZI/UQ==
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Leon Romanovsky <leonro@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH 1/2] dma: call unconditionally to unmap_page and unmap_sg callbacks
+Date: Thu, 11 Jul 2024 13:38:54 +0300
+Message-ID: <98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711081153.GC4587@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 10:11:53AM +0200, Peter Zijlstra wrote:
-> On Wed, Jul 10, 2024 at 07:06:43PM +0300, Alexander Shishkin wrote:
-> > In order to map the EFI runtime services, set_virtual_address_map
-> > needs to be called, which resides in the lower half of the address
-> > space. This means that LASS needs to be temporarily disabled around
-> > this call. This can only be done before the CR pinning is set up.
-> > 
-> > Move CR pinning setup behind the EFI initialization.
-> > 
-> > Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> 
-> So the previous patch makes us not boot, and this fixes it up? Perhaps
-> order things differently?
+From: Leon Romanovsky <leonro@nvidia.com>
 
-Maybe just move LASS enabling (patch 04/16) to the very end of the
-patchset?
+Almost all users of ->map_page()/map_sg() callbacks implement
+->unmap_page()/unmap_sg() callbacks too. One user which doesn't do it,
+is dummy DMA ops interface, and the use of this interface is to fail
+the operation and in such case, there won't be any call to
+->unmap_page()/unmap_sg().
 
+This patch removes the existence checks of ->unmap_page()/unmap_sg()
+and calls to it directly to create symmetrical interface to
+->map_page()/map_sg().
+
+Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+---
+ kernel/dma/mapping.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+index 81de84318ccc..6832fd6f0796 100644
+--- a/kernel/dma/mapping.c
++++ b/kernel/dma/mapping.c
+@@ -177,7 +177,7 @@ void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr, size_t size,
+ 	if (dma_map_direct(dev, ops) ||
+ 	    arch_dma_unmap_page_direct(dev, addr + size))
+ 		dma_direct_unmap_page(dev, addr, size, dir, attrs);
+-	else if (ops->unmap_page)
++	else
+ 		ops->unmap_page(dev, addr, size, dir, attrs);
+ 	debug_dma_unmap_page(dev, addr, size, dir);
+ }
+@@ -291,7 +291,7 @@ void dma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg,
+ 	if (dma_map_direct(dev, ops) ||
+ 	    arch_dma_unmap_sg_direct(dev, sg, nents))
+ 		dma_direct_unmap_sg(dev, sg, nents, dir, attrs);
+-	else if (ops->unmap_sg)
++	else
+ 		ops->unmap_sg(dev, sg, nents, dir, attrs);
+ }
+ EXPORT_SYMBOL(dma_unmap_sg_attrs);
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.45.2
+
 
