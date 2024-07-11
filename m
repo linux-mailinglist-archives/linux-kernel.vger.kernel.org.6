@@ -1,158 +1,144 @@
-Return-Path: <linux-kernel+bounces-248654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8187392E040
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:39:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F031B92E043
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BE7D1C21AE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:39:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F90283591
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A184812DDAF;
-	Thu, 11 Jul 2024 06:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71D612DD91;
+	Thu, 11 Jul 2024 06:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czn1ovPu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ue6IkGUh"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1AC8249A;
-	Thu, 11 Jul 2024 06:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E8284DE9;
+	Thu, 11 Jul 2024 06:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720679959; cv=none; b=RmBWlSkdrFsHygi756Uz3tpj0V+fpETq9tBsd6AnVO01r1M96KaGSlNrvNww78GSMuIOr1s1vnGhuGwm4CMgxN69HNv+QzvJ6ckWRZgHE42iJfvvUSJhJrWuFp1boy3/5TOcerhFLXWUMBlwb/njfMqqmhY/Cnq5Rgmro0Aoy4U=
+	t=1720679972; cv=none; b=UrVznhDHnNnCQ8x5+AzLKmefswTB1xnNTIA7NlT9WCnq/58d+0f3zCwJYmBV3YTRdRwCpn7pbUjFxVOmjz7+42sYvKxzst8AmFc1eGC/Q89z/P37znmFTtKMBwP6PDTrxg+LDDwmB3t8l3a/N3/wciV3g0xz2aHwT2+zQYo9a+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720679959; c=relaxed/simple;
-	bh=YYuzY+tLhiCKB0JfC01of+ILfufjHR1RA3FDo//2JiY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YrC7Q+xA2zRJLRYJKkTW2idnrNgxZXlKudwT85/KgcBjXGH8LtzzNPXLM9nz7FnZYm1QJSVZuhsZjo47yhSZGsljkFUkoSiy6SQV9OGtFUj4U/dKWUhMi+y7oLvKyVjX+tiMyHmwVzXZH/lVmpCt6BUJIkRvBKJnHf6cCiSxk0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czn1ovPu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92263C4AF0F;
-	Thu, 11 Jul 2024 06:39:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720679958;
-	bh=YYuzY+tLhiCKB0JfC01of+ILfufjHR1RA3FDo//2JiY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=czn1ovPuwZRPwkEMEGJNLqZvmdEJkCTC8Q03rhl6F5FW2JhUQHz63FjvRcr0ezkOr
-	 bqISEZUFVnEVqmqnzxptnWxsXZyHc9JWJwMwnC+H12l41zNckcvZ5kDjCacyL8ovPs
-	 s0E4oDvTj/5aRzMR2WwGI/DTrWNTh8tpeLvPUXEG7REvEZv6hyX27xhDhSz1kFoTmt
-	 exJ1UpnnHMgR25/a+abQ4AOiijAjOmldne29PLalhniHo0rLQLtlzvlqyeOXhF+s7f
-	 Srg9BVyAUxsaXdcfzeVDnE0age9uTF1q2tfzRl/5MlOoBy8Gvs7ql+kT1hK4tTDlOJ
-	 1htJA36xFjXAw==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77c9c5d68bso68738966b.2;
-        Wed, 10 Jul 2024 23:39:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUILdRMWBRq4WvReZrV4mXuT7aqOKRRhSYZrN5ZUCWAwFzEFtdN6avzDfVjpfCz1TJ5lVdx9DxEEUQFUfMdIZCKK49WIBYP9mx4CwidPNosZkaJTMW67ci8zU4BTD0ebbj4cU97CxqooOm2HaiacD5gqV/0XZNRdFp5efxqWvzEnl0=
-X-Gm-Message-State: AOJu0Yw1yb3mODtWqCkx5Iy0SxLdThN9OJDjjoWf+aD7KMs8DpMDuj0a
-	SdBCus15IIIYOyojaG6DT7hmdDU96NfWflyhA08sP+JwSJaqeFYneG+kKJEWlYxDZGz9gVoAc7V
-	mKEYG0jAFUmJ1UHHH9H122OpYOYw=
-X-Google-Smtp-Source: AGHT+IEdES9ra8lhHWoM6RznNhYmve7qzUYd0yRVQr+T7mh+ANEEX2mvwgKpXCmmQQzLCaxjyKbu0vIgnqH3wKUV+64=
-X-Received: by 2002:a17:907:da7:b0:a77:eb34:3b4b with SMTP id
- a640c23a62f3a-a780b68a989mr646569166b.11.1720679957126; Wed, 10 Jul 2024
- 23:39:17 -0700 (PDT)
+	s=arc-20240116; t=1720679972; c=relaxed/simple;
+	bh=5o6GS9CFJ3XzY5WS3VjXQZyHGmQWekxQIXP5NidKh0Q=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JR3w7oUgvnul8Wbe5vLnQEVaJdPsMnpFvaWVytE+7Lq2ki06vNRcLDkbw2yPHbubBYHbf2S9IHDchZa6k8ceD+yNswXslXIAYjpSy834Q5LNYhAvkrcVuNkw1+ASl0tSAnDylWO9glMsE29j4ISUAm/d4Le8fMbrWrsoy8eov74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ue6IkGUh; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720679968;
+	bh=5o6GS9CFJ3XzY5WS3VjXQZyHGmQWekxQIXP5NidKh0Q=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Ue6IkGUhsXxaKwC0b3SYMDQmDxY1ADssBHd2Hquwfn2sz2KSsRua1Y+Qol4Y9xn3M
+	 BcA+9/JRkFTvisGXBe6WPOcLKfd4HuI0FLrx8vOiIIDKCkkco5Rm/hrwYvz0A8WE4A
+	 z1BizDPXdu8R2e2VO1hR4+FvCsmBB2sWcAYvuAIkWIBs7mdhT5zZJurou4o4KH9knf
+	 Q//skXCy/D5UB/DKFoGLUV3T/eLPVmtehgGHhmcjFdv5614XCP4zTRebGwxdhMukLY
+	 4sSMzuiLSzTwXKQQebo3G0ThFUksNONG6HSQvkFME/W1HkrUgk/PVhuoT45Neaix0R
+	 QZA4CFcmM74TQ==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3D4423780627;
+	Thu, 11 Jul 2024 06:39:25 +0000 (UTC)
+Message-ID: <bab6401b-56e0-4fb7-8ae7-90607c52c58d@collabora.com>
+Date: Thu, 11 Jul 2024 11:39:23 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710-bug11-v2-1-e7bc61f32e5d@gmail.com>
-In-Reply-To: <20240710-bug11-v2-1-e7bc61f32e5d@gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Thu, 11 Jul 2024 07:38:40 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H6NisGBRqccRv3CiTDMJS0M7ZnvSrEDDHSOUn2TaWBBDw@mail.gmail.com>
-Message-ID: <CAL3q7H6NisGBRqccRv3CiTDMJS0M7ZnvSrEDDHSOUn2TaWBBDw@mail.gmail.com>
-Subject: Re: [PATCH v2] btrfs: Fix slab-use-after-free Read in add_ra_bio_pages
-To: Pei Li <peili.dev@gmail.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	Qu Wenruo <wqu@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, skhan@linuxfoundation.org, 
-	syzkaller-bugs@googlegroups.com, 
-	linux-kernel-mentees@lists.linuxfoundation.org, 
-	syzbot+853d80cba98ce1157ae6@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, kernel@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: openat2: don't print total number of tests and
+ then skip
+To: Shuah Khan <skhan@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>,
+ Aleksa Sarai <cyphar@cyphar.com>
+References: <20240522214647.3568788-1-usama.anjum@collabora.com>
+ <1fc06a15-f06e-4db1-ace5-b9d52250d0df@collabora.com>
+ <20240701.085146-junky.rubs.mossy.crews-uyuNIdHgWxb@cyphar.com>
+ <148d4c61-b60a-401f-96ee-b0291bcf87b3@collabora.com>
+ <c0007f80-d44b-42fa-afd4-fdaeb3b89f70@collabora.com>
+ <6d82fa16-ed2e-41f1-a466-c752032b6f68@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <6d82fa16-ed2e-41f1-a466-c752032b6f68@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 5:29=E2=80=AFAM Pei Li <peili.dev@gmail.com> wrote:
->
-> We are accessing the start and len field in em after it is free'd.
->
-> This patch moves the line accessing the free'd values in em before
-> they were free'd so we won't access free'd memory.
->
-> Reported-by: syzbot+853d80cba98ce1157ae6@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D853d80cba98ce1157ae6
-> Signed-off-by: Pei Li <peili.dev@gmail.com>
-> ---
-> Syzbot reported the following error:
-> BUG: KASAN: slab-use-after-free in add_ra_bio_pages.constprop.0.isra.0+0x=
-f03/0xfb0 fs/btrfs/compression.c:529
->
-> This is because we are reading the values from em right after freeing it
-> before through free_extent_map(em).
->
-> This patch moves the line accessing the free'd values in em before
-> they were free'd so we won't access free'd memory.
->
-> Fixes: 6a4049102055 ("btrfs: subpage: make add_ra_bio_pages() compatible"=
-)
+On 7/10/24 9:18 PM, Shuah Khan wrote:
+> On 7/10/24 03:33, Muhammad Usama Anjum wrote:
+>> Hi Shuah,
+>>
+>> Can you take the patch as is or by removing following from this patch:
+>>
+>> -    if (geteuid() != 0)
+>> +    if (geteuid())
+> 
+> As Aleksa mentioned, geteuid() != 0 is preferred.
+I can make the change after concluding the following discussion.
 
-This type of useful information should be in the changelog, not after the -=
---
+> 
+>>
+>> On 7/2/24 12:02 PM, Muhammad Usama Anjum wrote:
+>>> On 7/1/24 2:14 PM, Aleksa Sarai wrote:
+>>>> On 2024-07-01, Muhammad Usama Anjum <usama.anjum@collabora.com> wrote:
+>>>>> Adding more people for review
+>>>>>
+>>>>> On 5/23/24 2:46 AM, Muhammad Usama Anjum wrote:
+>>>>>> Don't print that 88 sub-tests are going to be executed. But then skip.
+>>>>>> The error is printed that executed test was only 1 while 88 should have
+>>>>>> run:
+>>>>>>
+>>>>>> Old output:
+>>>>>>    TAP version 13
+>>>>>>    1..88
+>>>>>>    ok 2 # SKIP all tests require euid == 0
+>>>>>>    # Planned tests != run tests (88 != 1)
+>>>>>>    # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:1 error:0
+This would return FAIL exit code to kselftest executor as the planned tests
+were 88 while executed tests are only 1. Hence FAIL error code would be
+returned. This is completely wrong.
 
-And btw, this was already fixed last week and it's in for-next:
+>>>>>>
+>>>>>> New and correct output:
+>>>>>>    TAP version 13
+>>>>>>    1..0 # SKIP all tests require euid == 0
+This would return SKIP exit code which is correct.
 
-https://github.com/btrfs/linux/commit/aaa2c8b3f54e7b4f31616fd03bb302cc17ccc=
-f39
-https://lore.kernel.org/linux-btrfs/20240704171031.GX21023@twin.jikos.cz/T/=
-#m9a92a5d980230323ec351a24adf9a3738cfbbc40
 
-Thanks.
+> 
+> I think having total number tell you how many tests are there.
+> I don't this this is good change.
+Having "1..88" misrepresents the number of executed tests. This is against
+the TAP specs. The total number of tests must be printed after finding out
+that initial conditions are fulfilled. From specs: [1]
 
-> ---
-> Changes in v2:
-> - Adapt Qu's suggestion to move the read-after-free line before freeing
-> - Cc stable kernel
-> - Link to v1: https://lore.kernel.org/r/20240710-bug11-v1-1-aa02297fbbc9@=
-gmail.com
-> ---
->  fs/btrfs/compression.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> A plan line of 1..0 indicates that the test set was completely skipped;
+> no tests are expected to follow, and none should have come before.
+> Harnesses should report on 1..0 test runs similarly to their handling of
+> SKIP Test Points, treating any comment in the Plan as the reason for
+> skipping.
 >
-> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-> index 6441e47d8a5e..f271df10ef1c 100644
-> --- a/fs/btrfs/compression.c
-> +++ b/fs/btrfs/compression.c
-> @@ -514,6 +514,8 @@ static noinline int add_ra_bio_pages(struct inode *in=
-ode,
->                         put_page(page);
->                         break;
->                 }
-> +               add_size =3D min(em->start + em->len, page_end + 1) - cur=
-;
-> +
->                 free_extent_map(em);
->
->                 if (page->index =3D=3D end_index) {
-> @@ -526,7 +528,6 @@ static noinline int add_ra_bio_pages(struct inode *in=
-ode,
->                         }
->                 }
->
-> -               add_size =3D min(em->start + em->len, page_end + 1) - cur=
-;
->                 ret =3D bio_add_page(orig_bio, page, add_size, offset_in_=
-page(cur));
->                 if (ret !=3D add_size) {
->                         unlock_extent(tree, cur, page_end, NULL);
->
-> ---
-> base-commit: 563a50672d8a86ec4b114a4a2f44d6e7ff855f5b
-> change-id: 20240710-bug11-a8ac18afb724
->
-> Best regards,
-> --
-> Pei Li <peili.dev@gmail.com>
->
->
+> 1..0 # WWW::Mechanize not installed
+
+[1] https://testanything.org/tap-version-14-specification.html
+
+> 
+> thanks,
+> -- Shuah
+> 
+
+-- 
+BR,
+Muhammad Usama Anjum
 
