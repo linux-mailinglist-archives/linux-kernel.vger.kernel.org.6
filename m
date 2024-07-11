@@ -1,132 +1,96 @@
-Return-Path: <linux-kernel+bounces-248648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06F892E036
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:31:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D0492E01E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AF7B283393
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:31:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99EBF283786
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F68913C80C;
-	Thu, 11 Jul 2024 06:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TL4focKa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8E484DE9;
+	Thu, 11 Jul 2024 06:30:21 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACAF1C68E;
-	Thu, 11 Jul 2024 06:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF1079CC
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 06:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720679469; cv=none; b=ud3dJt0Qh5mGnPQd4o0HWmELgfsf73FwrmmRUBd9uDI6YrNE39YG6EdH1zUSxe+C9IBKmF0S1wKEMcLO5EIdvahEv3cCrmc6uOfutHUhHgARfpufgyp9AAkEIHnrtzrrmXRvb7H4l2wVsyaz+T7VX0PW+PIwjj9zgvnKzKaYrys=
+	t=1720679420; cv=none; b=GDv+RHSVTyJRcMeHj18O3rNKNRy5FKVAiSh9OXurON/CuY1rNTYo0FO0hjcNleSPDh2QExmPJhcqIi/C3zl4cEZNggDyxnaBMs1G0J2kqdOZ6pTyV9TrBqa2lwXivoUKtom3hST2BCBv2d6rl/orAs9aKtWbC+z2l3kgWtyw/ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720679469; c=relaxed/simple;
-	bh=BUannu00JepoL1Z7Ukw4YDCb+t7wSdorptXpbpSwoW4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DNoEfhSNVPuN2sE54b4swvDQUbw6H2S5za6TniBHjCbWYibZ3QGMH4pFWxk6aX2lHUpHwyfjGrHYlDih9A13sOrOZPQp/sCOsnHp0iUNA78yINTF9xLOrPiZM6V4HgHdh9/ilb5O3PLRZ4DFmji4CAGGAnxq0P8L+fkYlSQc4T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TL4focKa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BC41C4AF0A;
-	Thu, 11 Jul 2024 06:31:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720679469;
-	bh=BUannu00JepoL1Z7Ukw4YDCb+t7wSdorptXpbpSwoW4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TL4focKaTYEsMI+Z06IxZbgs8CcmQvCzawXZvTI/fxggw/kyAh7jz//5YdEPHA/xQ
-	 hxHdpjRR7+asmmp5SqLsgdOZbc9tPxarfD3HqlUUvfQbtetFgWe3VZtky4h00nzQmF
-	 q+eDwKIo0NLVUxxexGo4hwza9oXvoufsm8tcGjHPXqOLx/26ymB8hL/+8I9h1yIafQ
-	 xBzpkUv9cDAefB58AcuvCi7jwYew29Cun7EXBY6hsgZSSsxzral7P4bq8l0LQCyFb3
-	 tcZwNPUPlGmV84s7Q1iokih1B94N51bUWtF9Eh8bbe/3RU8/qtx9s1Ss3U6jhecNVc
-	 B8ip+bzg1ziZQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.97.1)
-	(envelope-from <mchehab@kernel.org>)
-	id 1sRnKc-00000002b5h-1ajO;
-	Thu, 11 Jul 2024 08:31:06 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Ard Biesheuvel" <ardb@kernel.org>,
-	"James Morse" <james.morse@arm.com>,
-	"Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
-	"Len Brown" <lenb@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	"Shiju Jose" <shiju.jose@huawei.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-acpi@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] docs: efi: add CPER functions to driver-api
-Date: Thu, 11 Jul 2024 08:28:56 +0200
-Message-ID: <c6b1b295960779c25f235ac76263c5333f0b5888.1720679234.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1720679234.git.mchehab+huawei@kernel.org>
-References: <cover.1720679234.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1720679420; c=relaxed/simple;
+	bh=KAT9RnmPL0U58mleJPhdAUKbDaq4Gt6Eq4Q3xQ2t9KE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Cnjc5Q/1YweydEM1FsIixr+J/wE37s8GL4VIVMGVhY2onMbvNcFw/NfLn0OUWO2b84mA2DvB1FEAZNIjXrDEVA+ERqKzoyT2yXPBWDeY+QMGgcgkVBwI8O/jflNvJ+ymdLTu8gpQPcFtb77drzeL/K0U9h9XQ369AI66t20GHB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WKPr91XfwzQl1c;
+	Thu, 11 Jul 2024 14:26:17 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id E3EE8140416;
+	Thu, 11 Jul 2024 14:30:13 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 11 Jul 2024 14:30:12 +0800
+Message-ID: <eb647b6d-55cb-4fa2-6e2f-642d10afa719@huawei.com>
+Date: Thu, 11 Jul 2024 14:30:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH 0/3] ARM: Use generic interface to simplify crashkernel
+ reservation
+Content-Language: en-US
+To: Baoquan He <bhe@redhat.com>
+CC: <linux@armlinux.org.uk>, <vgoyal@redhat.com>, <dyoung@redhat.com>,
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<arnd@arndb.de>, <afd@ti.com>, <akpm@linux-foundation.org>,
+	<rmk+kernel@armlinux.org.uk>, <linus.walleij@linaro.org>,
+	<eric.devolder@oracle.com>, <gregkh@linuxfoundation.org>, <deller@gmx.de>,
+	<javierm@redhat.com>, <robh@kernel.org>, <thunder.leizhen@huawei.com>,
+	<austindh.kim@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>
+References: <20240708133348.3592667-1-ruanjinjie@huawei.com>
+ <Zo0DCVXvCryDr7WN@MiWiFi-R3L-srv>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <Zo0DCVXvCryDr7WN@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-There are two kernel-doc like descriptions at cper, which is used
-by other parts of cper and on ghes driver. They both have kernel-doc
-like descriptions.
 
-Change the tags for them to be actual kernel-doc tags and add them
-to the driver-api documentaion at the UEFI section.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- Documentation/driver-api/firmware/efi/index.rst | 11 ++++++++---
- drivers/firmware/efi/cper.c                     |  2 +-
- 2 files changed, 9 insertions(+), 4 deletions(-)
+On 2024/7/9 17:29, Baoquan He wrote:
+> On 07/08/24 at 09:33pm, Jinjie Ruan wrote:
+>> Currently, x86, arm64, riscv and loongarch has been switched to generic
+>> crashkernel reservation. Also use generic interface to simplify crashkernel
+>> reservation for arm32, and fix two bugs by the way.
+> 
+> I am not sure if this is a good idea. I added the generic reservation
+> itnerfaces for ARCH which support crashkernel=,high|low and normal
+> crashkernel reservation, with this, the code can be simplified a lot.
+> However, arm32 doesn't support crashkernel=,high, I am not sure if it's
+> worth taking the change, most importantly, if it will cause
+> misunderstanding or misoperation.
 
-diff --git a/Documentation/driver-api/firmware/efi/index.rst b/Documentation/driver-api/firmware/efi/index.rst
-index 4fe8abba9fc6..5a6b6229592c 100644
---- a/Documentation/driver-api/firmware/efi/index.rst
-+++ b/Documentation/driver-api/firmware/efi/index.rst
-@@ -1,11 +1,16 @@
- .. SPDX-License-Identifier: GPL-2.0
- 
--============
--UEFI Support
--============
-+====================================================
-+Unified Extensible Firmware Interface (UEFI) Support
-+====================================================
- 
- UEFI stub library functions
- ===========================
- 
- .. kernel-doc:: drivers/firmware/efi/libstub/mem.c
-    :internal:
-+
-+UEFI Common Platform Error Record (CPER) functions
-+==================================================
-+
-+.. kernel-doc:: drivers/firmware/efi/cper.c
-diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-index 462d739e8dd1..295f6f339575 100644
---- a/drivers/firmware/efi/cper.c
-+++ b/drivers/firmware/efi/cper.c
-@@ -69,7 +69,7 @@ const char *cper_severity_str(unsigned int severity)
- }
- EXPORT_SYMBOL_GPL(cper_severity_str);
- 
--/*
-+/**
-  * cper_print_bits - print strings for set bits
-  * @pfx: prefix for each line, including log level and prefix string
-  * @bits: bit mask
--- 
-2.45.2
+It seems that x86_32 doesn't support crashkernel=,high and use the
+generic interface，and also have the first patch bug. I’ll resend the
+first patch and explain it.
 
+> 
+> Thanks
+> Baoquan
+> 
+> 
 
