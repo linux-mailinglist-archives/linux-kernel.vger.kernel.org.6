@@ -1,94 +1,115 @@
-Return-Path: <linux-kernel+bounces-248902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F51992E37D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:30:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8AE492E380
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF969280FF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:30:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706771F229C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805BF15746D;
-	Thu, 11 Jul 2024 09:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E594D10A;
+	Thu, 11 Jul 2024 09:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLytW7F4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZMFnahuW"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E3F153517;
-	Thu, 11 Jul 2024 09:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423A454903
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720690230; cv=none; b=DCD53WuZZBD8lX7g83EIfj5Ei6WKZ6TzVCUsM0cUJlXjsnE6o2oJdIvtzGEG7/AMdo36vCPOKQVnDXADxiO7wOcEuCdQFd4HKoabyrnXweosDs9U5BnIEZuC7jpjcrAGDiv7q1DGxZ0Maldr/G8k7QxDu5MP2qwfCMaIquU4wmA=
+	t=1720690323; cv=none; b=jdKl5UiiBss+Fbjys1DAxqkCtIWOLvIneiOi0rtTmb7rcDKwpn50Leim/S0JX2MMqToaIgnJLvDd5WaF2fs4hM5YGhi291Mqpt6mlYeHN5kDnvJGQv65WaLQzRHsJAmEims+Wt0/ewkX3rnYgSReRROIxp5JkD1fu/7vgd9/q/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720690230; c=relaxed/simple;
-	bh=fwng61uZXdkHe+npWT2qcYK4wFUVGgK5LbzuriidjeQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ssd3tiXe/KT3vb1Ef1dCY6wbISsaSdK1Hs9SzYngvaylNbZJY73/qGFnnkc/jQTSj6Q0JZGlfIbYFSWoIRMrMJ1A8/vC0tlUSjZW0oXiXQjh/jcWWgpyHBK5/X8jBeqRifZF/i/VAXhh79U4ZmvGDRDi7QE4zn6ta/vR0zAG4cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLytW7F4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5AEE6C32786;
-	Thu, 11 Jul 2024 09:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720690230;
-	bh=fwng61uZXdkHe+npWT2qcYK4wFUVGgK5LbzuriidjeQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=XLytW7F4L6uEf1J+XfUzOBDuyFXDt3iyFFnjCmQKNTTDpyKpcUUOwhleqwLOpTAPj
-	 uLi6Xn1Nvzw/DeZGCo9RiWFRGkJMH5PelYdbocm8PdIvaXPj531HwhWHDfXYpUIaNf
-	 +CmMU5ANsH8kFEys7euAC5FRwesCwYWwKTcDegCNaf4HmEqhgvu9f3KNiD3fnbbD9s
-	 PK4p+K3nGwaaT8HVfQIubz6ETHXV0uop9Lzhlj4m/nrELBbRr/tyYP1TRNEpoYb3EP
-	 2DBAhljCQpshcZlMYl2VfIkOSuprK4ZGyO/QB2IYwm3UyFDsWZYHgnXsRu+9MPVMzp
-	 3NlezJLrqrQow==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 44437DAE95C;
-	Thu, 11 Jul 2024 09:30:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720690323; c=relaxed/simple;
+	bh=/K4xju8p6m4TilrAA0l9EIy4LFWGDl7Uo/w+n7SfL4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aMOx6tTBn/L/PdRbwMXpTovN2ZXfbCPuv3T2WM7bNXTC+dSj2xcD7Kz9ySbXO/5hiahh6fgx4iPLGouiESwPGxx3gM/PTn/pp5cjX/UpBorYNv/lU1D0SQYa8SmrlnuJL2aTYQCBdcgFC1Gs4GJxOcrMpix6qx9vMIAaKsHis38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZMFnahuW; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=/K4x
+	ju8p6m4TilrAA0l9EIy4LFWGDl7Uo/w+n7SfL4Q=; b=ZMFnahuWB/sq9/ZF7+jf
+	hrPFNK0R8/vNZ+OuGc8D8bRFCOBfN6iMADiXgwlhdICq2PNGEyGtYENYBN3QYt+o
+	e3ypD80B9h4PEt3jbeD/fHjxavZtoM0jDUFaK3ATyKerL3/VSsX464TM/oB8unG1
+	8+wE0gQYr10iDhD0fsd1nELRllk/86wVAp18wYBSXzwtsflAMhdaWVJQLcrfPISb
+	qGJSRSb0/PpDEJTEK1HB/h2Nxgq/hIPzPN0RvmVahPpdWZhR53A4PBj52c0igOXq
+	6wCdux4cUV6QG7AtRu3qOnHq/n2pRiMp0Ri7+U9qjCBbKDUuiPA7/UDVXxFtQ8u5
+	Ow==
+Received: (qmail 795187 invoked from network); 11 Jul 2024 11:31:58 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jul 2024 11:31:58 +0200
+X-UD-Smtp-Session: l3s3148p1@u7Iob/UcNNEgAwDPXwmZAIsFIv4n+Dpm
+Date: Thu, 11 Jul 2024 11:31:57 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+	Alain Volmat <alain.volmat@st.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: mark HostNotify target address as used
+Message-ID: <Zo-mjdgXQd-opb7R@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+	Alain Volmat <alain.volmat@st.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20240710085506.31267-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3 1/1] ethtool: netlink: do not return SQI value if link
- is down
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172069023027.13694.7048522125418716493.git-patchwork-notify@kernel.org>
-Date: Thu, 11 Jul 2024 09:30:30 +0000
-References: <20240709061943.729381-1-o.rempel@pengutronix.de>
-In-Reply-To: <20240709061943.729381-1-o.rempel@pengutronix.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: mkubecek@suse.cz, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us,
- vladimir.oltean@nxp.com, andrew@lunn.ch, arun.ramadoss@microchip.com,
- Woojung.Huh@microchip.com, kernel@pengutronix.de, netdev@vger.kernel.org,
- UNGLinuxDriver@microchip.com, linux-kernel@vger.kernel.org
-
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue,  9 Jul 2024 08:19:43 +0200 you wrote:
-> Do not attach SQI value if link is down. "SQI values are only valid if
-> link-up condition is present" per OpenAlliance specification of
-> 100Base-T1 Interoperability Test suite [1]. The same rule would apply
-> for other link types.
-> 
-> [1] https://opensig.org/automotive-ethernet-specifications/#
-> 
-> [...]
-
-Here is the summary with links:
-  - [net,v3,1/1] ethtool: netlink: do not return SQI value if link is down
-    https://git.kernel.org/netdev/net/c/c184cf94e73b
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8Oc0izMmPGwjjRq6"
+Content-Disposition: inline
+In-Reply-To: <20240710085506.31267-2-wsa+renesas@sang-engineering.com>
 
 
+--8Oc0izMmPGwjjRq6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jul 10, 2024 at 10:55:07AM +0200, Wolfram Sang wrote:
+> I2C core handles the local target for receiving HostNotify alerts. There
+> is no separate driver bound to that address. That means userspace can
+> access it if desired, leading to further complications if controllers
+> are not capable of reading their own local target. Bind the local target
+> to the dummy driver so it will marked as "handled by the kernel" if the
+> HostNotify feature is used. That protects aginst userspace access and
+> prevents other drivers binding to it.
+>=20
+> Fixes: 2a71593da34d ("i2c: smbus: add core function handling SMBus host-n=
+otify")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Fixed the commit message, rebased to for-current and applied to
+for-current, thanks!
+
+
+--8Oc0izMmPGwjjRq6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaPpo0ACgkQFA3kzBSg
+KbbUpw/+Jaxs4GwneP0P8fGi00uhdAnwstPGDr9lk8TCgYGHNDmmgGkcjhQrv8RJ
+KHJ3uesRV+o9H7hgD2aaUtRL0+TTc8h3LK0EsQuqJF+33ydPwUf5foE7jDi6aPh1
+kVUaRcPsOVmG81nk+d3goSdIcv7xlq8ZLZ8ekiPIu0/IWN7Ah4n5F6qLj671Odud
+aKFtn5XNKD9WKcaZxTP6PblCi4XjKNPGA6LHDKy9EI965OMKdUvFGFWHAjDb1Wf0
+x9jqunwN6bBRXZ1Q7ar1UKeAfT5FkQPjnKtOG9xpL52zlCN8d8UTMtwTJVRnUXMr
+lD3tFJq4sYksG9qTkZpHsGLpqbaugx4G5s3Egw/asdJ/3H/QBdEkU7PSClMiNpwS
++ivoz2MLhU7gurU8s+qAut0Wd+htKOnlQ8l0449LDMkm13bEYpc1UZKDhGcdLiKb
+jIl9pct0N88vX7lPjiGBuqV1f6XYLxQsSWhlPVQAuNxgvy1Bx5kFkKsea2pZ9MMY
+7u1/VWJliIDxzGHrzU7RHJhCl+kMRf2UJ2vBut7U7s5Rhwf9DsCEMmMuKSbAL9cW
+2x6Muu53MazzFdDkOUO4XdYu+o3I588o8EMe5nXw6oBmsh3NnFa0tKu8/fHOUIGu
+tJGsx1ybqgyii9xbQD4dHv05Th1b2xpqcg1kMi/4r4k7D9kZQSc=
+=JXwk
+-----END PGP SIGNATURE-----
+
+--8Oc0izMmPGwjjRq6--
 
