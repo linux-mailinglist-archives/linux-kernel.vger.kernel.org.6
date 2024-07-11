@@ -1,141 +1,120 @@
-Return-Path: <linux-kernel+bounces-249737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7CF792EF2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:51:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8326C92EF30
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36B29B229E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:51:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B0741F2427B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A05A16E893;
-	Thu, 11 Jul 2024 18:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FBA16EB42;
+	Thu, 11 Jul 2024 18:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LyvdAvB6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aM+JIVu/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCCF28FF
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D34116DEC9
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720723870; cv=none; b=uoV/6JeJZaFyrOTX1BXQOaSQjP5L/IRGpBXSDins0j+1prlh1bYsgAKy+kqY6q/qEk3b7fs9eYJCfNMrkPtrz79EIlJBjhC5fT/6PPmwsIQ1TjcXUqZavSU17yTfCns47IeTo3Qsg7vgcIEe6J1JThZ0C7DXrAwplvPl6VmMQYg=
+	t=1720723892; cv=none; b=IXUbj3SCCfZs9iNXz9xiVr8X/6MLZ2dX6IeKiTIcorWBQ3qFG01xLFN3Zzc7bgkIa2luexrDd9CgMy2R33KunyC2TRSd+iLK65YndYVRavnCynle4SB/oAlobmnkdRhoLceCeQ4/eV2KVB1XR3D3jPxjx4qFjKZ444otG41UiRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720723870; c=relaxed/simple;
-	bh=zhquo+oCsRV0hgu0alt1y9eCACTWN7cPkiK8rThrMGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JIogJqHAFVei+sAMZ/Dnmq978FqJMPouQtR3nl3eMlVfLo3N8CGB5eHz5vdOOmLzaHCLkOjyvBauo1mdIJ94VNBAihEKx06oycZ8nS4USnC/a4tf4WZCN8Unw0w3Gv2GaZSgF0OQ3tgd895tCl0plN6r2csPLuulkNjLorqaeDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LyvdAvB6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BDBB79008745;
-	Thu, 11 Jul 2024 18:50:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kU90E4EzVBWO/hKTiAhZwsQuZeXFe5mA7pm/NB52++4=; b=LyvdAvB69X0Qxu62
-	junCU9WNF95j6PGc4lnNgi8FX3jSKak3iir60Aml2bwB3t9SJ8NDBYMhuvs4xCee
-	UrB9NRj3uaoal6opPY2Wx/KSVJLGoI3EQt1lxgEDq0gbtNHh0gEByHz6m+TM0aGd
-	b8E9/DVo4PkeB1T5SeOEXYJkvIoKEvIFtPjYRecEwJMtr/qBUkoZ0jcfnCnhWimt
-	lBt3LpeHkPpepkak+TNYG8j3wWHXyBYXHzoGmT0EY42+6TGYila/cEwNYKaDozNA
-	F5LgrxXOoaalWuNe/cshohy41tihpOrH3PFzfQ5wlgUWmxUOwIQ38K6ZwTz1MCTC
-	7+YCQQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x51dg84-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 18:50:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BIoL0E024082
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 18:50:21 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 11:50:20 -0700
-Message-ID: <b1f79d00-80bc-4beb-8d49-6e626b79b97c@quicinc.com>
-Date: Thu, 11 Jul 2024 11:50:12 -0700
+	s=arc-20240116; t=1720723892; c=relaxed/simple;
+	bh=GbVV3xtyV+YHsn6PR2MxtBSTwiFfW2plyd+t2FmGEs0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Zv0DWDllZVhHvA81Ug2m7dWHLTWkTrKXiSp0kp8xKhaHKrRljDR9xsYFzrts5bXcINakvQk07Q1TYKBco9q3dnc0y/9s27azQlkBWEUCKCIizjciTgegFwC9EmUz4DLViho+uP6p+fLNcQ/dKxufzC+i/epxY89J5X6CeX8CjFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aM+JIVu/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720723890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZuNkKNqv9pZLBGUFjsKQZGxQRVrivTuf741mq7BYdgk=;
+	b=aM+JIVu/kQuPRe3XuWdEIMUNiB7sup3h6rpiFE65p44bQ0kfmBJ4FiWLFIG95Nrf6pWRIl
+	lSo+Ck6lorTaSKZ8hAnStkoYrpv1lG6gHis2r9UoptRt3sCrHz73cd9f8Wclng+MEoeTPo
+	3IV8+JR955rqghNZJUGyheClOoNyUTM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-612-wdVIOE8_NfOMjSY0DG08nA-1; Thu,
+ 11 Jul 2024 14:51:26 -0400
+X-MC-Unique: wdVIOE8_NfOMjSY0DG08nA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 331B31955F56;
+	Thu, 11 Jul 2024 18:51:22 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C377A19560AA;
+	Thu, 11 Jul 2024 18:51:21 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id 1497330C1C19; Thu, 11 Jul 2024 18:51:17 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id 110B03FB48;
+	Thu, 11 Jul 2024 20:51:17 +0200 (CEST)
+Date: Thu, 11 Jul 2024 20:51:17 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Mike Snitzer <snitzer@kernel.org>
+cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>, 
+    Alasdair G Kergon <agk@redhat.com>, 
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+    Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the device-mapper tree
+In-Reply-To: <Zo_mnW5NcRBkWejT@kernel.org>
+Message-ID: <ebfd8bf4-6260-f04-38f9-2ec234968171@redhat.com>
+References: <20240711121729.0d71308e@canb.auug.org.au> <947e6d6b-f798-4f04-b6d7-d18ad550db66@kernel.dk> <Zo_mnW5NcRBkWejT@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/mm: add testmmiotrace MODULE_DESCRIPTION()
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu
-	<mhiramat@kernel.org>,
-        Karol Herbst <karolherbst@gmail.com>,
-        Pekka Paalanen
-	<ppaalanen@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy
- Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav
- Petkov <bp@alien8.de>, <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>
-CC: <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TVytbWzRQGN5Kw_RiD9K3gyN9tJ4nIXH
-X-Proofpoint-ORIG-GUID: TVytbWzRQGN5Kw_RiD9K3gyN9tJ4nIXH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_14,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110130
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 5/15/24 17:06, Jeff Johnson wrote:
-> Fix the following 'make W=1' warning:
-> 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/mm/testmmiotrace.o
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->   arch/x86/mm/testmmiotrace.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-> index bda73cb7a044..ae295659ca14 100644
-> --- a/arch/x86/mm/testmmiotrace.c
-> +++ b/arch/x86/mm/testmmiotrace.c
-> @@ -144,3 +144,4 @@ static void __exit cleanup(void)
->   module_init(init);
->   module_exit(cleanup);
->   MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Test module for mmiotrace");
-> 
-> ---
-> base-commit: 8c06da67d0bd3139a97f301b4aa9c482b9d4f29e
-> change-id: 20240515-testmmiotrace-md-c6050c66a517
 
-I don't see this in linux-next yet so following up to see if anything 
-else is needed to get this merged.
 
-I'm hoping to have these warnings fixed tree-wide in 6.11.
+On Thu, 11 Jul 2024, Mike Snitzer wrote:
 
-/jeff
+> > Looks like the dm tree is re-applying patches yesterday rather
+> > than pulling in the dependency?
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm.git/commit/?h=dm-6.11&id=e87621ac68fec9086d9f0af4fe96594dd8e07fbb
+> > 
+> > why?
+> 
+> Really good question.
+> 
+> Mikulas has been handling DM for the 6.11 development cycle.  But I've
+> helped answer question and such along the way.  We actually had a
+> meeting on Tuesday to discuss outstanding patches (in patchwork) and
+> specifically discussed this very patch.  At the time I said I would
+> get with you to make sure you were the one to pick up Damien's 5
+> patches (which included what is now commit e87621ac68fe in block).  I
+> specifically said that the entire series should go through block
+> because even if DM picked up the one "dm: Refactor is_abnormal_io()"
+> it'd cause problems because block would then depend on DM for a simple
+> prep commit needed for later a patch in series.
+
+I probably badly understood it, I added the patch to my notes and then I 
+thought that I should apply it. Sorry for that.
+
+Mikulas
+
+> Anyway, I later saw you had already picked up Damien's series and had
+> no need to reach out to you, I noted as much to a group chat at Red
+> Hat (Mikulas included).  So not really sure what happened.
+> 
+> Sorry for the noise/trouble.
+> 
+> Mike
+> 
 
 
