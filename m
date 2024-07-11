@@ -1,112 +1,334 @@
-Return-Path: <linux-kernel+bounces-248703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8BE92E0DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:31:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D301A92E0EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:33:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D6BE1F22339
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:31:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F5D81F20F91
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18760148FE8;
-	Thu, 11 Jul 2024 07:31:29 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B67148FFC;
+	Thu, 11 Jul 2024 07:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="OkQ/mKZK";
+	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="ZDf29vfv";
+	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="dTnD9rKT"
+Received: from e2i411.smtp2go.com (e2i411.smtp2go.com [103.2.141.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED454EB55
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AF3130A47
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720683088; cv=none; b=s53XwmCh/v7NU5h10BzoQa1AD/XeL4Lqq/GDieWT0YwIBbdwiiUIaPI7Z6SsV5+K8KUczoopSFBUJaN5iDxcDK5qC6+oz7xFaG8YqUhC4JOVLvrpgoAhsMZjP8el3+3fN3MIpg0oUlMlkcXmuOSNJv6dyVfTrplNB5/Em5cCU9M=
+	t=1720683193; cv=none; b=Sw57AEEmKjit9KD6mQrVvdwgnAA1kDwfghQQ6OAnh1No/v/KvCg8nScryN8pHtCFCVxSQVxsE2291BCiDOUsCh09Syy6Csoho+AV/AX0ht/5o+ut6Zd7mKUL5qu0FsDsw+cEBk6pY2IMBSoLJo7/sYf3WYQkqSqBx08n9oTYR14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720683088; c=relaxed/simple;
-	bh=2ykrV+db0A9oXfPwOZSh0YWS78FhI0FWtnZN5Z6XYCg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Spr0H6g5u6v5tbff9HIUvVyYbGMEkbukaNMArhMPe6vBT6QkTB8zbRJQYM6fdJRJPuUw4jwICuPrL1edWYViP53+zFz85vxlSf6Atj8zWuKRzrY+0X2O+T1LUWC+8NGuffOiOArhedQLaQJ/pAhrFZqres9+8tJkLhIqq6uNJRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-80627fd1a81so45340539f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:31:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720683085; x=1721287885;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IxiJdl4VtQvTNmrKCocRbqkV0SinbYelbc+wAZLmHNQ=;
-        b=gI1gdO5Bba718qExaWqQAD9pq88iKZDOSQr/1JOqkoEjxJDaczaf1J0oRucFgSKFKi
-         YSgnHTtjK6pxJ3w+LebZoWW0gjV1M4Xjk02Ebozdxo+Jchnyl+5z02LmCLwokjV6dVU/
-         fvtLv/aHfewpNaEnb4wcaPOCqkrGwPG4slHCsPlIt3fCdz0f0X2/NBs+DrZLUiYUXod3
-         +gMxcg/wXvlCbViq5dg9jr/IhHsQukUiDqoHqAjuksKJcfoN9HfV8gvDAbjtdkptbvJH
-         oFFqn+2vX4pNIwt8IfMMSTjA7n0cPPFcPnlRYZlrHL1vtDGSO6Knvl7s/V0xZCZf7sTs
-         s22A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ34pyavk5/hnUCFlgOO2Y33gDEb1t3iD4+bjOTV4AQNSeEgUBQRSfnM+xdO/MUonr2v88dGX33tayyAKTk4BtbmfzFZdibld0LPA6
-X-Gm-Message-State: AOJu0Yy7mgv5kG3LDdO12hWYqQ7U/cVyA8K7uiCLrmRs8+UQ6fD4LH3G
-	3jto94un/alsRQ2k8pQRoXfeZC5GB7JaDWc0vhkYm1U/zzmdCGORwnL8Dm9Mh+r3xUPxTVoy9kU
-	x+YbiF6irrk7kuh9sAe9GBhqh/ts5nCADz/JzEYrdYWddNBIpzdadIwQ=
-X-Google-Smtp-Source: AGHT+IFWckUCxHgwYGtn24fWh3b9Aa1oJyYIW3pH83j2rqWMToR0Qm4RcwrF2vzeHHitwxBvKQan6wwAGETGzhd46Y1AOmGtVRh0
+	s=arc-20240116; t=1720683193; c=relaxed/simple;
+	bh=tmLvCWTAKrNvC+hTqcmobUhdkjTB6x/wWsoTeFLiEa0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dRctiac9JjSksjAyjL6ifC8f+xVX8+LdtzCqHNHMjO//M5Psx0s93pm8N0Zg0pQIL9Mj9ixVafGFtAl8fUzb+YjPYBVvDdoaHHqm1Oxqa7ZxHbYw+Uo9NSnFUd6JZDposuDZEC5tpGgvvYFVuPX5VQrdvQ6Nua/kYR0jdqEGWYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=OkQ/mKZK reason="unknown key version"; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=ZDf29vfv; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=dTnD9rKT; arc=none smtp.client-ip=103.2.141.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=mp6320.a1-4.dyn; x=1720684081; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=LhhC1XDkDuM3AReiatmP9njXLuykYg2VbD9+n1H5eAE=; b=OkQ/mKZKtz5iDpT3L7fRUg0V7j
+	pbLjB13QxOwlcXO+aljLNoNyHvAwZVoob6E0BMz4uDwUra80PFliDoqZsHvJP34DYO6hfa1gcT4nQ
+	pXzd7UJjlPQI4caDXg1FMhSqnp8F4Rqm0F3cL+ssYuJM1x+kY7aMXCj0HANcAQsJyOIX0/gOv7Gbq
+	u1bYtCHQjEwJsferq0FXM8Qexp3B21l8m173B00sab3uPtG2r9habMHhv5zy0eticeymBBocShQOp
+	83pCb/g6SrrRCpOI0kKTGjkJvQ9WD7GgOcCxiJwlQ8ZQoLqfO2iFvlJi5JmCFTy79Ra9sZOutK906
+	CC6m61rg==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
+ i=@fjasle.eu; q=dns/txt; s=s1174286; t=1720683181; h=from : subject :
+ to : message-id : date;
+ bh=LhhC1XDkDuM3AReiatmP9njXLuykYg2VbD9+n1H5eAE=;
+ b=ZDf29vfvjWaHCqO8Ptk3Rer8O3fxFg0ZZ8xV5NCnChQ1Kc2kOn953BJqM6fWsxc4g60Gj
+ GOCdHPlo473VDufnYpi7PmRFqB50uBDUOU056gKlrtEW6M8Rx2DFBlizRlrJ+cF5gIzoa1G
+ WoDxrgw1TVf1WhVVNgrNvq65SmyhKvRPD+BMDQ8bZrZqxVhynQTsYqdogwi8LHJsamlgC9v
+ akx1o23W+42OkN/MapBeh6cV1+M+egIDf0Sre2KNTq3k4BjN3sBoMFuvxqTnDNXaH8VTC4b
+ 5OV6LSFSBAetjof2kuJE3pzQmR2sE+CIWQmAvlcU4R9jG/fbHthb+Ri4RRaA==
+Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <nicolas@fjasle.eu>)
+ id 1sRoHy-TRjx74-2c; Thu, 11 Jul 2024 07:32:26 +0000
+Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
+ by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.97.1-S2G) (envelope-from <nicolas@fjasle.eu>)
+ id 1sRoHx-4o5NDgrgPEw-mkkl; Thu, 11 Jul 2024 07:32:25 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
+ t=1720683144; bh=tmLvCWTAKrNvC+hTqcmobUhdkjTB6x/wWsoTeFLiEa0=;
+ h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+ b=dTnD9rKTeX0q63zhPwi/SPZEvF3+zHJ7MUg0YD55cxD70lCgK+fVIGWbDVUm1XOP/
+ UmeOyJeCCNyGw6MUZfmbtkh1sQg5ksOBAB8i9dmdQnyDXIm2iZkSdCokeV0Y981TP/
+ 6MXmDa6pr1xybtzr7HwoqUGnA6YjYDm6ny1XpyPM=
+Received: by leknes.fjasle.eu (Postfix, from userid 1000)
+ id CEAD73E8F7; Thu, 11 Jul 2024 09:32:23 +0200 (CEST)
+Date: Thu, 11 Jul 2024 09:32:23 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>,
+ linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v4] kbuild: add script and target to generate pacman
+ package
+Message-ID: <Zo-Khw3jf-hSdD2S@fjasle.eu>
+References: <20240710-kbuild-pacman-pkg-v4-1-507bb5b79b2a@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:34a4:b0:4ba:f3bd:3523 with SMTP id
- 8926c6da1cb9f-4c1bdedeac6mr126608173.2.1720683085409; Thu, 11 Jul 2024
- 00:31:25 -0700 (PDT)
-Date: Thu, 11 Jul 2024 00:31:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000013c187061cf3c09c@google.com>
-Subject: [syzbot] Monthly bluetooth report (Jul 2024)
-From: syzbot <syzbot+listf73783798eb5d74d411e@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, marcel@holtmann.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature"; boundary="lZCcCeLzBRWDqdbM"
+Content-Disposition: inline
+In-Reply-To: <20240710-kbuild-pacman-pkg-v4-1-507bb5b79b2a@weissschuh.net>
+X-Smtpcorp-Track: Gackt8EGT7Cw.5SnQHwss6gV6.n34Lsw7Wakr
+Feedback-ID: 1174286m:1174286a9YXZ7r:1174286soGnZe9LlT
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-Hello bluetooth maintainers/developers,
 
-This is a 31-day syzbot report for the bluetooth subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/bluetooth
+--lZCcCeLzBRWDqdbM
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-During the period, 10 new issues were detected and 1 were fixed.
-In total, 53 issues are still open and 64 have been fixed so far.
+Sorry, I sent my last mail to quickly.  Three things below:
 
-Some of the still happening issues:
+On Wed, Jul 10, 2024 at 09:32:28PM +0200 Thomas Wei=DFschuh wrote:
+> pacman is the package manager used by Arch Linux and its derivates.
+> Creating native packages from the kernel tree has multiple advantages:
+>=20
+> * The package triggers the correct hooks for initramfs generation and
+>   bootloader configuration
+> * Uninstallation is complete and also invokes the relevant hooks
+> * New UAPI headers can be installed without any manual bookkeeping
+>=20
+> The PKGBUILD file is a simplified version of the one used for the
+> downstream Arch Linux "linux" package.
 
-Ref  Crashes Repro Title
-<1>  21879   Yes   possible deadlock in rfcomm_sk_state_change
-                   https://syzkaller.appspot.com/bug?extid=d7ce59b06b3eb14fd218
-<2>  13079   Yes   possible deadlock in rfcomm_dlc_exists
-                   https://syzkaller.appspot.com/bug?extid=b69a625d06e8ece26415
-<3>  5305    Yes   WARNING in hci_conn_timeout
-                   https://syzkaller.appspot.com/bug?extid=2446dd3cb07277388db6
-<4>  3382    Yes   KASAN: slab-use-after-free Read in __hci_req_sync
-                   https://syzkaller.appspot.com/bug?extid=27209997e4015fb4702e
-<5>  3246    Yes   WARNING in call_timer_fn
-                   https://syzkaller.appspot.com/bug?extid=6fb78d577e89e69602f9
-<6>  680     Yes   general protection fault in skb_release_data (2)
-                   https://syzkaller.appspot.com/bug?extid=ccfa5775bc1bda21ddd1
-<7>  411     Yes   KASAN: slab-use-after-free Read in sk_skb_reason_drop
-                   https://syzkaller.appspot.com/bug?extid=f115fcf7e49b2ebc902d
-<8>  250     Yes   general protection fault in lock_sock_nested
-                   https://syzkaller.appspot.com/bug?extid=d3ccfb78a0dc16ffebe3
-<9>  249     Yes   KASAN: slab-use-after-free Write in sco_sock_timeout
-                   https://syzkaller.appspot.com/bug?extid=4c0d0c4cde787116d465
-<10> 120     Yes   KASAN: slab-use-after-free Read in skb_release_head_state
-                   https://syzkaller.appspot.com/bug?extid=d863bc2d28ef7ff42984
+The package is actually called "linux-upstream", right?
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> Extra steps that should not be necessary for a development kernel have
+> been removed and an UAPI header package has been added.
+>=20
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> Tested-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Thomas Wei=DFschuh <linux@weissschuh.net>
+> ---
+> Changes in v4:
+> - Update MRPROPER_FILES
+> - Unify shell variable syntax
+> - Link to v3: https://lore.kernel.org/r/20240708-kbuild-pacman-pkg-v3-1-8=
+85df3cbc740@weissschuh.net
+>=20
+> Changes in v3:
+> - Enforce matching architectures for installation
+> - Add Reviewed-by and Tested-by from Nathan
+> - Link to v2: https://lore.kernel.org/r/20240706-kbuild-pacman-pkg-v2-1-6=
+13422a03a7a@weissschuh.net
+>=20
+> Changes in v2:
+> - Replace ${MAKE} with $MAKE for consistency with other variables
+> - Use $MAKE for "-s image_name"
+> - Avoid permission warnings from build directory
+> - Clarify reason for /build symlink removal
+> - Install System.map and config
+> - Install dtbs where available
+> - Allow cross-build through arch=3Dany
+> - Sort Contributor/Maintainer chronologically
+> - Disable some unneeded makepkg options
+> - Use DEPMOD=3Dtrue for consistency with rpm-package
+> - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-a=
+c2f63f5fa7b@weissschuh.net
+> ---
+>  .gitignore               |  6 ++++
+>  Makefile                 |  2 +-
+>  scripts/Makefile.package | 16 ++++++++++
+>  scripts/package/PKGBUILD | 83 ++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  4 files changed, 106 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/.gitignore b/.gitignore
+> index c59dc60ba62e..7902adf4f7f1 100644
+> --- a/.gitignore
+> +++ b/.gitignore
+> @@ -92,6 +92,12 @@ modules.order
+>  #
+>  /tar-install/
+> =20
+> +#
+> +# pacman files (make pacman-pkg)
+> +#
+> +/PKGBUILD
+> +/pacman/
+> +
+>  #
+>  # We don't want to ignore the following even if they are dot-files
+>  #
+> diff --git a/Makefile b/Makefile
+> index b25b5b44af10..79e8dcec6be9 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1497,7 +1497,7 @@ CLEAN_FILES +=3D vmlinux.symvers modules-only.symve=
+rs \
+>  # Directories & files removed with 'make mrproper'
+>  MRPROPER_FILES +=3D include/config include/generated          \
+>  		  arch/$(SRCARCH)/include/generated .objdiff \
+> -		  debian snap tar-install \
+> +		  debian snap tar-install PKGBUILD pacman \
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+(thanks!)
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+>  		  .config .config.old .version \
+>  		  Module.symvers \
+>  		  certs/signing_key.pem \
+> diff --git a/scripts/Makefile.package b/scripts/Makefile.package
+> index bf016af8bf8a..a5b5b899d90c 100644
+> --- a/scripts/Makefile.package
+> +++ b/scripts/Makefile.package
+> @@ -141,6 +141,21 @@ snap-pkg:
+>  	cd $(objtree)/snap && \
+>  	snapcraft --target-arch=3D$(UTS_MACHINE)
+> =20
+> +# pacman-pkg
+> +# ----------------------------------------------------------------------=
+-----
+> +
+> +PHONY +=3D pacman-pkg
+> +pacman-pkg:
+> +	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+> +	cd $(objtree) && \
 
-You may send multiple commands in a single email message.
+Please prefix this line with a '+' to allow make job-server delegation to
+sub-make called via makepkg.  This will prevent the make warning
+
+    make[3]: warning: jobserver unavailable: using -j1.  Add '+' to parent =
+make rule.
+
+
+> +		srctree=3D"$(realpath $(srctree))" \
+> +		objtree=3D"$(realpath $(objtree))" \
+> +		BUILDDIR=3D"$(realpath $(objtree))/pacman" \
+> +		CARCH=3D"$(UTS_MACHINE)" \
+> +		KBUILD_MAKEFLAGS=3D"$(MAKEFLAGS)" \
+> +		KBUILD_REVISION=3D"$(shell $(srctree)/init/build-version)" \
+
+Just a note: In Masahiro's current kbuild tree 'build-version' has been mov=
+ed
+to scripts/build-version.  But I don't know on which base this patch will
+possibly be applied to.
+
+> +		makepkg
+> +
+>  # dir-pkg tar*-pkg - tarball targets
+>  # ----------------------------------------------------------------------=
+-----
+> =20
+> @@ -221,6 +236,7 @@ help:
+>  	@echo '  bindeb-pkg          - Build only the binary kernel deb package'
+>  	@echo '  snap-pkg            - Build only the binary kernel snap packag=
+e'
+>  	@echo '                        (will connect to external hosts)'
+> +	@echo '  pacman-pkg          - Build only the binary kernel pacman pack=
+age'
+>  	@echo '  dir-pkg             - Build the kernel as a plain directory st=
+ructure'
+>  	@echo '  tar-pkg             - Build the kernel as an uncompressed tarb=
+all'
+>  	@echo '  targz-pkg           - Build the kernel as a gzip compressed ta=
+rball'
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> new file mode 100644
+> index 000000000000..b0b133ac28eb
+> --- /dev/null
+> +++ b/scripts/package/PKGBUILD
+> @@ -0,0 +1,83 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +# Maintainer: Thomas Wei=DFschuh <linux@weissschuh.net>
+> +# Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+
+I am not familiar enough with makepkg/PKGBUILD: Does it make sense to put
+'set -e' here, as we (will) do in other kbuild scripts?  ('set -u' breaks
+'makepkg'.)  Without 'set -e', shellcheck asks for error handling around 'c=
+d'
+commands.
+
+> +
+> +pkgbase=3Dlinux-upstream
+> +pkgname=3D("$pkgbase" "$pkgbase-headers" "$pkgbase-api-headers")
+> +pkgver=3D"${KERNELRELEASE//-/_}"
+> +pkgrel=3D"$KBUILD_REVISION"
+> +pkgdesc=3D'Linux'
+> +url=3D'https://www.kernel.org/'
+> +arch=3D($CARCH)
+> +options=3D(!debug !strip !buildflags !makeflags)
+> +license=3D(GPL-2.0-only)
+> +
+> +build() {
+> +  export MAKEFLAGS=3D"$KBUILD_MAKEFLAGS"
+> +  cd "$objtree"
+> +
+> +  # makepkg does a "chmod a-srw", triggering warnings during kbuild
+> +  chmod 0755 "$pkgdirbase" || true
+> +
+> +  $MAKE -f "$srctree/Makefile"
+> +}
+> +
+> +package_linux-upstream() {
+> +  pkgdesc=3D"The $pkgdesc kernel and modules"
+> +
+> +  export MAKEFLAGS=3D"$KBUILD_MAKEFLAGS"
+> +  cd "$objtree"
+> +  local modulesdir=3D"$pkgdir/usr/$MODLIB"
+> +
+> +  echo "Installing boot image..."
+> +  # systemd expects to find the kernel here to allow hibernation
+> +  # https://github.com/systemd/systemd/commit/edda44605f06a41fb86b7ab812=
+8dcf99161d2344
+> +  install -Dm644 "$($MAKE -s image_name)" "$modulesdir/vmlinuz"
+> +
+> +  # Used by mkinitcpio to name the kernel
+> +  echo "$pkgbase" | install -Dm644 /dev/stdin "$modulesdir/pkgbase"
+
+This looks funny, I think I'd just use echo "$pkgbase" >"$modulesdir/pkgbas=
+e",
+but this is probably just bike-shedding.
+
+So, all in all it looks good to me, thanks!
+
+With the jobserver-'+'-prefix added:
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+
+Kind regards,
+Nicolas
+
+--lZCcCeLzBRWDqdbM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEh0E3p4c3JKeBvsLGB1IKcBYmEmkFAmaPioAACgkQB1IKcBYm
+EmnGsRAAxhgsF3AzBnBDvQL2N6EJeUfKubcnL/F+b8btfLtJRLuGZJm/lLIf/tfK
+Hm+rFqRonyC2tNml0C8H1f8T6Aln6KbZtKGM4Z3PjCTux6PQyOfSbfABfbuwHy3M
+JUWFqz8Yd+dTJ3aDmh0RAgt5ugEj+FVgqnDuMeSJknn6jDuLsEeExwz99XbDuSN0
+93k74xVezM8oEJwyXIlcYGcy6foZPSWUcU91yym0g63a8z0RNGdI1E6yXQWZRsYb
+um1u0DSfErvVJ92gzBkBAuhXYswMoCFduvnZJ+ZxA9yGXrM8F8e5UYKzKHieadd0
+Dg38LwdbXQ1kpAYYd4GUMHDECEzcyNRpwpxpNYpa0s60Qe5NogeHwBcf2rP+c4tI
+oTVq4CHOBk4CpY92XCWlCKIH0wrkP5mYL6BxiPiFSwviQ9FYV+JAN5I9uAQZqWW0
+NYLelFNJPI2yXGVnAyCawYlErnfP5vpygNIKAePNF9qI/xvMoJEU2oT8Vn79NEwx
+9xSDHLzIFSRZvnX5xH2KTkLldiUv5KUZgyUTZDt4csSJM1wxwHOKw9V/TXXgWxdO
+OAqXI4weabHi2m63iqJirH4jrjnYXa0h7A652SXSrXsDnrqGIz6OLzKCuH2K/iwI
+Y7/50QpU/Q+jRRGYlT720aI0lo/705ddrlBqJx2E3trdE0Pzl9I=
+=fxKc
+-----END PGP SIGNATURE-----
+
+--lZCcCeLzBRWDqdbM--
 
