@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-249972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC68D92F25D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:57:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A98092F260
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 412CFB20C76
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:56:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 567D5283B54
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81AF1A071F;
-	Thu, 11 Jul 2024 22:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C121A072B;
+	Thu, 11 Jul 2024 22:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PgIrD0AN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GA7thgnN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2335616D4E8;
-	Thu, 11 Jul 2024 22:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F24D1A01B3;
+	Thu, 11 Jul 2024 22:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720738608; cv=none; b=gq34LUkE3scR9geVMvCiVss7igk4y7xMwLtqmjS4yuBolfvE7K13eos9RpryUsWcFbGfxfc/RBQvRs2vM2ZeCPaednt/TOdQTqCDtFxS4/OR/PRo/jdoRFXO+N6hRhG2Kmyuium4Ep6hKP7ZcWC+XV/jBfWnzWM6Ah9BaOd+8Hg=
+	t=1720738651; cv=none; b=AGDW18bBBxZUS2vYWzA1YI+mIno7sK5ieYw8nBY03oqQlneLdjGJnHLobDRmyFeuRJcruC7s1OaBpzmhtmJxYDa+9IcKJOWYqeFD9lTuFsJhRVH17FxNMsHWZ1b3T56egvcMZ7voG77n+zVLrzFxolw4RsQm8mk1B9+2cfSIEac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720738608; c=relaxed/simple;
-	bh=wED/ceXj3SCfyfRABZxVMDXqp+ySf1JiZO58sZxJTvY=;
+	s=arc-20240116; t=1720738651; c=relaxed/simple;
+	bh=BRy0MJSdVOujlhWtcryezKcC/GnZne3D+/47B+3Lo+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVyQkAjMQILGMF/MjSolM4kEr2Q23mEn+J6mB0DU3TtKJ3r7Qw2p8RauX+od7kSV4Gawpv7h1UR2h+Tsb8RHeZ5B2igwQ19ms/+Hf0AqHSccLe+Yex2IaZr/K7PsKoUZ54b8TfWHaESnbriCs0ukOrO2X0QiZ14gE8bh8Yszklg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PgIrD0AN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB1DC116B1;
-	Thu, 11 Jul 2024 22:56:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XiXMX+h2ZiWKtf15RuqR5kIC+z3aGAWIHCX5nx5HTCXcysiNP0+GCucEPrQwMC9Lk2VV4dwmkCZNJfgFyr6PZT/fCf6eh7WrHhvIphNTSnD70MWSs2df5hsgRv6wmC7Dkg0eokvbQ9w9f1OLvZrdba/oRgQn4Pea4dIh68DvmNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GA7thgnN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A78C116B1;
+	Thu, 11 Jul 2024 22:57:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720738607;
-	bh=wED/ceXj3SCfyfRABZxVMDXqp+ySf1JiZO58sZxJTvY=;
+	s=k20201202; t=1720738650;
+	bh=BRy0MJSdVOujlhWtcryezKcC/GnZne3D+/47B+3Lo+8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PgIrD0ANTFLW/WvPS/Q/nCg9ViROWv8tS/RbiRZKKzbOvPTc2DERFZJIsYS/5y1ig
-	 ncu4PDANpIg7Cfm166EcrdSLVi3P88jWnCSZVcEo/5JZlG98SOC+OdYxdD8w9qFO8x
-	 1OXTq58n0B2dHgw0XKAW+mmMq2ZKcA14Zet9UL99KzLZRaPy8aouO0wUnyYVcsbsDr
-	 opiEFgelizNv8fnOgoS8UpHjeJzYYJaBWYDaffzYVS2Nd0wye95Xdk5Aocl1cfX4Ps
-	 h8OTzOjOoIGRlQezULAWjuSsYQqVzzNDGrUigniYN+5NNS1Vqo+2opMgkthv6WCwyr
-	 4XwrHaux5pwfQ==
-Date: Thu, 11 Jul 2024 16:56:46 -0600
-From: Rob Herring <robh@kernel.org>
-To: Valentin Caron <valentin.caron@foss.st.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	b=GA7thgnNsbkEf2K9+nbxIH39bhCYsni85QYGw3IeeNzgwYnEBEkoOesEy0tn3bS00
+	 WmBKEvW7Zd9Fv5G8lg+9wSl1gK45+2szV7RiqQ7gPPnX2Qda3jhF2tXW0EqXDYCA10
+	 lD7VbO8l471xRcgrJ87u7Se7dCZh2YwyGrNBaH/PTZHoH8BVqbwrAPxybQNncpvGiO
+	 /mnTA5CP0x1GxGrYTmOp1FZQLpP/8Jl/r5BHYlmeaurBG3wrTh2FNMg5g6KGPpc5Zv
+	 hepSwZ90tQKqDiD4izkh0VSgv/Xly+cJeFBovE1FTp2Ajfeh5Mhk8O9ql9PVZyXWnf
+	 g1rSuuSzvCmAA==
+Date: Thu, 11 Jul 2024 16:57:29 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: nicolas.ferre@microchip.com
+Cc: linux-kernel@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Amelie Delaunay <amelie.delaunay@foss.st.com>
-Subject: Re: [PATCH 1/4] dt-bindings: rtc: stm32: describe pinmux nodes
-Message-ID: <20240711225646.GA3270567-robh@kernel.org>
-References: <20240711140843.3201530-1-valentin.caron@foss.st.com>
- <20240711140843.3201530-2-valentin.caron@foss.st.com>
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] dt-bindings: spi: at91: Add sama7d65 compatible string
+Message-ID: <172073864892.3275467.14128782959779333381.robh@kernel.org>
+References: <20240711165402.373634-1-nicolas.ferre@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,35 +62,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240711140843.3201530-2-valentin.caron@foss.st.com>
+In-Reply-To: <20240711165402.373634-1-nicolas.ferre@microchip.com>
 
-On Thu, Jul 11, 2024 at 04:08:40PM +0200, Valentin Caron wrote:
-> STM32 RTC is capable to handle 3 specific pins of the soc (out1, out2,
-> out2_rmp) and to outputs 2 signals (LSCO, alarm-a).
+
+On Thu, 11 Jul 2024 18:54:02 +0200, nicolas.ferre@microchip.com wrote:
+> From: Nicolas Ferre <nicolas.ferre@microchip.com>
 > 
-> This feature is configured thanks to pinmux nodes and pinctrl framework.
-> This feature is available with compatible st,stm32mp1-rtc and
-> st,stm32mp25-rtc only.
+> Add compatible string for sama7d65. Like sam9x60 and sam9x7, it requires
+> to bind to "atmel,at91rm9200-spi".
+> Group these three under the same enum, sorted alphanumerically, and
+> remove previously added item.
 > 
-> Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 > ---
->  .../devicetree/bindings/rtc/st,stm32-rtc.yaml | 28 +++++++++++++++++++
->  1 file changed, 28 insertions(+)
+>  .../devicetree/bindings/spi/atmel,at91rm9200-spi.yaml     | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
-> index 7a0fab721cf1..09221c2f8a0c 100644
-> --- a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
-> +++ b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
-> @@ -53,6 +53,28 @@ properties:
->        override default rtc_ck parent clock phandle of the new parent clock of rtc_ck
->      maxItems: 1
->  
-> +patternProperties:
-> +  "^rtc-[a-z]*-[0-9]+$":
 
-rtc--123 is valid? "*" should be "+"
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-Otherwise,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
 
