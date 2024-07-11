@@ -1,123 +1,167 @@
-Return-Path: <linux-kernel+bounces-249200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2379D92E866
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B890592E869
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64673B21DDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:39:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 296BCB22AD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAED15B98E;
-	Thu, 11 Jul 2024 12:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091A615D5A4;
+	Thu, 11 Jul 2024 12:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="xVLMbgGS"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OjJZj3V1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938E214F9DA;
-	Thu, 11 Jul 2024 12:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C9C14F9DA;
+	Thu, 11 Jul 2024 12:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720701548; cv=none; b=C/J56d8Oil4CdyIy7Q1z0+8VnEO4tFBHqhwonTPrVKZaMueC8ADHuLIfLi5SA+jWFDI9+J8du33l6yhUM0YkQuLPmntlsxlAb49EBAno3JcAgYbjUBL+bY4pyw6/X/CVDyomcPGwAh2foLWpk4NB+vTJbc2PUQjAdPA7mS+AJnI=
+	t=1720701733; cv=none; b=mFlgL94Tl2+DlKcG0B8j14TT8SprP5f2jBc15W6I1dOxG4lnGVS8T5JyUURmXk5CHW+q5z9L1hS2/428rq6N2JknOyc0QhjSYXqT/v3fNiFSvI8yq+ljKq9atJkzbMuN1kgeINoz7DXcuO4bH7KLPc7QeZnXLuWjRfHsChqqlqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720701548; c=relaxed/simple;
-	bh=I/o1l6qvwXUbNEK4rsgFm0M1JrYLAhwSlyVUEfpyT/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QhSoK09w4NyJd1XauzrGwwUyppwnJOgIUOfvX7y+UDj/xkB1AvSvsCkjtTAjnDIkbLmlGMuvemxh/+dNXDBp4yjlfAHUZjTlf7qaoG3AGwhgEQ8Aqmrl19vT1NpKIHTq67hWPc3HYHbdPlBvLUhHNc4I1xNm9o4J7K62SN7WN7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=xVLMbgGS reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 6849db892b77d304; Thu, 11 Jul 2024 14:39:03 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id B5172A035E7;
-	Thu, 11 Jul 2024 14:39:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1720701543;
-	bh=I/o1l6qvwXUbNEK4rsgFm0M1JrYLAhwSlyVUEfpyT/0=;
-	h=From:To:Cc:Subject:Date;
-	b=xVLMbgGSMSTEsvROmhkucOXPheRx8dCDqEiijG/TKr1ufG/rSGSzafcsHuZGfVucz
-	 1lCNbbYcYwdJSyx5lmGfOc2cUFxBDGKsX406hk+mmHAImiPdLVfGatYXCdaN2USjJa
-	 ofDSMYVF+cGhJdfaOuCauw3grG9jq3j7B78vxYTML0ZM2zJb53QxoC07qx7w70JzSP
-	 5aDqwiCAlc8b+h1UJZ/Kba9ojsXqcsRWOMjapNVTng+ktCrgxRNWc1/1xG/ek7sXQZ
-	 CkuGsgAkwzOGk8ZYIgrgDrawVFaG08+9th7gWi7CmFxm/yifHMYFoA5v2x3hYLzZxm
-	 DrX16h8Hgad3w==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>
-Subject:
- [PATCH v3] thermal: core: Add sanity checks for polling_delay and
- passive_delay
-Date: Thu, 11 Jul 2024 14:39:02 +0200
-Message-ID: <5802156.DvuYhMxLoT@rjwysocki.net>
+	s=arc-20240116; t=1720701733; c=relaxed/simple;
+	bh=dlfUGwii84jF8p5SUDRDlg9myqYP7D84ssMbUkuUDv4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ln6AX5DsqpN529+2Za5u3wu0b7oTU22Y4/9J4aCikXvBM+Yto6kDp7XKsf2mJfD3pDzMK95mF/0raQngTdpyloNUvK9IOboP7goSAq9+Y8KMgsdzvA3gQAxDYb8SypIj2lvkzUdOtx4HH6x33ak3zlV9t8FFHHxYIKAliYYYxCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OjJZj3V1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B4nNZ0026088;
+	Thu, 11 Jul 2024 12:42:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	H6kH1jLfoAopLbY3Q15BGpbUKRq51XC1uiFM3+Cl79Y=; b=OjJZj3V1VCoSHuTw
+	dhY8yTdCbvwMJpORIDR5yxb4+ULGATNbBokQcMh2qxBrNxusLFw5CInkuCw/XJ6B
+	pqJ23MUx7nVVVjr8246kYTEameP4gAJlWe7H9DpHJaiRBOB0SlWSsUOXRHsPJdg+
+	zENoq88GZbsX7RU1WNzfy6Jjkn6DOFmHcVRgr43NAwkZwI0PuFvgHqI2riU0bETI
+	dlBcPjo3PYzk02eFhE3PbDMhMyHDww6978I8rhGQZuqBZucV9pR/7yPfZmdcjYw/
+	q7lKOb7B2Zc0AGReaX2CeNiKr4D+otHGZhurUTDW8WazFNFb6HopFBWj/vk/IfzK
+	ibjepg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xpdv3pp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 12:42:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BCg2aH026618
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 12:42:02 GMT
+Received: from [10.50.14.217] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
+ 2024 05:41:59 -0700
+Message-ID: <b7ae3284-a89c-4128-8927-584aab136458@quicinc.com>
+Date: Thu, 11 Jul 2024 18:11:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrfeeggdehhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghr
- mhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=4 Fuz1=4 Fuz2=4
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-If polling_delay is nonzero and passive_delay is greater than
-polling_delay, the thermal zone temperature will be updated less
-often when tz->passive is nonzero, which is not as expected.  Make
-the thermal zone registration fail with -EINVAL in that case as
-this is a clear thermal zone configuration mistake.
-
-If polling_delay is nonzero and passive_delay is 0, which is regarded
-as a valid thermal zone configuration, the thermal zone will use polling
-except when tz->passive is nonzero.  However, the expected behavior in
-that case is to continue temperature polling with the same delay value
-regardless of tz->passive, so set passive_delay to the polling_delay
-value then.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-This supersedes
-
-https://lore.kernel.org/linux-pm/4940808.31r3eYUQgx@rjwysocki.net/
-
----
- drivers/thermal/thermal_core.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -1391,6 +1391,14 @@ thermal_zone_device_register_with_trips(
- 	if (num_trips > 0 && !trips)
- 		return ERR_PTR(-EINVAL);
- 
-+	if (polling_delay) {
-+		if (passive_delay > polling_delay)
-+			return ERR_PTR(-EINVAL);
-+
-+		if (!passive_delay)
-+			passive_delay = polling_delay;
-+	}
-+
- 	if (!thermal_class)
- 		return ERR_PTR(-ENODEV);
- 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: qcom: x1e80100: Update PDC hwirq map
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Abel Vesa
+	<abel.vesa@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+CC: Marijn Suijten <marijn.suijten@somainline.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240711-topic-x1e_pdc_tlmm-v1-1-e278b249d793@linaro.org>
+Content-Language: en-US
+From: Rajendra Nayak <quic_rjendra@quicinc.com>
+In-Reply-To: <20240711-topic-x1e_pdc_tlmm-v1-1-e278b249d793@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yeg_xDs3gu9qIi_C_HrXMsVX-_i4Uiha
+X-Proofpoint-ORIG-GUID: yeg_xDs3gu9qIi_C_HrXMsVX-_i4Uiha
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_08,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ adultscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ clxscore=1011 lowpriorityscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110090
 
 
 
+On 7/11/2024 3:07 PM, Konrad Dybcio wrote:
+> The current map seems to be out of sync (and includes a duplicate entry
+> for GPIO193..).
+> 
+> Replace it with the map present in shipping devices' ACPI tables.
+> 
+> This new one seems more complete, as it e.g. contains GPIO145 (PCIE6a
+> WAKE#)
+
+Thanks for fixing this, cross-checked with generating the data from the
+latest hardware documentation and this is indeed accurate.
+
+Reviewed-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+
+> 
+> Fixes: 05e4941d97ef ("pinctrl: qcom: Add X1E80100 pinctrl driver")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>   drivers/pinctrl/qcom/pinctrl-x1e80100.c | 27 +++++++++++++++------------
+>   1 file changed, 15 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-x1e80100.c b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
+> index e30e93840357..6cd4d10e6fd6 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-x1e80100.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
+> @@ -1813,18 +1813,21 @@ static const struct msm_pingroup x1e80100_groups[] = {
+>   
+>   static const struct msm_gpio_wakeirq_map x1e80100_pdc_map[] = {
+>   	{ 0, 72 }, { 2, 70 }, { 3, 71 }, { 6, 123 }, { 7, 67 }, { 11, 85 },
+> -	{ 15, 68 }, { 18, 122 }, { 19, 69 }, { 21, 158 }, { 23, 143 }, { 26, 129 },
+> -	{ 27, 144 }, { 28, 77 }, { 29, 78 }, { 30, 92 }, { 32, 145 }, { 33, 115 },
+> -	{ 34, 130 }, { 35, 146 }, { 36, 147 }, { 39, 80 }, { 43, 148 }, { 47, 149 },
+> -	{ 51, 79 }, { 53, 89 }, { 59, 87 }, { 64, 90 }, { 65, 106 }, { 66, 142 },
+> -	{ 67, 88 }, { 71, 91 }, { 75, 152 }, { 79, 153 }, { 80, 125 }, { 81, 128 },
+> -	{ 84, 137 }, { 85, 155 }, { 87, 156 }, { 91, 157 }, { 92, 138 }, { 94, 140 },
+> -	{ 95, 141 }, { 113, 84 }, { 121, 73 }, { 123, 74 }, { 129, 76 }, { 131, 82 },
+> -	{ 134, 83 }, { 141, 93 }, { 144, 94 }, { 147, 96 }, { 148, 97 }, { 150, 102 },
+> -	{ 151, 103 }, { 153, 104 }, { 156, 105 }, { 157, 107 }, { 163, 98 }, { 166, 112 },
+> -	{ 172, 99 }, { 181, 101 }, { 184, 116 }, { 193, 40 }, { 193, 117 }, { 196, 108 },
+> -	{ 203, 133 }, { 212, 120 }, { 213, 150 }, { 214, 121 }, { 215, 118 }, { 217, 109 },
+> -	{ 220, 110 }, { 221, 111 }, { 222, 124 }, { 224, 131 }, { 225, 132 },
+> +	{ 13, 86 }, { 15, 68 }, { 18, 122 }, { 19, 69 }, { 21, 158 }, { 23, 143 },
+> +	{ 24, 126 }, { 26, 129 }, { 27, 144 }, { 28, 77 }, { 29, 78 }, { 30, 92 },
+> +	{ 31, 159 }, { 32, 145 }, { 33, 115 }, { 34, 130 }, { 35, 146 }, { 36, 147 },
+> +	{ 38, 113 }, { 39, 80 }, { 43, 148 }, { 47, 149 }, { 51, 79 }, { 53, 89 },
+> +	{ 55, 81 }, { 59, 87 }, { 64, 90 }, { 65, 106 }, { 66, 142 }, { 67, 88 },
+> +	{ 68, 151 }, { 71, 91 }, { 75, 152 }, { 79, 153 }, { 80, 125 }, { 81, 128 },
+> +	{ 83, 154 }, { 84, 137 }, { 85, 155 }, { 87, 156 }, { 91, 157 }, { 92, 138 },
+> +	{ 93, 139 }, { 94, 140 }, { 95, 141 }, { 113, 84 }, { 121, 73 }, { 123, 74 },
+> +	{ 125, 75 }, { 129, 76 }, { 131, 82 }, { 134, 83 }, { 141, 93 }, { 144, 94 },
+> +	{ 145, 95 }, { 147, 96 }, { 148, 97 }, { 150, 102 }, { 151, 103 }, { 153, 104 },
+> +	{ 154, 100 }, { 156, 105 }, { 157, 107 }, { 163, 98 }, { 166, 112 }, { 172, 99 },
+> +	{ 175, 114 }, { 181, 101 }, { 184, 116 }, { 193, 117 }, { 196, 108 }, { 203, 133 },
+> +	{ 208, 134 }, { 212, 120 }, { 213, 150 }, { 214, 121 }, { 215, 118 }, { 217, 109 },
+> +	{ 219, 119 }, { 220, 110 }, { 221, 111 }, { 222, 124 }, { 224, 131 }, { 225, 132 },
+> +	{ 228, 135 }, { 230, 136 }, { 232, 162 },
+>   };
+>   
+>   static const struct msm_pinctrl_soc_data x1e80100_pinctrl = {
+> 
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240711-topic-x1e_pdc_tlmm-a6cd7a0f6cbd
+> 
+> Best regards,
 
