@@ -1,124 +1,166 @@
-Return-Path: <linux-kernel+bounces-248448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6069092DD49
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8811792DD4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EE811F22D9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F971C21B75
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B14A1C27;
-	Thu, 11 Jul 2024 00:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5662A64D;
+	Thu, 11 Jul 2024 00:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7ItivhK"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkezWg/q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0803463D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D79A36C
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720656309; cv=none; b=tW2VIs3Tkp8SIzv/3p1fDg1TOvKbkYa2D42dFfARjaAguWO+UwIV6MmewS+X1HLfHAPv6pE5Lhin4tGtS8WoFhz95vQ/5R8I/hE7/GoalBhiNZCE22dZSoSLJTfuausLFs/WI0GAFtvEIuTw8ZBpMWF9eIbIlz6Ef/cZnr2sbTM=
+	t=1720656428; cv=none; b=ApV9BCgWsLN17wzHJT6MT7wyFDd+dKAiWKndpKLPsBZFmlLhVPvjuLJ3JFI1K+BBEBAcKxkF6Z3TdRKAap1jWIzqMLUoDyjzG78hHM92TTRwVSolHsMaGVwTKDGuuGTGODIxB6nRh++sRzjyHlsR1rmdbPVlmFpqfI+Pif5ZCIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720656309; c=relaxed/simple;
-	bh=hHu/IyW6x+w5vAhpJ6MC+x6jI3h1T1ET7IgRgzFkP1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b6YasFMknee1nzEK2Fblztm+coRmFUhrKbwAFCtT2VfU61jKBrYcsRDjcEEL67sakvoPFEYp/rbVUA7LlKThdyLWPsWIjiRWyzt6RBTnT9+sglL6ekRvpNfycxXO1lPv01rH8AXV4O+Zxg2YbGXjSgkgvGMH7ZFAINF+6ahtPZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7ItivhK; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fb4a332622so1511185ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720656307; x=1721261107; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HhcXl9iADlsGgb8HLvc0JcuAcLtv+mF5by2xI/1b61k=;
-        b=J7ItivhKaWBVDPDNQKpogjSmtcfzpnoQlDAxFucu5zuAZpoJ7sgsZkolmWibZgVhyT
-         pjiUymbeTcLNZ1ZtOC7YtSkw9aJwqPsnQG/3O3d1RZsJPvqD4zvWeWOw+LOG6uF+SQRH
-         00qCbLkqisPm2Lnq29fl5CjapeYYBs0576DFooAANQ2h0Y7LdefcyswpHMjT3VLJ8A11
-         Yi5lDmeKt1CweGaV9ZfrbujvjCKls/QFswVls8RMrBIL0fUzDSSbt85Txc+1Zt2OD6WJ
-         a9PiTFel/bNYnh7P3QAtpgi71O/Q2cfJA8ghQZXCCNfv6ogsLnmJKFG3EA39u0YtoJIT
-         txhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720656307; x=1721261107;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HhcXl9iADlsGgb8HLvc0JcuAcLtv+mF5by2xI/1b61k=;
-        b=paf0z0y52++a5/QSYm+VAKFmRxPzth3cmyfITzMM6m3jF9aR5nmkaUUnZhdrvSGzWt
-         JKMsuu1jI0tdaJEgf0f/rZwP0+7irv4M6FXBKfCvIBzp4r9sXieELyVv9+RSrWSXSNZQ
-         AGhjzo+o7QrE2mSrb2ZykoxjbH+ma+Af/oRazJAxcbUsxU5i0zItWiEUmtyh30Hze/93
-         L6Wb0ZG2REeIJXc/lVvRwI3zKNfAZm6D85LMbhTSfvvnPJG8TpYkJNHQ+FToCcwf8FbP
-         K6uw8Yo8MPiQ4IDjowNTrJdyEkZXOpdGl7M8iabnryzXskrv/hyhE63dHpPc2PBeuX56
-         V8sg==
-X-Gm-Message-State: AOJu0YyR+b0cUYm/uHAaibfOQ8GNaeo2g+zbUOEdHYlt8AemYNbvv5Gl
-	81z6Gz/IKCJP7tMIBksq40zUuOIGvXokQN3Ki3+5SIL4mDuThizL
-X-Google-Smtp-Source: AGHT+IGcdq1ukj54eLusut1EYwIc3uLVIOvzbXWpk2uI5InHJr+QAtjdhXPyk3FuyJv93ncd7AaZZg==
-X-Received: by 2002:a17:902:f546:b0:1fb:8620:c0c3 with SMTP id d9443c01a7336-1fbb6d251edmr62737135ad.2.1720656307164;
-        Wed, 10 Jul 2024 17:05:07 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a10941sm39022245ad.30.2024.07.10.17.05.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 17:05:01 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 10 Jul 2024 14:05:00 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	schatzberg.dan@gmail.com, mingo@redhat.com, peterz@infradead.org,
-	changwoo@igalia.com, righi.andrea@gmail.com
-Subject: Re: [PATCH 6/6] sched_ext/scx_qmap: Pick idle CPU for direct
- dispatch on !wakeup enqueues
-Message-ID: <Zo8hrMWVw4VEIkkN@slm.duckdns.org>
-References: <20240709212137.1199269-1-tj@kernel.org>
- <20240709212137.1199269-7-tj@kernel.org>
- <20240710192523.GF317151@maniforge>
+	s=arc-20240116; t=1720656428; c=relaxed/simple;
+	bh=xHh00YildqCYFquwkJLPao1gWzbY+zfZiQ6Mt3A0MBg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BuvDHKSmxgUdp/YTd8fHKgCdBywFEO9cikQsSYr05jV/HpP6XwlKKentxwptbwHgVR1XKNm7RL6iRpls4GHg+6vrXAD31GG7CC3Cw8XWd+VULRcBxj3Zuy+gTpVNhrWgpEkTLWwK24bMLI5XUfC3siTKGL+L5ns8zZouWr5TZFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NkezWg/q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74790C32781;
+	Thu, 11 Jul 2024 00:07:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720656428;
+	bh=xHh00YildqCYFquwkJLPao1gWzbY+zfZiQ6Mt3A0MBg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NkezWg/qqsIAV3Ix8X9MnPrkaEqopHK1jOMNNhc926kdMpH21GvomkynwsYIgVE4a
+	 rr+60cy3SCQR1aGmNb6xGooKrW3ZQmm4g6BbpvFXHNbYoUTtD9zJ/KBMlg7a8ih4Ri
+	 FDqszWV11ZMGqG6+70oFKSQD8jtxzE1+BNPIcw42txkN+3rjjP/Pf9tZm47Zw9ZAFq
+	 yYtzOLMWjvL0ffqMj4gXoUvGccUnQmvSPo1rd9D4wj0RYwKQBsWaVc0xfvNMyWmNML
+	 Tbp6YQ9Q6duFQhr+wpqpg7TiJi8iMaEs40FdETnEGr6/ag6Dqup85blv/C5yjXNMJ1
+	 zd7qKvAWC1kMQ==
+Date: Thu, 11 Jul 2024 09:07:04 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: andrii@kernel.org, peterz@infradead.org, clm@meta.com, jolsa@kernel.org,
+ mingo@kernel.org, paulmck@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] uprobes: document the usage of mm->mmap_lock
+Message-Id: <20240711090704.556216a0bca595ad44ee9dbf@kernel.org>
+In-Reply-To: <20240710151006.GB9228@redhat.com>
+References: <20240710140017.GA1074@redhat.com>
+	<20240710140045.GA1084@redhat.com>
+	<20240710235159.23b8bc0f5247c358ccea699d@kernel.org>
+	<20240710151006.GB9228@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710192523.GF317151@maniforge>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Wed, 10 Jul 2024 17:10:07 +0200
+Oleg Nesterov <oleg@redhat.com> wrote:
 
-On Wed, Jul 10, 2024 at 02:25:23PM -0500, David Vernet wrote:
-...
-> > +	/* if !WAKEUP, select_cpu() wasn't called, try direct dispatch */
-> > +	if (!(enq_flags & SCX_ENQ_WAKEUP) &&
-> > +	    (cpu = pick_direct_dispatch_cpu(p, scx_bpf_task_cpu(p))) >= 0) {
-> > +		__sync_fetch_and_add(&nr_ddsp_from_enq, 1);
-> > +		scx_bpf_dispatch(p, SCX_DSQ_LOCAL_ON | cpu, slice_ns, enq_flags);
-> > +		return;
-> > +	}
+> On 07/10, Masami Hiramatsu wrote:
+> >
+> > On Wed, 10 Jul 2024 16:00:45 +0200
+> > Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > > The comment above uprobe_write_opcode() is wrong, unapply_uprobe() calls
+> > > it under mmap_read_lock() and this is correct.
+> > >
+> > > And it is completely unclear why register_for_each_vma() takes mmap_lock
+> > > for writing, add a comment to explain that mmap_write_lock() is needed to
+> > > avoid the following race:
+> > >
+> > > 	- A task T hits the bp installed by uprobe and calls
+> > > 	  find_active_uprobe()
+> > >
+> > > 	- uprobe_unregister() removes this uprobe/bp
+> > >
+> > > 	- T calls find_uprobe() which returns NULL
+> > >
+> > > 	- another uprobe_register() installs the bp at the same address
+> > >
+> > > 	- T calls is_trap_at_addr() which returns true
+> > >
+> > > 	- T returns to handle_swbp() and gets SIGTRAP.
 > 
-> Hmm, will this be a typical pattern for how this is used? I'd expect
-> ops.select_cpu() and ops.enqueue() to quite often be nearly the same
-> implementation. Meaning you would e.g. try to find an idle core in both, and do
-> SCX_DSQ_LOCAL_ON, with the difference being that you'd just return the cpu and
-> save the extra lock juggling if you did it on the ops.select_cpu() path. Not a
-> huge deal given that it's just an example scheduler, but it might be a good
-> idea to try and mirror typical use cases for that reason as well so readers get
-> an idea of what a typical pattern would look like.
+> ...
+> 
+> > >  int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+> > > @@ -1046,7 +1046,12 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
+> > >
+> > >  		if (err && is_register)
+> > >  			goto free;
+> > > -
+> > > +		/*
+> > > +		 * We take mmap_lock for writing to avoid the race with
+> > > +		 * find_active_uprobe(), install_breakpoint() must not
+> > > +		 * make is_trap_at_addr() true right after find_uprobe()
+> > > +		 * returns NULL.
+> >
+> > Sorry, I couldn't catch the latter part. What is the relationship of
+> > taking the mmap_lock and install_breakpoint() and is_trap_at_addr() here?
+> 
+> Please the the changelog above, it tries to explain this race with more
+> details...
 
-scx_qmap is a bit special in that it wants to be able to skip n'th tasks to
-test the stall detection mechanism. We can't express that in select_cpu() as
-not dispatching in select_cpu() just means that enqueue() will be invoked,
-so it just funnels all tasks, even direct dispatch ones, to enqueue(), so it
-looks a bit different from other schedulers. scx_qmap is mostly used to
-exercise different code paths and is rather messy for anyone to use it as a
-template. It'd probably be useful to note that in the comment.
+OK, but it seems we should write the above longer explanation here.
+What about the comment like this?
 
-Thanks.
+/*
+ * We take mmap_lock for writing to avoid the race with
+ * find_active_uprobe() and is_trap_at_adder() in reader
+ * side.
+ * If the reader, which hits a swbp and is handling it,
+ * does not take mmap_lock for reading, it is possible
+ * that find_active_uprobe() returns NULL (because
+ * uprobe_unregister() removes uprobes right before that),
+ * but is_trap_at_addr() can return true afterwards (because
+ * another thread calls uprobe_register() on the same address).
+ * This causes unexpected SIGTRAP on reader thread.
+ * Taking mmap_lock avoids this race.
+*/
+
+> 
+> > You meant that find_active_uprobe() is using find_uprobe() which searchs
+> > uprobe form rbtree?
+> 
+> Yes,
+> 
+> > But it seems uprobe is already inserted to the rbtree
+> > in alloc_uprobe() so find_uprobe() will not return NULL here, right?
+> 
+> uprobe_register() -> alloc_uprobe() can come after
+> find_active_uprobe() -> find_uprobe() returns NULL.
+> 
+> Now, if uprobe_register() -> register_for_each_vma() used mmap_read_lock(), it
+> could do install_breakpoint() before find_active_uprobe() calls is_trap_at_addr().
+> 
+> In this case find_active_uprobe() returns with uprobe == NULL and is_swbp == 1,
+> handle_swbp() treat this case as the "normal" int3 without uprobe and do
+> 
+> 	if (!uprobe) {
+> 		if (is_swbp > 0) {
+> 			/* No matching uprobe; signal SIGTRAP. */
+> 			force_sig(SIGTRAP);
+> 
+> Does this answer your question?
+
+No, thanks for the explanation.
+
+Thank you!
+
+> 
+> Oleg.
+> 
+
 
 -- 
-tejun
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
