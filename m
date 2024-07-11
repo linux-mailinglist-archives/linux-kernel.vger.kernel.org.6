@@ -1,162 +1,186 @@
-Return-Path: <linux-kernel+bounces-249901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333DB92F155
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:53:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFD2592F161
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8631F228D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:53:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 678921F22AD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F051A00E1;
-	Thu, 11 Jul 2024 21:53:25 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7CA1A00E1;
+	Thu, 11 Jul 2024 21:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SK4D7d3e"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D00B14BF90
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894E819F485
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720734804; cv=none; b=mwAljfQo0NvcVgV+mGMbeXLQS6kkviWEI0GiI5F+F7AxKHq2PiPu2EF+4XZLHs7gKcLzlNXpdobfAk3pL4lKXOm+LMl5p5IEal+OdK/hefH8kfmk4mMWJLjxH/11Yjn9c6CSsk9+gUewULtuJlJMm7Duk3TpQOlje2gobh1EVzI=
+	t=1720734989; cv=none; b=FL94udwnQhQiwt8ekNDbnxZ/2VkRp1bd2kZRwkr2UejqnOWN1SLZC2tmcW0kIt57+dW+uvx8cpW7E+RHU+V5RaZpDBALWmj1fDyblwfkFd+4bE9wlKeJfmYhrSsc7ST1CAxJNixSv7s7mwF+39EH1NML42C3z1nBRVj/Vt1ifHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720734804; c=relaxed/simple;
-	bh=goIEMmWra4VR/zk22neEfR4vdCzY0/UgpHk9a4hIxwU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UWSerX7dl1QMScVk5xPlSap7keUuIbJNHF4F0nRxYgQe9ZzIMx6Ek/FugRjBE8J/FX7247mK1mcCLsj0S6ivxTVu8vfOvVLPny+A/xZHy3C/NqX5VVmpODUz5i5kv2hWv5EH+cFYpAIwwBfOgMrYd/Psa0MPUWM06YlYCBx3Fig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-80502b81995so145828639f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:53:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720734802; x=1721339602;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1720734989; c=relaxed/simple;
+	bh=DIDgvcgmFmPsPPavJiQ1Vv4Swv8vnjxFF2oxXNf0ab4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NXflbUppfmqv3GSIdsAlHpS02cnjVSLs4a9fwzu4y4vQs5Ta/4Sr0EhfVATmwmCJvbZgFZV8LFTSlRyuIctMkEHCeT9BRYjAktTWJLjC+pDSi9ebM38mpwslURhJvkmpi7jf3gQ538YywCEqbIj2Xl4G5w1999cdPH/+C1wKYd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SK4D7d3e; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-8045e14c32bso3805739f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:56:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1720734987; x=1721339787; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QXJESV0WdNekAbfoHI/LlmU+KNikxwbt+E0/4D+3BZg=;
-        b=lo6wAqJcl19QmCsLeADetsAc+yLDmCaDoJXqidR8C5f+6iVD33O7EBzWmNBQ85ZDzI
-         MsyWHrLKNbVU8P0tc7c3fc88VCUtqHTdMkzva4sVZeZRZ2+0cfuJjhLzquDazcjyEJD1
-         GwSRFIjzyVzDOd19iCFzry022DPsx2TF+FdlSwqppHSfLfHETmRA1DyAU/964Jn/pvf2
-         rkznj+tGNOVcOkAB+qv664wkxRBaWnC4W04CTsYiKOliaTaVcW34jJqJb5erqjSewCwR
-         4Iu9MQWwQm4IbvOktFwNajFyObpUN1xxMAe8G0omqD7NY36a9Q9tvPZ1EU0P1+bdyy/d
-         DHBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUexYNZJi5915PG9PAQ6QBcH7/3fwQBV8p8VYioYfBLCj+B2ebYcxUYNwwtttSKwUcX8sThmeVVjQgBfM4D8rjTiEuURSxB0xcoEWOv
-X-Gm-Message-State: AOJu0Yy7ze7F/YiXABIVFpZu9GzRZJr2zWIVUOCItfkj1FBwUGyKkkud
-	KvOz08Gl9HQXaWrMFyqkUpVixs72ESNChkNonUI/YiH9xR3e87QYEGk+KTgW13HJtigmWrvBFMs
-	QqCRm611vyNsVS70m12GgzETA6tx0MRsIE7E1CA5bNAn2ZngAeXipL4o=
-X-Google-Smtp-Source: AGHT+IHVS/YlITEt2BXnTIL542JUTWdyivpk5UIPFWWjYA5LIpKxgrePwZfj+2S149fL/3tLEYZAxEiYs8lXYRiF5Ip4M4yCwrvE
+        bh=4ZqXMd/BZwDssF01cs3NfdsNolBEcWg7FCtmoecpdP8=;
+        b=SK4D7d3eZw7wdrfdMv0iOtYTZv92TcLEn3eCTAmytFkyskFblR5zGbR3NR5uaBX3wB
+         J8zI/9mtB/NB0USE1goNiQ6pJ1NeOAL9CvRpdVDiIVuoDWp0+GeAqtBw8T6IjZLxEobb
+         kPkxRG/6ZatpDOcplo8welqidv/QDzTfqwpMg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720734987; x=1721339787;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ZqXMd/BZwDssF01cs3NfdsNolBEcWg7FCtmoecpdP8=;
+        b=JmP1j0h+yAowjeUUAw0FIxGn2NUJwR8s0fgjAF2v1iVnqZj1Bd4TuEMI/VIJvdbb8u
+         AtfBWEbp0EtbnXi9xfQB8/pAukwH2ZCmm4aplr3JYd1cLk7ibQAEWufvS5R5CfyQGg/j
+         LPPNSebn+3bmskHEAaTlGJWAvW8rsT/Spe87NXtek6ir3xXb1zPzn+aojhE5KgTNGwlE
+         uRvfZvTqVSLIbvvp0z1L6G3t2U/N2f7tr6Mj2AvjldkEiP1el8GI8jtkjSvvjS5AzKoB
+         WpNeoGXR3f0Pa6iSjz/xCJxDWFhEvpFswdrahKBMSOlObSwI5FlNE8yGuultzi5QLyQA
+         Aqbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUy8Q6jkJGb2BHMWhCQvjiRjqK2xpAehNuVj5+nXmeSv+RVwKjAX30VNyKPXxsqOGaFfME7hzX1bRKhjKlNzOjrrzso+KSjKaFYxfQb
+X-Gm-Message-State: AOJu0YxIY81WUodEG0ds2BclAWa8XUOkT/okLGou+LijtYgAOcJ3QIwp
+	Nf/1YsWv8TyOTY9vB3GwJ7nFmHBYPtX7qgsyDNQ+DDt9OYh6z+pWnZE4esO9QqQ=
+X-Google-Smtp-Source: AGHT+IHJnvscnRKpA9/toeFRLI32Ul1ZlooCIKoES2PiuCfMQuLDYC5WuBwbOW5FjsA9va7SWmRfSw==
+X-Received: by 2002:a6b:6614:0:b0:7eb:2c45:4688 with SMTP id ca18e2360f4ac-806e21af79cmr362061739f.2.1720734986623;
+        Thu, 11 Jul 2024 14:56:26 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1c29d7asm2053421173.162.2024.07.11.14.56.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 14:56:26 -0700 (PDT)
+Message-ID: <e73c745a-5e2f-46f3-806a-739cfde72e8d@linuxfoundation.org>
+Date: Thu, 11 Jul 2024 15:56:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3416:b0:808:469:7072 with SMTP id
- ca18e2360f4ac-808046971bbmr16947439f.3.1720734802396; Thu, 11 Jul 2024
- 14:53:22 -0700 (PDT)
-Date: Thu, 11 Jul 2024 14:53:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a65b35061cffca61@google.com>
-Subject: [syzbot] [lsm?] WARNING in current_check_refer_path
-From: syzbot <syzbot+34b68f850391452207df@syzkaller.appspotmail.com>
-To: gnoack@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, mic@digikod.net, paul@paul-moore.com, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] kselftest: Add test to report device log errors
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Shuah Khan <shuah@kernel.org>, kernel@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernelci@lists.linux.dev, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240705-dev-err-log-selftest-v2-0-163b9cd7b3c1@collabora.com>
+ <2024071003-islamist-expediter-a22c@gregkh>
+ <71c479fb-cd25-45ec-8dd3-0521ef951f58@linuxfoundation.org>
+ <e1e32c72-6bd3-4c15-b301-c5670690ba99@linuxfoundation.org>
+ <1417b57a-ac0b-4e8c-b157-bbe9ebb14e57@notapiano>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <1417b57a-ac0b-4e8c-b157-bbe9ebb14e57@notapiano>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 7/11/24 15:44, Nícolas F. R. A. Prado wrote:
+> On Thu, Jul 11, 2024 at 01:53:37PM -0600, Shuah Khan wrote:
+>> On 7/10/24 15:49, Shuah Khan wrote:
+>>> On 7/10/24 07:11, Greg Kroah-Hartman wrote:
+>>>> On Fri, Jul 05, 2024 at 07:29:53PM -0400, Nícolas F. R. A. Prado wrote:
+>>>>> Log errors are the most widely used mechanism for reporting issues in
+>>>>> the kernel. When an error is logged using the device helpers, eg
+>>>>> dev_err(), it gets metadata attached that identifies the subsystem and
+>>>>> device where the message is coming from. This series makes use of that
+>>>>> metadata in a new test to report which devices logged errors.
+>>>>>
+>>>>> The first two patches move a test and a helper script to keep things
+>>>>> organized before this new test is added in the third patch.
+>>>>>
+>>>>> It is expected that there might be many false-positive error messages
+>>>>> throughout the drivers code which will be reported by this test. By
+>>>>> having this test in the first place and working through the results we
+>>>>> can address those occurrences by adjusting the loglevel of the messages
+>>>>> that turn out to not be real errors that require the user's attention.
+>>>>> It will also motivate additional error messages to be introduced in the
+>>>>> code to detect real errors where they turn out to be missing, since
+>>>>> it will be possible to detect said issues automatically.
+>>>>>
+>>>>> As an example, below you can see the test result for
+>>>>> mt8192-asurada-spherion. The single standing issue has been investigated
+>>>>> and will be addressed in an EC firmware update [1]:
+>>>>>
+>>>>> TAP version 13
+>>>>> 1..1
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `model_name' property: -6
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `energy_full_design' property: -6
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
+>>>>> not ok 1 +power_supply:sbs-8-000b
+>>>>>    Totals: pass:0 fail:1 xfail:0 xpass:0 skip:0 error:0
+>>>>>
+>>>>> [1] https://lore.kernel.org/all/cf4d8131-4b63-4c7a-9f27-5a0847c656c4@notapiano
+>>>>>
+>>>>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+>>>>
+>>>> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>
+>>> Is this dependent on a linux-next?
+>>>
+>>> Didn't apply to linux-kselftest next.
+>>>
+>>
+>> I tried applying these on top of linux-kselftest next which is at
+>> Linux 6.10-rc7 + other patches.
+>>
+>> I am not sure what is wrong - first patch applies and the second
+>> and third don't.
+>>
+>> git am fails and manual patch application worked for 2/3, same thing
+>> with 3.3 - these should apply cleanly since they don't have obvious
+>> conflicts.
+>>
+>> Please clean this up and send me updated series adding Greg's ack.
+> 
+> Oh, now I see what happened. I recently sent another series that touches the
+> same file (tools/testing/selftests/devices/test_discoverable_devices.py):
+> "kselftest: devices: Allow running test on more platforms"
+> https://lore.kernel.org/all/20240613-kselftest-discoverable-probe-mt8195-kci-v1-1-7b396a9b032d@collabora.com/
+> 
+> That was already merged through the usb tree, and is present on next (on which I
+> based this series).
+> 
+> In this case I imagine it's best if this series gets picked through the usb
+> tree, right? Even if I rebase on kselftest's next, there will be conflicts.
+> 
 
-syzbot found the following issue on:
+I see. No problem. It can go through usb tree
 
-HEAD commit:    8a03d70c27fc Merge remote-tracking branch 'tglx/devmsi-arm..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=174b0e6e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=15349546db652fd3
-dashboard link: https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13cd1b69980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12667fd1980000
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/efb354033e75/disk-8a03d70c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c747c205d094/vmlinux-8a03d70c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5641f4fb7265/Image-8a03d70c.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/4e4d1faacdef/mount_0.gz
+thanks,
+-- Shuah
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
-
-bcachefs (loop0): resume_logged_ops... done
-bcachefs (loop0): delete_dead_inodes... done
-bcachefs (loop0): done starting filesystem
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6284 at security/landlock/fs.c:971 current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
-Modules linked in:
-CPU: 0 PID: 6284 Comm: syz-executor169 Not tainted 6.10.0-rc6-syzkaller-g8a03d70c27fc #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
-lr : get_mode_access security/landlock/fs.c:953 [inline]
-lr : current_check_refer_path+0x4dc/0xaa8 security/landlock/fs.c:1132
-sp : ffff80009bb47840
-x29: ffff80009bb47980 x28: ffff80009bb478e0 x27: 0000000000000001
-x26: 1fffe0001b7a831f x25: ffff0000d713ef00 x24: ffff700013768f14
-x23: 000000000000f1ed x22: dfff800000000000 x21: ffff0000dbd418f8
-x20: 0000000000000000 x19: 0000000000001fff x18: ffff80009bb46be0
-x17: ffff800080b8363c x16: ffff80008afaca80 x15: 0000000000000004
-x14: 1ffff00013768f24 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff700013768f28 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d6845ac0 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000020
-x2 : 0000000000000000 x1 : 000000000000f1ed x0 : 000000000000d000
-Call trace:
- current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
- hook_path_rename+0x4c/0x60 security/landlock/fs.c:1416
- security_path_rename+0x154/0x1f0 security/security.c:1918
- do_renameat2+0x724/0xe40 fs/namei.c:5031
- __do_sys_renameat2 fs/namei.c:5078 [inline]
- __se_sys_renameat2 fs/namei.c:5075 [inline]
- __arm64_sys_renameat2+0xe0/0xfc fs/namei.c:5075
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-irq event stamp: 67226
-hardirqs last  enabled at (67225): [<ffff80008b1683b4>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
-hardirqs last  enabled at (67225): [<ffff80008b1683b4>] _raw_spin_unlock_irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
-hardirqs last disabled at (67226): [<ffff80008b06e498>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:470
-softirqs last  enabled at (66914): [<ffff8000800307e0>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (66912): [<ffff8000800307ac>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
