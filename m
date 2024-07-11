@@ -1,129 +1,107 @@
-Return-Path: <linux-kernel+bounces-249350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD4E92EA6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:14:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AB292EA71
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78C7F28109F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:14:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14136281112
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D232163A9B;
-	Thu, 11 Jul 2024 14:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500BB1662F8;
+	Thu, 11 Jul 2024 14:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Tu7Hs5cM"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oBtUnfCO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475F416130C
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852E1161901;
+	Thu, 11 Jul 2024 14:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720707271; cv=none; b=VhYLhwprIms1Lkywn5DLIXt2BHGMxczWSh+BSKYRathAXhjdWqdoxgjTnFV7uM9JKA8Zs0C32e3dkoyBIFOpZ1C7ycqkVJOObpX4eQDcdCElYy2TCc+HvY/VCVyTWXERMjSiGcdkWqCKRU+tjT8EYMY2+9qR+xyCGj45pu8UTaA=
+	t=1720707297; cv=none; b=GncJYKwa8R7kgDa26By8PZkUiriCStB0kqDQ7IhY731WacUe21wl/ZohBBchPKj7abe414HLdShw6OiOzpEFG3nnY2vhaXxsOxxpp0ck4UY0vpLyVtslseflD1NmQe28oRIbXPjqRQqMxMtyPPQ/g2YKrBL9wCw5vFGYvoCgfjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720707271; c=relaxed/simple;
-	bh=k6gEHt+xvUkeIRyoiWjWbAiSg5WbedFbm/FHPHtlVRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aU44W9+MUmYxBJBXHdjGjKlpkkLO18BuqvggLnjexUHXIpzwONFwitSt/tBkmfKtEqBzILKQb6QzQP+Pd4D46zkLCQWvtrEqHl6lylcc+5RFSvmUh2voN9r0Mz+kwEsiT9YJFZhx9Fk0wrRbhbsbXCh3PznSqR5PDnezsYcdqPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Tu7Hs5cM; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52e99060b0dso1002882e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:14:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1720707265; x=1721312065; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ETcGYWGq4nimdvPCfHodnKlCUrAHYcZUT9Kd0lfRhLg=;
-        b=Tu7Hs5cM/U/Iw/ASeGNjbQp517UHoNZcVR756O0iesE63YWkkrQU/fV/DvOXSx5f8x
-         77oEdCzBZXmMdwIt048/owv6pyW9gn0a1wn/O98g7P5OxtOhFA4n3oMIxPtxOATV4IVI
-         hPGOgtt9SF2s27jXNA9RtIwbigfVUKmNBOlOKcRyCxm/umJXHckCFWj521L+kNfwnTNN
-         gzmE2eSQan/Hx/MLx1BQm/hpojUb3zldbVv5eTLu7iywY7p9VNCx9nwLfg80uh3U9gVw
-         nJDTxj5vz4rPXjNxDcH7nGbv4OJdPHxyhiauKu6hrrpZQ3F1F0Y9RF1lQUZeHEtJ6T/e
-         ip0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720707265; x=1721312065;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ETcGYWGq4nimdvPCfHodnKlCUrAHYcZUT9Kd0lfRhLg=;
-        b=GbH08JrueQvMdZM9UYQ6jJHJNQNEMs6HrqtEprWgzBtQdEf0OXvUs0UUn2tp2OPcTV
-         hF5E/vuYtgZH/EcAiFybAQMgmIhWdnx8yZnRRCFb7Hbjl9C5sLnsnLBf4Ypa42tiR4EE
-         Ww2ncEUXzTUlB4TOY56rXH/BetL/hMGxbYG4Qu4AwoZ224KYQN9ZcRySZl0TvjnAuezP
-         6Bd5+OlPpdfAQW4EY1ZbXl694RRB5uGQKV0DVUdYNz8M2OTm9OOi2i8ycqdXq5rBuPv1
-         0br8UgIVh4MWyJEieye8yLjotWweHtPWBcHyQ17ayS5vr9iP9kIBO8PbuJ9o5D9rbzLZ
-         EjZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcQWPo2VjG4S96L4sBhVkbEek6rIMBu8213zrGC1yKqlaG974tHFidF0s/nMfwZZknc67Mp6QWvAu+whBWXDVU0XP4oVt9kxprl62t
-X-Gm-Message-State: AOJu0YySOkAMkxKoWJNJyKrK/heGRoN8ok/p2q3LH7+aQvNLvP/Nv4GS
-	IR8dV2zBciQDaZvsHalAdciMJGxoRkC2yyYPapSK7tCfg7gl0nu35xr460Pf3h0=
-X-Google-Smtp-Source: AGHT+IEzPG+qu6OL9MzbpwkC6XP8o+jkAEZwKCZapFXu49qLNouCsz3lCZ+8q2VzbI+KQgfySGooLg==
-X-Received: by 2002:a19:e05e:0:b0:52e:9765:84e8 with SMTP id 2adb3069b0e04-52eb99da425mr4901525e87.66.1720707265401;
-        Thu, 11 Jul 2024 07:14:25 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff045sm257878966b.126.2024.07.11.07.14.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 07:14:24 -0700 (PDT)
-Date: Thu, 11 Jul 2024 16:14:23 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, 
-	Zefan Li <lizefan.x@bytedance.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH cgroup/for-6.11] cgroup: Add Michal Koutny as a maintainer
-Message-ID: <5yfatxvtkpti2mrym2kd7j4qcdu7rxkyp5xvvwcefzvpdc2mkp@q5f7ug5tij6o>
-References: <Zo8OzWUzDv3rQIiw@slm.duckdns.org>
+	s=arc-20240116; t=1720707297; c=relaxed/simple;
+	bh=qqeKOSq0+dWEqdLcvtzfIzKAluC8hZVWXdKiFnn7c4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U5d30Y/sSWCjXjQJ66D0Avwjk3kXdPxWGWYB7NX2jiGRi1iAvg9bO7VpVCPhnmSmNj77zaoo3kcDU4fuMX6viAKHvDWsvDj8Dh4RTm26KZwkcfqaL6UrsEzviHM6/xdXi6cABntkMJY2Q68q84Q5bHhC5ufNoG1LyTClNw3tI34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oBtUnfCO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7265C116B1;
+	Thu, 11 Jul 2024 14:14:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720707297;
+	bh=qqeKOSq0+dWEqdLcvtzfIzKAluC8hZVWXdKiFnn7c4I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oBtUnfCOx5MHv7tNKr9gCdFxoCYP+2Blc1btkO4hssb1sqPQN0LPn6I2N59PjMwRz
+	 yGgJ6kkRYJ4Zu5is6PboEil9wneWkTsWoAhuzsEEvGHJ+Tm+IlN7j0VfoYokworAN2
+	 ENFukGLfTonlBg1ValoJjei2T4OYTvOF8bQUq6SywPZiXSWpa0khIluAHiYgBJhuX2
+	 mcMdfskFtPl4hKWRV0hYau5wiZpJtSukUsvdYS0rkVarBdwryscecsACIgT/vosUNk
+	 vMJUgVaf0m9dCcsw5GCMlp4YKah4F0vW9KX7wjZIGQVE1EWfAAsiA350UuGhz1znX8
+	 JV1s8+R1777+A==
+Date: Thu, 11 Jul 2024 07:14:55 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, Peng Fan <peng.fan@nxp.com>,
+ "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, "virtualization@lists.linux.dev"
+ <virtualization@lists.linux.dev>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] test/vsock: add install target
+Message-ID: <20240711071455.5abfaae9@kernel.org>
+In-Reply-To: <20240711133801.GA18681@fedora.redhat.com>
+References: <20240709135051.3152502-1-peng.fan@oss.nxp.com>
+	<twxr5pyfntg6igr4mznbljf6kmukxeqwsd222rhiisxonjst2p@suum7sgl5tss>
+	<PAXPR04MB845959D5F558BCC2AB46575788A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	<pugaghoxmegwtlzcmdaqhi5j77dvqpwg4qiu46knvdfu3bx7vt@cnqycuxo5pjb>
+	<PAXPR04MB845955C754284163737BECE788A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	<whgbeixcinqi2dmcfxxy4h7xfzjjx3kpsqsmjiffkkaijlxh6i@ozhumbrjse3c>
+	<20240710190059.06f01a4c@kernel.org>
+	<hxsdbdaywybncq5tdusx2zosfnhzxmu3zvlus7s722whwf4wei@amci3g47la7x>
+	<20240711133801.GA18681@fedora.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5uhdydamedm7ydyu"
-Content-Disposition: inline
-In-Reply-To: <Zo8OzWUzDv3rQIiw@slm.duckdns.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 11 Jul 2024 15:38:01 +0200 Stefan Hajnoczi wrote:
+> > Usually vsock tests test both the driver (virtio-vsock) in the guest and the
+> > device in the host kernel (vhost-vsock). So I usually run the tests in 2
+> > nested VMs to test the latest changes for both the guest and the host.
+> > 
+> > I don't know enough selftests, but do you think it is possible to integrate
+> > them?
+> > 
+> > CCing Stefan who is the original author and may remember more reasons about
+> > this choice.  
+> 
+> It's probably because of the manual steps in tools/testing/vsock/README:
+> 
+>   The following prerequisite steps are not automated and must be performed prior
+>   to running tests:
+> 
+>   1. Build the kernel, make headers_install, and build these tests.
+>   2. Install the kernel and tests on the host.
+>   3. Install the kernel and tests inside the guest.
+>   4. Boot the guest and ensure that the AF_VSOCK transport is enabled.
+> 
+> If you want to automate this for QEMU, VMware, and Hyper-V that would be
+> great. It relies on having a guest running under these hypervisors and
+> that's not trivial to automate (plus it involves proprietary software
+> for VMware and Hyper-V that may not be available without additional
+> license agreements and/or payment).
 
---5uhdydamedm7ydyu
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello.
-
-On Wed, Jul 10, 2024 at 12:44:29PM GMT, Tejun Heo <tj@kernel.org> wrote:
-> Michal has been contributing and reviewing patches across cgroup for a wh=
-ile
-> now. Add him as a maintainer.
-
-I hope this to be helpful to you and the community.
-
-=2E..
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5536,6 +5536,7 @@ CONTROL GROUP (CGROUP)
->  M:	Tejun Heo <tj@kernel.org>
->  M:	Zefan Li <lizefan.x@bytedance.com>
->  M:	Johannes Weiner <hannes@cmpxchg.org>
-> +M:	Michal Koutn=FD <mkoutny@suse.com>
->  L:	cgroups@vger.kernel.org
->  S:	Maintained
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git
-=20
-Acked-by: Michal Koutn=FD <mkoutny@suse.com>
-
---5uhdydamedm7ydyu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZo/ovQAKCRAt3Wney77B
-SVSaAQDl/jTgKWUbqGX7f4PGpzw+02qS3ODuDV7XRrjJHXM2bwD7Bs0rBaW5Zo3t
-4Ww0qfl2Qg0TLkMplYXm2qlvmy9fdQ4=
-=LWj3
------END PGP SIGNATURE-----
-
---5uhdydamedm7ydyu--
+Not sure if there's a requirement that full process is automated.
+Or at least if there is we are already breaking it in networking
+because for some tests we need user to export some env variables
+to point the test to the right interfaces and even a remote machine 
+to generate traffic. If the env isn't set up tests return 4 (SKIP).
+I don't feel strongly that ksft + env approach is better but at
+least it gives us easy access to the basic build and packaging
+features from ksft. Up to you but thought I'd ask.
 
