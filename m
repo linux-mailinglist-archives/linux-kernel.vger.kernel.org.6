@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-249920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CEC092F1A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:05:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9C6F92F1A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20D721F2276D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:05:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 065F11C22E07
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E32219FA72;
-	Thu, 11 Jul 2024 22:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D50F1A0703;
+	Thu, 11 Jul 2024 22:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="awZk8FJv"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jy5YIlwq"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DC742AB5
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F0B19EEAE
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720735503; cv=none; b=IawzVfqoIwc4ck7pB3AuHcoC9swiMKjF3mcjS9uqSylfUAXhJUiY8WOqTujOk76IGsL0z1jclZ04Mh/Klx4ytSsAQodxSosRTshTiXtm2PIJ58JaazLuaJR4uVzT5MCslN7gsVoTzHbXjVAWiazE+v4ZsJ49z5yY8LUGGAgUFeg=
+	t=1720735505; cv=none; b=WaMFQJSW9g7mUlIym1YvMzVXskWuXFRm6M1nKb/anLQupWR4390URGtwfc3E6tP4y1dxHE6CeI4bIz3j/ZGMfSEknW5QoFfGMlsr7HFx9mgdAfJzA6j9RYb+yZWX5xgy63Z/a1ocyFNcVZTkViaOUHb7iXAD1HBVr9G/O5Yzxyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720735503; c=relaxed/simple;
-	bh=Fil2wenKQ3H6RJp8la/RuIezEOCN8nH1G7BHf+hLpwE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=NBUxCXe5+gL4TBs0P7Fjag9r5Zg1XMU62HZKBX8bGHlH2baQOZxCFmJLBqJh/zqxDu34WzNc5Twzgk2c9l8+fITMggqc/o5oHW0zGU4Hmek1pKcf7SyVB20iPPYfb6S7QBtJwAe73XoIvT/ArwQsDMY0Zg2ZJcHUuPBw5aSoWAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=awZk8FJv; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1720735505; c=relaxed/simple;
+	bh=LlMJwvJNjqxvae6ifVFZzwByXNVXKmkRGg9KAloHJRc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CR/zBp76UMOT+aP3FrBfu04922h3RVnRj68dlvANLu7tllIpRHK39c7T3wyQ1iKxzPyQV6Fz4lt2JMOV6sFM1AhzSMxu7zAwMJrarNN7cieks5V2gg8120jA/j8jtQgD3bcFEIxU6tW0KVkPO3horiR5aF94pIzdezOc2U5ni4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jy5YIlwq; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62d054b1ceeso23269267b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:05:02 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02a4de4f4eso2427054276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:05:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720735501; x=1721340301; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GmNVGQhxfF+dmL8G2Kdb1Uh26WeDRaL20f0RWOUcIns=;
-        b=awZk8FJvsvhPWg3+VGBzSTc689F8PFBpnRw7DqH1M3LXYvS8TY5SgFPNl48YhEeefE
-         fM3BZnryniBpIMhu0y8NKNNqfZj3agxWpdHP3iPfv93nzKETkbG2iRXHkuEe4tfYtwF8
-         /UcKNZU0RmsTFvGumtLhlv4coCfyHWxqhnVpZZOlA547bQZixFqVayYxkWz/AnH3HV7Z
-         bIU+VVSqu4jBKZDpIJCzMZbCgIqzgv5dUz3RwNA2YMzHCJjIKbH7D/YYuUnSgUSMxy7t
-         3b3eHKJ2RvcmtR8R3S7Enz0x0+mnfSmM3WXYv0Vh3y77NwxayJCgoNMPOo1mqnQetNX2
-         PMnw==
+        d=google.com; s=20230601; t=1720735503; x=1721340303; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=93kJQnyc8fg8K6y0X8F3xN7SC1oO5b0Dd7FB+lYPuNQ=;
+        b=jy5YIlwqgLybij25eTvTV2mF3uXUq/xh/Xhyr0KkZV+ygruJ+yqp1/ERwlyULJLGIF
+         uXqkMcWYPFhwynPpOxmHvUSDT3/IDjx4ijyLkFOEHaQ/dBCDX799N9lLAxbhl357+t8E
+         ZeVoplXZIkENffypUipn8UbX4sHg5AP4k2kxMMc4VDDCRAIoSPLSf6XD9kbHdJ2goO1K
+         q3RC5aVkQMO9q4ujTJE2HgvG7EF1uT7BWC/e9R8NzpG9InaXUnxHp81wTtBxcQdn3bRh
+         rOzhGjefJuBQPIC5wJctQqWNDGRtEHGW9iXgt6O+Pho7raTKI3/EwAqPomGRmTknQNZN
+         KpMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720735501; x=1721340301;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GmNVGQhxfF+dmL8G2Kdb1Uh26WeDRaL20f0RWOUcIns=;
-        b=UeI28bd9sv4b5EU47IDG0cHPTYuKlnSE/m6PTZDq0Yj/og3/thl4xwpBBAgtDYrCs3
-         Sos5dTzJgoep0RnlBg7UatB1Y31kbzSkleUYWZYh7oRIC29colNABg5c1s5xvhqRRAtm
-         SK/WWINpp79HalxySL176e8KVbZLZWudV1kycHi1sGWZ485fUg3PPFyppL3mkvk2VOtp
-         8IvsjYjlPl7XsrI6ncScNpHRUMMlemIvBHm3SIWQyJxod45dAyJLqEkpnPRXb49xtt4s
-         TfOttrIN5bijD4LWE2tPpcW4Jw+mqhS+Rir2HJIMcW4snNFIRxGFVRCUC6PieGErYRMI
-         4uKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqhbJZImVsXzrLb+raz6Yqwvs1kUnbkGZmhp+ZzTjWTJDp3ZvZuckzB88S1QzrSB6Fvs6nny83Bz5NdogW0lM/suKxICA9Qjpn6vMo
-X-Gm-Message-State: AOJu0YwmUGiT4jn/diU2yIiKWKjzaVJqmWRnK0fAolEk8FwLhuMAH/4h
-	CRyWTLSeSCtYrRZcYomoU4uvZwH3EIjpOcIXovnLtQVU2wP+Pl5mhC7Jd6kNHVnKPHOgbGalmsR
-	aqQ==
-X-Google-Smtp-Source: AGHT+IFeorrBi9jfJXX70RSirbeZ3WCfrHwYAEA3ofVUx+qVZL0mHI2sTcB+Ym/6U8kb0iPO1/hJZdh8n04=
+        d=1e100.net; s=20230601; t=1720735503; x=1721340303;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=93kJQnyc8fg8K6y0X8F3xN7SC1oO5b0Dd7FB+lYPuNQ=;
+        b=Yd7vulFrKrSalZui5Bzk5Q6enyNI/JrBsIXeuU0hYe4BP6W3AgITmEXHwNrvp+D9uC
+         qGFEvPhXheZcUIPheKSQJ9SIjpllRt6jVeDqmcZDQoIfIZgXKZF731E6vd8IP+JHSbAJ
+         ZQ4Xsqj8DguJD4d5nos/Yy5mpOjxIx/HM+sdRhIcdQfn1/OS+nrd4vEsles4izTdaXJG
+         MAYc0qRtgBpszcfOGF5+0Lqww8YfTWTKOhs1hOGZoaRxCwbgDS5y7Z/K+gqiJyM0t/w5
+         N4qYD1M3ppvLAJrrQMSrhfsbUv5Vht5SrP3ji3/rbZZt/d+cYlYEKPJ2IT3L/R9okSjL
+         R53Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXulsF0zRD2NWOzZmJWx4k4VAj+8Nq3u22pkIJPdEQ9blvTae7AgK4OVBHi7UFky773eVC037DyYZqB6EVlLalw/hLtMECQCMTgauHg
+X-Gm-Message-State: AOJu0YwPU+cQOsCRbPXIBZUdrVp08ph+syOFGUzFWTzmqd7wo3CqUGsu
+	imuZc9tlt8CG1MTBlqGpl1WiZKbMKyXostd0dUnJiDzEmbZrGdXmSHOEgzzBYdnmaKSGzpzrsxw
+	q9A==
+X-Google-Smtp-Source: AGHT+IE5Ve5SJ1wAwBQCkjGpJ5hWlIgqCRMJq8/YBUF401ZfiUTIDMS3IJ0Xh5DM4xHnHKnJdlSUE6tovAs=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:3f97:69c0:dd80:bd4a])
- (user=surenb job=sendgmr) by 2002:a05:6902:72b:b0:e02:b093:dc1f with SMTP id
- 3f1490d57ef6-e041b034472mr20616276.1.1720735501238; Thu, 11 Jul 2024 15:05:01
+ (user=surenb job=sendgmr) by 2002:a05:6902:1208:b0:dfa:48f9:186a with SMTP id
+ 3f1490d57ef6-e041b0370bbmr22072276.3.1720735502941; Thu, 11 Jul 2024 15:05:02
  -0700 (PDT)
-Date: Thu, 11 Jul 2024 15:04:55 -0700
+Date: Thu, 11 Jul 2024 15:04:56 -0700
+In-Reply-To: <20240711220457.1751071-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240711220457.1751071-1-surenb@google.com>
 X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Message-ID: <20240711220457.1751071-1-surenb@google.com>
-Subject: [PATCH 1/3] lib: add missing newline character in the warning message
+Message-ID: <20240711220457.1751071-2-surenb@google.com>
+Subject: [PATCH 2/3] lib: reuse page_ext_data() to obtain codetag_ref
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com, 
@@ -79,27 +82,28 @@ Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com,
 	linux-kernel@vger.kernel.org, surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-Fixes: 22d407b164ff ("lib: add allocation tagging support for memory allocation profiling")
+codetag_ref_from_page_ext() reimplements the same calculation as
+page_ext_data(). Reuse existing function instead.
+
+Fixes: dcfe378c81f7 ("lib: introduce support for page allocation tagging")
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
- include/linux/alloc_tag.h | 2 +-
+ include/linux/pgalloc_tag.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
-index abd24016a900..8c61ccd161ba 100644
---- a/include/linux/alloc_tag.h
-+++ b/include/linux/alloc_tag.h
-@@ -122,7 +122,7 @@ static inline void alloc_tag_add_check(union codetag_ref *ref, struct alloc_tag
- 		  "alloc_tag was not cleared (got tag for %s:%u)\n",
- 		  ref->ct->filename, ref->ct->lineno);
+diff --git a/include/linux/pgalloc_tag.h b/include/linux/pgalloc_tag.h
+index 9cacadbd61f8..acb1e9ce7981 100644
+--- a/include/linux/pgalloc_tag.h
++++ b/include/linux/pgalloc_tag.h
+@@ -15,7 +15,7 @@ extern struct page_ext_operations page_alloc_tagging_ops;
  
--	WARN_ONCE(!tag, "current->alloc_tag not set");
-+	WARN_ONCE(!tag, "current->alloc_tag not set\n");
+ static inline union codetag_ref *codetag_ref_from_page_ext(struct page_ext *page_ext)
+ {
+-	return (void *)page_ext + page_alloc_tagging_ops.offset;
++	return (union codetag_ref *)page_ext_data(page_ext, &page_alloc_tagging_ops);
  }
  
- static inline void alloc_tag_sub_check(union codetag_ref *ref)
-
-base-commit: 8a18fda0febb7790de20ec1c3b4522ce026be1c6
+ static inline struct page_ext *page_ext_from_codetag_ref(union codetag_ref *ref)
 -- 
 2.45.2.993.g49e7a77208-goog
 
