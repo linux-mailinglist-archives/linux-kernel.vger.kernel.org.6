@@ -1,432 +1,229 @@
-Return-Path: <linux-kernel+bounces-249378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E83692EAD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE93392EAC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD313283CB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:34:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4897E281C9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2261684AB;
-	Thu, 11 Jul 2024 14:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9A1ZWus"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E45168C33;
+	Thu, 11 Jul 2024 14:32:22 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BAC167DA8;
-	Thu, 11 Jul 2024 14:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7149A1EB26;
+	Thu, 11 Jul 2024 14:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720708487; cv=none; b=S6FAM1IoBDnZrlV6T7duDpu+/mvXotImeVqMnCLqkuWEilONF7MUHalIqKIL/b5XcyqeP9qvLhdrHAE13pqAL1dA0nhFhDRxAxaEV1bzzoJSKGJaHsSJjyxdvsfHkEyKX5AHUNs5X1oM4iGshPNj810r6Ksn0kBFDigy8kYyj7c=
+	t=1720708341; cv=none; b=Ff/MpA4ZKFEPDe9XjwaNBHu7872HDvq87LpZPqxfH2bSrqvh9gcKehW5X5cwR6WpNhZJ37T/JerBS92P5+0P77J2tGDHOOgWHMjotZpQeZk+d0Biv8fMgSsuvD8sMLnXcvsyBF/LQnmo4JHd5+R++c8Gp9mnuFQEfm6FV2xq1t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720708487; c=relaxed/simple;
-	bh=u+JLQpY2OGFSvyqiP0oNI4X+ySZWmc0hNBY3OoLpvTw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BmydqMBce4r4LbHdnaF7aW6Ks8Ku7UZk+v05VFR7iJrXwm7Y/J8Zrp/Jw8NTCalSeOxctuaH9otSlOnpUOOKJgRiHY1kdZqOxzVIk0SBKgYZOVRr/e1bVHAvrGRcHVhevbz0f151LYWLS1TkMXeyi+Pipc1Qj9M/S6yNUaCm1L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9A1ZWus; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8490BC116B1;
-	Thu, 11 Jul 2024 14:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720708487;
-	bh=u+JLQpY2OGFSvyqiP0oNI4X+ySZWmc0hNBY3OoLpvTw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=s9A1ZWus2u/s3VdNqvfq5TnQkOHcQ+E+yMcB8FG3yojvKvocStUsBpAEJnqkpVVnI
-	 NEcpIyKsKgGNll95XbRT2sH6pt1BcuJjprDmYrPGONiyNQKLs59mnBJ6y3GmaqzLBd
-	 i+feY7H7u5fNayN8vpmU+KeoaJzq3fPVQ+8Sgi7Jjcv27qHYHi+a1rID+K1r6DuMxa
-	 YuBUwV6/WlRDvup3E3H1o8B2lcf8ksTWmi8TZoFqGNQ94tzwnD6H0cASHk94zbdMGQ
-	 /XOTVo+jBrxPwEPvesKCp0AEUN8P3hNPYywJF5lDahq6XIjg0du9ElidpX2TtPAfxA
-	 GwwLEcYftnBog==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 11 Jul 2024 15:33:28 +0100
-Subject: [PATCH] kselftest/alsa: Use card name rather than number in test
- names
+	s=arc-20240116; t=1720708341; c=relaxed/simple;
+	bh=up6W1K9mpxjGZ1T7a2dLYu/IsvtphCU8x2Vb6BTu6Zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sWzZ+Kf7q7kK24gD82ASCYCPwn9zsWjyCWIsfG2+g7cRZGOtlmgoyHqjVt0BxyqAOVE3cROPb23D8Cw3i29h4yz42sHYU8vdyYanmIU6Uz2b9OtJLXE9ja5ADPFnSDjQoEO7XMlGKe1z/owrrwth0j3ZOrqm6zMnx6PLPFk1JGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92796C116B1;
+	Thu, 11 Jul 2024 14:32:19 +0000 (UTC)
+Date: Thu, 11 Jul 2024 10:33:41 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: syzbot <syzbot+16b6ab88e66b34d09014@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, cgroups@vger.kernel.org, hannes@cmpxchg.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, lizefan.x@bytedance.com,
+ mathieu.desnoyers@efficios.com, mhiramat@kernel.org,
+ netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org
+Subject: Re: [syzbot] [mm?] possible deadlock in
+ __mmap_lock_do_trace_released
+Message-ID: <20240711103341.18a4eb4e@gandalf.local.home>
+In-Reply-To: <95930836-5b56-4c40-b2a0-2ddd4a59ae74@kernel.org>
+References: <0000000000002be09b061c483ea1@google.com>
+	<95930836-5b56-4c40-b2a0-2ddd4a59ae74@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240711-alsa-kselftest-board-name-v1-1-ab5cf2dbbea6@kernel.org>
-X-B4-Tracking: v=1; b=H4sIADftj2YC/x3MQQqDMBBG4avIrB1IJCB4ldLF1PzRoTaWjIgg3
- t3g8lu8d5KhKIyG5qSCXU3XXOHbhsZZ8gTWWE2d64LrvWdZTPhrWNIG2/izSomc5QdGEC8xhjG
- Jo9r/C5Iez/v1vq4bQlO3K2sAAAA=
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.14-dev-d4707
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13170; i=broonie@kernel.org;
- h=from:subject:message-id; bh=u+JLQpY2OGFSvyqiP0oNI4X+ySZWmc0hNBY3OoLpvTw=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmj+2Ekf3wRYUeio+n3/rUkalFzeUoYxJ/Da2Erwhc
- MbQDjA+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZo/thAAKCRAk1otyXVSH0EB5B/
- sGj1T4OaXaWh/RtRN5F+4/hqe4v9bV9sFApvnwk0NpdGrvCsVzCh98D1chMighLDbtCdBX9Wbcjw09
- TFjbudmgyVi+2dMH5lObbEWMeuCYGevyOFvUkorT1OE+nE0FNZFJNgm/i8E8EJHdcNSBDsJ6cjsdbV
- NpPB/ejUDKZcISa+osgM/2mxTSwdGnXHgsB7dcGg4ip3wakezG7ZIwS6gRokJF8inAuv//1EY3ffWy
- lrAFXaBkn1CLX4e7VSlEn8RQUHdHSwt6m7lL4DltSo7HAdxdTtzf+csdxJhJ7TAKQEQYs7N6uenuLG
- DfmGpFdmHRY8dza9h2hQO9gJ7gcpAr
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Currently for the PCM and mixer tests we report test names which identify
-the card being tested with the card number. This ensures we have unique
-names but since card numbers are dynamically assigned at runtime the names
-we end up with will often not be stable on systems with multiple cards
-especially where those cards are provided by separate modules loeaded at
-runtime. This makes it difficult for automated systems and UIs to relate
-test results between runs on affected platforms.
+On Thu, 4 Jul 2024 22:12:45 +0200
+Jesper Dangaard Brouer <hawk@kernel.org> wrote:
 
-Address this by replacing our use of card numbers with card names which are
-more likely to be stable across runs. We use the long name since in the
-case where we have two of the same card it is more likely to include
-deduplication information (eg, HDA cards include the address/IRQ). The
-resulting information is not the most beautiful for human readers but the
-majority of kselftest output consumption is automated systems and it wasn't
-that great anyway.
+> > ============================================
+> > WARNING: possible recursive locking detected
+> > 6.10.0-rc2-syzkaller-00797-ga12978712d90 #0 Not tainted
+> > --------------------------------------------
+> > syz-executor646/5097 is trying to acquire lock:
+> > ffff8880b94387e8 (lock#9){+.+.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+> > ffff8880b94387e8 (lock#9){+.+.}-{2:2}, at: __mmap_lock_do_trace_released+0x83/0x620 mm/mmap_lock.c:243
+> > 
+> > but task is already holding lock:
+> > ffff8880b94387e8 (lock#9){+.+.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+> > ffff8880b94387e8 (lock#9){+.+.}-{2:2}, at: __mmap_lock_do_trace_released+0x83/0x620 mm/mmap_lock.c:243
+> > 
+> > other info that might help us debug this:
+> >   Possible unsafe locking scenario:
+> > 
+> >         CPU0
+> >         ----
+> >    lock(lock#9);
+> >    lock(lock#9);
+> > 
+> >   *** DEADLOCK ***
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/alsa/mixer-test.c | 76 ++++++++++++++++---------------
- tools/testing/selftests/alsa/pcm-test.c   | 35 ++++++++------
- 2 files changed, 60 insertions(+), 51 deletions(-)
+Looks like it's trying to take the rwsem mm->mmap_lock recursively. And
+rwsems are *not* allowed to be recursively taken, as once there's a writer,
+all new acquires of the reader will block. Then you can have:
 
-diff --git a/tools/testing/selftests/alsa/mixer-test.c b/tools/testing/selftests/alsa/mixer-test.c
-index 1c04e5f638a0..df9ae3b4e2df 100644
---- a/tools/testing/selftests/alsa/mixer-test.c
-+++ b/tools/testing/selftests/alsa/mixer-test.c
-@@ -33,6 +33,7 @@
- struct card_data {
- 	snd_ctl_t *handle;
- 	int card;
-+	const char *card_name;
- 	struct pollfd pollfd;
- 	int num_ctls;
- 	snd_ctl_elem_list_t *ctls;
-@@ -91,6 +92,7 @@ static void find_controls(void)
- 		err = snd_card_get_longname(card, &card_longname);
- 		if (err != 0)
- 			card_longname = "Unknown";
-+		card_data->card_name = card_longname;
- 		ksft_print_msg("Card %d - %s (%s)\n", card,
- 			       card_name, card_longname);
- 
-@@ -389,16 +391,16 @@ static void test_ctl_get_value(struct ctl_data *ctl)
- 	/* If the control is turned off let's be polite */
- 	if (snd_ctl_elem_info_is_inactive(ctl->info)) {
- 		ksft_print_msg("%s is inactive\n", ctl->name);
--		ksft_test_result_skip("get_value.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("get_value.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
- 	/* Can't test reading on an unreadable control */
- 	if (!snd_ctl_elem_info_is_readable(ctl->info)) {
- 		ksft_print_msg("%s is not readable\n", ctl->name);
--		ksft_test_result_skip("get_value.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("get_value.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
-@@ -413,8 +415,8 @@ static void test_ctl_get_value(struct ctl_data *ctl)
- 		err = -EINVAL;
- 
- out:
--	ksft_test_result(err >= 0, "get_value.%d.%d\n",
--			 ctl->card->card, ctl->elem);
-+	ksft_test_result(err >= 0, "get_value.%s.%d\n",
-+			 ctl->card->card_name, ctl->elem);
- }
- 
- static bool strend(const char *haystack, const char *needle)
-@@ -431,7 +433,7 @@ static void test_ctl_name(struct ctl_data *ctl)
- {
- 	bool name_ok = true;
- 
--	ksft_print_msg("%d.%d %s\n", ctl->card->card, ctl->elem,
-+	ksft_print_msg("%s.%d %s\n", ctl->card->card_name, ctl->elem,
- 		       ctl->name);
- 
- 	/* Only boolean controls should end in Switch */
-@@ -453,8 +455,8 @@ static void test_ctl_name(struct ctl_data *ctl)
- 		}
- 	}
- 
--	ksft_test_result(name_ok, "name.%d.%d\n",
--			 ctl->card->card, ctl->elem);
-+	ksft_test_result(name_ok, "name.%s.%d\n",
-+			 ctl->card->card_name, ctl->elem);
- }
- 
- static void show_values(struct ctl_data *ctl, snd_ctl_elem_value_t *orig_val,
-@@ -682,30 +684,30 @@ static void test_ctl_write_default(struct ctl_data *ctl)
- 	/* If the control is turned off let's be polite */
- 	if (snd_ctl_elem_info_is_inactive(ctl->info)) {
- 		ksft_print_msg("%s is inactive\n", ctl->name);
--		ksft_test_result_skip("write_default.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("write_default.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
- 	if (!snd_ctl_elem_info_is_writable(ctl->info)) {
- 		ksft_print_msg("%s is not writeable\n", ctl->name);
--		ksft_test_result_skip("write_default.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("write_default.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
- 	/* No idea what the default was for unreadable controls */
- 	if (!snd_ctl_elem_info_is_readable(ctl->info)) {
- 		ksft_print_msg("%s couldn't read default\n", ctl->name);
--		ksft_test_result_skip("write_default.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("write_default.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
- 	err = write_and_verify(ctl, ctl->def_val, NULL);
- 
--	ksft_test_result(err >= 0, "write_default.%d.%d\n",
--			 ctl->card->card, ctl->elem);
-+	ksft_test_result(err >= 0, "write_default.%s.%d\n",
-+			 ctl->card->card_name, ctl->elem);
- }
- 
- static bool test_ctl_write_valid_boolean(struct ctl_data *ctl)
-@@ -815,15 +817,15 @@ static void test_ctl_write_valid(struct ctl_data *ctl)
- 	/* If the control is turned off let's be polite */
- 	if (snd_ctl_elem_info_is_inactive(ctl->info)) {
- 		ksft_print_msg("%s is inactive\n", ctl->name);
--		ksft_test_result_skip("write_valid.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("write_valid.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
- 	if (!snd_ctl_elem_info_is_writable(ctl->info)) {
- 		ksft_print_msg("%s is not writeable\n", ctl->name);
--		ksft_test_result_skip("write_valid.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("write_valid.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
-@@ -846,16 +848,16 @@ static void test_ctl_write_valid(struct ctl_data *ctl)
- 
- 	default:
- 		/* No tests for this yet */
--		ksft_test_result_skip("write_valid.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("write_valid.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
- 	/* Restore the default value to minimise disruption */
- 	write_and_verify(ctl, ctl->def_val, NULL);
- 
--	ksft_test_result(pass, "write_valid.%d.%d\n",
--			 ctl->card->card, ctl->elem);
-+	ksft_test_result(pass, "write_valid.%s.%d\n",
-+			 ctl->card->card_name, ctl->elem);
- }
- 
- static bool test_ctl_write_invalid_value(struct ctl_data *ctl,
-@@ -1027,15 +1029,15 @@ static void test_ctl_write_invalid(struct ctl_data *ctl)
- 	/* If the control is turned off let's be polite */
- 	if (snd_ctl_elem_info_is_inactive(ctl->info)) {
- 		ksft_print_msg("%s is inactive\n", ctl->name);
--		ksft_test_result_skip("write_invalid.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("write_invalid.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
- 	if (!snd_ctl_elem_info_is_writable(ctl->info)) {
- 		ksft_print_msg("%s is not writeable\n", ctl->name);
--		ksft_test_result_skip("write_invalid.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("write_invalid.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
-@@ -1058,28 +1060,28 @@ static void test_ctl_write_invalid(struct ctl_data *ctl)
- 
- 	default:
- 		/* No tests for this yet */
--		ksft_test_result_skip("write_invalid.%d.%d\n",
--				      ctl->card->card, ctl->elem);
-+		ksft_test_result_skip("write_invalid.%s.%d\n",
-+				      ctl->card->card_name, ctl->elem);
- 		return;
- 	}
- 
- 	/* Restore the default value to minimise disruption */
- 	write_and_verify(ctl, ctl->def_val, NULL);
- 
--	ksft_test_result(pass, "write_invalid.%d.%d\n",
--			 ctl->card->card, ctl->elem);
-+	ksft_test_result(pass, "write_invalid.%s.%d\n",
-+			 ctl->card->card_name, ctl->elem);
- }
- 
- static void test_ctl_event_missing(struct ctl_data *ctl)
- {
--	ksft_test_result(!ctl->event_missing, "event_missing.%d.%d\n",
--			 ctl->card->card, ctl->elem);
-+	ksft_test_result(!ctl->event_missing, "event_missing.%s.%d\n",
-+			 ctl->card->card_name, ctl->elem);
- }
- 
- static void test_ctl_event_spurious(struct ctl_data *ctl)
- {
--	ksft_test_result(!ctl->event_spurious, "event_spurious.%d.%d\n",
--			 ctl->card->card, ctl->elem);
-+	ksft_test_result(!ctl->event_spurious, "event_spurious.%s.%d\n",
-+			 ctl->card->card_name, ctl->elem);
- }
- 
- int main(void)
-diff --git a/tools/testing/selftests/alsa/pcm-test.c b/tools/testing/selftests/alsa/pcm-test.c
-index de664dedb541..a7b1e6e876c5 100644
---- a/tools/testing/selftests/alsa/pcm-test.c
-+++ b/tools/testing/selftests/alsa/pcm-test.c
-@@ -24,6 +24,7 @@ typedef struct timespec timestamp_t;
- 
- struct card_data {
- 	int card;
-+	const char *name;
- 	pthread_t thread;
- 	struct card_data *next;
- };
-@@ -35,6 +36,7 @@ struct pcm_data {
- 	int card;
- 	int device;
- 	int subdevice;
-+	const char *card_name;
- 	snd_pcm_stream_t stream;
- 	snd_config_t *pcm_config;
- 	struct pcm_data *next;
-@@ -191,6 +193,7 @@ static void find_pcms(void)
- 		if (!card_data)
- 			ksft_exit_fail_msg("Out of memory\n");
- 		card_data->card = card;
-+		card_data->name = card_longname;
- 		card_data->next = card_list;
- 		card_list = card_data;
- 
-@@ -232,6 +235,7 @@ static void find_pcms(void)
- 					pcm_data->card = card;
- 					pcm_data->device = dev;
- 					pcm_data->subdevice = subdev;
-+					pcm_data->card_name = card_name;
- 					pcm_data->stream = stream;
- 					pcm_data->pcm_config = conf_get_subtree(card_config, key, NULL);
- 					pcm_data->next = pcm_list;
-@@ -294,9 +298,9 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
- 
- 	desc = conf_get_string(pcm_cfg, "description", NULL, NULL);
- 	if (desc)
--		ksft_print_msg("%s.%s.%d.%d.%d.%s - %s\n",
-+		ksft_print_msg("%s.%s.%s.%d.%d.%s - %s\n",
- 			       test_class_name, test_name,
--			       data->card, data->device, data->subdevice,
-+			       data->card_name, data->device, data->subdevice,
- 			       snd_pcm_stream_name(data->stream),
- 			       desc);
- 
-@@ -352,9 +356,9 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
- 			old_format = format;
- 			format = snd_pcm_format_value(alt_formats[i]);
- 			if (format != SND_PCM_FORMAT_UNKNOWN) {
--				ksft_print_msg("%s.%d.%d.%d.%s.%s format %s -> %s\n",
-+				ksft_print_msg("%s.%s.%d.%d.%s.%s format %s -> %s\n",
- 						 test_name,
--						 data->card, data->device, data->subdevice,
-+						 data->card_name, data->device, data->subdevice,
- 						 snd_pcm_stream_name(data->stream),
- 						 snd_pcm_access_name(access),
- 						 snd_pcm_format_name(old_format),
-@@ -430,9 +434,9 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
- 		goto __close;
- 	}
- 
--	ksft_print_msg("%s.%s.%d.%d.%d.%s hw_params.%s.%s.%ld.%ld.%ld.%ld sw_params.%ld\n",
-+	ksft_print_msg("%s.%s.%s.%d.%d.%s hw_params.%s.%s.%ld.%ld.%ld.%ld sw_params.%ld\n",
- 		         test_class_name, test_name,
--			 data->card, data->device, data->subdevice,
-+			 data->card_name, data->device, data->subdevice,
- 			 snd_pcm_stream_name(data->stream),
- 			 snd_pcm_access_name(access),
- 			 snd_pcm_format_name(format),
-@@ -491,9 +495,10 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
- 		 * Anything specified as specific to this system
- 		 * should always be supported.
- 		 */
--		ksft_test_result(!skip, "%s.%s.%d.%d.%d.%s.params\n",
-+		ksft_test_result(!skip, "%s.%s.%s.%d.%d.%s.params\n",
- 				 test_class_name, test_name,
--				 data->card, data->device, data->subdevice,
-+				 data->card_name, data->device,
-+				 data->subdevice,
- 				 snd_pcm_stream_name(data->stream));
- 		break;
- 	default:
-@@ -501,14 +506,16 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
- 	}
- 
- 	if (!skip)
--		ksft_test_result(pass, "%s.%s.%d.%d.%d.%s\n",
-+		ksft_test_result(pass, "%s.%s.%s.%d.%d.%s\n",
- 				 test_class_name, test_name,
--				 data->card, data->device, data->subdevice,
-+				 data->card_name, data->device,
-+				 data->subdevice,
- 				 snd_pcm_stream_name(data->stream));
- 	else
--		ksft_test_result_skip("%s.%s.%d.%d.%d.%s\n",
-+		ksft_test_result_skip("%s.%s.%s.%d.%d.%s\n",
- 				 test_class_name, test_name,
--				 data->card, data->device, data->subdevice,
-+				 data->card_name, data->device,
-+				 data->subdevice,
- 				 snd_pcm_stream_name(data->stream));
- 
- 	if (msg[0])
-@@ -609,8 +616,8 @@ int main(void)
- 					      conf->filename, conf->config_id);
- 
- 	for (pcm = pcm_missing; pcm != NULL; pcm = pcm->next) {
--		ksft_test_result(false, "test.missing.%d.%d.%d.%s\n",
--				 pcm->card, pcm->device, pcm->subdevice,
-+		ksft_test_result(false, "test.missing.%s.%d.%d.%s\n",
-+				 pcm->card_name, pcm->device, pcm->subdevice,
- 				 snd_pcm_stream_name(pcm->stream));
- 	}
- 
+   CPU0				    CPU1
+   ----				    ----
+  down_read(lockA);
+				down_write(lockA); // blocks
+  down_read(lockA); //blocks
 
----
-base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
-change-id: 20240711-alsa-kselftest-board-name-e4a1add4cfa0
+DEADLOCK!
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+
+> > 
+> >   May be due to missing lock nesting notation
+> >   
+> 
+> To me, this looks like a lockdep false-positive, but I might be wrong.
+> 
+> Could someone with more LOCKDEP knowledge give their interpretation?
+> 
+> The commit[1] adds a fairly standard trylock scheme.
+> Do I need to lockdep annotate trylock's in some special way?
+> 
+>   [1] https://git.kernel.org/torvalds/c/21c38a3bd4ee3fb733
+> 
+> Also notice change uses raw_spin_lock, which might be harder for lockdep?
+> So, I also enabled CONFIG_PROVE_RAW_LOCK_NESTING in my testlab to help
+> with this, and CONFIG_PROVE_LOCKING.
+> (And obviously I also enabled LOCKDEP*)
+> 
+> --Jesper
+> 
+> > 5 locks held by syz-executor646/5097:
+> >   #0: ffff8880182eb118 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_lock include/linux/mmap_lock.h:144 [inline]
+> >   #0: ffff8880182eb118 (&mm->mmap_lock){++++}-{3:3}, at: acct_collect+0x1cf/0x830 kernel/acct.c:563
+> >   #1: ffff8880b94387e8 (lock#9){+.+.}-{2:2}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+> >   #1: ffff8880b94387e8 (lock#9){+.+.}-{2:2}, at: __mmap_lock_do_trace_released+0x83/0x620 mm/mmap_lock.c:243
+> >   #2: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+> >   #2: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+> >   #2: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: get_memcg_path_buf mm/mmap_lock.c:139 [inline]
+> >   #2: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: get_mm_memcg_path+0xb1/0x600 mm/mmap_lock.c:209
+> >   #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: trace_call_bpf+0xbc/0x8a0
+> >   #4: ffff8880182eb118 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:163 [inline]
+> >   #4: ffff8880182eb118 (&mm->mmap_lock){++++}-{3:3}, at: stack_map_get_build_id_offset+0x237/0x9d0 kernel/bpf/stackmap.c:141
+> > 
+> > stack backtrace:
+> > CPU: 0 PID: 5097 Comm: syz-executor646 Not tainted 6.10.0-rc2-syzkaller-00797-ga12978712d90 #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> > Call Trace:
+> >   <TASK>
+> >   __dump_stack lib/dump_stack.c:88 [inline]
+> >   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+> >   check_deadlock kernel/locking/lockdep.c:3062 [inline]
+> >   validate_chain+0x15d3/0x5900 kernel/locking/lockdep.c:3856
+> >   __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+> >   lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+> >   local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+> >   __mmap_lock_do_trace_released+0x9c/0x620 mm/mmap_lock.c:243
+
+Here we have:
+
+  static inline void mmap_read_lock(struct mm_struct *mm)
+  {
+        __mmap_lock_trace_start_locking(mm, false);
+        down_read(&mm->mmap_lock);
+        __mmap_lock_trace_acquire_returned(mm, false, true);
+  }
+
+Which is taking the mm->mmap_lock for read.
+
+> >   __mmap_lock_trace_released include/linux/mmap_lock.h:42 [inline]
+> >   mmap_read_unlock include/linux/mmap_lock.h:170 [inline]
+> >   bpf_mmap_unlock_mm kernel/bpf/mmap_unlock_work.h:52 [inline]
+> >   stack_map_get_build_id_offset+0x9c7/0x9d0 kernel/bpf/stackmap.c:173
+> >   __bpf_get_stack+0x4ad/0x5a0 kernel/bpf/stackmap.c:449
+> >   bpf_prog_e6cf5f9c69743609+0x42/0x46
+> >   bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
+> >   __bpf_prog_run include/linux/filter.h:691 [inline]
+> >   bpf_prog_run include/linux/filter.h:698 [inline]
+> >   bpf_prog_run_array include/linux/bpf.h:2104 [inline]
+> >   trace_call_bpf+0x369/0x8a0 kernel/trace/bpf_trace.c:147
+> >   perf_trace_run_bpf_submit+0x7c/0x1d0 kernel/events/core.c:10269
+> >   perf_trace_mmap_lock+0x3d7/0x510 include/trace/events/mmap_lock.h:16
+
+I'm guessing a bpf program attached to something within the same code:
+
+> >   trace_mmap_lock_released include/trace/events/mmap_lock.h:50 [inline]
+> >   __mmap_lock_do_trace_released+0x5bb/0x620 mm/mmap_lock.c:243
+
+Here is the same function as above where it took the mm->mmap_lock.
+
+My guess is the bpf program that attached to this event ends up calling the
+same function and it tries to take the rwsem again, and that poses a risk
+for deadlock.
+
+-- Steve
+
+> >   __mmap_lock_trace_released include/linux/mmap_lock.h:42 [inline]
+> >   mmap_read_unlock include/linux/mmap_lock.h:170 [inline]
+> >   acct_collect+0x81d/0x830 kernel/acct.c:566
+> >   do_exit+0x936/0x27e0 kernel/exit.c:853
+> >   do_group_exit+0x207/0x2c0 kernel/exit.c:1023
+> >   __do_sys_exit_group kernel/exit.c:1034 [inline]
+> >   __se_sys_exit_group kernel/exit.c:1032 [inline]
+> >   __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1032
+> >   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> >   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> >   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7f8fac26d039
+> > Code: 90 49 c7 c0 b8 ff ff ff be e7 00 00 00 ba 3c 00 00 00 eb 12 0f 1f
+> > 44 00 00 89 d0 0f 05 48 3d 00 f0 ff ff 77 1c f4 89 f0 0f 05 <48> 3d 00
+> > f0 ff ff 76 e7 f7 d8 64 41 89 00 eb df 0f 1f 80 00 00 00 RSP:
+> > 002b:00007ffd95d56e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7 RAX:
+> > ffffffffffffffda RBX: 0000000000000000 RCX: 00007f8fac26d039 RDX:
+> > 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000 RBP:
+> > 00007f8fac2e82b0 R08: ffffffffffffffb8 R09: 00000000000000a0 R10:
+> > 0000000000000000 R11: 0000000000000246 R12: 00007f8fac2e82b0 R13:
+> > 0000000000000000 R14: 00007f8fac2e8d20 R15: 00007f8fac23e1e0 </TASK>
+> > 
+> > 
+> > ---
+> > This report is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > 
+> > syzbot will keep track of this issue. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> > For information about bisection process
+> > see: https://goo.gl/tpsmEJ#bisection
+> > 
+> > If the report is already addressed, let syzbot know by replying with:
+> > #syz fix: exact-commit-title
+> > 
+> > If you want syzbot to run the reproducer, reply with:
+> > #syz test: git://repo/address.git branch-or-commit-hash
+> > If you attach or paste a git patch, syzbot will apply it before testing.
+> > 
+> > If you want to overwrite report's subsystems, reply with:
+> > #syz set subsystems: new-subsystem
+> > (See the list of subsystem names on the web dashboard)
+> > 
+> > If the report is a duplicate of another one, reply with:
+> > #syz dup: exact-subject-of-another-report
+> > 
+> > If you want to undo deduplication, reply with:
+> > #syz undup  
 
 
