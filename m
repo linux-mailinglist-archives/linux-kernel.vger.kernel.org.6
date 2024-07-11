@@ -1,139 +1,286 @@
-Return-Path: <linux-kernel+bounces-249303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DAEC92E9B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:36:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7064092E9B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F422AB20A22
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:36:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A6C282C37
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BED215F3E2;
-	Thu, 11 Jul 2024 13:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3002161900;
+	Thu, 11 Jul 2024 13:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ldMwUvr7"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J9hUJNi6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CA814C5A4
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1351D15FA8B
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720704993; cv=none; b=cYss0y5na4sJ3b9NJi9WZ97yUViN3pOAA/Iig5ghGijRmLZwpzm38EfAXAhbwWE+jSHhLxXBrTIQO4QKkC/f4vWOZKHEAJcGhaMn3O0M6sqe5TWazGL9dX7f2Ce1kjs6P3AejvVBdecSTTsIgOhAvt+MWfyWMhUop17FsIz98u8=
+	t=1720705089; cv=none; b=PJnJfP/bzWxB7m/2GavXm6JiVOy5XWka62LaPN9ivZ5YzaaGa6Nrv9uVrBkbIUhFOdb+HKHJg1qwrxSwikkWVs9BpxQipwHRsui49tddkmwZPNMDVYx2+IR34hh+D2ICxs//uDEIQXpMuPqvFRzw/ANwfIrp8qEtCMBzw0cu7ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720704993; c=relaxed/simple;
-	bh=ZJBtzydDNvnzwNjEXYE/Z8NIvItAF0eOwb6jFiFqgd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RaHmmOBbR6RWZr2/GINob7xQ7px0xGahpfpAfNXcWsk+kPw0Gk5/chdjBY1o4RcJsaxImBeDSgFG0Z/brFmjZqbQkF6lEXbYzYVNSPppiSf+BgdeI3jEHXtuN0ORNq/coNTTdfuUhmqp0b0YaH6Yi1itFtLKI6iz6MfQZ8xZEqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ldMwUvr7; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec61eeed8eso10774871fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 06:36:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720704990; x=1721309790; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=DVLJo0/MBfbDMXoMGmbxkF4EVNMrx/VG4OOfR+Do5os=;
-        b=ldMwUvr7K0mLW7Pabrb54oRls71XDYGeMkO2WSdBQESubbUUoACQQB3LT3W87fDnAn
-         GX83XU84qg3YtFvo5a0xGtFpeHk8SpABlYqFXiqTHrh+WjfsToPQvp14mASu9RXkaVQl
-         jBBQAK8LYW12TswA2/oJryXMMaTX0SsT0naJqV0+Z5K4CqabrhIFWxHQGoQ2ymDPZ2ZT
-         EA48tEqIS2eBdH9Tta9JmFNIbR2V2ZVM03wELFrmSivDNGs2pEMlGNpo0CKenUsnv9dh
-         x3VEK+Am+VJHmaySn0lSQS2b7Qgu+RcTsXTc/HJvtKfxNY/3xETWb69jzIqDTyg2q4nd
-         qMGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720704990; x=1721309790;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DVLJo0/MBfbDMXoMGmbxkF4EVNMrx/VG4OOfR+Do5os=;
-        b=SUWrvMKnC9UaToU2EEn7jZCidd2C+psBhX5/hMwamgyn9eOj0Keg1nOUeiMohbWnnU
-         wIUq1VD/Q5l948kUn58UWh3JaQn/7M82e5ODgNL/fOEARdhpLWU/MEcKLosPT7wQTtim
-         TEZafPoK0NEwztt0kRUMVsn5SW/gclwkHwqK3qoChyw5BSCD6Dxf8hdp45KUbtLRqU/q
-         fVstX639mb99d9ItWWakHdnbuhYsbSjFbFaXuTj8gKov/XioYGcmSCLEi5vKdZYy0NZi
-         Z7YkbmDxbIaHiR/Kb5Jiyz5CSc+nMAAJxcgpVvMba5A/DoKQ5wSZNlirhwfUBPZG2N/F
-         6n1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVqP5+JE6yzsa2hcgNdrGm8F5fAj5IPHeNt78zISbu+sZnxddtPtn3CozqbwAzeGjILufjDTZVnTkeR8sZPZ/TZOsphXvGSgkZvyuSF
-X-Gm-Message-State: AOJu0YzsG3vgpOEjxcaN/vvAPHMExaHjykpYhLnccHVjdWo0KD3HZa0c
-	3UBXAZ9kBFF5g1U1Ss8zOg4HEQSAbFlhS6gTO4xtmSlCHVkGepwJkEZAuR8xDMM=
-X-Google-Smtp-Source: AGHT+IGW1LfxEoPM8hrXbZlHQULLyAdwEerywPN0lSOYfjGLLYcyS8HeP866p3l1Hln9aIe3MLhEGg==
-X-Received: by 2002:a2e:b0d8:0:b0:2ec:419b:429e with SMTP id 38308e7fff4ca-2eeb30bbb7bmr52639441fa.2.1720704989535;
-        Thu, 11 Jul 2024 06:36:29 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bbe2d006sm3433632a12.31.2024.07.11.06.36.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 06:36:28 -0700 (PDT)
-Message-ID: <b61f7707-8b9d-49b9-a5d8-62e0cca37dd8@linaro.org>
-Date: Thu, 11 Jul 2024 15:36:26 +0200
+	s=arc-20240116; t=1720705089; c=relaxed/simple;
+	bh=P8SKTArk1yTLlMoa3xSgwOz3NV6OqlygXo0gaWmzOzg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cwBTYppP+f/8VuS4OGBkiQUxFDIZZf98MjWYuLqhW7EFAWLHSEfkOqQJJCCb5rVhiEM1DuqldFOk2BZumrjuVUqNMfBx2FJG3EfuoP/AREOIjGFqFYuo5t7aXdVeUzSsJCCaARRib1QpwqchQOnIU2HcNtFzKBwe5CEoUB3ITHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J9hUJNi6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720705086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cb7XNCaMxrfHjappNSB8neOonSmyc3xh7lLwEP4W3cA=;
+	b=J9hUJNi63dy2/kQp4uHIb0kYgGc4Kw6m6AG/mEgGkrU+H9L6WV3O5vfXybkQ8Oaprf34aH
+	XiFRQQfD9ma2m+N0gKqrYxVpF5i36v6gK1S4HoJvkV9KXtLeM7gV7fiOTkT9jPXV2bDFDD
+	Ek/qo2VT0QL+0pGW6OZhpqeW0aR9dYI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-384-Eko-k-9KPzGzpMw2dUugoA-1; Thu,
+ 11 Jul 2024 09:37:57 -0400
+X-MC-Unique: Eko-k-9KPzGzpMw2dUugoA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 47F27196E090;
+	Thu, 11 Jul 2024 13:37:54 +0000 (UTC)
+Received: from llong.com (unknown [10.22.64.119])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4B0D319560AE;
+	Thu, 11 Jul 2024 13:37:51 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH-cgroup v5] cgroup: Show # of subsystem CSSes in cgroup.stat
+Date: Thu, 11 Jul 2024 09:37:45 -0400
+Message-Id: <20240711133745.2376401-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] ARM: dts: qcom: apq8064-pins: correct error in
- drive-strength property
-To: Rayyan Ansari <rayyan.ansari@linaro.org>, linux-arm-msm@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Rob Herring <robh@kernel.org>
-References: <20240711110545.31641-2-rayyan.ansari@linaro.org>
- <20240711110545.31641-3-rayyan.ansari@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240711110545.31641-3-rayyan.ansari@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On 11.07.2024 1:01 PM, Rayyan Ansari wrote:
-> The "drive-strength" property was incorrectly spelt as "drive-strengh".
-> Correct this.
-> 
-> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
-> ---
+Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
+help manage different structures in various cgroup subsystems by being
+an embedded element inside a larger structure like cpuset or mem_cgroup.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+The /proc/cgroups file shows the number of cgroups for each of the
+subsystems.  With cgroup v1, the number of CSSes is the same as the
+number of cgroups.  That is not the case anymore with cgroup v2. The
+/proc/cgroups file cannot show the actual number of CSSes for the
+subsystems that are bound to cgroup v2.
 
-Konrad
+So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
+we can't tell by looking at /proc/cgroups which cgroup subsystems may
+be responsible.
+
+As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
+cgroup.stat file is now being extended to show the number of live and
+dying CSSes associated with all the non-inhibited cgroup subsystems
+that have been bound to cgroup v2 as long as it is not zero.  The number
+includes CSSes in the current cgroup as well as in all the descendants
+underneath it.  This will help us pinpoint which subsystems are
+responsible for the increasing number of dying (nr_dying_descendants)
+cgroups.
+
+The cgroup-v2.rst file is updated to discuss this new behavior.
+
+With this patch applied, a sample output from root cgroup.stat file
+was shown below.
+
+	nr_descendants 55
+	nr_dying_descendants 35
+	nr_subsys_cpuset 1
+	nr_subsys_cpu 40
+	nr_subsys_io 40
+	nr_subsys_memory 55
+	nr_dying_subsys_memory 35
+	nr_subsys_perf_event 56
+	nr_subsys_hugetlb 1
+	nr_subsys_pids 55
+	nr_subsys_rdma 1
+	nr_subsys_misc 1
+
+Another sample output from system.slice/cgroup.stat was:
+
+	nr_descendants 32
+	nr_dying_descendants 33
+	nr_subsys_cpu 30
+	nr_subsys_io 30
+	nr_subsys_memory 32
+	nr_dying_subsys_memory 33
+	nr_subsys_perf_event 33
+	nr_subsys_pids 32
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+---
+ Documentation/admin-guide/cgroup-v2.rst | 14 ++++++--
+ include/linux/cgroup-defs.h             |  7 ++++
+ kernel/cgroup/cgroup.c                  | 47 ++++++++++++++++++++++++-
+ 3 files changed, 65 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 52763d6b2919..356cd430c888 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -981,6 +981,16 @@ All cgroup core files are prefixed with "cgroup."
+ 		A dying cgroup can consume system resources not exceeding
+ 		limits, which were active at the moment of cgroup deletion.
+ 
++	  nr_subsys_<cgroup_subsys>
++		Total number of live cgroups associated with that cgroup
++		subsystem (e.g. memory) at and beneath the current
++		cgroup.  An entry will only be shown if it is not zero.
++
++	  nr_dying_subsys_<cgroup_subsys>
++		Total number of dying cgroups associated with that cgroup
++		subsystem (e.g. memory) beneath the current cgroup.
++		An entry will only be shown if it is not zero.
++
+   cgroup.freeze
+ 	A read-write single value file which exists on non-root cgroups.
+ 	Allowed values are "0" and "1". The default is "0".
+@@ -2930,8 +2940,8 @@ Deprecated v1 Core Features
+ 
+ - "cgroup.clone_children" is removed.
+ 
+-- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
+-  at the root instead.
++- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
++  "cgroup.stat" files at the root instead.
+ 
+ 
+ Issues with v1 and Rationales for v2
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index b36690ca0d3f..62de18874508 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -210,6 +210,13 @@ struct cgroup_subsys_state {
+ 	 * fields of the containing structure.
+ 	 */
+ 	struct cgroup_subsys_state *parent;
++
++	/*
++	 * Keep track of total numbers of visible and dying descendant CSSes.
++	 * Protected by cgroup_mutex.
++	 */
++	int nr_descendants;
++	int nr_dying_descendants;
+ };
+ 
+ /*
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index c8e4b62b436a..a59e869e8f39 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -3669,12 +3669,36 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
+ static int cgroup_stat_show(struct seq_file *seq, void *v)
+ {
+ 	struct cgroup *cgroup = seq_css(seq)->cgroup;
++	struct cgroup_subsys_state *css;
++	int ssid;
+ 
+ 	seq_printf(seq, "nr_descendants %d\n",
+ 		   cgroup->nr_descendants);
+ 	seq_printf(seq, "nr_dying_descendants %d\n",
+ 		   cgroup->nr_dying_descendants);
+ 
++	/*
++	 * Show the number of live and dying csses associated with each of
++	 * non-inhibited cgroup subsystems bound to cgroup v2 if non-zero.
++	 *
++	 * Without proper lock protection, racing is possible. So the
++	 * numbers may not be consistent when that happens.
++	 */
++	rcu_read_lock();
++	for_each_css(css, ssid, cgroup) {
++		if ((BIT(ssid) & cgrp_dfl_inhibit_ss_mask) ||
++		    (cgroup_subsys[ssid]->root !=  &cgrp_dfl_root))
++			continue;
++
++		seq_printf(seq, "nr_subsys_%s %d\n", cgroup_subsys[ssid]->name,
++			   css->nr_descendants + 1);
++		/* Current css is online */
++		if (css->nr_dying_descendants)
++			seq_printf(seq, "nr_dying_subsys_%s %d\n",
++				   cgroup_subsys[ssid]->name,
++				   css->nr_dying_descendants);
++	}
++	rcu_read_unlock();
+ 	return 0;
+ }
+ 
+@@ -5424,6 +5448,8 @@ static void css_release_work_fn(struct work_struct *work)
+ 	list_del_rcu(&css->sibling);
+ 
+ 	if (ss) {
++		struct cgroup_subsys_state *parent_css;
++
+ 		/* css release path */
+ 		if (!list_empty(&css->rstat_css_node)) {
+ 			cgroup_rstat_flush(cgrp);
+@@ -5433,6 +5459,13 @@ static void css_release_work_fn(struct work_struct *work)
+ 		cgroup_idr_replace(&ss->css_idr, NULL, css->id);
+ 		if (ss->css_released)
+ 			ss->css_released(css);
++
++		WARN_ON_ONCE(css->nr_descendants || css->nr_dying_descendants);
++		parent_css = css->parent;
++		while (parent_css) {
++			parent_css->nr_dying_descendants--;
++			parent_css = parent_css->parent;
++		}
+ 	} else {
+ 		struct cgroup *tcgrp;
+ 
+@@ -5517,8 +5550,11 @@ static int online_css(struct cgroup_subsys_state *css)
+ 		rcu_assign_pointer(css->cgroup->subsys[ss->id], css);
+ 
+ 		atomic_inc(&css->online_cnt);
+-		if (css->parent)
++		if (css->parent) {
+ 			atomic_inc(&css->parent->online_cnt);
++			while ((css = css->parent))
++				css->nr_descendants++;
++		}
+ 	}
+ 	return ret;
+ }
+@@ -5540,6 +5576,15 @@ static void offline_css(struct cgroup_subsys_state *css)
+ 	RCU_INIT_POINTER(css->cgroup->subsys[ss->id], NULL);
+ 
+ 	wake_up_all(&css->cgroup->offline_waitq);
++
++	/*
++	 * Parent css cannot be freed until after the freeing of child css,
++	 * see css_free_rwork_fn().
++	 */
++	while ((css = css->parent)) {
++		css->nr_descendants--;
++		css->nr_dying_descendants++;
++	}
+ }
+ 
+ /**
+-- 
+2.39.3
+
 
