@@ -1,108 +1,165 @@
-Return-Path: <linux-kernel+bounces-249814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5C092F041
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:20:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB1F92F04F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2601C216CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:20:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B5491C2226A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B56019EEB5;
-	Thu, 11 Jul 2024 20:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1D519EEB5;
+	Thu, 11 Jul 2024 20:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="B08k7FoK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b="phnp6ar0"
+Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F8216E88D;
-	Thu, 11 Jul 2024 20:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018AB82D68
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720729233; cv=none; b=i/UDbqUyr15PuplBDksjXuas/vIF9yzgoH33JIkXG5npZPzqfn2jGu4U/MBCkLDfBb2vlr/b5U/2bGx+MAPeF3x4Oo2W+jipOOBUYT+UA3CwZUTcYny4VsNlO1C+B6E7uXeweSjv/222I5dLFg0Qw3CbBEegbqM5beJdzR7kocU=
+	t=1720729812; cv=none; b=RIS6M4RHnaH4LAgebbnPVU0pMNXgTguGWS9BjhziM4GUwaPraKWsLdNnvbEZE7UtevZSGERZJ2+acA5kRt714jRu8ywv3CyV2YKDfo2uB+RJxNdZpDofOX+4Dm3zAcoWSxk1sz/Pfc/tY4mxGkAWiFsQ768Zptkem2vcLhKZI5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720729233; c=relaxed/simple;
-	bh=xa+rT4VmJOOY+hkHlExT68aShODjIMJJ+OQfbpBQ3fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qAbJi4eIYTB7ZLaebuKmGKQXT4kKGHA+Udb3CsG4KjaU0m1qEkYcIKyiGlOHSa7LufeUy+2/w05KaU7LHvLZwk6f6lQVUXuAFe699MldaUAoIF1V455UDmvouJMWh0KVwu4NRrNv5zlCWGfI71IEwhBAeGsbPxKUZYxNo28GG7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=B08k7FoK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45713C116B1;
-	Thu, 11 Jul 2024 20:20:31 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="B08k7FoK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1720729229;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yt6QePxaysQIEy2W33NFuV82FH1yOwTPMayUT9I0nRc=;
-	b=B08k7FoKM2lth8Goud21+qdX9b42LABqtbFegs2oLDnZEvSCsNyDg1bmjyhL5o8Z9rok38
-	0bDYNxgm6Q6JMUOebYHP2hMK+PLa6CubiFXMr8PKb3jvY6/5lUdoVrvXPIB35+82ogkpdJ
-	pJFYgPAVaSkR/6oG//+B/wc8s6FL04E=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0ffe4054 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Thu, 11 Jul 2024 20:20:29 +0000 (UTC)
-Date: Thu, 11 Jul 2024 22:20:26 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Yu Zhao <yuzhao@google.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	tglx@linutronix.de, linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org, x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
- lazily freeable mappings
-Message-ID: <ZpA-iuAItDxBSfBS@zx2c4.com>
-References: <54b6de32-f127-4928-9f4a-acb8653e5c81@redhat.com>
- <ZpAcWvij59AzUD9u@zx2c4.com>
- <ZpAc118_U7p3u2gZ@zx2c4.com>
- <ZpAfigBHfHdVeyNO@zx2c4.com>
- <8586b19c-2e14-4164-888f-8c3b86f3f963@redhat.com>
- <ZpAqbh3TnB9hIRRh@zx2c4.com>
- <443146f4-9db8-4a19-91f1-b6822fad8ce8@redhat.com>
- <1c8632b4-06a5-49da-be0c-6fc7ac2b3257@redhat.com>
- <2c464271-1c61-4cd8-bd4e-4bd8aa01fa00@redhat.com>
- <CAOUHufYsxCb=taWWfUbuzi1Hmmug=ThQMoTjsxrtFkt=UXEu6w@mail.gmail.com>
+	s=arc-20240116; t=1720729812; c=relaxed/simple;
+	bh=Q8J4u+TRue0SPONN75ke4O5RBuo7YiRTdfcxYd743y0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FTGREP5SiYs7nafw8Q7IpeI4d/PseIw8pQ6+EtZs6NSrhqzkUnD1znq2TZsODMsoJQlypxR3I+nSkJlAMEMaIDoblE5mij2w8FhFZMjqcIE8lBZu8rBmelXqV9h67zSk0VYjD9pr5UdeawE+QW9LLakX4QzdAi9UuTOTAi4KPBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b=phnp6ar0; arc=none smtp.client-ip=193.222.135.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
+Received: (wp-smtpd smtp.tlen.pl 38260 invoked from network); 11 Jul 2024 22:23:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=1024a;
+          t=1720729406; bh=N6X9s7DMvS4stOXC63Qh/ErDHC3LOgu0EjpBk7+EkOE=;
+          h=From:To:Cc:Subject;
+          b=phnp6ar0kMcwf1akCDf+9+zLCRr/I1uB3sshilQ/BMeuDTajBw+bw2If7k09R6kv8
+           JGGxCQncjJiftKxWL0qs4bAczezOZcTsUB51wvvguP0tU1x9rUlVk6x0Q8nAUXA+Ay
+           gQwRCYVp8gmPVd6GgXbPhGPWkmjAH4zaZOi3mKAk=
+Received: from aafe223.neoplus.adsl.tpnet.pl (HELO localhost.localdomain) (mat.jonczyk@o2.pl@[83.4.134.223])
+          (envelope-sender <mat.jonczyk@o2.pl>)
+          by smtp.tlen.pl (WP-SMTPD) with SMTP
+          for <linux-raid@vger.kernel.org>; 11 Jul 2024 22:23:25 +0200
+From: =?UTF-8?q?Mateusz=20Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
+To: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Mateusz=20Jo=C5=84czyk?= <mat.jonczyk@o2.pl>,
+	stable@vger.kernel.org,
+	Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>,
+	Paul Luse <paul.e.luse@linux.intel.com>,
+	Xiao Ni <xni@redhat.com>,
+	Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+Subject: [PATCH] md/raid1: set max_sectors during early return from choose_slow_rdev()
+Date: Thu, 11 Jul 2024 22:23:16 +0200
+Message-Id: <20240711202316.10775-1-mat.jonczyk@o2.pl>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <349e4894-b6ea-6bc4-b040-4a816b6960ab@huaweicloud.com>
+References: <349e4894-b6ea-6bc4-b040-4a816b6960ab@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOUHufYsxCb=taWWfUbuzi1Hmmug=ThQMoTjsxrtFkt=UXEu6w@mail.gmail.com>
+X-WP-MailID: 845761608838002fc020863bb3b1a580
+X-WP-AV: skaner antywirusowy Poczty o2
+X-WP-SPAM: NO 0000000 [MSPU]                               
 
-Hi David,
+Linux 6.9+ is unable to start a degraded RAID1 array with one drive,
+when that drive has a write-mostly flag set. During such an attempt,
+the following assertion in bio_split() is hit:
 
-On Thu, Jul 11, 2024 at 01:49:42PM -0600, Yu Zhao wrote:
-> On Thu, Jul 11, 2024 at 1:20 PM David Hildenbrand <david@redhat.com> wrote:
-> > > -       /* dirty lazyfree */
-> > > -       if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio)) {
-> > > -               success = lru_gen_del_folio(lruvec, folio, true);
-> > > -               VM_WARN_ON_ONCE_FOLIO(!success, folio);
-> > > -               folio_set_swapbacked(folio);
-> > > -               lruvec_add_folio_tail(lruvec, folio);
-> > > -               return true;
-> > > -       }
+	BUG_ON(sectors <= 0);
 
-> This is an optimization to avoid an unnecessary trip to
-> shrink_folio_list(), so it's safe to delete the entire 'if' block, and
-> that would be preferable than leaving a dangling 'if'.
+Call Trace:
+	? bio_split+0x96/0xb0
+	? exc_invalid_op+0x53/0x70
+	? bio_split+0x96/0xb0
+	? asm_exc_invalid_op+0x1b/0x20
+	? bio_split+0x96/0xb0
+	? raid1_read_request+0x890/0xd20
+	? __call_rcu_common.constprop.0+0x97/0x260
+	raid1_make_request+0x81/0xce0
+	? __get_random_u32_below+0x17/0x70
+	? new_slab+0x2b3/0x580
+	md_handle_request+0x77/0x210
+	md_submit_bio+0x62/0xa0
+	__submit_bio+0x17b/0x230
+	submit_bio_noacct_nocheck+0x18e/0x3c0
+	submit_bio_noacct+0x244/0x670
 
-Alright, I'll just remove that entire chunk then, for v+1 of this patch?
-That sounds prettttty okay.
+After investigation, it turned out that choose_slow_rdev() does not set
+the value of max_sectors in some cases and because of it,
+raid1_read_request calls bio_split with sectors == 0.
 
-Jason
+Fix it by filling in this variable.
+
+This bug was introduced in
+commit dfa8ecd167c1 ("md/raid1: factor out choose_slow_rdev() from read_balance()")
+but apparently hidden until
+commit 0091c5a269ec ("md/raid1: factor out helpers to choose the best rdev from read_balance()")
+shortly thereafter.
+
+Cc: stable@vger.kernel.org # 6.9.x+
+Signed-off-by: Mateusz Jończyk <mat.jonczyk@o2.pl>
+Fixes: dfa8ecd167c1 ("md/raid1: factor out choose_slow_rdev() from read_balance()")
+Cc: Song Liu <song@kernel.org>
+Cc: Yu Kuai <yukuai3@huawei.com>
+Cc: Paul Luse <paul.e.luse@linux.intel.com>
+Cc: Xiao Ni <xni@redhat.com>
+Cc: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+Link: https://lore.kernel.org/linux-raid/20240706143038.7253-1-mat.jonczyk@o2.pl/
+
+--
+
+Tested on both Linux 6.10 and 6.9.8.
+
+Inside a VM, mdadm testsuite for RAID1 on 6.10 did not find any problems:
+	./test --dev=loop --no-error --raidtype=raid1
+(on 6.9.8 there was one failure, caused by external bitmap support not
+compiled in).
+
+Notes:
+- I was reliably getting deadlocks when adding / removing devices
+  on such an array - while the array was loaded with fsstress with 20
+  concurrent processes. When the array was idle or loaded with fsstress
+  with 8 processes, no such deadlocks happened in my tests.
+  This occurred also on unpatched Linux 6.8.0 though, but not on
+  6.1.97-rc1, so this is likely an independent regression (to be
+  investigated).
+- I was also getting deadlocks when adding / removing the bitmap on the
+  array in similar conditions - this happened on Linux 6.1.97-rc1
+  also though. fsstress with 8 concurrent processes did cause it only
+  once during many tests.
+- in my testing, there was once a problem with hot adding an
+  internal bitmap to the array:
+	mdadm: Cannot add bitmap while array is resyncing or reshaping etc.
+	mdadm: failed to set internal bitmap.
+  even though no such reshaping was happening according to /proc/mdstat.
+  This seems unrelated, though.
+---
+ drivers/md/raid1.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 7b8a71ca66dd..82f70a4ce6ed 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -680,6 +680,7 @@ static int choose_slow_rdev(struct r1conf *conf, struct r1bio *r1_bio,
+ 		len = r1_bio->sectors;
+ 		read_len = raid1_check_read_range(rdev, this_sector, &len);
+ 		if (read_len == r1_bio->sectors) {
++			*max_sectors = read_len;
+ 			update_read_sectors(conf, disk, this_sector, read_len);
+ 			return disk;
+ 		}
+
+base-commit: 256abd8e550ce977b728be79a74e1729438b4948
+-- 
+2.25.1
+
 
