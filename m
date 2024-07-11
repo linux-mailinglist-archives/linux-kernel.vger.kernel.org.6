@@ -1,156 +1,121 @@
-Return-Path: <linux-kernel+bounces-249840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39B992F098
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:02:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336EC92F09B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10B6A1C22809
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 652811C228BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15EC19EECD;
-	Thu, 11 Jul 2024 21:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D89719EED6;
+	Thu, 11 Jul 2024 21:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwqISL51"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/AuuJw8"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801BA1509BC;
-	Thu, 11 Jul 2024 21:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7BE1509BC;
+	Thu, 11 Jul 2024 21:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720731720; cv=none; b=kMkQ4GgvLl9AOXSjh4IEYGB17k6597X+bI//W+2iF7qe2btnl6W7vyMF9TGZ+qcT2zXBf0aZtoF6QAx9m3AovFrxEd84fJDV+3VJXazXmmtk8gQT4tji33u318Bld83IpN7I5bGhzC0kNX1lXZgEg+pe6/25iyeBQCFKvMoeLCc=
+	t=1720731779; cv=none; b=JrwiXHhDNrZkKeAxVg3DyolTVEY7prQFs6xTrLsZrFpu3VCMcqypTv/2GoEdkBsdB35YmAeFgQEcXJlLYpHItlMgM0d8VwqkX1t4/ujAoaqwCha2q6RbSz4b7H29mqTIiInHJZgKdiwkfeumGG0S0hz5rSovllQFhQvjSXjEJVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720731720; c=relaxed/simple;
-	bh=Krb9F4VAsc/TNpIbMiRsb20CidVKObO5UAXOT7f1fEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K3Ai2sQ54CHd3eLtHF497ncRue1Qzj7C0sf4Sh4upTj8R81izKNQBhJtnqINiuJpHnRfx9o7WZ2nv+ujCmeOO3ZsoXDy5Ux0P8MlFwJFpsbZMw1vZqn1gG6gA3jgxeAaU8IIHWWV+Asfhg376+MvsiUmTbDhtpCNOLUFaH7BtpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwqISL51; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720731719; x=1752267719;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Krb9F4VAsc/TNpIbMiRsb20CidVKObO5UAXOT7f1fEE=;
-  b=RwqISL51HU0Dhk3UMZ6yDZ9crsE25PWwDYf49G2hJ2pVMxX38bXSw1bI
-   LdM2m6Pd03yw5Y9/b9Nb5dGy0ehlAFssN87D51NNMJNkYebFMAcQDZ7DT
-   B1uE3vgPfW5AxDkQRtpe4XUYAq8A9jAL6DFInOs7WGCPxxVyyj9VxtvYW
-   FRzeqSL8zwvaxWCq3IdJEM77qu9bmx8wsdDylM2mlz4b9yH6TL6nDRjvH
-   Ti28akrQ5kfD0FfLRCd5RRACT1A06mIG/4X/P2vDcj7DdqhLRV+JTYDY+
-   Tskdf3GYsEZKuoulMRlRKzFVGe+bQIs1BbrToSh+m2I6r4Oii6fOruvRK
-   A==;
-X-CSE-ConnectionGUID: Jvk7ek6ERBu0TRvqwyp6Iw==
-X-CSE-MsgGUID: 0jW2abRATQ6k3ByXNFGUEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="28740481"
-X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
-   d="scan'208";a="28740481"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 14:01:58 -0700
-X-CSE-ConnectionGUID: aAolWHEMSmu+ew2muZFURA==
-X-CSE-MsgGUID: JMbO4RkjTdii1bKEb1x4QA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
-   d="scan'208";a="48431162"
-Received: from unknown (HELO [10.124.221.144]) ([10.124.221.144])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 14:01:57 -0700
-Message-ID: <842a88e0-90ae-48be-91c9-8a7c3a8359a9@intel.com>
-Date: Thu, 11 Jul 2024 14:01:53 -0700
+	s=arc-20240116; t=1720731779; c=relaxed/simple;
+	bh=MCiiul/sL2ZAleSM+VXyP3MAAKUhd5EixF38DNqlwX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r3RovehEp7gW4dyw4Zb5D7J1wI7o6XD1IS7HRa2DCoK5UhoJIgicnVUZOTSwIUVuRuJMAL8PfxsHlhfl6Ile+CzZXPnN27GLSmvufkHVRFmYQE8t4Vx4fYxMvCN6X1WNkPaK2B6ijROvfKhiUrjRM90dNwhxA/RLfMNx/vtldJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/AuuJw8; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-765590154b4so892128a12.0;
+        Thu, 11 Jul 2024 14:02:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720731777; x=1721336577; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TPw/SO2sSnfKID7p0VglZO30XRVzBtVu+U7rJuk0nik=;
+        b=W/AuuJw8Rkx235EHQsab0ncg83EWgxsw6IyBoexUzVnxjpYOiUktJvp0OXhSXg+SIe
+         XYcrLunt0WyEvTJIoQNbpcQx3xNwGtlT6zAsMPeN0Q7A32RbMZBRD79krl+vKbVhjv2X
+         xQSilTLVRoMWvwk0t/XMg4Q/hwJ8ULyVE+EC9jJYF6FoH2LuKwBuotJCsQGPnOcAK5OR
+         Ww/bA7YO34WOaS2SZlAR9K2eTx7Z/Ll+oudWwgSnBRBy2Hno9lMNyjOsCG7S8Xnf0SFx
+         gELhoPlg0kDqqKGAx8hsf4087OXDgfzCD9MYUiFQZqy8scZ5tGNJlG6T+TZ1MHHtn6tP
+         IzRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720731777; x=1721336577;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TPw/SO2sSnfKID7p0VglZO30XRVzBtVu+U7rJuk0nik=;
+        b=JUlMKfc4JYKMPC93dLsg0nlraUvBkx5j1O+0nXCfcou212jA76Xzl89AFoZKfb0yaN
+         kusZDqgHNcQn9wGIkRXqmOA5w4hOEbZK60q1Llidh7C91p3AkXkxOtwsIm4fdV2u98ek
+         9Nkgr3xeuivMAE70qfOgY22LuQZ9FuyJWLChHlTyp7IgSsZ5c46dhc8wTWkJS7hmSFxN
+         uBL5ZXMRv79A+dIfUe0dVflzNkCfwKTvt/FK2NqrRuzqLrAaUdEAThelt/h0HZCACEqp
+         0C4975u080doKkk/3zsH5rfOah6yesiQ6Znuc3aO4AZs4jSnOiqewTXGZFBiYBZZ9LwO
+         /pag==
+X-Forwarded-Encrypted: i=1; AJvYcCUjo8fdtoJ7K9b2yUcB9z4c/RqDAfJ1vRi00ErvlrUD+UnTWHIwdRzNumYqt4jlvIF9W7mmcAveXuyedFS2G+mdlnFGPOvi7GLJeuxW+47hct7sz/cs/wgxdXDuR5Mh4/zrkGcSzuLxmTq3iN+UaBvmoiITamt/FkZvfsaEOG3VWv8s
+X-Gm-Message-State: AOJu0Yw1UjMOMkiwyfGdIkfH2PexQrV4F7/J1cDWa7OLhOhgTNgXGNJF
+	WuDGO8GHklj2QfvFk0vVRVShjF0xTDtS8Y6iyQ7lYF8tCAOEbo3W
+X-Google-Smtp-Source: AGHT+IGdb0yZ9jv0Ip0mZjZRgjiQo6tr0WqPFqmNDoqYhcf4lY/3x6skldRaQwFgzPd+apnufW2qnA==
+X-Received: by 2002:a05:6a20:a11c:b0:1c0:e1a5:9583 with SMTP id adf61e73a8af0-1c29821ac95mr10981697637.17.1720731777394;
+        Thu, 11 Jul 2024 14:02:57 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6acf417sm54587155ad.265.2024.07.11.14.02.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 14:02:57 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 11 Jul 2024 11:02:55 -1000
+From: "tj@kernel.org" <tj@kernel.org>
+To: Boy Wu =?utf-8?B?KOWQs+WLg+iqvCk=?= <Boy.Wu@mediatek.com>
+Cc: "boris@bur.io" <boris@bur.io>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	Iverlin Wang =?utf-8?B?KOeOi+iLs+mclik=?= <Iverlin.Wang@mediatek.com>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2] blk-cgroup: Replace u64_sync with blkg_stat_lock for
+ stats update
+Message-ID: <ZpBIfwThiVwstlXL@slm.duckdns.org>
+References: <20240710061334.1888-1-boy.wu@mediatek.com>
+ <Zo8HTD2AD-b51q0C@slm.duckdns.org>
+ <6114fbad7bce9b15806bb9fee25a1075ecb53dd1.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/syscall: Avoid memcpy() for ia32
- syscall_get_arguments()
-To: Kees Cook <kees@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Mirsad Todorovac <mtodorovac69@gmail.com>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>,
- Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Peter Collingbourne <pcc@google.com>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20240708202202.work.477-kees@kernel.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240708202202.work.477-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6114fbad7bce9b15806bb9fee25a1075ecb53dd1.camel@mediatek.com>
 
-On 7/8/24 13:22, Kees Cook wrote:
+Hello,
+
+On Thu, Jul 11, 2024 at 02:25:29AM +0000, Boy Wu (吳勃誼) wrote:
 ...
-> diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
-> index 2fc7bc3863ff..7c488ff0c764 100644
-> --- a/arch/x86/include/asm/syscall.h
-> +++ b/arch/x86/include/asm/syscall.h
-> @@ -82,7 +82,12 @@ static inline void syscall_get_arguments(struct task_struct *task,
->  					 struct pt_regs *regs,
->  					 unsigned long *args)
->  {
-> -	memcpy(args, &regs->bx, 6 * sizeof(args[0]));
-> +	args[0] = regs->bx;
-> +	args[1] = regs->cx;
-> +	args[2] = regs->dx;
-> +	args[3] = regs->si;
-> +	args[4] = regs->di;
-> +	args[5] = regs->bp;
->  }
->  
+> I can remove the 32bit only define, but I think we need to add back the
+> u64 sync, because the spin lock and the u64 sync serve different
+> purposes. The spin lock is for handling concurrent problems from
+> different CPUs updating stats, and u64 sync is for updating 64 bits
+> data and fetching 64 bits data from different CPUs in 32bit SMP
+> systems.
 
-Yeah, that's much less magic.  I'll stick this in the queue to go in to
-the tree in a few weeks.
+Hmm... so what I'm suggesting is using u64_sync for the per-cpu stat
+structure as they are guaranteed to have only one updater with irq disabled
+and use a spinlock for the shared iostat which can have multiple updaters
+and isn't accessed that frequently.
 
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Thanks.
+
+-- 
+tejun
 
