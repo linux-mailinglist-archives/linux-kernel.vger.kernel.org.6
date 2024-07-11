@@ -1,190 +1,254 @@
-Return-Path: <linux-kernel+bounces-249917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6674F92F19E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:01:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B88492F1A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7AD6B229EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:01:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88545285407
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721631A08A3;
-	Thu, 11 Jul 2024 22:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C050119FA80;
+	Thu, 11 Jul 2024 22:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="O4mDbKjm"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11020120.outbound.protection.outlook.com [52.101.56.120])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SW5F7wFq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B621A071C
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.120
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720735246; cv=fail; b=C8yCAO9oh0K413e4Er99VkHnGk94vXcMI09rEm0OqJBBErzphuIAaPn8kEqZkBaeg0QVyLx8W5zxGnwGYA1rkNWC5wC3rVzsSKMqpouDa71f5wuQzVmE0GQn11zEA/XSGYOYmBv/uT1gKHxqLMsnoqo7/TYBKWhskmDznBs24G4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720735246; c=relaxed/simple;
-	bh=R5OR02Lhj41Wz3mJqdMz5pSZ8HPa20ACHFziSnHX8RU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=CssSSc0oz61UYZT9dAHBpc3EylyHOfi+7a9ZaovddMV5+7b4R26RDeKvCl5OzCVJBsS+jNPmYjc+MI9ARZtetRp4E+wO/e/nQ7fNMk5ctL+PFyT9cCEywB5+ADusFS0qNonYtfPATzAD5weWygy0kDexx8pt3lKut0TApSGdzsk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=O4mDbKjm; arc=fail smtp.client-ip=52.101.56.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yg0aHwqTVA8CPV82/ZafGhq39I9jWyUtTG+00Yi5RttvK03igNk3g23B8jPDooO872aR0dT5/GcuA2mvrO7U5kDI+MY4HFVtYdYv0yJJNyGiJe3ytYchhRg9JYT2RbGOWV6eoX+zubalQrJVu63ECvERexM4p2+SPm4uHEl+Lb7AfMR+j0ZtqROfUioR2Mzkce2l9cMmh8LGI4F7xQEXN9QNCS0YykMZTtxJtmk4Yv0KXu8yErdQkrKEWr/j/k1OkVpb8W2OZuBg949OXAbklxUimMbCGMDFb6+WaprIe4A6AebuiHuYvgoiJjI92myVGBSxz/F3xYlZVp7BnI2iBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R5OR02Lhj41Wz3mJqdMz5pSZ8HPa20ACHFziSnHX8RU=;
- b=wXsw1iblxlHdVkqFEvLJxlF49pGBbKk1qY5Pw8Hd2gHiaH2YW3sP+hyBM5a97e3m6v2KuLEVTN1k/m/L7taVXuEpsGqMpx3csvqNrPn30u6O7mcPLnQQ+l2kBz8lp+m6uaEBa6b9F6n4S9d3rbM7lOeRt7jh68tQaPfNUhEHDwa6AaYWgBwPVbUDiYFIJH9xGnDM+HSEA/GU16kiTNLqRTtddUUVRGLoeWDsq3halid3AmFXVU/7PsSB4/azp3007IJbFz+7JvZ/KCk0hoTeObU6siHksPE/MLTLCIMxaJ16jIkxKeQvsSvvOz2Xn71IUmbIhApkuSBlSmMRExGBpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R5OR02Lhj41Wz3mJqdMz5pSZ8HPa20ACHFziSnHX8RU=;
- b=O4mDbKjmo1HUsQbwM6M5OhIfXST+3Uz2QEMfPEcmA7RT7W8exh/uG3nIE6GY4PGDTbv2bt70tzihRiBugI7REhJA5OVuxpBrE7GFs0s+GHu3L38Ly/GANrCCBoH5oyqN6gdr2V37p/LmX4dWXxT+Ezil7Ax2zm/n8xvQv7zVRYg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from BN0PR01MB6862.prod.exchangelabs.com (2603:10b6:408:161::11) by
- PH7PR01MB7824.prod.exchangelabs.com (2603:10b6:510:1dc::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.35; Thu, 11 Jul 2024 22:00:35 +0000
-Received: from BN0PR01MB6862.prod.exchangelabs.com
- ([fe80::8a1e:34a8:2ad9:7f83]) by BN0PR01MB6862.prod.exchangelabs.com
- ([fe80::8a1e:34a8:2ad9:7f83%3]) with mapi id 15.20.7762.020; Thu, 11 Jul 2024
- 22:00:35 +0000
-From: Carl Worth <carl@os.amperecomputing.com>
-To: James Morse <james.morse@arm.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre
- <reinette.chatre@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, H Peter Anvin
- <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>, James Morse
- <james.morse@arm.com>, shameerali.kolothum.thodi@huawei.com, D Scott
- Phillips OS <scott@os.amperecomputing.com>, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>, Xin
- Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com, David Hildenbrand
- <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>, Dave Martin
- <dave.martin@arm.com>
-Subject: Re: [PATCH v3 00/38] x86/resctrl: Move the resctrl filesystem code
- to /fs/resctrl
-In-Reply-To: <20240614150033.10454-1-james.morse@arm.com>
-References: <20240614150033.10454-1-james.morse@arm.com>
-Date: Thu, 11 Jul 2024 15:00:27 -0700
-Message-ID: <87bk33d1xg.fsf@rasp.cworth.amperemail.amperecomputing.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MW4PR04CA0247.namprd04.prod.outlook.com
- (2603:10b6:303:88::12) To BN0PR01MB6862.prod.exchangelabs.com
- (2603:10b6:408:161::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F349954903;
+	Thu, 11 Jul 2024 22:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720735427; cv=none; b=m7YVPIVfZk1oTgBrHcwpUW8pc3Tvq6cOyQxkf5qLcCMBLgEpU3KF+dhP+QUNABz+f9lws3uUw19wYOefudXi0wYLXiPwcStXjYoazmPv8wBz3TTw8LfOgKSBwCEdkkcCFD2p8/MDJU148w25R3RtcPGLtcFHODpZ66yfYfYcWTQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720735427; c=relaxed/simple;
+	bh=vZ/eekIB62QHGzRjLzJCvVidytw7m8uo1a+YsfLmyOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pjE32Cdyq5SYJrDeE5kyodXdwsWQvx4ycPLV6ktvChNd59EUnru6x1VL/tDzkh2CQ4c0oZH9NSz4kOgXkysrqNdb4+s/Kust8LhbREUnq6krURFE4adPSVIYfZ0vDgLSQvdziHpAYAmW0ZjYvzsxg8O+RNb8i03R8ePDN1ZD2+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SW5F7wFq; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720735425; x=1752271425;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=vZ/eekIB62QHGzRjLzJCvVidytw7m8uo1a+YsfLmyOs=;
+  b=SW5F7wFqNfk1JCn4xDt66mbvM33klXxNSuTHr8qmA7Uw3h7pL9Bnzcfa
+   lsdAENSRV9YpMb2wlBPegna9XQOfj6mKty7N7Qa1klis1cuZb4AgooZSU
+   2HCVyMfOsx6Gvw4YT35Fap1CEaCUJm8iLpY48zh0897Mm6pqOqW845alS
+   c9xEXwKc9dSkSNp1x46CSOZAcI3mgH0zyg1MjQwa3OvuWywt8Bb22Yjo2
+   SFAjfLP8mTtKb47X9we5KIJe9TvYxJSXmlUGl8XBKMJzBTxh+0STqGY5H
+   z2xnjHKIBH/FTXRckiWJGqtlG/9EP7tZQfQAUMGuX+1gHCh1nkyTUcz+o
+   g==;
+X-CSE-ConnectionGUID: VILHcv+2QOuKY6zym9Y1Lg==
+X-CSE-MsgGUID: 0u0XDwerS6aKt6Ked/rgpw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="28827303"
+X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
+   d="scan'208";a="28827303"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 15:03:44 -0700
+X-CSE-ConnectionGUID: fyH/RCdgTwaQHFAF0Zqwig==
+X-CSE-MsgGUID: u0M/yqP4RtiNRI7f2bvx5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
+   d="scan'208";a="53636196"
+Received: from tmsagapo-mobl2.amr.corp.intel.com (HELO desk) ([10.209.8.238])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 15:03:43 -0700
+Date: Thu, 11 Jul 2024 15:03:37 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Robert Gill <rtgill82@gmail.com>,
+	Jari Ruusu <jariruusu@protonmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	antonio.gomez.iglesias@linux.intel.com,
+	daniel.sneddon@linux.intel.com, stable@vger.kernel.org
+Subject: [PATCH v5] x86/entry_32: Use stack segment selector for VERW operand
+Message-ID: <20240711-fix-dosemu-vm86-v5-1-e87dcd7368aa@linux.intel.com>
+X-B4-Tracking: v=1; b=H4sIAD5WkGYC/3XNzW7CMAzA8VdBOS9VnA873Yn3QByyxh2RaDs1E
+ IFQ330pFyaVHf+W/fNDZJ4TZ/G5e4iZS8ppGmu4j53oTmH8ZplibaGVtspqlH26yThlHq6yDB5
+ ljAAQFJAhFvXqZ+a68hQPx9qnlC/TfH8+KLBO/7cKSJDed15jML0hvz+n8Xpr0njhc9NNg1jFo
+ l8KatoquirROWp7bD0TvVfMSyEFW8VU5QtabJ3RHbnwXrF/FFBbxVYlBLRoGSJjv1WWZfkFrez
+ Am4YBAAA=
+X-Mailer: b4 0.12.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR01MB6862:EE_|PH7PR01MB7824:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2aed34ef-a69e-4277-89f5-08dca1f4e437
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|7416014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3jYPhVoZpsS2Hk7BfcuoMi3gwkraUk2e6RPrhez4gsSNV5HC+cB5ZNWeSSWA?=
- =?us-ascii?Q?iUXGQ2tJIxjJaJirC6EZ4hQJisYMp3wSJI0YNrGqTzTK9HjqIkD2AffWq5Qq?=
- =?us-ascii?Q?Rl78QMURCYJ/t9vpLK4sg8moABBj8/iXUIO7/ujvfNo0k0LbG/xRxs4ccTuJ?=
- =?us-ascii?Q?6ZoucvwYEWMWA7X2nj22WZJIwm3YkWmWzIh7ZoUHOmp5GTaKwKU3gqts2KEK?=
- =?us-ascii?Q?jEcVwY8pZjfzcID3PmMGDrEpvXw5r8CV47Ye5PX22wXNJMUTI1e50l4Pjgut?=
- =?us-ascii?Q?LudcUag+A6wFDyC33sDN+MbQVg0hD2TwG5kstO7yhXrBEitI49/ewpH+WfXt?=
- =?us-ascii?Q?aQBfODvMhOneBPQkx0+HaiwvuANL4zfldOmTIQlGMbwLQeQ0FX8riWO2XcqY?=
- =?us-ascii?Q?9fK3xn8uhZHWpniuay0dXL1wb/o/XqiWdLwz+csw/77gu5XIzlo29AtlOVzJ?=
- =?us-ascii?Q?YqukfTa3o3ayghVexrIqsUkEPqleolIp4J/UE/drR/WroS1WoxZ2uABd/FZ+?=
- =?us-ascii?Q?Vxya1e+mq/+Ajn6E41ZFaYIfY1+vdTsfuilamrsdcSDJoWvEGF+0mW6O+m7K?=
- =?us-ascii?Q?sIaFS0LKaeM3F86D3Aj21sO7CcxLx1MmZZuW82FFT2zeEoMt1vyWd6s8/FrZ?=
- =?us-ascii?Q?FSDolQRqI1ciZLjTct+CbPBMPYn4UuvmoNKwU02AH97ei4orWlCtyBbdFpRT?=
- =?us-ascii?Q?CBN/MIyDIK4NWrhmEVG6aiu6xffafiLVY5dl1XSEKh6vNEghGJQfnlKh9ECg?=
- =?us-ascii?Q?gi43PGR9mtyzIS8OH6e9fzym0JoPlC3+lS9Q8bnuyAoan1nnbqJQvj8nBf7a?=
- =?us-ascii?Q?KTjFbndDDIucGSwEISswFrTM9rHWCJBMFW9T9+HOe+XhslF3ZGLnhBcKWdWw?=
- =?us-ascii?Q?2hR4nIBBF/9CUtV+bW1Cn9jIJtdZwUxzAI+0zGGPWk7K7SpeUuJ+4v2vo7LF?=
- =?us-ascii?Q?LSaHnhzJCzoji+RaVQf4iJ7G7RRu/+S0sERqalht6CIMn7tCGCKUtgvFElSV?=
- =?us-ascii?Q?pVMaSmJhQQyP3Rac13LYH0o3VGQ4Stt879duowT2tqX9gClAkD34PEijFvkK?=
- =?us-ascii?Q?N54LTIMJhuwUD/fb7zrxkiPrR7XV3QbENK7Lmq/lxvjgJ9bn8KgU+T1MbicE?=
- =?us-ascii?Q?3UNjczIvMLz11Rfkj9eDNA0OO3zrl3ry1arS1DoHIVD+SrGehPY1p0+52MSB?=
- =?us-ascii?Q?8xAsRrGPEjRQAfo+K5BW6CSmt0iBCsGeL1nEOoksT7P/t3xhEbs5ZVkn9v55?=
- =?us-ascii?Q?KZLra0gYIGo8lfIkdP2n5qdn6/3XHG9HM5UM9rACYpnzFMXdCkFOwxn6Azeo?=
- =?us-ascii?Q?fv28b6ofuSqUu9UT+p2gRd9murQco1m0BTmk6L5OiIcZ8gwDq0NNTxuP5k+3?=
- =?us-ascii?Q?eV+9cSGObOmktIUip3cWBNnBm1eeSI1b/czTCZwwDhSsvar2Tw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR01MB6862.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GthScPsmsz0AXTjcy2eP14HPkREuDgluCk4SFc+7PDEvDdPt6Adpx1vsmkuo?=
- =?us-ascii?Q?G2gTJ13bFwBbdDYO7CsfeFQHQV46Dw7zLy/6sDuPYQgf6DzTzFm29A870AEs?=
- =?us-ascii?Q?0tDpftT7SCrI1o4RxrAE51Q17EBGJLOHvKvubu+7qcq6oV/sM2JoLJHL3ZiQ?=
- =?us-ascii?Q?P0MTBk51JWHgutulu4FW6QroLABa0J+T2JeOYyZSQjpb447vH6oqOFbuoTd0?=
- =?us-ascii?Q?+AcqrL1ItWf95bfWOqX1fPzTqQSGRiwU8QLRdmU4QmwRKmdHGjfRZYjNaJTc?=
- =?us-ascii?Q?TN71QBa85ztYjHtLzE5WUXEe+JwvHNtaKb7H+E/YKsTAYiHqIIsk6+bHCU0S?=
- =?us-ascii?Q?PE9ZrMy1noc1nG+uGB3I7dVY/rgP8n/yxzZO/fz+5hUe0OaR7l4geHy0ox2x?=
- =?us-ascii?Q?j84lgGyT0lsRtDh73T/SrPjEPb2o94CXDK99GeaKp8fJ9/XQBLr1u4/kMugT?=
- =?us-ascii?Q?oIR213X66XdM9ppX1Ng+GBQj+XMLvNcntSs4K+Q2Xz1Xi8XsnSFVjdLuGAmz?=
- =?us-ascii?Q?TuE8SQBdu6uPGoHPkm+dTzP0R0oEDsvZdSewVRlrJALxYWTIN2sPUJu4Cp7F?=
- =?us-ascii?Q?XiOopUE2hBh2+fttNEH1jCuOGtT3bXLL4EorrRKsr7icoh3xOHQCdm4rjspP?=
- =?us-ascii?Q?U2/qfA6XWi6AIVBuuaQl0VXkYw7GAuhfFJVO+WL1hT+HrlF0OrDUul287OGP?=
- =?us-ascii?Q?6kcTz8t15FEEc/MWUolB4MxM3B8xNzSC4wmkV8mxZTCB7SUcW9tQBiUm76id?=
- =?us-ascii?Q?pFMV6m6dSojwSkpfDC/0vLJfGY5YAfN2sH3cPKSCutKLW6IO49ReqhTaEntg?=
- =?us-ascii?Q?atjilVL1eRa0MaozK42MtSeLA36lB6hkP5+vROauek2K+kD9csxom+8axr79?=
- =?us-ascii?Q?gYcohSLaqzfNGNeJ560RizOK/NHIzQJzO9yD/CQc+zzc+Y0An4qNrE/GQfXb?=
- =?us-ascii?Q?dxbh5gOIpvAeQ7075e2Tjl1JXdbmCegVuSE8LRHE/QrhasA/bW0OX2ZccRdy?=
- =?us-ascii?Q?3bsWIbrteAXCQmH571UkVbUP0UlS+O+J6kkE+Ll2yAuLwduyHd3We1j2ZJxp?=
- =?us-ascii?Q?p3VduzxXK6DaOaZcpJ0KjE/Kg7eOI0uv3Ce4IOywoLU2EQlQVt/klVK6V0qa?=
- =?us-ascii?Q?STt7g+CJdG5cMjaWQoo2AKfr8YPpVI7Hx3VDDI0XannzlFgDsDLKaPmkCENf?=
- =?us-ascii?Q?2gfFM5PzX8U/dqOEvjHzDg3LF+9RwuDS/HKE7M0WnhsOZRZ0K/lXs5LFTD1j?=
- =?us-ascii?Q?b0aHHYH8FlsSHnzsK04PPaxr17jgW4/5uNhKDI4bykgogAfQXIqNkBx+CdMb?=
- =?us-ascii?Q?mB/uQwfXQBZOflpKYlqGG7R71iRR33nozswbOTODBVaM16Oslq53v36zq//2?=
- =?us-ascii?Q?JP5A0QQqKqkRf42w5Gbj/Jyte5kcoO+2NkZdRuBGkJ4pYhXg1ztF+rguylJX?=
- =?us-ascii?Q?NOLytHGUHoDSN5c+YT7vDd8VIpy68ljLsAc4a72p28nhyKLxP+mkGqtY3+mv?=
- =?us-ascii?Q?YZZjeq6PVUzuLm/wEJGf+q6v9sb8U2bU7Ri8mcAdfhCujbAim0uV+I9+ZBNl?=
- =?us-ascii?Q?ELVPKwjfRpRpKsrs4ra/9nJRYG1T1Zh9ioGPfA7zNfzduN48LsktKM1X6Q1+?=
- =?us-ascii?Q?4THt+Jqb3pz3EnSTDOImFJc=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2aed34ef-a69e-4277-89f5-08dca1f4e437
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR01MB6862.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 22:00:35.4208
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ah2x+z0FH9LzMnsKnzwKyreMN9vAu5zv5+Hyk0a+LpqJuruO2mGwbYPsIaxpMVSwVbShM5jDjgjzZnwlM0sYEUjzX6+yrr8vE7L5bZCX6HU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR01MB7824
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-James Morse <james.morse@arm.com> writes:
-> This is the final series that allows other architectures to implement resctrl.
-> The final patch to move the code has been ommited, but can be generated using
-> the python script at the end of the series.
-> The final move is a bit of a monster. I don't expect that to get merged as part
-> of this series - we should wait for it to make less impact on other
-> series.
+Robert Gill reported below #GP when dosemu software was executing vm86()
+system call:
 
-Thanks, again, James.
+  general protection fault: 0000 [#1] PREEMPT SMP
+  CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
+  Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
+  EIP: restore_all_switch_stack+0xbe/0xcf
+  EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
+  ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
+  DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
+  CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
+  Call Trace:
+   show_regs+0x70/0x78
+   die_addr+0x29/0x70
+   exc_general_protection+0x13c/0x348
+   exc_bounds+0x98/0x98
+   handle_exception+0x14d/0x14d
+   exc_bounds+0x98/0x98
+   restore_all_switch_stack+0xbe/0xcf
+   exc_bounds+0x98/0x98
+   restore_all_switch_stack+0xbe/0xcf
 
-As with previous versions, I've tested this code (along with additional
-MPAM code from you and other code we've written), to test MPAM
-functionality on an Ampere implementation.
+This only happens when VERW based mitigations like MDS/RFDS are enabled.
+This is because segment registers with an arbitrary user value can result
+in #GP when executing VERW. Intel SDM vol. 2C documents the following
+behavior for VERW instruction:
 
-I replied to the in the series which introduces
-CONFIG_RESCTRL_FS_PSEUDO_LOCK to point out how that commit will actually
-break compilation if that option is not selected, (and I described the
-minor change needed to fix that).
+  #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
+	   FS, or GS segment limit.
 
-With that fixed, for the series:
+CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
+space. Replace CLEAR_CPU_BUFFERS with a safer version that uses %ss to
+refer VERW operand mds_verw_sel. This ensures VERW will not #GP for an
+arbitrary user %ds. Also, in NMI return path, move VERW to after
+RESTORE_ALL_NMI that touches GPRs.
 
-Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
+For clarity, below are the locations where the new CLEAR_CPU_BUFFERS_SAFE
+version is being used:
 
--Carl
+* entry_INT80_32(), entry_SYSENTER_32() and interrupts (via
+  handle_exception_return) do:
+
+restore_all_switch_stack:
+  [...]
+   mov    %esi,%esi
+   verw   %ss:0xc0fc92c0  <-------------
+   iret
+
+* Opportunistic SYSEXIT:
+
+   [...]
+   verw   %ss:0xc0fc92c0  <-------------
+   btrl   $0x9,(%esp)
+   popf
+   pop    %eax
+   sti
+   sysexit
+
+*  nmi_return and nmi_from_espfix:
+   mov    %esi,%esi
+   verw   %ss:0xc0fc92c0  <-------------
+   jmp     .Lirq_return
+
+Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
+Cc: stable@vger.kernel.org # 5.10+
+Reported-by: Robert Gill <rtgill82@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
+Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Suggested-by: Brian Gerst <brgerst@gmail.com> # Use %ss
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+v5:
+- Simplify the use of ALTERNATIVE construct (Uros/Jiri/Peter).
+
+v4: https://lore.kernel.org/r/20240710-fix-dosemu-vm86-v4-1-aa6464e1de6f@linux.intel.com
+- Further simplify the patch by using %ss for all VERW calls in 32-bit mode (Brian).
+- In NMI exit path move VERW after RESTORE_ALL_NMI that touches GPRs (Dave).
+
+v3: https://lore.kernel.org/r/20240701-fix-dosemu-vm86-v3-1-b1969532c75a@linux.intel.com
+- Simplify CLEAR_CPU_BUFFERS_SAFE by using %ss instead of %ds (Brian).
+- Do verw before popf in SYSEXIT path (Jari).
+
+v2: https://lore.kernel.org/r/20240627-fix-dosemu-vm86-v2-1-d5579f698e77@linux.intel.com
+- Safe guard against any other system calls like vm86() that might change %ds (Dave).
+
+v1: https://lore.kernel.org/r/20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com
+---
+
+---
+ arch/x86/entry/entry_32.S | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index d3a814efbff6..25c942149fb5 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -253,6 +253,14 @@
+ .Lend_\@:
+ .endm
+ 
++/*
++ * Safer version of CLEAR_CPU_BUFFERS that uses %ss to reference VERW operand
++ * mds_verw_sel. This ensures VERW will not #GP for an arbitrary user %ds.
++ */
++.macro CLEAR_CPU_BUFFERS_SAFE
++	ALTERNATIVE "", __stringify(verw %ss:_ASM_RIP(mds_verw_sel)), X86_FEATURE_CLEAR_CPU_BUF
++.endm
++
+ .macro RESTORE_INT_REGS
+ 	popl	%ebx
+ 	popl	%ecx
+@@ -871,6 +879,8 @@ SYM_FUNC_START(entry_SYSENTER_32)
+ 
+ 	/* Now ready to switch the cr3 */
+ 	SWITCH_TO_USER_CR3 scratch_reg=%eax
++	/* Clobbers ZF */
++	CLEAR_CPU_BUFFERS_SAFE
+ 
+ 	/*
+ 	 * Restore all flags except IF. (We restore IF separately because
+@@ -881,7 +891,6 @@ SYM_FUNC_START(entry_SYSENTER_32)
+ 	BUG_IF_WRONG_CR3 no_user_check=1
+ 	popfl
+ 	popl	%eax
+-	CLEAR_CPU_BUFFERS
+ 
+ 	/*
+ 	 * Return back to the vDSO, which will pop ecx and edx.
+@@ -951,7 +960,7 @@ restore_all_switch_stack:
+ 
+ 	/* Restore user state */
+ 	RESTORE_REGS pop=4			# skip orig_eax/error_code
+-	CLEAR_CPU_BUFFERS
++	CLEAR_CPU_BUFFERS_SAFE
+ .Lirq_return:
+ 	/*
+ 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on IRET core serialization
+@@ -1144,7 +1153,6 @@ SYM_CODE_START(asm_exc_nmi)
+ 
+ 	/* Not on SYSENTER stack. */
+ 	call	exc_nmi
+-	CLEAR_CPU_BUFFERS
+ 	jmp	.Lnmi_return
+ 
+ .Lnmi_from_sysenter_stack:
+@@ -1165,6 +1173,7 @@ SYM_CODE_START(asm_exc_nmi)
+ 
+ 	CHECK_AND_APPLY_ESPFIX
+ 	RESTORE_ALL_NMI cr3_reg=%edi pop=4
++	CLEAR_CPU_BUFFERS_SAFE
+ 	jmp	.Lirq_return
+ 
+ #ifdef CONFIG_X86_ESPFIX32
+@@ -1206,6 +1215,7 @@ SYM_CODE_START(asm_exc_nmi)
+ 	 *  1 - orig_ax
+ 	 */
+ 	lss	(1+5+6)*4(%esp), %esp			# back to espfix stack
++	CLEAR_CPU_BUFFERS_SAFE
+ 	jmp	.Lirq_return
+ #endif
+ SYM_CODE_END(asm_exc_nmi)
+
+---
+base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+change-id: 20240426-fix-dosemu-vm86-dd111a01737e
+
 
