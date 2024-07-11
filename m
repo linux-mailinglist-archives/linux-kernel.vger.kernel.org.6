@@ -1,199 +1,225 @@
-Return-Path: <linux-kernel+bounces-248911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C5692E3B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:45:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C4592E3B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 226D1282F82
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:45:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 847BC2848B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162061553BC;
-	Thu, 11 Jul 2024 09:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4909B155CBA;
+	Thu, 11 Jul 2024 09:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="rF3Pg+X9"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="lTAiHtvh"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2089.outbound.protection.outlook.com [40.107.255.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87E5157489
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720691117; cv=none; b=N0kN/fAetl6egLaiZm7x2GfipcXXeFwpBuqWL1HvhnlBOOwE10rVYJyWdwv1EWhwM/Wi+jLn2Rsz+xBQ2Bt5CjHdUipuTPBuctdLoUYouTBq7Pf+W4Az95ZlHIhE1reN097iVvqdSSDpdyl2lEVnlkZ2HaicGYTUF588bgZu3Pw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720691117; c=relaxed/simple;
-	bh=Oy7W7l6eQOf3PSHMcjeyj4fuNeSFdBFQ9Uq+63xIoT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jHgPYrfkgtWgknxlvJn0oryK38U4FVCLOo4nc79CHoHlVfC7GGzzKpfppVzD2xdHH8t8Vt4vNdi6KDQRjMut69DGMe+m1er8kVyhdkAfZT3h1q3Bba4w9fSYl1dczkEg7870mXzrOyN79GEtVMoMgmEmqbU+u0JUBbNuQvNI/Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=rF3Pg+X9; arc=none smtp.client-ip=167.172.40.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1720691095;
- bh=3VTjqdTB2Skdm6LlNLhdmYkYJnJbA0EzPLhUN0GVP+4=;
- b=rF3Pg+X9lOhYwAMLGxuumuQvC1B3YyghSZm2SvKm0O7v3nMcKx5DL20CX7XzEVZOk0bxGi5Lu
- 4V1DwIElHMP6bkYS/eQn+PIOXmD3KjzVy38PCHhUGKJJDAI5R18ed1kiQaNvdtf+mJ9+UsQZvoS
- fhKpgaor7sz+HxysQE876AX3uyJUb7ADjNK8rfIIX4j36Y3qoiXz25T2uE+IWBmM39HmKx/wz7R
- 44sMvhvu1h2fUZF4p2jdd1vhGJmu0K87iXfzmkm3aIa5xslML1OdFXoGXnnf88QkGoUL94lyel7
- MzVL9JhC/gSPlkMdd4s1nymhmS0Kr9FcyQfoRClSXpZQ==
-Message-ID: <6250fa05-7a06-4fa1-a2be-9cb66a2d2822@kwiboo.se>
-Date: Thu, 11 Jul 2024 11:44:46 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9170713DDA8;
+	Thu, 11 Jul 2024 09:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720691272; cv=fail; b=qARCdWveazqloop9P9yKvE6owkaNnA6MVkh/Ql6iwQ7aVgURDF8gs/WfLroR+fjQ+inkWbFvzIcj8eN9J0ToMhnL0FotXRe/Jyc2lVAVuaTfi7q3ncwJytLxgSe9bKoA+OMIYHxOQ/OtUY2ds3bI5ZAlSPVTW2zZeb4HC9KXtHY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720691272; c=relaxed/simple;
+	bh=ufdINLAlR5TWXhlaENBV5FdqxpmSnclPH1IzcWC/zTk=;
+	h=Message-ID:Date:Subject:To:References:Cc:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iV2vFbCWIBpDyXWrltrhv4vFSboHvMMYshNkNbK8wP9b+12hSJ/BABegOohanbQ5OZ3c7uRCvtFlSwPWKR51KrK3qOklv0D1UNR8pHzTjHnX5qFrhyUXQCftDork+mfJD0qsdb9cyAZKf3Fu3vk7mW2x3q20Yh2qR1q4wAdyogw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=lTAiHtvh; arc=fail smtp.client-ip=40.107.255.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xiB8QFftWAJGkkG+IZZkWiYsQUZ+fwlsC84cRTIQlIcDADMbFY0hjSEspv0Fz26+WrMW5QQOqYxmKLSIKL+r7qJ9cs33w6S/W2hi4Ait+pYgU8yoKipmWzpFJCgHFH7L3UbL5nJD1WoEPrPjMKaxn+LGNZLQT/OVeNZ6Z9ubSqU3NOldh6xHOiFignT2wG0p5rC/B9d2L4ZnVki8TD5yvE4yONegrcDMHpUIX7PKwAFPqJIWfr4Os54yslUlBZMuaZ0q+QDRdF4brlBdcLCeFJsnpdi9QtSy1DCf4MFH5reBQptdTnFiQyoIaZiVnPJvjKrOgsNir0H7zADFakH8GA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BPPQiwCpNr0UymrJZGcyMwq5oJWGuQiilFgKeNRcOXc=;
+ b=t8wQG9Jt/ZFAC6lH9aw8OvfGYOHr5kj1NucBqO+7EUGhyC1cUMsBEBIC0aDEHXXWiFCq1JHZW9yL55YQpOkC97AyD2ZfigBlw19GR8WaR755v7AMmN+WfmYZi9ClEfk5uYoT3GyR+CxRUlFDxAb/EQpDu5HpypoY403krPH5nti2ZB2rbdxlFgEut0qQ5TRh5Lam7AKkm/x4LF+ypl9gIZHG0ncZVdRt+uZ2cBFunB675nosZntiCq02jVq35mbl/SKbHs7Hyl8YCM9m8MADWsJ/HrrDraHb+iVT2W9qrmZ/IpSlM1ZJvrtU+tsDfUICwk2GTq5C5Gn7GEgFEwf/bw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BPPQiwCpNr0UymrJZGcyMwq5oJWGuQiilFgKeNRcOXc=;
+ b=lTAiHtvh9yaxlqXA4MHRoXcU2F9HRaxKuzAmSa1ELwCdL325j6+zIAD9lN6c0X5SF7xcaKYbNnz37vO+uOjvgUSRWyFa2iBIP+y9lt2rUv3QaZ/XuLu3OlfjO8CIwI12QRGxV8s7LX5CryiwRyIqrrvVHucB9J5MQTCoZuSinxsJSMiyFqsKmB6Afhhb36pB5fe5qPaTHxYTYZinEpEICOszrMX1XfBeBqhyyXI/e1xUmzTyqAlLrMr6HoltMya//ddgu3r5EDkLReRpjPoNttMHVW+NjDQI+EsMkda5BY5opcZPq6bU3KlfwQl6EplkUZVgJ88PvT7X1M9MAKm++g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR06MB7401.apcprd06.prod.outlook.com (2603:1096:820:146::12)
+ by SEZPR06MB6529.apcprd06.prod.outlook.com (2603:1096:101:189::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Thu, 11 Jul
+ 2024 09:47:41 +0000
+Received: from KL1PR06MB7401.apcprd06.prod.outlook.com
+ ([fe80::f4f:43c4:25e5:394e]) by KL1PR06MB7401.apcprd06.prod.outlook.com
+ ([fe80::f4f:43c4:25e5:394e%4]) with mapi id 15.20.7741.033; Thu, 11 Jul 2024
+ 09:47:41 +0000
+Message-ID: <591ba004-c28a-4956-ae13-c02cc8d235d3@vivo.com>
+Date: Thu, 11 Jul 2024 17:47:36 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] sbitmap: fix io hung due to race on
+ sbitmap_word::cleared
+Content-Language: en-US
+To: Bart Van Assche <bvanassche@acm.org>
+References: <20240710065616.1060803-1-yang.yang@vivo.com>
+ <ff5cc2b2-bf8e-4a48-8422-cdaac4129043@acm.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+ Ming Lei <ming.lei@redhat.com>, Omar Sandoval <osandov@fb.com>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+From: YangYang <yang.yang@vivo.com>
+In-Reply-To: <ff5cc2b2-bf8e-4a48-8422-cdaac4129043@acm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TY2PR02CA0038.apcprd02.prod.outlook.com
+ (2603:1096:404:a6::26) To KL1PR06MB7401.apcprd06.prod.outlook.com
+ (2603:1096:820:146::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add missing pinctrl for PCIe30x4
- node
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240711060939.1128-1-linux.amoon@gmail.com>
- <a8c1f49e-bf25-4fd3-a16f-13088f75767f@kwiboo.se>
- <CANAwSgQCn3jgiruiLs0cu-C+DguLtnk=msboAh8jNSF4P28gjA@mail.gmail.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <CANAwSgQCn3jgiruiLs0cu-C+DguLtnk=msboAh8jNSF4P28gjA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 167.172.40.54
-X-ForwardEmail-ID: 668fa9943d24780caa1a7dec
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR06MB7401:EE_|SEZPR06MB6529:EE_
+X-MS-Office365-Filtering-Correlation-Id: 21c413a3-c30c-4c3d-58cc-08dca18e8184
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K05YM1lQZTVtTGM0UldNQmY0bjhYbnNnOXkwZThLdXFHVTZTYXJEMlJrcCtx?=
+ =?utf-8?B?cGFVQW1LbERzRldDVlk0VS9MUFlTNjdOWUVBWmhrcHZEems5ZFZUeTcrekFJ?=
+ =?utf-8?B?QWFFeVhvdWlPczh3aUg5VURBTDRQZXhCU3hQM3pPNFZDOFc5MU84WlBDZ0FT?=
+ =?utf-8?B?SGRVOFJSNDNZR0lBTURGdVFmMGhySFYzMHBiMDczNlFMNHVrcFFOVHFwVDF4?=
+ =?utf-8?B?ZkNrS1h3STkyQjl4ald4KytTRHlCa1RHMFZOWlhzRWNzQ0gra1BCMzZVZWlG?=
+ =?utf-8?B?U2kvaFIyVlNsazBleGVHZ0tobGw1aFEyOEF3NU1SMnJGQnpwRm9qbmd4c3Yw?=
+ =?utf-8?B?SWdLWnNRV3Rtc0tSaFdLZ3VGWElXWVBpeDRJQkltWFh0Y3JsbDlpcUtUWU1L?=
+ =?utf-8?B?U01KK05tbFk1QnRxaWQwbmt6OXd3Tlo3WGNtZkF6cDA0aTJ0SFIzdDQ3ZmVW?=
+ =?utf-8?B?b2xZZ0I5YmQyQUE1V3oxWWgrMTZtRmtnSTBROTEyaWd5NkprZm1pUnNNTUJk?=
+ =?utf-8?B?MnVxcGZnZU9QUzllU0VhM3VzZVZWamJKTWxlNmRLcUdiNVVoMkVoRkZkTjNL?=
+ =?utf-8?B?TDhKeXRCK3B2M0tWT09MZUV4QVhQb1RheFJ4Z2ZhOUtOZXg5eHc3bFBINms0?=
+ =?utf-8?B?Q0U1QkEzSGNJcm1PNkppemtqbm5oQjNTeVA4RGlaTjBOZk9HenpMMVp6M3N1?=
+ =?utf-8?B?SW1CdExFcHIzRFJJUDNYL1laQ2VIMmxwVzg4OEFyL1hwQ2hQYWZoRDdpdGRL?=
+ =?utf-8?B?dDV3bHlwQkZWRE1Tbm9HMzZDZUZZTUM4bTlqRk5rZ3J0aCs5K2FQWTI2eXhz?=
+ =?utf-8?B?Rm9DdUl4ZVJEdjFUbFo3TFcvclRmQ2lJRUR6blZSb3E5ay94MzVPS29lUXhL?=
+ =?utf-8?B?bEtDcWN0WmtEczYzUU4zd0g4VndDYWZuT1R0ZmRMY2luTFRhbVBRQTNQTVY2?=
+ =?utf-8?B?YW8wSmZ2MlFsZ0VNNDJWWVBkbHFhTklmTDBDV2lmbHRmRlhkNWdOVGN1cGRM?=
+ =?utf-8?B?ZFRhUzhkbHVmUkRBSWFzZERkdHg3Nk5NdmhLbVZGaGlnWVpTTnl3aXdvUktO?=
+ =?utf-8?B?YnNSWHJTVDhhWSszY1pucmNoTTB6TzA1RFhVa2RmMGFtMW1uSTJTa0RtREJF?=
+ =?utf-8?B?ZVdUWm00VjZIbHJWR3dqbXpKVVcvK0lyQWZIRmpsU3cvU2d6TVdxM2hHMnI5?=
+ =?utf-8?B?d3l5M2MrbEJxL0hyT0xrMVA3OUUvM3Y1WWRuNUhrV2dDbFh0NE84OHRreVBl?=
+ =?utf-8?B?dkhVUHl1bVlrYUc3TjYyWEl2YUZDTmJCTzUrWlh1dVlkVWRYT3hhQTJ3MFlq?=
+ =?utf-8?B?TXAwc1FQQWlubURhUEdiQkRxWXJVSSs3VVk4VGdHck9Xb0NrVXJzdU9yTk11?=
+ =?utf-8?B?eVVFODI3eWNNVXZpbU1DTEZWOWpWbDM4dnB2aVZRNVhSdXM5OC8yaHQ3eXZp?=
+ =?utf-8?B?bjMzZFJRM3c1YnJXb3U2cVhNTndaMXlXZWErRG0xY0VOWUNadDVRTXlXSTBm?=
+ =?utf-8?B?OWUyS0RGa3djczlieVd0SCt1OVJvMmgxa1lza3kzdnhUeUpjbUFVWW5KcjRS?=
+ =?utf-8?B?SnVDUmpKSWErK2pMZzcvZHhhZlY5amNUZUVFVVVPemV0ZnZvTEVxTVFTN2tH?=
+ =?utf-8?B?QnRZQWwyQ1pjRnlPcHptY1JINy9ZbnY1SmJUbEJFUlNYSnpMVW9YdnNQL3Jl?=
+ =?utf-8?B?S2tnSlErQ0w3OHIvdGVtUWdhaUhNVjA1SkZwUDZrbXNjVXNLS1BRRFZ3Q3VM?=
+ =?utf-8?B?WG9GQzVDdHZSazh6TnJZRW01bGJIMUZUbzNkMzlVeHQrZG4zdVU4QTEvUStz?=
+ =?utf-8?B?bFMxQ2lxQXlxUEtoUkFVUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7401.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aHlqa2pveXpnRC8zRnlVbzJBbDNkNUo0amQ0YXIvMTU2T2QvOGtrRXhqcHJv?=
+ =?utf-8?B?NVU3WkFVenhzRFIrLzkyYnZVNmVFaUpLckxXODlHMXRQcmtZeE1MV0tXdGdE?=
+ =?utf-8?B?RXFxUDNrYWptK09iaUxKRyt5WUpEWGVZOHU4eDJHUVorRTljbEhwMVZZalA1?=
+ =?utf-8?B?Tk1DZUk2UFJlb2l3Unp1aFVUS0JkZ2ZkcTMwUzNlRHlINWg1Qi9Ha0xIZVc3?=
+ =?utf-8?B?T0pjKzljYzFmQTJCc1lqbXZRY3BRdjFPbWlsVy9iQ3VWek5uN3haRHhvWGFO?=
+ =?utf-8?B?RXdRMXF4TGVwR1pOY1dGei8waEs3M2NrWVJJbDU0UWoyZTJTV1prNE5abFVH?=
+ =?utf-8?B?UTRQZ01NRXphZ2QybDBaNVhhL3dTNVNMQSt4K0hKNkphbGkzZ2owcjVXRlZp?=
+ =?utf-8?B?T2t4aFRVOEFxQ0pMdDdOYVlxbzJjSXRmUTI4a2VEajdKa2Y4N05TV2JkQWk5?=
+ =?utf-8?B?bDVzU0lCaExDdml6Mm9KbHkxNlhKcFZEWkNLWVdpV3U4d2YxTU9remFKaHl1?=
+ =?utf-8?B?L1JKSEFIVUROYm8vNXJTa2lmL2FZemJsWnpXYk9qRHNjWUluUEpuQk85YUt3?=
+ =?utf-8?B?dE5iTFNYU3JYVHh4emhQbERhZ0YyNUR2M1B1bG1kcTRwOEJ4YUVOYVFmNHVa?=
+ =?utf-8?B?OU0wblYyOUwxSGU1Zk5jcWtaZkViZzE0K3h2TFU1VWhMV3NzN1lJQW1kSkdI?=
+ =?utf-8?B?blp1NXFSenVGVnRjZmNkcUlLN2kxVC9DN25KZThISkFiSzM2SDgyaDRoZ0w0?=
+ =?utf-8?B?K3pHSzhpKzA4Qm5Gd29NNWVYbURBZ0c1WTcwODBwZVRFYmdqK3pvc1BiNThM?=
+ =?utf-8?B?dm1Mam5FOTlBWFFsRzBReDZvak85YUVxdjRvSEg5TTJ6QUp0aUZObW9EejI1?=
+ =?utf-8?B?cXBpWE0yMzVyZUJobVZreUNHYys5dHB0STFJMDMvQUZ4U1p6RGpEdzQwUy9L?=
+ =?utf-8?B?T1lEWUtGL2NLRWtOWFNsQUtmeFFaaHVFUjNKSFRORlpSbDhodVRRR0MwSTZ4?=
+ =?utf-8?B?eFFTTjlRTWFXa1ZtNXdEdmdJU2NUQ3BXc1Q3RzNJbW9wamJNSkpPbkk5TTN3?=
+ =?utf-8?B?dGRBcUc2cHFmK214NGNPdURKYkRMcVRxb1F4SVZkUWZKTDcxRmhTd1cwR2x5?=
+ =?utf-8?B?dXdQWEhhbFA4cFA1RFFLTE5LRmxDOGxyT0t0Nm4vWTduTjhETlB1NWN0Z01K?=
+ =?utf-8?B?QWpvZTNYd1Bob3hEYnEzSUF6SkVHcGpmOFNDM0dValdOb1Z0eEl3a01adjI4?=
+ =?utf-8?B?c0VzSGMyQ2kyQ29hR1dJc3hmK1R0UE1VSVRLdm9ib1g1TnUrTWlFVXVENzdi?=
+ =?utf-8?B?WCtXOHNTVlpWRlViR041QmJhUGdNTXVyVmdyb2dXKy9qMTFqcjJzRVltTVNC?=
+ =?utf-8?B?TFJ3YTBBYkZ6UiswVmVNYy9uK1Z3dTlJNWhCQi9yMHJ4aXh5eU9iUy9ISHpr?=
+ =?utf-8?B?K0w1VUFSWUR0ODU1dmd3ZXErdG9iN1lYZ0VGSXVORE9tRlV5YjhzQ0pPd0R1?=
+ =?utf-8?B?azEydEpid3lMUUtoTDBYVTVJWDFCYTJuNDJIUVZGY05LSDI1bEVLNGhIUFF5?=
+ =?utf-8?B?bnk4MHBFNzF6dFVlN0NLUFF3ekFPTk1najV4bkIxSzZDZm1jejlUS00xSDNS?=
+ =?utf-8?B?SHB6NVZWUGttN1RsNWlHalRadlpWOWJJdHBhNU9DSGRXWjNSdVBKeHJyQ1dq?=
+ =?utf-8?B?aHhYaHZ0M0ZDRWFzZGFwZjJqRVJxamNiN0ZsNVJWKzFwOUJOQVB3M2tLa2R3?=
+ =?utf-8?B?NjkxYVNWYUFNa2xoZUVVVUdmSUg5d1RPYUdVWXJvQUJhK0Z3S1hEV1RPYysx?=
+ =?utf-8?B?elNvQ2RyUDhyNkRFQmduVVVXQVZmYVhQZGU2elgxSjRDQUNHUDAvdnpNc2ht?=
+ =?utf-8?B?eDh4ZW9jMUUwR09aaWd4THZydU0vMVdoRWJCYkxBUHJBUHJLZTFYT3g0SjJ0?=
+ =?utf-8?B?Skx3NVJ3c3QxQkVXMVREK09vdVMwU1hFTUtjSGloTG8vZER4MzY5eFA4MW5U?=
+ =?utf-8?B?SjhOemhkYUxocEU5MTcrRUJYU1JDUi9Deno4RlNRQkZabjdKOVBlMHV2VHNO?=
+ =?utf-8?B?R1gzNHZRaFhvb1liNzV5N1ZHOE5LbjA3WmJrSDNCUW5HT3hvM0IwL0hrYjJu?=
+ =?utf-8?Q?C4ky1GE/SRlJ+/SezNDPi3Md0?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21c413a3-c30c-4c3d-58cc-08dca18e8184
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7401.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 09:47:41.1859
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kQ4TNstD8WnN0oLk3J3CJlPu4DAYH1Z97Rx0Pms/nRPqXu4+rCsqe3T0BIwUIAKTxyh30iXtRPQ50doDnW4XGA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6529
 
-Hi Anand,
-
-On 2024-07-11 11:09, Anand Moon wrote:
-> Hi Jonas,
+On 2024/7/11 0:41, Bart Van Assche wrote:
+> On 7/9/24 11:56 PM, Yang Yang wrote:
+>> +    spin_lock_irqsave(&map->swap_lock, flags);
 > 
-> Thanks for your review comments.
-> 
-> On Thu, 11 Jul 2024 at 14:13, Jonas Karlman <jonas@kwiboo.se> wrote:
->>
->> Hi Anand,
->>
->> On 2024-07-11 08:09, Anand Moon wrote:
->>> Add missing pinctrl settings for PCIe 3.0 x4 clock request and wake
->>> signals.Each component of PCIe communication have the following control
->>> signals: PERST, WAKE, CLKREQ, and REFCLK. These signals work to generate
->>> high-speed signals and communicate with other PCIe devices.
->>> Used by root complex to endpoint depending on the power state.
->>>
->>> PERST is referred to as a fundamental reset. PERST should be held low
->>> until all the power rails in the system and the reference clock are stable.
->>> A transition from low to high in this signal usually indicates the
->>> beginning of link initialization.
->>>
->>> WAKE signal is an active-low signal that is used to return the PCIe
->>> interface to an active state when in a low-power state.
->>>
->>> CLKREQ signal is also an active-low signal and is used to request the
->>> reference clock.
->>>
->>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
->>> ---
->>> V2: Update the commit messge to describe the changs.
->>>     use pinctl group as its pre define in pinctl dtsi
->>> ---
->>>  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 6 +-----
->>>  1 file changed, 1 insertion(+), 5 deletions(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
->>> index 2e7512676b7e..ab3a20986c6a 100644
->>> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
->>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
->>> @@ -301,7 +301,7 @@ &pcie30phy {
->>>
->>>  &pcie3x4 {
->>>       pinctrl-names = "default";
->>> -     pinctrl-0 = <&pcie3_rst>;
->>> +     pinctrl-0 = <&pcie30x4m1_pins>;
->>
->> Use of the existing pcie30x4m1_pins group may not be fully accurate for
->> the PERST pin. The use of reset-gpios indicate that the PERST pin is
->> used with GPIO function and the driver will implicitly change the
->> function from perstn_m1 to GPIO. So this may not be best representation
->> of the hw, hence my initial suggestion, something like:
->>
->>         pcie30x4_pins: pcie30x4-pins {
->>                 rockchip,pins =
->>                         <4 RK_PB4 4 &pcfg_pull_none>,
->>                         <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>,
->>                         <4 RK_PB5 4 &pcfg_pull_none>;
->>         };
->>
->> Similar change should probably also be done for pcie2x1l0 and pcie2x1l2,
->> not just pcie3x4.
->>
-> 
-> Ok but it is better to update this in rk3588s-pinctrl.dtsi otherwise
-> the pcie30x4m1_pins
-> will not be used at all on all the boards
+> Please use guard(spinlock_irqsave) in new code instead of spin_lock_irqsave() + goto out_unlock 
+> + spin_unlock_irqrestore().
+> That will make this function significantly easier to read and to
+> maintain.
 
-I agree that it is unfortunate that the PERST pin is included in the
-groups in pinctrl.dtsi, however, for pcie ep mode the pins should more
-than likely be using the perstn_m1 function and not GPIO, so there are
-uses for the existing pin groups for ep mode.
-
-In my opinion using pcie30x4m1_pins as-is and having implicitly changing
-to GPIO function when driver/usage in the software require it is an okay
-description of the hw.
-
-However, seeing how use of pcie ep is described using its own node in DT
-I can understand that for rc mode the pin should be changed to GPIO to
-properly describe the expected usage.
-
-When I tried to add similar implicit change to use GPIO function in
-U-Boot to fix system freeze when improper pinctrl was used, it resulted
-in some discussions, see [1] ;-)
-
-[1] https://lore.kernel.org/u-boot/20240511112821.1156519-1-jonas@kwiboo.se/t/#u
-
-> I will update the PERST pin to RK_FUNC_GPIO on all the pcie2x1l0,
-> pcie2x1l2 and  pcie30x4
-> is this ok for you?
-
-This should probably be reworked in pinctrl.dtsi together with all
-affected boards and/or use a group override in the board dts.
-
-Regards,
-Jonas
+Got it.
 
 > 
->> Regards,
->> Jonas
+>> +
+>> +    if (!map->cleared) {
+>> +        if (depth > 0) {
+>> +            word_mask = (~0UL) >> (BITS_PER_LONG - depth);
+>> +            /*
+>> +             * The current behavior is to always retry after moving
+>> +             * ->cleared to word, and we change it to retry in case
+>> +             * of any free bits. To avoid dead loop, we need to take
 > 
-> Thanks
-> -Anand
->>
->>>       reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
->>>       vpcie3v3-supply = <&vcc3v3_pcie30>;
->>>       status = "okay";
->>> @@ -341,10 +341,6 @@ pcie2_2_rst: pcie2-2-rst {
->>>       };
->>>
->>>       pcie3 {
->>> -             pcie3_rst: pcie3-rst {
->>> -                     rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
->>> -             };
->>> -
->>>               pcie3_vcc3v3_en: pcie3-vcc3v3-en {
->>>                       rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
->>>               };
->>>
->>> base-commit: 34afb82a3c67f869267a26f593b6f8fc6bf35905
->>
+> What is a "dead loop"? Did you perhaps want to write "infinite loop"?
+
+Yeah. I suppose so.
+
+> 
+>> +             * wrap & alloc_hint into account. Without this, a soft
+>> +             * lockup was detected in our test environment.
+> 
+> Source code comments should not refer to "our test environment". Code
+> that is intended for upstream inclusion should work for all setups.
+
+Got it.
+
+> 
+>> +             */
+>> +            if (!wrap && alloc_hint)
+>> +                word_mask &= ~((1UL << alloc_hint) - 1);
+> 
+> Above I see an open-coded __clear_bit() operation. Has it been
+> considered to use __clear_bit() instead of open-coding it?
+
+It is meant to reset multiple bits to zero, but __clear_bit() is only
+capable of resetting one bit to zero.
+
+Thanks.
+
+> 
+> Thanks,
+> 
+> Bart.
 
 
