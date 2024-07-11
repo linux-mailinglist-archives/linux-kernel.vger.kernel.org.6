@@ -1,142 +1,157 @@
-Return-Path: <linux-kernel+bounces-248622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FC592DFD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:06:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E9D92DFDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B621F22D90
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:06:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B04AA282361
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC1482C6C;
-	Thu, 11 Jul 2024 06:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FBC839F4;
+	Thu, 11 Jul 2024 06:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAwacWNy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AUVHatp8"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBE420E3;
-	Thu, 11 Jul 2024 06:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C767826ACA
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 06:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720677956; cv=none; b=bkPy1Sdq9Wk2YD0JVqMhB5SnRwfe93ODdlDUKMPNibKXK5OTQf9CZ+TlQw4uqPWZ9WRjf7+3d/BCnYA5tsmWZF31cBBbrnTxtAGJKVZ+MITvw3PqLf0mCafaCJr+Zku8FVqEnvvlzxcSh4NcTwBvZdP5vKwAIGA9TBK7JiqwAYI=
+	t=1720677967; cv=none; b=W6jREu2qEo37rhRj++Wd1Hbg8uKG1XLyCD9bEaSngXGxZqC0NwtwS0vBto49VWeATPSUoZh1fYBxZTkPekUOUBruIdRIjJu4Mvw9u9ACUSc5E5tuamnUpMSyXgjDRKjEctQPclyE1XeXaTtZvQjWnreQFc2f+KwPd5gHaqJHE1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720677956; c=relaxed/simple;
-	bh=yQ8vc/mTO1yzL6nySZ9wEfYYL0O1XltTsf+4qKABHt0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hVsQgwrS9+M33fNgR66ml7hP8NgI+aK7/VgXlk5Wu4HT4zTKqbB8Eomc/A6TI4FjTDq1MZik9VHJp1SdWtS5oorvZ7QoskTcyzL1lE++810rCFLiAjccqtVvlO3ifi2BAJ9C47rLc+4Ac+aKs6adVE99wjP4pf7B2/8I8tesjM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAwacWNy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8209C4AF0A;
-	Thu, 11 Jul 2024 06:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720677955;
-	bh=yQ8vc/mTO1yzL6nySZ9wEfYYL0O1XltTsf+4qKABHt0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fAwacWNyNnUJhyaz6kTzFC+aQN9FW3nHkMDgB633KRoqtSwyIWMFMKvEdMPSyq09g
-	 drgzutwkAQSHJWG+YgIeG2Kd50z2p4ujjjHaSLi9O89LDAwgQmVZnPqdrUavMFHIi9
-	 83E5FFti1UKtTmne8OiZ0hX+TVoAvQ8/sBz7CrqoUqrSYShseBeFfvDVgvFKVKlPT9
-	 ST7jGwblLeLlbkQcy5Ufyu3VnSGifJE3mAOE3XYrzyIF0lR02tns31tsyyYRXuNUzp
-	 g+bkiO1SB02YMZ04TywWdqFb0lrMzMtCw9FrEqRTAa5Hbs8eJLBq4a/0cLuK8pwGCN
-	 Q/RgQnscu62Jw==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ea3e499b1so525471e87.3;
-        Wed, 10 Jul 2024 23:05:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXbgJo7oAM3kbWj9QYN2E8jBQOEbjz2S6gC7h+7eQv7nRbbIlzojPGdHNLsvx1Q2tcjx5lr0ivsa/aipXCkPBWHADHKm+MtfOUHVBqKcMjT+wO96PHmIcwp+4IRqS9jsstqPwtMofEU13O9YIFHakKd6QGOQNDyKfIJ8zhjdwGkCG4LKN988OoP
-X-Gm-Message-State: AOJu0Yw01Tz6C75+hfgbdJ93yVuSpmnLJ21FZvZALHOjit5YhT+mnD/z
-	Ru8RymxsKnDDzQjj3oihAth7VTpM8dk/NimzpQRu01kmUDEeKjEyYnYlTRqr8+VXXHvYdNTnlJ+
-	UIR21ZOrwHH9oU+NZun0VuzOs6cg=
-X-Google-Smtp-Source: AGHT+IF9yNz2aZVjovoxsbcGl9/km3XbnRfQHzNtIdc766X8nKOwNyd0Y83MS7zEjdEFUPGw5A4bGuBWSzUDXrLVDgM=
-X-Received: by 2002:ac2:58e8:0:b0:52e:9b87:233c with SMTP id
- 2adb3069b0e04-52eb99a3116mr3674073e87.36.1720677954106; Wed, 10 Jul 2024
- 23:05:54 -0700 (PDT)
+	s=arc-20240116; t=1720677967; c=relaxed/simple;
+	bh=Pct07P2cTZvGxvW7F2GXSza3Mvzjb0y516idEyqvNVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=myPCoTYpCMIM3F84XoJ1iJntITdAJnbSycawlMg9kRyF3Co3tzIH1pUuJ2+kg7x1QOhnQ3AfXo4RWv1X3rPmenWA4FxQnf+0hBuAxJVFgbsq4uOTDfNcA08Yl1UPy+dvMWcoRAYnhUf8NeoBff5pNlwYvAsp/x+RXeioGbzVSbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AUVHatp8; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c5362c7c0bso423884a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720677965; x=1721282765; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G1naGOzRkLRpp7KZwz3L99c4a5Zz60/yAipmQv8kxf0=;
+        b=AUVHatp8vF5gYWwK7526wGdxIPpkALAZEMDYWToA4vF544UtTUi74jWaPIdQ1g9DPO
+         pXNgvOD556DCuLqIYmyx4ryXxemvk5JIokhoqW5+5+spST9uOHDjhmq0Wht24YNxYy4H
+         3aPFEyqabzkry67W2RxBhndVTL5ecwW+z+iuCmRyApyD3cWaOnBZQRQM1dnTrzGg1WQJ
+         +VsDP2/qTo9iYDDHE2Hlh8vucEjwshP1gFAfs3boRv9ycPxNPw/ffgrwdtZ8xxG6gVUW
+         DyACbPE9oreHJbJ1X+duzTHNc/TJy427YHK3/EkGGnQ2T24fJSSxKxbPVtznV5pM7ypi
+         aAAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720677965; x=1721282765;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G1naGOzRkLRpp7KZwz3L99c4a5Zz60/yAipmQv8kxf0=;
+        b=IJg7TA0B9pLFSbYArOJovNjQQ0lAZfrzUR/jxsMxTfBL1DPTZyyf4BXfn1ogYGaVC4
+         f8uNDP2Ykb4VlScjClD/6tFZ9AJFTTgYvZIRNDdq9a6YI0IbN27TfzDOhGx8vORXeSqr
+         2dYNrT+AmDJ6Lcd/lVkbxKKC+6uLlJ58rg/UEBo5lyBhpthzU29P1i4xI51xivm5WJJi
+         85rm1wKihxF4tYXcCsaRBPLLtdBnxWFDu/Z25JXk2Y301CLmnRjSaHX2MQYQEDa0gGr3
+         eZFkAgSmJcBR3A7z86nf0rt84odMRiBNZnEKnrM3SkePEsil3H3STDOIkBZlrI/k01Yk
+         eQEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUrwLJEOWKek+ugZxY4jFmVeKK8iWrCdUMQmb+2DiKwNFyILFfqbb5vlR9OAAU4qTwj2Kfo+qkOsHNBYU+pAQjcX7OWWVW23iQGwPPw
+X-Gm-Message-State: AOJu0Yy7lp4F1SIvmN+sX2Qjn6lsYgLRdc4xOonLXIxNeHiXFERazrZB
+	MtOUcxyhUSwTHJ+OdkiQrclXPDNvZK7RR0l18NQfzlj9Vw4zcbY72gmLL01+Jbc=
+X-Google-Smtp-Source: AGHT+IHKIRAKhiyYiKLP0CQNpVmFEZVj0D+u79CNLoPp13J4mrQM8iSlQeqWiA0KS/IHQxTYeT1Glw==
+X-Received: by 2002:a17:90a:c7c9:b0:2c9:718c:73e with SMTP id 98e67ed59e1d1-2ca35c79e3emr6122202a91.29.1720677965084;
+        Wed, 10 Jul 2024 23:06:05 -0700 (PDT)
+Received: from localhost ([122.172.84.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a951741sm13039837a91.15.2024.07.10.23.06.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 23:06:04 -0700 (PDT)
+Date: Thu, 11 Jul 2024 11:36:01 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH V3 8/8] cpufreq: Add Rust based cpufreq-dt driver
+Message-ID: <20240711060601.fmnttgqhbh2pitzj@vireshk-i7>
+References: <cover.1719990273.git.viresh.kumar@linaro.org>
+ <b7df0c75cc07a451243b554fb2272c91cbe42dfe.1719990273.git.viresh.kumar@linaro.org>
+ <f0016987-4288-4adf-954d-665b35ae1bf1@redhat.com>
+ <20240710085652.zu7ntnv4gmy7zr2i@vireshk-i7>
+ <Zo6oqfFX-TNIeaIC@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710225538.work.224-kees@kernel.org> <d2b9e11a-749b-47cd-9cc2-0734ec5849b0@embeddedor.com>
- <175fc58f-b12a-4bc7-bc74-3365e5b0ee3e@embeddedor.com>
-In-Reply-To: <175fc58f-b12a-4bc7-bc74-3365e5b0ee3e@embeddedor.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 11 Jul 2024 08:05:43 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEyDjH0uu3Z4eBesV3PEnKGi5ArXXMp7R-hn8HdRytiPg@mail.gmail.com>
-Message-ID: <CAMj1kXEyDjH0uu3Z4eBesV3PEnKGi5ArXXMp7R-hn8HdRytiPg@mail.gmail.com>
-Subject: Re: [PATCH] efi: Replace efi_memory_attributes_table_t 0-sized array
- with flexible array
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Kees Cook <kees@kernel.org>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zo6oqfFX-TNIeaIC@pollux>
 
-On Thu, 11 Jul 2024 at 01:34, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
->
->
-> On 10/07/24 17:32, Gustavo A. R. Silva wrote:
-> >
-> >
-> > On 10/07/24 16:55, Kees Cook wrote:
-> >> While efi_memory_attributes_table_t::entry isn't used directly as an
-> >> array, it is used as a base for pointer arithmetic. The type is wrong
-> >> as it's not technically an array of efi_memory_desc_t's; they could be
-> >> larger. Regardless, leave the type unchanged and remove the old style
-> >> "0" array size. Additionally replace the open-coded entry offset code
-> >> with the existing efi_early_memdesc_ptr() helper.
-> >>
-> >> Signed-off-by: Kees Cook <kees@kernel.org>
-> >> ---
-> >> Cc: Ard Biesheuvel <ardb@kernel.org>
-> >> Cc: linux-efi@vger.kernel.org
-> >> ---
-> >>   drivers/firmware/efi/memattr.c | 2 +-
-> >>   include/linux/efi.h            | 6 +++++-
-> >>   2 files changed, 6 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/firmware/efi/memattr.c b/drivers/firmware/efi/memattr.c
-> >> index ab85bf8e165a..01142604e8df 100644
-> >> --- a/drivers/firmware/efi/memattr.c
-> >> +++ b/drivers/firmware/efi/memattr.c
-> >> @@ -164,7 +164,7 @@ int __init efi_memattr_apply_permissions(struct mm_struct *mm,
-> >>           bool valid;
-> >>           char buf[64];
-> >> -        valid = entry_is_valid((void *)tbl->entry + i * tbl->desc_size,
-> >> +        valid = entry_is_valid(efi_early_memdesc_ptr(tbl->entry, tbl->desc_size, i),
-> >>                          &md);
-> >>           size = md.num_pages << EFI_PAGE_SHIFT;
-> >>           if (efi_enabled(EFI_DBG) || !valid)
-> >> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> >> index 418e555459da..b06639c4f6a5 100644
-> >> --- a/include/linux/efi.h
-> >> +++ b/include/linux/efi.h
-> >> @@ -607,7 +607,11 @@ typedef struct {
-> >>       u32 num_entries;
-> >>       u32 desc_size;
-> >>       u32 flags;
-> >> -    efi_memory_desc_t entry[0];
-> >> +    /*
-> >> +     * There are @num_entries following, each of size @desc_size bytes,
-> >> +     * including an efi_memory_desc_t header.
-> >> +     */
-> >> +    efi_memory_desc_t entry[];
-> >
-> > a candidate for future __counted_by(num_entries * desc_size) ? :p
->
-> ah no, this rather be something more like __sized_by(num_entries * desc_size).
->
-> --
-> Gustavo
->
-> >
-> > Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> >
+On 10-07-24, 17:28, Danilo Krummrich wrote:
+> No, the platform driver layer will only guarantee that it decreses the reference
+> count of the `Arc` by one, that doesn't guarantee a free. If something else
+> still holds a reference to the `Arc` it will keep the `Registration` alive,
+> unless it's wrapped by `Devres`.
 
-Thanks. I'll take this for the next cycle, but would you mind adding a
-preceding patch that drops the 'early' from the macro name and updates
-the existing users (not the ones in arch/x88/boot, which has its own
-private copy for some reason). The 'early' is kind of irrelevant, and
-no longer accurate now that we use the macro for the memory attributes
-table as well as the memory map.
+I see. Thanks.
+
+There is one problem that I haven't found a solution to yet. If I make
+the following change to the driver:
+
+diff --git a/drivers/cpufreq/rcpufreq_dt.rs b/drivers/cpufreq/rcpufreq_dt.rs
+index 315adca2a747..052ea2db095a 100644
+--- a/drivers/cpufreq/rcpufreq_dt.rs
++++ b/drivers/cpufreq/rcpufreq_dt.rs
+@@ -236,7 +236,7 @@ fn probe(dev: &mut platform::Device, _id_info: Option<&Self::IdInfo>) -> Result<
+
+ module_platform_driver! {
+     type: CPUFreqDTDriver,
+-    name: "cpufreq_dt",
++    name: "cpufreq-dt",
+     author: "Viresh Kumar <viresh.kumar@linaro.org>",
+     description: "Generic CPUFreq DT driver",
+     license: "GPL v2",
+
+then I get this error:
+
+  CLIPPY     drivers/cpufreq/rcpufreq_dt.o
+error: expected one of `:`, `;`, or `=`, found `-`
+   --> /mnt/ssd/all/work/repos/kernel/linux/drivers/cpufreq/rcpufreq_dt.rs:237:1
+    |
+237 | / module_platform_driver! {
+238 | |     type: CPUFreqDTDriver,
+239 | |     name: "cpufreq-dt",
+240 | |     author: "Viresh Kumar <viresh.kumar@linaro.org>",
+241 | |     description: "Generic CPUFreq DT driver",
+242 | |     license: "GPL v2",
+243 | | }
+    | |_^ expected one of `:`, `;`, or `=`
+    |
+    = note: this error originates in the macro
+    `$crate::prelude::module` which comes from the expansion of the
+    macro `module_platform_driver` (in Nightly builds, run with -Z
+    macro-backtrace for more info)
+
+
+And because of that I had to change the name of the platform device
+too in the existing kernel.
+
+-- 
+viresh
 
