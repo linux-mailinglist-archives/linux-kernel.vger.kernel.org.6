@@ -1,144 +1,95 @@
-Return-Path: <linux-kernel+bounces-248455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8C992DD5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:27:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 369E592DD5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77610282D53
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:27:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F4071C2253D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EDA23D7;
-	Thu, 11 Jul 2024 00:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MTpPN5R6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F016FC3;
+	Thu, 11 Jul 2024 00:33:06 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1821C14;
-	Thu, 11 Jul 2024 00:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDD73211;
+	Thu, 11 Jul 2024 00:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720657621; cv=none; b=HWS9N96wifThCwJR4qcqhEAe9hVIqGn8zmr/Xz9u75Ywk/c4NaMTagOs4ZjicsFbzADp50reDeTcRepsK4r1O1znKIG84jXnqXCZcLsQ8n/kDAxrjRjSWMQNezR3x2RZagyMc4aYYrlQ65ZI+RBXaGuvZS2HX50JAMI8lMoVUt0=
+	t=1720657986; cv=none; b=KKDS01WGJrHMhRKYdJ9GqkhcM390y6UcPJ3BT9/ZSBLU4UYmtyTT0JwEDRdNIjJef+zPuwl57wOf6m9ZAZ/DtRcuVj6Ec5gtjAb7KcW8JI/6DypM63YVEIoB6aF6f6EbN755aX69GhlDy4UMfQNUBrT2xA3Z7Q3KbuA67kyrVFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720657621; c=relaxed/simple;
-	bh=UULG4kMeS44p/RRr8g5q9aIR1TLkUQFBx3QaxoMQq4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V9kiQI4+PMdCwMKCCsquwlb0Tuh1oHMwoXjUK9YsLozXCh8N82FDdU+xDBAZ48fW3z5KtTML78j3zx8fMiDSFRkm9kSQgMM/ocAB16Z67dl7ZpAEwE0fVZcb9EV+GiM86Rm7z87r/ZcWBuPVel0qh33yPUQ0hYj5K1LiTBdh5eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MTpPN5R6; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720657619; x=1752193619;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UULG4kMeS44p/RRr8g5q9aIR1TLkUQFBx3QaxoMQq4Y=;
-  b=MTpPN5R62N9+H9sRrGSrBzCEMJJUex7sQeYuiSmhyv3mmW/kzTGu4zCD
-   c/4qGA/Xbm5CbWD3uRahphUSOztMvWVlUWvVX5kf5DC2bs0fTMB9XfTTO
-   /HVVlOM5I9bbc9NPLuDCrFHGU67ijDT13euhUjKETXW4YjSMe7nVpZ601
-   PtmzzXHUQsdnMFtEOyioZBfILsiSUaLRm9uv5bzHqzHdrghdDJZJyOy13
-   uuiBGbYC7T5cBztvmxDkDzSebygYn0EG3t1lddWPeTJDXyl0JNDGlA+CA
-   n7QoCiOBh6vuGtN0/txS3lnfbghDG5vtmbffS+tN25eC+ait4bfxlBi/f
-   A==;
-X-CSE-ConnectionGUID: 5MXozepuTzGp/vaKvMRLRw==
-X-CSE-MsgGUID: lQiHLWqnSZamLc/yJqzUdg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="21886745"
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="21886745"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 17:26:58 -0700
-X-CSE-ConnectionGUID: Lo3xxtleTIesld7r1eYkWQ==
-X-CSE-MsgGUID: pJOn2XBiRYOcqGdRYH9Q9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="48470956"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.72.164])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 17:26:58 -0700
-Date: Wed, 10 Jul 2024 17:26:55 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: Robert Richter <rrichter@amd.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Address translation for HDM decoding
-Message-ID: <Zo8mz6uyQBCxsuJ3@aschofie-mobl2>
-References: <20240701174754.967954-1-rrichter@amd.com>
- <Zo8hJm7y9VIwhiDk@aschofie-mobl2>
+	s=arc-20240116; t=1720657986; c=relaxed/simple;
+	bh=R1eWCf+xDDaaLpjiSlzZKkDxJqqQrr9CIxeOsr1lQBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FFWVX2nkgQlW8aTdSCsVDrxP7cg6NYvSSCyX5sBem7e95h07hVa17E6XvZoLNWVNYk2BY30wasvC+GbH8pahMf1EKfhMEN7qLstUwbLks6FH6rEuMpT/DkZWxb1WCfCNIrPh1CvnNvMYD2GU4vCYtflsG13XqcUDHngRp+XHV28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46B0Uf7F092623;
+	Thu, 11 Jul 2024 09:30:41 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Thu, 11 Jul 2024 09:30:41 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46B0UefJ092620
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 11 Jul 2024 09:30:41 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <eb168f2f-948b-4a3b-9237-92902f0c7438@I-love.SAKURA.ne.jp>
+Date: Thu, 11 Jul 2024 09:30:40 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zo8hJm7y9VIwhiDk@aschofie-mobl2>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+To: Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>
+Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>,
+        syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net> <20240516.doyox6Iengou@digikod.net>
+ <20240627.Voox5yoogeum@digikod.net>
+ <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 10, 2024 at 05:02:46PM -0700, Alison Schofield wrote:
-> On Mon, Jul 01, 2024 at 07:47:48PM +0200, Robert Richter wrote:
-> > Default expectation of Linux is that HPA == SPA, which means that
-> > hardware addresses in the decoders are the same as the kernel sees
-> > them. However, there are platforms where this is not the case and an
-> > address translation between decoder's (HPA) and the system's physical
-> > addresses (SPA) is needed.
-> > 
-> > This series implements address translation for HDM decoding. The
-> > implementation follows the rule that the representation of hardware
-> > address ranges in the kernel are all SPA. If decoder registers (HDM
-> > decoder cap or register range) are not SPA, a base offset must be
-> > applied. Translation happens when accessing the registers back and
-> > forth. After a read access an address will be converted to SPA and
-> > before a write access the programmed address is translated from an
-> > SPA. The decoder register access can be easily encapsulated by address
-> > translation and thus there are only a few places where translation is
-> > needed and the code must be changed. This is implemented in patch #2,
-> > patch #1 is a prerequisite.
-> > 
-> > Address translation is restricted to platforms that need it. As such a
-> > platform check is needed and a flag is introduced for this (patch #3).
-> > 
-> > For address translation the base offset must be determined for the
-> > memory domain. Depending on the platform there are various options for
-> > this. The address range in the CEDT's CFWMS entry of the CXL host
-> > bridge can be used to determine the decoder's base address (patch
-> > #4). This is enabled for AMD Zen4 platforms (patch #5).
-> 
-> 
-> Hi Robert,
-> 
-> This HPA->SPA work needs to be done for addresses reported directly by
-> devices, ie DPAs in poison and other events - right?
-> 
-> For the XOR case, we discover the need for HPA->SPA while parsing the
-> CFMWS and add a cxl_hpa_to_spa_fn to the struct cxl_root_decoder. Later,
-> when the driver wants to translate a DPA (to include in a TRACE_EVENT)
-> it uses that 'extra mile' HPA->SPA function.
-> 
-> See Patch 2 in this series:
-> https://lore.kernel.org/cover.1719980933.git.alison.schofield@intel.com/T/#m9206e1f872ef252dbb54ce7f0365f0b267179fda
+On 2024/06/28 3:28, Paul Moore wrote:
+> It's also worth mentioning that while we always allocate i_security in
+> security_inode_alloc() right now, I can see a world where we allocate
+> the i_security field based on need using the lsm_blob_size info (maybe
+> that works today?  not sure how kmem_cache handled 0 length blobs?).
+> The result is that there might be a legitimate case where i_security
+> is NULL, yet we still want to call into the LSM using the
+> inode_free_security() implementation hook.
 
-Better link:
-https://lore.kernel.org/linux-cxl/cover.1719980933.git.alison.schofield@intel.com/
+As a LKM-based LSM user, I don't like dependency on the lsm_blob_size info.
 
-> 
-> It seems the Zen4 extra mile is a simple offset from the base calc.
-> Do you think a zen4 hpa->spa function will fit in with what I've done?
-> 
-> FWIW I took this code for a spin through cxl-test on it's own and combined
-> w the xor address tranlation patch set and no collisions, all humming along
-> nicely (for non-zen config).
-> 
-> --Alison
-> 
-> > 
-> snip
-> > 
-> 
+Since LKM-based LSM users cannot use lsm_blob_size due to __ro_after_init,
+LKM-based LSM users depend on individual LSM hooks being called even if
+i_security is NULL. How do we provide hooks for AV/EDR which cannot be 
+built into vmlinux (due to distributor's support policy) ? They cannot be
+benefited from infrastructure-managed security blobs.
+
 
