@@ -1,157 +1,144 @@
-Return-Path: <linux-kernel+bounces-248623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E9D92DFDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:06:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4197292DFE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B04AA282361
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC57C1F22F66
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FBC839F4;
-	Thu, 11 Jul 2024 06:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7412112C554;
+	Thu, 11 Jul 2024 06:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AUVHatp8"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rpeeg29y"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C767826ACA
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 06:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6496884DFF;
+	Thu, 11 Jul 2024 06:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720677967; cv=none; b=W6jREu2qEo37rhRj++Wd1Hbg8uKG1XLyCD9bEaSngXGxZqC0NwtwS0vBto49VWeATPSUoZh1fYBxZTkPekUOUBruIdRIjJu4Mvw9u9ACUSc5E5tuamnUpMSyXgjDRKjEctQPclyE1XeXaTtZvQjWnreQFc2f+KwPd5gHaqJHE1g=
+	t=1720678201; cv=none; b=R1SxVN9YTfF8hocV2UtMcSIBvgdKC//mGRGmCgAMfsVRf6oSJsaWnA0A+hrNkMdetGC07mwfj06qMmfaTJHLqnVt7fiwdfqddopHbYM2+Xc+A4c+iSQ6es4Q+vrmph59qUO9DgIwO/8Grhl6ZMGlL7QGljmIldzJjHwhxyr23wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720677967; c=relaxed/simple;
-	bh=Pct07P2cTZvGxvW7F2GXSza3Mvzjb0y516idEyqvNVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=myPCoTYpCMIM3F84XoJ1iJntITdAJnbSycawlMg9kRyF3Co3tzIH1pUuJ2+kg7x1QOhnQ3AfXo4RWv1X3rPmenWA4FxQnf+0hBuAxJVFgbsq4uOTDfNcA08Yl1UPy+dvMWcoRAYnhUf8NeoBff5pNlwYvAsp/x+RXeioGbzVSbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AUVHatp8; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c5362c7c0bso423884a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:06:05 -0700 (PDT)
+	s=arc-20240116; t=1720678201; c=relaxed/simple;
+	bh=Jtad3SbGErvDHkwgM6uh1x4KS5053h9Vfx/xHaVDGQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VoVw2o+2wgngXTIRWfysFWzFRJ46PwkQj2Dun8Vq0tr8v7Wz/shuwUgFKKHfMJvwuwiNZD4cbTv/kBNrq5ecUC5uvDB4valFJB9ILkjmojirUSb7bDVhrTiaQzWK669q3ozYzpLUDpxsfovP/PsKWNEGe6IReaArlsIHuSD9rTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rpeeg29y; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fb05ac6b77so3297785ad.0;
+        Wed, 10 Jul 2024 23:10:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720677965; x=1721282765; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G1naGOzRkLRpp7KZwz3L99c4a5Zz60/yAipmQv8kxf0=;
-        b=AUVHatp8vF5gYWwK7526wGdxIPpkALAZEMDYWToA4vF544UtTUi74jWaPIdQ1g9DPO
-         pXNgvOD556DCuLqIYmyx4ryXxemvk5JIokhoqW5+5+spST9uOHDjhmq0Wht24YNxYy4H
-         3aPFEyqabzkry67W2RxBhndVTL5ecwW+z+iuCmRyApyD3cWaOnBZQRQM1dnTrzGg1WQJ
-         +VsDP2/qTo9iYDDHE2Hlh8vucEjwshP1gFAfs3boRv9ycPxNPw/ffgrwdtZ8xxG6gVUW
-         DyACbPE9oreHJbJ1X+duzTHNc/TJy427YHK3/EkGGnQ2T24fJSSxKxbPVtznV5pM7ypi
-         aAAQ==
+        d=gmail.com; s=20230601; t=1720678200; x=1721283000; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=amL0i3U0AlpayuDFzxy6krwzUQYPva5CT6eMHJ9zRTU=;
+        b=Rpeeg29yG5TycvUzdl5LB+JFZyNmj3Dt/zxUV4A0yDt2JDOaxlzzIQLHhUP/c4TnDW
+         MK8DwRxpKzrsW7xKJdRg0mpf95dWmNcMRpoqE4mshSsPe5LoOkf+T0qZJ3iW7d8wyZkv
+         epAs8otVTt+cZCOX9V3LggKXE92phe6kfogjV2oMutAgcjgyWBjx0Jxll/9L9jD7HzXN
+         iDZLm32WAxt6t0kTEa5GpnXvmTaUYs58WNue9CrRIf84mK6yYzQ+U9HEdKLJ3rGxQyoX
+         /myGgdfBBp4tsANa077Q0NQSR1bYec8FqrJ2kxh71kZgQXx5lA5yRp8Zv+j9geKIlqgG
+         /mKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720677965; x=1721282765;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G1naGOzRkLRpp7KZwz3L99c4a5Zz60/yAipmQv8kxf0=;
-        b=IJg7TA0B9pLFSbYArOJovNjQQ0lAZfrzUR/jxsMxTfBL1DPTZyyf4BXfn1ogYGaVC4
-         f8uNDP2Ykb4VlScjClD/6tFZ9AJFTTgYvZIRNDdq9a6YI0IbN27TfzDOhGx8vORXeSqr
-         2dYNrT+AmDJ6Lcd/lVkbxKKC+6uLlJ58rg/UEBo5lyBhpthzU29P1i4xI51xivm5WJJi
-         85rm1wKihxF4tYXcCsaRBPLLtdBnxWFDu/Z25JXk2Y301CLmnRjSaHX2MQYQEDa0gGr3
-         eZFkAgSmJcBR3A7z86nf0rt84odMRiBNZnEKnrM3SkePEsil3H3STDOIkBZlrI/k01Yk
-         eQEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrwLJEOWKek+ugZxY4jFmVeKK8iWrCdUMQmb+2DiKwNFyILFfqbb5vlR9OAAU4qTwj2Kfo+qkOsHNBYU+pAQjcX7OWWVW23iQGwPPw
-X-Gm-Message-State: AOJu0Yy7lp4F1SIvmN+sX2Qjn6lsYgLRdc4xOonLXIxNeHiXFERazrZB
-	MtOUcxyhUSwTHJ+OdkiQrclXPDNvZK7RR0l18NQfzlj9Vw4zcbY72gmLL01+Jbc=
-X-Google-Smtp-Source: AGHT+IHKIRAKhiyYiKLP0CQNpVmFEZVj0D+u79CNLoPp13J4mrQM8iSlQeqWiA0KS/IHQxTYeT1Glw==
-X-Received: by 2002:a17:90a:c7c9:b0:2c9:718c:73e with SMTP id 98e67ed59e1d1-2ca35c79e3emr6122202a91.29.1720677965084;
-        Wed, 10 Jul 2024 23:06:05 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a951741sm13039837a91.15.2024.07.10.23.06.03
+        d=1e100.net; s=20230601; t=1720678200; x=1721283000;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=amL0i3U0AlpayuDFzxy6krwzUQYPva5CT6eMHJ9zRTU=;
+        b=wlwh5Mdgl+yDajbytyHhZ0KgS8aEhY4FUDw9jlTrb8312uYSCrKzXXHDVq+TrCfpDU
+         Csd/AioQKqpPgb7GEc3YgrabR8lBUT3SbE/pUoQwxUvM4mx79LGK5XhdXZFEERZ31RqY
+         7MU1GkAo4RGtrD7snboc5Qz0o7G1q89YdLuzDRKhdEIG28SEOGucct75hDp/zYGN1MT6
+         nGuHUDdcNVQpUDEAyENNWjBtATl3B9T0DEmxD0LrIAPwexBEPtAnhPGypDVND/kECMRY
+         qeLZTutNHrGwPyg+Q74aJnR2iWEHQZe7KX83v1Y58dUw7ri4hWjjZqhCD3orxwnmtNlH
+         PAeg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXI9RS2uVTCK7lVOSO9pKGLR6QkHQJkld9G9gnNIjBL0P7ipOKf6l0CtT/7awdjbYudhfJS9PYEoFvenwf/1L2e85XVle8yQodruLLjTkOuYLa4UloNb2x4M3n/xMu8L3IowzzuD/wnA==
+X-Gm-Message-State: AOJu0Yy4OxZsWTbsNFTHlBq0CKJc6ozgBRc/1DvnLo8mTGi5eADwYERZ
+	RsHRt9O1swa+tSvdw+/W+a/KgCt0OGC1Qfp8Ch+INlrobOfWf6V/
+X-Google-Smtp-Source: AGHT+IHNgkIOVxrxv50voAuFb/D8XfO6THqHTM2xrFSPja8CeSVW1OiVWX4BVgbQ7OUzpTaC3rvmOw==
+X-Received: by 2002:a17:902:e30a:b0:1fb:76d9:fe84 with SMTP id d9443c01a7336-1fbb6f0ce0bmr44688475ad.65.1720678199544;
+        Wed, 10 Jul 2024 23:09:59 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6acf681sm42710165ad.267.2024.07.10.23.09.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 23:06:04 -0700 (PDT)
-Date: Thu, 11 Jul 2024 11:36:01 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>, linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+        Wed, 10 Jul 2024 23:09:59 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH V3 8/8] cpufreq: Add Rust based cpufreq-dt driver
-Message-ID: <20240711060601.fmnttgqhbh2pitzj@vireshk-i7>
-References: <cover.1719990273.git.viresh.kumar@linaro.org>
- <b7df0c75cc07a451243b554fb2272c91cbe42dfe.1719990273.git.viresh.kumar@linaro.org>
- <f0016987-4288-4adf-954d-665b35ae1bf1@redhat.com>
- <20240710085652.zu7ntnv4gmy7zr2i@vireshk-i7>
- <Zo6oqfFX-TNIeaIC@pollux>
+Subject: [PATCH v2] arm64: dts: rockchip: Add missing pinctrl for PCIe30x4 node
+Date: Thu, 11 Jul 2024 11:39:34 +0530
+Message-ID: <20240711060939.1128-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zo6oqfFX-TNIeaIC@pollux>
+Content-Transfer-Encoding: 8bit
 
-On 10-07-24, 17:28, Danilo Krummrich wrote:
-> No, the platform driver layer will only guarantee that it decreses the reference
-> count of the `Arc` by one, that doesn't guarantee a free. If something else
-> still holds a reference to the `Arc` it will keep the `Registration` alive,
-> unless it's wrapped by `Devres`.
+Add missing pinctrl settings for PCIe 3.0 x4 clock request and wake
+signals.Each component of PCIe communication have the following control
+signals: PERST, WAKE, CLKREQ, and REFCLK. These signals work to generate
+high-speed signals and communicate with other PCIe devices.
+Used by root complex to endpoint depending on the power state.
 
-I see. Thanks.
+PERST is referred to as a fundamental reset. PERST should be held low
+until all the power rails in the system and the reference clock are stable.
+A transition from low to high in this signal usually indicates the
+beginning of link initialization.
 
-There is one problem that I haven't found a solution to yet. If I make
-the following change to the driver:
+WAKE signal is an active-low signal that is used to return the PCIe
+interface to an active state when in a low-power state.
 
-diff --git a/drivers/cpufreq/rcpufreq_dt.rs b/drivers/cpufreq/rcpufreq_dt.rs
-index 315adca2a747..052ea2db095a 100644
---- a/drivers/cpufreq/rcpufreq_dt.rs
-+++ b/drivers/cpufreq/rcpufreq_dt.rs
-@@ -236,7 +236,7 @@ fn probe(dev: &mut platform::Device, _id_info: Option<&Self::IdInfo>) -> Result<
+CLKREQ signal is also an active-low signal and is used to request the
+reference clock.
 
- module_platform_driver! {
-     type: CPUFreqDTDriver,
--    name: "cpufreq_dt",
-+    name: "cpufreq-dt",
-     author: "Viresh Kumar <viresh.kumar@linaro.org>",
-     description: "Generic CPUFreq DT driver",
-     license: "GPL v2",
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+V2: Update the commit messge to describe the changs.
+    use pinctl group as its pre define in pinctl dtsi
+---
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-then I get this error:
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+index 2e7512676b7e..ab3a20986c6a 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+@@ -301,7 +301,7 @@ &pcie30phy {
+ 
+ &pcie3x4 {
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&pcie3_rst>;
++	pinctrl-0 = <&pcie30x4m1_pins>;
+ 	reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
+ 	vpcie3v3-supply = <&vcc3v3_pcie30>;
+ 	status = "okay";
+@@ -341,10 +341,6 @@ pcie2_2_rst: pcie2-2-rst {
+ 	};
+ 
+ 	pcie3 {
+-		pcie3_rst: pcie3-rst {
+-			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+-		};
+-
+ 		pcie3_vcc3v3_en: pcie3-vcc3v3-en {
+ 			rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
 
-  CLIPPY     drivers/cpufreq/rcpufreq_dt.o
-error: expected one of `:`, `;`, or `=`, found `-`
-   --> /mnt/ssd/all/work/repos/kernel/linux/drivers/cpufreq/rcpufreq_dt.rs:237:1
-    |
-237 | / module_platform_driver! {
-238 | |     type: CPUFreqDTDriver,
-239 | |     name: "cpufreq-dt",
-240 | |     author: "Viresh Kumar <viresh.kumar@linaro.org>",
-241 | |     description: "Generic CPUFreq DT driver",
-242 | |     license: "GPL v2",
-243 | | }
-    | |_^ expected one of `:`, `;`, or `=`
-    |
-    = note: this error originates in the macro
-    `$crate::prelude::module` which comes from the expansion of the
-    macro `module_platform_driver` (in Nightly builds, run with -Z
-    macro-backtrace for more info)
-
-
-And because of that I had to change the name of the platform device
-too in the existing kernel.
-
+base-commit: 34afb82a3c67f869267a26f593b6f8fc6bf35905
 -- 
-viresh
+2.44.0
+
 
