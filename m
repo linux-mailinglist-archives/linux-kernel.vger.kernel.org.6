@@ -1,142 +1,99 @@
-Return-Path: <linux-kernel+bounces-249147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D775792E7A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 950DE92E7A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 155B11C2111D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:55:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C71411C21BA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AD016C6AA;
-	Thu, 11 Jul 2024 11:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7059116C86B;
+	Thu, 11 Jul 2024 11:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QqOPNyvX"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hOjIV7kF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NhMTLxVk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4773216B723
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6035515B14F;
+	Thu, 11 Jul 2024 11:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720698763; cv=none; b=uzzY7U5qfEV6a0ioDvDG98f+ww1ZHL0HNpahn0UQzmznrEpgRbMdgZg2N5OxQN3F7SheSylacCr+LBxUNzMplY1pGSv6OCra9lph44stClbVmMO0tPpfKc+60+aKuhPCCcuxKhmbYTnnKozHOlhRbSJ+uZYKT4m8SYYjQ08FCxE=
+	t=1720698768; cv=none; b=QJG+lKbqEkrQ9j1GOe4mGz2ITRDktC8jJzxVn5iFPgyPryd2lT+rEzrb+tMmGlQPO+oeyi1JYFtjC71RwUbNokjvU3ecMnZyk9/wkyn7J2LrEdOyWhYpRze+03+5ARHtVX66e4yEy7uTv+V3YrPUmk1J7rSm39tBXeu7YNZxLEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720698763; c=relaxed/simple;
-	bh=A0olck8xmt91kpHf3Gqks+7X7VhqbfLSRQr3kvyb9/A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rlV3rW3WDskas4VhvETYlzKREIeo5C+/hmvjw/GLcvkacb9pCiXrNMlik4tr4zlWdtxBQ7sb0hcpw6GmQgiqp/pFzDw9S0mYde1bHJqEfxCGdjJpTiWZ1tPdqb5lFnNEt7Q9FFG5zT2itdjOHM0nYaK9AGy+NyH+pND4cB6FOqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QqOPNyvX; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4266ea6a412so5778055e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:52:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1720698761; x=1721303561; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=23JHMztdqyVYYAjIp7U+2QZVKMehlsQx0vaIwQy1Uh0=;
-        b=QqOPNyvXIOORGpBVnySxyd0qCN6SRdb0veGgKY5jbF3eqk+0srNMnEMubPMqIIEMGN
-         s58ym7IshD1WweTdwXseHQcIZIMDGttuAa9fNkNi9wR+z+5ZirufN5FlAhCkBLm22prM
-         oZl7Cv95gPeiXlevuWlFdCuDgH4KnV/h4lAw8zC+Gi6RglCMx4mAjWuGlF9Hpk4GwY5f
-         mvmEnpAnOyhkcRQ16SW5l00RpcRbBqshLnd/EWZTdnSaKF83c0KWoteheZKrhQn2U/hN
-         OE+birFt8t37gRElAHIbDWdbluASlSXPUfV5/dpENfRif4HklpX5w6T2/XpAYnmlWDe3
-         w7wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720698761; x=1721303561;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=23JHMztdqyVYYAjIp7U+2QZVKMehlsQx0vaIwQy1Uh0=;
-        b=V8Orzhff7J2xC0Oqa9bMu7jtZoCh2N6R558Xa0hsOWIBslpYjJssExEPb+UPB6QhAd
-         mnR5UVxccvRMdHeHRZrmQGTk/B5koJcteSSbElb/5py2BkRu7azdbs48JugrhmpBhU3v
-         IR9lizEynivjZZRsKDyD0ZXtfTL59Okh4w646JxxHWOa9+5Lk3bSkx+KWzxCHS0pqFrl
-         2nqaUpmjeRGnGfOmQ80K8mDudWMd4ht3gi1rghDsIDUQRAaqsqPagZ6j1GAArYwYhTIf
-         4vdU7aWKVucZlfJuAqHUh0MiQznVuS7EhTWRHtJ4aK4UNW7pA0eIet6ZOFxQoslwEFsM
-         r4/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXPMBe6J3wPzHUVFbzRdAz1fynDeR1Jc2CDP8uE4n446BAexiPtnQmIXGfwdCuC61Z3YA88wGs7hZR2MAckmixKHPHQPuFGbj+xHKwp
-X-Gm-Message-State: AOJu0Yy9wpkw/X0b6hpHm85Sw+yfv1Fs/po6bQbcJyFz+Uma3tZMVhKS
-	cEQD5fdT53qFAZ8q36c0fMjPD0v9MJOOwcezGGP8TcaiAHsDZSxRkBLVKcRpuEM=
-X-Google-Smtp-Source: AGHT+IEGSAph+omnuZzg+uESoOH9Ojh+B4Qxya+Yp/LFOJWoFwzZN9bd/zH+TlfWF72r7coXWyfImA==
-X-Received: by 2002:adf:f004:0:b0:367:96b9:760a with SMTP id ffacd0b85a97d-367cea96903mr5200725f8f.41.1720698760771;
-        Thu, 11 Jul 2024 04:52:40 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde891cesm7615728f8f.62.2024.07.11.04.52.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 04:52:40 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: chris.brandt@renesas.com,
-	andi.shyti@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	p.zabel@pengutronix.de,
-	wsa+renesas@sang-engineering.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 11/11] arm64: dts: renesas: rzg3s-smarc-som: Enable i2c1 node
-Date: Thu, 11 Jul 2024 14:52:07 +0300
-Message-Id: <20240711115207.2843133-12-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1720698768; c=relaxed/simple;
+	bh=p8ScQkWIyu9ab0yXaUSPdA+/sWxuFRxGfY6Eo670r/8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DvAiNKri35eaECw8Xcd8bH5M8DUwnE+OrQLO3jLtvWt8t2I1Jnui4pBFDvdlTUIddyaeBFm/C3eGh3hPnUfyCDM5mEIy1yerGlijZgrt3jawJIcsEs7Qzr4nAl8aRXaJxvEUrEkWDjB5FY0Ya7bW5m5dqspacPVF63MjXOjfjDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hOjIV7kF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NhMTLxVk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720698764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p8ScQkWIyu9ab0yXaUSPdA+/sWxuFRxGfY6Eo670r/8=;
+	b=hOjIV7kFZFbohDbVe7Q9bCjws0IQXMScAb/HVQHW+C7RALr9ypLJRFzU63BhaZEls+1B4p
+	nvI2yiFG2QxkJDOJXBV8CIrEHMRm5uOT43QhXoTvQQ/tJxqMyZRbXW22bpC4mrSyi4AdZr
+	cO2lv1Wg7aBVCnJxGYz+RXodCLjs5/Cav33BNWfqnbOU75Rl49nTBwzzNNUY2A1EBh8goc
+	zzqoKap/KxdN2KC24/C09zszJ1tvO7cfnLU8dR4Kn/efLwrcMGC53o6wdvqwfs0GcNvSvf
+	bJwj4lXsQ5h9fjKUNdmbnJaX0SYTcTdH9iW55Zm3A8BC0770dresbDCDmvhrcA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720698764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p8ScQkWIyu9ab0yXaUSPdA+/sWxuFRxGfY6Eo670r/8=;
+	b=NhMTLxVkF/SftyM5dusPKl/dL0bOyt4x5X741aGr/Cumq5//dg+2xIXqqQ0Mx4BMfOwYBa
+	YhasC4IfWxt2OnCA==
+To: Aleksandar Rikalo <arikalo@gmail.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>
+Cc: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>, Chao-ying Fu
+ <cfu@wavecomp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@kernel.org>, Hauke
+ Mehrtens <hauke@hauke-m.de>, Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, Marc Zyngier <maz@kernel.org>, Paul Burton
+ <paulburton@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Serge
+ Semin <fancer.lancer@gmail.com>, Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: Re: [PATCH v5 03/11] irqchip/mips-gic: Introduce
+ for_each_online_cpu_gic()
+In-Reply-To: <20240711082656.1889440-4-arikalo@gmail.com>
+References: <20240711082656.1889440-1-arikalo@gmail.com>
+ <20240711082656.1889440-4-arikalo@gmail.com>
+Date: Thu, 11 Jul 2024 13:52:44 +0200
+Message-ID: <8734oguovn.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Thu, Jul 11 2024 at 10:26, Aleksandar Rikalo wrote:
 
-Enable i2c1 node.
+> From: Paul Burton <paulburton@kernel.org>
+>
+> Parts of code in the MIPS GIC driver operate on the GIC local register
+> block for each online CPU, accessing each via the GIC's other/redirect
+> register block.
+>
+> Abstract the process of iterating over online CPUs & configuring the
+> other/redirect region to access their registers through a new
+> for_each_online_cpu_gic() macro.
+>
+> Signed-off-by: Paul Burton <paulburton@kernel.org>
+> Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
+> Signed-off-by: Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>
+> Signed-off-by: Aleksandar Rikalo <arikalo@gmail.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-
-Changes in v3:
-- none
-
-Changes in v2:
-- none
-
- arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index 8a3d302f1535..21bfa4e03972 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -32,6 +32,7 @@ / {
- 	compatible = "renesas,rzg3s-smarcm", "renesas,r9a08g045s33", "renesas,r9a08g045";
- 
- 	aliases {
-+		i2c1 = &i2c1;
- 		mmc0 = &sdhi0;
- #if SW_CONFIG3 == SW_OFF
- 		mmc2 = &sdhi2;
-@@ -150,6 +151,10 @@ &extal_clk {
- 	clock-frequency = <24000000>;
- };
- 
-+&i2c1 {
-+	status = "okay";
-+};
-+
- #if SW_CONFIG2 == SW_ON
- /* SD0 slot */
- &sdhi0 {
--- 
-2.39.2
-
+I have nothing to do with this patch. I merely suggested you changes in
+the review.
 
