@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-248450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5714A92DD4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:12:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C1A92DD4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1733D1F23614
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:12:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 348E1B23978
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0781801;
-	Thu, 11 Jul 2024 00:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AD681F;
+	Thu, 11 Jul 2024 00:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UvnaoxtS"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="CjEsfRXu"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF93E36C;
-	Thu, 11 Jul 2024 00:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174B136C;
+	Thu, 11 Jul 2024 00:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720656743; cv=none; b=T7syHB0xwfkeAmrl7pMvVEpthVywlAvfJPfzaS0KQ0+ZV1s/piaovv56EsC7JKPhMQQ40rJZcSU/gbD8t+Z3zuqmEvW92DtPSiQHZhkk2INg7i/grXYXgn3Ghg1kJb99XXfbbjWzi41/xpCJMA/Lte3cyekWUYbVjYdTfDFT/ZI=
+	t=1720656796; cv=none; b=lhQEXamC5A8KJAz/C2hUGCnm3r2T7lP81F0KuNBnsSlxhOh1DeKKpG4m0VsV9fvz01Lggz+p9NyTWQjfjyo3NGqhtEKMLuDI0EYqCkNntpqdnmbqpK/3VlIasv1fRvHOwppj6yGuF/RYaFpTogjze/9JUT4Wpy3Wai8OTWl9ikc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720656743; c=relaxed/simple;
-	bh=z3/GPZr3IzNYwJAFUT/h9tXpOM7D+P0jV+CMFOAI/30=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CNNxSktJsig1sNodZFyS5ecWSUgjQU08YFRZtoQqknyVbboEg0Q5qnvKDJ16YhxYyUu+mPvVe69L2IAd4qM/jrWB2/V7bSTAudC1wFVFDqDR4CyApMxL+QyBS7a50WD+XKm0MKBV1tIuE2z8u2z4nIUzOwhz2lj4bpgBchPMHjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UvnaoxtS; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720656738;
-	bh=aOXnWRsFNv0bEA3PDX/YTLl+7NS+nEOIZ25OGc32Xgs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=UvnaoxtSGqPMsCysoNbJ8jch0T4GEvkJpT0+J4OKbpNr5DIlciOILaEYejwCOLvgc
-	 S4ei7WFlocJq3667WDQGzTbQPQAnNn8JvOntuHsAq2LchG6AQQo20CefQBkkxC5qvO
-	 FAn+EvoQ+iLFkCQMQalvn2Rbl7S29AP+ApOB8OkB8cz/RdmhQ62X7Dh9nxvjmXFzde
-	 euDL34FZ+SQTjG6DZPXuuf5lVNk36YgqdUAR7JoKwNqfIqgpOFQnXRwYIsBs1okhTU
-	 YmTnqObd7t1WlArUeR2LJ9zHP+Od+uOg+3bLPFg4u6a2mfU0LKHFMZLhW11kwrMFXy
-	 qv3IeYq5dS3vA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKFXf1pHBz4w2D;
-	Thu, 11 Jul 2024 10:12:18 +1000 (AEST)
-Date: Thu, 11 Jul 2024 10:12:17 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the bcachefs tree with Linus' tree
-Message-ID: <20240711101217.12675d47@canb.auug.org.au>
+	s=arc-20240116; t=1720656796; c=relaxed/simple;
+	bh=UtDt4LUfmyajo8Xa1uLEKN3Hah6yNHzOqbokGMBQnJI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q593zVVV6FzUnyrwI68ZlTnbJ6tenYTzIu/lkUiz6vaPX3/SMjIaoqatep+gbbElRvEnSJrX/k6fA0GUXk0lnnG7VarbdTKpapXLEgiZXkUpp7uwzI/kOsAZtX5m7ogzHrdmtYxSJlrKg7iOlFzaaOhRvIhF+SNOURBcQGkZgqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=CjEsfRXu; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46B0D39q82658278, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1720656783; bh=UtDt4LUfmyajo8Xa1uLEKN3Hah6yNHzOqbokGMBQnJI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=CjEsfRXunhcAEzkoFogu9pGD7SXmz7uDkT3Xuj2N8sQg7XTABRMuckeZW8xpCNyoC
+	 ihUaP0htPawVnUqFFI6e+v8LHnWVW5GUdU315woY7yyAsiEMHivkBpVy8XfM8rZB/F
+	 PjP83agtXBpmTZxzTA1zNc0XL+P90bLPBGlad+TDj+bNoCy7/Xe6z5SQaqUDkz1cxi
+	 A2CJByqqNA1oJMACl6aL9WZqiWkLOzK6cDrW8cn+6pPEOcxhYo3g3nqVgWd4/8g+9D
+	 N3aWfvF/FcZwWxGivKIz59idw3dTL9R0yf3Ikux/n16C0mGSxJZiqahl2pJc/R7DFe
+	 DNJ3/nbaDC4xA==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46B0D39q82658278
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 08:13:03 +0800
+Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 11 Jul 2024 08:13:04 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 11 Jul 2024 08:13:03 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Thu, 11 Jul 2024 08:13:03 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>,
+        "kvalo@kernel.org"
+	<kvalo@kernel.org>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] wifi: rtw89: chan: Use swap() to improve rtw89_swap_sub_entity()
+Thread-Topic: [PATCH] wifi: rtw89: chan: Use swap() to improve
+ rtw89_swap_sub_entity()
+Thread-Index: AQHa0vwSHFsha+UcbkOo1WiJogX7JLHwp9bg
+Date: Thu, 11 Jul 2024 00:13:03 +0000
+Message-ID: <3fb72f1fd0594f8981075ee0f3fbb0f7@realtek.com>
+References: <20240710190426.709964-2-thorsten.blum@toblux.com>
+In-Reply-To: <20240710190426.709964-2-thorsten.blum@toblux.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/k1bVI9sYrFtANSoBycP1=4y";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
---Sig_/k1bVI9sYrFtANSoBycP1=4y
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Thorsten Blum <thorsten.blum@toblux.com> wrote:
+> Use the swap() macro to simplify the rtw89_swap_sub_entity() function
+> and improve its readability. Remove the local variable tmp.
+>=20
+> Fixes the following Coccinelle/coccicheck warning reported by
+> swap.cocci:
+>=20
+>   WARNING opportunity for swap()
+>=20
+> Compile-tested only.
+>=20
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
-Hi all,
+The same patch [1] has been applied.=20
 
-Today's linux-next merge of the bcachefs tree got a conflict in:
+[1] https://lore.kernel.org/all/20240529020244.129027-1-jiapeng.chong@linux=
+.alibaba.com/
 
-  fs/bcachefs/fs.c
-
-between commit:
-
-  0f1f7324da0a ("bcachefs: Log mount failure error code")
-
-from Linus' tree and commit:
-
-  43c6a0cede5a ("bcachefs: Kill bch2_mount()")
-
-from the bcachefs tree.
-
-I fixed it up (I dropped the former change) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/k1bVI9sYrFtANSoBycP1=4y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaPI2EACgkQAVBC80lX
-0GwsEQf/fbBioo933eRY2bGLK8zTOyEzus2FiTsj2O6k/o4RA5AE062H90L4d/nU
-5mJ2wej2CURcyBDwh7Uo6/84/gTgGRyOewUgPQJRJKsflm1Dx1PR62q++7LL8ItP
-LsKwBQjJ4Sj7PdzFKcR9JKtFVla7joCWAMlcONTX9ohruEdR7JPStec8mUst/XuR
-OS8m7/GWDO7L8IlGf0QvLD288jMD2l2+WLEV5I/xziqKv6FV1qtK4itRCuBDBIQW
-ZU6Lsf9QGfruhJdysuqdAFH2TacOw1JiC4O5CkTh/gmWvlPkVzvmpt3cpjS8ePub
-AT6ASF6W+FSj6CVO8FWO/fzOjnBwgA==
-=3/gm
------END PGP SIGNATURE-----
-
---Sig_/k1bVI9sYrFtANSoBycP1=4y--
 
