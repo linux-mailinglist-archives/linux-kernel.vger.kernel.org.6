@@ -1,207 +1,127 @@
-Return-Path: <linux-kernel+bounces-248480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C6692DDD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:16:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B85AE92DDD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65EEB1F21B6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:16:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F88DB21A2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F332B9C5;
-	Thu, 11 Jul 2024 01:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4403A9449;
+	Thu, 11 Jul 2024 01:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jAUiNpn4"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwcE3E/F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD2610A36;
-	Thu, 11 Jul 2024 01:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DE86FCB;
+	Thu, 11 Jul 2024 01:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720660483; cv=none; b=Ai9ryazEBVve/EMowsjAvjOby7YUAa0IAUrfLUdfDCvjfoXTtoTR41IK3ejbZaT88vHRUIWj7aG1piNMr0VYHXg9nToRFQwvaqPmUep1UdbjVvVz1bHwcM3cE76CIM3psSSmNYzwt3TU5VYjCu1Wn7ReLd//y4wrNbCE8EXK/xA=
+	t=1720660500; cv=none; b=o1PvO2KFUqZXHVxdd+V0TBcbP862XrvV5md3lClfKBN67PFqtodxI3KZN/FlcG6uKpo26bRfe3AJbtrSkZuqwaZ2ZMQABNvMSIasOdYA+7uh15pstyTP+r5XBqgqHJ+06iVzOcU4ftzsz0ZmUS7QJtQd29Pfjyz11laO8s9RcQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720660483; c=relaxed/simple;
-	bh=6/zkEDXjZjxv6dDfH3KWAd0N7AnaFH1Zmp5aws/7dQk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sI7rDliEmEIRyR5Yy1kW8j+Pgu2K/HF+Wom7MBVSQf2QcKt7XEg/UZYiWLzz4Kwzk5JYWxgKh9ITZ4lsml1FaCkTe/QuhCIOP9urhUrVzqYZEHM/QqYdUiQi21cdHzyVOFzueYI9LfHi6Wd2k5KEc7Wf+nIJQXZSSKHy3RpatuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jAUiNpn4; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fafc9e07f8so2504905ad.0;
-        Wed, 10 Jul 2024 18:14:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720660481; x=1721265281; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rr7Q65/uUNMtJMngxD5LyYKesf+tbYcSf5IHS4oP4n8=;
-        b=jAUiNpn4e5i8hbgW/V9nHh1y59tzaQH2MI3E39ZRSwTckpsbUPo6zdDi0M7Qj1H1Ew
-         sHrPSR4u8vPArEXfIe4QSskottINLFSo3J1CCphBTdUoRgiOeg9oAPxEk76DJcVY1x2I
-         YcI6sfZRVVs09dEVw8O9gdFaoVO0OGQRCGjXMyrC7VVf1/8g/Lwc4lLNr/6LrLHHoJvB
-         +z2FuTKpxJ4D2kMufB/PS0heZs6wMCE/bZIlAhMNBBDHzNmdq6QgZHBr0ZzxKVmOjQXS
-         4vZOTwCQYbQA9jDkLG3+erjcGabcObbLsJATKHnQHHX14MLW+SuTCbHQG/mkzPsLX7fd
-         Pq0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720660481; x=1721265281;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rr7Q65/uUNMtJMngxD5LyYKesf+tbYcSf5IHS4oP4n8=;
-        b=oXBvrlDHANZWtoLM326Sf/ZiLS7s7E65/KZSacRuwDgT4rBhCXbi96P79mmLuqVSuf
-         lFwcsmsOqKnw7JUuj12wAXZ/QLWCB0HaO3sxpwJUibaH5RrNRxcNPFU3G3x/InTXdPvD
-         4yfihOVH4EkKWDQaO7S5LKpQwULORcfA9qDwXXskLKli06RPWFjgtUqBt7ed8TMd3B6x
-         XgrDZHhXca3/7F9wmtDdPdS95pgt//bk1CwneDENy71NXcXS3rhH+e0mZ0BerMDNgrsu
-         sqXM/NSWPtH+DdUE+zLyk8Kt+2GzzrCRqBylGWrqhkM9CxsOWLEgLNpdMF4lIq/Va1p9
-         8OBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPzrKGNiHpTDhGHvBmm0J+KZgcnYo4JbEabFLCgv8aZdPYF4pxt7eW+zEYyXFXyr3V52NIFlzhckrRVFLkNsar0U4seuGxv+QvK+gX7t9xoovjgkz1YsA/QV0533QVOk8Hh6vH5sNnqsG9qi/l/G2auppb6UOv5KPE9Y1MUxaJsYUZ
-X-Gm-Message-State: AOJu0YxAfNFHfRgMIXFrZyleiHeykJdquZ7fuCEdxD7nbJmM1A3HCPdP
-	jrNrIv7zvjVgClvTPxB1//KMRL/ZF2H2Xc2+s+vHmv2rrzuIrkxU
-X-Google-Smtp-Source: AGHT+IFJUeFA3eAzgk0yLfvuWC7HhHDzJ0TYJRTj/e7EpBNO4Fa5aqAl/Zb3JcJpxWMpURw+W2y5RA==
-X-Received: by 2002:a17:903:2bcb:b0:1f8:5a64:b468 with SMTP id d9443c01a7336-1fbb6ed9d22mr62847735ad.47.1720660480788;
-        Wed, 10 Jul 2024 18:14:40 -0700 (PDT)
-Received: from debian ([2601:646:8f03:9fee:398f:325f:a0e2:200f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab7c66sm39383215ad.121.2024.07.10.18.14.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 18:14:40 -0700 (PDT)
-From: fan <nifan.cxl@gmail.com>
-X-Google-Original-From: fan <fan@debian>
-Date: Wed, 10 Jul 2024 18:14:25 -0700
-To: Terry Bowman <Terry.Bowman@amd.com>
-Cc: nifan.cxl@gmail.com, Dan Williams <dan.j.williams@intel.com>,
-	ira.weiny@intel.com, dave@stgolabs.net, dave.jiang@intel.com,
-	alison.schofield@intel.com, ming4.li@intel.com,
-	vishal.l.verma@intel.com, jim.harris@samsung.com,
-	ilpo.jarvinen@linux.intel.com, ardb@kernel.org,
-	sathyanarayanan.kuppuswamy@linux.intel.com,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yazen.Ghannam@amd.com, Robert.Richter@amd.com,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
-Subject: Re: [RFC PATCH 1/9] PCI/AER: Update AER driver to call root port and
- downstream port UCE handlers
-Message-ID: <Zo8x8YvdHSgcjGcR@debian>
-References: <20240617200411.1426554-1-terry.bowman@amd.com>
- <20240617200411.1426554-2-terry.bowman@amd.com>
- <6675d1cc5d08_57ac294d5@dwillia2-xfh.jf.intel.com.notmuch>
- <ecc5fbd0-52e1-443f-8e5a-2546328319b2@amd.com>
- <668ef3a2.050a0220.96a0c.4f5c@mx.google.com>
- <8bf0d1c9-632e-458b-9b78-0faeea0472f8@amd.com>
+	s=arc-20240116; t=1720660500; c=relaxed/simple;
+	bh=QmVeqyAg4kx3FS1nqobMtRmk9z39HHVvttSW/nDR6FQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tU8cRH/BHDk9GnAeKoJ00OFpYCSKaoiQb5/GUZ7NMkbeMgnVVf3GFWYY1cc/Z8QyKa57kvis7bDNFYNEryzWPSqJTB8OIsQcQo/ffnWMolI5bUB35HGTxz3DpQw+adqfRQYhlUquMRPudA8kqEDNzvmUDoKumq7DE8M8GrjxWqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwcE3E/F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EBB7C4AF09;
+	Thu, 11 Jul 2024 01:14:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720660500;
+	bh=QmVeqyAg4kx3FS1nqobMtRmk9z39HHVvttSW/nDR6FQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QwcE3E/FDMXP7ng6I1/jq/eDzyZTjUMRg+cZQn8UKGpZJMqvviz7fXm6QDKltom1N
+	 vqMeKxtpC+ikvGjkBl6LLPliMLuoY6H8jOCt4MCcKCYPFOj7Q68E+htdG4/k8EHyqO
+	 WD3P9UYlPCpreeHOT+fTDtfORFijPTdz4MlCNg/Suo1A5rUCaVcDctHuzeIhIMKxGZ
+	 sAl9gfChwS1NjRJsya5Nl9OdgxdYDNjaZBPp0V2LGCTbNVlkpMTEKMcfPUgXncjoMt
+	 L2OsNWL9JVGBGRxEDAqSGyfDbxesr5PlixVU9KImF5Zx4t0jCALj7x38wJ7O2f4R2x
+	 WV0ApC+VNxUEQ==
+Date: Thu, 11 Jul 2024 02:14:56 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] regmap: Implement regmap_multi_reg_read()
+Message-ID: <Zo8yECqjvhw6dNGy@finisterre.sirena.org.uk>
+References: <20240710015622.1960522-1-linux@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PLf9y0OX9e5TZU/2"
+Content-Disposition: inline
+In-Reply-To: <20240710015622.1960522-1-linux@roeck-us.net>
+X-Cookie: Your love life will be... interesting.
+
+
+--PLf9y0OX9e5TZU/2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8bf0d1c9-632e-458b-9b78-0faeea0472f8@amd.com>
 
-On Wed, Jul 10, 2024 at 04:48:09PM -0500, Terry Bowman wrote:
-> Hi Fan,
-> 
-> On 7/10/24 15:48, nifan.cxl@gmail.com wrote:
-> > On Mon, Jun 24, 2024 at 12:56:29PM -0500, Terry Bowman wrote:
-> >> Hi Dan,
-> >>
-> >> I added a response below.
-> >>
-> >> On 6/21/24 14:17, Dan Williams wrote:
-> >>> Terry Bowman wrote:
-> >>>> The AER service driver does not currently call a handler for AER
-> >>>> uncorrectable errors (UCE) detected in root ports or downstream
-> >>>> ports. This is not needed in most cases because common PCIe port
-> >>>> functionality is handled by portdrv service drivers.
-> >>>>
-> >>>> CXL root ports include CXL specific RAS registers that need logging
-> >>>> before starting do_recovery() in the UCE case.
-> >>>>
-> >>>> Update the AER service driver to call the UCE handler for root ports
-> >>>> and downstream ports. These PCIe port devices are bound to the portdrv
-> >>>> driver that includes a CE and UCE handler to be called.
-> >>>>
-> >>>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> >>>> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> >>>> Cc: linux-pci@vger.kernel.org
-> >>>> ---
-> >>>>  drivers/pci/pcie/err.c | 20 ++++++++++++++++++++
-> >>>>  1 file changed, 20 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-> >>>> index 705893b5f7b0..a4db474b2be5 100644
-> >>>> --- a/drivers/pci/pcie/err.c
-> >>>> +++ b/drivers/pci/pcie/err.c
-> >>>> @@ -203,6 +203,26 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
-> >>>>  	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
-> >>>>  	struct pci_host_bridge *host = pci_find_host_bridge(dev->bus);
-> >>>>  
-> >>>> +	/*
-> >>>> +	 * PCIe ports may include functionality beyond the standard
-> >>>> +	 * extended port capabilities. This may present a need to log and
-> >>>> +	 * handle errors not addressed in this driver. Examples are CXL
-> >>>> +	 * root ports and CXL downstream switch ports using AER UIE to
-> >>>> +	 * indicate CXL UCE RAS protocol errors.
-> >>>> +	 */
-> >>>> +	if (type == PCI_EXP_TYPE_ROOT_PORT ||
-> >>>> +	    type == PCI_EXP_TYPE_DOWNSTREAM) {
-> >>>> +		struct pci_driver *pdrv = dev->driver;
-> >>>> +
-> >>>> +		if (pdrv && pdrv->err_handler &&
-> >>>> +		    pdrv->err_handler->error_detected) {
-> >>>> +			const struct pci_error_handlers *err_handler;
-> >>>> +
-> >>>> +			err_handler = pdrv->err_handler;
-> >>>> +			status = err_handler->error_detected(dev, state);
-> >>>> +		}
-> >>>> +	}
-> >>>> +
-> >>>
-> >>> Would not a more appropriate place for this be pci_walk_bridge() where
-> >>> the ->subordinate == NULL and these type-check cases are unified?
-> >>
-> >> It does. I can take a look at moving that.
-> > 
-> > Has that already been handled in pci_walk_bridge?
-> > 
-> > The function pci_walk_bridge() will call report_error_detected, where
-> > the err handler will be called. 
-> > https://elixir.bootlin.com/linux/v6.10-rc6/source/drivers/pci/pcie/err.c#L80
-> > 
-> > Fan
-> > 
-> 
-> You would think so but the UCE handler was not called in my testing for the PCIe 
-> ports (RP,USP,DSP). The pci_walk_bridge() function has 2 cases:
-> - If there is a subordinate/secondary bus then the callback is called for
-> those downstream devices but not the port itself.
-> - If there is no subordinate/secondary bus then the callback is invoked for the 
-> port itself.
-> 
-> The function header comment may explain it better:
-> /**                                                                                                                                                                                                                
->  * pci_walk_bridge - walk bridges potentially AER affected                                                                                                                                                         
->  * @bridge:     bridge which may be a Port, an RCEC, or an RCiEP                                                                                                                                                   
->  * @cb:         callback to be called for each device found                                                                                                                                                        
->  * @userdata:   arbitrary pointer to be passed to callback                                                                                                                                                         
->  *                                                             
->  * If the device provided is a bridge, walk the subordinate bus, including                                                                                                                                         
->  * any bridged devices on buses under this bus.  Call the provided callback                                                                                                                                        
->  * on each device found.                                                                                                                                                                                           
->  *                                                                                                                                                                                                                 
->  * If the device provided has no subordinate bus, e.g., an RCEC or RCiEP,                                                                                                                                          
->  * call the callback on the device itself. 
->  */
-> 
-> Regards,
-> Terry
+On Tue, Jul 09, 2024 at 06:56:19PM -0700, Guenter Roeck wrote:
+> regmap_multi_reg_read() is similar to regmap_bilk_read() but reads from
+> an array of non-sequential registers. It is helpful if multiple non-
+> sequential registers need to be read in a single operation which would
+> otherwise have to be mutex protected.
 
-OK, interesting.
-Btw, what is the "state" passed to pcie_do_recovery(...state...)?
+It would be nice to have KUnit coverage for the new function too.
 
-Fan
+The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
 
-> 
-> >>
-> >> Regards,
-> >> Terry
+  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-multi-reg-write
+
+for you to fetch changes up to 3c1ff93b4deea502cd8b0869839557cab2a28b71:
+
+  regmap: Implement regmap_multi_reg_read() (2024-07-10 18:45:34 +0100)
+
+----------------------------------------------------------------
+regmap: Implement regmap_multi_reg_read()
+
+A new API function from Guenter Roeck:
+
+regmap_multi_reg_read() is similar to regmap_bulk_read() but reads from
+an array of non-sequential registers. It is helpful if multiple non-
+sequential registers need to be read in a single operation which would
+otherwise have to be mutex protected.
+
+The name of the new function was chosen to match the existing function
+regmap_multi_reg_write().
+
+----------------------------------------------------------------
+Guenter Roeck (1):
+      regmap: Implement regmap_multi_reg_read()
+
+ drivers/base/regmap/regmap.c | 103 ++++++++++++++++++++++++++++---------------
+ include/linux/regmap.h       |   2 +
+ 2 files changed, 70 insertions(+), 35 deletions(-)
+
+--PLf9y0OX9e5TZU/2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaPMg8ACgkQJNaLcl1U
+h9DFUAf/ZT+z/+QECPzqG+vbsK0T/UIkvKo+EJm2Mt3GwDfE9aaJSFE0qUAyureZ
+W4SXt8Dw3RUkeU906rtuVF17g8SSb6RlmTTXo3pWfivSFh1eMxuCLaEyUHFBk921
+arbpAt6j2oc2jhqIwEJCu5YR441Hu8ktfmKjJIyIHcqf9dunkmUICWQIUzoDEm0r
+42uFy4xcuNlNHWtpeyrVGicXTX7zkwdLwLfived4sEar8oMIztQ9Ig9l3NCncez3
+MMJR1vnv1xX05hwy+Kw6LzA46nN4xtz67WUAtZa6WM6As1UC5u/udgVUV0qB3Jlu
+Ed4RhJno0mOpxtxSAJ8qjoe6JRHYAg==
+=jntA
+-----END PGP SIGNATURE-----
+
+--PLf9y0OX9e5TZU/2--
 
