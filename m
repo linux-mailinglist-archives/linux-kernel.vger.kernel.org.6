@@ -1,191 +1,141 @@
-Return-Path: <linux-kernel+bounces-249736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E1292EF2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:50:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CF792EF2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:51:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A9DD283C47
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:50:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36B29B229E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F4816EB77;
-	Thu, 11 Jul 2024 18:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A05A16E893;
+	Thu, 11 Jul 2024 18:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="By5aYvAq"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LyvdAvB6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F5F28FF;
-	Thu, 11 Jul 2024 18:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCCF28FF
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720723796; cv=none; b=fq7UPkrKeb/yLfUMW0Etfrd/bSlA5dMZSzrxRwZW0zcH+dxOdZEtDQTxPKRb/CqbzQEx+4O45ESWUJC/chLAjsCONlULi360bG/Ym7f2HvL1pds6zEa9i/+rZcaKDAJtF+wVt+GJ65FkQbABSFQXQ3F2soaTh3qDkxsgeof3xuw=
+	t=1720723870; cv=none; b=uoV/6JeJZaFyrOTX1BXQOaSQjP5L/IRGpBXSDins0j+1prlh1bYsgAKy+kqY6q/qEk3b7fs9eYJCfNMrkPtrz79EIlJBjhC5fT/6PPmwsIQ1TjcXUqZavSU17yTfCns47IeTo3Qsg7vgcIEe6J1JThZ0C7DXrAwplvPl6VmMQYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720723796; c=relaxed/simple;
-	bh=z2Zau4uAm8vaFqoE5iU5MmFK+8bXegUBo5jC5aSrspE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2GOyhz9RubhmSeqF8x9LCyR2gjtq70m46dcqL3xkJrt5FO7Vz6X+WVAjcLt1hIMHfbHjaoPXNUa4WUzRbu4IkwfTaFk3O8ytYKuvV5tT+qCUlzCcmN1zmnByTvVLFw+a1ixiZS6mElSJf9czRLw0iEK48V0Rf4sseHDzd6eeC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=By5aYvAq; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=o/IW2cCwLwJEDMO66z3r5dlrUmlAEsjcwslEcQLO45s=; b=By5aYvAqIMwiWTdp67RiKFT7sD
-	+qDZ7b1sxVwD8VDiFHi9n1oSEdZ/3h5u/OftoP8fJgV1h4+y2lNUpjtwaPm5oMmGidDXTk6dic2b4
-	w/casdFX/c1h5f+6ZemMDjQZ3uPI7rmnlYxBw3xBJCi2rYWiwztHif2ZV7DI7aeYu616aotcFIN9C
-	fHGJCn/AfGhzqriuT4bVmSK64p4kqVZZQosYcIq2LPVBTd0SKRaSVRPAogOxHR/mIyA4AfgJUzmTU
-	oPPAOqDQ/Yspi76VOtRsNQDtachP5NzFDNsIkhS/3e01Lk0lh5amtvxv19zcydP/4ugY7iD9yonGR
-	xdtwKXHw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRyrJ-000000018ze-3Fdq;
-	Thu, 11 Jul 2024 18:49:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4636630050D; Thu, 11 Jul 2024 20:49:37 +0200 (CEST)
-Date: Thu, 11 Jul 2024 20:49:37 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Marco Elver <elver@google.com>,
-	Gatlin Newhouse <gatlin.newhouse@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Pengfei Xu <pengfei.xu@intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Changbin Du <changbin.du@huawei.com>, Xin Li <xin3.li@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev,
-	t.p.northover@gmail.com, Fangrui Song <maskray@google.com>
-Subject: Re: [PATCH v4] x86/traps: Enable UBSAN traps on x86
-Message-ID: <20240711184937.GE27299@noisy.programming.kicks-ass.net>
-References: <20240710203250.238782-1-gatlin.newhouse@gmail.com>
- <20240711081031.GB4587@noisy.programming.kicks-ass.net>
- <CANpmjNObEzShHvw19EAntPvCYJbqezKBq+pB=mkd7j3sXDEE7A@mail.gmail.com>
- <202407110924.81A08DD4D@keescook>
+	s=arc-20240116; t=1720723870; c=relaxed/simple;
+	bh=zhquo+oCsRV0hgu0alt1y9eCACTWN7cPkiK8rThrMGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JIogJqHAFVei+sAMZ/Dnmq978FqJMPouQtR3nl3eMlVfLo3N8CGB5eHz5vdOOmLzaHCLkOjyvBauo1mdIJ94VNBAihEKx06oycZ8nS4USnC/a4tf4WZCN8Unw0w3Gv2GaZSgF0OQ3tgd895tCl0plN6r2csPLuulkNjLorqaeDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LyvdAvB6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BDBB79008745;
+	Thu, 11 Jul 2024 18:50:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kU90E4EzVBWO/hKTiAhZwsQuZeXFe5mA7pm/NB52++4=; b=LyvdAvB69X0Qxu62
+	junCU9WNF95j6PGc4lnNgi8FX3jSKak3iir60Aml2bwB3t9SJ8NDBYMhuvs4xCee
+	UrB9NRj3uaoal6opPY2Wx/KSVJLGoI3EQt1lxgEDq0gbtNHh0gEByHz6m+TM0aGd
+	b8E9/DVo4PkeB1T5SeOEXYJkvIoKEvIFtPjYRecEwJMtr/qBUkoZ0jcfnCnhWimt
+	lBt3LpeHkPpepkak+TNYG8j3wWHXyBYXHzoGmT0EY42+6TGYila/cEwNYKaDozNA
+	F5LgrxXOoaalWuNe/cshohy41tihpOrH3PFzfQ5wlgUWmxUOwIQ38K6ZwTz1MCTC
+	7+YCQQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x51dg84-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 18:50:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BIoL0E024082
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 18:50:21 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
+ 2024 11:50:20 -0700
+Message-ID: <b1f79d00-80bc-4beb-8d49-6e626b79b97c@quicinc.com>
+Date: Thu, 11 Jul 2024 11:50:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202407110924.81A08DD4D@keescook>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/mm: add testmmiotrace MODULE_DESCRIPTION()
+To: Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu
+	<mhiramat@kernel.org>,
+        Karol Herbst <karolherbst@gmail.com>,
+        Pekka Paalanen
+	<ppaalanen@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy
+ Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav
+ Petkov <bp@alien8.de>, <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+CC: <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240515-testmmiotrace-md-v1-1-10919a8b2842@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TVytbWzRQGN5Kw_RiD9K3gyN9tJ4nIXH
+X-Proofpoint-ORIG-GUID: TVytbWzRQGN5Kw_RiD9K3gyN9tJ4nIXH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_14,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110130
 
-On Thu, Jul 11, 2024 at 09:35:24AM -0700, Kees Cook wrote:
-> On Thu, Jul 11, 2024 at 11:06:12AM +0200, Marco Elver wrote:
-> > On Thu, 11 Jul 2024 at 10:10, Peter Zijlstra <peterz@infradead.org> wrote:
-> > >
-> > > On Wed, Jul 10, 2024 at 08:32:38PM +0000, Gatlin Newhouse wrote:
-> > > > Currently ARM architectures extract which specific sanitizer
-> > > > has caused a trap via encoded data in the trap instruction.
-> > > > Clang on x86 currently encodes the same data in ud1 instructions
-> > > > but the x86 handle_bug() and is_valid_bugaddr() functions
-> > > > currently only look at ud2s.
-> > > >
-> > > > Bring x86 to parity with arm64, similar to commit 25b84002afb9
-> > > > ("arm64: Support Clang UBSAN trap codes for better reporting").
-> > > > Enable the reporting of UBSAN sanitizer detail on x86 architectures
-> > > > compiled with clang when CONFIG_UBSAN_TRAP=y.
-> > >
-> > > Can we please get some actual words on what code clang will generate for
-> > > this? This doesn't even refer to the clang commit.
-> > >
-> > > How am I supposed to know if the below patch matches what clang will
-> > > generate etc..
-> > 
-> > I got curious what the history of this is - I think it was introduced
-> > in https://github.com/llvm/llvm-project/commit/c5978f42ec8e9, which
-> > was reviewed here: https://reviews.llvm.org/D89959
+On 5/15/24 17:06, Jeff Johnson wrote:
+> Fix the following 'make W=1' warning:
 > 
-> Sorry, I should have suggested this commit be mentioned in the commit
-> log. The details are in llvm/lib/Target/X86/X86MCInstLower.cpp:
-> https://github.com/llvm/llvm-project/commit/c5978f42ec8e9#diff-bb68d7cd885f41cfc35843998b0f9f534adb60b415f647109e597ce448e92d9f
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/mm/testmmiotrace.o
 > 
->   case X86::UBSAN_UD1:
->     EmitAndCountInstruction(MCInstBuilder(X86::UD1Lm)
->                                 .addReg(X86::EAX)
->                                 .addReg(X86::EAX)
->                                 .addImm(1)
->                                 .addReg(X86::NoRegister)
->                                 .addImm(MI->getOperand(0).getImm())
->                                 .addReg(X86::NoRegister));
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>   arch/x86/mm/testmmiotrace.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> Which is using the UD1Lm template from
-> https://github.com/llvm/llvm-project/blob/main/llvm/lib/Target/X86/X86InstrSystem.td#L27
+> diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
+> index bda73cb7a044..ae295659ca14 100644
+> --- a/arch/x86/mm/testmmiotrace.c
+> +++ b/arch/x86/mm/testmmiotrace.c
+> @@ -144,3 +144,4 @@ static void __exit cleanup(void)
+>   module_init(init);
+>   module_exit(cleanup);
+>   MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Test module for mmiotrace");
 > 
->   def UD1Lm   : I<0xB9, MRMSrcMem, (outs), (ins GR32:$src1, i32mem:$src2),
->                   "ud1{l}\t{$src2, $src1|$src1, $src2}", []>, TB, OpSize32;
-> 
-> It uses OpSize32, distinct from UD1Wm (16) and UD1Qm (64).
-> 
-> > But besides that, there's very little documentation. Either Gatlin or
-> > one of the other LLVM folks might have more background, but we might
-> > be out of luck if that 1 commit is all there is.
-> > 
-> > [+Cc Tim, author of the LLVM commit]
-> > 
-> > > > diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-> > > > index a3ec87d198ac..ccd573d58edb 100644
-> > > > --- a/arch/x86/include/asm/bug.h
-> > > > +++ b/arch/x86/include/asm/bug.h
-> > > > @@ -13,6 +13,17 @@
-> > > >  #define INSN_UD2     0x0b0f
-> > > >  #define LEN_UD2              2
-> > > >
-> > > > +/*
-> > > > + * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
-> > > > + */
-> > > > +#define INSN_ASOP    0x67
-> > >
-> > > I asked, but did not receive answer, *WHY* does clang add this silly
-> > > prefix? AFAICT this is entirely spurious and things would be simpler if
-> > > we don't have to deal with it.
-> 
-> Even if we change LLVM, I'd still like to support the older versions, so
-> we'll need to handle this regardless.
+> ---
+> base-commit: 8c06da67d0bd3139a97f301b4aa9c482b9d4f29e
+> change-id: 20240515-testmmiotrace-md-c6050c66a517
 
-Is it (LLVM) allowed to do prefix stuffing for 'random' instructions in
-order to achieve alignment goals? That is, are we ever expecting more
-prefixes here?
+I don't see this in linux-next yet so following up to see if anything 
+else is needed to get this merged.
 
-Anyway, as proposed the 'decoder' also accepts ASOP UD2, should we be
-complete and also return an instruction length? Just in case we want to
-be non fatal (WARN like) and skip over the instruction.
+I'm hoping to have these warnings fixed tree-wide in 6.11.
 
-> > >
-> > > > +#define OPCODE_PREFIX        0x0f
-> > >
-> > > This is *NOT* a prefix, it is an escape, please see the SDM Vol 2
-> > > Chapter 'Instruction Format'. That ASOP thing above is a prefix.
-> > >
-> > > > +#define OPCODE_UD1   0xb9
-> > > > +#define OPCODE_UD2   0x0b
-> > >
-> > > These are second byte opcodes. The actual (single byte opcodes) of those
-> > > value exist and are something entirely different (0xB0+r is MOV, and
-> > > 0x0B is OR).
-> 
-> What would be your preferred names for all of these defines?
+/jeff
 
-SDM calls 0x0f the escape opcode and these others secondary opcode
-bytes, so something along those lines would be clear I suppose.	
-
-Vol2 2.1.2 (todays edition)
 
