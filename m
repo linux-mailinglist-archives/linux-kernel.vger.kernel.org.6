@@ -1,148 +1,188 @@
-Return-Path: <linux-kernel+bounces-248500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6CA92DE1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:46:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F4192DE23
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:48:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC6BA1C216E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E337282844
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC1A8F4E;
-	Thu, 11 Jul 2024 01:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCAFBA33;
+	Thu, 11 Jul 2024 01:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iXpvcxkR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="BL6UYeyG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="r8ZVAWoM"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B8A321D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1408E560;
+	Thu, 11 Jul 2024 01:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720662399; cv=none; b=ovmeISd8emvVH1xKZREal5/+rqcA5sjCola0ykGosSj47S5w4GiHufqTPMBwq0y8UCIJonhZd2l3G1T1/DEB165WdFwsUaPyiPK6JTMbIHg+A9wQeW2iXfA0pIZeJM9EfbhHgqy6K2+rQ2mzFIa8xfSFoppGWjcOHOJRNaS5wGU=
+	t=1720662481; cv=none; b=peMb6tvIZl4q2mZtWhFjf5gsTV3r2z70xoWMjrJVi6jhOoE2eWwROkU8rQ+fUHw4LOPlzVvfOOyMRUuUVR8Qntbw63/Jf7TgquuKouU6k//NrTvzS2YajR1rkeRjQwzGsqwlRmHB1/I6ldUdcSv5NMmAMDRH0BvfFSWkqVbybWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720662399; c=relaxed/simple;
-	bh=XP/d/ZdSd0AByfrWjgBiH3rJMmDFKEO7x8m3AbPYooU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Uxza0V8j15eFbWXYbeT3CKDLnSe7PGAvg9jAkuWrzzxtWyOM1CfsciPfWo2mIC8lSU1xasVPoDrfPfpFQZPfmJ3WfrcI30bPwvNZ8by4zfVmnXS+OCW/H/vIbH7Wg5ZfBjEqgIqcIqN8ctPuVEXjVuBSvF25/hGzmGU1RCTmkws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iXpvcxkR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 518CBC32781;
-	Thu, 11 Jul 2024 01:46:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720662398;
-	bh=XP/d/ZdSd0AByfrWjgBiH3rJMmDFKEO7x8m3AbPYooU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=iXpvcxkRQ46ZCugwBTe9ZZDZVkvroa3ILeNC99WWxiJ4JevY7av1hkGbHIEC/8OIz
-	 ypWdXN0xMUTDt3DrriO5eiR4HiuchVmGDSXi3N/D+CynOkL54GEe7x6Hc8i5FIz8sC
-	 NGu5c57dsSyTjdjO46l7DWkJu4h2YGgUE524ByUTUyfHJrKyJHrVXOxusy7cVZma+1
-	 +iYbpzKybPpLf9Mi4k5yGTD3MWRcvnxC3Mog3EUEVB/fssd1HtAdTn6ogQVkrjxWbl
-	 OlWWXGTPJk9WQK0XV1NUaccYTC97ck/e2Y7FUjImYFTN8O5cNslPco2ankozGvkEg0
-	 BVNwM6e1nsmDQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v2 3/3] f2fs: clean up data_blkaddr() and get_dnode_addr()
-Date: Thu, 11 Jul 2024 09:46:32 +0800
-Message-Id: <20240711014632.3927676-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1720662481; c=relaxed/simple;
+	bh=k2y6a1jfT89sxheaZ7yuG8DpHpWUTCnfIdZigbjaDyM=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=i0DY8HoSJJpBkETWxe2O8HgzZan7u0adb7iVLeD3lbPL39Lz7v+oel5x7YnZIYMq+dBcUBAVAQ4KkNbY6h9JvugCRPqTrjCMb17JLLCiIU4rktdrwyNGKMGn4J3YEiPmgqobwFK0rxEoAWUx4sHdxTy3D++zBjrTUYKm/xR2rnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=BL6UYeyG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=r8ZVAWoM; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id B9188138170B;
+	Wed, 10 Jul 2024 21:47:58 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Wed, 10 Jul 2024 21:47:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1720662478;
+	 x=1720748878; bh=Ln8TN6QJTge04q/QLyiTegVf1QNFB8C3NtlV+agY4Bc=; b=
+	BL6UYeyGaVbjCVxGiQYxVACuuJ7a4+U2cz+dZX1nvi5bxeY50NtAPf3ZCT+K191q
+	LgPCHo73qfvF3Dy7Cjom13bMjzOCQoeBrpI9RZQb92DkoIx3QSV52yTCAd7rcA0o
+	eWonbrzommcUcHXn7OQP3B2U+u0zc2hO0OnOf5v4fwtKJG25CZuz2zpqdGxXrK+f
+	S5eqsnb6HDMMXm9WtS5TTIzXqu4svgF7qW8ZTYkNJQuzAMD/Svzu26QeZcgSf1Yu
+	9dJpmg2ZnSF59Msx+CVvGjJK0XDym31u5/yQtv0Sy4e4PT2OeLVOmghoHPPnjHlj
+	MyLCVkE/hJX7GZNfWag3Zw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720662478; x=
+	1720748878; bh=Ln8TN6QJTge04q/QLyiTegVf1QNFB8C3NtlV+agY4Bc=; b=r
+	8ZVAWoMNb247Ph2A9fkbxuZoaZNZ7ESPHVA2jkNYRAj4iUnQ0q3Znsl7MaupVyaL
+	ag1vOvdeZNNrhyij4qt8ibPWFwoV1Shr9bP+CrHKgpZTXf7vMYuQlIy2nhHnxcSS
+	5LIF4ExjN2A8sX0pc9ZflUpmO5KFUtefOfjtnbgzE9t3I/J7XEW+YkNOVdO/QO03
+	lR32Uf12pNkyZ7Qiz0rmSrRKTdbNvASFUl0FWbcfqu1HV/IOJnDAYtV79k5pNPw9
+	gsGHjbe3e18xENWjtO+eIrT00jNvVcJDy7DXh286HrhFDUJlDc+K/1avAxSrs5OC
+	XLglG8j3+A2N28xa/DekQ==
+X-ME-Sender: <xms:zDmPZgeEr0VMNC0qnCFZ4Wp2TbfXO7ULow4ehyjM0n_OLhIROaT9OA>
+    <xme:zDmPZiOdw2zZz1VJI-i9eFp-C4v6bSX49Q86414pvdTFfGJrsSk353DPxkUY6echT
+    13Y4LMhdZcOMx1LzfA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeefgdehudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
+    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+    eqnecuggftrfgrthhtvghrnhepgeeitddvvdffheegleekudfffffgkeeiteffiedtkeek
+    keevgfefleeijeelkefhnecuffhomhgrihhnpegtihhpuhhnihhtvggurdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhn
+    rdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:zDmPZhiyGzzVAO-qBjHlrb0MKqD_2HXe1BUfD07zxa87sAfYjFJdEw>
+    <xmx:zDmPZl_Qz7yZeJJHMaEjLEMuZ5qjlF3Z8LyG-A5EBllY4ZGR5Sl7Zw>
+    <xmx:zDmPZsvWiM90Qio6oxPMLS_V-1sbT-cIrYxwfVshc1Y1vQmZsBhYVg>
+    <xmx:zDmPZsFySNyiD3nfee9Orm509W5dK-4zZp789yUh9Z4GZL_ViExkFQ>
+    <xmx:zjmPZgj5MS8Md6r8nnEudS1frJ4BvcNYey-vi2loNBJOX-_zgro39bdb>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id CA98C36A0074; Wed, 10 Jul 2024 21:47:56 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <4cb980c8-4b96-4ed0-85af-9baa1b7ef30c@app.fastmail.com>
+In-Reply-To: <Zo457UgAkhbAgm2R@alpha.franken.de>
+References: <20240612-mips_ieee754_emul-v3-1-2c21b450abdb@flygoat.com>
+ <Zn1FuxNw2CUttzdg@alpha.franken.de>
+ <9cc26415-9cbc-47fa-a132-7d8c000874a4@app.fastmail.com>
+ <alpine.DEB.2.21.2406272053180.43454@angie.orcam.me.uk>
+ <fbd421a6-cf37-49ab-bdbe-6128a7cae8be@app.fastmail.com>
+ <Zoz6+YmUk7CBsNFw@alpha.franken.de>
+ <7797a7b2-1bb2-4c45-b65d-678f685dfa3d@app.fastmail.com>
+ <Zo457UgAkhbAgm2R@alpha.franken.de>
+Date: Thu, 11 Jul 2024 09:47:36 +0800
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
+ "Jonathan Corbet" <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+Subject: Re: [PATCH v3] MIPS: Implement ieee754 NAN2008 emulation mode
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Introudce a new help get_dnode_base() to wrap common code from
-get_dnode_addr() and data_blkaddr() for cleanup.
 
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- clean up get_dnode_base() and remove redundant declaration suggested
-by Jaegeuk.
- fs/f2fs/f2fs.h | 46 +++++++++++++++++-----------------------------
- 1 file changed, 17 insertions(+), 29 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3948c181997f..2d810f97992b 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2900,26 +2900,27 @@ static inline __le32 *blkaddr_in_node(struct f2fs_node *node)
- }
- 
- static inline int f2fs_has_extra_attr(struct inode *inode);
--static inline block_t data_blkaddr(struct inode *inode,
--			struct page *node_page, unsigned int offset)
-+static inline unsigned int get_dnode_base(struct inode *inode,
-+					struct page *node_page)
- {
--	struct f2fs_node *raw_node;
--	__le32 *addr_array;
--	int base = 0;
--	bool is_inode = IS_INODE(node_page);
-+	if (!IS_INODE(node_page))
-+		return 0;
- 
--	raw_node = F2FS_NODE(node_page);
-+	return inode ? get_extra_isize(inode) :
-+			offset_in_addr(&F2FS_NODE(node_page)->i);
-+}
- 
--	if (is_inode) {
--		if (!inode)
--			/* from GC path only */
--			base = offset_in_addr(&raw_node->i);
--		else if (f2fs_has_extra_attr(inode))
--			base = get_extra_isize(inode);
--	}
-+static inline __le32 *get_dnode_addr(struct inode *inode,
-+					struct page *node_page)
-+{
-+	return blkaddr_in_node(F2FS_NODE(node_page)) +
-+			get_dnode_base(inode, node_page);
-+}
- 
--	addr_array = blkaddr_in_node(raw_node);
--	return le32_to_cpu(addr_array[base + offset]);
-+static inline block_t data_blkaddr(struct inode *inode,
-+			struct page *node_page, unsigned int offset)
-+{
-+	return le32_to_cpu(*(get_dnode_addr(inode, node_page) + offset));
- }
- 
- static inline block_t f2fs_data_blkaddr(struct dnode_of_data *dn)
-@@ -3292,8 +3293,6 @@ static inline bool f2fs_is_cow_file(struct inode *inode)
- 	return is_inode_flag_set(inode, FI_COW_FILE);
- }
- 
--static inline __le32 *get_dnode_addr(struct inode *inode,
--					struct page *node_page);
- static inline void *inline_data_addr(struct inode *inode, struct page *page)
- {
- 	__le32 *addr = get_dnode_addr(inode, page);
-@@ -3432,17 +3431,6 @@ static inline int get_inline_xattr_addrs(struct inode *inode)
- 	return F2FS_I(inode)->i_inline_xattr_size;
- }
- 
--static inline __le32 *get_dnode_addr(struct inode *inode,
--					struct page *node_page)
--{
--	int base = 0;
--
--	if (IS_INODE(node_page) && f2fs_has_extra_attr(inode))
--		base = get_extra_isize(inode);
--
--	return blkaddr_in_node(F2FS_NODE(node_page)) + base;
--}
--
- #define f2fs_get_inode_mode(i) \
- 	((is_inode_flag_set(i, FI_ACL_MODE)) ? \
- 	 (F2FS_I(i)->i_acl_mode) : ((i)->i_mode))
--- 
-2.40.1
+=E5=9C=A82024=E5=B9=B47=E6=9C=8810=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
+=8D=883:36=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
+> On Wed, Jul 10, 2024 at 01:34:41PM +0800, Jiaxun Yang wrote:
+>>=20
+>>=20
+>> =E5=9C=A82024=E5=B9=B47=E6=9C=889=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
+=E5=8D=884:55=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
+>> > On Fri, Jun 28, 2024 at 01:33:06AM +0100, Jiaxun Yang wrote:
+>> >>=20
+>> >>=20
+>> >> =E5=9C=A82024=E5=B9=B46=E6=9C=8827=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=
+=8B=E5=8D=888:54=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
+>> >> > On Thu, 27 Jun 2024, Jiaxun Yang wrote:
+>> >> >
+>> >> >> >> @@ -318,6 +318,10 @@ void mips_set_personality_nan(struct ar=
+ch_elf_state *state)
+>> >> >> >>  	t->thread.fpu.fcr31 =3D c->fpu_csr31;
+>> >> >> >>  	switch (state->nan_2008) {
+>> >> >> >>  	case 0:
+>> >> >> >> +		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
+>> >> >> >> +			t->thread.fpu.fcr31 &=3D ~FPU_CSR_NAN2008;
+>> >> >> >> +		if (!(c->fpu_msk31 & FPU_CSR_ABS2008))
+>> >> >> >> +			t->thread.fpu.fcr31 &=3D ~FPU_CSR_ABS2008;
+>> >> >> >
+>> >> >> > why is this needed?
+>> >> >>=20
+>> >> >> Because t->thread.fpu.fcr31 comes from c->fpu_csr31, in this ca=
+se we the default
+>> >> >> value of c->fpu_csr31 is read from hardware and we don't know w=
+hat would that be.
+>> >> >
+>> >> >  But it has always been like this.  What has changed with your p=
+atch that=20
+>> >> > you need to mask the bit out now?
+>> >>=20
+>> >> After this patch kernel's copy of t->thread.fpu.fcr31 can disagree=
+ with hardware.
+>> >> When disagree happens, we trigger emulation.
+>> >>=20
+>> >> Before that patch for nan legacy binary running on nan2008 CPU t->=
+thread.fpu.fcr31
+>> >> will still be nan2008 (for ieee754=3Drelaxed) so that's not releva=
+nt.
+>> >
+>> > I'm considering to apply your patch, how much testing/verification =
+did
+>> > this patch see ? Do have some test binaries ?
+>>=20
+>> It has been tested against Debian rootfs. There is no need to test ag=
+aint special binary,
+>> but you need NaN2008 hardware such as Loongson 3A4000.
+>
+> that's just one case, what about NaN2008 binaries on a legacy MIPS CPU=
+ ?
 
+Boot tested CIP United's NaN2008 Debian port, works good so far [1].
+
+[1]: http://repo.oss.cipunited.com/debian/README.nan2008.txt
+
+Thanks
+- Jiaxun
+
+>
+> Thomas.
+>
+> --=20
+> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
+rily a
+> good idea.                                                [ RFC1925, 2=
+.3 ]
+
+--=20
+- Jiaxun
 
