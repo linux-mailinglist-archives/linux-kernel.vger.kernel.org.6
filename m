@@ -1,336 +1,209 @@
-Return-Path: <linux-kernel+bounces-248574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1129892DF2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:48:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1F892DF2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355351C21BD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:48:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FB001C21F99
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2B044377;
-	Thu, 11 Jul 2024 04:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C855C5F3;
+	Thu, 11 Jul 2024 04:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kWbyB+B+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BRayn4zu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NnZYUzAL";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BRayn4zu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NnZYUzAL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8685E15AE0;
-	Thu, 11 Jul 2024 04:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57F05477A
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720673294; cv=none; b=ieKdA24koh3C16Z7vECxbtmaWQ5T31zEt3vqjHQ3pqMhXvnmA9e6tgBU6nCd3mpVRFi41GGwvTSfWKN7weuVvq0J0yfC+qOHQ4yG5lFjsLIzFveJP3tFhU5LnAWtnzPOyifix5+vwlmSLW/6JZktHWbHFhd8bQ9D2TSCpu1uZjQ=
+	t=1720673299; cv=none; b=Y/Vg//Kxl90wxQPsfLbllmjo0KMsR6kkfqOoltGnmxCLLP8vaVbHcPULtRD5E1JSpL8MSuIaDd4nu3GFYgzNT3XByropgHbS7SW+Jn5U+YWPG9dGd4g3WoEgLv/uU3FgZV+XEBo5sxJYgp3PsXHxTzyo2yh+sslezebg6x/2els=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720673294; c=relaxed/simple;
-	bh=u2dTTjeoQNgtN4DfnFCRkWsTxvIwIy6d1aj8rzgjFqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RkLJrDNqeGVWzkxv8FcUladYnHDRMwFfYMsNcsVELzRy8jb/A2fov/YMGRX8l+ovQcq4z6guCFk2GNKVAmtGJKUBmhUW96gIvTvgsbupuo9/NpXjY0mJtrC6zFx2MIr0wzjvOElI9+X0TaIY05bjp8xsd8PMkYHTF4bj1FWNBUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kWbyB+B+; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720673292; x=1752209292;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=u2dTTjeoQNgtN4DfnFCRkWsTxvIwIy6d1aj8rzgjFqA=;
-  b=kWbyB+B+NyXlikvyp1HfxMTGNsKpPSP338aPyy9L5GbSbSiK/Z22O7rV
-   kfF/LM37nHvmAYABJrCvA5qdwb8naHsJJ8Iw6s/cZG85COn1z54RDubDh
-   rCb1nzgWgVfHahjdFh3ANAoYIS2R5Mz0diyyC8jHsSDkrvkUPoV61QuDr
-   RNvi6qvB7Z4OYzxB+dAHspiTuXvk2hkq1B9u4JACaqKfGajYadr8QrLpQ
-   FSp4Vjtnwa2lGMN/9zNcMyh/MZldiGFgLF0I8C1ToB63AcyU3s8hGxT+7
-   dMeDKM1iYPqy7aHW/NXAcGXHVMnV2P7LQZRqFf/D57lTYH8lLjtpmtelU
-   g==;
-X-CSE-ConnectionGUID: 1M3RMorkSi+h7M6kWZtw/Q==
-X-CSE-MsgGUID: gRWBfwReTcWJ8JGYUPy6xA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="28696907"
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="28696907"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 21:48:10 -0700
-X-CSE-ConnectionGUID: C2ue7uEWT8SEPqjFMH8zLw==
-X-CSE-MsgGUID: +AqMfFkeTI23ZWeW64V9Uw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="48430937"
-Received: from unknown (HELO [10.238.4.150]) ([10.238.4.150])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 21:48:08 -0700
-Message-ID: <deb45394-cf79-4a7b-b8bb-ed9540dc879c@linux.intel.com>
-Date: Thu, 11 Jul 2024 12:48:05 +0800
+	s=arc-20240116; t=1720673299; c=relaxed/simple;
+	bh=EC4xO0dF5octm5kAqsmlyr3bscbTK3fCdwZacnJbiVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PlH2cIg/l/gFHbRkcIvtlN9tmRzMFh2JgDnfmdV5IwVBj5o60Ir2gqnhAdQ+zn/cWQlhMjMj2O59MUqkS2WrTd7lf2MTgaecSSWhZxxsXubTpOmgkqmDWeSNmwVbc3bLMvLpTgqTNbtplSXTkxmwYfv4uXsqrI5fzDgzgtFoLNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BRayn4zu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NnZYUzAL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BRayn4zu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NnZYUzAL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A17C121991;
+	Thu, 11 Jul 2024 04:48:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720673295; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CtB+qwSkgCiMXy5rm2CLlB2vE/GD+brI0Y88TU3Jjy8=;
+	b=BRayn4zutZuEMV5pssSc2lmbq5COjD7G8C1DNFDOm0pP78HcNjgA2TD3M85JFvr2WBi7Gc
+	v4tJI2dYPasSGg65avPziWYCZHZTAodLeS5lthsOYZRHGwGAONNL1Yj2p1fG4sYnlNkRt1
+	czb/voyRLxfCOua/G/M56nt/h9tauAU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720673295;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CtB+qwSkgCiMXy5rm2CLlB2vE/GD+brI0Y88TU3Jjy8=;
+	b=NnZYUzALS+Q1URIrJhQ9FIE6zXoesaCKdZkz0jJMKPtyenVGTcwJpbISAoqgHEO+fMq8pb
+	RmE7/CaRgceh9uDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=BRayn4zu;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=NnZYUzAL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720673295; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CtB+qwSkgCiMXy5rm2CLlB2vE/GD+brI0Y88TU3Jjy8=;
+	b=BRayn4zutZuEMV5pssSc2lmbq5COjD7G8C1DNFDOm0pP78HcNjgA2TD3M85JFvr2WBi7Gc
+	v4tJI2dYPasSGg65avPziWYCZHZTAodLeS5lthsOYZRHGwGAONNL1Yj2p1fG4sYnlNkRt1
+	czb/voyRLxfCOua/G/M56nt/h9tauAU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720673295;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CtB+qwSkgCiMXy5rm2CLlB2vE/GD+brI0Y88TU3Jjy8=;
+	b=NnZYUzALS+Q1URIrJhQ9FIE6zXoesaCKdZkz0jJMKPtyenVGTcwJpbISAoqgHEO+fMq8pb
+	RmE7/CaRgceh9uDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 538A7136D6;
+	Thu, 11 Jul 2024 04:48:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +TyWDg5kj2Y7GAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 11 Jul 2024 04:48:14 +0000
+Date: Thu, 11 Jul 2024 06:48:12 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: Peter Xu <peterx@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Muchun Song <muchun.song@linux.dev>, SeongJae Park <sj@kernel.org>,
+	Miaohe Lin <linmiaohe@huawei.com>, Michal Hocko <mhocko@suse.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Ryan Roberts <ryan.roberts@arm.com>
+Subject: Re: [PATCH 00/45] hugetlb pagewalk unification
+Message-ID: <Zo9kDNFljpVzl69Z@localhost.localdomain>
+References: <20240704043132.28501-1-osalvador@suse.de>
+ <617169bc-e18c-40fa-be3a-99c118a6d7fe@redhat.com>
+ <Zoax9nwi5qmgTQR4@x1n>
+ <84d4e799-90da-487e-adba-6174096283b5@redhat.com>
+ <Zoug1swoTOqNUPJo@localhost.localdomain>
+ <9d5980e3-72e6-4848-b1ac-83ffab8522c4@redhat.com>
+ <Zo5v_hefrYFImqBC@localhost.localdomain>
+ <0f01c613-9e4f-47b6-af2b-09aa90437d90@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 3/5] perf x86/topdown: Don't move topdown metrics
- events when sorting events
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240708144204.839486-1-dapeng1.mi@linux.intel.com>
- <20240708144204.839486-4-dapeng1.mi@linux.intel.com>
- <CAP-5=fVPb4JGR3RxfPBGrihrra8bFzdJfFt2iASSs2xHOy=U4g@mail.gmail.com>
- <4d39856e-396d-4a48-9ca3-2e1a574f50d7@linux.intel.com>
- <CAP-5=fW65kxuABBJVAzKwoyBWW92_jkndWgY+4u9s3OGj_UkEg@mail.gmail.com>
- <afea2a93-0769-4ce5-ab59-2693d2d2f344@linux.intel.com>
- <CAP-5=fUP1O+VnH+7PaZtEgsFUFOpjo-tRtmAyVjG=Q4GFToR7g@mail.gmail.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <CAP-5=fUP1O+VnH+7PaZtEgsFUFOpjo-tRtmAyVjG=Q4GFToR7g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0f01c613-9e4f-47b6-af2b-09aa90437d90@redhat.com>
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: A17C121991
+X-Spam-Flag: NO
+X-Spam-Score: -5.51
+X-Spam-Level: 
+
+On Thu, Jul 11, 2024 at 02:15:38AM +0200, David Hildenbrand wrote:
+> > > (as a side note, cont-pte/cont-pmd should primarily be a hint from arch code
+> > > on how many entries we can batch, like we do in folio_pte_batch(); point is
+> > > that we want to batch also on architectures where we don't have such bits,
+> > > and prepare for architectures that implement various sizes of batching;
+> > > IMHO, having cont-pte/cont-pmd checks in common code is likely the wrong
+> > > approach. Again, folio_pte_batch() is where we tackled the problem
+> > > differently from the THP perspective)
+> > 
+> > I must say I did not check folio_pte_batch() and I am totally ignorant
+> > of what/how it does things.
+> > I will have a look.
+> > 
+> > > I have an idea for a better page table walker API that would try batching
+> > > most entries (under one PTL), and walkers can just register for the types
+> > > they want. Hoping I will find some time to at least scetch the user
+> > > interface soon.
+> > > 
+> > > That doesn't mean that this should block your work, but the
+> > > cont-pte/cont/pmd hugetlb stuff is really nasty to handle here, and I don't
+> > > particularly like where this is going.
+> > 
+> > Ok, let me take a step back then.
+> > Previous versions of that RFC did not handle cont-{pte-pmd} wide in the
+> > open, so let me go back to the drawing board and come up with something
+> > that does not fiddle with cont- stuff in that way.
+> > 
+> > I might post here a small diff just to see if we are on the same page.
+> > 
+> > As usual, thanks a lot for your comments David!
+> 
+> Feel free to reach out to discuss ways forward. I think we should
+> 
+> (a) move to the automatic cont-pte setting as done for THPs via
+>     set_ptes().
+> (b) Batching PTE updates at all relevant places, so we get no change in
+>     behavior: cont-pte bit will remain set.
+> (c) Likely remove the use of cont-pte bits in hugetlb code for anything
+>     that is not a present folio (i.e., where automatic cont-pte bit
+>     setting would never set it). Migration entries might require
+>     thought (we can easily batch to achieve the same thing, but the
+>     behavior of hugetlb likely differs to the generic way of handling
+>     migration entries on multiple ptes: reference the folio vs.
+>     the respective subpages of the folio).
+
+Uhm, I see, but I am bit confused.
+Although related, this seems orthogonal to this series and more like for
+a next-thing to do, right?
+
+It is true that this series tries to handle cont-{pmd,pte} in the
+pagewalk api for hugetlb vmas, but in order to raise less eye brows I
+can come up with a way not to do that for now, so we do not fiddle with
+cont-stuff in this series.
 
 
-On 7/10/2024 11:07 PM, Ian Rogers wrote:
-> On Wed, Jul 10, 2024 at 2:40 AM Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
->>
->> On 7/10/2024 6:37 AM, Ian Rogers wrote:
->>> On Mon, Jul 8, 2024 at 9:18 PM Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
->>>> On 7/8/2024 11:08 PM, Ian Rogers wrote:
->>>>> On Mon, Jul 8, 2024 at 12:40 AM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
->>>>>> when running below perf command, we say error is reported.
->>>>>>
->>>>>> perf record -e "{slots,instructions,topdown-retiring}:S" -vv -C0 sleep 1
->>>>>>
->>>>>> ------------------------------------------------------------
->>>>>> perf_event_attr:
->>>>>>   type                             4 (cpu)
->>>>>>   size                             168
->>>>>>   config                           0x400 (slots)
->>>>>>   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
->>>>>>   read_format                      ID|GROUP|LOST
->>>>>>   disabled                         1
->>>>>>   sample_id_all                    1
->>>>>>   exclude_guest                    1
->>>>>> ------------------------------------------------------------
->>>>>> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
->>>>>> ------------------------------------------------------------
->>>>>> perf_event_attr:
->>>>>>   type                             4 (cpu)
->>>>>>   size                             168
->>>>>>   config                           0x8000 (topdown-retiring)
->>>>>>   { sample_period, sample_freq }   4000
->>>>>>   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
->>>>>>   read_format                      ID|GROUP|LOST
->>>>>>   freq                             1
->>>>>>   sample_id_all                    1
->>>>>>   exclude_guest                    1
->>>>>> ------------------------------------------------------------
->>>>>> sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8
->>>>>> sys_perf_event_open failed, error -22
->>>>>>
->>>>>> Error:
->>>>>> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (topdown-retiring).
->>>>>>
->>>>>> The reason of error is that the events are regrouped and
->>>>>> topdown-retiring event is moved to closely after the slots event and
->>>>>> topdown-retiring event needs to do the sampling, but Intel PMU driver
->>>>>> doesn't support to sample topdown metrics events.
->>>>>>
->>>>>> For topdown metrics events, it just requires to be in a group which has
->>>>>> slots event as leader. It doesn't require topdown metrics event must be
->>>>>> closely after slots event. Thus it's a overkill to move topdown metrics
->>>>>> event closely after slots event in events regrouping and furtherly cause
->>>>>> the above issue.
->>>>>>
->>>>>> Thus delete the code that moving topdown metrics events to fix the
->>>>>> issue.
->>>>> I think this is wrong. The topdown events may not be in a group, such
->>>>> cases can come from metrics due to grouping constraints, and so they
->>>>> must be sorted together so that they may be gathered into a group to
->>>>> avoid the perf event opens failing for ungrouped topdown events. I'm
->>>>> not understanding what these patches are trying to do, if you want to
->>>>> prioritize the event for leader sampling why not modify it to compare
->>>> Per my understanding, this change doesn't break anything. The events
->>>> regrouping can be divided into below several cases.
->>>>
->>>> a. all events in a group
->>>>
->>>> perf stat -e "{instructions,topdown-retiring,slots}" -C0 sleep 1
->>>> WARNING: events were regrouped to match PMUs
->>>>
->>>>  Performance counter stats for 'CPU(s) 0':
->>>>
->>>>         15,066,240      slots
->>>>          1,899,760      instructions
->>>>          2,126,998      topdown-retiring
->>>>
->>>>        1.045783464 seconds time elapsed
->>>>
->>>> In this case, slots event would be adjusted as the leader event and all
->>>> events are still in same group.
->>>>
->>>> b. all events not in a group
->>>>
->>>> perf stat -e "instructions,topdown-retiring,slots" -C0 sleep 1
->>>> WARNING: events were regrouped to match PMUs
->>>>
->>>>  Performance counter stats for 'CPU(s) 0':
->>>>
->>>>          2,045,561      instructions
->>>>         17,108,370      slots
->>>>          2,281,116      topdown-retiring
->>>>
->>>>        1.045639284 seconds time elapsed
->>>>
->>>> In this case, slots and topdown-retiring are placed into a group and slots
->>>> is the group leader. instructions event is outside the group.
->>>>
->>>> c. slots event in group but topdown metric events outside the group
->>>>
->>>> perf stat -e "{instructions,slots},topdown-retiring"  -C0 sleep 1
->>>> WARNING: events were regrouped to match PMUs
->>>>
->>>>  Performance counter stats for 'CPU(s) 0':
->>>>
->>>>         20,323,878      slots
->>>>          2,634,884      instructions
->>>>          3,028,656      topdown-retiring
->>>>
->>>>        1.045076380 seconds time elapsed
->>>>
->>>> In this case, topdown-retiring event is placed into previous group and
->>>> slots is adjusted to leader event.
->>>>
->>>> d. multiple event groups
->>>>
->>>> perf stat -e "{instructions,slots},{topdown-retiring}"  -C0 sleep 1
->>>> WARNING: events were regrouped to match PMUs
->>>>
->>>>  Performance counter stats for 'CPU(s) 0':
->>>>
->>>>         26,319,024      slots
->>>>          2,427,791      instructions
->>>>          2,683,508      topdown-retiring
->>>>
->>>>        1.045495830 seconds time elapsed
->>>>
->>>> In this case, the two groups are merged to one group and slots event is
->>>> adjusted as leader.
->>>>
->>>> The key point of this patch is that it's unnecessary to move topdown
->>>> metrics events closely after slots event. It's a overkill since Intel core
->>>> PMU driver doesn't require that. Intel PMU driver just requires topdown
->>>> metrics events are in a group where slots event is the group leader, and
->>>> worse the movement for topdown metrics events causes the issue in the
->>>> commit message mentioned.
->>>>
->>>> This patch doesn't block to regroup topdown metrics event. It just removes
->>>> the unnecessary movement for topdown metrics events.
->>> But you will get the same behavior because of the non-arch dependent
->>> force group index - I guess you don't care as the sample read only
->>> happens when you have a group.
->>>
->>> I'm thinking of cases like (which admittedly is broken):
->>> ```
->>> $ perf stat -e "{slots,instructions},cycles,topdown-fe-bound" -a sleep 0.1
->>> [sudo] password for irogers:
->>>
->>> Performance counter stats for 'system wide':
->>>
->>>     2,589,345,900      slots
->>>       852,492,838      instructions
->>>       583,525,372      cycles
->>>   <not supported>      topdown-fe-bound
->>>
->>>       0.103930790 seconds time elapsed
->>> ```
->> I run the upstream code (commit 73e931504f8e0d42978bfcda37b323dbbd1afc08)
->> without this patchset, I see same issue.
->>
->> perf stat -e "{slots,instructions},cycles,topdown-fe-bound" -a sleep 0.1
->>
->>  Performance counter stats for 'system wide':
->>
->>        262,448,922      slots
->>         29,630,373      instructions
->>         43,891,902      cycles
->>    <not supported>      topdown-fe-bound
->>
->>        0.150369560 seconds time elapsed
->>
->> #perf -v
->> perf version 6.10.rc6.g73e931504f8e
->>
->> This issue is not caused by this patchset.
-> I agree, but I think what is broken above was caused by the forced
-> grouping change that I did for Andi. The point of your change here is
-> to say that topdown events don't need to be moved while sorting, but
-> what should be happening here is just that. topdown-fe-bound should be
-> moved into the group with slots and instructions so it isn't "<not
-> supported>". So yes the current code has issues, but that's not the
-> same as saying we don't need to move topdown events, we do so that we
-> may group them better.
->
-> Thanks,
-> Ian
-
-I see your point. I think the key is to ensure the topdown metrics events
-in a group which has slots as the leader. As for where the topdown metrics
-event is in the group, it doesn't matter. I would see if there is a better
-method to fix this issue. Thanks.
+Or am I misunderstanding you?
 
 
->
->>> As the slots event is grouped there's no force group index on it, we
->>> want to shuffle the topdown-fe-bound into the group so we want it to
->>> compare as less than cycles - ie we're comparing topdown events with
->>> non topdown events and trying to shuffle the topdown events first.
->> Current evlist__cmp() won't really swap the order of cycles and
->> topdown-fe-bound.
->>
->> if (lhs_sort_idx != rhs_sort_idx)
->>         return lhs_sort_idx - rhs_sort_idx;
->>
->> When comparing cycles and topdown-fe-bound events, lhs_sort_idx is 2 and
->> rhs_sort_idx is 3, so the swap won't happen.
->>
->> So the event sequence after sorting is still "slots, instructions ,cycles,
->> topdown-fe-bound". Both cycles and topdown-fe-bound events won't be placed
->> into the group.
->>
->>
->>> Thanks,
->>> Ian
->>>
->>>
->>>
->>>>> first?
->>>>>
->>>>> Thanks,
->>>>> Ian
->>>>>
->>>>>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->>>>>> ---
->>>>>>  tools/perf/arch/x86/util/evlist.c | 5 -----
->>>>>>  1 file changed, 5 deletions(-)
->>>>>>
->>>>>> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
->>>>>> index 332e8907f43e..6046981d61cf 100644
->>>>>> --- a/tools/perf/arch/x86/util/evlist.c
->>>>>> +++ b/tools/perf/arch/x86/util/evlist.c
->>>>>> @@ -82,11 +82,6 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
->>>>>>                         return -1;
->>>>>>                 if (arch_is_topdown_slots(rhs))
->>>>>>                         return 1;
->>>>>> -               /* Followed by topdown events. */
->>>>>> -               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
->>>>>> -                       return -1;
->>>>>> -               if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
->>>>>> -                       return 1;
->>>>>>         }
->>>>>>
->>>>>>         /* Default ordering by insertion index. */
->>>>>> --
->>>>>> 2.40.1
->>>>>>
+-- 
+Oscar Salvador
+SUSE Labs
 
