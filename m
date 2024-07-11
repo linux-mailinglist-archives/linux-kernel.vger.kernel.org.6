@@ -1,156 +1,126 @@
-Return-Path: <linux-kernel+bounces-249250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E89092E8D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:07:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061DB92E8AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 597B02826AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:07:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EBC1F231B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C588516A95E;
-	Thu, 11 Jul 2024 13:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2330B15F401;
+	Thu, 11 Jul 2024 13:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B23sVS/K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="1EIEvOmv"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2505169AE3
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C624615ECE8
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720702937; cv=none; b=DwTKA9tOVg3bFnG5D2NOWhLvP3qCdbBUIZ7vUQijWlwCwu40NoPpgoK6X8kkC7bblkvMIScCaEgGMWV5Zc+xAZKsJO+Umgzr8zoAHX7jTuXs6lBTTJ87AdzGGDuBJ1HTqwSnt0JqNw1+9g0dJrdkEsGyzQffiG2S2oGy0mN7Ry8=
+	t=1720702831; cv=none; b=JT1cH+DqDarMJ+MFimxRa+MuGoWFF/av/n67dBeik2bpy/JRHnbit0Zuygp0yru5BGut3R4BbNMznHyfFGhzjY7mr8MEZa4NOsvahH1UOSlYwQpNlrjIIcuJUMDzcV/YuTdl1/0G85dYmrHUb3mJ2pTE3WxOkR5r1p791aYDzlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720702937; c=relaxed/simple;
-	bh=XQg0xC95fqr2rj2jwofKATx4tzAfNoZL3L3ocZIK2Yc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qCQxPtylYyHabirGcubWnNmZRWudvP6b5yO+OjDGvuX7PvrX/rRp+zAXF8h/a8aHv4SXlGa35+nagedn9XCBTV7Jv/dkBalXIviDXi2r7Kitr2AgL5AoQvS3RNLkH9Tv9tkuRrykFxjMDqy9KVSCkHdH955pgV+Xy/YejQ51Zr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B23sVS/K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720702934;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BecpANArIMV8DYuzp7MuPwP+wsa2agRYjWQ5hatmwiA=;
-	b=B23sVS/KpoBngoElkHF8izZfK6Xdfvhia/B8i7FNs9SJdgQ/6XGz4Rrumg9+kIcfQTO4L4
-	XXQKG9BD9eiuDEa9s742OXUgKRIH9HohGaI0LTqscWTOjgPRhwqnwjTn2esu8zj4TRtlzU
-	iGm0RUkTNyKGQKUnCxHXisWiT06haR4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-573-j3VMWE-ePrmUOpn0P2CXbA-1; Thu,
- 11 Jul 2024 09:02:09 -0400
-X-MC-Unique: j3VMWE-ePrmUOpn0P2CXbA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 43DA11977006;
-	Thu, 11 Jul 2024 13:02:04 +0000 (UTC)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (unknown [10.39.192.211])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4A6D51955E9F;
-	Thu, 11 Jul 2024 13:01:41 +0000 (UTC)
-From: Valentin Schneider <vschneid@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Phil Auld <pauld@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Guo Ren <guoren@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: [RFC PATCH v3 09/10] sched/fair: Add a class->task_woken callback in preparation for per-task throttling
+	s=arc-20240116; t=1720702831; c=relaxed/simple;
+	bh=E9Xx4YsmdLPl9JM6Nb956eFYmxW+WJmiJqnM9qnOYgU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Z2nktgJxj7NEBztIz3xEO4xpme4Ix5TSKxdqqPIatnCtfffA6BI/1KSuF0JPPXvOYu3LxajQKejd3ZlKP9n8OYVAEXvibPxmTNjWOHYJR/mSVlNygoQK8NNxMAOV7CaaGKsM6Oi1onWbj8tsrUuSmpqrvyc2oTONevESv3tRpc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=1EIEvOmv; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
+	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
+	:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=XeZX/fN1JLnmI+FO4xROcdTsrgS/vV35tYbkT3yOVA8=; b=1EIEvOmvQ7ULVcq45LRry6nK+v
+	VWNoV6X660XoREPEAEvVqgKdJ68SLIs6yKVHRwIOgq9d6avjydiTEOwFd9+9ds2HWkFYTdBY+qVCJ
+	4f2VRs1dG9MMp6DHEGCzSuIYTQZKu2JeelQZtDfR9e+ZFTsQBx5dzSgLN8linWJDHfgJNT8yC4Whs
+	c/m6KpDD80YNKKl22TY0clTUz8JEsw1LdtlRVLVIBnDH0Fp1nYC3FAbFwoQqiSQFRXh9opvBzjpAw
+	OxnXbMEmrjNaSJmD6F5ygxKJsUj6pSOzhYigSnwEZHhjwwC1ZbTfzXJzRN+kxyOzOj/ROEvA78AgE
+	UR4K5seQ==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sRtPG-000BSC-IH; Thu, 11 Jul 2024 15:00:18 +0200
+Received: from [87.49.147.209] (helo=localhost)
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sRtPG-0003Cy-14;
+	Thu, 11 Jul 2024 15:00:17 +0200
+From: Esben Haabendal <esben@geanix.com>
 Date: Thu, 11 Jul 2024 15:00:03 +0200
-Message-ID: <20240711130004.2157737-10-vschneid@redhat.com>
-In-Reply-To: <20240711130004.2157737-1-vschneid@redhat.com>
-References: <20240711130004.2157737-1-vschneid@redhat.com>
+Subject: [PATCH v3 03/15] mtd: spi-nor: Align default_init() handling for
+ SPI_NOR_SKIP_SFDP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240711-macronix-mx25l3205d-fixups-v3-3-99353461dd2d@geanix.com>
+References: <20240711-macronix-mx25l3205d-fixups-v3-0-99353461dd2d@geanix.com>
+In-Reply-To: <20240711-macronix-mx25l3205d-fixups-v3-0-99353461dd2d@geanix.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rasmus Villemoes <rasmus.villemoes@prevas.dk>, 
+ linux-arm-kernel@lists.infradead.org, Esben Haabendal <esben@geanix.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720702815; l=1243;
+ i=esben@geanix.com; s=20240523; h=from:subject:message-id;
+ bh=E9Xx4YsmdLPl9JM6Nb956eFYmxW+WJmiJqnM9qnOYgU=;
+ b=iK/XDkcF02QhGwuqjgh2t6l5BJL/gsQcEG0/ScrlXESFe8xr/g+CctSmS5HLiXLNi/HxeDhFX
+ 5CtBi7zMusPB9+er3muBMrXmcaN/Ifhs4E9uKWeaWXMdIXDmshi6FUW
+X-Developer-Key: i=esben@geanix.com; a=ed25519;
+ pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27333/Thu Jul 11 10:35:59 2024)
 
-Later commits will change CFS bandwidth control throttling from a
-per-cfs_rq basis to a per-task basis. This means special care needs to be
-taken around any transition a task can have into and out of a cfs_rq.
+Currently, flashes declared with size != 0 in struct flash_info and without
+SPI_NOR_SKIP_SFDP in no_sfdp_flags is initialized using struct flash_info.
 
-To ease reviewing, the transitions are patched with dummy-helpers that are
-implemented later on.
+Flashes declared with size != 0 and SPI_NOR_SKIP_SFDP set is handled
+similarly, with the only difference being that the ->default_init() hooks
+is ignored.
 
-Add a class->task_woken callback to handle tasks being woken into
-potentially throttled cfs_rq's. Conversely, a task flagged for
-throttle-at-kernel-exit may block and need to have its pending throttle
-removed if runtime was replenished by the time it got woken up.
+With the only in-tree user of SPI_NOR_SKIP_SFDP is the Spansion s25fl256s0
+flash, which does not have either manufacturer or
+flash_info ->default_init() hooks, it should be safe to align this, so that
+they are handled in the same way.
 
-Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+Signed-off-by: Esben Haabendal <esben@geanix.com>
 ---
- kernel/sched/fair.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/mtd/spi-nor/core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b2242307677ca..0cec3e70f1277 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5776,6 +5776,17 @@ static void task_throttle_cancel_irq_work_fn(struct irq_work *work)
-        /* Write me */
- }
+diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
+index 39b28700ce28..d58f107f62ec 100644
+--- a/drivers/mtd/spi-nor/core.c
++++ b/drivers/mtd/spi-nor/core.c
+@@ -3029,8 +3029,7 @@ static int spi_nor_init_params(struct spi_nor *nor)
+ 		}
+ 	} else {
+ 		spi_nor_no_sfdp_init_params(nor);
+-		if (!(nor->info->no_sfdp_flags & SPI_NOR_SKIP_SFDP))
+-			spi_nor_manufacturer_init_params(nor);
++		spi_nor_manufacturer_init_params(nor);
  
-+static void task_woken_fair(struct rq *rq, struct task_struct *p)
-+{
-+	if (!cfs_bandwidth_used())
-+		return;
-+
-+	if (task_needs_throttling(p))
-+		task_throttle_setup(p);
-+	else
-+		task_throttle_cancel(p);
-+}
-+
- void init_cfs_throttle_work(struct task_struct *p)
- {
- 	/* Protect against double add, see throttle_cfs_rq() and throttle_cfs_rq_work() */
-@@ -13288,6 +13299,10 @@ DEFINE_SCHED_CLASS(fair) = {
- 	.task_change_group	= task_change_group_fair,
- #endif
- 
-+#ifdef CONFIG_CFS_BANDWIDTH
-+	.task_woken             = task_woken_fair,
-+#endif
-+
- #ifdef CONFIG_SCHED_CORE
- 	.task_is_throttled	= task_is_throttled_fair,
- #endif
+ 		if (spi_nor_try_sfdp(nor))
+ 			spi_nor_try_sfdp_init_params(nor);
+
 -- 
-2.43.0
+2.45.2
 
 
