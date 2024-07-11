@@ -1,188 +1,138 @@
-Return-Path: <linux-kernel+bounces-248502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F4192DE23
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:48:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C009F92DE20
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E337282844
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:48:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44656B23A93
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCAFBA33;
-	Thu, 11 Jul 2024 01:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810058801;
+	Thu, 11 Jul 2024 01:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="BL6UYeyG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="r8ZVAWoM"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="pHru8cC0"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1408E560;
-	Thu, 11 Jul 2024 01:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0D0523D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720662481; cv=none; b=peMb6tvIZl4q2mZtWhFjf5gsTV3r2z70xoWMjrJVi6jhOoE2eWwROkU8rQ+fUHw4LOPlzVvfOOyMRUuUVR8Qntbw63/Jf7TgquuKouU6k//NrTvzS2YajR1rkeRjQwzGsqwlRmHB1/I6ldUdcSv5NMmAMDRH0BvfFSWkqVbybWI=
+	t=1720662464; cv=none; b=apJo3hBUUnBaR6wrPvhd/xQ5AqgQOGsX9nP+q3kgRZW9tQp2hjCeE52q4ykU6h3AJ8QG+ra6PMXakToYQsLEhQGJ9pKjj/SAWk+lcQRavmC6A68TSCiUB/4lnmujYNVx9jWs4wQlCDCkLaKXLM2zILo/+5W8eVIxe8Jp8ngIqKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720662481; c=relaxed/simple;
-	bh=k2y6a1jfT89sxheaZ7yuG8DpHpWUTCnfIdZigbjaDyM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=i0DY8HoSJJpBkETWxe2O8HgzZan7u0adb7iVLeD3lbPL39Lz7v+oel5x7YnZIYMq+dBcUBAVAQ4KkNbY6h9JvugCRPqTrjCMb17JLLCiIU4rktdrwyNGKMGn4J3YEiPmgqobwFK0rxEoAWUx4sHdxTy3D++zBjrTUYKm/xR2rnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=BL6UYeyG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=r8ZVAWoM; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id B9188138170B;
-	Wed, 10 Jul 2024 21:47:58 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Wed, 10 Jul 2024 21:47:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1720662478;
-	 x=1720748878; bh=Ln8TN6QJTge04q/QLyiTegVf1QNFB8C3NtlV+agY4Bc=; b=
-	BL6UYeyGaVbjCVxGiQYxVACuuJ7a4+U2cz+dZX1nvi5bxeY50NtAPf3ZCT+K191q
-	LgPCHo73qfvF3Dy7Cjom13bMjzOCQoeBrpI9RZQb92DkoIx3QSV52yTCAd7rcA0o
-	eWonbrzommcUcHXn7OQP3B2U+u0zc2hO0OnOf5v4fwtKJG25CZuz2zpqdGxXrK+f
-	S5eqsnb6HDMMXm9WtS5TTIzXqu4svgF7qW8ZTYkNJQuzAMD/Svzu26QeZcgSf1Yu
-	9dJpmg2ZnSF59Msx+CVvGjJK0XDym31u5/yQtv0Sy4e4PT2OeLVOmghoHPPnjHlj
-	MyLCVkE/hJX7GZNfWag3Zw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720662478; x=
-	1720748878; bh=Ln8TN6QJTge04q/QLyiTegVf1QNFB8C3NtlV+agY4Bc=; b=r
-	8ZVAWoMNb247Ph2A9fkbxuZoaZNZ7ESPHVA2jkNYRAj4iUnQ0q3Znsl7MaupVyaL
-	ag1vOvdeZNNrhyij4qt8ibPWFwoV1Shr9bP+CrHKgpZTXf7vMYuQlIy2nhHnxcSS
-	5LIF4ExjN2A8sX0pc9ZflUpmO5KFUtefOfjtnbgzE9t3I/J7XEW+YkNOVdO/QO03
-	lR32Uf12pNkyZ7Qiz0rmSrRKTdbNvASFUl0FWbcfqu1HV/IOJnDAYtV79k5pNPw9
-	gsGHjbe3e18xENWjtO+eIrT00jNvVcJDy7DXh286HrhFDUJlDc+K/1avAxSrs5OC
-	XLglG8j3+A2N28xa/DekQ==
-X-ME-Sender: <xms:zDmPZgeEr0VMNC0qnCFZ4Wp2TbfXO7ULow4ehyjM0n_OLhIROaT9OA>
-    <xme:zDmPZiOdw2zZz1VJI-i9eFp-C4v6bSX49Q86414pvdTFfGJrsSk353DPxkUY6echT
-    13Y4LMhdZcOMx1LzfA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeefgdehudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
-    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-    eqnecuggftrfgrthhtvghrnhepgeeitddvvdffheegleekudfffffgkeeiteffiedtkeek
-    keevgfefleeijeelkefhnecuffhomhgrihhnpegtihhpuhhnihhtvggurdgtohhmnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhn
-    rdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:zDmPZhiyGzzVAO-qBjHlrb0MKqD_2HXe1BUfD07zxa87sAfYjFJdEw>
-    <xmx:zDmPZl_Qz7yZeJJHMaEjLEMuZ5qjlF3Z8LyG-A5EBllY4ZGR5Sl7Zw>
-    <xmx:zDmPZsvWiM90Qio6oxPMLS_V-1sbT-cIrYxwfVshc1Y1vQmZsBhYVg>
-    <xmx:zDmPZsFySNyiD3nfee9Orm509W5dK-4zZp789yUh9Z4GZL_ViExkFQ>
-    <xmx:zjmPZgj5MS8Md6r8nnEudS1frJ4BvcNYey-vi2loNBJOX-_zgro39bdb>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id CA98C36A0074; Wed, 10 Jul 2024 21:47:56 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1720662464; c=relaxed/simple;
+	bh=tMFHkxFPolROgECg5vVgfcIDDwUKCaXiGLwl/jzzNxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dtRIYpyf1row6p3nPbuc18yZhLBjP2pmjY3fVCenF+17550W3ZAhU/Z/N/Hd+buY+GVJAywKEt9CnVdWVAxRzB/vRTVVO8bhKFWo0LmiJruJvH51vV3ChVa9VHs1uJ8d8XnkU7OirCVA9KspU0lz8FMewcILRrL8VtxR71l+/3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=pHru8cC0; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79f178e62d1so22807985a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 18:47:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1720662462; x=1721267262; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0tN5R4YnhjAUO3BS4jN/9VwPte3wOBowtI6nf3MDomk=;
+        b=pHru8cC0YN6mRmgOdmfgJIWkpiUVicLikpcJ/YpZl+2g5WE5cv04ifNnrvPZg5SF1w
+         u9qh01sSs+okmblCat905LupU4j2bM9nZRmDuU5PgjdZSoWBYR1OOmzek1+dfWQXA+bx
+         n2jImCartjAPXCz+fC6IcQrBzeDAR4o83b3+UGPM8SScfeakR8tnZT1198ct/SWWhR91
+         +CuM/nNOXF/YWAEw18sTGSIJizY3fo+mdjM07pqRoI4BlB9xMuXigqP71rW725rhvXJK
+         wl26JOzrs+PosLJKlWwUmAY2GwC6mXFOELpKwiPmyoSvbZnnrZDfCIIyBlHaJeSkyEca
+         F4JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720662462; x=1721267262;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0tN5R4YnhjAUO3BS4jN/9VwPte3wOBowtI6nf3MDomk=;
+        b=VMEGZdASG4nvNKG/V7FC6fHbEnbI7iRt6qnLQNfgd3JDZeWXsIBTm9Ct8lk6HK9gdr
+         Sz6uIRmjswsfeEry39M1xiTfbBtcIBYHvxuLsm2FJ+FRV+R1W0reDvsq23Hc67IMuQxq
+         ATxTpaslro5KRh444tVDhF0TL3e+jsdGlp66viseaikSKLQgrcbwdbJP8INoo+xOWvxP
+         T2sx/FyoB/777tD6mNrB+3x5VZo72LI+uo7AkFZ5I/0Di7ohV1WHpj3HvYBnXKxCZdfc
+         CgVKkSFPWDLGPPcSSsSep6aapJdIi1/5klR+9yOOZHtERaMKtoJWBT8M8b9Km8tJL2Hr
+         T9Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCVkNp9DroEJ1BCi53YZtDu/mYtvJ2u9KTZu7KvRomYL7klr71kwsIhCOu7taFbChgO4AHpCQCroT/gNbeDYgH9edyNUB5LOdT0FmRr6
+X-Gm-Message-State: AOJu0Yz+u1fqSmS2cQ91i9DvQVyeYwvcZ1ti4ir0nJ5Pw5Gy/JAjA3NC
+	pOesFYe/hllvz5L1YD+4f+S+zdiRCnot1RPk9aIA10J0HzeY/mqLvnoibsuBfw==
+X-Google-Smtp-Source: AGHT+IEdvBZ5AhAWw7kB3UrCG2h7ixiJqeq8PURLRH1rrR34tzFsUpVzykFcjUiDfx5fm+R2MjzjKw==
+X-Received: by 2002:a05:620a:2482:b0:79f:b3c:8fcc with SMTP id af79cd13be357-79f199e43e8mr1031660585a.10.1720662461925;
+        Wed, 10 Jul 2024 18:47:41 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::cad7])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f18f1a32bsm246551285a.0.2024.07.10.18.47.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 18:47:41 -0700 (PDT)
+Date: Wed, 10 Jul 2024 21:47:39 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: ryan <ryanzhou54@gmail.com>
+Cc: jikos@kernel.org, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hid: usbhid: Enable remote wake-up based on device
+ configuration
+Message-ID: <f0c789d8-8ae0-4a46-a5b3-aa9a5a758915@rowland.harvard.edu>
+References: <20240710231606.3029-1-ryanzhou54@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <4cb980c8-4b96-4ed0-85af-9baa1b7ef30c@app.fastmail.com>
-In-Reply-To: <Zo457UgAkhbAgm2R@alpha.franken.de>
-References: <20240612-mips_ieee754_emul-v3-1-2c21b450abdb@flygoat.com>
- <Zn1FuxNw2CUttzdg@alpha.franken.de>
- <9cc26415-9cbc-47fa-a132-7d8c000874a4@app.fastmail.com>
- <alpine.DEB.2.21.2406272053180.43454@angie.orcam.me.uk>
- <fbd421a6-cf37-49ab-bdbe-6128a7cae8be@app.fastmail.com>
- <Zoz6+YmUk7CBsNFw@alpha.franken.de>
- <7797a7b2-1bb2-4c45-b65d-678f685dfa3d@app.fastmail.com>
- <Zo457UgAkhbAgm2R@alpha.franken.de>
-Date: Thu, 11 Jul 2024 09:47:36 +0800
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
- "Jonathan Corbet" <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
-Subject: Re: [PATCH v3] MIPS: Implement ieee754 NAN2008 emulation mode
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710231606.3029-1-ryanzhou54@gmail.com>
 
+On Thu, Jul 11, 2024 at 07:16:06AM +0800, ryan wrote:
+> According to the USB protocol, the host should automatically
+> adapt the remote wake-up function based on the configuration
+> descriptor reported by the device, rather than only the default
+> keyboard support. Therefore, it's necessary to support other hid
+> devices, such as digital headsets,mice,etc.
 
+It's true that the host shouldn't try to enable remote wakeup if the 
+configuration descriptor shows that the device doesn't support it.
 
-=E5=9C=A82024=E5=B9=B47=E6=9C=8810=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
-=8D=883:36=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
-> On Wed, Jul 10, 2024 at 01:34:41PM +0800, Jiaxun Yang wrote:
->>=20
->>=20
->> =E5=9C=A82024=E5=B9=B47=E6=9C=889=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
-=E5=8D=884:55=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
->> > On Fri, Jun 28, 2024 at 01:33:06AM +0100, Jiaxun Yang wrote:
->> >>=20
->> >>=20
->> >> =E5=9C=A82024=E5=B9=B46=E6=9C=8827=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=
-=8B=E5=8D=888:54=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
->> >> > On Thu, 27 Jun 2024, Jiaxun Yang wrote:
->> >> >
->> >> >> >> @@ -318,6 +318,10 @@ void mips_set_personality_nan(struct ar=
-ch_elf_state *state)
->> >> >> >>  	t->thread.fpu.fcr31 =3D c->fpu_csr31;
->> >> >> >>  	switch (state->nan_2008) {
->> >> >> >>  	case 0:
->> >> >> >> +		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
->> >> >> >> +			t->thread.fpu.fcr31 &=3D ~FPU_CSR_NAN2008;
->> >> >> >> +		if (!(c->fpu_msk31 & FPU_CSR_ABS2008))
->> >> >> >> +			t->thread.fpu.fcr31 &=3D ~FPU_CSR_ABS2008;
->> >> >> >
->> >> >> > why is this needed?
->> >> >>=20
->> >> >> Because t->thread.fpu.fcr31 comes from c->fpu_csr31, in this ca=
-se we the default
->> >> >> value of c->fpu_csr31 is read from hardware and we don't know w=
-hat would that be.
->> >> >
->> >> >  But it has always been like this.  What has changed with your p=
-atch that=20
->> >> > you need to mask the bit out now?
->> >>=20
->> >> After this patch kernel's copy of t->thread.fpu.fcr31 can disagree=
- with hardware.
->> >> When disagree happens, we trigger emulation.
->> >>=20
->> >> Before that patch for nan legacy binary running on nan2008 CPU t->=
-thread.fpu.fcr31
->> >> will still be nan2008 (for ieee754=3Drelaxed) so that's not releva=
-nt.
->> >
->> > I'm considering to apply your patch, how much testing/verification =
-did
->> > this patch see ? Do have some test binaries ?
->>=20
->> It has been tested against Debian rootfs. There is no need to test ag=
-aint special binary,
->> but you need NaN2008 hardware such as Loongson 3A4000.
->
-> that's just one case, what about NaN2008 binaries on a legacy MIPS CPU=
- ?
+However, it's not true that the host should try to enable remote wakeup 
+for devices other than keyboards with boot-protocol support.  History 
+has shown that quite a few HID devices don't handle remote wakeup 
+properly; the decision about whether to enable it should be left to the 
+user.
 
-Boot tested CIP United's NaN2008 Debian port, works good so far [1].
+Alan Stern
 
-[1]: http://repo.oss.cipunited.com/debian/README.nan2008.txt
-
-Thanks
-- Jiaxun
-
->
-> Thomas.
->
-> --=20
-> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
-rily a
-> good idea.                                                [ RFC1925, 2=
-.3 ]
-
---=20
-- Jiaxun
+> Signed-off-by: ryan <ryanzhou54@gmail.com>
+> ---
+>  drivers/hid/usbhid/hid-core.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hid/usbhid/hid-core.c b/drivers/hid/usbhid/hid-core.c
+> index a90ed2ceae84..d2901ad9a871 100644
+> --- a/drivers/hid/usbhid/hid-core.c
+> +++ b/drivers/hid/usbhid/hid-core.c
+> @@ -1179,16 +1179,16 @@ static int usbhid_start(struct hid_device *hid)
+>  	/* Some keyboards don't work until their LEDs have been set.
+>  	 * Since BIOSes do set the LEDs, it must be safe for any device
+>  	 * that supports the keyboard boot protocol.
+> -	 * In addition, enable remote wakeup by default for all keyboard
+> -	 * devices supporting the boot protocol.
+>  	 */
+>  	if (interface->desc.bInterfaceSubClass == USB_INTERFACE_SUBCLASS_BOOT &&
+>  			interface->desc.bInterfaceProtocol ==
+>  				USB_INTERFACE_PROTOCOL_KEYBOARD) {
+>  		usbhid_set_leds(hid);
+> -		device_set_wakeup_enable(&dev->dev, 1);
+>  	}
+>  
+> +	if (dev->actconfig->desc.bmAttributes & USB_CONFIG_ATT_WAKEUP)
+> +		device_set_wakeup_enable(&dev->dev, 1);
+> +
+>  	mutex_unlock(&usbhid->mutex);
+>  	return 0;
+>  
+> -- 
+> 2.17.1
+> 
+> 
 
