@@ -1,120 +1,173 @@
-Return-Path: <linux-kernel+bounces-249924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4152692F1B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:06:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB6692F1BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D425DB22D66
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:06:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C354D2866E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC7819FA72;
-	Thu, 11 Jul 2024 22:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5441A00E3;
+	Thu, 11 Jul 2024 22:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QuiJmk0Z"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRRCW1+Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC65442AB5
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DEB42AB5;
+	Thu, 11 Jul 2024 22:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720735586; cv=none; b=ukOJoDwNh1r8vUWwbmDjc9ywhOZBgrIVWPHRjL2eO7CF7BP4AzpBb4XuJsxRzrHdJ0e9O9RybXDhKPW4UUCXTXC+2d6vGASoxpNN8ygDBKTLOUtQ1U4RhMGXK8fLYr3v4an1J4gHQttxnBwK8FiMZxeK2JaqBt8L5zBue6roe4c=
+	t=1720735714; cv=none; b=bdyIj3gKNvLpSFMdyYK+Zm/EsQzyw4yJlEXiLSHGni2ijm6lj9RS8CEZ64HfyFLNQlzWswibWSWwol2PGEvQthwR82/hqF+Ai0bMtjllooPlZIpo0os8qdS0uj5tRRVs34daTVIx2mdoa8y3P8KGFpXX8Pg4oWsu4Gopm6l3roA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720735586; c=relaxed/simple;
-	bh=0Lj0cgNDlIHXytQl/CpN1IGs/JOv2kMwX3nlkpjt79o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BHcq2O1B6AdhsouV3npy3bFdMEq/d/3ASyZre4coDrtjSaS1KBuXfJYzXf9UJvIVCY7WTX8HNbgS2YXYeelsZmgzJZKO/MfLzHsdklAvhlJFhN4lJqxH48nlvcye5vYvhjM6hSmzi2xCogAf9qrKWJfE5zMKAFKi7aEVj1wV8pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QuiJmk0Z; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e03a6196223so1393666276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:06:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720735584; x=1721340384; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HTwnEz0VEcMkg2Ht1CajTFaZ8D9uhTsCApUF/Ll3B8g=;
-        b=QuiJmk0ZD8jWhJhJfmT8JzPn8T57vGT+yK8yvrX7HCMsCv+mEEj4E/rscbyvatgGfp
-         zpCwPPO/3dfO2IVvXsIjeQJ9l5wlQcuBMQRsx102cBn6V06QPZ9ugvNCVmvumpNuApvG
-         PiHCAALV33myfbwsMO06bot6b9dRy9xQFHk27Lat6yEP7Jdup9rvXGYi+O1XUR9vHPB+
-         TAJQGTwEZw8zbtQvawfU1S1Rb15nsMo/AqqN14IxNmBS3n9PXdfytfH82wWnQVCgtBgK
-         u03BtF2Nj9eWSwMWNcIQy4a4yLyCIhe/oN8jOvSi8u8o8/n+Q+7ZOtk1PW7TZqcXwh+K
-         Mc+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720735584; x=1721340384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HTwnEz0VEcMkg2Ht1CajTFaZ8D9uhTsCApUF/Ll3B8g=;
-        b=igFCwxCfbE+hBha3gFpYSOmyvtNsjXidwg8XFaEw0TAHtclbl5iH34e7D8oBS5nFem
-         NTExA4Zq3B8f9nQ7PSK3T0zZPaoCHxtcj9aEn+lRoCFZ7ZQqReLJLi0ud+SJL5n1MCuE
-         Osfs0j12io5BdeOwGK31nKdVjDZllH5Lzc0lHhJXgeRoF5nvCU5wuEd3zQ7OH2k/4CiZ
-         9Bd0NKQCUGEvdJZAv7Mffk2gUtrL7Bj9G2sg2nlGxZx7IyFLLqQismfFmPPhDAZnHscX
-         mJmALxRZXRjLbp13tAr5Dx4iAO/wXLllFBXiYlovJzDtucWa/FI5JpF6CB/DiHtzqhV+
-         B7gw==
-X-Forwarded-Encrypted: i=1; AJvYcCUH7iZnpoG5voj1+Yp/PIYjadH6xWEyF0MvFqZrJQGoGGUUoAojK5iPCYPcBu5fmhkBUejYEhUHfBZit3lBIiMOM+9r/GdSsBgtUkkH
-X-Gm-Message-State: AOJu0YzqgbSwHIm8fSh6Ck7usPamDcA2QMGz0HPM/QElcJy/dmazUn2E
-	J/1RO0Yyu74uiiYbrwZ4To4RMoJXdmT7yyvyY25z8W7f8R6qDTLOBT6wYHOt5b7u7VsYX6c8AUO
-	7tr7h4m/+PHR4i/I16Sj2An89WXhwQaFT0k9n
-X-Google-Smtp-Source: AGHT+IHJLn8D0nyG6xdr9eLP4CIHgLMA7BOjT8LRaNkWXLEwy63o/Zyvb97aT09Djm68GZu0z//vI5FzjbZPIwVmeqI=
-X-Received: by 2002:a25:d511:0:b0:e03:62b3:6498 with SMTP id
- 3f1490d57ef6-e041b12b3a4mr10695476276.47.1720735583493; Thu, 11 Jul 2024
- 15:06:23 -0700 (PDT)
+	s=arc-20240116; t=1720735714; c=relaxed/simple;
+	bh=djdztjiMohQIgYnDLRcYcPqXdFDkPuGeeTVUgFY6hbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEe6kvlxlvbrmkh9/xtKTGyY3jGAA/K2+dimhwN5LAqRQgqQBAc0VGOLm18hii3YhgxDDAGzwvTe5mTG0Gt7d5IxSOAMOX2lha9qJw7WJGzX88DAXm/ZM/blJljNGkVE6wtQbV68aftNMNngC1sx9OlCvJeQDFmpoQvho5ezRP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRRCW1+Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A8DC116B1;
+	Thu, 11 Jul 2024 22:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720735714;
+	bh=djdztjiMohQIgYnDLRcYcPqXdFDkPuGeeTVUgFY6hbc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mRRCW1+Y0fhMUNO7PJroj4O2Mk/VC4hRrsWgyqVax+6zKJmL9nLLTqJMbNKAGC9d8
+	 0z9KEL787lp6cXbk9sYFG+LT42CRgBG4slpXOhSfJkf//p+joYQec9byAY8zPL/PX3
+	 JPz7lNTXMRUQ5tWxx0TaLBCRu+qtt8A4AmGzKoID/wOAPRmxia3NepLKN11F9t5esP
+	 8hS2wq7dkF9FTQuUqN6JgJfvGVZjxTQjck0Q+1skG+fq/77Quv9e3qyH60+8JvmMm3
+	 sYYd/hiAsIxv6YudcHRQ+MRG/rQ7Ohaf4QHmo+eCBRBbNPiXAVQPLU65VF7yL3seQR
+	 D0vOG2PU+DB+Q==
+Date: Thu, 11 Jul 2024 15:08:30 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Guilherme Amadio <amadio@gentoo.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Thorsten Leemhuis <linux@leemhuis.info>, Leo Yan <leo.yan@arm.com>,
+	linux-perf-users@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/6] perf build: Conditionally add feature check flags
+ for libtrace{event,fs}
+Message-ID: <ZpBX3gE1wJ89gUlt@google.com>
+References: <20240628202608.3273329-1-amadio@gentoo.org>
+ <20240628203432.3273625-1-amadio@gentoo.org>
+ <ZoSOR0ULxXLxLZvA@google.com>
+ <ZoVFqiZdTXy1glLc@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711220457.1751071-1-surenb@google.com>
-In-Reply-To: <20240711220457.1751071-1-surenb@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 11 Jul 2024 15:06:12 -0700
-Message-ID: <CAJuCfpFAe9=ernUbyaf=VOjMF1ktyY73vJ8snQfEETeAxSW2Tw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] lib: add missing newline character in the warning message
-To: akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZoVFqiZdTXy1glLc@gentoo.org>
 
-On Thu, Jul 11, 2024 at 3:05=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> Fixes: 22d407b164ff ("lib: add allocation tagging support for memory allo=
-cation profiling")
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Hello,
 
-The fixes in this patchset are cleanups, not critical and not urgent.
+On Wed, Jul 03, 2024 at 02:35:54PM +0200, Guilherme Amadio wrote:
+> Hello,
+> 
+> On Tue, Jul 02, 2024 at 04:33:27PM -0700, Namhyung Kim wrote:
+> > Hello,
+> > 
+> > On Fri, Jun 28, 2024 at 10:34:27PM +0200, Guilherme Amadio wrote:
+> > > This avoids reported warnings when the packages are not installed.
+> > > 
+> > > Fixes: 0f0e1f44569061e3dc590cd0b8cb74d8fd53706b
+> > > Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
+> > 
+> > Thanks for working on this.
+> > 
+> > > ---
+> > >  tools/perf/Makefile.config | 28 +++++++++++++++-------------
+> > >  1 file changed, 15 insertions(+), 13 deletions(-)
+> > > 
+> > > diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> > > index 5271a4c1d2b3..5387babb8f04 100644
+> > > --- a/tools/perf/Makefile.config
+> > > +++ b/tools/perf/Makefile.config
+> > > @@ -182,13 +182,21 @@ endif
+> > >  FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
+> > >  FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
+> > >  
+> > > -# for linking with debug library, run like:
+> > > -# make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
+> > > -FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
+> > > -FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
+> > > -
+> > > -FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
+> > > -FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
+> > > +ifneq ($(NO_LIBTRACEEVENT),1)
+> > > +  ifeq ($(call get-executable,$(PKG_CONFIG)),)
+> > > +  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
+> > 
+> > I know you just copied the code, but IIRC we wanted to remove this dummy
+> > assignment before.
+> 
+> Sure, I will change this. I think we can also remove the "dummy :=" part and
+> just do $(error Error: ...), like it's done in other places.
+> 
+> > > +  endif
+> > > +endif
+> > > +ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
+> > > +  # for linking with debug library, run like:
+> > > +  # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
+> > > +  FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
+> > > +  FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
+> > > +endif
+> > > +ifeq ($(shell $(PKG_CONFIG) --exists libtracefs 2>&1 1>/dev/null; echo $$?),0)
+> > > +  FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
+> > > +  FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
+> > 
+> > I'm curious if we can redirect stderr to /dev/null to surpress the
+> > output when pkg-config is not installed.  Then we don't need to check
+> > the `ifeq`.
+> 
+> I was wondering that myself when I added the check, if you prefer to redirect
+> stderr to /dev/null, I will do it that way then when I submit v3.
+
+Due to the timing of the merge window, I'll apply this patch (1/6 only)
+with the following modification.  Please take a look and update v3.
+
 Thanks,
-Suren.
+Namhyung
 
-> ---
->  include/linux/alloc_tag.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
-> index abd24016a900..8c61ccd161ba 100644
-> --- a/include/linux/alloc_tag.h
-> +++ b/include/linux/alloc_tag.h
-> @@ -122,7 +122,7 @@ static inline void alloc_tag_add_check(union codetag_=
-ref *ref, struct alloc_tag
->                   "alloc_tag was not cleared (got tag for %s:%u)\n",
->                   ref->ct->filename, ref->ct->lineno);
->
-> -       WARN_ONCE(!tag, "current->alloc_tag not set");
-> +       WARN_ONCE(!tag, "current->alloc_tag not set\n");
->  }
->
->  static inline void alloc_tag_sub_check(union codetag_ref *ref)
->
-> base-commit: 8a18fda0febb7790de20ec1c3b4522ce026be1c6
-> --
-> 2.45.2.993.g49e7a77208-goog
->
+---
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 5387babb8f04..a4829b6532d8 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -184,19 +184,17 @@ FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
+ 
+ ifneq ($(NO_LIBTRACEEVENT),1)
+   ifeq ($(call get-executable,$(PKG_CONFIG)),)
+-  dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
++    $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
+   endif
+ endif
+-ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
+-  # for linking with debug library, run like:
+-  # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
+-  FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
+-  FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
+-endif
+-ifeq ($(shell $(PKG_CONFIG) --exists libtracefs 2>&1 1>/dev/null; echo $$?),0)
+-  FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
+-  FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
+-endif
++
++# for linking with debug library, run like:
++# make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
++FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent 2>/dev/null)
++FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent 2>/dev/null)
++
++FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs 2>/dev/null)
++FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs 2>/dev/null)
+ 
+ FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
+ # include ARCH specific config
+
 
