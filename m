@@ -1,86 +1,108 @@
-Return-Path: <linux-kernel+bounces-249070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D70D92E5EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:18:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2799392E65D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29878B271CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:18:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D1A1C21A02
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0106515958A;
-	Thu, 11 Jul 2024 11:10:57 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BABA16D9DD;
+	Thu, 11 Jul 2024 11:16:58 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BEB1607B4
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1299C16D9C2;
+	Thu, 11 Jul 2024 11:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720696256; cv=none; b=PRmmFLEciWo5J8JkPwNjm39BIQOM2XsX+AmRRQYnKq+wzGsagTn0Kgk3tTh41b4cCLtvAWyk/Hrfh5wAIkFLTNAduAwqVxj8KvDYdcfNY12ZeY6f/puR6xhalufKJndl2x2eJg7GpKYEDG+0/At2b31r5MU60OctX3G4d1KzdBI=
+	t=1720696617; cv=none; b=EbG2ooox6yn3UCPcJvVV7N/IcxG3pMkfSgW+/HoOyX17N89KKhAdjvMCmVk/0WQpr5VePkm1MOmWfGTYFaHdyJ2tzfvEk2e9z430lcDw6G5dR6J34dRipLcSXxpdsScMqequpoFMz9eUXja0cQEyqEzUs53gZNV0wxtbjzkjKdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720696256; c=relaxed/simple;
-	bh=AeEqfduxgfojeGH2SlT5j6HbJixFfIpgTzDL4V9zdM0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PxdzykHN4f5G/0AOvF2tcHA84sIgv0uTr/bjy5kEfI3BZHt2iEMqg8Sdi7Szg1KeCyO2/yl3XEAbz7o6vwe+9p7hRACiqE64fGfUjaV9bdSp47R003RxZHRLxr5Du0i+GmRb/b5Mr5vRcNFJBk2zKGMm5TUOfxTG2TbPCX9rdm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WKX330h3jz1T5SV;
-	Thu, 11 Jul 2024 19:06:07 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id EE9ED140361;
-	Thu, 11 Jul 2024 19:10:50 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 11 Jul
- 2024 19:10:50 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
-	<samitolvanen@google.com>, <debug@rivosinc.com>, <andy.chiu@sifive.com>,
-	<guoren@kernel.org>, <songshuaishuai@tinylab.org>, <bjorn@rivosinc.com>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] riscv: Remove unused _TIF_WORK_MASK
-Date: Thu, 11 Jul 2024 19:15:08 +0800
-Message-ID: <20240711111508.1373322-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720696617; c=relaxed/simple;
+	bh=3+Cu7JogFBF32s6Ive+/A0rhuCMFCdiT9lruAKuMaHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyozUQ5yeDNFTMpYbTFy+USf1UpeecbAgD7paxu3XPce1eVbyEFeLvvUv7CNFNBjs6uzpke2A7lkRKNrcelebkaCSev5+e4czz7R69/gqXTrQZIHskpVcse7GSpUY/IVWBT/m+z4w8tML2g47j4mttp6WhL32oH34HbzTFSIBnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77c0b42a8fso280161266b.1;
+        Thu, 11 Jul 2024 04:16:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720696614; x=1721301414;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/r51nS+g7lQoWT0HNbExECB6/rA+diGsBSoUeSas/gM=;
+        b=WAd45BL3UcIVSPmMLcV0jkFPuwjkyBTJ471YIHfeczU67sgiGQKdePpph8TTCOK0l0
+         Vs39Vv+rKS8y9m99ae+2duDafuYuA56l2nwi69mrNp2beZT6/yZq/npsiVCjfrOuxG4Z
+         In9O1LESpXjOx4X5sh38KCeZKTeEK70et0HKCEFSHri6+3NroTikCnCKJ3AFaID+hRsw
+         gB1Bm6Vxyx8B4nefqx+OZrpjthIfVJJ6vzonxHdzZd55RDSmXXU8glVY4eFZEnpFyQ0a
+         dOsj2z60mGMKuFCZFBl6kA83sxrjTeej2BeZ1/ZL3jfdQgBhdpSE9t8WFk3Rbq4iaE18
+         Ck+g==
+X-Forwarded-Encrypted: i=1; AJvYcCV5ekHEphS5d9i0r5HoYAv7CD1CwiDRAIwvauYiYZzloYOLXdhxkc3YBIsio6RuWrdq6gZ2v5hUIEvkWJbD1gvmMVsyhSkwx9YUrCHM
+X-Gm-Message-State: AOJu0YwjiChEelWPB2xAt4JgwS7atlkGkxPDwt+wTR2739B7fLnJamrX
+	WKTaGuMFJ7ElJfggDta0NFsR5/BVXUaxXXqOvfy6GsoAoMU2fhm7
+X-Google-Smtp-Source: AGHT+IE6LZHdbstxR+votJm7nuupUZbWEEQffPECqBfV2tlXDzop1gI1NS4S6fcacoV6R+qMyM4bdw==
+X-Received: by 2002:a17:906:5806:b0:a6f:e699:a9f8 with SMTP id a640c23a62f3a-a798a2cc14amr156904966b.18.1720696614118;
+        Thu, 11 Jul 2024 04:16:54 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a797ddb28ccsm132052466b.147.2024.07.11.04.16.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 04:16:53 -0700 (PDT)
+Date: Thu, 11 Jul 2024 04:16:51 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Madalin Bucur <madalin.bucur@nxp.com>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next 1/5] net: dpaa: avoid on-stack arrays of NR_CPUS
+ elements
+Message-ID: <Zo+/I5Rw0hp5wGeQ@gmail.com>
+References: <20240710230025.46487-1-vladimir.oltean@nxp.com>
+ <20240710230025.46487-2-vladimir.oltean@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710230025.46487-2-vladimir.oltean@nxp.com>
 
-Since commit f0bddf50586d ("riscv: entry: Convert to generic entry"),
-_TIF_WORK_MASK is no longer used, so remove it.
+Hello Vladimir,
 
-Fixes: f0bddf50586d ("riscv: entry: Convert to generic entry")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- arch/riscv/include/asm/thread_info.h | 4 ----
- 1 file changed, 4 deletions(-)
+On Thu, Jul 11, 2024 at 02:00:21AM +0300, Vladimir Oltean wrote:
+> The dpaa-eth driver is written for PowerPC and Arm SoCs which have 1-24
+> CPUs. It depends on CONFIG_NR_CPUS having a reasonably small value in
+> Kconfig. Otherwise, there are 2 functions which allocate on-stack arrays
+> of NR_CPUS elements, and these can quickly explode in size, leading to
+> warnings such as:
+> 
+>   drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:3280:12: warning:
+>   stack frame size (16664) exceeds limit (2048) in 'dpaa_eth_probe' [-Wframe-larger-than]
+> 
+> The problem is twofold:
+> - Reducing the array size to the boot-time num_possible_cpus() (rather
+>   than the compile-time NR_CPUS) creates a variable-length array,
+>   which should be avoided in the Linux kernel.
+> - Using NR_CPUS as an array size makes the driver blow up in stack
+>   consumption with generic, as opposed to hand-crafted, .config files.
+> 
+> A simple solution is to use dynamic allocation for num_possible_cpus()
+> elements (aka a small number determined at runtime).
+> 
+> Link: https://lore.kernel.org/all/202406261920.l5pzM1rj-lkp@intel.com/
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Reviewed-by: Breno Leitao <leitao@debian.org>
 
-diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
-index 5d473343634b..0eead6b7b790 100644
---- a/arch/riscv/include/asm/thread_info.h
-+++ b/arch/riscv/include/asm/thread_info.h
-@@ -111,8 +111,4 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src);
- #define _TIF_UPROBE		(1 << TIF_UPROBE)
- #define _TIF_RISCV_V_DEFER_RESTORE	(1 << TIF_RISCV_V_DEFER_RESTORE)
- 
--#define _TIF_WORK_MASK \
--	(_TIF_NOTIFY_RESUME | _TIF_SIGPENDING | _TIF_NEED_RESCHED | \
--	 _TIF_NOTIFY_SIGNAL | _TIF_UPROBE)
--
- #endif /* _ASM_RISCV_THREAD_INFO_H */
--- 
-2.34.1
+Thanks for working on it.
 
+--breno
 
