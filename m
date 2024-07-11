@@ -1,101 +1,123 @@
-Return-Path: <linux-kernel+bounces-249428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD4892EB8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:19:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE0B92EB8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F60A1F21E84
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C847284F9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6FC16C437;
-	Thu, 11 Jul 2024 15:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B49716B75B;
+	Thu, 11 Jul 2024 15:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hvjjQqIM"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LzvxL+oJ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7587E2F46
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5621642B;
+	Thu, 11 Jul 2024 15:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720711186; cv=none; b=LdoJAdag0+TiyPPFni03GRE34S2jhFWOw3ah0J1at5U7Q9PwbYwtZezTlogtJ1BKBX3wNxjRNx40XbciVWpibr318U38PSiikoOJzJPwyLHN4CWuLLm0Cu28JW0NQ0vLzKS2S9fEwSg+Kjg2EwGqytF5rgNOVhTG7qE7sO0pt1c=
+	t=1720711368; cv=none; b=GzAizbClTl5dPod/znRLZ9dIfGO9WVxUCFvPxv2esNSbbtXp479Wm1VCyiV66JIHi0M7A258Tvf373S486EbvqKZlhjv71jCKOWY9QDKIOaANfEzh6s9vArxgM4TbA5Ohrdm+qi30XNR1H2p1ZGXJtvNpJx+xdK2PXqE4XzS3zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720711186; c=relaxed/simple;
-	bh=2+bb+QpkBtNT8cHJOi+ZnFpY17WUiJVy/iDMJg10GLg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kmAyLA16T7Hnl0uVlIOssIRL4fsV1sMX7V+F44x+F+2FZi8shICou3Gj5uDoovx4b+TN80kaGBTqcTiQk9mSadSdNN/lXeovyBmwb7Cv1UVOHJrVl6TD4BHZIpspXoHSYOoCvksUzFMajR7v11j4GGX64bGQAy1374IVGWTg3ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hvjjQqIM; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso17241a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720711183; x=1721315983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2+bb+QpkBtNT8cHJOi+ZnFpY17WUiJVy/iDMJg10GLg=;
-        b=hvjjQqIM97atANHLuYnpBmgnOsg/biOrQ1LurrY+jpDWksUQUJIO1r9iquhz/oFtN9
-         9IGnvcWIJ2pksP3eDd67yUaa5chlexaqpsK9/KRAaJBXldEJBhDNzegj64nwE8/NMxC3
-         iPiRJEG0a+5mi2Ppn/DIkTvmeJ9mKtgUhmkSs6zb4nzM+WYB3CCkvvPPEw+0H3QhILV0
-         CrJPpS8v8tIgyMpexkgd38CvoBCefT0eHEG3E4WQMKlAVm7fHW6zsiNSx16Yeax/3Zb0
-         eF1w4jV20I0v2+W2eeWjO715VEukdG++klVdRrsuZ6Olk/dANMF+/1sdBvH8g5MTcYxb
-         AorA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720711183; x=1721315983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2+bb+QpkBtNT8cHJOi+ZnFpY17WUiJVy/iDMJg10GLg=;
-        b=hUqjyESgT2CtZCElx0eTrGIpKHeJZJxsQTQk9HO0Ptcu3WuytdfNN6Pc5ILW248Cch
-         ZXVKS/+SPRFEPTCUT2UScihv5kys7jhyGtXyfWlORdIIsfnLDS6dZtVJW4+flPzVRKXS
-         TiuBw+bCcF+vU2twl+hJ66zw/NxCxRfMAy40l5WsJDyYrQHKr9FW+6sc3cqYJWHg6pEk
-         RdnMzwqL/5jH+HgQUr5yZ//TuZBJv7nHTetmUaoWQGw3u44MIiZdPjG0iln4RymYO/jt
-         JmMAIzpnqiK+RaE5diYjO2GemOG/MrsCvkj1n6DiamPWcn9EwhQHH3xr5SKemRw+5mIk
-         XNog==
-X-Forwarded-Encrypted: i=1; AJvYcCWqGqtPzh6v5xeL3sIegFcNzqs85ErmE7Ivy9OzU8ndb0akyks9NFXmZCtXDm/Dh2KzwgvBMuOfvQC8KsKsGIVbSXyXv7JyjkZEsOyl
-X-Gm-Message-State: AOJu0YzCrwn61m4Mz0q6VgtyrU4hY2DI7qDVpZJl81IxBaW7BlffXsUz
-	asC2Qnm3e3Px5zPOsOhLf81O8djVcMVWT8GtiIj2c18MVRqcRhW9WOxhKtZGuienrVFm93ArFJ4
-	Vfws5wMl09WdsnxPapCb8YNUqFezQhivi/SdC
-X-Google-Smtp-Source: AGHT+IFUZHGB/MYTQ+AEtXTIG2MUpAJou7TV7BlhO3k/D26+Cr+yw9GU5imU9h/cKuxSPpspQWgJZ2uy19SIpgHSl2c=
-X-Received: by 2002:a50:cd8c:0:b0:58b:93:b623 with SMTP id 4fb4d7f45d1cf-5984e8f5e6fmr182082a12.5.1720711182527;
- Thu, 11 Jul 2024 08:19:42 -0700 (PDT)
+	s=arc-20240116; t=1720711368; c=relaxed/simple;
+	bh=+UWnsWVMdvca6g6oeX3Dfksfrism7A0B9YrqtABwQig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ab8WG2bILi7V0DE8sTU+DSdgH/cX9BnJZkjCpdx9qW9bIYPsr1TDl8BdZCb5O5PqhdypwLulSXJNEPJcwCjBsptb7ZlsZ00ftmCr3hAI/Vd3D0fwFf2BfzZnP3UXddR0YHk321BCEN2hmd+aIHR5bY3tOMC2eRdv/PZ4Gn/ysVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LzvxL+oJ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ZSAN8Frn8wQki6uXAENE6UG5BBN7qPxdEWLY87nt5nA=; b=LzvxL+oJ+FlY7E/sbmp1/DeVbB
+	LMU3TBxN5G8iAxpSPessAOx0tafI9BG94ltQ86hVjVMcGqIA7jDeHn8aqiBVs1bf7N2EvGHe2zNkQ
+	Ns5W2YcbnVnvoW5ubuMku9Q6ujx8jI9QCSRc3OLY1dCbvL/JEip7lkIDuYIEC2LuAfirm9aCXNR4u
+	afoWlJPgLv1mhBD+YIN5DVKDLoG14t6sqK4KQkQ7iH8QyL4L4BkcWyLxHcEQYooxDTK6ilOpj2Fmy
+	u9Go2tZTKe4IXtjvvIvVKNUx+U/XSPJO9/XXxko2pbKXVKIpobrEv44d8L0giqFWKDzfL4Pnisgsx
+	knAGBiZA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRvd0-0000000BHKt-4C5q;
+	Thu, 11 Jul 2024 15:22:39 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3F38830050D; Thu, 11 Jul 2024 17:22:38 +0200 (CEST)
+Date: Thu, 11 Jul 2024 17:22:38 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jiri Olsa <olsajiri@gmail.com>, mingo@kernel.org, andrii@kernel.org,
+	linux-kernel@vger.kernel.org, rostedt@goodmis.org, oleg@redhat.com,
+	clm@meta.com, paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <20240711152238.GB3285@noisy.programming.kicks-ass.net>
+References: <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <20240709090304.GG27299@noisy.programming.kicks-ass.net>
+ <Zo0KX1P8L3Yt4Z8j@krava>
+ <20240709101634.GJ27299@noisy.programming.kicks-ass.net>
+ <20240710071046.e032ee74903065bddba9a814@kernel.org>
+ <20240710101003.GV27299@noisy.programming.kicks-ass.net>
+ <20240710235616.5a9142faf152572db62d185c@kernel.org>
+ <CAEf4BzZGHGxsqNWSBu3B79ZNEM6EruiqSD4vT-O=_RzsBeKP0w@mail.gmail.com>
+ <20240711085118.GH4587@noisy.programming.kicks-ass.net>
+ <20240712001718.e00caa0a3cb410dc19f169c2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710220540.188239-1-pratikrajesh.sampat@amd.com> <20240710220540.188239-3-pratikrajesh.sampat@amd.com>
-In-Reply-To: <20240710220540.188239-3-pratikrajesh.sampat@amd.com>
-From: Peter Gonda <pgonda@google.com>
-Date: Thu, 11 Jul 2024 09:19:30 -0600
-Message-ID: <CAMkAt6qtViYTx_xfxt=4VQ6TQG=53X-ZdEZ84s8UrZm3p-4brA@mail.gmail.com>
-Subject: Re: [RFC 2/5] selftests: KVM: Decouple SEV ioctls from asserts
-To: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
-Cc: kvm@vger.kernel.org, shuah@kernel.org, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, seanjc@google.com, pbonzini@redhat.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712001718.e00caa0a3cb410dc19f169c2@kernel.org>
 
-On Wed, Jul 10, 2024 at 4:06=E2=80=AFPM Pratik R. Sampat
-<pratikrajesh.sampat@amd.com> wrote:
->
-> This commit separates the SEV, SEV-ES, SEV-SNP ioctl calls from its
-> positive test asserts. This is done so that negative tests can be
-> introduced and both kinds of testing can be performed independently
-> using the same base helpers of the ioctl.
->
-> This commit also adds additional parameters such as flags to improve
-> testing coverage for the ioctls.
->
-> Cleanups performed with no functional change intended.
->
-> Signed-off-by: Pratik R. Sampat <pratikrajesh.sampat@amd.com>
+On Fri, Jul 12, 2024 at 12:17:18AM +0900, Masami Hiramatsu wrote:
+> From 87dfb9c0e7660e83debd69a0c7e28bc61d214fa8 Mon Sep 17 00:00:00 2001
+> From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+> Date: Fri, 12 Jul 2024 00:08:30 +0900
+> Subject: [PATCH] MAINTAINERS: Add uprobes entry
+> 
+> Add uprobes entry to MAINTAINERS and move its maintenance on the linux-trace
+> tree as same as other probes.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  MAINTAINERS | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index da5352dbd4f3..7f6285d98b39 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -23105,6 +23105,18 @@ F:	drivers/mtd/ubi/
+>  F:	include/linux/mtd/ubi.h
+>  F:	include/uapi/mtd/ubi-user.h
+>  
+> +UPROBES
+> +M:	Masami Hiramatsu <mhiramat@kernel.org>
+> +M:	Oleg Nesterov <oleg@redhat.com>
+> +M:	Peter Zijlstra <peterz@infradead.org>
+> +L:	linux-kernel@vger.kernel.org
+> +L:	linux-trace-kernel@vger.kernel.org
+> +S:	Maintained
+> +Q:	https://patchwork.kernel.org/project/linux-trace-kernel/list/
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+> +F:	include/linux/uprobes.h
+> +F:	kernel/events/uprobes.c
 
-Tested-by: Peter Gonda <pgonda@google.com>
+Maybe no Q/T. Neither Oleg nor me have write access to that git tree.
+
+Also, I think you want:
+
+F: arch/*/kernel/uprobes.c 
+F: arch/*/kernel/probes/uprobes.c 
+F: arch/*/include/asm/uprobes.h
+
+
+This is just to ensure get_maintainers.sh gets our email addresses for
+all uprobes stuff.
 
