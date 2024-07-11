@@ -1,165 +1,223 @@
-Return-Path: <linux-kernel+bounces-249765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACE792EF87
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:20:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADECF92EF8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1923B1F21FA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:20:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38D661F224C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801B816EC11;
-	Thu, 11 Jul 2024 19:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AF316EB77;
+	Thu, 11 Jul 2024 19:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uKBi94R7"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FXB3bSZ3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5123F16D4D0
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5930C16EB4B
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720725605; cv=none; b=D3FBbyS8JPWG1kLS5VFAeNS0L6MWIKYUan8TtNAto7/EgoNyIOJSRiUGbVhj0Ea1GcAxrIDInLqmQ0OD228CtJmaNmXA+oljJregc3AcfNe1Cz0KFT/7nH5J5eMtDebE6m+QHCjDr/tE3ooIhp/ZSrOGg0t8SeIesme5u1r3wug=
+	t=1720725658; cv=none; b=hejpAXxrvMEnNEAJ0mT4jSIhRaLT2+yQ1egcNp8XM+VEK/K5QVswXb0cU435bLOBrK3WtOqKhaU0N6zXWs4EgLBXtd+RSdeOTsUbkgvRp9aa0hGpmy2vLjE0855OUnkpyZsdjy8ttZX7F9UvlELMiDiQEkJIcs8Tjll1VZrc9E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720725605; c=relaxed/simple;
-	bh=nf9cOxiu8EFTnlD4vdbKRn9iAdK5IAhbikgz3BZy3u0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BtUGRDNCn33eYRNOqgmjcHvFqDS1ZiMgw0z994rAu+uJf7sTEqglRfAQfWt9qKdWbU7evwCwAkXmNg8/x6SgacMLfQX+V6GwynJnD/22PWSeyqVOsu2nL+J5G/SXvr3VRSMaPx7wb2uZrZU26Mh5VEQVIRWNlF6M4MYF+XBup+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uKBi94R7; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e035949cc4eso2297926276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720725603; x=1721330403; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L5p4SaaO+7UoZgcm+e1C8dGPnGJXML0RCKN69AHh9/8=;
-        b=uKBi94R7I2FNWp+5opc8mDI4zAK8glG2CjngbSQKTVl4xM6qle22lUhWR5cgIms7EM
-         dobBVoPEdR7I76jr8z6fzH/5KMoMtgOz0G/orK6YDL/2yO9n58Qig4v5uMANX6/2VfJ/
-         Ga93R8CkdNlqCytFaUjGIgJyqV5mhT+y+6WoCmHfhT06JUxul3mLDlFg0HZKHVBOoA0A
-         yQLTAS2Thp2KkpsIallBVdrbZXRVl4l5ydyiMx04hHsbRJI8PJkfrnXuNy8Mg3RORSO6
-         9L2T2epT1H3uuNkmE/IGAMmTsOvQmJippv+pNSEFjS1eLyz84YCND3JqfrOiQUVc1oZM
-         uwuA==
+	s=arc-20240116; t=1720725658; c=relaxed/simple;
+	bh=48yw6T8nm8w1YXdZ9mvo5NEqQbm48YPBppi/Hjk0h3s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tPviYhAzBNxEMZpceFF2LDEUdSSgm2Fq1NiudlA88/2Ve6BuU134adw+BfcDEl4Ss+3qMuEZrYXYXTLEL9QDrZwmwA9ntCoLfZHeG620T9bYocwKDoggsRP3UnYezcK4frGmxHQ+t5UeK+SPl4BRk6q3YSlIkk47OhjWRbd7BVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FXB3bSZ3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720725656;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7N+tm8RAmvVoK/4zFvMkE00hvcBw8YJQoI04ZpFePNc=;
+	b=FXB3bSZ3pWGpL/RpkTiro5CoT9qrG48DM0UMzgevjnxPeU8KOMRMQIv5tjHk8marVdWhDR
+	BPamyehiJHBL0rlwBd45VxMSXMwUE7Y/urrEmDAg+sK9BmuVI/AKDeT7klCvuplTH2deE+
+	x3KVacHACCUpkyzxHFEDRddWhG0SBZI=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-177-aqYi6QBSPiS9v4DdJxOVsQ-1; Thu, 11 Jul 2024 15:20:52 -0400
+X-MC-Unique: aqYi6QBSPiS9v4DdJxOVsQ-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2c98c453912so1048746a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:20:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720725603; x=1721330403;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L5p4SaaO+7UoZgcm+e1C8dGPnGJXML0RCKN69AHh9/8=;
-        b=FixSgF2HeEftpWHrBcPHoKug2k0TuFd1m77qZ2fWS92JAFFySX4yiJy9B9fjo++vt2
-         9hh9HZjOp+JhTyN5HXpuN4cgriQXvecf/f8vKK98kMh5v+eR72bocxWfwSYFS7SG4Dfh
-         Mra1kBhaMeJbopJGDD832AjkjMOJq8yk0bZYl/NLlq/8TwLQGZxWP4M5VRMS/JsfrU7/
-         3Pzo66joHgRBLbROIfh+UeSCP0C6JCsvPy/WflPyUxOnT/WavvgUxhuRNMxuYquL6hCK
-         wUTQ1IUZ3BVKdYNs4iqXtXWqHb9E5/7gUvC1HunakHrspZi4MfvCWIb2NINJiBAjwinK
-         nU7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVEHE9n8W3b8oCksrSHaql0F8uJjYbDN/cuKPwKjZSYPbCJL9PwJriAtgStEB3vA+21ax8ZS6zPWtY1JzgsmnMtc02k7vLGfwUKK7zT
-X-Gm-Message-State: AOJu0Yy9yUQM+nxU4/Z/x2UyPbZIY3jNI61C9ge06AQU6A33cAC9b2d7
-	hO8RD+h3ujaoh+hlxTA9vMEqkVHICjTtn8R62d7jIgHdbBhpaRKrZkGHeaS6lITL0qhQM2ZupDO
-	fwA==
-X-Google-Smtp-Source: AGHT+IFwZuZdGnTKPExljm8Tw+4jIU2FhrH6S3OcLgO05bDExtd9/3IrHUiiKpVcYyY1Saivv4UkxyKDxXU=
-X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:7f87:3390:5055:fce9])
- (user=yuzhao job=sendgmr) by 2002:a05:6902:2e0d:b0:e03:2f90:e81d with SMTP id
- 3f1490d57ef6-e041b14c989mr615371276.11.1720725603316; Thu, 11 Jul 2024
- 12:20:03 -0700 (PDT)
-Date: Thu, 11 Jul 2024 13:19:57 -0600
-In-Reply-To: <20240711191957.939105-1-yuzhao@google.com>
+        d=1e100.net; s=20230601; t=1720725651; x=1721330451;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7N+tm8RAmvVoK/4zFvMkE00hvcBw8YJQoI04ZpFePNc=;
+        b=u1JqByTYT3JaA+WOWG5egwt+XDvykNYBS6IKZXEqO9DcEdvZVEghzge0DR0ngDEseR
+         5J4w/UgYBzlm6e/TAye7KkEck8IKtX4r1tFGsQPadvoaT5gGZ4v+pJk2mnRD+KDgAl8M
+         SzEWYcbG/CuJUqWuKawyp74OaXPh3ruoy26Kw9Aw1Km/8cZw8qVHncp5ahcnsio3bLlI
+         dZeSEppkNzcxiIy9scs/ZYnsp8mrQQnMGXlSEVAiL430lo0z5bPn/MDoJ+AhcISiv2lI
+         gzpn3mTi/WuUMneNMHzbHu3ehgmwEPqWK9auOvM0czcy85KX0o+9G+W9JpNQky5Drx1X
+         7MWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgvSvor6IKSTpVutL5I1ZRbdXz/kBC69bxyZulendtOB/pKUJ+5zhRWDhktJWfopx4ejNKwuKHGNbYQLaEjppDhi9nNfdsUjqFiV0q
+X-Gm-Message-State: AOJu0YxMixoO3ipF1kEyxSt/iUX0dO0IPhnvI/QwP87cxLFXdh16klDR
+	UUdhGl2nGoXO+5+iMLbBF5dMwiVj0PezefiPabP+y4fWclfWAvZS6m134Wn/nURtvBzGC9rTi+G
+	WfPGi/bu6yKa99U/LvCQqxrhmMRXdL3Brz8wxtu5ekt/pH9tSV9YtlyP37yLN6w==
+X-Received: by 2002:a17:90a:66c5:b0:2c9:b72:7a1f with SMTP id 98e67ed59e1d1-2ca35c72dbcmr7135110a91.28.1720725651054;
+        Thu, 11 Jul 2024 12:20:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGI0uMgSW1u3GFAz0lYiKmF1ks96H89oy9S4U/cwkivkF8t14iRSKoIcA541WBK+7eLWOipKw==
+X-Received: by 2002:a17:90a:66c5:b0:2c9:b72:7a1f with SMTP id 98e67ed59e1d1-2ca35c72dbcmr7135094a91.28.1720725650605;
+        Thu, 11 Jul 2024 12:20:50 -0700 (PDT)
+Received: from [10.35.209.243] ([208.115.86.77])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a97c196sm14214633a91.26.2024.07.11.12.20.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 12:20:50 -0700 (PDT)
+Message-ID: <2c464271-1c61-4cd8-bd4e-4bd8aa01fa00@redhat.com>
+Date: Thu, 11 Jul 2024 21:20:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240711191957.939105-1-yuzhao@google.com>
-X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Message-ID: <20240711191957.939105-2-yuzhao@google.com>
-Subject: [PATCH mm-unstable v1 2/2] mm/mglru: fix overshooting shrinker memory
-From: Yu Zhao <yuzhao@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Yu Zhao <yuzhao@google.com>, Alexander Motin <mav@ixsystems.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
+From: David Hildenbrand <david@redhat.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de,
+ linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org,
+ Yu Zhao <yuzhao@google.com>
+References: <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
+ <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
+ <ZpAR0CgLc28gEkV3@zx2c4.com> <ZpATx21F_01SBRnO@zx2c4.com>
+ <98798483-dfcd-451e-94bb-57d830bf68d8@redhat.com>
+ <54b6de32-f127-4928-9f4a-acb8653e5c81@redhat.com>
+ <ZpAcWvij59AzUD9u@zx2c4.com> <ZpAc118_U7p3u2gZ@zx2c4.com>
+ <ZpAfigBHfHdVeyNO@zx2c4.com>
+ <8586b19c-2e14-4164-888f-8c3b86f3f963@redhat.com>
+ <ZpAqbh3TnB9hIRRh@zx2c4.com>
+ <443146f4-9db8-4a19-91f1-b6822fad8ce8@redhat.com>
+ <1c8632b4-06a5-49da-be0c-6fc7ac2b3257@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1c8632b4-06a5-49da-be0c-6fc7ac2b3257@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-set_initial_priority() tries to jump-start global reclaim by
-estimating the priority based on cold/hot LRU pages. The estimation
-does not account for shrinker objects, and it cannot do so because
-their sizes can be in different units other than page.
+On 11.07.24 21:18, David Hildenbrand wrote:
+> On 11.07.24 20:56, David Hildenbrand wrote:
+>> On 11.07.24 20:54, Jason A. Donenfeld wrote:
+>>> On Thu, Jul 11, 2024 at 08:24:07PM +0200, David Hildenbrand wrote:
+>>>>> And PG_large_rmappable seems to only be used for hugetlb branches.
+>>>>
+>>>> It should be set for THP/large folios.
+>>>
+>>> And it's tested too, apparently.
+>>>
+>>> Okay, well, how disappointing is this below? Because I'm running out of
+>>> tricks for flag reuse.
+>>>
+>>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>>> index b9e914e1face..c1ea49a7f198 100644
+>>> --- a/include/linux/page-flags.h
+>>> +++ b/include/linux/page-flags.h
+>>> @@ -110,6 +110,7 @@ enum pageflags {
+>>>     	PG_workingset,
+>>>     	PG_error,
+>>>     	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
+>>> +	PG_owner_priv_2,
+>>
+>> Oh no, no new page flags please :)
+>>
+>> Maybe just follow what Linux suggested: pass vma to pte_dirty() and
+>> always return false for these special VMAs.
+> 
+> ... or look into removing that one case that gives us headake.
+> 
+> No idea what would happen if we do the following:
+> 
+> CCing Yu Zhao.
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 0761f91b407f..d1dfbd4fd38d 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -4280,14 +4280,9 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
+>                   return true;
+>           }
+>    
+> -       /* dirty lazyfree */
+> -       if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio)) {
+> -               success = lru_gen_del_folio(lruvec, folio, true);
+> -               VM_WARN_ON_ONCE_FOLIO(!success, folio);
+> -               folio_set_swapbacked(folio);
+> -               lruvec_add_folio_tail(lruvec, folio);
+> -               return true;
+> -       }
+> +       /* lazyfree: we may not be allowed to set swapbacked: MAP_DROPPABLE */
+> +       if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio))
+> +               return false;
 
-If shrinker objects are the majority, e.g., on TrueNAS SCALE 24.04.0
-where ZFS ARC can use almost all system memory,
-set_initial_priority() can vastly underestimate how much memory ARC
-shrinker can evict and assign extreme low values to
-scan_control->priority, resulting in overshoots of shrinker objects.
+Note that something is unclear to me: are we maybe running into that 
+code also if folio_set_swapbacked() is already set and we are not in the 
+lazyfree path (in contrast to what is documented)?
 
-To reproduce the problem, using TrueNAS SCALE 24.04.0 with 32GB DRAM,
-a test ZFS pool and the following commands:
-
-  fio --name=mglru.file --numjobs=36 --ioengine=io_uring \
-      --directory=/root/test-zfs-pool/ --size=1024m --buffered=1 \
-      --rw=randread --random_distribution=random \
-      --time_based --runtime=1h &
-
-  for ((i = 0; i < 20; i++))
-  do
-    sleep 120
-    fio --name=mglru.anon --numjobs=16 --ioengine=mmap \
-      --filename=/dev/zero --size=1024m --fadvise_hint=0 \
-      --rw=randrw --random_distribution=random \
-      --time_based --runtime=1m
-  done
-
-To fix the problem:
-1. Cap scan_control->priority at or above DEF_PRIORITY/2, to prevent
-   the jump-start from being overly aggressive.
-2. Account for the progress from mm_account_reclaimed_pages(), to
-   prevent kswapd_shrink_node() from raising the priority
-   unnecessarily.
-
-Reported-by: Alexander Motin <mav@ixsystems.com>
-Fixes: e4dde56cd208 ("mm: multi-gen LRU: per-node lru_gen_folio lists")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yu Zhao <yuzhao@google.com>
----
- mm/vmscan.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 6403038c776e..6216d79edb7f 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -4930,7 +4930,11 @@ static void set_initial_priority(struct pglist_data *pgdat, struct scan_control
- 	/* round down reclaimable and round up sc->nr_to_reclaim */
- 	priority = fls_long(reclaimable) - 1 - fls_long(sc->nr_to_reclaim - 1);
- 
--	sc->priority = clamp(priority, 0, DEF_PRIORITY);
-+	/*
-+	 * The estimation is based on LRU pages only, so cap it to prevent
-+	 * overshoots of shrinker objects by large margins.
-+	 */
-+	sc->priority = clamp(priority, DEF_PRIORITY / 2, DEF_PRIORITY);
- }
- 
- static void lru_gen_shrink_node(struct pglist_data *pgdat, struct scan_control *sc)
-@@ -6754,6 +6758,7 @@ static bool kswapd_shrink_node(pg_data_t *pgdat,
- {
- 	struct zone *zone;
- 	int z;
-+	unsigned long nr_reclaimed = sc->nr_reclaimed;
- 
- 	/* Reclaim a number of pages proportional to the number of zones */
- 	sc->nr_to_reclaim = 0;
-@@ -6781,7 +6786,8 @@ static bool kswapd_shrink_node(pg_data_t *pgdat,
- 	if (sc->order && sc->nr_reclaimed >= compact_gap(sc->order))
- 		sc->order = 0;
- 
--	return sc->nr_scanned >= sc->nr_to_reclaim;
-+	/* account for progress from mm_account_reclaimed_pages() */
-+	return max(sc->nr_scanned, sc->nr_reclaimed - nr_reclaimed) >= sc->nr_to_reclaim;
- }
- 
- /* Page allocator PCP high watermark is lowered if reclaim is active. */
 -- 
-2.45.2.993.g49e7a77208-goog
+Cheers,
+
+David / dhildenb
 
 
