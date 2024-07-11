@@ -1,117 +1,160 @@
-Return-Path: <linux-kernel+bounces-248457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1DD692DD61
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:37:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0FC92DD63
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 574921F226B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3832282ECB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F364436;
-	Thu, 11 Jul 2024 00:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B317F3D6D;
+	Thu, 11 Jul 2024 00:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KGnILLkt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="O4XljNBk"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9506481F
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0943211;
+	Thu, 11 Jul 2024 00:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720658240; cv=none; b=XwS7ToV6BLi98pDkmy2DkEyHR8+RFmq136mdlowLtiJquxkH81pZk8u8SVTXgb9GIEv0qJyKKfxHmyB8+bPQQkRAfv6fYFufKaioGkR7w13hP3Xdsb9UNj0w/nO+TGWoM2oW4ZxmDOtsffrFdPBsvDQoklaEidXu3o0mJmsCK30=
+	t=1720658294; cv=none; b=nefm4IvfLqfKjbyppEbcHcU+iKmobWEgCgkFMPaELhV7yVZ8lkHVJ75lkLjs89k5RnemyQXGg49Eu0gcLJSQX+HrkMJ6pnbHkAiH70FS5EzUYmf4DlXUzTgKyx0wgpt6RoW24a1PAZ7kXrtpRJNTfI/6vgKkQF7o8V6YSp2IpkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720658240; c=relaxed/simple;
-	bh=Pwt6HpDzF04SqtWTpzLP4Kb9ajlmJjE/x8qFxKKdrWk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Rbg7FukteMHs8J2JsVoHeeUVLZHmOz8wKmSjZsgXkZquIdznYVlFhRFMFaa+XbAI1P4OU5NTFa9BHT8YKxDfBWVZ7uUUXPve0MnVdSTafyNdEGJ10h24aWWUxnFX9Ab18j1BBF0m9RKMq6CCA/u67+/jJAP6WMXbEXrjW/A5a8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KGnILLkt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720658237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=pmG1I3rDWsEemreYYSLcpqwv1JF6UKierrIURxVUb3o=;
-	b=KGnILLkt8LUQ0kC0jFHZdZAQtYzl6PPteBYli7IDPZZYlD3DTuH6W2i3DMkB86rQXDjiOG
-	Dq4w4zYC80/p0H5C02RSSUKL5tpQkI5ZSILy+8e83RD0TZ3RSNRZspZ6ZuXWG19G2vbeMz
-	PoEpvqZAgd05IpcqOLvQnjciU1emHn4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-474-kCCU5OcyNn6jfGeg_E5EmA-1; Wed,
- 10 Jul 2024 20:37:12 -0400
-X-MC-Unique: kCCU5OcyNn6jfGeg_E5EmA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A40D2195608B;
-	Thu, 11 Jul 2024 00:37:09 +0000 (UTC)
-Received: from localhost (unknown [10.22.32.84])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E3E3919560AA;
-	Thu, 11 Jul 2024 00:37:07 +0000 (UTC)
-Date: Wed, 10 Jul 2024 21:37:06 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Jeff Brady <jeffreyjbrady@gmail.com>,
-	Luis Goncalves <lgoncalv@redhat.com>
-Subject: [ANNOUNCE] 5.10.220-rt112
-Message-ID: <Zo8pMpNo972JHYIs@uudg.org>
+	s=arc-20240116; t=1720658294; c=relaxed/simple;
+	bh=0nWqyYjYOZlnn07aEGHTbCBAfQartVHJY/JwVu8Ykww=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AWZgZVMWWrzY0MQ5rnrWVu30yneSlSqQ9wfEzrUsmz56bK6cKIHhqGKE1J2BbqnER4NdU0se3QhVwKeJwRXEPcNPRrc6N25pG3UqdkX+bakWObOsgGBkGHX2G/tqBGUCAXX5UYZniCeY9KkFrEZZVLPCTXFlKYoHE06AXWWVzBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=O4XljNBk; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: d4de513a3f1d11ef87684b57767b52b1-20240711
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=4ifJT5fUayNFbF/d8Vs6tcLVSXEDZGqDZXqqzL0+y4k=;
+	b=O4XljNBk1JAmJ5k8aZPte08FLnnouljTbbUtSRjWa82K2PGo4S0MbGfLALJaU7rEjBuJ8IrjdSBWupkfSxL9NxYEGdMLforNpeO5elS0ujPp5Rc3nU/qmY7XQYxyAJwwZEWEOogz1lkE1hPw/AUrDt8G++X8nerkbhfWWCNK6OU=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:f9a140aa-b8e3-41a8-be23-778ec873a65b,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:ae9532d5-0d68-4615-a20f-01d7bd41f0bb,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: d4de513a3f1d11ef87684b57767b52b1-20240711
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1173769964; Thu, 11 Jul 2024 08:38:02 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 11 Jul 2024 08:38:01 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 11 Jul 2024 08:38:01 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v3] Bluetooth: btmtk: Fix btmtk.c undefined reference build error
+Date: Thu, 11 Jul 2024 08:37:59 +0800
+Message-ID: <20240711003759.18644-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--10.944500-8.000000
+X-TMASE-MatchedRID: wjXr8BNNQ6iiwkztVCsqbzl6J+7ealtWvtVce6w5+K8sfFlFugSGUAOi
+	VFpF7nSJ37TMydxZ0/vc7gUppY5koqcgTP4t5UFTI0cHLI6lhgIoUVkB7ifJnmHtZs6e3ZMHAJY
+	y/fBIuxLTUnxbEiZ30zAYnDoLfAffAef6h21z2pAflhDI6DvVlkyQ5fRSh2656T1ArrMwNVq6h8
+	11TFv4c3ZaxeQSvArMSQv+FB+NQDofbciQjfRltRn0UD4GU5IqQBnqdxuJ5SAUtdRZTmEaIcJfR
+	ix8rcI6dR3E5cRxwyiN6fDbnTu0nx8TzIzimOwPbdTuPa9VRGvEQdG7H66TyH4gKq42LRYk/H0g
+	76nIVo3es9jlDCKhVe+7jUpl//joxAyCzWH1zgN+3BndfXUhXQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--10.944500-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 0EF1E6A077C4CC8F187001CEDDA52C4E625076B535373DA94F3692C0A2D61C212000:8
 
-Hello RT-list!
+MediaTek moved some usb interface related function to btmtk.c which
+may cause build failed if BT USB Kconfig wasn't enabled.
+Fix undefined reference by adding config check.
 
-I'm pleased to announce the 5.10.220-rt112 stable release.
+btmtk.c:(.text+0x89c): undefined reference to `usb_alloc_urb'
+btmtk.c:(.text+0x8e3): undefined reference to `usb_free_urb'
+btmtk.c:(.text+0x956): undefined reference to `usb_free_urb'
+btmtk.c:(.text+0xa0e): undefined reference to `usb_anchor_urb'
+btmtk.c:(.text+0xb43): undefined reference to `usb_autopm_get_interface'
+btmtk.c:(.text+0xb7e): undefined reference to `usb_autopm_put_interface'
+btmtk.c:(.text+0xf70): undefined reference to `usb_disable_autosuspend'
+btmtk.c:(.text+0x133a): undefined reference to `usb_control_msg'
 
-This release is just an update to the new stable 5.10.220
-version and no RT specific changes have been made.
+Fixes: 39a9e1c69e74 ("Bluetooth: btmtk: move btusb_mtk_hci_wmt_sync to btmtk.c")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407091928.AH0aGZnx-lkp@intel.com/
+Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+---
+Change from v2 to v3:
+-remove #if in structure in case error causes with certain compilier
+---
+ drivers/bluetooth/btmtk.c | 2 ++
+ drivers/bluetooth/btmtk.h | 2 ++
+ 2 files changed, 4 insertions(+)
 
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v5.10-rt
-  Head SHA1: b7364cea19a02eda9039a2d34c5f105d77f4697a
-
-Or to build 5.10.220-rt112 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.220.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.220-rt112.patch.xz
-
-Signing key fingerprint:
-
-  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
-
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Luis
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index b7c348687a77..9789296ad4f6 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -437,6 +437,7 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb)
+ }
+ EXPORT_SYMBOL_GPL(btmtk_process_coredump);
+ 
++#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
+ static void btmtk_usb_wmt_recv(struct urb *urb)
+ {
+ 	struct hci_dev *hdev = urb->context;
+@@ -1487,6 +1488,7 @@ int btmtk_usb_shutdown(struct hci_dev *hdev)
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(btmtk_usb_shutdown);
++#endif
+ 
+ MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
+ MODULE_AUTHOR("Mark Chen <mark-yw.chen@mediatek.com>");
+diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
+index 453ed5131a37..6bb59f4096b7 100644
+--- a/drivers/bluetooth/btmtk.h
++++ b/drivers/bluetooth/btmtk.h
+@@ -202,6 +202,7 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb);
+ void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
+ 			   u32 fw_flavor);
+ 
++#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
+ int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id);
+ 
+ int btmtk_usb_recv_acl(struct hci_dev *hdev, struct sk_buff *skb);
+@@ -216,6 +217,7 @@ int btmtk_usb_suspend(struct hci_dev *hdev);
+ int btmtk_usb_setup(struct hci_dev *hdev);
+ 
+ int btmtk_usb_shutdown(struct hci_dev *hdev);
++#endif
+ #else
+ 
+ static inline int btmtk_set_bdaddr(struct hci_dev *hdev,
+-- 
+2.18.0
 
 
