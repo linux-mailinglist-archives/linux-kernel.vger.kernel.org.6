@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-249967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E2292F24A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:52:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0E692F24D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A04AEB21361
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:52:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4D91F2219D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2812F1A0712;
-	Thu, 11 Jul 2024 22:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243991A0719;
+	Thu, 11 Jul 2024 22:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0MEtd9z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRJgImUw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6203414C596;
-	Thu, 11 Jul 2024 22:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFCF14C596;
+	Thu, 11 Jul 2024 22:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720738354; cv=none; b=iN+Oj5JpasIpUPIQJm2RPAX0SAVVKjaemk0n9ECe4TkITBL1PA77pkFTLrZjsJ200FT/3TgtRxhi3HWXgAsPzqoFSPoV/Ewf69pTSQNrEdq5aeJ5FH+QKf0wCdGoh+XfKVMBgjEqu1r+Rki7y68hWLaFPrf11k+/V/vdDIi5JDc=
+	t=1720738412; cv=none; b=M/R90M4Y8My8MI88bvr2R/gpWUTlQsXA0Jwv/2wdbhduqLijwXHF3Led75n/3SdZTh8rjgwWn9iwdFzIKYJtgEqzHMEzIEwlneQopU1DsKueGYHknGFNF2dxV11kLsdmc9NQTqyZk+Up92Ns9WExPLjD3VDGCCBDPKLZ2iZ+Z1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720738354; c=relaxed/simple;
-	bh=ugeb1t/kYPmUZZZGlXStlfCKlqmxzM0Ncj8Ch2jZflQ=;
+	s=arc-20240116; t=1720738412; c=relaxed/simple;
+	bh=ofndv/zw9XA0mWAXytFcHbCoYH5AfpN6Z0ZOKdwE13A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lm6Cin0Vow/kBOj6En9J0FBwbKyuV1ZtJZWr32VHCR+HaGfHAkwd9qVRuq1X76BLtCA8RnPyG4rxOU9dFM0WEOY8keEJbJLPWyp4FRwPodc7Z6Zy27pyIpwZKet7lbjPkHnTheLPDsfFotgAU5wiKX270BxfPlwZRSs4fm335Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0MEtd9z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF21FC116B1;
-	Thu, 11 Jul 2024 22:52:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=r1/E+vLJPZEygSOCutMlIlgNj01o1cAbblsHiGFc9tP7HeWm422Bijm1l+PlHG09moi8prdcID3Osmr04FnkenMXa5bS6qFd1IkjIzgoB24d5VoG38ol5kfOHFzWi5vYAfEZAHzePZrR9KSo1b3gbhVkc5ok/Cw2vWFojD2e15M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRJgImUw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C869CC116B1;
+	Thu, 11 Jul 2024 22:53:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720738354;
-	bh=ugeb1t/kYPmUZZZGlXStlfCKlqmxzM0Ncj8Ch2jZflQ=;
+	s=k20201202; t=1720738412;
+	bh=ofndv/zw9XA0mWAXytFcHbCoYH5AfpN6Z0ZOKdwE13A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D0MEtd9z4NCicAi3yAnq/KiYEoYQgQCyR5jSPbFt61t8uGixHGTJuGxcoMGNMphre
-	 GUlxjQsqgQaSsPGytVCG55F7C7B0Rn6pyF7IBumY/i2xDN/UPxqAdLGjgIB0Llemo7
-	 eDe1fT/o72SRDqXk2CMw3C6hjlmAcSYvb00otaDgRQqzt6NvOGeixb2qkU1i1fwyjw
-	 m6knkLd2mpRTnXqaHVQJHVA6RauYC11eI5bYfEW8mfQJfcK4tG+hN9geyqP0bPEUu1
-	 dDoc25ntmXtPzXOEqDsGYY6d0ujUAo8y6dB3rws19jq1Xu0BiPvmgFN4PQEWqV+Q1u
-	 xwQ74uLmGV2IA==
-Date: Thu, 11 Jul 2024 16:52:32 -0600
-From: Rob Herring <robh@kernel.org>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	b=XRJgImUwXxRDU4ZFiXi5TbBPoo/9R57ohVP4ma6bhp6yugygPbTIi6lkE2KJUdaO1
+	 YSOk8NhLPUjCCvdarb7p7291ZHdwotBmbDycfEPGRB8qSRe/hXSXe9mKx/CkGkCURv
+	 D8yW0cn8Gy2Mak5S+5/ykyBBduPjk6Wiw6XN8DtCC7mVpD/UWLFefkCUuFD0e3xcau
+	 LVtShkDHPdYpJLQe1wfhHaZYKWElMbolQsoEYI7Jmh/n/9TV6whQxbVTfHnByoSFQV
+	 C9MC+WJUs1v3x+kS4g3J/s6u4zpp8Atmylm2/p/GfGpyn/ZKP8ddPdZmyh1patBbwT
+	 oOpbFES2lnEjQ==
+Date: Thu, 11 Jul 2024 16:53:30 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Rayyan Ansari <rayyan.ansari@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Subject: Re: [PATCH v6 3/6] dt-bindings: iio: dac: Generalize DAC common
- properties
-Message-ID: <20240711225232.GA3248170-robh@kernel.org>
-References: <20240711114221.62386-1-kimseer.paller@analog.com>
- <20240711114221.62386-4-kimseer.paller@analog.com>
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Subject: Re: [PATCH] dt-bindings: phy: drop obsolete qcom,usb-8x16-phy
+ bindings
+Message-ID: <172073837103.3268845.15106965323950109239.robh@kernel.org>
+References: <20240711122016.41806-1-rayyan.ansari@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,49 +60,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240711114221.62386-4-kimseer.paller@analog.com>
+In-Reply-To: <20240711122016.41806-1-rayyan.ansari@linaro.org>
 
-On Thu, Jul 11, 2024 at 07:42:18PM +0800, Kim Seer Paller wrote:
-> Introduce a generalized DAC binding that can be used by DACs that have
-> similar properties adding output-range-microamp and output-range-microvolt.
+
+On Thu, 11 Jul 2024 13:20:14 +0100, Rayyan Ansari wrote:
+> Remove the bindings for the Qualcomm 8x16 PHY driver that was dropped
+> in commit 4756f35fdf14 ("usb: phy: remove phy-qcom-8x16-usb.c") in 2017.
 > 
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
 > ---
->  .../devicetree/bindings/iio/dac/dac.yaml      | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/dac.yaml
+>  .../bindings/phy/qcom,usb-8x16-phy.txt        | 76 -------------------
+>  1 file changed, 76 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/phy/qcom,usb-8x16-phy.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/dac.yaml b/Documentation/devicetree/bindings/iio/dac/dac.yaml
-> new file mode 100644
-> index 000000000000..a9787bbcd22b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/dac/dac.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: IIO Common Properties for DAC Channels
-> +
-> +maintainers:
-> +  - Jonathan Cameron <jic23@kernel.org>
-> +
-> +description:
-> +  A few properties are defined in a common way for DAC channels.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^channel(@[0-9a-f]+)?$"
-> +    description:
-> +      A channel index should match reg.
 
-Drop $nodename. That causes this to apply to every matching node and 
-hence the failures.
+Deleted files are an automatic Reviewed-by. ;)
 
-It is also redundant because you define the node name where you 
-reference dac.yaml.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Rob
 
