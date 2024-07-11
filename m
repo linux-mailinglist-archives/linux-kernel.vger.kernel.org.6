@@ -1,146 +1,181 @@
-Return-Path: <linux-kernel+bounces-249683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6328192EE7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:11:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284B192EE81
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15755284E5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:11:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7762EB22D52
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71E516E891;
-	Thu, 11 Jul 2024 18:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8AE16E872;
+	Thu, 11 Jul 2024 18:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VucPSh08"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BW6UBt11"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802BE16CD18;
-	Thu, 11 Jul 2024 18:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4A616DED4;
+	Thu, 11 Jul 2024 18:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720721371; cv=none; b=E9TpFigHgsmdqoC0MGT61xkaK2939P0IasuBRShWeYhKeQ8T4S6O6XTiK2LcNCtHmfyAkN5nFGtwhpaK4XfNCNTRlWwEYUler/ziNQRfEPWSJ1PT8u0j+QdsNUf4242emuUDp0gEQoOZ/Y33kd6BKEwKUmtmyy8eLB9D/JiWMDY=
+	t=1720721414; cv=none; b=DUkef/uA6h04/oveyETr1Lp+O0xnfI11f+ahiAY9LSs/q7huRy38iD7fzDUzbOVgO4rM1p/IHbIuVP2fDjl56j5/783wW2+m23XZRSG7b2fON6bJrw+zM2tO9hsjHSf5xI2D+C88Wg881tUQ7Ngsa9N5w/YeyUeTjNlrxSgiYps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720721371; c=relaxed/simple;
-	bh=0t0PrsffBjbOeXvSnfDiIlEcmh1iUXyE7PoS7skeuYM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=pXYxaccJaBoPTQNe6Ku7Jn+z+17Kf1+JfcjBZWMo9VmI+qFRnKCOEyla1plPwHbDCXj/t/gnbJZ5wLVyejNaUJTxDjCvmtrIGXM1t3Qi4BFYn//GQcwLPjIQWaSqWc2BXSTzGluWGz+rbhs0oeEmjVMSaPvFlwe3brJfH7dD3Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VucPSh08; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BEbgpe017987;
-	Thu, 11 Jul 2024 18:09:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mldO7xnB9weHAdODr49QbumnsOmrBtTnPrjgojbegnc=; b=VucPSh08GkP8Jhu/
-	17nAKrwtLPvwn1h8jb2YHgQd8YFuew5aZoZf/ACWCyPApRi6P4aHpj45wzWK9my0
-	/ucucFUzequpAdNlMlL6mtHo/DEWdTCBET1nESkxrkQWOM54BhrbYykB9Ea3lxPZ
-	TI1b6UCLxyjgBhycwZ7WZpIof1JeKXBmjw/r73MJ8NevG/Y8J7W9YkCqQXM4iE4f
-	U1mEColiBWSP+EO8sqPKbKCt8YWGqXxpjksuAn/BBHfMOUIofXBBvEJwUwCtsQU7
-	hjuWoSvIWavPkMmLFiuc63AbIGcvHv/bC9ArKUwb6335K+bY9vrWiDyKMF8tlUBD
-	T5bVPg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wmmwby0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 18:09:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BI9PTq015816
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 18:09:25 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 11:09:24 -0700
-Message-ID: <3fbab686-5a66-4b4e-b640-55426b2e1f57@quicinc.com>
-Date: Thu, 11 Jul 2024 11:09:23 -0700
+	s=arc-20240116; t=1720721414; c=relaxed/simple;
+	bh=7kuZlTBmxFWxph6Ful0WMwENSv+aNNJIa+996kwiXtI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hKs+1KO0iKzlKhHtNUxmaYVao57oZB+AeyWYCw4BXTRAeJoY6KNZWLdbbaIcFBnazqOcKedpSB6VxkD3fYupdtUGPY9Z9QuQe2yq3TyLQnFiZygRq5cDMDd9fJFvJI7UOmk+6XZXj71kgiId0GwCL3O1GJl3PUBC/j44xpSTDxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BW6UBt11; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720721412; x=1752257412;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=7kuZlTBmxFWxph6Ful0WMwENSv+aNNJIa+996kwiXtI=;
+  b=BW6UBt11tpGhmHo5a11804KtRwVrozP9FkESUvetLyM63ng0s2hI1L+T
+   /meeh5ofKeRDP7JesQua3qqUyb+22W9A4iwTrm1D2JfwjTqGfeBHlSeWL
+   UlSh2OJaVVesC5WL8Pd1kjPi1pw8Oyg9nKkeKXDNoqrsBqjAz2cRRR2xR
+   wly6PbE2kBYBDoUPu1clz630pQ3rQpWA7N6a8gELjVJhcti+HEtqvmNgN
+   9//G9sm6x4ut57moXsGgT6BukpAobfCq5BMd2+geB6MNYMvQEV1Us78mG
+   NX/YXF+TuDFI0hOC0GTT9RyYj7wGaaeCDntmI99QhUWNoMeo6jQjemz1e
+   g==;
+X-CSE-ConnectionGUID: H2p5jUJgRQKo6fxRutlb+Q==
+X-CSE-MsgGUID: xg/FsuZDSaKxT91vFt8f1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="22000435"
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="22000435"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 11:10:11 -0700
+X-CSE-ConnectionGUID: AhDtjmOTRDC36DgLP5DP+A==
+X-CSE-MsgGUID: NciQSOPKQaC6oEOiQdCfBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="79345324"
+Received: from unknown (HELO vcostago-mobl3) ([10.241.225.92])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 11:10:12 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>, "David S .
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse
+ Brandeburg <jesse.brandeburg@intel.com>, Tony Nguyen
+ <anthony.l.nguyen@intel.com>, Simon Horman <horms@kernel.org>, Richard
+ Cochran <richardcochran@gmail.com>, Paul Menzel <pmenzel@molgen.mpg.de>,
+ Sasha Neftin <sasha.neftin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH iwl-net v2 2/3] igc: Fix reset adapter logics when tx
+ mode change
+In-Reply-To: <6bb1ba4a-41ba-4bc1-9c4b-abfb27944891@linux.intel.com>
+References: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
+ <20240707125318.3425097-3-faizal.abdul.rahim@linux.intel.com>
+ <87o774u807.fsf@intel.com>
+ <6bb1ba4a-41ba-4bc1-9c4b-abfb27944891@linux.intel.com>
+Date: Thu, 11 Jul 2024 11:10:11 -0700
+Message-ID: <87le27ssu4.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spmi: add missing MODULE_DESCRIPTION() macros
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com>
- <88ab18bd-0700-46c6-9d74-5bd79a1f0fc1@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <88ab18bd-0700-46c6-9d74-5bd79a1f0fc1@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ydFMXoEkgLnJIJ5ce_mYQnUWQCgVyyjQ
-X-Proofpoint-ORIG-GUID: ydFMXoEkgLnJIJ5ce_mYQnUWQCgVyyjQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_13,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
- impostorscore=0 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110125
+Content-Type: text/plain
 
-On 6/26/24 09:15, Jeff Johnson wrote:
-> On 6/9/2024 5:40 PM, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/spmi-pmic-arb.o
->>
->> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>   drivers/spmi/hisi-spmi-controller.c | 1 +
->>   drivers/spmi/spmi-pmic-arb.c        | 1 +
->>   2 files changed, 2 insertions(+)
->>
->> diff --git a/drivers/spmi/hisi-spmi-controller.c b/drivers/spmi/hisi-spmi-controller.c
->> index fa068b34b040..3cafdf22c909 100644
->> --- a/drivers/spmi/hisi-spmi-controller.c
->> +++ b/drivers/spmi/hisi-spmi-controller.c
->> @@ -344,6 +344,7 @@ static void __exit spmi_controller_exit(void)
->>   }
->>   module_exit(spmi_controller_exit);
->>   
->> +MODULE_DESCRIPTION("Hisilicon 3670 SPMI Controller driver");
->>   MODULE_LICENSE("GPL v2");
->>   MODULE_VERSION("1.0");
->>   MODULE_ALIAS("platform:spmi_controller");
->> diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
->> index 791cdc160c51..f240fcc5a4e1 100644
->> --- a/drivers/spmi/spmi-pmic-arb.c
->> +++ b/drivers/spmi/spmi-pmic-arb.c
->> @@ -1891,5 +1891,6 @@ static struct platform_driver spmi_pmic_arb_driver = {
->>   };
->>   module_platform_driver(spmi_pmic_arb_driver);
->>   
->> +MODULE_DESCRIPTION("Qualcomm MSM SPMI Controller (PMIC Arbiter) driver");
->>   MODULE_LICENSE("GPL v2");
->>   MODULE_ALIAS("platform:spmi_pmic_arb");
->>
->> ---
->> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
->> change-id: 20240609-md-drivers-spmi-51a13baa2301
-> 
-> Following up to see if anything else is needed from me. Hoping to see this in
-> linux-next so I can remove it from my tracking spreadsheet :)
+"Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com> writes:
 
-I still don't see this in linux-next.
-Adding Greg KH since seems he's been merging this driver.
-My hope is to have these warnings fixed tree-wide in 6.11.
+> Hi Vinicius,
+>
+> On 11/7/2024 6:44 am, Vinicius Costa Gomes wrote:
+>> Faizal Rahim <faizal.abdul.rahim@linux.intel.com> writes:
+>> 
+>>> Following the "igc: Fix TX Hang issue when QBV Gate is close" changes,
+>>> remaining issues with the reset adapter logic in igc_tsn_offload_apply()
+>>> have been observed:
+>>>
+>>> 1. The reset adapter logics for i225 and i226 differ, although they should
+>>>     be the same according to the guidelines in I225/6 HW Design Section
+>>>     7.5.2.1 on software initialization during tx mode changes.
+>>> 2. The i225 resets adapter every time, even though tx mode doesn't change.
+>>>     This occurs solely based on the condition  igc_is_device_id_i225() when
+>>>     calling schedule_work().
+>>> 3. i226 doesn't reset adapter for tsn->legacy tx mode changes. It only
+>>>     resets adapter for legacy->tsn tx mode transitions.
+>>> 4. qbv_count introduced in the patch is actually not needed; in this
+>>>     context, a non-zero value of qbv_count is used to indicate if tx mode
+>>>     was unconditionally set to tsn in igc_tsn_enable_offload(). This could
+>>>     be replaced by checking the existing register
+>>>     IGC_TQAVCTRL_TRANSMIT_MODE_TSN bit.
+>>>
+>>> This patch resolves all issues and enters schedule_work() to reset the
+>>> adapter only when changing tx mode. It also removes reliance on qbv_count.
+>>>
+>>> qbv_count field will be removed in a future patch.
+>>>
+>>> Test ran:
+>>>
+>>> 1. Verify reset adapter behaviour in i225/6:
+>>>     a) Enrol a new GCL
+>>>        Reset adapter observed (tx mode change legacy->tsn)
+>>>     b) Enrol a new GCL without deleting qdisc
+>>>        No reset adapter observed (tx mode remain tsn->tsn)
+>>>     c) Delete qdisc
+>>>        Reset adapter observed (tx mode change tsn->legacy)
+>>>
+>>> 2. Tested scenario from "igc: Fix TX Hang issue when QBV Gate is closed"
+>>>     to confirm it remains resolved.
+>>>
+>>> Fixes: 175c241288c0 ("igc: Fix TX Hang issue when QBV Gate is closed")
+>>> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+>>> Reviewed-by: Simon Horman <horms@kernel.org>
+>>> ---
+>> 
+>> There were a quite a few bugs, some of them my fault, on this part of
+>> the code, changing between the modes in the hardware.
+>> 
+>> So I would like some confirmation that ETF offloading/LaunchTime was
+>> also tested with this change. Just to be sure.
+>> 
+>> But code-wise, looks good:
+>> 
+>> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+>> 
+>> 
+>> Cheers,
+>
+>
+> Tested etf with offload, looks like working correctly.
+>
+> 1. mqprio
+> tc qdisc add dev enp1s0 handle 100: parent root mqprio num_tc 3 \
+> map 2 2 1 0 2 2 2 2 2 2 2 2 2 2 2 2 \
+> queues 1@0 1@1 2@2 \
+> hw 0
+>
+> No reset adapter observed.
+>
+> 2. etf with offload
+> tc qdisc replace dev enp1s0 parent 100:1 etf \
+> clockid CLOCK_TAI delta 300000 offload
+>
+> Reset adapter observed (tx mode legacy -> tsn).
+>
+> 3. delete qdisc
+> tc qdisc delete dev enp1s0 parent root handle 100
+>
+> Reset adapter observed (tx mode tsn -> legacy).
+>
 
-/jeff
+That no unexpected resets are happening, is good.
 
+But what I had in mind was some functional tests that ETF is working. I
+guess that's the only way of knowing that it's still working. Sorry that
+I wasn't clear about that.
+
+
+Cheers,
+-- 
+Vinicius
 
