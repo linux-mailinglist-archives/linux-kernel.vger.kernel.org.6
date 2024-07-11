@@ -1,96 +1,112 @@
-Return-Path: <linux-kernel+bounces-249776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F51492EFA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:30:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 486C192EFAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04254B212ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:30:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3255281FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF77C15CD74;
-	Thu, 11 Jul 2024 19:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3F216EBED;
+	Thu, 11 Jul 2024 19:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Feq61t24"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfeAd7B9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A168E2F43
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252821C14;
+	Thu, 11 Jul 2024 19:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720726238; cv=none; b=DJEbC7AmAsyCgw+xaVZGrtCtz1SSiJG/JezEpA59K+uhH8c6D4qKRZX+MkVKnnrSGbaJYeqQXrJtGYmkwXwtzuwE8ry5blt4pEv9k99c+vy060TS670FeyHdXibsbRgG30XMaG0ISGsMnEMuefrZSqRm1Tf2P/lEfXdjK9v7HKY=
+	t=1720726474; cv=none; b=k9hw/tHVvbb2vqet7mQrHs4aMzxbEnI1L9lIXiivexn8HArCA1q7vWKWAbz3RyST005N+YdOAeEKQo7ERMa4+vfSXr9aGueqPVSadYkRbNPHDaaPfxp/hbVo1I0ezkjUni4iCd1hkqiMBx7PO5BxG5ZYK0IFbf1oTwuaPkbFAjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720726238; c=relaxed/simple;
-	bh=jIq9DB4+HfVVvk3niKjex6l7F/Vrr+uaMChFa8uTTmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BeSHXjBrx0tL8GPHSfMsuuf63ubnb7pRGyeRQub+D3dhVs2BN9ysezwGuP9hV7SpIzFAT1MEh94jc+PaGvIXueGrODaiM+hNLLuTUnGrTI6gcPOIXsPhsC2P0VPitGO4UqOtcelGyFZFWH3+xsGWbLHaw/GDlB755kT6V2TEdVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Feq61t24; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-380f2c58838so710365ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720726235; x=1721331035; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jIq9DB4+HfVVvk3niKjex6l7F/Vrr+uaMChFa8uTTmA=;
-        b=Feq61t24WTab4I8n5jOVQA6xUi/85OMzabYwywzU+El922r++Bi85Hy+g0ko9Dt9Zd
-         ICrGVxt1yuFK7kqDldNGOWgKrFHGyNYxgDIrZiJwhIfRGIdtf+4p+Y0DnZ6P1R7DlZi4
-         mJoUD52LiK5yj+cgZ2lY9b4TQ4bBqOlUL8vQY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720726235; x=1721331035;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jIq9DB4+HfVVvk3niKjex6l7F/Vrr+uaMChFa8uTTmA=;
-        b=Z1dGvApI3NxhwVrWKA3nMOqFzIvHWpQwCD36pNon1TvFpJH9WFHEvRJ6wC7mrbEDBd
-         dKCRZu36cvDb+hfxl9KLUW2l1CyR/mw9l4PZPsC/m3LJoS3FDfhq98z/0eHFwFsXQlnf
-         8y1ZRyFliowNIvcYHvr8BoWBjuLK3nBBrK7jjTFEuYePuqK/SodxZQ3kwftptVLSShFA
-         5U42IrRAhKhSol0gT+fxXCxQuqRWd1jspw6cDJHTaUT/ZwPd29D1RDDjZ28JMvCCdL79
-         Kel2u4GNyjR5o/fMxERB3ST03ZpWxT5Zg+roKpIjiJQpel6Wb5k2rwaOO7I25K+zjT3n
-         EU2g==
-X-Gm-Message-State: AOJu0YwKvhixyBz0SAdQpRGJSDwf6TtIUfQawXNSRN2BJZUNIUeK1VFC
-	AL7gPzQ5q+Br7z2pgGatMgacHwD2Lj+Pfu5bZLr2nudt02iDw5aUJVArXwG4icA=
-X-Google-Smtp-Source: AGHT+IEuugBUOtbPCwdOAl0sTv1M6tMnWa1RAQa6RETYXBN+nLRRupftab2+A8OSzisRPDSDiUOOgg==
-X-Received: by 2002:a05:6602:8d1:b0:7f9:90c5:4107 with SMTP id ca18e2360f4ac-806e190589dmr373773739f.1.1720726235641;
-        Thu, 11 Jul 2024 12:30:35 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7ffea7571cdsm204809539f.32.2024.07.11.12.30.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 12:30:35 -0700 (PDT)
-Message-ID: <fffc4793-e2ff-4e90-96b0-b37e02848bec@linuxfoundation.org>
-Date: Thu, 11 Jul 2024 13:30:34 -0600
+	s=arc-20240116; t=1720726474; c=relaxed/simple;
+	bh=rnJzywkRCd7XYg6cYxCjuRelZYp4cgYOJOVs+8goLSY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lNrCnbKuKXi9MA0Ysb0vJNCMZHkQgcTYcnRWKIQG7k5Y6h2ZM/lI3DADY7gRuzYVyMPCmAuDFODS3simo67F1/S9xO8/R5uT/U7Ze5x+q3VSK4w2mw90vBmlaRtVlSi98SEo/ujPIaQM4MbTsbyp0rVYtiEAabbxr8rX/9DiZ7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gfeAd7B9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7BB0C4AF0A;
+	Thu, 11 Jul 2024 19:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720726473;
+	bh=rnJzywkRCd7XYg6cYxCjuRelZYp4cgYOJOVs+8goLSY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gfeAd7B9+JBajYo0b3kC14jh+kBmxbqv7bidZiOID7K9OyOKX3/klen3euzhliSy3
+	 o+fD75Ud3ceLwxK6C5MeSrJSMC1rfZO/+BoZsn/jRj2ciMsTBy9ko2l1xrsZYI0nC1
+	 6ZLpINUj8BR0DXDAvswDYTZ9Mv1+i3ooxYSs4HXuyyr5ofy9bqMbStDHtjthR9xmtR
+	 2olcv1Y+BdkhLvDOPRyWQm4mNbUpDZtd/ZhqBD06npY1MKQidRItvI4EUNOPX5BB+B
+	 a9CY37X5ShD3yXJUbYHlmWvj9AkluCGuQ1c5i/KQsEN9Hp7LNCkxERJXBW90girPlm
+	 cRGcCXE+jv5Eg==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52ea952ce70so1387063e87.3;
+        Thu, 11 Jul 2024 12:34:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXACSptGkFpBOCv0aQKeRWrdCtAG5zuqKmchXctbumcqXq588piPVB9cy6s1U1Xzq2VyH9y+7P2ClkdXF87Ulpk3HU0TqGnaI/ooLLCBIVW5JpGe+kNCdXHx5rUkxGDoF8XerzYRg==
+X-Gm-Message-State: AOJu0YwNi1LWz30JGaWlmL5CmZcCliKCBoiR0i1fi5pP2CYHFFkOSG61
+	PYEhazWaXom1iXZeX6CByxmxRii9HtB5AunJBgJpavRUS2MRWN9Z5dZoMZKFHGZqZ6NnB1j2KcG
+	HmxwV1iczLJlgqgB6crAGSE3sYA==
+X-Google-Smtp-Source: AGHT+IF5ZwMkOUD5v9f290dZ5bmhnW8djdgJItCBBjgdP3+Qoa8fkAROjJ85zlq/0+vFIpGpC/6yq3d5B3hrGWl1RlU=
+X-Received: by 2002:a05:6512:2348:b0:52b:bee3:dcc6 with SMTP id
+ 2adb3069b0e04-52eb99d150fmr6767379e87.51.1720726471999; Thu, 11 Jul 2024
+ 12:34:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] add tests to verify IFS (In Field Scan) driver
- functionality
-To: "Joseph, Jithu" <jithu.joseph@intel.com>,
- Pengfei Xu <pengfei.xu@intel.com>, shuah@kernel.org,
- linux-kselftest <linux-kselftest@vger.kernel.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, ashok.raj@intel.com,
- sathyanarayanan.kuppuswamy@intel.com, Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1717137348.git.pengfei.xu@intel.com>
- <097e26f1-bf30-43ab-a65b-25a3062f92d5@intel.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <097e26f1-bf30-43ab-a65b-25a3062f92d5@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240703141634.2974589-1-amachhiw@linux.ibm.com>
+ <CAL_JsqL9hg8Hze4oOP1R55yVXBfTKE=RfwdBraNHiO71K21uNA@mail.gmail.com> <qcidmczsjdhaqz7hy3cqnpkjiaulxi7277ayzly3zyrrdbcr4w@5s4x5cgd3xk2>
+In-Reply-To: <qcidmczsjdhaqz7hy3cqnpkjiaulxi7277ayzly3zyrrdbcr4w@5s4x5cgd3xk2>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 11 Jul 2024 13:34:19 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+Mojbw9AXPZmGbzDbW7Tj=6zhBWtSKKdqrVhR=AUnp_g@mail.gmail.com>
+Message-ID: <CAL_Jsq+Mojbw9AXPZmGbzDbW7Tj=6zhBWtSKKdqrVhR=AUnp_g@mail.gmail.com>
+Subject: Re: [PATCH] PCI: Fix crash during pci_dev hot-unplug on pseries KVM guest
+To: Amit Machhiwal <amachhiw@linux.ibm.com>, kernel-team@lists.ubuntu.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-ppc@vger.kernel.org, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>, 
+	Vaibhav Jain <vaibhav@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, 
+	Kowshik Jois B S <kowsjois@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/10/24 19:42, Joseph, Jithu wrote:
-> Acked-by: Jithu Joseph<jithu.joseph@intel.com>
++Ubuntu kernel team
 
-Applied to linux-kselftest next for Linux 6.11-rc1.
+On Thu, Jul 11, 2024 at 8:21=E2=80=AFAM Amit Machhiwal <amachhiw@linux.ibm.=
+com> wrote:
+>
+> Hi Rob,
+>
+> On 2024/07/11 06:20 AM, Rob Herring wrote:
+> > On Wed, Jul 3, 2024 at 8:17=E2=80=AFAM Amit Machhiwal <amachhiw@linux.i=
+bm.com> wrote:
+> > >
+> > > With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug seque=
+nce
+> > > of a PCI device attached to a PCI-bridge causes following kernel Oops=
+ on
+> > > a pseries KVM guest:
+> >
+> > Can I ask why you have this option on in the first place? Do you have
+> > a use for it or it's just a case of distros turn on every kconfig
+> > option.
+>
+> Yes, this option is turned on in Ubuntu's distro kernel config where the =
+issue
+> was originally reported, while Fedora is keeping this turned off.
+>
+>     root@ubuntu:~# cat /boot/config-6.8.0-38-generic | grep PCI_DYN
+>     CONFIG_PCI_DYNAMIC_OF_NODES=3Dy
 
-thanks,
--- Shuah
+Ubuntu should turn off this option. For starters, it is not complete
+to be usable. Eventually, it should get removed in favor of some TBD
+runtime option.
+
+(And we should fix the crash too)
+
+Rob
 
