@@ -1,68 +1,65 @@
-Return-Path: <linux-kernel+bounces-249497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EDE92EC73
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE21B92ECF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C535328488C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B1391F23DA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0610416CD1A;
-	Thu, 11 Jul 2024 16:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F8B16D4D2;
+	Thu, 11 Jul 2024 16:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="0JUsBAUG"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="hqPZB/Ol"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385B1155CB8
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB5716D32E;
+	Thu, 11 Jul 2024 16:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720714582; cv=none; b=J5Tv2GR795jafozaHX30mcCohzLR72DLVcg5xjiRGqMehlEZ1JQ8kp0b5pcAsg7eqzLHJX4TOFT7RQKLWXTzxAYfImlbBpMrFHoTqCWSTdyNWgNoVyGF1qq4Fm27UEC2rrCkz9nbo8iKEwHfZvk0KeeE3BIR+D+BnP6f2JsmrFg=
+	t=1720716150; cv=none; b=EvBzZVinN9Ke6Wr0zm4yTwsjmqzwf2pa7AmOrfhL1zuP3s/Q9nyoxWC08sGSV1Gffij80sIjUR7Etri2mW5XFTq57Mmzf5KrqsJTyTiMhFyxqbX1Z3h2YTy4bKbtko0cSPdtQOQS8PBgBDfcg8YOjZQ8bph/ZmaSIV3mMpTd9ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720714582; c=relaxed/simple;
-	bh=YcA+H0UH5himzWlQiVV55SJZ5aod/NYeqs8LnRg02Fk=;
+	s=arc-20240116; t=1720716150; c=relaxed/simple;
+	bh=5XXrD3Er7tJlA0T069DV3WzFwIGiNLYlnHydNwOwoDA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OmkTSfnz7JyzPul/bBWwbeo78eNZRMEDqVbedRzsawF7V3+DbiF89OGPEhQOAViR1APfDC9hVWENkGb+w54ziuRtgCxQEmyAH9t0wMZBsGYkRglLstK7CkR65736apKQcmkns6Ex+9clLI/ARk1gyWkNlDeRRKraLS/z+/fhrpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=0JUsBAUG; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
-	by cmsmtp with ESMTPS
-	id Rvp6s98WrVpzpRwSxsZa8H; Thu, 11 Jul 2024 16:16:19 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id RwSxsjrUTyUEQRwSxsbjGY; Thu, 11 Jul 2024 16:16:19 +0000
-X-Authority-Analysis: v=2.4 cv=Tc6QtwQh c=1 sm=1 tr=0 ts=66900553
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8 a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8
- a=rOUgymgbAAAA:8 a=Gf48L2LQQ7vtOYgXLocA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=Fp8MccfUoT0GBdDC_Lng:22 a=zSyb8xVVt2t83sZkrLMb:22
- a=MP9ZtiD8KjrkvI0BhSjB:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eQeYix7fsBclpcHIxpnFNByXsSZl5xwa42J/v4FFhmc=; b=0JUsBAUG0QHvvmEIoymFjkBgBt
-	F9Sp0DNoKYz8c6svYFTkIBAOlHGODEWnpMHO52iJf6FjWYZ5CFq40WcahCEmv1xsboMnD2XYdSBmU
-	AKP+LtQcWfl32Kxi5VOXrJp5uTMAFAyloA6KTCgFMPnzLABRziiSqwYVtCpQShA7TH+nV4yeuV6KV
-	N06vXjYAo3JWtFZ5BKx9ws+NpZWRiDctTi3oMKLY8T4TZwDeff30clF0i9hZ8sDsrBCi9b/mATl4Z
-	sRofDOWnhB2OrE5nJFnZuS9PXTAEG5v96r6sUYng6pTx5L9h97tbLRA3sY9u7cWM93P44E5nDOir+
-	+9Um89Dg==;
-Received: from [201.172.173.139] (port=38138 helo=[192.168.15.4])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sRwSv-004Hk8-16;
-	Thu, 11 Jul 2024 11:16:17 -0500
-Message-ID: <15be9ec9-02a1-452d-aee5-d6536eef6796@embeddedor.com>
-Date: Thu, 11 Jul 2024 10:16:15 -0600
+	 In-Reply-To:Content-Type; b=PNE3nlovDbEH20rFmhbrLt34hcucKJPNxBGula4Vy8bKb0RdD6ebyBy+I35ERfQ+PvayisFDzgc0iTRHR951mmwNyMuHOz8QocyGr4c9ngMsD6WDNhmpsFcgQOZ+V/codULtCNJIBSJnV21J9pnAFqZ+AnHGvfNtEH83qXzgkEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=hqPZB/Ol; arc=none smtp.client-ip=43.163.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1720716134;
+	bh=s5mc+8AdniwxOMjnsOUvSDbal2IaCJcwnexgBeAnGbA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=hqPZB/Olgkz0rr82M3zrK0tN1hyAnUAoXEpMcSpimNjzlAaJe+2/fD0O/GX335os3
+	 W4IoAP3kxZ2VrfO9lvM4iLsXx7QPrkq4fPb0NzXTfHZFw5wVRUQMw70qVemfmL25ja
+	 SZKmnOfOwZJYaG+2c0tg8Em+jQcPpQ+W4nmwK2jo=
+Received: from [192.168.50.235] ([120.244.20.46])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 4229AC9C; Fri, 12 Jul 2024 00:16:34 +0800
+X-QQ-mid: xmsmtpt1720714594t6aplnsdx
+Message-ID: <tencent_CF3DC37BEB2026CB2F68408A2B62314E0C08@qq.com>
+X-QQ-XMAILINFO: NVd9ZAvGcUb9em05hx+gRvPtwZFbK38yNemqP+tOrKR9Yly3yXTL5QIasCAEK8
+	 rpDaZ6qpEvM5Fok1NrgugVqbojw8I/z88VKRL6mdwdswE7C+RxuHRIOR826LMRuH0LJ0yfL4Xrdn
+	 WU18aJQQTrOg+m2SF3fWjEAQ7ptCB90QBqXM+zXmMn5XpiJ8lPDylV1ShVnn+fcWkkBQSGZTyW57
+	 fF1LO9+tDq7md5vcxT+WbksW2QlA8wRbwwHjMY0cmBKUOeNX/LYwHROI+j4N7vs8XAjSFT6sKcdN
+	 XKt+Z7dwiLxLRmUPlWFI6G7sNOMr7kBoNjV8syQxxJTOUNshXdRPYFtlfgNSo5Uzc7roLqhulxdS
+	 Z6QlPOwOEO4JJV3aVTpb2h9j4xkRARVB0TgU6QjbG+9jATAJ+m5wsv8Xye8+vfO/zwFy6DAc177I
+	 JWRn/aw07Q7vKQi117TnEbOcZosNKBZVW9fB7Ekc5Vw5T+3DpfoOhB2YeOqx7zeuMYm6qFhlbUEi
+	 FXqStPW0saOSJbxsAr56iUGx7s2+epDf/NbLDQOqXft3HCK5qQj7GQR5Q3v99KRegiq3WeG7cm8L
+	 PdbL320urSaf7T5wFNLJl4KI/fvImiusPUvhlUyBeCz5vOFWc1zHK6qNItWZahd57tIKSV+TPeq1
+	 UsqqIOVJtI9lu1pHZbwtZS6P6sFq0CoGI2yQgGFZaV80X006yDCpyI3gaOlWpy/i9mjnYxwYzp+G
+	 kBioZWhpm83rhhS9DxV1/aJFM1KV05PNW1TQvskp/cOS4w3e0VeGBjifVBF7E6+dSG+eHG1INdts
+	 MxwBmmUwoEbrxgE36pZomfFvQ9rkfjD0tUUrqG+M1rIcl8efCLLboXxdzEhMh40zQ3EkFngZ6SI2
+	 ABZtpk5ixQ/yXAfW97KzcXz9p6HBJzV0CnhS+c89kumgBDec9iA5VkJNnIacJv/5PFiyCcjPs/CV
+	 YfyAWy0uN6zk2fxEU4CgQdnWEu00thHn5EmkCyZ2vmXNEYoHqttwTan4GPLv4ZSTyL67uohDduio
+	 xZpe9ZGg==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-OQ-MSGID: <dcf476c9-b3c5-4235-bf79-cee840895847@foxmail.com>
+Date: Fri, 12 Jul 2024 00:16:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,112 +67,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] scsi: mpi3mr: struct
- mpi3_event_data_sas_topology_change_list: Replace 1-element array with
- flexible array
-To: Kees Cook <kees@kernel.org>,
- Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
-Cc: Kashyap Desai <kashyap.desai@broadcom.com>,
- Sumit Saxena <sumit.saxena@broadcom.com>,
- Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Ranjan Kumar <ranjan.kumar@broadcom.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>, mpi3mr-linuxdrv.pdl@broadcom.com,
- linux-scsi@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240711155446.work.681-kees@kernel.org>
- <20240711155637.3757036-1-kees@kernel.org>
+Subject: Re: [PATCH v4] ext4: fix fast commit inode enqueueing during a full
+ journal commit
+To: Luis Henriques <luis.henriques@linux.dev>,
+ "wangjianjian (C)" <wangjianjian3@huawei.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger@dilger.ca>,
+ Jan Kara <jack@suse.cz>, Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+ linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240711083520.6751-1-luis.henriques@linux.dev>
+ <4f9d5881-11e6-4064-ab69-ca6ef81582b3@huawei.com>
+ <878qy8nem5.fsf@brahms.olymp>
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240711155637.3757036-1-kees@kernel.org>
+From: Wang Jianjian <wangjianjian0@foxmail.com>
+In-Reply-To: <878qy8nem5.fsf@brahms.olymp>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sRwSv-004Hk8-16
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:38138
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 1
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfD0oxwtXMk6zqjwLjz/PDIJOlgNX33QdbNUKfS9rCtq4rmZUBOkEwupeUjUw1sMmELOz4kD7jujP5JuS/rSGRcLDlDhPFWQF9QE+V8qZgRDgrcKfEQBz
- qcOgQ83nlKu08EyOOk+3r6LEe6UjiO6guKICHwMvorFh/qhWcJJ9m38U9NRCzw0Ws0MIC8HhndlHqnZuF7tZHCEPi2DwSkJN/WS9bvO5U3SDhU4x8MRYh6qW
+Content-Transfer-Encoding: 8bit
 
 
+On 2024/7/11 23:16, Luis Henriques wrote:
+> On Thu, Jul 11 2024, wangjianjian (C) wrote:
+>
+>> On 2024/7/11 16:35, Luis Henriques (SUSE) wrote:
+>>> When a full journal commit is on-going, any fast commit has to be enqueued
+>>> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
+>>> is done only once, i.e. if an inode is already queued in a previous fast
+>>> commit entry it won't be enqueued again.  However, if a full commit starts
+>>> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
+>>> be done into FC_Q_STAGING.  And this is not being done in function
+>>> ext4_fc_track_template().
+>>> This patch fixes the issue by re-enqueuing an inode into the STAGING queue
+>>> during the fast commit clean-up callback if it has a tid (i_sync_tid)
+>>> greater than the one being handled.  The STAGING queue will then be spliced
+>>> back into MAIN.
+>>> This bug was found using fstest generic/047.  This test creates several 32k
+>>> bytes files, sync'ing each of them after it's creation, and then shutting
+>>> down the filesystem.  Some data may be loss in this operation; for example a
+>>> file may have it's size truncated to zero.
+>>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>>> ---
+>>> Hi!
+>>> v4 of this patch enqueues the inode into STAGING *only* if the current tid
+>>> is non-zero.  It will be zero when doing an fc commit, and this would mean
+>>> to always re-enqueue the inode.  This fixes the regressions caught by Ted
+>>> in v3 with fstests generic/472 generic/496 generic/643.
+>>> Also, since 2nd patch of v3 has already been merged, I've rebased this patch
+>>> to be applied on top of it.
+>>>    fs/ext4/fast_commit.c | 10 ++++++++++
+>>>    1 file changed, 10 insertions(+)
+>>> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+>>> index 3926a05eceee..facbc8dbbaa2 100644
+>>> --- a/fs/ext4/fast_commit.c
+>>> +++ b/fs/ext4/fast_commit.c
+>>> @@ -1290,6 +1290,16 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
+>>>    				       EXT4_STATE_FC_COMMITTING);
+>>>    		if (tid_geq(tid, iter->i_sync_tid))
+>>>    			ext4_fc_reset_inode(&iter->vfs_inode);
+>>> +		} else if (tid) {
+>>> +			/*
+>>> +			 * If the tid is valid (i.e. non-zero) re-enqueue the
+>> one quick question about tid, if one disk is using long time and its tid   get
+>> wrapped to 0, is it a valid seq? I don't find code handling this situation.
+> Hmm... OK.  So, to answer to your question, the 'tid' is expected to wrap.
+> That's why we use:
+>
+> 	if (tid_geq(tid, iter->i_sync_tid))
+Yes, I know this.
+>
+> instead of:
+>
+> 	if (tid >= iter->i_sync_tid)
+>
+> (The second patch in v3 actually fixed a few places where the tid_*()
+> helpers weren't being used.)
+>
+> But your question shows me that my patch is wrong as '0' may actually be a
+> valid 'tid' value.
 
-On 11/07/24 09:56, Kees Cook wrote:
-> Replace the deprecated[1] use of a 1-element array in
-> struct mpi3_event_data_sas_topology_change_list with a modern
-> flexible array.
-> 
-> Additionally add __counted_by annotation since phy_entry is only ever
-> accessed in loops controlled by num_entries. For example:
-> 
->          for (i = 0; i < event_data->num_entries; i++) {
-> 		...
->                  handle = le16_to_cpu(event_data->phy_entry[i].attached_dev_handle);
-> 
-> No binary differences are present after this conversion.
-> 
-> Link: https://github.com/KSPP/linux/issues/79 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
+Actually my question is,  there are some place use '0' to check if a 
+transaction is valid, e.g.
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+In ext4_wait_for_tail_page_commit()
 
-Thanks
--- 
-Gustavo
+5218         while (1) {
+5219                 struct folio *folio = 
+filemap_lock_folio(inode->i_mapping,
+5220                                       inode->i_size >> PAGE_SHIFT);
+5221                 if (IS_ERR(folio))
+5222                         return;
+5223                 ret = __ext4_journalled_invalidate_folio(folio, offset,
+5224 folio_size(folio) - offset);
+5225                 folio_unlock(folio);
+5226                 folio_put(folio);
+5227                 if (ret != -EBUSY)
+5228                         return;
+5229                 commit_tid = 0;
+5230                 read_lock(&journal->j_state_lock);
+5231                 if (journal->j_committing_transaction)
+5232                         commit_tid = 
+journal->j_committing_transaction->t_tid;
+5233                 read_unlock(&journal->j_state_lock);
+5234                 if (commit_tid)
+5235                         jbd2_log_wait_commit(journal, commit_tid);
+5236         }
+5237  We only wait commit if tid is not zero.
 
-> ---
-> Cc: Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
-> Cc: Kashyap Desai <kashyap.desai@broadcom.com>
-> Cc: Sumit Saxena <sumit.saxena@broadcom.com>
-> Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> Cc: Ranjan Kumar <ranjan.kumar@broadcom.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: mpi3mr-linuxdrv.pdl@broadcom.com
-> Cc: linux-scsi@vger.kernel.org
-> Cc: linux-hardening@vger.kernel.org
-> ---
->   drivers/scsi/mpi3mr/mpi/mpi30_ioc.h | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/scsi/mpi3mr/mpi/mpi30_ioc.h b/drivers/scsi/mpi3mr/mpi/mpi30_ioc.h
-> index 028784949873..ae74fccc65b8 100644
-> --- a/drivers/scsi/mpi3mr/mpi/mpi30_ioc.h
-> +++ b/drivers/scsi/mpi3mr/mpi/mpi30_ioc.h
-> @@ -453,9 +453,6 @@ struct mpi3_event_data_sas_notify_primitive {
->   #define MPI3_EVENT_NOTIFY_PRIMITIVE_POWER_LOSS_EXPECTED   (0x02)
->   #define MPI3_EVENT_NOTIFY_PRIMITIVE_RESERVED1             (0x03)
->   #define MPI3_EVENT_NOTIFY_PRIMITIVE_RESERVED2             (0x04)
-> -#ifndef MPI3_EVENT_SAS_TOPO_PHY_COUNT
-> -#define MPI3_EVENT_SAS_TOPO_PHY_COUNT           (1)
-> -#endif
->   struct mpi3_event_sas_topo_phy_entry {
->   	__le16             attached_dev_handle;
->   	u8                 link_rate;
-> @@ -496,7 +493,7 @@ struct mpi3_event_data_sas_topology_change_list {
->   	u8                                 start_phy_num;
->   	u8                                 exp_status;
->   	u8                                 io_unit_port;
-> -	struct mpi3_event_sas_topo_phy_entry   phy_entry[MPI3_EVENT_SAS_TOPO_PHY_COUNT];
-> +	struct mpi3_event_sas_topo_phy_entry   phy_entry[] __counted_by(num_entries);
->   };
->   
->   #define MPI3_EVENT_SAS_TOPO_ES_NO_EXPANDER              (0x00)
+And in __jbd2_log_wait_for_space()
+
+79                 if (space_left < nblocks) {
+  80                         int chkpt = 
+journal->j_checkpoint_transactions != NULL;
+  81                         tid_t tid = 0;
+  82
+  83                         if (journal->j_committing_transaction)
+  84                                 tid = 
+journal->j_committing_transaction->t_tid;
+  85 spin_unlock(&journal->j_list_lock);
+  86 write_unlock(&journal->j_state_lock);
+  87                         if (chkpt) {
+  88 jbd2_log_do_checkpoint(journal);
+  89                         } else if 
+(jbd2_cleanup_journal_tail(journal) == 0) {
+  90                                 /* We were able to recover space; 
+yay! */
+  91                                 ;
+  92                         } else if (tid) {
+  93                                 /*
+  94                                  * 
+jbd2_journal_commit_transaction() may want
+  95                                  * to take the checkpoint_mutex if 
+JBD2_FLUSHED
+  96                                  * is set.  So we need to 
+temporarily drop it.
+  97                                  */
+  98 mutex_unlock(&journal->j_checkpoint_mutex);
+  99                                 jbd2_log_wait_commit(journal, tid);
+100 write_lock(&journal->j_state_lock);
+101                                 continue;
+We also only wait commit if tid is not zero.
+
+Does it mean all these have bugs if '0' is a valid 'tid' ?
+
+But on the other hand, if we don't consider sync and fsync, and default 
+commit interval is 5s,
+
+time of tid wrap to 0 is nearly 680 years. However, we can run 
+sync/fsync to make tid to increase
+
+more quickly in real world ?
+
+
+> Cheers,
+
 
