@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-249196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890CF92E851
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:34:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43EB792E857
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A44284369
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:34:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5A43B217B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A0915D5B8;
-	Thu, 11 Jul 2024 12:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CA815ECCA;
+	Thu, 11 Jul 2024 12:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Z1Lm4zyV"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="reIq8+ku"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558F914C587
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE23D15B964
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720701253; cv=none; b=nKK8nF9uOOdq2utJxGy1vC6nsWThY5jCBSOxYWtd5WOLOYoHBx4vb2Iv75Poy8vHORoOAg2AjS8j7K+Bp+40bmMMfJ/Em69SVEyD4Q4YKGCuPYYIjSZkRKr+1cma6icOI7/88e0HjJN5j5dPwWx3Mts668/SjbfS7Numb8r3nDM=
+	t=1720701254; cv=none; b=ZxO3mMPS/SneqSqEhdQpu5pfVR60xMmZfeAOB57H36pluHKM0jaE/quh42RRR7XqNjN8i2MwgIWglyUf1nCmWb0eMpV39Wn64+ECcHQSZVm/nUhFZFXVPyErDXXJmZsaGjhg37eiOPT/tH+Pa3gcmN9kpO1VHRSJ9CmKXSMWrsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720701253; c=relaxed/simple;
-	bh=SVNaY8uPYmFpQzt05SCgtnQKzfh+zub5JZo0eT+9Phg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NXkjwOW2xX2ShbadiE5FpV/8uILhkZIPiU93ytrT4sk7VtmNJIW+UaUOeFwyErvCRm6SkgTWmoyDov04s6ExTbRG7GK7ph1otFcLqZlOH+NSx8d0sldllJrBJdXCGF1a0WLFdHGDZegytTSM8dzFEVRhLBarsJ3kuJLLKbUv5pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Z1Lm4zyV; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1720701254; c=relaxed/simple;
+	bh=dY61pVfeYdptbpc1CWeooXje6VkidAQD5fhpL0AyjXQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ISx0n7qxeyqPClbg1+esQTjXZAuHR2ELJixP+r9pMf6GuKETGbBFKZHgKAzQHCf1bVOv9xAYBrXPdJT5pWhejIhPLj4+qIRKI1lhzpjqFtBWgobfKccUNeHH4j6yiNWh4javS+ZS6JTSR9xZ3QOaksh7icKM+JzuKDqGA8hN+N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=reIq8+ku; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-426685732dcso5459785e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:34:11 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4279c10a40eso2140385e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:34:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1720701250; x=1721306050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=v9gF9Nlbjx+3WYbHXvq9fYfuO2GW0NccrZ1QB+XZf7o=;
-        b=Z1Lm4zyVSvhDfmJwHgzoAdMhlTeGWvnPlgRXTe568rRUpNKQRjF/3eM0HXjIh94xJl
-         ss3epwTRjcPMqB+cVbg7yg/yncI8PiJ6jGH1hv46XGFqTkMWriJuNOYe/l97RIFp1199
-         yx4yS1lYe2vsnLM3hOg4Eiebbm5sj1SxHwGvOxaoW52XhPll9Jw3gjcMwqglDSbrQLX1
-         FJYOi3KVph5tkOCK0ktt5FLuRRpgDFsi3WO6XFdI3+3MsATQADA+KRSicVw/1NFr7eEU
-         hl9d/RpNZmos6qlLXqEri6xa6ekJNDQ9GG47PRFgtThwxQgSOfz9fFAkcM9r8gOhDiPC
-         PeEQ==
+        d=tuxon.dev; s=google; t=1720701251; x=1721306051; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LAFQBuBHIxkQvbv8fOdzuOd5saHrgFyg5FB8jBW+qBE=;
+        b=reIq8+ku8dLPzXdOR/+4yeP7tX03CHvSovobC+OsHWrzWNRNjY3DGIMRuqSjgQ+EjH
+         MuSjdLH/DcBKYJi854NYsUwPEtnN6B7ItGztFkO3A3w+MGMJagKrj01xeLFOnWMCdBkK
+         cDAQ46yJ/3PCht9picOteYdOa1djQ0AfbvEYMlb414R0GoBdtnuIdIs8wNBmMy+pek+M
+         xblNvBLLziD+/cLsslUlaaK/qrDmXahyBkcFqS3jXvbgMAOmis5rDcRoMhTwTDbXO6Fb
+         h/cRu0g19QqlpvQDcTNtfZ7oppzE89pwhCGoqVh242BPzj2SCxHTAxTM1D5UKJAweH50
+         g31A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720701250; x=1721306050;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v9gF9Nlbjx+3WYbHXvq9fYfuO2GW0NccrZ1QB+XZf7o=;
-        b=mKtNOO62Ml4Jqppw9zyn1AJZnxJUplJQL9exExt7ONuEq/jKN8aJaN+j2egbQmCuBI
-         zKotceBxFTEYmFEh6fVGNc8Cs2DdjP0JwLsver2npPqV0hHylmhD2UI5PepgN9wrRJEp
-         M+xwxCNjjwvap5CEfS1wmhxaWBp3PTbbv0odzci/LDiuoycyh8hrniPs2Nevv3IxQQCo
-         5GqPf5q8PCV7An+qH4OKKY9LdQD/utrP4pc3swyQ0M6w38n3au9lSlEwiqfAxob0JhTs
-         SZu7SiFoG7fOaPEFoftNMNaj93olE6EqsSGpGU2aEDagoljoUXlA91kgAKgqyhVzlQPx
-         /nNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTMHXh986PTd21RhuPiCTqAPg9Y9DcptJlDrZnbM7MPItME1FEkwxHuwCKEWlsThRLta0+pn82nx8e/MdH27SP3WpBAzvLgHUne4/R
-X-Gm-Message-State: AOJu0YzE6u6YP7p/w9y6LWgQUkLA6uBgisWWXjlIFBI7ODmvxX5WBtOv
-	IRlGmNDrzTES1CxAdwIBBWWo/gtAX85yCcdPOzLpNW5jw2Wn5fmjkbi1l6Ri0Sc=
-X-Google-Smtp-Source: AGHT+IE5OyEhveFcUAtoaVHeQx6Q9QEh5xiYR0uZxQSYMrJpf+ubS8v9LD0epdhy9PvZtkshzAQd/Q==
-X-Received: by 2002:a05:600c:17c7:b0:426:654e:16d0 with SMTP id 5b1f17b1804b1-4267018b105mr69388925e9.0.1720701249790;
-        Thu, 11 Jul 2024 05:34:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720701251; x=1721306051;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LAFQBuBHIxkQvbv8fOdzuOd5saHrgFyg5FB8jBW+qBE=;
+        b=YNN5JWFMtXAKZ6hEVCrjOiuL6C62bf1NifgQNNVUBQvOIpxpXVs+qA1bJB0NIHyorq
+         M3K6UohCpYwFnl65fqFAF3PNpCoTec5SS4UEeAa/QTsAevBXoua4vCwY/qm7XZHR6pJa
+         KOFqMrgmwWSgiRfHGCuV9pVTKFP+2nzTyp0xGD7X4ZoM858c+rKMCcEeTz1WimavPD2H
+         S/MisV14JZaYOqWU6EH4M3gyhs81PAOhuofMeZa8rVkjVbzjpS5epOAMabYIPmWteNHY
+         3hL1G1QZ5o9ikziru5oAAtrPsbB1jPq4zi0CBrfZVOZx1XvPnAHqn34m/xk5MIZYtafR
+         FnKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmB5osc87PvQqtTj3XTvP80IAWIVqI8B9bh+dHI4Cv1NfYH0Gh3W2QIQFX4as/qV0+GttVawDZqKCPGML5D9MtWCqWoAj7unQNcVM8
+X-Gm-Message-State: AOJu0YxULrpsJmMN2GklD4NOA/Y8J+VZM5t3LaXKBrGADQZVI2/NMj2f
+	LeHU8zoR0M/BguKqOnAwLS5Zo5I5LTyA8ahrp8inkw9ZRd2V2Hq2OCYI4lcOnPE=
+X-Google-Smtp-Source: AGHT+IFpavZbQE94svJyuAh6eTlEt3fIERDL3R/CcPSJlAFPUb9Zk6IvoUXtrZbD2FDIq2wriausKA==
+X-Received: by 2002:a05:600c:6d4:b0:426:6b85:bafb with SMTP id 5b1f17b1804b1-426707db6e7mr45894665e9.20.1720701251335;
+        Thu, 11 Jul 2024 05:34:11 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f741fa6sm118583955e9.45.2024.07.11.05.34.08
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f741fa6sm118583955e9.45.2024.07.11.05.34.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 05:34:09 -0700 (PDT)
+        Thu, 11 Jul 2024 05:34:10 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: vkoul@kernel.org,
@@ -82,10 +84,12 @@ Cc: dmaengine@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 0/3] dma: Enable DMA support for the Renesas RZ/G3S SoC
-Date: Thu, 11 Jul 2024 15:34:02 +0300
-Message-Id: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 1/3] clk: renesas: r9a08g045-cpg: Add DMA clocks and resets
+Date: Thu, 11 Jul 2024 15:34:03 +0300
+Message-Id: <20240711123405.2966302-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,25 +100,34 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+Add the missing DMA clock and resets.
 
-Series enables the DMA support for the Renesas RZ/G3S SoC.
-It adds DMA clock and reset support, updates the documentation and SoC
-dtsi with DMA node.
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a08g045-cpg.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thank you,
-Claudiu Beznea
-
-Claudiu Beznea (3):
-  clk: renesas: r9a08g045-cpg: Add DMA clocks and resets
-  dt-bindings: dma: rz-dmac: Document RZ/G3S SoC
-  arm64: dts: renesas: r9a08g045: Add DMAC node
-
- .../bindings/dma/renesas,rz-dmac.yaml         |  1 +
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 38 +++++++++++++++++++
- drivers/clk/renesas/r9a08g045-cpg.c           |  3 ++
- 3 files changed, 42 insertions(+)
-
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index 1e471426d4af..8a3ec5780722 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -193,6 +193,7 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
+ 	DEF_MOD("ia55_pclk",		R9A08G045_IA55_PCLK, R9A08G045_CLK_P2, 0x518, 0),
+ 	DEF_MOD("ia55_clk",		R9A08G045_IA55_CLK, R9A08G045_CLK_P1, 0x518, 1),
+ 	DEF_MOD("dmac_aclk",		R9A08G045_DMAC_ACLK, R9A08G045_CLK_P3, 0x52c, 0),
++	DEF_MOD("dmac_pclk",		R9A08G045_DMAC_PCLK, CLK_P3_DIV2, 0x52c, 1),
+ 	DEF_MOD("wdt0_pclk",		R9A08G045_WDT0_PCLK, R9A08G045_CLK_P0, 0x548, 0),
+ 	DEF_MOD("wdt0_clk",		R9A08G045_WDT0_CLK, R9A08G045_OSCCLK, 0x548, 1),
+ 	DEF_MOD("sdhi0_imclk",		R9A08G045_SDHI0_IMCLK, CLK_SD0_DIV4, 0x554, 0),
+@@ -233,6 +234,8 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
+ 	DEF_RST(R9A08G045_GIC600_GICRESET_N, 0x814, 0),
+ 	DEF_RST(R9A08G045_GIC600_DBG_GICRESET_N, 0x814, 1),
+ 	DEF_RST(R9A08G045_IA55_RESETN, 0x818, 0),
++	DEF_RST(R9A08G045_DMAC_ARESETN, 0x82c, 0),
++	DEF_RST(R9A08G045_DMAC_RST_ASYNC, 0x82c, 1),
+ 	DEF_RST(R9A08G045_WDT0_PRESETN, 0x848, 0),
+ 	DEF_RST(R9A08G045_SDHI0_IXRST, 0x854, 0),
+ 	DEF_RST(R9A08G045_SDHI1_IXRST, 0x854, 1),
 -- 
 2.39.2
 
