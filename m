@@ -1,187 +1,105 @@
-Return-Path: <linux-kernel+bounces-249469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E50B92EC22
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:58:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DAD92EC24
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62FEBB24D8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:58:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F982B24EA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB29216D334;
-	Thu, 11 Jul 2024 15:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8C016C86A;
+	Thu, 11 Jul 2024 15:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hfU2yAWd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4v3JfNu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B6A16C870;
-	Thu, 11 Jul 2024 15:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060C816CD1A;
+	Thu, 11 Jul 2024 15:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720713495; cv=none; b=Beqb4J7xjB0yafVGJYnZYE2/yLJ9W/TDQ9M6IHP/4Me8oOTRpD+spYFqazcZ0NPeriw8mOeo+rITfXdI4MiLrfPL6+bky+92JxI+WQIc9XWRTGwLphAFSd2jyagukuORuA0rtsflUMOQK7dYne7vRJqM3C7SBbVOilDKKNqSfVk=
+	t=1720713507; cv=none; b=fhVNQ/s+P1Vz7BqytmZ8QjxvQKb0D2lMQ+e2VcEJXlY39RKgh9dy4dIBMf7L9xCHkN+KiK9DSL7tg3WFz7ZLoOUk7EzUxyMJ3qSFXPABprSmd/Frw3dFbXOs29FiPrv1Oteb9OvGRHRB7cWKjhwcl5Z1TAULNG1a3t41DZO2RIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720713495; c=relaxed/simple;
-	bh=rG+rhFqRp+IXWkMK/whHaioY+dau+YVIg0mAS0SkFME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mg8rrXQ6LBE7/Ss+LisSIwpLAU8/nIW3eDuzXec0ICF1hn42DzHfNA8d//sjWnlFEQVfRPtmGA2ayncRam8vLVxm31zOQ7pEFywv19tSID/5GyzXZZDnKz5ry5VJWa9CQbmsIakb8T86AdEB0rv0UXIGrZa291nUjRZhs/Fyw+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hfU2yAWd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BFSF2L000723;
-	Thu, 11 Jul 2024 15:58:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=s
-	rw9iKFj3XZzXf9us0yVA0qIGq9Hz+UF1sQHulaTChM=; b=hfU2yAWdOEm1ZA3Yp
-	EstnV6q+S01JuBTKtmTaBuHgkwz4ojN6k3L/UUHASAaWI4wyP4Xtww0SZTUc8uIp
-	sNpQi494Nj6XBcas+EOJp8Kgcf+Gsv3oTVcxd7X7CscAdXqC8NDLfje5W7sZREFQ
-	/2D6DLyy7olZdMZXS4YSBaSCrB2X5gVcZK5WxY+CwiF5pLU0W+9Q04cawgc8yXa/
-	scliWSe0nCXv8jhlp4PF+t3IZV3hdkp2nNkeOyUovj1a026PqTYUL4eM9Kj8ZxWc
-	8lQRnenPXbeZoJlzsaNecyXmHkXBb69sAtmnodcfhZcFBDuJvvOs/WylzLE6nJv/
-	6nMVg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40aj2hr2vb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 15:58:07 +0000 (GMT)
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46BFw6jr014949;
-	Thu, 11 Jul 2024 15:58:06 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40aj2hr2v7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 15:58:06 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46BDi8HU013992;
-	Thu, 11 Jul 2024 15:58:05 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 407jy3h86m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 15:58:05 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46BFw3WR26477138
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 15:58:05 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0941158054;
-	Thu, 11 Jul 2024 15:58:03 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6220D58062;
-	Thu, 11 Jul 2024 15:58:00 +0000 (GMT)
-Received: from [9.171.21.149] (unknown [9.171.21.149])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 11 Jul 2024 15:58:00 +0000 (GMT)
-Message-ID: <cf07ec76-9d48-4bff-99f6-0842b5127c81@linux.ibm.com>
-Date: Thu, 11 Jul 2024 17:57:59 +0200
+	s=arc-20240116; t=1720713507; c=relaxed/simple;
+	bh=/kb7Zqr8CizmlxOqhpma6Z+jQqLlPdWjb8V4xQKTfD4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GbHVK3cffCt37bOWkDW8PCubD3ne4wF2fxNGLZH6K3FFiMd2Udkj6eQUNnnKVQ2SG6LvHGOY/yGEfQ5zfQyF13/tlNXMkO3tN54D4GZCja42g8DudJkF5Jkwew6cZOdd+1IG7RmfsYunylPxe9m80fYAhmmDHElXgE17xbD1lVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4v3JfNu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92914C116B1;
+	Thu, 11 Jul 2024 15:58:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720713506;
+	bh=/kb7Zqr8CizmlxOqhpma6Z+jQqLlPdWjb8V4xQKTfD4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=q4v3JfNuMwYrhjXPVE9IaJv/sh3LuYuCUF7nZKiP0PLhPw01UztfSDgixd6Zzo8z1
+	 r/iL6IKk2ETqTe8fuwLlayCLJnoxwrXMom15WZcPUjlp+zGpeTNAFCk5uHgTd/fs4P
+	 3T1t+9Kp1PvXLJ63uhygT5JQNqhgQxm86PdiWkIUIVBu0eBwKx6Qca07WcnVGx3+0g
+	 znnu+x6lL1fsUWacMQChGGxWls9GHeLOLQ9IGX8fSzZ0x0c9+X+GJLhJYGSCRnxWxR
+	 azoyKsUpDvZhkJf/uF7sxSX+8qyo8YJKseuJGo/avBrJE5Mj5LujrDOMoMjpHfLFZD
+	 ZX6edUmxmsMhg==
+From: Kees Cook <kees@kernel.org>
+To: Kashyap Desai <kashyap.desai@broadcom.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Sumit Saxena <sumit.saxena@broadcom.com>,
+	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	megaraidlinux.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] scsi: megaraid_sas: struct MR_LD_VF_MAP: Replace 1-element arrays with flexible arrays
+Date: Thu, 11 Jul 2024 08:58:23 -0700
+Message-Id: <20240711155823.work.778-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net/smc: introduce autosplit for smc
-To: Guangguan Wang <guangguan.wang@linux.alibaba.com>, jaka@linux.ibm.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
-        guwen@linux.alibaba.com, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240709160551.40595-1-guangguan.wang@linux.alibaba.com>
-Content-Language: en-US
-From: Wenjia Zhang <wenjia@linux.ibm.com>
-In-Reply-To: <20240709160551.40595-1-guangguan.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vQpjI97_zB7F7tl5rsq4ti1R3Ve61A55
-X-Proofpoint-ORIG-GUID: ubPATLYJIH5QSrZKPaZiKGKNCXWhVyUM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_11,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 priorityscore=1501 adultscore=0 spamscore=0 mlxlogscore=996
- suspectscore=0 clxscore=1011 impostorscore=0 mlxscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110111
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1183; i=kees@kernel.org; h=from:subject:message-id; bh=/kb7Zqr8CizmlxOqhpma6Z+jQqLlPdWjb8V4xQKTfD4=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmkAEfa7KwhRVpfAoIhUA1enNGEKSXbZVAnPWPY hBZ9DcxlxuJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZpABHwAKCRCJcvTf3G3A JoZfEACosPugyKJoe5or8jFLjhMs+u0AdJEEgExD9cySuhAWKko7ncWLkfZAQeSbpEjI1BCmJTb FHkmwTY9BP0W9EzNZnUgNiJlPJtEENShiwyQ7vMcFfgCVif53HQ1yugLtMEIdPX3yzI6fm++G1S c4IPV1uTRcTo5qhawyiI7hB2GphYL0L6hb+5TWpSpldFKDBVxjAcoVld0dU6C+zlk6YBjFjEW0b eYLuixNSV+QXBbCowbqLLVmhaA2owZvKGWeSFVrNCETFLX5U5B6HqShhBFublELsX/Hg3lF4gnW tnIT1P3VS6qnt+4Q8ku5uu/8gJrFrg7LZ43gVAF7DDp+gGMqItLwkhg+LDO7X4jeHarReInUCfm 8hN8IClFlbCRxCFebNeU84kIWKJpsPjgIx1x44V0Rw/+nsyjZoWjILHmxmdoGOYkfdTD5jkAfuS 3w/ouBxTlZqRXfF+BthI5WDLLCa3RXq1bv16N1YtlvAbp3FFQhA0BGtQT2sa0yGL215YZr6bV5Y a7nzeA8JBL05cFtn+9q7jNPd7KYDf40tG1pHP5LWCVQ46YODXzpau1k2vEQ5B4yalp4LZDsv+Zk zik91/P7BHmGBRuPQ1wxAACYGkJeuLickRxv+trBegqXN+aO9X/bbjOwRM6MU7P6LHz7FR704VK /UZ7fopjNnSEH
+ Kw==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
+Replace the deprecated[1] use of a 1-element array in
+struct MR_LD_VF_MAP with a modern flexible array.
 
+No binary differences are present after this conversion.
 
-On 09.07.24 18:05, Guangguan Wang wrote:
-> When sending large size data in TCP, the data will be split into
-> several segments(packets) to transfer due to MTU config. And in
-> the receive side, application can be woken up to recv data every
-> packet arrived, the data transmission and data recv copy are
-> pipelined.
-> 
-> But for SMC-R, it will transmit as many data as possible in one
-> RDMA WRITE and a CDC msg follows the RDMA WRITE, in the receive
-> size, the application only be woken up to recv data when all RDMA
-> WRITE data and the followed CDC msg arrived. The data transmission
-> and data recv copy are sequential.
-> 
-> This patch introduce autosplit for SMC, which can automatic split
-> data into several segments and every segment transmitted by one RDMA
-> WRITE when sending large size data in SMC. Because of the split, the
-> data transmission and data send copy can be pipelined in the send side,
-> and the data transmission and data recv copy can be pipelined in the
-> receive side. Thus autosplit helps improving latency performance when
-> sending large size data. The autosplit also works for SMC-D.
-> 
-> This patch also introduce a sysctl names autosplit_size for configure
-> the max size of the split segment, whose default value is 128KiB
-> (128KiB perform best in my environment).
-> 
-> The sockperf benchmark shows 17%-28% latency improvement when msgsize
->> = 256KB for SMC-R, 15%-32% latency improvement when msgsize >= 256KB
-> for SMC-D with smc-loopback.
-> 
-> Test command:
-> sockperf sr --tcp -m 1048575
-> sockperf pp --tcp -i <server ip> -m <msgsize> -t 20
-> 
-> Test config:
-> sysctl -w net.smc.wmem=524288
-> sysctl -w net.smc.rmem=524288
-> 
-> Test results:
-> SMC-R
-> msgsize   noautosplit    autosplit
-> 128KB       55.546 us     55.763 us
-> 256KB       83.537 us     69.743 us (17% improve)
-> 512KB      138.306 us    100.313 us (28% improve)
-> 1MB        273.702 us    197.222 us (28% improve)
-> 
-> SMC-D with smc-loopback
-> msgsize   noautosplit    autosplit
-> 128KB       14.672 us     14.690 us
-> 256KB       28.277 us     23.958 us (15% improve)
-> 512KB       63.047 us     45.339 us (28% improve)
-> 1MB        129.306 us     87.278 us (32% improve)
-> 
-> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-> ---
->   Documentation/networking/smc-sysctl.rst | 11 +++++++++++
->   include/net/netns/smc.h                 |  1 +
->   net/smc/smc_sysctl.c                    | 12 ++++++++++++
->   net/smc/smc_tx.c                        | 19 ++++++++++++++++++-
->   4 files changed, 42 insertions(+), 1 deletion(-)
-> 
+Link: https://github.com/KSPP/linux/issues/79 [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Kashyap Desai <kashyap.desai@broadcom.com>
+Cc: Sumit Saxena <sumit.saxena@broadcom.com>
+Cc: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Cc: Chandrakanth patil <chandrakanth.patil@broadcom.com>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: megaraidlinux.pdl@broadcom.com
+Cc: linux-scsi@vger.kernel.org
+---
+ drivers/scsi/megaraid/megaraid_sas.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Hi Guangguan,
+diff --git a/drivers/scsi/megaraid/megaraid_sas.h b/drivers/scsi/megaraid/megaraid_sas.h
+index 5680c6cdb221..84cf77c48c0d 100644
+--- a/drivers/scsi/megaraid/megaraid_sas.h
++++ b/drivers/scsi/megaraid/megaraid_sas.h
+@@ -2473,7 +2473,7 @@ struct MR_LD_VF_MAP {
+ 	union MR_LD_REF ref;
+ 	u8 ldVfCount;
+ 	u8 reserved[6];
+-	u8 policy[1];
++	u8 policy[];
+ };
+ 
+ struct MR_LD_VF_AFFILIATION {
+-- 
+2.34.1
 
-If I remember correctly, the intention to use one RDMA-write for a 
-possible large data is to reduce possible many partial stores. Since 
-many year has gone, I'm not that sure if it would still be an issue. I 
-need some time to check on it.
-
-BTW, I don't really like the idea to use sysctl to set the 
-autosplit_size in any value at will. That makes no sense to improve the 
-performance.
-
-Thanks,
-Wenjia
 
