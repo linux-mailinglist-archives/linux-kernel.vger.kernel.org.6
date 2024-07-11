@@ -1,247 +1,147 @@
-Return-Path: <linux-kernel+bounces-249007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C54792E4F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:41:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911DA92E4F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90325B21837
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C66B281295
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BC6158D98;
-	Thu, 11 Jul 2024 10:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07C9158A35;
+	Thu, 11 Jul 2024 10:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="cKsxTL4S"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11021118.outbound.protection.outlook.com [52.101.65.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vzDk7b7k"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F3D156225;
-	Thu, 11 Jul 2024 10:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.118
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720694454; cv=fail; b=YJpf3bBJTPeD5LAX4MBAFl7oEZEwzGxAYfrSCX7YxnmOmkmGZf4XIs4Yp2455Igy5olJKV+Aw1vhtIfHEb8/2wDxFD+BMSrxsz1P7p9es7s+MXPH0sW8Gu9M+qun2wuZQnzlgoFCCXNewZyi2zo/URNgQ7U+f9yzNNRvheikjLQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720694454; c=relaxed/simple;
-	bh=wV/eGO+yXAIhI2dGkgQHRBRo4Uc17eVvg6DVpzJJp4A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uq6GvxORrZ+gVPXDTmTDsRSq4C9C2V7/cT7y4Fd1yKx0Pq0NGKDLB+q4/nsrvX/cQs60m8sxcsK9+VoukPy9OY3Dc/V8dFiXz88JVkH2TipqPU4t+c1gHIsONiNC0yA4BOMMaurbyZDOBbGIzQtgpvO6Pi8cKoML/3llur7Ywhw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=cKsxTL4S; arc=fail smtp.client-ip=52.101.65.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eC0tOUAPZ9VFOOOBCnb8DrVLEb6uUpfGbzUb2jaOlYOm9VKd5jyLD3Q98HYgZhso9Xc1CEL9+/wscSB1oWb08W2BHa3sEt2mfwpWaTmUTyGMUVVa7fLPUcCWViKBmAnAk61qLXOauO1+I9PpMxTmb/mPdOhV7JqiV/b1WaLs3yn/GuttmF3yJGBdM/H105S7LMt7Oyy6Fp4dsm/9BGZOTSxQUnPvAX9NN8uUsrhz5og1NEhcjM4FUCpcLnYh94qDJApjx1J34F3Mlb+RRlD9m1cHvm7Z8k8OC5xTPEgNKC0TZzz+ZhCgaKiqnL71VZDqwNGptzxAORhgn5TljqG5fA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qBZ04eraB/9xDAPPezpjkPUljeHNi9lbTV0AobNXjIw=;
- b=uf0MI30Ra72DWrUcLkd6lfrAWlNxZMurLIjHA5QTC555U8JwmXysxZNFKerdeM7laeMHiOxF4zmGZppXY4lut78rxZrtn1rXxwLdyIa+ciTJzf/0j3mWLX388UctcdTo9/Fve7zWeleHHxy6FY8gTOHB1V2O5fThyhsBf3g2wcPcp4NnLQ62n4p89pz3+bt3V+i9mQNyZle/x1ymJIDsY40Gv1BmGxFRO6aiJP2pt+8tlFwmtgToBH58+kytCfP4Azg8RalnVTbfOfMQF9il6asDa2hPOY0lhUvTE4wwA7LzbeFuwV900Brs5jjenQ8NqgJ7I7nBHvdjkW+bhFHxFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qBZ04eraB/9xDAPPezpjkPUljeHNi9lbTV0AobNXjIw=;
- b=cKsxTL4SQcMixq6JtKKmsx8HA+bQiQ3IPAX7kY7zpqsgAhmkoqtSNLB/MudrszQJPjRHw5U1dCA4uUZSF31Tn5qt6+8D8Hl3nMNFLA2+dnJPaD7qX360ovfz+ilR1uYRV5/zmk39x7N44tZRDnlUaYlicer1fR5sbo35Op8v+B4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from PAXPR04MB8912.eurprd04.prod.outlook.com (2603:10a6:102:20f::22)
- by AM7PR04MB6824.eurprd04.prod.outlook.com (2603:10a6:20b:10e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22; Thu, 11 Jul
- 2024 10:40:47 +0000
-Received: from PAXPR04MB8912.eurprd04.prod.outlook.com
- ([fe80::7a71:bd84:cbb9:add8]) by PAXPR04MB8912.eurprd04.prod.outlook.com
- ([fe80::7a71:bd84:cbb9:add8%4]) with mapi id 15.20.7762.020; Thu, 11 Jul 2024
- 10:40:47 +0000
-Message-ID: <fcd0db64-6104-47a6-a482-6aa3eec702bc@cherry.de>
-Date: Thu, 11 Jul 2024 12:40:45 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: ov5675: Elongate reset to first transaction
- minimum gap
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Jacopo Mondi <jacopo@jmondi.org>
-Cc: Johan Hovold <johan@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240711-linux-next-ov5675-v1-0-69e9b6c62c16@linaro.org>
- <20240711-linux-next-ov5675-v1-2-69e9b6c62c16@linaro.org>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20240711-linux-next-ov5675-v1-2-69e9b6c62c16@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA2P291CA0010.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1e::16) To PAXPR04MB8912.eurprd04.prod.outlook.com
- (2603:10a6:102:20f::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF6115748C
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720694536; cv=none; b=SnvKE3ckh9rA+O0/K4RSKNuPopUUmkxHk6C6sP+fGP92KgnjolzTDZU67yWEBJxzXOIQKrCc+FOV9u3bimJIaOxCOM5LS+Uw1lmvvoN32G4wfb/mSjDfZqmBDkBswhpTKlH1/kDtQN6VtJ4w7hT7qmTBRK/GyJfOupZxJZQSgVU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720694536; c=relaxed/simple;
+	bh=U96uAEEwrb/sj5LnOKS9rX/+t0nhVAh5wKtzNWTuP0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lqnywqvzSy4XkfPZrOvxDbUwv+z+6LJubc6g8N0kFsYPM2FVZRlFe6q8fNhRxXlrYZD0il/2FE8gcOczOZwmExLIl2wmw7PzUy2RKLu7qBS8wNC5JKkrLPlMytih+j9ruhASCGC/BEHoh2rzkLG3cbQIbhp2zDbgcQlMHdz0qbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vzDk7b7k; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so1209800a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720694533; x=1721299333; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=PtxqIAWIiTUKLX6AXhXVggOKB10pYOSotqE522q5edk=;
+        b=vzDk7b7kjO7Rv/QifSKEEGNb82fgT7sRjGucVwW3WZqxR7EgQxDYVN+kMeIai1PGue
+         HOTCeErGIAA1g9qetcmoCwv53BZJAddXxBXvp0IxseQZ34lgmLPoxuoU/V9s8KG28Siy
+         xvaYZVhWV/dO3pw9gtZMJxVF/F00XDvF2cH4itb38S3E97s/UVMU00ba8t31o3CGSgOz
+         qJeEPK9hQo0bYyV+4q2qJeCtH9qyDj/2YHBZHrydAU5VkUY5k1rBOzHZf96t0G1d/ARZ
+         4NOfsbOt1MCgcxgxkudOMhVGhVnajrLN1ZAxO9/wOUOTTz4+s/4pQzd51MmSb3sDGG6a
+         CaHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720694533; x=1721299333;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PtxqIAWIiTUKLX6AXhXVggOKB10pYOSotqE522q5edk=;
+        b=SBemMVT0sqsmcP/R22o8F5M7CFCY4d3g/zGP3iJ7qsIQ/7UQRYY4UBbifI7CGu5KIq
+         4eQ8QX5deZztb6KY/9n0xsrU/cX+jfe8mZu8EjMJ5GpBU3lypqFnvdcOiClkzh1W81Cn
+         tkE/mTVCn+PM3rMBd6FrhSq+JilLngpLuL5rBaVGuCHvAa7Ov64uLPcCfuVTJUewlqhg
+         UY/I+cGQgUesdGn2HLVEkN/2j314Au/ySFvDXJedHB6oJjxx6kRj5xqJe0KWazLrWLzD
+         iHpVp2hixZbel5dm1jiQdjh+bMAt3qesQt7Al6mtAvQ4/Cqrn8NF9U5opSpn6DptXEzM
+         QeBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG5QXryhtU6dpLdjMTR+VkPQeneTFm6mm/anaPaVUPT3JKHahwKBPneGP2gsmvRhhPDCUZo9lHqjwEPnsTtnmSYy5yYftzTn1c6A63
+X-Gm-Message-State: AOJu0YxVtFb3oqSAasBzXzALHiK/LusoTfX0S8WgJz8wDo1W6ebSPLdU
+	KsFnewuU/l3JQtmVF+st03Bu76bh+o7IfphA8As2CCb7awytLn0uiIVwFn64LWs=
+X-Google-Smtp-Source: AGHT+IHk9aH+XY0uDq3os2yKd4DG51Hj7jKRYmxb0lTlr5Pw9fdKfxrwFD45/AkbwDIihG4ST2Px9w==
+X-Received: by 2002:a05:6402:50ce:b0:57c:c171:2fb6 with SMTP id 4fb4d7f45d1cf-5980c8f9a89mr1901423a12.1.1720694533179;
+        Thu, 11 Jul 2024 03:42:13 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bba54b07sm3293826a12.14.2024.07.11.03.42.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 03:42:12 -0700 (PDT)
+Message-ID: <5c4b7519-50e2-4de8-baa6-39a328886d34@linaro.org>
+Date: Thu, 11 Jul 2024 12:42:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8912:EE_|AM7PR04MB6824:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8cf51848-3045-4a09-2330-08dca195ec8a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VkZzNmM5aVgxdXFYZWZYS1VRei8vT3RJWk0xR0lqVEgwcmN1SFJKUHUwWmJD?=
- =?utf-8?B?cEEvWGhqbjJSSG4wRjJzaWIrR1JJcmdoaWlWNkRoNWhLZzVCSzV6MzVKMzh4?=
- =?utf-8?B?aXNLQ2lPQURERnI3cXpmVHBVR09OdFdqSFNLTFhXU1pSSlV3ZHdOTjIzSnBB?=
- =?utf-8?B?TEVzWHJYY2p6ZTZIYUZ5SXgrNkFUZGpkWkpqdEJGOXVnUVJ5LytMSmRSOGYx?=
- =?utf-8?B?bEFoTFcra3NEY1pDVGxaNUdnVmxFYzNOd2t0UHl4cktoMFRmQklzVE5yMEtF?=
- =?utf-8?B?ejhoc2dCQURxQXFBMUI5MTJOYyswbW0wd0crZGNwanZ3Z3FkcVdnOFhKczIr?=
- =?utf-8?B?N2Y3OU4zd0ZVdzVtTUJ6L1dIQXp0eWdLWTVlb0VQYWRHNEJVa0lzWjQvb2VQ?=
- =?utf-8?B?QWlucm1HWUFzN0drbU5lZjBwQkFxbEpTNnNIZ1J0OGRRd0VSeUFNcHNIV1pa?=
- =?utf-8?B?aEh1dkNuazJ4NDNNVkkranhqS08xZGZDR2d1d2tmUHpQWi9qVS9PSnhrOFBx?=
- =?utf-8?B?dVc4VXZzT25UMUZpRW5Jb2dzOUpNa09lcm1ZN253aXlrYWZxdXVmMm9aRW9Z?=
- =?utf-8?B?eTkvVGRBQUNBN2RVOHBCTFZaL0VkeFhNQS9FY3JoWld5V012dFZBTzcxN2p6?=
- =?utf-8?B?bXd6SnY1SGJxZ0xqZ2tDMFo3Z1hVQmo1MzF2TVd2REtzZXJBbGNhZ0tyUUxF?=
- =?utf-8?B?NDJRWXNQaVQ2UE5CWVdmMWN4eXRFNmRLTVZ2Si9jY1YxeDdHU0Y0aEhpTWJF?=
- =?utf-8?B?NE0vb3piRUpCYlJ6QVF6LzdoSURNZy9IdXdHVFdxVmNHMEw2byt2ZG9kRjFQ?=
- =?utf-8?B?YnNGaGIyWjgwbFN6d2hQYmZ2OW1SdStULzZtcnBUdXlLRkxlK3pxVHE4Tk1t?=
- =?utf-8?B?V1lZVGc1N3gyNk5pSlY1Nk5PSTRRdmRUUmFzY2lGMlpFTUZGYTFVeTFQaHRy?=
- =?utf-8?B?TWpvNU9WcE9VeHNMYnlZYkRNOXdDL21JcVN0K0t3SjlHdWVrMS8zbTVMSlNx?=
- =?utf-8?B?M3JielhpRlZ4emNQK2hmbWhsZy9Hek9kdk9pZ2RxSEhoL0FwanFzeG5nUTRN?=
- =?utf-8?B?NUF1TGltOWxsSE81cm5Rc3RXWVZHRUZFdU9mVU9JRXFPNys1Y0lWc24vVGo0?=
- =?utf-8?B?cjJjU1VFOHF5Zk1BaWxtMUpGOVhKNzg4WlZKbmxWcTVWODlhOHMvSW5GS2ZN?=
- =?utf-8?B?WXkwM3FWMFhuMzRRakhtZGlobCs3UUdCaXpianpWQjZjRHJWTWFwSHlhbzRE?=
- =?utf-8?B?aHJmQXQwb2pobWZwZ2UyQ3owdTdzL3hjOVk4OTRPR080N25hYSs4RjAweFFr?=
- =?utf-8?B?Y3laVzVpdmloWllhVVRwZnpMUzBpV2xnamdheEZzOVk0Tyt4OFBCczFrU043?=
- =?utf-8?B?SGw5UFN1akF0dFdGczE3NVgrUW1SOFhGenFKMDhPOG5UNEROSE13MTRhZFVx?=
- =?utf-8?B?c0F4WmRCd3dWdkFLQzJnd0NwU0cvNVlUdUlCenlpcjBEUENYV1VvV2doVDR0?=
- =?utf-8?B?UU1RcC9TTGk1eCs2NkxFWW82Y0VyZWVJMGpyQVMxcUV1OWVjclhWTDZ1eStt?=
- =?utf-8?B?N253M3dmc0NzY1IxUjdkVWlaOVNia1ZpR0pOUnBocEF2czVCRlhqeHJ3OWly?=
- =?utf-8?B?WnpuYXdyODQzTjdQZ21VWHJxZmxaaVZaZGRGUHQxZEZPUkJHVUN6elZUZzRC?=
- =?utf-8?B?N3FTQng1L0xYcHF5NXgrVklGVjQ3eFJ1QXRCZFRBMGR5ckIxU21PYjVYVTg2?=
- =?utf-8?B?ZnlpRU1TK1dRK3d4RHNiN0hxeVA1aDBSWmRjSkJJRENVNlRXR0RVZThycStm?=
- =?utf-8?B?am52VnJYWXBCdFVYc2NUdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8912.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RnU0V2IxNXROQkgyWGw3em9Zb3RidlhDUFRCNmV2SlovK2FpcERMTmFXYitm?=
- =?utf-8?B?blFQTTIyUkRRb09tZUFLcmVaWGREbHlXaFZSWkNzK2laV3c2S0I1b2VmR2NC?=
- =?utf-8?B?ZDhLaGRVNjVEeWR1M1lFa21RU2dHUXRKTW9kdU5Hbm5lMTZxVDhyN2prUDJQ?=
- =?utf-8?B?THFVbTI5bTNUR0FiVXFmTmZLVXVQUGhoQ1JuaTg5OElCN0Jpa0p1U2diR04x?=
- =?utf-8?B?QytnSXJuMDZxN1VDNGtDQnpIdzE5enl2SVlnR1hqQk9NSmhRYWFRbXlwOWRP?=
- =?utf-8?B?SmRGRzMwOStmdEpXdkNwYjMrSjdHcjUyZDNXSnFRMCtCeVFtcGE3ZFJzVTZi?=
- =?utf-8?B?RjRJMGpiZDV0TzViWFRLV2VzclUraXFDSEQ1cTlSWDQ4RWFENnBFM2x4K1hm?=
- =?utf-8?B?dWJ2OFY2RXRhWFB6d1c5bVZZQUxsdlZJNElId2JoRmg4b0hMN2xTdUxWS2x1?=
- =?utf-8?B?MmJ3RFVpNEdxa0UwZ1paZW9TQUdmMUNlb3AyMU8zM1hxRzd6cW9JK0ZhcEhM?=
- =?utf-8?B?Ty9rNVpONk9FM3psU1ViM0JpUnBsbDV3Si9KTklDenBSMk4zQ1dXTFZQWk53?=
- =?utf-8?B?WUwweHpxRTA1UmwzYkxMRnAveWRYa3NhZHBsVlNvbXF6cTF0LzZodU5od2tW?=
- =?utf-8?B?a0lkcGtmRkFacVZ4cXlISnhwcGFxdC9rM1Z6NFprSkFBaUNpVkFubGl6bDdm?=
- =?utf-8?B?ZmdnNVRqRk9tQ2FtK092VVA0VnhyMm1TcEIxcDVzR0ZTMGUxSXlsNVRMdkFC?=
- =?utf-8?B?dm53azVKYlRBM0ZDK1ZvZmN5QjlzRFZqbzk2eGZZT1l0L3J0ZTNNVFg5SUJN?=
- =?utf-8?B?ZWttUlIvSWl0WWtpOFN3UzhOOVZnR2F0U0UySW1kWUEvNUlNdmIyVHI5RW0w?=
- =?utf-8?B?QVprbXJoWmFLOHlpTmhZYXNhZGZiYzhBaWNpMWpOYVVJUVJqK1d3WmdYTito?=
- =?utf-8?B?SWx0bm1PZjVYNGxVU2J0T3ArT2taNW9HSEVWM24yb0ZwUlR2ZkxTWEMzSDUz?=
- =?utf-8?B?ZlhSTWpIRzhWQkhwZ0wySlUyUitIQmxOZHlITXl4WmZReDgvYWhkRWZSN3Rt?=
- =?utf-8?B?MmNRdnFqYXo5NWxjZG8rU0xUdHZoTmVINVBNS3FteERudE5vNVZaZUJVcXRT?=
- =?utf-8?B?TEV1MHA1dGt1bmtiWDhMaGpzZ1dTTVdrL1lkK1NxeVhkRC9pRW9TZEhFbWti?=
- =?utf-8?B?RXROdktkOEpHSlh1UGVjTXNTTFlXZEd0Vk5rL2VUWlIvT3VXOHp6M1MwaDFD?=
- =?utf-8?B?S3NkZ2JGeUdVUUxaZGF2bksxZ3VwQWQzZi8wZ3lXVXgyN1NaamFhd1RTVy9k?=
- =?utf-8?B?QjVwcFlOYkZ2UzJtR3dPSUl1eEdYbTlZUjljWGhiWWlibXlONEdWa0pwWTdm?=
- =?utf-8?B?bHp2WisxSzZtZ2h3SVFqbWRzUUtaODhDeFVsWXlwUE5zcEJPa1BnTGVicFlZ?=
- =?utf-8?B?ZlBSQWxwSnlBT2o4WmhTTkhkOVloMUN2VTNLS09XamRSSFNwcVFhVElHdWJl?=
- =?utf-8?B?VWx4Uy9ZTUV5VzRCS2FhOVVOL08rUWY3VC9qTUVDd1E3QVB3Y3NZUzJkaTAw?=
- =?utf-8?B?QWFNOHBGOXBLNjVsNzlVeURrL1ZXcHdGTnl6cU9kSDVGM0cyWDJLNlUxa1VM?=
- =?utf-8?B?bmtMWTZhZG1FZWpUa0lJbnp4bXhhMFdvTVJUTGk4U0lyTW5pTTNiblU2bTJS?=
- =?utf-8?B?SzNrV1EwdmRWVWFQNzdhc2NzVnZaYjBsa010NGpHQVR2THJyeVY5NGRaMEdq?=
- =?utf-8?B?WG5zUm1MTVhXd1E3cGtuZ3U3THpqZktNWkJNYVBtVk0vemI0aVpZS0lSTjRu?=
- =?utf-8?B?OGo4NUdldUd1WE1BUzk2R3ZacUk5NzJlRnh5TTdtRnBxZnI2UmlNOWdTWnA1?=
- =?utf-8?B?UGhUa1NLa3dEdnNCVDZsZmoxZDlsSkowaW4wTUszS3J5UStvTEN3UzZiQkMx?=
- =?utf-8?B?NkJkZnlCT0JWWlVWenBkK0ZPOU41YXJRWkRUVHphWmJTYkxqRkx6QW52RERw?=
- =?utf-8?B?QmdjbGJ3ai9wOXp0c29qbWhTaHk4QWlZZ3VFK1d6c1U2SjdvQ05TTm11ZS93?=
- =?utf-8?B?S1RlR3MwZXpQUmJEdmtSVG1QZEVCS0J1NDlEa1R0WVgrK0VWYVMwLzdOazVT?=
- =?utf-8?B?Y1Z2VUhJTzlWdWZGRzF3Z2l1TmxwVVJoSWhORzhubjRNZXV0OEtmL0ZBSGV5?=
- =?utf-8?B?emc9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8cf51848-3045-4a09-2330-08dca195ec8a
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8912.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 10:40:47.1734
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0yJ0vCfWY2jIHpb4nKTfN7lSi8sYATnT/57KJ+6noLW7uJG+mixxGkAQnYyWLhE9xYC21LPfPLFnhea8hBIyYfUAPJz+jx7wtrErI3g2ZVA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6824
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] drm/msm/a5xx: properly clear preemption records on
+ resume
+To: Vladimir Lypak <vladimir.lypak@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Jordan Crouse <jordan@cosmicpenguin.net>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240711100038.268803-1-vladimir.lypak@gmail.com>
+ <20240711100038.268803-3-vladimir.lypak@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240711100038.268803-3-vladimir.lypak@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Bryan,
-
-On 7/11/24 12:20 PM, Bryan O'Donoghue wrote:
-> The ov5675 specification says that the gap between XSHUTDN deassert and the
-> first I2C transaction should be a minimum of 8192 XVCLK cycles.
+On 11.07.2024 12:00 PM, Vladimir Lypak wrote:
+> Two fields of preempt_record which are used by CP aren't reset on
+> resume: "data" and "info". This is the reason behind faults which happen
+> when we try to switch to the ring that was active last before suspend.
+> In addition those faults can't be recovered from because we use suspend
+> and resume to do so (keeping values of those fields again).
 > 
-> Right now we use a usleep_rage() that gives a sleep time of between about
-> 430 and 860 microseconds.
-> 
-> On the Lenovo X13s we have observed that in about 1/20 cases the current
-> timing is too tight and we start transacting before the ov5675's reset
-> cycle completes, leading to I2C bus transaction failures.
-> 
-> The reset racing is sometimes triggered at initial chip probe but, more
-> usually on a subsequent power-off/power-on cycle e.g.
-> 
-> [   71.451662] ov5675 24-0010: failed to write reg 0x0103. error = -5
-> [   71.451686] ov5675 24-0010: failed to set plls
-> 
-> The current quiescence period we have is too tight, doubling the minimum
-> appears to fix the issue observed on X13s.
-> 
-> Fixes: 49d9ad719e89 ("media: ov5675: add device-tree support and support runtime PM")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Fixes: b1fc2839d2f9 ("drm/msm: Implement preemption for A5XX targets")
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
 > ---
->   drivers/media/i2c/ov5675.c | 9 +++++++--
->   1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
-> index 92bd35133a5d..0498f8f3064d 100644
-> --- a/drivers/media/i2c/ov5675.c
-> +++ b/drivers/media/i2c/ov5675.c
-> @@ -1018,8 +1018,13 @@ static int ov5675_power_on(struct device *dev)
->   
->   	gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
->   
-> -	/* 8192 xvclk cycles prior to the first SCCB transation */
-> -	usleep_range(delay_us, delay_us * 2);
-> +	/* The spec calls for a minimum delay of 8192 XVCLK cycles prior to
-> +	 * transacting on the I2C bus, which translates to about 430
-> +	 * microseconds at 19.2 MHz.
-> +	 * Testing shows the range 8192 - 16384 cycles to be unreliable.
-> +	 * Grant a more liberal 2x -3x clock cycle grace time.
-> +	 */
-> +	usleep_range(delay_us * 2, delay_us * 3);
->   
 
-Would it make sense to have power_off have the same logic? We do a 
-usleep_range of those same values currently, so keeping them in sync 
-seems to make sense to me.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Also, I'm wondering if it isn't an issue with the gpio not being high 
-right after gpoiod_set_value_cansleep() returns, i.e. the time it 
-actually takes for the HW to reach the IO level that means "high" for 
-the camera. And that this increased sleep is just a way to mitigate that?
-
-With this patch we essentially postpone the power_on by another 430ms 
-making it almost a full second before we can start using the camera. 
-That's quite a lot I think? We don't have a usecase right now that 
-requires this to be blazing fast (and we anyway would need at the very 
-least 430ms), so take this remark as what it is, a remark.
-
-The change looks fine to me even though it feels like a band-aid patch.
-
-Cheers,
-Quentin
+Konrad
 
