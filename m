@@ -1,165 +1,144 @@
-Return-Path: <linux-kernel+bounces-249352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E8092EA7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:16:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A4DD92EA67
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AB04B2166E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:16:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 203BE281B20
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC9F169382;
-	Thu, 11 Jul 2024 14:16:30 +0000 (UTC)
-Received: from mx2.mythic-beasts.com (mx2.mythic-beasts.com [46.235.227.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5009116132B;
+	Thu, 11 Jul 2024 14:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="VHAOMFo+"
+Received: from smtp84.ord1d.emailsrvr.com (smtp84.ord1d.emailsrvr.com [184.106.54.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6DD80BF8;
-	Thu, 11 Jul 2024 14:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D6716133E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=184.106.54.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720707389; cv=none; b=NcpzENcfta8t+jw81Rqjga925Zt4O5E4svvVH3WjeDj9TT1W9nJuwspSyaAo6BfRyZ83uzKeSL8E3oGb9KCupoINcA4dSp5CjnrtpaHxbHd61yIGIL/QIb7tycOPDmlgRLvjGKXqr0WeDA1SECHC7R/me+UsKZ2CyxkF7jEmQy0=
+	t=1720707107; cv=none; b=qfa4sfJeHG1dfu8+cFR+Ai26VjiGg2v/N05I53e+TDHFrnS0nEYkHHRypnp9gP5CIBoJvKM2Oh/hUUsY6vqLSZp5QHhwGAIE8wE1bozqoJdFCqym+3uaD8IrjH8c/KooKXTpKMep9fKszT780+4R2ESzqKGH4AywK/u4TAg4wOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720707389; c=relaxed/simple;
-	bh=a9pdGR6wfxP8Mqh0V6yErEEF9QRi8fjHjcnxSjYsoJk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ia/J7COLeWXcGAc2RHB/kU3RYJtdjXqBYlci/Z3v/RmOIlVka7q/td3i6tDCcu+7f2LHf9WZpzwTOHNp+PXavO1c3itR8+bPuyvIMBcfgCY5NBTGBRAmggCQEQ6o7Qq+X44HNFgeFGMgWwP/BvpjesfKBbqYHsIvpf3VlzKXLE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk; spf=pass smtp.mailfrom=jic23.retrosnub.co.uk; arc=none smtp.client-ip=46.235.227.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jic23.retrosnub.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jic23.retrosnub.co.uk
-Received: by mailhub-hex-d.mythic-beasts.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <jic23@jic23.retrosnub.co.uk>)
-	id 1sRuaU-002GpR-2F; Thu, 11 Jul 2024 15:15:58 +0100
-Date: Mon, 08 Jul 2024 09:28:18 +0100
-From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rob Herring <robh@kernel.org>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- Marcin Wojtas <marcin.s.wojtas@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
- netdev@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_3/6=5D_leds=3A_bd2606mvv=3A_use_device=5Ffor?=
- =?US-ASCII?Q?=5Feach=5Fchild=5Fnode=28=29_to_access_device_child_nodes?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <4cf71de7-dc47-475c-bba0-a9e755f66d49@gmail.com>
-References: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com> <20240706-device_for_each_child_node-available-v1-3-8a3f7615e41c@gmail.com> <20240707175713.4deb559f@jic23-huawei> <4cf71de7-dc47-475c-bba0-a9e755f66d49@gmail.com>
-Message-ID: <6119CC81-5F47-4DA3-8C9C-98C7C87C9734@jic23.retrosnub.co.uk>
+	s=arc-20240116; t=1720707107; c=relaxed/simple;
+	bh=OeRk1i3qXAV0YYxYZJgE3KI4JCMawZqmzQ8mGpGAIpM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lht9ucsz/wfgdRoqvaW08BfjcQH2wiXQJ1RhtR05em82HxmaXShslD5kUYZwaRIfUkDke5V4FJe8o3mJo3ohueOE946fdg7yxez43Gg3FXMtyTP/0+8YefhnWnbi4/bon+hCRjI8unt+oABE3sLycA6C/papO/MtNQw0x1DMezU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=VHAOMFo+; arc=none smtp.client-ip=184.106.54.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1720706703;
+	bh=OeRk1i3qXAV0YYxYZJgE3KI4JCMawZqmzQ8mGpGAIpM=;
+	h=Date:Subject:To:From:From;
+	b=VHAOMFo+dHgN6BbZY1sDnkVD+85dRNaqQ+aKOxMAw3kI2HS4hXYvumPf5gAw3u72Y
+	 Z6KpJGvU2rVBa7yhiSSBj5VKean9IhYrDM+kr/0ZTFfccgb7aUQvCWESutT763ClbF
+	 Q/dZt7vOjAlfLp28gW20f5chwz2UHB3q92EKoKzQ=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp11.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 83E6760182;
+	Thu, 11 Jul 2024 10:05:02 -0400 (EDT)
+Message-ID: <2b0e8a6c-f89e-4d71-a816-9da46ea695eb@mev.co.uk>
+Date: Thu, 11 Jul 2024 15:05:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-BlackCat-Spam-Score: 36
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] rtc: ds1343: Force SPI chip select to be active
+ high
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+ Mark Brown <broonie@kernel.org>
+References: <20240710175246.3560207-1-abbotti@mev.co.uk>
+ <20240710184053c34201f0@mail.local>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <20240710184053c34201f0@mail.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Classification-ID: daa3b8eb-56e6-455d-9215-420ec447232e-1-1
 
-No
+Greetings,
 
-On 8 July 2024 09:14:44 BST, Javier Carrasco <javier=2Ecarrasco=2Ecruz@gma=
-il=2Ecom> wrote:
->On 07/07/2024 18:57, Jonathan Cameron wrote:
->> On Sat, 06 Jul 2024 17:23:35 +0200
->> Javier Carrasco <javier=2Ecarrasco=2Ecruz@gmail=2Ecom> wrote:
->>=20
->>> The iterated nodes are direct children of the device node, and the
->>> `device_for_each_child_node()` macro accounts for child node
->>> availability=2E
->>>
->>> `fwnode_for_each_available_child_node()` is meant to access the child
->>> nodes of an fwnode, and therefore not direct child nodes of the device
->>> node=2E
->>>
->>> Use `device_for_each_child_node()` to indicate device's direct child
->>> nodes=2E
->>>
->>> Signed-off-by: Javier Carrasco <javier=2Ecarrasco=2Ecruz@gmail=2Ecom>
->> Why not the scoped variant?
->> There look to be two error paths in there which would be simplified=2E
->>=20
->
->I did not use the scoped variant because "child" is used outside the loop=
-=2E
+On 10/07/2024 19:40, Alexandre Belloni wrote:
+> Hello,
+> 
+> On 10/07/2024 18:52:07+0100, Ian Abbott wrote:
+>> Commit 3b52093dc917 ("rtc: ds1343: Do not hardcode SPI mode flags")
+>> bit-flips (^=) the existing SPI_CS_HIGH setting in the SPI mode during
+>> device probe.  This will set it to the wrong value if the spi-cs-high
+>> property has been set in the devicetree node.  Just force it to be set
+>> active high and get rid of some commentary that attempted to explain why
+>> flipping the bit was the correct choice.
+>>
+>> Fixes: 3b52093dc917 ("rtc: ds1343: Do not hardcode SPI mode flags")
+>> Cc: <stable@vger.kernel.org> # 5.6+
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+>> ---
+>>   drivers/rtc/rtc-ds1343.c | 9 +++------
+>>   1 file changed, 3 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/rtc/rtc-ds1343.c b/drivers/rtc/rtc-ds1343.c
+>> index ed5a6ba89a3e..484b5756b55c 100644
+>> --- a/drivers/rtc/rtc-ds1343.c
+>> +++ b/drivers/rtc/rtc-ds1343.c
+>> @@ -361,13 +361,10 @@ static int ds1343_probe(struct spi_device *spi)
+>>   	if (!priv)
+>>   		return -ENOMEM;
+>>   
+>> -	/* RTC DS1347 works in spi mode 3 and
+>> -	 * its chip select is active high. Active high should be defined as
+>> -	 * "inverse polarity" as GPIO-based chip selects can be logically
+>> -	 * active high but inverted by the GPIO library.
+>> +	/*
+>> +	 * RTC DS1347 works in spi mode 3 and its chip select is active high.
+>>   	 */
+>> -	spi->mode |= SPI_MODE_3;
+>> -	spi->mode ^= SPI_CS_HIGH;
+>> +	spi->mode |= SPI_MODE_3 | SPI_CS_HIGH;
+> 
+> Linus being the gpio maintainer and Mark being the SPI maintainer, I'm
+> pretty sure this was correct at the time.
 
-Ah missed that=2E  Good sign that things are wrong=2E=2E=2E
+I'm not convinced.  What value of `spi->mode & SPI_CS_HIGH` do you think 
+the device should end up using?  (I think it should end up using 
+`SPI_CS_HIGH`, which was the case before commit 3b52093dc917, because 
+the RTC chip requires active high CS.)  What do you think the value of 
+`spi->mode & SPI_CS_HIGH` will be *before* the `^=` operation? (For 
+devicetree, that depends on the `spi-cs-high` property.)
 
->
->On the other hand, I think an fwnode_handle_get() is missing for every
->"led_fwnodes[reg] =3D child" because a simple assignment does not
->increment the refcount=2E
+I think the devicetree node for the RTC device ought to be setting 
+`spi-cs-high` but cannot do so at the moment because the driver clobbers it.
 
-Yes=2E Looks like a bug to me as well=2E
+> Are you sure you are not missing an active high/low flag on a gpio
+> definition?
 
+The CS might be internal to the SPI controller, not using a GPIO line 
+(`cs-gpios` property).  SPI peripheral device drivers shouldn't care if 
+CS is using GPIO or not.
 
->
->After adding fwnode_handle_get(), the scoped variant could be used, and
->the call to fwnode_handle_put() would act on led_fwnodes[reg] instead=2E
+> 
+>>   	spi->bits_per_word = 8;
+>>   	res = spi_setup(spi);
+>>   	if (res)
+>> -- 
+>> 2.43.0
+>>
+> 
 
-There looks to be another bug as it only frees one handle on error=2E  Rig=
-ht now it shouldnt free any but once you fix that you will need to free any=
- not freed otherwise=2E
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
-Can it be squashed into one loop?
-
-J
-
-
->
->>> ---
->>>  drivers/leds/leds-bd2606mvv=2Ec | 7 +++----
->>>  1 file changed, 3 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/leds/leds-bd2606mvv=2Ec b/drivers/leds/leds-bd260=
-6mvv=2Ec
->>> index 3fda712d2f80=2E=2E4f38b7b4d9d1 100644
->>> --- a/drivers/leds/leds-bd2606mvv=2Ec
->>> +++ b/drivers/leds/leds-bd2606mvv=2Ec
->>> @@ -69,7 +69,7 @@ static const struct regmap_config bd2606mvv_regmap =
-=3D {
->>> =20
->>>  static int bd2606mvv_probe(struct i2c_client *client)
->>>  {
->>> -	struct fwnode_handle *np, *child;
->>> +	struct fwnode_handle *child;
->>>  	struct device *dev =3D &client->dev;
->>>  	struct bd2606mvv_priv *priv;
->>>  	struct fwnode_handle *led_fwnodes[BD2606_MAX_LEDS] =3D { 0 };
->>> @@ -77,8 +77,7 @@ static int bd2606mvv_probe(struct i2c_client *client=
-)
->>>  	int err, reg;
->>>  	int i;
->>> =20
->>> -	np =3D dev_fwnode(dev);
->>> -	if (!np)
->>> +	if (!dev_fwnode(dev))
->>>  		return -ENODEV;
->>> =20
->>>  	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->>> @@ -94,7 +93,7 @@ static int bd2606mvv_probe(struct i2c_client *client=
-)
->>> =20
->>>  	i2c_set_clientdata(client, priv);
->>> =20
->>> -	fwnode_for_each_available_child_node(np, child) {
->>> +	device_for_each_child_node(dev, child) {
->>>  		struct bd2606mvv_led *led;
->>> =20
->>>  		err =3D fwnode_property_read_u32(child, "reg", &reg);
->>>
->>=20
->
 
