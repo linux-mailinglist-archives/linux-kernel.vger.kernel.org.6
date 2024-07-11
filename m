@@ -1,138 +1,169 @@
-Return-Path: <linux-kernel+bounces-248616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E4192DFC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:47:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D01D92DFC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FD91C22340
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:47:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC681F22C85
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4662D8249A;
-	Thu, 11 Jul 2024 05:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="II6EcZ5G"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D089F823DE;
+	Thu, 11 Jul 2024 05:49:31 +0000 (UTC)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385451C3D;
-	Thu, 11 Jul 2024 05:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80932119;
+	Thu, 11 Jul 2024 05:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720676836; cv=none; b=b6olYO83OnK/eTVjA0xGwyEP8/LL18scuD7v/PtryrnXcb+77qYMk3DpjF81ucnvG9HbxBQhoSC7mZC2OvUc9JjhoSQxVXlCjm3bO0GJlJPy/osZ3oWS8E48IJNJPbMvAmyxjnDrCTGk4Vh2VNOIXSOz/i3gGjQwIXi6G6pu3KM=
+	t=1720676971; cv=none; b=bGqoLCMSfIdDnOrwxdfkq3D8NOobS7VeBhzPW3dBiI86TxU8UfRqeI0XZVBReGEtWJhD9av8Fpj/2/CUz9k10xA3Lv6lMkdmqFMLk+5/IAloQvp/KxTULCvy1nX5sWJzWHoW0e+N0hXu05KrXTEEJJDENBSC863xBwy50ZtNWNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720676836; c=relaxed/simple;
-	bh=KV5IXxru9pilF4dOOLYpt1RzDfKhSLtpig38iU5SKYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JbzK/4C6ds2OAbI7tdEgWONnQOX7bViU8vhNA9C3IRfGGUgZnfOSf73fgidE95UgKgCGRh6ixFNxxQVMEuCF90pDjXlyxKrLXHwBREARocxt+Jr017a1Q6pmV9H4BzyC9di7lzDtfDJ4fiYPia6dBz1grwPYvmk/5MnDJxtFcUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=II6EcZ5G; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B4mkfM014592;
-	Thu, 11 Jul 2024 05:47:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	D2mb8mAgWdsLluzPI3epDbMKGaelwMrlZ3WFZaUSHQY=; b=II6EcZ5Gi1ha4kRB
-	YvybFzFH9uqi2BmkNEKjL1lXBmxWiNq57/HcZw++aZ7GqxvOKoR/utmmTI80t3sd
-	m1UpN/WaRQiqd4mabh6TCLhSQht/jN3486JBLVR8FrFv1LIr/uRu20Ljqpd+wea5
-	Sy24k8js4A0zLZrRzM34aAAjJvhCEaw5ZHjuu6OqtnYuBcmVAxxzbd8+bPaIRGqm
-	5WCdTNOSqSSKQ99olOsZidgl5P5BiYnKqdtDl8BCo+5UPznqGQOVzYLB8CbPB18j
-	41uzG8wjLiKO4kdgC8URiotEAJsaupK2FaOe5OHaoq8bHtQkXFhCp5NC8Eyp/xzd
-	qSQQWQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 409kdtk5u2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 05:47:00 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46B5kwp7023762
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 05:46:58 GMT
-Received: from [192.168.143.77] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
- 2024 22:46:58 -0700
-Message-ID: <6f6a2608-6f1e-60dd-0dcc-93fa3d61202e@quicinc.com>
-Date: Wed, 10 Jul 2024 22:46:30 -0700
+	s=arc-20240116; t=1720676971; c=relaxed/simple;
+	bh=TtAx04AsrPmMaDmOaZr4TKNIJz6OqZOHS2TCRopxtTc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c2z1AbZ2vKjTKqbwFyDZ713tMplvbziNxjtBrzY9BX6sm3fRLnKSaK6kuqKe+Den/F5jgOoOrXqZC1EX9Wz2DYYFBCpUYeywOnIf0Z+wRuE8GTWBkA6EvmJhOP5KanD0WjWX2mrbqd6T2AERzOEWoSmUp0or+UeG+YwEeHHainY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4266edee10cso2865995e9.2;
+        Wed, 10 Jul 2024 22:49:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720676968; x=1721281768;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=00fvTifDFvVnBcJ6kYHawNRR9wAbk1H4q78FlXcE1x8=;
+        b=V+cUfUNOOMXl0iuR/7nFB6kyM0TO6Nz50Ouxqwa2YCvbn2XNtwICFWrZhCuxM0zVmX
+         y9/wyLGd6Foq8/mStmb+ejqgak+EzLS/fc5xUErRHpJ7fZzIE8a7LW0A6NNvLJQJ3p97
+         mgiOudtDiPNOg/YYa0D8q/RKMWZqs8NWy9NPRfOkpJ56XcjPDM0fYnc+cigO4DPmp58V
+         oxM6Mj5PHvUnkR/0BnW09kk0nN2zVygiG6I3WdYUnXSYMv3/n42KT7lTU9tmg73OkVZ5
+         BJI7AeHDi5Sx8w/PR/T0W0h0QUxfdW9XvnmF1ztHurrTR5/d44763jkUAjjdBK/QUqmv
+         wotQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJD0tLmNvs9P/vWLkdkXpCvCQq7Pfc86qOutWLKXIkLT9IrNbMFI80yvtZ84SGMw/2ojdjxz1zVpuk7MdzHvSoB1yRLn8Rh0mE+UL1Qsx2Svb0TLSSRc712Ouaf9YHiPDtUIPi
+X-Gm-Message-State: AOJu0Yzjf/nrnWapOF8KfINEbdBkB8e4APn3FjB6OuND5rDm5LA62wvQ
+	u/ii/gcIOhEsQKy91IE1pcMyPqIZFYsaUgqIMZblM439r/Jk+HKc
+X-Google-Smtp-Source: AGHT+IH1S2Mwi4vybh74mjAke/u9DirvmqwbDrxa8I/YMOrjllCOm2I5dAsxnn2JZZan2yI74IuS1w==
+X-Received: by 2002:a05:600c:6c51:b0:426:5e55:199a with SMTP id 5b1f17b1804b1-426707e3149mr44363655e9.23.1720676967885;
+        Wed, 10 Jul 2024 22:49:27 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427165c69f0sm80270865e9.30.2024.07.10.22.49.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 22:49:27 -0700 (PDT)
+Message-ID: <e321400f-0b76-4fdf-8773-cbad8a47baba@kernel.org>
+Date: Thu, 11 Jul 2024 07:49:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v3 1/1] scsi: ufs: core: Support Updating UIC Command
- Timeout
-To: Bart Van Assche <bvanassche@acm.org>, <quic_cang@quicinc.com>,
-        <quic_nitirawa@quicinc.com>, <avri.altman@wdc.com>,
-        <peter.wang@mediatek.com>, <manivannan.sadhasivam@linaro.org>,
-        <minwoo.im@samsung.com>, <adrian.hunter@intel.com>,
-        <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Maramaina Naresh <quic_mnaresh@quicinc.com>,
-        open list
-	<linux-kernel@vger.kernel.org>
-References: <cover.1720503791.git.quic_nguyenb@quicinc.com>
- <6513429b6d3b10829263bf33ace5c5128f106e59.1720503791.git.quic_nguyenb@quicinc.com>
- <a89910ad-da5b-42c2-8a0f-9f4908fa2c1a@acm.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] x86/entry_32: Use stack segment selector for VERW
+ operand
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Uros Bizjak <ubizjak@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, x86@kernel.org,
+ Robert Gill <rtgill82@gmail.com>, Jari Ruusu <jariruusu@protonmail.com>,
+ Brian Gerst <brgerst@gmail.com>,
+ "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+ antonio.gomez.iglesias@linux.intel.com, daniel.sneddon@linux.intel.com,
+ stable@vger.kernel.org
+References: <20240710-fix-dosemu-vm86-v4-1-aa6464e1de6f@linux.intel.com>
+ <8551ef61-71fb-18f3-a8a8-6c7c3ed731e6@gmail.com>
+ <20240710231609.rbxd7m5mjk53rthl@desk>
 Content-Language: en-US
-From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-In-Reply-To: <a89910ad-da5b-42c2-8a0f-9f4908fa2c1a@acm.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 39rtRuUgvIp4coAdsiixNe33AyD2U0Z5
-X-Proofpoint-GUID: 39rtRuUgvIp4coAdsiixNe33AyD2U0Z5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_02,2024-07-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- impostorscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- adultscore=0 suspectscore=0 phishscore=0 bulkscore=0 priorityscore=1501
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110038
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20240710231609.rbxd7m5mjk53rthl@desk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 7/9/2024 11:10 AM, Bart Van Assche wrote:
-> On 7/8/24 11:06 PM, Bao D. Nguyen wrote:
->> +static int uic_cmd_timeout_set(const char *val, const struct 
->> kernel_param *kp)
->> +{
->> +    unsigned int n;
->> +    int ret;
->> +
->> +    ret = kstrtou32(val, 0, &n);
->> +    if (ret != 0 || n < UIC_CMD_TIMEOUT_DEFAULT || n > 
->> UIC_CMD_TIMEOUT_MAX)
->> +        return -EINVAL;
->> +
->> +    return param_set_int(val, kp);
->> +}
+On 11. 07. 24, 1:16, Pawan Gupta wrote:
+> On Wed, Jul 10, 2024 at 11:50:50PM +0200, Uros Bizjak wrote:
+...
+>>> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+>>> index d3a814efbff6..d54f6002e5a0 100644
+>>> --- a/arch/x86/entry/entry_32.S
+>>> +++ b/arch/x86/entry/entry_32.S
+>>> @@ -253,6 +253,16 @@
+>>>    .Lend_\@:
+>>>    .endm
+>>> +/*
+>>> + * Safer version of CLEAR_CPU_BUFFERS that uses %ss to reference VERW operand
+>>> + * mds_verw_sel. This ensures VERW will not #GP for an arbitrary user %ds.
+>>> + */
+>>> +.macro CLEAR_CPU_BUFFERS_SAFE
+>>> +	ALTERNATIVE "jmp .Lskip_verw\@", "", X86_FEATURE_CLEAR_CPU_BUF
+>>> +	verw	%ss:_ASM_RIP(mds_verw_sel)
+>>> +.Lskip_verw\@:
+>>> +.endm
+>>
+>> Why not simply:
+>>
+>> .macro CLEAR_CPU_BUFFERS_SAFE
+>> 	ALTERNATIVE "", __stringify(verw %ss:_ASM_RIP(mds_verw_sel)),
+>> X86_FEATURE_CLEAR_CPU_BUF
+>> .endm
 > 
-> The above code converts 'val' twice to an integer: a first time by
-> calling kstrtou32() and a second time by calling param_set_int().
-> Please remove one of the two string-to-integer conversions, e.g. by
-> changing "param_set_int(val, kp)" into "uic_cmd_timeout = n" or
-> *(unsigned int *)kp->arg = n".
-Hi Bart,
-My understanding is that in the kstrtou32() function, the  the result of 
-the conversion is written to the third parameter only which is '&n' in 
-this case. 'val' does not get updated (and it cannot be updated because 
-of its 'const' type). Please correct me if I am wrong.
+> We can do it this way as well. But, there are stable kernels that don't
+> support relocations in ALTERNATIVEs. The way it is done in current patch
+> can be backported without worrying about which kernels support relocations.
 
-Thanks, Bao
+This sounds weird. There are code bases without ALTERNATIVE support at 
+all. Will you expand ALTERNATIVE into some cmp & jmp here due to that? No.
 
-> 
-> Thanks,
-> 
-> Bart.
+Instead, you can send this "backport" to stable for older kernels later, 
+once a proper patch is merged.
+
+thanks,
+-- 
+js
+suse labs
 
 
