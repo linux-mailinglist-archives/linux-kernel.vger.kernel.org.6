@@ -1,224 +1,363 @@
-Return-Path: <linux-kernel+bounces-248578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD10992DF34
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:53:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A27692DF3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1721B2840DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2E628440B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF034084E;
-	Thu, 11 Jul 2024 04:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6C14084E;
+	Thu, 11 Jul 2024 04:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bl04fBux"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="paKKDXwm"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2F615AE0
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720673592; cv=none; b=c8YW/zNn7SMGw+yCLbne5ow/9ljpytdCc7QTQ9//XlyLj5fPpOP9v7bUn7L2xJ1aOpYyYvXKtJQwZ30lLnwmoEQTkpHvgxsfUXShSGxcqnHMDW70B5Rhdn8WQf4Q+t4skrtwBRjXpzdTtyNSv2Fm1xddVw+D5ORhWOeHiG3uGmY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720673592; c=relaxed/simple;
-	bh=Or7bw6wvZdrSRlLf29yh1BSvsYPyl0c/svI1h5EAQRI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MXOu8x1tYWwNJ2xOxdiamqftpITplg27KKQ3cbt0jSwH483d/D0qUV4VtqiFkLW4T/YA5a2ED3rp0OUFT4Ff5wzcBWe4JT+MIzz7DyIcY1FMsQjrGiFQo2Om171Rzy04xlozY/04ZNFWdqQa5LQMjaOx6fhn2apzkV2rj/ys4l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bl04fBux; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720673589;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8g0zUV8cpJI+idm/YiDkSx9qRkVF3fRL4fAS6ajS/uY=;
-	b=bl04fBuxnPPt4zFh8udQ1N3p9jvBxPKMg2XlBEfkYvhLBwJD38HFF4JEMZGxFMqMf3Zn7K
-	znqTkg+H2S2iygfvGTBvu5BLN9i6zIhCX+neAHIj4ZZuj0RZl5k0XT3iNTwi0LVh/ZCPlo
-	d4SQzhvPlapdK/f2k3OffFJbAWAKPHs=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-660-i-VjHGP5OFuZDnWUWgNQjA-1; Thu, 11 Jul 2024 00:53:07 -0400
-X-MC-Unique: i-VjHGP5OFuZDnWUWgNQjA-1
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-7278c31e2acso354288a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:53:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720673586; x=1721278386;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8g0zUV8cpJI+idm/YiDkSx9qRkVF3fRL4fAS6ajS/uY=;
-        b=NHrNNVkWrLMJFvanVL5oU8UrmNkAgxYO7MVbs1c43N7xFP9TGJyMY5pgBX9eIKKlad
-         PWNttJkFElMDATy3L5bRl2A/j1hThOuxofN0EINhpvEYPLLMM3fGR8yaC9njtVYF2XUl
-         SqesNOhkxuTT7Pp/XuffVMiHvsqOSS7KFxwvJFY1ElXS/eFZ8Tv9lQ6ePDwTLdsPXigA
-         +U3Pl1pq5k+XaL4ZRYe7QOB803O7cGGQlHhaq0nDl3uVSkU4tO2RFb3dQC1r6YRFYn3g
-         m1bIo++wGd2n/YakCClqqQx5kcpYh3PKcAENN8Qg9Rx0cwKF8i6iJ/CyMIk6P0W73UwH
-         ABtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWK4Y7BCDZSfTfx3VPz/Q3UUgYTZpOa9mpw5ks7dAAmjOjQVsShsYRDGJiMw3AvGeVfKxI+xJ+xuezNpBW5x2DGma4TmcIM1lZZdkXL
-X-Gm-Message-State: AOJu0Yzo2JCscxtMAhtjhwfblc5BoiIwm+QyLvkw4mYhRFSl6pRT4iHi
-	z/WQIvvvaQ8yRobmHkDrZRf6D1GhPPfH/ex1Q6ADdbkDuf31H5u/gh20lUuQydJ8qJLflY890AL
-	yCuHxemhoi1+vndqC9caO+HLrTzc0wcHvnYYASl1h/+tl+LFemHFhDxyQDxxAMw==
-X-Received: by 2002:a05:6a20:7485:b0:1c2:97cd:94d8 with SMTP id adf61e73a8af0-1c298223d92mr8162577637.20.1720673586091;
-        Wed, 10 Jul 2024 21:53:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFuBcnPgOQDfaSMbgn/kyNHvB/POCVtdzyItufrxyMr6RCyOy1aQROJt2qdO3GzMLBPA+LuQA==
-X-Received: by 2002:a05:6a20:7485:b0:1c2:97cd:94d8 with SMTP id adf61e73a8af0-1c298223d92mr8162561637.20.1720673585706;
-        Wed, 10 Jul 2024 21:53:05 -0700 (PDT)
-Received: from [172.20.2.228] ([4.28.11.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a2c0dasm41719515ad.108.2024.07.10.21.53.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 21:53:05 -0700 (PDT)
-Message-ID: <f2fbe39e-20c6-470c-a2b3-100185ee2f43@redhat.com>
-Date: Thu, 11 Jul 2024 06:53:03 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2BB15AE0
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720673818; cv=fail; b=lzKsFK/SIMC2bmE20OldzYHsBumQSYPl7ggO23V8t7q7kJRtIG61LtqE2U+AhOcJDg4rcnhS+D5JWwsa94y4b2sy1uvdD3Cp/kbNWrkQO1r8alTRH6eHemMHciGoQaPMi2V3giOszDavXbdKxnZ7O9QPWM/QKaU/A38ecpo61Cc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720673818; c=relaxed/simple;
+	bh=YqSJrvcMhhg2YaJLpfXuuEe0j36+q3ZG/uvyOjXrO10=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IWbcE2AURBs563dmaCCKuKNEI5ouYhcXsen9E6UTZdcFdza3NTla6ymy4UKy44GdcnVUxZof6uh/tDIypPgMd6smHpKm5FG4sEtODgnQdz0IWYQmGMhu3mQtz6KQ2KYsT9Vvt7SaEBitSuPGP7pHoKxzkeecwmN1dsTNDdTAzCA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=paKKDXwm; arc=fail smtp.client-ip=40.107.244.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XTtpPCoreXUw08M1CPjkBE8cCWK5sYHipg6iNHioY7odUqOrIMBX1bmvI4GwvLRMhJ+uqAInxapYz7jfhJBOxI9Vv4GJFAluqoARGkyKhPa4zarcb2nvPEXnXVRmV2G1bVW0LbPzwSB3Vutglgmr5zuXetqknKrsupR5ynOn7Vm9H4EQxtCFjtPrNPGEsuyASlQetKJ2lrkFWcamxtRtG61+VtleEBZXOssCG40OZFfDs0q9+fT8aypc4Ce9oI3KXN5OUQmSUY7LU4TFNv/wWgVdbH0ZMSZopVadHB2NhwMqZhrsNY4xC4vN7lkp+gj23h9fN8tpBWwUhENouJ5Ucw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t336mXAzUiPWeuqNKurtKMJCxfRLVWSGaqHKSNtVKlY=;
+ b=XQH4Dw9mRpWO/CPOT8uAJbTAsMtjcEucgeQf4fAYVilkYXOCe8tblUFduWqT+PMpBfFl70g9FseM+TCpLgTqb6Gh8GRzWdIymtyPm1XKAwZK4XCWMz1ojLxqDUPRp7+lUeAW1JvPADcXVTPYxQPf2Jdkiumhip0t7szaWjUHtlKlb3QYPVRTxma72sdvbmnLkjAJW7607Nh3ETwGSYrmVdyd5TH1vfYxTNT3NvS913FWM7WzSCDH7mfoUxp8ku535X+WKEqrhPK0f+MoLNN77GYKQ1ikfSss3ZseVLWfc7RyqleZ5WccPfP+irM6cQWdB6j0F1TGYjyOeLRqLozNGA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t336mXAzUiPWeuqNKurtKMJCxfRLVWSGaqHKSNtVKlY=;
+ b=paKKDXwmPwfIEIF7WqlsKnW2SCzFtt6X8R4tO+4tUPfF4MrM4XzFf0B0cJCnqOuhWp3/BC54nl8FBxgE0tlcIzfmxZEN2o5vqx7RIRaymxouQA58MeO553vVV+grcRXZB/x+bNErn9nb0BXuSM01gyxSMgEzE1esaII1QmJ/pIw=
+Received: from BL1PR13CA0113.namprd13.prod.outlook.com (2603:10b6:208:2b9::28)
+ by IA1PR12MB7685.namprd12.prod.outlook.com (2603:10b6:208:423::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.40; Thu, 11 Jul
+ 2024 04:56:54 +0000
+Received: from BL6PEPF0001AB58.namprd02.prod.outlook.com
+ (2603:10b6:208:2b9:cafe::b) by BL1PR13CA0113.outlook.office365.com
+ (2603:10b6:208:2b9::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.20 via Frontend
+ Transport; Thu, 11 Jul 2024 04:56:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ BL6PEPF0001AB58.mail.protection.outlook.com (10.167.241.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7762.17 via Frontend Transport; Thu, 11 Jul 2024 04:56:53 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 10 Jul
+ 2024 23:56:52 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 10 Jul
+ 2024 23:56:52 -0500
+Received: from xsjwillw50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 10 Jul 2024 23:56:52 -0500
+From: Ronak Jain <ronak.jain@amd.com>
+To: <michal.simek@amd.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] firmware: xilinx: Add missing debug firmware interfaces
+Date: Wed, 10 Jul 2024 21:56:51 -0700
+Message-ID: <20240711045651.3309975-1-ronak.jain@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/45] hugetlb pagewalk unification
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Peter Xu <peterx@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Muchun Song <muchun.song@linux.dev>, SeongJae Park <sj@kernel.org>,
- Miaohe Lin <linmiaohe@huawei.com>, Michal Hocko <mhocko@suse.com>,
- Matthew Wilcox <willy@infradead.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Jason Gunthorpe <jgg@nvidia.com>, Ryan Roberts <ryan.roberts@arm.com>
-References: <20240704043132.28501-1-osalvador@suse.de>
- <617169bc-e18c-40fa-be3a-99c118a6d7fe@redhat.com> <Zoax9nwi5qmgTQR4@x1n>
- <84d4e799-90da-487e-adba-6174096283b5@redhat.com>
- <Zoug1swoTOqNUPJo@localhost.localdomain>
- <9d5980e3-72e6-4848-b1ac-83ffab8522c4@redhat.com>
- <Zo5v_hefrYFImqBC@localhost.localdomain>
- <0f01c613-9e4f-47b6-af2b-09aa90437d90@redhat.com>
- <Zo9kDNFljpVzl69Z@localhost.localdomain>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zo9kDNFljpVzl69Z@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: ronak.jain@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB58:EE_|IA1PR12MB7685:EE_
+X-MS-Office365-Filtering-Correlation-Id: 555ed781-9c80-4510-0933-08dca165e1c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kWBj4IVKo6Lvh7szQ11PtG42k2WzxAB75g1N1GIiP/fQfCm5zFEKB1ARJrra?=
+ =?us-ascii?Q?T5bTecubwNWKqxXBVSY+x/UGPLB/HpubEc0dY+ObMpzxDhft2koh4N3YQ59c?=
+ =?us-ascii?Q?GUxArt78fhzK2TZxC2aMYlU+/Ymlaqj/3J7TIdQPBn8YcBC284XVgMm/EaRN?=
+ =?us-ascii?Q?bUTxrvzx9UVx+xFYy2VxsLy77QydLdMu3cQ9ZmjZTW5fcuI47k7nxOIVhTWz?=
+ =?us-ascii?Q?MKmF2fafJ8fNnpWgBD0L0brK1m2+CWBFJbryqQMiFHK70CB46I681sqFt+Vx?=
+ =?us-ascii?Q?sVrtbuAAxptRbrFEEnbxr5Vl3WUZZzlPRzJpiqENPTh4Vyw6a5jeHbqxLG2S?=
+ =?us-ascii?Q?DfyUtPDlvrfsyHHAWvlKBs3mZ6Iz54FB5QiRYtTUOJ0WxpHpNxWTTkK4BmNC?=
+ =?us-ascii?Q?T8eZQ1Hatm9TQ3JtwlV4YT0lWPUqghgZbJMCktofRl3FAABh7OIyKFop8mar?=
+ =?us-ascii?Q?69AI17uhqHbIP8wzBQJUv55SJU+XNRQ8zjhcBu5bxiaBVnybnqfw50nYjCUk?=
+ =?us-ascii?Q?wnbOKfQ6ZchzYpguTjefR7PoCfwpWnB55KHtETaW8gZzKrIjdLyij+9CH91i?=
+ =?us-ascii?Q?2zXIlMYjTkV94KjY2Ab0xS9v7kYTrgnNsZ/oXMILQgj9jrnE0SZMHP84UpVx?=
+ =?us-ascii?Q?vXMbC13RZc7rMZD2gCKz9DzQX8SSx2PJwgjuCU1AhladMxsanGgOg2xptQx5?=
+ =?us-ascii?Q?4TNqU4PjSzNekD+SlIEKTE2CMyhVdP11OzVdxocLKTlniukWfX/mF2jHdWc3?=
+ =?us-ascii?Q?F7EVF+YSnFT1ZSzMcIWqetttHnsRkeaVV8bpSJdA0n+WLXbzZQdbA6QNoXEK?=
+ =?us-ascii?Q?JgoyhNpUuE9kacpUJKO/QP+eyfVCbPhI8u1/Y7MbUkGEcrALXDckH4fvu+4b?=
+ =?us-ascii?Q?N0mIj736A7NZeZRUsbOATbG9kS0Mr7OIsxsXzB3tgs896UKHMlEX1D+dp7/+?=
+ =?us-ascii?Q?RkNePnIQh6a4cHhRUT9XLxEz+PhrqfeK8Hch9/nrbsxlgprRNLtceytsv7dl?=
+ =?us-ascii?Q?RopO9ov+h1HSPOoMwRkL2ST/fZSIrpU7kKBm7NCHOXAr2vqNGdT+cXfDy66a?=
+ =?us-ascii?Q?NbrNqPov80K64XHZsI/Zloa7J75rcAOOQjGRRgBhoKEMrAFnPtHqkc32AqXW?=
+ =?us-ascii?Q?OGMsmYzq/OB3IXs7x16ctRaWQDA0E64+UjRkO2LiuPYhI5zda7xDHNZ2RKCD?=
+ =?us-ascii?Q?r9PqhyEz/1ePf4biauobvW20L3i4jzkT1p2XstnrJj+NYcW/NbdIUtAc/GyR?=
+ =?us-ascii?Q?xyIgCAXCW0P/hlbgZGFvN4otgT/gxe386+B6JyaWNHc/MYMlhRsVLog352sv?=
+ =?us-ascii?Q?impzNH6iYwiXRf/0EKqHLVYlbP6MYMDmZNZtitQZ4REnHtyJy1y06txClvQj?=
+ =?us-ascii?Q?sok0CXH2yweCeQI0AXvP2AjeggemOhkbYUpigWkkRwQAQ3sXbw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 04:56:53.0960
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 555ed781-9c80-4510-0933-08dca165e1c9
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB58.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7685
 
-On 11.07.24 06:48, Oscar Salvador wrote:
-> On Thu, Jul 11, 2024 at 02:15:38AM +0200, David Hildenbrand wrote:
->>>> (as a side note, cont-pte/cont-pmd should primarily be a hint from arch code
->>>> on how many entries we can batch, like we do in folio_pte_batch(); point is
->>>> that we want to batch also on architectures where we don't have such bits,
->>>> and prepare for architectures that implement various sizes of batching;
->>>> IMHO, having cont-pte/cont-pmd checks in common code is likely the wrong
->>>> approach. Again, folio_pte_batch() is where we tackled the problem
->>>> differently from the THP perspective)
->>>
->>> I must say I did not check folio_pte_batch() and I am totally ignorant
->>> of what/how it does things.
->>> I will have a look.
->>>
->>>> I have an idea for a better page table walker API that would try batching
->>>> most entries (under one PTL), and walkers can just register for the types
->>>> they want. Hoping I will find some time to at least scetch the user
->>>> interface soon.
->>>>
->>>> That doesn't mean that this should block your work, but the
->>>> cont-pte/cont/pmd hugetlb stuff is really nasty to handle here, and I don't
->>>> particularly like where this is going.
->>>
->>> Ok, let me take a step back then.
->>> Previous versions of that RFC did not handle cont-{pte-pmd} wide in the
->>> open, so let me go back to the drawing board and come up with something
->>> that does not fiddle with cont- stuff in that way.
->>>
->>> I might post here a small diff just to see if we are on the same page.
->>>
->>> As usual, thanks a lot for your comments David!
->>
->> Feel free to reach out to discuss ways forward. I think we should
->>
->> (a) move to the automatic cont-pte setting as done for THPs via
->>      set_ptes().
->> (b) Batching PTE updates at all relevant places, so we get no change in
->>      behavior: cont-pte bit will remain set.
->> (c) Likely remove the use of cont-pte bits in hugetlb code for anything
->>      that is not a present folio (i.e., where automatic cont-pte bit
->>      setting would never set it). Migration entries might require
->>      thought (we can easily batch to achieve the same thing, but the
->>      behavior of hugetlb likely differs to the generic way of handling
->>      migration entries on multiple ptes: reference the folio vs.
->>      the respective subpages of the folio).
-> 
-> Uhm, I see, but I am bit confused.
-> Although related, this seems orthogonal to this series and more like for
-> a next-thing to do, right?
+Add missing PM EEMI APIs interface in debug firmware driver.
 
-Well, yes and no. The thing is, that the cont-pte/cont-pmd stuff is not 
-as easy to handle like the PMD/PUD stuff, and sorting that out sounds 
-like some "pain". That's the ugly part of hugetlb, where it's simply ... 
-quite different :(
+The debugfs firmware driver interface is intended for testing and
+debugging the EEMI APIs only. This interface does not contain any
+checking regarding improper usage, and the number, type and valid
+ranges of the arguments. This interface must be used with a lot of
+care. In fact, accessing this interface during normal PM operation
+will very likely cause unexpected problems.
 
-> 
-> It is true that this series tries to handle cont-{pmd,pte} in the
-> pagewalk api for hugetlb vmas, but in order to raise less eye brows I
-> can come up with a way not to do that for now, so we do not fiddle with
-> cont-stuff in this series.
-> 
-> 
-> Or am I misunderstanding you?
+The debugfs interface shouldn't be used in the production system and
+hence it is disabled by default in defconfig.
 
-I can answer once I know more details about the approach you have in mind :)
+Signed-off-by: Ronak Jain <ronak.jain@amd.com>
+Signed-off-by: Michal Simek <michal.simek@amd.com>
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+---
+References to the public documents who talks about the debugfs 
+interface.
+https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18842232/Zynq+UltraScale+MPSoC+Power+Management+-+Linux+Kernel#ZynqUltraScale%EF%BC%8BMPSoCPowerManagement-LinuxKernel-Debugfs
 
+https://docs.amd.com/r/en-US/ug1137-zynq-ultrascale-mpsoc-swdev/Debug-Interface
+---
+ drivers/firmware/xilinx/zynqmp-debug.c | 162 ++++++++++++++++++++++++-
+ 1 file changed, 161 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/xilinx/zynqmp-debug.c b/drivers/firmware/xilinx/zynqmp-debug.c
+index 8528850af889..22853ae0efdf 100644
+--- a/drivers/firmware/xilinx/zynqmp-debug.c
++++ b/drivers/firmware/xilinx/zynqmp-debug.c
+@@ -31,12 +31,50 @@ static char debugfs_buf[PAGE_SIZE];
+ 
+ #define PM_API(id)		 {id, #id, strlen(#id)}
+ static struct pm_api_info pm_api_list[] = {
++	PM_API(PM_FORCE_POWERDOWN),
++	PM_API(PM_REQUEST_WAKEUP),
++	PM_API(PM_SYSTEM_SHUTDOWN),
++	PM_API(PM_REQUEST_NODE),
++	PM_API(PM_RELEASE_NODE),
++	PM_API(PM_SET_REQUIREMENT),
+ 	PM_API(PM_GET_API_VERSION),
++	PM_API(PM_REGISTER_NOTIFIER),
++	PM_API(PM_RESET_ASSERT),
++	PM_API(PM_RESET_GET_STATUS),
++	PM_API(PM_GET_CHIPID),
++	PM_API(PM_PINCTRL_SET_FUNCTION),
++	PM_API(PM_PINCTRL_CONFIG_PARAM_GET),
++	PM_API(PM_PINCTRL_CONFIG_PARAM_SET),
++	PM_API(PM_IOCTL),
++	PM_API(PM_CLOCK_ENABLE),
++	PM_API(PM_CLOCK_DISABLE),
++	PM_API(PM_CLOCK_GETSTATE),
++	PM_API(PM_CLOCK_SETDIVIDER),
++	PM_API(PM_CLOCK_GETDIVIDER),
++	PM_API(PM_CLOCK_SETPARENT),
++	PM_API(PM_CLOCK_GETPARENT),
+ 	PM_API(PM_QUERY_DATA),
+ };
+ 
+ static struct dentry *firmware_debugfs_root;
+ 
++/**
++ * zynqmp_pm_ioctl - PM IOCTL for device control and configs
++ * @node:	Node ID of the device
++ * @ioctl:	ID of the requested IOCTL
++ * @arg1:	Argument 1 of requested IOCTL call
++ * @arg2:	Argument 2 of requested IOCTL call
++ * @arg3:	Argument 3 of requested IOCTL call
++ * @out:	Returned output value
++ *
++ * Return:	Returns status, either success or error+reason
++ */
++static int zynqmp_pm_ioctl(const u32 node, const u32 ioctl, const u32 arg1,
++			   const u32 arg2, const u32 arg3, u32 *out)
++{
++	return zynqmp_pm_invoke_fn(PM_IOCTL, out, 5, node, ioctl, arg1, arg2, arg3);
++}
++
+ /**
+  * zynqmp_pm_argument_value() - Extract argument value from a PM-API request
+  * @arg:	Entered PM-API argument in string format
+@@ -95,6 +133,128 @@ static int process_api_request(u32 pm_id, u64 *pm_api_arg, u32 *pm_api_ret)
+ 		sprintf(debugfs_buf, "PM-API Version = %d.%d\n",
+ 			pm_api_version >> 16, pm_api_version & 0xffff);
+ 		break;
++	case PM_FORCE_POWERDOWN:
++		ret = zynqmp_pm_force_pwrdwn(pm_api_arg[0],
++					     pm_api_arg[1] ? pm_api_arg[1] :
++					     ZYNQMP_PM_REQUEST_ACK_NO);
++		break;
++	case PM_REQUEST_WAKEUP:
++		ret = zynqmp_pm_request_wake(pm_api_arg[0],
++					     pm_api_arg[1], pm_api_arg[2],
++					     pm_api_arg[3] ? pm_api_arg[3] :
++					     ZYNQMP_PM_REQUEST_ACK_NO);
++		break;
++	case PM_SYSTEM_SHUTDOWN:
++		ret = zynqmp_pm_system_shutdown(pm_api_arg[0], pm_api_arg[1]);
++		break;
++	case PM_REQUEST_NODE:
++		ret = zynqmp_pm_request_node(pm_api_arg[0],
++					     pm_api_arg[1] ? pm_api_arg[1] :
++					     ZYNQMP_PM_CAPABILITY_ACCESS,
++					     pm_api_arg[2] ? pm_api_arg[2] : 0,
++					     pm_api_arg[3] ? pm_api_arg[3] :
++					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
++		break;
++	case PM_RELEASE_NODE:
++		ret = zynqmp_pm_release_node(pm_api_arg[0]);
++		break;
++	case PM_SET_REQUIREMENT:
++		ret = zynqmp_pm_set_requirement(pm_api_arg[0],
++						pm_api_arg[1] ? pm_api_arg[1] :
++						ZYNQMP_PM_CAPABILITY_CONTEXT,
++						pm_api_arg[2] ?
++						pm_api_arg[2] : 0,
++						pm_api_arg[3] ? pm_api_arg[3] :
++						ZYNQMP_PM_REQUEST_ACK_BLOCKING);
++		break;
++	case PM_REGISTER_NOTIFIER:
++		ret = zynqmp_pm_register_notifier(pm_api_arg[0],
++						  pm_api_arg[1] ?
++						  pm_api_arg[1] : 0,
++						  pm_api_arg[2] ?
++						  pm_api_arg[2] : 0,
++						  pm_api_arg[3] ?
++						  pm_api_arg[3] : 0);
++		break;
++	case PM_RESET_ASSERT:
++		ret = zynqmp_pm_reset_assert(pm_api_arg[0], pm_api_arg[1]);
++		break;
++	case PM_RESET_GET_STATUS:
++		ret = zynqmp_pm_reset_get_status(pm_api_arg[0], &pm_api_ret[0]);
++		if (!ret)
++			sprintf(debugfs_buf, "Reset status: %u\n",
++				pm_api_ret[0]);
++		break;
++	case PM_GET_CHIPID:
++		ret = zynqmp_pm_get_chipid(&pm_api_ret[0], &pm_api_ret[1]);
++		if (!ret)
++			sprintf(debugfs_buf, "Idcode: %#x, Version:%#x\n",
++				pm_api_ret[0], pm_api_ret[1]);
++		break;
++	case PM_PINCTRL_SET_FUNCTION:
++		ret = zynqmp_pm_pinctrl_set_function(pm_api_arg[0],
++						     pm_api_arg[1]);
++		break;
++	case PM_PINCTRL_CONFIG_PARAM_GET:
++		ret = zynqmp_pm_pinctrl_get_config(pm_api_arg[0], pm_api_arg[1],
++						   &pm_api_ret[0]);
++		if (!ret)
++			sprintf(debugfs_buf,
++				"Pin: %llu, Param: %llu, Value: %u\n",
++				pm_api_arg[0], pm_api_arg[1],
++				pm_api_ret[0]);
++		break;
++	case PM_PINCTRL_CONFIG_PARAM_SET:
++		ret = zynqmp_pm_pinctrl_set_config(pm_api_arg[0],
++						   pm_api_arg[1],
++						   pm_api_arg[2]);
++		break;
++	case PM_IOCTL:
++		ret = zynqmp_pm_ioctl(pm_api_arg[0], pm_api_arg[1],
++				      pm_api_arg[2], pm_api_arg[3],
++				      pm_api_arg[4], &pm_api_ret[0]);
++		if (!ret && (pm_api_arg[1] == IOCTL_GET_RPU_OPER_MODE ||
++			     pm_api_arg[1] == IOCTL_GET_PLL_FRAC_MODE ||
++			     pm_api_arg[1] == IOCTL_GET_PLL_FRAC_DATA ||
++			     pm_api_arg[1] == IOCTL_READ_GGS ||
++			     pm_api_arg[1] == IOCTL_READ_PGGS ||
++			     pm_api_arg[1] == IOCTL_READ_REG))
++			sprintf(debugfs_buf, "IOCTL return value: %u\n",
++				pm_api_ret[1]);
++		if (!ret && pm_api_arg[1] == IOCTL_GET_QOS)
++			sprintf(debugfs_buf, "Default QoS: %u\nCurrent QoS: %u\n",
++				pm_api_ret[1], pm_api_ret[2]);
++		break;
++	case PM_CLOCK_ENABLE:
++		ret = zynqmp_pm_clock_enable(pm_api_arg[0]);
++		break;
++	case PM_CLOCK_DISABLE:
++		ret = zynqmp_pm_clock_disable(pm_api_arg[0]);
++		break;
++	case PM_CLOCK_GETSTATE:
++		ret = zynqmp_pm_clock_getstate(pm_api_arg[0], &pm_api_ret[0]);
++		if (!ret)
++			sprintf(debugfs_buf, "Clock state: %u\n",
++				pm_api_ret[0]);
++		break;
++	case PM_CLOCK_SETDIVIDER:
++		ret = zynqmp_pm_clock_setdivider(pm_api_arg[0], pm_api_arg[1]);
++		break;
++	case PM_CLOCK_GETDIVIDER:
++		ret = zynqmp_pm_clock_getdivider(pm_api_arg[0], &pm_api_ret[0]);
++		if (!ret)
++			sprintf(debugfs_buf, "Divider Value: %d\n",
++				pm_api_ret[0]);
++		break;
++	case PM_CLOCK_SETPARENT:
++		ret = zynqmp_pm_clock_setparent(pm_api_arg[0], pm_api_arg[1]);
++		break;
++	case PM_CLOCK_GETPARENT:
++		ret = zynqmp_pm_clock_getparent(pm_api_arg[0], &pm_api_ret[0]);
++		if (!ret)
++			sprintf(debugfs_buf,
++				"Clock parent Index: %u\n", pm_api_ret[0]);
++		break;
+ 	case PM_QUERY_DATA:
+ 		qdata.qid = pm_api_arg[0];
+ 		qdata.arg1 = pm_api_arg[1];
+@@ -150,7 +310,7 @@ static ssize_t zynqmp_pm_debugfs_api_write(struct file *file,
+ 	char *kern_buff, *tmp_buff;
+ 	char *pm_api_req;
+ 	u32 pm_id = 0;
+-	u64 pm_api_arg[4] = {0, 0, 0, 0};
++	u64 pm_api_arg[5] = {0, 0, 0, 0, 0};
+ 	/* Return values from PM APIs calls */
+ 	u32 pm_api_ret[4] = {0, 0, 0, 0};
+ 
 -- 
-Cheers,
-
-David / dhildenb
+2.25.1
 
 
