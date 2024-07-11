@@ -1,74 +1,64 @@
-Return-Path: <linux-kernel+bounces-249008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 911DA92E4F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:42:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E27092E4F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:42:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C66B281295
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:42:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701DB1C21A28
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07C9158A35;
-	Thu, 11 Jul 2024 10:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D30158D7B;
+	Thu, 11 Jul 2024 10:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vzDk7b7k"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jYCMypzf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF6115748C
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DF1157A74;
+	Thu, 11 Jul 2024 10:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720694536; cv=none; b=SnvKE3ckh9rA+O0/K4RSKNuPopUUmkxHk6C6sP+fGP92KgnjolzTDZU67yWEBJxzXOIQKrCc+FOV9u3bimJIaOxCOM5LS+Uw1lmvvoN32G4wfb/mSjDfZqmBDkBswhpTKlH1/kDtQN6VtJ4w7hT7qmTBRK/GyJfOupZxJZQSgVU=
+	t=1720694568; cv=none; b=FEhDIrUHpPFLrbaYPufmoL1mnMpz2Ov4htUWtHMGrJYKOQe0EZuV2S0VrkoDgaX6swiQh5LbwCOls9M3Iw9/dvHqFG2bP5YwPBdTO9YYpQIdcd48b/5zBBHGIeDRFuudlYz3y0SFZ5bXAcWOMN0Rx7MpKN7eEt3D1S4a9uQTYX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720694536; c=relaxed/simple;
-	bh=U96uAEEwrb/sj5LnOKS9rX/+t0nhVAh5wKtzNWTuP0I=;
+	s=arc-20240116; t=1720694568; c=relaxed/simple;
+	bh=t58zTv9k1wCt+G1ma/dgsP26I7BJP4mhNUq6tFhXl7E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lqnywqvzSy4XkfPZrOvxDbUwv+z+6LJubc6g8N0kFsYPM2FVZRlFe6q8fNhRxXlrYZD0il/2FE8gcOczOZwmExLIl2wmw7PzUy2RKLu7qBS8wNC5JKkrLPlMytih+j9ruhASCGC/BEHoh2rzkLG3cbQIbhp2zDbgcQlMHdz0qbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vzDk7b7k; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so1209800a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:42:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720694533; x=1721299333; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PtxqIAWIiTUKLX6AXhXVggOKB10pYOSotqE522q5edk=;
-        b=vzDk7b7kjO7Rv/QifSKEEGNb82fgT7sRjGucVwW3WZqxR7EgQxDYVN+kMeIai1PGue
-         HOTCeErGIAA1g9qetcmoCwv53BZJAddXxBXvp0IxseQZ34lgmLPoxuoU/V9s8KG28Siy
-         xvaYZVhWV/dO3pw9gtZMJxVF/F00XDvF2cH4itb38S3E97s/UVMU00ba8t31o3CGSgOz
-         qJeEPK9hQo0bYyV+4q2qJeCtH9qyDj/2YHBZHrydAU5VkUY5k1rBOzHZf96t0G1d/ARZ
-         4NOfsbOt1MCgcxgxkudOMhVGhVnajrLN1ZAxO9/wOUOTTz4+s/4pQzd51MmSb3sDGG6a
-         CaHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720694533; x=1721299333;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PtxqIAWIiTUKLX6AXhXVggOKB10pYOSotqE522q5edk=;
-        b=SBemMVT0sqsmcP/R22o8F5M7CFCY4d3g/zGP3iJ7qsIQ/7UQRYY4UBbifI7CGu5KIq
-         4eQ8QX5deZztb6KY/9n0xsrU/cX+jfe8mZu8EjMJ5GpBU3lypqFnvdcOiClkzh1W81Cn
-         tkE/mTVCn+PM3rMBd6FrhSq+JilLngpLuL5rBaVGuCHvAa7Ov64uLPcCfuVTJUewlqhg
-         UY/I+cGQgUesdGn2HLVEkN/2j314Au/ySFvDXJedHB6oJjxx6kRj5xqJe0KWazLrWLzD
-         iHpVp2hixZbel5dm1jiQdjh+bMAt3qesQt7Al6mtAvQ4/Cqrn8NF9U5opSpn6DptXEzM
-         QeBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVG5QXryhtU6dpLdjMTR+VkPQeneTFm6mm/anaPaVUPT3JKHahwKBPneGP2gsmvRhhPDCUZo9lHqjwEPnsTtnmSYy5yYftzTn1c6A63
-X-Gm-Message-State: AOJu0YxVtFb3oqSAasBzXzALHiK/LusoTfX0S8WgJz8wDo1W6ebSPLdU
-	KsFnewuU/l3JQtmVF+st03Bu76bh+o7IfphA8As2CCb7awytLn0uiIVwFn64LWs=
-X-Google-Smtp-Source: AGHT+IHk9aH+XY0uDq3os2yKd4DG51Hj7jKRYmxb0lTlr5Pw9fdKfxrwFD45/AkbwDIihG4ST2Px9w==
-X-Received: by 2002:a05:6402:50ce:b0:57c:c171:2fb6 with SMTP id 4fb4d7f45d1cf-5980c8f9a89mr1901423a12.1.1720694533179;
-        Thu, 11 Jul 2024 03:42:13 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bba54b07sm3293826a12.14.2024.07.11.03.42.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 03:42:12 -0700 (PDT)
-Message-ID: <5c4b7519-50e2-4de8-baa6-39a328886d34@linaro.org>
-Date: Thu, 11 Jul 2024 12:42:10 +0200
+	 In-Reply-To:Content-Type; b=WbWZESWazFzgnwR06cE4wx7GsJQbEl5fD+sXBLNYQomgWkbeC0afCUc8HmVeUI0C4x18H26SO3+3qLbUf2I16k+3x9Y7xdoMAR+/xJ3BLgAwzypU0Qj68vcKVcZKBtUfQvN1rAzh3vc/aZOZVwWVnZDUW+rLGxuikZ/RmkLXPT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jYCMypzf; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720694567; x=1752230567;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=t58zTv9k1wCt+G1ma/dgsP26I7BJP4mhNUq6tFhXl7E=;
+  b=jYCMypzfXwXpZjLne6FR5zT2ktWkoQvBx89DEEeD+krbkR8Fgs4x3geF
+   xiLexwDq/sf1UuFDcXJpq8luqGGOnBbB+VmjXgNzMv+7wI44RslLtnNqy
+   tdoY7fUsVtV/IKCLYItRTApeBmN7YB9naNwpDg9rWr6q8hE/zmQ0Eevg+
+   hAcmw9EGc7WZV6QODr4tsOc5YgJRv3sLKBrhcSy3ieTspNVF/MxDzPPFf
+   FJaIObI2+UpvRAff5SYzFKDvuYJ34eyv9x7fdEg4WbyC7QT6jDFhC1fKb
+   JZp66SVZWITxfRjPOAdh1liIewXRxJt1Dg+smm9KRg3yrt521Hjeqoh2P
+   A==;
+X-CSE-ConnectionGUID: OC362ItRQtCluwJCV3WZOA==
+X-CSE-MsgGUID: /+K3ZCaZTZCjhsO05BrL4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="29469117"
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="29469117"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 03:42:46 -0700
+X-CSE-ConnectionGUID: nkTtbMhnQlSTs28b3ePhsw==
+X-CSE-MsgGUID: 0osA4EkPSiG+1+4Xlzi4Lg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="49273414"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.249.84])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 03:42:40 -0700
+Message-ID: <68796741-f49f-447f-b707-fe4f8391fc17@intel.com>
+Date: Thu, 11 Jul 2024 13:42:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,72 +66,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] drm/msm/a5xx: properly clear preemption records on
- resume
-To: Vladimir Lypak <vladimir.lypak@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Jordan Crouse <jordan@cosmicpenguin.net>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240711100038.268803-1-vladimir.lypak@gmail.com>
- <20240711100038.268803-3-vladimir.lypak@gmail.com>
+Subject: Re: [PATCH V8 01/12] perf/core: Add aux_pause, aux_resume,
+ aux_start_paused
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Hendrik Brueckner <brueckner@linux.ibm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
+ <will@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <20240628065111.59718-1-adrian.hunter@intel.com>
+ <20240628065111.59718-2-adrian.hunter@intel.com>
+ <20240701102644.GA20127@noisy.programming.kicks-ass.net>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240711100038.268803-3-vladimir.lypak@gmail.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240701102644.GA20127@noisy.programming.kicks-ass.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11.07.2024 12:00 PM, Vladimir Lypak wrote:
-> Two fields of preempt_record which are used by CP aren't reset on
-> resume: "data" and "info". This is the reason behind faults which happen
-> when we try to switch to the ring that was active last before suspend.
-> In addition those faults can't be recovered from because we use suspend
-> and resume to do so (keeping values of those fields again).
+On 1/07/24 13:26, Peter Zijlstra wrote:
+> On Fri, Jun 28, 2024 at 09:51:00AM +0300, Adrian Hunter wrote:
 > 
-> Fixes: b1fc2839d2f9 ("drm/msm: Implement preemption for A5XX targets")
-> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> ---
+>> Add aux_paused to struct perf_event for AUX area events to keep track of
+>> the "paused" state. aux_paused is initialized to aux_start_paused.
+> 	
+>> @@ -798,6 +810,9 @@ struct perf_event {
+>>  	/* for aux_output events */
+>>  	struct perf_event		*aux_event;
+>>  
+>> +	/* for AUX area events */
+>> +	unsigned int			aux_paused;
+>> +
+>>  	void (*destroy)(struct perf_event *);
+>>  	struct rcu_head			rcu_head;
+>>  
+> 
+> Should this not be part of struct hw_perf_event for whatever hw event
+> implements this AUX stuff?
+> 
+> In fact, I would expect PERF_HES_PAUSED or something to go in
+> perf_event::hw::state.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Sorry for the slow reply due to vacation.
 
-Konrad
+There doesn't seem to be anything preventing pause/resume from
+"racing" (PMI vs task context) with changes in the aux event state,
+so aux_paused must be separate from perf_event::hw::state.
+
+But putting it in perf_event::hw should be fine.
 
