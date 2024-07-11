@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-249631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6BE92EE11
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:51:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DC292EE2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 763171C21B83
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:51:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3DCB1C2140B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3995F16D320;
-	Thu, 11 Jul 2024 17:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2112216EB59;
+	Thu, 11 Jul 2024 18:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J7K2AzWN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n8ySceTx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0AE12D205;
-	Thu, 11 Jul 2024 17:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76F416E870;
+	Thu, 11 Jul 2024 18:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720720257; cv=none; b=Z21wJISvQOtkfSaBAyFIou1wNWwILNwVQLHxEI7ObWQtdVts18u7c1Fke0ZpObXDqggeL/cKTLP5Xq0tBlk12quFGJOq64RcCJyd5igA/coVhXzCxxF7EoWgZUFg6QloqjfQjXBfepSXISR4qAczQpdkXho+bRP0PwmDP4NyM5M=
+	t=1720720823; cv=none; b=nI3jmTBHX8mAm9UyNGGglKwdIPTAB7yYYMwDWeOR6ylBtolj8PJSY+dS3ImkgpmzJT2oTrMzQ1Id1X5obruzaf/6SpCYelRRE0MuUsGcSkC9v/t2Cq6oT2lm8USX/9DETqyzIa+U540CB1BhZg5Bgw/z8tacPT2GanwcSsROAKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720720257; c=relaxed/simple;
-	bh=zw3FtwYQQ8rtj5yJV4VfCVdwI6K6bNrTvRLVgyKesao=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OaAEtHHYzFT9GqbUhDjD+VSbfyCA/PZyJ1Xwzw2zZcNu8+i3cjN/cQdvPVgw60BtZx4JZXmvIZDxqoc11go5JxhNX3U2C9vbL5ZEmqyoil9sOU863tEDX5GW5KBTj//YYjpjVYLSZVKqREmItw86Xio81Z8z0PDHAC5NsMOTGEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J7K2AzWN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02C3BC116B1;
-	Thu, 11 Jul 2024 17:50:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720720257;
-	bh=zw3FtwYQQ8rtj5yJV4VfCVdwI6K6bNrTvRLVgyKesao=;
-	h=From:To:Cc:Subject:Date:From;
-	b=J7K2AzWNgwfFTaklSmHUdptKcm8VMzsJz1l05l3cSBdpZt7Bel7py6e9FrG9oKV8G
-	 LGQZRTUqb6JDI/GO8hmxMKqy28hO1krhApo8guyTKuhzLTJC+wSZDyWAEEPswsJtpH
-	 SKJd3Byi+TBh9idxmgm25VjoigVHU4Io6k+btI6gV/X1PXdgYmrN4KFG5nmuKAoUeJ
-	 UOXjM8b10/8S1XpAwIJfqs0oPXgHZeqCaj1gbMtO6M2Xo/LAFJ1M9+BWWeYqrVuh30
-	 h65utAsCyDmMmGtlOWdb+vLX9l2BS4SF4guL0370rkMXaPRyeWbITVu7A3ZCQNQS6r
-	 Ok/aUmuNSgO/g==
-From: Kees Cook <kees@kernel.org>
-To: Adaptec OEM Raid Solutions <aacraid@microsemi.com>
-Cc: Kees Cook <kees@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] scsi: aacraid: struct aac_ciss_phys_luns_resp: Replace 1-element array with flexible array
-Date: Thu, 11 Jul 2024 10:50:55 -0700
-Message-Id: <20240711175055.work.928-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720720823; c=relaxed/simple;
+	bh=TiMKibYFLIqpKOzZI/Qxq1649SejuxuD1Q0Zim3d2ew=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=MzR0u6FOl4tTNYDrGh5pTeuG+BmAAzw6NUU3nS0PlkyIKfIdAYg/fuNKD5Qy3TGd8+VJbQXvIP9jNdo1nvaZDdHvBPuBaHDVRrIbu6El43l+LY7p8iBPm1G/1sWUaWCLkZLIY9Ygvdrj7802CwJI/H24htQkEZacEyQAxjghOiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n8ySceTx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BFmSig032636;
+	Thu, 11 Jul 2024 18:00:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=N7nvtSWo9WWnfpuIwR7eOP
+	es2K3UZsesR0FAqN+XzPY=; b=n8ySceTxPEhllQxusBNWI4Pifn6nyBWGrRjvQr
+	mO5EBgkDYpgCEyK6C5yJkAKKW/sm6T0CH/qnjC3nAgS6LGcg0paqzAE5OHhNyCJ3
+	3GjSa2mSBrpoMF1JUuslDKVjkBFZgBoKJNg7b82caZQu4p9+Chk24Ipo2/6PilKW
+	g+rUVZgCOsJX1/4OWY2cXlJFEG18DM4Z9V/IVoaYTMFJOvcO0RPhjUCbmxFDGuVb
+	HTnh3Sus/mxr+AU5TuGMTvEt1TyPXB0Ct9FYGHkyWB+7SrMNUSLtvFHjPZn0ryfP
+	v6y7/CKb1qy7CVmUFS9ye7li70fkfMt0FFq/IG5Gki38l2rQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ajbqr9yq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 18:00:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BI0Bo1015915
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 18:00:11 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
+ 2024 11:00:11 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 11 Jul 2024 10:52:13 -0700
+Subject: [PATCH v2] crypto: arm/xor - add missing MODULE_DESCRIPTION()
+ macro
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1636; i=kees@kernel.org; h=from:subject:message-id; bh=zw3FtwYQQ8rtj5yJV4VfCVdwI6K6bNrTvRLVgyKesao=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmkBt/7P6HwP5fZjHYrd+TQjHDP6HwDyOaTMlW3 5v2UmYtxmuJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZpAbfwAKCRCJcvTf3G3A JrZmEACxSg9VUUP6muCtUOlV41Vgh8ItMIdOqk2WCpY67B5Wf2edl//1XYrvX8dl4KfrORV1jK/ hvgAW1LQjIk5Y1SVeSlajpS8Y14li+J+chzKcc2LDsBH7cCB/4cw6OGWIJOvVz+5qAxXvRv2sV8 S8+ijVt3AG7PwZNucuQBRw73SavAtqYswCkhAb2xQB8EYOXbBy8Ap9FleGPOitm8L3MNamA+QQn S0IZ4GS1fuNsCxYhAJ9IL23qbDyVPNWNILA2wDRNofb0WcBLhDGVL4Ui031c2Pb8Qdwfd08LwWx zZWYT+46swVc7qIEkOAq6zF0LyewMNoacesjJkKoOodXr64iEEvODGV6YCFVE14Gdk+PeCcrBqt G09CSAKenKVD+UnTeSmMcco3G9YM5FCcsU6JALTGwl+Q3IuTZjm/2J+cXcLcfs1AwJzQTvQ8EM3 edrdeB6uXeFhK/Gg3BDsmwBx18ubeXYkhWaQNhiVK2jZsp99Jcy7EAeNomscQD92e9hXAbdKhrs L802pD0trm8gJDH6DtHQmUsAJe2L4xAIDFvrjTVFfjwVyG8y+bSUktHPdjJ7R4c1VppIdTG0v2W x8UaDUSn33dXVt/97SyOueXIDvC4IkeIl2fl//u91GkpgkHO6w4zYF2H6jHUW2nlPktQtpl1Srl 7WXx2sEcdmpwY
- jA==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240711-md-arm-arch-arm-lib-v2-1-ab08653dc106@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMwbkGYC/32OTQ6DIBCFr2JYdxpBbLWr3qNxATiWSQQtqLEx3
+ r3oAbqY5H3J+5mNRQyEkT2yjQVcKNLgE4hLxoxV/o1AbWImciHzmxDgWlDBpTP2FD1pqDXvdCF
+ lLQrDUnIM2NF6tr6axFpFBB2UN/bo6snPKzgVJwyH3VKchvA9f1j4Efo/t3DgcC8LVVVV2Sohn
+ 5+ZDHlzNYNjzb7vP3e/ZG3XAAAA
+To: Russell King <linux@armlinux.org.uk>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bO-38yDT1daemt-Es2Lnkm9b3ZDwEg6G
+X-Proofpoint-ORIG-GUID: bO-38yDT1daemt-Es2Lnkm9b3ZDwEg6G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_13,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=622 bulkscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 impostorscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407110125
 
-Replace the deprecated[1] use of a 1-element array in
-struct aac_ciss_phys_luns_resp with a modern flexible array.
+With ARCH=arm and CONFIG_KERNEL_MODE_NEON=y, make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/lib/xor-neon.o
 
-No binary differences are present after this conversion.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Link: https://github.com/KSPP/linux/issues/79 [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
-Cc: Adaptec OEM Raid Solutions <aacraid@microsemi.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org
+Changes in v2:
+- No changes to the actual patch, just rebased to current linus/master
+- Hope to have these warnings fixed tree-wide in 6.11
+- Link to v1: https://lore.kernel.org/r/20240622-md-arm-arch-arm-lib-v1-1-753a8885da24@quicinc.com
 ---
- drivers/scsi/aacraid/aachba.c  | 2 +-
- drivers/scsi/aacraid/aacraid.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/lib/xor-neon.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/aacraid/aachba.c b/drivers/scsi/aacraid/aachba.c
-index b22857c6f3f4..497c6dd5df91 100644
---- a/drivers/scsi/aacraid/aachba.c
-+++ b/drivers/scsi/aacraid/aachba.c
-@@ -1833,7 +1833,7 @@ static int aac_get_safw_ciss_luns(struct aac_dev *dev)
- 	struct aac_ciss_phys_luns_resp *phys_luns;
+diff --git a/arch/arm/lib/xor-neon.c b/arch/arm/lib/xor-neon.c
+index 522510baed49..cf57fca97908 100644
+--- a/arch/arm/lib/xor-neon.c
++++ b/arch/arm/lib/xor-neon.c
+@@ -8,6 +8,7 @@
+ #include <linux/raid/xor.h>
+ #include <linux/module.h>
  
- 	datasize = sizeof(struct aac_ciss_phys_luns_resp) +
--		(AAC_MAX_TARGETS - 1) * sizeof(struct _ciss_lun);
-+		AAC_MAX_TARGETS * sizeof(struct _ciss_lun);
- 	phys_luns = kmalloc(datasize, GFP_KERNEL);
- 	if (phys_luns == NULL)
- 		goto out;
-diff --git a/drivers/scsi/aacraid/aacraid.h b/drivers/scsi/aacraid/aacraid.h
-index 659e393c1033..6f0417f6f8a1 100644
---- a/drivers/scsi/aacraid/aacraid.h
-+++ b/drivers/scsi/aacraid/aacraid.h
-@@ -322,7 +322,7 @@ struct aac_ciss_phys_luns_resp {
- 		u8	level3[2];
- 		u8	level2[2];
- 		u8	node_ident[16];	/* phys. node identifier */
--	} lun[1];			/* List of phys. devices */
-+	} lun[];			/* List of phys. devices */
- };
++MODULE_DESCRIPTION("NEON accelerated XOR implementation");
+ MODULE_LICENSE("GPL");
  
- /*
--- 
-2.34.1
+ #ifndef __ARM_NEON__
+
+---
+base-commit: 9d9a2f29aefdadc86e450308ff056017a209c755
+change-id: 20240622-md-arm-arch-arm-lib-9b1fb344923c
 
 
