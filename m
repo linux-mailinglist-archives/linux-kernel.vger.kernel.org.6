@@ -1,100 +1,94 @@
-Return-Path: <linux-kernel+bounces-249474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710D092EC33
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4065592EC45
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A28C61C23A79
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:00:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE84E284723
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BBF16B392;
-	Thu, 11 Jul 2024 16:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FF916B392;
+	Thu, 11 Jul 2024 16:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hc1YuhhP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="M0D1OhMD"
+Received: from smtp82.iad3a.emailsrvr.com (smtp82.iad3a.emailsrvr.com [173.203.187.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826F1179AF;
-	Thu, 11 Jul 2024 16:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6AB15957E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.203.187.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720713631; cv=none; b=Coa/RhGMvyoebRTIcJ+MUdVK8giQ4Aiq2DaL/AeFjzt63RyySS8AqttngtAIOg5cWN4ahyb2YIgZq6ZfU9go47mjGSnZFDedsFOh5yVauOxzdejUjdGnbzpQJ9VPbVR2IHea5Qy+vz8JRoPhOJ7nSQQ588W6S7uHkA6gx9PD9sk=
+	t=1720714011; cv=none; b=Nh0gdXuXqaOCXgI8yGXFJl4QOEmmniql9Fp0zvy2XM/ww+Iq25wF4zzcJAEyyFRBxXD/uK+lO0JGRAZXuzf2rxpusRRYQz6Vp6wLZ1pd4n6BOp9rMA3t55GW/aDtk+lna6ilZwPRPNuC34+4qpsqZJ2d7w4fr6UQBr4dW/JDcwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720713631; c=relaxed/simple;
-	bh=BHYCtrKDFbTriWSnWuFES4/RKdf0Hj7f+PdyDv5PYEI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=U8EQ1auYlKsgWJpdeopg/m+iJyg7suovPJFkeA83dNd4HvsnRdWQhX4MG9VAaL6Q0GQmrb2WuL7laSuomc3TtEDWiUVBNp86oDPnVt9xSXB1n0jdcCU37/Mxvhob3kuFK6pdHt8bYhuoE8MEZO9/b5r9tJu2JApPkuJqPZvAPFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hc1YuhhP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 51839C4AF07;
-	Thu, 11 Jul 2024 16:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720713631;
-	bh=BHYCtrKDFbTriWSnWuFES4/RKdf0Hj7f+PdyDv5PYEI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hc1YuhhPUQSN3XJii8SEGASoc2W7yqf+j/4hs2xIoTF5ef8nTt2L+Xr77TSxfs9rn
-	 3AXQRdZt8wrkUo04WOclw0AY9lxb4P7F+ZImLnBeLNKDMTUpgeB1And7uZaUgF+sqy
-	 Z2kCxumlmMLQix0WKRNJSXSo/uzzHXUwhwWBiUrm4YKOH0moQUGMXdU2Z6mJU3POBT
-	 OtdXpUUFMWxC1+0Ooi5PCjiRPl/6c0bjygJZyKPietZxhK+TsgRGHqwMsqKDpBpuJ5
-	 aL5wNslJSMmcePjQSUjcPgSqBKHInUkxZDHDWS4TnMEQPLOq3CUhyk5iAoZg9wJ+ui
-	 dp3VXhATJt2bg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 378D6C43468;
-	Thu, 11 Jul 2024 16:00:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720714011; c=relaxed/simple;
+	bh=0uwD1M9nJAbWVzYpgSCZB5Zm24KRaWsiQ4PiDZVyuS0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rdhnMFWklxTg1ZVxswNZ2LInP3dIOuILMgJ/31/bpYiV7hAgXwau5GKrJ6oPJGk47D2cVQWlPSibwm1E/MskZRmX7kzDnxrSKJIHDGi29En5h0wyO1d0YCAqt4OFW2BMBD1Tc5GDdST+URxM3bJnNNbPdpoQ8F6alCD1LcQg+JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=M0D1OhMD; arc=none smtp.client-ip=173.203.187.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1720711749;
+	bh=0uwD1M9nJAbWVzYpgSCZB5Zm24KRaWsiQ4PiDZVyuS0=;
+	h=Date:Subject:To:From:From;
+	b=M0D1OhMDuM2DuydxSuNKRB+6Q24adcgvzEH3brk9cnPXCOVG/2nEKpqwDe/STM8gk
+	 tkvwA7BA/20IiQUMrrfNvv5HKB9jukCxCwVLoOitaFY9OHLFfkEELnIs1RE3hHRSmi
+	 bFcucWYRX5AYntFPCaikvfPhxqoQHwE/4+CcYVWM=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp19.relay.iad3a.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 887565150;
+	Thu, 11 Jul 2024 11:29:08 -0400 (EDT)
+Message-ID: <6f122282-1675-497f-bc2f-0bbfba6640aa@mev.co.uk>
+Date: Thu, 11 Jul 2024 16:29:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf] bpf, arm64: fix trampoline for BPF_TRAMP_F_CALL_ORIG
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172071363122.25248.13927897511832402439.git-patchwork-notify@kernel.org>
-Date: Thu, 11 Jul 2024 16:00:31 +0000
-References: <20240711151838.43469-1-puranjay@kernel.org>
-In-Reply-To: <20240711151838.43469-1-puranjay@kernel.org>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, puranjay12@gmail.com,
- xukuohai@huaweicloud.com, catalin.marinas@arm.com, will@kernel.org,
- jean-philippe@linaro.org, bpf@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] rtc: ds1343: Force SPI chip select to be active
+ high
+To: Mark Brown <broonie@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+References: <20240710175246.3560207-1-abbotti@mev.co.uk>
+ <20240710184053c34201f0@mail.local>
+ <2b0e8a6c-f89e-4d71-a816-9da46ea695eb@mev.co.uk>
+ <bd7c0eb9-bcb6-42e3-8be6-3d07452e3fd5@sirena.org.uk>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <bd7c0eb9-bcb6-42e3-8be6-3d07452e3fd5@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Classification-ID: 43f7e90d-b81b-44ea-bc3d-341a7d3df9f3-1-1
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Daniel Borkmann <daniel@iogearbox.net>:
-
-On Thu, 11 Jul 2024 15:18:38 +0000 you wrote:
-> When BPF_TRAMP_F_CALL_ORIG is set, the trampoline calls
-> __bpf_tramp_enter() and __bpf_tramp_exit() functions, passing them the
-> struct bpf_tramp_image *im pointer as an argument in R0.
+On 11/07/2024 15:21, Mark Brown wrote:
+> On Thu, Jul 11, 2024 at 03:05:01PM +0100, Ian Abbott wrote:
 > 
-> The trampoline generation code uses emit_addr_mov_i64() to emit
-> instructions for moving the bpf_tramp_image address into R0, but
-> emit_addr_mov_i64() assumes the address to be in the vmalloc() space and
-> uses only 48 bits. Because bpf_tramp_image is allocated using kzalloc(),
-> its address can use more than 48-bits, in this case the trampoline
-> will pass an invalid address to __bpf_tramp_enter/exit() causing a
-> kernel crash.
+>> I think the devicetree node for the RTC device ought to be setting
+>> `spi-cs-high` but cannot do so at the moment because the driver clobbers it.
 > 
-> [...]
+> Specifying spi-cs-high in the device tree should almost always be
+> redundant or a mistake, if the device needs a high chip select then we
+> already know that from the compatible.  The property is adding nothing
+> but potential confusion, in the normal course of affairs the driver
+> should just specify the configuration it needs for the bus.
 
-Here is the summary with links:
-  - [bpf] bpf, arm64: fix trampoline for BPF_TRAMP_F_CALL_ORIG
-    https://git.kernel.org/bpf/bpf-next/c/19d3c179a377
+So `spi->mode |= SPI_CS_HIGH;` is safer than `spi->mode ^= SPI_CS_HIGH;`?
 
-You are awesome, thank you!
+Regarding `spi-cs-high` in the device tree, what about the compatibility 
+table for `spi-cs-high` and `cs-gpio` active level in 
+"Documentation/devicetree/bindings/spi/spi-controller.yaml"?
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
 
