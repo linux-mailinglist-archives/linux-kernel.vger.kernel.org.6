@@ -1,144 +1,234 @@
-Return-Path: <linux-kernel+bounces-249978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C1692F277
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:07:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20DB292F27F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 314131C228F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:07:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EAE21C2293D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5475E1A0725;
-	Thu, 11 Jul 2024 23:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329761A08A0;
+	Thu, 11 Jul 2024 23:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dey2H8Sk"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cHZOGzRA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B241DFE3
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496651DFE3;
+	Thu, 11 Jul 2024 23:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720739241; cv=none; b=IQDUofj8+JsE0xwlNkxo1RPS3aHFVYfZf9i9W+LW7Lw/YMhWBFYlYQM3UvQ65Zsp+Vo3tFahzE/XOcjzOGBijflzIPFPtf7XykMcJVEKpKs4r35OrqFGn0i6OH9n8mBXWe1Liw+0WHxzwl0MGaK3cc+7p6JpJ8Ed8o4MDrr2i8o=
+	t=1720739444; cv=none; b=YdAx1o5jatbXchaY4yYHdS3KaI87jt8EEdh5FXRP12IwNyMcCTz4Qh5c8dMlDapGDlKFDcTTKLQXg2nId7zF+fx6Mox9g7i8vx1iNDoiPWtOxc95D0UUo/IBxaceTVMUnM9xyVND1nI0LKx/wGTD9c9QcIt87OIxrBhAOSGZEgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720739241; c=relaxed/simple;
-	bh=3M0EY2DABXXVKV2UN0YHNuXp8d0HW8YIbLcNOsrEjeg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jICemjr02XHixeV4o8Jq1tBistddDiVvZcOUvqP9byY2r52el33hZAd9S8gxzYESCn6K+HanyfXDjo7d+xzPVeGqT8VoRjn/6RagW1OVJCno5Hwki8IiJjSWyI9AR6a+byIE7cS7vGK/7G3sfDJ7J5gOeSBCyxd/+v39C+LENRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dey2H8Sk; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77c4309fc8so218417166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720739238; x=1721344038; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=byKCeNwRs0T1R6plp9OuqfAkOz/elWWT8jqkCBg7kkg=;
-        b=dey2H8Sk/Lwg7f1Gj0Tl9fIAHdXBUnpG6jd09lksZ/2qXhbFkAlPAGjmnRcOidaYSN
-         uBvqYhLY6xK7f0aXbIDW8Pjm+espz0KPrFbALST9t8XWmWwC9gBZJ7xgMrNjqS+/v6zY
-         00LX2RD9pENRA1C91E7AqE7VIUaaDAZNRnek1qggppZaiy6XKatmOzIgS/+wR2tzhZa+
-         S8KAgFifR/bIW84VhNCZ1TGTQvY92MDfGBuwr/vIHSTKn63CUMUIOmdXADE+gw4ftsCG
-         63JGHkEyBBeogEBbMej0VWjsDTdSn7raLE7B/lcmrBj6KZsDyGWDMSvWKiB3BzTpNwLy
-         yLFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720739238; x=1721344038;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=byKCeNwRs0T1R6plp9OuqfAkOz/elWWT8jqkCBg7kkg=;
-        b=q9kPGEbyI8YxWbPTk/9AuzrVlDkfKyoCGc+RdhV7DvfSnUGG/3WC5+9yVEcXVSFmcB
-         xgE+l7OamIjFgQAL4Klh5wJqYA39PcVpt5Y4qTfIu3LICOVSsNX/m2eWwYSsMPLXXGm8
-         oZ03njQ/hlKwINQJgx9E9Ay+czlGd6kRE0/B0LawfaZpOs3dC4ZyR/dmRAP8MA3pY9BS
-         CLd3szyYv0M//fRgL4lMfuvXHvxKc6IkuSxFCfqAEgKk8v8V5CPuZKNUQOreBJukjBp8
-         rU4zwPT8M4bR0GBeronqBl0U/HJH7glvU+YH/yjECE4GnXt7Gh5g7Oh0PVm6sUyKFRCb
-         UJ4g==
-X-Forwarded-Encrypted: i=1; AJvYcCV1qLFS5lp3INc+vs20wFmD6JUOHi+2HTHVYuU20dZoMwTYvBJRqh2vyrzAD/YzAaJDJs+zAGlP0EI6eqQiAo3Nx3jeioTbkeE9VSGn
-X-Gm-Message-State: AOJu0YylAz5iQFON957Cn4qAsVCN0DDNj1WVP6nBOIVWUVkyxuoVChVm
-	W5Nz8fzIdsgj/4xZBdetM3B9VleH4tqurQ8dGK3YPysAHDzDT3ikbwynjQ==
-X-Google-Smtp-Source: AGHT+IHTbjG/RYmwHcT/Q3lMtncGYloiLd+y4K3oAC67A0D4AU6O7kPZeN9IfTq1U1PJ5DxsO9o1cg==
-X-Received: by 2002:a17:907:3d87:b0:a77:d52d:5c61 with SMTP id a640c23a62f3a-a780b89ea27mr804898966b.69.1720739237926;
-        Thu, 11 Jul 2024 16:07:17 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-43-148.xnet.hr. [88.207.43.148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc52sm287890266b.4.2024.07.11.16.07.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 16:07:17 -0700 (PDT)
-Message-ID: <4aa9b897-4596-4e2c-8dda-f24ab51e9b7c@gmail.com>
-Date: Fri, 12 Jul 2024 01:07:16 +0200
+	s=arc-20240116; t=1720739444; c=relaxed/simple;
+	bh=ATrtSk6itwMrkk8dtkW0RYs8d3FjFdE0ZPlLBLuC9BQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=di0nFHlRFgRTg4a/a6yYUrMU8ckVPZvtqritjCziKj/pYDLx8yevKeAivHHvC0CEWUJRntw+/7Grlv9rXCjfY5UCmU74uegHouxTQTqn+pbY6jlc1zpVbirWBH9uo0B/iPJgWly21JHMjmQ1WEebRE4SZ/EBW+oaKb7C5vu7zDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cHZOGzRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF884C116B1;
+	Thu, 11 Jul 2024 23:10:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720739443;
+	bh=ATrtSk6itwMrkk8dtkW0RYs8d3FjFdE0ZPlLBLuC9BQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cHZOGzRAHjvOOoOt68Qg/gvKNaljKIXl2Jwh6iH7jR7cLmtzSv9bt9PQMf+h0Qa/U
+	 qbg5P8HTKkUwdusJuaKjB9ELxX7+wf2AesGCzbmv68DAVc1OvVqQ0qPkip8f1lRy8d
+	 VLqzXnww7eKfqSDisKTIDUM/i3gd4CoL4QGjyUc65o8y05nFPMUvXlCiSJUb41hhvP
+	 +LED4Sd+bchVuDulgLMbLuGxpEUPUQyosnWFzksPWR0leL4fZNS02hydpMT2M6gtld
+	 JS3k+LJ4Imz9KiiLe15KTKgGwH4Yjht/v4vJ2cmqRAgGi37uBa6LShDp1VReUDVHfz
+	 W/cRMF3D7czdA==
+Date: Thu, 11 Jul 2024 16:10:43 -0700
+From: Kees Cook <kees@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Mirsad Todorovac <mtodorovac69@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Peter Collingbourne <pcc@google.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] x86/syscall: Avoid memcpy() for ia32
+ syscall_get_arguments()
+Message-ID: <202407111500.B86485B3@keescook>
+References: <20240708202202.work.477-kees@kernel.org>
+ <20240711214450.GG27299@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-mtd@lists.infradead.org
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: [PATCH v1 1/1] mtd: slram: insert break after errors in parsing the
- map
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711214450.GG27299@noisy.programming.kicks-ass.net>
 
-The GCC 12.3.0 compiler on linux-next next-20240709 tree found the execution
-path in which, due to lazy evaluation, devlength isn't initialised with the
-parsed string:
+On Thu, Jul 11, 2024 at 11:44:50PM +0200, Peter Zijlstra wrote:
+> Just for my education on things foritfy; would something like:
+> 
+> void syscall_get_arguments(struct pt_regs *regs, unsigned long args[6])
+> {
+>         memcpy(args, (typeof(args))&regs->bx, 6*sizeof(args[0]));
+> }
 
-   289          while (map) {
-   290                  devname = devstart = devlength = NULL;
-   291
-   292                  if (!(devname = strsep(&map, ","))) {
-   293                          E("slram: No devicename specified.\n");
-   294                          break;
-   295                  }
-   296                  T("slram: devname = %s\n", devname);
-   297                  if ((!map) || (!(devstart = strsep(&map, ",")))) {
-   298                          E("slram: No devicestart specified.\n");
-   299                  }
-   300                  T("slram: devstart = %s\n", devstart);
- → 301                  if ((!map) || (!(devlength = strsep(&map, ",")))) {
-   302                          E("slram: No devicelength / -end specified.\n");
-   303                  }
- → 304                  T("slram: devlength = %s\n", devlength);
-   305                  if (parse_cmdline(devname, devstart, devlength) != 0) {
-   306                          return(-EINVAL);
-   307                  }
+Short answer: no.
 
-Parsing should be finished after map == NULL, so a break is best inserted after
-each E("slram: ... \n") error message.
+The long answer is long, and comes in two halves: the language half and
+the fortify half.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org
-Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
----
- drivers/mtd/devices/slram.c | 2 ++
- 1 file changed, 2 insertions(+)
+First, the C standard requires that all function argument arrays be
+decayed to pointers, so your prototype is semantically handled as if
+it were:
 
-diff --git a/drivers/mtd/devices/slram.c b/drivers/mtd/devices/slram.c
-index 28131a127d06..8297b366a066 100644
---- a/drivers/mtd/devices/slram.c
-+++ b/drivers/mtd/devices/slram.c
-@@ -296,10 +296,12 @@ static int __init init_slram(void)
-                T("slram: devname = %s\n", devname);
-                if ((!map) || (!(devstart = strsep(&map, ",")))) {
-                        E("slram: No devicestart specified.\n");
-+                       break;
-                }
-                T("slram: devstart = %s\n", devstart);
-                if ((!map) || (!(devlength = strsep(&map, ",")))) {
-                        E("slram: No devicelength / -end specified.\n");
-+                       break;
-                }
-                T("slram: devlength = %s\n", devlength);
-                if (parse_cmdline(devname, devstart, devlength) != 0) {
+void syscall_get_arguments(struct pt_regs *regs, unsigned long *args)
+
+The "6" is just totally thrown away by the language. :(
+
+*However* the compilers _will_ do things with it while generating
+diagnostics, but only from the caller's perspective (code _inside_
+has no awareness of the "6" unless the function has been inlined, sort
+of). For example:
+
+	unsigned long toosmall[4];
+	...
+	syscall_get_arguments(regs, toosmall);
+
+Produces:
+
+<source>:60:5: warning: 'syscall_get_arguments' accessing 48 bytes in a region of size 32 [-Wstringop-overflow=]
+   60 |     syscall_get_arguments(regs, toosmall);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<source>:60:5: note: referencing argument 2 of type 'long unsigned int[6]'
+<source>:49:6: note: in a call to function 'syscall_get_arguments'
+   49 | void syscall_get_arguments(struct pt_regs *regs, unsigned long args[6])
+      |      ^~~~~~~~~~~~~~~~~~~~~
+In function 'syscall_get_arguments',
+    inlined from 'passthru' at <source>:60:5:
+<source>:51:10: warning: 'memcpy' forming offset [32, 47] is out of the bounds [0, 32] of object 'toosmall' with type 'long unsigned int[4]' [-Warray-bounds=]
+   51 |          memcpy(args, (typeof(args))&regs->bx, 6*sizeof(args[0]));
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<source>: In function 'passthru':
+<source>:58:19: note: 'toosmall' declared here
+   58 |     unsigned long toosmall[4];
+      |                   ^~~~~~~~
+
+But syscall_get_arguments() internally has no idea what size "args" is:
+
+void noinline syscall_get_arguments(struct pt_regs *regs, unsigned long args[6])
+{
+	report(sizeof(args));
+	report(__builtin_object_size(args, 1));
+	report(__builtin_dynamic_object_size(args, 1));
+        memcpy(args, (typeof(args))&regs->bx, 6*sizeof(args[0]));
+}
+
+Which reports 8, SIZE_MAX (unknown), and SIZE_MAX (unknown) respectively.
+
+And the language is so busted about this that there is actually a
+diagnostic for "don't do that" that shows up with this code:
+
+<source>: In function 'syscall_get_arguments':
+<source>:53:22: warning: 'sizeof' on array function parameter 'args' will return size of 'long unsigned int *' [-Wsizeof-array-argument]
+   53 |         report(sizeof(args));
+      |                      ^
+
+_However_, if we _inline_ the function, suddenly _bos and _bdos know
+what's going on since they have visibility into the actual objection
+definition:
+
+void inline syscall_get_arguments(struct pt_regs *regs, unsigned long args[6])
+
+Now it reports 8, 32 (8 * the "toosmall" array size 4), 32 (same: _bdos
+falls back to _bos if there is no dynamic component). Note this is _not_
+6, but 4, the actual object size.
+
+Using the newer arg-sized array prototypes using a named argument _does_
+inform the internals, but that requires changing the calling convention
+for what is supposed to be a fixed size, and only behaves at runtime,
+which is just silly for compile-time fixed sizes. For example:
+
+void noinline syscall_get_arguments(struct pt_regs *regs, int n, unsigned long args[n])
+...
+	syscall_get_arguments(regs, 6, toosmall);
+
+Does report the expected things for _bdos internally (48), but not for
+sizeof (8) nor _bos (SIZE_MAX). Of course if we inline it, _bos starts
+working and, along with _bdos, realizes it was lied to, and reports
+32 again.
+
+The internals of fortify use _bdos, so how _bdos acts is how fortify
+will determine object sizes. With _bos/_bdos, there are two cases
+fortify examines: "whole object size" (type 0) and "subobject size"
+(type 1), where "type" is the second argument to _bos/_bdos:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/compiler_types.h?h=v6.9#n371
+
+The compiler's internal string API diagnostics (i.e. -Wstringop-overflow,
+-Wstringop-overread) effectively perform bounds checks with type 0,
+which is in line with the traditional way of treating everything as a
+raw pointer and expecting to clobber everything following it. This is
+terrible for mitigating security flaws, as we can't evaluate the intent
+of memcpy destination bounds unambiguously if we don't know what the
+destination boundaries are.
+
+So, fortify's memcpy moved from type 0 to type 1 (over several years
+now), and when doing that, we excluded doing type 1 checking on
+_source_ objects because we already had so much to clean up just for
+destinations. Unchecked destination object size overflows is where the
+real-world linear overflow security flaws come from most often, so it
+was the best use of our efforts.
+
+But to avoid revisiting the same code twice, fortify will examine source
+object sizes when it has already found a _destination_ object size
+overflow (so that they can be fixed simultaneously), or when W=1 has
+been enabled (so we there is always a log of it for the more sensitive
+CI systems):
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/fortify-string.h?h=v6.9#n554
+
+For the patch in this thread, the W=1 case was reported (overread of
+"bx"), because normally fortify would just ignore the overread of
+the source.
+
+Finally to answer your question about working around this case, _bos/_bdos
+will see right through the casting because it operates on the actual
+object behind it. (And casts to an array type are illegal too.)
+
+    unsigned long args[6];
+
+    report(__builtin_object_size((typeof(args))&regs->bx, 1));
+
+<source>: In function 'show':
+<source>:76:34: error: cast specifies array type
+   76 |     report(__builtin_object_size((typeof(args))&regs->bx, 1));
+      |                                  ^
+
+And a (char *) cast doesn't work: _bos(1) reports 8, the size of bx. Using
+locals doesn't help either:
+
+    void *ptr = (void *)&regs->bx;
+
+    report(__builtin_object_size(ptr, 1));
+
+Still 8. And ultimately this is good, since fortify will see through to
+the actual object that could get overflowed, etc. It's the behavior we
+want for the overflow defense.
+
+For cases where we really really absolutely cannot represent things in
+a way that fortify can be happy about, there is unsafe_memcpy(). Right
+now, only really wild stuff uses it (some network driver protocol
+layout shenanigans, bcachefs, etc). Virtually all kernel objects that
+are a destination for memcpy() should be able to be represented in a
+simple and unambiguous way. (And we've successfully done so, with some
+fun tangents along the way, like needing to have compilers implement
+-fstrict-flex-arrays=3, but that is a whole other topic.)
+
+-Kees
+
 -- 
-2.34.1
+Kees Cook
 
