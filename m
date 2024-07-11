@@ -1,158 +1,205 @@
-Return-Path: <linux-kernel+bounces-249931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA16292F1CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:23:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C48D492F1D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BD4D1F2235A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:23:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77C66283F35
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B17A1A01B6;
-	Thu, 11 Jul 2024 22:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598FA1A0713;
+	Thu, 11 Jul 2024 22:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="gal8xcnV"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0K8zKent"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3F416EB4E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D0B1A01A7
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720736596; cv=none; b=sAkIi9mB34GfSXxtXsFhe1eRHTkBleWrdJOjn+Wom9WolZpmXpJ5HsvQ+l8Ot8h43LBxKrmT3zcssh3GIA1xiiX/IN5ErBp7nmkRO98TmIhLvOxwQ7/ee8T39Tyz8XYWnKgUr0BjFPv7NFnTkYzEBEO3tCE2owjBDP8KppirRgI=
+	t=1720736650; cv=none; b=B5OgIftR0qZpTloxoatSgC6KDzQjAjMERh8U86gFParkNDAsIMvdNP86srVKdhUS68J4GogwI/123Jdcf0RGF2thhOcw9FOAyS1nd1ceM9zvd6pcG26ioDtuPnjQi4gbOCTRcdJ2BxPddwgwAVPABXBrlVEFeqk1S1TySONsv4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720736596; c=relaxed/simple;
-	bh=BOLUoPrByBwDN8/S3VKrljwo8YVxxLGQj2YW218NIWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFNX48oZJPki2rQxvon8mhWbgA3ub1MCu1RWRbTUHbcpv4Z5vHk5155kV2oHLDlQnDtMUiXqOBYJlW41bsj7MD7s+96b9QoFhWL5U6i83vFocJBM5orjngcqTOCCNmy+jFP5CNv8citDFDt+sjocncMWaf0x9XR4QZvbsxwKWOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=gal8xcnV; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fa2ea1c443so11572865ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:23:14 -0700 (PDT)
+	s=arc-20240116; t=1720736650; c=relaxed/simple;
+	bh=umz65CgamqI9woTw9I8lAdO2908JYg7ok02eaBGsWkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FF8zUXz9rbQMGzn2fqojpIrAcj4lnLS9AHRfKDfpwconZSYylkJTxuDXbgFMmgsHr8QbW/7mzTy2b/knX09rLlN+Ai325ijx37qBC6BCgagJpy3IxsoMstGCMLOvRuFExD+aSlbIZmzM3F4Q/A25XRqab5mnDKidUU+0gn70ggg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0K8zKent; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44a8b140a1bso101031cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:24:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720736594; x=1721341394; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wOA6NsFk6L+7Ls7mZsmFkNNQzEFiEdl0CxMpv9bv/Qg=;
-        b=gal8xcnVY0ur1eVKluzs+SjRxT4ljMSTrJYEOfnJEXblM7siPbCQHzLQMhNjwaaDWG
-         CLR9sOAMwh7UK3FcAiFnYBKaaQNBZjbn6fDqq+iqv6JkwWLNcUfFVm7tYGsdiR9XzZVL
-         Orm2D9LwCtccEkke0hbXFbm+iwyGdbD4oZfoXyUhwRn8qPvPWSR32VReOcOMqYbCdqEv
-         G6nH0AAMJNpqhaBAoiLcjgMvZra3sfWvNTz8Kg2ZMEegaW/hNcxzz2o6ztfdF6MBzaCA
-         oufvXxBL+eGk4tinePQy2CyZ2WUuu1GCK/mCGtjihyq2Tfhn/OqRqK9IoEgm0sCR6dy3
-         FlRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720736594; x=1721341394;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1720736648; x=1721341448; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wOA6NsFk6L+7Ls7mZsmFkNNQzEFiEdl0CxMpv9bv/Qg=;
-        b=EKIElSYUEpMfd/jqxXPmDB0Rv2WmAhD7OTi8oBCB/kd+Og2/IyZlLMfyo3vPkN3l/1
-         6PezRQC+BLUBivm8Vk9GjRigAcKXcZu0kcxo9ySgwlltgyafi47Ew3ik6hXD09ytOWfC
-         N98jAmY4XzrO3YczLu96TXLUlx2ToLlWNuLdUw22d7EzY/suejObeGtz5nJtjSsIT7DV
-         3i18rlyPw2NmwWHZlQLByxhCb9TzLWelFF9vAcSj5zu1k9SuNgzu8brxsRloU0VEgcc+
-         879C4LB0RBawf8kHK9hVUcH7m0jwpO+kYN9m+FGxa0PFjuRoPsIIDcUAjuiLOww9Kc48
-         ZDtg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+obLuNw5W//Ww2oAQAkXkAu0MYNr8UAtu96w0FeuwLdL8k23xu7HQrNSOrzjBrEcZRDZrfY4iI+JKfisQmRxr7t/SNL4PM7+N5/T9
-X-Gm-Message-State: AOJu0Yw5dHVT2qDYgwzm7kOYNtS++d2nGzlOXafHk3kC004t/DY8KQwz
-	oo7exlq6pa5CiMmdgbVc+SqGl9022kcz92sG3uzKYz80KWnN2sM4yNe9xRuPkAM=
-X-Google-Smtp-Source: AGHT+IEVnJzb7O36DPGCsgQl833NWjcEPMaDTTCYgNiB+OKGtg51343xFtMHn6nFNmILVnskS/PwlA==
-X-Received: by 2002:a17:902:e745:b0:1f9:ddea:4523 with SMTP id d9443c01a7336-1fbb6cda816mr89697095ad.6.1720736594362;
-        Thu, 11 Jul 2024 15:23:14 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a1083bsm55313555ad.37.2024.07.11.15.23.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 15:23:13 -0700 (PDT)
-Date: Thu, 11 Jul 2024 15:23:11 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Evan Green <evan@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Anup Patel <apatel@ventanamicro.com>,
-	Zong Li <zong.li@sifive.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Erick Archer <erick.archer@gmx.com>,
-	Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] RISC-V: hwprobe: Document unaligned vector perf
- key
-Message-ID: <ZpBbT1OquCCwUTWA@ghost>
-References: <20240711215846.834365-1-jesse@rivosinc.com>
- <20240711215846.834365-8-jesse@rivosinc.com>
+        bh=1ikbsIYih3ehLlIfT5YoG7a0BVQ8XeYIK6rrLHADErw=;
+        b=0K8zKent4k5GsWH1KQPj9oEjzCUYsfoNU7SHZQrlt2GtoD0LfCTi2MCIMmMjJ0aPaA
+         aojFhlLvvMclR1/zsOmdBeGC1mjD5puCGZN1VoKGaHv2q3uvXf/k4F4tszCRIkBZBuP0
+         SmB2f+b2SOR4PlRLElHZTSpQxFPNTGutQVbYLwgmGRe4Q5rP1SK0QbHqEYohRoI6zkAE
+         XB5k45KcwYfYTsARQsQd2derr7ZT4UByHkR5vUxV0bH6c2Y3Fv5Hk+scwq7GFqfQmQsM
+         IJhGEP7mx1POBgWnT1k9Wn8lZCU1GAzaWQlXnyHrnCZ76eYiiOR1bMNw3cvA9JiT8nj/
+         kFvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720736648; x=1721341448;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1ikbsIYih3ehLlIfT5YoG7a0BVQ8XeYIK6rrLHADErw=;
+        b=wY2DbfcBmozQVorHwL84y3nqGno8ZNUT1qIrAc2QlJI/sbO4Ho3liZ0HeioQNDYUja
+         7dpUnoj0VOp3OwFwA+G+EcVnFzwQ0ddOQJUoG2QUuZxp2ZCiJHM4Q6mtP+Ligdf+Q5q3
+         ak+12xSsqd18++p29UVJjuY8deMzu0Gx2swh0VHIcPMkUEz3bQTLOd/CxwkcviJSSekM
+         wyrLTlYqY+fWbm1RQF1/ROfu70tcKrD8g3WRYzm/QOtIYf6eJG/7xZdEvYGBnMl3Kfjg
+         U2TIvuax3we3o89xv4OE1il3V/1Uv6avMPisvZ2kcaSYd/Kp+npWP6+cxpGLzE3LIPlO
+         MkLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkj9yy+vrXODazl00+WPB8UdrDPjjcz8wZRnee2HxUi4Oh1oHNJN4dGJX6vdLZ+mltONAQBaTb2xvZCg7Gex+r8542Uqz/IQ7NeqHv
+X-Gm-Message-State: AOJu0Yxj6ZaO5Wjm/yRckS8owldyOSfa/LlJ7nbeUfOsSWRFFqwMpG7C
+	mDC/c+BpmS9hjQxI0Qbs1c+ebA5kp0ePohO0zM4Cr5pO5Cr8uqanC7tPAIonSfC6fT7EivMyVch
+	fqCL0kYzCPJKaZt8waRpTK7p2HqEg5ToVTQR+
+X-Google-Smtp-Source: AGHT+IGAc884CVEDTkvsd7h8jIYVN5c3I7pSJJVtiIZ6adS6zViqgnZWfojP5ub98vVg/kgQUmfRgXI+GvGBo0Nwylo=
+X-Received: by 2002:a05:622a:289a:b0:447:f3ae:383b with SMTP id
+ d75a77b69052e-44e9e556a99mr307391cf.19.1720736647474; Thu, 11 Jul 2024
+ 15:24:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711215846.834365-8-jesse@rivosinc.com>
+References: <20240711102436.4432-1-Dhananjay.Ugwekar@amd.com>
+In-Reply-To: <20240711102436.4432-1-Dhananjay.Ugwekar@amd.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 11 Jul 2024 15:23:56 -0700
+Message-ID: <CAP-5=fXXuWchzUK0n5KTH8kamr=DQoEni+bUoo8f-4j8Y+eMBg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/11] Add per-core RAPL energy counter support for AMD CPUs
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	kees@kernel.org, gustavoars@kernel.org, rui.zhang@intel.com, 
+	oleksandr@natalenko.name, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	ananth.narayan@amd.com, gautham.shenoy@amd.com, kprateek.nayak@amd.com, 
+	ravi.bangoria@amd.com, sandipan.das@amd.com, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 05:58:46PM -0400, Jesse Taube wrote:
-> Document key for reporting the speed of unaligned vector accesses.
-> The descriptions are the same as the scalar equivalent values.
-> 
-> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-> ---
-> V1 -> V2:
->   - New patch
-> V2 -> V3:
->  - Specify access width
-> V3 -> V4:
->  - Clarify we're talking about byte accesses using vector registers
->  - Spell out _VECTOR_ in macros
-> ---
->  Documentation/arch/riscv/hwprobe.rst | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-> index 78acd37b6477..f83a13dc4cbc 100644
-> --- a/Documentation/arch/riscv/hwprobe.rst
-> +++ b/Documentation/arch/riscv/hwprobe.rst
-> @@ -238,3 +238,19 @@ The following keys are defined:
->  
->  * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int which
->    represents the size of the Zicboz block in bytes.
-> +
-> +* :c:macro:`RISCV_HWPROBE_KEY_VECTOR_MISALIGNED_PERF`: An enum value describing the
-> +     performance of misaligned vector accesses on the selected set of processors.
-> +
-> +  * :c:macro:`RISCV_HWPROBE_VECTOR_MISALIGNED_UNKNOWN`: The performance of misaligned
-> +    vector accesses is unknown.
-> +
-> +  * :c:macro:`RISCV_HWPROBE_VECTOR_MISALIGNED_SLOW`: 32-bit misaligned accesses using vector
-> +    registers are slower than the equivalent quantity of byte accesses via vector registers.
-> +    Misaligned accesses may be supported directly in hardware, or trapped and emulated by software.
-> +
-> +  * :c:macro:`RISCV_HWPROBE_VECTOR_MISALIGNED_FAST`: 32-bit misaligned accesses using vector
-> +    registers are faster than the equivalent quantity of byte accesses via vector registers.
-> +
-> +  * :c:macro:`RISCV_HWPROBE_VECTOR_MISALIGNED_UNSUPPORTED`: Misaligned vector accesses are
-> +    not supported at all and will generate a misaligned address fault.
-> -- 
-> 2.45.2
-> 
+On Thu, Jul 11, 2024 at 3:25=E2=80=AFAM Dhananjay Ugwekar
+<Dhananjay.Ugwekar@amd.com> wrote:
+>
+> Currently the energy-cores event in the power PMU aggregates energy
+> consumption data at a package level. On the other hand the core energy
+> RAPL counter in AMD CPUs has a core scope (which means the energy
+> consumption is recorded separately for each core). Earlier efforts to add
+> the core event in the power PMU had failed [1], due to the difference in
+> the scope of these two events. Hence, there is a need for a new core scop=
+e
+> PMU.
+>
+> This patchset adds a new "power_per_core" PMU alongside the existing
+> "power" PMU, which will be responsible for collecting the new
+> "energy-per-core" event.
 
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Sorry for being naive, is the only reason for adding the new PMU for
+the sake of the cpumask? Perhaps we can add per event cpumasks like
+say `/sys/devices/power/events/energy-per-core.cpumask` which contains
+the CPUs of the different cores in this case. There's supporting
+hotplugging CPUs as an issue. Adding the tool support for this
+wouldn't be hard and it may be less messy (although old perf tools on
+new kernels wouldn't know about these files).
 
+Thanks,
+Ian
+
+
+> Tested the package level and core level PMU counters with workloads
+> pinned to different CPUs.
+>
+> Results with workload pinned to CPU 1 in Core 1 on an AMD Zen4 Genoa
+> machine:
+>
+> $ perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 1
+>
+>  Performance counter stats for 'system wide':
+>
+> S0-D0-C0         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C1         1          5.72 Joules power_per_core/energy-per-core/
+> S0-D0-C2         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C3         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C4         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C5         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C6         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C7         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C8         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C9         1          0.02 Joules power_per_core/energy-per-core/
+> S0-D0-C10        1          0.02 Joules power_per_core/energy-per-core/
+>
+> [1]: https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b14228868d@li=
+nux.intel.com/
+>
+> This patchset applies cleanly on top of v6.10-rc7 as well as latest
+> tip/master.
+>
+> v4 changes:
+> * Add patch 11 which removes the unused function cpu_to_rapl_pmu()
+> * Add Rui's rb tag for patch 1
+> * Invert the pmu scope check logic in patch 2 (Peter)
+> * Add comments explaining the scope check in patch 2 (Peter)
+> * Use cpumask_var_t instead of cpumask_t in patch 5 (Peter)
+> * Move renaming code to patch 8 (Rui)
+> * Reorder the cleanup order of per-core and per-pkg PMU in patch 10 (Rui)
+> * Add rapl_core_hw_unit variable to store the per-core PMU unit in patch
+>   10 (Rui)
+>
+> PS: Scope check logic is still kept the same (i.e., all Intel systems bei=
+ng
+> considered as die scope), Rui will be modifying it to limit the die-scope
+> only to Cascadelake-AP in a future patch on top of this patchset.
+>
+> v3 changes:
+> * Patch 1 added to introduce the logical_core_id which is unique across
+>   the system (Prateek)
+> * Use the unique topology_logical_core_id() instead of
+>   topology_core_id() (which is only unique within a package on tested
+>   AMD and Intel systems) in Patch 10
+>
+> v2 changes:
+> * Patches 6,7,8 added to split some changes out of the last patch
+> * Use container_of to get the rapl_pmus from event variable (Rui)
+> * Set PERF_EV_CAP_READ_ACTIVE_PKG flag only for pkg scope PMU (Rui)
+> * Use event id 0x1 for energy-per-core event (Rui)
+> * Use PERF_RAPL_PER_CORE bit instead of adding a new flag to check for
+>   per-core counter hw support (Rui)
+>
+> Dhananjay Ugwekar (10):
+>   perf/x86/rapl: Fix the energy-pkg event for AMD CPUs
+>   perf/x86/rapl: Rename rapl_pmu variables
+>   perf/x86/rapl: Make rapl_model struct global
+>   perf/x86/rapl: Move cpumask variable to rapl_pmus struct
+>   perf/x86/rapl: Add wrapper for online/offline functions
+>   perf/x86/rapl: Add an argument to the cleanup and init functions
+>   perf/x86/rapl: Modify the generic variable names to *_pkg*
+>   perf/x86/rapl: Remove the global variable rapl_msrs
+>   perf/x86/rapl: Add per-core energy counter support for AMD CPUs
+>   perf/x86/rapl: Remove the unused function cpu_to_rapl_pmu
+>
+> K Prateek Nayak (1):
+>   x86/topology: Introduce topology_logical_core_id()
+>
+>  Documentation/arch/x86/topology.rst   |   4 +
+>  arch/x86/events/rapl.c                | 454 ++++++++++++++++++--------
+>  arch/x86/include/asm/processor.h      |   1 +
+>  arch/x86/include/asm/topology.h       |   1 +
+>  arch/x86/kernel/cpu/debugfs.c         |   1 +
+>  arch/x86/kernel/cpu/topology_common.c |   1 +
+>  6 files changed, 328 insertions(+), 134 deletions(-)
+>
+> --
+> 2.34.1
+>
 
