@@ -1,124 +1,118 @@
-Return-Path: <linux-kernel+bounces-249584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F8592ED91
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:13:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4661C92ED90
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1577C1F235C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:13:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0EFF286373
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0331216DED6;
-	Thu, 11 Jul 2024 17:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC7D16DC2F;
+	Thu, 11 Jul 2024 17:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+j50o02"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eErcjg89"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D38216DEB2;
-	Thu, 11 Jul 2024 17:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBF616D9BB
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 17:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720717933; cv=none; b=HSZdbpSnry4uRJT9kFhyY9VnXrdcmQFfIF01YpRHD+V6ZaMMVkQuVZWHqryeI5weJnAG5ZpTmGr0U0t0VSyO/RgCYaTYrJ5W86m6ltQTN32/dlC/vVNWUspx+qKfL/ph2Jwjvretv6V/8RH/ZVcfPHJOR2YgZL5B39HdDMCDx7E=
+	t=1720717930; cv=none; b=NwLL1fRZFZNyPA94F+q84EdQePOpNRHKfRfFtxA2y4ElBmQQ2PTrr7aAAQwSq8W96CSY1oZQSEl5KM3xNfXZkkq2/Oxb9ame+Y26bD2BRFIS0Hpz8bRJfkBjD407sGgWIKFE5wb24po6F0n2FbS1MoqOUaOk/i1mj3zbfKDZKs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720717933; c=relaxed/simple;
-	bh=5YIqNKwyUr+LG6yUl04mH/OQyT4FdO5vSgs3hwM55I0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d/f1Mpm5LBO7N1DtXoblQRNZRAusA7JGB/JeNYdZVtkBNv3NCXJCpAoqeZmwwaFwjLZsly5vu+JHAE+jQHLhfAQK1RahLvPUDqtxZs8cgHooY9ksce9WhLNZ56NNozwSrTm4PQdI2GaRNmbU0N7x8ICkjZPT3UU9kRc9v7+0zMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+j50o02; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1720717930; c=relaxed/simple;
+	bh=2HM6DhaEhQrcUyMacVH6uBp9Qj5OKw2eJBzcomJN0jI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nIr9Ke88lwdGCC5xP3pj21/fF/K4QA7p/A72GxwVyTaH3+3y36qjF4n9JMpC7ISaWkJweLa21yPbcOzoXLOuSnBqEkeP7eeLtGAt2qpgfIyuT0KdDdKVKHlrymmBck4rFyB6FbkTwDpSMG36sbvjEy8jM0hYz9PHbo8c55giKio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eErcjg89; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7611b6a617cso850354a12.3;
-        Thu, 11 Jul 2024 10:12:11 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c97ff39453so905677a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:12:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720717931; x=1721322731; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q8FKh1codzdsvdDdcwzA56jGoX640hJ0GFCrKgUVpxc=;
-        b=Q+j50o02gOE4ypwdedtfu1m7jsyfyWQsw/LTVi+cOF9SxrGKWrgvfap1LKI5Z0hua0
-         l5BD80ViOQ5gxx0bKVhdE/gZwIj1iPuwcsTHJvLe/cPqxRTbB/+IXqWjZ/mLfiPOJ283
-         0xUZ8XUPu+ZMA9Az+G/j4ROBxjaYNgH99xSXCDJsuQKbZRJvWF6byHoTA0TSWPqwpbA6
-         qLR63m4I7pA51E09tO6E5J5rUuTnMLEKyqcXkHbv8/jC7gmkSj4aiOwHni32MWpvdbCy
-         du/3Ad+pksHrwpRJRFWN8V5vK+piee/2r4gHGWTb7+Zm1gkTZoRiQkW8iCNpuzQ/VuyT
-         C6Dg==
+        d=gmail.com; s=20230601; t=1720717928; x=1721322728; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S7ATwGtwViTmozQaBAkspz+JskSYJvpU6R7YfK3j+hI=;
+        b=eErcjg89TOXBN+JIx9+cOTE7Iiw5OPUZjkc4OZKIrHW+b+zuRBW0gIjaiWWoP5pMWQ
+         KK+MItgOMZM0d+PtrUVmY9BSAjuHAgpM26SvPNT9Rt3HPb9FnVDcKhshKw97qoHSLQy8
+         ZG0Xe9qzJzT5UJBLHT+F3Ox06lLAd6wRqRP32WJAaQ7/J6VaRv8b7KPZwD7H77QaW1MY
+         qYUIKMXGbA+pt7NuSGEXdVVflOvs8Qdij3oIpyv6j4S+fpSwgxXyAq8xSNlU/YQQPNXg
+         tJuUSCGuSyP2R7NwMJgAvX5+c16+r13RMiFfGf2TYDRWgCfh98j1lMlKZmZOagPkbVPi
+         ci9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720717931; x=1721322731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720717928; x=1721322728;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q8FKh1codzdsvdDdcwzA56jGoX640hJ0GFCrKgUVpxc=;
-        b=pPEbjpQv1b3zxyiFRb/fSHwkquqvmgWyWEVINRfZbjvUTk5N2tZGuO9SI8u2v8eny6
-         zeKyoMt8UDjbHmSby7xf0/kPgM4svdPHLo73s3U1nsO+dMND+d6Tu1h5qHkqTwKkQXlR
-         P0BmphOS921m3Y176o9GnqByGVMT6yAr1g7fR4r7CjhvuuSg3dT0Vl60VH2gNqrY5zN+
-         GFm6L76xRqFsud3LPehDQF+tJ+4Ln5qiD+W4lXQuG8ParDxyI99nbbeg4hKthLKWHK0o
-         /h3p2mzzPcc6oslYttQ7BEDsDyqDS74E88RVGdVLm/6qVLZJFORnTseK7Ls1fV8r1/D1
-         9paQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOkIKptQ9qJh3w6W3uuZS7NqRQ//hKWRql12lg/2e/6XixR5VnS0PyCNt5EWXDFt6lzY1KqkqhV79UPmNRE8PZ+udGFJOG04Wxg2usXkM/p0g5v0QoFQMG/6lSHoS9cC1of4MW12ff+4nop3186aYH
-X-Gm-Message-State: AOJu0YwWjbR/SzeyWfYPmDEumbhxIfT9+PWDzx1fZOvxxJqmGxyQAWNm
-	a2Ho+a+mrln02YZPCL1hUsqhW38icfkSw3Iwhr2YeG9UX8VSoNJEsLLoCFgZzPeyiaeYJO/Sq3Z
-	Ro6pUxz/T04pEAE9vGxFjzevN3Jc=
-X-Google-Smtp-Source: AGHT+IEXzsRL6ePSLYpXeg43d3J9B8DS4lHxsJA1VKNfsJe+PrY7j7Hl0j8NkYgMtVTyShQUgXo0PXxEB2CxxwdWORw=
-X-Received: by 2002:a17:90a:f0d6:b0:2c8:6a9d:5060 with SMTP id
- 98e67ed59e1d1-2ca35be1129mr7306896a91.7.1720717931172; Thu, 11 Jul 2024
- 10:12:11 -0700 (PDT)
+        bh=S7ATwGtwViTmozQaBAkspz+JskSYJvpU6R7YfK3j+hI=;
+        b=ae+3Z2F/6c08eSIwtW8O2YV7NtuST7WJplGeIDZcpXqNoIQq87M571x0Ca8o929s+f
+         1CUN6pEoSEfyi3g/vutBdYVxFFn1yiPdvOMwm/agI5bRiOFIfM9Ee/oN7/W2dc+lB8A2
+         JWTo3I78V6KBKucM04uXEHvxOe7naizSA56TzCi2EZUyoXwF05Lu4j1p+WyjaV6om658
+         HNtoVdyd0Om7/HhZm64D8df1WW5A9XAPMqS5JjfsPOxXhtrlAzObJFGlJ6EVXXSb+inS
+         R7Xwwz4YoV92WUq7vZ1WRxrEQTaH4wtFTCGCXti3LNPXU10A8mCVl/Hb86u63epqmuCe
+         LILA==
+X-Gm-Message-State: AOJu0YxeYVDGg//gSeyC4zwH7AhK7ba/jMMWDsHdz8FiCdxkoTtWRfVt
+	6fAScFOe34SP5WPGJieHGiyehNKjrJmkjOY4XSGOSmUFSWF0e4s+
+X-Google-Smtp-Source: AGHT+IFctpaKdFkGjPJRPrnAIlA0rjLwClna0yjrWCmMAC6baLVz20QSkJGp42/jOdtoDmbvOp2VuA==
+X-Received: by 2002:a17:90a:f007:b0:2c9:96fc:ac52 with SMTP id 98e67ed59e1d1-2ca35c72dcemr8627379a91.26.1720717926980;
+        Thu, 11 Jul 2024 10:12:06 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca888286d1sm3048576a91.45.2024.07.11.10.12.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 10:12:06 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 11 Jul 2024 07:12:05 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	Lai Jiangshan <jiangshan.ljs@antgroup.com>
+Subject: Re: [PATCH 0/7] Add wq_online_cpumask and remove cpus_read_lock()
+ from apply_wqattrs_lock()
+Message-ID: <ZpASZbR_bYzYEKcX@slm.duckdns.org>
+References: <20240711083547.3981-1-jiangshanlai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710140017.GA1074@redhat.com> <20240710163022.GA13298@redhat.com>
- <20240710163133.GD13298@redhat.com> <20240711092619.GA18031@redhat.com>
-In-Reply-To: <20240711092619.GA18031@redhat.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 11 Jul 2024 10:11:58 -0700
-Message-ID: <CAEf4Bzb0ErnW0o09fk2TCJnY3LNW7U4aB0YcUJqKjfNH+m-uyA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] uprobes: make uprobe_register() return struct uprobe *
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org, clm@meta.com, 
-	jolsa@kernel.org, mingo@kernel.org, paulmck@kernel.org, rostedt@goodmis.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711083547.3981-1-jiangshanlai@gmail.com>
 
-On Thu, Jul 11, 2024 at 2:28=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
-te:
->
-> On 07/10, Oleg Nesterov wrote:
-> >
-> > -void uprobe_unregister(struct inode *inode, loff_t offset, struct upro=
-be_consumer *uc)
-> > +void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *=
-uc)
-> >  {
-> > -     struct uprobe *uprobe;
-> > -
-> > -     uprobe =3D find_uprobe(inode, offset);
-> > -     if (WARN_ON(!uprobe))
-> > -             return;
-> > -
-> >       down_write(&uprobe->register_rwsem);
-> >       __uprobe_unregister(uprobe, uc);
-> >       up_write(&uprobe->register_rwsem);
-> > -     put_uprobe(uprobe);
->
-> OK, this is obviously wrong, needs get_uprobe/put_uprobe. __uprobe_unregi=
-ster()
-> can free this uprobe, so up_write(&uprobe->register_rwsem) is not safe.
+On Thu, Jul 11, 2024 at 04:35:40PM +0800, Lai Jiangshan wrote:
+> From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+> 
+> The new wq_online_mask mirrors the cpu_online_mask except during
+> hotplugging; specifically, it differs between the hotplugging stages
+> of workqueue_offline_cpu() and workqueue_online_cpu(), during which
+> the transitioning CPU is not represented in the mask.
+> 
+> With wq_online_cpumask, cpus_read_lock() is unneeded for wqattrs changes.
+> 
+> 
+> Lai Jiangshan (7):
+>   workqueue: Add wq_online_cpumask
+>   workqueue: Simplify wq_calc_pod_cpumask() with wq_online_cpumask
+>   workqueue: Remove cpus_read_lock() from apply_wqattrs_lock()
+>   workqueue: Remove the unneeded cpumask empty check in
+>     wq_calc_pod_cpumask()
+>   workqueue: Remove the argument @cpu_going_down from
+>     wq_calc_pod_cpumask()
+>   workqueue: Remove the arguments @hotplug_cpu and @online from
+>     wq_update_pod()
+>   workqueue: Rename wq_update_pod() to unbound_wq_update_pwq()
 
-uprobe_register(), given it returns an uprobe instance to the caller
-should keep refcount on it (it belongs to uprobe_consumer). That's
-what I did for my patches, are you going to do that as well?
+Applied 1-7 to wq/for-6.11. I updated a changelog to clarify why the change
+is needed.
 
-We basically do the same thing, just interfaces look a bit different.
+Thanks.
 
-
->
-> I'll send V2 on top of Peter's new version.
->
-> Oleg.
->
+-- 
+tejun
 
