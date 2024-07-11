@@ -1,60 +1,90 @@
-Return-Path: <linux-kernel+bounces-249271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F382F92E927
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:19:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B369B92E913
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 369D0B24497
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:16:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E49101C21485
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7693F15ECD9;
-	Thu, 11 Jul 2024 13:16:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CF914A601;
-	Thu, 11 Jul 2024 13:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E2A15ECDB;
+	Thu, 11 Jul 2024 13:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eiHXWkjD"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AC215252E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720703774; cv=none; b=t5yxJF7lw351X9dSoQATqVojP7i6gQiSkurmoyQlYUwulfA172VqLeaMX8vf2JWsbv0p4AUlLKUK8gePfsgqfLgvP3rYk8zfg3U/AFY7hhkbCmnbGAdDwAQCLCf1sbGhlyumtBrrshBOn493euZa8CK5hZY2yT5PTSQOdC93JNQ=
+	t=1720703802; cv=none; b=UferMrku985zASsAgxsFuRP3HkHIf5iPL3tkNUdY9Q97MCTe1/+o1jfnVHtRtV2Gi8oB5sCbcvff9cWmT1ZSWOJlDHDoSsD1/RoNhJtwh8acBzSSmrAhyr63UFCeJI74qP38bWRZq/7wMP5Lb+/ARyLDjcg70e2VKuwRkCqw4g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720703774; c=relaxed/simple;
-	bh=ZhZuMuRHnJIyr1f7YUiPJaPnBXIKeUBQIvzGT9F7HGQ=;
+	s=arc-20240116; t=1720703802; c=relaxed/simple;
+	bh=4ikN8JjZ+bXsTenqm2X8BKNxzCzpZv4nGiKyu8dkyWI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvOqFF+AC3Mf/qJ/e8nayrMUMUdMcRMmeU2TNniDTTT0QUC7AsLImXcnzO3J1kpLV+XWUue8iQ9CbcSWy7TfoHvrMKgKx19f3hpuL1LrM03+zbQzZml49N+P7TTIWUV3FODKt557rjSdKhndfwLH5BN3ai/lkMbrthkNE4mA5oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A703BFEC;
-	Thu, 11 Jul 2024 06:16:36 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78F383F766;
-	Thu, 11 Jul 2024 06:16:08 -0700 (PDT)
-Date: Thu, 11 Jul 2024 14:16:06 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v5 1/7] Documentation: firmware-guide: add NXP i.MX95
- SCMI documentation
-Message-ID: <Zo_bFnjWixZF6seV@pluto>
-References: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
- <20240621-imx95-bbm-misc-v2-v5-1-b85a6bf778cb@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FEqn3Ta14QqoELabbGUK67M9vw/L5iZyhyG6rYQWEqKgA76ztqC72TLJec+Imhd1ehy7M9qZ6jaYj4wRNDNRgC0NIDTjzwe5GsG4kAnA82O5I5pajOC2LQDdON6rRWlZadHI11HyaLJZvDNYBt1MyVhz5zXusDBfNt4KueUXCmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eiHXWkjD; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70b0428f793so685927b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 06:16:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720703800; x=1721308600; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wuplHtDIUsY+v60dipyWU9k8SUH+WJQjVihPpkXe2os=;
+        b=eiHXWkjDVLIUYlWvL56YD/VvZQRnfVI0njAfBQwZPsTdZ8xYqhkx3j5LndmnBn0fHg
+         pNxNn8scVZcoEl8CqGH5r9QONkaJVlBsRS0QinN1DT1xKcuhUGdsCz+8zkbQij7xRXN9
+         594WWeEuBjwKUb+4YwBFwY7oGy4nwEievCX39QaQE3G2NWW+IhtH8Yz01j9M8ikGM9Mq
+         4n7dpSpP9gWO1Ssubdw61N8W/4OGiBLwzu5yFPeFUkj4t8q5WVrYAeNbw0nOH/ObhpNf
+         W0BpsKtQ02nK3hLpqxKrRQX8qSMq+ekiZk5ffoGX55OsPKOumzQCEGx+4539INkG1ek1
+         COAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720703800; x=1721308600;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wuplHtDIUsY+v60dipyWU9k8SUH+WJQjVihPpkXe2os=;
+        b=Brh/QjJAWkzbcnLf4np0+CSguw6+lgfRu480lNluYvtAibZBER6FpG+IWw6zr20DCk
+         bjSFTc6CRfudwN7jnfVswz0SvH6r5ws6gkcreg1+hjwymcwOS/otFYrLUD5Gtvh9+1Rr
+         T/VTshMMSgks2NfZtWG/BkMiBmQ2CLqooEuoGljMmAOHQmjwmHiDBCdrKnUsNYvbmTfB
+         qFljv5dToPOJ00BTjmX8QbyLtJ+0jqQii8P2lei3is2EbQ0GsmBJ8dxrmmEmZD7OybOi
+         GK2lSINPmZPpzuteSlZvDvVcAbSXgVOSZ8F8EA3yRHc6hw90ZF9JcE0HatBzQYKJAGJu
+         j85A==
+X-Forwarded-Encrypted: i=1; AJvYcCX7eQ8azpADkFOmB/AUjO++hVcdZ3oLPVGMlxBWSu22HIqe8lpwDAB0hkruWjEWhsA9upesqrAz1mryNjG1hvVnLR2m+v/mxVLR4QQZ
+X-Gm-Message-State: AOJu0Yw0TrlNtqFm5cUBkbNH3BmG1Czb/annkXHzI6K180DXPYUR6MGy
+	9DCmsp+jpWaqCXN+40ydwJff7yTQ1pZvXGyZqUQVqdvAbtO4yMui1Qwywix+deI=
+X-Google-Smtp-Source: AGHT+IHZ3UH1ty7UF4a3wIr5FEGH2dlGV92koJ4rrmQlAuhh3VFAuItSKIUZOvFCugjqmOgiWXH3+w==
+X-Received: by 2002:a05:6a20:d50b:b0:1c2:9f03:82d4 with SMTP id adf61e73a8af0-1c29f038726mr6683433637.53.1720703800081;
+        Thu, 11 Jul 2024 06:16:40 -0700 (PDT)
+Received: from localhost ([122.172.84.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4396ab5esm5794716b3a.140.2024.07.11.06.16.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 06:16:39 -0700 (PDT)
+Date: Thu, 11 Jul 2024 18:46:37 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
+ domains
+Message-ID: <20240711131637.opzrayksfadimgq4@vireshk-i7>
+References: <20240618155013.323322-1-ulf.hansson@linaro.org>
+ <20240625105425.pkociumt4biv4j36@vireshk-i7>
+ <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
+ <20240701114748.hodf6pngk7opx373@vireshk-i7>
+ <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
+ <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
+ <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7>
+ <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
+ <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,164 +93,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621-imx95-bbm-misc-v2-v5-1-b85a6bf778cb@nxp.com>
+In-Reply-To: <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
 
-On Fri, Jun 21, 2024 at 03:04:36PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 11-07-24, 13:05, Ulf Hansson wrote:
+> On Thu, 11 Jul 2024 at 12:31, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> >
+> > On Thu, 11 Jul 2024 at 05:13, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > >
+> > > On 10-07-24, 15:51, Ulf Hansson wrote:
+> > > > I think this should work, but in this case we seem to need a similar
+> > > > thing for dev_pm_opp_set_rate().
+> > >
+> > > We don't go to that path for genpd's I recall. Do we ? For genpd's,
+> > > since there is no freq, we always call _set_opp().
+> >
+> > You are right! Although, maybe it's still preferred to do it in
+> > _set_opp() as it looks like the code would be more consistent? No?
+
+Since the function already accepted a flag, it was very easier to just reuse it
+without.
+
+> No matter how we do this, we end up enforcing OPPs for genpds.
 > 
-> Add NXP i.MX95 System Control Management Interface(SCMI) vendor
-> extensions protocol documentation.
-> 
+> It means that we may be requesting the same performance-level that we
+> have already requested for the device. Of course genpd manages this,
+> but it just seems a bit in-efficient to mee. Or maybe this isn't a big
+> deal as consumer drivers should end up doing this anyway?
 
-Hi,
+Normally I won't expect a consumer driver to do this check and so was the
+opp core handling that. But for genpd's we need to make this inefficient to not
+miss a vote.
 
-beside the final location of this file in the tree, and a few nitpicks
-down below.
+The problem is at another level though. Normally for any other device, like CPU,
+there is one vote for the entire range of devices supported by the OPP table.
+For example all CPUs of a cluster will share an OPP table (and they do dvfs
+together), and you call set_opp() for any of the CPU, we will go and change the
+OPP. There is no per-device vote.
 
-LGTM.
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+This whole design is broken in case of genpd, since you are expecting a separate
+vote per device. Ideally, each device should have had its own copy of the OPP
+table, but it is messy in case of genpd and to make it all work nicely, we may
+have to choose this inefficient way of doing it :(
 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-
-[snip]
-
-> +MISC_CONTROL_GET
-> +~~~~~~~~~~~~~~~~
-> +
-> +message_id: 0x4
-> +protocol_id: 0x84
-> +
-> ++------------------+-----------------------------------------------------------+
-> +|Parameters                                                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 index      |Index of the control                                       |
-> ++------------------+-----------------------------------------------------------+
-> +|Return values                                                                 |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|int32 status      |SUCCESS: if the control was get successfully.              |
-> +|                  |NOT_FOUND: if the index is not valid.                      |
-> +|                  |DENIED: if the agent does not have permission to get the   |
-> +|                  |control                                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 num        |Size of the return data in words, max 8                    |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32            |                                                           |
-> +|val[0, num - 8]   |value data array                                           |
-
-    val[0, num - 1]   --- typo ?
-
-which I suppose means that this  field is variable in size depending on
-num value...
-
-In the gneral SCMI spec I think usually we write something like
-
-   uint32 val[N] with N as specified in num.
-
-... but I am fine even with this val[0, num - 1] if it is intended to
-meanb this same thing, i.e. variable size field depending on another
-field.
-
-> ++------------------+-----------------------------------------------------------+
-> +
-> +MISC_CONTROL_ACTION
-> +~~~~~~~~~~~~~~~~~~~
-> +
-> +message_id: 0x5
-> +protocol_id: 0x84
-> +
-> ++------------------+-----------------------------------------------------------+
-> +|Parameters                                                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 index      |Index of the control                                       |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 action	   |Action for the control                                     |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 numarg	   |Size of the argument data, max 8                           |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32            |                                                           |
-> +|arg[0, numarg -1] |Argument data array                                        |
-> ++------------------+-----------------------------------------------------------+
-> +|Return values                                                                 |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|int32 status      |SUCCESS: if the action was set successfully.               |
-> +|                  |NOT_FOUND: if the index is not valid.                      |
-> +|                  |DENIED: if the agent does not have permission to get the   |
-> +|                  |control                                                    |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 num        |Size of the return data in words, max 8                    |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32            |                                                           |
-> +|val[0:num-1]      |value data array                                           |
-
-    val[0, num - 1] ... for consistency
-
-> ++------------------+-----------------------------------------------------------+
-> +
-> +MISC_DISCOVER_BUILD_INFO
-> +~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-> +This function is used to obtain the build commit, data, time, number.
-> +
-> +message_id: 0x6
-> +protocol_id: 0x84
-> +
-> ++------------------+-----------------------------------------------------------+
-> +|Return values                                                                 |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|int32 status      |SUCCESS: if the build info was got successfully.           |
-> +|                  |NOT_SUPPORTED: if the data is not available.               |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 buildnum   |Build number                                               |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 buildcommit|Most significant 32 bits of the git commit hash            |
-> ++------------------+-----------------------------------------------------------+
-> +|uint8 date[16]    |Date of build. Null terminated ASCII string of up to 16    |
-> +|                  |bytes in length                                            |
-> ++------------------+-----------------------------------------------------------+
-> +|uint8 time[16]    |Time of build. Null terminated ASCII string of up to 16    |
-> +|                  |bytes in length                                            |
-> ++------------------+-----------------------------------------------------------+
-> +
-> +MISC_ROM_PASSOVER_GET
-> +~~~~~~~~~~~~~~~~~~~~~
-> +
-> +ROM passover data is information exported by ROM and could be used by others.
-> +It includes boot device, instance, type, mode and etc. This function is used
-> +to obtain the ROM passover data. The returned block of words is structured as
-> +defined in the ROM passover section in the SoC RM.
-> +
-> +message_id: 0x7
-> +protocol_id: 0x84
-> +
-> ++------------------+-----------------------------------------------------------+
-> +|Return values                                                                 |
-> ++------------------+-----------------------------------------------------------+
-> +|Name              |Description                                                |
-> ++------------------+-----------------------------------------------------------+
-> +|int32 status      |SUCCESS: if the data was got successfully.                 |
-> +|                  |NOT_SUPPORTED: if the data is not available.               |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32 num        |Size of the passover data in words, max 13                 |
-> ++------------------+-----------------------------------------------------------+
-> +|uint32_t          |                                                           |
-> +|data[0:num-1]     |Passover data array                                        |
-> ++------------------+-----------------------------------------------------------+
-> +
-
-   data[0, num - 1] ...  consistency
-
-Thanks,
-Cristian
-
+-- 
+viresh
 
