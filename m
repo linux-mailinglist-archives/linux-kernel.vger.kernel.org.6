@@ -1,199 +1,198 @@
-Return-Path: <linux-kernel+bounces-248949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8B392E449
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:11:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651B892E48C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F7DF1F21B15
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:11:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CBC11C20DD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1C415887C;
-	Thu, 11 Jul 2024 10:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DELgQzJC"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C6A5158DAA;
+	Thu, 11 Jul 2024 10:23:41 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255531527A1;
-	Thu, 11 Jul 2024 10:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267B72209B;
+	Thu, 11 Jul 2024 10:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720692685; cv=none; b=T6d5gzagMIBkFUPPxXf9M+qdrCpJ3XRIYDY9Jw3eL8Rc9eTTztE0wBLk7TpgN5gWix8intab1Tg9q3/ft4TXo1gNV0NO9bLix0kCTAWxzSYqyzl7GFI0B33opFJO7MX/eorVpZLXZCCq7L5h+VAvgWFPVGRnNImQ6Rzq3BvtOvk=
+	t=1720693420; cv=none; b=vBzhHDp1B3LAWnSPygtl93n4lDDVElCT6+pjJhTJzRM/+LuuP2fL33sBeqajcivSQLffRCzOxurv1LDPSNc63pe/ZZWpceUVsJE30bzqStCPBja28HZ/zSFS565f4hpxcSOsOmknO+um6SfOacZ7maLQQeiM6Ad8wUn/fCVwMUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720692685; c=relaxed/simple;
-	bh=rnLNYxYC6p1mpumMYjsgC1M4Y15Dk7aT99vspyuPh2E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HTjznB8H8Crr+yfXCTjOadhTH+QiWe/al/pnkJWN002amp+ySaG9HjUcaVNFTdxe4Hc7LX5tUE4EVrNwyt3VvEO9p8GZLSZiZ7oX999lHYANs/vdHpSO6oFsbsHzLsUZhohvX0lMfL5ld4+WezXbGSzl9lrQcOPp/PNdzlMnuYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DELgQzJC; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5c651c521f2so351554eaf.1;
-        Thu, 11 Jul 2024 03:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720692683; x=1721297483; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sssdm/mEGaX8VGYzfAqbuhLtQj02OuS8MMuxfvANIDE=;
-        b=DELgQzJCpepMPl/0fXdf6piFo/E/blRqHogN/9Dlxo+UdVOQjsnGGV89br4DBAJMcq
-         0xjO0Q4z4A8LLV/KC/n8VQ3MiOM8t266OauUyLZ84/66ZDDiSS7pusVTmDko2fBXwJ0T
-         to2uOWRNGuyv4+rd0TdfvrHDY+SlhfRcaAHbQCYjeGF4+foHKli7Pj2wnVjCkIjWesID
-         jL7xntxKnZHh/31Z+0zCv/xlZJqS2q3togRXLiAsvCBppXHoZeGGabDN/qDgPvYmtHUy
-         CAfcx8eMH4Rd0DeL065nnF2zvZxt3jVLIMrAF9npcITQstDbhVfPlR3scltEKx1nMCwt
-         6GuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720692683; x=1721297483;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sssdm/mEGaX8VGYzfAqbuhLtQj02OuS8MMuxfvANIDE=;
-        b=O9Le2cJPUy7d3w5mrkRdMlSJoSF0F6bjn2dqciR+K9xTpzslnFSzcMrilFWjnGYMbY
-         ImhW1VdEuB2cmcwixQtsGq294KjzO3J/7HvaKMMfRKc4swf/sCaqVKCCISvN1PLNUjxu
-         f0jEyup207YMr0RE7BgH4h1u3S17S008snLeSfgDxktifBpLL2Lalu0Eu4rg/7kVP095
-         yH63XbJ4zqDejrRLHOWkrR5imIxkITIjIDU/0HtRXHKn3VUcU+pG0wwXbZ1dVun3XXQc
-         CFBxbU4lszNjovT/teagj6TrRSqfmSW1QMd8Qi1p2UFcRsE+XgK5v332OjoBoTtkf9/3
-         KzaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjFMJQQQP1mPE3h6Beu0YKCcXJk4dEXkGM843iRa5nqQP01DusCrpxLS9g3t2bV1PtvHIAXR209esh6kkos610e5euGbyImTqYUYp6enWEfJLcU9Oj0hex+hv8ShF6KHAfk0lEXWQzhg==
-X-Gm-Message-State: AOJu0YyreEVgueETzHuWStoRHb7b8O/f3GVS2nwCAB3gmBpO5eo2Drf1
-	djkwzEXIh8JRqs2JNw8YzfDaMt/m4E4xKoZNZj3r3NcB8fVWK+Tvnyy4xTlXXkqjo5b3M3S+BNa
-	Jp5FPwqIlQSLl43nb82GolnZd8Pk5DWkK
-X-Google-Smtp-Source: AGHT+IH1ttR/75JuJ021My5b2HIIn6/NSlK3cCUvgWvkm1omkLOkdMxUT723shGbnPaKxgwdRxEBdva9+b/Da6UWs40=
-X-Received: by 2002:a4a:302:0:b0:5bd:b695:5bf1 with SMTP id
- 006d021491bc7-5c68e49e561mr8401082eaf.9.1720692683096; Thu, 11 Jul 2024
- 03:11:23 -0700 (PDT)
+	s=arc-20240116; t=1720693420; c=relaxed/simple;
+	bh=mRiJQf8HlUUGHS/Aw8yW+dJgWms8uN86w7mo04vnImw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NEKOBHygYjY0mjZUmRfpu0j6PZVd7suMg9bl3gH7j1/w9LXLeXXQMEKUd6M9thIyHBgLuZGJUKIUfPPCCRnu3ASJfULVNK0EuSYDeCdcrDwDJMVcCFPIoUcHOMFXbkqhhZ/aS4B8SXUJzTy+LeV6Cao4NrrJUAbKE0sBqRcPeXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WKW1P1dvfzQkjL;
+	Thu, 11 Jul 2024 18:19:37 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 246CF1401E0;
+	Thu, 11 Jul 2024 18:23:34 +0800 (CST)
+Received: from hulk-vt.huawei.com (10.67.174.26) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 11 Jul 2024 18:23:33 +0800
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<corbet@lwn.net>, <haitao.huang@linux.intel.com>, <rdunlap@infradead.org>,
+	<kamalesh.babulal@oracle.com>
+CC: <cgroups@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] cgroup/misc: Introduce misc.events.local
+Date: Thu, 11 Jul 2024 10:14:57 +0000
+Message-ID: <20240711101457.2963104-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711060939.1128-1-linux.amoon@gmail.com> <a8c1f49e-bf25-4fd3-a16f-13088f75767f@kwiboo.se>
- <CANAwSgQCn3jgiruiLs0cu-C+DguLtnk=msboAh8jNSF4P28gjA@mail.gmail.com> <6250fa05-7a06-4fa1-a2be-9cb66a2d2822@kwiboo.se>
-In-Reply-To: <6250fa05-7a06-4fa1-a2be-9cb66a2d2822@kwiboo.se>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Thu, 11 Jul 2024 15:41:06 +0530
-Message-ID: <CANAwSgQdr-SADuKMxZqa=j6mHAC0K1N7nje29RTPm9N5j-++qg@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add missing pinctrl for PCIe30x4 node
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-Hi Jonas
+Currently the event counting provided by misc.events is hierarchical,
+it's not practical if user is only concerned with events of a
+specified cgroup. Therefore, introduce misc.events.local collect events
+specific to the given cgroup.
 
-On Thu, 11 Jul 2024 at 15:15, Jonas Karlman <jonas@kwiboo.se> wrote:
->
-> Hi Anand,
->
-> On 2024-07-11 11:09, Anand Moon wrote:
-> > Hi Jonas,
-> >
-> > Thanks for your review comments.
-> >
-> > On Thu, 11 Jul 2024 at 14:13, Jonas Karlman <jonas@kwiboo.se> wrote:
-> >>
-> >> Hi Anand,
-> >>
-> >> On 2024-07-11 08:09, Anand Moon wrote:
-> >>> Add missing pinctrl settings for PCIe 3.0 x4 clock request and wake
-> >>> signals.Each component of PCIe communication have the following control
-> >>> signals: PERST, WAKE, CLKREQ, and REFCLK. These signals work to generate
-> >>> high-speed signals and communicate with other PCIe devices.
-> >>> Used by root complex to endpoint depending on the power state.
-> >>>
-> >>> PERST is referred to as a fundamental reset. PERST should be held low
-> >>> until all the power rails in the system and the reference clock are stable.
-> >>> A transition from low to high in this signal usually indicates the
-> >>> beginning of link initialization.
-> >>>
-> >>> WAKE signal is an active-low signal that is used to return the PCIe
-> >>> interface to an active state when in a low-power state.
-> >>>
-> >>> CLKREQ signal is also an active-low signal and is used to request the
-> >>> reference clock.
-> >>>
-> >>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> >>> ---
-> >>> V2: Update the commit messge to describe the changs.
-> >>>     use pinctl group as its pre define in pinctl dtsi
-> >>> ---
-> >>>  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 6 +-----
-> >>>  1 file changed, 1 insertion(+), 5 deletions(-)
-> >>>
-> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> >>> index 2e7512676b7e..ab3a20986c6a 100644
-> >>> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> >>> @@ -301,7 +301,7 @@ &pcie30phy {
-> >>>
-> >>>  &pcie3x4 {
-> >>>       pinctrl-names = "default";
-> >>> -     pinctrl-0 = <&pcie3_rst>;
-> >>> +     pinctrl-0 = <&pcie30x4m1_pins>;
-> >>
-> >> Use of the existing pcie30x4m1_pins group may not be fully accurate for
-> >> the PERST pin. The use of reset-gpios indicate that the PERST pin is
-> >> used with GPIO function and the driver will implicitly change the
-> >> function from perstn_m1 to GPIO. So this may not be best representation
-> >> of the hw, hence my initial suggestion, something like:
-> >>
-> >>         pcie30x4_pins: pcie30x4-pins {
-> >>                 rockchip,pins =
-> >>                         <4 RK_PB4 4 &pcfg_pull_none>,
-> >>                         <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>,
-> >>                         <4 RK_PB5 4 &pcfg_pull_none>;
-> >>         };
-> >>
-> >> Similar change should probably also be done for pcie2x1l0 and pcie2x1l2,
-> >> not just pcie3x4.
-> >>
-> >
-> > Ok but it is better to update this in rk3588s-pinctrl.dtsi otherwise
-> > the pcie30x4m1_pins
-> > will not be used at all on all the boards
->
-> I agree that it is unfortunate that the PERST pin is included in the
-> groups in pinctrl.dtsi, however, for pcie ep mode the pins should more
-> than likely be using the perstn_m1 function and not GPIO, so there are
-> uses for the existing pin groups for ep mode.
->
-> In my opinion using pcie30x4m1_pins as-is and having implicitly changing
-> to GPIO function when driver/usage in the software require it is an okay
-> description of the hw.
->
-> However, seeing how use of pcie ep is described using its own node in DT
-> I can understand that for rc mode the pin should be changed to GPIO to
-> properly describe the expected usage.
->
+This is analogous to memory.events.local and pids.events.local.
 
-Thanks for your explanation.
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+---
+ Documentation/admin-guide/cgroup-v2.rst |  5 ++++
+ include/linux/misc_cgroup.h             |  3 ++
+ kernel/cgroup/misc.c                    | 39 +++++++++++++++++++++----
+ 3 files changed, 41 insertions(+), 6 deletions(-)
 
-> When I tried to add similar implicit change to use GPIO function in
-> U-Boot to fix system freeze when improper pinctrl was used, it resulted
-> in some discussions, see [1] ;-)
->
-> [1] https://lore.kernel.org/u-boot/20240511112821.1156519-1-jonas@kwiboo.se/t/#u
->
-Ok, I get this.
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index adf77ed92687..6c6075ed4aa5 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -2692,6 +2692,11 @@ Miscellaneous controller provides 3 interface files. If two misc resources (res_
+ 		The number of times the cgroup's resource usage was
+ 		about to go over the max boundary.
+ 
++  misc.events.local
++        Similar to misc.events but the fields in the file are local to the
++        cgroup i.e. not hierarchical. The file modified event generated on
++        this file reflects only the local events.
++
+ Migration and Ownership
+ ~~~~~~~~~~~~~~~~~~~~~~~
+ 
+diff --git a/include/linux/misc_cgroup.h b/include/linux/misc_cgroup.h
+index 618392d41975..49eef10c8e59 100644
+--- a/include/linux/misc_cgroup.h
++++ b/include/linux/misc_cgroup.h
+@@ -40,6 +40,7 @@ struct misc_res {
+ 	atomic64_t watermark;
+ 	atomic64_t usage;
+ 	atomic64_t events;
++	atomic64_t events_local;
+ };
+ 
+ /**
+@@ -53,6 +54,8 @@ struct misc_cg {
+ 
+ 	/* misc.events */
+ 	struct cgroup_file events_file;
++	/* misc.events.local */
++	struct cgroup_file events_local_file;
+ 
+ 	struct misc_res res[MISC_CG_RES_TYPES];
+ };
+diff --git a/kernel/cgroup/misc.c b/kernel/cgroup/misc.c
+index b92daf5d234d..0e26068995a6 100644
+--- a/kernel/cgroup/misc.c
++++ b/kernel/cgroup/misc.c
+@@ -134,6 +134,17 @@ static void misc_cg_update_watermark(struct misc_res *res, u64 new_usage)
+ 	}
+ }
+ 
++static void misc_cg_event(enum misc_res_type type, struct misc_cg *cg)
++{
++	atomic64_inc(&cg->res[type].events_local);
++	cgroup_file_notify(&cg->events_local_file);
++
++	for (; parent_misc(cg); cg = parent_misc(cg)) {
++		atomic64_inc(&cg->res[type].events);
++		cgroup_file_notify(&cg->events_file);
++	}
++}
++
+ /**
+  * misc_cg_try_charge() - Try charging the misc cgroup.
+  * @type: Misc res type to charge.
+@@ -177,10 +188,7 @@ int misc_cg_try_charge(enum misc_res_type type, struct misc_cg *cg, u64 amount)
+ 	return 0;
+ 
+ err_charge:
+-	for (j = i; j; j = parent_misc(j)) {
+-		atomic64_inc(&j->res[type].events);
+-		cgroup_file_notify(&j->events_file);
+-	}
++	misc_cg_event(type, i);
+ 
+ 	for (j = cg; j != i; j = parent_misc(j))
+ 		misc_cg_cancel_charge(type, j, amount);
+@@ -368,20 +376,33 @@ static int misc_cg_capacity_show(struct seq_file *sf, void *v)
+ 	return 0;
+ }
+ 
+-static int misc_events_show(struct seq_file *sf, void *v)
++static int __misc_events_show(struct seq_file *sf, bool local)
+ {
+ 	struct misc_cg *cg = css_misc(seq_css(sf));
+ 	u64 events;
+ 	int i;
+ 
+ 	for (i = 0; i < MISC_CG_RES_TYPES; i++) {
+-		events = atomic64_read(&cg->res[i].events);
++		if (local)
++			events = atomic64_read(&cg->res[i].events_local);
++		else
++			events = atomic64_read(&cg->res[i].events);
+ 		if (READ_ONCE(misc_res_capacity[i]) || events)
+ 			seq_printf(sf, "%s.max %llu\n", misc_res_name[i], events);
+ 	}
+ 	return 0;
+ }
+ 
++static int misc_events_show(struct seq_file *sf, void *v)
++{
++	return __misc_events_show(sf, false);
++}
++
++static int misc_events_local_show(struct seq_file *sf, void *v)
++{
++	return __misc_events_show(sf, true);
++}
++
+ /* Misc cgroup interface files */
+ static struct cftype misc_cg_files[] = {
+ 	{
+@@ -409,6 +430,12 @@ static struct cftype misc_cg_files[] = {
+ 		.file_offset = offsetof(struct misc_cg, events_file),
+ 		.seq_show = misc_events_show,
+ 	},
++	{
++		.name = "events.local",
++		.flags = CFTYPE_NOT_ON_ROOT,
++		.file_offset = offsetof(struct misc_cg, events_local_file),
++		.seq_show = misc_events_local_show,
++	},
+ 	{}
+ };
+ 
+-- 
+2.34.1
 
-> > I will update the PERST pin to RK_FUNC_GPIO on all the pcie2x1l0,
-> > pcie2x1l2 and  pcie30x4
-> > is this ok for you?
->
-> This should probably be reworked in pinctrl.dtsi together with all
-> affected boards and/or use a group override in the board dts.
-
-I will keep these board-specific pinctl changes.
-
->
-> Regards,
-> Jonas
->
-
-Thanks
--Anand
 
