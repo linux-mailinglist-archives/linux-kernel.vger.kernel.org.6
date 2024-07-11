@@ -1,179 +1,167 @@
-Return-Path: <linux-kernel+bounces-249521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5144B92ECAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F24D92ECC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C98C61F22007
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F37611F21AE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C68916D320;
-	Thu, 11 Jul 2024 16:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="B4vXUIKc"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2048.outbound.protection.outlook.com [40.107.237.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72FE16D33D;
+	Thu, 11 Jul 2024 16:32:23 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4E216CD12;
-	Thu, 11 Jul 2024 16:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720715284; cv=fail; b=kuvn3ydf/cCH/bGul3nBULVpeKP1pVK2BuRRZsYn7Ekbg9GF3BFXOOHHLkSAU4UJOmu15hX/qsahXqomWfcLvVE5OgCR6fTf30nTUmb1hYjOjqDBXFOMfc/C2sXLmuGty1sgBE2rvt1VUlFJXZLnD/itU9Sy/8JIYqjt1aX/LPI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720715284; c=relaxed/simple;
-	bh=YQpEC/qiBQroa3mm1E3KI5PbV+xGPjIZrAFY7CCxWqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cz8F/ZKLtzmRrjFiKMYrZYAx3M66Kd1yQKgZl2bIdWgJC/mHa8u3sXneHq+RrsP0dFX21dud+YOYj0TuOBsmQKLsoGLFT3hxEaRNWha9ukRHgaOFtmXrKX1j3ZpSkEAvXM1FwjmNinG2E1o+l9frJDI2VXUp00WKygUzGC7w+kU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=B4vXUIKc; arc=fail smtp.client-ip=40.107.237.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ugAL/1omO5WSo3BzAXDObfA4NqNgBaPgN5C3FXvB5AZQwpmBkodev2IAu1AyG/3pbls7jmYVOdUnZdhZ9+WOzK+m/t2WcMLyDEyqqgUFUV95/LvhAqbGGqeirnsfc5UVZy/2hOJIlA65Gdpq5X/mnd5CGQ2lDAgg/D2MeivV+mST1yUwWCYeKJCLDTQesSroQr0bRQIrZ+O52wSlBuLITJrPDMZugKwYSpLI0k2jC+fzEbb8Z6vXOXx1kJP8pKJYWhFdpmoaYP6PfvqX5o5dpcpGXw8a6z2blNF/2+sdQqA5A/g8bS75WShFm1kdrDrtqq9826dlts2WuhHwrBwVpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ttBJGxeYpuClpbEojPLyU39jatLusNucKMm4ywTf4gE=;
- b=TNvlrpBGsgcEWHSNvUkmsRfCa7BAwaHD5gT/+RPSqXFpHfGi1kwHGk8hgvZhvdXCh2aU4Wbuz3JHUFtPNvP3a6DFDHSUVruL7tS1qzxaRxOAtHpdrMffJSyNCiVeX62Tf0LFckD7IfDHw7Jj1qh8/BfIdRjPfGJqt4um1QfLobguGFCgqUxt63cluJmS5/lVez3begKeY185sbit+CGJC8zua3qTcqfScIbVPfEOZxav0nKD5PS+JLrydzsiXVnj2Fm4w7FQTKmJ2wDBEpiDNzzbzP2AHijGKCmYIC/HvSo7cR1P8653W1D5IPYjad/ewKYRzf4SASknm66LeEbm8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ttBJGxeYpuClpbEojPLyU39jatLusNucKMm4ywTf4gE=;
- b=B4vXUIKcaGx1MGIIXd1svGVLVgOv6Vqi2ahE8CcGhPF4pGRO97O+hVl0r7BOdW5YEB4vuoZCSJvXrfxL3F2D7hoKoo8CpV/VdGTtzdP7UWjTtP9kQF4HHBPHI+PUhf2Yr5I2X6gQkGITQ/MRPHvZ/Akyc0BNlzgFhgRnXjxLpgk=
-Received: from PH8PR22CA0018.namprd22.prod.outlook.com (2603:10b6:510:2d1::24)
- by SN7PR12MB6766.namprd12.prod.outlook.com (2603:10b6:806:26a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.21; Thu, 11 Jul
- 2024 16:27:58 +0000
-Received: from SN1PEPF00036F42.namprd05.prod.outlook.com
- (2603:10b6:510:2d1:cafe::a0) by PH8PR22CA0018.outlook.office365.com
- (2603:10b6:510:2d1::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23 via Frontend
- Transport; Thu, 11 Jul 2024 16:27:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF00036F42.mail.protection.outlook.com (10.167.248.26) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7762.17 via Frontend Transport; Thu, 11 Jul 2024 16:27:58 +0000
-Received: from [10.236.30.66] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 11 Jul
- 2024 11:27:57 -0500
-Message-ID: <7a449bc1-8ae6-4242-a8ce-df917042a1a6@amd.com>
-Date: Thu, 11 Jul 2024 11:27:57 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C361B1607B7
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720715543; cv=none; b=QYFOy7n9tg7saTQlYfSBY+tcSaMiTrOFkdDsayb1mmFxPdVLTZGYQfDIurhJN2N2tkJLqONagwOzMtA5SLHtzHN4QAHF4siwTkD0783FJDhggGVAs1xJYFO4ujh9HkNsqxrNoa8Yx4B6IbbLBOgJSS2ItYMsjg7xCSlEHHG98QY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720715543; c=relaxed/simple;
+	bh=c2d3iyUQdVBWidO9otp/SphbHXyDfvdcDXhrLan7KMw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=O6am9GLHzxf3F0El//SnN3nEcFjTrGCnnvnGzpu4Ff/dn6PPvBTFizsD7432HKzJmOt0ntkoCfe0lfnOs3l4ZCpMrTQrqg8gQKS6ryEZAMZBwbDIWUetKq7qFGslmx/zUCTcmtDyI7XxApG9CT8GBA3J3aHobsY1cx+Glf6Y+KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f3b0bc9cf6so126566439f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:32:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720715541; x=1721320341;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0Ys8pPyGnkUAIktEMj8o83PLn9BquZuJ6dCWf5ksSyI=;
+        b=GIDpXc0DuGG3rjBhIS6R+xWRoi0q5JxfnYMFk9HF/Q8w8jtNJJjgf4nx92orub+h6Y
+         XHzTUuKE88uf2eGymPWoOtRlUBVf4P9K/0/u+mr/dyosZjPjYxofDKOHJbcQqREalKwp
+         Ddh0r5sS27Mp70FyumsfJKoVC+pH1//g9ZNiBoGQLImEEUwEQrBKzIFT5R1JWxXZ1PiK
+         mpfhZrO4cdykzoFTRpM9U59XxO0PhtyMQQ3FyTaD6onGvRU4yx+tX3FO4nHf5ZM9MPUj
+         pA/mEWIizQwB8wW7UqjgfuZgC+hysQonjoErWZGWVLypyOCYdppImq4qQAn6Czn/6Trx
+         m4cg==
+X-Forwarded-Encrypted: i=1; AJvYcCWs3MOpbKS/VTKdgquuPpgTo6q9/A0S/ap6u6dzgivRRhTLT6dIAWaJ9g1t9MG6uNPNzni2uD0t8mKl3mD1xY+GlL/nIOV1ATrxgK3O
+X-Gm-Message-State: AOJu0YwjFmfmFKkI75AP7/8CPlu7IYh345WqGGS32+tKGuzHjRvIrWjh
+	+beS26EiOCosGm2qhFfbRZB8Gx0AfxyfH7VCj6NoHZb9U3hUznczGrq1tn0ZMo+/h1rt23p83+V
+	Z5fBgy98de4YigZR2fuDmBWv2jZIRcioc2DNM2bCVljENumh9w+qKHSs=
+X-Google-Smtp-Source: AGHT+IFbpfIXNnqTL7NYWHHMAFG/YWOGVCCsFGHwH6sAxF5seh9VrLw2I0yQVtVUZ1unpbpIRoZE3r3yyxI1FmRkQOKBVfBGkubd
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 2/5] selftests: KVM: Decouple SEV ioctls from asserts
-To: Peter Gonda <pgonda@google.com>
-CC: <kvm@vger.kernel.org>, <shuah@kernel.org>, <thomas.lendacky@amd.com>,
-	<michael.roth@amd.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240710220540.188239-1-pratikrajesh.sampat@amd.com>
- <20240710220540.188239-3-pratikrajesh.sampat@amd.com>
- <CAMkAt6pYAKzEVkKV1iriQei3opD9j3M4bM3-0yB4sX1wss+jsQ@mail.gmail.com>
-Content-Language: en-US
-From: "Sampat, Pratik Rajesh" <pratikrajesh.sampat@amd.com>
-In-Reply-To: <CAMkAt6pYAKzEVkKV1iriQei3opD9j3M4bM3-0yB4sX1wss+jsQ@mail.gmail.com>
+X-Received: by 2002:a05:6638:4124:b0:4c0:95c9:f77 with SMTP id
+ 8926c6da1cb9f-4c0b2ba3f26mr528011173.6.1720715539407; Thu, 11 Jul 2024
+ 09:32:19 -0700 (PDT)
+Date: Thu, 11 Jul 2024 09:32:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007c77b5061cfb4ec6@google.com>
+Subject: [syzbot] [wireless?] WARNING in ieee80211_do_stop (2)
+From: syzbot <syzbot+d7aa450b9ba2a184513b@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00036F42:EE_|SN7PR12MB6766:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2be62a2-7b77-41fb-bd5d-08dca1c66d2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q3pTM3dKcERCZ1BudnZRaW5uSGVKbENyOWVQY29yclZqdTZ1MzdGNHNYT1Rt?=
- =?utf-8?B?SWJoUFl6dHBheEhmT2xUOFBnMWYybTdLcTBpU0h6aFVqTE13bGo4UHJ3amhN?=
- =?utf-8?B?U3I5S29rRFRMc3RjcGVONG9GL0ErNmZZQVRCWWo3Wlg4bGNIQUh3SGNaS2Fp?=
- =?utf-8?B?NlEwL1JFMTRmWnhRZ3paNkNjOWNjNzcyMjQzb0xzM0Qvd0FNZHNnd3h0VlUz?=
- =?utf-8?B?SDkzKzdlR1JZRnhJeDdDSkxRVnR6NG84dnNhWWRUSHdEYmlOQ0MwL3N4cmpU?=
- =?utf-8?B?S0tNOGNSa21pOFRzaTJFTU54SXVxYTQxSkIrNG9xTlZBTjFLZlhGclBaQTVw?=
- =?utf-8?B?M0V6amgzZWlZdTNmY2kyKzJTVCt3dnlBaTJDRm1tbUFaVCtmM2RKcWowSUEv?=
- =?utf-8?B?RlI2ZUtmK0xud2RvSkRIdFpwbExHUTkrVjlUYkZ0Z3JvaWwxeS9WcVhnQmRG?=
- =?utf-8?B?UXlIU2lLWEQ1ZFhPd3cxOTExQUtJWjZnMHhOempJazdtWlZKSTJwcGRjNHdI?=
- =?utf-8?B?bitXQmdGMC9GbFRUdGt4d3lQK2lVRnZYZGNKSFhlM0FscVJJY01CR0NlZzJC?=
- =?utf-8?B?eXh3YUZCN2M4YUxzYVA1dHVPTDNTZWk4QU9ZWExGMklkeGt2cTVvdzRJUnpI?=
- =?utf-8?B?a0tHRm9uNWk1RHhOS0s1MkI5bEtPMWFKV3YrRU0wbkhjbnRPMjRCbkZkK2FV?=
- =?utf-8?B?a2x2d0tWdjhObDhqOEdYam1COXg2bGdzcVlsRS9XN2tCUi9LNkRVa0QxamFW?=
- =?utf-8?B?RmJieEJtV0N4cWtWdnFLNS9ZT2pGMEZLK0NlLzloUVBkK0VkZFR3Vmw0TDQz?=
- =?utf-8?B?OVpXR0o2MVJMd2pBQTkyczFnS0dONGdrZzRnNHNsZjlNK1hjU2VnNFhMNWV6?=
- =?utf-8?B?L3JxUXJzajRuRDNmVHdUZWVoMUVPL2M5L1grcHJOK1NldHdDemF6VXFMT1Fh?=
- =?utf-8?B?QWtIZ2luVlVJRkZTUWorMVhqZ0Vwam9wc2dXWnBtVllsQk1NaURidzErcjd2?=
- =?utf-8?B?UW5CekErMW5mTWczWDMzOTErc2xlbmlsUFVvMEFUaTV3cEJna3ArbjRSZnJM?=
- =?utf-8?B?TWpDaWdicklsZ1J4azRvd0N3Z1BSUmZXSGNuSVhCK091ZllaWmRxNjVyWkQz?=
- =?utf-8?B?RlRSeU02YUVRdmxZc2YzelUxMTZTUUlPSmc3a3A2QTVrOEZTWDNOUFJrSm5R?=
- =?utf-8?B?d3JMQmhWVkZaZ1VFc3lvS0FLampoOEw5RlRQcHo5SkFkeWxDRGVoUXYzN0w5?=
- =?utf-8?B?L2IrSDR6VFc5dkNURFZ4UnAxL2E0QXp6RDZUZXh3WWdqVUhRMHJkVkNwZVFH?=
- =?utf-8?B?VStja2lqcGJ2bENEM0hVcHp1TzNsbkhMRExnTCtMZlNnZUJnR2Y0MkFibWR6?=
- =?utf-8?B?VUFQTnM1TDB6bllrRnkyLzhUTkgyTmdoai91MkhYeUNtOU9UQjFNcXg0Z3Y4?=
- =?utf-8?B?TGlGWDZ4cXFCZTBCSzMwS09ZSGdKQnVub2xLMEY3Q0V1YWZHallVR0JXL3hY?=
- =?utf-8?B?d2x3Z2IwK0drVkU3MHdrakxqQml6UVlYRHRRQ0g3aVE1a2E1TlN6ZitSaGpT?=
- =?utf-8?B?MHpLam1wWnBESVNpbmV6S2NWeWJOWlRwMEdneTVuK3lCNUNxWGlNWUVYZUdi?=
- =?utf-8?B?bzlGM0x3dGR0b3JkSlhSTEpMM0lobXY2U2RhY1Ztb0tJcWVmWkM0RTU5djhm?=
- =?utf-8?B?YTd1SEhxcEtRUU9sUmlEamRMZ3R5ZDRPV2IzUEJFTXhXUlpIZnd6OUJ6Zkl6?=
- =?utf-8?B?QU1XbVZwRkwyclhwSUtobzRTVUZXcDZ6K1JJeFhLaTk2RWl0aWF2OEpZRU85?=
- =?utf-8?B?R2tOZ0hSVEEwVnFrMHdNUWNNdERZWEVxT2lZaDBSN25SR0d5b2k2UDdJY2d5?=
- =?utf-8?B?d0lZaHZacG9mRHVyTlNrMTV0aS8yWDMzakwvcDl2ejVBTWoranM0a0RBSlh2?=
- =?utf-8?Q?u/Rl9kb2go/BAkH0MkHZYnTX38AI9HLA?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 16:27:58.4331
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2be62a2-7b77-41fb-bd5d-08dca1c66d2e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00036F42.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6766
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    2f5e6395714d Merge branch 'net-pse-pd-add-new-pse-c33-feat..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f48376980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=db697e01efa9d1d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=d7aa450b9ba2a184513b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/44296878e8d6/disk-2f5e6395.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a3f8523e4843/vmlinux-2f5e6395.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c40a60a2869f/bzImage-2f5e6395.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d7aa450b9ba2a184513b@syzkaller.appspotmail.com
+
+netdevsim netdevsim1 netdevsim2: entered allmulticast mode
+netdevsim netdevsim1 netdevsim3: entered promiscuous mode
+netdevsim netdevsim1 netdevsim3: entered allmulticast mode
+mac80211_hwsim hwsim10 wlan0: entered promiscuous mode
+mac80211_hwsim hwsim10 wlan0: entered allmulticast mode
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 7335 at net/mac80211/iface.c:515 ieee80211_do_stop+0x18ee/0x1ee0 net/mac80211/iface.c:515
+Modules linked in:
+CPU: 0 PID: 7335 Comm: syz.1.716 Not tainted 6.10.0-rc6-syzkaller-01258-g2f5e6395714d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:ieee80211_do_stop+0x18ee/0x1ee0 net/mac80211/iface.c:515
+Code: ff e8 a6 32 9c f6 4c 89 ef 31 f6 e8 1c 4c 0c 00 48 8b 5c 24 60 e9 9d fd ff ff e8 8d 32 9c f6 e9 93 fd ff ff e8 83 32 9c f6 90 <0f> 0b 90 e9 cd ea ff ff e8 75 32 9c f6 90 43 0f b6 04 27 84 c0 0f
+RSP: 0018:ffffc9000d726800 EFLAGS: 00010246
+RAX: ffffffff8af9f4dd RBX: 0000000000000002 RCX: 0000000000040000
+RDX: ffffc900093ec000 RSI: 000000000003ffff RDI: 0000000000040000
+RBP: ffffc9000d726968 R08: ffffffff8af9dfa0 R09: 1ffffffff1f5b9ad
+R10: dffffc0000000000 R11: fffffbfff1f5b9ae R12: dffffc0000000000
+R13: ffff88807a598e20 R14: 0000000000000001 R15: ffff88807a8a2800
+FS:  00007f0f44fb46c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f53c3a15fa3 CR3: 0000000069780000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ieee80211_stop+0x436/0x4a0 net/mac80211/iface.c:761
+ __dev_close_many+0x219/0x300 net/core/dev.c:1558
+ __dev_close net/core/dev.c:1570 [inline]
+ __dev_change_flags+0x30e/0x6f0 net/core/dev.c:8835
+ dev_change_flags+0x8b/0x1a0 net/core/dev.c:8909
+ do_setlink+0xccd/0x41f0 net/core/rtnetlink.c:2900
+ rtnl_group_changelink net/core/rtnetlink.c:3447 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3706 [inline]
+ rtnl_newlink+0x1119/0x20a0 net/core/rtnetlink.c:3743
+ rtnetlink_rcv_msg+0x89b/0x1180 net/core/rtnetlink.c:6641
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
+ ___sys_sendmsg net/socket.c:2639 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0f44175bd9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0f44fb4048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f0f44303f60 RCX: 00007f0f44175bd9
+RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000000000005
+RBP: 00007f0f441e4aa1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f0f44303f60 R15: 00007ffe2ab3ef88
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 7/11/2024 11:11 AM, Peter Gonda wrote:
->> +int sev_vm_launch_update(struct kvm_vm *vm, uint32_t policy)
->> +{
->> +       struct userspace_mem_region *region;
->> +       int ctr, ret;
->>
->> +       hash_for_each(vm->regions.slot_hash, ctr, region, slot_node) {
->> +               ret = encrypt_region(vm, region, 0);
->> +               if (ret)
->> +                       return ret;
->> +       }
->>         if (policy & SEV_POLICY_ES)
->>                 vm_sev_ioctl(vm, KVM_SEV_LAUNCH_UPDATE_VMSA, NULL);
-> 
-> Adding the sev-es policy bit for negative testing is a bit confusing,
-> but I guess it works. For negative testing should we be more explicit?
-> Ditto for other usages of `policy` simply to toggle sev-es features.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-You're right. Although it works because the way we want for negative
-testing it does go by exercising a different path meant for a different
-policy.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Maybe I can refactor the old code to all test for type instead like I
-have done with the rest of the patchset just so that we are more
-explicit. Would that fare any better?
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
