@@ -1,143 +1,144 @@
-Return-Path: <linux-kernel+bounces-249979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D620892F27B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:07:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C1692F277
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD8D1F229A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:07:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 314131C228F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332D31A0B0A;
-	Thu, 11 Jul 2024 23:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5475E1A0725;
+	Thu, 11 Jul 2024 23:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N1VQR3/s"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dey2H8Sk"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206B41DFE3;
-	Thu, 11 Jul 2024 23:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B241DFE3
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720739249; cv=none; b=jhk6BedNO0W9OUMkog8YltVkN5IDWMw5vKAGUc31pFXwEQEeh4KRcxI1JrU+w+hnGOG0NUfe3wC2bK2mgiPif1Xf3W4VlIZ4EvA7WV0TmZ/bz57C5mnajMzivLAJMvhIDJHgLbar2P32wfyCK37QIPHvzcGirdbpZ4Z0wEfqHmQ=
+	t=1720739241; cv=none; b=IQDUofj8+JsE0xwlNkxo1RPS3aHFVYfZf9i9W+LW7Lw/YMhWBFYlYQM3UvQ65Zsp+Vo3tFahzE/XOcjzOGBijflzIPFPtf7XykMcJVEKpKs4r35OrqFGn0i6OH9n8mBXWe1Liw+0WHxzwl0MGaK3cc+7p6JpJ8Ed8o4MDrr2i8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720739249; c=relaxed/simple;
-	bh=UcMXaEV7R/bUuyeSozVX/+Hj1QoPeLuD2nEoxOWGzU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UkxpWzARWiCDnoqtNmlfE+LB7qBteoopMZVqmF/nHK+lyu6kBkDft0rtg6kHrw+dnzzhYEprLWqni8scBaue+q/omS5LqTUUuQNcL2fsrokwfmDHofLGn3V3xbOHeS62BxC24YSaISyE2yKVSBVFfTjl2Ij59zg+2Lodyi6SfUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N1VQR3/s; arc=none smtp.client-ip=209.85.219.179
+	s=arc-20240116; t=1720739241; c=relaxed/simple;
+	bh=3M0EY2DABXXVKV2UN0YHNuXp8d0HW8YIbLcNOsrEjeg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jICemjr02XHixeV4o8Jq1tBistddDiVvZcOUvqP9byY2r52el33hZAd9S8gxzYESCn6K+HanyfXDjo7d+xzPVeGqT8VoRjn/6RagW1OVJCno5Hwki8IiJjSWyI9AR6a+byIE7cS7vGK/7G3sfDJ7J5gOeSBCyxd/+v39C+LENRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dey2H8Sk; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e036d1ce4f7so1243581276.0;
-        Thu, 11 Jul 2024 16:07:27 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77c4309fc8so218417166b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:07:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720739247; x=1721344047; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720739238; x=1721344038; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=i2hBswY+u8xjK1Kzvor9fB+2gLyEPUsUoItxFLjtkvk=;
-        b=N1VQR3/sHgT8Q4fjvFmIc7+JeNQXye92vFyP++/JIcMDdZ/KR6lUA8PKnFaDBKsFKl
-         7ixBPJuIx9C5TUO2afp36X+16cLIkQPu8t8UGpkpALnrCeJCrW6zMGdbcKgUrWmPVxpZ
-         j5TOhNCqe8zbWHTmm1B1rSwjRr0zDeE90ujMRLnMibzg5F4TvdR5hj4Oainazd1Hp1tm
-         a+ILER7dZ0Fks8ey2iMTAbONSuqQcT48aozSBO99R4/rRecbQc+jN0o3GDCl23wCce/M
-         usxC10Plsdl/3r8My3CKsbv1X7omNR8uY4uP5R+MJxl2dnvZWj82VzVojWJNOq55lyJT
-         r6xg==
+        bh=byKCeNwRs0T1R6plp9OuqfAkOz/elWWT8jqkCBg7kkg=;
+        b=dey2H8Sk/Lwg7f1Gj0Tl9fIAHdXBUnpG6jd09lksZ/2qXhbFkAlPAGjmnRcOidaYSN
+         uBvqYhLY6xK7f0aXbIDW8Pjm+espz0KPrFbALST9t8XWmWwC9gBZJ7xgMrNjqS+/v6zY
+         00LX2RD9pENRA1C91E7AqE7VIUaaDAZNRnek1qggppZaiy6XKatmOzIgS/+wR2tzhZa+
+         S8KAgFifR/bIW84VhNCZ1TGTQvY92MDfGBuwr/vIHSTKn63CUMUIOmdXADE+gw4ftsCG
+         63JGHkEyBBeogEBbMej0VWjsDTdSn7raLE7B/lcmrBj6KZsDyGWDMSvWKiB3BzTpNwLy
+         yLFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720739247; x=1721344047;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i2hBswY+u8xjK1Kzvor9fB+2gLyEPUsUoItxFLjtkvk=;
-        b=O+o5Psk5bDiieFzpuUy/2KygDVCHaHiZE0OEgtUhQ65Bx2RmUm3Vi8DZUOTJD98/3j
-         RYCCIue/iYGF9LVuOz0v2pR/a4p5K2C9I1C8paVBmB6AZ/wkJ7EgDi1oveIaCF3FD6rg
-         +EX+QiLC90tarQ3sNAPWSaMLoEA30/xJUrFzFMOb6tkKWYCnfEPQiLGoiJfaXsmJ6B8k
-         Iy8RA+dDhGY0++hbAxgQmkvionreTR9siniBRIKtgLAclDwmlCJcGKaW3yYZcJ/Qm9Aq
-         7cdI/Z8XgL9T2Jgh1+9J5+rlmLs4rc7hQV8XevebUR9laQlZyCtwtZ9y0OxoIWyIIBiX
-         lfoA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5POVrzQMADd0DEy3gTMBCOrXaDTLj+1ZHxeP2ScriAABYJypIextv8qMIS6vQP0eMchJM63eSnP5ykatpdJ/BI7gN7M+fKhr3nlht1tC9DKTqiGGJTxYW0tcXP5V/PBAtNn+yXL2B+i8bz+CUpHIuRJNeR7gPNQ6VcRDrDeY1uhgtlWFJJEeFS19Q3h/NGYT891oiQHzntrENOYPJ8aXRy//tyB90mKIgyfia
-X-Gm-Message-State: AOJu0YwD4lPb+WsZrDzOmESUORbrIBA15Dmho6ZxUsiy+nAoAeMBKv3g
-	K/4BMwohxxUkRI8srt+4PO4UG3olyjvVJCUioNF+qOXDV3UMrQ13zcTHWEzjeWMeLAO7mxH85QR
-	eoJwwKTHZrwB1pD1XajCppi7jHf0=
-X-Google-Smtp-Source: AGHT+IESAzgUImuWHbpxSCeLvNle2lAnCtNiymuxM6do/gswGHb65EvzDJ50dh8SH6D3heE0PgCKfCSwNt2zccYk0iI=
-X-Received: by 2002:a25:4ac6:0:b0:e02:becd:d5eb with SMTP id
- 3f1490d57ef6-e058a4d4875mr967584276.13.1720739246975; Thu, 11 Jul 2024
- 16:07:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720739238; x=1721344038;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=byKCeNwRs0T1R6plp9OuqfAkOz/elWWT8jqkCBg7kkg=;
+        b=q9kPGEbyI8YxWbPTk/9AuzrVlDkfKyoCGc+RdhV7DvfSnUGG/3WC5+9yVEcXVSFmcB
+         xgE+l7OamIjFgQAL4Klh5wJqYA39PcVpt5Y4qTfIu3LICOVSsNX/m2eWwYSsMPLXXGm8
+         oZ03njQ/hlKwINQJgx9E9Ay+czlGd6kRE0/B0LawfaZpOs3dC4ZyR/dmRAP8MA3pY9BS
+         CLd3szyYv0M//fRgL4lMfuvXHvxKc6IkuSxFCfqAEgKk8v8V5CPuZKNUQOreBJukjBp8
+         rU4zwPT8M4bR0GBeronqBl0U/HJH7glvU+YH/yjECE4GnXt7Gh5g7Oh0PVm6sUyKFRCb
+         UJ4g==
+X-Forwarded-Encrypted: i=1; AJvYcCV1qLFS5lp3INc+vs20wFmD6JUOHi+2HTHVYuU20dZoMwTYvBJRqh2vyrzAD/YzAaJDJs+zAGlP0EI6eqQiAo3Nx3jeioTbkeE9VSGn
+X-Gm-Message-State: AOJu0YylAz5iQFON957Cn4qAsVCN0DDNj1WVP6nBOIVWUVkyxuoVChVm
+	W5Nz8fzIdsgj/4xZBdetM3B9VleH4tqurQ8dGK3YPysAHDzDT3ikbwynjQ==
+X-Google-Smtp-Source: AGHT+IHTbjG/RYmwHcT/Q3lMtncGYloiLd+y4K3oAC67A0D4AU6O7kPZeN9IfTq1U1PJ5DxsO9o1cg==
+X-Received: by 2002:a17:907:3d87:b0:a77:d52d:5c61 with SMTP id a640c23a62f3a-a780b89ea27mr804898966b.69.1720739237926;
+        Thu, 11 Jul 2024 16:07:17 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-43-148.xnet.hr. [88.207.43.148])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc52sm287890266b.4.2024.07.11.16.07.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 16:07:17 -0700 (PDT)
+Message-ID: <4aa9b897-4596-4e2c-8dda-f24ab51e9b7c@gmail.com>
+Date: Fri, 12 Jul 2024 01:07:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710212555.1617795-14-amery.hung@bytedance.com> <AS2P194MB21709F0B79D6FB686D373B199AA52@AS2P194MB2170.EURP194.PROD.OUTLOOK.COM>
-In-Reply-To: <AS2P194MB21709F0B79D6FB686D373B199AA52@AS2P194MB2170.EURP194.PROD.OUTLOOK.COM>
-From: Amery Hung <ameryhung@gmail.com>
-Date: Thu, 11 Jul 2024 16:07:15 -0700
-Message-ID: <CAMB2axMyA2TDZmXaO_BaFHk4Lh3Ri1LgEc7UU7ZoNsBsqANivQ@mail.gmail.com>
-Subject: Re: [RFC PATCH net-next v6 13/14] virtio/vsock: implement datagram support
-To: Luigi Leonardi <luigi.leonardi@outlook.com>
-Cc: Bobby Eshleman <bobby.eshleman@bytedance.com>, amery.hung@bytedance.com, 
-	bpf@vger.kernel.org, bryantan@vmware.com, dan.carpenter@linaro.org, 
-	davem@davemloft.net, decui@microsoft.com, edumazet@google.com, 
-	haiyangz@microsoft.com, jasowang@redhat.com, jiang.wang@bytedance.com, 
-	kuba@kernel.org, kvm@vger.kernel.org, kys@microsoft.com, 
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, mst@redhat.com, 
-	netdev@vger.kernel.org, oxffffaa@gmail.com, pabeni@redhat.com, 
-	pv-drivers@vmware.com, sgarzare@redhat.com, simon.horman@corigine.com, 
-	stefanha@redhat.com, vdasa@vmware.com, 
-	virtualization@lists.linux-foundation.org, wei.liu@kernel.org, 
-	xiyou.wangcong@gmail.com, xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: linux-mtd@lists.infradead.org
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: [PATCH v1 1/1] mtd: slram: insert break after errors in parsing the
+ map
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 4:03=E2=80=AFPM Luigi Leonardi
-<luigi.leonardi@outlook.com> wrote:
->
-> Hi Bobby, Amery
->
-> Thank you for working on this!
->
-> > This commit implements datagram support with a new version of
-> > ->dgram_allow().
->
-> Commit messages should be imperative "This commit implements X" -> "Imple=
-ments X".
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#de=
-scribe-your-changes
-> This suggestion applies to many of the commits in this series.
+The GCC 12.3.0 compiler on linux-next next-20240709 tree found the execution
+path in which, due to lazy evaluation, devlength isn't initialised with the
+parsed string:
 
-Thanks for pointing this out. I will change the commit message in the
-next version.
+   289          while (map) {
+   290                  devname = devstart = devlength = NULL;
+   291
+   292                  if (!(devname = strsep(&map, ","))) {
+   293                          E("slram: No devicename specified.\n");
+   294                          break;
+   295                  }
+   296                  T("slram: devname = %s\n", devname);
+   297                  if ((!map) || (!(devstart = strsep(&map, ",")))) {
+   298                          E("slram: No devicestart specified.\n");
+   299                  }
+   300                  T("slram: devstart = %s\n", devstart);
+ → 301                  if ((!map) || (!(devlength = strsep(&map, ",")))) {
+   302                          E("slram: No devicelength / -end specified.\n");
+   303                  }
+ → 304                  T("slram: devlength = %s\n", devlength);
+   305                  if (parse_cmdline(devname, devstart, devlength) != 0) {
+   306                          return(-EINVAL);
+   307                  }
 
->
-> > +static bool virtio_transport_dgram_allow(u32 cid, u32 port)
-> > +{
-> > +     struct virtio_vsock *vsock;
-> > +     bool dgram_allow;
-> > +
-> > +     dgram_allow =3D false;
->
-> I think you can initialize the variable in the declaration.
+Parsing should be finished after map == NULL, so a break is best inserted after
+each E("slram: ... \n") error message.
 
-Got it.
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org
+Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+---
+ drivers/mtd/devices/slram.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
-Amery
-
->
-> > +     rcu_read_lock();
-> > +     vsock =3D rcu_dereference(the_virtio_vsock);
-> > +     if (vsock)
-> > +             dgram_allow =3D vsock->dgram_allow;
-> > +     rcu_read_unlock();
-> > +
-> > +     return dgram_allow;
-> > +}
-> > +
->
-> The rest LGTM.
->
-> Thanks,
-> Luigi
+diff --git a/drivers/mtd/devices/slram.c b/drivers/mtd/devices/slram.c
+index 28131a127d06..8297b366a066 100644
+--- a/drivers/mtd/devices/slram.c
++++ b/drivers/mtd/devices/slram.c
+@@ -296,10 +296,12 @@ static int __init init_slram(void)
+                T("slram: devname = %s\n", devname);
+                if ((!map) || (!(devstart = strsep(&map, ",")))) {
+                        E("slram: No devicestart specified.\n");
++                       break;
+                }
+                T("slram: devstart = %s\n", devstart);
+                if ((!map) || (!(devlength = strsep(&map, ",")))) {
+                        E("slram: No devicelength / -end specified.\n");
++                       break;
+                }
+                T("slram: devlength = %s\n", devlength);
+                if (parse_cmdline(devname, devstart, devlength) != 0) {
+-- 
+2.34.1
 
