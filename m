@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-248660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF3992E050
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:51:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F5E92E052
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0C11C21B4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:51:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AC1D1F228EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E1112E1CD;
-	Thu, 11 Jul 2024 06:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331EC12E1CD;
+	Thu, 11 Jul 2024 06:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dT7Z9A1b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i58wH30T"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05BF12C54A
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 06:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6CE12DDAF
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 06:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720680674; cv=none; b=Hm4Qb32mtbvlVD4mJ2hWPtDNSXD62UeSlTFjrFXqIQdluqUNe0hwDNTQyLj+/H2QS36l7u2e/00a011EUS7t+NxP3nEDKhZEWISYKUw4CltW13RtO1leIRfa35d40VEh3Q0RkV8zKIpHMXt/NsMGDM3zlwyOQ0dvEugDVv8Tlpw=
+	t=1720680716; cv=none; b=dElc5aM+LryQf7r5sGIJhkUx5qqa1ECtoN20IYjs7Z9/pj56jejvaJkCjgWU7cRzcSYkrzGMCtMXnDQ1ltVOy2xxF8WMHZ2Kc0pE6XviZEMPzInkSNtIu3yTleTh8ALF/PpbTLWFb9mCcx9F0pbI9dvN9z+wzZTNZh+3HBVd6FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720680674; c=relaxed/simple;
-	bh=Rv3OWXJonP8x//8Hto2s3B7Uo7xTdf/CK14XpcBXeEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LvU1C+B0WcHjHpgX/TrRBVn949I2NFQMGcCRs+BPEqJ2BSYoKD5xRm7pg4ijJV0NJZqIkvMAolDSyZUot3KQfrzCFYVJpxbMAGHggC+gFRBEwyLxb6hqC3f7Iig4cgA5H3AmX3mHR9PhuOVb9SpqzqaYMUCCD5QpckUgYHZKsBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dT7Z9A1b; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720680672; x=1752216672;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Rv3OWXJonP8x//8Hto2s3B7Uo7xTdf/CK14XpcBXeEU=;
-  b=dT7Z9A1bZpZXiUyA6cE/7Jr1ZtVgVfQdfpar46AS30VybhYz3ZtPDFPT
-   DZiv8pkG/rGBJCT1MJJ63qud5hwstL/GFAvk+yu5fVOGxTlAV9uQaEnH5
-   qltDotdJq+Iuh1sMvnR3yRDmilKczr2avZA1NiLJfjKNyWJMn6hr/kWA6
-   dQm8md/AWlrdz0UL3yrme0hP7FssJfYDz127tF/Yk4A9o2/aDx4Z4loGh
-   huvbLWQlpb0GrZcpMZy25wzIAQB1M0thenmyucUfYWa9WV9qaX9DhT6ZD
-   9lmC7M5bhCrNEagWN5hkkcHcgOKv+L1i3pm0wkgWRSR9h175qeGWmdi95
-   w==;
-X-CSE-ConnectionGUID: vzfY9zY2Sw2nTb/nZbOwtw==
-X-CSE-MsgGUID: 9oUjDBrASkSE7NulBU0soQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="43462489"
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="43462489"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 23:51:11 -0700
-X-CSE-ConnectionGUID: LwCgQ+Y9R+K2ik4Yt80p6g==
-X-CSE-MsgGUID: rWueBdoPTfqnFTotKLZteg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="79595707"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 10 Jul 2024 23:51:10 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sRne0-000YuW-00;
-	Thu, 11 Jul 2024 06:51:08 +0000
-Date: Thu, 11 Jul 2024 14:50:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Renze Nicolai <renze@rnplus.nl>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Joel Stanley <joel@jms.id.au>
-Subject: arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: fan@1:
- aspeed,fan-tach-ch: b'\x01' is not of type 'object', 'integer', 'array',
- 'boolean', 'null'
-Message-ID: <202407111415.giGVjJLu-lkp@intel.com>
+	s=arc-20240116; t=1720680716; c=relaxed/simple;
+	bh=LCK9icEae3jKYmdEHdfJqroHgzlTNAWTkaaa0AbjU4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WITeM17ewlJ3gw1hLHy13EEiJ09AJW3Cv1H8USdUb721GRW+TjbDBUyPbrt3XYskK5cqIQpB7S6K0wuaGoB1/8Fx0Koq05bwsCRya+QU6YYc7aDH8UYO0ppt2//IOe49CD4IqsDRZzaXiU+SwPvp9O+dUJVf4C1kEakka2Hl+Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i58wH30T; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720680714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OGHWmQ5BDSpnthAm3GCMpgKvKr351yaxBIw3YmVdyjY=;
+	b=i58wH30Tl4Ii7DqZ1XrTdal22j+s69SwI/nMSNpIFtXHEbbPwAjGCjofBMyM9EkJW/NvA3
+	jc0c0qkDvpMcWtVfecmzlEl4YGIQx1eVsgjkNiZZ5e+RT5IfXgGMSiqeoQiBFOAd7J89G9
+	KpuRWMIyffzFKXq7kUQlp1vHcKVPozk=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-564-NjAVCP0rMAuY7h-vm81Dag-1; Thu, 11 Jul 2024 02:51:52 -0400
+X-MC-Unique: NjAVCP0rMAuY7h-vm81Dag-1
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a77c85826fdso59109466b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:51:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720680711; x=1721285511;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OGHWmQ5BDSpnthAm3GCMpgKvKr351yaxBIw3YmVdyjY=;
+        b=HsJg44zTCScYJUXeLuD3fD6VDLT6OZyFxhJSqWrD9gV9VDn2ZZ+OaJCvZMvz8aO4nd
+         KIxyPRj8fkv0VWbT2WgEcvS3nTa3sw7oxeop7EQ8n2hadNeTaiGhtvboSOOZjGXRDISW
+         zc5S6dQyNfWvAh0/T51pNsYoe1T4KKgpZ9t/Cjjq9JfGOYVKynMuh9dVR3usaHA+kCi/
+         Hcl6flOSQp8QeuBablNUt/xbbRhcnL9ZPlvtwgWKKvhpNvJp0LfxFf4sCGJLnA46bFcw
+         4lF3Umd7zwnFaZds1ONtEgJjTVi0t/Y0SYY72WSM7NZeCq6EmbNxwhjUDvUwDmeSsdIb
+         CBhg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7ZCQuKjfPniR7dtPf8IqlUJjc3NEUijVHLPwuK4SmUOEqKmDl0MguIOWV1l6RaGByv4mi/tufpMpQwapkRmIqI11fZaBLJ+UtTBTN
+X-Gm-Message-State: AOJu0Yy//Ef3nz4ontlv5XwXkeNkyr2xtcupKA8+7CaRchG8lQxeA32/
+	iX+mxMkIgcQ9sabLbsXVXMXjnkh2U5jsIA8DjuVWjul55AnLZ5QTWitroSra374yGSPfsDE4MLh
+	ADZnocdRIrI6+BKfN4IukvQvl3tHsdFsWeM4YdIwhZvl+MMYtX8xFKZkISFWpxg==
+X-Received: by 2002:a17:907:7f0e:b0:a72:4444:79bb with SMTP id a640c23a62f3a-a780b881cc4mr674810566b.59.1720680710879;
+        Wed, 10 Jul 2024 23:51:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHNGa3iTLDkJs9r42QlkOKMbEzsJfArWsJUH4Y9CnC2eN/9R9XztdP8hv+banbSj19eiMhoRA==
+X-Received: by 2002:a17:907:7f0e:b0:a72:4444:79bb with SMTP id a640c23a62f3a-a780b881cc4mr674809466b.59.1720680710535;
+        Wed, 10 Jul 2024 23:51:50 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a86f620sm226365966b.209.2024.07.10.23.51.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 23:51:50 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Lee Jones <lee@kernel.org>,
+	Karel Balej <balejk@matfyz.cz>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: repair file entry in MARVELL 88PM886 PMIC DRIVER
+Date: Thu, 11 Jul 2024 08:51:40 +0200
+Message-ID: <20240711065140.140703-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   9d9a2f29aefdadc86e450308ff056017a209c755
-commit: f373cffbdc46f287dd01bb7c4cfbf0b8c9a52d4e ARM: dts: aspeed: asrock: Add ASRock X570D4U BMC
-date:   2 months ago
-config: arm-randconfig-051-20240711 (https://download.01.org/0day-ci/archive/20240711/202407111415.giGVjJLu-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.3.0
-dtschema version: 2024.6.dev4+g23441a4
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240711/202407111415.giGVjJLu-lkp@intel.com/reproduce)
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407111415.giGVjJLu-lkp@intel.com/
+Commit f53d3efa366b ("MAINTAINERS: Add myself for Marvell 88PM886 PMIC")
+adds a file entry referring to drivers/regulators/88pm886-regulator.c,
+but the directory is actually called drivers/regulator. Note that there is
+no 's' at the end.
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: sram@1e720000: 'ranges' is a required property
-   	from schema $id: http://devicetree.org/schemas/sram/sram.yaml#
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: sgpio@1e780200: '#interrupt-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/gpio/aspeed,sgpio.yaml#
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: /ahb/apb/rtc@1e781000: failed to match any schema with compatible: ['aspeed,ast2500-rtc']
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: /ahb/apb/timer@1e782000: failed to match any schema with compatible: ['aspeed,ast2400-timer']
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: /ahb/apb/watchdog@1e785000: failed to match any schema with compatible: ['aspeed,ast2500-wdt']
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: /ahb/apb/watchdog@1e785020: failed to match any schema with compatible: ['aspeed,ast2500-wdt']
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: /ahb/apb/watchdog@1e785040: failed to match any schema with compatible: ['aspeed,ast2500-wdt']
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: /ahb/apb/pwm-tacho-controller@1e786000: failed to match any schema with compatible: ['aspeed,ast2500-pwm-tacho']
->> arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: fan@1: aspeed,fan-tach-ch: b'\x01' is not of type 'object', 'integer', 'array', 'boolean', 'null'
-   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
->> arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: fan@2: aspeed,fan-tach-ch: b'\x02' is not of type 'object', 'integer', 'array', 'boolean', 'null'
-   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
->> arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: fan@3: aspeed,fan-tach-ch: b'\x04\x0b' is not of type 'object', 'integer', 'array', 'boolean', 'null'
-   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
->> arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: fan@4: aspeed,fan-tach-ch: b'\x06\r' is not of type 'object', 'integer', 'array', 'boolean', 'null'
-   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
->> arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: fan@5: aspeed,fan-tach-ch: b'\x05\x0c' is not of type 'object', 'integer', 'array', 'boolean', 'null'
-   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: lpc@1e789000: lpc-snoop@90: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: lpc@1e789000: reg-io-width: 4 is not of type 'object'
-   	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: kcs@24: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: kcs@28: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
-   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-x570d4u.dtb: kcs@2c: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
+broken reference.
 
+Repair the file entry in the MARVELL 88PM886 PMIC DRIVER section.
+
+Fixes: f53d3efa366b ("MAINTAINERS: Add myself for Marvell 88PM886 PMIC")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3eab44bd1010..bb7b5ecbc0b9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13495,7 +13495,7 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/mfd/marvell,88pm886-a1.yaml
+ F:	drivers/input/misc/88pm886-onkey.c
+ F:	drivers/mfd/88pm886.c
+-F:	drivers/regulators/88pm886-regulator.c
++F:	drivers/regulator/88pm886-regulator.c
+ F:	include/linux/mfd/88pm886.h
+ 
+ MARVELL ARMADA 3700 PHY DRIVERS
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.2
+
 
