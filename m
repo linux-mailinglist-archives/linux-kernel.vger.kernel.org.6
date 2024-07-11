@@ -1,236 +1,209 @@
-Return-Path: <linux-kernel+bounces-249673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AC392EE5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C4F792EE63
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17D842838F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBA97284E1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A311416EBE4;
-	Thu, 11 Jul 2024 18:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7FB16DED2;
+	Thu, 11 Jul 2024 18:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BfOpZXAn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZPxjZNUG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB84016EB67
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E94116D33F;
+	Thu, 11 Jul 2024 18:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720720996; cv=none; b=IXNRCq3oXuwOs2ZfP4IEY73M0n32VRkNQaaLPqTJjXNoGL5h8yVx7+oYpGjnGXQXtaZ3gpiOixgmNYq65KeQUQhzCCtF2282MZ/87D6ctqrgsb+bXT493gTPPtJUXS/RlPGT/R4n4YcgGgfEaMsgR2ayCmNZz6RSqVwkI0eFZto=
+	t=1720721073; cv=none; b=dlYmfu2vcOAx/0cb2A0cTF459o/hrWMzKOMgvevyFA3WLlLGruWJPzPyTOdljiNYF4tfvSNS7PcSgX2ghVmLEAOE957s4tjF+fJeJamCIL5vPq8b7dyqXPfLYBHzh6QLvAGl0l+sq0FEqTZ8B91NW7FIsYZLgfgxI2t3Fy7OIQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720720996; c=relaxed/simple;
-	bh=ul6wGmGvayvF7Q/3RVvFFs/ZrscnpCnqpBv/fiyLAp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VDKHwCM6PYpXGCZOZmtenZ9aS3JifvpmxNWONCKwsa/xDBg0AzFv/cNe2Rm4lBObYosjTMJxQJWy5LPXgnjDjU0Aht4NA1H2poNEYgRQTBRfJqFy3i5ZDOOMMJBU/5zLdara/SBDDNtd2s75s0UVwQjW6DNBHLEHmlgS1lvwqNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BfOpZXAn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720720993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6Na0W+nnqCLAJBaL4aydebl5apHkb67BzyZZfMsvY/s=;
-	b=BfOpZXAnBMMuumPDDYQUu59lQdhQT0BAgHIwJnl4pyMRCuwEyVI2NwloMAINF1kFJC1SY/
-	LNNxxotdw7Dso2cy/gQyn0BciCLZw3yYOOMc/ZpXvEpmrVSwypl6wuIqrjIQ+JUB/xeyHh
-	qs+tU/UiLchyGUbP2oV03NN5bqrgCMM=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-629-emnnUYtQMXm4Ny4efZh3iw-1; Thu,
- 11 Jul 2024 14:03:09 -0400
-X-MC-Unique: emnnUYtQMXm4Ny4efZh3iw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D0A631954B31;
-	Thu, 11 Jul 2024 18:03:07 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8132E1955E89;
-	Thu, 11 Jul 2024 18:03:06 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: vbabka@suse.cz,
-	david@redhat.com,
-	seanjc@google.com,
-	michael.roth@amd.com,
-	linux-mm@kvack.org
-Subject: [PATCH] mm, virt: merge AS_UNMOVABLE and AS_INACCESSIBLE
-Date: Thu, 11 Jul 2024 14:03:05 -0400
-Message-ID: <20240711180305.15626-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1720721073; c=relaxed/simple;
+	bh=XBxod0zA2kJaQ30eaGrg8Gyqs6HEr8W4h16bYV+ocEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EAZuCXnWhSlcekW16bLNvMe81MCdXVsSwLdimeZVrb7NVTlmQ90ZZE8wq0/8GangP51pkK0fDlWXrl0/su7wkXc9RGhFoOC1TEj7GQGIibjZf04gMw26tqiOFNVsVcrea2jc/vAjwkA6iBVKjX+6hSi4P7V7XinNXP4Zp4oEmDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZPxjZNUG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BE01tH017618;
+	Thu, 11 Jul 2024 18:03:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nONQeuYbHLvRucyD7QhZjwXI2y6eI9gKzj/PG28Mnsk=; b=ZPxjZNUGsmcBi+5G
+	ffrG48WhB5Ds2J8F+jwTYQAu5L/qXaZxoOOxr5rnjGEMfj6tl6q0shuyZ5jAMRMc
+	uU4pzGMliYR0ukjzaZsfzJHkAIzdYX/2VSi8Ja3YKhUpfdE61Y/HjQ90ddyLEI0i
+	Cs1b0LTi9ycSqyCgVnPtPcOkZEedqPvEpx8cU+eohQz3BMq4K8/VqcHYdw9pxW/1
+	6CwLwCHzp6hjMPukcS9P42otWV9XZp7cavX+mBAfpgj1OQUKX+Eig6mx2T1OlDBj
+	B26qq41YNVGTqIhmQsdlJd5OFkBuJyLpdYPc+Rjvb09oEKMbFLA+JfP2WRGxpZvm
+	MDFdaA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40a8uhsxh6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 18:03:25 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BI3Nbb015261
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 18:03:23 GMT
+Received: from [10.110.44.137] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
+ 2024 11:03:22 -0700
+Message-ID: <fb285034-ed4c-4f20-ab80-cf91d36fc67c@quicinc.com>
+Date: Thu, 11 Jul 2024 11:03:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/msm/dpu: don't play tricks with debug macros
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn
+ Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Jordan Crouse <jordan@cosmicpenguin.net>,
+        Chandan Uddaraju <chandanu@codeaurora.org>,
+        Rajesh Yadav
+	<ryadav@codeaurora.org>,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>
+References: <20240709-dpu-fix-wb-v1-0-448348bfd4cb@linaro.org>
+ <20240709-dpu-fix-wb-v1-2-448348bfd4cb@linaro.org>
+ <46487222-6818-b0bf-e5cc-2310d62b5fe6@quicinc.com>
+ <CAA8EJpq7Lp-3V_AsLxO9ZOt8ZW1ZZ=FjhXV6R9jvH=sQ8XQE9w@mail.gmail.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAA8EJpq7Lp-3V_AsLxO9ZOt8ZW1ZZ=FjhXV6R9jvH=sQ8XQE9w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FknxQBwkKNIhvDX2H5RiooBpUZc2PoF1
+X-Proofpoint-ORIG-GUID: FknxQBwkKNIhvDX2H5RiooBpUZc2PoF1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_13,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 bulkscore=0 clxscore=1015 mlxscore=0 malwarescore=0
+ mlxlogscore=999 lowpriorityscore=0 suspectscore=0 spamscore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110125
 
-The flags AS_UNMOVABLE and AS_INACCESSIBLE were both added just for guest_memfd;
-AS_UNMOVABLE is already in existing versions of Linux, while AS_INACCESSIBLE was
-acked for inclusion in 6.11.
 
-But really, they are the same thing: only guest_memfd uses them, at least for
-now, and guest_memfd pages are unmovable because they should not be
-accessed by the CPU.
 
-So merge them into one; use the AS_INACCESSIBLE name which is more comprehensive.
-At the same time, this fixes an embarrassing bug where AS_INACCESSIBLE was used
-as a bit mask, despite it being just a bit index.
+On 7/10/2024 12:40 AM, Dmitry Baryshkov wrote:
+> On Tue, 9 Jul 2024 at 22:39, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 7/9/2024 6:48 AM, Dmitry Baryshkov wrote:
+>>> DPU debugging macros need to be converted to a proper drm_debug_*
+>>> macros, however this is a going an intrusive patch, not suitable for a
+>>> fix. Wire DPU_DEBUG and DPU_DEBUG_DRIVER to always use DRM_DEBUG_DRIVER
+>>> to make sure that DPU debugging messages always end up in the drm debug
+>>> messages and are controlled via the usual drm.debug mask.
+>>>
+>>
+>> These macros have been deprecated, is this waht you meant by the
+>> conversion to proper drm_debug_*?
+> 
+> Yes. Drop the driver-specific wrappers where they don't make sense.
+> Use sensible format strings in the cases where it actually does (like
+> VIDENC or _PLANE)
+> 
 
-The bug was mostly benign, becaus AS_INACCESSIBLE's bit representation (1010)
-corresponded to setting AS_UNEVICTABLE (which is already set) and AS_ENOSPC
-(except no async writes can happen on the guest_memfd).  So the AS_INACCESSIBLE
-flag simply had no effect.
+Ack but we need to not just drop the wrappers but drop the usage of 
+these macros as well because it is documented that they are deprecated.
 
-Fixes: 1d23040caa8b ("KVM: guest_memfd: Use AS_INACCESSIBLE when creating guest_memfd inode")
-Fixes: c72ceafbd12c ("mm: Introduce AS_INACCESSIBLE for encrypted/confidential memory")
-Cc: linux-mm@kvack.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- include/linux/pagemap.h | 14 +++++++-------
- mm/compaction.c         | 12 ++++++------
- mm/migrate.c            |  2 +-
- mm/truncate.c           |  2 +-
- virt/kvm/guest_memfd.c  |  3 +--
- 5 files changed, 16 insertions(+), 17 deletions(-)
+So I assume you want to get this in and do that as a follow up change?
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index ce7bac8f81da..e05585eda771 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -208,8 +208,8 @@ enum mapping_flags {
- 	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
- 	AS_STABLE_WRITES,	/* must wait for writeback before modifying
- 				   folio contents */
--	AS_UNMOVABLE,		/* The mapping cannot be moved, ever */
--	AS_INACCESSIBLE,	/* Do not attempt direct R/W access to the mapping */
-+	AS_INACCESSIBLE,	/* Do not attempt direct R/W access to the mapping,
-+				   including to move the mapping */
- };
- 
- /**
-@@ -310,20 +310,20 @@ static inline void mapping_clear_stable_writes(struct address_space *mapping)
- 	clear_bit(AS_STABLE_WRITES, &mapping->flags);
- }
- 
--static inline void mapping_set_unmovable(struct address_space *mapping)
-+static inline void mapping_set_inaccessible(struct address_space *mapping)
- {
- 	/*
--	 * It's expected unmovable mappings are also unevictable. Compaction
-+	 * It's expected inaccessible mappings are also unevictable. Compaction
- 	 * migrate scanner (isolate_migratepages_block()) relies on this to
- 	 * reduce page locking.
- 	 */
- 	set_bit(AS_UNEVICTABLE, &mapping->flags);
--	set_bit(AS_UNMOVABLE, &mapping->flags);
-+	set_bit(AS_INACCESSIBLE, &mapping->flags);
- }
- 
--static inline bool mapping_unmovable(struct address_space *mapping)
-+static inline bool mapping_inaccessible(struct address_space *mapping)
- {
--	return test_bit(AS_UNMOVABLE, &mapping->flags);
-+	return test_bit(AS_INACCESSIBLE, &mapping->flags);
- }
- 
- static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
-diff --git a/mm/compaction.c b/mm/compaction.c
-index e731d45befc7..714afd9c6df6 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1172,22 +1172,22 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 		if (((mode & ISOLATE_ASYNC_MIGRATE) && is_dirty) ||
- 		    (mapping && is_unevictable)) {
- 			bool migrate_dirty = true;
--			bool is_unmovable;
-+			bool is_inaccessible;
- 
- 			/*
- 			 * Only folios without mappings or that have
- 			 * a ->migrate_folio callback are possible to migrate
- 			 * without blocking.
- 			 *
--			 * Folios from unmovable mappings are not migratable.
-+			 * Folios from inaccessible mappings are not migratable.
- 			 *
- 			 * However, we can be racing with truncation, which can
- 			 * free the mapping that we need to check. Truncation
- 			 * holds the folio lock until after the folio is removed
- 			 * from the page so holding it ourselves is sufficient.
- 			 *
--			 * To avoid locking the folio just to check unmovable,
--			 * assume every unmovable folio is also unevictable,
-+			 * To avoid locking the folio just to check inaccessible,
-+			 * assume every inaccessible folio is also unevictable,
- 			 * which is a cheaper test.  If our assumption goes
- 			 * wrong, it's not a correctness bug, just potentially
- 			 * wasted cycles.
-@@ -1200,9 +1200,9 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
- 				migrate_dirty = !mapping ||
- 						mapping->a_ops->migrate_folio;
- 			}
--			is_unmovable = mapping && mapping_unmovable(mapping);
-+			is_inaccessible = mapping && mapping_inaccessible(mapping);
- 			folio_unlock(folio);
--			if (!migrate_dirty || is_unmovable)
-+			if (!migrate_dirty || is_inaccessible)
- 				goto isolate_fail_put;
- 		}
- 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index dd04f578c19c..50b60fb414e9 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -965,7 +965,7 @@ static int move_to_new_folio(struct folio *dst, struct folio *src,
- 
- 		if (!mapping)
- 			rc = migrate_folio(mapping, dst, src, mode);
--		else if (mapping_unmovable(mapping))
-+		else if (mapping_inaccessible(mapping))
- 			rc = -EOPNOTSUPP;
- 		else if (mapping->a_ops->migrate_folio)
- 			/*
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 60388935086d..581977d2356f 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -233,7 +233,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
- 	 * doing a complex calculation here, and then doing the zeroing
- 	 * anyway if the page split fails.
- 	 */
--	if (!(folio->mapping->flags & AS_INACCESSIBLE))
-+	if (!mapping_inaccessible(folio->mapping))
- 		folio_zero_range(folio, offset, length);
- 
- 	if (folio_has_private(folio))
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 9148b9679bb1..1c509c351261 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -416,11 +416,10 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
- 	inode->i_private = (void *)(unsigned long)flags;
- 	inode->i_op = &kvm_gmem_iops;
- 	inode->i_mapping->a_ops = &kvm_gmem_aops;
--	inode->i_mapping->flags |= AS_INACCESSIBLE;
- 	inode->i_mode |= S_IFREG;
- 	inode->i_size = size;
- 	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
--	mapping_set_unmovable(inode->i_mapping);
-+	mapping_set_inaccessible(inode->i_mapping);
- 	/* Unmovable mappings are supposed to be marked unevictable as well. */
- 	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
- 
--- 
-2.43.0
+>>
+>> /* NOTE: this is deprecated in favor of drm_dbg(NULL, ...). */
+>> #define DRM_DEBUG_DRIVER(fmt, ...)                                      \
+>>           __drm_dbg(DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
+>>
+>> I think all that this macro was doing was to have appropriate DRM_UT_*
+>> macros enabled before calling the corresponding DRM_DEBUG_* macros. But
+>> I think what was incorrect here is for DPU_DEBUG, we could have used
+>> DRM_UT_CORE instead of DRM_UT_KMS.
+> 
+> It pretty much tries to overplay the existing drm debugging mechanism
+> by either sending the messages to the DRM channel or just using
+> pr_debug. With DYNAMIC_DEBUG being disabled pr_debug is just an empty
+> macro, so all the messages can end up in /dev/null. We should not be
+> trying to be too smart, using standard DRM_DEBUG_DRIVER should be
+> enough. This way all driver-related messages are controlled by
+> drm.debug including or excluding the 0x02 bit.
+> 
+> 
+>>
+>> And DRM_DEBUG_DRIVER should have been used instead of DRM_ERROR.
+>>
+>> Was this causing the issue of the prints not getting enabled?
+> 
+> I pretty much think so.
+> 
 
+Alright, I am okay with the approach, just one minor suggestion, to keep 
+the behavior intact, previously the code wanted DPU_DEBUG to be 
+controlled by DRM_UT_KMS and DPU_DEBUG_DRIVER controlled by DRM_UT_DRIVER.
+
+Keeping that intact, we need to use DRM_DEBUG_KMS for DPU_DEBUG?
+
+>>
+>>> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h | 14 ++------------
+>>>    1 file changed, 2 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+>>> index e2adc937ea63..935ff6fd172c 100644
+>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+>>> @@ -31,24 +31,14 @@
+>>>     * @fmt: Pointer to format string
+>>>     */
+>>>    #define DPU_DEBUG(fmt, ...)                                                \
+>>> -     do {                                                               \
+>>> -             if (drm_debug_enabled(DRM_UT_KMS))                         \
+>>> -                     DRM_DEBUG(fmt, ##__VA_ARGS__); \
+>>> -             else                                                       \
+>>> -                     pr_debug(fmt, ##__VA_ARGS__);                      \
+>>> -     } while (0)
+>>> +     DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
+>>>
+>>>    /**
+>>>     * DPU_DEBUG_DRIVER - macro for hardware driver logging
+>>>     * @fmt: Pointer to format string
+>>>     */
+>>>    #define DPU_DEBUG_DRIVER(fmt, ...)                                         \
+>>> -     do {                                                               \
+>>> -             if (drm_debug_enabled(DRM_UT_DRIVER))                      \
+>>> -                     DRM_ERROR(fmt, ##__VA_ARGS__); \
+>>> -             else                                                       \
+>>> -                     pr_debug(fmt, ##__VA_ARGS__);                      \
+>>> -     } while (0)
+>>> +     DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
+>>>
+>>>    #define DPU_ERROR(fmt, ...) pr_err("[dpu error]" fmt, ##__VA_ARGS__)
+>>>    #define DPU_ERROR_RATELIMITED(fmt, ...) pr_err_ratelimited("[dpu error]" fmt, ##__VA_ARGS__)
+>>>
+> 
+> 
+> 
 
