@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-249074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3C292E651
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:21:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4059592E655
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FEC61F226BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:21:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0969287028
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0936116D4C9;
-	Thu, 11 Jul 2024 11:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0906116F844;
+	Thu, 11 Jul 2024 11:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vn5xnIJR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S7stCx4U"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C0B15E5C1;
-	Thu, 11 Jul 2024 11:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B086715E5CC;
+	Thu, 11 Jul 2024 11:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720696461; cv=none; b=HxgAnyk09FbtQ8yN4Qt1G3VnRxH4oXcL1AH7IAFLoHhDZYwXXlpyWA8jysWN3Hnxfdp7aVYvmCwUJCeCh8kzKWkPF2BUjFJLIFp62paDmqRrf6ZvBgl4W5Vck3iYVISixvpcHvQToQJyREeDeAKV55XHgc/5NVPZZXLVUFZDUGc=
+	t=1720696470; cv=none; b=WgtNfA05EDLfrv87q3m5deq45F2UsG1kfE+j5KQ0SNAiG0vigaQSr+hYdeQmbOdLH4ejdLW4QI2ztGneW90NpabDYxTH4KPx1vUya5WB72Qn9Vas/0PDYa/NC0OLYPFPtMWx6WbIZ2GepjgEtg0dqK4r5hertdaTHRVJ5BdT9rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720696461; c=relaxed/simple;
-	bh=g/j92WUZ9piMWN4g3zgDSxu2Gsz1VimMCRArM/ck5e0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XcnXJfWr1BdGwJimzarAggfFGr84bp4NyxGaZ/qfsmklnVqRS3IVgVJzR2Lwf6Gmy5Qip8eKnFD7VmYcUvlyDzXskA+NgdjRetVpTrp6aprsuhHv+GkdC01Zh7ns2yk+u2zkNi5g5pgxwOSwk7LVesxjnJFFilugZ7YKTUF67Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vn5xnIJR; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720696460; x=1752232460;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=g/j92WUZ9piMWN4g3zgDSxu2Gsz1VimMCRArM/ck5e0=;
-  b=Vn5xnIJRRLL9rKdsckJD+IFY8bKqC/Y1WgOqeWVTf38lHuj2MJRwM+eR
-   AeLD6TpQvFuxnL0yUOV0bKVQL2bGC+0+MpMroaKAveOmrwi08b2YRB3Cg
-   Vr4KPOYe9IXEeDx2qnHNRf7fTNXSvYGXsnnkcOk49ZLirpiw3EcpVcQnK
-   xM6gVAjca56Y/dXm1//YKS6Leu4xyHL4gJETGK47QaiaZWVWOD87yyxkD
-   S56H8j+0poAtLarSEQYaIp4NSzuegS9/Y9F8gSxIF5Oa3SvX4yhzJRQxw
-   KQHjQiTZW4xpjqOKx5brHCNA/9EONtTP/DYY8eKHrZKIBuwue99psyDiC
-   A==;
-X-CSE-ConnectionGUID: aZ0wjzlxSYiyowR87YSIKQ==
-X-CSE-MsgGUID: iwOPZLQwTM2BZgDHGaiX8g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="18175547"
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="18175547"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 04:14:19 -0700
-X-CSE-ConnectionGUID: OwRhu2uGT6S0MGTgLNOT8w==
-X-CSE-MsgGUID: s/DcEcCTR1+9EVqQXY2YYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="48407763"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.249.84])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 04:14:12 -0700
-Message-ID: <79fb8618-de7c-4a37-a7ec-d93b6f3d7012@intel.com>
-Date: Thu, 11 Jul 2024 14:14:07 +0300
+	s=arc-20240116; t=1720696470; c=relaxed/simple;
+	bh=ojExgSxv7HK1T6Of78y0TLEr332VUmoqzlLiLXM0IJY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qYBAYIcK8Zj2wsvWn19O9HMLkZq3f2pbx5pFeMwNEhHU2ChEtjLSL/gzdzH4Hbiagcw3z52/aZvXJW9luGVfIM+z4qwUY9Bf/NGTxBbrdhdJYONy7IG0MOxfkjkZhyE+qPZW173tGD3uiX7CrxjyJlfJWwWxqkCFtMit+fgKRc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S7stCx4U; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B4mo0X011655;
+	Thu, 11 Jul 2024 11:14:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MpkcDIuzdPc4JQfo1GuwWE0pqv1GLcWVFeXFcswOLx0=; b=S7stCx4U2p/Qa7gZ
+	gBnMujhWMSGkNdo+T4StMZ72EU4ixY93ovjIFVvZ1DbRetipl+I7HdYlGrsnD2EB
+	jQZRjK6o3Vh4EPX0sYi3p/gNKuIMQYvXF96NZAEw82HtOwFidBHWNQ/FXaTqfqr+
+	eY1x7bA7CVdjmwNl7ayyLt//NVjmcQbQQGtpUotsV33m3o7Zb+mbIiG8lRxO9ewN
+	SQx83oWXNNtxuW2oeLajY1AaP9SxX8MvmRArnYlieI/kL7lKDsmHLepGvaPlJN3n
+	Q7s7JhkI5zWdEvXyMlQ7vbC7Bxj+vX3LYNA3XI4UvgxtSxq3dAIz/gpb0Il2oD7m
+	To+nBA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wgwv5up-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 11:14:23 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BBEME5017097
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 11:14:22 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
+ 2024 04:14:16 -0700
+Message-ID: <0324e8e8-2ad4-4ce6-9616-3038b8e02ff9@quicinc.com>
+Date: Thu, 11 Jul 2024 19:14:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,72 +64,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V8 01/12] perf/core: Add aux_pause, aux_resume,
- aux_start_paused
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Hendrik Brueckner <brueckner@linux.ibm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
- <will@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20240628065111.59718-1-adrian.hunter@intel.com>
- <20240628065111.59718-2-adrian.hunter@intel.com>
- <20240701105238.GC20127@noisy.programming.kicks-ass.net>
+Subject: Re: [PATCH V3 00/13] media: qcom: camss: Add sm8550 support
+To: Krzysztof Kozlowski <krzk@kernel.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <55e850dd-1b45-4bad-a11f-f645cca07f2a@kernel.org>
+ <d8d6574a-2823-4955-898d-d6637e40946e@quicinc.com>
+ <d72ec08a-bd5c-482b-8af9-3fc923820d25@kernel.org>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240701105238.GC20127@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <d72ec08a-bd5c-482b-8af9-3fc923820d25@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -CdDd2WTXGQH3GY0bfTBXA0OT1tWhIUC
+X-Proofpoint-ORIG-GUID: -CdDd2WTXGQH3GY0bfTBXA0OT1tWhIUC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_06,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=981 mlxscore=0
+ adultscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110079
 
-On 1/07/24 13:52, Peter Zijlstra wrote:
-> On Fri, Jun 28, 2024 at 09:51:00AM +0300, Adrian Hunter wrote:
+
+Hi Krzysztof,
+
+On 7/10/2024 8:30 PM, Krzysztof Kozlowski wrote:
+> On 10/07/2024 13:27, Depeng Shao wrote:
+>>
+>>
+>> On 7/10/2024 7:08 PM, Krzysztof Kozlowski wrote:
+>>> On 09/07/2024 18:06, Depeng Shao wrote:
+>>>> V3:
+>>>> - Rebased the change based on below change which will be merged firstly.
+>>>>     "Move camss version related defs in to resources"
+>>>> Link: https://lore.kernel.org/all/20240522154659.510-1-quic_grosikop@quicinc.com/
+>>>> - Rebased the change based on Bryan's csiphy optimization change and add
+>>>> these changes into this series, so that the new csiphy-3ph driver don't
+>>>> need to add duplicate code. This has got Bryan's permission to add his
+>>>> patches into this series.
+>>>> - Refactor some changes based on the comments to move the random code to
+>>>> patches where they are used.
+>>>> - Remove the vfe780 irq function since it isn't doing the actual work.
+>>>> - Add dt-binding for sm8550 camss driver.
+>>>> Link to V2: https://lore.kernel.org/all/20240320141136.26827-1-quic_depengs@quicinc.com/
+>>>
+>>> I asked for reference to upstream DTS - where can I find the DTS patches?
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>
+>> Hi Krzysztof,
+>>
+>> Sorry for that, I thought add the dt-binding is also fine, since I saw
+>> other patches also do like this. Will add add the DTS in next patch set.
 > 
->> +	union {
->> +		__u32	aux_action;
->> +		struct {
->> +			__u32	aux_start_paused :  1, /* start AUX area tracing paused */
->> +				aux_pause        :  1, /* on overflow, pause AUX area tracing */
->> +				aux_resume       :  1, /* on overflow, resume AUX area tracing */
->> +				__reserved_3     : 29;
->> +		};
->> +	};
+> DTS should not be part of this patchset, but sent separately.  It's
+> enough if you post a lore link to it.
 > 
->> @@ -12860,7 +12930,7 @@ perf_event_create_kernel_counter(struct perf_event_attr *attr, int cpu,
->>  	 * Grouping is not supported for kernel events, neither is 'AUX',
->>  	 * make sure the caller's intentions are adjusted.
->>  	 */
->> -	if (attr->aux_output)
->> +	if (attr->aux_output || attr->aux_action)
->>  		return ERR_PTR(-EINVAL);
->>  
+
+Thanks for the explanation, I will post the link in new version series.
+
+> Best regards,
+> Krzysztof
 > 
-> AFAICT this is the only usage of aux_action. But in a few patches time
-> you'll introduce a helper along the lines of has_aux_action() that tests
-> all the individual bits.
-> 
-> Combined with perf_copy_attr() ensuring __reserved_3 is actually 0, I'm
-> thinking that should all be enough to render this aux_action field
-> surplus to requirement, and we can simplify all this somewhat, no?
 
-It is used in tool's patches and will be used more when additional
-fields are added for Intel PT Trigger Tracing.  See the information
-in the cover letter about that:
-
-[PATCH V8 00/12] perf/core: Add ability for an event to "pause" or "resume" AUX area tracing
-https://lore.kernel.org/lkml/20240628065111.59718-1-adrian.hunter@intel.com/
-
-In general, without aux_action there is no way to pass all the
-related fields together except by using struct perf_event_attr
-itself.
-
+Thanks,
+Depeng
 
