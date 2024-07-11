@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-249053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23BF692E578
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:09:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6039992E576
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47A9E1C22C42
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A0951C22330
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8E016133C;
-	Thu, 11 Jul 2024 11:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D2115A865;
+	Thu, 11 Jul 2024 11:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gvf8k7lx"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HVg9SoDa"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7766615B10F;
-	Thu, 11 Jul 2024 11:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0885C15A868;
+	Thu, 11 Jul 2024 11:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720696052; cv=none; b=kolGEzBNiPgqmlE5HEyJSVa9xPoLY86vWXCUmJ6XZ7AHdX9sKhGYtwMMcb65YgLVNsITKT4AY3ibDZ9EPZiUdH4BfTXBABuxa/5qApYsZQzGTdg09JYexuUUkXfxwsLIKj2ct/CWm0Q635AKS3eXv09FO9m6x7YUSAVGcbei/1c=
+	t=1720696051; cv=none; b=o6DPjqel2iFltOR4UeN1w1tvjzBHU1GQYbbuihfuK+cINYUa1vme5VyCvPGh2npO6q7Xg6qlbpvgbunDIj94Qm0Ltmc2sXNSaeJEyGe9brcNfzGQFaZFkuGb6RUydE8B4MZjGTFrjvAqJqzpunJqYKymIjTTFHzdkL7c+XVqCfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720696052; c=relaxed/simple;
-	bh=2T0ZeaCuHyE7S1MQjICNRCQqp1yquQA9xYneZhcf7yA=;
+	s=arc-20240116; t=1720696051; c=relaxed/simple;
+	bh=eKrnWxEQ7mJat9bK7hztaGayVd7Ezz7aRwEv9LVNEhs=;
 	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=gCQj1qs7I7L8dC/0E+Vhn6VWllRZ/C6N+eytVoAZp74avJf8VJmPU9U8TFZVFXbLRNtBUwUsJiY4aKdHzZuvKtAF68PMINLN3NvNqbMPjvbqN3gOWqWzI95337WrXGPH5/EVba6SeGjC9Fl1fizpPQ2KUSkXyjRQgH1dxQkFLvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gvf8k7lx; arc=none smtp.client-ip=90.155.92.199
+	 Content-Type; b=KkiKEW2fdwVRPF3uRf2WCJXpK5/mtMuBifZrgwWDRii0wd+V2ZMY1iezOzjjfpxt84UCkNMlzjt1TZekufVPZoPnv4290bfcNFudfIsGWqxtEJ10F0kANoFx6gmbCbz6U9IWIdPnxG8nZAxtgi4OrK4cSPaDVMEXvqoHaJJ8hhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HVg9SoDa; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=JGAQJ9O4GQNJ+lSrwckhmSvTl5Z3WnOhBl9Cbykx5eM=; b=gvf8k7lxxuojFBCwj8OPBpbV5y
-	AXwBogmVlq5Ub110X0UB/t+tI0XMWU2pK80XoOy0UMkxEVHsKmcj5tjiz67BfFOPMNl8LJ9U7/oHE
-	M5XLS8EJtYrQ5V+FFWSp1Vi7ZZ8yGV4mBw/kYM8EDsMhnHXjBgkGIWuss27LVnz4OzZYV3YMCscYV
-	OdIe+JwhzStMl6Au4saLNYqp3S4KO++lSdLvxDgb69TTrWL5OOFt032cKIV3+Yowo8lsLnQmoK7L2
-	E8verntSNWxJK0TCdyfmkIrgpbQaPAHO9ZyVzzEISK7Ti9DreovSScemLUCdiDUtxfhzPIn8nQBV7
-	VpbjxThg==;
+	bh=oJyO4fVmvgndm2CNyTnHKfKK4j72bWwI2b0ZVWus99U=; b=HVg9SoDaQDbBa8tLIo2j1Pg8a3
+	5ubXeE/VRU/5VS9Q2vui4H2BPsgTJQKcYaicHUfsR2H0SiNSHNkPxhCVyTvQrBmKcmRfhVJig2iTe
+	C93fvhouWLYLeW0Irm0AzIWa3AIi8RY/H1etH//g/rAhTecwdHlr4B2YhjmlklCkswdRsSWEkOeaY
+	Djl0K5eSJtZTPM7VJFPtwT8HQyyh0Ss5kJy9hW3EnhW42xffRezLcr/s1De9xtBnfcO4jzkXyi/ew
+	n7nh5PrGXrqJR2pxe4UgDuV2PAIB0IcWVttmwj6f9OL54pa9xsMWq3iHyk5IsXsoBYIw0F8IVzTAB
+	eyOTt4/A==;
 Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRre0-000000015VX-0L3j;
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRre0-0000000Ax6a-0kbN;
 	Thu, 11 Jul 2024 11:07:24 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id D9F793034B0; Thu, 11 Jul 2024 13:07:22 +0200 (CEST)
-Message-Id: <20240711110401.311168524@infradead.org>
+	id DEAAB30614E; Thu, 11 Jul 2024 13:07:22 +0200 (CEST)
+Message-Id: <20240711110401.412779774@infradead.org>
 User-Agent: quilt/0.65
-Date: Thu, 11 Jul 2024 13:02:45 +0200
+Date: Thu, 11 Jul 2024 13:02:46 +0200
 From: Peter Zijlstra <peterz@infradead.org>
 To: mingo@kernel.org,
  andrii@kernel.org,
@@ -61,7 +61,7 @@ Cc: linux-kernel@vger.kernel.org,
  jolsa@kernel.org,
  clm@meta.com,
  paulmck@kernel.org
-Subject: [PATCH v2 10/11] perf/uprobe: Convert single-step and uretprobe to SRCU
+Subject: [PATCH v2 11/11] perf/uprobe: Add uretprobe timer
 References: <20240711110235.098009979@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,213 +71,192 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Both single-step and uretprobes take a refcount on struct uprobe in
-handle_swbp() in order to ensure struct uprobe stays extant until a
-next trap.
-
-Since uprobe_unregister() only cares about the uprobe_consumer
-life-time, and these intra-trap sections can be arbitrarily large,
-create a second SRCU domain to cover these.
-
-Notably, a uretprobe with a registered return_instance that never
-triggers -- because userspace -- will currently pin the
-return_instance and related uprobe until the task dies. With this
-convertion to SRCU this behaviour will inhibit freeing of all uprobes.
+In order to put a bound on the uretprobe_srcu critical section, add a
+timer to uprobe_task. Upon every RI added or removed the timer is
+pushed forward to now + 1s. If the timer were ever to fire, it would
+convert the SRCU 'reference' to a refcount reference if possible.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/linux/uprobes.h |    2 +
- kernel/events/uprobes.c |   60 +++++++++++++++++++++++-------------------------
- 2 files changed, 31 insertions(+), 31 deletions(-)
+ include/linux/uprobes.h |    8 +++++
+ kernel/events/uprobes.c |   67 ++++++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 69 insertions(+), 6 deletions(-)
 
 --- a/include/linux/uprobes.h
 +++ b/include/linux/uprobes.h
-@@ -78,6 +78,7 @@ struct uprobe_task {
+@@ -15,6 +15,7 @@
+ #include <linux/rbtree.h>
+ #include <linux/types.h>
+ #include <linux/wait.h>
++#include <linux/timer.h>
  
+ struct vm_area_struct;
+ struct mm_struct;
+@@ -79,6 +80,10 @@ struct uprobe_task {
  	struct return_instance		*return_instances;
  	unsigned int			depth;
-+	unsigned int			active_srcu_idx;
+ 	unsigned int			active_srcu_idx;
++
++	struct timer_list		ri_timer;
++	struct callback_head		ri_task_work;
++	struct task_struct		*task;
  };
  
  struct return_instance {
-@@ -86,6 +87,7 @@ struct return_instance {
+@@ -86,7 +91,8 @@ struct return_instance {
+ 	unsigned long		func;
  	unsigned long		stack;		/* stack pointer */
  	unsigned long		orig_ret_vaddr; /* original return address */
- 	bool			chained;	/* true, if instance is nested */
-+	int			srcu_idx;
+-	bool			chained;	/* true, if instance is nested */
++	u8			chained;	/* true, if instance is nested */
++	u8			has_ref;
+ 	int			srcu_idx;
  
  	struct return_instance	*next;		/* keep as stack */
- };
 --- a/kernel/events/uprobes.c
 +++ b/kernel/events/uprobes.c
-@@ -54,6 +54,15 @@ DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem)
-  * Covers uprobe->consumers lifetime as well as struct uprobe.
-  */
- DEFINE_STATIC_SRCU(uprobes_srcu);
-+/*
-+ * Covers return_instance->uprobe and utask->active_uprobe. Separate from
-+ * uprobe_srcu because uprobe_unregister() doesn't need to wait for this
-+ * and these lifetimes can be fairly long.
-+ *
-+ * Notably, these sections span userspace and as such use
-+ * __srcu_read_{,un}lock() to elide lockdep.
-+ */
-+DEFINE_STATIC_SRCU(uretprobes_srcu);
- 
- /* Have a copy of original instruction */
- #define UPROBE_COPY_INSN	0
-@@ -596,25 +605,24 @@ set_orig_insn(struct arch_uprobe *auprob
- 			*(uprobe_opcode_t *)&auprobe->insn);
- }
- 
--static struct uprobe *try_get_uprobe(struct uprobe *uprobe)
--{
--	if (refcount_inc_not_zero(&uprobe->ref))
--		return uprobe;
--	return NULL;
--}
--
- static struct uprobe *get_uprobe(struct uprobe *uprobe)
- {
- 	refcount_inc(&uprobe->ref);
- 	return uprobe;
- }
- 
--static void uprobe_free_rcu(struct rcu_head *rcu)
-+static void uprobe_free_stage2(struct rcu_head *rcu)
- {
- 	struct uprobe *uprobe = container_of(rcu, struct uprobe, rcu);
- 	kfree(uprobe);
- }
- 
-+static void uprobe_free_stage1(struct rcu_head *rcu)
-+{
-+	struct uprobe *uprobe = container_of(rcu, struct uprobe, rcu);
-+	call_srcu(&uretprobes_srcu, &uprobe->rcu, uprobe_free_stage2);
-+}
-+
- static void put_uprobe(struct uprobe *uprobe)
- {
- 	if (refcount_dec_and_test(&uprobe->ref)) {
-@@ -626,7 +634,7 @@ static void put_uprobe(struct uprobe *up
- 		mutex_lock(&delayed_uprobe_lock);
- 		delayed_uprobe_remove(uprobe, NULL);
- 		mutex_unlock(&delayed_uprobe_lock);
--		call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_rcu);
-+		call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_stage1);
- 	}
- }
- 
-@@ -1753,7 +1761,7 @@ unsigned long uprobe_get_trap_addr(struc
+@@ -1761,7 +1761,12 @@ unsigned long uprobe_get_trap_addr(struc
  static struct return_instance *free_ret_instance(struct return_instance *ri)
  {
  	struct return_instance *next = ri->next;
--	put_uprobe(ri->uprobe);
-+	__srcu_read_unlock(&uretprobes_srcu, ri->srcu_idx);
+-	__srcu_read_unlock(&uretprobes_srcu, ri->srcu_idx);
++	if (ri->uprobe) {
++		if (ri->has_ref)
++			put_uprobe(ri->uprobe);
++		else
++			__srcu_read_unlock(&uretprobes_srcu, ri->srcu_idx);
++	}
  	kfree(ri);
  	return next;
  }
-@@ -1771,7 +1779,7 @@ void uprobe_free_utask(struct task_struc
- 		return;
- 
- 	if (utask->active_uprobe)
--		put_uprobe(utask->active_uprobe);
-+		__srcu_read_unlock(&uretprobes_srcu, utask->active_srcu_idx);
- 
- 	ri = utask->return_instances;
+@@ -1785,11 +1790,48 @@ void uprobe_free_utask(struct task_struc
  	while (ri)
-@@ -1814,7 +1822,7 @@ static int dup_utask(struct task_struct
+ 		ri = free_ret_instance(ri);
+ 
++	timer_delete_sync(&utask->ri_timer);
++	task_work_cancel(utask->task, &utask->ri_task_work);
+ 	xol_free_insn_slot(t);
+ 	kfree(utask);
+ 	t->utask = NULL;
+ }
+ 
++static void return_instance_task_work(struct callback_head *head)
++{
++	struct uprobe_task *utask = container_of(head, struct uprobe_task, ri_task_work);
++	struct return_instance *ri;
++
++	for (ri = utask->return_instances; ri; ri = ri->next) {
++		if (!ri->uprobe)
++			continue;
++		if (ri->has_ref)
++			continue;
++		if (refcount_inc_not_zero(&ri->uprobe->ref))
++			ri->has_ref = true;
++		else
++			ri->uprobe = NULL;
++		__srcu_read_unlock(&uretprobes_srcu, ri->srcu_idx);
++	}
++}
++
++static void return_instance_timer(struct timer_list *timer)
++{
++	struct uprobe_task *utask = container_of(timer, struct uprobe_task, ri_timer);
++	task_work_add(utask->task, &utask->ri_task_work, TWA_SIGNAL);
++}
++
++static struct uprobe_task *alloc_utask(struct task_struct *task)
++{
++	struct uprobe_task *utask = kzalloc(sizeof(struct uprobe_task), GFP_KERNEL);
++	if (!utask)
++		return NULL;
++	timer_setup(&utask->ri_timer, return_instance_timer, 0);
++	init_task_work(&utask->ri_task_work, return_instance_task_work);
++	utask->task = task;
++	return utask;
++}
++
+ /*
+  * Allocate a uprobe_task object for the task if necessary.
+  * Called when the thread hits a breakpoint.
+@@ -1801,7 +1843,7 @@ void uprobe_free_utask(struct task_struc
+ static struct uprobe_task *get_utask(void)
+ {
+ 	if (!current->utask)
+-		current->utask = kzalloc(sizeof(struct uprobe_task), GFP_KERNEL);
++		current->utask = alloc_utask(current);
+ 	return current->utask;
+ }
+ 
+@@ -1810,7 +1852,7 @@ static int dup_utask(struct task_struct
+ 	struct uprobe_task *n_utask;
+ 	struct return_instance **p, *o, *n;
+ 
+-	n_utask = kzalloc(sizeof(struct uprobe_task), GFP_KERNEL);
++	n_utask = alloc_utask(t);
+ 	if (!n_utask)
+ 		return -ENOMEM;
+ 	t->utask = n_utask;
+@@ -1822,13 +1864,20 @@ static int dup_utask(struct task_struct
  			return -ENOMEM;
  
  		*n = *o;
--		get_uprobe(n->uprobe);
-+		__srcu_clone_read_lock(&uretprobes_srcu, n->srcu_idx);
+-		__srcu_clone_read_lock(&uretprobes_srcu, n->srcu_idx);
++		if (n->uprobe) {
++			if (n->has_ref)
++				get_uprobe(n->uprobe);
++			else
++				__srcu_clone_read_lock(&uretprobes_srcu, n->srcu_idx);
++		}
  		n->next = NULL;
  
  		*p = n;
-@@ -1931,14 +1939,10 @@ static void prepare_uretprobe(struct upr
- 	if (!ri)
- 		return;
- 
--	ri->uprobe = try_get_uprobe(uprobe);
--	if (!ri->uprobe)
--		goto err_mem;
--
- 	trampoline_vaddr = get_trampoline_vaddr();
- 	orig_ret_vaddr = arch_uretprobe_hijack_return_addr(trampoline_vaddr, regs);
- 	if (orig_ret_vaddr == -1)
--		goto err_uprobe;
-+		goto err_mem;
- 
- 	/* drop the entries invalidated by longjmp() */
- 	chained = (orig_ret_vaddr == trampoline_vaddr);
-@@ -1956,11 +1960,13 @@ static void prepare_uretprobe(struct upr
- 			 * attack from user-space.
- 			 */
- 			uprobe_warn(current, "handle tail call");
--			goto err_uprobe;
-+			goto err_mem;
- 		}
- 		orig_ret_vaddr = utask->return_instances->orig_ret_vaddr;
+ 		p = &n->next;
+ 		n_utask->depth++;
  	}
++	if (n_utask->return_instances)
++		mod_timer(&n_utask->ri_timer, jiffies + HZ);
  
-+	ri->srcu_idx = __srcu_read_lock(&uretprobes_srcu);
-+	ri->uprobe = uprobe;
+ 	return 0;
+ }
+@@ -1967,6 +2016,7 @@ static void prepare_uretprobe(struct upr
+ 
+ 	ri->srcu_idx = __srcu_read_lock(&uretprobes_srcu);
+ 	ri->uprobe = uprobe;
++	ri->has_ref = 0;
  	ri->func = instruction_pointer(regs);
  	ri->stack = user_stack_pointer(regs);
  	ri->orig_ret_vaddr = orig_ret_vaddr;
-@@ -1972,8 +1978,6 @@ static void prepare_uretprobe(struct upr
+@@ -1976,6 +2026,8 @@ static void prepare_uretprobe(struct upr
+ 	ri->next = utask->return_instances;
+ 	utask->return_instances = ri;
  
++	mod_timer(&utask->ri_timer, jiffies + HZ);
++
  	return;
  
--err_uprobe:
--	uprobe_put(ri->uprobe);
  err_mem:
- 	kfree(ri);
- }
-@@ -1990,15 +1994,9 @@ pre_ssout(struct uprobe *uprobe, struct
- 	if (!utask)
- 		return -ENOMEM;
+@@ -2204,6 +2256,9 @@ handle_uretprobe_chain(struct return_ins
+ 	struct uprobe *uprobe = ri->uprobe;
+ 	struct uprobe_consumer *uc;
  
--	utask->active_uprobe = try_get_uprobe(uprobe);
--	if (!utask->active_uprobe)
--		return -ESRCH;
--
- 	xol_vaddr = xol_get_insn_slot(uprobe);
--	if (!xol_vaddr) {
--		err = -ENOMEM;
--		goto err_uprobe;
--	}
-+	if (!xol_vaddr)
-+		return -ENOMEM;
++	if (!uprobe)
++		return;
++
+ 	guard(srcu)(&uprobes_srcu);
  
- 	utask->xol_vaddr = xol_vaddr;
- 	utask->vaddr = bp_vaddr;
-@@ -2007,13 +2005,13 @@ pre_ssout(struct uprobe *uprobe, struct
- 	if (unlikely(err))
- 		goto err_xol;
+ 	for_each_consumer_rcu(uc, uprobe->consumers) {
+@@ -2250,8 +2305,10 @@ static void handle_trampoline(struct pt_
  
-+	utask->active_srcu_idx = __srcu_read_lock(&uretprobes_srcu);
-+	utask->active_uprobe = uprobe;
- 	utask->state = UTASK_SSTEP;
- 	return 0;
- 
- err_xol:
- 	xol_free_insn_slot(current);
--err_uprobe:
--	put_uprobe(utask->active_uprobe);
- 	return err;
- }
- 
-@@ -2366,7 +2364,7 @@ static void handle_singlestep(struct upr
- 	else
- 		WARN_ON_ONCE(1);
- 
--	put_uprobe(uprobe);
-+	__srcu_read_unlock(&uretprobes_srcu, utask->active_srcu_idx);
- 	utask->active_uprobe = NULL;
- 	utask->state = UTASK_RUNNING;
- 	xol_free_insn_slot(current);
+ 		instruction_pointer_set(regs, ri->orig_ret_vaddr);
+ 		do {
+-			if (valid)
++			if (valid) {
+ 				handle_uretprobe_chain(ri, regs);
++				mod_timer(&utask->ri_timer, jiffies + HZ);
++			}
+ 			ri = free_ret_instance(ri);
+ 			utask->depth--;
+ 		} while (ri != next);
 
 
 
