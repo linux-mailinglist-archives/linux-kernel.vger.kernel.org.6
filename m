@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-249037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D0192E562
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:06:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2C192E55D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41D11C21F3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F0912814BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1CC158DCE;
-	Thu, 11 Jul 2024 11:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897D215957E;
+	Thu, 11 Jul 2024 11:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NXE8x6CS"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RykFNq37"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9FC158DBF
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CB2156F5D;
+	Thu, 11 Jul 2024 11:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720695956; cv=none; b=eKnHB2bEhQ55aV7joeXVYA0Ha6zx2TmNxhru8RBk7SZqOaVem9u4xI9btTBFz+NpPV9+XL6VijaayQQThwT0zaSN3dJ/SkzaNyB3TqDuaFGWYozmPC/MmKu9ZiumuDuZYVyFbSqldBvngh5tFdOdqpAGsFx7nHA+IqubK4xAvB4=
+	t=1720695928; cv=none; b=Q7GmBR2uMxhSd7j/uwTXYlY91vcEg4TdFYjGBwpmSV9NOFf7qxz0bLLSFleZ6ik9LoO0BdrW/jfhflLJDuIi1M2RCzQ7DQVS4GlX7OOjz/b8uinMP4Wqm3klUnINTzu1ZdB3rvf52eoaRfAddS687xSrK8HtV0f/DKLHlfzDoz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720695956; c=relaxed/simple;
-	bh=j9NiAkcYaZRamBP4qRY3h61EYjWuLcJWwXFrgkmMxhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OrFU5+QGYBm7o2uMxNm3zQ7DhQP1uNj3p3nAT/FJxIZeBizIg3QhmLuvCxLcv+SfbCtccGLPvVIT393E9rEWBTCz0tcoJvYiYFsEQap9RRzRJTgxoh4OznkwTE3u+xZM5Pca9K651iyY70g1IADrMyocR5VtJgs++F57O9IRVds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NXE8x6CS; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e03c689addcso664160276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:05:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720695954; x=1721300754; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=j9NiAkcYaZRamBP4qRY3h61EYjWuLcJWwXFrgkmMxhc=;
-        b=NXE8x6CSZHTwPIXNdvJkrHhs8T62DP6eLaxflpb2uynoki2fmz1eG6hrL4Z/9154dA
-         N8ZjkNF5bKl1P6kaI3+IcqplAx6Ex29DO8niwk3wlkxzdJXCqVNiv6cB1NeevofpRdgf
-         6r/nY+/kG3FRJBrP8qdD4zdMQyBtD4t65Mplv3e/VdDCi5VM+rGCT79eBLNRHqOnBZNE
-         mRrxkZCGayDBn5OFMVvldLeULdINXibXHVAx9W4z2NNnOxQDoVS9Ctt65ngK2otlYwCd
-         YWFVM++Y8J76S0WbjV2NaWN4ikKsc1OS9XE/4XoG6lw8davOMshR82DpoNa4jOxcfiHb
-         vrCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720695954; x=1721300754;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j9NiAkcYaZRamBP4qRY3h61EYjWuLcJWwXFrgkmMxhc=;
-        b=wubD+ZT77vmml3h6pHPRBATY1m+JuxuB3O8Ctzk08e1ael89QiEGcEdLUxO0R1msvw
-         xoDxidUehV7gBzIBQKKFKGKYvOtE8Vz/77VLtTyCSdTS3180iLEbre6jEInmxyBosmpI
-         pTmw+nuOwfqPYv4wAPhJtjjHKIh9CMqyero2blCkfPhxZF9SRIyrMGqq7kYCiwqbhOzp
-         X4apUHdF7n+kO/zfZXP65CHhs/6H6lkbrexITg9RpnZsdpfcmGiJhZyGVJH7TJ1zaxu1
-         hY7lvsLWOQ4AfZX9k4cjnFW7bK1BBFKw3mUfnkMjICp/2zfgQDqHLHycaoHbWU+pDKrX
-         eJ9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVFmpjd6QUbge5pFo/vmFEpAG6AdVSYkwzTFKgcZZk2T6YmAoN8DHfJBLfj1o1JvEheKy9brmWlZiyNkht1wDJCVs0rs8Xc3RQXvP3Q
-X-Gm-Message-State: AOJu0Yz4AulOiG98qyVMNHF74H5tBy8lSXJqi/DJSSe5DCSzKoAmTXNQ
-	/NvO64j0+axl78a+26W2cwdp6VDseyRmRsTIm+Ddhk81FUzFD214OkqEKhdoPLEBo2EzEHpR5ts
-	MmUB0/g2UvWz35JNZ3Iy5HkCnChThXyUVJbxuww==
-X-Google-Smtp-Source: AGHT+IFr78C3FB3Wiso6ZeI7SPSIkZqE37WM3KiUtBxtkNcdoByPdi/4+jEHifoR7ryqA6byJNjbDwvYVpZ0laFSM0U=
-X-Received: by 2002:a25:d809:0:b0:e03:af3d:d4d6 with SMTP id
- 3f1490d57ef6-e041b20c6b3mr9365953276.42.1720695953858; Thu, 11 Jul 2024
- 04:05:53 -0700 (PDT)
+	s=arc-20240116; t=1720695928; c=relaxed/simple;
+	bh=JiYpCqAyIboDSFHKDduO+bx97bBcPjVtQTohMQc4QLg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=L5ngrluBZToEBDYRToVhycXKkNFBXdLl3RrT8MlzFIeqsKntc2k50hupsBWTt4kmKJqIwa6voB5jRVPnWUKKkETwyiQwWoS2X6uhEc2qgLfExMSsKqhqNczL7M2RLZy3vtCh6qlG7QChiSN/CVSIgTyLTWAtHISqDS5Ime5JN1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RykFNq37; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720695927; x=1752231927;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=JiYpCqAyIboDSFHKDduO+bx97bBcPjVtQTohMQc4QLg=;
+  b=RykFNq37X+FI/BEf2gD0MPqhSkcfJEvgtoQIZZ/jz5ukjaoBHl69Q7eQ
+   7RIAgD3vaB7O+AM5t+mJNZfM9qXrC6AOE5zP+gJQVJ0StncK2wFwHS+q9
+   F3WLVTZy/2gNbQdX4T8oF8jUcG+Bvd7z6+NcUyYibg0v9Jz5dbIdxmU02
+   /kLSfHl/oC+z1robb9xA5YfHFiRdv2vjvdj8ZDb2Jn1drpVSHmg+06aot
+   zCwpkgDJ49l8aX/A+cNSB/xnJCE+19pcI06Qk4maJoU6+qnFVTbTQrI9I
+   WyJHuYojXyZ69VxSNv1/gvrEy/lX5CZJdX6/cFI2sDkJKjC7oEabJ1Y2v
+   g==;
+X-CSE-ConnectionGUID: lj9ksX5bSCeIK0dgmXnnXQ==
+X-CSE-MsgGUID: 7pYko7BxS12k6/qc1l9DtQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="40580182"
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="40580182"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 04:05:27 -0700
+X-CSE-ConnectionGUID: k3DNBoMrRN63B7vi2mAG0A==
+X-CSE-MsgGUID: vycflJQMRyemJRMSn71qtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="53700819"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.127])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 04:05:23 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 11 Jul 2024 14:05:19 +0300 (EEST)
+To: daire.mcnamara@microchip.com
+cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+    conor.dooley@microchip.com, lpieralisi@kernel.org, kw@linux.com, 
+    robh@kernel.org, bhelgaas@google.com, LKML <linux-kernel@vger.kernel.org>, 
+    linux-riscv@lists.infradead.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Subject: Re: [PATCH v7 2/3] PCI: microchip: Fix inbound address translation
+ tables
+In-Reply-To: <20240711102218.2895429-4-daire.mcnamara@microchip.com>
+Message-ID: <b22a15d8-54d5-a8cf-717b-73c5af347755@linux.intel.com>
+References: <20240711102218.2895429-2-daire.mcnamara@microchip.com> <20240711102218.2895429-4-daire.mcnamara@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618155013.323322-1-ulf.hansson@linaro.org>
- <20240625105425.pkociumt4biv4j36@vireshk-i7> <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
- <20240701114748.hodf6pngk7opx373@vireshk-i7> <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
- <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
- <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7> <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
-In-Reply-To: <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 11 Jul 2024 13:05:17 +0200
-Message-ID: <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="8323328-1175667782-1720695919=:6262"
 
-On Thu, 11 Jul 2024 at 12:31, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->
-> On Thu, 11 Jul 2024 at 05:13, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > On 10-07-24, 15:51, Ulf Hansson wrote:
-> > > I think this should work, but in this case we seem to need a similar
-> > > thing for dev_pm_opp_set_rate().
-> >
-> > We don't go to that path for genpd's I recall. Do we ? For genpd's,
-> > since there is no freq, we always call _set_opp().
->
-> You are right! Although, maybe it's still preferred to do it in
-> _set_opp() as it looks like the code would be more consistent? No?
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-No matter how we do this, we end up enforcing OPPs for genpds.
+--8323328-1175667782-1720695919=:6262
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-It means that we may be requesting the same performance-level that we
-have already requested for the device. Of course genpd manages this,
-but it just seems a bit in-efficient to mee. Or maybe this isn't a big
-deal as consumer drivers should end up doing this anyway?
+On Thu, 11 Jul 2024, daire.mcnamara@microchip.com wrote:
 
-Kind regards
-Uffe
+> From: Daire McNamara <daire.mcnamara@microchip.com>
+>=20
+> On Microchip PolarFire SoC the PCIe Root Port can be behind one of three
+> general purpose Fabric Interface Controller (FIC) buses that encapsulates
+> an AXI-S bus. Depending on which FIC(s) the Root Port is connected
+> through to CPU space, and what address translation is done by that FIC,
+> the Root Port driver's inbound address translation may vary.
+>=20
+> For all current supported designs and all future expected designs,
+> inbound address translation done by a FIC on PolarFire SoC varies
+> depending on whether PolarFire SoC in operating in coherent DMA mode or
+> noncoherent DMA mode.
+>=20
+> The setup of the outbound address translation tables in the Root Port
+> driver only needs to handle these two cases.
+>=20
+> Setup the inbound address translation tables to one of two address
+> translations, depending on whether the rootport is being used with cohere=
+nt
+> DMA or noncoherent DMA.
+>=20
+> Fixes: 6f15a9c9f941 ("PCI: microchip: Add Microchip Polarfire PCIe contro=
+ller driver")
+> Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-1175667782-1720695919=:6262--
 
