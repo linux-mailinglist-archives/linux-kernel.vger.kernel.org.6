@@ -1,112 +1,165 @@
-Return-Path: <linux-kernel+bounces-249449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB0192EBDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:41:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16EFA92EBE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE37E283A0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C612F2832C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B7E16C84C;
-	Thu, 11 Jul 2024 15:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06E316C84C;
+	Thu, 11 Jul 2024 15:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="brWeXE3S"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvSASpCG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EABC1662FA
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEA028FF;
+	Thu, 11 Jul 2024 15:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720712503; cv=none; b=sSd3Lgkd610z288JvZxVZbuXCbhY3fKNl5E+sqSSQwCX2pMU/kbwdYnIHe86z5WKrXqRH2V5BD5JjBdibYJwVIIpZ6c3qv3ccHARNi1T8dqOWHz9sJ77jflIKXtYXh4yfs8S6zshclA80N95YoJm/3hzUPuftbBjpzT4RzwyjZw=
+	t=1720712643; cv=none; b=ocN6VWhsLPePtM0avEHK7p/Hps3TWv1TFDP7I2QDshzqeQxK6w2Dlis5VMwnBDkBOplJ/HY8Z+V3svDdMontn6RSOXXTLfHp1ruGyrFwPv2fTbK4+RdOCB3g8c+Mxf/aD0LefWwoxwk+Go3KUIVz71yISfrvwFrgwLzHH5RmHrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720712503; c=relaxed/simple;
-	bh=h74SYtaDurtWVMNe12MxjW2lrtvwlW5PQSKC1xWTX6k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EWu7CWNYsK0xsUDsew/WfmQ0zoo3AdWPMBJinswHrMezEyVUVEk/E792NijjP8OmhpqQ+ASES4lV2+9X7gl3sioj6TY64CZ1VqJrTJYD46iPbgyd6B5j8dQ/2YWq/5F0pkxCCs8tgfg87UWIuDHRdfws9rLQXtOWxFZtZcEsmm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=brWeXE3S; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4266f796e67so70825e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:41:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720712499; x=1721317299; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h74SYtaDurtWVMNe12MxjW2lrtvwlW5PQSKC1xWTX6k=;
-        b=brWeXE3SDJ+uVb9dBB2XMSlzt8/Kt+uPdTnVW5lWs1eRQe9Hg1int2wXMEUbNTTXfn
-         1RH5FBKOCxXIagdOLezHUGdc7b9/cCUqNcAyNVLwqvAnWt7UGsrhEqNMPyW2ScPkEMO3
-         1wHjUe1OpIPZV0BjAsLYJ92n0vkiOVgoD2zMKFRNf6JJQnMC2IkLeg/n+yffvaI+W1PD
-         eIAA8Z16JlkMnA1EL4D5a31Xuwu0QzxuGFFa+itBSciwh7iNUa7AvFfVEP6KLu56b3qd
-         b674/XlOm4sDPm7T9XKgUpafqVJ4CI6cR2EQrsLsHw0UNBPTmVmuC/uepBC1z3cfFv5Z
-         oSWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720712499; x=1721317299;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h74SYtaDurtWVMNe12MxjW2lrtvwlW5PQSKC1xWTX6k=;
-        b=YjNUa679d5zUKRI3i6qlNbUlKra3PVP6zuHqXJr59kENzgc5wdQYyJgP/D1UXtPblX
-         M0Xe5JoFfymszqudREnRHGIn78znJSTJpOKukL23IAQ0xP1PO0uUJAwnw3GT8X11Pqbe
-         dftlCQ8swX7/p9vcq3PgDJ7ghpArLMgW2IJ3/fceLc+5zhexuPFVxl4gx8DIbIfZn3SK
-         HYQsdmEIoEliDxTfaJLBHP3XyGTfQ9WqsaCKk9fF3dOYUdgUGCsOoYfxxO65jN5DDsbF
-         NaJchNKaFjVst/0Qcz74ZZp1QqMC079id9gQgrrlOivW5uj4ZdOctJy20TXqmW+5ozll
-         noXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWk8nVNNht2sLaDyRDLxlgdu8Mbf5ZIHBE9AlMqU1rBzuGXUTB7haMv36m+4VNtg+ASk4aSFBuy6niIvb5cn7MEgAGVYssnCxMdF/pL
-X-Gm-Message-State: AOJu0YwwuZaA/uJ29bxJANh07TGB4BQ49me9jPKo7lnsih30Drm8jD/G
-	lm/nlaKJRtxmCFB3RDs30WlWKHHlR2p3d68o9hImynveruQGFDN+9V45bWsB3OVbyq9rTwdHFBR
-	4gD1ZFbt+DHRjT4lnKWZ1O3ln6DHZwxbndDcb
-X-Google-Smtp-Source: AGHT+IHqsH8u6qwFJLBhhqu6nDqLgqH34jJy4y2QgSKBLi1LsZ+No2szVtZGkUHRDFSFjzp+JHcGZ7kloKTfhDAvrLU=
-X-Received: by 2002:a05:600c:4f08:b0:426:5d89:896d with SMTP id
- 5b1f17b1804b1-4279976a51bmr1709895e9.1.1720712498599; Thu, 11 Jul 2024
- 08:41:38 -0700 (PDT)
+	s=arc-20240116; t=1720712643; c=relaxed/simple;
+	bh=6xTQR2Dbjcsm8mmLfND+qt+uG4caLnLxEYW9q0IhclA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hSgqywCjTIFSbOJ5kb9HIPKGcN0JAlZeicgdyaEbbju8Z7xL+C5bBHaiAxbDfzF7F5S8z8w+jyqMECJzm5/7x049ynQ66NRCIXj9Zdqke7SQW/5brDyEN4XLhi9lSUGuMMdwL8p5aEipCgIxUhN8IquZo1c21yxS6u/MtLjmJdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvSASpCG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E50C116B1;
+	Thu, 11 Jul 2024 15:43:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720712642;
+	bh=6xTQR2Dbjcsm8mmLfND+qt+uG4caLnLxEYW9q0IhclA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hvSASpCG+qlpSxPDAagbNeLae8GIo6nCRbVPtyf0j7PmqrLyyd7wRaSJxL8CbxXo4
+	 kzk25/ZUtNlFmUramS4UNr22Rg3ZnXweD6R0YGFEV8Mgeyxb0tTpzkrtO+5VruJqPe
+	 PxNFXSQ8yF9zbNu90uGCJ0iP44CEGbepG7we3zk11ijx8k13DMv1gC251DhPvs4KfG
+	 7t9gPdVfoP6f2rk+ZNlpJCWZT2HJROpJ4jAMsvp1csdC9rvdLvGllEO2ZVFl1ewbHU
+	 7whG72ZXbvrhFvwCx8chJFcqe0Rrn2Ib/ND1dAl9KLvsbT9C6fJc43g8O//G3tuYM6
+	 MwEycof8W0ung==
+Date: Thu, 11 Jul 2024 16:43:57 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Subject: Re: [PATCH v6 3/6] dt-bindings: iio: dac: Generalize DAC common
+ properties
+Message-ID: <20240711-drew-skipper-a7a35e54ac2e@spud>
+References: <20240711114221.62386-1-kimseer.paller@analog.com>
+ <20240711114221.62386-4-kimseer.paller@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709125433.4026177-1-leitao@debian.org> <CANn89iJSUg8LJkpRrT0BWWMTiHixJVo1hSpt2-2kBw7BzB8Mqg@mail.gmail.com>
- <Zo5uRR8tOswuMhq0@gmail.com> <CANn89iLssOFT2JDfjk9LYh8SVzWZv8tRGS_6ziTLcUTqvqTwYQ@mail.gmail.com>
- <279c95ad-a716-415b-a050-b323e21bec31@intel.com>
-In-Reply-To: <279c95ad-a716-415b-a050-b323e21bec31@intel.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 11 Jul 2024 08:41:27 -0700
-Message-ID: <CANn89iLfpHam2pcha0R3Y8OBZiwsevDEM-kbhzB2Vv5UYgC7xw@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] netdevice: define and allocate &net_device _properly_
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Breno Leitao <leitao@debian.org>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, keescook@chromium.org, horms@kernel.org, 
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, linux-hardening@vger.kernel.org, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Johannes Berg <johannes.berg@intel.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, 
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nV8N9lxMRcLUX4/B"
+Content-Disposition: inline
+In-Reply-To: <20240711114221.62386-4-kimseer.paller@analog.com>
+
+
+--nV8N9lxMRcLUX4/B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 5:54=E2=80=AFAM Alexander Lobakin
-<aleksander.lobakin@intel.com> wrote:
->
-> From: Eric Dumazet <edumazet@google.com>
-> Date: Wed, 10 Jul 2024 10:04:39 -0700
->
-> > This is because of the =E2=80=98const=E2=80=99 qualifier of the paramet=
-er.
-> >
-> > This could be solved with _Generic() later, if we want to keep the
-> > const qualifier.
->
-> I tried _Generic() when I was working on this patch and it seems like
-> lots of drivers need to be fixed first. They pass a const &net_device,
-> but assign the result to a non-const variable and modify fields there.
-> That's why I bet up on this and just casted to (void *) for now.
+On Thu, Jul 11, 2024 at 07:42:18PM +0800, Kim Seer Paller wrote:
+> Introduce a generalized DAC binding that can be used by DACs that have
+> similar properties adding output-range-microamp and output-range-microvol=
+t.
+>=20
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> ---
+>  .../devicetree/bindings/iio/dac/dac.yaml      | 50 +++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/dac/dac.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/dac/dac.yaml b/Documen=
+tation/devicetree/bindings/iio/dac/dac.yaml
+> new file mode 100644
+> index 000000000000..a9787bbcd22b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/dac/dac.yaml
+> @@ -0,0 +1,50 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/dac/dac.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: IIO Common Properties for DAC Channels
+> +
+> +maintainers:
+> +  - Jonathan Cameron <jic23@kernel.org>
+> +
+> +description:
+> +  A few properties are defined in a common way for DAC channels.
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^channel(@[0-9a-f]+)?$"
+> +    description:
+> +      A channel index should match reg.
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  label:
+> +    description: Unique name to identify which channel this is.
+> +
+> +  output-range-microamp:
+> +    maxItems: 2
+> +    minItems: 2
+> +    description:
+> +      Specify the channel output full scale range in microamperes.
+> +
+> +  output-range-microvolt:
+> +    maxItems: 2
+> +    minItems: 2
+> +    description:
+> +      Specify the channel output full scale range in microvolts.
+> +
+> +oneOf:
+> +  - required:
+> +      - reg
+> +      - output-range-microamp
+> +  - required:
+> +      - reg
+> +      - output-range-microvolt
+> +
+> +required:
+> +  - reg
 
-Right, I will clean things up in the next cycle.
+I think my suggestion was outright wrong, and caused Rob's bot to
+complain. Go back to what you had and,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+--nV8N9lxMRcLUX4/B
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZo/9vQAKCRB4tDGHoIJi
+0vgzAPsFjVELwbDRZbfWEeqEHWdExIjuX+WPWijY5EBS7Zi4sQD7B/BLM5JhPO2q
+83li+n5FyWeNOuiIvwm00eSBPmH4Hgw=
+=1bv1
+-----END PGP SIGNATURE-----
+
+--nV8N9lxMRcLUX4/B--
 
