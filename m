@@ -1,213 +1,161 @@
-Return-Path: <linux-kernel+bounces-249988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E460392F2AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:38:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DAA92F2A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 464E7B21AF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:38:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B51282DC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8251A08C3;
-	Thu, 11 Jul 2024 23:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C933215ADAF;
+	Thu, 11 Jul 2024 23:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ey5B82r0"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="gxFeEsnp"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FFF15A84E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEBE13D8A7
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720741064; cv=none; b=oj5kHh4CoSSZ0DOmWwfYB50tAPBY4JYNu+GktMkCkz75pq14i42J/0/G351RvFCsLoCxTWvpAR719D8I0glC/VTDiXpmgCPkCb/81dJya88z+xQYib0q5PYaziuSz8gq8p5HxhG5GjCjY87NWOSkCgyLgAw5TwKNMIJOzB9PZDg=
+	t=1720741055; cv=none; b=TYK/iZ3xSy8uu2dosRZYism+qn4NjjqsdEQTVQfMvM059G0PTo7uerKVhdRYZDf2b0+YoxKfNpT5A0lkXSUwGFMf2GxUJOYbxjZa8Bg0v0Z7XfWYz1kUyWxFzops/SNMyvhYihjQ6AZsfLPVGxvbg7/cd+epb3UHgnrmOqTU48s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720741064; c=relaxed/simple;
-	bh=dgq8E7YvbNGNJS8c4nZ2r/r1ZEL9B3HdAw4noW885qg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XIzNuV8ic2+RdHbBIjsPCFnrZhrrkgO67TR3K8jYB8bRoehrp4cNX0p7579lAAdr4Uv7DC32COojvOvx5TsIEW3+p0AFamW2MlYtu5xeji2NaFf49hsQGXrYLMxV24DNfe+5EdBvdW7ojmAc5Z9q479ifv+tjP5CP+OzuUm8hKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ey5B82r0; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367a081d1cdso742572f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:37:42 -0700 (PDT)
+	s=arc-20240116; t=1720741055; c=relaxed/simple;
+	bh=2nqbbEAsVwbmaZoW7HNnsobSTISWs4X9BhTkCvVZ4rI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZMb0LDotEu6+V/ZeBLxzNKh537xg6HHc84P2ize0okDwnmi0mx95mHm3bopfNYBHRgqs5AQCZDENcMCr+f0jBJmL51edW2PHbXdLQN1Asho6Ce2UlxPgkYXvQpu76sn5r3TXwA5dBua3jh2XC8KKW7X4vwMSov2K2CwI3HcXO48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=gxFeEsnp; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e03a6c1741eso1492988276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:37:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720741061; x=1721345861; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dgq8E7YvbNGNJS8c4nZ2r/r1ZEL9B3HdAw4noW885qg=;
-        b=ey5B82r0D74quYWEYwM6a2ob0pf8hMBkPLSKo7tRh/NWBGFwMaYKdI0USqR/oMTkIc
-         M3dDo809aTpfOtkdNkFNq/ns/cjz6dmXeSPYAacYUOwGQNdcSd1okrwHY/8+co77Y3rn
-         Df/ZZXK7KsaSUUL7rPs7pcgp9KDinzj+ppwLQcxpXDCyT7jT0KPu5VLkKdqXKrLIBb6m
-         2qyhSQ8zoej6Bu7/lJp9MdbBlvjLSss+D9qeJnbdpCceGhToY+fNueHQ+jHGO0YYZJka
-         2lgYff1C83Z1+8LNBl3FTYGzgdL82F3OTsQkbxoS3tAzwYw8CzeYm7wOy1iv0Xsg1WaV
-         Bc1Q==
+        d=ziepe.ca; s=google; t=1720741052; x=1721345852; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X+KdXhfnlGfYruNnuxczBUgWH1eqq9zVhnZGK1VHbw0=;
+        b=gxFeEsnpdEfpCdyKvD4iIO2o5pIA5Tr08Eb2ZJrPelQk8Qw1EvLw2HrKIO4hVwSk0L
+         oBIWpKiBA+llmFcvaStLz8Xeg2agz8D/x0fi2pLGWkBwvSFP6szO+4i9t0nZTp6CDA+e
+         ZOECcT9avr09yRucYDC7Jt6+/s6kVb4wvRQo/T1HEO0dg4jbE5fHI0M1vTZxCoPUzhYj
+         0pc9Gl4PCPI/dRdPe/rDxRI+i8B7Bmyh33SmtShAeyszAV6duv4yVuzfYptJ2EUpBmOx
+         4y03JHjrxC/PAsmBRmwl5CluwD+MlsIbUTsalA44Ax02i9bQmO8ccOs0IAaLPK8FfvuK
+         2XcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720741061; x=1721345861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dgq8E7YvbNGNJS8c4nZ2r/r1ZEL9B3HdAw4noW885qg=;
-        b=qo+5YZ8/io4sbi2HRgxlrZnkkcLMpZpf9FKafy0ff9awVqiMd9WXRZUGrSUZv7C8SK
-         Llxlk7MUvTkmi8qjD5CW/oEwo+S5mx4osWh/30m+CAnQrrcG0qKv6iU1KQ1/bFWpdQZH
-         Vnf4aidyhA8MjUQwGOW5m5ZyXcirqTs4tZPc08pOULiIRpSJxd2vbKSm68ueQW2oDEvG
-         70WXWte1MWj6drCZiFXR0b2/WdRFq8pOXlSWhRXMUx4YWLLbGRRsJMVAgKK/z9pdL0xL
-         OKN8AbKYCd4d/B6XchlSgfuuBMqz/3j/yRhE30sK9imnywQstmrP7RMBtkg7OfndF/tK
-         tnLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaLDjhLXeS/CmczdhkC9Cc6wcKe4m5N+eUm+I3WE8kQ1iFg8tqA+AfmBXGXH7a6D211WCSUq3B6MFdP+38YTJ/Fg/Xm0ALiLo6I1W+
-X-Gm-Message-State: AOJu0Yw+jPCVIBVrxwPG2PC/GqGkyQFVZizQY+eLCeWE3yTZoUNmd+Yz
-	xIKEvrWmZA0tq4N5Bt757o7a+mCIyzUG7ZQpEmJdgP309nsjugUieVARZhXADNZYpdsHa5ROVYa
-	VqtgLhwYvPCE+GWX4FwcjAKqky2ck1RvOYBKz
-X-Google-Smtp-Source: AGHT+IEj9ZGC5V2+20cQS5OtDDoP2eEqjjPsDXclNG0/fAcvhnVa6UmpiVn1brtJfh3dg3jBIokctcxiU0ucW5/AJo8=
-X-Received: by 2002:a5d:6d01:0:b0:367:91cf:e890 with SMTP id
- ffacd0b85a97d-367cea46185mr8420151f8f.6.1720741060650; Thu, 11 Jul 2024
- 16:37:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720741052; x=1721345852;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X+KdXhfnlGfYruNnuxczBUgWH1eqq9zVhnZGK1VHbw0=;
+        b=bKeeNHyvimCRF59rzUn5PhAAaFhQeiW7REUd5Pfs6wiz+FyJvUxLRAvHETEUDTagG6
+         dNQfngbxhMcwn3xfb09IRKQVTqL0rdBXvsDUbpFWxK2k8+vL8kl07SEs8jabSQOXRX4o
+         nCQKENgqtoPFgnuTYZZTdbdf7/jvyV4pL7NJC5znk/peF2rc9MRljyOjk+XXkC/k1diM
+         uZVvyppqK9BBOd86NjflTz42o/0zMUxr7EzWkBjngrTzPiRBPHcyXYIJAmyr4lRrfp/u
+         WBvYHGooSldQLMg0uJeLU2xDI69DBg/Z2WZ4lv5VNTf4SGPKFusVH3kqKpcr88AGfMwf
+         JkhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSYj16h0fTvGMwB8DS3OHKkV8PcxP1Olyc5IpRILv/R63JvkTOBEaHktV4DFfOWs8G8xeiiG229f230I4ZdHZoi5n3bxZytrHz3jzL
+X-Gm-Message-State: AOJu0YxbvkyMx4iLhRq7Clm09svZwy4A1RlY/JpLYzqx0x5FHJo+fqLb
+	mpIxZ7F1NgjV2So86qIzXTuhETP5NHdzfICuMjoOKg1KJZl0X9sBvpdJFL5Fv5g=
+X-Google-Smtp-Source: AGHT+IE2w1iEvTJQgL110JqQwHO+CGC/PXq7/sUcslpRneSFJpeAVANOPh84CWfAbXtIrXm5qsA1pg==
+X-Received: by 2002:a25:9902:0:b0:e03:a248:7dd3 with SMTP id 3f1490d57ef6-e041b061cb3mr11759264276.23.1720741052384;
+        Thu, 11 Jul 2024 16:37:32 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61b9d606csm30110476d6.36.2024.07.11.16.37.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 16:37:31 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sS3Lu-00FSPx-5b;
+	Thu, 11 Jul 2024 20:37:30 -0300
+Date: Thu, 11 Jul 2024 20:37:30 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	"Liu, Yi L" <yi.l.liu@intel.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] iommu: Convert response code from failure to invalid
+Message-ID: <20240711233730.GT14050@ziepe.ca>
+References: <20240710083341.44617-1-baolu.lu@linux.intel.com>
+ <20240710083341.44617-4-baolu.lu@linux.intel.com>
+ <BN9PR11MB5276EC68D1BBB52C9E6DDE558CA42@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710234222.2333120-1-jthoughton@google.com>
-In-Reply-To: <20240710234222.2333120-1-jthoughton@google.com>
-From: David Matlack <dmatlack@google.com>
-Date: Thu, 11 Jul 2024 16:37:13 -0700
-Message-ID: <CALzav=d+eALgV5UKnwHh67XYba53tkWwDNPWrThcmCP++sCiLg@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/18] KVM: Post-copy live migration for guest_memfd
-To: James Houghton <jthoughton@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, Peter Xu <peterx@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB5276EC68D1BBB52C9E6DDE558CA42@BN9PR11MB5276.namprd11.prod.outlook.com>
 
-On Wed, Jul 10, 2024 at 4:42=E2=80=AFPM James Houghton <jthoughton@google.c=
-om> wrote:
->
-> --- Preventing access: KVM_MEMORY_ATTRIBUTE_USERFAULT ---
->
-> The most straightforward way to inform KVM of userfault-enabled pages is
-> to use a new memory attribute, say KVM_MEMORY_ATTRIBUTE_USERFAULT.
->
-> There is already infrastructure in place for modifying and checking
-> memory attributes. Using this interface is slightly challenging, as there
-> is no UAPI for setting/clearing particular attributes; we must set the
-> exact attributes we want.
+On Wed, Jul 10, 2024 at 09:56:34AM +0000, Tian, Kevin wrote:
+> > From: Lu Baolu <baolu.lu@linux.intel.com>
+> > Sent: Wednesday, July 10, 2024 4:34 PM
+> > 
+> > In the iopf deliver path, iommu_report_device_fault() currently responds
+> > a code of "Response Failure" to the hardware if it can't find a suitable
+> > iopf-capable domain where the page faults should be handled. The Response
+> > Failure is defined in PCI spec (section 10.4.2.1) as a catastrophic error,
+> > and the device will disable PRI for the function.
+> > 
+> > Failing to dispatch a set of fault messages is not a catastrophic error
+> > and the iommu core has no code to recover the PRI once it is disabled.
+> > 
+> > Replace it with a response code of "Invalid Response".
+> > 
+> > Fixes: b554e396e51c ("iommu: Make iopf_group_response() return void")
+> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > ---
+> >  drivers/iommu/io-pgfault.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iommu/io-pgfault.c b/drivers/iommu/io-pgfault.c
+> > index cd679c13752e..b8270ee5dcdb 100644
+> > --- a/drivers/iommu/io-pgfault.c
+> > +++ b/drivers/iommu/io-pgfault.c
+> > @@ -229,7 +229,7 @@ void iommu_report_device_fault(struct device *dev,
+> > struct iopf_fault *evt)
+> >  err_abort:
+> >  	dev_warn_ratelimited(dev, "iopf with pasid %d aborted\n",
+> >  			     fault->prm.pasid);
+> > -	iopf_group_response(group, IOMMU_PAGE_RESP_FAILURE);
+> > +	iopf_group_response(group, IOMMU_PAGE_RESP_INVALID);
+> >  	if (group == &abort_group)
+> >  		__iopf_free_group(group);
+> >  	else
+> 
+> this doesn't match the spec words on the use of INVALID:
+> 
+>   One or more pages within the associated PRG do not exist or
+>   requests access privilege(s) that cannot be granted. Unless the
+>   page mapping associated with the Function is altered, re-issuance
+>   of the associated request will never result in success.
+> 
+> this situation is not related to the permission of page mapping. Instead
+> it's a global problem applying to all functions submitting page requests
+> at this moment.
+> 
+> Though using FAILURE affects more functions sharing the PRI interface,
+> it also proactively avoids adding more in-fly requests to worsen the
+> low memory situation.
+> 
+> So none of the options looks perfect to me, but the existing code
+> responding FAILURE is more aligned to the spec?
 
-The thing we'll want to optimize specifically is clearing
-ATTRIBUTE_USERFAULT. During post-copy migration, there will be
-potentially hundreds of vCPUs in a single VM concurrently
-demand-fetching memory. Clearing ATTRIBUTE_USERFAULT for each page
-fetched is on the critical path of getting the vCPU back into
-guest-mode.
+Yeah, I don't know what to do here either, I guess the system is going
+to explode if you OOM during this stage.
 
-Clearing ATTRIBUTE_USERFAULT just needs to clear the attribute. It
-doesn't need to modify page tables or update any data structures other
-than the attribute itself. But the existing UAPI takes both mmu_lock
-and slots_lock IIRC.
+If it is some problem we'd probably have to preallocate this memory in
+a pool and rate limite the number of PRIs we allow open at once, using
+INVALID to create some back pressure. Seems wild.
 
-I'm also concerned that the existing UAPI could lead to userspace
-accidentally clearing ATTRIBUTE_USERFAULT when it goes to set
-ATTRIBUTE_PRIVATE (or any other potential future attribute). Sure that
-could be solved but that means centrally tracking attributes in
-userspace and issuing one ioctl per contiguous region of guest memory
-with matching attributes. Imagine a scenario where ~every other page
-of guest memory as ATTRIBUTE_USERFAULT and then userspace wants to set
-a differient attribute on a large region of memory. That's going to
-take a _lot_ of ioctls.
+Lets keep it as FAILURE for now, or at least it can be rediscussed
+another time.
 
-Having a UAPI to set (attributes |=3D delta) and clear (attributes &=3D
-~delta) attributes on a range of GFNs would solve both these problems.
-
->
-> The synchronization that is in place for updating memory attributes is
-> not suitable for post-copy live migration either, which will require
-> updating memory attributes (from userfault to no-userfault) very
-> frequently.
-
-There is also the xarray. I imagine that will trigger a lot of dynamic
-memory allocations during post-copy which will slow increase the total
-time a vCPU is paused due to a USERFAULT page.
-
-Is it feasible to convert attributes to a bitmap?
-
->
-> Another potential interface could be to use something akin to a dirty
-> bitmap, where a bitmap describes which pages within a memslot (or VM)
-> should trigger userfaults. This way, it is straightforward to make
-> updates to the userfault status of a page cheap.
-
-Taking a similar approach to dirty logging is attractive for several reason=
-s.
-
-1. The infrastructure to manage per-memslot bitmaps already exists for
-dirty logging.
-2. It avoids the performance problems with xarrays by using a bitmap.
-3. It avoids the performance problems with setting all attributes at once.
-
-However it will require new specific UAPIs to set/clear. And it's
-probably possible to optimize attributes to meet our needs, and those
-changes will benefit all attributes.
-
->
-> When KVM Userfault is enabled, we need to be careful not to map a
-> userfault page in response to a fault on a non-userfault page. In this
-> RFC, I've taken the simplest approach: force new PTEs to be PAGE_SIZE.
->
-> --- Page fault notifications ---
->
-> For page faults generated by vCPUs running in guest mode, if the page
-> the vCPU is trying to access is a userfault-enabled page, we use
-> KVM_EXIT_MEMORY_FAULT with a new flag: KVM_MEMORY_EXIT_FLAG_USERFAULT.
->
-> For arm64, I believe this is actually all we need, provided we handle
-> steal_time properly.
-
-There's steal time, and also the GIC pages. Steal time can use
-KVM_EXIT_MEMORY_FAULT, but that requires special casing in the ARM
-code. Alternatively, both can use the async mechanism and to avoid
-special handling in the ARM code.
-
->
-> For x86, where returning from deep within the instruction emulator (or
-> other non-trivial execution paths) is infeasible, being able to pause
-> execution while userspace fetches the page, just as userfaultfd would
-> do, is necessary. Let's call these "asynchronous userfaults."
->
-> A new ioctl, KVM_READ_USERFAULT, has been added to read asynchronous
-> userfaults, and an eventfd is used to signal that new faults are
-> available for reading.
->
-> Today, we busy-wait for a gfn to have userfault disabled. This will
-> change in the future.
->
-> --- Fault resolution ---
->
-> Resolving userfaults today is as simple as removing the USERFAULT memory
-> attribute on the faulting gfn. This will change if we do not end up
-> using memory attributes for KVM Userfault. Having a range-based wake-up
-> like userfaultfd (see UFFDIO_WAKE) might also be helpful for
-> performance.
->
-> Problems with this series
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> - This cannot be named KVM Userfault! Perhaps "KVM missing pages"?
-> - Memory attribute modification doesn't scale well.
-> - We busy-wait for pages to not be userfault-enabled.
-
-Async faults are a slow path so I think a wait queue would suffice.
-
-> - gfn_to_hva and gfn_to_pfn caches are not invalidated.
-> - Page tables are not collapsed when KVM Userfault is disabled.
-> - There is no self-test for asynchronous userfaults.
-> - Asynchronous page faults can be dropped if KVM_READ_USERFAULT fails.
-
-Userspace would probably treat this as fatal anyway right?
+Jason
 
