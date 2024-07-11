@@ -1,342 +1,194 @@
-Return-Path: <linux-kernel+bounces-249706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2E592EECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:22:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560C892EEB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08BFA1C21796
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:22:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4CA21F21977
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21EF16F848;
-	Thu, 11 Jul 2024 18:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F9816DC36;
+	Thu, 11 Jul 2024 18:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Li+gK0FC"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011043.outbound.protection.outlook.com [52.101.70.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ry/JgySD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE4F16F0E9;
-	Thu, 11 Jul 2024 18:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720722040; cv=fail; b=cY1Rqltky134TTwO8oq9GdV3q3ewd1UTMdBrXb/SDMifCfT/9KCKiJiW8QWNWz1xrZKsF2FpvXZ5xM7DrdFY6lDziF6McIaQ3bHScaCOTAfFC6kU4E4tjOnl6jd8uQ15IqQAcM4mFtwbR5hD5Y1mD8uK0okKPENfcms9wnPdjFM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720722040; c=relaxed/simple;
-	bh=wV6jeLzg3g3yedL24p0+Z/VLhNR2E9IdG2mdphSZULM=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=YYZhMUm+KdpboONCUq9ZbMcBt8FrW8JVlJKhfrpnQI7xVH7cw3/GsjG504BBJS16yqJ5jqZ7boYmcSr3o7OVUrrqEo/iWwmym4CuSDFV/ViPlGqbzpfaTvBS7X9DqZeygHBSbKQRcGPdO4B4J36YTi7ss8wQVSNNnXJeB9Xo56g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Li+gK0FC; arc=fail smtp.client-ip=52.101.70.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v//+/jBXw93W5qJ3AQi5/VcIoteGJii6AzOXSyG9jLL8eInvHQmXAI/QQodPMIwToahJIUenmPRK8ko0ZWxivqXcVjqAUrQrEujUOTkLK8/rfVzSQspuCzz7LGxFHJ47rzAFdRBh5grm1jvrX4/S9QvsRwLquEATcFgsCKQ/vDDVmBY0BHL3aOUKoUl32lW8XqvyXAu3SUDgZkQ+uLUHkrftjPOChG/zjY8fJwXBddQAvT8f9fzsQUAZ/3DyzugWouvFDpW8C1vI0M1YAa2fwKMYq4DvRmeOHna5oP0+EJ6Xbw0Lb6IZ65LZz1PRJTYts3go77KRQCw8vI/YFHO+WQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qf4R1w+IFfREDDFzcckD+cSjnRzgbLiQXklZJaK0WWY=;
- b=J1tytqAa1SUoEt0Tq5dsqMLxc84iu9Jc91wW13xTs4S7oTq+EEFVGq1HVGqOb0hkNoFysw36EUq7dfnu5jTOLyu3NX0wp+bqvS+YBEBoOcmmjT6CVOV5lVRNX295tybj3IuDqiTEA6zGKFb9+srN8rPmc0sqRbZITraQyD7yE42DV5JeSfDHx+EDo2hmaYGpsxiQ44QMBeDeHvY9Ty541bCLu7IIDppzgO+KgDvKssP/QflLJrAmzfWi98VaexTrt5htN9CG8o5DR+QGNwuDR/3cb0MnQCEOUqGIW6hMParXATHwPTLs7OfwZweF1OBKgKyXzpneDxchZvFNGsYWeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qf4R1w+IFfREDDFzcckD+cSjnRzgbLiQXklZJaK0WWY=;
- b=Li+gK0FCsDIDbqV08Rufn95yofDlGtqX2IUZ5+G8vJZJYBIQEbEgH6ThJ5RvlNl5cbpwqUas+VhgL+05N58lSAx/RjgM2jirj8OjQnvJTCx6014CpCBe4d+M4vscTaztwOmcr44+g+3zu6mdNQUx+BGaCvMsxrA6ukmtLUfD7Ag=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DBBPR04MB7514.eurprd04.prod.outlook.com (2603:10a6:10:1f7::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Thu, 11 Jul
- 2024 18:20:35 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7741.033; Thu, 11 Jul 2024
- 18:20:35 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Thu, 11 Jul 2024 14:20:03 -0400
-Subject: [PATCH 4/4] can: flexcan: add wakeup support for imx95
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240711-flexcan-v1-4-d5210ec0a34b@nxp.com>
-References: <20240711-flexcan-v1-0-d5210ec0a34b@nxp.com>
-In-Reply-To: <20240711-flexcan-v1-0-d5210ec0a34b@nxp.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- haibo.chen@nxp.com, imx@lists.linux.dev, han.xu@nxp.com, 
- Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720722012; l=6386;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=laFLVimb0DeJWbLI/AkKxnSps+vsZInKqjqapoJfi58=;
- b=2e4qM6H54zsC1usa6wNIsJtCGafFUQWK9SYPoJR2p1OaaClFEOMPW6TBBgdKEm2Vymhn4E/jX
- Q7v5Dm7pHT8BmzCQ4f8OPBqyNeczJUyAeKlxa1mRnkSUTvlrhCtKAkm
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: SJ0PR05CA0134.namprd05.prod.outlook.com
- (2603:10b6:a03:33d::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1717016DC30;
+	Thu, 11 Jul 2024 18:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720722017; cv=none; b=mQIYn1a0vHsWnt1gtON/g2sIPqU+2Hcw/lvHpPNOGuJJoj3QVaDnMF4kRqH4+X6SrBLnDbxwXJ99v35dR8v+FTDVzQzDUMAp5NDiGeWOs4lr2vanEBQ81+gsrDo1wE2jJeYU41+nDbuCt4DUvyT1C+P+P9Ee5WqgS4dM9qeA2H0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720722017; c=relaxed/simple;
+	bh=BwtKKuGG+KAGYojkzRg+plCNMfPy+VwWCQn81e2kjlk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GXoC5NVJAUITDYP//3EyShwRkwsiyeBB59aWamN2LWFK8pkVXvKJfMhbaLvlomm8ITKkW5osoEnxx1n0/jFJgo6DzEYHi9MDd+lEETCb4UOLLOiqrP4I5G1Cr1PZyloUGeUnJpDiMSGDdhNGmwyjpyb0rI9fsQohiD+CjXarmK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ry/JgySD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE29C116B1;
+	Thu, 11 Jul 2024 18:20:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720722016;
+	bh=BwtKKuGG+KAGYojkzRg+plCNMfPy+VwWCQn81e2kjlk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ry/JgySDXIxZnii43HzeySZPabhcql3VGmTqXFqpkFc1KLH1B2Pov444C0kYZK24a
+	 8EHwlxGmVOyK1DU6fTAcr5nKSqufJfrQvYtxSihVByNZikkzqzeF5INJ7CsQm4v9p1
+	 0uRJkeDp9dyDXAbzOKKhnuKLE0a9KIaMilQBOVZqoIfjrDIMa43kfKnM5SYX1Sbv3r
+	 UZ9nRy24Ax3yl7jv799w0BwaHKtKaBNHWF+hcMHeNax/2f/SILYYAxl2h2kyi78obm
+	 naCXD9Cm1fSBWTHAaVehv2c+EVyRQJfxFQv9tpNl6lAp6c5Z6pKX2FAdKy7daNCB4V
+	 Xyttby2wezCkw==
+Message-ID: <0b2fe3a733119b84baf0d65c097f4d716d4c9040.camel@kernel.org>
+Subject: Re: [PATCH 1/3] nfsd: fix refcount leak when failing to hash
+ nfsd_file
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever III <chuck.lever@oracle.com>, Youzhong Yang
+ <youzhong@gmail.com>
+Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>, Dai
+ Ngo <dai.ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Linux NFS Mailing
+ List <linux-nfs@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Date: Thu, 11 Jul 2024 14:20:14 -0400
+In-Reply-To: <1874B388-3A15-4D06-A328-C8581F5FE896@oracle.com>
+References: <20240710-nfsd-next-v1-0-21fca616ac53@kernel.org>
+	 <20240710-nfsd-next-v1-1-21fca616ac53@kernel.org>
+	 <CADpNCvYknMBXf+V=vBLkjOMhTFRN-3o2R9A2c5J4POuaD49kMw@mail.gmail.com>
+	 <50afe4a63be26a946257c335188e230c86beb148.camel@kernel.org>
+	 <1874B388-3A15-4D06-A328-C8581F5FE896@oracle.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedY
+	xp8+9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65ke5Ag0ETpXRPAEQAJkVmzCmF+IEenf9a2nZRXMluJohnfl2wCMmw5qNzyk0f+mYuTwTCpw7BE2H0yXk4ZfAuA+xdj14K0A1Dj52j/fKRuDqoNAhQe0b6ipo85Sz98G+XnmQOMeFVp5G1Z7r/QP/nus3mXvtFsu9lLSjMA0cam2NLDt7vx3l9kUYlQBhyIE7/DkKg+3fdqRg7qJoMHNcODtQY+n3hMyaVpplJ/l0DdQDbRSZi5AzDM3DWZEShhuP6/E2LN4O3xWnZukEiz688d1ppl7vBZO9wBql6Ft9Og74diZrTN6lXGGjEWRvO55h6ijMsLCLNDRAVehPhZvSlPldtUuvhZLAjdWpwmzbRIwgoQcO51aWeKthpcpj8feDdKdlVjvJO9fgFD5kqZQiErRVPpB7VzA/pYV5Mdy7GMbPjmO0IpoL0tVZ8JvUzUZXB3ErS/dJflvboAAQeLpLCkQjqZiQ/D
+	CmgJCrBJst9Xc7YsKKS379Tc3GU33HNSpaOxs2NwfzoesyjKU+P35czvXWTtj7KVVSj3SgzzFk+gLx8y2Nvt9iESdZ1Ustv8tipDsGcvIZ43MQwqU9YbLg8k4V9ch+Mo8SE+C0jyZYDCE2ZGf3OztvtSYMsTnF6/luzVyej1AFVYjKHORzNoTwdHUeC+9/07GO0bMYTPXYvJ/vxBFm3oniXyhgb5FtABEBAAGJAh8EGAECAAkFAk6V0TwCGwwACgkQAA5oQRlWghXhZRAAyycZ2DDyXh2bMYvI8uHgCbeXfL3QCvcw2XoZTH2l2umPiTzrCsDJhgwZfG9BDyOHaYhPasd5qgrUBtjjUiNKjVM+Cx1DnieR0dZWafnqGv682avPblfi70XXr2juRE/fSZoZkyZhm+nsLuIcXTnzY4D572JGrpRMTpNpGmitBdh1l/9O7Fb64uLOtA5Qj5jcHHOjL0DZpjmFWYKlSAHmURHrE8M0qRryQXvlhoQxlJR4nvQrjOPMsqWD5F9mcRyowOzr8amasLv43w92rD2nHoBK6rbFE/qC7AAjABEsZq8+TQmueN0maIXUQu7TBzejsEbV0i29z+kkrjU2NmK5pcxgAtehVxpZJ14LqmN6E0suTtzjNT1eMoqOPrMSx+6vOCIuvJ/MVYnQgHhjtPPnU86mebTY5Loy9YfJAC2EVpxtcCbx2KiwErTndEyWL+GL53LuScUD7tW8vYbGIp4RlnUgPLbqpgssq2gwYO9m75FGuKuB2+2bCGajqalid5nzeq9v7cYLLRgArJfOIBWZrHy2m0C+pFu9DSuV6SNr2dvMQUv1V58h0FaSOxHVQnJdnoHn13g/CKKvyg2EMrMt/EfcXgvDwQbnG9we4xJiWOIOcsvrWcB6C6lWBDA+In7w7SXnnokkZWuOsJdJQdmwlWC5L5ln9xgfr/4mOY38B0U=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7514:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b426703-d4b1-42c4-30ee-08dca1d62829
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NW83dlZCT2NVQzlEQTFhS3gwTjZHU2h5SERGckdudThjVjJhZVZiT3g0b2Qx?=
- =?utf-8?B?bHZjSld4OEtpL3V1aStMNWNpaGRLOUZnVnY3R0xaZTlGT0s3K0piZUZ5MCtp?=
- =?utf-8?B?bFZGNXAyUU9hTW1uTmhTeE8zbUlrdmY0MDdXUTM4TVV3RG1qYzU1QnZxaCtl?=
- =?utf-8?B?emdMRlRiRHZZNzNxakZnOUNtSitjQklvUi9wenhlZXNmMWRSd2xQbVdDYkgr?=
- =?utf-8?B?WE1ZTFNwVzRsd0svTDhjdkQ5VjVCb1A5Szd4dHBtVWRvMWxkRitFTW9IdjJP?=
- =?utf-8?B?azFlVXU2blpnUmwzbGNMRzJlNy8wZFA3VmtrcGp5aUlEc2RhV0NlbXgzSHow?=
- =?utf-8?B?LzhFZW1PeWc2SnozeHhaZERXZHNXWDJ6OVIrYmM4N1MvVVI5T3d2VUh6YVVX?=
- =?utf-8?B?ZXdoSlk0aFVLRUpXM0t1SlZETWlFZVYwMVVQNmpYcGNmUTlpVTRFWDhqMCtW?=
- =?utf-8?B?b1Rqak5UNTg0SmZONUxsK2ZLWm5XUHg0S2JaNUw0VDkvWnhuRk0vQk0vY1h3?=
- =?utf-8?B?MUI5cnJWK3dhZS9EamsrdWhlNjdEbVNlUjNIeUVXeEVDbVhodkZFZmN0WWNa?=
- =?utf-8?B?Yjgwd0ZuNmowM2JmdDlOS1ovSEUxY3g2SEU2VzBxaGVjN2JHQjc2MDB4Q3ND?=
- =?utf-8?B?dXFENk1IVlVKMC8vNm5yL3dMT3hERnNEN3NxRlhwZmRoQnhCTVRXcnZHbFVE?=
- =?utf-8?B?NzV4ZW9GOGdiOXg3aXVSa0g1dk4xZWZ5ZEtuSTBPREFiR1A1ck9qVTVkazBJ?=
- =?utf-8?B?d1Q2VmE3bVBHNnZSeGNIazY1TExocXZCa2NxWWRWczFCQU15OFAxZCtXYnUy?=
- =?utf-8?B?dWs0M01sVEVVL2R4Qndudko3WHROZzlZMVVFN0R0VWwzRGdSRkJIWlQ3ejNt?=
- =?utf-8?B?Z1RsdWtyVis0OXJjalhiMGltdXc1eG1UQnk4dHFSZFYyYjh4OHdqbkI4czZt?=
- =?utf-8?B?dEZ6dEtudXFUSjZEcHN3bU5VcVhiSlA4ZnVwcURnRXpIb2RUUzd1VjNldUdH?=
- =?utf-8?B?YzdSUVY5YVBxM3VubTJsTjNnYi9CcVlhTktoVWtpWTdSVGNhQlh0WXZLQWo1?=
- =?utf-8?B?d2xvL2xoVHUwUWdUMmV2aDFrT1Y2cnNLMmNOOExxeHMyR2N4STQ5OXdMWjJu?=
- =?utf-8?B?MkRaWW9NMHRvT2JYc0NqZDRyWnVzYk5PZHVBKzFYRmM5VlZIQlZkZlo5RHhj?=
- =?utf-8?B?SmVkeWdrQXlQNWJ1dzQweWZWa09zb2x0MEZHQktSczE5L1FBZEpHaEZnMjNU?=
- =?utf-8?B?L3BFNzNuRWdicDJvQll2RmtrdFBDQWNnVnIweFZOa0QwQzdrVjZzNDJuZzFL?=
- =?utf-8?B?dFQ5R2J4YUdsTVAvMmt0Z0kwNUxQOS9NYU02N0lSVVZSOU9wODBWY1VkRGJ4?=
- =?utf-8?B?dyszSmVCWFYxd0RXSkswM2FEMWwreWhUN2dSYkVqT1VIL3pMeWg1WHNlVnpG?=
- =?utf-8?B?QTY2cVI3R2RYeWdITCt1NGtUTHhMTFc0UjhrYVc4NGYxd21vWG1Oa1kvWGJu?=
- =?utf-8?B?K2Nla2MzVCsyejM3cExEWW1LVDY5L1EzNE54L1hpaEJXcDJnd2Z3SFQycG5C?=
- =?utf-8?B?ZDVVUkdCVDBMczJ6Sm1uUHc5NXcyV2Fjb1IyekM5ZmgwVWx4ZURXQmhlSnNE?=
- =?utf-8?B?UkF1ZDdHaDd5SWhyNEhDS2s5WStEVElwVUNXeTFTR3F3VzR5YS9jaFdCV200?=
- =?utf-8?B?ZjRIdXMvUlUrNnlYUnRBaDlvQlRIc2FPKzBuTVMzcGdNOThrcUpINzV2ZUZq?=
- =?utf-8?B?OWRLVUR0N0E5cHFERzF4RC9QdjFFNGtEcDhObVM3SzEzNnNnRHRnWHRTZjQz?=
- =?utf-8?B?QXFiK1lobHAvOTJBcTNhQzA1V0tyWmU1OWkyMXcvWi9zVjRsTVhxVzk1djlO?=
- =?utf-8?B?T29DczYvMnlGS1craHZZLzhzSUozY3IrREUyWmpGb0l1V0E9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TWJPSkEzVlJ4aTNHVi81TWRNOXZnZ3gyeW9sRkZiTi9Sa0hWblpNUnJQOE12?=
- =?utf-8?B?S2pheXU0R1B3MmVRWC8xa1FkSHB4TjhhWWcxcUNvdGhmNFhXVTBjYUxXMHBM?=
- =?utf-8?B?amZaZVBzY1ZqTStya2V6R1kxUXE5R3h1WFZlUkVOWGsySSs4bVpTUitVcmFC?=
- =?utf-8?B?UXREa2pjR2ZubzFUNlBZYU16a2syVHAvL2dKR1R0S2d4bmQ5RzlFMHpzQy8x?=
- =?utf-8?B?UG4yb2QreTlYSm1IalhHQ0hMQ1FocWozdnA0bU1FY3RtemlwM3dudEVTdmZE?=
- =?utf-8?B?RktDTWF3aUZ4OTdFeXRic2liZW1LcmF1U2FNVHdFdFBBWEVUT2hodzY1MURU?=
- =?utf-8?B?QWJOWXBhTVR5QmFIN01MWEVYdjBQUmZmYnh3YytqdEt6STVaMTNmS2JlSCtk?=
- =?utf-8?B?ZnJRTCtUeVVkRXFBR0ZsaHNkUkk3MDhCc04vNEdUR2M1bHREemxBSURpU1JH?=
- =?utf-8?B?RkQrVmlUOGJVV1YvTjRkUTRJcTMyNlNlTEQ5RElvT1RQRTR6MVBUdDdYR21a?=
- =?utf-8?B?R0l5UFdDZWdjMmlPZWhibHF2UWhnOXpmQmRiNm1oQVNJSmRyajVGTi9jQ200?=
- =?utf-8?B?MzVTWGFnZnIxWkNtNXJSdzg4aXZGdU13OHJEbnR3VFNIY1YwbVZDLzJRejlT?=
- =?utf-8?B?dmNyNENEV1F4cDVMWkdWUVNOemRIN3kwZHNueWZ5OVdxcVZhdndtYVhBMGtX?=
- =?utf-8?B?R3ZVTlJkQVJJaTVvdGExWDlEMTVvR0syRW9MUWNVZTdPYjUwR2tZTmtNT3NV?=
- =?utf-8?B?YXBReWNTR1RQWENLT2dhVmd1WUcrMzZsNWQzVXRTZUNXbkd4K2tmRllsTWQr?=
- =?utf-8?B?T2hSMjFKb1hzZmxPWE1XWDY0S1FKdmpFVFVXbmtMTU41OEFCZ0ZOYXZuaDYz?=
- =?utf-8?B?UlFDZTVEZ1JWbHZGSW1xcVNQSXpaVUJJRHppY2F3WlYyVlZYNnNOc1lVRkkx?=
- =?utf-8?B?aGZ2d1ErSTJDeEpEYnpqMzJPckVxNDRkOTdSTXBZQ0tlVlVsb2QwaDl6WERi?=
- =?utf-8?B?WW9hb3dseDc5TnJNZ2tjVytmQWRrb3M1WHVMZnhBdXdCNHVlYTB4eExRYzZ1?=
- =?utf-8?B?NzFNd3MwdWV6dnRVS2tYc3BTdVAycHZ0dXJFU1BqSDRCbFRkZi8xSWk5VGNj?=
- =?utf-8?B?amJGT05yUUdnK1UyOTBBZXF0MnJiRXpDU2lIWm96VmJ3Mlo3dmNqR2t3Q0RO?=
- =?utf-8?B?WDJqeW9YTGRTbjU3RnR3NmU3ejRwREFSelYwMEQvYnBiaDNGdjdCNVAvZE5C?=
- =?utf-8?B?R3RQRW9WMnlnVGpTR3RmbUQwNWhDM21WMGVCa1hvUDIvYXhMOGtvZmE3NjR0?=
- =?utf-8?B?SHJ2UU1BVlRUazMydVFRTSt0UXVsWEE2ZXQ1NkptNW5Ic3AvR1JDeEFFMUZL?=
- =?utf-8?B?WWtQMGwxbmhUTGpTclp2Y3NVbU5hdVJiVnVDTTNZazVyaUk1SmZSNXNBY0I1?=
- =?utf-8?B?Y0JjOGJ2SEpwN21sU3RicngrOUVTSmp3TWs2L0hzSnNrZk9yekVPaERxcjBn?=
- =?utf-8?B?Rncxa0YxYlFkTnBDMHk3UVFaVkhzNloyK1d0MlNWK0tYL2ZrVFV2bWl1R29B?=
- =?utf-8?B?ZnZaVWlSSURmN042VTl3UkZyYzZjSnhXaS9haVFWZGVGSFduOWtMSVU3TzBz?=
- =?utf-8?B?eTkyMUhuUXl5bU03cXVnU01saWtNUjdCK1U0cXVjU2srUUgrNGplZkxkU0FR?=
- =?utf-8?B?aTcrN1d5Wkg0MG04VVVJcXZLZlQ2RmhZV3ZqaWVGUlhmSlplWEM5ZC95bzdD?=
- =?utf-8?B?Ykd1L0VhVVhwWitLR2ZjMVltV2l1OFhyd0xpTlpvc3Y4V28wZmhLd3EvMTdS?=
- =?utf-8?B?Nmp2YnR6ZEl3VnhmVmZIbUhNN0pQYml6by90TEc1L3greWdnQXBXR2RNVkha?=
- =?utf-8?B?RFJ0VjhqUkU3c0oyZlhJNXNxQzBmcUV5enE0M0dOdXgrdFZjWjY4R2FreXdS?=
- =?utf-8?B?Tjh0d1FHTTNtSnhoZVdRRmNBSVFQNk9Qc0JNd3ZsdTNnUUxZZjIrOEl6Qzcz?=
- =?utf-8?B?U3lKSzhqdklkYmpzMjFDaC93djBkaGJwd1p6Y2N6RUttbVRDUG1oeEY3YkE5?=
- =?utf-8?B?MXZNYS9FdHljVUhLcHc0ZWJ0c2lsVmgvNEdzQjN1dnU3RVFNV3dQeXB1aXh5?=
- =?utf-8?Q?ET2q6mkLFVZfbFZ0ajoD+jv1u?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b426703-d4b1-42c4-30ee-08dca1d62829
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 18:20:34.9467
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TPQRGiGU3RORLam5sJbzKpIuFoZ20rG0W4DU/4nKvakObkXsbUTo1HeO8TXg0VtrdFrjI0CxLo/sQQGi80XJeA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7514
 
-From: Haibo Chen <haibo.chen@nxp.com>
+On Thu, 2024-07-11 at 18:16 +0000, Chuck Lever III wrote:
+>=20
+>=20
+> > On Jul 11, 2024, at 1:53=E2=80=AFPM, Jeff Layton <jlayton@kernel.org>
+> > wrote:
+> >=20
+> > On Thu, 2024-07-11 at 13:05 -0400, Youzhong Yang wrote:
+> > > Shouldn't we have fh_put(fhp) before 'retry'?
+> > >=20
+> >=20
+> > A subtle question, actually...
+> >=20
+> > It probably wouldn't hurt to do that, but I don't think it's
+> > required.
+> >=20
+> > The main reason we call fh_put is to force a second call to
+> > nfsd_set_fh_dentry. IOW, we want to redo the lookup by filehandle
+> > and
+> > find the inode.
+> >=20
+> > In the EEXIST case, presumably we have found the inode but we raced
+> > with another task in setting an nfsd_file for it in the hash.
+> > That's
+> > different from the case where the thing was unhashed or we got an
+> > EOPENSTALE.=C2=A0 So, I think we probably don't require refinding the
+> > inode
+> > in that case.
+> >=20
+> > More pointedly, I'm not sure this particular case is actually
+> > possible.
+> > The entries are hashed on the inode pointer value, and we're
+> > searching
+> > and inserting into the hash under the i_lock.
+> >=20
+> > Chuck, thoughts?
+>=20
+> Is the question whether we want to dput() the dentry that
+> is attached to the fhp ? fh_verify's API contract says:
+>=20
+> 310=C2=A0 * Regardless of success or failure of fh_verify(), fh_put()
+> should be
+> 311=C2=A0 * called on @fhp when the caller is finished with the
+> filehandle.=20
+>=20
+> It looks like none of nfsd_file_acquire's callers do an
+> fh_put() in their error flows.
+>=20
+> But maybe I've misunderstood the issue.
+>=20
 
-iMX95 define a bit in GPR that assert/desert IPG_STOP signal to Flex CAN
-module. It control flexcan enter STOP mode. Wakeup should work even FlexCAN
-is in STOP mode.
+Note that this API is weird and doesn't conform to typical get/put
+semantics.
 
-Due to iMX95 architecture design, A-Core can't access GPR. Only the system
-manager (SM) can config GPR. To support the wakeup feature, follow below
-steps:
+The fhp is instantiated before nfsd_file_do_acquire is called, and all
+of the callers that I can see do eventually call fh_put on it. fh_put
+is idempotent, so there should be no harm in calling it multiple times.
 
-For suspend:
+My question here though was more about this EEXIST case. Should we even
+bother checking for that? I don't see how it's possible.
 
-1) linux suspend, when CAN suspend, do nothing for GPR, and keep CAN
-related clock on.
-2) In ATF, check whether the CAN need to support wakeup, if yes, send a
-request to SM through SCMI protocol.
-3) In SM, config the GPR and assert IPG_STOP.
-4) A-Core suspend.
+>=20
+> > > On Wed, Jul 10, 2024 at 9:06=E2=80=AFAM Jeff Layton <jlayton@kernel.o=
+rg>
+> > > wrote:
+> > > >=20
+> > > > At this point, we have a new nf that we couldn't properly
+> > > > insert
+> > > > into
+> > > > the hashtable. Just free it before retrying, since it was never
+> > > > hashed.
+> > > >=20
+> > > > Fixes: c6593366c0bf ("nfsd: don't kill nfsd_files because of
+> > > > lease
+> > > > break error")
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > ---
+> > > > =C2=A0fs/nfsd/filecache.c | 4 +++-
+> > > > =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
+> > > >=20
+> > > > diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+> > > > index f84913691b78..4fb5e8546831 100644
+> > > > --- a/fs/nfsd/filecache.c
+> > > > +++ b/fs/nfsd/filecache.c
+> > > > @@ -1038,8 +1038,10 @@ nfsd_file_do_acquire(struct svc_rqst
+> > > > *rqstp,
+> > > > struct svc_fh *fhp,
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (likely(ret =3D=3D 0)=
+)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto open_file;
+> > > >=20
+> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret =3D=3D -EEXIST)
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret =3D=3D -EEXIST) {
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 nfsd_file_free(nf);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto retry;
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 trace_nfsd_file_insert_e=
+rr(rqstp, inode, may_flags,
+> > > > ret);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 status =3D nfserr_jukebo=
+x;
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto construction_err;
+> > > >=20
+> > > > --
+> > > > 2.45.2
+> > > >=20
+> >=20
+> > --=20
+> > Jeff Layton <jlayton@kernel.org>
+>=20
+>=20
+> --
+> Chuck Lever
+>=20
+>=20
 
-For wakeup and resume:
-
-1) A-core wakeup event arrive.
-2) In SM, deassert IPG_STOP.
-3) Linux resume.
-
-Add a new fsl_imx95_devtype_data and FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI to
-reflect this.
-
-Reviewed-by: Han Xu <han.xu@nxp.com>
-Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- drivers/net/can/flexcan/flexcan-core.c | 49 ++++++++++++++++++++++++++++++----
- drivers/net/can/flexcan/flexcan.h      |  2 ++
- 2 files changed, 46 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/flexcan/flexcan-core.c
-index f6e609c388d55..ad3240e7e6ab4 100644
---- a/drivers/net/can/flexcan/flexcan-core.c
-+++ b/drivers/net/can/flexcan/flexcan-core.c
-@@ -354,6 +354,14 @@ static struct flexcan_devtype_data fsl_imx93_devtype_data = {
- 		FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX_RTR,
- };
- 
-+static struct flexcan_devtype_data fsl_imx95_devtype_data = {
-+	.quirks = FLEXCAN_QUIRK_DISABLE_RXFG | FLEXCAN_QUIRK_ENABLE_EACEN_RRS |
-+		FLEXCAN_QUIRK_DISABLE_MECR | FLEXCAN_QUIRK_USE_RX_MAILBOX |
-+		FLEXCAN_QUIRK_BROKEN_PERR_STATE | FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI |
-+		FLEXCAN_QUIRK_SUPPORT_FD | FLEXCAN_QUIRK_SUPPORT_ECC |
-+		FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX |
-+		FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX_RTR,
-+};
- static const struct flexcan_devtype_data fsl_vf610_devtype_data = {
- 	.quirks = FLEXCAN_QUIRK_DISABLE_RXFG | FLEXCAN_QUIRK_ENABLE_EACEN_RRS |
- 		FLEXCAN_QUIRK_DISABLE_MECR | FLEXCAN_QUIRK_USE_RX_MAILBOX |
-@@ -548,6 +556,13 @@ static inline int flexcan_enter_stop_mode(struct flexcan_priv *priv)
- 	} else if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_GPR) {
- 		regmap_update_bits(priv->stm.gpr, priv->stm.req_gpr,
- 				   1 << priv->stm.req_bit, 1 << priv->stm.req_bit);
-+	} else if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI) {
-+		/* For the SCMI mode, driver do nothing, ATF will send request to
-+		 * SM(system manager, M33 core) through SCMI protocol after linux
-+		 * suspend. Once SM get this request, it will send IPG_STOP signal
-+		 * to Flex_CAN, let CAN in STOP mode.
-+		 */
-+		return 0;
- 	}
- 
- 	return flexcan_low_power_enter_ack(priv);
-@@ -559,7 +574,11 @@ static inline int flexcan_exit_stop_mode(struct flexcan_priv *priv)
- 	u32 reg_mcr;
- 	int ret;
- 
--	/* remove stop request */
-+	/* Remove stop request, for FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI,
-+	 * do nothing here, because ATF already send request to SM before
-+	 * linux resume. Once SM get this request, it will deassert the
-+	 * IPG_STOP signal to Flex_CAN.
-+	 */
- 	if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_SCFW) {
- 		ret = flexcan_stop_mode_enable_scfw(priv, false);
- 		if (ret < 0)
-@@ -1987,6 +2006,9 @@ static int flexcan_setup_stop_mode(struct platform_device *pdev)
- 		ret = flexcan_setup_stop_mode_scfw(pdev);
- 	else if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_GPR)
- 		ret = flexcan_setup_stop_mode_gpr(pdev);
-+	else if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI)
-+		/* ATF will handle all STOP_IPG related work */
-+		ret = 0;
- 	else
- 		/* return 0 directly if doesn't support stop mode feature */
- 		return 0;
-@@ -2013,6 +2035,7 @@ static const struct of_device_id flexcan_of_match[] = {
- 	{ .compatible = "fsl,imx8qm-flexcan", .data = &fsl_imx8qm_devtype_data, },
- 	{ .compatible = "fsl,imx8mp-flexcan", .data = &fsl_imx8mp_devtype_data, },
- 	{ .compatible = "fsl,imx93-flexcan", .data = &fsl_imx93_devtype_data, },
-+	{ .compatible = "fsl,imx95-flexcan", .data = &fsl_imx95_devtype_data, },
- 	{ .compatible = "fsl,imx6q-flexcan", .data = &fsl_imx6q_devtype_data, },
- 	{ .compatible = "fsl,imx28-flexcan", .data = &fsl_imx28_devtype_data, },
- 	{ .compatible = "fsl,imx53-flexcan", .data = &fsl_imx25_devtype_data, },
-@@ -2311,9 +2334,22 @@ static int __maybe_unused flexcan_noirq_suspend(struct device *device)
- 	if (netif_running(dev)) {
- 		int err;
- 
--		if (device_may_wakeup(device))
-+		if (device_may_wakeup(device)) {
- 			flexcan_enable_wakeup_irq(priv, true);
- 
-+			/* For FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI, it need
-+			 * ATF to send request to SM through SCMI protocol,
-+			 * SM will assert the IPG_STOP signal. But all this
-+			 * works need the CAN clocks keep on.
-+			 * After the CAN module get the IPG_STOP mode, and
-+			 * switch to STOP mode, whether still keep the CAN
-+			 * clocks on or gate them off depend on the Hardware
-+			 * design.
-+			 */
-+			if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI)
-+				return 0;
-+		}
-+
- 		err = pm_runtime_force_suspend(device);
- 		if (err)
- 			return err;
-@@ -2330,9 +2366,12 @@ static int __maybe_unused flexcan_noirq_resume(struct device *device)
- 	if (netif_running(dev)) {
- 		int err;
- 
--		err = pm_runtime_force_resume(device);
--		if (err)
--			return err;
-+		if (!(device_may_wakeup(device) &&
-+		      priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI)) {
-+			err = pm_runtime_force_resume(device);
-+			if (err)
-+				return err;
-+		}
- 
- 		if (device_may_wakeup(device))
- 			flexcan_enable_wakeup_irq(priv, false);
-diff --git a/drivers/net/can/flexcan/flexcan.h b/drivers/net/can/flexcan/flexcan.h
-index 025c3417031f4..4933d8c7439e6 100644
---- a/drivers/net/can/flexcan/flexcan.h
-+++ b/drivers/net/can/flexcan/flexcan.h
-@@ -68,6 +68,8 @@
- #define FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX_RTR BIT(15)
- /* Device supports RX via FIFO */
- #define FLEXCAN_QUIRK_SUPPORT_RX_FIFO BIT(16)
-+/* Setup stop mode with ATF SCMI protocol to support wakeup */
-+#define FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI BIT(17)
- 
- struct flexcan_devtype_data {
- 	u32 quirks;		/* quirks needed for different IP cores */
-
--- 
-2.34.1
-
+--=20
+Jeff Layton <jlayton@kernel.org>
 
