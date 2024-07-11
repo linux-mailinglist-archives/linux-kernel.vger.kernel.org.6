@@ -1,179 +1,117 @@
-Return-Path: <linux-kernel+bounces-248901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C397D92E36F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:29:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4300792E36D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A38A28598F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7501D1C2122C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE12155CBA;
-	Thu, 11 Jul 2024 09:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047AC15697B;
+	Thu, 11 Jul 2024 09:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xloc13dx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SOApO34m"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517F714039D;
-	Thu, 11 Jul 2024 09:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89271553BC;
+	Thu, 11 Jul 2024 09:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720690163; cv=none; b=g566OY8TFStyAnu+kRD8+5akEtEO5ppDZdBbTMFHwI5VJbLxr2A1JHivnIjIWwSJq/WyrpEeNXNsTZFgnPC2GnbPKhRY3TVCXuZPiO2+sieG9FMlGdBAjLXJr00cJ0ZHd9VnNPXxeAn7TrpzRe+ApuovZHyfwI73O0e1/fRhNNY=
+	t=1720690113; cv=none; b=Vn9/P8IIKlsZapSuswHnfnVo+Tmu9t9LYw3TZeFKi7/OiNWXWx7IxQ3tbvs2mCzs7hyRCvf7b+EHSBYslYvmONjWcJaRCfTxFj+JC5CRzp/ApoCDLCQnUDL4dJb/oIXAfQQ2TtARrbivLJOGKXwl6Ou+PJu3tycPTK/HhLJrQyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720690163; c=relaxed/simple;
-	bh=Ez45eI0vWZmvYDv9iC2voRpQwzU9akAGjvrbYSvICJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=R0eJCZLfbhoCb0jtJYLsuNDF/Do4s1T2HN75RWczu0rEtLypsgwmAVtI6aVtqahT6uZouHVNnkFi0HFA2r2+c97mg4yLl8tYXjzdy+G7qi1zmX+pyRQNrMWmXwUCGDJW1JvpZi+hc+E8ZNhuNi1Ed+zt3a9OItk7Vj2TtcJ7Y3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xloc13dx; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720690162; x=1752226162;
-  h=message-id:date:mime-version:subject:references:from:to:
-   cc:in-reply-to:content-transfer-encoding;
-  bh=Ez45eI0vWZmvYDv9iC2voRpQwzU9akAGjvrbYSvICJ8=;
-  b=Xloc13dxLBB1+dcn4LwCxFuctjADzNY2rui35z1rpN8UOAtN9qHSE48f
-   et53Aocl7V4/pikNSFQX3GcMIvXoq500HXmmNRWMCxZcsYoQeNWUjqe/B
-   FSHopbtBIFXBUaHr00DENjswUOHR9rE/yd8xClh/vkfQKCFVgNVc7D+zI
-   l0H/5EFvLxszkvaj0dCJ3wounWVtQKaYbZ9iyzYXKQd5uyPQCCaprdeYD
-   5XZhMv90xz9psKXXxRCFtwFMvymVJcScCRaomG1ywESPMyo7SVNFxhlr8
-   VBu+NjrFQMxEETbXU6Oqeoe4dPNlzJ2IUbsek/C7wZsDCBmE3ZKGujNOP
-   Q==;
-X-CSE-ConnectionGUID: /+hLMd5jRvOvTNmkhwqJiA==
-X-CSE-MsgGUID: 20OVsiXAQ56h53cp0UaGLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="28651643"
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="28651643"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 02:29:21 -0700
-X-CSE-ConnectionGUID: 83SxTHjcTcOl5ltQZdRcwg==
-X-CSE-MsgGUID: 0ikLMkX/Q1+3583xpKwHng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
-   d="scan'208";a="48397425"
-Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.229.108]) ([10.124.229.108])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 02:29:17 -0700
-Message-ID: <eb2808fe-6f11-4bc2-8931-fcd8bd89600a@intel.com>
-Date: Thu, 11 Jul 2024 17:27:42 +0800
+	s=arc-20240116; t=1720690113; c=relaxed/simple;
+	bh=/K+lCMjK2dr/WBBFPRaN3f+6YxEMPa/QeHQ6NWrXnos=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DIAHjfI17QE0wZUYgyFOjHmEakENZv7dhJKkU96Zmh8vOCuf7D8dsIG8CViHecAqnZvqTbOwcnj4xSVkZG+BtOVULjcUt4bvkQgtOqv81GqIRqdgx+P39GTr40WEAjTgHJWtW/lMhG2BjVdOfwlPz5N7iHJkm6FXeaCJ/biKMj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SOApO34m; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B4n1p9011771;
+	Thu, 11 Jul 2024 09:28:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=/K+lCMjK2dr/WBBFPRaN3f+6
+	YxEMPa/QeHQ6NWrXnos=; b=SOApO34mjAy1QoftfeKHwWjVpiFYcTo4qc21QgQJ
+	YcQfAwy5HQDGUiOi+ji5/v9DkcV7M3g4AwChYXD9PSPDR1CuzO+6BFjdL6h2CbGX
+	UwGFNNLKzb9HDrRq6iS+ctBGn3fi+4tEFaX6/wflKmS0HdHgUbvkM3+Dv0uwcstm
+	xv9hiX5kHg8Is1KLskTu4TfehOH5TfXl4ZdLXrJEmaGvBzrgtKPiAUVI1oTIPhlQ
+	zhZfs/yONudapvQWaqxZK0MGw8+MHLkDFd33QQbpM7/9pFcpBXc+lFAbPcfo4uBT
+	rFqUSDh6ItDCph4BbN5ELsDw0eNIK4zXV0VIVe/0zXeWig==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wgwuvrq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 09:28:27 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46B9SQ94005396
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 09:28:26 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 11 Jul 2024 02:28:21 -0700
+Date: Thu, 11 Jul 2024 14:58:17 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <quic_wcheng@quicinc.com>,
+        <johan+linaro@kernel.org>, <quic_kriskura@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v0 1/2] dt-bindings: usb: qcom,dwc3: Add minItems for
+ interrupt info
+Message-ID: <Zo+lsSwFG3+KwKUu@hu-varada-blr.qualcomm.com>
+References: <20240711065615.2720367-1-quic_varada@quicinc.com>
+ <5fb21a62-9c9e-45ed-bf3f-c4d54f243886@kernel.org>
+ <Zo+cDxiog/IXdt9S@hu-varada-blr.qualcomm.com>
+ <5142d8af-2b05-4018-a9c5-0a8b99719b0d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240703143311.2184454-1-yu.ma@intel.com>
- <20240703143311.2184454-4-yu.ma@intel.com>
- <CAGudoHH_P4LGaVN1N4j8FNTH_eDm3SDL7azMc25+HY2_XgjvJQ@mail.gmail.com>
- <20240704215507.mr6st2d423lvkepu@quack3>
- <3c7a0cd7-1dd2-4762-a2dd-67e6b6a82df7@intel.com>
- <1296ef8d-dade-46e5-8571-e7dba158f405@intel.com>
- <CAGudoHGJrRi_UZ2wv2dG9U9VGasHW203O4nQHkE9KkaWJJ61WQ@mail.gmail.com>
- <0b928778df827f7ea948931c3358616c8e7f26f7.camel@linux.intel.com>
-From: "Ma, Yu" <yu.ma@intel.com>
-Content-Language: en-US
-To: Tim Chen <tim.c.chen@linux.intel.com>, Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org,
- edumazet@google.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
- tim.c.chen@intel.com, yu.ma@intel.com
-In-Reply-To: <0b928778df827f7ea948931c3358616c8e7f26f7.camel@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5142d8af-2b05-4018-a9c5-0a8b99719b0d@kernel.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: PQNQcTZkXsnwtvHbHnecuI6zXOoVaAM7
+X-Proofpoint-ORIG-GUID: PQNQcTZkXsnwtvHbHnecuI6zXOoVaAM7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_06,2024-07-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=427 mlxscore=0
+ adultscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110066
 
-
-On 7/11/2024 7:40 AM, Tim Chen wrote:
-> On Tue, 2024-07-09 at 12:17 +0200, Mateusz Guzik wrote:
->> Right, forgot to respond.
->>
->> I suspect the different result is either because of mere variance
->> between reboots or blogbench using significantly less than 100 fds at
->> any given time -- I don't have an easy way to test at your scale at
->> the moment. You could probably test that by benching both approaches
->> while switching them at runtime with a static_branch. However, I don't
->> know if that effort is warranted atm.
->>
->> So happens I'm busy with other stuff and it is not my call to either
->> block or let this in, so I'm buggering off.
->>
->> On Tue, Jul 9, 2024 at 10:32 AM Ma, Yu <yu.ma@intel.com> wrote:
->>>
->>> On 7/5/2024 3:56 PM, Ma, Yu wrote:
->>>> I had something like this in mind:
->>>>>> diff --git a/fs/file.c b/fs/file.c
->>>>>> index a3b72aa64f11..4d3307e39db7 100644
->>>>>> --- a/fs/file.c
->>>>>> +++ b/fs/file.c
->>>>>> @@ -489,6 +489,16 @@ static unsigned int find_next_fd(struct fdtable
->>>>>> *fdt, unsigned int start)
->>>>>>           unsigned int maxfd = fdt->max_fds; /* always multiple of
->>>>>> BITS_PER_LONG */
->>>>>>           unsigned int maxbit = maxfd / BITS_PER_LONG;
->>>>>>           unsigned int bitbit = start / BITS_PER_LONG;
->>>>>> +       unsigned int bit;
->>>>>> +
->>>>>> +       /*
->>>>>> +        * Try to avoid looking at the second level map.
->>>>>> +        */
->>>>>> +       bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
->>>>>> +                               start & (BITS_PER_LONG - 1));
->>>>>> +       if (bit < BITS_PER_LONG) {
->>>>>> +               return bit + bitbit * BITS_PER_LONG;
->>>>>> +       }
-> I think this approach based on next_fd quick check is more generic and scalable.
+On Thu, Jul 11, 2024 at 11:03:56AM +0200, Krzysztof Kozlowski wrote:
+> On 11/07/2024 10:47, Varadarajan Narayanan wrote:
+> >>
+> >> but x1e80100 has 4, right?
+> >
+> > Yes. Will have a separate block for ipq5332. Went with min/max based
+> > on one of the previous blocks that had min/max as two and three for
+> > a group of SoCs.
+> >
 >
-> It just happen for blogbench, just checking the first 64 bit allow a quicker
-> skip to the two level search where this approach, next_fd may be left
-> in a 64 word that actually has no open bits and we are doing useless search
-> in find_next_zero_bit(). Perhaps we should check full_fds_bits to make sure
-> there are empty slots before we do
-> find_next_zero_bit() fast path.  Something like
->
-> 	if (!test_bit(bitbit, fdt->full_fds_bits)) {
-> 		bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
-> 					start & (BITS_PER_LONG - 1));
-> 		if (bit < BITS_PER_LONG)
-> 			return bit + bitbit * BITS_PER_LONG;
-> 	}
-> Tim
+> Did you even test it before sending?
 
-Yes, agree that it scales better, I'll update v4 with fast path for the 
-word contains next_fd and send out for review soon
+Yes, ran dt_binding_check. After confirming that ipq5332 related
+errors got resolved and no new errors for x1e80100 sent the
+patch. Missed the yaml file related error generated by Rob's bot.
 
->>>>> Drat, you're right. I missed that Ma did not add the proper offset to
->>>>> open_fds. *This* is what I meant :)
->>>>>
->>>>>                                  Honza
->>>> Just tried this on v6.10-rc6, the improvement on top of patch 1 and
->>>> patch 2 is 7% for read and 3% for write, less than just check first word.
->>>>
->>>> Per my understanding, its performance would be better if we can find
->>>> free bit in the same word of next_fd with high possibility, but
->>>> next_fd just represents the lowest possible free bit. If fds are
->>>> open/close frequently and randomly, that might not always be the case,
->>>> next_fd may be distributed randomly, for example, 0-65 are occupied,
->>>> fd=3 is returned, next_fd will be set to 3, next time when 3 is
->>>> allocated, next_fd will be set to 4, while the actual first free bit
->>>> is 66 , when 66 is allocated, and fd=5 is returned, then the above
->>>> process would be went through again.
->>>>
->>>> Yu
->>>>
->>> Hi Guzik, Honza,
->>>
->>> Do we have any more comment or idea regarding to the fast path? Thanks
->>> for your time and any feedback :)
->>>
->>>
->>> Regards
->>>
->>> Yu
->>>
->>
+Will address these and send a new patch.
+
+Thanks
+Varada
 
