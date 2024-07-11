@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-249835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8419992F08A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:58:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D69892F08E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 114611F23E0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:58:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518631C227D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A00019EEBF;
-	Thu, 11 Jul 2024 20:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97A519EECC;
+	Thu, 11 Jul 2024 20:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IcKgSAiS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XmrH8rrW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7140882D68;
-	Thu, 11 Jul 2024 20:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2763219EEBB
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720731516; cv=none; b=eyknlNwMMcYIr6rA2h1VJq+P0SmDtxDrG9g4O/wbJfl97B9EeKnT2ZCNSbyN8LB0ltTp1Th+X+ZAlbI2WG7E8WG4ijz8uXGTSucv09rcicL4WmNwzwZOdgLS7KLvuIOSRp/3aAiQSngvz/U/w2RtXTCs8ihDd504Y4qMxseRK38=
+	t=1720731553; cv=none; b=HLmC+G+8TD7iba3GfvBLE6t7/+EFQejCvl76jnTb86SLWHiD578R/TRoYroAtm1ffwoNzhGmnzfwSev5BAd6LHhHJvufrUNjpWkfqwmnRTMzP3SwsLAlrfEh8vVroLU+UdO2ML4nbDMsmkT3/AZlORDU+gY3coA+ij+lIHC4zZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720731516; c=relaxed/simple;
-	bh=8U+AfVIFeyA7CmGX4UGBlcY7fyqzeuSiPVavOFWJQok=;
+	s=arc-20240116; t=1720731553; c=relaxed/simple;
+	bh=YGCy8/XzgD9q9tYGn9G38Ra+VL//ENX4T5zehGmjrgw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FKnfHKUxFZzSTmbWhwJAUaNr1W4Mfb+dTtQLyahTHu/TDg7ddpKij3ZpSSbpzRGWWmlBpNGH0NYeUWG16ebseL6Zts4qShoPkrLD9nJCU4D7zWgu288kTFNNHGUIo4N0Fd8DfiUNp/x7S+la5udMSwwVHCej5gwMZrW1zYwx+Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IcKgSAiS; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720731515; x=1752267515;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8U+AfVIFeyA7CmGX4UGBlcY7fyqzeuSiPVavOFWJQok=;
-  b=IcKgSAiSOb79Bn9AuuBlTcxeGEbuOmBekxo0zSfTp54gSlp2OMssNoYe
-   COZ9HKba/oadoKvL0q2AQQICPkHvxH+lZYWOTr1m2AeYwSXsPrG7bVC2Q
-   vpFC07qXhKL3a2eCV/PJh43tgMzsAOL3bnCT/3Qt3kUO24vmgLvek1uSN
-   tH1ezG8Je4QZDh4os0V6oVV1+SjCpjA3Z1Q3f/OiN+dNLTz7rNXVGVLoZ
-   Hd1AijnjKyYf9EIxKJqkx/bsNsVRS4QeB0RcVDamOTY+yNOMjnIcQypuL
-   T393q94ifOPfMbTNkL2toFget59UkkslkyQNdXnO2lILoRFqZ4D0+PcZ8
-   A==;
-X-CSE-ConnectionGUID: KjSrvFYaTsKvqHeFxK4drw==
-X-CSE-MsgGUID: cLk4mYO9ROC/MbtGN9ZTWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="17856040"
-X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
-   d="scan'208";a="17856040"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 13:58:34 -0700
-X-CSE-ConnectionGUID: otJWUUxcTO6T7RZeNMngxA==
-X-CSE-MsgGUID: gvmJQ3vbTYCNWgp69xYBow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
-   d="scan'208";a="48665160"
-Received: from unknown (HELO [10.124.221.144]) ([10.124.221.144])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 13:58:32 -0700
-Message-ID: <1c2fd06e-2e97-4724-80ab-8695aa4334e7@intel.com>
-Date: Thu, 11 Jul 2024 13:58:30 -0700
+	 In-Reply-To:Content-Type; b=oeTQ6ozFml3Pm2WPU99OE9Up9Ktrnu6zjkU35uOAF8XMWDZOHdm+CRzpdWnGI/vXWkyEPMoXjZt5do9scy7MeZCHQnjB3cqLpWcH26A+1myhIu695mdoNjWLid03bUBURK87IggtpDXi7gWQppw3cOfTAEc/93cbmthuxs5VJEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XmrH8rrW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720731551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zXifGiy9cirPgt179LI62P9UXVyjpkXbhG8GKQeCghw=;
+	b=XmrH8rrW8mw6Z3+TkYO7i1UbXeUpfSiQipKzZH7d1PA5BnXMGREBpEdv8Nhrwvicmq3VBG
+	EFQEdQ9Yrj+voGGbyhgNXyalikW56SWzJDhCvM7iTCbNxMDEVRnefh5juKE6/2FO7uishx
+	RByMyqTF3J+CDKs/WSN1Vebz+FG4SKo=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-vDg02POVN2KLZAUZ-vyl-g-1; Thu, 11 Jul 2024 16:59:09 -0400
+X-MC-Unique: vDg02POVN2KLZAUZ-vyl-g-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1fb1c206242so10153075ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:59:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720731549; x=1721336349;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zXifGiy9cirPgt179LI62P9UXVyjpkXbhG8GKQeCghw=;
+        b=PHlfQ50LOWPT1Al1dliG3rhHuz3BG1/DA71iUISIgBbBx0NZBhpq6Q+O4gpSXOXpYb
+         SOraNaUROzcbVyp8uWzQUFdbsJUASQdz7x15/A/RuO8h4EdTq3HYK0lxegkZoOO2jirX
+         h7LTRK+PPjDTsK20fRLJhtZCXZvgSR8Bw/pwdATJ78h+6Q8ZYfG1jLoTpbAejnpPeNXv
+         r4mmNt4v8LkXGxU60DxXwhkaOQ/aee4KGhzG6N1/uzi1yEW7eEG43FblWBAMS8C1y9dP
+         IgPummRleKfwgYIBstc911qCajcpJ7UdkpCu/xAZecPXXQ37jvN6dcwdbaztFZTkAASd
+         5QwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQrNVwAbFIl5dN/WHn7nWWq2TJMHFxx8BOyCMjF1Ex5SIRxNqJLb7cPc5IKTQ8kBMlzr1qmotjm4Fca2Eh8/0Q3E5Sec8gM4jM0cfv
+X-Gm-Message-State: AOJu0YwiUU/GHyYoxdAgp9Leta6E2WlGw44EzfNR3QZP4uOJvqgzTv+f
+	DAI22VwUysnQmzoA9roVxMbc8A/OzBe/i9fCv117HLdJCeUocZN7mlxiBr5j8izNXZ6tSbbgJqA
+	/4JesyexoJLqKvMNNqOvo12G8m5qCp1osfq3t96O7GczQN0up+8vTL2irYdj9ZA==
+X-Received: by 2002:a17:902:e5ca:b0:1fb:484a:d0 with SMTP id d9443c01a7336-1fbb6ea43b7mr86918625ad.54.1720731548661;
+        Thu, 11 Jul 2024 13:59:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGjoPXYyNaAorl0l5+ZqAXAxXREpJhiFgdiuRaj1yx69KDyImpVEOb6v3YXt8odns9amQqgWw==
+X-Received: by 2002:a17:902:e5ca:b0:1fb:484a:d0 with SMTP id d9443c01a7336-1fbb6ea43b7mr86918445ad.54.1720731548032;
+        Thu, 11 Jul 2024 13:59:08 -0700 (PDT)
+Received: from [172.20.2.228] ([4.28.11.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a108a9sm54818295ad.61.2024.07.11.13.59.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 13:59:07 -0700 (PDT)
+Message-ID: <6f045e34-8b88-49f7-957a-69130f6de949@redhat.com>
+Date: Thu, 11 Jul 2024 22:59:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,113 +82,183 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] Introduce CET supervisor state support
-To: "Yang, Weijiang" <weijiang.yang@intel.com>, tglx@linutronix.de,
- x86@kernel.org, seanjc@google.com, pbonzini@redhat.com,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: peterz@infradead.org, chao.gao@intel.com, rick.p.edgecombe@intel.com,
- mlevitsk@redhat.com, john.allen@amd.com
-References: <20240531090331.13713-1-weijiang.yang@intel.com>
- <67c5a358-0e40-4b2f-b679-33dd0dfe73fb@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
+To: Yu Zhao <yuzhao@google.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de,
+ linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+References: <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
+ <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
+ <ZpAR0CgLc28gEkV3@zx2c4.com> <ZpATx21F_01SBRnO@zx2c4.com>
+ <98798483-dfcd-451e-94bb-57d830bf68d8@redhat.com>
+ <54b6de32-f127-4928-9f4a-acb8653e5c81@redhat.com>
+ <ZpAcWvij59AzUD9u@zx2c4.com> <ZpAc118_U7p3u2gZ@zx2c4.com>
+ <ZpAfigBHfHdVeyNO@zx2c4.com>
+ <8586b19c-2e14-4164-888f-8c3b86f3f963@redhat.com>
+ <ZpAqbh3TnB9hIRRh@zx2c4.com>
+ <443146f4-9db8-4a19-91f1-b6822fad8ce8@redhat.com>
+ <1c8632b4-06a5-49da-be0c-6fc7ac2b3257@redhat.com>
+ <2c464271-1c61-4cd8-bd4e-4bd8aa01fa00@redhat.com>
+ <CAOUHufYsxCb=taWWfUbuzi1Hmmug=ThQMoTjsxrtFkt=UXEu6w@mail.gmail.com>
+ <da3ea234-d6dd-4809-b2f5-fbfedacb9748@redhat.com>
+ <CAOUHufZuMdN31WnbwctyFv+o8nAfVBaiHZa9Ud_cz6QAoNQHxw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <67c5a358-0e40-4b2f-b679-33dd0dfe73fb@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAOUHufZuMdN31WnbwctyFv+o8nAfVBaiHZa9Ud_cz6QAoNQHxw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 7/8/24 20:17, Yang, Weijiang wrote:
-> So I'm not sure whether XFEATURE_MASK_KERNEL_DYNAMIC and related changes
-> are worth or not for this series.
+On 11.07.24 21:58, Yu Zhao wrote:
+> On Thu, Jul 11, 2024 at 1:53 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 11.07.24 21:49, Yu Zhao wrote:
+>>> On Thu, Jul 11, 2024 at 1:20 PM David Hildenbrand <david@redhat.com> wrote:
+>>>>
+>>>> On 11.07.24 21:18, David Hildenbrand wrote:
+>>>>> On 11.07.24 20:56, David Hildenbrand wrote:
+>>>>>> On 11.07.24 20:54, Jason A. Donenfeld wrote:
+>>>>>>> On Thu, Jul 11, 2024 at 08:24:07PM +0200, David Hildenbrand wrote:
+>>>>>>>>> And PG_large_rmappable seems to only be used for hugetlb branches.
+>>>>>>>>
+>>>>>>>> It should be set for THP/large folios.
+>>>>>>>
+>>>>>>> And it's tested too, apparently.
+>>>>>>>
+>>>>>>> Okay, well, how disappointing is this below? Because I'm running out of
+>>>>>>> tricks for flag reuse.
+>>>>>>>
+>>>>>>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+>>>>>>> index b9e914e1face..c1ea49a7f198 100644
+>>>>>>> --- a/include/linux/page-flags.h
+>>>>>>> +++ b/include/linux/page-flags.h
+>>>>>>> @@ -110,6 +110,7 @@ enum pageflags {
+>>>>>>>               PG_workingset,
+>>>>>>>               PG_error,
+>>>>>>>               PG_owner_priv_1,        /* Owner use. If pagecache, fs may use*/
+>>>>>>> +   PG_owner_priv_2,
+>>>>>>
+>>>>>> Oh no, no new page flags please :)
+>>>>>>
+>>>>>> Maybe just follow what Linux suggested: pass vma to pte_dirty() and
+>>>>>> always return false for these special VMAs.
+>>>>>
+>>>>> ... or look into removing that one case that gives us headake.
+>>>>>
+>>>>> No idea what would happen if we do the following:
+>>>>>
+>>>>> CCing Yu Zhao.
+>>>>>
+>>>>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>>>>> index 0761f91b407f..d1dfbd4fd38d 100644
+>>>>> --- a/mm/vmscan.c
+>>>>> +++ b/mm/vmscan.c
+>>>>> @@ -4280,14 +4280,9 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
+>>>>>                     return true;
+>>>>>             }
+>>>>>
+>>>>> -       /* dirty lazyfree */
+>>>>> -       if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio)) {
+>>>>> -               success = lru_gen_del_folio(lruvec, folio, true);
+>>>>> -               VM_WARN_ON_ONCE_FOLIO(!success, folio);
+>>>>> -               folio_set_swapbacked(folio);
+>>>>> -               lruvec_add_folio_tail(lruvec, folio);
+>>>>> -               return true;
+>>>>> -       }
+>>>>> +       /* lazyfree: we may not be allowed to set swapbacked: MAP_DROPPABLE */
+>>>>> +       if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio))
+>>>>> +               return false;
+>>>
+>>> This is an optimization to avoid an unnecessary trip to
+>>> shrink_folio_list(), so it's safe to delete the entire 'if' block, and
+>>> that would be preferable than leaving a dangling 'if'.
+>>
+>> Great, thanks.
+>>
+>>>
+>>>> Note that something is unclear to me: are we maybe running into that
+>>>> code also if folio_set_swapbacked() is already set and we are not in the
+>>>> lazyfree path (in contrast to what is documented)?
+>>>
+>>> Not sure what you mean: either rmap sees pte_dirty() and does
+>>> folio_mark_dirty() and then folio_set_swapbacked(); or MGLRU does the
+>>> same sequence, with the first two steps in walk_pte_range() and the
+>>> last one here.
+>>
+>> Let me rephrase:
+>>
+>> Checking for lazyfree is
+>>
+>> "folio_test_anon(folio) && !folio_test_swapbacked(folio)"
+>>
+>> Testing for dirtied lazyfree is
+>>
+>> "folio_test_anon(folio) && !folio_test_swapbacked(folio) &&
+>>    folio_test)dirty(folio)"
+>>
+>> So I'm wondering about the missing folio_test_swapbacked() test.
 > 
-> Could you share your thoughts?
+> It's not missing: type == LRU_GEN_FILE means folio_is_file_lru(),
+> which in turn means !folio_test_swapbacked().
+> 
 
-First of all, I really do appreciate when folks make the effort to _try_
-to draw their own conclusions before asking the maintainers to share
-theirs.  Next time, OK? ;)
+Ahh, got it, thanks!
 
-But here goes.  So we've basically got three cases.  Here's a fancy table:
+-- 
+Cheers,
 
-> https://docs.google.com/spreadsheets/d/e/2PACX-1vROHIgrtHzUJmdlzT7D7tuVzgM8AMlK2XlorvFIJvk-I0NjD7A-T_qntjz7cUJlCScfWGtSfPK30Xtu/pubhtml
-
-... and the same in ASCII
-
-Case |IA32_XSS[12] | Space | RFBM[12] | Drop%	
------+-------------+-------+----------+------
-  1  |	   0	   | None  |	0     |  0.0%
-  2  |	   1	   | None  |	0     |  0.2%
-  3  |	   1	   | 24B?  |	1     |  0.2%
-
-Case 1 is the baseline of course.  Case 2 avoids allocating space for
-CET and also leans on the kernel to set RFBM[12]==0 and tell the
-hardware not to write CET-S state.  Case 3 wastes the CET-S space in
-each task and also leans on the hardware init optimization to avoid
-writing out CET-S space on each XSAVES.
-
-#1 is: 0 lines of code.
-#2 is: 5 files changed, 90 insertions(+), 27 deletions(-)
-#3 is: very few lines of code, nearing zero
-
-#2 and #3 have the same performance.
-
-So we're down to choosing between
-
- * $BYTES space in 'struct fpu' (on hardware supporting CET-S)
-
-or
-
- * ~100 loc
-
-$BYTES is 24, right?  Did I get anything wrong?
-
-So, here's my stake in the ground: I think the 100 lines of code is
-probably worth it.  But I also hate complicating the FPU code, so I'm
-also somewhat drawn to just eating the 24 bytes and moving on.
-
-But I'm still in the "case 2" camp.
-
-Anybody disagree?
+David / dhildenb
 
 
