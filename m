@@ -1,112 +1,95 @@
-Return-Path: <linux-kernel+bounces-249628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF4892EE06
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:46:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37C292EE03
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4EB1C20E9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:46:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 742DB1F2305C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFED16CD17;
-	Thu, 11 Jul 2024 17:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RYRoACGC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4AB16DC0E;
+	Thu, 11 Jul 2024 17:45:43 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164737F492;
-	Thu, 11 Jul 2024 17:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D09F288A4;
+	Thu, 11 Jul 2024 17:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720719960; cv=none; b=cB1TvAfh53CobLDTfc130YO/fVfSG6nZVANo77/HPZR7QbY23mjUghyabI4cfzFu04oK/bya+E9Kc6ojHqiLTELRXvIEkjrxf5Y+j/BK91Xhl2Eph8zEUaOMOsn8RHZa7xexIgZxUH5oD4MLYawGxRXHrE02l7H8R3reTOdxKrI=
+	t=1720719943; cv=none; b=Yjihusxg0Zsg0IDAvA2CgXHpSfkON96erpZI5Fxew9/MAn7yiP/W+GqdhK2KbF8ZrYqpr90i2w4Rt9Vw8dTHd85QySC1lnTdIdVCzwQdJGL7qfb82C19PSKuuDZRaC5HqNrj5JuHWP0zOQn5m5xy1nWaJIDFdoDfxsBy7jlTAU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720719960; c=relaxed/simple;
-	bh=xclbpvZqBZFVNWlZTggHeSBR9i8w8gKEldzknM8mYRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Jg3/7aWY1wJanP7OWTd1FBFV/PfEtZ4LubWI1q7cua79Ah1Ef1UxCtIn3BiMqn+LXe1B4FFGQvqNBKlXlslPRfpDC59BO5Y8eBzwQ6nilgNEwJMReynAPXSnew93zo0amcDrvBDgibe0Xhf9WLZlNx0aKk2q95yOy8sdEB/eCvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RYRoACGC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BCih1U014631;
-	Thu, 11 Jul 2024 17:45:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GwBFYXMdD1X49TV4BVm7xe3SSQwTysSATv9976M8WMU=; b=RYRoACGCohysQ15e
-	w9EJPsz4WSd0Gv9fKb+JkNcG90wZwYeU167EnTZssM9cYWGDN7QiWaJxCivpTPzb
-	pB6Jff6E33wPiSIAahhD3GAUc6d/tCeXd6TrI8CLvVgqoog5kBATlgAQYTudsrt4
-	GcnKTANgFRIhXUuB23VGPCdIfUollPx2/A3XICefqeApcGRVOyQgeRFGZ6tydLGs
-	Np74UJwQpmRhbzj5i12XtHOifHBqGycxUTBW5ddLJ2L3Y/eRVEThrJS/iGXvPQok
-	bOSTyC1GhS82ZjLa3WY+G37Qz8hE/xD07tsE4typsistGGy/4N+eDcvP10+9M8l/
-	N6uUoQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 409kdtmxrf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 17:45:45 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BHjiMD009338
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 17:45:44 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 10:45:43 -0700
-Message-ID: <ea1b2ed4-704a-4676-8915-d3e566675070@quicinc.com>
-Date: Thu, 11 Jul 2024 10:45:43 -0700
+	s=arc-20240116; t=1720719943; c=relaxed/simple;
+	bh=HMHhXtHErUM41FQcbLQbteqc0M4Q2bcSNoyiQKozxx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NdaW7/qmkkaTYdzmvEpavOzQilqtZMoLeQaJWRLyi6geftRYPM5T48LT/kpqiSmUNfLLHcRx8j38TK+fVvsz2p23rQlEs/b/+MHESqfxeAXLC4pHFDHEpOI2qNEAbbnGeRDtC2EF1lC1FKNPNpz4SV4W0fpPfBy2fYlmvMKPhcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79339C116B1;
+	Thu, 11 Jul 2024 17:45:41 +0000 (UTC)
+Date: Thu, 11 Jul 2024 13:47:03 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Jiri Olsa <olsajiri@gmail.com>,
+ mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+ oleg@redhat.com, clm@meta.com, paulmck@kernel.org, bpf
+ <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <20240711134703.715e6361@gandalf.local.home>
+In-Reply-To: <20240711152238.GB3285@noisy.programming.kicks-ass.net>
+References: <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+	<20240709090304.GG27299@noisy.programming.kicks-ass.net>
+	<Zo0KX1P8L3Yt4Z8j@krava>
+	<20240709101634.GJ27299@noisy.programming.kicks-ass.net>
+	<20240710071046.e032ee74903065bddba9a814@kernel.org>
+	<20240710101003.GV27299@noisy.programming.kicks-ass.net>
+	<20240710235616.5a9142faf152572db62d185c@kernel.org>
+	<CAEf4BzZGHGxsqNWSBu3B79ZNEM6EruiqSD4vT-O=_RzsBeKP0w@mail.gmail.com>
+	<20240711085118.GH4587@noisy.programming.kicks-ass.net>
+	<20240712001718.e00caa0a3cb410dc19f169c2@kernel.org>
+	<20240711152238.GB3285@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: test: add MODULE_DESCRIPTION()
-To: John Johansen <john.johansen@canonical.com>,
-        Paul Moore
-	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
-	<serge@hallyn.com>
-CC: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
- <17dad6b9-9dc3-4b0f-bd3d-34e9e22e7627@canonical.com>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <17dad6b9-9dc3-4b0f-bd3d-34e9e22e7627@canonical.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: k8Mhs3lXG4xo2MilVXA2DfNYVGINlqP_
-X-Proofpoint-GUID: k8Mhs3lXG4xo2MilVXA2DfNYVGINlqP_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_12,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- impostorscore=0 mlxlogscore=635 lowpriorityscore=0 malwarescore=0
- adultscore=0 suspectscore=0 phishscore=0 bulkscore=0 priorityscore=1501
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110123
 
-On 6/25/24 01:26, John Johansen wrote:
-> On 5/29/24 18:21, Jeff Johnson wrote:
->> Fix the 'make W=1' warning:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in 
->> security/apparmor/apparmor_policy_unpack_test.o
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On Thu, 11 Jul 2024 17:22:38 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
+
+> > +UPROBES
+> > +M:	Masami Hiramatsu <mhiramat@kernel.org>
+> > +M:	Oleg Nesterov <oleg@redhat.com>
+> > +M:	Peter Zijlstra <peterz@infradead.org>
+> > +L:	linux-kernel@vger.kernel.org
+> > +L:	linux-trace-kernel@vger.kernel.org
+> > +S:	Maintained
+> > +Q:	https://patchwork.kernel.org/project/linux-trace-kernel/list/
+> > +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+> > +F:	include/linux/uprobes.h
+> > +F:	kernel/events/uprobes.c  
 > 
-> Acked-by: John Johansen <john.johansen@canonical.com>
+> Maybe no Q/T. Neither Oleg nor me have write access to that git tree.
 > 
-> I will pull this into my tree
+> Also, I think you want:
+> 
+> F: arch/*/kernel/uprobes.c 
+> F: arch/*/kernel/probes/uprobes.c 
+> F: arch/*/include/asm/uprobes.h
+> 
+> 
+> This is just to ensure get_maintainers.sh gets our email addresses for
+> all uprobes stuff.
 
-I still don't see this in linux-next.
-I'm hoping to have these warnings fixed tree-wide in 6.11.
+Agreed. As those files can go through other trees, it's best not to add
+linux-trace.git nor patchwork to MAINTAINERS file. It's just there to make
+sure the proper people are Cc'd.
 
+-- Steve
 
