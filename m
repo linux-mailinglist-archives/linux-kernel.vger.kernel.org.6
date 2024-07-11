@@ -1,211 +1,97 @@
-Return-Path: <linux-kernel+bounces-249601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DF192EDC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4718492EDC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 686C81C21CE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:28:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7419D1C218C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7158316EB46;
-	Thu, 11 Jul 2024 17:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A80E16E885;
+	Thu, 11 Jul 2024 17:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qcsi2N7J"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jM4VKXa2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E0516DEAA
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 17:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0BF16DC0F;
+	Thu, 11 Jul 2024 17:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720718855; cv=none; b=MPyeT0qJ5LjGtS50BNB5KeEE0Qa3j+Hb0Tzs0HF3UTMBECy4NtmbDVlnqYeWZCbPOKTBSbMMZW4sDm4zfAbabj7a8kpJiAIkWSZwsRWIsUko8kgklht8T7MDm6AA1EYtQwCvsl0J+cpSnhhpfcroRXBzH7C1pCKtJ/A0TkcOIa4=
+	t=1720718902; cv=none; b=XElRPNuy8QpW0yUzmfi4WZzvqI6k969kYEFgkMELyCHD6nCO+kptnDpWbZwgJkD2d0LUHhey7Nw4PoqyfQAeRMj10N22NqEfIg8A4TlGlUVg4kZQc/Hy0U3gND3Jr43HIxQxar3VON5Cxz0BP+5mqwXAB+M56/bfdX4c7Dqrtf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720718855; c=relaxed/simple;
-	bh=D5kYreCrB5xrumNP3OKohnR608Naw8wi1bCJDarZPNI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=W0GvJbOvq0WbY4LRIWsoJYH1LkLImruPyEu5Na/uH7Rg5no8hTborJxlABI4daVQOu+O8OHUBaTurW6t5pT0w8TXMDSZWTrYbcAyzBsDfgi4YT3VLmn4Am564V3RCmhZBMfb4ijPZmTeEB57wk43PKY0pF1HxayI8z84fTu0hgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qcsi2N7J; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720718852;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zJAVuyl9T4GQQYKbPn1wdX80P5wSTLbI1xM8EjpmCQk=;
-	b=Qcsi2N7JlUo7UYQPU5j65Ph93lNiZyFR+LewUZAvAgVJggXeL+qwRu0t+KtseLmr1ju+/K
-	WjUTJ2iMiO1Ce1YvDjWnnFfsSQ7EXpZ97RL4ioFND/PyE3vN/chu13DDm4Z7YcdhVw7T2X
-	izoCmVQPdoqa9zJl1CzmjlHxkEb/VEo=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-673-jLlutl05P0GQKdkY0OgvzQ-1; Thu, 11 Jul 2024 13:27:31 -0400
-X-MC-Unique: jLlutl05P0GQKdkY0OgvzQ-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-70b09eb46e4so1141655b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:27:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720718850; x=1721323650;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zJAVuyl9T4GQQYKbPn1wdX80P5wSTLbI1xM8EjpmCQk=;
-        b=CxgRKRIXmMsntPvUgs4NVdnL9otzqoRbgkYZ+ZHPlsGuiCmObpaQ83ntxzlh4dLjc4
-         58uvgq4NmdbUCuee1d1Rm5Af7VJR16eSyHr1/1EeLc0zon3812sVvE2+1FgfbPhfgF1o
-         3rZt63DrR2JgI4RTeOIclKtwBS3QRhs4R2oyyef+DAB3pYpRU7AT+wBz1Q1/VjEPJrlk
-         VV+2FkOlHErT/C1CK5Z+PzmjB6JASC/g2r8tHxlVqKgbvJ72neS2zaooQGwtaW14nouT
-         lKOP/vNggU4OoUD39LH0DOzlOkK3XiFLYrvkUW1f1rXHoU/s0kGHX4QSY3hU7Y6N/IEX
-         ACMQ==
-X-Gm-Message-State: AOJu0Yxd9R7ac7kWdmcT+n6dwwcLpJSYD/ADhFKIMEOCn5wqZ8DwQeL9
-	Iu1UyNPcLMiTFel8xgGy4Vp4hCkJ/SQIYRtsY98FcM24E7/77DP5XBDoMArqMx8n/WneIEc4hWA
-	EDpnBkYKeDAUegZt3PiwNBmD0FyporUddU56q+sI+8r/cnkHNGk1VDbq2iHtB7Q==
-X-Received: by 2002:a05:6a21:3393:b0:1c2:8e77:a813 with SMTP id adf61e73a8af0-1c298205f0dmr11027124637.1.1720718850308;
-        Thu, 11 Jul 2024 10:27:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHh44QMcq2txXbEeWFpr+RS5mfBXkcTVLyvOo+9zU+WfqfEcW+CPvdJNskQniJUZNJcHLgJ4A==
-X-Received: by 2002:a05:6a21:3393:b0:1c2:8e77:a813 with SMTP id adf61e73a8af0-1c298205f0dmr11027098637.1.1720718849890;
-        Thu, 11 Jul 2024 10:27:29 -0700 (PDT)
-Received: from [10.35.209.243] ([208.115.86.77])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab75ffsm53099335ad.175.2024.07.11.10.27.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 10:27:29 -0700 (PDT)
-Message-ID: <54b6de32-f127-4928-9f4a-acb8653e5c81@redhat.com>
-Date: Thu, 11 Jul 2024 19:27:27 +0200
+	s=arc-20240116; t=1720718902; c=relaxed/simple;
+	bh=V1YprhAmorpwrONXWh+NHJ2n1tCH1SDtbs2oxzRP8Sc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lWmC0/1+1Wdm42nf1kTbsKTenlQ51AgJnt4Uvbgv+5V/pn9WvHVM58m55dxZGs4CzsjjojWbyfkMMegMUSrjtTZGO6Vt6DXZKqu2s5zmb6mJhoT4rH3wO0XiVtDPn0QZBeUgwfCc0JRBuGceiE4y+T9jFLOd/dIpAvIVjtOFtas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jM4VKXa2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12E99C32786;
+	Thu, 11 Jul 2024 17:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720718902;
+	bh=V1YprhAmorpwrONXWh+NHJ2n1tCH1SDtbs2oxzRP8Sc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jM4VKXa2LxfHcB3j7rlu1fknEoLHy8oYGGdxVVwjoD7IPi6RBifzLYdH5rvw/8fwG
+	 gt+p/5GSs+EHXw5aMp4bwhEviArbsH3w4kh0XOgqqftFPEfjYD+tV6+YKgCcbn41Yr
+	 0EARCCMt5EBcM2FZuBqYGSZae6n0hiTVk4TZw2bbovwbDy/TK0dE79CrJLEhwDPFiw
+	 TVnkeqnvZV3MuUmsvxQhjJMN1bZIurMbyw9jVGdNH1pw9sestB0531hTUTVhRwfPi3
+	 63O7g+Tmsl1Ed3zoEJEn9l3zLYzYSG8nWx7echGT6zwOhXzklDGpwTxhrbF+CRiLZw
+	 wf72jzJB2PSDg==
+From: Kees Cook <kees@kernel.org>
+To: Sathya Prakash <sathya.prakash@broadcom.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	MPT-FusionLinux.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 0/6] scsi: message: fusion: Replace 1-element arrays with flexible arrays
+Date: Thu, 11 Jul 2024 10:28:14 -0700
+Message-Id: <20240711172432.work.523-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
- lazily freeable mappings
-From: David Hildenbrand <david@redhat.com>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
- tglx@linutronix.de, linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
- x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
- Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
- Christian Brauner <brauner@kernel.org>,
- David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-References: <20240709130513.98102-1-Jason@zx2c4.com>
- <20240709130513.98102-2-Jason@zx2c4.com>
- <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
- <9b400450-46bc-41c7-9e89-825993851101@redhat.com>
- <Zo8q7ePlOearG481@zx2c4.com> <Zo9gXAlF-82_EYX1@zx2c4.com>
- <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
- <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
- <ZpAR0CgLc28gEkV3@zx2c4.com> <ZpATx21F_01SBRnO@zx2c4.com>
- <98798483-dfcd-451e-94bb-57d830bf68d8@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <98798483-dfcd-451e-94bb-57d830bf68d8@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=975; i=kees@kernel.org; h=from:subject:message-id; bh=V1YprhAmorpwrONXWh+NHJ2n1tCH1SDtbs2oxzRP8Sc=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmkBYzIn64pgvfTCbTO9TZjopxPJO2NthyC8yVV cQ6YPmSc9uJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZpAWMwAKCRCJcvTf3G3A Jm0nD/9ra65WzdfD1AZ90IYwRQyH5y1/k/Db3vsdyfGwrQbWVPpCWci6pnmd7Qi33S0fYS0mF6L moaj73hu48n0ED5mlQBI3NN9mLx5569HRH1ZnTdRWZFpvKKv2/cSCtDw3ipRYOf24J7I+wMUn75 jQfZshvwne+R+Qgr62j+Zz/nTJCT5lLE+Ntg7ET3Y+0NFTD56NCw1csr31S7AYrPLo/DMTqzlti +tvAh06Yxm9VMIiunp/DFv1b7WlXLh73K/JzQqPZPWSFtm0BRAWqJkzd6umhD8+JljGBq5GS1/d AS3s2pBNaTjEOz7Jm7aJt1CvIO4bbggBaV1fqynnI/XCa7LOImxPCiIWK/vDPmtpfXDOHS9VVW1 nR9Xz8dNB7i4uMfqG2ScO0ARCC5BEyzsOTopcKDNB+ebImO1xlN5kNNSQ64l6u3fJcOIGbCA7OH hCLl8zHbtPmo5o7fVJ7ofo/VpLECCMT06USH/bawaRaHsZwPoGzb/GEaBHzlZiLxDTJafVAQ/kv H6k7mo0j7zU3La4j+XVF16LNEesY0GmDhd/rIRA+o80x7G+PDX8HsZZc7Ua4cKG/3asVAdGVjuH hEo5CTjdFzwwndMSV1RVc2I9DUqGso01IdO7Gemb7Y9Ci3C+qWEP/K8/a1HuxVSz6FaoPHrnjEu b4rMy5UnBzUZi1
+ Q==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On 11.07.24 19:24, David Hildenbrand wrote:
-> On 11.07.24 19:17, Jason A. Donenfeld wrote:
->> On Thu, Jul 11, 2024 at 07:09:36PM +0200, Jason A. Donenfeld wrote:
->>> So, hmm... The swapbacked thing really seemed so simple... I wonder if
->>> there's a way of recovering that.
->>
->> Not wanting to introduce a new bitflag, I went looking and noticed this:
->>
->> /*
->>    * Private page markings that may be used by the filesystem that owns the page
->>    * for its own purposes.
->>    * - PG_private and PG_private_2 cause release_folio() and co to be invoked
->>    */
->> PAGEFLAG(Private, private, PF_ANY)
->> PAGEFLAG(Private2, private_2, PF_ANY) TESTSCFLAG(Private2, private_2, PF_ANY)
->> PAGEFLAG(OwnerPriv1, owner_priv_1, PF_ANY)
->>           TESTCLEARFLAG(OwnerPriv1, owner_priv_1, PF_ANY)
->>
->> The below +4/-1 diff is pretty hacky and might be illegal in the state
->> of California, but I think it does work. The idea is that if that bit is
->> normally only used for filesystems, then in the anonymous case, it's
->> free to be used for this.
->>
->> Any opinions about this, or a suggestion on how to do that in a less
->> ugly way?
->>
->> Jason
->>
->>
->> diff --git a/mm/rmap.c b/mm/rmap.c
->> index 1f9b5a9cb121..090554277e4a 100644
->> --- a/mm/rmap.c
->> +++ b/mm/rmap.c
->> @@ -1403,6 +1403,8 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
->>    	 */
->>    	if (!(vma->vm_flags & VM_DROPPABLE))
->>    		__folio_set_swapbacked(folio);
->> +	else
->> +		folio_set_owner_priv_1(folio);
-> 
-> 
-> PG_owner_priv_1 maps to PG_swapcache? :)
+Hi,
 
-Maybe the combination !swapbacked && swapcache could be used to indicate 
-such folios. (we will never set swapbacked)
+Replace all remaining uses of deprecated 1-element "fake" flexible arrays
+with modern C99 flexible arrays. Add __counted_by annotations at the
+same time.
 
-But likely we have to be a bit careful here. We don't want 
-folio_test_swapcache() to return for folios that ... are not in the 
-swapcache.
+Thanks!
+
+-Kees
+
+Kees Cook (6):
+  scsi: message: fusion: struct _RAID_VOL0_SETTINGS: Replace 1-element
+    array with flexible array
+  scsi: message: fusion: struct _CONFIG_PAGE_SAS_IO_UNIT_0: Replace
+    1-element array with flexible array
+  scsi: message: fusion: struct _CONFIG_PAGE_RAID_PHYS_DISK_1: Replace
+    1-element array with flexible array
+  scsi: message: fusion: struct _CONFIG_PAGE_IOC_2: Replace 1-element
+    array with flexible array
+  scsi: message: fusion: struct _CONFIG_PAGE_IOC_3: Replace 1-element
+    array with flexible array
+  scsi: message: fusion: struct _CONFIG_PAGE_IOC_4: Replace 1-element
+    array with flexible array
+
+ drivers/message/fusion/lsi/mpi_cnfg.h | 60 +++------------------------
+ 1 file changed, 6 insertions(+), 54 deletions(-)
 
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
