@@ -1,90 +1,60 @@
-Return-Path: <linux-kernel+bounces-249746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CAC92EF45
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:59:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8663D92EF48
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5531C226F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C11C1C22763
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B99216EB4F;
-	Thu, 11 Jul 2024 18:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1FB16EB67;
+	Thu, 11 Jul 2024 19:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Md30t4w4"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="38RwiT9X"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C94D161939;
-	Thu, 11 Jul 2024 18:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A1E1EEF8;
+	Thu, 11 Jul 2024 19:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720724360; cv=none; b=kVu6KGDg5VxXwSdNCiriHbL5h7u7mQZ8vICtOSRCIGZuqYZ/6MKvo2MD3jS5DbBp15ncKZK0pOlL+nRrWH4l/puCv5oWLCvp0N0v2lN4yf2C2Q5XR22cYy7KH/mJphfSzj+sWItQjUJb4cU2cgm4Oagz4W5ITBPyFwEL/Vlo/yc=
+	t=1720724527; cv=none; b=aTECLNGs9rXJSuw+fMDhM1PuzgxDhQ0+BDCcLhX1T/I9UBAxZ0OfMEq2j2T9RH3RdF52Y5FBZpcGmCvuOafsK2m2aLRBjXTngdetSLYlOSuMNTdmptAGQhtS+0aJNoaoJEnnE4PhBMVij1qRAUsUz/ErEigL7poxsxkuPAlzQiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720724360; c=relaxed/simple;
-	bh=UdguaAOSauFRiLzQp7YnrXVJzMCTkUQF9aOc83nB8fw=;
+	s=arc-20240116; t=1720724527; c=relaxed/simple;
+	bh=T5ur6kTMiFkf6ydxqgDppTo0id0QsIx/TC9h4lnYQlM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xb/3qwzb8f5zn6qughU66YRcu1f+zjkmfm9OXHSYN2laIOhg9lCvfQzzCW2+EiTnRlOpXTok3J0sSpBKjazFHpDOi8aHnkRs7iSN8BT3cjSUFchQpuakoLd7cSqIO2k/Pg9pj1fafTh+9DQlJPqSG7Gtm3GzTnHwrpr1lv5RERg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Md30t4w4; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-70b2421471aso838144a12.0;
-        Thu, 11 Jul 2024 11:59:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720724359; x=1721329159; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wAwJOLFxUKa89FAigcoASIJTkbTM7IYYEPI8ZeQQfr4=;
-        b=Md30t4w4QdgBzY039RdVNHeKySocVwPxwzh0myZPzQFp43AuKte27zaiEUgp1Pvp8o
-         Z6OgnMc/RmTTgUdRBvqmITP4uEJjJZnJ2S84+98xlbif1R0DbBkrM4Wg/1VE53sfKR2E
-         ZjipEjXRF9N5siEY2qg9A2Lovg1Ovvx4fMgEr+2p/xA5HIO9F1xA19hKpHyVNEjJE7zJ
-         LGiF9DPkAl9Y50U1YH9uHmhIwy2pzn6MnnjryYZUOpo9v5jfWeSP0gLxXt65251tgr6t
-         0O6YT68dzCE5I9Nj+VEP2YlkVDCkLlMtdjxkp3MWJXUMx/hhultsWpEFidjCpkjgalbw
-         aK0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720724359; x=1721329159;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wAwJOLFxUKa89FAigcoASIJTkbTM7IYYEPI8ZeQQfr4=;
-        b=E++U9Uuy+/CneXCq1SL6vcMZX/D9Ws28OMJiW1pGIuSTMzIpNEIWpqMkkNd6pwGUEc
-         nOHR13k4wbXOhIxRagFUfzkefnutuevA9Yk0KJ4Bdbro9eWc4iNoS0h/lVceUJiqYYs7
-         EwPuvXBkx/YOCidB6i5AsBCLYtwdiFwhXDV5tAhTkUiIw9V5iH6AqvSZ04qxPf+auFX6
-         LriXWVMtJsgnmiuN8L8TuJhnqsxJ4eLAuAM85OInHXrPqDLbsS/OlZx0tVQm7C0rKEDR
-         aZmsSKcAg1M5h9otivqwovXU9s7HBSfoTQrX9ebx+eb0OniA85XJtj4lRCSTb//SQBnX
-         tm1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXh1h1FkCXJtiUJ8/LluaMuBdPF89NiNZda+dsXjdSKMtT6wNF1iZSWFtmqFvKb+RnUBiEVCIw8H2QDMuYHc/WYfYRHLMM3A+dd5aYXhO260nAJlEIPX/DhEPoZ3m7RDLfrxw5iKAc9A8cuPhKTuU458SQXHjBD++ebB8NspKvu1Q==
-X-Gm-Message-State: AOJu0Yww9zkwpQAEWpIky69LtX5EzIFt/9ZOL3kBdAx6YWU7xnukwgrs
-	pbxj/iYXFXO3G4yMvDb1TmBXS37i4PbyVz3+awCbW9sN3bjdTGd4
-X-Google-Smtp-Source: AGHT+IEaYZysFDr3u4TvfrN/2rI5XMfoEv2tJeStwbblXJH7peMkHGNb5Ktf37hygbsa/aaUPqKrcQ==
-X-Received: by 2002:a05:6a20:6a10:b0:1c2:94ad:1c6a with SMTP id adf61e73a8af0-1c29824f1dcmr12400776637.37.1720724358676;
-        Thu, 11 Jul 2024 11:59:18 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b54ea2279sm3635520b3a.171.2024.07.11.11.59.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 11:59:17 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Thu, 11 Jul 2024 08:59:16 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [PATCH v3 1/2] cgroup: Show # of subsystem CSSes in cgroup.stat
-Message-ID: <ZpArhD49OonR6Oz6@slm.duckdns.org>
-References: <20240710182353.2312025-1-longman@redhat.com>
- <20240711134927.GB456706@cmpxchg.org>
- <4e1078d6-6970-4eea-8f73-56a3815794b5@redhat.com>
- <ZpAT_xu0oXjQsKM7@slm.duckdns.org>
- <76e70789-986a-44c2-bfdc-d636f425e5ae@redhat.com>
- <ZpAoD7_o8bf6yVGr@slm.duckdns.org>
- <e5348a85-22eb-48a6-876d-3180de5c7171@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u3osi+7dbOnJNMFet7fRoqNNtMiEWiodt+wRPczuBxE5i06e/lbQK6pUVQWTKHytrsNKBqAEM02NXZArGgYadsx+UkV4eq6xa8Ej9scQFkxBFQChP5SdlV0az/lJBdXhOFGwY2T4dhSzYFItsXMxMo/69IBneWo76dIsqvGVDmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=38RwiT9X; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=oICfSKcVVEwr9lphhag1D//hdbq9wT1yKGoVIaAkzZM=; b=38RwiT9Xpuk8RpGPbWTjeK8nSv
+	Eb5BgasInFjvbdq/uyC7f6aRNrJYcawfB5gZMCPGJyQZPOfWiq89IbbPmLIk9GQWOhhsT/XxW+cSj
+	Us21iANKJpy8Oazhd6O1A6qfEBojrdrlpMkEDqmvZa9XrDBGCvysiJcamxBjIInX6jU8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sRz3E-002LP6-G2; Thu, 11 Jul 2024 21:01:56 +0200
+Date: Thu, 11 Jul 2024 21:01:56 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kamil =?iso-8859-1?Q?Hor=E1k_=282N=29?= <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 4/4] net: phy: bcm-phy-lib: Implement BroadR-Reach
+ link modes
+Message-ID: <885eec03-b4d0-4bd1-869f-c334bb22888c@lunn.ch>
+References: <20240708102716.1246571-1-kamilh@axis.com>
+ <20240708102716.1246571-5-kamilh@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,33 +63,175 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e5348a85-22eb-48a6-876d-3180de5c7171@redhat.com>
+In-Reply-To: <20240708102716.1246571-5-kamilh@axis.com>
 
-On Thu, Jul 11, 2024 at 02:51:38PM -0400, Waiman Long wrote:
-> 
-> On 7/11/24 14:44, Tejun Heo wrote:
-> > Hello,
-> > 
-> > On Thu, Jul 11, 2024 at 01:39:38PM -0400, Waiman Long wrote:
-> > > On 7/11/24 13:18, Tejun Heo wrote:
-> > ...
-> > > Currently, I use the for_each_css() macro for iteration. If you mean
-> > > displaying all the possible cgroup subsystems even if they are not enabled
-> > > for the current cgroup, I will have to manually do the iteration.
-> > Just wrapping it with for_each_subsys() should do, no? for_each_css() won't
-> > iterate anything if css doesn't exist for the cgroup.
-> 
-> OK, I wasn't sure if you were asking to list all the possible cgroup v2
-> cgroup subsystems even if they weren't enabled in the current cgroup.
-> Apparently, that is the case. I prefer it that way too.
+> +static int bcm5481x_get_brrmode(struct phy_device *phydev, u8 *data)
+>  {
+> -	int err, reg;
+> +	int reg;
+>  
+> -	/* Disable BroadR-Reach function. */
+>  	reg = bcm_phy_read_exp(phydev, BCM54810_EXP_BROADREACH_LRE_MISC_CTL);
+> -	reg &= ~BCM54810_EXP_BROADREACH_LRE_MISC_CTL_EN;
+> -	err = bcm_phy_write_exp(phydev, BCM54810_EXP_BROADREACH_LRE_MISC_CTL,
+> -				reg);
+> -	if (err < 0)
 
-Yeah, I think listing all is better. If the list corresponded directly to
-cgroup.controllers, it may make sense to only show enabled ones but we can
-have dying ones and implicitly enabled memory and so on, so I think it'd be
-cleaner to just list them all.
+bcm_phy_read_exp() could fail. So you should keep the test. Also, the
+caller of this function does look at the return value.
 
-Thanks.
+> +/**
+> + * bcm5481x_read_abilities - read PHY abilities from LRESR or Clause 22
+> + * (BMSR) registers, based on whether the PHY is in BroadR-Reach or IEEE mode
+> + * @phydev: target phy_device struct
+> + *
+> + * Description: Reads the PHY's abilities and populates
+> + * phydev->supported accordingly. The register to read the abilities from is
+> + * determined by current brr mode setting of the PHY.
+> + * Note that the LRE and IEEE sets of abilities are disjunct.
+> + *
+> + * Returns: 0 on success, < 0 on failure
+> + */
+> +static int bcm5481x_read_abilities(struct phy_device *phydev)
+> +{
+> +	int i, val, err;
+> +	u8 brr_mode;
+> +
+> +	for (i = 0; i < ARRAY_SIZE(bcm54811_linkmodes); i++)
+> +		linkmode_clear_bit(bcm54811_linkmodes[i], phydev->supported);
+> +
+> +	err = bcm5481x_get_brrmode(phydev, &brr_mode);
 
--- 
-tejun
+> +static int bcm5481x_set_brrmode(struct phy_device *phydev, bool on)
+> +{
+> +	int reg;
+> +	int err;
+> +	u16 val;
+> +
+> +	reg = bcm_phy_read_exp(phydev, BCM54810_EXP_BROADREACH_LRE_MISC_CTL);
+> +
+> +	if (on)
+> +		reg |= BCM54810_EXP_BROADREACH_LRE_MISC_CTL_EN;
+> +	else
+> +		reg &= ~BCM54810_EXP_BROADREACH_LRE_MISC_CTL_EN;
+> +
+
+> +static int bcm54811_config_init(struct phy_device *phydev)
+> +{
+> +	struct device_node *np = phydev->mdio.dev.of_node;
+> +	bool brr = false;
+> +	int err, reg;
+> +
+>  	err = bcm54xx_config_init(phydev);
+>  
+>  	/* Enable CLK125 MUX on LED4 if ref clock is enabled. */
+> @@ -576,29 +687,80 @@ static int bcm54811_config_init(struct phy_device *phydev)
+>  			return err;
+>  	}
+>  
+> -	return err;
+> +	/* Configure BroadR-Reach function. */
+> +	brr = of_property_read_bool(np, "brr-mode");
+> +
+> +	/* With BCM54811, BroadR-Reach implies no autoneg */
+> +	if (brr)
+> +		phydev->autoneg = 0;
+> +
+> +	return bcm5481x_set_brrmode(phydev, brr);
+>  }
+
+The ordering seems a bit strange here.
+
+phy_probe() will call phydrv->get_features. At this point, the PHY is
+in whatever mode it resets to, or maybe what it is strapped
+to. phydev->supported could thus be set to standard IEEE modes,
+despite the board design is actually for BroadR-Reach.
+
+Sometime later, when the MAC is connected to the PHY config_init() is
+called. At that point, you poke around in DT and find how the PHY is
+connected to the cable. At that point, you set the PHY mode, and
+change phydev->supported to reflect reality.
+
+I really think that reading DT should be done much earlier, maybe in
+the driver probe function, or maybe get_features. get_features should
+always return the correct values from the board.
+
+> +static int bcm5481_config_aneg(struct phy_device *phydev)
+> +{
+> +	u8 brr_mode;
+> +	int ret;
+> +
+> +	ret = bcm5481x_get_brrmode(phydev, &brr_mode);
+
+Rather than read it from the hardware every single time, could you
+store the DT value in bcm54xx_phy_priv ?
+
+> +/* Read LDS Link Partner Ability in BroadR-Reach mode */
+> +static int bcm_read_lpa(struct phy_device *phydev)
+
+This function seems to be missing an lds or lre prefix.
+
+> +static int bcm_read_status_fixed(struct phy_device *phydev)
+
+and here. Please make sure the naming is consistent. Anything which
+only accesses lre or lds registers should make that clear in its name.
+
+> +static int bcm54811_read_status(struct phy_device *phydev)
+> +{
+> +	u8 brr_mode;
+> +	int err;
+> +
+> +	err = bcm5481x_get_brrmode(phydev, &brr_mode);
+> +
+> +	if (err)
+> +		return err;
+> +
+> +	if (brr_mode) {
+> +		/* Get the status in BroadRReach mode just like
+> +		 *   genphy_read_status does in normal mode
+> +		 */
+> +
+> +		int err, old_link = phydev->link;
+> +
+> +		/* Update the link, but return if there was an error */
+> +
+> +		err = lre_update_link(phydev);
+> +		if (err)
+> +			return err;
+> +
+> +		/* why bother the PHY if nothing can have changed */
+> +		if (phydev->autoneg ==
+> +		    AUTONEG_ENABLE && old_link && phydev->link)
+> +			return 0;
+> +
+> +		phydev->speed = SPEED_UNKNOWN;
+> +		phydev->duplex = DUPLEX_UNKNOWN;
+> +		phydev->pause = 0;
+> +		phydev->asym_pause = 0;
+> +
+> +		err = bcm_read_master_slave(phydev);
+> +		if (err < 0)
+> +			return err;
+> +
+> +		/* Read LDS Link Partner Ability */
+> +		err = bcm_read_lpa(phydev);
+> +		if (err < 0)
+> +			return err;
+> +
+> +		if (phydev->autoneg ==
+> +		    AUTONEG_ENABLE && phydev->autoneg_complete) {
+> +			phy_resolve_aneg_linkmode(phydev);
+> +		} else if (phydev->autoneg == AUTONEG_DISABLE) {
+> +			err = bcm_read_status_fixed(phydev);
+> +			if (err < 0)
+> +				return err;
+> +		}
+
+This would probably look better if you pulled this code out into a
+helper bcm54811_lre_read_status().
+
+    Andrew
+
+---
+pw-bot: cr
 
