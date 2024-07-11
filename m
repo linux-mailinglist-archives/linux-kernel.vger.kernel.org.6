@@ -1,178 +1,226 @@
-Return-Path: <linux-kernel+bounces-248893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D9E92E359
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:21:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186AC92E35B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:21:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 971E31F23FD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:21:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 754F7B22399
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B17155A52;
-	Thu, 11 Jul 2024 09:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFA415575B;
+	Thu, 11 Jul 2024 09:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Xy8zeInq"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="GlCweC5Z"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2096.outbound.protection.outlook.com [40.107.215.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E6414F111;
-	Thu, 11 Jul 2024 09:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720689679; cv=none; b=kb3vCGqfq2xUijg3dEfmM76xF5m9NSeCk1GFB5OlQR8CkZKU+4j/0alFgfRBxGEwz6EPp67WDrgMD/m0Uf2XJo2b/+M8921VJomUjt7d0d8fHWLTuq/r9pB+gywpBd11aWe+2RTAdrucAHnP1C8nO/HEwuyuwTtWwTwJtcmBVow=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720689679; c=relaxed/simple;
-	bh=tQJG8NMkrg/xn3s3bUs1n5Z3qe5f9ytiiGMbVgyGTIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gHJixwJg2rearfDnH9S2vjkDs/N77051Rp1p/Ni4Yy9kONVTuWrYftN8btlGJJgDHryOSFvcyZMLtZ9E+SIqE8G+VhyWR9T1npqprsmxj+9lmuPAc1WKBqW5C8UvrAuA4l163BTB8oBQxBgbAOpM50DZibnrRFOUBXq4VaXOvZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Xy8zeInq; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720689675;
-	bh=tQJG8NMkrg/xn3s3bUs1n5Z3qe5f9ytiiGMbVgyGTIM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Xy8zeInqd48+wCBkc5QVrJawwT+52nNTL1C+MooVJlMxQKTd0rRFbRbL+kyaEyw0n
-	 dl8rOynHmRCEEjrS0uK/VWHdeKddAp6G5EFTD4fwKFSOYKmfKctAhffrvqIh/f28tw
-	 X4Kv4sQQylJ6LjB4kN6IsHSV8zNKiOUcscCdIbrJz71O/jksNPCedqTBVUzgXGtwFN
-	 aIYBOgEREZPdl9NFzOUQXR9E3NHaPdEbYo9wB0onL0+n/ysyXLxj/d7NsxWR+nhQ1u
-	 At6FwucdE0gYXcDuqvAcOhedrJ4Wduu83vB4IuBIUfSYoQjwzQOATADYqDv6vpahG7
-	 pnxxvUG6nKFSg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0051137811F4;
-	Thu, 11 Jul 2024 09:21:14 +0000 (UTC)
-Message-ID: <2dba1638-f155-463b-8f87-421101b8f4f2@collabora.com>
-Date: Thu, 11 Jul 2024 11:21:14 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9506F14F111;
+	Thu, 11 Jul 2024 09:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720689706; cv=fail; b=SZWrFToQNtKVEJM48lpu/wt4WbWkeSQMPnk/vM5PWo0kR6iKAyu1q5CZUbOeKdykwAYgHmU2F25LphPyTjCvc+ij2HmtE+Huo96LZBYIOiV4lsneWgsS0AGSfXJSJs/thOZbDt1keEFdHoaVZDRU5DVGVFN2ofW3qbXtDIBzJ1c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720689706; c=relaxed/simple;
+	bh=jCUtfLMdlGqQ+suhTTcn8QAoFelYt/p20Oen7Z0T9EM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Poc5gXGmlA+mDi7YuX3x39aY5HJKRZ4iMZYWj7kIIi5x3D1RlqGK9EQgod2lugr4guw185KJ4lrqfjPyjn1xGwxUiNRF/NKTmyA3kA/WMjbyGo0RGgS5e691oXSatdJrn2+PzHpDufs6BpWG7epQsQou6Bw5ZrJGzQqaExiWRGA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=GlCweC5Z; arc=fail smtp.client-ip=40.107.215.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=flmd6VnrK8NxAtA9eLyHQ80YzNjrBOy5kLjhYZLVHT4ED1PBmJJ+7g4Vvz2e52pghnztUlVqxOgldbHiRPtn0fVUt+9JpjBQB0du2eVWuGLvH9ZhOyOMVDehJhLpmNE7zK71AEUosyMUSVMWRAyMEvbiB575fi7j5Ze5LvhXS8s2kG6MemBYdr2Gysq2CUQR3Gg6WV1U5SyHq33MGlt8vOpdcE3pumSWwvTMEYMTzxcU66tQIzKMWNJdjexz8D5zGDgHcBp9wTfKqbqftTbLNPyTkqcDbFn0YmCwohi0+1BlRU7Zr7AFbJqgThYG1Y2TJOFa+QZtXWVuUgvHKcgxbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=muysqAzZnksQWdcYQMP/1nE1QtP26I0Yx30WrT8Jujs=;
+ b=WCu12EFejOwvR+NvDwsXjLw+dJ9JnbXvIHASdlOSaBtUsOk0wP1+VfOah26qJk/y4mp1vtm/XznTbZ/FrFChjmLSQQDB2bs3eZvFNLdPOoqqy+h7ZfN1aRy2FfJ+6OfW+/1SuEg9+BGqKBEQS0+cXT3LaiM6if8nuqHQW959jpzOqrnh9vRFdHUL4weBkMp6MsFw2GQlPOy5wyVnBfl7RrJJCVzPySgQhc+B3+VeERGRjq6q3OkjxiRLfhCAsypRQInd4IqJaiQ5gwB7XCRQb1NXZ2F1ulCP0NlqNHbcINjdoq3RnylAE+9zMoWPocp9T8HRakAHbvRml1Ut2gmrcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=muysqAzZnksQWdcYQMP/1nE1QtP26I0Yx30WrT8Jujs=;
+ b=GlCweC5ZVRciyhzFxY3WZvhGfFdgqtNOyTWl369/4G56NGjOGh9Tl/ohaC8CJjvxtUNaKuLgLXNlSpfSJwRsELKvIq0xTIF/sAYARyb9eVDvf9WWyzUcdRGcliP8RdHWxsZxqekY+jqRLt4dK6/76Rurlao+yrfydYdTF3tEJ31g6sBGfP4CCeOF5cUVtq5OkXrSqUWlmjc+5PmdJWvoGuMs2tSyCtM6p/PpVxtwqdLDakLkdKwC90a4QMevzJMIIq56JFR+LWxVwwE31DlfYz7Vkb/dc/hwVLGj+1AvmZMyD6iNyse/tj2PWkOsik+vTYgK+CM1r7ZCkY08+ePPKQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from JH0PR03MB7384.apcprd03.prod.outlook.com (2603:1096:990:11::8)
+ by TYSPR03MB7783.apcprd03.prod.outlook.com (2603:1096:400:411::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22; Thu, 11 Jul
+ 2024 09:21:40 +0000
+Received: from JH0PR03MB7384.apcprd03.prod.outlook.com
+ ([fe80::1ff4:d29:cc2e:7732]) by JH0PR03MB7384.apcprd03.prod.outlook.com
+ ([fe80::1ff4:d29:cc2e:7732%7]) with mapi id 15.20.7741.033; Thu, 11 Jul 2024
+ 09:21:39 +0000
+Message-ID: <89e1ec7c-0269-4795-923a-249013b2267b@amlogic.com>
+Date: Thu, 11 Jul 2024 17:21:36 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] Add support for Amlogic T7 reset controller
+To: neil.armstrong@linaro.org, Philipp Zabel <p.zabel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Zelong Dong <zelong.dong@amlogic.com>
+References: <20240422-t7-reset-v2-0-cb82271d3296@amlogic.com>
+ <c11bfe7e-e917-4ecd-ab2c-548332a4d22d@linaro.org>
+Content-Language: en-US
+From: Kelvin Zhang <kelvin.zhang@amlogic.com>
+In-Reply-To: <c11bfe7e-e917-4ecd-ab2c-548332a4d22d@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR04CA0215.apcprd04.prod.outlook.com
+ (2603:1096:4:187::14) To JH0PR03MB7384.apcprd03.prod.outlook.com
+ (2603:1096:990:11::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Probe failure of usb controller @11290000 on MT8195 after
- next-20231221
-To: Macpaul Lin <macpaul.lin@mediatek.com>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com,
- Chen-Yu Tsai <wenst@chromium.org>, Bear Wang <bear.wang@mediatek.com>,
- Pablo Sun <pablo.sun@mediatek.com>
-References: <9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano>
- <064935d8-fbda-4eda-b013-8c8fc63b561c@collabora.com>
- <375b2345-657a-4b8f-b5e3-dc16784ffde9@notapiano>
- <da27d957-866f-f055-9e83-cdc362d98dc7@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <da27d957-866f-f055-9e83-cdc362d98dc7@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: JH0PR03MB7384:EE_|TYSPR03MB7783:EE_
+X-MS-Office365-Filtering-Correlation-Id: 348546d9-ff21-48b7-acb8-08dca18adea0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZmtPdGJwdDZBMlVQRkNrbUtONHhnMExJdWFHekRiZmlpMjRrWURxNVpVbGEw?=
+ =?utf-8?B?cm1ZOFVpUkxXcGtKS1o4cUoyYkF4QXJpcGluTVlyNmdwbEZQVWxXeTZabmJv?=
+ =?utf-8?B?c3RGNFN6d3oxRUVOQVJVbEZmYWFUTS9aN2xXVjJRaXVwRmUwTHkwelhSbG5h?=
+ =?utf-8?B?d1pOL3g4ZEMvTmNoWXVZdThLVC9HUHJObkdzdjlKZmFCNGVjZHd5K1h1ZDdo?=
+ =?utf-8?B?eWUzRGx0N0U4T3ZTT1BuZkdNMDBIYldGZVZ5bFJiazhXMkt2VXE0MGkrbzd1?=
+ =?utf-8?B?dlFqYkFnSjhhc1hWZUcrNjh5cGpwN09hV2lBWjlXczZDSi80VzZXOStZOEwz?=
+ =?utf-8?B?WmxCaWkxTkg4QlVRd05zN0lDN0JoRWJNWXg3R1E0UDkzSDFRdncyb2hhTHd5?=
+ =?utf-8?B?Wk9PYnd6WjZRMVJqRnlkVkwzajM2U2ZEZzFNdENXNnlzdUZWUndUVFdrY2lv?=
+ =?utf-8?B?eUNCR29DK0lJWlNhTmkxeWt5cHFBV1U1RkRlT2VEM3J5T1pOOU5pK2JJWVpV?=
+ =?utf-8?B?eEF6NGlaNGhncmc0UUtWRHNDU3lPS0FheklxR2t1RjkzeWErYndqZzRSa253?=
+ =?utf-8?B?RUZFK3M5QTltU3grbFhXOG9aeU1GQmg2RjlyYndoWS9Ja0l0TXFyRkhrK1Y2?=
+ =?utf-8?B?VlBDbmJJMHZ0Q2xMUmdEWlZLUEtoRlVlNUgveHZ2NGMrR1kvbElxZFJCQU1S?=
+ =?utf-8?B?OWxJWHdzT0kyNi9OdXc3WDNUZkl1SU1tZkpMZU4yYWZ2UkVxQXZybVhDWVkw?=
+ =?utf-8?B?ZmdGUkozVmJqNDFjOGxtMUNTSmc2STQxcjE3Y2xva2RsZFc4VDJFbHZVWXIw?=
+ =?utf-8?B?d1dHZ0VIOEtETEtzek9kc3hpcnIxNnJHcXpGSWR1cTAzdlJvRGxrNWErQ2wx?=
+ =?utf-8?B?ZEFJa1kwUzJvbmV2c1RVNVVXdkNJTEMvQjkxUTljWjZBZmlqMXFFRStSV0NG?=
+ =?utf-8?B?WWNqMlpCUCt0akJDMGJYbzlibHdIMGljUWVJNlEvdjIxQ2lyM25HOXBSaU42?=
+ =?utf-8?B?UmY1OGNpdW9xR3RlNGFSeXNWOXlqckVqd1ZJL0N1UitJU0pTR1ZnT2hxZVV1?=
+ =?utf-8?B?TXF2L1NCajUyM3hZbWJQODdRVnBxM0ZsWXNLVDlpaDc1d2d1M1NXRWx3eERr?=
+ =?utf-8?B?OFhENGpMeGk4YkNRQ2dzS0MxU1JXbE5MZHpacDJBRDQzV25VeWdMZ1NHUlU3?=
+ =?utf-8?B?bThwaFA5bTFxU1dlQWhreTUrSXZVMGZBb3J0QzNaUkZXMno3Nyt2QVdKN1Fu?=
+ =?utf-8?B?TlYzM1NzTDA2a1pENHBEQnVRK3k1S1NQVW9iZnNVQUdWcGd1RDJRZitnSExV?=
+ =?utf-8?B?MDFyb05MNjdOZndLRE1MWnBJSmk4V0dSS3prakl3V3dZQStPQjFwaThoNVcx?=
+ =?utf-8?B?L28rY1AyQnpLQzVjaTZaSnNyYnJrM1JQU1k4bGdiUDQzVEtBQTB5ek9rSGhG?=
+ =?utf-8?B?VjNVeDErUWdaeitIOUxnY0hoYVZXTkpJeTRlV0lyaE5ET08rRXZ5ay95bWNp?=
+ =?utf-8?B?dXFrZ2Zramd1VXplVDVTZGZtYTg0ZU9aVHh6aVZ3dXdKNXdCL2ZRTjFBV0dE?=
+ =?utf-8?B?ZzRqZ3lxU1d5a0tWU3B2dkp0MjdxeU5jelBqTExMQS82MXdobkp1eEI1aFhE?=
+ =?utf-8?B?cFBNM0l4Y0JNZVZkVnBGMmh4ZHp5c0JkZS9BRTluem05djE5SE44d0t3ajZW?=
+ =?utf-8?B?U1F1RGZaSTE2cGpJTkRUN1BsZE9QYmdRMG41dmovVjY1SVc0dG5ISHZqOHl5?=
+ =?utf-8?Q?L8tXXtFDRjj6xi6HX8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR03MB7384.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QS8zRWZEcitaZXQwVy9NTHoxUElFeGcxbGxVdUZaRjlwWHdHUEVYaFg4Z2JI?=
+ =?utf-8?B?Umg5RWN4YVQzRk54TURUTGJKWjVQNm1TYU8vVnpWMmo1a2xHVmE5dDhzOW5M?=
+ =?utf-8?B?OU1QUHBGMTJiclFGaGlMd0l2cEl1Vi9FSDBoN0hmUkV6eWtuU0JCdlI2cDRP?=
+ =?utf-8?B?K3d5Mm8yVmw3dytOZkZaSzB2cGxzcDRNN1ZqbzdCbVArRXdYTXREU2FlenRV?=
+ =?utf-8?B?WkVOVGtFZVVUaDlFZHJrcmdhNkJFNFBvS3VpVVpseUVqUHJ6S3R3MnY3clQ5?=
+ =?utf-8?B?Y0k1MUFzYkZMQWRyM2RRcjdQV2hneDVBMjNkdTVxOVRCT04zcFNGYkNDbmx0?=
+ =?utf-8?B?KzlpNGtGWklYVC8yZ25qa3VXK2JYSzdUenA3Qm93Tm1uMUZ0OENYUkxSVGp3?=
+ =?utf-8?B?ZjJBeHVZaElObjdYQlh1UmxEdkdHL25JcXlMWGxhVFlINDF6R1JXWVBpSGo0?=
+ =?utf-8?B?ZEVmUnZmYlVZUGRKam50Nk4rNDRhZVAxcTZxcE1FYlR4NURQVzVuc1lhc2U5?=
+ =?utf-8?B?Q0w4eHlCclZFVnA0SFJUTzJ3STlNRms4djZ4NFRtaXpBbE1XNWpiOVp1bXpK?=
+ =?utf-8?B?MWRPdlRaQzhLWlQzaXFidlJYeFF3eVpuZlRxelVyekJqcDczalV6bzM5Y2Q1?=
+ =?utf-8?B?RXBFNThSait4WWsvTHhqRVJaRzZSRjFybVkvK0ltVUpQZWVXSEdQMXI4OTNz?=
+ =?utf-8?B?OHJVaUhUR3crdFRBVHo0QjU2RkxOUEkzcmVsMlFxTzAwbHR3YnpXMlRHMHh1?=
+ =?utf-8?B?WElaRnlPWWlUKzcyTkZtV083b05nR2Y4eGFjdCtwUkcvMXVudzN6QnkxWlBI?=
+ =?utf-8?B?dW5pYnBlZVRNS1AvVzdyMFEwOEpEd3hMQ0lXekZDelQ4Q0dpK213TytrY3ZT?=
+ =?utf-8?B?K0VoQUoxY0NJdDBmTFVyYi9TNjhPQXJabXk2b2djK0RseTdkZEZVeHV6OGVN?=
+ =?utf-8?B?ZlFUVWU4T2NBclBBdEVEeHFyaktMdTFpdTJDT0psR3ZlSmt0L3UzSXdNbHpY?=
+ =?utf-8?B?VEJNTi8veFlqUE9aTnlJT3V1SFRFTnRyWlhzVWYwaTFCbjY5VWdVUWY4ZUk5?=
+ =?utf-8?B?Qzh5cDcrcTBHUUZtT3dXZStyaXlnN1VnZFl5QUhrY1EzdDZzeHNJcTg5UENM?=
+ =?utf-8?B?dG5ZNnVCVzlrZHVFWTArZHBtYjZRSHFXcEl6eTdOTU1VVjdxQ3ZyMk1Vd3Zp?=
+ =?utf-8?B?TzlVd28ybEJJUVNUR1VYbXNGbGJMMEJLc1J4SThWTmlTaHV0UGlpMTFpWXo3?=
+ =?utf-8?B?OWJyRkpNY2xBbmlNWFcrQzRPUmxwd2twVmZkZFFiKy9SWFJrTGZ5TlRzYmNY?=
+ =?utf-8?B?L3V1UW9OWGl4bDRXQTlCdDJSZDV6SHRwSlJuOVVjd1JuTDZUcDREaGFXTkFr?=
+ =?utf-8?B?MVNOdUxubjRDOCtKVUpqYkNtRThzUlJzc0JTejBLd0wzYWdXODhnQXRoYjVQ?=
+ =?utf-8?B?OWpoTmUwMXdIaExBb2dOanp1bFRMYkJaZFZsZUlBU005UEVHSGcxbkd0L1Fs?=
+ =?utf-8?B?QTUrUHZDMVdRb24rOFVzcWNXMG1ZNlM4STRiTFZyeEMrcmxlYXJxVnJPdnA0?=
+ =?utf-8?B?YkZTckxqOU1kZHlFV2txNXFuYlBuRkNoblNtUWhaNjdWcElSN254RHNBd3Yr?=
+ =?utf-8?B?Z3FsNVFqRmRRWnBDLzQ1UnhKSTZCOER2QVBzK3lUc0JsT1BTV2RoeTJNL0t0?=
+ =?utf-8?B?S2tmMWJJZHpqL1hoMGNCaTZ5ckE3TnRDaTRZcUlBL0Q0UEdOTEl1eE1oNmZF?=
+ =?utf-8?B?VDJHTTNMb0t1SmtQTmtBUm1ESGVWazlKb2h2NWVPOWtORVcyR2FvV05aS0w3?=
+ =?utf-8?B?OGdQVFVTeHh5bjRTQnpUZjBjODI3TW9OMC9UekswQzRUV2poVDNpa1R4dDZx?=
+ =?utf-8?B?U29VWFFSbDloNjBrUDlqc2FDUHQ2Z3AycU5rUVRaZ0pjZklsRC84OFhRcDVq?=
+ =?utf-8?B?bEtUcDFDRE0wR3ZDeXpXdU93SHdBa2ZMR2FhS1pXVEI5a3lJbEE1TkdnckZk?=
+ =?utf-8?B?MWxvVitlbmNwNGU3WHhzejdIQXhZdWhTNEI2cVZsK21ML0hEa0tnVTVUeE9V?=
+ =?utf-8?B?ZWtWVDljWXRLd2VnS2toRlgwUmdZTEhhTHRzZ1R0QXJwNENmOTh3TWVPZk0r?=
+ =?utf-8?B?QUp5dytLc2dRUHNDem5JKzV3MGV2aWNDbFdSQlVBT25MTWlIck1meEpvVlBK?=
+ =?utf-8?B?b0E9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 348546d9-ff21-48b7-acb8-08dca18adea0
+X-MS-Exchange-CrossTenant-AuthSource: JH0PR03MB7384.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 09:21:39.3429
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /hP2zTbA0kdU0pUCTPTcox8ZneaGAylpLJ4DV+1oFuRCrwGCWOB4ygODccWxXW4Hx6D61xiUhDZXAg75K9hG/9ftnRmpW1mGjIQElscMheA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR03MB7783
 
-Il 11/07/24 06:13, Macpaul Lin ha scritto:
+On 2024/6/5 20:51, Neil Armstrong wrote:
+> [ EXTERNAL EMAIL ]
 > 
+> Hi Philipp,
 > 
-> On 7/11/24 03:15, Nícolas F. R. A. Prado wrote:
->> On Fri, Jan 19, 2024 at 10:12:07AM +0100, AngeloGioacchino Del Regno wrote:
->>> Il 18/01/24 19:36, Nícolas F. R. A. Prado ha scritto:
->>>> Hi,
->>>>
->>>> KernelCI has identified a failure in the probe of one of the USB controllers on
->>>> the MT8195-Tomato Chromebook [1]:
->>>>
->>>> [   16.336840] xhci-mtk 11290000.usb: uwk - reg:0x400, version:104
->>>> [   16.337081] xhci-mtk 11290000.usb: xHCI Host Controller
->>>> [   16.337093] xhci-mtk 11290000.usb: new USB bus registered, assigned bus 
->>>> number 5
->>>> [   16.357114] xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
->>>> [   16.357119] xhci-mtk 11290000.usb: can't setup: -110
->>>> [   16.357128] xhci-mtk 11290000.usb: USB bus 5 deregistered
->>>> [   16.359484] xhci-mtk: probe of 11290000.usb failed with error -110
->>>>
->>>> A previous message [2] suggests that a force-mode phy property that has been
->>>> merged might help with addressing the issue, however it's not clear to me how,
->>>> given that the controller at 1129000 uses a USB2 phy and the phy driver patch
->>>> only looks for the property on USB3 phys.
->>>>
->>>> Worth noting that the issue doesn't always happen. For instance the test did
->>>> pass for next-20240110 and then failed again on today's next [3]. But it does
->>>> seem that the issue was introduced, or at least became much more likely, between
->>>> next-20231221 and next-20240103, given that it never happened out of 10 runs
->>>> before, and after that has happened 5 out of 7 times.
->>>>
->>>> Note: On the Tomato Chromebook specifically this USB controller is not connected
->>>> to anything.
->>>>
->>>> [1] 
->>>> https://urldefense.com/v3/__https://linux.kernelci.org/test/case/id/659ce3506673076a8c52a428/__;!!CTRNKA9wMg0ARbw!jtg5drII8WUPwTiL4sWZiSRPXN-EBN8ctTGI85sirqvkmaUbA5z-wrLqPPfxlZZkQ7NItOWDT97OSdENT5oGHKY$
->>>> [2] https://lore.kernel.org/all/239def9b-437b-9211-7844-af4332651df0@mediatek.com/
->>>> [3] 
->>>> https://urldefense.com/v3/__https://linux.kernelci.org/test/case/id/65a8c66ee89acb56ac52a405/__;!!CTRNKA9wMg0ARbw!jtg5drII8WUPwTiL4sWZiSRPXN-EBN8ctTGI85sirqvkmaUbA5z-wrLqPPfxlZZkQ7NItOWDT97OSdENi-d0sVc$
->>>>
->>>> Thanks,
->>>> Nícolas
->>>
->>> Hey Nícolas,
->>>
->>> I wonder if this is happening because of async probe... I have seen those happening
->>> once in a (long) while on MT8186 as well with the same kind of flakiness and I am
->>> not even able to reproduce anymore.
->>>
->>> For MT8195 Tomato, I guess we can simply disable that controller without any side
->>> effects but, at the same time, I'm not sure that this would be the right thing to
->>> do in this case.
->>>
->>> Besides, the controller at 11290000 is the only one that doesn't live behind MTU3,
->>> but I don't know if that can ring any bell....
+> On 22/04/2024 13:11, Kelvin Zhang via B4 Relay wrote:
+>> Add a new compatible and device node for Amlogic T7 reset controller.
+>> And modify the driver accordingly.
 >>
->> An update on this issue: it looks like it only happens if "xhci-mtk
->> 11290000.usb" probes before "mtk-pcie-gen3 112f8000.pcie". What they have in
->> common is that both of those nodes use phys that share the same t-phy block:
->> pcie uses the usb3 phy while xhci uses the usb2 phy. So it seems that some of
->> the initialization done by the pcie controller might be implicitly needed by the
->> usb controller.
+>> Signed-off-by: Zelong Dong <zelong.dong@amlogic.com>
+>> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
+>> ---
+>> Changes in v2:
+>> - Drop the compatible comment in dt-binding.
+>> - Move t7-reset.h to arch/arm64/boot/dts/amlogic.
+>> - Link to v1: 
+>> https://lore.kernel.org/r/20240329-t7-reset-v1-0-4c6e2e68359e@amlogic.com
 >>
->> This should help to narrow down the issue and find a proper fix for it.
+>> ---
+>> Zelong Dong (3):
+>>        dt-bindings: reset: Add Amlogic T7 reset controller
+>>        reset: reset-meson: Add support for Amlogic T7 SoC reset 
+>> controller
+>>        arm64: dts: amlogic: Add Amlogic T7 reset controller
 >>
->> Thanks,
->> Nícolas
+>>   .../bindings/reset/amlogic,meson-reset.yaml        |   1 +
+>>   arch/arm64/boot/dts/amlogic/amlogic-t7-reset.h     | 197 
+>> +++++++++++++++++++++
+>>   arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi        |   7 +
 > 
-> 'force-mode' should only applied to the boards which require XHCI function instead 
-> of a PCIE port.
+> I applied the DT change, could you pick the bindings & driver change ?
 > 
-> For example, mt8395-genio-1200-evk.dts requires property 'force-mode' to fix probe 
-> issue for USBC @11290000.
+Hi Philipp,
+Sorry to bother you.
+For patch 1&2, is there anything that needs improvement?
+Thanks very much!
+
+> Thanks,
+> Neil
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mediatek/linux.git/commit/?h=v6.10-next/dts64&id=666e6f39faff05fe12bfc64c64aa9015135ce783
+>>   drivers/reset/reset-meson.c                        |   6 +
+>>   4 files changed, 211 insertions(+)
+>> ---
+>> base-commit: f529a6d274b3b8c75899e949649d231298f30a32
+>> change-id: 20240329-t7-reset-f87e8346fadb
+>>
+>> Best regards,
 > 
-> 'force-mode' should be no need for tomato boards and the behavior should be the 
-> same as before.
-> 
-> Another possibility is the firmware change on tomato boards. I'm not sure if there 
-> is any changes on tomato's recent firmware for tphy of this port, which could also 
-> be a reason causes this kind of failure.
-> I don't have tomato boards on hand.
-> 
-
-Hello Macpaul,
-
-it's just about the usb node missing a power domain: as the PCIE_MAC_P1 domain
-seems to be shared between USB and PCIe, adding it to the USB node fixes the
-setup phase.
-
-I'll send a devicetree fix soon.
-
-Cheers,
-Angelo
-
-> Thanks
-> Macpaul Lin
-
 
