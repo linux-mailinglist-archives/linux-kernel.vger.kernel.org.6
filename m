@@ -1,218 +1,106 @@
-Return-Path: <linux-kernel+bounces-249389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED2292EB02
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B0292EB09
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B96D28521C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C559328299C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19D4168C33;
-	Thu, 11 Jul 2024 14:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7079A1662FE;
+	Thu, 11 Jul 2024 14:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="AuPvm2HY"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXSO7ohj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8791C1EB2B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0DE32F46;
+	Thu, 11 Jul 2024 14:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720709125; cv=none; b=rsAPqXljTxA8LX2IDNc1gK+ZbM6OXfDWZTu7fOl3cZeV7Qqhq4U80eiwrkbFMsmmG2lMjGKwDFnGeExXVYD6ooiwoY1C4lydYVvVZ6DdHy8PXo2N5gg/U2wONGK0sVMRm6xvSFc8p1EmU6jWamM8h6U1mJb8ZV5F03Ku1ndF1bo=
+	t=1720709242; cv=none; b=hssKqlEMig7O6XjVIOXY5S4H/mx4I2rfcv0TBAI1ynB9p0pKUOACYkSpnFKhxn1WQEtz06dFZ5mt6nhMeFK5cl4UqxabLphNd8VNFUAYaZUywROSg789bV41W9gB6AadfhL72P6la2jgPbycptuzoi3OvLPBWFodXfOeUBJqwww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720709125; c=relaxed/simple;
-	bh=X/Vus3odAr0nVoUkxLttzX7Pk94wValiSx+VwO4R69w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aW2TN9qrCnSAReYQ27v2OxdJFQfzw7D6tQaGc4Tz2Sbuv8KB49Kc9VaCKMWAAsezmhEEBni+/1EP45rF7Mdw0pDOY8Hkr9k6RhIOSAIb8bSKrelI3M9k/DIQiLvrCuCYPK4wr893EHprHnB8a9hy96S+mBUrk6VvRyQgjefIT7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=AuPvm2HY; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=X/Vu
-	s3odAr0nVoUkxLttzX7Pk94wValiSx+VwO4R69w=; b=AuPvm2HYrBBxPCRmojQD
-	7CRnGb08OzEAMIGsRtGo1cADF0LX2II9QCJrZUl8IaFo/ZZrZu7J+SrEBWtj60Pv
-	1FkcrDPS/qIZnwEyGkXZcTAvUt2AcDbXPu9bRoCsRQVJ3yq7hI4gN1/pRnYBoxmm
-	LrVreSCYG9WfR6AIcwartOTLwI8fldcBkiqrbY/9wh/UHI5zzHySLqznxmN0E27e
-	CL+TVhOO2A9S47NlInzK62SsP9b7IiXAGum0KbJErYmlY66z9pmjZt/lJ/IEYVUY
-	0s8pI4FRRnO0k8J6sY5OSdOg4ouZH//OI4WOka5wh84Dzu3nFqTCzDfn3u4TXjEA
-	qA==
-Received: (qmail 877093 invoked from network); 11 Jul 2024 16:45:16 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jul 2024 16:45:16 +0200
-X-UD-Smtp-Session: l3s3148p1@33mez/kc+ORehhtW
-Date: Thu, 11 Jul 2024 16:45:15 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, Ajay Gupta <ajayg@nvidia.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-	Andrew Lunn <andrew@lunn.ch>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	asahi@lists.linux.dev, Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Baruch Siach <baruch@tkos.co.il>,
-	Bence =?utf-8?B?Q3PDs2vDoXM=?= <bence98@sch.bme.hu>,
-	Benson Leung <bleung@chromium.org>,
-	Binbin Zhou <zhoubinbin@loongson.cn>, Chen-Yu Tsai <wens@csie.org>,
-	Chris Brandt <chris.brandt@renesas.com>,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	chrome-platform@lists.linux.dev,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Conghui Chen <conghui.chen@intel.com>,
-	Eddie James <eajames@linux.ibm.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Hans de Goede <hdegoede@redhat.com>, Hans Hu <hanshu@zhaoxin.com>,
-	Hector Martin <marcan@marcan.st>, Heiko Stuebner <heiko@sntech.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jochen Friedrich <jochen@scram.de>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michael Shych <michaelsh@nvidia.com>, openbmc@lists.ozlabs.org,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Peter Korsgaard <peter@korsgaard.com>,
-	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-	Ray Jui <rjui@broadcom.com>, Robert Richter <rric@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Scott Branden <sbranden@broadcom.com>, Stefan Roese <sr@denx.de>,
-	Sven Peter <sven@svenpeter.dev>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thor Thayer <thor.thayer@linux.intel.com>,
-	Till Harbaum <till@harbaum.org>,
-	Vadim Pasternak <vadimp@nvidia.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	virtualization@lists.linux.dev, Vladimir Zapolskiy <vz@mleia.com>,
-	Yicong Yang <yangyicong@hisilicon.com>
-Subject: Re: [PATCH v2 00/60] i2c: reword first drivers according to newest
- specification
-Message-ID: <Zo_v-xk3Hh_88sNa@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	Ajay Gupta <ajayg@nvidia.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-	Andrew Lunn <andrew@lunn.ch>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	asahi@lists.linux.dev, Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Baruch Siach <baruch@tkos.co.il>,
-	Bence =?utf-8?B?Q3PDs2vDoXM=?= <bence98@sch.bme.hu>,
-	Benson Leung <bleung@chromium.org>,
-	Binbin Zhou <zhoubinbin@loongson.cn>, Chen-Yu Tsai <wens@csie.org>,
-	Chris Brandt <chris.brandt@renesas.com>,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	chrome-platform@lists.linux.dev,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Conghui Chen <conghui.chen@intel.com>,
-	Eddie James <eajames@linux.ibm.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Hans de Goede <hdegoede@redhat.com>, Hans Hu <hanshu@zhaoxin.com>,
-	Hector Martin <marcan@marcan.st>, Heiko Stuebner <heiko@sntech.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jochen Friedrich <jochen@scram.de>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michael Shych <michaelsh@nvidia.com>, openbmc@lists.ozlabs.org,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Peter Korsgaard <peter@korsgaard.com>,
-	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-	Ray Jui <rjui@broadcom.com>, Robert Richter <rric@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Scott Branden <sbranden@broadcom.com>, Stefan Roese <sr@denx.de>,
-	Sven Peter <sven@svenpeter.dev>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Thor Thayer <thor.thayer@linux.intel.com>,
-	Till Harbaum <till@harbaum.org>,
-	Vadim Pasternak <vadimp@nvidia.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	virtualization@lists.linux.dev, Vladimir Zapolskiy <vz@mleia.com>,
-	Yicong Yang <yangyicong@hisilicon.com>
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
- <nbi3fngfcipt35gzguk2mh4zzh3vy5a5gsk7dti5smm2iimytl@drm7p2iqsinp>
+	s=arc-20240116; t=1720709242; c=relaxed/simple;
+	bh=hM5QweryAJkWIpPmNGoqk5/juhbNP9xVhAPxnCDBzIM=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=GOWxdZ0qrQdVclrnXpaZrpRHsdeJlgtN+alqKq8uB9fjJyMwz3b6WaEiD9iu7TcJ4nSBDiI1MVIsJwxUcCLWwj9upKjCId0pXy3AjX3R7NiDrI6wNhoZI/7uh7oMp4xG4nq8uRsfixuhvzHfz28uREhsgwbiutLjAOfDvhuFN9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXSO7ohj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF05C116B1;
+	Thu, 11 Jul 2024 14:47:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720709242;
+	bh=hM5QweryAJkWIpPmNGoqk5/juhbNP9xVhAPxnCDBzIM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nXSO7ohj4s1KEm+feokGgsBkZgIDF6Z8ioFdhmbQoTVyDSXAgSJFKbXwNCT3Hxz7K
+	 9nZk/Vq0/05iBSJ55/qzQJbiOC/b5pWUJY1XSmcb/WXPlOR3eqkt1fij4hZYG2uWWH
+	 f4mzHR/kXJf7hEF72cVk5/wAAq9JDp42AixUxUsXpMYMZWPxmte/O2zGMOn3nej/Nb
+	 45kdg2vBd+svc03mrWcR72LqUSrfZBOjZLeWWYG+YCZyaMSkaWobImPhkK+2rd4HLX
+	 wGeKdeG9d4WC3zx20dBt+I4tPNkpIv8rpwssDk2D6njn0OU2IMC1lO2Wy9VFMNZW/2
+	 T9h6TP1poyJAA==
+Message-ID: <95eeaec80e22a55026b3aaa94d2a7ad6.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI fixes for v6.10-rc7
+Date: Thu, 11 Jul 2024 15:47:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Vk6JWgUmE7mz+Biu"
-Content-Disposition: inline
-In-Reply-To: <nbi3fngfcipt35gzguk2mh4zzh3vy5a5gsk7dti5smm2iimytl@drm7p2iqsinp>
 
+The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
 
---Vk6JWgUmE7mz+Biu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
 
+are available in the Git repository at:
 
-> Thanks for this big work, at the end it turned out quite nice and
-> I'm happy of the outcome!
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.10-rc7
 
-Me too. And thanks for the enormous review work!
+for you to fetch changes up to c8bd922d924bb4ab6c6c488310157d1a27996f31:
 
+  spi: mux: set ctlr->bits_per_word_mask (2024-07-09 17:42:33 +0100)
 
---Vk6JWgUmE7mz+Biu
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------
+spi: Fixes for v6.10
 
------BEGIN PGP SIGNATURE-----
+This pull request fixes two regressions that have been bubbling along
+for a large part of this release.  One is a revert of the multi mode
+support for the OMAP SPI controller, this introduced regressions on a
+number of systems and while there has been progress on fixing those
+we've not got something that works for everyone yet so let's just drop
+the change for now.  The other is a series of fixes from David Lechner
+for his recent message optimisation work, this interacted badly with
+spi-mux which is altogether too clever with recursive use of the bus and
+creates situations that hadn't been considered.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaP7/sACgkQFA3kzBSg
-Kbbq3A/9FNY+7cgd8CU9HNabmoXmMSCsOVflmaDNapeEn/iIYZUiBBFhDcYnJczI
-T429i2bK95+lup88Nhn9fzXQ4hoPFa2TuPkQ5n3M7A9hjFnAOxLmTd91uO98BfVm
-8IYBr6EIu/AfX/+D6Rj1Ro1VpSwK4laze5p9WGyNjp6QIzJ+KqmRh+vf9Shg1urk
-9gNjTClxMD1OjQ60X0Vr4XmDONnsK8guT/Zkkk1gtDRDC8P92Jw17/3vtuBQnwP6
-S1NAFaqvdLbLKuRBsK7KwJ6oJ4sH5jq2LCiJk87GHsXnQBerXSR3AFORTQWjvEBF
-6qz8rHh0/GrQklzbs/VgVlqV3NygU4D2T18NZMyLxaJAGPmDPGeL5YvcweblR0TL
-yMMuXmSq7ACO+aTJgqIqt2Wx1PS4cbvSmaHUnG52eGrX28o1PgjIW5y0xGu9G5FU
-Funcvt0JlI2HtC1FI2FGDsCW77U3mh3U5N5NEo7y24XPebmTVhGifj2kWp/WkA3F
-UPgJdkXF0gUzDxQj3Febmvmeh3m58s+Io+3LWBncCK2eRgL4YyEaKpEegQfA43Rl
-PJGODikSLI1gh/8qN/WE44DGio65TYItOJrPX3b8VwOQLCgKgwz0y+a37vy2Jd7W
-X/LXLwb8txlca1gF88Bg07eWwR/jwNoHp4c/k2C80iwHtJ12Kcg=
-=ribe
------END PGP SIGNATURE-----
+There are also a couple of small driver specific fixes, including one
+more patch from David for sleep duration calculations in the AXI driver.
 
---Vk6JWgUmE7mz+Biu--
+----------------------------------------------------------------
+Bastien Curutchet (1):
+      spi: davinci: Unset POWERDOWN bit when releasing resources
+
+David Lechner (4):
+      spi: axi-spi-engine: fix sleep calculation
+      spi: don't unoptimize message in spi_async()
+      spi: add defer_optimize_message controller flag
+      spi: mux: set ctlr->bits_per_word_mask
+
+Mark Brown (1):
+      spi: omap2-mcspi: Revert multi mode support
+
+Uwe Kleine-König (1):
+      spi: imx: Don't expect DMA for i.MX{25,35,50,51,53} cspi devices
+
+ drivers/spi/spi-axi-spi-engine.c | 26 ++++++++++++++++++--------
+ drivers/spi/spi-davinci.c        |  6 ++++++
+ drivers/spi/spi-imx.c            |  2 +-
+ drivers/spi/spi-mux.c            |  2 ++
+ drivers/spi/spi-omap2-mcspi.c    | 15 +--------------
+ drivers/spi/spi.c                | 20 +++++++++++++++++---
+ include/linux/spi/spi.h          |  4 ++++
+ 7 files changed, 49 insertions(+), 26 deletions(-)
 
