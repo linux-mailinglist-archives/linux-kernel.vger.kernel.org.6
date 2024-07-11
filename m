@@ -1,199 +1,140 @@
-Return-Path: <linux-kernel+bounces-249802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E2492F007
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:59:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150D392F00C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E15CC1F228EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:59:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FCA4B22293
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7100F19E832;
-	Thu, 11 Jul 2024 19:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D537019E83C;
+	Thu, 11 Jul 2024 19:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qptw++qi"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="wl3eW6oG"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9DF19E822
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013DC19E822
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 19:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720727977; cv=none; b=Zi+SmBkZZX+TDlLf18rKhj5nwsUntJTlp0CB3H5GfuSwdDFKprW2SOyV47947rXo6wLZkzXkypMGXvhOk1+Wg244zJQYqImyTDlcaECOTM5lAuK8STKy4vGvkMxZl2sdgv3Vja4pi5HNccJ50JL9W+z8vdv8bR2ks/vkwLo8V/k=
+	t=1720727995; cv=none; b=JFwRsOQRgWqtBAcF0COmTdeyJtawtHDHsx/+RMZZXxXlVqJ4R9jc25C7L7qmrRcfus719+T20HZTvyTrC/SJ++Rqa+iBm6TX4gW3p6IiMOOmTLs4oulwQ+G3lEIUsuPzUiWEWBiZ8orN7k3EdB0PRFCtPMleaj6oMIXJiKfV+QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720727977; c=relaxed/simple;
-	bh=EwcI560szzXCbpyfgDyYof692YXwxRMkFI4AdQM+lcQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fiBiv3MAIxX4Zh5Itl+wyuObuCzJGVNuXkXa6JAnexhV5hrY1zo1SAMtuWozpyqOA1/uheGI4KNohZZQug6DoYZg28brfZUE8uo+bDV8Cfm+EvFywt6NaW2I/CzNvHb0GGsZLRs6lSrQAMZo1AVN84jQDeNa6XqwivLW1P/Ec4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qptw++qi; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-447df43324fso1671cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:59:35 -0700 (PDT)
+	s=arc-20240116; t=1720727995; c=relaxed/simple;
+	bh=ZFsNRA4oHonDs7htq9TQlbzH95+/U/2f1q+48RdjPCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BcxGmm9Nj5bSTVUFMAPE83qZ/xbqplnMuQYbdEOBPXw6Lyw2XW6gw1AqvQ1kcMSvQawnE2X+Pae/WVlYntghw6ODKrSUhf+yYln7ztYnguwBmDE556elB+FHsAPvHw5KHh4zScLP+6JwIEhM8G+BU1Ebmp9LNrKWTunDVpQn5Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=wl3eW6oG; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b5ecafbf88so6395696d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720727975; x=1721332775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=usQgq2qcD076ORgLl9lg0b15V7evrXBpIxDm3sw86OY=;
-        b=qptw++qixRwPsC5loItR03SgoDryBucQvldLH8j3mPnYCa8Jl8M3xp2NHqaIJCioDB
-         B1d05m+xuXwQc29IaOwe1MvIxtyUmzeIe/ZsJbe22tAdezD8FdnXYz32lpCHKwnkdq9n
-         ykah1rR7z3JUj8z3KXcnqtzTUpDtjXBHcIKL6nh5awf/Pg9Ut5+NulBBPsNCxFGmOIGL
-         nDvVnNyNuicZ/lK2O5ZdcXh/UCQi6lNN3Gbi6E8p6tKKQN/M464qxYfoOc7HFM+cZxPp
-         MhWyBLccduYxNp4FQvot/iwxDOkicyeW2xly7PAAKFW77W9ipQOp3iQzOhLnb8UvhdJ+
-         uOcA==
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1720727992; x=1721332792; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v0fBzMvARzNqWDIvjkNZtGgftU6BR00tv1V56A0sRI4=;
+        b=wl3eW6oGF0nyU+9MJlx/LeYF/XzTYUj6S1aWCdB0+83FpI/C05K9KU3N7gccelZB6i
+         cqfVDKbjEpp2n68Yn+gUexD5gvuB5s217Z7UpY9EQim/OgOXaqj4aqADEn1jto8p1Jod
+         Gjk2PLHFksRK5an8e2ssA1u09X7dA8nyYt/dlVVXgmkbs1NPBXGqfDJq8JGCP7LZ+wC9
+         QW9b+a7F4B0wMMo/0+fMPiS3tRFxfKp8zH7a9Bmhtp+4Cho8xuLuCbYCSF4ObP9TBXRg
+         cmMYwWFdEA9qSbHeVerqdtL+3xPXuna7tnla45fiwNPCF3W4ELO4sorjN2YMhJyTTvNe
+         8cug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720727975; x=1721332775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=usQgq2qcD076ORgLl9lg0b15V7evrXBpIxDm3sw86OY=;
-        b=B4Xnae+w41YDlLatXR9qQ5+0OhXXrQBilUMyoWoqOH/9GNGoPCIa3nSJKCQuzMOQcp
-         N9iIPWKMle4/Q0RYJKku2fWOKocFOYgJLs9ONkAYffbCgE87JJz8s8oo7eRkA6Jp8t5o
-         3eCXG+xpegR8JW3UO+PQPbfNxyXZlUZKWK0vGrrCnqkCOqmzCiJtsBrm7owQJlpwHZ8e
-         5lZPlTT+/g+6CLj00Lk5lZHV+EYoODbVl5SL8zJtAnE+GuGjy1rNl7rIi4t3sXx0QvsT
-         A2WrRH86dQSRjB8ohHJGk2s/p8sB1hREdTJ+RztaO0dTPaycuaDFcr7m2kjI1mNNUbYM
-         L5Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKyDd3SY8M4YbABJ+wdlPcSFkml9YhT1H5H0qC0CRbdq4yzm9qFAmB8526LYtSXvCzRf8ykzjyn8mOogEZtZipffyMtUehg9KIjvtp
-X-Gm-Message-State: AOJu0Yx1TU5FNIEaRwisU2sM3Ix1GDcC/kvLI1je0FtoOXW5QXGDCtO6
-	3ECCeLxt12LCfeakaWaArAdQx1HGqjzhQyRQoq487WhUW2w1THuhwT8va5Ppu0r0QyPaZ0bJvsw
-	8+7QCBN0UUajmGHfOx+unEvSx71/GTlLQ9J1H
-X-Google-Smtp-Source: AGHT+IEM7irFssvF1uct5oQd7x7Vaba9daG5UqSQAd7zGLlxjvcWer92aqHngywJVogpDpoHiV+PdmFmORbjnMYXigE=
-X-Received: by 2002:ac8:7193:0:b0:447:d555:7035 with SMTP id
- d75a77b69052e-44e793e6f9dmr475651cf.13.1720727974558; Thu, 11 Jul 2024
- 12:59:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720727992; x=1721332792;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v0fBzMvARzNqWDIvjkNZtGgftU6BR00tv1V56A0sRI4=;
+        b=AfcWKFozkY5n8fX1w7hzj/6hsJSlPH17KBJnLq8kOW6HbqTCgnmzU72UvYbji2L4MB
+         Qahtk92XSntk3NQgLmvzAsHBvcbdbsFw2g6oJNfPhdsUgLqApxckQGalCbH/dLdfr95L
+         8g6RUCmNOlvpnUloLn3AdWWcwhqUeTzNHdGSmGNV8l6PuxHpcYT6x/osD0XSeJ4o5bBR
+         PN+GLzvuwmWNBAArP6uBTDK017HVUkfXDcP4TrHmqhn0NE6wh5Uh1DEd5Qvuau0vUHif
+         xTgo8yoddaXhhTrSyqhyHAUweG8Y53+e0H4x4hBNSStTex18DDh8QWiwpx8UayfyLdpO
+         HbVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTkTRiSHwSRq2R+1VfH1UsuTnmvwEdzgeNFwKTKcmcf6HjzDwlwuzh00zzct9BUl5gmGQuRY1NznknkD/ZL+FoS0oVbUCHX7D7dJ9x
+X-Gm-Message-State: AOJu0YwX9g3NGJV2gB+w24ruzGZ5ymCdMc84ZEkeOgUdojlQ6RLzC27Z
+	9zD/0Ca/6gVsffOPehIGlAOyRxevpW8F8UBpkLv4Zy5I2gu1O+xQfwaU2fOdk7k=
+X-Google-Smtp-Source: AGHT+IFiJnY/cGELlDLmvJpmQlnosRF0R2F/8VoRGVECBWJ/JmxJND9XjYQhP4M0tiwANXIyAJJhqw==
+X-Received: by 2002:a05:6214:c2f:b0:6b0:71c0:cbaa with SMTP id 6a1803df08f44-6b61bf1b857mr113709506d6.33.1720727991788;
+        Thu, 11 Jul 2024 12:59:51 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61b9c4867sm28611176d6.26.2024.07.11.12.59.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 12:59:51 -0700 (PDT)
+Date: Thu, 11 Jul 2024 15:59:46 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [PATCH v3 1/2] cgroup: Show # of subsystem CSSes in cgroup.stat
+Message-ID: <20240711195946.GA1094169@cmpxchg.org>
+References: <20240710182353.2312025-1-longman@redhat.com>
+ <20240711134927.GB456706@cmpxchg.org>
+ <4e1078d6-6970-4eea-8f73-56a3815794b5@redhat.com>
+ <ZpAT_xu0oXjQsKM7@slm.duckdns.org>
+ <76e70789-986a-44c2-bfdc-d636f425e5ae@redhat.com>
+ <ZpAoD7_o8bf6yVGr@slm.duckdns.org>
+ <e5348a85-22eb-48a6-876d-3180de5c7171@redhat.com>
+ <ZpArhD49OonR6Oz6@slm.duckdns.org>
+ <c54651db-1a06-49f6-aea7-02768ad70756@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
- <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
- <ZpAR0CgLc28gEkV3@zx2c4.com> <ZpATx21F_01SBRnO@zx2c4.com> <98798483-dfcd-451e-94bb-57d830bf68d8@redhat.com>
- <54b6de32-f127-4928-9f4a-acb8653e5c81@redhat.com> <ZpAcWvij59AzUD9u@zx2c4.com>
- <ZpAc118_U7p3u2gZ@zx2c4.com> <ZpAfigBHfHdVeyNO@zx2c4.com> <8586b19c-2e14-4164-888f-8c3b86f3f963@redhat.com>
- <ZpAqbh3TnB9hIRRh@zx2c4.com> <443146f4-9db8-4a19-91f1-b6822fad8ce8@redhat.com>
- <1c8632b4-06a5-49da-be0c-6fc7ac2b3257@redhat.com> <2c464271-1c61-4cd8-bd4e-4bd8aa01fa00@redhat.com>
- <CAOUHufYsxCb=taWWfUbuzi1Hmmug=ThQMoTjsxrtFkt=UXEu6w@mail.gmail.com> <da3ea234-d6dd-4809-b2f5-fbfedacb9748@redhat.com>
-In-Reply-To: <da3ea234-d6dd-4809-b2f5-fbfedacb9748@redhat.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Thu, 11 Jul 2024 13:58:57 -0600
-Message-ID: <CAOUHufZuMdN31WnbwctyFv+o8nAfVBaiHZa9Ud_cz6QAoNQHxw@mail.gmail.com>
-Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
- lazily freeable mappings
-To: David Hildenbrand <david@redhat.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de, 
-	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, "Carlos O'Donell" <carlos@redhat.com>, 
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c54651db-1a06-49f6-aea7-02768ad70756@redhat.com>
 
-On Thu, Jul 11, 2024 at 1:53=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 11.07.24 21:49, Yu Zhao wrote:
-> > On Thu, Jul 11, 2024 at 1:20=E2=80=AFPM David Hildenbrand <david@redhat=
-.com> wrote:
-> >>
-> >> On 11.07.24 21:18, David Hildenbrand wrote:
-> >>> On 11.07.24 20:56, David Hildenbrand wrote:
-> >>>> On 11.07.24 20:54, Jason A. Donenfeld wrote:
-> >>>>> On Thu, Jul 11, 2024 at 08:24:07PM +0200, David Hildenbrand wrote:
-> >>>>>>> And PG_large_rmappable seems to only be used for hugetlb branches=
-.
-> >>>>>>
-> >>>>>> It should be set for THP/large folios.
-> >>>>>
-> >>>>> And it's tested too, apparently.
-> >>>>>
-> >>>>> Okay, well, how disappointing is this below? Because I'm running ou=
-t of
-> >>>>> tricks for flag reuse.
-> >>>>>
-> >>>>> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.=
-h
-> >>>>> index b9e914e1face..c1ea49a7f198 100644
-> >>>>> --- a/include/linux/page-flags.h
-> >>>>> +++ b/include/linux/page-flags.h
-> >>>>> @@ -110,6 +110,7 @@ enum pageflags {
-> >>>>>              PG_workingset,
-> >>>>>              PG_error,
-> >>>>>              PG_owner_priv_1,        /* Owner use. If pagecache, fs=
- may use*/
-> >>>>> +   PG_owner_priv_2,
-> >>>>
-> >>>> Oh no, no new page flags please :)
-> >>>>
-> >>>> Maybe just follow what Linux suggested: pass vma to pte_dirty() and
-> >>>> always return false for these special VMAs.
+On Thu, Jul 11, 2024 at 03:13:12PM -0400, Waiman Long wrote:
+> 
+> On 7/11/24 14:59, Tejun Heo wrote:
+> > On Thu, Jul 11, 2024 at 02:51:38PM -0400, Waiman Long wrote:
+> >> On 7/11/24 14:44, Tejun Heo wrote:
+> >>> Hello,
 > >>>
-> >>> ... or look into removing that one case that gives us headake.
-> >>>
-> >>> No idea what would happen if we do the following:
-> >>>
-> >>> CCing Yu Zhao.
-> >>>
-> >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> >>> index 0761f91b407f..d1dfbd4fd38d 100644
-> >>> --- a/mm/vmscan.c
-> >>> +++ b/mm/vmscan.c
-> >>> @@ -4280,14 +4280,9 @@ static bool sort_folio(struct lruvec *lruvec, =
-struct folio *folio, struct scan_c
-> >>>                    return true;
-> >>>            }
-> >>>
-> >>> -       /* dirty lazyfree */
-> >>> -       if (type =3D=3D LRU_GEN_FILE && folio_test_anon(folio) && fol=
-io_test_dirty(folio)) {
-> >>> -               success =3D lru_gen_del_folio(lruvec, folio, true);
-> >>> -               VM_WARN_ON_ONCE_FOLIO(!success, folio);
-> >>> -               folio_set_swapbacked(folio);
-> >>> -               lruvec_add_folio_tail(lruvec, folio);
-> >>> -               return true;
-> >>> -       }
-> >>> +       /* lazyfree: we may not be allowed to set swapbacked: MAP_DRO=
-PPABLE */
-> >>> +       if (type =3D=3D LRU_GEN_FILE && folio_test_anon(folio) && fol=
-io_test_dirty(folio))
-> >>> +               return false;
-> >
-> > This is an optimization to avoid an unnecessary trip to
-> > shrink_folio_list(), so it's safe to delete the entire 'if' block, and
-> > that would be preferable than leaving a dangling 'if'.
->
-> Great, thanks.
->
-> >
-> >> Note that something is unclear to me: are we maybe running into that
-> >> code also if folio_set_swapbacked() is already set and we are not in t=
-he
-> >> lazyfree path (in contrast to what is documented)?
-> >
-> > Not sure what you mean: either rmap sees pte_dirty() and does
-> > folio_mark_dirty() and then folio_set_swapbacked(); or MGLRU does the
-> > same sequence, with the first two steps in walk_pte_range() and the
-> > last one here.
->
-> Let me rephrase:
->
-> Checking for lazyfree is
->
-> "folio_test_anon(folio) && !folio_test_swapbacked(folio)"
->
-> Testing for dirtied lazyfree is
->
-> "folio_test_anon(folio) && !folio_test_swapbacked(folio) &&
->   folio_test)dirty(folio)"
->
-> So I'm wondering about the missing folio_test_swapbacked() test.
+> >>> On Thu, Jul 11, 2024 at 01:39:38PM -0400, Waiman Long wrote:
+> >>>> On 7/11/24 13:18, Tejun Heo wrote:
+> >>> ...
+> >>>> Currently, I use the for_each_css() macro for iteration. If you mean
+> >>>> displaying all the possible cgroup subsystems even if they are not enabled
+> >>>> for the current cgroup, I will have to manually do the iteration.
+> >>> Just wrapping it with for_each_subsys() should do, no? for_each_css() won't
+> >>> iterate anything if css doesn't exist for the cgroup.
+> >> OK, I wasn't sure if you were asking to list all the possible cgroup v2
+> >> cgroup subsystems even if they weren't enabled in the current cgroup.
+> >> Apparently, that is the case. I prefer it that way too.
+> > Yeah, I think listing all is better. If the list corresponded directly to
+> > cgroup.controllers, it may make sense to only show enabled ones but we can
+> > have dying ones and implicitly enabled memory and so on, so I think it'd be
+> > cleaner to just list them all.
+> 
+> That will means cgroup subsystems that are seldomly used like rdma, misc 
+> or even hugetlb will always be shown in all the cgroup.stat output. I 
+> actually prefer just showing those that are enabled. As for dying memory 
+> cgroups, they will only be shown in its online ancestors. We currently 
+> don't know how many level down are each of the dying ones.
 
-It's not missing: type =3D=3D LRU_GEN_FILE means folio_is_file_lru(),
-which in turn means !folio_test_swapbacked().
+It seems odd to me to not show dead ones after a cgroup has disabled
+the controller again. They still consume memory, after all, and so
+continue to be property of that cgroup afterwards.
+
+Instead of doing for_each_css(), would it make more sense to have
+
+	struct cgroup {
+		...
+		int nr_dying_subsys[CGROUP_SUBSYS_COUNT];
+		...
+	}
+
+and just always print them all, regardless of what is, or was,
+enabled?
 
