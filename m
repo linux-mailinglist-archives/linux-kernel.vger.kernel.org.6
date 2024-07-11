@@ -1,99 +1,157 @@
-Return-Path: <linux-kernel+bounces-248854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486FA92E2B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:49:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3FF992E2BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 042D5285D66
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:49:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 219AE1C21ABF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E7C1527AC;
-	Thu, 11 Jul 2024 08:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F9815445D;
+	Thu, 11 Jul 2024 08:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fR0alzbS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GW14cVOm"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B3B78283;
-	Thu, 11 Jul 2024 08:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBFC12BF02;
+	Thu, 11 Jul 2024 08:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720687741; cv=none; b=jQTVVpUqZ23WSSiVsitVA2aqmj82AQTxnPyOgzQCGejybvb0kC3JfZ/Xgk9uIj34mIzXAaxLTUuGgj7XE9df4VRU+oXCAbV8TJAFIjcwTCCM7lqs4JCfXJFG4qPnwx5V5UiWNQp0Qh1vXAt7I+qsSC/AsUaO10ajNwoxGAYSNa4=
+	t=1720687888; cv=none; b=NEU3Djx8MuExeX+KttjoHvZ8Oaf24ljDfDEZhsqSnQAvbfn8M3h1d/NV1DkNFRvuiCCbqWQLNxIn14keMJeXXQKmXnhfWJeQR/Qs1JJLBKlHETFNEQl/5KyNesf31rj4t/uIRcJDq/rEyx5+F7wCHsUKrK0FUhoQNkQupfq1xhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720687741; c=relaxed/simple;
-	bh=KvSh6XeA52JyOMfHv09Hn8dqnlUTpUE6bi2Cxcgc3ZM=;
+	s=arc-20240116; t=1720687888; c=relaxed/simple;
+	bh=O4yibOBKqWqkWqN4pxaomHef+aRPGUQDXFseO15nYXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lKekRMXM3SIGztfhJOuk7+2RFnR/aT+Wzpuv3pm+qZZU1gqsW4W5oOsdoJISqv5C3YoU6ifEo5FnPTR+cWy04K/ZOnPNKl1wdfmFBzz+sLGzGj76Mg4jjjHzacALaO9QEIFxzoW83nRpv9JN3GIecrBmegsMBApbnvBpTdhA+5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fR0alzbS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78717C116B1;
-	Thu, 11 Jul 2024 08:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720687741;
-	bh=KvSh6XeA52JyOMfHv09Hn8dqnlUTpUE6bi2Cxcgc3ZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fR0alzbSMLlG8PEUDZzG2UHxWzI1XW8DEVXqg8wuYWbTmYJgOTfK3FLogTE/gLZuQ
-	 QP6mzkZ8VHIIRsXcca6bekX7QPUBWeWSWe84TBbS0SOwHAFSu/T7OdI2w8R57Y/Pg7
-	 1/OMdzHb18YgPUu7om/UqQX9AliwDgssniukFsjwTV0xVnjulCZcDJ8WnmKsuqYp2y
-	 tLi/VzXIfgJBDxmJuxk7lOWB2Oe68ETEeD5wI3uXv7ba/4xtvgh3VLyPpNKsj1gI/a
-	 YKNPGt1TwC0CDz2mUNKnmBfAvZAw+cZYHVdcwla7lc1+/nK6utb3Qu17L7Bw506F88
-	 qi1iMdZ9wFgDw==
-Date: Thu, 11 Jul 2024 09:48:56 +0100
-From: Simon Horman <horms@kernel.org>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Subject: Re: [PATCH net-next v4] ice: Adjust over allocation of memory in
- ice_sched_add_root_node() and ice_sched_add_node()
-Message-ID: <20240711084856.GB8788@kernel.org>
-References: <20240710123949.9265-1-amishin@t-argos.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mtaK+N65z/Y9xCWQaI7a48vXIHxJKD1Q/QYDxi1YChUMj4KDF6gmMCmTqI3hvSKnhw2A9R55eJVNax0eBHq8Nlap8bkE0tWWwee1CI42NZK0TWPy7JvMt3B1HiKW221utscKQxSb6vL+7GPUMvYrHNZ8aMp+i2VqgDK6wHikVDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GW14cVOm; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=cqn9i5MsAUEjBWVzzIv2gV9Xacv5KrkAiXudj0N+8jA=; b=GW14cVOmPhpLU2dLssELZc+wwj
+	91zrX0HK412yvdMh8FTrUdV3l7sA1jpmsbxP5H/YtIQfWIZOg2K34gpDfK112kHaRVh1hsRIUP8aE
+	XoRDwsABLFDTU7WXCG9iF/WppSJg/nMeogqFo8IMlm5rvG2rzE/2BnxmFxD5JhgC1eZAQCxRS4wNs
+	8+eT1z5aWArrYw1Iyej2lciLCEHNC8FX+DTi9g6Cy6mwFQy2EeNEE4NMtsSZsbLwe9cJFba3LZQI5
+	meB0QJmo/4F9xE5Sf9ii2mKd8ylrixFGryl7oxqQlMapDcKXxCbpItiJtn7giR51xqQLNIl+TUVAK
+	gqRficjA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRpWJ-000000014By-0yCi;
+	Thu, 11 Jul 2024 08:51:19 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A5D3330050D; Thu, 11 Jul 2024 10:51:18 +0200 (CEST)
+Date: Thu, 11 Jul 2024 10:51:18 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Jiri Olsa <olsajiri@gmail.com>,
+	mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, clm@meta.com,
+	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <20240711085118.GH4587@noisy.programming.kicks-ass.net>
+References: <20240708091241.544262971@infradead.org>
+ <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+ <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <20240709090304.GG27299@noisy.programming.kicks-ass.net>
+ <Zo0KX1P8L3Yt4Z8j@krava>
+ <20240709101634.GJ27299@noisy.programming.kicks-ass.net>
+ <20240710071046.e032ee74903065bddba9a814@kernel.org>
+ <20240710101003.GV27299@noisy.programming.kicks-ass.net>
+ <20240710235616.5a9142faf152572db62d185c@kernel.org>
+ <CAEf4BzZGHGxsqNWSBu3B79ZNEM6EruiqSD4vT-O=_RzsBeKP0w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240710123949.9265-1-amishin@t-argos.ru>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZGHGxsqNWSBu3B79ZNEM6EruiqSD4vT-O=_RzsBeKP0w@mail.gmail.com>
 
-On Wed, Jul 10, 2024 at 03:39:49PM +0300, Aleksandr Mishin wrote:
-> In ice_sched_add_root_node() and ice_sched_add_node() there are calls to
-> devm_kcalloc() in order to allocate memory for array of pointers to
-> 'ice_sched_node' structure. But incorrect types are used as sizeof()
-> arguments in these calls (structures instead of pointers) which leads to
-> over allocation of memory.
+On Wed, Jul 10, 2024 at 11:40:17AM -0700, Andrii Nakryiko wrote:
+> On Wed, Jul 10, 2024 at 7:56 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >
+> > On Wed, 10 Jul 2024 12:10:03 +0200
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > > On Wed, Jul 10, 2024 at 07:10:46AM +0900, Masami Hiramatsu wrote:
+> > >
+> > > > > FFS :-/ That touches all sorts and doesn't have any perf ack on. Masami
+> > > > > what gives?
+> > > >
+> > > > This is managing *probes and related dynamic trace-events. Those has been
+> > > > moved from tip. Could you also add linux-trace-kernel@vger ML to CC?
+> > >
+> > > ./scripts/get_maintainer.pl -f kernel/events/uprobes.c
+> > >
+> > > disagrees with that, also things like:
+> > >
+> > >   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git/commit/?h=probes/for-next&id=4a365eb8a6d9940e838739935f1ce21f1ec8e33f
+> > >
+> > > touch common perf stuff, and very much would require at least an ack
+> > > from the perf folks.
+> >
+> > Hmm, indeed. I'm OK to pass those patches (except for trace_uprobe things)
+> > to -tip if you can.
+> >
+> > >
+> > > Not cool.
+> >
 > 
-> Adjust over allocation of memory by correcting types in devm_kcalloc()
-> sizeof() arguments.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
-> ---
-> v4:
->   - Remove Suggested-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
->   - Add Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
->     (https://lore.kernel.org/all/6d8ac0cf-b954-4c12-8b5b-e172c850e529@intel.com/)
-> v3: https://lore.kernel.org/all/20240708182736.8514-1-amishin@t-argos.ru/
->   - Update comment and use the correct entities as suggested by Przemek
-> v2: https://lore.kernel.org/all/20240706140518.9214-1-amishin@t-argos.ru/
->   - Update comment, remove 'Fixes' tag and change the tree from 'net' to
->     'net-next' as suggested by Simon
->     (https://lore.kernel.org/all/20240706095258.GB1481495@kernel.org/)
-> v1: https://lore.kernel.org/all/20240705163620.12429-1-amishin@t-argos.ru/
+> You were aware of this patch and cc'ed personally (just like
+> linux-perf-users@vger.kernel.org) on all revisions of it. I addressed
+> your concerns in [0], you went silent after that and patches were
+> sitting idle for more than a month.
 
-Thanks for your persistence, this version looks good to me.
+Yeah, I remember seeing it. But I was surprised it got applied. If I'm
+tardy -- this can happen, more so of late since I'm still recovering
+from injury and I get far more email than I could hope to process in a
+work day -- please ping.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+(also, being 'forced' into using a split keyboard means I'm also
+re-learning how to type, further slowing me down -- training muscle
+memory takes a while)
+
+Taking patches that touch other trees is fairly common, but in all those
+cases an ACK is 'required'.
+
+(also also, I'm not the only maintainer there)
+
+> But regardless, if you'd like me to do any adjustments, please let me know.
+> 
+>   [0] https://lore.kernel.org/all/CAEf4Bzazi7YMz9n0V46BU7xthQjNdQL_zma5vzgCm_7C-_CvmQ@mail.gmail.com/
+> 
+
+I'll check, it might be fine, its just the surprise of having it show up
+in some random tree that set me off.
+
+> > Yeah, the probe things are boundary.
+> > BTW, IMHO, there could be dependency issues on *probes. Those are usually used
+> > by ftrace/perf/bpf, which are managed by different trees. This means a series
+> > can span multiple trees. Mutually reviewing is the solution?
+> >
+> 
+> I agree, there is no one best tree for stuff like this. So as long as
+> relevant people and mailing lists are CC'ed we hopefully should be
+> fine?
+
+Typically, yeah, that should work just fine.
+
+But if Masami wants to do uprobes, then it might be prudent to add a
+MAINTAINERS entry for it. 
+
+A solution might be to add a UPROBES entry and add masami, oleg (if he
+wants) and myself as maintainers -- did I forget anyone? Git seems to
+suggest it's mostly been Oleg carrying this thing.
+
+That is, one way or another I think we should get
+./scripts/get_maintainer.pl to emit more people for the relevant files.
 
