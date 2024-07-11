@@ -1,73 +1,37 @@
-Return-Path: <linux-kernel+bounces-249108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19F992E6C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:33:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFCE92E6C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21C71C20A91
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:33:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4081C22D7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D74815EFB6;
-	Thu, 11 Jul 2024 11:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cayVgiR+"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E522E15FA8B;
+	Thu, 11 Jul 2024 11:29:08 +0000 (UTC)
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D5A15957E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF4E1591E2;
+	Thu, 11 Jul 2024 11:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720697327; cv=none; b=Z3tyZ7Sr2nBRg1tTKAAINtyKUwvXCqTwOYNnIuVQ7iRbtX4KJKpTBMQy6oQ9FHCeFF3NGXuNdWu3wqIWl6UgCtmKI8EJxwaJEOmotMCBEclryMvQbXy8euXIs/a7k1+wRoHMa4v/O0C8VfzUUZJbEi5Sp4KUFs4OMFL9TmfoPWo=
+	t=1720697348; cv=none; b=tk9LYRcC7spDRJAY94pcy0B+of9mXadzayaeH1O7LmrOWinSPHktlrLSB9NqNDJcdPMwQeBz/+Tmcu+CHEhoTBk97fe7r4Gy5gH1SU8oRxKbEMIBrVKz8yhlI/Hj9bfMDdLwrYvqOPURmR3yFbegO6xD5mK1Kf86j9aSNF5rUDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720697327; c=relaxed/simple;
-	bh=H/yJcyeWYsJtAO5ufkkNAxb+N3K7x1J4FY0ND2ZzQyY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=K+be9jFj5GiepyVvr51XMdA3O+N4VfKttXqikMrP/NKzzLFaYp/WSlgHtOF9er1mJ6IJDpl/X1heogWqnNLjlQURcarY+aWckC0NvAeHoWuuqt2ZqcZw4T8yy8PHLzppbF3prSWViZjmrdWkppLk8hYgYHoEJARJDaLaOegbUpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cayVgiR+; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42660b8dd27so4828625e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:28:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720697324; x=1721302124; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=H/yJcyeWYsJtAO5ufkkNAxb+N3K7x1J4FY0ND2ZzQyY=;
-        b=cayVgiR+Y3sMJPRv2S9iRfsvB4KrwijFdKaaE2wJpWNzYHaTDRvYYcttAzMDLeXYeR
-         tgMvsSoEgn5CgHRKZLIOH43gxCmiry8aF8ZiQ51U1J+Y00FGaeVH3QOIamxxBXMxBy4R
-         R4sxORZ2YP37MLFA+//HqejmIDDJClqKxQYdeKEFWRarrAojhfGS2VAIPZpLBW/N7Azy
-         fabv0qhT49FBfOkSRNPVogT6Kp05U/AlGWQbNjrSqEzwK55g1KCAIhJPeTnJs64XDoKs
-         SutKnN53JEsE2ny63SpxOSRqXsfDkDFfOWhOmtHmnIih9fMCySwjx6IOe7AamqmomWAY
-         T0Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720697324; x=1721302124;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/yJcyeWYsJtAO5ufkkNAxb+N3K7x1J4FY0ND2ZzQyY=;
-        b=oLdUE/Eeg6aZxIgWCQ9z5CNT3d5deGAIq+0ZrjWIk3KXuCOHwumebjGQhE+RwBumH6
-         6W9E1sTFXRxNNKTfkVG1VK9xJJ30h2U/siwe5a4JPGlsKS/eZtMC9xgqdb4HzMDna5FT
-         uaaRl8g3R6IGlWCzCRVt0jrNtiuDJmyyWZ89Cx1RazVffhEorkseUAJoV0f7ErmUREV9
-         aft1uDUKTPMFZpdg/0yzJaKVXLXzR85Bl5JSxcvaX/xe56q/FzwQuXAuftyr9oeRivwb
-         DgHJE16T6jeSk+ggRv9PbPut+pp5qVeYv3jqTzqjlbKoID4eIq5Z3W31p6mWumc2dAZb
-         7H8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVGp1Qxql6CTfkzoeNUmHdD5yZWU5seslP4vb4f1srHwwxV8o6KJ+0wp3qcTc9EBMIEFs9ApGtkIcKvwiImjqvhZc0xxSWdzODzZnzc
-X-Gm-Message-State: AOJu0YysRbSF5RCTwJ8v8lH01i6LPbF/CLk9ejXqABgucYX7DQ4b0nak
-	nWhPNxNNmPoRgQPA9pGjLl4u7c5ylLeYuorXHJZs8WaGRc87Eu4JHjXl3N6dJEo=
-X-Google-Smtp-Source: AGHT+IGpNfWzw/AXdT51ntv1SBFRB91uXKQA+H9vA8vS8UT0DNtrzwTYgZNb8Fa/r+QFA/8HLqi20Q==
-X-Received: by 2002:a05:600c:4a99:b0:426:5de3:2ae5 with SMTP id 5b1f17b1804b1-426707d8ae6mr66975345e9.10.1720697324085;
-        Thu, 11 Jul 2024 04:28:44 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f736939sm115679945e9.37.2024.07.11.04.28.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 04:28:43 -0700 (PDT)
-Message-ID: <22dc8e14-334e-4a77-bc90-a63223a46857@linaro.org>
-Date: Thu, 11 Jul 2024 12:28:42 +0100
+	s=arc-20240116; t=1720697348; c=relaxed/simple;
+	bh=El4eX6/oaBBEXxAVVLSzLu3U0qCVTLODUHr1DjsAVPU=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mAqAmnuRbi+N31QpCRrGIJk97rsugjMhgabDBQIOoedwyuX7HLB7sDUw+v1g2Wv3+GZnQ4ns/3TDS4EGk5lX1DQlsUsVE/rK2OR43/8kVZzQepK+m2wudnYuNzBuvFVoocDa6s6S9QrQgZOo6jUGbIOUgYMbNQ3oKHHdN4U0Jlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 11174FF809;
+	Thu, 11 Jul 2024 11:28:56 +0000 (UTC)
+Message-ID: <41bfecdd-b301-4129-bebe-ee8211a2e1d4@ovn.org>
+Date: Thu, 11 Jul 2024 13:28:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,34 +39,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: ov5675: Elongate reset to first transaction
- minimum gap
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To: Quentin Schulz <quentin.schulz@cherry.de>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Jacopo Mondi <jacopo@jmondi.org>
-Cc: Johan Hovold <johan@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240711-linux-next-ov5675-v1-0-69e9b6c62c16@linaro.org>
- <20240711-linux-next-ov5675-v1-2-69e9b6c62c16@linaro.org>
- <fcd0db64-6104-47a6-a482-6aa3eec702bc@cherry.de>
- <aa20591f-3939-4776-9025-b8d7159f4c63@linaro.org>
+Cc: dev@openvswitch.org, linux-kernel@vger.kernel.org,
+ Eric Dumazet <edumazet@google.com>, linux-kselftest@vger.kernel.org,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ i.maximets@ovn.org
+Subject: Re: [ovs-dev] [PATCH net-next v2] selftests: openvswitch: retry
+ instead of sleep
+To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
+References: <20240710090500.1655212-1-amorenoz@redhat.com>
 Content-Language: en-US
-In-Reply-To: <aa20591f-3939-4776-9025-b8d7159f4c63@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ xsFNBF77bOMBEADVZQ4iajIECGfH3hpQMQjhIQlyKX4hIB3OccKl5XvB/JqVPJWuZQRuqNQG
+ /B70MP6km95KnWLZ4H1/5YOJK2l7VN7nO+tyF+I+srcKq8Ai6S3vyiP9zPCrZkYvhqChNOCF
+ pNqdWBEmTvLZeVPmfdrjmzCLXVLi5De9HpIZQFg/Ztgj1AZENNQjYjtDdObMHuJQNJ6ubPIW
+ cvOOn4WBr8NsP4a2OuHSTdVyAJwcDhu+WrS/Bj3KlQXIdPv3Zm5x9u/56NmCn1tSkLrEgi0i
+ /nJNeH5QhPdYGtNzPixKgPmCKz54/LDxU61AmBvyRve+U80ukS+5vWk8zvnCGvL0ms7kx5sA
+ tETpbKEV3d7CB3sQEym8B8gl0Ux9KzGp5lbhxxO995KWzZWWokVUcevGBKsAx4a/C0wTVOpP
+ FbQsq6xEpTKBZwlCpxyJi3/PbZQJ95T8Uw6tlJkPmNx8CasiqNy2872gD1nN/WOP8m+cIQNu
+ o6NOiz6VzNcowhEihE8Nkw9V+zfCxC8SzSBuYCiVX6FpgKzY/Tx+v2uO4f/8FoZj2trzXdLk
+ BaIiyqnE0mtmTQE8jRa29qdh+s5DNArYAchJdeKuLQYnxy+9U1SMMzJoNUX5uRy6/3KrMoC/
+ 7zhn44x77gSoe7XVM6mr/mK+ViVB7v9JfqlZuiHDkJnS3yxKPwARAQABzSJJbHlhIE1heGlt
+ ZXRzIDxpLm1heGltZXRzQG92bi5vcmc+wsGUBBMBCAA+AhsDBQsJCAcCBhUKCQgLAgQWAgMB
+ Ah4BAheAFiEEh+ma1RKWrHCY821auffsd8gpv5YFAmP+Y/MFCQjFXhAACgkQuffsd8gpv5Yg
+ OA//eEakvE7xTHNIMdLW5r3XnWSEY44dFDEWTLnS7FbZLLHxPNFXN0GSAA8ZsJ3fE26O5Pxe
+ EEFTf7R/W6hHcSXNK4c6S8wR4CkTJC3XOFJchXCdgSc7xS040fLZwGBuO55WT2ZhQvZj1PzT
+ 8Fco8QKvUXr07saHUaYk2Lv2mRhEPP9zsyy7C2T9zUzG04a3SGdP55tB5Adi0r/Ea+6VJoLI
+ ctN8OaF6BwXpag8s76WAyDx8uCCNBF3cnNkQrCsfKrSE2jrvrJBmvlR3/lJ0OYv6bbzfkKvo
+ 0W383EdxevzAO6OBaI2w+wxBK92SMKQB3R0ZI8/gqCokrAFKI7gtnyPGEKz6jtvLgS3PeOtf
+ 5D7PTz+76F/X6rJGTOxR3bup+w1bP/TPHEPa2s7RyJISC07XDe24n9ZUlpG5ijRvfjbCCHb6
+ pOEijIj2evcIsniTKER2pL+nkYtx0bp7dZEK1trbcfglzte31ZSOsfme74u5HDxq8/rUHT01
+ 51k/vvUAZ1KOdkPrVEl56AYUEsFLlwF1/j9mkd7rUyY3ZV6oyqxV1NKQw4qnO83XiaiVjQus
+ K96X5Ea+XoNEjV4RdxTxOXdDcXqXtDJBC6fmNPzj4QcxxyzxQUVHJv67kJOkF4E+tJza+dNs
+ 8SF0LHnPfHaSPBFrc7yQI9vpk1XBxQWhw6oJgy3OwU0EXvts4wEQANCXyDOic0j2QKeyj/ga
+ OD1oKl44JQfOgcyLVDZGYyEnyl6b/tV1mNb57y/YQYr33fwMS1hMj9eqY6tlMTNz+ciGZZWV
+ YkPNHA+aFuPTzCLrapLiz829M5LctB2448bsgxFq0TPrr5KYx6AkuWzOVq/X5wYEM6djbWLc
+ VWgJ3o0QBOI4/uB89xTf7mgcIcbwEf6yb/86Cs+jaHcUtJcLsVuzW5RVMVf9F+Sf/b98Lzrr
+ 2/mIB7clOXZJSgtV79Alxym4H0cEZabwiXnigjjsLsp4ojhGgakgCwftLkhAnQT3oBLH/6ix
+ 87ahawG3qlyIB8ZZKHsvTxbWte6c6xE5dmmLIDN44SajAdmjt1i7SbAwFIFjuFJGpsnfdQv1
+ OiIVzJ44kdRJG8kQWPPua/k+AtwJt/gjCxv5p8sKVXTNtIP/sd3EMs2xwbF8McebLE9JCDQ1
+ RXVHceAmPWVCq3WrFuX9dSlgf3RWTqNiWZC0a8Hn6fNDp26TzLbdo9mnxbU4I/3BbcAJZI9p
+ 9ELaE9rw3LU8esKqRIfaZqPtrdm1C+e5gZa2gkmEzG+WEsS0MKtJyOFnuglGl1ZBxR1uFvbU
+ VXhewCNoviXxkkPk/DanIgYB1nUtkPC+BHkJJYCyf9Kfl33s/bai34aaxkGXqpKv+CInARg3
+ fCikcHzYYWKaXS6HABEBAAHCwXwEGAEIACYCGwwWIQSH6ZrVEpascJjzbVq59+x3yCm/lgUC
+ Y/5kJAUJCMVeQQAKCRC59+x3yCm/lpF7D/9Lolx00uxqXz2vt/u9flvQvLsOWa+UBmWPGX9u
+ oWhQ26GjtbVvIf6SECcnNWlu/y+MHhmYkz+h2VLhWYVGJ0q03XkktFCNwUvHp3bTXG3IcPIC
+ eDJUVMMIHXFp7TcuRJhrGqnlzqKverlY6+2CqtCpGMEmPVahMDGunwqFfG65QubZySCHVYvX
+ T9SNga0Ay/L71+eVwcuGChGyxEWhVkpMVK5cSWVzZe7C+gb6N1aTNrhu2dhpgcwe1Xsg4dYv
+ dYzTNu19FRpfc+nVRdVnOto8won1SHGgYSVJA+QPv1x8lMYqKESOHAFE/DJJKU8MRkCeSfqs
+ izFVqTxTk3VXOCMUR4t2cbZ9E7Qb/ZZigmmSgilSrOPgDO5TtT811SzheAN0PvgT+L1Gsztc
+ Q3BvfofFv3OLF778JyVfpXRHsn9rFqxG/QYWMqJWi+vdPJ5RhDl1QUEFyH7ok/ZY60/85FW3
+ o9OQwoMf2+pKNG3J+EMuU4g4ZHGzxI0isyww7PpEHx6sxFEvMhsOp7qnjPsQUcnGIIiqKlTj
+ H7i86580VndsKrRK99zJrm4s9Tg/7OFP1SpVvNvSM4TRXSzVF25WVfLgeloN1yHC5Wsqk33X
+ XNtNovqA0TLFjhfyyetBsIOgpGakgBNieC9GnY7tC3AG+BqG5jnVuGqSTO+iM/d+lsoa+w==
+In-Reply-To: <20240710090500.1655212-1-amorenoz@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: i.maximets@ovn.org
 
-On 11/07/2024 12:22, Bryan O'Donoghue wrote:
-> if you feel very strongly that 426 milliseconds * 2 is wrong
+On 7/10/24 11:04, Adrian Moreno wrote:
+> There are a couple of places where the test script "sleep"s to wait for
+> some external condition to be met.
+> 
+> This is error prone, specially in slow systems (identified in CI by
+> "KSFT_MACHINE_SLOW=yes").
+> 
+> To fix this, add a "ovs_wait" function that tries to execute a command
+> a few times until it succeeds. The timeout used is set to 5s for
+> "normal" systems and doubled if a slow CI machine is detected.
+> 
+> This should make the following work:
+> 
+> $ vng --build  \
+>     --config tools/testing/selftests/net/config \
+>     --config kernel/configs/debug.config
+> 
+> $ vng --run . --user root -- "make -C tools/testing/selftests/ \
+>     KSFT_MACHINE_SLOW=yes TARGETS=net/openvswitch run_tests"
+> 
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> ---
+>  .../selftests/net/openvswitch/openvswitch.sh  | 45 +++++++++++++++----
+>  .../selftests/net/openvswitch/ovs-dpctl.py    |  1 +
+>  2 files changed, 38 insertions(+), 8 deletions(-)
 
-MICROSECONDS !
+Seem like we don't have a signal from CI for some reason yet,
+but I tested this locally and it seem to work fine.  Either
+way it's a better way of doing things than sleep'n'hope.
 
-Bah
-
----
-bod
+Reviewed-by: Ilya Maximets <i.maximets@ovn.org>
 
