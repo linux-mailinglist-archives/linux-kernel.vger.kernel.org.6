@@ -1,131 +1,226 @@
-Return-Path: <linux-kernel+bounces-249296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB6492E997
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:34:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D8892E99F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:34:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A0772810F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:34:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA012810D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A2D15FA68;
-	Thu, 11 Jul 2024 13:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eKmpcDrH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A6F15ECD6;
-	Thu, 11 Jul 2024 13:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF367160887;
+	Thu, 11 Jul 2024 13:33:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B114CE09;
+	Thu, 11 Jul 2024 13:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720704834; cv=none; b=shrAOCH02lOIsmIt6akFZMgDYG1uPCmv0YZTJH3qtrijTuTeLDU67urFch5Zl8ndU4t2ZVeWs+Bobu9TQJbbF9vwwYS2H8p0gxks2N8wWsw0dfGX2HgueIwYuX0c3uw52MFXoXcs4WUWrpUqqziS8MxlxPQrznRyQg9kyW49bPw=
+	t=1720704836; cv=none; b=DW95i0rF8bpUykCLmNTCcOXJYcTOKXKDRK9crPQAOL86kzIQZoQ1qtAG+htDba1Sm6VFZ/yaDhrLe8UjN5CPkIMEgfr98bbnCMaRJeF0c1HXwac9lKyGwu8e4Q8RDs8aGox8Fh5gb0b5Wu7hkJQnk5mhfij+mpMTt0SAQ5owwuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720704834; c=relaxed/simple;
-	bh=Q0uJNTpk2Imumg1owNbTczldmVgomp8l5jwPmlVdno0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PI+t7nYSyyoTCYNE9M7j8OyvO4tWHcPh8FQVhIkkiakAz/auzVeDrC5i4o1k6kLWxdEJ/yGerW6sNXimYm3sxu3VprFzDuuI9zXRWkaquiE4Oj9DjB/Pnu6uWY61Uwt3y7WosAlJZQAEa7i+x79A5OGDRGfkTvfdhjNlQtTPaR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eKmpcDrH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BD2sUp017917;
-	Thu, 11 Jul 2024 13:33:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CVa3k0i2OsR9Z5jhEKXiC8fF51xuj5g9e+59ICrlh4Y=; b=eKmpcDrHiub7sM00
-	omL44P1Rvg18kEKOoGMH8s7m3dXr7H3zi1EaJ78npFm9XTgnw6KYFMo02jYO4WHK
-	KOzC84mHy3XOx11AwqTN+Tqoyt1k35FjsxAbHnebHahD6f3EnbfqBqQfGbYJXEuE
-	MVQ8i1zZGldRy3irh3EYsdKqadcomV0W4ld3/+pPPg6LDtWeM/Z3uE8FZWgm++J9
-	x95UYhWI4EUeOHEO/vB7G4pUYFujKDi9YHL6M4FiztV+J9Z4IE1dCRoM2BWPDWi/
-	t/gY0iGOasECL9PDrAof1CZ4BjTPZgY9VM5EAgFLZHqjM9FSMcTPOnOMQOVzXho4
-	aOxdaQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40a8uhs8qy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 13:33:43 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BDXgDk030452
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 13:33:42 GMT
-Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 06:33:38 -0700
-Message-ID: <0e9ddeba-ca2e-6f92-dde0-b74629928864@quicinc.com>
-Date: Thu, 11 Jul 2024 19:03:34 +0530
+	s=arc-20240116; t=1720704836; c=relaxed/simple;
+	bh=G0Y5MS/fG5nofaxo9KxIn5gYLBj3YWsywp6BEyBcgac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOARDFiSLkvEuxUnt5/PeJ/ZGyxdpJlelKM8J8E7z2Zw20ZpkjnquZoIQp01Qm3z5RCj2oMuYwX3C/FoigamOaNqMTdEmiIMqLZgdSBWJLYEvGTuuVgNBj/X44f2REPSXS5NCaFOuWekDcZKAIMQ8iHv8hrg2e+3YvmmnHWiKis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 508CAFEC;
+	Thu, 11 Jul 2024 06:34:19 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F8523F766;
+	Thu, 11 Jul 2024 06:33:49 -0700 (PDT)
+Date: Thu, 11 Jul 2024 14:33:39 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v5 5/7] firmware: imx: add i.MX95 MISC driver
+Message-ID: <Zo_fM8c485SSnTDF@pluto>
+References: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
+ <20240621-imx95-bbm-misc-v2-v5-5-b85a6bf778cb@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [RFC V3 2/4] firmware: arm_scmi: vendors: Add ARM SCMI QCOM
- vendor protocol v1.0
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>, <sudeep.holla@arm.com>,
-        <cristian.marussi@arm.com>, <andersson@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
-        <conor+dt@kernel.org>, Amir Vajid <avajid@quicinc.com>
-References: <20240702191440.2161623-1-quic_sibis@quicinc.com>
- <20240702191440.2161623-3-quic_sibis@quicinc.com>
- <2b278a27-f527-448c-99b5-fc307d792127@linaro.org>
-From: Sibi Sankar <quic_sibis@quicinc.com>
-In-Reply-To: <2b278a27-f527-448c-99b5-fc307d792127@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6az48Wt6plrdIL0jKBmYxUdXEWZ_51DX
-X-Proofpoint-ORIG-GUID: 6az48Wt6plrdIL0jKBmYxUdXEWZ_51DX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_09,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 bulkscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- mlxlogscore=946 lowpriorityscore=0 suspectscore=0 spamscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110097
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621-imx95-bbm-misc-v2-v5-5-b85a6bf778cb@nxp.com>
 
-
-
-On 7/9/24 15:40, Konrad Dybcio wrote:
-> On 2.07.2024 9:14 PM, Sibi Sankar wrote:
->> The ARM SCMI QCOM vendor protocol provides a generic way of exposing a
->> number of Qualcomm SoC specific features (like memory bus scaling) through
->> a mixture of pre-determined algorithm strings and param_id pairs hosted on
->> the SCMI controller.
->>
+On Fri, Jun 21, 2024 at 03:04:40PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> [...]
-
-Hey Konrad,
-
-Thanks for taking time to review the series.
-
+> The i.MX95 System manager exports SCMI MISC protocol for linux to do
+> various settings, such as set board gpio expander as wakeup source.
 > 
->> +/**
->> + * qcom_scmi_vendor_protocol_cmd - vendor specific commands supported by Qualcomm SCMI
->> + *                                 vendor protocol.
+> The driver is to add the support.
 > 
-> include the word 'enum' or:
+
+Hi,
+
+a small style nitpick down below.
+
+Other than that,
+
+LGTM.
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
+
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/firmware/imx/Kconfig    |  11 ++++
+>  drivers/firmware/imx/Makefile   |   1 +
+>  drivers/firmware/imx/sm-misc.c  | 119 ++++++++++++++++++++++++++++++++++++++++
+>  include/linux/firmware/imx/sm.h |  33 +++++++++++
+>  4 files changed, 164 insertions(+)
 > 
-> warning: cannot understand function prototype: 'enum qcom_scmi_vendor_protocol_cmd '
+> diff --git a/drivers/firmware/imx/Kconfig b/drivers/firmware/imx/Kconfig
+> index 183613f82a11..477d3f32d99a 100644
+> --- a/drivers/firmware/imx/Kconfig
+> +++ b/drivers/firmware/imx/Kconfig
+> @@ -22,3 +22,14 @@ config IMX_SCU
+>  
+>  	  This driver manages the IPC interface between host CPU and the
+>  	  SCU firmware running on M4.
+> +
+> +config IMX_SCMI_MISC_DRV
+> +	tristate "IMX SCMI MISC Protocol driver"
+> +	depends on IMX_SCMI_MISC_EXT || COMPILE_TEST
+> +	default y if ARCH_MXC
+> +	help
+> +	  The System Controller Management Interface firmware (SCMI FW) is
+> +	  a low-level system function which runs on a dedicated Cortex-M
+> +	  core that could provide misc functions such as board control.
+> +
+> +	  This driver can also be built as a module.
+> diff --git a/drivers/firmware/imx/Makefile b/drivers/firmware/imx/Makefile
+> index 8f9f04a513a8..8d046c341be8 100644
+> --- a/drivers/firmware/imx/Makefile
+> +++ b/drivers/firmware/imx/Makefile
+> @@ -1,3 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_IMX_DSP)		+= imx-dsp.o
+>  obj-$(CONFIG_IMX_SCU)		+= imx-scu.o misc.o imx-scu-irq.o rm.o imx-scu-soc.o
+> +obj-${CONFIG_IMX_SCMI_MISC_DRV}	+= sm-misc.o
+> diff --git a/drivers/firmware/imx/sm-misc.c b/drivers/firmware/imx/sm-misc.c
+> new file mode 100644
+> index 000000000000..342e1254a356
+> --- /dev/null
+> +++ b/drivers/firmware/imx/sm-misc.c
+> @@ -0,0 +1,119 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright 2024 NXP
+> + */
+> +
+> +#include <linux/firmware/imx/sm.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/scmi_protocol.h>
+> +#include <linux/scmi_imx_protocol.h>
+> +
+> +static const struct scmi_imx_misc_proto_ops *imx_misc_ctrl_ops;
+> +static struct scmi_protocol_handle *ph;
+> +struct notifier_block scmi_imx_misc_ctrl_nb;
+> +
+> +int scmi_imx_misc_ctrl_set(u32 id, u32 val)
+> +{
+> +	if (!ph)
+> +		return -EPROBE_DEFER;
+> +
+> +	return imx_misc_ctrl_ops->misc_ctrl_set(ph, id, 1, &val);
+> +};
+> +EXPORT_SYMBOL(scmi_imx_misc_ctrl_set);
+> +
+> +int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val)
+> +{
+> +	if (!ph)
+> +		return -EPROBE_DEFER;
+> +
+> +	return imx_misc_ctrl_ops->misc_ctrl_get(ph, id, num, val);
+> +}
+> +EXPORT_SYMBOL(scmi_imx_misc_ctrl_get);
+> +
+> +static int scmi_imx_misc_ctrl_notifier(struct notifier_block *nb,
+> +				       unsigned long event, void *data)
+> +{
+> +	/*
+> +	 * notifier_chain_register requires a valid notifier_block and
+> +	 * valid notifier_call. SCMI_EVENT_IMX_MISC_CONTROL is needed
+> +	 * to let SCMI firmware enable control events, but the hook here
+> +	 * is just a dummy function to avoid kernel panic as of now.
+> +	 */
+> +	return 0;
+> +}
+> +
+> +static int scmi_imx_misc_ctrl_probe(struct scmi_device *sdev)
+> +{
+> +	const struct scmi_handle *handle = sdev->handle;
+> +	struct device_node *np = sdev->dev.of_node;
+> +	u32 src_id, flags;
+> +	int ret, i, num;
+> +
+> +	if (!handle)
+> +		return -ENODEV;
+> +
+> +	if (imx_misc_ctrl_ops) {
+> +		dev_err(&sdev->dev, "misc ctrl already initialized\n");
+> +		return -EEXIST;
+> +	}
+> +
+> +	imx_misc_ctrl_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_IMX_MISC, &ph);
+> +	if (IS_ERR(imx_misc_ctrl_ops))
+> +		return PTR_ERR(imx_misc_ctrl_ops);
+> +
+> +	num = of_property_count_u32_elems(np, "nxp,ctrl-ids");
+> +	if (num % 2) {
+> +		dev_err(&sdev->dev, "Invalid wakeup-sources\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	scmi_imx_misc_ctrl_nb.notifier_call = &scmi_imx_misc_ctrl_notifier;
+> +	for (i = 0; i < num; i += 2) {
+> +		ret = of_property_read_u32_index(np, "nxp,ctrl-ids", i, &src_id);
+> +		if (ret) {
+> +			dev_err(&sdev->dev, "Failed to read ctrl-id: %i\n", i);
+> +			continue;
+> +		}
+> +
+> +		ret = of_property_read_u32_index(np, "nxp,ctrl-ids", i + 1, &flags);
+> +		if (ret) {
+> +			dev_err(&sdev->dev, "Failed to read ctrl-id value: %d\n", i + 1);
+> +			continue;
+> +		}
+> +
+> +		ret = handle->notify_ops->devm_event_notifier_register(sdev, SCMI_PROTOCOL_IMX_MISC,
+> +								       SCMI_EVENT_IMX_MISC_CONTROL,
+> +								       &src_id,
+> +								       &scmi_imx_misc_ctrl_nb);
+> +		if (ret)
 
-will fix it in the next re-spin.
+missing {
+		dev_err(&sdev->dev, "Failed to register scmi misc event: %d\n", src_id);
 
--Sibi
+	}
 
-> 
-> Konrad
+
+Thanks,
+Cristian
 
