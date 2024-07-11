@@ -1,126 +1,105 @@
-Return-Path: <linux-kernel+bounces-249161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D1892E7D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:01:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6203A92E7E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C0B12820BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:01:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DB7228761E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525EF15B145;
-	Thu, 11 Jul 2024 12:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DB115FCEB;
+	Thu, 11 Jul 2024 12:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JBjOyswt"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Cqy1HJFU"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6ECF156F2D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E0A156C61
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720699261; cv=none; b=G8FQX2pBMWiKzAS/JMEnfvdZZXsLJdyx3Rs1iVW3rmGeDTU1qhH7oq8O9t7oQz+Ef3ZGj51ju6jxIXYqlQf++p3yUAPViscr9KHQqqn2bvaevZb3AKEPEjvkCOAQB1pkxZK+oaW6jsBOROx19TwAA0Bll0QOPQJ3QzdROJzj46g=
+	t=1720699309; cv=none; b=nk57hH74NJvUarW767iqVJU9d++TfsQzsvtRvrDgo+NKg8rHPpZCoG4K/mOtSSHf9n/1EdNMwSO1omZNwiRBkBPERP335QtnfiQWwTtwwivf6kUp8GgOBh+xVTJrhHbcEs1LaHpqTS1pH8Ubsiq+8GHwXlvtdEouOw6yLxdeuJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720699261; c=relaxed/simple;
-	bh=v49Vip4jZ4oBWopBF6Z/4qZU0UdOimIaGgazufPlW2g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RM8l3W7jPX7rqJ7XO10mNdBm4NOOnahw+UzLbYY710f3wjch8kkDRSiljDi0YX6oEMxs9vU2qlxDdTrsNXdp/gXDPDZ+l68cKjvg2n635rdWLwFbPqZ/P2dfWtR4Jh2sg04UGO9XdM9CLgSdJYRaROZY4Iq7T3gZm+t2BMKLr18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JBjOyswt; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4265c2b602aso5262335e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:00:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720699258; x=1721304058; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2JUd2oLXgxshKzRFVISFxh+A+Mvcy+qNlBasbhAfNdM=;
-        b=JBjOyswtkOKjO/rVl5GyhQrUk1FTLWGA39KEEcIUX/Jrm9LrlJIUgBXPqPxiCU+lHv
-         RULBP5UeSZ9KZ8KG9cA6r+R9tfZZ2LvlQnY+LwPqY13keA5st6cHLwPacf2gNb7wMWlQ
-         Mx1Cq09ZsUv86NNrwyXNiJ9yYsrpdzNcqzsQ8cFB5Wj4IRMrV0KrFz4xBQ8BLC1SgQet
-         hyKyYbNIUKIjQ55UbWse9iN02kmwvNhAdGyM9Xds/hv1a7Uf4MrS9vsJ6CUUj5lG1nyM
-         FJQps4NpfYtSBQiqXeGhRcA9Iyw/U3KUcijvXzMwPFozD7n3NTYaO68F69b+7DezbKfe
-         bDpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720699258; x=1721304058;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2JUd2oLXgxshKzRFVISFxh+A+Mvcy+qNlBasbhAfNdM=;
-        b=wQTXAfDfa+fhsp8RBiarXknIZh4thjK1GwQRHzOk/eZJ7LW6TUhCCOGWgukzXYG7LL
-         FmxlccZ22/Rt5NeKsxU6K7LxFQBlLD0APUmvDAu0hpp5cKbkdrFtZ5C/Mb7f25OBKK+H
-         myAXUtCEy4AJuOcCF9emPxb5r9SmhDFZ15/CJ4tJ6xhap1sHbvmEpK6vMuMOn9a7lYhg
-         JCziLEkaW6WJlN6x8+TJs1l2l8OgR2nZ5JApNRifY62wN8EP0VclOOKQnWLIJupgfwqb
-         t207vZuakll/G9OhH5yd81/F57WVjyAbrfpyu92ts9GGbAAk5rzZHr5GoNLiyo7zGaaH
-         I/HA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2++nNquoPI0WdpwE1WVz57M4TE3t845wjyS/YxSn03kt/gqXjuu7wjICwJTH0+0eOBrtfvOr9pBDcRCVq1Pu7+JsmUty2i6CxjM3I
-X-Gm-Message-State: AOJu0YyRzvEBscqXZeumQWYzNsKRhJAZ6dPo/vS4aWuxLStEUwS4YTGM
-	8A/itdgNm2vtkZbsFFtOOPA8lNvnzSrcLMGIdWhRpsEj+ZzaXnqqOZAhygRtZZU=
-X-Google-Smtp-Source: AGHT+IEYp8K8dzwxo8IceVvIX+AjIdtBRRlmCQuuavFPvMmMwPrAreMKuYzQFVtHTSRgUEKZznR3tA==
-X-Received: by 2002:a05:600c:4d0d:b0:426:6e8b:3dc5 with SMTP id 5b1f17b1804b1-426708f1fb7mr54216235e9.32.1720699258137;
-        Thu, 11 Jul 2024 05:00:58 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42650b26c48sm248723315e9.17.2024.07.11.05.00.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 05:00:57 -0700 (PDT)
-Message-ID: <4c26e896-69fa-413b-ace3-39c9698dd6aa@linaro.org>
-Date: Thu, 11 Jul 2024 13:00:56 +0100
+	s=arc-20240116; t=1720699309; c=relaxed/simple;
+	bh=YqvdRqli3JiPIPEXNQZ5ncC0zMSvrBCdwSmE95Mg5SI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rytb1C7hqGi0mqp9+nuIGYfJngU/DDVfj8nBie1F+h9lSbDVhOsOueVrWwIoQH2J8JxbVmSIRlnKOGWtItwhhJnTPlAeXWPfTl0wph85GbAWqAY3QVqt5ZHF1o4m1geTZ0zZ8wKn94CPPQcb7ekQNWp2LKkSj9gfEPg9vLushNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Cqy1HJFU; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BA6xNV013090;
+	Thu, 11 Jul 2024 05:01:38 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=1Qoy7KYEQ9s+6+w6zmzcugv
+	BQaIE9TKnoB8ckAHKCLc=; b=Cqy1HJFUGcI2XLfoBbsKNr2BzdbkajcDPznkWCA
+	KZjpELyxgv5489zP7z1FRD8NHxaLP6axrrQduoNn6Qv8al1Hm9BKwSfd3C79w2iM
+	hZXjl4J+4UkmaPicDc/dPIQx8kizhm1vx8aQoPFMmNQXhMJeti8G2NSCR0CvMvhx
+	xc0YWbe8b7Lr5EbfjOVFJT9ZGt6SXb6PljrUApuk/XGAbt3BflR5PgujQvnNPfOk
+	ZBZ6Gvtrh9s3rDy6QtW5V7zNWfbEuRIyy9qf8NznAa8qqrxwU/klkZCaBsLP5PK2
+	jsYOi4kpjRfKQMAl4yplDDafAxMhI5iJl3almyPrgn1hogw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 40adbv09kn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 05:01:37 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 11 Jul 2024 05:01:36 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 11 Jul 2024 05:01:36 -0700
+Received: from localhost.localdomain (unknown [10.28.36.156])
+	by maili.marvell.com (Postfix) with ESMTP id A13F33F7040;
+	Thu, 11 Jul 2024 05:01:34 -0700 (PDT)
+From: Vamsi Attunuru <vattunuru@marvell.com>
+To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <vattunuru@marvell.com>
+Subject: [PATCH] misc: Kconfig: add a new dependency for MARVELL_CN10K_DPI
+Date: Thu, 11 Jul 2024 05:01:15 -0700
+Message-ID: <20240711120115.4069401-1-vattunuru@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/13] media: qcom: camss: Add CSID Gen3 support for
- SM8550
-To: Depeng Shao <quic_depengs@quicinc.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com,
- Yongsheng Li <quic_yon@quicinc.com>
-References: <20240709160656.31146-1-quic_depengs@quicinc.com>
- <20240709160656.31146-10-quic_depengs@quicinc.com>
- <1da50dd1-b170-4775-94fc-19a10b7f9c47@kernel.org>
- <4c8095dd-4f96-4b0e-9282-8bdfb5badbc3@quicinc.com>
- <9255b3e4-874c-4919-b50a-919cf0f42f75@kernel.org>
- <064baf66-eecd-4982-864f-50b86b104ff6@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <064baf66-eecd-4982-864f-50b86b104ff6@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: u-3Jof4d0rkGRqf5M8aMMpZWDN-K1ON1
+X-Proofpoint-GUID: u-3Jof4d0rkGRqf5M8aMMpZWDN-K1ON1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_08,2024-07-11_01,2024-05-17_01
 
-On 11/07/2024 12:41, Depeng Shao wrote:
->>> Yes, these are some sequences to initialize the HW.
->>
->> Hm? It's like you ignore the problem and just answer with whatever to
->> shut up the reviewer. Instead of replying with the same, address the
->> problem. Why ordering is not a problem here?
->>
-> 
-> Sorry, I didn't mean that, was trying to understand the problem, then 
-> just sent out the mail by mistake.
-> Do you mean we should use writel to ensure the strict sequences?
-> Thanks for catching this problem, this problem is also in the the 
-> existing camss driver. I will check all of them in this series, but the 
-> problem in some existing camss drivers, maybe Bryan from Linaro can help 
-> to fix them, since I don't have these devices to verify the modifications.
+DPI hardware is an on-chip PCIe device on Marvell's arm64 SoC
+platforms. As Arnd suggested, CN10K belongs to ARCH_THUNDER
+lineage.
 
-_relaxed is used I'm sure because that's what's always been used and 
-what downstream does.
+Patch makes mrvl_cn10k_dpi driver dependent on CONFIG_ARCH_THUNDER.
 
-Is there a good reason for it ? None that I can think of.
-
-Krzysztof is right, there's no good reason to use relaxed() here at all, 
-you should drop it.
-
+Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
 ---
-bod
+ drivers/misc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 64fcca9e44d7..f3bb75384627 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -588,6 +588,7 @@ config NSM
+ config MARVELL_CN10K_DPI
+ 	tristate "Octeon CN10K DPI driver"
+ 	depends on PCI
++	depends on ARCH_THUNDER || COMPILE_TEST
+ 	help
+ 	  Enables Octeon CN10K DMA packet interface (DPI) driver which
+ 	  intializes DPI hardware's physical function (PF) device's
+-- 
+2.25.1
+
 
