@@ -1,150 +1,113 @@
-Return-Path: <linux-kernel+bounces-249992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4361E92F2B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:44:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B2692F2B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A95A7B21BCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:44:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41809B21C12
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6729315ADA1;
-	Thu, 11 Jul 2024 23:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D37D15B133;
+	Thu, 11 Jul 2024 23:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UwBNkT6U"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hsMpeaue"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1891E158A35
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F19814D2AC
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720741450; cv=none; b=AhwNcnxumPbGvbCGgWy6E/1cWeG/ZMf8UxV4zQQXLUnuw0rd9ekgWNs4Hp321J4yk9TFr330dyYc6YjXF4bjsUp+wIwfv7FIgNCb7qg/BfJW1Cj76Z+watbpMCoFYzOAAWY+d9hON460KxNFfJGwKQ79XBoBS9YPfoEY5xpBt6E=
+	t=1720741555; cv=none; b=tacDqjL4C+h1R7sGiiLA8jqmfgGvm77hg6GQB9kda7uH1pgBo1wlYcdawfpjnmzX2aYmjk3u4uxm47jFQJTnb/Y5ZgvNPNXQsjjkidg0AyPhE2JrklSswcbe0wMTSQfHDAT4YCGoItB9YdwrZr1EnP8OXrHonNKkPNd6DEqClpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720741450; c=relaxed/simple;
-	bh=wLBMawbVY4kj2Bt4EYlLhcU0EttvHEXOdNB5ECvZTL0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NECsEh7xjnVNJ7lS3te7sbWT20tNJczI4OWfZSFOfCrj1WHTAmVTv+gDkB/xV7mbIjYoH272AoCDYmPs1d9PFyO8bLytD6yXigmWdOuQM/JNa3fVXX6E4A0QvPUXzt/LeT64n2NkvA0QYyssemQ5MBJ5F5qV2YFnpDsw85Vnf1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UwBNkT6U; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so1821151a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:44:08 -0700 (PDT)
+	s=arc-20240116; t=1720741555; c=relaxed/simple;
+	bh=ixwHm9s164H7lhleYumN5xZomvZGH6ly6DxBenbRgNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F8FjTiB+LizB5FtWiqM2aE6RoqZzr9xv4hdBKc0RMR01jIcMSU6IvsgATnUecxhissetvg7nLPQFl9nJB84IMJUhYkT6FQHy4AdxFt9VO/1sXE6TLyd3bZQeJsgfnQjQ+HLVUrTYhrj2oqT9Q/7dQqiWciMNMXy2/jliumCrAxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=hsMpeaue; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-44d1eb90522so6678851cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:45:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720741447; x=1721346247; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/UTDOPl9I3vMY3m8thY7f41quo4HANERf0zsiZjsCw0=;
-        b=UwBNkT6U5OcPbnLrXm/u7WkFuoARoBFwi+i+5sd2Nruuv9747O7qodf+ha0LSQ1pWJ
-         Y5BDmBrNieis2QBXspzM9xi8AVNAg9vzLtGhDdQhY1ClFIBmNRHs5+mmdwulJlzYVj3g
-         0x2JJGDvMLSiaZd9JfTK/Tc3qHW6yBUh+n9l2srnBjZkP87BCafp3dSDvLMnzwhOFj8Z
-         rV3ajOyvuu4uTE3R5MQbTGbYQ2wOAGoFSygKMMbbRXcY8fzdhCMnjlW0H6CAnomii76O
-         KBZb28w5/xZn8JXngkHMubDWiH58NZFSyrg0KU03P3hwKIMEmwX45iR/0cfq6wqRnM//
-         NahQ==
+        d=ziepe.ca; s=google; t=1720741553; x=1721346353; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CClLV1tB51ZaX86iB9FDhvujW8hrz0rku38BFiYHCho=;
+        b=hsMpeaue6Ucf0sz9k2t2NuKhmx0FMbdAWlBz2a/rp6UFoLHI/oTo/avNZN6I6hNohU
+         6n8mI+VWhO5uWpx+EKYlq6dR2w0ZP84rddsIBoXAwOMJfjS1RVYS7iMTz02OKq046RZO
+         eHLBu1HaVEmRAE7RyJt87FMu9KxFfuOl7O+4F+/ySFOeETuzHJig5f8RLFCpmvxB2vp+
+         5c0RKbr0kQYmdVEd9ImRaG4CPxdfQAJMezLis4IIYlMKQxy4yDScViQGDgho9z/B2JIj
+         ZF61LQ+gFO5PmXgZm+ICetLz2r6THbhrAAKaGrPN5MW3gZ23g1a50mVxAr0pvqHMjq/1
+         LxEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720741447; x=1721346247;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/UTDOPl9I3vMY3m8thY7f41quo4HANERf0zsiZjsCw0=;
-        b=KRQ9O4tqr6gO/KmhbkZ9vode96T0UTikcizP6L/ErjNHdYyPfnfIe638EeDYDbA8sH
-         /tWJqU2jM/dw7wAUmrncYgACFW6kp/jsZkYbjywwjMgWGKViJiEbXpzY3hJx0J3W7gP1
-         n18Pmehxip3wmu76/HZgbFEKc6xUEx+khGc78DyKNYiyi4dcwAfAVRsobaOjmAbVIrUY
-         l5F2vcRUJw28GUOPrN73Ir+Ee1uI4xfAqIuWepBHgosduNnvCpe04REp3P/ZqWtvJYRx
-         WCtpUUzH+BAIsFOQr5mc7Iv8XmOfDPhqUWuCetQSDv2+WdNMZJTecjhn/fgvsWoALAyW
-         grnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwo2zO3kgDcajGGptEIq/VppW4NLTyqhwBsRF2e7iYo8sI8NKJ5l8/Gpp+SXsf3ZYp7hXox4+x6JmP6rpEoCiJbq2PolARhjz8QIBr
-X-Gm-Message-State: AOJu0Yy1tEMpQnTNxuCfLjMpyfY81cn8sCuFJUbeeOtWSzBfxD/32dtd
-	skQXh/nAMABKfzxvZBDhpAQI2z8bSO44ztTChhP8QbDx0UKizGLP
-X-Google-Smtp-Source: AGHT+IEJeM0LyVy2Bw99T+GuOi4v/uMCQDzpgBCjcbqcQI0pTZdD1glvHsJQ8cdC917J3/VfRpJQ5Q==
-X-Received: by 2002:a50:9f0d:0:b0:586:f49:1762 with SMTP id 4fb4d7f45d1cf-594bc7c819cmr5494970a12.26.1720741447227;
-        Thu, 11 Jul 2024 16:44:07 -0700 (PDT)
-Received: from localhost (dh207-43-148.xnet.hr. [88.207.43.148])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bb96042fsm3950389a12.5.2024.07.11.16.44.06
+        d=1e100.net; s=20230601; t=1720741553; x=1721346353;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CClLV1tB51ZaX86iB9FDhvujW8hrz0rku38BFiYHCho=;
+        b=aAv08ilO+crpbC2RlikW/qC/4d3755UErxJKqorbpif4sG0W7/RmqrVvqDOsKcyd9n
+         RqJe80R/1oXiY6JF5dRKe8yfrQSBf4tgAGA7/NQvuB5ugpONs3g1fWYhriEFmvxdvZKQ
+         1W9DR6811FyAeJdRRB5e52hM6Kxbd/d77MjijLYN6EPWteumUgGGnBeW+/6B9g9e6Gqj
+         GnO0ItonEcjTkXuGerMQyC2ge0VE4NSjh+bw6LHyFk4OoI/Cqk/iHVKGSUBeYh9Xl4IU
+         /8knBewFayC8Ygg6uy8N50KoyHfzCseHRC+Z/7q3F625N1C0CpjBMr0D121bikfVjXJY
+         cHTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFDY56jOYXLlisqSdOEmxsy7AIHY60hKLo9I9P5SEqEaRM+ILe8fh/TkZ9oZdmrthShxfLDKhopSR5W2q60Qmvvwf0BxOQgE/JTq/6
+X-Gm-Message-State: AOJu0YxjfSpVWxS+rUY/4tTYKzOo98ThFCf3Lad8ZtYMdTMTO3r/CJwg
+	ea6pmLtFvhIQxYnwQedfdtpwO8DyAwPzp3Xmm56VVxEIkKk3deJCYZi6sd3ZKe8=
+X-Google-Smtp-Source: AGHT+IGCxyT9qIVCEjXNFSJHXsvAlc0MYxLm+Aq0I+IiARoMTxGfb8kiptQiG1V3+Q00EN8jXeloBw==
+X-Received: by 2002:ac8:5848:0:b0:447:e364:ab41 with SMTP id d75a77b69052e-447faa495d3mr115034431cf.59.1720741553352;
+        Thu, 11 Jul 2024 16:45:53 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b2690csm35263031cf.1.2024.07.11.16.45.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 16:44:06 -0700 (PDT)
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Subject: [PATCH v2 1/1] mtd: slram: insert break after errors in parsing the map
-Date: Fri, 12 Jul 2024 01:43:20 +0200
-Message-Id: <20240711234319.637824-1-mtodorovac69@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Thu, 11 Jul 2024 16:45:52 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sS3Tz-00FUa5-38;
+	Thu, 11 Jul 2024 20:45:51 -0300
+Date: Thu, 11 Jul 2024 20:45:51 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] iommufd: Avoid PRI Response Failure
+Message-ID: <20240711234551.GV14050@ziepe.ca>
+References: <20240710083341.44617-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710083341.44617-1-baolu.lu@linux.intel.com>
 
-GCC 12.3.0 compiler on linux-next next-20240709 tree found the execution
-path in which, due to lazy evaluation, devlength isn't initialised with the
-parsed string:
+On Wed, Jul 10, 2024 at 04:33:38PM +0800, Lu Baolu wrote:
+> This series is a follow-up for the discussion that happened here.
+> 
+> https://lore.kernel.org/linux-iommu/20240709173643.GI14050@ziepe.ca/
+> 
+> It prevents user space from responding to a group of page faults with a
+> response code other than IOMMUFD_PAGE_RESP_SUCCESS and
+> IOMMUFD_PAGE_RESP_INVALID, which will be treated by the device as
+> Response Failure according to the PCI spec.
+> 
+> Please help review and comment.
+> 
+> Lu Baolu (3):
+>   iommufd: Remove IOMMUFD_PAGE_RESP_FAILURE
+>   iommufd: Add check on user response code
+>   iommu: Convert response code from failure to invalid
 
-   289		while (map) {
-   290			devname = devstart = devlength = NULL;
-   291
-   292			if (!(devname = strsep(&map, ","))) {
-   293				E("slram: No devicename specified.\n");
-   294				break;
-   295			}
-   296			T("slram: devname = %s\n", devname);
-   297			if ((!map) || (!(devstart = strsep(&map, ",")))) {
-   298				E("slram: No devicestart specified.\n");
-   299			}
-   300			T("slram: devstart = %s\n", devstart);
- → 301			if ((!map) || (!(devlength = strsep(&map, ",")))) {
-   302				E("slram: No devicelength / -end specified.\n");
-   303			}
- → 304			T("slram: devlength = %s\n", devlength);
-   305			if (parse_cmdline(devname, devstart, devlength) != 0) {
-   306				return(-EINVAL);
-   307			}
+Applied to iommufd for-next
 
-Parsing should be finished after map == NULL, so a break is best inserted after
-each E("slram: ... \n") error message.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org
-Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
----
-v1:
- initial patch proposal.
-
-v2:
- re-sent using git send-email + oauth2 (fixing T-Bird TAB problem).
-
- drivers/mtd/devices/slram.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/mtd/devices/slram.c b/drivers/mtd/devices/slram.c
-index 28131a127d06..8297b366a066 100644
---- a/drivers/mtd/devices/slram.c
-+++ b/drivers/mtd/devices/slram.c
-@@ -296,10 +296,12 @@ static int __init init_slram(void)
- 		T("slram: devname = %s\n", devname);
- 		if ((!map) || (!(devstart = strsep(&map, ",")))) {
- 			E("slram: No devicestart specified.\n");
-+			break;
- 		}
- 		T("slram: devstart = %s\n", devstart);
- 		if ((!map) || (!(devlength = strsep(&map, ",")))) {
- 			E("slram: No devicelength / -end specified.\n");
-+			break;
- 		}
- 		T("slram: devlength = %s\n", devlength);
- 		if (parse_cmdline(devname, devstart, devlength) != 0) {
--- 
-2.34.1
-
+Thanks,
+Jason
 
