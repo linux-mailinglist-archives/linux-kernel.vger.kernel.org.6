@@ -1,67 +1,65 @@
-Return-Path: <linux-kernel+bounces-249168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6203A92E7E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:02:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1096892E7DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DB7228761E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C052E28624D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DB115FCEB;
-	Thu, 11 Jul 2024 12:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA67215B14C;
+	Thu, 11 Jul 2024 12:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Cqy1HJFU"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="H2I3oWp5"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E0A156C61
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 12:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0941915ADB4;
+	Thu, 11 Jul 2024 12:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720699309; cv=none; b=nk57hH74NJvUarW767iqVJU9d++TfsQzsvtRvrDgo+NKg8rHPpZCoG4K/mOtSSHf9n/1EdNMwSO1omZNwiRBkBPERP335QtnfiQWwTtwwivf6kUp8GgOBh+xVTJrhHbcEs1LaHpqTS1pH8Ubsiq+8GHwXlvtdEouOw6yLxdeuJM=
+	t=1720699304; cv=none; b=Hxgqyy9GECXVoqtyzHRi2aS0rbHCVVlvexGWY+W0liVJXBOfvRFOFgYGPxI3FTCzNeYpCRcpNvakuVqDwJL3y2wcBQ/L+/OEJKIn1Va5Jr9qEyjrLcK3Z+frCosGNVpFNpIOVQUwFnVtsQ761OnTC+mjxMsYCsYuNouOIKHY2gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720699309; c=relaxed/simple;
-	bh=YqvdRqli3JiPIPEXNQZ5ncC0zMSvrBCdwSmE95Mg5SI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rytb1C7hqGi0mqp9+nuIGYfJngU/DDVfj8nBie1F+h9lSbDVhOsOueVrWwIoQH2J8JxbVmSIRlnKOGWtItwhhJnTPlAeXWPfTl0wph85GbAWqAY3QVqt5ZHF1o4m1geTZ0zZ8wKn94CPPQcb7ekQNWp2LKkSj9gfEPg9vLushNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Cqy1HJFU; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BA6xNV013090;
-	Thu, 11 Jul 2024 05:01:38 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=1Qoy7KYEQ9s+6+w6zmzcugv
-	BQaIE9TKnoB8ckAHKCLc=; b=Cqy1HJFUGcI2XLfoBbsKNr2BzdbkajcDPznkWCA
-	KZjpELyxgv5489zP7z1FRD8NHxaLP6axrrQduoNn6Qv8al1Hm9BKwSfd3C79w2iM
-	hZXjl4J+4UkmaPicDc/dPIQx8kizhm1vx8aQoPFMmNQXhMJeti8G2NSCR0CvMvhx
-	xc0YWbe8b7Lr5EbfjOVFJT9ZGt6SXb6PljrUApuk/XGAbt3BflR5PgujQvnNPfOk
-	ZBZ6Gvtrh9s3rDy6QtW5V7zNWfbEuRIyy9qf8NznAa8qqrxwU/klkZCaBsLP5PK2
-	jsYOi4kpjRfKQMAl4yplDDafAxMhI5iJl3almyPrgn1hogw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 40adbv09kn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 05:01:37 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 11 Jul 2024 05:01:36 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 11 Jul 2024 05:01:36 -0700
-Received: from localhost.localdomain (unknown [10.28.36.156])
-	by maili.marvell.com (Postfix) with ESMTP id A13F33F7040;
-	Thu, 11 Jul 2024 05:01:34 -0700 (PDT)
-From: Vamsi Attunuru <vattunuru@marvell.com>
-To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <vattunuru@marvell.com>
-Subject: [PATCH] misc: Kconfig: add a new dependency for MARVELL_CN10K_DPI
-Date: Thu, 11 Jul 2024 05:01:15 -0700
-Message-ID: <20240711120115.4069401-1-vattunuru@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720699304; c=relaxed/simple;
+	bh=YMbrlYAacq8VnF6uzSYjpNqyLR/Zwj3QjxxEfxNoWV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=V03/qBt/GstIUdc7AlhneILTD2W6vv07L6HLzbFn9ZHW2DjYCxnxu7NikD1jbT9RXh6o/L1YMhtV9pnPbB0MDDNER2zoz8ZUPO96riLlw8Y0CD3jI5qA5yUmGtCE9Zd1ASp1sanxjrbWNEWuCRUz77DpRRmR2WMSIoqJ6pAoHwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=H2I3oWp5; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPA id 4C8C61BF20F;
+	Thu, 11 Jul 2024 12:01:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720699293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qt7UmrwvNzoZ4+Yje8MDhIVAuMdtzcc+/RmUSruDHcw=;
+	b=H2I3oWp5iw1bBZE/lzsXWp4ybyEurGYZ2hBB7tkrdoGxiv1v1xn7+2op+0YvYHiju+W1Sp
+	GaS7Ww4+FlQPldWhMIpwToEEYU4WahcubZYSH63azYbbjB26pXgr+NsdjEF9CI3n5v8OGr
+	1PvcfXN25bzwDKQtqWMos0kBr42J8EfnWop0kxv6A4M4r/VDBaFThKOr6dM1cI6z9mYHUD
+	/NE30YqVF0zECKCKlyEbYSd+qpl2xyAOuzNDRpw8aUxu/q/zs2/g+xGbY50JAQ5ulCh0Cp
+	v8sjGHyATKN9wRAJMpkuyrXmqpDHWnJk4qqDd5ZQSxHeYeC3jLHhfkR7Lp9b+A==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: Riku Voipio <riku.voipio@iki.fi>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH v3 1/4] leds: pca9532: Use defines to select PWM instance
+Date: Thu, 11 Jul 2024 14:01:26 +0200
+Message-ID: <20240711120129.100248-2-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.45.0
+In-Reply-To: <20240711120129.100248-1-bastien.curutchet@bootlin.com>
+References: <20240711120129.100248-1-bastien.curutchet@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,37 +67,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: u-3Jof4d0rkGRqf5M8aMMpZWDN-K1ON1
-X-Proofpoint-GUID: u-3Jof4d0rkGRqf5M8aMMpZWDN-K1ON1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_08,2024-07-11_01,2024-05-17_01
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-DPI hardware is an on-chip PCIe device on Marvell's arm64 SoC
-platforms. As Arnd suggested, CN10K belongs to ARCH_THUNDER
-lineage.
+Two tables are used to configure the PWM and PSC registers of the two
+PWM available in the pca9532. Magic numbers are used to access this table
+instead of defines.
 
-Patch makes mrvl_cn10k_dpi driver dependent on CONFIG_ARCH_THUNDER.
+Add defines PCA9532_PWM_ID_0 and PCA9532_PWM_ID_1 and use them in place of
+these magic numbers.
 
-Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
 ---
- drivers/misc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/leds/leds-pca9532.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 64fcca9e44d7..f3bb75384627 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -588,6 +588,7 @@ config NSM
- config MARVELL_CN10K_DPI
- 	tristate "Octeon CN10K DPI driver"
- 	depends on PCI
-+	depends on ARCH_THUNDER || COMPILE_TEST
- 	help
- 	  Enables Octeon CN10K DMA packet interface (DPI) driver which
- 	  intializes DPI hardware's physical function (PF) device's
+diff --git a/drivers/leds/leds-pca9532.c b/drivers/leds/leds-pca9532.c
+index bf8bb8fc007c..b6e5f48bffe7 100644
+--- a/drivers/leds/leds-pca9532.c
++++ b/drivers/leds/leds-pca9532.c
+@@ -45,6 +45,9 @@ struct pca9532_data {
+ 	struct gpio_chip gpio;
+ #endif
+ 	const struct pca9532_chip_info *chip_info;
++
++#define PCA9532_PWM_ID_0	0
++#define PCA9532_PWM_ID_1	1
+ 	u8 pwm[2];
+ 	u8 psc[2];
+ };
+@@ -181,12 +184,12 @@ static int pca9532_set_brightness(struct led_classdev *led_cdev,
+ 		led->state = PCA9532_ON;
+ 	else {
+ 		led->state = PCA9532_PWM0; /* Thecus: hardcode one pwm */
+-		err = pca9532_calcpwm(led->client, 0, 0, value);
++		err = pca9532_calcpwm(led->client, PCA9532_PWM_ID_0, 0, value);
+ 		if (err)
+ 			return err;
+ 	}
+ 	if (led->state == PCA9532_PWM0)
+-		pca9532_setpwm(led->client, 0);
++		pca9532_setpwm(led->client, PCA9532_PWM_ID_0);
+ 	pca9532_setled(led);
+ 	return err;
+ }
+@@ -209,11 +212,11 @@ static int pca9532_set_blink(struct led_classdev *led_cdev,
+ 
+ 	/* Thecus specific: only use PSC/PWM 0 */
+ 	psc = (*delay_on * 152-1)/1000;
+-	err = pca9532_calcpwm(client, 0, psc, led_cdev->brightness);
++	err = pca9532_calcpwm(client, PCA9532_PWM_ID_0, psc, led_cdev->brightness);
+ 	if (err)
+ 		return err;
+ 	if (led->state == PCA9532_PWM0)
+-		pca9532_setpwm(led->client, 0);
++		pca9532_setpwm(led->client, PCA9532_PWM_ID_0);
+ 	pca9532_setled(led);
+ 
+ 	return 0;
+@@ -229,9 +232,9 @@ static int pca9532_event(struct input_dev *dev, unsigned int type,
+ 
+ 	/* XXX: allow different kind of beeps with psc/pwm modifications */
+ 	if (value > 1 && value < 32767)
+-		data->pwm[1] = 127;
++		data->pwm[PCA9532_PWM_ID_1] = 127;
+ 	else
+-		data->pwm[1] = 0;
++		data->pwm[PCA9532_PWM_ID_1] = 0;
+ 
+ 	schedule_work(&data->work);
+ 
+@@ -246,7 +249,7 @@ static void pca9532_input_work(struct work_struct *work)
+ 
+ 	mutex_lock(&data->update_lock);
+ 	i2c_smbus_write_byte_data(data->client, PCA9532_REG_PWM(maxleds, 1),
+-		data->pwm[1]);
++		data->pwm[PCA9532_PWM_ID_1]);
+ 	mutex_unlock(&data->update_lock);
+ }
+ 
+@@ -475,9 +478,9 @@ pca9532_of_populate_pdata(struct device *dev, struct device_node *np)
+ 
+ 	pdata->gpio_base = -1;
+ 
+-	of_property_read_u8_array(np, "nxp,pwm", &pdata->pwm[0],
++	of_property_read_u8_array(np, "nxp,pwm", &pdata->pwm[PCA9532_PWM_ID_0],
+ 				  ARRAY_SIZE(pdata->pwm));
+-	of_property_read_u8_array(np, "nxp,psc", &pdata->psc[0],
++	of_property_read_u8_array(np, "nxp,psc", &pdata->psc[PCA9532_PWM_ID_0],
+ 				  ARRAY_SIZE(pdata->psc));
+ 
+ 	for_each_available_child_of_node(np, child) {
 -- 
-2.25.1
+2.45.0
 
 
