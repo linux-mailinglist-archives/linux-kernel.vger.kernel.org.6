@@ -1,241 +1,160 @@
-Return-Path: <linux-kernel+bounces-249345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0A092EA5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:10:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F8592EA57
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DC231C21FA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:10:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EDCD281B20
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39641161939;
-	Thu, 11 Jul 2024 14:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4FD161936;
+	Thu, 11 Jul 2024 14:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="YPRyVZsl"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Y/RT/R/z"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2056.outbound.protection.outlook.com [40.107.244.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FFF160887;
-	Thu, 11 Jul 2024 14:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720707018; cv=none; b=iD7Ewzywaqifw2TQSeKsUK5m0zUehQ0bO+E3mTQ2gMtF84PhRkrwRYF7+/E4f8J0l4TIJSytw9vvXiLdn5cQ8eR2FPHsHNldZs33KeiL9pJwil+wjADDEAInhYfzaMDP5IP/KynyVVDWnKGcA3ddMmlhjw5uSdqB3NDfm22NdBw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720707018; c=relaxed/simple;
-	bh=UppB3BsxXDX6xFvEa/tdgF94kNizSSKvS8CjD2WKUFw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PSVLsT10SqKBxkQDHUsNQyw15lN391JYakLSvng4TQjuK3W1rSKw5tr42ekirvkScwfv2Aaqaqqq5lCL979wY1U7u0AfO5IqCZdpHRqmMTVSmXjuBrii09JjWGxndoLQ65sqXe2UpwGo9BlZsdQqMBBoGewivLlTkQZ/ycScP9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=YPRyVZsl; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BB0Uqd016528;
-	Thu, 11 Jul 2024 16:09:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	iLbomluoqVo15OHcbhEImrIzxINGFc7oFRacLoM3Ikk=; b=YPRyVZslhoqCJtOP
-	X3oRUTNl8+p+fAwyh5VEWG5/mYqAw8361tttZL6/cEJK/6zjaa+bIfxWG2DxRFfg
-	UAPF9kkV2aHaFyVN7k6umDPL80raEj9hZOP5nd5/jK88cM6iOfDq0b1FRm1w/Sqs
-	1FfWOUq+8qUo5AnSDuyuoWIMFKHGKe5Ob+mNpON5MCA/aD223YzOkZPdMSmvtGL7
-	9eMKkloglfx/Advgx7LGfpKFwlvM4JYQIYQ+e9BbJMjkAoGhyOHXKOKH8xRtXRiI
-	jiQVC+Mrkamc3MyMQV+KOA8zbdeN13g8bF1s/UjIVDzSnjUwirvPPx2v8ne/A1ty
-	4x31Mg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 406whhx7r8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 16:09:41 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7B5C040047;
-	Thu, 11 Jul 2024 16:09:37 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C537423D40B;
-	Thu, 11 Jul 2024 16:09:00 +0200 (CEST)
-Received: from localhost (10.48.86.111) by SHFDAG1NODE1.st.com (10.75.129.69)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F002D14BFA2;
+	Thu, 11 Jul 2024 14:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720707010; cv=fail; b=RrQ7PoTd799JpuQ31mPeToxRZwi0oq5b2xlL0NNRMvk65YAU/JMeHPwX1SxTbPeNbC1NCqyF3u8Zd9Mclwy5bSwMZ2vIVhdxxydgb31E6jLHPOLYLrmhbL9DtiJ0NCUekLsGakANZXj10T6HwYQiO086aiyE/V1vz3e8fstCvdM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720707010; c=relaxed/simple;
+	bh=KTL6OGfaYQ51eL/IFumkAi27BbuIi3O4SvpgUuRScdQ=;
+	h=References:From:To:CC:Subject:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=NiNgEOOaEmj/2dybHYbE2H449SKFF5I9TJYXe3pTzlc2hRK52WvfT+sL4IZsXsbikQvOtr3WBTS7WYUTLsQi7QMRNNvuKChCx3ZTzbAEJG5Pmh1ZJXK4Jdx2p/A6+adHjJDllOFmYeLgZ2PO+FufdsfkJVs3eG+NTTiYQiWaJE8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Y/RT/R/z; arc=fail smtp.client-ip=40.107.244.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I6w6suIeovVOxgN2083vnuT1y/sEYDyOejGKm/Wk6kudDudi+fyoIQaV8rajnvNNIj1IyO7gYvaoozo+SgS9BOsMyRXt4QoHH2s9RupDRgaWC95IRLo1/lQ1+rdGa1GnxcD5GNCrLgeyBGZxM5TsqAlFHuoHc/yKao/3hKNQLWSP7ngl7I5F8qaoAi++aamkwRacs2ub4t1Wy9JZS9OBQhFL+vdK7OTNEJGjdgct4jlBfdeIFkOaHSxdYjMGBwHCRJ4i2wbYF0kBaTHPVG3JJTR5kxijj1n7XRl9sw+VA9HgsuwyMWmRlnuGhm7rz/rgCwNat6xMKMLkKLiVrlylYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KTL6OGfaYQ51eL/IFumkAi27BbuIi3O4SvpgUuRScdQ=;
+ b=iECDMgaJaMpI1fTKz6tIgWGefFjbIEtBhXWoRp6dy15qLr22D6jFXNtr4IKZRjOeWVUwySjqt8PU3vaZBjHO6Pl+Jkr4FcMUnaSJkg7W7QnhawmUovsdf9Q/p97IkXefzaep0spgrNj5Ose43DbLzQXz/yg2oukkmL8FFPG0oXULDGaieG22D4OAj3xEgaVvu3x1vu9amprZvYD/HS37v5xphNYbrfDNdjGO357yD7EkfuNkL7aQk6tJfZSFD6QZ5XQK68WT0cIubCuf5hYAs0dt8/g5tkmWqcWHwjILUY/TleLA+UUo2dB33elRmBvA4MYRqmW9pCe/mc0VBJj6Kg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KTL6OGfaYQ51eL/IFumkAi27BbuIi3O4SvpgUuRScdQ=;
+ b=Y/RT/R/zekdjiHM8DmfQdGalA9l4Kx+La179uor4Q0UMgJvbdZHq9OyPqLH2rzlU34zasD1zk893rKZM0nUJZGjbno2z8hQyEXEzupX4b6Z/9EnBUAhylaMkerfZVzX1fLyFb4fsj1P3YzBI7FxRsQCQcCgj1BcPvjGFWYuoJA630TFp/GqGNu0h3iOaWBpYOLBe0D3QjpAC8QnWb7W7hDQzLL6xYlLK+kZG8sknxzK4qEVNFghlHWEu15myEARq0xv8dVzMRrG7st01rQEPU7+njDigwfZhWsP7LrqFw6o1TXURZqwk1B1CUEy0S2nr+A/c6v5WA4GbGuUBLPF5zw==
+Received: from BY5PR04CA0021.namprd04.prod.outlook.com (2603:10b6:a03:1d0::31)
+ by CY8PR12MB7707.namprd12.prod.outlook.com (2603:10b6:930:86::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Thu, 11 Jul
+ 2024 14:10:00 +0000
+Received: from SJ5PEPF00000206.namprd05.prod.outlook.com
+ (2603:10b6:a03:1d0:cafe::1a) by BY5PR04CA0021.outlook.office365.com
+ (2603:10b6:a03:1d0::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22 via Frontend
+ Transport; Thu, 11 Jul 2024 14:09:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ5PEPF00000206.mail.protection.outlook.com (10.167.244.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7762.17 via Frontend Transport; Thu, 11 Jul 2024 14:09:59 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 11 Jul
+ 2024 07:09:43 -0700
+Received: from fedora (10.126.230.35) by rnnvmail201.nvidia.com (10.129.68.8)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 11 Jul
- 2024 16:09:00 +0200
-From: Valentin Caron <valentin.caron@foss.st.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Amelie Delaunay <amelie.delaunay@foss.st.com>,
-        Valentin Caron
-	<valentin.caron@foss.st.com>
-Subject: [PATCH 4/4] rtc: stm32: add alarm A out feature
-Date: Thu, 11 Jul 2024 16:08:43 +0200
-Message-ID: <20240711140843.3201530-5-valentin.caron@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240711140843.3201530-1-valentin.caron@foss.st.com>
-References: <20240711140843.3201530-1-valentin.caron@foss.st.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 11 Jul
+ 2024 07:09:38 -0700
+References: <20240711080934.2071869-1-danieller@nvidia.com>
+User-agent: mu4e 1.8.14; emacs 29.4
+From: Petr Machata <petrm@nvidia.com>
+To: Danielle Ratson <danieller@nvidia.com>
+CC: <netdev@vger.kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <idosch@nvidia.com>,
+	<petrm@nvidia.com>, <ecree.xilinx@gmail.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: ethtool: Monotonically increase the
+ message sequence number
+Date: Thu, 11 Jul 2024 16:09:28 +0200
+In-Reply-To: <20240711080934.2071869-1-danieller@nvidia.com>
+Message-ID: <878qy8rpeq.fsf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_10,2024-07-11_01,2024-05-17_01
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF00000206:EE_|CY8PR12MB7707:EE_
+X-MS-Office365-Filtering-Correlation-Id: d4c1fa3d-291d-4493-8a2e-08dca1b32667
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vwoLQO/NQfoehISlZgGLqVzGFAatR8QBQQra5zPseZo7AmOLScw0jkuQO+TI?=
+ =?us-ascii?Q?17b60PjYsg0Ovbo4d6twrEOABQv2ppAe3ELpf+jIo5hOTfXHGaViSFQktMsY?=
+ =?us-ascii?Q?gfcDI4MdIIQJuyvp381FsU4rbR99BhsUQIFsUPVaiJYhei9PyLdf/vW6pKfm?=
+ =?us-ascii?Q?R0F0AmtaXk9fSelMzxCIIbGnuCwABu628hmd0+RlYPOdt/Jgn74CStGEvMDt?=
+ =?us-ascii?Q?oHxP5lvCp0p9hUZu11qyDDlE/VImiTU1Vn2LVHCVx92xEzmz0nbalikrCpSs?=
+ =?us-ascii?Q?oZyysrZM6z7Gj0FvhPA/HpqK893nZJvpJB1JuUVbO5qSF5Dmz4e5Jvd4Yx2S?=
+ =?us-ascii?Q?8v+TVYNQLwLnM8E09k8/ikF4XbcwP6T1/Vee9ObfMbgbaYL3cJ60yPyGQzVB?=
+ =?us-ascii?Q?BCRHPIaR/8OV6c42abuqCDedqzFtNNfgVZ5jiOJPHV59IfwMPR/7INS3TwWg?=
+ =?us-ascii?Q?6meS3pu3EXP6+QbRy6X22ju44en/MBvNQ7GCy5TgbM4FpfJ6PTyBouYp3kkb?=
+ =?us-ascii?Q?zyQfE1cxsO9/1IUDS7Fs7K5VlKCspJAjfsVmqrOOlrH3iFXkehdgvu7N+xhY?=
+ =?us-ascii?Q?bFgo20BxFTplPeG4fnwj1ZqitGUNszYwbkULiwtp3w/pzeJdGPyhB/WVbDx4?=
+ =?us-ascii?Q?rI+KelZQOAluOLHNfahZ9yVJlA0ys0hbjuv2dM9p9D9qHJKvyYYHCyUk9VRw?=
+ =?us-ascii?Q?5t13vzIefK0FQqlGKHqTttUcdvSJF3xA6f1clN/rZXVCIjyRbJuT0V8G+9Nx?=
+ =?us-ascii?Q?m5oJfpdnoc7jnRrLh1OqthcK8sM4qqcvdHL8nowweW3BpRreOFHKBCiSgutk?=
+ =?us-ascii?Q?vv20yYjMki7HSOepXmR8eG2K2lcgrzahLOp6d1sP8eKjQ9Xx6Qxx4VNWP5mF?=
+ =?us-ascii?Q?Gb9UdK/PZ0tP4tKTYTjIsCQzrK12gPJyE2ewaXMN8jcGmAxULwP0fWhW60QS?=
+ =?us-ascii?Q?6M5VA2aXHAkNKdwr2almHz11friGqSNrXFYpYMUyB1DAuC6O5lJZ5WDhuoVh?=
+ =?us-ascii?Q?UA53EJ3xh+5TpD7E1KaXcy4ctdjgKxE5vBdqHMZ3csHrZAXEjbECjTNG1KQA?=
+ =?us-ascii?Q?G4eHzBVUFFTbo0ejy0HFmwMPtNF/dPvqntLLRLJITHPzVi7qx/rXZ0nE4cqq?=
+ =?us-ascii?Q?yz2rvxLueQwjBwWT07cpy8Myn5uM43X0YhfgaqjhQw4CbY0WlrN/ckepmnzI?=
+ =?us-ascii?Q?loZE6ycu3BJXcPLW6K/K1uMoe2IWNM8Tufz/Lq4i9ZTfcvJjfDkZ1mRu0B7q?=
+ =?us-ascii?Q?8iNGHXeDGd+4qawL7+LigqIoNFJp50hmBFTCYY/pYSJZzidXv5cwNxk7LmuZ?=
+ =?us-ascii?Q?acVAWVdHLuXiCebVOUuShI4lqPKlfZiZ9D8Qt7kUuwCaalYWMuWBCrqScQ80?=
+ =?us-ascii?Q?1yDUSQ7v2M9V1piDsv+1B90RDPjCeccAoU+hRCvpo3g6TgHpFu/oqaKTTzM6?=
+ =?us-ascii?Q?++yewX1Pl+uBL32vbvNovsKVee9XsRO5?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 14:09:59.3899
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4c1fa3d-291d-4493-8a2e-08dca1b32667
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF00000206.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7707
 
-STM32 RTC can pulse some SOC pins when an RTC alarm expires.
-This patch adds this functionality for alarm A. The pulse can out on three
-pins RTC_OUT1, RTC_OUT2, RTC_OUT2_RMP (PC13, PB2, PI8 on stm32mp15)
-(PC13, PB2, PI1 on stm32mp13) (PC13, PF4/PF6, PI8 on stm32mp25).
 
-This patch only adds the functionality for devices which are using
-st,stm32mp1-rtc and st,stm32mp25-rtc compatible.
+Danielle Ratson <danieller@nvidia.com> writes:
 
-Add "alarm-a" in pinmux functions.
+> Currently, during the module firmware flashing process, unicast
+> notifications are sent from the kernel using the same sequence number,
+> making it impossible for user space to track missed notifications.
+>
+> Monotonically increase the message sequence number, so the order of
+> notifications could be tracked effectively.
+>
+> Signed-off-by: Danielle Ratson <danieller@nvidia.com>
+> Reviewed-by: Ido Schimmel <idosch@nvidia.com>
 
-Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
----
- drivers/rtc/rtc-stm32.c | 60 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
-
-diff --git a/drivers/rtc/rtc-stm32.c b/drivers/rtc/rtc-stm32.c
-index a57d494b229c..802c1412e064 100644
---- a/drivers/rtc/rtc-stm32.c
-+++ b/drivers/rtc/rtc-stm32.c
-@@ -47,8 +47,10 @@
- #define STM32_RTC_CR_ALRAE		BIT(8)
- #define STM32_RTC_CR_ALRAIE		BIT(12)
- #define STM32_RTC_CR_OSEL		GENMASK(22, 21)
-+#define STM32_RTC_CR_OSEL_ALARM_A	FIELD_PREP(STM32_RTC_CR_OSEL, 0x01)
- #define STM32_RTC_CR_COE		BIT(23)
- #define STM32_RTC_CR_TAMPOE		BIT(26)
-+#define STM32_RTC_CR_TAMPALRM_TYPE	BIT(30)
- #define STM32_RTC_CR_OUT2EN		BIT(31)
- 
- /* STM32_RTC_ISR/STM32_RTC_ICSR bit fields */
-@@ -158,6 +160,7 @@ struct stm32_rtc_data {
- 	bool need_accuracy;
- 	bool rif_protected;
- 	bool has_lsco;
-+	bool has_alarm_out;
- };
- 
- struct stm32_rtc {
-@@ -245,6 +248,47 @@ struct stm32_rtc_pinmux_func {
- 	int (*action)(struct pinctrl_dev *pctl_dev, unsigned int pin);
- };
- 
-+static int stm32_rtc_pinmux_action_alarm(struct pinctrl_dev *pctldev, unsigned int pin)
-+{
-+	struct stm32_rtc *rtc = pinctrl_dev_get_drvdata(pctldev);
-+	struct stm32_rtc_registers regs = rtc->data->regs;
-+	unsigned int cr = readl_relaxed(rtc->base + regs.cr);
-+	unsigned int cfgr = readl_relaxed(rtc->base + regs.cfgr);
-+
-+	if (!rtc->data->has_alarm_out)
-+		return -EPERM;
-+
-+	cr &= ~STM32_RTC_CR_OSEL;
-+	cr |= STM32_RTC_CR_OSEL_ALARM_A;
-+	cr &= ~STM32_RTC_CR_TAMPOE;
-+	cr &= ~STM32_RTC_CR_COE;
-+	cr &= ~STM32_RTC_CR_TAMPALRM_TYPE;
-+
-+	switch (pin) {
-+	case OUT1:
-+		cr &= ~STM32_RTC_CR_OUT2EN;
-+		cfgr &= ~STM32_RTC_CFGR_OUT2_RMP;
-+		break;
-+	case OUT2:
-+		cr |= STM32_RTC_CR_OUT2EN;
-+		cfgr &= ~STM32_RTC_CFGR_OUT2_RMP;
-+		break;
-+	case OUT2_RMP:
-+		cr |= STM32_RTC_CR_OUT2EN;
-+		cfgr |= STM32_RTC_CFGR_OUT2_RMP;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	stm32_rtc_wpr_unlock(rtc);
-+	writel_relaxed(cr, rtc->base + regs.cr);
-+	writel_relaxed(cfgr, rtc->base + regs.cfgr);
-+	stm32_rtc_wpr_lock(rtc);
-+
-+	return 0;
-+}
-+
- static int stm32_rtc_pinmux_lsco_available(struct pinctrl_dev *pctldev, unsigned int pin)
- {
- 	struct stm32_rtc *rtc = pinctrl_dev_get_drvdata(pctldev);
-@@ -307,6 +351,7 @@ static int stm32_rtc_pinmux_action_lsco(struct pinctrl_dev *pctldev, unsigned in
- 
- static const struct stm32_rtc_pinmux_func stm32_rtc_pinmux_functions[] = {
- 	STM32_RTC_PINMUX("lsco", &stm32_rtc_pinmux_action_lsco, "out1", "out2_rmp"),
-+	STM32_RTC_PINMUX("alarm-a", &stm32_rtc_pinmux_action_alarm, "out1", "out2", "out2_rmp"),
- };
- 
- static int stm32_rtc_pinmux_get_functions_count(struct pinctrl_dev *pctldev)
-@@ -763,6 +808,7 @@ static const struct stm32_rtc_data stm32_rtc_data = {
- 	.need_accuracy = false,
- 	.rif_protected = false,
- 	.has_lsco = false,
-+	.has_alarm_out = false,
- 	.regs = {
- 		.tr = 0x00,
- 		.dr = 0x04,
-@@ -788,6 +834,7 @@ static const struct stm32_rtc_data stm32h7_rtc_data = {
- 	.need_accuracy = false,
- 	.rif_protected = false,
- 	.has_lsco = false,
-+	.has_alarm_out = false,
- 	.regs = {
- 		.tr = 0x00,
- 		.dr = 0x04,
-@@ -822,6 +869,7 @@ static const struct stm32_rtc_data stm32mp1_data = {
- 	.need_accuracy = true,
- 	.rif_protected = false,
- 	.has_lsco = true,
-+	.has_alarm_out = true,
- 	.regs = {
- 		.tr = 0x00,
- 		.dr = 0x04,
-@@ -847,6 +895,7 @@ static const struct stm32_rtc_data stm32mp25_data = {
- 	.need_accuracy = true,
- 	.rif_protected = true,
- 	.has_lsco = true,
-+	.has_alarm_out = true,
- 	.regs = {
- 		.tr = 0x00,
- 		.dr = 0x04,
-@@ -878,6 +927,17 @@ MODULE_DEVICE_TABLE(of, stm32_rtc_of_match);
- static void stm32_rtc_clean_outs(struct stm32_rtc *rtc)
- {
- 	struct stm32_rtc_registers regs = rtc->data->regs;
-+	unsigned int cr = readl_relaxed(rtc->base + regs.cr);
-+
-+	cr &= ~STM32_RTC_CR_OSEL;
-+	cr &= ~STM32_RTC_CR_TAMPOE;
-+	cr &= ~STM32_RTC_CR_COE;
-+	cr &= ~STM32_RTC_CR_TAMPALRM_TYPE;
-+	cr &= ~STM32_RTC_CR_OUT2EN;
-+
-+	stm32_rtc_wpr_unlock(rtc);
-+	writel_relaxed(cr, rtc->base + regs.cr);
-+	stm32_rtc_wpr_lock(rtc);
- 
- 	if (regs.cfgr != UNDEF_REG) {
- 		unsigned int cfgr = readl_relaxed(rtc->base + regs.cfgr);
--- 
-2.25.1
-
+Applied, thanks.
 
