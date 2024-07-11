@@ -1,85 +1,180 @@
-Return-Path: <linux-kernel+bounces-249412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 759CF92EB5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:13:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E598A92EB60
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E9911C21EA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:13:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E201B21D47
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72F216B3BF;
-	Thu, 11 Jul 2024 15:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B7D16B75B;
+	Thu, 11 Jul 2024 15:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pnVqCYw1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eGyF3bo6"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDFD1EB2B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DD41EB2B;
+	Thu, 11 Jul 2024 15:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720710805; cv=none; b=RITV7SR9RWjc3COG7DrhacWqkUGtVTYyd+3rvXuEoopRSQLTar5KoPWHUbjKaW/gRV6QdshwGFdGOamOWxbecWBYiQ+4iVudXAqWgwdNYNDPHT3BhFVqwpUMQC3hkvzqGiajFqyq9MybrOnYqZeEVu99/coqI8AN+dTrIY978T8=
+	t=1720710825; cv=none; b=N9DkCeF9x0F9ZTB8qE35HEYhkH2638cMopaULY0sl4bsn6FCG7gtZHPRuRlXy+aLq43w+uSzFl6IVwVe6qVBEnilY9JNuKmSePDZ9czMqK3v4M0cVv2D1JfmABj5yGASPA7pOTMB8jLvMD8TN1Fqudxcp0N59Vxa7JlwHbI9X2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720710805; c=relaxed/simple;
-	bh=9zjATUP3xx6iVJ/dTpMxDzrlKeX9MiSo5X+0L6tu33A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pd8vFNuh+claOhqhMqDvLJX1sE/U8tHt20diwD4hYqPQ5Xz746oMdBEu+U4+pXVnpv2rpvf3s+ypVOv2jqyD3jIq1HTfjCBbUy6DbI1NtvYTa8sNlijlUqePPSivfk4ZTY6tB497qKMWK97vDuMGiHaUotRA/I4oghBvySiq78Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pnVqCYw1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8CD2C116B1;
-	Thu, 11 Jul 2024 15:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720710804;
-	bh=9zjATUP3xx6iVJ/dTpMxDzrlKeX9MiSo5X+0L6tu33A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pnVqCYw1kN8Qk+kO3EGoZatRIx+9DwEEqnWk2LBijACQAOnHYGxZLCyG4fSKPTsKW
-	 qIOeHUJmh8JB6S92SRUKaXe6KLKfIfCh1T3fyKpfimN1d+bhTYIzrMNT2/owYeeJoF
-	 sjKsG3UyPXfhmy8MXbltoAuzxYSB42AkLmm2rrtw=
-Date: Thu, 11 Jul 2024 17:13:21 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: =?utf-8?B?5p2O5ZOy?= <sensor1010@163.com>
-Cc: rafael@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] driver:core: no need to set a default value for
- want_async
-Message-ID: <2024071101-cytoplast-overflow-d8cd@gregkh>
-References: <20240711150545.3143-1-sensor1010@163.com>
+	s=arc-20240116; t=1720710825; c=relaxed/simple;
+	bh=81AKgtA1uznOFVqj0HvFqXW2EgoSANb2dsdrd1yL+DA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TrDXeDVrWct/VNsf6wVQIHr2y4+8ZUbDcwk0vlSYS5EAU3+2AtWOobnhH1NvhPqj7hIDRkJV4HR4ZImkMSZ4TdNPEAduSi5xEGoeuCJxkG05aAOnSm8pzXF8+9kWH2d5ncaUy/UOAbjkkFtSl+6UGOvL3j2LhPT/X/Djfr1gB/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=eGyF3bo6; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BFBXEd028439;
+	Thu, 11 Jul 2024 15:13:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding; s=corp-2023-11-20; bh=tMb6QlIhL7i02Y
+	Q5iV8PgLPax76xsocKD57dZ+AI5/8=; b=eGyF3bo6DY3LrpQVoJ9sEUii1Zg+FX
+	xgQRoDz0Vodt6iDIDrHanSWcgAHEhrD/U7hGpnkQ2J3MEc9ysrD/QLYo6aIRmiM5
+	inAUfwqYEbJNnNznnO+UPvzWD/sgQLzvW3wfZQF8Tdq00FYGQK0DGuTJzeh2X3cq
+	t6DrF0BVuMwsEcWmaswdWBdwEI6KoacLX2+IOWFcJcQnahJQCOmKiBq8FtsxOZ5b
+	sZWcp932j0hG8725YseaQ3Pv5JozD+4i3e+0D0b/e70f2vxUimxySPjU+eUxxau1
+	KG27vsgj2wu7hZYwReTfxsoZf7kEo2D7UX/2KXbb6e4ujWIT4akGB0HA==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 406wkcht3g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 15:13:32 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46BF0p6m008801;
+	Thu, 11 Jul 2024 15:13:31 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 409vv4q8d9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 15:13:31 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46BFB01B021418;
+	Thu, 11 Jul 2024 15:13:31 GMT
+Received: from aakhoje-ol.in.oracle.com (dhcp-10-76-48-194.vpn.oracle.com [10.76.48.194])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 409vv4q86g-1;
+	Thu, 11 Jul 2024 15:13:30 +0000
+From: Anand Khoje <anand.a.khoje@oracle.com>
+To: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc: saeedm@mellanox.com, leon@kernel.org, tariqt@nvidia.com,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        davem@davemloft.net, rama.nichanamatlu@oracle.com,
+        manjunath.b.patil@oracle.com
+Subject: [PATCH net-next] net/mlx5: Reclaim max 50K pages at once
+Date: Thu, 11 Jul 2024 20:43:22 +0530
+Message-ID: <20240711151322.158274-1-anand.a.khoje@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240711150545.3143-1-sensor1010@163.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_10,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407110109
+X-Proofpoint-ORIG-GUID: dWUOlbZMnd9FUTIpfzUswqX7x3IrR0Gz
+X-Proofpoint-GUID: dWUOlbZMnd9FUTIpfzUswqX7x3IrR0Gz
 
-On Thu, Jul 11, 2024 at 08:05:45AM -0700, 李哲 wrote:
-> The default value of this member variable is false,
-> which is only set to true when asynchronous loading is required,
-> and does not need to be set to false during synchronization
-> 
-> Signed-off-by: 李哲 <sensor1010@163.com>
-> ---
->  drivers/base/dd.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index d047919d1f5e..47351d98f6e1 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -1014,7 +1014,6 @@ static int __device_attach(struct device *dev, bool allow_async)
->  		struct device_attach_data data = {
->  			.dev = dev,
->  			.check_async = allow_async,
-> -			.want_async = false,
+In non FLR context, at times CX-5 requests release of ~8 million FW pages.
+This needs humongous number of cmd mailboxes, which to be released once
+the pages are reclaimed. Release of humongous number of cmd mailboxes is
+consuming cpu time running into many seconds. Which with non preemptible
+kernels is leading to critical process starving on that cpu’s RQ.
+To alleviate this, this change restricts the total number of pages
+a worker will try to reclaim maximum 50K pages in one go.
+The limit 50K is aligned with the current firmware capacity/limit of
+releasing 50K pages at once per MLX5_CMD_OP_MANAGE_PAGES + MLX5_PAGES_TAKE
+device command.
 
-This is good to keep as-is for documentation alone, it doesn't actually
-change anything and makes it obvious.
+Our tests have shown significant benefit of this change in terms of
+time consumed by dma_pool_free().
+During a test where an event was raised by HCA
+to release 1.3 Million pages, following observations were made:
 
-thanks,
+- Without this change:
+Number of mailbox messages allocated was around 20K, to accommodate
+the DMA addresses of 1.3 million pages.
+The average time spent by dma_pool_free() to free the DMA pool is between
+16 usec to 32 usec.
+           value  ------------- Distribution ------------- count
+             256 |                                         0
+             512 |@                                        287
+            1024 |@@@                                      1332
+            2048 |@                                        656
+            4096 |@@@@@                                    2599
+            8192 |@@@@@@@@@@                               4755
+           16384 |@@@@@@@@@@@@@@@                          7545
+           32768 |@@@@@                                    2501
+           65536 |                                         0
 
-greg k-h
+- With this change:
+Number of mailbox messages allocated was around 800; this was to
+accommodate DMA addresses of only 50K pages.
+The average time spent by dma_pool_free() to free the DMA pool in this case
+lies between 1 usec to 2 usec.
+           value  ------------- Distribution ------------- count
+             256 |                                         0
+             512 |@@@@@@@@@@@@@@@@@@                       346
+            1024 |@@@@@@@@@@@@@@@@@@@@@@                   435
+            2048 |                                         0
+            4096 |                                         0
+            8192 |                                         1
+           16384 |                                         0
+
+Signed-off-by: Anand Khoje <anand.a.khoje@oracle.com>
+Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
+Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+index d894a88..972e8e9 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+@@ -608,6 +608,11 @@ enum {
+ 	RELEASE_ALL_PAGES_MASK = 0x4000,
+ };
+ 
++/* This limit is based on the capability of the firmware as it cannot release
++ * more than 50000 back to the host in one go.
++ */
++#define MAX_RECLAIM_NPAGES (-50000)
++
+ static int req_pages_handler(struct notifier_block *nb,
+ 			     unsigned long type, void *data)
+ {
+@@ -639,7 +644,16 @@ static int req_pages_handler(struct notifier_block *nb,
+ 
+ 	req->dev = dev;
+ 	req->func_id = func_id;
+-	req->npages = npages;
++
++	/* npages > 0 means HCA asking host to allocate/give pages,
++	 * npages < 0 means HCA asking host to reclaim back the pages allocated.
++	 * Here we are restricting the maximum number of pages that can be
++	 * reclaimed to be MAX_RECLAIM_NPAGES. Note that MAX_RECLAIM_NPAGES is
++	 * a negative value.
++	 * Since MAX_RECLAIM is negative, we are using max() to restrict
++	 * req->npages (and not min ()).
++	 */
++	req->npages = max_t(s32, npages, MAX_RECLAIM_NPAGES);
+ 	req->ec_function = ec_function;
+ 	req->release_all = release_all;
+ 	INIT_WORK(&req->work, pages_work_handler);
+-- 
+1.8.3.1
+
 
