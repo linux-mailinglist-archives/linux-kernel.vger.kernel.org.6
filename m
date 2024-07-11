@@ -1,127 +1,197 @@
-Return-Path: <linux-kernel+bounces-248492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF0292DDFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:34:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4EA92DDFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63A401F22351
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:34:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 343A1B220F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4997F8BE2;
-	Thu, 11 Jul 2024 01:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64EB9441;
+	Thu, 11 Jul 2024 01:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lvFzi6m6"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B78D50F;
-	Thu, 11 Jul 2024 01:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720661676; cv=none; b=J3QvMFwAsLLoz5mGuVgzLtWJ6q+Hph8EttIV4wNA4xCPevG50Zhv3GKPQnGh7FLN0r5LeGhtfwvrUlg5EI9zwOCNU87d9qLa2AlhsRS5MSLoMGvUTFzaDu54IvmSBMrcWUNn7qFicrubzSl6gI590210SHhT0qWmru8sc958Ja0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720661676; c=relaxed/simple;
-	bh=pA6vmWSm/iDojky5Zc/QjwIbNgw6dhnTrgRAW/qu/lQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kPCr5WMf2E3p6RDSHesX/2W6Ydr4p/P8i4SFTIYMISrJF+VIIl8nJ9lp0z2LSt2b+oLvKPIWyL1z2uBmowDQlbRjdbaQadYjjZo7a4viR6wtO1Z3Ohw61gsC3x2TSmgMQ0/MsCRprU+HXDdeuTsiq1MqPJ3Ecm7j/9O224E6Isc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lvFzi6m6; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=GoF5Tvs4M62Ghtrmmmiuuadjx57wxduzEtdRGXczzNU=;
-	b=lvFzi6m6Dn65MTU77OKLdKPFbPSLljB4ZTDDv1jV4TwV9Bu+08j96ILnSw3Jse
-	t7ApJoAj4e9snkpZDKHbOmun6DRBxQVo5hpJDj6Xws9LGMLGRidAT+dmHtROFKGd
-	wz0lTCDfU6CQ+BzDYD6c+VyMawB/LGSv1JYjjXRbow7eI=
-Received: from [10.0.2.15] (unknown [111.205.43.230])
-	by gzga-smtp-mta-g0-2 (Coremail) with SMTP id _____wD3_2c_No9mV3JWCg--.57692S2;
-	Thu, 11 Jul 2024 09:32:48 +0800 (CST)
-Message-ID: <db1d3c1d-de04-401e-a03e-a8bc8cce639e@163.com>
-Date: Thu, 11 Jul 2024 09:32:46 +0800
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ort/wogj"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011033.outbound.protection.outlook.com [52.101.65.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3677323CE;
+	Thu, 11 Jul 2024 01:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720661604; cv=fail; b=FhzRBzgl39fLMMlSfx9ugOkK2TbA56jDtIChgAJCGgOkfEYKKynP4cvYmGdD6OsRoWCvWDZRLRY52c0OKKZzn9vucfHUcQZkLyq4XUpI7zutPEVUmVLjWUiBSUvcg3dV6Cmm80zj4JntBmRT0/WasZBI9ssT+dfZOr0VL7prLBE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720661604; c=relaxed/simple;
+	bh=kLOkxGCMh2fdh1wKWJ+oJcX2M6FmLR6Y3TEjecbcmrE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZnppgPTzPeTgbH2Mf9fsmWZa6B+8Gs+WFy+qDMRTOzavD4TdTPb+JvuE8lx4wLqb1lEa3Bqc+ivzI37xzMwFuTxL8GUDEt9cD9gC4Y+arYpU+UcTTp9et4oKdULc5ga4mKm0GL6Z9arsbh2SvaieTLfVHCiZ5+1uqwQRJ8JSuF4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ort/wogj; arc=fail smtp.client-ip=52.101.65.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=E3OIYvoY0iCxkkA2/5PyhTxtvRoXtC5kYXJJHYqyvK75G2OPlwrbkSBfRwp2lAy2WP0JxvPhuYQqmFHCGf45I9/a0dZ6RE6VCZUBM+lS8U4+XuZcWyYvNX6Ny+Hq6ca+kTm3Up8nZ82HHL1trblb1svZebORIvE7nzsgGXq69390fnxZcrXKvQ5CSBh+wsYZKQL3GpjuEnZJVym45os1qtIP69sDbwj7KKYtsNeXV+wXiyMPjcSwZby09jHvrYaEWqD+eoyM050NNM2fgsaWF6kC/WMD9kp0ie/n+XTtmwL/eICLw3Kam77Z/Oh9+QFUCCYA/y80nTsX1sZhE6DF0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kLOkxGCMh2fdh1wKWJ+oJcX2M6FmLR6Y3TEjecbcmrE=;
+ b=lExIEhpY4cThpu/6e1wAhKVmjMB2NWTFncz1yb4ps7zdoc3eMAG0w+DslzRupKkhaq3zKR4iRQcEuD2wBHI7otUBQJR0nwAaZue6YOt7WrthaW984686hYpUa8kiDy1l4pVwkTR6KNAEZz2Qbt004lx3/lJ0knRFYTBYC+OJXQqs5JmPPyr4p8+9n+Bh3HtKqx8HxBOV7HnKdvh0WkccYNJ/0yG1B1kEYoFcITlCmZFEOcDIPwvEGoqC95UAHOIeQvUAUzOKVESizxlbHXsocL8yKliICQKzMWsW4Jtrb7oLWnXzlMgstDJQGiF7rznwGJXy0SNVf1GUG5cQjHIT8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kLOkxGCMh2fdh1wKWJ+oJcX2M6FmLR6Y3TEjecbcmrE=;
+ b=Ort/wogj4zHtTS93iXTNnIT0C0ZJTyXAqMYUJAMtF5a+LI4DhhYxjSNHvZ0ehAoOqfr8LjIvSyzMwd5W0asxDUDm/zFZ31eDD64U5Riv429DOtm8aI3nD16dtvtpTEA+eGcElrrf0RqXpTby9hqyh2c3dGHh63b8rpIij4B7xaY=
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
+ by AM9PR04MB7569.eurprd04.prod.outlook.com (2603:10a6:20b:2d8::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Thu, 11 Jul
+ 2024 01:33:17 +0000
+Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
+ ([fe80::f950:3bb6:6848:2257%4]) with mapi id 15.20.7741.033; Thu, 11 Jul 2024
+ 01:33:17 +0000
+From: David Lin <yu-hao.lin@nxp.com>
+To: Kalle Valo <kvalo@kernel.org>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"briannorris@chromium.org" <briannorris@chromium.org>, "francesco@dolcini.it"
+	<francesco@dolcini.it>, Pete Hsieh <tsung-hsien.hsieh@nxp.com>, Rafael Beims
+	<rafael.beims@toradex.com>, Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: RE: [EXT] Re: [PATCH v11 0/2] wifi: mwifiex: add code to support host
+ mlme
+Thread-Topic: [EXT] Re: [PATCH v11 0/2] wifi: mwifiex: add code to support
+ host mlme
+Thread-Index: AQHazcJ9oDCg+GgGMkqUSOf86PFchbHvOSrAgABqRqGAASV5UA==
+Date: Thu, 11 Jul 2024 01:33:17 +0000
+Message-ID:
+ <PA4PR04MB963820FD55F250775FB37C84D1A52@PA4PR04MB9638.eurprd04.prod.outlook.com>
+References: <20240704033001.603419-1-yu-hao.lin@nxp.com>
+	<PA4PR04MB9638BD3D09017A786FC3DAECD1A42@PA4PR04MB9638.eurprd04.prod.outlook.com>
+ <8734ohn08x.fsf@kernel.org>
+In-Reply-To: <8734ohn08x.fsf@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|AM9PR04MB7569:EE_
+x-ms-office365-filtering-correlation-id: 3d995fb7-414e-45b9-a6ab-08dca1497076
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?keGMtOcQoFUWN4Jmkn7u08H0eqWrmfL8Lzn6xpwsfPhmIxYxSxlcMsYNmWNp?=
+ =?us-ascii?Q?Lv0Iw0b/Da/77XH3mJFS0Mft9+4YYCacFp0LWOD8jj1Ki6PT1GM0LH/AoDn8?=
+ =?us-ascii?Q?cqa9Gfo0+fZdeQ7CE37LnhMk1Z+pAr+g4nonc3ahtJ9Z+mhYVb7wNvMi/E2G?=
+ =?us-ascii?Q?GXwLFk/aCjgLCzNp8SOsNU812ZNtv5wwqH+tr+amuzwcfGBYPC2SYwe9htYt?=
+ =?us-ascii?Q?r3MEi856DOlb3VGGZYMsMSJF86g03RK3MKfNsRewuaU7mAFomuVBkNP/Rwiu?=
+ =?us-ascii?Q?yzZvfDEpsFVxyN2pkY6OiJE65D7/VxG9DceIh3GrOi6ZnoTlY1ugVXXGPxLN?=
+ =?us-ascii?Q?yP8X9c08oIFXDZUVieSZdj27Jl5p4VLtQqYgP4VEsGX2JRd0if2YpMyZp9bs?=
+ =?us-ascii?Q?R74jbSgYy02BjSgkR8lHyqKaA2xBI+xMqISfrTnBXiKbzEDg6fJWDlvpgapZ?=
+ =?us-ascii?Q?WfjyyjGjBVNN+mXcFjoWrW+GMrgLDhUFRbXvPOq9pR9zA0rmQQnsokIf7Ki3?=
+ =?us-ascii?Q?FUpRMKyYRLpCRA3cx6pBYiQud3vAj1yudLBsbYcCTcXuuXS6v7BZU9s6Wp5V?=
+ =?us-ascii?Q?84eGgRAVNMbLQVsNIznHkBhbN3xxPPIha6JjeGacbEY/8YNgdvHP3fwIqXMT?=
+ =?us-ascii?Q?g3YNe8a3zO1wk1XrFKkWSVdrAjVLMEadTTXmnq/pmQ3sjrDrxDAZdzqly8Wq?=
+ =?us-ascii?Q?gVJiqgGPyzEnTlHSB8EaQ/yolTbjjx7c/9KU92mtHaK9ISnI0j6VFK9u5BkH?=
+ =?us-ascii?Q?NrKkaykGJcMtNJ1yNsgfcqZJbHOP1oauIJl9I3uaI3y3S3YMmKeomU+XVzBr?=
+ =?us-ascii?Q?gVjN9vihV83CCp6p7VM8Mph2xgir5FA0XKHBsuO99uYogNW+Y8Fngjlrp5tL?=
+ =?us-ascii?Q?YhiNlyinDrY52mYzjtpKf7omOS9vOyMBib+6ZO+hq+1rInTZjeE0dl2YtP2C?=
+ =?us-ascii?Q?0rHw0D/LoMMJJMLdgqiDb3QB9hHa6lC08k/tNhTlbCwLUV+STWhd4iFQp9f7?=
+ =?us-ascii?Q?KzxeQnkEACdH+7QYOqSyIJ1AaTrWu2U7/a5SZIU4HbOFhUAWacN4CU2rrxBY?=
+ =?us-ascii?Q?6fPR9WnMxCV71w/MIhepUGUkx8dJ+O2jzfAk5Za7Je6lhDjvlQGkMceO9o8S?=
+ =?us-ascii?Q?WG+kis0q+ipTgkHL7okdmgTprUT6EVyKDHgOYJ7zS3uZqax2R+29aqnkeTHH?=
+ =?us-ascii?Q?lXcruVQj7Rd5rdhwjwtveegc+RR9tKR3kSr/hj526KMURlWVQMn/0KirxSLe?=
+ =?us-ascii?Q?9jSkARW08LJ46UnUVvX9mSelWvtVbFZKLTT9vefQ0HRWa91ssxU1lbyqLH65?=
+ =?us-ascii?Q?dpYTT0/g0wPh9ewKHUoP4chCuAAF0j8GjTt8HO+HMTfyrT3TRTYvEXJQ13X3?=
+ =?us-ascii?Q?4UPjeqSzMlSxbhE7Nv7oxDwady3MNE5Vl24Brxh6RUdzSrzosw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?hWgZg/L/jAnLT4B9YrkW3vG+Z6phdhENqNHvsOfdGlSsELzTQzpRtNtLPFGe?=
+ =?us-ascii?Q?PF5HYqM+gRhEWH/1fxX+P7vZTIQuLB+E1Pc+i/EjtHBQ00GCdn8yVqdmtEhR?=
+ =?us-ascii?Q?aQ9JX3EwTvoN0wutIF3MGn/AVMEZOasKdG4GTnr/XJLZxl+IL1hpX1EDCa0P?=
+ =?us-ascii?Q?hFVe5jTapkS9POjP0E0nk/86aYeiUFN8TYil3A/pgGWeq1aNhwQpQhVn1dXY?=
+ =?us-ascii?Q?npiDb7PLlVOMZoi6IRqXx9qTj1VZRq8nX+QxG+I5TbKWOUMjScJNoVmkrteS?=
+ =?us-ascii?Q?XraUUbFizwHrpQ00FaEzDHsq5xomqG+eB2UUpaLaZxY0MpeMe0dJ+GONSDgG?=
+ =?us-ascii?Q?tBUeTowPHUXVxE8rT5Z8/5HXxr8R0KWT3iyfQIoM9kY6a0MtNgtkCT8JoR+P?=
+ =?us-ascii?Q?/7HKQNDJcSbZ+ZYhlOHMBngB0Ck+mrQyF+yhFzxYES82o+zB3Z4XXMbnLHFP?=
+ =?us-ascii?Q?bKQa/Zk4uViWntL8H8V3ey8Z5Kk8XYlg3cNgcGkeKAs7SjvpQrg86dwkh+lM?=
+ =?us-ascii?Q?F4Y0GVzdpSltXC0nXk3/XMFsCTSUGldhC5+YCaLvCcHPcqg3/payif1Wr+gA?=
+ =?us-ascii?Q?PXryTMxlKs4dn+QN8ApFoHf7yAf+0N2KTFQRmIG+JTK8a5b+vU5xh59DqMNt?=
+ =?us-ascii?Q?frD2ik/4WLrXwT9L7g2o2hjt5JH+v5UYm89qXipYnZZXSaAFluujC/ruXh1t?=
+ =?us-ascii?Q?Xse1+DOJaxo9rFjIqZfRq26fxjfyJTXmaSAKz4B+4VhhbNxk3QzsDumzc4Oo?=
+ =?us-ascii?Q?b9Ynk2lyDtyTUNv9YpEEvV8rgfgTuE0+fLABLMTYEbUmiqE/YR55Cpaknzot?=
+ =?us-ascii?Q?mabb8Fewi/bDk4LdOI8CVysEwtZyrmFIMfWNdeH+JE7zBcSpeQr7qWDAeAvz?=
+ =?us-ascii?Q?70tMQ0heUV3b3z8gcuv5r2Myi/YWp/uii30iHrCwHXnczi7B3+ST8MTu79jW?=
+ =?us-ascii?Q?CxB6R4I2qEuq7KFyCQQTFKjpYqVYckI/F82cwXrCxipIeX5aPsWIca3XDmGM?=
+ =?us-ascii?Q?wd8sLxcg6PqHI/4+4BlUiIkOhqE9eSaeV+SqthfjayF9ewUeGK95JjAU0xH3?=
+ =?us-ascii?Q?VbfCZ+vMgcNu60NEPTQ3NEVpEgvCRxdJszGBjJvAllkH3pakvfoDK63VUS/A?=
+ =?us-ascii?Q?WHlq4PucOHGaUHivFdpkRuymRCnZoWmnWTHQvFHElz9mNefBdjZ9TSIE6dk4?=
+ =?us-ascii?Q?EOFwHhJAuBHCbzuuiJKCXY7z0lbiFYACYjbQpyrt6wcgj1DsQp2NAZkOHPiU?=
+ =?us-ascii?Q?975IO5AutbqBmBlop2yOYnbEPXegpLP+PyXk2/KS6bJhq3PrWfhDGdsbWVId?=
+ =?us-ascii?Q?f3l6Y5fKuE1DYmmTuzB1sCX6Z/L+BW9QMOOK3l7roRORtoWOemOh/gT+lP6/?=
+ =?us-ascii?Q?mZf4khGT6FbjXxqTYf45TrAsrtgM+AEDIztO0+c3A3frVv732F0uwlmxqsBo?=
+ =?us-ascii?Q?vJgksCPPuYshoqW/RAvF04dObwVtmbLXKxEOJ8s7JLlDRHbGrNkMKSCa1jFR?=
+ =?us-ascii?Q?p+UdFgqOreveelMxYB7+koMNRpgOV4CmBa+Y05BxMNyE0h7nbuTyMv3K146p?=
+ =?us-ascii?Q?q4RrT8fPWyCde7zf6Jk=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] PCI: vmd: Create domain symlink before
- pci_bus_add_devices()
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev,
- paul.m.stillwell.jr@intel.com, lpieralisi@kernel.org, kw@linux.com,
- robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, sunjw10@lenovo.com, ahuang12@lenovo.com
-References: <20240710221659.GA262309@bhelgaas>
-Content-Language: en-US
-From: Jiwei Sun <sjiwei@163.com>
-In-Reply-To: <20240710221659.GA262309@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3_2c_No9mV3JWCg--.57692S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCw4rAr45JFy5WFW5Jr13Arb_yoW5GF1xpF
-	sxWa4jyF4kGr4Ig3Wjy3y8Xa40kw1vvrWYqryrtrWa9r98ZFyF9F4rKr45CFW2yF1vva42
-	va1DWry7W3srWaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UYD7-UUUUU=
-X-CM-SenderInfo: 5vml4vrl6rljoofrz/1tbiDwQZmWVOFJTG5AAAsC
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3d995fb7-414e-45b9-a6ab-08dca1497076
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2024 01:33:17.0716
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: chRiI08JS+k0zABcXi0upEbdCHw4hz0fBnmfSFYKZXk048634qLHrurha/7Frxa6mL+ll2re6RM2f1l0A3fVLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7569
 
+> From: Kalle Valo <kvalo@kernel.org>
+> Sent: Wednesday, July 10, 2024 4:02 PM
+> To: David Lin <yu-hao.lin@nxp.com>
+> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> briannorris@chromium.org; francesco@dolcini.it; Pete Hsieh
+> <tsung-hsien.hsieh@nxp.com>; Rafael Beims <rafael.beims@toradex.com>;
+> Francesco Dolcini <francesco.dolcini@toradex.com>
+> Subject: [EXT] Re: [PATCH v11 0/2] wifi: mwifiex: add code to support hos=
+t
+> mlme
+>=20
+> Caution: This is an external email. Please take care when clicking links =
+or
+> opening attachments. When in doubt, report the message using the 'Report
+> this email' button
+>=20
+>=20
+> David Lin <yu-hao.lin@nxp.com> writes:
+>=20
+> > I found the state of this patch series had been changed to "Deferred".
+> >
+> > Since this patch series had been reviewed for a long period of time
+> > and reviewed, tested, and acked by members from community. I wonder
+> > what else should I do to let it be merged to mainline Linux kernel?
+>=20
+> Most likely the merge window opens on Sunday and I didn't want to apply t=
+he
+> patchset last minute. So this has to wait v6.12.
+>=20
 
-On 7/11/24 06:16, Bjorn Helgaas wrote:
-> [-cc Pawel, Alexey, Tomasz, which all bounced]
-> 
-> On Wed, Jul 10, 2024 at 09:29:25PM +0800, Jiwei Sun wrote:
->> On 7/10/24 04:59, Bjorn Helgaas wrote:
->>> [+cc Pawel, Alexey, Tomasz for mdadm history]
->>> On Wed, Jun 05, 2024 at 08:48:44PM +0800, Jiwei Sun wrote:
->>>> From: Jiwei Sun <sunjw10@lenovo.com>
->>>>
->>>> During booting into the kernel, the following error message appears:
->>>>
->>>>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: Unable to get real path for '/sys/bus/pci/drivers/vmd/0000:c7:00.5/domain/device''
->>>>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: /dev/nvme1n1 is not attached to Intel(R) RAID controller.'
->>>>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: No OROM/EFI properties for /dev/nvme1n1'
->>>>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: no RAID superblock on /dev/nvme1n1.'
->>>>   (udev-worker)[2149]: nvme1n1: Process '/sbin/mdadm -I /dev/nvme1n1' failed with exit code 1.
->>>>
->>>> This symptom prevents the OS from booting successfully.
->>>
->>> I guess the root filesystem must be on a RAID device, and it's the
->>> failure to assemble that RAID device that prevents OS boot?  The
->>> messages are just details about why the assembly failed?
->>
->> Yes, you are right, in our test environment, we installed the SLES15SP6
->> on a VROC RAID 1 device which is set up by two NVME hard drivers. And
->> there is also a hardware RAID kit on the motherboard with other two NVME 
->> hard drivers.
-> 
-> OK, thanks for all the details.  What would you think of updating the
-> commit log like this?
+Thanks for your help.
 
-Thanks, I think this commit log is clearer than before. Do I need to 
-send another v4 patch for the changes?
-
-Thanks,
-Regards,
-Jiwei
-
-> 
->   The vmd driver creates a "domain" symlink in sysfs for each VMD bridge.
->   Previously this symlink was created after pci_bus_add_devices() added
->   devices below the VMD bridge and emitted udev events to announce them to
->   userspace.
-> 
->   This led to a race between userspace consumers of the udev events and the
->   kernel creation of the symlink.  One such consumer is mdadm, which
->   assembles block devices into a RAID array, and for devices below a VMD
->   bridge, mdadm depends on the "domain" symlink.
-> 
->   If mdadm loses the race, it may be unable to assemble a RAID array, which
->   may cause a boot failure or other issues, with complaints like this:
-> 
->   ...
-> 
->   Create the VMD "domain" symlink before invoking pci_bus_add_devices() to
->   avoid this race.
-
+David
 
