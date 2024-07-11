@@ -1,156 +1,159 @@
-Return-Path: <linux-kernel+bounces-249438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506C192EBB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:29:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B52CA92EBB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D379CB20BD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:28:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8ECF1C2256B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C3D16C84D;
-	Thu, 11 Jul 2024 15:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B949D16C86C;
+	Thu, 11 Jul 2024 15:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B0XkhEFJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tvbdEsk4"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A08612FB1B;
-	Thu, 11 Jul 2024 15:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15C216C684
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720711711; cv=none; b=uic8PSE3VN0oFbUSm0GNriVxEzxrcko6digceEfmkIT5y7T/d8ZFt0EbzpX85ojaNL+0aFH1jzsJmXBTPLWONo3JXtiA6E57rF68DeZ4kYLoCgiCJrhcZKrZkbIBu2lhZ+j5Bed6POEpmKUDWAV5w2nWPOUoqmyqCxg7WKYvDJE=
+	t=1720711702; cv=none; b=cXCF9AFZqEHEk7TsEzgulfVq8DBhYX/wUE2r+g9uYwIuKO4GomWQo10DKHvSix1tBozzE9hrlD5+yTFzOUf7pz7VJnFaZh+qjTWcEUKh9+PNIlfBXMzDetycMx7vF7DvB6klTjqU7ur7qw7SQNq5UDO+sD6gjyYUll4gTgRQykM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720711711; c=relaxed/simple;
-	bh=Mp6aeP16rDe0NgNWIzBoWpraUHDvr79iZxKuBFhJlTM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=M3Uwk30mB5C9as93E04Pg83Y5bJF58DO0m47oWO/C4g9EZcPKH3bZu90XHS85NGRRWQT27Ej78hTBK7Dg6U2j0f7l+F72twAoLE2no9N9+SjsXhqMRK2thk+jJuw2/AGLQUKAqiGjOWmfj6F9wVErPAJhoAv16nWBZG8TNx6hJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B0XkhEFJ; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720711709; x=1752247709;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Mp6aeP16rDe0NgNWIzBoWpraUHDvr79iZxKuBFhJlTM=;
-  b=B0XkhEFJL+gxn7leHDTjx+e7axY0ldGNr1uqQTAofPOK/IEv31lXxvm4
-   +w88YKYHxN7cRYz3L6zfkAWZtcOD9Ad9ojfHB4ycWTTdYXRhUR3VPLr2p
-   cxIT7Ozc+hVTfwFwm4iblpdbIU7I0NrIyji0F0FVqLe7XhmtY4vTaXo14
-   0J+NTRF3Ztpov8JuWUDCUewlALtMveXZiw8vTjYAOxUYpDkPWY0DS1EKj
-   f6i4YjkuW/EAybStLTGkkKcLJ55dJTYC/uCMfFaZzW7PoI8dPQ+Ap9yvc
-   MsH+pqq8l60Raw1v/zf+cccsE9xo4L7RxhF+pKVZms6y6u9uzaw9RY0lo
-   A==;
-X-CSE-ConnectionGUID: jwo3iKt3TOCpUZ2AT6Ts5w==
-X-CSE-MsgGUID: Lk2x2/jrTkuY6CHR44HuJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="17808699"
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="17808699"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 08:27:21 -0700
-X-CSE-ConnectionGUID: c9wssgMYS8W+5OlqCdzdcA==
-X-CSE-MsgGUID: kGuY6bOZRN+tTexzDVQivA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="49027757"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.127])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 08:27:17 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 11 Jul 2024 18:27:13 +0300 (EEST)
-To: superm1@kernel.org
-cc: Bjorn Helgaas <bhelgaas@google.com>, 
-    Mathias Nyman <mathias.nyman@intel.com>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>, 
-    Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH v2 2/4] PCI: Verify functions currently in D3cold have
- entered D0
-In-Reply-To: <20240710205838.2413465-3-superm1@kernel.org>
-Message-ID: <29d388a8-b529-6af1-d3a3-a0846e1f0692@linux.intel.com>
-References: <20240710205838.2413465-1-superm1@kernel.org> <20240710205838.2413465-3-superm1@kernel.org>
+	s=arc-20240116; t=1720711702; c=relaxed/simple;
+	bh=SilAbBLlHxF1fFiXA5nZv8t2dj5EmTE+T6I22rXMb5M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z3dAekSBBVELvJequkc8bStM9YiaKNqrMENsXK0KInojx94NA6w507hgncvgI/QW4qyZmErGxuktZhySaood+DE6OB/CkyMnz3sxV1IdoUq0RjPJ28WY9yXvzzOGqZUlDP7K6iGOwMFN1XqJ//xwkwaXE1d/WhHeRvEn3NJDRvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tvbdEsk4; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-79ef7ecc7d4so68793485a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:28:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720711699; x=1721316499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WQkM2Ryk0ZQZFnLcaLIzbhoe7KSMFKbN9WHRd1zSTLE=;
+        b=tvbdEsk4sodNSvw9dH8d0RTBCUCIMpLRnkDWzwu+htuFGz9CKFgr7WVU3tljAoy3nm
+         hq++uQy+j+zsmqSFprVU8kf2JMITO/neuc77g+lZ3I11/gED/4qmLT5sywvJtSN1P2s/
+         Rw0IPojdYEmIuRqp2FDXdstx+z4YbcILMMm4jeXPKt2fdJSHOO/4qy55yPCcQ4qfHb5n
+         OgfJPbuVjsIc2HSwdt/TVN7xX0RCdKr9VHnb2j4BZdpkA4MqKHZCNrF4ryhprX2kM1YH
+         nbBCiHiZyEnGJuvFSFv6/cC6OfZU0QYi/JDkO1yidn53SMazkEtK1qJwK6CdGXv22vGM
+         r3OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720711699; x=1721316499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WQkM2Ryk0ZQZFnLcaLIzbhoe7KSMFKbN9WHRd1zSTLE=;
+        b=bUyuuQItb+1/Rx/EYTGyb+bABU7RUPEiRjeVhOTs9vy4GOLktdnGfGzcjVqKrOQcJk
+         ANRG4++d29R+zgh3qQw1evgiZtWgouHbSkr7DjXZ2K6JqSDAnE2QL33xdy/W7Ey6ZJfx
+         P5+z98yZUaBcii+IotLkvG/oSwvnZUJytioLDczsK57vAw49W7AHUrMLfdhikFJ026Fl
+         F73s4++7Si/sJarE9nNWgaa+HfcAvuS10j90LVN6Np0id0sPhg4pTyVNns3Wm8OHeoFr
+         0h0L65JRNvBRB6zu1BXSc7aUjmXl1njJFZxL6SGTwy3tu+M1U+156fM48gxwEpyBv+6k
+         FOpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlk9oMjl5IARiPa/37eihP9wGC0rxcnIfFyUz8R8zYWv8uDKKtWu6M97MbqWeBap2NAtep/QDpHif2jsqRgGMHC2PmEpOmPiej/ify
+X-Gm-Message-State: AOJu0YwWLECjkCwIL3GH9XeOUDhyg5FqtQwdV6ROlSSyzafoN5tiCQBN
+	i2MWTYcQ4GIpXUJFcXDy3XPYwF31Rh05JAM72e7gPzZNsDZrZuGhw7seWZqU9GhsC8QcHgNTJ3n
+	zl8Xm4loITFWcl53ZweEFRmOP6Hc1EzE998i1
+X-Google-Smtp-Source: AGHT+IE8HI6rD0D7bFmLR1Mn8tZE0XSsSvK7NyBw9sFmyI90jMNxfVlBfEcxHI84DHJue4HhA0QN9oG7JH/Vd9MHPxg=
+X-Received: by 2002:a05:6214:cad:b0:6b0:76f1:8639 with SMTP id
+ 6a1803df08f44-6b61c1b6d8fmr100368136d6.42.1720711698460; Thu, 11 Jul 2024
+ 08:28:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-2025960674-1720711633=:6262"
+References: <20240710001749.1388631-1-almasrymina@google.com>
+ <20240710001749.1388631-13-almasrymina@google.com> <4b0479b0-1e0f-43db-8333-26b7a1fd791c@nvidia.com>
+In-Reply-To: <4b0479b0-1e0f-43db-8333-26b7a1fd791c@nvidia.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 11 Jul 2024 08:28:03 -0700
+Message-ID: <CAHS8izOc4gZUP-aS747OVf3uyn8KAyfeBcYDx2CQc-L9RnvrXA@mail.gmail.com>
+Subject: Re: [PATCH net-next v16 12/13] selftests: add ncdevmem, netcat for
+ devmem TCP
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
+	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
+	Stanislav Fomichev <sdf@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, Jul 10, 2024 at 5:44=E2=80=AFPM John Hubbard <jhubbard@nvidia.com> =
+wrote:
+>
+> On 7/9/24 5:17 PM, Mina Almasry wrote:
+> ...
+> > diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selft=
+ests/net/Makefile
+> > index bc3925200637c..39420a6e86b7f 100644
+> > --- a/tools/testing/selftests/net/Makefile
+> > +++ b/tools/testing/selftests/net/Makefile
+> > @@ -95,6 +95,11 @@ TEST_PROGS +=3D fq_band_pktlimit.sh
+> >   TEST_PROGS +=3D vlan_hw_filter.sh
+> >   TEST_PROGS +=3D bpf_offload.py
+> >
+> > +# YNL files, must be before "include ..lib.mk"
+> > +EXTRA_CLEAN +=3D $(OUTPUT)/libynl.a
+> > +YNL_GEN_FILES :=3D ncdevmem
+> > +TEST_GEN_FILES +=3D $(YNL_GEN_FILES)
+> > +
+> >   TEST_FILES :=3D settings
+> >   TEST_FILES +=3D in_netns.sh lib.sh net_helper.sh setup_loopback.sh se=
+tup_veth.sh
+> >
+> > @@ -104,6 +109,10 @@ TEST_INCLUDES :=3D forwarding/lib.sh
+> >
+> >   include ../lib.mk
+> >
+> > +# YNL build
+> > +YNL_GENS :=3D netdev
+> > +include ynl.mk
+>
+> This seems to be missing a rule to generate ynl.mk, right?
+>
 
---8323328-2025960674-1720711633=:6262
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Hi John,
 
-On Wed, 10 Jul 2024, superm1@kernel.org wrote:
+tools/testing/selftests/net/ynl.mk was merged as part of this patch a
+few days ago:
 
-> From: Mario Limonciello <mario.limonciello@amd.com>
->=20
-> It is reported that USB4 routers and downstream devices may behave
-> incorrectly if a dock cable is plugged in at approximately the time that
-> the autosuspend_delay is configured. In this situation the device has
-> attempted to enter D3cold, but didn't finish D3cold entry when the PCI
-> core tried to transition it back to D0.
->=20
-> Empirically measuring this situation an "aborted" D3cold exit takes
-> ~60ms and a "normal" D3cold exit takes ~10ms.
->=20
-> The PCI-PM 1.2 spec specifies that the restore time for functions
-> in D3cold is either 'Full context restore or boot latency'.
->=20
-> As PCIe r6.0 sec 5.8 specifies that the device will have gone
-> through a conventional reset it may take some time for the
+https://patchwork.kernel.org/project/netdevbpf/patch/20240628003253.1694510=
+-14-almasrymina@google.com/
 
-I'd add comma after reset.
-
-The code change looks okay though,
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
-> device to be ready.
->=20
-> Wait up to 1 sec as specified in PCIe r6.0 sec 6.6.1 for a device
-> in D3cold to return to D0.
->=20
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/pci/pci.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->=20
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 4ad02ad640518..9af324ab6bb02 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -1388,6 +1388,17 @@ int pci_power_up(struct pci_dev *dev)
->  =09else if (state =3D=3D PCI_D2)
->  =09=09udelay(PCI_PM_D2_DELAY);
-> =20
-> +=09/*
-> +=09 * D3cold -> D0 will have gone through a conventional reset and may n=
-eed
-> +=09 * time to be ready.
-> +=09 */
-> +=09if (dev->current_state =3D=3D PCI_D3cold) {
-> +=09=09int ret;
-> +
-> +=09=09ret =3D pci_dev_wait(dev, "D3cold->D0", PCI_RESET_WAIT);
-> +=09=09if (ret)
-> +=09=09=09return ret;
-> +=09}
->  end:
->  =09dev->current_state =3D PCI_D0;
->  =09if (need_restore)
->=20
+Is it not working for you by any chance?
 
 --=20
- i.
-
---8323328-2025960674-1720711633=:6262--
+Thanks,
+Mina
 
