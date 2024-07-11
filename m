@@ -1,106 +1,124 @@
-Return-Path: <linux-kernel+bounces-249952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA36892F217
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:36:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3239B92F216
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49F02B21E3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 647BC1C227D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2BD1A0737;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7F11A0724;
 	Thu, 11 Jul 2024 22:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rX5MzmVo"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ks8ELnCm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350F685956;
-	Thu, 11 Jul 2024 22:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33AD15531B;
+	Thu, 11 Jul 2024 22:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720737379; cv=none; b=AFx8zG3P0skkWHWXl+zVJup9j0NqS0ioPHqqj1oWNOAn4nrStZsndy/WmTAfzDrwUhso343yxa7oq2g+Ole+g03myGCGKnlaI9VR/q9FfkHeqhT5OngKzoSfqjHSCn7WUhENJwNPmIkh39cj766/8FbrQ78K+4e8fGCnOouAuCs=
+	t=1720737379; cv=none; b=W4cgAYu4DikQyXLpCSN7iU8RZLjpd9UP9wHtmgdMZp84w/2um9Qunc4NACokUYxylgxizLwZ3j8Cy3YPR4IID7UylV30afDND68IdxHaUGTtkHuqLtD1kHB7iWUptsH/SAJ6/vpirZCF/WEX6+Nf46uCRPq8dSQWjEut8f5F+xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720737379; c=relaxed/simple;
-	bh=dc4Jw3DTKtefZuRRzMr/hY9B1TDH97UDzj3YCB3E4p4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=looolxlJ8X6bCJtTrfCt+iYvddw0KSz2sU8FwFdncoLW/KkhyA+b+AaFEgv0fJ4kOHFXmvewPkKgc/pbcuRS8Gt3HauyOkWu8lasOg0BQm/wzGj6pzHMftHNG/PfmMeXNiJ2galFRMSWsI+1+R1M3Nk+3hjYLRJynoL6T1rFclI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rX5MzmVo; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720737367;
-	bh=r9hKUTWh5HXYpxD+Z8+97RAaJIdCfBVXj1YcCQXcHzw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=rX5MzmVovlAzMUfHII3Q5eTQaoZOL/gm2MpRWKmkVdv7tOiIkzvOu68JeBLsuYGJ/
-	 xrbSeZW0UVxuqjiWCC43GBOWlPf3hcbtZag8KIk8HNYiu4WKNupRFtfWOl8k5wkz4e
-	 z4AMPVG6KwLk3ZWPbnXa3y9HiwnvgghbnSOmdETgzqdvNvVPi/VHFZUp7dre6OzoOz
-	 QVI297kTCuYQD2k53fCVngtKjmsLfObwMqj2MFGlvv0C0mOHaUZHeSEqvTWW2Kku5L
-	 XkmIav2E04Uj828x4GW2f1u2mPbk9s9owyKeBUwhKzulQe6R0bkU/i0U3YbcnY2kUk
-	 tX71cslZMw4tQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKqM95vsXz4x12;
-	Fri, 12 Jul 2024 08:36:05 +1000 (AEST)
-Date: Fri, 12 Jul 2024 08:36:03 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
- <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, David Miller
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>
-Cc: bpf <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the bpf-next tree
-Message-ID: <20240712083603.10cbdec3@canb.auug.org.au>
+	bh=pirreVvy4JZn8lrnWfmD1cwECwdJ1hvtT3Z1k6qiOwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NnhZTnCig2g4Cq4v/dhrr8UN9q9j2REX7/kRmmCWpifZWtjDn328hN6MJqB/HSbQS2Zq8akYoS2p/IgtLua8XWnYDiXVi3w6wKbOwqksqHTfBSCxVvQfYB0UKHlY56oZyc/s/W/+6irT8iwdUnZ5YVeodyakl5M+9lBkFo0iHxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ks8ELnCm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B487C32782;
+	Thu, 11 Jul 2024 22:36:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720737379;
+	bh=pirreVvy4JZn8lrnWfmD1cwECwdJ1hvtT3Z1k6qiOwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ks8ELnCmsBZ4ZxMYxC8SuWAARCYiWRJZth0Zyt2UkPp/K/lMnmocSf81YBl6SiiNT
+	 9EmZM/rP13whx+pEGYHjq33WVwsaXcFI04u4h0Xdp3CHgQbxHRS5T/cwQSPlutGUPQ
+	 w/XSc9Y3yIO6s3CTlWHuiUuS72Xs1FDIT1kTTUyj+ex6Je0OVJTO3FRoYn2+haZdle
+	 H4A1enmwEcV7wAyyeTpVcElD1vWsHCgmL4cP6H8t/BSFhWxXaUhMPRbtpMFaPLNtZO
+	 sMs6hSmwYtuq5Fah4gfxcu5YiQFlKM6XDscniSMdF/dEBhjbQIOdx09ch5PTd3NBs/
+	 /A5ym9rdYGSIA==
+Date: Thu, 11 Jul 2024 16:36:18 -0600
+From: Rob Herring <robh@kernel.org>
+To: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jay Buddhabhatti <jay.buddhabhatti@amd.com>,
+	Dhaval Shah <dhaval.r.shah@amd.com>,
+	Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	saikrishna12468@gmail.com, git@amd.com
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: Add support for Xilinx Versal
+ platform
+Message-ID: <20240711223618.GA3237343-robh@kernel.org>
+References: <20240711103317.891813-1-sai.krishna.potthuri@amd.com>
+ <20240711103317.891813-2-sai.krishna.potthuri@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3KrzG.q/=lXaTJ/VL9pZalK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711103317.891813-2-sai.krishna.potthuri@amd.com>
 
---Sig_/3KrzG.q/=lXaTJ/VL9pZalK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 11, 2024 at 04:03:15PM +0530, Sai Krishna Potthuri wrote:
+> Add Xilinx Versal compatible string and corresponding groups, function and
+> pins properties to support pin controller features on Versal platform.
+> 
+> Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+> ---
+>  .../bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml | 509 +++++++++++-------
+>  1 file changed, 329 insertions(+), 180 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
+> index ce66fd15ff9c..68c378b17f49 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
+> @@ -28,7 +28,9 @@ description: |
+>  
+>  properties:
+>    compatible:
+> -    const: xlnx,zynqmp-pinctrl
+> +    enum:
+> +      - xlnx,zynqmp-pinctrl
+> +      - xlnx,versal-pinctrl
+>  
+>  patternProperties:
+>    '^(.*-)?(default|gpio-grp)$':
+> @@ -46,196 +48,334 @@ patternProperties:
+>              description:
+>                List of pins to select (either this or "groups" must be specified)
+>              items:
+> -              pattern: '^MIO([0-9]|[1-6][0-9]|7[0-7])$'
+> +              allOf:
+> +                - if:
+> +                    properties:
+> +                      compatible:
+> +                        contains:
+> +                          const: xlnx,zynqmp-pinctrl
+> +                  then:
+> +                    pattern: '^MIO([0-9]|[1-6][0-9]|7[0-7])$'
+> +                  else:
+> +                    pattern: '^((LPD|PMC)_)?MIO([0-9]|[1-6][0-9]|7[0-7])$'
 
-Hi all,
+Did you test whether this works? It doesn't because the schema is 
+nonsense. The schema applies to a property's value, but the "if" schema 
+applies to a node. And it's not even the node you are at, but the parent 
+node. IOW, there is no "compatible" in this node.
 
-The following commit is also in the net tree as a different commit
-(but the same patch):
+The 'else' schema covers both cases, so I'd just change the pattern and 
+be done with it.
 
-  6f130e4d4a5f ("bpf: Fix order of args in call to bpf_map_kvcalloc")
+However, based on the rest of the patch, you should just do a new schema 
+doc. There's little overlap of the values.
 
-This is commit
-
-  af253aef183a ("bpf: fix order of args in call to bpf_map_kvcalloc")
-
-in the net tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3KrzG.q/=lXaTJ/VL9pZalK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQXlMACgkQAVBC80lX
-0GwU+wf/accOP7SbyaFHTbEpMeVe5wwGhbEd3JWxSpbuKTZx5bWFATYgNamBIZR4
-amaHYWLkwi7EJyMQg7bknWqbtxAavj4rxKMuzxIhVC7+d+CUUDmPr6M00DsYWdsw
-LetA/az4UhyaZ0Hx2xhEzeA+pS9RWcCFscjb62NQa5MOK86gCTXZ9biVjJl0YnYQ
-eQ83IofSjOQCjkF+l6EtBVzpUYEXxEnOkYQqIPwAD9UM8cyf7E8HcmCa3J1xVnzy
-j35/A4zWmZ5YtMUupowtxyhX+G2OEOnIqYiYuEvZifpskLYbaMU8I0C4+mZK8FvT
-UcTs54Qls4DtFyb4WwKVgoOqE+A6PQ==
-=EaLA
------END PGP SIGNATURE-----
-
---Sig_/3KrzG.q/=lXaTJ/VL9pZalK--
+Rob
 
