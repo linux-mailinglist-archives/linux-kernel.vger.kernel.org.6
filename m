@@ -1,166 +1,191 @@
-Return-Path: <linux-kernel+bounces-249357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20EF592EA89
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:20:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F220892EA8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FBCCB21B9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:20:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861F31F232B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8705F167265;
-	Thu, 11 Jul 2024 14:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJcwOYmo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B826815AD99;
-	Thu, 11 Jul 2024 14:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33D01662E2;
+	Thu, 11 Jul 2024 14:20:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417A015ECCA;
+	Thu, 11 Jul 2024 14:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720707614; cv=none; b=PBWuUAT+1jqGWLnJ2Pzf5xii/0ES+lH/t9JWH4PW8TzX91BC4wuoBI1RuEwUyvPE7NH+8GJV6sMcrP+OQerNIY6nmmXBn26tyZ/oDFOggm7NZeUciLh9Rajyt8Z5OOgimqw6RHMwbVPSKXSsSnT+p0BiVpptfV0rvCeaZF0mCnk=
+	t=1720707649; cv=none; b=JPHeHSi29KbC+L0hcISvPzKIUKMdRSQPTkYjt7EoHAsP2S+Gr0pHjKmMsPSaaeaEj4B6KEcZWW+QBLuAmFJqMqD3eOyehfspD1X09OYwv7H/87YrMQHEUBWLyftNUVDugMz7aqStv2+TdGOq2KxJpKlHj1kbkwdrUvXovqI5P4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720707614; c=relaxed/simple;
-	bh=/VstGtV+katcjRzUb0Jru+O6vxW9u7IvFm83js3uw3A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tj6g0INOtk48gS0MPEK5mFjpkTRE2pdKelykVTJwRwhCFYgByjOvV6zBdYOohsQ6RFwLKIpiRgpcI3Y2jTZbQvzA+lRB+YkMwGFSXubfHrK74Xzdfh9jr7BlZ/0wQttMHOGeMFNXMDab532Ib2kmqo4mp6NRpD2Qq0KeeC9sW/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJcwOYmo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 393CEC4AF07;
-	Thu, 11 Jul 2024 14:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720707614;
-	bh=/VstGtV+katcjRzUb0Jru+O6vxW9u7IvFm83js3uw3A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=vJcwOYmoolGfg+xrhiOj/Bwvsa4Rw4RlmbK66NDCTgsDnaqS4259wWDNRltsFvJJU
-	 brxQtfc9Q513Xm43hZy/QRv6Zk1q7apIu4xko3U+V7uPbVjj3OKXAnSq47ZN4SVue2
-	 XfhQWtTVALMCig3tt3IbTCbvmMUx78JPeeU2xUMfB/vtb+dckrHbtzjYh2sVbb7nkK
-	 /UBss9AYOvMzCjwsje1syhYUrgNEiH3awy8ZlC53Np63wHpTNBIL5ssI14bIi/j7oY
-	 WFaL0VLCoPp7OWdINwjaea1L+DshjHxZECJ210qRQTEv1vXS+2poLgoUJpBmsGte6K
-	 0tWqrNS7MsOhQ==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eeb1051360so7886391fa.0;
-        Thu, 11 Jul 2024 07:20:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXsftutfRPQ70BBhK+s875bITOXA/1C6hCpJTO1bLtCrRep1yC1GeTxUji0gNkOv1Bz3lJun86LEpRPE2X3x6mCFDE9+ZFG0fD7UauRWtdL2W0kEwdvdj0rTYXNAxnOzE9fsCo48ZgI+g==
-X-Gm-Message-State: AOJu0Yyw9nD5PiUap6rco4565LLZNnK+iAPjwRYkc8PoAdTh2O59lRhQ
-	HNSs3DxaycD7t05hpjuNajBXxY46GpaJ3Jw2QW8LkYHIJ6wQJLiPOWhBRZfO2CsfuHTUqEkc4rU
-	fVS8d0GuNWmxuinneDZAsKUJO7Q==
-X-Google-Smtp-Source: AGHT+IE0CAYjyGnb5JatMHqj5ndbAwxzfnxdyxt2dr39gp4FD8KncQturA2vW4998XBh3dHYzOnJmewDL3lOw+gAh4U=
-X-Received: by 2002:a05:6512:54c:b0:524:43b2:d326 with SMTP id
- 2adb3069b0e04-52eb99a273amr5209274e87.37.1720707612501; Thu, 11 Jul 2024
- 07:20:12 -0700 (PDT)
+	s=arc-20240116; t=1720707649; c=relaxed/simple;
+	bh=pquOPkCraFMTEeTmUKF4GVnjPOMtCd1vv88fzoBbSas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AczJMlsyLKyFDpG0H8XS1Q9l+YUzfqek3Oyz5GlZglL4XQn2rjUZITpkv4tEE1Pe9Vjo/Dz0Ft2+PMIv3e1PmrjlAU+7onHrdfCbOQpEfLR1qF/zGN2AttkJNJa8DyEWeAPYN2p7Wcg2xSlzgQ+jEfd9Jwcc+YOifxoD1lti4zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1F14FEC;
+	Thu, 11 Jul 2024 07:21:11 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 377EE3F766;
+	Thu, 11 Jul 2024 07:20:44 -0700 (PDT)
+Date: Thu, 11 Jul 2024 15:20:41 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"james.quinlan@broadcom.com" <james.quinlan@broadcom.com>,
+	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"etienne.carriere@st.com" <etienne.carriere@st.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	"michal.simek@amd.com" <michal.simek@amd.com>,
+	"quic_sibis@quicinc.com" <quic_sibis@quicinc.com>,
+	"quic_nkela@quicinc.com" <quic_nkela@quicinc.com>,
+	"ptosi@google.com" <ptosi@google.com>,
+	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
+	"souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>,
+	Etienne Carriere <etienne.carriere@foss.st.com>
+Subject: Re: [PATCH v2 6/8] firmware: arm_scmi: Make OPTEE transport a
+ standalone driver
+Message-ID: <Zo_qOcRa11INO8cs@pluto>
+References: <20240710173153.4060457-1-cristian.marussi@arm.com>
+ <20240710173153.4060457-7-cristian.marussi@arm.com>
+ <PAXPR04MB8459B0299D11F08605C20BB988A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711-b4-upstream-j742s2-v1-1-8b9e41c18f91@ti.com>
-In-Reply-To: <20240711-b4-upstream-j742s2-v1-1-8b9e41c18f91@ti.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 11 Jul 2024 08:19:59 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJABHM9StutsYPjArjhnQ5vVyYK-ASd62iO6+jNBZVqig@mail.gmail.com>
-Message-ID: <CAL_JsqJABHM9StutsYPjArjhnQ5vVyYK-ASd62iO6+jNBZVqig@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: ti: Introduce J742S2 SoC and EVM
-To: Manorit Chawdhry <m-chawdhry@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Udit Kumar <u-kumar1@ti.com>, 
-	Neha Malcom Francis <n-francis@ti.com>, Aniket Limaye <a-limaye@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB8459B0299D11F08605C20BB988A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-On Wed, Jul 10, 2024 at 11:26=E2=80=AFPM Manorit Chawdhry <m-chawdhry@ti.co=
-m> wrote:
->
-> This series add the Linux support for our new family of device J742S2.
-> This device is a subset of J784S4 and shares the same memory map and
-> thus the nodes are being reused from J784S4 to avoid duplication.
->
-> Here are some of the salient features of the J742S2 automotive grade
-> application processor:
->
-> The J742S2 SoC belongs to the K3 Multicore SoC architecture platform,
-> providing advanced system integration in automotive, ADAS and industrial
-> applications requiring AI at the network edge. This SoC extends the K3
-> Jacinto 7 family of SoCs with focus on raising performance and
-> integration while providing interfaces, memory architecture and compute
-> performance for multi-sensor, high concurrency applications.
->
-> Some highlights of this SoC are:
-> * Up to Four Arm=C2=AE Cortex=C2=AE-A72 microprocessor subsystem at up to=
- 2.0GHz,
->   3 C7x floating point vector DSPs with Up to Two Deep-learning matrix
->   multiply accelerator (MMAv2),
-> * 3D GPU: Automotive grade IMG BXS-4-64 MC1
-> * Vision Processing Accelerator (VPAC) with image signal processor and
->   Depth and Motion Processing Accelerator (DMPAC)
-> * Three CSI2.0 4L RX plus two CSI2.0 4L TX, two DSI Tx, one eDP/DP and
->   one DPI interface.
-> * Integrated gigabit ethernet switch, up to 4 ports ,two ports
->   support 10Gb USXGMII; One 4 lane PCIe-GEN3 controllers, USB3.0
->   Dual-role device subsystems, Up to 20 MCANs, among other peripherals.
->
-> ( Refer Table 2-1 for Device comparison with J7AHP )
->
-> Link: https://www.ti.com/lit/pdf/spruje3 (TRM)
-> Link: https://www.ti.com/lit/ug/sprujd8/sprujd8.pdf (EVM user guide)
-> Link: https://www.ti.com/lit/zip/SPAC001 (Schematics)
-> ---
-> The series adds support for J742S2 family of SoCs. Also adds J742S2 EVM
-> Support and re-uses most of the stuff from the superset device J784s4.
->
-> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> ---
->  arch/arm64/boot/dts/ti/Makefile            |  3 ++
->  arch/arm64/boot/dts/ti/k3-j742s2-evm.dts   | 22 ++++++++++++++
->  arch/arm64/boot/dts/ti/k3-j742s2-main.dtsi | 47 ++++++++++++++++++++++++=
-++++++
->  arch/arm64/boot/dts/ti/k3-j742s2.dtsi      | 18 ++++++++++++
->  4 files changed, 90 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Mak=
-efile
-> index e20b27ddf901..4d0688c5cff7 100644
-> --- a/arch/arm64/boot/dts/ti/Makefile
-> +++ b/arch/arm64/boot/dts/ti/Makefile
-> @@ -119,6 +119,9 @@ dtb-$(CONFIG_ARCH_K3) +=3D k3-j784s4-evm-pcie0-pcie1-=
-ep.dtbo
->  dtb-$(CONFIG_ARCH_K3) +=3D k3-j784s4-evm-quad-port-eth-exp1.dtbo
->  dtb-$(CONFIG_ARCH_K3) +=3D k3-j784s4-evm-usxgmii-exp1-exp2.dtbo
->
-> +# Boards with J742S2 SoC
-> +dtb-$(CONFIG_ARCH_K3) +=3D k3-j742s2-evm.dtb
-> +
->  # Build time test only, enabled by CONFIG_OF_ALL_DTBS
->  k3-am625-beagleplay-csi2-ov5640-dtbs :=3D k3-am625-beagleplay.dtb \
->         k3-am625-beagleplay-csi2-ov5640.dtbo
-> diff --git a/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts b/arch/arm64/boot/d=
-ts/ti/k3-j742s2-evm.dts
-> new file mode 100644
-> index 000000000000..98088ccfd76d
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts
-> @@ -0,0 +1,22 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.co=
-m/
-> + *
-> + * EVM Board Schematics: https://www.ti.com/lit/zip/SPAC001
-> + */
-> +
-> +#include "k3-j784s4-evm.dts"
-> +#include "k3-j742s2.dtsi"
+On Thu, Jul 11, 2024 at 12:57:46PM +0000, Peng Fan wrote:
+> > Subject: [PATCH v2 6/8] firmware: arm_scmi: Make OPTEE transport a
+> > standalone driver
+> > 
+> > Make SCMI OPTEE transport a standalone driver that can be optionally
+> > loaded as a module.
+> > 
+> > CC: Etienne Carriere <etienne.carriere@foss.st.com>
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > ---
+> > v1 --> v2
+> > - handle platform_driver_register() failures
+> > ---
+> >  drivers/firmware/arm_scmi/Kconfig             |  6 +-
+> >  drivers/firmware/arm_scmi/Makefile            |  2 +-
+> >  drivers/firmware/arm_scmi/common.h            |  3 -
+> >  drivers/firmware/arm_scmi/driver.c            |  3 -
+> >  .../{optee.c => scmi_transport_optee.c}       | 91 ++++++++++---------
+> >  5 files changed, 52 insertions(+), 53 deletions(-)  rename
+> > drivers/firmware/arm_scmi/{optee.c => scmi_transport_optee.c} (90%)
+> > 
+> > diff --git a/drivers/firmware/arm_scmi/Kconfig
+> > b/drivers/firmware/arm_scmi/Kconfig
+> > index a4d44ef8bf45..def7e3f09356 100644
+> > --- a/drivers/firmware/arm_scmi/Kconfig
+> > +++ b/drivers/firmware/arm_scmi/Kconfig
+> > @@ -89,8 +89,8 @@ config ARM_SCMI_TRANSPORT_MAILBOX
+> >  	  will be called scmi_transport_mailbox.
+> > 
+> >  config ARM_SCMI_TRANSPORT_OPTEE
+> > -	bool "SCMI transport based on OP-TEE service"
+> > -	depends on OPTEE=y || OPTEE=ARM_SCMI_PROTOCOL
+> > +	tristate "SCMI transport based on OP-TEE service"
+> > +	depends on OPTEE
+> >  	select ARM_SCMI_HAVE_TRANSPORT
+> >  	select ARM_SCMI_HAVE_SHMEM
+> >  	select ARM_SCMI_HAVE_MSG
+> > @@ -100,6 +100,8 @@ config ARM_SCMI_TRANSPORT_OPTEE
+> > 
+> >  	  If you want the ARM SCMI PROTOCOL stack to include
+> > support for a
+> >  	  transport based on OP-TEE SCMI service, answer Y.
+> > +	  This driver can also be built as a module.  If so, the module
+> > +	  will be called scmi_transport_optee.
+> > 
+> >  config ARM_SCMI_TRANSPORT_SMC
+> >  	tristate "SCMI transport based on SMC"
+> > diff --git a/drivers/firmware/arm_scmi/Makefile
+> > b/drivers/firmware/arm_scmi/Makefile
+> > index 6868a47fa4ab..b04119ce972f 100644
+> > --- a/drivers/firmware/arm_scmi/Makefile
+> > +++ b/drivers/firmware/arm_scmi/Makefile
+> > @@ -7,13 +7,13 @@ scmi-driver-
+> > $(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) += raw_mode.o
+> >  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_SHMEM) = shmem.o
+> >  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_MSG) += msg.o
+> >  scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_VIRTIO) += virtio.o
+> > -scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += optee.o
+> > scmi-protocols-y := base.o clock.o perf.o power.o reset.o sensors.o
+> > system.o voltage.o powercap.o  scmi-protocols-y += pinctrl.o  scmi-
+> > module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
+> > 
+> >  obj-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) +=
+> > scmi_transport_smc.o
+> >  obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) +=
+> > scmi_transport_mailbox.o
+> > +obj-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) +=
+> > scmi_transport_optee.o
+> > 
+> >  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
+> >  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o diff --git
+> > a/drivers/firmware/arm_scmi/common.h
+> > b/drivers/firmware/arm_scmi/common.h
+> > index edb786cde25c..0ce1d804b3fc 100644
+> > --- a/drivers/firmware/arm_scmi/common.h
+> > +++ b/drivers/firmware/arm_scmi/common.h
+> > @@ -289,9 +289,6 @@ int
+> > scmi_xfer_raw_wait_for_message_response(struct scmi_chan_info
+> > *cinfo,  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO  extern const
+> > struct scmi_desc scmi_virtio_desc;  #endif -#ifdef
+> > CONFIG_ARM_SCMI_TRANSPORT_OPTEE -extern const struct
+> > scmi_desc scmi_optee_desc; -#endif
+> > 
+> >  void scmi_rx_callback(struct scmi_chan_info *cinfo, u32 msg_hdr,
+> > void *priv);
+> > 
+> > diff --git a/drivers/firmware/arm_scmi/driver.c
+> > b/drivers/firmware/arm_scmi/driver.c
+> > index b14c5326930a..67b416c7f2f5 100644
+> > --- a/drivers/firmware/arm_scmi/driver.c
+> > +++ b/drivers/firmware/arm_scmi/driver.c
+> > @@ -3251,9 +3251,6 @@ ATTRIBUTE_GROUPS(versions);
+> > 
+> >  /* Each compatible listed below must have descriptor associated with
+> > it */  static const struct of_device_id scmi_of_match[] = { -#ifdef
+> > CONFIG_ARM_SCMI_TRANSPORT_OPTEE
+> > -	{ .compatible = "linaro,scmi-optee", .data =
+> > &scmi_optee_desc },
+> > -#endif
+> >  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
+> >  	{ .compatible = "arm,scmi-virtio", .data = &scmi_virtio_desc},
+> > #endif diff --git a/drivers/firmware/arm_scmi/optee.c
+> > b/drivers/firmware/arm_scmi/scmi_transport_optee.c
+> > similarity index 90%
+> > rename from drivers/firmware/arm_scmi/optee.c rename to
+> > drivers/firmware/arm_scmi/scmi_transport_optee.c
+> > index 99f3b0bfb956..7a16c8d3e213 100644
+> > --- a/drivers/firmware/arm_scmi/optee.c
+> > +++ b/drivers/firmware/arm_scmi/scmi_transport_optee.c
+> > @@ -1,6 +1,6 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >  /*
+> > - * Copyright (C) 2019-2021 Linaro Ltd.
+> > + * Copyright (C) 2019-2024 Linaro Ltd.
+> 
+> This should be kept unchanged?
 
-The structure of this is weird and fragile. You delete nodes in
-k3-j742s2.dtsi which are defined indirectly (I assume) by
-k3-j784s4-evm.dts. When there's a 2nd board for this SoC, you are
-going to have to duplicate everything here. k3-j742s2.dtsi should
-include k3-j742s4.dtsi. And then you may need a common EVM board .dtsi
-to share.
-
-Rob
+Not sure, like I said previously, how to go about years.
+Thanks,
+Cristian
 
