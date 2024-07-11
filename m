@@ -1,845 +1,149 @@
-Return-Path: <linux-kernel+bounces-249027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2876892E53A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:56:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B2592E53F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48F171C22225
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E423281643
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6F915AAC6;
-	Thu, 11 Jul 2024 10:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC603158DC4;
+	Thu, 11 Jul 2024 10:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YRh0njpA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b="ckjYxlHu"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29147156962;
-	Thu, 11 Jul 2024 10:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D2129CF0;
+	Thu, 11 Jul 2024 10:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720695355; cv=none; b=pI/29KzhMjHp6XvUPWTj/mjF9C1lnhDVl8Rqd/zBWD3J2huHVJgneLwgnfIw+WzFZHBfYJ7QO8Rkb3X546BzIjqqPZVQ5TLO/ebl2dspCqlPhprEA/KlzCM9vTHu8R2ZsFks6urPg9cBqKgvZhn4oOeZdxVFWNJusOoPxRLpzDI=
+	t=1720695445; cv=none; b=fq9IUgUnmtEm0BuqFY5oqwJcBX0h3MdBLqKLGiSxF7QukzSSDFGuEtr8Jc2XaggdnIt+JGh495sGYGxMg8DJ3tjmv35nOZ8mI0wC5tT1fMCJ1iDpFmEccVUTXJFYyD67nVwyTVKlcMMVeNTgDN3YxwnSMM/brRH91kJaCuFGo1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720695355; c=relaxed/simple;
-	bh=tcDa3hXyLYf/8pmQpdypqzc4xqu16xCk/qbLJT93YtM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Tr3BKCIVqiSuwEBdSsqNvGdGzD/txa0YrpjpUI8fgXCORVMJK/PfQxwvHGBZmq+intg5fyw0fULzaG2NBqoiSUdg2M8G88xtFrZkLP0XMkpsDmXwxGcr0MgjUNncD6u7mOKvHhlqKud7HewmAPS/ViomVdRw4pvebOHC8iw5MzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YRh0njpA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C2E2CC32786;
-	Thu, 11 Jul 2024 10:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720695354;
-	bh=tcDa3hXyLYf/8pmQpdypqzc4xqu16xCk/qbLJT93YtM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=YRh0njpAY7jIN913wFGs8N48pyrkc4FlV1krJZ/OwqUqPSwWDdsAdIUclZk90bAA1
-	 70+Gh6vnNWG98psVpIEQ/BNMzGgfruQH8S062YoEcLZ3hUkvh3sWoBMuwSGhl3tkJ6
-	 9Qlcx3NUvzMs6H2zalm+BxO0B3A4VOUk1eVslsTYB9G3kQ1zwQ7dbQ7ZsgJtm1w7PB
-	 n4ncNpog0NnA15fLsknf3eJxrR77F/BzQtXtT8UVb6/5J+pU3jSHFN8Kd4ZTRXL1or
-	 L/Wfi8/iNew8McrKjmmWxLqmbEdifudjgixb7eS4jjLPgPThsUrnf6p3K43DeYNHOy
-	 N1G6wjR3tgeSw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C3FC3DA4D;
-	Thu, 11 Jul 2024 10:55:54 +0000 (UTC)
-From: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
-Date: Thu, 11 Jul 2024 18:55:38 +0800
-Subject: [PATCH RESEND v9 2/2] dmaengine: Loongson1: Add Loongson-1 APB DMA
- driver
+	s=arc-20240116; t=1720695445; c=relaxed/simple;
+	bh=+gEUZWwJxf6UBZ5/l0igGZen8dsW6JJDK458gV3RP5M=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=PXudvb9MeAFdcyPB/Hv/mtcEaRVdtQBEg4Rp8Vp5UpWH9oZsol8Sfx760tEOO6Rjow/w2fJoQfctY22JbYRBh/VGGhtJYcB0EWiYTueZuoRLpRxmBZibM7SHeitUUE9QvraeSsko66DHG7ua/caRpZEkZtytEA1ooCB5E+Gld2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b=ckjYxlHu; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720695406; x=1721300206; i=frank.scheiner@web.de;
+	bh=VzEYr0o+A2uEVOWKMUMa1+D6NeJfJnWMktoA/muX5PI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ckjYxlHuK95a9bJSJlwrZb+sDXGGtZeQthPhTDvoK5rSpGcU3H72pzL6qZfj6CxH
+	 b3wZv39M7bcNyGzKSRnqGil0GAr5QNGHyqmHUQMvKk7ry/LN1e5wSes3d+pTusnrg
+	 qsTvDp0EPIIweeAt+F1q0Tc3iI6KBX4X1y2/N3Yn4F2So3KwZXPeGPAi/A/QETqh6
+	 fPPtRJmMelXHQF8m3YF3wrKZS7pC7P/eEg626UoS4HozAuziQTjsydrljn1eNpqv4
+	 +NxcBdv5s4TLlI8qOdknfv0EXc0r6wqExdHS2EihhygLiHhiqiBl8HLNi45Vnm7xM
+	 4MY9DtE1V+mMr62UUA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.30] ([87.155.230.91]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N79RI-1sK2OQ1fI4-013Kgf; Thu, 11
+ Jul 2024 12:56:46 +0200
+Message-ID: <76458f11-0ca4-4d3b-a9bc-916399f76b54@web.de>
+Date: Thu, 11 Jul 2024 12:56:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240711-loongson1-dma-v9-2-5ce8b5e85a56@gmail.com>
-References: <20240711-loongson1-dma-v9-0-5ce8b5e85a56@gmail.com>
-In-Reply-To: <20240711-loongson1-dma-v9-0-5ce8b5e85a56@gmail.com>
-To: Keguang Zhang <keguang.zhang@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
- Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720695351; l=21751;
- i=keguang.zhang@gmail.com; s=20231129; h=from:subject:message-id;
- bh=srUzLIkbPEI7ZwoZrHjUoMpl+Xa31X76sy1UJtx17gY=;
- b=govo+HWQysytA8MzTvuqeQEx7dXjru6KGCsvcudbKdX3/U1lYg0HaFznWK/fbqY+PfwZHn9BQ
- u7K7o1It8FOAgCjVvVUgh18z0GiQfSukn/YRLsiRX/TxoR0VvHkVjTS
-X-Developer-Key: i=keguang.zhang@gmail.com; a=ed25519;
- pk=FMKGj/JgKll/MgClpNZ3frIIogsh5e5r8CeW2mr+WLs=
-X-Endpoint-Received: by B4 Relay for keguang.zhang@gmail.com/20231129 with
- auth_id=102
-X-Original-From: Keguang Zhang <keguang.zhang@gmail.com>
-Reply-To: keguang.zhang@gmail.com
+User-Agent: Mozilla Thunderbird
+To: gregkh@linuxfoundation.org, stable@vger.kernel.org
+Cc: akpm@linux-foundation.org, allen.lkml@gmail.com, broonie@kernel.org,
+ conor@kernel.org, f.fainelli@gmail.com, jonathanh@nvidia.com,
+ linux-kernel@vger.kernel.org, linux@roeck-us.net,
+ lkft-triage@lists.linaro.org, patches@kernelci.org, patches@lists.linux.dev,
+ pavel@denx.de, rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
+ sudipm.mukherjee@gmail.com, torvalds@linux-foundation.org,
+ =?UTF-8?B?VG9tw6HFoSBHbG96YXI=?= <tglozar@gmail.com>
+References: <20240704094505.095988824@linuxfoundation.org>
+Subject: Re: [PATCH 5.10 000/284] 5.10.221-rc2 review
+Content-Language: en-US
+From: Frank Scheiner <frank.scheiner@web.de>
+In-Reply-To: <20240704094505.095988824@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Fbq7Hjr7X2/6ACoXjJUp9J9n84tJ5yO9w0OJ9P0SzPkif0/w2pg
+ SRSj9DIyr2EryV/M2d1Ae+pOzl4zTHF5nWDyTWn9onLoMODiT4ahfxd1DHHRoPG+2TB166v
+ v9FsJI40B7uY6QnSy+mW5KKfFNaLvHSpmS5plv6cnO3PaYFj/xsOtM067Ma3GTkuihRTAc3
+ 5NRm/k7qElvIyPrIppfFQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:KYa8x5bIf0s=;GYogy+6iurgHSxK2th2isUgduVZ
+ FAaCvByYxSNBykzRUrGPx4t9f5f+yFqnDIKQIwO8MB8JXasA9GqULx5HbZeCUS8L95epaH7wv
+ aTE5EP+iA+eGqcm87RnswHMABe3OrDsQ4lM0T+GtvAvqfsnfw2nGFavFf/b3T303X0XEaMyu9
+ p3RVypLzS5r27m2lzAZwx4hWPOxOCPsoPcsa+5/wFDXpWOT+KHMiftaSLlwwFntP3aWXZWSUE
+ cBrjqyo3VE7cANXh0tXpPtz4qkgLBFOSnMlkuvfoX+G5sc910TcF2iALcNBNpoy9fKq9SqPox
+ /y0n7C6jADCg1Qvh82H6XC1QxeEy6+cVAERRS8gYeuT/1iHlNjzeNKgbROnei3SRAGn/xlSQ9
+ PrMID4WNREW1UPa64oIkML0zhEEBUlwTLxv97gcLOUlzxT9BfKAzOfrLd9dl/LotqRNNYeBY9
+ w280NeicdQJT7HuxFO1OUF9HUb0X4ghsMoArO4ORtoJTigxV/pCKRG7IVA/irbR4WrY6+ozgQ
+ 81DkKUgg9XWeCHlUJEuJjgvkjFg+HrEQblJgGjC0Z+QpcGTBLcVHUX+50/vvR2dA/MDiIyCgJ
+ rzcvsXqMPvQFvRKOsSyFUKeZzU0l39HGx56F74djSp+wowB7xondNEa/zOz7kIkmI+yDrCA96
+ R9FMV0aBn06tq1v5k1SJ91Z33/kynwyAWzgcVOxv8EcYd4AC3yMEYEgqtAOjBbC5LT0j376R1
+ zUq9h6mEOkveJ0GNtCHM9EfqkYtN/+7799VO20z3BF+H8tBfjZlY75Y1WJHC53aTicKa5tBVs
+ GYX2W6gm3gvqSXTi74bkT2McsCfyVwwaYe7Ug7iPMOr4s=
 
-From: Keguang Zhang <keguang.zhang@gmail.com>
+Dear Greg, dear Sasha,
 
-This patch adds APB DMA driver for Loongson-1 SoCs.
+I noticed a build failure for linux-5.10.y for ia64 ([1]) (sorry,
+actually since 5.10.221-rc1, but I didn't notice that build failure
+before yesterday :-/ and as the review window for 5.10.222-rc1 is not
+yet open, I thought I send it now as response to the last review window
+announcement for 5.10.221-rc2):
 
-Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
----
-Changes in v9:
-- Fix all the errors and warnings when building with W=1 and C=1
+https://github.com/linux-ia64/linux-stable-rc/actions/runs/9771252437/job/=
+26974019958#step:8:3524:
+```
+[...]
+CC [M]  drivers/pps/pps.o
+drivers/firmware/efi/memmap.c:16:10: fatal error: asm/efi.h: No such
+file or directory
+    16 | #include <asm/efi.h>
+       |          ^~~~~~~~~~~
+compilation terminated.
+[...]
+```
 
-Changes in v8:
-- None
+[1]:
+https://github.com/linux-ia64/linux-stable-rc/actions/runs/9771252437#summ=
+ary-26974019958
 
-Changes in v7:
-- Change the comptible to 'loongson,ls1*-apbdma'
-- Update Kconfig and Makefile accordingly
-- Rename the file to loongson1-apb-dma.c to keep the consistency
+This is related to the recent addition of this change set:
 
-Changes in v6:
-- Implement .device_prep_dma_cyclic for Loongson1 audio driver,
-- as well as .device_pause and .device_resume.
-- Set the limitation LS1X_DMA_MAX_DESC and put all descriptors
-- into one page to save memory
-- Move dma_pool_zalloc() into ls1x_dma_alloc_desc()
-- Drop dma_slave_config structure
-- Use .remove_new instead of .remove
-- Use KBUILD_MODNAME for the driver name
-- Improve the debug information
+efi: memmap: Move manipulation routines into x86 arch tree
 
-Changes in v5:
-- Add DT support
-- Use DT data instead of platform data
-- Use chan_id of struct dma_chan instead of own id
-- Use of_dma_xlate_by_chan_id() instead of ls1x_dma_filter()
-- Update the author information to my official name
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
+/commit/?h=3Dlinux-5.10.y&id=3D31e0721aeabde29371f624f56ce2f403508527a5
 
-Changes in v4:
-- Use dma_slave_map to find the proper channel.
-- Explicitly call devm_request_irq() and tasklet_kill().
-- Fix namespace issue.
-- Some minor fixes and cleanups.
+...to linux-5.10.y. For ia64 this change set on its own seems incomplete
+as it requires a header not available for ia64 w/o additional changes.
 
-Changes in v3:
-- Rename ls1x_dma_filter_fn to ls1x_dma_filter.
+Adding:
 
-Changes in v2:
-- Change the config from 'DMA_LOONGSON1' to 'LOONGSON1_DMA',
-- and rearrange it in alphabetical order in Kconfig and Makefile.
-- Fix comment style.
----
- drivers/dma/Kconfig             |   9 +
- drivers/dma/Makefile            |   1 +
- drivers/dma/loongson1-apb-dma.c | 665 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 675 insertions(+)
+efi: ia64: move IA64-only declarations to new asm/efi.h header
 
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index 002a5ec80620..f7b06c4cdf3f 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -369,6 +369,15 @@ config K3_DMA
- 	  Support the DMA engine for Hisilicon K3 platform
- 	  devices.
- 
-+config LOONGSON1_APB_DMA
-+	tristate "Loongson1 APB DMA support"
-+	depends on MACH_LOONGSON32 || COMPILE_TEST
-+	select DMA_ENGINE
-+	select DMA_VIRTUAL_CHANNELS
-+	help
-+	  This selects support for the APB DMA controller in Loongson1 SoCs,
-+	  which is required by Loongson1 NAND and audio support.
-+
- config LPC18XX_DMAMUX
- 	bool "NXP LPC18xx/43xx DMA MUX for PL080"
- 	depends on ARCH_LPC18XX || COMPILE_TEST
-diff --git a/drivers/dma/Makefile b/drivers/dma/Makefile
-index 802ca916f05f..eb04bb7f19d7 100644
---- a/drivers/dma/Makefile
-+++ b/drivers/dma/Makefile
-@@ -49,6 +49,7 @@ obj-$(CONFIG_INTEL_IDMA64) += idma64.o
- obj-$(CONFIG_INTEL_IOATDMA) += ioat/
- obj-y += idxd/
- obj-$(CONFIG_K3_DMA) += k3dma.o
-+obj-$(CONFIG_LOONGSON1_APB_DMA) += loongson1-apb-dma.o
- obj-$(CONFIG_LPC18XX_DMAMUX) += lpc18xx-dmamux.o
- obj-$(CONFIG_LS2X_APB_DMA) += ls2x-apb-dma.o
- obj-$(CONFIG_MILBEAUT_HDMAC) += milbeaut-hdmac.o
-diff --git a/drivers/dma/loongson1-apb-dma.c b/drivers/dma/loongson1-apb-dma.c
-new file mode 100644
-index 000000000000..fe259eccc71d
---- /dev/null
-+++ b/drivers/dma/loongson1-apb-dma.c
-@@ -0,0 +1,665 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Driver for Loongson-1 APB DMA Controller
-+ *
-+ * Copyright (C) 2015-2024 Keguang Zhang <keguang.zhang@gmail.com>
-+ */
-+
-+#include <linux/dmapool.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_dma.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include "dmaengine.h"
-+#include "virt-dma.h"
-+
-+/* Loongson-1 DMA Control Register */
-+#define DMA_CTRL			0x0
-+
-+/* DMA Control Register Bits */
-+#define DMA_STOP			BIT(4)
-+#define DMA_START			BIT(3)
-+#define DMA_ASK_VALID			BIT(2)
-+
-+#define DMA_ADDR_MASK			GENMASK(31, 6)
-+
-+/* DMA Next Field Bits */
-+#define DMA_NEXT_VALID			BIT(0)
-+
-+/* DMA Command Field Bits */
-+#define DMA_RAM2DEV			BIT(12)
-+#define DMA_INT				BIT(1)
-+#define DMA_INT_MASK			BIT(0)
-+
-+#define LS1X_DMA_MAX_CHANNELS		3
-+
-+/* Size of allocations for hardware descriptors */
-+#define LS1X_DMA_DESCS_SIZE		PAGE_SIZE
-+#define LS1X_DMA_MAX_DESC		\
-+	(LS1X_DMA_DESCS_SIZE / sizeof(struct ls1x_dma_hwdesc))
-+
-+struct ls1x_dma_hwdesc {
-+	u32 next;		/* next descriptor address */
-+	u32 saddr;		/* memory DMA address */
-+	u32 daddr;		/* device DMA address */
-+	u32 length;
-+	u32 stride;
-+	u32 cycles;
-+	u32 cmd;
-+	u32 stats;
-+};
-+
-+struct ls1x_dma_desc {
-+	struct virt_dma_desc vdesc;
-+	enum dma_transfer_direction dir;
-+	enum dma_transaction_type type;
-+	unsigned int bus_width;
-+
-+	unsigned int nr_descs;	/* number of descriptors */
-+
-+	struct ls1x_dma_hwdesc *hwdesc;
-+	dma_addr_t hwdesc_phys;
-+};
-+
-+struct ls1x_dma_chan {
-+	struct virt_dma_chan vchan;
-+	struct dma_pool *desc_pool;
-+	phys_addr_t src_addr;
-+	phys_addr_t dst_addr;
-+	enum dma_slave_buswidth src_addr_width;
-+	enum dma_slave_buswidth dst_addr_width;
-+
-+	void __iomem *reg_base;
-+	int irq;
-+
-+	struct ls1x_dma_desc *desc;
-+
-+	struct ls1x_dma_hwdesc *curr_hwdesc;
-+	dma_addr_t curr_hwdesc_phys;
-+};
-+
-+struct ls1x_dma {
-+	struct dma_device ddev;
-+	void __iomem *reg_base;
-+
-+	unsigned int nr_chans;
-+	struct ls1x_dma_chan chan[];
-+};
-+
-+#define to_ls1x_dma_chan(dchan)		\
-+	container_of(dchan, struct ls1x_dma_chan, vchan.chan)
-+
-+#define to_ls1x_dma_desc(vd)		\
-+	container_of(vd, struct ls1x_dma_desc, vdesc)
-+
-+/* macros for registers read/write */
-+#define chan_readl(chan, off)		\
-+	readl((chan)->reg_base + (off))
-+
-+#define chan_writel(chan, off, val)	\
-+	writel((val), (chan)->reg_base + (off))
-+
-+static inline struct device *chan2dev(struct dma_chan *chan)
-+{
-+	return &chan->dev->device;
-+}
-+
-+static inline int ls1x_dma_query(struct ls1x_dma_chan *chan,
-+				 dma_addr_t *hwdesc_phys)
-+{
-+	struct dma_chan *dchan = &chan->vchan.chan;
-+	int val, ret;
-+
-+	val = *hwdesc_phys & DMA_ADDR_MASK;
-+	val |= DMA_ASK_VALID;
-+	val |= dchan->chan_id;
-+	chan_writel(chan, DMA_CTRL, val);
-+	ret = readl_poll_timeout_atomic(chan->reg_base + DMA_CTRL, val,
-+					!(val & DMA_ASK_VALID), 0, 3000);
-+	if (ret)
-+		dev_err(chan2dev(dchan), "failed to query DMA\n");
-+
-+	return ret;
-+}
-+
-+static inline int ls1x_dma_start(struct ls1x_dma_chan *chan,
-+				 dma_addr_t *hwdesc_phys)
-+{
-+	struct dma_chan *dchan = &chan->vchan.chan;
-+	int val, ret;
-+
-+	dev_dbg(chan2dev(dchan), "cookie=%d, starting hwdesc=%x\n",
-+		dchan->cookie, *hwdesc_phys);
-+
-+	val = *hwdesc_phys & DMA_ADDR_MASK;
-+	val |= DMA_START;
-+	val |= dchan->chan_id;
-+	chan_writel(chan, DMA_CTRL, val);
-+	ret = readl_poll_timeout(chan->reg_base + DMA_CTRL, val,
-+				 !(val & DMA_START), 0, 3000);
-+	if (ret)
-+		dev_err(chan2dev(dchan), "failed to start DMA\n");
-+
-+	return ret;
-+}
-+
-+static inline void ls1x_dma_stop(struct ls1x_dma_chan *chan)
-+{
-+	chan_writel(chan, DMA_CTRL, chan_readl(chan, DMA_CTRL) | DMA_STOP);
-+}
-+
-+static void ls1x_dma_free_chan_resources(struct dma_chan *dchan)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+
-+	dma_free_coherent(chan2dev(dchan), sizeof(struct ls1x_dma_hwdesc),
-+			  chan->curr_hwdesc, chan->curr_hwdesc_phys);
-+	vchan_free_chan_resources(&chan->vchan);
-+	dma_pool_destroy(chan->desc_pool);
-+	chan->desc_pool = NULL;
-+}
-+
-+static int ls1x_dma_alloc_chan_resources(struct dma_chan *dchan)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+
-+	chan->desc_pool = dma_pool_create(dma_chan_name(dchan),
-+					  chan2dev(dchan),
-+					  sizeof(struct ls1x_dma_hwdesc),
-+					  __alignof__(struct ls1x_dma_hwdesc),
-+					  0);
-+	if (!chan->desc_pool)
-+		return -ENOMEM;
-+
-+	/* allocate memory for querying current HW descriptor */
-+	dma_set_coherent_mask(chan2dev(dchan), DMA_BIT_MASK(32));
-+	chan->curr_hwdesc = dma_alloc_coherent(chan2dev(dchan),
-+					       sizeof(struct ls1x_dma_hwdesc),
-+					       &chan->curr_hwdesc_phys,
-+					       GFP_KERNEL);
-+	if (!chan->curr_hwdesc)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
-+static void ls1x_dma_free_desc(struct virt_dma_desc *vdesc)
-+{
-+	struct ls1x_dma_desc *desc = to_ls1x_dma_desc(vdesc);
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(vdesc->tx.chan);
-+
-+	dma_pool_free(chan->desc_pool, desc->hwdesc, desc->hwdesc_phys);
-+	chan->desc = NULL;
-+	kfree(desc);
-+}
-+
-+static struct ls1x_dma_desc *
-+ls1x_dma_alloc_desc(struct dma_chan *dchan, int sg_len,
-+		    enum dma_transfer_direction direction,
-+		    enum dma_transaction_type type)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+	struct ls1x_dma_desc *desc;
-+
-+	if (sg_len > LS1X_DMA_MAX_DESC) {
-+		dev_err(chan2dev(dchan), "sg_len %u exceeds limit %lu",
-+			sg_len, LS1X_DMA_MAX_DESC);
-+		return NULL;
-+	}
-+
-+	desc = kzalloc(sizeof(*desc), GFP_NOWAIT);
-+	if (!desc)
-+		return NULL;
-+
-+	/* allocate HW descriptors */
-+	desc->hwdesc = dma_pool_zalloc(chan->desc_pool, GFP_NOWAIT,
-+				       &desc->hwdesc_phys);
-+	if (!desc->hwdesc) {
-+		dev_err(chan2dev(dchan), "failed to alloc HW descriptors\n");
-+		ls1x_dma_free_desc(&desc->vdesc);
-+		return NULL;
-+	}
-+
-+	desc->dir = direction;
-+	desc->type = type;
-+	desc->nr_descs = sg_len;
-+
-+	return desc;
-+}
-+
-+static int ls1x_dma_setup_hwdescs(struct dma_chan *dchan,
-+				  struct ls1x_dma_desc *desc,
-+				  struct scatterlist *sgl, unsigned int sg_len)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+	dma_addr_t next_hwdesc_phys = desc->hwdesc_phys;
-+
-+	struct scatterlist *sg;
-+	unsigned int dev_addr, cmd, i;
-+
-+	switch (desc->dir) {
-+	case DMA_MEM_TO_DEV:
-+		dev_addr = chan->dst_addr;
-+		desc->bus_width = chan->dst_addr_width;
-+		cmd = DMA_RAM2DEV | DMA_INT;
-+		break;
-+	case DMA_DEV_TO_MEM:
-+		dev_addr = chan->src_addr;
-+		desc->bus_width = chan->src_addr_width;
-+		cmd = DMA_INT;
-+		break;
-+	default:
-+		dev_err(chan2dev(dchan), "unsupported DMA direction: %s\n",
-+			dmaengine_get_direction_text(desc->dir));
-+		return -EINVAL;
-+	}
-+
-+	/* setup HW descriptors */
-+	for_each_sg(sgl, sg, sg_len, i) {
-+		dma_addr_t buf_addr = sg_dma_address(sg);
-+		size_t buf_len = sg_dma_len(sg);
-+		struct ls1x_dma_hwdesc *hwdesc = &desc->hwdesc[i];
-+
-+		if (!is_dma_copy_aligned(dchan->device, buf_addr, 0, buf_len)) {
-+			dev_err(chan2dev(dchan), "buffer is not aligned!\n");
-+			return -EINVAL;
-+		}
-+
-+		hwdesc->saddr = buf_addr;
-+		hwdesc->daddr = dev_addr;
-+		hwdesc->length = buf_len / desc->bus_width;
-+		hwdesc->stride = 0;
-+		hwdesc->cycles = 1;
-+		hwdesc->cmd = cmd;
-+
-+		if (i) {
-+			next_hwdesc_phys += sizeof(*hwdesc);
-+			desc->hwdesc[i - 1].next = next_hwdesc_phys
-+			    | DMA_NEXT_VALID;
-+		}
-+	}
-+
-+	if (desc->type == DMA_CYCLIC)
-+		desc->hwdesc[i - 1].next = desc->hwdesc_phys | DMA_NEXT_VALID;
-+
-+	for_each_sg(sgl, sg, sg_len, i) {
-+		struct ls1x_dma_hwdesc *hwdesc = &desc->hwdesc[i];
-+
-+		print_hex_dump_debug("HW DESC: ", DUMP_PREFIX_OFFSET, 16, 4,
-+				     hwdesc, sizeof(*hwdesc), false);
-+	}
-+
-+	return 0;
-+}
-+
-+static struct dma_async_tx_descriptor *
-+ls1x_dma_prep_slave_sg(struct dma_chan *dchan,
-+		       struct scatterlist *sgl, unsigned int sg_len,
-+		       enum dma_transfer_direction direction,
-+		       unsigned long flags, void *context)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+	struct ls1x_dma_desc *desc;
-+
-+	dev_dbg(chan2dev(dchan), "sg_len=%u flags=0x%lx dir=%s\n",
-+		sg_len, flags, dmaengine_get_direction_text(direction));
-+
-+	desc = ls1x_dma_alloc_desc(dchan, sg_len, direction, DMA_SLAVE);
-+	if (!desc)
-+		return NULL;
-+
-+	if (ls1x_dma_setup_hwdescs(dchan, desc, sgl, sg_len)) {
-+		ls1x_dma_free_desc(&desc->vdesc);
-+		return NULL;
-+	}
-+
-+	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
-+}
-+
-+static struct dma_async_tx_descriptor *
-+ls1x_dma_prep_dma_cyclic(struct dma_chan *dchan,
-+			 dma_addr_t buf_addr, size_t buf_len, size_t period_len,
-+			 enum dma_transfer_direction direction,
-+			 unsigned long flags)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+	struct ls1x_dma_desc *desc;
-+	struct scatterlist *sgl;
-+	unsigned int sg_len;
-+	unsigned int i;
-+
-+	dev_dbg(chan2dev(dchan),
-+		"buf_len=%d period_len=%zu flags=0x%lx dir=%s\n", buf_len,
-+		period_len, flags, dmaengine_get_direction_text(direction));
-+
-+	sg_len = buf_len / period_len;
-+	desc = ls1x_dma_alloc_desc(dchan, sg_len, direction, DMA_CYCLIC);
-+	if (!desc)
-+		return NULL;
-+
-+	/* allocate the scatterlist */
-+	sgl = kmalloc_array(sg_len, sizeof(*sgl), GFP_NOWAIT);
-+	if (!sgl)
-+		return NULL;
-+
-+	sg_init_table(sgl, sg_len);
-+	for (i = 0; i < sg_len; ++i) {
-+		sg_set_page(&sgl[i], pfn_to_page(PFN_DOWN(buf_addr)),
-+			    period_len, offset_in_page(buf_addr));
-+		sg_dma_address(&sgl[i]) = buf_addr;
-+		sg_dma_len(&sgl[i]) = period_len;
-+		buf_addr += period_len;
-+	}
-+
-+	if (ls1x_dma_setup_hwdescs(dchan, desc, sgl, sg_len)) {
-+		ls1x_dma_free_desc(&desc->vdesc);
-+		return NULL;
-+	}
-+
-+	kfree(sgl);
-+
-+	return vchan_tx_prep(&chan->vchan, &desc->vdesc, flags);
-+}
-+
-+static int ls1x_dma_slave_config(struct dma_chan *dchan,
-+				 struct dma_slave_config *config)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+
-+	chan->src_addr = config->src_addr;
-+	chan->src_addr_width = config->src_addr_width;
-+	chan->dst_addr = config->dst_addr;
-+	chan->dst_addr_width = config->dst_addr_width;
-+
-+	return 0;
-+}
-+
-+static int ls1x_dma_pause(struct dma_chan *dchan)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&chan->vchan.lock, flags);
-+	ret = ls1x_dma_query(chan, &chan->curr_hwdesc_phys);
-+	if (!ret)
-+		ls1x_dma_stop(chan);
-+	spin_unlock_irqrestore(&chan->vchan.lock, flags);
-+
-+	return ret;
-+}
-+
-+static int ls1x_dma_resume(struct dma_chan *dchan)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&chan->vchan.lock, flags);
-+	ret = ls1x_dma_start(chan, &chan->curr_hwdesc_phys);
-+	spin_unlock_irqrestore(&chan->vchan.lock, flags);
-+
-+	return ret;
-+}
-+
-+static int ls1x_dma_terminate_all(struct dma_chan *dchan)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+	unsigned long flags;
-+	LIST_HEAD(head);
-+
-+	spin_lock_irqsave(&chan->vchan.lock, flags);
-+	ls1x_dma_stop(chan);
-+	vchan_get_all_descriptors(&chan->vchan, &head);
-+	spin_unlock_irqrestore(&chan->vchan.lock, flags);
-+
-+	vchan_dma_desc_free_list(&chan->vchan, &head);
-+
-+	return 0;
-+}
-+
-+static enum dma_status ls1x_dma_tx_status(struct dma_chan *dchan,
-+					  dma_cookie_t cookie,
-+					  struct dma_tx_state *state)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+	enum dma_status status;
-+	size_t bytes = 0;
-+	unsigned long flags;
-+
-+	status = dma_cookie_status(dchan, cookie, state);
-+	if (status == DMA_COMPLETE)
-+		return status;
-+
-+	spin_lock_irqsave(&chan->vchan.lock, flags);
-+	if (chan->desc && cookie == chan->desc->vdesc.tx.cookie) {
-+		struct ls1x_dma_desc *desc = chan->desc;
-+		int i;
-+
-+		if (ls1x_dma_query(chan, &chan->curr_hwdesc_phys)) {
-+			spin_unlock_irqrestore(&chan->vchan.lock, flags);
-+			return status;
-+		}
-+
-+		/* locate the current HW descriptor */
-+		for (i = 0; i < desc->nr_descs; i++)
-+			if (desc->hwdesc[i].next == chan->curr_hwdesc->next)
-+				break;
-+
-+		/* count the residues */
-+		for (; i < desc->nr_descs; i++)
-+			bytes += desc->hwdesc[i].length * desc->bus_width;
-+
-+		dma_set_residue(state, bytes);
-+	}
-+	spin_unlock_irqrestore(&chan->vchan.lock, flags);
-+
-+	return status;
-+}
-+
-+static void ls1x_dma_issue_pending(struct dma_chan *dchan)
-+{
-+	struct ls1x_dma_chan *chan = to_ls1x_dma_chan(dchan);
-+	struct virt_dma_desc *vdesc;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&chan->vchan.lock, flags);
-+	if (vchan_issue_pending(&chan->vchan) && !chan->desc) {
-+		vdesc = vchan_next_desc(&chan->vchan);
-+		if (vdesc) {
-+			chan->desc = to_ls1x_dma_desc(vdesc);
-+			ls1x_dma_start(chan, &chan->desc->hwdesc_phys);
-+		} else {
-+			chan->desc = NULL;
-+		}
-+	}
-+	spin_unlock_irqrestore(&chan->vchan.lock, flags);
-+}
-+
-+static irqreturn_t ls1x_dma_irq_handler(int irq, void *data)
-+{
-+	struct ls1x_dma_chan *chan = data;
-+	struct ls1x_dma_desc *desc = chan->desc;
-+	struct dma_chan *dchan = &chan->vchan.chan;
-+
-+	if (!desc) {
-+		dev_warn(chan2dev(dchan),
-+			 "IRQ %d with no active descriptor on channel %d\n",
-+			 irq, dchan->chan_id);
-+		return IRQ_NONE;
-+	}
-+
-+	dev_dbg(chan2dev(dchan), "DMA IRQ %d on channel %d\n", irq,
-+		dchan->chan_id);
-+
-+	spin_lock(&chan->vchan.lock);
-+
-+	if (desc->type == DMA_CYCLIC) {
-+		vchan_cyclic_callback(&desc->vdesc);
-+	} else {
-+		list_del(&desc->vdesc.node);
-+		vchan_cookie_complete(&desc->vdesc);
-+		chan->desc = NULL;
-+	}
-+
-+	spin_unlock(&chan->vchan.lock);
-+	return IRQ_HANDLED;
-+}
-+
-+static int ls1x_dma_chan_probe(struct platform_device *pdev,
-+			       struct ls1x_dma *dma, int chan_id)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct ls1x_dma_chan *chan = &dma->chan[chan_id];
-+	char pdev_irqname[4];
-+	char *irqname;
-+	int ret;
-+
-+	sprintf(pdev_irqname, "ch%u", chan_id);
-+	chan->irq = platform_get_irq_byname(pdev, pdev_irqname);
-+	if (chan->irq < 0)
-+		return -ENODEV;
-+
-+	irqname = devm_kasprintf(dev, GFP_KERNEL, "%s:%s",
-+				 dev_name(dev), pdev_irqname);
-+	if (!irqname)
-+		return -ENOMEM;
-+
-+	ret = devm_request_irq(dev, chan->irq, ls1x_dma_irq_handler,
-+			       IRQF_SHARED, irqname, chan);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to request IRQ %u!\n", chan->irq);
-+
-+	chan->reg_base = dma->reg_base;
-+	chan->vchan.desc_free = ls1x_dma_free_desc;
-+	vchan_init(&chan->vchan, &dma->ddev);
-+	dev_info(dev, "%s (irq %d) initialized\n", pdev_irqname, chan->irq);
-+
-+	return 0;
-+}
-+
-+static void ls1x_dma_chan_remove(struct ls1x_dma *dma, int chan_id)
-+{
-+	struct device *dev = dma->ddev.dev;
-+	struct ls1x_dma_chan *chan = &dma->chan[chan_id];
-+
-+	devm_free_irq(dev, chan->irq, chan);
-+	list_del(&chan->vchan.chan.device_node);
-+	tasklet_kill(&chan->vchan.task);
-+}
-+
-+static int ls1x_dma_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct dma_device *ddev;
-+	struct ls1x_dma *dma;
-+	int nr_chans, ret, i;
-+
-+	nr_chans = platform_irq_count(pdev);
-+	if (nr_chans <= 0)
-+		return nr_chans;
-+	if (nr_chans > LS1X_DMA_MAX_CHANNELS)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "nr_chans=%d exceeds the maximum\n",
-+				     nr_chans);
-+
-+	dma = devm_kzalloc(dev, struct_size(dma, chan, nr_chans), GFP_KERNEL);
-+	if (!dma)
-+		return -ENOMEM;
-+
-+	/* initialize DMA device */
-+	dma->reg_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(dma->reg_base))
-+		return PTR_ERR(dma->reg_base);
-+
-+	ddev = &dma->ddev;
-+	ddev->dev = dev;
-+	ddev->copy_align = DMAENGINE_ALIGN_4_BYTES;
-+	ddev->src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
-+	    BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) | BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
-+	ddev->dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
-+	    BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) | BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
-+	ddev->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
-+	ddev->max_sg_burst = LS1X_DMA_MAX_DESC;
-+	ddev->residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
-+	ddev->device_alloc_chan_resources = ls1x_dma_alloc_chan_resources;
-+	ddev->device_free_chan_resources = ls1x_dma_free_chan_resources;
-+	ddev->device_prep_slave_sg = ls1x_dma_prep_slave_sg;
-+	ddev->device_prep_dma_cyclic = ls1x_dma_prep_dma_cyclic;
-+	ddev->device_config = ls1x_dma_slave_config;
-+	ddev->device_pause = ls1x_dma_pause;
-+	ddev->device_resume = ls1x_dma_resume;
-+	ddev->device_terminate_all = ls1x_dma_terminate_all;
-+	ddev->device_tx_status = ls1x_dma_tx_status;
-+	ddev->device_issue_pending = ls1x_dma_issue_pending;
-+
-+	dma_cap_set(DMA_SLAVE, ddev->cap_mask);
-+	INIT_LIST_HEAD(&ddev->channels);
-+
-+	/* initialize DMA channels */
-+	for (i = 0; i < nr_chans; i++) {
-+		ret = ls1x_dma_chan_probe(pdev, dma, i);
-+		if (ret)
-+			return ret;
-+	}
-+	dma->nr_chans = nr_chans;
-+
-+	ret = dmaenginem_async_device_register(ddev);
-+	if (ret) {
-+		dev_err(dev, "failed to register DMA device! %d\n", ret);
-+		return ret;
-+	}
-+
-+	ret =
-+	    of_dma_controller_register(dev->of_node, of_dma_xlate_by_chan_id,
-+				       ddev);
-+	if (ret) {
-+		dev_err(dev, "failed to register DMA controller! %d\n", ret);
-+		return ret;
-+	}
-+
-+	platform_set_drvdata(pdev, dma);
-+	dev_info(dev, "Loongson1 DMA driver registered\n");
-+
-+	return 0;
-+}
-+
-+static void ls1x_dma_remove(struct platform_device *pdev)
-+{
-+	struct ls1x_dma *dma = platform_get_drvdata(pdev);
-+	int i;
-+
-+	of_dma_controller_free(pdev->dev.of_node);
-+
-+	for (i = 0; i < dma->nr_chans; i++)
-+		ls1x_dma_chan_remove(dma, i);
-+}
-+
-+static const struct of_device_id ls1x_dma_match[] = {
-+	{ .compatible = "loongson,ls1b-apbdma" },
-+	{ .compatible = "loongson,ls1c-apbdma" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, ls1x_dma_match);
-+
-+static struct platform_driver ls1x_dma_driver = {
-+	.probe = ls1x_dma_probe,
-+	.remove_new = ls1x_dma_remove,
-+	.driver	= {
-+		.name = KBUILD_MODNAME,
-+		.of_match_table = ls1x_dma_match,
-+	},
-+};
-+
-+module_platform_driver(ls1x_dma_driver);
-+
-+MODULE_AUTHOR("Keguang Zhang <keguang.zhang@gmail.com>");
-+MODULE_DESCRIPTION("Loongson-1 APB DMA Controller driver");
-+MODULE_LICENSE("GPL");
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/=
+?id=3D8ff059b8531f3b98e14f0461859fc7cdd95823e4
 
--- 
-2.43.0
+...or from here (according to GitHub this is in linux-stable(-rc)
+starting with linux-5.12.y):
 
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?i=
+d=3D8ff059b8531f3b98e14f0461859fc7cdd95823e4
 
+fixes it for me with 5.10.222-rc1, see for example [2].
+
+[2]:
+https://github.com/linux-ia64/linux-stable-rc/actions/runs/9871144965#summ=
+ary-27258970494
+
+Cheers,
+Frank
 
