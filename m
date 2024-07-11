@@ -1,261 +1,215 @@
-Return-Path: <linux-kernel+bounces-248868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D07992E2F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:02:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D743D92E2F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5A15B22A44
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:02:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5A5283622
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F2C1552E1;
-	Thu, 11 Jul 2024 09:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1D81552E1;
+	Thu, 11 Jul 2024 09:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cGJ5E1pv"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D961653
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IprCWz9x"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638DB54916
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720688515; cv=none; b=J725KAdxDQNKLJKqJEO08js61o6nh3mBOjXj3Pg4jgmuNdKbkh6zAXoaq/wTVsdaDl4v9ThqQPPsmWXaE2zLVQAHK5hBYuSF4oDScO1uC26rC8nKLqWOj7aRtY63C/jgO66TPelhSn+F25v9CiImmA1HOA5r3kvtbuQ5HdqOGtg=
+	t=1720688481; cv=none; b=KdCotEW+d6pkQB9gPJ6yHPnDLhBx7PJcq5ULvAgtX8rvjdRMvs+ypjZqy9iRgS/dIgXSMCvcuk+4GJuR2V/OLoNNZ7fq5eoQxK4Jc38ugD9Xogn4IiYfJvwuhR4lg4+0C4HY3Wv4rGy6HjjLxDRAmF3LJu8sjrfJO5ZyDbvD7Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720688515; c=relaxed/simple;
-	bh=lINr88gczmWj3d2leTgdQ31biQ3osRE/EoZDr9FFRPw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OATIiSR2xHoUo9Qx3+dwYwxJimwLTzDXiuuh0vdumItXrRcanJiIxGcxYdW+chadlJ5SR9cQxtfX4WLvi0bSWIW7iFKuWF5qFEoQv/BvQZ2mdprPcRPYk+gNum506fquiduN/8wW/UUfUv62mc1udwXpyusozjp0rLtyf6kve4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cGJ5E1pv; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=lCt6G
-	meRArF+8nUi6YqN2qNoWrWjqPoXRRKGa+JcmaQ=; b=cGJ5E1pvgWniLR7qe03g7
-	t73P+5lb1lZ1BwaJDUwGcdk+8XHcITbKKJ3i7r7ByUHVjNHkPglwgYc2sASzwWpd
-	SSJdQ4xJQnn/bWK5qpLKK9fY7dAbOr98Dn1OBOBtyck6YqDNOheE0XpzvFKKENpz
-	g11etsTzAb06CEhBw0XvAA=
-Received: from localhost.localdomain (unknown [111.48.69.247])
-	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wCXb29Qn49mDOmHBA--.34288S2;
-	Thu, 11 Jul 2024 17:01:05 +0800 (CST)
-From: oushixiong1025@163.com
-To: Dave Airlie <airlied@redhat.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Shixiong Ou <oushixiong@kylinos.cn>
-Subject: [PATCH] drm/ast: add multiple connectors support
-Date: Thu, 11 Jul 2024 17:01:02 +0800
-Message-Id: <20240711090102.352213-1-oushixiong1025@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720688481; c=relaxed/simple;
+	bh=py/S5YhDTfUOlw/+tXf9jV6Hv7YWRbSfk7va1FaCeWw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UUq0moVq4w1HTMRyXpNpCMMuS0le8714pMi9ZU6r2cAm9ZdPIby5aWLTyklLN1VDL5uzq/w5d7Xb9BSulgfimsoCsL/BA241PZ5jrg8rH8sjGUue+C8/BAl7GnvExAbNcg/WN4zLF2eQkwHYKOTLYkAKx/L3GnVho6Ca93puM3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IprCWz9x; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42793fc0a6dso4234325e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 02:01:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720688478; x=1721293278; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O76Wd1xdw6NT3rqbN+Mq89J6tI9yqcUKeCRTu1LWxmk=;
+        b=IprCWz9xcgirnEPFCwyAbA3nriCVul6nNQni0MtRqkWJkhflYVvIwrdXTtGsDO0JjH
+         PZkdR92h2+ynAusM8WkdTSz3gn02lQ2cawGv0rLBvtDuMk0MpE1u3kbpiRNyy9dERwbT
+         fSJfsHMjrSb4wjvhJ/mx5IkGQWENo4m7yeMh2TqM9UeHwVwvRGj+mSzCsvaNfnRJ9tQZ
+         CdBpXboC8ZCCNQba5L5+Y+helrwmJCGBXZwRyXRIzM+HY7wc+JMpGPKkcXtQQDHgm93s
+         Riy/2xRxPgGQx7CFHiTYae+apOPUilA6WBxc8wW34+F5UUEAWFmg2cC1YjJ/hNUB1l6D
+         1Mgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720688478; x=1721293278;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O76Wd1xdw6NT3rqbN+Mq89J6tI9yqcUKeCRTu1LWxmk=;
+        b=UXjV6DzC9jlQIWIpJF1XZ0cyMxR2og0blUnBq6W0gxcXT5Ldee2inBp0dd/E18rVi+
+         rT1u4VF7JRF2q8hwQsHw0yZ7YAqEu0wP2TKbZ39e6/OPZ8ivRfSJ05aMdmJsjCUy541m
+         bbr3yp+kwdDeQ1Kd/HCBHXtfgCNDmIlG78DSmxbsG/NqK6tho7/9RL7Eh/Xf7Bzxb0kV
+         JFEfg77/E6t7dJNGjGMGfQmXCnIVN7YI1JJm6Ylj1m1UW0/b9lePmL0XJ9gjK1IY/DtR
+         XWnURv2WLr0+yskQkPKB35anzRJY/DRqB+pPqXmz+qHiFrH4hl+N0hxmTP6At10uWd84
+         CUlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWekrJ5LrNzHLLF3KtOXVRpWVqriJUymX+m2cGK5vYlAnytpyFlX1fEsD3G8tRduVfsdbBim37Y6W1J10zvoeD1nbAGJDdvg8ryzycJ
+X-Gm-Message-State: AOJu0YyoqLX7Z19MUojlQjTbw2/SQ3+DWZIdCwPOBZjcdBmzAR40oFw2
+	bTcaSYpUxbCLa7r8iiFFfarP2GdC5S227NhEjhCE+gVcmsTQ2vIcUk8WNr180Ss=
+X-Google-Smtp-Source: AGHT+IF8lHe9Es5HF0Ko8Tr5R/zHyd6BopakSB0f7nBr2KdNcKTrn7lbuxyBJzEVMvldK1lXJtcgrA==
+X-Received: by 2002:a05:600c:358f:b0:426:8ee5:5d24 with SMTP id 5b1f17b1804b1-4268ef4a0b6mr39316115e9.20.1720688477752;
+        Thu, 11 Jul 2024 02:01:17 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:a9e9:c71a:10d8:7f63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e9666sm108670895e9.9.2024.07.11.02.01.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 02:01:17 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Philipp Zabel
+ <p.zabel@pengutronix.de>,  Jan Dakinevich
+ <jan.dakinevich@salutedevices.com>,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org
+Subject: Re: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
+In-Reply-To: <88d1dbd92e922ad002367d8dac67d0eb.sboyd@kernel.org> (Stephen
+	Boyd's message of "Wed, 10 Jul 2024 15:49:38 -0700")
+References: <20240710162526.2341399-1-jbrunet@baylibre.com>
+	<20240710162526.2341399-8-jbrunet@baylibre.com>
+	<88d1dbd92e922ad002367d8dac67d0eb.sboyd@kernel.org>
+Date: Thu, 11 Jul 2024 11:01:16 +0200
+Message-ID: <1jv81cgv4z.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCXb29Qn49mDOmHBA--.34288S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3JF45Kw1DJFyfJF15CFyxGrg_yoWxtrW7pr
-	W8trZavr48XrsxWFn8AF4kGrnIyF9FyayUtr1rWw4a9w1kGw1DAF48Jrs8Za4DGrZ5AFyU
-	JanFqF47C3WUuw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j5BMtUUUUU=
-X-CM-SenderInfo: xrxvxxx0lr0wirqskqqrwthudrp/1tbiXRQZD2XAmK5qkwAAs1
+Content-Type: text/plain
 
-From: Shixiong Ou <oushixiong@kylinos.cn>
+On Wed 10 Jul 2024 at 15:49, Stephen Boyd <sboyd@kernel.org> wrote:
 
-[WHY]
-The AST2600 tx_chip_types will be detected as AST_TX_DP, but some BMC
-boards that use AST2600 use the VGA interface instead of the DP interface.
-In this case, it will use Virtual connector as the DP is disconnected.
+> Quoting Jerome Brunet (2024-07-10 09:25:16)
+>> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
+>> index e34a10b15593..5cc767d50e8f 100644
+>> --- a/drivers/reset/reset-meson.c
+>> +++ b/drivers/reset/reset-meson.c
+> [...]
+>> +
+>> +int devm_meson_rst_aux_register(struct device *dev,
+>> +                               struct regmap *map,
+>> +                               const char *adev_name)
+>> +{
+>> +       struct meson_reset_adev *raux;
+>> +       struct auxiliary_device *adev;
+>> +       int ret;
+>> +
+>> +       raux = kzalloc(sizeof(*raux), GFP_KERNEL);
+>> +       if (!raux)
+>> +               return -ENOMEM;
+>> +
+>> +       ret = ida_alloc(&meson_rst_aux_ida, GFP_KERNEL);
+>
+> Do we expect more than one device with the same name? I wonder if the
+> IDA can be skipped.
 
-[HOW]
-Allows multiple physical connectors to exist at the same time.
+I've wondered about that too.
 
-Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
----
- drivers/gpu/drm/ast/ast_drv.h  |  6 ++++-
- drivers/gpu/drm/ast/ast_main.c |  8 +++----
- drivers/gpu/drm/ast/ast_mode.c | 40 ++++++++++++++++++++--------------
- 3 files changed, 33 insertions(+), 21 deletions(-)
+I don't think it is the case right now but I'm not 100% sure.
+Since I spent time thinking about it, I thought it would just be safer (and
+relatively cheap) to put in and enough annoying debugging the
+expectation does not hold true.
 
-diff --git a/drivers/gpu/drm/ast/ast_drv.h b/drivers/gpu/drm/ast/ast_drv.h
-index ba3d86973995..e326124b3fec 100644
---- a/drivers/gpu/drm/ast/ast_drv.h
-+++ b/drivers/gpu/drm/ast/ast_drv.h
-@@ -150,9 +150,13 @@ static inline struct ast_plane *to_ast_plane(struct drm_plane *plane)
-  * BMC
-  */
- 
-+#define MAX_CONNECTORS 2
-+
- struct ast_bmc_connector {
- 	struct drm_connector base;
--	struct drm_connector *physical_connector;
-+
-+	struct drm_connector *physical_connectors[MAX_CONNECTORS];
-+	int count;
- };
- 
- static inline struct ast_bmc_connector *
-diff --git a/drivers/gpu/drm/ast/ast_main.c b/drivers/gpu/drm/ast/ast_main.c
-index 0637abb70361..428529749ae6 100644
---- a/drivers/gpu/drm/ast/ast_main.c
-+++ b/drivers/gpu/drm/ast/ast_main.c
-@@ -85,7 +85,7 @@ static void ast_detect_tx_chip(struct ast_device *ast, bool need_post)
- 	if (!need_post) {
- 		jreg = ast_get_index_reg_mask(ast, AST_IO_VGACRI, 0xa3, 0xff);
- 		if (jreg & 0x80)
--			ast->tx_chip_types = AST_TX_SIL164_BIT;
-+			ast->tx_chip_types |= AST_TX_SIL164_BIT;
- 	}
- 
- 	if (IS_AST_GEN4(ast) || IS_AST_GEN5(ast) || IS_AST_GEN6(ast)) {
-@@ -97,7 +97,7 @@ static void ast_detect_tx_chip(struct ast_device *ast, bool need_post)
- 		jreg = ast_get_index_reg_mask(ast, AST_IO_VGACRI, 0xd1, 0xff);
- 		switch (jreg) {
- 		case 0x04:
--			ast->tx_chip_types = AST_TX_SIL164_BIT;
-+			ast->tx_chip_types |= AST_TX_SIL164_BIT;
- 			break;
- 		case 0x08:
- 			ast->dp501_fw_addr = drmm_kzalloc(dev, 32*1024, GFP_KERNEL);
-@@ -110,12 +110,12 @@ static void ast_detect_tx_chip(struct ast_device *ast, bool need_post)
- 			}
- 			fallthrough;
- 		case 0x0c:
--			ast->tx_chip_types = AST_TX_DP501_BIT;
-+			ast->tx_chip_types |= AST_TX_DP501_BIT;
- 		}
- 	} else if (IS_AST_GEN7(ast)) {
- 		if (ast_get_index_reg_mask(ast, AST_IO_VGACRI, 0xD1, TX_TYPE_MASK) ==
- 		    ASTDP_DPMCU_TX) {
--			ast->tx_chip_types = AST_TX_ASTDP_BIT;
-+			ast->tx_chip_types |= AST_TX_ASTDP_BIT;
- 			ast_dp_launch(&ast->base);
- 		}
- 	}
-diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
-index 6695af70768f..31a49d32e506 100644
---- a/drivers/gpu/drm/ast/ast_mode.c
-+++ b/drivers/gpu/drm/ast/ast_mode.c
-@@ -1717,7 +1717,8 @@ static int ast_bmc_connector_helper_detect_ctx(struct drm_connector *connector,
- 					       bool force)
- {
- 	struct ast_bmc_connector *bmc_connector = to_ast_bmc_connector(connector);
--	struct drm_connector *physical_connector = bmc_connector->physical_connector;
-+	struct drm_connector *physical_connector;
-+	int i, count = bmc_connector->count;
- 
- 	/*
- 	 * Most user-space compositors cannot handle more than one connected
-@@ -1730,10 +1731,13 @@ static int ast_bmc_connector_helper_detect_ctx(struct drm_connector *connector,
- 	 *        than one connector per CRTC. The BMC should always be connected.
- 	 */
- 
--	if (physical_connector && physical_connector->status == connector_status_disconnected)
--		return connector_status_connected;
-+	for (i = 0; i < count; i++) {
-+		physical_connector = bmc_connector->physical_connectors[i];
-+		if (physical_connector && physical_connector->status == connector_status_connected)
-+			return connector_status_disconnected;
-+	}
- 
--	return connector_status_disconnected;
-+	return connector_status_connected;
- }
- 
- static int ast_bmc_connector_helper_get_modes(struct drm_connector *connector)
-@@ -1756,10 +1760,11 @@ static const struct drm_connector_funcs ast_bmc_connector_funcs = {
- 
- static int ast_bmc_connector_init(struct drm_device *dev,
- 				  struct ast_bmc_connector *bmc_connector,
--				  struct drm_connector *physical_connector)
-+				  struct drm_connector **physical_connector,
-+				  int count)
- {
- 	struct drm_connector *connector = &bmc_connector->base;
--	int ret;
-+	int i, ret;
- 
- 	ret = drm_connector_init(dev, connector, &ast_bmc_connector_funcs,
- 				 DRM_MODE_CONNECTOR_VIRTUAL);
-@@ -1768,13 +1773,16 @@ static int ast_bmc_connector_init(struct drm_device *dev,
- 
- 	drm_connector_helper_add(connector, &ast_bmc_connector_helper_funcs);
- 
--	bmc_connector->physical_connector = physical_connector;
-+	for (i = 0; i < count; i++)
-+		bmc_connector->physical_connectors[i] = physical_connector[i];
-+	bmc_connector->count = count;
- 
- 	return 0;
- }
- 
- static int ast_bmc_output_init(struct ast_device *ast,
--			       struct drm_connector *physical_connector)
-+			       struct drm_connector **physical_connector,
-+			       int count)
- {
- 	struct drm_device *dev = &ast->base;
- 	struct drm_crtc *crtc = &ast->crtc;
-@@ -1790,7 +1798,7 @@ static int ast_bmc_output_init(struct ast_device *ast,
- 		return ret;
- 	encoder->possible_crtcs = drm_crtc_mask(crtc);
- 
--	ret = ast_bmc_connector_init(dev, bmc_connector, physical_connector);
-+	ret = ast_bmc_connector_init(dev, bmc_connector, physical_connector, count);
- 	if (ret)
- 		return ret;
- 
-@@ -1852,8 +1860,8 @@ static const struct drm_mode_config_funcs ast_mode_config_funcs = {
- int ast_mode_config_init(struct ast_device *ast)
- {
- 	struct drm_device *dev = &ast->base;
--	struct drm_connector *physical_connector = NULL;
--	int ret;
-+	struct drm_connector *physical_connector[MAX_CONNECTORS] = {NULL};
-+	int count, ret;
- 
- 	ret = drmm_mutex_init(dev, &ast->modeset_lock);
- 	if (ret)
-@@ -1897,27 +1905,27 @@ int ast_mode_config_init(struct ast_device *ast)
- 		ret = ast_vga_output_init(ast);
- 		if (ret)
- 			return ret;
--		physical_connector = &ast->output.vga.connector;
-+		physical_connector[count++] = &ast->output.vga.connector;
- 	}
- 	if (ast->tx_chip_types & AST_TX_SIL164_BIT) {
- 		ret = ast_sil164_output_init(ast);
- 		if (ret)
- 			return ret;
--		physical_connector = &ast->output.sil164.connector;
-+		physical_connector[count++] = &ast->output.sil164.connector;
- 	}
- 	if (ast->tx_chip_types & AST_TX_DP501_BIT) {
- 		ret = ast_dp501_output_init(ast);
- 		if (ret)
- 			return ret;
--		physical_connector = &ast->output.dp501.connector;
-+		physical_connector[count++] = &ast->output.dp501.connector;
- 	}
- 	if (ast->tx_chip_types & AST_TX_ASTDP_BIT) {
- 		ret = ast_astdp_output_init(ast);
- 		if (ret)
- 			return ret;
--		physical_connector = &ast->output.astdp.connector;
-+		physical_connector[count++] = &ast->output.astdp.connector;
- 	}
--	ret = ast_bmc_output_init(ast, physical_connector);
-+	ret = ast_bmc_output_init(ast, physical_connector, count);
- 	if (ret)
- 		return ret;
- 
+I don't have a strong opinion on this. What do you prefer ?
+
+>
+>> +       if (ret < 0)
+>> +               goto raux_free;
+>> +
+>> +       raux->map = map;
+>> +
+>> +       adev = &raux->adev;
+>> +       adev->id = ret;
+>> +       adev->name = adev_name;
+>> +       adev->dev.parent = dev;
+>> +       adev->dev.release = meson_rst_aux_release;
+>> +       device_set_of_node_from_dev(&adev->dev, dev);
+>> +
+>> +       ret = auxiliary_device_init(adev);
+>> +       if (ret)
+>> +               goto ida_free;
+>> +
+>> +       ret = __auxiliary_device_add(adev, dev->driver->name);
+>> +       if (ret) {
+>> +               auxiliary_device_uninit(adev);
+>> +               return ret;
+>> +       }
+>> +
+>> +       return devm_add_action_or_reset(dev, meson_rst_aux_unregister_adev,
+>> +                                       adev);
+>> +
+>> +ida_free:
+>> +       ida_free(&meson_rst_aux_ida, adev->id);
+>> +raux_free:
+>> +       kfree(raux);
+>> +       return ret;
+>> +
+>
+> Nitpick: Drop extra newline?
+>
+>> +}
+>> +EXPORT_SYMBOL_GPL(devm_meson_rst_aux_register);
+>> +
+>> +MODULE_DESCRIPTION("Amlogic Meson Reset driver");
+>>  MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
+>> +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
+>>  MODULE_LICENSE("Dual BSD/GPL");
+>> diff --git a/include/soc/amlogic/meson-auxiliary-reset.h b/include/soc/amlogic/meson-auxiliary-reset.h
+>> new file mode 100644
+>> index 000000000000..8fdb02b18d8c
+>> --- /dev/null
+>> +++ b/include/soc/amlogic/meson-auxiliary-reset.h
+>> @@ -0,0 +1,23 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef __SOC_AMLOGIC_MESON_AUX_RESET_H
+>> +#define __SOC_AMLOGIC_MESON_AUX_RESET_H
+>> +
+>> +#include <linux/err.h>
+>> +
+>> +struct device;
+>> +struct regmap;
+>> +
+>> +#ifdef CONFIG_RESET_MESON
+>> +int devm_meson_rst_aux_register(struct device *dev,
+>> +                               struct regmap *map,
+>> +                               const char *adev_name);
+>> +#else
+>> +static inline int devm_meson_rst_aux_register(struct device *dev,
+>> +                                             struct regmap *map,
+>> +                                             const char *adev_name)
+>> +{
+>> +       return -EOPNOTSUPP;
+>
+> Shouldn't this be 'return 0' so that the clk driver doesn't have to care
+> about the config?
+
+I don't think the system (in general) would be able function without the reset
+driver, so the question is rather phylosophical.
+
+Let's say it could, if this returns 0, consumers of the reset controller
+will defer indefinitely ... which is always a bit more difficult to sort
+out.
+
+If it returns an error, the problem is pretty obvious, helping people
+solve it quickly.
+
+Also the actual device we trying to register provides clocks and reset.
+It is not like the reset is an optional part we don't care about.
+
+On this instance it starts from clock, but it could have been the other
+way around. Both are equally important.
+
+I'd prefer if it returns an error when the registration can't even start.
+
 -- 
-2.25.1
-
+Jerome
 
