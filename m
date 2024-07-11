@@ -1,199 +1,105 @@
-Return-Path: <linux-kernel+bounces-249500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95E792EC7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:19:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40ED92EC7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDFAC1C21D14
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:19:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 596451F242AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF6916CD1A;
-	Thu, 11 Jul 2024 16:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B189B16CD2C;
+	Thu, 11 Jul 2024 16:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sci.fi header.i=@sci.fi header.b="PU8kL0jB"
-Received: from fgw20-4.mail.saunalahti.fi (fgw20-4.mail.saunalahti.fi [62.142.5.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0G4skA8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364B58F72
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7EC8BFD;
+	Thu, 11 Jul 2024 16:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720714747; cv=none; b=jcolGlod3OUfZ74csjJRbkPqY/HyCd2rnOowVXzJ2qy3N4RqWtaCSc/Qa7C1Bojx28055dfGZjA/3Fi4uqsDdMyQ+P1jiVvmheiFFpXdZTWPrqHYdBFyfABUn37+OLNTk3QxLdV8GB87MpQx8Z+6HucbUNHceRBmi2VXBcItQcE=
+	t=1720714770; cv=none; b=aNZ51zrgVVgaQRyn/1wb6jcB5zzrCcRnC8MkbufzKx0d8XT8s3TDeATJMhSjva1/ZlCbyMQ7INw+q4XIjkHE5ScbpjyB4Zs3utdvB4g/uMukav/I5hxNUtljiCtQuOeuQSxBjfTFsH7+hZ2wl2C2XQqeM65KMxwDDV7kvG73u8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720714747; c=relaxed/simple;
-	bh=zCAjZ21UoUMwBBB1qyvpP4jCRL8vy3sea2sCKrtiIH4=;
+	s=arc-20240116; t=1720714770; c=relaxed/simple;
+	bh=SwRdtjhihPCHAVs2FVYLRfxFyvmKTZPzi6KmiCgoTww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OjYtafzvp+Pghx1TQIq5JGfMClOjI7PNx2CUeUL6LQ8IzltrB+yQvuse+CXpIMdnnfSAMNTN1yj8zLxSpoc0RzYfwiJYDYVqNH/Np1VzNLWf9pze83yic68PVFWSXiz9il57miYmau+Q5X0D7mOJKV9oKtZKQZycS78rPa7m+N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sci.fi; spf=pass smtp.mailfrom=sci.fi; dkim=pass (2048-bit key) header.d=sci.fi header.i=@sci.fi header.b=PU8kL0jB; arc=none smtp.client-ip=62.142.5.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sci.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sci.fi
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=sci.fi; s=elisa1;
-	h=in-reply-to:content-transfer-encoding:content-type:mime-version:references:
-	 message-id:subject:cc:to:from:date:feedback-id:from:to:cc:reply-to:subject:
-	 date:in-reply-to:references:list-archive:list-subscribe:list-unsubscribe:
-	 content-type:content-transfer-encoding:message-id;
-	bh=QLwqgHRZ6lSOojwMebwwsVWAh74G0Lu0nm5wRXcRVSI=;
-	b=PU8kL0jBK8cZIcMZFYjysq11i8gTTRmK+OaD5MQ5ojwXdHGIxiqM+mzN7t9y6ADyZU0q/VsJ9ia5j
-	 VImah3lSvSFSXoKGGmHA2EyGWAcQzNj89Lxvr9YVCo0NBmeMKaEkT5Paif0HbDY4Lmyk4kv/UIhgb1
-	 kV6tTwPfXwJ8xIaKdcRG8Y+Bl8pVvd1Zj+JB5RV1Fc8EYGkIu/PKjU+MQdsOFKAR5Ij+KxYaGKn7y4
-	 uvXXHkPhdeKwm8wIE/XY7s6pojAh0QLHrTO5oaCi7E8C3AobFlKn2vjjfzUY6IfUKG6QuFVsrE3tBR
-	 1SyqVnUE+H7MUJrA3q2p0kLOiVXtn2Q==
-Feedback-ID: 91b3a81a:25bf58:smtpa:elisa
-Received: from sci.fi (89-27-49-32.bb.dnainternet.fi [89.27.49.32])
-	by fgw20.mail.saunalahti.fi (Halon) with ESMTPSA
-	id 44a41fc4-3fa1-11ef-8dbd-005056bd6ce9;
-	Thu, 11 Jul 2024 19:18:55 +0300 (EEST)
-Date: Thu, 11 Jul 2024 19:18:54 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <syrjala@sci.fi>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] Input: ati-remote2 - use driver core to instantiate
- device attributes
-Message-ID: <ZpAF7gqeF589IkTA@sci.fi>
-Mail-Followup-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <syrjala@sci.fi>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <Zo8gaF_lKPAfcye1@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p/CRDdm355AOdS7ft6a8t52NfJIeoJ9j3KjzcPt6NypBaiuYNQcbOzMyDuRcZo2wVHgpUBsjrKOt7DvBMDsgqXSyqoSq1NGOf3Tia/fSXuD1wX3IhdhnBag9ohRqrpMDreWB6gL5S+gZv8GSLzMYUTp/nnXFPo+TR3T1jJ0V1Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0G4skA8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11FFDC116B1;
+	Thu, 11 Jul 2024 16:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720714769;
+	bh=SwRdtjhihPCHAVs2FVYLRfxFyvmKTZPzi6KmiCgoTww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D0G4skA8Tn5yxLL2Iaq9ZS0WXdlQKCg5WwzDGl/T2ajNdOEBgGJ4uJpz0EbQoxDjk
+	 9zIDZ8CqL9PcOvxqxeekNgUhGNeDkpOBi7o3crtkwI6K8+lifHEeougZ+C4783p9di
+	 mLyfWCqF3C059TJvW3Mu6K+/zZUvTsIiQ/kkc+8qupeq8UArkFTp6idDFEMLxEu9za
+	 mraOmK2Fll5kJOfttZFOfRRsoj/PW20vLXI3crL2CJoW96kFgMmHdrF7FdL16/p4eK
+	 32wGFuhP9R1G+9KQfU6C+OFvtqJ3X1WvvmcjQogRYuLZi/jkj2PFrsK1gWDnVi0Cx1
+	 2Lu4g/lWDFx2A==
+Date: Thu, 11 Jul 2024 17:19:25 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>, Shuah Khan <shuah@kernel.org>,
+	linux-sound@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/alsa: Use card name rather than number in test
+ names
+Message-ID: <b3fdbb63-067b-4ff4-8fd8-1c2455a553a5@sirena.org.uk>
+References: <20240711-alsa-kselftest-board-name-v1-1-ab5cf2dbbea6@kernel.org>
+ <7cd921b3-fed9-4b0c-9ba8-381e45ef4218@perex.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HzrO27/Ki/7DpdHj"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zo8gaF_lKPAfcye1@google.com>
+In-Reply-To: <7cd921b3-fed9-4b0c-9ba8-381e45ef4218@perex.cz>
+X-Cookie: Individualists unite!
 
-On Wed, Jul 10, 2024 at 04:59:36PM -0700, Dmitry Torokhov wrote:
-> Instead of manually creating driver-specific device attributes
-> set struct usb_driver->dev_groups pointer to have the driver core
-> do it.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  drivers/input/misc/ati_remote2.c | 50 +++++++++++---------------------
->  1 file changed, 17 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/input/misc/ati_remote2.c b/drivers/input/misc/ati_remote2.c
-> index 946bf75aa106..795f69edb4b2 100644
-> --- a/drivers/input/misc/ati_remote2.c
-> +++ b/drivers/input/misc/ati_remote2.c
-> @@ -204,26 +204,7 @@ struct ati_remote2 {
->  	unsigned int mode_mask;
->  };
->  
-> -static int ati_remote2_probe(struct usb_interface *interface, const struct usb_device_id *id);
-> -static void ati_remote2_disconnect(struct usb_interface *interface);
-> -static int ati_remote2_suspend(struct usb_interface *interface, pm_message_t message);
-> -static int ati_remote2_resume(struct usb_interface *interface);
-> -static int ati_remote2_reset_resume(struct usb_interface *interface);
-> -static int ati_remote2_pre_reset(struct usb_interface *interface);
-> -static int ati_remote2_post_reset(struct usb_interface *interface);
-> -
-> -static struct usb_driver ati_remote2_driver = {
-> -	.name       = "ati_remote2",
-> -	.probe      = ati_remote2_probe,
-> -	.disconnect = ati_remote2_disconnect,
-> -	.id_table   = ati_remote2_id_table,
-> -	.suspend    = ati_remote2_suspend,
-> -	.resume     = ati_remote2_resume,
-> -	.reset_resume = ati_remote2_reset_resume,
-> -	.pre_reset  = ati_remote2_pre_reset,
-> -	.post_reset = ati_remote2_post_reset,
-> -	.supports_autosuspend = 1,
-> -};
-> +static struct usb_driver ati_remote2_driver;
 
-Would be easier to see what's actually happening if
-the rearrangement of the forward declarations was a
-separate patch.
+--HzrO27/Ki/7DpdHj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Otherwise lgtm
-Reviewed-by: Ville Syrjälä <syrjala@sci.fi>
+On Thu, Jul 11, 2024 at 06:08:38PM +0200, Jaroslav Kysela wrote:
+> On 11. 07. 24 16:33, Mark Brown wrote:
 
->  
->  static int ati_remote2_submit_urbs(struct ati_remote2 *ar2)
->  {
-> @@ -791,10 +772,7 @@ static struct attribute *ati_remote2_attrs[] = {
->  	&dev_attr_mode_mask.attr,
->  	NULL,
->  };
-> -
-> -static struct attribute_group ati_remote2_attr_group = {
-> -	.attrs = ati_remote2_attrs,
-> -};
-> +ATTRIBUTE_GROUPS(ati_remote2);
->  
->  static int ati_remote2_probe(struct usb_interface *interface, const struct usb_device_id *id)
->  {
-> @@ -861,13 +839,9 @@ static int ati_remote2_probe(struct usb_interface *interface, const struct usb_d
->  
->  	strlcat(ar2->name, "ATI Remote Wonder II", sizeof(ar2->name));
->  
-> -	r = sysfs_create_group(&udev->dev.kobj, &ati_remote2_attr_group);
-> -	if (r)
-> -		goto fail3;
-> -
->  	r = ati_remote2_input_init(ar2);
->  	if (r)
-> -		goto fail4;
-> +		goto fail3;
->  
->  	usb_set_intfdata(interface, ar2);
->  
-> @@ -875,8 +849,6 @@ static int ati_remote2_probe(struct usb_interface *interface, const struct usb_d
->  
->  	return 0;
->  
-> - fail4:
-> -	sysfs_remove_group(&udev->dev.kobj, &ati_remote2_attr_group);
->   fail3:
->  	ati_remote2_urb_cleanup(ar2);
->   fail2:
-> @@ -900,8 +872,6 @@ static void ati_remote2_disconnect(struct usb_interface *interface)
->  
->  	input_unregister_device(ar2->idev);
->  
-> -	sysfs_remove_group(&ar2->udev->dev.kobj, &ati_remote2_attr_group);
-> -
->  	ati_remote2_urb_cleanup(ar2);
->  
->  	usb_driver_release_interface(&ati_remote2_driver, ar2->intf[1]);
-> @@ -1032,4 +1002,18 @@ static int ati_remote2_post_reset(struct usb_interface *interface)
->  	return r;
->  }
->  
-> +static struct usb_driver ati_remote2_driver = {
-> +	.name       = "ati_remote2",
-> +	.probe      = ati_remote2_probe,
-> +	.disconnect = ati_remote2_disconnect,
-> +	.dev_groups = ati_remote2_groups,
-> +	.id_table   = ati_remote2_id_table,
-> +	.suspend    = ati_remote2_suspend,
-> +	.resume     = ati_remote2_resume,
-> +	.reset_resume = ati_remote2_reset_resume,
-> +	.pre_reset  = ati_remote2_pre_reset,
-> +	.post_reset = ati_remote2_post_reset,
-> +	.supports_autosuspend = 1,
-> +};
-> +
->  module_usb_driver(ati_remote2_driver);
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
-> 
-> 
-> -- 
-> Dmitry
+> > Address this by replacing our use of card numbers with card names which are
+> > more likely to be stable across runs. We use the long name since in the
 
--- 
-Ville Syrjälä
-syrjala@sci.fi
-http://www.sci.fi/~syrjala/
+> I think that a combination of card number and card ID may be sufficient (and
+> a compromise). It's shorter and user-friendly. Additionally, a table may be
+> printed at the beginning of report with card number, card ID and long card
+> name for further processing and identification.
+
+These don't help, the problem is that anything which includes the card
+number in the test name result is going to result in unstable test names
+depending on race conditions at boot.  There are automated systems that
+parse kselftest output generically, I'm not sure there's a great deal of
+enthusiasm for writing a custom parser for the ALSA selftests
+specifically.
+
+--HzrO27/Ki/7DpdHj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaQBgwACgkQJNaLcl1U
+h9AYagf/WW+148pc/VOKJhcllAIu66wbfTEChyp2qGQ25wJbxQFCtKMc7cyKhBkG
+qSRReaPNpIZtA+eaWhvAknMVqz+VDpTEw9eV+MDIZOATK5PJ1s7DT7i7VnYgQ9+Y
+aE4XDnR0iw3W4GVp/+dQUAyF/DoD6dyolbhtM2aKaEQunh+pUem6flREdxw4B6nY
+vex/pMtsB6y/4FX1nrhMOsTKs8Pwh76u95ntLSDwgKxU1D3dgD5dbyWwaNSV2JF7
+Z+MdgaIqhb37o9aG50CKy3Tvi+i5/JB1zd7ZClE98LZyr5LMz29iL2Mw/Gl7cWCl
+2CVW2+D1vl/BUhkYjwveXMyjbwZ5Ag==
+=3ekl
+-----END PGP SIGNATURE-----
+
+--HzrO27/Ki/7DpdHj--
 
