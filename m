@@ -1,207 +1,173 @@
-Return-Path: <linux-kernel+bounces-249680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF9192EE74
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:10:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E11492EE77
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8FA7B239A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:10:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 716AD1C21B40
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C6C17109C;
-	Thu, 11 Jul 2024 18:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5FC171650;
+	Thu, 11 Jul 2024 18:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NkLEzYYL";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Mrm9t3ws"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="GG5fdtTA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4CE16EB40;
-	Thu, 11 Jul 2024 18:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720721259; cv=fail; b=QjXqERMNfkoC5RMYZxLG86t8HbNfS3/EK9SLVe+OdPkdc8AwrpN2mJOc28A+U+yxObTyhmOrbI6bY5M+lhAgH+uRBqInLAOmsMnsJWzTF4dWMzbPnYiBQynOpeYYF/2xXihR654bv5MXpvDDwlNnU6y6O4GAbHlAyzndDXivPa4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720721259; c=relaxed/simple;
-	bh=dnuB7UNQMSyNIDqcLtjYcdBUG+Qrva0h3hUsE16jnZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=W2biQVfVRI6ESfuGtG+VUcs3PZmJ9BtvG5nlcKD3tX9xSIclffTqppepBUIqFYsrsvfnDTVWVyIJJ2JE+dGodm4dLYXgME5+q3uMt6YSDGORYBsbwGHpcGnR2O+X14pHpxNtIhfgSp3P2pliApAtUzZ4CSxgp1g8YzNmczLd4BM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NkLEzYYL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Mrm9t3ws; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BFBVG7012948;
-	Thu, 11 Jul 2024 18:07:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=YkYtoiK/RFEs1O+
-	jOO1DHVHVodPiQM9rCTdM8F+sfBE=; b=NkLEzYYLCfqPszgNZ0i1JaLbHlY6+qw
-	jQdaBeNAnOmyhICZG2r87kjm/zyZ0ocp+3tUCCecFVs7AXLbBFKxGm3TJrqEKVHr
-	nLYac/Ja2y0u1WbhE1Vy3zy3pAf4J1bLJ0WhPJbSy70jUmOFHx11s3CQBRfxHzqo
-	RZAotXCF6m4xh//39x0yd0rISS53hJCs+VLcDvl+wQ5n+sbFsgbAeLBkZdf48QHm
-	rWbIl3NRg6q1BbOuKEEQlc0JdOJvCf/jNoKJFgq4eg7jfVnE9TjDOgj/zPrfkEhv
-	NRh+nObDIhh7dbusxlCn+FKfcdhE4pVqfmrBRVSXOzmEXv2xmsc/AeA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 406wknt80f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 18:07:25 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46BH0x7u030233;
-	Thu, 11 Jul 2024 18:07:24 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2168.outbound.protection.outlook.com [104.47.56.168])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 409vvbmh68-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 18:07:24 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ilKgGT9fMae0ZW/huzg2pNUBr/tfeFHRjnIPw9mrfooW5HCTKIdyEVZNb2wzC0q7y5aAAODUBHu/A8zpp0myUMK0YTcqLPOzmiGPxnU3YEy9FBdCRjDFfuGnJSt8RRczS52zEZmcfFXHpJ7irWH/pOo33j9leZO74R5dInQSfCWNkz6J0u3NvYiCSZQYFlp0w/WecdjGA7dfcmI3iyFv96TPPX2S2iXfwtQ9b0stdG2Oc1eVGDeG154l6g4VgwONLtLgXv9rYwD5YMg4JPlgV/nTvlSyZ4BzacQV2aaGmMEOWQpuLJiXdnBYn4+aFoy2T/r5r8JF+uYB/3gt8nxVrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YkYtoiK/RFEs1O+jOO1DHVHVodPiQM9rCTdM8F+sfBE=;
- b=aMDiClzkzXhmYR6vGjW1TakT690buA+Y06fQue7gDWTHt1lToImCcsTL4g2GpBMb3etCieKLI5PIfSaCDa/ai6zOqR7jiYyHr5xDQyjeaD+dvQ+h5QVKySuyL1qlWSjbtkwiEthLn76okvl9xjJBzAqyZSSsecKe9hpiJE6saurSRAYJJHEGm4I88qKj37eQap1SqsnbCBuhXiWuy+KFj5hus6lJ2myYwrZWOLFQes2qAq9TN64OfLtdFkksc0J1fZBhfjXO9wO1zPhsmYvtrGQcayAHRrbTJzlioi80B9LECcUMGt+jMWsbIMws6cS63yh/h5+Y5mZNxHLeCMELHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YkYtoiK/RFEs1O+jOO1DHVHVodPiQM9rCTdM8F+sfBE=;
- b=Mrm9t3wsK5LmUsYyfD70OGcWTPlzceVVNHW8YB/F1Y+wSsdi0fqwsDRvTWPa0D4pTlvhXPOq18Yd8ro8cxttNmwu3UQU6gOG9gJcnG51wGdi9+DcmXsF/3Lhhw9jlojkVJV4xqudDoCV7kp/8j9VkV9WVjFFUPlN0MkNJD5iAQ4=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by MN2PR10MB4320.namprd10.prod.outlook.com (2603:10b6:208:1d5::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22; Thu, 11 Jul
- 2024 18:07:21 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7741.033; Thu, 11 Jul 2024
- 18:07:21 +0000
-Date: Thu, 11 Jul 2024 14:07:18 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, gregkh@linuxfoundation.org, linux-mm@kvack.org,
-        surenb@google.com, rppt@kernel.org, adobriyan@gmail.com
-Subject: Re: [PATCH v6 0/6] ioctl()-based API to query VMAs from
- /proc/<pid>/maps
-Message-ID: <yv6k4j4ptmyhheorcu6ybdcyemxez6wy6ygn64l4v75zwbghb4@wewfmb3nmzku>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, gregkh@linuxfoundation.org, linux-mm@kvack.org, 
-	surenb@google.com, rppt@kernel.org, adobriyan@gmail.com
-References: <20240627170900.1672542-1-andrii@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627170900.1672542-1-andrii@kernel.org>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YT4P288CA0041.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:b01:d3::22) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9193D16EB46;
+	Thu, 11 Jul 2024 18:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720721296; cv=none; b=D87ILJ0t9YXyBJH/SXJ+fFTAjidrADiB88CWGQmx5SIL0DR5cHnXobspVsmuFN3SdZ9/gTyPC59rIa6zr7MUSjw+DEVCI/T1kJR/Z9VwZtapRP+p7PtIw5ZrBbYiJwD0RZ+l//6eiYEldKX0T3orelZ/pXaoOVGmIETPdoy1SGY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720721296; c=relaxed/simple;
+	bh=kCEqjpo+ZVR6xK/Dc/PdG5Yks8sL5srMtDfZOT3AIdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQVSD5mrrrK6AhwMGNPHWZzeV1D/QnLehnsuH92lzB4zXuQ/gEVUTrX8HQST/4mvSmsdE0Ow38TtwVnt2DSpzEsLcZ1DP60T2SmBmYMuCUTKmmkgylmc3t7GP7tvI0oTr3Ka6D0RH0r0/QhGe/eBZF099ZgrpuJPmiuUMEAUccQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=GG5fdtTA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF7F0C116B1;
+	Thu, 11 Jul 2024 18:08:14 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="GG5fdtTA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1720721293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vrbjgfDMzIE2fcJdddHdiUI6Z2R4tJHcA1zxYRpyDQo=;
+	b=GG5fdtTA1zCjARiOc0JT2QSJVFEpN+jrCTd4q+NR1JZpl6ubGktju4Q7+hV3hbjaAVoVxw
+	p7Px6jD7dDn9VczXfHDjzPwm2sWOSlLNWsok1IGTQyQKEw8jT3tF2M1TUt51rUnMTjwOyu
+	hlHzl8eqdhiSplPQ21B8RBPD+k0vyqk=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id a8ed7bc0 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 11 Jul 2024 18:08:13 +0000 (UTC)
+Date: Thu, 11 Jul 2024 20:08:10 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <ZpAfigBHfHdVeyNO@zx2c4.com>
+References: <Zo8q7ePlOearG481@zx2c4.com>
+ <Zo9gXAlF-82_EYX1@zx2c4.com>
+ <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
+ <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
+ <ZpAR0CgLc28gEkV3@zx2c4.com>
+ <ZpATx21F_01SBRnO@zx2c4.com>
+ <98798483-dfcd-451e-94bb-57d830bf68d8@redhat.com>
+ <54b6de32-f127-4928-9f4a-acb8653e5c81@redhat.com>
+ <ZpAcWvij59AzUD9u@zx2c4.com>
+ <ZpAc118_U7p3u2gZ@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|MN2PR10MB4320:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d1fcfdb-21ee-4677-6113-08dca1d44ef7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?AmGmygCaOYHLooBolWK8lEj42uwkKPkZq025LysXYVJCVKoNP09eFRe/aa+i?=
- =?us-ascii?Q?KdEt2PVxJQzDAKUt7G4sb9461JQwM22hdjTpe1aghB80TN4Czo4F65mBzSQ2?=
- =?us-ascii?Q?qBmotza5llnaNWrtelz9KwX6ea+K5/vZOggyaYlqklb024SThCYJ7tGWBHb0?=
- =?us-ascii?Q?HiuSZxHPTW5j4WlnYH+8Svl1JV/ZatGv2rcu6MyE8NxUMptkocXmUVljlJn4?=
- =?us-ascii?Q?oQe0fnSarsbae+QP+8yRFKyvwwe9xAVSz/piJUDGz9ppaG8orabUDq6IU53o?=
- =?us-ascii?Q?0aM5ZxcBiEgjAAMjNz9Qtda5H2gSAQNMugrjaxlguHTDJ/tRwBzuYsQvTPWi?=
- =?us-ascii?Q?YiyYl66JoM+WV86tU+AMvbZWbuwY/7aONxyCXBRx+I3KLf9uFFCLq77qvkXF?=
- =?us-ascii?Q?+UISzBynQ94Px1N5gqVaz/ZL7deHPyHjxG0TC3EXBZsfGHgxcYYtdbccfQHJ?=
- =?us-ascii?Q?pQMjiSYKdy8rYPAMs32OBakdb6bmViP7MNWNOYB5Z4BVM+6C8uExfQTy97H5?=
- =?us-ascii?Q?MmIaAl+t+H2sYZgdwZlxdegPVSFZrCwpV7cBk+qBu0v0/Rv8IjNA9XhtvBy9?=
- =?us-ascii?Q?O5iRUgPKjJwRS6twEyScuAi4wPn9rvDJJ2Emp3wSs6X3iqKUdEY5SSqdUwqH?=
- =?us-ascii?Q?CJ8xWz9OEX5oTiqwgfvqY1DfStEUA+VE1n8ZhQsjpy3woK8+zLw71FQe9zmn?=
- =?us-ascii?Q?292jb65SiY0IKwmliYxlpalGCYJe8ZaVk++U/R8mlY7dL4riOquZJx2FSdi6?=
- =?us-ascii?Q?ffKu8b8WRWLWZgrqtIy9MPMKvadp/LTdJOPeo5+E3htl/17BUZr1gksSQYyC?=
- =?us-ascii?Q?acn4RiVRAAythGcof9OByllrj2h+CFmKCTYKHLuWmeVeOcK2E7DWMQ7sE6GA?=
- =?us-ascii?Q?a5/taSnEYcoBqQ2yihH4HCn4IU9dqBzvqm7+9d2rU+bSIw7WVHaCqzyPbKXv?=
- =?us-ascii?Q?sV9/cj8fSgprqAfL+xN7xmJ73ZAyznDz7k9dH3fyNRQCeDLoW3iqpRo6IrhN?=
- =?us-ascii?Q?2YZP8yx8t2pmZ4LD+vaiuE/P86iyBVQZqh4rppHiUCLAu4+baCEGLyNeUk4l?=
- =?us-ascii?Q?OD4fKnqrA7GBAqAVA+w+/iCteIkmAFfKZfZehtn+1uwXiB6WyMjt8lXjj9jX?=
- =?us-ascii?Q?EMcKAodjYowIuBsLakW0xcW3ftRT+CffLuV+hN6+z+CiFfmWsnsDNv1XBaAb?=
- =?us-ascii?Q?Oz+7LNR+QODFiKti2TUjWLLEISm7zLkKihvMyxMUfMh2VDRYnMAl5dgsD/d3?=
- =?us-ascii?Q?TFye0JkjoqbP8wC6tNIPVStx+dJTGqScGeaAgAsZjHbsK0Dyh4uRpYUtE5NL?=
- =?us-ascii?Q?cJSrclGgrqdoDfqQyz7M7oD9hRCnOfGBzLCysJxqi2Di3g=3D=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?IA7APx0ZfE22ujlpkKP2TG1XS1W7ta6BMhCC4ThfnKVb9cC4HZQF68Xl8RXe?=
- =?us-ascii?Q?plJ878lSf51UzPglLV+qaU/0esK6RB2haNnJHt3xZsJWe3CaCJmBbXfK7zVi?=
- =?us-ascii?Q?cG9fJUSc1Ya8FFW4MYEHL84bgKuj+EBbXcZTnKFypcC+7Oz5+mrUIfsr7PEw?=
- =?us-ascii?Q?NmDWy5ijn9INeG3q/CayPijDU/l/6Qsu+8b28TmxEX5XGzZZXfyOxZEhBxg/?=
- =?us-ascii?Q?JUwnW1zsVPG6VPPEmhO7M8nTMQcF2FR8WkTwlNo7f4pJyL83j4A0Z8454S+x?=
- =?us-ascii?Q?VpHFdZrjBtVJTYtlFo/uBGHzLyhaHVa7ireEjEOJj1wUlosWhnk2pT0kiDhY?=
- =?us-ascii?Q?mY+QniK5IUsJnQoCMQUKvxREpywhhHNuVeB1BVotTHc4vP/qs6OTyJRkcNSS?=
- =?us-ascii?Q?x25UGym8d0Z/QfKfJgXxlJglHggOmywqGe/UOF9U3KHDgZSEOYQnVRUYMciX?=
- =?us-ascii?Q?6m2Sxfm5EuKIgvkFKnXQMWMNzAmu+bdWn3ugGCxmDrBgL6qNHeypR8XFcuXJ?=
- =?us-ascii?Q?gxiK02uK7Svet2ApKOk5QgwuAgmVXDquKYiCxiWxOl1xjJpfz8LzmDpl41YI?=
- =?us-ascii?Q?o5pweX1fNtlNZ09GGAFPIjqA6fWd8NGERixwEtUU+BQy5iGF0rQU0bEAw3B7?=
- =?us-ascii?Q?r4iZk4IuhpHQw7Yd7/KdhDWvUN6UltDCq3EDRvteFFHb0tS084ryJ16I5rV6?=
- =?us-ascii?Q?3EDEz+imDZllqzcWqVpoJDHxeQfJ+P5OzBDJahtOAcfM1wsHqEdEP8siHtuK?=
- =?us-ascii?Q?+Xny0QWp3xXkA6H/LyXIPQP4tBnFRlWti6xNLWnb2yiCcodJfnopMKSJLfaD?=
- =?us-ascii?Q?DKLz5pZ/AWsyVsdWsC7oNAK+NUc3T0h20y5Z4stWSj0Ufj+meOx0B+zSzJoD?=
- =?us-ascii?Q?YrOnOa+v/uxVSL3fAHRv9iNKy+rMTowxwwq6BXGr0yh1kDhsxwxiQWHgDrlW?=
- =?us-ascii?Q?wViWCffROHk0GI4dkGckXS4tA8cgfbsMZZpHGZqDZP5DDYyF6+yvZ+n+37H4?=
- =?us-ascii?Q?5LPmJWqwmtQOkfF9Tzi5tse6RE4PR9q1zYuRjMVrYO+ON8Kk3lWKvtcSzZ7z?=
- =?us-ascii?Q?p9INFoxZnitVU3Mkcnm352pqCJqdm4POWFEq+AqNgQg/1Noo+NWKdHDocmjH?=
- =?us-ascii?Q?32iyH2xSa/ND56UzbI1WEeC+dcQYSqscrLfBwcb6rngFw/DpeMv1WCoeqOta?=
- =?us-ascii?Q?oZ40n/cPhso5VQSvVRfXUyuAbAxX6wKzm9Zhs8IXYeer1OKgtLMuqx/aMlId?=
- =?us-ascii?Q?Q1aAxBWNdh+2rdFTSj5eqDt54ZaEGHI9jn8TwtkG2HDLswHUtOKy+gMwilZY?=
- =?us-ascii?Q?+aE9kfQHJLT9vHLJaQvcHvF9SMnwaEL3xN2BNIaLXQnmzi/g4VRzLSlNG6G5?=
- =?us-ascii?Q?ebUlJ3F9Fk5qcQ2VYmxKyuHpWRbscM2Fi0NHmERUuS6dlmpzP+9cdzAEcCV0?=
- =?us-ascii?Q?wTBsarIZaOF+cjnzmGiTdrLUaptxfT+nujzk+b4QQWUSlIeWeX3JUdn0Z4CW?=
- =?us-ascii?Q?wzGqK1GgHg9nPXLSlBM2HrDHDJZyVgWkIAyJwFYKrp2AVrbsHXvMlkQEfBcX?=
- =?us-ascii?Q?ML7qgWLONAkXe8Berrn2xMYCVHuibxcQAFuVobjHatu2y3c/a+wreDGteBln?=
- =?us-ascii?Q?Kw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	+jY/oOy5hLUrMxcPVje4MC5WO0YgU3Dkw1zlHyowfjMCE8ze/+IzOXluc2oqqhXx37wUQm+KQZugx+VVU5kQuACMYRzz6KMtKgGXT06YRyq0o0l32B/1daGo+1ekWe3WvuN7A7OzzDIt+uhAjaJu24SIUXWDCTctxkuZvmLClMJ4U/B3ZrgH3uuDpkwUIQSENaA4p6svYgwSqEHf94Tj9erCPPEJhmwtFNg6nCxOZO9ee+mepQwI9vNu+8+LfEj5ntbZzlhdR7OVQIQwXojpzHLuPxhTaFcIN8cZQegR4JtKqg8QLmxnEOtPPe1jy1//GLEy/wafGWHk7jlZyEq00rEbv0tmPvs4JrjmzeDWalEbz9NTlLPo2SQlNEvAUo+FpBqiMVigGJMo88DQFJMCxw3Mr6DiXZ6IK9V8hoiK4ovjH24Dv9HZ50yZ0TwXQYzy7V8WqfSYy+H8Jpv4T+Kdfuteo+G+JphYBa11DlG6jQ9B9IzrPY5mVpfdCyYMBykuwYDz8tI/s2gKCK1gWZwO43zp5F6Q7w4W0z13Cu1vjRFx7OdyQGhCyXwXfqyy0Sq7UfmGDj3ctmpDX6H1L16FZu0yH4t4VxpsBHpSHL9f6QA=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d1fcfdb-21ee-4677-6113-08dca1d44ef7
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 18:07:21.1028
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FyD0AbHcKPsG/DAGQdcL9dlx2OV2aZNqsH6fKzBSzAZ7Z/4HqrQrzhLsJJrvbmk0J5fZtQpTXk6VntGmWyYI2Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4320
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_13,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 mlxscore=0
- spamscore=0 phishscore=0 adultscore=0 malwarescore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
- definitions=main-2407110126
-X-Proofpoint-GUID: A8aZXG8SNe-pD8jFe4rpuKekfypFif9i
-X-Proofpoint-ORIG-GUID: A8aZXG8SNe-pD8jFe4rpuKekfypFif9i
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZpAc118_U7p3u2gZ@zx2c4.com>
 
-* Andrii Nakryiko <andrii@kernel.org> [240627 13:09]:
-> Implement binary ioctl()-based interface to /proc/<pid>/maps file to allow
-> applications to query VMA information more efficiently than reading *all* VMAs
-> nonselectively through text-based interface of /proc/<pid>/maps file.
+On Thu, Jul 11, 2024 at 07:56:39PM +0200, Jason A. Donenfeld wrote:
+> On Thu, Jul 11, 2024 at 07:54:34PM +0200, Jason A. Donenfeld wrote:
+> > On Thu, Jul 11, 2024 at 07:27:27PM +0200, David Hildenbrand wrote:
+> > > > PG_owner_priv_1 maps to PG_swapcache? :)
+> > > 
+> > > Maybe the combination !swapbacked && swapcache could be used to indicate 
+> > > such folios. (we will never set swapbacked)
+> > > 
+> > > But likely we have to be a bit careful here. We don't want 
+> > > folio_test_swapcache() to return for folios that ... are not in the 
+> > > swapcache.
+> > 
+> > I was thinking that too, but I'm afraid it's going to be another
+> > whack-a-mole nightmare. Even for things like task_mmu in procfs that
+> > show stats, that's going to be wonky.
+> > 
+> > Any other flags we can overload that aren't going to be already used in
+> > our case?
 > 
+> PG_error / folio_set_error seems unused in the non-IO case.
 
-Thanks for doing this Andrii.  It looks to be a step forward for a lot
-of use cases.
+And PG_large_rmappable seems to only be used for hugetlb branches.
 
-Acked-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index b9e914e1face..7fdc03197438 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -190,6 +190,7 @@ enum pageflags {
+ 	/* At least one page in this folio has the hwpoison flag set */
+ 	PG_has_hwpoisoned = PG_error,
+ 	PG_large_rmappable = PG_workingset, /* anon or file-backed */
++	PG_droppable = PG_error, /* anon droppable, not hugetlb */
+ };
 
+ #define PAGEFLAGS_MASK		((1UL << NR_PAGEFLAGS) - 1)
+@@ -640,6 +641,8 @@ FOLIO_TEST_CLEAR_FLAG_FALSE(young)
+ FOLIO_FLAG_FALSE(idle)
+ #endif
+
++FOLIO_FLAG(droppable, FOLIO_SECOND_PAGE)
++
+ /*
+  * PageReported() is used to track reported free pages within the Buddy
+  * allocator. We can use the non-atomic version of the test and set
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 1f9b5a9cb121..73b4052b2f82 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1403,6 +1403,8 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
+ 	 */
+ 	if (!(vma->vm_flags & VM_DROPPABLE))
+ 		__folio_set_swapbacked(folio);
++	else
++		folio_set_droppable(folio);
+ 	__folio_set_anon(folio, vma, address, true);
+
+ 	if (likely(!folio_test_large(folio))) {
+@@ -1852,7 +1854,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 				      * ones can be dropped even if they've
+ 				      * been dirtied.
+ 				      */
+-				     (vma->vm_flags & VM_DROPPABLE))) {
++				      folio_test_droppable(folio))) {
+ 					dec_mm_counter(mm, MM_ANONPAGES);
+ 					goto discard;
+ 				}
+@@ -1866,7 +1868,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 				 * Unlike MADV_FREE mappings, VM_DROPPABLE ones
+ 				 * never get swap backed on failure to drop.
+ 				 */
+-				if (!(vma->vm_flags & VM_DROPPABLE))
++				if (!folio_test_droppable(folio))
+ 					folio_set_swapbacked(folio);
+ 				ret = false;
+ 				page_vma_mapped_walk_done(&pvmw);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 2e34de9cd0d4..41340f2a12c7 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -4266,7 +4266,8 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
+ 	}
+
+ 	/* dirty lazyfree */
+-	if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio)) {
++	if (type == LRU_GEN_FILE && folio_test_anon(folio) &&
++	    folio_test_dirty(folio) && !folio_test_droppable(folio)) {
+ 		success = lru_gen_del_folio(lruvec, folio, true);
+ 		VM_WARN_ON_ONCE_FOLIO(!success, folio);
+ 		folio_set_swapbacked(folio);
 
