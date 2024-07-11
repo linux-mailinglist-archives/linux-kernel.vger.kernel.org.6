@@ -1,144 +1,160 @@
-Return-Path: <linux-kernel+bounces-248625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4197292DFE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:10:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4EF92DFDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC57C1F22F66
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:10:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C746282679
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7412112C554;
-	Thu, 11 Jul 2024 06:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D4482C67;
+	Thu, 11 Jul 2024 06:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rpeeg29y"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="V54KARxK"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6496884DFF;
-	Thu, 11 Jul 2024 06:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E7320E3
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 06:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720678201; cv=none; b=R1SxVN9YTfF8hocV2UtMcSIBvgdKC//mGRGmCgAMfsVRf6oSJsaWnA0A+hrNkMdetGC07mwfj06qMmfaTJHLqnVt7fiwdfqddopHbYM2+Xc+A4c+iSQ6es4Q+vrmph59qUO9DgIwO/8Grhl6ZMGlL7QGljmIldzJjHwhxyr23wg=
+	t=1720678197; cv=none; b=lel/pjJakPKg2OvxrFaHbtx5OaEfvqiy4YpCMP5HEHdx/j6M7sGLsfT9U7tbktr9u7pO8kXEOl/ipdWeJSy04tftTYLEizhzqV8islt+5tniV+l105XpxQ450aUvSxfWbbtxoPVj9rJp9QwrBgUTsxiKNQPfOtBlXnCgwpLjhDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720678201; c=relaxed/simple;
-	bh=Jtad3SbGErvDHkwgM6uh1x4KS5053h9Vfx/xHaVDGQg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VoVw2o+2wgngXTIRWfysFWzFRJ46PwkQj2Dun8Vq0tr8v7Wz/shuwUgFKKHfMJvwuwiNZD4cbTv/kBNrq5ecUC5uvDB4valFJB9ILkjmojirUSb7bDVhrTiaQzWK669q3ozYzpLUDpxsfovP/PsKWNEGe6IReaArlsIHuSD9rTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rpeeg29y; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fb05ac6b77so3297785ad.0;
-        Wed, 10 Jul 2024 23:10:00 -0700 (PDT)
+	s=arc-20240116; t=1720678197; c=relaxed/simple;
+	bh=Uug0Qmp2eZWpiJ2VcKydECZ4C/6tV1D7yoG/UxTCcpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=uUCBrkp8lEwcdqPjkMlvvnrIjZUeOeo10Tb8zeTUt06XE8DW2UebeC2whgSnJSUsUdsHXxPW67I8R5+PLbo/E9rrDam924+zVfpJPP5GmrrhfxE2NAILjWMSFY/9vDH/LTBA7d9IvHSdo9Yc0LY4mcIhtU+lBMxeAyyBwLmGF0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=V54KARxK; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-25d6dd59170so279971fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720678200; x=1721283000; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=amL0i3U0AlpayuDFzxy6krwzUQYPva5CT6eMHJ9zRTU=;
-        b=Rpeeg29yG5TycvUzdl5LB+JFZyNmj3Dt/zxUV4A0yDt2JDOaxlzzIQLHhUP/c4TnDW
-         MK8DwRxpKzrsW7xKJdRg0mpf95dWmNcMRpoqE4mshSsPe5LoOkf+T0qZJ3iW7d8wyZkv
-         epAs8otVTt+cZCOX9V3LggKXE92phe6kfogjV2oMutAgcjgyWBjx0Jxll/9L9jD7HzXN
-         iDZLm32WAxt6t0kTEa5GpnXvmTaUYs58WNue9CrRIf84mK6yYzQ+U9HEdKLJ3rGxQyoX
-         /myGgdfBBp4tsANa077Q0NQSR1bYec8FqrJ2kxh71kZgQXx5lA5yRp8Zv+j9geKIlqgG
-         /mKA==
+        d=bytedance.com; s=google; t=1720678195; x=1721282995; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P3M3PfsAx3vPU+NiI8uq0uabDA7M3koOLeB2Wv0JEvM=;
+        b=V54KARxKNbP6vuwtC6g5nsLBhU3pfRrYRgOttkOedNvEQK2aeasLaeb5snwVx7Hoca
+         KuOWm0q4NWvpEaU9EMGSry499nYICnTz7Sui2bdLklevU8BwVFhPPA5PdeHsyg13Pz+3
+         dg0GpvTvS1IlG47A246fYn1WOIcSfFEInHYznFmVHe7faQwwRO54j3cV59FMjuX+MGlA
+         VySlW5muhjYw8Y3/8x2hT9z0l8E8rTVU2rLDhB0iPzclHsiraAppC4Nc+idXIe4ri3Ew
+         p8rlEtAae7XXx0/GRvNFtIyWaeGmoOaIxFCGflnk+O9KN5PyKI4GAVei6QN4nL1orMie
+         xtrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720678200; x=1721283000;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=amL0i3U0AlpayuDFzxy6krwzUQYPva5CT6eMHJ9zRTU=;
-        b=wlwh5Mdgl+yDajbytyHhZ0KgS8aEhY4FUDw9jlTrb8312uYSCrKzXXHDVq+TrCfpDU
-         Csd/AioQKqpPgb7GEc3YgrabR8lBUT3SbE/pUoQwxUvM4mx79LGK5XhdXZFEERZ31RqY
-         7MU1GkAo4RGtrD7snboc5Qz0o7G1q89YdLuzDRKhdEIG28SEOGucct75hDp/zYGN1MT6
-         nGuHUDdcNVQpUDEAyENNWjBtATl3B9T0DEmxD0LrIAPwexBEPtAnhPGypDVND/kECMRY
-         qeLZTutNHrGwPyg+Q74aJnR2iWEHQZe7KX83v1Y58dUw7ri4hWjjZqhCD3orxwnmtNlH
-         PAeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXI9RS2uVTCK7lVOSO9pKGLR6QkHQJkld9G9gnNIjBL0P7ipOKf6l0CtT/7awdjbYudhfJS9PYEoFvenwf/1L2e85XVle8yQodruLLjTkOuYLa4UloNb2x4M3n/xMu8L3IowzzuD/wnA==
-X-Gm-Message-State: AOJu0Yy4OxZsWTbsNFTHlBq0CKJc6ozgBRc/1DvnLo8mTGi5eADwYERZ
-	RsHRt9O1swa+tSvdw+/W+a/KgCt0OGC1Qfp8Ch+INlrobOfWf6V/
-X-Google-Smtp-Source: AGHT+IHNgkIOVxrxv50voAuFb/D8XfO6THqHTM2xrFSPja8CeSVW1OiVWX4BVgbQ7OUzpTaC3rvmOw==
-X-Received: by 2002:a17:902:e30a:b0:1fb:76d9:fe84 with SMTP id d9443c01a7336-1fbb6f0ce0bmr44688475ad.65.1720678199544;
-        Wed, 10 Jul 2024 23:09:59 -0700 (PDT)
-Received: from localhost.localdomain ([113.30.217.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6acf681sm42710165ad.267.2024.07.10.23.09.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 23:09:59 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arm64: dts: rockchip: Add missing pinctrl for PCIe30x4 node
-Date: Thu, 11 Jul 2024 11:39:34 +0530
-Message-ID: <20240711060939.1128-1-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.44.0
+        d=1e100.net; s=20230601; t=1720678195; x=1721282995;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P3M3PfsAx3vPU+NiI8uq0uabDA7M3koOLeB2Wv0JEvM=;
+        b=ZVs4ZQke/TtOP2kE/ZPUhlDPRr+obZlIxoJQ/agiHrR8zvleJSyi/8T7GE0EaPJVaC
+         pmZIwWiaMduNRDHy1sqy5NKVnd1SUsD6VUq6XUFD9t701i5LMUbZ3nf9kz4Q0cmyjLhv
+         mi6KsMvcg2wFOR/NdAG77mdstle27VCc+aEkmdJOPBKIGMwCGpCrKDPiPe8qHqzv5LUH
+         X3H0Ab+N4ASjlJB39B099IicW7l297sohacvTSmljgqJchH3rXaffpHQl4q1FoG/CyaA
+         QXIRWBoos3q8k68tAE5V5o1WMF8sE317lEZH8K0OGyHkL6JQLKMcHvpbAkj4bVDXh6rv
+         GQmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVk/DyCURXBe12iL/WYrnCf0BaSU+cWt6T+5moK1DZ/79awxrP6kqOapP1BuT2kZf8xBnSBY+1XBrGojxxTmdMmefZuKRdKVFsqhMnj
+X-Gm-Message-State: AOJu0YwvhE2c8m1H4Qq0fclS8fpTciFHH/pafDsZI712R0Da0prIcyCZ
+	3IwDxobt57kmMPq7lb9KzAuKr5foWh1dTqhXZXHuOiuaeibmY6lADDnxMMPMi/ehGvBMD03zctM
+	E+szf0B1QexlDAtGsAiDvIECwIj8n0zbW2D1y832cZA7CqwFutyUf7Fz4
+X-Google-Smtp-Source: AGHT+IHcN2m9lFqoH4GP+4D/ntqMBI1+rK9QIx5yDML85z8OJGfON1bRuawj96Ajf6+pi5K2TF5PNmy5hlvmlangqPw=
+X-Received: by 2002:a05:6870:658f:b0:25e:2956:4b8b with SMTP id
+ 586e51a60fabf-25eaec074damr5991249fac.39.1720678194836; Wed, 10 Jul 2024
+ 23:09:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240625030502.68988-1-cuiyunhui@bytedance.com>
+In-Reply-To: <20240625030502.68988-1-cuiyunhui@bytedance.com>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Thu, 11 Jul 2024 14:09:43 +0800
+Message-ID: <CAEEQ3wnrdRcBdevQDGQ-5dr3aO1ura13_VskMYm8ySTZJTiYhw@mail.gmail.com>
+Subject: Re: [PATCH] riscv: Randomize lower bits of stack address
+To: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	cuiyunhui@bytedance.com, andy.chiu@sifive.com, alexghiti@rivosinc.com, 
+	conor.dooley@microchip.com, bjorn@rivosinc.com, sorear@fastmail.com, 
+	cleger@rivosinc.com, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, punit.agrawal@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add missing pinctrl settings for PCIe 3.0 x4 clock request and wake
-signals.Each component of PCIe communication have the following control
-signals: PERST, WAKE, CLKREQ, and REFCLK. These signals work to generate
-high-speed signals and communicate with other PCIe devices.
-Used by root complex to endpoint depending on the power state.
+Add punit in the loop.
 
-PERST is referred to as a fundamental reset. PERST should be held low
-until all the power rails in the system and the reference clock are stable.
-A transition from low to high in this signal usually indicates the
-beginning of link initialization.
 
-WAKE signal is an active-low signal that is used to return the PCIe
-interface to an active state when in a low-power state.
+On Tue, Jun 25, 2024 at 11:05=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedance.co=
+m> wrote:
+>
+> Implement arch_align_stack() to randomize the lower bits
+> of the stack address.
+>
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>  arch/riscv/include/asm/exec.h | 8 ++++++++
+>  arch/riscv/kernel/process.c   | 9 +++++++++
+>  2 files changed, 17 insertions(+)
+>  create mode 100644 arch/riscv/include/asm/exec.h
+>
+> diff --git a/arch/riscv/include/asm/exec.h b/arch/riscv/include/asm/exec.=
+h
+> new file mode 100644
+> index 000000000000..07d9942682e0
+> --- /dev/null
+> +++ b/arch/riscv/include/asm/exec.h
+> @@ -0,0 +1,8 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +
+> +#ifndef __ASM_EXEC_H
+> +#define __ASM_EXEC_H
+> +
+> +extern unsigned long arch_align_stack(unsigned long sp);
+> +
+> +#endif /* __ASM_EXEC_H */
+> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+> index e4bc61c4e58a..e3142d8a6e28 100644
+> --- a/arch/riscv/kernel/process.c
+> +++ b/arch/riscv/kernel/process.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/tick.h>
+>  #include <linux/ptrace.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/personality.h>
+>
+>  #include <asm/unistd.h>
+>  #include <asm/processor.h>
+> @@ -26,6 +27,7 @@
+>  #include <asm/cpuidle.h>
+>  #include <asm/vector.h>
+>  #include <asm/cpufeature.h>
+> +#include <asm/exec.h>
+>
+>  #if defined(CONFIG_STACKPROTECTOR) && !defined(CONFIG_STACKPROTECTOR_PER=
+_TASK)
+>  #include <linux/stackprotector.h>
+> @@ -99,6 +101,13 @@ void show_regs(struct pt_regs *regs)
+>                 dump_backtrace(regs, NULL, KERN_DEFAULT);
+>  }
+>
+> +unsigned long arch_align_stack(unsigned long sp)
+> +{
+> +       if (!(current->personality & ADDR_NO_RANDOMIZE) && randomize_va_s=
+pace)
+> +               sp -=3D get_random_u32_below(PAGE_SIZE);
+> +       return sp & ~0xf;
+> +}
+> +
+>  #ifdef CONFIG_COMPAT
+>  static bool compat_mode_supported __read_mostly;
+>
+> --
+> 2.20.1
+>
 
-CLKREQ signal is also an active-low signal and is used to request the
-reference clock.
-
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-V2: Update the commit messge to describe the changs.
-    use pinctl group as its pre define in pinctl dtsi
----
- arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index 2e7512676b7e..ab3a20986c6a 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -301,7 +301,7 @@ &pcie30phy {
- 
- &pcie3x4 {
- 	pinctrl-names = "default";
--	pinctrl-0 = <&pcie3_rst>;
-+	pinctrl-0 = <&pcie30x4m1_pins>;
- 	reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
- 	vpcie3v3-supply = <&vcc3v3_pcie30>;
- 	status = "okay";
-@@ -341,10 +341,6 @@ pcie2_2_rst: pcie2-2-rst {
- 	};
- 
- 	pcie3 {
--		pcie3_rst: pcie3-rst {
--			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
--		};
--
- 		pcie3_vcc3v3_en: pcie3-vcc3v3-en {
- 			rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
-
-base-commit: 34afb82a3c67f869267a26f593b6f8fc6bf35905
--- 
-2.44.0
-
+Thanks,
+Yunhui
 
