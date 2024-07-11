@@ -1,176 +1,269 @@
-Return-Path: <linux-kernel+bounces-249687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E38892EE87
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:12:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E523B92EE8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9645283795
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:12:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58B91B21482
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7245416E878;
-	Thu, 11 Jul 2024 18:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D718D16D9DE;
+	Thu, 11 Jul 2024 18:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="T9oIzlQu"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x6c9Ar9c"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BB916D9DD
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3919816D307
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720721536; cv=none; b=vFTKTSj8WatnCFZGoNBogVOL9Zm5g7Kz/jN9MrpOL5oyGve/MLbrMZAavlP1PT9WrQQ35RHCLlT/lJUCgr76KJiL1JtHoRu1Msp49N0ay9V45TRR4IrU+O0mXKAfUIPeSbUZrEPP1aprV6xBiadzFHMW5C5f8NWRAkfwpbq3iGs=
+	t=1720721604; cv=none; b=nH/6z/652CYkP8iKaYKdFivJzdgYqrncNJ7vQGQrDeKy4Ix5MicatK5QPPCWOVtHaBZGUH06MiG+gSKFWWZ6FEYj0ZaK9CJisZdZCs/p0PgYhg8djwq36Uwrm2DrE/swoPpMSAZkltD1ehF9tGNjscCKkh5n/lqfnDmsg/NK+e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720721536; c=relaxed/simple;
-	bh=qjZ95FdfR8fibhKaYFGQ8xUQGhsqJZDQmhdEuQus4R0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IyGLJYH94bWeJiPX2YxQVNOJlnbuyK7QoXMuEH8FPa6LFtKTgpa8TKlBWw6kkiCrCiYXI5ZPY9/ztOxe5iN3uhoVFuQt1IHVC20viMTqsh6sEsXpuo0YnL2Z56vGbYr4SUXLJ7MJyrJnDzpH8tgfNGGDWq6kr3ksOVMe9obNPzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=T9oIzlQu; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
-	by cmsmtp with ESMTPS
-	id RvgzsaDHq1zuHRyH8sQkZ6; Thu, 11 Jul 2024 18:12:14 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id RyH7s96k3rcQSRyH7scQAX; Thu, 11 Jul 2024 18:12:13 +0000
-X-Authority-Analysis: v=2.4 cv=T92KTeKQ c=1 sm=1 tr=0 ts=6690207d
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
- a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8 a=TAdm9UboAgj19sWw0poA:9
- a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=Fp8MccfUoT0GBdDC_Lng:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KoZkARx5lnZczAYRCAa+zb47+ShE8UYwk3OAblehdv8=; b=T9oIzlQuDG6LFtao7OafX47RD/
-	rku3zaOU+3dgu/SjQIERBdkH3G5kJ6xIRWvKymghT5xghbxmpFZMcx9NOnHiaVNhYOQMK32Ppxc6s
-	i3Z/MIUohxb+9IyP3HOQ2BubMR+yzOhDiakYAViNh+v/MVu9h/sDQYxJ2RkXbcjwuK41WgdO9MJNv
-	3slaPdPTilSQY2xYgbSmu84whFUb1aJ0AuBQGOzDOZuBjQXCmiy8a3Ex8j7GuqiuNJGqRYOkWomkH
-	mcXd3s0uHxQsW3SGfRNLp6JylwibXXJ8vJ1TTwkcrbZD3VlfPYrr10wFKpxWtiSKOEEwMgbCd/1Ir
-	vyCNs0pg==;
-Received: from [201.172.173.139] (port=53488 helo=[192.168.15.4])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sRyH6-002DoA-1p;
-	Thu, 11 Jul 2024 13:12:12 -0500
-Message-ID: <f1d60f01-5059-4c1a-a00e-c7d523f28784@embeddedor.com>
-Date: Thu, 11 Jul 2024 12:12:11 -0600
+	s=arc-20240116; t=1720721604; c=relaxed/simple;
+	bh=/dG2UvQ+EH+yqXZlVbqRDI/un7i5XAyyN6aOd95/g/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SQZuOW56UOB/0/1OvzN3f3xs9C5Tyo9UXQWDKr305xr/TiQvB6W1s466t6GhvGz3AXZtdRb2wSC3KGA4mpMEm++maYwuzxhCQYoQhQ+A+51ZkxnlMkPR0pIhSKGJ97STiDy3C9XqbPjy9DBkPYm4JndHluQaTtBfPp6M3bbRDRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x6c9Ar9c; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6510c0c8e29so11537017b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:13:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720721600; x=1721326400; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nyJ6P+FkdwGhVRPUnMvVBafw0z1eayMg2GyL0TyLrvU=;
+        b=x6c9Ar9ckdFW3hKUFiVdTDuAj9/vIslMcR8xWNTjijnNRO94C5jfz24UgpVzmUEr6R
+         TzgxuyVAWkE198HkDME6Xtw9PVLSqWzQXmUjF77njHs81cF6EEkDUXG36+rOKtKgfP6n
+         oSP3V+lJVOK/QzHWXXN+61b8gCWzFJLbc9JlyrBzrliBMSSKluZ5YIR/KnpoE1QZsjIi
+         KCJuu32G55jiu0B81CH8sr6aGh77uIiZCxioiB/hh4Mz21jA/fd7Y1OVHnl6uwKc7svr
+         c+Lb/hgzbPoWpYcOmHnmXgJ7qH4K8r76vRFs/qR/jJqO1VzNCfP9LANAulNBE5rXeo8o
+         RCvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720721600; x=1721326400;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nyJ6P+FkdwGhVRPUnMvVBafw0z1eayMg2GyL0TyLrvU=;
+        b=CKnDmGXtqXpTlBbBKxp7sduR/5u7Bh8mfhFoeD5vmKYsdhrM2+ap9EgT2nhzN3yJ1f
+         a+vA3T7yxg5KfptN/kfxlWShgP1lZ9QSjemXovDX1VMlF9g/yMJD+rur6eSxmEVLmlZB
+         EXppJ/ZlAw71f24JC7zjtKRoWx+3W9JxwfSRYNyVHdFT77HI6XWj16zV0pBxsyZEIev0
+         CzzvwaYR1NCRdyAzEI+0NM1PXObQpTW9Go1Ha5HgNWNJKLV4HCuwB9HcF7XhFAcPv77Q
+         j3JwMVvg/yMQpcjbfuW5Y7J+ZP8d0aKxLdjb3jLOmWIG/RB+sPLOQ7CgmhrKIDBmih+z
+         7Ipw==
+X-Forwarded-Encrypted: i=1; AJvYcCUo7BP9dvWaRQUVgfAwvDuiy9kfya/EMZnz+0H+DJJ2GYLNcRmK02Mr/sFNMIWmCCs1WiAHSY7Jw4Usr5QYtUMzOKMKpe8ie3RC6TWo
+X-Gm-Message-State: AOJu0YxUZjn2n6By2O39Bm3m5u/Q0cndYW1bk6XxK1zna44vr6rVdlmX
+	0bZsaOr25kJIfJRfbbGngDLDKCptF+st2T653Z5W06a3TQaqRXf3sKwcLioTNWh9AcQfsen5dl0
+	bDYXQ7N/aktoMl297pnnMYxYtPtbjsKp4wCqc
+X-Google-Smtp-Source: AGHT+IEEQU5biwkInlxNgBrM2IpMWrKKZsCPM/P2i2VC7zYaPlXK0eCVtc6vDTBA+rUofvGyIoZFTCjIctuVqbLEHM4=
+X-Received: by 2002:a05:690c:6112:b0:631:ffc1:4397 with SMTP id
+ 00721157ae682-658ef34a2e9mr120082367b3.29.1720721599990; Thu, 11 Jul 2024
+ 11:13:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] scsi: message: fusion: struct _RAID_VOL0_SETTINGS:
- Replace 1-element array with flexible array
-To: Kees Cook <kees@kernel.org>, Sathya Prakash <sathya.prakash@broadcom.com>
-Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
- Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240711172432.work.523-kees@kernel.org>
- <20240711172821.123936-1-kees@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240711172821.123936-1-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sRyH6-002DoA-1p
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:53488
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfLceAQvPvPpROzrt2rE8rdoV9CW+SqAHf38PPuhtYFty48UBRQ/3Q867iBirTKF5POu1N/cZRr1cpPMRzB8c0z8CwMDLEADPRb3AUpxEgdIrOvl7AgRc
- dXmJAghBraHa2RYc3WIUkhaxS6RsCpgcpOcjl/6iB+ZDQ1cSdlcnFja6yuK3k6dGf0KFzAUyFGxDh9wiXoX6/qtXXHfbcULc5SfVf7ccbbN/49tHADcdt2oq
+References: <20240702191650.57364-1-tmaimon77@gmail.com> <20240702191650.57364-3-tmaimon77@gmail.com>
+In-Reply-To: <20240702191650.57364-3-tmaimon77@gmail.com>
+From: Benjamin Fair <benjaminfair@google.com>
+Date: Thu, 11 Jul 2024 11:12:42 -0700
+Message-ID: <CADKL2t4F20iFdwxDH0PXCa8-HO_cDhYzu+ObyzwaazWWkKj-tg@mail.gmail.com>
+Subject: Re: [PATCH v26 2/3] reset: npcm: register npcm8xx clock auxiliary bus device
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, 
+	joel@jms.id.au, venture@google.com, yuenn@google.com, 
+	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 2 Jul 2024 at 12:17, Tomer Maimon <tmaimon77@gmail.com> wrote:
+>
+> Add NPCM8xx clock controller auxiliary bus device registration.
+>
+> The NPCM8xx clock controller is registered as an aux device because the
+> reset and the clock controller share the same register region.
+>
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 
+I booted a kernel with this driver and verified that basic
+functionality works fine.
 
-On 11/07/24 11:28, Kees Cook wrote:
-> Replace the deprecated[1] use of a 1-element array in
-> struct _RAID_VOL0_SETTINGS with a modern flexible array.
-> 
-> Additionally add __counted_by annotation since PhysDisk is only ever
-> accessed via a loops bounded by NumPhysDisks:
-> 
-> lsi/mpi_cnfg.h:    RAID_VOL0_PHYS_DISK     PhysDisk[] __counted_by(NumPhysDisks); /* 28h */
-> mptbase.c:	for (i = 0; i < buffer->NumPhysDisks; i++) {
-> mptbase.c:		    buffer->PhysDisk[i].PhysDiskNum, &phys_disk) != 0)
-> mptsas.c:	for (i = 0; i < buffer->NumPhysDisks; i++) {
-> mptsas.c:		    buffer->PhysDisk[i].PhysDiskNum, &phys_disk) != 0)
-> mptsas.c:	for (i = 0; i < buffer->NumPhysDisks; i++) {
-> mptsas.c:		    buffer->PhysDisk[i].PhysDiskNum, &phys_disk) != 0)
-> 
-> No binary differences are present after this conversion.
-> 
-> Link: https://github.com/KSPP/linux/issues/79 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
-
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-
-Thanks!
--- 
-Gustavo
+Tested-by: Benjamin Fair <benjaminfair@google.com>
 
 > ---
-> Cc: Sathya Prakash <sathya.prakash@broadcom.com>
-> Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-> Cc: Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> Cc: MPT-FusionLinux.pdl@broadcom.com
-> Cc: linux-scsi@vger.kernel.org
-> Cc: linux-hardening@vger.kernel.org
-> ---
->   drivers/message/fusion/lsi/mpi_cnfg.h | 10 +---------
->   1 file changed, 1 insertion(+), 9 deletions(-)
-> 
-> diff --git a/drivers/message/fusion/lsi/mpi_cnfg.h b/drivers/message/fusion/lsi/mpi_cnfg.h
-> index 3770cb1cff7d..f59a741ef21c 100644
-> --- a/drivers/message/fusion/lsi/mpi_cnfg.h
-> +++ b/drivers/message/fusion/lsi/mpi_cnfg.h
-> @@ -2295,14 +2295,6 @@ typedef struct _RAID_VOL0_SETTINGS
->   #define MPI_RAID_HOT_SPARE_POOL_6                       (0x40)
->   #define MPI_RAID_HOT_SPARE_POOL_7                       (0x80)
->   
-> -/*
-> - * Host code (drivers, BIOS, utilities, etc.) should leave this define set to
-> - * one and check Header.PageLength at runtime.
-> - */
-> -#ifndef MPI_RAID_VOL_PAGE_0_PHYSDISK_MAX
-> -#define MPI_RAID_VOL_PAGE_0_PHYSDISK_MAX        (1)
-> -#endif
-> -
->   typedef struct _CONFIG_PAGE_RAID_VOL_0
->   {
->       CONFIG_PAGE_HEADER      Header;         /* 00h */
-> @@ -2321,7 +2313,7 @@ typedef struct _CONFIG_PAGE_RAID_VOL_0
->       U8                      DataScrubRate;  /* 25h */
->       U8                      ResyncRate;     /* 26h */
->       U8                      InactiveStatus; /* 27h */
-> -    RAID_VOL0_PHYS_DISK     PhysDisk[MPI_RAID_VOL_PAGE_0_PHYSDISK_MAX];/* 28h */
-> +    RAID_VOL0_PHYS_DISK     PhysDisk[] __counted_by(NumPhysDisks); /* 28h */
->   } CONFIG_PAGE_RAID_VOL_0, MPI_POINTER PTR_CONFIG_PAGE_RAID_VOL_0,
->     RaidVolumePage0_t, MPI_POINTER pRaidVolumePage0_t;
->   
+>  drivers/reset/Kconfig               |  1 +
+>  drivers/reset/reset-npcm.c          | 74 ++++++++++++++++++++++++++++-
+>  include/soc/nuvoton/clock-npcm8xx.h | 16 +++++++
+>  3 files changed, 90 insertions(+), 1 deletion(-)
+>  create mode 100644 include/soc/nuvoton/clock-npcm8xx.h
+>
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 7112f5932609..31ec8795c105 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -148,6 +148,7 @@ config RESET_MESON_AUDIO_ARB
+>  config RESET_NPCM
+>         bool "NPCM BMC Reset Driver" if COMPILE_TEST
+>         default ARCH_NPCM
+> +       select AUXILIARY_BUS
+>         help
+>           This enables the reset controller driver for Nuvoton NPCM
+>           BMC SoCs.
+> diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
+> index 8935ef95a2d1..aa68b947226a 100644
+> --- a/drivers/reset/reset-npcm.c
+> +++ b/drivers/reset/reset-npcm.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  // Copyright (c) 2019 Nuvoton Technology corporation.
+>
+> +#include <linux/auxiliary_bus.h>
+>  #include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+> @@ -10,11 +11,14 @@
+>  #include <linux/property.h>
+>  #include <linux/reboot.h>
+>  #include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  #include <linux/of_address.h>
+>
+> +#include <soc/nuvoton/clock-npcm8xx.h>
+> +
+>  /* NPCM7xx GCR registers */
+>  #define NPCM_MDLR_OFFSET       0x7C
+>  #define NPCM7XX_MDLR_USBD0     BIT(9)
+> @@ -89,6 +93,7 @@ struct npcm_rc_data {
+>         const struct npcm_reset_info *info;
+>         struct regmap *gcr_regmap;
+>         u32 sw_reset_number;
+> +       struct device *dev;
+>         void __iomem *base;
+>         spinlock_t lock;
+>  };
+> @@ -372,6 +377,67 @@ static const struct reset_control_ops npcm_rc_ops = {
+>         .status         = npcm_rc_status,
+>  };
+>
+> +static void npcm_clock_unregister_adev(void *_adev)
+> +{
+> +       struct auxiliary_device *adev = _adev;
+> +
+> +       auxiliary_device_delete(adev);
+> +       auxiliary_device_uninit(adev);
+> +}
+> +
+> +static void npcm_clock_adev_release(struct device *dev)
+> +{
+> +       struct auxiliary_device *adev = to_auxiliary_dev(dev);
+> +       struct npcm_clock_adev *rdev = to_npcm_clock_adev(adev);
+> +
+> +       kfree(rdev);
+> +}
+> +
+> +static struct auxiliary_device *npcm_clock_adev_alloc(struct npcm_rc_data *rst_data, char *clk_name)
+> +{
+> +       struct npcm_clock_adev *rdev;
+> +       struct auxiliary_device *adev;
+> +       int ret;
+> +
+> +       rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
+> +       if (!rdev)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       rdev->base = rst_data->base;
+> +
+> +       adev = &rdev->adev;
+> +       adev->name = clk_name;
+> +       adev->dev.parent = rst_data->dev;
+> +       adev->dev.release = npcm_clock_adev_release;
+> +       adev->id = 555u;
+> +
+> +       ret = auxiliary_device_init(adev);
+> +       if (ret) {
+> +               kfree(rdev);
+> +               return ERR_PTR(ret);
+> +       }
+> +
+> +       return adev;
+> +}
+> +
+> +static int npcm8xx_clock_controller_register(struct npcm_rc_data *rst_data, char *clk_name)
+> +{
+> +       struct auxiliary_device *adev;
+> +       int ret;
+> +
+> +       adev = npcm_clock_adev_alloc(rst_data, clk_name);
+> +       if (IS_ERR(adev))
+> +               return PTR_ERR(adev);
+> +
+> +       ret = auxiliary_device_add(adev);
+> +       if (ret) {
+> +               auxiliary_device_uninit(adev);
+> +               return ret;
+> +       }
+> +
+> +       return devm_add_action_or_reset(rst_data->dev, npcm_clock_unregister_adev, adev);
+> +}
+> +
+>  static int npcm_rc_probe(struct platform_device *pdev)
+>  {
+>         struct npcm_rc_data *rc;
+> @@ -392,6 +458,7 @@ static int npcm_rc_probe(struct platform_device *pdev)
+>         rc->rcdev.of_node = pdev->dev.of_node;
+>         rc->rcdev.of_reset_n_cells = 2;
+>         rc->rcdev.of_xlate = npcm_reset_xlate;
+> +       rc->dev = &pdev->dev;
+>
+>         ret = devm_reset_controller_register(&pdev->dev, &rc->rcdev);
+>         if (ret) {
+> @@ -413,7 +480,12 @@ static int npcm_rc_probe(struct platform_device *pdev)
+>                 }
+>         }
+>
+> -       return ret;
+> +       switch (rc->info->bmc_id) {
+> +       case BMC_NPCM8XX:
+> +               return npcm8xx_clock_controller_register(rc, "clk-npcm8xx");
+> +       default:
+> +               return ret;
+> +       }
+>  }
+>
+>  static struct platform_driver npcm_rc_driver = {
+> diff --git a/include/soc/nuvoton/clock-npcm8xx.h b/include/soc/nuvoton/clock-npcm8xx.h
+> new file mode 100644
+> index 000000000000..139130e98c51
+> --- /dev/null
+> +++ b/include/soc/nuvoton/clock-npcm8xx.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __SOC_NPCM8XX_CLOCK_H
+> +#define __SOC_NPCM8XX_CLOCK_H
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/container_of.h>
+> +
+> +struct npcm_clock_adev {
+> +       void __iomem *base;
+> +       struct auxiliary_device adev;
+> +};
+> +
+> +#define to_npcm_clock_adev(_adev) \
+> +       container_of((_adev), struct npcm_clock_adev, adev)
+> +
+> +#endif
+> --
+> 2.34.1
+>
 
