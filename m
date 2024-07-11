@@ -1,177 +1,423 @@
-Return-Path: <linux-kernel+bounces-249962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0190492F239
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:47:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6000992F23B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25C531C227E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1412F2833A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D49519FA86;
-	Thu, 11 Jul 2024 22:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CpTv6tuC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80A914C596;
+	Thu, 11 Jul 2024 22:48:24 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C02A12C477
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0609D12C477
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720738067; cv=none; b=f7imlBWWHTvsd0sD4FIpzujnn+78ViD0m6gdICh7GA6IprRCnjamOuSJWUKZShluIv5ts/9qznN9I8ebfETQJpyGWBZWGeVg9UU/4aauyXQkkShofbt1Cmku/1zme9jFB8To8/NM81fLi4uaUqjDxW9O/ZGsz+p1kh48pVy6/+E=
+	t=1720738103; cv=none; b=SvDkXJJhjX6CQHGVwDCyaK/ubTL35ZvgtWu+y4ooEZb7F4Q82sSZsj4xfhRXdL//7/YmzD/0jlkSTCJvD9XO01Z11iMGUBLhYADZVG8zeH3MC/wSr8J9WRgIUGeeUKbpxY7A7wyJjLdNmFRIEIugzeQjjl5ir7G8PvcLPnibkFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720738067; c=relaxed/simple;
-	bh=RVPB+kgxEAOGVrCf+IxrqUC2VKA71l8WoyiFRqAk7bM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OC+KQa68WS2mFt6rj+uf50mDc45QplWUjl4LuSuep8cqvoHmAP5Yh7l6ZQs2qoDRw/2vp6KYsXMZIPz5j3HsIcttaLL6CaXQ0Wo+H2pNI3YwdE1TDFOT5g+fWspjYltNi28B2qGF53ZZymIw3C7Q1NTe4itLItuQdep+Sjxv4ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CpTv6tuC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720738064;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jUUE4IEeDu26fE4TU1o+NLYPFE26wbQVbpeOsn3UXXI=;
-	b=CpTv6tuC3Uv3hR778hcMZJPYNPoLKbar9tMFpcVPaNk+oglfIAPcYhRlhIEY3p+ITjzEsB
-	O6eSw7N3COZY0zOAD9x4VCABAl91zQYGjlnbfAgl3QOxrP+YrYEZyX4pA3o3ZR8XMTTSKK
-	JIYd83LMJlLzmrwYFh/yuVSm4BzaFC8=
-Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
- [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-99-gOD9nvNcNAuIkOR3gTtuTw-1; Thu, 11 Jul 2024 18:47:41 -0400
-X-MC-Unique: gOD9nvNcNAuIkOR3gTtuTw-1
-Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-704496bca36so122530a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:47:41 -0700 (PDT)
+	s=arc-20240116; t=1720738103; c=relaxed/simple;
+	bh=XaG/9uIDsbKCKW28ID0XVFdhixA/ARTIJWXk14Wwnio=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T9a0pTu247pxBuc4Cczn2dWbWnbovguhItfeet63Qq9gPczAcaHcSsKNkPvfAF4cTs7wWffCTsgG/qg5xtKdAPKvI466M/VSP7dtxiv+j2wZ1C7HpH0X3BRJ+5h43MDNH75CfM+1HfR/wNp+nBOnSj/OtiGfCZ1B/jLFZD2Sz2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8051524c1f8so148318039f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:48:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720738060; x=1721342860;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jUUE4IEeDu26fE4TU1o+NLYPFE26wbQVbpeOsn3UXXI=;
-        b=hp/XAuojAgXl6s6xQtrsglkqOXOvvXBoZtDpNKRSfh6tCsjBzIb5kPVEKUrVPAZ2im
-         sEGbeZ2kecuTSpRP7WfrmrFZmBfjM7shOZFdecbHYwy1rDZsuhrmVp1YlJwsEbcRV0ik
-         NGRjPJpSHd5R9huap17Lxqnow99sT1e1vJT4uXkr2+2uA9IQIxpZZBmuG0uArZ/XE7Q6
-         3AlD9dAUeVFMjzMkZM9EoVG/lkeb3r6zjVJKaNShQXmwTzg+JIasYczKXzYZt7Ug/LJX
-         /JRHmumDsUXzUQ0oxN0LTP8wiMmFtKnvFi/XpwV+YnqDcJkF6v6u5I40SxA0iBGZVHC6
-         bkHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXlTNNEcukHEbcU7rcWp/MsCQTFi+5gP+AFOFVatk45nIDBEkBU0zN/s2ILOPu/mhSmymWM3UGLJ6Y69eJVkEGjA8KKZ2djtztwez6
-X-Gm-Message-State: AOJu0YyX6nem+KB0wRuUD7G0Dqks3D8S4lA0J7u2DUco4RfMtjrGvKrj
-	MVV3WvV+mwaSVXT4+XqyL5j5AR/DAEznd+nQkDHyMV5KUlXO7QE0UnYeL8sD6vyrjI01Xu9VQ7B
-	a/PLrsy0MH9SYwhAS+SmTMq6pbdEZ98Tfq58iN73BdGwDenWsPu52K1+6oTPxmg==
-X-Received: by 2002:a05:6870:b48b:b0:25e:dce:491b with SMTP id 586e51a60fabf-2603a6b1846mr4151081fac.1.1720738060532;
-        Thu, 11 Jul 2024 15:47:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGifGQLAfLsA3PvJ0N0vhdzW8eV9Axj5BbRdepNcpr12Y+xwkO3ea+jL3/qN/UDGzQlYNNLpQ==
-X-Received: by 2002:a05:6870:b48b:b0:25e:dce:491b with SMTP id 586e51a60fabf-2603a6b1846mr4151066fac.1.1720738060089;
-        Thu, 11 Jul 2024 15:47:40 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a148df63c1sm107037485a.11.2024.07.11.15.47.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 15:47:39 -0700 (PDT)
-Date: Thu, 11 Jul 2024 18:47:36 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Pei Li <peili.dev@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	syzbot+35a4414f6e247f515443@syzkaller.appspotmail.com
-Subject: Re: [PATCH] mm: Fix mmap_assert_locked() in follow_pte()
-Message-ID: <ZpBhCHsG39wIVnQN@x1n>
-References: <20240710-bug12-v1-1-0e5440f9b8d3@gmail.com>
- <92a2dc30-6e48-44ea-9cde-693b911f200d@redhat.com>
- <3879ee72-84de-4d2a-93a8-c0b3dc3f0a4c@redhat.com>
- <e4719acd-4ee4-435d-a596-093794d15be6@redhat.com>
+        d=1e100.net; s=20230601; t=1720738101; x=1721342901;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kUq4mFKYDUuOJA1So/dtgBjRUV3ymcjMLfVqKXZl6wE=;
+        b=YttUUgq8Z0qA1H2kG3aJBvSQMnKIXJwtj1+aZ/K+XmG+kPYuelj6XpUK1TMCkSJrAO
+         7ssiLIuUgeUXE8kWLcGEdNGYEv1jha52JAUoKC4rGVK2fD/RnS3vMb7poaXBte5zGxW/
+         emZkextUpAwBHjo9Kmf7XbYh/UcJDjv6naMXBWp0f3kQIOSB3uASaPgqamdG8zsDBTFH
+         J6VairxbpLBTEmE3DnmRwKycJBWNLnUZGIpn3HmNDCgP3kmx5Q2gLxnu9iRzI3HgBBxJ
+         YDHNiEODFlMLwmUAfZ1PdUMT9mpfzcGMUCqeZ/kWbpdUQWIMNsAyC7J5nfNAtKFVXXcC
+         Jfng==
+X-Forwarded-Encrypted: i=1; AJvYcCV0v8wMZkiPtTgeUVEnrgMvfoWwSQ/IaF/2pxd3dJXZLzo7O2DBJjmvy2dBcJbVjmaA2FWqqK1hmTS8mjOw63fqs/XHsxdI1LHL6gZQ
+X-Gm-Message-State: AOJu0Yx60V9+ByZN/WoB/gEgmR2bpvAkTs6gq1VR5qA2xpu8npTElF+o
+	gkwb98dh8GnmqqT6Gq1fFfr3u1hFyewH8O7g1DLf8qXm/32DDIj6M88VUS/Fl4jYtTsYDAeoRow
+	bZkvCwe3uVwojm3YNb1P2dDJsKtJ5UZUbGbqSrxnMOjDo+5b0i5f7lHg=
+X-Google-Smtp-Source: AGHT+IEGY5HGsKCLCrGxeW/vnGc1Gjxmoz4d0jso6m89axV4BRpLjEuLu5o+X05VTUEG92vLDeh3Us4hhN+zvpd9+Z/1f/bVTFjc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e4719acd-4ee4-435d-a596-093794d15be6@redhat.com>
+X-Received: by 2002:a05:6638:150d:b0:4b9:13c9:b0fb with SMTP id
+ 8926c6da1cb9f-4c0b2b78063mr598164173.5.1720738101184; Thu, 11 Jul 2024
+ 15:48:21 -0700 (PDT)
+Date: Thu, 11 Jul 2024 15:48:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000045dc6e061d008fff@google.com>
+Subject: [syzbot] [net?] INFO: task hung in cleanup_net (7)
+From: syzbot <syzbot+09e91cb5dd034b2d3ad4@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 11, 2024 at 11:51:41PM +0200, David Hildenbrand wrote:
-> On 11.07.24 23:45, David Hildenbrand wrote:
-> > On 11.07.24 23:33, David Hildenbrand wrote:
-> > > On 11.07.24 07:13, Pei Li wrote:
-> > > > This patch fixes this warning by acquiring read lock before entering
-> > > > untrack_pfn() while write lock is not held.
-> > > > 
-> > > > syzbot has tested the proposed patch and the reproducer did not
-> > > > trigger any issue.
-> > > > 
-> > > > Reported-by: syzbot+35a4414f6e247f515443@syzkaller.appspotmail.com
-> > > > Closes: https://syzkaller.appspot.com/bug?extid=35a4414f6e247f515443
-> > > > Tested-by: syzbot+35a4414f6e247f515443@syzkaller.appspotmail.com
-> > > > Signed-off-by: Pei Li <peili.dev@gmail.com>
-> > > > ---
-> > > > Syzbot reported the following warning in follow_pte():
-> > > > 
-> > > > WARNING: CPU: 3 PID: 5192 at include/linux/rwsem.h:195 rwsem_assert_held include/linux/rwsem.h:195 [inline]
-> > > > WARNING: CPU: 3 PID: 5192 at include/linux/rwsem.h:195 mmap_assert_locked include/linux/mmap_lock.h:65 [inline]
-> > > > WARNING: CPU: 3 PID: 5192 at include/linux/rwsem.h:195 follow_pte+0x414/0x4c0 mm/memory.c:5980
-> > > > 
-> > > > This is because we are assuming that mm->mmap_lock should be held when
-> > > > entering follow_pte(). This is added in commit c5541ba378e3 (mm:
-> > > > follow_pte() improvements).
-> > > > 
-> > > > However, in the following call stack, we are not acquring the lock:
-> > > >     follow_phys arch/x86/mm/pat/memtype.c:957 [inline]
-> > > >     get_pat_info+0xf2/0x510 arch/x86/mm/pat/memtype.c:991
-> > > >     untrack_pfn+0xf7/0x4d0 arch/x86/mm/pat/memtype.c:1104
-> > > >     unmap_single_vma+0x1bd/0x2b0 mm/memory.c:1819
-> > > >     zap_page_range_single+0x326/0x560 mm/memory.c:1920
-> > > 
-> > > That implies that unmap_vmas() is called without the mmap lock in read
-> > > mode, correct?
-> > > 
-> > > Do we know how this happens?
-> > > 
-> > > * exit_mmap() holds the mmap lock in read mode
-> > > * unmap_region is documented to hold the mmap lock in read mode
-> > 
-> > I think this is it (missed the call from zap_page_range_single()):
-> > 
-> >    follow_phys arch/x86/mm/pat/memtype.c:957 [inline]
-> >    get_pat_info+0xf2/0x510 arch/x86/mm/pat/memtype.c:991
-> >    untrack_pfn+0xf7/0x4d0 arch/x86/mm/pat/memtype.c:1104
-> >    unmap_single_vma+0x1bd/0x2b0 mm/memory.c:1819
-> >    zap_page_range_single+0x326/0x560 mm/memory.c:1920
-> >    unmap_mapping_range_vma mm/memory.c:3684 [inline]
-> >    unmap_mapping_range_tree mm/memory.c:3701 [inline]
-> >    unmap_mapping_pages mm/memory.c:3767 [inline]
-> >    unmap_mapping_range+0x1ee/0x280 mm/memory.c:3804
-> >    truncate_pagecache+0x53/0x90 mm/truncate.c:731
-> >    simple_setattr+0xf2/0x120 fs/libfs.c:886
-> >    notify_change+0xec6/0x11f0 fs/attr.c:499
-> >    do_truncate+0x15c/0x220 fs/open.c:65
-> >    handle_truncate fs/namei.c:3308 [inline]
-> > 
-> > I think Peter recently questioned whether untrack_pfn() should be even
-> > called from the place, but I might misremember things.
-> > 
-> > Fix should work (I suspect we are not violating some locking rules?),
-> > PFNMAP should not happen there too often that we really care.
-> 
-> ... thinking again, likely we reach this point with "!mm_wr_locked" and the
-> mmap lock already held in read mode. So I suspect the fix won't work as is.
+Hello,
 
-Ah yes, I had one rfc patch for that, I temporarily put that aside as it
-seemed nobody cared except myself.. it's here:
+syzbot found the following issue on:
 
-https://lore.kernel.org/all/20240523223745.395337-2-peterx@redhat.com
+HEAD commit:    c6653f49e4fd Merge tag 'powerpc-6.10-4' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16e85369980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=864caee5f78cab51
+dashboard link: https://syzkaller.appspot.com/bug?extid=09e91cb5dd034b2d3ad4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-I didn't know it can already cause real trouble.  It looks like that patch
-should fix this.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Thanks,
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/883870bfa71b/disk-c6653f49.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f2d0f532ed6a/vmlinux-c6653f49.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/14f12438424f/bzImage-c6653f49.xz
 
--- 
-Peter Xu
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+09e91cb5dd034b2d3ad4@syzkaller.appspotmail.com
 
+INFO: task kworker/u8:6:1040 blocked for more than 143 seconds.
+      Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:6    state:D stack:22248 pid:1040  tgid:1040  ppid:2      flags:0x00004000
+Workqueue: netns cleanup_net
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_timeout+0xb0/0x310 kernel/time/timer.c:2557
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common kernel/sched/completion.c:116 [inline]
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
+ __flush_work+0xaa9/0xd00 kernel/workqueue.c:4227
+ flush_all_backlogs net/core/dev.c:6000 [inline]
+ unregister_netdevice_many_notify+0x8a0/0x16b0 net/core/dev.c:11201
+ cleanup_net+0x75d/0xcc0 net/core/net_namespace.c:635
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
+ worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task kworker/u8:9:2843 blocked for more than 144 seconds.
+      Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/u8:9    state:D
+ stack:23640 pid:2843  tgid:2843  ppid:2      flags:0x00004000
+Workqueue: ipv6_addrconf addrconf_dad_work
+
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4193
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
+ worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task kworker/1:2:2932 blocked for more than 145 seconds.
+      Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:2     state:D stack:25272 pid:2932  tgid:2932  ppid:2      flags:0x00004000
+Workqueue: events request_firmware_work_func
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ regdb_fw_cb+0x82/0x1c0 net/wireless/reg.c:1017
+ request_firmware_work_func+0x1a4/0x280 drivers/base/firmware_loader/main.c:1167
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
+ worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task dhcpcd:4760 blocked for more than 146 seconds.
+      Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:dhcpcd          state:D stack:20384 pid:4760  tgid:4760  ppid:4759   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ rtnl_lock net/core/rtnetlink.c:79 [inline]
+ rtnetlink_rcv_msg+0x842/0x1180 net/core/rtnetlink.c:6632
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2564
+ netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
+ netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1361
+ netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1905
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
+ ___sys_sendmsg net/socket.c:2639 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbaa016fa4b
+RSP: 002b:00007ffecf670818 EFLAGS: 00000246
+ ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fbaa00976c0 RCX: 00007fbaa016fa4b
+RDX: 0000000000000000 RSI: 00007ffecf6849c8 RDI: 0000000000000010
+RBP: 0000000000000010 R08: 0000000000000000 R09: 00007ffecf6849c8
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 00007ffecf6849c8 R14: 0000000000000030 R15: 0000000000000001
+ </TASK>
+INFO: task kworker/1:4:5146 blocked for more than 147 seconds.
+      Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:4     state:D
+ stack:24872 pid:5146  tgid:5146  ppid:2      flags:0x00004000
+Workqueue: events linkwatch_event
+
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ linkwatch_event+0xe/0x60 net/core/link_watch.c:276
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
+ worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task udevd:5147 blocked for more than 148 seconds.
+      Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:udevd           state:D
+ stack:24864 pid:5147  tgid:5147  ppid:4546   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ device_lock include/linux/device.h:1009 [inline]
+ uevent_show+0x17d/0x340 drivers/base/core.c:2743
+ dev_attr_show+0x55/0xc0 drivers/base/core.c:2437
+ sysfs_kf_seq_show+0x331/0x4c0 fs/sysfs/file.c:59
+ seq_read_iter+0x445/0xd60 fs/seq_file.c:230
+ new_sync_read fs/read_write.c:395 [inline]
+ vfs_read+0x9bd/0xbc0 fs/read_write.c:476
+ ksys_read+0x1a0/0x2c0 fs/read_write.c:619
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8f25168b6a
+RSP: 002b:00007ffcd09cdd58 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 0000557c6193d2c0 RCX: 00007f8f25168b6a
+RDX: 0000000000001000 RSI: 0000557c6192d930 RDI: 0000000000000008
+RBP: 0000557c6193d2c0 R08: 0000000000000008 R09: 0000000000000008
+R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000003fff R14: 00007ffcd09ce238 R15: 000000000000000a
+ </TASK>
+INFO: task kworker/1:6:5153 blocked for more than 148 seconds.
+      Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:6     state:D stack:20976 pid:5153  tgid:5153  ppid:2      flags:0x00004000
+Workqueue: events switchdev_deferred_process_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ switchdev_deferred_process_work+0xe/0x20 net/switchdev/switchdev.c:104
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
+ worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+INFO: task syz.3.10:5176 blocked for more than 149 seconds.
+      Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.3.10        state:D
+ stack:23776 pid:5176  tgid:5175  ppid:5109   flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_timeout+0xb0/0x310 kernel/time/timer.c:2557
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common kernel/sched/completion.c:116 [inline]
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
+ __flush_work+0xaa9/0xd00 kernel/workqueue.c:4227
+ __lru_add_drain_all+0x4f6/0x560 mm/swap.c:902
+ madvise_collapse+0x24b/0xcf0 mm/khugepaged.c:2712
+ madvise_vma_behavior mm/madvise.c:1094 [inline]
+ madvise_walk_vmas mm/madvise.c:1268 [inline]
+ do_madvise+0xc5f/0x4590 mm/madvise.c:1464
+ __do_sys_madvise mm/madvise.c:1481 [inline]
+ __se_sys_madvise mm/madvise.c:1479 [inline]
+ __x64_sys_madvise+0xa6/0xc0 mm/madvise.c:1479
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd40bb75bd9
+RSP: 002b:00007fd40c8d1048 EFLAGS: 00000246
+ ORIG_RAX: 000000000000001c
+RAX: ffffffffffffffda RBX: 00007fd40bd03f60 RCX: 00007fd40bb75bd9
+RDX: 0000000000000019 RSI: 0000000000600003 RDI: 0000000020000000
+RBP: 00007fd40bbe4aa1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fd40bd03f60 R15: 00007fd40be2fa68
+ </TASK>
+INFO: task syz-executor:5178 blocked for more than 150 seconds.
+      Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:25840 pid:5178  tgid:5178  ppid:1      flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
+ ip_tunnel_init_net+0x20e/0x710 net/ipv4/ip_tunnel.c:1159
+ ops_init+0x359/0x610 net/core/net_namespace.c:139
+ setup_net+0x515/0xca0 net/core/net_namespace.c:343
+ copy_net_ns+0x4e2/0x7b0 net/core/net_namespace.c:508
+ create_new_namespaces+0x425/0x7b0 kernel/nsproxy.c:110
+ unshare_nsproxy_namespaces+0x124/0x180 kernel/nsproxy.c:228
+ ksys_unshare+0x619/0xc10 kernel/fork.c:3323
+ __do_sys_unshare kernel/fork.c:3394 [inline]
+ __se_sys_unshare kernel/fork.c:3392 [inline]
+ __x64_sys_unshare+0x38/0x40 kernel/fork.c:3392
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb0b9177337
+RSP: 002b:00007fb0b942ffa8 EFLAGS: 00000206 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00007fb0b91e4be6 RCX: 00007fb0b9177337
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040000000
+RBP: 0000000000000000 R08: 00007fb0b9e37d60 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 000000000000000c
+R13: 0000000000000003 R14: 0000000000000009 R15: 0000000000000009
+ </TASK>
+INFO: task syz.0.11:5180 blocked for more than 151 seconds.
+      Not tainted 6.10.0-rc6-syzkaller-00223-gc6653f49e4fd #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.11        state:D stack:24912 pid:5180  tgid:5180  ppid:5111   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5408 [inline]
+ __schedule+0x17e8/0x4a20 kernel/sched/core.c:6745
+ __schedule_loop kernel/sched/core.c:6822 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6837
+ schedule_timeout+0xb0/0x310 kernel/time/timer.c:2557
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common kernel/sched/completion.c:116 [inline]
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
+ __synchronize_srcu+0x357/0x400 kernel/rcu/srcutree.c:1396
+ nbd_clear_que drivers/block/nbd.c:960 [inline]
+ nbd_clear_sock drivers/block/nbd.c:1335 [inline]
+ nbd_config_put+0x3d2/0x7e0 drivers/block/nbd.c:1358
+ nbd_release+0x10b/0x130 drivers/block/nbd.c:1653
+ bdev_release+0x5e3/0x700
+ blkdev_release+0x15/0x20 block/fops.c:623
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xa27/0x27e0 kernel/exit.c:876
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1025
+ get_signal+0x16a1/0x1740 kernel/signal.c:2909
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x360 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f492bfa7bc5
+RSP: 002b:00007f492c22fae0 EFLAGS: 00000293 ORIG_RAX: 00000000000000e6
+RAX: 0000000000000000 RBX: 00007f492c103f60 RCX: 00007f492bfa7bc5
+RDX: 00007f492c22fb20 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 00007f492c105a60 R08: 0000000000000000 R09: 7fffffffffffffff
+R10: 0000000000000000 R11: 0000000000000293 R12: 000000000001769b
+R13: 000000000000015e R14: 00007f492c105a60 R15: 00007f492c22fc30
+ </TASK>
+Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings
+
+Showing all locks held in the system:
+2 locks held by kworker/0:1/9:
+5 locks held by kworker/u8:0/11:
+ #0: ffff8880b953e798 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
+ #1: 
+ffff8880b9528948
+ (
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
