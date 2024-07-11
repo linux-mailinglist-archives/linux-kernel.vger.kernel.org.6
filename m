@@ -1,80 +1,68 @@
-Return-Path: <linux-kernel+bounces-249565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B55E92ED55
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:59:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B000792ED58
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFB7E28A092
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:59:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59A0E1F236A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F94816DC0E;
-	Thu, 11 Jul 2024 16:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8AA16DC3B;
+	Thu, 11 Jul 2024 16:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZmAY+1R6"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YutO4poH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E54E16D9B7;
-	Thu, 11 Jul 2024 16:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B666616D9C5;
+	Thu, 11 Jul 2024 16:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720717150; cv=none; b=gg1aaZSHtIH3Qign5h6vCjZVePgI+NRh7jvwNqRBJZzANnHa8F3dEaAaASQjD6nTfZqVGtLdFVZPm/SjkR+uV79kJxgdyFrdl+d5NGPbmT5rBRxGtkhB41dIpnotJy5idRBaUhKtV8/acHoO98qFzwQI0Yc2bwikcX776TNT5zM=
+	t=1720717164; cv=none; b=I7Aa60+8xpCAGyrhFzQhdVuLTGIK4U6gUD8AZNZCFtlOZvijb9qYI79J0URf40iRUzNQ/l0lU4FPckd0tSfY/yfK035oL3f8VjPx28atHRuwBZftoBPZU+ZsOV0WuCY0snQkenntNjlAQj4MbfjyyOqRhNof429C5SV6vuNOSPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720717150; c=relaxed/simple;
-	bh=plctfo8iBnoMFnzoXeE+bB0UeZTZ+PUS5nvRSchqkiM=;
+	s=arc-20240116; t=1720717164; c=relaxed/simple;
+	bh=Z8VGan5F8QzSJ03qkchy06gXKvp+W67s71nEoYeZ9M4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gNkxGINloOaNrZ9a0ZRa5J54G8PfuFQcn3D0crjfreXtt8ArfNYdqQgMUNKGkqGN1bJb/Lx26tNHs2SB0AvCtjROcoYDAaPtm2aDWR3zPBd7fFVrpKgvWQpeME6yiTISdYEyzy0kdOIFp2oEoMaffG7W/7Y7iA17krHMEBmKvcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZmAY+1R6; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-25e04a7d9f1so553501fac.2;
-        Thu, 11 Jul 2024 09:59:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720717148; x=1721321948; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tMUjnCsE/tLYkkpuhi+oCrSbeNv52wydATmzobtPUpc=;
-        b=ZmAY+1R6Vu5tK6e5PALuS4ZWC6bJ8PcXR8lv716xASyk3gui3j2AWxU8iNyLIgZoxz
-         FMOL90dPoxIsqyKK9Ne8H6bIdiScXvrHdcBnKmu9VDBuX3ixiglXO4k3lEbsJWy51MYw
-         Yu8gVVm5lc4o2evQqNRPmVDB9jzKtVtg/sanpeKQAl9LqXkbCIVH5mrVXsmfPyXWvTtm
-         Ib8ApYwqwMPhRQjvb95KrZquTW8vr1yUwl4xnTdwIsAD2Q/RZcEGBJPBUJTj4V0Ag+V6
-         joHzcXU87zSIM00l7ECUHJjrrSNFXE85GCJoER434D+LRcL8OCxV5qbER0IIT37H6R1Q
-         MSOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720717148; x=1721321948;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tMUjnCsE/tLYkkpuhi+oCrSbeNv52wydATmzobtPUpc=;
-        b=OiHzkq2GR73qv2pXe3gLSmxtkPid+V/o+oMEHWjJcvhGwX1xu9FVdHY6H2G6UHD3ml
-         O0jMBearGW+KCypRuwLK52E6QvG9MsLDctiGrIB14xppiuagIR5l+FgzueClVPyDJYPX
-         AXuDhRJOVJaD4aBc0Cul79vNevDW5GzEU0ZRnc0sC3IrNAD92UreqbOrZNb5pjeJ6tSZ
-         V+rgh+MmImT/BdIhFB/z2hhC6Yqd5X+mLOA8DlqMJtLD2hWhcmetWwNHe6yMfthmxYVG
-         tGGumZJo/2SuIMYhIKhYXlMDJn+92X3E4+sQ+ViZySRDOPcm8mmJWbLMHizx0McU7q/X
-         reCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhIdH3s5k3JcAV0ru/HR25VXHm45RnBO6hmrstuM0QiY9QM9lSMIGmgekPiGWlSdDOOqhPU66fvq0/kVW3UpkWoMec+rFlv8bELIHl0us9W+bnCV8H1i6dK5yHvi/uQRFP06kpgc8fSuKGaHY587Oi+zMyiImvOGdRQ1WLwJ6GQ8Kwdjod
-X-Gm-Message-State: AOJu0YwYajHzHSZM04dvH+UBhgWCocjaBhARy028aJIuDYqtj8rgjUhw
-	p9VbMChb78gxBQKcKxrvWySHA5DEZTjSR7NAb4YV8DUbbn34gIlV
-X-Google-Smtp-Source: AGHT+IEjaMG9H1N1y+h9qn6EUn1w1/YsbxFFT3hasiLz6/tiRRa4X70zyMuz0K2gFlmvSOXNLmyo5A==
-X-Received: by 2002:a05:6870:a353:b0:25e:2923:a373 with SMTP id 586e51a60fabf-25eae7a3377mr7231416fac.15.1720717148465;
-        Thu, 11 Jul 2024 09:59:08 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:4761:5ea8:2da4:8299])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b438c0996sm5925705b3a.60.2024.07.11.09.59.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 09:59:08 -0700 (PDT)
-Date: Thu, 11 Jul 2024 09:59:05 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH v3 0/2] Input: exc3000 - EXC81W32 controller support
-Message-ID: <ZpAPWdv9oTS6ouzP@google.com>
-References: <20240710-input-exc3000-exc81w32-v3-0-4272183628b4@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ut0iWTdifiekBQvBFWIKnYxtW/xGPeUo+v2X0e5bieqSE61tyjXNIq2DJFo+s7wErYAo8qqHn0kd9qc3jd5Ik09nNhpp5/j57WGkq8r6js2rSTDx7FdtuHEQ5CJJITmLYmAgdt66q2pdZ+LAGgzZdRT46Lzxetgt7iNsNyhjVm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YutO4poH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 844D9C116B1;
+	Thu, 11 Jul 2024 16:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720717164;
+	bh=Z8VGan5F8QzSJ03qkchy06gXKvp+W67s71nEoYeZ9M4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YutO4poH5OebnHWJZBkw/SUknN7eI1qeO6iPc9Gmw58ywvIIwUTkoWfAmZ0ySW62L
+	 s1eDnKyKkgDZL0X13FwMgvDmocGiPq9lCL3xWZnr+W7GOJv+00kcMVvXrUygfwmB9h
+	 UQpWMm1wb7DDVOH5CEz65KvebDbyiA3Z5hR3EeZdHQ1eiP9aOhoPzhK65NHMCrEdvw
+	 BysbBNZHQjw5i4BUowRrjSuO8shgvatgFPlpb2xeYBMHjpYI3oNdmBgY5dVSOEtvUI
+	 IMdkZwblsgXtn8zrIiBM6WaoFMIz9EsT8YZD3ED28uXH188OnajJQT0TbPI8RXD2Nx
+	 52SWJjj9nszSg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sRx8c-000000005Xb-1zFe;
+	Thu, 11 Jul 2024 18:59:22 +0200
+Date: Thu, 11 Jul 2024 18:59:22 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe
+Message-ID: <ZpAPaker8mulvKCj@hovoldconsulting.com>
+References: <20240711090250.20827-1-johan+linaro@kernel.org>
+ <f7e74a6f-0548-4caa-a8fc-8180c619c9aa@linaro.org>
+ <Zo-ssBBDbHRLtAwG@hovoldconsulting.com>
+ <Zo_zu-RmbZyKijVQ@hovoldconsulting.com>
+ <20240711161947.GA4434@thinkpad>
+ <20240711164153.GA4992@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,18 +71,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710-input-exc3000-exc81w32-v3-0-4272183628b4@pengutronix.de>
+In-Reply-To: <20240711164153.GA4992@thinkpad>
 
-On Wed, Jul 10, 2024 at 12:28:30PM +0200, Philipp Zabel wrote:
-> EXC81W32 controllers use the same protocol and have the same resolution
-> as the EXC80 controllers. They can be supported by the exc3000 driver
-> with minimal changes.
-> 
-> Their featureset may differ, though. Looking at the messages, it appears
-> the EXC81 also supports touch pressure or area measurement, for example.
+On Thu, Jul 11, 2024 at 10:11:53PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Jul 11, 2024 at 09:49:52PM +0530, Manivannan Sadhasivam wrote:
+> > On Thu, Jul 11, 2024 at 05:01:15PM +0200, Johan Hovold wrote:
 
-Applied the series, thank you.
+> > > > Also note that the errors happen also without this patch applied, they
+> > > > are just being reported now.
 
--- 
-Dmitry
+> > > Perhaps something is off because we're running the link at half width?
+> > 
+> > My hunch is the PHY settings. But Abel cross checked the PHY settings with
+> > internal documentation and they seem to match. Also, Qcom submitted a series
+> > that is supposed to fix stability issues with Gen4 [1]. With this series, Gen 4
+> > x4 setup is working on SA8775P-RIDE board as reported by Qcom. But Abel
+> > confirmed that it didn't help him with the link downgrade issue.
+> > 
+> > Perhaps you can give it a try and see if it makes any difference for
+> > this issue?
+
+If there are known issues with running at Gen4 speed without that
+series, then it seems quite likely that doing so anyway could also cause
+correctable errors.
+
+Unfortunately, I get a hypervisor reset when I tried booting with that
+series so there appears to be some implicit dependency on something
+else (e.g. the 4l stuff).
+
+> One thing I confirmed is, we definitely need different PHY sequence for using
+> 2L. The current PHY settings are for 4L, so limiting the lane count from the
+> controller is going to be problematic. And AER errors might be due to that as
+> well.
+
+Another good point. But we currently use the
+"qcom,x1e80100-qmp-gen4x2-pcie-phy" settings. Shouldn't those be for x2,
+and then Abel has another series that adds the x4 settings? Or are you
+saying that the currently merged "gen4x2" settings are really for 4l?
+
+Johan
 
