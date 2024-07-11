@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-248663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9D692E056
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:53:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583D492E061
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AFB428304B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB5B1F222A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 06:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622EA12E1FF;
-	Thu, 11 Jul 2024 06:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758E012DD9B;
+	Thu, 11 Jul 2024 06:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fvYtZloq"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HXx3rhj9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D6B12D752;
-	Thu, 11 Jul 2024 06:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B29712C54A;
+	Thu, 11 Jul 2024 06:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720680781; cv=none; b=qA66rXNJGenEJxLv/pwZBUiStEH38OMMomQlrzG2OuDU1QrRA2r2pZhFPdBTISK4LPFZwEI34PQPLuHgutCr0BkTBWPo+Db87ThZcRzyYeE9VApP8cUvcWJ0/w/g3O9Dg4fZ3DBmyY3qSwM9uf4FrCCn0hYh0NLH/NyVKWB8fGQ=
+	t=1720680997; cv=none; b=Lkm0qJ8QGaweLx+2YOxsnUKUF61sR02miQEEOmzhBnkPaItjBu6mJ4mcPzuJJbGAMldIv8zUwGj3K6ms3Yy031lejf8fu347Uj/cyQ8nwpOQ24JaXfCLPr+s5F2guGF05asUMXczr9f32zXYt5GtgTFXpmfMn+lvEPNJiep+FD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720680781; c=relaxed/simple;
-	bh=PSgWXlV9tZQ+QaMrzGIglX6scnKbFwJQ9iFd+WMyZ1g=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CyeQKnsB2YQXPeb9lV64i+WeeBO3DQPVw5VbcfVV/o5qP6rZu4D796rDB+MW8sFPcKRBU35Bdk8sKXesAjmx7laRP8UxLeVdRI//po20ZKtXLjNfqwrd/sd/PPx372ks4jy9t+rhJLog2ND1ojPMN0XyEh8dOwtoVsuOyuX+1a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fvYtZloq; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720680778;
-	bh=PSgWXlV9tZQ+QaMrzGIglX6scnKbFwJQ9iFd+WMyZ1g=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=fvYtZloqezaYbLA791HK6JPXGU46kph1GqG8MHVzEqqkHlNEOIfy4SwA9KDW1pZ0w
-	 d0XhrI0B7qpo8cBbo5yVSAJi+pEPrnDS1rI0AERLZH0kxnaeKQ1IA78+EewQYM/p4v
-	 uOsu/aOWR3TV7ayjeg4/KKYLpNkg1VChS4DZC4fZLIy7Wt75AiEMTJHYn9XrysDPBQ
-	 5HNpjZlJSD5hRDgtGikIt+qDYoAj2mKxVG6dyTewtNA7W1/MZuApiTu3OWgYg5RoFU
-	 rmDm6CzoWM694EfwTZ4LHEt/WUwdMm57ZIHurxSPJ1ZvaoHUR5ghO/3yhJWveNFd4N
-	 bUWc4tNmG8SuQ==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8FFEB3780627;
-	Thu, 11 Jul 2024 06:52:53 +0000 (UTC)
-Message-ID: <0b731ef9-3110-44d8-b768-ccbf7585a08d@collabora.com>
-Date: Thu, 11 Jul 2024 11:52:50 +0500
+	s=arc-20240116; t=1720680997; c=relaxed/simple;
+	bh=7PdI6dGb0scfg3lG1tvlmkvFOJyPIaXxnPjFo6A1gQA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mc416RFKabQKQUwFkZt1h9bzU8Y5C41fpWq/dKhqqiu+0Td4fjRFjP7vs45fiRRPXVNHz/A5EtnuV94myGe68bScIl0sPXBfERLNl3kvDXuSEt+r76gyDDNzI6EHRE18sQAKwYw+NLOiZNUkFSEVNBxknrI2D2rzLYeCd2jbPRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HXx3rhj9; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720680997; x=1752216997;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=7PdI6dGb0scfg3lG1tvlmkvFOJyPIaXxnPjFo6A1gQA=;
+  b=HXx3rhj9g2+ke0pA1yW1kOJb/2ePkn/M/qEPc0/ru3GLBV0nYEiXajA0
+   LNWksR6M97pIsDW0Hp4S65QTgvjNAl6esQcuo6hFOX3XZ0DmqAASe6Icl
+   rACU8nSKbSPmV/eMr9T8xJWG1WFtGmml1G/M+tw9m6dh+RbwR9NF79ktp
+   3GL3kanvbbgxzaXq6RLllvX0KU70lbRwkW9rjWvXSvf/tv9xFGKEbfsSE
+   bsW/0AjSX9y4qS3JHmXZt6XY3Hi4tLIYV6puXsosGxv6K/RDmVeKGqGhC
+   lPyzEEHZugD1LZK8NtnC+6Vxmajkl84XawbjWGcHR7AVADecdntHxkfgM
+   w==;
+X-CSE-ConnectionGUID: tfuBTGTVS0Wcnbh7uMO1gw==
+X-CSE-MsgGUID: X5tIQrPsQl+6YiQm7IddTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="18177119"
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="18177119"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 23:56:36 -0700
+X-CSE-ConnectionGUID: zc9BorrXTNSYgESHKXov3Q==
+X-CSE-MsgGUID: 7poP+vrFS9i8o6vwFQ1pRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="53401877"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 23:56:33 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  "Rafael J. Wysocki"
+ <rafael@kernel.org>,  Len Brown <lenb@kernel.org>,  Ho-Ren Chuang
+ <horen.chuang@linux.dev>,  Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+  linux-acpi@vger.kernel.org,  linux-kernel@vger.kernel.org,  kernel test
+ robot <lkp@intel.com>
+Subject: Re: [PATCH] ACPI: HMAT: Mark hmat_set_default_dram_perf() as __init
+In-Reply-To: <20240710-fix-modpost-warning-default_dram_nodes-v1-1-8961453cc82d@kernel.org>
+	(Nathan Chancellor's message of "Wed, 10 Jul 2024 09:29:57 -0700")
+References: <20240710-fix-modpost-warning-default_dram_nodes-v1-1-8961453cc82d@kernel.org>
+Date: Thu, 11 Jul 2024 14:54:42 +0800
+Message-ID: <87jzhsa05p.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH v2] selftests: x86: conform test to TAP format output
-To: Shuah Khan <skhan@linuxfoundation.org>,
- "Chang S. Bae" <chang.seok.bae@intel.com>,
- Binbin Wu <binbin.wu@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20240426101824.2894574-1-usama.anjum@collabora.com>
- <da0f535d-b970-4de5-9dfb-e2cbf62c816b@collabora.com>
- <890460a3-fd09-4f59-ab21-4f5b16256175@collabora.com>
- <f929b8c4-fb66-4724-b2ee-d012a5c20324@collabora.com>
- <0333bafc-295a-4fd8-8099-8fa8c6b0ae23@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <0333bafc-295a-4fd8-8099-8fa8c6b0ae23@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 
-On 7/10/24 9:16 PM, Shuah Khan wrote:
-> On 7/10/24 03:37, Muhammad Usama Anjum wrote:
->> This patch brings just readability implements by using kselftests wrappers
->> instead of manual pass/fail test cases counting. It has been on mailing
->> list from several months now. Please can someone ack or nack?
->>
-> 
-> Okay. I think I responded to your other patches that are adding TAP
-> to individual tests when kselftest wrapped does it for you based on
-> return values.
-The current test doesn't return any exit value (hence implicitly always 0
-is returned). The return value in addition to some other changes is getting
-fixed in this patch.
+Nathan Chancellor <nathan@kernel.org> writes:
 
-> 
-> The reason I don't want to take this patch is if you run the test
-> using the recommended method:
-> 
-> make -C tools/testing/selftests/vDSO/ run_tests you will get the
-> TAP output because lib.mk runtests framework takes care of this.
-This patch is required to correctly return the value so that runtests
-fraework can correctly mark the result of the test.
+> After commit 4dc70b711dbc ("memory tier: consolidate the initialization
+> of memory tiers"), there is a modpost warning when
+> hmat_set_default_dram_perf() is not inlined into its callsite, as it
+> appears that default_dram_nodes may be accessed after its memory has
+> been freed.
+>
+>   WARNING: modpost: vmlinux: section mismatch in reference: hmat_set_default_dram_perf+0x18 (section: .text) -> default_dram_nodes (section: .init.data)
+>
+> The single callsite, hmat_init(), is __init, so this warning is not a
+> problem in reality but it is easily solvable by marking
+> hmat_set_default_dram_perf() as __init, which should have been done when
+> this function was added in commit 3718c02dbd4c ("acpi, hmat: calculate
+> abstract distance with HMAT").
 
-> 
-> or
-> 
-> make kselftest TARGETS=vDSO will do the same.
-> 
-> Please don't send TAP conversions for individual runs. You will
-> start seeing duplicate TAP output which will make it unreadable.
-> 
-> Run the test using make -C or make kselftest TARGETS before
-> investing time to concert to TAP. I am not going to take TAP
-> conversions patches if make -C or make kselftest TARGETS
-> shows TAP.
-> 
-> thanks,
-> -- Shuah
-> 
+Good catch!  Thanks for your fix!  If it's necessary, feel free to add
 
--- 
-BR,
-Muhammad Usama Anjum
+Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406292310.hlRATeZJ-lkp@intel.com/
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
+> I left off a fixes tag as I assume this is going to be squashed into the
+> former change mentioned above, as it is still in mm-unstable, but feel
+> free to add one if the patch is going to be standalone.
+> ---
+>  drivers/acpi/numa/hmat.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+> index a2f9e7a4b479..ca0c0ea3e1ef 100644
+> --- a/drivers/acpi/numa/hmat.c
+> +++ b/drivers/acpi/numa/hmat.c
+> @@ -933,7 +933,7 @@ static int hmat_callback(struct notifier_block *self,
+>  	return NOTIFY_OK;
+>  }
+>  
+> -static int hmat_set_default_dram_perf(void)
+> +static __init int hmat_set_default_dram_perf(void)
+>  {
+>  	int rc;
+>  	int nid, pxm;
+>
+> ---
+> base-commit: 17bcc624e67da6383060ee24483db77aa17276aa
+> change-id: 20240710-fix-modpost-warning-default_dram_nodes-38b6faffe3da
+>
+> Best regards,
+
+--
+Best Regards,
+Huang, Ying
 
