@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-249902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD2592F161
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:56:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0525A92F165
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 678921F22AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:56:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50B51F22820
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7CA1A00E1;
-	Thu, 11 Jul 2024 21:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC401A00EC;
+	Thu, 11 Jul 2024 21:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SK4D7d3e"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H9ZCsvSi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894E819F485
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E2D16D9CA
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720734989; cv=none; b=FL94udwnQhQiwt8ekNDbnxZ/2VkRp1bd2kZRwkr2UejqnOWN1SLZC2tmcW0kIt57+dW+uvx8cpW7E+RHU+V5RaZpDBALWmj1fDyblwfkFd+4bE9wlKeJfmYhrSsc7ST1CAxJNixSv7s7mwF+39EH1NML42C3z1nBRVj/Vt1ifHU=
+	t=1720735041; cv=none; b=FnvR7t1wvZecjNVq1rydGFvqm2W+QpfCouwFh1ywlsJSp9ol2jn1l2Xb10XaqMZWajxcD0b5qqJ0uPkPmFqZSQAnt3TZtOXOeDXDg23PpMpnXAqCQzENha6JxsWoHCECw1GPf2ySr58bMV6wFaUjV4oxM8UGGT49nD0CWjEk4lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720734989; c=relaxed/simple;
-	bh=DIDgvcgmFmPsPPavJiQ1Vv4Swv8vnjxFF2oxXNf0ab4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NXflbUppfmqv3GSIdsAlHpS02cnjVSLs4a9fwzu4y4vQs5Ta/4Sr0EhfVATmwmCJvbZgFZV8LFTSlRyuIctMkEHCeT9BRYjAktTWJLjC+pDSi9ebM38mpwslURhJvkmpi7jf3gQ538YywCEqbIj2Xl4G5w1999cdPH/+C1wKYd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SK4D7d3e; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-8045e14c32bso3805739f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:56:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720734987; x=1721339787; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4ZqXMd/BZwDssF01cs3NfdsNolBEcWg7FCtmoecpdP8=;
-        b=SK4D7d3eZw7wdrfdMv0iOtYTZv92TcLEn3eCTAmytFkyskFblR5zGbR3NR5uaBX3wB
-         J8zI/9mtB/NB0USE1goNiQ6pJ1NeOAL9CvRpdVDiIVuoDWp0+GeAqtBw8T6IjZLxEobb
-         kPkxRG/6ZatpDOcplo8welqidv/QDzTfqwpMg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720734987; x=1721339787;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ZqXMd/BZwDssF01cs3NfdsNolBEcWg7FCtmoecpdP8=;
-        b=JmP1j0h+yAowjeUUAw0FIxGn2NUJwR8s0fgjAF2v1iVnqZj1Bd4TuEMI/VIJvdbb8u
-         AtfBWEbp0EtbnXi9xfQB8/pAukwH2ZCmm4aplr3JYd1cLk7ibQAEWufvS5R5CfyQGg/j
-         LPPNSebn+3bmskHEAaTlGJWAvW8rsT/Spe87NXtek6ir3xXb1zPzn+aojhE5KgTNGwlE
-         uRvfZvTqVSLIbvvp0z1L6G3t2U/N2f7tr6Mj2AvjldkEiP1el8GI8jtkjSvvjS5AzKoB
-         WpNeoGXR3f0Pa6iSjz/xCJxDWFhEvpFswdrahKBMSOlObSwI5FlNE8yGuultzi5QLyQA
-         Aqbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUy8Q6jkJGb2BHMWhCQvjiRjqK2xpAehNuVj5+nXmeSv+RVwKjAX30VNyKPXxsqOGaFfME7hzX1bRKhjKlNzOjrrzso+KSjKaFYxfQb
-X-Gm-Message-State: AOJu0YxIY81WUodEG0ds2BclAWa8XUOkT/okLGou+LijtYgAOcJ3QIwp
-	Nf/1YsWv8TyOTY9vB3GwJ7nFmHBYPtX7qgsyDNQ+DDt9OYh6z+pWnZE4esO9QqQ=
-X-Google-Smtp-Source: AGHT+IHJnvscnRKpA9/toeFRLI32Ul1ZlooCIKoES2PiuCfMQuLDYC5WuBwbOW5FjsA9va7SWmRfSw==
-X-Received: by 2002:a6b:6614:0:b0:7eb:2c45:4688 with SMTP id ca18e2360f4ac-806e21af79cmr362061739f.2.1720734986623;
-        Thu, 11 Jul 2024 14:56:26 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1c29d7asm2053421173.162.2024.07.11.14.56.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 14:56:26 -0700 (PDT)
-Message-ID: <e73c745a-5e2f-46f3-806a-739cfde72e8d@linuxfoundation.org>
-Date: Thu, 11 Jul 2024 15:56:25 -0600
+	s=arc-20240116; t=1720735041; c=relaxed/simple;
+	bh=fI6yQPBGaJd6Dt0pOr97WwmWU63uK/Ow13/IyMF6wwk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=R64eB6VNBKGbok2LOMxt1eHsGxFrCJNaVD3sR8ltnDtAc2punNJLHanRPB++dYMqM2WR/20ErKVaiFA3iXig0NY75ZLJi8o7cxv2Em0JAXnVBat+xmKUSCNpGcGevBcZk4b7usYveYM91MZ4iHOvR+eaheeht2HGDgyzaaH+yyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H9ZCsvSi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720735038;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZESGIe+T4x/4v/aHPLwag6NIYST3OqGfVKCQ2tuMUgM=;
+	b=H9ZCsvSiG0AQTuNSkbFdA8U/CB6au+kPN6iPJ0fiKUz5fyWRnlb0qzDBg5DFVX2JCj1xRv
+	PmQQ0jY2NkP+0hI3SMEqwZLYkUxtFF0mzT2PVlXT4KjGuxRCzetPsMqa1cqfNZEPdyA/9v
+	ojZfQWS0IykWBW34oBdLZYywm+Fca90=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-388-9kXdp_WGN7qgzxNQfFEdvA-1; Thu,
+ 11 Jul 2024 17:57:15 -0400
+X-MC-Unique: 9kXdp_WGN7qgzxNQfFEdvA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6D82F19560B1;
+	Thu, 11 Jul 2024 21:57:13 +0000 (UTC)
+Received: from [10.22.64.119] (unknown [10.22.64.119])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C303919560AA;
+	Thu, 11 Jul 2024 21:57:11 +0000 (UTC)
+Message-ID: <7a2e9bd2-a0fd-4429-b22f-6a246ceb6155@redhat.com>
+Date: Thu, 11 Jul 2024 17:57:10 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,115 +64,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] kselftest: Add test to report device log errors
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Shuah Khan <shuah@kernel.org>, kernel@collabora.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernelci@lists.linux.dev, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240705-dev-err-log-selftest-v2-0-163b9cd7b3c1@collabora.com>
- <2024071003-islamist-expediter-a22c@gregkh>
- <71c479fb-cd25-45ec-8dd3-0521ef951f58@linuxfoundation.org>
- <e1e32c72-6bd3-4c15-b301-c5670690ba99@linuxfoundation.org>
- <1417b57a-ac0b-4e8c-b157-bbe9ebb14e57@notapiano>
+Subject: Re: [PATCH v3 1/2] cgroup: Show # of subsystem CSSes in cgroup.stat
+From: Waiman Long <longman@redhat.com>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>
+References: <20240710182353.2312025-1-longman@redhat.com>
+ <20240711134927.GB456706@cmpxchg.org>
+ <4e1078d6-6970-4eea-8f73-56a3815794b5@redhat.com>
+ <ZpAT_xu0oXjQsKM7@slm.duckdns.org>
+ <76e70789-986a-44c2-bfdc-d636f425e5ae@redhat.com>
+ <ZpAoD7_o8bf6yVGr@slm.duckdns.org>
+ <e5348a85-22eb-48a6-876d-3180de5c7171@redhat.com>
+ <ZpArhD49OonR6Oz6@slm.duckdns.org>
+ <c54651db-1a06-49f6-aea7-02768ad70756@redhat.com>
+ <20240711195946.GA1094169@cmpxchg.org>
+ <e42f41af-e8a9-4544-9194-003d6b0f0ba8@redhat.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <1417b57a-ac0b-4e8c-b157-bbe9ebb14e57@notapiano>
+In-Reply-To: <e42f41af-e8a9-4544-9194-003d6b0f0ba8@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 7/11/24 15:44, Nícolas F. R. A. Prado wrote:
-> On Thu, Jul 11, 2024 at 01:53:37PM -0600, Shuah Khan wrote:
->> On 7/10/24 15:49, Shuah Khan wrote:
->>> On 7/10/24 07:11, Greg Kroah-Hartman wrote:
->>>> On Fri, Jul 05, 2024 at 07:29:53PM -0400, Nícolas F. R. A. Prado wrote:
->>>>> Log errors are the most widely used mechanism for reporting issues in
->>>>> the kernel. When an error is logged using the device helpers, eg
->>>>> dev_err(), it gets metadata attached that identifies the subsystem and
->>>>> device where the message is coming from. This series makes use of that
->>>>> metadata in a new test to report which devices logged errors.
->>>>>
->>>>> The first two patches move a test and a helper script to keep things
->>>>> organized before this new test is added in the third patch.
->>>>>
->>>>> It is expected that there might be many false-positive error messages
->>>>> throughout the drivers code which will be reported by this test. By
->>>>> having this test in the first place and working through the results we
->>>>> can address those occurrences by adjusting the loglevel of the messages
->>>>> that turn out to not be real errors that require the user's attention.
->>>>> It will also motivate additional error messages to be introduced in the
->>>>> code to detect real errors where they turn out to be missing, since
->>>>> it will be possible to detect said issues automatically.
->>>>>
->>>>> As an example, below you can see the test result for
->>>>> mt8192-asurada-spherion. The single standing issue has been investigated
->>>>> and will be addressed in an EC firmware update [1]:
->>>>>
->>>>> TAP version 13
->>>>> 1..1
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `model_name' property: -6
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `energy_full_design' property: -6
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>>    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>> not ok 1 +power_supply:sbs-8-000b
->>>>>    Totals: pass:0 fail:1 xfail:0 xpass:0 skip:0 error:0
->>>>>
->>>>> [1] https://lore.kernel.org/all/cf4d8131-4b63-4c7a-9f27-5a0847c656c4@notapiano
->>>>>
->>>>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>>>
->>>> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>
->>> Is this dependent on a linux-next?
->>>
->>> Didn't apply to linux-kselftest next.
->>>
+On 7/11/24 17:00, Waiman Long wrote:
+> On 7/11/24 15:59, Johannes Weiner wrote:
+>> On Thu, Jul 11, 2024 at 03:13:12PM -0400, Waiman Long wrote:
+>>> On 7/11/24 14:59, Tejun Heo wrote:
+>>>> On Thu, Jul 11, 2024 at 02:51:38PM -0400, Waiman Long wrote:
+>>>>> On 7/11/24 14:44, Tejun Heo wrote:
+>>>>>> Hello,
+>>>>>>
+>>>>>> On Thu, Jul 11, 2024 at 01:39:38PM -0400, Waiman Long wrote:
+>>>>>>> On 7/11/24 13:18, Tejun Heo wrote:
+>>>>>> ...
+>>>>>>> Currently, I use the for_each_css() macro for iteration. If you 
+>>>>>>> mean
+>>>>>>> displaying all the possible cgroup subsystems even if they are 
+>>>>>>> not enabled
+>>>>>>> for the current cgroup, I will have to manually do the iteration.
+>>>>>> Just wrapping it with for_each_subsys() should do, no? 
+>>>>>> for_each_css() won't
+>>>>>> iterate anything if css doesn't exist for the cgroup.
+>>>>> OK, I wasn't sure if you were asking to list all the possible 
+>>>>> cgroup v2
+>>>>> cgroup subsystems even if they weren't enabled in the current cgroup.
+>>>>> Apparently, that is the case. I prefer it that way too.
+>>>> Yeah, I think listing all is better. If the list corresponded 
+>>>> directly to
+>>>> cgroup.controllers, it may make sense to only show enabled ones but 
+>>>> we can
+>>>> have dying ones and implicitly enabled memory and so on, so I think 
+>>>> it'd be
+>>>> cleaner to just list them all.
+>>> That will means cgroup subsystems that are seldomly used like rdma, 
+>>> misc
+>>> or even hugetlb will always be shown in all the cgroup.stat output. I
+>>> actually prefer just showing those that are enabled. As for dying 
+>>> memory
+>>> cgroups, they will only be shown in its online ancestors. We currently
+>>> don't know how many level down are each of the dying ones.
+>> It seems odd to me to not show dead ones after a cgroup has disabled
+>> the controller again. They still consume memory, after all, and so
+>> continue to be property of that cgroup afterwards.
 >>
->> I tried applying these on top of linux-kselftest next which is at
->> Linux 6.10-rc7 + other patches.
+>> Instead of doing for_each_css(), would it make more sense to have
 >>
->> I am not sure what is wrong - first patch applies and the second
->> and third don't.
->>
->> git am fails and manual patch application worked for 2/3, same thing
->> with 3.3 - these should apply cleanly since they don't have obvious
->> conflicts.
->>
->> Please clean this up and send me updated series adding Greg's ack.
-> 
-> Oh, now I see what happened. I recently sent another series that touches the
-> same file (tools/testing/selftests/devices/test_discoverable_devices.py):
-> "kselftest: devices: Allow running test on more platforms"
-> https://lore.kernel.org/all/20240613-kselftest-discoverable-probe-mt8195-kci-v1-1-7b396a9b032d@collabora.com/
-> 
-> That was already merged through the usb tree, and is present on next (on which I
-> based this series).
-> 
-> In this case I imagine it's best if this series gets picked through the usb
-> tree, right? Even if I rebase on kselftest's next, there will be conflicts.
-> 
+>>     struct cgroup {
+>>         ...
+>>         int nr_dying_subsys[CGROUP_SUBSYS_COUNT];
+>
+> What exactly does new this array for? Is this for copying out 
+> css->nr_dying_descendants before disabling a controller? The number 
+> may be out of date when it is used. I would think we should store the 
+> actual css and clearing it again once the css is ready to be freed.
+>
+> Anyway, I would suggest doing it as a separate add-on patch if we 
+> decide to do it instead of adding it to the current patch.
 
-I see. No problem. It can go through usb tree
+Alternatively, we could delay the clearing of cgroup->subsys[] entry 
+from offline time to until the css is ready to be freed. We do need to 
+add check about the CSS_ONLINE flag when we only want to deal with 
+online csses.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
+Cheers,
+Longman
 
 
