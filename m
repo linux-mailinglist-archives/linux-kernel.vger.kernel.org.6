@@ -1,191 +1,115 @@
-Return-Path: <linux-kernel+bounces-249546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748F192ED1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:52:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E6C92ED21
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 082301F22B3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 027151C21406
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBA916D9BB;
-	Thu, 11 Jul 2024 16:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DAE16D9AF;
+	Thu, 11 Jul 2024 16:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e6jgLrTt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="TmcQYI6l"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48663376E5;
-	Thu, 11 Jul 2024 16:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C8416D4F4;
+	Thu, 11 Jul 2024 16:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720716703; cv=none; b=fB3gPlKmE4ef5BSqNjA06gTnYaX7kaZtuJz4X3R+ZOn1WctczqlTa9hStjFTvQnVwCoPWcpWF66MCgL0Ufod/jzzt6sMOD8g0wo0lYXuL9nDHYRqVzOkyCp9wtuOpikGchiiyeb2uRLSgRhyghWKuM6RmkXj42BGniiYUvo0P4Y=
+	t=1720716881; cv=none; b=tvOgGcbM6kiL/D+/dluTFLXCQQSaLn3WQZcU3TCFvT3pqU6lDGVIDoHQE9L9K3BC6IrlPSa8C3aCTvqDCKBc/3XU+QwyP8qg5yLDW7QH1Gr7+VRpKsPhyVxne1oEAbY3LrquCagAXG9ZcCqJz1L4EFvf/cHlp8t603r7MMKGHXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720716703; c=relaxed/simple;
-	bh=kmGbtXEsMjJy/wpU2hA6AuW+oaSd10dmF9hCafZ07GI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mA90HvSnsn+MnFClJXV6JAEb2gUoDBuZiHZq2RJ7WbvFcmBrU4LxTP5FbfApaY0dZrt/apPf3RYh+AtJTFUJwRWk31LD5bDbBF0sqX9Ukk7D3vfBsedGUC+Fi5I6GnKHXRrnKcayQJzmVmw9VwmlHw9roOt5GwX0Oxq2Rs4AM6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e6jgLrTt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F39C116B1;
-	Thu, 11 Jul 2024 16:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720716702;
-	bh=kmGbtXEsMjJy/wpU2hA6AuW+oaSd10dmF9hCafZ07GI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e6jgLrTtoFWdwMS9eTSIt8y+gfMtPQ6WtVeTi1Jm5Rq6rJCBtKhgBiX0lwnGPSYjz
-	 POgkbYDJfaPdVrYeQQGmx4PJsSG4cOb1yCZtWnD3QLF1Tcu07O28a7iM3Ib8SCmAba
-	 JCIqali4EF+aY3T9oeQZMZXdXI0fMkjynqP+7mzVM5WSTUgZj6kIvgwZVpG0cgcp+W
-	 e8q6UrKbd27jWhCKkIc3AoSE6kxE8nUsGAsUBC1eSgA/xf4Xr5ZSYa6nPHeCw0XVqp
-	 qdkcXBQXKoXs8bxCODrFuPDRFEVzsL979JH7tQAhIa9HLRl39RllYBG+c3j0n63EdM
-	 pAgpLsnfPQNcQ==
-Date: Thu, 11 Jul 2024 09:51:42 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
-	kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-nfs@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 4/9] fs: have setattr_copy handle multigrain
- timestamps appropriately
-Message-ID: <20240711165142.GP612460@frogsfrogsfrogs>
-References: <20240711-mgtime-v5-0-37bb5b465feb@kernel.org>
- <20240711-mgtime-v5-4-37bb5b465feb@kernel.org>
+	s=arc-20240116; t=1720716881; c=relaxed/simple;
+	bh=AFmcG/KEvllGzTWGQ+DiPSWbg3J8mbUzRHD1iS4cnLs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EokYA3TOmcpQxxxorPI9Qv6u0hHxmuYxRia5g8wfWLeIMthTh2whvssn191HQxCW/wu9obmH256h2clIfD4oTHD6Ecl840sDz7SmOUqAy7N2vNC+h7jvk7/iDUiGkfQYXxMw13GlnxPGEDNYOXQRbYbjp1v70LSOMjj6yfY+w7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=TmcQYI6l; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1720716879; x=1752252879;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=AFmcG/KEvllGzTWGQ+DiPSWbg3J8mbUzRHD1iS4cnLs=;
+  b=TmcQYI6llWwxM96yjBctQbxFREFCpqOOb20BMRbvlfYZ0UEyiTjPiJKG
+   ory1r9dWZn/pLufOAz5EdZPFZfyEhyLNZKey5t4bgD/v/m6NsOWlH6fIV
+   UNclTbiEpl1U0cVuSV6ivUitqqKWQZcKUVUCCBU2Jwx/VSMuHPlNZTUB8
+   lO2SgxFIJ/G8z0qDkgWi6c+koPgVrf/FZW0N/XCIzwuBET5ql28o0Br4p
+   I5dFpvZsw4q5pxrGukJhaCESpehhXF4A4sLPDoZ+4WrkoTWnijCikTO1Q
+   vWrqXHj7vYDM1D9QQ54xXe812dEZHiyqIVYJ7JnAM2/gnelFkT9PfJGG1
+   Q==;
+X-CSE-ConnectionGUID: zM8v1C8oQ/SssnAxM3eiww==
+X-CSE-MsgGUID: hgIhfGcaQyqkhzbrf/VsWQ==
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="29772050"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Jul 2024 09:54:32 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 11 Jul 2024 09:54:01 -0700
+Received: from ROU-LL-M43238.amer.actel.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 11 Jul 2024 09:53:57 -0700
+From: <nicolas.ferre@microchip.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Rob Herring
+	<robh@kernel.org>, <devicetree@vger.kernel.org>
+CC: Tudor Ambarus <tudor.ambarus@linaro.org>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-spi@vger.kernel.org>, "Nicolas
+ Ferre" <nicolas.ferre@microchip.com>
+Subject: [PATCH] dt-bindings: spi: at91: Add sama7d65 compatible string
+Date: Thu, 11 Jul 2024 18:54:02 +0200
+Message-ID: <20240711165402.373634-1-nicolas.ferre@microchip.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711-mgtime-v5-4-37bb5b465feb@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Jul 11, 2024 at 07:08:08AM -0400, Jeff Layton wrote:
-> The setattr codepath is still using coarse-grained timestamps, even on
-> multigrain filesystems. To fix this, we need to fetch the timestamp for
-> ctime updates later, at the point where the assignment occurs in
-> setattr_copy.
-> 
-> On a multigrain inode, ignore the ia_ctime in the attrs, and always
-> update the ctime to the current clock value. Update the atime and mtime
-> with the same value (if needed) unless they are being set to other
-> specific values, a'la utimes().
-> 
-> Note that we don't want to do this universally however, as some
-> filesystems (e.g. most networked fs) want to do an explicit update
-> elsewhere before updating the local inode.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Makes sense to me,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Add compatible string for sama7d65. Like sam9x60 and sam9x7, it requires
+to bind to "atmel,at91rm9200-spi".
+Group these three under the same enum, sorted alphanumerically, and
+remove previously added item.
 
---D
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ .../devicetree/bindings/spi/atmel,at91rm9200-spi.yaml     | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> ---
->  fs/attr.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 46 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 825007d5cda4..e03ea6951864 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -271,6 +271,42 @@ int inode_newsize_ok(const struct inode *inode, loff_t offset)
->  }
->  EXPORT_SYMBOL(inode_newsize_ok);
->  
-> +/**
-> + * setattr_copy_mgtime - update timestamps for mgtime inodes
-> + * @inode: inode timestamps to be updated
-> + * @attr: attrs for the update
-> + *
-> + * With multigrain timestamps, we need to take more care to prevent races
-> + * when updating the ctime. Always update the ctime to the very latest
-> + * using the standard mechanism, and use that to populate the atime and
-> + * mtime appropriately (unless we're setting those to specific values).
-> + */
-> +static void setattr_copy_mgtime(struct inode *inode, const struct iattr *attr)
-> +{
-> +	unsigned int ia_valid = attr->ia_valid;
-> +	struct timespec64 now;
-> +
-> +	/*
-> +	 * If the ctime isn't being updated then nothing else should be
-> +	 * either.
-> +	 */
-> +	if (!(ia_valid & ATTR_CTIME)) {
-> +		WARN_ON_ONCE(ia_valid & (ATTR_ATIME|ATTR_MTIME));
-> +		return;
-> +	}
-> +
-> +	now = inode_set_ctime_current(inode);
-> +	if (ia_valid & ATTR_ATIME_SET)
-> +		inode_set_atime_to_ts(inode, attr->ia_atime);
-> +	else if (ia_valid & ATTR_ATIME)
-> +		inode_set_atime_to_ts(inode, now);
-> +
-> +	if (ia_valid & ATTR_MTIME_SET)
-> +		inode_set_mtime_to_ts(inode, attr->ia_mtime);
-> +	else if (ia_valid & ATTR_MTIME)
-> +		inode_set_mtime_to_ts(inode, now);
-> +}
-> +
->  /**
->   * setattr_copy - copy simple metadata updates into the generic inode
->   * @idmap:	idmap of the mount the inode was found from
-> @@ -303,12 +339,6 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
->  
->  	i_uid_update(idmap, attr, inode);
->  	i_gid_update(idmap, attr, inode);
-> -	if (ia_valid & ATTR_ATIME)
-> -		inode_set_atime_to_ts(inode, attr->ia_atime);
-> -	if (ia_valid & ATTR_MTIME)
-> -		inode_set_mtime_to_ts(inode, attr->ia_mtime);
-> -	if (ia_valid & ATTR_CTIME)
-> -		inode_set_ctime_to_ts(inode, attr->ia_ctime);
->  	if (ia_valid & ATTR_MODE) {
->  		umode_t mode = attr->ia_mode;
->  		if (!in_group_or_capable(idmap, inode,
-> @@ -316,6 +346,16 @@ void setattr_copy(struct mnt_idmap *idmap, struct inode *inode,
->  			mode &= ~S_ISGID;
->  		inode->i_mode = mode;
->  	}
-> +
-> +	if (is_mgtime(inode))
-> +		return setattr_copy_mgtime(inode, attr);
-> +
-> +	if (ia_valid & ATTR_ATIME)
-> +		inode_set_atime_to_ts(inode, attr->ia_atime);
-> +	if (ia_valid & ATTR_MTIME)
-> +		inode_set_mtime_to_ts(inode, attr->ia_mtime);
-> +	if (ia_valid & ATTR_CTIME)
-> +		inode_set_ctime_to_ts(inode, attr->ia_ctime);
->  }
->  EXPORT_SYMBOL(setattr_copy);
->  
-> 
-> -- 
-> 2.45.2
-> 
-> 
+diff --git a/Documentation/devicetree/bindings/spi/atmel,at91rm9200-spi.yaml b/Documentation/devicetree/bindings/spi/atmel,at91rm9200-spi.yaml
+index 32e7c14033c2..d29772994cf5 100644
+--- a/Documentation/devicetree/bindings/spi/atmel,at91rm9200-spi.yaml
++++ b/Documentation/devicetree/bindings/spi/atmel,at91rm9200-spi.yaml
+@@ -18,10 +18,10 @@ properties:
+     oneOf:
+       - const: atmel,at91rm9200-spi
+       - items:
+-          - const: microchip,sam9x60-spi
+-          - const: atmel,at91rm9200-spi
+-      - items:
+-          - const: microchip,sam9x7-spi
++          - enum:
++              - microchip,sam9x60-spi
++              - microchip,sam9x7-spi
++              - microchip,sama7d65-spi
+           - const: atmel,at91rm9200-spi
+ 
+   reg:
+-- 
+2.39.2
+
 
