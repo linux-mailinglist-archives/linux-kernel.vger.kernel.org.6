@@ -1,50 +1,59 @@
-Return-Path: <linux-kernel+bounces-248686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50C992E09F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:14:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E364692E097
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B87E1F22692
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:14:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991241F22047
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B51130487;
-	Thu, 11 Jul 2024 07:14:39 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6E313DDD1;
+	Thu, 11 Jul 2024 07:11:10 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACBD12FF71
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957F612FF88;
+	Thu, 11 Jul 2024 07:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720682078; cv=none; b=IzxTOMlxgyMv/n9hCUf4dlNDnbrOcBxO0cE88y97Jfa6OCt4ACyXABTNxtAwbIk0+5kw/uV1ILFjrfEiaMhIX67xta1PRCDbGeCe2c7oUg57/NCh6sE2XKhHmIQMbPcN93s1ENozxKQm8a3t1I74MczlspRFxKSczLiI522VGj4=
+	t=1720681869; cv=none; b=WzBs7gxVCIL8GiqC/fqJqyzWPY4q+3XZEfumu1JLA9YMEVdwK+5Sx1MZqlKOq+BPMwv+v8305K2lbbkl4ENirkCOJpFnzxkKS7Vi1Kf4C22ZmmKYDj3YLeBrj8xGBokgJZBf9DvqDjr5B5ocF/JKdb3GaBJPOoKsFRu/31gecDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720682078; c=relaxed/simple;
-	bh=umgp6A9ocfsCRENUP33QgEjljReB72E+CZe+xkKrGfY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TsI/bkmQOsC/gjwqZxb8zZpsZ5l2IVZre0YBb43UdLOzdij5ieT2lhXsz8NNNOqJ/JCb2tKwDdWlsnVTzxPcbJFz3GIVqn/VVrIBGNToGx3sbRSnIhN8wEVD57IAVcWzBZ2y52bZPeW2dd8HC6rMlbCo7gqj3LY6BAhkJA6M5HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WKQss6qrbz1xtVx;
-	Thu, 11 Jul 2024 15:12:49 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1D5E014010C;
-	Thu, 11 Jul 2024 15:14:26 +0800 (CST)
-Received: from huawei.com (10.173.127.72) by kwepemd200019.china.huawei.com
- (7.221.188.193) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Jul
- 2024 15:14:25 +0800
-From: Miaohe Lin <linmiaohe@huawei.com>
-To: <akpm@linux-foundation.org>, <muchun.song@linux.dev>
-CC: <linmiaohe@huawei.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm/hugetlb: fix possible recursive locking detected warning
-Date: Thu, 11 Jul 2024 15:10:01 +0800
-Message-ID: <20240711071001.3475337-1-linmiaohe@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1720681869; c=relaxed/simple;
+	bh=4W3vs38AT9kQ3vdhQynMgIJXMDLIST7oSVRkYD5cx9Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HZ2iPpZj5224D+O6Ul9Rvsb4L0/tcls9KakSa9JKQvui27lKMUiF6UO/5jStx3W6zt1qY/LU3JMR0umLgL5ItQl9TPuwFjKTJ9ooKdZsOE+7WVWXZAAZnFgIbCia++8AxJUsisbgX0qlMkoxG1j6NZ8eJeqnF7bBy7ZRcHkvsCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowACHjeVbhY9m9za0Ag--.57384S2;
+	Thu, 11 Jul 2024 15:10:29 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mykolal@fb.com,
+	shuah@kernel.org,
+	sowmini.varadhan@oracle.com
+Cc: bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH] selftests/bpf:fix a resource leak in main()
+Date: Thu, 11 Jul 2024 15:10:18 +0800
+Message-Id: <20240711071018.2197252-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,96 +61,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+X-CM-TRANSID:zQCowACHjeVbhY9m9za0Ag--.57384S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZw15AFyrWry8JF1Dtr47Jwb_yoWfKwcE93
+	yjqrn7GFs0vFn8Ar15Kw4rCrs5uw4rWrW7GrsIqFy3tw4DXrsxGF4v9rn8Aa4fWrZxurZF
+	yFykX34aka1jvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3AFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUOrcfUUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-When tries to demote 1G hugetlb folios, a lockdep warning is observed:
+The requested resources should be closed before return in main(), otherwise
+ resource leak will occur. Add a check of cg_fd before close().
 
-============================================
-WARNING: possible recursive locking detected
-6.10.0-rc6-00452-ga4d0275fa660-dirty #79 Not tainted
---------------------------------------------
-bash/710 is trying to acquire lock:
-ffffffff8f0a7850 (&h->resize_lock){+.+.}-{3:3}, at: demote_store+0x244/0x460
-
-but task is already holding lock:
-ffffffff8f0a6f48 (&h->resize_lock){+.+.}-{3:3}, at: demote_store+0xae/0x460
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&h->resize_lock);
-  lock(&h->resize_lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-4 locks held by bash/710:
- #0: ffff8f118439c3f0 (sb_writers#5){.+.+}-{0:0}, at: ksys_write+0x64/0xe0
- #1: ffff8f11893b9e88 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_fop_write_iter+0xf8/0x1d0
- #2: ffff8f1183dc4428 (kn->active#98){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x100/0x1d0
- #3: ffffffff8f0a6f48 (&h->resize_lock){+.+.}-{3:3}, at: demote_store+0xae/0x460
-
-stack backtrace:
-CPU: 3 PID: 710 Comm: bash Not tainted 6.10.0-rc6-00452-ga4d0275fa660-dirty #79
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x68/0xa0
- __lock_acquire+0x10f2/0x1ca0
- lock_acquire+0xbe/0x2d0
- __mutex_lock+0x6d/0x400
- demote_store+0x244/0x460
- kernfs_fop_write_iter+0x12c/0x1d0
- vfs_write+0x380/0x540
- ksys_write+0x64/0xe0
- do_syscall_64+0xb9/0x1d0
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa61db14887
-RSP: 002b:00007ffc56c48358 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007fa61db14887
-RDX: 0000000000000002 RSI: 000055a030050220 RDI: 0000000000000001
-RBP: 000055a030050220 R08: 00007fa61dbd1460 R09: 000000007fffffff
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 00007fa61dc1b780 R14: 00007fa61dc17600 R15: 00007fa61dc16a00
- </TASK>
-
-Lockdep considers this an AA deadlock because the different resize_lock
-mutexes reside in the same lockdep class, but this is a false positive.
-Place them in distinct classes to avoid these warnings.
-
-Fixes: 8531fc6f52f5 ("hugetlb: add hugetlb demote page support")
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+Fixes: 435f90a338ae ("selftests/bpf: add a test case for sock_ops perf-event notification")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- mm/hugetlb.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/testing/selftests/bpf/test_tcpnotify_user.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 45fd3bc75332..2004e6d3f7ca 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4659,6 +4659,8 @@ bool __init __attribute((weak)) arch_hugetlb_valid_size(unsigned long size)
- 	return size == HPAGE_SIZE;
- }
- 
-+static struct lock_class_key hugetlb_resize_keys[HUGE_MAX_HSTATE];
-+
- void __init hugetlb_add_hstate(unsigned int order)
- {
- 	struct hstate *h;
-@@ -4671,6 +4673,7 @@ void __init hugetlb_add_hstate(unsigned int order)
- 	BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
- 	h = &hstates[hugetlb_max_hstate++];
- 	mutex_init(&h->resize_lock);
-+	lockdep_set_class(&h->resize_lock, &hugetlb_resize_keys[hstate_index(h)]);
- 	h->order = order;
- 	h->mask = ~(huge_page_size(h) - 1);
- 	for (i = 0; i < MAX_NUMNODES; ++i)
+diff --git a/tools/testing/selftests/bpf/test_tcpnotify_user.c b/tools/testing/selftests/bpf/test_tcpnotify_user.c
+index 595194453ff8..f81c60db586e 100644
+--- a/tools/testing/selftests/bpf/test_tcpnotify_user.c
++++ b/tools/testing/selftests/bpf/test_tcpnotify_user.c
+@@ -161,7 +161,8 @@ int main(int argc, char **argv)
+ 	error = 0;
+ err:
+ 	bpf_prog_detach(cg_fd, BPF_CGROUP_SOCK_OPS);
+-	close(cg_fd);
++	if (cg_fd >= 0)
++		close(cg_fd);
+ 	cleanup_cgroup_environment();
+ 	perf_buffer__free(pb);
+ 	return error;
 -- 
-2.33.0
+2.25.1
 
 
