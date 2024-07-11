@@ -1,226 +1,178 @@
-Return-Path: <linux-kernel+bounces-249385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D09DA92EAEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:38:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 113C592EB10
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6076B1F21EAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40C981C20F4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D385477A;
-	Thu, 11 Jul 2024 14:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D8516A37C;
+	Thu, 11 Jul 2024 14:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JzLAs8FZ"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mbPE43Bm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997401662FE
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7508C12C549
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720708695; cv=none; b=rRBQmYcIT4I//H6O4S/rpB4rVsK3r+Z3WckTe8FGCYryR6osnJh1r7k7hkJYZ2d8FzbCZmu39kM2aSvnofd3WEfc/LJsfwuRRfu2XcWFoq5UgZrc87+UWQdqNAbHBy2w39/XgSvMcIZmCM+HKEYRCOiVfkQOmU665soBLUjSAws=
+	t=1720709687; cv=none; b=q34AON4EuRgwnLPcOiDNdYSyfP1t1OhxkV2I/GAstSfBYY8dQeHg+8H+c8f34R+j+GB6fpJQxbbWnDfZMQykiaxiPIoPpyIuEurvrkUvEgVSr5cwOG6Oupi0Q8ovv6b7XSjT4FmVtk00m8uy2LzC90Rvj5ZVOaNjr+/39OLLzvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720708695; c=relaxed/simple;
-	bh=+cdTiP9dj8e8SJZXEgF4LtTRbK33298paImQMDs+2bg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tVi6GUDvx263U9+nz++x//EJWUHU8IRFow8uRnoOoG/ODDPfbpsncquUY2A0d39twMizykIEUzwlAA8QJ1mjGYX88Kp14IdFjhrtmrLZDrPQA3kkYd5NXRbG26rtvGaqW2dAfQowyT6T2r/ou8+YymdMdZTGjCEyqViuRdlQwO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JzLAs8FZ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso6927075e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:38:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720708692; x=1721313492; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p/2rQG6qusYOLdxsnhVJWh4v91MMJIJgP837QrDDHJw=;
-        b=JzLAs8FZ7xKcpH/1wtDndzz4x6NMdZrF24ClTaJ8mvWLBomiG5fwjH+eG5k2hPxQVA
-         FIvOFT7cAmCwsRga0p2x5/KjLHdc8iz7VGY9ZmskaDlUGx4RqngUXq25uAnVWTPXBbJb
-         WH+WvpF5QLOW61gG0+rCDmq6Vl1kbab/pBI+kuTCAdybmPbHlCSOtLLErKdMyT04msvu
-         ZT7jhZO8wjJ49Lvb5mvxRlRhp5hMdwp0G/l1zOiCTklP0pwAyTk+opB6XkIt0iemLyv1
-         eO5tyVdGRCPSO5IiQC791SgTeskqiCriPq75XnmnVCnv4PiFBHvuMPumcrRyaHY4ORvP
-         hALw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720708692; x=1721313492;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p/2rQG6qusYOLdxsnhVJWh4v91MMJIJgP837QrDDHJw=;
-        b=dPa9jqAh95ppWAvGvZjSeIw6d6Hwp/OytKuqbRH3Qtj4j3huoHFgQMlxCzZhTkjTCu
-         pd9mLZJoB6/9ht2EllVc2WHgf5ntPiaaAvytZrSDk7xBq1KNs3QIqeq7K51WAN1og59w
-         La0pUpueVfErHDvYKCnPet7eGJUdFm1ckZxat9DVmW3FipKmf6HKjoxv0IOqM5CdwZyc
-         ZMB7oqkVyxfSHGaNOG8zwVq57p/ngo2XgF7LjzVDx1qFQflu54jFj8AQ7hjjeFFRRwqB
-         gmfqryr+HUBO+piJ+Br/2Jn+V4fIQ7rQ7cmWz3YUuAVjX2uB7n3iQfhxMFqQaHeHrouT
-         jdCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVo53DIEv/3iKPTiR9XGYtu3wx37Kb9yBTBsqgf/+/3Ch5IhQ8UbVbktEYPkOJncSalw39agn4TForhG2Hl4oY+bGd5dfKhux3Bb10U
-X-Gm-Message-State: AOJu0YyuFyVOXf970KAH/Ux/DUijRu7RODjsSZWmYfSBnFP/oSD0Mrep
-	u9Nsou9hGnfA84sa+1xeWmaCqf/uY8Vc2F8DJWcCy0/o3OWqR57VOjx0YFVBWH2rMm35onjRvxF
-	LeSw=
-X-Google-Smtp-Source: AGHT+IF/y967rQpaUTsEREkfcgiae6YzTKeupAxZjzOFwtIOuVn9rQDGqFXfgMTOw6/tS3NrmM6HCg==
-X-Received: by 2002:a05:600c:48a2:b0:426:5471:12e2 with SMTP id 5b1f17b1804b1-426705cf0f1mr63758805e9.4.1720708691703;
-        Thu, 11 Jul 2024 07:38:11 -0700 (PDT)
-Received: from [127.0.1.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f1ff9sm121535355e9.18.2024.07.11.07.38.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 07:38:11 -0700 (PDT)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Thu, 11 Jul 2024 15:38:10 +0100
-Subject: [PATCH v2] media: ov5675: Fix power on/off delay timings
+	s=arc-20240116; t=1720709687; c=relaxed/simple;
+	bh=0/mI3AauqSo/TufjQdQjUo6dCLrU1WeCSj/5ySxVsSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tW5FdruwG4mqgUmY3VJKYOtT9M1Y4T9o58PG4jcO61TMR0zs5fxJv/661FXYRAbGN1Ao9lH1hb6qw1HqrVnLE1p4+2lnoh1L+zfxe+wboCzkbz658r9WzzxAsGz1D42HlZ1K69C1/ijp6lqkfU35qqJSyTuHlmJQh/4KrGPi0rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mbPE43Bm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AFC1C116B1;
+	Thu, 11 Jul 2024 14:54:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720709687;
+	bh=0/mI3AauqSo/TufjQdQjUo6dCLrU1WeCSj/5ySxVsSk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mbPE43BmBoIbVEv+lnM0MBlVgA3oBAnb0wNCbr4rUrmOEPabS436DWqehGD5N6GJY
+	 WhG6r8w+PWZitMYZrchmb+3TPUvfEOjuoV1NKJm+rENCe9rDHVthD+hAopZaZwmP3Z
+	 f7PuWnhLyt7WVx4NBV55us5oX8Le3TwHtahk1cJchCMtEq9Xql5IpPR1OGKKEsl6ek
+	 R9LrGPr6i4zDJLbDUpxPrFRfIQo27nXLhJHOZJXlgIWXYrV8QDPTvu6lducX1fjpar
+	 QKlSlHLZxEDUQv8ioLR5Ks2e2TiX6SGGfwDT1rdQ7j+xr10TFccRxdiYQyMNkjfkDG
+	 +tiKS77A4EHWw==
+Date: Thu, 11 Jul 2024 22:40:33 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Cyril Bur <cyrilbur@tenstorrent.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	antonb@tenstorrent.com
+Subject: Re: [PATCH v2] riscv: Improve exception and system call latency
+Message-ID: <Zo_u4eoq3-m9e3X7@xhacker>
+References: <20231225040018.1660554-1-antonb@tenstorrent.com>
+ <20240607061335.2197383-1-cyrilbur@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240711-linux-next-ov5675-v2-1-d0ea6ac2e6e9@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAFHuj2YC/22NwQ6CMBBEf4Xs2TVtkSKe/A/DAeoCm5jWtNjUk
- P67lcSbxzeZebNBIM8U4FJt4ClyYGcLqEMFZhnsTMj3wqCEOolWCnywfSW0lFZ0sdFtg1qMgs6
- 1aetJQtk9PU2cduetL7xwWJ1/7xdRftOfTf6xRYkCdUfdqI1WRupr6QzeHZ2foc85fwC89Q9zs
- wAAAA==
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Quentin Schulz <quentin.schulz@theobroma-systems.com>, 
- Jacopo Mondi <jacopo@jmondi.org>
-Cc: Johan Hovold <johan@kernel.org>, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.15-dev-13183
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240607061335.2197383-1-cyrilbur@tenstorrent.com>
 
-The ov5675 specification says that the gap between XSHUTDN deassert and the
-first I2C transaction should be a minimum of 8192 XVCLK cycles.
+On Thu, Jun 06, 2024 at 11:13:35PM -0700, Cyril Bur wrote:
+> From: Anton Blanchard <antonb@tenstorrent.com>
+> 
+> Many CPUs implement return address branch prediction as a stack. The
+> RISCV architecture refers to this as a return address stack (RAS). If
+> this gets corrupted then the CPU will mispredict at least one but
+> potentally many function returns.
+> 
+> There are two issues with the current RISCV exception code:
+> 
+> - We are using the alternate link stack (x5/t0) for the indirect branch
+>   which makes the hardware think this is a function return. This will
+>   corrupt the RAS.
+> 
+> - We modify the return address of handle_exception to point to
+>   ret_from_exception. This will also corrupt the RAS.
+> 
+> Testing the null system call latency before and after the patch:
+> 
+> Visionfive2 (StarFive JH7110 / U74)
+> baseline: 189.87 ns
+> patched:  176.76 ns
+> 
+> Lichee pi 4a (T-Head TH1520 / C910)
+> baseline: 666.58 ns
+> patched:  636.90 ns
+> 
+> Just over 7% on the U74 and just over 4% on the C910.
+> 
+> Signed-off-by: Anton Blanchard <antonb@tenstorrent.com>
+> Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
 
-Right now we use a usleep_rage() that gives a sleep time of between about
-430 and 860 microseconds.
-
-On the Lenovo X13s we have observed that in about 1/20 cases the current
-timing is too tight and we start transacting before the ov5675's reset
-cycle completes, leading to I2C bus transaction failures.
-
-The reset racing is sometimes triggered at initial chip probe but, more
-usually on a subsequent power-off/power-on cycle e.g.
-
-[   71.451662] ov5675 24-0010: failed to write reg 0x0103. error = -5
-[   71.451686] ov5675 24-0010: failed to set plls
-
-The current quiescence period we have is too tight. Instead of expressing
-the post reset delay in terms of the current XVCLK this patch converts the
-power-on and power-off delays to the maximum theoretical delay @ 6 MHz with
-an additional buffer.
-
-1.365 milliseconds on the power-on path is 1.5 milliseconds with grace.
-853 microseconds on the power-off path is 900 microseconds with grace.
-
-Fixes: 49d9ad719e89 ("media: ov5675: add device-tree support and support runtime PM")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
-v2:
-- Drop patch to read and act on reported XVCLK
-- Use worst-case timings + a reasonable grace period in-lieu of previous
-  xvclk calculations on power-on and power-off.
-- Link to v1: https://lore.kernel.org/r/20240711-linux-next-ov5675-v1-0-69e9b6c62c16@linaro.org
-
-v1:
-One long running saga for me on the Lenovo X13s is the occasional failure
-to either probe or subsequently bring-up the ov5675 main RGB sensor on the
-laptop.
-
-Initially I suspected the PMIC for this part as the PMIC is using a new
-interface on an I2C bus instead of an SPMI bus. In particular I thought
-perhaps the I2C write to PMIC had completed but the regulator output hadn't
-become stable from the perspective of the SoC. This however doesn't appear
-to be the case - I can introduce a delay of milliseconds on the PMIC path
-without resolving the sensor reset problem.
-
-Secondly I thought about reset pin polarity or drive-strength but, again
-playing about with both didn't yield decent results.
-
-I also played with the duration of reset to no avail.
-
-The error manifested as an I2C write timeout to the sensor which indicated
-that the chip likely hadn't come out reset. An intermittent fault appearing
-in perhaps 1/10 or 1/20 reset cycles.
-
-Looking at the expression of the reset we see that there is a minimum time
-expressed in XVCLK cycles between reset completion and first I2C
-transaction to the sensor. The specification calls out the minimum delay @
-8192 XVCLK cycles and the ov5675 driver meets that timing almost exactly.
-
-A little too exactly - testing finally showed that we were too racy with
-respect to the minimum quiescence between reset completion and first
-command to the chip.
-
-Fixing this error I choose to base the fix again on the number of clocks
-but to also support any clock rate the chip could support by moving away
-from a define to reading and using the XVCLK.
-
-True enough only 19.2 MHz is currently supported but for the hypothetical
-case where some other frequency is supported in the future, I wanted the
-fix introduced in this series to still hold.
-
-Hence this series:
-
-1. Allows for any clock rate to be used in the valid range for the reset.
-2. Elongates the post-reset period based on clock cycles which can now
-vary.
-
-Patch #2 can still be backported to stable irrespective of patch #1.
----
- drivers/media/i2c/ov5675.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
-index 3641911bc73f..547d6fab816a 100644
---- a/drivers/media/i2c/ov5675.c
-+++ b/drivers/media/i2c/ov5675.c
-@@ -972,12 +972,10 @@ static int ov5675_set_stream(struct v4l2_subdev *sd, int enable)
- 
- static int ov5675_power_off(struct device *dev)
- {
--	/* 512 xvclk cycles after the last SCCB transation or MIPI frame end */
--	u32 delay_us = DIV_ROUND_UP(512, OV5675_XVCLK_19_2 / 1000 / 1000);
- 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
- 	struct ov5675 *ov5675 = to_ov5675(sd);
- 
--	usleep_range(delay_us, delay_us * 2);
-+	usleep_range(900, 1000);
- 
- 	clk_disable_unprepare(ov5675->xvclk);
- 	gpiod_set_value_cansleep(ov5675->reset_gpio, 1);
-@@ -988,7 +986,6 @@ static int ov5675_power_off(struct device *dev)
- 
- static int ov5675_power_on(struct device *dev)
- {
--	u32 delay_us = DIV_ROUND_UP(8192, OV5675_XVCLK_19_2 / 1000 / 1000);
- 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
- 	struct ov5675 *ov5675 = to_ov5675(sd);
- 	int ret;
-@@ -1014,8 +1011,11 @@ static int ov5675_power_on(struct device *dev)
- 
- 	gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
- 
--	/* 8192 xvclk cycles prior to the first SCCB transation */
--	usleep_range(delay_us, delay_us * 2);
-+	/* Worst case quiesence gap is 1.365 milliseconds @ 6MHz XVCLK
-+	 * Add an additional threshold grace period to ensure reset
-+	 * completion before initiating our first I2C transaction.
-+	 */
-+	usleep_range(1500, 1600);
- 
- 	return 0;
- }
-
----
-base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
-change-id: 20240710-linux-next-ov5675-60b0e83c73f1
-
-Best regards,
--- 
-Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-
+Tested-by: Jisheng Zhang <jszhang@kernel.org>
+Reviewed-by: Jisheng Zhang <jszhang@kernel.org>
+> ---
+> v2:
+>    Simplify jalr ra,t1 to jalr t1
+>    Drop extra .globl from entry.S and use ra == handle_exception
+> ---
+>  arch/riscv/kernel/entry.S      | 17 ++++++++++-------
+>  arch/riscv/kernel/stacktrace.c |  4 ++--
+>  2 files changed, 12 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> index 68a24cf9481a..c933460ed3e9 100644
+> --- a/arch/riscv/kernel/entry.S
+> +++ b/arch/riscv/kernel/entry.S
+> @@ -88,7 +88,6 @@ SYM_CODE_START(handle_exception)
+>  	call riscv_v_context_nesting_start
+>  #endif
+>  	move a0, sp /* pt_regs */
+> -	la ra, ret_from_exception
+>  
+>  	/*
+>  	 * MSB of cause differentiates between
+> @@ -97,7 +96,8 @@ SYM_CODE_START(handle_exception)
+>  	bge s4, zero, 1f
+>  
+>  	/* Handle interrupts */
+> -	tail do_irq
+> +	call do_irq
+> +	j ret_from_exception
+>  1:
+>  	/* Handle other exceptions */
+>  	slli t0, s4, RISCV_LGPTR
+> @@ -105,11 +105,14 @@ SYM_CODE_START(handle_exception)
+>  	la t2, excp_vect_table_end
+>  	add t0, t1, t0
+>  	/* Check if exception code lies within bounds */
+> -	bgeu t0, t2, 1f
+> -	REG_L t0, 0(t0)
+> -	jr t0
+> -1:
+> -	tail do_trap_unknown
+> +	bgeu t0, t2, 3f
+> +	REG_L t1, 0(t0)
+> +2:	jalr t1
+> +	j ret_from_exception
+> +3:
+> +
+> +	la t1, do_trap_unknown
+> +	j 2b
+>  SYM_CODE_END(handle_exception)
+>  ASM_NOKPROBE(handle_exception)
+>  
+> diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
+> index 528ec7cc9a62..5eb3d135b717 100644
+> --- a/arch/riscv/kernel/stacktrace.c
+> +++ b/arch/riscv/kernel/stacktrace.c
+> @@ -16,7 +16,7 @@
+>  
+>  #ifdef CONFIG_FRAME_POINTER
+>  
+> -extern asmlinkage void ret_from_exception(void);
+> +extern asmlinkage void handle_exception(void);
+>  
+>  static inline int fp_is_valid(unsigned long fp, unsigned long sp)
+>  {
+> @@ -70,7 +70,7 @@ void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
+>  			fp = frame->fp;
+>  			pc = ftrace_graph_ret_addr(current, NULL, frame->ra,
+>  						   &frame->ra);
+> -			if (pc == (unsigned long)ret_from_exception) {
+> +			if (pc == (unsigned long)handle_exception) {
+>  				if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
+>  					break;
+>  
+> -- 
+> 2.25.1
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
