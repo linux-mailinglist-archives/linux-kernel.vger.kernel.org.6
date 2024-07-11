@@ -1,87 +1,124 @@
-Return-Path: <linux-kernel+bounces-248465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A8B92DDA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:08:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63D992DDA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE412817BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:08:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F5F2825D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CBB883D;
-	Thu, 11 Jul 2024 01:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D5F523D;
+	Thu, 11 Jul 2024 01:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="AzOdFXgS"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaswazhF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB89EDE;
-	Thu, 11 Jul 2024 01:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4220EBE49;
+	Thu, 11 Jul 2024 01:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720660090; cv=none; b=RWbfm60nSqfriN1zBFQ9uL32mLXlEHRLAuetGyFTk8trENdq1SNXrqNnIZ8ksvHlZWvxy4VtfR5soFESKKTBqCNpGrzcU6BYqBSenKYA8+AvX2sVDmaLdiszskJxbE7tsIxV96CbTcvwrz9md/wK9WA7DticcIABIJosUqeYnI4=
+	t=1720660105; cv=none; b=czTu4ZxLCoTQieDXwMOphjBrW1UejbYPanE73ICshhu7eUjg6FBlSKxDr8863gHBlZW4jU27fZKHzPV1YWrka0lijm8U1tHw7EyNcVjV/vGlvTGiVvxj1z20FY1O96o6mmrWublKoJV9/68nh6DgBhWn6/O4EHvI1T5FHX5/o8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720660090; c=relaxed/simple;
-	bh=GZ6TeTkURZEkICEupC4JglsSBRC3luXvLeZtmEQBQ+U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bQakTV2sHnuxfxhbhPwWyvpQx2K0jTvuIHft3eEEsNt1wa80RafT9vMnuFamq2VcZaE36Hgl1A2itrFEFXcLs1Icjklux5ri0AFdfNHoLP9pTnnyuDdF/DtsHfDonW4r/36pU1l61eIhsv5o/xln1J/ecv1dQGkInrltxS+rOWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=AzOdFXgS; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46B1803102704447, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1720660080; bh=GZ6TeTkURZEkICEupC4JglsSBRC3luXvLeZtmEQBQ+U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=AzOdFXgSQ9JrT6dxZdsCSbYqNE7vTsm0VnpamxKUIg4LODV8Bm3fLSBDeTAAASK9h
-	 Lv5dh2JlFfjNVXD877pROXHJspR1MgnY0/3lc1jrhFBuYvQtXJRQAoX33Mqf652a9Z
-	 YaOe+HgmILHdJix860KfDs/fAVXirG12RGN0bv246C5ibj2Pu3/Q6QnZ1SKP4qc+g6
-	 MroKD0S87lzw1ydEWlfSJNc7uReyBmB+4VYmNvQIlFnLxAQZBv5WTpodP2I3ObUidh
-	 7bWivBJPTxYfug4L7wWBrI6FBIF1SNbbPLNpDi6TxyYEg4LDyCg4QfF4f+Sq0NiN5l
-	 oRofnagrjHUMw==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46B1803102704447
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 09:08:00 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 11 Jul 2024 09:08:01 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 11 Jul 2024 09:08:00 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Thu, 11 Jul 2024 09:08:00 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Colin Ian King <colin.i.king@gmail.com>, Kalle Valo <kvalo@kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH][next] wifi: rtw89: 8852bt: rfk: Fix spelling mistake "KIP_RESOTRE" -> "KIP_RESTORE"
-Thread-Topic: [PATCH][next] wifi: rtw89: 8852bt: rfk: Fix spelling mistake
- "KIP_RESOTRE" -> "KIP_RESTORE"
-Thread-Index: AQHa0ruFWRpvCWi/UkaLsQbm6z/XUrHwt/sw
-Date: Thu, 11 Jul 2024 01:08:00 +0000
-Message-ID: <f188660d4333447381cc708008d3e9a9@realtek.com>
-References: <20240710112253.228171-1-colin.i.king@gmail.com>
-In-Reply-To: <20240710112253.228171-1-colin.i.king@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1720660105; c=relaxed/simple;
+	bh=SMz9nJUL1CPqXAWfimtrxdGvpG09xA8QZ9vSjFy8kcI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=FPtPx/OWDT4CR1ctvzX1t5CRqf4IB6Jw1PAOResu+cs+A79eWitSNd+S4F7HcxiRyDAfAe6hXmftZ6eM76zA5hfVfsQ5xdvs3Td7AOXIuJYGWchSP+1nvI6JNWX938i9surwfb8hBsP7HheUWLSTbHFUC1XhzOyhZKoCvWFvPRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaswazhF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD14FC32781;
+	Thu, 11 Jul 2024 01:08:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720660105;
+	bh=SMz9nJUL1CPqXAWfimtrxdGvpG09xA8QZ9vSjFy8kcI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qaswazhFSmg1dpTeaM4t2pY1GFbjcoS6h7TUfVvM47oTwdjOdhT36qqoYMlwDl0fq
+	 2VRFetKtL1GMczGeFtmSAOcvXI0euIqDs+//5u0RLaxfBjm+vnrjokUAbAC//Fnkwn
+	 4FcjFc2QwxD9CH9qDYsXix92bj7eByuuD9fSHLdhOmk1yqS9lurTIn5ofoM66doQ83
+	 6INEJYUjS50Le643jUajB7FaFbG+SZRzkUcZwhWxw2Jjrh/TyOYQAJL1eBOLoghDwk
+	 l5GZzfzLa5PCVk0OAZb1u3E6JCi5LnF5M/TDqT5eBYgSUXoLljhUGltMg+F3i4KPRk
+	 mNBR/25cLgJ+w==
+Date: Thu, 11 Jul 2024 10:08:21 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] bootconfig: Remove duplicate included header file
+ linux/bootconfig.h
+Message-Id: <20240711100821.a1ba1449c3be80d30ea6a697@kernel.org>
+In-Reply-To: <20240711002152.800028-2-thorsten.blum@toblux.com>
+References: <20240711002152.800028-2-thorsten.blum@toblux.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Q29saW4gSWFuIEtpbmcgPGNvbGluLmkua2luZ0BnbWFpbC5jb20+IHdyb3RlOg0KPiBUaGVyZSBp
-cyBhIHNwZWxsaW5nIG1pc3Rha2UgaW4gYSBsaXRlcmFsIHN0cmluZy4gRml4IGl0Lg0KPiANCj4g
-U2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmkua2luZ0BnbWFpbC5jb20+DQoN
-CkFja2VkLWJ5OiBQaW5nLUtlIFNoaWggPHBrc2hpaEByZWFsdGVrLmNvbT4NCg0KDQo=
+On Thu, 11 Jul 2024 02:21:53 +0200
+Thorsten Blum <thorsten.blum@toblux.com> wrote:
+
+> The header file linux/bootconfig.h is included whether __KERNEL__ is
+> defined or not.
+> 
+> Include it only once before the #ifdef/#else/#endif preprocessor
+> directives and remove the following make includecheck warning:
+> 
+>   linux/bootconfig.h is included more than once
+> 
+
+OK, but this leaves only a comment in !__KERNEL__ part.
+That comment should be moved and updated too. Please move this on the top of
+this file and remove `!__KERNEL__` part.
+
+/*
+ * NOTE: This file is also used by tools/bootconfig, because tools/bootconfig
+ * will run the parser for sanity test.
+ * This does NOT mean lib/bootconfig.c is always available in the user space.
+ * However, if you change this file, please make sure the tools/bootconfig
+ * has no issue on building and running.
+ */
+
+Thank you,
+
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  lib/bootconfig.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/lib/bootconfig.c b/lib/bootconfig.c
+> index 97f8911ea339..297871455db5 100644
+> --- a/lib/bootconfig.c
+> +++ b/lib/bootconfig.c
+> @@ -4,8 +4,9 @@
+>   * Masami Hiramatsu <mhiramat@kernel.org>
+>   */
+>  
+> -#ifdef __KERNEL__
+>  #include <linux/bootconfig.h>
+> +
+> +#ifdef __KERNEL__
+>  #include <linux/bug.h>
+>  #include <linux/ctype.h>
+>  #include <linux/errno.h>
+> @@ -33,7 +34,6 @@ const char * __init xbc_get_embedded_bootconfig(size_t *size)
+>   * However, if you change this file, please make sure the tools/bootconfig
+>   * has no issue on building and running.
+>   */
+> -#include <linux/bootconfig.h>
+>  #endif
+>  
+>  /*
+> -- 
+> 2.45.2
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
