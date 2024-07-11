@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-249260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FEB892E8F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C493A92E8F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130441F21FEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:09:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F96128740E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F1F167DB8;
-	Thu, 11 Jul 2024 13:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A3516A959;
+	Thu, 11 Jul 2024 13:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mofgraXs"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZHnaBxNe"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9D015AAD3;
-	Thu, 11 Jul 2024 13:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63B21684A7;
+	Thu, 11 Jul 2024 13:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720703227; cv=none; b=f5kYiXS1bB9cZ/yvlhk0UKDUcIysKh906cDNnrFTuH7+G37XP2mWuntQ1+1AegycrMO7GgMl3V/IENMe76wsC9wm10UhwczcfCendG2PfFzbqhGGfVZ7KwxRTCykF2eb1NUEv1mbec0rAnPwruA3o7z94nXQ+htmVPTb3KyNsTo=
+	t=1720703230; cv=none; b=tuijSfZvS9WsM620oEPEK/TeVmJ+5NpHxNQwhR+jlvvW9j59lV5IiqIRpilbDM4FuzybJEAPkKDC6eVOdMG9tlyqKYRgSEjeaUQ14kL3F51ym2iaH3HRfGnhJsApCslitIHDV/J0SyoduOqRzs4pEemusE8ZejapqfnvBvP0Llc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720703227; c=relaxed/simple;
-	bh=L//aq6g2sCb7brUZIQ6mvahCmEij6tQ2f9SWRglAYto=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IN/VGh9mMLMp5hg22cr9BRKDdvb6Eh9dkp5kcWEqRWFg8Jt2VL2uoXVpRjOe0u2HJlF+XvXqbFUbYbHNJEQ090tt8RP5bPq9EGMkL7Ky5EF+LN2hNuRR6tATk0/4PcrBrRQksIPhx+hXHcs/nDmFBM6C7nlW+h8zuTtqmNAJjSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mofgraXs; arc=none smtp.client-ip=209.85.215.169
+	s=arc-20240116; t=1720703230; c=relaxed/simple;
+	bh=f+jxSNyhE10kPaWRusCsXbEE1RXBwIFmEXq7EkDieyo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LRQpq/eOtUg+0HbMo2UgeBJpVGq32VyouFumMV3OAoTxPtUGDzR+A4ZtiIWlb47/5+7u9Z51lDqCSeFi1h5HXL2upi8apXrdekRs0eZ3NgNFKEOXErexjF5nMGVpmk26q8y9OHR1cwVmIM6OctgSOE0himTwNPA9cu9OadiR4Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZHnaBxNe; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-75c3acf90f0so590474a12.2;
-        Thu, 11 Jul 2024 06:07:06 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fbc0a1494dso5422325ad.3;
+        Thu, 11 Jul 2024 06:07:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720703226; x=1721308026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rfcikbn6aIkgCMZzgFg/rRrOdrcIMJdb5nB1Tqsn+HQ=;
-        b=mofgraXsu+ZlX93qNVNYA9t91w0JnUJ15y83ke4wVknjCvNVBwkO3Mz0XxoZQditVQ
-         wK/zFdl3HLPGIv1y70z31sy50iOar5locaAjdf9GsyuIr4pW6h9JoMYmXokhNr84F8Jh
-         EBhR3fb986n2hVacId5AKybvqHm79Pn9IQyuSwLZ1/JOs0GNLbwxh0qVuVIdIBrq0vkd
-         54aU7P7nrhLy95vr3PpkjArUpa1vk+vOxJnzDbpUHXaEkBaxikcym7dfCKuH0oJ/HTaV
-         qz8srgXfh+Q0fwLh0EqvZQmGI114/RO8lYLb8MBdoEUZFzY9p9IqMuk4T6I+eeu+NsjR
-         jnvw==
+        d=gmail.com; s=20230601; t=1720703228; x=1721308028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0jnve3iMfQ3N9VA7fI/ITJkN0F4YPFwznhKUmalCiOE=;
+        b=ZHnaBxNed5jPpIuLihMtrQLgmSObQoGCePgOsaSGrJTadxaspnEOwS7I1mMrDR9ruF
+         38AC/6N82VTNG3ufcnw0eUBIUJeMNyq0pj9eomL8CmFAlz0BpM+7b4uXI5seHpbHtjzo
+         ncxK4KZJlmAm2YwFTSQipo0zXQ/46+/6tQtX0yWvnZZTCReGtkWfzKRnSstjj2DJKRnU
+         fGa2KDWeGR+LOkD34UxDkJ9EOAPgxWeF8sJN1SkT/KrOfwPS+fzBEqnuOemoMX8VrFk9
+         oHCDmCCP+SgOZoKkR7d62+rv5or03+xh0ByT1lVviMeOY20cl2MuZ0Xz89w2gtbvIcPW
+         2UJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720703226; x=1721308026;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rfcikbn6aIkgCMZzgFg/rRrOdrcIMJdb5nB1Tqsn+HQ=;
-        b=PYJ+BPdMlmvpDfAUtkVN71LT81y3Sq8nbVVdw9UXPK9dJl2tcHdCPMyp8A9t+zy+MF
-         PUlAaA/qHnhl8AbxyHVzD/Wqw+ijAXzsKRPdr/4jGvKvGSoldthZwKxk9tOcmkPlSuA2
-         j5167Ccl4iWOCHB9zFzwTD7Zsun3xsP4QRBqG0QafFNcIWA4q9plukcYiDBlwW2QPpry
-         LvdPMlXnRK0k0Cl6E/ZmdJ225+rvN8W9t//x90o3KOcvpwClNsmR6Ow7cVqhSFl1G0zj
-         ATj0WqdruyfMx/wxyLtko8FOewp4ekS8TOrTy7Fl6ORTF3WogoTHNv0Iws+j2eEMfbfU
-         41Og==
-X-Forwarded-Encrypted: i=1; AJvYcCVc5ZmFPAkfvXzjxwxanRCgL+XXSUINy7YgLJlgLaI/lHHbP7GUbOfdHNupkmZ5BJjJYgePOH9bX3X4gcVw8vpPM6a8HMKU/gsSUFjs29kItaurQYrq5z7Waa0OB2x5jjuML1w769z0qg==
-X-Gm-Message-State: AOJu0YyNBbzOEHziPQC5gFNniBDD0UhcpvKYpVRbYNyQEHI+s6XyPbo+
-	aI0/VsOOCpIJvjbURxFa36d90zm3glP90lRM95l1s8WzWMujHQEu
-X-Google-Smtp-Source: AGHT+IFKPXUr1OLuiftkz50lboHtjDhk7taX+ATRjV0+GBPX70PqRG6CCAlN4MArjw88NEwHKiUM+A==
-X-Received: by 2002:a17:902:fc88:b0:1f9:9221:6c2d with SMTP id d9443c01a7336-1fbb6ec1c52mr55718315ad.53.1720703225500;
-        Thu, 11 Jul 2024 06:07:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720703228; x=1721308028;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0jnve3iMfQ3N9VA7fI/ITJkN0F4YPFwznhKUmalCiOE=;
+        b=UGEVauCZ3uNO9+AErzaVvRrnaAxLVN+nPLx1Ufm8/M+YUX5n67To6SPVxJgSWYBj6o
+         wT1civyF51f/KDz3ldeKzzkA/zgmWmBB89rzNOcU0ytZnH91XNVVgMLgcLyIKW3whfvh
+         Un0x2ckRrmq2DkdRwzcMihzvWubeMkyr1A4s0BVYv22U5NMkENtsGoTjuMWtZGFf0bGK
+         CrQsojOSph8DO/wdsPgyklaAS/cIpbE2bqROaBfpZcqIJ/kz7PhZv9giG+p3tKqmwraX
+         /hCpBMcr/iRN1LbpkHDV/PlZx1XsQ82Z7m630Gr6pu+7nK+mIjXE9GJBICgfsy5eO6VB
+         cd9w==
+X-Forwarded-Encrypted: i=1; AJvYcCX2UKej8aZoJ4PRgNxSBoF4fKS2PmVjOo6gOMqrFPTSWbCmIT8DYwzUmGT9ZNxQ/2m5QhJ3DYAoYN8ver8WuCIJgqrm1uQVJ53Wk0DyCGShckfRSIU/7u1NRZYK+mXzSMCvXHO0cy9QxA==
+X-Gm-Message-State: AOJu0YxVpSnnSuIpJKw38VblR0EPEO0Zc7GHL7RHnTmA+undUlOYU+M3
+	U5wEx1HiafGY7crc6ovVBMDteMMMlEIxytnvlJuuiR3o9Ihxrb67
+X-Google-Smtp-Source: AGHT+IEmrIGHOBFSqXd81RIMGrfzoPUeUGC1m4BCECre0JDGSNlum8QRpsMZAkW8rPcHp3wUnUdxkw==
+X-Received: by 2002:a17:903:2352:b0:1fa:47b7:2e41 with SMTP id d9443c01a7336-1fbb6ce5288mr74016295ad.1.1720703227962;
+        Thu, 11 Jul 2024 06:07:07 -0700 (PDT)
 Received: from obliging-System-Product-Name.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a10868sm50188305ad.9.2024.07.11.06.07.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a10868sm50188305ad.9.2024.07.11.06.07.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 06:07:05 -0700 (PDT)
+        Thu, 11 Jul 2024 06:07:07 -0700 (PDT)
 From: Yang Chen <yangchen.openbmc@gmail.com>
 To: joel@jms.id.au,
 	andrew@codeconstruct.com.au,
@@ -76,10 +78,12 @@ To: joel@jms.id.au,
 Cc: Jerry.Lin@quantatw.com,
 	yangchen.openbmc@gmail.com,
 	yang.chen@quantatw.com
-Subject: [PATCH v1 0/1] Add gpio line name in Meta Minerva BMC(AST2600)
-Date: Thu, 11 Jul 2024 21:05:00 +0800
-Message-Id: <20240711130501.2900301-1-yangchen.openbmc@gmail.com>
+Subject: [PATCH v1 1/1] ARM: dts: aspeed: minerva: add host0-ready pin
+Date: Thu, 11 Jul 2024 21:05:01 +0800
+Message-Id: <20240711130501.2900301-2-yangchen.openbmc@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240711130501.2900301-1-yangchen.openbmc@gmail.com>
+References: <20240711130501.2900301-1-yangchen.openbmc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,19 +92,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Based on: https://lore.kernel.org/all/f7412b65e1844ea9f3ad9fe5825e5d1da422ad69.camel@codeconstruct.com.au/
+Add host0-ready pin for phosphor-state-manager.
 
-Change log:
-
-v1
-  Patch 0001 - Add host0-ready pin.
-
-Yang Chen (1):
-  ARM: dts: aspeed: minerva: add host0-ready pin
-
+Signed-off-by: Yang Chen <yangchen.openbmc@gmail.com>
+---
  arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
+index f5ac248097b4..41e2246cfbd1 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
+@@ -613,7 +613,7 @@ &gpio0 {
+ 	/*P0-P7*/	"","","","","","","","",
+ 	/*Q0-Q7*/	"","","","","","power-chassis-control","","",
+ 	/*R0-R7*/	"","","","","","","","",
+-	/*S0-S7*/	"","","","","","","","",
++	/*S0-S7*/	"","","","","","","","host0-ready",
+ 	/*T0-T7*/	"","","","","","","","",
+ 	/*U0-U7*/	"","","","","","","","",
+ 	/*V0-V7*/	"","","","","BAT_DETECT","","power-chassis-good","",
 -- 
 2.34.1
 
