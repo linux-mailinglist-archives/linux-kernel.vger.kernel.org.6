@@ -1,95 +1,80 @@
-Return-Path: <linux-kernel+bounces-249001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B38192E4DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:34:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36BE892E4E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE58B1C21E96
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E720A2853B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FF915B0F2;
-	Thu, 11 Jul 2024 10:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0C5156962;
+	Thu, 11 Jul 2024 10:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eqsqXWsU"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2080.outbound.protection.outlook.com [40.107.223.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UiEeqhym"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5E715958E;
-	Thu, 11 Jul 2024 10:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720694024; cv=fail; b=Z2B+jAl9HXy8W07X60dtqde6Vvdank1W4BqgT9FirIkVpS3XIRJYSTVumKtvjTtRshCGc+5mfJXC8cHb294u+TObJz5GnEIhT0Vp8G/7j9TVsNvvUqanbgieLAKm7NHu+eK47d9uN6AEk83nd8cFANTyJ/5r3FG2U9HXLv688PA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720694024; c=relaxed/simple;
-	bh=aEP9//HJhri6/luYGIN3gPQz8tAOFxNPNqiJvuDfi6k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gmFwrqPcdkUqtu39Gra8UAkpZv6t0OIsSCHRWVAKOwa/NG6Y7P7YhVHPCRs+Ra7HxNP/lUhfVAc2M2+pbIxovbctBA1VMOGcasD9e6jAHTVTJrSUKHaWcP1GqfHjyokq+1nZC79ZaCB1hJdS617xOqFG6c7STvRy5u8g/rINrEQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eqsqXWsU; arc=fail smtp.client-ip=40.107.223.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JHwqY6rVGcOBzD2NraRA0OOBUYEQvqrCJkEDtJhCNIWyrsbqmfEhoirmZnmJFSvf2r7Uxz4rz9A/4D3PQbtrY5yC0rHyhAHmr4iA5RHRdSzeXhiVwcff4UpzEweLKY459GlA5SsMYLxdYAXgGLEi2iFjruLfgnaAAJ55Aeyhmp071hZBAmD1CmqWfmPpALk0CSQ2Qo6Rsnwba4wqJmlUYHXXQN9/BQWgAyThUqr02kLis2nWSaGK1aja2JUvRhOpPfejlBYLVvwDCE8lle51ZVFvSRKuCnlVuenYDTqhltRDAxbSofUwccZyD9XrH45NFvw+twWcM6OIVLWP2GPn0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=18X7AL+gySGaAU6T4kRJemHzBS231JLwQEuirixxrqM=;
- b=yAP9JYLqMeustLgHE8yCVdvyOcILVJyGrSp4xWtzcxvORCctQWqfONrezlHMzaLYYlZRNGw6eq/tm8TbVjQzuJDqBYYCyw02iYrshOiIuTL1aBoY2EHg8xDSOCi3UKg1EfC++Bqg+noOO5+1ge4PD+Ghj6nrhu4oBYtcuDazQ+wBzOGV0rwU1xtfyJebBBSI17faecogCQMzwESW27GEqHpzu9U3Vlr3dPSgDNeQiVQ0qOK55IzRJEZpRVeOUOIXU1V5P9HxZU7YCbcET+zhDdBWttx99qjKdSltRLStD4wil3fOF7ER66QY3KAC0ZAaxYX6Y/8Og6vb2QmvhrUcLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=18X7AL+gySGaAU6T4kRJemHzBS231JLwQEuirixxrqM=;
- b=eqsqXWsU+QqriSS3x31VZJ/sRsLltHrmlfPMVu1043oMzyZ0vA+3v8FxEhiKn75HiL5WXXeDZwvOc6+tdVozQLXvZ20SMRfZw/6inoukLs7gneiU3GilY3HYQgM+U3SGi7aa4Cdvib7P0Yt3wyRStZ0SGAbvobRFQ0Un9Z5m6D8=
-Received: from SJ0PR05CA0065.namprd05.prod.outlook.com (2603:10b6:a03:332::10)
- by CH3PR12MB7617.namprd12.prod.outlook.com (2603:10b6:610:140::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.20; Thu, 11 Jul
- 2024 10:33:39 +0000
-Received: from CO1PEPF000044F1.namprd05.prod.outlook.com
- (2603:10b6:a03:332:cafe::bf) by SJ0PR05CA0065.outlook.office365.com
- (2603:10b6:a03:332::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22 via Frontend
- Transport; Thu, 11 Jul 2024 10:33:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CO1PEPF000044F1.mail.protection.outlook.com (10.167.241.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7762.17 via Frontend Transport; Thu, 11 Jul 2024 10:33:38 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 11 Jul
- 2024 05:33:36 -0500
-Received: from xhdlakshmis40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 11 Jul 2024 05:33:32 -0500
-From: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Michal Simek
-	<michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, "Jay
- Buddhabhatti" <jay.buddhabhatti@amd.com>, Dhaval Shah
-	<dhaval.r.shah@amd.com>, Praveen Teja Kundanala
-	<praveen.teja.kundanala@amd.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<saikrishna12468@gmail.com>, <git@amd.com>, Sai Krishna Potthuri
-	<sai.krishna.potthuri@amd.com>
-Subject: [PATCH 3/3] pinctrl: pinctrl-zynqmp: Add support for Versal platform
-Date: Thu, 11 Jul 2024 16:03:17 +0530
-Message-ID: <20240711103317.891813-4-sai.krishna.potthuri@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240711103317.891813-1-sai.krishna.potthuri@amd.com>
-References: <20240711103317.891813-1-sai.krishna.potthuri@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25F815B55E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720694054; cv=none; b=BrFBzGeT9vHxr9VHdj1MxOm0KZDT2jAr+s2f9z1jPCyGwhIrOKLVmhQu4sln1RhFP2ii7y0IpwQDukMJlkPSZEr4TMpsugJrMYC8QwVg39KHguR4FyBoB3N3s0K/9EykqWhPS5tcXF9yMZQ9qfdAJtFOwOnKvpOryCEoNLdrkIg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720694054; c=relaxed/simple;
+	bh=U8ma8KhMaM2r8zgII+K905t72sTILD7DaVFiHDJtZZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zflh1zv1tjv4B2U/VW4/brEsehXbPfcGSzFXgfcYU6e2GLUgXv2r3LnGH6P07f/hSohpWCHE7UgoRIyABrhSdCONRWd0fELfn24oCLBiOYFOd6/z5rYrfNB6zUrv11XuVoTITYKU0c6Ys/ASq/qk4VJzgfGgNLJqiRpone+1SEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UiEeqhym; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-59559ea9cfdso863964a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:34:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1720694051; x=1721298851; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jR1Web6fOpG4PfW7GgX8Z5K27/fHkBluZOacmcz2i6E=;
+        b=UiEeqhymZJOAS+ns+GPbWwkGNun4qelky5fRCXKetk4WmFjVTKs3qNzw+tt8nQlNxi
+         LdgZpgd32u/JJdNzraAutwITpTeORDsQsZxAf0KAt01EhqAMitG+MNwmsrXimY0Itz0I
+         Q7gXXvnDXUoWwZjqOLARyyuHoor0bORlvAJ4heUkeh5wJAJ09n+z4HF25/63C4OCq+oZ
+         f5dmRRrbAiNXKPZ6mhoOvgGp7hbT2oyCoMhmGtY7NdOVf/EN5dxRAnEpdLFsXnVDIHAE
+         xm3hnsGKNRNAduBoLI8W/NAlXPp19xYpCi1jn0L08e57tvHFw5pL414LYM4OmPGKCICT
+         hgfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720694051; x=1721298851;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jR1Web6fOpG4PfW7GgX8Z5K27/fHkBluZOacmcz2i6E=;
+        b=gndBKb4yZ8vypyzXdjRjSTBK9Mj3HZ8UK6cpF6NOCe9NlzRaShd9y2uarT4f7CVhwS
+         i+CAE9k+aANFwXuq7fjiBMZ8T5Erxgbbhm50siwu/JCiXkeDLS+Wv4CrwrnjCafSSWYf
+         RZx5pPSnEGiKuS/CJlUIQdzT2OFfhfjkHZyDxs3HAH2JTDUpR+3ywAU1y9l+bQTnmqG8
+         vauFhVAwbeUDtvtKoTI3/yj1IImXuosH8ZJEYOTqw0oOJqv7qoFtdjFRX6sdUYMoTAKL
+         uqJR9yMm6KaovsJSFvNtFx+COcB+2WA5lgINePcDp7EzcrCfCvLJx8IKdRrU8pok2Zx7
+         qjkw==
+X-Gm-Message-State: AOJu0Yx/RNcH459sZ2ixgw+HLQPmD0PQ1Z0/jngmDKA9vRw/i684/fxI
+	MtKpG2XoVEZhb811jAx2asxBWedCpuUiNZp4X0ZP3nHbjnuqf/Czd7RG8C7VhPY=
+X-Google-Smtp-Source: AGHT+IESzBPL1aKKBD56be1MULJXc15BES/x9i+LATELu4LzxdGOdNbDaV9C405YEadlCd/JoNnfNw==
+X-Received: by 2002:a05:6402:4316:b0:57c:a77d:a61e with SMTP id 4fb4d7f45d1cf-594bab80111mr6037655a12.7.1720694050942;
+        Thu, 11 Jul 2024 03:34:10 -0700 (PDT)
+Received: from localhost (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bbe2cf60sm3296192a12.26.2024.07.11.03.34.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 03:34:10 -0700 (PDT)
+From: Petr Tesarik <petr.tesarik@suse.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	kexec@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	Petr Tesarik <petr@tesarici.cz>,
+	Petr Tesarik <ptesarik@suse.com>
+Subject: [PATCH] sysfs/cpu: Make crash_hotplug attribute world-readable
+Date: Thu, 11 Jul 2024 12:34:09 +0200
+Message-ID: <20240711103409.319673-1-petr.tesarik@suse.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,206 +82,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: sai.krishna.potthuri@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F1:EE_|CH3PR12MB7617:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06c9a0f9-0cb7-4287-9e6b-08dca194ed3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?D6Vyr14wr8nUSSwfrRa/4VTeZjiN9SL5WoxlTWhVUpDRWlk+5jakSHozdEnM?=
- =?us-ascii?Q?hAOr0YTGRLk2838Tgw4DfrlPrzqiA4EpPvv6X3AUI4FIsaqjzbeAjdsnMg8C?=
- =?us-ascii?Q?YLNxKGX5X4ehjVl7d8NPeJm4RPiiklE1xswK0t9TSFB7xglMbxZlrlJ5s6pk?=
- =?us-ascii?Q?TNiu1P8vdlTv9eH2Fjm5LTIUrMAsWCmuKfdNXE5WL3hYSWaJhHdxzyJr6gdP?=
- =?us-ascii?Q?NXKD+Gz7wi5QRvG2sjRwtQcey7Pt8QVj63zEHN6LChyomy6Q7poWQLbIO+aW?=
- =?us-ascii?Q?7wiozMx6C8T870xshJZUuCX+7T3wyEsOwHdV2RZWdjlgIE5O7Hbp9jv/aZlC?=
- =?us-ascii?Q?G61/CDXEbKiQkr/XuU8H65T2WwXpNym7jZ9oktGKMDJfuPp5rN0aZinqxAa+?=
- =?us-ascii?Q?oKMs/83DbGTRQPjfUsa3hzOD1GafHXpRUB3B3tf6ycFuCANuCjSMF1Fj6v3R?=
- =?us-ascii?Q?ugAVqI3s5yURSzMbF4BDK/TCcD32LsyP265WY+8d4/zOt+R2M/gjhZbx4qeR?=
- =?us-ascii?Q?nEHj1/Ahsd5pzb0bQegMs6I0U2vXHxq38CfZA2rlLPp9K3Sok+vHYtnSd4t4?=
- =?us-ascii?Q?afetyl08lppJ2fxK7gTaTO22V/Mm6lqjfN376Up81WOyrOaQg/0052h03yjm?=
- =?us-ascii?Q?ZfwVadYV19FgrF6eVnE8vSS+lD3Ou8IhvXiYtsosA4YvaLpKYXNuw9MzbBhX?=
- =?us-ascii?Q?kl/tvBTHeQse53LVQjB/taDZ+OUPPwWBSEHncYP2a91J9/NqGqKuQtXNI43G?=
- =?us-ascii?Q?GrQisLurE37w6W8mYHWWCZCjIwDg5HukNXuKMpLHphyMkifWAtm5UXKBE6xs?=
- =?us-ascii?Q?9LTmc9/RAqa8PceFpg4WPb1O7ELZalYcuGY+L7G48Dka3Z1GAK1BYJzpFv+B?=
- =?us-ascii?Q?ZArXV8mrgrh35GQ13mwSAoext7HrVaX/sKscXEsEDKFuIBwn8Hu+Jb4Ih7+y?=
- =?us-ascii?Q?6GRpNITlLwTDjdZGzKSpBg0/E/LCOApyBUP62nqW5Cj20Mp8DeU/nUo3JD4B?=
- =?us-ascii?Q?d8Yc31Q0u+ezZUPYXWa37FVhr7sQx+aASChqSVscX8+g1jnxDhJi6lf/9509?=
- =?us-ascii?Q?1JOdpsOOML3299pEzAVm9fbH+pzoRf9RKsf8Vfy18bxpE2o+borCxOZxzbfc?=
- =?us-ascii?Q?AvBAIci4Wa89xIKZA+VGQ7iG7NGylOpjM+HubD6ed4p5z34r8K5Czgx2524R?=
- =?us-ascii?Q?utgyw1yv6Pc+L6bScYm98nlMEYI4E9t3AI932JMOa5SveGBE+Yeb+vSCxg1l?=
- =?us-ascii?Q?7qSwASVugBgFjs0pjdxdbCIiMLU+GpkjQXaAfrBs+k9TiQhfLnMeQTuh6XL4?=
- =?us-ascii?Q?3qE+IoN6XdR38faABq4fsqqkD1IwDlEAYckwCQ3FYxiIudp+gDuzQMsThYfm?=
- =?us-ascii?Q?qXeDoRdM7Nf3JazLZFKo081hS7ELPoEoaWheEyt5VOVRrAT7MifYwh8yT/tm?=
- =?us-ascii?Q?z98hBTlF4VWi5TdfSKCWfollNp5+wyIO?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 10:33:38.3447
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06c9a0f9-0cb7-4287-9e6b-08dca194ed3a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7617
 
-Add Pinctrl support for Xilinx Versal platform.
-Driver checks for firmware support to retrieve the Pin information, if it
-is supported then proceed further otherwise it returns error saying
-operation not supported. Latest Xilinx Platform Management Firmware must
-be used to make use of the Pinctrl driver for Versal platform.
+From: Petr Tesarik <ptesarik@suse.com>
 
-Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
+There is no reason to restrict access to this attribute, as it merely
+reports whether crash elfcorehdr is automatically updated on CPU hot
+plug/unplug and/or online/offline events.
+
+Note that since commit 79365026f8694 ("crash: add a new kexec flag for
+hotplug support"), this maps to the same flag which is world-accessible
+through /sys/devices/system/memory/crash_hotplug.
+
+Signed-off-by: Petr Tesarik <ptesarik@suse.com>
 ---
- drivers/pinctrl/pinctrl-zynqmp.c | 91 ++++++++++++++++++++++++++++++--
- 1 file changed, 86 insertions(+), 5 deletions(-)
+ drivers/base/cpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
-index 3c6d56fdb8c9..e2cfd3d512e8 100644
---- a/drivers/pinctrl/pinctrl-zynqmp.c
-+++ b/drivers/pinctrl/pinctrl-zynqmp.c
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/pinctrl/pinctrl-zynqmp.h>
- 
-+#include <linux/bitfield.h>
- #include <linux/bitmap.h>
- #include <linux/init.h>
- #include <linux/module.h>
-@@ -44,6 +45,12 @@
- #define DRIVE_STRENGTH_8MA	8
- #define DRIVE_STRENGTH_12MA	12
- 
-+#define VERSAL_LPD_PIN_PREFIX		"LPD_MIO"
-+#define VERSAL_PMC_PIN_PREFIX		"PMC_MIO"
-+
-+#define VERSAL_PINCTRL_ATTR_NODETYPE_MASK	GENMASK(19, 14)
-+#define VERSAL_PINCTRL_NODETYPE_LPD_MIO		BIT(0)
-+
- /**
-  * struct zynqmp_pmux_function - a pinmux function
-  * @name:	Name of the pin mux function
-@@ -596,8 +603,12 @@ static int zynqmp_pinctrl_prepare_func_groups(struct device *dev, u32 fid,
- 			if (!groups[resp[i]].name)
- 				return -ENOMEM;
- 
--			for (pin = 0; pin < groups[resp[i]].npins; pin++)
--				__set_bit(groups[resp[i]].pins[pin], used_pins);
-+			for (pin = 0; pin < groups[resp[i]].npins; pin++) {
-+				if (of_device_is_compatible(dev->of_node, "xlnx,zynqmp-pinctrl"))
-+					__set_bit(groups[resp[i]].pins[pin], used_pins);
-+				else
-+					__set_bit((u8)groups[resp[i]].pins[pin] - 1, used_pins);
-+			}
- 		}
- 	}
- done:
-@@ -873,6 +884,70 @@ static int zynqmp_pinctrl_prepare_pin_desc(struct device *dev,
- 	return 0;
- }
- 
-+static int versal_pinctrl_get_attributes(u32 pin_idx, u32 *response)
-+{
-+	struct zynqmp_pm_query_data qdata = {0};
-+	u32 payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	qdata.qid = PM_QID_PINCTRL_GET_ATTRIBUTES;
-+	qdata.arg1 = pin_idx;
-+
-+	ret = zynqmp_pm_query_data(qdata, payload);
-+	if (ret)
-+		return ret;
-+
-+	memcpy(response, &payload[1], sizeof(*response));
-+
-+	return 0;
-+}
-+
-+static int versal_pinctrl_prepare_pin_desc(struct device *dev,
-+					   const struct pinctrl_pin_desc **zynqmp_pins,
-+					   unsigned int *npins)
-+{
-+	u32 lpd_mio_pins = 0, attr, nodetype;
-+	struct pinctrl_pin_desc *pins, *pin;
-+	int ret, i;
-+
-+	ret = zynqmp_pm_is_function_supported(PM_QUERY_DATA, PM_QID_PINCTRL_GET_ATTRIBUTES);
-+	if (ret)
-+		return ret;
-+
-+	ret = zynqmp_pinctrl_get_num_pins(npins);
-+	if (ret)
-+		return ret;
-+
-+	pins = devm_kzalloc(dev, sizeof(*pins) * *npins, GFP_KERNEL);
-+	if (!pins)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < *npins; i++) {
-+		ret = versal_pinctrl_get_attributes(i, &attr);
-+		if (ret)
-+			return ret;
-+
-+		pin = &pins[i];
-+		pin->number = attr;
-+		nodetype = FIELD_GET(VERSAL_PINCTRL_ATTR_NODETYPE_MASK, attr);
-+		if (nodetype == VERSAL_PINCTRL_NODETYPE_LPD_MIO) {
-+			pin->name = devm_kasprintf(dev, GFP_KERNEL, "%s%d",
-+						   VERSAL_LPD_PIN_PREFIX, i);
-+			lpd_mio_pins++;
-+		} else {
-+			pin->name = devm_kasprintf(dev, GFP_KERNEL, "%s%d",
-+						   VERSAL_PMC_PIN_PREFIX, i - lpd_mio_pins);
-+		}
-+
-+		if (!pin->name)
-+			return -ENOMEM;
-+	}
-+
-+	*zynqmp_pins = pins;
-+
-+	return 0;
-+}
-+
- static int zynqmp_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+index c61ecb0c2ae2..73d69791d0d3 100644
+--- a/drivers/base/cpu.c
++++ b/drivers/base/cpu.c
+@@ -308,7 +308,7 @@ static ssize_t crash_hotplug_show(struct device *dev,
  {
- 	struct zynqmp_pinctrl *pctrl;
-@@ -882,9 +957,14 @@ static int zynqmp_pinctrl_probe(struct platform_device *pdev)
- 	if (!pctrl)
- 		return -ENOMEM;
+ 	return sysfs_emit(buf, "%d\n", crash_check_hotplug_support());
+ }
+-static DEVICE_ATTR_ADMIN_RO(crash_hotplug);
++static DEVICE_ATTR_RO(crash_hotplug);
+ #endif
  
--	ret = zynqmp_pinctrl_prepare_pin_desc(&pdev->dev,
--					      &zynqmp_desc.pins,
--					      &zynqmp_desc.npins);
-+	if (of_device_is_compatible(pdev->dev.of_node, "xlnx,versal-pinctrl")) {
-+		ret = versal_pinctrl_prepare_pin_desc(&pdev->dev, &zynqmp_desc.pins,
-+						      &zynqmp_desc.npins);
-+	} else {
-+		ret = zynqmp_pinctrl_prepare_pin_desc(&pdev->dev, &zynqmp_desc.pins,
-+						      &zynqmp_desc.npins);
-+	}
-+
- 	if (ret) {
- 		dev_err(&pdev->dev, "pin desc prepare fail with %d\n", ret);
- 		return ret;
-@@ -907,6 +987,7 @@ static int zynqmp_pinctrl_probe(struct platform_device *pdev)
- 
- static const struct of_device_id zynqmp_pinctrl_of_match[] = {
- 	{ .compatible = "xlnx,zynqmp-pinctrl" },
-+	{ .compatible = "xlnx,versal-pinctrl" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, zynqmp_pinctrl_of_match);
+ static void cpu_device_release(struct device *dev)
 -- 
-2.25.1
+2.45.2
 
 
