@@ -1,127 +1,114 @@
-Return-Path: <linux-kernel+bounces-249596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690C592EDB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:27:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0998292EDB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 210951F22441
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:27:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E9D5B21E94
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A2416DC00;
-	Thu, 11 Jul 2024 17:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229CD16DC33;
+	Thu, 11 Jul 2024 17:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OAh+Fmg2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LBwyQwjb"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A9142AB5;
-	Thu, 11 Jul 2024 17:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFCB15ECCA;
+	Thu, 11 Jul 2024 17:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720718839; cv=none; b=VgD/T+lPjnDByxqYhHpH/efX1ad20D7sR0iMCkdWJ1fJ7441YcJ/9RWpoObthFNlPtM6tjUD871BJzYaw6RwhiQSS2hHEJHP8LEz7AXv3zdT+tuR3NTMh9igiwhLlF2wEYaI1IA4hD+ojih332V0qTKHl4wIifVeFrY5aFE+v4s=
+	t=1720718852; cv=none; b=dTwZci87Tcq8a7lF67ukCsthQlyn+z4G0G6YQNcEgk3KwfOJJUmPqX06e7bMp3yahdyh+98myduXtzXhF9bO7BSlEYJhvezkPmtj+g/ZmA6w0/qXO4Am3ZnTQm+OU65ed1bW1bTjQlsoH4B2N5s0Oa7Zcf2JIRsILhwsma35DTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720718839; c=relaxed/simple;
-	bh=M4ZqeXBMxCYAveIw6xehZg0LpC1GClfx6iMeK2x2qeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcOOR46fB62MrIGX0SRAZWe5kvyohCNMUPJq6bpXQsehy5JB2NatQiPpjjURgYKRgbsazuAEvTUIrTe941ZQRDYhD64vsu/PqWEC7KL5ymQmds9zKZMgKP72emXH0CEV+dA0fXQRR5N9pJ8mBfpzfRH4VZSFVO8Cc1+AeO/M/l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OAh+Fmg2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 128B2C116B1;
-	Thu, 11 Jul 2024 17:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720718838;
-	bh=M4ZqeXBMxCYAveIw6xehZg0LpC1GClfx6iMeK2x2qeI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OAh+Fmg2zPYlww53BEiLu3bLEeQd7BKi8ggeoiINMlu3wpWI+YRtUuavbfHC3oZS4
-	 jxgMpDEQxC2QMwMtG7gKJOifFZ4se5VyguzqXAEUip6NXdpMu0HohEh0FeUcbj2w4Y
-	 s59c/PGgJAF6cmh7lonhGcY3V1B4HFQiL0uKs+galKUePOddPeGIyYKNiG/Q7igNRx
-	 dxz9juTaKGS+pLnHCkroh0EwIn7BkMVgaM3fr4NtPcPE6xTWMy+Ivx/YxvAVlvqCn5
-	 GAEIJFiEEdRX14sDAtm0DBtHIc3r8SVVPsxvMFZROLCWKUHmDtY7ubob9qCUtvsgmF
-	 xaLlm+HFI1jNA==
-Date: Thu, 11 Jul 2024 20:27:13 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: Re: [PATCH 2/2] dma: Add IOMMU static calls with clear default ops
-Message-ID: <20240711172713.GA1815706@unreal>
-References: <98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org>
- <f2b699aea8fff5589a674da2a567fd593ed2d386.1720693745.git.leon@kernel.org>
+	s=arc-20240116; t=1720718852; c=relaxed/simple;
+	bh=WpUZ4910FAKCZbHx5BKBePk11aG3Y1+CuAT+yvV1tTY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hcvdBhXP91wOgw8xqJvd8lV2sJYXHADScprGcvWXCVKEoN4Ku8g6QpKWYB5/9HFiwaJhKjOiOG/5YoNaVwibcCqBAWLrI/X2Nt65nB6Bt4ULj74gqD++oRBYy1qfhIOZAugpbcSY6U6VWigM9iVuutpAlQabBjes4ABKpdBiP8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LBwyQwjb; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fb4a332622so6981855ad.2;
+        Thu, 11 Jul 2024 10:27:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720718850; x=1721323650; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pDdRinobJraWOj70a5x24jnbjy/LGvPgJQQBc3lXSlk=;
+        b=LBwyQwjbz59BsmgIw/WKfHH+Fa9MYnll7oJDO4N58cFqk6eJVW0espuxouUy1lYvC2
+         j3YId1wWRNNaRubdCLpksDgFxCTRSjnm1J57fPQ8/hwIp9LJ0hRIPvm25H0Lf6YI+YPp
+         YqVRHZwnWb3zP+z2q1Qg5krMZOD/crXfVAx4zCcKrE+j62lT2TD9RySl1A63IEH3NFF3
+         sbam+CFnPjuieVo0PYzMfgBxbutMz9xDOhD09OHUeS+bzmQaG/5REFasYyJLx8tINN+h
+         kZHiw9PqFczayl8qFrRqDTV+sIB/pMrwsfyanpwvNI68ig/Wjd+za7mkbnDjJ+XjqgOq
+         c8mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720718850; x=1721323650;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pDdRinobJraWOj70a5x24jnbjy/LGvPgJQQBc3lXSlk=;
+        b=UECSrZMjQzOlzCTdq2nWoTmpB8ac+KJ5jJoRI2Vy08KQKcsiDkHSz/MqkI5BpX2XzL
+         VYOjhjltksENxiDcFyqQs9JJu19DfFsnnvJUzkhQBkoh9nHtjFhRDpAMJh0HCXp5Yy2U
+         FXVIB1VI2QdoJsqcDrk4l1uAhB88UlFC3XoErxuuom7bC/rHSx/at8ylS2bXME/2H7Qi
+         PmYWUpFdzKQHv/OMhX8SFhQeHbKSfxbBlablx6sSRuFox/5Ffey494LfLl2G8dkAqxKr
+         8Fv2i3iICYAJa40Wc7SJ/F0TeWWyHWQifipWX6FNzKyWb1gJPm5sJoAt6sxaEQDB9/a0
+         JCxw==
+X-Gm-Message-State: AOJu0YyG80BWdjxGG13ImOWp6wcmjD+9TvrDDmUtEEhEeBQzov38Akur
+	PTJMC7IFvbJ1zX8YEwuBZa7GpfHkv9IsMjoojABEfI4bLxM/H6qBGFad/Q==
+X-Google-Smtp-Source: AGHT+IFZWm8ly54xvFNUuXX4lAEG19DGbsHPbEj9X/NenbaT9aM8VulqguSxGafjOmyfqKhv/hHapA==
+X-Received: by 2002:a17:902:e745:b0:1fb:19d1:707 with SMTP id d9443c01a7336-1fbb6d2519amr80738875ad.11.1720718850147;
+        Thu, 11 Jul 2024 10:27:30 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:4761:5ea8:2da4:8299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ac0c47sm52976845ad.192.2024.07.11.10.27.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 10:27:29 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org,
+	Sebastian Reichel <sre@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 2/6] Input: tsc2004/5 - do not hard code interrupt trigger
+Date: Thu, 11 Jul 2024 10:27:13 -0700
+Message-ID: <20240711172719.1248373-2-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
+In-Reply-To: <20240711172719.1248373-1-dmitry.torokhov@gmail.com>
+References: <20240711172719.1248373-1-dmitry.torokhov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f2b699aea8fff5589a674da2a567fd593ed2d386.1720693745.git.leon@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 01:38:55PM +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> Most of the IOMMU drivers are using the same DMA operations, which are
-> default ones implemented in drivers/iomem/dma-iomem.c. So it makes sense
-> to properly set them as a default with direct call without need to
-> perform function pointer dereference.
-> 
-> During system initialization, the IOMMU driver can set its own DMA and
-> in such case, the default DMA operations will be overridden.
-> 
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
->  MAINTAINERS               |  1 +
->  drivers/iommu/dma-iommu.c | 24 +++++++-------
->  include/linux/iommu-dma.h | 50 +++++++++++++++++++++++++++++
->  kernel/dma/iommu.h        | 67 +++++++++++++++++++++++++++++++++++++++
->  kernel/dma/mapping.c      |  9 +++---
->  5 files changed, 134 insertions(+), 17 deletions(-)
->  create mode 100644 include/linux/iommu-dma.h
->  create mode 100644 kernel/dma/iommu.h
+Instead of hard-coding interrupt trigger rely on ACPI/DT/board code
+to set it up appropriately.
 
-<...>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/input/touchscreen/tsc200x-core.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> +++ b/include/linux/iommu-dma.h
-> @@ -0,0 +1,50 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2024, NVIDIA CORPORATION & AFFILIATES. All rights reserved
-> + *
-> + * DMA operations that map physical memory through IOMMU.
-> + */
-> +#ifndef _LINUX_IOMMU_DMA_H
-> +#define _LINUX_IOMMU_DMA_H
-> +
-> +#include <linux/dma-direction.h>
-> +
-> +#ifdef CONFIG_IOMMU_API
+diff --git a/drivers/input/touchscreen/tsc200x-core.c b/drivers/input/touchscreen/tsc200x-core.c
+index 39789a27f65b..cd539a2a1dd5 100644
+--- a/drivers/input/touchscreen/tsc200x-core.c
++++ b/drivers/input/touchscreen/tsc200x-core.c
+@@ -542,10 +542,8 @@ int tsc200x_probe(struct device *dev, int irq, const struct input_id *tsc_id,
+ 	/* Ensure the touchscreen is off */
+ 	tsc200x_stop_scan(ts);
+ 
+-	error = devm_request_threaded_irq(dev, irq, NULL,
+-					  tsc200x_irq_thread,
+-					  IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+-					  "tsc200x", ts);
++	error = devm_request_threaded_irq(dev, irq, NULL, tsc200x_irq_thread,
++					  IRQF_ONESHOT, "tsc200x", ts);
+ 	if (error) {
+ 		dev_err(dev, "Failed to request irq, err: %d\n", error);
+ 		return error;
+-- 
+2.45.2.993.g49e7a77208-goog
 
-This should be CONFIG_IOMMU_DMA.
-
-diff --git a/include/linux/iommu-dma.h b/include/linux/iommu-dma.h
-index b42487bf8f8e..bfdcc9d65daf 100644
---- a/include/linux/iommu-dma.h
-+++ b/include/linux/iommu-dma.h
-@@ -9,7 +9,7 @@
-
- #include <linux/dma-direction.h>
-
--#ifdef CONFIG_IOMMU_API
-+#ifdef CONFIG_IOMMU_DMA
- dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
-                              unsigned long offset, size_t size,
-                              enum dma_data_direction dir, unsigned long attrs);
-@@ -46,5 +46,5 @@ static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
-                               unsigned long attrs)
- {
- }
--#endif /* CONFIG_IOMMU_API */
-+#endif /* CONFIG_IOMMU_DMA */
- #endif /* _LINUX_IOMMU_DMA_H */
-
-Thanks
 
