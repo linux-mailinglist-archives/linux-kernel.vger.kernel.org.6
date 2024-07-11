@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-249675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C4F792EE63
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:09:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E6B92EE61
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBA97284E1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:09:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 430871F2205A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7FB16DED2;
-	Thu, 11 Jul 2024 18:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F9516EC14;
+	Thu, 11 Jul 2024 18:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZPxjZNUG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="35GOoYlz"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E94116D33F;
-	Thu, 11 Jul 2024 18:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D640116D33F;
+	Thu, 11 Jul 2024 18:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720721073; cv=none; b=dlYmfu2vcOAx/0cb2A0cTF459o/hrWMzKOMgvevyFA3WLlLGruWJPzPyTOdljiNYF4tfvSNS7PcSgX2ghVmLEAOE957s4tjF+fJeJamCIL5vPq8b7dyqXPfLYBHzh6QLvAGl0l+sq0FEqTZ8B91NW7FIsYZLgfgxI2t3Fy7OIQA=
+	t=1720721039; cv=none; b=Zo5hFW5tD6vSH9CCjJlSVtxi5/7pXm5pyoUNBfEtHXt94lTj4GnkkYgIdX2OX0i4ov8hfygFj/fzBu0+wEL8lC1Jji0zTEjgM8PvPuov38dj+3YzQ8XI9fHtsOECXMRUTOCPoxK74Lb9ML8jc0Fgt3Q9SDd66w4PAGPWKpo+KiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720721073; c=relaxed/simple;
-	bh=XBxod0zA2kJaQ30eaGrg8Gyqs6HEr8W4h16bYV+ocEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EAZuCXnWhSlcekW16bLNvMe81MCdXVsSwLdimeZVrb7NVTlmQ90ZZE8wq0/8GangP51pkK0fDlWXrl0/su7wkXc9RGhFoOC1TEj7GQGIibjZf04gMw26tqiOFNVsVcrea2jc/vAjwkA6iBVKjX+6hSi4P7V7XinNXP4Zp4oEmDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZPxjZNUG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BE01tH017618;
-	Thu, 11 Jul 2024 18:03:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nONQeuYbHLvRucyD7QhZjwXI2y6eI9gKzj/PG28Mnsk=; b=ZPxjZNUGsmcBi+5G
-	ffrG48WhB5Ds2J8F+jwTYQAu5L/qXaZxoOOxr5rnjGEMfj6tl6q0shuyZ5jAMRMc
-	uU4pzGMliYR0ukjzaZsfzJHkAIzdYX/2VSi8Ja3YKhUpfdE61Y/HjQ90ddyLEI0i
-	Cs1b0LTi9ycSqyCgVnPtPcOkZEedqPvEpx8cU+eohQz3BMq4K8/VqcHYdw9pxW/1
-	6CwLwCHzp6hjMPukcS9P42otWV9XZp7cavX+mBAfpgj1OQUKX+Eig6mx2T1OlDBj
-	B26qq41YNVGTqIhmQsdlJd5OFkBuJyLpdYPc+Rjvb09oEKMbFLA+JfP2WRGxpZvm
-	MDFdaA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40a8uhsxh6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 18:03:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BI3Nbb015261
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 18:03:23 GMT
-Received: from [10.110.44.137] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 11:03:22 -0700
-Message-ID: <fb285034-ed4c-4f20-ab80-cf91d36fc67c@quicinc.com>
-Date: Thu, 11 Jul 2024 11:03:15 -0700
+	s=arc-20240116; t=1720721039; c=relaxed/simple;
+	bh=pab+mbEW8dwG9AGWYRD0lodd45oLps+hgZoI7xasCZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=doN5voq/ij128XOpcONmzqLZSBg/XAj8sb2CSvyrMf/lvf884tWM2oKcWeb4fScu3gKUzv/P6Gp98eI3sooiCRvDaHx9UmP6ub0dEbIYSFINg7a3urVqsUPoMbC1zMbWVnaKwHT0cAx4Rs7XArE7LFy92K1trAv4FAfg1IgtMr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=35GOoYlz; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WKjK919fWzlgx6s;
+	Thu, 11 Jul 2024 18:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1720721034; x=1723313035; bh=pab+mbEW8dwG9AGWYRD0lodd
+	45oLps+hgZoI7xasCZg=; b=35GOoYlzZ3l8VcLtmxmrULG5mUhE1j6ep/3nDBiT
+	RhlCkaUPv/iRzciw6FC+VztDCBCROGtbeHqECYKgi90RbEMSA5KojLcYNzJCr2GY
+	mQR/HyKl2aTHl2injaQIMz5Xql+cvzj2wRQtGUKpfT0a9AmvJvx/9khevqZpn1cQ
+	QMJbMCBHYZk1KkrswuQS3BtaEPJRhr7xlTP5XMpYxKOecZE/YzOw0WTghZOTu6Fw
+	V8bG/6UyT73AnIKgPoKmTxJ0Zb6trv1QKLOYgTnIierUP7ZnEdBvW6G0mQk7TQpE
+	/gxct5f5nBciTVYNZwZfdgNdhM3SNRMIjSQHxHy4TR+RMA==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id TWGyb7_uIrbK; Thu, 11 Jul 2024 18:03:54 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WKjK46vqVzllCRC;
+	Thu, 11 Jul 2024 18:03:52 +0000 (UTC)
+Message-ID: <4c8f1e4e-1b15-4afa-b1e2-084e0c4caeec@acm.org>
+Date: Thu, 11 Jul 2024 11:03:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,146 +64,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/msm/dpu: don't play tricks with debug macros
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn
- Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Chandan Uddaraju <chandanu@codeaurora.org>,
-        Rajesh Yadav
-	<ryadav@codeaurora.org>,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>
-References: <20240709-dpu-fix-wb-v1-0-448348bfd4cb@linaro.org>
- <20240709-dpu-fix-wb-v1-2-448348bfd4cb@linaro.org>
- <46487222-6818-b0bf-e5cc-2310d62b5fe6@quicinc.com>
- <CAA8EJpq7Lp-3V_AsLxO9ZOt8ZW1ZZ=FjhXV6R9jvH=sQ8XQE9w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] blk-ioprio: remove per-disk structure
+To: Yu Kuai <yukuai1@huaweicloud.com>, tj@kernel.org, josef@toxicpanda.com,
+ jack@suse.cz, axboe@kernel.dk
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com
+References: <20240711090059.3998565-1-yukuai1@huaweicloud.com>
+ <20240711090059.3998565-3-yukuai1@huaweicloud.com>
 Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <CAA8EJpq7Lp-3V_AsLxO9ZOt8ZW1ZZ=FjhXV6R9jvH=sQ8XQE9w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240711090059.3998565-3-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FknxQBwkKNIhvDX2H5RiooBpUZc2PoF1
-X-Proofpoint-ORIG-GUID: FknxQBwkKNIhvDX2H5RiooBpUZc2PoF1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_13,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 bulkscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- mlxlogscore=999 lowpriorityscore=0 suspectscore=0 spamscore=0 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110125
 
+On 7/11/24 2:00 AM, Yu Kuai wrote:
+> ioprio works on the blk-cgroup level, all disks in the same cgroup
+> are the same, and the struct ioprio_blkg doesn't have anything in it.
+> Hence register the policy is enough, because cpd_alloc/free_fn will
+> be handled for each blk-cgroup, and there is no need to activate the
+> policy for disk.
 
+As one can see in the output of git grep -nHEB1 '>pd_(alloc|free)_fn\(',
+none of the pd_alloc_fn / pd_free_fn callers checks whether or not these
+pointers are NULL. Hence my question why this patch does not trigger any
+NULL pointer dereferences?
 
-On 7/10/2024 12:40 AM, Dmitry Baryshkov wrote:
-> On Tue, 9 Jul 2024 at 22:39, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
->>
->>
->>
->> On 7/9/2024 6:48 AM, Dmitry Baryshkov wrote:
->>> DPU debugging macros need to be converted to a proper drm_debug_*
->>> macros, however this is a going an intrusive patch, not suitable for a
->>> fix. Wire DPU_DEBUG and DPU_DEBUG_DRIVER to always use DRM_DEBUG_DRIVER
->>> to make sure that DPU debugging messages always end up in the drm debug
->>> messages and are controlled via the usual drm.debug mask.
->>>
->>
->> These macros have been deprecated, is this waht you meant by the
->> conversion to proper drm_debug_*?
-> 
-> Yes. Drop the driver-specific wrappers where they don't make sense.
-> Use sensible format strings in the cases where it actually does (like
-> VIDENC or _PLANE)
-> 
+Thanks,
 
-Ack but we need to not just drop the wrappers but drop the usage of 
-these macros as well because it is documented that they are deprecated.
-
-So I assume you want to get this in and do that as a follow up change?
-
->>
->> /* NOTE: this is deprecated in favor of drm_dbg(NULL, ...). */
->> #define DRM_DEBUG_DRIVER(fmt, ...)                                      \
->>           __drm_dbg(DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
->>
->> I think all that this macro was doing was to have appropriate DRM_UT_*
->> macros enabled before calling the corresponding DRM_DEBUG_* macros. But
->> I think what was incorrect here is for DPU_DEBUG, we could have used
->> DRM_UT_CORE instead of DRM_UT_KMS.
-> 
-> It pretty much tries to overplay the existing drm debugging mechanism
-> by either sending the messages to the DRM channel or just using
-> pr_debug. With DYNAMIC_DEBUG being disabled pr_debug is just an empty
-> macro, so all the messages can end up in /dev/null. We should not be
-> trying to be too smart, using standard DRM_DEBUG_DRIVER should be
-> enough. This way all driver-related messages are controlled by
-> drm.debug including or excluding the 0x02 bit.
-> 
-> 
->>
->> And DRM_DEBUG_DRIVER should have been used instead of DRM_ERROR.
->>
->> Was this causing the issue of the prints not getting enabled?
-> 
-> I pretty much think so.
-> 
-
-Alright, I am okay with the approach, just one minor suggestion, to keep 
-the behavior intact, previously the code wanted DPU_DEBUG to be 
-controlled by DRM_UT_KMS and DPU_DEBUG_DRIVER controlled by DRM_UT_DRIVER.
-
-Keeping that intact, we need to use DRM_DEBUG_KMS for DPU_DEBUG?
-
->>
->>> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> ---
->>>    drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h | 14 ++------------
->>>    1 file changed, 2 insertions(+), 12 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
->>> index e2adc937ea63..935ff6fd172c 100644
->>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
->>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
->>> @@ -31,24 +31,14 @@
->>>     * @fmt: Pointer to format string
->>>     */
->>>    #define DPU_DEBUG(fmt, ...)                                                \
->>> -     do {                                                               \
->>> -             if (drm_debug_enabled(DRM_UT_KMS))                         \
->>> -                     DRM_DEBUG(fmt, ##__VA_ARGS__); \
->>> -             else                                                       \
->>> -                     pr_debug(fmt, ##__VA_ARGS__);                      \
->>> -     } while (0)
->>> +     DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
->>>
->>>    /**
->>>     * DPU_DEBUG_DRIVER - macro for hardware driver logging
->>>     * @fmt: Pointer to format string
->>>     */
->>>    #define DPU_DEBUG_DRIVER(fmt, ...)                                         \
->>> -     do {                                                               \
->>> -             if (drm_debug_enabled(DRM_UT_DRIVER))                      \
->>> -                     DRM_ERROR(fmt, ##__VA_ARGS__); \
->>> -             else                                                       \
->>> -                     pr_debug(fmt, ##__VA_ARGS__);                      \
->>> -     } while (0)
->>> +     DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
->>>
->>>    #define DPU_ERROR(fmt, ...) pr_err("[dpu error]" fmt, ##__VA_ARGS__)
->>>    #define DPU_ERROR_RATELIMITED(fmt, ...) pr_err_ratelimited("[dpu error]" fmt, ##__VA_ARGS__)
->>>
-> 
-> 
-> 
+Bart.
 
