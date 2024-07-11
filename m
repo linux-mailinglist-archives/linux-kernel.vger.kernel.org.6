@@ -1,138 +1,112 @@
-Return-Path: <linux-kernel+bounces-249729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7FD92EF13
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:45:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0187592EF10
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0F201F23065
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:45:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B0B5B228EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F8C16E88E;
-	Thu, 11 Jul 2024 18:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106C316E88D;
+	Thu, 11 Jul 2024 18:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kkxt+r4k"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWjcuDWx"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B711C16DEC2;
-	Thu, 11 Jul 2024 18:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E818B38398;
+	Thu, 11 Jul 2024 18:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720723495; cv=none; b=Frd42OluJ5CJCYMkxSXywHxKl3M2vDLl2IkagImxKmWYVK/48gKjmhUOYAjqGqMNcUcYdFL/njfUXRzoqhOXrYw3DsMqFzpHNJFSUdmsLxrn4EfimliWf0+3hrdH92cK3h3RgMi1+JVQ0Zuk9qH70mY40/079C0zDRoxZc99wX4=
+	t=1720723475; cv=none; b=PaLSE1qWaosII5bfJ70ucGL4H0yIx6ntC2RpMUSyuWvboT65HsctHeYPecPhWZtYg+OpeAaN8xfEupyngy6vcHul+48d5E8/QHKAZP58tNmjoylAb3icfe3+HbboU0lG5V4p5gO0ufe/I+tp+c3P04l04QUKqKlLqetlJGgFXs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720723495; c=relaxed/simple;
-	bh=pd/Yn2JxsxkrZmSa8/G43dYjU26mRHFRHL2mCUI7paM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=V+PqyJBFjLThbSitFAcb/b5v9z1pizbjn+hoLJluXuylkPPKWmK+HoOyDF5ITldWXFoxSBPsfphyPOynb4L0qplLjB19hNGXpSsoVo9QTrMIlMKY7lgeXcIH17ylb4FyEqQIcybOybwotCjf7pwauEixVE/oHGr2Y+Pi35QytUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kkxt+r4k; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BDd6Je012659;
-	Thu, 11 Jul 2024 18:43:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	s1g4puKmzdu8RvrxbPD8Z2aPunTmspkN2ogP0QM2Mgo=; b=kkxt+r4kmrvm3tOg
-	Cvtt++B6tDH1iMjXXt5MgVSHGM5Gu96pqK63EVrhMYf0lxG6qnrTHqsxD4wHi2tw
-	Or+d3Agonk838LTpP+S1bX+y7y8sjGJAIHCmUcr8jkqRXmjdKj64ASqP+hlEDzkR
-	aPAld/u7yNd4pnA7A9iL2g8fQwur8kyiLijZ4+B0Y+AUeaHfq5kfK72X7HsO/zzp
-	79DM3xMyPZqF89lTu8FivGml0lkA8mEVOqvE/74dLMW9qRI1Zmte1aJCJSIPz4UJ
-	oDiG4Z9jiJT543GSejBAJ9qq+lN97XsOKDDj+nD+9WC+/SLW9JIZ8Bhz1avAzNhm
-	3PRLJg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 409vydugwt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 18:43:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BIhJCa014533
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 18:43:19 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 11:43:19 -0700
-Message-ID: <b8b23dc1-7df6-489d-9638-db64a89c8a83@quicinc.com>
-Date: Thu, 11 Jul 2024 11:43:18 -0700
+	s=arc-20240116; t=1720723475; c=relaxed/simple;
+	bh=SEFCc513xCNJSG9UVFgYdr0OMgjdLx1OXfmbJqmjliM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q72k0+ufvOggFoj2+mg/lb6eN3b+8P1CE7jM8h9txyLS6RRArjpM5cIW0NC2UKk+XB8L27dL/b++4qo7VqyZukuggU8CDpwjWCwAV5W8UcldIJ7qCIwd8iWYChlL7XScprigQs5m8ES8Di345+McJ4CfVGVU47VlX2RB3STWk2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWjcuDWx; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70b09cb7776so1058170b3a.1;
+        Thu, 11 Jul 2024 11:44:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720723473; x=1721328273; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=81F7Jmh/XxgGOMMJv6GwxpQ3JjZzTcsp+Xpu4neomkU=;
+        b=dWjcuDWxsfVUuiF945u1ZCgmgACDVu/3GgmrU9cg9CBgaSyPFA59Luaqx7WPPrAq2B
+         WUV8gx9p+VPW5Ddeni9YBV6JGlSiBcac1wBa3SlQ51vzMwhyBButUlVMXoGZjfTDxhok
+         xyA+3ZZAl51/tDm0WKhoGcYu4KyGJef3Jj+QH9P+bKx2CtgsTmiCYydMtdYGDiHjIEax
+         33a93OQGo4PmZiM6/prAXcBz4nNSxiqVXGbdaOJNYQXs024C/61k8XSuLhxvEpp8vFqR
+         17+UCVwScx2Ib3PskNojIQEftZVvmlySk8rSgRP+hrSWSz39ewhT38xzTqNlRFRYqWMw
+         8ktw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720723473; x=1721328273;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=81F7Jmh/XxgGOMMJv6GwxpQ3JjZzTcsp+Xpu4neomkU=;
+        b=qsemrLiIDZUbMzfSZXegzJeQNfv6pMFGPRYu6hsZGV8SUu+VYXFV5kUuXMnp1BL9G6
+         ZnaSJIHebYMi7YLwFtJrzSf4/m4hYmje3CFy/xcxGs+C+jG7H8NoS913CCiUrOeqp6mn
+         dlarPOi8qvg1qffD/oktHqS86nVLtAXm85qOyKQ8GW6aFjPRV/ZCfrD6/NObk2pcxuYK
+         o/+dcZi049zFN5gE+xX4q31MndVcdERhAELOuW6TLZ2k5uHMZgoO1MlCUjAFgyhpFC7t
+         NWEY8NWVPjkR28ZvYOUOxWvxHlowdnwn2J2xo3BmSPFcpBoM+gmhpASrWwPrNnHM8W3B
+         mYsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWs6cy1Rx713wZGSOh/OVaCf9NgtYxfWwFNXmPgyX9h3kUuSnL7IjsXvbR2ERmVdhobtPamyiKXNkH8dyrRJLuDnhXIqxco0IZZ8wFLItFqODAv6XVRTSB7nU9BxFwb7d8MNB0DMsPX27luIKopzwXU9EQ8oYmyy81Z/EmE5h3WmA==
+X-Gm-Message-State: AOJu0YyDEbRaK6NNLJKV7nVwHp/Ry+hPS7uMKj+mJzA2Ll9xrL9mw7Yd
+	oHk7FHBUwS0z6237Ob6Ib0hIP3ONV4C6j3AU1eArii9XaJ3+0EJK
+X-Google-Smtp-Source: AGHT+IGrNhyhr4lJ/caU15aCmXa8NIU4JW+ZCRr9qtS57I+xiOizFgSPzdyXR1KOhdGx0whGrYN7uA==
+X-Received: by 2002:a05:6a20:3941:b0:1c2:8b7f:5eb4 with SMTP id adf61e73a8af0-1c29820c03bmr10025148637.5.1720723473090;
+        Thu, 11 Jul 2024 11:44:33 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b54ea2279sm3622293b3a.171.2024.07.11.11.44.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 11:44:32 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Thu, 11 Jul 2024 08:44:31 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [PATCH v3 1/2] cgroup: Show # of subsystem CSSes in cgroup.stat
+Message-ID: <ZpAoD7_o8bf6yVGr@slm.duckdns.org>
+References: <20240710182353.2312025-1-longman@redhat.com>
+ <20240711134927.GB456706@cmpxchg.org>
+ <4e1078d6-6970-4eea-8f73-56a3815794b5@redhat.com>
+ <ZpAT_xu0oXjQsKM7@slm.duckdns.org>
+ <76e70789-986a-44c2-bfdc-d636f425e5ae@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] virtio: add missing MODULE_DESCRIPTION() macro
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        =?UTF-8?Q?Eugenio_P=C3=A9rez?=
-	<eperezma@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240602-md-virtio_dma_buf-v1-1-ce602d47e257@quicinc.com>
- <ef8f00f2-210c-454e-a7f8-ab724a18bf96@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <ef8f00f2-210c-454e-a7f8-ab724a18bf96@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: T_ZKg2aanK-uQjTJG4ZN8WXUocqwZfjS
-X-Proofpoint-ORIG-GUID: T_ZKg2aanK-uQjTJG4ZN8WXUocqwZfjS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_14,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- priorityscore=1501 clxscore=1015 mlxlogscore=999 impostorscore=0
- suspectscore=0 spamscore=0 adultscore=0 malwarescore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <76e70789-986a-44c2-bfdc-d636f425e5ae@redhat.com>
 
-On 6/23/24 10:36, Jeff Johnson wrote:
-> On 6/2/2024 1:25 PM, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_dma_buf.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>   drivers/virtio/virtio_dma_buf.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/virtio/virtio_dma_buf.c b/drivers/virtio/virtio_dma_buf.c
->> index 2521a75009c3..3034a2f605c8 100644
->> --- a/drivers/virtio/virtio_dma_buf.c
->> +++ b/drivers/virtio/virtio_dma_buf.c
->> @@ -85,5 +85,6 @@ int virtio_dma_buf_get_uuid(struct dma_buf *dma_buf,
->>   }
->>   EXPORT_SYMBOL(virtio_dma_buf_get_uuid);
->>   
->> +MODULE_DESCRIPTION("dma-bufs for virtio exported objects");
->>   MODULE_LICENSE("GPL");
->>   MODULE_IMPORT_NS(DMA_BUF);
->>
->> ---
->> base-commit: 83814698cf48ce3aadc5d88a3f577f04482ff92a
->> change-id: 20240602-md-virtio_dma_buf-b3552ca6c5d5
->>
-> 
-> Following up to see if anything else is needed from me.
-> Hoping to see this in linux-next :)
+Hello,
 
-I still don't see this in linux-next so following up to see if anything 
-else is needed to get this merged. Adding Greg KH since he's signed off 
-on this file before and he's taken quite a few of my cleanups through 
-his trees.
+On Thu, Jul 11, 2024 at 01:39:38PM -0400, Waiman Long wrote:
+> On 7/11/24 13:18, Tejun Heo wrote:
+...
+> Currently, I use the for_each_css() macro for iteration. If you mean
+> displaying all the possible cgroup subsystems even if they are not enabled
+> for the current cgroup, I will have to manually do the iteration.
 
-I'm hoping to have all of these warnings fixed tree-wide in 6.11.
+Just wrapping it with for_each_subsys() should do, no? for_each_css() won't
+iterate anything if css doesn't exist for the cgroup.
 
-/jeff
+Thanks.
 
+-- 
+tejun
 
