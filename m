@@ -1,128 +1,160 @@
-Return-Path: <linux-kernel+bounces-248858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C431292E2CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:54:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863A592E2D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00E571C22E4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:54:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6023B219DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E4B1552E7;
-	Thu, 11 Jul 2024 08:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AA3gJ1fY"
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE95153581;
+	Thu, 11 Jul 2024 08:55:23 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF53128372;
-	Thu, 11 Jul 2024 08:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB08F78283
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720688059; cv=none; b=RAkxC7l36YmJRGzy56Sxzb8jWw56syA02DDrDBzRncNsAhz3dVcpwtohyuuq3zG4WqPjkuU9juoCsvUuI9B9YK0yGVSSbAyTo3ujP8Nv4y5AtFF8J5ccK0kJqDrwlMk7RiWDx4lQrrYpqUC0cC9T3aD/Z2qtdGyrWcaXsB82T+M=
+	t=1720688123; cv=none; b=juKinWzrGmxT10KBPkhslzgHns3QwUuJ8Ni1vgabRcZMzl5AYf4TculwiSrGwJDDqr61aOzwr/+HkzJY9XmJrnUi0jQhN11k7/5ObDPm/LiQMv4TTz4OUYNcsPiL3EbLNfN3+PsN5RACWvq6RW86hjqkklGcNTBzKDIoqqXcqss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720688059; c=relaxed/simple;
-	bh=D+QQsXFMRvw9K/Ga6VQddVnwvaukbDA+lgAqpvT47JE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hW2tqszfllNgblZZw5PssC2P6ood77fAuS+tMf2/2U6KYuSYIIPTG8ueqdfcemXi020o8mz6idk/pZPvDkUcatlMI0nnxOmjlTLrjg+n8vZ/JEiTdTR8TnGZ/dKZQv8h1eHecoD609XN5D6GBvX5sjIUpz18r3SIdWQ/uvsmruY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AA3gJ1fY; arc=none smtp.client-ip=217.70.178.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay6-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::226])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id 7B8A2C6F9D;
-	Thu, 11 Jul 2024 08:53:37 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6CCC0C0004;
-	Thu, 11 Jul 2024 08:53:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720688010;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=llx+XP6JadpR4EDUDeetmhDEqpsogxmUXPt4IRV6jhY=;
-	b=AA3gJ1fYpAWXhsN7u788NnDZ/v0vX7dvLEo/dMkPVF5FqXQ24pJWrLa4tMsc3P88ymKrBq
-	6/k6Mvok52jqLwLGDrDHBqpORhVYkPhxEmvcpegNa3p8uJIaugUhdix2M2aDmKhsj4dBIx
-	2JJCKR3Iqw7LHGWBqkX0rYIOoLQBa2KXf0+b54pVu58xPJUh4LNQMBGFoMCZrmavp3FOLR
-	0seHoFINGYwQExywKl2/xoA8PJJVlRzRCpV2v3wRe5i7aKRjYuIAYHWV5yVJQ8klKNcm3E
-	e6mFtzIssZXgr2v+afFUXJb1SrbMP+grMQlia8iERqyPY67fv92Y2SIY6KmeIg==
-Date: Thu, 11 Jul 2024 10:53:26 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH v2 1/2] net: pse-pd: Do not return EOPNOSUPP if config
- is null
-Message-ID: <20240711105326.1a5b6b0b@kmaincent-XPS-13-7390>
-In-Reply-To: <20240711084300.GA8788@kernel.org>
-References: <20240710114232.257190-1-kory.maincent@bootlin.com>
-	<20240711084300.GA8788@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720688123; c=relaxed/simple;
+	bh=Ieeo12Y9Zk6Da7peJZoY0SL3N0/6PNtoVpZrhj5NoPI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=k/kCjgFCv3jYFTi2MhKa5xckSpeuQtkKPlPlZliyIwFgynrQLduo7540ZqzjCgxxqkzXlVDbdaFNvGPGmJmErh8cV1L6z/aqs6fwzM1DSoymF7Z/ixEsiihVktw3mT+XAKfvCUX8Y/c1dWdPHRc2tIfw3L4y4StDn3UBIBe55CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7ebd11f77d8so71919839f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:55:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720688121; x=1721292921;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pzd+X9QEqYjrbi3EtMzlUg+nanjs6nVilWOmryRstKI=;
+        b=ttSnNxVTaVJ5rQKSitjGqeZ0bjReYHQTTQ+3x724mNMInpSn38holDNqf4pYraBGRt
+         r5LjyLhUu3yGb27xr9Pxdxu6kFk8EkvYgk88S7e+7Kyd5V2UxLAGBbVR2UrxXRTFviGb
+         eQ/fG3bMxtgEienAYtOWw85dfrMGZrP8ij77anZdGBwHEIifidIF9wbxXjeYVJRHJB78
+         2Tfh/WWLw1AqOxq8YT7e5DnNxr14zejwzAk+H1Pne5RBT7cgVLwTzEgtUTY7BuWq+UzY
+         snHnQFBVVxhzVJfiDHD8TYgFN484bF3iKUD/Gn3m27OFc4+Db3RLzU4SG+R5neu6MBMJ
+         reZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUw4L4o5LlBIjedTDC39vR9LOroaqQOkyTW4yZqoz/tUN3OxYPj+Q32I7IIWGKAXE03xZfncahQy5tqXxKDE5jEEZUVTGwGBqAWIo5o
+X-Gm-Message-State: AOJu0YzI3dRqGurGP7CTRbLorFngsgWPDiJW4ogrFrKdtX5q/RxRq5Mg
+	K1DfWGRmqA7l6ueqGdBXKKAjkddPrIToNte9mfOK9abnO/aDVQfhhMsYwqULATMbBAM8gKpTh2e
+	ABWDfCfNrgr904qa5BOHgYg02bNSL37FmbknTSqRX86DbCk9xfKzyy8w=
+X-Google-Smtp-Source: AGHT+IG1SIDhJo7vyIuMCc8FKw7+wkpapX5tIBaR9j40ZmSxf3UCJ4Kz4sy+k2ML1km1bnO175WCfYQB/gDLWF/+WaZVMRz2oXTQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+X-Received: by 2002:a05:6638:2192:b0:4b9:ad96:2adc with SMTP id
+ 8926c6da1cb9f-4c0b2b39704mr481726173.4.1720688120892; Thu, 11 Jul 2024
+ 01:55:20 -0700 (PDT)
+Date: Thu, 11 Jul 2024 01:55:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000372171061cf4ecb5@google.com>
+Subject: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in dbNextAG (2)
+From: syzbot <syzbot+808f3f84407f08a93022@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 11 Jul 2024 09:43:00 +0100
-Simon Horman <horms@kernel.org> wrote:
+Hello,
 
-> On Wed, Jul 10, 2024 at 01:42:30PM +0200, Kory Maincent wrote:
-> > For a PSE supporting both c33 and PoDL, setting config for one type of =
-PoE
-> > leaves the other type's config null. Currently, this case returns
-> > EOPNOTSUPP, which is incorrect. Instead, we should do nothing if the
-> > configuration is empty.
-> >=20
-> > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> > Fixes: d83e13761d5b ("net: pse-pd: Use regulator framework within PSE
-> > framework") ---
-> >=20
-> > Changes in v2:
-> > - New patch to fix dealing with a null config. =20
->=20
-> Hi Kory,
->=20
-> A few thing from a process perspective:
->=20
-> 1. As fixes, with fixes tags (good!), this patchset seems like it is
->    appropriate for net rather than net-next. And indeed it applies
->    to net but not net-next. However, the absence of a target tree
->    confuses our CI which failed to apply the patchset to net-next.
->=20
->    Probably this means it should be reposted, targeted at net.
->=20
->    Subject: [Patch v3 net x/y] ...
->=20
->    See: https://docs.kernel.org/process/maintainer-netdev.html
+syzbot found the following issue on:
 
-Oops indeed sorry, forgot to add the net prefix.
+HEAD commit:    22f902dfc51e Merge tag 'i2c-for-6.10-rc7' of git://git.ker..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=175c1059980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1ace69f521989b1f
+dashboard link: https://syzkaller.appspot.com/bug?extid=808f3f84407f08a93022
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17eb06e1980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e6f6e1980000
 
-> 2. Please provide a cover letter for patch sets with more than one
->    (but not just one) patch. That provides an overview of how
->    the patches relate to each other. And a convenient anchor for
->    feedback such as point 1 above.
->=20
-> ...
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/da00a62c06a3/disk-22f902df.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e090db7ab1fa/vmlinux-22f902df.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5332f53497de/bzImage-22f902df.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/ec0f0006ae2c/mount_0.gz
 
-As my first version contained only one patch I did not thought of adding a
-cover letter for the 2nd version but indeed I should. Sorry.
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-Thanks for the reminder I will try to not have my head in the cloud next ti=
-me.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15d45c9e980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=17d45c9e980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13d45c9e980000
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+808f3f84407f08a93022@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+------------[ cut here ]------------
+UBSAN: array-index-out-of-bounds in fs/jfs/jfs_dmap.c:661:7
+index 128 is out of range for type 's64[128]' (aka 'long long[128]')
+CPU: 0 PID: 5083 Comm: syz-executor157 Not tainted 6.10.0-rc6-syzkaller-00215-g22f902dfc51e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_out_of_bounds+0x121/0x150 lib/ubsan.c:429
+ dbNextAG+0x3f3/0x630 fs/jfs/jfs_dmap.c:661
+ diAlloc+0x6c6/0x1760 fs/jfs/jfs_imap.c:1369
+ ialloc+0x8f/0x900 fs/jfs/jfs_inode.c:56
+ jfs_create+0x1be/0xb90 fs/jfs/namei.c:92
+ lookup_open fs/namei.c:3505 [inline]
+ open_last_lookups fs/namei.c:3574 [inline]
+ path_openat+0x1a84/0x35f0 fs/namei.c:3810
+ do_filp_open+0x235/0x490 fs/namei.c:3840
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1413
+ do_sys_open fs/open.c:1428 [inline]
+ __do_sys_openat fs/open.c:1444 [inline]
+ __se_sys_openat fs/open.c:1439 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1439
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fdb9c0a0a99
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffecc111738 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdb9c0a0a99
+RDX: 000000000000275a RSI: 00000000200005c0 RDI: 00000000ffffff9c
+RBP: 00007fdb9c11a5f0 R08: 000055555c2c14c0 R09: 000055555c2c14c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffecc111760
+R13: 00007ffecc111988 R14: 431bde82d7b634db R15: 00007fdb9c0e903b
+ </TASK>
+---[ end trace ]---
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
