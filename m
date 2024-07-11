@@ -1,171 +1,105 @@
-Return-Path: <linux-kernel+bounces-249889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE3492F135
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F82C92F136
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:38:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 693B91F23249
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1AF1C22A01
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7F919FA95;
-	Thu, 11 Jul 2024 21:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781A119FA72;
+	Thu, 11 Jul 2024 21:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kMFCsb9F"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dol8757m"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E1D19EEB7
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6205A12F385
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720733806; cv=none; b=UCvLjJJbnmMasNhZBE3upX4L1rJZxiWhgA1sOrhindptxb0UY71xcVnxVuWS5uv739d2MjvSI2/op3dLeJ8zL/5Ggd7yVTvVWrPatLVOKfRoUCM8hb7Y5bU4AVwu8Bq3Fmfw/DEWfqziofLGqlvWlyI/GD3p+m+4ypCiiTHftBA=
+	t=1720733923; cv=none; b=cz5Tfs+ysXLydKzkG7KEQeqopgCLDF+15vMIHEkXsn7apxcPD64rmJ80Cl9BYIf+L+kj3Hjgq4YDplLXYUYLhbADdVu5iotmpGrlcJVdaPIhinf+b0OOSIqbEU36F7mPRxW/QK/t4SAa43D3GpCLQ8J+/lxnJbIrAaZd1Cqwggc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720733806; c=relaxed/simple;
-	bh=qcfw4ZEipXJaZB8aZn/6RzXP8PBdSCt/J+jyIfgv61o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SGTu/GCf/F+la9ykH6pA3Z4b1dmKnL4KucdyKuXHxHhoSHBQlXxSOmMCdU4L+7fua4nWQ88oqwsq5ttXnDEv7hD4g3HVwCD0b7Z9tqzuMMh/LmXJyeISpUfINyNcPhXWQtPy8vdzltqzrJ1cfyDHY+eTNfujmAI9uzqtJaeL+yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kMFCsb9F; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5b9794dad09so668765eaf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:36:42 -0700 (PDT)
+	s=arc-20240116; t=1720733923; c=relaxed/simple;
+	bh=f0wFiFq5dAE7dnpF6Vm0E8ke0Etl9xk5YcgJu9cdznM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t7eVb33mxYi5PzCFJ7sDeEIIrgZ3AWkH8ttRoxD7pjGifnf+cMuYPRVBDx1Z92PlgjU8x1DDertNK6ffy9a11XqM9DcCbBa0n2uZUQYW9zJmqbuKLmF894itDMbwxeUJZ4pejyEzxwZjhUKTHpNtNvvwxdMNwRE/AdQX8Bk8mx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dol8757m; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-64789495923so13183947b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:38:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720733802; x=1721338602; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dmNMXoUWUZ9pmumtzDsBb+Z7WfRYtOtrecZqaqh7Ddo=;
-        b=kMFCsb9F3w1tGM+mMp+eZ7IJPVgYzq/w2An6KwhsYqTOaeZAqPRhYcBtum8AvDbNXb
-         xZzpd3n4U+dKi6U+fDPms5phbkN9I1lCipmJghwfGKufEHx1vH52Q4/Jh0HOh29uGeBe
-         d2HUgVZ2X7L4Ao2pO3NqJsXu0lY4Cr52moNFL/K1EBtr5KUQK+IcFK51/mErpfU0DqIB
-         HruHqBVLMdaE5Ermb1/E62aTOWSR73cOqT+eTc3s612vpzpFHw5WXcHt5F3l7uEoXlyp
-         T1l6G47xGIaR8k77T5qdQ5R/Co163MmllOCCcYNtQFavVV/iLw8YQY1mZXG0VWHSxise
-         K+mw==
+        d=google.com; s=20230601; t=1720733921; x=1721338721; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f0wFiFq5dAE7dnpF6Vm0E8ke0Etl9xk5YcgJu9cdznM=;
+        b=dol8757m30o8e3h8AAGCZV5KwjowtM7VkCqxdJkBhdGVizvMgGDXP/vZu2X4zt59QR
+         cnA2ZSaqY+6V7wPLBbFB1aTfCoGKK6GnDQw0GP0HMzOBBH3ztyzv7Qz/XkWx4g5VKGm4
+         m8YiJF8n437BmjiSxaK3AX+1tyCH+7jaVXv1O9nRbRbF9IpZ8pX+DLIpM7Gv4J5nz/z8
+         nN6AYmz8+REn8Tg9ybUIMeqn2OMb0YfRmv94xtEFgL5g3xKR75ca1/9NoFNh+mIPRu0o
+         ZfLrn4BIywWVqNvPbuV/DtTsCehY9RMHrhNcJmnOKOl6KqDxg7i3+xE3Dg7oB/qHAE4r
+         A3eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720733802; x=1721338602;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dmNMXoUWUZ9pmumtzDsBb+Z7WfRYtOtrecZqaqh7Ddo=;
-        b=fk7Z3bSgu7PVFMinqOj/R9o2WljNdnStuLbUA4J1bVP2nn9K8l6YJj4n1z0dLUE/4W
-         uoreTtNNYcXjoFs2FOhnDJH1dszeAzWmB7c1IeBLv2NfXPyDOD0spDS7OQTK3MNTVGuQ
-         shhpNpU6y04a0Cus34VF9R+kQ2e9Vdral1fi+hWxjV6H06KcZjlFVJgsHFrTmTJGYiFl
-         GaQ2YVXYmGOpAJRyEfVceCjWLGXvTPXlemVYqd+p93n+s7mSCzLItBe0KzDm8C/ERNIR
-         g8DesP+ZhcfGJxY6daRHNm3roI3n0tOEUQToLlBgKd3JVX7fJs3vaPYFi1dHu0YeBcd7
-         tjkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIl9QhyWKdLkFdvVdEZ2Dl7MfbPxG5GmutktPxICsYBkcNAgDkS+oQuLIbFoHwKjgUGLceY9k5v3DsZo7N03e6IoROUMZbCboJ1BSk
-X-Gm-Message-State: AOJu0YwnghgXkBnUylAxpVBQEI5/6zriOEtrW95yLYGtanAgXLLxXXRF
-	Nqr41DP3621siHtjOOMa2UzhylQpx6HvHD7heIw0AAnGlYACbfDYEg2u3kzU91o=
-X-Google-Smtp-Source: AGHT+IH9l2G5i0p5je9vPCuRcuZCqx1TN0LUQn6U/enW/tK3QxG5RWV+qhirMBXEGyIr9DY5SSlrrg==
-X-Received: by 2002:a05:6820:210b:b0:5c6:6f69:7e7b with SMTP id 006d021491bc7-5ccdb7ced73mr264769eaf.3.1720733801865;
-        Thu, 11 Jul 2024 14:36:41 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c7b12612e0sm598518eaf.36.2024.07.11.14.36.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 14:36:41 -0700 (PDT)
-Message-ID: <1a686673-9ffa-4574-a095-923d0e168893@baylibre.com>
-Date: Thu, 11 Jul 2024 16:36:40 -0500
+        d=1e100.net; s=20230601; t=1720733921; x=1721338721;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f0wFiFq5dAE7dnpF6Vm0E8ke0Etl9xk5YcgJu9cdznM=;
+        b=LavzAM5ifUYC1yv0dfeeXmfVyTWLsBj5fShxQ+KJKy8TFivNLaDaZ5MM2vucWFlACl
+         mSOjQ4/lav3IBxOY5jOgOeEQDsBPk039TsqRZkZ0n9Il15cb+zHT4Zv4yA4DvuvyY3gd
+         IKGYRDOn/iFn40iffSzGBiQANotPv/feskVMqIUn5ypcjm8uMJdekCUiVphaN/BE/pxm
+         hLM2u6CpIf2mJWV3i4Y+9WSaXH1LeGilchW8BSdq4SCIwjZQHh9wa3TyLl8NztX00NSV
+         aYORGmE2Q9yZ+3Doky3KLXoyaSdxfe7ohOOqTuCa/EaXctD6YgV/6d+27YzikQRng08+
+         Qr+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXaiAhxQvGEegBUjUmzSf4ff2H81jNKVmn2VQODpym/kAiWSFKWdi3XDNFEmgiRIQJjNOo+3aSkGnZUxfR8JgrOU2vYtXHe6qWBRLal
+X-Gm-Message-State: AOJu0YwZX8pC4E2N7j3MR3HZe3UXdIXS3aWw29UfIWJUsGHlnX97jvJ6
+	8duL0fDZQYCkBCD8W9cBEK5jyOnwLRbqX/CHpAlaFMJSdA00ABm3tEmqMwiUkkb+wM0Qt9H2HNJ
+	gy2DWMIH1CHV5xdwR+u9ReWrOpo5xUJmEHAoSXkOSEOQXTUXDsg==
+X-Google-Smtp-Source: AGHT+IEy1pyt1fAB4JX4uVbAqGclWCC30idjb8WmdUApyesOAiZMyd3u1Ss45XXknzvuW3NpMSfe7bkeXK7gQR+K5Es=
+X-Received: by 2002:a81:9181:0:b0:64b:a3f0:5eee with SMTP id
+ 00721157ae682-658eed5e01amr100627527b3.17.1720733920975; Thu, 11 Jul 2024
+ 14:38:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/6] dt-bindings: iio: dac: Generalize DAC common
- properties
-To: Kim Seer Paller <kimseer.paller@analog.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>
-References: <20240711114221.62386-1-kimseer.paller@analog.com>
- <20240711114221.62386-4-kimseer.paller@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240711114221.62386-4-kimseer.paller@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240711204626.1669138-1-surenb@google.com> <20240711140742.b2c536fb4de2800534a99980@linux-foundation.org>
+In-Reply-To: <20240711140742.b2c536fb4de2800534a99980@linux-foundation.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 11 Jul 2024 14:38:27 -0700
+Message-ID: <CAJuCfpFC3OLimU8q1m9tJh8UoRePb2Gw6Ezbrt-fOGBrKwzyUg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] alloc_tag: Export memory allocation profiling symbols
+ used by modules
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/11/24 6:42 AM, Kim Seer Paller wrote:
-> Introduce a generalized DAC binding that can be used by DACs that have
-> similar properties adding output-range-microamp and output-range-microvolt.
-> 
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> ---
->  .../devicetree/bindings/iio/dac/dac.yaml      | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/dac.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/dac.yaml b/Documentation/devicetree/bindings/iio/dac/dac.yaml
-> new file mode 100644
-> index 000000000000..a9787bbcd22b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/dac/dac.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/dac/dac.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: IIO Common Properties for DAC Channels
-> +
-> +maintainers:
-> +  - Jonathan Cameron <jic23@kernel.org>
-> +
-> +description:
-> +  A few properties are defined in a common way for DAC channels.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^channel(@[0-9a-f]+)?$"
-> +    description:
-> +      A channel index should match reg.
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  label:
-> +    description: Unique name to identify which channel this is.
-> +
-> +  output-range-microamp:
-> +    maxItems: 2
-> +    minItems: 2
-> +    description:
-> +      Specify the channel output full scale range in microamperes.
-> +
-> +  output-range-microvolt:
-> +    maxItems: 2
-> +    minItems: 2
-> +    description:
-> +      Specify the channel output full scale range in microvolts.
-> +
-> +oneOf:
-> +  - required:
-> +      - reg
-> +      - output-range-microamp
-> +  - required:
-> +      - reg
-> +      - output-range-microvolt
-> +
-> +required:
-> +  - reg
-> +
+On Thu, Jul 11, 2024 at 2:07=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Thu, 11 Jul 2024 13:46:26 -0700 Suren Baghdasaryan <surenb@google.com>=
+ wrote:
+>
+> > Export mem_alloc_profiling_key, page_ext_get() and page_ext_set() symbo=
+ls
+> > as they can be used by modules (mem_alloc_profiling_key is used indirec=
+tly
+> > via mem_alloc_profiling_enabled()).
+>
+> Thanks, I'll add
+>
+> Fixes: 22d407b164ff ("lib: add allocation tagging support for memory allo=
+cation profiling").
 
-It looks like oneOf: and required: are missing an indent, which is
-likely the cause of the Rob-bot complaints.
-
-Also, shouldn't the last required: be an item in the oneOf: list?
-
-> +additionalProperties: true
-
+Perfect. Thank you!
 
