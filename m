@@ -1,178 +1,146 @@
-Return-Path: <linux-kernel+bounces-248558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D902D92DEF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:52:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BF892DEFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719721F224FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:52:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427E9283F3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363D639847;
-	Thu, 11 Jul 2024 03:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBED374F5;
+	Thu, 11 Jul 2024 03:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ofbF4vP6"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I0GTCzyV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75914225CF
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C60D1A28B;
+	Thu, 11 Jul 2024 03:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720669964; cv=none; b=nLjQDG9wVm1zPp4VJ3LzcwMqL1bfwxhJtmxLwKqMPnJHBmsDGGhrI4dr3IpaaR6R6qSxvOfYvCGP2YZ4kVOntly+uzLIHx43DM0H0J1DZjLdy/yYX1YMJ3+w6dw4nV3l2vvoJZ+SgkJSBUG5QPBBpWNQ1wHcGHDb18BsqwAVCM8=
+	t=1720669995; cv=none; b=n9rNypZbEkAGIbimbyHUzD1Sf7OwDCWoWShTg764+XgbM8zYz/k4/bTXVwsn47Q/WahDXtq0Bod8cvQJGmtP1AN8Z3BQ0KlXLUXEAolsQ5mHBtJMlkMsseS3iOwhQNjaF+F6+hCoxzEaZLyZJiOdeVBWq/ZrntJs56BbhbbPHyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720669964; c=relaxed/simple;
-	bh=w/CRzOULj8k8/ejOmbwzniOhftViOF29wdQSEI+N5KA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Euc8g1oMcGGr5ciF2PMb1NAKq6AbQI3K714eVwuQFSHxV+q98SwPqIPu/H0uff5aAl5CEMODzLdLo4fik6Elt+P6Rgf31tx1BXHJho97kERLSFf3Q9XeYUN6uQwqqVxkoQhT08O31mv32GoHlBddBILUueqwVXKerc+9CZeMwoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ofbF4vP6; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: chenridong@huawei.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720669960;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dOoSWA4MuzyTNUQetsPg/A3T+W7+WdTLofO63JGsjfs=;
-	b=ofbF4vP6UJsG8giA+5QkqYZkVxGkAJUpVil750kXaMu56AzHKchWE/oM2IYvY9A0ScI5k0
-	I9zc7zl7dGoaQDD8cGGgjXvYXgKygcs/lYUE1A56Q6tznOLlLm2lSGerz/qfM4Gpm9FpEj
-	6R+yKX8DjfFls68+CJ/dD/vav9WGtik=
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: martin.lau@linux.dev
-X-Envelope-To: ast@kernel.org
-X-Envelope-To: daniel@iogearbox.net
-X-Envelope-To: andrii@kernel.org
-X-Envelope-To: eddyz87@gmail.com
-X-Envelope-To: song@kernel.org
-X-Envelope-To: yonghong.song@linux.dev
-X-Envelope-To: john.fastabend@gmail.com
-X-Envelope-To: kpsingh@kernel.org
-X-Envelope-To: sdf@google.com
-X-Envelope-To: haoluo@google.com
-X-Envelope-To: jolsa@kernel.org
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: lizefan.x@bytedance.com
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: bpf@vger.kernel.org
-X-Envelope-To: cgroups@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Thu, 11 Jul 2024 03:52:34 +0000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: chenridong <chenridong@huawei.com>, tj@kernel.org
-Cc: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
-	andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
-	yonghong.song@linux.dev, john.fastabend@gmail.com,
-	kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
-	jolsa@kernel.org, tj@kernel.org, lizefan.x@bytedance.com,
-	hannes@cmpxchg.org, bpf@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] cgroup: Fix AA deadlock caused by
- cgroup_bpf_release
-Message-ID: <Zo9XAmjpP6y0ZDGH@google.com>
-References: <20240607110313.2230669-1-chenridong@huawei.com>
- <67B5A5C8-68D8-499E-AFF1-4AFE63128706@linux.dev>
- <300f9efa-cc15-4bee-b710-25bff796bf28@huawei.com>
- <a1b23274-4a35-4cbf-8c4c-5f770fbcc187@huawei.com>
+	s=arc-20240116; t=1720669995; c=relaxed/simple;
+	bh=qcAi/KImJdPBCy86glT+54IEnwhg7m8nj+/t+a9vtlk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cUJz+2iDSAn1uHH2qfF48xcYY6keFHB9oruJuM6Qga+97VSRWjzYdw3zZYZ+XlqMUeAiRBTVqZBidcuP2aREqKX/eKEw/j62v1z5D/UpN1Yd7X4KSMDMD5zF8mk21BwSsV7Fj6j+15t/YiOz0XoNf3PtixWfX2AFaaSJYWr6tEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I0GTCzyV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B33bYX008672;
+	Thu, 11 Jul 2024 03:53:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	eNuOdHzLm/d4A5amPX6nWJvH1GqUCUbQTgScANGGqfA=; b=I0GTCzyVmSkrBgsE
+	zc1C3WPJjTjkv2ASQpIkTDTJS3lCAMcbAlzeOFRU0hc7nm1PzRTyIYKg1IKI42++
+	5/WKoku0mMJYsp656dfw1q8cHP5/0ygp96hF++1U7Tb6pQvGFxuwOqNppA6StrJr
+	F2HmDWTT+X56zNc9aL3W1hwmgSXUq/PNWOIpqukFgIRuXdLE8ozXBpE31LaL0qmA
+	NyZmO03qD4+/tjkIFRpyzlgGgysynSlgcMPjoUd+F/hQ+Za6bPmw3s2FwQPD5C5W
+	gFMU7y8Sf2gQ4/H4OcB7pjcGn8rMx0UBtaGbWVw9OMblDE/rl67kEGsaBi6XBdJA
+	5r0IUQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wmmuar1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 03:53:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46B3r7qZ012546
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 03:53:07 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
+ 2024 20:53:01 -0700
+Message-ID: <8ef27923-03ed-44d2-bfa3-6efc75f8d6be@quicinc.com>
+Date: Thu, 11 Jul 2024 11:52:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a1b23274-4a35-4cbf-8c4c-5f770fbcc187@huawei.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: phy: describe the Qualcomm SGMII PHY
+ for QCS9100
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240709-add_qcs9100_dwmac_sgmii_hpy_compatible-v2-0-5ffeb16252db@quicinc.com>
+ <20240709-add_qcs9100_dwmac_sgmii_hpy_compatible-v2-1-5ffeb16252db@quicinc.com>
+ <1486c975-3cc8-46b9-b049-1df4dfed0040@kernel.org>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <1486c975-3cc8-46b9-b049-1df4dfed0040@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CN9arzV0--T56EhVnqgwiZZvuU1v2Zn7
+X-Proofpoint-ORIG-GUID: CN9arzV0--T56EhVnqgwiZZvuU1v2Zn7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-10_20,2024-07-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407110024
 
-On Wed, Jul 10, 2024 at 11:02:57AM +0800, chenridong wrote:
+
+
+On 7/10/2024 6:13 PM, Krzysztof Kozlowski wrote:
+> On 09/07/2024 17:15, Tengfei Fan wrote:
+>> Document the Qualcomm SGMII PHY for the QCS9100 platforms.
+>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+>> platform use non-SCMI resource. In the future, the SA8775p platform will
+>> move to use SCMI resources and it will have new sa8775p-related device
+>> tree. Consequently, introduce "qcom,qcs9100-dwmac-sgmii-phy" to describe
+>> non-SCMI based the Qualcomm SGMII PHY.
+>>
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>>   .../devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml        | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml
+>> index b9107759b2a5..74ec4579c0d6 100644
+>> --- a/Documentation/devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml
+>> +++ b/Documentation/devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml
+>> @@ -15,7 +15,10 @@ description:
+>>   
+>>   properties:
+>>     compatible:
+>> -    const: qcom,sa8775p-dwmac-sgmii-phy
+>> +    items:
+> 
+> items is not needed here, this could be an enum directly.
+> 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Thanks Krzysztof!
+
+In the next version patch series, I will check all the patch series, 
+using an enum instead od items.
+
 > 
 > 
-> On 2024/7/9 21:42, chenridong wrote:
-> > 
-> > 
-> > On 2024/6/10 10:47, Roman Gushchin wrote:
-> > > Hi Chen!
-> > > 
-> > > Was this problem found in the real life? Do you have a LOCKDEP
-> > > splash available?
-> > > 
-> > Sorry for the late email response.
-> > Yes, it was. The issue occurred after a long period of stress testing,
-> > with a very low probability.
-> > > > On Jun 7, 2024, at 4:09 AM, Chen Ridong <chenridong@huawei.com> wrote:
-> > > > 
-> > > > ﻿We found an AA deadlock problem as shown belowed:
-> > > > 
-> > > > cgroup_destroy_wq        TaskB                WatchDog
-> > > > system_wq
-> > > > 
-> > > > ...
-> > > > css_killed_work_fn:
-> > > > P(cgroup_mutex)
-> > > > ...
-> > > >                                 ...
-> > > >                                 __lockup_detector_reconfigure:
-> > > >                                 P(cpu_hotplug_lock.read)
-> > > >                                 ...
-> > > >                 ...
-> > > >                 percpu_down_write:
-> > > >                 P(cpu_hotplug_lock.write)
-> > > >                                                 ...
-> > > >                                                 cgroup_bpf_release:
-> > > >                                                 P(cgroup_mutex)
-> > > >                                 smp_call_on_cpu:
-> > > >                                 Wait system_wq
-> > > > 
-> > > > cpuset_css_offline:
-> > > > P(cpu_hotplug_lock.read)
-> > > > 
-> > > > WatchDog is waiting for system_wq, who is waiting for cgroup_mutex, to
-> > > > finish the jobs, but the owner of the cgroup_mutex is waiting for
-> > > > cpu_hotplug_lock. This problem caused by commit 4bfc0bb2c60e ("bpf:
-> > > > decouple the lifetime of cgroup_bpf from cgroup itself")
-> > > > puts cgroup_bpf release work into system_wq. As cgroup_bpf is a
-> > > > member of
-> > > > cgroup, it is reasonable to put cgroup bpf release work into
-> > > > cgroup_destroy_wq, which is only used for cgroup's release work, and the
-> > > > preblem is solved.
-> > > 
-> > > I need to think more on this, but at first glance the fix looks a
-> > > bit confusing. cgroup_bpf_release() looks quite innocent, it only
-> > > takes a cgroup_mutex. It’s not obvious why it’s not ok and requires
-> > > a dedicated work queue. What exactly is achieved by placing it back
-> > > on the dedicated cgroup destroy queue?
-> > > 
-> > > I’m not trying to say your fix won’t work, but it looks like it
-> > > might cover a more serious problem.
-> > 
-> > The issue lies in the fact that different tasks require the cgroup_mutex
-> > and cpu_hotplug_lock locks, eventually forming a deadlock. Placing
-> > cgroup bpf release work on cgroup destroy queue can break loop.
-> > 
-> The max_active of system_wq is WQ_DFL_ACTIVE(256). If all active works are
-> cgroup bpf release works, it will block smp_call_on_cpu work which enque
-> after cgroup bpf releases. So smp_call_on_cpu holding cpu_hotplug_lock will
-> wait for completion, but it can never get a completion because cgroup bpf
-> release works can not get cgroup_mutex and will never finish.
-> However, Placing the cgroup bpf release works on cgroup destroy will never
-> block smp_call_on_cpu work, which means loop is broken. Thus, it can solve
-> the problem.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Tejun,
-
-do you have an opinion on this?
-
-If there are certain limitations from the cgroup side on what can be done
-in a generic work context, it would be nice to document (e.g. don't grab
-cgroup mutex), but I still struggle to understand what exactly is wrong
-with the blamed commit.
-
-Thanks,
-Roman
+-- 
+Thx and BRs,
+Tengfei Fan
 
