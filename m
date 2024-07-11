@@ -1,84 +1,91 @@
-Return-Path: <linux-kernel+bounces-249272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A2F92E90E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:16:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7AA92E8FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF609287947
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:16:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0E428859A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E380214A601;
-	Thu, 11 Jul 2024 13:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EAF15ECDC;
+	Thu, 11 Jul 2024 13:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJksXENK"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SEGLsNzm"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC7715ECDF
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C5A15AAD3;
+	Thu, 11 Jul 2024 13:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720703777; cv=none; b=MbZUO+PLpDdJgDuce9Jpg/BJpoYRSv02FhdixlIQstbW3Ry66cj23a3cZvCli/4yBBq8Q09bhE6XE3eslnFv5AEAa58Ejci4BpghBqv0iCoIS5hWKl+KOQ3jiZ/tSQu4gjBvOUSCovdsnisoitG5d0amLWDqWkCOkNHMKsPrgaQ=
+	t=1720703669; cv=none; b=XaCmnBQN4xPiVpGACvbIOU6Z02ZYZEpcCv6AbxXJogHjViMORGdryaX6Pw96HjN3qYhq0vemlLSK7qxgAhCgvXKLRKh63+Uyh4o4WCHKgtFbqjCK5qw5gTSpyFp9Mc0QcTbfxIwTfFmhmaFYO6FEvPqvpJQPwv2e/SVqwJgsWv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720703777; c=relaxed/simple;
-	bh=h/SnQjeIotE/r0mBrmeTceepJ5qYMrJlJH23q1ifQhU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fAFd5qqKNe3TTMl62Gnpjibd8K2KJYZOFvUPJoZB+Pu+H2pSRVHGRgtKk8aI6Jg6jvKxMKrErVeSx5ZuFK6oKYg4bJ7rgC8TJ5tBbotqE305WmZl8MCgtwgFRoeohg4ZaOWz3AaNJ3JYkPRgKbVLh2FWbn8XfK9IayNu/UAKwrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FJksXENK; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1720703669; c=relaxed/simple;
+	bh=GzEACVD+JqkdYmDO3AwNpm6xmM9v3fwgfez/OD4okQU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FTkYq4sZTtyR/jaRFPL+WV/D8iEoNRp/+oY7d4S62guT4cnP/k1rpsfi5eS7XirpG5M4UoPorKx4oJExW5pvAlu72E9IF+7B/I0Q99D/bF/m6KVMylTX5G2FknNSunKRFZ0Seveuab0ZsJOZMU/9tWcVQ4R8YuyDKFuGmlxtvhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SEGLsNzm; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso6308405e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 06:16:15 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4266f535e82so5546855e9.1;
+        Thu, 11 Jul 2024 06:14:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720703774; x=1721308574; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720703666; x=1721308466; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C+btIB698AoBarUXfbFVZZbKwRwcIjCEhAp+IjhWQE4=;
-        b=FJksXENKjGYQsiIsUkSH16iKviQ8SP0Loy4WFwKnNtcZhD96zpA/RwZIxSz15pShr2
-         cQ0Z5sZ5zW3xTuMh0QYj++cWIOjit7NHwqxBIg+vnK35tIYPjlHNfwfMpEGZCb/sM6Eq
-         hsscvTNZmqJCntPKiz87Cuj4RG8H0rQH5LJk6iyQqO3jZgStcdZ+oA+JzykdMb0QDodV
-         RBgO9Rlb1EEIN7AVFwKe6OH8KsS6ZRxDZ6ZKHk4tAthqfiXu0z8b89roRK0iYM9JiYhq
-         BFyFg4QY0H3JxlJsg5DlZsUP6MMNPhUkog6FcN3cgQMmvUhypLRhb8WmpMzzj/u0bXa1
-         MIRA==
+        bh=SW4rzMU+cmLzXEzGKinf4A7N4+M41M8PEaZuIQWHA6c=;
+        b=SEGLsNzmaL7gH2kz+D4hxbCM9JS1zV9tLMbXPPaT6ZfAGOo2ODlwEB1pBU1COputFp
+         4/CsbtqkGNKPK4E4l9wBkt01ofSA8cxThRa+Za0tVOzWkMdPzJEXRGqWfT9vM+p8punz
+         NiviIbJ2GK3S98sieuxQPW76HR5JnMmECiHgsWIyBbGUYMVArBHgstC1tm95pnraKMs2
+         ADVHKaZX3PPwwUCsQlzN+cW0Ed+v801A/H7F5JU56ehu/E+TwHVZnYd0KkCk1QhiOALJ
+         YIUw/ZyDT84w0MWs1xmX4aUNoTW3dqiai9W9HoDtFCnL/qxyqzbx0eY9HEAWMkJg7Yz9
+         0WMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720703774; x=1721308574;
+        d=1e100.net; s=20230601; t=1720703666; x=1721308466;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C+btIB698AoBarUXfbFVZZbKwRwcIjCEhAp+IjhWQE4=;
-        b=bzIzKr9JqgQKB50M1qbgERIsgtYrqRlQCTS+mitf6Lfxx8uVyMiPJuRjQyeYCmefsh
-         QC+uI3AlaW4tzGGZHR2hm0fCr503lQ/CuvolZFnHsBoZ+chiHXJy57UEeCx+DITrOy8L
-         GxCnfw+noXtpqb3302qd609Q6dx2RnQuT65TLFTRqeoXuP6YXiEt2gDO5WuHjsVO7Sok
-         bJ7HPHECk6gsywbXtLBmzbU7kcT/E1m7hEccaXjRuwOCFyncCFXpLkjwN5KDAwORumBm
-         a16w44ddH0pOEBdJdx4JzztV3xzvIko0i5Xg+H+a9KNySCubIOA+Og7jaH0Hr/zziDa0
-         zPUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdRGk6yYwMzrCirq1THejkA3GILa/Q7EoCUq2MuP0Hzt11X07YWSkDs66BWyiFZATXDzjYZPORFWqWXQqxRF8MaWBJFFXH+lzLZYg4
-X-Gm-Message-State: AOJu0YwxyPV1NPx9RxayUZXB43M+HZdRPAA6drOwbPsikPvgcy9RyN0m
-	L3TzltCwPxm03Fq6IGBDUksHswQkv8snwWddIFI9Hs4BUSiaiSP2
-X-Google-Smtp-Source: AGHT+IFL0UaiWD7mdTfNHJBjD/TlYPEODih+gOwr8wL08Wda8w+hrgiHASHLfRhsDgZcttdrt9CW1Q==
-X-Received: by 2002:a05:600c:54ca:b0:426:6902:7053 with SMTP id 5b1f17b1804b1-426707cc0d7mr58888065e9.15.1720703773802;
-        Thu, 11 Jul 2024 06:16:13 -0700 (PDT)
-Received: from eichest-laptop.gad.local ([2a02:168:af72:0:49a:1bc0:a7da:9525])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4267255858asm74132645e9.0.2024.07.11.06.16.12
+        bh=SW4rzMU+cmLzXEzGKinf4A7N4+M41M8PEaZuIQWHA6c=;
+        b=UvIa7OF+ZWzpKXtiGPHmsA9wiNsaCsFnAXqJdOy7TDU5fr4Jsj8DFkdA4ALTRUk5du
+         MJP1EFd4QbhAR0mjP9pzrk2nN9vXAcSYudfKHtspB/4lvREoA/4YUVUAZ8p/lf7yCR1y
+         2zAOYB2S7rqZcUCpyxVwb6/++eTP0vC1wvpW8BXAPm9EoZqYDENclSt7gfp2Yhu5iNEC
+         zt+1j6N//NNkK6/BXlbWXsHTS8aHp6vnnG8V2Jqp5sdyuBTDxN9MVFASEIKIwKLPadZS
+         /F5UaATaPx/ixvD799E3qnu09CnrSvjT89NohVoF6W+KZD1okNJretQUSuTTkSc+ZEIZ
+         9PEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdGzE3+H1y6Km1KsWVi69cMoRiH21Tgx19ygSHsVRWwINypbpXnpaZLpMYKI/SWD0uzVB+zsydc3N567YqULfRwILD5tgLQfnyyV7zBJvYkrHBRN9VwFBVsyRqTuYoQSyjXB4M
+X-Gm-Message-State: AOJu0Yz/WoKZqyfjAGhvyiWwtk9pMqqC1Ide1NSLSb15g7b6lE63tNcj
+	IYpRjlghnMIjZNTypWcC3x4g3vegsT4JSW8Ra06mRRKT0yCFrR19
+X-Google-Smtp-Source: AGHT+IED9wyDCvyGT/hdPKwB/fdPHFOGVK2PqvM5ZboTWYLnq1dcnzvRgy6G60d7cNZUKQsr5QjMaw==
+X-Received: by 2002:a7b:c015:0:b0:426:5b34:55c5 with SMTP id 5b1f17b1804b1-426707d8b15mr63878865e9.11.1720703665813;
+        Thu, 11 Jul 2024 06:14:25 -0700 (PDT)
+Received: from localhost ([146.70.204.204])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42799224980sm27167565e9.38.2024.07.11.06.14.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 06:16:13 -0700 (PDT)
-From: Stefan Eichenberger <eichest@gmail.com>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	sergio.paracuellos@gmail.com,
-	florian.fainelli@broadcom.com,
-	krzysztof.kozlowski@linaro.org,
-	eichest@gmail.com,
-	robh@kernel.org,
-	frank.li@vivo.com
-Cc: linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] phy: marvell: phy-mvebu-cp110-comphy: improve eth_port1 on comphy4
-Date: Thu, 11 Jul 2024 15:12:47 +0200
-Message-ID: <20240711131612.98952-1-eichest@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 11 Jul 2024 06:14:25 -0700 (PDT)
+From: Richard Gobert <richardbgobert@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	idosch@nvidia.com,
+	amcohen@nvidia.com,
+	petrm@nvidia.com,
+	gnault@redhat.com,
+	jbenc@redhat.com,
+	b.galvani@gmail.com,
+	martin.lau@kernel.org,
+	daniel@iogearbox.net,
+	aahila@google.com,
+	liuhangbin@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	horms@kernel.org
+Cc: Richard Gobert <richardbgobert@gmail.com>
+Subject: [PATCH net-next v3 0/2] net: add local address bind support to vxlan and geneve
+Date: Thu, 11 Jul 2024 15:14:09 +0200
+Message-Id: <20240711131411.10439-1-richardbgobert@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,33 +94,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-According to the CN9100_MPP_information document, CP_SRD4 (comphy 4)
-supports 2500 BASE-X and 5000 BASE-R for ETH_PORT1. I was able to test
-that 2500 BASE-X is indeed supported. Unfortunately, our HW does not
-support 5000 BASE-R, but I assume from the document that it does, so I
-set the muxing there too to 0x1.
+This series adds local address bind support to both vxlan
+and geneve sockets.
 
-Signed-off-by: Stefan Eichenberger <eichest@gmail.com>
----
- drivers/phy/marvell/phy-mvebu-cp110-comphy.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+v2 -> v3:
+  - Fix typo and nit problem (Simon)
+  - v2: https://lore.kernel.org/netdev/20240708111103.9742-1-richardbgobert@gmail.com/
 
-diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-index da5e8f4057490..fefc02d921e69 100644
---- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-+++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
-@@ -244,8 +244,8 @@ static const struct mvebu_comphy_conf mvebu_comphy_cp110_modes[] = {
- 	GEN_CONF(4, 1, PHY_MODE_USB_HOST_SS, COMPHY_FW_MODE_USB3H),
- 	GEN_CONF(4, 1, PHY_MODE_PCIE, COMPHY_FW_MODE_PCIE),
- 	ETH_CONF(4, 1, PHY_INTERFACE_MODE_SGMII, 0x1, COMPHY_FW_MODE_SGMII),
--	ETH_CONF(4, 1, PHY_INTERFACE_MODE_2500BASEX, -1, COMPHY_FW_MODE_2500BASEX),
--	ETH_CONF(4, 1, PHY_INTERFACE_MODE_5GBASER, -1, COMPHY_FW_MODE_XFI),
-+	ETH_CONF(4, 1, PHY_INTERFACE_MODE_2500BASEX, 0x1, COMPHY_FW_MODE_2500BASEX),
-+	ETH_CONF(4, 1, PHY_INTERFACE_MODE_5GBASER, 0x1, COMPHY_FW_MODE_XFI),
- 	ETH_CONF(4, 1, PHY_INTERFACE_MODE_10GBASER, -1, COMPHY_FW_MODE_XFI),
- 	/* lane 5 */
- 	ETH_CONF(5, 1, PHY_INTERFACE_MODE_RXAUI, 0x2, COMPHY_FW_MODE_RXAUI),
+v1 -> v2:
+  - Change runtime checking of CONFIG_IPV6 to compile time in geneve
+  - Change {geneve,vxlan}_find_sock to check listening address
+  - Fix incorrect usage of IFLA_VXLAN_LOCAL6 in geneve
+  - Use NLA_POLICY_EXACT_LEN instead of changing strict_start_type in geneve
+  - v1: https://lore.kernel.org/netdev/df300a49-7811-4126-a56a-a77100c8841b@gmail.com/
+
+Richard Gobert (2):
+  net: vxlan: enable local address bind for vxlan sockets
+  net: geneve: enable local address bind for geneve sockets
+
+ drivers/net/geneve.c               | 82 +++++++++++++++++++++++++++---
+ drivers/net/vxlan/vxlan_core.c     | 55 ++++++++++++++------
+ include/net/geneve.h               |  6 +++
+ include/uapi/linux/if_link.h       |  2 +
+ tools/include/uapi/linux/if_link.h |  2 +
+ 5 files changed, 124 insertions(+), 23 deletions(-)
+
 -- 
-2.43.0
+2.36.1
 
 
