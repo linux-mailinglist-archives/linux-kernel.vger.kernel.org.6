@@ -1,128 +1,251 @@
-Return-Path: <linux-kernel+bounces-248881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE0492E31D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:07:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D9E92E326
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C544B273F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:07:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9AB31C20BDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A4515573B;
-	Thu, 11 Jul 2024 09:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99ED156653;
+	Thu, 11 Jul 2024 09:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="C/JewJdt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="edW1QDUI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8792D02E;
-	Thu, 11 Jul 2024 09:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55926153517
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720688866; cv=none; b=HWICRV9A/vo52zvFNsxMkwHgdYGPfb0fZ2Wg215Ryoy6yRYhgxywO0TKLTr5Ml4DWW9GKTOk+pmIHCKbAdY0xPao9arJfcYKs4k2dxHQL7urhlAHa4ts4qDj283gW8fmv4XYRnUTfJXg6Z1eavI8waIaPVFAOtVf41i89q8+uB0=
+	t=1720688917; cv=none; b=tb+r87xe9as6BVBjaTeYd6VhnpFG3cgGsbSuwNL4FB98PiP3EEESMm4BeEgFFyvvFJywQTqChd2LxLijVdwIox/uZAZG6CnFWuOOKWTGGcRkeKQV/WOXRdeiF9DqBRsCDdS5GUdJ4oHgszaWA2yxOh5/0uDrqAy5zoNMUBC+22Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720688866; c=relaxed/simple;
-	bh=Nbtdy1pOMs1Hscod8ce57LgV6ZcLf68E3FqIantW4ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WMvNUBc0HZ5I9RNBsU+PJvpaH0NWK6AKHV/NNJCAELT9mUq+zjlWAx1ob0MYpEda7NgafTiv/x6OB1emLxvUosWltz5MedHm7aJzE6MOXhibGRPX4lqqvUMORDrA8S+vRdsJgjwnI3WzgE+PVKMiw5re1UA4K8nkbvv61vmCeJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=C/JewJdt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43D2AC116B1;
-	Thu, 11 Jul 2024 09:07:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720688865;
-	bh=Nbtdy1pOMs1Hscod8ce57LgV6ZcLf68E3FqIantW4ns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C/JewJdtKwHx2Ipm+t2CTeMB21DVhlSa2sKHpKiBeQxMOiFrMmoNIDUaEfnkOS04F
-	 que1jSSGUpKGMOGXVKO771YZkrpb7pu/wMBL1AV71HTFrcQ/YH8iOhTE/rb25OQfR8
-	 Qx5M4TSnCjAEUUPTW7Lm+f5IUOIG2j84Zo2VG6xo=
-Date: Thu, 11 Jul 2024 11:07:42 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Akash Kumar <quic_akakum@quicinc.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Jing Leng <jleng@ambarella.com>, Felipe Balbi <balbi@kernel.org>,
-	Jack Pham <quic_jackp@quicinc.com>, kernel@quicinc.com,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Vijayavardhan Vennapusa <quic_vvreddy@quicinc.com>,
-	Krishna Kurapati <quic_kriskura@quicinc.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: gadget: uvc: Add H264 frame format support
-Message-ID: <2024071126-napped-cobbler-4693@gregkh>
-References: <20240711082304.1363-1-quic_akakum@quicinc.com>
+	s=arc-20240116; t=1720688917; c=relaxed/simple;
+	bh=ljxzkssEHs7PsymbyswJfU5Htuhh01H9EMxCQUsejwQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KWqGrsOyr8SYtejujEAFYBI/41GYijGHvi74zN3Qx5X2/6yHW5Qw3UXLT17tN1NJpwMtLyEJQ30ka4Bhg/ZcnDTzvhRFtaSrGq0A7FSjvAABH5gyzLRgcMcJYXAgh5F1CjHkH2qWchikxBYFcgDkKnMDwbmR4YPtWCvEgXpyMzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=edW1QDUI; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720688913;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Z/tGGgMXZufug5VbuEhcEzd7l9HFMjvswmFUFEeaDBA=;
+	b=edW1QDUIcFUJRRiQIL4gj9GFObjD3jZy+F3DsmgKfER3VyfFmSEKXoc3KEfuYa2J/oYf11
+	0d6AhK02uXdZaL0GSHo/kDiCKk5hXo+BSw0p1YIeDadpmUDuaSnKF9gtdTGEdp3zTi6xdw
+	WTKgHNJPQ7V2i22VCrUtbpCRHrKLAyI=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-569-43IzKTryPSG5oQmdWAnIzw-1; Thu, 11 Jul 2024 05:08:32 -0400
+X-MC-Unique: 43IzKTryPSG5oQmdWAnIzw-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ee49ce152eso5407571fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 02:08:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720688910; x=1721293710;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z/tGGgMXZufug5VbuEhcEzd7l9HFMjvswmFUFEeaDBA=;
+        b=SwopXcxQsK39l0THmSvohcy/qHA7QZpQoOSQfBITRpau6MxMvxuPXF80N4KIw6CU+r
+         yOSViV/E2GIxlwGE/4nuV6O+uAInRU2R3rB65V6g+hwY30dwoE0ovne6ccjFnwL2dKM8
+         QezBHmlh1TENFFwvIpNNFPoiydJj8qRJEONe41Tg7zW2kyKYoJ/yOgMilypkbt+xQheM
+         4NxeQHFi2cx8j9AILg+qAlGtKwyECsfTAwtbEmq/PAJtW/g80OX5PRpIE/Q8feeYKfmB
+         /oJOC+8YGan1j2oqlo3Ch2ru07jMpWUxSdq3u00tfQHf9DHi6Uz1OokwftTSEIa6k9Ml
+         +LLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmKWMyVUWY32iZ4hRHaTZQkFrV1OP/m8e93O7uzOoDZkL8dQwmtzcEEsPXRUAZotv8PXTov1odPQBdJtnNRdVlJlR/9DyzxlT7tLNf
+X-Gm-Message-State: AOJu0YzKD7PLqmxTR2ao4qjF28Zt+KsEbJGiP7jal8DadMAQWtF5jWlD
+	HJwQ8pUsqabBrT7jV5wAMdOCBzNwLek1Fed1FX0ef4mjIdMn0oIjxxabkhJDV7QLtRyyfHqY+Dc
+	CaRZ+q5jCgaf+NIBpKvZkz2DVKbNGqru1bT6aWOiP+/N9gCQDp7Se6e+76YV/Uc/HDSPA1IPOAW
+	da7SWRR5/moYE4Emr4nsfh7vQfEOPSdaIrzlOP
+X-Received: by 2002:a2e:a7c7:0:b0:2ee:5b64:b471 with SMTP id 38308e7fff4ca-2eeb30fefcdmr62447861fa.30.1720688910137;
+        Thu, 11 Jul 2024 02:08:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6W3hcev+Z5OBlMg/D7fGaW0A5j3JIOurKm0/vCYKBrpnwOMpohSuAs0Uf+VCxUXTyOZqrGR6A60J2YxKWLD0=
+X-Received: by 2002:a2e:a7c7:0:b0:2ee:5b64:b471 with SMTP id
+ 38308e7fff4ca-2eeb30fefcdmr62447591fa.30.1720688909618; Thu, 11 Jul 2024
+ 02:08:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711082304.1363-1-quic_akakum@quicinc.com>
+References: <20240708064820.88955-1-lulu@redhat.com> <PH0PR12MB5481AE2FD52AEE1C10411F3DDCDB2@PH0PR12MB5481.namprd12.prod.outlook.com>
+ <CACLfguXk4qiw4efRGK4Gw8OZQ_PKw6j+GVQJCVtbyJ+hxOoE0Q@mail.gmail.com>
+ <20240709084109-mutt-send-email-mst@kernel.org> <CACGkMEtdFgbgrjNDoYfW1B+4BwG8=i9CP5ePiULm2n3837n29w@mail.gmail.com>
+ <20240710020852-mutt-send-email-mst@kernel.org> <CACLfguW0HxPy7ZF7gg7hNzMqFcf5x87asQKBUqZMOJC_S8kSbw@mail.gmail.com>
+In-Reply-To: <CACLfguW0HxPy7ZF7gg7hNzMqFcf5x87asQKBUqZMOJC_S8kSbw@mail.gmail.com>
+From: Leonardo Milleri <lmilleri@redhat.com>
+Date: Thu, 11 Jul 2024 10:08:18 +0100
+Message-ID: <CAD2tU16x1aeZLcQrESroqz-5n=S0nkgh8QTQO31-yYF_7hqB=Q@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] vdpa: support set mac address from vdpa tool
+To: Cindy Lu <lulu@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Parav Pandit <parav@nvidia.com>
+Cc: Jason Wang <jasowang@redhat.com>, Dragos Tatulea <dtatulea@nvidia.com>, 
+	"sgarzare@redhat.com" <sgarzare@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 01:53:04PM +0530, Akash Kumar wrote:
-> Add support for framebased frame format which can be used to support
-> multiple formats like H264 or H265 other than mjpeg and YUV frames.
-> 
-> Framebased format is set to H264 by default, which can be updated to
-> other formats by updating the GUID through guid configfs attribute.
-> Using Different structures for all 3 formats as H264 has different
-> structure than mjpeg and uncompressed which will be paased to
-> frame make func based on active format instead of common frame
-> structure, have updated all apis in driver accordingly.
-> h264 is not recognized by hosts machine during enumeration
-> with common frame structure, so we need to pass h264 frame
-> structure separately.
-> 
-> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
-> ---
->  .../ABI/testing/configfs-usb-gadget-uvc       |  88 ++-
->  drivers/usb/gadget/function/uvc_configfs.c    | 570 +++++++++++++++---
->  drivers/usb/gadget/function/uvc_configfs.h    |  34 +-
->  drivers/usb/gadget/function/uvc_v4l2.c        |  80 ++-
->  include/uapi/linux/usb/video.h                |  62 ++
->  5 files changed, 714 insertions(+), 120 deletions(-)
-> 
-> Changes for v2:
-> - Added H264 frame format Details in Documentation/ABI/
->   and new configsfs attribute path for mjpeg and
->   uncompresseed formats.
-> 
-> diff --git a/Documentation/ABI/testing/configfs-usb-gadget-uvc b/Documentation/ABI/testing/configfs-usb-gadget-uvc
-> index 4feb692c4c1d..2580083cdcc5 100644
-> --- a/Documentation/ABI/testing/configfs-usb-gadget-uvc
-> +++ b/Documentation/ABI/testing/configfs-usb-gadget-uvc
-> @@ -224,13 +224,13 @@ Description:	Additional color matching descriptors
->  					  white
->  		========================  ======================================
->  
-> -What:		/config/usb-gadget/gadget/functions/uvc.name/streaming/mjpeg
-> -Date:		Dec 2014
-> +What:		/config/usb-gadget/gadget/functions/uvc.name/streaming/mjpeg/name
+Sorry for the noise, resending the email in text format
 
-You are changing an existing api, how will all existing code handle
-this?  Will it not break?  What is ensuring that this will work as-is
-ok?
+Hi All,
 
-> -#define UVCG_FRAME_ATTR(cname, aname, bits) \
-> -static ssize_t uvcg_frame_##cname##_show(struct config_item *item, char *page)\
-> +#define UVCG_FRAME_ATTR(cname, fname, bits) \
-> +static ssize_t uvcg_frame_##fname##_##cname##_show(struct config_item *item, char *page)\
->  {									\
->  	struct uvcg_frame *f = to_uvcg_frame(item);			\
->  	struct f_uvc_opts *opts;					\
-> @@ -1936,14 +1941,14 @@ static ssize_t uvcg_frame_##cname##_show(struct config_item *item, char *page)\
->  	opts = to_f_uvc_opts(opts_item);				\
->  									\
->  	mutex_lock(&opts->lock);					\
-> -	result = sprintf(page, "%u\n", f->frame.cname);			\
-> +	result = scnprintf(page, PAGE_SIZE, "%u\n", f->frame.fname.cname);\
+My answers inline below
 
-sysfs_emit() is made for this.
+>> Any specific reason to pre-create those large number of vdpa devices of =
+the pool?
+>> I was hoping to create vdpa device with needed attributes, when spawning=
+ a kubevirt instance.
+>> K8s DRA infrastructure [1] can be used to create the needed vdpa device.=
+ Have you considered using the DRA of [1]?
 
-thanks,
+The vhost-vdpa devices are created in the host before spawning the
+kubevirt VM. This is achieved by using:
+- sriov-network-operator: load kernel drivers, create vdpa devices
+(with MAC address), etc
+- sriov-device-plugin: create pool of resources (vdpa devices in this
+case), advertise devices to k8s, allocate devices during pod creation
+(by the way, isn't this mechanism very similar to DRA?)
 
-greg k-h
+Then we create the kubevirt VM by defining an interface with the
+following attributes:
+- type:vdpa
+- mac
+- source: vhost-vdpa path
+
+So the issue is, how to make sure the mac in the VM is the same mac of vdpa=
+?
+Two options:
+- ensure kubevirt interface mac is equal to vdpa mac: this is not
+possible because of the device plugin resource pool. You can have a
+few devices in the pool and the device plugin picks one randomly.
+- change vdpa mac address at a later stage, to make sure it is aligned
+with kubevirt interface mac. I don't know if there is already specific
+code in kubevirt to do that or need to be implemented.
+
+Hope this helps to clarify
+
+Thanks
+Leonardo
+
+
+On Wed, Jul 10, 2024 at 10:46=E2=80=AFAM Cindy Lu <lulu@redhat.com> wrote:
+>
+> On Wed, 10 Jul 2024 at 14:10, Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Wed, Jul 10, 2024 at 11:05:48AM +0800, Jason Wang wrote:
+> > > On Tue, Jul 9, 2024 at 8:42=E2=80=AFPM Michael S. Tsirkin <mst@redhat=
+.com> wrote:
+> > > >
+> > > > On Tue, Jul 09, 2024 at 02:19:19PM +0800, Cindy Lu wrote:
+> > > > > On Tue, 9 Jul 2024 at 11:59, Parav Pandit <parav@nvidia.com> wrot=
+e:
+> > > > > >
+> > > > > > Hi Cindy,
+> > > > > >
+> > > > > > > From: Cindy Lu <lulu@redhat.com>
+> > > > > > > Sent: Monday, July 8, 2024 12:17 PM
+> > > > > > >
+> > > > > > > Add support for setting the MAC address using the VDPA tool.
+> > > > > > > This feature will allow setting the MAC address using the VDP=
+A tool.
+> > > > > > > For example, in vdpa_sim_net, the implementation sets the MAC=
+ address to
+> > > > > > > the config space. However, for other drivers, they can implem=
+ent their own
+> > > > > > > function, not limited to the config space.
+> > > > > > >
+> > > > > > > Changelog v2
+> > > > > > >  - Changed the function name to prevent misunderstanding
+> > > > > > >  - Added check for blk device
+> > > > > > >  - Addressed the comments
+> > > > > > > Changelog v3
+> > > > > > >  - Split the function of the net device from vdpa_nl_cmd_dev_=
+attr_set_doit
+> > > > > > >  - Add a lock for the network device's dev_set_attr operation
+> > > > > > >  - Address the comments
+> > > > > > >
+> > > > > > > Cindy Lu (2):
+> > > > > > >   vdpa: support set mac address from vdpa tool
+> > > > > > >   vdpa_sim_net: Add the support of set mac address
+> > > > > > >
+> > > > > > >  drivers/vdpa/vdpa.c                  | 81 ++++++++++++++++++=
+++++++++++
+> > > > > > >  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 19 ++++++-
+> > > > > > >  include/linux/vdpa.h                 |  9 ++++
+> > > > > > >  include/uapi/linux/vdpa.h            |  1 +
+> > > > > > >  4 files changed, 109 insertions(+), 1 deletion(-)
+> > > > > > >
+> > > > > > > --
+> > > > > > > 2.45.0
+> > > > > >
+> > > > > > Mlx5 device already allows setting the mac and mtu during the v=
+dpa device creation time.
+> > > > > > Once the vdpa device is created, it binds to vdpa bus and other=
+ driver vhost_vdpa etc bind to it.
+> > > > > > So there was no good reason in the past to support explicit con=
+fig after device add complicate the flow for synchronizing this.
+> > > > > >
+> > > > > > The user who wants a device with new attributes, as well destro=
+y and recreate the vdpa device with new desired attributes.
+> > > > > >
+> > > > > > vdpa_sim_net can also be extended for similar way when adding t=
+he vdpa device.
+> > > > > >
+> > > > > > Have you considered using the existing tool and kernel in place=
+ since 2021?
+> > > > > > Such as commit d8ca2fa5be1.
+> > > > > >
+> > > > > > An example of it is,
+> > > > > > $ vdpa dev add name bar mgmtdev vdpasim_net mac 00:11:22:33:44:=
+55 mtu 9000
+> > > > > >
+> > > > > Hi Parav
+> > > > > Really thanks for your comments. The reason for adding this funct=
+ion
+> > > > > is to support Kubevirt.
+> > > > > the problem we meet is that kubevirt chooses one random vdpa devi=
+ce
+> > > > > from the pool and we don't know which one it going to pick. That =
+means
+> > > > > we can't get to know the Mac address before it is created. So we =
+plan
+> > > > > to have this function to change the mac address after it is creat=
+ed
+> > > > > Thanks
+> > > > > cindy
+> > > >
+> > > > Well you will need to change kubevirt to teach it to set
+> > > > mac address, right?
+> > >
+> > > That's the plan. Adding Leonardo.
+> > >
+> > > Thanks
+> >
+> > So given you are going to change kubevirt, can we
+> > change it to create devices as needed with the
+> > existing API?
+> >
+> Hi Micheal and Parav,
+> I'm really not familiar with kubevirt, hope Leonardo can help answer
+> these questions
+> Hi @Leonardo Milleri
+> would you help answer these questions?
+>
+> Thanks
+> Cindy
+> > > >
+> > > > --
+> > > > MST
+> > > >
+> >
+>
+
 
