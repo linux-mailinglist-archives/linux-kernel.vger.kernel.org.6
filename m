@@ -1,117 +1,171 @@
-Return-Path: <linux-kernel+bounces-249002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36BE892E4E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:35:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8879692E4E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E720A2853B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B792F1C20952
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0C5156962;
-	Thu, 11 Jul 2024 10:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9547D157476;
+	Thu, 11 Jul 2024 10:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UiEeqhym"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LGsxiFLG"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25F815B55E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960BC158D94
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720694054; cv=none; b=BrFBzGeT9vHxr9VHdj1MxOm0KZDT2jAr+s2f9z1jPCyGwhIrOKLVmhQu4sln1RhFP2ii7y0IpwQDukMJlkPSZEr4TMpsugJrMYC8QwVg39KHguR4FyBoB3N3s0K/9EykqWhPS5tcXF9yMZQ9qfdAJtFOwOnKvpOryCEoNLdrkIg=
+	t=1720694102; cv=none; b=c9/7P3ocXzGkUJeLiCsRZy3WSuBhQG8cEkyWNh5dA9l3wr/K+f7uxvjnohuo3BRvcsKEaZm1L3iAOjqrSJb5sGqJHhm3arm1nslvcZsQ56ZxZVquiHKjRRn6aiwGlSlyaZ3+sZ8Dkr/wK7aDpF6s8822+VyNi1csAC3SbjKLKbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720694054; c=relaxed/simple;
-	bh=U8ma8KhMaM2r8zgII+K905t72sTILD7DaVFiHDJtZZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zflh1zv1tjv4B2U/VW4/brEsehXbPfcGSzFXgfcYU6e2GLUgXv2r3LnGH6P07f/hSohpWCHE7UgoRIyABrhSdCONRWd0fELfn24oCLBiOYFOd6/z5rYrfNB6zUrv11XuVoTITYKU0c6Ys/ASq/qk4VJzgfGgNLJqiRpone+1SEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UiEeqhym; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-59559ea9cfdso863964a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:34:12 -0700 (PDT)
+	s=arc-20240116; t=1720694102; c=relaxed/simple;
+	bh=azTey6Mbe5LDqWSTEruz0j0tEwPtlNQpE18cgLltbe0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X3OGwys3hW7JC9Nnl9AXiwzOQIWd07vTnbF1+IabQ732oJaoJlofwdDvfSc6XRSLvYBJxMZwqChZvpXNoeDyAOqJy/Wx4AZkZLPMKSLVy5RWKgnKDj64r79a0DPrZykH7fC7Tn8fealss+0qynIjoh0QBt5SkwWZpltNCVtKrq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=LGsxiFLG; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3cabac56b38so460345b6e.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:35:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1720694051; x=1721298851; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jR1Web6fOpG4PfW7GgX8Z5K27/fHkBluZOacmcz2i6E=;
-        b=UiEeqhymZJOAS+ns+GPbWwkGNun4qelky5fRCXKetk4WmFjVTKs3qNzw+tt8nQlNxi
-         LdgZpgd32u/JJdNzraAutwITpTeORDsQsZxAf0KAt01EhqAMitG+MNwmsrXimY0Itz0I
-         Q7gXXvnDXUoWwZjqOLARyyuHoor0bORlvAJ4heUkeh5wJAJ09n+z4HF25/63C4OCq+oZ
-         f5dmRRrbAiNXKPZ6mhoOvgGp7hbT2oyCoMhmGtY7NdOVf/EN5dxRAnEpdLFsXnVDIHAE
-         xm3hnsGKNRNAduBoLI8W/NAlXPp19xYpCi1jn0L08e57tvHFw5pL414LYM4OmPGKCICT
-         hgfQ==
+        d=sifive.com; s=google; t=1720694099; x=1721298899; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=81XIkWS3ndQ7+PCCdHsExXmF1eARnUo6Gh7sCw+xD4Y=;
+        b=LGsxiFLGgctkcNa4uIYDdYdHDygJkyF6j1TZqjgI4gHz06/fyoJSAZoPB6ZlFFx0kd
+         VjZSnUt9cKEfBSxvYZyGVnP96WTtU8NA7imxRcwnGO9jiRK+pg0wP6+t1YPsxMbi++OE
+         m0zL7q5JwMCBT2ZNh5gR3p+JgQZayfjAJ+mRj2YRucc5/adO6bmsfn8wDwsQOyBx0LuC
+         hfXQW5rdiyj6lV/rIo0ynjHLlITt/YZ9GpW3QsmRm1n6d2BMql6V4YBNuh6MJyOtoe59
+         o6HSNbABbAId8FajB06EVDjhs5H7SBhsyFiGgtF733/qMTRkoaGwo+5v7snEu3mG1fPc
+         a2mQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720694051; x=1721298851;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jR1Web6fOpG4PfW7GgX8Z5K27/fHkBluZOacmcz2i6E=;
-        b=gndBKb4yZ8vypyzXdjRjSTBK9Mj3HZ8UK6cpF6NOCe9NlzRaShd9y2uarT4f7CVhwS
-         i+CAE9k+aANFwXuq7fjiBMZ8T5Erxgbbhm50siwu/JCiXkeDLS+Wv4CrwrnjCafSSWYf
-         RZx5pPSnEGiKuS/CJlUIQdzT2OFfhfjkHZyDxs3HAH2JTDUpR+3ywAU1y9l+bQTnmqG8
-         vauFhVAwbeUDtvtKoTI3/yj1IImXuosH8ZJEYOTqw0oOJqv7qoFtdjFRX6sdUYMoTAKL
-         uqJR9yMm6KaovsJSFvNtFx+COcB+2WA5lgINePcDp7EzcrCfCvLJx8IKdRrU8pok2Zx7
-         qjkw==
-X-Gm-Message-State: AOJu0Yx/RNcH459sZ2ixgw+HLQPmD0PQ1Z0/jngmDKA9vRw/i684/fxI
-	MtKpG2XoVEZhb811jAx2asxBWedCpuUiNZp4X0ZP3nHbjnuqf/Czd7RG8C7VhPY=
-X-Google-Smtp-Source: AGHT+IESzBPL1aKKBD56be1MULJXc15BES/x9i+LATELu4LzxdGOdNbDaV9C405YEadlCd/JoNnfNw==
-X-Received: by 2002:a05:6402:4316:b0:57c:a77d:a61e with SMTP id 4fb4d7f45d1cf-594bab80111mr6037655a12.7.1720694050942;
-        Thu, 11 Jul 2024 03:34:10 -0700 (PDT)
-Received: from localhost (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bbe2cf60sm3296192a12.26.2024.07.11.03.34.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 03:34:10 -0700 (PDT)
-From: Petr Tesarik <petr.tesarik@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	kexec@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	Petr Tesarik <petr@tesarici.cz>,
-	Petr Tesarik <ptesarik@suse.com>
-Subject: [PATCH] sysfs/cpu: Make crash_hotplug attribute world-readable
-Date: Thu, 11 Jul 2024 12:34:09 +0200
-Message-ID: <20240711103409.319673-1-petr.tesarik@suse.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1720694099; x=1721298899;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=81XIkWS3ndQ7+PCCdHsExXmF1eARnUo6Gh7sCw+xD4Y=;
+        b=lKd/3ZMfI4dPuQqAW2PPzPRaK9z3QCzWp2PQtZgb3WFPPYGbR1Ndg0cq7LRShbywJB
+         6zPAHUBmcwMw8X+nS8U5IIQgzPpqJXRdjKGgQGV9VaUvkW0OhzJcIjr7CxWfIeQtxeUw
+         kBjF9xwHMER8oklUqkXkBmkjIgGQ85c/V8IIt+dEZoin6OUXPn+L27P3kX6if6l16cTM
+         W5btK+Xac5L2ToPpRWeHUrIDZTNt/5TMDhVSFHS920tj5fTcqzoKr8zrXnqrb2FysBGc
+         AcGCzA9wnJv7Wr7/qFf73cg2rOQvkZpcIpPJBuH1kyC7wexQo/w2gNITdh0D03qG4Ay2
+         s1tg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6DkqPHcTz95vsDR3GACpL8Z8uhKLCJuK54lYMy0SQR2exf4P85KEqRS45f7uozA4pS1L7YPN/nE3X3go6xkEVQAympYZWys1NBqht
+X-Gm-Message-State: AOJu0YwaZDJfbElfPKEUDzgoFiJZUhMIGb8b161ar8i4/Zy7gviHanfk
+	9fx46HKWBBjMYTNAyFRTyAM80blYGjaw40fVmFDhk/JAnxn0cJ54aA/5dCdXsP/JmSS96xW/7XJ
+	Y1JpPKp1V6YrFwLVwzemnnA2d7ZAVf0M6kd0n+/vfYinkXi/rkFA=
+X-Google-Smtp-Source: AGHT+IFJB5x3pYSD0y4Q5r4wWK4Y3rLRAWXELD1JUSAm8Ow50OC5okYZ99DPR11L57LtC71EXPAYdgoDHtJYINBxm0g=
+X-Received: by 2002:a05:6808:308d:b0:3d9:2415:da77 with SMTP id
+ 5614622812f47-3d93c073d69mr9586482b6e.25.1720694099522; Thu, 11 Jul 2024
+ 03:34:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240628093711.11716-1-yongxuan.wang@sifive.com>
+ <20240628093711.11716-3-yongxuan.wang@sifive.com> <20240628-clamp-vineyard-c7cdd40a6d50@spud>
+ <402C3422-0248-4C0F-991E-C0C4BBB0FA72@jrtc27.com> <20240630-caboose-diameter-7e73bf86da49@spud>
+In-Reply-To: <20240630-caboose-diameter-7e73bf86da49@spud>
+From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Date: Thu, 11 Jul 2024 18:34:49 +0800
+Message-ID: <CAMWQL2gpg-xN5xjshTaZT5844kKoZHDmLUQb8nXYYzw1RGbykQ@mail.gmail.com>
+Subject: Re: [PATCH v6 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+To: Conor Dooley <conor@kernel.org>
+Cc: Jessica Clarke <jrtc27@jrtc27.com>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-riscv <linux-riscv@lists.infradead.org>, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, Greentime Hu <greentime.hu@sifive.com>, 
+	Vincent Chen <vincent.chen@sifive.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Petr Tesarik <ptesarik@suse.com>
+Hi Conor and Jessica,
 
-There is no reason to restrict access to this attribute, as it merely
-reports whether crash elfcorehdr is automatically updated on CPU hot
-plug/unplug and/or online/offline events.
+On Sun, Jun 30, 2024 at 10:09=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Sat, Jun 29, 2024 at 02:09:34PM +0100, Jessica Clarke wrote:
+> > On 28 Jun 2024, at 17:19, Conor Dooley <conor@kernel.org> wrote:
+> > >
+> > > On Fri, Jun 28, 2024 at 05:37:06PM +0800, Yong-Xuan Wang wrote:
+> > >> Add entries for the Svade and Svadu extensions to the riscv,isa-exte=
+nsions
+> > >> property.
+> > >>
+> > >> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > >> ---
+> > >> .../devicetree/bindings/riscv/extensions.yaml | 28 +++++++++++++++++=
+++
+> > >> 1 file changed, 28 insertions(+)
+> > >>
+> > >> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml=
+ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > >> index 468c646247aa..c3d053ce7783 100644
+> > >> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > >> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > >> @@ -153,6 +153,34 @@ properties:
+> > >>             ratified at commit 3f9ed34 ("Add ability to manually tri=
+gger
+> > >>             workflow. (#2)") of riscv-time-compare.
+> > >>
+> > >> +        - const: svade
+> > >> +          description: |
+> > >> +            The standard Svade supervisor-level extension for SW-ma=
+naged PTE A/D
+> > >> +            bit updates as ratified in the 20240213 version of the =
+privileged
+> > >> +            ISA specification.
+> > >> +
+> > >> +            Both Svade and Svadu extensions control the hardware be=
+havior when
+> > >> +            the PTE A/D bits need to be set. The default behavior f=
+or the four
+> > >> +            possible combinations of these extensions in the device=
+ tree are:
+> > >> +            1) Neither Svade nor Svadu present in DT =3D>
+> > >
+> > >>                It is technically
+> > >> +               unknown whether the platform uses Svade or Svadu. Su=
+pervisor may
+> > >> +               assume Svade to be present and enabled or it can dis=
+cover based
+> > >> +               on mvendorid, marchid, and mimpid.
+> > >
+> > > I would just write "for backwards compatibility, if neither Svade nor
+> > > Svadu appear in the devicetree the supervisor may assume Svade to be
+> > > present and enabled". If there are systems that this behaviour causes
+> > > problems for, we can deal with them iff they appear. I don't think
+> > > looking at m*id would be sufficient here anyway, since the firmware c=
+an
+> > > have an impact. I'd just drop that part entirely.
+> >
+> > Older QEMU falls into that category, as do Bluespec=E2=80=99s soft-core=
+s (which
+> > ours are derived from at Cambridge). I feel that, in reality, one
+> > should be prepared to handle both trapping and atomic updates if
+> > writing an OS that aims to support case 1.
+>
+> I guess that is actually what we should put in then, to use an
+> approximation of your wording, something like
+>         Neither Svade nor Svadu present in DT =3D> Supervisor software sh=
+ould be
+>         prepared to handle either hardware updating of the PTE A/D bits o=
+r page
+>         faults when they need updated
+> ?
 
-Note that since commit 79365026f8694 ("crash: add a new kexec flag for
-hotplug support"), this maps to the same flag which is world-accessible
-through /sys/devices/system/memory/crash_hotplug.
+Thank you! I will update in the next version.
 
-Signed-off-by: Petr Tesarik <ptesarik@suse.com>
----
- drivers/base/cpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index c61ecb0c2ae2..73d69791d0d3 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -308,7 +308,7 @@ static ssize_t crash_hotplug_show(struct device *dev,
- {
- 	return sysfs_emit(buf, "%d\n", crash_check_hotplug_support());
- }
--static DEVICE_ATTR_ADMIN_RO(crash_hotplug);
-+static DEVICE_ATTR_RO(crash_hotplug);
- #endif
- 
- static void cpu_device_release(struct device *dev)
--- 
-2.45.2
-
+Regards,
+Yong-Xuan
 
