@@ -1,120 +1,203 @@
-Return-Path: <linux-kernel+bounces-248595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 937D592DF76
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:27:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F47F92DFA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B435283F4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:27:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C4591F22023
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FCD6EB7C;
-	Thu, 11 Jul 2024 05:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25EE82C67;
+	Thu, 11 Jul 2024 05:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ZOXrs43I";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="CSwpWI6L"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="OprD4Ovo"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5E142042;
-	Thu, 11 Jul 2024 05:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AACA7829C;
+	Thu, 11 Jul 2024 05:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720675667; cv=none; b=lm/wZbEOu5HRixZLHXQPaVnTb9Kf4NOs1lQB7o2aKX4/6ONaYwc/Sc1kHg6ymyGhKN35wPi3I7SyAgiPpl6hxWxudzO1S1GgYD88sScVRfaNJTBjcZSAAoiqXOHHUautucGrZVcxDYT/BXcqzH5/VUWUwp/VDSE2qymxYW7q4N4=
+	t=1720675797; cv=none; b=XzZJTzlNQcidYh5RsA7wSnLTAsWTwkmxClKWc3zABsYei9U1/ru6jHmEyAeWxmd4ZD+sMaQVJxir9MtKlAf8NMrtuFfGfQCep5bYtImyx/hv/WKwy0O4p1JoK1INz2IDtSv5oO5ek7OmagPGwISaC5cK8CPnSdPEZIiKjpzYgBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720675667; c=relaxed/simple;
-	bh=HSsX0RnRuDFdjgHKzOQtBjgv2nX0He6FmULrIZgV2do=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mi5md1nnfk3nCvfIsOTX1BRlNGkUnUtiw6ugn3koiLVrOe1mk/sywHm1hfL3Mcr+GLZLLMkRfpg9hjoPSzBSrhCzhKX24NL86RfUD1O8wk8kwsjocaLS5/a0ilUl0uA8pMsLrsEYZ78MrNs2/6vcFmPkCcgmuwWENkIg3AsOhYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ZOXrs43I; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=CSwpWI6L reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1720675664; x=1752211664;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=HSsX0RnRuDFdjgHKzOQtBjgv2nX0He6FmULrIZgV2do=;
-  b=ZOXrs43ISmbjEKXnExZdRQfpw/PvqOwc5L5J3d2g76O7m45M5zFMSn/8
-   FKco8rFUHGOwZRFy+VQqPpJzNJYopbpoddA44j61JrP2CUQdVv10AMzj0
-   bl01lb6a74ui400RoGqQI4Qph96MCx+/i8ivFzmzpuBhgBXLNmrnviecU
-   C/kvsi/EZ/LOlkc9psUPHx4QADTxxlS14LZ/ah/9BVZrOux71s+DE6pTB
-   mSUDNerO5qgbZ+9VvWQGyl/3eVimDrqzOYPwfzyk/JkWN+iS0NPQbPXLD
-   AHvM0JbaW7f2tSAE/mO7mkdWl1sZyXY993yD0NsEgrxKjGPj0+nKX490n
-   A==;
-X-CSE-ConnectionGUID: 4R+YyxF4TvuAdyuF6HKwhg==
-X-CSE-MsgGUID: Fn3IlePpQkWP6bFs1b+N/A==
-X-IronPort-AV: E=Sophos;i="6.09,199,1716242400"; 
-   d="scan'208";a="37850448"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 11 Jul 2024 07:27:40 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A54FD16337A;
-	Thu, 11 Jul 2024 07:27:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1720675656;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=HSsX0RnRuDFdjgHKzOQtBjgv2nX0He6FmULrIZgV2do=;
-	b=CSwpWI6Lf4xrqzWYv5+Hmj2pkBU90Gz5eSk8N1mrQhjPh9iid9DEuc3WNe/CBO2vvRCExT
-	hjwwRzC+dNFp3HjXY1mfa1T4re9x2giweXhnmJhZTtfGmzLUZIRf7NdRIoxcLlIfRFGzE0
-	ejAQfvXWaP1AWJ5im+lmoYtF4QDEU3kuUJZdBcfY3L2gJPWXUgJh3qBIAI02iTxLQHL1mT
-	RBAQi/t5pPQONzWEOqokoAVFyiLLeCUIx3R0QESg0Z1SQ70S5oweDGm22Ibw6H/xQaVuIC
-	sztdr1U8B/GpEW3FoKO8JmKS146OS9hgGNJ2Udwkn35e9BV3xH+AqJ7iGjfaCw==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 1/6] dt-bindings: clocks: add binding for generic clock-generators
-Date: Thu, 11 Jul 2024 07:27:40 +0200
-Message-ID: <1899010.tdWV9SEqCh@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <68f6dc44a8202fd83792e58aea137632.sboyd@kernel.org>
-References: <20240709123121.1452394-1-heiko@sntech.de> <21244242.0c2gjJ1VT2@diego> <68f6dc44a8202fd83792e58aea137632.sboyd@kernel.org>
+	s=arc-20240116; t=1720675797; c=relaxed/simple;
+	bh=tVi+AdVtLCoo0xLNKhOl4i2hgIaH2Q3fdb81B0+VlsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L9BAO1DOVoy4Ll2l+3LVv/M+M7vbDMNYvR+54+LF18YcrzTP2IS/NlYquywZNuOoCnHnI9I8wxD0FdLYOdCV3l2dz3vhQZPOM2H+4glsYnjcPxb5ALwJ1SiQyYFrnGp6eVzvArPnhD/RioXbDTrbEQAX7bHvMh6mWl7LQuF+1fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=OprD4Ovo; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1720675785; x=1721280585; i=quwenruo.btrfs@gmx.com;
+	bh=+RR1hUYr3X9lDdEoYTmfRGxXIBBbKKDuAWup2kRpIkA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=OprD4OvohLpOFHYrjUCh7WLJmnMy4OInb2IgqUpSl+SzJdnc/48jWuw3LIdLInjI
+	 eFnE7M6/k0ddA39b8Pbwxe2YypuGG7kbvSLGKwY0Z2PyTsiuTwuL5t3UrqsH2Lqig
+	 CXeGZBiNauyKH6YOBsUmgfv6autPgnm1vPDtrPfA5zhWnJiKF2HlKydFHEdqI7zq0
+	 eWf3j+vahV0rWLZgl+gbyM2pPTT2Iq28pET3oFlj4ePGulHxt3Wa39ROd7PulfbB3
+	 YtTISwg0K6fADcZEscG18mavkqcBR+hM2wjygkcWoi3lZDNZXzcdVA1zubMnl9jtD
+	 kZJ3uldjVNnPhbUd5A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MhlGk-1rx8SP0Ft2-00mlSF; Thu, 11
+ Jul 2024 07:29:45 +0200
+Message-ID: <edcd0036-5782-4c29-9f5e-b7610ea9eb4e@gmx.com>
+Date: Thu, 11 Jul 2024 14:59:39 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] btrfs: Fix slab-use-after-free Read in
+ add_ra_bio_pages
+To: Pei Li <peili.dev@gmail.com>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ Qu Wenruo <wqu@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, skhan@linuxfoundation.org,
+ syzkaller-bugs@googlegroups.com,
+ linux-kernel-mentees@lists.linuxfoundation.org,
+ syzbot+853d80cba98ce1157ae6@syzkaller.appspotmail.com
+References: <20240710-bug11-v2-1-e7bc61f32e5d@gmail.com>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <20240710-bug11-v2-1-e7bc61f32e5d@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
-
-Am Donnerstag, 11. Juli 2024, 01:21:15 CEST schrieb Stephen Boyd:
-> Quoting Heiko St=FCbner (2024-07-10 00:45:17)
-> > Am Mittwoch, 10. Juli 2024, 09:02:34 CEST schrieb Alexander Stein:
-> > >=20
-> > > So essentially only enable-gpios and vdd-supply is added in compariso=
-n to
-> > > fixed-clock. Does it make sense to add that to the fixed-clocks inste=
-ad?
-> > > Similar to fixed-regulator.
-> >=20
-> > I wasn't that sure which way to go in the first place.
-> > The deciding point was reading that line about the fixed clock not
-> > being gateable, so I opted to not touch the fixed-clock.
-> >=20
-> > But you're definitly right, this _could_ live inside the fixed-clock
-> > as well, if we decide to get rid of the not-gateable thing above.
->=20
-> It's probably more complicated to combine it with the fixed-clock
-> binding after making properties required like vdd-supply. I'd just make
-> a new binding and look at combining later.
-
-Maybe I am missing something IMHO adding optional vdd-supply and
-enable-gpios doesn't seem a big deal.
-Anyway I don't have a hard opinion here. To me fixed-clocks still
-seems very appropriate for having a controlling GPIO and power supply.
-I just would get rid of the (comment only) hint they are ungatable.
-
-Best regards,
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+X-Provags-ID: V03:K1:Ox+U2OEvYY4rVIdz47iUwojWUYdvqQIDD2B1PU937XY42mwDTyW
+ Q9tiqbtT3EfE9DKOvcKxzDZDhxJ9UXuVjvMIleGlbQIqPkqXoZZ5FRh1OBV+NY5x+qwuV0h
+ SGQS7J9kUYi34AwRL+zWloCk+ivUIvou8dFNrQnzirKJWxxPnokEw5BVF70ZvyEmExPP2Xg
+ 9QccyLEAk44uZdt7YUEzQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:w4iUgBVpG5M=;o49mxWNPbOyzJaXhBCeFaWdsVcG
+ o4R84zsczPUv/aWyMPoOlJsAmCQJsithZ4XVUasgVUGLm7kCZthtaofSYjqripn4YGG6Jqq5/
+ 1zRTdxxvihkbufcXLY37DyrXEF4LaN7o/Jav9LdsIyHewSHNqUNFzXNhGSgpBJDucvgydxErl
+ uTwTIl17lDqfBce1yH8CPF3Mxvbc/u0RBlY7BXYD5f+spCUEk46tgRudzBH6siEe9qWeMp7ik
+ eod+5l/HkiuVPiIS0H2zEcpgcr6nrR5dAxHSiW5uUJNvi9A3+ETyk+UqvuhnSzrmvEOm07XWw
+ yIVOlvc+wMZ3xYoVRxJBylpzaYCb23hl0rrKB05vNMbiOV9/AfrrrHIT8MrsKnHeF3YOsR71S
+ gIrOZsiNA0AJi0Ef+zlJZB6X62OAGAHTsPfCquaAaF31OVbjtR/irsa+yXehrKcjlFoHBwQOh
+ skRDiTP0t63jicAOcfHdewVcXvMI9OPqyzmY3yF+uJBnpdEwZxHKxDYy1oqN81hHQFe8tKGOw
+ i+f4Q8+DnUlpl/5IvxbtACNxlALWAgtahBegSxAped73hdOuilw7bEX3C6YnNd+inK6rQYdXK
+ ecc63czZyPIx+QPzG7XikyA6URatxrTh75QLfApASgGivj35QjByw3PWGLmJyNRGOWcOtJrSP
+ QGbYH/J4BuH6I1iywHVajjC8G9l+HXl1pO83tyJUtGVCnAK9sAeekuBzSqLPWbLo38ezX2diI
+ yTUeaFtIGfJ459hyVUqZQhpvYVEtM6g4YprFdWe/9rcQsXsTdBqMkaDe4WypSu/ypiRTwjCul
+ 8Tak27/d2aHvjj25uMfo7u7mNa6ZjyPoT7WwnsolUU654=
 
 
+
+=E5=9C=A8 2024/7/11 13:59, Pei Li =E5=86=99=E9=81=93:
+> We are accessing the start and len field in em after it is free'd.
+>
+> This patch moves the line accessing the free'd values in em before
+> they were free'd so we won't access free'd memory.
+>
+> Reported-by: syzbot+853d80cba98ce1157ae6@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D853d80cba98ce1157ae6
+> Signed-off-by: Pei Li <peili.dev@gmail.com>
+> ---
+> Syzbot reported the following error:
+> BUG: KASAN: slab-use-after-free in add_ra_bio_pages.constprop.0.isra.0+0=
+xf03/0xfb0 fs/btrfs/compression.c:529
+>
+> This is because we are reading the values from em right after freeing it
+> before through free_extent_map(em).
+>
+> This patch moves the line accessing the free'd values in em before
+> they were free'd so we won't access free'd memory.
+>
+> Fixes: 6a4049102055 ("btrfs: subpage: make add_ra_bio_pages() compatible=
+")
+
+This fixes tag, along with the syzbot report, should be in the main
+commit message, not after the "---" line, which would be discarded when
+applying.
+
+> ---
+> Changes in v2:
+> - Adapt Qu's suggestion to move the read-after-free line before freeing
+> - Cc stable kernel
+
+It's not just Ccing to the stable list, but with a version tag.
+
+For all the proper tags usage, you can check this commit, it has all the
+correct tags.
+
+b2a616676839 ("btrfs: fix rw device counting in __btrfs_free_extra_devids"=
+)
+
+Otherwise the code looks good to me.
+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+
+Thanks,
+Qu
+
+> - Link to v1: https://lore.kernel.org/r/20240710-bug11-v1-1-aa02297fbbc9=
+@gmail.com
+> ---
+>   fs/btrfs/compression.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+> index 6441e47d8a5e..f271df10ef1c 100644
+> --- a/fs/btrfs/compression.c
+> +++ b/fs/btrfs/compression.c
+> @@ -514,6 +514,8 @@ static noinline int add_ra_bio_pages(struct inode *i=
+node,
+>   			put_page(page);
+>   			break;
+>   		}
+> +		add_size =3D min(em->start + em->len, page_end + 1) - cur;
+> +
+>   		free_extent_map(em);
+>
+>   		if (page->index =3D=3D end_index) {
+> @@ -526,7 +528,6 @@ static noinline int add_ra_bio_pages(struct inode *i=
+node,
+>   			}
+>   		}
+>
+> -		add_size =3D min(em->start + em->len, page_end + 1) - cur;
+>   		ret =3D bio_add_page(orig_bio, page, add_size, offset_in_page(cur));
+>   		if (ret !=3D add_size) {
+>   			unlock_extent(tree, cur, page_end, NULL);
+>
+> ---
+> base-commit: 563a50672d8a86ec4b114a4a2f44d6e7ff855f5b
+> change-id: 20240710-bug11-a8ac18afb724
+>
+> Best regards,
 
