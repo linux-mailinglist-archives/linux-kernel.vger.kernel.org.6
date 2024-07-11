@@ -1,133 +1,83 @@
-Return-Path: <linux-kernel+bounces-250004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D87A92F2DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:58:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6829592F2E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0DE1F2214F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:58:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F23284012
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC841A01DA;
-	Thu, 11 Jul 2024 23:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52361A073B;
+	Thu, 11 Jul 2024 23:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CnqvycZH"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sl9OEyLb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB49815AAD9;
-	Thu, 11 Jul 2024 23:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90EC15AAD9;
+	Thu, 11 Jul 2024 23:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720742314; cv=none; b=Bu8Ozu6ySnwLoImz80YJMn/AFKjH9LemVGp/zQdJmc+AiMQP1yyfR1GKxhBEEWMRjU0g36LdD8xhg23MSVAoJKVrA4lZmVXxPev1xWqIz6Bqcdh6Bpoqhx6FBV2oUTAJkkEOrW091oDSR//P3fXkp7HwVRiO6ib4Vc6M+u+O7e4=
+	t=1720742326; cv=none; b=TmahoUjRdSvVZ3X/llJxHXbjdsDCjRN6UZYGj3dbn8C3QFzRMccmRPyDu0+vBDBChTe++iWNLR6wnRWGRHG+pymFtYgZXllqRn6PCkJbKtIJe2bdpGugLrNHb+SSIcvT+if3n9zaQQct9/q9CCp0ohc01tJewLvcmDVVxJehPKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720742314; c=relaxed/simple;
-	bh=2vBC+KzcKTxk5k7WHAz1mB5gMwlYbubQ12KRQ2/rDrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=bmnYLtX3qV8niDsAXb4UbAkBtamtkQVk+rIJ6C21pQ73qozvGO4AkuKAHOPKPnhf5rshSURIs75noKT7GQSKnjgB7qmxLyg+xf8FXCLtLCNCvVuf2h80zp4t8jJXF2DtPVFPQGHrbW27+8yGe0wMWoNJOYzaP+EXFmu4zmMGzmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CnqvycZH; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720742308;
-	bh=zZ8/h8JZ7AJhCHt1R2GbbeguaQJrJzLHHkBrjjtpecM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CnqvycZHlJGkCivGN/mIlvxtw+96I1ott32433moDF+sYHUUVUGfhO7fVs+N0KsTX
-	 BSoZUgXHQ6LaknIBJRlD3+lflUxlclf2GApHhwvh5m4B0EqHWMyyO7qeWwl6SDm/M4
-	 NoDzejE8wR11Q5/8nRkPPJMmQX/J7JgbQk14JuQQmck/AjF2Rq9EHRc4YrdDz0bBTO
-	 YFDAG/kWHAUlvWdB/qfq8wS+/snaFgnMkBk0Xc2h3LSv8UZ6FtK+hdA6G/DnXzJlv3
-	 2gIGJSl1ZpO/KOQIOV7W0XAuNidh9eVDXR7ssVo2Lt49w5g74GRC08L/oWGfGLDFRm
-	 qvNHIH5grgZQg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKsBB2KTBz4w2F;
-	Fri, 12 Jul 2024 09:58:26 +1000 (AEST)
-Date: Fri, 12 Jul 2024 09:58:25 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann
- <arnd@arndb.de>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>, Drew Fustini
- <dfustini@tenstorrent.com>, Drew Fustini <drew@pdp7.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Yangtao Li <frank.li@vivo.com>
-Subject: linux-next: manual merge of the clk tree with the arm-soc tree
-Message-ID: <20240712095825.6e1224d9@canb.auug.org.au>
+	s=arc-20240116; t=1720742326; c=relaxed/simple;
+	bh=ktsn/j9zoy17I5McpCAkdJifL+uddoJ55SLYw0XUFqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=doNrTu3EPchMEN4G6/daP+pflktF0wTREiw4pL11fNrqeDF/IU2t7lGyeqmreLrAhAbsUBXl7LMZydEDFnJ8moAb5y+fiECGROL+kDCfJAlXn2gWM44O5Bh+S5TP7P+nNkAUNafYyND4j4DY9ryWIiwkmd2IWoMHBMORinufeHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sl9OEyLb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD8BBC116B1;
+	Thu, 11 Jul 2024 23:58:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720742325;
+	bh=ktsn/j9zoy17I5McpCAkdJifL+uddoJ55SLYw0XUFqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sl9OEyLbt8GPnUbgcKiLQ9sRjF3DLxyCtjs7yZ2E9G788UcU7+IaHGXo+PL2A52f6
+	 e1FOW6F0kVfKJdQBoqthVj94pK57Yg3uRVurQoYDWJM5l8Am1RIapu2QpZF7ZjeMfP
+	 ouEOtt7kJE57+tYupql2WOu+9c39tbBO6wC2AB85KOcPvVbqepz0rLKzKhZsRIpqT3
+	 5AUNklHXG4hR1MK3Fs3nokhNg5daNoAxgeTsMycvRBJXDvDzCwdQUwb9uqMSns0u6D
+	 2JBtth3uFht/OlSBseKFwqQbB726SiNuB0n03IhCghVmXJzQHsN+KCAKsPzrYO+ykP
+	 YUnEe53zsv1vw==
+Date: Fri, 12 Jul 2024 01:58:42 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: George Stark <gnstark@salutedevices.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	neil.armstrong@linaro.org, khilman@baylibre.com, jbrunet@baylibre.com, 
+	martin.blumenstingl@googlemail.com, glaroque@baylibre.com, rafael@kernel.org, 
+	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, b.galvani@gmail.com, 
+	mmkurbanov@sberdevices.ru, linux-i2c@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@salutedevices.com
+Subject: Re: [PATCH v2 1/3] dt-bindings: i2c: amlogic,meson6-i2c: add
+ optional power-domains
+Message-ID: <ca2zfkqajyco5bfjyr4xde67hypcn3gl4s4vlvlte6uljpnw44@6eqhqmodul67>
+References: <20240710223214.2348418-1-gnstark@salutedevices.com>
+ <20240710223214.2348418-2-gnstark@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/qD7mgudfTiVy6t9Hm6zpsBV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710223214.2348418-2-gnstark@salutedevices.com>
 
---Sig_/qD7mgudfTiVy6t9Hm6zpsBV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi George,
 
-Hi all,
+On Thu, Jul 11, 2024 at 01:32:12AM GMT, George Stark wrote:
+> On newer SoCs, the I2C hardware can require a power domain to operate.
+> Since the same compatible is used for older and newer SoCs make
+> power-domains property optional.
+> 
+> Signed-off-by: George Stark <gnstark@salutedevices.com>
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Today's linux-next merge of the clk tree got a conflict in:
+Just this one pushed to i2c/i2c-host.
 
-  MAINTAINERS
-
-between commit:
-
-  480d9a6083f4 ("MAINTAINERS: thead: add git tree")
-
-from the arm-soc tree and commit:
-
-  1037885b309c ("dt-bindings: clock: Document T-Head TH1520 AP_SUBSYS contr=
-oller")
-
-from the clk tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc MAINTAINERS
-index 44cff47c2594,04eb5587ffa7..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -19382,8 -19322,9 +19382,10 @@@ M:	Guo Ren <guoren@kernel.org
-  M:	Fu Wei <wefu@redhat.com>
-  L:	linux-riscv@lists.infradead.org
-  S:	Maintained
- +T:	git https://github.com/pdp7/linux.git
-+ F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-  F:	arch/riscv/boot/dts/thead/
-+ F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
- =20
-  RNBD BLOCK DRIVERS
-  M:	Md. Haris Iqbal <haris.iqbal@ionos.com>
-
---Sig_/qD7mgudfTiVy6t9Hm6zpsBV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQcaEACgkQAVBC80lX
-0GweAAf+NvWgW6ckvbjJTDY/DDeKsGHmyNw9ApUImUJOIpMjGsgxmZbU6CrA0CFZ
-iSBMVdpZsZC1gbd2BVuXOmrta9m/M+CxnpmjKAIG4cGQNIbob9f6uo4vlGudCCCi
-Qygww/jMCKE9HM6HocaIFY/n0cdNsY5kAjEyycgDiIkc/LxalUKqC8LsLBLC+90t
-XOdeG8Db1yGgsnb84/X1kQqvHoejExDTAFYVeuExoh5ADePkriG6+4CFTiBTKk/2
-0Hmq7u5fSe+GjkllfAebC2gC8kocvaKSEEetlRxZ/hwvm4Ch0xCzd1LJFcL66kqC
-ADm8MebRMhNez8kHqBNrGP3FaBWyTw==
-=yBL5
------END PGP SIGNATURE-----
-
---Sig_/qD7mgudfTiVy6t9Hm6zpsBV--
+Thanks,
+Andi
 
