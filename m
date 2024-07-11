@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-249936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B7992F1E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:28:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 990C492F1E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DF8A1F226E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:28:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55EB3284035
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F601A0B10;
-	Thu, 11 Jul 2024 22:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905EF1A2C09;
+	Thu, 11 Jul 2024 22:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fVQcbup0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JvXzicLX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBF31A0711
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EB01A08A6
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720736885; cv=none; b=Sf7fEJxWDTKtIHXFsBaXEZy8AyXqyRLIj2A2ss/4AapN53XUuADNYvw8vlAnsJc3HKrenZXeVyAwmdRMU07TS0FdGISyROM9yO2QwVCxPyUYULJDQQa7FnkiIwVxZ/O2WQAiNiBDG/SQbayqtAQ5mGqPbhFJsuM1CK/PYwf8gYU=
+	t=1720736886; cv=none; b=pU+59mI6abu8GKq1D8dU0tisAEWIVHcz8Xkxf6PDV/cSvyUWsh46LU6oQzhLWJf1jM79YaC4mhVMd/feU/fkWjDJb+Miyvuu/W/Gmm51ksQhKmQg1uyGrjHso9uvetQzuiaCkjzUB2LbvhC2Fiv4PV76JY77j9ONIPeutIrfvIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720736885; c=relaxed/simple;
-	bh=BoNFTMNodlsB+PzOqqm9FaRQDDjFEoEodW/SZ/JxIgw=;
+	s=arc-20240116; t=1720736886; c=relaxed/simple;
+	bh=c6++jZ9Vq4mbxWHs/E5s5/t2TpDV/B7uGsl8FnP9omE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=numPhHBTw/4rLcEjfCSuzOVwGIiutJPSoUgo9H8bcdt9EQbhffmAMp7V5iLEe/ikMZf+LJPb0huU5dnEFQeosFCc25VywDiIVijb4gKae+iFAWnVINv1Nf/a86pjDau6cGWma7NUgwuyCueJfUrXFUc2it3BiMWOjr9XFeWCszs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fVQcbup0; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-Type; b=e9fnWMTXuD6TL7lBzLy7shCRRH/2rUhwdSmw9nMsAzjnWcat8etDyaiyT/aRZ2dXg2/JiSQkfsoh7HX8CWQ5HYssIv6jKQxUYmbu0jScSrmJIm8p2di1Xf8qpxaeU0bmCJ43YUbfcADCMcKEKtQ95l7dqRNvbBORN0FeIEqxopk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JvXzicLX; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720736882;
+	s=mimecast20190719; t=1720736884;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=eD20AnLzqduoYD1gk5YMqXZJv49fFs5h4FT96ZIsKZg=;
-	b=fVQcbup0avwjFhXr2sE+QRQbSM6t5+wQFS8EpOkkTWkJYFVA1gv6MiciQSI0MVw12jd8ia
-	KOQPUBiL/cyQJzkhqUsDi+2XcUT3AqZXr7f+Cd7VRmwGymW9Lu1AMZXOCqeupmBOlQ/sXa
-	yYFdbvM0HC2Gyu/vnpV+t2dY4cvZFAU=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+	bh=cBzkcMlAqM2DYy44QBoHHnpRLCW6Bwp/3x9Z7IIRW1Y=;
+	b=JvXzicLXODuwubEURQxwgwZoLfSfpYU33NvSNwiWicgv/8F9EAq9ZEVKL4iDvTuWsEfEEn
+	BP2gR1WjgXRMJZtei8THuoonMLvK9OdsGlrDIWNnkQOEM+AddsPxTJHwG9j4cJcEvoAgS+
+	VK0t205x6LkTLYrEmvnS7TU5FpNUPoQ=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-219-llKx0sUsNyaWHEDP-qGuUw-1; Thu,
- 11 Jul 2024 18:27:59 -0400
-X-MC-Unique: llKx0sUsNyaWHEDP-qGuUw-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-48-GP78KJSDONmgZ3_h1VhNlg-1; Thu,
+ 11 Jul 2024 18:28:00 -0400
+X-MC-Unique: GP78KJSDONmgZ3_h1VhNlg-1
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6C219196CE01;
-	Thu, 11 Jul 2024 22:27:58 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5A38B19560AA;
+	Thu, 11 Jul 2024 22:27:59 +0000 (UTC)
 Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B2C9619560AE;
-	Thu, 11 Jul 2024 22:27:57 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7013B1956046;
+	Thu, 11 Jul 2024 22:27:58 +0000 (UTC)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org
 Cc: seanjc@google.com,
 	michael.roth@amd.com
-Subject: [PATCH 02/12] KVM: guest_memfd: delay folio_mark_uptodate() until after successful preparation
-Date: Thu, 11 Jul 2024 18:27:45 -0400
-Message-ID: <20240711222755.57476-3-pbonzini@redhat.com>
+Subject: [PATCH 03/12] KVM: guest_memfd: do not go through struct page
+Date: Thu, 11 Jul 2024 18:27:46 -0400
+Message-ID: <20240711222755.57476-4-pbonzini@redhat.com>
 In-Reply-To: <20240711222755.57476-1-pbonzini@redhat.com>
 References: <20240711222755.57476-1-pbonzini@redhat.com>
 Precedence: bulk
@@ -75,53 +75,81 @@ Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The up-to-date flag as is now is not too useful; it tells guest_memfd not
-to overwrite the contents of a folio, but it doesn't say that the page
-is ready to be mapped into the guest.  For encrypted guests, mapping
-a private page requires that the "preparation" phase has succeeded,
-and at the same time the same page cannot be prepared twice.
-
-So, ensure that folio_mark_uptodate() is only called on a prepared page.  If
-kvm_gmem_prepare_folio() or the post_populate callback fail, the folio
-will not be marked up-to-date; it's not a problem to call clear_highpage()
-again on such a page prior to the next preparation attempt.
+We have a perfectly usable folio, use it to retrieve the pfn and order.
 
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- virt/kvm/guest_memfd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ virt/kvm/guest_memfd.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
 
 diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 522e1b28e7ae..1ea632dbae57 100644
+index 1ea632dbae57..5221b584288f 100644
 --- a/virt/kvm/guest_memfd.c
 +++ b/virt/kvm/guest_memfd.c
-@@ -73,8 +73,6 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index, bool
+@@ -13,6 +13,18 @@ struct kvm_gmem {
+ 	struct list_head entry;
+ };
  
- 		for (i = 0; i < nr_pages; i++)
- 			clear_highpage(folio_page(folio, i));
--
--		folio_mark_uptodate(folio);
- 	}
- 
- 	if (prepare) {
-@@ -84,6 +82,8 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index, bool
- 			folio_put(folio);
- 			return ERR_PTR(r);
- 		}
++/**
++ * folio_file_pfn - like folio_file_page, but return a pfn.
++ * @folio: The folio which contains this index.
++ * @index: The index we want to look up.
++ *
++ * Return: The pfn for this index.
++ */
++static inline kvm_pfn_t folio_file_pfn(struct folio *folio, pgoff_t index)
++{
++	return folio_pfn(folio) + (index & (folio_nr_pages(folio) - 1));
++}
 +
-+		folio_mark_uptodate(folio);
+ static int kvm_gmem_prepare_folio(struct inode *inode, pgoff_t index, struct folio *folio)
+ {
+ #ifdef CONFIG_HAVE_KVM_GMEM_PREPARE
+@@ -22,7 +34,6 @@ static int kvm_gmem_prepare_folio(struct inode *inode, pgoff_t index, struct fol
+ 	list_for_each_entry(gmem, gmem_list, entry) {
+ 		struct kvm_memory_slot *slot;
+ 		struct kvm *kvm = gmem->kvm;
+-		struct page *page;
+ 		kvm_pfn_t pfn;
+ 		gfn_t gfn;
+ 		int rc;
+@@ -34,13 +45,12 @@ static int kvm_gmem_prepare_folio(struct inode *inode, pgoff_t index, struct fol
+ 		if (!slot)
+ 			continue;
+ 
+-		page = folio_file_page(folio, index);
+-		pfn = page_to_pfn(page);
++		pfn = folio_file_pfn(folio, index);
+ 		gfn = slot->base_gfn + index - slot->gmem.pgoff;
+-		rc = kvm_arch_gmem_prepare(kvm, gfn, pfn, compound_order(compound_head(page)));
++		rc = kvm_arch_gmem_prepare(kvm, gfn, pfn, folio_order(folio));
+ 		if (rc) {
+-			pr_warn_ratelimited("gmem: Failed to prepare folio for index %lx GFN %llx PFN %llx error %d.\n",
+-					    index, gfn, pfn, rc);
++			pr_warn_ratelimited("gmem: Failed to prepare folio for GFN %llx PFN %llx error %d.\n",
++					    gfn, pfn, rc);
+ 			return rc;
+ 		}
+ 	}
+@@ -548,7 +558,6 @@ __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
+ 	pgoff_t index = gfn - slot->base_gfn + slot->gmem.pgoff;
+ 	struct kvm_gmem *gmem = file->private_data;
+ 	struct folio *folio;
+-	struct page *page;
+ 
+ 	if (file != slot->gmem.file) {
+ 		WARN_ON_ONCE(slot->gmem.file);
+@@ -571,9 +580,7 @@ __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
+ 		return ERR_PTR(-EHWPOISON);
  	}
  
- 	/*
-@@ -646,6 +646,8 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
+-	page = folio_file_page(folio, index);
+-
+-	*pfn = page_to_pfn(page);
++	*pfn = folio_file_pfn(folio, index);
+ 	if (max_order)
+ 		*max_order = 0;
  
- 		p = src ? src + i * PAGE_SIZE : NULL;
- 		ret = post_populate(kvm, gfn, pfn, p, max_order, opaque);
-+		if (!ret)
-+			folio_mark_uptodate(folio);
- 
- 		folio_put(folio);
- 		if (ret)
 -- 
 2.43.0
 
