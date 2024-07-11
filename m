@@ -1,98 +1,212 @@
-Return-Path: <linux-kernel+bounces-249071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C983292E5F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:18:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FE592E5F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58C34B273C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:18:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B261C20950
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4D3161904;
-	Thu, 11 Jul 2024 11:11:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBE815B10B;
+	Thu, 11 Jul 2024 11:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RfH2kkLH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FBF158DD4
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760BD15A876;
+	Thu, 11 Jul 2024 11:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720696265; cv=none; b=hwwP+Az2C76G4x+02GRd3uOvVyhmGaoPt1si9yLc6tnOSqoVdaYZtp5zw4x8d0UAdQxdWHZ/RqXYvnz0XW/lRgZAgAkTVd/nblLIGTptOobO5g3eMqBz7asLxU/AfSnVT47ltJcM+mVtnKmZ+/aGtL2oCMmQ1030LDMKuFJuYeQ=
+	t=1720696337; cv=none; b=AdoGqA8wj+rFBwJ8ls6ckXdvANw1cxS81M+EN1fmNocNM4Td1ipDn2tr+mW9aIe3F+pNyk71k1OpReBUNsITrLEVRMsUYo+5qnwvDS9kFUJy1vbuIy6Hes7tAfy0UE52tilQ3/46+nvYulSGSVHG+cLO8NTu51Ju4a0ZrJnY7Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720696265; c=relaxed/simple;
-	bh=0ZwX0N6cmTcPU6cUOhbMilU6Yelh76r3rbVgmSzYq0s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=h5zUySlR6wZVgrdepv/dDFxw61QjWAy984keNusBgKZVumYw4/BLb2kfryzV3S6ZyQ7GjdUhofzfGKA5rFjyw6C77AmbTJcvfUJFf04oU33NXBGInp/DnXUW/5IcwX4caq3pcIvX91kNwgZkEMaOHtzAwyN7uwWIGe8yW1oU728=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f9a5529d33so82284939f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:11:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720696263; x=1721301063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hxg3UJPkzx7M07gbZ9SOx2eod/ecUaN/p77xgE8W3KQ=;
-        b=LQhyto3RAmwqKRy/bCHS5TN37IZxan0IwnV10kkuV8v7A6JkYPSDi4D2SWKi23PlvO
-         3aT7hrFJEZHFb6pEeAEbocRihgePYWcYKuuHmkUEEKG1gp5sL0G2kbFbvTg8CimounJ2
-         Qo2XaAp+up3/eVw0D/B99XVWzEvNfuKNRzBNOEqXQFYlPBBBn5R64vZIC5KDgWULJHaq
-         tlq9EY7lrdVxPrZdiwdKWUxcEwv0SbkaUs2CP7d4uSS0Ck4CpZaj9J9sFMI2SwYHW+Wd
-         q6gdfImjyqLOFdADxrMovyA8OQ+0fV+UKHRrzMH9YIbewvDgCmlB54GkNr/6TbTYNMLh
-         w5mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPx60MMGOuCpqLuxwCx7ttCHKQ5r9GNNmtm2HetB4Fp8CKjcvudTKJoxOQlmNri05grY4/zpS3P3E2pxhtsoWqwrNUWXxMj/79hTbI
-X-Gm-Message-State: AOJu0YxE8PU0zUa/EYmSaFQr4NMeppDlnFmgTr2Dy3ACZejcMFOsvU+m
-	S9fEqcnwJ7ZO/xqtVs520QijfsKYkLDUcRL6HTEPBp0c8dwUYga2ki0Biws2VbjqAyzmRvi82w2
-	o47LKqX+uhAOzSPREH8Qtba3+qZ114HK5Kc4Qbeyzyne0XV1kWDPHwN0=
-X-Google-Smtp-Source: AGHT+IGBjGi2u0vQwkoJ9T1yTRI18dBxcqWGmgtHOfjU9ZTmOOpU364A1mpSXTEejum4DWNhNasVTJ0VRDyOX29dVNI3xFSozQ7R
+	s=arc-20240116; t=1720696337; c=relaxed/simple;
+	bh=O4FhESzcrV95CJNbDR38TRMaLJwt1puooPNazIDhPAQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PAKb5O66T+YcRyzHTttovOrYlVZ4T/GYCHwlb2X8EwykZ3iz+tmF+UETIzA+1ef5gfkTXY5MBys3EMAgoXdC4R7Po3iHZnTaz8nChuuzLSOR+odAJVC/zgAaFOE3MeT/lti/fpuuIe/Ix68rbjxJeKE5ZcLKi3fEb6+VvIVt5h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RfH2kkLH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 690A4C116B1;
+	Thu, 11 Jul 2024 11:12:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720696337;
+	bh=O4FhESzcrV95CJNbDR38TRMaLJwt1puooPNazIDhPAQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RfH2kkLHpSE7LujU8OExlUXYiZ30M8F6pgrbWzM32OmDOW4VyhlVyUn6xiAtYWQCy
+	 /dxo5DmzxAby0AdJx96fq8rPWtT76UYer8aD2fz/S6PdMstZmKjDj46qoKQmdpyYo0
+	 ABp7S0+Ask0wuebzHS2N8apTxS5KOiEjRZuo/TTgUqJYl1BorZADPyUl3LnQr706B2
+	 zf/4JgFGsTcXyHaXDkJhXoaImcogQTGg+vaRHO75fX1wVOgg43pS/rLqx85DFGDA5X
+	 9EPnilW4IuaCDqSN/BDj6WuSxvzNO3w0mP/lowKH0GiFzghHAfBoD+JOgqOYaREvQH
+	 UMm/JYia2qtMA==
+Message-ID: <9255b3e4-874c-4919-b50a-919cf0f42f75@kernel.org>
+Date: Thu, 11 Jul 2024 13:12:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8601:b0:4c0:9a05:44c4 with SMTP id
- 8926c6da1cb9f-4c0b24e9f62mr482571173.0.1720696262760; Thu, 11 Jul 2024
- 04:11:02 -0700 (PDT)
-Date: Thu, 11 Jul 2024 04:11:02 -0700
-In-Reply-To: <0000000000008ac77c0615d60760@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000822b8b061cf6d171@google.com>
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in sys_wait4 (4)
-From: syzbot <syzbot+6969434de600a6ba9f07@syzkaller.appspotmail.com>
-To: alsa-devel-bounces@alsa-project.org, alsa-devel@alsa-project.org, 
-	broonie@kernel.org, davem@davemloft.net, dcaratti@redhat.com, 
-	edumazet@google.com, jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
-	lenb@kernel.org, lgirdwood@gmail.com, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, netdev@vger.kernel.org, oder_chiou@realtek.com, 
-	pabeni@redhat.com, pctammela@mojatatu.com, perex@perex.cz, rafael@kernel.org, 
-	shuah@kernel.org, shumingf@realtek.com, syzkaller-bugs@googlegroups.com, 
-	tiwai@suse.com, vinicius.gomes@intel.com, vladimir.oltean@nxp.com, 
-	xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/13] media: qcom: camss: Add CSID Gen3 support for
+ SM8550
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Yongsheng Li <quic_yon@quicinc.com>
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <20240709160656.31146-10-quic_depengs@quicinc.com>
+ <1da50dd1-b170-4775-94fc-19a10b7f9c47@kernel.org>
+ <4c8095dd-4f96-4b0e-9282-8bdfb5badbc3@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <4c8095dd-4f96-4b0e-9282-8bdfb5badbc3@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+On 11/07/2024 13:08, Depeng Shao wrote:
 
-commit fb66df20a7201e60f2b13d7f95d031b31a8831d3
-Author: Vladimir Oltean <vladimir.oltean@nxp.com>
-Date:   Mon May 27 15:39:55 2024 +0000
 
-    net/sched: taprio: extend minimum interval restriction to entire cycle too
+>>
+>>> + */
+>>> +static int csid_reset(struct csid_device *csid)
+>>> +{
+>>> +	unsigned long time;
+>>> +	u32 val;
+>>> +	int i;
+>>> +
+>>> +	reinit_completion(&csid->reset_complete);
+>>> +
+>>> +	writel_relaxed(1, csid->base + CSID_TOP_IRQ_CLEAR);
+>>> +	writel_relaxed(1, csid->base + CSID_IRQ_CMD);
+>>> +	writel_relaxed(1, csid->base + CSID_TOP_IRQ_MASK);
+>>> +
+>>> +	for (i = 0; i < MSM_CSID_MAX_SRC_STREAMS; i++)
+>>> +		if (csid->phy.en_vc & BIT(i)) {
+>>> +			writel_relaxed(BIT(BUF_DONE_IRQ_STATUS_RDI_OFFSET + i),
+>>> +						csid->base + CSID_BUF_DONE_IRQ_CLEAR);
+>>> +			writel_relaxed(0x1 << IRQ_CMD_CLEAR, csid->base + CSID_IRQ_CMD);
+>>> +			writel_relaxed(BIT(BUF_DONE_IRQ_STATUS_RDI_OFFSET + i),
+>>> +						csid->base + CSID_BUF_DONE_IRQ_MASK);
+>>> +		}
+>>> +
+>>> +	/* preserve registers */
+>>> +	val = (0x1 << RST_LOCATION) | (0x1 << RST_MODE);
+>>> +	writel_relaxed(val, csid->base + CSID_RST_CFG);
+>>
+>> ... here - using everywhere relaxed here is odd and looks racy. These
+>> looks like some strict sequences.
+>>
+> Yes, these are some sequences to initialize the HW.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10593441980000
-start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fe78468a74fdc3b7
-dashboard link: https://syzkaller.appspot.com/bug?extid=6969434de600a6ba9f07
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1091a5f6180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a22c13180000
+Hm? It's like you ignore the problem and just answer with whatever to
+shut up the reviewer. Instead of replying with the same, address the
+problem. Why ordering is not a problem here?
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> 
+>>
+>>> +
+>>> +	val = (0x1 << SELECT_HW_RST) | (0x1 << SELECT_IRQ_RST);
+>>> +	writel_relaxed(val, csid->base + CSID_RST_CMD);
+>>> +
+>>> +	time = wait_for_completion_timeout(&csid->reset_complete,
+>>> +					   msecs_to_jiffies(CSID_RESET_TIMEOUT_MS));
+>>> +	if (!time) {
+>>> +		dev_err(csid->camss->dev, "CSID reset timeout\n");
+>>> +		return -EIO;
+>>> +	}
+>>> +
+>>
+>>
+>>> +
+>>> +static void csid_subdev_init(struct csid_device *csid)
+>>> +{
+>>> +	csid->testgen.modes = csid_testgen_modes;
+>>> +	csid->testgen.nmodes = CSID_PAYLOAD_MODE_NUM_SUPPORTED_GEN2;
+>>> +}
+>>> +
+>>> +const struct csid_hw_ops csid_ops_gen3 = {
+>>
+>> Isn't there a warning here?
+>>
+>>> +	.configure_stream = csid_configure_stream,
+>>> +	.configure_testgen_pattern = csid_configure_testgen_pattern,
+>>> +	.hw_version = csid_hw_version,
+>>> +	.isr = csid_isr,
+>>> +	.reset = csid_reset,
+>>> +	.src_pad_code = csid_src_pad_code,
+>>> +	.subdev_init = csid_subdev_init,
+>>> +};
+>>
+>> Your patchset does not apply at all. Tried v6.9, v6.10, next. I see some
+>> dependency above, but that means no one can test it and no one can apply it.
+>>
+>> Fix the warnings, I cannot verify it but I am sure you have them.
+>>
+> 
+> My code base is next master branch, do you mean the 'declared and not 
+> used' warning? I don't see this warning with below two version compiler 
+> even though I just pick this patch and pull the code the latest version. 
+> But it indeed have this issue, these structures are declared and will be 
+> used later in "media: qcom: camss: Add sm8550 resources" patch, will 
+> think about how to avoid this.
+> 
+> aarch64-linux-gnu-gcc (Ubuntu/Linaro 7.5.0-3ubuntu1~18.04) 7.5.0
+> aarch64-linux-gnu-gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
 
-#syz fix: net/sched: taprio: extend minimum interval restriction to entire cycle too
+That's some old compilers... I am talking about recent GCC, recent clang
+and of course W=1.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+
+Best regards,
+Krzysztof
+
 
