@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-249297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D8892E99F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:34:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B0CE92E9A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA012810D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:34:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF451F2183C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF367160887;
-	Thu, 11 Jul 2024 13:33:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B114CE09;
-	Thu, 11 Jul 2024 13:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496AE1607B7;
+	Thu, 11 Jul 2024 13:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJCMyte9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780F415ECED;
+	Thu, 11 Jul 2024 13:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720704836; cv=none; b=DW95i0rF8bpUykCLmNTCcOXJYcTOKXKDRK9crPQAOL86kzIQZoQ1qtAG+htDba1Sm6VFZ/yaDhrLe8UjN5CPkIMEgfr98bbnCMaRJeF0c1HXwac9lKyGwu8e4Q8RDs8aGox8Fh5gb0b5Wu7hkJQnk5mhfij+mpMTt0SAQ5owwuQ=
+	t=1720704875; cv=none; b=CXqE7o0kkgSgdhHkxLmZNkfdlzS1mEgUW5Cdu5ifbN2bs4KaIy4TMExgHa/31r424AYu9d57siYVcriiGplRfmNXqspoK0LtnjZ6puWaKbM1RvY9iXhvt4z4UzOPgMExGikstrX6KS9c6cEe+qcLiCzaqR4l/fZRp6JU754V86I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720704836; c=relaxed/simple;
-	bh=G0Y5MS/fG5nofaxo9KxIn5gYLBj3YWsywp6BEyBcgac=;
+	s=arc-20240116; t=1720704875; c=relaxed/simple;
+	bh=2245hG+1Ai1cZny9nsPPBR8t+Q8qNnh9+uiqqQ1DY0c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aOARDFiSLkvEuxUnt5/PeJ/ZGyxdpJlelKM8J8E7z2Zw20ZpkjnquZoIQp01Qm3z5RCj2oMuYwX3C/FoigamOaNqMTdEmiIMqLZgdSBWJLYEvGTuuVgNBj/X44f2REPSXS5NCaFOuWekDcZKAIMQ8iHv8hrg2e+3YvmmnHWiKis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 508CAFEC;
-	Thu, 11 Jul 2024 06:34:19 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F8523F766;
-	Thu, 11 Jul 2024 06:33:49 -0700 (PDT)
-Date: Thu, 11 Jul 2024 14:33:39 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v5 5/7] firmware: imx: add i.MX95 MISC driver
-Message-ID: <Zo_fM8c485SSnTDF@pluto>
-References: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
- <20240621-imx95-bbm-misc-v2-v5-5-b85a6bf778cb@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B2SmVqmCVeiCgy2UR1cY+igp4D/pSGak41zSfZO6Dr11Js5eyfeZjEt8B+JrPAZVScpNMDmQyx0eqtqLw4ICEZLvyk1rpgJsanj0908/Yc+ttPtGqpKQtoifPclDg8YrWj9PgasrLAw9q0CUBi/oAKrz2+oNtoLuuCphmN4rMCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJCMyte9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E49C3C32786;
+	Thu, 11 Jul 2024 13:34:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720704874;
+	bh=2245hG+1Ai1cZny9nsPPBR8t+Q8qNnh9+uiqqQ1DY0c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sJCMyte9hfIJGg1Y2Ex3vGQBwOzi5YhtSoMLqo82KRwpSJz99+9DAuvs6dQ0rJkOZ
+	 DU++zPfDQKVMQ+0kexZ9uParR+Ligk47q5JUG+8SeI/HNS2kAAk6ZqlIPwMU5rQi4I
+	 eWkosPCP/5eNGevePrua9M3qxxGuycxgVkeWSdlF1zusEFlGgYFL0ThZTBuYM2/BSR
+	 d0ChOf5zLEuR53NHciVn2yh66iJMhqTOZZkmNMXMj8P9slRoEAdt1DLP+gZ7DULk/f
+	 4dPEHyD6Q27bF7QZjsyQo1FowlydNcco2WJ+sk8199GJuznccJ6axC16ONEo3cAvdW
+	 RSopsS0nF7dDg==
+Date: Thu, 11 Jul 2024 14:34:30 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/2] libceph: suppress crush_choose_indep()
+ kernel-doc warnings
+Message-ID: <20240711133430.GE8788@kernel.org>
+References: <20240710-kd-crush_choose_indep-v1-0-fe2b85f322c6@quicinc.com>
+ <20240710-kd-crush_choose_indep-v1-1-fe2b85f322c6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,165 +62,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621-imx95-bbm-misc-v2-v5-5-b85a6bf778cb@nxp.com>
+In-Reply-To: <20240710-kd-crush_choose_indep-v1-1-fe2b85f322c6@quicinc.com>
 
-On Fri, Jun 21, 2024 at 03:04:40PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Wed, Jul 10, 2024 at 11:10:03AM -0700, Jeff Johnson wrote:
+> Currently, when built with "make W=1", the following warnings are
+> generated:
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'map' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'work' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'bucket' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'weight' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'weight_max' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'x' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'left' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'numrep' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'type' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'out' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'outpos' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'tries' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'recurse_tries' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'recurse_to_leaf' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'out2' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'parent_r' not described in 'crush_choose_indep'
+> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'choose_args' not described in 'crush_choose_indep'
 > 
-> The i.MX95 System manager exports SCMI MISC protocol for linux to do
-> various settings, such as set board gpio expander as wakeup source.
+> These warnings are generated because the prologue comment for
+> crush_choose_indep() uses the kernel-doc prefix, but the actual
+> comment is a very brief description that is not in kernel-doc
+> format. Since this is a static function there is no need to fully
+> document the function, so replace the kernel-doc comment prefix with a
+> standard comment prefix to remove these warnings.
 > 
-> The driver is to add the support.
-> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Hi,
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-a small style nitpick down below.
-
-Other than that,
-
-LGTM.
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/firmware/imx/Kconfig    |  11 ++++
->  drivers/firmware/imx/Makefile   |   1 +
->  drivers/firmware/imx/sm-misc.c  | 119 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/firmware/imx/sm.h |  33 +++++++++++
->  4 files changed, 164 insertions(+)
-> 
-> diff --git a/drivers/firmware/imx/Kconfig b/drivers/firmware/imx/Kconfig
-> index 183613f82a11..477d3f32d99a 100644
-> --- a/drivers/firmware/imx/Kconfig
-> +++ b/drivers/firmware/imx/Kconfig
-> @@ -22,3 +22,14 @@ config IMX_SCU
->  
->  	  This driver manages the IPC interface between host CPU and the
->  	  SCU firmware running on M4.
-> +
-> +config IMX_SCMI_MISC_DRV
-> +	tristate "IMX SCMI MISC Protocol driver"
-> +	depends on IMX_SCMI_MISC_EXT || COMPILE_TEST
-> +	default y if ARCH_MXC
-> +	help
-> +	  The System Controller Management Interface firmware (SCMI FW) is
-> +	  a low-level system function which runs on a dedicated Cortex-M
-> +	  core that could provide misc functions such as board control.
-> +
-> +	  This driver can also be built as a module.
-> diff --git a/drivers/firmware/imx/Makefile b/drivers/firmware/imx/Makefile
-> index 8f9f04a513a8..8d046c341be8 100644
-> --- a/drivers/firmware/imx/Makefile
-> +++ b/drivers/firmware/imx/Makefile
-> @@ -1,3 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_IMX_DSP)		+= imx-dsp.o
->  obj-$(CONFIG_IMX_SCU)		+= imx-scu.o misc.o imx-scu-irq.o rm.o imx-scu-soc.o
-> +obj-${CONFIG_IMX_SCMI_MISC_DRV}	+= sm-misc.o
-> diff --git a/drivers/firmware/imx/sm-misc.c b/drivers/firmware/imx/sm-misc.c
-> new file mode 100644
-> index 000000000000..342e1254a356
-> --- /dev/null
-> +++ b/drivers/firmware/imx/sm-misc.c
-> @@ -0,0 +1,119 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright 2024 NXP
-> + */
-> +
-> +#include <linux/firmware/imx/sm.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/scmi_protocol.h>
-> +#include <linux/scmi_imx_protocol.h>
-> +
-> +static const struct scmi_imx_misc_proto_ops *imx_misc_ctrl_ops;
-> +static struct scmi_protocol_handle *ph;
-> +struct notifier_block scmi_imx_misc_ctrl_nb;
-> +
-> +int scmi_imx_misc_ctrl_set(u32 id, u32 val)
-> +{
-> +	if (!ph)
-> +		return -EPROBE_DEFER;
-> +
-> +	return imx_misc_ctrl_ops->misc_ctrl_set(ph, id, 1, &val);
-> +};
-> +EXPORT_SYMBOL(scmi_imx_misc_ctrl_set);
-> +
-> +int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val)
-> +{
-> +	if (!ph)
-> +		return -EPROBE_DEFER;
-> +
-> +	return imx_misc_ctrl_ops->misc_ctrl_get(ph, id, num, val);
-> +}
-> +EXPORT_SYMBOL(scmi_imx_misc_ctrl_get);
-> +
-> +static int scmi_imx_misc_ctrl_notifier(struct notifier_block *nb,
-> +				       unsigned long event, void *data)
-> +{
-> +	/*
-> +	 * notifier_chain_register requires a valid notifier_block and
-> +	 * valid notifier_call. SCMI_EVENT_IMX_MISC_CONTROL is needed
-> +	 * to let SCMI firmware enable control events, but the hook here
-> +	 * is just a dummy function to avoid kernel panic as of now.
-> +	 */
-> +	return 0;
-> +}
-> +
-> +static int scmi_imx_misc_ctrl_probe(struct scmi_device *sdev)
-> +{
-> +	const struct scmi_handle *handle = sdev->handle;
-> +	struct device_node *np = sdev->dev.of_node;
-> +	u32 src_id, flags;
-> +	int ret, i, num;
-> +
-> +	if (!handle)
-> +		return -ENODEV;
-> +
-> +	if (imx_misc_ctrl_ops) {
-> +		dev_err(&sdev->dev, "misc ctrl already initialized\n");
-> +		return -EEXIST;
-> +	}
-> +
-> +	imx_misc_ctrl_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_IMX_MISC, &ph);
-> +	if (IS_ERR(imx_misc_ctrl_ops))
-> +		return PTR_ERR(imx_misc_ctrl_ops);
-> +
-> +	num = of_property_count_u32_elems(np, "nxp,ctrl-ids");
-> +	if (num % 2) {
-> +		dev_err(&sdev->dev, "Invalid wakeup-sources\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	scmi_imx_misc_ctrl_nb.notifier_call = &scmi_imx_misc_ctrl_notifier;
-> +	for (i = 0; i < num; i += 2) {
-> +		ret = of_property_read_u32_index(np, "nxp,ctrl-ids", i, &src_id);
-> +		if (ret) {
-> +			dev_err(&sdev->dev, "Failed to read ctrl-id: %i\n", i);
-> +			continue;
-> +		}
-> +
-> +		ret = of_property_read_u32_index(np, "nxp,ctrl-ids", i + 1, &flags);
-> +		if (ret) {
-> +			dev_err(&sdev->dev, "Failed to read ctrl-id value: %d\n", i + 1);
-> +			continue;
-> +		}
-> +
-> +		ret = handle->notify_ops->devm_event_notifier_register(sdev, SCMI_PROTOCOL_IMX_MISC,
-> +								       SCMI_EVENT_IMX_MISC_CONTROL,
-> +								       &src_id,
-> +								       &scmi_imx_misc_ctrl_nb);
-> +		if (ret)
-
-missing {
-		dev_err(&sdev->dev, "Failed to register scmi misc event: %d\n", src_id);
-
-	}
-
-
-Thanks,
-Cristian
 
