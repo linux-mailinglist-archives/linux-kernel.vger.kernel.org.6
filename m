@@ -1,158 +1,276 @@
-Return-Path: <linux-kernel+bounces-248740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C4B92E15C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:54:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7639E92E15D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164191F21C34
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:54:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0448A1F218DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE7C1509A6;
-	Thu, 11 Jul 2024 07:54:02 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF52D14B955;
+	Thu, 11 Jul 2024 07:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1kldPbi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB4014B943;
-	Thu, 11 Jul 2024 07:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7E7148847
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720684441; cv=none; b=FhrojNOldj1AHV1veNQkQXXIYOdM2zjC3l/rxHl4LHjO9xTJGNllV31aQwWn7WlV7WDhn9CUJkDE9x1S7tCaWl819Lb6LQswQJQV5vogGPVSTRMoMPX0L804iFfFUv5PetHyGesSyLfrLG0r3yH26MScIrI13SrE+scHOorcMDQ=
+	t=1720684463; cv=none; b=W6Gg5FTDYLoGALKNBI+C6/E8NDwB940OsPSY4DiR3u5q5Vf0SuX5n8QV9leEHbaiIqbVQ8xXckf86tf6QvfpB04e7lTHhFbmSHqZSCFzwl0PJWpVLjSQWD814xc6ZBXlC9vKxVSMzMlTPMMxxvYWychQWi00iFi3FzazYaaFauY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720684441; c=relaxed/simple;
-	bh=0BgnDHiX/TK+JQoHQMsUy+eteShtWavkLMpjkahy91M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JayWjUhQDYYEJGCFY4tH2VxIl8dePcVqMy0NhWgwQsa2hru0kzhgbgYcK6zSfPpfZPIGD3XY9cU/M5WEEF69v1HdXMYfOVkbA8jCU8I3wMuQBcmhtCBpSPuESE8mx5lnNOg43sFvZuauCZ6oVS7noUC0j42B4I1IJSxmRPs6MmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-650b8e0a6ceso5874147b3.3;
-        Thu, 11 Jul 2024 00:53:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720684438; x=1721289238;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5fRVbJjcNb5I05e6Xfep3Il3HTd1wTS3dEeZLYGEQtM=;
-        b=PHJazHFGAmjv8X4bkxbaxB44Cf7U0Ug2b5psUq5CJGn5i0U0CLxDGz8F5jjQU9QCV4
-         17RhVbblJNQVQlJIRArMzHv3oKlscj9Ue4B2SFZz1PIXZS4kgh3z7LfALD+1lZocL/8K
-         EAwHQA87fnqgR10yq2Ru06sm7qjQEKUkk0DuFG23Do/c4XLBmLw6jC2XIdivyLqeJLr1
-         55oMzKoSbmiEO9q/ewEHnWvyyrJPyi2JYGR1HvBFz3VKkYFCLWP87yzklgdNqmdPbg5I
-         drriOOcReUTkJklqDrvv9j6E6k6iVEjSS5o4QA39JwgRSknZZ+jq4ki7D0bM/v7u1mWH
-         1DKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDBMQYnO30WcFt0oqS5+NBuTIGoSB2HEVDciE2KtRgLUWF0zFTXEvoHOSXGuBbpblt/qcJlY9wsTVHGyvaU4Odt6C3fg4nRCHrXFfKXwSbFcH3G1aZCPGurxZq74xrH3PRnTEmJyrWr0f6X68e0MRQCbV9kW6YpsNVI3FykAQD4fRWov6yxohpMY3w/k5ZfDkKdPpIZn2oEsirL+t8kAJFzMdM1MtXVB//9NgkDrS9K868Rv7sxc2oKp5vF9CqEkAT
-X-Gm-Message-State: AOJu0YwSBnf3ov5Q802WsxFshwxxwxPp8CszsF+U6AUN4yZbH5vOdL9S
-	ev2P16PvMe6h9rlPOSj+rwZWWdpp50u9SMzb+Flz/F0qzbRs3HNAG6u0EXfi
-X-Google-Smtp-Source: AGHT+IEAVEVDvRPumjsbsdvUEKBWr+nCV0eoncFS6xMhbJf5JHh93sDmEHKqPscdEqfNwYteTbffWg==
-X-Received: by 2002:a25:6801:0:b0:e05:6d47:57a4 with SMTP id 3f1490d57ef6-e056d475973mr3452925276.10.1720684437720;
-        Thu, 11 Jul 2024 00:53:57 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e041a8acf85sm925002276.9.2024.07.11.00.53.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 00:53:56 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-64789495923so5634487b3.0;
-        Thu, 11 Jul 2024 00:53:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4AQsv5jhWFuUQz0NAtfh4lw8g73dBZSHrV+2Jm5LEAFZta8ZV8wHZmu8OQpncIPgolXa65Dm91ZogINUS+8oBOSrfVVVC2FDeHGlbtTS4n85KK7/Tpv1WIPc5sO/3t7J1RUauL419dilUXE3zCfYrYa+78/2B6FkRUCIk1ofQ6LIXLmFLKwvn7x+mokD9Z2WTA/+qjwHZ2PrNpgTDLwkQ1ez7mskWCQ54pAkrunEGcxmjbkpACdSo6tMQDIJ7KYQe
-X-Received: by 2002:a81:8d49:0:b0:63b:df6e:3f6d with SMTP id
- 00721157ae682-658f02f3720mr78529147b3.37.1720684436126; Thu, 11 Jul 2024
- 00:53:56 -0700 (PDT)
+	s=arc-20240116; t=1720684463; c=relaxed/simple;
+	bh=73g+B7p7ldQTHzImC+1MGrXi9U00jiWoL/Y/qUkftSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fvoBPW6q5RLoKxWAYIttR5Izwe13HyPgXVEBh+FaRwl5iY1JPEnl5PG4QHxKDP32gGz0ZW+6otZgZnfJukcszBh4icZ9Ptrmtw8E05pstlDjYg/vUZc9zpPxjOVf04wHohkvejCEDB8jaLPQU1Ixg23rZtjyD6Vfa0Qb/8O0t+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1kldPbi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C58C116B1;
+	Thu, 11 Jul 2024 07:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720684462;
+	bh=73g+B7p7ldQTHzImC+1MGrXi9U00jiWoL/Y/qUkftSc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=u1kldPbieR8qmwpR8CEtZiRyFirGHAQ73TKWbePCSHXCsu75n2HJkSnen8eAFO4Ur
+	 OneC0lgLQZZW4Y+EbeTD9+y1xyV9NmarW3KQv5pbu5YyHrgZuQT1VtCWnnGMbcG0Qp
+	 o/UpNKuQGCUIUftBYxZMiG0Ic4cszA3fwbzJLusE7SzCiSQPSuPV9e5PFpZ8R4JQaE
+	 uDlSdpcrUHTM6gHKKs/RfzaiL7wWmFTLA/kNXvg/HRcL8nX1gil56VW5R/BdnO7c6U
+	 xJqMcF9rVUVswLcMUc/A1mYZPh6xfnd8cRuya+ny39oOsgpXFYY+Lfx2kpFcsynenB
+	 DITxSJv2N6Wnw==
+Message-ID: <d77a11a6-bcd8-4bbb-ba37-bde5b0631c69@kernel.org>
+Date: Thu, 11 Jul 2024 10:54:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com> <22db23bd-5872-49a0-990f-2a0e5f51bfb5@tuxon.dev>
-In-Reply-To: <22db23bd-5872-49a0-990f-2a0e5f51bfb5@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 Jul 2024 09:53:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWTYfK6aVi5BzBtQg_zQWjuZX7d7QHr3a4GAb+dQOWyvQ@mail.gmail.com>
-Message-ID: <CAMuHMdWTYfK6aVi5BzBtQg_zQWjuZX7d7QHr3a4GAb+dQOWyvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] phy: cadence-torrent: add support for three or more
+ links using 2 protocols
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, p.zabel@pengutronix.de,
+ sjakhade@cadence.com, thomas.richard@bootlin.com, theo.lebrun@bootlin.com,
+ robh@kernel.org, linux-phy@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ srk@ti.com
+References: <20240710115624.3232925-1-s-vadapalli@ti.com>
+ <acef4aeb-ddb6-4e2b-b2ac-8ac351efcf2f@kernel.org>
+ <1cf302f8-c458-4221-a8b6-b586b671929e@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <1cf302f8-c458-4221-a8b6-b586b671929e@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Claudiu,
+Siddharth
 
-On Wed, Jul 10, 2024 at 4:20=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxo=
-n.dev> wrote:
-> On 28.06.2024 12:22, Geert Uytterhoeven wrote:
-> > On Tue, Jun 25, 2024 at 2:14=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.d=
-ev> wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> Fast mode plus is available on most of the IP variants that RIIC drive=
-r
-> >> is working with. The exception is (according to HW manuals of the SoCs
-> >> where this IP is available) the Renesas RZ/A1H. For this, patch
-> >> introduces the struct riic_of_data::fast_mode_plus.
-> >>
-> >> Fast mode plus was tested on RZ/G3S, RZ/G2{L,UL,LC}, RZ/Five by
-> >> instantiating the RIIC frequency to 1MHz and issuing i2c reads on the
-> >> fast mode plus capable devices (and the i2c clock frequency was checke=
-d on
-> >> RZ/G3S).
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> >> --- a/drivers/i2c/busses/i2c-riic.c
-> >> +++ b/drivers/i2c/busses/i2c-riic.c
-> >> @@ -407,6 +413,9 @@ static int riic_init_hw(struct riic_dev *riic)
-> >>         riic_writeb(riic, 0, RIIC_ICSER);
-> >>         riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
-> >>
-> >> +       if (info->fast_mode_plus && t->bus_freq_hz =3D=3D I2C_MAX_FAST=
-_MODE_PLUS_FREQ)
-> >> +               riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
-> >
-> > Unless FM+ is specified, RIIC_ICFER is never written to.
-> > Probably the register should always be initialized, also to make sure
-> > the FMPE bit is cleared when it was set by the boot loader, but FM+
-> > is not to be used.
->
-> Instead of clearing only this bit, what do you think about using
-> reset_control_reset() instead of reset_control_deassert() in riic_i2c_pro=
-be()?
->
-> HW manuals for all the devices listed in
-> Documentation/devicetree/bindings/i2c/renesas,riic.yaml specifies that
-> ICFER_FMPE register is initialized with a default value by reset. All the
-> other registers are initialized with default values at reset (according t=
-o
-> HW manuals). I've checked it on RZ/G3S and it behaves like this.
+On 11/07/2024 08:13, Siddharth Vadapalli wrote:
+> On Wed, Jul 10, 2024 at 06:22:53PM +0300, Roger Quadros wrote:
+>> Hi Siddharth,
+> 
+> Hello Roger,
+> 
+> Thank you for reviewing this patch.
+> 
+>>
+>> On 10/07/2024 14:56, Siddharth Vadapalli wrote:
+>>> The Torrent SERDES can support at most two different protocols. This only
+>>
+>> Could you please point to where this is mentioned? Doesn't this SERDES support 4 lanes?
+>> So in theory each lane can be used as one protocol (or link) independed of the other.
+> 
+> The Torrent SERDES has two PLLs. So up to two different protocols can be
+> supported. Please note that protocol is not the same as a link. I am
+> defining the terms below for your convenience:
+> 
+> Protocol
+>   Analogous to PHY_TYPE -> DP/PCIe/QSGMII/SGMII/USB/USXGMII/XAUI/XFI
+> 
+> Lane
+>   A pair of differential signals for TX/RX. A Lane is configured
+>   to operate for a specified Protocol.
+> 
+> Link
+>   A collection of one or more lanes configured for the same Protocol.
+> 
+> Since there are two PLLs, at most two different Protocols can be
+> supported with each PLL configured for the frequency corresponding to
+> the respective Protocol.
+> 
+> Each Lane can be configured to operate for any of the Protocols with the
+> SERDES level constraint being that at most two different Protocols can
+> be supported across all Lanes.
 
-RZ/A1 and RZ/A2M do not have reset controller support yet, so calling
-reset_control_reset() is a no-op on these SoCs.
+Thanks for the detailed explanation.
+> 
+>>
+>> Also, from code
+>>
+>> struct cdns_torrent_phy {
+>> ...
+>>         struct cdns_torrent_inst phys[MAX_NUM_LANES];
+>> ...
+>> }
+>>
+>> and MAX_NUM_LANES is 4.
+>>
+>> And from Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+>>
+>> patternProperties:
+>>   '^phy@[0-3]$':
+>>     type: object
+>>     description:
+>>       Each group of PHY lanes with a single master lane should be represented as a sub-node.
+>>
+>> Which means it can have upto 4 phy nodes with different protocols.
+> 
+> I respectfully disagree with your conclusion. MAX_NUM_LANES is 4 since
+> the Torrent SERDES has 4 Lanes. Additionally, the description:
+> "Each group of PHY lanes with a single master lane should be represented
+> as a sub-node."
+> is referring to a Link. A sub-node is analogous to a Link. Based on what
+> you have quoted above, the following statement:
+> "Which means it can have upto 4 phy nodes with different protocols."
+> doesn't seem obvious to me.
 
-However, I overlooked that riic_init_hw() does an internal reset first
-by setting the ICCR1_IICRST bit in RIIC_ICCR1.
-Is that sufficient to reset the FMPE bit?
+in the pattern Properties:
+phy@[0-3] means phy@0, phy@1, phy@2, phy@3
 
-Gr{oetje,eeting}s,
+That's why I said it can have 4 PHY nodes. But looks like code doesn't
+match the documentation.
 
-                        Geert
+> 
+> Setting aside the Documentation for a moment, if we look at the SERDES
+> driver, it will simply reject any configuration specified in the
+> device-tree that has more than 2 sub-nodes i.e. Links.
+> I am referring to the following section of the driver prior to this patch:
+> 
+> static
+> int cdns_torrent_phy_configure_multilink(struct cdns_torrent_phy *cdns_phy)
+> {
+> 	....
+> 	/* Maximum 2 links (subnodes) are supported */
+> 	if (cdns_phy->nsubnodes != 2)
+> 		return -EINVAL;
+> 	....
+> }
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+OK. now looking at hardware capability it looks like we can still have 4
+subnodes (phys/links) as long as all of them don't need more than 2 PLLs.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+So Documentation is correct from that perspective.
+We will still need to update the documentation to reflect the 2 PLL/protocol limit?
+
+> 
+> In other words, irrespective of what the Documentation says, more than
+> two sub-nodes are not allowed. We cannot specify more than 2 Protocols
+> with just two sub-nodes (Links). So we can configure all 4 Lanes of the
+> SERDES for at-most two different protocols, which does match the SERDES
+> Hardware limitation since it has 2 PLLs.
+> 
+>>
+>>> mandates that the device-tree sub-nodes expressing the configuration should
+>>> describe links with at-most two different protocols.
+>>>
+>>> The existing implementation however imposes an artificial constraint that
+>>> allows only two links (device-tree sub-nodes). As long as at-most two
+>>> protocols are chosen, using more than two links to describe them in an
+>>> alternating configuration is still a valid configuration of the Torrent
+>>> SERDES.
+>>>
+>>> A 3-Link 2-Protocol configuration of the 4-Lane SERDES can be:
+>>> Lane 0 => Protocol 1 => Link 1
+>>> Lane 1 => Protocol 1 => Link 1
+>>> Lane 2 => Protocol 2 => Link 2
+>>> Lane 3 => Protocol 1 => Link 3
+>>>
+>>> A 4-Link 2-Protocol configuration of the 4-Lane SERDES can be:
+>>> Lane 0 => Protocol 1 => Link 1
+>>> Lane 1 => Protocol 2 => Link 2
+>>> Lane 2 => Protocol 1 => Link 3
+>>> Lane 3 => Protocol 2 => Link 4
+>>>
+>>
+>> Could you please give an example of device tree where existing implementation
+>> doesn't work for you.
+> 
+> As I have pointed in my response above, the existing driver rejects any
+> configuration which has more than two sub-nodes in the device-tree.
+> Each device-tree sub-node represents a Link. A Link can constitute of
+> one or more lanes. The existing driver prior to this patch only allows
+> specifying two Links. In the examples I have listed above in the commit
+> message, though there are only 2 protocols, since 3 Links are necessary
+> to represent the configuration, the SERDES driver will not configure the
+> SERDES, though the SERDES hardware supports such a configuration as it
+> is still only 2 protocols being configured.
+> 
+> While I am not the author of this driver and therefore cannot be certain
+> about it, my guess about the author's rationale behind the existing
+> implementation is the following:
+> Given that the SERDES supports at most two protocols, the SERDES driver
+> needs to prevent the user from specifying more than two protocols and
+> treat all such requests as INVALID. One way to do so, which the author
+> seems to have chosen, is to limit the number of Links supported to 2.
+> Since it is impossible to request more than 2 protocols with just 2
+> Links, such a constraint although more limiting than required, does the
+> needful.
+> 
+> This patch on the other hand tries to relax the artificial constraint
+> imposed in this driver by redefining the constraint to match the SERDES
+> Hardware limitation. So the constraint of at-most 2 Links is replaced
+> with at-most 2 Protocols in this patch, thereby making the constraint
+> reflect the true Hardware limitation.
+> 
+> Also, apart from the configurations that I have tested below on
+> J7200-EVM, on a custom board with the J784S4/TDA4AP SoC [1] which
+> has 4 Instances of the 4-Lane Torrent SERDES, the following configurations
+> have been verified simultaneously with the current patch:
+> 
+> SERDES0 -> 1 Protocol, 2 Links
+>   Lane 0 -> PCIe, Lane 1 -> Unused, Lane 2 -> PCIe, Lane 3 -> Unused
+>   (Link1 -> Lane0, Link2 -> Lane 2)
+> SERDES1 -> 1 Protocol, 2 Links
+>   Lane 0 -> PCIe, Lane 1 -> Unused, Lane 2 -> PCIe, Lane 3 -> Unused
+>   (Link1 -> Lane0, Link2 -> Lane 2)
+> SERDES2 -> 2 Protocols, 3 Links
+>   Lanes 0 and 1 -> SGMII, Lane 2 -> QSGMII, Lane 3 -> SGMII
+>   (Link1 -> Lanes 0 and 1, Link2 -> Lane2, Link3 -> Lane 3)
+> SERDES4 -> 2 Protocols, 2 Links
+>   Lanes 0 and 1 -> Unused, Lane 2 -> SGMII, Lane 3 -> USB
+>   (Link1 -> Lane2, Link2 -> Lane3)
+> 
+> For more details regarding the above, please refer [2]
+> 
+> [1] https://www.ti.com/product/TDA4AP-Q1
+> [2] https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1383684/tda4ap-q1-limitations-for-configuration-for-serdes-lanes-when-using-qsgmii-sgmii-and-sgmii-usb3-mixed/
+> 
+>>
+>>> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+>>> ---
+>>>
+>>> Hello,
+>>>
+>>> This patch is based on linux-next tagged next-20240710.
+>>> Patch has been sanity tested and tested for functionality in the following
+>>> configurations with the Torrent SERDES0 on J7200-EVM:
+>>> 1. PCIe (Lanes 0 and 1) + QSGMII (Lane 2)
+>>>    => 2 protocols, 2 links
+>>> 2. PCIe (Lane0 as 1 Link) + PCIe (Lane 1 as 1 Link)
+>>>    => 1 protocol, 2 links
+>>> 3. PCIe (Lanes 0 and 1) + QSGMII (Lane 2) + PCIe (Lane 3)
+>>>    => 2 protocols, 3 links
+>>>
+> 
+> [...]
+> 
+> Regards,
+> Siddharth.
+
+-- 
+cheers,
+-roger
 
