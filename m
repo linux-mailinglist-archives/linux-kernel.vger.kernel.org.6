@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-249341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E0692EA4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:08:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C100892EA4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987701C219CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:08:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2B2F1C22898
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12A9166317;
-	Thu, 11 Jul 2024 14:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxIVo3Zu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239AA15ECE6
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD41161328;
+	Thu, 11 Jul 2024 14:08:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598C115ECE6;
+	Thu, 11 Jul 2024 14:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720706900; cv=none; b=KmlPM/Mw0RvHiYe63jp9oOkwZ2JBeeNsghEEg83mLCEODUFtAXjw3pl67HA+xH2jPrgc8IH4QMhkwrAo6PHl2c3CKFOm32jtOGsJmxe5vacfl0WP8wIzMZ+E3407GKMWsXCRV5tN1m6OJV014BCyR0x80iEjsb8Dj9859Ob2fR8=
+	t=1720706898; cv=none; b=JVg/KrZs7VTEYfWQ1RTjSgq7D3+rw9FWV301iEWZQsaIHt0d9/QXqU3n3YhYqS2ovNnsFFf6f7BRWIn6CxAl5D/dbqWIiOc4fmr0c+UeDptJ5JukskWPmLMbPiwz478T7wtmf4uGF03eoQWGYNivnvdcLD9QBSPEkWKghF91+sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720706900; c=relaxed/simple;
-	bh=Jb9JnMiieeILvb3iq79QDI4ghaEx9ENNV87tSbXIO30=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B6wbpCzCwBBh2V52S1OoJzBSGkkoIymZ3e/iJbGi+o1pfPmSeEv+/FOo3YyQ2NydTA42oU+Ta3Jv3QA1Ol7o413OCkwhhcIiqRZ/2yahDBC63PvRIQmOHn5xBmn1DvR0wft5AnA6PiuKL3C00f0WZYbDqqv+Sl0/plWhhS/RqS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxIVo3Zu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C092AC4AF15
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:08:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720706899;
-	bh=Jb9JnMiieeILvb3iq79QDI4ghaEx9ENNV87tSbXIO30=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JxIVo3ZusX0rtXH16yosijmPc0RYiPMnR3w7xpHuDYV+ww1WbIpkZ/TRSis2rRoFx
-	 cy+npKZrw///G6PjhK6BqlDLTLC6vvNlw+HayC6ifwXcLIo/we3/sN2FX9lXEFHi03
-	 WEPNMB19P+XCusTTAmgCZVVesEYxm+jT0ckJfismAq68gri0YPFqjfTY4CsqzBlT6i
-	 B4wR7aVO292c3fqe8NgCluSqWt3pYP0cCyY2gvpFU1pKblcu2ToRSFgBVNe0mPlJMs
-	 T/Y5nfK+aHa3muyk3FMt0DWXqPRVCAWSwA8siF+HL0pf6gmmL3ML5OLNK5sAbynFnI
-	 6j9mJTgxG1wAw==
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-64b29539d86so8462317b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:08:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKYKnXTReYsADf+YikFu0IsG6MDGN+s50DAifC4+HO623mGo8ELJEBIlYOSUYZ0ciDIun/S8oJcqHvPw4Uc75FUNZ0bFZDfi0Qj0pz
-X-Gm-Message-State: AOJu0YxD+Wy6TTr2deIdcJ80EMH+qoXu3Rqgpy+x9HOAlJrbSgA01d8B
-	/6wrjgWOmHU3jh5ZtHzFXNN3Jx7FdhcNFSumou/uoM9vWxoBSkazyhVeUg5lcbf+5OzJaujaQlB
-	PEtC+K7qKP9n2/lacsLG+BohNhTJLdCE22J9Z9A==
-X-Google-Smtp-Source: AGHT+IHLoq/PTQeo3FQR4YjukSl2GTGwepIgYGhvIjDE5lql7zyOsHBtLjiLNAk1bE2UcXtQlFM7ZTdzXIb2GOt5kMk=
-X-Received: by 2002:a81:6982:0:b0:627:a917:bae7 with SMTP id
- 00721157ae682-658ef43fb82mr85019617b3.30.1720706899028; Thu, 11 Jul 2024
- 07:08:19 -0700 (PDT)
+	s=arc-20240116; t=1720706898; c=relaxed/simple;
+	bh=d10qq7uUVAs7cNOmMvBwCwSJYYg445wsioh7YmYx0tI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UvvDlKTCBLpiYhsxHYQesmvfOzfSXgrHMFzjSsMri2RuWMGHc20t/f9WA8GC6b3Zrj+Ann+Ba588XFpir4YbWpGa7H7jZHI2m/TgbuSd6pkOGf2V6b1qqxiUSJVsz3jMvGI8UN0Fsg37WbhBJaHLtYbfd0Evlbo4QkrMNcCR9CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B79D8FEC;
+	Thu, 11 Jul 2024 07:08:40 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 429C13F766;
+	Thu, 11 Jul 2024 07:08:13 -0700 (PDT)
+Date: Thu, 11 Jul 2024 15:08:10 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"james.quinlan@broadcom.com" <james.quinlan@broadcom.com>,
+	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+	"vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+	"etienne.carriere@st.com" <etienne.carriere@st.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	"michal.simek@amd.com" <michal.simek@amd.com>,
+	"quic_sibis@quicinc.com" <quic_sibis@quicinc.com>,
+	"quic_nkela@quicinc.com" <quic_nkela@quicinc.com>,
+	"ptosi@google.com" <ptosi@google.com>,
+	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>,
+	"souvik.chakravarty@arm.com" <souvik.chakravarty@arm.com>
+Subject: Re: [PATCH v2 2/8] firmware: arm_scmi: Introduce packet handling
+ helpers
+Message-ID: <Zo_nStw7NkeAhN0G@pluto>
+References: <20240710173153.4060457-1-cristian.marussi@arm.com>
+ <20240710173153.4060457-3-cristian.marussi@arm.com>
+ <PAXPR04MB8459E1ED6375ECE89C8471AE88A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org> <ae6b4885-0590-4585-a1fd-39b64df2f902@arm.com>
-In-Reply-To: <ae6b4885-0590-4585-a1fd-39b64df2f902@arm.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 11 Jul 2024 07:08:07 -0700
-X-Gmail-Original-Message-ID: <CACePvbX99r8BNZTkax=KGBx-XYP6WLxZKez3qsi+FfreC2TwGg@mail.gmail.com>
-Message-ID: <CACePvbX99r8BNZTkax=KGBx-XYP6WLxZKez3qsi+FfreC2TwGg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] mm: swap: mTHP swap allocator base on swap cluster order
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kairui Song <kasong@tencent.com>, 
-	Hugh Dickins <hughd@google.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Barry Song <baohua@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB8459E1ED6375ECE89C8471AE88A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-On Thu, Jul 11, 2024 at 3:02=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.com>=
- wrote:
->
-> > Kernel compile under tmpfs with cgroup memory.max =3D 2G.
-> > 12 core 24 hyperthreading, 32 jobs.
-> >
-> > HDD swap 3 runs average, 20G swap file:
-> >
-> > Without:
-> > user  4186.290
-> > system        421.743
-> > real  597.317
-> >
-> > With:
-> > user  4113.897
-> > system        413.123
-> > real  659.543
->
-> If I've understood this correctly, this test is taking~10% longer in wall=
- time?
+On Thu, Jul 11, 2024 at 10:43:23AM +0000, Peng Fan wrote:
+> > Subject: [PATCH v2 2/8] firmware: arm_scmi: Introduce packet
+> > handling helpers
+> > 
 
-Most likely due to the high variance in measurement and fewer
-measuring samples 3 vs 10. Most of that wall time is waiting for IO.
-It is likely just noise.
+Hi Peng,
 
-> But your changes shouldn't affect HDD swap path? So what's the reason for=
- this?
+thanks for having a look.
 
-The change did affect HDD swap path in the sense that it did not need
-to check for si->cluster_info any more. A small gain there.
+> > Introduce a pair of structures initialized to contain all the existing
+> > packet handling helpers, both for transports based on shared memory
+> > and messages.
+> > 
+> > No functional change.
+> > 
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> > ---
+> > v1 --> v2
+> > - fixed commit message
+> > ---
+> ......
+> 
+> > d33a704e5814..f4ba38afe0bb 100644
+> > --- a/drivers/firmware/arm_scmi/msg.c
+> > +++ b/drivers/firmware/arm_scmi/msg.c
+> > @@ -4,8 +4,8 @@
+> >   *
+> >   * Derived from shm.c.
+> >   *
+> > - * Copyright (C) 2019-2021 ARM Ltd.
+> > - * Copyright (C) 2020-2021 OpenSynergy GmbH
+> > + * Copyright (C) 2019-2024 ARM Ltd.
+> > + * Copyright (C) 2020-2024 OpenSynergy GmbH
+> 
+> Nitpick: OpenSynergy year should be kept unchanged?
+> 
+> Otherwise looks good:
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-The wall clock time is more than double the SSD or zram. Which means
-most of the time the system is waiting for HDD IO to complete (wait is
-98%) , there will be much higher variance for sure. At this point the
-wall clock we are measuring the wait mostly,  not the actual work. The
-system time is quicker, that is good.
+Yeah, I am not sure how to go around years of Copyrights...moreover I
+received some auto-responder email from OpenSynergy saying thay have
+been acquired by Qualcomm....I suppose I have to stick anyway with the
+original autorship/copyright.
 
-I now have a dedicated machine to run the HDD swap now. The HDD is
-very very slow to swap. The point of the HDD test is being able to
-complete the run without OOM. Because of the high latency in HDD,
-there will be more memory pressure. It did catch some other bugs in my
-internal version of the patch.
-
-> I'm hoping to review this properly next week. It would be great to get th=
-is in
-> sooner rather than later IMHO.
-
-Thank you. This new code path is much easier to work with than the
-previous SSD and HDD mixed allocation path. I am able to implement the
-cluster reservation experiment in the new allocator much quicker.
-
-Chris
+Thanks,
+Cristian
 
