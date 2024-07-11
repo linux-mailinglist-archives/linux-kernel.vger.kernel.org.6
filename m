@@ -1,136 +1,236 @@
-Return-Path: <linux-kernel+bounces-249884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B2392F120
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:30:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E12692F123
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19AAB281C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:30:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BD61B20BBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F4719F461;
-	Thu, 11 Jul 2024 21:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12AE19FA79;
+	Thu, 11 Jul 2024 21:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ulEm/Je0"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YK/tsZmO"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28ED1509BA
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977B812F385
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720733424; cv=none; b=Hrr840QOTwJMAyWMAHlHh9cNVoKqXYq8yJNQs4wVGpfHA+oepC+k3LmPW5V4sx30QwBEDM3y+n0lO3x/25yC/d+bf9CJNm4EHe0/TLciOmreYGOI/98lc46ZSzQYjnRuES9XKqjnrUYhARQzaPGhD0+HtME1TnpBjuMxyF/XeCQ=
+	t=1720733485; cv=none; b=HbsYp5ZNfyJL5osRuC5ClhCmJT6AmjYZ9s+b/pQKQAXV63Z4Wjmgw68VHlM4Wrj/3Z2gh8yHd+ZaeMHDk3pgdA2IBt6RYMhNcI3Q5z8zg7uk+26rlVzvQDLuWkEHsMIDGb4xU/9K4K4uQRkXE6mShmmzBvgPS7yfXNSEy64Higc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720733424; c=relaxed/simple;
-	bh=PfV2LHhczgIOiF/FLHFpLccfgiYbU8sArpFAL8jU+I0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=STFo8fhxw1hO3iB34ZHN98pPDnfMqYWhwQDXEEktRlP+uYTrmQNn5gPo9BPsDeLfcQLDRd/0Eb2LD+dQ5Jx7piy3qKjl93nD1Gn1NNBCGf6/ItADyGuc86O15GGbiwPRgFN1VIZG1BB2832Q+Ct8l/JH9jYRHGlQyg3Wqv+Bn70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ulEm/Je0; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-44a8b140a1bso84151cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:30:22 -0700 (PDT)
+	s=arc-20240116; t=1720733485; c=relaxed/simple;
+	bh=jFC/ch/i8/z5xVvWKDKmHwOHmrjhAbhPZHERWwIZfQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XR0F3xlV334EHNFELdd8lQc6XHPGrTuq0lrRE1EDAbP31btBMA5fEWuM15/bQbjF63CWugGEahjUncRdtHcV4mwOOhK5x9hBVHxXUPxmu10wWYqUxRhic4OQY1ox8SUfVi/sAfbk0dbxNU3tZWPR1FJ2SDTQOalZZlxshueOrOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YK/tsZmO; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3d853e31de8so727238b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:31:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720733421; x=1721338221; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WdfX1DsNm8qjiscI8ctGm/5sGZ9D9wiSufYLdJu7uyk=;
-        b=ulEm/Je02zanIO3IOm21GY0zW9vTWtwgqtBGNvwaFiePQo9M+n43BVLZGDgh8wPXiZ
-         W20H/rD2oIKSCL1/4NVHRUMirpwaQcx4SVYID+5X8gr9GAxUsld/YluCibHBd44/MbAr
-         oYER70/8/yl9/FkMoj4Pn7DFZ/0lQfXzhG75RI4wLRJTnPi8DMPVdAeBea6CaZCOV9qI
-         QfzyEz/X5FInmi0R7+uCKa44wKAWzZ5STD2EWFQPaejuLV84ycDoW01q7c8XjMfTBJHh
-         sd5p603vDz1yDlyXsJ8kPij9JlLRVIAr044u1spm3gRY1o4+jL4EP4jmyM1RLReJ/nl8
-         641A==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720733483; x=1721338283; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SfeKN2QfdZHciO4OVOVkpdd43CD7Qm2bGhXeNljngUw=;
+        b=YK/tsZmO76iCrXYiHHrA+y32F7ZmMZuF8/UZuTosVFxz8STblfzPAh4imVFyrVFO4f
+         fDRHIncSoh9OLUXnvgWPm6MH6RZz8pwXTiWEToNqjIKlSB4CytM3CWlHOVgKVdQXVIp7
+         B/0X5QMNNWfERunu6Dg0kWQ+PxJPhVMegQOjT2ONyY3dqIWsbDH55blM32qaMlU1Pal5
+         wwhypADmV86JRrS+u9q+oBHrhXSjIy/lEo7n7z6mUZOgNdfV+bXT39k16a1FrlrYM2kG
+         /2OT2+5hVQEvl9RL1Y1JNmULaNnQ1mmUDMGt4KWhw57oVGTVoPObjG2Ngja21hreL2ER
+         C7Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720733421; x=1721338221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WdfX1DsNm8qjiscI8ctGm/5sGZ9D9wiSufYLdJu7uyk=;
-        b=mvox+r0dcMICi5C+9RNqJZ5ykPMTDWLxUqVZIf1bIFlJMuazQzmLMSTT3Js0RDtPkl
-         85Z8Nn9QlcB7pKX2NkT6w+N+LTq2aIuFwNOmZxHphwoqNgEYYycjso9/cZ2IzSF7ArxI
-         Geg8siOmk5O3bMmf+Ayb09mAivN05vg8yoc+XoI2ZYTmoXc5ptNTvHNhuKAQ04E0o7nv
-         6ksr9KjWSxN7nRlsJI2IW5CYm6TEQHnzFv7rBL2C8Mo03K05dNbUsscUgQtoigM6ODAW
-         LcghgsjVUTn7LfLeKk+9XigFkx2scmH4kdrQ9XSQKz34AGqwyYujXKlwSxYNkyl2FaZE
-         dl9A==
-X-Forwarded-Encrypted: i=1; AJvYcCURnr88248mj6pE2/als80+pVkqzqxLKGyA++q5WImXXAEA7b5peLzB+2WdmQTXLcoQQNqrsxePbs40gqThQRO8ZX84wr/49NNFljZR
-X-Gm-Message-State: AOJu0YxYl0ktESQXqNp8pCqNpqk83/BxHDGj6IYsk36y7iv4zSqZcxrC
-	Ap/uk5WsS555UKLZKjuf5NJuTtX2NwA/C9zeDIixRu+8/GJMAnO7hstCaEky3nSuSxzBuUOucX8
-	xrbgbhF0kpFqCOVQ1+rv3dFHRoWrmEc4eTKi5
-X-Google-Smtp-Source: AGHT+IH1gJu5R1iFRIxSGci2RgwfG8wuhhVVH665/5MtCBtZ7FUXpsLXOP0eGmaZoZ6oaZEEKWJwGogTVVA5LciZykM=
-X-Received: by 2002:a05:622a:7703:b0:447:f44d:d0ed with SMTP id
- d75a77b69052e-44e9c93886amr194641cf.1.1720733421418; Thu, 11 Jul 2024
- 14:30:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720733483; x=1721338283;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SfeKN2QfdZHciO4OVOVkpdd43CD7Qm2bGhXeNljngUw=;
+        b=icGnpMCdPYN/E6uJMqrOI7LZfebZHbV8GemZkxZioFS5HvtByb1hULtkGjhq5j721V
+         sJfYVjgzajLLy6betMDXiSr6omw1D5UXtn3RqaG6P36EwlmuBPC8PTJWAP9huzrTPXA8
+         kGU0Qf++efLzvTjK6K7MWyy2VkVHPTivnREyv9+CjNvdTI6cpY89CCdpLusHmkVAtR2N
+         mM8FBTH4T7PMi+fWYihKyKI5lPaI9RiDUkuknK4MOmxyz1IA+4yH2znuXlHNAbXX9efs
+         yIjP/17kjaknvRQeyQZ+e2X/OxF/M54AQhpmGtpQ+AbhJcRBueXW9hVShxjUzB9gffqo
+         hvyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlTh4m5DMAumkCoxfjGWxGbhYyi7oQgofOlU+fToTXBhqjwZ2lrXjJSHgaPoGKawjribn6cqkqyGAzhS17ZYslmg1a+H2Idt+SH3V/
+X-Gm-Message-State: AOJu0YymOVN87ZNYQmtXBm/KdVDVtsoLfufw1HrWdpJRz9P7eg6dYfFc
+	yLRCVi/VDNRX2ZeKIdGAzYjVUG7BAnBs/9cU5CChjrA8BduFBHIO4uch8m2qd34=
+X-Google-Smtp-Source: AGHT+IFf4egknI9k9MvbDQeAJxrUvsMSH7+SArDvalruHrHw+3gkn8noL4LvJ2u6fMwbjYLblTnOIA==
+X-Received: by 2002:a05:6808:3d2:b0:3d9:3e48:8b13 with SMTP id 5614622812f47-3d93e48a58emr8438609b6e.10.1720733482672;
+        Thu, 11 Jul 2024 14:31:22 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d93ad2447dsm1180928b6e.25.2024.07.11.14.31.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 14:31:22 -0700 (PDT)
+Message-ID: <733f4f7b-53b2-46c1-8bf8-5ed357adab30@baylibre.com>
+Date: Thu, 11 Jul 2024 16:31:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711212514.2372780-1-yoann.congal@smile.fr>
-In-Reply-To: <20240711212514.2372780-1-yoann.congal@smile.fr>
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 11 Jul 2024 14:29:43 -0700
-Message-ID: <CAGETcx--FNpz3o5TiZ3T6UkMHKBUjD8cwHR6eQAjM-U86=p_Eg@mail.gmail.com>
-Subject: Re: [PATCH] regulator: core: Set the fwnode for regulator_dev
-To: Yoann Congal <yoann.congal@smile.fr>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iio: dac: support the ad8460 Waveform DAC
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+ "Tinaco, Mariel" <Mariel.Tinaco@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+ Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+ Dimitri Fedrau <dima.fedrau@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
+ Nuno Sa <nuno.sa@analog.com>
+References: <20240510064053.278257-1-Mariel.Tinaco@analog.com>
+ <20240510064053.278257-3-Mariel.Tinaco@analog.com>
+ <20240511174405.10d7fce8@jic23-huawei>
+ <SJ0PR03MB62241801F72B21EEC9CDCCBD91D42@SJ0PR03MB6224.namprd03.prod.outlook.com>
+ <20240628194546.2f608365@jic23-huawei>
+ <SJ0PR03MB62246270CC24E70732D0288F91DA2@SJ0PR03MB6224.namprd03.prod.outlook.com>
+ <20240708170504.00006c9d@Huawei.com>
+ <ccce603d36fa2fd590b563955bcd2cda085773e5.camel@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <ccce603d36fa2fd590b563955bcd2cda085773e5.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 2:25=E2=80=AFPM Yoann Congal <yoann.congal@smile.fr=
-> wrote:
->
-> From: Yoann Congal <yoann.congal@smile.fr>
->
-> After commit 3fb16866b51d ("driver core: fw_devlink: Make cycle
-> detection more robust"), fw_devlink prints an error when consumer
-> devices don't have their fwnode set. This used to be ignored silently.
->
-> Set the fwnode in regulator_dev so fw_devlink can find them and properly
-> track their dependencies.
->
-> This fixes errors like this:
->   stpmic1-regulator 5c002000.i2c:stpmic@33:regulators: Failed to create d=
-evice link (0x180) with 2-0033
->
-> NB: This is similar to the commit a26cc2934331 ("drm/mipi-dsi: Set the
-> fwnode for mipi_dsi_device") applied to the regulator framework.
->
-> Cc: Saravana Kannan <saravanak@google.com>
-> Cc: stable@vger.kernel.org # 5.13.x
-> Fixes: 63c7c9e16c8e ("regulator: core: Get and put regulator of_node")
-> Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+On 7/11/24 4:20 AM, Nuno Sá wrote:
+> On Mon, 2024-07-08 at 17:05 +0100, Jonathan Cameron wrote:
+>> On Mon, 8 Jul 2024 05:17:55 +0000
+>> "Tinaco, Mariel" <Mariel.Tinaco@analog.com> wrote:
+>>
+>>>> -----Original Message-----
+>>>> From: Jonathan Cameron <jic23@kernel.org>
+>>>> Sent: Saturday, June 29, 2024 2:46 AM
+>>>> To: Tinaco, Mariel <Mariel.Tinaco@analog.com>
+>>>> Cc: linux-iio@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>>>> kernel@vger.kernel.org; Lars-Peter Clausen <lars@metafoo.de>; Rob Herring
+>>>> <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
+>>>> <conor+dt@kernel.org>; Liam Girdwood <lgirdwood@gmail.com>; Mark Brown
+>>>> <broonie@kernel.org>; Hennerich, Michael <Michael.Hennerich@analog.com>;
+>>>> Marcelo Schmitt <marcelo.schmitt1@gmail.com>; Dimitri Fedrau
+>>>> <dima.fedrau@gmail.com>; Guenter Roeck <linux@roeck-us.net>
+>>>> Subject: Re: [PATCH 2/2] iio: dac: support the ad8460 Waveform DAC
+>>>>
+>>>> [External]
+>>>>   
+>>>>>>> +};
+>>>>>>> +
+>>>>>>> +static int ad8460_get_powerdown_mode(struct iio_dev *indio_dev,
+>>>>>>> +				     const struct iio_chan_spec *chan) {
+>>>>>>> +	return 0;  
+>>>>>>
+>>>>>> Why have the stubs in here?  
+>>>>>
+>>>>> Should I move the stubs to a different place in the code or remove
+>>>>> them altogether since there is only a single powerdown mode available  
+>>>> Ah. I'd not really understood what was going on here.  This is fine as is.
+>>>>   
+>>>>>> AD8460_HVDAC_DATA_WORD_HIGH(index),  
+>>>>>>> +			    ((val >> 8) & 0xFF));  
+>>>>>>
+>>>>>> bulk write? or do these need to be ordered?  
+>>>>>
+>>>>> For this I used bulk read/write this way.
+>>>>>
+>>>>> static int ad8460_set_hvdac_word(struct ad8460_state *state,
+>>>>> 				 int index,
+>>>>> 				 int val)
+>>>>> {
+>>>>> 	u8 regvals[AD8460_DATA_BYTE_WORD_LENGTH];  
+>>>> regmap bulk accesses (when spi anyway) should be provided with DMA safe
+>>>> buffers.
+>>>> Easiest way to do that is add one with __aligned(IIO_DMA_MINALIGN) to the
+>>>> end of the ad8460_state structure.  Possibly you'll need a lock to protect it -
+>>>> I
+>>>> haven't checked.  
+>>>>>
+>>>>> 	regvals[0] = val & 0xFF;
+>>>>> 	regvals[1] = (val >> 8) & 0xFF;  
+>>>>
+>>>> That is an endian conversion so use appropriate endian function to fill it
+>>>> efficiently and document clearly what is going on.
+>>>>
+>>>>
+>>>> 	put_unaligned_le16()
+>>>>   
+>>>>>
+>>>>> 	return regmap_bulk_write(state->regmap,  
+>>>> AD8460_HVDAC_DATA_WORD_LOW(index),  
+>>>>> 				 regvals,  
+>>>> AD8460_DATA_BYTE_WORD_LENGTH); }  
+>>>>>
+>>>>>  
+>>>>>>> +}  
+>>>>   
+>>>>>>> +	state->regmap = devm_regmap_init_spi(spi,
+>>>>>>> &ad8460_regmap_config);
+>>>>>>> +	if (IS_ERR(state->regmap))
+>>>>>>> +		return dev_err_probe(&spi->dev, PTR_ERR(state->regmap),
+>>>>>>> +				     "Failed to initialize regmap");
+>>>>>>> +
+>>>>>>> +	ret = devm_iio_dmaengine_buffer_setup_ext(&spi->dev, indio_dev,
+>>>>>>> +"tx",
+>>>>>>> +  
+>>>>>> IIO_BUFFER_DIRECTION_OUT);
+>>>>>>
+>>>>>> Ah. I take back my binding comment. I assume this is mapping some
+>>>>>> non standard interface for the parallel data flow?  
+>>>>>
+>>>>> Yes, the HDL side doesn't follow yet the standard IIO backend from
+>>>>> which this driver was tested  
+>>>>
+>>>> Hmm. I'd like to see this brought inline with the other iio backend drivers if
+>>>> possible.  
+>>>
+>>> Does this mean that we would need to implement an AXI IP core on the
+>>> FPGA side to be able to test this?
+>>
+>> Don't think so.  That framework is meant to support any equivalent IP.
+>> So whatever you have should be supportable. Maybe it's somewhat of a stub
+>> driver though if there isn't anything controllable.
+>>
+>> It's Nuno's area of expertise though +CC.
+>>
+> 
+> Hi Jonathan,
+> 
+> Yeah, I did reply David (IIRC) about the very same question. In the design/HW Mariel
+> is working on the DAC is directly connected to the DMA core which is handled already
+> by a proper dma controller driver. So in this case I'm really not seeing the backend
+> need right now (maybe in the future we may have another design for this device that
+> could justify for a backend device but no idea on that).
+> 
+> As you mention, we could very well do a stub platform driver so we can use the
+> backend framework (like dma-backend or something) that could pretty much be a stub
+> for the DMA controller. But is it worth it though? We'd actually be "lying" in terms
+> of HW description as the DMA is a property of the actual converter.
+> 
+> - Nuno Sá
+> 
+> 
 
-The change is valid but the problem is that managed device links don't
-work correctly for "class" type devices. So, we can't merge this
-change yet.
+I'm a bit inclined to agree with Jonathan here. I could see someone in the future,
+wanting to, e.g., use DMA + a GPIO controller for the parallel interface if they
+didn't have an FPGA. So it seems a bit more future-proof to just always use the
+IIO backend framework for the parallel interface.
 
-So, for now, we shouldn't land this. Are you not seeing probing issues
-when you do this? Or significant changes/delays in probing?
+FWIW, I don't think it would be "lying" since the io-backend DT node would be
+representing physical parallel bus between the DMA controller and the ADC
+chip.
 
--Saravana
+But if DT maintainers are OK with the idea that a DMA channel can be directly
+wired to an external chip, I guess I won't complain. :-)
 
-> ---
->  drivers/regulator/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-> index 844e9587a880..f05f873021d2 100644
-> --- a/drivers/regulator/core.c
-> +++ b/drivers/regulator/core.c
-> @@ -5656,7 +5656,7 @@ regulator_register(struct device *dev,
->                 dangling_of_gpiod =3D true;
->         if (!init_data) {
->                 init_data =3D config->init_data;
-> -               rdev->dev.of_node =3D of_node_get(config->of_node);
-> +               device_set_node(&rdev->dev, of_fwnode_handle(config->of_n=
-ode));
->         }
->
->         ww_mutex_init(&rdev->mutex, &regulator_ww_class);
 
