@@ -1,110 +1,166 @@
-Return-Path: <linux-kernel+bounces-249387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AAB992EAF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:44:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0317D92EAFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D91CCB219B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FD731F23E45
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9EE169AE3;
-	Thu, 11 Jul 2024 14:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B6C16B3BC;
+	Thu, 11 Jul 2024 14:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="P43Nh8o2"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="q1PXf1Gy"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353E1161B43
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A95167DB8
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720709050; cv=none; b=gkc8Omz19EDvngSR8+rLVxzpB4rvnCd1n2Y0zBkcdOaZJ/BeEJ3V3F3M8DPtjMtNfXZPI6gLSDUlAuieDZIVW2kscSjEBJKTZfsJ4HVhDXjr7HBf5mIhJdBGJ9AwVNF3UXNM+QHEpEAjduP2TjVSsyyB5oBrCihwsd0/BBQEgfQ=
+	t=1720709078; cv=none; b=teH2NTAhtoEVeJmGSJgmswG4uxRhAd0qyIze9nBi1NFYZN5Swa2X51OtXlnfVe8U61Rs664V2ebmZooM2EFiBuZc8AnULiUCMoW96HB2pZhKJIwR+r4U/nmGPUFt5FjBMBJoFdOuplI/3wi5yuXWfDBGvloFoA5QDqSz456ECbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720709050; c=relaxed/simple;
-	bh=d3YObu13iB6Kcvu2O65ozWAbx9bOeZu+8fpEHh1grJ0=;
+	s=arc-20240116; t=1720709078; c=relaxed/simple;
+	bh=MMu6kiGgrdyVeIGgo0o2g5ISXoiklOJgpiyd0c6Mhcg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ASBsFz/odyS342IqCvn/Cm2MFM+u+QH25mhORnLTH3WUsFNAex758WUVjnX+saIMyCw1kS3TGJfG4Mv8nrBjAQJqN7Sx4Go0TA8yOM3F78TEdXP52w+uwybs4vc3lSsAGmQ68/pQ4QHJ57WTkzCS9MZqGle0gqX3g0+8aZ9S+MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=P43Nh8o2; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Dfkb
-	sELzbnikRJdgk5Ohme85MtHt0bXQNuVw3p8IKig=; b=P43Nh8o2kh6BSzcgIvdn
-	e56/yVyMMcwOo9SAM66wLaKp1xrUry+22WwgC0ONysrZYpYd+WPZmrzxxfhM1MW9
-	BTqRmDk7cx7FKS2/inNR1HDDfQXcbDCW3oZIyZ4+pQhMrwefiqzEva+KxeEPuvdz
-	51Fjloi0GB2Ch1+MPZ6nytbz0rX/3BEqrdQz8NeR0m6BgGGgXgKC2C4eexweNCv7
-	dOXF2zew2eLIyq4b8rbwS6iE3w2gBa6PQRrnKOpMwZxyHs2FiiYZORb1oPWnMy7h
-	TV5JzWstsyuYcmoaNwEbBSRDgIsAgPtyyw1bxEF3O0iFKSmruzfHVlrqj1rkIr5a
-	Dw==
-Received: (qmail 876813 invoked from network); 11 Jul 2024 16:44:02 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jul 2024 16:44:02 +0200
-X-UD-Smtp-Session: l3s3148p1@Nsw3y/kcDphehhtW
-Date: Thu, 11 Jul 2024 16:44:01 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, Hans Hu <hanshu@zhaoxin.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 56/60] i2c: viai2c: reword according to newest
- specification
-Message-ID: <Zo_vsdNOmJFomwzP@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	Hans Hu <hanshu@zhaoxin.com>, linux-kernel@vger.kernel.org
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
- <20240706112116.24543-57-wsa+renesas@sang-engineering.com>
- <6arkyo4dg3k2ya6oitgv4ajcd55ncf2xfgm4o76jfbkvn4wca6@7qf3kjaq5sci>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mCWxO5ltvvmUYd1cKIezGcfprAjH8VCK1MsRQPLA2TMNGHSSLPTaXNABOERnZGbaq/UVZ3PAw2UEq7pm2hqk2PSoEhPjti2neDbIA7NlxFMuPwP0TbB1VPpg/Xp9qN7nRr+TMrmtT613MP0IvwuvoXvVdnSwEueH/BPjx+t442M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=q1PXf1Gy; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64b3655297aso9071487b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1720709075; x=1721313875; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p6PLNSJZMY2HBtPFlfBgNDPZWDEOAS/uY6eb53FVzXU=;
+        b=q1PXf1GybYh1aDXkOQriXh3etXHQaQvAEvEHvmjzflwesjMtmTkIcKjsvkM3cvyMew
+         1ADOSrKUCZeN1Bc6ndt1rYxk0DDfHkzu9xezqPuUzubgvhJWQPvuMkrPn/0U5ZZxfo9i
+         fctEzUyU1X+gwXWNkJGT6Qb6Rul3J21Wfk7CiQmTfo+8/rA+YGP6qKw6dLORH3DeagL/
+         y8faZ8jpGGnpY3BUumaQJl7BBvPzevdG9+6FJ6dQodNUGNJSp/gYUNCG5drWdvmjx5Mn
+         cv8yTWT0bLgjhtN0Oa3FCF0hNCixvqUBhriTBD67tVMd36sVAEQFtLzVdeP7ReM7JUpg
+         nXbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720709075; x=1721313875;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p6PLNSJZMY2HBtPFlfBgNDPZWDEOAS/uY6eb53FVzXU=;
+        b=kI8YnasgBcVzbqS/9vKvdtNutAjNlXj8IKexQuHHZ0qeJhDBpb+1uNHHlGh1jVnyt4
+         WIKO1kydeVhazkULtXqYQe+1RTN7koaEqwG10ka49NBbmpqGcfOYUo26AilLr2NXBpYl
+         qx7csMmjhf4IjmGMgKnk79SfFjCcJBJU/CuSiJvPww7FRPhHhWNe5fiadB87SUYFo6zq
+         X70YwSotO59gpPFPF6CE7bSwYIz5QdYsH3BTey+jHmWm12m2mhCrG1531u8W7k0vw/4C
+         8g9oiBa/3fAHzJcJ9Z18luk0bDzJi5FXgdVOZbOeVIauFqu4BWx/XXCmsjPUpBUUNP4d
+         dQVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWX+A0vvcynF200RKSlpLhISm6v1lubZcbT6NVcUU7Ht29Cm6ZQrx8GQ8HGBB2/Gd1ifR5n9X3seEYyAwCKU0rgzLIktWekOJzAcufx
+X-Gm-Message-State: AOJu0YzlBv9UyJfI7FsPi5gUL6Zz5jRSTKlUYiI0T8P5/l1010WswTw8
+	5A55RGBIEi+SXl1L6oiIawdpb2zDpyJ0ghaIxk2pnINq1TV6eh2RZS7Ba8OouOo=
+X-Google-Smtp-Source: AGHT+IFAnEDVnsGx1tZ1AxBo1QTn+tOSC2MfALvNb6Q+MllvTQBzHLMq8T3kjDK5yp3+1lqcT3GiRg==
+X-Received: by 2002:a05:690c:3385:b0:62f:2553:d3b3 with SMTP id 00721157ae682-658ef3414eemr120805467b3.29.1720709075414;
+        Thu, 11 Jul 2024 07:44:35 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4936079sm11198567b3.15.2024.07.11.07.44.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 07:44:34 -0700 (PDT)
+Date: Thu, 11 Jul 2024 10:44:34 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
+	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>,
+	kernel-team@fb.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-nfs@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v5 0/9] fs: multigrain timestamp redux
+Message-ID: <20240711144434.GB1235314@perftesting>
+References: <20240711-mgtime-v5-0-37bb5b465feb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JopVeG4lPsQY2Oe/"
-Content-Disposition: inline
-In-Reply-To: <6arkyo4dg3k2ya6oitgv4ajcd55ncf2xfgm4o76jfbkvn4wca6@7qf3kjaq5sci>
-
-
---JopVeG4lPsQY2Oe/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240711-mgtime-v5-0-37bb5b465feb@kernel.org>
 
+On Thu, Jul 11, 2024 at 07:08:04AM -0400, Jeff Layton wrote:
+> tl;dr for those who have been following along:
+> 
+> There are several changes in this version. The conversion of ctime to
+> be a ktime_t value has been dropped, and we now use an unused bit in
+> the nsec field as the QUERIED flag (like the earlier patchset did).
+> 
+> The floor value is now tracked as a monotonic clock value, and is
+> converted to a realtime value on an as-needed basis. This eliminates the
+> problem of trying to detect when the realtime clock jumps backward.
+> 
+> Longer patch description for those just joining in:
+> 
+> At LSF/MM this year, we had a discussion about the inode change
+> attribute. At the time I mentioned that I thought I could salvage the
+> multigrain timestamp work that had to be reverted last year [1].
+> 
+> That version had to be reverted because it was possible for a file to
+> get a coarse grained timestamp that appeared to be earlier than another
+> file that had recently gotten a fine-grained stamp.
+> 
+> This version corrects the problem by establishing a per-time_namespace
+> ctime_floor value that should prevent this from occurring. In the above
+> situation, the two files might end up with the same timestamp value, but
+> they won't appear to have been modified in the wrong order.
+> 
+> That problem was discovered by the test-stat-time gnulib test. Note that
+> that test still fails on multigrain timestamps, but that's because its
+> method of determining the minimum delay that will show a timestamp
+> change will no longer work with multigrain timestamps. I have a patch to
+> change the testcase to use a different method that is in the process of
+> being merged.
+> 
+> The testing I've done seems to show performance parity with multigrain
+> timestamps enabled vs. disabled, but it's hard to rule this out
+> regressing some workload.
+> 
+> This set is based on top of Christian's vfs.misc branch (which has the
+> earlier change to track inode timestamps as discrete integers). If there
+> are no major objections, I'd like to have this considered for v6.12,
+> after a nice long full-cycle soak in linux-next.
+> 
+> PS: I took a stab at a conversion for bcachefs too, but it's not
+> trivial. bcachefs handles timestamps backward from the way most
+> block-based filesystems do. Instead of updating them in struct inode and
+> eventually copying them to a disk-based representation, it does the
+> reverse and updates the timestamps in its in-core image of the on-disk
+> inode, and then copies that into struct inode. Either that will need to
+> be changed, or we'll need to come up with a different way to do this for
+> bcachefs.
+> 
+> [1]: https://lore.kernel.org/linux-fsdevel/20230807-mgctime-v7-0-d1dec143a704@kernel.org/
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-> > -#define ZXI2C_HS_MASTER_CODE	(0x08 << 8)
-> > +#define ZXI2C_HS_CTRL_CODE	(0x08 << 8)
->=20
-> They also look like driver specific rather than hardware.
->=20
-> Hans, can you please confirm?
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-The I2C specification explicitly changed "mastercode" to "controller
-code" for high speed init.
+Thanks,
 
-
---JopVeG4lPsQY2Oe/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaP760ACgkQFA3kzBSg
-Kbaxxw//R1A+rgrWQfrcx2syRRgBijgOuZ75OowpVV532IvwgyxyP96mca5BaLzy
-nMj3Miqm24zrlkn75wJunG2Ngj7wDR7EAOnAjyEvxJdafjq1RiE/j8M/F2GzAAcq
-BY2GpNCD6Vk44qGP/OaUJIMIy784Ihg+fpRLCk9sGtxKNzjGBd1/TST8UJXc45AZ
-vZgw7OORKz83czY8A9+eITc7RSxaglYz4gmsSm/r34MMTzAk10E4h1UaR0/AtRcu
-0XIuV8k2OC7DTjq8KrDiGDJ+ywBUxXMpfK3DwMJGtS1g6sd/tFDzQ1i3ZOUUD8YU
-E1GMv7Rv9M2rO0nK3sdKIWse7RHfrHki/40aqKDuYrbchVd4TKW1M1rwBS9T5061
-nr2KY/r8gmbXNZzmJYzGJovJwJclsvirFKWyE3lK3AQatOL9+8ahMswnk6bye4yD
-30aLWLhzUWJXf6pSBaHG88hzPkYhWkwK7rR9CzqzJXMK3jizkGnGJd8LfKGyJG5u
-PDKGhTJs95WZM++nGe2UgfeEpAT/EjS6oDf5NFN0lVZZMgyvjVYpgnSlthhbNAwr
-jCvqXV9fCw64Ro5a0FyT1kMnHXutAY8VhEYe1RwZHdtKR/1he8FAgzJ7/jRpNJ9x
-jMjEmFw7VmZeYMGcabWgDPe6FHESI7gQEQ5d3TXzZHFaxMNL3sU=
-=tZ3P
------END PGP SIGNATURE-----
-
---JopVeG4lPsQY2Oe/--
+Josef
 
