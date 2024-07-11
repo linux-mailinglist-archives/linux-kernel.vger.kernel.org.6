@@ -1,186 +1,212 @@
-Return-Path: <linux-kernel+bounces-249099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32EA892E6A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:29:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B22E92E6BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61A61F26403
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:29:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6AC1B2A344
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1197D15B12F;
-	Thu, 11 Jul 2024 11:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A7016DEC6;
+	Thu, 11 Jul 2024 11:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HB50Gyk/"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="usEEdAnN"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857A0158DC1
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720697077; cv=none; b=JxKcCi1+yNu4+pj3HGiVaUwHzogh51FXpCJchHwPP3ZFRyz5MZvD7NUHaE4QZ5AIJ/nhtEsvYk+TtTo4gcyGuBRI9Mw7Ww1su874mGcAg2sIRYd6swBdAjwOE9yz5DSJrL41s5W6a+KfLrWuIGk/YKjUHgnFi3j/McruXceLTGM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720697077; c=relaxed/simple;
-	bh=/9oArPsq57wbS0FYuGBqiYy7h9TmwdEnt+Vdtx21jTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FkNJsi2ix62rR0ar/+jEtjwUsAcHxScA0tO5U5+vh0HeU1xvPXbeXQw6rZ+Wy2HCsIMY2wFtcfXc/eakVfAPCb3KCPQd875o7CVB8p8iAuliVYCwhaNrkr945c3VOkSSHFLd2H0kGaO4AmLzs4AZMRTnA9vrG3q3zSD3sXT0+78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HB50Gyk/; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42679f33fefso5054655e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:24:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720697074; x=1721301874; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7J3XmVGRUwfePfxIWcbxVXHrQGcPTlGlP9ANwNd5N5M=;
-        b=HB50Gyk/IIdd8Jjt+ZJbamW10O+oxUOzC5bcyxUuPFE4RJrQlixxZi0b/IXjCrXt9X
-         VcPDPrM3jkyMz1+3Nm2iJQxQRfZWp7cYzUMHRBvV2cNN+g7c6sso/ekyFMEMlffeXMpi
-         sg5kxHstWJ2wN4zItA0/awsU3HWowpV/gIgQSeMCgAMmlOdjgZjBMgw4igkEmtv1/4qn
-         PkkEerff0lC3qo7BKESqQF3v759QaHTVMG94UkR8t5hXGiGbYUt+8JjknLEgJGgj6rcr
-         P6lBnO5fVkzEHzVuwqK/f1jQJkQDtg2/h+DXiUiaRGOC+ALRjcJkJpzrwjBdKxWm3Mlw
-         /AGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720697074; x=1721301874;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7J3XmVGRUwfePfxIWcbxVXHrQGcPTlGlP9ANwNd5N5M=;
-        b=FXzmAFmIrwNA+qrjm28vQzYXLglu3vdtLUTo2pvCmavnoYl5HGZnhU4ZHSZj7L4ghy
-         oNEPBJUDXEVci4qcvCqLG3Rlg7aLtpDWdBLPgv0M23HdZD30Bv+u98VJ/2szhFDBJhYy
-         NKt9w370BlJ/U0SqlpbI7HoMdOYnjNB/If2ZPltE49ug4vDO7iZ0qO8cQDayzIgC01tR
-         fWHXjBK1OdbkwXWibNj5pRPmvmY7bcj5L7Oyk1WYOpHidODDOZEF7TRQ9ss+UYULlelA
-         juufnHMpwYelWAQnFm2JtIyBO82OgKXA5q2izbL++eZ3t1gt87S6Bwu22sGQ5+C92FXV
-         PK/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWWHpGBVyXK7NTPCcBtlOP3J3oCxccqQGqZWfe+nJY67bNLrRqDRuTpnjq6YbG6KVaoTmvpCN/EZoqMKXcl0TJOY3MHsOCEACxmvlq/
-X-Gm-Message-State: AOJu0YwMzBIW1B5iLxpVLdx3sfwCScU/Z+9DKZaody4pHK3E4MLmtxWQ
-	3FN6/25RpQWzCE0zOHv8eKH1oIeB7uez5Fk2Ki4+m+zz8oKX4M6BsskaLBxxCuw=
-X-Google-Smtp-Source: AGHT+IH+MrhpKULhyNqDavQn/HmaV04zZUuIb4CtelgvAjidvApzydEGwVdpRswc/d+4R9FRlMUmJA==
-X-Received: by 2002:a05:600c:4653:b0:426:5ccc:df62 with SMTP id 5b1f17b1804b1-426709fae88mr45907865e9.41.1720697073933;
-        Thu, 11 Jul 2024 04:24:33 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42673d7f528sm101758575e9.9.2024.07.11.04.24.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 04:24:33 -0700 (PDT)
-Message-ID: <aea131bf-416e-4e58-a64b-0353b63340ea@linaro.org>
-Date: Thu, 11 Jul 2024 12:24:32 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F6716DEAD;
+	Thu, 11 Jul 2024 11:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720697115; cv=fail; b=JdDIfkNZ0O0zVePcgyNk8OI9SPOQQMOk11K3/D9lDN2NwgPNTl3l1J1ty8F+o5Jx5GIml8sSLmUE7PSlBjpIjc7lsvJ0eTstzQ79xIJ7RoSoWzX+FSHNA4YUaQkW8N+669FEX8VqK7pVAiLCQJ+p24/AxKz2Zxn+dHUmW/pZFHQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720697115; c=relaxed/simple;
+	bh=kcL0oPLw4ZCEerTKTgJVedoK1CiwlVhqDegjHBz+bzo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NQZ8/e/jXtIYXcP7Qbk9mB81f7uRFvZHPmqoLReNbWr8JIagAAn0fw4TKtQUdL4tRSRDPoVCgUGf2jCHgwiCKxWQyAPn5VQEEZ28HgQya1rC+YHxF9P/9ktoSg2+B7peaytkcmlfaRyUmXttdR8/y6H84KOCQc17CEkaZq9mp/0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=usEEdAnN; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B2UDY2017195;
+	Thu, 11 Jul 2024 04:25:06 -0700
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2174.outbound.protection.outlook.com [104.47.55.174])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 409wmdcc7d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Jul 2024 04:25:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YWQgJ8t+BsCRs/gPvwm/aZbS0H0zuhsHkE3v5NIm3FiX03CgL22p/od/kau5qRhF5lBJikZFfAFeeQ0zHWXDb0L4bPdCvfv3BobzWFyJ5cm9dU/lLYXzghB9PrR3np9xUx1VYk2jmv8CtSpAw+GGKsRXQB1Uazz5gIjsn3suSrNHtSIciWNplE/VgFg1DGCL+F25TeSxRlPGV5xoQ9AjqSHYIE+cPjkBnUx8he3j5smsdQiNakNVLZ0u6PQ/u+bys8c1Xz0o4C2UKJGQ9gIrHyGOOgKrD6/hAZ5kYtwgVq7lG3KCwYsTSmovggM4kKp1ePCs8S9eKsAOueJvSnM3cQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kcL0oPLw4ZCEerTKTgJVedoK1CiwlVhqDegjHBz+bzo=;
+ b=Nl/7kDvXCuA5Frk+db8UZpmRtzVAcwWdoRwqQFkPc/kB1BRYHVbDdGxDL8UmofBM5kegnN5sKZ5MEi5zxN+5Z8UYPvjo7PgbfHkxM0GmQrAgiqJ7pRXAlAqN8hBizi6+JC5l1kIuQwOIZNLGZN/Rsi5xYCJXiRo9PPwfldnFec0eMkwYKzpwcDc7eQwnVgETxjUchQpBdrlQrv8Im6cEtt6yRkmtC0P4zq/vXR1u8Uw8JhUiIWkq48pSA5CFsO9vUZRHdncHmLf0tQLbZyK2N409IH+28PHQm89Q0hzWfU2qPg35bY48raKnRslLRpTOXWeQKUeUxlVPcOzKRaoQIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kcL0oPLw4ZCEerTKTgJVedoK1CiwlVhqDegjHBz+bzo=;
+ b=usEEdAnNxqc5QoKXg/ck51DqLcA1pdAsF4BPntF9TOE0zZe6HehoeaJcWxx0r5szXqPLulQ2EEjy5iGKDPNBuTqASgkW0/q/gtsanWi8klq+cADt2bliWOedxJsdorESfZ2qsYRt17LJWsUQgDaBH/9unUwx2RLV1ewqQ5S7TU8=
+Received: from CH0PR18MB4339.namprd18.prod.outlook.com (2603:10b6:610:d2::17)
+ by LV3PR18MB6205.namprd18.prod.outlook.com (2603:10b6:408:27b::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Thu, 11 Jul
+ 2024 11:25:03 +0000
+Received: from CH0PR18MB4339.namprd18.prod.outlook.com
+ ([fe80::61a0:b58d:907c:16af]) by CH0PR18MB4339.namprd18.prod.outlook.com
+ ([fe80::61a0:b58d:907c:16af%5]) with mapi id 15.20.7741.033; Thu, 11 Jul 2024
+ 11:25:03 +0000
+From: Geethasowjanya Akula <gakula@marvell.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "pabeni@redhat.com"
+	<pabeni@redhat.com>,
+        "edumazet@google.com" <edumazet@google.com>,
+        Sunil
+ Kovvuri Goutham <sgoutham@marvell.com>,
+        Subbaraya Sundeep Bhatta
+	<sbhatta@marvell.com>,
+        Hariprasad Kelam <hkelam@marvell.com>
+Subject: RE: [EXTERNAL] Re: [net-next PATCH v8 03/11] octeontx2-pf: Create
+ representor netdev
+Thread-Topic: [EXTERNAL] Re: [net-next PATCH v8 03/11] octeontx2-pf: Create
+ representor netdev
+Thread-Index: AQHazsRrH0Kj1fJcF0GZtWbGkMdHrLHtxAiAgAOoEWA=
+Date: Thu, 11 Jul 2024 11:25:03 +0000
+Message-ID: 
+ <CH0PR18MB4339535C4E61F8ACA36EDE19CDA52@CH0PR18MB4339.namprd18.prod.outlook.com>
+References: <20240705101618.18415-1-gakula@marvell.com>
+	<20240705101618.18415-4-gakula@marvell.com>
+ <20240708203337.0e20c444@kernel.org>
+In-Reply-To: <20240708203337.0e20c444@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH0PR18MB4339:EE_|LV3PR18MB6205:EE_
+x-ms-office365-filtering-correlation-id: f336b5d2-455b-4d42-f5eb-08dca19c1bbc
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?UGVYN3JIaG9jbGZ5VlNiQ21kMkJiZUpjYXhHSmxBam02cnlBcEp2R01PZW1Z?=
+ =?utf-8?B?VzgzS2pDRkZzNWdJalNCcFI2TmNnQk9abDhzQU53V1RqczZEM0pGZlVlSnFn?=
+ =?utf-8?B?QklOeFFlMGRseFRnUXdrVlRXTDRoL21KRUpvWEF3QjBqVVBWRXpuTVJxTS84?=
+ =?utf-8?B?eWlIQnlvcnJuZE0wRmRoRVhpUVA5TnBrVlZqWVpHc0prN00yNy92OVloZ1NL?=
+ =?utf-8?B?Tk1QVVhYWDZ4cUVxQ1Q3L0YzUWpxU1hhRk9LNmlVZWppMWVYaGE4bFJVUndj?=
+ =?utf-8?B?ckFGRzF3c0p6cW0rc0tEaHpOcjV2UXBlWnZpMUVIeFVIS3hBakgvQjFNZEM3?=
+ =?utf-8?B?MEZ1Ty9QTUdVM2RyT3hNaVFXbk54YjZCMmt4OWRyK0xXQnozNk5oeStEcXBL?=
+ =?utf-8?B?NmJudWpvMUQwZnJNYjdUNVFVRjlvUVJZV1dyU01VSG1WSFZQeFdwMG92LytT?=
+ =?utf-8?B?RUhPY3lPeUhDMnpQbHc4VHNTbmdDdk5PZzF2UE1sTDF4OHAxalZUd1ZTY3lJ?=
+ =?utf-8?B?TmJxcmV4RmxyaGwyV3ZadFRCWE55ODZ5YmdtckpCTndnZkdWOE03QzJ3TTZG?=
+ =?utf-8?B?ckZMczVJOHRLUWV6cHI3VnVzVHNabGQ3V3NkL3FUTEJWYSt6SkNmQWhmdXZ4?=
+ =?utf-8?B?ZzF1eXJDQUtwZ2lrSk5WQUlvSEVIYlBHTlNPSERzaHp1ZWIvZHJhVXdGUWZh?=
+ =?utf-8?B?ZmFrWExYM3NpZ3lKRHdoUU9WQlNXaFVKUGtIZ2xXd2hHaE5UR2ZycXFVV0Zk?=
+ =?utf-8?B?cG5Md3hCSkIyV3FtcHBWUXpVdUNXYnNnaUgwb2hMRXhSVzNNclFUY0dDM0dH?=
+ =?utf-8?B?L0RRRUxLS3kyRXB6UW91TWpKWVVqR3VPSlQ0VFVRSUw2OVREblB1N0Y3bEtm?=
+ =?utf-8?B?TWR0eWI4ZWFPQ2FTYU1idzZlRDVIazZDMFlLc0grbGxOdjhucUJNVTNEbFJE?=
+ =?utf-8?B?VFlJSjVsZENZRjRaNWxSNkVxdmtwenIwVDBRbXIzcXRnUngvNW1la3pzV2Q4?=
+ =?utf-8?B?ekVITFdEZG5CT1RnZldTQ29vV1pkM28xR3c1RTU0d0MySTgwRkJEbDFRWUNk?=
+ =?utf-8?B?ckdqODkrL3laMGpabDhGc09oQ3ZubmZyaUpnRXVXc0FLOU44Nk4wVmVvaktH?=
+ =?utf-8?B?a00zMXAveXVNb3JZL2F3b04xcXhCZTdLNkVrMEJidkhYYjh3d2N2czR6SWhF?=
+ =?utf-8?B?ZUFZc2FLR0VnQ0NnVC9sKzNPa1hFKzlYSEVCcXFrQTJyMmNVcmFENEsrTm1n?=
+ =?utf-8?B?M3o1enNkbWtzUVZVUjdBWFcvY0V2alV6RUxYUVVGaFJSUU9JdDBkczBFdVJu?=
+ =?utf-8?B?My9YS0ZuYUx4YzJPNm0wL1dvZjkzZUxWNFUwck9hdUtYYXZjUDBLSVplU2RX?=
+ =?utf-8?B?dFVaT3g4Q3kxSTBuWEZxdGpkYVh3Qm5UdEtHOUVtcnptUlZ3S2k0Sk13ekpP?=
+ =?utf-8?B?Nks4eHBqdHkrcC9QOUdVVENEQVozVFhCYnhCbGNYMEtEVS91YityZ1JKQ3I0?=
+ =?utf-8?B?cUx4Vk5yMjdkZmkyN1dFMGt4akI4Wm4vUjVqUUg0OVZEWHpvb0JmcmxXdldO?=
+ =?utf-8?B?U1pNa25pREgxNmpCV1pwaVpqdnI0QXQ4czRWNnF4Vk5rekF5L3pCeFcrVk1N?=
+ =?utf-8?B?cnhZVGlydTFkRUl3M1dmTWpPbC9UZDJBTUErOE9VWGdVanZoOHhhTXZUVUhy?=
+ =?utf-8?B?aDliM0RHT2NoUFRFVXJKQjM0amZHYnlUQUFsbi9XQ1ZPaE5ta1lRS1UrbUMw?=
+ =?utf-8?B?K0F0L2M1L3g4cWJUSVh4LzFzSlNNeVZudWlqZk5oTm5xRFV3WkVoM0ZMNXVP?=
+ =?utf-8?B?SDlxdGR1QUFuQlFMTVRlUllHcndzTlJFRWUzemhUYUJZcjBNVm5Fc1YxQ3lm?=
+ =?utf-8?B?UjdUcEY4Nkdpc1RYWUdrajhBOWE5TzV0OElNa1o5bldSYUE9PQ==?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR18MB4339.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?Q3FZeGNiRFptN3NweTQ2cWZ5QjNUQ3R5SFZIMWIxeWhkL1QzN0tSSVlITzEy?=
+ =?utf-8?B?S3VFcCtZcGh0bjVWMm9HQlVZU2sycTNETXZRdTZuaGN0QjhacThiNjIzRVBF?=
+ =?utf-8?B?ZENuMjVNRVRuT3EzWnRqOHl4ek4yTzF3b2ZXRWN0Mk9DQ3FKN3ZES1JxOGFS?=
+ =?utf-8?B?VzJ4b0tMVFFGeFhpOG00dEVMbkg1cDZHWVZLWEczdjBoaURZNWhEUHY4RUg1?=
+ =?utf-8?B?M29FWUFPU0lkUzM1Q2VhWGdYbW1XUmZOa0lpcHBnT3lKdjA4N0laSUVGRGxk?=
+ =?utf-8?B?RFVHUGw5dkExTWo5dTFQYzg2VWxHMitFSTBRTmpianJTUlRaajVPUG9Od3dI?=
+ =?utf-8?B?Ty94TmF4R2t6YnR0YVJaaGZWL2NxTHRHVU9BSWdMdHl4aTkzSStCMmRsWTRX?=
+ =?utf-8?B?S0k5d2pGa1Z6NVNrK3pldllESTFYMjJVKzE5R1lDb1pOYTNJSG94YnZTMGth?=
+ =?utf-8?B?dlc2RkdNNTB5YVpmOWxld2tZUTZJc0tRbVRlbXF2VCtWV0J3UmNKbFhYcnE2?=
+ =?utf-8?B?UkJhUmFiYkx3ZXpub3ZWbU5Yb09JODRvbmJ1TDVkYVErdlJWYVBMM2R3SUVv?=
+ =?utf-8?B?STdZY204dDZrTWhUM2JnbXZPQWF6U1ptV2svL3JqRTNqZ2g0eTFPQk04Y2c5?=
+ =?utf-8?B?MzF2WDY5bHlWUWVxMExtTWdKYVl4Y2h3bndJL1BMWFdIWmZkWG02YlJnSURn?=
+ =?utf-8?B?VkVqbzNnMU9SQlBRNDZpYm1pVkhDeXFxOWFNZ0ZYZjdRMlZDYmJkemRrcmMv?=
+ =?utf-8?B?WlpHTkdKa2JhNTJpSnppb2crNGtGNjN4UDd2dFl6MmUyVmtIN1NwcWJsa1g5?=
+ =?utf-8?B?Tmp2eFJ6alBPRmlja3ZsdkFMbWFrOWZxZUdMVXhHcUpTbEo1Ujl4Sm1hRnpy?=
+ =?utf-8?B?ZzQvZ1haV29MQ1h6WFQ0TjIxcXBtTklGcWZuejdEQXpJOUpzdXM3WEt5VDkz?=
+ =?utf-8?B?Y3BmY1BBeTZwYTRXeDhJQkMrZ2dxYjJET0MycnR1MU81TytVNGhyQnRVRmc0?=
+ =?utf-8?B?S3JhaHBQYkVNK2RqY29HV0NybTZSNzlDNXpiZmplVzVjcU9qUFFCWUt1cGZj?=
+ =?utf-8?B?WWNxRGtvTUdPcDVBQWw3UlQ0cjBXRXY1TC9abjJBL21CRVZXWUxKQkxMWHFy?=
+ =?utf-8?B?YVNiaml4NHVLVU1zd2lYbFpFeEMxUkxvQis3cStQTExiM0JyQ3NlWFllM1d0?=
+ =?utf-8?B?a0xJL0FRSEZ0bjh4NisxbndGUjYyTjFkSVNBays0UzZGNFlkaDVRZEhYbzJ1?=
+ =?utf-8?B?bXVPRDBaUEVEdjV6M0NPRStVOWVnVFdXV1VMMm91ZEh3SGhCdldEOXk1djVN?=
+ =?utf-8?B?WFE2MzdFMXhxRTluUXJka2hEdVk1dGkyZVZNK1p4SHVwelFQSE9BSkxiVjRF?=
+ =?utf-8?B?RHdhMHZMdkJIMEc5QitrNjJRZEpwaFBLVUtNaEhqRGhIRTA4KzBFbkgvbXZ2?=
+ =?utf-8?B?SjBDVmY4NTJNUlVrRHNzbDBBRWRHQUhnUk1URk9ac2dJNzZLbGdYQThFd09n?=
+ =?utf-8?B?ZEZyMy9iT05HQ3JJL3grOExac2ZqS1U5TDNneXk2TDZOU2V2NDQ0b0RsaU5t?=
+ =?utf-8?B?KytpelZzUUVGeHZUdHFFTmxDb25OLzJCVVlXL0VVUFQwcFdTL2o5cG1BSDYy?=
+ =?utf-8?B?a2x5S1Y4Q1p6blQ0ZUlwV3l0T0p5eGFPY0ZhbVFQNU50ek9JZXJEUldyKzB1?=
+ =?utf-8?B?VVg5cjdEbThDOTlPdERmTlMvSXlYdFhmRzhwQzBQRlh5VUw3b3ZvdnNwalRW?=
+ =?utf-8?B?M2RkeEhIZlV4R3VJT2NiR0xhN3BkTFdrclg4NkFyR0dOS1pPRnpvODZOeGVV?=
+ =?utf-8?B?NDhQMkMxdW5hQXhaNnBxclpBTW0xTExTNE5WdEpvSmlzZHEyUDNOWlJKMEti?=
+ =?utf-8?B?MmtoR1BYRUlUaWpQRnViU3kvMzIvMi9JSTlJSVBZekJMbHdXNEZJSzV4c1RZ?=
+ =?utf-8?B?bThGRWc4TU1NZ2xDUG5SdGU3N0dqL0hlTmFEbzAzWTJ0TnRUUWpjMUdiK0xI?=
+ =?utf-8?B?WlhMMDhNT0kyUTNPbGhYRFVmUDhBa1pzOTJlQnBlQmNSSjIzZWxLbjN5dWlo?=
+ =?utf-8?B?dXM4S0RqWTR4VjAzNzh3WnZkdUxyZ2JTV000YURjR1c5K2UxWTVnaDVpTDM5?=
+ =?utf-8?B?aVRCdVdVMVdDWVlKYzdmTjBZQXpMaW00MmQ0MXRuRzBCdzBmUXA0S0xNZHds?=
+ =?utf-8?Q?oi99KGW0MOh96jSMZv9zJnw=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: ov5675: Elongate reset to first transaction
- minimum gap
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Jacopo Mondi <jacopo@jmondi.org>, Johan Hovold <johan@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240711-linux-next-ov5675-v1-0-69e9b6c62c16@linaro.org>
- <20240711-linux-next-ov5675-v1-2-69e9b6c62c16@linaro.org>
- <fcd0db64-6104-47a6-a482-6aa3eec702bc@cherry.de>
- <CAPY8ntAgjnA2NFRG_qaDnHvzWVX_VJ8ONCVvuJhPQgvSxwD0Uw@mail.gmail.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <CAPY8ntAgjnA2NFRG_qaDnHvzWVX_VJ8ONCVvuJhPQgvSxwD0Uw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR18MB4339.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f336b5d2-455b-4d42-f5eb-08dca19c1bbc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2024 11:25:03.1599
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +zcLMHxffUxF+xjnvdWtQTthzAS49w3DuIjcoRNqNTa0z3lVox59Z8aXxyHGgKjEtQyQTrteckJ0VtCQ00B09Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR18MB6205
+X-Proofpoint-GUID: 4W7sd_R1CXNzO7p0nbFS--bk0ZJSfciR
+X-Proofpoint-ORIG-GUID: 4W7sd_R1CXNzO7p0nbFS--bk0ZJSfciR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_06,2024-07-11_01,2024-05-17_01
 
-On 11/07/2024 12:17, Dave Stevenson wrote:
-> Hi Quentin and Bryan
-> 
-> On Thu, 11 Jul 2024 at 11:40, Quentin Schulz <quentin.schulz@cherry.de> wrote:
->>
->> Hi Bryan,
->>
->> On 7/11/24 12:20 PM, Bryan O'Donoghue wrote:
->>> The ov5675 specification says that the gap between XSHUTDN deassert and the
->>> first I2C transaction should be a minimum of 8192 XVCLK cycles.
->>>
->>> Right now we use a usleep_rage() that gives a sleep time of between about
->>> 430 and 860 microseconds.
->>>
->>> On the Lenovo X13s we have observed that in about 1/20 cases the current
->>> timing is too tight and we start transacting before the ov5675's reset
->>> cycle completes, leading to I2C bus transaction failures.
->>>
->>> The reset racing is sometimes triggered at initial chip probe but, more
->>> usually on a subsequent power-off/power-on cycle e.g.
->>>
->>> [   71.451662] ov5675 24-0010: failed to write reg 0x0103. error = -5
->>> [   71.451686] ov5675 24-0010: failed to set plls
->>>
->>> The current quiescence period we have is too tight, doubling the minimum
->>> appears to fix the issue observed on X13s.
->>>
->>> Fixes: 49d9ad719e89 ("media: ov5675: add device-tree support and support runtime PM")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> ---
->>>    drivers/media/i2c/ov5675.c | 9 +++++++--
->>>    1 file changed, 7 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/media/i2c/ov5675.c b/drivers/media/i2c/ov5675.c
->>> index 92bd35133a5d..0498f8f3064d 100644
->>> --- a/drivers/media/i2c/ov5675.c
->>> +++ b/drivers/media/i2c/ov5675.c
->>> @@ -1018,8 +1018,13 @@ static int ov5675_power_on(struct device *dev)
->>>
->>>        gpiod_set_value_cansleep(ov5675->reset_gpio, 0);
->>>
->>> -     /* 8192 xvclk cycles prior to the first SCCB transation */
->>> -     usleep_range(delay_us, delay_us * 2);
->>> +     /* The spec calls for a minimum delay of 8192 XVCLK cycles prior to
->>> +      * transacting on the I2C bus, which translates to about 430
->>> +      * microseconds at 19.2 MHz.
->>> +      * Testing shows the range 8192 - 16384 cycles to be unreliable.
->>> +      * Grant a more liberal 2x -3x clock cycle grace time.
->>> +      */
->>> +     usleep_range(delay_us * 2, delay_us * 3);
->>>
->>
->> Would it make sense to have power_off have the same logic? We do a
->> usleep_range of those same values currently, so keeping them in sync
->> seems to make sense to me.
->>
->> Also, I'm wondering if it isn't an issue with the gpio not being high
->> right after gpoiod_set_value_cansleep() returns, i.e. the time it
->> actually takes for the HW to reach the IO level that means "high" for
->> the camera. And that this increased sleep is just a way to mitigate that?
->>
->> With this patch we essentially postpone the power_on by another 430ms
->> making it almost a full second before we can start using the camera.
->> That's quite a lot I think? We don't have a usecase right now that
->> requires this to be blazing fast (and we anyway would need at the very
->> least 430ms), so take this remark as what it is, a remark.
-> 
-> I think you've misread 430 usec as 430 msec.
-> 
-> I was looking at the series and trying to decide whether it's worth
-> going to the effort of computing the time at all when even on the
-> slowest 6MHz XVCLK we're sub 1.5ms for the required delay.
-> At the max XVLCK of 24MHz you could save 1ms. I know of very few use
-> cases that would suffer for a 1ms delay.
-> 
-> I know we all like to be precise, but it sounds like the precision
-> actually causes grief in this situation.
-
-Yeah the first draft of the patch just had a post-reset delay of I 
-forget - I think I just used usleep_range(2000, 2200); again but I kind 
-respected the attempt to hit the specification and wanted to fix the 
-original logic, which is close but no cigar ATM.
-
----
-bod
-
+DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEpha3ViIEtpY2luc2tpIDxr
+dWJhQGtlcm5lbC5vcmc+DQo+U2VudDogVHVlc2RheSwgSnVseSA5LCAyMDI0IDk6MDQgQU0NCj5U
+bzogR2VldGhhc293amFueWEgQWt1bGEgPGdha3VsYUBtYXJ2ZWxsLmNvbT4NCj5DYzogbmV0ZGV2
+QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj5kYXZlbUBk
+YXZlbWxvZnQubmV0OyBwYWJlbmlAcmVkaGF0LmNvbTsgZWR1bWF6ZXRAZ29vZ2xlLmNvbTsgU3Vu
+aWwNCj5Lb3Z2dXJpIEdvdXRoYW0gPHNnb3V0aGFtQG1hcnZlbGwuY29tPjsgU3ViYmFyYXlhIFN1
+bmRlZXAgQmhhdHRhDQo+PHNiaGF0dGFAbWFydmVsbC5jb20+OyBIYXJpcHJhc2FkIEtlbGFtIDxo
+a2VsYW1AbWFydmVsbC5jb20+DQo+U3ViamVjdDogW0VYVEVSTkFMXSBSZTogW25ldC1uZXh0IFBB
+VENIIHY4IDAzLzExXSBvY3Rlb250eDItcGY6IENyZWF0ZQ0KPnJlcHJlc2VudG9yIG5ldGRldg0K
+Pg0KPk9uIEZyaSwgNSBKdWwgMjAyNCAxNTo0NjoxMCArMDUzMCBHZWV0aGEgc293amFueWEgd3Jv
+dGU6DQo+PiAgLi4uL2V0aGVybmV0L21hcnZlbGwvb2N0ZW9udHgyLnJzdCAgICAgICAgICAgIHwg
+IDQ5ICsrKysrKw0KPg0KPllvdXIgZG9jdW1lbnRhdGlvbiBpcyBpbnN1ZmZpY2llbnQuDQpXaWxs
+IGFkZCBtb3JlIGRldGFpbHMgaW4gbmV4dCB2ZXJzaW9uLg0KDQpUaGFua3MsDQpHZWV0aGEuDQo+
+LS0NCj5wdy1ib3Q6IGNyDQo=
 
