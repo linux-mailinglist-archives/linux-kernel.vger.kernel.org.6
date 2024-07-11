@@ -1,107 +1,179 @@
-Return-Path: <linux-kernel+bounces-248898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE62892E368
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:27:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C397D92E36F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E04901C21BCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:27:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A38A28598F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E021E155A52;
-	Thu, 11 Jul 2024 09:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE12155CBA;
+	Thu, 11 Jul 2024 09:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="dC4WnT3x"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xloc13dx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D191BE6F
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517F714039D;
+	Thu, 11 Jul 2024 09:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720690014; cv=none; b=RTxlotg8tX3J53gYGe5aH4T8vBBLEkogaKB/cKqzXfnREObNs+mSDY22C9TY/ZQdsCtkjkzLDi1UiMdkqyOxYhF++vvZuMy179Z2P80zkynw7PckN8mpvLI5oxX0vLwcgH2bCISehDIgQH/VNs8JFuKSyO9pcrVS0szKPv2olJs=
+	t=1720690163; cv=none; b=g566OY8TFStyAnu+kRD8+5akEtEO5ppDZdBbTMFHwI5VJbLxr2A1JHivnIjIWwSJq/WyrpEeNXNsTZFgnPC2GnbPKhRY3TVCXuZPiO2+sieG9FMlGdBAjLXJr00cJ0ZHd9VnNPXxeAn7TrpzRe+ApuovZHyfwI73O0e1/fRhNNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720690014; c=relaxed/simple;
-	bh=2tFtKgxNYDhaOhDDfnqF4Tr26RPT96HhtvIaZw5Jfrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RMixYGCjhf3a3+gvu6f9DMA3AOiw7LUIYmNqBc/WctkAR9+BJKtSQYfpZZ7RGpPsz3zlCaaIcCoGbOWqlDD11hAV3FwAnp5HS7TQqm3Jy0GypG83zSF7A1kBABQoeLdY/LUYMQRHJRW1nwCQ+YeO4K2RRO91CzbonLC396RlzWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=dC4WnT3x; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=z++z
-	4PsmWomeVqtniGIkn0Y3nNRWhrQ+aa2t3xfmEjE=; b=dC4WnT3xETrUxe4YSQvV
-	yzuEM6+/vVIic2Vf7vI1X6W9et7uxOF4ApYwLqR7QDHTbIC/Ad1ezPRiel6gNa0e
-	IAxxS19zhUul/NGEbWHmi4smOSXX76ogZ3KkgdS8vTt7dKwKbshVE1iYKDare0ao
-	5WpXNn8n98ES3LtX2pfPtIiBBV+hidfN0agQx9Rhbvi0blxWb2fn6I6OqD1RlG3y
-	vl6Cyyo9cO1kouICtjngiO6S7Iys3ftpAJoTMC/bBl+PwmYuZQFYYGqXQrvmYUKb
-	o24d3MEaMWxALFu3wPR+I5hzxLeHFTpv7ekOPyvFWtFWENzUIWkqBNHir/JR5h4q
-	nA==
-Received: (qmail 793755 invoked from network); 11 Jul 2024 11:26:50 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jul 2024 11:26:50 +0200
-X-UD-Smtp-Session: l3s3148p1@hEPTXPUcgK8gAwDPXwmZAIsFIv4n+Dpm
-Date: Thu, 11 Jul 2024 11:26:50 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-	Alain Volmat <alain.volmat@st.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: mark HostNotify target address as used
-Message-ID: <Zo-lWi3EtRoJa6kk@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-	Alain Volmat <alain.volmat@st.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20240710085506.31267-2-wsa+renesas@sang-engineering.com>
- <c8f837f5-16b1-a5da-c687-a95d2ec42fa0@gmail.com>
+	s=arc-20240116; t=1720690163; c=relaxed/simple;
+	bh=Ez45eI0vWZmvYDv9iC2voRpQwzU9akAGjvrbYSvICJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=R0eJCZLfbhoCb0jtJYLsuNDF/Do4s1T2HN75RWczu0rEtLypsgwmAVtI6aVtqahT6uZouHVNnkFi0HFA2r2+c97mg4yLl8tYXjzdy+G7qi1zmX+pyRQNrMWmXwUCGDJW1JvpZi+hc+E8ZNhuNi1Ed+zt3a9OItk7Vj2TtcJ7Y3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xloc13dx; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720690162; x=1752226162;
+  h=message-id:date:mime-version:subject:references:from:to:
+   cc:in-reply-to:content-transfer-encoding;
+  bh=Ez45eI0vWZmvYDv9iC2voRpQwzU9akAGjvrbYSvICJ8=;
+  b=Xloc13dxLBB1+dcn4LwCxFuctjADzNY2rui35z1rpN8UOAtN9qHSE48f
+   et53Aocl7V4/pikNSFQX3GcMIvXoq500HXmmNRWMCxZcsYoQeNWUjqe/B
+   FSHopbtBIFXBUaHr00DENjswUOHR9rE/yd8xClh/vkfQKCFVgNVc7D+zI
+   l0H/5EFvLxszkvaj0dCJ3wounWVtQKaYbZ9iyzYXKQd5uyPQCCaprdeYD
+   5XZhMv90xz9psKXXxRCFtwFMvymVJcScCRaomG1ywESPMyo7SVNFxhlr8
+   VBu+NjrFQMxEETbXU6Oqeoe4dPNlzJ2IUbsek/C7wZsDCBmE3ZKGujNOP
+   Q==;
+X-CSE-ConnectionGUID: /+hLMd5jRvOvTNmkhwqJiA==
+X-CSE-MsgGUID: 20OVsiXAQ56h53cp0UaGLg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="28651643"
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="28651643"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 02:29:21 -0700
+X-CSE-ConnectionGUID: 83SxTHjcTcOl5ltQZdRcwg==
+X-CSE-MsgGUID: 0ikLMkX/Q1+3583xpKwHng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="48397425"
+Received: from yma27-mobl.ccr.corp.intel.com (HELO [10.124.229.108]) ([10.124.229.108])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 02:29:17 -0700
+Message-ID: <eb2808fe-6f11-4bc2-8931-fcd8bd89600a@intel.com>
+Date: Thu, 11 Jul 2024 17:27:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ghnN+7tU7NIdeHXq"
-Content-Disposition: inline
-In-Reply-To: <c8f837f5-16b1-a5da-c687-a95d2ec42fa0@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240703143311.2184454-1-yu.ma@intel.com>
+ <20240703143311.2184454-4-yu.ma@intel.com>
+ <CAGudoHH_P4LGaVN1N4j8FNTH_eDm3SDL7azMc25+HY2_XgjvJQ@mail.gmail.com>
+ <20240704215507.mr6st2d423lvkepu@quack3>
+ <3c7a0cd7-1dd2-4762-a2dd-67e6b6a82df7@intel.com>
+ <1296ef8d-dade-46e5-8571-e7dba158f405@intel.com>
+ <CAGudoHGJrRi_UZ2wv2dG9U9VGasHW203O4nQHkE9KkaWJJ61WQ@mail.gmail.com>
+ <0b928778df827f7ea948931c3358616c8e7f26f7.camel@linux.intel.com>
+From: "Ma, Yu" <yu.ma@intel.com>
+Content-Language: en-US
+To: Tim Chen <tim.c.chen@linux.intel.com>, Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ edumazet@google.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
+ tim.c.chen@intel.com, yu.ma@intel.com
+In-Reply-To: <0b928778df827f7ea948931c3358616c8e7f26f7.camel@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---ghnN+7tU7NIdeHXq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 7/11/2024 7:40 AM, Tim Chen wrote:
+> On Tue, 2024-07-09 at 12:17 +0200, Mateusz Guzik wrote:
+>> Right, forgot to respond.
+>>
+>> I suspect the different result is either because of mere variance
+>> between reboots or blogbench using significantly less than 100 fds at
+>> any given time -- I don't have an easy way to test at your scale at
+>> the moment. You could probably test that by benching both approaches
+>> while switching them at runtime with a static_branch. However, I don't
+>> know if that effort is warranted atm.
+>>
+>> So happens I'm busy with other stuff and it is not my call to either
+>> block or let this in, so I'm buggering off.
+>>
+>> On Tue, Jul 9, 2024 at 10:32 AM Ma, Yu <yu.ma@intel.com> wrote:
+>>>
+>>> On 7/5/2024 3:56 PM, Ma, Yu wrote:
+>>>> I had something like this in mind:
+>>>>>> diff --git a/fs/file.c b/fs/file.c
+>>>>>> index a3b72aa64f11..4d3307e39db7 100644
+>>>>>> --- a/fs/file.c
+>>>>>> +++ b/fs/file.c
+>>>>>> @@ -489,6 +489,16 @@ static unsigned int find_next_fd(struct fdtable
+>>>>>> *fdt, unsigned int start)
+>>>>>>           unsigned int maxfd = fdt->max_fds; /* always multiple of
+>>>>>> BITS_PER_LONG */
+>>>>>>           unsigned int maxbit = maxfd / BITS_PER_LONG;
+>>>>>>           unsigned int bitbit = start / BITS_PER_LONG;
+>>>>>> +       unsigned int bit;
+>>>>>> +
+>>>>>> +       /*
+>>>>>> +        * Try to avoid looking at the second level map.
+>>>>>> +        */
+>>>>>> +       bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
+>>>>>> +                               start & (BITS_PER_LONG - 1));
+>>>>>> +       if (bit < BITS_PER_LONG) {
+>>>>>> +               return bit + bitbit * BITS_PER_LONG;
+>>>>>> +       }
+> I think this approach based on next_fd quick check is more generic and scalable.
+>
+> It just happen for blogbench, just checking the first 64 bit allow a quicker
+> skip to the two level search where this approach, next_fd may be left
+> in a 64 word that actually has no open bits and we are doing useless search
+> in find_next_zero_bit(). Perhaps we should check full_fds_bits to make sure
+> there are empty slots before we do
+> find_next_zero_bit() fast path.  Something like
+>
+> 	if (!test_bit(bitbit, fdt->full_fds_bits)) {
+> 		bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
+> 					start & (BITS_PER_LONG - 1));
+> 		if (bit < BITS_PER_LONG)
+> 			return bit + bitbit * BITS_PER_LONG;
+> 	}
+> Tim
 
+Yes, agree that it scales better, I'll update v4 with fast path for the 
+word contains next_fd and send out for review soon
 
-> > to the dummy driver so it will marked as "handled by the kernel" if the
->                                 ^ be? :-)
-
-Yes, thanks!
-
-
---ghnN+7tU7NIdeHXq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaPpVkACgkQFA3kzBSg
-KbbR+BAAgn9mPsdzPbBoJIYSuxAskuiXX+VC3m3aVXtcCy7BhOSgUg/dUkug9Ze6
-wXBehGmaeANq9SN3GjyW4AEozsOHW/DTqpnT6M9x0h7vl1UWGZsJKvlPKwub5YR1
-mLkzsTOnH120WIe2iCE+S1//Ljk90HNrODB9WwRLryQ0+48ZAzC4tnRHCVcJHH/V
-Np8dCfD7+Ac8FxpYdymgOqx2nXWpI9KGgOKvWROnreOE2zr5ShMC+/3pC1OjBWMk
-UZK205a8UoF8oQjavTqnG+k92kwydjYMiFy5SoXK47ODoU+LDoc30ZfWSOxMhEkk
-bIbO0qil9VjYYuOBqI3TA4KjKQ8okoAQFdF+gmCnJ0yK4xaSktrQO+IJY1LDEJMs
-scfiohh4IdJBKD7ZxNuS6s5BGtLN7yE/RdNq5CAXAFQ+Afssk2jWlFt1yr6oVMk3
-VPzkkt8JXIbAVoVeunBIbR/AE6jgpLi1FY2dFK+DJAdf+ex/xl3oHdn/p6DbTv9M
-HvuAOIUK7b0QkfHqcR9ZA8ceCQKkHhv+PIReXXei64DRrQWbosU+PLBJuVAbekvQ
-Y+TdN2ju+se4yvXm9K0MsMVDJrzpwX9fQB2YAT5hnJQX0Y6MKCUOd6ZaWL4sxYWR
-p8rkakj8FSYCn62Lf1ATEkc2+6ef1hMbDtvWwCPDEUnrgEkM9YA=
-=Z9sf
------END PGP SIGNATURE-----
-
---ghnN+7tU7NIdeHXq--
+>>>>> Drat, you're right. I missed that Ma did not add the proper offset to
+>>>>> open_fds. *This* is what I meant :)
+>>>>>
+>>>>>                                  Honza
+>>>> Just tried this on v6.10-rc6, the improvement on top of patch 1 and
+>>>> patch 2 is 7% for read and 3% for write, less than just check first word.
+>>>>
+>>>> Per my understanding, its performance would be better if we can find
+>>>> free bit in the same word of next_fd with high possibility, but
+>>>> next_fd just represents the lowest possible free bit. If fds are
+>>>> open/close frequently and randomly, that might not always be the case,
+>>>> next_fd may be distributed randomly, for example, 0-65 are occupied,
+>>>> fd=3 is returned, next_fd will be set to 3, next time when 3 is
+>>>> allocated, next_fd will be set to 4, while the actual first free bit
+>>>> is 66 , when 66 is allocated, and fd=5 is returned, then the above
+>>>> process would be went through again.
+>>>>
+>>>> Yu
+>>>>
+>>> Hi Guzik, Honza,
+>>>
+>>> Do we have any more comment or idea regarding to the fast path? Thanks
+>>> for your time and any feedback :)
+>>>
+>>>
+>>> Regards
+>>>
+>>> Yu
+>>>
+>>
 
