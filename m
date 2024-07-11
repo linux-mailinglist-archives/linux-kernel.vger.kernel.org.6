@@ -1,111 +1,116 @@
-Return-Path: <linux-kernel+bounces-249810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A3D92F025
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:09:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDBC92F04B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1ACF1F227FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:09:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70481B22989
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F40C19E830;
-	Thu, 11 Jul 2024 20:09:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A76149000
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB1D19EEAA;
+	Thu, 11 Jul 2024 20:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="JCjoJJ4+"
+Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2C412B171
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720728558; cv=none; b=gUbljXSTnD2ZfcVr9gnLDOtiZf3TtqiA9iYUPWpUe9E7fMVRUwV1U4lgSeulAenx51CVDzpSrbcDoLBnxG1va6xDEiL6e63E6EcUtEwAYPDwfzRMU5cBaIvfUr/WXrT8Oc5noT4LuhKsaERteDUA11BEdhB+YYGfbq710LH7qrE=
+	t=1720729646; cv=none; b=fR4nG8AWqly4cWLSBR+P4+Del9FXDmHCc1yf69Agch4MAVHu+lfsMhkb0Xg2rEX2lO+Db3CAb/XsaV0oA4Ccwcy0i5sdseYKJRKPAI9BDydRpKt8EZJ+lj5O1b8I1JfHBvEJQfKMeCu+3jUPKu8ZEjejDfw/ad4ItDnmMjYoVeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720728558; c=relaxed/simple;
-	bh=IQEMcvQA4q5UdFL8E3k7bSfozbC0sE/EVwt+B8J4d+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XYVVcMIuDe2sQlZoSr9OEBCtXYuX7wjJ0PcUB5osCb71KiyWwdapTh/xEYzyaL84iFW55hX4j6Hcmegnosg41MH4DbbcAJetdXhtIOVNOL7gc6ra/ZmZnTAfL8p7KtQhxR34KxCRqBmclRdqK6NIwD2+USOnCcdFzayT0HHeD2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAF421007;
-	Thu, 11 Jul 2024 13:09:40 -0700 (PDT)
-Received: from [10.57.91.215] (unknown [10.57.91.215])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A365E3F762;
-	Thu, 11 Jul 2024 13:09:13 -0700 (PDT)
-Message-ID: <455ccc97-11bd-456d-92b3-b7c8fe4c8d9a@arm.com>
-Date: Thu, 11 Jul 2024 21:08:49 +0100
+	s=arc-20240116; t=1720729646; c=relaxed/simple;
+	bh=chDJJJWbG8wbMscp9nEe5dSFB9fITJITeU+CsbfKuXM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Vp60KpMRstZq4ieekspuX3nnven+CLoaSq52Cr0mN43+0Hvdfw/c+q8wokpwTwcsiQhU+bHBz+PekMhTCIb4vfXTMNlAtDEmbCUbR1gTIB+J10pWI+Lc0v7G0utUiDid+t3P0MDKKxwYD9d4G4ZiDGTGQidaJDxxfEu8sF+aiqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=JCjoJJ4+; arc=none smtp.client-ip=82.195.75.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
+	s=smtpauto.stravinsky; h=X-Debian-User:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:References:In-Reply-To:Date:Cc:To:From:Subject:
+	Message-ID:Reply-To:Content-ID:Content-Description;
+	bh=chDJJJWbG8wbMscp9nEe5dSFB9fITJITeU+CsbfKuXM=; b=JCjoJJ4+S/g3rbeO00+Ps4ymIL
+	UG/KHIHSPhXHf0zQepCJMqEQYa3WrOqLTZUhAR61mCRmnWiXZjcW3yMY1r6JsGz3p58CGPk1LZS9f
+	53GdlmnUrf9hOM/RvFLFZCm9FHXD/x7gbRbDICuJfGBx39IqNxC6EQF9xKoVY8YPVzAeofzANVWAO
+	pvmI9z4wjItOuHgX6rnYTWVfadkDua9avN90GgH3OUn13kzGqZG9PalOnK/2Uc9Ab+GeRwwAyUyp3
+	jWfFsmp8YjFg70bRGVEgt5cw6wssYaaWNyURjaYFnq2z3Pg8r33gwmFCGLS1lTySrzAqA+B0z9wJ8
+	4uS+lz/Q==;
+Received: from authenticated user
+	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.94.2)
+	(envelope-from <corsac@debian.org>)
+	id 1sS07R-00An92-58
+	for linux-kernel@vger.kernel.org; Thu, 11 Jul 2024 20:10:21 +0000
+Message-ID: <2d7bd8b2b9736d4a7d0a26169978372b5e002a62.camel@debian.org>
+Subject: Re: [PATCH] mm: huge_memory: don't force huge page alignment on 32
+ bit
+From: Yves-Alexis Perez <corsac@debian.org>
+To: Yang Shi <shy828301@gmail.com>, jirislaby@kernel.org, surenb@google.com,
+  riel@surriel.com, willy@infradead.org, cl@linux.com,
+ akpm@linux-foundation.org
+Cc: yang@os.amperecomputing.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Salvatore Bonaccorso <carnil@debian.org>, Ben
+ Hutchings <ben@decadent.org.uk>
+Date: Thu, 11 Jul 2024 22:10:12 +0200
+In-Reply-To: <20240118133504.2910955-1-shy828301@gmail.com>
+References: <20240118133504.2910955-1-shy828301@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.3-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dma: Add IOMMU static calls with clear default ops
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Jason Gunthorpe <jgg@nvidia.com>, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev
-References: <98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org>
- <f2b699aea8fff5589a674da2a567fd593ed2d386.1720693745.git.leon@kernel.org>
- <28309b7f-9809-452f-95fe-3448c15bdf1b@arm.com>
- <20240711185741.GC1815706@unreal>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240711185741.GC1815706@unreal>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Debian-User: corsac
 
-On 2024-07-11 7:57 pm, Leon Romanovsky wrote:
-> On Thu, Jul 11, 2024 at 07:23:20PM +0100, Robin Murphy wrote:
->> On 11/07/2024 11:38 am, Leon Romanovsky wrote:
->>> From: Leon Romanovsky <leonro@nvidia.com>
->>>
->>> Most of the IOMMU drivers are using the same DMA operations, which are
->>> default ones implemented in drivers/iomem/dma-iomem.c. So it makes sense
->>> to properly set them as a default with direct call without need to
->>> perform function pointer dereference.
->>>
->>> During system initialization, the IOMMU driver can set its own DMA and
->>> in such case, the default DMA operations will be overridden.
->>
->> I'm going to guess you don't actually mean "IOMMU drivers" in the usual
->> sense of drivers/iommu/, but rather "arch DMA ops (which often, but not
->> always, involve some sort of IOMMU)."
-> 
-> Yes, you are right. I used word "drivers" as a general term to describe
-> everything that implements their own ->map_page() callback.
-> 
->>
->> If so, I'd much rather see this done properly, i.e. hook everything up
->> similarly to dma-direct and be able to drop CONFIG_DMA_OPS for "modern"
->> dma-direct/iommu-dma architectures entirely. Furthermore the implementation
->> here isn't right - not only is it not conceptually appropriate to make
->> iommu-dma responsibile for proxying random arch DMA ops, but in practial
->> terms it's just plain broken, since the architectures which still have their
->> own DMA ops also don't use iommu-dma, so this is essentially disabling the
->> entire streaming DMA API on ARM/PowerPC/etc.
-> 
-> Sorry but I'm not sure that I understood your reply. Can you please clarify
-> what does it mean broken in this context?
-> 
-> All archs have one of the following options:
-> 1. No DMA ops -> for them dma_map_direct() will return True and they
-> never will enter into IOMMU path.
-> 2. Have DMA ops but without .map_page() -> they will use default IOMMU
-> 3. Have DMA ops with .map_page() -> they will use their own implementation
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-Urgh, sorry, let that instead be a lesson in not adding needless layers 
-of indirection that are named as confusingly as possible, then. Seems I 
-saw stubs plus static inline wrappers, managed to misread dma_iommu_* 
-vs. iommu_dma_*, and jump to the wrong conclusion of what was stubbed 
-out, not least since that was the only interpretation in which adding an 
-extra layer of inline wrappers would seem necessary in the first place. 
-If these dma_iommu_* functions serve no purpose other than to make the 
-code even more of a maze of twisty little passages, all alike, then 
-please just feed them to a grue instead.
+On Thu, 2024-01-18 at 05:35 -0800, Yang Shi wrote:
+> The commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
+> boundaries") caused two issues [1] [2] reported on 32 bit system or compa=
+t
+> userspace.
+>=20
+> It doesn't make too much sense to force huge page alignment on 32 bit
+> system due to the constrained virtual address space.
 
-Thanks,
-Robin.
+Hi people,
+
+sorry for beeing so late. I've looked at this following the OpenSSH issue
+(CVE-2024-6387 [1]) and especially the impact on IA-32 installations where
+ASLR is apparently broken.
+
+There was a recent thread [2] on oss-security discussing the issue.
+
+Looking at the commit log I think the intention was to fix this both for:
+- - 32 bit process running on 64 bit kernels: in_compat_syscall()
+- - all processes running on 32 bit kernels: IS_ENABLED(CONFIG_32BIT)
+
+Unfortunately, as far as I can tell, CONFIG_32BIT is not enabled on 32bit x=
+86
+kernels. Maybe CONFIG_X86_32 would be the right one there?
+
+[1] https://www.openwall.com/lists/oss-security/2024/07/01/3
+[2] https://www.openwall.com/lists/oss-security/2024/07/08/3
+- --=20
+Yves-Alexis
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEE8vi34Qgfo83x35gF3rYcyPpXRFsFAmaQPCQACgkQ3rYcyPpX
+RFvSHQf/VE7td7scTTsrK7Cx0F3MmDLFgjUDbMDuyPq6lNQqnDbd2zc00JP1eeLs
+/mW1uZNbR92bn6xq2sPJu7c6tB3MJuiQme+ZqnPfIgyoWc89i6V6WUXTZN077lIl
+xJZxHLMei5KreHz66AYU66HdU89knMTcX362YyyI8dEZKXS3FlP0SLSoBM0UKY0G
+HYM6+GetE+fINhfNSMpHgqkTQB825Vqdq5UBsBjHYMg5RJ92/fDgUo5RD7qm/HVz
+SDDNSGwpVwYZ20RnnD+DOS9rsnyR4FcAP0m0dcTmQdM8GcY4SyjnEux5idvCicjy
+a1jmvsSLxCMZ9mZsrsipIZoNhSHlDA=3D=3D
+=3Df0Lk
+-----END PGP SIGNATURE-----
 
