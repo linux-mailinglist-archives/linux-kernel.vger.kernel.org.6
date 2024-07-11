@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-249106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F1E92E6BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:32:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A81592E6BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9698284EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:32:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45AAD1F277D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BC615EFAF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDF0167DB9;
 	Thu, 11 Jul 2024 11:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="B2kumLOo"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="r0C3YnWX"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1AA156225
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1A115B964
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720697291; cv=none; b=m7ABnQAUpuIuRggTrgM4BwTp4MRT4HOZR1Ela8y5yUrJFmCu9ckfO58T0/4hHmKXnh3KJKp1tc5Bm/j9VDuZkgxTh5SPJlOsL0hlKlBkHr197YgwOgwI0vbLjiFP/4eK9BYs1n+NtOkmIthLZVL0hE9ZxQOyC79ID7fNNT5gWrU=
+	t=1720697292; cv=none; b=oO9W2OKB0w9NFe5/yjftWn5JEKn+Rpf4Y0dbRRGI3Q2QqU0BBt0MOLOKJUdpgktfo3hx18zk6WrPA9YvhoJwSwyZNX6aMnwEJobWGSdfrsP5zcf8CvAxzXFOVaVCAGhEmq1x2dCWn8KJbP7u2AhjkxXaoFhICZPfFKtDRxLoXCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720697291; c=relaxed/simple;
+	s=arc-20240116; t=1720697292; c=relaxed/simple;
 	bh=ue/D6aaMj20smtKi2jAbMVRAEMMLERO+XAiZ94XCja4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ryeR4Sleyj1IIjgdq7Psu42ztXok19aPsLsab3nVqg76Og3n1eyGvIjoI2P1uQVfXHu1RBrfEPfWOg8KiXXcEYIUOnj0kThLsxBSE52u/1M/KVaFnNMg08YedVmo72d70giR1bZwPHP+2lDQKl/HkCmvotNEf/EW9vJSjX/5WKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=B2kumLOo; arc=none smtp.client-ip=209.85.160.177
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DFkjT4+QuV6jK6xRqQEDBVOUg9F/NPlgKAnWR/06+hncB3PtLXvUq4j5d1ABXxm8b2kwc/vxDKUHpZ5RJg/bkFFilRdBzzWRH3ztrKAMHI1bICbN/vyk1aVLUX/j9lbijRnpwK5IeUtFgCbQl2THTZTxr+5oJMNRC2KOMT430uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=r0C3YnWX; arc=none smtp.client-ip=209.85.217.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44ad1c9fb04so3899981cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:28:07 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-48fefaf11f9so254244137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:28:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720697286; x=1721302086; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720697289; x=1721302089; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
         bh=n4IagqgBEWB1oo5Cqg5iaPlJgTTeYOkk6mC1e1sE7v8=;
-        b=B2kumLOoBZfQagH4WlbhIsn9jGu5A1BZzCWcEW/vunpuURyNNk+6+a6b2BDitqk8Uk
-         Vx6sL7JUYuphwYkssiTDthhCRzgKmB1ED69ZcE5sRfDs3Dx6TKddhStqkna/1jp66L1h
-         Yz2y2xz79H9CW42YAzbgMCg9rBUsmsXQG2PwYL6kp5TolIR8j3Zd0M7qWA1gEiY8soDV
-         ur4QEFIvEGYjtuRmEWFH0XPu3eElYrHIWzNRHwYGT7dikNOKdMeI8AkWdxSm/MLfZH4q
-         RbXXZS0206wWcHSzjKi7xuceR8HKVJHM3VlUOk2VBxB35q2lffge5I0APCsl/DbO372U
-         XOQA==
+        b=r0C3YnWXAJsxJkmItfRo5ybrRyuMf29JIRjN3bMrW9xlXMrtswSLUSom17XDNtRzH9
+         LmtPZ8BBn1rHmF6lDTts+a0M2QsxbFHONkc9efTku7unyMx4zZnSNAI8INo94D8RchbU
+         QeWaq/lrez2BxqO/WbFJXma/TRhVmalOHJfgUOTyBEMzpZEOIOmpFkSSR3I5fjwipDqg
+         V4dNccCRMMt0jlGi/RyUdcIcHajUEKAWrvWFHY0jVse+zgHCwD30tYb886vIThPWG/Vf
+         yWd3hO5IwugiPdYai51yqYEFqNRzxkpyElLz35sVHSUiZmjKAqn2E5jkM2a4v60cjj3c
+         AiIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720697286; x=1721302086;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
+        d=1e100.net; s=20230601; t=1720697289; x=1721302089;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
         bh=n4IagqgBEWB1oo5Cqg5iaPlJgTTeYOkk6mC1e1sE7v8=;
-        b=kFp3DdzmZegSy/MsMjERGs7V9xkDFv7VVvWJjx5gleEn2mwX+E9IQDlXeVf8j7JjLo
-         ih1xh7DDO+iKATRc9ixSEQj9qaQuLHJuROxrirFlPZ7F951AXJl72bJ9WbB+QBYXMy8l
-         tn/dgF1LNN7xyBKtT3V0vlCfhekMqHXc5pLFQxn9T3WQVAfM4UXJebwLf7WFzgc5S30a
-         Fy8R8VY3QuvpMUray+XY8zOYLLi6kcU/xAKcNXVgHOXP8iGW890ihQ3GOZ6AUHIrEX4e
-         erMSMU3yJ9lCYD7Yz54dYOBSZ2I/HDGQre6bERowmDFYuKXVDTn5VGQDPiuuFbyLz+Fo
-         adkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZqLw4ME5YPvotv2Sklm7Da0K0W8tSTzh5xITq86ocFTYN5enGA0qur0AJGMxBPgbY3yZAtUquz+fRpPqjcYin5Hi1xTiBlZuPYis1
-X-Gm-Message-State: AOJu0Yy9/2X4mkJH6Rk1FGLEOsI/yv8LhCevaNCw8fapCaJlpLUiGpn+
-	9xNg8ZV4AxBzuCMFylFcKytm3aoOfvPz+AMzWVONCa5e/9Pkk2C2EkyQyXKfSK8=
-X-Google-Smtp-Source: AGHT+IGWL63JOeSzdCwUk8BUGlsc844oQVV8aJNmtUwKqG3hECJfCelzieYR6PSvclWPksawC9mUZA==
-X-Received: by 2002:ac8:5910:0:b0:447:bf9c:3ea8 with SMTP id d75a77b69052e-447faadc5dbmr90068481cf.65.1720697286688;
-        Thu, 11 Jul 2024 04:28:06 -0700 (PDT)
+        b=PtaNHqEKtQX7x0H7cLo/zfpy6AYEPEmZHTM6zoWfSA789SnoZbJhf4O9dCp8YBb/nJ
+         bvZXB9ANpEzn/9DQIZaptbAQ8edPLHg33SLE+/3Jmgc4hrODakXFFNVMOg8VAE2VWM4U
+         edK/zvyL3d4Br5xUFMosZAAmoJcvOL2E19FMWvW8Y5jKV5rlU/iDbJ/8Dc3ZbKYXy6uk
+         XNQOfxd30T9oBBBP/oP2KphKjpBoTh6MkjxSSABIUKao3DIr5ifreDF492XOcuKLB5UD
+         2k+Hzt1fWIobWyODBR7p+91W33x/sdZZds0EKeUe3jL+krrtqLwHiINzZmubB6QfjZoC
+         uLwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmRDh5Ku4exoH2m6DKkOTC3ywsf0byXGobOqz0PDzh/8r660psQ1o51fiWdm+Nd/YUQIeXTFJCsw52B0sIDvJ8qt+zoWf7dor3vRdb
+X-Gm-Message-State: AOJu0YwfOot+xSJ3bExzZDGzBhSx4kFsy4FNtuouWGqYOxfn9XoGbpfG
+	RALgTD/T9Zj1VlHLD6/Y9y6cx0BRMsWe+5+w5EJB/hChEkS6FOX8kXdF3swy/r8=
+X-Google-Smtp-Source: AGHT+IE64NYEOMzUTR1HNV/M/f92iVl/wBjraeYffY438wDyec46/vZDcyXmkgrZkYcLIj4zwnmaVA==
+X-Received: by 2002:a05:6102:38c6:b0:48f:9751:198b with SMTP id ada2fe7eead31-490321f8006mr9003557137.23.1720697289268;
+        Thu, 11 Jul 2024 04:28:09 -0700 (PDT)
 Received: from megalith.oryx-coho.ts.net (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b3d293sm29021281cf.25.2024.07.11.04.28.06
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b3d293sm29021281cf.25.2024.07.11.04.28.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 04:28:06 -0700 (PDT)
+        Thu, 11 Jul 2024 04:28:09 -0700 (PDT)
 From: Trevor Gamblin <tgamblin@baylibre.com>
 To: Michael Hennerich <michael.hennerich@analog.com>,
 	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
@@ -72,9 +74,11 @@ Cc: Trevor Gamblin <tgamblin@baylibre.com>,
 	linux-pwm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Subject: [PATCH] pwm: axi-pwmgen: add .max_register to regmap
-Date: Thu, 11 Jul 2024 07:28:01 -0400
-Message-ID: <20240711112803.3942189-1-tgamblin@baylibre.com>
+Date: Thu, 11 Jul 2024 07:28:02 -0400
+Message-ID: <20240711112803.3942189-2-tgamblin@baylibre.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240711112803.3942189-1-tgamblin@baylibre.com>
+References: <20240711112803.3942189-1-tgamblin@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
