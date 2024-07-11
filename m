@@ -1,186 +1,237 @@
-Return-Path: <linux-kernel+bounces-249837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE9592F091
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:59:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D37992F093
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BFE21C2287F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:59:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF372B23031
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA31A16EB67;
-	Thu, 11 Jul 2024 20:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1644E19E811;
+	Thu, 11 Jul 2024 21:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CiebzYfJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uQhgwhHm"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EFC16DEB9
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979041509BC
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720731565; cv=none; b=ROcW2xGr8EKh13R1kc3mp1qdEi7b50vfJONL0ovHno3O1pQHpIFIxy3zjiV+C0WRMv1+Q20TA4yJ6S5OoG+/VbS0FC+ITAA7YsR4MLKJd0iMkWZQcdzCXWPK+4PQotlLqR1+8t1zQfFtQHMDcFhuTLpZfNABNNYfiQSfJE2N/Xo=
+	t=1720731636; cv=none; b=iiekWw4fDgfyx83aXsWHaKdcjb96nJj842aVWSGrSSJ3KVPAabbvFrdwVkEzFDFAc/21APYvBLBnSI1R9BGOp0drPOwh76bJUhcMMUnwmTXmBFQ9CP58ZlKzRwAfRc1RQS2HgcX0ku9l81ALaX8ly84daWvWMgBPB9gb4TDc1Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720731565; c=relaxed/simple;
-	bh=QQsgAsDAjlmdZlcOkXsBLSszukt65MSwcRGa9RewC/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B2Bkz+w+bfmQL0xWqDj1Gwqj8ollj5qb+OyVgHbQdpfmFer4au0ZfdNJjdG8QYIM6HHgIwUPofX/wxAf2SEGCaOiM8PqKgIegRaKtIqApr2oEVwl0JnpJzkato0L9r50+mnpyoUCBi362iH3T+M6CjY6+OLpP6xpQVw3SOpL6cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CiebzYfJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720731562;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LZQ+a9DmpNAaUKr5Arm0el2gXwdPADPIa0ljBv25PlY=;
-	b=CiebzYfJzn4VfbHCGrsTCeHZjdZKEo9M/2xLBsL8G5gOKYeMgQ4CAGHrPV5QTyk+Op05M8
-	u/KudJi6AOd1w3bqccjKycaNudLqQ/6RMFa0pROaL/HbVd1OvBwcttg4c6L2IetOlN4NBG
-	ehZdiXbq8GB1HEKfzEEYmGX0AyPW17g=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-630-rh74hsqPPuKBP4XPkTV-7A-1; Thu, 11 Jul 2024 16:59:21 -0400
-X-MC-Unique: rh74hsqPPuKBP4XPkTV-7A-1
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7036c416655so1153863a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:59:21 -0700 (PDT)
+	s=arc-20240116; t=1720731636; c=relaxed/simple;
+	bh=TUygQ/+j8rAfw6jiMmkk22s71Mv2wILJNz65EiwAVSw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z/vzXfsH0CAmuRCDEBYE+VIhn0V1kpR2njJQa+0rISk33hlUlJlaB+tLWcSHbrjcXiHwatfrwM7ai/llm/J0UZJJcI+BKTidHJ9o/jlWoVCswmpw6sH+5jP3wCH5BhsPIVBtFvsJnORjRdcqUMXYapIoPzbZoovNR20m1s8NQ34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uQhgwhHm; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4266edee10cso8044135e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:00:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720731633; x=1721336433; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=66JmoF/QeR3DsXY/A2yKPCjdhMtDcQtWf+drZ4mBEhA=;
+        b=uQhgwhHmaF1quglWeD+MeIq38bPRQ9SyUJ8/3yuB5LKr+OCTFv1XjoIgoBz99sYl4O
+         P4hd5xHpOwGYQTjQtS/OY8dDnRqxYTe13kpMdoQNtqFgZ3Oh+inexAnfm9kUkBcZU+Gv
+         K1eFfKGCRYUxdTqjX0TbY8YYn7nYzP5YNMVGFBhvyT0s+YVEMYEd4yvnm3ACy1HYEbkU
+         DGw99+7u5G3RMGnhqK/2OtjHg1ZoZ9EKkNXyKPnrqQFkzZi1uamgKQoQFcMvJ98YSiX+
+         EcCsUDYlYAn94G4Z0CDORuvK4gwFuYM7P/bahWmGn2mgbrJjN49HTXepbAgq3nBpeuV6
+         eSYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720731560; x=1721336360;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LZQ+a9DmpNAaUKr5Arm0el2gXwdPADPIa0ljBv25PlY=;
-        b=VRezvZfzAKuX+ilNx0W4us8mJ893WWwC1uHd2/AScl5obhaiJcwS4+G5uz8dXvu7si
-         3E0U4u9o7YMmb3QOaK9C1bV1FcyYpXA2i3dw1DSWTbb7i3CBSIzT7dr2TEY1ZdRT/J1h
-         eQInxfbh0ODZezWZ0jAuWkHGf7x5ysTpvx/ByLqqU7RoAbgP6NAj4XMP0hBCbgvzTINf
-         S4tbmIB74DhkADDKdw4q5TujQ32ejCLtUbrBLsQbuEfXrErL6tUqd3Ug9HkYLQAfkHk/
-         Kdma+ryqnnI1FTGIjZsp55gs2q6NgURiLmATYVCh2syFGHp09nXJl+YD/w9NsanXE1np
-         d/cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhWwBr98NjeJ5ZKjt1Cn47RRUns1/Iv/j0juipD746aa5X4HPm2vffIeSPmI3C4Xn+dY8aR8VXgiVq62fWwwtqZTVTHI2bjMxwiIg0
-X-Gm-Message-State: AOJu0YyQKgAdvVoE1SB6Cw5GaEqq5cuwEZJnQ7uVFmiKEqG1TjtNiUqc
-	y39e0uEyf45FZxGo/EmvpDTKHnBuxnuQd2J7tSkfy5qPTYowDIfEPaZi07oEVC68CzD8p0y3ql8
-	zHVtAFjt2Hp8Kk/h/IzgVZMmQYM2V+0JPJ1dKS5S/LvBcRoJOF/rT+8ppLrd9ow==
-X-Received: by 2002:a05:6359:459f:b0:1ab:f2b3:f018 with SMTP id e5c5f4694b2df-1abf2b3f356mr829569255d.0.1720731560649;
-        Thu, 11 Jul 2024 13:59:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IES9jTxXw9aqKIz5yO9tX4m+yDeq6TI47YACdc8XKO2Tsd7kHzFe6TfXf8OAFM3rZSFS7A7pQ==
-X-Received: by 2002:a05:6359:459f:b0:1ab:f2b3:f018 with SMTP id e5c5f4694b2df-1abf2b3f356mr829567355d.0.1720731560266;
-        Thu, 11 Jul 2024 13:59:20 -0700 (PDT)
-Received: from [172.20.2.228] ([4.28.11.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-77d60117addsm4705877a12.20.2024.07.11.13.59.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 13:59:19 -0700 (PDT)
-Message-ID: <ac230cd8-11b0-48f2-94dd-6195967c08e9@redhat.com>
-Date: Thu, 11 Jul 2024 22:59:18 +0200
+        d=1e100.net; s=20230601; t=1720731633; x=1721336433;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=66JmoF/QeR3DsXY/A2yKPCjdhMtDcQtWf+drZ4mBEhA=;
+        b=og3uc8OzXPyRgJDQS4nGaMLEVEqYQiDgjxkymCAWiydHp4KKDE8yTLOXzYrPnOKG57
+         8WsvX8wT6V0Wu3vtQ7eRQW1iApeoG6k3+57W3CVaTj4jYvCVp5eTONWC+x367EUP4RBd
+         6XCMFmdwYySFsi/8sxvRZzNYvlYxFnxfoV7FK7a9Tan1B/hAQqI6+J90ATcPNEJAb79D
+         dHcD6TYTONVuAHH+x8foTVvvJStRIpRV1n7U10uoWgwKisR4xdgpGZIiQP585zkQZ+vI
+         Cryof2pS3veSC5J9OQ8BJxWN6i36LUsIuFnSedTE4wEpcqHSwTI3pmN0cRaKeMLxdpa/
+         0KPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKzzNdB6OMbXfxsiAY/o5AVy0oTLRWjMorho9Sno0HK9meMAcXQSIbkg3g/evxGihKb9t9l2gVmFLfkIG/Q5537tf4B4GCibR6HlJp
+X-Gm-Message-State: AOJu0YylWRf96Sbbdu8Y8Z7OhwMV0uS4voBt/jjE56ll6kQ42uKjhtU1
+	T0U9VQGjXI8kas8Z0ImHaGtMOgnkCMmJF54Z86WcfSxvJ98B433u/qsF1SWB+1jdw4G3scJ97Eu
+	gLtuh9+mVxgCDEg52r/CFSbwsXio9jB/2iOGU
+X-Google-Smtp-Source: AGHT+IHapAG+Jct6S7LNUUD+7jqXhZs5azzCnfIkvskET1tubguYLkqX2/UPvGInXhS7BA4uqni+7IG2uwUy4ekTEcY=
+X-Received: by 2002:a5d:4e12:0:b0:366:e1a6:3386 with SMTP id
+ ffacd0b85a97d-367ceacaa9fmr6076279f8f.44.1720731632563; Thu, 11 Jul 2024
+ 14:00:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
- lazily freeable mappings
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>, Yu Zhao <yuzhao@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de,
- linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
- Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
- Christian Brauner <brauner@kernel.org>,
- David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-References: <54b6de32-f127-4928-9f4a-acb8653e5c81@redhat.com>
- <ZpAcWvij59AzUD9u@zx2c4.com> <ZpAc118_U7p3u2gZ@zx2c4.com>
- <ZpAfigBHfHdVeyNO@zx2c4.com>
- <8586b19c-2e14-4164-888f-8c3b86f3f963@redhat.com>
- <ZpAqbh3TnB9hIRRh@zx2c4.com>
- <443146f4-9db8-4a19-91f1-b6822fad8ce8@redhat.com>
- <1c8632b4-06a5-49da-be0c-6fc7ac2b3257@redhat.com>
- <2c464271-1c61-4cd8-bd4e-4bd8aa01fa00@redhat.com>
- <CAOUHufYsxCb=taWWfUbuzi1Hmmug=ThQMoTjsxrtFkt=UXEu6w@mail.gmail.com>
- <ZpA-iuAItDxBSfBS@zx2c4.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZpA-iuAItDxBSfBS@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240710140057.347384-1-jfalempe@redhat.com> <20240710140057.347384-5-jfalempe@redhat.com>
+In-Reply-To: <20240710140057.347384-5-jfalempe@redhat.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 11 Jul 2024 23:00:20 +0200
+Message-ID: <CAH5fLgiVqSYcnS3b2=deGHg+VZk0RQK4HVBbrSrhxNMWYGUQ7w@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] drm/panic: Add a QR code panic screen
+To: Jocelyn Falempe <jfalempe@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
+	Danilo Krummrich <dakr@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11.07.24 22:20, Jason A. Donenfeld wrote:
-> Hi David,
-> 
-> On Thu, Jul 11, 2024 at 01:49:42PM -0600, Yu Zhao wrote:
->> On Thu, Jul 11, 2024 at 1:20 PM David Hildenbrand <david@redhat.com> wrote:
->>>> -       /* dirty lazyfree */
->>>> -       if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio)) {
->>>> -               success = lru_gen_del_folio(lruvec, folio, true);
->>>> -               VM_WARN_ON_ONCE_FOLIO(!success, folio);
->>>> -               folio_set_swapbacked(folio);
->>>> -               lruvec_add_folio_tail(lruvec, folio);
->>>> -               return true;
->>>> -       }
-> 
->> This is an optimization to avoid an unnecessary trip to
->> shrink_folio_list(), so it's safe to delete the entire 'if' block, and
->> that would be preferable than leaving a dangling 'if'.
-> 
-> Alright, I'll just remove that entire chunk then, for v+1 of this patch?
-> That sounds prettttty okay.
+On Wed, Jul 10, 2024 at 4:01=E2=80=AFPM Jocelyn Falempe <jfalempe@redhat.co=
+m> wrote:
+>
+> This patch adds a new panic screen, with a QR code and the kmsg data
+> embedded.
+> If DRM_PANIC_SCREEN_QR_CODE_URL is set, then the kmsg data will be
+> compressed with zlib and encoded as a numerical segment, and appended
+> to the URL as a URL parameter. This allows to save space, and put
+> about ~7500 bytes of kmsg data, in a V40 QR code.
+> Linux distributions can customize the URL, and put a web frontend to
+> directly open a bug report with the kmsg data.
+>
+> Otherwise the kmsg data will be encoded as a binary segment (ie raw
+> ascii) and only a maximum of 2953 bytes of kmsg data will be
+> available in the QR code.
+>
+> You can also limit the QR code size with DRM_PANIC_SCREEN_QR_VERSION.
+>
+> v2:
+>  * Rewrite the rust comments with Markdown (Alice Ryhl)
+>  * Mark drm_panic_qr_generate() as unsafe (Alice Ryhl)
+>  * Use CStr directly, and remove the call to as_str_unchecked()
+>    (Alice Ryhl)
+>  * Add a check for data_len <=3D data_size (Greg KH)
+>
+> v3:
+>  * Fix all rust comments (typo, punctuation) (Miguel Ojeda)
+>  * Change the wording of safety comments (Alice Ryhl)
+>  * Add a link to the javascript decoder in the Kconfig (Greg KH)
+>  * Fix data_size and tmp_size check in drm_panic_qr_generate()
+>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> ---
 
-Yes!
+Overall, it looks reasonable to me. Some comments below.
 
--- 
-Cheers,
+The changelog should go below the --- or in the cover letter.
 
-David / dhildenb
+> +       if (stream.total_out > max_qr_data_size) {
+> +               /* too much data for the QR code, so skip the first line =
+and try again */
+> +               kmsg =3D strchr(kmsg + 1, '\n');
+> +               if (!kmsg)
+> +                       return -EINVAL;
+> +               kmsg_len =3D strlen(kmsg);
+> +               goto try_again;
 
+It seems like kmsg will start with a newline character when this retry
+routine runs. Is that really what you want? Why not instead strchr and
+then do the plus one afterwards?
+
+This would also simplify the logic for why `kmsg + 1` doesn't go out
+of bounds. Right now I have to check that there's no codepath where
+kmsg points at the nul terminator byte.
+
+> +const __LOG_PREFIX: &[u8] =3D b"rust_qrcode\0";
+
+I guess this constant is because you're not using the module! macro?
+
+> +/// C entry point for the rust QR Code generator.
+> +///
+> +/// Write the QR code image in the data buffer, and return the QR code w=
+idth,
+> +/// or 0, if the data doesn't fit in a QR code.
+> +///
+> +/// * `url`: The base URL of the QR code. It will be encoded as Binary s=
+egment.
+> +/// * `data`: A pointer to the binary data, to be encoded. if URL is NUL=
+L, it
+> +///    will be encoded as binary segment, otherwise it will be encoded
+> +///    efficiently as a numeric segment, and appended to the URL.
+> +/// * `data_len`: Length of the data, that needs to be encoded, must be =
+less
+> +///    than data_size.
+> +/// * `data_size`: Size of data buffer, it should be at least 4071 bytes=
+ to hold
+> +///    a V40 QR code. It will then be overwritten with the QR code image=
+.
+> +/// * `tmp`: A temporary buffer that the QR code encoder will use, to wr=
+ite the
+> +///    segments and ECC.
+> +/// * `tmp_size`: Size of the temporary buffer, it must be at least 3706=
+ bytes
+> +///    long for V40.
+> +///
+> +/// # Safety
+> +///
+> +/// * `url` must be null or point at a nul-terminated string.
+> +/// * `data` must be valid for reading and writing for `data_size` bytes=
+.
+> +/// * `tmp` must be valid for reading and writing for `tmp_size` bytes.
+> +///
+> +/// They must remain valid for the duration of the function call.
+> +
+> +#[no_mangle]
+> +pub unsafe extern "C" fn drm_panic_qr_generate(
+> +    url: *const i8,
+> +    data: *mut u8,
+> +    data_len: usize,
+> +    data_size: usize,
+> +    tmp: *mut u8,
+> +    tmp_size: usize,
+> +) -> u8 {
+> +    if data_size < 4071 || tmp_size < 3706 || data_len > data_size {
+> +        return 0;
+> +    }
+> +    // SAFETY: The caller ensures that `data` is a valid pointer for rea=
+ding and
+> +    // writing `data_size` bytes.
+> +    let data_slice: &mut [u8] =3D unsafe { core::slice::from_raw_parts_m=
+ut(data, data_size) };
+> +    // SAFETY: The caller ensures that `tmp` is a valid pointer for read=
+ing and
+> +    // writing `tmp_size` bytes.
+> +    let tmp_slice: &mut [u8] =3D unsafe { core::slice::from_raw_parts_mu=
+t(tmp, tmp_size) };
+> +    if url.is_null() {
+> +        match EncodedMsg::new(&[&Segment::Binary(&data_slice[0..data_len=
+])], tmp_slice) {
+> +            None =3D> 0,
+> +            Some(em) =3D> {
+> +                let qr_image =3D QrImage::new(&em, data_slice);
+> +                qr_image.width
+> +            }
+> +        }
+> +    } else {
+> +        // SAFETY: The caller ensures that `url` is a valid pointer to a
+> +        // nul-terminated string.
+> +        let url_cstr: &CStr =3D unsafe { CStr::from_char_ptr(url) };
+> +        let segments =3D &[
+> +            &Segment::Binary(url_cstr.as_bytes()),
+> +            &Segment::Numeric(&data_slice[0..data_len]),
+> +        ];
+> +        match EncodedMsg::new(segments, tmp_slice) {
+> +            None =3D> 0,
+> +            Some(em) =3D> {
+> +                let qr_image =3D QrImage::new(&em, data_slice);
+> +                qr_image.width
+> +            }
+> +        }
+> +    }
+> +}
+
+This looks good to me. :)
+
+Alice
 
