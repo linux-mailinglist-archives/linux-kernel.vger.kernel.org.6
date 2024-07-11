@@ -1,194 +1,330 @@
-Return-Path: <linux-kernel+bounces-249749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5E692EF4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:03:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 976F592EF4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B8A1F21ACB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:03:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228F01F21F37
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0490A16EB56;
-	Thu, 11 Jul 2024 19:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F62715F40D;
+	Thu, 11 Jul 2024 19:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xGlubG/7"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2051.outbound.protection.outlook.com [40.107.237.51])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mIZ09Hrj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7AF1EEF8;
-	Thu, 11 Jul 2024 19:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720724599; cv=fail; b=Wfy9tPrO6efeRa/LqHx5cRUrplxIbp+2+7fSSOWg29dYYt78vVrGOiJYBgAteUdnWVap/sCN97tJtkKIEjP96/O49l3pJx39qxNIA8nnBcmnuYJn0ykNcUhcnRidbntyMMG4+Q47hfY87xPKcw3kZw9JlZuP3JCUvOTk0OZFoyg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720724599; c=relaxed/simple;
-	bh=PP0QpSUjQ0ucU9X39AbY6e/iJM6QZd4jNHodCxYEiPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=SnqMIn4HAsEWj/7x+nP09KnOPS3D8PKLx5Mmueal+93vmX/JKLPIwQPALQXTfH/i6QDuW3bJcjZcb4hccQL9tGhPgFeYsl2NLAq4Cz3a1mmBlDcMkEqa1zkOaLM7dgtvIkHxuKh3RPlj9e6NClJGrb+bkKl7CQLukGt3VLngaLs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xGlubG/7; arc=fail smtp.client-ip=40.107.237.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x6PxP+faxL8o8FLio2pAEK5m2gVJrPngbPLMqj8YSj7x2MJ7v3HoZd2XLKezM6zDF082qp38/IXuHz3+WveTc2bpb9QfjuF7NzgLMPIbn/YUpp/NS59IbeJK8u2d63yVqNlkgq9CnvZ7+fp32eWnK4XwoQpwG1+im+ZTcZJBku1sYB5jQb3YzNJutzwHifSeTDCzWYCrdvEhDtQvJEIW4q2Eyg8R4lpbUO08JK65lhEyI3LJm7h8IxW1RhnG5viJy0WA3l0SNZJPLr3nhleDkIvWSSm7eVZnBt4TumceI2ehghCzZTdymr6houWHRg94qLpr6WliUHDND1yIh2JjJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vkhurIWMcBIodzm7+8IKNLbMzrsV9b56DLzsusFAmEQ=;
- b=Z1dFyEl5WS4iTqjpQAcVklsJUPmOcHVRlr3STKOi2PmK6mZK2piK4sixiQr4tTDqxHlvsxzzON/JGodUQeCUuYhArKUwpQ9898dtEmth7/S1Ums75knw9fHIGJ4fS9pGpBHXweaBvcOcXT/bT3x8B6RIOwzE5QVnV3b/OtbO21fAfD77SMEad/W8k/wGZt+JQfu60sYWjgyOy7Jr21zHglXK4X7rqIYMktZXYqkMrySXgfNRRi8qqinIYl7K3B6ZT8GJiL6EFbNrUIhA6U+c+HKpx9v266JjJ42LaUSIlSG/IRVg5ddmzf/daZe1iY/d+716D95cg+5Z9CbfQxvNyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vkhurIWMcBIodzm7+8IKNLbMzrsV9b56DLzsusFAmEQ=;
- b=xGlubG/7HiSef4UU6d47T7Y1eaVpdF/m6rhVXMLbVQp5tqqo9sZzG9592WiKzhy3dmWQ30WwUpqydjxdcg53P+3MnfPWob1LuJLJHOw3gRHxQTc41VoYBxIQRNbJHu8C2SNiNgWjsbRhHfraM1AXZfiaUwtQfyODWraXp1WzFQg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
- by PH7PR12MB6740.namprd12.prod.outlook.com (2603:10b6:510:1ab::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Thu, 11 Jul
- 2024 19:03:13 +0000
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a%6]) with mapi id 15.20.7762.016; Thu, 11 Jul 2024
- 19:03:13 +0000
-Date: Thu, 11 Jul 2024 21:03:09 +0200
-From: Robert Richter <rrichter@amd.com>
-To: Alison Schofield <alison.schofield@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Address translation for HDM decoding
-Message-ID: <ZpAsbceUL-D7YJSR@rric.localdomain>
-References: <20240701174754.967954-1-rrichter@amd.com>
- <Zo8hJm7y9VIwhiDk@aschofie-mobl2>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zo8hJm7y9VIwhiDk@aschofie-mobl2>
-X-ClientProxiedBy: FR0P281CA0136.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:96::10) To CYYPR12MB8750.namprd12.prod.outlook.com
- (2603:10b6:930:be::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F3F15E5CD;
+	Thu, 11 Jul 2024 19:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720724627; cv=none; b=m+t//vjlnXPCQlwCYmswesTZC5lKfXMnJIDoEenhd5UOIxvFjJ256bbteGpSvnk5hGgnaAfLz0LHAcaDNyd+ODz7hOs6R6HJSQ3YC+A8u0GaBlkZr9DRVEGP85SPKb63c57QKoNur/xTPyNVITJMTikR5Lc87wWlR7H02zf5rec=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720724627; c=relaxed/simple;
+	bh=KjDHsBomUHrlcuMySZ8NJg7L3Q0FPnsN62pBzRy47t0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jIQ1i1l72R5NUCa5AS5JN8kTigbdlvfYutXLIAdVyC6JzIjk/nz/lgNIDomB13yColNlVFW9bv7aXd3LAET5UEgxkTzGT680k66QmZaVqUgYyJdQZ8quz5n/8lNFbXU7dqCQ14W5SMMmZVAFPCYvKb6sqiNPJNsPdAkIYEebAT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mIZ09Hrj; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720724625; x=1752260625;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KjDHsBomUHrlcuMySZ8NJg7L3Q0FPnsN62pBzRy47t0=;
+  b=mIZ09Hrjb1u9iUwYNZlLNYzs7f2Olat/9jaKCCdgdNO2lXxwqsL+TCoN
+   rBEgxvQWiSvCT9S0Un/Rqxo1Y01BzbxU7y+NlMBR7B3RUfQ4ygZI4CIzj
+   QPYI6ajpU/Yweaa62TNzrK/+G9Kc3ujjh6f6gkhJlAIoZDaVT+kYdJQjf
+   90FaW9PL2iSnnzUP2AOE+YnnpBq6Rh6r/W8kpqknkERsJHiWzyb3vUVOf
+   s/yFnElDA5vB2DbDhHi1Y/JkbQDfYyMcb2Cf63KCpyA7zjqKMeyi8QDNG
+   zmMzwTAI7bRj1NQ9zm9yxl1x2njrWt+giXuIGKK+vrR5jE3Xbpj3FjLzc
+   Q==;
+X-CSE-ConnectionGUID: agBPXJaVSo+fqvIALCMzEw==
+X-CSE-MsgGUID: KEOFaHguS56XPfW8mtwlsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="17753626"
+X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
+   d="scan'208";a="17753626"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 12:03:45 -0700
+X-CSE-ConnectionGUID: 8bj9pQiWR/6B/B20EEpk+A==
+X-CSE-MsgGUID: ulTMRKI8TFan/Xihp4bMsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
+   d="scan'208";a="79358047"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 11 Jul 2024 12:03:42 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sRz4s-000ZiI-29;
+	Thu, 11 Jul 2024 19:03:38 +0000
+Date: Fri, 12 Jul 2024 03:03:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jerome Brunet <jbrunet@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Jan Dakinevich <jan.dakinevich@salutedevices.com>,
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
+Message-ID: <202407120208.ub5kh5K1-lkp@intel.com>
+References: <20240710162526.2341399-8-jbrunet@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|PH7PR12MB6740:EE_
-X-MS-Office365-Filtering-Correlation-Id: cb60a9e7-9310-43eb-aac8-08dca1dc1cda
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WX8HjMFzloZYofslcO3Q9ORfOTx0TAnDjjCCl7c1T0jpFUft27U+pzjw6JMB?=
- =?us-ascii?Q?Rsl+LwCsvaYgvQvXZuIsSjszJXesBHKeWtSCwJjmU0Z5rtqG8w2tBqXnZvFc?=
- =?us-ascii?Q?WGnogd/UZ8kqCkvvWhFzWmfs1aM9gETEKJx0PTxSHsCy2cfecMW1UTpCxFxI?=
- =?us-ascii?Q?8Uc1vqtyK8x/kRbqLCjBoi/n7AJFQIvGFWpWacVioD3x3p+5doz6as3KLok4?=
- =?us-ascii?Q?7HrzwESc86HssqWuD8mKP7xv+ZfjNv+OHWmOR0x++qMjk1Fy8oDComLZvVd2?=
- =?us-ascii?Q?HXLtfp1pyqDXyVBkzOwE3GayqyWtT19+y7I+U6iRen5DtluxwsOYjAhaPlMh?=
- =?us-ascii?Q?6KYu8JMCEUw0bqlxHl5gBj7BEQeQXKnBhMHbriX1peAJoN85h2364+njL9PY?=
- =?us-ascii?Q?W9Pe0EP5v2i07FihpWjNv4uHFfa7jnMjnLAUzfp3cSfuQUCobqhC1Oxjun9S?=
- =?us-ascii?Q?dD/HZ/kj8Dkr3w/KA38HEPwkstAKAdIvjfs1BHY6ptYZQI6SMc+4ixC0QYiA?=
- =?us-ascii?Q?gkUcEuCsdRaiBa/qvdQTxb0adSz8/fVL/kRSY+ZUhpPrqDgxZOzXjcWElMoS?=
- =?us-ascii?Q?1rBPAU6f9U5INE234UnkvkqbJ+WbZJAa/mvpaVu+/jHqbQo9+j/SLboj1aLL?=
- =?us-ascii?Q?fnkDBSh4EqGppawFsNSXKyb3eV8iw58+v6pA7NdVS+OREija0dBLBOm1Xnvi?=
- =?us-ascii?Q?LlFh/yABUlDgTWiIfOJnZW/FU0+14K2kFqcqkY+o360IVyDk7qxof0xZGY/e?=
- =?us-ascii?Q?+B30BVBOm07Bfu5QZUUlQiVqbcBXEMVSRHBmvgxnMXZmrg5qNhqWz/UZTxCO?=
- =?us-ascii?Q?MTCCSFm9C4bBAfGt5eOsmHyMb+X8FAf2nomwttMfYqLend86XPCetUDWPCc3?=
- =?us-ascii?Q?4kLye9v0MoDclMGga2wRYW0NHwx+Ve++5A81EzpyItuZ/hQDdi0N33LuRHPp?=
- =?us-ascii?Q?gvExHIXYQAleC81OABkiPxoHIkJUqnwplEuHgVILcxsBQ6KquZHE+ife0SPe?=
- =?us-ascii?Q?1k/Da5M96XRKCvy+yPON/IIeJBZHqxTDDywIvly4HrZfzTbPC697v5pbj4A5?=
- =?us-ascii?Q?h4e+LF5vjUpxu5JBlHaXSjnhADdFV6VkI7UBxhZceI5hA9JLDXpF8oz7xb9e?=
- =?us-ascii?Q?yiQGIUR/xQFZ7pPIhJUKJUWVXHaiWNKW6TqLR/AKWj3xwpCUQqxbc+u8XLb8?=
- =?us-ascii?Q?14vWyjjX4VA8ipeuVi1cHsNGAxtacNNCIQXPjcrdKhf9UmIsWyX0qxBy7c2u?=
- =?us-ascii?Q?WI++lUsmnmVn0INah7wCKCHTwZg3bdLQ1+1cfT1OCnJgLmAkB/51OrAKEyO0?=
- =?us-ascii?Q?Nyk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ojGBHuYHIYFoO5a/0ERIcO8Lv4c2cmaGMvnN3JX2gpNQWu8Tl9w+mCg5vNnE?=
- =?us-ascii?Q?DE6FK5XbffavZ7pzSxDu/T/gzKeSMgMXNefucIGbN0x9ySyklc2D7flR99eK?=
- =?us-ascii?Q?8kxHnvJLufGf0TdfK0yLOHkZaZORZsKin+TgS9e7s8YJjED2xGUHy5jp3rnn?=
- =?us-ascii?Q?gJcnSDRIEEvBryVi7MtISazgitDmLwEFqna6YguLj0VKKJI7aE1eMLaCWOjU?=
- =?us-ascii?Q?SclUBoUK50io38exCCfK75GhWMIOYrvnt5Zer/kc1FdJgNCbDHCxQ50k5XDh?=
- =?us-ascii?Q?ussKk/tvHuX8dzn8uJWdVRUvTlIbPVQG4jbehYljcUVRQbvo7ACW+Jr9VhWR?=
- =?us-ascii?Q?Y4JRJO/sqqK4/D4HmQA/7UuRY9BG4t7VcP1DE+Oj+3NB7PfSd5CBhue24xY+?=
- =?us-ascii?Q?wAxjRHQc9smenBKbK7p19L9sZREImem6sEzWCxOP4/rYXy1aP9dMidmJnTWQ?=
- =?us-ascii?Q?I5BGfuRwVyBgu6GYZeiUUCFxrnRx0zaqOCgAh1ACxi4OfDJJlDHl/XBCq3TP?=
- =?us-ascii?Q?qdGOose9HkOO7jmt+gpxDaC1VJenDH/s1R95SqJ1q67fLPep/X0KFndDNZok?=
- =?us-ascii?Q?JgjqT/LMWFvhz/gqMK/KreP8/Ok16nAhJ7F1OBDZetWV3ad7+0dAl24DNrsC?=
- =?us-ascii?Q?sipQ8FahxBeM2oVOLFThBgP9/O0GUK7qVppGUN8pRwQFOnoawi3zEYwNuYiv?=
- =?us-ascii?Q?ylRF+8vN8kjdNLOZd1uFaDRm+WPWOfbKGjvS3rl8Hfm4w2fh8JjfJHtbhxQD?=
- =?us-ascii?Q?Th/V0ENmPy/dBYtHvBjngdWd+XHOvS1NMk5Xa9HO75Gq01lCanmYqP+9O/V1?=
- =?us-ascii?Q?ZVSY4vFAmqWFZb15YGWDsgc7Nfl0s6Qo1lI0Yjvbj2cp3lgsOvATD9enLHU5?=
- =?us-ascii?Q?+abWerMl0vHtzsGo9tnIfcFsmv3UrvxTN7PCrsuVC8JdPPgZHIAXDIQpMuIL?=
- =?us-ascii?Q?tnuF7G5KKzFsIybdkrFuq/xdEc8Zruwt/hcXzLwx7EOC8x61TyiblfQPS4l2?=
- =?us-ascii?Q?y3SnSBsvKd1yzmHQ5MkwIsoybeaelcac5tYFQ12CbqZroI8wCNozE/yH5Azb?=
- =?us-ascii?Q?cA8BTtil47wD9YIFaV/zx6eqXceFDJ66pxsCSXzQfI/cY/eTVgfdKjX4c3aE?=
- =?us-ascii?Q?boRUFkDVQqRe456kYoFP5ClXBcrSp0ce6m1SXiwGrUAW9clrhUpBnzjIgmJZ?=
- =?us-ascii?Q?3qHuChs3t9ShnycKlRdnIfuwLZor8VBCZ8HG6/kkrbpvCn+QiA21saykKeXK?=
- =?us-ascii?Q?6GcHbUm38516lqcIBbEQExOiozsjvz4YonFrjGn1h9JRkIDB3u59tAQu/MwX?=
- =?us-ascii?Q?xWM/hJLWAja+V5HVcqXfQ7pualbKb5BcphFD+ceBwHa3c3OziEW1AukE50/U?=
- =?us-ascii?Q?sWf2cxDTXFH9yc8j04vxBEYaSR11sDijDoixICJiZ24RpXvhLgiRAxLFSVSA?=
- =?us-ascii?Q?33MrmmHsFXBZHZ7B64QS+VotJ1dXaW6P+XQxVO+ay9osD1Ll9S3CPtxy4wdx?=
- =?us-ascii?Q?nW9utBoeME2Z2X7ceCww4GD7ju24ZOj8LF0XzTgAwrV7g70iGMJt1BY8tKhR?=
- =?us-ascii?Q?UNZtSmc4Buz+LZB2/KrgxkRypyq67dGMQWMR6xjx?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb60a9e7-9310-43eb-aac8-08dca1dc1cda
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 19:03:13.0289
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /onBRkLCFKBLjnlehUshIYXR1dAVM79jsEZ6DJnSr1ExtHXgGsY0d84bftOf7fkQdI64nANyIBPBxTRAzeirfA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6740
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710162526.2341399-8-jbrunet@baylibre.com>
 
-Alison,
+Hi Jerome,
 
-On 10.07.24 17:02:46, Alison Schofield wrote:
-> This HPA->SPA work needs to be done for addresses reported directly by
-> devices, ie DPAs in poison and other events - right?
+kernel test robot noticed the following build errors:
 
-we need it to translate the base address of the HDM decoder cap
-registers or the range registers to an HPA when accessing it.
+[auto build test ERROR on pza/reset/next]
+[also build test ERROR on clk/clk-next linus/master v6.10-rc7 next-20240711]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> For the XOR case, we discover the need for HPA->SPA while parsing the
-> CFMWS and add a cxl_hpa_to_spa_fn to the struct cxl_root_decoder. Later,
+url:    https://github.com/intel-lab-lkp/linux/commits/Jerome-Brunet/reset-amlogic-convert-driver-to-regmap/20240711-055833
+base:   https://git.pengutronix.de/git/pza/linux reset/next
+patch link:    https://lore.kernel.org/r/20240710162526.2341399-8-jbrunet%40baylibre.com
+patch subject: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240712/202407120208.ub5kh5K1-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240712/202407120208.ub5kh5K1-lkp@intel.com/reproduce)
 
-As some platforms allow an even more fine grained HPA/SPA mapping that
-may devide a memory domain in separate SPA ranges we might just want
-to move it directly into struct cxl_decoder so that endpoints or
-switches can use it too.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407120208.ub5kh5K1-lkp@intel.com/
 
-> when the driver wants to translate a DPA (to include in a TRACE_EVENT)
-> it uses that 'extra mile' HPA->SPA function.
-> 
-> See Patch 2 in this series:
-> https://lore.kernel.org/cover.1719980933.git.alison.schofield@intel.com/T/#m9206e1f872ef252dbb54ce7f0365f0b267179fda
-> 
-> It seems the Zen4 extra mile is a simple offset from the base calc.
-> Do you think a zen4 hpa->spa function will fit in with what I've done?
+All errors (new ones prefixed by >>):
 
-Thanks for the pointer, I will take look into the details here and try
-to reuse most of that infrastructure.
+   In file included from drivers/reset/reset-meson.c:8:
+   In file included from include/linux/auxiliary_bus.h:11:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:173:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2253:
+   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     501 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     508 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     520 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     529 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/reset/reset-meson.c:11:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from drivers/reset/reset-meson.c:11:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from drivers/reset/reset-meson.c:11:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> drivers/reset/reset-meson.c:272:1: error: redefinition of '__inittest'
+     272 | module_auxiliary_driver(meson_reset_aux_driver);
+         | ^
+   include/linux/auxiliary_bus.h:245:2: note: expanded from macro 'module_auxiliary_driver'
+     245 |         module_driver(__auxiliary_driver, auxiliary_driver_register, auxiliary_driver_unregister)
+         |         ^
+   include/linux/device/driver.h:261:3: note: expanded from macro 'module_driver'
+     261 | } \
+         |   ^
+   include/linux/module.h:131:42: note: expanded from macro '\
+   module_init'
+     131 |         static inline initcall_t __maybe_unused __inittest(void)                \
+         |                                                 ^
+   drivers/reset/reset-meson.c:232:1: note: previous definition is here
+     232 | module_platform_driver(meson_reset_pltf_driver);
+         | ^
+   include/linux/platform_device.h:303:2: note: expanded from macro 'module_platform_driver'
+     303 |         module_driver(__platform_driver, platform_driver_register, \
+         |         ^
+   include/linux/device/driver.h:261:3: note: expanded from macro 'module_driver'
+     261 | } \
+         |   ^
+   include/linux/module.h:131:42: note: expanded from macro '\
+   module_init'
+     131 |         static inline initcall_t __maybe_unused __inittest(void)                \
+         |                                                 ^
+>> drivers/reset/reset-meson.c:272:1: error: redefinition of 'init_module'
+     272 | module_auxiliary_driver(meson_reset_aux_driver);
+         | ^
+   include/linux/auxiliary_bus.h:245:2: note: expanded from macro 'module_auxiliary_driver'
+     245 |         module_driver(__auxiliary_driver, auxiliary_driver_register, auxiliary_driver_unregister)
+         |         ^
+   include/linux/device/driver.h:261:3: note: expanded from macro 'module_driver'
+     261 | } \
+         |   ^
+   include/linux/module.h:133:6: note: expanded from macro '\
+   module_init'
+     133 |         int init_module(void) __copy(initfn)                    \
+         |             ^
+   drivers/reset/reset-meson.c:232:1: note: previous definition is here
+     232 | module_platform_driver(meson_reset_pltf_driver);
+         | ^
+   include/linux/platform_device.h:303:2: note: expanded from macro 'module_platform_driver'
+     303 |         module_driver(__platform_driver, platform_driver_register, \
+         |         ^
+   include/linux/device/driver.h:261:3: note: expanded from macro 'module_driver'
+     261 | } \
+         |   ^
+   include/linux/module.h:133:6: note: expanded from macro '\
+   module_init'
+     133 |         int init_module(void) __copy(initfn)                    \
+         |             ^
+>> drivers/reset/reset-meson.c:272:1: error: redefinition of '__exittest'
+     272 | module_auxiliary_driver(meson_reset_aux_driver);
+         | ^
+   include/linux/auxiliary_bus.h:245:2: note: expanded from macro 'module_auxiliary_driver'
+     245 |         module_driver(__auxiliary_driver, auxiliary_driver_register, auxiliary_driver_unregister)
+         |         ^
+   include/linux/device/driver.h:266:3: note: expanded from macro 'module_driver'
+     266 | } \
+         |   ^
+   include/linux/module.h:139:42: note: expanded from macro '\
+   module_exit'
+     139 |         static inline exitcall_t __maybe_unused __exittest(void)                \
+         |                                                 ^
+   drivers/reset/reset-meson.c:232:1: note: previous definition is here
+     232 | module_platform_driver(meson_reset_pltf_driver);
+         | ^
+   include/linux/platform_device.h:303:2: note: expanded from macro 'module_platform_driver'
+     303 |         module_driver(__platform_driver, platform_driver_register, \
+         |         ^
+   include/linux/device/driver.h:266:3: note: expanded from macro 'module_driver'
+     266 | } \
+         |   ^
+   include/linux/module.h:139:42: note: expanded from macro '\
+   module_exit'
+     139 |         static inline exitcall_t __maybe_unused __exittest(void)                \
+         |                                                 ^
+>> drivers/reset/reset-meson.c:272:1: error: redefinition of 'cleanup_module'
+     272 | module_auxiliary_driver(meson_reset_aux_driver);
+         | ^
+   include/linux/auxiliary_bus.h:245:2: note: expanded from macro 'module_auxiliary_driver'
+     245 |         module_driver(__auxiliary_driver, auxiliary_driver_register, auxiliary_driver_unregister)
+         |         ^
+   include/linux/device/driver.h:266:3: note: expanded from macro 'module_driver'
+     266 | } \
+         |   ^
+   include/linux/module.h:141:7: note: expanded from macro '\
+   module_exit'
+     141 |         void cleanup_module(void) __copy(exitfn)                \
+         |              ^
+   drivers/reset/reset-meson.c:232:1: note: previous definition is here
+     232 | module_platform_driver(meson_reset_pltf_driver);
+         | ^
+   include/linux/platform_device.h:303:2: note: expanded from macro 'module_platform_driver'
+     303 |         module_driver(__platform_driver, platform_driver_register, \
+         |         ^
+   include/linux/device/driver.h:266:3: note: expanded from macro 'module_driver'
+     266 | } \
+         |   ^
+   include/linux/module.h:141:7: note: expanded from macro '\
+   module_exit'
+     141 |         void cleanup_module(void) __copy(exitfn)                \
+         |              ^
+   drivers/reset/reset-meson.c:292:5: error: redefinition of 'devm_meson_rst_aux_register'
+     292 | int devm_meson_rst_aux_register(struct device *dev,
+         |     ^
+   include/soc/amlogic/meson-auxiliary-reset.h:15:19: note: previous definition is here
+      15 | static inline int devm_meson_rst_aux_register(struct device *dev,
+         |                   ^
+   17 warnings and 5 errors generated.
 
-> 
-> FWIW I took this code for a spin through cxl-test on it's own and combined
-> w the xor address tranlation patch set and no collisions, all humming along
-> nicely (for non-zen config).
 
-Thanks,
+vim +/__inittest +272 drivers/reset/reset-meson.c
 
--Robert
+   267	
+   268	static struct auxiliary_driver meson_reset_aux_driver = {
+   269		.probe		= meson_reset_aux_probe,
+   270		.id_table	= meson_reset_aux_ids,
+   271	};
+ > 272	module_auxiliary_driver(meson_reset_aux_driver);
+   273	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
