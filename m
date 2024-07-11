@@ -1,109 +1,130 @@
-Return-Path: <linux-kernel+bounces-248818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BFBF92E263
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:33:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D2A92E260
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:33:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD6721C2170A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31F6284FCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45E015B15D;
-	Thu, 11 Jul 2024 08:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044EF15ADA1;
+	Thu, 11 Jul 2024 08:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="akx8IgIN"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjU07k5D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F29915A865
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CAF15A87F;
+	Thu, 11 Jul 2024 08:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720686658; cv=none; b=GHlsC1IwNp6obKJ+/fiWd6HdT7W9avrEQpQOBgEZfp9/rRziE7PpF9ALonNgzDDefoaC5hz+kyJtP40mjw0pLoPUwkYcRmmHL/63GQx3sy0CmuXnch6cK6TVvXukCfHSwCK9sZY4HfB4/rt1jpcF3N3BZR+W/TXrTeletOnPhpI=
+	t=1720686655; cv=none; b=juZsDX3gKNm+V02DqoyCBAinm23iwA/uEqvfp2qi3dmBDuyZIZB9u6LADlx9gkTSbMS1yIVU/q+FwmkNpHEGcnCbwBfsqfDnn/tBOO4eJt1REwSAMCC4hsjU3VafL1kDJ45YtVzHYU7mLaaUIkzPNEldD93LMlbgDAKfAVW2F+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720686658; c=relaxed/simple;
-	bh=GNnb2pMEpLCZWuU8exB1G4Ok1i/56wOMag9mtFIm49I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iXmDhe2hcR+K/ebnGqEGUKcFxD96MGVJQCd7AQONdIOL57UMChosu8xFkg0K81i59UItPNZWKgBIrjreHwuZnuBdqcUPQN0IIZTVPz0gWkJXLTEWMMylFUKWblKQWbUSt9H3BpHw7OKxuEqZ5hTbr8n35UhhbvTFhubTvZO1dRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=akx8IgIN; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=P+uBeegXTfrwt6
-	z+MKaVDcauEQ2cMUwbT1jXu03xNsk=; b=akx8IgINx6+frcTynwYHGUMx3B3S/B
-	6ccUemnF+1fVjBblUeDVehwjMuW/h7tnSgoIq/EUmu4Oc7dpAkuqnsOy/Hb09sps
-	+QejBZW8wHdMGxZs8Topwla9ASdY7RvkNv0Q3YpBWi+en+utY/y2IhW+NoJ0Zi7s
-	WWSI2y8jTResX39Sx/Y9+tUWNUPY9i6VSnDvdcXtBm0HZnn/r7P+voEGijpjWn8w
-	USBSS02d/m2VxyL4JdOg4syIJDbrE71yjaQazLLnsm+VNz8CyiZBY1VpQTi68hXr
-	iOx2Lc1rQKN82y4iBSmygSgD7wDOKR2xmARP7atm3FHvg1FWZ1H7E7YQ==
-Received: (qmail 777695 invoked from network); 11 Jul 2024 10:30:52 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jul 2024 10:30:52 +0200
-X-UD-Smtp-Session: l3s3148p1@0iKxlPQcOoQgAwDPXwmZAIsFIv4n+Dpm
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] i2c: rcar: ensure Gen3+ reset does not disturb local targets
-Date: Thu, 11 Jul 2024 10:30:44 +0200
-Message-ID: <20240711083043.8334-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720686655; c=relaxed/simple;
+	bh=Co2hf2aFg/DDh/+imxd7qZkGobFIm1pn0931psX820w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uALoet+VnGdW6r8jpE2yaHx3RH4/dIy/UWbl5mMGtpJpVJ1jKpoo0tJ3Jsf2EgGNGiohApKLYGfOTWPtkZ6QLKJwnyPAMX1paERQJsgdm5+CVXDru6ZxNA0VxF4KhNkWvI61NycdjEXo1Qy2FcvyRPosjCbcSF1/2qyYW4vgWUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjU07k5D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D20BC116B1;
+	Thu, 11 Jul 2024 08:30:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720686654;
+	bh=Co2hf2aFg/DDh/+imxd7qZkGobFIm1pn0931psX820w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WjU07k5Dz6CrXTYARn1OTYxm1Yp+jqTA19ZewguJZNZ0APFX0Gdt4zcWKUBlD7Pgf
+	 dTmdTpV3kcL5zBTAhj0TQU0+YZOSg0Qe1yY3MfSBKgYtKHdH7r75he+AjziZdn7jCh
+	 oSP3KyhYd06S/Gw1+DYDhEUwF9opRal8iEq7PlCtwA1uxxm/GfDEzsQ6OgZDynSsBz
+	 DvdtlMqdxHXdClfke6ICfLQLC8uYQseuDDV1Nblw5hNSccWITlgNFSr1sYVlMCPcv3
+	 JKKKbMzZeLJ4p1Twsbamtl0u/XYSYNSOrIdnqs6t7ixczAi5UFHbzo6eydqNGFvsQN
+	 3/eypiXMNUW3A==
+Date: Thu, 11 Jul 2024 09:30:50 +0100
+From: Lee Jones <lee@kernel.org>
+To: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: Riku Voipio <riku.voipio@iki.fi>, Pavel Machek <pavel@ucw.cz>,
+	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>
+Subject: Re: [PATCH v2 2/4] leds: pca9532: Use PWM1 for hardware blinking
+Message-ID: <20240711083050.GK501857@google.com>
+References: <20240617143910.154546-1-bastien.curutchet@bootlin.com>
+ <20240617143910.154546-3-bastien.curutchet@bootlin.com>
+ <b88d211f-3c5b-4428-bd94-3d089c56ed22@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b88d211f-3c5b-4428-bd94-3d089c56ed22@bootlin.com>
 
-R-Car Gen3+ needs a reset before every controller transfer. That erases
-configuration of a potentially in parallel running local target
-instance. To avoid this disruption, avoid controller transfers if a
-local target is running. Also, disable SMBusHostNotify because it
-requires being a controller and local target at the same time.
+On Wed, 10 Jul 2024, Bastien Curutchet wrote:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-rcar.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> Hi Lee,
+> 
+> On 6/17/24 16:39, Bastien Curutchet wrote:
+> 
+> > +static int pca9532_update_hw_blink(struct pca9532_led *led,
+> > +				   unsigned long delay_on, unsigned long delay_off)
+> > +{
+> > +	struct pca9532_data *data = i2c_get_clientdata(led->client);
+> > +	unsigned int psc;
+> > +	int i;
+> > +
+> > +	/* Look for others LEDs that already use PWM1 */
+> > +	for (i = 0; i < data->chip_info->num_leds; i++) {
+> > +		struct pca9532_led *other = &data->leds[i];
+> > +
+> > +		if (other == led)
+> > +			continue;
+> > +
+> > +		if (other->state == PCA9532_PWM1) {
+> > +			if (other->ldev.blink_delay_on != delay_on ||
+> > +			    other->ldev.blink_delay_off != delay_off) {
+> > +				dev_err(&led->client->dev,
+> > +					"HW can handle only one blink configuration at a time\n");
+> 
+> I'm having some second thoughts about this dev_err().
+> 
+> It was dev_dbg() in V1, but based on your suggestion, I changed it to
+> dev_err() because an error was returned after.
+> 
+> I've worked more with this patch since it got applied, these error messages
+> appear frequently, though they don’t seem to be 'real' errors to me as the
+> software callback is used afterwards and the LED blinks at the expected
+> period.
+> 
+> Don't you think a dev_dbg() would be more appropriate in this case ? Or
+> perhaps a comment instead of a message ?
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 8f2ede534f30..29cbeda59f3e 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -884,6 +884,10 @@ static int rcar_i2c_do_reset(struct rcar_i2c_priv *priv)
- {
- 	int ret;
- 
-+	/* Don't reset if a slave instance is currently running */
-+	if (priv->slave)
-+		return -EISCONN;
-+
- 	ret = reset_control_reset(priv->rstc);
- 	if (ret)
- 		return ret;
-@@ -1176,6 +1180,7 @@ static int rcar_i2c_probe(struct platform_device *pdev)
- 	if (of_property_read_bool(dev->of_node, "smbus"))
- 		priv->flags |= ID_P_HOST_NOTIFY;
- 
-+	/* R-Car Gen3+ needs a reset before every transfer */
- 	if (priv->devtype >= I2C_RCAR_GEN3) {
- 		priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
- 		if (IS_ERR(priv->rstc)) {
-@@ -1186,6 +1191,9 @@ static int rcar_i2c_probe(struct platform_device *pdev)
- 		ret = reset_control_status(priv->rstc);
- 		if (ret < 0)
- 			goto out_pm_put;
-+
-+		/* hard reset disturbs HostNotify local target, so disable it */
-+		priv->flags &= ~ID_P_HOST_NOTIFY;
- 	}
- 
- 	ret = platform_get_irq(pdev, 0);
+If it's not an error, then don't return an error message.
+
+Maybe drop the message for a comment and return -EBUSY instead?
+
+> > +				return -EINVAL;
+> > +			}
+> > +		}
+> > +	}
+> > +
+> > +	psc = ((delay_on + delay_off) * PCA9532_PWM_PERIOD_DIV - 1) / 1000;
+> > +	if (psc > U8_MAX) {
+> > +		dev_err(&led->client->dev, "Blink period too long to be handled by hardware\n");
+> 
+> Same comments for this dev_err()
+> 
+> > +		return -EINVAL;
+> > +	}
+> 
+> 
+> Best regards,
+> Bastien
+
 -- 
-2.43.0
-
+Lee Jones [李琼斯]
 
