@@ -1,89 +1,97 @@
-Return-Path: <linux-kernel+bounces-249856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704FA92F0C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:13:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FF892F0C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 23:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2057B1F227CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:13:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A54C1F226C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 21:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B483419EED0;
-	Thu, 11 Jul 2024 21:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677F019EEDF;
+	Thu, 11 Jul 2024 21:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="k5KqnbN9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKohomAq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025A113D626
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1851509BC;
+	Thu, 11 Jul 2024 21:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720732400; cv=none; b=ojhrpqLjne/oIJuT9bN33ezapMrB0kksC3Haz+Q3XMZN8KlCOAmwN8YSvEnF25zdTpvNUCtN5H5s02fFsMbC1UpSjzqbfnL8aa49LsNW5yf7sjaz9rfo4ij75IrMaZCnSTXdKqt8vaHAtAJl8GSd8wB7s2TIdpT0vmHslWCsh94=
+	t=1720732416; cv=none; b=mX4r751FJWGhbSZ0V3PYDH62uqGXsAEW2wHEWdRgdDjFqNCCR6ozX8i+pBRwPrF/uCSnygOZU+bf5Sf3eMBbiR6mmloVQX/1GiB2RTwDO2HzPX0ff0YfaGc7/jQKeTcgqgngCT+d7RWvHhX1muDdXWbHJ1EPmPt3KW1yR2bFGn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720732400; c=relaxed/simple;
-	bh=aTiXrj3+xejUUrTCvsK1TranlzYVGOMQWvbn8pvRMHw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=V+9AhYSbYGkeW1L2R2a+xAL8vEWPdLYEI16n9r2ze6t15TZp3vEjXEEcebqIifS5Wbtk3Hrl186zuAGPTvvhRNPG3qVgzPmUtxyF18ZOZIPxqcfBGCtNclukLyZIlpir5AmazlBOG1Qc4UKKqgaQi00Phse8MH1gbgO/XCJ20/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=k5KqnbN9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34066C116B1;
-	Thu, 11 Jul 2024 21:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1720732399;
-	bh=aTiXrj3+xejUUrTCvsK1TranlzYVGOMQWvbn8pvRMHw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k5KqnbN94gEyboFzfGInpP1flG4b36AO5Pus25eRK1l9aXz2EnW2MCxxoxxjwms7t
-	 +4nDkMHCaXGvezNo2T/gyReR8ErjjlHgz9aH/NHJVzAC0HR4whAf/BLxCziAmk7etJ
-	 jp5BnF00f40SkUiS2+i08DBnlyse0sic0O+CtrLo=
-Date: Thu, 11 Jul 2024 14:13:18 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: zhangchun <zhang.chuna@h3c.com>
-Cc: <jiaoxupo@h3c.com>, <linux-kernel@vger.kernel.org>,
- <linux-mm@kvack.org>, <shaohaojize@126.com>, <zhang.zhansheng@h3c.com>,
- <zhang.zhengming@h3c.com>
-Subject: Re: [PATCH v2] mm: Give kmap_lock before call =?ISO-8859-1?Q?flus?=
- =?UTF-8?Q?h=5Ftlb=5Fkernel=5Frang=EF=BC=8Cavoid?= kmap_high deadlock.
-Message-Id: <20240711141318.95c48cf7295f5e2d6f659aac@linux-foundation.org>
-In-Reply-To: <1720681676-53147-1-git-send-email-zhang.chuna@h3c.com>
-References: <20240710103611.809895ff809df9ed411bfaa8@linux-foundation.org>
-	<1720681676-53147-1-git-send-email-zhang.chuna@h3c.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720732416; c=relaxed/simple;
+	bh=zD3H2nNg/pVAuxwarSoosSrcXFyYiiavlKTZ20sCeM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U+4rZebtr5BPCuik5jGrNTLzTMKpD2A4i3shmr00ZeKJb5M9B2IWX3kJegKSk2hVhoZaRHYVq+RU5P/PZHFzQFMFNfMfyZDnCIu6RPOrtIVn9h7ee16zKkEwO/h81F0A/TTABb0J2x1DpiH8ZnuWVpY0tYo/IK7gCe8LkcsR9Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKohomAq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03340C116B1;
+	Thu, 11 Jul 2024 21:13:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720732416;
+	bh=zD3H2nNg/pVAuxwarSoosSrcXFyYiiavlKTZ20sCeM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IKohomAqoc4gxipkRO1NgxAokKA94Gmr8tOd2ACAmsEj27nT89p91hNF3B/Ba15m5
+	 BokRn8jrE7DZ5UpFkC+yZJ4B21K1265XiHkcFaFj+QfTd0ydjtJVUp/y7z7YRepd0o
+	 ssB0uFPV14oMw58KotNoUISsF+Dz+liGFUSuZEOqYFXLhJY/a9n1nYWRnSRfqrkS8O
+	 PH8feg45iCzaqaalMckvM4D6v2i79rAmDIHsP1KqBZVNbmeyvWtkAohtiAAVd0ZTqX
+	 pdVEP+U+l246KAY3vm7mzDQa/B+aY5ZMlsDg+xE+GnsbV+EOJ3rstuj9PFC/At4R9D
+	 lkTts2tve+/Lg==
+Date: Thu, 11 Jul 2024 15:13:34 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, bert@biot.com,
+	sander@svanheule.net, daniel.lezcano@linaro.org,
+	paulburton@kernel.org, kabel@kernel.org, tsbogend@alpha.franken.de,
+	conor+dt@kernel.org, peterz@infradead.org, john@phrozen.org,
+	linux-kernel@vger.kernel.org, krzk+dt@kernel.org,
+	tglx@linutronix.de, mail@birger-koblitz.de, ericwouds@gmail.com
+Subject: Re: [PATCH v5 06/10] dt-bindings: interrupt-controller:
+ realtek,rtl-intc: Add rtl9300-intc
+Message-ID: <172073241371.3019767.1008127650947227633.robh@kernel.org>
+References: <20240710043524.1535151-1-chris.packham@alliedtelesis.co.nz>
+ <20240710043524.1535151-7-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710043524.1535151-7-chris.packham@alliedtelesis.co.nz>
 
-On Thu, 11 Jul 2024 15:07:56 +0800 zhangchun <zhang.chuna@h3c.com> wrote:
 
-> >> --- a/mm/highmem.c
-> >> +++ b/mm/highmem.c
-> >> @@ -220,8 +220,11 @@ static void flush_all_zero_pkmaps(void)
-> >>  		set_page_address(page, NULL);
-> >>  		need_flush = 1;
-> >>  	}
-> >> -	if (need_flush)
-> >> +	if (need_flush) {
-> >> +		unlock_kmap();
-> >>  		flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
-> >> +		lock_kmap();
-> >> +	}
-> >>  }
+On Wed, 10 Jul 2024 16:35:20 +1200, Chris Packham wrote:
+> Add a compatible string for the interrupt controller found on the
+> rtl930x SoCs. The interrupt controller has registers for VPE1 so these
+> are added as a second reg cell.
 > 
-> >Why is dropping the lock like this safe?  What data is it protecting and why is it OK to 
-> >leave that data unprotected here?
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
 > 
-> kmap_lock is used to protect pkmap_count, pkmap_page_table and last_pkmap_nr(static variable). 
-> When call flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP)), flush_tlb_kernel_range
-> will neither modify nor read these variables. Leave that data unprotected here is safe.
+> Notes:
+>     Changes in v5:
+>     - set reg::minItems = 2 when compatible == "rtl9300-intc"
+>     Changes in v4:
+>     - None
+>     Changes in v3:
+>     - Add reg::minItems where required
+>     Changes in v3:
+>     - Use items to describe the regs property
+>     Changes in v2:
+>     - Set reg:maxItems to 2 to allow for VPE1 registers on the rtl9300. Add
+>       a condition to enforce the old limit on other SoCs.
+>     - Connor and Krzysztof offered acks on v1 but I think the changes here
+>       are big enough to void those.
+> 
+>  .../realtek,rtl-intc.yaml                     | 20 ++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
 
-No, the risk here is that when the lock is dropped, other threads will
-modify the data.  And when this thread (the one running
-flush_all_zero_pkmaps()) retakes the lock, that data may now be
-unexpectedly altered.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
