@@ -1,103 +1,95 @@
-Return-Path: <linux-kernel+bounces-248519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 006D192DE4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED9C92DE54
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 04:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 141661C21048
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D06F11C21320
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EEDD2E6;
-	Thu, 11 Jul 2024 02:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1670E171C1;
+	Thu, 11 Jul 2024 02:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DtVcDnqp"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxcj3vyU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFC479DF;
-	Thu, 11 Jul 2024 02:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D43E572;
+	Thu, 11 Jul 2024 02:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720664258; cv=none; b=nbAmeAu6AwoguhigWcKQV0eRI0IyB2hWsvkWte33GoHFHq1o1ExarCaLK968mXyXkxbS2IQoO8WYQYgAzdNzd9YIa9sPDRDmudL2IkQCrgeZ7bt6TLsiaoLEK+gjxOZSJoLjuAbuTBuPfE0jpIvhfMHqvytqm0SumU+ULGruIEA=
+	t=1720664433; cv=none; b=Qq0kTZqEKGrrYYq1dIskj17fDirC7hPWoCGj4VTWRyDQshvMD7JfLF+x14mGbkKG3YMPDvHpcHMuHDkLIb8WwDEo7u6pu8Xg+Lpvc71pUhmVW1lppulBslWpaGjlBD5082jJ6DNai8YA0YGaTULWkYk2M0Hsk0+cWhSnE7+HXzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720664258; c=relaxed/simple;
-	bh=6Cl0COJ+KPE08x/VOBtl345I/TBsEEvslZZImkNkZPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Wvln4SooSYwD5ZmTju8U0odLnczCOzEoxhF3vDWJ9hslJZCE/m4GEXCpwCHBvEj48Z0mk7Ln5lr0Cyz5GYDsaksAs4yafBOs9j4t1iY1gSkaspRYbog1WXmivreL9BF8Of4b0Z5zdbvsBu5e3Yu3LlbyrwPm87eKONQ9fq605zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DtVcDnqp; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720664251;
-	bh=PPo7nmHCNk06MfO58dmwetPugEnRShvTRaasMy1gZtU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DtVcDnqpSFKxBh9JBgfVvzC8qOcjND9xGD2jdZtV7wDJqsyPvjBerbiEBHq2CdXv5
-	 VbHJFNNgJyZe7Y/XExncc1z5LPev6GFbC3HmqpD5zrl8BJVm4nABSbzfxd5BARr0OG
-	 vzfdjWOIkFniTnZJFarHE4Wb94vzdpU7swMNqLtgM+0U77aRxaaPuUyCP4mnoVTslv
-	 S5L52BXP9ktcoB2ynL0r5PCGECHrrYbVN+diHZ45HT0blyBLCP4vd1Qab4abYH0FmC
-	 atp7YrFyIWKoXEdqoyDmVMzPZbLZd5eeUKOYNG9+WLx60Y1rC6KSM4xHi7l/2enWsM
-	 40GzwIWUvQJ4g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKJK64WYlz4wcl;
-	Thu, 11 Jul 2024 12:17:30 +1000 (AEST)
-Date: Thu, 11 Jul 2024 12:17:29 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Jens Axboe <axboe@kernel.dk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the device-mapper tree
-Message-ID: <20240711121729.0d71308e@canb.auug.org.au>
+	s=arc-20240116; t=1720664433; c=relaxed/simple;
+	bh=91a5G059o+c7SEd6rEUFbfqFaetOrMp/p5CAtHhbnww=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=W5dS/KO+gc3r5+fb5gehq0QdqlOUubl2+mQN4/c4kL163Q/KaU4/ArUobMt2TVADzpOodh+09kHpNyLx4Bl4K4L8+pdyBFXHe9NtsUijVltVSUlrX5edmCqv/hzD7RhCcAR8exP9yXcyT+cybrTySs0DbXYldantjj1Ne0Z3WVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxcj3vyU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 01768C32781;
+	Thu, 11 Jul 2024 02:20:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720664433;
+	bh=91a5G059o+c7SEd6rEUFbfqFaetOrMp/p5CAtHhbnww=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=dxcj3vyUM04aIJyPdBc4QckQKuS6m2FlisWvuZFo5GsQYTErFgTYbrqwDDGPrXwyj
+	 +YyTcq9GH0rbISEhmfXILoK2q1VPPsL0gYwbGEKLykRWdHmSqO8LQX1qo6HaQViBI7
+	 CjxKQdp3dBp7QgSbRZTxSEq57wPgWhD+M/UZTXYBAMcJZ5CRo1ae6pulPXToBJwUKY
+	 jqDUrc2PTV9dJC2EhOY10JDy/olQ6pdkaqgcJb0bDrSQEBhZ+eATMaLyrbCsPfSmlt
+	 0pwDtx/Lm8FddwwOYNNTkxrNn0fm4mcJZ1fVFGBrZePu8j4OjTu8y++Lozwa/q+2iz
+	 jpHCgn3CQ26Sw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E9CA7DAE95B;
+	Thu, 11 Jul 2024 02:20:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/QDfqgO57ncFxaPAPE3tTbce";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 1/1] dt-bindings: net: convert enetc to yaml
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172066443295.28307.4062455810710183011.git-patchwork-notify@kernel.org>
+Date: Thu, 11 Jul 2024 02:20:32 +0000
+References: <20240709214841.570154-1-Frank.Li@nxp.com>
+In-Reply-To: <20240709214841.570154-1-Frank.Li@nxp.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: robh@kernel.org, Frank.li@nxp.com, conor+dt@kernel.org,
+ davem@davemloft.net, devicetree@vger.kernel.org, edumazet@google.com,
+ imx@lists.linux.dev, krzk+dt@kernel.org, krzk@kernel.org, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com
 
---Sig_/QDfqgO57ncFxaPAPE3tTbce
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello:
 
-Hi all,
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-The following commit is also in the block tree as a different commit
-(but the same patch):
+On Tue,  9 Jul 2024 17:48:41 -0400 you wrote:
+> Convert enetc device binding file to yaml. Split to 3 yaml files,
+> 'fsl,enetc.yaml', 'fsl,enetc-mdio.yaml', 'fsl,enetc-ierb.yaml'.
+> 
+> Additional Changes:
+> - Add pci<vendor id>,<production id> in compatible string.
+> - Ref to common ethernet-controller.yaml and mdio.yaml.
+> - Add Wei fang, Vladimir and Claudiu as maintainer.
+> - Update ENETC description.
+> - Remove fixed-link part.
+> 
+> [...]
 
-  e87621ac68fe ("dm: Refactor is_abnormal_io()")
+Here is the summary with links:
+  - [v3,1/1] dt-bindings: net: convert enetc to yaml
+    https://git.kernel.org/netdev/net-next/c/d00ba1d734f7
 
-This is commit
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-  ae7e965b36e3 ("dm: Refactor is_abnormal_io()")
 
-in the block tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/QDfqgO57ncFxaPAPE3tTbce
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaPQLoACgkQAVBC80lX
-0GyzbQf/VxdzhWp8lKKx8EmZs5QVSlgONPEz/sQBt3zOnwAmlq0bpa4vIpiCvdTQ
-QLrQcnnOIVeFk6rO/nTn6YAIbPn144dHUSF4aKZQ42x3k67hnOJi+BaFsgYsEK5l
-M8WOS4oJqpnX9+B6WwcxKBgqukXSGYqQFf28z0mbfih4os+ahpprhhiBxgLTZ8yK
-rw6vr5S99wG71BVejW5rv0aIWSyYCk3UkXpSJ3DyAnMCmjdcOCf1jp91s3RHSDcU
-+Kr8yzEBiEgCKb968axsX5+wCXFnAjfY7l+K4zITW4RRZ4JYT8gw4LQ63MGRsxyi
-CIJYYon5agZbeY0Vz+yItkPmvicGgg==
-=Izey
------END PGP SIGNATURE-----
-
---Sig_/QDfqgO57ncFxaPAPE3tTbce--
 
