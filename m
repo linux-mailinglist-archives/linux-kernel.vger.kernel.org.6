@@ -1,146 +1,156 @@
-Return-Path: <linux-kernel+bounces-249434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C95092EBA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:26:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506C192EBB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B901C22CD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:26:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D379CB20BD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621FD16C6A3;
-	Thu, 11 Jul 2024 15:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C3D16C84D;
+	Thu, 11 Jul 2024 15:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dm8Srm4/"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B0XkhEFJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153B016B747
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A08612FB1B;
+	Thu, 11 Jul 2024 15:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720711596; cv=none; b=hCTUXKKrtsKmpnIoD/DhMMBuXATWJCmNzPPQXxvYgQlMTKUOwlvlujbElxhbdTWcG85/vhNY/5BNLn9OEajXPejMmY6mQogk7WOAZBJAtBNltfK4BObZLsIQr3iuAXnj2YmEqYsfkK7xCHdgWc5CSOfcQyMSADtdCaIbHfjCPtY=
+	t=1720711711; cv=none; b=uic8PSE3VN0oFbUSm0GNriVxEzxrcko6digceEfmkIT5y7T/d8ZFt0EbzpX85ojaNL+0aFH1jzsJmXBTPLWONo3JXtiA6E57rF68DeZ4kYLoCgiCJrhcZKrZkbIBu2lhZ+j5Bed6POEpmKUDWAV5w2nWPOUoqmyqCxg7WKYvDJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720711596; c=relaxed/simple;
-	bh=Z2UifNQfHSWQactTbUxwngct7Jif7447IF3QEfZiqWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HoqvDrBe2CdfBJBm6v9PXAZe5vPNjivfBe4oXlkiG3gMj1rPSK5z0tnK1vIB/JGWLDrjQocheEooCYlMyNdPeySc8EAZdiDA+qYVieo+gQkWTelD0l6jrTJWwzNgQDZz3qMcRnBemyUDRRIUPhenQlZlTUQd1CmQNWic0hL4eVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dm8Srm4/; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e0354459844so1021743276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:26:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720711594; x=1721316394; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z2UifNQfHSWQactTbUxwngct7Jif7447IF3QEfZiqWY=;
-        b=Dm8Srm4/3k2UEj5Pe02DINegUCr/eEMDoyOSMG572SioW6VYEAA61+e4tg7qSzJ8T9
-         3WosFTFlDbR7kcJpU9fWeQkF1fp0ZLmES/wvMHwlJ/1qMvcD9Rj9kl5/AvLCRr4HGrRG
-         PKAH9K+Gl0eOJRtCu5LqaBUDhTZQrE1JvU0CwV5gR9igIt4+PHxXjRhHH2SGYHmeXC/z
-         7ZlXe6ryKVE7KMWV8BjpOg7EdvyGFVIRl7L45yFW1in2aTvJYDmcpQr8Bxpf1pUUOGgj
-         yRvBruI118fAdQXPMKcmpJD657fFU66S30CGsHjHZrY/LOIDLoKP2tsLK4P5IRgUyMyV
-         1Ljw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720711594; x=1721316394;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z2UifNQfHSWQactTbUxwngct7Jif7447IF3QEfZiqWY=;
-        b=NNN7YHtnBrXVv8hQq39KmKaQMIcEPry6xt0oB/M28ic379LE4eSlkn/sFROIzVNakW
-         A2BmCeB1HPw5RTOc/UvFPB3N1PTV4f/sYV3JrJp4mtUbQe6eaZprdxbq/ij4wQqHqwbs
-         F9HmVrTGeVztKHNWE9wYS5UQuFwyGNhw41Bkay99pxYHLt5BAROgorSCprnAf+B07yhX
-         GgkuWVzMHanA9oM/nK+zWDZzrc4C4s6Y5zR6iIFmrxoSst0L0/Y2eyA8Y0pkHxLa1F6o
-         7TYr2uoIk6yKKO4Nt0pNNAzCS53ALLU96ZpnbcTmuu+uRcfsHLjSr381HC4Cae8PLfrJ
-         oU1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUkfsoJ/GxLOzolhzyRiUcn9A7Mr5ndQxmqRyApyj5JymBvzaleF0XooFe6hDnQmOmkecYPQe2+kcj8TojWyz2vJsoQJ5s6UzEytIxu
-X-Gm-Message-State: AOJu0YxxlmQUbueAxrrClQqK/DYbLoh9hlRmKV6efBPhtZvEYJApcRzI
-	WeyAGJuejRgpGwZhmiNfUGxmX8ZYY82C1WP6XoOyirOzB9QG1eI5zUtebxfsbxNlVE4NY+0EKoF
-	2ciI0qX+L1JHzrOaMEohisy3SXEpty+FvFALE/w==
-X-Google-Smtp-Source: AGHT+IHRSvRxtciU4D9HXYrANT6oCsSmGR5hfnzw9CYJVDrCkRv/UkJgcHyyeRSNtmZhuOvpcZVYT0H141BgwBp64+o=
-X-Received: by 2002:a25:d852:0:b0:dfb:61e:3ee0 with SMTP id
- 3f1490d57ef6-e041b034870mr9885394276.10.1720711593970; Thu, 11 Jul 2024
- 08:26:33 -0700 (PDT)
+	s=arc-20240116; t=1720711711; c=relaxed/simple;
+	bh=Mp6aeP16rDe0NgNWIzBoWpraUHDvr79iZxKuBFhJlTM=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=M3Uwk30mB5C9as93E04Pg83Y5bJF58DO0m47oWO/C4g9EZcPKH3bZu90XHS85NGRRWQT27Ej78hTBK7Dg6U2j0f7l+F72twAoLE2no9N9+SjsXhqMRK2thk+jJuw2/AGLQUKAqiGjOWmfj6F9wVErPAJhoAv16nWBZG8TNx6hJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B0XkhEFJ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720711709; x=1752247709;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Mp6aeP16rDe0NgNWIzBoWpraUHDvr79iZxKuBFhJlTM=;
+  b=B0XkhEFJL+gxn7leHDTjx+e7axY0ldGNr1uqQTAofPOK/IEv31lXxvm4
+   +w88YKYHxN7cRYz3L6zfkAWZtcOD9Ad9ojfHB4ycWTTdYXRhUR3VPLr2p
+   cxIT7Ozc+hVTfwFwm4iblpdbIU7I0NrIyji0F0FVqLe7XhmtY4vTaXo14
+   0J+NTRF3Ztpov8JuWUDCUewlALtMveXZiw8vTjYAOxUYpDkPWY0DS1EKj
+   f6i4YjkuW/EAybStLTGkkKcLJ55dJTYC/uCMfFaZzW7PoI8dPQ+Ap9yvc
+   MsH+pqq8l60Raw1v/zf+cccsE9xo4L7RxhF+pKVZms6y6u9uzaw9RY0lo
+   A==;
+X-CSE-ConnectionGUID: jwo3iKt3TOCpUZ2AT6Ts5w==
+X-CSE-MsgGUID: Lk2x2/jrTkuY6CHR44HuJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="17808699"
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="17808699"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 08:27:21 -0700
+X-CSE-ConnectionGUID: c9wssgMYS8W+5OlqCdzdcA==
+X-CSE-MsgGUID: kGuY6bOZRN+tTexzDVQivA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
+   d="scan'208";a="49027757"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.127])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 08:27:17 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 11 Jul 2024 18:27:13 +0300 (EEST)
+To: superm1@kernel.org
+cc: Bjorn Helgaas <bhelgaas@google.com>, 
+    Mathias Nyman <mathias.nyman@intel.com>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    "open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>, 
+    Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 2/4] PCI: Verify functions currently in D3cold have
+ entered D0
+In-Reply-To: <20240710205838.2413465-3-superm1@kernel.org>
+Message-ID: <29d388a8-b529-6af1-d3a3-a0846e1f0692@linux.intel.com>
+References: <20240710205838.2413465-1-superm1@kernel.org> <20240710205838.2413465-3-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618155013.323322-1-ulf.hansson@linaro.org>
- <20240625105425.pkociumt4biv4j36@vireshk-i7> <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
- <20240701114748.hodf6pngk7opx373@vireshk-i7> <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
- <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
- <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7> <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
- <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com> <20240711131637.opzrayksfadimgq4@vireshk-i7>
-In-Reply-To: <20240711131637.opzrayksfadimgq4@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 11 Jul 2024 17:25:57 +0200
-Message-ID: <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="8323328-2025960674-1720711633=:6262"
 
-On Thu, 11 Jul 2024 at 15:16, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 11-07-24, 13:05, Ulf Hansson wrote:
-> > On Thu, 11 Jul 2024 at 12:31, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > >
-> > > On Thu, 11 Jul 2024 at 05:13, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > > >
-> > > > On 10-07-24, 15:51, Ulf Hansson wrote:
-> > > > > I think this should work, but in this case we seem to need a similar
-> > > > > thing for dev_pm_opp_set_rate().
-> > > >
-> > > > We don't go to that path for genpd's I recall. Do we ? For genpd's,
-> > > > since there is no freq, we always call _set_opp().
-> > >
-> > > You are right! Although, maybe it's still preferred to do it in
-> > > _set_opp() as it looks like the code would be more consistent? No?
->
-> Since the function already accepted a flag, it was very easier to just reuse it
-> without.
->
-> > No matter how we do this, we end up enforcing OPPs for genpds.
-> >
-> > It means that we may be requesting the same performance-level that we
-> > have already requested for the device. Of course genpd manages this,
-> > but it just seems a bit in-efficient to mee. Or maybe this isn't a big
-> > deal as consumer drivers should end up doing this anyway?
->
-> Normally I won't expect a consumer driver to do this check and so was the
-> opp core handling that. But for genpd's we need to make this inefficient to not
-> miss a vote.
->
-> The problem is at another level though. Normally for any other device, like CPU,
-> there is one vote for the entire range of devices supported by the OPP table.
-> For example all CPUs of a cluster will share an OPP table (and they do dvfs
-> together), and you call set_opp() for any of the CPU, we will go and change the
-> OPP. There is no per-device vote.
->
-> This whole design is broken in case of genpd, since you are expecting a separate
-> vote per device. Ideally, each device should have had its own copy of the OPP
-> table, but it is messy in case of genpd and to make it all work nicely, we may
-> have to choose this inefficient way of doing it :(
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Right, I get your point.
+--8323328-2025960674-1720711633=:6262
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Although, it seems to me that just limiting required-opps to
-performance-levels, could avoid us from having to enforce the OPPs for
-genpd. In other words, doing something along the lines of $subject
-patch should work fine.
+On Wed, 10 Jul 2024, superm1@kernel.org wrote:
 
-In fact, it looks to me that the required-opps handling for the
-*single* PM domain case, is already limited to solely
-performance-levels (opp-level), as there are no required_devs being
-assigned for it. Or did I get that wrong?
+> From: Mario Limonciello <mario.limonciello@amd.com>
+>=20
+> It is reported that USB4 routers and downstream devices may behave
+> incorrectly if a dock cable is plugged in at approximately the time that
+> the autosuspend_delay is configured. In this situation the device has
+> attempted to enter D3cold, but didn't finish D3cold entry when the PCI
+> core tried to transition it back to D0.
+>=20
+> Empirically measuring this situation an "aborted" D3cold exit takes
+> ~60ms and a "normal" D3cold exit takes ~10ms.
+>=20
+> The PCI-PM 1.2 spec specifies that the restore time for functions
+> in D3cold is either 'Full context restore or boot latency'.
+>=20
+> As PCIe r6.0 sec 5.8 specifies that the device will have gone
+> through a conventional reset it may take some time for the
 
-Kind regards
-Uffe
+I'd add comma after reset.
+
+The code change looks okay though,
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+> device to be ready.
+>=20
+> Wait up to 1 sec as specified in PCIe r6.0 sec 6.6.1 for a device
+> in D3cold to return to D0.
+>=20
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/pci/pci.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>=20
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 4ad02ad640518..9af324ab6bb02 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1388,6 +1388,17 @@ int pci_power_up(struct pci_dev *dev)
+>  =09else if (state =3D=3D PCI_D2)
+>  =09=09udelay(PCI_PM_D2_DELAY);
+> =20
+> +=09/*
+> +=09 * D3cold -> D0 will have gone through a conventional reset and may n=
+eed
+> +=09 * time to be ready.
+> +=09 */
+> +=09if (dev->current_state =3D=3D PCI_D3cold) {
+> +=09=09int ret;
+> +
+> +=09=09ret =3D pci_dev_wait(dev, "D3cold->D0", PCI_RESET_WAIT);
+> +=09=09if (ret)
+> +=09=09=09return ret;
+> +=09}
+>  end:
+>  =09dev->current_state =3D PCI_D0;
+>  =09if (need_restore)
+>=20
+
+--=20
+ i.
+
+--8323328-2025960674-1720711633=:6262--
 
