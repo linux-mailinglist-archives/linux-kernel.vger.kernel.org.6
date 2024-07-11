@@ -1,112 +1,83 @@
-Return-Path: <linux-kernel+bounces-249308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB9E92E9C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:39:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E167292E9C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0A76B28555
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:39:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EA881C21EBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568AA15FCEA;
-	Thu, 11 Jul 2024 13:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZI7Z+Fyq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A9E158D6F
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDF215FD16;
+	Thu, 11 Jul 2024 13:40:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4FF15ECD2;
+	Thu, 11 Jul 2024 13:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720705176; cv=none; b=i9ftLOBnSemT9B/EZ0x7lCCX0cQWQ2bfrmxBeV+Un/AkbeSQiYliNlm9bBFgoo1OOLQgLZVH16/SiSgfKd2gOxORoVaVd9EsZhLr95Af+VRCZ1Kdz4ChbrNxi0TMdpfOGUyqket9YRnmvYSMYeYavcaZnQRoLrqg8zJFeJAQSL8=
+	t=1720705214; cv=none; b=hpomQFtkUzsrZgy35xoW3OVwk/V5GMju8ypl5rfS0qVwFzPL7wecM8xQELqI877C4motzcz1K3lgtrvQDhHJdBkBbAsTxteDnIb2oreGig3zzxmOweS+u61tIOW+zHE2dpOlMQe1M5pGLayJ7meetFtBHnF74HWcrWX4mUWiBPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720705176; c=relaxed/simple;
-	bh=CeSSr2GqviLyMzCik5Kr4s5kuUTTZQ3UDFiw/cyQh70=;
+	s=arc-20240116; t=1720705214; c=relaxed/simple;
+	bh=JuIAFWRJtJ8H5PJwu/wDqaK4s+FrtjzeYIWcRlQLbTY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oWgKjMCOV4NBIJ2viRpqJ0qenjKj/ZhDyBMJ7nxO4loxNWeiWkteYwTqJcP1BCCFtublO6fCEJcRgbrfVu4APsohHcOU+EA9X6mP4bHCK0gMfURFzNP7N7z9+YqH/VBmBQ999FYX7mSfKr+Ke73m45bY/CmXfZONbMBlT1yel7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZI7Z+Fyq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720705172;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dw4qu9/yffnQvKdNYrdZGLZ+gcH1BeP3yFHuxOgKb68=;
-	b=ZI7Z+FyqA+dfPsCdfp8Z278F5a776OPDPXIE6yWQ+uAqP7ucZcxmDqHlHVPodUSeshjK/A
-	qn6yENxBXBy1OZvWap1g/+LjgSZoH6WTa9r+ePOpDxhlr39sh2fwJIuL8jrzlbjwZQ/BBY
-	J563TnljAcclbZYUkzZMpSSCnePogXQ=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-296-KgO0v2kvNEGbsmhc6h3V2w-1; Thu,
- 11 Jul 2024 09:39:19 -0400
-X-MC-Unique: KgO0v2kvNEGbsmhc6h3V2w-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C54BF1955BD2;
-	Thu, 11 Jul 2024 13:39:16 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.44])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 10A941955F3B;
-	Thu, 11 Jul 2024 13:39:11 +0000 (UTC)
-Date: Thu, 11 Jul 2024 21:39:06 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: YangYang <yang.yang@vivo.com>
-Cc: Bart Van Assche <bvanassche@acm.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Omar Sandoval <osandov@fb.com>,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v6] sbitmap: fix io hung due to race on
- sbitmap_word::cleared
-Message-ID: <Zo/gevNqftePGvic@fedora>
-References: <20240710065616.1060803-1-yang.yang@vivo.com>
- <29e50fff-fa7f-4b92-bfe9-7665c934b7dc@acm.org>
- <ead047aa-d9dc-4b2f-869f-610b309b5092@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CvLQzGzx1CMQu/12/xKPWgia/jkrLL0D06qU0FqXmo6VU2fyqBsV/2j8D5E9HS465IKx5s6HnNWora3zuiVJFShQOMnljxUcL4IC9p3ocmqKzovpWkFoPbGjZWiAXec/4sN8uxM2wmFfxylJlP6WZSS2DHvYEsfv5rtyi0jIbP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC3A8FEC;
+	Thu, 11 Jul 2024 06:40:36 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9FE363F766;
+	Thu, 11 Jul 2024 06:40:08 -0700 (PDT)
+Date: Thu, 11 Jul 2024 14:39:58 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v5 6/7] rtc: support i.MX95 BBM RTC
+Message-ID: <Zo_grjVBb0mVwGj0@pluto>
+References: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
+ <20240621-imx95-bbm-misc-v2-v5-6-b85a6bf778cb@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ead047aa-d9dc-4b2f-869f-610b309b5092@vivo.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20240621-imx95-bbm-misc-v2-v5-6-b85a6bf778cb@nxp.com>
 
-On Thu, Jul 11, 2024 at 08:48:03PM +0800, YangYang wrote:
-> On 2024/7/11 3:54, Bart Van Assche wrote:
-> > On 7/9/24 11:56 PM, Yang Yang wrote:
-> > > +    /**
-> > > +     * @swap_lock: Held while swapping word <-> cleared
-> > > +     */
-> > > +    spinlock_t swap_lock;
-> > 
-> > Why is only swapping 'word' with 'cleared' protected by the spinlock?
-> > If all 'cleared' changes would be protected by this spinlock then
-> > that would allow to eliminate the expensive xchg() call from
-> > sbitmap_deferred_clear().
+On Fri, Jun 21, 2024 at 03:04:41PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> The spinlock was initially introduced in ea86ea2cdced ("sbitmap:
-> ammortize cost of clearing bits").
-> I think if all 'cleared' changes are protected by the spinlock, the
-> overhead of clearing tags would definitely increase.
+> The BBM module provides RTC feature. To i.MX95, this module is managed by
+> System Manager and exported System Control Management Interface(SCMI).
+> Linux could use i.MX SCMI BBM Extension protocol to use RTC feature.
+> 
 
-There are only two WRITE on 'cleared':
+Hi Peng,
 
-- xchg(&map->cleared, 0) in sbitmap_deferred_clear()
-
-- set_bit() in sbitmap_deferred_clear_bit()
-
-xchg() supposes to provide such protection already.
+LGTM.
+Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 
 Thanks,
-Ming
+Cristian
 
 
