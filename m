@@ -1,153 +1,115 @@
-Return-Path: <linux-kernel+bounces-248925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D4B92E3ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:58:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C95B92E40B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A4B328165F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:58:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B2C8B245D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4756B157491;
-	Thu, 11 Jul 2024 09:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E711581F9;
+	Thu, 11 Jul 2024 10:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjUl7Uzb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfXB027K"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829B315747C;
-	Thu, 11 Jul 2024 09:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F95157492;
+	Thu, 11 Jul 2024 10:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720691922; cv=none; b=uIbfBMmGDYayGa+6OmOi195EFy4sbZPGFnorJeBd0NbQHEJinHJa9cNw2D+YI5u6lTuRh0JMLYkltGulxhapMKTFXfoX5OgDLj/IFw5RnfUVv1a9B/1H/nmqatQcGy5QDUEUqwWtkOsL+3Reh1EHaVDlLFfKlmcuKksAjIP2oWY=
+	t=1720692151; cv=none; b=r6pDeJR9CV0xCtSQYFYmVFDsoYJKCCu7+ZH1JV4oLQ0VlCkrsI29sxjW1klHQjKNuz9SJ4v1Hl/6Wyz8T1Cd+1zKD/RLLID6zJNLnuB9xTayIWR3F2LRPZhfCcDArFAsH9UiSuS72sSLNBr7VFX+2YDVMZhp9EBAYRGIO9vr3KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720691922; c=relaxed/simple;
-	bh=WuvcPyYCPZVdObRzkt1wRjrxvRBYyt8oPc8M1YvBhVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GR3l3lT9JGYC3oN04gq6HcwX0vzVzBAbQQiwV/flVkhszYRlSEkwGtUu5CJDt/2FOhvF+3u5/zgjzmSV9KQoQ7V1UMrxpwezCAM6VGWCKy8Q0zaAwN0z1nzjNCs+7CmUaOP1fh0kqXMWbD9SNbG2uvgZE3MhwwOFBbBSx14ssdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjUl7Uzb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00B68C116B1;
-	Thu, 11 Jul 2024 09:58:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720691922;
-	bh=WuvcPyYCPZVdObRzkt1wRjrxvRBYyt8oPc8M1YvBhVY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fjUl7UzbTkgcD0Civgq2Uxe04S1u/b2s/CouNh2KieybTTl/KucwfS3DvVk/9bw6s
-	 rx26o1bt0Ua9bmgwSefq3HyJAPZkdTdd0vDQ053QjgqP2uz5juuvweRlmwtyaxS2Sl
-	 XoqaIkWf9Y4SPs4YL8+82EvPZyOJUscsGyEx1elWOlPohA5xqJMOc2y05BkbFtfs6S
-	 72wgve9PkMUu/qF2QDn3QBJNOJfV25IQa9ktYi3U7+r0PDopXyfhTBms6Xgc3TKV42
-	 MC8lowyAZwxe95VnPCIAyZm5gK/nOlXnaC3XfrghD/+y6Vys7qtIpJ6FLWHUP9bKIh
-	 JuFdcwI7la6HA==
-Date: Thu, 11 Jul 2024 10:58:34 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Manikandan.M@microchip.com, Hari.PrasathGE@microchip.com,
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org,
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se, jernej.skrabec@gmail.com, airlied@gmail.com,
-	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux@armlinux.org.uk,
-	Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, arnd@arndb.de, Jason@zx2c4.com,
-	palmer@rivosinc.com, mpe@ellerman.id.au, rdunlap@infradead.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/4] drm/bridge: add Microchip DSI controller support for
- sam9x7 SoC series
-Message-ID: <20240711-freezing-decrease-4807d5d62f2a@spud>
-References: <20240704084837.168075-1-manikandan.m@microchip.com>
- <20240704084837.168075-3-manikandan.m@microchip.com>
- <9ef5a1ba-e404-46e0-8513-5fffbfb5618b@kernel.org>
- <aeaeb5d4-5e55-4a7a-bce7-fa207ebf0616@microchip.com>
- <4c1b7af7-e53c-492a-9c41-40cad78f7666@kernel.org>
+	s=arc-20240116; t=1720692151; c=relaxed/simple;
+	bh=kmgWtyOZTKJM+sAzcAkBvL0QpNbdfAmZ7s3njzEU70M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a8tnD9/pqvtn2YQlHPWivUGJn8hp8VKPKBm86Kjz7/k83FvFGI9JqcTmJRMH21YVbblKe8oMUL0EbpNtFA+nkxlVOsY9jdZlDmn5MJSSEoaTXUCe+F8BJBVgab9kLQKE7FFp05sTnvmjDrdQErjxVZnn66SuB05bppat+s9xlxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfXB027K; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58bac81f419so820503a12.0;
+        Thu, 11 Jul 2024 03:02:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720692149; x=1721296949; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W7LlhYWp7nTMZ7K5CSP3BcZJAn5u5YMEvoL0KoMR+4c=;
+        b=NfXB027Kz7BwV7gH5O20EQcayiXelJ8NOdw6gh2RAj10vGp1+0AJxTYf575BhzMZmz
+         IoOUm++IBQHHGrco9ptq2fOnZVbm2zixByQwbToYZvf+JLSIBbbBqiqumXbeH+KGGsIT
+         wskYhw3TZ7LrprmI/qE09zvufwRkMdkVEVfJ87voRc76K6xVoEhnCpNYtal1wdZzQkHB
+         7EKo9gqtMLMh2tOBXy+cCvWfW4tpRdIjVe3r8EyDF4662N1KMgltcB5hhoExatLiWrm1
+         mrVZV0KvfKwimH/Ur0U21AfD/KTvfSKOjHTOusJyw9aKFklkAUxWOAPIxkCPCreKxcjZ
+         82kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720692149; x=1721296949;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W7LlhYWp7nTMZ7K5CSP3BcZJAn5u5YMEvoL0KoMR+4c=;
+        b=GOBYMbKxcACLCVKZxJ+a2tC1T2z5uDfXYuQJO03qYKCv0lGNN6mquBk3+sixp0oV9M
+         0cvIHeTmZv/E0jV6NEeEIKxOl3L352eYOp8q9xR4+hSWtacvQdX83KNtI/OJ1nnD0Zqi
+         9MyXFfJ5MlavKss0vZWtbq01GZKt7ML26vSGzSPwaPJnbfJP6rDbMDrgKm8wBHQKez+R
+         UlXzPOOgdiEjl3vLS1BEaCoC3A5jdDOu24Sa9yHqZ8gmQsnyBFU0Sh/yVGaarBHfWaCC
+         O3CETVfUC/xC8qftXYlTOtR6+KpE36vQUBEotuTeMvGWt41IYnfTG4lUWey5BRC5bdvN
+         smGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXclwg10vgGxB3qr0QX0JKm7gW8aCjw8OrMGj2R8a3ljYU0Y50i7GrNgIhdGCtTFlCtmEOpc52MgtFPWi+1jf+GBYv9OTaadXjceQIafkEG3EJ8z/BCWrx0yz7N/OZ5Pxxc7CXx8n33cVRGFA==
+X-Gm-Message-State: AOJu0Yyf0IDYPl3pV0ZPeGrJ9sTr9gRSEf92HFXMiBoyBh7ua2386aHf
+	VdGTmQSRfhr7s0W2Rqr68/0DHDOh6Ckv761A5cH2wLUV3q7A8of+
+X-Google-Smtp-Source: AGHT+IGYQg8AZUImmAxC1jDm80glcTQzVnRnDnAM3C088/0+jlZf/fyKMvJlBHWFkzqB9e2hoZAe8Q==
+X-Received: by 2002:a17:906:378b:b0:a77:dd1c:6270 with SMTP id a640c23a62f3a-a780b688911mr513379166b.5.1720692148336;
+        Thu, 11 Jul 2024 03:02:28 -0700 (PDT)
+Received: from localhost.localdomain (public-nat-01.vpngate.v4.open.ad.jp. [219.100.37.233])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bc876sm239207666b.5.2024.07.11.03.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 03:02:27 -0700 (PDT)
+From: Vladimir Lypak <vladimir.lypak@gmail.com>
+To: Vladimir Lypak <vladimir.lypak@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Jordan Crouse <jordan@cosmicpenguin.net>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] fixes for Adreno A5Xx preemption
+Date: Thu, 11 Jul 2024 10:00:17 +0000
+Message-ID: <20240711100038.268803-1-vladimir.lypak@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="EWu0S0GtGVx/Ra1x"
-Content-Disposition: inline
-In-Reply-To: <4c1b7af7-e53c-492a-9c41-40cad78f7666@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+There are several issues with preemption on Adreno A5XX GPUs which
+render system unusable if more than one priority level is used. Those
+issues include persistent GPU faults and hangs, full UI lockups with
+idling GPU.
 
---EWu0S0GtGVx/Ra1x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+---
+Vladimir Lypak (4):
+  drm/msm/a5xx: disable preemption in submits by default
+  drm/msm/a5xx: properly clear preemption records on resume
+  drm/msm/a5xx: fix races in preemption evaluation stage
+  drm/msm/a5xx: workaround early ring-buffer emptiness check
 
-On Thu, Jul 11, 2024 at 11:05:37AM +0200, Krzysztof Kozlowski wrote:
-> On 11/07/2024 10:30, Manikandan.M@microchip.com wrote:
-> > Hi Krzysztof,
-> >=20
-> > On 04/07/24 4:27 pm, Krzysztof Kozlowski wrote:
-> >> EXTERNAL EMAIL: Do not click links or open attachments unless you know=
- the content is safe
-> >>
-> >> On 04/07/2024 10:48, Manikandan Muralidharan wrote:
-> >>> Add the Microchip's DSI controller wrapper driver that uses
-> >>> the Synopsys DesignWare MIPI DSI host controller bridge.
-> >>>
-> >>> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-> >>> ---
-> >>
-> >>
-> >> ...
-> >>
-> >>> +
-> >>> +#define HSTT(_maxfreq, _c_lp2hs, _c_hs2lp, _d_lp2hs, _d_hs2lp)      =
- \
-> >>> +{                                    \
-> >>> +     .maxfreq =3D _maxfreq,            \
-> >>> +     .timing =3D {                     \
-> >>> +             .clk_lp2hs =3D _c_lp2hs,  \
-> >>> +             .clk_hs2lp =3D _c_hs2lp,  \
-> >>> +             .data_lp2hs =3D _d_lp2hs, \
-> >>> +             .data_hs2lp =3D _d_hs2lp, \
-> >>> +     }                               \
-> >>> +}
-> >>> +
-> >>> +struct hstt hstt_table[] =3D {
-> >>
-> >> So more globals? No.
-> >=20
-> > In the sam9x7 datasheet, the high speed transition time for data and
-> > clock lane at different freq for the DSI controller ranges are tabulated
-> > with constant values.
-> > I referred other similar platforms for the functionality and found=20
-> > similar way of implementation,  only a few had equations to derive the=
-=20
-> > low power and high speed timings.I am not able to come up with a more=
-=20
-> > efficient method. If there is something I am missing, please suggest.
-> > TIA
->=20
-> Yeah, this should not be a global. Nothing above suggests it.
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c     | 18 ++++++++++----
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.h     | 12 ++++++---
+ drivers/gpu/drm/msm/adreno/a5xx_preempt.c | 30 ++++++++++++++++++++---
+ 3 files changed, 47 insertions(+), 13 deletions(-)
+---
+base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
+-- 
+2.45.2
 
-I think what Krzysztof is suggesting here is use of the static
-keyword...
-
->=20
-> BTW, no W=3D1 clang warnings? Are you sure?
->=20
-> Best regards,
-> Krzysztof
->=20
-
---EWu0S0GtGVx/Ra1x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZo+sygAKCRB4tDGHoIJi
-0gtxAQD5lJOy/q4aES6K9CjXBUSnOWaI63qOFMdQ616WHgo78wD9FOHchUgSltnR
-kDI6geXp0AJKzlBkFd7UwEarIdbUJAc=
-=Ikhe
------END PGP SIGNATURE-----
-
---EWu0S0GtGVx/Ra1x--
 
