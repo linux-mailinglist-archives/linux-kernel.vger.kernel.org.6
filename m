@@ -1,412 +1,432 @@
-Return-Path: <linux-kernel+bounces-249376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB5792EAD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:34:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E83692EAD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84C4281FC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD313283CB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4893F16A954;
-	Thu, 11 Jul 2024 14:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2261684AB;
+	Thu, 11 Jul 2024 14:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BuW7zRsI"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9A1ZWus"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267F3158DA8;
-	Thu, 11 Jul 2024 14:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BAC167DA8;
+	Thu, 11 Jul 2024 14:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720708443; cv=none; b=Km9XDe+1W77AVhqNk5QN+2GkR+oF5qArmF2YiZ7oUm3CrHhGRyqJAcBqJRtZaDkL61BZc2trCXac2c0pClhPWXupks1QCahUFypKhuUFM8WR5R1+2LCCV3TtA3TfATS1LBsu4Pxcy/XNoVBVPTr1PH6yNd22VzU/Ppf87LW8KUY=
+	t=1720708487; cv=none; b=S6FAM1IoBDnZrlV6T7duDpu+/mvXotImeVqMnCLqkuWEilONF7MUHalIqKIL/b5XcyqeP9qvLhdrHAE13pqAL1dA0nhFhDRxAxaEV1bzzoJSKGJaHsSJjyxdvsfHkEyKX5AHUNs5X1oM4iGshPNj810r6Ksn0kBFDigy8kYyj7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720708443; c=relaxed/simple;
-	bh=0cOmxcRk0+/3AKFnowBw/+Y1brcE83Kk9E2BC4J0KHE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eBMV1xlcQPttlK+VRW0r4BYg8727fJk9JdB5n7ovH8Gv3u3ofTbd0OO0FeWIjSOmDzaaLz2dorXklqxW6PjnjwcOC3Nx7fJfpVcixL51nPQDpOpQmEEFKUnXLW3J9fAAcmVkXmHq8YWaJEC8KZrrFDvWoL3aAsZ0VNKPzXitoOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BuW7zRsI; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-810197638fcso313622241.1;
-        Thu, 11 Jul 2024 07:34:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720708440; x=1721313240; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BM09hnKVB1kESbZILffmOawcWcc5pMVTZevNuy1bqkk=;
-        b=BuW7zRsIkKzAvyb/JPNVcPGYjVA4iOo/+dLkH1OXEsSk/KyxSKWRgTRmd14tnl0139
-         vjnt65xrFV/L463hGrdHH2XLR8PEca0MbZU95ZCpzGfMYg5CAaTuZUYLAedx5QPnU7Lj
-         cOUtiy4c56EFmUDSVTMIJIf0Fo6xHc39lMMojKSKtluL1XqB/YZ+BLdoGLHQRAPpqoqf
-         z4WQftKoKvl7vMOL3sJD6xSsorNvDcvk0mR35ul0i2/0b8SQykqr8mqbC75h/rJ6SzwJ
-         EQVzLKVg9Rg6Mst5E71r+6R3gpZx7drND1AUP6YrKj8SLRa8hZBI3W27t15SrT+c7Q8X
-         ilTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720708440; x=1721313240;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BM09hnKVB1kESbZILffmOawcWcc5pMVTZevNuy1bqkk=;
-        b=Dru+3g7oxjUqg4XFe2mvul3L0jkUMSsu7Csrmmz5AE3X6Zo+Mn2wQaBFAEdwSwyklb
-         LojOj3za+h6VC6Oc/5F896Xh7ovRq4WLLR5iZ0euFAIlerKOofAIOUVF2o7kaEmcXKnB
-         dnXo6IsYa6w3XvkGkuWYfarnqYiTXlt4OQ0CrX6V0Ni7d8yL5k9Ua9fHpUB7scCSmdMj
-         c3Lwd3Erz1LHrA6HAlaQSXZ85XiRZq1xWY39KVYwvxCHKavsE0QZ99Xc0aKRKPZk9T7c
-         3vVUnxvSqoxWA5Og+F/cfvirK0SEfejvpGo6iyNyONgNUBL6ODKUhHS4fsW7tjllwC1b
-         8a0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVyK6XssFd+MohnM13hXWfr5LbJU9M3/bZb1kcvuahBK3xIBR+pJ7frZwQwoFMKOq3+8QjDXJI5jxJUs9nRkkkpms85XoAJGLGSBOwwMWzI06tUQqJIKc9fa5CiUOBaA2Oj1excLKabagCPqncpHwqzyT+r3pPKGFce2Lov
-X-Gm-Message-State: AOJu0YwyVJPwczpwVmBpQKdP0TeakwIhai+F8zvF9KkVb4SSPictm/Y2
-	OnTW/Ji/Luqnu8WeNGZZZuhYAnBmoSt1ey+NnOAu67MUCTH9xhgbdqmYdo/FldQhC2VT0OYx+IT
-	3gGkJT8aDtfJkIKvNbDaG3vPO5e4=
-X-Google-Smtp-Source: AGHT+IG+32pOzsD1Wpd/m/yDdX5729UAhjArzwR66VTPZ3h+eIPc2EMF9lsGy46gmKbhU4yaab9TtAr8Zg0w00fRAds=
-X-Received: by 2002:a05:6122:21ac:b0:4ef:52e2:6763 with SMTP id
- 71dfb90a1353d-4f33f318833mr9932911e0c.13.1720708439701; Thu, 11 Jul 2024
- 07:33:59 -0700 (PDT)
+	s=arc-20240116; t=1720708487; c=relaxed/simple;
+	bh=u+JLQpY2OGFSvyqiP0oNI4X+ySZWmc0hNBY3OoLpvTw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BmydqMBce4r4LbHdnaF7aW6Ks8Ku7UZk+v05VFR7iJrXwm7Y/J8Zrp/Jw8NTCalSeOxctuaH9otSlOnpUOOKJgRiHY1kdZqOxzVIk0SBKgYZOVRr/e1bVHAvrGRcHVhevbz0f151LYWLS1TkMXeyi+Pipc1Qj9M/S6yNUaCm1L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9A1ZWus; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8490BC116B1;
+	Thu, 11 Jul 2024 14:34:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720708487;
+	bh=u+JLQpY2OGFSvyqiP0oNI4X+ySZWmc0hNBY3OoLpvTw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=s9A1ZWus2u/s3VdNqvfq5TnQkOHcQ+E+yMcB8FG3yojvKvocStUsBpAEJnqkpVVnI
+	 NEcpIyKsKgGNll95XbRT2sH6pt1BcuJjprDmYrPGONiyNQKLs59mnBJ6y3GmaqzLBd
+	 i+feY7H7u5fNayN8vpmU+KeoaJzq3fPVQ+8Sgi7Jjcv27qHYHi+a1rID+K1r6DuMxa
+	 YuBUwV6/WlRDvup3E3H1o8B2lcf8ksTWmi8TZoFqGNQ94tzwnD6H0cASHk94zbdMGQ
+	 /XOTVo+jBrxPwEPvesKCp0AEUN8P3hNPYywJF5lDahq6XIjg0du9ElidpX2TtPAfxA
+	 GwwLEcYftnBog==
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 11 Jul 2024 15:33:28 +0100
+Subject: [PATCH] kselftest/alsa: Use card name rather than number in test
+ names
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617054514.127961-1-chengen.du@canonical.com>
- <ZnAdiDjI_unrELB8@nanopsycho.orion> <6670898e1ca78_21d16f2946f@willemb.c.googlers.com.notmuch>
- <ZnEmiIhs5K4ehcYH@nanopsycho.orion> <66715247c147c_23a4e7294a7@willemb.c.googlers.com.notmuch>
- <CAPza5qfQtPZ-UPF97CG+zEwoQunbzg8F8kX0Q1y5Fzt4Zoc=4w@mail.gmail.com>
- <6673dc0ee45dd_2a03042941e@willemb.c.googlers.com.notmuch>
- <CAPza5qfqoJeSe3=nEuMAhWygiu0+N3v2Qe1TPB1eywMEyfGLrw@mail.gmail.com>
- <66794d8c1d425_3637da294d8@willemb.c.googlers.com.notmuch> <CAPza5qeh+vDAv_Xe5Duz53GFDef2UNxSdPAbgivk=XmdVkJbMQ@mail.gmail.com>
-In-Reply-To: <CAPza5qeh+vDAv_Xe5Duz53GFDef2UNxSdPAbgivk=XmdVkJbMQ@mail.gmail.com>
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date: Thu, 11 Jul 2024 10:33:23 -0400
-Message-ID: <CAF=yD-+9m9MVTsmidD3wheBCWu6EZGmYEqB6a=jpY0GT74r6fA@mail.gmail.com>
-Subject: Re: [PATCH v8] af_packet: Handle outgoing VLAN packets without
- hardware offloading
-To: Chengen Du <chengen.du@canonical.com>
-Cc: Jiri Pirko <jiri@resnulli.us>, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, kaber@trash.net, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240711-alsa-kselftest-board-name-v1-1-ab5cf2dbbea6@kernel.org>
+X-B4-Tracking: v=1; b=H4sIADftj2YC/x3MQQqDMBBG4avIrB1IJCB4ldLF1PzRoTaWjIgg3
+ t3g8lu8d5KhKIyG5qSCXU3XXOHbhsZZ8gTWWE2d64LrvWdZTPhrWNIG2/izSomc5QdGEC8xhjG
+ Jo9r/C5Iez/v1vq4bQlO3K2sAAAA=
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.14-dev-d4707
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13170; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=u+JLQpY2OGFSvyqiP0oNI4X+ySZWmc0hNBY3OoLpvTw=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmj+2Ekf3wRYUeio+n3/rUkalFzeUoYxJ/Da2Erwhc
+ MbQDjA+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZo/thAAKCRAk1otyXVSH0EB5B/
+ sGj1T4OaXaWh/RtRN5F+4/hqe4v9bV9sFApvnwk0NpdGrvCsVzCh98D1chMighLDbtCdBX9Wbcjw09
+ TFjbudmgyVi+2dMH5lObbEWMeuCYGevyOFvUkorT1OE+nE0FNZFJNgm/i8E8EJHdcNSBDsJ6cjsdbV
+ NpPB/ejUDKZcISa+osgM/2mxTSwdGnXHgsB7dcGg4ip3wakezG7ZIwS6gRokJF8inAuv//1EY3ffWy
+ lrAFXaBkn1CLX4e7VSlEn8RQUHdHSwt6m7lL4DltSo7HAdxdTtzf+csdxJhJ7TAKQEQYs7N6uenuLG
+ DfmGpFdmHRY8dza9h2hQO9gJ7gcpAr
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Wed, Jul 10, 2024 at 10:34=E2=80=AFPM Chengen Du <chengen.du@canonical.c=
-om> wrote:
->
-> On Mon, Jun 24, 2024 at 6:42=E2=80=AFPM Willem de Bruijn
-> <willemdebruijn.kernel@gmail.com> wrote:
-> >
-> > Chengen Du wrote:
-> > > On Thu, Jun 20, 2024 at 3:36=E2=80=AFPM Willem de Bruijn
-> > > <willemdebruijn.kernel@gmail.com> wrote:
-> > > >
-> > > > Chengen Du wrote:
-> > > > > On Tue, Jun 18, 2024 at 5:24=E2=80=AFPM Willem de Bruijn
-> > > > > <willemdebruijn.kernel@gmail.com> wrote:
-> > > > > >
-> > > > > > Jiri Pirko wrote:
-> > > > > > > Mon, Jun 17, 2024 at 09:07:58PM CEST, willemdebruijn.kernel@g=
-mail.com wrote:
-> > > > > > > >Jiri Pirko wrote:
-> > > > > > > >> Mon, Jun 17, 2024 at 07:45:14AM CEST, chengen.du@canonical=
-.com wrote:
-> > > > > > > >> >The issue initially stems from libpcap. The ethertype wil=
-l be overwritten
-> > > > > > > >> >as the VLAN TPID if the network interface lacks hardware =
-VLAN offloading.
-> > > > > > > >> >In the outbound packet path, if hardware VLAN offloading =
-is unavailable,
-> > > > > > > >> >the VLAN tag is inserted into the payload but then cleare=
-d from the sk_buff
-> > > > > > > >> >struct. Consequently, this can lead to a false negative w=
-hen checking for
-> > > > > > > >> >the presence of a VLAN tag, causing the packet sniffing o=
-utcome to lack
-> > > > > > > >> >VLAN tag information (i.e., TCI-TPID). As a result, the p=
-acket capturing
-> > > > > > > >> >tool may be unable to parse packets as expected.
-> > > > > > > >> >
-> > > > > > > >> >The TCI-TPID is missing because the prb_fill_vlan_info() =
-function does not
-> > > > > > > >> >modify the tp_vlan_tci/tp_vlan_tpid values, as the inform=
-ation is in the
-> > > > > > > >> >payload and not in the sk_buff struct. The skb_vlan_tag_p=
-resent() function
-> > > > > > > >> >only checks vlan_all in the sk_buff struct. In cooked mod=
-e, the L2 header
-> > > > > > > >> >is stripped, preventing the packet capturing tool from de=
-termining the
-> > > > > > > >> >correct TCI-TPID value. Additionally, the protocol in SLL=
- is incorrect,
-> > > > > > > >> >which means the packet capturing tool cannot parse the L3=
- header correctly.
-> > > > > > > >> >
-> > > > > > > >> >Link: https://github.com/the-tcpdump-group/libpcap/issues=
-/1105
-> > > > > > > >> >Link: https://lore.kernel.org/netdev/20240520070348.26725=
--1-chengen.du@canonical.com/T/#u
-> > > > > > > >> >Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspa=
-ce")
-> > > > > > > >> >Cc: stable@vger.kernel.org
-> > > > > > > >> >Signed-off-by: Chengen Du <chengen.du@canonical.com>
-> > > > > > > >> >---
-> > > > > > > >> > net/packet/af_packet.c | 86 ++++++++++++++++++++++++++++=
-+++++++++++++-
-> > > > > > > >> > 1 file changed, 84 insertions(+), 2 deletions(-)
-> > > > > > > >> >
-> > > > > > > >> >diff --git a/net/packet/af_packet.c b/net/packet/af_packe=
-t.c
-> > > > > > > >> >index ea3ebc160e25..84e8884a77e3 100644
-> > > > > > > >> >--- a/net/packet/af_packet.c
-> > > > > > > >> >+++ b/net/packet/af_packet.c
-> > > > > > > >> >@@ -538,6 +538,61 @@ static void *packet_current_frame(st=
-ruct packet_sock *po,
-> > > > > > > >> >  return packet_lookup_frame(po, rb, rb->head, status);
-> > > > > > > >> > }
-> > > > > > > >> >
-> > > > > > > >> >+static u16 vlan_get_tci(struct sk_buff *skb, struct net_=
-device *dev)
-> > > > > > > >> >+{
-> > > > > > > >> >+ struct vlan_hdr vhdr, *vh;
-> > > > > > > >> >+ u8 *skb_orig_data =3D skb->data;
-> > > > > > > >> >+ int skb_orig_len =3D skb->len;
-> > > > > > > >> >+ unsigned int header_len;
-> > > > > > > >> >+
-> > > > > > > >> >+ if (!dev)
-> > > > > > > >> >+         return 0;
-> > > > > > > >> >+
-> > > > > > > >> >+ /* In the SOCK_DGRAM scenario, skb data starts at the n=
-etwork
-> > > > > > > >> >+  * protocol, which is after the VLAN headers. The outer=
- VLAN
-> > > > > > > >> >+  * header is at the hard_header_len offset in non-varia=
-ble
-> > > > > > > >> >+  * length link layer headers. If it's a VLAN device, th=
-e
-> > > > > > > >> >+  * min_header_len should be used to exclude the VLAN he=
-ader
-> > > > > > > >> >+  * size.
-> > > > > > > >> >+  */
-> > > > > > > >> >+ if (dev->min_header_len =3D=3D dev->hard_header_len)
-> > > > > > > >> >+         header_len =3D dev->hard_header_len;
-> > > > > > > >> >+ else if (is_vlan_dev(dev))
-> > > > > > > >> >+         header_len =3D dev->min_header_len;
-> > > > > > > >> >+ else
-> > > > > > > >> >+         return 0;
-> > > > > > > >> >+
-> > > > > > > >> >+ skb_push(skb, skb->data - skb_mac_header(skb));
-> > > > > > > >> >+ vh =3D skb_header_pointer(skb, header_len, sizeof(vhdr)=
-, &vhdr);
-> > > > > > > >> >+ if (skb_orig_data !=3D skb->data) {
-> > > > > > > >> >+         skb->data =3D skb_orig_data;
-> > > > > > > >> >+         skb->len =3D skb_orig_len;
-> > > > > > > >> >+ }
-> > > > > > > >> >+ if (unlikely(!vh))
-> > > > > > > >> >+         return 0;
-> > > > > > > >> >+
-> > > > > > > >> >+ return ntohs(vh->h_vlan_TCI);
-> > > > > > > >> >+}
-> > > > > > > >> >+
-> > > > > > > >> >+static __be16 vlan_get_protocol_dgram(struct sk_buff *sk=
-b)
-> > > > > > > >> >+{
-> > > > > > > >> >+ __be16 proto =3D skb->protocol;
-> > > > > > > >> >+
-> > > > > > > >> >+ if (unlikely(eth_type_vlan(proto))) {
-> > > > > > > >> >+         u8 *skb_orig_data =3D skb->data;
-> > > > > > > >> >+         int skb_orig_len =3D skb->len;
-> > > > > > > >> >+
-> > > > > > > >> >+         skb_push(skb, skb->data - skb_mac_header(skb));
-> > > > > > > >> >+         proto =3D __vlan_get_protocol(skb, proto, NULL)=
-;
-> > > > > > > >> >+         if (skb_orig_data !=3D skb->data) {
-> > > > > > > >> >+                 skb->data =3D skb_orig_data;
-> > > > > > > >> >+                 skb->len =3D skb_orig_len;
-> > > > > > > >> >+         }
-> > > > > > > >> >+ }
-> > > > > > > >> >+
-> > > > > > > >> >+ return proto;
-> > > > > > > >> >+}
-> > > > > > > >> >+
-> > > > > > > >> > static void prb_del_retire_blk_timer(struct tpacket_kbdq=
-_core *pkc)
-> > > > > > > >> > {
-> > > > > > > >> >  del_timer_sync(&pkc->retire_blk_timer);
-> > > > > > > >> >@@ -1007,10 +1062,16 @@ static void prb_clear_rxhash(stru=
-ct tpacket_kbdq_core *pkc,
-> > > > > > > >> > static void prb_fill_vlan_info(struct tpacket_kbdq_core =
-*pkc,
-> > > > > > > >> >                  struct tpacket3_hdr *ppd)
-> > > > > > > >> > {
-> > > > > > > >> >+ struct packet_sock *po =3D container_of(pkc, struct pac=
-ket_sock, rx_ring.prb_bdqc);
-> > > > > > > >> >+
-> > > > > > > >> >  if (skb_vlan_tag_present(pkc->skb)) {
-> > > > > > > >> >          ppd->hv1.tp_vlan_tci =3D skb_vlan_tag_get(pkc->=
-skb);
-> > > > > > > >> >          ppd->hv1.tp_vlan_tpid =3D ntohs(pkc->skb->vlan_=
-proto);
-> > > > > > > >> >          ppd->tp_status =3D TP_STATUS_VLAN_VALID | TP_ST=
-ATUS_VLAN_TPID_VALID;
-> > > > > > > >> >+ } else if (unlikely(po->sk.sk_type =3D=3D SOCK_DGRAM &&=
- eth_type_vlan(pkc->skb->protocol))) {
-> > > > > > > >> >+         ppd->hv1.tp_vlan_tci =3D vlan_get_tci(pkc->skb,=
- pkc->skb->dev);
-> > > > > > > >> >+         ppd->hv1.tp_vlan_tpid =3D ntohs(pkc->skb->proto=
-col);
-> > > > > > > >> >+         ppd->tp_status =3D TP_STATUS_VLAN_VALID | TP_ST=
-ATUS_VLAN_TPID_VALID;
-> > > > > > > >> >  } else {
-> > > > > > > >> >          ppd->hv1.tp_vlan_tci =3D 0;
-> > > > > > > >> >          ppd->hv1.tp_vlan_tpid =3D 0;
-> > > > > > > >> >@@ -2428,6 +2489,10 @@ static int tpacket_rcv(struct sk_b=
-uff *skb, struct net_device *dev,
-> > > > > > > >> >                  h.h2->tp_vlan_tci =3D skb_vlan_tag_get(=
-skb);
-> > > > > > > >> >                  h.h2->tp_vlan_tpid =3D ntohs(skb->vlan_=
-proto);
-> > > > > > > >> >                  status |=3D TP_STATUS_VLAN_VALID | TP_S=
-TATUS_VLAN_TPID_VALID;
-> > > > > > > >> >+         } else if (unlikely(sk->sk_type =3D=3D SOCK_DGR=
-AM && eth_type_vlan(skb->protocol))) {
-> > > > > > > >> >+                 h.h2->tp_vlan_tci =3D vlan_get_tci(skb,=
- skb->dev);
-> > > > > > > >> >+                 h.h2->tp_vlan_tpid =3D ntohs(skb->proto=
-col);
-> > > > > > > >> >+                 status |=3D TP_STATUS_VLAN_VALID | TP_S=
-TATUS_VLAN_TPID_VALID;
-> > > > > > > >> >          } else {
-> > > > > > > >> >                  h.h2->tp_vlan_tci =3D 0;
-> > > > > > > >> >                  h.h2->tp_vlan_tpid =3D 0;
-> > > > > > > >> >@@ -2457,7 +2522,8 @@ static int tpacket_rcv(struct sk_bu=
-ff *skb, struct net_device *dev,
-> > > > > > > >> >  sll->sll_halen =3D dev_parse_header(skb, sll->sll_addr)=
-;
-> > > > > > > >> >  sll->sll_family =3D AF_PACKET;
-> > > > > > > >> >  sll->sll_hatype =3D dev->type;
-> > > > > > > >> >- sll->sll_protocol =3D skb->protocol;
-> > > > > > > >> >+ sll->sll_protocol =3D (sk->sk_type =3D=3D SOCK_DGRAM) ?
-> > > > > > > >> >+         vlan_get_protocol_dgram(skb) : skb->protocol;
-> > > > > > > >> >  sll->sll_pkttype =3D skb->pkt_type;
-> > > > > > > >> >  if (unlikely(packet_sock_flag(po, PACKET_SOCK_ORIGDEV))=
-)
-> > > > > > > >> >          sll->sll_ifindex =3D orig_dev->ifindex;
-> > > > > > > >> >@@ -3482,7 +3548,8 @@ static int packet_recvmsg(struct so=
-cket *sock, struct msghdr *msg, size_t len,
-> > > > > > > >> >          /* Original length was stored in sockaddr_ll fi=
-elds */
-> > > > > > > >> >          origlen =3D PACKET_SKB_CB(skb)->sa.origlen;
-> > > > > > > >> >          sll->sll_family =3D AF_PACKET;
-> > > > > > > >> >-         sll->sll_protocol =3D skb->protocol;
-> > > > > > > >> >+         sll->sll_protocol =3D (sock->type =3D=3D SOCK_D=
-GRAM) ?
-> > > > > > > >> >+                 vlan_get_protocol_dgram(skb) : skb->pro=
-tocol;
-> > > > > > > >> >  }
-> > > > > > > >> >
-> > > > > > > >> >  sock_recv_cmsgs(msg, sk, skb);
-> > > > > > > >> >@@ -3539,6 +3606,21 @@ static int packet_recvmsg(struct s=
-ocket *sock, struct msghdr *msg, size_t len,
-> > > > > > > >> >                  aux.tp_vlan_tci =3D skb_vlan_tag_get(sk=
-b);
-> > > > > > > >> >                  aux.tp_vlan_tpid =3D ntohs(skb->vlan_pr=
-oto);
-> > > > > > > >> >                  aux.tp_status |=3D TP_STATUS_VLAN_VALID=
- | TP_STATUS_VLAN_TPID_VALID;
-> > > > > > > >> >+         } else if (unlikely(sock->type =3D=3D SOCK_DGRA=
-M && eth_type_vlan(skb->protocol))) {
-> > > > > > > >>
-> > > > > > > >> I don't understand why this would be needed here. We spent=
- quite a bit
-> > > > > > > >> of efford in the past to make sure vlan header is always s=
-tripped.
-> > > > > > > >> Could you fix that in tx path to fulfill the expectation?
-> > > > > > > >
-> > > > > > > >Doesn't that require NETIF_F_HW_VLAN_CTAG_TX?
-> > > > > > > >
-> > > > > > > >I also wondered whether we should just convert the skb for t=
-his case
-> > > > > > > >with skb_vlan_untag, to avoid needing new PF_PACKET logic to=
- handle
-> > > > > > > >unstripped tags in the packet socket code. But it seems equa=
-lly
-> > > > > > > >complex.
-> > > > > > >
-> > > > > > > Correct. skb_vlan_untag() as a preparation of skb before this=
- function
-> > > > > > > is called is exactly what I was suggesting.
-> > > > > >
-> > > > > > It's not necessarily simpler, as that function expects skb->dat=
-a to
-> > > > > > point to the (outer) VLAN header.
-> > > > > >
-> > > > > > It will pull that one, but not any subsequent ones.
-> > > > > >
-> > > > > > SOCK_DGRAM expects skb->data to point to the network layer head=
-er.
-> > > > > > And we only want to make this change for SOCK_DGRAM and if auxd=
-ata is
-> > > > > > requested.
-> > > > > >
-> > > > > > Not sure that it will be simpler. But worth a look at least.
-> > > > >
-> > > > > Thank you for your suggestion.
-> > > > >
-> > > > > I have analyzed the code and considered a feasible approach. We c=
-ould
-> > > > > call skb_vlan_untag() in packet_rcv before pushing skb into
-> > > > > sk->sk_receive_queue.
-> > > >
-> > > > Only for SOCK_DGRAM.
-> > > >
-> > > > And there is some user risk, as they will see different packets on
-> > > > the same devices as before. A robust program should work for both
-> > > > vlan stripped and unstripped, and the unstripped case is already
-> > > > broken wrt sll_protocol returned, so I suppose this is acceptable.
-> > > >
-> > > > > We would also need to determine if auxdata is
-> > > > > required to maintain performance, which might cause the logic of
-> > > > > judging PACKET_SOCK_AUXDATA to be spread across both the packet_r=
-cv()
-> > > > > and packet_recvmsg() functions.
-> > > >
-> > > > You mean to only make the above change if SOCK_DGRAM and auxdata is
-> > > > requested?
-> > >
-> > > Yes, we can constrain the performance overhead to specific scenarios =
-this way.
-> > >
-> > > >
-> > > > Btw, also tpacket_rcv, where auxdata is always returned.
-> > > >
-> > > > > The skb_vlan_untag() function handles VLANs in a more comprehensi=
-ve
-> > > > > way, but it seems to have a greater performance impact compared t=
-o our
-> > > > > current approach.
-> > > >
-> > > > I was afraid of that too. The skb_share_check is fine, as this also
-> > > > exists in packet_rcv, before we would call skb_vlan_untag.
-> > > >
-> > > > A bigger issue: this only pulls the outer tag. So we still need to
-> > > > handle the vlan stacking case correctly manually.
-> > >
-> > > It seems we are on the same page. The need to manually handle VLAN
-> > > stacking is a significant concern. Since the code is in the critical
-> > > path, we must carefully manage the performance overhead. Given that
-> > > the current method is more efficient than calling skb_vlan_untag(), I
-> > > propose retaining the patch as is. Please let me know if there are an=
-y
-> > > other concerns.
-> >
-> > I agree.
->
-> I apologize for any inconvenience. May I ask when this patch will be
-> merged? Or is there anything I need to do to help the patch proceed?
+Currently for the PCM and mixer tests we report test names which identify
+the card being tested with the card number. This ensures we have unique
+names but since card numbers are dynamically assigned at runtime the names
+we end up with will often not be stable on systems with multiple cards
+especially where those cards are provided by separate modules loeaded at
+runtime. This makes it difficult for automated systems and UIs to relate
+test results between runs on affected platforms.
 
-Please rebase and resubmit.
+Address this by replacing our use of card numbers with card names which are
+more likely to be stable across runs. We use the long name since in the
+case where we have two of the same card it is more likely to include
+deduplication information (eg, HDA cards include the address/IRQ). The
+resulting information is not the most beautiful for human readers but the
+majority of kselftest output consumption is automated systems and it wasn't
+that great anyway.
 
-For details, see also
-https://kernel.org/doc/html/latest/process/maintainer-netdev.html#patch-sta=
-tus
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/alsa/mixer-test.c | 76 ++++++++++++++++---------------
+ tools/testing/selftests/alsa/pcm-test.c   | 35 ++++++++------
+ 2 files changed, 60 insertions(+), 51 deletions(-)
+
+diff --git a/tools/testing/selftests/alsa/mixer-test.c b/tools/testing/selftests/alsa/mixer-test.c
+index 1c04e5f638a0..df9ae3b4e2df 100644
+--- a/tools/testing/selftests/alsa/mixer-test.c
++++ b/tools/testing/selftests/alsa/mixer-test.c
+@@ -33,6 +33,7 @@
+ struct card_data {
+ 	snd_ctl_t *handle;
+ 	int card;
++	const char *card_name;
+ 	struct pollfd pollfd;
+ 	int num_ctls;
+ 	snd_ctl_elem_list_t *ctls;
+@@ -91,6 +92,7 @@ static void find_controls(void)
+ 		err = snd_card_get_longname(card, &card_longname);
+ 		if (err != 0)
+ 			card_longname = "Unknown";
++		card_data->card_name = card_longname;
+ 		ksft_print_msg("Card %d - %s (%s)\n", card,
+ 			       card_name, card_longname);
+ 
+@@ -389,16 +391,16 @@ static void test_ctl_get_value(struct ctl_data *ctl)
+ 	/* If the control is turned off let's be polite */
+ 	if (snd_ctl_elem_info_is_inactive(ctl->info)) {
+ 		ksft_print_msg("%s is inactive\n", ctl->name);
+-		ksft_test_result_skip("get_value.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("get_value.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+ 	/* Can't test reading on an unreadable control */
+ 	if (!snd_ctl_elem_info_is_readable(ctl->info)) {
+ 		ksft_print_msg("%s is not readable\n", ctl->name);
+-		ksft_test_result_skip("get_value.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("get_value.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+@@ -413,8 +415,8 @@ static void test_ctl_get_value(struct ctl_data *ctl)
+ 		err = -EINVAL;
+ 
+ out:
+-	ksft_test_result(err >= 0, "get_value.%d.%d\n",
+-			 ctl->card->card, ctl->elem);
++	ksft_test_result(err >= 0, "get_value.%s.%d\n",
++			 ctl->card->card_name, ctl->elem);
+ }
+ 
+ static bool strend(const char *haystack, const char *needle)
+@@ -431,7 +433,7 @@ static void test_ctl_name(struct ctl_data *ctl)
+ {
+ 	bool name_ok = true;
+ 
+-	ksft_print_msg("%d.%d %s\n", ctl->card->card, ctl->elem,
++	ksft_print_msg("%s.%d %s\n", ctl->card->card_name, ctl->elem,
+ 		       ctl->name);
+ 
+ 	/* Only boolean controls should end in Switch */
+@@ -453,8 +455,8 @@ static void test_ctl_name(struct ctl_data *ctl)
+ 		}
+ 	}
+ 
+-	ksft_test_result(name_ok, "name.%d.%d\n",
+-			 ctl->card->card, ctl->elem);
++	ksft_test_result(name_ok, "name.%s.%d\n",
++			 ctl->card->card_name, ctl->elem);
+ }
+ 
+ static void show_values(struct ctl_data *ctl, snd_ctl_elem_value_t *orig_val,
+@@ -682,30 +684,30 @@ static void test_ctl_write_default(struct ctl_data *ctl)
+ 	/* If the control is turned off let's be polite */
+ 	if (snd_ctl_elem_info_is_inactive(ctl->info)) {
+ 		ksft_print_msg("%s is inactive\n", ctl->name);
+-		ksft_test_result_skip("write_default.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("write_default.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+ 	if (!snd_ctl_elem_info_is_writable(ctl->info)) {
+ 		ksft_print_msg("%s is not writeable\n", ctl->name);
+-		ksft_test_result_skip("write_default.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("write_default.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+ 	/* No idea what the default was for unreadable controls */
+ 	if (!snd_ctl_elem_info_is_readable(ctl->info)) {
+ 		ksft_print_msg("%s couldn't read default\n", ctl->name);
+-		ksft_test_result_skip("write_default.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("write_default.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+ 	err = write_and_verify(ctl, ctl->def_val, NULL);
+ 
+-	ksft_test_result(err >= 0, "write_default.%d.%d\n",
+-			 ctl->card->card, ctl->elem);
++	ksft_test_result(err >= 0, "write_default.%s.%d\n",
++			 ctl->card->card_name, ctl->elem);
+ }
+ 
+ static bool test_ctl_write_valid_boolean(struct ctl_data *ctl)
+@@ -815,15 +817,15 @@ static void test_ctl_write_valid(struct ctl_data *ctl)
+ 	/* If the control is turned off let's be polite */
+ 	if (snd_ctl_elem_info_is_inactive(ctl->info)) {
+ 		ksft_print_msg("%s is inactive\n", ctl->name);
+-		ksft_test_result_skip("write_valid.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("write_valid.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+ 	if (!snd_ctl_elem_info_is_writable(ctl->info)) {
+ 		ksft_print_msg("%s is not writeable\n", ctl->name);
+-		ksft_test_result_skip("write_valid.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("write_valid.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+@@ -846,16 +848,16 @@ static void test_ctl_write_valid(struct ctl_data *ctl)
+ 
+ 	default:
+ 		/* No tests for this yet */
+-		ksft_test_result_skip("write_valid.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("write_valid.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+ 	/* Restore the default value to minimise disruption */
+ 	write_and_verify(ctl, ctl->def_val, NULL);
+ 
+-	ksft_test_result(pass, "write_valid.%d.%d\n",
+-			 ctl->card->card, ctl->elem);
++	ksft_test_result(pass, "write_valid.%s.%d\n",
++			 ctl->card->card_name, ctl->elem);
+ }
+ 
+ static bool test_ctl_write_invalid_value(struct ctl_data *ctl,
+@@ -1027,15 +1029,15 @@ static void test_ctl_write_invalid(struct ctl_data *ctl)
+ 	/* If the control is turned off let's be polite */
+ 	if (snd_ctl_elem_info_is_inactive(ctl->info)) {
+ 		ksft_print_msg("%s is inactive\n", ctl->name);
+-		ksft_test_result_skip("write_invalid.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("write_invalid.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+ 	if (!snd_ctl_elem_info_is_writable(ctl->info)) {
+ 		ksft_print_msg("%s is not writeable\n", ctl->name);
+-		ksft_test_result_skip("write_invalid.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("write_invalid.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+@@ -1058,28 +1060,28 @@ static void test_ctl_write_invalid(struct ctl_data *ctl)
+ 
+ 	default:
+ 		/* No tests for this yet */
+-		ksft_test_result_skip("write_invalid.%d.%d\n",
+-				      ctl->card->card, ctl->elem);
++		ksft_test_result_skip("write_invalid.%s.%d\n",
++				      ctl->card->card_name, ctl->elem);
+ 		return;
+ 	}
+ 
+ 	/* Restore the default value to minimise disruption */
+ 	write_and_verify(ctl, ctl->def_val, NULL);
+ 
+-	ksft_test_result(pass, "write_invalid.%d.%d\n",
+-			 ctl->card->card, ctl->elem);
++	ksft_test_result(pass, "write_invalid.%s.%d\n",
++			 ctl->card->card_name, ctl->elem);
+ }
+ 
+ static void test_ctl_event_missing(struct ctl_data *ctl)
+ {
+-	ksft_test_result(!ctl->event_missing, "event_missing.%d.%d\n",
+-			 ctl->card->card, ctl->elem);
++	ksft_test_result(!ctl->event_missing, "event_missing.%s.%d\n",
++			 ctl->card->card_name, ctl->elem);
+ }
+ 
+ static void test_ctl_event_spurious(struct ctl_data *ctl)
+ {
+-	ksft_test_result(!ctl->event_spurious, "event_spurious.%d.%d\n",
+-			 ctl->card->card, ctl->elem);
++	ksft_test_result(!ctl->event_spurious, "event_spurious.%s.%d\n",
++			 ctl->card->card_name, ctl->elem);
+ }
+ 
+ int main(void)
+diff --git a/tools/testing/selftests/alsa/pcm-test.c b/tools/testing/selftests/alsa/pcm-test.c
+index de664dedb541..a7b1e6e876c5 100644
+--- a/tools/testing/selftests/alsa/pcm-test.c
++++ b/tools/testing/selftests/alsa/pcm-test.c
+@@ -24,6 +24,7 @@ typedef struct timespec timestamp_t;
+ 
+ struct card_data {
+ 	int card;
++	const char *name;
+ 	pthread_t thread;
+ 	struct card_data *next;
+ };
+@@ -35,6 +36,7 @@ struct pcm_data {
+ 	int card;
+ 	int device;
+ 	int subdevice;
++	const char *card_name;
+ 	snd_pcm_stream_t stream;
+ 	snd_config_t *pcm_config;
+ 	struct pcm_data *next;
+@@ -191,6 +193,7 @@ static void find_pcms(void)
+ 		if (!card_data)
+ 			ksft_exit_fail_msg("Out of memory\n");
+ 		card_data->card = card;
++		card_data->name = card_longname;
+ 		card_data->next = card_list;
+ 		card_list = card_data;
+ 
+@@ -232,6 +235,7 @@ static void find_pcms(void)
+ 					pcm_data->card = card;
+ 					pcm_data->device = dev;
+ 					pcm_data->subdevice = subdev;
++					pcm_data->card_name = card_name;
+ 					pcm_data->stream = stream;
+ 					pcm_data->pcm_config = conf_get_subtree(card_config, key, NULL);
+ 					pcm_data->next = pcm_list;
+@@ -294,9 +298,9 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
+ 
+ 	desc = conf_get_string(pcm_cfg, "description", NULL, NULL);
+ 	if (desc)
+-		ksft_print_msg("%s.%s.%d.%d.%d.%s - %s\n",
++		ksft_print_msg("%s.%s.%s.%d.%d.%s - %s\n",
+ 			       test_class_name, test_name,
+-			       data->card, data->device, data->subdevice,
++			       data->card_name, data->device, data->subdevice,
+ 			       snd_pcm_stream_name(data->stream),
+ 			       desc);
+ 
+@@ -352,9 +356,9 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
+ 			old_format = format;
+ 			format = snd_pcm_format_value(alt_formats[i]);
+ 			if (format != SND_PCM_FORMAT_UNKNOWN) {
+-				ksft_print_msg("%s.%d.%d.%d.%s.%s format %s -> %s\n",
++				ksft_print_msg("%s.%s.%d.%d.%s.%s format %s -> %s\n",
+ 						 test_name,
+-						 data->card, data->device, data->subdevice,
++						 data->card_name, data->device, data->subdevice,
+ 						 snd_pcm_stream_name(data->stream),
+ 						 snd_pcm_access_name(access),
+ 						 snd_pcm_format_name(old_format),
+@@ -430,9 +434,9 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
+ 		goto __close;
+ 	}
+ 
+-	ksft_print_msg("%s.%s.%d.%d.%d.%s hw_params.%s.%s.%ld.%ld.%ld.%ld sw_params.%ld\n",
++	ksft_print_msg("%s.%s.%s.%d.%d.%s hw_params.%s.%s.%ld.%ld.%ld.%ld sw_params.%ld\n",
+ 		         test_class_name, test_name,
+-			 data->card, data->device, data->subdevice,
++			 data->card_name, data->device, data->subdevice,
+ 			 snd_pcm_stream_name(data->stream),
+ 			 snd_pcm_access_name(access),
+ 			 snd_pcm_format_name(format),
+@@ -491,9 +495,10 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
+ 		 * Anything specified as specific to this system
+ 		 * should always be supported.
+ 		 */
+-		ksft_test_result(!skip, "%s.%s.%d.%d.%d.%s.params\n",
++		ksft_test_result(!skip, "%s.%s.%s.%d.%d.%s.params\n",
+ 				 test_class_name, test_name,
+-				 data->card, data->device, data->subdevice,
++				 data->card_name, data->device,
++				 data->subdevice,
+ 				 snd_pcm_stream_name(data->stream));
+ 		break;
+ 	default:
+@@ -501,14 +506,16 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
+ 	}
+ 
+ 	if (!skip)
+-		ksft_test_result(pass, "%s.%s.%d.%d.%d.%s\n",
++		ksft_test_result(pass, "%s.%s.%s.%d.%d.%s\n",
+ 				 test_class_name, test_name,
+-				 data->card, data->device, data->subdevice,
++				 data->card_name, data->device,
++				 data->subdevice,
+ 				 snd_pcm_stream_name(data->stream));
+ 	else
+-		ksft_test_result_skip("%s.%s.%d.%d.%d.%s\n",
++		ksft_test_result_skip("%s.%s.%s.%d.%d.%s\n",
+ 				 test_class_name, test_name,
+-				 data->card, data->device, data->subdevice,
++				 data->card_name, data->device,
++				 data->subdevice,
+ 				 snd_pcm_stream_name(data->stream));
+ 
+ 	if (msg[0])
+@@ -609,8 +616,8 @@ int main(void)
+ 					      conf->filename, conf->config_id);
+ 
+ 	for (pcm = pcm_missing; pcm != NULL; pcm = pcm->next) {
+-		ksft_test_result(false, "test.missing.%d.%d.%d.%s\n",
+-				 pcm->card, pcm->device, pcm->subdevice,
++		ksft_test_result(false, "test.missing.%s.%d.%d.%s\n",
++				 pcm->card_name, pcm->device, pcm->subdevice,
+ 				 snd_pcm_stream_name(pcm->stream));
+ 	}
+ 
+
+---
+base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+change-id: 20240711-alsa-kselftest-board-name-e4a1add4cfa0
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
