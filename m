@@ -1,286 +1,152 @@
-Return-Path: <linux-kernel+bounces-248551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BDE92DED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:26:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B94492DED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0063BB20B37
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B201F219EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E96A1773D;
-	Thu, 11 Jul 2024 03:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED1015E8C;
+	Thu, 11 Jul 2024 03:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X3yTOF3o"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Igh+Qulw"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CFC10A36
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C83171C1;
+	Thu, 11 Jul 2024 03:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720668384; cv=none; b=ul/d7++282Mp6wMO3g4cvCvsdPyka7K97CJjLcD9+ZuWFJcX2uzI4PNuZHGxldv2zU/Al799Wpdq4JAC19lFCcaxKzWR38kzOMWYLVCLqIcp4UDZ2oWA6sL+U5R6QcHZN3ti+qVQHXTPLLGB3w4HORE7/K5kHT1+ZSLq8f58pc0=
+	t=1720668827; cv=none; b=ScC+EDtNFrLHXGP5Cx7M9u8jGIWPpF5QC0XHsPORD6cdNbxMDtMKOd09O+lmyvktPZ5ntbksN8eO2/UCBwez63FvWi03ZsIKWmCPmQmlKHyVAoHVtFf+meM61UDP+tbfl0r2YGuvRJepU2UPH3Uki/A0iqdpY6IF6Ww1j0AoSic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720668384; c=relaxed/simple;
-	bh=Xyd5IOnHeH56MqaVRrnmE0m5UZbI67hrKEPt2DvQM1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQKNtoTkES88Ib/aC0q8vtS5c5Xl6KT45zbOJk3F+dYoNyJlUJOUqhmscWVyFLhWKY0pC8+ZlboYLwtmvMjtkkl5iz7IhJRewUMdps4k8u5H8VhPcAlUKuHw1qLRCF1VG/T7AsrZb629eFNnN1fuSZMzQv9SG7g801zPccKIs4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X3yTOF3o; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: longman@redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720668378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CXlYjjpXIw/MDcAYR6pZoCOa4GgMCUHEw/QIM7QU9bM=;
-	b=X3yTOF3oq921aF/Q68UdTEyNt9IzPftsEKCzypCukgVZGHJMJoxdwhOo1IFsv8KhWnv8D9
-	/otwpaYwZ3RM5hnrs1HI1TA0lEHJ7DCkEwJPAjZesGYGJ9yZzDjbL93vw42vuxtJLSdWqE
-	o652pueWst3yyHv8bGiVF/eTYyYaHXI=
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: lizefan.x@bytedance.com
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mkoutny@suse.com
-X-Envelope-To: corbet@lwn.net
-X-Envelope-To: cgroups@vger.kernel.org
-X-Envelope-To: linux-doc@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: kamalesh.babulal@oracle.com
-Date: Thu, 11 Jul 2024 03:26:11 +0000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>
-Subject: Re: [PATCH-cgroup v4] cgroup: Show # of subsystem CSSes in
- cgroup.stat
-Message-ID: <Zo9Q063eF8CdVyR1@google.com>
-References: <20240711025153.2356213-1-longman@redhat.com>
+	s=arc-20240116; t=1720668827; c=relaxed/simple;
+	bh=4hlYR62Hg+U/Y1kFs0Ifw4O8vrwVZnqQNa0SmlCLrlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iwp+7Hb1O6fG4ZB6vhVryxlmET34LbRPrbYPeGnYNj+qG15ZYfgi1bHXQvJE40tIr+q5Og8I7sKD+4XLP1fkcj5qXHiYYTmdY4GGeRjSbhLhX/Mjh6mYdqc/QYRMdm2vWZXwUb437ivGcFlhkzjWqLOuy0U1Cs16TPuFC61iSwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Igh+Qulw; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c9a1ea8cc3so345456a91.0;
+        Wed, 10 Jul 2024 20:33:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720668825; x=1721273625; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yt3QLy2Sw58+UdLWM0CN81s3FpNswdEnQpHKCTNZxGQ=;
+        b=Igh+QulwbOMO39saUbD86koE8kh3ZEpy4TnU5RnXo6+wZZXbQCiQ8zanchz/W4P6GP
+         0H3qzZPOLoOJ2kPZMRqXNWF2xQjucfUQaukKGYXkKhbg4U4zM/NFH5dqDDkpafK5B3eX
+         OUts4ceyT0t3xtgD5IoUre7SBlsmm8GYxXMcRpWV++56/uq1Yq4YxwM7FQdPXwDKx1na
+         KHTTitZmWXPlynbLKbnEoFcZi+VaMD9fzrNq8MPqcw+8DKpEO6uK+P3TWcjI9y529utk
+         XoQsj8nyN5O+yinJfsnhvDEK8XmxXIGI9ZjFHNwv6MkzXDrc07AzpRcSnKlcMltTMSfT
+         ePgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720668825; x=1721273625;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yt3QLy2Sw58+UdLWM0CN81s3FpNswdEnQpHKCTNZxGQ=;
+        b=MR7ILMZ+OLnrInbwX5oHC1CuQzPJ4vbJfJ0kqBhSZRXDXaMsrBYWkOx7qynpTHIZUj
+         YETAhSu2xsErZHU7KHR4V2Rqc2d12n7/upS5YpUtC3N3vctIVumXjdSpqQKqkRDYwjSS
+         if+X6StFDamtRHOuW2/jKSn6Ng+H8p8IXPhhda82QFS51+93rQAyMYy/Y8/fpIrkjXHK
+         mqfFNDWXeEsTj1clvu0xB+zHgqKtnaEhBpZP/4Jkw6GSFigIwBdrcP0XiHjLPYQvjEMc
+         rRwsM+YZmTVyK77qMHxMlsaWEHzbIuekIunBvK5a+dYEB4euI1LnXUI03AIM8SEcjnud
+         4kTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2kqkvcxV9LnQ+MnE1VJHn4ZGTJhClXTWneY+JL204Q7O0HbtbyOGfXugCCqxrd4m9HVyje+5ytQiq/YIixJurTiUZompUh9FrvENrHOU3t+2+BLzmr6z2+ugvQQuaNr0Ss37b4TCm5as=
+X-Gm-Message-State: AOJu0Yyvi/ondpkvC9XyEKdSibbaAcnTccHvbezZdxWAtXvqW+su96KK
+	q26yHm/NUrmeMZQbmsHVnHr72H+vlGW6wb0l4CjRnw+lcP0AlhXS
+X-Google-Smtp-Source: AGHT+IFQOFIlozp52Pu30R4uQDnndw0Jf0+KidnafwhJyD+e2M9KkS/A/OAlv8KbGmqJAe+9sVwM6A==
+X-Received: by 2002:a17:90a:d70a:b0:2c9:6a0e:6e66 with SMTP id 98e67ed59e1d1-2ca9d74756cmr2106536a91.5.1720668824961;
+        Wed, 10 Jul 2024 20:33:44 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a9977cfsm12598020a91.34.2024.07.10.20.33.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 20:33:43 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <ddb24ce3-a8a7-4535-9d8f-9368440d502e@roeck-us.net>
+Date: Wed, 10 Jul 2024 20:33:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711025153.2356213-1-longman@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] regmap: Implement regmap_multi_reg_read()
+To: Mark Brown <broonie@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240710015622.1960522-1-linux@roeck-us.net>
+ <Zo8yECqjvhw6dNGy@finisterre.sirena.org.uk>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <Zo8yECqjvhw6dNGy@finisterre.sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 10, 2024 at 10:51:53PM -0400, Waiman Long wrote:
-> Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
-> help manage different structures in various cgroup subsystems by being
-> an embedded element inside a larger structure like cpuset or mem_cgroup.
+On 7/10/24 18:14, Mark Brown wrote:
+> On Tue, Jul 09, 2024 at 06:56:19PM -0700, Guenter Roeck wrote:
+>> regmap_multi_reg_read() is similar to regmap_bilk_read() but reads from
+>> an array of non-sequential registers. It is helpful if multiple non-
+>> sequential registers need to be read in a single operation which would
+>> otherwise have to be mutex protected.
 > 
-> The /proc/cgroups file shows the number of cgroups for each of the
-> subsystems.  With cgroup v1, the number of CSSes is the same as the
-> number of cgroups.  That is not the case anymore with cgroup v2. The
-> /proc/cgroups file cannot show the actual number of CSSes for the
-> subsystems that are bound to cgroup v2.
+> It would be nice to have KUnit coverage for the new function too.
 > 
-> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
-> we can't tell by looking at /proc/cgroups which cgroup subsystems may
-> be responsible.
-> 
-> As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
-> cgroup.stat file is now being extended to show the number of live and
-> dying CSSes associated with all the non-inhibited cgroup subsystems
-> that have been bound to cgroup v2 as long as it is not zero.  The number
-> includes CSSes in the current cgroup as well as in all the descendants
-> underneath it.  This will help us pinpoint which subsystems are
-> responsible for the increasing number of dying (nr_dying_descendants)
-> cgroups.
-> 
-> The cgroup-v2.rst file is updated to discuss this new behavior.
-> 
-> With this patch applied, a sample output from root cgroup.stat file
-> was shown below.
-> 
-> 	nr_descendants 55
-> 	nr_dying_descendants 35
-> 	nr_subsys_cpuset 1
-> 	nr_subsys_cpu 40
-> 	nr_subsys_io 40
-> 	nr_subsys_memory 55
-> 	nr_dying_subsys_memory 35
-> 	nr_subsys_perf_event 56
-> 	nr_subsys_hugetlb 1
-> 	nr_subsys_pids 55
-> 	nr_subsys_rdma 1
-> 	nr_subsys_misc 1
-> 
-> Another sample output from system.slice/cgroup.stat was:
-> 
-> 	nr_descendants 32
-> 	nr_dying_descendants 33
-> 	nr_subsys_cpu 30
-> 	nr_subsys_io 30
-> 	nr_subsys_memory 32
-> 	nr_dying_subsys_memory 33
-> 	nr_subsys_perf_event 33
-> 	nr_subsys_pids 32
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  Documentation/admin-guide/cgroup-v2.rst | 14 ++++++-
->  include/linux/cgroup-defs.h             |  7 ++++
->  kernel/cgroup/cgroup.c                  | 52 ++++++++++++++++++++++++-
->  3 files changed, 70 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-> index 52763d6b2919..356cd430c888 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -981,6 +981,16 @@ All cgroup core files are prefixed with "cgroup."
->  		A dying cgroup can consume system resources not exceeding
->  		limits, which were active at the moment of cgroup deletion.
->  
-> +	  nr_subsys_<cgroup_subsys>
-> +		Total number of live cgroups associated with that cgroup
-> +		subsystem (e.g. memory) at and beneath the current
-> +		cgroup.  An entry will only be shown if it is not zero.
-> +
-> +	  nr_dying_subsys_<cgroup_subsys>
-> +		Total number of dying cgroups associated with that cgroup
-> +		subsystem (e.g. memory) beneath the current cgroup.
-> +		An entry will only be shown if it is not zero.
-> +
->    cgroup.freeze
->  	A read-write single value file which exists on non-root cgroups.
->  	Allowed values are "0" and "1". The default is "0".
-> @@ -2930,8 +2940,8 @@ Deprecated v1 Core Features
->  
->  - "cgroup.clone_children" is removed.
->  
-> -- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
-> -  at the root instead.
-> +- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
-> +  "cgroup.stat" files at the root instead.
->  
->  
->  Issues with v1 and Rationales for v2
-> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-> index b36690ca0d3f..62de18874508 100644
-> --- a/include/linux/cgroup-defs.h
-> +++ b/include/linux/cgroup-defs.h
-> @@ -210,6 +210,13 @@ struct cgroup_subsys_state {
->  	 * fields of the containing structure.
->  	 */
->  	struct cgroup_subsys_state *parent;
-> +
-> +	/*
-> +	 * Keep track of total numbers of visible and dying descendant CSSes.
-> +	 * Protected by cgroup_mutex.
-> +	 */
-> +	int nr_descendants;
-> +	int nr_dying_descendants;
->  };
->  
->  /*
-> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-> index c8e4b62b436a..cf4fc1c109e2 100644
-> --- a/kernel/cgroup/cgroup.c
-> +++ b/kernel/cgroup/cgroup.c
-> @@ -3669,12 +3669,36 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
->  static int cgroup_stat_show(struct seq_file *seq, void *v)
->  {
->  	struct cgroup *cgroup = seq_css(seq)->cgroup;
-> +	struct cgroup_subsys_state *css;
-> +	int ssid;
->  
->  	seq_printf(seq, "nr_descendants %d\n",
->  		   cgroup->nr_descendants);
->  	seq_printf(seq, "nr_dying_descendants %d\n",
->  		   cgroup->nr_dying_descendants);
->  
-> +	/*
-> +	 * Show the number of live and dying csses associated with each of
-> +	 * non-inhibited cgroup subsystems bound to cgroup v2 if non-zero.
-> +	 *
-> +	 * Without proper lock protection, racing is possible. So the
-> +	 * numbers may not be consistent when that happens.
-> +	 */
-> +	rcu_read_lock();
-> +	for_each_css(css, ssid, cgroup) {
-> +		if ((BIT(ssid) & cgrp_dfl_inhibit_ss_mask) ||
-> +		    (cgroup_subsys[ssid]->root !=  &cgrp_dfl_root))
-> +			continue;
-> +
-> +		seq_printf(seq, "nr_subsys_%s %d\n", cgroup_subsys[ssid]->name,
-> +			   css->nr_descendants + 1);
-> +		/* Current css is online */
-> +		if (css->nr_dying_descendants)
-> +			seq_printf(seq, "nr_dying_subsys_%s %d\n",
-> +				   cgroup_subsys[ssid]->name,
-> +				   css->nr_dying_descendants);
-> +	}
-> +	rcu_read_unlock();
->  	return 0;
->  }
->  
-> @@ -5424,6 +5448,8 @@ static void css_release_work_fn(struct work_struct *work)
->  	list_del_rcu(&css->sibling);
->  
->  	if (ss) {
-> +		struct cgroup_subsys_state *parent_css;
-> +
->  		/* css release path */
->  		if (!list_empty(&css->rstat_css_node)) {
->  			cgroup_rstat_flush(cgrp);
-> @@ -5433,6 +5459,14 @@ static void css_release_work_fn(struct work_struct *work)
->  		cgroup_idr_replace(&ss->css_idr, NULL, css->id);
->  		if (ss->css_released)
->  			ss->css_released(css);
-> +
-> +		WARN_ON_ONCE(css->nr_descendants || css->nr_dying_descendants);
-> +		parent_css = css->parent;
-> +		while (parent_css) {
-> +			parent_css->nr_dying_descendants--;
-> +			parent_css = parent_css->parent;
-> +		}
-> +		css_put(css->parent);	/* Parent can be freed now */
->  	} else {
->  		struct cgroup *tcgrp;
->  
-> @@ -5517,8 +5551,11 @@ static int online_css(struct cgroup_subsys_state *css)
->  		rcu_assign_pointer(css->cgroup->subsys[ss->id], css);
->  
->  		atomic_inc(&css->online_cnt);
-> -		if (css->parent)
-> +		if (css->parent) {
->  			atomic_inc(&css->parent->online_cnt);
-> +			while ((css = css->parent))
-> +				css->nr_descendants++;
-> +		}
->  	}
->  	return ret;
->  }
-> @@ -5540,6 +5577,19 @@ static void offline_css(struct cgroup_subsys_state *css)
->  	RCU_INIT_POINTER(css->cgroup->subsys[ss->id], NULL);
->  
->  	wake_up_all(&css->cgroup->offline_waitq);
-> +
-> +	/*
-> +	 * Get a reference to parent css to ensure reliable access to its
-> +	 * nr_dying_descendants until after this child css is ready to be
-> +	 * freed.
-> +	 */
-> +	if (css->parent)
-> +		css_get(css->parent);
 
-I think this blob can be dropped: css has a reference to their parent up to
-very last moment, see css_free_rwork_fn().
-And the corresponding css_put() can be dropped too.
+Agreed, makes sense. I'll have a look and see what I can come up with.
+I assume you'd also like to have a unit test for regmap_multi_reg_write() ?
 
-With this thing fixed, please, feel free to add
-Acked-by: Roman Gushchin <roman.gushchin@linux.dev> .
+Thanks,
+Guenter
 
-Thank you!
 
