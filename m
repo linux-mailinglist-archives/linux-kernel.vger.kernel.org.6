@@ -1,152 +1,178 @@
-Return-Path: <linux-kernel+bounces-249834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA2892F086
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:57:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8419992F08A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AAC51F23B0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 114611F23E0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F095519F46A;
-	Thu, 11 Jul 2024 20:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A00019EEBF;
+	Thu, 11 Jul 2024 20:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LWDNmZ1A"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IcKgSAiS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4018BFC
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7140882D68;
+	Thu, 11 Jul 2024 20:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720731439; cv=none; b=cmdXM4TGTeQ5RzPBtFP3v9QAcizphJjeeeCEf3UpMdFykwefs3ea0k68ohpVPlK2I4U98sYKy2c0NuvUpXhWKdBsuf31/ZndM5ZFYcG0fHeqc0WXhldxpw8MYSJn/5fL9EbfUY4KAX3vG0zBF908aTCpXGIPAkitL9JIj9UJTXI=
+	t=1720731516; cv=none; b=eyknlNwMMcYIr6rA2h1VJq+P0SmDtxDrG9g4O/wbJfl97B9EeKnT2ZCNSbyN8LB0ltTp1Th+X+ZAlbI2WG7E8WG4ijz8uXGTSucv09rcicL4WmNwzwZOdgLS7KLvuIOSRp/3aAiQSngvz/U/w2RtXTCs8ihDd504Y4qMxseRK38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720731439; c=relaxed/simple;
-	bh=yspC+57ohBKj+IE3NEA9/ct7ABkwKPmz0e+zIn1KONg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MbF7tOlQulecIK6XxliAYiIrjNgZrNBW0gPdp5AjGLgIFN9F1Forw1bVn/cqrccqgvMpqarAJP6uZf6XcX43QYRbLas64sGDEtHqwEQc8sbzGfw+GYt7NIBtjzhqS82gOChT1mdQD/vjfQZqosscZ14qA7nGMGuRXlTHUOw4xpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LWDNmZ1A; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso1446358276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720731436; x=1721336236; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qR1w6TGwRPRKUblfK+cvVsJQzW84NzZB6wHL2Wt2c14=;
-        b=LWDNmZ1AmXcyPkFEkz3scc4/444fdYHtXFWe9NH/bsP4G1jEoizC1hc9xBmCBhZ/R4
-         Fb9ihPW6kqZ9OGcnnZYLpOrySPdZDXWfMjZm7AwYS4xMDhw9+GLSKREbHyBaLTMvhvvy
-         NFJpjZ0nK7TZJbuKKtFq1jDlF4WIgGHmDKJBtFIWnkcz/iv9BKoensGhQEIl3w9ofku3
-         yjsYlQJdVTsHmWOrcoI4WTEN/9fXRVTvI2QMcNB+lD24UHMU01bUZk71tjXonzPxYKzy
-         lom7LBYj+xTEq5BhCJtsn938NwqsXycqrZ0fHe5nX4mIx6BWzHyVACBTKx61h4A5xoTv
-         verA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720731436; x=1721336236;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qR1w6TGwRPRKUblfK+cvVsJQzW84NzZB6wHL2Wt2c14=;
-        b=t5Nz6guDDAcdky6mgs0saxsNIWxxPJdfrE8nLp4ZMZn4sAA/QmAG9khJtTNrjZdqA2
-         C9ZCF3kI+vE9LDe0s3abp/HHUz6Hb1PeadL5I+L+/JMX0Q077wm8EPPjiqCErRvYhXaS
-         mRn+ftKnbtax377KwCG9pOpzXcchvutvmHTjv9aJFZinkax5QqsRrCpmdJ7I+fapVJV1
-         CwvkoCG1P7Pk6oNxi4RAvFtQ3LnsRAT6NENxvjbxV9ZTuQdanQ0/VhLbjivAPXLptfDO
-         yzvVjEGzRdntjtFzXhvqqqX1H98TlVIUuf4rvvP3/spiDMkrH/FfxlTF9qj+oYArR/xR
-         Qwlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlL7ZEx0T6Yg+4Mpc8BkTflY7s06OSYmSWJzThYcjZ1824cpDu8d4hG13k4058tMJac/IWNjlk2EITJ0FzEuvcNQIY+vzK84FB2cqG
-X-Gm-Message-State: AOJu0YxVIN+E96eRQzJTjyxayF5ggXv13jq9EvY8rt1I1yDc64N6WmnU
-	SGxBLbKSTcPS2JCuKIEK3fThYm3duDX/6lnQzOrH6j+w0tPA+2FerqjmaKku7hdnRukfdUDH5UY
-	fXQnznJfOPnEUyM8mljWVgyTz/Tr+xf/Yhz0J
-X-Google-Smtp-Source: AGHT+IEYLltipW2y2jpNMjV5kpiHBN8xdsLzBdnyK43dhH65oHO3BC27aVEWQpPKMVw7hLbmYOjCnlcdqKg1G5wqhvg=
-X-Received: by 2002:a25:d3cf:0:b0:dfb:c6a:643 with SMTP id 3f1490d57ef6-e041b070a46mr11240607276.7.1720731436062;
- Thu, 11 Jul 2024 13:57:16 -0700 (PDT)
+	s=arc-20240116; t=1720731516; c=relaxed/simple;
+	bh=8U+AfVIFeyA7CmGX4UGBlcY7fyqzeuSiPVavOFWJQok=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FKnfHKUxFZzSTmbWhwJAUaNr1W4Mfb+dTtQLyahTHu/TDg7ddpKij3ZpSSbpzRGWWmlBpNGH0NYeUWG16ebseL6Zts4qShoPkrLD9nJCU4D7zWgu288kTFNNHGUIo4N0Fd8DfiUNp/x7S+la5udMSwwVHCej5gwMZrW1zYwx+Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IcKgSAiS; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720731515; x=1752267515;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8U+AfVIFeyA7CmGX4UGBlcY7fyqzeuSiPVavOFWJQok=;
+  b=IcKgSAiSOb79Bn9AuuBlTcxeGEbuOmBekxo0zSfTp54gSlp2OMssNoYe
+   COZ9HKba/oadoKvL0q2AQQICPkHvxH+lZYWOTr1m2AeYwSXsPrG7bVC2Q
+   vpFC07qXhKL3a2eCV/PJh43tgMzsAOL3bnCT/3Qt3kUO24vmgLvek1uSN
+   tH1ezG8Je4QZDh4os0V6oVV1+SjCpjA3Z1Q3f/OiN+dNLTz7rNXVGVLoZ
+   Hd1AijnjKyYf9EIxKJqkx/bsNsVRS4QeB0RcVDamOTY+yNOMjnIcQypuL
+   T393q94ifOPfMbTNkL2toFget59UkkslkyQNdXnO2lILoRFqZ4D0+PcZ8
+   A==;
+X-CSE-ConnectionGUID: KjSrvFYaTsKvqHeFxK4drw==
+X-CSE-MsgGUID: cLk4mYO9ROC/MbtGN9ZTWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="17856040"
+X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
+   d="scan'208";a="17856040"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 13:58:34 -0700
+X-CSE-ConnectionGUID: otJWUUxcTO6T7RZeNMngxA==
+X-CSE-MsgGUID: gvmJQ3vbTYCNWgp69xYBow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
+   d="scan'208";a="48665160"
+Received: from unknown (HELO [10.124.221.144]) ([10.124.221.144])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 13:58:32 -0700
+Message-ID: <1c2fd06e-2e97-4724-80ab-8695aa4334e7@intel.com>
+Date: Thu, 11 Jul 2024 13:58:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710001749.1388631-1-almasrymina@google.com>
- <20240710001749.1388631-6-almasrymina@google.com> <20240710094900.0f808684@kernel.org>
- <CAHS8izPTqsNQnQWKpDPTxULTFL4vr4k6j9Zw8TQzJVDBMXWMaA@mail.gmail.com> <20240710182322.667f0108@kernel.org>
-In-Reply-To: <20240710182322.667f0108@kernel.org>
-From: Mina Almasry <almasrymina@google.com>
-Date: Thu, 11 Jul 2024 13:57:01 -0700
-Message-ID: <CAHS8izNMsCHhJM4hf7pf2p98sp9-3gxL6o7sC6JQnqThxiWjYw@mail.gmail.com>
-Subject: Re: [PATCH net-next v16 05/13] page_pool: devmem support
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, linux-mm@kvack.org, 
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] Introduce CET supervisor state support
+To: "Yang, Weijiang" <weijiang.yang@intel.com>, tglx@linutronix.de,
+ x86@kernel.org, seanjc@google.com, pbonzini@redhat.com,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: peterz@infradead.org, chao.gao@intel.com, rick.p.edgecombe@intel.com,
+ mlevitsk@redhat.com, john.allen@amd.com
+References: <20240531090331.13713-1-weijiang.yang@intel.com>
+ <67c5a358-0e40-4b2f-b679-33dd0dfe73fb@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <67c5a358-0e40-4b2f-b679-33dd0dfe73fb@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 10, 2024 at 6:23=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Wed, 10 Jul 2024 16:42:04 -0700 Mina Almasry wrote:
-> > > > +static inline void netmem_set_pp(netmem_ref netmem, struct page_po=
-ol *pool)
-> > > > +{
-> > > > +     __netmem_clear_lsb(netmem)->pp =3D pool;
-> > > > +}
-> > >
-> > > Why is all this stuff in the main header? It's really low level.
-> > > Please put helpers which are only used by the core in a header
-> > > under net/core/, like net/core/dev.h
-> >
-> > Sorry none of those are only used by net/core/*. Pretty much all of
-> > these are used by include/net/page_pool/helpers.h, and some have
-> > callers in net/core/devmem.c or net/core/skbuff.c
-> >
-> > Would you like me to move these pp specific looking ones to
-> > include/net/page_pool/netmem.h or something similar?
->
-> That's because some things already in helpers have no real business
-> being there either. Why is page_pool_set_pp_info() in helpers.h?
+On 7/8/24 20:17, Yang, Weijiang wrote:
+> So I'm not sure whether XFEATURE_MASK_KERNEL_DYNAMIC and related changes
+> are worth or not for this series.
+> 
+> Could you share your thoughts?
 
-OK, I looked into this a bit. It looks like I can trivially move
-page_pool_set/clear_pp_info() to page_pool_priv.h, and that lets me
-move out a few of these netmem helpers to a header under net/core.
+First of all, I really do appreciate when folks make the effort to _try_
+to draw their own conclusions before asking the maintainers to share
+theirs.  Next time, OK? ;)
 
-However, to move more of these netmem helpers to a private header, I
-think I need to move all the page pool dma helpers and reffing helpers
-to a private header or the .c file, which I think will uninline them
-as they're eventually called from drivers.
+But here goes.  So we've basically got three cases.  Here's a fancy table:
 
-I had guessed the previous authors put those dma and ref helpers in
-the .h file to inline them as they're used in fast paths. Do you think
-the refactor and the uninling is desirable? Or should I just do with
-the trivial moving of the page_pool_set/clear_pp_info() to the private
-file?
+> https://docs.google.com/spreadsheets/d/e/2PACX-1vROHIgrtHzUJmdlzT7D7tuVzgM8AMlK2XlorvFIJvk-I0NjD7A-T_qntjz7cUJlCScfWGtSfPK30Xtu/pubhtml
 
---=20
-Thanks,
-Mina
+... and the same in ASCII
+
+Case |IA32_XSS[12] | Space | RFBM[12] | Drop%	
+-----+-------------+-------+----------+------
+  1  |	   0	   | None  |	0     |  0.0%
+  2  |	   1	   | None  |	0     |  0.2%
+  3  |	   1	   | 24B?  |	1     |  0.2%
+
+Case 1 is the baseline of course.  Case 2 avoids allocating space for
+CET and also leans on the kernel to set RFBM[12]==0 and tell the
+hardware not to write CET-S state.  Case 3 wastes the CET-S space in
+each task and also leans on the hardware init optimization to avoid
+writing out CET-S space on each XSAVES.
+
+#1 is: 0 lines of code.
+#2 is: 5 files changed, 90 insertions(+), 27 deletions(-)
+#3 is: very few lines of code, nearing zero
+
+#2 and #3 have the same performance.
+
+So we're down to choosing between
+
+ * $BYTES space in 'struct fpu' (on hardware supporting CET-S)
+
+or
+
+ * ~100 loc
+
+$BYTES is 24, right?  Did I get anything wrong?
+
+So, here's my stake in the ground: I think the 100 lines of code is
+probably worth it.  But I also hate complicating the FPU code, so I'm
+also somewhat drawn to just eating the 24 bytes and moving on.
+
+But I'm still in the "case 2" camp.
+
+Anybody disagree?
+
 
