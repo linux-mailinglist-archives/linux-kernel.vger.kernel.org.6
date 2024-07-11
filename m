@@ -1,171 +1,124 @@
-Return-Path: <linux-kernel+bounces-249003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8879692E4E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:35:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8602692E4E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B792F1C20952
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41448285272
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9547D157476;
-	Thu, 11 Jul 2024 10:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE791157A74;
+	Thu, 11 Jul 2024 10:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LGsxiFLG"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DTxGISw4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960BC158D94
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E77782D94;
+	Thu, 11 Jul 2024 10:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720694102; cv=none; b=c9/7P3ocXzGkUJeLiCsRZy3WSuBhQG8cEkyWNh5dA9l3wr/K+f7uxvjnohuo3BRvcsKEaZm1L3iAOjqrSJb5sGqJHhm3arm1nslvcZsQ56ZxZVquiHKjRRn6aiwGlSlyaZ3+sZ8Dkr/wK7aDpF6s8822+VyNi1csAC3SbjKLKbQ=
+	t=1720694235; cv=none; b=cngtYjPP4jxkBhDTZFwnmr7GxdBqLX07SpSHF2uPKJ5OfFi7l4Obda7raFk9mWdo/Oe44v5v7z/yTg8gjfGLSR0xDip8MDmNDy9xNeff1vzepFO+1D1vG1NZgddNgchQISV4gQ3D5ZJEbCs5xzedlZS7Ksvf5g0Bp05+x8t2WIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720694102; c=relaxed/simple;
-	bh=azTey6Mbe5LDqWSTEruz0j0tEwPtlNQpE18cgLltbe0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X3OGwys3hW7JC9Nnl9AXiwzOQIWd07vTnbF1+IabQ732oJaoJlofwdDvfSc6XRSLvYBJxMZwqChZvpXNoeDyAOqJy/Wx4AZkZLPMKSLVy5RWKgnKDj64r79a0DPrZykH7fC7Tn8fealss+0qynIjoh0QBt5SkwWZpltNCVtKrq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=LGsxiFLG; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3cabac56b38so460345b6e.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:35:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1720694099; x=1721298899; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=81XIkWS3ndQ7+PCCdHsExXmF1eARnUo6Gh7sCw+xD4Y=;
-        b=LGsxiFLGgctkcNa4uIYDdYdHDygJkyF6j1TZqjgI4gHz06/fyoJSAZoPB6ZlFFx0kd
-         VjZSnUt9cKEfBSxvYZyGVnP96WTtU8NA7imxRcwnGO9jiRK+pg0wP6+t1YPsxMbi++OE
-         m0zL7q5JwMCBT2ZNh5gR3p+JgQZayfjAJ+mRj2YRucc5/adO6bmsfn8wDwsQOyBx0LuC
-         hfXQW5rdiyj6lV/rIo0ynjHLlITt/YZ9GpW3QsmRm1n6d2BMql6V4YBNuh6MJyOtoe59
-         o6HSNbABbAId8FajB06EVDjhs5H7SBhsyFiGgtF733/qMTRkoaGwo+5v7snEu3mG1fPc
-         a2mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720694099; x=1721298899;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=81XIkWS3ndQ7+PCCdHsExXmF1eARnUo6Gh7sCw+xD4Y=;
-        b=lKd/3ZMfI4dPuQqAW2PPzPRaK9z3QCzWp2PQtZgb3WFPPYGbR1Ndg0cq7LRShbywJB
-         6zPAHUBmcwMw8X+nS8U5IIQgzPpqJXRdjKGgQGV9VaUvkW0OhzJcIjr7CxWfIeQtxeUw
-         kBjF9xwHMER8oklUqkXkBmkjIgGQ85c/V8IIt+dEZoin6OUXPn+L27P3kX6if6l16cTM
-         W5btK+Xac5L2ToPpRWeHUrIDZTNt/5TMDhVSFHS920tj5fTcqzoKr8zrXnqrb2FysBGc
-         AcGCzA9wnJv7Wr7/qFf73cg2rOQvkZpcIpPJBuH1kyC7wexQo/w2gNITdh0D03qG4Ay2
-         s1tg==
-X-Forwarded-Encrypted: i=1; AJvYcCW6DkqPHcTz95vsDR3GACpL8Z8uhKLCJuK54lYMy0SQR2exf4P85KEqRS45f7uozA4pS1L7YPN/nE3X3go6xkEVQAympYZWys1NBqht
-X-Gm-Message-State: AOJu0YwaZDJfbElfPKEUDzgoFiJZUhMIGb8b161ar8i4/Zy7gviHanfk
-	9fx46HKWBBjMYTNAyFRTyAM80blYGjaw40fVmFDhk/JAnxn0cJ54aA/5dCdXsP/JmSS96xW/7XJ
-	Y1JpPKp1V6YrFwLVwzemnnA2d7ZAVf0M6kd0n+/vfYinkXi/rkFA=
-X-Google-Smtp-Source: AGHT+IFJB5x3pYSD0y4Q5r4wWK4Y3rLRAWXELD1JUSAm8Ow50OC5okYZ99DPR11L57LtC71EXPAYdgoDHtJYINBxm0g=
-X-Received: by 2002:a05:6808:308d:b0:3d9:2415:da77 with SMTP id
- 5614622812f47-3d93c073d69mr9586482b6e.25.1720694099522; Thu, 11 Jul 2024
- 03:34:59 -0700 (PDT)
+	s=arc-20240116; t=1720694235; c=relaxed/simple;
+	bh=DFEfePK8cAElLfJIiPmawLyu7JjbXJrgS7m+m6Pnd5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NonNTTUFgG1viNBhs2uII1f0rVqO5sVEfjM9DMwibMd8HdMbVcsK6DvM+DdiinAyOCE1RUl+99vPprXMqdxcC5QQGqVWaPnzv63VJhRTKEE2nK8lsfN73PS+NYHRIt0keto51XYzr0dm+JKfB7HvqVmDSdrqObV4faEhVIe0w2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DTxGISw4; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720694234; x=1752230234;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DFEfePK8cAElLfJIiPmawLyu7JjbXJrgS7m+m6Pnd5Q=;
+  b=DTxGISw4HxEBg4N6eo2Y/r5Q5hTCl9vse9VjYw7Q9RkHup80RX6z8VPO
+   4wG2HK1RIbRGAZPEry/PnxcALaMrNLpilyaGWkphvaq+J1zISSeiL/BQf
+   JP6ZXP1+piRcqDX14LM7m15OSl6Q5guUaqfHJ8wlzC4bfkT+gXzKz/U4G
+   Y7Pfy/2U19ZZU47JsWkaCWbQOO/XNK/lWq4HhEnUNe96IwjiGrKKGDbLT
+   zpRDyl7/pqRoNLc7tlrdeyQTd6lWtXXsHg9wL/MhZuLPT0NDtwcjbdNAF
+   HqpwUr9SIfjIUDkbRa9N9C49H2JPs5q24FwrPDCoo9Cadk5n3o5YqScg6
+   g==;
+X-CSE-ConnectionGUID: cE3gteqFT1+i/6VXoueBlQ==
+X-CSE-MsgGUID: KMNCtYJhSp+jJ6vZI2b7Kg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="29468679"
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="29468679"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 03:37:13 -0700
+X-CSE-ConnectionGUID: RTya0ugrQZuBYIYVmuGQgw==
+X-CSE-MsgGUID: KADa2dLDQ/mTpNQID6JOXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="49272803"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP; 11 Jul 2024 03:37:02 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 0BAD329E; Thu, 11 Jul 2024 13:37:00 +0300 (EEST)
+Date: Thu, 11 Jul 2024 13:37:00 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Xiongwei Song <xiongwei.song@windriver.com>, 
+	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, 
+	Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
+	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Yian Chen <yian.chen@intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [PATCH v4 07/16] x86/cpu: Defer CR pinning setup until after EFI
+ initialization
+Message-ID: <3dbaf7fm65xl6kou5fj4tzty7emsdecs3juu4rm7266pgzcfk3@z3mehcszkw7j>
+References: <20240710160655.3402786-1-alexander.shishkin@linux.intel.com>
+ <20240710160655.3402786-8-alexander.shishkin@linux.intel.com>
+ <20240711081153.GC4587@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628093711.11716-1-yongxuan.wang@sifive.com>
- <20240628093711.11716-3-yongxuan.wang@sifive.com> <20240628-clamp-vineyard-c7cdd40a6d50@spud>
- <402C3422-0248-4C0F-991E-C0C4BBB0FA72@jrtc27.com> <20240630-caboose-diameter-7e73bf86da49@spud>
-In-Reply-To: <20240630-caboose-diameter-7e73bf86da49@spud>
-From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Date: Thu, 11 Jul 2024 18:34:49 +0800
-Message-ID: <CAMWQL2gpg-xN5xjshTaZT5844kKoZHDmLUQb8nXYYzw1RGbykQ@mail.gmail.com>
-Subject: Re: [PATCH v6 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
-To: Conor Dooley <conor@kernel.org>
-Cc: Jessica Clarke <jrtc27@jrtc27.com>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-riscv <linux-riscv@lists.infradead.org>, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, Greentime Hu <greentime.hu@sifive.com>, 
-	Vincent Chen <vincent.chen@sifive.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711081153.GC4587@noisy.programming.kicks-ass.net>
 
-Hi Conor and Jessica,
+On Thu, Jul 11, 2024 at 10:11:53AM +0200, Peter Zijlstra wrote:
+> On Wed, Jul 10, 2024 at 07:06:43PM +0300, Alexander Shishkin wrote:
+> > In order to map the EFI runtime services, set_virtual_address_map
+> > needs to be called, which resides in the lower half of the address
+> > space. This means that LASS needs to be temporarily disabled around
+> > this call. This can only be done before the CR pinning is set up.
+> > 
+> > Move CR pinning setup behind the EFI initialization.
+> > 
+> > Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > Suggested-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> 
+> So the previous patch makes us not boot, and this fixes it up? Perhaps
+> order things differently?
 
-On Sun, Jun 30, 2024 at 10:09=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
-ote:
->
-> On Sat, Jun 29, 2024 at 02:09:34PM +0100, Jessica Clarke wrote:
-> > On 28 Jun 2024, at 17:19, Conor Dooley <conor@kernel.org> wrote:
-> > >
-> > > On Fri, Jun 28, 2024 at 05:37:06PM +0800, Yong-Xuan Wang wrote:
-> > >> Add entries for the Svade and Svadu extensions to the riscv,isa-exte=
-nsions
-> > >> property.
-> > >>
-> > >> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> > >> ---
-> > >> .../devicetree/bindings/riscv/extensions.yaml | 28 +++++++++++++++++=
-++
-> > >> 1 file changed, 28 insertions(+)
-> > >>
-> > >> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml=
- b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > >> index 468c646247aa..c3d053ce7783 100644
-> > >> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > >> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > >> @@ -153,6 +153,34 @@ properties:
-> > >>             ratified at commit 3f9ed34 ("Add ability to manually tri=
-gger
-> > >>             workflow. (#2)") of riscv-time-compare.
-> > >>
-> > >> +        - const: svade
-> > >> +          description: |
-> > >> +            The standard Svade supervisor-level extension for SW-ma=
-naged PTE A/D
-> > >> +            bit updates as ratified in the 20240213 version of the =
-privileged
-> > >> +            ISA specification.
-> > >> +
-> > >> +            Both Svade and Svadu extensions control the hardware be=
-havior when
-> > >> +            the PTE A/D bits need to be set. The default behavior f=
-or the four
-> > >> +            possible combinations of these extensions in the device=
- tree are:
-> > >> +            1) Neither Svade nor Svadu present in DT =3D>
-> > >
-> > >>                It is technically
-> > >> +               unknown whether the platform uses Svade or Svadu. Su=
-pervisor may
-> > >> +               assume Svade to be present and enabled or it can dis=
-cover based
-> > >> +               on mvendorid, marchid, and mimpid.
-> > >
-> > > I would just write "for backwards compatibility, if neither Svade nor
-> > > Svadu appear in the devicetree the supervisor may assume Svade to be
-> > > present and enabled". If there are systems that this behaviour causes
-> > > problems for, we can deal with them iff they appear. I don't think
-> > > looking at m*id would be sufficient here anyway, since the firmware c=
-an
-> > > have an impact. I'd just drop that part entirely.
-> >
-> > Older QEMU falls into that category, as do Bluespec=E2=80=99s soft-core=
-s (which
-> > ours are derived from at Cambridge). I feel that, in reality, one
-> > should be prepared to handle both trapping and atomic updates if
-> > writing an OS that aims to support case 1.
->
-> I guess that is actually what we should put in then, to use an
-> approximation of your wording, something like
->         Neither Svade nor Svadu present in DT =3D> Supervisor software sh=
-ould be
->         prepared to handle either hardware updating of the PTE A/D bits o=
-r page
->         faults when they need updated
-> ?
+Maybe just move LASS enabling (patch 04/16) to the very end of the
+patchset?
 
-Thank you! I will update in the next version.
-
-Regards,
-Yong-Xuan
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
