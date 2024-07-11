@@ -1,109 +1,152 @@
-Return-Path: <linux-kernel+bounces-248684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E364692E097
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:11:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8FEC92E09C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991241F22047
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:11:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270BE1C21AAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6E313DDD1;
-	Thu, 11 Jul 2024 07:11:10 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FE313F439;
+	Thu, 11 Jul 2024 07:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="LwArbRcz"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957F612FF88;
-	Thu, 11 Jul 2024 07:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E693712FB02
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720681869; cv=none; b=WzBs7gxVCIL8GiqC/fqJqyzWPY4q+3XZEfumu1JLA9YMEVdwK+5Sx1MZqlKOq+BPMwv+v8305K2lbbkl4ENirkCOJpFnzxkKS7Vi1Kf4C22ZmmKYDj3YLeBrj8xGBokgJZBf9DvqDjr5B5ocF/JKdb3GaBJPOoKsFRu/31gecDU=
+	t=1720681898; cv=none; b=MN1XlMxxfEtqGADuDvd9OYK1LfS7guSLpAU7qquQxDw85CZFL2fNKQzwnY5wdni3N3enyb18/EvyvDgxfiNfc44e0TmpA0Yc6kC8L36WplNvnxWVJl4iKRQuBizZkeEUdjWpinlzHZ3aydZBCTxaQpO6ltYRj5lVgsT8mZduquk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720681869; c=relaxed/simple;
-	bh=4W3vs38AT9kQ3vdhQynMgIJXMDLIST7oSVRkYD5cx9Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HZ2iPpZj5224D+O6Ul9Rvsb4L0/tcls9KakSa9JKQvui27lKMUiF6UO/5jStx3W6zt1qY/LU3JMR0umLgL5ItQl9TPuwFjKTJ9ooKdZsOE+7WVWXZAAZnFgIbCia++8AxJUsisbgX0qlMkoxG1j6NZ8eJeqnF7bBy7ZRcHkvsCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowACHjeVbhY9m9za0Ag--.57384S2;
-	Thu, 11 Jul 2024 15:10:29 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mykolal@fb.com,
-	shuah@kernel.org,
-	sowmini.varadhan@oracle.com
-Cc: bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH] selftests/bpf:fix a resource leak in main()
-Date: Thu, 11 Jul 2024 15:10:18 +0800
-Message-Id: <20240711071018.2197252-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720681898; c=relaxed/simple;
+	bh=VIAV0i8bfBGJmr2ASHi9uepl/tgYVYGPQgjFhw98zcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pw31RAT6Z2DFfUmtenEqG/ENQCjgjXIdFywtSmXGPoC3wPa6ZKPKTBGXQ9Qu+ZU6muJubKCWOz8G/Gdedm9/Z1R6uJyf3wqn8p0tgcZ8VcVSdbM2Bdp4dK40KDx3FPR+FOsZTK+qMdJwGxCcmpYXnBKKUmIo3mM6wOxm4PcLRyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=LwArbRcz; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso4466221fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:11:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720681895; x=1721286695; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a8FpGfJhKHRH51INGqjbfreZcK/LNo4iyWKefVeCz8o=;
+        b=LwArbRczHX09SzBLu2F7ctkxsGY5eoxRiYvWxDCwK5pbm/8HTW+B37ki7KuI6UZmxv
+         O51el9nqk5wZ6mHIBltTQuDZwJ3uTpMYpmv8UfysS8mWEw4hA7reNGCNUDJin5CQvKHl
+         sYYvkZ7dZBOmj+eY38AcM+qqACgSPPFReFGvOHiDhV1ErtiNMrJlzoKnpe0TxXxrung+
+         ccHfuyU5kRkQcYmz6hHl488uLzJEQeCDof/tJOHu+DAPzCWT+MgMG8z1RjTJdUIvrnTK
+         2OWJ4rUqc5KTIcr5lAH9EEjG5ICr4VNbzQnsFj57lMl3HrGgp0AwUHOCgBhkgTG8KdxA
+         t/1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720681895; x=1721286695;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a8FpGfJhKHRH51INGqjbfreZcK/LNo4iyWKefVeCz8o=;
+        b=PeKPjgN8JQ9zueLuUyFT5Ie1L9YWg0+Q9/fIOv65CY2A19dxSh9qTfTzFr0mTLW/Tg
+         HWujiKuKc+mid2X3uzDno6L4VKtSEdzp8hZ7AVneauDGsW+ucEglU33yq4qfJC7FTpst
+         PPxCzEO+BtrlLgBcvSMLpd9lTAQyOEV345iM+wL3CnJUCvz/xb14yMQdTcQmtAxV+POv
+         CHEbQUisWQ14+zZLuvEeolyr2TkR6FRERj8RFSQ9rrv5f4guhcsQVgWg95251Ks1rQ91
+         zcRMWic/LDRjIgsI1hYMy8PeufmLklWUnEIKL2lys+CH/3VQIcYNeDqK+6WnaTkqL9zO
+         dGow==
+X-Forwarded-Encrypted: i=1; AJvYcCW/uMUZw89g0cij17boaPT8YDV9aqndhenbmVlKfztPSVIfneZUssordnWHPxcHZD2EyRB6ub5647/uUqz36aSlMKWMg1wx70rAD6fz
+X-Gm-Message-State: AOJu0Yw5bTv7MgsocMc7DRl4tW/jPrI+k/Aoqu/LWnmwkjztlSMps8aA
+	lz99Kt+Yg1lWOUz6cFA9qHkdyiDQUinz1BK3WjQU7hTJnz8kw1s5kg9qVSDlqoy68FfMbvwj9GT
+	ZbdBjK5+/DaEtoeu4Bo42j7cM9T+wc9OAiF4PEg==
+X-Google-Smtp-Source: AGHT+IHcmrV3Xm79/GKLrO5u/EIzHMqb39TGt7V4F8gME6OClLLzo6aZsZ4SHb9OWD9Ho4J3EkV7V/Xbc5AIozEv7nY=
+X-Received: by 2002:a2e:9495:0:b0:2ec:1ce8:9a7d with SMTP id
+ 38308e7fff4ca-2eeb30b83f4mr49649831fa.4.1720681894945; Thu, 11 Jul 2024
+ 00:11:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACHjeVbhY9m9za0Ag--.57384S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZw15AFyrWry8JF1Dtr47Jwb_yoWfKwcE93
-	yjqrn7GFs0vFn8Ar15Kw4rCrs5uw4rWrW7GrsIqFy3tw4DXrsxGF4v9rn8Aa4fWrZxurZF
-	yFykX34aka1jvjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3AFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUOrcfUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+References: <20240709-hci_qca_refactor-v3-0-5f48ca001fed@linaro.org>
+ <172064103479.11923.11962118903624442308.git-patchwork-notify@kernel.org>
+ <CABBYNZKvSF9h1K29oex3kXm+2h+62gwJ8+YJPM0Orap6_xVDTQ@mail.gmail.com> <05ae1a45-107e-4d01-9cfe-648b52cbb364@linaro.org>
+In-Reply-To: <05ae1a45-107e-4d01-9cfe-648b52cbb364@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 11 Jul 2024 09:11:23 +0200
+Message-ID: <CAMRc=MfgBhMZvBD70bAxc1Lw-zTU_7ByaxBqPfgD0WZ6Hq+MOQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Bluetooth: hci_qca: use the power sequencer for wcn7850
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: patchwork-bot+bluetooth@kernel.org, marcel@holtmann.org, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	quic_bgodavar@quicinc.com, quic_rjliao@quicinc.com, andersson@kernel.org, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, bartosz.golaszewski@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The requested resources should be closed before return in main(), otherwise
- resource leak will occur. Add a check of cg_fd before close().
+On Thu, Jul 11, 2024 at 12:08=E2=80=AFAM Konrad Dybcio <konrad.dybcio@linar=
+o.org> wrote:
+>
+> On 10.07.2024 10:43 PM, Luiz Augusto von Dentz wrote:
+> > Hi Bartosz,
+> >
+> > On Wed, Jul 10, 2024 at 3:50=E2=80=AFPM <patchwork-bot+bluetooth@kernel=
+.org> wrote:
+> >>
+> >> Hello:
+> >>
+> >> This series was applied to bluetooth/bluetooth-next.git (master)
+> >> by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+> >>
+> >> On Tue, 09 Jul 2024 14:18:31 +0200 you wrote:
+> >>> The following series extend the usage of the power sequencing subsyst=
+em
+> >>> in the hci_qca driver.
+> >>>
+> >>> The end goal is to convert the entire driver to be exclusively pwrseq=
+-based
+> >>> and simplify it in the process. However due to a large number of user=
+s we
+> >>> need to be careful and consider every case separately.
+> >>>
+> >>> [...]
+> >>
+> >> Here is the summary with links:
+> >>   - [v3,1/6] dt-bindings: bluetooth: qualcomm: describe the inputs fro=
+m PMU for wcn7850
+> >>     https://git.kernel.org/bluetooth/bluetooth-next/c/e1c54afa8526
+> >>   - [v3,2/6] Bluetooth: hci_qca: schedule a devm action for disabling =
+the clock
+> >>     https://git.kernel.org/bluetooth/bluetooth-next/c/a887c8dede8e
+> >>   - [v3,3/6] Bluetooth: hci_qca: unduplicate calls to hci_uart_registe=
+r_device()
+> >>     https://git.kernel.org/bluetooth/bluetooth-next/c/cdd10964f76f
+> >>   - [v3,4/6] Bluetooth: hci_qca: make pwrseq calls the default if avai=
+lable
+> >>     https://git.kernel.org/bluetooth/bluetooth-next/c/958a33c3f9fc
+> >>   - [v3,5/6] Bluetooth: hci_qca: use the power sequencer for wcn7850 a=
+nd wcn6855
+> >>     https://git.kernel.org/bluetooth/bluetooth-next/c/4fa54d8731ec
+> >>   - [v3,6/6] arm64: dts: qcom: sm8650-qrd: use the PMU to power up blu=
+etooth
+> >>     (no matching commit)
+> >
+> > Last one doesn't apply so you will probably need to rebase or
+> > something if it really needs to go thru bluetooth-next.
+>
+> Bartosz forgot to mention it should go through qcom
+>
+> Konrad
 
-Fixes: 435f90a338ae ("selftests/bpf: add a test case for sock_ops perf-event notification")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- tools/testing/selftests/bpf/test_tcpnotify_user.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Yes, sorry. That's alright, if patches 1-5/6 make v6.11 then I'll just
+resend patch 6/6 to Bjorn directly next release and we'll avoid a
+cross-tree merge this way.
 
-diff --git a/tools/testing/selftests/bpf/test_tcpnotify_user.c b/tools/testing/selftests/bpf/test_tcpnotify_user.c
-index 595194453ff8..f81c60db586e 100644
---- a/tools/testing/selftests/bpf/test_tcpnotify_user.c
-+++ b/tools/testing/selftests/bpf/test_tcpnotify_user.c
-@@ -161,7 +161,8 @@ int main(int argc, char **argv)
- 	error = 0;
- err:
- 	bpf_prog_detach(cg_fd, BPF_CGROUP_SOCK_OPS);
--	close(cg_fd);
-+	if (cg_fd >= 0)
-+		close(cg_fd);
- 	cleanup_cgroup_environment();
- 	perf_buffer__free(pb);
- 	return error;
--- 
-2.25.1
-
+Thanks!
+Bart
 
