@@ -1,86 +1,124 @@
-Return-Path: <linux-kernel+bounces-248447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B04F92DD48
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:04:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6069092DD49
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0A91C21AAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EE811F22D9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05263801;
-	Thu, 11 Jul 2024 00:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B14A1C27;
+	Thu, 11 Jul 2024 00:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJaV/ZUM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7ItivhK"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1B13201;
-	Thu, 11 Jul 2024 00:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0803463D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720656284; cv=none; b=pUBNZxQWg8EgmfHll6tvybxh0odT5522KmyloyDjk3fAWTNBCpXATRafXgKA1r+SW6z/fGKK4u9sc3ovQsDfM4ru1s/zvnT9mW5q2doM3MEAmtp7aMbjty5X+26bRIlOQ4hr4L/Wy6gfRcLBKWISnpv3eiJ7HQODU14NDNn65IE=
+	t=1720656309; cv=none; b=tW2VIs3Tkp8SIzv/3p1fDg1TOvKbkYa2D42dFfARjaAguWO+UwIV6MmewS+X1HLfHAPv6pE5Lhin4tGtS8WoFhz95vQ/5R8I/hE7/GoalBhiNZCE22dZSoSLJTfuausLFs/WI0GAFtvEIuTw8ZBpMWF9eIbIlz6Ef/cZnr2sbTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720656284; c=relaxed/simple;
-	bh=LoH2ZoYa2mnasOzoozuE/n+8G7gQuYpt7BBzCX/pdtI=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=sKNn3qQWcBlxWtzSUz/ojwPW4qtMApA7/0MlUsMX64QE3gN0bgpJXBLjwAnKZ+/goUj8TjMTp93wFg3XNv06Mdd1vM5V2Vquv/dKZPhZY1fWQTgl3ChJ8PlxGk4DHWb40E0BanZ1zYIIZhhTFUUEpn9dK83WG0yLSJDs3nsJk3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJaV/ZUM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B460DC32781;
-	Thu, 11 Jul 2024 00:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720656283;
-	bh=LoH2ZoYa2mnasOzoozuE/n+8G7gQuYpt7BBzCX/pdtI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=HJaV/ZUMnZTRLGyfiuXbJbUmRL7yDm1gJ9K3gHULJ8mRPiN+iz1B+3NYQZHr8GCME
-	 ruwg/2gcwwQTn+7AZDO4le8WS5O+EJFUVLFOqkzYUz9lWzf5b5+HDXpeaYqdaoUCiq
-	 nIJeYz/XIm041sjjShE5ftHZUL1cR/iefzPLpimZgYBCW83d6nMG2tyJD6Yb2ljVDu
-	 hpTseJ/7C6rtKMENy8IwftS07vgymquHBH4stH1vdZo7FVMv3DJeM73tesNWMPgAvr
-	 4/dDEBVg6ub6wunrinM190eKNqZI3tb1rFXoEmi2d7DjZ60ink6PyLV54UnW3EQY7z
-	 hVHtO/McBRTKg==
-Message-ID: <9cb3f57ed4b41fb51600610a3a1c9437.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720656309; c=relaxed/simple;
+	bh=hHu/IyW6x+w5vAhpJ6MC+x6jI3h1T1ET7IgRgzFkP1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b6YasFMknee1nzEK2Fblztm+coRmFUhrKbwAFCtT2VfU61jKBrYcsRDjcEEL67sakvoPFEYp/rbVUA7LlKThdyLWPsWIjiRWyzt6RBTnT9+sglL6ekRvpNfycxXO1lPv01rH8AXV4O+Zxg2YbGXjSgkgvGMH7ZFAINF+6ahtPZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7ItivhK; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fb4a332622so1511185ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:05:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720656307; x=1721261107; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HhcXl9iADlsGgb8HLvc0JcuAcLtv+mF5by2xI/1b61k=;
+        b=J7ItivhKaWBVDPDNQKpogjSmtcfzpnoQlDAxFucu5zuAZpoJ7sgsZkolmWibZgVhyT
+         pjiUymbeTcLNZ1ZtOC7YtSkw9aJwqPsnQG/3O3d1RZsJPvqD4zvWeWOw+LOG6uF+SQRH
+         00qCbLkqisPm2Lnq29fl5CjapeYYBs0576DFooAANQ2h0Y7LdefcyswpHMjT3VLJ8A11
+         Yi5lDmeKt1CweGaV9ZfrbujvjCKls/QFswVls8RMrBIL0fUzDSSbt85Txc+1Zt2OD6WJ
+         a9PiTFel/bNYnh7P3QAtpgi71O/Q2cfJA8ghQZXCCNfv6ogsLnmJKFG3EA39u0YtoJIT
+         txhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720656307; x=1721261107;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HhcXl9iADlsGgb8HLvc0JcuAcLtv+mF5by2xI/1b61k=;
+        b=paf0z0y52++a5/QSYm+VAKFmRxPzth3cmyfITzMM6m3jF9aR5nmkaUUnZhdrvSGzWt
+         JKMsuu1jI0tdaJEgf0f/rZwP0+7irv4M6FXBKfCvIBzp4r9sXieELyVv9+RSrWSXSNZQ
+         AGhjzo+o7QrE2mSrb2ZykoxjbH+ma+Af/oRazJAxcbUsxU5i0zItWiEUmtyh30Hze/93
+         L6Wb0ZG2REeIJXc/lVvRwI3zKNfAZm6D85LMbhTSfvvnPJG8TpYkJNHQ+FToCcwf8FbP
+         K6uw8Yo8MPiQ4IDjowNTrJdyEkZXOpdGl7M8iabnryzXskrv/hyhE63dHpPc2PBeuX56
+         V8sg==
+X-Gm-Message-State: AOJu0YyR+b0cUYm/uHAaibfOQ8GNaeo2g+zbUOEdHYlt8AemYNbvv5Gl
+	81z6Gz/IKCJP7tMIBksq40zUuOIGvXokQN3Ki3+5SIL4mDuThizL
+X-Google-Smtp-Source: AGHT+IGcdq1ukj54eLusut1EYwIc3uLVIOvzbXWpk2uI5InHJr+QAtjdhXPyk3FuyJv93ncd7AaZZg==
+X-Received: by 2002:a17:902:f546:b0:1fb:8620:c0c3 with SMTP id d9443c01a7336-1fbb6d251edmr62737135ad.2.1720656307164;
+        Wed, 10 Jul 2024 17:05:07 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a10941sm39022245ad.30.2024.07.10.17.05.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 17:05:01 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 10 Jul 2024 14:05:00 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	schatzberg.dan@gmail.com, mingo@redhat.com, peterz@infradead.org,
+	changwoo@igalia.com, righi.andrea@gmail.com
+Subject: Re: [PATCH 6/6] sched_ext/scx_qmap: Pick idle CPU for direct
+ dispatch on !wakeup enqueues
+Message-ID: <Zo8hrMWVw4VEIkkN@slm.duckdns.org>
+References: <20240709212137.1199269-1-tj@kernel.org>
+ <20240709212137.1199269-7-tj@kernel.org>
+ <20240710192523.GF317151@maniforge>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAA8EJpqOD-JKGCJiC7yAkiG3oAOEbHQ-_aCmDiP5HdeEVZm8fw@mail.gmail.com>
-References: <20240628-gpucc-no-request-v1-0-b680c2f90817@linaro.org> <20240628-gpucc-no-request-v1-1-b680c2f90817@linaro.org> <5153b8f8a6c6ffdc1254e00c47a888ed.sboyd@kernel.org> <CAA8EJpqOD-JKGCJiC7yAkiG3oAOEbHQ-_aCmDiP5HdeEVZm8fw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: qocm: add qcom_cc_map_norequest
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 10 Jul 2024 17:04:41 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710192523.GF317151@maniforge>
 
-Quoting Dmitry Baryshkov (2024-07-10 16:32:18)
-> On Tue, 9 Jul 2024 at 01:30, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Dmitry Baryshkov (2024-06-27 22:20:22)
-> > > The GPU clock controllers use memory region that is a part of the GMU=
-'s
-> > > memory region. Add qcom_cc_map_norequest() to be used by GPUCC, so th=
-at
-> > > GPU driver can use devm_ioremap_resource for GMU resources.
-> >
-> > Why does GMU map the gpu clk controller? Does it use those registers? We
-> > don't want to allow two different drivers to map the same region because
-> > then they don't coordinate and write over things.
->=20
-> It's not that GMU maps gpu CC separately. It looks more like gpucc is
-> a part of the GMU address space. I think GMU manages some of the
-> clocks or GDSCs directly.
->=20
+Hello,
 
-I imagine GMU is a collection of stuff, so the register range is large
-because it's basically a subsystem unto itself. Can the range in DT be
-split up, or changed so that different devices within GMU are split out?
-Or maybe the gpu clk controller can be made into a child of some GMU
-node, where the GMU node has a driver that populates devices that match
-drivers in different subsystems.
+On Wed, Jul 10, 2024 at 02:25:23PM -0500, David Vernet wrote:
+...
+> > +	/* if !WAKEUP, select_cpu() wasn't called, try direct dispatch */
+> > +	if (!(enq_flags & SCX_ENQ_WAKEUP) &&
+> > +	    (cpu = pick_direct_dispatch_cpu(p, scx_bpf_task_cpu(p))) >= 0) {
+> > +		__sync_fetch_and_add(&nr_ddsp_from_enq, 1);
+> > +		scx_bpf_dispatch(p, SCX_DSQ_LOCAL_ON | cpu, slice_ns, enq_flags);
+> > +		return;
+> > +	}
+> 
+> Hmm, will this be a typical pattern for how this is used? I'd expect
+> ops.select_cpu() and ops.enqueue() to quite often be nearly the same
+> implementation. Meaning you would e.g. try to find an idle core in both, and do
+> SCX_DSQ_LOCAL_ON, with the difference being that you'd just return the cpu and
+> save the extra lock juggling if you did it on the ops.select_cpu() path. Not a
+> huge deal given that it's just an example scheduler, but it might be a good
+> idea to try and mirror typical use cases for that reason as well so readers get
+> an idea of what a typical pattern would look like.
+
+scx_qmap is a bit special in that it wants to be able to skip n'th tasks to
+test the stall detection mechanism. We can't express that in select_cpu() as
+not dispatching in select_cpu() just means that enqueue() will be invoked,
+so it just funnels all tasks, even direct dispatch ones, to enqueue(), so it
+looks a bit different from other schedulers. scx_qmap is mostly used to
+exercise different code paths and is rather messy for anyone to use it as a
+template. It'd probably be useful to note that in the comment.
+
+Thanks.
+
+-- 
+tejun
 
