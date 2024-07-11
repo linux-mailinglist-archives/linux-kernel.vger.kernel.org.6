@@ -1,260 +1,182 @@
-Return-Path: <linux-kernel+bounces-248744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E0F192E168
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:57:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7290C92E16A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D7531F21B9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 276B22825A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E939414B955;
-	Thu, 11 Jul 2024 07:57:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DACF14D283;
+	Thu, 11 Jul 2024 07:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WzMJQ9Xa"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A55F4963F
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD5E4CB23
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720684626; cv=none; b=NkG7Wj2LJnLc8G95Eonw/v3CMSqFbRhWRup4ko470Kr9utOAtZQyuxrfOoVAUk1D4jzC1FNwyEnra7BSuwsctI5lXouCuwQV9l8l7upuBUqhrc47Iw9PpRWNcGGs2uqoDeibIBkKrPqA0c3BKeDxlNs44CqbWqPsvhZVpKe7IG8=
+	t=1720684681; cv=none; b=rvNV44Fi3fF1jHlb1ThhRYtY5roLwmBeMrcv0a9llZxD8wo4His3rIyc/PztTDHt7w71urHpNtci9Tfk/qXZIvKlXbfJ3mGHilLhpxAA4I8CDcANGsPUYkMaXOw6JQQqeTnKs50sN5P+SAo5AJhnK0DYkPDP1+8WZlPA1wBryZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720684626; c=relaxed/simple;
-	bh=lmShxM/64hherYa6LYBoyjARgfMMmc6X3kUymo9v7Rs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kVJd5LP5e7oeLvKkLeLdv/F5zJINlHQIGN7wa5osCz3+bHwuG+n+OwxS9dzOxFD1pJVTBD+lwYNcHgT/FsyfRkes9ppuQ7kyRF3PxrUfsujyAb1vP13EvWvrVbKjlnJQBm1Hlh7OUZajxnYFVyAHqbR0xvtc9xvl33k9Sg1mbZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7fc9fc043eeso63691239f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:57:04 -0700 (PDT)
+	s=arc-20240116; t=1720684681; c=relaxed/simple;
+	bh=Jl7LbtNor/AZBViMkDaQwErv9uJgZebfqcmGpbq16aM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jaBCtU9jHDLW/d9i9Wczhtlr1FggQwB6Pj5WoxuXIDo3W8JVXgpvqzD0ny8hsdYycl1YOkVOD5jcuICJSb1yNHCWc+uItxTCdj+MQFc9TA4K9Nn95La+TQzK6YEWcvJMjgglDOvYFTiKxIdr/E9DLD3bJ4bo0KxTrRxt1xUz5kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WzMJQ9Xa; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so3323315e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:57:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720684678; x=1721289478; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AgM361BYAq0iGbtkT3hQE7bNR8KxM3q/tLCmdGxIpCw=;
+        b=WzMJQ9Xanv3Ei7VL7UUI0vBdZAdHdaxJUKYTbV2fZnUy+8w3V+KhGiHgdaSbK7Yscx
+         pFwasuMTOiH0E9EtDYUuk+VAfbgaI8jlkFRshD4cGATOhXwOtUtQeIFB+l7+UMAdLj1Y
+         7xdO+cfoA7OQ8SxcNn4W2/uLog22hhGfc7JQrO6JONXW2q09xq6cVs/DxyJb9azweduR
+         /H1yv/Mcso3stU+bj+97tWLLAK89wNOZYMCtrodUHpgHUv5qNpQjyxWLUTRCCZkQlUFu
+         5c/dP+FurVvWmFQXZCCe4gYUm60Z2KD2KaqJT4rWzrBeUIJLyvTFrGJ5ZDNdsprAl4hs
+         Umnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720684624; x=1721289424;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9398RJINYcC+tCW2A411cep3yNYukxMzqadN+n1VPgg=;
-        b=Ts8Pwq7KISCA5+q/gFN3y+RsdOoEanIjKnulRtLFqDndJcuvutbMqUFDg4tfsDK59a
-         KF03sOA4mMr/RxMJc3gL6yGcgnASYdkjupnHnl5msimWXSwTFRlB+29Anpghf419VkK7
-         ZJXPm/nUK4gGU7ijYIIJIiQjKTHpMijIBPI3RcpYNw6yqYwSSJkKvySdboXi0opO2mBc
-         lqDpvzyy6TVWlmU0guzVNh7at657xVtxz0oC9Qa+Jk/iFxgYMLHdEFQ8e0ndIH1LIn2X
-         bKCn9x0OvtL3VbDGdhSnJPq4k0OO0+kxvotqCDIWMiUecoJxJQPlmLZNVq5iyBKZMU4x
-         X2JA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkb5YPInZP/E4AYRG9WL6Gl5NILecBnai3S8njD4WK7yWRTtU3zIUD6DSQsrRmCbZ400vy10iWWAyh35jysU3W0Uf1lSVIU5ScrMBQ
-X-Gm-Message-State: AOJu0YzXn4Vl2HeN7Qu7QK3xfHoYFr7yYEgCH1p5x/6O2JWMjspiLJ7e
-	zGaIEN4wwIsqRFA/hP8FHpnLbCrzqlToqvRcWTjLEZyregmpLeWboNjcoF9LABzDubjE+E+4gF1
-	bi+8p+jFWVAp/fLCOD8p0nT+/aO7djNLZT1NyafO+izT8abJ+5SVoH1U=
-X-Google-Smtp-Source: AGHT+IGWAJQLHt9DsvgXErnHEjDPjdQ1njoJj2hzadAq1rp0rpVA3U2AAtxvFjarhNRqJ6BRfCs2P6+BAjUOM9C2NUJoKDJg776z
+        d=1e100.net; s=20230601; t=1720684678; x=1721289478;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AgM361BYAq0iGbtkT3hQE7bNR8KxM3q/tLCmdGxIpCw=;
+        b=Y1KBb2ThxyNUNThFPbCto0vbhnNz3wlr6oBGe02z4M0z3vCuo02646E3n+J7iMG8Pi
+         fYQljP0SGZWMpfQ4J4iLSN5XHedV6wVrNowhw+JhLLYWZLj0ygbUxwZK2Ww3tDrkP4ne
+         Q2cSmu14fsEtK+JtRGu3OImFDzhPQ0WpEzvbj6+TtJRsqO8OoGcUDFCLcaHiXSeVSO+6
+         Oy2l/DcKWMu38pEgndmd2Ogj7geKygMTe2yCwaKiQj6nqO3D9YtdUtZagYrLkhwQFqcM
+         8d+VlFb8HOdGomXM4cn7aDgJIqL5ipcHtJ+xp5uuZGDnbHkMuMcTOtCRHx12VhwKYIas
+         fTzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQhnycXZqxWb8UCidRbKDauKmNpslmbsJp874O3RtuPe+5Xa2Qm/0miYaB5aQCK5ne8kt5ZY54aQFNhq6M4auFocvWsoRH/t1eU+og
+X-Gm-Message-State: AOJu0YxIs8vSmrCcQTI8q3DCUHTCDUXhMCZsQ/xYnM06WB0Q3IU2a0c/
+	yNoQJv34Vp31vJm+078QNE2gb8dPqwD09Z9zpw7VDgTdoqnr7nYd7fVDHTxXUvdNtw+BHLxmbaK
+	e
+X-Google-Smtp-Source: AGHT+IHB0si76JZ9j6zbyRH35zyC5sWwKCluZCNVAxjobcDbOXwmVjBdrHMP2I2PmEw7TjfC4Y+S2Q==
+X-Received: by 2002:a05:600c:5584:b0:426:6252:61d9 with SMTP id 5b1f17b1804b1-427981c524amr13627265e9.11.1720684678022;
+        Thu, 11 Jul 2024 00:57:58 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f07dasm107187775e9.12.2024.07.11.00.57.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 00:57:57 -0700 (PDT)
+Message-ID: <b288d373-a1bc-46b9-9a08-4d949d1bd2bc@linaro.org>
+Date: Thu, 11 Jul 2024 09:57:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2582:b0:4b9:ad20:51f7 with SMTP id
- 8926c6da1cb9f-4c0b29715f7mr460854173.1.1720684623822; Thu, 11 Jul 2024
- 00:57:03 -0700 (PDT)
-Date: Thu, 11 Jul 2024 00:57:03 -0700
-In-Reply-To: <7bc3c0f4-d611-4328-b456-a7d2ac0ff4b9@paragon-software.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c617c3061cf41b01@google.com>
-Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
-From: syzbot <syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: non-dt-devices: document ltr,ltrf216a used
+ via ACPI PRP0001
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Marek Vasut <marex@denx.de>,
+ Jonathan Cameron <jic23@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+References: <20240709084401.21108-1-krzysztof.kozlowski@linaro.org>
+ <20240709170248.GA3803124-robh@kernel.org>
+ <CAL_JsqL-wLzHmYN9Lntth3TKgpjfj3jxoGD5T49gSkDSMR=S_Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAL_JsqL-wLzHmYN9Lntth3TKgpjfj3jxoGD5T49gSkDSMR=S_Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 09/07/2024 22:48, Rob Herring wrote:
+> On Tue, Jul 9, 2024 at 11:15 AM Rob Herring <robh@kernel.org> wrote:
+>>
+>> On Tue, Jul 09, 2024 at 10:44:01AM +0200, Krzysztof Kozlowski wrote:
+>>> There is a device in the wild with non-updatable firmware coming with
+>>> ACPI tables with rejected "ltr,ltrf216a" compatible.  Linux kernel still
+>>> supports this device via ACPI PRP0001, however the compatible was never
+>>> accepted to bindings.  Lack of bindings causes checkpatch.pl warning
+>>> about undocumented compatible.
+>>
+>> Why do we care? For checkpatch.pl I really don't. That hack check I
+>> wrote makes any string in binding docs a documented compatible. I have a
+>> better check using the schema written, but that would make checkpatch
+>> dependent on dtschema tools. So maybe just time to drop this check from
+>> checkpatch as we have other ways to check and track this.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-out-of-bounds Read in mi_enum_attr
+People still use checkpatch - both to actually test patches before
+sending and also to fix random existing issues.
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in mi_enum_attr+0x84b/0x9e0 fs/ntfs3/record.c:246
-Read of size 4 at addr ffff888068a97345 by task syz-executor.4/9900
+>>
+>> However, I do care about 'make dt_compatible_check'. Besides these ACPI
+>> cases, there's a bunch of cases that we'll never have schemas for. Like
+>> everything from Sparc... Old PowerMac stuff... So I would like to
+>> 'document' them just to exclude from dt_compatible_check. So perhaps
+>> this should be generalized.
 
-CPU: 1 PID: 9900 Comm: syz-executor.4 Not tainted 6.10.0-rc1-syzkaller-00042-gbde63e8eae5d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- mi_enum_attr+0x84b/0x9e0 fs/ntfs3/record.c:246
- mi_find_attr+0x1c5/0x2b0 fs/ntfs3/record.c:353
- ni_find_attr+0x390/0x8d0 fs/ntfs3/frecord.c:202
- ntfs_readlink_hlp+0xa5/0xc70 fs/ntfs3/inode.c:1960
- ntfs_get_link+0x79/0x110 fs/ntfs3/inode.c:2106
- pick_link+0x631/0xd50
- step_into+0xca9/0x1080 fs/namei.c:1874
- open_last_lookups fs/namei.c:3597 [inline]
- path_openat+0x18ef/0x3280 fs/namei.c:3804
- do_filp_open+0x235/0x490 fs/namei.c:3834
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
- do_sys_open fs/open.c:1420 [inline]
- __do_sys_open fs/open.c:1428 [inline]
- __se_sys_open fs/open.c:1424 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1424
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5e9bc7cda9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5e9c9930c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f5e9bdac050 RCX: 00007f5e9bc7cda9
-RDX: 0000000000000065 RSI: 0000000000000080 RDI: 0000000020000440
-RBP: 00007f5e9bcc947a R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f5e9bdac050 R15: 00007fff3591b788
- </TASK>
+Sure, I can rewrite it to more generic.
 
-Allocated by task 9815:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
- kasan_kmalloc include/linux/kasan.h:211 [inline]
- kmalloc_trace_noprof+0x19c/0x2c0 mm/slub.c:4152
- kmalloc_noprof include/linux/slab.h:660 [inline]
- ntfs_get_link+0x63/0x110 fs/ntfs3/inode.c:2102
- pick_link+0x631/0xd50
- step_into+0xca9/0x1080 fs/namei.c:1874
- open_last_lookups fs/namei.c:3597 [inline]
- path_openat+0x18ef/0x3280 fs/namei.c:3804
- do_filp_open+0x235/0x490 fs/namei.c:3834
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
- do_sys_open fs/open.c:1420 [inline]
- __do_sys_open fs/open.c:1428 [inline]
- __se_sys_open fs/open.c:1424 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1424
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> Here's my list of what's really not documented. It's just a grep of
+> the bindings of each compatible found by 'make dt_compatible_check'.
+> Probably anything with SUNW, ibm, amcc, or mpc5 is never going to be
+> documented.
+> 
+> There are some false positives such as cases documented like "fsl,<chip>-guts".
 
-Freed by task 9815:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
- __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2195 [inline]
- slab_free mm/slub.c:4436 [inline]
- kfree+0x149/0x360 mm/slub.c:4557
- do_delayed_call include/linux/delayed_call.h:28 [inline]
- put_link fs/namei.c:1025 [inline]
- open_last_lookups fs/namei.c:3596 [inline]
- path_openat+0x180d/0x3280 fs/namei.c:3804
- do_filp_open+0x235/0x490 fs/namei.c:3834
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1405
- do_sys_open fs/open.c:1420 [inline]
- __do_sys_open fs/open.c:1428 [inline]
- __se_sys_open fs/open.c:1424 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1424
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+I'll come with something, maybe incomplete but it could grow later.
 
-The buggy address belongs to the object at ffff888068a96000
- which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 837 bytes to the right of
- allocated 4096-byte region [ffff888068a96000, ffff888068a97000)
+Best regards,
+Krzysztof
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x68a90
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffefff(slab)
-raw: 00fff00000000040 ffff888014c42140 ffffea000087be00 dead000000000002
-raw: 0000000000000000 0000000000040004 00000001ffffefff 0000000000000000
-head: 00fff00000000040 ffff888014c42140 ffffea000087be00 dead000000000002
-head: 0000000000000000 0000000000040004 00000001ffffefff 0000000000000000
-head: 00fff00000000003 ffffea0001a2a401 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0x1d2820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL), pid 5079, tgid 5079 (kworker/0:3), ts 179614011412, free_ts 179293511077
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
- prep_new_page mm/page_alloc.c:1476 [inline]
- get_page_from_freelist+0x2e2d/0x2ee0 mm/page_alloc.c:3402
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4660
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2264
- allocate_slab+0x5a/0x2e0 mm/slub.c:2427
- new_slab mm/slub.c:2480 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3666
- __slab_alloc+0x58/0xa0 mm/slub.c:3756
- __slab_alloc_node mm/slub.c:3809 [inline]
- slab_alloc_node mm/slub.c:3988 [inline]
- __do_kmalloc_node mm/slub.c:4120 [inline]
- kmalloc_node_track_caller_noprof+0x281/0x440 mm/slub.c:4141
- kmalloc_reserve+0x111/0x2a0 net/core/skbuff.c:597
- __alloc_skb+0x1f3/0x440 net/core/skbuff.c:666
- alloc_skb include/linux/skbuff.h:1308 [inline]
- nsim_dev_trap_skb_build drivers/net/netdevsim/dev.c:748 [inline]
- nsim_dev_trap_report drivers/net/netdevsim/dev.c:805 [inline]
- nsim_dev_trap_report_work+0x254/0xaa0 drivers/net/netdevsim/dev.c:850
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-page last free pid 6810 tgid 6808 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1088 [inline]
- free_unref_page+0xd19/0xea0 mm/page_alloc.c:2565
- discard_slab mm/slub.c:2526 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:2994
- put_cpu_partial+0x17c/0x250 mm/slub.c:3069
- __slab_free+0x2ea/0x3d0 mm/slub.c:4306
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3940 [inline]
- slab_alloc_node mm/slub.c:4000 [inline]
- kmalloc_trace_noprof+0x132/0x2c0 mm/slub.c:4147
- kmalloc_noprof include/linux/slab.h:660 [inline]
- kzalloc_noprof include/linux/slab.h:778 [inline]
- fnd_get fs/ntfs3/ntfs_fs.h:672 [inline]
- dir_search_u+0x16a/0x3a0 fs/ntfs3/dir.c:246
- ntfs_extend_init+0x27a/0x530 fs/ntfs3/fsntfs.c:250
- ntfs_fill_super+0x4213/0x4830 fs/ntfs3/super.c:1523
- get_tree_bdev+0x3f7/0x570 fs/super.c:1615
- vfs_get_tree+0x90/0x2a0 fs/super.c:1780
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-
-Memory state around the buggy address:
- ffff888068a97200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888068a97280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888068a97300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                           ^
- ffff888068a97380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888068a97400: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
-Tested on:
-
-commit:         bde63e8e fs/ntfs3: Fix formatting, change comments, re..
-git tree:       https://github.com/Paragon-Software-Group/linux-ntfs3.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c9e87e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e4430a9c6b8c7af4
-dashboard link: https://syzkaller.appspot.com/bug?extid=a426cde6dee8c2884b0b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
 
