@@ -1,75 +1,109 @@
-Return-Path: <linux-kernel+bounces-248972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B077792E494
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:26:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D29A92E497
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6717F282629
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:26:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB841C214A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3AB1581FB;
-	Thu, 11 Jul 2024 10:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B8315B0EE;
+	Thu, 11 Jul 2024 10:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWfylG4R"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rX8g/jvl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A37158A29;
-	Thu, 11 Jul 2024 10:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AD815ADAF;
+	Thu, 11 Jul 2024 10:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720693463; cv=none; b=CUNfoj2RhyAEuD6/+MSzKy6nGOB4oivn+Q1LaspgO3W4Jz2V5CWtGrd1CiF59QL2Cv3Ur+eAlJDJzdW1Hffo96Sq5MjUYE/Hvp9ME5jrXa3dJ/aQ3TEotV5Tp0b+a/fAuvF9hDMOxU56t5Wgt4v4PGwZ+rqAGOzOTHBZlBF5Szw=
+	t=1720693467; cv=none; b=RZuA8kX4J4b75fzXQQT8v8RAQWb3KIdHsTHJb7G2lBRjwY7c4NsACcQCVkpJBs/qEbz+Jh4JwgzgShgQMIhOWFX3l8oNPpBg+S2nobHdEJF2WOI3+lJfCqb2y3n2qp5cCd42O4WPcIi/F6CcRvPFEAmDherVMPySVkYihB4gWlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720693463; c=relaxed/simple;
-	bh=HmJseevhNYSkdjwozzsJ9KmW2GTJMbaS95Tj7s+PEj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t78FzaPH0sDGRtmDn/KfHsmbMwEhm/gZwo5uoHKhDB+AjXajPUTxz4m3HB4JswZ/7b24Woa/WklaYB+PY7lTHZOPokVHY4XcaaL/zjpFn8lcGujqDAIiopn+gdfYlgHbyCOKKvFfqWjyb+70EPYcpBIa3vqMnng+7Kl2+EPIRI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWfylG4R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A809C116B1;
-	Thu, 11 Jul 2024 10:24:22 +0000 (UTC)
+	s=arc-20240116; t=1720693467; c=relaxed/simple;
+	bh=jWhtAUzEgmVZFeeYOSGdaSumDDb6FTyygsuBQNC+pjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n96WQzhfR6n4z7rbpzJGe2xgzgX1rqy3XEUAGNqUzQplb/GhCenO/dv01cI65Yvqf9r/Y2rJ1qSFyshTe6T+lsIaHsWWA599I8trBEc9ydZ5iFQFWkJbiAC9bN9PCZ/XNB8LxupKagt/BSKDq8u7EvjyY5JH9GL7h1u+sHpIdoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rX8g/jvl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A04F9C32786;
+	Thu, 11 Jul 2024 10:24:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720693463;
-	bh=HmJseevhNYSkdjwozzsJ9KmW2GTJMbaS95Tj7s+PEj0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TWfylG4R3iWg+wOlunAw9BErwADGIxUeCaaaQYhUfH3TWvHsrbba4vzFvulV4qUvh
-	 lvaoaYhT0fg9aVeE8o8S04OfuXofmKlC5MJJE/ag+bd+7merjjSLhMLGURs2iDVDwU
-	 8vz9TPXRtuOTRyVyuxZYdFje3Mav1rczeuUUCzOevdwomIfM6ol6Mg55Al4xpaNDp+
-	 4KbiXaV+UUTSsAHZ0WBIHRaTWo4lV6HFD+C2YS0MrObTpvXUoxVix74N21siRSm9jN
-	 ROXHAYqUVlsZSDneWU+RV+Gq8Xb0Acw3QUjQX5j+Cpiu94NRPubDjLSPVso9hq12Rq
-	 JtV7sNilecs0Q==
-Date: Thu, 11 Jul 2024 12:24:20 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 45/60] i2c: sis5595: reword according to newest
- specification
-Message-ID: <75z3n3dg7ckiwgdpiqvldfk6nmo6s64swafjj2kwgplwvdjlya@kq3qq6ayu3ul>
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
- <20240706112116.24543-46-wsa+renesas@sang-engineering.com>
+	s=k20201202; t=1720693467;
+	bh=jWhtAUzEgmVZFeeYOSGdaSumDDb6FTyygsuBQNC+pjU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rX8g/jvlnX/6yWjPfnMHltlnf+iEzRRE4VEK/Aj4RR52c7WBFqYiZcspGoCbbEZe/
+	 nP/19Y3bnvOtAi5Uxr/+b9c71i206wAYPn2V/fx3Fn8xovJU9z9E1U/9Joecqq4Hkg
+	 KUKfggXrfnHJUYG3Kg/QDKDmSWDp1eadr+w2GoUklFHWs3jhZ7n1U7S34XRF9Om6r3
+	 1KukoGzMXsypOv7eMYSxkpzA/V7S4vuOfCnVpkmCOcBI4z03aUL0AvRRUzy6QlLP9V
+	 c+ixaccxPaIKuvW94AwvBAG2muZyJSiUhbb/D1j45Gk5UcIJUCxHll/WnBY61xuH2g
+	 ICukaRfw+rXSg==
+Message-ID: <92bf088a-ffb4-4b15-ab00-5718d5b3c0ae@kernel.org>
+Date: Thu, 11 Jul 2024 19:24:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240706112116.24543-46-wsa+renesas@sang-engineering.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] ata: ahci_imx: Clean up code by using i.MX8Q HSIO
+ PHY driver
+To: Richard Zhu <hongxing.zhu@nxp.com>, tj@kernel.org, cassel@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com
+Cc: linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, kernel@pengutronix.de
+References: <1720685518-20190-1-git-send-email-hongxing.zhu@nxp.com>
+ <1720685518-20190-3-git-send-email-hongxing.zhu@nxp.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <1720685518-20190-3-git-send-email-hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Wolfram,
-
-On Sat, Jul 06, 2024 at 01:20:45PM GMT, Wolfram Sang wrote:
-> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
-> specifications and replace "master/slave" with more appropriate terms.
+On 7/11/24 17:11, Richard Zhu wrote:
+> Clean up code by using PHY interface.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+[...]
 
-Thanks,
-Andi
+>  static int imx8_sata_enable(struct ahci_host_priv *hpriv)
+>  {
+> -	u32 val, reg;
+> -	int i, ret;
+> +	u32 val;
+> +	int ret;
+>  	struct imx_ahci_priv *imxpriv = hpriv->plat_data;
+>  	struct device *dev = &imxpriv->ahci_pdev->dev;
+>  
+> -	/* configure the hsio for sata */
+> -	ret = clk_prepare_enable(imxpriv->phy_pclk0);
+> -	if (ret < 0) {
+> -		dev_err(dev, "can't enable phy_pclk0.\n");
+> +	/*
+> +	 * Since "REXT" pin is only present for first lane of i.MX8QM
+> +	 * PHY, it's calibration results will be stored, passed
+
+s/it's/its
+
+> +	 * through second lane PHY, and shared with all three lane PHYs.
+
+s/through/through to the
+
+> +	 *
+> +	 * Initialize the first two lane PHYs here, although only the
+> +	 * third lane PHY is used by SATA.
+> +	 */
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
