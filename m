@@ -1,109 +1,86 @@
-Return-Path: <linux-kernel+bounces-248710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FD0992E0FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:35:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91DB92E0FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08E0B282DB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:35:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBFFCB20EE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E3D14A601;
-	Thu, 11 Jul 2024 07:35:11 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885B7148FE8;
+	Thu, 11 Jul 2024 07:37:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168E584DFF;
-	Thu, 11 Jul 2024 07:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA48329CEF
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720683311; cv=none; b=Q4q8vecwUrnrT4iRaPpxIlECrk8ZowQGUTstl3ibS99oXo2hzKgpUe7XdvsANPLkKl82V7wrpD7Gtvnbg/bBFotqvnSldSFp8fgAtelN/kFwrme9CfVyqR+Kw5kJg0iH3tb2ZxXwgb07KJ0AscozodUHVKgqmIJznpaDv1FdrGw=
+	t=1720683425; cv=none; b=pouxVgFakgqXpzBUBQU+NaD9xE9f1jSYPpeCqCYFN5jPOitB3+m8+0HOBLGuOsJKjqsTdbgVAkKcfFuweuXS+EwEqHrcMFnpmWsN/Rtp4oQ1wcKhm4U88gC+mbtPXCt6mg+ULuoWI/nv7Mn/7+wTngq2L/awGyHnQ7RXnooZ7rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720683311; c=relaxed/simple;
-	bh=A32NKfZuOtU4yS4/ogbhcy9GY77BvCCMpJQQ6CdWgQQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nDE2vSIUZOQbmN9gE3pyBKqSETQQ7MsGTCui79iER7/1W4Sp4nXTJI3PPjMRaLV56DSGmoJLvT5sKpqJFEnLwmc0tyPYXYZZuebEdC9291cPF2o3CfNs7wrlXIp8Wag8+3cXhBX6olEA5vMSf0PfQZAYbdH8LjUWx5B59z4yzgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowACHjeUOi49mMu60Ag--.57582S2;
-	Thu, 11 Jul 2024 15:34:45 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: andrii@kernel.org,
-	eddyz87@gmail.com,
-	mykolal@fb.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	rdna@fb.com
-Cc: bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH] selftests/bpf:fix a resource leak in main()
-Date: Thu, 11 Jul 2024 15:34:36 +0800
-Message-Id: <20240711073436.2258240-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720683425; c=relaxed/simple;
+	bh=A2ezpYR3ttrX/bq63eFO5j5ZnJ4PcR0U/4jpRULEayU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Fqjl06QkPqiCUznnLfTDtxjzMZTLWGZbCKUxW89VUEAAaa7/utAOv5hM7ro+va0wyyoVvaW0OGHehuO/FqSWEaFjAc7ztltLPqQUOyImH/nDgOAFxMmGPU9gKOqVhRxWZYQIqkDkrw+Y8L53Ud3JcCEi46o0m90HJOGHfzBBJnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f6530b381bso70004639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 00:37:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720683423; x=1721288223;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Pp0pNES1MFPjLxBywT/N8nY7ZTqE/24efjFS6N0IRo=;
+        b=L1nt2r7DQ0EhcUU+HeXTaNtOdoteLAgCSVnC1jWGNeVm2Hm9dCbmHjyL9X1O9eTHTu
+         BzNghffED6hQ9Y2136MZcgOo8qPRq4jP8cPVOSx9fA37TeoI1sZFhTRczdW8hOrDH48n
+         QMiv85BwTuA775DllxXHqbH6i8ORUITYvurEyEAJLHvU6y+9mjikMizbTr7Nlsj2LfVI
+         bj1MQeQV5gW9sAJ2zY14XQka3qKbEfNK1WpwdJp1tGMXQBILj1xYAaVmg4H7a/uws3az
+         +NctfWNwCashXns5UxTRY0vLTLd5O8Hl3QGhMEjIAD/vcPhngTkrKSNWlFcH/yzxswYx
+         CuRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBA0nUDkFn7s47dey5/5sio6C7HehBlo5CmrIWzUXieoVVGDBtrpzc1IUi55YVpqjpadvmaIAWKW8c3uyQL+HKolXRlpN5mjOp4ueI
+X-Gm-Message-State: AOJu0YwKDav+ZrA1pfIK8VjvpZt/syMHTRTcC9rYIcHm9UweJoMhBn5Y
+	bON/S11Zg+8zeoy17xYwj/cXCQ5ek9DBbz0WZvgZ7mkDUgWJmbsh6Sn4H5cbeTXwK30BFfuVu/k
+	0GPd6JP6CudJRacPiWXp4rrCjOLpMXWRMyftDqbsOZZq/qy3cgc/6RQQ=
+X-Google-Smtp-Source: AGHT+IE+E1wvVpwW0IRISHm0yhA1mPaWzLXyOChuUjzyPUAInkL5ZPRD3nXQropSX/83UpIereEwhPnmTy8Fs5VLC0eOD5I4Wt6x
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACHjeUOi49mMu60Ag--.57582S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFW7Xr1DCw1rKF1UGFWfKrg_yoWfuwbEkw
-	47Jrn7JFZ8ZF18Jr42gw1FkrWrCa1YgryxJFWDJa43JrWUXrWDJF4qkFZ8Ja4rWa98Xasr
-	tFyDurySyw47CjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbSkFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFV
-	Cjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
-	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42
-	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
-	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
-	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1YiiDUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+X-Received: by 2002:a05:6638:2416:b0:4c0:8165:c395 with SMTP id
+ 8926c6da1cb9f-4c0b2a93c4dmr809715173.3.1720683423040; Thu, 11 Jul 2024
+ 00:37:03 -0700 (PDT)
+Date: Thu, 11 Jul 2024 00:37:03 -0700
+In-Reply-To: <086e91b5-4afa-40e3-b8a6-f2734761f801@paragon-software.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003398d5061cf3d49f@google.com>
+Subject: Re: [syzbot] [ntfs3?] KASAN: slab-out-of-bounds Read in mi_enum_attr
+From: syzbot <syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The requested resources should be closed before return in main(), otherwise
-resource leak will occur. Add a check of cgfd before close().
+Hello,
 
-Fixes: 5ecd8c22739b ("selftests/bpf: Selftest for bpf_skb_ancestor_cgroup_id")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- tools/testing/selftests/bpf/test_skb_cgroup_id_user.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/tools/testing/selftests/bpf/test_skb_cgroup_id_user.c b/tools/testing/selftests/bpf/test_skb_cgroup_id_user.c
-index ed518d075d1d..f84faddd72e6 100644
---- a/tools/testing/selftests/bpf/test_skb_cgroup_id_user.c
-+++ b/tools/testing/selftests/bpf/test_skb_cgroup_id_user.c
-@@ -176,7 +176,8 @@ int main(int argc, char **argv)
- err:
- 	err = -1;
- out:
--	close(cgfd);
-+	if (cgfd >= 0)
-+		close(cgfd);
- 	cleanup_cgroup_environment();
- 	printf("[%s]\n", err ? "FAIL" : "PASS");
- 	return err;
--- 
-2.25.1
+Reported-and-tested-by: syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         9d9a2f29 Merge tag 'mm-hotfixes-stable-2024-07-10-13-1..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=106c2e9e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bb254077242b0ab4
+dashboard link: https://syzkaller.appspot.com/bug?extid=a426cde6dee8c2884b0b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
