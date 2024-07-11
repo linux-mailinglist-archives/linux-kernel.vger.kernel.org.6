@@ -1,123 +1,188 @@
-Return-Path: <linux-kernel+bounces-249415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E9392EB67
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:16:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9433F92EB6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 561651C21EFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:16:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42FD1282C08
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A0C1684A2;
-	Thu, 11 Jul 2024 15:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF1515B999;
+	Thu, 11 Jul 2024 15:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CF2vN7k7"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yHhHCPYC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8i3hr4Jg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D41523CE;
-	Thu, 11 Jul 2024 15:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AE723CE;
+	Thu, 11 Jul 2024 15:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720710961; cv=none; b=r/Fa/XZimzdGY99noNFc+pnqp1KCNyq5sDwnNq1PynXz/2AxIVEBYCbHvml+14kfu4DphKG8eTbeFK+lr1eF4LFadp+niAKGx3eeGmv7eSinkuOn7oBajahI1tzIUG7EFF+LeNSRJK8L0FdQFOImCa4JBE77te2RNuNhMREgCt0=
+	t=1720710969; cv=none; b=As2O+Nfk7qTfNdVHeY5UlwzpL2J61uYxLPVmQotoSYWfta3neirTMSCAy8K9U5Kfu1DWmhYcxoqIKtQGX90rt0aFe3Dn2MX9VB4HqqWBJXzpUXy/GjsPxnwiEfHYaJq3kvWH9wk09QpQPhQ5vuLxySpAxV8zbCpUn6VzZJPAU6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720710961; c=relaxed/simple;
-	bh=69NxrdQtCaFvKPAK+3dmMpGuDWOfj7n4eKuXyLqH94A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iV3man6Fvy0crMy+4hdYp7taZZAVyhnFlp/UjydjKlwUr7YpqMLyR5mpNl5KvMSd57JGVvDIvalpjtjDkouzrm/Lyg+bGFA6GmJkseYOaTO3qpI8+ZdxiFtj+US7e/dDiSKaeRnmEk6DTzIEZBNfWh9PaAqCVQC3oa62LY/tWDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CF2vN7k7; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee910d6a9dso10790891fa.1;
-        Thu, 11 Jul 2024 08:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720710958; x=1721315758; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZGl/Q3t3H4Y6pcGYBNgquXA7C+pZSkZnm2XjFCslZZE=;
-        b=CF2vN7k7xZW97cqK4YEksNKFmg3uJxP5qu6XGrcn5EurxDGl8LQYtTm3lkQcE7aYqP
-         kf8PZEUGUtLdW36N/sZWB4njPIFSgekfg1DOG92EcutzVl1CG9T257cF67bStJKxhfNl
-         TnWiK7vOfA9M1hWWmc8dcb3uuhUSHPjrySFQg0HKQ3JACrTn2vtVHtSnQXBZTWvaJWL8
-         NN8hGaVGQDHrbpRahepnZRZhm5SLMaDizqf6n88dj9HN9vnEfZsz6i5BxvPe/LMJSxbO
-         x1AGqE2IPpTy2Xi8YNjJJ2vN3j2UZOXoilJcX0Q5oFg74bDsIL6GiNBy712InmFfJE/y
-         +utQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720710958; x=1721315758;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZGl/Q3t3H4Y6pcGYBNgquXA7C+pZSkZnm2XjFCslZZE=;
-        b=WiBOwuQ8ooRQoSvNCha+p9EvGTxy0q+CNvUmZGXG0f+JOBUwRJ9GxdR3iutdeioSdM
-         euEcPNfmy5/Ch44g2AuuDvlVUWMbDRkb5BYgMfHSVxMLlNf8vN5/LBFd4uDf4wa9T2jQ
-         exhUmNi1Gk0GpNGm0pTwkc3DrLC6OZnyxd3w6gPp85O5i2F5xd5W2lGabZQbpr3HPvoz
-         xAx4pQy7nE/Qh2H9+vIZwHEDgQ3U30Yd/5d25zXlXNJYxC3wI+5jUTEVTC85KBS6eFcl
-         uTo43vHnoFjwnRCzN0LXVjfGYlT9/0z/T0Ob18A2/4/3hKMPSTH7Ze2dWl6pv9IS7Ezi
-         KV6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXjlfFqlcDPsGoafNUJa8oGqFa74i5OFXURTJ1nfx7QzEZJpZG8jYuRoZJZfa0ZjZaVs73gtlRNjHHGluVx02ezBBM1vK4CVWE+T5wc5xaoKQu97zzp/eK2NiCjPglzrTMi2V0JUMfO
-X-Gm-Message-State: AOJu0YxCC7/4x9MDjlvIT14z2rVSRgCDtR3wfQJAu0UJ0/YAiNbl3OWQ
-	mAaxJES3folLUN8N9rWthKyl49Ohv/RMBo9vqdInjyKbnei9Svec
-X-Google-Smtp-Source: AGHT+IEZK224wXxaBhlp/9qyNfJD3kPGiU4NCU8SJCg/+jcHd6LQYrEJcKw40dLSOpV78Wc1tOS+vw==
-X-Received: by 2002:a2e:b059:0:b0:2ec:53fb:39cb with SMTP id 38308e7fff4ca-2eeb30ba0edmr58659121fa.6.1720710957454;
-        Thu, 11 Jul 2024 08:15:57 -0700 (PDT)
-Received: from localhost.localdomain ([178.69.224.101])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eeb3475174sm8700481fa.79.2024.07.11.08.15.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 08:15:57 -0700 (PDT)
-From: Artem Sadovnikov <ancowi69@gmail.com>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Artem Sadovnikov <ancowi69@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v5 5.10/5.15] ata: libata-scsi: check cdb length for VARIABLE_LENGTH_CMD commands
-Date: Thu, 11 Jul 2024 18:15:46 +0300
-Message-Id: <20240711151546.341491-1-ancowi69@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720710969; c=relaxed/simple;
+	bh=BfBSUOPqmi3LuNAPGcdlMxJ0qVCvioaU4Xh7gZ+xN8g=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=LlWj1mr+xXeU/RN571PqAFMen13kOXxc/q5fUVs73WKzjtxKgGt6YHxtoj6yIBcPSK4Ks2c4FLVe1S4EOzBH9ifO9NXfcpdeIclqGiQf5skQtEHQwXrsUNtGr2g85t78bHJryEZvgDGR1iQz+Lh1RHEeLUTuiSzVOpl2L2GjPjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yHhHCPYC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8i3hr4Jg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 11 Jul 2024 15:16:04 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720710966;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZaNplFVYapEUI3M23Goml2uSiimpfDyZ8+AUduFpyrg=;
+	b=yHhHCPYC4gwQjyuVSCQRtrjDg5Hd02lksfjDmuzfTL1lpxhgikuu5I7Il/hM5dRSC8FyXD
+	eTBTIc2uzAtReJefdy3ub7KRFQbjvPD5jSsfZMvUbelDgKwvKuXMdK+ivZXraKthEsJei4
+	6m5T+EYvmJlxLRq4P+ZIkceF4E00euRqFHpCiLoFz62bRvXtq/XAo2AOyPW2C/UkVVvV4v
+	OZPEGDP57HkdHwm2feXLn9msb+32+lLkxdDanVq3VwsqnL6amcgh16ud4Rk86ogVro33Bb
+	XpGLbOx+RggrkQIgAqCtZfZCo9lJkeLremaD8fi3T+pujvDZd3dMQnMiuIlQLg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720710966;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZaNplFVYapEUI3M23Goml2uSiimpfDyZ8+AUduFpyrg=;
+	b=8i3hr4Jg1DdZ7YXyDIctxZ1R1rQwOZTqQw1MgPK86/7GnF293Eol5iPb1t/e/Y8ciUmYzi
+	wS1HVy4uKFX+mfCg==
+From: "tip-bot2 for Shenwei Wang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] irqchip/imx-irqsteer: Handle runtime power management
+ correctly
+Cc: Shenwei Wang <shenwei.wang@nxp.com>, Thomas Gleixner <tglx@linutronix.de>,
+ stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+ maz@kernel.org
+In-Reply-To: <20240703163250.47887-1-shenwei.wang@nxp.com>
+References: <20240703163250.47887-1-shenwei.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <172071096497.2215.13516438615600678880.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Fuzzing of 5.10 stable branch reports a slab-out-of-bounds error in
-ata_scsi_pass_thru.
+The following commit has been merged into the irq/core branch of tip:
 
-The error is fixed in 5.18 by commit ce70fd9a551a ("scsi: core: Remove the
-cmd field from struct scsi_request") upstream.
+Commit-ID:     cd0406fab8d4a16ec4f617c0a4b405bf70543b5b
+Gitweb:        https://git.kernel.org/tip/cd0406fab8d4a16ec4f617c0a4b405bf70543b5b
+Author:        Shenwei Wang <shenwei.wang@nxp.com>
+AuthorDate:    Wed, 03 Jul 2024 11:32:50 -05:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 11 Jul 2024 17:06:02 +02:00
 
-The problem is that the length of the received SCSI command is not
-validated if scsi_op == VARIABLE_LENGTH_CMD. It can lead to out-of-bounds
-reading if the user sends a request with SCSI command of length less than
-32.
+irqchip/imx-irqsteer: Handle runtime power management correctly
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+The power domain is automatically activated from clk_prepare(). However, on
+certain platforms like i.MX8QM and i.MX8QXP, the power-on handling invokes
+sleeping functions, which triggers the 'scheduling while atomic' bug in the
+context switch path during device probing:
 
-Signed-off-by: Artem Sadovnikov <ancowi69@gmail.com>
-Signed-off-by: Mikhail Ivanov <iwanov-23@bk.ru>
-Signed-off-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
+ BUG: scheduling while atomic: kworker/u13:1/48/0x00000002
+ Call trace:
+  __schedule_bug+0x54/0x6c
+  __schedule+0x7f0/0xa94
+  schedule+0x5c/0xc4
+  schedule_preempt_disabled+0x24/0x40
+  __mutex_lock.constprop.0+0x2c0/0x540
+  __mutex_lock_slowpath+0x14/0x20
+  mutex_lock+0x48/0x54
+  clk_prepare_lock+0x44/0xa0
+  clk_prepare+0x20/0x44
+  imx_irqsteer_resume+0x28/0xe0
+  pm_generic_runtime_resume+0x2c/0x44
+  __genpd_runtime_resume+0x30/0x80
+  genpd_runtime_resume+0xc8/0x2c0
+  __rpm_callback+0x48/0x1d8
+  rpm_callback+0x6c/0x78
+  rpm_resume+0x490/0x6b4
+  __pm_runtime_resume+0x50/0x94
+  irq_chip_pm_get+0x2c/0xa0
+  __irq_do_set_handler+0x178/0x24c
+  irq_set_chained_handler_and_data+0x60/0xa4
+  mxc_gpio_probe+0x160/0x4b0
+
+Cure this by implementing the irq_bus_lock/sync_unlock() interrupt chip
+callbacks and handle power management in them as they are invoked from
+non-atomic context.
+
+[ tglx: Rewrote change log, added Fixes tag ]
+
+Fixes: 0136afa08967 ("irqchip: Add driver for imx-irqsteer controller")
+Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20240703163250.47887-1-shenwei.wang@nxp.com
 ---
- drivers/ata/libata-scsi.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/irqchip/irq-imx-irqsteer.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index 36f32fa052df..4397986db053 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -3949,6 +3949,9 @@ static unsigned int ata_scsi_var_len_cdb_xlat(struct ata_queued_cmd *qc)
- 	const u8 *cdb = scmd->cmnd;
- 	const u16 sa = get_unaligned_be16(&cdb[8]);
+diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irqsteer.c
+index 20cf7a9..75a0e98 100644
+--- a/drivers/irqchip/irq-imx-irqsteer.c
++++ b/drivers/irqchip/irq-imx-irqsteer.c
+@@ -36,6 +36,7 @@ struct irqsteer_data {
+ 	int			channel;
+ 	struct irq_domain	*domain;
+ 	u32			*saved_reg;
++	struct device		*dev;
+ };
  
-+	if (scmd->cmd_len != 32)
-+		return 1;
+ static int imx_irqsteer_get_reg_index(struct irqsteer_data *data,
+@@ -72,10 +73,26 @@ static void imx_irqsteer_irq_mask(struct irq_data *d)
+ 	raw_spin_unlock_irqrestore(&data->lock, flags);
+ }
+ 
++static void imx_irqsteer_irq_bus_lock(struct irq_data *d)
++{
++	struct irqsteer_data *data = d->chip_data;
 +
- 	/*
- 	 * if service action represents a ata pass-thru(32) command,
- 	 * then pass it to ata_scsi_pass_thru handler.
--- 
-2.34.1
-
++	pm_runtime_get_sync(data->dev);
++}
++
++static void imx_irqsteer_irq_bus_sync_unlock(struct irq_data *d)
++{
++	struct irqsteer_data *data = d->chip_data;
++
++	pm_runtime_put_autosuspend(data->dev);
++}
++
+ static const struct irq_chip imx_irqsteer_irq_chip = {
+-	.name		= "irqsteer",
+-	.irq_mask	= imx_irqsteer_irq_mask,
+-	.irq_unmask	= imx_irqsteer_irq_unmask,
++	.name			= "irqsteer",
++	.irq_mask		= imx_irqsteer_irq_mask,
++	.irq_unmask		= imx_irqsteer_irq_unmask,
++	.irq_bus_lock		= imx_irqsteer_irq_bus_lock,
++	.irq_bus_sync_unlock	= imx_irqsteer_irq_bus_sync_unlock,
+ };
+ 
+ static int imx_irqsteer_irq_map(struct irq_domain *h, unsigned int irq,
+@@ -150,6 +167,7 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
+ 	if (!data)
+ 		return -ENOMEM;
+ 
++	data->dev = &pdev->dev;
+ 	data->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(data->regs)) {
+ 		dev_err(&pdev->dev, "failed to initialize reg\n");
 
