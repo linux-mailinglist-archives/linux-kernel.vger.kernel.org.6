@@ -1,149 +1,176 @@
-Return-Path: <linux-kernel+bounces-249226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C956492E8AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:01:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E0F92E8D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746AC1F22AD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:01:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D90B284304
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521A015FA68;
-	Thu, 11 Jul 2024 13:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7F81684A7;
+	Thu, 11 Jul 2024 13:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="qm2cgKsc"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g4Tforgx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB6415ECF8
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B401C16131C
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720702831; cv=none; b=HO13riYfJisi/y74tM+073K061fZtG5cTz9SBeQvg5ZiA5a1dr8HS7rWa9VFClSWrsQyAAriRTnoRD41h3/n+SxGuGdjAj4lfuLSixkWw3/vUmw7KDzayHDAjyOAvXb6KhNzXsIBXB9FETr69xSmOi6VkkCoKjAQx90DA6g7rx0=
+	t=1720702913; cv=none; b=riuJ64m+JnDAp25Db+6i4XUyvrjMg71MAx8nOX4UuPhYkxbs5KDk6zCYFyaI+6pXxrum+NkBfIoXmf3kftzz1nVaK/I75LfrR3LH8JJKYDmL5uFOOccsNSEabA95FOmZ1fXt/BQNmUOIj2QtGqakity7lplGd52V+WF48oOVl1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720702831; c=relaxed/simple;
-	bh=JrPkztMV1oVuJInQdJCGTwXrnR2sny7JLQNFMwZiGqI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iggZw0Bpuis6XRDsH4DXe6u1aEaJc9rkyweb0duwNx7mifMANVyQ0Y8J1z9N1SS2uf4wc1ijueEQuSzpe+/H775vnP0MacjQryNX2LgJ4eTEPZvbLWIhjwUP5snT7WDXZWWHShBeltvIZmJ7BaRwEVCiZH8o5VNLoMByzmPkFG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=qm2cgKsc; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=yWPnlogaHh1JsL53cSK4pYNGOrysHKRUndRnVu5uc+I=; b=qm2cgKsc04djIe+T+t/T4PrZAl
-	XA/YTkOz03/j7brnLnj3eP3aKCF/Fy4OSk57EPv4HG5kUILHcftrj0UMK1SEqeJQvaNzWgNmuUlV1
-	q6cfglywoU/xSvwDT46pNPyIKwp0w4WhuXNZpzvcl6EhQJ/8oJsZ+wtJEpJab173wAqmGksEWr+W9
-	b97sMRyZgrWWkM+Q2ubkWgo8mwik7vG7GagS6Evq/b3p7L3mzHzIrvRnkeeiIkD/uqVIlUih2Tyjf
-	5fjHqOhDxVZ2vZcKw9GwU/LIxA4n/PBgeLAa/P4DVQgdtHszJj44GwSSFmKdXFc/QtHZ9i3kZEeHB
-	mhtMMISg==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sRtPF-000BS8-Rl; Thu, 11 Jul 2024 15:00:17 +0200
-Received: from [87.49.147.209] (helo=localhost)
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sRtPF-00037C-2D;
-	Thu, 11 Jul 2024 15:00:17 +0200
-From: Esben Haabendal <esben@geanix.com>
+	s=arc-20240116; t=1720702913; c=relaxed/simple;
+	bh=kEbqFbMAMRFPsL2Ni9U3GMlxwu2JbJXIf/1GDFAi7j8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Knk0X1SyjLZ4l9B+p6EuJOA+EhJMoLJ9UfsMJWCArMioySoWpvddkJrNaqluK1ommH7wv6Y9Y9HO/8ym4b16VgtCyWLPnBZfOYVe0CFBjC16vRJSn3rHy+uObB/IgnGXmFiADFbg1UOewAQDgFkK+JU0CczLC6tx1q8Tx1390lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g4Tforgx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720702910;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bo6AeZ1jwJY+2L4Z28XS0rJC0wllWNmRErvAYHJbVJg=;
+	b=g4TforgxcNNMG6GREnuqwlaZiGqQ37DLsaXtD8/dFAz5+2MuxhI8i6uscDRYWVl75tZS2F
+	1+7BvfB8kHc/CcetNcOi8OVOj8CtVTwjCh9FzasTip8l2E0IT9ddM5rn2OeVnk9WxeKJkf
+	WF/j4Wnq1tzP20KsroJBn53nMxgM+ZQ=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-648-AnhaU64YN2SPdUPPEE27_Q-1; Thu,
+ 11 Jul 2024 09:01:46 -0400
+X-MC-Unique: AnhaU64YN2SPdUPPEE27_Q-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2102919236B1;
+	Thu, 11 Jul 2024 13:01:41 +0000 (UTC)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (unknown [10.39.192.211])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1D4119560AA;
+	Thu, 11 Jul 2024 13:01:33 +0000 (UTC)
+From: Valentin Schneider <vschneid@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Phil Auld <pauld@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Guo Ren <guoren@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>
+Subject: [RFC PATCH v3 08/10] sched/fair: Prepare migrate_task_rq_fair() for per-task throttling
 Date: Thu, 11 Jul 2024 15:00:02 +0200
-Subject: [PATCH v3 02/15] mtd: spi-nor: macronix: enable quad/dual speed
- for mx25l3205d chips
+Message-ID: <20240711130004.2157737-9-vschneid@redhat.com>
+In-Reply-To: <20240711130004.2157737-1-vschneid@redhat.com>
+References: <20240711130004.2157737-1-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240711-macronix-mx25l3205d-fixups-v3-2-99353461dd2d@geanix.com>
-References: <20240711-macronix-mx25l3205d-fixups-v3-0-99353461dd2d@geanix.com>
-In-Reply-To: <20240711-macronix-mx25l3205d-fixups-v3-0-99353461dd2d@geanix.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Rasmus Villemoes <rasmus.villemoes@prevas.dk>, 
- linux-arm-kernel@lists.infradead.org, Esben Haabendal <esben@geanix.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720702815; l=2314;
- i=esben@geanix.com; s=20240523; h=from:subject:message-id;
- bh=JrPkztMV1oVuJInQdJCGTwXrnR2sny7JLQNFMwZiGqI=;
- b=jO03AmXp0U1Nh+VMBJv8f0MdVICx6OYPq8mRIR1HA6jgera3Lq58jHoP+eLaFtWBiMdB0nVmp
- bD+RRvKAFi1AidmK2ckr/aV7iqu0vDFS3tumjbHR/Qdy2gHt5QBTW92
-X-Developer-Key: i=esben@geanix.com; a=ed25519;
- pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27333/Thu Jul 11 10:35:59 2024)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Macronix engineers apparantly do not understand the purpose of having
-an ID actually identify the chip and its capabilities. Sigh.
+Later commits will change CFS bandwidth control throttling from a
+per-cfs_rq basis to a per-task basis. This means special care needs to be
+taken around any transition a task can have into and out of a cfs_rq.
 
-The original Macronix SPI NOR flash that identifies itself as 0xC22016
-with RDID was MX25L3205D. This chip does not support SFDP, but does
-support the 2READ command (1-2-2).
+To ease reviewing, the transitions are patched with dummy-helpers that are
+implemented later on.
 
-When Macronix announced EoL for MX25L3205D, the recommended
-replacement part was MX25L3206E, which conveniently also identifies
-itself as 0xC22016. It does not support 2READ, but supports DREAD
-(1-1-2) instead, and supports SFDP for discovering this.
+Add helpers to migrate_task_rq_fair() to cover CPU migration. Even if the
+task stays within the same taskgroup, each cfs_rq has its own runtime
+accounting, thus the task needs to be throttled or unthrottled
+accordingly.
 
-When Macronix announced EoL for MX25L3206E, the recommended
-replacement part was MX25L3233F, which also identifies itself as
-0xC22016. It supports DREAD, 2READ, and the quad modes QREAD (1-1-4)
-and 4READ (1-4-4). This also support SFDP.
-
-So far, all of these chips have been handled the same way by the Linux
-driver. The SFDP information have not been read, and no dual and quad
-read modes have been enabled.
-
-The trouble begins when we want to enable the faster read modes. The
-RDID command only return the same 3 bytes for all 3 chips, so that
-doesn't really help.
-
-Instead, we can use the SPI_NOR_TRY_SFDP flag, which forces the spi-nor
-system to try using SFDP, but fallback to the parameters specified in
-struct flash_info.
-
-This way, boards using MX25L3205D will continue as before this change.
-That is without taking advantage of the 1-2-2 that it supports.
-
-For MX25L3206E and MX25L3233F, the SFDP parameters are used, and they will
-therefore be using the optimal dual or quad mode supported by the flash
-and the SPI controller it is attached to.
-
-Signed-off-by: Esben Haabendal <esben@geanix.com>
+Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 ---
- drivers/mtd/spi-nor/macronix.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/fair.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
-index ea6be95e75a5..090f28e05a5d 100644
---- a/drivers/mtd/spi-nor/macronix.c
-+++ b/drivers/mtd/spi-nor/macronix.c
-@@ -61,7 +61,7 @@ static const struct flash_info macronix_nor_parts[] = {
- 		.id = SNOR_ID(0xc2, 0x20, 0x16),
- 		.name = "mx25l3205d",
- 		.size = SZ_4M,
--		.no_sfdp_flags = SECT_4K,
-+		.no_sfdp_flags = SECT_4K | SPI_NOR_TRY_SFDP,
- 	}, {
- 		.id = SNOR_ID(0xc2, 0x20, 0x17),
- 		.name = "mx25l6405d",
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ec4cf7308a586..b2242307677ca 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5694,8 +5694,11 @@ static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
+ 	return cfs_bandwidth_used() && cfs_rq->throttle_count;
+ }
+ 
++static inline bool task_has_throttle_work(struct task_struct *p) { return false; }
+ static inline bool task_needs_throttling(struct task_struct *p) { return false; }
++static inline bool task_needs_migrate_throttling(struct task_struct *p, unsigned int dst_cpu) { return false; }
+ static inline void task_throttle_setup(struct task_struct *p) { }
++static inline void task_throttle_cancel_migrate(struct task_struct *p, int dst_cpu) { }
+ static inline void task_throttle_cancel(struct task_struct *p) { }
+ 
+ /*
+@@ -6626,8 +6629,11 @@ static inline int throttled_lb_pair(struct task_group *tg,
+ 	return 0;
+ }
+ 
++static inline bool task_has_throttle_work(struct task_struct *p) { return false; }
+ static inline bool task_needs_throttling(struct task_struct *p) { return false; }
++static inline bool task_needs_migrate_throttling(struct task_struct *p, unsigned int dst_cpu) { return false; }
+ static inline void task_throttle_setup(struct task_struct *p) { }
++static inline void task_throttle_cancel_migrate(struct task_struct *p, int dst_cpu) { }
+ static inline void task_throttle_cancel(struct task_struct *p) { }
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+@@ -8308,6 +8314,24 @@ static void migrate_task_rq_fair(struct task_struct *p, int new_cpu)
+ 	se->avg.last_update_time = 0;
+ 
+ 	update_scan_period(p, new_cpu);
++
++	if (!cfs_bandwidth_used())
++		return;
++	/*
++	 * When the runtime within a cfs_bandwidth is depleted, all underlying
++	 * cfs_rq's can have (approximately) sched_cfs_bandwidth_slice() runtime
++	 * remaining.
++	 *
++	 * This means all tg->cfs_rq[]'s do not get throttled at the exact same
++	 * time: some may still have a bit of runtime left. Thus, even if the
++	 * task is staying within the same cgroup, and under the same
++	 * cfs_bandwidth, the cfs_rq it migrates to might have a different
++	 * throttle status - resync is needed.
++	 */
++	if (task_needs_migrate_throttling(p, new_cpu))
++		task_throttle_setup(p);
++	else if (task_has_throttle_work(p))
++		task_throttle_cancel_migrate(p, new_cpu);
+ }
+ 
+ static void task_dead_fair(struct task_struct *p)
 -- 
-2.45.2
+2.43.0
 
 
