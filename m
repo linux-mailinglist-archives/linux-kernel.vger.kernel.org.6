@@ -1,90 +1,150 @@
-Return-Path: <linux-kernel+bounces-249368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC5492EABD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:28:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 672F792EAC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17C991F22890
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21138282700
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303E01662FA;
-	Thu, 11 Jul 2024 14:28:51 +0000 (UTC)
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF2D167271;
+	Thu, 11 Jul 2024 14:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aZO0hu+m";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="v+nkHe6R";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mL7hHlO+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NpffYXfe"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBAC15ECCA
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 14:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF2315ECCA;
+	Thu, 11 Jul 2024 14:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720708130; cv=none; b=LnnnnW8/PcC+qV+vW++OhTgaxRAgqNCBj6CM3v24qj7IVBUvu4WOu1UmE97d2B8RzO6XtNPPN1eWTFO1EDkGWC9nF0fsvKz6bI2X+D/qfsmcd/DadvwtI8/fblcHejcGQZ0i6Vc81qpkqm9Y0ayHKKJ+sBBkcKd+dWAiNpysOpw=
+	t=1720708188; cv=none; b=towT7NeMm62KqgsorwlLG/373TSBhLcWbP4Apoy/48CVLgcsp0aYejGiTZNkA6VcCCgSGHQ94dC8pJkD9CmmibhZP0STAs+1AOymokLnZBKyqCzau9JR+JtI2uGNKtAMnY43bM4Q4LAUeFYDGbnudsy7Wv1mNUfu+PfH9l1p2Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720708130; c=relaxed/simple;
-	bh=eiSasGCrA3fKd8PFdd7iVlxNpta3/jrT40usetjF85o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=esnUK+6Swq9ysAGlY5MxsTzmJYWShArKLkzlVHPCCoi4J8FjEy4MtOaueGSGsD7gCHjXWp3SlNd+fWQcammbZ4JbOQ/4kAlMlBbShvULyDfqo5z1yu3aYMgOfSQPSgx4zPK1czHRC+x+frkaPyvIMwKX2XGEtOGJZ0aaxj6Gf1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:9b6b:6da0:997b:7165])
-	by andre.telenet-ops.be with bizsmtp
-	id mEUg2C00546XLxg01EUgre; Thu, 11 Jul 2024 16:28:40 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sRumY-001kQg-Ff;
-	Thu, 11 Jul 2024 16:28:40 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sRumm-0009sm-0p;
-	Thu, 11 Jul 2024 16:28:40 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: =?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Andy Shevchenko <andy@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] platform: cznic: CZNIC_PLATFORMS should depend on MACH_ARMADA_38X || ARCH_MVEBU || PPC_P2020
-Date: Thu, 11 Jul 2024 16:28:38 +0200
-Message-Id: <80e17dffa8f4c1d3fdedd4d82df3a722aa4044ff.1720707932.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720708188; c=relaxed/simple;
+	bh=GU0xdeNkNhxA/0nFt5TwpELEEtnBOegmjpdSd81yY7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FEZ/VOZqstGkXW9S3CxeEF9aM7CiBdd9WibCuMtilvifM1qbNguw/hSSIhxi3A6IAkK6l1QJAx2N9oUUFcSdYPSLcjBOZ8XEPDIBmG/Zt75+PVwK2R91gG9te3JYhOUDKpSOiKiFt6Ovl4mRSCR5gW4SARhbGfBcweXRCZte0dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aZO0hu+m; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=v+nkHe6R; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mL7hHlO+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NpffYXfe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0F1471F8D6;
+	Thu, 11 Jul 2024 14:29:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720708179;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GXsVvEVmcCHIEAk1iWp3BrHLQnBHN0Sz0SM1aR0NFn4=;
+	b=aZO0hu+mkUDSRwYb+QjJF3LTIqXFbvbESBXutwQbhx5v4R0z1s7UmHH72MwFm+6Mmh9JGU
+	unI5P0VY0zI8jjueNuWcFmEOexQjvnEzfHQQf6E/oGsrYwKvFbPY9vbM9IYeOMrrIu3UvM
+	eeo5qjrYQRTLxW9ukjv9FFr9SSO3MFM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720708179;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GXsVvEVmcCHIEAk1iWp3BrHLQnBHN0Sz0SM1aR0NFn4=;
+	b=v+nkHe6Rx0ajlYVTJbe/sTh827Q8AwHvpnyPBBbqPqxySLJeVrM38WW2ywZJYpnilusEKP
+	GdRBsGtrBvb0jNDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720708178;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GXsVvEVmcCHIEAk1iWp3BrHLQnBHN0Sz0SM1aR0NFn4=;
+	b=mL7hHlO+czO+475uItk9I6CDuU3a0DdImFUa/g0DYxxfjM3us1BTUZOz9aifCt2O++wzSs
+	Ao7rgNoU48yctzmU0Yq1EOjhkSou/YNgINB7mI/Dhz0F0FDd1Ig09UEM4gMYK/uwRaCLYF
+	yXwBDlVvjaEW08LQOIz8mEji3C/kp3A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720708178;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GXsVvEVmcCHIEAk1iWp3BrHLQnBHN0Sz0SM1aR0NFn4=;
+	b=NpffYXfe14JmLWMJQRJS7259W7Z1zqvhPdVJxegKtCz1K4SJALeEyw10dJDKLApbU29My5
+	yDUxUSchFtMR9SBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E6D5D136AF;
+	Thu, 11 Jul 2024 14:29:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id M1wqOFHsj2ZuEAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 11 Jul 2024 14:29:37 +0000
+Date: Thu, 11 Jul 2024 16:29:28 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Kees Cook <kees@kernel.org>
+Cc: David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] fs/affs: struct slink_front: Replace 1-element array
+ with flexible array
+Message-ID: <20240711142928.GB8022@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20240710225734.work.823-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710225734.work.823-kees@kernel.org>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_FIVE(0.00)[5]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
+X-Spam-Level: 
 
-CZ.NIC's Turris devices are based on Marvell Armada 385 or 3720, or on
-Freescale P2020 SoCs.  Hence add dependencies on MACH_ARMADA_38X,
-ARCH_MVEBU, and PPC_P2020, to prevent asking the user about these
-drivers when configuring a kernel that cannot run on any CZ.NIC Turris
-system.
+On Wed, Jul 10, 2024 at 03:57:34PM -0700, Kees Cook wrote:
+> Replace the deprecated[1] use of a 1-element array in
+> struct slink_front with a modern flexible array.
+> 
+> No binary differences are present after this conversion.
+> 
+> Link: https://github.com/KSPP/linux/issues/79 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Fixes: 992f1a3d4e88498d ("platform: cznic: Add preliminary support for Turris Omnia MCU")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Perhaps the dependency on PPC_P2020 should be dropped?
----
- drivers/platform/cznic/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks, I've added the 3 patches to my tree. I've noticed there's one
+more 1-element array in struct affs_root_head (hashtable):
 
-diff --git a/drivers/platform/cznic/Kconfig b/drivers/platform/cznic/Kconfig
-index 6edac80d5fa37762..70f5e683f61f2708 100644
---- a/drivers/platform/cznic/Kconfig
-+++ b/drivers/platform/cznic/Kconfig
-@@ -6,6 +6,7 @@
- 
- menuconfig CZNIC_PLATFORMS
- 	bool "Platform support for CZ.NIC's Turris hardware"
-+	depends on MACH_ARMADA_38X || ARCH_MVEBU || PPC_P2020 || COMPILE_TEST
- 	help
- 	  Say Y here to be able to choose driver support for CZ.NIC's Turris
- 	  devices. This option alone does not add any kernel code.
--- 
-2.34.1
+https://elixir.bootlin.com/linux/latest/source/fs/affs/amigaffs.h#L50
 
+The struct is used only partially by AFFS_ROOT_HEAD from affs_fill_super
+and not accessing the hashtable. This could have been missed by the
+tools you use or was the conversion intentionally skipped?
 
