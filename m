@@ -1,194 +1,248 @@
-Return-Path: <linux-kernel+bounces-249123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C2BD92E740
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:42:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006BD92E746
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24458281207
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:42:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAC62281636
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E291515AD8B;
-	Thu, 11 Jul 2024 11:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EDB15A873;
+	Thu, 11 Jul 2024 11:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ejeXEwNg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="1qH88vIF"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B615E1494B9;
-	Thu, 11 Jul 2024 11:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E6D155A5D;
+	Thu, 11 Jul 2024 11:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720698128; cv=none; b=MlskncyPbgDv+aQbh8HhOS+/ql8InXxMFdsBfZkDJ6FNZ2NlJu+wJ5yUJX/E/2HtiwfLUxissXwwJgsWw9bRwA8LOVWnaJJRQ2c9wTZMi1hcUq3XyC40HC3Sjfg7ob1pg3r2tNafrTOWCIaS46r1zR/xidgPLMVHNaj22x0+W8w=
+	t=1720698195; cv=none; b=gRl/u6vFuDCosbB3LBMKlJJapEA2lxzIKC7o5/3YlVIMTobkC1vP/VT6lXHtgG//GjAo9eqkaoQhYOuTY0zTjF23XczDxRjrA4ODhUtPtqIr9x8dM5wWk5q+HcYsfanPSGhzbp9g31wN56tfnbEFyI4PXlvfhu9OC8JLkqNsejc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720698128; c=relaxed/simple;
-	bh=e0cazWYdfzz02xk0wTrFktv9zUTp+D7e1iDGQONVLyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TjBzq66//oSBSzytwFUpxIJrCRKpKWo+kmlI5Kz++gNK57+2PBb+4tevizGE/kAHRe712GJG/d5BfATTVLEJxPvOAoDtP6g6pQxAnL7TfwuikgoMMGqVw6L6ENwCmtyigxl+3WDC7qe1Wt/qn8IZ7BBHQQOxOxV6lBYVbaBOBZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ejeXEwNg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B8YDqd032231;
-	Thu, 11 Jul 2024 11:42:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kwhn+bHrbOxjCMUoj+nhy/hbAd2eoAFhsInH5vRK9uM=; b=ejeXEwNgdBgtyEf0
-	HqHqKuATrLRqJwg5KLmHcI3yE95JmAbZl0LfnS55jct+uJ7Quk/TZ9D/5LW99flb
-	TiMWR/8FmslggGjWw4VjiVGa49TUajN20H3u+yGkv/tbUCnhHW618knnuegFoyQD
-	hCiA+F1jx2LK8b1Z4M87WAUMtKyPTP/Kyj/Ji5d6UbkYICBZGGxnByolMw+Qmibc
-	qPnudsgYJ508yHEZU/mK9UZe6JzcyubUmF+yMu0+vQVNf3AgIktyApYZ6q5Zw0ha
-	EKt7NpUwQ7I0ccT5mUt7AHfv6yKWWZNWVXnrfZm0zucxkiy+HOZuFZ1LtH03Ff+K
-	pCexkg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ac0ggg3w-1
+	s=arc-20240116; t=1720698195; c=relaxed/simple;
+	bh=dLhmt98GOBebEwaTJw3sfY5WZZ8/HHQU5dyPw4s1QPQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q/dEQAMym7lXdhm5xrCdWFh4RgpjeN0p3h0bVGC42HUNGYoiIkmZCZSDlv9Vu71fv1aLLGYqSVGXvTCSLHSZfMX/SOPfXLOxwo2JdujYLjFJ0tPBS4+b1xFHaZ2jE2Fnz1dKJeIyjpOX/HNDdEWCxCxED59RIcNaxGPPSUv40vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=1qH88vIF; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B8d78j011012;
+	Thu, 11 Jul 2024 07:42:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=+Z4kn8G9VHUBIv2CowSJGLGHGz5
+	AUBn7iiK1TB1WtYM=; b=1qH88vIFyWhRlKWNVam4lLmwYMpp8mGxiROUpDCUwkj
+	Xy7mR2n2+1M8lE8P7j7cE+ZbCdDXy1cZW+RPwlUZPhN8fHuuQP6RIprfJEJ+tuxm
+	dpXIpSmdqYgTxoPvRCjwS6/2NIX/zpTrx7WNRitDcqyHLcNKkNT4KOYT4bmEW11Z
+	G8gq2BnwsnrAatDuKtc0qHFQepVF2o9NP78S/eL+WwUMFFnHaL764oe0mlyt0bDo
+	aRQPiZNpgDa9zgJfXVD2uLXi6L1CywwUqasO4A0xSnkn+PAZkMQF0b3it47woHim
+	XM1zuPDHHQ9ra1SUXw2IwknZKrgl2jiEIa+KiOTtgDQ==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 408fy4vpvh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 11:42:02 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46BBg1aB024993
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 11:42:01 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 04:41:54 -0700
-Message-ID: <064baf66-eecd-4982-864f-50b86b104ff6@quicinc.com>
-Date: Thu, 11 Jul 2024 19:41:52 +0800
+	Thu, 11 Jul 2024 07:42:46 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 46BBgji8022822
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 11 Jul 2024 07:42:45 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Thu, 11 Jul
+ 2024 07:42:44 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Thu, 11 Jul 2024 07:42:44 -0400
+Received: from kim-VirtualBox.ad.analog.com (KPALLER2-L03.ad.analog.com [10.117.220.23])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 46BBgTQZ013318;
+	Thu, 11 Jul 2024 07:42:32 -0400
+From: Kim Seer Paller <kimseer.paller@analog.com>
+To: <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: Jonathan Cameron <jic23@kernel.org>,
+        David Lechner
+	<dlechner@baylibre.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Dimitri Fedrau
+	<dima.fedrau@gmail.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Michael
+ Hennerich <michael.hennerich@analog.com>,
+        =?UTF-8?q?Nuno=20S=C3=A1?=
+	<noname.nuno@gmail.com>,
+        Kim Seer Paller <kimseer.paller@analog.com>
+Subject: [PATCH v6 0/6] Add driver for LTC2664 and LTC2672
+Date: Thu, 11 Jul 2024 19:42:15 +0800
+Message-ID: <20240711114221.62386-1-kimseer.paller@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/13] media: qcom: camss: Add CSID Gen3 support for
- SM8550
-To: Krzysztof Kozlowski <krzk@kernel.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Yongsheng Li
-	<quic_yon@quicinc.com>
-References: <20240709160656.31146-1-quic_depengs@quicinc.com>
- <20240709160656.31146-10-quic_depengs@quicinc.com>
- <1da50dd1-b170-4775-94fc-19a10b7f9c47@kernel.org>
- <4c8095dd-4f96-4b0e-9282-8bdfb5badbc3@quicinc.com>
- <9255b3e4-874c-4919-b50a-919cf0f42f75@kernel.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <9255b3e4-874c-4919-b50a-919cf0f42f75@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3preGwDa5SchP-XdwOI1fNkZTyRM-M0X
-X-Proofpoint-GUID: 3preGwDa5SchP-XdwOI1fNkZTyRM-M0X
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: ZCg1BX8gaR5MtzUP4dhYYH-FwvURlVBa
+X-Proofpoint-ORIG-GUID: ZCg1BX8gaR5MtzUP4dhYYH-FwvURlVBa
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_08,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 mlxlogscore=999
- mlxscore=0 impostorscore=0 clxscore=1015 suspectscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110083
+ definitions=2024-07-11_06,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 lowpriorityscore=0 spamscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 adultscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407110083
 
-Hi Krzysztof,
+Generalize the ABI documentation for DAC. The ABI defined for toggle mode
+channels:
 
-On 7/11/2024 7:12 PM, Krzysztof Kozlowski wrote:
-> On 11/07/2024 13:08, Depeng Shao wrote:
-> 
-> 
->>>
->>>> + */
->>>> +static int csid_reset(struct csid_device *csid)
->>>> +{
->>>> +	unsigned long time;
->>>> +	u32 val;
->>>> +	int i;
->>>> +
->>>> +	reinit_completion(&csid->reset_complete);
->>>> +
->>>> +	writel_relaxed(1, csid->base + CSID_TOP_IRQ_CLEAR);
->>>> +	writel_relaxed(1, csid->base + CSID_IRQ_CMD);
->>>> +	writel_relaxed(1, csid->base + CSID_TOP_IRQ_MASK);
->>>> +
->>>> +	for (i = 0; i < MSM_CSID_MAX_SRC_STREAMS; i++)
->>>> +		if (csid->phy.en_vc & BIT(i)) {
->>>> +			writel_relaxed(BIT(BUF_DONE_IRQ_STATUS_RDI_OFFSET + i),
->>>> +						csid->base + CSID_BUF_DONE_IRQ_CLEAR);
->>>> +			writel_relaxed(0x1 << IRQ_CMD_CLEAR, csid->base + CSID_IRQ_CMD);
->>>> +			writel_relaxed(BIT(BUF_DONE_IRQ_STATUS_RDI_OFFSET + i),
->>>> +						csid->base + CSID_BUF_DONE_IRQ_MASK);
->>>> +		}
->>>> +
->>>> +	/* preserve registers */
->>>> +	val = (0x1 << RST_LOCATION) | (0x1 << RST_MODE);
->>>> +	writel_relaxed(val, csid->base + CSID_RST_CFG);
->>>
->>> ... here - using everywhere relaxed here is odd and looks racy. These
->>> looks like some strict sequences.
->>>
->> Yes, these are some sequences to initialize the HW.
-> 
-> Hm? It's like you ignore the problem and just answer with whatever to
-> shut up the reviewer. Instead of replying with the same, address the
-> problem. Why ordering is not a problem here?
-> 
+LTC2664:
+  * out_voltageY_toggle_en
+  * out_voltageY_raw0
+  * out_voltageY_raw1
+  * out_voltageY_symbol
 
-Sorry, I didn't mean that, was trying to understand the problem, then 
-just sent out the mail by mistake.
-Do you mean we should use writel to ensure the strict sequences?
-Thanks for catching this problem, this problem is also in the the 
-existing camss driver. I will check all of them in this series, but the 
-problem in some existing camss drivers, maybe Bryan from Linaro can help 
-to fix them, since I don't have these devices to verify the modifications.
+LTC2672:
+  * out_currentY_toggle_en
+  * out_currentY_raw0
+  * out_currentY_raw1
+  * out_currentY_symbol
 
->>>> +
->>>> +const struct csid_hw_ops csid_ops_gen3 = {
->>>
->>> Isn't there a warning here?
->>>
->>>> +	.configure_stream = csid_configure_stream,
->>>> +	.configure_testgen_pattern = csid_configure_testgen_pattern,
->>>> +	.hw_version = csid_hw_version,
->>>> +	.isr = csid_isr,
->>>> +	.reset = csid_reset,
->>>> +	.src_pad_code = csid_src_pad_code,
->>>> +	.subdev_init = csid_subdev_init,
->>>> +};
->>>
->>> Your patchset does not apply at all. Tried v6.9, v6.10, next. I see some
->>> dependency above, but that means no one can test it and no one can apply it.
->>>
->>> Fix the warnings, I cannot verify it but I am sure you have them.
->>>
->>
->> My code base is next master branch, do you mean the 'declared and not
->> used' warning? I don't see this warning with below two version compiler
->> even though I just pick this patch and pull the code the latest version.
->> But it indeed have this issue, these structures are declared and will be
->> used later in "media: qcom: camss: Add sm8550 resources" patch, will
->> think about how to avoid this.
->>
->> aarch64-linux-gnu-gcc (Ubuntu/Linaro 7.5.0-3ubuntu1~18.04) 7.5.0
->> aarch64-linux-gnu-gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
-> 
-> That's some old compilers... I am talking about recent GCC, recent clang
-> and of course W=1.
-> 
+Default channels won't have any of the above ABIs. A channel is toggle capable
+if the devicetree 'adi,toggle-mode' flag is set.
 
-Thanks for the sharing, I will try to upgrade to latest compiler to 
-avoid other potential issues.
+changes in v6:
+
+Bindings:
+  * Added clarification description for output-range-microvolt property and
+    modified conditional logic for output-range-microvolt for ltc2664 binding.
+  * Simplified schema validation logic for DAC binding.
+  * Added Reviewed-by tag for ltc2672 binding.
+
+changes in v5:
+
+ltc2664:
+  * Removed return statement for error code in ltc2664_dac_code_read making it a
+    void function.
+  * Refactored voltage regulator error handling and logic setting for vref_mv.
+  * Added Reviewed-by tag.
+
+Bindings:
+  * Added dac.yaml and generalized DAC common properties.
+  * Modified ltc2664 binding adding constraints for the adi,manual-span-operation-config
+    and output-range-microvolt properties.
+
+changes in v4:
+
+ltc2664:
+  * Added comments for each field in the ltc2664_chan struct.
+  * Changed global_toggle data type to bool and updated vref and rfsadj variables
+    to include units.
+  * Added 0,0 entry in ltc2672_span_helper to removed the id field from the
+    ltc2664_chip_info struct.
+  * Used mul_u64_u32_div helper function from linux/math64.h to avoid integer
+    overflow during scale calculation.
+  * Refactored code to use a single template for channel instead of separate
+    channel arrays.
+  * Used the devm_regulator_get_enable_read_voltage API for simplifying voltage
+    retrieval.
+
+ABI:
+  sysfs-bus-iio:
+    * Added commit message for the ABI changes.
+  sysfs-bus-iio-dac:
+    * Updated the description of toggle_en to clarify autonomous toggling.
+    * Fixed inconsistent use of spacing and tabs.
+
+Bindings:
+  * Dropped Reviewed-by tag.
+  * Updated the description for both bindings to include both 12-bit and 16-bit
+    versions.
+
+changes in v3:
+
+ltc2664:
+  * Added span sanity check for no match.
+  * Initialized the variable 'span' to fix build warning.
+  * Added Reported-by and Closes by tag.
+
+ABI:
+  * Modified descriptions to make it more generalize.
+  * Removed MAINTAINERS file entry.
+
+Bindings:
+  * Changed clr-gpios to reset-gpios.
+  * Added output range and reset code description for 'adi,manual-span-operation-config'
+    property in ltc2664 binding.
+  * Removed the $ref for 'adi,output-range-microamp' due to dt-schema warning
+    in ltc2672 binding. Added Reported-by and Closes by tag.
+  * Modified io-channels description and added maxItems constraint.
+
+changes in v2:
+
+ltc2664:
+  * Updated struct ltc2664_chip_info to include device-specific data for scale,
+    offset, measurement type, internal vref, manual span support, and rfsadj
+    support.
+  * Added a read-only extended info attribute powerdown_mode to indicate the
+    state that the DAC output enters when the device is powered down.
+  * Refactored code for setting the span into separate function and directly
+    returning the span.
+  * Adjusted memory allocation for st->iio_channels to include null terminator.
+  * Spaces have been added after { and before }. Each pair of values is now
+    placed on a separate line.
+
+ABI:
+  * Generalized the ABI documentation for DAC.
+  * Added DAC 42kohm_to_gnd powerdown mode.
+
+Bindings:
+  * Created separate bindings for ltc2664 and ltc2672.
+  * Added v-pos-supply and v-neg-supply regulator properties.
+  * Renamed vref-supply to ref-supply based on the datasheet.
+  * Added io-channels property and specifying the pin for multiplexer output.
+  * Added vdd0-vdd4 supply properties for ltc2672, although they are not
+    currently supported in the driver.
+  * Changed clr-gpios description based on the datasheet.
+  * Used 4 spaces for example indentation.
+
+Kim Seer Paller (6):
+  iio: ABI: Generalize ABI documentation for DAC
+  iio: ABI: add DAC 42kohm_to_gnd powerdown mode
+  dt-bindings: iio: dac: Generalize DAC common properties
+  dt-bindings: iio: dac: Add adi,ltc2664.yaml
+  dt-bindings: iio: dac: Add adi,ltc2672.yaml
+  iio: dac: ltc2664: Add driver for LTC2664 and LTC2672
+
+ Documentation/ABI/testing/sysfs-bus-iio       |   1 +
+ Documentation/ABI/testing/sysfs-bus-iio-dac   |  61 ++
+ .../ABI/testing/sysfs-bus-iio-dac-ltc2688     |  31 -
+ .../bindings/iio/dac/adi,ltc2664.yaml         | 181 +++++
+ .../bindings/iio/dac/adi,ltc2672.yaml         | 160 ++++
+ .../devicetree/bindings/iio/dac/dac.yaml      |  50 ++
+ MAINTAINERS                                   |  10 +
+ drivers/iio/dac/Kconfig                       |  11 +
+ drivers/iio/dac/Makefile                      |   1 +
+ drivers/iio/dac/ltc2664.c                     | 735 ++++++++++++++++++
+ 10 files changed, 1210 insertions(+), 31 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-dac
+ create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+ create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
+ create mode 100644 Documentation/devicetree/bindings/iio/dac/dac.yaml
+ create mode 100644 drivers/iio/dac/ltc2664.c
 
 
-Thanks,
-Depeng
+base-commit: 1ebab783647a9e3bf357002d5c4ff060c8474a0a
+-- 
+2.34.1
+
 
