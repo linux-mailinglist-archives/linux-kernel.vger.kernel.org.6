@@ -1,139 +1,193 @@
-Return-Path: <linux-kernel+bounces-249822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227B392F05B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:33:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425C592F060
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1F4F28382D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:33:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A08B6B229EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D176119EEC4;
-	Thu, 11 Jul 2024 20:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680BC19F47A;
+	Thu, 11 Jul 2024 20:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EC5TdLpX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pCY61RYf"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096F013DDD1;
-	Thu, 11 Jul 2024 20:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3669C13D626;
+	Thu, 11 Jul 2024 20:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720730022; cv=none; b=rBMaqWYTBCf4Um6LgyWg8aGGRggvev430Z9O2pnPmgpgQx9XeQpc+lF2qLiY4kJZ1zkzfsZmZK8YtOimRs1or5uOhsA9fUg1iCr8v/SRsNv2bwbopb9s8i+bRFDPyLBdGWTuz51IMbp1xJNo7YLV2AiyhxVnF3BND0jhRtXmYPY=
+	t=1720730023; cv=none; b=eeZ63rVtvDGEhFygEe+EGkGfOLjBlIXnbyyKWCkwyd0QkhZV9bCzaLH61hWZnh5K8XYu8fwkPHmbpFStQsj3qEA54OZUMccTEbFVN8uomyyoyxjoFuQODOIQSDvlurVo6NT/KrwKFvbOb0aubAkTLzp9i/4q1SBrM6H4IqggfQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720730022; c=relaxed/simple;
-	bh=3s6t0CswabjkJ7pow6bUNxhLXYvaA+fwYXXiJ7M6KrM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H6xt7ik1mxQ6NGqPbh6EM0S9/zUjlTnDsUQSN2P8pUc3Z8VOwo//Xd9pmNR32OxYUr6BEj1LkxA3XWeu0Ug60hXAP6WeviA73eTV70Z02Fiqt30xnALH452yQheWQkQBCGJ+/XjpAX/7F46uUPCnuJev2CBdiTU99bJt74n8bhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EC5TdLpX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91391C4AF0F;
-	Thu, 11 Jul 2024 20:33:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720730021;
-	bh=3s6t0CswabjkJ7pow6bUNxhLXYvaA+fwYXXiJ7M6KrM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=EC5TdLpX0cKuGNtGI5lbjNazbh4b8srWK6Qr3KGytIVpJ7z7VHQgcH6KcRiDefGMU
-	 PlqZ9FV7kS4CM2sR8DUYfAymwuhS+nlL4TgemH5KwTtesZyeFe3AO8jttTgmRp3AzC
-	 /ldEAlX/b74vkHINFzs+0d6RmKQOWqW23UPABOkbTEmJ9rjG/+vU1S31J9IP26ZsrU
-	 xyBdio3tWVAwMkSBkmph3nKQxEEwewJwU2OC6ZHj3p9hJetGRYdW+PHWQJ9Tial9+y
-	 PPeCXU4BuwZTGqO0ZYx/mCE3menTaQJS4ZfKtuDEE5EJcl/NDxTvyDnf9dqYTe3aD3
-	 N8DqVOilynUfQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ea5dc3c66so2172067e87.3;
-        Thu, 11 Jul 2024 13:33:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXGShef0Q2SyOOOGZMS3/1JrWphjlaDlb5Izl/Qd3jyu8uo6tu4j9e4f2J1EapkqBPOB2IM44Ji2m+htA252nfNsHmifwKW8UXmBjF3CcWsWvvQz6hjONYTUpizqqNX9mNaWeaKww2+rseeFp1Q3pOUDN+3dCN8fmuxP21xSNPmRLdvTJnOtlMiJjssXKN3oDbdrTDWKaHqAZIoqA==
-X-Gm-Message-State: AOJu0YzYF9xw1sKrQ9RLRFFRqR1JrL22cbnItbnCs5NYjvmVjHKE+bT2
-	2q/4RHEv45/5o1PKxVn+IiK2SkZWzA+ULgpsrVuSZsG2JwOI/fMbUj4KEIyC+apXKjHNoJeSo5k
-	tU0sV1rKhhOZICN2o49ugKGX0yw==
-X-Google-Smtp-Source: AGHT+IH9fDJBb6vRKIf7eJgNl1y1C3rVvgy59J3R4rDDXXqqxjPM6C27hXW9YPtUAfvsjk0rbroExhSGNYkcvc2LVEY=
-X-Received: by 2002:a05:6512:3ca5:b0:52b:c33a:aa7c with SMTP id
- 2adb3069b0e04-52eb99d652emr7657946e87.65.1720730019781; Thu, 11 Jul 2024
- 13:33:39 -0700 (PDT)
+	s=arc-20240116; t=1720730023; c=relaxed/simple;
+	bh=u9OIK/7LLd4/30SCi4eE3ANtbzLqHBtUVdKoP1X3Lu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V7RoT7Ku42YS2f5nEClL8nog14ARw8G2QSj1h2EOVNjA5IBpVaPrRRw0vEZGgP2HfKX54HKL9K2TL7Tz/ntDcd417j/9DpQ41GJtuqNhBZM23CfecwTHMNS6XID6bLSN+bUPRfnQGsC6mHTkQaL8MOEA3LwYPoPsiReiqalGFmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pCY61RYf; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ADB9E1BF204;
+	Thu, 11 Jul 2024 20:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720730018;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IouwIgo+kP+HswbewtSJ8i0mZUqTEtq++kfOp3rA2cc=;
+	b=pCY61RYf9XpU6OIywfEq/tnfP//rltf0nVP6mHpAIyZ9HRqzcuYkkUUEqws8i+jLDHWAdi
+	Cx9TMIeayt/qDOsq0yfzsOzfmrWnvSQ/+80UE/7t+gGK3f+aBhk4tDwyJUUgLYdN9+1ow3
+	AzGh0WM37wucGQbgYBl9QNSK6VUjNONo4XrAhRDJrI6I49NquqUDu8KoWWmg1HX0nDkvbw
+	51umsal5Q9HuB3QqBZzWHYgTQsRU8HdfCug1Ys06Q0ZKwKoCUBL8wCuJK6N/qpHL3u8BV4
+	Y3WmyHRxSp2MzP1KS5tLPLXWUdoa1kkSVMPzVeNWyOxMSQoI6gi/az8Js3LLDQ==
+Date: Thu, 11 Jul 2024 22:33:37 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v5 6/7] rtc: support i.MX95 BBM RTC
+Message-ID: <202407112033378dbbea83@mail.local>
+References: <20240621-imx95-bbm-misc-v2-v5-0-b85a6bf778cb@nxp.com>
+ <20240621-imx95-bbm-misc-v2-v5-6-b85a6bf778cb@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627091137.370572-1-herve.codina@bootlin.com>
- <20240627091137.370572-7-herve.codina@bootlin.com> <20240711152952.GL501857@google.com>
- <20240711184438.65446cc3@bootlin.com> <2024071113-motocross-escalator-e034@gregkh>
-In-Reply-To: <2024071113-motocross-escalator-e034@gregkh>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 11 Jul 2024 14:33:26 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+1r3SSaXupdNAcXO-4rcV-_3_hwh0XJaBsB9fuX5nBCQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+1r3SSaXupdNAcXO-4rcV-_3_hwh0XJaBsB9fuX5nBCQ@mail.gmail.com>
-Subject: Re: [PATCH v3 6/7] mfd: Add support for LAN966x PCI device
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Herve Codina <herve.codina@bootlin.com>, Lee Jones <lee@kernel.org>, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	UNGLinuxDriver@microchip.com, Saravana Kannan <saravanak@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621-imx95-bbm-misc-v2-v5-6-b85a6bf778cb@nxp.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Thu, Jul 11, 2024 at 1:08=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Jul 11, 2024 at 06:44:38PM +0200, Herve Codina wrote:
-> > Hi Lee,
-> >
-> > On Thu, 11 Jul 2024 16:29:52 +0100
-> > Lee Jones <lee@kernel.org> wrote:
-> >
-> > > On Thu, 27 Jun 2024, Herve Codina wrote:
-> > >
-> > > > Add a PCI driver that handles the LAN966x PCI device using a device=
--tree
-> > > > overlay. This overlay is applied to the PCI device DT node and allo=
-ws to
-> > > > describe components that are present in the device.
-> > > >
-> > > > The memory from the device-tree is remapped to the BAR memory thank=
-s to
-> > > > "ranges" properties computed at runtime by the PCI core during the =
-PCI
-> > > > enumeration.
-> > > >
-> > > > The PCI device itself acts as an interrupt controller and is used a=
-s the
-> > > > parent of the internal LAN966x interrupt controller to route the
-> > > > interrupts to the assigned PCI INTx interrupt.
-> > >
-> > > Not entirely sure why this is in MFD.
-> >
-> > This PCI driver purpose is to instanciate many other drivers using a DT
-> > overlay. I think MFD is the right subsystem.
+Hello,
 
-It is a Multi-function Device, but it doesn't appear to use any of the
-MFD subsystem. So maybe drivers/soc/? Another dumping ground, but it
-is a driver for an SoC exposed as a PCI device.
+On 21/06/2024 15:04:41+0800, Peng Fan (OSS) wrote:
+> +	ret = bbnsm->ops->rtc_time_get(ph, 0, &val);
+> +	if (ret) {
+> +		dev_err(dev, "%s: %d\n", __func__, ret);
 
-> Please use the aux bus for that, that is what is was specifically
-> designed for, and what it is being used for today.
+This is not super useful, you should drop the various dev_err or pr_err
+as there is no action the user can take to solve the erro apart from
+retrying.
 
-We discussed this already[1]. Different usecase, but needs the same thing.
+> +		return ret;
+> +	}
+> +
+> +	rtc_time64_to_tm(val, tm);
+> +
+> +	return 0;
+> +}
+> +
+> +static int scmi_imx_bbm_set_time(struct device *dev, struct rtc_time *tm)
+> +{
+> +	struct scmi_imx_bbm *bbnsm = dev_get_drvdata(dev);
+> +	struct scmi_protocol_handle *ph = bbnsm->ph;
+> +	u64 val;
+> +	int ret;
+> +
+> +	val = rtc_tm_to_time64(tm);
+> +
+> +	ret = bbnsm->ops->rtc_time_set(ph, 0, val);
+> +	if (ret)
+> +		dev_err(dev, "%s: %d\n", __func__, ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int scmi_imx_bbm_alarm_irq_enable(struct device *dev, unsigned int enable)
+> +{
 
-Like I said before, the bus and device used for DT MMIO devices is
-like it or not platform bus/device.
+How can userspace disable the alarm?
 
-In this case, all the child devices are already supported as platform
-devices. There would be zero benefit to add all the boilerplate to
-make their drivers both platform and aux bus drivers. Plus there is
-zero DT support in aux bus.
+> +	return 0;
+> +}
+> +
+> +static int scmi_imx_bbm_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+> +{
+> +	struct scmi_imx_bbm *bbnsm = dev_get_drvdata(dev);
+> +	struct scmi_protocol_handle *ph = bbnsm->ph;
+> +	struct rtc_time *alrm_tm = &alrm->time;
+> +	u64 val;
+> +	int ret;
+> +
+> +	val = rtc_tm_to_time64(alrm_tm);
+> +
+> +	ret = bbnsm->ops->rtc_alarm_set(ph, 0, val);
+> +	if (ret)
+> +		dev_err(dev, "%s: %d\n", __func__, ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct rtc_class_ops smci_imx_bbm_rtc_ops = {
+> +	.read_time = scmi_imx_bbm_read_time,
+> +	.set_time = scmi_imx_bbm_set_time,
+> +	.set_alarm = scmi_imx_bbm_set_alarm,
+> +	.alarm_irq_enable = scmi_imx_bbm_alarm_irq_enable,
+> +};
+> +
+> +static int scmi_imx_bbm_rtc_notifier(struct notifier_block *nb, unsigned long event, void *data)
+> +{
+> +	struct scmi_imx_bbm *bbnsm = container_of(nb, struct scmi_imx_bbm, nb);
+> +	struct scmi_imx_bbm_notif_report *r = data;
+> +
+> +	if (r->is_rtc)
+> +		rtc_update_irq(bbnsm->rtc_dev, 1, RTC_AF | RTC_IRQF);
+> +	else
+> +		pr_err("Unexpected bbm event: %s\n", __func__);
+> +
+> +	return 0;
+> +}
+> +
+> +static int scmi_imx_bbm_rtc_init(struct scmi_device *sdev)
+> +{
+> +	const struct scmi_handle *handle = sdev->handle;
+> +	struct device *dev = &sdev->dev;
+> +	struct scmi_imx_bbm *bbnsm = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	bbnsm->rtc_dev = devm_rtc_allocate_device(dev);
+> +	if (IS_ERR(bbnsm->rtc_dev))
+> +		return PTR_ERR(bbnsm->rtc_dev);
+> +
+> +	bbnsm->rtc_dev->ops = &smci_imx_bbm_rtc_ops;
+> +	bbnsm->rtc_dev->range_min = 0;
 
-Rob
+range_min is set to 0 by default, this is not necessary
 
-[1] https://lore.kernel.org/all/Y9kuxrL3XaCG+blk@kroah.com/
+> +	bbnsm->rtc_dev->range_max = U32_MAX;
+> +
+> +	ret = devm_rtc_register_device(bbnsm->rtc_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	bbnsm->nb.notifier_call = &scmi_imx_bbm_rtc_notifier;
+> +	return handle->notify_ops->devm_event_notifier_register(sdev, SCMI_PROTOCOL_IMX_BBM,
+> +								SCMI_EVENT_IMX_BBM_RTC,
+> +								NULL, &bbnsm->nb);
+
+Note that failing after devm_rtc_register_device opens the driver to a
+race condition as the character device will exist at that time.
+
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
