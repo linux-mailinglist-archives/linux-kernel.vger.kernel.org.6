@@ -1,205 +1,356 @@
-Return-Path: <linux-kernel+bounces-249709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C36392EED4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:23:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD0892EED0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 758311F2473F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:23:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 449E1284A24
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF3916EB41;
-	Thu, 11 Jul 2024 18:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="oy4AgKC2"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012070.outbound.protection.outlook.com [52.101.66.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8339F16E873;
-	Thu, 11 Jul 2024 18:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720722212; cv=fail; b=Sqi+clS411tlHvlHRAvwDWeHGBJtnMJK99h7csks+aKehQJv9VSuW6hYm8XU719NXBG7yOLsC+l3sD08s9TIXQ1521W5PAx5CJwMCy2sQ7OTsC7W+hNP8hOpYyQoIArN2Votb3xHYWVEpSFk/FJ51/TZxX3UtyQzPFV7T60Q85I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720722212; c=relaxed/simple;
-	bh=njFj/Lt+7JoMrNVZPHbsuqPQDfqzLOXzFzu1QBPFn5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fhPAH6fTrEyDLFyUSepruMuCr4nbApsX+3xQ+uMHGHu5d8ExoOpJhA9+psp1V3acsxEKTez4Lh2JJ9BAixn8YqWU8M/9C4o8YgcTHKacm5jnRKJ6Oat3+VrSoDMFGD2eyzAAcG1w89FLMtBLgT38JHDwyTxVx0SvMcbLYgyss94=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=oy4AgKC2; arc=fail smtp.client-ip=52.101.66.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D76RaA/SmPsg5qcF0KTe4HEn3ZaCo3cueo5Kl8SuKP6L09+bq4AO2btuIES63keJlYVGHPaopul0fz1VtjitEIZXiqF/Vt5igirb9qWoqbedamfhbIMvFSNnmQHEFZyCI26X2lBXUvcPc/ag26wHMe711UDPJAxiMYAn+/JR1uxjn1q6s1eCa8r5NP4mCkLq9g30YJNCz9edgJuKbaUvCiZcRTB3gU+qCdJc78rLI93ksfRDPgdwwx1xCLvMyW1igTt3PYSHtdsTy62sU2KQf1qEPNWho3wSpKI6m52NRF8LG5UQf5kvUfPbD0d9t/k5SIZ37yc/JDcWwJEEVFYoJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9UaekAOZ93Ecn0tdL5zanKt3sp8FnK2YqOCD7hmNFCM=;
- b=ZF42kL7Cv0AGLNpEsBTiNHOUaxnlqGxAzzAqTdJ8U+c4lqaCeRvAuE6L3KcDpzP+ioWKWb/Ui0AZBVMPq54RxO8g4CuzB4AEgesSLZY1YGKjYopo3grhG/UAQXTIUlYhCXLC1xrVOEzEHduLTAGGM+9WhP2e64m0pUKTvEJRJCdXmJlgHhXY7Mxm1WqcjxgJu+vRhGOH0EzY59LMs7BAm6XnLjbCYZkxQDXY0XG35U/cOsB2hmMWNVz4ZBvLcmlAlxQOfOQHnmNc6lnj3qfZM8uJJQCgpLqZKG7dRLGP0D/+V1/vhEcNFRz/gymbaZy1y7rXxf4cU3db4tj8TBiFkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9UaekAOZ93Ecn0tdL5zanKt3sp8FnK2YqOCD7hmNFCM=;
- b=oy4AgKC2kugo08mHM0xOtvhvqgaBKBsg2/zs7BfQiOAiyYq40l/L5AYNGdHJC0BHBU5tvDF8aJWBd7IksN4BfTlND5ohCoIpUhh9K8UBaBUoOmmmXBgxp1Ot8wiE2rogIBR/WryIqrvc5DZKOqUyUMQzyQd2jlLFC7G91NCoEzc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DBBPR04MB7514.eurprd04.prod.outlook.com (2603:10a6:10:1f7::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Thu, 11 Jul
- 2024 18:23:28 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7741.033; Thu, 11 Jul 2024
- 18:23:28 +0000
-Date: Thu, 11 Jul 2024 14:23:17 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	haibo.chen@nxp.com, imx@lists.linux.dev, han.xu@nxp.com
-Subject: Re: [PATCH 3/4] bingdings: can: flexcan: move fsl,imx95-flexcan
- standalone
-Message-ID: <ZpAjFc9OwxkgbTmJ@lizhi-Precision-Tower-5810>
-References: <20240711-flexcan-v1-0-d5210ec0a34b@nxp.com>
- <20240711-flexcan-v1-3-d5210ec0a34b@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711-flexcan-v1-3-d5210ec0a34b@nxp.com>
-X-ClientProxiedBy: SJ0PR03CA0278.namprd03.prod.outlook.com
- (2603:10b6:a03:39e::13) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CACB16DEAE;
+	Thu, 11 Jul 2024 18:23:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C9B16D9BA
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720722206; cv=none; b=GeyT1KWcYCMgGCLSrbe54zDY+Auk1RDUMDiMce6vqNI/2btIeibVkM8C/AL/tS659XFCJh54UAK1oFktApwO7C89nBPryT4VwVDsvZLZrW/LRHGsX9dlIDdK9FK2Mez9VzuEAXGP+fEJUHCmFI3QXUyF6P2nrIbHcp1t6OWHr9E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720722206; c=relaxed/simple;
+	bh=Jg3xQ07nFj5pVxjhxyngxPmbMvOYrQ3u7amnqXeFXSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GE1dxIXX5NsVDCSRp0YGCJEtB4GA4reFtq3VpTL7ENzrMtKQpEQsB/paVPaN7LNSS49us6I8EbtOpf7sdakiaJotplJOxodd7meGLvT0sTAhWpficjrS2v+0YBrxUCWqbDVVHXatEmfQRDVorG+2RVoOJ5IyS2ymxKblc4HYOtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3BAD1007;
+	Thu, 11 Jul 2024 11:23:48 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ADD963F766;
+	Thu, 11 Jul 2024 11:23:21 -0700 (PDT)
+Message-ID: <28309b7f-9809-452f-95fe-3448c15bdf1b@arm.com>
+Date: Thu, 11 Jul 2024 19:23:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7514:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0993ce01-d058-4f8e-fd91-08dca1d68f45
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BA2azEiKUL2qikhHnLl0pcH37TxHBw0HwlOqZC4kxsMBSsZicehx5v8NmT1Z?=
- =?us-ascii?Q?NOCHTUUk5J6oQkLBhOimDaygs3DGtoMRbfcB96NPcP/Nh5C5ic8wZXOby2GY?=
- =?us-ascii?Q?LGCt8d+8JSggcmYcvFOjM9jEJNXkoTREXfhVCMqIKUKbaJ6QxADuGI+hxxIa?=
- =?us-ascii?Q?9gyJi8mgZ+KNFxhjzbNA1+085K5wC3W3Ezh+c9ypv1o2ElHHpbN9EezplRFh?=
- =?us-ascii?Q?PNg3c4Ute72fCpubDGuKHzssfcxtkZYktoP0RUb7/g5gMJw03srbckHeZRYb?=
- =?us-ascii?Q?57/Zr09eVcpWZ3mMM45dhgGYLDqOFrvtAbJzrexmKHFbyNc39gyX219kAIe8?=
- =?us-ascii?Q?3hnHQVMFkvfJ9NakH/BM0lTis2Nxc/jm8xHdYzo+v2mlKnkOcDzY2b8OAB17?=
- =?us-ascii?Q?d+eZsWrBMwq1e7wQSVkwWHek6kTENQswRWtW5jh+MGkppUel5o2+6a0ak+Fh?=
- =?us-ascii?Q?mESOXBhf8hUwQIqJ636o058WtattTsNx6EQ0TUNCFYXr9PdEcEbI232RTYMh?=
- =?us-ascii?Q?VU1FNoeboGeB41R9WLGckq3xRwHLkjrAsDdGkHN/2KgaanJQas5obtbFiSLd?=
- =?us-ascii?Q?VTE7/fhR3g033RWGjJiWXcwsI+n995tM3NSg86MGH+5j/v++teEXfclfpVfz?=
- =?us-ascii?Q?IoS2WGMCGQoVjRjuFrViJNBls+zTx36TZZq2ViTN65uwE87iD7IMJWuYGHAd?=
- =?us-ascii?Q?ckSROpxz9Il1UJCJcCq2o6QhUmro6OkxF9W+k1QrLnTAp2s0hdVzJ2jH/f8y?=
- =?us-ascii?Q?jrUKjWDo6+kXWJVplNy9DSq3JDEkGQAKPjJ+IHfUQ9DouKW2bO1VBR9nROzm?=
- =?us-ascii?Q?rawxTBKLu7rbgkBMYRXZUFRCQhEvC7QD4lDCXiEk4q+nsyE1ycQTU5rBt49I?=
- =?us-ascii?Q?3JMujAltHqTB9rRHBXi98F2X/MwYoSLF3BXofnRN7PadWNDUauoOzQP0If4Q?=
- =?us-ascii?Q?pACAATR2WASHZA9OheuUuoGr2Kh9GCRpYunsS8aQVur/qPcw0XcRAmA5Xhej?=
- =?us-ascii?Q?s57tpfnUAGbZ73qf7DxSlw0Hww4JrDfO8UhEtrekNCA2B9Pj6R3h+KlPcYI3?=
- =?us-ascii?Q?79DGtVahOiEd/9QExDKkuRj4KkmfNsMwyDkevWhQ1tCZE2ZC0vQJh4GVlKPc?=
- =?us-ascii?Q?Irz0/v56B+LIQfyE8VXVhPn6wgMpte6KeBPn02s4EdsSPQ9987FYPJ58OwCb?=
- =?us-ascii?Q?VqrpvqAAox9QYDQuD4yCKbDcBWwvbZmyf3AjGGwfph8tSQEdPpoStOtyUGRZ?=
- =?us-ascii?Q?Hco86Z+HmyIgwHvbG7NiZVhC0yZ8DjkIKKLynBEHCpdsHf6//NmIHCkNKBQX?=
- =?us-ascii?Q?K1YyMYAg139EruaspT7KIBKwXEd/AxNu6KzB+aEB+SYxEeWL2w3lcPzPoipo?=
- =?us-ascii?Q?82QvE4EQUJ+gEnwpM1Ei9f+B2XoeF9PuO6yr3psvu74md31ORw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eu7FgSK7JPWsK7IyLlo/1FAwaLBMWbEP9D6lcnpm6oDtXBzE2X08P0ep3eeN?=
- =?us-ascii?Q?KqYKGxcP1321Pw9MdIbTcm2ufn758TSx1rxcMycxUW5lpbR7NwVmntfgZ1T2?=
- =?us-ascii?Q?J4cTXtCsl3cEaYM6SL2OYlQpCXChEsedZlubUMusyZA/cGFqY+hBuxivPi3w?=
- =?us-ascii?Q?WYmXFvxk3g/S76DL6Nr5F9Ww54YOsyka8GcGkBDmo8TrCnjgl/nYRHBh/1Hy?=
- =?us-ascii?Q?ZjKax46Kp+qZDLoi9gsjwadgbEmtcuc4xWTr50CqSUIiHOJGNEVhh68a/JK7?=
- =?us-ascii?Q?IGFORog2ar5xcmdjE9jZpCDW1WRjsaSjWhfz1swgts4WjmWthoituhXKKwp0?=
- =?us-ascii?Q?b554DqK8RWagrFgW4vQYWn4QdYXQdjeBtQzscNoTi3yQH285724hJ7dl9nch?=
- =?us-ascii?Q?nbodjG0XnAqVYloSrqTjl083PmHY4SPFh04G6/XHKAOTI9CMP/h8twjNIlbV?=
- =?us-ascii?Q?4d2gK4c+y9GJkukSj+YX0Mesx4riDS0sF8IjHyHLzls9hyFdetDlpuau4d9s?=
- =?us-ascii?Q?G8pBTDb/sexy76Lchrxvz9HMza4KbpC/wx3MOj8+WqlWMtZ2vPfbIGU02H/Q?=
- =?us-ascii?Q?I13UYsBq5V2S99fEvB2fFN1Gt/0nspfYccBYnj/e3iTVkF4tw9eO/IP+BJS5?=
- =?us-ascii?Q?53VsLsEhe5L8Xmex1zfuvVRnSyNwIQZ+lvefMT0QYgUpcFyi/sag44PBQGoD?=
- =?us-ascii?Q?cfXlVGuCbDoZMhs9cDjLIzDYRNKvBHHok074tJQCinC+twgZ1qVSW0My/cst?=
- =?us-ascii?Q?1iM0Lb/ZZUbCITHVRH5C5mVfz1GH7+MIu96WjRBP01JOCMwKt5ALwh1NpGjM?=
- =?us-ascii?Q?yvDygZyjAQrut4EphwFEi6iuU395lHVaIiHgB13c5ePEB8NJobzSHEvMPGlg?=
- =?us-ascii?Q?2+WULeiOGnH5+gUWkmdT/lCx86Je1D4J3wMj0giBDpCgkvj2NQA66M2amh2O?=
- =?us-ascii?Q?Z1F2CYTXT5d0PYX2qlu88pNDsheuEK0gdYN7omM4DCvRMg7pKx39XinpX4ah?=
- =?us-ascii?Q?8+E1NWiHOHqh0/tx9xHWBTgUHf/oG9CVBebWxrAbuYbf8umeVhALqEhdRmvx?=
- =?us-ascii?Q?YHZbM0PdDrN9qcP90tRIZHzlkSKCL617XgorYhZwWDeUiNjwUK8POxn8Poe3?=
- =?us-ascii?Q?1RBpwxS+8MMub4ih+Nbgim8uCEbJC/V3200jQK+GQnvphLl1qQqXARUOny+o?=
- =?us-ascii?Q?oqZuVF/CjT4JvT2B6W8ICnBNUf6r68WrP47yCAmug3BwXULiFaCXagrzJzI4?=
- =?us-ascii?Q?FkDeTaCaTOkyvkqcuGXVI1njILlWSd0F2n0GWcCoIXQrE5TXBf05N/EzmZwq?=
- =?us-ascii?Q?5X3D8+vQinRfdLyiiyyMATCD7ONfhbI3SHZScQRKzxPxJh0iBr1YWDRRZ4rF?=
- =?us-ascii?Q?WZGwnyUdzviZByGgGH+Jgqitz2mGnWfS9RcF5iNZCJKE+EFgC2NBTFTX1MPc?=
- =?us-ascii?Q?RcQI8H7CsvXzKj6aFXbD3C0N/rjU+A2IhgWzKKOM42CowzIl4GkLPJevcbeN?=
- =?us-ascii?Q?m6zNO+ZbmyxPehmnKCk7ppN0S3llJozfcK+Ag3ZGr//rTEA1es0bUd865jDS?=
- =?us-ascii?Q?TTByBFERkBp7aBn9o9mrIa5/b3Xjxb8/MQEw/CJ8?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0993ce01-d058-4f8e-fd91-08dca1d68f45
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 18:23:27.9403
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EVYb+X08IU2LhyaYciEfqcKJKojbyi0TPm7++ZBCN2pt1YA9diaiM1MtB6x7cfnLgHiUOfS15ouf1Zwu3E4kkg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7514
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dma: Add IOMMU static calls with clear default ops
+To: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Jason Gunthorpe <jgg@nvidia.com>
+Cc: Leon Romanovsky <leonro@nvidia.com>, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev
+References: <98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org>
+ <f2b699aea8fff5589a674da2a567fd593ed2d386.1720693745.git.leon@kernel.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <f2b699aea8fff5589a674da2a567fd593ed2d386.1720693745.git.leon@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Sorry accidently delete 'dt-' in subject. Will fix in next version.
-Frank
+On 11/07/2024 11:38 am, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> Most of the IOMMU drivers are using the same DMA operations, which are
+> default ones implemented in drivers/iomem/dma-iomem.c. So it makes sense
+> to properly set them as a default with direct call without need to
+> perform function pointer dereference.
+> 
+> During system initialization, the IOMMU driver can set its own DMA and
+> in such case, the default DMA operations will be overridden.
 
-On Thu, Jul 11, 2024 at 02:20:02PM -0400, Frank Li wrote:
-> From: Haibo Chen <haibo.chen@nxp.com>
-> 
-> The flexcan in iMX95 is not compatible with imx93 because wakeup method is
-> difference. Make fsl,imx95-flexcan not fallback to fsl,imx93-flexcan.
-> 
-> Reviewed-by: Han Xu <han.xu@nxp.com>
-> Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+I'm going to guess you don't actually mean "IOMMU drivers" in the usual 
+sense of drivers/iommu/, but rather "arch DMA ops (which often, but not 
+always, involve some sort of IOMMU)."
+
+If so, I'd much rather see this done properly, i.e. hook everything up 
+similarly to dma-direct and be able to drop CONFIG_DMA_OPS for "modern" 
+dma-direct/iommu-dma architectures entirely. Furthermore the 
+implementation here isn't right - not only is it not conceptually 
+appropriate to make iommu-dma responsibile for proxying random arch DMA 
+ops, but in practial terms it's just plain broken, since the 
+architectures which still have their own DMA ops also don't use 
+iommu-dma, so this is essentially disabling the entire streaming DMA API 
+on ARM/PowerPC/etc.
+
+Thanks,
+Robin.
+
+> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
 > ---
->  Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>   MAINTAINERS               |  1 +
+>   drivers/iommu/dma-iommu.c | 24 +++++++-------
+>   include/linux/iommu-dma.h | 50 +++++++++++++++++++++++++++++
+>   kernel/dma/iommu.h        | 67 +++++++++++++++++++++++++++++++++++++++
+>   kernel/dma/mapping.c      |  9 +++---
+>   5 files changed, 134 insertions(+), 17 deletions(-)
+>   create mode 100644 include/linux/iommu-dma.h
+>   create mode 100644 kernel/dma/iommu.h
 > 
-> diff --git a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> index b6c92684c5e29..c08bd78e3367e 100644
-> --- a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> @@ -17,6 +17,7 @@ properties:
->    compatible:
->      oneOf:
->        - enum:
-> +          - fsl,imx95-flexcan
->            - fsl,imx93-flexcan
->            - fsl,imx8qm-flexcan
->            - fsl,imx8mp-flexcan
-> @@ -39,9 +40,6 @@ properties:
->                - fsl,imx6ul-flexcan
->                - fsl,imx6sx-flexcan
->            - const: fsl,imx6q-flexcan
-> -      - items:
-> -          - const: fsl,imx95-flexcan
-> -          - const: fsl,imx93-flexcan
->        - items:
->            - enum:
->                - fsl,ls1028ar1-flexcan
-> 
-> -- 
-> 2.34.1
-> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index da5352dbd4f3..1e64be463da7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11544,6 +11544,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
+>   F:	Documentation/devicetree/bindings/iommu/
+>   F:	Documentation/userspace-api/iommu.rst
+>   F:	drivers/iommu/
+> +F:	include/linux/iommu-dma.h
+>   F:	include/linux/iommu.h
+>   F:	include/linux/iova.h
+>   F:	include/linux/of_iommu.h
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index 43520e7275cc..54e95792ed90 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -17,6 +17,7 @@
+>   #include <linux/gfp.h>
+>   #include <linux/huge_mm.h>
+>   #include <linux/iommu.h>
+> +#include <linux/iommu-dma.h>
+>   #include <linux/iova.h>
+>   #include <linux/irq.h>
+>   #include <linux/list_sort.h>
+> @@ -1134,9 +1135,9 @@ static void iommu_dma_sync_sg_for_device(struct device *dev,
+>   			arch_sync_dma_for_device(sg_phys(sg), sg->length, dir);
+>   }
+>   
+> -static dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
+> -		unsigned long offset, size_t size, enum dma_data_direction dir,
+> -		unsigned long attrs)
+> +dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
+> +			      unsigned long offset, size_t size,
+> +			      enum dma_data_direction dir, unsigned long attrs)
+>   {
+>   	phys_addr_t phys = page_to_phys(page) + offset;
+>   	bool coherent = dev_is_dma_coherent(dev);
+> @@ -1194,8 +1195,9 @@ static dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
+>   	return iova;
+>   }
+>   
+> -static void iommu_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
+> -		size_t size, enum dma_data_direction dir, unsigned long attrs)
+> +void iommu_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
+> +			  size_t size, enum dma_data_direction dir,
+> +			  unsigned long attrs)
+>   {
+>   	struct iommu_domain *domain = iommu_get_dma_domain(dev);
+>   	phys_addr_t phys;
+> @@ -1348,8 +1350,8 @@ static int iommu_dma_map_sg_swiotlb(struct device *dev, struct scatterlist *sg,
+>    * impedance-matching, to be able to hand off a suitably-aligned list,
+>    * but still preserve the original offsets and sizes for the caller.
+>    */
+> -static int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
+> -		int nents, enum dma_data_direction dir, unsigned long attrs)
+> +int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+> +		     enum dma_data_direction dir, unsigned long attrs)
+>   {
+>   	struct iommu_domain *domain = iommu_get_dma_domain(dev);
+>   	struct iommu_dma_cookie *cookie = domain->iova_cookie;
+> @@ -1468,8 +1470,8 @@ static int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
+>   	return ret;
+>   }
+>   
+> -static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+> -		int nents, enum dma_data_direction dir, unsigned long attrs)
+> +void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
+> +			enum dma_data_direction dir, unsigned long attrs)
+>   {
+>   	dma_addr_t end = 0, start;
+>   	struct scatterlist *tmp;
+> @@ -1731,10 +1733,6 @@ static const struct dma_map_ops iommu_dma_ops = {
+>   	.free_noncontiguous	= iommu_dma_free_noncontiguous,
+>   	.mmap			= iommu_dma_mmap,
+>   	.get_sgtable		= iommu_dma_get_sgtable,
+> -	.map_page		= iommu_dma_map_page,
+> -	.unmap_page		= iommu_dma_unmap_page,
+> -	.map_sg			= iommu_dma_map_sg,
+> -	.unmap_sg		= iommu_dma_unmap_sg,
+>   	.sync_single_for_cpu	= iommu_dma_sync_single_for_cpu,
+>   	.sync_single_for_device	= iommu_dma_sync_single_for_device,
+>   	.sync_sg_for_cpu	= iommu_dma_sync_sg_for_cpu,
+> diff --git a/include/linux/iommu-dma.h b/include/linux/iommu-dma.h
+> new file mode 100644
+> index 000000000000..b42487bf8f8e
+> --- /dev/null
+> +++ b/include/linux/iommu-dma.h
+> @@ -0,0 +1,50 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2024, NVIDIA CORPORATION & AFFILIATES. All rights reserved
+> + *
+> + * DMA operations that map physical memory through IOMMU.
+> + */
+> +#ifndef _LINUX_IOMMU_DMA_H
+> +#define _LINUX_IOMMU_DMA_H
+> +
+> +#include <linux/dma-direction.h>
+> +
+> +#ifdef CONFIG_IOMMU_API
+> +dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
+> +			      unsigned long offset, size_t size,
+> +			      enum dma_data_direction dir, unsigned long attrs);
+> +void iommu_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
+> +			  size_t size, enum dma_data_direction dir,
+> +			  unsigned long attrs);
+> +int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+> +		     enum dma_data_direction dir, unsigned long attrs);
+> +void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
+> +			enum dma_data_direction dir, unsigned long attrs);
+> +#else
+> +static inline dma_addr_t iommu_dma_map_page(struct device *dev,
+> +					    struct page *page,
+> +					    unsigned long offset, size_t size,
+> +					    enum dma_data_direction dir,
+> +					    unsigned long attrs)
+> +{
+> +	return DMA_MAPPING_ERROR;
+> +}
+> +static inline void iommu_dma_unmap_page(struct device *dev,
+> +					dma_addr_t dma_handle, size_t size,
+> +					enum dma_data_direction dir,
+> +					unsigned long attrs)
+> +{
+> +}
+> +static inline int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
+> +				   int nents, enum dma_data_direction dir,
+> +				   unsigned long attrs)
+> +{
+> +	return -EINVAL;
+> +}
+> +static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+> +			       int nents, enum dma_data_direction dir,
+> +			       unsigned long attrs)
+> +{
+> +}
+> +#endif /* CONFIG_IOMMU_API */
+> +#endif /* _LINUX_IOMMU_DMA_H */
+> diff --git a/kernel/dma/iommu.h b/kernel/dma/iommu.h
+> new file mode 100644
+> index 000000000000..4abaea2dfc49
+> --- /dev/null
+> +++ b/kernel/dma/iommu.h
+> @@ -0,0 +1,67 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2024, NVIDIA CORPORATION & AFFILIATES. All rights reserved
+> + *
+> + * DMA operations that map physical memory through IOMMU.
+> + */
+> +#ifndef _KERNEL_DMA_IOMMU_H
+> +#define _KERNEL_DMA_IOMMU_H
+> +
+> +#include <linux/iommu-dma.h>
+> +
+> +static inline dma_addr_t dma_iommu_map_page(struct device *dev,
+> +					    struct page *page, size_t offset,
+> +					    size_t size,
+> +					    enum dma_data_direction dir,
+> +					    unsigned long attrs)
+> +{
+> +	const struct dma_map_ops *ops = get_dma_ops(dev);
+> +
+> +	if (ops->map_page)
+> +		return ops->map_page(dev, page, offset, size, dir, attrs);
+> +
+> +	return iommu_dma_map_page(dev, page, offset, size, dir, attrs);
+> +}
+> +
+> +static inline void dma_iommu_unmap_page(struct device *dev, dma_addr_t addr,
+> +					size_t size,
+> +					enum dma_data_direction dir,
+> +					unsigned long attrs)
+> +{
+> +	const struct dma_map_ops *ops = get_dma_ops(dev);
+> +
+> +	if (ops->unmap_page) {
+> +		ops->unmap_page(dev, addr, size, dir, attrs);
+> +		return;
+> +	}
+> +
+> +	iommu_dma_unmap_page(dev, addr, size, dir, attrs);
+> +}
+> +
+> +static inline int dma_iommu_map_sg(struct device *dev, struct scatterlist *sg,
+> +				   int nents, enum dma_data_direction dir,
+> +				   unsigned long attrs)
+> +{
+> +	const struct dma_map_ops *ops = get_dma_ops(dev);
+> +
+> +	if (ops->map_sg)
+> +		return ops->map_sg(dev, sg, nents, dir, attrs);
+> +
+> +	return iommu_dma_map_sg(dev, sg, nents, dir, attrs);
+> +}
+> +
+> +static inline void dma_iommu_unmap_sg(struct device *dev,
+> +				      struct scatterlist *sg, int nents,
+> +				      enum dma_data_direction dir,
+> +				      unsigned long attrs)
+> +{
+> +	const struct dma_map_ops *ops = get_dma_ops(dev);
+> +
+> +	if (ops->unmap_sg) {
+> +		ops->unmap_sg(dev, sg, nents, dir, attrs);
+> +		return;
+> +	}
+> +
+> +	iommu_dma_unmap_sg(dev, sg, nents, dir, attrs);
+> +}
+> +#endif /* _KERNEL_DMA_IOMMU_H */
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index 6832fd6f0796..a9aa4036362a 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+> @@ -16,6 +16,7 @@
+>   #include <linux/vmalloc.h>
+>   #include "debug.h"
+>   #include "direct.h"
+> +#include "iommu.h"
+>   
+>   #if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
+>   	defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
+> @@ -160,7 +161,7 @@ dma_addr_t dma_map_page_attrs(struct device *dev, struct page *page,
+>   	    arch_dma_map_page_direct(dev, page_to_phys(page) + offset + size))
+>   		addr = dma_direct_map_page(dev, page, offset, size, dir, attrs);
+>   	else
+> -		addr = ops->map_page(dev, page, offset, size, dir, attrs);
+> +		addr = dma_iommu_map_page(dev, page, offset, size, dir, attrs);
+>   	kmsan_handle_dma(page, offset, size, dir);
+>   	debug_dma_map_page(dev, page, offset, size, dir, addr, attrs);
+>   
+> @@ -178,7 +179,7 @@ void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr, size_t size,
+>   	    arch_dma_unmap_page_direct(dev, addr + size))
+>   		dma_direct_unmap_page(dev, addr, size, dir, attrs);
+>   	else
+> -		ops->unmap_page(dev, addr, size, dir, attrs);
+> +		dma_iommu_unmap_page(dev, addr, size, dir, attrs);
+>   	debug_dma_unmap_page(dev, addr, size, dir);
+>   }
+>   EXPORT_SYMBOL(dma_unmap_page_attrs);
+> @@ -198,7 +199,7 @@ static int __dma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
+>   	    arch_dma_map_sg_direct(dev, sg, nents))
+>   		ents = dma_direct_map_sg(dev, sg, nents, dir, attrs);
+>   	else
+> -		ents = ops->map_sg(dev, sg, nents, dir, attrs);
+> +		ents = dma_iommu_map_sg(dev, sg, nents, dir, attrs);
+>   
+>   	if (ents > 0) {
+>   		kmsan_handle_dma_sg(sg, nents, dir);
+> @@ -292,7 +293,7 @@ void dma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg,
+>   	    arch_dma_unmap_sg_direct(dev, sg, nents))
+>   		dma_direct_unmap_sg(dev, sg, nents, dir, attrs);
+>   	else
+> -		ops->unmap_sg(dev, sg, nents, dir, attrs);
+> +		dma_iommu_unmap_sg(dev, sg, nents, dir, attrs);
+>   }
+>   EXPORT_SYMBOL(dma_unmap_sg_attrs);
+>   
 
