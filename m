@@ -1,348 +1,104 @@
-Return-Path: <linux-kernel+bounces-248463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460DA92DD7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 02:49:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D26C92DDB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 03:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E1B2828B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:49:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E83C1C2171C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878787462;
-	Thu, 11 Jul 2024 00:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4QN8V+V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5BB79DF;
+	Thu, 11 Jul 2024 01:12:44 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AAB17FD;
-	Thu, 11 Jul 2024 00:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2896FC3;
+	Thu, 11 Jul 2024 01:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720658929; cv=none; b=br1jSwJhPlecqLLh7omUWg4p2zk1WZyp1LFzj4fAMe6jIMDsEk1WcaXwDpr6Dy0cya3ONNKjh4U2Htxi70kWBbZa2q3Ya+GHsCNo5agPk2vE00pQBfLLjxj1i6Yw3j3c3xmg9N8RcZZx0bfeSLvrXAx3LCs2KN42hYXrz6yqIpo=
+	t=1720660363; cv=none; b=UrK09f1jsRsSKbVJKHruKxTCXGiPTRC+++9uTNPdHImMi3oV5WR4o1Cqrv1qarC+8D/of9NZCrXWr7oLZT0k4fc6XkUBcBKWgeVVa4ThDGlq0PVD9Zjy3FxoYwpgS2y1bMdZH/wqMuuzukoNnO1ICFds5UwsGP75MqbBEJJHO7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720658929; c=relaxed/simple;
-	bh=1QWRTj0NgxJken/pxHFzYtCWzNKZqdt99bnCGV7dvX0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BaY+Yi3kwQjAag50SYYmBe9WWq8j+1OlU8uNSDwp4eI04is1ikJb92pbO0pQksVtk1eigcakvN98GZooSvezO0OwTkA0P6MuoTMvb6J6Uyd7WYecfEK6jF8JC4S31veZ9y4zPell9co9FuVHO2v9h/duu1FdbJ4g2zglPtlgLwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4QN8V+V; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720658927; x=1752194927;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=1QWRTj0NgxJken/pxHFzYtCWzNKZqdt99bnCGV7dvX0=;
-  b=l4QN8V+VJZpwkiwGoW85MkRcs8eD3wuviT2ZG++20RpUFMB51pU1duGV
-   sUu4B85axR7f30w7aNhwsb4MXc/g3Seo2SnfUpnRmyVAgkSqwPLjUB6fZ
-   qz1twEYMa9ATabMqCVmnXuek/z9YiBmbA+LG/cda5Ip/ZKE1+z6+hEUlL
-   UHpCTLcdbK5rtTpJmzGSFe3ZT6pFR4UoxEf+lSW7DAJHSSXg1F5m3dtUP
-   p0qBpyVHtZvkIbWuz2nqn0ZLBBSDVk3rhqxFeyXYbUSfQfRqGZWZmVjKT
-   niyUOWWctXsOUrgwzDxpVoIZDKRKiZbyx4e0WKCmH7KlNEAZpz2JJsxIx
-   g==;
-X-CSE-ConnectionGUID: 9cILeKfoQiW1fAhBxyNg9g==
-X-CSE-MsgGUID: zxpycwvnQcyuy8qJuy3GPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="29172736"
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="29172736"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 17:48:47 -0700
-X-CSE-ConnectionGUID: xYsy0nIxQsWSpu8gqq6RQw==
-X-CSE-MsgGUID: TKxZRBbsQM6REW2gGUJQ0w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="48274689"
-Received: from bmurrell-mobl.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.221.70])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 17:48:46 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Rodrigo Cataldo via B4 Relay
- <devnull+rodrigo.cadore.l-acoustics.com@kernel.org>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Kurt
- Kanzenbach <kurt.kanzenbach@linutronix.de>, "Christopher S. Hall"
- <christopher.s.hall@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rodrigo Cataldo
- <rodrigo.cadore@l-acoustics.com>
-Subject: Re: [PATCH iwl-net] igc: Ensure PTM request is completed before
- timeout has started
-In-Reply-To: <20240708-igc-flush-ptm-request-before-timeout-6-10-v1-1-70e5ebec9efe@l-acoustics.com>
-References: <20240708-igc-flush-ptm-request-before-timeout-6-10-v1-1-70e5ebec9efe@l-acoustics.com>
-Date: Wed, 10 Jul 2024 17:48:45 -0700
-Message-ID: <87r0c0sqhe.fsf@intel.com>
+	s=arc-20240116; t=1720660363; c=relaxed/simple;
+	bh=O7UHm5mGZ4SXp7fR7bG+DpEoKu3hZUJvpz1WHuoRNrU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vqx/48J7lKnH4M5Yv6VLJNH6L977h3bmP2KmTvBXkgh8B5u4Gi2779Cf8C9c+pH32Cl/9icW3vlaRjOaadgo376cvDS65aOIbw/HxU7evPjGwS7khQDO+gQHDBh+LVr5lBzvTUdjtDe/MJRqRwA1lFFKAlayh0E1qO5bguGmx3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowADHqE10MY9mlj+8Ag--.2888S2;
+	Thu, 11 Jul 2024 09:12:21 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: njavali@marvell.com,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	skashyap@marvell.com,
+	himanshu.madhani@oracle.com,
+	dwagner@suse.de
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH v2] scsi: qla2xxx: Convert comma to semicolon
+Date: Thu, 11 Jul 2024 08:57:24 +0800
+Message-Id: <20240711005724.2358446-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADHqE10MY9mlj+8Ag--.2888S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZrWxtrWUCF1UXry8AFb_yoWDGrc_uF
+	s0qrW2qrn0kr129w18Xr43A3yIvFWvqr1kC3WYyry5u3y8X347XF1Yqr43X3W3trWIyFW5
+	Aw4UXryjvF1rujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
+	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc2xSY4AK67AK6w4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjfU5eOJUUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Rodrigo Cataldo via B4 Relay
-<devnull+rodrigo.cadore.l-acoustics.com@kernel.org> writes:
+Replace a comma between expression statements by a semicolon.
 
-> From: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
->
-> When a PTM is requested via wr32(IGC_PTM_STAT), the operation may only
-> be completed by the next read operation (flush). Unfortunately, the next
-> read operation in the PTM request loop happens after we have already
-> started evaluating the response timeout.
->
-> Thus, the following behavior has been observed::
->
->   phc2sys-1655  [010]   103.233752: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
->   phc2sys-1655  [010]   103.233754: funcgraph_entry:                    |    igc_phc_get_syncdevice_time() {
->   phc2sys-1655  [010]   103.233755: funcgraph_entry:                    |      igc_rd32() {
->   phc2sys-1655  [010]   103.233931: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
->   phc2sys-1655  [010]   103.233932: local_timer_entry: vector=236
->   phc2sys-1655  [010]   103.233932: hrtimer_cancel: hrtimer=0xffff8edeef526118
->   phc2sys-1655  [010]   103.233933: hrtimer_expire_entry: hrtimer=0xffff8edeef526118 now=103200127876 function=tick_nohz_handler/0x0
->
->   ... tick handler ...
->
->   phc2sys-1655  [010]   103.233971: funcgraph_exit:       !  215.559 us |      }
->   phc2sys-1655  [010]   103.233972: funcgraph_entry:                    |      igc_rd32() {
->   phc2sys-1655  [010]   103.234135: funcgraph_exit:       !  164.370 us |      }
->   phc2sys-1655  [010]   103.234136: funcgraph_entry:         1.942 us   |      igc_rd32();
->   phc2sys-1655  [010]   103.234147: console:              igc 0000:03:00.0 enp3s0: Timeout reading IGC_PTM_STAT register
->
-> Based on the (simplified) code::
->
-> 	ctrl = rd32(IGC_PTM_CTRL);
->         /* simplified: multiple writes here */
-> 	wr32(IGC_PTM_STAT, IGC_PTM_STAT_VALID);
->
-> 	err = readx_poll_timeout(rd32, IGC_PTM_STAT, stat,
-> 				 stat, IGC_PTM_STAT_SLEEP,
-> 				 IGC_PTM_STAT_TIMEOUT);
-> 	if (err < 0) {
-> 		netdev_err(adapter->netdev, "Timeout reading IGC_PTM_STAT register\n");
-> 		return err;
-> 	}
->
-> Where readx_poll_timeout() starts the timeout evaluation before calling
-> the rd32() parameter (rd32() is a macro for igc_rd32()).
->
-> In the trace shown, the read operation of readx_poll_timeout() (second
-> igc_rd32()) took so long that the timeout (IGC_PTM_STAT_VALID) has expired
-> and no sleep has been performed.
->
-> With this patch, a write flush is added (which is an additional
-> igc_rd32() in practice) that can wait for the write before the timeout
-> is evaluated::
->
->   phc2sys-1615  [010]    74.517954: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
->   phc2sys-1615  [010]    74.517956: funcgraph_entry:                    |    igc_phc_get_syncdevicetime() {
->   phc2sys-1615  [010]    74.517957: funcgraph_entry:                    |      igc_rd32() {
->   phc2sys-1615  [010]    74.518127: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
->   phc2sys-1615  [010]    74.518128: local_timer_entry: vector=236
->   phc2sys-1615  [010]    74.518128: hrtimer_cancel: hrtimer=0xffff96466f526118
->   phc2sys-1615  [010]    74.518128: hrtimer_expire_entry: hrtimer=0xffff96466f526118 now=74484007229 function=tick_nohz_handler/0x0
->
->   ... tick handler ...
->
->   phc2sys-1615  [010]    74.518180: funcgraph_exit:       !  222.282 us |      }
->   phc2sys-1615  [010]    74.518181: funcgraph_entry:                    |      igc_rd32() {
->   phc2sys-1615  [010]    74.518349: funcgraph_exit:       !  168.160 us |      }
->   phc2sys-1615  [010]    74.518349: funcgraph_entry:         1.970 us   |      igc_rd32();
->   phc2sys-1615  [010]    74.518352: hrtimer_init: hrtimer=0xffffa6f9413a3940 clockid=CLOCK_MONOTONIC mode=0x0
->   phc2sys-1615  [010]    74.518352: preempt_disable: caller=_raw_spin_lock_irqsave+0x28 parent=hrtimer_start_range_ns+0x56
->   phc2sys-1615  [010]    74.518353: hrtimer_start: hrtimer=0xffffa6f9413a3940 function=hrtimer_wakeup/0x0 expires=74484232878 softexpires=74484231878
->
->   .. hrtimer setup and return ...
->
->   kworker/10:1-242   [010]    74.518382: sched_switch: kworker/10:1:242 [120] W ==> phc2sys:1615 [120]
->   phc2sys-1615  [010]    74.518383: preempt_enable: caller=schedule+0x36 parent=schedule+0x36
->   phc2sys-1615  [010]    74.518384: funcgraph_entry:      !  100.088 us |      igc_rd32();
->   phc2sys-1615  [010]    74.518484: funcgraph_entry:         1.958 us   |      igc_rd32();
->   phc2sys-1615  [010]    74.518488: funcgraph_entry:         2.019 us   |      igc_rd32();
->   phc2sys-1615  [010]    74.518490: funcgraph_entry:         1.956 us   |      igc_rd32();
->   phc2sys-1615  [010]    74.518492: funcgraph_entry:         1.980 us   |      igc_rd32();
->   phc2sys-1615  [010]    74.518494: funcgraph_exit:       !  539.386 us |    }
->
-> Now the sleep is called as expected, and the operation succeeds.
-> Therefore, regardless of how long it will take for the write to be
-> completed, we will poll+sleep at least for the time specified in
-> IGC_PTM_STAT_TIMEOUT.
->
-> Fixes: a90ec8483732 ("igc: Add support for PTP getcrosststamp()")
-> Signed-off-by: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
-> ---
-> I have been searching for the proper solution for this PTM issue for a long
-> time. The issue was observed on a 13700 (Raptor Lake). We also use a 8500
-> (Coffee Lake) that is much less susceptible for this issue, but still
-> happens. Both are using I225-LM cards.
->
-> For a 24 hours test, idle system, I have observed with 13700::
->
-> 	number of timeouts in 86400 seconds: 2509
->
-> The same test on a 8500::
->
->         number of timeouts in 86400 seconds: 9
->
-> Where one PTM request is sent per second. Test was done this script::
->
->   record_multiple_timeout_param()
->   {
->   	local taskset_cpu=$1
->   	local cur_limit=$((SECONDS + LIMIT_SECONDS ))
->   	local timeouts=0
->   
->   	while [ $SECONDS -lt $cur_limit ]
->   	do
->   		REL_TO=$((cur_limit - SECONDS))
->   
->   		timeout $REL_TO taskset $taskset_cpu \
->   			phc2sys -c $ITF_NAME -s CLOCK_REALTIME -O 37 -m 1>/dev/null
->   		if [ $? -eq 255 ]; then
->   			timeouts=$((timeouts + 1))
->   		fi
->   	done
->   	printf "\tnumber of timeouts in %s seconds: %d\n" $LIMIT_SECONDS $timeouts
->   }
->
->   record_multiple_timeout_param $NON_ISOLCPU_MASK
->
-> Firmware version for the cards::
->
->   # lshw -class network -json | jq '.[0].product,.[0].configuration.firmware'
->   "Ethernet Controller I225-LM"
->   "1057:8754"
->
->   # lshw -class network -json | jq '.[2].product,.[2].configuration.firmware'
->   "Ethernet Controller I225-LM"
->   "1057:8754
->
-> A couple of attempts were made that did not lead to solving the
-> issue (disabling ASPM in kernel and boot, using periodic tick), and a couple
-> of solutions that worked but that were subpar:
->
-> 1. The issue was not observed for a phc2sys(8) running on a fully
->    isolated nohz_full core. We do not have the luxury of dedicating a a
->    core for it.
+Fixes: d4523bd6fd5d ("scsi: qla2xxx: Refactor asynchronous command initialization")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+Changelog:
 
-This one is interesting. Was it because the isolated CPU never got to
-sleep and readx_poll_timeout() became a busy loop? I am trying to fit
-this one on my mental model.
+v1 -> v2:
 
-> 2. Bumping the IGC_PTM_STAT_TIMEOUT value. Other machines may need
->    another value though.
+1. Add Fixes tag.
+---
+ drivers/scsi/qla2xxx/qla_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This one is not horrible as well. Some value like 400us comes to mind.
-
-Your proposed fix looks fine as well, I was thinking a bit about it, and
-even if it's more a like a timing issue than "the absolutely correct
-fix", there are little chances for bad side effects.
-
-If there aren't any other ideas, I am fine with this:
-
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-
-> 3. Retry (multiple times) readx_poll_timeout() in case of failure. This may
->    significantly increase the function latency, because each
->    readx_poll_timeout() can take more than 100 us.
-> 4. Disabling preemption during the PTM request. Horrible.
->
-
-I wonder if you tried moving the I225 to the graphics card PCIe slot, or
-is it an onboard card? IIRC there are different PCIe controllers for the
-graphics slot vs. the other ones, at least on Coffee Lake.
-
-> For the Coffee Lake machine, the issue tends to be avoided because the
-> read does not take so long. Here is basically the same trace using the
-> Cofee Lake machine::
->
->   phc2sys-1204  [002]  1778.220288: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
->   phc2sys-1204  [002]  1778.220290: funcgraph_entry:                    |    igc_phc_get_syncdevicetime() {
->   phc2sys-1204  [002]  1778.220291: funcgraph_entry:                    |      igc_rd32() {
->   phc2sys-1204  [002]  1778.220373: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
->   phc2sys-1204  [002]  1778.220374: local_timer_entry: vector=236
->   phc2sys-1204  [002]  1778.220375: hrtimer_cancel: hrtimer=0xffff894027326118
->   phc2sys-1204  [002]  1778.220376: hrtimer_expire_entry: hrtimer=0xffff894027326118 now=1778228034802 function=tick_nohz_handler/0x0
->
->   ... tick handler ...
->
->   phc2sys-1204  [002]  1778.220411: funcgraph_exit:       !  119.843 us |      }
->   phc2sys-1204  [002]  1778.220412: funcgraph_entry:                    |      igc_rd32() {
->   phc2sys-1204  [002]  1778.220492: funcgraph_exit:       + 80.094 us   |      }
->   phc2sys-1204  [002]  1778.220493: funcgraph_entry:        2.951 us    |      igc_rd32();
->   phc2sys-1204  [002]  1778.220497: hrtimer_init: hrtimer=0xffffa504c0d83aa0 clockid=CLOCK_MONOTONIC mode=0x0
->   phc2sys-1204  [002]  1778.220498: preempt_disable: caller=_raw_spin_lock_irqsave+0x28 parent=hrtimer_start_range_ns+0x56
->   phc2sys-1204  [002]  1778.220499: hrtimer_start: hrtimer=0xffffa504c0d83aa0 function=hrtimer_wakeup/0x0 expires=1778228158866 softexpires=1778228157866
->
->   ... timer setup ....
->
->   phc2sys-1204  [002]  1778.220509: preempt_enable: caller=_raw_spin_unlock_irqrestore+0x2b parent=hrtimer_start_range_ns+0x12d
->   phc2sys-1204  [002]  1778.220511: funcgraph_entry:        7.338 us   |      igc_rd32();
->   phc2sys-1204  [002]  1778.220519: funcgraph_entry:        2.769 us   |      igc_rd32();
->   phc2sys-1204  [002]  1778.220522: funcgraph_entry:        2.798 us   |      igc_rd32();
->   phc2sys-1204  [002]  1778.220525: funcgraph_entry:        2.736 us   |      igc_rd32();
->   phc2sys-1204  [002]  1778.220529: funcgraph_entry:        2.750 us   |      igc_rd32();
->   phc2sys-1204  [002]  1778.220532: funcgraph_exit:       !  242.656 us |    }
->
-> For both machines, I observed that the first igc_rd32() after an idle
-> period (more than 10us) tends to take significantly more time. I assume
-> this is a hardware power-saving technique, but I could not find any
-> mention in the manuals. This is very easily observable with an idle
-> system running phc2sys, since it will request only once every second.
->
-> This is the typical trace of the operation::
->
->   phc2sys-1204  [002]  1749.209397: funcgraph_entry:                   |  igc_ptp_getcrosststamp() {
->   phc2sys-1204  [002]  1749.209398: funcgraph_entry:                   |    igc_phc_get_syncdevicetime() {
->   phc2sys-1204  [002]  1749.209400: funcgraph_entry:      + 81.491 us  |      igc_rd32();
->   phc2sys-1204  [002]  1749.209482: funcgraph_entry:        3.691 us   |      igc_rd32();
->   phc2sys-1204  [002]  1749.209487: funcgraph_entry:        2.942 us   |      igc_rd32();
->   phc2sys-1204  [002]  1749.209490: hrtimer_init: hrtimer=0xffffa504c0d83a00 clockid=CLOCK_MONOTONIC mode=0x0
->   phc2sys-1204  [002]  1749.209491: preempt_disable: caller=_raw_spin_lock_irqsave+0x28 parent=hrtimer_start_range_ns+0x56
->   ... timer setup and it goes on like before ...
->
-> The preemption needs to happen for this issue, so that this power-saving
-> mode is triggered, making the igc_rd32 'slow enough' so that all of the
-> timeout is consumed before the card has time to answer.
->
-> I believe flushing the write solves the issue definitely, since the
-> write should be completed before the timeout has started. So that, even
-> if the timeout is consumed by a slow read operation, the write has been
-> received before and the card had time to process the request.
-> ---
->  drivers/net/ethernet/intel/igc/igc_ptp.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/net/ethernet/intel/igc/igc_ptp.c b/drivers/net/ethernet/intel/igc/igc_ptp.c
-> index 1bb026232efc..d7269e4f1a21 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_ptp.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_ptp.c
-> @@ -1005,6 +1005,10 @@ static int igc_phc_get_syncdevicetime(ktime_t *device,
->  		 * VALID bit.
->  		 */
->  		wr32(IGC_PTM_STAT, IGC_PTM_STAT_VALID);
-> +		/* Ensure the hardware receives the ptm request before the
-> +		 * response timeout starts.
-> +		 */
-> +		wrfl();
->  
->  		err = readx_poll_timeout(rd32, IGC_PTM_STAT, stat,
->  					 stat, IGC_PTM_STAT_SLEEP,
->
-> ---
-> base-commit: 0005b2dc43f96b93fc5b0850d7ca3f7aeac9129c
-> change-id: 20240705-igc-flush-ptm-request-before-timeout-6-10-f6e02c96f6d4
->
-> Best regards,
-> -- 
-> Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
->
->
-
-
-Cheers,
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index 8377624d76c9..e2ca9a14b643 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -423,7 +423,7 @@ qla2x00_async_logout(struct scsi_qla_host *vha, fc_port_t *fcport)
+ 	sp->type = SRB_LOGOUT_CMD;
+ 	sp->name = "logout";
+ 	qla2x00_init_async_sp(sp, qla2x00_get_async_timeout(vha) + 2,
+-			      qla2x00_async_logout_sp_done),
++			      qla2x00_async_logout_sp_done);
+ 
+ 	ql_dbg(ql_dbg_disc, vha, 0x2070,
+ 	    "Async-logout - hdl=%x loop-id=%x portid=%02x%02x%02x %8phC explicit %d.\n",
 -- 
-Vinicius
+2.25.1
+
 
