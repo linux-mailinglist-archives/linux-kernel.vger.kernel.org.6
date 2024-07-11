@@ -1,192 +1,126 @@
-Return-Path: <linux-kernel+bounces-248586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF9B92DF51
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:09:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA64092DF52
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B194EB21181
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:09:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EBF9B216B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816125477A;
-	Thu, 11 Jul 2024 05:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10BB4EB5E;
+	Thu, 11 Jul 2024 05:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9NrvbX/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nCuDEfi9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFDA20312;
-	Thu, 11 Jul 2024 05:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9325720312
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720674575; cv=none; b=bssANFueJz77G+Q+RFXayE04JvkaPD+CZhR8xdMEwE8hreBiG2/hiPtOF7hcL8ArAM4737BCylSnSGikqnHBXX5xKR9jg7ZFDD9qJ88pF1etxncz6Eb+wa4ZDdVnlg7fgKkNfBWpzrIFY/DfQzDVe3DJDEQLfjoTW+GVp+Zb5Jc=
+	t=1720674730; cv=none; b=JRhioRrQIR4TBhiY7IJHQmYNQB2ZyfEHoTB05Z5z4buZPpNZY9wC5rj/3e+6VmCVxbtW+bhXmnhtFVDh1wBHsx64XJBSeppsHWHZETHOJ0uTajuE3cmUF9lh6i22g1LytubPH4G4pZIu4LYoOwVCdmkuYDLJg1Jq3zk8oaj55eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720674575; c=relaxed/simple;
-	bh=3mq68wnh89QhdTG3ycaKxXy1VslZgsI6uKtfnxrJKOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f6E+71xLsO4Jl+EvQzXMm50TLpRfKC0AR7BBdwQ8sat3481M3TiWPDgo37iYYTZkOy8kSAJzoLkGg4gz7W2CdSLdCpi/+UUHCKZdWJmonps9QBe3ovDvyeC1NArFxJZl6U+G1XyRFlLxfcr8rsDTi7uGuh7Hp9XkO6wAEsGcC8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9NrvbX/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9637EC116B1;
-	Thu, 11 Jul 2024 05:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720674575;
-	bh=3mq68wnh89QhdTG3ycaKxXy1VslZgsI6uKtfnxrJKOY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=q9NrvbX/oX/k35lLO8q7wvLSzVvstvCAcObMHW32njE39nucF0a/Ouk48dMJiSQ1K
-	 XXOHIsk5Mn0S/dROc4yRRN9YbMdMMKulfNgduegxJCkoJ7JkxXvwpIdFSk9vrNATxL
-	 WcXdqHSn9c4DB3IDuJuT26tsgLBR1TOLvzDmaAu0dTwkEwdJyNUWxQLz/TRC5nkEud
-	 +LSrCnwRAZI4onpYDDT+kOVhFumI8yldiFIZvy62t/7J6afq+6/LLlHdQZEde69FKj
-	 0rAvGYc50KRAsUCbnZ/e5K5Wjzd+IvXY9vKRL+mRk0u4LMHE4Tccrjjy8S/+yl1EPy
-	 Sc12uX6UcfP9g==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Thu, 11 Jul 2024 07:09:27 +0200
-Message-ID: <20240711-vfs-fixes-b2bdd616763d@brauner>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720674730; c=relaxed/simple;
+	bh=MZd38XxWmIqZrcV1axvi6IGkNY/+kRVgzvxcTNf3Djk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=FwlTQP/FIPgI+jgYV89QDzlZRQ94Yu3hoXVzGOyKaXe0rrxAK9FXu89UzDI4CJt+M0KQ8nqv/78iNIzNxatGcestjTrsANFSobXXcMloX2Dn+N6v1Rh31tX3tQ7ru6NB5CXTqc3kxVvpPin5diD/24fLDu5lnMl5LG6S4JH5qeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nCuDEfi9; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720674727; x=1752210727;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=MZd38XxWmIqZrcV1axvi6IGkNY/+kRVgzvxcTNf3Djk=;
+  b=nCuDEfi9pyeqyCVTpbXl43hEXJD8HFzS82PTdzHjJj/8p+kdryYG/lNq
+   TKju+LQYIGCQ4VejxNepontlOHobdlKgvAK26eW9e/C4WrBDOi4Vf/L/M
+   UH+mZ+hOx0mEHixksOkdaCuve3lt2WW1CGfaLJmnNkV1ok4aZE5jJTgLH
+   aPKAnL84BsJDuG7udLziMkpsaFTP3Kfwh5rwNTvZLqh3EL3x6jAGRof8t
+   Xip22dEUudLPOPfq291Q6QgZxoAh9LS1pQa9mPax+iZf2CrkGjuMnaZVJ
+   DftHSln5SRsDiLEl/mlxnBwrYhc1596fC+OjdCttZajxbgsD5XZ38+JNg
+   Q==;
+X-CSE-ConnectionGUID: OvGnnI5iT1+HUEWi+JwmOA==
+X-CSE-MsgGUID: +5+XXmRdTtOwlwNhOg7FoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="17902358"
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="17902358"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 22:12:07 -0700
+X-CSE-ConnectionGUID: CHRzAthCRsWkuL64hJVWdQ==
+X-CSE-MsgGUID: Hi2X5buFS42TbgssuhErgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,199,1716274800"; 
+   d="scan'208";a="48435324"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 10 Jul 2024 22:12:05 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sRm67-000YoE-21;
+	Thu, 11 Jul 2024 05:12:03 +0000
+Date: Thu, 11 Jul 2024 13:11:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zev Weiss <zev@bewilderbeest.net>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>
+Subject: arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: fan@2:
+ aspeed,fan-tach-ch: b'\x02' is not of type 'object', 'integer', 'array',
+ 'boolean', 'null'
+Message-ID: <202407111300.gFJMPPU7-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5441; i=brauner@kernel.org; h=from:subject:message-id; bh=3mq68wnh89QhdTG3ycaKxXy1VslZgsI6uKtfnxrJKOY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT1Z3IKHs9f/26Rr0Pkzw9/58//LPgt+ND7tq/nl7ccX Rdd9EjyZkcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEJBcy/FOK8D/PyLlSjOdI z/xpq9mvhzzZ3jdP1FlngvR1tR1NTlcYGc77nZtm1nzf4wzb5zuznBZNuejYmsgi1L834ueJXdV WpzkB
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-/* Summary */
-This contains fixes for this merge window:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9d9a2f29aefdadc86e450308ff056017a209c755
+commit: dc4a65fdfe635da9d6a76032aa1f729c6a3c0edd ARM: dts: aspeed: Add ASRock SPC621D8HM3 BMC
+date:   2 months ago
+config: arm-randconfig-051-20240711 (https://download.01.org/0day-ci/archive/20240711/202407111300.gFJMPPU7-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.3.0
+dtschema version: 2024.6.dev4+g23441a4
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240711/202407111300.gFJMPPU7-lkp@intel.com/reproduce)
 
-cachefiles:
-- Export an existing and add a new cachefile helper to be used in filesystems
-  to fix reference count bugs.
-- Use the newly added fscache_ty_get_volume() helper to get a reference count
-  on an fscache_volume to handle volumes that are about to be removed cleanly.
-- After withdrawing a fscache_cache via FSCACHE_CACHE_IS_WITHDRAWN wait for all
-  ongoing cookie lookups to complete and for the object count to reach zero.
-- Propagate errors from vfs_getxattr() to avoid an infinite loop in
-  cachefiles_check_volume_xattr() because it keeps seeing ESTALE.
-- Don't send new requests when an object is dropped by raising
-  CACHEFILES_ONDEMAND_OJBSTATE_DROPPING.
-- Cancel all requests for an object that is about to be dropped.
-- Wait for the ondemand_boject_worker to finish before dropping a cachefiles
-  object to prevent use-after-free.
-- Use cyclic allocation for message ids to better handle id recycling.
-- Add missing lock protection when iterating through the xarray when polling.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407111300.gFJMPPU7-lkp@intel.com/
 
-netfs:
-- Use standard logging helpers for debug logging.
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: sram@1e720000: 'ranges' is a required property
+   	from schema $id: http://devicetree.org/schemas/sram/sram.yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: sgpio@1e780200: '#interrupt-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/gpio/aspeed,sgpio.yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/apb/rtc@1e781000: failed to match any schema with compatible: ['aspeed,ast2500-rtc']
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/apb/timer@1e782000: failed to match any schema with compatible: ['aspeed,ast2400-timer']
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/apb/watchdog@1e785000: failed to match any schema with compatible: ['aspeed,ast2500-wdt']
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/apb/watchdog@1e785020: failed to match any schema with compatible: ['aspeed,ast2500-wdt']
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/apb/watchdog@1e785040: failed to match any schema with compatible: ['aspeed,ast2500-wdt']
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: /ahb/apb/pwm-tacho-controller@1e786000: failed to match any schema with compatible: ['aspeed,ast2500-pwm-tacho']
+>> arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: fan@2: aspeed,fan-tach-ch: b'\x02' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+>> arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: fan@3: aspeed,fan-tach-ch: b'\x03' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+>> arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: fan@4: aspeed,fan-tach-ch: b'\x04' is not of type 'object', 'integer', 'array', 'boolean', 'null'
+   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: lpc@1e789000: lpc-snoop@90: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: lpc@1e789000: reg-io-width: 4 is not of type 'object'
+   	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: kcs@24: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: kcs@28: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+   arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-spc621d8hm3.dtb: kcs@2c: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
 
-VFS:
-- Fix potential use-after-free in file locks during trace_posix_lock_inode().
-  The tracepoint could fire while another task raced it and freed the lock that
-  was requested to be traced.
-- Only increment the nr_dentry_negative counter for dentries that are present
-  on the superblock LRU. Currently, DCACHE_LRU_LIST list is used to detect this
-  case. However, the flag is also raised in combination with DCACHE_SHRINK_LIST
-  to indicate that dentry->d_lru is used. So checking only DCACHE_LRU_LIST will
-  lead to wrong nr_dentry_negative count. Fix the check to not count dentries
-  that are on a shrink related list.
-
-Misc:
-- hfsplus: fix an uninitialized value issue in copy_name.
-- minix: fix minixfs_rename with HIGHMEM. It still uses kunmap() even though we
-  switched it to kmap_local_page() a while ago.
-
-/* Testing */
-clang: Debian clang version 16.0.6 (27)
-gcc: (Debian 13.2.0-25) 13.2.0
-
-All patches are based on v6.10-rc6. No build failures or warnings were observed.
-
-/* Conflicts */
-No known conflicts.
-
-The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
-
-  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10-rc8.fixes
-
-for you to fetch changes up to 3d1bec293378700dddc087d4d862306702276c23:
-
-  minixfs: Fix minixfs_rename with HIGHMEM (2024-07-10 07:15:36 +0200)
-
-Please consider pulling these changes from the signed vfs-6.10-rc8.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.10-rc8.fixes
-
-----------------------------------------------------------------
-Baokun Li (7):
-      netfs, fscache: export fscache_put_volume() and add fscache_try_get_volume()
-      cachefiles: fix slab-use-after-free in fscache_withdraw_volume()
-      cachefiles: fix slab-use-after-free in cachefiles_withdraw_cookie()
-      cachefiles: propagate errors from vfs_getxattr() to avoid infinite loop
-      cachefiles: stop sending new request when dropping object
-      cachefiles: cancel all requests for the object that is being dropped
-      cachefiles: cyclic allocation of msg_id to avoid reuse
-
-Brian Foster (1):
-      vfs: don't mod negative dentry count when on shrinker list
-
-Christian Brauner (1):
-      Merge patch series "cachefiles: random bugfixes"
-
-Edward Adam Davis (1):
-      hfsplus: fix uninit-value in copy_name
-
-Hou Tao (1):
-      cachefiles: wait for ondemand_object_worker to finish when dropping object
-
-Jeff Layton (1):
-      filelock: fix potential use-after-free in posix_lock_inode
-
-Jingbo Xu (1):
-      cachefiles: add missing lock protection when polling
-
-Matthew Wilcox (Oracle) (1):
-      minixfs: Fix minixfs_rename with HIGHMEM
-
-Uwe Kleine-König (1):
-      netfs: Switch debug logging to pr_debug()
-
- fs/cachefiles/cache.c          | 45 +++++++++++++++++++++++++++++++++++-
- fs/cachefiles/daemon.c         |  4 ++--
- fs/cachefiles/internal.h       |  3 +++
- fs/cachefiles/ondemand.c       | 52 +++++++++++++++++++++++++++++++++++++-----
- fs/cachefiles/volume.c         |  1 -
- fs/cachefiles/xattr.c          |  5 +++-
- fs/dcache.c                    | 12 +++++++---
- fs/hfsplus/xattr.c             |  2 +-
- fs/locks.c                     |  2 +-
- fs/minix/namei.c               |  3 +--
- fs/netfs/buffered_read.c       | 14 ++++++------
- fs/netfs/buffered_write.c      | 12 +++++-----
- fs/netfs/direct_read.c         |  2 +-
- fs/netfs/direct_write.c        |  8 +++----
- fs/netfs/fscache_cache.c       |  4 ++--
- fs/netfs/fscache_cookie.c      | 28 +++++++++++------------
- fs/netfs/fscache_io.c          | 12 +++++-----
- fs/netfs/fscache_main.c        |  2 +-
- fs/netfs/fscache_volume.c      | 18 +++++++++++++--
- fs/netfs/internal.h            | 35 +---------------------------
- fs/netfs/io.c                  | 12 +++++-----
- fs/netfs/main.c                |  4 ----
- fs/netfs/misc.c                |  4 ++--
- fs/netfs/write_collect.c       | 16 ++++++-------
- fs/netfs/write_issue.c         | 36 ++++++++++++++---------------
- include/linux/fscache-cache.h  |  6 +++++
- include/trace/events/fscache.h |  4 ++++
- 27 files changed, 213 insertions(+), 133 deletions(-)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
