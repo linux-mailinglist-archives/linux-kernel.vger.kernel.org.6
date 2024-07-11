@@ -1,165 +1,167 @@
-Return-Path: <linux-kernel+bounces-249522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5411792ECB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:28:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743DB92EC9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1AD51F22887
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ACA7284D11
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2638916D4D2;
-	Thu, 11 Jul 2024 16:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27A816CD21;
+	Thu, 11 Jul 2024 16:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VXTvs2Fe"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="VQUsvQdw"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5666F16CD12;
-	Thu, 11 Jul 2024 16:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52FA8F72
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 16:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720715292; cv=none; b=VUoTCLSSfcEFMHkyObhmjr2JxQ1qmFgfZZiQwUIFSzWX7VAnKbamSqk+KNiS3aFSVAqM0diNXbOFB8Zm9l3n9NdEA++yn1Y+CeqBZkxBxrrts+ymHG9BA0hdxBa29U06zOMVak7kx8Odk6KFkuanDIQAaXdDsrkqfkYJD2llMCc=
+	t=1720715122; cv=none; b=td13F4MKsVHdGjiea/SXDUS3aniDqSMAvtg8q5FY6vUZKFNtmsjd9luIeou3d0aqW5sOTTd4r+gH+hq1VsTFG5zLntvwFwR8nNW/eM1AeWFnEON+Xg0Hw3HG3W60ZHGYqFNu2bPiLuz9ptR4qzvVhXWBQxvIiNNfMIxIf3TqsCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720715292; c=relaxed/simple;
-	bh=yU45aZilw8uuoyyBEqzLvjn+ubl8VV3DgDQLNw3YG28=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zs2r+6GOWKNCM3KEGItf9e1P2jmYTcUxZCpE4Cfm30kdGCYacVgBWKPlLXMgi8wbFq1xJV1M6MU6M23FoZo5/Gss54+HOS78e+8ZKG+udY51zBV9Xfz/+aQK+BNVg4puhwRvVaZGvoYWNFnz9cLJJFzPM9whUWTameZgUb5Qbf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VXTvs2Fe; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BEwJEf020574;
-	Thu, 11 Jul 2024 16:28:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
-	ufQoE7Ty/3mWJ+0Zwk5edHESJga+H590Q3CcBxzoQ2Q=; b=VXTvs2FeKrP8/zPj
-	CCyb+hYFA5e4n9zJcqE829cYrdOBRGo3JOIuEGIyskkBXB8RW90rpvLK4B+ToSKs
-	Th5YlLShCPDVA3T8NyyU1/SzyRDBLqw8xQ6eTo+T3fZPlB8BQvsYOdPWqBCWdIMZ
-	FT9DYMYDW3VruHqBYwqgre40jTlqPpf8s6VkHdO0Z0yMl1IfExXk8v0A5C9F7WJi
-	hlHx78J3Muz1Caq9n0oPTRAIJCBsaPyUVke+FYOowizoU31+075Siy2Lw42uTWaU
-	gXy9FXaduOtMmrBH/8H5ZZaB+5PEC5S/VPWaC/y/U0iZkQfp2WJOFNIhkpCNYV+T
-	sqBZdA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40ahmg090h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 16:28:08 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46BGS81Q000348;
-	Thu, 11 Jul 2024 16:28:08 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40ahmg08ue-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 16:28:08 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46BG1LV5014101;
-	Thu, 11 Jul 2024 16:23:56 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407h8q1s30-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 16:23:56 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46BGNotf58655138
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Jul 2024 16:23:52 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 979332004D;
-	Thu, 11 Jul 2024 16:23:50 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 55BD620040;
-	Thu, 11 Jul 2024 16:23:50 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.152.224.66])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 11 Jul 2024 16:23:50 +0000 (GMT)
-Date: Thu, 11 Jul 2024 18:23:48 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, hca@linux.ibm.com, svens@linux.ibm.com,
-        gor@linux.ibm.com, nrb@linux.ibm.com, nsg@linux.ibm.com,
-        seiden@linux.ibm.com, frankja@linux.ibm.com, borntraeger@de.ibm.com,
-        gerald.schaefer@linux.ibm.com, david@redhat.com
-Subject: Re: [PATCH v1 2/2] s390/kvm: Move bitfields for dat tables
-Message-ID: <20240711182348.21ca02b2@p-imbrenda>
-In-Reply-To: <Zo/3RzpS2WNssMIi@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-References: <20240703155900.103783-1-imbrenda@linux.ibm.com>
-	<20240703155900.103783-3-imbrenda@linux.ibm.com>
-	<Zo/3RzpS2WNssMIi@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1720715122; c=relaxed/simple;
+	bh=by8drg7BkwyPqnnrBo9joy/euqUdnROj+pyxhwVy4W4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UZ+NrP+wEruYYem5WSksX+61sUOMkHFQknAJAR5zBFZ8Rny0t5q7ga++G+kXk9kpsn5OzZYCS3wu65PCyXl7M2+u6fDU28XCRSgqV+ekomvR55h5X56o2lJYphlsW71OMJTKfBSFT/Sx0GEkkV5TqUMa6iMuk1KzFg0kfYTfF/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=VQUsvQdw; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
+	by cmsmtp with ESMTPS
+	id RcWKsVIKhumtXRwbZs3wXL; Thu, 11 Jul 2024 16:25:13 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id RwbYsddx9eCxMRwbYsS1Ho; Thu, 11 Jul 2024 16:25:13 +0000
+X-Authority-Analysis: v=2.4 cv=M/yGKDws c=1 sm=1 tr=0 ts=66900769
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=VwQbUJbxAAAA:8 a=Q-fNiiVtAAAA:8 a=bLk-5xynAAAA:8 a=yPCof4ZbAAAA:8
+ a=4U04rXiFe3vrU3-RqrIA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=Fp8MccfUoT0GBdDC_Lng:22 a=zSyb8xVVt2t83sZkrLMb:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=l7dJmZsHDRRtYA6jqLTJ+nJTV8ksdPp6ErT4krrc1nI=; b=VQUsvQdwHQbARSRkuj05QVoX1J
+	uJiaTp1lX5LbB6yQ+4o/kEOEpJxWlsa5XN+nLLs+ulsGCK3w2HcJ4bHcj3vsHQ/FZZIrhv3OewiwY
+	tmj/Vzx80+thZO5Sr6krZP0XI6n27La08d1CuyLn+1f8wjrO7xbFw6VeLFLqK5qruCll7jrVPGccJ
+	7j5v0YLDW66bIwlCjIAvTyIi6zT5KBNm33z2EnblaJP5ja6i2wt+yMSH0aX4sJ7i7Q355q/2Hxetr
+	SnDcHtPDF00Ndt30X5OUH4Yb5Pnc3uAoniz1PiajjUnpPQYaIPBV3cI4mwx4zm8WN3qz1rGJfkY1O
+	paLQh4uQ==;
+Received: from [201.172.173.139] (port=55644 helo=[192.168.15.4])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sRwbX-0002St-0G;
+	Thu, 11 Jul 2024 11:25:11 -0500
+Message-ID: <8381a68e-5dcd-454a-bca3-d00bb0420a28@embeddedor.com>
+Date: Thu, 11 Jul 2024 10:25:09 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] scsi: mpi3mr: struct mpi3_sas_io_unit_page1: Replace
+ 1-element array with flexible array
+To: Kees Cook <kees@kernel.org>,
+ Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
+Cc: Kashyap Desai <kashyap.desai@broadcom.com>,
+ Sumit Saxena <sumit.saxena@broadcom.com>,
+ Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Ranjan Kumar <ranjan.kumar@broadcom.com>, mpi3mr-linuxdrv.pdl@broadcom.com,
+ linux-scsi@vger.kernel.org, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20240711155446.work.681-kees@kernel.org>
+ <20240711155637.3757036-4-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240711155637.3757036-4-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: bJ05gT0dL5CUBYGVd-UwsmMf1XGmGaM1
-X-Proofpoint-ORIG-GUID: ydhzCz_K1SRAxstt5eY2sc-YxVkf_ovY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_12,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- suspectscore=0 lowpriorityscore=0 mlxlogscore=875 priorityscore=1501
- mlxscore=0 bulkscore=0 malwarescore=0 impostorscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110114
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sRwbX-0002St-0G
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:55644
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 44
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfHq9/fc8wHAsZpYquev95jqOd6fD+jVXXesr2lj5aWfMg7JQaT11e4xk0a8S+FWs3XSuw+5+TnaM/8RemHazQRb0bJcyydxmRrPP7EUyrglg0QHeNqrw
+ lrtUVQc8WORjHKtIIHdCXDIEW0HgFljJ8DKDCitFY3aevxIkYw8ATQ0whvdqdPA//nfvrCHqFZxD1/iWKqwfgYkxLDo1dxQRCzHqvCnaN+u0fO/4ARRPwrlB
 
-On Thu, 11 Jul 2024 17:16:23 +0200
-Alexander Gordeev <agordeev@linux.ibm.com> wrote:
 
-> On Wed, Jul 03, 2024 at 05:59:00PM +0200, Claudio Imbrenda wrote:
+
+On 11/07/24 09:56, Kees Cook wrote:
+> Replace the deprecated[1] use of a 1-element array in
+> struct mpi3_sas_io_unit_page1 with a modern flexible array.
 > 
-> Hi Claudio,
+> No binary differences are present after this conversion.
 > 
-> > Once in a separate header, the structs become available everywhere. One
-> > possible usecase is to merge them in the s390 
-> > definitions, which is left as an exercise for the reader.  
+> Link: https://github.com/KSPP/linux/issues/79 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+
+Thanks
+-- 
+Gustavo
+
+> ---
+> Cc: Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>
+> Cc: Kashyap Desai <kashyap.desai@broadcom.com>
+> Cc: Sumit Saxena <sumit.saxena@broadcom.com>
+> Cc: Sreekanth Reddy <sreekanth.reddy@broadcom.com>
+> Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+> Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+> Cc: Ranjan Kumar <ranjan.kumar@broadcom.com>
+> Cc: mpi3mr-linuxdrv.pdl@broadcom.com
+> Cc: linux-scsi@vger.kernel.org
+> ---
+>   drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> Is my understanding correct that you potentially see page_table_entry::val /
-> region?_table_entry.*::val / segment_table_entry.* merged with pte_t::pte /
-> p?d_t::p?d?
-> 
-> Thanks!
-
-that depends on how you want to do the merge
-
-you could do:
-
-typedef union {
-	unsigned long pte;
-	union page_table_entry hw;
-	union page_table_entry_softbits sw;
-} pte_t;
-
-then you would have pte_t::pte and pte_t::hw::val; unfortunately it's
-not possible to anonymously merge a named type.. 
-
-this would be great but can't be done*:
-
-typedef union {
-	unsigned long pte;
-	union page_table_entry;
-} pte_t;
-
-[*] gcc actually supports it with an additional feature switch, but
-it's not standard C and I seriously doubt we should even think about
-doing it
-
-another possibility is a plain
-
-typedef union page_table_entry pte_t;
-
-and then fix pte_val() and similar, but then you won't have the
-softbits.
-
-
-in the end, it's up to you how you want to merge them. I will
-have my own unions that I will use only inside KVM, that's enough for
-me.
+> diff --git a/drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h b/drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h
+> index 66cca35d8e52..4b7a8f6314a3 100644
+> --- a/drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h
+> +++ b/drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h
+> @@ -1603,9 +1603,6 @@ struct mpi3_sas_io_unit1_phy_data {
+>   	__le32             reserved08;
+>   };
+>   
+> -#ifndef MPI3_SAS_IO_UNIT1_PHY_MAX
+> -#define MPI3_SAS_IO_UNIT1_PHY_MAX           (1)
+> -#endif
+>   struct mpi3_sas_io_unit_page1 {
+>   	struct mpi3_config_page_header         header;
+>   	__le16                             control_flags;
+> @@ -1615,7 +1612,7 @@ struct mpi3_sas_io_unit_page1 {
+>   	u8                                 num_phys;
+>   	u8                                 sata_max_q_depth;
+>   	__le16                             reserved12;
+> -	struct mpi3_sas_io_unit1_phy_data      phy_data[MPI3_SAS_IO_UNIT1_PHY_MAX];
+> +	struct mpi3_sas_io_unit1_phy_data      phy_data[];
+>   };
+>   
+>   #define MPI3_SASIOUNIT1_PAGEVERSION                                 (0x00)
 
