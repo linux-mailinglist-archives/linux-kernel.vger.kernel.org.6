@@ -1,63 +1,65 @@
-Return-Path: <linux-kernel+bounces-249399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C716D92EB31
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:01:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F2D92EB34
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 880FF282050
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:01:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8BAD1C23A85
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85071684A8;
-	Thu, 11 Jul 2024 15:01:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4223A16B38F;
+	Thu, 11 Jul 2024 15:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GBjfc0A8"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQMEc+IV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588DF14A4F7;
-	Thu, 11 Jul 2024 15:01:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81808154BE8;
+	Thu, 11 Jul 2024 15:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720710065; cv=none; b=IetKCK2BKjeP5iUlgNDBYsIpDdDcAee+kU2ZZWrtjkrq6WUV3cJzH+/XZOM/SIggoTHLetzgjd+96Yw/dU6oPCQQQ/ez5hi1qNbzyEeNn5TNCunVAqGUXeyxhCHWFf0DTmKrAfLiTthUPvEpYx4F5h82QaNbQra30gGw3BN2Evo=
+	t=1720710078; cv=none; b=obFXT04z/SzX1Kcj6HeWQ+PTEjbgEPagM4+cxj6tFcTCPz/AekfO+E1mGkjDTuxQ6aPJKQa2I8q36L6iZb18Ja6DoCLShVnXoRM2aZGxgEtmszskIhMlTCnv/Hz0yct7gIMMb5F0saeULqZT/0QDJ1kgeYgfCdiYfpXTOwB5bc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720710065; c=relaxed/simple;
-	bh=628C/Aq52Kfgb3AouXQudVs1Fdv8eNeF2/Sn/7ZzdNo=;
+	s=arc-20240116; t=1720710078; c=relaxed/simple;
+	bh=cbO/KRhRU5RpiqktSyiEnIwlpQFVvKQFp96GPxVwHr4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YnkHqHV+6sI2WKucVVJAxqce4aWXYibob+BvFWI+nQ8hYCuARNWQJnhluiGFNTWscis81N2ghuFCWIll8tAnuUFZfH3nqn/7gSCmQBo0hQ/DkaxcdPH2jGiLsBD+vRqVGIyLNPV6iKI2b3VyIxO6ARJIHxlnN5KWzvAdyij3itI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GBjfc0A8; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JDR+Y5lA68hGC+YOCg0tjUpoc5lcqLw0eQjAAGj2XjM=; b=GBjfc0A8w9oDOAc8BdHFkF4n9A
-	WArrfK4afX/Fb3Y81Z6x+OlxDZiahYLpK//GBKhrFDQG50cWu9GcVpmT3PWwnBDku7HF4laS4pgO1
-	SK3jDuZhzDxF0DxEYPB933yZ5o5hbzv278t391eLI6tJan3fleMtD+bZWGtgaAaNZqRk8eA8cg3C4
-	mzsUFTOi6OZZZp2e1yFbZRnaOqV3K36TIyk+rVuXLOjNevAOhOgRRAWhPE+4/cpKdDVkLqObzIfJg
-	KRgDAoDdSDqAVQieV2ZZWShHVhNAeWZ7PW39vHLe9F9L9FbqczJwHLgUoUIBvEH0P2wVkDHF/2t6J
-	AZ9L9nBQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRvHz-000000017LI-0hsE;
-	Thu, 11 Jul 2024 15:00:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8707C30050D; Thu, 11 Jul 2024 17:00:54 +0200 (CEST)
-Date: Thu, 11 Jul 2024 17:00:54 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
-	mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com,
-	paulmck@kernel.org
-Subject: Re: [PATCH v2 11/11] perf/uprobe: Add uretprobe timer
-Message-ID: <20240711150054.GA3285@noisy.programming.kicks-ass.net>
-References: <20240711110235.098009979@infradead.org>
- <20240711110401.412779774@infradead.org>
- <20240711131918.GC16902@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WG5cu0CMpQMa0HKcAEyBMwwHfpXBu+YWc3ngwT8pG0JYslHOa/1boAaLBvj91DtWB0oRSQH8bieq3UjjUvBuNlyQFiSozf61rCRVBqRG28JTSvF34u7lC2q8NPDP2iDo7kn91ARSgkRitIxAM6r7waCYYhTMnTzHb9SoqlJCcaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQMEc+IV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00F32C116B1;
+	Thu, 11 Jul 2024 15:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720710078;
+	bh=cbO/KRhRU5RpiqktSyiEnIwlpQFVvKQFp96GPxVwHr4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EQMEc+IVmXqEhb86jpWSVanbwrjG+orKHT0VuzmeJWWHXKS6WE4s/qX6nztJgkr3y
+	 8xvWfllsUCRyOeES1NySCFe6TPp3osxfajxGOiWrsrkl/Afg435V0wU7pefuWRvmH9
+	 qFRK+bwlarIw+MTN4Up7sHB/Dhlp3zFBOJtvknyYeRI1gXuI1a/bW2T4zmHoiGFibs
+	 KZ56g9E0jE5Qhdwcf4746cqwdNYFqqV8p4tUMXrrXzI8QQAsPwZgxtV3TAcSiJnjza
+	 XKSJDT6PyOVba5EpLZGoGb1bHl6t44ctA5/VZI60wxvL7I91Ehage8wbZEL+A0VZFc
+	 fDD8mN1dmkieA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sRvIJ-000000002bU-2meG;
+	Thu, 11 Jul 2024 17:01:15 +0200
+Date: Thu, 11 Jul 2024 17:01:15 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe
+Message-ID: <Zo_zu-RmbZyKijVQ@hovoldconsulting.com>
+References: <20240711090250.20827-1-johan+linaro@kernel.org>
+ <f7e74a6f-0548-4caa-a8fc-8180c619c9aa@linaro.org>
+ <Zo-ssBBDbHRLtAwG@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,69 +68,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240711131918.GC16902@redhat.com>
+In-Reply-To: <Zo-ssBBDbHRLtAwG@hovoldconsulting.com>
 
-On Thu, Jul 11, 2024 at 03:19:19PM +0200, Oleg Nesterov wrote:
-> Not sure I read this patch correctly, but at first glance it looks
-> suspicious..
-> 
-> On 07/11, Peter Zijlstra wrote:
-> >
-> > +static void return_instance_timer(struct timer_list *timer)
-> > +{
-> > +	struct uprobe_task *utask = container_of(timer, struct uprobe_task, ri_timer);
-> > +	task_work_add(utask->task, &utask->ri_task_work, TWA_SIGNAL);
-> > +}
-> 
-> What if utask->task sleeps in TASK_STOPPED/TASK_TRACED state before
-> return from the ret-probed function?
-> 
-> In this case it won't react to TWA_SIGNAL until debugger or SIGCONT
-> wakes it up.
+[ +CC: Mani ]
 
-Or FROZEN etc.. Yeah.
+On Thu, Jul 11, 2024 at 11:58:08AM +0200, Johan Hovold wrote:
+> On Thu, Jul 11, 2024 at 11:54:15AM +0200, Konrad Dybcio wrote:
+> > On 11.07.2024 11:02 AM, Johan Hovold wrote:
+> > > The DWC PCIe controller can be used with its internal MSI controller or
+> > > with an external one such as the GICv3 Interrupt Translation Service
+> > > (ITS).
+> > > 
+> > > Add the msi-map properties needed to use the GIC ITS. This will also
+> > > make Linux switch to the ITS implementation, which allows for assigning
+> > > affinity to individual MSIs.
 
-> ---------------------------------------------------------------------------
-> And it seems that even task_work_add() itself is not safe...
+> > X1E CRD throws tons of correctable errors with this on PCIe6a:
+
+> What branch are you using? Abel reported seeing this with his branch
+> which has a few work-in-progress patches that try to enable 4-lane PCIe.
 > 
-> Suppose we have 2 ret-probed functions
-> 
-> 	void f2() { ... }
-> 	void f1() { ...; f2(); }
-> 
-> A task T calls f1(), hits the bp, and calls prepare_uretprobe() which does
-> 
-> 	mod_timer(&utask->ri_timer, jiffies + HZ);
-> 
-> Then later it calls f2() and the pending timer expires after it enters the
-> kernel, but before the next prepare_uretprobe() -> mod_timer().
-> 
-> In this case ri_task_work is already queued and the timer is pending again.
+> There are no errors with my wip branch based on rc7, and I have the same
+> drive as Abel.
 
-You're saying we can hit a double enqueue, right? Yeah, that's a
-problem. But that can be fairly easily rectified.
+For some reason I don't get these errors on my machine, but this has now
+been confirmed by two other people running my rc branch (including Abel)
+so something is broken here, for example, with the PHY settings.
 
-> Now. Even if T goes to the exit_to_user_mode_loop() path immediately, in
-> theory nothing can guarantee that it will call get_signal/task_work_run
-> in less than 1 second, it can be preempted.
-> 
-> But T can sleep in xol_take_insn_slot() before return from handle_swbp(),
-> and this is not so theoretical.
+I saw five correctable errors once, when running linux-next, but it took
+several minutes and they were still minutes apart.
 
-So the assumption is that kernel code makes forward progress. If we get
-preempted, we'll get scheduled again. If the machine is so overloaded
-this takes more than a second, stretching the SRCU period is the least
-of your problems.
+> Also note that the errors happen also without this patch applied, they
+> are just being reported now.
 
-Same with sleeps, it'll get a wakeup.
+I guess we need to track down what is causing these errors before
+enabling ITS (and thereby the error reporting). 
 
-The only thing that is out of our control is userspace. And yes, I had
-not considered STOPPED/TRACED/FROZEN.
+At least L0s is not involved here, as it was with sc8280xp, as the
+NVMe controllers in question do not support it.
 
-So the reason I did that task_work is because the return_instance list
-is strictly current, so a random timer cannot safely poke at it. And
-barring those pesky states, it does as desired.
+Perhaps something is off because we're running the link at half width?
 
-Let me ponder that a little, I *can* make it work, but all 'solutions'
-I've come up with so far are really rather vile.
+Johan
 
