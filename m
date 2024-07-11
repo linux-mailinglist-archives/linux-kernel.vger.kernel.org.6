@@ -1,286 +1,178 @@
-Return-Path: <linux-kernel+bounces-249305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7064092E9B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:38:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D074C92E9B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A6C282C37
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:38:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 871581F21D9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3002161900;
-	Thu, 11 Jul 2024 13:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DDF15FCEB;
+	Thu, 11 Jul 2024 13:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J9hUJNi6"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1351D15FA8B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XC9fIpH/"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BD34CE09;
+	Thu, 11 Jul 2024 13:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720705089; cv=none; b=PJnJfP/bzWxB7m/2GavXm6JiVOy5XWka62LaPN9ivZ5YzaaGa6Nrv9uVrBkbIUhFOdb+HKHJg1qwrxSwikkWVs9BpxQipwHRsui49tddkmwZPNMDVYx2+IR34hh+D2ICxs//uDEIQXpMuPqvFRzw/ANwfIrp8qEtCMBzw0cu7ig=
+	t=1720705084; cv=none; b=lgBAkNToDJRW1th1dVlMBPWOWECUTyh5RtSQ+0z8OUqMdHCIIIvKrcNro2b1OSrjShdS4OkNd5FReHqiNrVCwTYs1RjVAjADEQuJKlBZ1MBZ5lAY024U2OIAtKWEtgiSYLV5oxYjZXb2wZZENFMs4UulwZgVyID5n/Ke4ohcXnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720705089; c=relaxed/simple;
-	bh=P8SKTArk1yTLlMoa3xSgwOz3NV6OqlygXo0gaWmzOzg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cwBTYppP+f/8VuS4OGBkiQUxFDIZZf98MjWYuLqhW7EFAWLHSEfkOqQJJCCb5rVhiEM1DuqldFOk2BZumrjuVUqNMfBx2FJG3EfuoP/AREOIjGFqFYuo5t7aXdVeUzSsJCCaARRib1QpwqchQOnIU2HcNtFzKBwe5CEoUB3ITHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J9hUJNi6; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720705086;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=cb7XNCaMxrfHjappNSB8neOonSmyc3xh7lLwEP4W3cA=;
-	b=J9hUJNi63dy2/kQp4uHIb0kYgGc4Kw6m6AG/mEgGkrU+H9L6WV3O5vfXybkQ8Oaprf34aH
-	XiFRQQfD9ma2m+N0gKqrYxVpF5i36v6gK1S4HoJvkV9KXtLeM7gV7fiOTkT9jPXV2bDFDD
-	Ek/qo2VT0QL+0pGW6OZhpqeW0aR9dYI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-384-Eko-k-9KPzGzpMw2dUugoA-1; Thu,
- 11 Jul 2024 09:37:57 -0400
-X-MC-Unique: Eko-k-9KPzGzpMw2dUugoA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 47F27196E090;
-	Thu, 11 Jul 2024 13:37:54 +0000 (UTC)
-Received: from llong.com (unknown [10.22.64.119])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4B0D319560AE;
-	Thu, 11 Jul 2024 13:37:51 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1720705084; c=relaxed/simple;
+	bh=+lpvg91EuVmo4l6WbNPi0rA3weAObdsfpM9GbOYSK4Y=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Vz9Eh7Rjb7QZoV0sge/VMMpglpp44FEE6vEl+Bs7wmWisS/aGsa6hklQcZX8YgRx6CX1fWF++ypu6P5nAbwqdTcKD8/BZDJAVY+KxbAbaOxV3ILXdyodzZB+1F3RTJqkaSb74ejIvj8l6Z8qvP2vEr/Kgzu2E9tC1b5yW1utphU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XC9fIpH/; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 32BD020B7165;
+	Thu, 11 Jul 2024 06:38:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 32BD020B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1720705082;
+	bh=E8vCEReVfg+1Pp/llNttYBBSJa9eYonYgDLL3JxqQxg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XC9fIpH/5l/+ozrdPr6ij4Q4Nrb0fheFEQZzyAhw7Z+hF9as0VuUwics1dfwKw3Vh
+	 Rn92l6DuIwd+uayCTM1PYkG/CmLK+PVu1jrcLqg6uB+BbJkeP5fhxRbxe740tKBDBw
+	 e/FEL/a5LmJK2pSadPNb7AafjSSuFfBWLYcSaLqI=
+From: Konstantin Taranov <kotaranov@linux.microsoft.com>
+To: kotaranov@microsoft.com,
+	pabeni@redhat.com,
+	haiyangz@microsoft.com,
+	kys@microsoft.com,
+	edumazet@google.com,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	decui@microsoft.com,
+	wei.liu@kernel.org,
+	sharmaajay@microsoft.com,
+	longli@microsoft.com,
+	jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH-cgroup v5] cgroup: Show # of subsystem CSSes in cgroup.stat
-Date: Thu, 11 Jul 2024 09:37:45 -0400
-Message-Id: <20240711133745.2376401-1-longman@redhat.com>
+	netdev@vger.kernel.org
+Subject: [PATCH rdma-next v3 1/1] RDMA/mana_ib: Set correct device into ib
+Date: Thu, 11 Jul 2024 06:37:57 -0700
+Message-Id: <1720705077-322-1-git-send-email-kotaranov@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
-help manage different structures in various cgroup subsystems by being
-an embedded element inside a larger structure like cpuset or mem_cgroup.
+From: Konstantin Taranov <kotaranov@microsoft.com>
 
-The /proc/cgroups file shows the number of cgroups for each of the
-subsystems.  With cgroup v1, the number of CSSes is the same as the
-number of cgroups.  That is not the case anymore with cgroup v2. The
-/proc/cgroups file cannot show the actual number of CSSes for the
-subsystems that are bound to cgroup v2.
+Add mana_get_primary_netdev_rcu helper to get a primary
+netdevice for a given port. When mana is used with
+netvsc, the VF netdev is controlled by an upper netvsc
+device. In a baremetal case, the VF netdev is the
+primary device.
 
-So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
-we can't tell by looking at /proc/cgroups which cgroup subsystems may
-be responsible.
+Use the mana_get_primary_netdev_rcu() helper in the mana_ib
+to get the correct device for querying network states.
 
-As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
-cgroup.stat file is now being extended to show the number of live and
-dying CSSes associated with all the non-inhibited cgroup subsystems
-that have been bound to cgroup v2 as long as it is not zero.  The number
-includes CSSes in the current cgroup as well as in all the descendants
-underneath it.  This will help us pinpoint which subsystems are
-responsible for the increasing number of dying (nr_dying_descendants)
-cgroups.
-
-The cgroup-v2.rst file is updated to discuss this new behavior.
-
-With this patch applied, a sample output from root cgroup.stat file
-was shown below.
-
-	nr_descendants 55
-	nr_dying_descendants 35
-	nr_subsys_cpuset 1
-	nr_subsys_cpu 40
-	nr_subsys_io 40
-	nr_subsys_memory 55
-	nr_dying_subsys_memory 35
-	nr_subsys_perf_event 56
-	nr_subsys_hugetlb 1
-	nr_subsys_pids 55
-	nr_subsys_rdma 1
-	nr_subsys_misc 1
-
-Another sample output from system.slice/cgroup.stat was:
-
-	nr_descendants 32
-	nr_dying_descendants 33
-	nr_subsys_cpu 30
-	nr_subsys_io 30
-	nr_subsys_memory 32
-	nr_dying_subsys_memory 33
-	nr_subsys_perf_event 33
-	nr_subsys_pids 32
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+Fixes: 8b184e4f1c32 ("RDMA/mana_ib: Enable RoCE on port 1")
+Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 14 ++++++--
- include/linux/cgroup-defs.h             |  7 ++++
- kernel/cgroup/cgroup.c                  | 47 ++++++++++++++++++++++++-
- 3 files changed, 65 insertions(+), 3 deletions(-)
+I would appreciate if I could get Acks on it from:
+* netvsc maintainers (e.g., Haiyang)
+* net maintainers (e.g., Jakub, David, Eric, Paolo)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 52763d6b2919..356cd430c888 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -981,6 +981,16 @@ All cgroup core files are prefixed with "cgroup."
- 		A dying cgroup can consume system resources not exceeding
- 		limits, which were active at the moment of cgroup deletion.
- 
-+	  nr_subsys_<cgroup_subsys>
-+		Total number of live cgroups associated with that cgroup
-+		subsystem (e.g. memory) at and beneath the current
-+		cgroup.  An entry will only be shown if it is not zero.
-+
-+	  nr_dying_subsys_<cgroup_subsys>
-+		Total number of dying cgroups associated with that cgroup
-+		subsystem (e.g. memory) beneath the current cgroup.
-+		An entry will only be shown if it is not zero.
-+
-   cgroup.freeze
- 	A read-write single value file which exists on non-root cgroups.
- 	Allowed values are "0" and "1". The default is "0".
-@@ -2930,8 +2940,8 @@ Deprecated v1 Core Features
- 
- - "cgroup.clone_children" is removed.
- 
--- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
--  at the root instead.
-+- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
-+  "cgroup.stat" files at the root instead.
- 
- 
- Issues with v1 and Rationales for v2
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index b36690ca0d3f..62de18874508 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -210,6 +210,13 @@ struct cgroup_subsys_state {
- 	 * fields of the containing structure.
- 	 */
- 	struct cgroup_subsys_state *parent;
-+
-+	/*
-+	 * Keep track of total numbers of visible and dying descendant CSSes.
-+	 * Protected by cgroup_mutex.
-+	 */
-+	int nr_descendants;
-+	int nr_dying_descendants;
- };
- 
- /*
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index c8e4b62b436a..a59e869e8f39 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -3669,12 +3669,36 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
- static int cgroup_stat_show(struct seq_file *seq, void *v)
+v1->v2:
+Leon Romanovsky asked to make a helper in the net/mana and get
+acks from net maintainers.
+v2->v3:
+Added warn on rcu lock not held. 
+Use the word "primary" instead of "master"
+Merged two commits into one and submitted to rdma-next
+
+ drivers/infiniband/hw/mana/device.c           | 16 ++++++++--------
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 19 +++++++++++++++++++
+ include/net/mana/mana.h                       |  2 ++
+ 3 files changed, 29 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
+index b07a8e2e838f..7ac01918ef7c 100644
+--- a/drivers/infiniband/hw/mana/device.c
++++ b/drivers/infiniband/hw/mana/device.c
+@@ -56,7 +56,7 @@ static int mana_ib_probe(struct auxiliary_device *adev,
  {
- 	struct cgroup *cgroup = seq_css(seq)->cgroup;
-+	struct cgroup_subsys_state *css;
-+	int ssid;
+ 	struct mana_adev *madev = container_of(adev, struct mana_adev, adev);
+ 	struct gdma_dev *mdev = madev->mdev;
+-	struct net_device *upper_ndev;
++	struct net_device *ndev;
+ 	struct mana_context *mc;
+ 	struct mana_ib_dev *dev;
+ 	u8 mac_addr[ETH_ALEN];
+@@ -84,17 +84,17 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 	dev->ib_dev.num_comp_vectors = mdev->gdma_context->max_num_queues;
+ 	dev->ib_dev.dev.parent = mdev->gdma_context->dev;
  
- 	seq_printf(seq, "nr_descendants %d\n",
- 		   cgroup->nr_descendants);
- 	seq_printf(seq, "nr_dying_descendants %d\n",
- 		   cgroup->nr_dying_descendants);
- 
-+	/*
-+	 * Show the number of live and dying csses associated with each of
-+	 * non-inhibited cgroup subsystems bound to cgroup v2 if non-zero.
-+	 *
-+	 * Without proper lock protection, racing is possible. So the
-+	 * numbers may not be consistent when that happens.
-+	 */
-+	rcu_read_lock();
-+	for_each_css(css, ssid, cgroup) {
-+		if ((BIT(ssid) & cgrp_dfl_inhibit_ss_mask) ||
-+		    (cgroup_subsys[ssid]->root !=  &cgrp_dfl_root))
-+			continue;
-+
-+		seq_printf(seq, "nr_subsys_%s %d\n", cgroup_subsys[ssid]->name,
-+			   css->nr_descendants + 1);
-+		/* Current css is online */
-+		if (css->nr_dying_descendants)
-+			seq_printf(seq, "nr_dying_subsys_%s %d\n",
-+				   cgroup_subsys[ssid]->name,
-+				   css->nr_dying_descendants);
-+	}
-+	rcu_read_unlock();
- 	return 0;
- }
- 
-@@ -5424,6 +5448,8 @@ static void css_release_work_fn(struct work_struct *work)
- 	list_del_rcu(&css->sibling);
- 
- 	if (ss) {
-+		struct cgroup_subsys_state *parent_css;
-+
- 		/* css release path */
- 		if (!list_empty(&css->rstat_css_node)) {
- 			cgroup_rstat_flush(cgrp);
-@@ -5433,6 +5459,13 @@ static void css_release_work_fn(struct work_struct *work)
- 		cgroup_idr_replace(&ss->css_idr, NULL, css->id);
- 		if (ss->css_released)
- 			ss->css_released(css);
-+
-+		WARN_ON_ONCE(css->nr_descendants || css->nr_dying_descendants);
-+		parent_css = css->parent;
-+		while (parent_css) {
-+			parent_css->nr_dying_descendants--;
-+			parent_css = parent_css->parent;
-+		}
- 	} else {
- 		struct cgroup *tcgrp;
- 
-@@ -5517,8 +5550,11 @@ static int online_css(struct cgroup_subsys_state *css)
- 		rcu_assign_pointer(css->cgroup->subsys[ss->id], css);
- 
- 		atomic_inc(&css->online_cnt);
--		if (css->parent)
-+		if (css->parent) {
- 			atomic_inc(&css->parent->online_cnt);
-+			while ((css = css->parent))
-+				css->nr_descendants++;
-+		}
+-	rcu_read_lock(); /* required to get upper dev */
+-	upper_ndev = netdev_master_upper_dev_get_rcu(mc->ports[0]);
+-	if (!upper_ndev) {
++	rcu_read_lock(); /* required to get primary netdev */
++	ndev = mana_get_primary_netdev_rcu(mc, 0);
++	if (!ndev) {
+ 		rcu_read_unlock();
+ 		ret = -ENODEV;
+-		ibdev_err(&dev->ib_dev, "Failed to get master netdev");
++		ibdev_err(&dev->ib_dev, "Failed to get netdev for IB port 1");
+ 		goto free_ib_device;
  	}
- 	return ret;
+-	ether_addr_copy(mac_addr, upper_ndev->dev_addr);
+-	addrconf_addr_eui48((u8 *)&dev->ib_dev.node_guid, upper_ndev->dev_addr);
+-	ret = ib_device_set_netdev(&dev->ib_dev, upper_ndev, 1);
++	ether_addr_copy(mac_addr, ndev->dev_addr);
++	addrconf_addr_eui48((u8 *)&dev->ib_dev.node_guid, ndev->dev_addr);
++	ret = ib_device_set_netdev(&dev->ib_dev, ndev, 1);
+ 	rcu_read_unlock();
+ 	if (ret) {
+ 		ibdev_err(&dev->ib_dev, "Failed to set ib netdev, ret %d", ret);
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index b89ad4afd66e..68c2bea2c022 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -3007,3 +3007,22 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
+ 	gd->gdma_context = NULL;
+ 	kfree(ac);
  }
-@@ -5540,6 +5576,15 @@ static void offline_css(struct cgroup_subsys_state *css)
- 	RCU_INIT_POINTER(css->cgroup->subsys[ss->id], NULL);
- 
- 	wake_up_all(&css->cgroup->offline_waitq);
 +
-+	/*
-+	 * Parent css cannot be freed until after the freeing of child css,
-+	 * see css_free_rwork_fn().
-+	 */
-+	while ((css = css->parent)) {
-+		css->nr_descendants--;
-+		css->nr_dying_descendants++;
-+	}
- }
- 
- /**
++struct net_device *mana_get_primary_netdev_rcu(struct mana_context *ac, u32 port_index)
++{
++	struct net_device *ndev;
++
++	RCU_LOCKDEP_WARN(!rcu_read_lock_held(),
++			 "Taking primary netdev without holding the RCU read lock");
++	if (port_index >= ac->num_ports)
++		return NULL;
++
++	/* When mana is used in netvsc, the upper netdevice should be returned. */
++	if (ac->ports[port_index]->flags & IFF_SLAVE)
++		ndev = netdev_master_upper_dev_get_rcu(ac->ports[port_index]);
++	else
++		ndev = ac->ports[port_index];
++
++	return ndev;
++}
++EXPORT_SYMBOL_NS(mana_get_primary_netdev_rcu, NET_MANA);
+diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+index 59823901b74f..f9b4b0dcb69f 100644
+--- a/include/net/mana/mana.h
++++ b/include/net/mana/mana.h
+@@ -797,4 +797,6 @@ void mana_destroy_wq_obj(struct mana_port_context *apc, u32 wq_type,
+ int mana_cfg_vport(struct mana_port_context *apc, u32 protection_dom_id,
+ 		   u32 doorbell_pg_id);
+ void mana_uncfg_vport(struct mana_port_context *apc);
++
++struct net_device *mana_get_primary_netdev_rcu(struct mana_context *ac, u32 port_index);
+ #endif /* _MANA_H */
 -- 
-2.39.3
+2.43.0
 
 
