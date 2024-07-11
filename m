@@ -1,95 +1,115 @@
-Return-Path: <linux-kernel+bounces-248941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2B892E424
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:04:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD7C92E426
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6751D288533
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74DB41C217A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752BC158A27;
-	Thu, 11 Jul 2024 10:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2866F1581F6;
+	Thu, 11 Jul 2024 10:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qk7HvNY5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="Guw25fXT"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B47157A61;
-	Thu, 11 Jul 2024 10:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C8815748F
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720692247; cv=none; b=dVRuoqa/6zcJbMAec2rSxdGba83iZ7zd3HB+tNpTvc7709ku8Nuj/7cBLYRjXTw2cSIxuwYdFJXD2q03aUCTGLarbwftockpVlW4DrSFsVEaFc64oK9ffSri/lc//stHRpfQzESiz6DtetzbmvzZEvSz5Y0HEqXlT5BgYlE24Dg=
+	t=1720692325; cv=none; b=L7U1j/f7Nun/QFc8I1Bm4AVoKWZfgCGpwJyNz1vdxyRf9ViSRtK6NeCFq+2R4kx5q7fsu3X5fABZ5q1unwyGTSyww5qVaYxVgr74zdyZG0+T4McZY2StgNvGfK/gl3+PegmCkQAve5MaEetQrbmwfuRPTh1K9q8r7sFQGA0iLks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720692247; c=relaxed/simple;
-	bh=T2hZAkVdwKJbOWQnDYuPe62AFV+qUr4L58kAwGO8POY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnAbyCFR3mdPd49VlxP2RJAx8je/C+YAIrtwuF71HyRRds+4gBYHxR7tJ3N8XvCG0BJ/yeDFcT5osV08g73VS0NfgY1JeY6NxoFtg/H6+e3dFrAvl+OmBlUsJ+3aEaE6HFt58YBk4a5ihaSjiZaFEPHcUbDfj4S11I0SqEmhCwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qk7HvNY5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E120C116B1;
-	Thu, 11 Jul 2024 10:04:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720692247;
-	bh=T2hZAkVdwKJbOWQnDYuPe62AFV+qUr4L58kAwGO8POY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qk7HvNY5gjdeGcY4B5UFzLa8h4RjoLwU7iwK2sM19nAQTCegEc824z5Q4xCY6IzSX
-	 PNpK2fGaSgcKBTJe4q5vULQpw2sWYEk1QDrpBB/4W2hLvGQNI9zeqYyDQ+6CvKfmnE
-	 JGiPms8jcTE05fdiUPvzn1PZL8syD7CLGgDOtsOTdvvIX8hcFRCGVVtpLfmJ67aHuR
-	 w/vziUaSUC1NOcUrYvmQyoHl+mqTf5Qs4s7/6yzgBaDaaVjUSDWHsQi2RspMFZdPpk
-	 QfKsHaGa4L1WHGDcsPk5UhELzd1gLnzrgPkMdenIH+Iok19GOgGYhW4QqTFZd3QWAB
-	 gSP+xzalWpaRA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sRqei-000000008TY-1WtQ;
-	Thu, 11 Jul 2024 12:04:04 +0200
-Date: Thu, 11 Jul 2024 12:04:04 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe
-Message-ID: <Zo-uFGK7Ge_9-DJb@hovoldconsulting.com>
-References: <20240711090250.20827-1-johan+linaro@kernel.org>
- <f7e74a6f-0548-4caa-a8fc-8180c619c9aa@linaro.org>
- <Zo-ssBBDbHRLtAwG@hovoldconsulting.com>
- <bf41aa8b-6a49-4610-8a8e-c2dab8ef4334@linaro.org>
+	s=arc-20240116; t=1720692325; c=relaxed/simple;
+	bh=woariqs1T/t6joBcoDmTz9WPGOF9LK4+GbAOdGbFbyw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FTaGUzd5UeJit450pLv5saCHq6aXczq6zShW2vKZRLaAtgEZ9xTU+SXbsvZ7zykQlK0gpgf4aT26wDj696jp2RjS3o4Db3DoNJIy6ZNO4hj28eD8ucuQbR7hRIDo5zDeB322vwE/Tj5G7x7yTcNAY07Fr2Fw4PK2p4lgPWSa1CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=Guw25fXT; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: jonas@kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1720692321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=woariqs1T/t6joBcoDmTz9WPGOF9LK4+GbAOdGbFbyw=;
+	b=Guw25fXTsi2R6EDlEA9Sq0mA1QFGoWhYFqmBpJJR7gBDxmaPVIGpjHw97CkwW1Zwnt6B4J
+	Ydyo1WOgg/qynJOlUKr/kF3JPyOAMu1EMOLPsYS42vB3DwZT9BAtSJxgXDKRp6LRn5cFUN
+	EDCDUp2surfL6vW11js9ztESYJheqxeKohcHGNbbO/DRdMMveA0W3dIfDhDgt+I6DzaatY
+	c6iip31+SA5dV+G43MjNVHO38GqC8WAhloL3YXjky+u2ukgjNEyR0KvNHoAokYi8VeuVQw
+	X1FhLDFwDKZChAV84HXftQJ7T6lJ4Uhv/m/p1WcY6hSF0l/LNzeDNG0FlAzG6w==
+X-Envelope-To: linux.amoon@gmail.com
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: heiko@sntech.de
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Jonas Karlman <jonas@kwiboo.se>, Anand Moon <linux.amoon@gmail.com>
+Cc: linux-rockchip@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v2] arm64: dts: rockchip: Add missing pinctrl for PCIe30x4 node
+Date: Thu, 11 Jul 2024 12:05:07 +0200
+Message-ID: <2017670.43MJ0K8Myn@bagend>
+Organization: Connecting Knowledge
+In-Reply-To:
+ <CANAwSgQCn3jgiruiLs0cu-C+DguLtnk=msboAh8jNSF4P28gjA@mail.gmail.com>
+References:
+ <20240711060939.1128-1-linux.amoon@gmail.com>
+ <a8c1f49e-bf25-4fd3-a16f-13088f75767f@kwiboo.se>
+ <CANAwSgQCn3jgiruiLs0cu-C+DguLtnk=msboAh8jNSF4P28gjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf41aa8b-6a49-4610-8a8e-c2dab8ef4334@linaro.org>
+Content-Type: multipart/signed; boundary="nextPart9979218.Gk3PjodWl2";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jul 11, 2024 at 12:00:50PM +0200, Konrad Dybcio wrote:
-> On 11.07.2024 11:58 AM, Johan Hovold wrote:
+--nextPart9979218.Gk3PjodWl2
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+Date: Thu, 11 Jul 2024 12:05:07 +0200
+Message-ID: <2017670.43MJ0K8Myn@bagend>
+Organization: Connecting Knowledge
+MIME-Version: 1.0
 
-> > What branch are you using? Abel reported seeing this with his branch
-> > which has a few work-in-progress patches that try to enable 4-lane PCIe.
-> > 
-> > There are no errors with my wip branch based on rc7, and I have the same
-> > drive as Abel.
-> 
-> linux-next/master
+On Thursday, 11 July 2024 11:09:48 CEST Anand Moon wrote:
+> Ok but it is better to update this in rk3588s-pinctrl.dtsi
 
-Hmm. Ok. We may need to disable L0s as I did for sc8280xp as well, but
-that was not the cause for Abel's errors.
+It's probably better to base your patch(es) on Heiko's 'for-next' (or 'v6.11-
+armsoc/dts64') branch as that file no longer exists there
+--nextPart9979218.Gk3PjodWl2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-> > Also note that the errors happen also without this patch applied, they
-> > are just being reported now.
-> 
-> Ouch.. wonder how much that drives the perf down
+-----BEGIN PGP SIGNATURE-----
 
-Could you post the output of lspci -vv for the NVMe controller?
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZo+uUwAKCRDXblvOeH7b
+blpuAP0UVF/cKRG9V7+rqf/WlKLAkLvHlt6ZJ4I9ApuZxegHKwEAieUAKVb4laEU
+S21ZzMcJwL9EtDWySPiHunToRKsDbAE=
+=1hje
+-----END PGP SIGNATURE-----
 
-Johan
+--nextPart9979218.Gk3PjodWl2--
+
+
+
 
