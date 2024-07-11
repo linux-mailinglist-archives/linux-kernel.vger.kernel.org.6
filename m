@@ -1,149 +1,307 @@
-Return-Path: <linux-kernel+bounces-249573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A99092ED77
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:09:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F77A92ED7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 19:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA699285DC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:09:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBECAB20CC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0D116D4F1;
-	Thu, 11 Jul 2024 17:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DF916D9D4;
+	Thu, 11 Jul 2024 17:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b2Q1jkqJ"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="X/X7+0TS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D48716D4E7
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 17:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48FE16D4E7;
+	Thu, 11 Jul 2024 17:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720717768; cv=none; b=OE4x5SSSuEU1Dmzpn1gJZaZkmXiuPHMazfJte8qEfMYhnRscge0TNnWDzTcgU9GR3hTnuA5fjOLl1pWVHVlkJvQgpEP3VpZ6FumGM+49dcWmUGqJw06typ0DScT7mj0ldUyQKgvtCnUHSWWeBsBQGpyKtscMvnBzkEf2VpyV8Fg=
+	t=1720717784; cv=none; b=alD53J28DAQLoo4nLMS4MeCwP7MmkqnsJU4/cXk+hYl7ZrGsR3mrGtrpDnD/IzaVmYtzjoNCUPQS2C/RvE57IKtl3oSA7NZOR0+A34d7Weqd+VYvxGoXK7aozq8vV4qwqM4zVcwnT20aZ2mXKqQSBe8gyHUPWFXAHpVO9TJ+mrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720717768; c=relaxed/simple;
-	bh=C3F9jB3kZe372d/2FqZSOc9k/pEeRRtlSpwAdrHy+RI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pfVtzT9aU+Cd8DBuoh7dy7E073KdOjZfVtymErv9UIKI763sp/wCG7LEwl/2/siG+QZv7uU3wXTWNV1hNAGsJFju+KkB8N3W2qsrgNa8Lyr+Fb8p+D83lGepnJXRFsYApKDTydvsLXwuX5NzS+byX71rMe1c45fSh6wiU/PDoj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b2Q1jkqJ; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e03a6196223so1114868276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:09:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720717764; x=1721322564; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BT4Q0fDnQo1b1rbWAFdQTaPbqeR+6myjThNugn0g5s4=;
-        b=b2Q1jkqJkdrBKBoPlQpg1AvpEWUqpYJbM9G5sE/t56Xesvk5d4XYp1DhVcuXjlcZjG
-         lGUcC1WGRtn4v2pQshjeHSdz2P1HT/UjPKndBfiQRrpI3uDr41XkyYdX2bxg77HHEI3Q
-         82HYJ3OJb+LaQy5oX4CM9gNP5Xll6PmfYJvKPhqFUeuI+pziLZL78GmNrk3U1+Mxlt5W
-         OkczD52qpVo4K6l9PNvIR4S02INIY2I6Z30R+Fh0rZij67dgrvzIqlE8wgCk0CDqiFKm
-         gS0ugE84PpCJVHfJD/U3ghI+r3zrv5O4lEoA9pPZ8fb4c3C59wL5yaNknKTa6oJtMQIJ
-         +0RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720717764; x=1721322564;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BT4Q0fDnQo1b1rbWAFdQTaPbqeR+6myjThNugn0g5s4=;
-        b=dLMrUJbtP8PNNX711f/QhRvdkaygO7tR6HchHH5V4HCXKt1AO/p2JUnFQpcf7nJl0y
-         5DIcJzUkNdfQx1pzSgqPgxQyyZLmeOeXmNtDvuR0VPXSfVgOoDRKG2aNgcg/FIyo5gYU
-         wgiG5uv5clbIaCK824tp4azvljr46wFNQPZDIpRo9iLisaEnQNVORp6TQrlYXACqddi9
-         /7/JPKsVQQ7Bd6Nr/3VE//OEedD8Q6IqjHVM1hzeev8aiTPCHKzlsp8Bl2/WaWoy6VKg
-         zoYPEjvD74XrRduO9pMo71yVJ8gKKpLxGA+/7O5VMoCl/P3iEAGfbnL0P3gZJKtGNnND
-         iq3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVtNdgw1IHiRibzrVxGfMcK64IFYWPUCbplWCYIaUHO7ulzPePuSsfKkFJAzVA5II7Me3X8CEzjREBfxjI+0g8vZEL0eEGMQbibF9mc
-X-Gm-Message-State: AOJu0Ywzq3tGQXodsBXz6073wZVO6eNX63S08qdyLiLH+473eoIeJhk5
-	4ogklXXlQhsfmx9pHBGTcWrlxjhYVfEvNcaWKm60a1ViRNKAwatHr5qAM2fZZzeGIIYUYndCcs+
-	/gvfvamP7McI3Ot6MuwLFhU5gYnCWq7Tm/jzM
-X-Google-Smtp-Source: AGHT+IFhB7a+a8BufuhlkTWktjp2U5ed8yphy1GsV9RSCnMPrnocZGbTiFQNSoEMqZd7f6XE4G2m/LQxA5D5a5Q+8sc=
-X-Received: by 2002:a5b:b0b:0:b0:e03:ae1c:8d0f with SMTP id
- 3f1490d57ef6-e041b17328fmr10346582276.59.1720717764206; Thu, 11 Jul 2024
- 10:09:24 -0700 (PDT)
+	s=arc-20240116; t=1720717784; c=relaxed/simple;
+	bh=VJps8YRyXPgmkQL/Oc0nWeCbG5EJcOqKrcAnZRcok64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UyBAz/WlAamYdEoVpRgzlPEEAhmO+DK5yPuhrPPZWfXuQuo+l8JpzmuXwO8odDgjEblTaX9DQBm2RymkP7vVDePo+ZdLMxKgXfCEFM1+Hr8EwX8vfbNLTrt702zWhTzPy8C9UwD4ZT/FnpZ8KyyRwuy8wGG4mzbwblE+umoMrEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=X/X7+0TS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB2E2C116B1;
+	Thu, 11 Jul 2024 17:09:41 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="X/X7+0TS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1720717780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b5Zk8ILabTM/NFQk7obBb2+60sqv1qoyRRStBSjez0M=;
+	b=X/X7+0TSXxHpmN9PMnqrKgXgKx72kEhINEQYzolMUKcDfR1Vzh5V+MOSwdpOdnflOrEggY
+	zwuFsiGiSZePB7MRot1uPuwaJvzoEreWrxF6ZujhbuOrACxJggMXynn87lCnleNNjeWH5z
+	uh/2WYxRcos75n4JpPgbhTxfBYbgRw4=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 229a906f (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Thu, 11 Jul 2024 17:09:39 +0000 (UTC)
+Date: Thu, 11 Jul 2024 19:09:36 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev, tglx@linutronix.de,
+	linux-crypto@vger.kernel.org, linux-api@vger.kernel.org,
+	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <ZpAR0CgLc28gEkV3@zx2c4.com>
+References: <20240709130513.98102-1-Jason@zx2c4.com>
+ <20240709130513.98102-2-Jason@zx2c4.com>
+ <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
+ <9b400450-46bc-41c7-9e89-825993851101@redhat.com>
+ <Zo8q7ePlOearG481@zx2c4.com>
+ <Zo9gXAlF-82_EYX1@zx2c4.com>
+ <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
+ <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202407050845.zNONqauD-lkp@intel.com>
-In-Reply-To: <202407050845.zNONqauD-lkp@intel.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 11 Jul 2024 10:09:13 -0700
-Message-ID: <CAJuCfpEwNE5tsm+iZTzZc-hdR5sBXAKd57tOGum67_fAu2Gi3A@mail.gmail.com>
-Subject: Re: mm/slub.c:2077:1: error: unused function 'prepare_slab_obj_exts_hook'
-To: kernel test robot <lkp@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
 
-On Thu, Jul 4, 2024 at 5:35=E2=80=AFPM kernel test robot <lkp@intel.com> wr=
-ote:
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t master
-> head:   661e504db04c6b7278737ee3a9116738536b4ed4
-> commit: b4601d096aac8ed26afa88ef8b249975b0530ca1 mm/slab: fix 'variable o=
-bj_exts set but not used' warning
-> date:   10 days ago
-> config: x86_64-sof-customedconfig-amd-defconfig (https://download.01.org/=
-0day-ci/archive/20240705/202407050845.zNONqauD-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a=
-15a9eac96088ae5e9134248d8236e34b91b1)
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20240705/202407050845.zNONqauD-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202407050845.zNONqauD-lkp=
-@intel.com/
+Hi Linus, David,
 
-Fix is posted at
-https://lore.kernel.org/all/20240711170216.1149695-1-surenb@google.com/
-over slab/for-next baseline because that branch contains another code
-refactoring [1] which would cause merge conflicts.
+On Wed, Jul 10, 2024 at 10:07:03PM -0700, Linus Torvalds wrote:
+> The other approach might be to just let all the dirty handling happen
+> - make droppable pages have a "page->mapping" (and not be anonymous),
+> and have the mapping->a_ops->writepage() just always return success
+> immediately.
 
-[1] https://lore.kernel.org/all/20240704135941.1145038-1-surenb@google.com/
+When I was working on this patchset this year with the syscall, this is
+similar somewhat to the initial approach I was taking with setting up a
+special mapping. It turned into kind of a mess and I couldn't get it
+working. There's a lot of functionality built around anonymous pages
+that would need to be duplicated (I think?). I'll revisit it if need be,
+but let's see if I can make avoiding the dirty bit propagation work.
 
->
-> All errors (new ones prefixed by >>):
->
-> >> mm/slub.c:2077:1: error: unused function 'prepare_slab_obj_exts_hook' =
-[-Werror,-Wunused-function]
->     2077 | prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, =
-void *p)
->          | ^~~~~~~~~~~~~~~~~~~~~~~~~~
->    1 error generated.
->
->
-> vim +/prepare_slab_obj_exts_hook +2077 mm/slub.c
->
-> 0bedcc66d2a43a Vlastimil Babka    2023-10-03  2075
-> 4b8736964640fe Suren Baghdasaryan 2024-03-21  2076  static inline struct =
-slabobj_ext *
-> 4b8736964640fe Suren Baghdasaryan 2024-03-21 @2077  prepare_slab_obj_exts=
-_hook(struct kmem_cache *s, gfp_t flags, void *p)
-> 3450a0e5a6fc4c Vlastimil Babka    2023-11-13  2078  {
-> 4b8736964640fe Suren Baghdasaryan 2024-03-21  2079      return NULL;
-> 4b8736964640fe Suren Baghdasaryan 2024-03-21  2080  }
-> 3450a0e5a6fc4c Vlastimil Babka    2023-11-13  2081
->
-> :::::: The code at line 2077 was first introduced by commit
-> :::::: 4b8736964640fe160724e7135dc62883bddcdace mm/slab: add allocation a=
-ccounting into slab allocation and free paths
->
-> :::::: TO: Suren Baghdasaryan <surenb@google.com>
-> :::::: CC: Andrew Morton <akpm@linux-foundation.org>
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+> It's mainly the pte_dirty games in mm/vmscan.c that does it
+> (walk_pte_range), but also the tear-down in mm/memory.c
+> (zap_present_folio_ptes). Possibly others that I didn't think of.
+> 
+> Both do have access to the vma, although in the case of
+> walk_pte_range() we don't actually pass it down because we haven't
+> needed it).
+
+Actually, it's there hanging out in args->vma, and the function makes
+use of that member already. So not so bad.
+
+> 
+> There's also page_vma_mkclean_one(), try_to_unmap_one() and
+> try_to_migrate_one().  And possibly many others I haven't even thought
+> about.
+> 
+> So quite a few places that do that "transfer dirty bit from pte to folio".
+
+Alright, an hour later of fiddling, and it doesn't actually work (yet?)
+-- the selftest fails. A diff follows below.
+
+So, hmm... The swapbacked thing really seemed so simple... I wonder if
+there's a way of recovering that.
+
+Jason
+
+
+diff --git a/mm/gup.c b/mm/gup.c
+index ca0f5cedce9b..38745cc4fa06 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -990,7 +990,8 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+ 	}
+ 	if (flags & FOLL_TOUCH) {
+ 		if ((flags & FOLL_WRITE) &&
+-		    !pte_dirty(pte) && !PageDirty(page))
++		    !pte_dirty(pte) && !PageDirty(page) &&
++		    !(vma->vm_flags & VM_DROPPABLE))
+ 			set_page_dirty(page);
+ 		/*
+ 		 * pte_mkyoung() would be more correct here, but atomic care
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 34c4820e0d3d..2401fc4203ba 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -1339,7 +1339,7 @@ static int write_protect_page(struct vm_area_struct *vma, struct folio *folio,
+ 			goto out_unlock;
+ 		}
+
+-		if (pte_dirty(entry))
++		if (pte_dirty(entry) && !(vma->vm_flags & VM_DROPPABLE))
+ 			folio_mark_dirty(folio);
+ 		entry = pte_mkclean(entry);
+
+@@ -1518,7 +1518,7 @@ static int try_to_merge_one_page(struct vm_area_struct *vma,
+ 			 * Page reclaim just frees a clean page with no dirty
+ 			 * ptes: make sure that the ksm page would be swapped.
+ 			 */
+-			if (!PageDirty(page))
++			if (!PageDirty(page) && !(vma->vm_flags & VM_DROPPABLE))
+ 				SetPageDirty(page);
+ 			err = 0;
+ 		} else if (pages_identical(page, kpage))
+diff --git a/mm/memory.c b/mm/memory.c
+index d10e616d7389..6a02d16309be 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1479,7 +1479,7 @@ static __always_inline void zap_present_folio_ptes(struct mmu_gather *tlb,
+
+ 	if (!folio_test_anon(folio)) {
+ 		ptent = get_and_clear_full_ptes(mm, addr, pte, nr, tlb->fullmm);
+-		if (pte_dirty(ptent)) {
++		if (pte_dirty(ptent) && !(vma->vm_flags & VM_DROPPABLE)) {
+ 			folio_mark_dirty(folio);
+ 			if (tlb_delay_rmap(tlb)) {
+ 				delay_rmap = true;
+@@ -6140,7 +6140,8 @@ static int __access_remote_vm(struct mm_struct *mm, unsigned long addr,
+ 			if (write) {
+ 				copy_to_user_page(vma, page, addr,
+ 						  maddr + offset, buf, bytes);
+-				set_page_dirty_lock(page);
++				if (!(vma->vm_flags & VM_DROPPABLE))
++					set_page_dirty_lock(page);
+ 			} else {
+ 				copy_from_user_page(vma, page, addr,
+ 						    buf, maddr + offset, bytes);
+diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+index aecc71972a87..72d3f8eaae6e 100644
+--- a/mm/migrate_device.c
++++ b/mm/migrate_device.c
+@@ -216,7 +216,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+ 			migrate->cpages++;
+
+ 			/* Set the dirty flag on the folio now the pte is gone. */
+-			if (pte_dirty(pte))
++			if (pte_dirty(pte) && !(vma->vm_flags & VM_DROPPABLE))
+ 				folio_mark_dirty(folio);
+
+ 			/* Setup special migration page table entry */
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 1f9b5a9cb121..1688d06bb617 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1397,12 +1397,7 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
+ 	VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
+ 	VM_BUG_ON_VMA(address < vma->vm_start ||
+ 			address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
+-	/*
+-	 * VM_DROPPABLE mappings don't swap; instead they're just dropped when
+-	 * under memory pressure.
+-	 */
+-	if (!(vma->vm_flags & VM_DROPPABLE))
+-		__folio_set_swapbacked(folio);
++	__folio_set_swapbacked(folio);
+ 	__folio_set_anon(folio, vma, address, true);
+
+ 	if (likely(!folio_test_large(folio))) {
+@@ -1777,7 +1772,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 		pte_install_uffd_wp_if_needed(vma, address, pvmw.pte, pteval);
+
+ 		/* Set the dirty flag on the folio now the pte is gone. */
+-		if (pte_dirty(pteval))
++		if (pte_dirty(pteval) && !(vma->vm_flags & VM_DROPPABLE))
+ 			folio_mark_dirty(folio);
+
+ 		/* Update high watermark before we lower rss */
+@@ -1822,7 +1817,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 			}
+
+ 			/* MADV_FREE page check */
+-			if (!folio_test_swapbacked(folio)) {
++			if (!folio_test_swapbacked(folio) || (vma->vm_flags & VM_DROPPABLE)) {
+ 				int ref_count, map_count;
+
+ 				/*
+@@ -1846,13 +1841,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 				 * plus the rmap(s) (dropped by discard:).
+ 				 */
+ 				if (ref_count == 1 + map_count &&
+-				    (!folio_test_dirty(folio) ||
+-				     /*
+-				      * Unlike MADV_FREE mappings, VM_DROPPABLE
+-				      * ones can be dropped even if they've
+-				      * been dirtied.
+-				      */
+-				     (vma->vm_flags & VM_DROPPABLE))) {
++				    !folio_test_dirty(folio)) {
+ 					dec_mm_counter(mm, MM_ANONPAGES);
+ 					goto discard;
+ 				}
+@@ -1862,12 +1851,7 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
+ 				 * discarded. Remap the page to page table.
+ 				 */
+ 				set_pte_at(mm, address, pvmw.pte, pteval);
+-				/*
+-				 * Unlike MADV_FREE mappings, VM_DROPPABLE ones
+-				 * never get swap backed on failure to drop.
+-				 */
+-				if (!(vma->vm_flags & VM_DROPPABLE))
+-					folio_set_swapbacked(folio);
++				folio_set_swapbacked(folio);
+ 				ret = false;
+ 				page_vma_mapped_walk_done(&pvmw);
+ 				break;
+@@ -2151,7 +2135,7 @@ static bool try_to_migrate_one(struct folio *folio, struct vm_area_struct *vma,
+ 		}
+
+ 		/* Set the dirty flag on the folio now the pte is gone. */
+-		if (pte_dirty(pteval))
++		if (pte_dirty(pteval) && !(vma->vm_flags & VM_DROPPABLE))
+ 			folio_mark_dirty(folio);
+
+ 		/* Update high watermark before we lower rss */
+@@ -2397,7 +2381,7 @@ static bool page_make_device_exclusive_one(struct folio *folio,
+ 		pteval = ptep_clear_flush(vma, address, pvmw.pte);
+
+ 		/* Set the dirty flag on the folio now the pte is gone. */
+-		if (pte_dirty(pteval))
++		if (pte_dirty(pteval) && !(vma->vm_flags & VM_DROPPABLE))
+ 			folio_mark_dirty(folio);
+
+ 		/*
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 2e34de9cd0d4..cf5b26bd067a 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -3396,6 +3396,7 @@ static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
+ 		walk->mm_stats[MM_LEAF_YOUNG]++;
+
+ 		if (pte_dirty(ptent) && !folio_test_dirty(folio) &&
++		    !(args->vma->vm_flags & VM_DROPPABLE) &&
+ 		    !(folio_test_anon(folio) && folio_test_swapbacked(folio) &&
+ 		      !folio_test_swapcache(folio)))
+ 			folio_mark_dirty(folio);
+@@ -3476,6 +3477,7 @@ static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area
+ 		walk->mm_stats[MM_LEAF_YOUNG]++;
+
+ 		if (pmd_dirty(pmd[i]) && !folio_test_dirty(folio) &&
++		    !(vma->vm_flags && VM_DROPPABLE) &&
+ 		    !(folio_test_anon(folio) && folio_test_swapbacked(folio) &&
+ 		      !folio_test_swapcache(folio)))
+ 			folio_mark_dirty(folio);
+@@ -4076,6 +4078,7 @@ void lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
+ 		young++;
+
+ 		if (pte_dirty(ptent) && !folio_test_dirty(folio) &&
++		    !(vma->vm_flags & VM_DROPPABLE) &&
+ 		    !(folio_test_anon(folio) && folio_test_swapbacked(folio) &&
+ 		      !folio_test_swapcache(folio)))
+ 			folio_mark_dirty(folio);
+
 
