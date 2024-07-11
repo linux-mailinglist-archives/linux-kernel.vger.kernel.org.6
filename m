@@ -1,155 +1,119 @@
-Return-Path: <linux-kernel+bounces-248823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA36692E271
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:34:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797FB92E27F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6C31C211CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:34:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9BADB23C74
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91408158D6F;
-	Thu, 11 Jul 2024 08:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IxKOdkJu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E584615B140;
+	Thu, 11 Jul 2024 08:33:36 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2966E155CA5
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBDE15B0F2
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720686698; cv=none; b=B2PGEAWOJA5FK9ZgBrgBagudusbllJOLX/uaLSm2o5rfP7iTVcYjiTEFW6dbPP4TGFuMZuwz+hxCW/xo47gyg0FS6DagbMtUHkdMAAHuolXMXocDOrOXH2LjYwzw6Rn2DXAOitF0ULNo4Nb3OoWy+fu+J23GsaXjN2+cL5a1T5w=
+	t=1720686816; cv=none; b=dV+BbXo2X5Ni7fL394w+lHA0yd3MbGENLLOL+XMcea4b8vk4IQj6r7BXKa8iIKM0Reab+HkJny3YdzWGIKYi8WuweppI5Z5CvIbxPrUWfnJilWbfUqJmTnVoz576sVQYbjE9C8fRngv4i1JOakkQiYOw6yp3ZNLtvClB47i8NpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720686698; c=relaxed/simple;
-	bh=J309idn94l6LfM69hofwVk6z9S7VT1vK5PVzSR4ifFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eiMy4PrWh1o0ppPOWpRPGfHW2EgunhfE4r9wunzEW2mFiMbt+J6oyyRSiTYpgiJsx8NQftIcADZ5ge0pl/X3Zz81Ah72Uv88MYrQ7FMM/OxmukuYV+iLcIGv4P7X1ioPZMRgXxx61EKtn+2caxKANUhOSCRIjQ78YzjUfkrOZVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IxKOdkJu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720686696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xsavuo7VjN4IgYGRQOpxjo6n2SWYiH9JroTE1iXSFAY=;
-	b=IxKOdkJuuRUvFke+nipPaPBht/9CuajOQiN0BoLQXmy1hlWpQaHDVNZXoNohzCeq6Q7Oi3
-	DivqyyEUZME3313TD39bPHyfuQJhIbE8wPCRaIS7b6ULrWtd7edIjzcS8i377k+twBz/UK
-	mPFfzVrUwMFuyUG0ImcbT4X+GrXO7rQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-600-XsPmoLVlOuO_US59wkgpIg-1; Thu, 11 Jul 2024 04:31:34 -0400
-X-MC-Unique: XsPmoLVlOuO_US59wkgpIg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4256667ebf9so4522455e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:31:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720686693; x=1721291493;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xsavuo7VjN4IgYGRQOpxjo6n2SWYiH9JroTE1iXSFAY=;
-        b=oN1TPsCAyPKTDd9T2pNNg401B+cPr3OBGlMf0EQRmxO3kH5myKylUfcvi19D+V2AFf
-         dcxxxScZcj2c4IBbygWF0+QiP8IV0Yye6FonqELpH5NamCyRsld+9hCoDJC4C61dDSxR
-         shScK0QVAglSVNZv19mFFqmJ/6yxoWTqTBkZqP950gWJFu2HBhoJfaDd9JLOX30mhIXI
-         2dVwIYjtuJXGdCztmxFiPT9gH8JxvST4eqfHXGSVBfduF8YNtyDYAmmSSbeqf+p8vgnH
-         GfGht2xmwm7Qb+t0vHaRdoWvMFit4MLvJdzaCzIgQspb1c02Yc7YOBdu/lm9xEZPZf3t
-         /sjg==
-X-Gm-Message-State: AOJu0YxbCyqa3CzhFdv2vHOI9sCICzbwDiSVZO08yMgMkoa5UVVm8z6G
-	vVlsDE95QLnqoUWFfVMzI6gwTlSl8XPq41XAuST67/p/e390lxiuuTaXnygEIhMgzr0hRYsGLPZ
-	qE38GtPFPiHUcYfXpY4YwJgTIPBc26y/v1OFgruEdRKJbFK2TmB7cJFwP+BqitA==
-X-Received: by 2002:a05:600c:41d1:b0:426:5d37:67f0 with SMTP id 5b1f17b1804b1-426707cbd7amr47937325e9.13.1720686693632;
-        Thu, 11 Jul 2024 01:31:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEsGmNWWpKzLdjjvHa8Oly0TKggOk/fmTsEbwHHsuebuNMp1P87hEdumnvEl9dAnc+GlyWXw==
-X-Received: by 2002:a05:600c:41d1:b0:426:5d37:67f0 with SMTP id 5b1f17b1804b1-426707cbd7amr47937135e9.13.1720686693017;
-        Thu, 11 Jul 2024 01:31:33 -0700 (PDT)
-Received: from ?IPV6:2003:cf:d74b:1cd5:1c4c:c09:d73b:c07d? (p200300cfd74b1cd51c4c0c09d73bc07d.dip0.t-ipconnect.de. [2003:cf:d74b:1cd5:1c4c:c09:d73b:c07d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa0613sm7165414f8f.88.2024.07.11.01.31.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 01:31:32 -0700 (PDT)
-Message-ID: <8268c602-7852-4d5b-86de-54b0a38cf244@redhat.com>
-Date: Thu, 11 Jul 2024 10:31:31 +0200
+	s=arc-20240116; t=1720686816; c=relaxed/simple;
+	bh=q0kFuWpy/Q0SfNf7bROn3mekt5j/tbY9mvHj/9Me+3Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WNrAn7EnI6AQ8ytpLwiroqRPvOLVLfrnLNQSkBQGebkW8VmEnojjFczQS/25rjyZMF3HCL9wjktvk8OsJeUHsIRkLhRfSy/lrZPxxVQl3yVvfWcaRMLB+GxRgg1Xz4sXs8yO5v1Nqb4BxYLU0YwmfQDUq9Y/8uMSuf2zoiZNvl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=none smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=isrc.iscas.ac.cn
+Received: from sunying2022-ubuntu-01.cloud.onecloud.io (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAAXHZnImI9mBB0vFQ--.56149S2;
+	Thu, 11 Jul 2024 16:33:13 +0800 (CST)
+From: sunying@isrc.iscas.ac.cn
+To: ebiederm@xmission.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu
+Cc: kexec@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	zhuhengbo@iscas.ac.cn,
+	Ying Sun <sunying@isrc.iscas.ac.cn>,
+	Petr Tesarik <petr@tesarici.cz>
+Subject: [PATCH v1] riscv/kexec_file: Fix relocation type R_RISCV_ADD16 and R_RISCV_SUB16 unknown
+Date: Thu, 11 Jul 2024 08:32:36 +0000
+Message-Id: <20240711083236.2859632-1-sunying@isrc.iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] virtio-fs: Add 'file' mount option
-To: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
- Miklos Szeredi <mszeredi@redhat.com>, German Maglione
- <gmaglione@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Vivek Goyal <vgoyal@redhat.com>
-References: <20240709111918.31233-1-hreitz@redhat.com>
- <20240710172828.GB542210@dynamic-pd01.res.v6.highway.a1.net>
-Content-Language: en-US
-From: Hanna Czenczek <hreitz@redhat.com>
-In-Reply-To: <20240710172828.GB542210@dynamic-pd01.res.v6.highway.a1.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAXHZnImI9mBB0vFQ--.56149S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw4UWrWfAw13ZFWDAFW7XFb_yoW8Gryxp3
+	43Cr15KFs8GryxKw4xArykua4rW3Z8urW3Ja90kFyrJrnrJry8t3yqqw1UJa1jvr1FgrWS
+	vFy2gF95GF1jyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+	6r4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwAKzVCY07xG64k0F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvj
+	DU0xZFpf9x0JUSiihUUUUU=
+X-CM-SenderInfo: 5vxq5x1qj6x21ufox2xfdvhtffof0/
 
-On 10.07.24 19:28, Stefan Hajnoczi wrote:
-> On Tue, Jul 09, 2024 at 01:19:16PM +0200, Hanna Czenczek wrote:
->> Hi,
->>
->> We want to be able to mount filesystems that just consist of one regular
->> file via virtio-fs, i.e. no root directory, just a file as the root
->> node.
->>
->> While that is possible via FUSE itself (through the 'rootmode' mount
->> option, which is automatically set by the fusermount help program to
->> match the mount point's inode mode), there is no virtio-fs option yet
->> that would allow changing the rootmode from S_IFDIR to S_IFREG.
->>
->> To do that, this series introduces a new 'file' mount option that does
->> precisely that.  Alternatively, we could provide the same 'rootmode'
->> option that FUSE has, but as laid out in patch 1's commit description,
->> that option is a bit cumbersome for virtio-fs (in a way that it is not
->> for FUSE), and its usefulness as a more general option is limited.
->>
->>
->> Hanna Czenczek (2):
->>    virtio-fs: Add 'file' mount option
->>    virtio-fs: Document 'file' mount option
->>
->>   fs/fuse/virtio_fs.c                    | 9 ++++++++-
->>   Documentation/filesystems/virtiofs.rst | 5 ++++-
->>   2 files changed, 12 insertions(+), 2 deletions(-)
->>
->> -- 
->> 2.45.1
->>
-> Looks good to me. Maybe add the 'file' option to FUSE as well to keep
-> them in sync (eventually rootmode could be exposed to virtiofs too, if
-> necessary)?
+From: Ying Sun <sunying@isrc.iscas.ac.cn>
 
-I don’t think this option makes much sense for FUSE, like Josef has 
-said; it would just duplicate a subset of 'rootmode', and because FUSE 
-filesystems are rarely mounted by hand, I don’t think anyone would ever 
-use it.
+Runs on the kernel with CONFIG_RISCV_ALTERNATIVE enabled:
+  kexec -sl vmlinux
 
-If it were important to keep them in sync, I’d rather have virtio-fs 
-provide 'rootmode' instead.  Personally, I don’t think it’s that 
-important, and I’d rather have a simple '-o file' instead of '-o 
-rootmode=0100000' (hope I counted the 0s right) for a filesystem that is 
-actually not rarely mounted by hand.
+Error:
+  kexec_image: Unknown rela relocation: 34
+  kexec_image: Error loading purgatory ret=-8
+and
+  kexec_image: Unknown rela relocation: 38
+  kexec_image: Error loading purgatory ret=-8
 
-If we ever do find out that we want to support other root modes than 
-S_IFREG and S_IFDIR, we will probably want 'rootmode' for virtio-fs, 
-too, yes.  But I can’t see that right now.
+The purgatory code uses the 16-bit addition and subtraction relocation
+type, but not handled, resulting in kexec_file_load failure.
+So add handle to arch_kexec_apply_relocations_add().
 
-> Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Tested on RISC-V64 Qemu-virt, issue fixed.
 
-Thanks!
+Co-developed-by: Petr Tesarik <petr@tesarici.cz>
+Signed-off-by: Petr Tesarik <petr@tesarici.cz>
+Signed-off-by: Ying Sun <sunying@isrc.iscas.ac.cn>
+---
+ arch/riscv/kernel/elf_kexec.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Hanna
+diff --git a/arch/riscv/kernel/elf_kexec.c b/arch/riscv/kernel/elf_kexec.c
+index 11c0d2e0becf..3c37661801f9 100644
+--- a/arch/riscv/kernel/elf_kexec.c
++++ b/arch/riscv/kernel/elf_kexec.c
+@@ -451,6 +451,12 @@ int arch_kexec_apply_relocations_add(struct purgatory_info *pi,
+ 			*(u32 *)loc = CLEAN_IMM(CJTYPE, *(u32 *)loc) |
+ 				 ENCODE_CJTYPE_IMM(val - addr);
+ 			break;
++		case R_RISCV_ADD16:
++			*(u16 *)loc += val;
++			break;
++		case R_RISCV_SUB16:
++			*(u16 *)loc -= val;
++			break;
+ 		case R_RISCV_ADD32:
+ 			*(u32 *)loc += val;
+ 			break;
+-- 
+2.34.1
 
 
