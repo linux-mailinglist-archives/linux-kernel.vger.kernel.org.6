@@ -1,123 +1,210 @@
-Return-Path: <linux-kernel+bounces-249429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE0B92EB8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:22:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E9992EB91
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C847284F9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:22:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841651F22793
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B49716B75B;
-	Thu, 11 Jul 2024 15:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7792116B753;
+	Thu, 11 Jul 2024 15:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LzvxL+oJ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdSe85mD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5621642B;
-	Thu, 11 Jul 2024 15:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AFD148FE8;
+	Thu, 11 Jul 2024 15:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720711368; cv=none; b=GzAizbClTl5dPod/znRLZ9dIfGO9WVxUCFvPxv2esNSbbtXp479Wm1VCyiV66JIHi0M7A258Tvf373S486EbvqKZlhjv71jCKOWY9QDKIOaANfEzh6s9vArxgM4TbA5Ohrdm+qi30XNR1H2p1ZGXJtvNpJx+xdK2PXqE4XzS3zA=
+	t=1720711405; cv=none; b=aqliLP+5ODmNCANpD9WEWkikzKPK1sPgFieBbUeD97rE9QZSHS+E1kXCH6+ONDQ8Xdtv2x/czHeyP5FrF8m4Kga+1Q5Ty4Tr2c3TSMFabhm0dvL6Ju4951o7Mofsj4TBLnOhMp2LLq5otYYvkRXEYfoYimxZI5vJHXAxxWwOECk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720711368; c=relaxed/simple;
-	bh=+UWnsWVMdvca6g6oeX3Dfksfrism7A0B9YrqtABwQig=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ab8WG2bILi7V0DE8sTU+DSdgH/cX9BnJZkjCpdx9qW9bIYPsr1TDl8BdZCb5O5PqhdypwLulSXJNEPJcwCjBsptb7ZlsZ00ftmCr3hAI/Vd3D0fwFf2BfzZnP3UXddR0YHk321BCEN2hmd+aIHR5bY3tOMC2eRdv/PZ4Gn/ysVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LzvxL+oJ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZSAN8Frn8wQki6uXAENE6UG5BBN7qPxdEWLY87nt5nA=; b=LzvxL+oJ+FlY7E/sbmp1/DeVbB
-	LMU3TBxN5G8iAxpSPessAOx0tafI9BG94ltQ86hVjVMcGqIA7jDeHn8aqiBVs1bf7N2EvGHe2zNkQ
-	Ns5W2YcbnVnvoW5ubuMku9Q6ujx8jI9QCSRc3OLY1dCbvL/JEip7lkIDuYIEC2LuAfirm9aCXNR4u
-	afoWlJPgLv1mhBD+YIN5DVKDLoG14t6sqK4KQkQ7iH8QyL4L4BkcWyLxHcEQYooxDTK6ilOpj2Fmy
-	u9Go2tZTKe4IXtjvvIvVKNUx+U/XSPJO9/XXxko2pbKXVKIpobrEv44d8L0giqFWKDzfL4Pnisgsx
-	knAGBiZA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRvd0-0000000BHKt-4C5q;
-	Thu, 11 Jul 2024 15:22:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3F38830050D; Thu, 11 Jul 2024 17:22:38 +0200 (CEST)
-Date: Thu, 11 Jul 2024 17:22:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jiri Olsa <olsajiri@gmail.com>, mingo@kernel.org, andrii@kernel.org,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org, oleg@redhat.com,
-	clm@meta.com, paulmck@kernel.org, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-Message-ID: <20240711152238.GB3285@noisy.programming.kicks-ass.net>
-References: <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
- <20240709090304.GG27299@noisy.programming.kicks-ass.net>
- <Zo0KX1P8L3Yt4Z8j@krava>
- <20240709101634.GJ27299@noisy.programming.kicks-ass.net>
- <20240710071046.e032ee74903065bddba9a814@kernel.org>
- <20240710101003.GV27299@noisy.programming.kicks-ass.net>
- <20240710235616.5a9142faf152572db62d185c@kernel.org>
- <CAEf4BzZGHGxsqNWSBu3B79ZNEM6EruiqSD4vT-O=_RzsBeKP0w@mail.gmail.com>
- <20240711085118.GH4587@noisy.programming.kicks-ass.net>
- <20240712001718.e00caa0a3cb410dc19f169c2@kernel.org>
+	s=arc-20240116; t=1720711405; c=relaxed/simple;
+	bh=JfLcu56UysTRyIkfxtd8Hbx1zuGOH16FdmhwjmvWqNI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=puzJwtc4sQrXfIJJKhX/jojqgqNvVvd2+/2VuVvXSZC9h/iHqn6B04+yigEQs1MfPkK3r8UZUSyKVwAuCWNdWr71vpM/fWnVBiQckdB/AhnXM0wrQ3BRKF24dimpYuS3HdoWq+W5JN/mXz9JiRtZCzzUn+5CeJCT+LQLxK+xgfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdSe85mD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B1CBC116B1;
+	Thu, 11 Jul 2024 15:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720711405;
+	bh=JfLcu56UysTRyIkfxtd8Hbx1zuGOH16FdmhwjmvWqNI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OdSe85mDKLOnqGqdnHiOrsO4qfD0OknKA1o7q+MAfjYfLtD9eUnzdKECtxvozY62K
+	 BGhRNq36NDsSJvtRzqyX86jPLxsJrP6Le7erblUpOyEMSeGaEgWpV0tBrFG0zYxvd4
+	 TeNENjgI/YnjGvBy3zHJhzV+x8fbQXZ01Hy1GsjPg9QSWrNjpJxGUeyCNr4CSxVIxP
+	 00m+CNcOQdQi49ubGDoZw4RH8K9rzCa/UYAfF6XPwpq8cGXMOgLxdtlA+y40MBdCJG
+	 skFBcrUkuWJVob71byvZYMVcsv3Ut9HHTLPj5uGweVPnz6nDxh+3hxnEpKmUISjWxU
+	 Y30uXLV4Wc0DQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: phy: hisilicon,hi3798cv200-combphy: Convert to DT schema
+Date: Thu, 11 Jul 2024 09:23:13 -0600
+Message-ID: <20240711152313.2364383-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712001718.e00caa0a3cb410dc19f169c2@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 12, 2024 at 12:17:18AM +0900, Masami Hiramatsu wrote:
-> From 87dfb9c0e7660e83debd69a0c7e28bc61d214fa8 Mon Sep 17 00:00:00 2001
-> From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-> Date: Fri, 12 Jul 2024 00:08:30 +0900
-> Subject: [PATCH] MAINTAINERS: Add uprobes entry
-> 
-> Add uprobes entry to MAINTAINERS and move its maintenance on the linux-trace
-> tree as same as other probes.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  MAINTAINERS | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index da5352dbd4f3..7f6285d98b39 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -23105,6 +23105,18 @@ F:	drivers/mtd/ubi/
->  F:	include/linux/mtd/ubi.h
->  F:	include/uapi/mtd/ubi-user.h
->  
-> +UPROBES
-> +M:	Masami Hiramatsu <mhiramat@kernel.org>
-> +M:	Oleg Nesterov <oleg@redhat.com>
-> +M:	Peter Zijlstra <peterz@infradead.org>
-> +L:	linux-kernel@vger.kernel.org
-> +L:	linux-trace-kernel@vger.kernel.org
-> +S:	Maintained
-> +Q:	https://patchwork.kernel.org/project/linux-trace-kernel/list/
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-> +F:	include/linux/uprobes.h
-> +F:	kernel/events/uprobes.c
+Convert the hisilicon,hi3798cv200-combphy binding to DT schema format.
 
-Maybe no Q/T. Neither Oleg nor me have write access to that git tree.
+Drop the example as arm/hisilicon/controller/hi3798cv200-perictrl.yaml
+already contains an example of this binding.
 
-Also, I think you want:
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+v2:
+ - Drop Jianguo Sun's bouncing email
+---
+ .../phy/hisilicon,hi3798cv200-combphy.yaml    | 56 ++++++++++++++++++
+ .../bindings/phy/phy-hi3798cv200-combphy.txt  | 59 -------------------
+ 2 files changed, 56 insertions(+), 59 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/hisilicon,hi3798cv200-combphy.yaml
+ delete mode 100644 Documentation/devicetree/bindings/phy/phy-hi3798cv200-combphy.txt
 
-F: arch/*/kernel/uprobes.c 
-F: arch/*/kernel/probes/uprobes.c 
-F: arch/*/include/asm/uprobes.h
+diff --git a/Documentation/devicetree/bindings/phy/hisilicon,hi3798cv200-combphy.yaml b/Documentation/devicetree/bindings/phy/hisilicon,hi3798cv200-combphy.yaml
+new file mode 100644
+index 000000000000..81001966f657
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/hisilicon,hi3798cv200-combphy.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/hisilicon,hi3798cv200-combphy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: HiSilicon STB PCIE/SATA/USB3 PHY
++
++maintainers:
++  - Shawn Guo <shawn.guo@linaro.org>
++
++properties:
++  compatible:
++    const: hisilicon,hi3798cv200-combphy
++
++  reg:
++    maxItems: 1
++
++  '#phy-cells':
++    description: The cell contains the PHY mode
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  hisilicon,fixed-mode:
++    description: If the phy device doesn't support mode select but a fixed mode
++      setting, the property should be present to specify the particular mode.
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum: [ 1, 2, 4]  # SATA, PCIE, USB3
++
++  hisilicon,mode-select-bits:
++    description: If the phy device support mode select, this property should be
++      present to specify the register bits in peripheral controller.
++    items:
++      - description: register_offset
++      - description: bit shift
++      - description: bit mask
++
++required:
++  - compatible
++  - reg
++  - '#phy-cells'
++  - clocks
++  - resets
++
++oneOf:
++  - required: ['hisilicon,fixed-mode']
++  - required: ['hisilicon,mode-select-bits']
++
++additionalProperties: false
++
++...
+diff --git a/Documentation/devicetree/bindings/phy/phy-hi3798cv200-combphy.txt b/Documentation/devicetree/bindings/phy/phy-hi3798cv200-combphy.txt
+deleted file mode 100644
+index 17b0c761370a..000000000000
+--- a/Documentation/devicetree/bindings/phy/phy-hi3798cv200-combphy.txt
++++ /dev/null
+@@ -1,59 +0,0 @@
+-HiSilicon STB PCIE/SATA/USB3 PHY
+-
+-Required properties:
+-- compatible: Should be "hisilicon,hi3798cv200-combphy"
+-- reg: Should be the address space for COMBPHY configuration and state
+-  registers in peripheral controller, e.g. PERI_COMBPHY0_CFG and
+-  PERI_COMBPHY0_STATE for COMBPHY0 Hi3798CV200 SoC.
+-- #phy-cells: Should be 1.  The cell number is used to select the phy mode
+-  as defined in <dt-bindings/phy/phy.h>.
+-- clocks: The phandle to clock provider and clock specifier pair.
+-- resets: The phandle to reset controller and reset specifier pair.
+-
+-Refer to phy/phy-bindings.txt for the generic PHY binding properties.
+-
+-Optional properties:
+-- hisilicon,fixed-mode: If the phy device doesn't support mode select
+-  but a fixed mode setting, the property should be present to specify
+-  the particular mode.
+-- hisilicon,mode-select-bits: If the phy device support mode select,
+-  this property should be present to specify the register bits in
+-  peripheral controller, as a 3 integers tuple:
+-  <register_offset bit_shift bit_mask>.
+-
+-Notes:
+-- Between hisilicon,fixed-mode and hisilicon,mode-select-bits, one and only
+-  one of them should be present.
+-- The device node should be a child of peripheral controller that contains
+-  COMBPHY configuration/state and PERI_CTRL register used to select PHY mode.
+-  Refer to arm/hisilicon/hisilicon.txt for the parent peripheral controller
+-  bindings.
+-
+-Examples:
+-
+-perictrl: peripheral-controller@8a20000 {
+-	compatible = "hisilicon,hi3798cv200-perictrl", "syscon",
+-		     "simple-mfd";
+-	reg = <0x8a20000 0x1000>;
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-	ranges = <0x0 0x8a20000 0x1000>;
+-
+-	combphy0: phy@850 {
+-		compatible = "hisilicon,hi3798cv200-combphy";
+-		reg = <0x850 0x8>;
+-		#phy-cells = <1>;
+-		clocks = <&crg HISTB_COMBPHY0_CLK>;
+-		resets = <&crg 0x188 4>;
+-		hisilicon,fixed-mode = <PHY_TYPE_USB3>;
+-	};
+-
+-	combphy1: phy@858 {
+-		compatible = "hisilicon,hi3798cv200-combphy";
+-		reg = <0x858 0x8>;
+-		#phy-cells = <1>;
+-		clocks = <&crg HISTB_COMBPHY1_CLK>;
+-		resets = <&crg 0x188 12>;
+-		hisilicon,mode-select-bits = <0x0008 11 (0x3 << 11)>;
+-	};
+-};
+-- 
+2.43.0
 
-
-This is just to ensure get_maintainers.sh gets our email addresses for
-all uprobes stuff.
 
