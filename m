@@ -1,150 +1,137 @@
-Return-Path: <linux-kernel+bounces-248584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D4A92DF4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:05:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AF392DF4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DE041F2385F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:05:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1626228441B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 05:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D465474A;
-	Thu, 11 Jul 2024 05:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B164EB5E;
+	Thu, 11 Jul 2024 05:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lrk13TXq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RXy0+mo5"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6D24EB55;
-	Thu, 11 Jul 2024 05:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D35F20312
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 05:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720674295; cv=none; b=QbhzCyDuXSW3I4Snvd6skWv7IBR7CGwRbvB+PjbPTSEaHj2ujW55tPncX4RVruYwez31h2FO74wE6FDPGScvwHok8KkxNxPNXyemR2oq0YhulZnUYTm9W0Qh8epSfIMymvKvnc6043BRMUFHAMG88X4yUlp7u3oGzoLx7uyEPzo=
+	t=1720674445; cv=none; b=URsFb1UdoK8F9R2BQzSn1pA0n9Bq4VsTZGK4pSWVyQAso17tqrUzIPPIgymsC5QsJt3rJz3pbn0c2CDl+SYP/noPiUadGKXilskLyt0gb+6dRmDNx/ZfZLGcSGYbkUFIapIbux2UwfK1H92jrj2gBmFmlK0dCdrvsMaOX2pubIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720674295; c=relaxed/simple;
-	bh=bmmiqnGMym0cd9eaRTuiQ/e0/Tdh4uIOIWOrVn6th5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jv3ZFkpAOaQja9+CvQxqT7UiQiR08XD0KZxs9iQgCyJWETT2mjOFc2mkIL6inKmngoyUXn9XpUxfjm+ULNt8ZPi7u78rzdxKd1EqGOIxAcwy37phybi3EEAqPk7I1+6KkuKW/kUXIZh5ycwPC/i03P6YBkwYrKF4gacEzlZxEYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lrk13TXq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B4n5RD004611;
-	Thu, 11 Jul 2024 05:04:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UiiGhSGgBi1qiMkn7SfxdUtsB35BvZV/7EeGl5O4RSc=; b=lrk13TXq2aZ82Esc
-	jd5SOI/oxpCo4Qd7fZdaC4SIMU4ySOCF4ab2EYydP9bM/HpixLHHWgvmhfWfQcCF
-	9Z6pPjBg1FkASwQPJjE8XssGqvkIW0ilUouayOYLlr946ugZ4ZwM5hISEX6l+ZRm
-	0nGMe385N1kjJ1VgQ++372D1Gxechdv3tyLEsU9G8A+A5T1QtTsPPNRq9eF9aIR4
-	YE0SlHyx8zzNqlPTjNNFKAhC7tL3biVoFgDsDwnkQPrFXbJIaFTC36CgHkz/OJHo
-	m8YdtVgH3dygJbPyg3qMSkov4z41NV2ac3QFo8BAnzR9J5IJtbWCp9exOSXGnHNN
-	c3OBcQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we9355n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 05:04:49 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46B54miY013308
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 05:04:48 GMT
-Received: from [10.216.6.181] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
- 2024 22:04:44 -0700
-Message-ID: <fa189b4c-d407-4d48-9677-528f07f81efa@quicinc.com>
-Date: Thu, 11 Jul 2024 10:34:24 +0530
+	s=arc-20240116; t=1720674445; c=relaxed/simple;
+	bh=nGrmC0u5rsERqyefhRnP7/QKTu/yo7p7qovzWnDCLCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q368wF1LTIWsJTiu15Vf9AvDv4AjVQ+rhUiie06CAgG7bESEEv767OdimZ/MXmW+u8NefVIWSfCTvqsTrtW4qCiKtmw2+6TEZr8Is1Z5Eq+z7NEDzGm+aHz3kVWp/4gA4+bgmEdobSRg3oMkecZZbAOED9Ml3QCrp+rm7xWmhOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RXy0+mo5; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ea929ea56so903399e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1720674441; x=1721279241; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jtRyIrmKJ/IBvDIrDZPP2KUo8CcYvxcVDEjZhvnGRqk=;
+        b=RXy0+mo5hbsP45mTrYWpL6eRHuOma/hVAKKp2XMJ9Bm0bfyKGnFVulb8lDNLJQAvv1
+         Y+yoSyEMespaUGRm6QS8wbQtevJvmMMSfsM2x9klMjvvU1Kz6FWKWksv9OLaaBSxTVbe
+         ZL0Wj3wMz5GJ6puJU55vfqeXSajkpA6DKsThs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720674441; x=1721279241;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jtRyIrmKJ/IBvDIrDZPP2KUo8CcYvxcVDEjZhvnGRqk=;
+        b=bZ13opm5v89WUjwFXFfs0GbGCuLxwv4ch48+jBN+uDxTlX8rPeCrX75YfuJUJA/yed
+         bcPmtNHmFqT6zT1aYECpCip2C683/SGW9h9MqwwxSPxSfupnvYds/ciXBQWcUEzfobSy
+         J5eZY2Mp07R5GA7mbDOHNgwLLDOMvpklqfYOi4rfwV2+NzSgTulm8NNRYieLLIstmJ+6
+         wRv7N/rLAy0DhleER1B6cw85yDeUaLUlLgOf5VLdktXOp8eEJMDidpFwQmVPkaxDFldv
+         y8IS01sG0QT/9U1759q8OanKNxc3FBILBz03teNA7qNe1jz89nj7VcDYmczoOoEI5be6
+         vAWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNQKJ54iWL51GZA394vG6IGaHEagEOaf2MTqxRAWJLnP0YqPXX6uYBknPqBoqD0i1zBTKaUxUEZI5W84utkGKa/kPawRyUo4bQ1Z/f
+X-Gm-Message-State: AOJu0Yx0S9JLruTChZvBm6hIT6I7aTqXkpkZLbfE7BfXuZ6Y1sUA62ts
+	EdFFh7nNe9N8nA1MhPFZsQ629Orbmof1Vr98TqTxYmTTuL3z6HcK/yQZXDBzr08ZhtYxX4MK9Kn
+	v
+X-Google-Smtp-Source: AGHT+IHHTbSejddUZrg6ymBfC6gDheXkdoWLUQ2K70Cwk7rvgFtn4roWkRLuH5hNZNTDYwYpsnauQg==
+X-Received: by 2002:a05:6512:1106:b0:52c:83c7:936a with SMTP id 2adb3069b0e04-52eb99d2717mr6110075e87.42.1720674441250;
+        Wed, 10 Jul 2024 22:07:21 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff282sm220869066b.130.2024.07.10.22.07.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 22:07:20 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6b3so321867a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:07:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWBcUxrkkieJvmYunmxnn1LSNUS4En2sAAklfkKDnIndhMw4aRywOnCACORvifyYRKVLzbyT0RqMDABtbgdo2qBy5iB0TInxQLlcS8k
+X-Received: by 2002:a05:6402:134f:b0:58d:77e0:5c29 with SMTP id
+ 4fb4d7f45d1cf-594bb181cb8mr5703709a12.10.1720674440224; Wed, 10 Jul 2024
+ 22:07:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: qcom: sa8775p: Add UART node
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>, <andersson@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>
-References: <20240710094149.13299-1-quic_vdadhani@quicinc.com>
- <2e309d52-8180-4922-9a5a-022fc8bf8ef5@kernel.org>
- <f5ed3285-82da-4ba8-9b4d-a0cc7323fde4@linaro.org>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <f5ed3285-82da-4ba8-9b4d-a0cc7323fde4@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NXiDcJW_jYI9lOXxVdsNPDzhOfMbWESO
-X-Proofpoint-GUID: NXiDcJW_jYI9lOXxVdsNPDzhOfMbWESO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_02,2024-07-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- bulkscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=999 malwarescore=0 mlxscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407110032
+References: <20240709130513.98102-1-Jason@zx2c4.com> <20240709130513.98102-2-Jason@zx2c4.com>
+ <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com> <9b400450-46bc-41c7-9e89-825993851101@redhat.com>
+ <Zo8q7ePlOearG481@zx2c4.com> <Zo9gXAlF-82_EYX1@zx2c4.com> <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
+In-Reply-To: <bf51a483-8725-4222-937f-3d6c66876d34@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 10 Jul 2024 22:07:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
+Message-ID: <CAHk-=wh=vzhiDSNaLJdmjkhLqevB8+rhE49pqh0uBwhsV=1ccQ@mail.gmail.com>
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
+To: David Hildenbrand <david@redhat.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	tglx@linutronix.de, linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, 
+	x86@kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, "Carlos O'Donell" <carlos@redhat.com>, 
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
+	Christian Brauner <brauner@kernel.org>, David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 10 Jul 2024 at 21:46, David Hildenbrand <david@redhat.com> wrote:
+>
+> Maybe we can find ways of simply never marking these pages dirty, so we
+> don't have to special-case that code where we don't really have a VMA at
+> hand?
 
+That's one option. Jason's patch basically goes "ignore folio dirty
+bit for these pages".
 
-On 7/10/2024 4:09 PM, Konrad Dybcio wrote:
-> On 10.07.2024 11:47 AM, Krzysztof Kozlowski wrote:
->> On 10/07/2024 11:41, Viken Dadhaniya wrote:
->>> Add missing UART configuration for sa8775.
->>>
->>> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 231 ++++++++++++++++++++++++++
->>>   1 file changed, 231 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> index 23f1b2e5e624..c107ee40341d 100644
->>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> @@ -1,6 +1,7 @@
->>>   // SPDX-License-Identifier: BSD-3-Clause
->>>   /*
->>>    * Copyright (c) 2023, Linaro Limited
->>> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>>    */
->>>   
->>>   #include <dt-bindings/interconnect/qcom,icc.h>
->>> @@ -657,6 +658,21 @@
->>>   				status = "disabled";
->>>   			};
->>>   
->>> +			uart14: serial@880000 {
->>> +				compatible = "qcom,geni-uart";
->>> +				reg = <0x0 0x00880000 0x0 0x4000>;
->>> +				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
->>> +				clocks = <&gcc GCC_QUPV3_WRAP2_S0_CLK>;
->>> +				clock-names = "se";
->>> +				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
->>> +						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
->>> +						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
->>> +						 &config_noc SLAVE_QUP_2 QCOM_ICC_TAG_ALWAYS>;
->>> +				interconnect-names = "qup-core", "qup-config";
->>> +				power-domains = <&rpmhpd SA8775P_CX>;
->>
->> All the clocks, interconenct and power domains look to me questionable.
->> AFAIK, most of it (if not all) is going to be removed.
-> 
-> Yeah.. I'm lukewarm on accepting any sa8775p changes until that qcs9100(?)
-> situation is squared out first
-> 
-> Konrad
+Your suggestion basically says "don't turn folios dirty in the first place".
 
-Thanks for clarification. Please help to sign-off or let me know in case 
-of any concern.
+It's mainly the pte_dirty games in mm/vmscan.c that does it
+(walk_pte_range), but also the tear-down in mm/memory.c
+(zap_present_folio_ptes). Possibly others that I didn't think of.
 
+Both do have access to the vma, although in the case of
+walk_pte_range() we don't actually pass it down because we haven't
+needed it).
+
+There's also page_vma_mkclean_one(), try_to_unmap_one() and
+try_to_migrate_one().  And possibly many others I haven't even thought
+about.
+
+So quite a few places that do that "transfer dirty bit from pte to folio".
+
+The other approach might be to just let all the dirty handling happen
+- make droppable pages have a "page->mapping" (and not be anonymous),
+and have the mapping->a_ops->writepage() just always return success
+immediately.
+
+That might actually be a conceptually simpler model. MAP_DROPPABLE
+becomes a shared mapping that just has a really cheap writeback that
+throws the data away. No need to worry about swap cache or anything
+like that, because that's just for anonymous pages.
+
+I say "conceptually simpler", because right now the patch does depend
+on just using the regular anon page faulting etc code.
+
+                 Linus
 
