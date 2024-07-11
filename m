@@ -1,138 +1,150 @@
-Return-Path: <linux-kernel+bounces-249419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD94A92EB70
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:16:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CABC992EB6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:16:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 997452839A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:16:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 087921C22332
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501AF16C687;
-	Thu, 11 Jul 2024 15:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C58216C6BD;
+	Thu, 11 Jul 2024 15:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bs4wEg3D"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nOStm/wt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9+hY5+mD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D313A16B75C
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0FB2F46;
+	Thu, 11 Jul 2024 15:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720710983; cv=none; b=PXyz7ZrZnyaCY4+7Uo2TaCr1oMu/Dvm+4UqtLEz557ZPC7DuUBNoT7Ogt77ICeazzTGQVuZWv3wbQrKtV9e+z/FSU84n8GMmq+LeNIq89XC1t+MRAFRUn85j/OXEu6q9rhxwX6WLR/Tbc14lusiUbpzmMs11ItdETJcnexKEpgo=
+	t=1720710970; cv=none; b=sRFdprCvnJ4leGsNdf+yzGf4pW6bCmSefMyPx4mwR9LrFR945NHy03rmhcNMMnmDCLQDZFGqQmKJj/ihGVf+8u0xFIIzV82HwdXtjDXymrK5VAAkqTTc0GsIFsu3oGavvzhu36BQsjkSMG95dCi2XBCMf3nXeEhLCOPX9+Ey4FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720710983; c=relaxed/simple;
-	bh=ZT8r4jHQhDaBCzN3+aEtNsWoK9MhYoqizNljs+w6bDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s6nquzKySSDlnsZncUJ7ht+vBjiEznBtNlpmF3SHwLeufy4EKvCJPCvHYqYuSRbzOc+Pv5C5hNp85xQvWhn4G5kCm3BLm6NE1SWiNPrQC1hD5bIx34P241ieEXohrUvHULBqhyGhim1hoMwtdKaDdlJuZ2TPHQ7kmSdGZ4JUJtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bs4wEg3D; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42666b89057so83975e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:16:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720710979; x=1721315779; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fyJDEQBIS7qTi/nDqfXrdBXWCR7i7ojFDGlwfpekfoI=;
-        b=Bs4wEg3D5q2c6efrE96XH59oUsQzUXWnGYsfurUc8IHesEIkg6C85dCiyRTlXKlbVp
-         31TlqHuKoFOXiEG3j+RluCKJmpme2HlHJ6VhssnWb0E4IW/Gq9RSkcXkAzHlM/ONtwX4
-         IfXegvkGre495sO8ysF9oOuKRVC+j8waID5RZRy+Vq6kNwvp02P0Spc6Lxf9pLGb21yQ
-         5EAGz8OMForknCb8qWeDaxSuOMIFkmUxvSSRQhhSr9OQARsEV7S9kO2praMCnTvHUks7
-         KNW80hLDs+IoNLkHHTiQKLzYVodEhSSwtOLNLFyD3CCaTIDwkJNIeUzx0cYFKHpfV+GB
-         zXAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720710979; x=1721315779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fyJDEQBIS7qTi/nDqfXrdBXWCR7i7ojFDGlwfpekfoI=;
-        b=LaSC1NGCjiqoR12Xmyr2NgPP+U4VHtPD/dLe73uGy5sSIoysDKQAVfAw3Lohm/xTyh
-         VqNYjSxs/lQHy+nihcqhtr3OdlriEfWUIAUQgVqN3ikQOlPuJupsRcZ+n87IfGTkIvkM
-         Bc7zhbU6QAin54Mvc3G52jjBfdgkf4FplrNrdlJChNt/BYzR/YcqfsIgabUduNIK8hlh
-         H27eRifB/frq9et0vZuPax0WPyJhpX+/2YrKq686U+hTZmgL9YsHM9ZczwFnO/qluDGr
-         vyrgxJDM25MwLHjv5cKm9aL8+b3lsCvByhO/BHrln+SpqBO0ZREQXl8uYoz45xU5NTcv
-         btkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWG0N51sTfJmtd8uo/FIn8LenP+jO/FH+obQRbsXdo2dt23Mj/zf38MmuBUAt9vFGo9h9h7lYhpZm5Qe09EgsO36SUFycxzEbJ/iaK
-X-Gm-Message-State: AOJu0YweFkS05/KldzvHhCWP3FIeJskaiUaz5nZ3XmURBnNJnUkZeTEQ
-	Ulol3Xf6NDwXMqPj5sX4GEp0yCopmgiYsCeABjELhb+0+zJ+EWnVAmhBKe+Ukn7ztD5qmSc1GBo
-	ieSH/KuwEL9VEhVML0ypq2hjsUiLAF2K0xspW
-X-Google-Smtp-Source: AGHT+IGyYy3GyAeAwJ7v4rMOuRzUatN1QEIvXg15T5400EWs8XL5YxyUZKvT+dfB4f5AwJxjdXJ5KxKcif0r6hYufcg=
-X-Received: by 2002:a7b:cd95:0:b0:426:6e95:6ea7 with SMTP id
- 5b1f17b1804b1-427986dc130mr2064645e9.0.1720710978801; Thu, 11 Jul 2024
- 08:16:18 -0700 (PDT)
+	s=arc-20240116; t=1720710970; c=relaxed/simple;
+	bh=XER4affaoxXJ4XP8yq7gbg1fMLWlgiulfAIv8QZ5S60=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=tEb/MpZ9HbA3ccytOUZ0/9lcm0X6j56Z6sr3F5n/nGqvSepUdF4ZFJaugDfWxsYOr56gvkaSCFUYW1h/Smfx72azMpg6Ka00q+6g6pB5OQCYJa16mWqiz4va6W3qetcu1h+VWrDqjPFxAGnBGMMhvt3BKgOZrFxlSy1bfgSk8UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nOStm/wt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9+hY5+mD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 11 Jul 2024 15:16:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720710967;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=93RfNDYG6fiD1LI3E/9qh9JPnMLb8HcdK9CDBN7BESo=;
+	b=nOStm/wtdhTGJNuMkf5x73QhErncVRNxeNHAuWRukDXbKYnCR1TuvTfzaKe56J5+USH/id
+	fn/JigyshxRJ5XcC7FOVsbWmR0uIsuoh1F01Pn8XrND11LSgnGBDyKPp8sEaFEekCPcaEC
+	8NJ0WsUtH1ZIiJZH7mYEnYnRV7HjR4UQthiHFZSDjsDBshLok8Ikl23Qlsnf/cBAQDqb8j
+	qSXld/Xd+0D/4x09j5OPkhjjTr6SyTwaXRZiuxG/ASzdQzrqvkfYVX2rEpdkCV0WKOZSih
+	Wl/6nANOVeJBVwgWw7AiorSsO5kfIC8R/05RG5JeZCotb4Weu+Uxt0/NwEv3hQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720710967;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=93RfNDYG6fiD1LI3E/9qh9JPnMLb8HcdK9CDBN7BESo=;
+	b=9+hY5+mDUYZQNJvGeu9JRkUn985R3WJb8Dg2UvUjJwxCGvHIeBNol49FhD314DUA9MF1x5
+	ieiEEQN4ta1y0ICg==
+From: "tip-bot2 for Geert Uytterhoeven" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/core] irqchip/gic-v3: Pass #redistributor-regions to
+ gic_of_setup_kvm_info()
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3C808286a3ac08f60585ae7e2c848e0f9b3cb79cf8=2E17199?=
+ =?utf-8?q?12215=2Egit=2Egeert+renesas=40glider=2Ebe=3E?=
+References: =?utf-8?q?=3C808286a3ac08f60585ae7e2c848e0f9b3cb79cf8=2E171991?=
+ =?utf-8?q?2215=2Egit=2Egeert+renesas=40glider=2Ebe=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710220540.188239-1-pratikrajesh.sampat@amd.com> <20240710220540.188239-2-pratikrajesh.sampat@amd.com>
-In-Reply-To: <20240710220540.188239-2-pratikrajesh.sampat@amd.com>
-From: Peter Gonda <pgonda@google.com>
-Date: Thu, 11 Jul 2024 09:16:05 -0600
-Message-ID: <CAMkAt6oc5YC8oLpvFDeCOrEH6Hm88M_U_eMBPXpQWvcqjL7nzg@mail.gmail.com>
-Subject: Re: [RFC 1/5] selftests: KVM: Add a basic SNP smoke test
-To: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
-Cc: kvm@vger.kernel.org, shuah@kernel.org, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, seanjc@google.com, pbonzini@redhat.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <172071096553.2215.15804715660858922520.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 10, 2024 at 4:06=E2=80=AFPM Pratik R. Sampat
-<pratikrajesh.sampat@amd.com> wrote:
->
-> Extend sev_smoke_test to also run a minimal SEV-SNP smoke test that
-> initializes and sets up private memory regions required to run a simple
-> SEV-SNP guest.
->
-> Similar to it's SEV-ES smoke test counterpart, this also does not support
-> GHCB and ucall yet and uses the GHCB MSR protocol to trigger an exit of
-> the type KVM_EXIT_SYSTEM_EVENT.
->
-> Also, decouple policy and type and require functions to provide both
-> such that there is no assumption regarding the type using policy.
->
-> Signed-off-by: Pratik R. Sampat <pratikrajesh.sampat@amd.com>
+The following commit has been merged into the irq/core branch of tip:
 
-Tested-by: Peter Gonda <pgonda@google.com>
+Commit-ID:     1265db582c7449edee41e29068b236c474a354a0
+Gitweb:        https://git.kernel.org/tip/1265db582c7449edee41e29068b236c474a354a0
+Author:        Geert Uytterhoeven <geert+renesas@glider.be>
+AuthorDate:    Tue, 02 Jul 2024 11:24:14 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 11 Jul 2024 16:54:31 +02:00
 
->
-> -       test_sev(guest_sev_code, SEV_POLICY_NO_DBG);
-> -       test_sev(guest_sev_code, 0);
-> +       test_sev(guest_sev_code, KVM_X86_SEV_VM, SEV_POLICY_NO_DBG);
-> +       test_sev(guest_sev_code, KVM_X86_SEV_VM, 0);
->
->         if (kvm_cpu_has(X86_FEATURE_SEV_ES)) {
-> -               test_sev(guest_sev_es_code, SEV_POLICY_ES | SEV_POLICY_NO=
-_DBG);
-> -               test_sev(guest_sev_es_code, SEV_POLICY_ES);
-> +               test_sev(guest_sev_es_code, KVM_X86_SEV_ES_VM, SEV_POLICY=
-_ES | SEV_POLICY_NO_DBG);
-> +               test_sev(guest_sev_es_code, KVM_X86_SEV_ES_VM, SEV_POLICY=
-_ES);
-> +
-> +               if (kvm_has_cap(KVM_CAP_XCRS) &&
-> +                   (xgetbv(0) & XFEATURE_MASK_X87_AVX) =3D=3D XFEATURE_M=
-ASK_X87_AVX) {
-> +                       test_sync_vmsa(KVM_X86_SEV_ES_VM, SEV_POLICY_ES);
-> +                       test_sync_vmsa(KVM_X86_SEV_ES_VM, SEV_POLICY_ES |=
- SEV_POLICY_NO_DBG);
-> +               }
-> +       }
-> +
-> +       if (kvm_cpu_has(X86_FEATURE_SNP) && is_kvm_snp_supported()) {
-> +               test_sev(guest_snp_code, KVM_X86_SNP_VM, SNP_POLICY_SMT |=
- SNP_POLICY_RSVD_MBO);
+irqchip/gic-v3: Pass #redistributor-regions to gic_of_setup_kvm_info()
 
-I'd guess most systems have SMT enabled, but is there a way we can
-check and toggle the SNP_POLICY_SMT policy bit programmatically?
+The caller of gic_of_setup_kvm_info() already queried DT for the value
+of the #redistributor-regions property.  So just pass this value,
+instead of doing the DT look-up again in the callee.
 
-Also should we have a base SNP policy so we don't have to read
-`SNP_POLICY_SMT | SNP_POLICY_RSVD_MBO` every time? Not sure I think
-selftests prefer more verbosity.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Marc Zyngier <maz@kernel.org>
+Link: https://lore.kernel.org/r/808286a3ac08f60585ae7e2c848e0f9b3cb79cf8.1719912215.git.geert+renesas@glider.be
+
+---
+ drivers/irqchip/irq-gic-v3.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index e4bc5f0..7c12d11 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -2190,11 +2190,10 @@ out_put_node:
+ 	of_node_put(parts_node);
+ }
+ 
+-static void __init gic_of_setup_kvm_info(struct device_node *node)
++static void __init gic_of_setup_kvm_info(struct device_node *node, u32 nr_redist_regions)
+ {
+ 	int ret;
+ 	struct resource r;
+-	u32 gicv_idx;
+ 
+ 	gic_v3_kvm_info.type = GIC_V3;
+ 
+@@ -2202,12 +2201,8 @@ static void __init gic_of_setup_kvm_info(struct device_node *node)
+ 	if (!gic_v3_kvm_info.maint_irq)
+ 		return;
+ 
+-	if (of_property_read_u32(node, "#redistributor-regions",
+-				 &gicv_idx))
+-		gicv_idx = 1;
+-
+-	gicv_idx += 3;	/* Also skip GICD, GICC, GICH */
+-	ret = of_address_to_resource(node, gicv_idx, &r);
++	/* Also skip GICD, GICC, GICH */
++	ret = of_address_to_resource(node, nr_redist_regions + 3, &r);
+ 	if (!ret)
+ 		gic_v3_kvm_info.vcpu = r;
+ 
+@@ -2297,7 +2292,7 @@ static int __init gic_of_init(struct device_node *node, struct device_node *pare
+ 	gic_populate_ppi_partitions(node);
+ 
+ 	if (static_branch_likely(&supports_deactivate_key))
+-		gic_of_setup_kvm_info(node);
++		gic_of_setup_kvm_info(node, nr_redist_regions);
+ 	return 0;
+ 
+ out_unmap_rdist:
 
