@@ -1,190 +1,232 @@
-Return-Path: <linux-kernel+bounces-249282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE18192E967
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:24:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F26092E971
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B53E1F2248C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:24:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B6F1C221EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C8015FCE5;
-	Thu, 11 Jul 2024 13:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846A815FA68;
+	Thu, 11 Jul 2024 13:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fnKlRyzT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bRkI51fk";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ygIn3Hqr"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55E315EFAE;
-	Thu, 11 Jul 2024 13:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720704275; cv=none; b=DcrtpGiFgQxfmVanrZV55YdZJZwbAjUaKizax53D199ElkrD1tJTdf1nJPMcAYU8BX1JZk/ROISac/EDJhON1/6+hnayk++4cNj6XTnW8kIa1Ga8InSFUVBc45cS0Fm88iaJWtL68DlhZwx+PgNOVCR6avSKOuGGoIyeHOCpJiQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720704275; c=relaxed/simple;
-	bh=w1u81luxRSKXuuP8bL2ZtVySjx/0jxSrRzrfaS7TWpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HqsHFzUONatg617mG+Jvr+lsFMhL3wcqPgYCg7oDffTzAhvD7BEMSW4upEKgQ66nsgg8lXqWqWMUXFrMm9ambFuwaiHEoPAJPuF5bqYFPJs+KQPuuvUSZFhHvuYuWkrdIcoUlm3TvHcv/vy7YZ7ARohRVn2IXSKOA9n/7NCwDmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fnKlRyzT; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720704274; x=1752240274;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=w1u81luxRSKXuuP8bL2ZtVySjx/0jxSrRzrfaS7TWpk=;
-  b=fnKlRyzTMusmSQxIr//bTdOI1F6boLgTfbRyVQUJnNsQyZPOY7wrhGDR
-   OVJhlorejfnUVWxDwHVLbCP2luSVg9K5/RGzYx5QYH2mknkAeEc2MKoZy
-   0iAzz6Q/jZPGk3T0DsDCqKdPbPiWnLEAJd2GEROsNHJj6UgdPqTFj1lwI
-   /yHfD7OGTnXPVQ20SqJx4tCKwPNWJuKRX0zg5SyK+U8Acf1A12nqA/Jt0
-   fB2EOBEy4pxASqpJsvqgbMp95mmV2QpM3NypwPYC6hxJTAUcGWnq2lwvQ
-   N/wylCQ9rNKZKOkFztasjAYZm2hYXjsckhqre+yEd1YAn+2Ll5+7/I8fS
-   w==;
-X-CSE-ConnectionGUID: 8hmpUz8XR5+VWRgfZtNGig==
-X-CSE-MsgGUID: +ZeZT5nYSlK2yJu456jxQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="28676502"
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="28676502"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 06:24:33 -0700
-X-CSE-ConnectionGUID: w68rnNGyTX+raf3+ra/vZQ==
-X-CSE-MsgGUID: xfhpknJGQvakxEtM1SwOLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="53376105"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 11 Jul 2024 06:24:27 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sRtmZ-000ZJz-2y;
-	Thu, 11 Jul 2024 13:24:23 +0000
-Date: Thu, 11 Jul 2024 21:23:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	David Hildenbrand <david@redhat.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
-Message-ID: <202407112113.SzSpdDLK-lkp@intel.com>
-References: <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9621715ECE6;
+	Thu, 11 Jul 2024 13:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720704294; cv=fail; b=V9uBcr3cBa6Wg5QnjxP1BCy+5xMXoqwWZp0YCTu0sIsrcKdIk1YTlA4QXXAOXJRghlzFVxFGj2DtRYuy6PKGs1I8jTjDmPJFieFbJZmH7S1a87kUk3v9oieu3phcCZFfd/8g4aUhAv5CI4Q99vTicjQ9vPeHN50akRDrcozPeY4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720704294; c=relaxed/simple;
+	bh=+Ia0a3mtb+wrtYOYzWsKxUPvmzEO4hs7q30AP7Syo0w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UZnNHJLXQiApg2ES9hbJUC2btLJ2GDBVgKjnM+HDf+uS13NkSH4GnKibmBQSaNW1M+XkDipkGwN/2Jc/hrZToR2PoUPvqWI1UFHjrUBrpmm8mOqGlid6k8TqcrjqmKPgGIlsz/oOtvy8exl/Sxw4P8qzImFoDFTRP2rZSWnzBR8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bRkI51fk; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ygIn3Hqr; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B7tcpV012756;
+	Thu, 11 Jul 2024 13:24:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=+Ia0a3mtb+wrtYOYzWsKxUPvmzEO4hs7q30AP7Syo0w=; b=
+	bRkI51fkuYXAvJOcI22H0IlM9Q3kjm76ibtkJKRa4HSb3O640B4A9vE1FjWvfKng
+	HtAQkylhGW4mLzuPg45BNI+mMD9I2HOlY5xRYoqpWTkOUlSh4Sv4C5McfowiMZa7
+	b3i/bzczcbtGQcxenM2PN+my8cug0DzJoy+ocm+bj71bhy7c3bZ2Tq9CeZyMlsY7
+	8SYTGYobBI6jgY/tmG6dxfCYrYP91PWAmOlZE2UboAnjcoFjWexzJVCAIWMIx05J
+	LUTi9bJe4KsRIikeGkUpxPu6dJxvyBQBFX7IxgG9fEQ+Y0mB7m7LnUTN0+hQv8+k
+	WlTBzRPpDxFk3QYg9r4uVA==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 406wky9pwt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 13:24:17 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46BC3OAw008924;
+	Thu, 11 Jul 2024 13:24:17 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2043.outbound.protection.outlook.com [104.47.70.43])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 409vv4hyvh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 13:24:17 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U3jlgHxnwk9MzEVtw2g66GqKOfY/MyR+LJNirf0CXm/QGxyXFBNo+qiYgewUsv2zZ4XiCSOzpyHvYP7DSHCWfcXkxhmng5Xmc2SURF8qcJzUG1ag08hlVJdk/k7Ltbf7t9SiXIvlBFz+4unmpA0r+uAEwVKy8MsDLqb2HNFoadFWw6QfzHDl9RIc4h2KK9Haiqz50SNEO+7P20djmh9Emv8EjhIODom7wME+ngVePY1+thms+Ilra3Fb5MEYOr48enz0s9O4XaxYtnBcl3hVzF/+tUBrw4ned8mOz8h/gB8tvjMVRObkwhk3Kjo6R2LsHqQ16rjYNgc0GYMd0MUvOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+Ia0a3mtb+wrtYOYzWsKxUPvmzEO4hs7q30AP7Syo0w=;
+ b=rLOu5tCXbd12huqgHi4r3DuH2PDJxuuuLlD7UHFFL6plgWTEHlVUocwyP85ihOhXAw7f5ztBds0a13p75NGGUBrZZ2i+52t8G9A+eHkhZ8BPNQKOqw+c0gfERdyz8eXvZOSllL51enk5utRdj+/2fdNt4gnFBab8QhQMqDYw1SyFDqKUgYL5FY4lm1uT74jFZvJej9fXnVV5zkYBPgHCFEdXgdvlBraA7sp2cvPeT0XqwxIhnnSNoJdANhF3xF+DYVpzOV/oySggRCB0aufxHxsRwyZtqagMT3fQNcAUOoh9ynB3Zi8K0jCTr6xh+XCmOhNIidsahjniKMQJBs4itg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+Ia0a3mtb+wrtYOYzWsKxUPvmzEO4hs7q30AP7Syo0w=;
+ b=ygIn3Hqrk0TsSEO6DjRt+M1pqIT4iPQMN6wR1cgwu1CF5gz4bNt5gTTHKVz9OXSaF5Kt5NZSeu1rDin8z5oVpN6/RLlZ426t9WER81jCqJ5pZa4xm0gnhqFolAsehmIyAcF36MeDRBd5aUYDYbkDrxzSn6eqUZM9iuJUuX5IB4c=
+Received: from BLAPR10MB5009.namprd10.prod.outlook.com (2603:10b6:208:321::10)
+ by CY8PR10MB6825.namprd10.prod.outlook.com (2603:10b6:930:9c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22; Thu, 11 Jul
+ 2024 13:24:13 +0000
+Received: from BLAPR10MB5009.namprd10.prod.outlook.com
+ ([fe80::a088:b5e0:2c1:78a0]) by BLAPR10MB5009.namprd10.prod.outlook.com
+ ([fe80::a088:b5e0:2c1:78a0%3]) with mapi id 15.20.7762.020; Thu, 11 Jul 2024
+ 13:24:13 +0000
+Message-ID: <4930431a-8dc8-47ac-8d4b-75b64c5110e0@oracle.com>
+Date: Thu, 11 Jul 2024 09:24:09 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] xen: make multicall debug boot time selectable
+To: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, linux-doc@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, xen-devel@lists.xenproject.org
+References: <20240710092749.13595-1-jgross@suse.com>
+Content-Language: en-US
+From: boris.ostrovsky@oracle.com
+In-Reply-To: <20240710092749.13595-1-jgross@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR05CA0100.namprd05.prod.outlook.com
+ (2603:10b6:a03:e0::41) To BLAPR10MB5009.namprd10.prod.outlook.com
+ (2603:10b6:208:321::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BLAPR10MB5009:EE_|CY8PR10MB6825:EE_
+X-MS-Office365-Filtering-Correlation-Id: 83bf0a03-1b5c-4628-9874-08dca1acc1ad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?WjlpM3ZiNE9JdFlrZ25zT3BETXBTSlRhMVAvUlh0bVNNY2FGQmI1Ykg5aWF3?=
+ =?utf-8?B?OTdDdTJ4MnI3R3ErMFlJcEVLQmxqZFdjTFNiWHFHMTdFR3d3OVdYUWx6Y2tK?=
+ =?utf-8?B?bUtPUm1ZR2tQYnZLK09Yemg3dGtBVkFDZEE1ZHE0dzBqTkc5Q2pXL2JFcUtX?=
+ =?utf-8?B?UDBYdkNmclFucW05T0ZlLzRGRTE3by82aStGLzlrOGZvUlFqUkQrZWdaclRZ?=
+ =?utf-8?B?aGVHRzJZTGVZSmFPc0ZnK2ZpemhibkJTV1hOYnh0R01BdXZVbjhhWkEvQ2Zr?=
+ =?utf-8?B?Wm9QaUkyRmhxMHlRVGxnRkwrZzNWOUVZSE1ueFRJd243dHZiYWk2OFNubkRt?=
+ =?utf-8?B?WGxnbWdzNEtMb2tkU0ZoQmVQSnFBWFc2KzFvOFdlWGpON1lzaUdCbTdPeVNI?=
+ =?utf-8?B?d3gvNndKbzVpM0lLWDFLd3U0WjJRUm1MbzZhNTU3WkVhelJncWZiT2tuVm1z?=
+ =?utf-8?B?aS9mdkRSTHdXaE56WlhhLy9aR1RITjJDYnFVdU9XZzhITFFQeWdOTDVNdVB1?=
+ =?utf-8?B?dnBNR0JGUHNrV3dFQXh4TCtkOFhGbWJvNUM5bDlIbXFES2FLZnNXT25vYzNj?=
+ =?utf-8?B?SDU1ZmxYWUQrcHRqMU4yMW5jZVFMamJQbVhKNGU0N25xcTdGYXJFVHlSZkh4?=
+ =?utf-8?B?a3RyMlFYYWtsUHFod2ZZQ0NqVDZuRkgyVmkrL1JpL09zZ0xONnJyeXMrcnFx?=
+ =?utf-8?B?b2FUWTJSRU5JMVpOV2VFUTUxZVE1WlFFUTdzSDVJNDA0Ny9BQXY3UFM4WFhi?=
+ =?utf-8?B?dzN3NXpUTGllOWI1UU5teVZZQWdFTzJ0VDVwNm9NN2VHME1DU2dXcU9WUTlU?=
+ =?utf-8?B?bmN4Q0R3MzMvbUxqYUJBcFEwcVpYS1UvZTRpb3RGWjg1WW9LWXRIZXlhSHFG?=
+ =?utf-8?B?ODl1QmpqMDlmWUVlOFE1V1pQcHF1NDZObkY5Wld0NUoraHMxYU9mWXg3Zmdy?=
+ =?utf-8?B?blpyWHRtbzk1K3c5SThlMG15TjFuUDQvb3UvSE1qVTJxVkF0SWhXbTBEWEti?=
+ =?utf-8?B?Zi9rV3U5U3ZZY2FOdnBVcHJrSHBxeWtDbGdNMEQ3QW9ITTF1OXRTbVRPNDFh?=
+ =?utf-8?B?YzFFN0IzTDJ6MEdDOE5HSDNaZFhZMFFyVHZNWEE5WnplSHRGK3UxK1pxMG1N?=
+ =?utf-8?B?bW5saE9YSVM5THRWKzdVRGJJbGNDRkpEc1hrNkM5OGtrRkNUMkFoOGxYYlVz?=
+ =?utf-8?B?ZTFlSXZiTEF3aFllOWorWjRwNjZCUDNuMDF6Y0kyeXppZXNqV3RUMWhnMkRk?=
+ =?utf-8?B?OFlnRTZuUlB2SGFSWm1UTmlEVmpzVkxVeUtNWTVrcXMvbG5qRnlLY2R3bmR3?=
+ =?utf-8?B?OVh5L0xQQno5ZVNITk9NOTZJbDhDRFYyRXUxcUNTMnZFdU9BcHVNT3FWeTBs?=
+ =?utf-8?B?cVh1YXd6TzhtWEdRQ0N1WlNUUnlrWlk3ekt1Z3I3b013aVBmN3g5c0JNL1Vm?=
+ =?utf-8?B?S0RHa1JvTlZuby95R0NUcWF6Z2hQV0tCWlpwNENDTHUrM1J5ZzAwVjBHUlpC?=
+ =?utf-8?B?eXJvOEdRSGVHblhUV2w4MURYWHRNeVdBZDE5NEdwVFpPcnJlY3pqdEYyUU91?=
+ =?utf-8?B?Y0h5anE2R1orbGlDV25yVkYyNkNOS0QwZWJJZ2RKRTJtUGMwajg1eGNFM2o5?=
+ =?utf-8?B?anI1dzdPcmR3L29XZkxPRExwelpCcHR1d2tKK0lTVEVaakRZeXpPK3o3bDdq?=
+ =?utf-8?B?R1ZMUHIydTZNM3FqTUJlYndlR1ZNTlIxZWZTVkFNbjhCRk9mdUJVa2ZOamQ2?=
+ =?utf-8?B?alQ5dGZtb0N6ZHErSnVtMks0b2ZHK08yU2VBK2w5UkltSEVSeUJjTXplaGM5?=
+ =?utf-8?B?RjZmbkRqQ2p1S1pzSUtzUT09?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BLAPR10MB5009.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?M25kcTMwRkhEalhHMUxlVWpsaFJrY2wrUU5BWkZYTDVsemNMNkpzNCtFK1RP?=
+ =?utf-8?B?YjBmR2RKb05Nd0FGMEliMkJqNVdvMzgza2NzbitCQlh5Yzc5YzJMdGR3T3RI?=
+ =?utf-8?B?cTBIbUx3SXFteThoMjk5RmtMQWtzMDJ0V0JIQTJHejcxR1AwM0dDWUJOU2hT?=
+ =?utf-8?B?b1dhVmN4ZlN0blhITkRUQlpxeWI4WncyY0dBamo2by9IRTFVQW94cmV6Z2tv?=
+ =?utf-8?B?TU93WmVRUE5KQ3NobjY0SUxNU0k2ZGFUL09RRm9KYjIzb3lyMGg4azVDamR4?=
+ =?utf-8?B?UjMvZmRnSTZRSW1MRTl3eWx5YVgycGZXaTRyQVl5U1lSVW9vTGxWRWZJc0wv?=
+ =?utf-8?B?bUpTZVZwbzlkRzJLZE5PQVZjdlZwd0VvMGtsVFo0a2xoQUNTRjFBOFFvMExU?=
+ =?utf-8?B?bTdUdHFkUllFVCtiZVM2OGRjS3FOMUxHdHVYdFV2TUlRZkU0U0diQVZFcEo2?=
+ =?utf-8?B?ZjUrR1dVOXc0SVZtVlpiQkptSm4yb0UwVmRaM3U4aFB4eFZSZ0dQTjhPN3Zy?=
+ =?utf-8?B?MUZjVDJraU1GbzZiMWlvVGQ4amU4N1NlaVRsVzNha1JROElVVkpMRkdUOGRp?=
+ =?utf-8?B?L1ZRNXZaUDlxUjhxT2tNcnpnUDNIdUpnTWJhUVdXM2NvdGQ5S2xLc0VLcXdy?=
+ =?utf-8?B?amhVUmd0NHIrb1JsNmZRc3NBR2hrajZEb1hjcHN5dS9sSXA1ZGN5eHR2VHFa?=
+ =?utf-8?B?TEE1MmY2Vi9zcHpxQXpGc2xyOEhPYVFQSFRET1RNK0hUSFhkNy9jZDB3MktT?=
+ =?utf-8?B?bitSRHhvZzVyR0xBMndvZmVqM09hRzErWVVjZnAxZ0xhVVF6cU4wWVlnWm5l?=
+ =?utf-8?B?dVkweFZwKzdmN09ncmVJbkZXK3B1dU1oQXlJS3dnM0Y3VnluTWNiMWVZQitN?=
+ =?utf-8?B?THpERUFhVnl5eTRxazFJcy9MeHl1ZzBCcnU2TmJiOHQyNDIxeGc1cVF5bUox?=
+ =?utf-8?B?UkNrTWd4V2x1VEtIUUdHSnh4Wm9oc1BQdTIrNlNyWjl0MkhDOXpqVjZNZ2Zz?=
+ =?utf-8?B?c3NGaGhibzN4NlRTL0pOSm5meklPZ3RrN1V4QzF1Qmhyc1dHNGhSRTdJa0M2?=
+ =?utf-8?B?UCt4MGNTTWViUkFNZnBQcU5Jazl5VW9tS0RkWmt0cEVLWExsc2JsUll1aEdW?=
+ =?utf-8?B?RU5kRFVBS2N0RWMwRVJ3T0Roc01YTWpJeUZkUHpoYWpRZ1FhQmhydFdkSnVm?=
+ =?utf-8?B?TkhYb2RMcFBLMEJVczQ2R1NMdmd4YzFTTmdENitldmVPM2ZOdllNMytxWkJh?=
+ =?utf-8?B?YUw3S2NxMUllYWpvVzFMWWJNcG1vWHIrYXAvV2FOZURuS1lib0RxQ1pEazdr?=
+ =?utf-8?B?a0ZvczdlV2gxaFd0UzRhQUNLTW9VMG4wcXVoZDN2bGNZOWZhdm9xVThqa0J1?=
+ =?utf-8?B?WXNLeHYzNk5kWnViTUFGbldqMnJmR2pxcFFsbm4rTjBpTUpZZ054NS90ODN1?=
+ =?utf-8?B?VEZiRi9hSm0rOXd4Z2ttZG8vclhTa0xkYzlJWHg2aGhuNTMySkFmOTdwa2ti?=
+ =?utf-8?B?TDJ4TUxoTjRZREFKWkhsWFJUNmlkU3hKUXhRQWxVVFN6M01XdFpXZFhQM29F?=
+ =?utf-8?B?bEVjall6Qk1jNTIrTkxXd2FNV0Q1MHRDcmFNNjByRWNJaWtpR1BSeEhtV1Z5?=
+ =?utf-8?B?K0N6RTdEaGgwTGluS3Y5a2Z6N2FjR2ZES25BNWo4Q21ZRXlXdzN4R292d3lH?=
+ =?utf-8?B?MWtEaEFHWXFhNk1qN09LN2o3d1M2M2tXVVhwUUVpaWFJVVpXSkVhWDVPL3h4?=
+ =?utf-8?B?N0pERXN2OU9jalZYcmdUWDBjTVNRVjQ2UjQ1ZUFhRC9nYnhTQlYzZFFkbzYx?=
+ =?utf-8?B?UHBQMG5DemZhNzlWMW5qd1ZhSmFERVd3a2lLM0ZTZGdSVU1FWFVkbzBmNFhp?=
+ =?utf-8?B?eExWR2I5SlRnSlc0NFAxTk5VRWJ4L0hTbEhrenNxRUVXNHlCU1FhWDZJalJH?=
+ =?utf-8?B?MzFSMXo0NlF5VG1odmZkQzNWTHRpUnFOOWt4MTdrcXhnODRKSlRiV05kdmhh?=
+ =?utf-8?B?UXhaUWtMNW1IWlBkZWhMTUUwVHE1VFE4TmQycXBzM25md0lkWkhxYVlhUjhL?=
+ =?utf-8?B?ZkEvN2VvQ0tpL2U1SVJlWUVWdXVNeXI4UktPSzNqM25wemh2QWVYN3RIbU9a?=
+ =?utf-8?B?ZXNJOUR5dWhqcGNnN0tTdzFHZnFTNCtWZEtTaDNXOWJwR2N2bjhheC9WZ1oy?=
+ =?utf-8?B?REE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	1USn+2Gae6PbJ2nRjC5odCVPSQ6CDx8COHV6RPNMnnxoOWYsHNbMnL7Eqf9+3BNpIr68fVRisMumaRJI4Qq0MOzhj+kAK9ZpcTGizMGXN2kNijc9z6fbJ4QQbdIBwKxxVHDE2oyZASkaucFVhP3HM/4mSRz6j3BKFsObFf0Vf53oVRxwVgYqu2Z/D0yKS1FkdQXc46hGMB664ppLVMyd/5uiF0/sNiEzs40abNjqCZivuj8/EsTPT/DxdU7ZCq/XW8gK2Wzy0re0JuPzZYN+4C8YcGGLk6kDJm/wfwSU2OrSEfF342hGh3noqYteXzbLhctqAiY6Kx78+K8gmVQUGZfz6rrzCM2wRB8DaunjcgNjgYzLWUiPBMxL0msFIq+eByHxbCpbXoNpFOYutCEhkS/zYR2LTfyQcRls0sdpE7FqGpJRy4jmIn9QbyrbWsyFl32Mz05N3JL4Er2r6rs5b6tzFzhXT6ihem2EBWx/zSnB2vj8N7uHU2eguVgOjBhgMpfRbsaHHARnhD1YY7KlWzuVJmuEk751/PMxIb73U05dmfUWwkmlDhwOUi+4a2B5222KeKFB7xve3cP/2fAMILfX3qW66YXYVd2eQCAkO78=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83bf0a03-1b5c-4628-9874-08dca1acc1ad
+X-MS-Exchange-CrossTenant-AuthSource: BLAPR10MB5009.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 13:24:13.7239
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5GFVL/Wlj4buJj1bELvXx+v8MJ/s1twWD2+vWycARTDgepvvYnQ09mk7yvmApFdLlTKzkSs0UwQzLHF1o0WCpOiNYlffVk/CKGsg/XPwVDk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6825
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_09,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ suspectscore=0 malwarescore=0 phishscore=0 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407110096
+X-Proofpoint-ORIG-GUID: 97cW-wtBgkdF_gab4ssIWg2zGwABCyn9
+X-Proofpoint-GUID: 97cW-wtBgkdF_gab4ssIWg2zGwABCyn9
 
-Hi Michael,
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on next-20240710]
-[cannot apply to uml/next remoteproc/rproc-next s390/features linus/master uml/fixes v6.10-rc7 v6.10-rc6 v6.10-rc5 v6.10-rc7]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Michael-S-Tsirkin/virtio_balloon-add-work-around-for-out-of-spec-QEMU/20240711-004346
-base:   next-20240710
-patch link:    https://lore.kernel.org/r/3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst%40redhat.com
-patch subject: [PATCH v2 2/2] virtio: fix vq # for balloon
-config: i386-randconfig-014-20240711 (https://download.01.org/0day-ci/archive/20240711/202407112113.SzSpdDLK-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240711/202407112113.SzSpdDLK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407112113.SzSpdDLK-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/virtio/virtio_pci_common.c:391:1: error: version control conflict marker in file
-     391 | <<<<<<< HEAD
-         | ^
->> drivers/virtio/virtio_pci_common.c:392:30: error: use of undeclared identifier 'queue_idx'
-     392 |                 vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
-         |                                            ^
-   2 errors generated.
+On 7/10/24 5:27 AM, Juergen Gross wrote:
+> Today Xen multicall debugging needs to be enabled via modifying a
+> define in a source file for getting debug data of multicall errors
+> encountered by users.
+>
+> Switch multicall debugging to depend on a boot parameter "xen_mc_debug"
+> instead, enabling affected users to boot with the new parameter set in
+> order to get better diagnostics.
+>
+> With debugging enabled print the following information in case at least
+> one of the batched calls failed:
+> - all calls of the batch with operation, result and caller
+> - all parameters of each call
+> - all parameters stored in the multicall data for each call
+>
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 
 
-vim +391 drivers/virtio/virtio_pci_common.c
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-   365	
-   366	static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
-   367				    struct virtqueue *vqs[],
-   368				    struct virtqueue_info vqs_info[])
-   369	{
-   370		struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-   371		int i, err;
-   372	
-   373		vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
-   374		if (!vp_dev->vqs)
-   375			return -ENOMEM;
-   376	
-   377		err = request_irq(vp_dev->pci_dev->irq, vp_interrupt, IRQF_SHARED,
-   378				dev_name(&vdev->dev), vp_dev);
-   379		if (err)
-   380			goto out_del_vqs;
-   381	
-   382		vp_dev->intx_enabled = 1;
-   383		vp_dev->per_vq_vectors = false;
-   384		for (i = 0; i < nvqs; ++i) {
-   385			struct virtqueue_info *vqi = &vqs_info[i];
-   386	
-   387			if (!vqi->name) {
-   388				vqs[i] = NULL;
-   389				continue;
-   390			}
- > 391	<<<<<<< HEAD
- > 392			vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
-   393					     vqi->name, vqi->ctx,
-   394	=======
-   395			vqs[i] = vp_setup_vq(vdev, i, callbacks[i], names[i],
-   396					     ctx ? ctx[i] : false,
-   397	>>>>>>> f814759f80b7... virtio: fix vq # for balloon
-   398					     VIRTIO_MSI_NO_VECTOR);
-   399			if (IS_ERR(vqs[i])) {
-   400				err = PTR_ERR(vqs[i]);
-   401				goto out_del_vqs;
-   402			}
-   403		}
-   404	
-   405		return 0;
-   406	out_del_vqs:
-   407		vp_del_vqs(vdev);
-   408		return err;
-   409	}
-   410	
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
