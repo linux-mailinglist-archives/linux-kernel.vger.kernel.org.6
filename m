@@ -1,206 +1,158 @@
-Return-Path: <linux-kernel+bounces-248739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7563092E157
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C4B92E15C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0651F213F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164191F21C34
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133C214B950;
-	Thu, 11 Jul 2024 07:53:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zE1fhSQ6"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE7C1509A6;
+	Thu, 11 Jul 2024 07:54:02 +0000 (UTC)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBA414A633
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 07:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB4014B943;
+	Thu, 11 Jul 2024 07:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720684432; cv=none; b=lW+ZtDcg3CfVhWaICvWYjGhD8CftZWAIhuOpKWHO9BbjKjttZ6ciPsKZeSaMZxUqId11oPlGWOpIYbLLtvGqeeawGD5KppY50A/uE6mrGFPMfY/xvK9Ndajud8rz2Fjg5W1sV1OZERruvWLbk4C/agm7eJrvh3uvjFaSQPwGH/0=
+	t=1720684441; cv=none; b=FhrojNOldj1AHV1veNQkQXXIYOdM2zjC3l/rxHl4LHjO9xTJGNllV31aQwWn7WlV7WDhn9CUJkDE9x1S7tCaWl819Lb6LQswQJQV5vogGPVSTRMoMPX0L804iFfFUv5PetHyGesSyLfrLG0r3yH26MScIrI13SrE+scHOorcMDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720684432; c=relaxed/simple;
-	bh=BKSDHzynO6v61cW8i/1VhHg5DZ87VhiYcZ1Md8WAKCk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=em4+nxrA5ePOMG42B5ljYESNdJFBI7AG/xUHQauf2fHhFikXhxsuOMeaNNv5wpvFO6EAueD/tcFwDaeOOAEwG8k61Q60+rzM+PS1VMpVkCVNGHrnGgdOBAgbaocCOXaolC83zv4mfvyURKD1b8wMjuOc0EDARBdbX1tEv2t5pOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=zE1fhSQ6; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46B7rbZ2080766;
-	Thu, 11 Jul 2024 02:53:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720684417;
-	bh=O2yihfRWjVbYRd8r0aBV3Gq7SQjJHFV6kCLF+0hqCyM=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=zE1fhSQ6C3ChPNCHMUV01qEZ7mae6LlMSAeQ9xRljTyMFYY6j5mysCLXXPnsBxbva
-	 ZGwqcsWDMLpsuGekEemAAqJiwkml7qtD/XSm/jMabTmLWU+K3y0w7z38Hit5NooOOH
-	 DEoSxH4LjpseErnw4sVBrUeNYhyJgZ6dxoeZ8ZyI=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46B7rb9d019973
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 11 Jul 2024 02:53:37 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 11
- Jul 2024 02:53:36 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 11 Jul 2024 02:53:36 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46B7rZ4p029518;
-	Thu, 11 Jul 2024 02:53:36 -0500
-Date: Thu, 11 Jul 2024 13:23:34 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Swapnil Kashinath Jakhade <sjakhade@cadence.com>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
-        "vkoul@kernel.org"
-	<vkoul@kernel.org>,
-        "kishon@kernel.org" <kishon@kernel.org>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "rogerq@kernel.org"
-	<rogerq@kernel.org>,
-        "thomas.richard@bootlin.com"
-	<thomas.richard@bootlin.com>,
-        "theo.lebrun@bootlin.com"
-	<theo.lebrun@bootlin.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "srk@ti.com" <srk@ti.com>, Milind
- Parab <mparab@cadence.com>
-Subject: Re: [PATCH v2] phy: cadence-torrent: add support for three or more
- links using 2 protocols
-Message-ID: <7504ea5a-335b-4152-a0f4-5be68f048903@ti.com>
-References: <20240710115624.3232925-1-s-vadapalli@ti.com>
- <LV3PR07MB1036463AB8AB5D38D003175E6C5A52@LV3PR07MB10364.namprd07.prod.outlook.com>
+	s=arc-20240116; t=1720684441; c=relaxed/simple;
+	bh=0BgnDHiX/TK+JQoHQMsUy+eteShtWavkLMpjkahy91M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JayWjUhQDYYEJGCFY4tH2VxIl8dePcVqMy0NhWgwQsa2hru0kzhgbgYcK6zSfPpfZPIGD3XY9cU/M5WEEF69v1HdXMYfOVkbA8jCU8I3wMuQBcmhtCBpSPuESE8mx5lnNOg43sFvZuauCZ6oVS7noUC0j42B4I1IJSxmRPs6MmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-650b8e0a6ceso5874147b3.3;
+        Thu, 11 Jul 2024 00:53:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720684438; x=1721289238;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5fRVbJjcNb5I05e6Xfep3Il3HTd1wTS3dEeZLYGEQtM=;
+        b=PHJazHFGAmjv8X4bkxbaxB44Cf7U0Ug2b5psUq5CJGn5i0U0CLxDGz8F5jjQU9QCV4
+         17RhVbblJNQVQlJIRArMzHv3oKlscj9Ue4B2SFZz1PIXZS4kgh3z7LfALD+1lZocL/8K
+         EAwHQA87fnqgR10yq2Ru06sm7qjQEKUkk0DuFG23Do/c4XLBmLw6jC2XIdivyLqeJLr1
+         55oMzKoSbmiEO9q/ewEHnWvyyrJPyi2JYGR1HvBFz3VKkYFCLWP87yzklgdNqmdPbg5I
+         drriOOcReUTkJklqDrvv9j6E6k6iVEjSS5o4QA39JwgRSknZZ+jq4ki7D0bM/v7u1mWH
+         1DKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDBMQYnO30WcFt0oqS5+NBuTIGoSB2HEVDciE2KtRgLUWF0zFTXEvoHOSXGuBbpblt/qcJlY9wsTVHGyvaU4Odt6C3fg4nRCHrXFfKXwSbFcH3G1aZCPGurxZq74xrH3PRnTEmJyrWr0f6X68e0MRQCbV9kW6YpsNVI3FykAQD4fRWov6yxohpMY3w/k5ZfDkKdPpIZn2oEsirL+t8kAJFzMdM1MtXVB//9NgkDrS9K868Rv7sxc2oKp5vF9CqEkAT
+X-Gm-Message-State: AOJu0YwSBnf3ov5Q802WsxFshwxxwxPp8CszsF+U6AUN4yZbH5vOdL9S
+	ev2P16PvMe6h9rlPOSj+rwZWWdpp50u9SMzb+Flz/F0qzbRs3HNAG6u0EXfi
+X-Google-Smtp-Source: AGHT+IEAVEVDvRPumjsbsdvUEKBWr+nCV0eoncFS6xMhbJf5JHh93sDmEHKqPscdEqfNwYteTbffWg==
+X-Received: by 2002:a25:6801:0:b0:e05:6d47:57a4 with SMTP id 3f1490d57ef6-e056d475973mr3452925276.10.1720684437720;
+        Thu, 11 Jul 2024 00:53:57 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e041a8acf85sm925002276.9.2024.07.11.00.53.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 00:53:56 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-64789495923so5634487b3.0;
+        Thu, 11 Jul 2024 00:53:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4AQsv5jhWFuUQz0NAtfh4lw8g73dBZSHrV+2Jm5LEAFZta8ZV8wHZmu8OQpncIPgolXa65Dm91ZogINUS+8oBOSrfVVVC2FDeHGlbtTS4n85KK7/Tpv1WIPc5sO/3t7J1RUauL419dilUXE3zCfYrYa+78/2B6FkRUCIk1ofQ6LIXLmFLKwvn7x+mokD9Z2WTA/+qjwHZ2PrNpgTDLwkQ1ez7mskWCQ54pAkrunEGcxmjbkpACdSo6tMQDIJ7KYQe
+X-Received: by 2002:a81:8d49:0:b0:63b:df6e:3f6d with SMTP id
+ 00721157ae682-658f02f3720mr78529147b3.37.1720684436126; Thu, 11 Jul 2024
+ 00:53:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <LV3PR07MB1036463AB8AB5D38D003175E6C5A52@LV3PR07MB10364.namprd07.prod.outlook.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com> <22db23bd-5872-49a0-990f-2a0e5f51bfb5@tuxon.dev>
+In-Reply-To: <22db23bd-5872-49a0-990f-2a0e5f51bfb5@tuxon.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 11 Jul 2024 09:53:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWTYfK6aVi5BzBtQg_zQWjuZX7d7QHr3a4GAb+dQOWyvQ@mail.gmail.com>
+Message-ID: <CAMuHMdWTYfK6aVi5BzBtQg_zQWjuZX7d7QHr3a4GAb+dQOWyvQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 06:43:01AM +0000, Swapnil Kashinath Jakhade wrote:
-> Hi Siddharth,
+Hi Claudiu,
 
-Hello Swapnil,
+On Wed, Jul 10, 2024 at 4:20=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxo=
+n.dev> wrote:
+> On 28.06.2024 12:22, Geert Uytterhoeven wrote:
+> > On Tue, Jun 25, 2024 at 2:14=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.d=
+ev> wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> Fast mode plus is available on most of the IP variants that RIIC drive=
+r
+> >> is working with. The exception is (according to HW manuals of the SoCs
+> >> where this IP is available) the Renesas RZ/A1H. For this, patch
+> >> introduces the struct riic_of_data::fast_mode_plus.
+> >>
+> >> Fast mode plus was tested on RZ/G3S, RZ/G2{L,UL,LC}, RZ/Five by
+> >> instantiating the RIIC frequency to 1MHz and issuing i2c reads on the
+> >> fast mode plus capable devices (and the i2c clock frequency was checke=
+d on
+> >> RZ/G3S).
+> >>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > Thanks for your patch!
+> >
+> >> --- a/drivers/i2c/busses/i2c-riic.c
+> >> +++ b/drivers/i2c/busses/i2c-riic.c
+> >> @@ -407,6 +413,9 @@ static int riic_init_hw(struct riic_dev *riic)
+> >>         riic_writeb(riic, 0, RIIC_ICSER);
+> >>         riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
+> >>
+> >> +       if (info->fast_mode_plus && t->bus_freq_hz =3D=3D I2C_MAX_FAST=
+_MODE_PLUS_FREQ)
+> >> +               riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
+> >
+> > Unless FM+ is specified, RIIC_ICFER is never written to.
+> > Probably the register should always be initialized, also to make sure
+> > the FMPE bit is cleared when it was set by the boot loader, but FM+
+> > is not to be used.
+>
+> Instead of clearing only this bit, what do you think about using
+> reset_control_reset() instead of reset_control_deassert() in riic_i2c_pro=
+be()?
+>
+> HW manuals for all the devices listed in
+> Documentation/devicetree/bindings/i2c/renesas,riic.yaml specifies that
+> ICFER_FMPE register is initialized with a default value by reset. All the
+> other registers are initialized with default values at reset (according t=
+o
+> HW manuals). I've checked it on RZ/G3S and it behaves like this.
 
-Thank you for reviewing this patch.
+RZ/A1 and RZ/A2M do not have reset controller support yet, so calling
+reset_control_reset() is a no-op on these SoCs.
 
-[...]
+However, I overlooked that riic_init_hw() does an internal reset first
+by setting the ICCR1_IICRST bit in RIIC_ICCR1.
+Is that sufficient to reset the FMPE bit?
 
-> > - A multilink configuration doesn't necessarily imply two protocols
-> >   since a single protocol may be split across links as follows:
-> >   Lane 0 => Protocol 1
-> >   Lane 1 => Unused
-> >   Lane 2 => Protocol 1
-> >   Lane 3 => Unused
-> >   which corresponds to two links and therefore two sub-nodes. In such a
-> >   case, treat it as two single-link configurations performed sequentially
-> >   which happens to be the case prior to this patch. To address this,
-> >   handle the case where cdns_torrent_phy_configure_multilink() can be
-> >   invoked for a single protocol with multiple sub-nodes (links) by
-> >   erroring out only when the number of protocols is strictly greater
-> >   than two, followed by handling the configuration similar to how it was
-> >   done prior to this patch.
-> 
-> The assumption here that "a single protocol when split across links is to be
-> considered as single-link configurations performed sequentially" is not always
-> correct.
-> e.g. If there are 2 PCIe links, then this is a case of 'Multilink PCIe' and not 2 separate
-> 'single link PCIe'. Multilink PCIe has different PLL configurations than for single link
-> PCIe resulting in different register configurations.
-> Also, for multi-protocol case, in cdns_torrent_phy_configure_multilink() function,
-> the existing implementation considers this as multilink case of combination of 2
-> protocols which has different register config than single link of each protocol.
+Gr{oetje,eeting}s,
 
-I suppose that PCIe is the only such protocol since it can have
-different speeds despite a single protocol (Gen1, Gen2, Gen3...), unlike
-other protocols which have a fixed speed and therefore the PLL
-associated with them doesn't have to be reconfigured as the rate will
-never change. Please let me know if there are other protocols (maybe DP?)
-which also require such special handling.
+                        Geert
 
-[...]
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> > +		phy_t1 = fns(cdns_phy->protocol_bitmask, 0);
-> > +		/**
-> > +		 * For a single protocol split across multiple links,
-> > +		 * assign TYPE_NONE to phy_t2 for configuring each link
-> > +		 * identical to a single-link configuration with a single
-> > +		 * protocol.
-> > +		 */
-> > +		phy_t2 = TYPE_NONE;
-> 
-> As mentioned above, assuming phy_t2 = TYPE_NONE is not correct here.
-
-I can update this patch to handle it differently for PCIe multi-link, but
-as of now I don't see any PCIe multi-link support in the current Torrent
-SERDES driver in Mainline Linux.
-
-> 
-> FYI. I have shared few patches to TI earlier removing the constraint of Maximum 2 links (subnodes)
-> in the driver specifically for Multilink PCIe cases.
-> Please check first 4 patches in link below.
-> https://github.com/t-c-collab/linux/commits/ti-linux-6.1.y-torrent-multi-pcie-sgmii-v1
-
-The patches you are referring to above seem to remove the constraint of
-a maximum of 2 links, __only__ when one of the protocols is PCIe [1].
-However, that is not necessarily the only use-case for multiple links.
-
-Please consider the following valid use-case:
-SERDES Lane 0 -> SGMII
-SERDES Lane 1 -> SGMII
-SERDES Lane 2 -> QSGMII
-SERDES Lane 3 -> SGMII
-Representing the above in the device-tree will require 3 sub-nodes
-(links):
-&serdes {
-	serdes_sgmii_link1: phy@0 {
-		reg = <0>;
-		cdns,num-lanes = <2>;
-		#phy-cells = <0>;
-		cdns,phy-type = <PHY_TYPE_SGMII>;
-		resets = <&serdes_wiz 1>, <&serdes_wiz 2>;
-	};
-	serdes_qsgmii_link2: phy@2 {
-		reg = <2>;
-		cdns,num-lanes = <1>;
-		#phy-cells = <0>;
-		cdns,phy-type = <PHY_TYPE_QSGMII>;
-		resets = <&serdes_wiz 3>;
-	};
-	serdes_sgmii_link3: phy@3 {
-		reg = <3>;
-		cdns,num-lanes = <1>;
-		#phy-cells = <0>;
-		cdns,phy-type = <PHY_TYPE_SGMII>;
-		resets = <&serdes_wiz 4>;
-	};
-};
-
-Such a configuration is valid since it is still using only 2 different
-protocols. But the existing driver doesn't allow splitting/alternating
-protocols. So any use-case is forced to conform to a consecutive allocation
-of protocols. This patch enables the aforementioned use-case and this has
-been validated for functionality on the J784S4 SoC with a custom board [2].
-
-I believe that this patch can be extended further to support the PCIe
-Multi-link configuration as well. Please let me know your thoughts on
-this.
-
-[1] https://github.com/t-c-collab/linux/commit/fd87922da100b1ed30015333e037c506c510e932#diff-814f5e3b47c89595aa30310ec07ab7aa8ac96f2921f524c4f5cd536a2c3c5adbR2488
-[2] https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1383684/tda4ap-q1-limitations-for-configuration-for-serdes-lanes-when-using-qsgmii-sgmii-and-sgmii-usb3-mixed/
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
