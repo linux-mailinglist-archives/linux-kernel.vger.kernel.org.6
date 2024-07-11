@@ -1,251 +1,177 @@
-Return-Path: <linux-kernel+bounces-248882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D9E92E326
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B14392E32A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9AB31C20BDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:08:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D6BC1C20FD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99ED156653;
-	Thu, 11 Jul 2024 09:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612E515573B;
+	Thu, 11 Jul 2024 09:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="edW1QDUI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aYFbomGL"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55926153517
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D63A2D02E;
+	Thu, 11 Jul 2024 09:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720688917; cv=none; b=tb+r87xe9as6BVBjaTeYd6VhnpFG3cgGsbSuwNL4FB98PiP3EEESMm4BeEgFFyvvFJywQTqChd2LxLijVdwIox/uZAZG6CnFWuOOKWTGGcRkeKQV/WOXRdeiF9DqBRsCDdS5GUdJ4oHgszaWA2yxOh5/0uDrqAy5zoNMUBC+22Y=
+	t=1720689007; cv=none; b=FqTmUMzODKBRIEJrsN8xWIlfTWyoq6GOO7n51ZLHdjoAWkK5Y+lRNS4bjw/uaMlFFr5PLUcF8DiE8JP7i6t2xFTtO4IPf6D8Vj+dhNtjRMlEhuAXsGm3MoOuUCet34otHjBJXEYs48KgpxtMbBal3vb2uC2tXc1aDYM2gKHhIWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720688917; c=relaxed/simple;
-	bh=ljxzkssEHs7PsymbyswJfU5Htuhh01H9EMxCQUsejwQ=;
+	s=arc-20240116; t=1720689007; c=relaxed/simple;
+	bh=+oy0Z7r4tpSnJtqI7rCdzd5clp5UFBQ7gpr3Bk9pXzA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KWqGrsOyr8SYtejujEAFYBI/41GYijGHvi74zN3Qx5X2/6yHW5Qw3UXLT17tN1NJpwMtLyEJQ30ka4Bhg/ZcnDTzvhRFtaSrGq0A7FSjvAABH5gyzLRgcMcJYXAgh5F1CjHkH2qWchikxBYFcgDkKnMDwbmR4YPtWCvEgXpyMzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=edW1QDUI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720688913;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z/tGGgMXZufug5VbuEhcEzd7l9HFMjvswmFUFEeaDBA=;
-	b=edW1QDUIcFUJRRiQIL4gj9GFObjD3jZy+F3DsmgKfER3VyfFmSEKXoc3KEfuYa2J/oYf11
-	0d6AhK02uXdZaL0GSHo/kDiCKk5hXo+BSw0p1YIeDadpmUDuaSnKF9gtdTGEdp3zTi6xdw
-	WTKgHNJPQ7V2i22VCrUtbpCRHrKLAyI=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-569-43IzKTryPSG5oQmdWAnIzw-1; Thu, 11 Jul 2024 05:08:32 -0400
-X-MC-Unique: 43IzKTryPSG5oQmdWAnIzw-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2ee49ce152eso5407571fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 02:08:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=YAbRThmHkBaINUlUo5ysmIIYOe48VEOxQPPZ2zZrTBP8D/NoOFO+Lf3+9ef3ANb/cbLLYuMQDbApvWO988Pugcp7oBY2JH6ifH9PFhDL17YyeKCV5hIrhDkK78W5/jgZEl+BXFa+6ewTDP3ZgQvZMruTFfhMPPlukXdbugQh1QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aYFbomGL; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5c66b53232aso309154eaf.1;
+        Thu, 11 Jul 2024 02:10:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720689005; x=1721293805; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XsucxGW9Y+TjxP5luc1qfbPrrug0CyYu7la7U7tC3b8=;
+        b=aYFbomGLR/CqFTB8jgTQRzuAEOnGo/MXGcWt7/rRINDxEWXGo9WjqHe2MlGoFfuP5Z
+         Ge+e3hZW5mixhFW/ifMsEAC82CJXkfHvtttittyuPGaMfIOQO6t4M8MyBoFUdBzW1ou4
+         cjqpuuVSZOr4/egRdgrFlntpV4NNgCFXXm2ipvLKk5IslIZG70Xe7oWdN6Ecdo0jJrcZ
+         7pUi/N6p3eUczdRuGhwVoQ2vZdfYtuSlv+X0sq61XKLYck/cID5zc+QInjQ7623lvx71
+         N6mfZBS7eHxMj4nifplCyxVadh05u0I2fxDFWDCVgi+MBplGtITaKShFc+eFj4BL+d3d
+         duhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720688910; x=1721293710;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z/tGGgMXZufug5VbuEhcEzd7l9HFMjvswmFUFEeaDBA=;
-        b=SwopXcxQsK39l0THmSvohcy/qHA7QZpQoOSQfBITRpau6MxMvxuPXF80N4KIw6CU+r
-         yOSViV/E2GIxlwGE/4nuV6O+uAInRU2R3rB65V6g+hwY30dwoE0ovne6ccjFnwL2dKM8
-         QezBHmlh1TENFFwvIpNNFPoiydJj8qRJEONe41Tg7zW2kyKYoJ/yOgMilypkbt+xQheM
-         4NxeQHFi2cx8j9AILg+qAlGtKwyECsfTAwtbEmq/PAJtW/g80OX5PRpIE/Q8feeYKfmB
-         /oJOC+8YGan1j2oqlo3Ch2ru07jMpWUxSdq3u00tfQHf9DHi6Uz1OokwftTSEIa6k9Ml
-         +LLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmKWMyVUWY32iZ4hRHaTZQkFrV1OP/m8e93O7uzOoDZkL8dQwmtzcEEsPXRUAZotv8PXTov1odPQBdJtnNRdVlJlR/9DyzxlT7tLNf
-X-Gm-Message-State: AOJu0YzKD7PLqmxTR2ao4qjF28Zt+KsEbJGiP7jal8DadMAQWtF5jWlD
-	HJwQ8pUsqabBrT7jV5wAMdOCBzNwLek1Fed1FX0ef4mjIdMn0oIjxxabkhJDV7QLtRyyfHqY+Dc
-	CaRZ+q5jCgaf+NIBpKvZkz2DVKbNGqru1bT6aWOiP+/N9gCQDp7Se6e+76YV/Uc/HDSPA1IPOAW
-	da7SWRR5/moYE4Emr4nsfh7vQfEOPSdaIrzlOP
-X-Received: by 2002:a2e:a7c7:0:b0:2ee:5b64:b471 with SMTP id 38308e7fff4ca-2eeb30fefcdmr62447861fa.30.1720688910137;
-        Thu, 11 Jul 2024 02:08:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6W3hcev+Z5OBlMg/D7fGaW0A5j3JIOurKm0/vCYKBrpnwOMpohSuAs0Uf+VCxUXTyOZqrGR6A60J2YxKWLD0=
-X-Received: by 2002:a2e:a7c7:0:b0:2ee:5b64:b471 with SMTP id
- 38308e7fff4ca-2eeb30fefcdmr62447591fa.30.1720688909618; Thu, 11 Jul 2024
- 02:08:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720689005; x=1721293805;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XsucxGW9Y+TjxP5luc1qfbPrrug0CyYu7la7U7tC3b8=;
+        b=N1p4Yu2+49NSIcTz4qi3NECQdg3aBRVKHqK8U1TW8A94KReFdP0ZhwGzaNRU8or7p+
+         1L2wRdS5ohXFsZxWbOUJZ37+YqPyu4YI9YTZlDaSKcMZslQxz7B3ENSkzo6UFAdw+zox
+         r84VVoOwQwhULCHBT2eBWwUQaOtfZCXXiq9j17QEojbM4JtoqKkcK1FRvAMSgSir6btq
+         Bl7RbDnVGjy9MdnRPc2TqhA54j389nG/LLPJFXVjgkTlStRJg8dFYSjyCg2D62Mrugmc
+         S6Dsb9FrmljRqQAAACP8AVJYF2vt9R7QTjk//4tGTiSzPAJyf9OT7vVQuaMe+3N/ZyOl
+         TgwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcjSgADkcOpoFTNFzea9xsRn+MBtNA9KG3qVaK7FG/w3PEt6KfKFAnb7NNyKcxi0W3oOdpFo5/slH3NE7Cana8w8UZmgjw3ycQxj6crXr4d3snwvfJhjzyn/1UZ5+7Oh4F0JQ6/pDxhw==
+X-Gm-Message-State: AOJu0YyQAGBTGSmDvsXk4u4eB4JFdRoMsufGv9GeJANz/bLWVI543GFm
+	G6dYHrq4qe6cpQjWFgDmp6X7VR5FmqxgoGltDjEN61G/PvGYyRjBmZ0ecnMb3Cx+wJgUN3j4p5v
+	SCQYn8DRbMQA13K7e3/3oGkswnscRrEQT
+X-Google-Smtp-Source: AGHT+IGMwf9afo3OG1lHgS1ygbb9ZfnegCOtYS2szd+hQvD0ovzyg8NehAjnnLFB/W90zesnDvVLncGZ45ZwhA2XryA=
+X-Received: by 2002:a4a:51c1:0:b0:5c2:20eb:aebe with SMTP id
+ 006d021491bc7-5c68e49f1bamr8218134eaf.9.1720689005129; Thu, 11 Jul 2024
+ 02:10:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708064820.88955-1-lulu@redhat.com> <PH0PR12MB5481AE2FD52AEE1C10411F3DDCDB2@PH0PR12MB5481.namprd12.prod.outlook.com>
- <CACLfguXk4qiw4efRGK4Gw8OZQ_PKw6j+GVQJCVtbyJ+hxOoE0Q@mail.gmail.com>
- <20240709084109-mutt-send-email-mst@kernel.org> <CACGkMEtdFgbgrjNDoYfW1B+4BwG8=i9CP5ePiULm2n3837n29w@mail.gmail.com>
- <20240710020852-mutt-send-email-mst@kernel.org> <CACLfguW0HxPy7ZF7gg7hNzMqFcf5x87asQKBUqZMOJC_S8kSbw@mail.gmail.com>
-In-Reply-To: <CACLfguW0HxPy7ZF7gg7hNzMqFcf5x87asQKBUqZMOJC_S8kSbw@mail.gmail.com>
-From: Leonardo Milleri <lmilleri@redhat.com>
-Date: Thu, 11 Jul 2024 10:08:18 +0100
-Message-ID: <CAD2tU16x1aeZLcQrESroqz-5n=S0nkgh8QTQO31-yYF_7hqB=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] vdpa: support set mac address from vdpa tool
-To: Cindy Lu <lulu@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Parav Pandit <parav@nvidia.com>
-Cc: Jason Wang <jasowang@redhat.com>, Dragos Tatulea <dtatulea@nvidia.com>, 
-	"sgarzare@redhat.com" <sgarzare@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <20240711060939.1128-1-linux.amoon@gmail.com> <a8c1f49e-bf25-4fd3-a16f-13088f75767f@kwiboo.se>
+In-Reply-To: <a8c1f49e-bf25-4fd3-a16f-13088f75767f@kwiboo.se>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 11 Jul 2024 14:39:48 +0530
+Message-ID: <CANAwSgQCn3jgiruiLs0cu-C+DguLtnk=msboAh8jNSF4P28gjA@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add missing pinctrl for PCIe30x4 node
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Sorry for the noise, resending the email in text format
+Hi Jonas,
 
-Hi All,
+Thanks for your review comments.
 
-My answers inline below
+On Thu, 11 Jul 2024 at 14:13, Jonas Karlman <jonas@kwiboo.se> wrote:
+>
+> Hi Anand,
+>
+> On 2024-07-11 08:09, Anand Moon wrote:
+> > Add missing pinctrl settings for PCIe 3.0 x4 clock request and wake
+> > signals.Each component of PCIe communication have the following control
+> > signals: PERST, WAKE, CLKREQ, and REFCLK. These signals work to generate
+> > high-speed signals and communicate with other PCIe devices.
+> > Used by root complex to endpoint depending on the power state.
+> >
+> > PERST is referred to as a fundamental reset. PERST should be held low
+> > until all the power rails in the system and the reference clock are stable.
+> > A transition from low to high in this signal usually indicates the
+> > beginning of link initialization.
+> >
+> > WAKE signal is an active-low signal that is used to return the PCIe
+> > interface to an active state when in a low-power state.
+> >
+> > CLKREQ signal is also an active-low signal and is used to request the
+> > reference clock.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> > V2: Update the commit messge to describe the changs.
+> >     use pinctl group as its pre define in pinctl dtsi
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 6 +-----
+> >  1 file changed, 1 insertion(+), 5 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > index 2e7512676b7e..ab3a20986c6a 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > @@ -301,7 +301,7 @@ &pcie30phy {
+> >
+> >  &pcie3x4 {
+> >       pinctrl-names = "default";
+> > -     pinctrl-0 = <&pcie3_rst>;
+> > +     pinctrl-0 = <&pcie30x4m1_pins>;
+>
+> Use of the existing pcie30x4m1_pins group may not be fully accurate for
+> the PERST pin. The use of reset-gpios indicate that the PERST pin is
+> used with GPIO function and the driver will implicitly change the
+> function from perstn_m1 to GPIO. So this may not be best representation
+> of the hw, hence my initial suggestion, something like:
+>
+>         pcie30x4_pins: pcie30x4-pins {
+>                 rockchip,pins =
+>                         <4 RK_PB4 4 &pcfg_pull_none>,
+>                         <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>,
+>                         <4 RK_PB5 4 &pcfg_pull_none>;
+>         };
+>
+> Similar change should probably also be done for pcie2x1l0 and pcie2x1l2,
+> not just pcie3x4.
+>
 
->> Any specific reason to pre-create those large number of vdpa devices of =
-the pool?
->> I was hoping to create vdpa device with needed attributes, when spawning=
- a kubevirt instance.
->> K8s DRA infrastructure [1] can be used to create the needed vdpa device.=
- Have you considered using the DRA of [1]?
+Ok but it is better to update this in rk3588s-pinctrl.dtsi otherwise
+the pcie30x4m1_pins
+will not be used at all on all the boards
+I will update the PERST pin to RK_FUNC_GPIO on all the pcie2x1l0,
+pcie2x1l2 and  pcie30x4
+is this ok for you?
 
-The vhost-vdpa devices are created in the host before spawning the
-kubevirt VM. This is achieved by using:
-- sriov-network-operator: load kernel drivers, create vdpa devices
-(with MAC address), etc
-- sriov-device-plugin: create pool of resources (vdpa devices in this
-case), advertise devices to k8s, allocate devices during pod creation
-(by the way, isn't this mechanism very similar to DRA?)
-
-Then we create the kubevirt VM by defining an interface with the
-following attributes:
-- type:vdpa
-- mac
-- source: vhost-vdpa path
-
-So the issue is, how to make sure the mac in the VM is the same mac of vdpa=
-?
-Two options:
-- ensure kubevirt interface mac is equal to vdpa mac: this is not
-possible because of the device plugin resource pool. You can have a
-few devices in the pool and the device plugin picks one randomly.
-- change vdpa mac address at a later stage, to make sure it is aligned
-with kubevirt interface mac. I don't know if there is already specific
-code in kubevirt to do that or need to be implemented.
-
-Hope this helps to clarify
+> Regards,
+> Jonas
 
 Thanks
-Leonardo
-
-
-On Wed, Jul 10, 2024 at 10:46=E2=80=AFAM Cindy Lu <lulu@redhat.com> wrote:
+-Anand
 >
-> On Wed, 10 Jul 2024 at 14:10, Michael S. Tsirkin <mst@redhat.com> wrote:
+> >       reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
+> >       vpcie3v3-supply = <&vcc3v3_pcie30>;
+> >       status = "okay";
+> > @@ -341,10 +341,6 @@ pcie2_2_rst: pcie2-2-rst {
+> >       };
 > >
-> > On Wed, Jul 10, 2024 at 11:05:48AM +0800, Jason Wang wrote:
-> > > On Tue, Jul 9, 2024 at 8:42=E2=80=AFPM Michael S. Tsirkin <mst@redhat=
-.com> wrote:
-> > > >
-> > > > On Tue, Jul 09, 2024 at 02:19:19PM +0800, Cindy Lu wrote:
-> > > > > On Tue, 9 Jul 2024 at 11:59, Parav Pandit <parav@nvidia.com> wrot=
-e:
-> > > > > >
-> > > > > > Hi Cindy,
-> > > > > >
-> > > > > > > From: Cindy Lu <lulu@redhat.com>
-> > > > > > > Sent: Monday, July 8, 2024 12:17 PM
-> > > > > > >
-> > > > > > > Add support for setting the MAC address using the VDPA tool.
-> > > > > > > This feature will allow setting the MAC address using the VDP=
-A tool.
-> > > > > > > For example, in vdpa_sim_net, the implementation sets the MAC=
- address to
-> > > > > > > the config space. However, for other drivers, they can implem=
-ent their own
-> > > > > > > function, not limited to the config space.
-> > > > > > >
-> > > > > > > Changelog v2
-> > > > > > >  - Changed the function name to prevent misunderstanding
-> > > > > > >  - Added check for blk device
-> > > > > > >  - Addressed the comments
-> > > > > > > Changelog v3
-> > > > > > >  - Split the function of the net device from vdpa_nl_cmd_dev_=
-attr_set_doit
-> > > > > > >  - Add a lock for the network device's dev_set_attr operation
-> > > > > > >  - Address the comments
-> > > > > > >
-> > > > > > > Cindy Lu (2):
-> > > > > > >   vdpa: support set mac address from vdpa tool
-> > > > > > >   vdpa_sim_net: Add the support of set mac address
-> > > > > > >
-> > > > > > >  drivers/vdpa/vdpa.c                  | 81 ++++++++++++++++++=
-++++++++++
-> > > > > > >  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 19 ++++++-
-> > > > > > >  include/linux/vdpa.h                 |  9 ++++
-> > > > > > >  include/uapi/linux/vdpa.h            |  1 +
-> > > > > > >  4 files changed, 109 insertions(+), 1 deletion(-)
-> > > > > > >
-> > > > > > > --
-> > > > > > > 2.45.0
-> > > > > >
-> > > > > > Mlx5 device already allows setting the mac and mtu during the v=
-dpa device creation time.
-> > > > > > Once the vdpa device is created, it binds to vdpa bus and other=
- driver vhost_vdpa etc bind to it.
-> > > > > > So there was no good reason in the past to support explicit con=
-fig after device add complicate the flow for synchronizing this.
-> > > > > >
-> > > > > > The user who wants a device with new attributes, as well destro=
-y and recreate the vdpa device with new desired attributes.
-> > > > > >
-> > > > > > vdpa_sim_net can also be extended for similar way when adding t=
-he vdpa device.
-> > > > > >
-> > > > > > Have you considered using the existing tool and kernel in place=
- since 2021?
-> > > > > > Such as commit d8ca2fa5be1.
-> > > > > >
-> > > > > > An example of it is,
-> > > > > > $ vdpa dev add name bar mgmtdev vdpasim_net mac 00:11:22:33:44:=
-55 mtu 9000
-> > > > > >
-> > > > > Hi Parav
-> > > > > Really thanks for your comments. The reason for adding this funct=
-ion
-> > > > > is to support Kubevirt.
-> > > > > the problem we meet is that kubevirt chooses one random vdpa devi=
-ce
-> > > > > from the pool and we don't know which one it going to pick. That =
-means
-> > > > > we can't get to know the Mac address before it is created. So we =
-plan
-> > > > > to have this function to change the mac address after it is creat=
-ed
-> > > > > Thanks
-> > > > > cindy
-> > > >
-> > > > Well you will need to change kubevirt to teach it to set
-> > > > mac address, right?
-> > >
-> > > That's the plan. Adding Leonardo.
-> > >
-> > > Thanks
+> >       pcie3 {
+> > -             pcie3_rst: pcie3-rst {
+> > -                     rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+> > -             };
+> > -
+> >               pcie3_vcc3v3_en: pcie3-vcc3v3-en {
+> >                       rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
+> >               };
 > >
-> > So given you are going to change kubevirt, can we
-> > change it to create devices as needed with the
-> > existing API?
-> >
-> Hi Micheal and Parav,
-> I'm really not familiar with kubevirt, hope Leonardo can help answer
-> these questions
-> Hi @Leonardo Milleri
-> would you help answer these questions?
+> > base-commit: 34afb82a3c67f869267a26f593b6f8fc6bf35905
 >
-> Thanks
-> Cindy
-> > > >
-> > > > --
-> > > > MST
-> > > >
-> >
->
-
 
