@@ -1,104 +1,133 @@
-Return-Path: <linux-kernel+bounces-248850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F18392E2AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:47:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2E392E2B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE7F284C45
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:47:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C115B24D9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E7015531B;
-	Thu, 11 Jul 2024 08:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DC9155308;
+	Thu, 11 Jul 2024 08:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="kXATyhs4"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mPkzAW2K";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vVYfrTdx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A71D518
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFB512BF02;
+	Thu, 11 Jul 2024 08:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720687646; cv=none; b=IDrM30+AgyEaRZXj+M/RwtnuOH2ryY0IKoEZTyEkrnAkkDPWQ89T1w6Z3XyN3s2oxkWd1iKJlNWnhU++OPAL9EMXI/3t6eY+uYHB7DtYLt67RahA0nuhA9MaVAapxKcYZT9Xhbqb/2WckQKeS/Ur+zeaHJ6pZtdNTSJC29yBK8Y=
+	t=1720687674; cv=none; b=AswBK6S+rpIjbni2Ep1AXv2cC8L+31dBT5iflVbnbAjgXD4b/+q5dlTozVsVY5XVSEaNPcbIrFolm9V7ZwucPqGW4YPCKrxXLoN0tWp19M0KwLhiPUyK+YUrAk7/4NykDtKHM5M7HG3GKFNx6gKQTd+D6FkPWAmGQP4vltDFCRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720687646; c=relaxed/simple;
-	bh=/UcrM9S9fPVMtzAalcskkXvVlbajPVnGUkiWQO2xdWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GX7uNiJzkF3yagJm8yb1LMptP4sOwlCaPsFHuPyuMGv8LAG6xEgvH9pD+V+Dl9z6YAb/bqvS33zonRM2pV5BrKJv3UYxboFSrOroguDCyrgj0Frv24bRvUb17WIg0vze/ecUn+V4p9//GlvYcQTwWlQR41Sk6yw23iUkc8pocuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=kXATyhs4; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=/Ucr
-	M9S9fPVMtzAalcskkXvVlbajPVnGUkiWQO2xdWU=; b=kXATyhs4/LsJkNPCZwXN
-	V1fyBCC/+TxuDeQBSDqdIL7K3UJxMefdRXUv5q4GJ05xLsljauaIh8wHeSKuHx1s
-	Os5NLJz4UovGqRDyfGTOT4Eh8S9+D/KUSQvHFwNzEbiMj26HcD5K7giB8poixolX
-	dEwXFVvY1iEmXd1c2hE86A2XiAGwJFlhAqZvk5Ho3FB9wTe1KCqtgAeUChfSID16
-	nDUuLG4NyWLgBSTPRb/gLcABr4Y0uzrL6eMpWIYmMzjsptcG0CzGVeFLVYOnTX+p
-	HrX8AzrSpoeamZM9uysq2NOUH3gRTjUczXpVJ5Xd5bb6qqoxJe8dma7j7cgW+PJD
-	Cg==
-Received: (qmail 782210 invoked from network); 11 Jul 2024 10:47:22 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jul 2024 10:47:22 +0200
-X-UD-Smtp-Session: l3s3148p1@O+6qz/QcHtwgAwDPXwmZAIsFIv4n+Dpm
-Date: Thu, 11 Jul 2024 10:47:21 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Jian Jun Chen <jian.jun.chen@intel.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: delete entry for Conghui Chen
-Message-ID: <Zo-cGVD_mvezDMoZ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Jian Jun Chen <jian.jun.chen@intel.com>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20240706144150.2668-2-wsa+renesas@sang-engineering.com>
- <20240708061937.p7lhz7eho4dh5bv7@vireshk-i7>
+	s=arc-20240116; t=1720687674; c=relaxed/simple;
+	bh=hMfy74YYlrsHF3yA2hofdWVjdYwIcuxR3NacsnWwdIU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=tMqtz+ZBfgtLjb/gwwbFnSDBIBUm5eJ0PqKDquxawlapW4j/XtG5ulsF5x365ryOw4rn/MDu8m6rK+SrOAUGCqBvE0tD8Fdt1X5sgTQIExuisylZVdAo4WuDNmS3RKK7lOPkQ1oJmQcUV4u3WdIZUyMKDhJ9cfUEk0Ze9NHfpUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mPkzAW2K; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vVYfrTdx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 11 Jul 2024 08:47:49 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720687670;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gcf3lDdrhhPrYEO/nWpoUqfXkWSFN6AmThPK46U89HE=;
+	b=mPkzAW2K0Y+zK0qGwEE8lxE6JcV0mAltNz3pzm9YKEDMuf7OKF2h6kBmZRq3aL0vwHHMzw
+	XEvG3vIiUDJ5ItqbACSy/nQV/ClN7bWs2jWCoOlJDrUrSe2rTLUUGwAtJRz6fXv6N1AHcL
+	kVanybCkEhGYGQzH8BCLoWbZIq5+AfBuVguFIWjkaAloFzIoZrWvUAcRtj34R9wG5bGvXV
+	iiYCvSuyAFVMYaFFN11eIJyRcZ1vtpgc2EFR5OgYc/Ny5wX8yIEKKl6zeT0541OBz6+i8f
+	k7jEL2UGe3TfYXVFW+viQnHWI/cSGqqhH06rB3ndevr9y7xKVDRp9GpLx6wdfA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720687670;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gcf3lDdrhhPrYEO/nWpoUqfXkWSFN6AmThPK46U89HE=;
+	b=vVYfrTdxhhP6hMHbpG87KRg+/AiY3K22FYs4aUR6mShKUPmyl7Ffi4o//BleXbV0w3KJ05
+	gG1rxW32HjjNsiCQ==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/core] sched: Update MAINTAINERS and CREDITS
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240708075752.GF11386@noisy.programming.kicks-ass.net>
+References: <20240708075752.GF11386@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LlX4jScTkSgHKceY"
-Content-Disposition: inline
-In-Reply-To: <20240708061937.p7lhz7eho4dh5bv7@vireshk-i7>
+Message-ID: <172068766925.2215.17525521312357894567.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the sched/core branch of tip:
 
---LlX4jScTkSgHKceY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Commit-ID:     db43a609d01e8bf9b812d45dc2945c65b57dd793
+Gitweb:        https://git.kernel.org/tip/db43a609d01e8bf9b812d45dc2945c65b57dd793
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Mon, 08 Jul 2024 09:57:52 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 11 Jul 2024 10:44:18 +02:00
 
+sched: Update MAINTAINERS and CREDITS
 
-> May be we can add Jian as "R:" here to keep someone from Intel in loop ?
+Thank you Daniel for having been our friend!
 
-Yes, it would surely be nice to have someone from Intel in the loop. As
-Jian did not respond up to now, I suggest to add him with a seperate
-patch, though. Let's get rid of the bounce first.
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
+Reviewed-by: Steven Rostedt <rostedt@goodmis.org>
+Link: https://lore.kernel.org/r/20240708075752.GF11386@noisy.programming.kicks-ass.net
+---
+ CREDITS     | 3 +++
+ MAINTAINERS | 1 -
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-
---LlX4jScTkSgHKceY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaPnBkACgkQFA3kzBSg
-KbYp+Q//bh9qbtiA0zdbNxQ3P37IvH19O7gILsfN3jffvqqBrVvhLmnjQ3olpPIM
-f3jI6TwCU+KlsvGt54IN0rMeF3R3PFDbq4fSbB3NwnucqX+MyeEBmM+nQsc/FPzd
-hXH9F3mdNNw0QPk24qOWLWwSe9m3H9yZvJg4wkj8w5jDAREtbTMZS/lPfuRcjE0l
-3iWzK6Rwj/v4zf/gbyP/3J3Udea0IJRO+oIdJKnXVbqwV4VyX+uKDFG8EKX84g5Q
-UBSW889qOa0aNs7T01Orn2an+jti0j+XAy/UQK10d6hC2UT8YL7p3KeKWKhLfgPC
-V8VLdRRrjMv08GCqgkpKq8w0odSuglmOqZ6pQgf+TaVRNic46+w4NI0yrICxEb3O
-c/ag3TqtJNvp7UFenM/irqDb4/448F0DHVD9XonZ1hvJr47I/15psxoBPHQlG9/T
-zm1FomYQiXlaXubD1U3W1xdgEkV0gbLcS4eMI9zzTiZXQenV1zLcsbkAXJccqUAo
-hBsZcueHh9piknxpPEbUfXy8VS9iL1zyo4/zsZMyklY68aCxdcH3r798FJwwIQVK
-ryvXe0BLBvGQoh4PK588d6R3b4Lp3tjkBS2jcjph4ncdA+A7JPbQOBkotmRfnrDY
-i27EJZ0OqqGRfw0/F015dgSNfq2YBJTk6K/eYDKw4bLyjULBjYA=
-=xJIJ
------END PGP SIGNATURE-----
-
---LlX4jScTkSgHKceY--
+diff --git a/CREDITS b/CREDITS
+index 0107047..88c4c08 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -271,6 +271,9 @@ D: Driver for WaveFront soundcards (Turtle Beach Maui, Tropez, Tropez+)
+ D: Various bugfixes and changes to sound drivers
+ S: USA
+ 
++N: Daniel Bristot de Oliveira
++D: Scheduler contributions, notably: SCHED_DEADLINE
++
+ N: Carlos Henrique Bauer
+ E: chbauer@acm.org
+ E: bauer@atlas.unisinos.br
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2ca8f35..2e1b8bb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19924,7 +19924,6 @@ R:	Dietmar Eggemann <dietmar.eggemann@arm.com> (SCHED_NORMAL)
+ R:	Steven Rostedt <rostedt@goodmis.org> (SCHED_FIFO/SCHED_RR)
+ R:	Ben Segall <bsegall@google.com> (CONFIG_CFS_BANDWIDTH)
+ R:	Mel Gorman <mgorman@suse.de> (CONFIG_NUMA_BALANCING)
+-R:	Daniel Bristot de Oliveira <bristot@redhat.com> (SCHED_DEADLINE)
+ R:	Valentin Schneider <vschneid@redhat.com> (TOPOLOGY)
+ L:	linux-kernel@vger.kernel.org
+ S:	Maintained
 
