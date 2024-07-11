@@ -1,151 +1,156 @@
-Return-Path: <linux-kernel+bounces-249157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D8C92E7C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:58:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E3A92E7C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 13:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF9EE1C210D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 038781C212F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CAD115B137;
-	Thu, 11 Jul 2024 11:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DE515957E;
+	Thu, 11 Jul 2024 11:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FaA63Xir"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lQ5oynFP"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423B5156F2D;
-	Thu, 11 Jul 2024 11:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715AF156993
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 11:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720699120; cv=none; b=UxDVwTyhhwTQKJbXh4V5YP1FKWF4rT0spjCBMumvHoDwr09t78R+K7dAOqWvnshq56PuNWMUrhmZ62lQ9zQhSrEdK8LWaoaPpNUK+KnzdDHRXZMLasP8GGIUuPmvhwuwpaDD6ow5Cv0mMyq6E9jRcdlP/II9mS4oqElxxrkmH7Y=
+	t=1720699175; cv=none; b=aWKs5S3o7A0vJRgUkNJIEEoBebp8Prjviqusk48xm5E2qm0tZ6x+jzgeDlA6tAQz4Baht5bj7/zBzPgSa36tzo/lGpIii6N1Z5wngGV08+agYvEIU9IA7LxtmxVCFdmLEUcX5REoeXMJ0c1c2X+Zw5dCYJXPCbgZkbxk25iUbYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720699120; c=relaxed/simple;
-	bh=HguvgwvBpfqOovw/jwg7IosK9ScAa4vcIicrJd3hq3A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XgHUw18zmJXdmVSpUAM6MvWfjdCAufarwS/yglkh9Efdv7pPCEUseHE1Qfju04xBoSuBBDkRb2ZXmwO0vsn9S+il9h1RMcQYQ9Nlbkht2pO50rsfLF3dwQvzoz9E+rJDGbYAU/5bXEg+71PFW796zzONhav0EM4F1v1CK6ejqvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FaA63Xir; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 220DEC32786;
-	Thu, 11 Jul 2024 11:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720699119;
-	bh=HguvgwvBpfqOovw/jwg7IosK9ScAa4vcIicrJd3hq3A=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=FaA63XirlsuMviOf8i7MJTazgVYL2Ch6vFUDsvIOJ2sozDymDwiiVBf8PBGbMSO9N
-	 CokXW15chmFXFbymH71lS85ijqE40UnOYtcHGE3jrs2slFFSFJK90RUXCKC7QHTTaZ
-	 22UGZAhYYwDi/oowJwgDWqUYysNtCOkaylo/pRDN6i3fELtXNwtN++oXwRdVKU4pyk
-	 LkLxvpa2AWxchzkPwqAuCJmOw2Y2HuF0/4l7ZGZjj/hpdTBWGiqxZ1dWb/U5sRjk7n
-	 zlpQlF7xti3TilxjyI57eYWJA0INQSj/xm09mICJP/kTeLY/2BBTtWzANbh94WdZMW
-	 /zoZMT+BWS6OQ==
-Message-ID: <ae98e21f-91ac-4878-8cab-916b24e927e5@kernel.org>
-Date: Thu, 11 Jul 2024 13:58:31 +0200
+	s=arc-20240116; t=1720699175; c=relaxed/simple;
+	bh=hgVajsSMleVzgg4GLptF7/bEsjil7cS35tYtJx5AJHo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EhCfHUq8sqEDq+uerRPFgHwDrZDcmC/KJB+1FmiXe0/AlGWp5aO4He1KQy/hBQ0SsiYVNMpT/GrKBTVMVo6EzDQetl0JTbhgR7dJaOLnX3F1wiKlrdYaF0+wdzEctEVVNiyO+Jdww1zVra+h4V0FIeYiXZmd6cWfvoN/mrvJFIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lQ5oynFP; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-58d24201934so1393356a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 04:59:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720699172; x=1721303972; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=werTonj7QNq+ua51haeygUPcm9W0ZEoCpESBneEXr5U=;
+        b=lQ5oynFPk0e8HbFc/9rxReNX9i7FB3tiIHG8nfMyR2JPmxydCLvq6T/4U4ga5v9vaj
+         yL6lOt9cNNrIrB4qLohA29U8ErzMPnBjeyUsLrZKLQIrKPAz8vwNLTV0oi8+iXW+ywxU
+         ddOt3kAl+rI4jkuZqYoOBG/5WjEGTruINGehnW3AoAWaT3T3ymvCBi55N5Lg4MiVTgjn
+         ivih4T3UBaVmYbyt1EfX54pB1GoRa3dpg/DRv6HoV53pAWSYNEmJH9cFyKgqUsRn3SVG
+         tPbvENzbdaqg8lIFujBsw7aMBvCJ2UXRzP3xkuxoBoLJNaf1Fs1/LbmJ+E9P0vVEZJNF
+         dcgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720699172; x=1721303972;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=werTonj7QNq+ua51haeygUPcm9W0ZEoCpESBneEXr5U=;
+        b=WcdGfT4EXu9MAMJa7MjTJ2W4H65J55rgEl9UByrVBze8iO63GpbxNpBJDvQ+CaK9r/
+         M15zdosXWvQ+m8u5WVMT/IhOjQGKGI5/OmNnhDip21nnh0nkvk6qJ3zAoiKv9H0NVoQS
+         cFuUfc3gWSGi08PqxKAMpHZFi9v3z9TF+XtdJul4sKM7N8VYNKimeQg0xCzZXmpRuqUx
+         tuZ6lAzKFA6aYBA0jQyZowcOyqRQIOted4vwuAvL5omkWQSY3WW59gpbB2Ab9uBM6BtQ
+         TeuBA2YAKORHoV9ToRObQsHioUyq/Vy9YuuAP39Zqp7RfNy+EsPpwLA6+kffGyWF1I2b
+         Dr5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWCCIa0eBuX+YjnKF+VfBBZHSkPebaEUGSBl/0H9CsM044hi+t0tDTqNnu49LWnZQxTYeP0cm5HY/E4Zsn3pZ+KOIyIlRptrwKPgGrI
+X-Gm-Message-State: AOJu0Ywf6hL55g1wIQ0xw5iFVEw2AIuBh+ZoEXfEegvfE0/jvxwJ0DGQ
+	R653cBpt1Cy4q0XXm9SuXuqtX8VEI+mb+KjO4tprx4nsTl+9v1BmYYYg2XITuVHS3NDX13svAGC
+	9a5K+2iQ9S/Sa00bi9nyBwqQyH/6AlDln3qKr1g==
+X-Google-Smtp-Source: AGHT+IHoRn575wSFRpHdhPoGsIQtDx3qlYWl74xlQ60nrZPI28oD6g5R4UE+O1SA6Aq4WQmMbZWG2mYCINhvt4c3a7o=
+X-Received: by 2002:a05:6402:2813:b0:57c:603a:6b2b with SMTP id
+ 4fb4d7f45d1cf-5980e547f6amr1736371a12.21.1720699171546; Thu, 11 Jul 2024
+ 04:59:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: interconnect: Add Qualcomm IPQ5332
- support
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org,
- konrad.dybcio@linaro.org, djakov@kernel.org, quic_wcheng@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20240711113239.3063546-1-quic_varada@quicinc.com>
- <20240711113239.3063546-2-quic_varada@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240711113239.3063546-2-quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <cover.1720690278.git.mchehab+huawei@kernel.org>
+ <b9cd4a65d3389102def662a8bc09ffaa622265f7.1720690278.git.mchehab+huawei@kernel.org>
+ <20240711075332-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240711075332-mutt-send-email-mst@kernel.org>
+From: Peter Maydell <peter.maydell@linaro.org>
+Date: Thu, 11 Jul 2024 12:59:20 +0100
+Message-ID: <CAFEAcA-PYnZ-32MRX+PgvzhnoAV80zBKMYg61j2f=oHaGfwSsg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] arm/virt: Wire up GPIO error source for ACPI / GHES
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <philmd@linaro.org>, 
+	Ani Sinha <anisinha@redhat.com>, Eduardo Habkost <eduardo@habkost.net>, 
+	Igor Mammedov <imammedo@redhat.com>, Marcel Apfelbaum <marcel.apfelbaum@gmail.com>, 
+	Shannon Zhao <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>, linux-edac@kernel.org, 
+	linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/07/2024 13:32, Varadarajan Narayanan wrote:
-> Add interconnect-cells to clock provider so that it can be
-> used as icc provider.
-> 
-> Add master/slave ids for Qualcomm IPQ5332 Network-On-Chip
-> interfaces. This will be used by the gcc-ipq5332 driver
-> for providing interconnect services using the icc-clk
-> framework.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+On Thu, 11 Jul 2024 at 12:54, Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Thu, Jul 11, 2024 at 11:52:03AM +0200, Mauro Carvalho Chehab wrote:
+> > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> >
+> > Creates a GED - Generic Event Device and set a GPIO to
+> > be used or error injection.
+> >
+> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  hw/arm/virt-acpi-build.c | 29 +++++++++++++++++++++++++----
+> >  hw/arm/virt.c            | 12 +++++++++++-
+> >  include/hw/boards.h      |  1 +
+> >  3 files changed, 37 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/hw/arm/virt-acpi-build.c b/hw/arm/virt-acpi-build.c
+> > index e10cad86dd73..b6f2e55014a2 100644
+> > --- a/hw/arm/virt-acpi-build.c
+> > +++ b/hw/arm/virt-acpi-build.c
+> > @@ -63,6 +63,7 @@
+> >
+> >  #define ARM_SPI_BASE 32
+> >
+> > +#define ACPI_GENERIC_EVENT_DEVICE "GEDD"
+> >  #define ACPI_BUILD_TABLE_SIZE             0x20000
+> >
+> >  static void acpi_dsdt_add_cpus(Aml *scope, VirtMachineState *vms)
+> > @@ -155,9 +156,14 @@ static void acpi_dsdt_add_gpio(Aml *scope, const MemMapEntry *gpio_memmap,
+> >
+> >      Aml *aei = aml_resource_template();
+> >      /* Pin 3 for power button */
+> > -    const uint32_t pin_list[1] = {3};
+> > +    uint32_t pin = 3;
+> >      aml_append(aei, aml_gpio_int(AML_CONSUMER, AML_EDGE, AML_ACTIVE_HIGH,
+> > -                                 AML_EXCLUSIVE, AML_PULL_UP, 0, pin_list, 1,
+> > +                                 AML_EXCLUSIVE, AML_PULL_UP, 0, &pin, 1,
+> > +                                 "GPO0", NULL, 0));
+> > +    pin = 6;
+> > +    /* Pin 8 for generic error */
+>
+> For real? Code says 6, comment says 8.
+>
+> Comments must come before the code they comment, not after it,
+> then this kind of thing won't happen.
 
-That's another patchset from Qualcomm where tags get ignored. Maybe it's
-the same team? You have very good internal guideline, so read it before
-posting.
+It might also be nice to have a symbolic constant for the
+pin number somewhere, so we don't rely on the magic number here and...
 
-Expecting us to do the same review we already did, is a waste of
-community resources.
+> > @@ -1014,6 +1021,8 @@ static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
+> >  {
+> >      gpio_key_dev = sysbus_create_simple("gpio-key", -1,
+> >                                          qdev_get_gpio_in(pl061_dev, 3));
+> > +    gpio_error_dev = sysbus_create_simple("gpio-key", -1,
+> > +                                          qdev_get_gpio_in(pl061_dev, 6));
 
-<form letter>
-This is a friendly reminder during the review process.
+...here being the same.
 
-It looks like you received a tag and forgot to add it.
+Then if the code says "pin = VIRT_GPIO_ERROR_PIN" or something
+similar the comment isn't required because the code is clear
+without it.
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
+(This is already a problem for the power-button pin 3, so we could
+do an initial cleanup patch to sort out pin 3 first).
 
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-Best regards,
-Krzysztof
-
+thanks
+-- PMM
 
