@@ -1,114 +1,76 @@
-Return-Path: <linux-kernel+bounces-249527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B62B92ECD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:34:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61D092ECD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 18:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D9D1C217A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:34:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3081F22862
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 16:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA1216D337;
-	Thu, 11 Jul 2024 16:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D7016D32C;
+	Thu, 11 Jul 2024 16:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="kthwHN0P";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FP/YKxpu"
-Received: from flow2-smtp.messagingengine.com (flow2-smtp.messagingengine.com [103.168.172.137])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kty32UDH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3645916B752;
-	Thu, 11 Jul 2024 16:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2A816B752;
+	Thu, 11 Jul 2024 16:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720715670; cv=none; b=Nzg2DmncZZG3jreyi0hEEZI521rKoCIi+jpuOst3606qyw7wY0hcQQNwTBEbWbyIJET16gOzs44idjPzd4M++zFQGy20usun1/YknLXXc5cYOFQx/GOOBUlBAyUeGmguJMKPZz3SfC5wx43UPH8CLZ/Juw5BVLYFH2z/Z84kCTw=
+	t=1720715725; cv=none; b=d9r7CRGIx82YPM5bnS0cT0drDdbN39EnU0ANLtkLgpG5l3lNFhMGmzYHnQ2R0FfPjXpgDOQb77ONUsEckkqM67vaKHY9QWQL+KzEfXdiY4TcLGZbJdHg7JxgRewD0pjYLJs40NwFvSZome9dM++lw70w0bm6vJprD/DDx4RC1ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720715670; c=relaxed/simple;
-	bh=smbShI+Lu4YENO9SclMUBSefMZDkT3jPuDhhU7gUJWA=;
+	s=arc-20240116; t=1720715725; c=relaxed/simple;
+	bh=eYOzrKzYkBArUGV+retdG2v4fSbxeHESNpJPniHrEBk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mLr7C0y5Wkzm5Drh5INl5Jy3XvAewXqxjtxgRjnXsC+k8WKJhCyOuKGWaIfpZM73a0X84YrJ/ZkoFmARH9j+36BWQCRgg4UixbaF8aUnmkjyMNzBHro2Z25QHaSZr+X69/muGmm1feXo5Ddb0suqMcykKzETwVWQFdw7UQ+m5sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=kthwHN0P; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FP/YKxpu; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailflow.nyi.internal (Postfix) with ESMTP id 1EEF3200536;
-	Thu, 11 Jul 2024 12:34:27 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Thu, 11 Jul 2024 12:34:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1720715667; x=1720722867; bh=fbai7xo9jC
-	lg1MHdg/OPKg9usQQpTGfdoSS4TcKGfBY=; b=kthwHN0Pw8ta9M8XfrzzYaMkOE
-	nTMTLOFla7IlMY1bMugg8KvPzldNQ7Tnw6n4HOxz+ZQXwZ+MASmF6uSiCuF0g286
-	sGB+NP/a84rMorwQdvbg2jECdznuve0OOvAIv1od7SevzOg8RQJ9jXasW/EgBYw1
-	ofeABA8+Jp36LkgIxqWxoFcCMfC1u7TT55DzWK2RmM8InaZ8H7TgpOR2TLgyTQOg
-	UldD73Q6JJKwYO7NHgwyh0iG+vCbEsD2AJV50VBglF1v8FlgzwSS/V53hmitmEQX
-	/+gNlprpFKkQjEnji2Y+eQInsU0jRBy+ut9kdmoXE8A9e+vILCF/Wz0X5myg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720715667; x=1720722867; bh=fbai7xo9jClg1MHdg/OPKg9usQQp
-	TGfdoSS4TcKGfBY=; b=FP/YKxpuBxO3Q5JpYLxvf6W2QplUNhPoeylSRgX4AIhJ
-	vXXmncQzUUHeHPhN2Yk/2SzWCXySwZ52QPbqmx7kZ2lTDVc+R/p7sawmY4feKpXt
-	Cy1LdFsRqSaY8OZyoPT4swTAFZ6og/m/m1tjW6O/BZMaCszxagwCDvmUor16+CwL
-	00z3Mpl0Bd/Samh6DyUlBXolQr1JooXLLQaJj9O8hO2CIpdlGD5HPWIE/2aPsKxh
-	N/YUSzKSdgk1zpkkgJGKU8q9RRIzjkAon9QeoynvpqtOQ9RrBf+Oa2gNi/RifFHd
-	uWZDgpZGeL2cOpaBnAsQn/pSEChFpp9PI0rionksUw==
-X-ME-Sender: <xms:kQmQZgEEavpCdLB7hI49ebZCsGi28Ts4Yib--CCnMPD3mxpqUw39rg>
-    <xme:kQmQZpW2nrWtc3VXpi1hSbxhGz2lGvMxUQBSyTkV6g28DPCOExr6BFdhj_87WbyVy
-    JrwUNqbpUm8tw>
-X-ME-Received: <xmr:kQmQZqLzWWtC3-eXkW5h-ZoMjuDk_wBfVAR-CrXWxGg9rvCCjcQeisjtA95xNwqZv54oGSOaFSJSpYi2_FvDJ-qnUYpQYEc860xZnQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeeggddutdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepfeevie
-    ffgeeuffeikeejvdegtefhuddvjeelgfevtedtgfegieegleefudeljeeknecuffhomhgr
-    ihhnpegsohhothhlihhnrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
-X-ME-Proxy: <xmx:kQmQZiG0a-Bb8hBPrZBDJnpY9RSTFjQ7QzTlGXUPTD_OqIyTgA00mg>
-    <xmx:kQmQZmUcYTrdyCbCsJIer9x-v2w6PLQ5WJ50C7JuC8Gqjd2OvZcZIA>
-    <xmx:kQmQZlNx3l59JZsHM4tdMFUTjKWw3Na1PlLw2kIgU4CBbVXJJcwJMg>
-    <xmx:kQmQZt1jqCP92pzmL5Ve3ng2xO9BftMpBWZ1zAtAJVpMAc0NlAiJQw>
-    <xmx:kwmQZog6sCMXz6XxCiZeva0w0QpCygeOJcM2UlqG4vOnY2-R38E7gqLW>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Jul 2024 12:34:24 -0400 (EDT)
-Date: Thu, 11 Jul 2024 18:34:22 +0200
-From: Greg KH <greg@kroah.com>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>, linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 8/8] cpufreq: Add Rust based cpufreq-dt driver
-Message-ID: <2024071111-negotiate-spoof-da94@gregkh>
-References: <cover.1720680252.git.viresh.kumar@linaro.org>
- <b1601c1dbdf68a4b812fcfaf73f3b5dea67f2025.1720680252.git.viresh.kumar@linaro.org>
- <Zo-3QIPbhBsv8EjB@pollux>
- <20240711130802.vk7af6zd4um3b2cm@vireshk-i7>
- <Zo_cW57i_GMlmYV-@pollux>
- <2024071122-escargot-treadmill-6e9a@gregkh>
- <ZpAEWAzETnrVI-cs@pollux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hwmbukn1aQk+Mphk9wuQcIRZVMv4pihJUBMX+xQkGAP4eVvtxCSrteliQgfqVgiRGo3Fzvr6omlVNoI3MjviIWF3rR+Q8VD4U54d1+LHECNUtWrzYEByKIkMpWDzhx8E81N13Hmu/d9oQPTkFyBmcN1uixN7hy4E5QJXJj9gHhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kty32UDH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49893C116B1;
+	Thu, 11 Jul 2024 16:35:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720715725;
+	bh=eYOzrKzYkBArUGV+retdG2v4fSbxeHESNpJPniHrEBk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kty32UDHqUwc34fH+pbtVG4FtlLSqpihl2Oc+Hx7JE/2QJAOzQDDdd+WDi2mpE1FR
+	 ZRrliVHVYrxT73c5ivaXYRtGNOypC2rjHn0GspIwx18EiujaaBZPWBReeLhHof6AQo
+	 KcE3iC9+6EU4S8xKN3dNo6itXqwJDzE2Jh0U086Jl1YY7TWF7FsoQekJJUzjNBNyPz
+	 sOctkctn3WNBmPUZZtVkzDYsOgUYuIGMKxtwUOYHfd2cs3AzCYs1vtPTEUUmVnCRy/
+	 r8sALqwCo5bDRDDISgYzxZlOqdSj/f43VR73tyNDJMtEzx6AzvNfC2CXY04fTc08vW
+	 fdndubSKuYHeA==
+Date: Thu, 11 Jul 2024 09:35:24 -0700
+From: Kees Cook <kees@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Gatlin Newhouse <gatlin.newhouse@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Pengfei Xu <pengfei.xu@intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Changbin Du <changbin.du@huawei.com>, Xin Li <xin3.li@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev,
+	t.p.northover@gmail.com, Fangrui Song <maskray@google.com>
+Subject: Re: [PATCH v4] x86/traps: Enable UBSAN traps on x86
+Message-ID: <202407110924.81A08DD4D@keescook>
+References: <20240710203250.238782-1-gatlin.newhouse@gmail.com>
+ <20240711081031.GB4587@noisy.programming.kicks-ass.net>
+ <CANpmjNObEzShHvw19EAntPvCYJbqezKBq+pB=mkd7j3sXDEE7A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -117,57 +79,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZpAEWAzETnrVI-cs@pollux>
+In-Reply-To: <CANpmjNObEzShHvw19EAntPvCYJbqezKBq+pB=mkd7j3sXDEE7A@mail.gmail.com>
 
-On Thu, Jul 11, 2024 at 06:12:08PM +0200, Danilo Krummrich wrote:
-> On Thu, Jul 11, 2024 at 04:37:50PM +0200, Greg KH wrote:
-> > On Thu, Jul 11, 2024 at 03:21:31PM +0200, Danilo Krummrich wrote:
-> > > (2) You require drivers to always implement a "dummy" struct platform_device,
-> > > there is platform_device_register_simple() for that purpose.
-> > 
-> > No, NEVER do that.  platform devices are only for real platform devices,
-> > do not abuse that interface any more than it already is.
+On Thu, Jul 11, 2024 at 11:06:12AM +0200, Marco Elver wrote:
+> On Thu, 11 Jul 2024 at 10:10, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Wed, Jul 10, 2024 at 08:32:38PM +0000, Gatlin Newhouse wrote:
+> > > Currently ARM architectures extract which specific sanitizer
+> > > has caused a trap via encoded data in the trap instruction.
+> > > Clang on x86 currently encodes the same data in ud1 instructions
+> > > but the x86 handle_bug() and is_valid_bugaddr() functions
+> > > currently only look at ud2s.
+> > >
+> > > Bring x86 to parity with arm64, similar to commit 25b84002afb9
+> > > ("arm64: Support Clang UBSAN trap codes for better reporting").
+> > > Enable the reporting of UBSAN sanitizer detail on x86 architectures
+> > > compiled with clang when CONFIG_UBSAN_TRAP=y.
+> >
+> > Can we please get some actual words on what code clang will generate for
+> > this? This doesn't even refer to the clang commit.
+> >
+> > How am I supposed to know if the below patch matches what clang will
+> > generate etc..
 > 
-> I thought we're talking about cases like [1] or [2], but please correct me if
-> those are considered abusing the platform bus as well.
+> I got curious what the history of this is - I think it was introduced
+> in https://github.com/llvm/llvm-project/commit/c5978f42ec8e9, which
+> was reviewed here: https://reviews.llvm.org/D89959
+
+Sorry, I should have suggested this commit be mentioned in the commit
+log. The details are in llvm/lib/Target/X86/X86MCInstLower.cpp:
+https://github.com/llvm/llvm-project/commit/c5978f42ec8e9#diff-bb68d7cd885f41cfc35843998b0f9f534adb60b415f647109e597ce448e92d9f
+
+  case X86::UBSAN_UD1:
+    EmitAndCountInstruction(MCInstBuilder(X86::UD1Lm)
+                                .addReg(X86::EAX)
+                                .addReg(X86::EAX)
+                                .addImm(1)
+                                .addReg(X86::NoRegister)
+                                .addImm(MI->getOperand(0).getImm())
+                                .addReg(X86::NoRegister));
+
+Which is using the UD1Lm template from
+https://github.com/llvm/llvm-project/blob/main/llvm/lib/Target/X86/X86InstrSystem.td#L27
+
+  def UD1Lm   : I<0xB9, MRMSrcMem, (outs), (ins GR32:$src1, i32mem:$src2),
+                  "ud1{l}\t{$src2, $src1|$src1, $src2}", []>, TB, OpSize32;
+
+It uses OpSize32, distinct from UD1Wm (16) and UD1Qm (64).
+
+> But besides that, there's very little documentation. Either Gatlin or
+> one of the other LLVM folks might have more background, but we might
+> be out of luck if that 1 commit is all there is.
 > 
-> (Those drivers read the CPU OF nodes, instead of OF nodes that represent a
-> separate device.)
+> [+Cc Tim, author of the LLVM commit]
 > 
-> [1] https://elixir.bootlin.com/linux/latest/source/drivers/cpuidle/cpuidle-riscv-sbi.c#L586
-> [2] https://elixir.bootlin.com/linux/latest/source/drivers/cpuidle/cpuidle-psci.c#L441
+> > > diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+> > > index a3ec87d198ac..ccd573d58edb 100644
+> > > --- a/arch/x86/include/asm/bug.h
+> > > +++ b/arch/x86/include/asm/bug.h
+> > > @@ -13,6 +13,17 @@
+> > >  #define INSN_UD2     0x0b0f
+> > >  #define LEN_UD2              2
+> > >
+> > > +/*
+> > > + * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
+> > > + */
+> > > +#define INSN_ASOP    0x67
+> >
+> > I asked, but did not receive answer, *WHY* does clang add this silly
+> > prefix? AFAICT this is entirely spurious and things would be simpler if
+> > we don't have to deal with it.
 
-Yes, these are abuses of that and should be virtual devices as they have
-nothing to do with the platform bus.
+Even if we change LLVM, I'd still like to support the older versions, so
+we'll need to handle this regardless.
 
-> > > I think (2) is the preferred option.
-> > 
-> > No, not at all, sorry.
-> > 
-> > Use a real device, you have one somewhere that relates to this hardware,
-> > otherwise you aren't controlling anything and then you can use a virtual
-> > device.
-> 
-> Of course we should stick to a real device if there is one, I didn't meant to
-> say anything else.
-> 
-> But since it came up now, some virtual drivers still require a parent device.
+> >
+> > > +#define OPCODE_PREFIX        0x0f
+> >
+> > This is *NOT* a prefix, it is an escape, please see the SDM Vol 2
+> > Chapter 'Instruction Format'. That ASOP thing above is a prefix.
+> >
+> > > +#define OPCODE_UD1   0xb9
+> > > +#define OPCODE_UD2   0x0b
+> >
+> > These are second byte opcodes. The actual (single byte opcodes) of those
+> > value exist and are something entirely different (0xB0+r is MOV, and
+> > 0x0B is OR).
 
-Great, use the default one that the kernel gives you :)
+What would be your preferred names for all of these defines?
 
-> For instance, in DRM we have vGEM [3] and vKMS [4], that use
-> platform_device_register_simple() for this purpose.
-
-Again, abuse, please do not do so.
-
-> What should they use instead? I'm happy to fix things up if required.
-> 
-> [3] https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/vgem/vgem_drv.c
-> [4] https://elixir.bootlin.com/linux/latest/source/drivers/gpu/drm/vkms/vkms_drv.c
-
-Use the virtual device interface please, that's what it is there for.
-
-thanks,
-
-greg k-h
+-- 
+Kees Cook
 
