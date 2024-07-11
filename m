@@ -1,105 +1,76 @@
-Return-Path: <linux-kernel+bounces-248978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5180A92E4A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:27:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D92392E4A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8366C1C214B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4F291F23290
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E436415A85A;
-	Thu, 11 Jul 2024 10:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D246158D96;
+	Thu, 11 Jul 2024 10:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="FiaQTHYm"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HcB+PVKm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A17158D9F;
-	Thu, 11 Jul 2024 10:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE95B158848;
+	Thu, 11 Jul 2024 10:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720693588; cv=none; b=nMJ0YjtUZBTlVmdltD6dS0k96lnwfmJZZCt5mlQsYHnjx48RMdlc/9Jr9mTQXhqSWkHaxxAL8LNXfgtz/+RTPQ0su1PI8/y+zt67xQBEAlZIm+A4h19EqM8XTntuxIQYRS9zFbMNj7UCc5P6Q8cgLNt4ytm1brKtZnd1ZkCXXF4=
+	t=1720693612; cv=none; b=Nxy4Sm+Y7uzJ825YqX/qlvu/1n+foOv6c9ZO93fv44EgWyiVp8YnqslzAc1prxswuZ6XPBiZ6MRure4GNlehmmeZ994JmLal5X7fE6hnmfyp7G3bnzvoKI3rfGhU2XyyLLRoc6e6p/L+/96YCQqaK6KTX3OWdGXmLG2LqKc7THY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720693588; c=relaxed/simple;
-	bh=v6Jo7U6TT2Vkgzbro1d0MWT3zaUe6TJuSdV8eGnONW4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QJTCz3CS2AcaDwMGfgGHumwuUhEhE0sqJphxb94qDyOcnzqRJ4Q/gZHUxtyTw+7mtkJvJmGkEo/pHTSC5lTlPty93487KqFkmS+yezK/saiN7uCTsVo+XFym8apjF/YXpaIHrH5D5wbUmmpsRb5GtbNvx4cLUoGymkEOzkSrLF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=FiaQTHYm; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5neouFoxFdfZBVXEqnaYLxMNKHfvtG+Wak2dfk250Rk=; t=1720693586; x=1721298386; 
-	b=FiaQTHYmIhngoGabpFit7p75rLhSo9gPy+1FSleR6sdef2ZuTUhOg7lK90u6WX5+KwaAUfiT7O/
-	oUCv4AjleUlqIpOU/Bjze2l/4BXS5Nrtr36Fx8tRT04d3JCG2GQnGEMJB0+p2ek71GQJdJDDDDyFF
-	YgL4shEWjgrEnie4M7we8wa9Svlg/LlgxKAF9owOJ/aI6QfVEvyDmIwqMqfZN0vwyukk0DByc6Uzu
-	g7oZJLCYjmhBkbQ1hQ9/zGb9itqM/JGuB77zGmsbK+nirH2/OV7Bt/g7Qjpor40l1K+LOawctHABP
-	MaHxg5JPxPKxpZ5jX+8K2lA872H97T65sPOw==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1sRr0I-00000002K40-3zfO; Thu, 11 Jul 2024 12:26:22 +0200
-Received: from p5b13a475.dip0.t-ipconnect.de ([91.19.164.117] helo=[192.168.178.20])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1sRr0I-000000010Fo-1rdq; Thu, 11 Jul 2024 12:26:22 +0200
-Message-ID: <aea743f7f514cfea239ece0fe8f697b9a8acc09f.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v3] sh: Restructure setup code to reserve memory regions
- earlier
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, 
-	ysato@users.sourceforge.jp, dalias@libc.org
-Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
- robh+dt@kernel.org,  kernel@quicinc.com
-Date: Thu, 11 Jul 2024 12:26:21 +0200
-In-Reply-To: <20240520175802.2002183-1-quic_obabatun@quicinc.com>
-References: <20240520175802.2002183-1-quic_obabatun@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1720693612; c=relaxed/simple;
+	bh=wlAKga00AmflDbni8pz8GB7yjejPf0h5De8U+naCjYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bdtnF/rIbTfFMBIKgqcdBBgvcTeVyA/XY+uoXeBzVNOZaaoYQ/BgECf5wJ02Pk98tNkJB2Cey7DeJKqNiUENB5fD8mb3jmypXOprN9H7+X5TlzXmZaBuGenn5pJt8/0GfPOyKOOzBdmHdT9VtZjWYjneLRiBGhluO9S+xnipTmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HcB+PVKm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A31E7C116B1;
+	Thu, 11 Jul 2024 10:26:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720693612;
+	bh=wlAKga00AmflDbni8pz8GB7yjejPf0h5De8U+naCjYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HcB+PVKmUaP/JyX9dauDHiTxRmfCrQPpDx+bgE4NCI2BJWckUmU7MWegiDOEY+axl
+	 rtwNWrso0ng9BqTu2wi1mhF6MyizO3hleyyzIZu3H5UIXGn1osl72ZIPKKF7xyedDG
+	 gYYwvZdGGBaWWBHNRg2H6+lkgjHyFSBzJQyJDRS//hB99O6nhnjQDLo/BkShC9Zmea
+	 ANI5rB2zaECBEqJ9iNnAvAmuNxTVvXyxihM+TuG23sIu1eptZK8QLs1jVyLSssWRb+
+	 Qrqb1YnstktnFS7r/hSK1YQ433TiuKC3KdyZysTfGSdYtA1MlsEZ4GESBNPgoeGRpb
+	 en3EbmLcW4LGQ==
+Date: Thu, 11 Jul 2024 12:26:48 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 48/60] i2c: sun6i-p2wi: reword according to newest
+ specification
+Message-ID: <hheateu4yyhbbft4jlw3aivlmf6nxs6gry3en7vcekvfjavnib@orxdxz2ufwys>
+References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+ <20240706112116.24543-49-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240706112116.24543-49-wsa+renesas@sang-engineering.com>
 
-Hi Oreoluwa,
+Hi Wolfram,
 
-On Mon, 2024-05-20 at 10:58 -0700, Oreoluwa Babatunde wrote:
-> The unflatten_device_tree() function contains a call to
-> memblock_alloc(). This is a problem because this allocation is done
-> before any of the reserved memory regions are set aside in
-> paging_init().
-> As a result, there is a possibility for memblock to unknowingly allocate
-> from any of the memory regions that are meant to be reserved.
->=20
-> Hence, restructure the setup code to set aside reserved memory
-> regions before any allocations are done using memblock.
+On Sat, Jul 06, 2024 at 01:20:48PM GMT, Wolfram Sang wrote:
+> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
+> specifications and replace "master/slave" with more appropriate terms.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Let me test this first to see whether this causes any regressions on my
-J2 board. Afterwards, I will review and merge the patch to my SH tree.
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 
-Sorry for taking so long for this.
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Thanks,
+Andi
 
