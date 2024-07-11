@@ -1,422 +1,279 @@
-Return-Path: <linux-kernel+bounces-249441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F13692EBC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:34:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C260992EBCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 17:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B04521C23122
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:34:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DDFE2858F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 15:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128E31662FE;
-	Thu, 11 Jul 2024 15:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDCF16A93F;
+	Thu, 11 Jul 2024 15:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NyNEx3up"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="myvYcZ1x";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="u6ts49pY"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72C01642B;
-	Thu, 11 Jul 2024 15:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720712087; cv=none; b=Yzv3ZnB20XVDtLMBfBTrUW0ilgmGDlFuYiqgAcEdyzLuRJNnc34gINr9X6rIDXlXxKL2XV5yzXs8tuGcVK44t1j9bsk2BgK0OWlCczWf6H2QCNHVHQDYUnkkbcj6MiPrO0Y0ePnmNDGQh1bypJyq+ouUNXhQIkuJyZRX8emew6Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720712087; c=relaxed/simple;
-	bh=U5jon1rYFX1NVG83utEX/mdSih5YntDhhBFTKpbCiGQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nMGmOtv1/Jec0FHKwKhtk2uDtFTmNv/W+7SC/qyh6riZAZaQMDtZGybj225yFsyxEs0wIKqIrKy6qjIs9kviSXOG7WfvVyaFdMaeKY5K0q+9x2GDEkmoHprvt2vJAvXCxqJY7SQCfWCPFHudMBeA6qsG9S7AgjEklmngWLis6hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NyNEx3up; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720712086; x=1752248086;
-  h=message-id:subject:from:reply-to:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=U5jon1rYFX1NVG83utEX/mdSih5YntDhhBFTKpbCiGQ=;
-  b=NyNEx3upIw3C3TnklcQ9EA4FRfx3MTBdbIZ8/OL3Py7Sqy1Wnvm08Ut+
-   aObFkkpG0yyDKWVMpOKOdTJlKnHpVebZK9Yejhvkew3JvafzXGP6X0nbn
-   ZNHvEgM0l4vjqIRCiyP/j9LlZUm7YAjF078PlbVmDiGotzDz5tO1R8GfB
-   gfkjZ38o6XYNu7aXwCaJcnfc2a3qAXZqGzmQjdb7257DDS5aySEfA4IrD
-   2oeTzncuWmxhWagxDSfYq+5OrcfUZsdeMmbRGqZv26UlmPVkjwtkP6Vu5
-   8FjpV0UA5EBjZ1jnzTNpWCntr2hXMJ4zTferH7FXMXF46DfFIrVIysCFQ
-   A==;
-X-CSE-ConnectionGUID: rwcZK4rQRMijLGBzJdXY1Q==
-X-CSE-MsgGUID: RBa1OcMhSyW/UwJvnCwl/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="17974840"
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="17974840"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 08:34:45 -0700
-X-CSE-ConnectionGUID: gC6Y0LgAQdOKD6RHyyz8tw==
-X-CSE-MsgGUID: 0e13ganHTiCbMfQXMJE4hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,200,1716274800"; 
-   d="scan'208";a="53544670"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 08:34:45 -0700
-Received: from [10.54.75.156] (debox1-desk1.jf.intel.com [10.54.75.156])
-	by linux.intel.com (Postfix) with ESMTP id E172020738FE;
-	Thu, 11 Jul 2024 08:34:44 -0700 (PDT)
-Message-ID: <0da168ef21485ee944ceedbc1b77f3141f741dfe.camel@linux.intel.com>
-Subject: Re: [PATCH v2] platform/x86:intel/pmc: Enable the ACPI PM Timer to
- be turned off when suspended
-From: "David E. Box" <david.e.box@linux.intel.com>
-Reply-To: david.e.box@linux.intel.com
-To: Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, Marek Maslanka
-	 <mmaslanka@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, David E Box
- <david.e.box@intel.com>,  Hans de Goede <hdegoede@redhat.com>, Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- platform-driver-x86@vger.kernel.org, Rafael J Wysocki <rjw@rjwysocki.net>
-Date: Thu, 11 Jul 2024 08:34:44 -0700
-In-Reply-To: <CAE2upjS-hzciBNm+csXM+i-dnW1knBEyAwcGDya1WCezxD7M=Q@mail.gmail.com>
-References: 
-	<CAGcaFA3c_rc6HVVqc2=UqOgu2c7zX_XTWNx7Yf-KL7W8LgEi7A@mail.gmail.com>
-	 <20240703113850.2726539-1-mmaslanka@google.com>
-	 <CAE2upjS-hzciBNm+csXM+i-dnW1knBEyAwcGDya1WCezxD7M=Q@mail.gmail.com>
-Autocrypt: addr=david.e.box@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQENBF2w2YABCACw5TpqmFTR6SgsrNqZE8ro1q2lUgVZda26qIi8GeHmVBmu572RfPydisEpCK246rYM5YY9XAps810ZxgFlLyBqpE/rxB4Dqvh04QePD6fQNui/QCSpyZ6j9F8zl0zutOjfNTIQBkcar28hazL9I8CGnnMko21QDl4pkrq1dgLSgl2r2N1a6LJ2l8lLnQ1NJgPAev4BWo4WAwH2rZ94aukzAlkFizjZXmB/6em+lhinTR9hUeXpTwcaAvmCHmrUMxeOyhx+csO1uAPUjxL7olj2J83dv297RrpjMkDyuUOv8EJlPjvVogJF1QOd5MlkWdj+6vnVDRfO8zUwm2pqg25DABEBAAG0KkRhdmlkIEUuIEJveCA8ZGF2aWQuZS5ib3hAbGludXguaW50ZWwuY29tPokBTgQTAQgAOBYhBBFoZ8DYRC+DyeuV6X7Mry1gl3p/BQJdsNmAAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEH7Mry1gl3p/NusIAK9z1xnXphedgZMGNzifGUs2UUw/xNl91Q9qRaYGyNYATI6E7zBYmynsUL/4yNFnXK8P/I7WMffiLoMqmUvNp9pG6oYYj8ouvbCexS21jgw54I3m61M+wTokieRIO/GettVlCGhz7YHlHtGGqhzzWB3CGPSJMwsouDPvyFFE+28p5d2v9l6rXSb7T297Kh50VX9Ele8QEKngrG+Z/u2lr/bHEhvx24vI8ka22cuTaZvThYMwLTSC4kq9L9WgRv31JBSa1pcbcHLOCoUl0RaQwe6J8w9hN2uxCssHrrfhSA4YjxKNIIp3YH4IpvzuDR3AadYz1klFTnEOxIM7fvQ2iGu5AQ0EXbDZgAEIAPGbL3wvbYUDGMoBSN89GtiC6ybWo28JSiYIN5N9LhDTwfWROenkRvmTESaE5fAM24sh8S0h+F+eQ7j/E/RF3pM31gSovTKw0Pxk7GorK
-	FSa25CWemxSV97zV8fVegGkgfZkBMLUId+AYCD1d2R+tndtgjrHtVq/AeN0N09xv/d3a+Xzc4ib/SQh9mM50ksqiDY70EDe8hgPddYH80jHJtXFVA7Ar1ew24TIBF2rxYZQJGLe+Mt2zAzxOYeQTCW7WumD/ZoyMm7bg46/2rtricKnpaACM7M0r7g+1gUBowFjF4gFqY0tbLVQEB/H5e9We/C2zLG9r5/Lt22dj7I8A6kAEQEAAYkBNgQYAQgAIBYhBBFoZ8DYRC+DyeuV6X7Mry1gl3p/BQJdsNmAAhsMAAoJEH7Mry1gl3p/Z/AH/Re8YwzY5I9ByPM56B3Vkrh8qihZjsF7/WB14Ygl0HFzKSkSMTJ+fvZv19bk3lPIQi5lUBuU5rNruDNowCsnvXr+sFxFyTbXw0AQXIsnX+EkMg/JO+/V/UszZiqZPkvHsQipCFVLod/3G/yig9RUO7A/1efRi0E1iJAa6qHrPqE/kJANbz/x+9wcx1VfFwraFXbdT/P2JeOcW/USW89wzMRmOo+AiBSnTI4xvb1s/TxSfoLZvtoj2MR+2PW1zBALWYUKHOzhfFKs3cMufwIIoQUPVqGVeH+u6Asun6ZpNRxdDONop+uEXHe6q6LzI/NnczqoZQLhM8d1XqokYax/IZ4=
-Organization: David E. Box
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8062C158216
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 15:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720712357; cv=fail; b=LbyazQAi/Q5IdZ0FKF6BAI7Lo055TsV8SY0LCjzn04mHvtspzP4hCui2PIcDJY43xSRTelCHU3+ITkdr1XJuzqLFf62PreXCBfHq1Ca1ikiaMeaEmKRMl+hKSdgB6Fb3TRWON58rVfWU8fsY++clZQhvvCene8Ftm9rEBkehSjI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720712357; c=relaxed/simple;
+	bh=fGo80exa+9PUT2T43V3Snbiii8OZegVgkujpjX+BLQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lQtHgKwvU/ZcXTByA9r+kTD2vALIqG7ZYLAOwtSjXmtMt1iThHsEKw0l+QF5nO4Zbt7OHTT5tDzji7my3UWXSXEFwRZto0coQw5mMCbxO7AbiC9ZsLVmxnPgQN6GzsuiZObkGOVTKs4rYMHZM9SbPG2vLZpqPEtOFdoS1l5mbgI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=myvYcZ1x; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=u6ts49pY; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46BFBXeI010306;
+	Thu, 11 Jul 2024 15:39:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=yNuEwOan55I1SE9
+	t8MUlaS1mSqT1DMFJxS+49Cw9Mtw=; b=myvYcZ1x92pJweQaTMQdVDpjCSFOIde
+	4uik33Gn3KfFAKOiWU8Eqq0Z5VSty24VpxUqs6J1W+lomSG9dD+pvv64XcmoDl+B
+	L4oU/fie0J26ZDyZ8f2wPfKgGOlOKhHe4q5jH3ZAfNC9W6cDLhXzj9EJ+DQnIXtg
+	DdGoww+saBc2w3LmjNgACj3w1PkCnIfX0PGdQC79KmY1V+VPdgv/FiXMrGy/MVR+
+	UhupM+s334FinwL/2J3DTdAoMdSLX/w6lYIzr6/8jxyY2fdTqPEbPYnKZ9nO0r1J
+	xYyCCOjd6TYeaiGeYJ0YcvUQn09NmYvjpzWgGGPyQV3a9HBiABZ9oWQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 406wt8huk9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 15:39:01 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46BEeGCM028764;
+	Thu, 11 Jul 2024 15:38:59 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2174.outbound.protection.outlook.com [104.47.55.174])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 409vv567sw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Jul 2024 15:38:59 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qmnzp5Pa65kAbgOGou0sDDjVrlMRU4Fjpxz8/qpxMsVqStRDjwO7bKy2dMYwu0bx/w5UeDgbfuyodEHRj8TBk9I95RQDAV12W7ST/LsPuKbsfS0F5od/bHBeg4h/pNQL4gtXgTh5RbJbOQWA/Cn7tEMG7wLc4/uoZ7esTwLNq1xJW/cuZFrbRM/espi2A7r8/cZPOJslqGOy2kbqcMok+px686p40KcPBP21uuW/MSuCCbQ4o5z0ZtW73Iqvu3nIGnXl4zZirIWFrUy32tldrs4XAodLv3gc67ZyJ2CjHE64JVnnEH0NlxNUz04VgYZPhy5aRN23Z/UKrFb27LGtLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yNuEwOan55I1SE9t8MUlaS1mSqT1DMFJxS+49Cw9Mtw=;
+ b=p51nXxLNutCVAQLd++WEyySJ3XuAbw+p9YD1s9b5biy1cVnKofP+QYVBu7KS1N6KvTdoiiaUIm6A3Hwx7UyJ9VTktgR+5sl7Q3pCY/NKK29vekSHfzINCr+08IR96DN/qiJTIAzygnFLXn2KxUPRyxRV2IwLQZ3033t7zrxZ9/NExeMjAH/9I+pdHplzRnisvFRcUVuEF+xgAmO2rVO/ZMi+0wIkHVeIP3bwMxU/P04pPHiiVwoOTxGqevsms8LUcbWB/SJqBcSP36GN2GHDxk3vVsMijTy8sBrpyYd0Xs50fMSgcE5oE+jo0G1pylgn7jn99KW0ulidW/2xwqDAEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yNuEwOan55I1SE9t8MUlaS1mSqT1DMFJxS+49Cw9Mtw=;
+ b=u6ts49pYnP+dcrgOOFeSkYuU4MdtvmnpvhIZfnSproFbjmEK4pjiRQ5BHULz7LA1NdSSPcPuShuNGRoudppojpghQ2udFjOjke2KSGfDnhK3mUaDXRlvrnVL4+YoKm2FNs3+HLvJFjf0i1nCo274YHOqk7BPIz0nrRaZL+oW+8M=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by SJ0PR10MB4800.namprd10.prod.outlook.com (2603:10b6:a03:2da::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.39; Thu, 11 Jul
+ 2024 15:38:57 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7762.016; Thu, 11 Jul 2024
+ 15:38:57 +0000
+Date: Thu, 11 Jul 2024 16:38:53 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>, sidhartha.kumar@oracle.com,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>,
+        linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v4 20/21] mm/mmap: Move may_expand_vm() check in
+ mmap_region()
+Message-ID: <5a2a4443-d6ef-4410-984b-9660980a7fc9@lucifer.local>
+References: <20240710192250.4114783-1-Liam.Howlett@oracle.com>
+ <20240710192250.4114783-21-Liam.Howlett@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710192250.4114783-21-Liam.Howlett@oracle.com>
+X-ClientProxiedBy: LO4P265CA0288.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:38f::16) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SJ0PR10MB4800:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50113a9a-b23f-4a72-2ad6-08dca1bf93f8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?ErLC3cNUPIaC2SpxG/1yj5Qe/zyJsoLb9WBQuIrYNld3MqYCwLBb7n3E2nWK?=
+ =?us-ascii?Q?wsMgNm4zoWfjufGMK1ZiEypjqmSrQoqeLCgIRo4Fqh1k5xb+/YSAcgS8l+nY?=
+ =?us-ascii?Q?9KvWlowj9HAFRDXVGlbVfbRz1KmPtbnWnG5CyiyPlk5x2y6OUKTqO/SUy5IK?=
+ =?us-ascii?Q?5LsnEudTfq4T5J6upjuMPdovU7oAmtozMEd4kBUKul8Y1J42JVttt8cCSAiS?=
+ =?us-ascii?Q?THhkT/8twJSJJXPnTzuc1J5XCds1CAODfoPvT4KvyGrAOg6cNcSga8TbGNec?=
+ =?us-ascii?Q?JMNxJEeBn6yzp4O5PUED9AMGtAuefyTxoF6CORheEjpxY28UymYgmbR/oDVh?=
+ =?us-ascii?Q?JGhtEfafDXKyF08Ml6EKXqrE7Qrjf7LB8DfSaS3P6n2RIgCO5/s0yY1NtnmM?=
+ =?us-ascii?Q?IfRzRXg73KaeNZvg5mAQTYIFQp8iWTWM4n4uJb/46feyQqn1L0Bt9eMd+HR+?=
+ =?us-ascii?Q?EYMhk9/gzKeThefIWwDbF21wKD5XGc6dWuS6GkoYExQzYvOkgHAAAn8SzG+R?=
+ =?us-ascii?Q?5JOjVjFC+OR9lLV4dC3Oql4B5N2pJppVSLCLOa8rgJs8+MmWhVSPa9XAnytf?=
+ =?us-ascii?Q?Oj4Qx6Oqztt79w32JGK9CV0Ysaxj97jNOJnxM5peKJEF88IUJaB7QILog4+z?=
+ =?us-ascii?Q?HnivetixYNq/OxPA3jvvm1EkAHvS9GhCSmBE9GeA8FYCRwg6oShZL0m7gwas?=
+ =?us-ascii?Q?WEXpq1yPxpvBubUbEmlMh6+cZTjEzIplATbmNUZwU1JBXEo3htmfF+zOSPLf?=
+ =?us-ascii?Q?1Y5bokKvt0P/xNd0oK8hkdO1WWyAyJhSJ75XSPJjAaw3IgUo1T/EdL9J/7wM?=
+ =?us-ascii?Q?3vhuo4F2KS9FsRIPfsfkzIswapZVUIu5TUdUdwuZ7zSewr+t2vJm/zfCzGtE?=
+ =?us-ascii?Q?orXw0mNcbG7CsiXA1JeAWi1J6g1lLEfXckH217U6hddiX7Z49pQp/nO1R+6i?=
+ =?us-ascii?Q?fJ3kvAUQfwpuqGvcKmEYbMRQKuIQTVsWVhevhZvAXgg4v02dma/E3cDMag0y?=
+ =?us-ascii?Q?Xe+Fm149T9O7IY94iosLhiVEvs7bDJzprfAoSz85WglmNtjfv4ptjL5zGfwy?=
+ =?us-ascii?Q?rq+lwSJqA5hc87e1EdvoisN4N1a+kFCFzBx4+FW8ktASKeKaF5Of5le1T/cr?=
+ =?us-ascii?Q?JUGgB0QTmzhhGpS+38kIX1EGM25bTcA4kC7DahXOCLcVAspuwMRrdt5pdn2G?=
+ =?us-ascii?Q?sVgS0x4sgtaJNXNClSd+XD6e/7jnAZX4VxFPWHOCHV9BnI9craGjTJhcBfDF?=
+ =?us-ascii?Q?4CPE6VlRc+xzo8SkP/vL/xs41KVe28vh7jse5CjaXSvWpmqVmpMLh09KI1dn?=
+ =?us-ascii?Q?rYd77337MQbZ7r/m8IDb6A3rAy4Uxc2HtOkBUTD3tdhgDg=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?KsPoE7N8ZqAEZnhI0HIemu7THNpX6J5HE0EZ/kv4CDaPcfbR5rRhBNwlgk5j?=
+ =?us-ascii?Q?Sy/r7qk7r9rOJ8xnp9ROfcOUlPmPWsVwiFvFqEcG+Vk1KQ9RO2PgvEo9qUra?=
+ =?us-ascii?Q?Zs6901G6EWNQ0F4pn54DVcuHOiH3vWkJMR2VVH+ZfBaSMXPzxUcqyBpK189/?=
+ =?us-ascii?Q?g7wmbUsLSPnmWDTsfoxr7lNL1IKQBc530Z+7ukf0/SwkrCh6rI21wJ29LVBy?=
+ =?us-ascii?Q?qTbk2Xzn789DA5eYuPvVTaX35efi3MhtYAPUm4y8P/rxXZHcHvrg7lXg9mA7?=
+ =?us-ascii?Q?jRlw4duTpghZTKesAgjWdo4NJPMyoYPUJnskFYxaveYnbo5hwAx5EbsZkIK4?=
+ =?us-ascii?Q?b+Fws1Q2C+VkWcAfXlODvxg8p+5TsHFsdJxvOV3VWK73yHI0GCJvRtt9CAMD?=
+ =?us-ascii?Q?nOQ9Xgwa41q8BsZMx9NZhenykWxUBDUv8ykjp4H87Z6xRU++tGkFUks0KEMl?=
+ =?us-ascii?Q?CNjhRsCQWoqSdZrbUy5KtFg/B59CbEhbjllgYwk0ivUYxZBLUxRIixRz6o4f?=
+ =?us-ascii?Q?YEd3CVWxSqCdEBeU7xQjnSdZth9GJaZjre2DTQFo/mp/zCjRgOzBTMzMdwRh?=
+ =?us-ascii?Q?VxJFJoZqDaI8shj9F5aR5iZD1CeATr4icjeV7ZcRj/ldEcaZoVIXKMlYOeyK?=
+ =?us-ascii?Q?JU0EQJUSzawfVcWkKE99jHC6EehgbNyMD0zL7PxCQmyRidutGPCLTzgYCIoJ?=
+ =?us-ascii?Q?L4Je4+YOav6hsyadJ17wJcUm70/ka+OI9XH4jwJNL9pjQQ0fxCZHShua709i?=
+ =?us-ascii?Q?0FJSzugHfxWe27lXaNA00/kcfAnj05x8wzahMdZCeAhuCYfRXaDDXJvsCUgx?=
+ =?us-ascii?Q?huCIOeVklWL/h3rmrIjrylqKCNKrNs9SUqHl4LEE6M3PbSm88UV8VkllWcJX?=
+ =?us-ascii?Q?VRxnmVHB1oYiWi4sRDiE/1lZaC/3UOc2GB70F//pxoatFE6y6R82QdOjwxTF?=
+ =?us-ascii?Q?LwldroFK9ijpfyLgnsBG4hiRO+B/WP2qgKP8uAh23ya5LQaxJmA86wbBJezX?=
+ =?us-ascii?Q?EEhmCe5zixsc6vZM8YyDJRII3XBLqRDIKCIdzxVyDAEIcCAb3+cJY4QpGRoz?=
+ =?us-ascii?Q?US/mOx6bwp1TvWZvq+4mcwZJDq08wIc5UCzEulsw6sqD3vLEheng3nDIsQAu?=
+ =?us-ascii?Q?9tV676bzyeH0Ad0rtkhx6h7kxlwH6pOLVrDExQVdoqELhqWh2a0zzZ1Cx0JW?=
+ =?us-ascii?Q?Szzazd+srqPs6W0BWQJGkrTP+T7zrrUKql9ZIhDM93c7uLy5VNb6g1PgS2Vv?=
+ =?us-ascii?Q?yZZEk0Bf/ROk3dwMmxpT80vE5xdVXWfOrZ7dmZ6FS1hyomZXmbn1zoS5u2Wp?=
+ =?us-ascii?Q?8A7YSEb1HgyVaFrZSnV36BaeEKm3QyO8EJ9w8OPktChA2kltjalLvh8Z6lyF?=
+ =?us-ascii?Q?djUVsfqXKbVm1adon3tBA+PRPgiBEL60aOmHuSmMD+HNxwb6YfJc1doVDi8p?=
+ =?us-ascii?Q?qYjEgRsSlOYDvjMhZnSu+tpP46GxbUzApwziJtpvF9PKJUq95MRB+rxTsXks?=
+ =?us-ascii?Q?RBrfqp88ipk02qbGdhW8TIxRAX083WCQDXgOqcWlJeaEoKu4yzSliehUkh1X?=
+ =?us-ascii?Q?tUAQRQvNcy0ApS2pFyY8OVdCjiNLdSAZpoAwB18s7S0dIELREDw2YYz2hwYh?=
+ =?us-ascii?Q?zb/b++jYAaQaT9rGowI5e8HS39rcQZkIvP12LZ+brnnUtriGatunhzrZONH4?=
+ =?us-ascii?Q?m+ColQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	1XKw1Io0B4DU+tBGNK+sz45vZxCcM8AYS28oxHpTcQERAehESiKACoo/b7XPM1u58aK7Z36uyAk3EKy6hoymnezSmwZjSOPCMzZFWSxXGwUPoLb1dBhFDhDql6IdU05aHvYfSyi4MvLdAuPjW+GiuW+UcboB4vQi3CFw6AKsXDEZPauMFWfpxeUvxjgWD3vJz4E0ZeusHekJEsvEKL9aA6N2rAgWPPbgnEKZjGUd85HkFRzQyA5m9hJKPMWb251zauJPKRuZ813jM1F2ZA+Y+EvOagQOqDBWZavA2qFo304luKo4t4gnk5bko3Z5ngLzowtE15G+3kCKRhPtpEovhJPSj+z556e8SobaRjxjQFJg/yfmn7CdBt8lOIeHY9eSZSIIfbSiCfB59H7D4KtiiTCWO1La+dSxdgEVK2LrzZ91HndgFNY/Lpjd5Nf9t0qLVwhr9ftuUdEykThcPPqJsvgodnQgfCbAoH7OmPxVTCNoNthPDysc9D/aNqoG9FrITQD7q/ObqZmEy8cDh/oPkunwjkIb/TnlAoGgsxcjNtq7W4/fNlVDOsW2GgDtKVCkLTTRHRHo/Y5ag982/8I8D1bEMBP5CxLlr6lNL46VTMI=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50113a9a-b23f-4a72-2ad6-08dca1bf93f8
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2024 15:38:57.4096
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SLx5iAwGV7OYOiSvgW5Gce3pfbJ2kEJ8xJuo+MNsp65CChMiLRyQx+2Em/SBNKOTn82j4QXJp6+LVKUsFe/Z+TUcx//vphaDpWFAv/qiCi8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4800
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-11_11,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0 spamscore=0
+ mlxlogscore=999 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407110110
+X-Proofpoint-GUID: MX-9zCyBhg6ugyQIjdXDN4HuTfJywFa2
+X-Proofpoint-ORIG-GUID: MX-9zCyBhg6ugyQIjdXDN4HuTfJywFa2
 
-Hi Marek. Thanks for the patch.
+On Wed, Jul 10, 2024 at 03:22:49PM GMT, Liam R. Howlett wrote:
+> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+>
+> The MAP_FIXED page count is available after the vms_gather_munmap_vmas()
+> call, so use it instead of looping over the vmas twice.
 
-On Wed, 2024-07-03 at 12:30 -0400, Rajneesh Bhardwaj wrote:
-> On Wed, Jul 3, 2024 at 7:39=E2=80=AFAM Marek Maslanka <mmaslanka@google.c=
-om> wrote:
-> >=20
-> > Allow to disable ACPI PM Timer on suspend and enable on resume. A
-> > disabled timer helps optimise power consumption when the system is
-> > suspended. On resume the timer is only reactivated if it was activated
-> > prior to suspend, so unless the ACPI PM timer is enabled in the BIOS,
-> > this won't change anything.
->=20
-> Back in the days IIRC, it was frowned upon but I am not sure anymore.
-> Maybe Rafael or David will have some opinion on this change. Is this
-> something that could be done in a platform specific manner such as in
-> coreboot?
+This commit message doesn't explain the 'Move may_expand_vm()' part of this
+change which is the patch's subject. Should add a little blurb about that.
 
-I discussed with Rafael. This is generally a good idea, but need to ensure =
-that
-the ACPI PM Timer isn't being used as a clock source. This could mess with =
-the
-timekeeping system. Also, maybe a better idea is to disable it altogether a=
-t
-probe time if it's not being used as a clock source. This should only be th=
-e
-case when TSC is unstable and HPET is unavailable, but need to confirm.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> ---
+>  mm/mmap.c | 36 ++++--------------------------------
+>  1 file changed, 4 insertions(+), 32 deletions(-)
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 18c269bf8703..7a440e7da55a 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -401,27 +401,6 @@ anon_vma_interval_tree_post_update_vma(struct vm_area_struct *vma)
+>  		anon_vma_interval_tree_insert(avc, &avc->anon_vma->rb_root);
+>  }
+>
+> -static unsigned long count_vma_pages_range(struct mm_struct *mm,
+> -		unsigned long addr, unsigned long end,
+> -		unsigned long *nr_accounted)
+> -{
+> -	VMA_ITERATOR(vmi, mm, addr);
+> -	struct vm_area_struct *vma;
+> -	unsigned long nr_pages = 0;
+> -
+> -	*nr_accounted = 0;
+> -	for_each_vma_range(vmi, vma, end) {
+> -		unsigned long vm_start = max(addr, vma->vm_start);
+> -		unsigned long vm_end = min(end, vma->vm_end);
+> -
+> -		nr_pages += PHYS_PFN(vm_end - vm_start);
+> -		if (vma->vm_flags & VM_ACCOUNT)
+> -			*nr_accounted += PHYS_PFN(vm_end - vm_start);
+> -	}
+> -
+> -	return nr_pages;
+> -}
+> -
+>  static void __vma_link_file(struct vm_area_struct *vma,
+>  			    struct address_space *mapping)
+>  {
+> @@ -2949,17 +2928,6 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  	pgoff_t vm_pgoff;
+>  	int error = -ENOMEM;
+>  	VMA_ITERATOR(vmi, mm, addr);
+> -	unsigned long nr_pages, nr_accounted;
+> -
+> -	nr_pages = count_vma_pages_range(mm, addr, end, &nr_accounted);
+> -
+> -	/*
+> -	 * Check against address space limit.
+> -	 * MAP_FIXED may remove pages of mappings that intersects with requested
+> -	 * mapping. Account for the pages it would unmap.
+> -	 */
+> -	if (!may_expand_vm(mm, vm_flags, pglen - nr_pages))
+> -		return -ENOMEM;
+>
+>
+>  	/* Find the first overlapping VMA */
+> @@ -2987,6 +2955,10 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  			vma_iter_next_range(&vmi);
+>  	}
+>
+> +	/* Check against address space limit. */
+> +	if (!may_expand_vm(mm, vm_flags, pglen - vms.nr_pages))
+> +		goto abort_munmap;
+> +
+>  	/*
+>  	 * Private writable mapping: check memory availability
+>  	 */
+> --
+> 2.43.0
+>
 
-David
+This is fine though as discussed previously, though obviously need to think
+about the arch_unmap() bit :)
 
->=20
-> >=20
-> > Signed-off-by: Marek Maslanka <mmaslanka@google.com>
-> > ---
-> > =C2=A0drivers/platform/x86/intel/pmc/adl.c=C2=A0 |=C2=A0 2 ++
-> > =C2=A0drivers/platform/x86/intel/pmc/cnp.c=C2=A0 |=C2=A0 2 ++
-> > =C2=A0drivers/platform/x86/intel/pmc/core.c | 37 ++++++++++++++++++++++=
-+++++
-> > =C2=A0drivers/platform/x86/intel/pmc/core.h |=C2=A0 8 ++++++
-> > =C2=A0drivers/platform/x86/intel/pmc/icl.c=C2=A0 |=C2=A0 2 ++
-> > =C2=A0drivers/platform/x86/intel/pmc/mtl.c=C2=A0 |=C2=A0 2 ++
-> > =C2=A0drivers/platform/x86/intel/pmc/spt.c=C2=A0 |=C2=A0 2 ++
-> > =C2=A0drivers/platform/x86/intel/pmc/tgl.c=C2=A0 |=C2=A0 2 ++
-> > =C2=A08 files changed, 57 insertions(+)
-> >=20
-> > diff --git a/drivers/platform/x86/intel/pmc/adl.c
-> > b/drivers/platform/x86/intel/pmc/adl.c
-> > index e7878558fd909..9d9c07f44ff61 100644
-> > --- a/drivers/platform/x86/intel/pmc/adl.c
-> > +++ b/drivers/platform/x86/intel/pmc/adl.c
-> > @@ -295,6 +295,8 @@ const struct pmc_reg_map adl_reg_map =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ppfear_buckets =3D CNP_PPFE=
-AR_NUM_ENTRIES,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_cfg_offset =3D CNP_PMC_P=
-M_CFG_OFFSET,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_read_disable_bit =3D CNP=
-_PMC_READ_DISABLE_BIT,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_ctl_offset =3D SPT_P=
-MC_ACPI_PM_TMR_CTL_OFFSET,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_disable_bit =3D SPT_=
-PMC_BIT_ACPI_PM_TMR_DISABLE,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ltr_ignore_max =3D ADL_NUM_=
-IP_IGN_ALLOWED,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .lpm_num_modes =3D ADL_LPM_N=
-UM_MODES,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .lpm_num_maps =3D ADL_LPM_NU=
-M_MAPS,
-> > diff --git a/drivers/platform/x86/intel/pmc/cnp.c
-> > b/drivers/platform/x86/intel/pmc/cnp.c
-> > index dd72974bf71e2..513c02670c5aa 100644
-> > --- a/drivers/platform/x86/intel/pmc/cnp.c
-> > +++ b/drivers/platform/x86/intel/pmc/cnp.c
-> > @@ -200,6 +200,8 @@ const struct pmc_reg_map cnp_reg_map =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ppfear_buckets =3D CNP_PPFE=
-AR_NUM_ENTRIES,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_cfg_offset =3D CNP_PMC_P=
-M_CFG_OFFSET,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_read_disable_bit =3D CNP=
-_PMC_READ_DISABLE_BIT,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_ctl_offset =3D SPT_P=
-MC_ACPI_PM_TMR_CTL_OFFSET,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_disable_bit =3D SPT_=
-PMC_BIT_ACPI_PM_TMR_DISABLE,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ltr_ignore_max =3D CNP_NUM_=
-IP_IGN_ALLOWED,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .etr3_offset =3D ETR3_OFFSET=
-,
-> > =C2=A0};
-> > diff --git a/drivers/platform/x86/intel/pmc/core.c
-> > b/drivers/platform/x86/intel/pmc/core.c
-> > index 10c96c1a850af..e97ac7a8a18bc 100644
-> > --- a/drivers/platform/x86/intel/pmc/core.c
-> > +++ b/drivers/platform/x86/intel/pmc/core.c
-> > @@ -1171,6 +1171,35 @@ static bool pmc_core_is_pson_residency_enabled(s=
-truct
-> > pmc_dev *pmcdev)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return val =3D=3D 1;
-> > =C2=A0}
-> >=20
-> > +/*
-> > + * Enable or disable APCI PM Timer
-> > + *
-> > + * @return: Previous APCI PM Timer enabled state
-> > + */
-> > +static bool pmc_core_enable_apci_pm_timer(struct pmc_dev *pmcdev, bool
-> > enable)
-> > +{
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct pmc *pmc =3D pmcdev->pmcs[=
-PMC_IDX_MAIN];
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct pmc_reg_map *map =3D=
- pmc->map;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool state;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 reg;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!map->acpi_pm_tmr_ctl_offset)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 return false;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_lock(&pmcdev->lock);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg =3D pmc_core_reg_read(pmc, ma=
-p->acpi_pm_tmr_ctl_offset);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 state =3D !(reg & map->acpi_pm_tm=
-r_disable_bit);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (enable)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 reg &=3D ~map->acpi_pm_tmr_disable_bit;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 reg |=3D map->acpi_pm_tmr_disable_bit;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmc_core_reg_write(pmc, map->acpi=
-_pm_tmr_ctl_offset, reg);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mutex_unlock(&pmcdev->lock);
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return state;
-> > +}
-> >=20
-> > =C2=A0static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
-> > =C2=A0{
-> > @@ -1446,6 +1475,10 @@ static __maybe_unused int pmc_core_suspend(struc=
-t
-> > device *dev)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (pmcdev->suspend)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 pmcdev->suspend(pmcdev);
-> >=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Disable APCI PM Timer */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmcdev->enable_acpi_pm_timer_on_r=
-esume =3D
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 pmc_core_enable_apci_pm_timer(pmcdev, false);
-> > +
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Check if the syspend will=
- actually use S0ix */
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (pm_suspend_via_firmware(=
-))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 return 0;
-> > @@ -1500,6 +1533,10 @@ int pmc_core_resume_common(struct pmc_dev *pmcde=
-v)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int offset =3D pmc->map->lpm=
-_status_offset;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int i;
-> >=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Enable APCI PM Timer */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (pmcdev->enable_acpi_pm_timer_=
-on_resume)
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 pmc_core_enable_apci_pm_timer(pmcdev, true);
-> > +
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Check if the syspend used=
- S0ix */
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (pm_suspend_via_firmware(=
-))
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 return 0;
-> > diff --git a/drivers/platform/x86/intel/pmc/core.h
-> > b/drivers/platform/x86/intel/pmc/core.h
-> > index 83504c49a0e31..fe1a94f693b63 100644
-> > --- a/drivers/platform/x86/intel/pmc/core.h
-> > +++ b/drivers/platform/x86/intel/pmc/core.h
-> > @@ -67,6 +67,8 @@ struct telem_endpoint;
-> > =C2=A0#define SPT_PMC_LTR_SCC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x3A0
-> > =C2=A0#define SPT_PMC_LTR_ISH=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x3A4
-> >=20
-> > +#define SPT_PMC_ACPI_PM_TMR_CTL_OFFSET=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 0x18FC
-> > +
-> > =C2=A0/* Sunrise Point: PGD PFET Enable Ack Status Registers */
-> > =C2=A0enum ppfear_regs {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 SPT_PMC_XRAM_PPFEAR0A =3D 0x=
-590,
-> > @@ -147,6 +149,8 @@ enum ppfear_regs {
-> > =C2=A0#define SPT_PMC_VRIC1_SLPS0LVEN=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(13)
-> > =C2=A0#define SPT_PMC_VRIC1_XTALSDQDIS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(22)
-> >=20
-> > +#define SPT_PMC_BIT_ACPI_PM_TMR_DISABLE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(1)
-> > +
-> > =C2=A0/* Cannonlake Power Management Controller register offsets */
-> > =C2=A0#define CNP_PMC_SLPS0_DBG_OFFSET=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x10B4
-> > =C2=A0#define CNP_PMC_PM_CFG_OFFSET=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1818
-> > @@ -344,6 +348,8 @@ struct pmc_reg_map {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const u8=C2=A0 *lpm_reg_inde=
-x;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const u32 pson_residency_off=
-set;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const u32 pson_residency_cou=
-nter_step;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const u32 acpi_pm_tmr_ctl_offset;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const u32 acpi_pm_tmr_disable_bit=
-;
-> > =C2=A0};
-> >=20
-> > =C2=A0/**
-> > @@ -417,6 +423,8 @@ struct pmc_dev {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 die_c6_offset;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct telem_endpoint *punit=
-_ep;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct pmc_info *regmap_list=
-;
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool enable_acpi_pm_timer_on_resu=
-me;
-> > =C2=A0};
-> >=20
-> > =C2=A0enum pmc_index {
-> > diff --git a/drivers/platform/x86/intel/pmc/icl.c
-> > b/drivers/platform/x86/intel/pmc/icl.c
-> > index 71b0fd6cb7d84..cbbd440544688 100644
-> > --- a/drivers/platform/x86/intel/pmc/icl.c
-> > +++ b/drivers/platform/x86/intel/pmc/icl.c
-> > @@ -46,6 +46,8 @@ const struct pmc_reg_map icl_reg_map =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ppfear_buckets =3D ICL_PPFE=
-AR_NUM_ENTRIES,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_cfg_offset =3D CNP_PMC_P=
-M_CFG_OFFSET,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_read_disable_bit =3D CNP=
-_PMC_READ_DISABLE_BIT,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_ctl_offset =3D SPT_P=
-MC_ACPI_PM_TMR_CTL_OFFSET,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_disable_bit =3D SPT_=
-PMC_BIT_ACPI_PM_TMR_DISABLE,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ltr_ignore_max =3D ICL_NUM_=
-IP_IGN_ALLOWED,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .etr3_offset =3D ETR3_OFFSET=
-,
-> > =C2=A0};
-> > diff --git a/drivers/platform/x86/intel/pmc/mtl.c
-> > b/drivers/platform/x86/intel/pmc/mtl.c
-> > index c7d15d864039d..91f2fa728f5c8 100644
-> > --- a/drivers/platform/x86/intel/pmc/mtl.c
-> > +++ b/drivers/platform/x86/intel/pmc/mtl.c
-> > @@ -462,6 +462,8 @@ const struct pmc_reg_map mtl_socm_reg_map =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ppfear_buckets =3D MTL_SOCM=
-_PPFEAR_NUM_ENTRIES,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_cfg_offset =3D CNP_PMC_P=
-M_CFG_OFFSET,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_read_disable_bit =3D CNP=
-_PMC_READ_DISABLE_BIT,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_ctl_offset =3D SPT_P=
-MC_ACPI_PM_TMR_CTL_OFFSET,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_disable_bit =3D SPT_=
-PMC_BIT_ACPI_PM_TMR_DISABLE,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .lpm_num_maps =3D ADL_LPM_NU=
-M_MAPS,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ltr_ignore_max =3D MTL_SOCM=
-_NUM_IP_IGN_ALLOWED,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .lpm_res_counter_step_x2 =3D=
- TGL_PMC_LPM_RES_COUNTER_STEP_X2,
-> > diff --git a/drivers/platform/x86/intel/pmc/spt.c
-> > b/drivers/platform/x86/intel/pmc/spt.c
-> > index ab993a69e33ee..2cd2b3c68e468 100644
-> > --- a/drivers/platform/x86/intel/pmc/spt.c
-> > +++ b/drivers/platform/x86/intel/pmc/spt.c
-> > @@ -130,6 +130,8 @@ const struct pmc_reg_map spt_reg_map =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ppfear_buckets =3D SPT_PPFE=
-AR_NUM_ENTRIES,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_cfg_offset =3D SPT_PMC_P=
-M_CFG_OFFSET,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_read_disable_bit =3D SPT=
-_PMC_READ_DISABLE_BIT,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_ctl_offset =3D SPT_P=
-MC_ACPI_PM_TMR_CTL_OFFSET,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_disable_bit =3D SPT_=
-PMC_BIT_ACPI_PM_TMR_DISABLE,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ltr_ignore_max =3D SPT_NUM_=
-IP_IGN_ALLOWED,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_vric1_offset =3D SPT_PMC=
-_VRIC1_OFFSET,
-> > =C2=A0};
-> > diff --git a/drivers/platform/x86/intel/pmc/tgl.c
-> > b/drivers/platform/x86/intel/pmc/tgl.c
-> > index e0580de180773..371b4e30f1426 100644
-> > --- a/drivers/platform/x86/intel/pmc/tgl.c
-> > +++ b/drivers/platform/x86/intel/pmc/tgl.c
-> > @@ -197,6 +197,8 @@ const struct pmc_reg_map tgl_reg_map =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ppfear_buckets =3D ICL_PPFE=
-AR_NUM_ENTRIES,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_cfg_offset =3D CNP_PMC_P=
-M_CFG_OFFSET,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm_read_disable_bit =3D CNP=
-_PMC_READ_DISABLE_BIT,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_ctl_offset =3D SPT_P=
-MC_ACPI_PM_TMR_CTL_OFFSET,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .acpi_pm_tmr_disable_bit =3D SPT_=
-PMC_BIT_ACPI_PM_TMR_DISABLE,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .ltr_ignore_max =3D TGL_NUM_=
-IP_IGN_ALLOWED,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .lpm_num_maps =3D TGL_LPM_NU=
-M_MAPS,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .lpm_res_counter_step_x2 =3D=
- TGL_PMC_LPM_RES_COUNTER_STEP_X2,
-> > --
-> > 2.45.2.803.g4e1b14247a-goog
-> >=20
->=20
->=20
-
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
