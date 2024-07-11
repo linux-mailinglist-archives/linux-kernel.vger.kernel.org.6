@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-248826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE3E92E277
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:35:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8FD92E279
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 789B628843C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:35:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 736651F210C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 08:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DE3155CBA;
-	Thu, 11 Jul 2024 08:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA18F157491;
+	Thu, 11 Jul 2024 08:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOzHR25+"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SP8I9exP"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD41150992
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C47156F3A
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 08:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720686785; cv=none; b=giarAHE8SMfkT8NpZHRgN7G+Z3zrWBTt/qtp0LoKNLtUPNj7uATRFJ5Hz/7/E9cOqsh8aA+is7ddZC9UrxducOvGoWHHdCYh3WWR25xi1MrtioTdBNZ6JsEORW1qGO94cEUPYaPAp9hOZvLBaaYNsPnAkCtCzMgmdPc85BcvW1Y=
+	t=1720686788; cv=none; b=jzfL5F0leatYdxbm2MUOVkqqhKOMt9B3y4kysqfvioU3hct587rN/OF6NUmhjVKqR9D67O5Zy49deLIwFlLEML9RmkfgbrvymnTg+bAK3fJ4xSXmNky+KZwPgaoZyw0htFsPKxJ1B+m2O6K7neTmQEa61BVLxDEK0wLeIXuW59s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720686785; c=relaxed/simple;
-	bh=NruwJsFvwsSPkXYLJUwgKr+gFvQvXB2WWXCsPlIzVok=;
+	s=arc-20240116; t=1720686788; c=relaxed/simple;
+	bh=PPqAOgxiHf80yuq2V7rEIjlkSvnolbs5gz7XAwBVk/o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=o6tWcnesxdG6h5kRT94ELMAg0h9vyH/AaMluIwTtB9IPKD/mzj5m7ugnh2uQBj89kKiUH7gLa9b10mdJGcEKOfmr7W3DfRbqHu9EW9Cwsy/jB0nwfNXTPm3wLwhlSC0nScMBvb9qjCSvkJghXTlb7okmf/qwgP4WgE4PCOBJEaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOzHR25+; arc=none smtp.client-ip=209.85.166.174
+	 MIME-Version; b=OWLzk8ASEeknYAXY7TKAxHRS5qwhBE9wCbIFtlik/Ij590z/vDGjLJQeVKPddeBfIrIrHdTdgm/gaRL3bTx5col0u9ej8auYszfYmjxT2ZWVbET0NfbLaT47nfgNstHHJrlRvaUEF9+m+cym7cybcY3SRKmunI3ildAB49oGDSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SP8I9exP; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3815eaa136eso2393175ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:33:04 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70b42250526so529695b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 01:33:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720686783; x=1721291583; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720686786; x=1721291586; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I1wTEq4Zj0zkb0J+FzMN27F+Tf2xE8G5ye4De2za5ow=;
-        b=VOzHR25+L0TY6OSCXYbWF+JB5VYI2LbPbGXiQJMsQgxiRCl1v7l0vmy5/4HYdLSjCp
-         QYD1IZYFkzw+sj8j0LpCdoSJd1IIavWmdvzfjq3gipdq4NoKTUTuS9H2tcKfzyHTQAtN
-         gNDrzlkLEf2Ouv8sDlO6sE426AQsGlzfdFbWUc0avUDEBPzBbCSY/z1uWBov16zjNX8e
-         JPxwYMY1riNCyQYQACM8HJhw9sqN4AbEtLCoH9Wd3Er8JIZRZVolIv2L0QGYVo4fW3CF
-         yjVhEv1x4JTKoddIvjw5q3JH+SOMtr+DpxrhEcZh701ejEGKQlRlapvIoLAjt2tmvwdZ
-         lZGg==
+        bh=tiOeWmbTexBi55Q/t6q7ngGXESICd795YG/HDDiGhpg=;
+        b=SP8I9exP3kCUTHkdKlAmWXDWQrvUh5Q4xEQnqhVacR2aXQTVpnsqqE1trgMhEr88z2
+         vIR781gVOXpZy4jCk/ZAEBRPaMRHOJHovxI0OxzG6rsCnbaTQo/UFyIgmEW3sZfelEC2
+         reJflIRXtF87q5W9VGjVfAwb3mtxO/LYToEhoGXgkbY7fDL609GG6r0l1/P0+FHUB6m4
+         FzUP7zLKzMCgJPrUc+YROcfTUxY2z7wO5wbzS2rtfUkta4lGnibfZcWzGJmt8lkWAgQW
+         m5YJRR2DrXsLJLRvxv4BhRBJctY11rFfqRYsBOBJlLYGeHbUtEf2VVwlsqIXrNA/4mhp
+         sMKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720686783; x=1721291583;
+        d=1e100.net; s=20230601; t=1720686786; x=1721291586;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I1wTEq4Zj0zkb0J+FzMN27F+Tf2xE8G5ye4De2za5ow=;
-        b=jssFrq1nsezn80+iRb1KSDksrZcNIbUsnY4YNxa4W7Q7S1gsFCNSRkkixsJb9+JKMQ
-         8D5Ozk8/pkEHVtZ+cK7XnAd/q7OP5VYkCizp5MQGx8m5weW5ICF9au5eMLRKxWQsndVA
-         1k5JMVI+nv1ZDfXovYSW/6oznXAlU7jRzjns47ODx/pC2VcfYR5bKEjFC8GaWllt8oJE
-         prPxy0Z09PbBqooJ7R4xoHbqCFB/m2ZuJtg+I8TalWjDtUHwkpU/VhQKAuqGxqqrVKiZ
-         v7elkuYjarTBhGXKnewy4OYIKIEsZmMU1as3TJUqEZqk+5iQ1BGL0qZ1TrVh26gLcyEv
-         92Hw==
-X-Gm-Message-State: AOJu0Yxc1bAau/TUcZCe03oM+feAO8zTcnCyGb0ecqdk9vXsL4u6pFCz
-	A3uB0hypKMrZJMkQkIN9p352R0qRO9P+Zg12WdNmulKRUz96TI3bB862Yw==
-X-Google-Smtp-Source: AGHT+IGidlC9pHkyhf3IQ8ixSjKuNzH9IdxH5up1iWrP0qK75V5ZBnOhGrLc2YyQAES6dlkoiVhrGQ==
-X-Received: by 2002:a05:6e02:170c:b0:382:325c:f7be with SMTP id e9e14a558f8ab-38a570fb1f2mr96676875ab.4.1720686783107;
-        Thu, 11 Jul 2024 01:33:03 -0700 (PDT)
-Received: from localhost ([198.11.176.14])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4397f32csm5267425b3a.146.2024.07.11.01.33.02
+        bh=tiOeWmbTexBi55Q/t6q7ngGXESICd795YG/HDDiGhpg=;
+        b=CnassYfkWfHHsINo8gjLlgx+JnVjhNBsIjHg2i5phP0b7kehEtMnvoVkUSpO9NeoTQ
+         pNKdmV7I9V4481muclCVu8Y8t+zzM3fsfSr7T/SDOQdDSDkjVEftZjZFH75bbBBRLC2O
+         xdbthDqDmRvNs1E4QKQ4n6mmsJhEcqKgWkC6wyrGpLVPQUXWRplN0bSQgvwcblQ0co5g
+         niQ1IH2NL3A1dzP0FyAchz6ImzlwzAsZNgz0V64nVUX8DArvEaeYjAIOAdJLF+p37Laz
+         eakaVb/j8yaP9I8zauk95iCrEfGEqKZcJPLKWHza8VeZHf9BpqFO/kSFgGupZEYj7MAi
+         1ZUA==
+X-Gm-Message-State: AOJu0YwKpJ/hLqA5eg98I5XBzlBTc6a9c2D1Z/o5IFE5DcRi8sXsQ8bw
+	r1qD47VNAokhnZFOqe7zrKylPCLdEtKOGbKr95J51/NAMBjeDEMEPthS4w==
+X-Google-Smtp-Source: AGHT+IFJ5d72RsM7GIb9z5ohNAWlZT0KxHL4qtyQ/K4hKrraFzVIXRZb6XgwPoN9SqrMoL6cDL9xmw==
+X-Received: by 2002:a05:6a00:2292:b0:70b:2ede:7142 with SMTP id d2e1a72fcca58-70b436171c6mr9202424b3a.34.1720686785984;
+        Thu, 11 Jul 2024 01:33:05 -0700 (PDT)
+Received: from localhost ([47.89.225.180])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4389c0ffsm5260635b3a.16.2024.07.11.01.33.05
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Jul 2024 01:33:02 -0700 (PDT)
+        Thu, 11 Jul 2024 01:33:05 -0700 (PDT)
 From: Lai Jiangshan <jiangshanlai@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
 	Tejun Heo <tj@kernel.org>,
 	Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH 1/7] workqueue: Add wq_online_cpumask
-Date: Thu, 11 Jul 2024 16:35:41 +0800
-Message-Id: <20240711083547.3981-2-jiangshanlai@gmail.com>
+Subject: [PATCH 2/7] workqueue: Simplify wq_calc_pod_cpumask() with wq_online_cpumask
+Date: Thu, 11 Jul 2024 16:35:42 +0800
+Message-Id: <20240711083547.3981-3-jiangshanlai@gmail.com>
 X-Mailer: git-send-email 2.19.1.6.gb485710b
 In-Reply-To: <20240711083547.3981-1-jiangshanlai@gmail.com>
 References: <20240711083547.3981-1-jiangshanlai@gmail.com>
@@ -86,62 +86,46 @@ Content-Transfer-Encoding: 8bit
 
 From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
 
-The new wq_online_mask mirrors the cpu_online_mask except during
-hotplugging; specifically, it differs between the hotplugging stages
-of workqueue_offline_cpu() and workqueue_online_cpu(), during which
-the transitioning CPU is not represented in the mask.
+Avoid relying on cpu_online_mask for wqattrs changes so that
+cpus_read_lock() can be removed from apply_wqattrs_lock().
+
+And with wq_online_cpumask, attrs->__pod_cpumask doesn't need to be
+reused as a temporary storage to calculate if the pod have any online
+CPUs @attrs wants since @cpu_going_down is not in the wq_online_cpumask.
 
 Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
 ---
- kernel/workqueue.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ kernel/workqueue.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
 diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 5d362290c2e8..985ab9230fe0 100644
+index 985ab9230fe0..9f454a9c04c8 100644
 --- a/kernel/workqueue.c
 +++ b/kernel/workqueue.c
-@@ -444,6 +444,9 @@ static struct rcuwait manager_wait = __RCUWAIT_INITIALIZER(manager_wait);
- static LIST_HEAD(workqueues);		/* PR: list of all workqueues */
- static bool workqueue_freezing;		/* PL: have wqs started freezing? */
+@@ -5156,20 +5156,14 @@ static void wq_calc_pod_cpumask(struct workqueue_attrs *attrs, int cpu,
+ 	const struct wq_pod_type *pt = wqattrs_pod_type(attrs);
+ 	int pod = pt->cpu_pod[cpu];
  
-+/* PL: mirror the cpu_online_mask excluding the CPU in the midst of hotplugging */
-+static cpumask_var_t wq_online_cpumask;
-+
- /* PL&A: allowable cpus for unbound wqs and work items */
- static cpumask_var_t wq_unbound_cpumask;
+-	/* does @pod have any online CPUs @attrs wants? */
++	/* calculate possible CPUs in @pod that @attrs wants */
+ 	cpumask_and(attrs->__pod_cpumask, pt->pod_cpus[pod], attrs->cpumask);
+-	cpumask_and(attrs->__pod_cpumask, attrs->__pod_cpumask, cpu_online_mask);
+-	if (cpu_going_down >= 0)
+-		cpumask_clear_cpu(cpu_going_down, attrs->__pod_cpumask);
+-
+-	if (cpumask_empty(attrs->__pod_cpumask)) {
++	/* does @pod have any online CPUs @attrs wants? */
++	if (!cpumask_intersects(attrs->__pod_cpumask, wq_online_cpumask)) {
+ 		cpumask_copy(attrs->__pod_cpumask, attrs->cpumask);
+ 		return;
+ 	}
  
-@@ -6583,6 +6586,8 @@ int workqueue_online_cpu(unsigned int cpu)
- 
- 	mutex_lock(&wq_pool_mutex);
- 
-+	cpumask_set_cpu(cpu, wq_online_cpumask);
-+
- 	for_each_pool(pool, pi) {
- 		/* BH pools aren't affected by hotplug */
- 		if (pool->flags & POOL_BH)
-@@ -6629,6 +6634,9 @@ int workqueue_offline_cpu(unsigned int cpu)
- 
- 	/* update pod affinity of unbound workqueues */
- 	mutex_lock(&wq_pool_mutex);
-+
-+	cpumask_clear_cpu(cpu, wq_online_cpumask);
-+
- 	list_for_each_entry(wq, &workqueues, list) {
- 		struct workqueue_attrs *attrs = wq->unbound_attrs;
- 
-@@ -7650,10 +7658,12 @@ void __init workqueue_init_early(void)
- 
- 	BUILD_BUG_ON(__alignof__(struct pool_workqueue) < __alignof__(long long));
- 
-+	BUG_ON(!alloc_cpumask_var(&wq_online_cpumask, GFP_KERNEL));
- 	BUG_ON(!alloc_cpumask_var(&wq_unbound_cpumask, GFP_KERNEL));
- 	BUG_ON(!alloc_cpumask_var(&wq_requested_unbound_cpumask, GFP_KERNEL));
- 	BUG_ON(!zalloc_cpumask_var(&wq_isolated_cpumask, GFP_KERNEL));
- 
-+	cpumask_copy(wq_online_cpumask, cpu_online_mask);
- 	cpumask_copy(wq_unbound_cpumask, cpu_possible_mask);
- 	restrict_unbound_cpumask("HK_TYPE_WQ", housekeeping_cpumask(HK_TYPE_WQ));
- 	restrict_unbound_cpumask("HK_TYPE_DOMAIN", housekeeping_cpumask(HK_TYPE_DOMAIN));
+-	/* yeap, return possible CPUs in @pod that @attrs wants */
+-	cpumask_and(attrs->__pod_cpumask, attrs->cpumask, pt->pod_cpus[pod]);
+-
+ 	if (cpumask_empty(attrs->__pod_cpumask))
+ 		pr_warn_once("WARNING: workqueue cpumask: online intersect > "
+ 				"possible intersect\n");
 -- 
 2.19.1.6.gb485710b
 
