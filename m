@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-248713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24A092E102
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:41:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6CF592E105
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E40A51C21084
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:41:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E577B22560
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 07:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E9F14AD3A;
-	Thu, 11 Jul 2024 07:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60BB14A633;
+	Thu, 11 Jul 2024 07:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rPKjaLOk"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="d1L2Uyvp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADBC1474D3;
-	Thu, 11 Jul 2024 07:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB2512EBCE;
+	Thu, 11 Jul 2024 07:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720683709; cv=none; b=Evao0qJH1UqzqvrLFGYQNJ/eizWCfVn4gBcNrQJCw1Ze3/zCTui4asJ1r8VYoHBKo+bbNkMbgT8Ody/oQp6t48h/iudGtIXSLUmqK8yMbwxac/F7wbgxh32s39yxiBEAZRbqdoaixiDMrYtSF+MiinGDCc/UCsbaZE/2ZcuGtB8=
+	t=1720683735; cv=none; b=gF15NMVBK5+wWv0dTQSVm0j/nH3YVxC0e4w5VUw7YBU/wCXz3TMH42pSKVY4cHiNqejAW0Fvh+K8GIFWKc4dUpiwkcJsk6+iBHMN6mnzvQvtkVbHNhA+NBgbfRGs+kBvD3Pkkt/PAUz4BBMuBhWdqUG/p4oBdrJwCTi2CIce2Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720683709; c=relaxed/simple;
-	bh=/VryOXJPCZMkmZNtKvVFMLdICO254DnaenyxLgQZB28=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=REblSg9GOBRTME4JQoUhsmLz0Vz9aexdFBz9X1IluXeLSLnKxhik9M8+RUPywBddDcfYIJ/LCV8DoxIeFnouEA81+SjNpzBOY7SZv+Uy9RPW1kMBS1A2gEbScKvc4Mm4yuYQUtNX1vRD5VyS1SgEDXJdCWJ1HTvlyn050phuB9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rPKjaLOk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 347C2C116B1;
-	Thu, 11 Jul 2024 07:41:48 +0000 (UTC)
+	s=arc-20240116; t=1720683735; c=relaxed/simple;
+	bh=srVf0WlK0TqEXKiOUeFnP8lZxyYPDYdOAoFPRJajxtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JxwNkpLqjkxztflGzaApOiQYtJg0+vQ9TiIJ4mHC6EgPt7BxmHlFcjcXgk3Zt47ks9X0Jnz8ILwfoJsefE0GOqfM09yY32p91ea3ZSfeseoUWZ36W2OTZXRTo0uyemLZ50wRJ8Myw05BoufCIJud7h3VrLT7+Lu0yplGcjgNgO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=d1L2Uyvp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9778AC116B1;
+	Thu, 11 Jul 2024 07:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720683708;
-	bh=/VryOXJPCZMkmZNtKvVFMLdICO254DnaenyxLgQZB28=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=rPKjaLOkuNjkEs1KUQ0nAjpD/SDRQRy039lXVwX7agX6OKhbpsatUTs3+hus5juGI
-	 5j50h8TUNvss09HEFoGctjv7Uf/ufwz7QFWeC0xbhOfURMMNE6+HgnpqkJCBicZkVN
-	 5eF+UoLZG6wnoypir2Vx2/+My3FJPmIbQlkOL+Ow=
-Date: Thu, 11 Jul 2024 09:41:45 +0200
+	s=korg; t=1720683735;
+	bh=srVf0WlK0TqEXKiOUeFnP8lZxyYPDYdOAoFPRJajxtc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d1L2UyvpEytgjTHmwdjc2o7LvtdYK/+6UsogGR/J8dosOhfA3Lw9euXMBuI4mQgHr
+	 xhHDxzf20la0P7wRuW14iDx1kLO6q2rnK4h8WwKhXX+GRZuDwnLzskZP0ohSznB4/O
+	 DMYcS2vhfv+QChhTf3JDLb+Edu25RQVgAqG1iPcw=
+Date: Thu, 11 Jul 2024 09:42:12 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Alan Stern <stern@rowland.harvard.edu>, ryan <ryanzhou54@gmail.com>,
-	jikos@kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hid: usbhid: Enable remote wake-up based on device
- configuration
-Message-ID: <2024071104-rental-bleak-b273@gregkh>
-References: <20240710231606.3029-1-ryanzhou54@gmail.com>
- <f0c789d8-8ae0-4a46-a5b3-aa9a5a758915@rowland.harvard.edu>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, usbb2k-api-dev@nongnu.org,
+	linux-kernel@vger.kernel.org,
+	Henk Vergonet <Henk.Vergonet@gmail.com>
+Subject: Re: [PATCH 1/2] Input: yealink - use driver core to instantiate
+ device attributes
+Message-ID: <2024071157-cognitive-gradually-9ded@gregkh>
+References: <20240710234855.311366-1-dmitry.torokhov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,31 +55,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f0c789d8-8ae0-4a46-a5b3-aa9a5a758915@rowland.harvard.edu>
+In-Reply-To: <20240710234855.311366-1-dmitry.torokhov@gmail.com>
 
-On Wed, Jul 10, 2024 at 09:47:39PM -0400, Alan Stern wrote:
-> On Thu, Jul 11, 2024 at 07:16:06AM +0800, ryan wrote:
-> > According to the USB protocol, the host should automatically
-> > adapt the remote wake-up function based on the configuration
-> > descriptor reported by the device, rather than only the default
-> > keyboard support. Therefore, it's necessary to support other hid
-> > devices, such as digital headsets,mice,etc.
+On Wed, Jul 10, 2024 at 04:48:53PM -0700, Dmitry Torokhov wrote:
+> Instead of manually creating driver-specific device attributes
+> set struct usb_driver->dev_groups pointer to have the driver core
+> do it.
 > 
-> It's true that the host shouldn't try to enable remote wakeup if the 
-> configuration descriptor shows that the device doesn't support it.
-> 
-> However, it's not true that the host should try to enable remote wakeup 
-> for devices other than keyboards with boot-protocol support.  History 
-> has shown that quite a few HID devices don't handle remote wakeup 
-> properly; the decision about whether to enable it should be left to the 
-> user.
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
 
-I agree, this patch isn't acceptable.  Ryan, why do you want this
-applied?  What userspace control is missing to allow you to do this
-today on your systems with no kernel changes for devices that you know
-will work properly?
+Thanks for doing these cleanups!
 
-thanks,
-
-greg k-h
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
