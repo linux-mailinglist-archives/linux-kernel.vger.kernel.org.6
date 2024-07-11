@@ -1,160 +1,246 @@
-Return-Path: <linux-kernel+bounces-248906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5336492E38B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:38:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3AB92E39F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 11:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D45091F22ADB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:38:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5DE1C211AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 09:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC07156C78;
-	Thu, 11 Jul 2024 09:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004CF157491;
+	Thu, 11 Jul 2024 09:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iUZ3fhWS"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BQAocZja"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDD31552E7
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1A6156F55
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 09:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720690687; cv=none; b=fyHwb4uJWb7hf3SR92ZwT1QDUOrGkidpyOwlOe3U5xgbE15Qbul84zmiEF48LaiaHjRWGU1qRLsbAy9RCmAdC0yx13swc+NuHQiaStDlmb1YvhF0URGPGK4By3XMsDYmMGLPgGkhm3aqdl5G4XE8M8COJ7yiMGHfI8Yo1KE56dY=
+	t=1720690876; cv=none; b=SgUUFKvoO/nB8eTCejjlLfFgiWttJVnmwncmkPY3H75EFVIep0wGQUShE5wHF47KbsSUwsrOdIfc53S6+wCbqdSobrqVO9t3b+0mDxU6fYwqTx+v9LWDAQvdsxH4JaX/Usdh8fUkQVfG86p7/HeXOh+ulLPvHBeaLS/ahSwgOc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720690687; c=relaxed/simple;
-	bh=WrqaJmAAllwF2lX26NM6VCkccaq+3XJvLkShVBlREYs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uvna6RsBRmDGj9whkoa13PLYcz7z+ILyQhgxvBkgK74LLm6jTqyVwS1wm4T9+kfxByO/xbZXHqwENH3COGRf5/XkYIPu0Z2FgxxXsmOMPeUfbB1zVhfIVdKiaD8So6aOJo00m/vII/Ia1lx2wnUU3rqg9Wa9xdZwrR0KfDIp1e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iUZ3fhWS; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso875963a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 02:38:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720690684; x=1721295484; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vtm3g0wVvH8T4JQMpomMsIPVuRYp3oJIFms5ruCK3E4=;
-        b=iUZ3fhWS+fIBMunjTyHRS9Ac6u2HtaKeBBBCaHU0CctDApvZgXBURbstqbuBxItNdx
-         OOo6pO10rKN/8qV1tKZsgcJbMPnLFCmNmL7bP3xgAKoJOKqyQIbFMzJLK6g0M7bIMN3N
-         0MOzwGIhqG0qjCTU83ZwmegUiKJOWrM+JRJmS4aVSvUfmYqVSpkLOIRsHttolCppRiFP
-         zd1mIDVO1b9zdXdrlf8VCtR5BJeo2RlR61ie7z6YMnB85Bmsj5m+5hu7RS4Fu2jmDM3k
-         f96aY977baG9MrD42uzf/DLJdNJ/ykxk0tiRWk+7TxSKgiGAX8BWz4xAHOVFunXpGbtm
-         bNHQ==
+	s=arc-20240116; t=1720690876; c=relaxed/simple;
+	bh=8RUZWpSSsIgoH4i40p6vT8jM5LG/7OmypIyPi6a/9F0=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MwEq9zfAE2zHJeBL59pHiPhdp45M5YuLlwDfmABPc+/AZNGvao6Oq/4GzQSXQZW1ioAR2kyqdzgCS1bejrZMm15dNL9VsNIVZYZqjTpAoqQCr/bXxob6TF1H09+TG2Hk1BB/6ZN4P8NzUDAldAyxioSvaXGZly/Q7+JracfWEjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BQAocZja; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720690873;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=roMHuw+PALuns3vCWcdFi8XZN8Qqy8eFcMii4s+wTJk=;
+	b=BQAocZjaNMm571ovu92S9DwpVtIEV6sAm7jGBnG5UsHJOzIGYcyTgKwSlC65F4JuxjRe3R
+	SHornCAOtrtQ7Owy1irv6qlslQwrKYUSKyxjEXK2cEHrXckJrG1nnOKHTLFlyQN628QBdR
+	LDqkVO7jQusNZeNbMoacj+ZEPNVSAqk=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-207-jNdymbDnN1mMTVgCSbiaew-1; Thu, 11 Jul 2024 05:41:10 -0400
+X-MC-Unique: jNdymbDnN1mMTVgCSbiaew-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b5ed8fb791so8991986d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 02:41:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720690684; x=1721295484;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vtm3g0wVvH8T4JQMpomMsIPVuRYp3oJIFms5ruCK3E4=;
-        b=LjHPwKaJVzsXHWkUBOkFs9wI9hsbmXhIw3eA/7bMtpp/R/wDpJ0HOL2QJuphcZj2ih
-         BOIkIFNIbvgQUlSPbyIqF3/+0MK+5vL+agTFv7YAv6sI0SfVtAoehr3//M9923fDyKuS
-         CBenAUdQ8MsT4NfdGlDXJWoLlivFOhcOSCi1IpgXCXMEMrDlJZWjkcwP096Kk8N967yK
-         WlPkZ2nEj4YeY6F843ZTlP2tLIn8evCRllxyT0quOgoi1na7cKdUmaNJb7nNZCt3NAD8
-         Qi0W6Zr3lnXa0Id9sHzI5fB3/SLYX8b0JmwbulC+zL+pl2rW2n0xw/LzkRd637bBvq98
-         C2+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXVkUFt8eRsknhlcx3+c0oL7QWns6HroKkqF6BJK7vrRjh/AhIvO3a9JMUqzByRMO73Htk462gbGBU+D+MiRPZtjv4zdYbE/4jlL4Ld
-X-Gm-Message-State: AOJu0YymJRpC0BkEDDq4cpRIOalUnVdvdWgvLJuR2SgvOCAtZ/QopcVA
-	6lnPTUxuNwaWBLavI/qz9jzU+PDQ4zn/5TML9+MZCz5IstNsd4kogGdX2X3KPRo=
-X-Google-Smtp-Source: AGHT+IGWjR2keEOrWBH0DFC0WEy78M3ePZNOnnrC3T9ok1Mer9dBM2kVfoDFXV9MjJM9tjrjw2pK2Q==
-X-Received: by 2002:a17:906:c082:b0:a77:c9cc:f971 with SMTP id a640c23a62f3a-a780b89c9a0mr553924066b.65.1720690683859;
-        Thu, 11 Jul 2024 02:38:03 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bc3f31d9sm3266753a12.44.2024.07.11.02.38.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 02:38:03 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Thu, 11 Jul 2024 11:37:57 +0200
-Subject: [PATCH] pinctrl: qcom: x1e80100: Update PDC hwirq map
+        d=1e100.net; s=20230601; t=1720690870; x=1721295670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
+         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=roMHuw+PALuns3vCWcdFi8XZN8Qqy8eFcMii4s+wTJk=;
+        b=vvOBI6QQBh64Xu1wQZoW/iYLmoU/bAxkn9CRvN1MhjZ2207MlbUE540V3C8v+cshpe
+         lt4cJrTdS8ss0i9Y5MyEnbI4vR4b/VPgsi8XV1fA4Q47esK7XqAeOk9iQekWPISgchmT
+         Z+jrS44x8+akpssdv1lWhFf2Dw/ZSr4R6tMnot5mAdiz61twdq5mGHZR6pMNyowUw1l8
+         Dhdj+MHrw/BC5Gl1hdWL3HoijckFq0VE0vIqUjAYcQUa+wuP+yPQ0iBzyQ17N6VP0nlU
+         jZmmKmRj6BJLAITO8CdeaUOo3stTk0VhFK0v5YINiLVe4ucKD2qAOEqfDcTEzl0Jxvsd
+         gxPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWGN9fl6AeajKH72u6uxhe4Ru3mhfsWITCv9uwDbV9cEAsz7DqJfpy9atOin8qtooZh84G/G5RZv1EKwJ3vdqoyjMcIY2OQdgYr6h2
+X-Gm-Message-State: AOJu0YzG+oOvAGurJGNjPkKhIPnjzjiFkpxZo+h8mbs0FEK94v59xsG/
+	E2p6cTFFvxwnvRFPK0qUVlt6+6TlBgQQVy4i2s5/u8bMQldwpWV8fl6OCbo6QOTAHV2adSVEZ0r
+	LR04PDfZ6coMZHrhNtY/1ts3l04xCfV0IVBK7wzI3JXzP+L8qpxH2D992hRyTv7ejm3BjQO7xsk
+	NySNKReYgZsWcBQgt/VK5fbB7cJ5aiMoCo2QO7
+X-Received: by 2002:ad4:4ea6:0:b0:6b5:e006:11b0 with SMTP id 6a1803df08f44-6b61bca384fmr99044806d6.20.1720690869712;
+        Thu, 11 Jul 2024 02:41:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSRxmewcxMQ/3BL81YZjQF3O+LHKdXdzsEe8HRIH22wz9sWJC8rn/QEPgJD7oQUldO/x36Y6ZPMZhiH0ZPSGE=
+X-Received: by 2002:ad4:4ea6:0:b0:6b5:e006:11b0 with SMTP id
+ 6a1803df08f44-6b61bca384fmr99044606d6.20.1720690869382; Thu, 11 Jul 2024
+ 02:41:09 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 11 Jul 2024 09:41:08 +0000
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240710090500.1655212-1-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240711-topic-x1e_pdc_tlmm-v1-1-e278b249d793@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAPSnj2YC/x3MQQqAIBBA0avErBM0oqCrRIiNUw1UikYI4t2Tl
- m/xf4ZIgSnC1GQI9HJkd1eotgE8zL2TYFsNnex6OSolHucZRVKkvUX9nNclzIB2NHIbcLVQQx9
- o4/RP56WUD5rELFRkAAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720690682; l=3361;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=WrqaJmAAllwF2lX26NM6VCkccaq+3XJvLkShVBlREYs=;
- b=KDxXbPYT1PbOp7Nc0gylZY0GWjG7XYzgs4e4ix75XpgXP3FQAJ/VtlgqQ1MLuZUXKgtPKPZNC
- OUcVFI02IlwBzSxyjMCamPn+PigzulQQv7Y8+dKkHIEVmuJudjgF9K5
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+In-Reply-To: <20240710090500.1655212-1-amorenoz@redhat.com>
+Date: Thu, 11 Jul 2024 09:41:08 +0000
+Message-ID: <CAG=2xmMsgmZosNvuVC-uGjkKGQfSq0kjwpMSgS46jpd5Zbpp7A@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] selftests: openvswitch: retry instead of sleep
+To: netdev@vger.kernel.org
+Cc: Pravin B Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, dev@openvswitch.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, horms@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The current map seems to be out of sync (and includes a duplicate entry
-for GPIO193..).
+On Wed, Jul 10, 2024 at 11:04:59AM GMT, Adrian Moreno wrote:
+> There are a couple of places where the test script "sleep"s to wait for
+> some external condition to be met.
+>
+> This is error prone, specially in slow systems (identified in CI by
+> "KSFT_MACHINE_SLOW=3Dyes").
+>
+> To fix this, add a "ovs_wait" function that tries to execute a command
+> a few times until it succeeds. The timeout used is set to 5s for
+> "normal" systems and doubled if a slow CI machine is detected.
+>
+> This should make the following work:
+>
+> $ vng --build  \
+>     --config tools/testing/selftests/net/config \
+>     --config kernel/configs/debug.config
+>
+> $ vng --run . --user root -- "make -C tools/testing/selftests/ \
+>     KSFT_MACHINE_SLOW=3Dyes TARGETS=3Dnet/openvswitch run_tests"
+>
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> ---
+>  .../selftests/net/openvswitch/openvswitch.sh  | 45 +++++++++++++++----
+>  .../selftests/net/openvswitch/ovs-dpctl.py    |  1 +
+>  2 files changed, 38 insertions(+), 8 deletions(-)
+>
+> diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh b/too=
+ls/testing/selftests/net/openvswitch/openvswitch.sh
+> index bc71dbc18b21..cc0bfae2bafa 100755
+> --- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
+> +++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
+> @@ -11,6 +11,11 @@ ksft_skip=3D4
+>  PAUSE_ON_FAIL=3Dno
+>  VERBOSE=3D0
+>  TRACING=3D0
+> +WAIT_TIMEOUT=3D5
+> +
+> +if test "X$KSFT_MACHINE_SLOW" =3D=3D "Xyes"; then
+> +	WAIT_TIMEOUT=3D10
+> +fi
+>
+>  tests=3D"
+>  	arp_ping				eth-arp: Basic arp ping between two NS
+> @@ -29,6 +34,30 @@ info() {
+>  	[ $VERBOSE =3D 0 ] || echo $*
+>  }
+>
+> +ovs_wait() {
+> +	info "waiting $WAIT_TIMEOUT s for: $@"
+> +
+> +	if "$@" ; then
+> +		info "wait succeeded immediately"
+> +		return 0
+> +	fi
+> +
+> +	# A quick re-check helps speed up small races in fast systems.
+> +	# However, fractional sleeps might not necessarily work.
+> +	local start=3D0
+> +	sleep 0.1 || { sleep 1; start=3D1; }
+> +
+> +	for (( i=3Dstart; i<WAIT_TIMEOUT; i++ )); do
+> +		if "$@" ; then
+> +			info "wait succeeded after $i seconds"
+> +			return 0
+> +		fi
+> +		sleep 1
+> +	done
+> +	info "wait failed after $i seconds"
+> +	return 1
+> +}
+> +
+>  ovs_base=3D`pwd`
+>  sbxs=3D
+>  sbx_add () {
+> @@ -278,20 +307,19 @@ test_psample() {
+>
+>  	# Record psample data.
+>  	ovs_spawn_daemon "test_psample" python3 $ovs_base/ovs-dpctl.py psample-=
+events
+> +	ovs_wait grep -q "listening for psample events" ${ovs_dir}/stdout
+>
+>  	# Send a single ping.
+> -	sleep 1
+>  	ovs_sbx "test_psample" ip netns exec client ping -I c1 172.31.110.20 -c=
+ 1 || return 1
+> -	sleep 1
+>
+>  	# We should have received one userspace action upcall and 2 psample pac=
+kets.
+> -	grep -E "userspace action command" $ovs_dir/s0.out >/dev/null 2>&1 || r=
+eturn 1
+> +	ovs_wait grep -q "userspace action command" $ovs_dir/s0.out || return 1
+>
+>  	# client -> server samples should only contain the first 14 bytes of th=
+e packet.
+> -	grep -E "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{28}$" \
+> -			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
+> -	grep -E "rate:4294967295,group:2,cookie:eeff0c" \
+> -			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
+> +	ovs_wait grep -qE "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{=
+28}$" \
+> +		$ovs_dir/stdout || return 1
+> +
+> +	ovs_wait grep -q "rate:4294967295,group:2,cookie:eeff0c" $ovs_dir/stdou=
+t || return 1
+>
+>  	return 0
+>  }
+> @@ -711,7 +739,8 @@ test_upcall_interfaces() {
+>  	ovs_add_netns_and_veths "test_upcall_interfaces" ui0 upc left0 l0 \
+>  	    172.31.110.1/24 -u || return 1
+>
+> -	sleep 1
+> +	ovs_wait grep -q "listening on upcall packet handler" ${ovs_dir}/left0.=
+out
+> +
+>  	info "sending arping"
+>  	ip netns exec upc arping -I l0 172.31.110.20 -c 1 \
+>  	    >$ovs_dir/arping.stdout 2>$ovs_dir/arping.stderr
+> diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools=
+/testing/selftests/net/openvswitch/ovs-dpctl.py
+> index 1e15b0818074..8a0396bfaf99 100644
+> --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> @@ -2520,6 +2520,7 @@ class PsampleEvent(EventSocket):
+>      marshal_class =3D psample_msg
+>
+>      def read_samples(self):
+> +        print("listening for psample events", flush=3DTrue)
+>          while True:
+>              try:
+>                  for msg in self.get():
+> --
+> 2.45.2
+>
 
-Replace it with the map present in shipping devices' ACPI tables.
 
-This new one seems more complete, as it e.g. contains GPIO145 (PCIE6a
-WAKE#)
+This patch is supposed to fix openvswitch selftests on "-dbg" machines.
+However, as Simon points out, all recent rounds are failing [1]. I don't
+see this patch being included in the batches and I was wondering why.
 
-Fixes: 05e4941d97ef ("pinctrl: qcom: Add X1E80100 pinctrl driver")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-x1e80100.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+Also I see a (presumably unrelated) build error netdev/build_32bit.
+Is there anything I can do?
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-x1e80100.c b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
-index e30e93840357..6cd4d10e6fd6 100644
---- a/drivers/pinctrl/qcom/pinctrl-x1e80100.c
-+++ b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
-@@ -1813,18 +1813,21 @@ static const struct msm_pingroup x1e80100_groups[] = {
- 
- static const struct msm_gpio_wakeirq_map x1e80100_pdc_map[] = {
- 	{ 0, 72 }, { 2, 70 }, { 3, 71 }, { 6, 123 }, { 7, 67 }, { 11, 85 },
--	{ 15, 68 }, { 18, 122 }, { 19, 69 }, { 21, 158 }, { 23, 143 }, { 26, 129 },
--	{ 27, 144 }, { 28, 77 }, { 29, 78 }, { 30, 92 }, { 32, 145 }, { 33, 115 },
--	{ 34, 130 }, { 35, 146 }, { 36, 147 }, { 39, 80 }, { 43, 148 }, { 47, 149 },
--	{ 51, 79 }, { 53, 89 }, { 59, 87 }, { 64, 90 }, { 65, 106 }, { 66, 142 },
--	{ 67, 88 }, { 71, 91 }, { 75, 152 }, { 79, 153 }, { 80, 125 }, { 81, 128 },
--	{ 84, 137 }, { 85, 155 }, { 87, 156 }, { 91, 157 }, { 92, 138 }, { 94, 140 },
--	{ 95, 141 }, { 113, 84 }, { 121, 73 }, { 123, 74 }, { 129, 76 }, { 131, 82 },
--	{ 134, 83 }, { 141, 93 }, { 144, 94 }, { 147, 96 }, { 148, 97 }, { 150, 102 },
--	{ 151, 103 }, { 153, 104 }, { 156, 105 }, { 157, 107 }, { 163, 98 }, { 166, 112 },
--	{ 172, 99 }, { 181, 101 }, { 184, 116 }, { 193, 40 }, { 193, 117 }, { 196, 108 },
--	{ 203, 133 }, { 212, 120 }, { 213, 150 }, { 214, 121 }, { 215, 118 }, { 217, 109 },
--	{ 220, 110 }, { 221, 111 }, { 222, 124 }, { 224, 131 }, { 225, 132 },
-+	{ 13, 86 }, { 15, 68 }, { 18, 122 }, { 19, 69 }, { 21, 158 }, { 23, 143 },
-+	{ 24, 126 }, { 26, 129 }, { 27, 144 }, { 28, 77 }, { 29, 78 }, { 30, 92 },
-+	{ 31, 159 }, { 32, 145 }, { 33, 115 }, { 34, 130 }, { 35, 146 }, { 36, 147 },
-+	{ 38, 113 }, { 39, 80 }, { 43, 148 }, { 47, 149 }, { 51, 79 }, { 53, 89 },
-+	{ 55, 81 }, { 59, 87 }, { 64, 90 }, { 65, 106 }, { 66, 142 }, { 67, 88 },
-+	{ 68, 151 }, { 71, 91 }, { 75, 152 }, { 79, 153 }, { 80, 125 }, { 81, 128 },
-+	{ 83, 154 }, { 84, 137 }, { 85, 155 }, { 87, 156 }, { 91, 157 }, { 92, 138 },
-+	{ 93, 139 }, { 94, 140 }, { 95, 141 }, { 113, 84 }, { 121, 73 }, { 123, 74 },
-+	{ 125, 75 }, { 129, 76 }, { 131, 82 }, { 134, 83 }, { 141, 93 }, { 144, 94 },
-+	{ 145, 95 }, { 147, 96 }, { 148, 97 }, { 150, 102 }, { 151, 103 }, { 153, 104 },
-+	{ 154, 100 }, { 156, 105 }, { 157, 107 }, { 163, 98 }, { 166, 112 }, { 172, 99 },
-+	{ 175, 114 }, { 181, 101 }, { 184, 116 }, { 193, 117 }, { 196, 108 }, { 203, 133 },
-+	{ 208, 134 }, { 212, 120 }, { 213, 150 }, { 214, 121 }, { 215, 118 }, { 217, 109 },
-+	{ 219, 119 }, { 220, 110 }, { 221, 111 }, { 222, 124 }, { 224, 131 }, { 225, 132 },
-+	{ 228, 135 }, { 230, 136 }, { 232, 162 },
- };
- 
- static const struct msm_pinctrl_soc_data x1e80100_pinctrl = {
+[1]
+https://netdev.bots.linux.dev/contest.html?executor=3Dvmksft-net-dbg&test=
+=3Dopenvswitch-sh
 
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240711-topic-x1e_pdc_tlmm-a6cd7a0f6cbd
-
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+Thanks.
+Adri=C3=A1n
 
 
