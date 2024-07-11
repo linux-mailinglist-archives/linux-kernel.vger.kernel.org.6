@@ -1,116 +1,130 @@
-Return-Path: <linux-kernel+bounces-249818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDBC92F04B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:27:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE84A92F02B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 22:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70481B22989
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:27:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC6D28290D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 20:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB1D19EEAA;
-	Thu, 11 Jul 2024 20:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E1016C689;
+	Thu, 11 Jul 2024 20:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b="JCjoJJ4+"
-Received: from stravinsky.debian.org (stravinsky.debian.org [82.195.75.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4XhutoQR"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2C412B171
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.195.75.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D0219EEAB
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720729646; cv=none; b=fR4nG8AWqly4cWLSBR+P4+Del9FXDmHCc1yf69Agch4MAVHu+lfsMhkb0Xg2rEX2lO+Db3CAb/XsaV0oA4Ccwcy0i5sdseYKJRKPAI9BDydRpKt8EZJ+lj5O1b8I1JfHBvEJQfKMeCu+3jUPKu8ZEjejDfw/ad4ItDnmMjYoVeo=
+	t=1720728908; cv=none; b=telDu+kO784k+N511KVlmVQNT51QHrnW88mDRpvqSw0XvGylGe0hibp6NLnsG0s6GoDOadN56KeEqoXD0v2pkL71YpJGDD9FWBtl2CCeMaAr0UxJUsb+7wH0mKpJpHv/YJRpCapLQrKWZ6lKgAFJIMf6shN4HEgS1r7RLu6+vtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720729646; c=relaxed/simple;
-	bh=chDJJJWbG8wbMscp9nEe5dSFB9fITJITeU+CsbfKuXM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Vp60KpMRstZq4ieekspuX3nnven+CLoaSq52Cr0mN43+0Hvdfw/c+q8wokpwTwcsiQhU+bHBz+PekMhTCIb4vfXTMNlAtDEmbCUbR1gTIB+J10pWI+Lc0v7G0utUiDid+t3P0MDKKxwYD9d4G4ZiDGTGQidaJDxxfEu8sF+aiqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=none smtp.mailfrom=debian.org; dkim=pass (2048-bit key) header.d=debian.org header.i=@debian.org header.b=JCjoJJ4+; arc=none smtp.client-ip=82.195.75.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=debian.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=debian.org;
-	s=smtpauto.stravinsky; h=X-Debian-User:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:References:In-Reply-To:Date:Cc:To:From:Subject:
-	Message-ID:Reply-To:Content-ID:Content-Description;
-	bh=chDJJJWbG8wbMscp9nEe5dSFB9fITJITeU+CsbfKuXM=; b=JCjoJJ4+S/g3rbeO00+Ps4ymIL
-	UG/KHIHSPhXHf0zQepCJMqEQYa3WrOqLTZUhAR61mCRmnWiXZjcW3yMY1r6JsGz3p58CGPk1LZS9f
-	53GdlmnUrf9hOM/RvFLFZCm9FHXD/x7gbRbDICuJfGBx39IqNxC6EQF9xKoVY8YPVzAeofzANVWAO
-	pvmI9z4wjItOuHgX6rnYTWVfadkDua9avN90GgH3OUn13kzGqZG9PalOnK/2Uc9Ab+GeRwwAyUyp3
-	jWfFsmp8YjFg70bRGVEgt5cw6wssYaaWNyURjaYFnq2z3Pg8r33gwmFCGLS1lTySrzAqA+B0z9wJ8
-	4uS+lz/Q==;
-Received: from authenticated user
-	by stravinsky.debian.org with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.94.2)
-	(envelope-from <corsac@debian.org>)
-	id 1sS07R-00An92-58
-	for linux-kernel@vger.kernel.org; Thu, 11 Jul 2024 20:10:21 +0000
-Message-ID: <2d7bd8b2b9736d4a7d0a26169978372b5e002a62.camel@debian.org>
-Subject: Re: [PATCH] mm: huge_memory: don't force huge page alignment on 32
- bit
-From: Yves-Alexis Perez <corsac@debian.org>
-To: Yang Shi <shy828301@gmail.com>, jirislaby@kernel.org, surenb@google.com,
-  riel@surriel.com, willy@infradead.org, cl@linux.com,
- akpm@linux-foundation.org
-Cc: yang@os.amperecomputing.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Salvatore Bonaccorso <carnil@debian.org>, Ben
- Hutchings <ben@decadent.org.uk>
-Date: Thu, 11 Jul 2024 22:10:12 +0200
-In-Reply-To: <20240118133504.2910955-1-shy828301@gmail.com>
-References: <20240118133504.2910955-1-shy828301@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.3-1 
+	s=arc-20240116; t=1720728908; c=relaxed/simple;
+	bh=ffgWiw/ggc+SHGiICSvAu2BZVRSY0eNV0A13uMJMTZM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KdMWkk7zNF1GhHwC6/I+cEazGtd6EsYubjyk7fJ2t/cpi+l/r/9WVP/dukLftPkEFNk0Vhp1Zy8algk7pKFD2YLao4+9tNFI4cmdACxTi1/gPO0dBODzHIa8WMZzA3CxYWlSnMceA0vLHC8Gaj3y5d0FD6CLPL2mCDoAez9pL4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4XhutoQR; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70af036df9cso971295b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 13:15:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720728906; x=1721333706; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VXAgzTWHJrrbxSWRnlwI50WSsE9epZDrGyk57jVBeFw=;
+        b=4XhutoQRPe2mpoFMd8H/fUYCV4wNjr6plvgdL640reOHpKiqgPr1l8xcsaxItI5YjJ
+         d5Tn2DMOrlMlRp/L7dEohF8j8M0hCkhT4A49pt2aTu0VXnxgqGdLRmbYj7NFcJEAueVW
+         i+B91oDxtN/2HyA/ckzaN69gHRU1bswkP7LUGlE6XZT81gt8qbOxUxP6IqaZ9h4+gAZX
+         KB/uq+mDEZ8llU8Ex53u1YnzkaKt3nJ3Bl5TtMyYneqmxsAaKPzrwBj9NyMrhz1WzVLK
+         MrXT4Eg80ld1OS6W4WQGzTnpQ+1cEZcs8IHY5bmMuGgvJQBz7tjNDnOz7lnTfncUd3TO
+         7kNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720728906; x=1721333706;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VXAgzTWHJrrbxSWRnlwI50WSsE9epZDrGyk57jVBeFw=;
+        b=mug0lKWggCfLSacHs/JLNCitZEMa6grklIW4tD/vAA3S+W/VXeu2u18S50peqcTwfT
+         iDIcVVHMtIaOzCJYnYgER7fROgsEET+TZ8ndGcYc1q2FcWFed4pXVy6LGg7GWDuGpv/F
+         O2mAPvP1oab2CA4yZePEsxvlXvyllBZ1ZBriCyrfWcJgV0hh6dg+oxLxA1IzJYSJoxgw
+         IYj9fondpkWfK5OF/WBB30ELqQcpIMt8uHZqHQVXpVrZws4GE+3a4rcN2g0I3QAqeHMu
+         X07PA9HZ+Gb5d5IiFVHiHicQ8YYIi5MC0/H7fIbvWDQ2g+5h9ouo71en+y/7jQ9NZ2cZ
+         dEhA==
+X-Gm-Message-State: AOJu0Yw1PHPIX7mMIQo098CL8K0cOVmFKLvB4VbZpRjYcE+XgF/BbbeE
+	YSsd2Q+qutmQXomCrtAdklCjgYjIJTXhqabDgGDQxz4lKFWo8P9JkdUftFk6Uz/ROECnI0WGc3z
+	7m07Yx2WxiQ==
+X-Google-Smtp-Source: AGHT+IFBCyEY1yOdr0AAGu6OKWjejGpwi7NWiZk/luxllujP0NWCAqvmTjyblFDDXC6rBpZzZb77yUZF7ajnqw==
+X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
+ (user=cmllamas job=sendgmr) by 2002:a05:6a00:9287:b0:70b:5392:5a0d with SMTP
+ id d2e1a72fcca58-70b53925b66mr277058b3a.2.1720728905497; Thu, 11 Jul 2024
+ 13:15:05 -0700 (PDT)
+Date: Thu, 11 Jul 2024 20:14:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Debian-User: corsac
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
+Message-ID: <20240711201452.2017543-1-cmllamas@google.com>
+Subject: [PATCH] binder: fix hang of unregistered readers
+From: Carlos Llamas <cmllamas@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	stable@vger.kernel.org, Martijn Coenen <maco@google.com>, 
+	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+With the introduction of binder_available_for_proc_work_ilocked() in
+commit 1b77e9dcc3da ("ANDROID: binder: remove proc waitqueue") a binder
+thread can only "wait_for_proc_work" after its thread->looper has been
+marked as BINDER_LOOPER_STATE_{ENTERED|REGISTERED}.
 
-On Thu, 2024-01-18 at 05:35 -0800, Yang Shi wrote:
-> The commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
-> boundaries") caused two issues [1] [2] reported on 32 bit system or compa=
-t
-> userspace.
->=20
-> It doesn't make too much sense to force huge page alignment on 32 bit
-> system due to the constrained virtual address space.
+This means an unregistered reader risks waiting indefinitely for work
+since it never gets added to the proc->waiting_threads. If there are no
+further references to its waitqueue either the task will hang. The same
+applies to readers using the (e)poll interface.
 
-Hi people,
+I couldn't find the rationale behind this restriction. So this patch
+restores the previous behavior of allowing unregistered threads to
+"wait_for_proc_work". Note that an error message for this scenario,
+which had previously become unreachable, is now re-enabled.
 
-sorry for beeing so late. I've looked at this following the OpenSSH issue
-(CVE-2024-6387 [1]) and especially the impact on IA-32 installations where
-ASLR is apparently broken.
+Fixes: 1b77e9dcc3da ("ANDROID: binder: remove proc waitqueue")
+Cc: stable@vger.kernel.org
+Cc: Martijn Coenen <maco@google.com>
+Cc: Arve Hj=C3=B8nnev=C3=A5g <arve@google.com>
+Signed-off-by: Carlos Llamas <cmllamas@google.com>
+---
+ drivers/android/binder.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-There was a recent thread [2] on oss-security discussing the issue.
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index b21a7b246a0d..2d0a24a56508 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -570,9 +570,7 @@ static bool binder_has_work(struct binder_thread *threa=
+d, bool do_proc_work)
+ static bool binder_available_for_proc_work_ilocked(struct binder_thread *t=
+hread)
+ {
+ 	return !thread->transaction_stack &&
+-		binder_worklist_empty_ilocked(&thread->todo) &&
+-		(thread->looper & (BINDER_LOOPER_STATE_ENTERED |
+-				   BINDER_LOOPER_STATE_REGISTERED));
++		binder_worklist_empty_ilocked(&thread->todo);
+ }
+=20
+ static void binder_wakeup_poll_threads_ilocked(struct binder_proc *proc,
+--=20
+2.45.2.993.g49e7a77208-goog
 
-Looking at the commit log I think the intention was to fix this both for:
-- - 32 bit process running on 64 bit kernels: in_compat_syscall()
-- - all processes running on 32 bit kernels: IS_ENABLED(CONFIG_32BIT)
-
-Unfortunately, as far as I can tell, CONFIG_32BIT is not enabled on 32bit x=
-86
-kernels. Maybe CONFIG_X86_32 would be the right one there?
-
-[1] https://www.openwall.com/lists/oss-security/2024/07/01/3
-[2] https://www.openwall.com/lists/oss-security/2024/07/08/3
-- --=20
-Yves-Alexis
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEE8vi34Qgfo83x35gF3rYcyPpXRFsFAmaQPCQACgkQ3rYcyPpX
-RFvSHQf/VE7td7scTTsrK7Cx0F3MmDLFgjUDbMDuyPq6lNQqnDbd2zc00JP1eeLs
-/mW1uZNbR92bn6xq2sPJu7c6tB3MJuiQme+ZqnPfIgyoWc89i6V6WUXTZN077lIl
-xJZxHLMei5KreHz66AYU66HdU89knMTcX362YyyI8dEZKXS3FlP0SLSoBM0UKY0G
-HYM6+GetE+fINhfNSMpHgqkTQB825Vqdq5UBsBjHYMg5RJ92/fDgUo5RD7qm/HVz
-SDDNSGwpVwYZ20RnnD+DOS9rsnyR4FcAP0m0dcTmQdM8GcY4SyjnEux5idvCicjy
-a1jmvsSLxCMZ9mZsrsipIZoNhSHlDA=3D=3D
-=3Df0Lk
------END PGP SIGNATURE-----
 
