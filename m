@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-249031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0671292E546
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:59:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8082292E54B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3843C1C20C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:59:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA6C0B232DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 10:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA1F15A851;
-	Thu, 11 Jul 2024 10:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3625215B113;
+	Thu, 11 Jul 2024 10:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mXAwW7MI"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SG716DhI"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A8915A84A
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F8515A873
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 10:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720695540; cv=none; b=q5gjk5kA0R3zba0Z91PbpRQXlRRTH6lwtu8CgLKbOav2S624CHfFG6thMuSjemC+npO9YKWhXbJXb7r6xWK4okdwxeWYXn7pSv6CmVznc7VAovnQL2X9NuiV9AFTzMVIkAl5eYglkuuBnRI0URYyp8sjR7FFtVmnkLAVhenHGQE=
+	t=1720695542; cv=none; b=HAyEn6Vne1CLDDXwc6/NduC8hIy3GtG3ByeqR+Sw/KDQ0LuyVYNMxV3z4AIoC30u3fZ70djMdxoHny2PEoCew93JD9oEmWmsTwxi0nox/8CJz1LNL8SK//6LHrFcrIF7HzNu4MXIdJHcNFNPKqPfE9qtYTLgB+m/89tlw3Uj81c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720695540; c=relaxed/simple;
-	bh=8F5cu1Nbgdv4LRNHCnmFtoPrKLEu6NjO08uCvgHdr/o=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gs1oHTSCsDqOjSmbmkWs2ScLZa8mSrHrHg3wm4pl75UMUv2f40Ncf7yA2bhCt4RAcyUQXO1y8OIMg+54esmKqTPMSUbN9Vt6nlgsVtGWoLOJ3gDuNcTUrvwH2J/p+Rd4nHXYsVTAEmBjCd7coV//uYkLkn7ErZW7lLcFqKEVWQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mXAwW7MI; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1720695542; c=relaxed/simple;
+	bh=o5wmjjrS0U5dVav+92IGsPmpYlccYdlL2eO7w6/h1Rg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qN7hVBHxOAET+2h1hblOb5fjSYcHXLyTljyBHGv2NUv53zK1xg8fxXGOZnCkdmUAOUX00uM/NEo+MFcb1IsonOyPtpvuDItOu6RhwBR793YH8wqQP+0ppbsYceng6LgGvA9Q36NbPrZSJuAsPo3e2PoFhwgJTXUsGsLuxu4O8wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SG716DhI; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7523f0870cso90098166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:58:58 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ea929ea56so1462582e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 03:59:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720695537; x=1721300337; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LvJE+2dq9rYOh/AV+Ot4mrkMQ+gmhep7qxXNI0HNNrY=;
-        b=mXAwW7MIpTWwhasTk4BcsKls1TvBkVVDHPRCXUlFK+1DRXF6qlJJrwwzGl9GnXRQcx
-         lO5Dmcc9FNkcAAqzPb01fCJCuAM4TgXn8ZRtsVEunc4dPUC7g4RGFPqenemAhR10hCjh
-         TstoEHdO6DfL8t7Y705+kJF61b53bphO5VINyGRcMEUAf8LPYfiqp8wlcaxW1T5AGsAR
-         D8CwZ5MS54elnx5OXk8RdmwIGvKUiCb415NoXsY5xwdzvaRZyNIoJsjY9H2MWybK+Kd0
-         +VGW+XPyLH4vSlCMobTsd10P3qP+64cEc8vFesa/6jHUmcHu2Oz/rxYtBDe49zdu35Ij
-         h7Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720695537; x=1721300337;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1720695538; x=1721300338; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LvJE+2dq9rYOh/AV+Ot4mrkMQ+gmhep7qxXNI0HNNrY=;
-        b=ZARFjc1XSE0FLEBXPHIlMY1nRS5bxPj/4mEdZHRpOA2+dVI5xKFX9yIvxmZKH7q3cV
-         /7FpdYu7GpGVNP2PAIvBj/7/t4IuZ4Qd8FwKydUJ7u/6P7yeoEw9y2v1CyIiNkXTWz2B
-         21S4+lBCep6u2rl2z0BofTyGfkMRxqJSAtRvKliKVCcXlFql6Es6SdHZRBXzoJmOUTG5
-         l9r/o9ALwox8zqTYAlkrlr+SoR66KyBur4tznQb5Yxmt5b6ec6EtrudN7zUK1+KlWgL9
-         pQBNHkRHmxMvfjxAuQswvKER3DvvE/gm/YORpwBCzSv1yH7vce+GZwJNJxuqtQ36Iz5T
-         IqVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDpe+Q+2kaqV6viQd48QBeN4KeR5RI20vHytKn0Pg3qYWoT3m6PnTyR0VzzIqkkkssVhZ3tmZNyH2PxW/6eqgkBfMiyOpF+O9KZl+y
-X-Gm-Message-State: AOJu0Yyew8NtCJP0u5DCyTwHiDmRc9wQyESYRxjPtwxHDnhQkLLYBo1s
-	nMdAr2BK/REaPhzy7XNd6hyUJmPQU6NuYWZZQ/TvHXYH7aO415TF1jMHJY0Uu30=
-X-Google-Smtp-Source: AGHT+IEAW01nZBJFD5VdSSV3PecfmH4qafPWxkDUGCRoxv1ctIabspJoRoPmVVEBMq++Ku3GjQ0X4A==
-X-Received: by 2002:a17:907:868c:b0:a77:c548:6452 with SMTP id a640c23a62f3a-a780b6fe882mr729736466b.41.1720695536680;
-        Thu, 11 Jul 2024 03:58:56 -0700 (PDT)
+        bh=VRZQkTNZjsLuCasezyPCrKEKVyWJYvPN1YmP0VrOd88=;
+        b=SG716DhIHjeLqUlxd2Jrb8PMwMyLy35/YtjCIkqJEo20XUydBVFKJiS6nQ5p33WQY5
+         bR4IOeICAgXAqoDosa/MA0rOJbFPZXwFuYDlAtTe0DwcflYFGWBz5YY5IDzj6jL7T7eF
+         wYXy1oHyep6R2/qlJ0CM1mbFA0x9LMGfo7P2PxgoWyQEO7wpNlJsYXZpHVbfHfGRSbRZ
+         njjOUwxLBt7qQYeyoVfwVvoPIocKsUGWHE9uib130QoBx2+eS2FgJpddHt8/I5zCkWVl
+         OLD1ZN6+0wd1gRZ0qrvYcSVj9avFoehnN611PY+qhGZjMHm4OmU8uRlgoMmHpVuCtC7Y
+         HPDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720695538; x=1721300338;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VRZQkTNZjsLuCasezyPCrKEKVyWJYvPN1YmP0VrOd88=;
+        b=wmKr87276gH+ASLnTND9otOnvK/jbxsDvlSVaSvm1VYssTmzPwgyxgwk8/vo042HHF
+         D6XfbwORGgapW95W1iWkuethCiudMlDv+6UvgfcZq8q2qqcR/cYmWTVADjiQssLc+7sh
+         vih96EHY7VHJqEGmJiwm279j5IYJvdyKn9h5/QJrVnnn/BrmNhm0laKj5CJjeFLeXqPH
+         /XOi/yYmvcNu1swlOeFkj5lwvV8QDjzGL3zfPqncr1wp5H5uoYYSa8/H3yA9EM2Gj5oC
+         zBKQkvk5dPNh+hqAzJS41Uoi+zZ8FGvK+AWNqab1MCKN+zuJh9ATpZQ7f4T1YkR9qyuk
+         Gcag==
+X-Forwarded-Encrypted: i=1; AJvYcCXxsmwf6wStat8iuS82k9ts5Pn5Fm5ATvVqZSBq1QkOf8m1/atOrjYk/U+MyP7ozmtIVF6MSXe7tM6UIX2aaAcxNPU0qfGm4GllkLX9
+X-Gm-Message-State: AOJu0YysZPOsI8KcWd23oQ3vbGstRYsU55rVOnN9JuCr8oy3Ktttz+XY
+	atLdUMI6lRvPBDDw/a0x9XiklzX2LgnpzZr+V/jNkdE2+WS0jDokS8Anq5UDqTrmIAsob/OWRqI
+	q
+X-Google-Smtp-Source: AGHT+IEF9wvlnvvFUWUZi8NqcwbGeBGoD4ZWjsTKI8p5uJ3qILXRhPu+GBSzmLrXexXHZQDnIDl5yA==
+X-Received: by 2002:a19:7508:0:b0:52c:e1cd:39bd with SMTP id 2adb3069b0e04-52eb9991e39mr5920243e87.13.1720695538187;
+        Thu, 11 Jul 2024 03:58:58 -0700 (PDT)
 Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a871f2fsm244209966b.202.2024.07.11.03.58.55
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a871f2fsm244209966b.202.2024.07.11.03.58.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 03:58:56 -0700 (PDT)
+        Thu, 11 Jul 2024 03:58:57 -0700 (PDT)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: [PATCH 0/2] x1e80100 dt cleanups
-Date: Thu, 11 Jul 2024 12:58:45 +0200
-Message-Id: <20240711-topic-hhh-v1-0-a1b6b716685f@linaro.org>
+Date: Thu, 11 Jul 2024 12:58:46 +0200
+Subject: [PATCH 1/2] arm64: dts: qcom: x1e80100: Fix up hex style
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,9 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOW6j2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDc0ND3ZL8gsxk3YyMDF2L5BTj1BQLM4MUCxMloPqCotS0zAqwWdGxtbU
- AikauXFsAAAA=
+Message-Id: <20240711-topic-hhh-v1-1-a1b6b716685f@linaro.org>
+References: <20240711-topic-hhh-v1-0-a1b6b716685f@linaro.org>
+In-Reply-To: <20240711-topic-hhh-v1-0-a1b6b716685f@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>
@@ -86,35 +88,269 @@ Cc: Marijn Suijten <marijn.suijten@somainline.org>,
  linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720695535; l=833;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720695535; l=7801;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=8F5cu1Nbgdv4LRNHCnmFtoPrKLEu6NjO08uCvgHdr/o=;
- b=hdWv2NmA9+0va34hfJCJrN8qQiSgnY7I8O9TBjBXpybIHbC1QZhFtcGOkGe+1jRnaGJeuHsns
- YFR8Ay56WlmDEELQyUpJTOi6JLKxsq2OFmDZW0+F1nN2MPoXVj6S/i6
+ bh=o5wmjjrS0U5dVav+92IGsPmpYlccYdlL2eO7w6/h1Rg=;
+ b=i+fqq4StFGLGiBh/G+E0+LqkhN/ESlSwCL/bSutssHNRPLAZG7ZEtd+nRnsVwp4vH46sbXvvU
+ 7tI+HWFYAmSAY5s5dQ7elGkanILMtmFdUsT1bxNY37doY18QKraBdcm
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-no functional changes
+Adhere to the convention: pad the addresses to 8 hex digits and use
+lowercase letters.
+
+Compile tested, no difference.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
-Konrad Dybcio (2):
-      arm64: dts: qcom: x1e80100: Fix up hex style
-      arm64: dts: qcom: x1e80100: Disable SMB2360_2 by default
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 78 +++++++++++++++++-----------------
+ 1 file changed, 39 insertions(+), 39 deletions(-)
 
- .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   |  4 --
- arch/arm64/boot/dts/qcom/x1e80100-crd.dts          |  4 ++
- .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts  |  4 ++
- arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi       |  2 +
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts          | 12 ++--
- arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 78 +++++++++++-----------
- 6 files changed, 57 insertions(+), 47 deletions(-)
----
-base-commit: f477dd6eede3ecedc8963478571d99ec3bf3f762
-change-id: 20240711-topic-hhh-8cd3ed860d84
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 7bca5fcd7d52..919500f562c3 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -1979,7 +1979,7 @@ qupv3_0: geniqup@bc0000 {
+ 
+ 			i2c0: i2c@b80000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0 0xb80000 0 0x4000>;
++				reg = <0 0x00b80000 0 0x4000>;
+ 
+ 				interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
+ 
+@@ -2144,7 +2144,7 @@ &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
+ 
+ 			spi2: spi@b88000 {
+ 				compatible = "qcom,geni-spi";
+-				reg = <0 0xb88000 0 0x4000>;
++				reg = <0 0x00b88000 0 0x4000>;
+ 
+ 				interrupts = <GIC_SPI 584 IRQ_TYPE_LEVEL_HIGH>;
+ 
+@@ -2243,7 +2243,7 @@ &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
+ 
+ 			i2c4: i2c@b90000 {
+ 				compatible = "qcom,geni-i2c";
+-				reg = <0 0xb90000 0 0x4000>;
++				reg = <0 0x00b90000 0 0x4000>;
+ 
+ 				interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
+ 
+@@ -2772,7 +2772,7 @@ usb_1_ss2_qmpphy_dp_in: endpoint {
+ 
+ 		cnoc_main: interconnect@1500000 {
+ 			compatible = "qcom,x1e80100-cnoc-main";
+-			reg = <0 0x1500000 0 0x14400>;
++			reg = <0 0x01500000 0 0x14400>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2781,7 +2781,7 @@ cnoc_main: interconnect@1500000 {
+ 
+ 		config_noc: interconnect@1600000 {
+ 			compatible = "qcom,x1e80100-cnoc-cfg";
+-			reg = <0 0x1600000 0 0x6600>;
++			reg = <0 0x01600000 0 0x6600>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2790,7 +2790,7 @@ config_noc: interconnect@1600000 {
+ 
+ 		system_noc: interconnect@1680000 {
+ 			compatible = "qcom,x1e80100-system-noc";
+-			reg = <0 0x1680000 0 0x1c080>;
++			reg = <0 0x01680000 0 0x1c080>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2799,7 +2799,7 @@ system_noc: interconnect@1680000 {
+ 
+ 		pcie_south_anoc: interconnect@16c0000 {
+ 			compatible = "qcom,x1e80100-pcie-south-anoc";
+-			reg = <0 0x16c0000 0 0xd080>;
++			reg = <0 0x016c0000 0 0xd080>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2808,7 +2808,7 @@ pcie_south_anoc: interconnect@16c0000 {
+ 
+ 		pcie_center_anoc: interconnect@16d0000 {
+ 			compatible = "qcom,x1e80100-pcie-center-anoc";
+-			reg = <0 0x16d0000 0 0x7000>;
++			reg = <0 0x016d0000 0 0x7000>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2817,7 +2817,7 @@ pcie_center_anoc: interconnect@16d0000 {
+ 
+ 		aggre1_noc: interconnect@16e0000 {
+ 			compatible = "qcom,x1e80100-aggre1-noc";
+-			reg = <0 0x16E0000 0 0x14400>;
++			reg = <0 0x016e0000 0 0x14400>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2826,7 +2826,7 @@ aggre1_noc: interconnect@16e0000 {
+ 
+ 		aggre2_noc: interconnect@1700000 {
+ 			compatible = "qcom,x1e80100-aggre2-noc";
+-			reg = <0 0x1700000 0 0x1c400>;
++			reg = <0 0x01700000 0 0x1c400>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2835,7 +2835,7 @@ aggre2_noc: interconnect@1700000 {
+ 
+ 		pcie_north_anoc: interconnect@1740000 {
+ 			compatible = "qcom,x1e80100-pcie-north-anoc";
+-			reg = <0 0x1740000 0 0x9080>;
++			reg = <0 0x01740000 0 0x9080>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2844,7 +2844,7 @@ pcie_north_anoc: interconnect@1740000 {
+ 
+ 		usb_center_anoc: interconnect@1750000 {
+ 			compatible = "qcom,x1e80100-usb-center-anoc";
+-			reg = <0 0x1750000 0 0x8800>;
++			reg = <0 0x01750000 0 0x8800>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2853,7 +2853,7 @@ usb_center_anoc: interconnect@1750000 {
+ 
+ 		usb_north_anoc: interconnect@1760000 {
+ 			compatible = "qcom,x1e80100-usb-north-anoc";
+-			reg = <0 0x1760000 0 0x7080>;
++			reg = <0 0x01760000 0 0x7080>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2862,7 +2862,7 @@ usb_north_anoc: interconnect@1760000 {
+ 
+ 		usb_south_anoc: interconnect@1770000 {
+ 			compatible = "qcom,x1e80100-usb-south-anoc";
+-			reg = <0 0x1770000 0 0xf080>;
++			reg = <0 0x01770000 0 0xf080>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -2871,7 +2871,7 @@ usb_south_anoc: interconnect@1770000 {
+ 
+ 		mmss_noc: interconnect@1780000 {
+ 			compatible = "qcom,x1e80100-mmss-noc";
+-			reg = <0 0x1780000 0 0x5B800>;
++			reg = <0 0x01780000 0 0x5B800>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -3337,7 +3337,7 @@ gem_noc: interconnect@26400000 {
+ 
+ 		nsp_noc: interconnect@320c0000 {
+ 			compatible = "qcom,x1e80100-nsp-noc";
+-			reg = <0 0x320C0000 0 0xE080>;
++			reg = <0 0x320C0000 0 0xe080>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -3671,7 +3671,7 @@ data-pins {
+ 
+ 		lpass_ag_noc: interconnect@7e40000 {
+ 			compatible = "qcom,x1e80100-lpass-ag-noc";
+-			reg = <0 0x7e40000 0 0xE080>;
++			reg = <0 0x07e40000 0 0xe080>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -3680,7 +3680,7 @@ lpass_ag_noc: interconnect@7e40000 {
+ 
+ 		lpass_lpiaon_noc: interconnect@7400000 {
+ 			compatible = "qcom,x1e80100-lpass-lpiaon-noc";
+-			reg = <0 0x7400000 0 0x19080>;
++			reg = <0 0x07400000 0 0x19080>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -3689,7 +3689,7 @@ lpass_lpiaon_noc: interconnect@7400000 {
+ 
+ 		lpass_lpicx_noc: interconnect@7430000 {
+ 			compatible = "qcom,x1e80100-lpass-lpicx-noc";
+-			reg = <0 0x7430000 0 0x3A200>;
++			reg = <0 0x07430000 0 0x3A200>;
+ 
+ 			qcom,bcm-voters = <&apps_bcm_voter>;
+ 
+@@ -4202,11 +4202,11 @@ opp-575000000 {
+ 
+ 			mdss_dp0: displayport-controller@ae90000 {
+ 				compatible = "qcom,x1e80100-dp";
+-				reg = <0 0xae90000 0 0x200>,
+-				      <0 0xae90200 0 0x200>,
+-				      <0 0xae90400 0 0x600>,
+-				      <0 0xae91000 0 0x400>,
+-				      <0 0xae91400 0 0x400>;
++				reg = <0 0x0ae90000 0 0x200>,
++				      <0 0x0ae90200 0 0x200>,
++				      <0 0x0ae90400 0 0x600>,
++				      <0 0x0ae91000 0 0x400>,
++				      <0 0x0ae91400 0 0x400>;
+ 
+ 				interrupts-extended = <&mdss 12>;
+ 
+@@ -4285,11 +4285,11 @@ opp-810000000 {
+ 
+ 			mdss_dp1: displayport-controller@ae98000 {
+ 				compatible = "qcom,x1e80100-dp";
+-				reg = <0 0xae98000 0 0x200>,
+-				      <0 0xae98200 0 0x200>,
+-				      <0 0xae98400 0 0x600>,
+-				      <0 0xae99000 0 0x400>,
+-				      <0 0xae99400 0 0x400>;
++				reg = <0 0x0ae98000 0 0x200>,
++				      <0 0x0ae98200 0 0x200>,
++				      <0 0x0ae98400 0 0x600>,
++				      <0 0x0ae99000 0 0x400>,
++				      <0 0x0ae99400 0 0x400>;
+ 
+ 				interrupts-extended = <&mdss 13>;
+ 
+@@ -4368,11 +4368,11 @@ opp-810000000 {
+ 
+ 			mdss_dp2: displayport-controller@ae9a000 {
+ 				compatible = "qcom,x1e80100-dp";
+-				reg = <0 0xae9a000 0 0x200>,
+-				      <0 0xae9a200 0 0x200>,
+-				      <0 0xae9a400 0 0x600>,
+-				      <0 0xae9b000 0 0x400>,
+-				      <0 0xae9b400 0 0x400>;
++				reg = <0 0x0ae9a000 0 0x200>,
++				      <0 0x0ae9a200 0 0x200>,
++				      <0 0x0ae9a400 0 0x600>,
++				      <0 0x0ae9b000 0 0x400>,
++				      <0 0x0ae9b400 0 0x400>;
+ 
+ 				interrupts-extended = <&mdss 14>;
+ 
+@@ -4450,11 +4450,11 @@ opp-810000000 {
+ 
+ 			mdss_dp3: displayport-controller@aea0000 {
+ 				compatible = "qcom,x1e80100-dp";
+-				reg = <0 0xaea0000 0 0x200>,
+-				      <0 0xaea0200 0 0x200>,
+-				      <0 0xaea0400 0 0x600>,
+-				      <0 0xaea1000 0 0x400>,
+-				      <0 0xaea1400 0 0x400>;
++				reg = <0 0x0aea0000 0 0x200>,
++				      <0 0x0aea0200 0 0x200>,
++				      <0 0x0aea0400 0 0x600>,
++				      <0 0x0aea1000 0 0x400>,
++				      <0 0x0aea1400 0 0x400>;
+ 
+ 				interrupts-extended = <&mdss 15>;
+ 
 
-Best regards,
 -- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+2.45.2
 
 
