@@ -1,53 +1,44 @@
-Return-Path: <linux-kernel+bounces-249193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-249171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAFDC92E843
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:28:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C27AE92E7EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 14:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90E331F21EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:28:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECDFB1C22123
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 12:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A296915B995;
-	Thu, 11 Jul 2024 12:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="rsbL5l1q"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64AC15B125;
+	Thu, 11 Jul 2024 12:05:46 +0000 (UTC)
+Received: from relay162.nicmail.ru (relay162.nicmail.ru [91.189.117.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADDB156F3C;
-	Thu, 11 Jul 2024 12:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9633E1459E3;
+	Thu, 11 Jul 2024 12:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.189.117.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720700902; cv=none; b=CWuZtnNyYGJzsHnhzM/6heGf4wWboTH80v0v9jY2bULidybaC+N2PMKNNAibNYcVrNpYGBJFRx50Du63L6WrC3CVwITUnOq/r4GqYCVbFIoJvjv33Ce40C1euWUHnDxC0vc6kWY8cZrq8rPi3Eg36uMgktF6tnZi7WexUJ2Oa9c=
+	t=1720699546; cv=none; b=XSZleU4PFEVzUl19X01JqSduDBsWc4iSillTxi4VZoRLCivL0dIqqX2TCAmk9SbznJT8KZSxhScg+1fJK2zWrC9o95FCE0rib1Jd8ACEHU4ZdFh5Nbpd4G4Wr9ZJNmty8/Vc5OxC/tvRa0ZWQV5oppqTCl0q+MenLVqaEfMQhL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720700902; c=relaxed/simple;
-	bh=i4hyI/hy0o2C6P+eReJ4tkD49PMyVqhEhDDKVFDTbiM=;
+	s=arc-20240116; t=1720699546; c=relaxed/simple;
+	bh=UEG5oO4aQWYowkNRCgVYBDNTQFSZJ3RG3sBGHi73afE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tSaZD7FxC9NLL3QLigVYuWHycarIuM3bnqUxoah2H+EJWTTOhvziQ6yS5aB9seVElu6a1dSB417CH8gJbg4G8JlaVxZozThs6ByiUnF+rVORncHTznRso4eXN+bMMi44Q2UmVBfrWSkYG4d0t5Nk4mC8tgsc+ZlDlkCgky3whvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=rsbL5l1q; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 757B787CDB;
-	Thu, 11 Jul 2024 14:28:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1720700893;
-	bh=NIzryQ37ZZoNVW+U0vbGNpcPRjx/Ml6ebapl6goqrtg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rsbL5l1quHBJDTctuFf/JbNjErt2GHuDH7RbMyG9r2Fw1zSoB1oDDVbbFkNFpES0n
-	 wHFaqDRHwYP19WSXRR50zhgr2TY9zx91OFAEymfZbe0RHxxj6xb+U5M5Vilcqw4P3j
-	 6xI7VTdZk6wc57K6z3CCkeBF8gcEhh7+DxOTSXsec1oilpHAOJ8m11Gr7Ku68jE5K2
-	 5CE4zw9/tfVNT/VDO0P6rQDnUNm61kzc3yzOp46cGbDwCM7kzEjiKGwToToJt1Y+89
-	 BdBW0eP6G7vXhvTNmO7w9HhiSQDGDaSoaCi5uWEQryhCT9IpSGe82y/YJzyv+g/0Yp
-	 ISn6eZBQn5ixg==
-Message-ID: <1458500b-150f-4882-992c-02823cb8dcf8@denx.de>
-Date: Thu, 11 Jul 2024 13:47:02 +0200
+	 In-Reply-To:Content-Type; b=e7TNhlCywbAyRo4p0+1hRoRbnaJno4esfl2n0UgYIzfR4cJgUFtOptnSNOl+MA7Dd3vEfH+mwIea6D4PCC2Gra4exOUdIdyW75CjsIC1MHa4WaIpGFs1UYRFPI7lE9EGCUUp3Bmm/KK8y15JHhBNBDM36WHbIq5scYPZJkj7JIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru; spf=pass smtp.mailfrom=ancud.ru; arc=none smtp.client-ip=91.189.117.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ancud.ru
+Received: from [10.28.138.148] (port=29942 helo=[192.168.95.111])
+	by relay.hosting.mail.nic.ru with esmtp (Exim 5.55)
+	(envelope-from <kiryushin@ancud.ru>)
+	id 1sRsLr-0003JI-9K;
+	Thu, 11 Jul 2024 14:52:44 +0300
+Received: from [87.245.155.195] (account kiryushin@ancud.ru HELO [192.168.95.111])
+	by incarp1101.mail.hosting.nic.ru (Exim 5.55)
+	with id 1sRsLr-003wUg-2W;
+	Thu, 11 Jul 2024 14:52:43 +0300
+Message-ID: <74a44b62-def7-4848-9495-caebcc382b5c@ancud.ru>
+Date: Thu, 11 Jul 2024 14:52:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,46 +46,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] leds: leds-pca995x: Add support for NXP PCA9956B
-To: pieterjanca@gmail.com, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Isai Gaspar <isaiezequiel.gaspar@nxp.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240711-pca995x-v3-0-a1bf1f3c3f5a@gmail.com>
- <20240711-pca995x-v3-2-a1bf1f3c3f5a@gmail.com>
+Subject: Re: [PATCH net-next v3] tg3: Remove residual error handling in
+ tg3_suspend
+To: Pavan Chebbi <pavan.chebbi@broadcom.com>
+Cc: Michael Chan <mchan@broadcom.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org,
+ Michael Chan <michael.chan@broadcom.com>
+References: <20240709165410.11507-1-kiryushin@ancud.ru>
+ <CALs4sv20_K0P_Ach=_kZ1jDZHKXvvcNBxatF9sP0iHRNku2OMQ@mail.gmail.com>
+ <c5601e9d-e020-483f-a984-886f1aaf3207@ancud.ru>
+ <CALs4sv2mxjHkOB95UysSPKCZ1v8+SJqyxi8cvB0b==3dEakeEw@mail.gmail.com>
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20240711-pca995x-v3-2-a1bf1f3c3f5a@gmail.com>
+From: Nikita Kiryushin <kiryushin@ancud.ru>
+In-Reply-To: <CALs4sv2mxjHkOB95UysSPKCZ1v8+SJqyxi8cvB0b==3dEakeEw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+X-MS-Exchange-Organization-SCL: -1
 
-On 7/11/24 9:52 AM, Pieterjan Camerlynck via B4 Relay wrote:
+Thank You! It was an outdated tree on my side, what a shame.
+Sorry for the confusion.
 
-[...]
-
-> @@ -52,9 +69,9 @@ struct pca995x_led {
->   };
->   
->   struct pca995x_chip {
-> +	const struct pca995x_chipdef *chipdef;
->   	struct regmap *regmap;
->   	struct pca995x_led leds[PCA995X_MAX_OUTPUTS];
-> -	int btype;
-
-Nitpick, maybe you can replace btype with chipdef in this place, without 
-reordering the structure ?
-
->   };
->   
->   static int pca995x_brightness_set(struct led_classdev *led_cdev,
-
-In any case:
-
-Reviewed-by: Marek Vasut <marex@denx.de>
-
-Thanks !
+On 7/11/24 07:02, Pavan Chebbi wrote:
+> No, I do see the patch in net-next. (net->net-next merge takes care)
+> Please rebase to latest?
+>
 
