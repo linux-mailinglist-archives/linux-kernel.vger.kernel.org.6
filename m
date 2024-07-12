@@ -1,235 +1,236 @@
-Return-Path: <linux-kernel+bounces-250337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DEF792F69F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:59:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B0392F54F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670122817A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:59:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA17E1C21CE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFE01422AF;
-	Fri, 12 Jul 2024 07:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2F113D50A;
+	Fri, 12 Jul 2024 06:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cs-soprasteria.com header.i=@cs-soprasteria.com header.b="0ttg/nx2"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2085.outbound.protection.outlook.com [40.107.21.85])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l/oIGFNN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C309113F454;
-	Fri, 12 Jul 2024 07:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720771190; cv=fail; b=Kt945SWEgBy8RL5/QWLs6GfhCmAoeQGkj40Na3HVwxa3QlVhAnGUQ4le3wQVC5ZvVWm0BB5fv+W00XM8/ngx5Tf9QPNJShk2CpcXigIbdGAXXltjdeNih4sQt3GpoE9lGZLeDCwYwXhTrVJIYyVIgrN8NxSziWeAuS8O31ktHMU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720771190; c=relaxed/simple;
-	bh=sZoqRXetGTDJcFa32dEQS5bIWtE2/f8XZ2WfWKnQTnc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=M5/f6MQP34vqpUFhayrd2Ch+TMUAmlf6S+N6kF2LM7//WjnhYuH+wiTmZUA0juwg3zW3YYCRBhhxdo09L0GJukZTrnAeSDPQlO9UflUBia535OkewOypKUbEKiIqW0wf8VJsjwiAB5Gdt5G00YOY4eoEr4lEDWrp9GH4ZGAE/Xo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs-soprasteria.com; spf=pass smtp.mailfrom=cs-soprasteria.com; dkim=pass (2048-bit key) header.d=cs-soprasteria.com header.i=@cs-soprasteria.com header.b=0ttg/nx2; arc=fail smtp.client-ip=40.107.21.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs-soprasteria.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs-soprasteria.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Rbox0yNQiI6+rJyThackTfh0cMfZXYZWvX3fujejHtDwYSApLTWyQT1Kf+6LQf51+9dFhoflzz82kwc+r9A+y4Z07Ikej8X36Cpbof/8h6tUAaM060xrH+Bfti+f7a79A6KkWPMouU4GwFxqJe0r5ssNBoKyNEZiwT1NP5k2JFCgUQEToeCFzHQcObyEojVSIk16ieARPg84+k6kDT/itnTYXzePhMNDYjP5sKQmuYYtr127KMW/F2rmBxUpjNtPtHQ/LIIq/8dsDh191ObsYl6P/GKOvJascE5TF7Clv0EZbQwH7oJLIdOZku2Ca+rwdek1N0Z8+sD+Sk/e3G4MaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sZoqRXetGTDJcFa32dEQS5bIWtE2/f8XZ2WfWKnQTnc=;
- b=Cdx4j37z/gkKnFF7EFOqrCm9GrMtyGEismtvBA61QXlBc14poacH8Ir/zpyr5HlhSS4Yle6s55qWTZPNp0VxzUfU0CNXHjVmoeAArBb8w5gfOqjtoa/+i+D5pf27ziW/V5oEFAGLau/QySiEWNcWBE9Hpo571pqPI4qRJAx2acs5Obyjo7BIIm7Md/Pfl/e242eha8WaTWP1DJaKHSVaw+9+z2Nu9d3MT+gk3pKjeOxTraGf40+91+881pKv+wD3e0G3/hsC+cPMPKS8xgPslicbhDaRY/V+SNVeILgeC3EkOa8U+y36NZ05x9UMpmuKMUxul2pU7HiHi+izNGEpQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cs-soprasteria.com; dmarc=pass action=none
- header.from=cs-soprasteria.com; dkim=pass header.d=cs-soprasteria.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cs-soprasteria.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sZoqRXetGTDJcFa32dEQS5bIWtE2/f8XZ2WfWKnQTnc=;
- b=0ttg/nx2RB2AZWVFz38eAyDIZjZ38RYk+xlybAB72BzD5BJs1HQOTAkP6ofoMnXVvjUibLvj69A8w5mgy88oMPuizIlEMbSsqnVeCc/KzNJRHGT212BWVeFplxGmHH5A+Im2uEm0WBsZjQO4NwUi6GbOq3OplKX+Q5G3WjuBBBtGl+e/YqF5KpQMteIFi/+0liwmP1XTwO5twfI9owu2jtUYm0gFr3P7Pmnke7z8h4r5ULPquaG5YHwOfz0HdSFHrHrb02Ny6Dlx+2JAwr01LZpSvZwYxnsUBuR5R5IlufIeNthK4icWED3lVNGBjYzO8FfQNz9YgNgdo+qrz6A15w==
-Received: from AM0PR07MB4962.eurprd07.prod.outlook.com (2603:10a6:208:f3::19)
- by DU0PR07MB8417.eurprd07.prod.outlook.com (2603:10a6:10:351::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.19; Fri, 12 Jul
- 2024 07:59:44 +0000
-Received: from AM0PR07MB4962.eurprd07.prod.outlook.com
- ([fe80::6724:2919:9cbb:2bb2]) by AM0PR07MB4962.eurprd07.prod.outlook.com
- ([fe80::6724:2919:9cbb:2bb2%7]) with mapi id 15.20.7784.005; Fri, 12 Jul 2024
- 07:59:43 +0000
-From: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-To: Michael Ellerman <mpe@ellerman.id.au>, Mark Brown <broonie@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>, Arnd Bergmann <arnd@arndb.de>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Qiang Zhao <qiang.zhao@nxp.com>, Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam <festevam@gmail.com>, Nicolin
- Chen <nicoleotsuka@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, Thomas Petazzoni
-	<thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 07/10] soc: fsl: cpm1: qmc: Introduce functions to get
- a channel from a phandle list
-Thread-Topic: [PATCH v2 07/10] soc: fsl: cpm1: qmc: Introduce functions to get
- a channel from a phandle list
-Thread-Index: AQHay6pNvsbN6VJe70a8MonTZyE2rLHlgUWAgABkS4CADOYDgA==
-Date: Fri, 12 Jul 2024 07:59:43 +0000
-Message-ID: <9423930f-8cb8-4b31-927f-a93b1006fb18@cs-soprasteria.com>
-References: <20240701113038.55144-1-herve.codina@bootlin.com>
- <20240701113038.55144-8-herve.codina@bootlin.com>
- <a8c44188-d5d8-445d-9d64-bbfce6b1b628@sirena.org.uk>
- <87a5ixkghq.fsf@mail.lhotse>
-In-Reply-To: <87a5ixkghq.fsf@mail.lhotse>
-Accept-Language: fr-FR, en-US
-Content-Language: fr-FR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cs-soprasteria.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM0PR07MB4962:EE_|DU0PR07MB8417:EE_
-x-ms-office365-filtering-correlation-id: 1dbade5b-1b94-4fef-11ce-08dca2489726
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?OFdZMDM4MVF2ZE9QdTQrYzFvMkhzT2ZJWURiT1laQkc3S3pJL3lJcEFxNkpl?=
- =?utf-8?B?TG9KYUp2OXdyWW9mb29xUWc2MDBSUk0xeDJFZDFuLzAwb0NoSk5OeVQ4QnpI?=
- =?utf-8?B?RjdWQ3F0eDQ1SkxIbFZrQUU5a0xDQVVlNlNURDE2ek9lRnVUQUMyZHIzdFpY?=
- =?utf-8?B?dnRuV25IZkpHc2Y3eVpSdFBnTElwSHhUUjEwOUdSRFJBNkFUWjJQY3EvTk9E?=
- =?utf-8?B?ODIyZlVuY00vVFhCVEpOaElzaFpCNjdJcURNdllFcVUrbTBGZHo2VVlaeXIy?=
- =?utf-8?B?enlNY2VDMC8yOVU4UXZ2QXUwSnBKNVlNRkI4TnZUUFo1SjNkc0RTNGV3WWIy?=
- =?utf-8?B?SitPdzZNZjZHdytscVVPWFhobjYyc2owTlZZUEt2TGFKYjNnTXJtM215T1ps?=
- =?utf-8?B?T2JWK1BqTjlrNTZ3T3FaVk5UUGo1MDZtUXhwRCtxTGUzWkd6cXNJZ1ZRc1pR?=
- =?utf-8?B?bzBBSE96U2NxWTUxYWlsQWFqZ0MyVUdzbVJST1hnSkQ5U0FJSTNvejZjV0pi?=
- =?utf-8?B?eFd5MjFNZGMyaS93S0RQa2ovR0QzMnlGbkYvUDA2V2ZZZEcvRWVnV1liUVB4?=
- =?utf-8?B?aVo0MzFkSFIxNi8zVWJ3T2x3OVhJcW1Da0dtMlkxVWhnNDlaR1hJVCtzd29G?=
- =?utf-8?B?Z21PNzRNMXZibGtZRENjNWd3TjZqd0dmMmx0TlNhV0JUTExJbmV6T0tKMjls?=
- =?utf-8?B?dzhWeTVEVlZudzRlZHJkQ25mVzEzOWg1cy8xeXMvajlkcXVkZGZOY2toZGhE?=
- =?utf-8?B?Z1gvNDZJZEpNaGEwM2d6NzA3d1Mzc01wbmRSZUoyYzdodEdmM0hpenY3M25F?=
- =?utf-8?B?eVZaRkhsRmFVOTZ0aGM1d1RWY2o0ellsak9SQ1hPV2FpeGo0V1EyRzVnNGx2?=
- =?utf-8?B?REs1UUgvbW10dm5BalNYSEVOODVYWFVTYjJqU0FNelVMaTQ0WHJ5Ymx2bks4?=
- =?utf-8?B?TGttNkdEbnBjUFAxUE9kSEIxSmtqWisrcDY2dGtUY2VNN0VqYWxtTDlEZWsr?=
- =?utf-8?B?MndqdVBFZTVCbkVVYjgrUzdKbGZ5WmY1SzRwa2JPcVI4b0pFMUoxMjNyUGFT?=
- =?utf-8?B?NHRRR2pGODJjUDgzUDZ1YTROeWNUZ0lONGI0cUdURGh4RXlRbWd4SkZCSVZs?=
- =?utf-8?B?Ny90TmZSRm1qZ0tUSmlLUkQ0LzdBck5tb3E0eDhsUmhJYlY3QndaYWZnVmM2?=
- =?utf-8?B?dWdMS0RXd20vMzdhZjE5VDFyVkNnTW4wenlWWXVobFpnSTRFeVcwR2xlUkRQ?=
- =?utf-8?B?MUVHekgxSDBNazdNRW14OFlobTRsalBDSDlWTU9IUlYrQVVrelhjdmNHTlc2?=
- =?utf-8?B?cGRMcGMxYmVvYUVKSVlTZEp3UHdxZy9jY3U2Rnl0SlJwWEZWM2NGNzAwMHlO?=
- =?utf-8?B?eVhGb3RzZWxjSDRNd1FYTThuMy9PQ25HMzNBNTNOR2NYMU0zRzlZclhiNWRR?=
- =?utf-8?B?ckgxMExoVTRNY3pVRzY3ZkVFV3U1Q3c3cjZHQm1mTWw4c0ZZZS9WeTIvY0Vh?=
- =?utf-8?B?UVdZSDJyVlY2WU9yQ0tCL2QwSXRKRFAwbnR1MndVS3FBNmFpYVZxWCtWM05G?=
- =?utf-8?B?aFRyemhqR0xrK3hMTWRaUUtma01BVkNDbkVqa3pjZU9UdmRhcFc0WUFmeE1q?=
- =?utf-8?B?aVJsSnIxeFpxNTByUVFIUUsrQ09FRmJtRmp3UkNFQURubFF2UTA2UmFXQ2JR?=
- =?utf-8?B?eHJjY3ZGZ3IwVmV4NmpqS01IcjZDNWNURmcyMXZHNUE4WmFLcXdIR1NtVVAy?=
- =?utf-8?B?R2RzVk82UDBvOEZWZm05bStRQVJOK3JaOUJ1ZlFnZmZKa29wT0t0d2ZjZW1B?=
- =?utf-8?Q?2Wzpb7xBvCPiQTSSJqjb7bE9UfzTidk8SD40w=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR07MB4962.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?cERadG9rNVN1NG5TaCtYbFU5WEUrdUplWitmK0FTSFdtZGRuYXVXSHpHR2lI?=
- =?utf-8?B?ZEIrTHdKdzJ2a25YV243dXZVeHdmRUJRU1VnbGw3eUVzc3EyUmxJV3JkVnFy?=
- =?utf-8?B?Ly9LQ1p4Y3ZONzBjaTZ0cjhtYldlVE4zdG01REs3UDlMUU9FWENEOEsrNkF3?=
- =?utf-8?B?ZGgyT2tYRDBaUFZRZlF1UldsRm1qSENLK2NkNjlXVlU5UGU2ZDRBWHNDdDY4?=
- =?utf-8?B?ZnBhRHlvVmR1d05nUmJ6T3Z1MjZVUFp1V0xyQkdoSWRrQ0tiZCtwY2JWcy9L?=
- =?utf-8?B?MkcxNTltZVNCcm4rZUhOT3dDUnNqai80R2RrS0h5aHhOQ3VRbGc5d2lZQU9X?=
- =?utf-8?B?VVhoM29qRGN4NWxCQWhqcTlSVXh2K1FwUUprMWxtTXJwS0dnditjYkNidkR4?=
- =?utf-8?B?bStUa01YRnAra0N1WGpwZ3ZwVGs2UGxQQmhjT3RMRHMweHVVNG41d3l3dzBo?=
- =?utf-8?B?VVBKVW5JdllUQ0NRMkFmamo0eWtvU0t4ZVFpZlM4M0FwV2J6cW5Td2RGaWNl?=
- =?utf-8?B?ZUZoMkZaemFlaGFMN3U4ODZLZHVEQ21PTEtqL2l2RktvdDgyeWVzWmtEcU8r?=
- =?utf-8?B?d3FybXkwVGh1eFZ5OXdUYjRacTM4eUU0elVFNEFEVXBHemxoL2VjT29YaVZI?=
- =?utf-8?B?cHBDQThDZVZvZmdKQUNOS1dWT1B4OXZEanFaZ0JlVXlkbllIcHVpVmNENjlI?=
- =?utf-8?B?VFNONFo1aVBRTkpVeGxSNXdQU080ZXNYZjh1T1JuSGgwYlZZbHloM1JwRHNz?=
- =?utf-8?B?Z0lKL2FISFQzQkRoVitOQUVJU3o4c0ZLNGU4RlpXeXBhOFBWSWY4VXA0b054?=
- =?utf-8?B?dUtiTnllQmxXdVNZcHZLbmMraUQyR0FEL2FaNVVBeEhGcmxMMU15R1pYN29P?=
- =?utf-8?B?anhGZlhUb00wODlaUzlFTnlZNkRSdWRWcjc3dDFsNlFZMHdPaW9tT3NPOVFF?=
- =?utf-8?B?RzNDM3YyVHVKcGhockdJbi80SzcxVjBTakNXcDUxQytHeEhzRnM3Y1AwSjJn?=
- =?utf-8?B?SW5sMURud3dyQVNaTDZuZjNFMWppNkovQkcrK0I5MHU2VWJJMi9NSnh2ZmxZ?=
- =?utf-8?B?UVQwTmFBbVZLSUhlSVNVSUNHYUFOWEN5QmZmT2dVQk85S0syeUFMNmdiQ2hz?=
- =?utf-8?B?eTNOYXY1WWxKK2JES0E4ZWtZbk5uQVJUQmMwajducUtCTFBTbUhIRURXeGd6?=
- =?utf-8?B?M014cVRUVUNPZkwvdm9rQ0pYVWc2QUpXbklNRmhyOGZ0RmNZU2o4T2kvYWVZ?=
- =?utf-8?B?ZUVjU1p2dnJuYnFQZ0ZOYkVORlNCMmRWc3g0bzVDWDI3TTVWd05qczZpcC9t?=
- =?utf-8?B?N1hnUUZzOXJ2cDJyMnpUV3FXQjdlcnM1bzVabzAwaFo1MENub0tOalFJbS9x?=
- =?utf-8?B?Z2d0c1UwaGlHM2pYZFNlY1JTc1RxUStNVWFuMkVnSjJlTFdkN3M3YzFQMlNI?=
- =?utf-8?B?ZGdyQUZaTFpWd2FWenR0bFhVYmNPVFlHRlhHRHNURGZxZmJDYzM4Nmk5OEU5?=
- =?utf-8?B?TmlaZk56Rm9NYkQrSUkwSEFMMFJldFEvVVE5djFCMjBkRG54Z0Uvank4YWk5?=
- =?utf-8?B?SEIxaUJGTUtpdVFkUnNYbVBOYk1EdVZDeWF1YldJaDY1ZnJ2NHRoUlh2T0JL?=
- =?utf-8?B?NURGcnIxbnVTdWI5WkRtSHpXbGViM0w1NjJ1V2UySm1HM25hK2s0dmJEdENY?=
- =?utf-8?B?ZmdXNU1KZzVSQVJJWDgzYzFoUHZaaVRmWVBjcS9PV25XSXhTcmxmWHN3QklD?=
- =?utf-8?B?S2tMQjhDRG1KRmtRU2ZHREpyUWRIYUtzOVBsVVZzOTdRaCsrZFZiQlVlbUJk?=
- =?utf-8?B?UVdveVVKaGROZzVzdFJXelRhVEFkV0ErMmxlallkaTNpRnlCeTdPQ0ZUWUxE?=
- =?utf-8?B?SWxZT1Mramx4K0JLc05MU3k2NUpNcmVMNFJQdU0zTkRCTng2VWpEaTB2QlV0?=
- =?utf-8?B?bDNHYnYwL1Q2UnZFMmZlRDdOK0FDSEdHZzRQV0JxUlhRbDBlZi95QmhXVjNC?=
- =?utf-8?B?R2g4QXZWN1l5a3BNQ3RnLzlKeWJrUkZwMTNlRTJOWVQ1VS9yS2h0Vzk1dVp4?=
- =?utf-8?B?OVBwMXZoaTVkMVNoYXlMOUd2QndRdWQwQklUekk0OWpuclhFeGhBbXF4L2pP?=
- =?utf-8?B?ZW1RZHltREtLRWkvR1NDbW9uNi9PWkpkM0I3ZlgxV0VVZ01NU0tNZ20zaVZ0?=
- =?utf-8?B?cHc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7C67D9FDF9F7D840A9ACBA50C319D5B7@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B234B13CFB0;
+	Fri, 12 Jul 2024 06:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720764460; cv=none; b=qtAy77lBUNOUe8NwncDwlNNJhuz18nDE6xqxYauHmNCEEmTXN+ucmTskfEhvcKrsE05B5ryMo93L3jlZ8P4TxkJY8vGRs1YdmLUpsKvqxdqnnGOeLLVfKJlEBexNeXP8fX7bJoziMi7XKNi6LRZTM6uB9jHw/dRU2WSGRl1JZHg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720764460; c=relaxed/simple;
+	bh=o5lvfeUUUoomFKAxIJKfOCvtb4tndh2fIBaR29n/aJ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=riSEu6kd1MorlxuY0CAAMXjR8pRxZ75IFwM/oHWMCwZsUbA5KBbVnH7VlHPz/gt+SngYQQyHMWUc4MuZCZNJWH6PWMxZ8fGgMQvkrA6Hx7Fj+6C3I5Tb2/5wZyJyFipagwfD2JPFWyk4IrOxF/R5MMONvviu+IPnH6jdGOS8WDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l/oIGFNN; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720764459; x=1752300459;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=o5lvfeUUUoomFKAxIJKfOCvtb4tndh2fIBaR29n/aJ0=;
+  b=l/oIGFNNYDOIZz4eQp46DuQ/6XCx7iv7QOa18htTT+viSw8WZU/RLEYJ
+   H8Sz8abvXZyn+XxpFup6lje9FS0SdqMcorOoKNAW8oaShl1Y6bR+EvF1G
+   tMDtoyRZGsC/hPiq72gDWgJVXomXUjgoNOy88UOTC2BqcUlewLqEdhhaA
+   5Vb/r8xr+Caag9+776+0cyGY0YfU8sln/GYeBre7bVgp/MA6u4wN7wp65
+   5mz5Rb3GYonWyTkQhSh0j4M91vjMIwgbRQyMeEz2NZJYncxG31tfM8j9c
+   jrFQadEhkies0KPfKkPNssgbImAx3Nob8ZyqHDIFw57L3hf70Ns4BlptV
+   w==;
+X-CSE-ConnectionGUID: LwVlmWuATWG0WzkJ9esOeg==
+X-CSE-MsgGUID: GR/Sm1nqSP+NYHt4voYy/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="29597392"
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="29597392"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 23:07:26 -0700
+X-CSE-ConnectionGUID: Bh92un7EQhSrbbkHsWaPRA==
+X-CSE-MsgGUID: xPBQA+kiQAquipaFJnLmzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="49219323"
+Received: from emr.sh.intel.com ([10.112.229.56])
+  by orviesa006.jf.intel.com with ESMTP; 11 Jul 2024 23:07:23 -0700
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jim Mattson <jmattson@google.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Xiong Zhang <xiong.y.zhang@intel.com>,
+	Zhenyu Wang <zhenyuw@linux.intel.com>,
+	Like Xu <like.xu.linux@gmail.com>,
+	Jinrong Liang <cloudliang@tencent.com>,
+	Yongwei Ma <yongwei.ma@intel.com>,
+	Dapeng Mi <dapeng1.mi@intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [Patch v2] KVM: x86/pmu: Insert #GP for invalid architectural PMU MSRs access
+Date: Fri, 12 Jul 2024 12:49:17 +0000
+Message-Id: <20240712124917.68858-1-dapeng1.mi@linux.intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cs-soprasteria.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR07MB4962.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1dbade5b-1b94-4fef-11ce-08dca2489726
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2024 07:59:43.6907
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8b87af7d-8647-4dc7-8df4-5f69a2011bb5
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kAveYCrtHa7JZbKQzVPrzKNCx6AbP+PkObvVlfPwiyu5oGqWEYJGe03xwfWDqc9fTSJpJrUQGHKTJ9Qf4qXHLxxBBqEbk8B5Z8Si84JZbCiEk43xIIjSs+yaPZsNy1qg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR07MB8417
-X-MS-Exchange-CrossPremises-AuthAs: Internal
-X-MS-Exchange-CrossPremises-AuthMechanism: 04
-X-MS-Exchange-CrossPremises-AuthSource: AM0PR07MB4962.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossPremises-TransportTrafficType: Email
-X-MS-Exchange-CrossPremises-SCL: 1
-X-MS-Exchange-CrossPremises-messagesource: StoreDriver
-X-MS-Exchange-CrossPremises-BCC:
-X-MS-Exchange-CrossPremises-originalclientipaddress: 93.17.236.2
-X-MS-Exchange-CrossPremises-transporttraffictype: Email
-X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;
-X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent
-X-OrganizationHeadersPreserved: DU0PR07MB8417.eurprd07.prod.outlook.com
+Content-Transfer-Encoding: 8bit
 
-DQoNCkxlIDA0LzA3LzIwMjQgw6AgMDU6MDEsIE1pY2hhZWwgRWxsZXJtYW4gYSDDqWNyaXTCoDoN
-Cj4gTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwub3JnPiB3cml0ZXM6DQo+PiBPbiBNb24sIEp1
-bCAwMSwgMjAyNCBhdCAwMTozMDozNFBNICswMjAwLCBIZXJ2ZSBDb2RpbmEgd3JvdGU6DQo+Pj4g
-cW1jX2NoYW5fZ2V0X2J5cGhhbmRsZSgpIGFuZCB0aGUgcmVzb3VyY2UgbWFuYWdlZCB2ZXJzaW9u
-IHJldHJpZXZlIGENCj4+PiBjaGFubmVsIGZyb20gYSBzaW1wbGUgcGhhbmRsZS4NCj4+Pg0KPj4+
-IEV4dGVuZCB0aGUgQVBJIGFuZCBpbnRyb2R1Y2UgcW1jX2NoYW5fZ2V0X2J5cGhhbmRsZXNfaW5k
-ZXgoKSBhbmQgdGhlDQo+Pj4gcmVzb3VyY2UgbWFuYWdlZCB2ZXJzaW9uIGluIG9yZGVyIHRvIHJl
-dHJpZXZlIGEgY2hhbm5lbCBmcm9tIGEgcGhhbmRsZQ0KPj4+IGxpc3QgdXNpbmcgdGhlIHByb3Zp
-ZGVkIGluZGV4IHRvIGlkZW50aWZ5IHRoZSBwaGFuZGxlIGluIHRoZSBsaXN0Lg0KPj4NCj4+IFRo
-ZXNlIHR3byBQb3dlclBDIHBhdGNoZXMgc2VlbSB0cml2aWFsIGVub3VnaCBhbmQgaGF2ZSBnb3Qg
-bm8gcmVzcG9uc2UsDQo+PiB1bmxlc3Mgc29tZW9uZSBvYmplY3RzIEknbGwgZ28gYWhlYWQgYW5k
-IGFwcGx5IHRoZW0uDQo+IA0KPiBBY2suDQo+IA0KPiBNQUlOVEFJTkVSUyBzYXlzOg0KPiANCj4g
-RlJFRVNDQUxFIFFVSUNDIEVOR0lORSBMSUJSQVJZDQo+IE06ICAgICAgUWlhbmcgWmhhbyA8cWlh
-bmcuemhhb0BueHAuY29tPg0KPiBMOiAgICAgIGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3Jn
-DQo+IFM6ICAgICAgTWFpbnRhaW5lZA0KPiBGOiAgICAgIGRyaXZlcnMvc29jL2ZzbC9xZS8NCj4g
-RjogICAgICBpbmNsdWRlL3NvYy9mc2wvcWUvDQo+IA0KPiBCdXQgSSBzZWUgbm8gZW1haWwgZnJv
-bSB0aGF0IGFkZHJlc3Mgc2luY2UgSmFudWFyeSAyMDIxOg0KPiANCj4gICAgaHR0cHM6Ly9sb3Jl
-Lmtlcm5lbC5vcmcvYWxsLz9xPWYlM0FxaWFuZy56aGFvJTQwbnhwLmNvbQ0KPiANCj4gQW5kIGFj
-dHVhbGx5IGRyaXZlcnMvc29jL2ZzbCB3YXMgbWFya2VkIG9ycGhhbiBpbiBBcHJpbCwgbWF5YmUg
-dGhpcw0KPiBzaG91bGQgYmUgYWxzby4NCj4gDQo+IE9yIGRvZXMgSGVydmUgd2FudCB0byB0YWtl
-IG92ZXIgbWFpbnRhaW5pbmcgaXQ/DQoNCldlIGhhZCBzb21lIGRpc2N1c3Npb24gYWJvdXQgdGhh
-dCBpbiBBcHJpbCwgc2VlIA0KaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXhwcGMtZGV2LzIw
-MjQwMjE5MTUzMDE2Lm50bHRjNzZicGh3cnY2aG5Ac2tidWYvVC8jbWY2ZDRhNWVlZjc5ZThlYWU3
-YWUwNDU2YTI3OTRjMDFlNjMwYTY3NTYNCg0KSGVydsOpIGhhcyBzb21lIG9mIG91ciBoYXJkd2Fy
-ZSBmb3IgYSBsaW1pdGVkIHBlcmlvZCBvZiB0aW1lIGJlY2F1c2UgaGUgDQppcyBkb2luZyBzb21l
-IGltcGxlbWVudGF0aW9uIGZvciB1cywgYnV0IGhlIHdvbid0IGtlZXAgdGhhdCBoYXJkd2FyZSBv
-biANCnRoZSBsb25nIHJ1bi4NCg0KSSB3aWxsIHNlbmQgYSBwYXRjaCB0byB0YWtlIG92ZXIgbWFp
-bnRhaW5pbmcgZHJpdmVycy9zb2MvZnNsLw0KDQpDaHJpc3RvcGhlDQo=
+Return KVM_MSR_RET_INVALID instead of 0 to inject #GP to guest for all
+invalid architectural PMU MSRs access.
+
+Currently KVM silently drops the access and doesn't inject #GP for some
+invalid PMU MSRs like MSR_P6_PERFCTR0/MSR_P6_PERFCTR1,
+MSR_P6_EVNTSEL0/MSR_P6_EVNTSEL1, but KVM still injects #GP for all other
+invalid PMU MSRs.
+
+This behavior is introduced by 'commit 5753785fa977 ("KVM: do not #GP
+on perf MSR writes when vPMU is disabled")' in 2012. This looks more
+like a quirk and just want to respect some guests odd behavior for the
+legacy non-architectural PMUs.
+
+But for platforms with architectural PMU nowadays, this quirk can be
+dropped. Especially since Perfmon v6 starts, the GP counters could
+become discontinuous on HW, It's possible that HW doesn't support GP
+counters 0 and 1. #GP needs to be injected to guest to notify this case.
+
+All PMU related kselftests
+(pmu_counters_test/pmu_event_filter_test/vmx_pmu_caps_test) and KUT PMU
+tests (pmu/pmu_lbr/pmu_pebs) pass with this patch on Sapphire Rapids.
+
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+---
+ arch/x86/kvm/x86.c                            | 53 ++++++++++++-------
+ .../selftests/kvm/x86_64/pmu_counters_test.c  | 12 +++--
+ 2 files changed, 42 insertions(+), 23 deletions(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 994743266480..800442db0f21 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4051,16 +4051,6 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_IA32_MC0_CTL2 ... MSR_IA32_MCx_CTL2(KVM_MAX_MCE_BANKS) - 1:
+ 		return set_msr_mce(vcpu, msr_info);
+ 
+-	case MSR_K7_PERFCTR0 ... MSR_K7_PERFCTR3:
+-	case MSR_P6_PERFCTR0 ... MSR_P6_PERFCTR1:
+-	case MSR_K7_EVNTSEL0 ... MSR_K7_EVNTSEL3:
+-	case MSR_P6_EVNTSEL0 ... MSR_P6_EVNTSEL1:
+-		if (kvm_pmu_is_valid_msr(vcpu, msr))
+-			return kvm_pmu_set_msr(vcpu, msr_info);
+-
+-		if (data)
+-			kvm_pr_unimpl_wrmsr(vcpu, msr, data);
+-		break;
+ 	case MSR_K7_CLK_CTL:
+ 		/*
+ 		 * Ignore all writes to this no longer documented MSR.
+@@ -4137,6 +4127,24 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		vcpu->arch.guest_fpu.xfd_err = data;
+ 		break;
+ #endif
++	case MSR_K7_PERFCTR0 ... MSR_K7_PERFCTR3:
++	case MSR_P6_PERFCTR0 ... MSR_P6_PERFCTR1:
++	case MSR_K7_EVNTSEL0 ... MSR_K7_EVNTSEL3:
++	case MSR_P6_EVNTSEL0 ... MSR_P6_EVNTSEL1:
++		/*
++		 * Some legacy guests don't expect to get a #GP if these MSRs
++		 * are invalid on the old platforms with non-architectural PMUs.
++		 * Refer: commit 5753785fa977 ("KVM: do not #GP on perf MSR writes
++		 * when vPMU is disabled")
++		 */
++		if (!vcpu_to_pmu(vcpu)->version) {
++			if (kvm_pmu_is_valid_msr(vcpu, msr))
++				return kvm_pmu_set_msr(vcpu, msr_info);
++			if (data)
++				kvm_pr_unimpl_wrmsr(vcpu, msr, data);
++			break;
++		}
++		fallthrough;
+ 	default:
+ 		if (kvm_pmu_is_valid_msr(vcpu, msr))
+ 			return kvm_pmu_set_msr(vcpu, msr_info);
+@@ -4239,14 +4247,6 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 	case MSR_DRAM_ENERGY_STATUS:	/* DRAM controller */
+ 		msr_info->data = 0;
+ 		break;
+-	case MSR_K7_EVNTSEL0 ... MSR_K7_EVNTSEL3:
+-	case MSR_K7_PERFCTR0 ... MSR_K7_PERFCTR3:
+-	case MSR_P6_PERFCTR0 ... MSR_P6_PERFCTR1:
+-	case MSR_P6_EVNTSEL0 ... MSR_P6_EVNTSEL1:
+-		if (kvm_pmu_is_valid_msr(vcpu, msr_info->index))
+-			return kvm_pmu_get_msr(vcpu, msr_info);
+-		msr_info->data = 0;
+-		break;
+ 	case MSR_IA32_UCODE_REV:
+ 		msr_info->data = vcpu->arch.microcode_version;
+ 		break;
+@@ -4496,6 +4496,23 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 		msr_info->data = vcpu->arch.guest_fpu.xfd_err;
+ 		break;
+ #endif
++	case MSR_K7_EVNTSEL0 ... MSR_K7_EVNTSEL3:
++	case MSR_K7_PERFCTR0 ... MSR_K7_PERFCTR3:
++	case MSR_P6_PERFCTR0 ... MSR_P6_PERFCTR1:
++	case MSR_P6_EVNTSEL0 ... MSR_P6_EVNTSEL1:
++		/*
++		 * Some legacy guests don't expect to get a #GP if these MSRs
++		 * are invalid on the old platforms with non-architectural PMUs.
++		 * Refer: commit 5753785fa977 ("KVM: do not #GP on perf MSR writes
++		 * when vPMU is disabled")
++		 */
++		if (!vcpu_to_pmu(vcpu)->version) {
++			if (kvm_pmu_is_valid_msr(vcpu, msr_info->index))
++				return kvm_pmu_get_msr(vcpu, msr_info);
++			msr_info->data = 0;
++			break;
++		}
++		fallthrough;
+ 	default:
+ 		if (kvm_pmu_is_valid_msr(vcpu, msr_info->index))
+ 			return kvm_pmu_get_msr(vcpu, msr_info);
+diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+index 698cb36989db..69fca57dedef 100644
+--- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
++++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+@@ -358,7 +358,8 @@ static void guest_test_rdpmc(uint32_t rdpmc_idx, bool expect_success,
+ static void guest_rd_wr_counters(uint32_t base_msr, uint8_t nr_possible_counters,
+ 				 uint8_t nr_counters, uint32_t or_mask)
+ {
+-	const bool pmu_has_fast_mode = !guest_get_pmu_version();
++	uint8_t guest_pmu_version = guest_get_pmu_version();
++	const bool pmu_has_fast_mode = !guest_pmu_version;
+ 	uint8_t i;
+ 
+ 	for (i = 0; i < nr_possible_counters; i++) {
+@@ -377,12 +378,13 @@ static void guest_rd_wr_counters(uint32_t base_msr, uint8_t nr_possible_counters
+ 		const bool expect_success = i < nr_counters || (or_mask & BIT(i));
+ 
+ 		/*
+-		 * KVM drops writes to MSR_P6_PERFCTR[0|1] if the counters are
+-		 * unsupported, i.e. doesn't #GP and reads back '0'.
++		 * KVM drops writes to MSR_P6_PERFCTR[0|1] for non-architectural PMUs
++		 * if the counters are unsupported, i.e. doesn't #GP and reads back '0'.
+ 		 */
+ 		const uint64_t expected_val = expect_success ? test_val : 0;
+-		const bool expect_gp = !expect_success && msr != MSR_P6_PERFCTR0 &&
+-				       msr != MSR_P6_PERFCTR1;
++		const bool expect_gp = !expect_success &&
++				       (guest_pmu_version ||
++					(msr != MSR_P6_PERFCTR0 && msr != MSR_P6_PERFCTR1));
+ 		uint32_t rdpmc_idx;
+ 		uint8_t vector;
+ 		uint64_t val;
+
+base-commit: 771df9ffadb8204e61d3e98f36c5067102aab78f
+-- 
+2.40.1
+
 
