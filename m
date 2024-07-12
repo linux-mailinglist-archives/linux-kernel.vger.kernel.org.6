@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-250503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC0392F899
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:00:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8AB92F89C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:00:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975601F232B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:00:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D411F23DC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EC113E03A;
-	Fri, 12 Jul 2024 10:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9D9155A39;
+	Fri, 12 Jul 2024 10:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hKcfqs8U"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3EhOmRa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A4510F7
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C774624;
+	Fri, 12 Jul 2024 10:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720778427; cv=none; b=U1lmi+nnYfrnGpxyEcMKa0McyU9e8tFf5Tt7+KBbamF6E6S+ZxFy+HS71ARuCTWpZoscAzm7TKDg1O7T/jg9i5+EVRUPM3HW2bULSQh95Ro5rNg6AR5x7PgCeMgYAbb9m8BLbuigs/GNWj9fMSr9ZewbgBwGUcXAn3ga77gz0Eg=
+	t=1720778439; cv=none; b=W3cGY7+HbklqkA+p2SDTgd034af79gR/FOFQOKH+0c9YIyu2G4cjPCQpuwpV45BicQ6NEkunN8roYx/lQ5vv2y3Hhq01d9HkYd3qaIxnsbSgL7EhilGhzxZHTgsXgdYl8CwgakdCjAoRxXpeIfqcutl91ojBmOY/efZ7JEt+J6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720778427; c=relaxed/simple;
-	bh=rgfGe+n4aLY4lJb277XVowuNUYiTJ84gMEi9sQ/DjvQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=g5glyZzvUoSp1kbGWRBMnrgLfJgavilyOKl5R7WWSGPD2fmHh9LfnFJei1+zlFOxlwI6hjWlNFH7eu/e4zNWNiDM/e+Y74G5bXqZLfrvL3j+SO88+b3y8AtHETr5AuevVLFy50/B/PGfKysYni++//h9AuOFBbIXF5QnmEpjnMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hKcfqs8U; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42793d4abbbso12628155e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:00:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720778424; x=1721383224; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fSsytuug3CRKYELeUghAkPTYddqwto5qSFyfJvfzsKY=;
-        b=hKcfqs8U4nBbsvTyDSYx3zsKWYT0x+QrdHUGnnV0j3DUHePVF1eAGLIbCGKrBp06JG
-         nRQvqOyW35ZEZhFc1LlYgW+RVdgWFQfI2tQ708emrGZLfP2AUGSgPwmKCKTrAHPFXUBC
-         C6P3tcDTXliDPnMRFn3IHTQimzrMKY+C+JoJYQU1cHSlKUUtzbxNG20WntPEW3HOXotQ
-         WF6d/jr+y/06EuvcAmA130DcTy2Q9GaLgyfoSM2QwJzR1wXK/C5xuMBFObZjky4b4Tju
-         +A3wfn2b90gSLBy7FO2dGdMfObAp6F3ZMcImhkfuHJIAn6katIxkaiJW8lhHOBkO2VhI
-         jm/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720778424; x=1721383224;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fSsytuug3CRKYELeUghAkPTYddqwto5qSFyfJvfzsKY=;
-        b=mPQthLjA+jI+yooe31Zw/e+vUHD7S1rkqMRmUZneaeT7mOAvuzYzpXtv74OA8u9QrM
-         GwHol9izVNPAB+DQci2vqggr3SAjbpqsNk6HrS5+kZdnmE94a6a2TKVwxe4UaNXtLNb2
-         CdxLucrJbPU0bcTlLvHhm6mdVApf5jbObnOWE1zRHLmKBhatSv5g2MiV8f5pdJVpJdXs
-         Jx9gCJqSxYLG51ow6PGuyuHzRNseikk9ZzQXOOFq5o7z3DYp/FP2Pxj6Q1UDFO2RCj2h
-         dwyV3jrGiK8p/WJ0nMRnaOjZokNGDnENAk48ROUtn2Jfj7R0s0ECl9/XLvHRUCL5XVtt
-         sVcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUosoJ71kj3aFZn3/SfrP1PRSz4zOVrBWyYFI1fw+UIZ/BzZkwWJGxwyMPj/M73gcMWyfRO/O2+3L9JS1YTK1Az8pvEeypYCjsdd7nd
-X-Gm-Message-State: AOJu0YyMuKzLIVnn/f0d6dYDp2adJolFMN4yL174PPkZbf/i+3G1H0Us
-	sIwW/rwecX1lFgNC0M28/ZO69Y9UsfPIbXmKaeA1xUa5OeV5VPmIKjzY0XKDPjg=
-X-Google-Smtp-Source: AGHT+IE4X36PNQS0IVul3KYRWEkZF9TnHf11aAzYXEcD9kLqBbfDlDwUZknOIMZ6msu0SsEo3y6NLQ==
-X-Received: by 2002:a05:600c:42d3:b0:426:6edf:4f41 with SMTP id 5b1f17b1804b1-426705ced8fmr86596275e9.8.1720778424394;
-        Fri, 12 Jul 2024 03:00:24 -0700 (PDT)
-Received: from [127.0.0.2] ([2a02:2454:ff1f:b240:cbc0:d3ac:530e:4e1d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f288470sm17641885e9.23.2024.07.12.03.00.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 03:00:24 -0700 (PDT)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Fri, 12 Jul 2024 12:00:03 +0200
-Subject: [PATCH] power: supply: qcom_battmgr: Ignore extra __le32 in info
- payload
+	s=arc-20240116; t=1720778439; c=relaxed/simple;
+	bh=OjZcO5Y/p3VJkM8yC5RnwUbNTQGbECoPCnl3MYrvQP4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=udTjRk3ze7Gxft0HomF0S3nboKj5cdMliTWTsnIoCBv/yNeBZ8xVI35zOs6pf/n8N2nDl9qpA3GpYO4a/OsAZ76LEF3mBLG/rDMYWwW6U/iuxifS17VSysZmcV/ciTUQ8dz/1BXINMo/gyG2vXKBmhyJwAeUoSndVUiLz7iXhUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3EhOmRa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0644C32786;
+	Fri, 12 Jul 2024 10:00:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720778439;
+	bh=OjZcO5Y/p3VJkM8yC5RnwUbNTQGbECoPCnl3MYrvQP4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Y3EhOmRawcToB8Y50dXh3LvRY9xDs8zUPNyNvuxFSd+QIxAJjjZ/Y8B5/qnIBKYvM
+	 iH1GMM+xEe021s+FhioMF6mT780Ef2JcAyyPpTTE8zIIR3FR3mrd25OP+P7OqeHmRe
+	 DqPEIQQs81OdkqK0RwdW4KVRNkLC6ySq/aK/GDxLmMs2z8jNvpK7bahbmZLDRaPRVh
+	 Zt/xYd5Irzt6k8fwRazrKh4xwunJk671+nmHsCiSkGhcWOKbdWoJ3hsF7JsXlNgRFO
+	 Nu1YGciVSzWFEybhPEpshSN/iRrHqGrsTIUYCTeoBOpnKTqRW6Bi9KaR/mvZuR4zz7
+	 nR+6pkhRc4ouA==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Date: Fri, 12 Jul 2024 12:00:15 +0200
+Subject: [PATCH net-next] selftests: mptcp: lib: fix shellcheck errors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,50 +50,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240712-x1e80100-battmgr-v1-1-a253d767f493@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAKL+kGYC/x2MQQqAIBAAvxJ7Tti1IOkr0UFrtT1koRJB9Pek4
- 8DMPJA5CWcYmwcSX5LliBWobWDZbAysZK0MGnWPA5G6iQ0SonK2lD0kRWyt65zx1YCanYm93P9
- ymt/3A5ZV2yBiAAAA
-To: Sebastian Reichel <sre@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
- Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-X-Mailer: b4 0.13.0
+Message-Id: <20240712-upstream-net-next-20240712-selftests-mptcp-fix-shellcheck-v1-1-1cb7180db40a@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAK7+kGYC/z2NwQrCMBBEf6Xs2YUmaAv+iniocWKCaQzZrRRK/
+ 90g6GEOjxnebCSoEULnbqOKd5T4yg3MoSMXpvwAx3tjsr099qOxvBTRimnmDG1Zlf+VIHmFqPB
+ c1BX2cWUJSMkFuCcP3owYTm5w5kbNXyra4vt9oZ+Nrvv+AYb/eS6VAAAA
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1485; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=OjZcO5Y/p3VJkM8yC5RnwUbNTQGbECoPCnl3MYrvQP4=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmkP7EQ2BR/zeb4cBmw6GrnLDEFoqjy7o5IjRyR
+ UtuB5lfEpyJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZpD+xAAKCRD2t4JPQmmg
+ c0B/EADj9aUj3KGhZb3TKEu0tg9TQlcryAThbXO+qf93el1zpeiDYHl0ZyaWOwj2oMDV2QGaG/s
+ +blKSoMWZZTj3Aju0EwC8vmst5YZIJAfet5+F4yN4Nzlxyz1ZDxfqzLad8Wm/X9ZweG5ZA58OTO
+ Pca8Nc9ew+r2rTt/UWdwQ82fTZXHoXxSPVdSp7oBrW58E3kvkrSGrobuIahinr9hA7jzyVSd1Jr
+ dQZfNqbcmF+O8uD1youEoU7zW79wCwsAt5HvbESlul0Zso/qo0WNzBLNIH7UGwAUXh0efOzs4KG
+ 45vUHf5Wnc2Yd56hMi4n2thIOIaT7SAd44EdVrVm888kuelRVk0LLShY0m3KOLdPFq6Qi/Hin8e
+ Woe/zPqLgTGfTA+7TNJJYv8Ctv0jqT5tfdIJF1z0+oUzFQfOJwLPIfe/TvkZlTW0uj8OVS4YEow
+ hClhNu3LkkRSmfJXkHddWRa3bAmsCCrrNMhmWSQV6dvUqndq8g/NA7+CckZ6kGBk/mvj0m2Tax9
+ 0T+35EJQt9ra7m0zcUpXPq8XekHar3Wfzyg22RlNk3uD0tKrdWsHWuM1zfHi3V+A7tzaFrAV6Z2
+ a5d+FUir/WWaU/WovxBcin4oghOlMTV0yqzB1L+Gp4EW8ckoeLxpEjSgOGBJqd32a+aTQCkcoVX
+ H5+6gUuKn6t/+ew==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Some newer ADSP firmware versions on X1E80100 report an extra __le32 at the
-end of the battery information request payload, causing qcom_battmgr to
-fail to initialize. Adjust the check to ignore the extra field in the info
-payload so we can support both old and newer firmware versions.
+It looks like we missed these two errors recently:
 
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+  - SC2068: Double quote array expansions to avoid re-splitting elements.
+  - SC2145: Argument mixes string and array. Use * or separate argument.
+
+Two simple fixes, it is not supposed to change the behaviour as the
+variable names should not have any spaces in their names. Still, better
+to fix them to easily spot new issues.
+
+Fixes: f265d3119a29 ("selftests: mptcp: lib: use setup/cleanup_ns helpers")
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 ---
- drivers/power/supply/qcom_battmgr.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Notes:
+  - The mentioned commit is currently only in 'net-next', not in 'net'.
+---
+ tools/testing/selftests/net/mptcp/mptcp_lib.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/supply/qcom_battmgr.c b/drivers/power/supply/qcom_battmgr.c
-index 46f36dcb185c..a5b5f1251af1 100644
---- a/drivers/power/supply/qcom_battmgr.c
-+++ b/drivers/power/supply/qcom_battmgr.c
-@@ -1007,7 +1007,9 @@ static void qcom_battmgr_sc8280xp_callback(struct qcom_battmgr *battmgr,
- 		battmgr->error = 0;
- 		break;
- 	case BATTMGR_BAT_INFO:
--		if (payload_len != sizeof(resp->info)) {
-+		/* some firmware versions report an extra __le32 at the end of the payload */
-+		if (payload_len != sizeof(resp->info) &&
-+		    payload_len != (sizeof(resp->info) + sizeof(__le32))) {
- 			dev_warn(battmgr->dev,
- 				 "invalid payload length for battery information request: %zd\n",
- 				 payload_len);
+diff --git a/tools/testing/selftests/net/mptcp/mptcp_lib.sh b/tools/testing/selftests/net/mptcp/mptcp_lib.sh
+index 194c8fc2e55a..438280e68434 100644
+--- a/tools/testing/selftests/net/mptcp/mptcp_lib.sh
++++ b/tools/testing/selftests/net/mptcp/mptcp_lib.sh
+@@ -428,8 +428,8 @@ mptcp_lib_check_tools() {
+ }
+ 
+ mptcp_lib_ns_init() {
+-	if ! setup_ns ${@}; then
+-		mptcp_lib_pr_fail "Failed to setup namespace ${@}"
++	if ! setup_ns "${@}"; then
++		mptcp_lib_pr_fail "Failed to setup namespaces ${*}"
+ 		exit ${KSFT_FAIL}
+ 	fi
+ 
 
 ---
-base-commit: 3fe121b622825ff8cc995a1e6b026181c48188db
-change-id: 20240711-x1e80100-battmgr-1eaab3b8f024
+base-commit: 2146b7dd354c2a1384381ca3cd5751bfff6137d6
+change-id: 20240712-upstream-net-next-20240712-selftests-mptcp-fix-shellcheck-6f17e65c6c1b
 
 Best regards,
 -- 
-Stephan Gerhold <stephan.gerhold@linaro.org>
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
