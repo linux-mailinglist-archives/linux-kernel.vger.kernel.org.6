@@ -1,107 +1,155 @@
-Return-Path: <linux-kernel+bounces-250988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6088D92FF3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:13:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BBF792FF3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 915B01C22449
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:13:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A02E21C2297B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE14176AD6;
-	Fri, 12 Jul 2024 17:10:28 +0000 (UTC)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87806176FBD;
+	Fri, 12 Jul 2024 17:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iZ4UhAo1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F431741ED;
-	Fri, 12 Jul 2024 17:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB6D176AA1
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720804227; cv=none; b=WkX/N8GHjCxgoIW/wZILxuDiqJsGPkZNCyZUcleOxhr1PRTEEGukXwHhbiS0qrvfXnxKJzQXvRUQ0avOIF/8ZT4jAd3P/OGm0zb+XUHDT0LIaHdfp8qd7h1ovM0UXhaoShbu6ttLWFwHSGXmTFMQaPbx+Z2Jnlj1A6phF40P5EU=
+	t=1720804248; cv=none; b=HQEjiUnPg3qimluzDGlzAZMqXZ2in2vtYQ8ki/5uw5SHwrsp8eGQkRh7ATJRgeCgbKTSeCzxd5ZaUg9vxdSNwAgWWYmfa4IiiOkA7/IvtFYSU3xV76++jDVQqwVLQ5vlxwi0NIFX+xnN4DNwHIhZRsVPKGunxVYWIBKeh5YcM40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720804227; c=relaxed/simple;
-	bh=P/vj0tML+5sLhokNg//BJblNlTH8Oeuu7lKQm4cUE5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D0rdxQ5eFp/ivWj62X3DwI7Sy6aUpDmZq2xxDA1FPd+e1xclv1UXK4f1TiEZ/aYNUEqQIePqpWSiFYgE6GTTct3cP7GX1ST1hNqU1696KduTFH/TBJJZimwfbQ6ykaMHzVl9D+KKe/0DcCrQPupSXUjWDYJrXNjEpukfQvbHs9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6561850a7bcso21995497b3.3;
-        Fri, 12 Jul 2024 10:10:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720804224; x=1721409024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vdymif93j3WT4mEDNRmiwZsKR34HhTzNWp4qIqS/+dY=;
-        b=SxPD3cVbnj83SefefqmxovTfPmuP43q3ntbz4PwBZwSVfsp5+hmf01qmR8yF58MKZA
-         ZPscituCejy2nM+qiYt8fUJqnDJ4M8fGNlTYM2S+oXcIoB1OxgiAXcJKvbC7DMhQ7hv2
-         7yEzgf+qJB+JxdPq368vu9pDYj4S8a5tLEmANRqAVskap+w/hK/EjT76rEBxUb94u+kb
-         MmMp8ngyAJUo9ujC+S+zFTFNsAZaHBXZqUhjjTfCrdFFwqrXHmlk6nLeNgotHi6wp2o5
-         /kYrE1+CfyAIBpIFscpydHNK+wPtfruBPYFzZNu6L5Eazf+3njZHILOb0FXl9y4MIBqH
-         KMXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbSw9StlwKH9F3SnwDQ6t8pV04t1vWABhyYHnhn4s3vh6AX8LzTf7Vfg1ml4pQrEb76aACSOvPL0L2qdfpnCItJJRt9Pw/dONBL+liogzywXE+KSMAdTTPrHOvOhOVlszAhBDwcVa33AtRi4aSk9E4pdtplVkkQ7j5TDkr1PqBm0Ei6IPmhxwSB/YTxJtUUvn4tZNXTiFuXbyG1twT67jFY/kmEi9vYklhjV8=
-X-Gm-Message-State: AOJu0Yx4VNFFWC7F1hPYxZNgL0t38vQNSl4ii5dyv2qeIpQKLq+KU9hJ
-	nqJUUy/7CrBjb5BNbVq+ZsU1fRcV5ntTELyE8RG5Iy97QOdJtQYucUkAVq6g
-X-Google-Smtp-Source: AGHT+IHbf1ZPWpkegIvxeEaUwk3tdCIsPvIM0Lan2AbRp1z8YEmauvQDap3uRs+T9+W+hsHPz4rJOw==
-X-Received: by 2002:a0d:e616:0:b0:643:c2bf:c156 with SMTP id 00721157ae682-658eed628fbmr120677577b3.19.1720804223695;
-        Fri, 12 Jul 2024 10:10:23 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4f18f0csm15634707b3.58.2024.07.12.10.10.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 10:10:23 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6510c0c8e29so21731097b3.0;
-        Fri, 12 Jul 2024 10:10:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXVNQLREwE8XbTI6KT0K8QI0ML84eUK6q+dAUhRupR0Thzp+ThOAilG3t0nc9wIxb2S6x84ofQBYKLEf3ENLZb5RVdm6B3oQrkZ1HEgnmeEO7qRz0Sa6M0IQ6SFyhBxuynj/596NGOwGcH6grOXNLnWzxeOuha8njb80LhE/ysw393W0rfacR/1v9j0OgiMr/OL5ZBSWj0toS80GOygagc9rWEciu7qqDBLLWk=
-X-Received: by 2002:a0d:eec6:0:b0:646:fe8e:f03b with SMTP id
- 00721157ae682-658ee791211mr114821107b3.2.1720804223028; Fri, 12 Jul 2024
- 10:10:23 -0700 (PDT)
+	s=arc-20240116; t=1720804248; c=relaxed/simple;
+	bh=QPbldaZLRVQw71mtTkMjBKj0haUUdISrLOQxYOJKFgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rVPVTZC3YobEJ2MSd+1TFuFFsQsWamyXkMR1aUVESq7AWlsFqQLLShqpCq32G6mnhR8pcpw8mZ0H5H1D3fg9x9BDLWihaHrBsv5aFOS6sWQrx9sKyXDEB379A6CXJd4psK1YuxEPxrJyLvsXRNuftuIYOYW3ZQ+zFMP1KQHVBas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iZ4UhAo1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720804245;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bnm3ivYBPn9ycwUjzHL/j+hS87OKKBuD3Bec1gFTGWo=;
+	b=iZ4UhAo1FjaV5j6XAVMzvblhGlWR2KJX1GEE+6+qYGYxLVyzhn9Qh9aeqT2y+x3aGdqZkT
+	UwQ2/LC/0h1+wGAcc0VuaD8CCKbV8j+LGWaOMJJXpFqYT+bctQKwl6zfMo7YVQ1qLyd3wU
+	V2DgfX++OD/UWk9gLsqxJ9DxYyx2eWo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-oogQPAjpN5SBGdDFLTZiSA-1; Fri,
+ 12 Jul 2024 13:10:41 -0400
+X-MC-Unique: oogQPAjpN5SBGdDFLTZiSA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E43AF195608B;
+	Fri, 12 Jul 2024 17:10:38 +0000 (UTC)
+Received: from [10.22.17.116] (unknown [10.22.17.116])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 259321955F40;
+	Fri, 12 Jul 2024 17:10:36 +0000 (UTC)
+Message-ID: <48802fec-0563-429b-95b2-571862ffff18@redhat.com>
+Date: Fri, 12 Jul 2024 13:10:36 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531065723.1085423-1-claudiu.beznea.uj@bp.renesas.com> <7f99cb63-0c6b-460e-934b-4e7e8d84bb3a@tuxon.dev>
-In-Reply-To: <7f99cb63-0c6b-460e-934b-4e7e8d84bb3a@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 Jul 2024 19:10:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXN7xCtjRraTu=3JS6x8GCo7iuS40PVTN_DPvhA-AMqfw@mail.gmail.com>
-Message-ID: <CAMuHMdXN7xCtjRraTu=3JS6x8GCo7iuS40PVTN_DPvhA-AMqfw@mail.gmail.com>
-Subject: Re: [PATCH v9 0/9] watchdog: rzg2l_wdt: Add support for RZ/G3S
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: wim@linux-watchdog.org, linux@roeck-us.net, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, 
-	geert+renesas@glider.be, magnus.damm@gmail.com, biju.das.jz@bp.renesas.com, 
-	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	claudiu.beznea.uj@bp.renesas.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] cgroup: Show # of subsystem CSSes in cgroup.stat
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>
+References: <20240711134927.GB456706@cmpxchg.org>
+ <4e1078d6-6970-4eea-8f73-56a3815794b5@redhat.com>
+ <ZpAT_xu0oXjQsKM7@slm.duckdns.org>
+ <76e70789-986a-44c2-bfdc-d636f425e5ae@redhat.com>
+ <ZpAoD7_o8bf6yVGr@slm.duckdns.org>
+ <e5348a85-22eb-48a6-876d-3180de5c7171@redhat.com>
+ <ZpArhD49OonR6Oz6@slm.duckdns.org>
+ <c54651db-1a06-49f6-aea7-02768ad70756@redhat.com>
+ <20240711195946.GA1094169@cmpxchg.org>
+ <e42f41af-e8a9-4544-9194-003d6b0f0ba8@redhat.com>
+ <20240712162920.GA1321673@cmpxchg.org>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240712162920.GA1321673@cmpxchg.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Claudiu,
+On 7/12/24 12:29, Johannes Weiner wrote:
+> On Thu, Jul 11, 2024 at 05:00:41PM -0400, Waiman Long wrote:
+>> On 7/11/24 15:59, Johannes Weiner wrote:
+>>> On Thu, Jul 11, 2024 at 03:13:12PM -0400, Waiman Long wrote:
+>>>> On 7/11/24 14:59, Tejun Heo wrote:
+>>>>> On Thu, Jul 11, 2024 at 02:51:38PM -0400, Waiman Long wrote:
+>>>>>> On 7/11/24 14:44, Tejun Heo wrote:
+>>>>>>> Hello,
+>>>>>>>
+>>>>>>> On Thu, Jul 11, 2024 at 01:39:38PM -0400, Waiman Long wrote:
+>>>>>>>> On 7/11/24 13:18, Tejun Heo wrote:
+>>>>>>> ...
+>>>>>>>> Currently, I use the for_each_css() macro for iteration. If you mean
+>>>>>>>> displaying all the possible cgroup subsystems even if they are not enabled
+>>>>>>>> for the current cgroup, I will have to manually do the iteration.
+>>>>>>> Just wrapping it with for_each_subsys() should do, no? for_each_css() won't
+>>>>>>> iterate anything if css doesn't exist for the cgroup.
+>>>>>> OK, I wasn't sure if you were asking to list all the possible cgroup v2
+>>>>>> cgroup subsystems even if they weren't enabled in the current cgroup.
+>>>>>> Apparently, that is the case. I prefer it that way too.
+>>>>> Yeah, I think listing all is better. If the list corresponded directly to
+>>>>> cgroup.controllers, it may make sense to only show enabled ones but we can
+>>>>> have dying ones and implicitly enabled memory and so on, so I think it'd be
+>>>>> cleaner to just list them all.
+>>>> That will means cgroup subsystems that are seldomly used like rdma, misc
+>>>> or even hugetlb will always be shown in all the cgroup.stat output. I
+>>>> actually prefer just showing those that are enabled. As for dying memory
+>>>> cgroups, they will only be shown in its online ancestors. We currently
+>>>> don't know how many level down are each of the dying ones.
+>>> It seems odd to me to not show dead ones after a cgroup has disabled
+>>> the controller again. They still consume memory, after all, and so
+>>> continue to be property of that cgroup afterwards.
+>>>
+>>> Instead of doing for_each_css(), would it make more sense to have
+>>>
+>>> 	struct cgroup {
+>>> 		...
+>>> 		int nr_dying_subsys[CGROUP_SUBSYS_COUNT];
+>> What exactly does new this array for?
+> For keeping the counts. Instead of inside the css.
+>
+> AFAICS, with your current patch, if somebody were to disable the
+> controller in cgroup.subtree_control, it would offline the css at that
+> level, become unreachable from cgroup->subsys[], and you'd lose
+> remaining counts of dead css that are still associated with that
+> cgroup. Re-enabling the controller would create a new css with new
+> descendant counts, and now the reported numbers are actively misleading.
+>
+> That seems undesirable.
+>
+> If you track the counts in the cgroup itself, then cgroup.stat would
+> reliably show the total counts of dead controllers that are associated
+> with the subtree, even after disabling or toggling controllers.
+>
+> The hooks in online, offline, release should be the same, just update
+> css->cgroup->nr_dying_subsys[id] instead of css->nr_dying_descendants.
 
-On Fri, Jul 12, 2024 at 5:39=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxo=
-n.dev> wrote:
-> Can you please let me know if there is anything you would like me to
-> address for this series?
+That does make sense. Thank for the suggestion. I will update the patch 
+accordingly.
 
-Your series was merged in watchdog/master two days ago, and is part
-of next-20240711 and later.
+Cheers,
+Longman
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
