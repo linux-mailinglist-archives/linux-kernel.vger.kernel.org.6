@@ -1,81 +1,140 @@
-Return-Path: <linux-kernel+bounces-250133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C4792F48F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:08:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F5792F491
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02C151C230F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:08:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B726E1C2308B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119FA10A1F;
-	Fri, 12 Jul 2024 04:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24E911187;
+	Fri, 12 Jul 2024 04:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GNsN50BY"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGpKl+mN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA83624
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 04:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4484A3D
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 04:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720757275; cv=none; b=Ame29mh1n3EDxOlWki9QJ/Ag2Cdy0H3YXKXYF/Ug167iiiWUVYPPc73+yzl2cyJaPHneOqd4h4Phlsr3ejBiV0NssXLc8b4WAO7qi36e9kHUvKrJyO0Z+cEw8tG0gytaM98Y1F00mmwPvt8u9fbofOQoSyMUc7iYegDqxvfqXXY=
+	t=1720757397; cv=none; b=A3K2n/toWmb3OfKYpeFjmT5plqip5sVpHI6enzYY4kBlwOdKu10Ox1cMpen+zXslvMi77kTNFOY8VeGh0q3NCUGsfBJUBA+QFbC/aAMJNhZWRsNkKYO3nYHWQNU1OqBTCv+k4oj62pmA/hUpzo+yTWIwECgqoTQdMAQ6zIu1f2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720757275; c=relaxed/simple;
-	bh=PxNSId08MowSn7NbIH1MTWzw7VtL/T5CdLx9bZ4Yh2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=becp8C/WMWYMx5uCWeT3QQC/yJ79Ma84WNpJ4ffVvteeK/o8oH+0NjHi1xr7KnWPdRa5l9vZ33NDZEW7waF+PCLR7OAmlPOe8JEaqF/3TC+OSk45ES7bzd6IsG6ff86ZUZ1xtH+schdfl2zIxugei2lVoLryN5OgOMxUHKrswto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GNsN50BY; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: youling.tang@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720757270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9TOSIiB7JBkoX6UYTsCWNWgwPw31kFf6GF1CBwDwIcs=;
-	b=GNsN50BYHXwWGBt8kZd+CM5ek+PCAwvMPbEI2STz1zorGzI1WJe0eKCMqesmbFfMOsnI1X
-	AZz+tx0XDywc42v+skMmnWqPzTQb6oQOBF9OG6hQF/xlkvI/r9BJo/1xvczJurC6gucOPq
-	Xm48egQTTLZJ4ER/kBPFiGcA84CVjgw=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: tangyouling@kylinos.cn
-Date: Fri, 12 Jul 2024 00:07:32 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Youling Tang <youling.tang@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH] mm: list_lru: Fix NULL pointer dereference in
- list_lru_add()
-Message-ID: <sd32qchit33aafht27utinrz5dizw62qbtwdmwbtugqrlglmtx@6aitsotgqnpi>
-References: <20240712032554.444823-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1720757397; c=relaxed/simple;
+	bh=ov6vsRh9oCOwll/9cGyKD8KumYOAD2zGCgg8X1M2O9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=av9rX+3Yhhb6EaazOVv3Q4dc+hp1PSwlJhWmbmQsr9oLhQk0iLoE02V6oju8j48dAf0OTKPmuaTs/gIYEZzjhmdgqDann1ouv+t1vAR/rXVYnTk8IqzTVtr9kY9KLUI1XuBo6nvmO50QPSUSFITZnc+8e5lQBic7/gPns70UfmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGpKl+mN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7934EC3277B;
+	Fri, 12 Jul 2024 04:09:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720757396;
+	bh=ov6vsRh9oCOwll/9cGyKD8KumYOAD2zGCgg8X1M2O9k=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RGpKl+mNRyRNs7qHLHnIBJebTVTWWLWFP0MvfLyFk3ntzIhWbCxHm/5d+psTOPajs
+	 /JYdSITaEXSoFznvapGjaXjTr3kgoNrnxRgtIZjhJo3DhRsRmXFKPX7beBtEeMrzvt
+	 aCCItTn4A/+065eqCuHfqjrV5k0dg3wcCdynkwm6ICkgr7x9M68EYRrLsyJvXusQ5v
+	 vwNxnyZD4nPOVpvS2KXoHE5qQHkTOb5uwGDPZ/NnE8cOwzfc1vI3sdINfK4PEObuEi
+	 Q3i1lFIlE32KzrwaFKpFY8j3e7AXq9GNcH4p139w2ZOds9quPLOhDqcT0R5L6NJvXA
+	 X1DJaVCSxdikQ==
+From: alexs@kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: "Alex Shi (Tencent)" <alexs@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Yoann Congal <yoann.congal@smile.fr>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: [PATCH v3] mm/memcg: alignment memcg_data define condition
+Date: Fri, 12 Jul 2024 12:14:35 +0800
+Message-ID: <20240712041435.301314-1-alexs@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712032554.444823-1-youling.tang@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 12, 2024 at 11:25:54AM GMT, Youling Tang wrote:
-> From: Youling Tang <tangyouling@kylinos.cn>
-> 
-> Note that list_lru_from_memcg_idx() may return NULL, so it is necessary
-> to error handle the return value to avoid triggering NULL pointer
-> dereference BUG.
-> 
-> The issue was triggered for discussion [1],
-> Link [1]: https://lore.kernel.org/linux-bcachefs/84de6cb1-57bd-42f7-8029-4203820ef0b4@linux.dev/T/#m901bb26cdb1d9d4bacebf0d034f0a5a712cc93a6
+From: "Alex Shi (Tencent)" <alexs@kernel.org>
 
-I see no explanation for why this is the correct fix, and I doubt it is.
-What's the real reason for the NULL lru_list_one, and why doesn't this
-come up on other filesystems?
+commit 21c690a349ba ("mm: introduce slabobj_ext to support slab object
+extensions") changed the folio/page->memcg_data define condition from
+MEMCG to SLAB_OBJ_EXT. This action make memcg_data exposed while !MEMCG.
+
+As Vlastimil Babka suggested, let's add _unused_slab_obj_ext for
+SLAB_MATCH for slab.obj_exts while !MEMCG. That could resolve the match
+issue, clean up the feature logical.
+
+Signed-off-by: Alex Shi (Tencent) <alexs@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Yoann Congal <yoann.congal@smile.fr>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+---
+ include/linux/mm_types.h | 8 ++++++--
+ mm/slab.h                | 4 +++-
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index ef09c4eef6d3..4ac3abc673d3 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -180,8 +180,10 @@ struct page {
+ 	/* Usage count. *DO NOT USE DIRECTLY*. See page_ref.h */
+ 	atomic_t _refcount;
+ 
+-#ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ 	unsigned long memcg_data;
++#elif defined(CONFIG_SLAB_OBJ_EXT)
++	unsigned long _unused_slab_obj_ext;
+ #endif
+ 
+ 	/*
+@@ -343,8 +345,10 @@ struct folio {
+ 			};
+ 			atomic_t _mapcount;
+ 			atomic_t _refcount;
+-#ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ 			unsigned long memcg_data;
++#elif defined(CONFIG_SLAB_OBJ_EXT)
++			unsigned long _unused_slab_obj_ext;
+ #endif
+ #if defined(WANT_PAGE_VIRTUAL)
+ 			void *virtual;
+diff --git a/mm/slab.h b/mm/slab.h
+index 3586e6183224..3aae11dde532 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -97,8 +97,10 @@ struct slab {
+ SLAB_MATCH(flags, __page_flags);
+ SLAB_MATCH(compound_head, slab_cache);	/* Ensure bit 0 is clear */
+ SLAB_MATCH(_refcount, __page_refcount);
+-#ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ SLAB_MATCH(memcg_data, obj_exts);
++#elif defined(CONFIG_SLAB_OBJ_EXT)
++SLAB_MATCH(_unused_slab_obj_ext, obj_exts);
+ #endif
+ #undef SLAB_MATCH
+ static_assert(sizeof(struct slab) <= sizeof(struct page));
+-- 
+2.43.0
+
 
