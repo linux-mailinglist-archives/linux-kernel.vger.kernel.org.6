@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-250539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4664B92F8E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:24:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D9492F8E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E730B242DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:24:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C39CE287139
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEB716EB77;
-	Fri, 12 Jul 2024 10:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4EE16EBEE;
+	Fri, 12 Jul 2024 10:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vLhojQtq"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X3jsYZYp"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BFF16D4CD
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B028B16EBF8
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720779764; cv=none; b=tai6A9WDJox8gBd5dULcLvVtvD6H6XgxC+dMbRE64JWhgxfHhZ4+fw5PDGVZDuhPTn8WsR2ByL0oE9lBWe4iFGdwYu62WVW45V8CS7lDAvnAHTwt4IjnEdoMQqQUbXm3ic0msRbDHRYlOJmhbTsTLc/uQaRIUv/7woLzmsDWeno=
+	t=1720779769; cv=none; b=t0dYn3X/BbvZOhgOGkmjWhFEkH33dl3+fqIMmTpRbRngSMGQicOk5SOd5ArAuSo3p5C+wEqY/1fRIU4lW0qFwi8ujDJeQ6YUjndnCV1kgnzXOeiwXanqXjqjW1n7dLWID2iBUy9XPzAc8I4CYYPtRcsc3L2JNG+yTKGaQHC0lFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720779764; c=relaxed/simple;
-	bh=OF5kuBWRBeBlB31dyxyZ6fG75qUp5sguPS+co/ixCEg=;
+	s=arc-20240116; t=1720779769; c=relaxed/simple;
+	bh=poODv9RcudTQN+sJKIl7ULkys/ISBKMP07Fg5QudCtQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UIu+VgD/fIstCpq9F92K/KOUwLTDwt/n2DZYTer/sJorzJ1Q1VOfkdg8rLR1VXzTr+EfnHbwLF6FWotsnRklD6XZeNygH8VZD0R132eaRx8F0O16Jp4Vuokv9YzGF19eUwbdnaAHQdeAo/PJQAuVfj6a5/COIrulFL15q/KzF1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vLhojQtq; arc=none smtp.client-ip=209.85.221.49
+	 MIME-Version; b=PqwZgpEI3yV0PlrZuGBqCDoZMQAjb9b833zaI7pNEMlmw2LEne9+bi84I8oUZfD+08HbfzLDj005Gu+YBlYKMVO7n8+/hCUoMhiTxAJXs+pnSepat/rXULHMmE1fNpKRyqRSls7r+5ran5ETBRs9UH5AyoInOozSxjzHqcSSRQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X3jsYZYp; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-36796d2e5a9so1130362f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:22:42 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42679f33fefso12234675e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720779761; x=1721384561; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720779766; x=1721384566; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3dUxw4pnzTq6V22lhZXyELBpDIT+OtfcjZAN4tSNlkQ=;
-        b=vLhojQtqTByMRzkqNWRruGFpkqEfzSI+tS98ySAWqvQztO8XxEnAG7Q4huLNOEd/zx
-         ikL1IkcuvsvAvXbrnbcPBju2W8Hr6MuCmdvFq5syExul1YIkWHOEpco8jbFG8/JriJRv
-         Ngy6LqeWwSEsjQAPCK57PScC+GR6/KjW7EcaJe2XFYAlW+IhxqjjKT0qAA5fOnCNymBa
-         RaI4q9pnelkt7HZFERayDQJCjCIjPlzwh6n1zjRH3kOf1VE1FXKlG5rc+QkqLmlhSina
-         Lqw7iChqlRQu7lIZoaphhO2IWHH9sZSLqrb+qVpCoViTkgoFRnICrkbXlyznP4r/ojNq
-         QvyA==
+        bh=T+cqckU3PK/4oZg7w+6ZlVXIz08ibsuhvPsyHiAGTJU=;
+        b=X3jsYZYpeKhmKoQ8yf+idJU1QVBss56pMgfcn7BwnIuouyONAoUnj+Yb4XjBX2BeDr
+         iV4YDKGkjx/2ImrxSVqRnK7UhLchyRxpRpcZi/cwUmGPl2a5q0Z+DWwjTnYrchIiSZZq
+         ORgEACAyKYF7VXJ/KIPEoInbSkZNiULXuRzyqbgb2oD64zr5Q6KV9TjY11DAhsh2L/kJ
+         LpyV2K8akoW0Ig9n0+edyz40puGjIDbrpR2pf2xPxEq1w1s+oNM1JEh1faU928kTqhg/
+         UTIRu/nnIDHmuEWCNCeeJPEwNeXWRDhbmM9V87V1IIIAQqasBf37KYfAlr6T0vFWWaqk
+         UCyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720779761; x=1721384561;
+        d=1e100.net; s=20230601; t=1720779766; x=1721384566;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3dUxw4pnzTq6V22lhZXyELBpDIT+OtfcjZAN4tSNlkQ=;
-        b=XAgLSBWZ83UMRX4C/kMizDFYKFvtVQxf8bsjQdO2pDutdvDrdArJqkm/3fPV8Pxijk
-         Nt07DtFwOinDB0XCyiwUJ4Fa8boGrDZFvvMf2jSnGA3KFvA/4qm0QX8mB4jDdEwwoIZN
-         /9VNzk6pjk1UnC1BCGCCMdtiHygSTZtna4lfE89QzD930Z36DJtDdndqvAuqfnTRuhA+
-         3OtwC11UaFJAcjpQkuP0MNfjf9ZuMZWgyZ+hmiSzZkJygJxHLTdmpv9UP3wN26Q0WTNK
-         4SAAFFEskH587tdo+rSL0Yykpvg2ja7KtTufGZnWqF03p4eaaHJxT+nQgWmylzhJH2VL
-         PYKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwAuRwEr4Az9Ef92kSeru6P8BTwhtjZkEr1LEZse7Fp8fOtVdbQ6x4rdculpBDWJ3SPSoTEGiPCrEr8dsoJVq7FkN/QpJF0Ccw4MVj
-X-Gm-Message-State: AOJu0Ywh396kxqJbQwQevH0lR+Yz2mzJpD2ksYmiycks7G+BUPOSt4PL
-	tUn8slbIbsCXMvDWBqvYOr3xC5uyirlJpWHE/80vSpG3zNtwth64mRwF5etzEmc=
-X-Google-Smtp-Source: AGHT+IF+R3RQarQUJDVqwDOdNbdiQNMbxNXEfqhZWKHIvM9InYkmtV7hlxj0r3Fieyfyj3lD/5Omtw==
-X-Received: by 2002:a05:6000:1b06:b0:367:96d6:4c2d with SMTP id ffacd0b85a97d-367cea6b830mr7924712f8f.25.1720779761602;
-        Fri, 12 Jul 2024 03:22:41 -0700 (PDT)
+        bh=T+cqckU3PK/4oZg7w+6ZlVXIz08ibsuhvPsyHiAGTJU=;
+        b=NjPKJ1cCQNmEuifkdAOVQSCr6sVsYJMeFj/r2i/npaBgR1QQvvD30MzmAdG7QWHlUx
+         Xvw1XUZigzYLyv+TikpdbUoEpu94qqUzd60dEaTgJ0/OWJ7vsTT6g/GJipNzXBZEaAU6
+         4Rtd0LVPkieV3ovPmRlq/6jGclbKbFnjc0hZ6GsQ8QioAIux8eCTwEqe03dEBkIq+VDL
+         S8nCoUH4KH42c7jrF1NwJ86+ZkErU/A4OLBx9uPTOswNg3NJaKnm+N2VVeo8VAKtcSLJ
+         dlcbO5k6Zdyop1Ehefahb0zEssHfV9ESYkta385EtVWj+hu12CHgn0uuXuaYE/jNeN6/
+         eGFw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9g4H9M9EJrqRLuG9zLlMsT+K3wUtIgfW5hHKXw3JLE2IMrWGF9fLlZypeGfljDAruiPSO0Jmv40aFejs09l9G70tX+NHoy4UI3ceZ
+X-Gm-Message-State: AOJu0YwQP8tNk0MnlPSSZuqD24cvbJMki5zRujSqjcuibst5iU+K3bQG
+	KlvW6/4Ar4gu5a1QDFJw36Tc3OuSzotg72L1y4kSUsmbMIJ4vUFEO9zZZ43LWWk=
+X-Google-Smtp-Source: AGHT+IE+VB3WvOca9zdDx6Lys780musKRQG8QOG3x0Z34w+FsYxwd3eo3DXVQhPIsbF9WOcbW4gGhg==
+X-Received: by 2002:a5d:588d:0:b0:367:f2ea:13e4 with SMTP id ffacd0b85a97d-367f2ea15eamr3674929f8f.32.1720779766060;
+        Fri, 12 Jul 2024 03:22:46 -0700 (PDT)
 Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde89164sm9911058f8f.63.2024.07.12.03.22.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde89164sm9911058f8f.63.2024.07.12.03.22.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 03:22:41 -0700 (PDT)
+        Fri, 12 Jul 2024 03:22:45 -0700 (PDT)
 From: James Clark <james.clark@linaro.org>
 To: coresight@lists.linaro.org,
 	suzuki.poulose@arm.com,
@@ -93,9 +93,9 @@ Cc: James Clark <james.clark@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-stm32@st-md-mailman.stormreply.com,
 	linux-perf-users@vger.kernel.org
-Subject: [PATCH v5 07/17] perf: cs-etm: Print queue number in raw trace dump
-Date: Fri, 12 Jul 2024 11:20:16 +0100
-Message-Id: <20240712102029.3697965-8-james.clark@linaro.org>
+Subject: [PATCH v5 08/17] perf: cs-etm: Add runtime version check for OpenCSD
+Date: Fri, 12 Jul 2024 11:20:17 +0100
+Message-Id: <20240712102029.3697965-9-james.clark@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240712102029.3697965-1-james.clark@linaro.org>
 References: <20240712102029.3697965-1-james.clark@linaro.org>
@@ -109,77 +109,126 @@ Content-Transfer-Encoding: 8bit
 
 From: James Clark <james.clark@arm.com>
 
-Now that we have overlapping trace IDs it's also useful to know what the
-queue number is to be able to distinguish the source of the trace so
-print it inline.
+OpenCSD is dynamically linked so although there is a build time check,
+at runtime the user might still have the wrong version. To avoid hard
+to debug errors, add a runtime version check.
 
 Signed-off-by: James Clark <james.clark@arm.com>
 Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 4 ++--
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.h | 2 +-
- tools/perf/util/cs-etm.c                        | 7 ++++---
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ tools/build/feature/test-libopencsd.c               |  4 ++--
+ tools/perf/Makefile.config                          |  2 +-
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c     | 13 +++++++++++++
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.h     |  1 +
+ tools/perf/util/cs-etm-decoder/cs-etm-min-version.h | 13 +++++++++++++
+ tools/perf/util/cs-etm.c                            |  3 +++
+ 6 files changed, 33 insertions(+), 3 deletions(-)
+ create mode 100644 tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
 
+diff --git a/tools/build/feature/test-libopencsd.c b/tools/build/feature/test-libopencsd.c
+index 4cfcef9da3e4..d092a0c662f4 100644
+--- a/tools/build/feature/test-libopencsd.c
++++ b/tools/build/feature/test-libopencsd.c
+@@ -1,12 +1,12 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <opencsd/c_api/opencsd_c_api.h>
++#include "cs-etm-decoder/cs-etm-min-version.h"
+ 
+ /*
+  * Check OpenCSD library version is sufficient to provide required features
+  */
+-#define OCSD_MIN_VER ((1 << 16) | (2 << 8) | (1))
+ #if !defined(OCSD_VER_NUM) || (OCSD_VER_NUM < OCSD_MIN_VER)
+-#error "OpenCSD >= 1.2.1 is required"
++#error "OpenCSD minimum version (OCSD_MIN_VER) not met."
+ #endif
+ 
+ int main(void)
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 7f1e016a9253..2d21be42820e 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -141,7 +141,7 @@ endif
+ ifdef CSLIBS
+   LIBOPENCSD_LDFLAGS := -L$(CSLIBS)
+ endif
+-FEATURE_CHECK_CFLAGS-libopencsd := $(LIBOPENCSD_CFLAGS)
++FEATURE_CHECK_CFLAGS-libopencsd := $(LIBOPENCSD_CFLAGS) -I$(src-perf)/util
+ FEATURE_CHECK_LDFLAGS-libopencsd := $(LIBOPENCSD_LDFLAGS) $(OPENCSDLIBS)
+ 
+ # for linking with debug library, run like:
 diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index d49c3e9c7c21..b78ef0262135 100644
+index b78ef0262135..5e1b4503aab1 100644
 --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
 +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -41,7 +41,7 @@ const u32 INSTR_PER_NS = 10;
+@@ -16,6 +16,7 @@
  
- struct cs_etm_decoder {
- 	void *data;
--	void (*packet_printer)(const char *msg);
-+	void (*packet_printer)(const char *msg, void *data);
- 	bool suppress_printing;
- 	dcd_tree_handle_t dcd_tree;
- 	cs_etm_mem_cb_type mem_access;
-@@ -202,7 +202,7 @@ static void cs_etm_decoder__print_str_cb(const void *p_context,
- 	const struct cs_etm_decoder *decoder = p_context;
+ #include "cs-etm.h"
+ #include "cs-etm-decoder.h"
++#include "cs-etm-min-version.h"
+ #include "debug.h"
+ #include "intlist.h"
  
- 	if (p_context && str_len && !decoder->suppress_printing)
--		decoder->packet_printer(msg);
-+		decoder->packet_printer(msg, decoder->data);
+@@ -835,3 +836,15 @@ const char *cs_etm_decoder__get_name(struct cs_etm_decoder *decoder)
+ {
+ 	return decoder->decoder_name;
  }
- 
- static int
++
++int cs_etm_decoder__check_ver(void)
++{
++	if (ocsd_get_version() < OCSD_MIN_VER) {
++		pr_err("OpenCSD >= %d.%d.%d is required\n", OCSD_MIN_MAJOR,
++							    OCSD_MIN_MINOR,
++							    OCSD_MIN_PATCH);
++		return -EINVAL;
++	}
++
++	return 0;
++}
 diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-index 272c2efe78ee..12c782fa6db2 100644
+index 12c782fa6db2..2ec426ee16dc 100644
 --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
 +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-@@ -60,7 +60,7 @@ struct cs_etm_trace_params {
+@@ -107,5 +107,6 @@ int cs_etm_decoder__get_packet(struct cs_etm_packet_queue *packet_queue,
  
- struct cs_etm_decoder_params {
- 	int operation;
--	void (*packet_printer)(const char *msg);
-+	void (*packet_printer)(const char *msg, void *data);
- 	cs_etm_mem_cb_type mem_acc_cb;
- 	bool formatted;
- 	bool fsyncs;
+ int cs_etm_decoder__reset(struct cs_etm_decoder *decoder);
+ const char *cs_etm_decoder__get_name(struct cs_etm_decoder *decoder);
++int cs_etm_decoder__check_ver(void);
+ 
+ #endif /* INCLUDE__CS_ETM_DECODER_H__ */
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-min-version.h b/tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
+new file mode 100644
+index 000000000000..c69597e9d0af
+--- /dev/null
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef INCLUDE__CS_ETM_MIN_VERSION_H__
++#define INCLUDE__CS_ETM_MIN_VERSION_H__
++
++#define OCSD_MIN_MAJOR 1
++#define OCSD_MIN_MINOR 2
++#define OCSD_MIN_PATCH 1
++
++#define OCSD_MIN_VER ((OCSD_MIN_MAJOR << 16) | \
++		      (OCSD_MIN_MINOR << 8) |  \
++		      (OCSD_MIN_PATCH))
++
++#endif /* INCLUDE__CS_ETM_MIN_VERSION_H__ */
 diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 87e983da19be..49fadf46f42b 100644
+index 49fadf46f42b..2385d5ed5ea5 100644
 --- a/tools/perf/util/cs-etm.c
 +++ b/tools/perf/util/cs-etm.c
-@@ -762,15 +762,16 @@ static void cs_etm__packet_swap(struct cs_etm_auxtrace *etm,
- 	}
- }
+@@ -3369,6 +3369,9 @@ int cs_etm__process_auxtrace_info_full(union perf_event *event,
+ 	u64 *ptr = NULL;
+ 	u64 **metadata = NULL;
  
--static void cs_etm__packet_dump(const char *pkt_string)
-+static void cs_etm__packet_dump(const char *pkt_string, void *data)
- {
- 	const char *color = PERF_COLOR_BLUE;
- 	int len = strlen(pkt_string);
-+	struct cs_etm_queue *etmq = data;
- 
- 	if (len && (pkt_string[len-1] == '\n'))
--		color_fprintf(stdout, color, "	%s", pkt_string);
-+		color_fprintf(stdout, color, "	Qnr:%d; %s", etmq->queue_nr, pkt_string);
- 	else
--		color_fprintf(stdout, color, "	%s\n", pkt_string);
-+		color_fprintf(stdout, color, "	Qnr:%d; %s\n", etmq->queue_nr, pkt_string);
- 
- 	fflush(stdout);
- }
++	if (cs_etm_decoder__check_ver())
++		return -EINVAL;
++
+ 	/* First the global part */
+ 	ptr = (u64 *) auxtrace_info->priv;
+ 	num_cpu = ptr[CS_PMU_TYPE_CPUS] & 0xffffffff;
 -- 
 2.34.1
 
