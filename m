@@ -1,82 +1,85 @@
-Return-Path: <linux-kernel+bounces-250090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C551092F425
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:45:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4C192F426
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A041F232B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F23628339E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B329460;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4261BE68;
 	Fri, 12 Jul 2024 02:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="cGX5LLRU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gaD08SoQ"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="lz8yYnWl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F1B8jHJ4"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4268F70
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482B179D0
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720752309; cv=none; b=qZ0hdafG6zxGZf3J8oOSNWkyQp69LUhIdQYIfJnhtoXSfjFYPkV4FUePde7OK1qWB74wfoCYn8ylWdtKvHtZ7pjmBG+LKXxzHTUvdJeyYPfY1DPo764sFhR/mEY9jAJWLy6xonVz9Gb7bKnKq4fXgdIyyb2Gt03yVU/wnwlOVfo=
+	t=1720752310; cv=none; b=XT5+IXpbw6RHanZUbOSJD9yFkLwQPn0G24RSCPCkGVkSt1C35PWGVv74moQCImz+FbNTYg9OT4JrlPqKx67yjtrIPWEOCvzba5FizPOiUCAF7R2QiOKwbV7dmT6t8qhaH8edNzyz14QcrNMfOFkNM9LS9QaRSx1DqhnKJlwFxiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720752309; c=relaxed/simple;
-	bh=PinMlmzLmmq7KztT2fDEb93yYErd8hJTdF9//UQnfKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TGLxFRHNokX/MaOXGDb9pcTKpaHcc4rr6DDcQTJD1i76NcVR13kajqzuscBcNy4Fv9H56cW5z546wEX4damDubSumFQabeTE68XcLhyRJzO6VnsRzP8qM+3phitKwFB+ZCWW3BkFH4AGH4GuX+XlJu41/lAZU/FGKKLeiZPpzuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=cGX5LLRU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gaD08SoQ; arc=none smtp.client-ip=103.168.172.154
+	s=arc-20240116; t=1720752310; c=relaxed/simple;
+	bh=nbvpJQzFIg23rNR8yhUFc2jwjZR2DQm8DGNmSgSF76A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Fo1P1hvTqMfjUjMGDm1q2iFXkvahELH60ioEXP4280xUJSXHQdX6J+okKrKFvGTH9+pYm78m0U2+Z2hw/R0lsSOdynPXzlXi6LSJf+0k+ILq12fpdhy4RGkUKgLYJsNezG/CBFKPI9ydv8plVX413IrU+UHgv/3C7vLLdtnGIBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=lz8yYnWl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F1B8jHJ4; arc=none smtp.client-ip=103.168.172.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sent.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id B165E114158A;
-	Thu, 11 Jul 2024 22:45:05 -0400 (EDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 5CDE01388638;
+	Thu, 11 Jul 2024 22:45:07 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 11 Jul 2024 22:45:05 -0400
+  by compute4.internal (MEProxy); Thu, 11 Jul 2024 22:45:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
-	:subject:to:to; s=fm2; t=1720752305; x=1720838705; bh=mZXQybFJfj
-	4oW2kR9aus3Dkh3XdyBd8HLQGRekYCKZM=; b=cGX5LLRUb2PZAgUTusLHvdsUrO
-	Y7A9YYWE/CdjEyqHuxSt7AijHCdpZuewiLmMjgwdAn7JNea275wrOAdxsLnq5mfN
-	zZBKNNu70qAfm8hKF/0dGaJEoVJvvH0TSA6MRwARfVQfSV5A1/EXREhTdsFN//BT
-	qdGSUzZ8mlQpyyiJ4tu2ULABC0TPw8mdsXO77Z8wmQ+pRivZ5HC5mSPY4DpWkhax
-	bQ0iwHl9r6rVy3bzAA4qKvaKU6oOtRgUOs0g6VYMyglrevbszveorYHJ1zD3IKIX
-	Xt+PzJJlEmnaNh2L6ZiU8x3sAv7TrLufeBmX4Pu+Tsm2o+9tEGYMncDXsfFw==
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:reply-to:subject:subject:to:to; s=fm2; t=1720752307;
+	 x=1720838707; bh=jNGroiyo4BuTb3hCWpWux7PfCpk0jLOtvpYsdbCWP/I=; b=
+	lz8yYnWlO09wfHb83ln8BKkBoq5gRUQUwFV6dKkRSNHwT4rFIM9zWzLIqahj4zcY
+	nIKYIY0qBuykHnAcw9kWMVsgUcfpGapKaEEYwFcjePBPb9J+vOKMqVWSuhQdCUgi
+	X/ywcj41J/8GmeqbecKCObHP2Gl3Zr1ZqExtA96VyEde9CU/pdggiB24rp7Ynkr3
+	KmvsfUc7zb0dwxGPPC5RGBYlTmzbvDgrDGjuoYWCIjKEyIi2CsDuZ8gZCHfRMDAy
+	iA7+METH6x27l+qkdLRd79V01z1npc7+W91QR4PbAE2opafwTdtzGiAXOodyqxH/
+	P+RcVgx5iCn98RjXD2Wk8A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm2; t=1720752305; x=1720838705; bh=mZXQybFJfj4oW
-	2kR9aus3Dkh3XdyBd8HLQGRekYCKZM=; b=gaD08SoQKUgO0Ncqp6huEs3QqY0dv
-	jX22KgUAGW8lh0zyK+hQOyw9rN9C4KY8/xc1ZF8x4rFN0YCOO629hKJ/SMSs0yiK
-	CLcbq0nvoweWPC3rMmboPn8TIOydYMKo/ayTaKPmD0gv1JlEb/JY+8PfdtqFmu6Y
-	MsXzkdo3z8f2/0LFZ92idNfwt4h5gHtLxpqVqc+VOAg0ZL4TsVOAS6ofzTnSKCP6
-	1OY9lh+9qoimewFkHD4x9MehYMUKt3vCpyLckCOpGlbeyJCk/ctG8UKf9sYJ9bVx
-	pLEUf6Dn1l2JWQEJmQSCuBlEFPbj4yXu15i04pXN+TjLsCNH6/atQS1zw==
-X-ME-Sender: <xms:sJiQZlHaEYSYOOtSKa8wchWjY3YsPxZB0uMntaKTp-FRrBZgrLG7EA>
-    <xme:sJiQZqXWYA67Joufqqv-PdHMwwW0sE9ill9Jxv1ODWN_HgIU5dc8-6EGQHUvwwj_O
-    hbfyvf448kNPMSamw>
-X-ME-Received: <xmr:sJiQZnL6jw0tvIOUA6fEr3dLy25Jg3wF_hvHFBVAbgNhbLrTKcod83Vr9Vi-d4XDbWzYc0CRfotu4FQ0PC5YcfrQr9qsONI-r1Z0gPhOWnjTuUPgO1A9wqqr>
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720752307; x=
+	1720838707; bh=jNGroiyo4BuTb3hCWpWux7PfCpk0jLOtvpYsdbCWP/I=; b=F
+	1B8jHJ4ViBoTClRPWsQtEFz8ORDTWX/HBWUZXJMc/mK0/CscC9ecK2cnFdnms0Be
+	Di/RSin7dfh9ANGM62MH/uM50t0aqSb1MHPuEYdPLltOQ15RQGlK0fnZVZGRt97l
+	VE31CoxTR5wQr+uQojH/Oy1DWxLiiC80wUV7S7nzO3hbRu1IXbvqTq2JlXFJd5de
+	aGcgLCth+TsO3jtZOGz0cqf/9IFDBzNrZP83iQ5jAddkb2UXrMHU0OurI1IE7twH
+	t/zF5WbD9PIw2WTeQ2QEpLUvG8j901OJkltRg91Lsk1qggqlaE5i2tb4TNhXt3Ru
+	ZojyNMaWjOD7ZZ300CnuQ==
+X-ME-Sender: <xms:spiQZtiaZFgz5zC_lyuyIh32684g0gz93_7tpze3zqnLUjt2vCCOYg>
+    <xme:spiQZiAaCl2OFB-x7KQWTGcB9weIHlyX3y5sammra34VDDAe3pg2oTCHKTYE3TrdT
+    vRLV6XyJYYCM_kZxg>
+X-ME-Received: <xmr:spiQZtE3pn28pCJP32hU44h1tOKro7qWY3dZz3XwYS3qSOq3BCrzRpLICdUh1jPKnUD6HXpc2WnmhLb4bepgstnmgMroTNr4-4eTyfwqt_phk-GFsFnS0mU5>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeehgdeigecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkfforhgggfestdekredtredttdenucfhrhhomhepkghiucgjrghn
-    uceoiihirdihrghnsehsvghnthdrtghomheqnecuggftrfgrthhtvghrnhepffejueeife
-    ejudejudfgiedtfeeltdfgueffhfdulefgtdekteekfeejheekhedtnecuvehluhhsthgv
-    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepiihirdihrghnsehsvghnth
-    drtghomh
-X-ME-Proxy: <xmx:sJiQZrF6SyP6s-KV9V6uIIWoeN5xHn1q9Jwhibl7a2nACCWfVQCagg>
-    <xmx:sJiQZrUHzqz5_lkoM41Ym_puqe4RcS-Yh8zditnL1TBmHI46DVba6w>
-    <xmx:sJiQZmOCaEAmgHvFmaAZS93qAioLIE7a3XfH0m5zcS3ScK11RW_6_w>
-    <xmx:sJiQZq0HhtF4V6ePsHdQ7xmWt31v5HAu1fClE3QB1-ljGNyKzzJcpg>
-    <xmx:sZiQZiFUcX1ydHrR_PlcYmR66kw008C-661_HaWrImrXg4cGRO8HGNbr>
+    fjughrpefhvfevufffkffojghfrhgggfestdekredtredttdenucfhrhhomhepkghiucgj
+    rghnuceoiihirdihrghnsehsvghnthdrtghomheqnecuggftrfgrthhtvghrnhepudfgfe
+    elhfekiefgtedvudfghfduffefieefffejvefhlefhhffgkedtfeevhfevnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepiihirdihrghnsehsvg
+    hnthdrtghomh
+X-ME-Proxy: <xmx:spiQZiT2es1XWHRLfeyb5XkpgXgwccW9RnhcGrMCsec1uplwkrPdug>
+    <xmx:spiQZqzp8lOv2x0ruNX1kAlJjfFO0-3TaW3Ab9-NO-GJzMldc9677g>
+    <xmx:spiQZo6i1A__HUnyePtFOlA40GtjJ22MjfgDWeVFDV9ZVoT4d8MEbw>
+    <xmx:spiQZvxbGjm0oyAcSJjhEXFxX2JS8jyPQXcHwurTWdkqehz7EQuCpw>
+    <xmx:s5iQZlxsrnzbmaaLgsJXf39fF2rrIvDM_eySAZEspemSHBfn39q3ZrIt>
 Feedback-ID: iccd040f4:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Jul 2024 22:45:03 -0400 (EDT)
+ 11 Jul 2024 22:45:05 -0400 (EDT)
 From: Zi Yan <zi.yan@sent.com>
 To: David Hildenbrand <david@redhat.com>,
 	"Huang, Ying" <ying.huang@intel.com>,
@@ -85,10 +88,12 @@ Cc: Zi Yan <ziy@nvidia.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 0/3] Fix and refactor do_{huge_pmd_}numa_page()
-Date: Thu, 11 Jul 2024 22:44:52 -0400
-Message-ID: <20240712024455.163543-1-zi.yan@sent.com>
+Subject: [RFC PATCH 1/3] memory tiering: read last_cpupid correctly in do_huge_pmd_numa_page()
+Date: Thu, 11 Jul 2024 22:44:53 -0400
+Message-ID: <20240712024455.163543-2-zi.yan@sent.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240712024455.163543-1-zi.yan@sent.com>
+References: <20240712024455.163543-1-zi.yan@sent.com>
 Reply-To: Zi Yan <ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -100,33 +105,36 @@ Content-Transfer-Encoding: 8bit
 
 From: Zi Yan <ziy@nvidia.com>
 
-First patch adds the missing sysctl_numa_balancing_mode check. Second patch
-introduces folio_has_cpupid() to replace open coded folio last_cpupid check.
-Third patch consolidates code in do_numa_page() and do_huge_pmd_numa_page()
-by moving more common code into numa_migrate_prep() (renamed to
-numa_migrate_check() in the patch).
+last_cpupid is only available when memory tiering is off or the folio
+is in toptier node. Complete the check to read last_cpupid when it is
+available.
 
-The RFC is mainly for third patch. It changes the original code behavior:
-1. do_huge_pmd_numa_page() did not check shared folios to set TNF_SHARED.
-2. do_huge_pmd_numa_page() did not check and skip zone device folios.
+Before the fix, the default last_cpupid will be used even if memory
+tiering mode is turned off at runtime instead of the actual value. This
+can prevent task_numa_fault() from getting right numa fault stats, but
+should not cause any crash. User might see performance changes after the
+fix.
 
+Fixes: 33024536bafd ("memory tiering: hot page selection with hint page fault latency")
+Signed-off-by: Zi Yan <ziy@nvidia.com>
+---
+ mm/huge_memory.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-
-Zi Yan (3):
-  memory tiering: read last_cpupid correctly in do_huge_pmd_numa_page()
-  memory tiering: introduce folio_has_cpupid() check
-  mm/migrate: move common code to numa_migrate_check (was
-    numa_migrate_prep)
-
- include/linux/memory-tiers.h |  8 ++++
- kernel/sched/fair.c          |  3 +-
- mm/huge_memory.c             | 31 +++++---------
- mm/internal.h                |  5 ++-
- mm/memory-tiers.c            | 17 ++++++++
- mm/memory.c                  | 82 +++++++++++++++++-------------------
- mm/mprotect.c                |  3 +-
- 7 files changed, 80 insertions(+), 69 deletions(-)
-
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index d7c84480f1a4..07d9dde4ca33 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1705,7 +1705,8 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+ 	 * For memory tiering mode, cpupid of slow memory page is used
+ 	 * to record page access time.  So use default value.
+ 	 */
+-	if (node_is_toptier(nid))
++	if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) ||
++	    node_is_toptier(nid))
+ 		last_cpupid = folio_last_cpupid(folio);
+ 	target_nid = numa_migrate_prep(folio, vmf, haddr, nid, &flags);
+ 	if (target_nid == NUMA_NO_NODE)
 -- 
 2.43.0
 
