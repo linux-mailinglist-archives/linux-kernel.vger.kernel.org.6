@@ -1,128 +1,111 @@
-Return-Path: <linux-kernel+bounces-250341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73AD92F6B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:06:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DC992F6AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 247831C2246F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:06:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ED2C1F22B99
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C911420BC;
-	Fri, 12 Jul 2024 08:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA0713DDC2;
+	Fri, 12 Jul 2024 08:06:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AIEO+UKk"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="K31cVLW5"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DCD12F37B;
-	Fri, 12 Jul 2024 08:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AA317741;
+	Fri, 12 Jul 2024 08:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720771607; cv=none; b=fXmjToat/7PaGClFxmKwtX48XEXoP5RdvEw05kbDPMfuz5MbauUNEutFixDxhSbA7P4qsK2Ewc0Ay6+V1TLxJ6NC5CrgQX3qAWIsyP3EQMXT8nd0oXmvXvE8Ot3vmFxWdN3VfUZd3BHQAx/nPwJb4Ltli/Hmi1ZRoy9k+5GZ2+s=
+	t=1720771575; cv=none; b=o7oVMKajQpd1mI8dhcAoZGJUfiaLDLCbZWdPRFp/UAppd2/4Jy8SfGjrg8Yp8xMHvbs8Kz7dQYksVQWsxbr8hbDwwUGD2L6aEyh+Yz8XMBUVkxtCyH+4YXuGwg8iu+cqqbp6p0854UAHpGBlSErIcH/ZYl1l6SxnRGDP5JkntkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720771607; c=relaxed/simple;
-	bh=0/rwx0Bqtb+ua3ORpNZKSGNN0rqbdcUeTrf3gRq5VMc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=EON1YS5u1kD92iwUqT23X19ihGy0mfJLJgPtWLwrU6s1SZ2wN799jnbnNzwmW/masipXcOZQ1eq+HuCiEkO9GJWLebmGUSc9pN7nlptAe7+Y1Atk8XOFHGUUwjhasuSxPuwE8bVsdnIN1TD5Tg2lRwAWhEQzwLdRfmZE57G9eYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AIEO+UKk; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720771551; x=1721376351; i=markus.elfring@web.de;
-	bh=0/rwx0Bqtb+ua3ORpNZKSGNN0rqbdcUeTrf3gRq5VMc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AIEO+UKkNGIYT2eD2jM807IZeCZUQRpKVRFxlNOsFwbs/faaedvj/OKLCqQKnGsM
-	 /eTa1zc5XF4OiKmU9+Wv/6IovOfTh8lVWFaV41InITw7TV4uLIiI9lKTGsNTgHnyN
-	 XKvwTx91DTUAeTlp+Fh7uzlHK+P6Ec7AgIpWy0R/rmqzBNH8X5tFH6WiqFtCBWpV2
-	 XC6xXBfZP1K8cyrOXV/pl+MBlY1LQJrTk2Wk4uMaqntK2NZRYQC/+DOZRgZIBVZ0c
-	 85cOcGYPD0TnoKFlDmV7AcOiRwBhfy8BRA9epl6bu7yFbTY+8eGIHF77qlcZlGpBh
-	 AN9tG0Kw+On2mYXglg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M4KJX-1sSSGl35Kj-004Dzo; Fri, 12
- Jul 2024 10:05:50 +0200
-Message-ID: <c341e275-4fac-4aaa-8117-55b654c5c006@web.de>
-Date: Fri, 12 Jul 2024 10:05:31 +0200
+	s=arc-20240116; t=1720771575; c=relaxed/simple;
+	bh=7KQJ/rSORgjYXReXBIPA5wk8qlvF92namALIkf9OGVg=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VNX0z6vBQdDi7jtiUmveLcCyTW3CbxpdXofSSg6Xmf8qYQcG0E+Gl9Zw1u7Q09vA6HuDFYx3RQ8jNv3qA2bUWdoSTbApHGJO7Z9rzsuQ66GYmZ6gMlehy9eMYWi1brniwIodNDnbC0OZJJDf8pemfwfEi76pEFMhKVNYGUcnGwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=K31cVLW5; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E7D99DACD3;
+	Fri, 12 Jul 2024 10:06:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1720771563; h=from:subject:date:message-id:to:mime-version:content-type;
+	bh=TvF5r8A7Vug3T/T54B+epLrboJRNbq0U5RG0fUJgFGs=;
+	b=K31cVLW5lEAt46WtS1G6zNBb0CLvm2GhWiw78YLGKfoFYTOi7tnp6Ep1nZYyCjeVCmSaQV
+	I0Z7l2+9Cn5EJrARjhRG9LDV1b2yHX5lzxAb17YXiRdr0AE8Oq/pHJw5hwHukCuYEkDmCc
+	rw4s54XLVUC/J4rdlYSznFHv8sEh+ZbneWqC+VRGWEG2X0DwCl9OrbNjccQhJ02FjxPDub
+	P135uSExWJXyweVWvIaV+ghdB8a1d02ZVdFv2KJtYCQ9n3LPRpE/OoAh4CwEkQe1zXr2E7
+	hanDEoe3yh9MlnZY7CUKbECViWi/2Iy8ZpkJ6ORaQeoFa61w3YLOadiwea/6tg==
+Date: Fri, 12 Jul 2024 10:06:00 +0200
+From: Daniel Wagner <wagi@monom.org>
+To: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, 
+	stable-rt@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Tom Zanussi <tom.zanussi@linux.intel.com>, Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 4.19.317-rt137
+Message-ID: <172077140772.5488.7194965584849299600@beryllium.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Andrii Nakryiko <andrii@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Song Liu <song@kernel.org>,
- Sowmini Varadhan <sowmini.varadhan@oracle.com>,
- Yonghong Song <yonghong.song@linux.dev>
-References: <20240711071018.2197252-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] selftests/bpf:fix a resource leak in main()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240711071018.2197252-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:oUKZu+vu7nh0tSLh70wUSTHqD7mlZPuZbblnC97isWPywN3CTY6
- MPLrEhxWiR67ygcNJpTwqVGA3labNhi1dKl5KFpKV+GSKPatdSX9jQu5BU7Yw41pl9L0khE
- BS8SItbfWWC0KLCxFfKS52Qz0qoPRs0CPBeHY9tijMnQiK2oPcUKDdvr6SCBBBCkMik3Dcq
- WJFX2Hct0JyLaHPWty/rw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:HgQa9a9Ceu0=;kI7GpdLvjL6wxQl9enFajHXsUOX
- U2EUwR5u25ajvlySVYPhKLvZ9BGjkGkLfMWmUkNjRc/sP+IElmi9GqFV9Hwe7GHLvbKD2ce2D
- edhrCbrU0iyImnQp1Bneb3mO4GeuNEg/xpHyqp2fvroX26ktj6WDyvZPwV0s1JUjjlxNah1Lq
- em9Uj7sCDdcUFp+Zx5b3N5fOC8e6M4qwnupF/LNd8mc1dbZOvvFqPcd7IsZ2pZjVw7yIW6gsx
- 6RNRV9TuZwiKRlDHsUnjGoHaSi+t0EJ0DkJiv1yanVyGm2ukO2Hs+sJwqCN4AVL2XodilUdOZ
- nHs/kOvBbLwBS48eGGT/ajp277hvAYh+Lxji+7m9Up22FcOHyP1uvdzrOZhrlkNkMIodvOwzs
- ZRAbmfCsT7siMvnj+CNexjmUY7dN7fFMCnG/sTo3W4/XD/XR8G3qAwREp4rVcpJiCwL7LFEgO
- cT2sO7po4wdlXPcBTKP6SUY23FSsVnnGIc93TbLl+JXCjfAOyj6tQRjwSwmFSctPrHdbMdfkX
- v4qOUeH6pJbZk0QAPn4LTd5kPyAGSHHlelzdbyNBY92AAeLzxPus4wgg1ubHR971HbLTH0I+d
- gmyGP58sM5lSz8Pxe67v7JnBUY+5JDD41O5wgJtuVCqr/axGDSqRIm0akxQ020dpJfUNLuyv+
- rceBz64i/G9Bf16NHpMM9e2+qAxadgM/eSpxAlNMuF2yzh8vzTI0PQF+QBXXvZi+yQuDmHFo0
- gKC74Wjk4xktcIJVw6dWZ3xvOUHF6sB0EZzjxXQ7rwsQXj1A0JnouVEV8ZkHsVKHc+szmZnV4
- JuvYPkmGF+VuI+aycuuEkngA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Last-TLS-Session-Version: TLSv1.3
 
-> The requested resources should be closed before return in main(), otherw=
-ise
-> resource leak will occur. Add a check of cg_fd before close().
->
-> Fixes: 435f90a338ae ("selftests/bpf: add a test case for sock_ops perf-e=
-vent notification")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Hello RT-list!
 
-Please reconsider such information once more.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/researcher-guidelines.rst?h=3Dv6.10-rc7#n5
+I'm pleased to announce the 4.19.317-rt137 stable release.
 
+This just updates this series to the latest stable upstream
+release. No RT specific changes.
 
-How many source code analysis tools should be able to point out that the r=
-eturn value
-from the call of a function like pthread_create() should get more developm=
-ent attention
-(also for discussed test functions)?
-https://elixir.bootlin.com/linux/v6.10-rc7/source/tools/testing/selftests/=
-bpf/test_tcpnotify_user.c#L122
+You can get this release via the git tree at:
 
-See also:
-* https://cwe.mitre.org/data/definitions/252.html
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-* https://wiki.sei.cmu.edu/confluence/display/c/POS54-C.+Detect+and+handle=
-+POSIX+library+errors
+  branch: v4.19-rt
+  Head SHA1: cd63b6227c26a73d4626bdab9811f685f0e3fd7c
 
+Or to build 4.19.317-rt137 directly, the following patches should be applied:
 
-Regards,
-Markus
+  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.19.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.19.317.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patch-4.19.317-rt137.patch.xz
+
+Signing key fingerprint:
+
+  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Daniel
+
+Changes from v4.19.316-rt136:
+---
+
+Daniel Wagner (1):
+      Linux 4.19.317-rt137
+---
+localversion-rt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+---
+diff --git a/localversion-rt b/localversion-rt
+index f824f53c19ea..41b444e910ef 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt136
++-rt137
 
