@@ -1,111 +1,206 @@
-Return-Path: <linux-kernel+bounces-250340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3DC992F6AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:06:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D36D92F6DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ED2C1F22B99
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:06:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39B631C22416
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA0713DDC2;
-	Fri, 12 Jul 2024 08:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="K31cVLW5"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E521313FD66;
+	Fri, 12 Jul 2024 08:24:00 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AA317741;
-	Fri, 12 Jul 2024 08:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE6313D609
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720771575; cv=none; b=o7oVMKajQpd1mI8dhcAoZGJUfiaLDLCbZWdPRFp/UAppd2/4Jy8SfGjrg8Yp8xMHvbs8Kz7dQYksVQWsxbr8hbDwwUGD2L6aEyh+Yz8XMBUVkxtCyH+4YXuGwg8iu+cqqbp6p0854UAHpGBlSErIcH/ZYl1l6SxnRGDP5JkntkM=
+	t=1720772640; cv=none; b=neXZx5Xftc1L3pd34Ovmqve1s9NN07tyAz4mtnGJLK4iZbJSvcczwB3DJAnI7b1PT7YIqoKZpiYcdSiB9oPk5UgMzmGMOchHwLDCQkoJeCHGVrrAtHJ5f1xYPa3Tp9fapuRBE+1XBBihSkIXBj/YnnCw+PaXNek7AEq2YhrN+9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720771575; c=relaxed/simple;
-	bh=7KQJ/rSORgjYXReXBIPA5wk8qlvF92namALIkf9OGVg=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VNX0z6vBQdDi7jtiUmveLcCyTW3CbxpdXofSSg6Xmf8qYQcG0E+Gl9Zw1u7Q09vA6HuDFYx3RQ8jNv3qA2bUWdoSTbApHGJO7Z9rzsuQ66GYmZ6gMlehy9eMYWi1brniwIodNDnbC0OZJJDf8pemfwfEi76pEFMhKVNYGUcnGwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=K31cVLW5; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E7D99DACD3;
-	Fri, 12 Jul 2024 10:06:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1720771563; h=from:subject:date:message-id:to:mime-version:content-type;
-	bh=TvF5r8A7Vug3T/T54B+epLrboJRNbq0U5RG0fUJgFGs=;
-	b=K31cVLW5lEAt46WtS1G6zNBb0CLvm2GhWiw78YLGKfoFYTOi7tnp6Ep1nZYyCjeVCmSaQV
-	I0Z7l2+9Cn5EJrARjhRG9LDV1b2yHX5lzxAb17YXiRdr0AE8Oq/pHJw5hwHukCuYEkDmCc
-	rw4s54XLVUC/J4rdlYSznFHv8sEh+ZbneWqC+VRGWEG2X0DwCl9OrbNjccQhJ02FjxPDub
-	P135uSExWJXyweVWvIaV+ghdB8a1d02ZVdFv2KJtYCQ9n3LPRpE/OoAh4CwEkQe1zXr2E7
-	hanDEoe3yh9MlnZY7CUKbECViWi/2Iy8ZpkJ6ORaQeoFa61w3YLOadiwea/6tg==
-Date: Fri, 12 Jul 2024 10:06:00 +0200
-From: Daniel Wagner <wagi@monom.org>
-To: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, 
-	stable-rt@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Tom Zanussi <tom.zanussi@linux.intel.com>, Clark Williams <williams@redhat.com>
-Subject: [ANNOUNCE] 4.19.317-rt137
-Message-ID: <172077140772.5488.7194965584849299600@beryllium.lan>
+	s=arc-20240116; t=1720772640; c=relaxed/simple;
+	bh=96SPCQiSgOxraPa5O4Ow8Hx1Id2vJ8/LG/Es8VJOpsc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=G1zSm6iDC4Fl6mGIL63HsPLizSCcsYMQJFKriw31UxfxWZ4KCcL5rL5xBv1vwDdM6NGrYI/TlTPPCy3AuOvTCToMZv/+IPGyrqlkbDiiBO62iqgG/LUR7gT6kQQes9UyDOUI9qT/z5ioKNrY5v9DxtAe+SvwHijtvD/rUGRjtj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4WL3dD1VGjz9v7Hp
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:49:04 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 9124F140ABE
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:07:11 +0800 (CST)
+Received: from [10.221.99.159] (unknown [10.221.99.159])
+	by APP2 (Coremail) with SMTP id GxC2BwDXe90i5JBmuR9PAQ--.17117S2;
+	Fri, 12 Jul 2024 09:07:10 +0100 (CET)
+Message-ID: <d6a76968-d10b-c60b-245a-f58116eca6af@huaweicloud.com>
+Date: Fri, 12 Jul 2024 10:06:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCHv2 0/4] tools/memory-model: Define more of LKMM in
+ tools/memory-model
+From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
+To: Alan Stern <stern@rowland.harvard.edu>,
+ Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: paulmck@kernel.org, parri.andrea@gmail.com, will@kernel.org,
+ peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+ dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+ akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+ urezki@gmail.com, quic_neeraju@quicinc.com, frederic@kernel.org,
+ linux-kernel@vger.kernel.org, lkmm@lists.linux.dev
+References: <20240604152922.495908-1-jonas.oberhauser@huaweicloud.com>
+ <88c1ebc8-4805-4d1d-868a-889043899979@rowland.harvard.edu>
+ <bbc3bd10-3bf5-4b1a-a275-dd328c42e307@huaweicloud.com>
+ <f93f140b-13bc-4d00-adee-46cc1c016480@rowland.harvard.edu>
+ <4792c9e7-2594-3600-5d82-4cb1443fe670@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <4792c9e7-2594-3600-5d82-4cb1443fe670@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwDXe90i5JBmuR9PAQ--.17117S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3AryDZr4UWw1fJw4DXFyrJFb_yoW7XFWUp3
+	yUXFZ5Jr45Za18C3ykCF4UXw1rKrWqy3y5XrWrt3y3ZF43KFW5Jay0ywsF9F9rAr1Iqw1k
+	ZF17JF98CF9rAaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
+	7I0E8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I
+	0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
+	GVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYY7kG6xAYrwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU1db1UUUUU
+X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
 
-Hello RT-list!
+On 6/10/2024 10:38 AM, Hernan Ponce de Leon wrote:
+> On 6/8/2024 3:00 AM, Alan Stern wrote:
+>> On Wed, Jun 05, 2024 at 09:58:42PM +0200, Jonas Oberhauser wrote:
+>>>
+>>>
+>>> Am 6/4/2024 um 7:56 PM schrieb Alan Stern:
+>>>> Just to clarify: Your first step encompasses patches 1 - 3, and the
+>>>> second step is patch 4.  The first three patches can be applied now, 
+>>>> but
+>>>> the last one needs to wait until herd7 has been updated.  Is this all
+>>>> correct?
+>>>
+>>> Exactly.
+>>
+>> With regard to patch 4, how much thought have you and Hernan given to
+>> backward compatibility?  Once herd7 is changed, old memory model files
+>> will no longer work correctly.
+>>
+> 
+> Honestly, I did not think much about this (at least until Akira 
+> mentioned in my PR). My hope was that changes to the model could be 
+> back-ported to previous kernel versions. However that would not work for 
+> existing out-of-tree files.
+> 
+> My question is: is compatibility with out-of-tree files really a 
+> requirement? I would argue that if people are using outdated models, 
+> they may get wrong results anyway. This is because some of the changes 
+> done to lkmm during the last few years change the expected result for 
+> some litmus tests.
+> 
+> Hernan
 
-I'm pleased to announce the 4.19.317-rt137 stable release.
+I pushed some new changes to the code for backward compatibility [1]. 
+The series also needs the patch at the bottom to properly deal with the 
+ordering of failing CAses and non-returning operations. With it, all 
+litmus tests return the correct result (the script needs to pass option 
+-lkmm-legacy false to herd).
 
-This just updates this series to the latest stable upstream
-release. No RT specific changes.
+Implementation-wise, there are two things that I would like to have:
 
-You can get this release via the git tree at:
+- atomic_add_unless implementation is treated different than the rest 
+and it is one of the few remaining cases where memory orderings are 
+hardcoded [2]. I would like to define it in the .def file as
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+	atomic_add_unless(X,V,U) __atomic_add_unless{ONCE}(X,V,U)
 
-  branch: v4.19-rt
-  Head SHA1: cd63b6227c26a73d4626bdab9811f685f0e3fd7c
+- "deref" and "lderef" instructions seems to add a "rb_dep" fence. None 
+of the model files (.cat, .def, .bell) refers to "rb_dep" so this looks 
+useless to me. However, I never checked the details of these 
+dereferencing instruction so I might be missing something. Maybe Paul 
+can clarify.
 
-Or to build 4.19.317-rt137 directly, the following patches should be applied:
+Hernan
 
-  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.19.tar.xz
+[1] https://github.com/herd/herdtools7/pull/865
+[2] https://github.com/herd/herdtools7/issues/868
 
-  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.19.317.xz
 
-  https://www.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patch-4.19.317-rt137.patch.xz
+diff --git a/tools/memory-model/linux-kernel.def 
+b/tools/memory-model/linux-kernel.def
+index 001366ff3fb4..5a40c2cad39b 100644
+--- a/tools/memory-model/linux-kernel.def
++++ b/tools/memory-model/linux-kernel.def
+@@ -32,10 +32,10 @@ xchg(X,V)  __xchg{MB}(X,V)
+  xchg_relaxed(X,V) __xchg{ONCE}(X,V)
+  xchg_release(X,V) __xchg{RELEASE}(X,V)
+  xchg_acquire(X,V) __xchg{ACQUIRE}(X,V)
+-cmpxchg(X,V,W) __cmpxchg{MB}(X,V,W)
+-cmpxchg_relaxed(X,V,W) __cmpxchg{ONCE}(X,V,W)
+-cmpxchg_acquire(X,V,W) __cmpxchg{ACQUIRE}(X,V,W)
+-cmpxchg_release(X,V,W) __cmpxchg{RELEASE}(X,V,W)
++cmpxchg(X,V,W) __cmpxchg{MB,ONCE}(X,V,W)
++cmpxchg_relaxed(X,V,W) __cmpxchg{ONCE,ONCE}(X,V,W)
++cmpxchg_acquire(X,V,W) __cmpxchg{ACQUIRE,ONCE}(X,V,W)
++cmpxchg_release(X,V,W) __cmpxchg{RELEASE,ONCE}(X,V,W)
 
-Signing key fingerprint:
+  // Spinlocks
+  spin_lock(X) { __lock(X); }
+@@ -63,14 +63,14 @@ atomic_set(X,V) { WRITE_ONCE(*X,V); }
+  atomic_read_acquire(X) smp_load_acquire(X)
+  atomic_set_release(X,V) { smp_store_release(X,V); }
 
-  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
+-atomic_add(V,X) { __atomic_op(X,+,V); }
+-atomic_sub(V,X) { __atomic_op(X,-,V); }
+-atomic_and(V,X) { __atomic_op(X,&,V); }
+-atomic_or(V,X)  { __atomic_op(X,|,V); }
+-atomic_xor(V,X) { __atomic_op(X,^,V); }
+-atomic_inc(X)   { __atomic_op(X,+,1); }
+-atomic_dec(X)   { __atomic_op(X,-,1); }
+-atomic_andnot(V,X) { __atomic_op(X,&~,V); }
++atomic_add(V,X) { __atomic_op{NORETURN}(X,+,V); }
++atomic_sub(V,X) { __atomic_op{NORETURN}(X,-,V); }
++atomic_and(V,X) { __atomic_op{NORETURN}(X,&,V); }
++atomic_or(V,X)  { __atomic_op{NORETURN}(X,|,V); }
++atomic_xor(V,X) { __atomic_op{NORETURN}(X,^,V); }
++atomic_inc(X)   { __atomic_op{NORETURN}(X,+,1); }
++atomic_dec(X)   { __atomic_op{NORETURN}(X,-,1); }
++atomic_andnot(V,X) { __atomic_op{NORETURN}(X,&~,V); }
 
-All keys used for the above files and repositories can be found on the
-following git repository:
+  atomic_add_return(V,X) __atomic_op_return{MB}(X,+,V)
+  atomic_add_return_relaxed(V,X) __atomic_op_return{ONCE}(X,+,V)
+@@ -127,10 +127,10 @@ atomic_xchg(X,V) __xchg{MB}(X,V)
+  atomic_xchg_relaxed(X,V) __xchg{ONCE}(X,V)
+  atomic_xchg_release(X,V) __xchg{RELEASE}(X,V)
+  atomic_xchg_acquire(X,V) __xchg{ACQUIRE}(X,V)
+-atomic_cmpxchg(X,V,W) __cmpxchg{MB}(X,V,W)
+-atomic_cmpxchg_relaxed(X,V,W) __cmpxchg{ONCE}(X,V,W)
+-atomic_cmpxchg_acquire(X,V,W) __cmpxchg{ACQUIRE}(X,V,W)
+-atomic_cmpxchg_release(X,V,W) __cmpxchg{RELEASE}(X,V,W)
++atomic_cmpxchg(X,V,W) __cmpxchg{MB,ONCE}(X,V,W)
++atomic_cmpxchg_relaxed(X,V,W) __cmpxchg{ONCE,ONCE}(X,V,W)
++atomic_cmpxchg_acquire(X,V,W) __cmpxchg{ACQUIRE,ONCE}(X,V,W)
++atomic_cmpxchg_release(X,V,W) __cmpxchg{RELEASE,ONCE}(X,V,W)
 
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+  atomic_sub_and_test(V,X) __atomic_op_return{MB}(X,-,V) == 0
+  atomic_dec_and_test(X)  __atomic_op_return{MB}(X,-,1) == 0
 
-Enjoy!
-Daniel
-
-Changes from v4.19.316-rt136:
----
-
-Daniel Wagner (1):
-      Linux 4.19.317-rt137
----
-localversion-rt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
----
-diff --git a/localversion-rt b/localversion-rt
-index f824f53c19ea..41b444e910ef 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt136
-+-rt137
 
