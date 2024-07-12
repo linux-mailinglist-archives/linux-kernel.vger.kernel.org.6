@@ -1,82 +1,133 @@
-Return-Path: <linux-kernel+bounces-251088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1445930075
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:25:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939AE930079
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62E0F284ED9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:25:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1280AB221E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83811BC40;
-	Fri, 12 Jul 2024 18:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B8C1BDD3;
+	Fri, 12 Jul 2024 18:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mkp29Xrb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+81KW75"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BA8199B9;
-	Fri, 12 Jul 2024 18:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A014F18AF9;
+	Fri, 12 Jul 2024 18:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720808705; cv=none; b=il4h+j7uiGErIHBB3feu6juh2sF7QW8MhNvoe/WPGtwHSchy0XGCdG306e2awK1m12gLl3kSBZhoSB5TuTyvIAlh8ulLJ5VFNm42/zRpbAXC02S7VZO8B77/Ge79bW8haDksUwIWTXhPo8Ks0sd5kpoBa3nD3jQAWB0+BIvtyS4=
+	t=1720808830; cv=none; b=CvoA8KwobvXHpTtPETRCichovr9tIL8OU8OvAEzQ3IMH3INb1ojMTjGt1g+E7FChq3g+6hh4eqfSuty/aunmCegRnh0C5X7At7ZESWXq7oce7M4tU/YkK5YF+9JXdpAIEPP5rYFf4e5tcER7+ADrGRQQmxuFvryXtz+wEzLsxRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720808705; c=relaxed/simple;
-	bh=ytl+qStaRWN5MPeht2osE5k7c1v2pdGtsE/PG/Q9fKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yh7oVWpCd4K+s2mHx4jkl0vo1JzVQ1eIMpIaC1OqPNO+EuI+iUqGqdzmT0UfcobfsGNr2cQfEIqW7vyNsQNyDicNBOcmT90JuYPxw7rQShnS9ZpR0+pU2oRWSQAUB0EQJvQvaCJbCPHHMf3Uituw8ZhtP0Q/HLVz5S0bBqdkXT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mkp29Xrb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9BD8C32782;
-	Fri, 12 Jul 2024 18:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720808704;
-	bh=ytl+qStaRWN5MPeht2osE5k7c1v2pdGtsE/PG/Q9fKM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mkp29XrbxcqHLsGzQMqRDt+UshPx80sQJAAbC6kedDSZG/c+8nw9MdUJ+mNBofwES
-	 3ASApV0Bi+4XQoLYA3+hRDe0Kl6z7fHTJfx6Dr6EteL5hATAvhjdNkLkOfVT1xtC/X
-	 V5A9guIMdLudBqId16fK24grWQjNZgdifbT1gJRzWoWJsIz4LQMEugPr/VWKYQDkl5
-	 2I6lZZwcPGY8x+oPpkPyT8YWcOhaZMStCXh4zBBl8bbs+SZsBU2yBAxN17mfX+90tg
-	 1rzemFkzHAZIQI+BX/zcIeXylfsjQCxoJSoteUlJ2FrW6R7Ngt1fuaLXFjv9fEynEv
-	 H6/MpTUNMBQ8A==
-Date: Fri, 12 Jul 2024 19:25:00 +0100
-From: Simon Horman <horms@kernel.org>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: marcin.s.wojtas@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: mvpp2: Improve data types and use min()
-Message-ID: <20240712182500.GE120802@kernel.org>
-References: <20240711154741.174745-1-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1720808830; c=relaxed/simple;
+	bh=ySTzuCWe1WZtgrrB2Ofesp8DBEZhlfXalI9LWz4BmC0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nclcZ2n1uEGPamnj524fbOhlEJS2Lg4g1y99+f+pi+zMwrSCHVRdMpIXNZnW/sawC2SGcDPGel4GNbFCsjNlCqxZo5nGJe4lRdIRMNXuu6Pdjc+MwqjhTvExndk2C5VDiCZuTy5DSvIwRZIwjJW5QfAUly9f1heXrqqNCg2ZwCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V+81KW75; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2bfdae7997aso1815717a91.2;
+        Fri, 12 Jul 2024 11:27:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720808828; x=1721413628; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MWlzuBs0JVjSsrquzlDZxy9XAzKcfAZio8DZyGUFpyU=;
+        b=V+81KW75dA0Ke/w4epimQ1T6qUFX54T+Ie/+V4IU9lcCytI1zE/Duf68PswGv3u0Go
+         POGV3mVEH+Uys1nK0H5msbYT2zE7irM5+GMyj7UM3YxR4QSMtuUgHAJPSVWii0ZtmWww
+         1N20pEx590ZKNM+jW89/P/XiuENKsZEghkilK41kSygXbZprsOBkJRj0RnNY48X1LV6n
+         EVj3GnCqVdHJzceLWJ+ZkF0GBeTqDxdZwh1ZWeILXo8fO1fOMxgy9YGAngLQmleXyVlH
+         y2KmvLC97sd8g3dDa/uAgJBrgZqTvqrlYl2OqNoo3LfxdQk0l+E4PHm4zhNpLx2Gf/CT
+         3BHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720808828; x=1721413628;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MWlzuBs0JVjSsrquzlDZxy9XAzKcfAZio8DZyGUFpyU=;
+        b=nrmWZaUUAWHAthdhsLYGfztt55T6b9tJ4BZiFvLBv9Q0m/FEWaCozHow+DMi1pAQJT
+         V2A9mok2zPo59QgfIH/nzjA7/HeWpo2oCLZ3mRbgmnTh0pZDwWie0clNwK04VcdI0AE6
+         utQUT6VY1cWFUDjmX4Mc/JW6qE9GN94gtkZyQyzD6U8JUvEi1eejce7o9G1XZ/8zng+J
+         7uRUKwrU23INBQP4k1BqQvBT//uB+HI3mVUX6RYj3EWROv4x8GFohTATC5lSMMLk1KsA
+         pUygmSSAifbB1x+afZ3vb1kDqvhxKRgSEYaRHa5wXMAWfcB5UGHrA/iuCypjxv9IhuCp
+         UtJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzb/obnDPsqD9sJIsMKdsIxkQXV3tzFHI+ObiVoIiUZgvhEMYzVpL1q3e3hGo2dhXal+J6GgNaxpMYXEX8XZ795WgEr/RbXua+dFdH0AlMNFlJ+PmkF0GpsN5yRK8qON6ZI4Nz9j1pqpO2bPHRcZ8B30+9x54bliIjT4l2hys5TX7dbdGYxxQdLj6qwob8dzhofWiWGBlRUdn9Y2npgzVJ
+X-Gm-Message-State: AOJu0Yyg5KduzAnRSD/6JNSNKawXeGjw8EgHOiUGlV3yQOOhbTMm7eGF
+	v1TZ+asbw3gYf6cPddbwBSBR3Zi4DFYM6s76H9jgRyBF1hnUnqCZBROmefNJRfK16Ks+mlIYpEj
+	kvMwWEADDN4xqnSmUJQl4gXcWTfU=
+X-Google-Smtp-Source: AGHT+IGLopBIwpc+2USkp/PiI+T5/l6GSue2R9EDzDT5841MwRMyYJEbmNCoR3BjszWiyagYOQlpBK7jirXqPCRnk9E=
+X-Received: by 2002:a17:90a:d917:b0:2c9:83f3:128c with SMTP id
+ 98e67ed59e1d1-2ca35d4407emr10421111a91.31.1720808827772; Fri, 12 Jul 2024
+ 11:27:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711154741.174745-1-thorsten.blum@toblux.com>
+References: <20240712135228.1619332-1-jolsa@kernel.org> <20240712135228.1619332-2-jolsa@kernel.org>
+In-Reply-To: <20240712135228.1619332-2-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 12 Jul 2024 11:26:55 -0700
+Message-ID: <CAEf4BzbGVGkoCW3xE9yvMUhMDESEZEpQohKoTvy8w7V9o70vBA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] uprobe: Change uretprobe syscall scope and number
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org, 
+	bpf@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	"Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
+	Deepak Gupta <debug@rivosinc.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 05:47:43PM +0200, Thorsten Blum wrote:
-> Change the data type of the variable freq in mvpp2_rx_time_coal_set()
-> and mvpp2_tx_time_coal_set() to u32 because port->priv->tclk also has
-> the data type u32.
-> 
-> Change the data type of the function parameter clk_hz in
-> mvpp2_usec_to_cycles() and mvpp2_cycles_to_usec() to u32 accordingly
-> and remove the following Coccinelle/coccicheck warning reported by
-> do_div.cocci:
-> 
->   WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead
-> 
-> Use min() to simplify the code and improve its readability.
-> 
-> Compile-tested only.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+On Fri, Jul 12, 2024 at 6:52=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> After discussing with Arnd [1] it's preferable to change uretprobe
+> syscall number to 467 to omit the merge conflict with xattrat syscalls.
+>
+> Also changing the ABI to 'common' which will ease up the global
+> scripts/syscall.tbl management. One consequence is we generate uretprobe
+> syscall numbers for ABIs that do not support uretprobe syscall, but the
+> syscall still returns -ENOSYS when called in that ABI.
+>
+> [1] https://lore.kernel.org/lkml/784a34e5-4654-44c9-9c07-f9f4ffd952a0@app=
+.fastmail.com/
+>
+> Fixes: 190fec72df4a ("uprobe: Wire up uretprobe system call")
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  arch/x86/entry/syscalls/syscall_64.tbl | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+sure, why not
 
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/sysc=
+alls/syscall_64.tbl
+> index 6452c2ec469a..dabf1982de6d 100644
+> --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -384,7 +384,7 @@
+>  460    common  lsm_set_self_attr       sys_lsm_set_self_attr
+>  461    common  lsm_list_modules        sys_lsm_list_modules
+>  462    common  mseal                   sys_mseal
+> -463    64      uretprobe               sys_uretprobe
+> +467    common  uretprobe               sys_uretprobe
+>
+>  #
+>  # Due to a historical design error, certain syscalls are numbered differ=
+ently
+> --
+> 2.45.2
+>
 
