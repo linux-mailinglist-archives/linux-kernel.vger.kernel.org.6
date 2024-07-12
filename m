@@ -1,79 +1,62 @@
-Return-Path: <linux-kernel+bounces-250201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0102D92F51B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:39:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB50192F51E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E1EB1C224F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:39:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F3D5B21CB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDDA1803E;
-	Fri, 12 Jul 2024 05:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2293318654;
+	Fri, 12 Jul 2024 05:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KBvNMIy8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fK4qrFH+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64C71B969
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 05:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15AEFC12;
+	Fri, 12 Jul 2024 05:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720762774; cv=none; b=AXJoUdFcbn9LsDGTESFiWM9vLOGh3KOJUxDhlddXjueVMS9Jy//uG2uxS5e7i8urFfVblIbFQZ10RrqMM+By/n4bJdi5oHOgknfdF6sq4RmHmyFvljRj+QSn4KIYXzBmS6ztu7P9PJVivbH8DuJ8Mr3onKbSgA4213qJ/4yrgsg=
+	t=1720762830; cv=none; b=SaKPjZWtKbUkUl7A8GWKzirgHJH87I3KxHN6k6zvutDYGiYmxCHkvLmIP4W+zJWMmqI3KnibjCWiX8SpRDc8aR9ZI0QwAjcNrVAXZ6qkUEoNPDL2eaS2225yqnql3MjBmmqn0RMvfJPmbbPHtW4rHdZx4GvK0ILqCxgoE9sKH7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720762774; c=relaxed/simple;
-	bh=EaiqQv1CXRmEOwGPKyZ1gEREXMoGVvsMHHaWcTl/5N4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QfVbgdh5QAiluiRJmhIHDmwugL6qJKeoKTXUIn5rHpvw8mGdnXZLP6cTLXKId2ztQ7Xfo1er3jqgb5KmECwcI/u61FDdQyPaAYxOPZWNhFYJaXH6PqS9oivZqXllnB6jKbNihuASXjQ3Q5vNEtsSav4vOcbQRsJN0D/NBO8/lVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KBvNMIy8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720762770;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Juf3XDq2EUxzBjQ9N3/IKdm2gpCkJR3uxHfLLmp+JKA=;
-	b=KBvNMIy8thlO405vxXerJXxEAMzp+mrYNQpIoJOKhAJjlG7YzZxTzA5V6mZyLPQUqygxTq
-	ClIdd8HYyslF+ucPx9kmy3X0Yf9xgeHBeDCRnWVe8OUvYDzK5tiz5OHRtFGRVeeF/BQoWb
-	2YP0e7XgaT8RkSJavyHVinADU00FabU=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-90-HA8_Q2RgN7GRaBwq_O3tUQ-1; Fri, 12 Jul 2024 01:39:28 -0400
-X-MC-Unique: HA8_Q2RgN7GRaBwq_O3tUQ-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1fb05b9e222so13302945ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 22:39:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720762766; x=1721367566;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Juf3XDq2EUxzBjQ9N3/IKdm2gpCkJR3uxHfLLmp+JKA=;
-        b=Zceg2tBrXWXZ4BND0ofzfo2OcioeBvOwuE7AT7R6zxLH+SgL8cS3wQwyjrt/2ZyGw2
-         YS0NaljDMsPif8HepWcpNO+fsnJYG1pafGEi1AswoLycXajz9yrwVj44RhkmGRp/JFHA
-         6Kg2hi341YpAirNn3Tl/Fg45Y2HXQCJnjlCuccDG8zSQExWu5ZehpD3ma8AL1LH0C/Hp
-         fn+PZC7jf0oS5hNc0jgEtVMkKPHnB/dL669awFjymoTw19+OZWgRVggCSkKtj3DAAu8x
-         lLHTEKk4h01HbLBsU0FaLBxzJhfXDkHomy1wFpMcZSloUyrhKVoj9Ye6NRkcXtml+xza
-         4mCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVI3tDH6s7J6nWxHjSaIRSVI8052ovFu1JE83dI2aPeV2arrX790WyR9nv4rLjIwFo1spCHYIFxks/rnYzLzbGYLxrGgS1SASMPzz6L
-X-Gm-Message-State: AOJu0YxSMbgUvEjcuzGl7zzORP2ia0rrq1xaFLkbGCRR5494/dsWfFkr
-	PBPNnxJZIHBzMdWzxnkzu6fXIeDmas7KPbcDkXk/hf8k1Sy7v6lWSJuRCpEeBS+dsjr8x6YbWLG
-	/vLE3ufDXArorLjIddckGud9LxXK7h+mxyxYWpMTfcZ13PRLJ9U4FFcOR7JRbkyhl65hCSg==
-X-Received: by 2002:a17:903:2342:b0:1fb:4194:5b78 with SMTP id d9443c01a7336-1fbb6ec24cbmr90896725ad.47.1720762766483;
-        Thu, 11 Jul 2024 22:39:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFfj/Ar1/TbsQ4S4E1sIRhO+MyKu2ikCKwAAuxpNfHr8daVGBu9FDekV4bt2He3KUzw0zdWRA==
-X-Received: by 2002:a17:903:2342:b0:1fb:4194:5b78 with SMTP id d9443c01a7336-1fbb6ec24cbmr90896565ad.47.1720762766058;
-        Thu, 11 Jul 2024 22:39:26 -0700 (PDT)
-Received: from [192.168.68.54] ([43.252.112.134])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a2b2b0sm59174105ad.84.2024.07.11.22.39.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 22:39:25 -0700 (PDT)
-Message-ID: <63a0364b-a2e0-48c2-b255-e976112deeb1@redhat.com>
-Date: Fri, 12 Jul 2024 15:39:20 +1000
+	s=arc-20240116; t=1720762830; c=relaxed/simple;
+	bh=hvyFx3I4Ha1qkqZiA0VG/4TdPG0Oy8Q8M9MNYd24II4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gOuVLJqXwEC1c0cHE1793oB9cdTEpQSp/1/UuLjpJ4M058oOcjSfBEwWMn4aRi3WxuXCff/AbUl04gmiffoedCFB2JqfZeq4injGwlb9WMZU5nj56Q7YtPgl87NKYbihde6bnFvkdA5ys9ZSeARyWy378bfsn2ZQ0Ym9/9XDigA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fK4qrFH+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46C2eofX008746;
+	Fri, 12 Jul 2024 05:40:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	S+lQpm2m3jaaBULrxGFN2wLiGoIoLBtU+dUdkmZdDK4=; b=fK4qrFH+7aywWD6S
+	DGMS4440AsziEWMn+oUvITgxViF+mzLu9gekwL2pDW//seGzL+vbNW+Blcxl/km3
+	c5c9ItlWcY7aY0Hcn22Uy12PwClh6WB6U/fdJbviYlVD3Dd+2jlvUF7BbdXtXXc0
+	+6f60JQz0LbpMKLXiWnjL9owweXbVxx48cYzgCGeorVsBimTNsVS0fEXktpneaRl
+	ZGKjXHY9WIwh64nYRasfXFMmXdUluOPQLshOpLKTarpAuzcOldfcaR/Y6DA88Hui
+	zeElgSEXHTUDT9nW5K5/MMDBfl6s/CJUTZaTG1J+MUQbtY4IzUNoqIgX9aDTg0Oa
+	iCaQoA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x51ef86-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 05:40:24 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46C5eI33002900
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 05:40:18 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
+ 2024 22:40:13 -0700
+Message-ID: <072da4b0-2d6c-4342-a1f4-451f4ff791fc@quicinc.com>
+Date: Fri, 12 Jul 2024 13:40:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,114 +64,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory: Avoid PMD-size page cache if needed
-To: David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, william.kucharski@oracle.com,
- ryan.roberts@arm.com, shan.gavin@gmail.com
-References: <20240711104840.200573-1-gshan@redhat.com>
- <ZpBEwEn3swH7IFbI@casper.infradead.org>
- <f58433ee-7217-4f9e-91ba-c29f95cd56b0@redhat.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <f58433ee-7217-4f9e-91ba-c29f95cd56b0@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2] dt-bindings: soc: qcom,aoss-qmp: Document the QCS9100
+ AOSS channel
+To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240709-document_qcs9100_aoss_qmp_compatible-v2-1-6c7f35bc9ec3@quicinc.com>
+ <24302005-d9a5-400e-a28c-40276a3f7250@quicinc.com>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <24302005-d9a5-400e-a28c-40276a3f7250@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7kv-dtF8Y_UZ0R4dBTVod6M61i7tHQDU
+X-Proofpoint-ORIG-GUID: 7kv-dtF8Y_UZ0R4dBTVod6M61i7tHQDU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-12_03,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407120037
 
-On 7/12/24 7:03 AM, David Hildenbrand wrote:
-> On 11.07.24 22:46, Matthew Wilcox wrote:
->> On Thu, Jul 11, 2024 at 08:48:40PM +1000, Gavin Shan wrote:
->>> +++ b/mm/huge_memory.c
->>> @@ -136,7 +136,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->>>           while (orders) {
->>>               addr = vma->vm_end - (PAGE_SIZE << order);
->>> -            if (thp_vma_suitable_order(vma, addr, order))
->>> +            if (!(vma->vm_file && order > MAX_PAGECACHE_ORDER) &&
->>> +                thp_vma_suitable_order(vma, addr, order))
->>>                   break;
+
+
+On 7/11/2024 3:58 AM, Chris Lew wrote:
+> Hi Tengfei,
+> 
+> On 7/9/2024 7:24 AM, Tengfei Fan wrote:
+>> Document the Always-On Subsystem side channel on the QCS9100 Platform.
+>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+> 
+> /s/drived/derived/
+
+ACK.
+
+> 
+>> platform use non-SCMI resource. In the future, the SA8775p platform will
+>> move to use SCMI resources and it will have new sa8775p-related device
+>> tree. Consequently, introduce "qcom,qcs9100-aoss-qmp" to describe
+>> non-SCMI based AOSS channel.
 >>
->> Why does 'orders' even contain potential orders that are larger than
->> MAX_PAGECACHE_ORDER?
+> 
+> Were there any differences between non-SCMI and SCMI based platforms 
+> specifically for the qcom_aoss.com driver?
+> 
+> 
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+>> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+>> While the QCS9100 platform is still in the early design stage, the
+>> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+>> mounts the QCS9100 SoC instead of the SA8775p SoC.
 >>
->> We do this at the top:
+>> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+>> all the compatible strings will be updated from "SA8775p" to "QCS9100".
+>> The QCS9100 device tree patches will be pushed after all the device tree
+>> bindings and device driver patches are reviewed.
 >>
->>          orders &= vma_is_anonymous(vma) ?
->>                          THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
+>> The final dtsi will like:
+>> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
 >>
->> include/linux/huge_mm.h:#define THP_ORDERS_ALL_FILE     (BIT(PMD_ORDER) | BIT(PUD_ORDER))
+>> The detailed cover letter reference:
+>> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+>> ---
+>> Changes in v2:
+>>    - Split huge patch series into different patch series according to
+>>      subsytems
+>>    - Update patch commit message
 >>
->> ... and that seems very wrong.  We support all kinds of orders for
->> files, not just PMD order.  We don't support PUD order at all.
+>> prevous disscussion here:
+>> [1] v1: 
+>> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+>> ---
+>>   Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
 >>
->> What the hell is going on here?
-> 
-> yes, that's just absolutely confusing. I mentioned it to Ryan lately that we should clean that up (I wanted to look into that, but am happy if someone else can help).
-> 
-> There should likely be different defines for
-> 
-> DAX (PMD|PUD)
-> 
-> SHMEM (PMD) -- but soon more. Not sure if we want separate ANON_SHMEM for the time being. Hm. But shmem is already handles separately, so maybe we can just ignore shmem here.
-> 
-> PAGECACHE (1 .. MAX_PAGECACHE_ORDER)
-> 
-> ? But it's still unclear to me.
-> 
-> At least DAX must stay special I think, and PAGECACHE should be capped at MAX_PAGECACHE_ORDER.
-> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml 
+>> b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+>> index 7afdb60edb22..80e1a8b43586 100644
+>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+>> @@ -25,6 +25,7 @@ properties:
+>>     compatible:
+>>       items:
+>>         - enum:
+>> +          - qcom,qcs9100-aoss-qmp
+>>             - qcom,qdu1000-aoss-qmp
+>>             - qcom,sa8775p-aoss-qmp
+>>             - qcom,sc7180-aoss-qmp
+>>
+>> ---
+>> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+>> change-id: 20240709-document_qcs9100_aoss_qmp_compatible-a7376629ea6c
+>>
+>> Best regards,
 
-David, I can help to clean it up. Could you please help to confirm the following
-changes are exactly what you're suggesting? Hopefully, there are nothing I've missed.
-The original issue can be fixed by the changes. With the changes applied, madvise(MADV_COLLAPSE)
-returns with errno -22 in the test program.
-
-The fix tag needs to adjusted either.
-
-Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs interface")
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 2aa986a5cd1b..45909efb0ef0 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -74,7 +74,12 @@ extern struct kobj_attribute shmem_enabled_attr;
-  /*
-   * Mask of all large folio orders supported for file THP.
-   */
--#define THP_ORDERS_ALL_FILE    (BIT(PMD_ORDER) | BIT(PUD_ORDER))
-+#define THP_ORDERS_ALL_FILE_DAX                \
-+       ((BIT(PMD_ORDER) | BIT(PUD_ORDER)) & (BIT(MAX_PAGECACHE_ORDER + 1) - 1))
-+#define THP_ORDERS_ALL_FILE_DEFAULT    \
-+       ((BIT(MAX_PAGECACHE_ORDER + 1) - 1) & ~BIT(0))
-+#define THP_ORDERS_ALL_FILE            \
-+       (THP_ORDERS_ALL_FILE_DAX | THP_ORDERS_ALL_FILE_DEFAULT)
-  
-  /*
-   * Mask of all large folio orders supported for THP.
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2120f7478e55..4690f33afaa6 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -88,9 +88,17 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
-         bool smaps = tva_flags & TVA_SMAPS;
-         bool in_pf = tva_flags & TVA_IN_PF;
-         bool enforce_sysfs = tva_flags & TVA_ENFORCE_SYSFS;
-+       unsigned long supported_orders;
-+
-         /* Check the intersection of requested and supported orders. */
--       orders &= vma_is_anonymous(vma) ?
--                       THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
-+       if (vma_is_anonymous(vma))
-+               supported_orders = THP_ORDERS_ALL_ANON;
-+       else if (vma_is_dax(vma))
-+               supported_orders = THP_ORDERS_ALL_FILE_DAX;
-+       else
-+               supported_orders = THP_ORDERS_ALL_FILE_DEFAULT;
-+
-+       orders &= supported_orders;
-         if (!orders)
-                 return 0;
-
-Thanks,
-Gavin
-
+-- 
+Thx and BRs,
+Tengfei Fan
 
