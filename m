@@ -1,103 +1,125 @@
-Return-Path: <linux-kernel+bounces-250911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8C892FE73
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:25:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DE292FE77
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6D99282B81
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:25:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04F5A1F23C1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72D3176250;
-	Fri, 12 Jul 2024 16:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECB0176223;
+	Fri, 12 Jul 2024 16:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qheNKlkm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="fN8LIlVQ"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5C5176231;
-	Fri, 12 Jul 2024 16:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234B21482EE;
+	Fri, 12 Jul 2024 16:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720801540; cv=none; b=ZsrPNnMkbm1jO3qk1icyMoxaTzkHZn8maaxLnbO861aPkoCGXqZJsoMc4gI+6ygzltqs47fIkc9+xV3a2hdGOGorpyACNKCH41Bba6DQVG6Vl+Hg1bj3XAwQ/Ip5XswX5SlfDVMXkV7VFu3BqiVoXXo9XLVV5W/gdAZDE37q4Oc=
+	t=1720801614; cv=none; b=HqUOdoZEMJ5fGCG4IDjvIp9F5TP5WvJ3NOVXmpiMtd0wxeiuL81mzxpDMAW7D+CECY88cN6JyhjY72LIDOB7H50zok5UhtV5rXw4wVg2fYNytLA+JVLs2+FpLyhCiHHrtTXWsm16jGZ2fo5MVvam86+3+JWlweUxaymOalnDgLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720801540; c=relaxed/simple;
-	bh=vKbYjpqSW68vls9/ccAwcEsiYRHH2lrWUF7KjbHlMEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OWPNudvyc4SSikAslxA9V+O+8BnpILFT+24U56GIQOfiyO4V0bAEW47rE4o3xLf/X+nkx8uiVDetlqydkKVvA3UkMh5uTHelb2R+J5Rhl3tV0BwAohAkUUMuLw4h5uGoXVZRXYeL2C1OaaQoUueOsdUFwVawcr4RKzeuCvJsb/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qheNKlkm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B37C32782;
-	Fri, 12 Jul 2024 16:25:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720801539;
-	bh=vKbYjpqSW68vls9/ccAwcEsiYRHH2lrWUF7KjbHlMEE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qheNKlkm2Idxpgf4Uo5eN5a4AFkxhoiFJax9yW+nJDJI4QA+uUuiZ6whRtpx5QTOr
-	 hPg0XMVsG356juBaiHXaqUcpNuMFASVb9uzikwS9WXk2QDcrQAwg7/4n6hbdvrdX7C
-	 gB9ABOl3gGZkvSlpdR9jLtjCfY6NQ0aaVuWbWy8z7kn4RNhHr1LrTq/AS3n9i3iZTf
-	 xfGG3nyMeV5suicqZDD2Yot8XN6/j4sNIPyfHH0Lmr/MrkhFFNM/aTq3GEY2PVPpoW
-	 CYDU9aG/Dsatw0zowI43N9ZpYA1dhJQ6x3HF1Ay2yxeVGnmU6L8lhoTTz21HWRn7YZ
-	 TzNO8xSerdKvQ==
-Date: Fri, 12 Jul 2024 18:25:34 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, jikos@kernel.org, linus.walleij@linaro.org, dianders@google.com, 
-	hsinyi@google.com, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: HID: i2c-hid: elan: Introduce Elan
- ekth6a12nay
-Message-ID: <c4d37nhn5mjzftvde4hk377vyz3dqp4d75hctobaeclzk2orxa@pxweixkkn3zl>
-References: <20240704085555.11204-1-lvzhaoxiong@huaqin.corp-partner.google.com>
- <20240704085555.11204-2-lvzhaoxiong@huaqin.corp-partner.google.com>
+	s=arc-20240116; t=1720801614; c=relaxed/simple;
+	bh=8xueuFh66IOZH5nB59tpVHpKkEs7lwbBx9lTmbkBLRw=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jKyyMytIhsyfKesERBINJZ6y7eGcMggVrDyQRnGlNXSQ1xzFQLYoLeeEKU+LdkzHL/BQt1XEPfY85b/8V6D7BRRFcSqBUqZeutSiIEmV0QWLGJstxEQ2ZdBnTAkm0klZHDNwd4pI990NsnV91dnjPCgeJciZrE6izGRY9rwLSWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=fN8LIlVQ; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720801600; x=1721406400; i=spasswolf@web.de;
+	bh=aJ0Pj4SQBF9yDLIqf75TpxCyvDNf0udTd7nS3n1EoaA=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=fN8LIlVQyTnmECLU0M0z/BUZkXiK/m52jAJjnNeVr0twJNamRii6LvLxnSbdRFoZ
+	 n3fwwV49V+scl5+ex6rSmoFVagz7xiDuLPeh7gppzI03w6b4EhY+6oIGIjcOBODne
+	 fKd4kCqnjbr8kg3uBLY8Mpo1OuE1T/RMpypFSGhbp5I7rXcu5OBYcXc2ypgXiuj7R
+	 gN5zWICRCU36MAc3vsDkZjqXGAa14yBXI3ej9qrg853byXkuewJHdW1faahjqbkVa
+	 VDWdr/E5fm5cNk0VXM/uG3wRKnuhNsOJUgGgUBptcUwyU28pB+5IIebPpb+EuXlNF
+	 kEqruAXzgNVyzBz4iQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4vNe-1sKiQ834rM-015T0S; Fri, 12
+ Jul 2024 18:26:40 +0200
+Message-ID: <6407b0ef1ee38cfa29c5b7ce9f185cda04209f66.camel@web.de>
+Subject: Re: commit 1c29a32ce65f4cd0f1c causes Bad rss-counter state and
+ firefox-esr crash in linux-next-20240613
+From: Bert Karwatzki <spasswolf@web.de>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Jiri Olsa <olsajiri@gmail.com>,
+ linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
+ linux-next@vger.kernel.org
+Date: Fri, 12 Jul 2024 18:26:39 +0200
+In-Reply-To: <eee7hvd6vh4v65ta5fl7iacth7yesvryktxouu34uy4cxpxalm@ngeeuayw2lxp>
+References: <20240712121800.3049-1-spasswolf@web.de>
+	 <20240712121800.3049-2-spasswolf@web.de>
+	 <eee7hvd6vh4v65ta5fl7iacth7yesvryktxouu34uy4cxpxalm@ngeeuayw2lxp>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.3-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704085555.11204-2-lvzhaoxiong@huaqin.corp-partner.google.com>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kivOzDX+2AGX0oejXMWjRdC8XotU2+/61jOD6zt7KRCMCCagRq7
+ jI38Hh54D2depuMgJ8pGvgit4ld4Zpuwo/BNwhM46/BgsdY1wxNyjR+l4qYgKlf3sEHOUf8
+ frJA3HgxLmGC3lXy/jWVe8hiG7vAlVT7GSDjWIpLzkQK1DAcPW9oJy6O+yTdFne0LzuhpR4
+ wgqmiT53CtT1R7BPjXRpQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RpdpzLKFOQ0=;+wFm20eCSAwG/y9n5H6g+W74OoT
+ +NQU47PuQXQxfoEvu2PKlwP+FAJA3dN3mrgbxfRLCRxd/xUf5LT2ITLUz5kgQOBA0s5+Hr+kc
+ vIfBnovGWgDUcfoN8FJsGpwYihazJYkOYJS40uinWCZl5fzdXKBWMJqUAfL0SBaoDqNWl1zZO
+ 9CXH0tHlBPfZ5edV6IBn3iMbCzQgaYlces/x3MZMOFga9ZWTipciyzmAIzxnv8yUnPQRBe2d1
+ gsP25ZULjbzgW1Gx+UaeDjlp5G4P7UP3h3tGaUPvSUqmGq46LnOaNTF30JnBENB6riwi4MatU
+ gda1YXilQCu6CgrNkMCL61kgYQ/nAELqwcvPa+7h8j7H8MCpaQZCgo7Z8enhunwcn800SxV/q
+ jWHwshbVCXPuHVVrA5NmHDgG8C9b2RAm2PQCRoTbLgUYzh+JP+4rJYYSVH8ZmUGH+oAp+GX0N
+ H3W9MKwuR3jh0xFiUWRJspq1TdhVHxwm9DXPUlCjAtL1X9i73VkTKt9qxmut7dKvEYzxQfeBW
+ 0rdVxKJXY7gOA3CCdEVzkepn4Gfi5prXKEw5m9kQP3DaOFqVWqlJaRWAuSXGhHR9Gw6phRNtg
+ OjBuB90Y21Bk1iDjwtH6RSBzdiX+wg6142DsYzKCAT8FCgVL0W28sYhFqKK4E5QXj7KGyEc0A
+ 6hNvaEJ5t+Ztcuqk/FY6H+XkSARm2D9x5LH+8GAJe7j/0UgZVspcPCpiFjhY7bcNAUSdj4qd6
+ OUMZObbiRmY/2h2rapoU5cgLsRY94k182OXYt8mfXlA+dx/3ZSNfH2zcAhXF0Wogx+vVZgYZm
+ v1DDU35BzCyg5nBqw57CQkmQ==
 
-On Jul 04 2024, Zhaoxiong Lv wrote:
-> The Elan ekth6a12nay touch screen chip same as Elan eKTH6915 controller
-> has a reset gpio. The difference is that they have different
-> post_power_delay_ms.
-> 
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-> ---
->  Documentation/devicetree/bindings/input/elan,ekth6915.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/elan,ekth6915.yaml b/Documentation/devicetree/bindings/input/elan,ekth6915.yaml
-> index dc4ac41f2441..0bbf9dd7636e 100644
-> --- a/Documentation/devicetree/bindings/input/elan,ekth6915.yaml
-> +++ b/Documentation/devicetree/bindings/input/elan,ekth6915.yaml
-> @@ -20,6 +20,7 @@ properties:
->    compatible:
->      enum:
->        - elan,ekth6915
-> +      - elan,ekth6a12nay
->        - ilitek,ili2901
+Am Freitag, dem 12.07.2024 um 11:38 -0400 schrieb Liam R. Howlett:
+> * Bert Karwatzki <spasswolf@web.de> [240712 08:18]:
+> > I did some experiments on the rss counter bug. The next patch is made =
+for linux-next-20240613
+> > with commit 1c29a32ce65f4cd0f1c0f9 reverted. Then I simply inlined the=
+ code of do_vmi_unmap()
+> > and do_vmi_align_munmap() into mmap_region(). This version of the code=
+ works fine and does not
+> > show the rss counter bug.
+>
+> Are you still working with v1 of this patch set?
+>
+> I root-caused the rss counter issue and seg fault to the fact that next
+> or prev may be expanded and I was using the new start/end on munmap() in
+> the completion.  This was fixed in subsequent patches.
+>
+> I've sent v4 recently, but will have to a v5 to back off the removal of
+> arch_unmap() for PPC.
+>
+> ...
+>
+> Thanks,
+> Liam
 
-This is not in v6.10-rcX, ilitek got removed and the compatible node got
-updated.
+Sorry, that was a mistake when using git send-email while working on anoth=
+er bug
+I accidently sent this old mail. I actually have tested the v3 and v4 patc=
+hsets
+on linux-next up to 2024711 with no error. I havent't tested v4 on linux-
+20240712, yet, because next-20240712 has a deadlock issue:
+https://lore.kernel.org/all/20240712080414.GA47643@google.com/
+(while sending a mail to this issue, I accidently send the old mail, too)
 
-I could amend the patch for this but I'd rather have you to do it as I
-can not test the change myself.
-
-So please respin the series on top of v6.10 at least, keep the various
-acks/rev-by and and make sure you test.
-
-Cheers,
-Benjamin
-
->  
->    reg:
-> -- 
-> 2.17.1
-> 
+Bert Karwatzki
 
