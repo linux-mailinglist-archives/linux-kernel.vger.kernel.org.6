@@ -1,144 +1,105 @@
-Return-Path: <linux-kernel+bounces-251166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860B5930172
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:07:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E267930177
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0957BB22A06
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:07:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7EA1F23035
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0526549630;
-	Fri, 12 Jul 2024 21:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9D94963C;
+	Fri, 12 Jul 2024 21:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="gSpGb5Qt"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="M+KXEAFw"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D31D219FF;
-	Fri, 12 Jul 2024 21:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C69A482C3
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 21:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720818450; cv=none; b=fWq56q6arKRbKVw3qpAC40Znu07ekXhMXgtMzc7nhc8/rRa/gTfZvM7aRk1h4Ua7TUFsJK3ejBciKIsxqPHipY+tqqfzYUiYsNWedPwundi6gs72kc8flJq9BM/KERYp/Cf/LNdrj5RsbV394Aki7uiZmk/tgm7WGm3TvLploVo=
+	t=1720818477; cv=none; b=XsoG7hEpiME+v2LRDvxhj641OfVpGK9sgYggOoG/Ia5gVslvLirNLXAYb9uDRdG8Ty73VmbiY2SP72KvbM353MX0LQmhzLV5IBS24/NxJz+rnANuZgsVq3NJ9AGpomBEJu8ir12/+cfkhmw0gEgCMCl8mj0nikDsXczAjzytENg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720818450; c=relaxed/simple;
-	bh=vKFZ7VhhVPwDMBl1L3Jwa9uOyxKi/wF0dZAUg/xUYoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RcfxGAhNmJ0i1diy3a30bthBXK33ExUGsqvErnBM/DBf2H806IdKuwtLzvW9a08/gJ6jR6mXPqmCzqdxAQsyBDYU0zsoZzg23RtpjH2+490xl4iA0SIIeX/hKwL9Ny+hYR2VEekJ26mYRZV5BfM2mWcoghKkEC0PCdwHa2Hsyv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=gSpGb5Qt; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=4fyXkYyDXPeoIA7KiK11Pb/8YiiA2kBtTpxn1oy5Xfg=; b=gSpGb5Qt1QavJ4twGDivqpU9x1
-	kJt7FGBvbK2aTCJXowAhCepe19G36RO0QZWmVH4ZPnVqIYIfznu7g94inYaiaa4BZwbr0mfO7JKmq
-	hYRy6/W3yREkiAKPS246SXVVNa0BVKo1HZe+daKDFlZ9wbhS0rpTOJi6AfDKYl1fydKTSjE4zeaFA
-	T2PD/MI/JPC74BKmrhhAdrEh2TjJz5S2lgouEjh1E/aDlO28e1Khlw1472v0LlmBo1AWQJStJIzSv
-	XuNycvvbN48jEJAU5oiGYqzSk8+UlLvMw5zPEmKVQbAREOVeGYIr8Ia4mlMgVp51XfHHXOziLrjME
-	hkmO4NzA==;
-Date: Fri, 12 Jul 2024 23:06:56 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Andy
- Shevchenko <andriy.shevchenko@linux.intel.com>, Rob Herring
- <robh@kernel.org>, Daniel Scally <djrscally@gmail.com>, Heikki Krogerus
- <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Jean Delvare <jdelvare@suse.com>, Guenter
- Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>, Lee Jones
- <lee@kernel.org>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-leds@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 3/6] leds: bd2606mvv: use device_for_each_child_node()
- to access device child nodes
-Message-ID: <20240712230656.67e89eb2@akphone>
-In-Reply-To: <2cd45260-e737-43e9-9bf6-c267d6f86ad3@gmail.com>
-References: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com>
-	<20240706-device_for_each_child_node-available-v1-3-8a3f7615e41c@gmail.com>
-	<20240707175713.4deb559f@jic23-huawei>
-	<4cf71de7-dc47-475c-bba0-a9e755f66d49@gmail.com>
-	<2cd45260-e737-43e9-9bf6-c267d6f86ad3@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.37; aarch64-alpine-linux-musl)
+	s=arc-20240116; t=1720818477; c=relaxed/simple;
+	bh=7Cm88/6Mbf88RzoSxmJ3Qlv7IJR9YSotepXJlOAWIic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BbJZ4O+jIauuzbzRiOimQthOgx9mLVq6BbQob5R2IL8IvWTFUxXlb79idZI6xgqW+8eO6NMRYd+cOvVtHu+mxQYlsrTnGhl9Ehr3nhHLYTYo3A5uSCgM+Gtj0DonYKgoYWj6c9iBOk/9Ih1Yh6id+wV6QTw2ir5GA6GAD9IWyqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=M+KXEAFw; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-25e134abf00so1171806fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:07:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720818474; x=1721423274; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fq4KkMj11vqcNNXM8EwtAU8v4pHupusWEImjez7Pt5o=;
+        b=M+KXEAFwnDkvZpiCGJ1fZBhp+ECUJoLb+t8gUqddAEjESnorNvqc4x5Yy2ZzYdLqhu
+         yErgtzqaO5hT4C+kbLqYPy8uWwG8o9NbqWHM7tQ5SuzB1B/zhe8AnLDHwgSnnFHapPdv
+         9WpqEDpSul9u+Ut79lBDy/OPydoss4c2vieQ9SPLRrYJyLFsQlSGoNeqVx0H9mBdZ2FO
+         CEHjw2pQnKzg2ae7NeUy3I0xcUmoJKnJ7gz3PMzTjUUnGLh7cWEQD0jIRLal5H01G0u3
+         A75XB0EG7mJDIqBfjdQhNrRu/T5JnOev6OrLrFCkhwWOdYB7lXtZR8mt2Yu4UokMU8+6
+         CVUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720818474; x=1721423274;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fq4KkMj11vqcNNXM8EwtAU8v4pHupusWEImjez7Pt5o=;
+        b=iVCK5TBCTFh2eEs0CDLyC3+x7bE8wDQeQ6A2ji5J7AosPNknq5QintIaIX5Uoucz8p
+         pnVsOOFffBkNR29/yEvNgMiZ2ZvAtg9ZKyrpPL7c3peMcLUlY9hQtJFhAFXkNw7/a+rE
+         XwjtT4r/NtRxVkuyoGDrwrzGswuTmfrzk6duLXI7v1IzLgelacf3IHxrOLoqwFV7sCg4
+         7GZH23mlCeeNB4eojMMt8ZEx2H+p4MopfBmR0qK63PeFNVTdpEbZU0Bf4L64HB9wmH2C
+         ur/W/1km3bZdZr8qcQNjOHnXwNTyK4GRHeOtRG/yRtvMCFmcO1bRYn5v6dV875m7iP2w
+         nd/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUEUfrlZGvwsoIwqlsoxSqV0WOUyDnehsEqj20cY05OpNaoE1D1iby9FFpcG9QI6DR0kirfrDn8OcusXWXgLB1VvuyQEVb6f3W6b+j3
+X-Gm-Message-State: AOJu0YwbU+uwB/0Uxpi0pk0xoue4dopw2VEp2jd/zXOM7YGiISOEXdcX
+	LcGwWbTr9Hc6Af4Uv8xgy2EIlz72+1k1u4xOmIzg5dgSszGHRY1TtuwyzGehAM+ar8alc5pmNWQ
+	K
+X-Google-Smtp-Source: AGHT+IEoXuUJo/PhE68eMUnJlCNcQbocfp7ikjcwp+WLVN3kx8wks5LBo4mswSpy1LlRkxQBiHpZ5Q==
+X-Received: by 2002:a05:6870:700e:b0:24f:d498:5e01 with SMTP id 586e51a60fabf-25eaec6da3bmr11467594fac.57.1720818474317;
+        Fri, 12 Jul 2024 14:07:54 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-704495a9e0asm1130090a34.81.2024.07.12.14.07.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 14:07:53 -0700 (PDT)
+Message-ID: <5d1f63b1-5196-423a-a967-5fb2d9fef979@baylibre.com>
+Date: Fri, 12 Jul 2024 16:07:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 5/7] dt-bindings: iio: adc: Add AD4000
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, corbet@lwn.net, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+References: <cover.1720810545.git.marcelo.schmitt@analog.com>
+ <98c82e0a2a868a1578989fe69527347aa92083d7.1720810545.git.marcelo.schmitt@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <98c82e0a2a868a1578989fe69527347aa92083d7.1720810545.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 8 Jul 2024 17:45:43 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+On 7/12/24 2:22 PM, Marcelo Schmitt wrote:
+> Add device tree documentation for AD4000 series of ADC devices.
+> 
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
 
-> On 08/07/2024 10:14, Javier Carrasco wrote:
-> > On 07/07/2024 18:57, Jonathan Cameron wrote:  
-> >> On Sat, 06 Jul 2024 17:23:35 +0200
-> >> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-> >>  
-> >>> The iterated nodes are direct children of the device node, and the
-> >>> `device_for_each_child_node()` macro accounts for child node
-> >>> availability.
-> >>>
-> >>> `fwnode_for_each_available_child_node()` is meant to access the
-> >>> child nodes of an fwnode, and therefore not direct child nodes of
-> >>> the device node.
-> >>>
-> >>> Use `device_for_each_child_node()` to indicate device's direct
-> >>> child nodes.
-> >>>
-> >>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
-> >> Why not the scoped variant?
-> >> There look to be two error paths in there which would be
-> >> simplified. 
-> > 
-> > I did not use the scoped variant because "child" is used outside
-> > the loop.
-> > 
-> > On the other hand, I think an fwnode_handle_get() is missing for
-> > every "led_fwnodes[reg] = child" because a simple assignment does
-> > not increment the refcount.
-> > 
-> > After adding fwnode_handle_get(), the scoped variant could be used,
-> > and the call to fwnode_handle_put() would act on led_fwnodes[reg]
-> > instead. 
-> 
-> Actually, the whole trouble comes from doing the processing in two
-> consecutive loops, where the second loop accesses a child node that
-> gets released at the end of the first one. It seems that some code
-> got moved from one loop to a new one between two versions of the
-> patchset.
-> 
-> @Andreas Kemnade: I see that you had a single loop until v4 (the
-> driver got applied with v6), and then you split it into two loops,
-> but I don't see any mention to this modification in the change log.
-> 
-> What was the reason for this modification? Apparently, similar drivers
-> do everything in one loop to avoid such issues.
-> 
-The reason for two loops is that we check in the first loop whether
-broghtness can be individually controlled so we can set max_brightness
-in the second loop. I had the assumption that max_brightness should be
-set before registering leds.
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
-Some LEDs share brightness register, in the case where leds are defined
-with a shared register, we revert to on-off.
 
-> Maybe refactoring to have a single loop again (if possible) would be
-> the cleanest solution. Otherwise a get/put mechanism might be
-> necessary.
-> 
-I had no idea how to do it the time I wrote the patch.
-
-Regards,
-Andreas
 
