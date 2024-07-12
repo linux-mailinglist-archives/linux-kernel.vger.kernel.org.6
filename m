@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-251163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB39930168
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:02:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A0693016B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0341F2310F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:02:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97D6282809
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E7B47F5F;
-	Fri, 12 Jul 2024 21:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14313481C4;
+	Fri, 12 Jul 2024 21:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AobKsMNM"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UHy4r4np"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D301094E;
-	Fri, 12 Jul 2024 21:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D6D47F41;
+	Fri, 12 Jul 2024 21:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720818158; cv=none; b=Na58oSgfC+/T6NkKA4Z5R1D3xI2DcwCqRThWgw4AwSJ55n9BTaClU99JTCWoQKu/MOZ0WXufBAg3eOHLq5XHy9JUW2nh8kzJW4sMKJwlPydsFGt3nD41Q9s0VQobyGDzMECOw9RaXJHH4bv6zL0bkA6q/RyhayxQgv86XP1R4eI=
+	t=1720818218; cv=none; b=cgLCQIMrmwYQ77OlXiIeLiTScKpeaMwZVGS7nLZ5W9285jLiTPcrvUyjEmQsf4bT1nqO+Yn9X4DVGQW7iAVCiBNaIn3E5Ev8HgQ6Egmq8h2Ki2altzzHro5+5xBi7QXGeXxc230rFQ57j/d4EqloqJ/2u+iPJCkJq/RwTZ1r46o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720818158; c=relaxed/simple;
-	bh=E3bqKQF9NupUdY1X3LoVgtwzmS81Qs1cr0Zy0zomHQI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ivgdivB/wSFsLfnkuvoCM/gt3ArCkDT2B/QiLJIEG2ESXd9INZg/36dQ6uncB8wiWwzCurmeW1Nfwcrwy7XfgUkvYyRz6MCWyjLOXxqv/eG6q5+XXHC3B2KV4I9mD7Fy5QZBODpaCU529GAHqnm8xtjSPlT9KSNbi/WBRmGscQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AobKsMNM; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5b97a9a9b4bso1086645eaf.0;
-        Fri, 12 Jul 2024 14:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720818156; x=1721422956; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3kkkiGO/kyluSOIqlCphcpAU2FE2uhCL82aBXiEAD0A=;
-        b=AobKsMNMv9zMTsH9Rf36U5Z+l3qD22PgeUX9D78xILhwNC99de2atQsslZtr/92tJ8
-         oZtASE94nePv6/Hfaasba8p/xV3a1aGjbNmOsB4GzZWvWJm2s5nc/FRNGSJ5obooWoga
-         g/BaqWW1rWqyG6k3y+iDi/JSnz9itAB7n1flwe1H9vUKdja6dttoCiUpHmymNPE0nv+N
-         gjbsEtWyP++3s+r83PlovHpnYAlcVb9kJ9EjX8xRM06jb4rpRL0UhdUTo+uJLmN/m0Y9
-         6jFBoPyWOa+kYwt+EYQxXt2tkwB8vqnu5x05S+dkaJINKvUxQgDD6LldGY9ZmaCBhLUw
-         eA3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720818156; x=1721422956;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3kkkiGO/kyluSOIqlCphcpAU2FE2uhCL82aBXiEAD0A=;
-        b=YWcQLZeQZILE3yF62l5zx0VVvU2qBITMFuHfuzYx86ccOlUoUfpGdfg7ShZVoXodl3
-         g/GevG/V870zP0Z3+6VC7ED5T70oZM4s+myCnyfDkg9kdGFecR1xUwyLMXjYganngN4w
-         N7S1K7I44S0hKDDHfiwAvim0JKzaj4dvmy4W4RR4GU4Tutfxuk3RYO2AMlgjIn950GyG
-         rAQiyFJQGYi9uu22SvKyiEbQGdYWHxBhHp//U8sEYfrv5eK2puaii4pU4gIVqCMkImqV
-         rKROS6lNnFRE+lb1deHRGIfJdpmzNMY3CWuDe9Lwahbk2wQ7birqyoCtXWI/bonOFcSe
-         5roQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVnfbosaKS27DXmDzGDSY4gGizx5B+fvVe8GwYEUpt7z8dWRe4Jr5b7rBWWQLMFnnr4L3hzG3tNuMJsWX/ENUbJhVvdkr3Punnu9fn5Hbj2DLPFI3/uUF4gdPyAOgR1v1NRylE4/sk=
-X-Gm-Message-State: AOJu0Ywq2G2EH78X2QtP1+fG5nWWPRspmqNo5m41BauqTJdiJB9Dm2JV
-	oSaawUsZ9AgmIUa2ngIimREzlKaTPDte/60sI3mdsu+IStETAN1I
-X-Google-Smtp-Source: AGHT+IE4ALT8roZ1t3XhXtyuD1j5gAIM1uqK7lT52poiDEEjqMhEKkUuMoBMs45Re6mEzDggCZ1AaQ==
-X-Received: by 2002:a05:6359:740f:b0:1a5:7844:2068 with SMTP id e5c5f4694b2df-1aade0db912mr990636155d.5.1720818155728;
-        Fri, 12 Jul 2024 14:02:35 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-77d621c6300sm6304368a12.51.2024.07.12.14.02.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 14:02:35 -0700 (PDT)
-Message-ID: <0dd4e916-6f7f-4427-a217-5b7a290b1b3f@gmail.com>
-Date: Fri, 12 Jul 2024 14:02:32 -0700
+	s=arc-20240116; t=1720818218; c=relaxed/simple;
+	bh=xzSr4rTygjq40NySqIzPz/YhF/sBRLmGmXQ9xrTIJYQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SlEWNO/BXmh35zCmzPeU8oMv+aU4nOlNHuPt+rEw7oe68LV7N0JLc5xLdPTTXXH42uBOf2+SswOWYFgSZF9p7WkxNZbvmwcXiEDtrI6rJs6RqH2eabVuAyQ6Ba+6+WN6ftoyhvTZeueFc89ATCbZyAKEA+0Ti0IjHGXq8GjR37w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UHy4r4np; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46CEB3ul009130;
+	Fri, 12 Jul 2024 21:03:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BQNyKzaB1t/sXuLQaAphOIYHQ+AM6KkZNjTtrGtunoc=; b=UHy4r4npUwwJ7u/O
+	LF4+qrCtnkF+igi18P0qDQ/4f6s8LzL5eOUT6X0XSjO4SYtIBBtX2ESUZcpjRdFs
+	zjizt+Gpbtq+Pxw3eI8QAU/b8/JeN1C9wvJqokoIlLCYzic0GzhJJPKfRcCL2j4r
+	CeWEdADKTML95pCOHMKjBIURkfJsIeDH9dpW28XoZQYMTcOZdd23jTqApn4SNno7
+	ZXMJ5WfR04lLYorOuaOygdm22lPm1VBILCyQnlm3sunR9lJ15L3/LYZcmuL83Em/
+	j+Jux4Djq8cpXYyoTBWUDz90D1cTqexUlV0RWvSPCwHt/WMjzjIJa6BHLHaD752a
+	xJxibg==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4091jdtjxv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 21:03:19 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46CL3Iq3032258
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 21:03:18 GMT
+Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 12 Jul
+ 2024 14:03:18 -0700
+Message-ID: <4f1a3bcb-31b0-4688-b6e5-92a940cf2881@quicinc.com>
+Date: Fri, 12 Jul 2024 14:03:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,100 +64,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Make SCMI transport as standalone drivers
-To: Cristian Marussi <cristian.marussi@arm.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- arm-scmi@vger.kernel.org
-Cc: sudeep.holla@arm.com, james.quinlan@broadcom.com,
- vincent.guittot@linaro.org, etienne.carriere@st.com, peng.fan@oss.nxp.com,
- michal.simek@amd.com, quic_sibis@quicinc.com, quic_nkela@quicinc.com,
- ptosi@google.com, dan.carpenter@linaro.org, souvik.chakravarty@arm.com
-References: <20240710173153.4060457-1-cristian.marussi@arm.com>
+Subject: Re: [PATCH 2/2] drm/panel: simple: add Innolux G070ACE-LH3 LVDS
+ display support
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@pengutronix.de>
+References: <20240712-b4-v6-10-topic-innolux-v1-0-bb0acf273d0d@pengutronix.de>
+ <20240712-b4-v6-10-topic-innolux-v1-2-bb0acf273d0d@pengutronix.de>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240710173153.4060457-1-cristian.marussi@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <20240712-b4-v6-10-topic-innolux-v1-2-bb0acf273d0d@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jWJj7v02I0_F3zGgfULG9Tfor_3n9vKU
+X-Proofpoint-ORIG-GUID: jWJj7v02I0_F3zGgfULG9Tfor_3n9vKU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-12_16,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 malwarescore=0 mlxlogscore=999
+ mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1011 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407120143
 
-On 7/10/24 10:31, Cristian Marussi wrote:
-> Hi all,
-> 
-> Till now the SCMI transport layer was being built embedded into in the core
-> SCMI stack.
-> 
-> Some of these transports, despite being currently part of the main SCMI
-> module, are indeed also registered with different subsystems like optee or
-> virtio, and actively probed also by those: this led to a few awkward and
-> convoluted tricks to properly handle such interactions at boot time in the
-> SCMI stack.
-> 
-> Moreover some partner expressed the desire to be able to fully modularize
-> the transports components.
-> 
-> This series aim to make all such transports as standalone drivers that can
-> be optionally loaded as modules.
-> 
-> In order to do this, at first some new mechanism is introduced to support
-> this new capability while maintaining, in parallel, the old legacy embedded
-> transports; then each transport, one by one, is transitioned to be a
-> standalone driver and finally the old legacy support for embedded transport
-> is removed.
-> 
-> Patch [1/8] is a mostly unrelated (but much needed) clean-up from Peng,
-> which I included in this series to avoid conflicts at merge.
-> 
-> Patch [2/8] simply collects the existing datagram manipulation helpers in a
-> pair of function pointers structures, in preparation for later reworks.
-> 
-> Patch [3/8] adds the bulk of the new logic to the core SCMI stack and then
-> each existing transport is transitioned to be a standalone driver in
-> patches 4,5,6,7 while shuffling around the compatibles. (no DT change is
-> needed of curse for backward compatibility)
-> While doing this I kept the module authorship in line with the main
-> author(S) as spitted out by git-blame.
-> 
-> Finally patch [8/8] removes all the legacy dead code from the core SCMI
-> stack.
-> 
-> No new symbol EXPORT has been added.
-> 
-> The new transport drivers have been tested, as built-in and LKM, as
-> follows:
-> 
-> - mailbox on JUNO
-> - virtio on emulation
-> - optee on QEMU/optee using Linaro setup
-> 
-> Exercised using the regular SCMI drivers stack and the SCMI ACS suite,
-> testing commands, replies, delayed responses and notification.
-> 
-> Multiple virtual SCMI instances support has been tested too.
-> 
-> SMC has NOT been tested/exercised at run-time, only compile-tested.
-> (due to lack of hardware)
-> 
-> Note that in this new setup, all the probe deferral and retries between the
-> SCMI core stack and the transports has been removed, since no more needed.
-> 
-> Moreover the new drivers have been tested also with a fully modularized
-> SCMI stack, i.e.:
-> 
->    scmi-core.ko + scmi-module.ko + scmi_transport_*.ko [ + vendor modules ]
-> 
-> ToBeDone:
->   - completely remove any dependency at build time at the Kconfig level between
->     the SCMI core and the transport drivers: so that the transports will be
->     dependent only on the related subsystems (optee/virtio/mailbox/smc)
->     (easy to be done but maybe it is not worth...)
->   - integrate per-platform transport configuration capabilities
->     (max_rx_timeout_ms & friends..)
-> 
-> Based on sudeep/for-next/scmi/updates.
-> 
-> Any feedback, and especially testing (:D) is welcome.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
 
+On 7/12/2024 4:05 AM, Steffen Trumtrar wrote:
+> The G070ACE-LH3 is a 7" TFT Color LCD module with WLED backlight.
+> 
+> https://www.data-modul.com/sites/default/files/products/G070ACE-LH3-specification-12058417.pdf
+> 
+> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> ---
+>   drivers/gpu/drm/panel/panel-simple.c | 35 +++++++++++++++++++++++++++++++++++
+>   1 file changed, 35 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+> index dcb6d0b6ced06..d3ce78643fd86 100644
+> --- a/drivers/gpu/drm/panel/panel-simple.c
+> +++ b/drivers/gpu/drm/panel/panel-simple.c
+> @@ -2509,6 +2509,38 @@ static const struct panel_desc innolux_g070y2_l01 = {
+>   	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+>   };
+>   
+> +static const struct display_timing innolux_g070ace_lh3_timing = {
+> +	.pixelclock = { 25200000, 25400000, 35700000 },
+> +	.hactive = { 800, 800, 800 },
+> +	.hfront_porch = { 32, 32, 32 },
+> +	.hback_porch = { 31, 31, 31 },
+> +	.hsync_len = { 1, 1, 1 },
+
+Hi Steffen,
+
+The min/max horizontal and vertical porches here don't seem to add up to 
+the min/max [HV]blanks specified in the datasheet linked in the commit 
+msg. Any reason for that?
+
+Thanks,
+
+Jessica Zhang
+
+> +	.vactive = { 480, 480, 480 },
+> +	.vfront_porch = { 5, 5, 5 },
+> +	.vback_porch = { 4, 4, 4 },
+> +	.vsync_len = { 1, 1, 1 },
+> +	.flags = DISPLAY_FLAGS_DE_HIGH,
+> +};
+> +
+> +static const struct panel_desc innolux_g070ace_lh3 = {
+> +	.timings = &innolux_g070ace_lh3_timing,
+> +	.num_timings = 1,
+> +	.bpc = 8,
+> +	.size = {
+> +		.width = 152,
+> +		.height = 91,
+> +	},
+> +	.delay = {
+> +		.prepare = 10,
+> +		.enable = 450,
+> +		.disable = 200,
+> +		.unprepare = 510,
+> +	},
+> +	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
+> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
+> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+> +};
+> +
+>   static const struct drm_display_mode innolux_g070y2_t02_mode = {
+>   	.clock = 33333,
+>   	.hdisplay = 800,
+> @@ -4599,6 +4631,9 @@ static const struct of_device_id platform_of_match[] = {
+>   	}, {
+>   		.compatible = "innolux,g070ace-l01",
+>   		.data = &innolux_g070ace_l01,
+> +	}, {
+> +		.compatible = "innolux,g070ace-lh3",
+> +		.data = &innolux_g070ace_lh3,
+>   	}, {
+>   		.compatible = "innolux,g070y2-l01",
+>   		.data = &innolux_g070y2_l01,
+> 
+> -- 
+> 2.45.1
+> 
 
