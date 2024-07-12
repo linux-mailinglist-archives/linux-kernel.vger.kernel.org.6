@@ -1,131 +1,233 @@
-Return-Path: <linux-kernel+bounces-250249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A846292F5A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:48:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B0892F5AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D12B283517
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0EC283541
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EFA13D533;
-	Fri, 12 Jul 2024 06:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CB913D622;
+	Fri, 12 Jul 2024 06:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AHMvc0aH"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jsSiJECI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2898339B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A12012DDBA;
+	Fri, 12 Jul 2024 06:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720766912; cv=none; b=su7x/zpih3eutCl6L0F+tc4Qy6bgNUvbR0hQC5OTuEktdm22w+QbjdpdZcVmDeUYrP2/YLvh7zcxhyE/nRALs8zafcd528aamfzQgkOV6UYlkqIstmpoeVEkzEQ1SLDoTZdJfdBY+byN+vdVeXt+xUXYcCem/ogsfpLBZfLtMLE=
+	t=1720767019; cv=none; b=bxDMz6B5u9qzUG8rozK7t8zRmcEC2RSHTQkmovrFFoTYNNrUObG9YIC3ziqdndAeQAAt6GO58knDmUq27HxPnHUH2t9BvKzMQ0EUBdul23NQ0a1U9nkCWNrINS418RJ3zf27Z42AdetGPuutmzSuGC4boJhFTIyDlbsEgDAlDrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720766912; c=relaxed/simple;
-	bh=xMV/z33NFOqMzM8JfcQjaOoMBKUPMqBIE+lUrEw52mE=;
-	h=From:Date:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W7Qks+WcA3f4hH5eH3MkNMSZv3wJh3WfqVrscn4LNRDRz3zKHQ974K83zaUKBgWMQJ/rEKt16DWZAt97qeKnimYAQyWZWOqtbxG1XAClaynDf0YyEKCENelRoHj6sMExXgGTBcQL5ABbzYgIvJ3a5IkDJ/i0V/W/SYTAmi9EhlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AHMvc0aH; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52ea929ea56so3242470e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:48:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1720766908; x=1721371708; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:date:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xMV/z33NFOqMzM8JfcQjaOoMBKUPMqBIE+lUrEw52mE=;
-        b=AHMvc0aHgPq7Y9HYk50YMCWVNOm9G8MDpaQuSapvXGbxoZ5CNBcIwePQuca0Ob1fOX
-         QIQ/UeKsi5hXNLklD5442bmfrNnRrl3rVHHH3rss8cczxjOijVeVxT4nUBMfaqfB7uvW
-         7+d0/SWj8YhfH8UN0889k9NyAG/MPpD+nPqAKyQRiUS3ZjBafoTGRz/uNRGWO/W4cdCn
-         UtTeK31p8w7AMi+BRnuClXUlE9pXtX/vN28Axa5Q0EG+1MavLUQOvm80nOxfXs/cMmqU
-         M8iI5MRPR4s6RTjjBUL5zwP2P1OSohQpUfmAf87kWSq/+CBZh2fZFEVoNVp8Eblb+pOI
-         3Unw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720766908; x=1721371708;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xMV/z33NFOqMzM8JfcQjaOoMBKUPMqBIE+lUrEw52mE=;
-        b=fRXlaKcMpJ2SN//nIlZaPaGowtGVnJUppc85fOka/pZnGkJVkPckZeqqqAcXPeoi0L
-         jPwUrlR17vx5CnRLe1yW50Piijabq1gqsuZ14YfN6oMn7CWDT5a5TtX6PNHawAU3e1LN
-         NX2QgPT4jcjvAiRUq2MJxfN6EtKbwBajtnDGoXs4EbCXnMS+88WPv+PkI0aBCn1zScX9
-         gPgEKyT56/STOxT+2avUdpO5T/P6zuDrQOkjr+6ZWIRtr3CxGHrkV4gGTNyg/3cFFJXv
-         GbGy9fU/7nGE9T8bsQthbd1MWaU9EkBcW6whIYocFHVXqHFrLzxUkwWHmyuHYT4KXPVR
-         MUbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVj/7fbKRRmK9dHupjtIwl+GUHYxicF1kHVCBzvFEKOOuJyccNkvRhD82sewy9G2GEMq7prijWHMd1ZFpMi6jn8sJKxj2hafWfZrpYL
-X-Gm-Message-State: AOJu0Yxmy1bd97h59tpBSnXpUFX2jUp3ws9im+fnM1jlTxYhK5A6iawe
-	azMY9GRoK+PpQHdcdB+Su3eeXIvn+RLbjVEc370pTUvuJ+21ikeCFB/s+g0QT3Q=
-X-Google-Smtp-Source: AGHT+IHTtmtrVLLE7aDfY6kkhvZrmZsV2MnTKBQLikl9TyOMWMFZLyZQL7bTaCQtck/kvBawPV6jfQ==
-X-Received: by 2002:a05:6512:3499:b0:52e:936e:a237 with SMTP id 2adb3069b0e04-52eb999b382mr6496264e87.16.1720766908188;
-        Thu, 11 Jul 2024 23:48:28 -0700 (PDT)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a872002sm314623966b.211.2024.07.11.23.48.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 23:48:27 -0700 (PDT)
-From: Petr Tesarik <petr.tesarik@suse.com>
-X-Google-Original-From: Petr Tesarik <ptesarik@suse.com>
-Date: Fri, 12 Jul 2024 08:48:26 +0200
-To: Sourabh Jain <sourabhjain@linux.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
- kexec@lists.infradead.org, linux-kernel@vger.kernel.org, Petr Tesarik
- <petr@tesarici.cz>
-Subject: Re: [PATCH] sysfs/cpu: Make crash_hotplug attribute world-readable
-Message-ID: <20240712084826.3128cba2@mordecai.tesarici.cz>
-In-Reply-To: <06c0d61f-8dcb-46f6-8710-db1c6163907b@linux.ibm.com>
-References: <20240711103409.319673-1-petr.tesarik@suse.com>
-	<59d88de7-369a-44e8-a965-109c8690869e@linux.ibm.com>
-	<20240712082124.272e079f@meshulam.tesarici.cz>
-	<06c0d61f-8dcb-46f6-8710-db1c6163907b@linux.ibm.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1720767019; c=relaxed/simple;
+	bh=eLi3fYikhmZmAiWojiYM4xhueLbPTdJEVJAlqd18vvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SKLjEzU6qptcCmb6fbOKkVtsxNCxpuvYZIqI6oasp90wczAVDqMT8bNRmhSuK03R5mpg9t0rADOM4DUhSoEXoMIFYkr6DlbzQiBvxUGzjdOTQkMnfjIIccPguR1RpwNhbtAUHTMtNLGM1Qu+8gkNuUX8dGkzM6oXKfjYz7gffjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jsSiJECI; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720767018; x=1752303018;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eLi3fYikhmZmAiWojiYM4xhueLbPTdJEVJAlqd18vvM=;
+  b=jsSiJECIG9G6RiXle6UjcUB28iPH/DD/56hdg8SOgbi2mFJYHSYh4uZA
+   47cDT6NB2aj+FO7MZIvFaLLteabD+tZXIJ2/fEJtXGZ2U7GOd9pTEHe6F
+   85C0Ntf9HXoF0AWU2OtinN53m+BdPc0gJ5waayWUA7YoEAZSr5QppSU4h
+   DHP19IUXiqA+MGPhNu7apxGeUphGVnRuf9gL6XI6ZcxC1bGDK31vx8HZ3
+   3vpRzLzmd9pbrRFYlTv2Vfu1FXh4+pUarguRos+NLGxh0akzlsSK0lz2K
+   CdMR+XDiP+hUK178UHKHbhOhps7vHQZnB+vxi6tIHm4DwB9/U/IXk6n5m
+   Q==;
+X-CSE-ConnectionGUID: J3icUbloQvir6/p1aoVPnQ==
+X-CSE-MsgGUID: e7bEg5rvRFar6pK4Uv2esw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="21101407"
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="21101407"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 23:50:17 -0700
+X-CSE-ConnectionGUID: LvxdULpuRNimbwC0rZ2gzA==
+X-CSE-MsgGUID: b+ApyV3URIKQWbGRuPOesg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="54009317"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 11 Jul 2024 23:50:12 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sSA6c-000aSv-0i;
+	Fri, 12 Jul 2024 06:50:10 +0000
+Date: Fri, 12 Jul 2024 14:49:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tao Zhang <quic_taozha@quicinc.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Tao Zhang <quic_taozha@quicinc.com>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] coresight: Add source filtering for multi-port
+ output
+Message-ID: <202407121454.IxYqSYDp-lkp@intel.com>
+References: <20240711081750.21792-3-quic_taozha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711081750.21792-3-quic_taozha@quicinc.com>
 
-On Fri, 12 Jul 2024 12:01:29 +0530
-Sourabh Jain <sourabhjain@linux.ibm.com> wrote:
+Hi Tao,
 
-> Hello Petr,
->=20
-> On 12/07/24 11:51, Petr Tesa=C5=99=C3=ADk wrote:
-> > On Fri, 12 Jul 2024 10:00:09 +0530
-> > Sourabh Jain <sourabhjain@linux.ibm.com> wrote:
-> > =20
-> >> Hello Petr,
-> >>
-> >> Just want to mentioned few points about the commit message. No strong
-> >> opinion on changing the commit message.
-> >>
-> >> On 11/07/24 16:04, Petr Tesarik wrote: =20
-> >>> From: Petr Tesarik <ptesarik@suse.com>
-> >>>
-> >>> There is no reason to restrict access to this attribute, as it merely
-> >>> reports whether crash elfcorehdr is automatically updated on CPU hot
-> >>> plug/unplug and/or online/offline events. =20
-> >> Now, it is not just elfcorehdr; there could be multiple kexec segments
-> >> based on the architecture's needs.
-> >> For example, on PowerPC, it is elfcorehdr and FDT. =20
-> > Right. I am even working with a PowerVM LPAR on an L922 system now. ;-)
-> >
-> > OTOH I was just too lazy to invent my own description, so I took it
-> > from Documentation/ABI/testing/sysfs-devices-system-cpu. That one
-> > could be improved. And a couple of other places... Expect a patch. =20
-> Thanks for point it out, I will send a patch to fix the ABI document for=
-=20
-> crash_hotplug and other places in the kernel. Thanks,
+kernel test robot noticed the following build warnings:
 
-Oh, I was planning to do that, but if you want to send a patch
-yourself, I won't duplicate efforts. There are other cleanups on my
-TODO list.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.10-rc7 next-20240711]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Petr T
+url:    https://github.com/intel-lab-lkp/linux/commits/Tao-Zhang/dt-bindings-arm-qcom-coresight-static-replicator-Add-property-for-source-filtering/20240711-162200
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240711081750.21792-3-quic_taozha%40quicinc.com
+patch subject: [PATCH v2 2/3] coresight: Add source filtering for multi-port output
+config: arm-randconfig-004-20240712 (https://download.01.org/0day-ci/archive/20240712/202407121454.IxYqSYDp-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240712/202407121454.IxYqSYDp-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407121454.IxYqSYDp-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/hwtracing/coresight/coresight-platform.c:261:23: warning: more '%' conversions than data arguments [-Wformat-insufficient-args]
+                                     "Filter source %s is not a source device\n");
+                                                    ~^
+   include/linux/dev_printk.h:156:62: note: expanded from macro 'dev_warn'
+           dev_printk_index_wrap(_dev_warn, KERN_WARNING, dev, dev_fmt(fmt), ##__VA_ARGS__)
+                                                                       ^~~
+   include/linux/dev_printk.h:19:22: note: expanded from macro 'dev_fmt'
+   #define dev_fmt(fmt) fmt
+                        ^~~
+   include/linux/dev_printk.h:110:16: note: expanded from macro 'dev_printk_index_wrap'
+                   _p_func(dev, fmt, ##__VA_ARGS__);                       \
+                                ^~~
+   1 warning generated.
+
+
+vim +261 drivers/hwtracing/coresight/coresight-platform.c
+
+   185	
+   186	/*
+   187	 * of_coresight_parse_endpoint : Parse the given output endpoint @ep
+   188	 * and fill the connection information in @pdata->out_conns
+   189	 *
+   190	 * Parses the local port, remote device name and the remote port.
+   191	 *
+   192	 * Returns :
+   193	 *	 0	- If the parsing completed without any fatal errors.
+   194	 *	-Errno	- Fatal error, abort the scanning.
+   195	 */
+   196	static int of_coresight_parse_endpoint(struct device *dev,
+   197					       struct device_node *ep,
+   198					       struct coresight_platform_data *pdata)
+   199	{
+   200		int ret = 0;
+   201		struct of_endpoint endpoint, rendpoint;
+   202		struct device_node *rparent = NULL;
+   203		struct device_node *rep = NULL;
+   204		struct device *rdev = NULL;
+   205		struct fwnode_handle *rdev_fwnode;
+   206		struct coresight_connection conn = {};
+   207		struct coresight_connection *new_conn;
+   208	
+   209		do {
+   210			/* Parse the local port details */
+   211			if (of_graph_parse_endpoint(ep, &endpoint))
+   212				break;
+   213			/*
+   214			 * Get a handle on the remote endpoint and the device it is
+   215			 * attached to.
+   216			 */
+   217			rep = of_graph_get_remote_endpoint(ep);
+   218			if (!rep)
+   219				break;
+   220			rparent = of_coresight_get_port_parent(rep);
+   221			if (!rparent)
+   222				break;
+   223			if (of_graph_parse_endpoint(rep, &rendpoint))
+   224				break;
+   225	
+   226			rdev_fwnode = of_fwnode_handle(rparent);
+   227			/* If the remote device is not available, defer probing */
+   228			rdev = coresight_find_device_by_fwnode(rdev_fwnode);
+   229			if (!rdev) {
+   230				ret = -EPROBE_DEFER;
+   231				break;
+   232			}
+   233	
+   234			conn.src_port = endpoint.port;
+   235			/*
+   236			 * Hold the refcount to the target device. This could be
+   237			 * released via:
+   238			 * 1) coresight_release_platform_data() if the probe fails or
+   239			 *    this device is unregistered.
+   240			 * 2) While removing the target device via
+   241			 *    coresight_remove_match()
+   242			 */
+   243			conn.dest_fwnode = fwnode_handle_get(rdev_fwnode);
+   244			conn.dest_port = rendpoint.port;
+   245	
+   246			/*
+   247			 * Get the firmware node of the filter source through the
+   248			 * reference. This could be used to filter the source in
+   249			 * building path.
+   250			 */
+   251			conn.filter_src_fwnode =
+   252				fwnode_find_reference(&ep->fwnode, "filter-src", 0);
+   253			if (IS_ERR(conn.filter_src_fwnode))
+   254				conn.filter_src_fwnode = NULL;
+   255			else {
+   256				conn.filter_src_dev =
+   257				 coresight_find_csdev_by_fwnode(conn.filter_src_fwnode);
+   258				if (conn.filter_src_dev && (conn.filter_src_dev->type
+   259				    != CORESIGHT_DEV_TYPE_SOURCE))
+   260					dev_warn(&conn.filter_src_dev->dev,
+ > 261					  "Filter source %s is not a source device\n");
+   262			}
+   263	
+   264			new_conn = coresight_add_out_conn(dev, pdata, &conn);
+   265			if (IS_ERR_VALUE(new_conn)) {
+   266				fwnode_handle_put(conn.dest_fwnode);
+   267				return PTR_ERR(new_conn);
+   268			}
+   269			/* Connection record updated */
+   270		} while (0);
+   271	
+   272		of_node_put(rparent);
+   273		of_node_put(rep);
+   274		put_device(rdev);
+   275	
+   276		return ret;
+   277	}
+   278	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
