@@ -1,112 +1,105 @@
-Return-Path: <linux-kernel+bounces-250924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82CB92FEAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:36:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134A192FEAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00125B214F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:36:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C46632813E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61221176259;
-	Fri, 12 Jul 2024 16:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310AB17624A;
+	Fri, 12 Jul 2024 16:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yDEJKAva"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MtXLypBy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2269F16F849
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7756F16F849
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720802194; cv=none; b=W/ukn+4oAdZ4pvLVGiH+6dYyUDNzJh3otYCHElz6nDotDBRSkIJ82NvXJuc45X2ohqREI3Kg5NBhKtqhiW6buZtrHD+GGsCC4Dsgrv5fa6LSTPZ+sopWY3thUWeeqV1hE9TldO6oSdAZ33MDv2aw1bozq6+l9nHcUs/kFGjDD24=
+	t=1720802289; cv=none; b=MMSJ3KsaCP4mQUK+x1gfg3vFU+8VirX4eOw/8j560kLBBp78XAWcYLDsUUdJw+hiojSNQvZ/pF0YTbYnr6vJh5Kc28LueUwhmz9Srae2bYKquLUy7xKCqiKgl20YVJl3xibigYWsIM+6T4P4oraXBaZ3t4Q1L3MculyaqJMPisc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720802194; c=relaxed/simple;
-	bh=Q+eUgasNNrBRtBGArjWHhYi7BKk7Sg0Hctyi1MeRtTo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oqeXuiHtagSFJGCfQ/2Vn5ML9yPbRwRZ9d9chIY82yQwtV3CpEPzbzVc6CXRJDWMczgq2pAd7GOdO2io28cxEiMvB6DPol4oZDC3G5YEgsATZSEFFSfCGMGDgYgWzSc3dYNgfG+pV/v2Cub5Whn9EiLunaPd6TlyjfuAZAu0eQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yDEJKAva; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58c0abd6b35so18312a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:36:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720802191; x=1721406991; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q+eUgasNNrBRtBGArjWHhYi7BKk7Sg0Hctyi1MeRtTo=;
-        b=yDEJKAvazgd+p2sA30d6k7afqEUidx5tAbaHciU98rvMxB6HZVXaSpd+sYGoV5sqGc
-         72JQwKD7TpOaDVfX8xjiB9BC/3oi9fVRIpJJ+/vWGqFsbd1e4Mt4oBYnimW0wtE6hA9Z
-         BRDTuWrn/C+0tOMW0I15HOma9968kRIAgtAIxQmxekKZFJuVPl+Jxo7Tif5KKvoQGTg5
-         SrV8LGfBJXhulFKIEazNNcF+ObBsArIKdvnp+nnaEzvwq0CjXmY0TJdOyB4YQHMOvn8p
-         BsXS7XQqnU+0S+gyNFBAab98h3/Z//e0/1mmtNTxbKHT0prryv3fsbqpra6YvudmKT29
-         TyIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720802191; x=1721406991;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q+eUgasNNrBRtBGArjWHhYi7BKk7Sg0Hctyi1MeRtTo=;
-        b=seimOYEA3vvPBqToj26uAu5WO7gl9LjnbXx/nwyCoVSklFnYxncWoRbvvpJJMkYY7n
-         IZk626rZaTJ5/oPsk/Dyn/sVAabRPQzXVZJM78CnnsQv0WoiB30yQB/rjVybM0fWFYww
-         /hPJSn8zIITqzCeTeZL+hw5L/KxvJozoWxquQn23UoQHEH1AgrJ0fHZz3JVpCjQWFqca
-         O3Zn2aOalmNEHYd9kojFcxe+8yeVUnvPv8TLcGzgj0AKNVf66271Inb97cUVtjv19Yh1
-         NB2zev4waByDl/rA7Pop+qXKBHozNLYIG+i8/kQMolJyXAeF8GkMpqZYNpW51V+oc50+
-         7tWw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+L5rtIzmtgHUlvr140frWyQMNRAYfQI8Gbve8/gvui9IX2dAYc45mJ3cbA8edCNYzKcx9PoT3kFAzbDwWUXE7cEJ8Z556EJHN7Ray
-X-Gm-Message-State: AOJu0YyA7ZVqze3AbTUuEIbS/f5/JfuNJYY8wrrw0DqTYMJzPS9PhJnw
-	HuSDozCekGQArs2tItLMuD1OpEV2rLqnmADdvW8woORj3nN5+yKjnEtiOLW9xs5NVLCIQSyCTmT
-	nRHt9pvxR/7aofT+IXqJQobfuywXAaflUaen4E08/eORQOpW/0A==
-X-Google-Smtp-Source: AGHT+IEiidXKcJS+6y/kit+jVK4ZbCZPpMuXc9Ks0S13qwD9jaG7oeORoJWBxB+XKUhbeC/jYAXC6G90hqboJG2Vfjc=
-X-Received: by 2002:a05:6402:358c:b0:58b:5725:dedc with SMTP id
- 4fb4d7f45d1cf-5997a4d6499mr289915a12.4.1720802191090; Fri, 12 Jul 2024
- 09:36:31 -0700 (PDT)
+	s=arc-20240116; t=1720802289; c=relaxed/simple;
+	bh=NunoeZtgEB7m2qmzgxHSz4ZGe+euAKHwYFP/rBZ8Bx0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kojaNj/I8K7eEb/mfxgp+GflCIQVjPBOh1PO4ctFZPuOqo99Aps+I1gXOyLnG/FYvCBS7fDKmU6w6Yx74Jsd4jwHuLhrU/fOZpEkLaHTtPUgvyu25O7gS+VcsmuJblfGEmceFeBRMyet5Xls5KKvUL7Pvp7/W/8igv2yW+W7Udw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MtXLypBy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77D4CC32782;
+	Fri, 12 Jul 2024 16:38:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720802289;
+	bh=NunoeZtgEB7m2qmzgxHSz4ZGe+euAKHwYFP/rBZ8Bx0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=MtXLypByEcan+P5AnZxQYTNpl2+3Yc0BnHSWwPJ3+9eK/s19ti4VnG5qsp1dlPm5v
+	 W8cAMvrQssfM1du1hi2nB4golZuQPsZ2bY8GBb+G8qFe2RA1IkQCxhVfQOOCb1Veym
+	 2+f5WL8ywNk20zkoKyTfW25Bmqpv8vtfdSXpWZHibZUdZ1M1zBCVNx+GqcrrxPo//z
+	 vl+Cio2m22hZvpoODBZFRroIndlXzq4F2uQlTdkQ5O346D9VwCoUofCVAJsAChZZa3
+	 OoJ5WSjkZXZ0NZ3c1v+3cOGPj7dOwt2OlbpVg//oPDtSbH4nw6mo2xTUBIelOgO9oX
+	 V3qwBJMQRxK6Q==
+From: Mark Brown <broonie@kernel.org>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz, 
+ pierre-louis.bossart@linux.intel.com, 13916275206@139.com, 
+ zhourui@huaqin.com, alsa-devel@alsa-project.org, i-salazar@ti.com, 
+ linux-kernel@vger.kernel.org, j-chadha@ti.com, liam.r.girdwood@intel.com, 
+ jaden-yue@ti.com, yung-chuan.liao@linux.intel.com, dipa@ti.com, 
+ yuhsuan@google.com, henry.lo@ti.com, tiwai@suse.de, baojun.xu@ti.com, 
+ soyer@irl.hu, Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com, 
+ cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com, 
+ savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com, jesse-ji@ti.com, 
+ darren.ye@mediatek.com
+In-Reply-To: <20240710064238.1480-1-shenghao-ding@ti.com>
+References: <20240710064238.1480-1-shenghao-ding@ti.com>
+Subject: Re: [PATCH v2] ASoc: tas2781: Add new Kontrol to set tas2563
+ digital Volume
+Message-Id: <172080228320.548034.2855852943661036499.b4-ty@kernel.org>
+Date: Fri, 12 Jul 2024 17:38:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712143415.1141039-1-leitao@debian.org>
-In-Reply-To: <20240712143415.1141039-1-leitao@debian.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 12 Jul 2024 09:36:17 -0700
-Message-ID: <CANn89iLxq_PGZLRkkOMSMZkZRnM5NveFvOiJfQqywpqZS6fDwA@mail.gmail.com>
-Subject: Re: [PATCH net v2] net: netconsole: Disable target before netpoll cleanup
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, pabeni@redhat.com, Jakub Kicinski <kuba@kernel.org>, 
-	=?UTF-8?Q?Bruno_Pr=C3=A9mont?= <bonbons@linux-vserver.org>, 
-	Matt Mackall <mpm@selenic.com>, thepacketgeek@gmail.com, riel@surriel.com, 
-	horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-On Fri, Jul 12, 2024 at 7:34=E2=80=AFAM Breno Leitao <leitao@debian.org> wr=
-ote:
->
-> Currently, netconsole cleans up the netpoll structure before disabling
-> the target. This approach can lead to race conditions, as message
-> senders (write_ext_msg() and write_msg()) check if the target is
-> enabled before using netpoll. The sender can validate that the target is
-> enabled, but, the netpoll might be de-allocated already, causing
-> undesired behaviours.
->
-> This patch reverses the order of operations:
-> 1. Disable the target
-> 2. Clean up the netpoll structure
->
-> This change eliminates the potential race condition, ensuring that
-> no messages are sent through a partially cleaned-up netpoll structure.
->
-> Fixes: 2382b15bcc39 ("netconsole: take care of NETDEV_UNREGISTER event")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+On Wed, 10 Jul 2024 14:42:37 +0800, Shenghao Ding wrote:
+> Requriment from customer to add new kcontrol to set tas2563 digital
+> Volume
+> 
+> 
 
-Goof catch, thanks.
+Applied to
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoc: tas2781: Add new Kontrol to set tas2563 digital Volume
+      commit: 75ed63a5ab5d1d2872c735bc7edf8fef0e2fa2ea
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
