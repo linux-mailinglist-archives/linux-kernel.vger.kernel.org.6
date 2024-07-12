@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-250306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60CDF92F64C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF4492F64D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030BA1F22D9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58EFA282209
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3FE13D619;
-	Fri, 12 Jul 2024 07:33:44 +0000 (UTC)
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B555E13DDDD;
+	Fri, 12 Jul 2024 07:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ki261NVV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70AE8F58
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056E713DDA3
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720769623; cv=none; b=co1RJhpaA05cTkxSkdmZVo5Nck4rFLKzLKGxJ9xmypGnGP9dOEMlBwxguWxc2Smf2zwvPYYxeCPAbf7Ox8ZVDtZ0x+p/GuHefNx0gC1zGLy8QBIMMCXphz5PH8/MwpNMRouPgDiuUgf1e2m1pNAZyiQXA+hbkkzA6nIirsvQCL0=
+	t=1720769663; cv=none; b=tzRD8oCfLMUjHO7IDD2QoQPhYvjFO+R7xo8NhRmil5g+Z9MHULUUs2O79FGJGq+BoQk1lOhyeODhzey78FssDBdDv3iRNpyztA58tlUJK0nLeXm+cBQbrBVxnWGHIO8elaRBfypxmAYa0ZN5ZnhNJl+JjYsUJjgmUkG0BVpjES0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720769623; c=relaxed/simple;
-	bh=V/kKfskmGeohcGgTh/TWitjQ2ktSVRQ+jrz7Poi2ZCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M+SHc8jsJvDPg/6KmVvVZQV27TWhpSvE+acJG59zsLVanzvBYaUH+spHZMRswQd4egGrTAesMLzqTeElQaryddFmvXi3+1ssOMnwqhCJTarLAxcCUmjf6ZbmSU1KijRAN9/UhTJjq4looWo2jmHUS+IC8fGYTohx63t2gKG+0XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-382458be75bso7101945ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 00:33:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720769621; x=1721374421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hn+o8AqZLo3hb96gEPNbR8OJxXzWCm+T0yWulB6rTQs=;
-        b=MSmYAYU5Gcc98QhfPQkW9cjM2DNaxOuHcIT6B6hfLMHxU1GWBmzucihPPG95M3/6HG
-         Fj9CM0dbB3f1lM55KAjElZyz4r9GkISgoHgiknd9+FjrddFdk1Ni95VD4hrdSSke2N4M
-         rfsIpVWyah3fRtSot41l6iR+GeWVNo/cL7GmTZHeC9vCbZ31a+20io3XBgJ9j9LPWJPF
-         dck3pfwg0e11ruCH1eFHjMbVquxxRxB15PIgAXudTdf346oBU0pidWQ3A9fo/2nftcDa
-         kgTFsi9Mzc8V263K0XIXoxI8dVsE8UDekg5AhwbcSQMWoQQ5C4LmNaznZGEqq3Tk/K8d
-         qMwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWLTPsefAKnG8mOLUBsksKl+r82HPEC0rFRSLHpERFRdvjcFyIH3tou6REaydqTD8tT6z2Fiw65zuXJ8bNC5mwarZN3BFOuVsQo5px
-X-Gm-Message-State: AOJu0YwAZTUkUdY9VMzswt7oxTV7hcjDhH5lZBPv0Slb0/P5qRuBjXrd
-	SIhRCHn1/MEj8L/RD+w7j4Z+QjZuLbth8p1r1xw4+oYjfv8lId6hMqypId35
-X-Google-Smtp-Source: AGHT+IGbQMjqFMpaULo80E2uxbUpy3EgGlFwaqZ+ciPbdnh24W4/zLrHJxvlMFHsD4vKrRb/CUQoUg==
-X-Received: by 2002:a05:6e02:1985:b0:375:dc39:cfd2 with SMTP id e9e14a558f8ab-38a580a7215mr122140005ab.11.1720769620754;
-        Fri, 12 Jul 2024 00:33:40 -0700 (PDT)
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com. [209.85.166.169])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-38a4b870e83sm18431885ab.55.2024.07.12.00.33.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 00:33:40 -0700 (PDT)
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-382458be75bso7101865ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 00:33:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVR03iz4mfhzJYSaYO7ZZpVowwM6vxqKZmpezHb8iv9O7AS+BBwfzjQwhNaJx3nkMOhCHwElJ5pAqUygfBEnC1/QolW/ruKisCWvIy4
-X-Received: by 2002:a05:6e02:1906:b0:375:efde:97a6 with SMTP id
- e9e14a558f8ab-38a570f909fmr133671515ab.7.1720769620042; Fri, 12 Jul 2024
- 00:33:40 -0700 (PDT)
+	s=arc-20240116; t=1720769663; c=relaxed/simple;
+	bh=pQDRxA/hn4GoB35hMTWuxnTZbA6PilRZeqm+y7oKfkY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iGtDn7M29lCa98alE/Ywwk8hxT0x1dOEZyD8bVRHEtbn2WuvQbh0xD1hQuirHYN23ATumDW5XHTTdRf3oixnT/Mn27vEFAyoxuuJxNJ+DSlUlD1zjgMvrjmtprB/Rva1foldET+65UcXC1vbBrF0I5PjQBD2BTsV2/cqqk5KLcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ki261NVV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C45FC3277B;
+	Fri, 12 Jul 2024 07:34:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720769662;
+	bh=pQDRxA/hn4GoB35hMTWuxnTZbA6PilRZeqm+y7oKfkY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ki261NVVkOo6/fkukqcGMmIUAvLrT3KwM+lh0WXotJcJ5QfGsr3G3lSOeE5KO1IYw
+	 zSsM2REhgYqHv/J7N4uVVQC/bmoxwvm6kH/VxhSU7QcS6DxSeKQz4SAqeIWSee6vuW
+	 qUUmLEfGhSJe8V86Q4nzBEKlQ+NnudwBSGeFeoPtHGpEdwUSi4f46vxEQpA2GSI0cm
+	 KWVIalevvudV0mnJmM/oh7weYngkOz8W5nlHmfz3WLtIrr35a5udQrmMWz+oBCDPRc
+	 E7N99QseG1xfjGxCDwcoELIByug2rgrQzlOKn3jRZ81WbQVcJWZn59jycBMpYvr/W/
+	 4SKPmX3EjxE5Q==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH] f2fs: don't traverse directory blocks after EOF
+Date: Fri, 12 Jul 2024 15:34:15 +0800
+Message-Id: <20240712073415.227226-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712032140.4012667-1-lsahn@wewakecorp.com>
- <ZpCqkPIOCsnmf5lF@google.com> <CANTT7qi_qZfFH+T1z22GMQ-LmG1vHG1adzD=hxXiXyKT4kkhOQ@mail.gmail.com>
- <2024071241-entail-icing-58cf@gregkh>
-In-Reply-To: <2024071241-entail-icing-58cf@gregkh>
-From: Leesoo Ahn <lsahn@ooseel.net>
-Date: Fri, 12 Jul 2024 16:33:40 +0900
-X-Gmail-Original-Message-ID: <CANTT7qijsbExBqD0WNC-V+w8BWXDCB+s_Vn+=8GXoeA3D5c1Xg@mail.gmail.com>
-Message-ID: <CANTT7qijsbExBqD0WNC-V+w8BWXDCB+s_Vn+=8GXoeA3D5c1Xg@mail.gmail.com>
-Subject: Re: [PATCH] android: binder: print error message on failure of
- creating proc file
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Carlos Llamas <cmllamas@google.com>, Leesoo Ahn <lsahn@wewakecorp.com>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-2024=EB=85=84 7=EC=9B=94 12=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 4:19, G=
-reg Kroah-Hartman <gregkh@linuxfoundation.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=
-=EC=84=B1:
->
-> On Fri, Jul 12, 2024 at 03:52:32PM +0900, Leesoo Ahn wrote:
-> > 2024=EB=85=84 7=EC=9B=94 12=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 1:0=
-1, Carlos Llamas <cmllamas@google.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1=
-:
-> > >
-> > > On Fri, Jul 12, 2024 at 12:21:40PM +0900, Leesoo Ahn wrote:
-> > > > It better prints out an error message to give more information if
-> > > > calling debugfs_create_file() is failure and the return value has a=
-n
-> > > > error code.
-> > > >
-> > > > Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
-> > > > ---
-> > >
-> > > What are you trying to fix? My understanding is that users of the
-> > > debugfs API can safely ignore any errors and move on. IMO it doesn't
-> > > make sense to add this without a real reason.
-> >
-> > What I was trying to say, users would predict that a file under
-> > debugfs will be created while they are opening a binder device. But if
-> > it failed for some reason without any debug message, they would get
-> > confused that the file doesn't exist and have no clue what happened
-> > without a message.
->
-> And that's fine, again, the kernel does not care if debugfs is working
-> or not.  It's just a debugging help, it does not affect the normal
-> operation of a system at all, and as such, userspace can't rely on it
-> being present for any functionality other than debugging issues that
-> might happen at times.
+All directory blocks are within the scope of i_size, so let's limit
+the end_block to just check valid dirent blocks.
 
-Thank you for explaining in detail.
-I hadn't thought about it from that perspective.
+Meanwhile, it uses dir_blocks() instead of variable for cleanup in
+__f2fs_find_entry().
 
-Let me close this issue.
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/dir.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-BR,
-Leesoo
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 02c9355176d3..d4591c215f07 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -305,18 +305,21 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
+ 	int s = GET_DENTRY_SLOTS(fname->disk_name.len);
+ 	unsigned int nbucket, nblock;
+ 	unsigned int bidx, end_block;
++	unsigned long last_block;
+ 	struct page *dentry_page;
+ 	struct f2fs_dir_entry *de = NULL;
+ 	pgoff_t next_pgofs;
+ 	bool room = false;
+ 	int max_slots;
+ 
++	last_block = dir_blocks(dir);
+ 	nbucket = dir_buckets(level, F2FS_I(dir)->i_dir_level);
+ 	nblock = bucket_blocks(level);
+ 
+ 	bidx = dir_block_index(level, F2FS_I(dir)->i_dir_level,
+ 			       le32_to_cpu(fname->hash) % nbucket);
+ 	end_block = bidx + nblock;
++	end_block = min_t(unsigned int, end_block, last_block);
+ 
+ 	while (bidx < end_block) {
+ 		/* no need to allocate new dentry pages to all the indices */
+@@ -361,7 +364,6 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+ 					 const struct f2fs_filename *fname,
+ 					 struct page **res_page)
+ {
+-	unsigned long npages = dir_blocks(dir);
+ 	struct f2fs_dir_entry *de = NULL;
+ 	unsigned int max_depth;
+ 	unsigned int level;
+@@ -373,7 +375,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+ 		goto out;
+ 	}
+ 
+-	if (npages == 0)
++	if (dir_blocks(dir) == 0)
+ 		goto out;
+ 
+ 	max_depth = F2FS_I(dir)->i_current_depth;
+-- 
+2.40.1
+
 
