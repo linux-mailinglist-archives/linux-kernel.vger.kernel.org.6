@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-250738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC0692FC1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:04:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6CC92FC1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6241F228FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:04:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6FAC1C22825
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD45A17108A;
-	Fri, 12 Jul 2024 14:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D4217109D;
+	Fri, 12 Jul 2024 14:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f0b7joZp"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pPlI1DtF"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A865215DBAE
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6765D16C69E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720793067; cv=none; b=mYVyQ4sSC4zdltUKgo9nspZeMKnjhN/Y4kM7fhXx3nyi94ekr7foLA1r6DYUCSDal2F/eR+uO4WTNlR4B6li2Ob7aWk4wIM9ltVyDAAC2CYmvIbodNpw/vFruE5ETx9djY6tZlhP6JzZTZdM1jauxFG+ippkqG4dDbo4EvKNeM0=
+	t=1720793105; cv=none; b=RY/SnhSWQoUPjIO3FQ3B+ngrXl8CUb293zf1uOU7bysxyd4qBD7hgskw+opYtwdzHnSpGi00DutCrPxLBWIm48pl777BTWag/PtZeoFbq8WHatqDzuJaMIWXTz55ZgLjVZLVHgxtUEDcsVFRtCjFc2XEc5rfyBZtN9AM33v3vXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720793067; c=relaxed/simple;
-	bh=f4nPJBWcL+FWBNNP7qtZLWX3gQIx7r3DtuJMpTD5/Oc=;
+	s=arc-20240116; t=1720793105; c=relaxed/simple;
+	bh=IKwu4IeO4ctIHCAUeLuXDVYmpaVD4J5Qf/i0s0LEYt4=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=m2zhTVZDdVGkDZ8LTWMGMG/GC86/dlgaiNpHHW8y2u0R3UmuDXdvsZMCN6Zxd5JmSCC2awd8d6Zg4dp7oiyYaZQ2rILdJvB27TVKXzaYRHwO2UDs+SDAmsv9OUWlg1cK8YnjXy0zsOnZ2LjGfno8zjF2/lAkc7OViZCIkTUFmvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f0b7joZp; arc=none smtp.client-ip=209.85.167.176
+	 Content-Disposition; b=GkqJpHIAFtvNYQgFUePSPRNDmlZ/uxPskhq4yIi7x+tcbK80uF2hfddmfvyg99Fs4AFQVLWyEu/e55MpBPbxvwajAjQ6CWOtaTYSlgQQLZeBFNFhSf5MHDeHBfIOexTkf/ae4TYApD+HvnkRQYIzsssYGavymXje+fk27yT7wEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pPlI1DtF; arc=none smtp.client-ip=209.85.210.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3d932f991f6so1174235b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:04:25 -0700 (PDT)
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-708b273b437so892611a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:05:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720793065; x=1721397865; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720793102; x=1721397902; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=R0tPaSbJr1gyBPbW9jKrvoYL58n/60/CIcsiIcRMhY0=;
-        b=f0b7joZpWTP8fSOeBxnqbFRMdosp5K1RcfFP+hC/sDV+1OzFwX6ZtGwHoQ48Nl3+IN
-         H/Fc6XjWHrJ1AK1n3YgzeQ5OmzsslrMG40EQ4o3rWmUy/SeMet1dLj67WZYLKHYcD2Pe
-         VIGj76q4f31QYBGqp8I04aLK6BhV9qla1ZG90IDkWK4kwKkjQNacLHuaW/4DxEwNzSuB
-         GCuuLEO1WP9NAuvgokD+eD4GWm4XdRoLjbu8U2UeqfVSvMfLR1bhUH2Ev6UxJAO9nUyp
-         PBayEX2WCg4WZAU58S83wGYpxTR1CX91oKcLaMpQAkVL+FflvowXAmEEn4pEekyHJCLA
-         G++Q==
+        bh=VghSScXg0SnQ65hjRgRRdsd386IPCF3v3rBLbMWrDA4=;
+        b=pPlI1DtFjrYkcc5iP02KyHctwNmU/dTI846uBcmcoxncvXHALoYXSwrqT8TOXx1yBx
+         0T8wToDuig/+P6PRdOhTXiAXD6OekG6YAjA0oP6z22IVIQkg4eES9waj7O7Mfg3L6gsO
+         yDyXrHJryRziT8/BmH94Pkb5DtdX6yYwnkXRePuFAH8pkfIrLyUbPAKYpqT2e355ascl
+         E0jjB6ysjZZqB7YOdEsr4GbGAFtHEMMeB+Xukk3k6Sb6WdCaq4DkYCqH3n9wuygnCqLx
+         fNw7uNBEhRQfLQ32pCiCujgoDRy37f0+H+FLvEPEx1YfLnM+YQeXbMJjd+ORLYUzBvir
+         feig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720793065; x=1721397865;
+        d=1e100.net; s=20230601; t=1720793102; x=1721397902;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R0tPaSbJr1gyBPbW9jKrvoYL58n/60/CIcsiIcRMhY0=;
-        b=JkIEwaB5P/vHOpXR9ctGCfdXB4siirhdTRaxomNciqYUb0QyntNdabxXDHaunLi+/F
-         +tpCbEb/n+R0OlY0dpJohGC2xGH/PQtt4lxW5P1YJppx1PA8Ni5b6NttFTGo+3nTHJOd
-         K4tzwKSnldfboPEOSdpXowV5dhKpwDcHM0VO/EPEBmVtuq8CFwuyFRedoaloKZDf705y
-         k9t6NCJEdT1DsA8apzy/VVz8TKw5Untbjq9wZOKdhqFfFcpqjOWdtXO9Qp15j3aT8Opz
-         00J3LjkP5IL+8mdX3DtQJ9VENeJ3Jmu3gvkXdNQ6bCHjNL6ymQHcDfk/rHN7LUdRsq8l
-         4wVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUT35WgLiiaD8vHpNqw6kGPQEowKc7YTr7XxhqhoBes3MFmvmy45T0DTJm6wDIZJnqy+aM3JXiJgObRk2inbqADIp/HQ2B4Bbo5vJ7
-X-Gm-Message-State: AOJu0YymSDWR6LhoEghEu9bUx8dHQtcO8xd7KrHDgUXaCbIY1pqnRQpU
-	qaptnOXpKZVkIRymSpk2A2pz2rtUIbMq46VPH10taq4vOdIszNSSu/WU02awfNY=
-X-Google-Smtp-Source: AGHT+IHvKRXgbYK/Cei1uAHdNU9V5NaySuUO0ey6pJOZHrm9szgI1TMI8MwHwey/7TIGHSFFHYqcjw==
-X-Received: by 2002:a05:6870:ac26:b0:25d:7cc4:caa8 with SMTP id 586e51a60fabf-25eae74ac40mr9611788fac.10.1720793064654;
-        Fri, 12 Jul 2024 07:04:24 -0700 (PDT)
+        bh=VghSScXg0SnQ65hjRgRRdsd386IPCF3v3rBLbMWrDA4=;
+        b=E9UzI/ThNxszSo7smKRr0+vijY4sd3lDRJyhl2RazrAD+GvzlQhLI8pqmN/fw6RQ73
+         MYT4NaLUyTzJmkbq4GE7vUfxmFdwYCnWgAziP8tbmYBXyLXpp6zlpp3USTQwtG+D1mmS
+         5vv3JEWaBPzGSEQ7Z//UoRLzdeg5peys9KnLkge4k4dmeXWEVyxJpamMohCephxAM3/t
+         KMnOp0tTEvO/L/mPvn5edTES2PhJ9nCAZDe9Kmf8GDBH7jfz98bXamPTZTZmmDNkeHMF
+         2xZBaZo/YVqBoIiheV3EIGJbnU4F52fL1O9rQnjt4kxfbc6mw6gRJoz8s0ph1QHbaBQH
+         JZPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWutjRTzjZb43LissMBWASwkz4dAEEaucb38gpQPXhyu5GjO/4vTZEWxzhhHEgdIPvHiFFiQ00oj+5a1tamSlcAXS++1ff4Y5KQGi4r
+X-Gm-Message-State: AOJu0Yz1fcI9u+T85/hJevi7TKS993C6gPHVqvYE+khD01TP2LyXf3gP
+	3v+BObNhEedNAPpZeLR+RA+bIReJfjC06R1Xx+aXx2SQbMo1dOQvu/TJDgjNoV8=
+X-Google-Smtp-Source: AGHT+IFA0p4jpx4ZTZg5gSmdCsyYovFZ3XvuMQom8jLmz1vaX/2ViXszD44aiF1MHSHh4j1LYznztQ==
+X-Received: by 2002:a9d:759a:0:b0:703:7a17:f267 with SMTP id 46e09a7af769-7037a17f53dmr12708239a34.26.1720793102310;
+        Fri, 12 Jul 2024 07:05:02 -0700 (PDT)
 Received: from localhost ([2603:8080:b800:f700:d26:9826:56eb:a2e5])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25ea9feb5a5sm2154367fac.19.2024.07.12.07.04.24
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70559902e6esm847390a34.35.2024.07.12.07.05.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:04:24 -0700 (PDT)
-Date: Fri, 12 Jul 2024 09:04:22 -0500
+        Fri, 12 Jul 2024 07:05:02 -0700 (PDT)
+Date: Fri, 12 Jul 2024 09:04:59 -0500
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] eeprom: ee1004: Unlock on error path in probe()
-Message-ID: <b5c51026-a2de-434b-8f45-44a641ab1c82@stanley.mountain>
+To: Hector Martin <marcan@marcan.st>
+Cc: Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] nvme: apple: remove some dead code
+Message-ID: <124bbda3-7ccf-4e6b-b30d-7115e1c2620f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,30 +86,29 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Call mutex_unlock() before returning an error in ee1004_probe()
+platform_get_irq() never returns zero so we can remove his dead code.
+Checking for zero is a historical artifact from over ten years ago.
 
-Fixes: 55d57ef6fa97 ("eeprom: ee1004: Use devres for bus data cleanup")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/misc/eeprom/ee1004.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/nvme/host/apple.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/misc/eeprom/ee1004.c b/drivers/misc/eeprom/ee1004.c
-index d4aeeb2b2169..adba67cef1e7 100644
---- a/drivers/misc/eeprom/ee1004.c
-+++ b/drivers/misc/eeprom/ee1004.c
-@@ -272,8 +272,10 @@ static int ee1004_probe(struct i2c_client *client)
+diff --git a/drivers/nvme/host/apple.c b/drivers/nvme/host/apple.c
+index b1387dc459a3..f5a3a4e8b1e5 100644
+--- a/drivers/nvme/host/apple.c
++++ b/drivers/nvme/host/apple.c
+@@ -1417,10 +1417,6 @@ static struct apple_nvme *apple_nvme_alloc(struct platform_device *pdev)
+ 		ret = anv->irq;
+ 		goto put_dev;
  	}
+-	if (!anv->irq) {
+-		ret = -ENXIO;
+-		goto put_dev;
+-	}
  
- 	err = devm_add_action_or_reset(&client->dev, ee1004_cleanup_bus_data, bd);
--	if (err < 0)
-+	if (err < 0) {
-+		mutex_unlock(&ee1004_bus_lock);
- 		return err;
-+	}
- 
- 	i2c_set_clientdata(client, bd);
- 
+ 	anv->mmio_coproc = devm_platform_ioremap_resource_byname(pdev, "ans");
+ 	if (IS_ERR(anv->mmio_coproc)) {
 -- 
 2.43.0
 
