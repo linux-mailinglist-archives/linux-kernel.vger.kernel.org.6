@@ -1,75 +1,85 @@
-Return-Path: <linux-kernel+bounces-251160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4118993015F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:56:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55B16930162
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16B31F22F91
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:56:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA96AB22558
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B4F46542;
-	Fri, 12 Jul 2024 20:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EB0481D3;
+	Fri, 12 Jul 2024 20:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IJtK9LYW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tt1n0HMU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8299E8F6A
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 20:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06007241E7;
+	Fri, 12 Jul 2024 20:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720817787; cv=none; b=K08R8RvXLrDxR81PsT320BEkBKMt40uAYQ20o//AvqMHmJXJ+L8H9m8TUY8FUoDSiJospX4q967fUHJPhaDObXsGIvin/PU3HuY8PhJF425b8tjnpdSmFchr0kb3MJCdTVGhdrs4DEiTqmcHkm3CvJRdhSn1YelCMeFfvKf1iIM=
+	t=1720817930; cv=none; b=qkBjm9iI1SsqezvtbgwKUr+bUyMcHZxDCeox2K+VF7jd+rmZXIBbtFazZh2g0BOyGXv7UP4N7vJDhLid+CXOHcLidcPagA3KgZp9mMNxYOYPgHlO2lHgnXuzNXumt7V2veSmFT2tgfOeOua5YJCwFsUGGmDAKeauKZHGh2vp128=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720817787; c=relaxed/simple;
-	bh=97/k8W97VFXseeyXUb7dFdkjvKl2R3JBWSCRoDDZVIE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=WObIrNuG3KC+NpeyKgg1wTLAxlsJMCUDLjYfO/bIyEXEdLfa3lAv5q6ICT+N5LrPsbr6t5WmBJtj2BREUDlJ7G9Jc04EVYyAsnaAKLrFXgUvJ4cM+qMv3ULI1mh9vevgS7H/+E7EdyD+6JXh7gEOds+15QK0VDILTwdkNl9Ed/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IJtK9LYW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF990C32782;
-	Fri, 12 Jul 2024 20:56:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1720817787;
-	bh=97/k8W97VFXseeyXUb7dFdkjvKl2R3JBWSCRoDDZVIE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IJtK9LYWV/hyZrVDz/8pb3w3m17cvPtiEdfn3KXR9Uk8G7fgjyulCNuToK+/Drq8y
-	 sLLs/BeNerK8D2suE8g+S/gUXtr5QAerqDxx9OvmBmn5ZRyFShRkOtolhTLTUw1Q3b
-	 0mwcpuyTRAmenQSnxWYgEtI8e5i4KhfwnFiIGujU=
-Date: Fri, 12 Jul 2024 13:56:26 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: yangge <yangge1116@126.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, 21cnbao@gmail.com, david@redhat.com,
- baolin.wang@linux.alibaba.com, aneesh.kumar@linux.ibm.com,
- liuzixing@hygon.cn
-Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding
- to LRU batch
-Message-Id: <20240712135626.3a7cc4b9e959a1124614aa37@linux-foundation.org>
-In-Reply-To: <503f0df7-91e8-07c1-c4a6-124cad9e65e7@google.com>
-References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
-	<503f0df7-91e8-07c1-c4a6-124cad9e65e7@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720817930; c=relaxed/simple;
+	bh=/Q7Fd/xXOpQ1mKISZMwTVDbIjGOOKIIpgxkXDfpf0+Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=UGor5Rdvz7NTorqvYryD30Yj8EgENWCl760OqtqlyyNh+0tuyWvS5lLKAti1iBvUeUUiM0GLyIMWnohkJYPsioq7fvayRh+QO233ilJSW8gesrEyNDd0fZgZxC3MCrpBzl+MFeLbr4fBW3sUJvkG6iHHKGMOoG/7cr+HSPpGH4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tt1n0HMU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A508AC32782;
+	Fri, 12 Jul 2024 20:58:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720817929;
+	bh=/Q7Fd/xXOpQ1mKISZMwTVDbIjGOOKIIpgxkXDfpf0+Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Tt1n0HMUQUQjICfM2n5VNqp07IX9DnFQDo+w9ZxJP7NTXu784JLKzyQFo+1WrnqqR
+	 sdwoW8MWj6OR2jVUrGCWQ7cfbjmb6Vo+AN4LmVB9Cp7BCQ+pljgL8EVCrxa72MWc09
+	 MlWqhpS5h8faaOeW6YjDRdK77jaqH+lhRSc2Do3+KplG1ouJl4vmtl8QvGYfoMQKZR
+	 5Ufo0vL1Udc3pmOlv3RDryZ48XWhPKxafaKuXjabDlEDXl8kFq/7cDw7NSJo0jJFJE
+	 gNm6tBpLdWbO/TPWDr7touLLjHvo04QG8kG6WJDcdVfz8dCaSgbxOpAL1rYle2jt7i
+	 6l8t/pU5+0yIQ==
+From: Niklas Cassel <cassel@kernel.org>
+To: Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-ide@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Frank Li <Frank.Li@nxp.com>
+Cc: imx@lists.linux.dev
+In-Reply-To: <20240712185740.3819170-1-Frank.Li@nxp.com>
+References: <20240712185740.3819170-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH v3 1/1] dt-bindings: ata: ahci-fsl-qoriq: add
+ fsl,ls1046a-ahci and fsl,ls1012a-ahci
+Message-Id: <172081792736.129743.17961813868575869255.b4-ty@kernel.org>
+Date: Fri, 12 Jul 2024 22:58:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Fri, 12 Jul 2024 01:56:04 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
+On Fri, 12 Jul 2024 14:57:40 -0400, Frank Li wrote:
+> Add missing documented compatible strings 'fsl,ls1046a-ahci' and
+> 'fsl,ls1012a-ahci'. Allow 'fsl,ls1012a-ahci' to fallback to
+> 'fsl,ls1043a-ahci'.
+> 
+> Fix below CHECK_DTB warnings
+> arch/arm64/boot/dts/freescale/fsl-ls1012a-qds.dtb: sata@3200000: compatible:0: 'fsl,ls1012a-ahci' is not one of ['fsl,ls1021a-ahci', 'fsl,ls1043a-ahci', 'fsl,ls1028a-ahci', 'fsl,ls1088a-ahci', 'fsl,ls2080a-ahci', 'fsl,lx2160a-ahci']
+> arch/arm64/boot/dts/freescale/fsl-ls1012a-qds.dtb: sata@3200000: compatible: ['fsl,ls1012a-ahci', 'fsl,ls1043a-ahci'] is too long
+> 
+> [...]
 
-> I have no objection to it going forward to 6.11-rc, but I do object to
-> the Cc stable, and its current placing in mm-hotfixes-unstable (if that
-> means it's to be rushed into 6.10 final).
+Applied to libata/linux.git (for-6.11), thanks!
 
-No probs, I moved it to mm-unstable and removed cc:stable.
+[1/1] dt-bindings: ata: ahci-fsl-qoriq: add fsl,ls1046a-ahci and fsl,ls1012a-ahci
+      https://git.kernel.org/libata/linux/c/6739fad4
 
-The issue sounds significant so someone might request a -stable
-backport in the future, but the workflow doesn't have a way of
-expressing that.
+Kind regards,
+Niklas
 
 
