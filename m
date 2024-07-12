@@ -1,157 +1,120 @@
-Return-Path: <linux-kernel+bounces-250079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4E792F404
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:28:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9DDE92F405
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 278281F233A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:28:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D1128383E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C50B8F5B;
-	Fri, 12 Jul 2024 02:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487CC8C1F;
+	Fri, 12 Jul 2024 02:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QRATs0aw"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kcAxDQ5D"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDAC79D0;
-	Fri, 12 Jul 2024 02:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422C9C8C0
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720751331; cv=none; b=Oc4vEsFkOAH+01f8cBolwWcd5GTVKJgQYG4XsvDP8g4YrryarqYJhxM+V3ODS1GcBdjBugBwYTrMaUfkJkb775GIA6XKrkzieoq8EBd+OBHlp8i1hJvEd1nx1QdM0aZDIEHbutn+DE7K055k36fpNynlB/e5hu/AAPebrh0qFD0=
+	t=1720751397; cv=none; b=bfCXXnrVDBHQIF1riby6XfFxda+CfqWZWKwMGuWEWE+7UcI1lLSLnmqWKqEvET3qr5aVVnNLOz/FkgTHyKm6dyc4fjf1etcpCaePMenqf9v/ZIMwGlpb6snI4FHR+L0F+y8vZz1IYannKBENi6P83VCGqgKSWTZXKNPvI9nQEx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720751331; c=relaxed/simple;
-	bh=N0u3WEUNNmZu+qZYjviTlBy5Lg5i17OUTz2r/3xw56Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n7CLy4AS2jKXSLLEuVyjBi3P6/Zd/whFNzjGr4SxXWZ5YolpTDIDyknuIZKCkf4rcJ8YYIOG17BzozQPyHKtchifKo+QpfN9JxVwBNR+aRd0pn1MJ7wfePC3I79v+kJqaFA+PtHSqTHpTL6ObtBLXthctszCL7fWmv64CsEfvCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QRATs0aw; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720751325;
-	bh=776BhMmb21jisugPehbvK83vs4KqO37PlFEa+bKwYmU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QRATs0awvti9IbE4hdeNyKsmvZ7nPdqDpB6SYH0SQCFUwR1XWt4/3RWfVW+knaCrN
-	 7M8+XqYN2ZMNeRAarGigCgkCNMFTm9flvANvT8L1kzGW3YrVRvViMK0F3cx8n8QsPI
-	 krR67X+l72x+BYtfiPW6/j65miQsVPgfXi+cEOo7mALFAjKJc+9bq3TB6URX4MmP9Y
-	 FKlgUvhRqr1nHgl9KdmC4hFN31NumtZ+8Cgfk145NfXBnPME7gpl4dgvYvzNP0hjU4
-	 shlcp3VDRUgNfca9J4JoVqslkeXGRrZvYJPh3DfW6oFp+Xx/7h4+CJUwe0yO7ivDul
-	 VlVe97f2ZPb/w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKwWc1XWlz4w2R;
-	Fri, 12 Jul 2024 12:28:44 +1000 (AEST)
-Date: Fri, 12 Jul 2024 12:28:43 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@redhat.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Ville =?UTF-8?B?U3lyasOkbMOk?=
- <ville.syrjala@linux.intel.com>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Message-ID: <20240712122843.312313a4@canb.auug.org.au>
-In-Reply-To: <20240701171901.GA882812@thelio-3990X>
-References: <20240701191319.087b227e@canb.auug.org.au>
-	<20240701171901.GA882812@thelio-3990X>
+	s=arc-20240116; t=1720751397; c=relaxed/simple;
+	bh=iGvMHNFrVrtuVJGtAwOd3TSqeeyJS67441wBp4VhuU8=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=HiVoSwTsLkKAbdmQzmod8IfbH0H+3fgZUiLCdiQWcy5ft8lJxtxDZv598SOppdV4Uy/Tq1wQVpjJG+VUOkdr14fH+QUQeMUQuBvv4us1+NDKxgifz7SJPSTBKqL3YDEilVggeyVTbH1Hr++C6PXjEmfh/zmcWp6DWToOjZsZCnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kcAxDQ5D; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: willy@infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720751393;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cqGt6wfRotjMw1Rxo2bsfyZM2cjm85hVKvptBJmS+/g=;
+	b=kcAxDQ5DOfSEDmTkCsMONeCP8HRjaaAAIreIlMUx3/vu4XwgNFo6v7TVyhcKYnrHoZbKZB
+	OlZV1UTILVmPTYDZQABulsGbdLecpFMNFMkLLfPFTZZ5mUccRVM6VqpTUOl0MgqJpi8qH/
+	W+jNLuxoaUK7eTSbpAqLatqmI5xB6LY=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: david@redhat.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/H/iDkLlMHsM8Mgav8Y0_chz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/H/iDkLlMHsM8Mgav8Y0_chz
-Content-Type: text/plain; charset=US-ASCII
+Date: Fri, 12 Jul 2024 02:29:50 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Yajun Deng" <yajun.deng@linux.dev>
+Message-ID: <66e43c92d3b4ecfff50e84bdaeedfad3aa477df6@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH] mm: unified folio_test_anon()/folio_anon_vma() and use
+ them
+To: "Matthew Wilcox" <willy@infradead.org>
+Cc: akpm@linux-foundation.org, david@redhat.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <Zo_ZULOseAmEQMIw@casper.infradead.org>
+References: <20240711130351.2830-1-yajun.deng@linux.dev>
+ <Zo_ZULOseAmEQMIw@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi all,
+July 11, 2024 at 9:08 PM, "Matthew Wilcox" <willy@infradead.org> wrote:
 
-On Mon, 1 Jul 2024 10:19:01 -0700 Nathan Chancellor <nathan@kernel.org> wro=
-te:
+
+
+>=20
+>=20On Thu, Jul 11, 2024 at 09:03:51PM +0800, Yajun Deng wrote:
+>=20
+>=20>=20
+>=20> +++ b/include/linux/page-flags.h
+> >=20
+>=20>  @@ -691,7 +691,8 @@ static __always_inline bool PageMappingFlags(c=
+onst struct page *page)
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  static __always_inline bool folio_test_anon(const struct folio *fo=
+lio)
+> >=20
+>=20>  {
+> >=20
+>=20>  - return ((unsigned long)folio->mapping & PAGE_MAPPING_ANON) !=3D =
+0;
+> >=20
+>=20>  + return ((unsigned long)folio->mapping & PAGE_MAPPING_FLAGS) =3D=
+=3D
+> >=20
+>=20>  + PAGE_MAPPING_ANON;
+> >=20
+>=20>  }
+> >=20
+>=20
+> This is wrong. KSM pages are supposed to return true for
+>=20
+>=20folio_test_anon(). I haven't looked any further at this patch, since
+>=20
+>=20the premise appears to wrong and you clearly haven't tested.
 >
-> On Mon, Jul 01, 2024 at 07:13:19PM +1000, Stephen Rothwell wrote:
-> >=20
-> > After merging the drm tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> >=20
-> > In file included from arch/powerpc/include/asm/mmu.h:144,
-> >                  from arch/powerpc/include/asm/paca.h:18,
-> >                  from arch/powerpc/include/asm/current.h:13,
-> >                  from include/linux/sched.h:12,
-> >                  from include/linux/ratelimit.h:6,
-> >                  from include/linux/dev_printk.h:16,
-> >                  from include/linux/device.h:15,
-> >                  from include/linux/dma-mapping.h:8,
-> >                  from drivers/gpu/drm/omapdrm/omap_gem.c:7:
-> > drivers/gpu/drm/omapdrm/omap_gem.c: In function 'omap_gem_pin_tiler':
-> > arch/powerpc/include/asm/page.h:25:33: error: conversion from 'long uns=
-igned int' to 'u16' {aka 'short unsigned int'} changes value from '65536' t=
-o '0' [-Werror=3Doverflow]
-> >    25 | #define PAGE_SIZE               (ASM_CONST(1) << PAGE_SHIFT)
-> >       |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > drivers/gpu/drm/omapdrm/omap_gem.c:758:42: note: in expansion of macro =
-'PAGE_SIZE'
-> >   758 |                                          PAGE_SIZE);
-> >       |                                          ^~~~~~~~~
-> > drivers/gpu/drm/omapdrm/omap_gem.c: In function 'omap_gem_init':
-> > arch/powerpc/include/asm/page.h:25:33: error: conversion from 'long uns=
-igned int' to 'u16' {aka 'short unsigned int'} changes value from '65536' t=
-o '0' [-Werror=3Doverflow]
-> >    25 | #define PAGE_SIZE               (ASM_CONST(1) << PAGE_SHIFT)
-> >       |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > drivers/gpu/drm/omapdrm/omap_gem.c:1504:65: note: in expansion of macro=
- 'PAGE_SIZE'
-> >  1504 |                         block =3D tiler_reserve_2d(fmts[i], w, =
-h, PAGE_SIZE);
-> >       |                                                                =
- ^~~~~~~~~
-> > cc1: all warnings being treated as errors
-> >=20
-> > Exposed by commit
-> >=20
-> >   dc6fcaaba5a5 ("drm/omap: Allow build with COMPILE_TEST=3Dy")
-> >=20
-> > PowerPC 64 bit uses 64k pages.
-> >=20
-> > I have reverted that commit for today. =20
->=20
-> FWIW, I sent a patch to address this in a bit of a more targeted manner
-> over a week ago:
->=20
-> https://lore.kernel.org/20240620-omapdrm-restrict-compile-test-to-sub-64k=
-b-page-size-v1-1-5e56de71ffca@kernel.org/
->=20
-> Although somehow, I left off Ville from that patch :/
 
-I am still reverting that commit (as of yesterday, the failure still
-occurs) ...
+Thank you for pointing this out. It was my mistake!
 
---=20
-Cheers,
-Stephen Rothwell
+I think I need to add a new helper function, like __folio_test_movable. e=
+.g.
 
---Sig_/H/iDkLlMHsM8Mgav8Y0_chz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQlNsACgkQAVBC80lX
-0Gy4vggAiVPl92oeXBiXBv07+6oFM8mgQZicXoV1qRz8CFGEjrhw7r15r0U+wR1P
-YQFSPtg8lADO3oSBHjzm1YeCIsECq8QAi9GY4YF2bTsRgIgMnpOFAyeZoCv0uMR0
-1otR5Z8ztH5nvpz7SPthIHSfh3Auf1C1ruQMgCxpUzgRjZnoP74n9Zm67wHE2edX
-YscNPi+pLWdqfQwvpH/pJqGRXG8QaQSr4U9W7Np9I3oYRgNfqb3LDszjju22H9OO
-h5G9dcuBckSa+dDcsdYowpLb6tVsRSQX8EQRdz6Z+CZzV8AcRdbDrhzfBVDWvYHN
-BacfJ8E3KYL+sO7m1NeEBRRIXR46ng==
-=15md
------END PGP SIGNATURE-----
-
---Sig_/H/iDkLlMHsM8Mgav8Y0_chz--
+static __always_inline bool __folio_test_anon(const struct folio *folio)
+{
+        return ((unsigned long)folio->mapping & PAGE_MAPPING_FLAGS) =3D=
+=3D
+                PAGE_MAPPING_ANON;
+}
 
