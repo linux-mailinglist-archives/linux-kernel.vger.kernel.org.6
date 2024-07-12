@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-250929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA9D92FEB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:44:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82E292FEBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB73A1F21D71
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:44:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24C661C22525
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47372176AA1;
-	Fri, 12 Jul 2024 16:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727A7176256;
+	Fri, 12 Jul 2024 16:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QHC8gYrl"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNAibmIO"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1E7176226
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4C91DFD2;
+	Fri, 12 Jul 2024 16:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720802660; cv=none; b=f+E8D3xzuKDJFHdWedWM9hXijh5xU4igk7e+8CnSoOEey6PI8I4BHTRXsDg6ZnugDeyNIGEEnSarkgeCPBHdmQZMp9WyZIH0RuZBQop+WSVW47V9famE3BXR5E5ZnwbhysPs8cYRrE6SuMOEOb5jd2qQFmSOxfnYOlOIsBqsHhk=
+	t=1720802678; cv=none; b=ZctHZ4FvnRzQyyk4ID5BHCSG1rBO/r/o9TcsHNOSFKc38pNY+DF4X2X8jzlxDcdoDvvv5yIUoz8fka0NnmDiiD7Bp/wsfEpwylG97YjWHaMpefd59aaH/QVQ23NDcKHbZKvrLti8+vbZ2OBVTgQbSZWj3KyTRAtwx3m7vqzXC+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720802660; c=relaxed/simple;
-	bh=R/VQL6TZWIMbWV7Oz6zjIUUzEa4X1DiUdsIcFW8Fp1w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qsRk9przj2MLi75WlKBZT2lbA4eiJYoPkiIgmRyXVQZ0ESZS44TSNeA8rMTKGUU/ILsiUFCewbhaAD/Z4aw74fFaI1LjvnSG3xsD1+GXVhQsrDNLxqjkX2oGJ0V00VAhrLMPIY5H73lIlRsA4Tj+uumcnWHybrDxFXyzRTdfYco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QHC8gYrl; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e03c68c7163so3836588276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:44:19 -0700 (PDT)
+	s=arc-20240116; t=1720802678; c=relaxed/simple;
+	bh=YxRdb5IHqO/LJY/dxEeMHOtFew6h7HXipnunZJonl2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctZv8jSRR7b4T+TakTUhD4dNodoKrpt1DKT0o++im5NHmZv8M7SdP6PGx6duPyyszJjb2OiIBu121OE7f/OkZQnoyUblUot0bFXsitxw3PHtTtmWWtQAyR5+VcWNEhg4Wor3gNLQj0ADWCa86k2RlFyA52433SkDu9EWN0C9n6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QNAibmIO; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fafc9e07f8so16578645ad.0;
+        Fri, 12 Jul 2024 09:44:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720802658; x=1721407458; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e2/8S8obzkiJSotbtrvsa+xr/94yI9iIKCvWVMV27e0=;
-        b=QHC8gYrlS3+gE0K3dMytxBL3oeQhSDnznrj3T9WHNaGqHy/0CdIU6wWfCOKhl2c2BX
-         Z/D0bZ5A1GbaZVsxb+wsgCfGolZR4OEa4bce/xeGqpygknXarZmEZDj9tDtJn7vKRfoL
-         l4V3yUywB0f54xbF+1BqM9veHkPyT9A8Z6/LF/U6QstuOSegffmopcQt/A+f7UIxss4h
-         ipvjch3MAYTWYPt6Bf5kEX5dmBv7v3q1aeS53upZLY69PdhNzU1HsGSdWYyQSeQIzsta
-         JgTX+Ebt93mIdkefreHiCj3Yif9oFVb1ow18S6ABxW/4YmyKk1bfupunefgQ6mjHVkt4
-         vqMQ==
+        d=gmail.com; s=20230601; t=1720802676; x=1721407476; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mf3+N0YSmeZeihxo/NnmDHWXw8mFHbf47GlGRoikzhs=;
+        b=QNAibmIO0jWp7ZZBGq/mUSS8xVnajGYYCf0ODd/g1H6UveIoCkaEw3rzMOZgqT/itf
+         GSBHhswo/273QTvE7WpGS7F5vR3cOroxZ3tFHJ6Qm7BVfQD9EHkUKRwr0BOVORsAIBSA
+         zcXdukrfe3MMFfNWsMA2/tOC78GwhrlJXxgHZhOmPZc+XZSwmPviJP1Dfh/OF90l6/aP
+         IXxZlS0OIzUf6nO/mrnOmuqVy8l6QIZYWJjcNjzBpIA6UFLpVcdWjNytwvhZgCnJ/d82
+         g4SKzR9LGhrujJ9DntXKrdzSYUReR/gAC13CR7Phvrlc09JmaiVRRnwvTh+fGwAYCkMj
+         xFAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720802658; x=1721407458;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e2/8S8obzkiJSotbtrvsa+xr/94yI9iIKCvWVMV27e0=;
-        b=GDPCDxXpLNfFrLnAmiq2jRFqRoxKxGv05I8Za9DDrDs6d49FYmikhB4d2RFAOGIEmc
-         P6xeMyxE7fQKpFQK3HZshCqrVe39MGyYIVC7/qIv2AtDOHB1LjcAGJpozp5YuttXP0/u
-         gsVKJYqjUKgN1GVli3Syds48BgY4taVwNZQOh9+tUkFBOu4sGRCOyJ5vPIdexxbh39oj
-         O20l8FNiUZkkusm0KLS4i1NsvE3pisbLFcmaktGyM49HqaLj2SOpqZdfyKcfZI0Ojy5P
-         jPL8NMBYUVWb8X6Eis104XTbfJzvjh8Xs2lYftrP/Ls+yHKjBXPaRT26p2pzrQV7PHqz
-         T8CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZj8VqnoocbOjV5RqgagXOOHjLxCjAyyATYh82kv3Uv8jmpDdzRf+trLYNTvdguchtxpYsDJ+wqHooUzjCCdDlDIGoMpA3WqC0VHSQ
-X-Gm-Message-State: AOJu0Yy/absUW+r6A9wblRpP9wYPBgHleWXY6UJQ3iaeY7/PA+bBmNHl
-	Nrz2LE1b1Ze8mLjHCdS0GC9SscPuv1izSTDrl5fLBhrdEhX/ShLZAlLAMue8vFWK/HY202bvls9
-	elw==
-X-Google-Smtp-Source: AGHT+IF/KOJ6Gpolu2Ub9nHa1DDJ0KD5nKpBN5oi+4bnQG+a/r7jBG5lYmOuxqEj5AFxHhdkEOevPVEs1hM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:a07:b0:e03:5dfe:45bb with SMTP id
- 3f1490d57ef6-e041b14c6a3mr810243276.12.1720802658285; Fri, 12 Jul 2024
- 09:44:18 -0700 (PDT)
-Date: Fri, 12 Jul 2024 09:44:16 -0700
-In-Reply-To: <20240712122408.3f434cc5@rorschach.local.home>
+        d=1e100.net; s=20230601; t=1720802676; x=1721407476;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mf3+N0YSmeZeihxo/NnmDHWXw8mFHbf47GlGRoikzhs=;
+        b=jqhkYOABui8ocRP43Ea33iR3hAxaHjbSQTOAcenRd4BiUrvYylsqGHuTgAXMIn+EQl
+         g166HGvi51udc6UWZDacZ0h4dfUdJ6RqEuqSwNRV244RN0sDEQczAomxDOAs+djyW5c7
+         uXbffQdFa8zBcixr7SyhmWVfVBPxp5q2mXSEq+t5Lnq6D+DPmioHxRVf5zgnMX4+59Q0
+         X4yvzzBUsZFieSYHtNnHY7klZWKd3IpGWY8vmdpvSGPLwd+L9CmVEtGt6L9C7zs3s3LZ
+         SVrAiOwlESAl3v4L1kcEZxaEKBCDmVj6+Xfh0L9S9BXeGTlYP0ibnHlUcEaVBYy1Rr4q
+         Gt0A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4OY2VfujsaMry+0yRklRVY5OAPPQ3tTbHrRnSDgdBWSKUcZCUapj4gyXFHlFp3ordAzKYM0dHKQPCasijPsaKFapyjXbrEPeGmuYRG1K+jpo3ZBFYb5nXtPVBZi/hu1S95I0ysx00LA==
+X-Gm-Message-State: AOJu0YxRGgbf6uyiIr0Y2Oqdw8ldFAvSfMiuL6AlG9OG8d3KFpqKm2LE
+	TUhRN7ETZsI2O94WuhiCCnI51e/jPNaEeyylxi6fJZs77qKcxoRz
+X-Google-Smtp-Source: AGHT+IEd2hcToL9T2KKyG1KdlYVWLDe2KMkYzK/sMrcZoiXMDle0FAqSC9YcLXok9xeOaQ7fLFcVQQ==
+X-Received: by 2002:a17:903:2343:b0:1fb:5c54:36c8 with SMTP id d9443c01a7336-1fbb6ed576cmr106880785ad.50.1720802676551;
+        Fri, 12 Jul 2024 09:44:36 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a122a1sm70918095ad.45.2024.07.12.09.44.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 09:44:36 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Fri, 12 Jul 2024 06:44:34 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the cgroup tree
+Message-ID: <ZpFdcteO8CeZ94Cn@slm.duckdns.org>
+References: <20240712164354.65cb32bc@canb.auug.org.au>
+ <20240712165107.7b46a640@canb.auug.org.au>
+ <8734oe1xak.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240403140116.3002809-1-vineeth@bitbyteword.org>
- <ZjJf27yn-vkdB32X@google.com> <CAO7JXPgbtFJO6fMdGv3jf=DfiCNzcfi4Hgfn3hfotWH=FuD3zQ@mail.gmail.com>
- <CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com>
- <66912820.050a0220.15d64.10f5@mx.google.com> <19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
- <20240712122408.3f434cc5@rorschach.local.home>
-Message-ID: <ZpFdYFNfWcnq5yJM@google.com>
-Subject: Re: [RFC PATCH v2 0/5] Paravirt Scheduling (Dynamic vcpu priority management)
-From: Sean Christopherson <seanjc@google.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Ben Segall <bsegall@google.com>, 
-	Borislav Petkov <bp@alien8.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Mel Gorman <mgorman@suse.de>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
-	Suleiman Souhlal <suleiman@google.com>, Masami Hiramatsu <mhiramat@kernel.org>, himadrics@inria.fr, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	graf@amazon.com, drjunior.org@gmail.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8734oe1xak.fsf@trenco.lwn.net>
 
-On Fri, Jul 12, 2024, Steven Rostedt wrote:
-> On Fri, 12 Jul 2024 10:09:03 -0400
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> 
-> > > 
-> > > Steven Rostedt told me, what we instead need is a tracepoint callback in a
-> > > driver, that does the boosting.  
-> > 
-> > I utterly dislike changing the system behavior through tracepoints. They were
-> > designed to observe the system, not modify its behavior. If people start abusing
-> > them, then subsystem maintainers will stop adding them. Please don't do that.
-> > Add a notifier or think about integrating what you are planning to add into the
-> > driver instead.
-> 
-> I tend to agree that a notifier would be much better than using
-> tracepoints, but then I also think eBPF has already let that cat out of
-> the bag. :-p
-> 
-> All we need is a notifier that gets called at every VMEXIT.
+Hello,
 
-Why?  The only argument I've seen for needing to hook VM-Exit is so that the
-host can speculatively boost the priority of the vCPU when deliverying an IRQ,
-but (a) I'm unconvinced that is necessary, i.e. that the vCPU needs to be boosted
-_before_ the guest IRQ handler is invoked and (b) it has almost no benefit on
-modern hardware that supports posted interrupts and IPI virtualization, i.e. for
-which there will be no VM-Exit.
+On Fri, Jul 12, 2024 at 08:48:19AM -0600, Jonathan Corbet wrote:
+> > Actually my character map app says that it should be the two bytes 0xC3
+> > 0xBD in UTF-8 (it is 0x00FD in UTF-16).
+> 
+> As you observed, the patch is encoded in ISO-8859, not UTF8; that
+> doesn't fit well in a file that uses UTF8.  One could argue that Sphinx
+> should be a bit more robust, but satisfactory results will not be had
+> regardless.
+> 
+> An encoding check might be a useful thing to have in checkpatch.pl,
+> methinks.
+
+Local env is utf-8 but I saved the email from mutt and then applied it, so
+maybe that's why it became iso-8859? Anyways, I'll fix it up.
+
+Thanks.
+
+-- 
+tejun
 
