@@ -1,188 +1,110 @@
-Return-Path: <linux-kernel+bounces-250733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1930892FC00
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:00:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BFB92FC03
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83A4AB22780
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3C7283424
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872A517165D;
-	Fri, 12 Jul 2024 14:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXLgVsnD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348F116FF45;
+	Fri, 12 Jul 2024 14:00:41 +0000 (UTC)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EBD171081;
-	Fri, 12 Jul 2024 14:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD0115DBAE;
+	Fri, 12 Jul 2024 14:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720792808; cv=none; b=vAsit1bfjrSk77zz56SYc/ESMVU29gzyVVZl3xP+8gjCXtRYhByp0c8mciWcC8VD2rrY+Nff+w0Jh5w0eQTorhNcqrWAdI3E8+ip2TjiIrcB9dGPTCWECKql2yzP0Qa4hmNqFROuaF3GqLXXgiw+AbcKNO1cFngCLeIk5FJr+u0=
+	t=1720792840; cv=none; b=oOIA9+jleoLnJW4mgtC1Eqi38CJn9xC3Ri4vUujn8kxYhgxe5coo4IwdC20kh2XjjWqGyVbEgEEBSTrhunzghEpWoRgng+pJhyDWcnul/tVtqtKl7nIY9bsir5MZ0spajnYXyd1iFQTSONmNCNDdKNHmgco7b7r+kS/jZVIyGdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720792808; c=relaxed/simple;
-	bh=DGSZ+m3mBiM3CPnjUI1G13NKvpVkuZFnkMu0JX/X7jM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qiDoCFaEMKI289P4QSw6cJMx8x5gLcZ81asVhnnVkeTIEnHwKRxh7tSVWdr4fDS9N1YY6hfokgHh+MdIS1zp3Qw6Gc5SYk3sDoM745AfGRDBP0qq6Rrds3OYLyeq2KD2bjvZ9HHzoIrEz8UXi63rdOETNW1GlIZn/8EYit8h63w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXLgVsnD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92851C32786;
-	Fri, 12 Jul 2024 14:00:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720792808;
-	bh=DGSZ+m3mBiM3CPnjUI1G13NKvpVkuZFnkMu0JX/X7jM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YXLgVsnDJKOdnonyl1AsfSxjn+yxsu8LxLtm+80pCGmk+p9iyKya80BCUCItGCD0i
-	 FRl3ck8joWeumoppnTB5KnM7hBaCwawhHA4FHLZCpaVSVnzSQvDK4RZwRGqObjfLdN
-	 pH447kGaWm92WXXSL9K6x7EHPjMbnFN2Ly6OrLow/vzXlDnl0CBYKq0/RSuxav5uBy
-	 KnB3X2/NpKRRFgZ9AM7MJ2bftNIXMfE0eCFhC8kNH5gFpWgMTLhhZ2LMQtFSyWw5fL
-	 QasfNGerNMQR0eIsT0sEOv+Dgbn/rg6IXTN8IEsuvxutOnUdNsSjCaj3JwWdxZ5/fY
-	 yFHBVZHn38SCw==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL for v6.11] vfs mount
-Date: Fri, 12 Jul 2024 15:59:50 +0200
-Message-ID: <20240712-vfs-mount-8fd93381a87f@brauner>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720792840; c=relaxed/simple;
+	bh=dHJYcDC0Lei1SsAY91BIMUsBuZTwqN+2ZOEo+8vR6l0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CHIRqTPafl6eHOoh7naRiR+eZVp6Ge/5DLfQUmEqi9EgT88Q83X5CfzYiCNev41+Vx0+zN/9QDHHTLdCstwusbeYPkqGHWMkqlIYkFiw+q99pScYur20I5oKSBv1nTT2QHMCqGqPUs4lPHBcEHYVcaCw6SNgpYAoq+HRGmBH/vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-643f3130ed1so19010457b3.2;
+        Fri, 12 Jul 2024 07:00:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720792838; x=1721397638;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MTq/V0P75/NUd20Q5A6O2om6T8uBfp2si5TUj0FwnZA=;
+        b=CgHl05L+NIEeSLyN2YZ/BnTV+DmuMNJWzAOhH0ffvRcWvShMgzLAgwa4qIs47vhMdF
+         Dp5NTFaPmotADE4eUHNypYSluNVmexeBiBQkv14k92Dr0c1p+nRpZEsvdHnsXdH1l4FT
+         MLuuPoJAGoySCj2RgwIAfkQB2cx48+IUTJO4rNH37H935IbpcsgXyjO9Ru1YiL/HYJ7+
+         OBisNOqV/35RgOq6u0l8ENMAe+4pZAEv1olR7jGgeitjKdbZ/AxjCtGb6i7r0wyhPuVm
+         xDVnmJtYPsw7QZpw2a0ycReXaO2OyQQ/S8fqOyR4WpAmsaFmhR5nRraT+rI5TdT65djd
+         e+kg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmzqVvjTtgkyFRJ+dfqRCDci+sbTJer/ubsp42FLfg1gsuBoJSlcJ0gjgLOpftgPg0QWF3EqODsDk+lyneuAH8t2eb90JhHmPodWvt73ZZqPYUd7G2ce8sI8L0I7Bbh6qb8RqQfd4VvM/0GQf6bvPP6ikQ1EH0ss+aWyql8DfLIY/Vxye5/X4umcA=
+X-Gm-Message-State: AOJu0YzbzT9STk5T3yIAvmcuHZZ5FLDD9GPesDbYgqz5/8QC0GGy6tJI
+	hOy0AJPjc6Ftpp3eKUrPLzGgcDWFCsfd2XBXKi3EB2P65L5DrvP8JK7hSnnN
+X-Google-Smtp-Source: AGHT+IGk/OHsPJtvZe32d5Yq3AW8v0LI3e2426ZHIGUqhk36UvNJrJn88L1kw2bkei9epe+gjwBtng==
+X-Received: by 2002:a81:834a:0:b0:631:6970:eac with SMTP id 00721157ae682-658eed5df81mr118568157b3.13.1720792837278;
+        Fri, 12 Jul 2024 07:00:37 -0700 (PDT)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e68e5195sm14798647b3.105.2024.07.12.07.00.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 07:00:37 -0700 (PDT)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-654cf0a069eso17797167b3.1;
+        Fri, 12 Jul 2024 07:00:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXTaMBBEFLbONyxa6bU2Iy1buCrTtvfo+ybH/cgf6iCo3eRxWXkc/zweL1PjTnBk/zZM/LmdEgcUFQ7KTAuqk7VtL0LYrsgXFoc2HYDTPJ/eEHPX0Mw75GXk2VodOiyaHwL7KhOeYMYMg7G1hYhnz/2eaG3RENSVC7wVn3g4PKegr7U6/aoJXruIO4=
+X-Received: by 2002:a81:8d4a:0:b0:648:3fb2:753b with SMTP id
+ 00721157ae682-658ef2492a0mr112356657b3.24.1720792836854; Fri, 12 Jul 2024
+ 07:00:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5287; i=brauner@kernel.org; h=from:subject:message-id; bh=DGSZ+m3mBiM3CPnjUI1G13NKvpVkuZFnkMu0JX/X7jM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNNLvR/oDrkYC0n8E0v7tTHpd2than1q9oeKqUtmbhx 2r+gDXzO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACay6DTD/0ixH9J/H6yZJs3j 5ewixX5Sd6H6u0MlHxjMfxhLh/RIyDMyXNp4Ks+Np7ls3vb0JrF77F5zGxvEeJwtNkrf31Dl9la EFQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240628131021.177866-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240628131021.177866-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240628131021.177866-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 Jul 2024 16:00:24 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUxUfEXZ5QVfG5HNjQ+MNKDqkX5COD4_v-fzkgZFAOheA@mail.gmail.com>
+Message-ID: <CAMuHMdUxUfEXZ5QVfG5HNjQ+MNKDqkX5COD4_v-fzkgZFAOheA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] clk: renesas: rzg2l-cpg: Remove unused base pointer
+ from rzg2l_cpg_sd_mux_clk_register
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hey Linus,
+On Fri, Jun 28, 2024 at 3:11=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Refactor the `rzg2l_cpg_sd_mux_clk_register` function to eliminate the
+> unused `base` parameter. This parameter was redundant and not utilized
+> within the function.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-/* Summary */
-This contains work to extend the abilities of listmount() and statmount() and
-various fixes and cleanups.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.12.
 
-Features:
+Gr{oetje,eeting}s,
 
-- Allow iterating through mounts via listmount() from newest to oldest. This
-  makes it possible for mount(8) to keep iterating the mount table in reverse
-  order so it gets newest mounts first.
+                        Geert
 
-- Relax permissions on listmount() and statmount(). It's not necessary to have
-  capabilities in the initial namespace. It's sufficient to have capabilities
-  in the owning namespace of the mount namespace we're located in to list
-  unreachable mounts in that namespace.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-- Extend both listmount() and statmount() to list and stat mounts in foreign
-  mount namespaces.
-
-  Currently the only way to iterate over mount entries in mount namespaces that
-  aren't in the caller's mount namespace is by crawling through /proc in order
-  to find /proc/<pid>/mountinfo for the relevant mount namespace. This is both
-  very clumsy and hugely inefficient. So extend struct mnt_id_req with a new
-  member that allows to specify the mount namespace id of the mount namespace
-  we want to look at.
-
-  Luckily internally we already have most of the infrastructure for this so we
-  just need to expose it to userspace. Give userspace a way to retrieve the id
-  of a mount namespace via statmount() and through a new nsfs ioctl() on mount
-  namespace file descriptor.
-
-  This comes with appropriate selftests.
-
-- Expose mount options through statmount().
-
-  Currently if userspace wants to get mount options for a mount and with
-  statmount(), they still have to open /proc/<pid>/mountinfo to parse mount
-  options. Simply the information through statmount() directly.
-
-  Afterwards it's possible to only rely on statmount() and listmount() to
-  retrieve all and more information than /proc/<pid>/mountinfo provides.           
-
-  This comes with appropriate selftests.
-
-Fixes:
-
-- Avoid copying to userspace under the namespace semaphore in listmount.
-
-Cleanups:
-
-- Simplify the error handling in listmount by relying on our newly added
-  cleanup infrastructure.
-
-- Refuse invalid mount ids early for both listmount and statmount.
-
-/* Testing */
-clang: Debian clang version 16.0.6 (26)
-gcc: (Debian 13.2.0-24)
-
-All patches are based on v6.10-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-No known conflicts.
-
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11.mount
-
-for you to fetch changes up to 4bed843b10004d9101b49ac7270131051c39a92b:
-
-  fs: reject invalid last mount id early (2024-07-08 06:32:18 +0200)
-
-Please consider pulling these changes from the signed vfs-6.11.mount tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.11.mount
-
-----------------------------------------------------------------
-Christian Brauner (15):
-      path: add cleanup helper
-      fs: don't copy to userspace under namespace semaphore
-      fs: simplify error handling
-      fs: relax permissions for listmount()
-      listmount: allow listing in reverse order
-      fs: relax permissions for statmount()
-      fs: Allow listmount() in foreign mount namespace
-      fs: Allow statmount() in foreign mount namespace
-      Merge patch series "Support foreign mount namespace with statmount/listmount"
-      fs: use guard for namespace_sem in statmount()
-      Merge patch series "Add the ability to query mount options in statmount"
-      fs: only copy to userspace on success in listmount()
-      fs: find rootfs mount of the mount namespace
-      fs: refuse mnt id requests with invalid ids early
-      fs: reject invalid last mount id early
-
-Josef Bacik (7):
-      fs: keep an index of current mount namespaces
-      fs: export the mount ns id via statmount
-      fs: add an ioctl to get the mnt ns id from nsfs
-      selftests: add a test for the foreign mnt ns extensions
-      fs: rename show_mnt_opts -> show_vfsmnt_opts
-      fs: export mount options via statmount()
-      sefltests: extend the statmount test for mount options
-
- fs/mount.h                                         |   2 +
- fs/namespace.c                                     | 450 +++++++++++++++++----
- fs/nsfs.c                                          |  14 +
- fs/proc_namespace.c                                |   6 +-
- include/linux/path.h                               |   9 +
- include/uapi/linux/mount.h                         |  10 +-
- include/uapi/linux/nsfs.h                          |   2 +
- .../selftests/filesystems/statmount/Makefile       |   2 +-
- .../selftests/filesystems/statmount/statmount.h    |  46 +++
- .../filesystems/statmount/statmount_test.c         | 144 +++++--
- .../filesystems/statmount/statmount_test_ns.c      | 364 +++++++++++++++++
- 11 files changed, 926 insertions(+), 123 deletions(-)
- create mode 100644 tools/testing/selftests/filesystems/statmount/statmount.h
- create mode 100644 tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
