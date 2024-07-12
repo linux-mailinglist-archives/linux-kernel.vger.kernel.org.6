@@ -1,131 +1,187 @@
-Return-Path: <linux-kernel+bounces-251024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C67992FFEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:42:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B3CD92FFEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE9101C20C4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:42:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 997B4B238BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41DC176ADF;
-	Fri, 12 Jul 2024 17:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5761176AD4;
+	Fri, 12 Jul 2024 17:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="w5cZG0Dp";
-	dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="0evCQ1wb"
-Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="epiI7NKn"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25F743AA9
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4609043AA9;
+	Fri, 12 Jul 2024 17:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720806116; cv=none; b=VfWy4JgNVs7bTW8PT7rYK5v9zsYoHnXZigxih7K1w9sJuLqxxDg5QHEJty7qomuoKS8onqRhF+ZJ5RRL1GpuHftiWlUltMZQXMZXF90dcDPdLAr+/l3NYwhM388YKeoUeTTw9Nd3itpe1LgK8UJJWidOEKnRhJ5X1JnfoDzo2vk=
+	t=1720806205; cv=none; b=iiP1d0R50ZRfKOxGbCujRzOBuLNEu+O5tFKL3e0EKLiHVGu4dVH4AsjncOIzEdEfpT+lKg8v9IEpPyxY/gi3Xmiq3Ex6JEp5thXX1kJwpj7CnHmngEN4wdGDXof0HFxZM+xNTavvZAMm/gsdYuoN0IPOv5w81wnB4ys9d5fnKAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720806116; c=relaxed/simple;
-	bh=iIEQHyI+TXMW7DAkLVqLEtRI5rmuYOxbENf9/9JAH98=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=m6uS2FVLxe4qVp6AWxfbuZiLKl5XJNkaJaL0hJ4xGjMsH88yWFpNZEVdpnkAtuzoE+rscw8QMjiJv3qNt9p8Ps4s3hHI35Nwyfh+eyvxPp+9Mm/x8Taqaw6OEaWCcxOI0ehtmEh6vkbUglgmYj6wIvaGeBDvo9nmYtpk8YC0Jwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=w5cZG0Dp; dkim=pass (1024-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=0evCQ1wb; arc=none smtp.client-ip=64.147.108.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id 2A16820A97;
-	Fri, 12 Jul 2024 13:41:48 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=date:from
-	:to:cc:subject:message-id:mime-version:content-type; s=sasl; bh=
-	iIEQHyI+TXMW7DAkLVqLEtRI5rmuYOxbENf9/9JAH98=; b=w5cZG0DpTPXbxw8d
-	LxTI4+g8mXZeDuF6+DLtYiIz2sTkdyuAQKVeVpT6hOtk3GT4F/bOcpR2tXbvdTlw
-	yOuzOX7/Z6jCpNgNzv5mb6p/encHUC7RjMX3P51Sbq6XoQSdojh7xlsQUnNvKZA6
-	Fc2rwiJugMIolGfq1lpqVCs5b+Y=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id 2219320A95;
-	Fri, 12 Jul 2024 13:41:48 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:message-id:mime-version:content-type;
- s=2016-12.pbsmtp; bh=iIEQHyI+TXMW7DAkLVqLEtRI5rmuYOxbENf9/9JAH98=;
- b=0evCQ1wbzffABDOIC88Z+X8ADprrt2JEfSJP45w/rpY5xAdu3OU3ibeOzX/00gR7ED6Putkk3KHcqftk+6ne0fPgF113Ea16o8xXq9XbwJXEW7mUslP6AkmAVpwn8TbDHTXF/o7DPleRxhtklsZ3OeQg1fD0nfmDl8YiV8mYeDY=
-Received: from yoda.fluxnic.net (unknown [184.162.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 959C220A94;
-	Fri, 12 Jul 2024 13:41:47 -0400 (EDT)
-	(envelope-from nico@fluxnic.net)
-Received: from xanadu (unknown [IPv6:fd17:d3d3:663b:0:9696:df8a:e3:af35])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id 7FC7CD48E35;
-	Fri, 12 Jul 2024 13:41:46 -0400 (EDT)
-Date: Fri, 12 Jul 2024 13:41:46 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] mul_u64_u64_div_u64: avoid undefined shift value
-Message-ID: <7rrs9pn1-n266-3013-9q6n-1osp8r8s0rrn@syhkavp.arg>
+	s=arc-20240116; t=1720806205; c=relaxed/simple;
+	bh=qqDxsW8JKNo4pUvPxIdtXjmqmRm9U7qlNWm3bk3xRVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UsHTatK0cAU33ZKZ1ezQlLVeQnQkMe3senGDwIen4K173/kfilxLAHE1K+xKK1izusaYs7Dr1lQAbbfJ9X0wmtmCgghARdU5jlty2rUCO+sbo89pd7J3r7E2E9Q5t5WC85nUyls9pu0wYAyqXLOz/0xTsKrnTvIi7IQpZ8dD5jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=epiI7NKn; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BaNbiP+w4TmaIHZFkKIxIGkit2bo/A0i+pALN4QBZkI=; b=epiI7NKnu3BMCNcQ1ZGCpK4wNO
+	oGOBbczEzsofAerhLjb+5E9D5xUZZv6sSvh0ZOr4JpEH7aIxNNb2lskWvheFGtnOlVYMvNJXRZKN4
+	e7XbYBhGixpAevHHnasnaBx2CtueoVwgnrCoFIeTl3jh69wR/td8oq9SZcPc9TYWwaNlfhDVYNSdQ
+	pzltnW/EoXIKLStkdD2r7oDKZ4dgSZlSDt8u+gp+byhdpLXok1zl6/TlT+2sriz9fw8ULPp3g6XTe
+	59cl7/TT9i42qnKhMp7cIzBSvrxZqJy0i4IAKAYLPB93htn+ydqZLmatZj0SQyP+aBUxPMuM4+w2V
+	uhplDG6Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sSKIb-0000000Cjju-2X8w;
+	Fri, 12 Jul 2024 17:43:13 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1E93D30050D; Fri, 12 Jul 2024 19:43:13 +0200 (CEST)
+Date: Fri, 12 Jul 2024 19:43:13 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Phil Auld <pauld@redhat.com>, Clark Williams <williams@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [RFC PATCH v3 10/10] sched/fair: Throttle CFS tasks on return to
+ userspace
+Message-ID: <20240712174313.GW27299@noisy.programming.kicks-ass.net>
+References: <20240711130004.2157737-1-vschneid@redhat.com>
+ <20240711130004.2157737-11-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID:
- 033B29A0-4076-11EF-B317-965B910A682E-78420484!pb-smtp2.pobox.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711130004.2157737-11-vschneid@redhat.com>
 
-From: Nicolas Pitre <npitre@baylibre.com>
+On Thu, Jul 11, 2024 at 03:00:04PM +0200, Valentin Schneider wrote:
 
-Shifting a value to its type's size or beyond is undefined. This may 
-happen if the product of a * b is not more than 64 bits despite
-ilog2(a) + ilog2(b) being 63 and c having no trailing 0 bits.
-We end up with shift=0 and n_lo >> shift | (n_hi << (64 - shift).
-Take care of that case and add such case to the test module.
+> +static void throttle_one_task(struct cfs_rq *cfs_rq, struct task_struct *p)
+>  {
+> +	long task_delta, idle_task_delta;
+> +	struct sched_entity *se = &p->se;
+> +
+> +	list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
+>  
+> +	task_delta = 1;
+> +	idle_task_delta = cfs_rq_is_idle(cfs_rq) ? 1 : 0;
+> +
+> +	for_each_sched_entity(se) {
+> +		cfs_rq = cfs_rq_of(se);
+> +
+> +		if (!se->on_rq)
+> +			return;
+> +
+> +		dequeue_entity(cfs_rq, se, DEQUEUE_SLEEP);
+> +		cfs_rq->h_nr_running -= task_delta;
+> +		cfs_rq->idle_h_nr_running -= idle_task_delta;
+> +
+> +		if (cfs_rq->load.weight) {
+> +			/* Avoid re-evaluating load for this entity: */
+> +			se = parent_entity(se);
+> +			break;
+> +		}
+> +	}
+> +
+> +	for_each_sched_entity(se) {
+> +		cfs_rq = cfs_rq_of(se);
+> +		/* throttled entity or throttle-on-deactivate */
+> +		if (!se->on_rq)
+> +			goto throttle_done;
+> +
+> +		update_load_avg(cfs_rq, se, 0);
+> +		se_update_runnable(se);
+> +		cfs_rq->h_nr_running -= task_delta;
+> +		cfs_rq->h_nr_running -= idle_task_delta;
+> +	}
+> +
+> +throttle_done:
+> +	/* At this point se is NULL and we are at root level*/
+> +	sub_nr_running(rq_of(cfs_rq), 1);
+>  }
 
-Using __builtin_ctzll() with 0 is also undefined so take care of that
-case too.
+I know you're just moving code around, but we should look if we can
+share code between this and dequeue_task_fair().
 
-Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202407121652.69e657c5-oliver.sang@intel.com
----
+I have patches around this in that eevdf series I should send out again,
+I'll try and have a stab.
 
-Andrew: up to you to fold this in the original or queue it as is.
+> -static void task_throttle_cancel_irq_work_fn(struct irq_work *work)
+> +static void throttle_cfs_rq_work(struct callback_head *work)
+>  {
+> -       /* Write me */
+> +	struct task_struct *p = container_of(work, struct task_struct, sched_throttle_work);
+> +	struct sched_entity *se;
+> +	struct rq *rq;
+> +	struct cfs_rq *cfs_rq;
+> +
+> +	WARN_ON_ONCE(p != current);
+> +	p->sched_throttle_work.next = &p->sched_throttle_work;
+> +	/*
+> +	 * If task is exiting, then there won't be a return to userspace, so we
+> +	 * don't have to bother with any of this.
+> +	 */
+> +	if ((p->flags & PF_EXITING))
+> +		return;
+> +
+> +	CLASS(task_rq_lock, rq_guard)(p);
+> +	rq = rq_guard.rq;
 
-diff --git a/lib/math/div64.c b/lib/math/div64.c
-index b7fc752463..5faa29208b 100644
---- a/lib/math/div64.c
-+++ b/lib/math/div64.c
-@@ -212,11 +212,18 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 c)
- 
- #endif
- 
-+	/* make sure c is not zero, trigger exception otherwise */
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wdiv-by-zero"
-+	if (unlikely(c == 0))
-+		return 1/0;
-+#pragma GCC diagnostic pop
-+
- 	int shift = __builtin_ctzll(c);
- 
- 	/* try reducing the fraction in case the dividend becomes <= 64 bits */
- 	if ((n_hi >> shift) == 0) {
--		u64 n = (n_lo >> shift) | (n_hi << (64 - shift));
-+		u64 n = shift ? (n_lo >> shift) | (n_hi << (64 - shift)) : n_lo;
- 
- 		return div64_u64(n, c >> shift);
- 		/*
-diff --git a/lib/math/test_mul_u64_u64_div_u64.c b/lib/math/test_mul_u64_u64_div_u64.c
-index a25640d349..58d058de4e 100644
---- a/lib/math/test_mul_u64_u64_div_u64.c
-+++ b/lib/math/test_mul_u64_u64_div_u64.c
-@@ -23,6 +23,7 @@ static test_params test_values[] = {
- {        0x1ffffffff,        0x1ffffffff,                0x4, 0xffffffff00000000 },
- { 0xffff000000000000, 0xffff000000000000, 0xffff000000000001, 0xfffeffffffffffff },
- { 0x3333333333333333, 0x3333333333333333, 0x5555555555555555, 0x1eb851eb851eb851 },
-+{ 0x7fffffffffffffff,                0x2,                0x3, 0x5555555555555554 },
- { 0xffffffffffffffff,                0x2, 0x8000000000000000,                0x3 },
- { 0xffffffffffffffff,                0x2, 0xc000000000000000,                0x2 },
- { 0xffffffffffffffff, 0x4000000000000004, 0x8000000000000000, 0x8000000000000007 },
+The other way to write this is:
+
+	scoped_guard (task_rq_lock, p) {
+		struct rq *rq = scope.rq;
+
+> +	se = &p->se;
+> +	cfs_rq = cfs_rq_of(se);
+> +
+> +	/*
+> +	 * If not in limbo, then either replenish has happened or this task got
+> +	 * migrated out of the throttled cfs_rq, move along
+> +	 */
+> +	if (!cfs_rq->throttle_count)
+> +		return;
+> +
+> +	update_rq_clock(rq);
+> +
+> +	throttle_one_task(cfs_rq, p);
+> +
+> +	resched_curr(rq);
+
+	}
+
+>  }
 
