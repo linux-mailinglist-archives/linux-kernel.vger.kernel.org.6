@@ -1,224 +1,193 @@
-Return-Path: <linux-kernel+bounces-251207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208B4930214
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:19:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4238F930213
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A38071F23390
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:19:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFF27B21906
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C427E116;
-	Fri, 12 Jul 2024 22:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3919061FF5;
+	Fri, 12 Jul 2024 22:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FEefdM9M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GjTegZnc"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1761451C21
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 22:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17E21BDC3;
+	Fri, 12 Jul 2024 22:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720822732; cv=none; b=rKAxrey3gp68Lhn/990qiaMS8Z2DcuJGQ1SoQlI8E1hezH1ONUkP1P4Sm5btWb2yqFWrQKSV8wj27FefKOjHFIo7MWxehs0KgGs0nfcRd/+9tVDf9jotdsto4iNk1FK3Mx0Eyxih5teY1vyH08lg8gBjj/L1aYSXvqhwQeK8SN4=
+	t=1720822713; cv=none; b=q5fFff2CxGuM6KYeigSy+dzSmkOH7ixf0vqivvyEs73NXSYcnql3ASaHGNOrEI1UB6VEeQpcfntOLsJ227I3ouakKbJzDZnY1sXlITRHYLjPmMbpvsKnBlsH5tGyPZ+6iZLMgzx3al7CyP68hYscseCsCKEyJslBIS46CBrGPPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720822732; c=relaxed/simple;
-	bh=c8aqR3vVfFWnbA3YiiU5OA6SrVEqcg5ZU1m3bgUVoEY=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=TLdZZoXSKpjfvW54ZQtwivlZwBHqIHwKA/Ke9uuNUFHEe1Nn9fePHf3uDnRUgrUH+0rVMaa+jo0ENQkizChipsiE1WbHa8k6FSLq80rHOo74ixwG/vXVEledXIwoFqHi8lPU1IL4mRXtiMXIYoOF5bw4fSqqq5Y5BgBG/PjHqPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FEefdM9M; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720822731; x=1752358731;
-  h=date:from:to:cc:subject:message-id;
-  bh=c8aqR3vVfFWnbA3YiiU5OA6SrVEqcg5ZU1m3bgUVoEY=;
-  b=FEefdM9M5kIh6SZMcmlHAmzQWhz5nlvf/rhwHgCoNVOPM1BwotkYCJNp
-   5CheB79fgLOwKssWNHZGmGXfnJz3V3NB4KmeSyHYdUJkgLPwLT6iFDiv2
-   epthnE05uKGL/xIz7Y1LOnAY8PvLKQf9wL4iQe5eXnDsz6GEiEoqpp35o
-   7SKSwv3nz8P45TwYnqe2XkBKhyrb8o2oaJkD9P3V5LVr+V79Ju4emUcnV
-   mXESFRa21gwW2OJR3iXanazBvCT+f4FHF8mVc0XTQ/AiPoKbb/dZR+rMT
-   a1Di+IPBEBFbmta8ZF68d1z0dT3txhAXIo4gtqADWFc4SoHSV/dQBXNe8
-   g==;
-X-CSE-ConnectionGUID: dS9yeRr1SNaYxfHiMnOlZQ==
-X-CSE-MsgGUID: q/jI7E3MTxeaPND4rKPhHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="29430338"
-X-IronPort-AV: E=Sophos;i="6.09,204,1716274800"; 
-   d="scan'208";a="29430338"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 15:18:51 -0700
-X-CSE-ConnectionGUID: pXD/0EzgRH++07xarGiNbQ==
-X-CSE-MsgGUID: /nuWbJmeRoKTx8GsrnMxXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,204,1716274800"; 
-   d="scan'208";a="48987234"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 12 Jul 2024 15:18:50 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sSObH-000bMY-27;
-	Fri, 12 Jul 2024 22:18:47 +0000
-Date: Sat, 13 Jul 2024 06:18:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/core] BUILD SUCCESS
- 513fbe762f644872cc2ff47407cbc24422a33fb5
-Message-ID: <202407130612.UOm32cEx-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1720822713; c=relaxed/simple;
+	bh=3Yd8//CkFdri8ix2BgzZkcKGGDyp6VbpdPgbhhaFr5Q=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UhIBm60cSnUI0RqH7yDnrbCleKOlPT0YKistM9SNYrNdbrDrN/6huOzxrdATnkyOT0B5fVz7Fe8Ls3QHVowm/FKi2im1YbFWsMx/Zv36ahpmggkke1novoVFP26ecqHvRCVZWKsPs8Y3BJIKhslqfE41wWK617Bs1Hpv+TeB4TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GjTegZnc; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4277a5ed48bso17832155e9.2;
+        Fri, 12 Jul 2024 15:18:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720822709; x=1721427509; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Gp997xfVUy47LFNuWEWNS+olZrom40X4hD1oREeaYw=;
+        b=GjTegZncTbnEywxJttSRz7WGAv/9JHT6BF1ciCjegPMJnI1LC3VoAkATj/g5J3LU5y
+         9WcnplEBK8UsJMWmAcjWTsGhWOZiE71/ps9Sm3/WO7YewWmBJccdocA5CBJ5VbimpTBX
+         NcWL0rPAIlmqIJTQru99buZbbRj2OsdkLl+r1HPJz++s9CfafPpDTScjDJkkx4e/fEb/
+         euR+8DxDt6udam4Qegsqn/xv1mANIFjHs1Pv6jOEmX+1ZfYtXSn9yIkCUSDfVv8lcRfN
+         /XfDrWBkna1CV1WS+32EugLH4i+cTTlcKNjDIMhQ7KUzg/MoALRA2R8WZIC+voAAbhFo
+         Jqlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720822709; x=1721427509;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Gp997xfVUy47LFNuWEWNS+olZrom40X4hD1oREeaYw=;
+        b=vi/I37c+dP2x6h2NJU5XR8l7lXHjEfvpa5Y32LcnsD4cny5CNUT7QjNpmyVORtsqLa
+         ZpUJtTy5ECQRC0wFbcM6WcPvDK+23olJQY2nz6iOyZvsOU9G+56LNGQSsqK/ePpBCdEs
+         5gNk+jOx1l0Xnw52j+h3J0yJNf/G8SllVwUZ2oYGdvKPKVaW+3E71I3wao3hPalCsZrX
+         oEQDf5BwnS6ezsn49XzFAf023upgvagt51HcVTb/DcO+HuB5AFjndM34U7zpG/R0uZEi
+         Dd+Rb837ZH6pkJx/u4G3kipLs03aT/y9BbX5r1eOJzicQhqBmJ/iDYe36PpW34QszPMb
+         BOtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCXwTMQfnKbbzw3+uEtyWD/8CBh/KRcUDAizSFIgomhHd0cv1paXaBjlF68rManxE9XkQtDSViZ9wkTie6Urh3rlWZ8skdcSeOA4QGUd6kHQO5iGmHBz5OjEx5
+X-Gm-Message-State: AOJu0YzGHTqgCY68WkREpWsuoqxLe9dkS9JNsZYs2JIg44Q44sD1sYCw
+	JHAZUA99d8Cs+H7TRJ3syb3itYTCxuW9Vdb0eq7Edy7FwNHfON8Z
+X-Google-Smtp-Source: AGHT+IFLpQM4YiEssHHVafXpVRO0//qzed86MvSdeVDSAkWApnTdHqlYS9RY2Uvh2+XC5IqgqUYtYA==
+X-Received: by 2002:a05:600c:2284:b0:426:5e91:391e with SMTP id 5b1f17b1804b1-426707f81a5mr81179955e9.26.1720822709159;
+        Fri, 12 Jul 2024 15:18:29 -0700 (PDT)
+Received: from krava (ip-94-113-247-30.net.vodafone.cz. [94.113.247.30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa067dsm11124788f8f.78.2024.07.12.15.18.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 15:18:28 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Sat, 13 Jul 2024 00:18:26 +0200
+To: Joe Damato <jdamato@fastly.com>, Kyle Huey <me@kylehuey.com>
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, acme@kernel.org, andrii.nakryiko@gmail.com,
+	elver@google.com, khuey@kylehuey.com, mingo@kernel.org,
+	namhyung@kernel.org, peterz@infradead.org, robert@ocallahan.org,
+	yonghong.song@linux.dev, mkarsten@uwaterloo.ca, kuba@kernel.org
+Subject: Re: [bpf?] [net-next ?] [RESEND] possible bpf overflow/output bug
+ introduced in 6.10rc1 ?
+Message-ID: <ZpGrstyKD-PtWyoP@krava>
+References: <ZpFfocvyF3KHaSzF@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpFfocvyF3KHaSzF@LQ3V64L9R2>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-branch HEAD: 513fbe762f644872cc2ff47407cbc24422a33fb5  genirq: Set IRQF_COND_ONESHOT in request_irq()
+On Fri, Jul 12, 2024 at 09:53:53AM -0700, Joe Damato wrote:
+> Greetings:
+> 
+> (I am reposting this question after 2 days and to a wider audience
+> as I didn't hear back [1]; my apologies it just seemed like a
+> possible bug slipped into 6.10-rc1 and I wanted to bring attention
+> to it before 6.10 is released.)
+> 
+> While testing some unrelated networking code with Martin Karsten (cc'd on
+> this email) we discovered what appears to be some sort of overflow bug in
+> bpf.
+> 
+> git bisect suggests that commit f11f10bfa1ca ("perf/bpf: Call BPF handler
+> directly, not through overflow machinery") is the first commit where the
+> (I assume) buggy behavior appears.
 
-elapsed time: 1445m
+heya, nice catch!
 
-configs tested: 132
-configs skipped: 2
+I can reproduce.. it seems that after f11f10bfa1ca we allow to run tracepoint
+program as perf event overflow program 
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+bpftrace's bpf program returns 1 which means that perf_trace_run_bpf_submit
+will continue to execute perf_tp_event and then:
 
-tested configs:
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                   randconfig-001-20240712   gcc-13.2.0
-arc                   randconfig-002-20240712   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-19
-arm                              allyesconfig   gcc-14.1.0
-arm                   randconfig-001-20240712   clang-19
-arm                   randconfig-002-20240712   clang-19
-arm                   randconfig-003-20240712   gcc-14.1.0
-arm                   randconfig-004-20240712   clang-15
-arm64                            allmodconfig   clang-19
-arm64                             allnoconfig   gcc-14.1.0
-arm64                 randconfig-001-20240712   gcc-14.1.0
-arm64                 randconfig-002-20240712   gcc-14.1.0
-arm64                 randconfig-003-20240712   clang-19
-arm64                 randconfig-004-20240712   clang-17
-csky                              allnoconfig   gcc-14.1.0
-csky                  randconfig-001-20240712   gcc-14.1.0
-csky                  randconfig-002-20240712   gcc-14.1.0
-hexagon                          allmodconfig   clang-19
-hexagon                           allnoconfig   clang-19
-hexagon                          allyesconfig   clang-19
-hexagon               randconfig-001-20240712   clang-14
-hexagon               randconfig-002-20240712   clang-19
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240712   gcc-9
-i386         buildonly-randconfig-002-20240712   clang-18
-i386         buildonly-randconfig-003-20240712   clang-18
-i386         buildonly-randconfig-004-20240712   clang-18
-i386         buildonly-randconfig-005-20240712   gcc-11
-i386         buildonly-randconfig-006-20240712   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240712   clang-18
-i386                  randconfig-002-20240712   clang-18
-i386                  randconfig-003-20240712   clang-18
-i386                  randconfig-004-20240712   clang-18
-i386                  randconfig-005-20240712   clang-18
-i386                  randconfig-006-20240712   clang-18
-i386                  randconfig-011-20240712   clang-18
-i386                  randconfig-012-20240712   clang-18
-i386                  randconfig-013-20240712   clang-18
-i386                  randconfig-014-20240712   gcc-10
-i386                  randconfig-015-20240712   gcc-10
-i386                  randconfig-016-20240712   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch             randconfig-001-20240712   gcc-14.1.0
-loongarch             randconfig-002-20240712   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                 randconfig-001-20240712   gcc-14.1.0
-nios2                 randconfig-002-20240712   gcc-14.1.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240712   gcc-14.1.0
-parisc                randconfig-002-20240712   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc               randconfig-001-20240712   clang-15
-powerpc               randconfig-002-20240712   clang-19
-powerpc               randconfig-003-20240712   clang-19
-powerpc64             randconfig-001-20240712   clang-19
-powerpc64             randconfig-002-20240712   clang-19
-powerpc64             randconfig-003-20240712   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                 randconfig-001-20240712   clang-19
-riscv                 randconfig-002-20240712   gcc-14.1.0
-s390                             allmodconfig   clang-19
-s390                              allnoconfig   clang-19
-s390                             allyesconfig   gcc-14.1.0
-s390                  randconfig-001-20240712   gcc-14.1.0
-s390                  randconfig-002-20240712   gcc-14.1.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                    randconfig-001-20240712   gcc-14.1.0
-sh                    randconfig-002-20240712   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64               randconfig-001-20240712   gcc-14.1.0
-sparc64               randconfig-002-20240712   gcc-14.1.0
-um                               allmodconfig   clang-19
-um                                allnoconfig   clang-17
-um                               allyesconfig   gcc-13
-um                    randconfig-001-20240712   clang-19
-um                    randconfig-002-20240712   clang-15
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240712   clang-18
-x86_64       buildonly-randconfig-002-20240712   clang-18
-x86_64       buildonly-randconfig-003-20240712   clang-18
-x86_64       buildonly-randconfig-004-20240712   clang-18
-x86_64       buildonly-randconfig-005-20240712   clang-18
-x86_64       buildonly-randconfig-006-20240712   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240712   gcc-12
-x86_64                randconfig-002-20240712   gcc-13
-x86_64                randconfig-003-20240712   gcc-12
-x86_64                randconfig-004-20240712   clang-18
-x86_64                randconfig-005-20240712   gcc-13
-x86_64                randconfig-006-20240712   clang-18
-x86_64                randconfig-011-20240712   clang-18
-x86_64                randconfig-012-20240712   clang-18
-x86_64                randconfig-013-20240712   clang-18
-x86_64                randconfig-014-20240712   gcc-13
-x86_64                randconfig-015-20240712   clang-18
-x86_64                randconfig-016-20240712   clang-18
-x86_64                randconfig-071-20240712   gcc-13
-x86_64                randconfig-072-20240712   gcc-11
-x86_64                randconfig-073-20240712   clang-18
-x86_64                randconfig-074-20240712   gcc-9
-x86_64                randconfig-075-20240712   clang-18
-x86_64                randconfig-076-20240712   clang-18
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240712   gcc-14.1.0
-xtensa                randconfig-002-20240712   gcc-14.1.0
+  perf_tp_event
+    perf_swevent_event
+      __perf_event_overflow
+        bpf_overflow_handler
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+bpf_overflow_handler then executes event->prog on wrong arguments, which
+results in wrong 'work' data in bpftrace output
+
+I can 'fix' that by checking the event type before running the program like
+in the change below, but I wonder there's probably better fix
+
+Kyle, any idea?
+
+> 
+> Running the following on my machine as of the commit mentioned above:
+> 
+>   bpftrace -e 'tracepoint:napi:napi_poll { @[args->work] = count(); }'
+> 
+> while simultaneously transferring data to the target machine (in my case, I
+> scp'd a 100MiB file of zeros in a loop) results in very strange output
+> (snipped):
+> 
+>   @[11]: 5
+>   @[18]: 5
+>   @[-30590]: 6
+>   @[10]: 7
+>   @[14]: 9
+> 
+> It does not seem that the driver I am using on my test system (mlx5) would
+> ever return a negative value from its napi poll function and likewise for
+> the driver Martin is using (mlx4).
+> 
+> As such, I don't think it is possible for args->work to ever be a large
+> negative number, but perhaps I am misunderstanding something?
+> 
+> I would like to note that commit 14e40a9578b7 ("perf/bpf: Remove #ifdef
+> CONFIG_BPF_SYSCALL from struct perf_event members") does not exhibit this
+> behavior and the output seems reasonable on my test system. Martin confirms
+> the same for both commits on his test system, which uses different hardware
+> than mine.
+> 
+> Is this an expected side effect of this change? I would expect it is not
+> and that the output is a bug of some sort. My apologies in that I am not
+> particularly familiar with the bpf code and cannot suggest what the root
+> cause might be.
+> 
+> If it is not a bug:
+>   1. Sorry for the noise :(
+
+your report is great, thanks a lot!
+
+jirka
+
+
+>   2. Can anyone suggest what this output might mean or how the
+>      script run above should be modified? AFAIK this is a fairly
+>      common bpftrace that many folks run for profiling/debugging
+>      purposes.
+> 
+> Thanks,
+> Joe
+> 
+> [1]: https://lore.kernel.org/bpf/Zo64cpho2cFQiOeE@LQ3V64L9R2/T/#u
+
+---
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index c6a6936183d5..0045dc754ef7 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9580,7 +9580,7 @@ static int bpf_overflow_handler(struct perf_event *event,
+ 		goto out;
+ 	rcu_read_lock();
+ 	prog = READ_ONCE(event->prog);
+-	if (prog) {
++	if (prog && prog->type == BPF_PROG_TYPE_PERF_EVENT) {
+ 		perf_prepare_sample(data, event, regs);
+ 		ret = bpf_prog_run(prog, &ctx);
+ 	}
 
