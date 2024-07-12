@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-250978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB97B92FF1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:10:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7B792FF23
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7340928630D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB0C61C224E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F3F174EFB;
-	Fri, 12 Jul 2024 17:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AFD17A597;
+	Fri, 12 Jul 2024 17:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvzJ6CN7"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TI4vQiKN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613A817623E;
-	Fri, 12 Jul 2024 17:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3962D178365;
+	Fri, 12 Jul 2024 17:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720803979; cv=none; b=AUcS4eMwRLvIirNvgY9zwu3kCH9zQWKcS0QeqifmD54njmAjaCtYqa4gvWgswPhgv2qB0QZbZoJWjuElsQoiTpKDJCulDCJl0nbOEz9o1nCcjlpczQ2xxQuL2o/GAleGRaP7noom8WVJkJM+mCRHMBvfIWaoiwJLQ+GhWKY9p+Q=
+	t=1720804008; cv=none; b=Ydeu8ZcOPsqccNSREH43tCsiBxfCjlmsNcr6CKmF2ZcJkkO9g0rAOAHHw7/x6ChnKjPCoj69xekdXSy9Ofsq6F6AXO2NFzh2fD6bfh4XhXwmF4Luv6xZU0kuNwz/6QFU/3a7tTR+95HUZyDjI4w+WaScDCZ1b7ZGEDy0Snn8lhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720803979; c=relaxed/simple;
-	bh=g4HosscmGTGzLql1pINXl2ryFOeiOcS0JD/J8utFiG8=;
+	s=arc-20240116; t=1720804008; c=relaxed/simple;
+	bh=PUqWn4jllh5OewXcguzC8AZTOPOBJ1djS1slHZD/dQw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQov+AXEjHRhhRBVwcOfAMqvBEo+g3dJ9NLMCezjeE65bjeH27WsOaeRqzv/wQYRz6j11s6Yx0MqtADfwkI1uUb7hWMOqcFc7mVCFGOGQifwJiz54ztCRC6sQ4ci3dfq6owDj28EZDeNA37p0IvsQTtDL0/g4Q4jmA9f8xwO62M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TvzJ6CN7; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70b03ffbb3aso1875253b3a.0;
-        Fri, 12 Jul 2024 10:06:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720803978; x=1721408778; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RXBbNRNVh7Jf3s8Zs2bOIxvS1kfw/H6qMUrvf21hgkM=;
-        b=TvzJ6CN7vu+enYqwSHZDFwoB7G6vT9zmasezQvUZSzL+2tANmkPZWux3Xo6yV5O1DC
-         JpOnjolW5OO4oGJLNwT5TpeI462vF6Posj1EhdzKjAeeFqvTVflZMHpFJaJIRqPu4n2P
-         2tN3f7pUtROm9CjODvkkb2RGJKBytOchd5Wmjqmfq240cLEwwx2S0T9S2VkL1tCSM8xm
-         4Fo3xHTsm86QMLkc3Wxdnnw3DWi+RE+/Gqq0aQnLnzrUCdQPh+2cobaCOcB0yITeC7n/
-         yG3B4jSVhP30k8kj0PUOKnSpOGcK0tcYDi7V+uwE1DRr9eIqp6gwhgA6kfpGUoPiH6YV
-         yJhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720803978; x=1721408778;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RXBbNRNVh7Jf3s8Zs2bOIxvS1kfw/H6qMUrvf21hgkM=;
-        b=FAay3bVmPrXY+5S7dRAx8MKr80uZCiyoh3lGvCUaWtATRs7NAFIShTHoF8F4k88KQd
-         FpRozwpuhYxm6QO0olOBslH36IIVdfh9+3GVDOWTno/H0NuIvyGv7Et2QVaSah8YKA6i
-         1NplVjQLrK+j6poG7JamcusWTOYOJoAj8rAd6e4RIdBXmA5vArZYy+R7RC8mL1L1LU5U
-         a9NbbTfTUKszWje5GenHeHMLO8JXHSN1wDlRhCOUrJfc0ooYsDbxqul6Wx5UPcJTxFGt
-         O88j1sWELMM0Rfa18+5g5G+QeE0AoDADWWlrK1p6LVsyg9W8uNEKBseEWUDNkrITKYA9
-         ryEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNQZ116Gugz7p0U2ywtO6IDyRIQcYgzyVaNtn1rnEnvWM0yHDf5AHAiFw5l1EpFw+lmz/+D9EtmX8I6snwxEulcNXRUstjCE6dh6M1lgXsb+xXTrTRyY4r0r1Cycrgd4w1Ncy7
-X-Gm-Message-State: AOJu0Yzg+MhBe5hP/JRFR1/TasDBiN2U1j8lWKoVeDrqTG4qUBYbqCMr
-	hy2ukqEzQQXtS3btiPQpWRRJsc7TqNnHm+4DF1h3DhmEWnSxa9UI
-X-Google-Smtp-Source: AGHT+IHnbDShKr97eQTu93Ri/R0ihvF9+DxpM+vu/Mjzng4jauBBUJJj1nBUn1qCkVTWy4PIz+SS9A==
-X-Received: by 2002:a05:6a00:3e21:b0:70a:f40e:f2c7 with SMTP id d2e1a72fcca58-70b435e7aa4mr14970162b3a.24.1720803977591;
-        Fri, 12 Jul 2024 10:06:17 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70b4398039csm7720181b3a.154.2024.07.12.10.06.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 10:06:16 -0700 (PDT)
-Message-ID: <6f42557f-9c13-4c31-978d-3a7385456e02@gmail.com>
-Date: Fri, 12 Jul 2024 10:05:52 -0700
+	 In-Reply-To:Content-Type; b=p1v9Cgxm2oLe4k8PH0DGQS+p2K78A56bjw+vbSiZRT+xAcXawafNmyzjt5vBc5WKBEPxwS1ty85WUvkYIOl3SEiaH49fUCgyFlHMuTRWe8/TFqmNVw6tdNVhF/f2Ib7Zr4Pl66DGFdACuW1FKvnaAxhUeBSH0OlTlEyLj9AhVYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TI4vQiKN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7DDDC32782;
+	Fri, 12 Jul 2024 17:06:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720804007;
+	bh=PUqWn4jllh5OewXcguzC8AZTOPOBJ1djS1slHZD/dQw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TI4vQiKNYcQW76zn9bSXm7bwg2Vk21+efa6J9unwqghhqx1A7JxQNcU7VjzOT3eVv
+	 6CyouinCvTUlOsSXbjCnhD3jZ0zt4UFHsxch5M6aNkMMtBot/uouLQ0uoLnJOtJGQx
+	 1FVH8PJeN+yuX3PUB01LjTAfqFvNIl66BY6jFwoUwyc5YPTn5XFhjfya7sA1bWdIY5
+	 ExS7GiSEF37sxQx3IcY5AjutScCizih4wVZkPgxjrPxXoBWTgj/RVbW4C9YLxsvybW
+	 rNPdbYiZoWVP8dnfVwjUxsSxsG+66Ide+iaI2UIMqaFGAXuleCxmDVIvIei85ev99S
+	 Ma6IQBWIG6+ZQ==
+Message-ID: <014934b1-1fa9-42e1-8c2a-29b65731240d@kernel.org>
+Date: Fri, 12 Jul 2024 19:06:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,45 +49,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240709110651.353707001@linuxfoundation.org>
+Subject: Re: [PATCH 1/5] dt-bindings: iio: adc: Add ADC5 GEN3 Channel info for
+ pm8775 PMIC
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>,
+ Thara Gopinath <thara.gopinath@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Kamal Wadhwa <quic_kamalw@quicinc.com>, Taniya Das
+ <quic_tdas@quicinc.com>, Jishnu Prakash <quic_jprakash@quicinc.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240712-mbg-tm-support-v1-0-7d78bec920ca@quicinc.com>
+ <20240712-mbg-tm-support-v1-1-7d78bec920ca@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240709110651.353707001@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240712-mbg-tm-support-v1-1-7d78bec920ca@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/9/24 04:09, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.98 release.
-> There are 102 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 12/07/2024 14:43, Satya Priya Kakitapalli wrote:
+> Add definitions for ADC5 GEN3 virtual channels(combination of ADC channel
+> number and PMIC SID number) used by PM8775.
 > 
-> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
-> Anything received after that time might be too late.
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  .../iio/adc/qcom,spmi-adc5-gen3-pm8775.h           | 42 ++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.98-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+This is part of binding patch, so squash it.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+
+Best regards,
+Krzysztof
 
 
