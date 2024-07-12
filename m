@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-250713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463F892FBBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:48:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C205E92FBC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E48111F216AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:48:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC36C1C2274C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6868F171080;
-	Fri, 12 Jul 2024 13:48:27 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D69917108D;
+	Fri, 12 Jul 2024 13:48:50 +0000 (UTC)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5823FC12;
-	Fri, 12 Jul 2024 13:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103ED16F8F7;
+	Fri, 12 Jul 2024 13:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720792107; cv=none; b=VL0H2yhZjWWUD4g72P9ZZKBmw8wAX+PgiAnTFCDhUBQc63aFLIWPFDZkbr9c+3Eow2mlOSe3sfa1UOmdp5cm/gxkdrUdSHlDIsR/jRrCDFATqDgfMo0loAZj9vVnYwyxt7Zz7gk/6rV15Jsde72olddsToFvHE9LVe/Rm6z99fo=
+	t=1720792129; cv=none; b=apAfy0uGPVqIzAicDc+RQgYEk2W69P7FQ1ZG5vt7bIPPVK8XpisTuEOGLmGZJD+SOWdPUSozO+WwLme/b9yo8v50+xnEQvDQbEVNIqCX6MGPO6XHFblhU3aHkXwFj32OIMb7u6XOrmgjPG6AbYAYjc4fEptFqV9dvuf+yt9HcGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720792107; c=relaxed/simple;
-	bh=yYs7MkrW0+QU3QEsKi7sNmspymkEpf3TgBrnpt7kn1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z+CMY4OwMKxp4Kfbs8j+f0yYND0sumq0iG/Y83k/LDT++ilZAmKbRf1/nbvSn3ZLI0hUXxjSfZFCH2kzQM40aVpdzOGWoaSfwmftRPEIVN1vou0ABHsJJ+03iirzh1NMe9x1NGzr6RUVgLiRP6xBuLZx2YYZc58VSASs1ullu5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1720792129; c=relaxed/simple;
+	bh=nqVDQNv+suqxBIpH77fKPAmQjy6WSNsrO+Tg5CD5qrU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CHYNNzkUIREWGyOo+Zj8SEjnEjl0Tyl2R2wJ3NT+vwTRi3NsoJwXD+vlnMLPP2viKUSmbCGnfxQ/3dRuTWMmxV3U9HQ/bBcxyXEfU7o5VoVxdw8+k5+c6ZVsTtro9DqF5nwMSdaag/i8Mk45f6MSTbH0Sx35tGxf2D7F7VqLCNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-650469f59d7so20977387b3.2;
-        Fri, 12 Jul 2024 06:48:24 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58c2e5e8649so4675777a12.1;
+        Fri, 12 Jul 2024 06:48:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720792103; x=1721396903;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=442BdvzCkNEPOCEKPQXbGDECLpFWinxKnjTci7pd9gM=;
-        b=ev01vbGDqCrS42q0fS7XeI9QU1v0GNoIcC7ezufc0Mbvdf/j709IowAZgh5EnnHdfw
-         0ChtM6uOKiFSzFG1zj/8VT5MfiAVxUxJ2aNldCKxq7FNYvIBcRj2mljF+9kH6QhIv4q7
-         btUZpOuRrm/eSwxh8T3H3gCR8Vxgj8guSFDSHRQHfPKdfyxs2s0H7Utl+Qq5jc7VyftW
-         F3OH91edlYW5ygHhFq5RBQ0uUx4tqrwUnDXk/UxqJviR5l5zIBnm9Tf2bHKwSGZvQK8J
-         SdPfF5cOlNCExv/Fk1r1rNaQz7biaM4WG9viOsIfyqsny1zUlelTmJ5NgkntYi1na4If
-         KDtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGsKZyywnLzmRNCBX63JhIdm0j/OAmktny1pnJgOWNJmqsXgsHx0aRAKTpzxk5JAPbrzKwGxZ1WF/jkF43s9yd+R5EoOrANVjdWgG4nsgJ9bbp8J1ljRyWserCUQBy1MbYQ3lFjhM3Tf/eIF3MJbZpo03si/lAuglQHAdZnkwI3PsvCSlBTefYrFa6VnSVV2SDUjoondM44ky979gIk35qMBQGL79679V6uZEb0tJcpYX2eVTdc4WI5U/lGgvkr7M9
-X-Gm-Message-State: AOJu0YzJOvO8hzC1Jbzok5o9lo4cdaISLiBx2R5vc97DPCRmFzn8LlFH
-	f5aSDxGC9V7acODwptOJ6JkIVS7BY64l/c7CkwDSxKSbGoGugsublgG5DfSS
-X-Google-Smtp-Source: AGHT+IFFB42VJP8fv6OfeFMKry7hjXAB/2QigIi6hGKgTuUFG4230MziGertmjharB1YUmo7HubHxg==
-X-Received: by 2002:a05:690c:45c5:b0:61b:3454:8941 with SMTP id 00721157ae682-658f07d74aamr152888327b3.43.1720792102817;
-        Fri, 12 Jul 2024 06:48:22 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4d2ad85sm14943267b3.41.2024.07.12.06.48.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 06:48:22 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-650469f59d7so20977097b3.2;
-        Fri, 12 Jul 2024 06:48:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWiK/33p+YvTqqY7cX11H+cJjJGXSXa2erXOxErAa8HTvB/kGL03fKHu3ET5qn8U4ZFyT4r2qv/jSxyKC7XeDhCzTyMPYyzhHYS5LWJ34rglK2K493JLqZAXDOgME3Mo+FGAHbfnDeLbjKm0EN1RJemIZEQ7sR0Vy5Dmsj+aJG60DI9zRjGGwKo4mZ4KbHCcPFaZIHRZK9TSZWWJgYV+Wk1pRZl5hwrBzOg+Kb9bG4MZbA0Ya3lnOWwRxHOvWnG/pWC
-X-Received: by 2002:a05:690c:7442:b0:64b:9f5f:67b2 with SMTP id
- 00721157ae682-658ef24c009mr138713557b3.31.1720792101940; Fri, 12 Jul 2024
- 06:48:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720792126; x=1721396926;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CmVwnvN6+DuyrexeYoU5XL5BETojSK3dnBSlBQaG9gA=;
+        b=FvGS4O3mzvkPpxtB8r5WQtqrQpxkTf/UBBCmXrLcYKv1ItmcIB7+qZ97UUVXj4fZQY
+         k9kx278w/+dB3q2Al+VU4mNawZHr/Ov2ZYyjGDmnp4H2DDB6HVFbrApVCMUjmztsuXx6
+         L7q+rrq8BAOfViIUdKvO9gAWW8OwlCAsn+dYF5QRehbCQ90vv1iKFNRP5FoCE63ukClj
+         Hgi6yBHVbzcQz3PcphB5DoyO65yzK9H5DHNMrBTLF98ieE+BVT4gG5At+ifJlq66PbNQ
+         2vxr/kGPZZ00qwl3n//VcESDvGs1ohDRIsYTF78MkClr0nNq/EICm+FHJpPoL59/IFK1
+         5yaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWn/Clt95BcEJFzzGNK7ecIjzBVuFPmEisliN/Q8voX70/F/fo7dE8Ioro4zvnvXvSfalMBezOYEDj2UVXr0oySyzrNXIgidgSMdzfWJZf9puehUKk8PdqyFebFocSlmU2oURxh
+X-Gm-Message-State: AOJu0YzJPSnalF8dixuYaGfRaURk0OpGEgClTo5U+H/7EE5NJUB56AEZ
+	Cn+a9CwTB04eioBne34nVpsrhXZDbvBRO/P62475x+KZZvUJn70vws0FIA==
+X-Google-Smtp-Source: AGHT+IFv51hOg+PubMmleWpQi1pNNfOjes3smQ6GJQ4MUFgcUEGWOyTU3+wdbc30gzz9j7sc4aW9YQ==
+X-Received: by 2002:a17:906:ca0e:b0:a77:b349:ffd8 with SMTP id a640c23a62f3a-a799cd38d66mr179731966b.32.1720792126181;
+        Fri, 12 Jul 2024 06:48:46 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-005.fbsv.net. [2a03:2880:30ff:5::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcbeasm348959866b.28.2024.07.12.06.48.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 06:48:45 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Madalin Bucur <madalin.bucur@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: leit@meta.com,
+	netdev@vger.kernel.org (open list:FREESCALE QORIQ DPAA ETHERNET DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: dpaa: Fix compilation Warning
+Date: Fri, 12 Jul 2024 06:48:16 -0700
+Message-ID: <20240712134817.913756-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com> <20240711123405.2966302-2-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240711123405.2966302-2-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 Jul 2024 15:48:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU1hqPeD91WhcY=JwUho6suwE1gRi6iWdOpYGvchioJLw@mail.gmail.com>
-Message-ID: <CAMuHMdU1hqPeD91WhcY=JwUho6suwE1gRi6iWdOpYGvchioJLw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: renesas: r9a08g045-cpg: Add DMA clocks and resets
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	biju.das.jz@bp.renesas.com, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 2:34=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add the missing DMA clock and resets.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Remove variables that are defined and incremented but never read.
+This issue appeared in network tests[1] as:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.12.
+	drivers/net/ethernet/freescale/dpaa/dpaa_eth_sysfs.c:38:6: warning: variable 'i' set but not used [-Wunused-but-set-variable]
+	38 |         int i = 0;
+	   |             ^
 
-Gr{oetje,eeting}s,
+Link: https://netdev.bots.linux.dev/static/nipa/870263/13729811/build_clang/stderr [1]
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth_sysfs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-                        Geert
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth_sysfs.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth_sysfs.c
+index 4fee74c024bd..aad470e9caea 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth_sysfs.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth_sysfs.c
+@@ -35,7 +35,6 @@ static ssize_t dpaa_eth_show_fqids(struct device *dev,
+ 	u32 last_fqid = 0;
+ 	ssize_t bytes = 0;
+ 	char *str;
+-	int i = 0;
+ 
+ 	list_for_each_entry_safe(fq, tmp, &priv->dpaa_fq_list, list) {
+ 		switch (fq->fq_type) {
+@@ -85,7 +84,6 @@ static ssize_t dpaa_eth_show_fqids(struct device *dev,
+ 
+ 		prev = fq;
+ 		prevstr = str;
+-		i++;
+ 	}
+ 
+ 	if (prev) {
+-- 
+2.43.0
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
