@@ -1,138 +1,260 @@
-Return-Path: <linux-kernel+bounces-250233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2522C92F586
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E0A092F589
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C341F21FC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:26:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B631F22A7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FEA13D603;
-	Fri, 12 Jul 2024 06:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CSdNAIg8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB74A13D607;
+	Fri, 12 Jul 2024 06:27:47 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5E813D2B5
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AACD17BBE;
+	Fri, 12 Jul 2024 06:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720765595; cv=none; b=VQlRMICFsTGtmTdDb9VcNIm98nTeHO1mNL0y8dsf8KSXAhx2v+fP/Plp69S+asV5DXxkvutFOMgrM6/OZJsiE12azoYfqI1buVg6zMU0tUfrviM+FQ1Dr97pqvXLbEnczKZzJ9a5DJTmdWWc8gdxL5PgUNpikJUr65uxm8x6ZKw=
+	t=1720765667; cv=none; b=XJPb9lT+497dbvsgQO+voJyGedvdmINpZJpnRXyKxA/zXBLEYLlDAexOapVHMtZJuzt0oPzZPjNBwIWUGUbax78nSvIHxb+bIS9fMX0zZws9vkh51opzK/iDVDcEzFgyfoYaZSHxnpy5/XRtrtvavlV5f8wqnb/Qqy2DWoMw0H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720765595; c=relaxed/simple;
-	bh=u6FNmlZeQMto0upixwU3exVMCHI8HT2oAnTcwPvWRSY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tQKvOFHpwHPb72O1hNsX7MsQ6VZCkNvJDicWqBrgPbCamwCL6h0NPvxPT6/ZBYXQiLcQjJLnCzFyXZKmxKAjpKotejYxylXfomSgsidXuZpEfVjGzzBoDPNHfxshb87voftiXviHnnyWW9LhgqPA7JUBzFzSTlGliYa+XxMxAQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CSdNAIg8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720765593;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9a5IayKbXBKJrNi/QMZz5s0Prw5V2adYI5z3/V5xH40=;
-	b=CSdNAIg8KOETOlz1x/TX16d1L93YNSyEDD4uj38DEjjL9wP2RIKskPubZDohHVt10oYJur
-	nNcevPFAJE3vmkaH+7nd4kOgE47VWPduZVc46YM1KdF8GsaUqOCHLBM9J4h0xaECdSPXmo
-	6vrRNRJEqb8bdZYrycZZyNgjbHbpHcU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-628-r2lohZS6PbKmIl5snPI1bw-1; Fri, 12 Jul 2024 02:26:28 -0400
-X-MC-Unique: r2lohZS6PbKmIl5snPI1bw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4266fcb3166so730635e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:26:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720765587; x=1721370387;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9a5IayKbXBKJrNi/QMZz5s0Prw5V2adYI5z3/V5xH40=;
-        b=T0LggSUTW/z95BhRh1pEH1GYl/xwMYOnjQAjDn1ku4Oqb+E+YFZPctTJh/rv3uU1nQ
-         rdKoTfryCB7ZPVW4AQeVc366tDYPFi3VX5nddGPxICteJvW3rXfGmkzRXPSI5RHJtR5e
-         N3uopK/RVOjssf7nK/5+jS2VhFGGGvq/OjSHFnR1Fcd1y2vDV+DEl2/59djyoH4uhsaS
-         YvBjxTAFWZVZVCx/Sh6J5TLYeCb2vaaSQdxOZqLIf/yutWDKWmF+Eb2p3ULExnmWoiDS
-         LtPpa3ggqbE/Z1lEq9+pc5akSI/0unjMtQnhBfWCvfWagRyTKHM64qshZwhRXg2EjdEq
-         dfbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPAvD0VcL9Ynm4+8NLS/6MqJwDceE8g1gSKPDhtSvlBVpWhaKIbmKCjrVVSj/vO0hOwn7QNfVaJ/434WFe00HRFID/rNKFfWFjwy84
-X-Gm-Message-State: AOJu0YwvxeljqkHDgBXOg5CqJU/w8L9fA/nddzpQr/df66aPSkm36XxS
-	jVB8hlMBWoCeSGNCOTDg9HShXgQnZ/YV1kaUYS2OLbZlQElzd4jWZGHxm4ytL2f158hrUYzdJ1L
-	pRowVQJ0Kc5q98Se204oufn2uwHv60gJ5x31h4hNhQqCfbrsyKOUD2b9TBs5m+Q==
-X-Received: by 2002:a5d:64cb:0:b0:362:1322:affc with SMTP id ffacd0b85a97d-367ceac1af6mr7196236f8f.5.1720765587436;
-        Thu, 11 Jul 2024 23:26:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKURcKatRXBWbit8UsmQ0Qm94LXmqPcy3DdNqKx6medY7O8ZyGlJX5YS/xZ14HpSQcyTLjgg==
-X-Received: by 2002:a5d:64cb:0:b0:362:1322:affc with SMTP id ffacd0b85a97d-367ceac1af6mr7196220f8f.5.1720765587025;
-        Thu, 11 Jul 2024 23:26:27 -0700 (PDT)
-Received: from pstanner-thinkpadt14sgen1.fritz.box (200116b82df8b300fbf278adc06b342f.dip.versatel-1u1.de. [2001:16b8:2df8:b300:fbf2:78ad:c06b:342f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde891a3sm9322535f8f.61.2024.07.11.23.26.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 23:26:26 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Karol Herbst <kherbst@redhat.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>
-Subject: [PATCH v2] drm/nouveau: Improve variable names in nouveau_sched_init()
-Date: Fri, 12 Jul 2024 08:26:18 +0200
-Message-ID: <20240712062618.8057-1-pstanner@redhat.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1720765667; c=relaxed/simple;
+	bh=3L4Y7nsXbhrfQy+s59yoRG1+TN1gXL3IuWxdlQYndxw=;
+	h=To:From:Subject:Message-ID:Date:MIME-Version:Content-Type; b=VpZP5GwoHfUtHRw6Em9ez1S7x7gLysT4iYmPWpSc2I9MmdKwaMxr5TYGmhdQE0PF++qp4nhA75ST2uW3Sf5I3qMwdlj3q28UYwjMXNrQbCdwbFT9nzuaxRGVkbqvpm2gkfxj5ZccTGsr7PFAGn9OZf3h382nfB1goqdjnNPqfsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WL1q24LWdz4f3kvq;
+	Fri, 12 Jul 2024 14:27:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 8ADAC1A0568;
+	Fri, 12 Jul 2024 14:27:39 +0800 (CST)
+Received: from [10.174.178.46] (unknown [10.174.178.46])
+	by APP2 (Coremail) with SMTP id Syh0CgB34YbZzJBmRSN_Bw--.31285S3;
+	Fri, 12 Jul 2024 14:27:37 +0800 (CST)
+To: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Ted Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+ Christoph Hellwig <hch@infradead.org>,
+ linux-mtd <linux-mtd@lists.infradead.org>,
+ Richard Weinberger <richard@nod.at>, "zhangyi (F)" <yi.zhang@huawei.com>,
+ yangerkun <yangerkun@huawei.com>, "wangzhaolong (A)"
+ <wangzhaolong1@huawei.com>
+From: Zhihao Cheng <chengzhihao@huaweicloud.com>
+Subject: [BUG REPORT] potential deadlock in inode evicting under the inode lru
+ traversing context on ext4 and ubifs
+Message-ID: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
+Date: Fri, 12 Jul 2024 14:27:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgB34YbZzJBmRSN_Bw--.31285S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxKFWfKr4xZF17AF1rArWUArb_yoWxJw45pr
+	WDWrySyr4kXFyY934vqr4kXw1093WkKF4UXr95CrnrZ3WDJF1IqF17try5AFW7GrWkA3s0
+	qa1UCr1DCa1ay3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UQzVbUUUUU=
+X-CM-SenderInfo: xfkh0wx2klxt3r6k3tpzhluzxrxghudrp/
 
-nouveau_sched_init() uses the function drm_sched_init(). The latter
-function has parameters called "hang_limit" and "timeout" in its API
-documentation.
+Hi. Recently, we found a deadlock in inode recliaiming process caused by 
+circular dependence between file inode and file's xattr inode.
 
-nouveau_sched_init(), however, defines a variable called
-"job_hang_limit" which is passed to drm_sched_init()'s "timeout"
-parameter. The actual "hang_limit" parameter is directly set to 0.
+Problem description
+===================
 
-Rename "job_hang_limit" to "timeout".
+The inode reclaiming process(See function prune_icache_sb) collects all 
+reclaimable inodes and mark them with I_FREEING flag at first, at that 
+time, other processes will be stuck if they try getting these inodes(See 
+function find_inode_fast), then the reclaiming process destroy the 
+inodes by function dispose_list().
+Some filesystems(eg. ext4 with ea_inode feature, ubifs with xattr) may 
+do inode lookup in the inode evicting callback function, if the inode 
+lookup is operated under the inode lru traversing context, deadlock 
+problems may happen.
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
-Changes in v2:
-- Remove variable "hang_limit". (Danilo)
----
- drivers/gpu/drm/nouveau/nouveau_sched.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Case 1: In function ext4_evict_inode(), the ea inode lookup could happen 
+if ea_inode feature is enabled, the lookup process will be stuck under 
+the evicting context like this:
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
-index 32fa2e273965..ba4139288a6d 100644
---- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-@@ -404,7 +404,7 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
- {
- 	struct drm_gpu_scheduler *drm_sched = &sched->base;
- 	struct drm_sched_entity *entity = &sched->entity;
--	long job_hang_limit = msecs_to_jiffies(NOUVEAU_SCHED_JOB_TIMEOUT_MS);
-+	const long timeout = msecs_to_jiffies(NOUVEAU_SCHED_JOB_TIMEOUT_MS);
- 	int ret;
- 
- 	if (!wq) {
-@@ -418,7 +418,7 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
- 
- 	ret = drm_sched_init(drm_sched, &nouveau_sched_ops, wq,
- 			     NOUVEAU_SCHED_PRIORITY_COUNT,
--			     credit_limit, 0, job_hang_limit,
-+			     credit_limit, 0, timeout,
- 			     NULL, NULL, "nouveau_sched", drm->dev->dev);
- 	if (ret)
- 		goto fail_wq;
--- 
-2.45.0
+  1. File A has inode i_reg and an ea inode i_ea
+  2. getfattr(A, xattr_buf) // i_ea is added into lru // lru->i_ea
+  3. Then, following three processes running like this:
+
+     PA                              PB
+  echo 2 > /proc/sys/vm/drop_caches
+   shrink_slab
+    prune_dcache_sb
+    // i_reg is added into lru, lru->i_ea->i_reg
+    prune_icache_sb
+     list_lru_walk_one
+      inode_lru_isolate
+       i_ea->i_state |= I_FREEING // set inode state
+      inode_lru_isolate
+       __iget(i_reg)
+       spin_unlock(&i_reg->i_lock)
+       spin_unlock(lru_lock)
+                                      rm file A
+                                       i_reg->nlink = 0
+       iput(i_reg) // i_reg->nlink is 0, do evict
+        ext4_evict_inode
+         ext4_xattr_delete_inode
+          ext4_xattr_inode_dec_ref_all
+       ext4_xattr_inode_iget
+            ext4_iget(i_ea->i_ino)
+             iget_locked
+              find_inode_fast
+               __wait_on_freeing_inode(i_ea) ----¡ú AA deadlock
+     dispose_list // cannot be executed by prune_icache_sb
+      wake_up_bit(&i_ea->i_state)
+
+Case 2: In deleted inode writing function ubifs_jnl_write_inode(), file 
+deleting process holds BASEHD's wbuf->io_mutex while getting the xattr 
+inode, which could race with inode reclaiming process(The reclaiming 
+process could try locking BASEHD's wbuf->io_mutex in inode evicting 
+function), then an ABBA deadlock problem would happen as following:
+
+  1. File A has inode ia and a xattr(with inode ixa), regular file B has
+     inode ib and a xattr.
+  2. getfattr(A, xattr_buf) // ixa is added into lru // lru->ixa
+  3. Then, following three processes running like this:
+
+         PA                PB                        PC
+                 echo 2 > /proc/sys/vm/drop_caches
+                  shrink_slab
+           prune_dcache_sb
+           // ib and ia are added into lru, lru->ixa->ib->ia
+                   prune_icache_sb
+                    list_lru_walk_one
+                     inode_lru_isolate
+                      ixa->i_state |= I_FREEING // set inode state
+                     inode_lru_isolate
+                      __iget(ib)
+                      spin_unlock(&ib->i_lock)
+                      spin_unlock(lru_lock)
+                                                    rm file B
+                                                     ib->nlink = 0
+  rm file A
+   iput(ia)
+    ubifs_evict_inode(ia)
+     ubifs_jnl_delete_inode(ia)
+      ubifs_jnl_write_inode(ia)
+       make_reservation(BASEHD) // Lock wbuf->io_mutex
+       ubifs_iget(ixa->i_ino)
+        iget_locked
+         find_inode_fast
+          __wait_on_freeing_inode(ixa)
+           |          iput(ib) // ib->nlink is 0, do evict
+           |           ubifs_evict_inode
+           |            ubifs_jnl_delete_inode(ib)
+          ¡ý             ubifs_jnl_write_inode
+      ABBA deadlock ¡û-----make_reservation(BASEHD)
+                    dispose_list // cannot be executed by prune_icache_sb
+                     wake_up_bit(&ixa->i_state)
+
+Reproducer:
+===========
+
+https://bugzilla.kernel.org/show_bug.cgi?id=219022
+
+About solutions
+===============
+
+We have thought some solutions, but all of them will import new influence.
+
+Solution 1: Don't cache xattr inode, make drop_inode callback return 
+true for xattr inode. It will make getting xattr slower.
+Test code:
+     gettimeofday(&s, NULL);
+     for (i = 0; i < 10000; ++i)
+         if (getxattr("/root/temp/file_a", "user.a", buf, 4098) < 0)
+             perror("getxattr");
+     gettimeofday(&e, NULL);
+     printf("cost %ld us\n", 1000000 * (e.tv_sec - s.tv_sec) + e.tv_usec 
+- s.tv_usec);
+Result:
+ext4:
+cost 151068 us // without fix
+cost 321594 us // with fix
+ubifs:
+134125 us // without fix
+371023 us // with fix
+
+Solution 2: Don't put xattr inode into lru, which is implemented by 
+holding xattr inode's refcnt until the file inode is evicted, besides 
+that, make drop_inode callback return true for xattr inode. The solution 
+pins xattr inode in memory until the file inode is evicted, file inode 
+won't be evicted if it has pagecahes, specifically:
+inode_lru_isolate
+  if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) { // 
+file inode won't be evicted, so its' xattr inode won't be reclaimed too, 
+which will increase the memory noise.
+   __iget(inode);
+   if (remove_inode_buffers(inode))
+   ...
+   iput(inode);
+  }
+
+Solution 3: Forbid inode evicting under the inode lru traversing 
+context. Specifically, mark inode with 'I_FREEING' instead of getting 
+its' refcnt to eliminate the inode getting chance in 
+inode_lru_isolate(). The solution is wrong, because the pagecahes may 
+still alive after invalidate_mapping_pages(), so we cannot destroy the 
+file inode after clearing I_WILL_FREE.
+diff --git a/fs/inode.c b/fs/inode.c
+index 3a41f83a4ba5..c649be22f841 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -843,7 +844,7 @@ static enum lru_status inode_lru_isolate(struct 
+list_head *item,
+       * be under pressure before the cache inside the highmem zone.
+       */
+      if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) {
+-        __iget(inode);
++        inode->i_state |= I_WILL_FREE;
+          spin_unlock(&inode->i_lock);
+          spin_unlock(lru_lock);
+          if (remove_inode_buffers(inode)) {
+@@ -855,9 +856,9 @@ static enum lru_status inode_lru_isolate(struct 
+list_head *item,
+                  __count_vm_events(PGINODESTEAL, reap);
+              mm_account_reclaimed_pages(reap);
+          }
+-        iput(inode);
++        spin_lock(&inode->i_lock);
++        inode->i_state &= ~I_WILL_FREE;
+          spin_lock(lru_lock);
+-        return LRU_RETRY;
+      }
+
+Solution 4: Break the circular dependence between file inode and file's 
+xattr inode, for example, after comparing 
+inode_lru_isolate(prune_icache_sb) with invalidate_inodes, we found that 
+invalidate_mapping_pages is not invoked by invalidate_inodes, can we 
+directly remove the branch 'if (inode_has_buffers(inode) || 
+!mapping_empty(&inode->i_data))' from inode_lru_isolate?
+
+Any better solutions?
 
 
