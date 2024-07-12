@@ -1,160 +1,151 @@
-Return-Path: <linux-kernel+bounces-250410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048CC92F788
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:05:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1232B92F79B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E1711C217CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:05:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3335E1C2109B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36685143758;
-	Fri, 12 Jul 2024 09:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B8C146D42;
+	Fri, 12 Jul 2024 09:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q9wCDxXz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MKb7AGa0";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q9wCDxXz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MKb7AGa0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="M7SN+q9i";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NrQeQaoA"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA392E3E5
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99014143747;
+	Fri, 12 Jul 2024 09:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720775146; cv=none; b=jMM5VWZMXWPRtzSCcROb0D0ybEd1zZGyFOywjqP7nLIYNGTdP3GuEV0mtyiBnLnXjUP747JqDNwSU/fa62jCSw95fkNPZle6qo+98LZBN5SEFUNQ1jySNFV/8+qp4V6oraRWEa2cmaG8cH2KvSc5ll8F2HuwxcyITucoNl8mws8=
+	t=1720775354; cv=none; b=B1XHoXHU/viJxbPN9p7GszhHcMMdEuBa1zQ8p7o868QHbUVvwowATZHEdsnwCudJoNMbl0ivEW/0UgITEK74eyLTbSyTzQHmv34U6xQuYGcMQT04w6Opz7GbioS/fS/HJ4IuxebKZtJwNPEx/0j2nqICyc23C3YxlS6tPh143yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720775146; c=relaxed/simple;
-	bh=n9zCnby7RStLsYiaqLC7s2b1p5UbHmaaIR2SSzrVCaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WrAnkSS0qYlfD5HBHIf0E/dZ9Py/GSzutdm637PrVUHWqe8Kdl1CQ4jiZ3lT/ic6/aXcgaagqPn39io8vaqJcvMFy1tLx79Dq45W9cvUDsZ73BUxwyeCWKQ8t06kFxuhtOnL6Co9RzesCeoaKmxLMIUgaN31v1+klzBD5WaAmHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q9wCDxXz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MKb7AGa0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q9wCDxXz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MKb7AGa0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 110681FB72;
-	Fri, 12 Jul 2024 09:05:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720775143; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KHPKYhyfY8y0bbRj9icGAe1iV34Xb9Ze5OLkT5Fpfys=;
-	b=Q9wCDxXzSlQNBycICSy9ZwNIGEdp9BX9rVWK18hsV9BuJJNJr92v+Q2mozzdorbpgaTWMi
-	qnMD40Aulb5C6kZqRdTelB1b18JQ+/kkOhDwIwGRIJlyf1pS2HgaFiemUd6Y2DBzgEfUyk
-	glgL7ChQVSOTmdcKcfBETjbhNKA1kUU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720775143;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KHPKYhyfY8y0bbRj9icGAe1iV34Xb9Ze5OLkT5Fpfys=;
-	b=MKb7AGa0OjPupFeWs4IXmlqLYSlM0zJ0SSjeDrn5vvUQvPlUbicpV1i6jiKHgnH5ezHjn2
-	p1rs2R5/wVome8Bg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Q9wCDxXz;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MKb7AGa0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720775143; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KHPKYhyfY8y0bbRj9icGAe1iV34Xb9Ze5OLkT5Fpfys=;
-	b=Q9wCDxXzSlQNBycICSy9ZwNIGEdp9BX9rVWK18hsV9BuJJNJr92v+Q2mozzdorbpgaTWMi
-	qnMD40Aulb5C6kZqRdTelB1b18JQ+/kkOhDwIwGRIJlyf1pS2HgaFiemUd6Y2DBzgEfUyk
-	glgL7ChQVSOTmdcKcfBETjbhNKA1kUU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720775143;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KHPKYhyfY8y0bbRj9icGAe1iV34Xb9Ze5OLkT5Fpfys=;
-	b=MKb7AGa0OjPupFeWs4IXmlqLYSlM0zJ0SSjeDrn5vvUQvPlUbicpV1i6jiKHgnH5ezHjn2
-	p1rs2R5/wVome8Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 229AF13686;
-	Fri, 12 Jul 2024 09:05:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id y6A7BObxkGbPDwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Fri, 12 Jul 2024 09:05:42 +0000
-Date: Fri, 12 Jul 2024 11:05:32 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Muchun Song <muchun.song@linux.dev>,
-	David Hildenbrand <david@redhat.com>,
-	Michal Hocko <mhocko@suse.com>, Donet Tom <donettom@linux.ibm.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [RFC PATCH 2/8] arch/s390: Teach
- arch_get_unmapped_area{_topdown} to handle hugetlb mappings
-Message-ID: <ZpDx3CWGzvZ02qFa@localhost.localdomain>
-References: <20240710105042.30165-1-osalvador@suse.de>
- <20240710105042.30165-3-osalvador@suse.de>
+	s=arc-20240116; t=1720775354; c=relaxed/simple;
+	bh=Dkgox/IQTwaQ+eQxNPJVC2wknfvPEUKKuT06ZCrgfKk=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=rbLnVIMTjxvHHuoiNEfMAumYSywNFoNp7orEJKubLwAuTHsbxztwE/vTmaRV22G82jiH4UNcrSDwsgOFImy2m1jW1kd9MIXUX6ek6rmXwKxi6cLlMWnFULnwGLdupxpY+7eCb/dZK+P5PWt7O1t2DkD9NbpIwMP5aQ+Zzf+lRew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=M7SN+q9i; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NrQeQaoA; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id AF4B4138221C;
+	Fri, 12 Jul 2024 05:09:11 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 12 Jul 2024 05:09:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1720775351;
+	 x=1720861751; bh=sZ7e4XevovcBdrC0s9li43TyJDtZzYkioK9A8LGqM/Y=; b=
+	M7SN+q9i0T1/jB6rkxntX3fgDkaikboa5B4fEQ7f99816KkJDDm+CP8PZpT8ZezN
+	GNUQGwX8pzFBddHKwfg2FfGNMroyt65wjVT3xmfuIHK9WbS9ETLz6G3Tl6PSN+/F
+	Gfumz/LDeEJNUhs/uKhyYOFI8xO/2U2gYlzfwSI9iCp9A1u8FAaz3YdE96uOlsIy
+	C3z1sY56kT3e9DuxQR+jFBJ1IFYSZVRPnixfa4p7PBQmFvT6dCgKuWiOYdwH2RC8
+	FCkIWbjvRk0llcGrJ0HVxt8Kl4gGJsU5QivQRQPATjazMWPswZcZVynMUPFb/PJN
+	uQk5pfumf9/XpeBnVjhcTQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720775351; x=
+	1720861751; bh=sZ7e4XevovcBdrC0s9li43TyJDtZzYkioK9A8LGqM/Y=; b=N
+	rQeQaoAYrmIx4P9f1dJ204CLgUujqrXKFMFrNNLiFFla4i8EB7bhNuKzjgRj3DGO
+	Eym3G3cXIPA9uQzYswhcEucP6Mvp9c5FLUD/cdWl6bl7XVW+IM2TekwG8A4C79S9
+	RKniQ50ZGXAG+CDKWB/rNZdBZS4WCdmBTR/EUR3Rn55HgdUBgbbooTGJE781Y63f
+	S6Uud8LVRJi2zAyBSMhQQqQAgB1U3UpaSfZgH22siiPk6Nybr5f46Z1EhpNLZ6n7
+	L3D7R8EZOD7aNt3qY7lxRGjX9Jaluw6Js9KGMNAtvS0npAU0x/wzA6w3JvX3vwzq
+	2Y/W0ngCQNcaYui6ZdOew==
+X-ME-Sender: <xms:tPKQZsDR-wmYFg7MIczctzGLNXIg6jYekOWPBAT2oOYzOgmMIKfXtA>
+    <xme:tPKQZujqoKOXxeixBmlq_wWrG20-7I5PX6o1IAasYCOnLRcrQWPaioJkPDCSXXEcY
+    0tjiQB1LzzzPzvF32A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeeigddtkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
+    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:tPKQZvnM0POoj8h13xHmxb_HKBiaQZefN_oNtqRHbw4JDgxKnPxd9A>
+    <xmx:tPKQZixofpA8v3Gue5nkhh60aW_mzdzZJE689uqiwWZsm0JkKizC7A>
+    <xmx:tPKQZhSnPYREvuE2yvUVgs7XB7xgq8KM2oeEU38DYPogz8EKybqKvg>
+    <xmx:tPKQZta3spHoTBC_qk6-TiezbpzzI7noO1wvjB0mBLDEKDwWuROD3A>
+    <xmx:t_KQZhwIZzgBoFR5lfyh56NGNRguMKKXxXb63UdfFG80E_XGEKAnPekG>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 1B788B6008F; Fri, 12 Jul 2024 05:09:08 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710105042.30165-3-osalvador@suse.de>
-X-Rspamd-Queue-Id: 110681FB72
-X-Spamd-Result: default: False [-1.51 / 50.00];
-	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Score: -1.51
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+Message-Id: <b8fa2389-e666-4631-a872-d0144fb7b3ac@app.fastmail.com>
+In-Reply-To: 
+ <CAK7LNARpWB6Pqa80KDmpdJ_Rf5FZc71_bX9eSy3fFVCAyg8CAg@mail.gmail.com>
+References: <20240704143611.2979589-1-arnd@kernel.org>
+ <20240704143611.2979589-2-arnd@kernel.org>
+ <CAK7LNARpWB6Pqa80KDmpdJ_Rf5FZc71_bX9eSy3fFVCAyg8CAg@mail.gmail.com>
+Date: Fri, 12 Jul 2024 11:07:34 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Arnd Bergmann" <arnd@kernel.org>
+Cc: Linux-Arch <linux-arch@vger.kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Nicolas Schier" <nicolas@fjasle.eu>, "Vineet Gupta" <vgupta@kernel.org>,
+ "Russell King" <linux@armlinux.org.uk>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Will Deacon" <will@kernel.org>, guoren <guoren@kernel.org>,
+ "Brian Cain" <bcain@quicinc.com>, "Huacai Chen" <chenhuacai@kernel.org>,
+ "WANG Xuerui" <kernel@xen0n.name>, "Dinh Nguyen" <dinguyen@kernel.org>,
+ "Jonas Bonn" <jonas@southpole.se>,
+ "Stefan Kristiansson" <stefan.kristiansson@saunalahti.fi>,
+ "Stafford Horne" <shorne@gmail.com>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Albert Ou" <aou@eecs.berkeley.edu>, "Rich Felker" <dalias@libc.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Andreas Larsson" <andreas@gaisler.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 01/17] syscalls: add generic scripts/syscall.tbl
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 12:50:36PM +0200, Oscar Salvador wrote:
-> We want to stop special casing hugetlb mappings and make them go
-> through generic channels, so teach arch_get_unmapped_area{_topdown}
-> to handle those.
-> s390 specific hugetlb function does not set info.align_offset, so do
-> the same here for compatibility.
-> 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+On Fri, Jul 12, 2024, at 10:43, Masahiro Yamada wrote:
+> On Thu, Jul 4, 2024 at 11:36=E2=80=AFPM Arnd Bergmann <arnd@kernel.org=
+> wrote:
+>
+> I know this is already written in this way
+> in include/uapi/asm-generic/unistd.h, but
+> the native and compat have the same function name.
+>
+>
+> Can we simplify it like this?
+>
+> 65     common  readv                           sys_readv
+> 66     common  writev                          sys_writev
 
-I could finally grab a s390 machine and I realized I made some silly
-syntax mistakes here.
-I am running some tests on s390 to make sure all is smooth.
+Good idea. It looks like this came from 5f764d624a89 ("fs:
+remove the compat readv/writev syscalls"), and I'll fix it up
+in my follow-up series, which has a lot of other cleanups
+like this one across architectures.
 
+Thanks,
 
--- 
-Oscar Salvador
-SUSE Labs
+     Arnd
 
