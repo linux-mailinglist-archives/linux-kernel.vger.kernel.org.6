@@ -1,119 +1,130 @@
-Return-Path: <linux-kernel+bounces-250485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB3392F85A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:51:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E9E92F863
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 298752825E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:51:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68F33B2321B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E521494BC;
-	Fri, 12 Jul 2024 09:51:07 +0000 (UTC)
-Received: from out28-148.mail.aliyun.com (out28-148.mail.aliyun.com [115.124.28.148])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3E715359B;
+	Fri, 12 Jul 2024 09:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BryiJl3/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mKW/aPEL"
+Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CDF17BB6;
-	Fri, 12 Jul 2024 09:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEAB17BB6;
+	Fri, 12 Jul 2024 09:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720777867; cv=none; b=n7cM58veBi/kd7uPuzFzLQR31N38YYO0nofHWejmyENJIn4JW50dAS1of2yP926tsB2+iqb37yNHh8ijuWfIXQTEHRKNxO8jUXOaI7RYo9LpAyof4tB5n0PzQJxRqbUHxOBuP0ZsOUZWGYrFIQIe8xKlP6yoMZfQmqYshR025oA=
+	t=1720777924; cv=none; b=XXeuJJLYFQRlHVAFMuqnV55R4JyMGW+vUz36b9hVlqqywayXjvkgIc/yXSmPBIExhIDRMVZ17BAgt12Wa+TgAGZ6wmHVb/Ki/SOIDGzlbJ/++1vY6pUgxWD2kIVl60HLotafcZ6EsHxlYae4EakbAHDtZS9DWM1tIaTidWsM7Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720777867; c=relaxed/simple;
-	bh=pUaulvtdD9qQg/45WX1ET2WbuAUsRQxwcTQt/oHElw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hvvfrHbGrt9ateHdZYlivh6JfHo6F31+y6ukHzUCQWtJ80IF3yEaKSBgIhSa2cZoeP+rCRSL0W2D6vq8kqdGZlWD0bkCurkTF1UnGeG7Mp5jRsVH4B3HGRtXosAEx9Fh93s6o/eZQsIwOJpZAJJYBNUEyA5rB36LpXVGoeHyRbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=115.124.28.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08055284|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.211365-0.00225663-0.786379;FP=16534973576804402570|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033023108233;MF=wangshuaijie@awinic.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.YOOi3cV_1720777846;
-Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.YOOi3cV_1720777846)
-          by smtp.aliyun-inc.com;
-          Fri, 12 Jul 2024 17:50:54 +0800
-From: wangshuaijie@awinic.com
-To: krzk@kernel.org
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dmitry.torokhov@gmail.com,
-	jeff@labundy.com,
-	kangjiajun@awinic.com,
-	krzk+dt@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liweilei@awinic.com,
-	robh@kernel.org,
-	wangshuaijie@awinic.com
-Subject: Re: [PATCH V2 3/5] Add aw9610x series related interfaces to the aw_sar driver
-Date: Fri, 12 Jul 2024 09:50:46 +0000
-Message-ID: <20240712095046.2396720-1-wangshuaijie@awinic.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <4d8b7fe5-a566-49f7-8924-3c310af2f7cd@kernel.org>
-References: <4d8b7fe5-a566-49f7-8924-3c310af2f7cd@kernel.org>
+	s=arc-20240116; t=1720777924; c=relaxed/simple;
+	bh=qnwmKA1E77dU3/Siq976FhjiJYE//apcHV6ykvuw28g=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=EoySB0l+IaL8vJaD+HAxtXCBi6FuRqVA/O6IU0WkNBlaYPBCMc7owXWt+nzoDJqKO6nqjits8Eh6xwE7Fxz6LmCKkfZ1QxhUddVhk2/Rn6zZvIrhMDmimIYKtKlOqlYNYZemkvhZriksyYj+cbqGbLmON0ybtmzEOGtYYZgDUvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BryiJl3/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mKW/aPEL; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8B8671144813;
+	Fri, 12 Jul 2024 05:52:01 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 12 Jul 2024 05:52:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1720777921;
+	 x=1720864321; bh=1i/vtDPCq+ba017V3YOHCPsm2lCK+3guf6JFMXq0RyM=; b=
+	BryiJl3/LeVnnYFdHpoPCySMaI2nQ0N9aTak6myPMZ/SpBJI79xI19jV+NWlOZ/z
+	VtKZ/uE62ZoxIyUmFMlG3pMDW1DZMsBQsetdpvTc2SULUjJOb5vtjt0Zrv1EY9+J
+	pE7nQFXZDCa/NbNYCRWYE6kp0635Xi9kKh111aVivrEWx6jqeaSmkJhLN3UmD90L
+	meb2VdT5oWq3H+lVxTc6R7EIJJjPpIxzPXbxCvhd6TPkZI/boR9OoDqd0Xhw0R9Z
+	Bly/zCXJca3ia9fngzeT1VAUN0vxipsampUrtWpSUfrgyRbJ0gPAS/sRqOrga3Xg
+	m6W+pKalUpsbQRW70GYJ+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720777921; x=
+	1720864321; bh=1i/vtDPCq+ba017V3YOHCPsm2lCK+3guf6JFMXq0RyM=; b=m
+	KW/aPELPox1MQtH5P/ZEPY7vSavQVzUfjDwjXyQHh4HWwE94syilyoFuOAhsbK5r
+	eCBX35owLoxxbcPMVI03LTZfLKepw2THRDLthNe4C/avTn48Cek5P234wQ44yT81
+	qPpCkAsAjEzn91m5RkSzEHT1tsbskEn18u50+u5YgRsYoID6/4hC/4plO9f49NxV
+	khiFwUEBjy5/Ib9l6OJFPMu24dydw+dLCctmBCLJL4z7VkSjmAyDGtruvtu8pU18
+	0Zc/CXmDSqC90lXGAboG86keD2on/th6I8ZZJ/XKlSf1Fru91j7L/cLV6YA+Zvu5
+	FiOqsCkp3vxTlmrK1yHgQ==
+X-ME-Sender: <xms:wPyQZj0y9QPTem1RXtyhRyIa0I8B1Sxt1CjvG-wKc9md4F1-IaZuDA>
+    <xme:wPyQZiFOu3g8WwmwqQ4h4apvxKXIOmOxbnm1IAxwwxQHYwTWJS7zNP4wy568mIjPf
+    nNZkFFtKk-g381X2no>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeeigdduiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepofgfggfkjghffffhvfevufgtgfesth
+    hqredtreerjeenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnuges
+    rghrnhgusgdruggvqeenucggtffrrghtthgvrhhnpeegfeejhedvledvffeijeeijeeivd
+    dvhfeliedvleevheejleetgedukedtgfejveenucevlhhushhtvghrufhiiigvpedtnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:wPyQZj5Cvkvn-18UIBtVc5StNpUruuckhhcwQYHvtRfloaTFs0XfnQ>
+    <xmx:wPyQZo1UkUm-DbrKid-G4csibAFm03UIie2r3gyHuQy6cvarAGCjXg>
+    <xmx:wPyQZmFyF1mINj0dNhWl9mjHq-7VtihI1t1ycPvHRmeGzRwA6Smtnw>
+    <xmx:wPyQZp91ERAWvRpw3s6lmOHg1ELMmZX8k-U00HQIedceW6XnV25OzA>
+    <xmx:wfyQZrQK4I9a2pd-C2GeXNJl4A98NLd_5hbUPwyIF0zdcmt7SDM3jriG>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 60055B6008D; Fri, 12 Jul 2024 05:52:00 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-Id: <7351db74-fb04-4d0f-93ae-d3a3a3a310ff@app.fastmail.com>
+In-Reply-To: <20240712093524.905556-2-u.kleine-koenig@baylibre.com>
+References: <20240712093524.905556-2-u.kleine-koenig@baylibre.com>
+Date: Fri, 12 Jul 2024 11:51:38 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] UAPI/ioctl: Improve parameter name of ioctl request definition
+ helpers
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,=0D
-=0D
-On Wed, 5 Jun 2024 12:22:16, krzk@kernel.org wrote:=0D
->On 05/06/2024 11:11, wangshuaijie@awinic.com wrote:=0D
->> From: shuaijie wang <wangshuaijie@awinic.com>=0D
->> =0D
->=0D
->No commit msg, no proper subject prefix.=0D
->=0D
-=0D
-The patch for v3 will fix these issues.=0D
-=0D
->> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>=0D
->> | Reported-by: kernel test robot <lkp@intel.com>=0D
->> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>=0D
->> | Reported-by: Dan Carpenter <error27@gmail.com>=0D
->=0D
->Drop all these, this is some bogus tags. Tag never starts with pipe, btw.=
-=0D
->=0D
-=0D
-The patch for v3 will fix these issues.=0D
-=0D
->> ---=0D
->>  drivers/input/misc/aw_sar/aw9610x/aw9610x.c | 884 ++++++++++++++++++++=
-=0D
->>  drivers/input/misc/aw_sar/aw9610x/aw9610x.h | 327 ++++++++=0D
->>  2 files changed, 1211 insertions(+)=0D
->>  create mode 100644 drivers/input/misc/aw_sar/aw9610x/aw9610x.c=0D
->>  create mode 100644 drivers/input/misc/aw_sar/aw9610x/aw9610x.h=0D
->=0D
->...=0D
->=0D
->> +struct aw_reg_data {=0D
->> +	unsigned char rw;=0D
->> +	unsigned short reg;=0D
->> +};=0D
->> +/********************************************=0D
->> + * Register Access=0D
->> + *******************************************/=0D
->> +#define REG_NONE_ACCESS					(0)=0D
->> +#define REG_RD_ACCESS					(1 << 0)=0D
->> +#define REG_WR_ACCESS					(1 << 1)=0D
->> +=0D
->> +static const struct aw_reg_data g_aw9610x_reg_access[] =3D {=0D
->=0D
->Ehh... so we are at basics of C. Data structures do not go to headers.=0D
->=0D
-=0D
-The patch for v3 will fix these issues.=0D
-=0D
->=0D
->Best regards,=0D
->Krzysztof=0D
-=0D
-Kind regards,=0D
-Wang Shuaijie=0D
+On Fri, Jul 12, 2024, at 11:35, Uwe Kleine-K=C3=B6nig wrote:
+> The third parameter to _IOR et al is a type name, not a size. So the
+> parameter being named "size" is irritating. Rename it to "argtype"
+> instead to reduce confusion.
+>
+> There is a very minor chance that this breaks stuff. It only hurts
+> however if there is a variable (or macro) in userspace that is called
+> "argtype" *and* it's used in the parameters of _IOR and friends. IMHO
+> this is negligible because usually definitions making use of these
+> macros are provided by kernel headers (i.e. us) or if they are
+> replicated in userspace code, they are replicated and so supposed to
+> match the kernel definitions (e.g. to make them usable by programs
+> without the need to update the kernel headers used to compile the
+> program).
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+> ---
+> Hello,
+>
+> if there are doubts about using "argtype": Would "_argtype" be better?
+
+The patch looks good to me, and I think using 'argtype'
+is fine. I would apply it directly, but not with the current
+timing just ahead of the merge window.
+
+If there are no other comments, how about I take this after -rc1?
+You may have to remind me about it.
+
+      Arnd
 
