@@ -1,112 +1,90 @@
-Return-Path: <linux-kernel+bounces-250930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82E292FEBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:44:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C52D592FEBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24C661C22525
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:44:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE4451C227B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727A7176256;
-	Fri, 12 Jul 2024 16:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB20717624F;
+	Fri, 12 Jul 2024 16:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNAibmIO"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2NtIycx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4C91DFD2;
-	Fri, 12 Jul 2024 16:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180C5C2C8;
+	Fri, 12 Jul 2024 16:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720802678; cv=none; b=ZctHZ4FvnRzQyyk4ID5BHCSG1rBO/r/o9TcsHNOSFKc38pNY+DF4X2X8jzlxDcdoDvvv5yIUoz8fka0NnmDiiD7Bp/wsfEpwylG97YjWHaMpefd59aaH/QVQ23NDcKHbZKvrLti8+vbZ2OBVTgQbSZWj3KyTRAtwx3m7vqzXC+I=
+	t=1720802725; cv=none; b=Lt5A5J71PWl/1sHzeT1EkZyRHN+iKMQd07fawOd5w0wpZs5lG/QZkraE+UjXpJ/Ma7ZHdZuh/umW/ohgmDM34vXgqjHk1Xu4Aanuu5LdHazXogLFrtnfzMmQURKxk3v6aR723c3vXgdHM0oVscUrFhsu/RTIdc1bfJGaUV8bcjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720802678; c=relaxed/simple;
-	bh=YxRdb5IHqO/LJY/dxEeMHOtFew6h7HXipnunZJonl2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ctZv8jSRR7b4T+TakTUhD4dNodoKrpt1DKT0o++im5NHmZv8M7SdP6PGx6duPyyszJjb2OiIBu121OE7f/OkZQnoyUblUot0bFXsitxw3PHtTtmWWtQAyR5+VcWNEhg4Wor3gNLQj0ADWCa86k2RlFyA52433SkDu9EWN0C9n6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QNAibmIO; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fafc9e07f8so16578645ad.0;
-        Fri, 12 Jul 2024 09:44:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720802676; x=1721407476; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mf3+N0YSmeZeihxo/NnmDHWXw8mFHbf47GlGRoikzhs=;
-        b=QNAibmIO0jWp7ZZBGq/mUSS8xVnajGYYCf0ODd/g1H6UveIoCkaEw3rzMOZgqT/itf
-         GSBHhswo/273QTvE7WpGS7F5vR3cOroxZ3tFHJ6Qm7BVfQD9EHkUKRwr0BOVORsAIBSA
-         zcXdukrfe3MMFfNWsMA2/tOC78GwhrlJXxgHZhOmPZc+XZSwmPviJP1Dfh/OF90l6/aP
-         IXxZlS0OIzUf6nO/mrnOmuqVy8l6QIZYWJjcNjzBpIA6UFLpVcdWjNytwvhZgCnJ/d82
-         g4SKzR9LGhrujJ9DntXKrdzSYUReR/gAC13CR7Phvrlc09JmaiVRRnwvTh+fGwAYCkMj
-         xFAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720802676; x=1721407476;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mf3+N0YSmeZeihxo/NnmDHWXw8mFHbf47GlGRoikzhs=;
-        b=jqhkYOABui8ocRP43Ea33iR3hAxaHjbSQTOAcenRd4BiUrvYylsqGHuTgAXMIn+EQl
-         g166HGvi51udc6UWZDacZ0h4dfUdJ6RqEuqSwNRV244RN0sDEQczAomxDOAs+djyW5c7
-         uXbffQdFa8zBcixr7SyhmWVfVBPxp5q2mXSEq+t5Lnq6D+DPmioHxRVf5zgnMX4+59Q0
-         X4yvzzBUsZFieSYHtNnHY7klZWKd3IpGWY8vmdpvSGPLwd+L9CmVEtGt6L9C7zs3s3LZ
-         SVrAiOwlESAl3v4L1kcEZxaEKBCDmVj6+Xfh0L9S9BXeGTlYP0ibnHlUcEaVBYy1Rr4q
-         Gt0A==
-X-Forwarded-Encrypted: i=1; AJvYcCX4OY2VfujsaMry+0yRklRVY5OAPPQ3tTbHrRnSDgdBWSKUcZCUapj4gyXFHlFp3ordAzKYM0dHKQPCasijPsaKFapyjXbrEPeGmuYRG1K+jpo3ZBFYb5nXtPVBZi/hu1S95I0ysx00LA==
-X-Gm-Message-State: AOJu0YxRGgbf6uyiIr0Y2Oqdw8ldFAvSfMiuL6AlG9OG8d3KFpqKm2LE
-	TUhRN7ETZsI2O94WuhiCCnI51e/jPNaEeyylxi6fJZs77qKcxoRz
-X-Google-Smtp-Source: AGHT+IEd2hcToL9T2KKyG1KdlYVWLDe2KMkYzK/sMrcZoiXMDle0FAqSC9YcLXok9xeOaQ7fLFcVQQ==
-X-Received: by 2002:a17:903:2343:b0:1fb:5c54:36c8 with SMTP id d9443c01a7336-1fbb6ed576cmr106880785ad.50.1720802676551;
-        Fri, 12 Jul 2024 09:44:36 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a122a1sm70918095ad.45.2024.07.12.09.44.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 09:44:36 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 12 Jul 2024 06:44:34 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the cgroup tree
-Message-ID: <ZpFdcteO8CeZ94Cn@slm.duckdns.org>
-References: <20240712164354.65cb32bc@canb.auug.org.au>
- <20240712165107.7b46a640@canb.auug.org.au>
- <8734oe1xak.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1720802725; c=relaxed/simple;
+	bh=fz1FkdOHxXkL0jA9cpZro/NUbB3UZWCruXEUFtwB72U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PI335MHhLQSMipr5zQl9thkbvrMlbl4J/4hrJdmq05Q4BLlcsBfo1jDHS06dyIf9xyadn+ZrJA6/N2Dce7LG70hfdSeSiZJifE/WPWXDkzP6zi6OqkEvVfUyK2WYhbfQ/DluyxIrCwjUC1Qo/+0PuFEkkd4lFKG9OdavvHRUwsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2NtIycx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2434BC32782;
+	Fri, 12 Jul 2024 16:45:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720802724;
+	bh=fz1FkdOHxXkL0jA9cpZro/NUbB3UZWCruXEUFtwB72U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=T2NtIycx7YnG4LtxEwNouZg/UJ6Ec44PZ3iSjlW36b6oLDSqhOHo9UZF7gQqLV1fc
+	 DYQIGsY2SAPhLYs5NPrMNnG9BTqquuhDvModypusA1iME8QdatG302WYvjHOZb4m8M
+	 SmjSpseZGlLqrqxb9cx95wKI8qy/gTbiDStqz9w9W38joRf9yxJj6WGWo7XkgbK4i/
+	 hn4GKXh8LjhFwGLQkJGrGeD3YVB6YUy5oAgpCzr79GkXqn4takjEXFXpliSQ6Nd7f3
+	 hC6ZlPvcoU1TngKtTheuebTcf512N+IAB28kM8Sd2JsehFf6bqv1YyKzMBIchtis0O
+	 6fVz2d4yQyBgw==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	acme@redhat.com,
+	linux-perf-users <linux-perf-users@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 0/3] Introduce --task-name and --fuzzy-name options in perf sched map
+Date: Fri, 12 Jul 2024 09:45:20 -0700
+Message-ID: <172080268548.2773429.10546736534878393260.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
+In-Reply-To: <20240707182716.22054-1-vineethr@linux.ibm.com>
+References: <20240707182716.22054-1-vineethr@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8734oe1xak.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On Sun, 07 Jul 2024 23:57:13 +0530, Madadi Vineeth Reddy wrote:
 
-On Fri, Jul 12, 2024 at 08:48:19AM -0600, Jonathan Corbet wrote:
-> > Actually my character map app says that it should be the two bytes 0xC3
-> > 0xBD in UTF-8 (it is 0x00FD in UTF-16).
+> This patch-set aims to reduce the amount of output printed on the terminal
+> when using perf sched map, allowing users to focus only on the tasks of
+> interest.
 > 
-> As you observed, the patch is encoded in ISO-8859, not UTF8; that
-> doesn't fit well in a file that uses UTF8.  One could argue that Sphinx
-> should be a bit more robust, but satisfactory results will not be had
-> regardless.
+> This helps in visualizing how a benchmark or a task is spread over
+> the available CPUs while also knowing which CPUs are idle(.) and which
+> are not(-). This will be more useful as number of CPUs increase.
 > 
-> An encoding check might be a useful thing to have in checkpatch.pl,
-> methinks.
+> [...]
 
-Local env is utf-8 but I saved the email from mutt and then applied it, so
-maybe that's why it became iso-8859? Anyways, I'll fix it up.
+Applied to perf-tools-next, thanks!
 
-Thanks.
-
--- 
-tejun
+Best regards,
+Namhyung
 
