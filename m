@@ -1,246 +1,880 @@
-Return-Path: <linux-kernel+bounces-251214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2868293022F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:44:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D23D7930231
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:44:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D326E2833A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87CCC283380
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE886EB55;
-	Fri, 12 Jul 2024 22:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC8E6A347;
+	Fri, 12 Jul 2024 22:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Uh9UlnLP"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011016.outbound.protection.outlook.com [52.101.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLORCvSP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEFE1BDC3;
-	Fri, 12 Jul 2024 22:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720824262; cv=fail; b=pMt3QslKdx9ynF5Mycwht7lGh0DD9CmQVeEXJrOtxfDfP//EKZB5BZVMGrt5VJJYQEuprXHBmG4dlG8A5HJP4xgMy631/fZBbh4YnJx0/b7+Oe4jYu4fhmjFAfZzR0j/K81GWQZ/oigqLNYacz4JT1H5l3e620/OzLoHPvBmehM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720824262; c=relaxed/simple;
-	bh=94Q3jp5CIjN0i4xBe7GoqqedUYSgDrD9wnBe9HLhaJA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=n9ilLR2xzYCwwcI7Q+Cdjk8pFMnOscmpPM+9Fvb+mBSHnKkKIIjCPF8t2lpSyjw5NxxOf1IfN4ZwuuYpJU7eZ9slazBa6Vl9DdXgose86cvtkTNO9hY9gjqpStjsozzcqZb55hqY05BXfJeFUzvOx76qoEzhlccfCofuznqoqzw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Uh9UlnLP; arc=fail smtp.client-ip=52.101.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x9MPkP+5NgzjYN4c/mQUwdT59iXTa/hHxlxAST8PdEWJClwaSOIlc+i+ngMPgwKTpyvG1tPiU/oP70gRXu7Z91mjDbkE+aIbQTV4V2qG28uFttW1eoiAKBBlnQrFWBEt37Oq//0LxRq33aPY/vPrqvIhbNEa7Ou8zrwdU3jsA/Y8xYmUuGoMz3BbLQ+ZnlOxpGzQu6lhAk9AnFxXtYiVXS9VCC7FQuRyCn/LmTwDaEOhx5Y5Hfr/8SStkdYSBPmB8qOQ59YMsyTY9EoSulTiX1CR+JHWzHarbU7Ko5xlRr253iIpnN5qdOUKcQMOVMa8SIHkJQbpXBwd4mcck66e3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v1At1qRQ966YIkNvxAD3/Z/+dP+7bqsMTYhaI6lzAXU=;
- b=rth/G6KIJQmAtDmjhnmc/d4DOqOTcorpyB4MVWlDl9TNZ1EORWk/aHMytm8RoCO+u7J9qfFtyj+M89PwfeAcQYZF3SCaB6MFgWxVJgSxtCkxtYz49Zg0MxuOk4gLVo4OzviVTisv5PnAx0p9ypHGMD87YSekXyFNFkADRsHSKiYX7xP+ApM/ez5frXiUEdKSXQ7w6ZbFWGF1AsQHFF00RJWGueuaG/4ibhJjT0Q9mnELSGby/G4pBzWCfjU2uKBRBU13beaXMO5xMA8G8sBDmN+aG1w5MFXf5JjhPmVUfDuvBBrfI3FV6P0B5OfdxCb56j9TIaSROZOQifc1J3W9PA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v1At1qRQ966YIkNvxAD3/Z/+dP+7bqsMTYhaI6lzAXU=;
- b=Uh9UlnLPnzGNyXyCQBUBHkElNOoQHfbZvAwDdhD3BpL6c+j5chGzM48/PVP09SqwqRqucHetXFH7ToFpijfa3MFh4yimuvRJDzBKpwauhqEYGZM/C6KPEuwzde3xXjjnZxgLFR55gM8h5Gm50+JNgrYvQmodt7AaqMwKS7UJVtg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB8460.eurprd04.prod.outlook.com (2603:10a6:102:1db::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
- 2024 22:44:17 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
- 22:44:16 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Jason Liu <jason.hui.liu@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] input: bbnsm_pwrkey: Fix missed key press after suspend
-Date: Fri, 12 Jul 2024 18:43:51 -0400
-Message-Id: <20240712224352.82190-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0332.namprd03.prod.outlook.com
- (2603:10b6:a03:39c::7) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE161BDC3;
+	Fri, 12 Jul 2024 22:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720824267; cv=none; b=oXxWHBrdZiMgqrzdh0vtZO4mzMuqQXwYpMzV+lcWXjIq8/30aYsQFGOTRfaNUVGQYM1rZLkew1kTQeNkuzDqpN7rtSV47628/UDDWVN5iB8lL3xnEqxYvPQcyuMs0GxKdFLlMB5gST2wQ1GGKVxxCePmTfJb9n5J/3ubyoZcOho=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720824267; c=relaxed/simple;
+	bh=NIGdh/kMaF+lvONdNDcKSTqVCmA3Hf1AZlPWWBHP8nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=CJdsEYaVvILCwUNILnieWNOdhsygymVVXHWg7OgWEXo8FWnaVBr+vOzeVWDSTsmiGfzQZGwcKHK+XAUg4g32wg9prc7KXdq+AeTg2JDxYaQ++6bWUz0IeecuwlXv4azec1rKEpP9IKmMyO/KEYjqfPpbjZFCIRB+lD1VL7zK9MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLORCvSP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2CD8C32782;
+	Fri, 12 Jul 2024 22:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720824267;
+	bh=NIGdh/kMaF+lvONdNDcKSTqVCmA3Hf1AZlPWWBHP8nc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=fLORCvSPIfEUSx8ljluhidKnvRkwOx1+BEHl80fkzgizYnAKeooZJEWvA1fQyJnzc
+	 kQl3lNIDDP0fdd1SD/VPZqruHbS/GFoGQl0g0nnthdxK8kJzgd7ixyAsjUe1955e3S
+	 EKyfIM3Bv8mIGMd8NHsfrUcDpAsdrK5l31pBgylWNpArxSGwRoOdLRnLjnAuJckNER
+	 6tT1HZWDdhkqplnlq8lTdomMpqPHbjXhdyH/CaDqzlE47eYeo5cjYKATEm9QXYTGkc
+	 tL28quyam9JbJOi7016n8bkoqJ+EkgiskLs9tFk3UtKlL2pyQoKJoleiCM3huYdTqD
+	 Kj0wCCDG2pLxw==
+Date: Fri, 12 Jul 2024 17:44:25 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: ngn <ngn@ngn.tf>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: shpchp: Remove hpc_ops
+Message-ID: <20240712224425.GA351076@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8460:EE_
-X-MS-Office365-Filtering-Correlation-Id: f68bda36-8aa3-432a-d664-08dca2c4292b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0Tjs45ycOomdN7t4g2KoPUnUvvRh5hyTPCt0hs7qbH/P2sUjb01/w0RJZkhi?=
- =?us-ascii?Q?g8o22VRkRX+mZPDg9FYGkMHSSX+mRi7ThSj55wl4drRHbfGPCRpj/tTVrj2q?=
- =?us-ascii?Q?5o5YSFJnBsq2oxSCL/vcCDOwI6ytQYJIaT/U5qVjuZcyrFyWu7dajHF8BYRt?=
- =?us-ascii?Q?Pp5qfflQUfLaegOAJI7aj8FW/1n51o/RWoPrc3IINEKJz6ZX76jAbtmmFjO6?=
- =?us-ascii?Q?gDas930BM/SwcfmvONSipDy3AbsGcaeUFQ9sLVeTzpAjZCtSPXq8CNn1RrUs?=
- =?us-ascii?Q?gQfkivMfmiWLtGgN2d9D1MVasO+Acghp2yeIIq8+4eerb8ckxw3R6uCH0Jwh?=
- =?us-ascii?Q?2gBI+/HwnyGK74PWQsy9tsspOYl4kGxSPmV+JDeVGJUX6GJr2i35diH5jRZj?=
- =?us-ascii?Q?c7KdpcLrIiqPj9KbsxKoqMhAyui0lAuRWgFy7eFNtipGWx7KG4PKBnOPh2VV?=
- =?us-ascii?Q?AktSKQTvhD5MUoovJNtFBoYFxMAaxrMdcgkikcNL8ecttc27/UKT4z4Ujp6q?=
- =?us-ascii?Q?8q6vLGLyl50Nmla/MlpfbH2lbtT5xI3/GP2Dn9g8dPB+iHC7Zhk0AljvH9QJ?=
- =?us-ascii?Q?bisKguMU0Fg44BJ5gzB1u3jnuIxSB+FLtpl1KqF7dsO08GHFTQaWWwcTSc2p?=
- =?us-ascii?Q?4vVtTmRjX5Vgu+pt5r1EnvSEXptjpXE25AIIabQ6Jw4xlsmAs+c1vb19jd8i?=
- =?us-ascii?Q?i/RKBVX8E1c4uDjjlFpxJoAtQa9hHL4NCw0VEtXZeEg+BLL3WXHshLYsXP8j?=
- =?us-ascii?Q?E5uTf+GOFOYzQxQGnk4OZTQenF2S38/E4pA9x2z9zZG6vcGHdjORNKfDbP6T?=
- =?us-ascii?Q?hk90jsL56tP+rRtqe8E/MsojDxYzWapsXsIbH7TX8QiaFE739k2iGMnaeeWE?=
- =?us-ascii?Q?GFsnh9JpaWNYib2PZ+I32pRO7Ill6mhwOdBdJyTdFeduj5d2JxKMYuDY4vkO?=
- =?us-ascii?Q?XMXel5gkNe6Rext8KvDSmFHGfl9/8rBNwNFX/itIJlpS0+fGwrNM4NGJZBJA?=
- =?us-ascii?Q?jkmxAVbYfNIJNlwNmDWFlpLB7m3zPC0W3M8VxiAiRkbDIxPWHxGcaeObjUGY?=
- =?us-ascii?Q?Il09+5wz0XWeTyUVt3wSyTGlWkzD53At7LIM7tR2QSSdR1xhL/IFSyTpLEVS?=
- =?us-ascii?Q?Xi5UjWkO4aQrctFAdwkZnHqJBQ8be5Un+OZEw8+a67jya7DW/+mOq6hgDCV3?=
- =?us-ascii?Q?8sC/04v16OA1jWyZtWcyjN4BuOcWofyLHuB3dsz42rK9wstdb3he3+dHoW17?=
- =?us-ascii?Q?tb4NCMC8ZYGa9NYaDYeNU7+zudaOjDTCu0JhgulEfFpz1zEAX6r9hDX7mEMp?=
- =?us-ascii?Q?ye3tLIWgQB7El8FpOIctzMV2xS9cyODNAAD+H9hq9rJ5++5XC0BbIozJEy6P?=
- =?us-ascii?Q?GdHXsxvU+wQ8WsqVsde3eASag3bflSmprzslnOzK2N5n8jDJZA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HANVajNxGDwBCVXYbSsrC2/dU25n3y7Du0Ckjc0d8yIw8wnCLcqFTdhUnNJ1?=
- =?us-ascii?Q?ytuFpjtViHFobCTRU3Tg/6HkskR5XO0NaCf5gluMY1HLS0JJBykPPU9wDSCO?=
- =?us-ascii?Q?zPdEeidDXnOvkBKSMOD2QAcidwN5YV0NZ4Sz72zGw0WV9r6MWlN6UqYhnj6W?=
- =?us-ascii?Q?EWREFYPCd9gcMR6Xh15AV+gQ8U9tT+M3nfeu1TUuVCG9ZVmVIktYEGGmZ1Fs?=
- =?us-ascii?Q?1C8PhunF0prLqxjdl7gPwQ/+MXF+QkiONJKbYsi43X7QcT5FeWKxNl5kD4M4?=
- =?us-ascii?Q?81JZaL5qG08WaAstVVUj6f388C5LU+Ydl3uURk2QXAstYuBZhk9YDfvbOb5q?=
- =?us-ascii?Q?crbAT5/FYKO3wREK6muNA4zKotUMfuJt+e71jM+Vfxv1pysQ/WEA83MWAOII?=
- =?us-ascii?Q?FBTCsUnBZGL6eeZdB6il3sGw/jNzWEiIU57/6PPstgXsY9NPeuYewKmm2DBX?=
- =?us-ascii?Q?eHiQX4TRy1q0E3Kb68oQrCIlGvMhjfbpvuaRRUfbbLD9jWCh4ht1wf0bQuFu?=
- =?us-ascii?Q?AHS+2E+k6WfFJVnYnswj6hiSS2kMr/vGKP0yiYYDYd8IIYVseHYHPrzYI0wy?=
- =?us-ascii?Q?aWMyJhG5gTKQLwsgU33JeK9POWrPdeY2ao+ti8fvJVWYGOKoW4KngNE1qyj8?=
- =?us-ascii?Q?BNV2zJ7YtMSMPn6Hum/DZ+S/+wZFKGonvg4CfiBqTlJwqo04/Ud8kSZyWCOX?=
- =?us-ascii?Q?1ljeFgXH6An0/XoXAsmKwIR2b07dfnOvi8VUuT0sgZ7o7HIRsIFgyCIk4Obb?=
- =?us-ascii?Q?D6+P6ilZRZDx9/J6tCbAQ75y/OP0e9E+vO+mz36wnH8+zJ3DTEZcHPjzK2E8?=
- =?us-ascii?Q?oO9C2EAEcS478YMT0nk9VAt58tX1G6XXxjuyfpdAoD0o10Sd8/BC6z2/xhUW?=
- =?us-ascii?Q?PCc0jxXCXM7e8Hb/9ZmAvnkqQ5ThOVBOQgms5yFNwTRpVNX4FAEmOnj+o+72?=
- =?us-ascii?Q?l5keMzroHeXtcsfSlmHZfPa5zX8FhZEV+9wkhIj9LqXzs5nPbRvKp6ZU5NQu?=
- =?us-ascii?Q?LA4smGIaDmH+ak9jKyqFaLWEcyRPeBdTFZVpg9YGAabyKpabkHFNBIM/a8l5?=
- =?us-ascii?Q?CwWdmifObpIC/nz9UxDkMgO5ir6bkheopbKbxw8pw5OyF/LIVruwgJj2+5XX?=
- =?us-ascii?Q?axVAu8c+SLvgdBbnywPvkFkQUFnZg4r7guE8YC6maVpEcjNbK3QjfXcuXCen?=
- =?us-ascii?Q?dAsd8OfHhL0yVNTQkNXr7p/Cg425fkjLdw/ppAYXhHEOMT6PeRxGY0ShRG4m?=
- =?us-ascii?Q?2iMiFoPWYH6gXmIYqrW5A1uxfK8KGHeOaUSUqj5i5daeWahehtrufFOuQQhd?=
- =?us-ascii?Q?YyMLkR2LeNRlbM8GKMfXTa1yWDR5f2+0izxvo9NohQpD5BHMnRS9/uHcYumG?=
- =?us-ascii?Q?h2Gj0Cv6xK+a4rshiBUgNZMkJyLTOFslahTrdow/tIVuUP5TzepUn70sYzhR?=
- =?us-ascii?Q?bfHf4Tr5BUPzR3Li4OrYRo9B43e2IOHf9RWZQeFGOethjiOvtMQoj4kqyhAW?=
- =?us-ascii?Q?k6ygPW/3BfxNnSHUbTL+GzPuJn/B7HEcn4uWWUNGFum0Ic/M9NB3i/xyCsRE?=
- =?us-ascii?Q?nJUhWAmLhRlebY2j9ALtjQkkAp5MRr454amLP8k+?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f68bda36-8aa3-432a-d664-08dca2c4292b
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 22:44:16.9181
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Lw8fpq4ujLU6tPp5oTEV4CJEEQvocNMIzHIYPAImye/xmNBJP9QgwHaZWv+JiMe+tkTh0G3VYq+1m0aW6Zw7Wg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8460
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <abb0f57ee513af545be761988fa9ad5ce5703060.1718949042.git.ngn@ngn.tf>
 
-From: Jacky Bai <ping.bai@nxp.com>
+On Fri, Jun 21, 2024 at 09:35:00AM +0300, ngn wrote:
+> fix checpatch warnings and call hpc_ops functions directly, this has been
+> also done in pciehp with commit 82a9e79ef132
 
-Report input event directly on wakeup to ensure no press event is missed
-when resuming from suspend.
+Trivial changes like checkpatch fixes should be in a separate patch
+from substantive things.  This helps make both easier to review.
 
-Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Acked-by: Jason Liu <jason.hui.liu@nxp.com>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- drivers/input/misc/nxp-bbnsm-pwrkey.c | 36 +++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+It *might* be worthwhile to remove hpc_ops, although shpchp is pretty
+old and dusty by now, and it's hard to justify touching things like
+that because the risk of breaking something is relatively high and the
+benefit is relatively low.
 
-diff --git a/drivers/input/misc/nxp-bbnsm-pwrkey.c b/drivers/input/misc/nxp-bbnsm-pwrkey.c
-index 1d99206dd3a8b..9675717ecbdfe 100644
---- a/drivers/input/misc/nxp-bbnsm-pwrkey.c
-+++ b/drivers/input/misc/nxp-bbnsm-pwrkey.c
-@@ -38,6 +38,7 @@ struct bbnsm_pwrkey {
- 	int irq;
- 	int keycode;
- 	int keystate;  /* 1:pressed */
-+	bool suspended;
- 	struct timer_list check_timer;
- 	struct input_dev *input;
- };
-@@ -70,6 +71,7 @@ static irqreturn_t bbnsm_pwrkey_interrupt(int irq, void *dev_id)
- {
- 	struct platform_device *pdev = dev_id;
- 	struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
-+	struct input_dev *input = bbnsm->input;
- 	u32 event;
- 
- 	regmap_read(bbnsm->regmap, BBNSM_EVENTS, &event);
-@@ -81,6 +83,16 @@ static irqreturn_t bbnsm_pwrkey_interrupt(int irq, void *dev_id)
- 	mod_timer(&bbnsm->check_timer,
- 		   jiffies + msecs_to_jiffies(DEBOUNCE_TIME));
- 
-+	/*
-+	 * Directly report key event after resume to make sure key press
-+	 * event is never missed.
-+	 */
-+	if (bbnsm->suspended) {
-+		bbnsm->keystate = 1;
-+		input_event(input, EV_KEY, bbnsm->keycode, 1);
-+		input_sync(input);
-+	}
-+
- 	/* clear PWR OFF */
- 	regmap_write(bbnsm->regmap, BBNSM_EVENTS, BBNSM_BTN_OFF);
- 
-@@ -173,6 +185,29 @@ static int bbnsm_pwrkey_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int __maybe_unused bbnsm_pwrkey_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
-+
-+	bbnsm->suspended = true;
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused bbnsm_pwrkey_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
-+
-+	bbnsm->suspended = false;
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(bbnsm_pwrkey_pm_ops, bbnsm_pwrkey_suspend,
-+		bbnsm_pwrkey_resume);
-+
- static const struct of_device_id bbnsm_pwrkey_ids[] = {
- 	{ .compatible = "nxp,imx93-bbnsm-pwrkey" },
- 	{ /* sentinel */ }
-@@ -182,6 +217,7 @@ MODULE_DEVICE_TABLE(of, bbnsm_pwrkey_ids);
- static struct platform_driver bbnsm_pwrkey_driver = {
- 	.driver = {
- 		.name = "bbnsm_pwrkey",
-+		.pm = &bbnsm_pwrkey_pm_ops,
- 		.of_match_table = bbnsm_pwrkey_ids,
- 	},
- 	.probe = bbnsm_pwrkey_probe,
--- 
-2.34.1
+The fact that shpchp is the only user of hpc_ops does make me a little
+more sympathetic to the idea of removing it, though.
 
+> Signed-off-by: ngn <ngn@ngn.tf>
+> ---
+>  drivers/pci/hotplug/shpchp.h      |  84 ++++++++++++-----------
+>  drivers/pci/hotplug/shpchp_core.c |  20 +++---
+>  drivers/pci/hotplug/shpchp_ctrl.c | 107 ++++++++++++++----------------
+>  drivers/pci/hotplug/shpchp_hpc.c  |  63 ++++++------------
+>  4 files changed, 120 insertions(+), 154 deletions(-)
+> 
+> diff --git a/drivers/pci/hotplug/shpchp.h b/drivers/pci/hotplug/shpchp.h
+> index 3a97f455336e..6931d648b873 100644
+> --- a/drivers/pci/hotplug/shpchp.h
+> +++ b/drivers/pci/hotplug/shpchp.h
+> @@ -48,16 +48,15 @@ do {									\
+>  #define ctrl_dbg(ctrl, format, arg...)					\
+>  	do {								\
+>  		if (shpchp_debug)					\
+> -			pci_printk(KERN_DEBUG, ctrl->pci_dev,		\
+> +			pci_printk(KERN_DEBUG, (ctrl)->pci_dev,		\
+>  					format, ## arg);		\
+>  	} while (0)
+>  #define ctrl_err(ctrl, format, arg...)					\
+> -	pci_err(ctrl->pci_dev, format, ## arg)
+> +	pci_err((ctrl)->pci_dev, format, ## arg)
+>  #define ctrl_info(ctrl, format, arg...)					\
+> -	pci_info(ctrl->pci_dev, format, ## arg)
+> +	pci_info((ctrl)->pci_dev, format, ## arg)
+>  #define ctrl_warn(ctrl, format, arg...)					\
+> -	pci_warn(ctrl->pci_dev, format, ## arg)
+> -
+> +	pci_warn((ctrl)->pci_dev, format, ## arg)
+>  
+>  #define SLOT_NAME_SIZE 10
+>  struct slot {
+> @@ -72,7 +71,6 @@ struct slot {
+>  	u8 latch_save;
+>  	u8 pwr_save;
+>  	struct controller *ctrl;
+> -	const struct hpc_ops *hpc_ops;
+>  	struct hotplug_slot hotplug_slot;
+>  	struct list_head	slot_list;
+>  	struct delayed_work work;	/* work for button event */
+> @@ -94,7 +92,6 @@ struct controller {
+>  	int slot_num_inc;		/* 1 or -1 */
+>  	struct pci_dev *pci_dev;
+>  	struct list_head slot_list;
+> -	const struct hpc_ops *hpc_ops;
+>  	wait_queue_head_t queue;	/* sleep & wake process */
+>  	u8 slot_device_offset;
+>  	u32 pcix_misc2_reg;	/* for amd pogo errata */
+> @@ -175,20 +172,20 @@ static inline const char *slot_name(struct slot *slot)
+>  }
+>  
+>  struct ctrl_reg {
+> -	volatile u32 base_offset;
+> -	volatile u32 slot_avail1;
+> -	volatile u32 slot_avail2;
+> -	volatile u32 slot_config;
+> -	volatile u16 sec_bus_config;
+> -	volatile u8  msi_ctrl;
+> -	volatile u8  prog_interface;
+> -	volatile u16 cmd;
+> -	volatile u16 cmd_status;
+> -	volatile u32 intr_loc;
+> -	volatile u32 serr_loc;
+> -	volatile u32 serr_intr_enable;
+> -	volatile u32 slot1;
+> -} __attribute__ ((packed));
+> +	u32 base_offset;
+> +	u32 slot_avail1;
+> +	u32 slot_avail2;
+> +	u32 slot_config;
+> +	u16 sec_bus_config;
+> +	u8  msi_ctrl;
+> +	u8  prog_interface;
+> +	u16 cmd;
+> +	u16 cmd_status;
+> +	u32 intr_loc;
+> +	u32 serr_loc;
+> +	u32 serr_intr_enable;
+> +	u32 slot1;
+> +} __packed;
+>  
+>  /* offsets to the controller registers based on the above structure layout */
+>  enum ctrl_offsets {
+> @@ -252,18 +249,21 @@ static inline void amd_pogo_errata_restore_misc_reg(struct slot *p_slot)
+>  	u8  rse_set;
+>  
+>  	/* write-one-to-clear Bridge_Errors[ PERR_OBSERVED ] */
+> -	pci_read_config_dword(p_slot->ctrl->pci_dev, PCIX_MISC_BRIDGE_ERRORS_OFFSET, &pcix_bridge_errors_reg);
+> +	pci_read_config_dword(p_slot->ctrl->pci_dev, PCIX_MISC_BRIDGE_ERRORS_OFFSET,
+> +			      &pcix_bridge_errors_reg);
+>  	perr_set = pcix_bridge_errors_reg & PERR_OBSERVED_MASK;
+>  	if (perr_set) {
+>  		ctrl_dbg(p_slot->ctrl,
+>  			 "Bridge_Errors[ PERR_OBSERVED = %08X] (W1C)\n",
+>  			 perr_set);
+>  
+> -		pci_write_config_dword(p_slot->ctrl->pci_dev, PCIX_MISC_BRIDGE_ERRORS_OFFSET, perr_set);
+> +		pci_write_config_dword(p_slot->ctrl->pci_dev, PCIX_MISC_BRIDGE_ERRORS_OFFSET,
+> +				       perr_set);
+>  	}
+>  
+>  	/* write-one-to-clear Memory_Base_Limit[ RSE ] */
+> -	pci_read_config_dword(p_slot->ctrl->pci_dev, PCIX_MEM_BASE_LIMIT_OFFSET, &pcix_mem_base_reg);
+> +	pci_read_config_dword(p_slot->ctrl->pci_dev, PCIX_MEM_BASE_LIMIT_OFFSET,
+> +			      &pcix_mem_base_reg);
+>  	rse_set = pcix_mem_base_reg & RSE_MASK;
+>  	if (rse_set) {
+>  		ctrl_dbg(p_slot->ctrl, "Memory_Base_Limit[ RSE ] (W1C)\n");
+> @@ -300,24 +300,22 @@ static inline void amd_pogo_errata_restore_misc_reg(struct slot *p_slot)
+>  	pci_write_config_dword(p_slot->ctrl->pci_dev, PCIX_MISCII_OFFSET, pcix_misc2_temp);
+>  }
+>  
+> -struct hpc_ops {
+> -	int (*power_on_slot)(struct slot *slot);
+> -	int (*slot_enable)(struct slot *slot);
+> -	int (*slot_disable)(struct slot *slot);
+> -	int (*set_bus_speed_mode)(struct slot *slot, enum pci_bus_speed speed);
+> -	int (*get_power_status)(struct slot *slot, u8 *status);
+> -	int (*get_attention_status)(struct slot *slot, u8 *status);
+> -	int (*set_attention_status)(struct slot *slot, u8 status);
+> -	int (*get_latch_status)(struct slot *slot, u8 *status);
+> -	int (*get_adapter_status)(struct slot *slot, u8 *status);
+> -	int (*get_adapter_speed)(struct slot *slot, enum pci_bus_speed *speed);
+> -	int (*get_prog_int)(struct slot *slot, u8 *prog_int);
+> -	int (*query_power_fault)(struct slot *slot);
+> -	void (*green_led_on)(struct slot *slot);
+> -	void (*green_led_off)(struct slot *slot);
+> -	void (*green_led_blink)(struct slot *slot);
+> -	void (*release_ctlr)(struct controller *ctrl);
+> -	int (*check_cmd_status)(struct controller *ctrl);
+> -};
+> +int shpchp_power_on_slot(struct slot *slot);
+> +int shpchp_slot_enable(struct slot *slot);
+> +int shpchp_slot_disable(struct slot *slot);
+> +int shpchp_set_bus_speed_mode(struct slot *slot, enum pci_bus_speed speed);
+> +int shpchp_get_power_status(struct slot *slot, u8 *status);
+> +int shpchp_get_attention_status(struct slot *slot, u8 *status);
+> +int shpchp_set_attention_status(struct slot *slot, u8 status);
+> +int shpchp_get_latch_status(struct slot *slot, u8 *status);
+> +int shpchp_get_adapter_status(struct slot *slot, u8 *status);
+> +int shpchp_get_adapter_speed(struct slot *slot, enum pci_bus_speed *speed);
+> +int shpchp_get_prog_int(struct slot *slot, u8 *prog_int);
+> +int shpchp_query_power_fault(struct slot *slot);
+> +void shpchp_green_led_on(struct slot *slot);
+> +void shpchp_green_led_off(struct slot *slot);
+> +void shpchp_green_led_blink(struct slot *slot);
+> +void shpchp_release_ctlr(struct controller *ctrl);
+> +int shpchp_check_cmd_status(struct controller *ctrl);
+>  
+>  #endif				/* _SHPCHP_H */
+> diff --git a/drivers/pci/hotplug/shpchp_core.c b/drivers/pci/hotplug/shpchp_core.c
+> index 56c7795ed890..f9a54a509dab 100644
+> --- a/drivers/pci/hotplug/shpchp_core.c
+> +++ b/drivers/pci/hotplug/shpchp_core.c
+> @@ -81,7 +81,6 @@ static int init_slots(struct controller *ctrl)
+>  		slot->ctrl = ctrl;
+>  		slot->bus = ctrl->pci_dev->subordinate->number;
+>  		slot->device = ctrl->slot_device_offset + i;
+> -		slot->hpc_ops = ctrl->hpc_ops;
+>  		slot->number = ctrl->first_slot + (ctrl->slot_num_inc * i);
+>  
+>  		slot->wq = alloc_workqueue("shpchp-%d", 0, 0, slot->number);
+> @@ -102,7 +101,7 @@ static int init_slots(struct controller *ctrl)
+>  			 slot->bus, slot->device, slot->hp_slot, slot->number,
+>  			 ctrl->slot_device_offset);
+>  		retval = pci_hp_register(hotplug_slot,
+> -				ctrl->pci_dev->subordinate, slot->device, name);
+> +					 ctrl->pci_dev->subordinate, slot->device, name);
+>  		if (retval) {
+>  			ctrl_err(ctrl, "pci_hp_register failed with error %d\n",
+>  				 retval);
+> @@ -150,7 +149,7 @@ static int set_attention_status(struct hotplug_slot *hotplug_slot, u8 status)
+>  		 __func__, slot_name(slot));
+>  
+>  	slot->attention_save = status;
+> -	slot->hpc_ops->set_attention_status(slot, status);
+> +	shpchp_set_attention_status(slot, status);
+>  
+>  	return 0;
+>  }
+> @@ -183,7 +182,7 @@ static int get_power_status(struct hotplug_slot *hotplug_slot, u8 *value)
+>  	ctrl_dbg(slot->ctrl, "%s: physical_slot = %s\n",
+>  		 __func__, slot_name(slot));
+>  
+> -	retval = slot->hpc_ops->get_power_status(slot, value);
+> +	retval = shpchp_get_power_status(slot, value);
+>  	if (retval < 0)
+>  		*value = slot->pwr_save;
+>  
+> @@ -198,7 +197,7 @@ static int get_attention_status(struct hotplug_slot *hotplug_slot, u8 *value)
+>  	ctrl_dbg(slot->ctrl, "%s: physical_slot = %s\n",
+>  		 __func__, slot_name(slot));
+>  
+> -	retval = slot->hpc_ops->get_attention_status(slot, value);
+> +	retval = shpchp_get_attention_status(slot, value);
+>  	if (retval < 0)
+>  		*value = slot->attention_save;
+>  
+> @@ -213,7 +212,7 @@ static int get_latch_status(struct hotplug_slot *hotplug_slot, u8 *value)
+>  	ctrl_dbg(slot->ctrl, "%s: physical_slot = %s\n",
+>  		 __func__, slot_name(slot));
+>  
+> -	retval = slot->hpc_ops->get_latch_status(slot, value);
+> +	retval = shpchp_get_latch_status(slot, value);
+>  	if (retval < 0)
+>  		*value = slot->latch_save;
+>  
+> @@ -228,7 +227,7 @@ static int get_adapter_status(struct hotplug_slot *hotplug_slot, u8 *value)
+>  	ctrl_dbg(slot->ctrl, "%s: physical_slot = %s\n",
+>  		 __func__, slot_name(slot));
+>  
+> -	retval = slot->hpc_ops->get_adapter_status(slot, value);
+> +	retval = shpchp_get_adapter_status(slot, value);
+>  	if (retval < 0)
+>  		*value = slot->presence_save;
+>  
+> @@ -264,7 +263,7 @@ static int shpc_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  
+>  	ctrl = kzalloc(sizeof(*ctrl), GFP_KERNEL);
+>  	if (!ctrl)
+> -		goto err_out_none;
+> +		return -ENODEV;
+>  
+>  	INIT_LIST_HEAD(&ctrl->slot_list);
+>  
+> @@ -293,10 +292,9 @@ static int shpc_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  err_cleanup_slots:
+>  	cleanup_slots(ctrl);
+>  err_out_release_ctlr:
+> -	ctrl->hpc_ops->release_ctlr(ctrl);
+> +	shpchp_release_ctlr(ctrl);
+>  err_out_free_ctrl:
+>  	kfree(ctrl);
+> -err_out_none:
+>  	return -ENODEV;
+>  }
+>  
+> @@ -306,7 +304,7 @@ static void shpc_remove(struct pci_dev *dev)
+>  
+>  	dev->shpc_managed = 0;
+>  	shpchp_remove_ctrl_files(ctrl);
+> -	ctrl->hpc_ops->release_ctlr(ctrl);
+> +	shpchp_release_ctlr(ctrl);
+>  	kfree(ctrl);
+>  }
+>  
+> diff --git a/drivers/pci/hotplug/shpchp_ctrl.c b/drivers/pci/hotplug/shpchp_ctrl.c
+> index 6a6705e0cf17..9e6437e318f5 100644
+> --- a/drivers/pci/hotplug/shpchp_ctrl.c
+> +++ b/drivers/pci/hotplug/shpchp_ctrl.c
+> @@ -51,7 +51,7 @@ u8 shpchp_handle_attention_button(u8 hp_slot, struct controller *ctrl)
+>  	ctrl_dbg(ctrl, "Attention button interrupt received\n");
+>  
+>  	p_slot = shpchp_find_slot(ctrl, hp_slot + ctrl->slot_device_offset);
+> -	p_slot->hpc_ops->get_adapter_status(p_slot, &(p_slot->presence_save));
+> +	shpchp_get_adapter_status(p_slot, &p_slot->presence_save);
+>  
+>  	/*
+>  	 *  Button pressed - See if need to TAKE ACTION!!!
+> @@ -62,7 +62,6 @@ u8 shpchp_handle_attention_button(u8 hp_slot, struct controller *ctrl)
+>  	queue_interrupt_event(p_slot, event_type);
+>  
+>  	return 0;
+> -
+>  }
+>  
+>  u8 shpchp_handle_switch_change(u8 hp_slot, struct controller *ctrl)
+> @@ -75,8 +74,8 @@ u8 shpchp_handle_switch_change(u8 hp_slot, struct controller *ctrl)
+>  	ctrl_dbg(ctrl, "Switch interrupt received\n");
+>  
+>  	p_slot = shpchp_find_slot(ctrl, hp_slot + ctrl->slot_device_offset);
+> -	p_slot->hpc_ops->get_adapter_status(p_slot, &(p_slot->presence_save));
+> -	p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
+> +	shpchp_get_adapter_status(p_slot, &p_slot->presence_save);
+> +	shpchp_get_latch_status(p_slot, &getstatus);
+>  	ctrl_dbg(ctrl, "Card present %x Power status %x\n",
+>  		 p_slot->presence_save, p_slot->pwr_save);
+>  
+> @@ -116,7 +115,7 @@ u8 shpchp_handle_presence_change(u8 hp_slot, struct controller *ctrl)
+>  	/*
+>  	 * Save the presence state
+>  	 */
+> -	p_slot->hpc_ops->get_adapter_status(p_slot, &(p_slot->presence_save));
+> +	shpchp_get_adapter_status(p_slot, &p_slot->presence_save);
+>  	if (p_slot->presence_save) {
+>  		/*
+>  		 * Card Present
+> @@ -148,7 +147,7 @@ u8 shpchp_handle_power_fault(u8 hp_slot, struct controller *ctrl)
+>  
+>  	p_slot = shpchp_find_slot(ctrl, hp_slot + ctrl->slot_device_offset);
+>  
+> -	if (!(p_slot->hpc_ops->query_power_fault(p_slot))) {
+> +	if (!(shpchp_query_power_fault(p_slot))) {
+>  		/*
+>  		 * Power fault Cleared
+>  		 */
+> @@ -173,15 +172,15 @@ u8 shpchp_handle_power_fault(u8 hp_slot, struct controller *ctrl)
+>  }
+>  
+>  /* The following routines constitute the bulk of the
+> -   hotplug controller logic
+> + * hotplug controller logic
+>   */
+>  static int change_bus_speed(struct controller *ctrl, struct slot *p_slot,
+> -		enum pci_bus_speed speed)
+> +			    enum pci_bus_speed speed)
+>  {
+>  	int rc = 0;
+>  
+>  	ctrl_dbg(ctrl, "Change speed to %d\n", speed);
+> -	rc = p_slot->hpc_ops->set_bus_speed_mode(p_slot, speed);
+> +	rc = shpchp_set_bus_speed_mode(p_slot, speed);
+>  	if (rc) {
+>  		ctrl_err(ctrl, "%s: Issue of set bus speed mode command failed\n",
+>  			 __func__);
+> @@ -191,8 +190,8 @@ static int change_bus_speed(struct controller *ctrl, struct slot *p_slot,
+>  }
+>  
+>  static int fix_bus_speed(struct controller *ctrl, struct slot *pslot,
+> -		u8 flag, enum pci_bus_speed asp, enum pci_bus_speed bsp,
+> -		enum pci_bus_speed msp)
+> +			 u8 flag, enum pci_bus_speed asp, enum pci_bus_speed bsp,
+> +			 enum pci_bus_speed msp)
+>  {
+>  	int rc = 0;
+>  
+> @@ -241,14 +240,14 @@ static int board_added(struct slot *p_slot)
+>  		 __func__, p_slot->device, ctrl->slot_device_offset, hp_slot);
+>  
+>  	/* Power on slot without connecting to bus */
+> -	rc = p_slot->hpc_ops->power_on_slot(p_slot);
+> +	rc = shpchp_power_on_slot(p_slot);
+>  	if (rc) {
+>  		ctrl_err(ctrl, "Failed to power on slot\n");
+>  		return -1;
+>  	}
+>  
+> -	if ((ctrl->pci_dev->vendor == 0x8086) && (ctrl->pci_dev->device == 0x0332)) {
+> -		rc = p_slot->hpc_ops->set_bus_speed_mode(p_slot, PCI_SPEED_33MHz);
+> +	if (ctrl->pci_dev->vendor == 0x8086 && ctrl->pci_dev->device == 0x0332) {
+> +		rc = shpchp_set_bus_speed_mode(p_slot, PCI_SPEED_33MHz);
+>  		if (rc) {
+>  			ctrl_err(ctrl, "%s: Issue of set bus speed mode command failed\n",
+>  				 __func__);
+> @@ -256,14 +255,14 @@ static int board_added(struct slot *p_slot)
+>  		}
+>  
+>  		/* turn on board, blink green LED, turn off Amber LED */
+> -		rc = p_slot->hpc_ops->slot_enable(p_slot);
+> +		rc = shpchp_slot_enable(p_slot);
+>  		if (rc) {
+>  			ctrl_err(ctrl, "Issue of Slot Enable command failed\n");
+>  			return rc;
+>  		}
+>  	}
+>  
+> -	rc = p_slot->hpc_ops->get_adapter_speed(p_slot, &asp);
+> +	rc = shpchp_get_adapter_speed(p_slot, &asp);
+>  	if (rc) {
+>  		ctrl_err(ctrl, "Can't get adapter speed or bus mode mismatch\n");
+>  		return WRONG_BUS_FREQUENCY;
+> @@ -285,7 +284,7 @@ static int board_added(struct slot *p_slot)
+>  		return rc;
+>  
+>  	/* turn on board, blink green LED, turn off Amber LED */
+> -	rc = p_slot->hpc_ops->slot_enable(p_slot);
+> +	rc = shpchp_slot_enable(p_slot);
+>  	if (rc) {
+>  		ctrl_err(ctrl, "Issue of Slot Enable command failed\n");
+>  		return rc;
+> @@ -313,13 +312,13 @@ static int board_added(struct slot *p_slot)
+>  	p_slot->is_a_board = 0x01;
+>  	p_slot->pwr_save = 1;
+>  
+> -	p_slot->hpc_ops->green_led_on(p_slot);
+> +	shpchp_green_led_on(p_slot);
+>  
+>  	return 0;
+>  
+>  err_exit:
+>  	/* turn off slot, turn on Amber LED, turn off Green LED */
+> -	rc = p_slot->hpc_ops->slot_disable(p_slot);
+> +	rc = shpchp_slot_disable(p_slot);
+>  	if (rc) {
+>  		ctrl_err(ctrl, "%s: Issue of Slot Disable command failed\n",
+>  			 __func__);
+> @@ -329,7 +328,6 @@ static int board_added(struct slot *p_slot)
+>  	return(rc);
+>  }
+>  
+> -
+>  /**
+>   * remove_board - Turns off slot and LEDs
+>   * @p_slot: target &slot
+> @@ -352,14 +350,14 @@ static int remove_board(struct slot *p_slot)
+>  		p_slot->status = 0x01;
+>  
+>  	/* turn off slot, turn on Amber LED, turn off Green LED */
+> -	rc = p_slot->hpc_ops->slot_disable(p_slot);
+> +	rc = shpchp_slot_disable(p_slot);
+>  	if (rc) {
+>  		ctrl_err(ctrl, "%s: Issue of Slot Disable command failed\n",
+>  			 __func__);
+>  		return rc;
+>  	}
+>  
+> -	rc = p_slot->hpc_ops->set_attention_status(p_slot, 0);
+> +	rc = shpchp_set_attention_status(p_slot, 0);
+>  	if (rc) {
+>  		ctrl_err(ctrl, "Issue of Set Attention command failed\n");
+>  		return rc;
+> @@ -371,7 +369,6 @@ static int remove_board(struct slot *p_slot)
+>  	return 0;
+>  }
+>  
+> -
+>  struct pushbutton_work_info {
+>  	struct slot *p_slot;
+>  	struct work_struct work;
+> @@ -401,7 +398,7 @@ static void shpchp_pushbutton_thread(struct work_struct *work)
+>  	case POWERON_STATE:
+>  		mutex_unlock(&p_slot->lock);
+>  		if (shpchp_enable_slot(p_slot))
+> -			p_slot->hpc_ops->green_led_off(p_slot);
+> +			shpchp_green_led_off(p_slot);
+>  		mutex_lock(&p_slot->lock);
+>  		p_slot->state = STATIC_STATE;
+>  		break;
+> @@ -446,10 +443,10 @@ void shpchp_queue_pushbutton_work(struct work_struct *work)
+>  
+>  static void update_slot_info(struct slot *slot)
+>  {
+> -	slot->hpc_ops->get_power_status(slot, &slot->pwr_save);
+> -	slot->hpc_ops->get_attention_status(slot, &slot->attention_save);
+> -	slot->hpc_ops->get_latch_status(slot, &slot->latch_save);
+> -	slot->hpc_ops->get_adapter_status(slot, &slot->presence_save);
+> +	shpchp_get_power_status(slot, &slot->pwr_save);
+> +	shpchp_get_attention_status(slot, &slot->attention_save);
+> +	shpchp_get_latch_status(slot, &slot->latch_save);
+> +	shpchp_get_adapter_status(slot, &slot->presence_save);
+>  }
+>  
+>  /*
+> @@ -462,7 +459,7 @@ static void handle_button_press_event(struct slot *p_slot)
+>  
+>  	switch (p_slot->state) {
+>  	case STATIC_STATE:
+> -		p_slot->hpc_ops->get_power_status(p_slot, &getstatus);
+> +		shpchp_get_power_status(p_slot, &getstatus);
+>  		if (getstatus) {
+>  			p_slot->state = BLINKINGOFF_STATE;
+>  			ctrl_info(ctrl, "PCI slot #%s - powering off due to button press\n",
+> @@ -473,10 +470,10 @@ static void handle_button_press_event(struct slot *p_slot)
+>  				  slot_name(p_slot));
+>  		}
+>  		/* blink green LED and turn off amber */
+> -		p_slot->hpc_ops->green_led_blink(p_slot);
+> -		p_slot->hpc_ops->set_attention_status(p_slot, 0);
+> +		shpchp_green_led_blink(p_slot);
+> +		shpchp_set_attention_status(p_slot, 0);
+>  
+> -		queue_delayed_work(p_slot->wq, &p_slot->work, 5*HZ);
+> +		queue_delayed_work(p_slot->wq, &p_slot->work, 5 * HZ);
+>  		break;
+>  	case BLINKINGOFF_STATE:
+>  	case BLINKINGON_STATE:
+> @@ -489,10 +486,10 @@ static void handle_button_press_event(struct slot *p_slot)
+>  			  slot_name(p_slot));
+>  		cancel_delayed_work(&p_slot->work);
+>  		if (p_slot->state == BLINKINGOFF_STATE)
+> -			p_slot->hpc_ops->green_led_on(p_slot);
+> +			shpchp_green_led_on(p_slot);
+>  		else
+> -			p_slot->hpc_ops->green_led_off(p_slot);
+> -		p_slot->hpc_ops->set_attention_status(p_slot, 0);
+> +			shpchp_green_led_off(p_slot);
+> +		shpchp_set_attention_status(p_slot, 0);
+>  		ctrl_info(ctrl, "PCI slot #%s - action canceled due to button press\n",
+>  			  slot_name(p_slot));
+>  		p_slot->state = STATIC_STATE;
+> @@ -526,8 +523,8 @@ static void interrupt_event_handler(struct work_struct *work)
+>  		break;
+>  	case INT_POWER_FAULT:
+>  		ctrl_dbg(p_slot->ctrl, "%s: Power fault\n", __func__);
+> -		p_slot->hpc_ops->set_attention_status(p_slot, 1);
+> -		p_slot->hpc_ops->green_led_off(p_slot);
+> +		shpchp_set_attention_status(p_slot, 1);
+> +		shpchp_green_led_off(p_slot);
+>  		break;
+>  	default:
+>  		update_slot_info(p_slot);
+> @@ -538,8 +535,7 @@ static void interrupt_event_handler(struct work_struct *work)
+>  	kfree(info);
+>  }
+>  
+> -
+> -static int shpchp_enable_slot (struct slot *p_slot)
+> +static int shpchp_enable_slot(struct slot *p_slot)
+>  {
+>  	u8 getstatus = 0;
+>  	int rc, retval = -ENODEV;
+> @@ -547,17 +543,17 @@ static int shpchp_enable_slot (struct slot *p_slot)
+>  
+>  	/* Check to see if (latch closed, card present, power off) */
+>  	mutex_lock(&p_slot->ctrl->crit_sect);
+> -	rc = p_slot->hpc_ops->get_adapter_status(p_slot, &getstatus);
+> +	rc = shpchp_get_adapter_status(p_slot, &getstatus);
+>  	if (rc || !getstatus) {
+>  		ctrl_info(ctrl, "No adapter on slot(%s)\n", slot_name(p_slot));
+>  		goto out;
+>  	}
+> -	rc = p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
+> +	rc = shpchp_get_latch_status(p_slot, &getstatus);
+>  	if (rc || getstatus) {
+>  		ctrl_info(ctrl, "Latch open on slot(%s)\n", slot_name(p_slot));
+>  		goto out;
+>  	}
+> -	rc = p_slot->hpc_ops->get_power_status(p_slot, &getstatus);
+> +	rc = shpchp_get_power_status(p_slot, &getstatus);
+>  	if (rc || getstatus) {
+>  		ctrl_info(ctrl, "Already enabled on slot(%s)\n",
+>  			  slot_name(p_slot));
+> @@ -567,26 +563,26 @@ static int shpchp_enable_slot (struct slot *p_slot)
+>  	p_slot->is_a_board = 1;
+>  
+>  	/* We have to save the presence info for these slots */
+> -	p_slot->hpc_ops->get_adapter_status(p_slot, &(p_slot->presence_save));
+> -	p_slot->hpc_ops->get_power_status(p_slot, &(p_slot->pwr_save));
+> +	shpchp_get_adapter_status(p_slot, &p_slot->presence_save);
+> +	shpchp_get_power_status(p_slot, &p_slot->pwr_save);
+>  	ctrl_dbg(ctrl, "%s: p_slot->pwr_save %x\n", __func__, p_slot->pwr_save);
+> -	p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
+> +	shpchp_get_latch_status(p_slot, &getstatus);
+>  
+>  	if ((p_slot->ctrl->pci_dev->vendor == PCI_VENDOR_ID_AMD &&
+> -	     p_slot->ctrl->pci_dev->device == PCI_DEVICE_ID_AMD_POGO_7458)
+> -	     && p_slot->ctrl->num_slots == 1) {
+> +	     p_slot->ctrl->pci_dev->device == PCI_DEVICE_ID_AMD_POGO_7458) &&
+> +	     p_slot->ctrl->num_slots == 1) {
+>  		/* handle AMD POGO errata; this must be done before enable  */
+>  		amd_pogo_errata_save_misc_reg(p_slot);
+>  		retval = board_added(p_slot);
+>  		/* handle AMD POGO errata; this must be done after enable  */
+>  		amd_pogo_errata_restore_misc_reg(p_slot);
+> -	} else
+> +	} else {
+>  		retval = board_added(p_slot);
+> +	}
+>  
+>  	if (retval) {
+> -		p_slot->hpc_ops->get_adapter_status(p_slot,
+> -				&(p_slot->presence_save));
+> -		p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
+> +		shpchp_get_adapter_status(p_slot, &p_slot->presence_save);
+> +		shpchp_get_latch_status(p_slot, &getstatus);
+>  	}
+>  
+>  	update_slot_info(p_slot);
+> @@ -595,8 +591,7 @@ static int shpchp_enable_slot (struct slot *p_slot)
+>  	return retval;
+>  }
+>  
+> -
+> -static int shpchp_disable_slot (struct slot *p_slot)
+> +static int shpchp_disable_slot(struct slot *p_slot)
+>  {
+>  	u8 getstatus = 0;
+>  	int rc, retval = -ENODEV;
+> @@ -608,17 +603,17 @@ static int shpchp_disable_slot (struct slot *p_slot)
+>  	/* Check to see if (latch closed, card present, power on) */
+>  	mutex_lock(&p_slot->ctrl->crit_sect);
+>  
+> -	rc = p_slot->hpc_ops->get_adapter_status(p_slot, &getstatus);
+> +	rc = shpchp_get_adapter_status(p_slot, &getstatus);
+>  	if (rc || !getstatus) {
+>  		ctrl_info(ctrl, "No adapter on slot(%s)\n", slot_name(p_slot));
+>  		goto out;
+>  	}
+> -	rc = p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
+> +	rc = shpchp_get_latch_status(p_slot, &getstatus);
+>  	if (rc || getstatus) {
+>  		ctrl_info(ctrl, "Latch open on slot(%s)\n", slot_name(p_slot));
+>  		goto out;
+>  	}
+> -	rc = p_slot->hpc_ops->get_power_status(p_slot, &getstatus);
+> +	rc = shpchp_get_power_status(p_slot, &getstatus);
+>  	if (rc || !getstatus) {
+>  		ctrl_info(ctrl, "Already disabled on slot(%s)\n",
+>  			  slot_name(p_slot));
+> diff --git a/drivers/pci/hotplug/shpchp_hpc.c b/drivers/pci/hotplug/shpchp_hpc.c
+> index 48e4daefc44a..012b9e3fe5b0 100644
+> --- a/drivers/pci/hotplug/shpchp_hpc.c
+> +++ b/drivers/pci/hotplug/shpchp_hpc.c
+> @@ -167,7 +167,6 @@
+>  
+>  static irqreturn_t shpc_isr(int irq, void *dev_id);
+>  static void start_int_poll_timer(struct controller *ctrl, int sec);
+> -static int hpc_check_cmd_status(struct controller *ctrl);
+>  
+>  static inline u8 shpc_readb(struct controller *ctrl, int reg)
+>  {
+> @@ -317,7 +316,7 @@ static int shpc_write_cmd(struct slot *slot, u8 t_slot, u8 cmd)
+>  	if (retval)
+>  		goto out;
+>  
+> -	cmd_status = hpc_check_cmd_status(slot->ctrl);
+> +	cmd_status = shpchp_check_cmd_status(slot->ctrl);
+>  	if (cmd_status) {
+>  		ctrl_err(ctrl, "Failed to issued command 0x%x (error code = %d)\n",
+>  			 cmd, cmd_status);
+> @@ -328,7 +327,7 @@ static int shpc_write_cmd(struct slot *slot, u8 t_slot, u8 cmd)
+>  	return retval;
+>  }
+>  
+> -static int hpc_check_cmd_status(struct controller *ctrl)
+> +int shpchp_check_cmd_status(struct controller *ctrl)
+>  {
+>  	int retval = 0;
+>  	u16 cmd_status = shpc_readw(ctrl, CMD_STATUS) & 0x000F;
+> @@ -357,7 +356,7 @@ static int hpc_check_cmd_status(struct controller *ctrl)
+>  }
+>  
+>  
+> -static int hpc_get_attention_status(struct slot *slot, u8 *status)
+> +int shpchp_get_attention_status(struct slot *slot, u8 *status)
+>  {
+>  	struct controller *ctrl = slot->ctrl;
+>  	u32 slot_reg = shpc_readl(ctrl, SLOT_REG(slot->hp_slot));
+> @@ -381,7 +380,7 @@ static int hpc_get_attention_status(struct slot *slot, u8 *status)
+>  	return 0;
+>  }
+>  
+> -static int hpc_get_power_status(struct slot *slot, u8 *status)
+> +int shpchp_get_power_status(struct slot *slot, u8 *status)
+>  {
+>  	struct controller *ctrl = slot->ctrl;
+>  	u32 slot_reg = shpc_readl(ctrl, SLOT_REG(slot->hp_slot));
+> @@ -406,7 +405,7 @@ static int hpc_get_power_status(struct slot *slot, u8 *status)
+>  }
+>  
+>  
+> -static int hpc_get_latch_status(struct slot *slot, u8 *status)
+> +int shpchp_get_latch_status(struct slot *slot, u8 *status)
+>  {
+>  	struct controller *ctrl = slot->ctrl;
+>  	u32 slot_reg = shpc_readl(ctrl, SLOT_REG(slot->hp_slot));
+> @@ -416,7 +415,7 @@ static int hpc_get_latch_status(struct slot *slot, u8 *status)
+>  	return 0;
+>  }
+>  
+> -static int hpc_get_adapter_status(struct slot *slot, u8 *status)
+> +int shpchp_get_adapter_status(struct slot *slot, u8 *status)
+>  {
+>  	struct controller *ctrl = slot->ctrl;
+>  	u32 slot_reg = shpc_readl(ctrl, SLOT_REG(slot->hp_slot));
+> @@ -427,7 +426,7 @@ static int hpc_get_adapter_status(struct slot *slot, u8 *status)
+>  	return 0;
+>  }
+>  
+> -static int hpc_get_prog_int(struct slot *slot, u8 *prog_int)
+> +int shpchp_get_prog_int(struct slot *slot, u8 *prog_int)
+>  {
+>  	struct controller *ctrl = slot->ctrl;
+>  
+> @@ -436,7 +435,7 @@ static int hpc_get_prog_int(struct slot *slot, u8 *prog_int)
+>  	return 0;
+>  }
+>  
+> -static int hpc_get_adapter_speed(struct slot *slot, enum pci_bus_speed *value)
+> +int shpchp_get_adapter_speed(struct slot *slot, enum pci_bus_speed *value)
+>  {
+>  	int retval = 0;
+>  	struct controller *ctrl = slot->ctrl;
+> @@ -444,7 +443,7 @@ static int hpc_get_adapter_speed(struct slot *slot, enum pci_bus_speed *value)
+>  	u8 m66_cap  = !!(slot_reg & MHZ66_CAP);
+>  	u8 pi, pcix_cap;
+>  
+> -	retval = hpc_get_prog_int(slot, &pi);
+> +	retval = shpchp_get_prog_int(slot, &pi);
+>  	if (retval)
+>  		return retval;
+>  
+> @@ -489,7 +488,7 @@ static int hpc_get_adapter_speed(struct slot *slot, enum pci_bus_speed *value)
+>  	return retval;
+>  }
+>  
+> -static int hpc_query_power_fault(struct slot *slot)
+> +int shpchp_query_power_fault(struct slot *slot)
+>  {
+>  	struct controller *ctrl = slot->ctrl;
+>  	u32 slot_reg = shpc_readl(ctrl, SLOT_REG(slot->hp_slot));
+> @@ -498,7 +497,7 @@ static int hpc_query_power_fault(struct slot *slot)
+>  	return !(slot_reg & POWER_FAULT);
+>  }
+>  
+> -static int hpc_set_attention_status(struct slot *slot, u8 value)
+> +int shpchp_set_attention_status(struct slot *slot, u8 value)
+>  {
+>  	u8 slot_cmd = 0;
+>  
+> @@ -520,22 +519,22 @@ static int hpc_set_attention_status(struct slot *slot, u8 value)
+>  }
+>  
+>  
+> -static void hpc_set_green_led_on(struct slot *slot)
+> +void shpchp_green_led_on(struct slot *slot)
+>  {
+>  	shpc_write_cmd(slot, slot->hp_slot, SET_PWR_ON);
+>  }
+>  
+> -static void hpc_set_green_led_off(struct slot *slot)
+> +void shpchp_green_led_off(struct slot *slot)
+>  {
+>  	shpc_write_cmd(slot, slot->hp_slot, SET_PWR_OFF);
+>  }
+>  
+> -static void hpc_set_green_led_blink(struct slot *slot)
+> +void shpchp_green_led_blink(struct slot *slot)
+>  {
+>  	shpc_write_cmd(slot, slot->hp_slot, SET_PWR_BLINK);
+>  }
+>  
+> -static void hpc_release_ctlr(struct controller *ctrl)
+> +void shpchp_release_ctlr(struct controller *ctrl)
+>  {
+>  	int i;
+>  	u32 slot_reg, serr_int;
+> @@ -575,7 +574,7 @@ static void hpc_release_ctlr(struct controller *ctrl)
+>  	release_mem_region(ctrl->mmio_base, ctrl->mmio_size);
+>  }
+>  
+> -static int hpc_power_on_slot(struct slot *slot)
+> +int shpchp_power_on_slot(struct slot *slot)
+>  {
+>  	int retval;
+>  
+> @@ -586,7 +585,7 @@ static int hpc_power_on_slot(struct slot *slot)
+>  	return retval;
+>  }
+>  
+> -static int hpc_slot_enable(struct slot *slot)
+> +int shpchp_slot_enable(struct slot *slot)
+>  {
+>  	int retval;
+>  
+> @@ -599,7 +598,7 @@ static int hpc_slot_enable(struct slot *slot)
+>  	return retval;
+>  }
+>  
+> -static int hpc_slot_disable(struct slot *slot)
+> +int shpchp_slot_disable(struct slot *slot)
+>  {
+>  	int retval;
+>  
+> @@ -681,7 +680,7 @@ static int shpc_get_cur_bus_speed(struct controller *ctrl)
+>  }
+>  
+>  
+> -static int hpc_set_bus_speed_mode(struct slot *slot, enum pci_bus_speed value)
+> +int shpchp_set_bus_speed_mode(struct slot *slot, enum pci_bus_speed value)
+>  {
+>  	int retval;
+>  	struct controller *ctrl = slot->ctrl;
+> @@ -871,28 +870,6 @@ static int shpc_get_max_bus_speed(struct controller *ctrl)
+>  	return retval;
+>  }
+>  
+> -static const struct hpc_ops shpchp_hpc_ops = {
+> -	.power_on_slot			= hpc_power_on_slot,
+> -	.slot_enable			= hpc_slot_enable,
+> -	.slot_disable			= hpc_slot_disable,
+> -	.set_bus_speed_mode		= hpc_set_bus_speed_mode,
+> -	.set_attention_status	= hpc_set_attention_status,
+> -	.get_power_status		= hpc_get_power_status,
+> -	.get_attention_status	= hpc_get_attention_status,
+> -	.get_latch_status		= hpc_get_latch_status,
+> -	.get_adapter_status		= hpc_get_adapter_status,
+> -
+> -	.get_adapter_speed		= hpc_get_adapter_speed,
+> -	.get_prog_int			= hpc_get_prog_int,
+> -
+> -	.query_power_fault		= hpc_query_power_fault,
+> -	.green_led_on			= hpc_set_green_led_on,
+> -	.green_led_off			= hpc_set_green_led_off,
+> -	.green_led_blink		= hpc_set_green_led_blink,
+> -
+> -	.release_ctlr			= hpc_release_ctlr,
+> -};
+> -
+>  int shpc_init(struct controller *ctrl, struct pci_dev *pdev)
+>  {
+>  	int rc = -1, num_slots = 0;
+> @@ -978,8 +955,6 @@ int shpc_init(struct controller *ctrl, struct pci_dev *pdev)
+>  	/* Setup wait queue */
+>  	init_waitqueue_head(&ctrl->queue);
+>  
+> -	ctrl->hpc_ops = &shpchp_hpc_ops;
+> -
+>  	/* Return PCI Controller Info */
+>  	slot_config = shpc_readl(ctrl, SLOT_CONFIG);
+>  	ctrl->slot_device_offset = (slot_config & FIRST_DEV_NUM) >> 8;
+> -- 
+> 2.45.1
+> 
 
