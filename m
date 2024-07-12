@@ -1,185 +1,309 @@
-Return-Path: <linux-kernel+bounces-250804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD1F92FD04
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:56:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9D292FD09
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7A51F24238
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0081628488C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D5E172BC8;
-	Fri, 12 Jul 2024 14:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8473172BD6;
+	Fri, 12 Jul 2024 14:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T6f2aYu9"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ds9qYosA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203441E4A9
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7BA16EBEA
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720796197; cv=none; b=kXB/7odchksu2LGYXCg86bgeNIa9EOR98R45L6CSCzIwHiF+vZxfw/Ih5QWcXP3+6MMP3cQMP0K5DaTpkgFdSRlWHGXtePAOHSt3enRbGGTMvR4HPfE1YkVYO8PLWE+ATh3+Hmoffk6vvSxWHeE1JYmrJAFq/UXGAFPajTL7p3E=
+	t=1720796310; cv=none; b=Raw15D5s9KtO0hm3I3oPmiYPhOe8EOKRGkqpXsW45SEOgqAytDgv6ND2Za+ifkbzZUldE/j4Aakjxxc8heSgQ9CRZylzR/vQ/pvO9l2qDzimePBaCUhoaZDZYFhOlVtONRDSHksikQzYz0fecKyRHJIDYoYPQQW8FoxXqwOPEfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720796197; c=relaxed/simple;
-	bh=SSKRtsXyzHZFJ2vEEJZxayCvLBN10jSdkeQ4SPgwQyc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XD4R2Irq7uBy4CIBrpDuZX9Zby3VTjEramttybIKIiU7wzpRMfYnxHjjvpJUr4d/e7FGIleGLbIySppyysOKkuOaTfdBz0Fl+8BemaP92lpoZMydfDTSTzvq/2s/nKGaZUXnjimhYg9Ujtz+Y7mqNNcWc50LpgYJUKSpb7GLzVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T6f2aYu9; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e9fe05354so3052703e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720796194; x=1721400994; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i7PJER1WcNMLVoA4+jwbRI3bEuqBAe5uHPV+6MR3WXI=;
-        b=T6f2aYu9RviWKPb2+dVH0v4WygtLep6m4svNThn/T3ggMHCJI0t9REfbF0Xu/5F/II
-         i9Ek3Bl7/KbUBW+PCvOgQv5noEeYNIE5bPldkaPJ4SqjAw95XupR1PRdlwGBiYHW0eso
-         0wpSCj+FlM6iooed1xNOb0LOOoPo6KboLY016pex67kAEGMaTJ1+w4UTu9i1T1rsRx8Q
-         P4/sGeoY49314TZTg65pizG2mJLlHlKAfxbMQiDjOoeoyUGwFINDJ0/HIH/39muVtUBP
-         coBwrVoB5j12U0UoYawkwelAVnv/9w+FLtSgXoYHksw+kMOuVwTD4bmVY/1iQXcvCsXL
-         a77g==
+	s=arc-20240116; t=1720796310; c=relaxed/simple;
+	bh=QAQL9WA5yryImtMgoZke+4Qk2yO3SJugkz5uM/GF3iU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MjRGMG+Z5vdYCXUGlMeolMNGYFXuQy3nGOdEPgr+JnlNdLcCpkR/Lo2TgKMJikdYur86CSk07vRg+FxnK08aVg55S64EtJI2Z1aBVVei4o/ZKsvF/emJ5t9PcHqYR6axGNdq94mqnUWTqyPpbmKzfSdfwXZ7pyr6lBn4J4f2ynY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ds9qYosA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720796307;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ooUnRT5bFlp/EtV77Ea4i/3nkK3DE6nGkAg+V4vLiBc=;
+	b=ds9qYosAIJlesWGyfBR75UHYKEN7EG4K+PDfyQSiTLkuAvvfdVsKPVOvUrzKfce9Hl1y0a
+	3fIVw52Z0DnFAL3nPO7IQiWprmfOXbH0YoOY0v4/EGv7D6C6jxEL8I9WH1pF3yZaF5W0pg
+	Nme5DvnMJlhxbDK217wPjzX2tQrws64=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-642-2CTtdpGmPeWvjn7LIgyMSA-1; Fri, 12 Jul 2024 10:58:25 -0400
+X-MC-Unique: 2CTtdpGmPeWvjn7LIgyMSA-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a77e044ff17so160370066b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:58:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720796194; x=1721400994;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=i7PJER1WcNMLVoA4+jwbRI3bEuqBAe5uHPV+6MR3WXI=;
-        b=jWYPcYZCFDL8WB8kaXO4SEJ0iZ5q10SvcqcCTf34Zf3A1po0nEVN9PRjDVjvO7vaG/
-         OuYAK0ITV8h5BMU2z8Xo+DKovUhUJdHrelYBjMiv8T+CkAPVzNaNArYNiLfxVjMFmKHX
-         6mLV6JVuTgCfREDmnL6pi8CFbqs5cOEBuA1dkvl5UNHY4B6N3qLYRT+e3bBKZitxRRhy
-         nSBqmHbZjAtLbFybeuxKktM02HOBR0fuJ5yvLqZ8LIdopQyoYRF250RTGfw9y+AGWtTu
-         p1nitalOzAVzua1/ODnNfDwQcnQGQ4s22iAS+bm7fNEMf5yo0r+wtkAA+m4OTC0Pjrx7
-         OeyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTygiY6F1jIzWPHAFya9g864K0iRtv1mDfT3IROa9uPB/3W3flvvgwZ9BpbqaNnNGTKD0VsvKZASOnTELZUJJcvhBi4+sBhATf9Y4y
-X-Gm-Message-State: AOJu0Yx5bEFH3rPxWCQjND4IUhJA86FIH1bIMvInRHE6N2zNn0jNsc8t
-	cr1/XU8NQFbVPALQNoGwGPX7LCwheaOv8oxBt8gJ4measAjyzMS3amMiH054eho=
-X-Google-Smtp-Source: AGHT+IFKsQa4tj4EnMtXSYCImi7RYxWXOxCwTzx3qALEfPlt1OtJI1helQ394X7LtJ9DSijPFxVFiQ==
-X-Received: by 2002:a05:6512:3b20:b0:52c:adc4:137c with SMTP id 2adb3069b0e04-52eb99949a2mr8484666e87.20.1720796193960;
-        Fri, 12 Jul 2024 07:56:33 -0700 (PDT)
-Received: from ?IPV6:2a0d:e487:123f:f92c:4c8f:b8cc:9804:975e? ([2a0d:e487:123f:f92c:4c8f:b8cc:9804:975e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f27846bsm25959965e9.25.2024.07.12.07.56.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 07:56:33 -0700 (PDT)
-Message-ID: <4f3b24d6-9638-49d0-8308-00da09c7ed76@linaro.org>
-Date: Fri, 12 Jul 2024 16:56:30 +0200
+        d=1e100.net; s=20230601; t=1720796305; x=1721401105;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ooUnRT5bFlp/EtV77Ea4i/3nkK3DE6nGkAg+V4vLiBc=;
+        b=HvkpE0TEetKmW22Lsb07zGfPgPKJ3N3OD3bu75AoaekOEG5/g8Cafvnf57QZnE/Bn+
+         YZJKt1oDKp/4QwFGPx7/arge5XNlSxAt7J/bu+Yr/FI+VSSlAc1oiROvbO29M/PI6mNc
+         +cmrxXNGa4WXspWmB2bRBXV6+/mOE3TdxrqF39Sy8v+Baiv2yllpDWoql1rYKotz4ta2
+         8wpjJfw7LODbgdPPy6QBGO4qMxYp0YrmWMiVUhrBs6YHP+IajZMTgYt4LOLQey4Fa/DA
+         H4eZMhORXqCNZ1g9IVd/pGam1H2HDEU/jx1YjT2sd5hjgzj3UMePrA0veKOrgdZCaxIz
+         9bpw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcdN+xc5FHWQHJBqGpmTZsSsLkFIT8lOxXfnv8mn/pzYkHLX0HOevO8lVa9EmBfRuHqNw+igDg3H2xi15j155uGevC9V/Ni0H3zpRz
+X-Gm-Message-State: AOJu0YwrDm3qtabtp5AqtuatMLPqqIA3WkZIV0QaDLudK9LAHD0qMXcB
+	xIBFM6W1IIkaApoxj3+T31Qsg2tp/AxRy29JWvLvSnt9BfKE+yK+KvqdM+NLlYkuHhy/rFh2o87
+	MR4KyMnHxQEuHVi47cmT0xuLaSsH9eiHwKR/rETVpKNMGCJsVO1CTWnN6WLZpfQ==
+X-Received: by 2002:a17:907:7808:b0:a6f:b67d:959e with SMTP id a640c23a62f3a-a780b87f058mr736690266b.53.1720796304771;
+        Fri, 12 Jul 2024 07:58:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFnyf7vZp/+lmun6GiXaP7igj1JGgPEpX7RNNIRIT8jvy/pkdTitkWwVEFBx3utcpdug494jA==
+X-Received: by 2002:a17:907:7808:b0:a6f:b67d:959e with SMTP id a640c23a62f3a-a780b87f058mr736688666b.53.1720796304159;
+        Fri, 12 Jul 2024 07:58:24 -0700 (PDT)
+Received: from sgarzare-redhat (host-82-57-51-153.retail.telecomitalia.it. [82.57.51.153])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff24esm352434366b.131.2024.07.12.07.58.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 07:58:23 -0700 (PDT)
+Date: Fri, 12 Jul 2024 16:58:20 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: luigi.leonardi@outlook.com
+Cc: Stefan Hajnoczi <stefanha@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Marco Pinna <marco.pinn95@gmail.com>
+Subject: Re: [PATCH net-next v3 2/2] vsock/virtio: avoid queuing packets when
+ work queue is empty
+Message-ID: <4ou6pj632vwst652fcnfiz4hklncc6g4djel5byabdb3hpyap2@ebxpk7ovewv3>
+References: <20240711-pinna-v3-0-697d4164fe80@outlook.com>
+ <20240711-pinna-v3-2-697d4164fe80@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v1 4/4] drm/panel: ili9806e: Break some CMDS into helper
- functions
-To: Doug Anderson <dianders@chromium.org>,
- cong yang <yangcong5@huaqin.corp-partner.google.com>
-Cc: Michael Walle <mwalle@kernel.org>, quic_jesszhan@quicinc.com,
- linus.walleij@linaro.org, airlied@gmail.com, dmitry.baryshkov@linaro.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240710084715.1119935-1-yangcong5@huaqin.corp-partner.google.com>
- <20240710084715.1119935-5-yangcong5@huaqin.corp-partner.google.com>
- <D2LQJROQYIY3.2Q88EXS8HUDLQ@kernel.org>
- <CAD=FV=WAosZPSKdpwR6pjOmiy4hih=jXaMg2guuVgmc+qj-Csw@mail.gmail.com>
- <D2M42ODWQPAU.I0BMEOLKUP29@kernel.org>
- <CAHwB_NJ+YEMoL18Sr9HFmTVH_ErDztyF7vxxPFAE0Y2ta3dO0A@mail.gmail.com>
- <CAD=FV=VNx5qEyWDvVz6AVDryqvw09tkYRYMjbFuUQS4Wvyok6Q@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAD=FV=VNx5qEyWDvVz6AVDryqvw09tkYRYMjbFuUQS4Wvyok6Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240711-pinna-v3-2-697d4164fe80@outlook.com>
 
-On 11/07/2024 21:36, Doug Anderson wrote:
-> Hi,
-> 
-> On Wed, Jul 10, 2024 at 6:09 PM cong yang
-> <yangcong5@huaqin.corp-partner.google.com> wrote:
->>
->> Hi,
->>
->> Michael Walle <mwalle@kernel.org> 于2024年7月11日周四 03:38写道：
->>>
->>> On Wed Jul 10, 2024 at 9:12 PM CEST, Doug Anderson wrote:
->>>> Hi,
->>>>
->>>> On Wed, Jul 10, 2024 at 2:02 AM Michael Walle <mwalle@kernel.org> wrote:
->>>>>
->>>>> On Wed Jul 10, 2024 at 10:47 AM CEST, Cong Yang wrote:
->>>>>> Break select page cmds into helper function.
->>>>>
->>>>> Why though? I don't find that anything easier to read. In fact, I
->>>>> deliberately chose not to factor that out into a function. It's just
->>>>> a sequence of magic commands, taken straight from the datasheet. So,
->>>>> I'd like to keep it that way.
->>>>
->>>> The consensus of previous discussion on the lists was that folks
->>>> agreed that we should, where possible, make it more obvious what these
->>>> magic sequences of commands were doing. IMO separating out the page
->>>> switch command helps. Certainly I'm always happy to hear other
->>>> opinions, though.
->>>
->>> Fair enough, but in that case, one should take the datasheet (which
->>> you can find online) and replace all the magic numbers with the
->>> correct command names from it. E.g. 0xff is the ENEXTC register. To
->>> be clear, I'm not just talking about the "switch page command".
->>>
->>> As patch stands, I don't see much value, TBH. On the contrary, you
->>> make it harder to compare it with the Ortustech panel datasheet.
->>>
->>> just my 2c,
->>> -michael
->>
->> If all drivers replace all the magic numbers with the correct command names,
->> it will be a huge amount of work (assuming that the datasheet can be found).
->>   I am afraid I don't have enough time to complete it.  Thanks.
-> 
-> Makes sense. I'd be interested in hearing the opinion of others in the
-> DRM community about whether they'd prefer to land something long this
-> patch as-is or drop it.
+On Thu, Jul 11, 2024 at 04:58:47PM GMT, Luigi Leonardi via B4 Relay wrote:
+>From: Luigi Leonardi <luigi.leonardi@outlook.com>
+>
+>Introduce an optimization in virtio_transport_send_pkt:
+>when the work queue (send_pkt_queue) is empty the packet is
 
-I don't have a strong opinion, but I think only changing the switch
-page operations doesn't make a lot of sense by itself.
+Note: send_pkt_queue is just a queue of sk_buff, is not really a work 
+queue.
 
-Having a much larger register coverage would be preferred.
+>put directly in the virtqueue increasing the throughput.
 
-Neil
+Why?
 
-> 
-> -Doug
+I'd write something like this, but feel free to change it:
+
+When the driver needs to send new packets to the device, it always
+queues the new sk_buffs into an intermediate queue (send_pkt_queue)
+and schedules a worker (send_pkt_work) to then queue them into the
+virtqueue exposed to the device.
+
+This increases the chance of batching, but also introduces a lot of
+latency into the communication. So we can optimize this path by
+adding a fast path to be taken when there is no element in the
+intermediate queue, there is space available in the virtqueue,
+and no other process that is sending packets (tx_lock held).
+
+
+>
+>In the following benchmark (pingpong mode) the host sends
+
+"fio benchmark"
+
+>a payload to the guest and waits for the same payload back.
+>
+>All vCPUs pinned individually to pCPUs.
+>vhost process pinned to a pCPU
+>fio process pinned both inside the host and the guest system.
+>
+>Host CPU: Intel i7-10700KF CPU @ 3.80GHz
+>Tool: Fio version 3.37-56
+>Env: Phys host + L1 Guest
+>Runtime-per-test: 50s
+>Mode: pingpong (h-g-h)
+>Test runs: 50
+>Type: SOCK_STREAM
+>
+>Before: Linux 6.9.7
+>
+>Payload 512B:
+>
+>	1st perc.	overall		99th perc.
+>Before	370		810.15		8656		ns
+>After	374		780.29		8741		ns
+>
+>Payload 4K:
+>
+>	1st perc.	overall		99th perc.
+>Before	460		1720.23		42752		ns
+>After	460		1520.84		36096		ns
+>
+>The performance improvement is related to this optimization,
+>I used ebpf to check that each packet was sent directly to the
+>virtqueue.
+>
+>Throughput: iperf-vsock
+
+I would reorganize the description for a moment because it's a little 
+confusing. For example like this:
+
+The following benchmarks were run to check improvements in latency and 
+throughput. The test bed is a host with Intel i7-10700KF CPU @ 3.80GHz 
+and L1 guest running on QEMU/KVM.
+
+- Latency
+   Tool: ...
+
+- Throughput
+   Tool: ...
+
+>The size represents the buffer length (-l) to read/write
+>P represents the number parallel streams
+>
+>P=1
+>	4K	64K	128K
+>Before	6.87	29.3	29.5 Gb/s
+>After	10.5	39.4	39.9 Gb/s
+>
+>P=2
+>	4K	64K	128K
+>Before	10.5	32.8	33.2 Gb/s
+>After	17.8	47.7	48.5 Gb/s
+>
+>P=4
+>	4K	64K	128K
+>Before	12.7	33.6	34.2 Gb/s
+>After	16.9	48.1	50.5 Gb/s
+
+Wow, great! I'm a little surprised that the latency is not much 
+affected, but the throughput benefits so much with that kind of 
+optimization.
+
+Maybe we can check the latency with smaller payloads like 64 bytes or 
+even smaller.
+
+>
+>Co-developed-by: Marco Pinna <marco.pinn95@gmail.com>
+>Signed-off-by: Marco Pinna <marco.pinn95@gmail.com>
+>Signed-off-by: Luigi Leonardi <luigi.leonardi@outlook.com>
+>---
+> net/vmw_vsock/virtio_transport.c | 38 ++++++++++++++++++++++++++++++++++----
+> 1 file changed, 34 insertions(+), 4 deletions(-)
+>
+>diff --git a/net/vmw_vsock/virtio_transport.c b/net/vmw_vsock/virtio_transport.c
+>index c4205c22f40b..d75727fdc35f 100644
+>--- a/net/vmw_vsock/virtio_transport.c
+>+++ b/net/vmw_vsock/virtio_transport.c
+>@@ -208,6 +208,29 @@ virtio_transport_send_pkt_work(struct work_struct *work)
+> 		queue_work(virtio_vsock_workqueue, &vsock->rx_work);
+> }
+>
+>+/* Caller need to hold RCU for vsock.
+>+ * Returns 0 if the packet is successfully put on the vq.
+>+ */
+>+static int virtio_transport_send_skb_fast_path(struct virtio_vsock *vsock, struct sk_buff *skb)
+>+{
+>+	struct virtqueue *vq = vsock->vqs[VSOCK_VQ_TX];
+>+	int ret;
+>+
+>+	/* Inside RCU, can't sleep! */
+>+	ret = mutex_trylock(&vsock->tx_lock);
+>+	if (unlikely(ret == 0))
+>+		return -EBUSY;
+>+
+>+	ret = virtio_transport_send_skb(skb, vq, vsock);
+>+
+>+	mutex_unlock(&vsock->tx_lock);
+>+
+>+	/* Kick if virtio_transport_send_skb succeeded */
+
+Superfluous comment, we can remove it.
+
+>+	if (ret == 0)
+>+		virtqueue_kick(vq);
+
+nit: I'd add a blank line here after the if block to highlight that the 
+return is out.
+
+>+	return ret;
+>+}
+>+
+> static int
+> virtio_transport_send_pkt(struct sk_buff *skb)
+> {
+>@@ -231,11 +254,18 @@ virtio_transport_send_pkt(struct sk_buff *skb)
+> 		goto out_rcu;
+> 	}
+>
+>-	if (virtio_vsock_skb_reply(skb))
+>-		atomic_inc(&vsock->queued_replies);
+>+	/* If the workqueue (send_pkt_queue) is empty there is no need to enqueue the packet.
+
+Again, send_pkt_queue is not a workqueue.
+
+Here I would explain more why there is no need, the fact that we are not 
+doing this is clear.
+
+>+	 * Just put it on the virtqueue using virtio_transport_send_skb_fast_path.
+>+	 */
+>
+
+nit: here I would instead remove the blank line to make it clear that 
+the comment is about the code below.
+
+>-	virtio_vsock_skb_queue_tail(&vsock->send_pkt_queue, skb);
+>-	queue_work(virtio_vsock_workqueue, &vsock->send_pkt_work);
+>+	if (!skb_queue_empty_lockless(&vsock->send_pkt_queue) ||
+>+	    virtio_transport_send_skb_fast_path(vsock, skb)) {
+>+		/* Packet must be queued */
+
+Please, include it in the comment before the if where you can explain 
+the whole logic of the optimization.
+
+>+		if (virtio_vsock_skb_reply(skb))
+>+			atomic_inc(&vsock->queued_replies);
+
+nit: blank line, how it was before this patch:
+
+	if (virtio_vsock_skb_reply(skb))
+		atomic_inc(&vsock->queued_replies);
+
+	virtio_vsock_skb_queue_tail(&vsock->send_pkt_queue, skb);
+	queue_work(virtio_vsock_workqueue, &vsock->send_pkt_work);
+
+
+>+		virtio_vsock_skb_queue_tail(&vsock->send_pkt_queue, skb);
+>+		queue_work(virtio_vsock_workqueue, &vsock->send_pkt_work);
+>+	}
+>
+> out_rcu:
+> 	rcu_read_unlock();
+>
+>-- 
+>2.45.2
+>
+>
+
+I tested the patch and everything seems to be fine, all my comments are 
+minor and style, the code should be fine!
+
+Thanks,
+Stefano
 
 
