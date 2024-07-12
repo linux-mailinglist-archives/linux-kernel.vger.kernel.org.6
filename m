@@ -1,99 +1,107 @@
-Return-Path: <linux-kernel+bounces-250720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB0092FBDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:53:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ECCC92FBDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 016A51F2241F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 354CC28304A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738EA171679;
-	Fri, 12 Jul 2024 13:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7/JyyFG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DF6171E47;
+	Fri, 12 Jul 2024 13:53:07 +0000 (UTC)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A795226AFF;
-	Fri, 12 Jul 2024 13:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995DB171646;
+	Fri, 12 Jul 2024 13:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720792378; cv=none; b=uoz0BIccXECNQ+LKwx5BBBA6MdVUYjSd6ESOiVCwXj7iwl6+VNmFZeHWBLlwpawvAb/0pWErNsMLjGdO2BIl0AEEnqGBn1ovtWWXKrpsIDRzyFS7owxK/llET4Rs8eox0+I/Uh09VwQAkwbktvA9MNEGo36I692WdXtoUG1hbsE=
+	t=1720792387; cv=none; b=FYf9bTjkWPDgeCYZYDxh0U7YjyvWNqCKQIqg17/yQ/g4S6yoYl0oi/6vI0qEp5g3gHupQYgzmDehZjBjGWHVjdnsYR2rFmzOPL090SammkMBaVJfd7W0LjD6Z3K06tWSgTsMLOc0npKrdTSG20ZmaFOxNpaQHcMIBSNQSN7tfZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720792378; c=relaxed/simple;
-	bh=R9G9wwPftutPeaaExTJ6lpEMwJ9MWKMZZnuGnq3/zxk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NcgRcZCTK2C7r+7phf1YHv0FJFYQJg1oI/H8ANS6KJqrhNsTQHGCBvbfzSqh7Ix3gQdUJ2LX/9gMUfA3tQ7SGn36Fw5OmMpKjWn5T8Ngu+P83YGzv0Lp/cwhLgszefLLSIOiv+8b9eJHJ1DQH9KKDyzIOwi+23LNO5VVWxMLXSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7/JyyFG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDAF3C32782;
-	Fri, 12 Jul 2024 13:52:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720792378;
-	bh=R9G9wwPftutPeaaExTJ6lpEMwJ9MWKMZZnuGnq3/zxk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l7/JyyFGRzRJk6RiHso3Yw8FRyAiuQtYOWdEVk4e0EblvsrsT7DNWkQ0yQR1sW4wm
-	 7vlJZmN6CWDXj0hA5w7X25WMWt/p2AWUChOtYW9tJfGNROFTRTor1uudfwCzLBgeLp
-	 +JIPsataZdsdeeArLNAQS2OASb6d/j7oLd4ogtYWhXj0gmUZv6dyYiy8FPbc6AoX1K
-	 VsdId2oll5FXCvi2rw9DT+px/Ad38i/0nnURMjepA35/sqxmotAdu4TqxnmqLlG94l
-	 r95UgJoHaMSMt667314RhybeZ71BbMy94UEhVLOMOnad+V8STICWHaOSQXDMmcywUx
-	 kB1GCbtTa58FQ==
-From: Jiri Olsa <jolsa@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	x86@kernel.org,
-	bpf@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH 2/2] selftests/bpf: Change uretprobe syscall number in uprobe_syscall test
-Date: Fri, 12 Jul 2024 15:52:28 +0200
-Message-ID: <20240712135228.1619332-3-jolsa@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240712135228.1619332-1-jolsa@kernel.org>
-References: <20240712135228.1619332-1-jolsa@kernel.org>
+	s=arc-20240116; t=1720792387; c=relaxed/simple;
+	bh=oUeQAOehsUA8Zz0Q9AJ49iAgQrXTGohjJhjj8d9Ejn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ppUbRfWnYuq6R414jsn5Awi7qYS4Qpbk8wjp6/ZwS2Fz+QMoaxfuv7GUGDnZSp6+z8nRCRroMouhshkuPPZwMOS1QuiijwaIulFGNWdgrFpGLTvklZ2Z5S828ByPynZMbfvqUItxRPE7HheJtqDr1TMd4zfRk0CZfJTs/HLjCZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so2646040a12.2;
+        Fri, 12 Jul 2024 06:53:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720792384; x=1721397184;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7nM9ZZaS7zEh5VH7vpWzHeJauviA6kuXXb6GAmKaWqo=;
+        b=ZiFbKMtpqwnWX2s27idqj335VmGy+0eWA+NfKDTpKUHaqU4NS+HtXYKLru6YJqk/dI
+         X8a47WdJhKpl1LqrVW10aypTu61sya+PlSV+6lJqk0dctOMk9kb40TR+YzXn1UE2aNx4
+         xHW0ev2h7wC2wqEJsMY6LGaqT0C8HXvrpuDuVb/Ik2Wtg3Nan85wQ4ZqxM/dAoMRNOZO
+         FhJVuCt5pxJ6K+vRex5/3+S8IzzbASYKoGSWEgPFvP57V2FOqLP2O19nN7Bqkw51hWuZ
+         UPI8Oz8djBvUTJfHzQIbJNpcgubxlJ+eBck1IU7FvI7z2RDA/U5JINNX56hSmhnMKQM1
+         5Q3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVvpH7jZsxcF3iB+dD6c9t+4Y30j5/YheW60bFdyPca8j+NFAZ+/wtqXggpdUjqA97OArBbk9YbTOIobD2BFZAIrcCRk4cMiqJn0YET
+X-Gm-Message-State: AOJu0YwX6Csp7ma7PrCcn4x1+kMMcKVTkb7UvsEYu+ZxyG8dPDapDpIe
+	g6I1W41QzrYN+LVVt/hc2J1HKj3tKccKtxj1Ie9ZUd/k2v7NFIMefxsufA==
+X-Google-Smtp-Source: AGHT+IHbRkYceFQ+y9i5wL92DTMDBFZU43kjo/0dzAA2E7wBDXKD7X1+A3oUtgIcQKPoDAnsgKaHbA==
+X-Received: by 2002:a17:906:b319:b0:a72:676a:7d7b with SMTP id a640c23a62f3a-a780b688906mr933166466b.9.1720792383756;
+        Fri, 12 Jul 2024 06:53:03 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc52sm343007166b.4.2024.07.12.06.53.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 06:53:03 -0700 (PDT)
+Date: Fri, 12 Jul 2024 06:52:38 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Madalin Bucur <madalin.bucur@nxp.com>, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next 5/5] soc: fsl: qbman: FSL_DPAA depends on
+ COMPILE_TEST
+Message-ID: <ZpE1Jn5ZbQikAHmI@gmail.com>
+References: <20240710230025.46487-1-vladimir.oltean@nxp.com>
+ <20240710230025.46487-6-vladimir.oltean@nxp.com>
+ <20240712121400.bnjcexqpqgjhlmuc@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712121400.bnjcexqpqgjhlmuc@skbuf>
 
-Fixing the syscall number value.
+On Fri, Jul 12, 2024 at 03:14:00PM +0300, Vladimir Oltean wrote:
+> On Thu, Jul 11, 2024 at 02:00:25AM +0300, Vladimir Oltean wrote:
+> > From: Breno Leitao <leitao@debian.org>
+> > 
+> > As most of the drivers that depend on ARCH_LAYERSCAPE, make FSL_DPAA
+> > depend on COMPILE_TEST for compilation and testing.
+> > 
+> > 	# grep -r depends.\*ARCH_LAYERSCAPE.\*COMPILE_TEST | wc -l
+> > 	29
+> > 
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> > ---
+> 
+> I don't know why nipa says there are 800+ new warnings/errors introduced
+> by this patch, but it looks like a false positive (or I can't seem to
+> find something relevant).
 
-Fixes: 9e7f74e64ae5 ("selftests/bpf: Add uretprobe syscall call from user space test")
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Right, All of the warnings are basically a set of MODULES_DESCRIPTION()
+that are missing in other parts of the kernel, and not related to this
+patch series. None of them seems to be in the network stack. (for
+context, I've fixed all the missing MODULES_DESCRIPTION in the past).
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-index c8517c8f5313..bd8c75b620c2 100644
---- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-+++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-@@ -216,7 +216,7 @@ static void test_uretprobe_regs_change(void)
- }
- 
- #ifndef __NR_uretprobe
--#define __NR_uretprobe 463
-+#define __NR_uretprobe 467
- #endif
- 
- __naked unsigned long uretprobe_syscall_call_1(void)
--- 
-2.45.2
+nipa also complained about an unused variable, and we have a patch for
+it already:
 
+https://lore.kernel.org/all/20240712134817.913756-1-leitao@debian.org/
 
