@@ -1,173 +1,206 @@
-Return-Path: <linux-kernel+bounces-250781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E655092FCC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:39:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F34E92FCC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 157131C21943
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:39:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339FE1C21D5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E59172BA5;
-	Fri, 12 Jul 2024 14:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F7117277F;
+	Fri, 12 Jul 2024 14:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pygdGV22"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="dXj/Z9xC"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013071.outbound.protection.outlook.com [52.101.67.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27934171E61
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720795183; cv=none; b=ZVawS42eailXQaCrsXbf06W4/ygHHHVCEtH4jSGJSR9lcMd8rYTyfQWkDGYkRhnFzkA+9Qt7cWrK1Y17HA2H2VB9a/D3psVU2jM9JCPjvY/tEtn+v4K4B5sfBzKI/AZwO/LnXPEZYrYCHv7apUoGnKdgt2lk0Goe209S2+bBV7E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720795183; c=relaxed/simple;
-	bh=vCag917Ay33RsHIAYI483LRvFB14mVxaZIpusLuag/w=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DNpkZfEc5WBaaBOGseO4eME+OGLCyHdSmi8iCJrwVU3FGddJhEVE6b5HefaMWGBboUv0J0bMmxL+QoUT1ylGw551XIqoplUc1ht3vmV/eQELl0xxo/Rnz1kSg+pc/ighKgTa6qQB3vjSToeF+ccxN+IjbWL0/YtkTIVfMTS8lus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pygdGV22; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eec7e43229so23891911fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:39:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720795179; x=1721399979; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j+529H3GiijTCXecWV4ffQBMI7Sa+Z0BYJ6CZ1mod40=;
-        b=pygdGV22A3lSDkoGSZm2+Bqvl+KTy+8iA/J8lVAsQx3y4xjCuABoXSvsd1oeq1gZYZ
-         vUaghTadeitpyWLSJ1OUgq803WaNO9H3IwAk3fOutxykiYVgjM4vbS/dQbSvjaHP/B//
-         CmgPCnb8/+CWT2YMQvYbMWcBOBAkUC/X9uqb5aM8/EVKWvQS7gCPqAuYLOPgrj4TGNZN
-         ccdc+X+TbuHRwVRaFeno4TOvOz9AIFXjyw43is9QWtWubL6xJZ06s5opwD0eR3xtxoUV
-         vv83p9z78uA0L16QTmdbulQ/o1TKTCm/6jFT6sRdhrxj11e2vfu1m0tjmHBRajwbvhh2
-         NRjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720795179; x=1721399979;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=j+529H3GiijTCXecWV4ffQBMI7Sa+Z0BYJ6CZ1mod40=;
-        b=S5w/5AJanlauLEDwFz0hEAn3X18topLc+AnxgGm5RneZuGdLbgLKlma02GYnC4ZB+d
-         /s5LSdP2S4p4YnQ+Jz6GUOnzfK6LDwHbr8nDprNlERcmU3qg+4ZP7Y7J5CYixEM83N31
-         k19UErRlHPMh5NBu3przBLgqjLzue2lAVe9Iv6V014QvoYLnZ/Em8oYvx/IhFwLpQeH4
-         Rdnv+SUA4l74HbpDoeCLreAHCi2GNUmqfmlDI/6uA1F7tQTcIeIsqny1QKZ2X4SGcp4M
-         TVp/A7JMUzyQiWIfNh9E8hU9XqRjEaQ43OM24FgJdRC59dpIeWkTTSxY9JpxdclXdLTs
-         Abew==
-X-Forwarded-Encrypted: i=1; AJvYcCXqjseb0VLdTRCaW8BH8FS2bMrPNPiMOjwkAxKa0S9zeXlarYpRYsPMWoOoN1VdA/0pyygnKnotGKllgiktzdz5wMD5Mw5sJLiv7Nry
-X-Gm-Message-State: AOJu0YyqcrUBUKxGRR0JuQ+MXzv5O2j8VC3k4FYoI9HW0i9OGWWiUzy8
-	OP52vxICorNQqakiSNGO35MthVcsx2OYP2QLNbEHle2MUVsmk0BygEpK4C3nPAQ=
-X-Google-Smtp-Source: AGHT+IEUJv2E2YmWwP9keqGtBKgVNIRhkD50j8KUevpEmBZBl6UJ/Ph9d40mcCJXS6cKySEZWRH03Q==
-X-Received: by 2002:a2e:b8c4:0:b0:2ee:d8f3:188d with SMTP id 38308e7fff4ca-2eed8f345e7mr5211101fa.14.1720795178997;
-        Fri, 12 Jul 2024 07:39:38 -0700 (PDT)
-Received: from ?IPV6:2a0d:e487:123f:f92c:4c8f:b8cc:9804:975e? ([2a0d:e487:123f:f92c:4c8f:b8cc:9804:975e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f25b946sm25336675e9.19.2024.07.12.07.39.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 07:39:38 -0700 (PDT)
-Message-ID: <306baccf-0106-4253-b6b1-72eaee9c5911@linaro.org>
-Date: Fri, 12 Jul 2024 16:39:32 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2C615098E;
+	Fri, 12 Jul 2024 14:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720795271; cv=fail; b=EwLyZANcM8E882BtUM4P2U+xg2THhM8C18uPUwagWfMfUMclCC91rgXSrmVVY8nwJ69N5YlREy0j3fb/QRuIxDsiHkljt3mEh+RNp6h6pf1iEndxXAYZyz2M+DgmpA88FZHmj4mlPMMllyj+vYS29QFm4JCvBMNzELGZ3yuFo+E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720795271; c=relaxed/simple;
+	bh=CUb70sCkQUFov9ql5SKGe6X0VR5ug6XpUBKLDLb7qx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=riLL8Ftgz4b21E/ugFgWUor8UoNfNXLgd3qMbSFk0leU0lLBQm4lqNzt2x0hx/tvz+IUTkL4pzAZNp+d0tuggbJD4Al0ETwfmimh5ClYminqn7acCcdQbs1GfcSd6AWUsQEITQRe4+QlGzbi43pYhBmRbkuoqQv3ZWiT82M024Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=dXj/Z9xC; arc=fail smtp.client-ip=52.101.67.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h2QuBe61JBqM+PBoIwwoWzUeHXcYv9AKP725019mS4Gc8TfBEZqeRD7323ZAO4vNNHGiwtdn2kziN/BxCkq5kSzVBGhFqwzOamlBh6InKP/eejiX01ppU+vOn6EMO/9Q70JQIXO/FkgecqqrQ6jljgG9xdYUREnyj4n0FWLQ4Tu64b7MLa8K2TRYV9KAajCHNs/YJBkUfWqYxXgbks/oQh/o0sj8k7cRhcXh0m1zXYQp9oAosia1KpnhkXPDj1BK+Jf+g0F4VQ/4Xqnu36kJZNs3OlzGRVg1ezsdySylBVRocN+xC9zw6VvsLD6jSZJHjZSRXCJ2b83p2AeC845CQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=16uwJvBijG4JkkW6J7u+mNO8tsjc/4SEcZenZKAvxAY=;
+ b=eogUSaj2/kv2wo1eKVixXbIzUNNdP9D0CDJ50OLc8cx0BDoGd0RTr2Yg9aRL71oYVt5iPs4uS82D944JYTRQCbnT3/Cj+g2CuLZP6Smn7AgeKp0mcIw5oNZrQE/QbJ/SYN2suEG1zgYOt0v8mVofE4Jbk4Cy5rzpKTTa4eOPeD/2Vbwzxw5A/ls6SGgdT3jGLonN6KkcL8r4u5yFJcHl+RKAAYV2PDI2fCTMmNa2b90EFBsD8k2C0qHNsQ5iOCVYiKuH8aXSiSGXNV++xs3TwnytPwGw9eeFSHTc14fHhWj8MKZZEn+Pekc/YhBsk1DRVvJFwdDMeBSVbXascY3eaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=16uwJvBijG4JkkW6J7u+mNO8tsjc/4SEcZenZKAvxAY=;
+ b=dXj/Z9xC393FyqfBR/Sp0XF0zZup/NN6eyaohuhJ9Kg3sp4XF3vK9iHSyc7TVMct8rFw9OKzynmVtCHPCz1VNQpP0hxMwkIM41IDxpT6q+qSG45CHQN1res4vyCfQrvzXc0AyPtYuMMvMVMicUtTVOKDvE7eywt7tRG0EB1tUTg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GV1PR04MB9200.eurprd04.prod.outlook.com (2603:10a6:150:2b::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
+ 2024 14:41:04 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
+ 14:41:04 +0000
+Date: Fri, 12 Jul 2024 10:40:55 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Clark Wang <xiaoning.wang@nxp.com>, Jun Li <jun.li@nxp.com>,
+	pratikmanvar09@gmail.com
+Subject: Re: [PATCH 3/3] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+Message-ID: <ZpFAd+Mp2JFnaPet@lizhi-Precision-Tower-5810>
+References: <20240711-pwm-v1-0-4d5766f99b8b@nxp.com>
+ <20240711-pwm-v1-3-4d5766f99b8b@nxp.com>
+ <78119193-98b7-446f-82d6-37884a5b03ad@gmx.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78119193-98b7-446f-82d6-37884a5b03ad@gmx.net>
+X-ClientProxiedBy: BY3PR04CA0020.namprd04.prod.outlook.com
+ (2603:10b6:a03:217::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/5] Add support for MBG Thermal monitoring device
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>,
- Thara Gopinath <thara.gopinath@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Kamal Wadhwa <quic_kamalw@quicinc.com>, Taniya Das
- <quic_tdas@quicinc.com>, Jishnu Prakash <quic_jprakash@quicinc.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240712-mbg-tm-support-v1-0-7d78bec920ca@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240712-mbg-tm-support-v1-0-7d78bec920ca@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB9200:EE_
+X-MS-Office365-Filtering-Correlation-Id: 07859288-5f26-4965-a4fc-08dca280a836
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?S9jZ1QDOnHoNcH1GRCxVwnNsoiy9iDw+YCnMc6qkMV6C9BovrWn0rtx2cD7s?=
+ =?us-ascii?Q?0Pg8Dbh+zRsg8JspJVLUMpp0A/7nlgrz7vuU10KxUl/7olZOo9C/NMYpeOdj?=
+ =?us-ascii?Q?wgMlH2EHfpW79MixCa6OZj/rZECDdMv1hto3R2UAnNJ3tKDS2QNehcn2GXn7?=
+ =?us-ascii?Q?YcuzF0ghuTWRQvKq6lZFaR3bACVAgVhn8grhpM2Jg7xyir1anYfhUrEEopgj?=
+ =?us-ascii?Q?MIwLVWBKGwzk/CAeQ5eOBVpZZekV5WLtxmh5c2HgVChzKtqFumWEBbwtkbOf?=
+ =?us-ascii?Q?nRykdTpuGkHVgJScrZf97Tef4+bkWVyTRbUErk2OST3Ts7GmpZG8M59DVDGH?=
+ =?us-ascii?Q?IqKfEAG/NFg4iBkkdSCtqM9W/AUiRAokBulpdp5HL5LhBBxnnLtQOKfNd9nT?=
+ =?us-ascii?Q?Mn8SWCXzMZf9dSdikTJ34BKnfHNNv8iJUKOIACEJB2g1iEp6cyEYNgmEi79s?=
+ =?us-ascii?Q?+KzgMzhpM5mhsKI8NkDoRAb/ifl9sGkt8ORZiksMoiAwgRBU8WYzqP205OVg?=
+ =?us-ascii?Q?ewmEhI7X+mxtwiIJA0Xk/kt85I++VIMiGUK6UsAon8mj/VcAlsAsk3GlULVU?=
+ =?us-ascii?Q?n+TeSCAAiUCUtay8IKBd4WOQSGkwhEM21cfRZPZnVAnm14h+/AExRicKCrHc?=
+ =?us-ascii?Q?rDqdGFv3oOyk1uPjJPX9dtLV4Lnns63ToU7Vgod950lQ1rkMb3xdwmDwefiA?=
+ =?us-ascii?Q?BtYIPKsO+6wY/XAf2BpGpYKQsIy2/eTTC6R6K36iBeIUxvFOjz91FqDGiVvY?=
+ =?us-ascii?Q?Y1ama8NdX2Ou/Ta0Xl2Ob3Ayp3BMDk3rTNgVn08OgQYfTXLz0ksEB/EaEgwO?=
+ =?us-ascii?Q?nnFlYNprCV7Tf3HxSoRzvg2kxbZJjf2QytJxYxhHcSjWr8MNurHAasx32hAR?=
+ =?us-ascii?Q?0EuimPwydJb7INAx9OgBEEuRadg57Cz1xK23LtnEr8c6hirWsnyfAFJMkqkj?=
+ =?us-ascii?Q?NOsLSOs4mBSZ9fxqaz3p3tkT9wmEDuOZylJe33xidcRIH6ECyw6wz8iLKcyQ?=
+ =?us-ascii?Q?HWZSYVYjca02DABrkMB9RLiWFcp7pG+LVPVY5jk7r55Yp4SP2g04AOTik3br?=
+ =?us-ascii?Q?xCHQrw79ADCpB2CUZid+1K34qRyfzwZL0mvlxG16UoLevwPz+Zzfc/TEsdq2?=
+ =?us-ascii?Q?ZrOLtqoFVcUWvcVbXVOhQSpINHmfQPz+Bp/+JVIcma7xHA+XJ9keMA8t2QWn?=
+ =?us-ascii?Q?FLFpSIZGKBPcRSI1CWTl9gT++1lvDBrlyPbYTOv2cLy5+AMDw1MwAmVIXIFm?=
+ =?us-ascii?Q?oN7N4J5T+wWcoUY/Yg5k0eG+ZgWqnhPekRHZ3Ds/TP3Zk6TVU4vlj7hD8xSP?=
+ =?us-ascii?Q?4fchw/yKvWVAIThSuWUFxBxB1pbejSWpqFqdX0FAsRQxRWrooPvwEi9seqyk?=
+ =?us-ascii?Q?5ku7aBA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?AYiTTQ//K3kHVQMaELdVCR4082CXgtDPSvrjRakwHxe35o3Aa0YSiyWxYVB8?=
+ =?us-ascii?Q?yHEKQ9/Zg3in03352Cq0yHSDnwAjTsRQSwbziOgdczV+mcH0B9fb0GgPePAB?=
+ =?us-ascii?Q?22u8jQeX5lb5ysZNXOzMQmKiz+TpZr/jTTDkSOBH8mGnlkq/Em/slYVn1s8H?=
+ =?us-ascii?Q?70j2o8xaoYiyptXSM9/gh3FfLgvDHamMdxGmCPreMpvmRIfc+6FxW0ZnAwhz?=
+ =?us-ascii?Q?iEUgbj0EICKNG2gc48TkisXtZp+Ml0MokpBwUfzr9eoKD8fFgnL8tGweTTsT?=
+ =?us-ascii?Q?q0mkPgkxTDZG8D7kfWNuYkSW2HOsnb6Y3yPDyRGIs35GJjlKXfo/p30Uywzl?=
+ =?us-ascii?Q?cOyx3BUN+Roj1gseyUBQtK6XQwwblnQc8lkS4GYZExasUyfcyaz7x/bw/Mmj?=
+ =?us-ascii?Q?pD5b+0DllwnXR0jh7VVAJ0RW0RTPYRVLcP4PCmXX39JZaw0RiUtKr9Ll+v23?=
+ =?us-ascii?Q?Eg39Y/EbaDnaiax7f41FYuShZQQKKk3BdJ3/FhXj/TsVYWmNBsurz07oe2Oe?=
+ =?us-ascii?Q?Iyc8rBSA4mGGUbfFOuZh/ydDbZ7vLqUm3EIJE9qQFjzvfTj90VbJi0RKsUIn?=
+ =?us-ascii?Q?5xQQrnRLVYKjIzDUb7g5ozRcbJ87Il0oc7BcMhI+VxwDmRwT6sl05h3MDOan?=
+ =?us-ascii?Q?gy/h6cW7aNEcMt0KB4ri7E0+fonx6JTRnnZ0eBH1BgPMFQcuIyb48Ys5A0oc?=
+ =?us-ascii?Q?ncwZFCiv61YF/3SAYQifTApbG1iLmEhFRLTgfDMv8MMen1DpTIyvTcRVgkL7?=
+ =?us-ascii?Q?I3mQxqzjogGHg8fIhHS3TbzWz+kRZgmLknBSnS23i4tLgWROWPwRHM736bhZ?=
+ =?us-ascii?Q?oqjr//m0mhmBVTDf3zY5e+hVV/ixAJ3P4gq3LOjAksoXNnLgbExyH3m+TPPh?=
+ =?us-ascii?Q?/DEfzpw4HaiLwef4tsjbFIuG/L4nZZUr+4ZoA3Enz+gUrSU1HoMVGiEaz3Np?=
+ =?us-ascii?Q?vJdSr49+RjtHMUvFmJNoDYa8p4YkJXuhtF541doF/nVEccN70i+X6i3BsjV9?=
+ =?us-ascii?Q?t8Eq3Ubfbe97zE2M02J08n1vxfSNnONwV5wsrgn+lo1Ab3YnKOWjQsMUEZpD?=
+ =?us-ascii?Q?ZzObKEoeXs3NlNb1C9NoCTc+Z6m0Q1CSPgr7PRPrcOgThf+4TYX7Gyk4pJqf?=
+ =?us-ascii?Q?b7evpnUDTj+TuU8026wWSm0gocgefVm8rfdWki7fhw7dJ8pwhMtvI++lOpU9?=
+ =?us-ascii?Q?A87AquNPymU21a4PVHqs6kZl6RncpJJXxhSBVAqY/gmRWyVhT4GgYSTceLqN?=
+ =?us-ascii?Q?ibS3rPUFImPy/UDsPl5sSf8rNkgfuQ3Q9CSsT8nzrT73ZMKJzZn3y0GEMFVg?=
+ =?us-ascii?Q?j1/SFInRIm3urP5YEwWp2b6H9u88HeYrikCxacTPx1KFkBItu7D0vBgfL7If?=
+ =?us-ascii?Q?e3xWOAQV8vdbcd8PYugfSUKUHoQY7ktL8KOfjssXFkHeHoF97i9HU/yPWqH5?=
+ =?us-ascii?Q?u9y4LI0QJ6EiKFVJByZ5WSWi1PxseuJQ6nCiOTJEifHDvWgF1oze3+0l5Xhq?=
+ =?us-ascii?Q?BE48ZvbYImeUWVuXgejnZ5xsfiLVfKFTHq9tDrudSAlEiAMTBv3hwPaBKxHe?=
+ =?us-ascii?Q?NV8nbqEadqMZ026w/SkWUN6Mb2S3e5IA2FzRUxf6?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07859288-5f26-4965-a4fc-08dca280a836
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 14:41:04.2510
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7y4yIMf3QN8R1bHlB6sielENfRpD3tXyt6XTPONbwV4L+0CcGZ+MCRfRneucm5+cwL48q4T548x8KRVxsEnmww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9200
 
-Hi,
-
-On 12/07/2024 14:43, Satya Priya Kakitapalli wrote:
-> Add bindings, driver and DT for the Qualcomm's MBG thermal
-> monitoring device.
+On Fri, Jul 12, 2024 at 08:26:17AM +0200, Stefan Wahren wrote:
+> Hi Frank,
 > 
-> Please note that this series is dependent on [1] which adds
-> ADC5-GEN3 support.
+> Am 11.07.24 um 23:08 schrieb Frank Li:
+> > From: Clark Wang <xiaoning.wang@nxp.com>
+> > 
+> > When the SAR FIFO is empty, the write value is directly applied to SAR even
+> > though the current period is not over. If the new SAR value is less than
+> > the old one and the counter is greater than the new SAR value, the current
+> > period will not flip the level. This result in a pulse with a 100% duty
+> > cycle.
+> > 
+> > Write the old SAR value before updating the new duty cycle to SAR. This
+> > avoids writing the new value into an empty FIFO.
+> > 
+> > This only resolves the issue when the PWM period is longer than 2us
+> > (or <500KHz) because write register is not quick enough when PWM period is
+> > very short.
+> > 
+> > Reviewed-by: Jun Li <jun.li@nxp.com>
+> > Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> the same patch has been submitted from other people in the past and they
+> received many review comments [1], [2].
 > 
-> [1] https://lore.kernel.org/linux-iio/20231231171237.3322376-1-quic_jprakash@quicinc.com/
+> Can you please explain which version of the patch this is and does it
+> address any review comments?
 
-Since this dependency was sent almost 7 months ago, and had plenty of changes requests,
-this patchset should've been either delayed until a proper support of ADC5-GEN3
-was accepted or marked as RFC.
+Thank, I am not realize someone already submitted before. I fixed some by
+common senses. Let me double check to make sure to fix all. 
 
-> 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
-> Satya Priya Kakitapalli (5):
->        dt-bindings: iio: adc: Add ADC5 GEN3 Channel info for pm8775 PMIC
->        dt-bindings: thermal: qcom: Add MBG thermal monitor bindings
->        thermal: qcom: Add support for MBG Temp monitor
->        ARM: dts: qcom: Add vadc support for pm8775 pmic on SA8775P
->        ARM: dts: qcom: Add support for MBG TM for pm8775 on SA8775P
-
-Those should be: "arm64: dts: qcom: sa8775p-pmics: ..."
+Frank
 
 > 
->   .../bindings/thermal/qcom-spmi-mbg-tm.yaml         |  63 +++++
->   arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi        | 210 ++++++++++++++++
->   drivers/thermal/qcom/Kconfig                       |  11 +
->   drivers/thermal/qcom/Makefile                      |   1 +
->   drivers/thermal/qcom/qcom-spmi-mbg-tm.c            | 269 +++++++++++++++++++++
->   .../iio/adc/qcom,spmi-adc5-gen3-pm8775.h           |  42 ++++
->   6 files changed, 596 insertions(+)
-> ---
-> base-commit: c27723304c1f6af79f7bece5edacace6a8d46167
-> change-id: 20240627-mbg-tm-support-7bbf25c246e1
+> Best regards
 > 
-> Best regards,
-
-Neil
-
+> [1] -
+> https://lore.kernel.org/linux-pwm/20211220073130.1429723-1-xiaoning.wang@nxp.com/
+> [2] -
+> https://lore.kernel.org/linux-pwm/20231229063013.1786-1-pratikmanvar09@gmail.com/
 
