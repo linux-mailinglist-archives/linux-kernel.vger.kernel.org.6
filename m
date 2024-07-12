@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-251029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A254192FFFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:52:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0797930001
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DE751F23739
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:52:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32C46B22596
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981E6176FA3;
-	Fri, 12 Jul 2024 17:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDA8143C52;
+	Fri, 12 Jul 2024 17:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="iUW2bBox"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="U+4CyYIX"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80231143C52;
-	Fri, 12 Jul 2024 17:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8FF16F8F5;
+	Fri, 12 Jul 2024 17:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720806727; cv=none; b=hzdJXSfzSyZeQFKqDxngHQ1UnAEQnCRtgSYWLG0XN2adWmg/PFoDng/xal6kKQoeNPhuiU5HBnP7C/FquUlVsNTKMSKWxrIyFmfD4oP39NpSV4zH1ryuWqYCSfpdvrrMj6eBZiOZRK7w/QOAp0gc1JeAs7NMhUtR6kBq6D7BEK8=
+	t=1720806823; cv=none; b=hsO7e1PEqY5ZDHK8DP4KVTkhyq0KZtyJwzhKIrXGwS+Xyg3XhOKkELyqGLxK8++FAovKlhWUeegXxU7Z3vL3Cg1+j1ugE6zZZu8qKQmCi1hL+wqIDx31P/rFKZbf3r0jFyKb90b52txqsdyLPVj95uMBetAignq9KKynPE/rTx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720806727; c=relaxed/simple;
-	bh=i6ghiyZud1s7d2jVLaGdpTehfGlJn4BDOTkDfs84v0k=;
+	s=arc-20240116; t=1720806823; c=relaxed/simple;
+	bh=6XXrmX7z0sJhUPuzc/d7CRMR71UcuWhAgefjKvfTRpI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hdvfljNvIV+o1cGL5GNEVKa6lnTa+180CWbSclc4g4cRPugwZl2AjE/mXCGBnweLhOP5dNVHMg/1KDA+wtTGD83BKjpGsqj5Ny3idsonG0ULf8SvwJGn7CqL88Vnx6TOBcCyB4muN4Bd5BnqTwF4KWy/DUp7MPdRqXK7kFcB7WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=iUW2bBox; arc=none smtp.client-ip=199.89.1.12
+	 In-Reply-To:Content-Type; b=Wm+nb+ySiIH+F8dveMQ69kBJxk4X5m65auLC2yh419zbJiu3fxUwCVnLnVPbwGaqiGCAzaDrRSyj02FMHUuJwZLtGiiQKr2OYfmKcf0PPv8YQSr6gCt9ru65b1qj1prPsTlxMMLJeuNWTIGXIUH4OC4+loaEt0CzmPFWXAdGws4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=U+4CyYIX; arc=none smtp.client-ip=199.89.1.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WLK116sMRzllCRp;
-	Fri, 12 Jul 2024 17:52:05 +0000 (UTC)
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WLK2k6zNPz6CmM5x;
+	Fri, 12 Jul 2024 17:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
 	content-transfer-encoding:content-type:content-type:in-reply-to
 	:from:from:content-language:references:subject:subject
 	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1720806721; x=1723398722; bh=qx2yHKrOtr7nncPx5lDJ1DX9
-	Y1bBWBHCftoh5jHF4Xw=; b=iUW2bBoxhy+jEggy9y9kAl9AlVn1CPOawcy847h6
-	MWX/9rGnjxlQtbUeCKAE4+CfHnzvh1KE+1y8/SRM3wTum/qJF33n9aDmYRoIOW7u
-	7u71dawlsWo4E+VbWDUYvC23tmUujVAGMv/AC9PeZahwCtq3vFMb27wkMKoNHPW9
-	In5pfvM7KuKGDFe45njqgBxS1LdGywskaLgvWkrNNj0rATBtgjUAUyTJy31R/tJn
-	WulihiG0ykDiN/b9qI8CsfrT2t19m8fKjmk+0DwKQep8zpgu5k8bqc3MgTcrlLtP
-	+LfTDzb9K8V+unYXtPGaJjunohFS3XT4AYALTvkLD0Qhdw==
+	 s=mr01; t=1720806812; x=1723398813; bh=Ui5K+5Z74KfkcStMuHfzuZ36
+	85TuJxJZarO60+eBfz0=; b=U+4CyYIXoyVhY/dnhefBF2YqA1u8h8IbgtysjcnP
+	Fku+K+aS0zkEjzPidqFUvZembJVs/UFSO2SfxW4vTgRMw8CrqqJlgmFnchNM5zvH
+	5T1IV6oxL0evslAppERQTmFxQAcXaOBxJiZDayeusHz4kiDEhwxxLDs51fkO10yP
+	T9Qlhd3PQz8re5eyyrqRD+nO6UCBZZ84Yc7hCfrE6ykikBJs9mT1UK8/710By/Bc
+	j9OB2wnprIgWk/H+beIB0g2J59mYG2MImJrvA2DftY6SFXdr8ndpVp04G+gHuO13
+	Flmh9RFaLF6RT/RkoGREVv9DND7z9oGRsk3mMW2fPGbV7Q==
 X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id LtWOsS9hymJ0; Fri, 12 Jul 2024 17:52:01 +0000 (UTC)
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ghXhushBKFiw; Fri, 12 Jul 2024 17:53:32 +0000 (UTC)
 Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WLK0s1LVkzllBd1;
-	Fri, 12 Jul 2024 17:51:56 +0000 (UTC)
-Message-ID: <4062986c-61be-473d-b8bc-b40d9260f301@acm.org>
-Date: Fri, 12 Jul 2024 10:51:55 -0700
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WLK2d6rm3z6CmQvG;
+	Fri, 12 Jul 2024 17:53:29 +0000 (UTC)
+Message-ID: <293dff44-8ae2-431b-a002-b31a09ddd34e@acm.org>
+Date: Fri, 12 Jul 2024 10:53:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,37 +64,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] scsi: ufs: core: Support Updating UIC Command
- Timeout
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, quic_cang@quicinc.com,
- quic_nitirawa@quicinc.com, avri.altman@wdc.com, peter.wang@mediatek.com,
- manivannan.sadhasivam@linaro.org, minwoo.im@samsung.com,
- adrian.hunter@intel.com, martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>, Bean Huo <beanhuo@micron.com>,
- Maramaina Naresh <quic_mnaresh@quicinc.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <cover.1720503791.git.quic_nguyenb@quicinc.com>
- <6513429b6d3b10829263bf33ace5c5128f106e59.1720503791.git.quic_nguyenb@quicinc.com>
- <a89910ad-da5b-42c2-8a0f-9f4908fa2c1a@acm.org>
- <6f6a2608-6f1e-60dd-0dcc-93fa3d61202e@quicinc.com>
- <91d9bb0f-d9da-6303-c16a-f449b070a4e5@quicinc.com>
+Subject: Re: [PATCH v6] sbitmap: fix io hung due to race on
+ sbitmap_word::cleared
+To: Ming Lei <ming.lei@redhat.com>
+Cc: YangYang <yang.yang@vivo.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Omar Sandoval <osandov@fb.com>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+References: <20240710065616.1060803-1-yang.yang@vivo.com>
+ <29e50fff-fa7f-4b92-bfe9-7665c934b7dc@acm.org>
+ <ead047aa-d9dc-4b2f-869f-610b309b5092@vivo.com> <Zo/gevNqftePGvic@fedora>
+ <6acb93c3-f11b-40a4-bec0-b17fb77ad0c9@acm.org>
+ <CAFj5m9L2qin-h1qfPbhotSr-2Xh+mnQbsWhpzeK3dA_YTQ=JpA@mail.gmail.com>
 Content-Language: en-US
 From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <91d9bb0f-d9da-6303-c16a-f449b070a4e5@quicinc.com>
+In-Reply-To: <CAFj5m9L2qin-h1qfPbhotSr-2Xh+mnQbsWhpzeK3dA_YTQ=JpA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 7/11/24 6:20 PM, Bao D. Nguyen wrote:
-> Maybe I misunderstood your comment. You probably was concerned about the 
-> execution time of param_set_int(val, kp) vs a single assignment 
-> instruction 'uic_cmd_timeout = n;', right? If that's the case, I'll 
-> update the patch.
+On 7/11/24 6:01 PM, Ming Lei wrote:
+> On Fri, Jul 12, 2024 at 12:33=E2=80=AFAM Bart Van Assche <bvanassche@ac=
+m.org> wrote:
+>> The comment above 'swap_lock' in this patch is as follows:
+>>
+>>          /**
+>>           * @swap_lock: Held while swapping word <-> cleared
+>>           */
+>>
+>> In other words, 'swap_lock' is used to serialize *code*. Using
+>> synchronization objects to serialize code is known as an anti-pattern,
+>> something that shouldn't be done.
+>=20
+>> Synchronization objects should be used
+>> to serialize access to data.
+>=20
+> It can be thought of serializing UPDATE on both ->word and ->cleared,
+> instead of code.
 
-I'm concerned about the two conversions yielding different results, e.g.
-because of different handling of base prefixes (e.g. 0x) or different
-handling of overflows. This patch would be easier to review if the
-conversion from string to int only happens once.
+It would be appreciated if the comment above swap_lock would be modified
+such that it reflects that it serializes simultaneous updates of ->word
+and ->cleared.
 
 Thanks,
 
