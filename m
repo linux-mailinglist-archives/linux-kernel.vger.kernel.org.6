@@ -1,107 +1,181 @@
-Return-Path: <linux-kernel+bounces-250721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECCC92FBDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:53:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D6392FBE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 354CC28304A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48C601C2240D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6DF6171E47;
-	Fri, 12 Jul 2024 13:53:07 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDA417109D;
+	Fri, 12 Jul 2024 13:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WC4QO9f7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995DB171646;
-	Fri, 12 Jul 2024 13:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5F716CD12;
+	Fri, 12 Jul 2024 13:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720792387; cv=none; b=FYf9bTjkWPDgeCYZYDxh0U7YjyvWNqCKQIqg17/yQ/g4S6yoYl0oi/6vI0qEp5g3gHupQYgzmDehZjBjGWHVjdnsYR2rFmzOPL090SammkMBaVJfd7W0LjD6Z3K06tWSgTsMLOc0npKrdTSG20ZmaFOxNpaQHcMIBSNQSN7tfZY=
+	t=1720792465; cv=none; b=Pqh0M8NcljrxK9d5oWi6j1wh2CDD9QrPiykAZhdrRUq/F8ssoEBkJcjLMtqalkWkPk05MWyuTo2hHW6KHJG+RNBkf2zWaggI8SPfLWeTLclokisfLppAcklE8VIlSv3ird2oKwjCrrVVXhRQUD5fVk/Pw7o21+n0uzkw3PPULU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720792387; c=relaxed/simple;
-	bh=oUeQAOehsUA8Zz0Q9AJ49iAgQrXTGohjJhjj8d9Ejn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ppUbRfWnYuq6R414jsn5Awi7qYS4Qpbk8wjp6/ZwS2Fz+QMoaxfuv7GUGDnZSp6+z8nRCRroMouhshkuPPZwMOS1QuiijwaIulFGNWdgrFpGLTvklZ2Z5S828ByPynZMbfvqUItxRPE7HheJtqDr1TMd4zfRk0CZfJTs/HLjCZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so2646040a12.2;
-        Fri, 12 Jul 2024 06:53:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720792384; x=1721397184;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7nM9ZZaS7zEh5VH7vpWzHeJauviA6kuXXb6GAmKaWqo=;
-        b=ZiFbKMtpqwnWX2s27idqj335VmGy+0eWA+NfKDTpKUHaqU4NS+HtXYKLru6YJqk/dI
-         X8a47WdJhKpl1LqrVW10aypTu61sya+PlSV+6lJqk0dctOMk9kb40TR+YzXn1UE2aNx4
-         xHW0ev2h7wC2wqEJsMY6LGaqT0C8HXvrpuDuVb/Ik2Wtg3Nan85wQ4ZqxM/dAoMRNOZO
-         FhJVuCt5pxJ6K+vRex5/3+S8IzzbASYKoGSWEgPFvP57V2FOqLP2O19nN7Bqkw51hWuZ
-         UPI8Oz8djBvUTJfHzQIbJNpcgubxlJ+eBck1IU7FvI7z2RDA/U5JINNX56hSmhnMKQM1
-         5Q3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVvpH7jZsxcF3iB+dD6c9t+4Y30j5/YheW60bFdyPca8j+NFAZ+/wtqXggpdUjqA97OArBbk9YbTOIobD2BFZAIrcCRk4cMiqJn0YET
-X-Gm-Message-State: AOJu0YwX6Csp7ma7PrCcn4x1+kMMcKVTkb7UvsEYu+ZxyG8dPDapDpIe
-	g6I1W41QzrYN+LVVt/hc2J1HKj3tKccKtxj1Ie9ZUd/k2v7NFIMefxsufA==
-X-Google-Smtp-Source: AGHT+IHbRkYceFQ+y9i5wL92DTMDBFZU43kjo/0dzAA2E7wBDXKD7X1+A3oUtgIcQKPoDAnsgKaHbA==
-X-Received: by 2002:a17:906:b319:b0:a72:676a:7d7b with SMTP id a640c23a62f3a-a780b688906mr933166466b.9.1720792383756;
-        Fri, 12 Jul 2024 06:53:03 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc52sm343007166b.4.2024.07.12.06.53.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 06:53:03 -0700 (PDT)
-Date: Fri, 12 Jul 2024 06:52:38 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Madalin Bucur <madalin.bucur@nxp.com>, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next 5/5] soc: fsl: qbman: FSL_DPAA depends on
- COMPILE_TEST
-Message-ID: <ZpE1Jn5ZbQikAHmI@gmail.com>
-References: <20240710230025.46487-1-vladimir.oltean@nxp.com>
- <20240710230025.46487-6-vladimir.oltean@nxp.com>
- <20240712121400.bnjcexqpqgjhlmuc@skbuf>
+	s=arc-20240116; t=1720792465; c=relaxed/simple;
+	bh=ASb4uUl9onGaXi3ZmpTmuC3q3odAXqPBUXnZOxldlL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JavTVf43DMm2moIIlvdlwsN7B6hm7NAJp3NdSX2/WN/Zmbzm0sORvfkynNWaVLBaRl/pTEK2oOnuyGpx7+Z3jRp6IJURJVI5nfvYTf9jdplCuR0GVcKjHn7jBnlrcR2f47amKW7FAUpTln5gOsR/FMyWdfxwYGbCBJ2nm5RbXXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WC4QO9f7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28B3FC32782;
+	Fri, 12 Jul 2024 13:54:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720792465;
+	bh=ASb4uUl9onGaXi3ZmpTmuC3q3odAXqPBUXnZOxldlL8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WC4QO9f7YCt/qaj32jNOn8fPq/WUQ+y4hZkJrJyK0+Xzge32SerQxQnv4ZmWGLKqY
+	 mvq+Tvv6sy6FSczrNq4qkrMYRuDfZHfgEW1A3kFhpIBS9aDUGWvlEB16ZHNzff++EM
+	 bIEyYg+uUCeOxiIvAURQJxbk6/I/0dpi9gs3j6dRKYOJUb0GvuxDPQxV+bxLz+Ajpa
+	 3zOaxm1KwrHr6CJ6isNnYmGnu81FPhkzClZVsNaxNVQ+M6GTgcDx/ncSOy+klq8+DD
+	 za/1VHEaewOtca0RPgOG8HkkqNGUWcwpp3kPMKSe5Mloxbp2Ak8EPb2miPwVnba/eB
+	 k8TAojnJUcfGA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL for v6.11] vfs module descriptions
+Date: Fri, 12 Jul 2024 15:54:15 +0200
+Message-ID: <20240712-vfs-module-400367af1f9a@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712121400.bnjcexqpqgjhlmuc@skbuf>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3881; i=brauner@kernel.org; h=from:subject:message-id; bh=ASb4uUl9onGaXi3ZmpTmuC3q3odAXqPBUXnZOxldlL8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNNO3MvFNnUrBwt7OvZtY7q0CdfKv0U4Jn1+hmf+kO7 D8hHVLSUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJEfSxn+Z3iU3l9yTHTZs8s/ Ui8HrMq6fiR7qbeFQ/FDnf0MpsX7NBgZHrlIuZtm7Ej+PNVxYrP3Ps1QphiePbl/qzU6mCWvnpR iAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 12, 2024 at 03:14:00PM +0300, Vladimir Oltean wrote:
-> On Thu, Jul 11, 2024 at 02:00:25AM +0300, Vladimir Oltean wrote:
-> > From: Breno Leitao <leitao@debian.org>
-> > 
-> > As most of the drivers that depend on ARCH_LAYERSCAPE, make FSL_DPAA
-> > depend on COMPILE_TEST for compilation and testing.
-> > 
-> > 	# grep -r depends.\*ARCH_LAYERSCAPE.\*COMPILE_TEST | wc -l
-> > 	29
-> > 
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> > ---
-> 
-> I don't know why nipa says there are 800+ new warnings/errors introduced
-> by this patch, but it looks like a false positive (or I can't seem to
-> find something relevant).
+Hey Linus,
 
-Right, All of the warnings are basically a set of MODULES_DESCRIPTION()
-that are missing in other parts of the kernel, and not related to this
-patch series. None of them seems to be in the network stack. (for
-context, I've fixed all the missing MODULES_DESCRIPTION in the past).
+/* Summary */
+This contains patches to add module descriptions to all modules under fs/
+currently lacking them.
 
-nipa also complained about an unused variable, and we have a patch for
-it already:
+/* Testing */
+clang: Debian clang version 16.0.6 (26)
+gcc: (Debian 13.2.0-24)
 
-https://lore.kernel.org/all/20240712134817.913756-1-leitao@debian.org/
+All patches are based on v6.10-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+No known conflicts.
+
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11.module.description
+
+for you to fetch changes up to 807221c54db6bc696b65106b4ee76286e435944d:
+
+  openpromfs: add missing MODULE_DESCRIPTION() macro (2024-06-20 09:46:01 +0200)
+
+Please consider pulling these changes from the signed vfs-6.11.module.description tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.11.module.description
+
+----------------------------------------------------------------
+Jeff Johnson (13):
+      fs: minix: add MODULE_DESCRIPTION()
+      fs: efs: add MODULE_DESCRIPTION()
+      fs: sysv: add MODULE_DESCRIPTION()
+      qnx6: add MODULE_DESCRIPTION()
+      qnx4: add MODULE_DESCRIPTION()
+      fs: hpfs: add MODULE_DESCRIPTION()
+      fs: hfs: add MODULE_DESCRIPTION()
+      fs: cramfs: add MODULE_DESCRIPTION()
+      fs: binfmt: add missing MODULE_DESCRIPTION() macros
+      fs: fat: add missing MODULE_DESCRIPTION() macros
+      fs: autofs: add MODULE_DESCRIPTION()
+      fs: nls: add missing MODULE_DESCRIPTION() macros
+      openpromfs: add missing MODULE_DESCRIPTION() macro
+
+ fs/autofs/init.c        | 1 +
+ fs/binfmt_misc.c        | 1 +
+ fs/binfmt_script.c      | 1 +
+ fs/cramfs/inode.c       | 1 +
+ fs/efs/inode.c          | 1 +
+ fs/fat/fat_test.c       | 1 +
+ fs/fat/inode.c          | 1 +
+ fs/hfs/super.c          | 1 +
+ fs/hpfs/super.c         | 1 +
+ fs/minix/inode.c        | 1 +
+ fs/nls/mac-celtic.c     | 1 +
+ fs/nls/mac-centeuro.c   | 1 +
+ fs/nls/mac-croatian.c   | 1 +
+ fs/nls/mac-cyrillic.c   | 1 +
+ fs/nls/mac-gaelic.c     | 1 +
+ fs/nls/mac-greek.c      | 1 +
+ fs/nls/mac-iceland.c    | 1 +
+ fs/nls/mac-inuit.c      | 1 +
+ fs/nls/mac-roman.c      | 1 +
+ fs/nls/mac-romanian.c   | 1 +
+ fs/nls/mac-turkish.c    | 1 +
+ fs/nls/nls_ascii.c      | 1 +
+ fs/nls/nls_base.c       | 1 +
+ fs/nls/nls_cp1250.c     | 1 +
+ fs/nls/nls_cp1251.c     | 1 +
+ fs/nls/nls_cp1255.c     | 1 +
+ fs/nls/nls_cp437.c      | 1 +
+ fs/nls/nls_cp737.c      | 1 +
+ fs/nls/nls_cp775.c      | 1 +
+ fs/nls/nls_cp850.c      | 1 +
+ fs/nls/nls_cp852.c      | 1 +
+ fs/nls/nls_cp855.c      | 1 +
+ fs/nls/nls_cp857.c      | 1 +
+ fs/nls/nls_cp860.c      | 1 +
+ fs/nls/nls_cp861.c      | 1 +
+ fs/nls/nls_cp862.c      | 1 +
+ fs/nls/nls_cp863.c      | 1 +
+ fs/nls/nls_cp864.c      | 1 +
+ fs/nls/nls_cp865.c      | 1 +
+ fs/nls/nls_cp866.c      | 1 +
+ fs/nls/nls_cp869.c      | 1 +
+ fs/nls/nls_cp874.c      | 1 +
+ fs/nls/nls_cp932.c      | 1 +
+ fs/nls/nls_cp936.c      | 1 +
+ fs/nls/nls_cp949.c      | 1 +
+ fs/nls/nls_cp950.c      | 1 +
+ fs/nls/nls_euc-jp.c     | 1 +
+ fs/nls/nls_iso8859-1.c  | 1 +
+ fs/nls/nls_iso8859-13.c | 1 +
+ fs/nls/nls_iso8859-14.c | 1 +
+ fs/nls/nls_iso8859-15.c | 1 +
+ fs/nls/nls_iso8859-2.c  | 1 +
+ fs/nls/nls_iso8859-3.c  | 1 +
+ fs/nls/nls_iso8859-4.c  | 1 +
+ fs/nls/nls_iso8859-5.c  | 1 +
+ fs/nls/nls_iso8859-6.c  | 1 +
+ fs/nls/nls_iso8859-7.c  | 1 +
+ fs/nls/nls_iso8859-9.c  | 1 +
+ fs/nls/nls_koi8-r.c     | 1 +
+ fs/nls/nls_koi8-ru.c    | 1 +
+ fs/nls/nls_koi8-u.c     | 1 +
+ fs/nls/nls_ucs2_utils.c | 1 +
+ fs/nls/nls_utf8.c       | 1 +
+ fs/openpromfs/inode.c   | 1 +
+ fs/qnx4/inode.c         | 1 +
+ fs/qnx6/inode.c         | 1 +
+ fs/sysv/super.c         | 1 +
+ 67 files changed, 67 insertions(+)
 
