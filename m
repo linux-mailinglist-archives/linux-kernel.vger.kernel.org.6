@@ -1,333 +1,281 @@
-Return-Path: <linux-kernel+bounces-250395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7EC492F752
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:55:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C7F92F756
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 598FB1F21A06
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCF83283E6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A201428EA;
-	Fri, 12 Jul 2024 08:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9967914F135;
+	Fri, 12 Jul 2024 08:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="p+FR6TMe"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GKVzHXLp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF80614265A
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF1A143C6B
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720774472; cv=none; b=hi6xZ581sVbyO18TDeJDrOq1qBB0Ip8m9L0lSSk5ShNtZscJr15OLZOX+bDj/19zL1gSG4wUKYJ0xsl344wb2kp3HcqZ+3KGCPb4REVPRQqgQrqV+NoHFmlf0JcxNKX+uz3j6ISkz8PQoucol/m//5+2Kv7425MQQLQoE7OMrcc=
+	t=1720774492; cv=none; b=NBrkFb6r47hBkKZiXN/Yy8Mr5YH1g3lDi+6jJHr1UCgyb0NLFSB5toSUisD/u846y5by8NxtAVBE+YLBcVadvERnRsOQdKfxATdjWgbZ4yXvCPSVum8bfS4q6BSM4G/GbdhcThGxpcbKwEYPKRVAMpj3H0nbviNIyqTd4IepGiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720774472; c=relaxed/simple;
-	bh=Wbb1FijNhfNROnsYW4E19syqV9gjAepOgcjzWx0x5AU=;
+	s=arc-20240116; t=1720774492; c=relaxed/simple;
+	bh=xCYPR3PI6bxPO/fQptRxI7tJvEMtvWLt8trPp7HUf7k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hNY7E3prlcayVbowpHe0aEeQzkwglQKrLjqI9DFNRE0WtkwqDDgAEXcjQ9DYOZ6W65vlVAS0sxM8CMCx0T75rZ2vynoc5Sa2DCz/EVJ2+bnTeLq8Jfi6Mj2q1QJ1K2htmpUxSgn9H6g9lDC4D+IctlJ42A7j3teGGnuUvKyg5r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=p+FR6TMe; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-356c4e926a3so1119440f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 01:54:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720774468; x=1721379268; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y9InJSzy0ES6bg+8MGtn3MK1Bwf9ZBDLRJ2XsmfgOvc=;
-        b=p+FR6TMexOC0wwTjPHpxlHihnG81Ytf9J7jEI/CuNNWmhtyx+4joA3Sh1Tz9D38/C/
-         Fe3z3DRtKKOM+gANOVE4/bqjudVV6QQtSp9fiSXcRMsdpdHOmCAxGjIxGfH9Z3wFA5rg
-         zk5ZzmHVK26uhMT3NhsSN+RhpZksBdvBvVgoFsvAdkEHqQqDbS068nPMzxeC1W1xkY1g
-         yLg5GppgxEdbjKgH2bgtBN0nvlMN/Qw+19NmAqrU8WF/aFag2fjVmllU3BkYq6VdHhRa
-         /ocZO+oS2zbxXTqdu0jGkPDx+QXE2Eyccc4Lhs2Mob6h74HIiOMKEjjvAWdftyF2LQdc
-         v4fg==
+	 Content-Type:Content-Disposition:In-Reply-To; b=SYWCmG3yF9IQ0EYT1X+ymiuLaM8yH7aj7efG51NDtBZGs02RKL4CUs/k+SePTwWoVvrB356RLTZgs0bspXoDPJ5Tgm4dSCDA4f7txhb8kGhMTQW0bXxVuF6Jzbsaz/DRezw8mfeyXGone1aQGTIfknz7lwjpGK/pUdZROgPtLVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GKVzHXLp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720774489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YGUwzKz1FC7XKNssvzh/Aj+HVOd49bkbQ0nivkkXFmg=;
+	b=GKVzHXLpcM1ziU5NbEeYl3y7/uzxpz2jU7aJY0BXFKFtDaqx13OOQuxQI3L9JgbCi2/pD0
+	HwrYlHEXbIORFlIB+dQdRNEJTzmEIJ4SY0RP3GX7kFClpCtmuLJLbrUroqdHi/4udA8FHv
+	jgpBmqzVhO8sWPREMKEVdSY+slXj+2M=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-609-kJKUVUC5NPCFIfWixtsu9g-1; Fri, 12 Jul 2024 04:54:41 -0400
+X-MC-Unique: kJKUVUC5NPCFIfWixtsu9g-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-426724679f0so14459515e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 01:54:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720774468; x=1721379268;
+        d=1e100.net; s=20230601; t=1720774480; x=1721379280;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y9InJSzy0ES6bg+8MGtn3MK1Bwf9ZBDLRJ2XsmfgOvc=;
-        b=DEr96yhecO9Jv+RQ9PH/GaYUd4ReEI3zn6yU57uYt+Ffv6+mscCsmV4oaOdld32SmI
-         n3texXj9sh+gMDXdD32NOE+EV0TBrjnOn9K+dW8lI/D6r0u5naSRAUbMrGgxtH6E8tS0
-         xobWvAa9Sz57fZ2xTaKLrIRZ4gwIb2UnJv7dOU2+EiFzhbrjDCEPFVwgxrT8VZGgODjO
-         wshN8jwEiuiRQ3/++OFHONZ7+d6z1SpX2u0SaY1r1cigrbfqGgwGBqezL2w3SL6ULRMm
-         hpFuNR9DleMqisXLQe37Xr0yifliYdgpHB7wq1uSLrjJH3RVz4RP7FkSlbJetj4QoCdT
-         rCWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHmGurl8bVhaj9NZqjeNqoD3c/JRONpS8/Ss+aN/RMZAGF2V3zc3Dql29jS7JUQKUTUi9Uqqe4alR6W1FYzJm0jcyEpAEdzottULbt
-X-Gm-Message-State: AOJu0YzhVxYOEIhPt0tB2jpQvDlYODIYl+C4X4903XZJuOoavRIRJrto
-	ESHLr5RO2ftCOif42mQILT3dQkO2/55lA+YI/1XxHZQ0l9NJIIPSZ4LoDfi4UJg=
-X-Google-Smtp-Source: AGHT+IHD4MV1Mmsw+K5iradfuCMgKB56j98M6M1zcRyASCH4zkXlQMd8jezMCRK6rG3ByRTw0+9ZzA==
-X-Received: by 2002:adf:eb81:0:b0:367:9ce3:167a with SMTP id ffacd0b85a97d-367ceadb3e7mr7065472f8f.64.1720774468043;
-        Fri, 12 Jul 2024 01:54:28 -0700 (PDT)
-Received: from localhost (p50915eb1.dip0.t-ipconnect.de. [80.145.94.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa067dsm9712869f8f.78.2024.07.12.01.54.27
+        bh=YGUwzKz1FC7XKNssvzh/Aj+HVOd49bkbQ0nivkkXFmg=;
+        b=cHyhOXzx+tVjY35JZcXn+V1c2morH599xbiay/fXDigEYGrPzNplrilCY8xrKnlVSh
+         70Rk98SZMlKWTlnbHXcOe9Kq4bdEmM/Omt8suJts8CIDm1ZLIQlKzfCZhGYG4YIqjXJJ
+         Nk6LzsRrhbmFjDfXu+HN6zVQIdctmYOwfgJHafNpAj9S8ZfiI1FMONjdly7/L4TVOjRh
+         a/w9K3NolgAr2wr+udLpN7w3FHvM+6ymV3llhyWW39DO0UUznTcq+dKa64tgMOuZz2Oy
+         Lh8I4tcqsb7ATKPVLc2B2zzh2vtsRiKdxwWyUGaJtdRmb24lgOREKDClspWyN1Qyw0sr
+         vVEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlViT3UwbUM/UunrdsLzmfIPm64LRtyyglxejyf9/qx1oALG3vs6zLnZwR2VnreOYU9wIj4QpXcGkSb+dhR/wOltMMLmeMbBP63UY1
+X-Gm-Message-State: AOJu0YxHDeIuB3Bx8WKuY40F+AdYRGWRmcAE58t9TSwMhewUgWao9uJ9
+	TwecZjC84Xm6YbeZgKUYcLyf26ERxL69Z6g/SPzLm4JX8DkqF0UQTvGa7o6bGZIlOMOUCV+6it+
+	0IM6c38rnkB09THzJ02BFCLxp6tBon8WHesslzOsk539K/w85P49BGK07vhKfhg==
+X-Received: by 2002:a05:600c:1c1c:b0:424:8be4:f2c with SMTP id 5b1f17b1804b1-4279dabdfa1mr19063595e9.2.1720774480472;
+        Fri, 12 Jul 2024 01:54:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkkoUJWogIxc8aAVkgm7MgPD/u3veQ1A4xDoDJJYafBVdLp0C0nWIxuogLeydo1P5/GhsYSA==
+X-Received: by 2002:a05:600c:1c1c:b0:424:8be4:f2c with SMTP id 5b1f17b1804b1-4279dabdfa1mr19063395e9.2.1720774480104;
+        Fri, 12 Jul 2024 01:54:40 -0700 (PDT)
+Received: from fedora ([2a01:e0a:257:8c60:80f1:cdf8:48d0:b0a1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8476dsm9631003f8f.36.2024.07.12.01.54.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 01:54:27 -0700 (PDT)
-Date: Fri, 12 Jul 2024 10:54:26 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Farouk Bouabid <farouk.bouabid@cherry.de>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Quentin Schulz <quentin.schulz@cherry.de>, Heiko Stuebner <heiko@sntech.de>, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 2/6] pwm: add mule pwm-over-i2c driver
-Message-ID: <5hd7fndgivgusx76wq6mbvgefngd3tllqsfsk6pppbphchczte@ujagkep4miet>
-References: <20240529-buzzer_support-v1-0-fd3eb0a24442@cherry.de>
- <20240529-buzzer_support-v1-2-fd3eb0a24442@cherry.de>
+        Fri, 12 Jul 2024 01:54:39 -0700 (PDT)
+Date: Fri, 12 Jul 2024 10:54:37 +0200
+From: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v4 00/15] arm64: Support for running as a guest in Arm CCA
+Message-ID: <ZpDvTXMDq6i+4O0m@fedora>
+References: <20240701095505.165383-1-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wbrgntclef5fmbs4"
-Content-Disposition: inline
-In-Reply-To: <20240529-buzzer_support-v1-2-fd3eb0a24442@cherry.de>
-
-
---wbrgntclef5fmbs4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240701095505.165383-1-steven.price@arm.com>
+
+On Mon, Jul 01, 2024 at 10:54:50AM +0100, Steven Price wrote:
+> This series adds support for running Linux in a protected VM under the
+> Arm Confidential Compute Architecture (CCA). This has been updated
+> following the feedback from the v3 posting[1]. Thanks for the feedback!
+> Individual patches have a change log. But things to highlight:
+> 
+>  * a new patch ("firmware/psci: Add psci_early_test_conduit()") to
+>    prevent SMC calls being made on systems which don't support them -
+>    i.e. systems without EL2/EL3 - thanks Jean-Philippe!
+> 
+>  * two patches dropped (overriding set_fixmap_io). Instead
+>    FIXMAP_PAGE_IO is modified to include PROT_NS_SHARED. When support
+>    for assigning hardware devices to a realm guest is added this will
+>    need to be brought back in some form. But for now it's just adding
+>    complixity and confusion for no gain.
+> 
+>  * a new patch ("arm64: mm: Avoid TLBI when marking pages as valid")
+>    which avoids doing an extra TLBI when doing the break-before-make.
+>    Note that this changes the behaviour in other cases when making
+>    memory valid. This should be safe (and saves a TLBI for those cases),
+>    but it's a separate patch in case of regressions.
+> 
+>  * GIC ITT allocation now uses a custom genpool-based allocator. I
+>    expect this will be replaced with a generic way of allocating
+>    decrypted memory (see [4]), but for now this gets things working
+>    without wasting too much memory.
+> 
+> The ABI to the RMM from a realm (the RSI) is based on the final RMM v1.0
+> (EAC 5) specification[2]. Future RMM specifications will be backwards
+> compatible so a guest using the v1.0 specification (i.e. this series)
+> will be able to run on future versions of the RMM without modification.
+> 
+> This series is based on v6.10-rc1. It is also available as a git
+> repository:
+> 
+> https://gitlab.arm.com/linux-arm/linux-cca cca-guest/v4
+> 
+> This series (the guest side) should be in a good state so please review
+> with the intention that this could be merged soon. The host side will
+> require more iteration so the versioning of the series will diverge -
+> so for now continue to use v3 for the host support.
+> 
+> Introduction (unchanged from v2 posting)
+> ============
+> A more general introduction to Arm CCA is available on the Arm
+> website[3], and links to the other components involved are available in
+> the overall cover letter.
+> 
+> Arm Confidential Compute Architecture adds two new 'worlds' to the
+> architecture: Root and Realm. A new software component known as the RMM
+> (Realm Management Monitor) runs in Realm EL2 and is trusted by both the
+> Normal World and VMs running within Realms. This enables mutual
+> distrust between the Realm VMs and the Normal World.
+> 
+> Virtual machines running within a Realm can decide on a (4k)
+> page-by-page granularity whether to share a page with the (Normal World)
+> host or to keep it private (protected). This protection is provided by
+> the hardware and attempts to access a page which isn't shared by the
+> Normal World will trigger a Granule Protection Fault.
+> 
+> Realm VMs can communicate with the RMM via another SMC interface known
+> as RSI (Realm Services Interface). This series adds wrappers for the
+> full set of RSI commands and uses them to manage the Realm IPA State
+> (RIPAS) and to discover the configuration of the realm.
+> 
+> The VM running within the Realm needs to ensure that memory that is
+> going to use is marked as 'RIPAS_RAM' (i.e. protected memory accessible
+> only to the guest). This could be provided by the VMM (and subject to
+> measurement to ensure it is setup correctly) or the VM can set it
+> itself.  This series includes a patch which will iterate over all
+> described RAM and set the RIPAS. This is a relatively cheap operation,
+> and doesn't require memory donation from the host. Instead, memory can
+> be dynamically provided by the host on fault. An alternative would be to
+> update booting.rst and state this as a requirement, but this would
+> reduce the flexibility of the VMM to manage the available memory to the
+> guest (as the initial RIPAS state is part of the guest's measurement).
+> 
+> Within the Realm the most-significant active bit of the IPA is used to
+> select whether the access is to protected memory or to memory shared
+> with the host. This series treats this bit as if it is attribute bit in
+> the page tables and will modify it when sharing/unsharing memory with
+> the host.
+> 
+> This top bit usage also necessitates that the IPA width is made more
+> dynamic in the guest. The VMM will choose a width (and therefore which
+> bit controls the shared flag) and the guest must be able to identify
+> this bit to mask it out when necessary. PHYS_MASK_SHIFT/PHYS_MASK are
+> therefore made dynamic.
+> 
+> To allow virtio to communicate with the host the shared buffers must be
+> placed in memory which has this top IPA bit set. This is achieved by
+> implementing the set_memory_{encrypted,decrypted} APIs for arm64 and
+> forcing the use of bounce buffers. For now all device access is
+> considered to required the memory to be shared, at this stage there is
+> no support for real devices to be assigned to a realm guest - obviously
+> if device assignment is added this will have to change.
+> 
+> Finally the GIC is (largely) emulated by the (untrusted) host. The RMM
+> provides some management (including register save/restore) but the
+> ITS buffers must be placed into shared memory for the host to emulate.
+> There is likely to be future work to harden the GIC driver against a
+> malicious host (along with any other drivers used within a Realm guest).
+> 
+> [1] https://lore.kernel.org/lkml/20240605093006.145492-1-steven.price%40arm.com
+> [2] https://developer.arm.com/documentation/den0137/1-0eac5/
+> [3] https://www.arm.com/architecture/security-features/arm-confidential-compute-architecture
+> [4] https://lore.kernel.org/lkml/ZmNJdSxSz-sYpVgI%40arm.com
+> 
+> Jean-Philippe Brucker (1):
+>   firmware/psci: Add psci_early_test_conduit()
+> 
+> Sami Mujawar (2):
+>   arm64: rsi: Interfaces to query attestation token
+>   virt: arm-cca-guest: TSM_REPORT support for realms
+> 
+> Steven Price (7):
+>   arm64: realm: Query IPA size from the RMM
+>   arm64: Mark all I/O as non-secure shared
+>   arm64: Make the PHYS_MASK_SHIFT dynamic
+>   arm64: Enforce bounce buffers for realm DMA
+>   arm64: mm: Avoid TLBI when marking pages as valid
+>   irqchip/gic-v3-its: Share ITS tables with a non-trusted hypervisor
+>   irqchip/gic-v3-its: Rely on genpool alignment
+> 
+> Suzuki K Poulose (5):
+>   arm64: rsi: Add RSI definitions
+>   arm64: Detect if in a realm and set RIPAS RAM
+>   arm64: Enable memory encrypt for Realms
+>   arm64: Force device mappings to be non-secure shared
+>   efi: arm64: Map Device with Prot Shared
+> 
+>  arch/arm64/Kconfig                            |   3 +
+>  arch/arm64/include/asm/fixmap.h               |   2 +-
+>  arch/arm64/include/asm/io.h                   |   8 +-
+>  arch/arm64/include/asm/mem_encrypt.h          |  17 ++
+>  arch/arm64/include/asm/pgtable-hwdef.h        |   6 -
+>  arch/arm64/include/asm/pgtable-prot.h         |   3 +
+>  arch/arm64/include/asm/pgtable.h              |  13 +-
+>  arch/arm64/include/asm/rsi.h                  |  64 ++++++
+>  arch/arm64/include/asm/rsi_cmds.h             | 134 +++++++++++
+>  arch/arm64/include/asm/rsi_smc.h              | 142 ++++++++++++
+>  arch/arm64/include/asm/set_memory.h           |   3 +
+>  arch/arm64/kernel/Makefile                    |   3 +-
+>  arch/arm64/kernel/efi.c                       |   2 +-
+>  arch/arm64/kernel/rsi.c                       | 104 +++++++++
+>  arch/arm64/kernel/setup.c                     |   8 +
+>  arch/arm64/mm/init.c                          |  10 +-
+>  arch/arm64/mm/pageattr.c                      |  76 ++++++-
+>  drivers/firmware/psci/psci.c                  |  25 +++
+>  drivers/irqchip/irq-gic-v3-its.c              | 142 +++++++++---
+>  drivers/virt/coco/Kconfig                     |   2 +
+>  drivers/virt/coco/Makefile                    |   1 +
+>  drivers/virt/coco/arm-cca-guest/Kconfig       |  11 +
+>  drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
+>  .../virt/coco/arm-cca-guest/arm-cca-guest.c   | 211 ++++++++++++++++++
+>  include/linux/psci.h                          |   5 +
+>  25 files changed, 953 insertions(+), 44 deletions(-)
+>  create mode 100644 arch/arm64/include/asm/mem_encrypt.h
+>  create mode 100644 arch/arm64/include/asm/rsi.h
+>  create mode 100644 arch/arm64/include/asm/rsi_cmds.h
+>  create mode 100644 arch/arm64/include/asm/rsi_smc.h
+>  create mode 100644 arch/arm64/kernel/rsi.c
+>  create mode 100644 drivers/virt/coco/arm-cca-guest/Kconfig
+>  create mode 100644 drivers/virt/coco/arm-cca-guest/Makefile
+>  create mode 100644 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
 Hello,
 
-On Wed, May 29, 2024 at 12:10:31PM +0200, Farouk Bouabid wrote:
-> Mule is a device that can output a PWM signal based on I2C commands.
->=20
-> Add pwm driver for Mule PWM-over-I2C controller.
->=20
-> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
-> ---
->  drivers/pwm/Kconfig    |  10 +++++
->  drivers/pwm/Makefile   |   1 +
->  drivers/pwm/pwm-mule.c | 115 +++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 126 insertions(+)
->=20
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index 4b956d661755..eb8cfa113ec7 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -425,6 +425,16 @@ config PWM_MICROCHIP_CORE
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called pwm-microchip-core.
-> =20
-> +config PWM_MULE
-> +	tristate "Mule PWM-over-I2C support"
-> +	depends on I2C && OF
+I tested this series on QEMU/KVM with the CCA patches(v2) and the FVP
+model. I could not find any evident issue.
 
-It would be easy to drop the hard dependency on OF. Please do that.
+Tested-by: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
 
-Given that that part doesn't seem to be available for individual sale, I
-suggest to add something like:
-
-	depends on (ARM64 && ARCH_ROCKCHIP) || COMPILE_TEST
-
-to not annoy people configuring a kernel for x86 or s390.
-
-> +	help
-> +	  PWM driver for Mule PWM-over-I2C controller. Mule is a device
-> +	  that can output a PWM signal based on I2C commands.
-
-How is that different from a PWM that is an ordinary I2C device? If
-there is no difference, I'd just call this "an I2C device". Also "can
-output a PWM signal" is a given for PWM drivers :-)
-
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called pwm-mule.
-> +
->  config PWM_MXS
->  	tristate "Freescale MXS PWM support"
->  	depends on ARCH_MXS || COMPILE_TEST
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index c5ec9e168ee7..cdd736ea3244 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -38,6 +38,7 @@ obj-$(CONFIG_PWM_MESON)		+=3D pwm-meson.o
->  obj-$(CONFIG_PWM_MEDIATEK)	+=3D pwm-mediatek.o
->  obj-$(CONFIG_PWM_MICROCHIP_CORE)	+=3D pwm-microchip-core.o
->  obj-$(CONFIG_PWM_MTK_DISP)	+=3D pwm-mtk-disp.o
-> +obj-$(CONFIG_PWM_MULE)		+=3D pwm-mule.o
->  obj-$(CONFIG_PWM_MXS)		+=3D pwm-mxs.o
->  obj-$(CONFIG_PWM_NTXEC)		+=3D pwm-ntxec.o
->  obj-$(CONFIG_PWM_OMAP_DMTIMER)	+=3D pwm-omap-dmtimer.o
-> diff --git a/drivers/pwm/pwm-mule.c b/drivers/pwm/pwm-mule.c
-> new file mode 100644
-> index 000000000000..e8593a48b16e
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-mule.c
-> @@ -0,0 +1,115 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Mule PWM-over-I2C controller driver
-> + *
-> + * Copyright (C) 2024 Theobroma Systems Design und Consulting GmbH
-
-Is there a publicly available datasheet? I guess not. (I ask because
-adding a link there to such a document would be nice.)
-
-> + */
-> +
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/pwm.h>
-> +#include <linux/regmap.h>
-> +
-> +struct mule_pwm {
-> +	struct mutex lock;
-> +	struct regmap *regmap;
-> +};
-> +
-> +static const struct regmap_config pwm_mule_config =3D {
-> +	.reg_bits =3D 8,
-> +	.val_bits =3D 8,
-> +};
-> +
-> +#define MULE_PWM_DCY_REG	0x0
-> +#define MULE_PWM_FREQ_L_REG	0x1	/* LSB register */
-> +#define MULE_PWM_FREQ_H_REG	0x2	/* MSB register */
-> +
-> +#define NANOSECONDS_TO_HZ(x) (1000000000UL/(x))
-
-Don't introduce such a macro if you only use it once. Having the
-division in the function results in code that is easier to read (IMHO).
-
-> +static int pwm_mule_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> +			      const struct pwm_state *state)
-> +{
-> +	struct mule_pwm *priv =3D pwmchip_get_drvdata(chip);
-> +	u8 duty_cycle;
-> +	u64 freq;
-> +	int ret;
-> +
-> +	freq =3D NANOSECONDS_TO_HZ(state->period);
-> +
-> +	if (freq > U16_MAX) /* Frequency is 16-bit wide */ {
-> +		dev_err(chip->dev,
-> +			"Failed to set frequency: %llu Hz: out of 16-bit range\n", freq);
-> +		return -EINVAL;
-> +	}
-
-You're supposed to configure the biggest possible period not bigger than
-the requested period. So this should be:
-
-	/*
-	 * The period is configured using a 16 bit wide register holding
-	 * the frequency in Hz.
-	 */
-	unsigned int period =3D min_t(u64, state->period, NSEC_PER_SEC);
-	unsigned int freq =3D DIV_ROUND_UP(NSEC_PER_SEC, period);
-
-	if (freq > U16_MAX)
-		return -EINVAL;
-
-> +	if (state->enabled)
-> +		duty_cycle =3D pwm_get_relative_duty_cycle(state, 100);
-
-This is wrong for two reasons:
-
- - It uses rounding to the nearest duty_cycle, however you're supposed
-   to round down.
- - It uses the requested period instead of the real one.
-
-I wonder why the hardware doesn't use the whole 8 bits here.
-
-> +	else
-> +		duty_cycle =3D 0;
-> +
-> +	mutex_lock(&priv->lock);
-
-If you use the guard helper, you don't need to resort to goto for error
-handling.
-
-> +	ret =3D regmap_bulk_write(priv->regmap, MULE_PWM_FREQ_L_REG, &freq, 2);
-> +	if (ret) {
-> +		dev_err(chip->dev,
-> +			"Failed to set frequency: %llu Hz: %d\n", freq, ret);
-> +		goto out;
-> +	}
-> +
-> +	ret =3D regmap_write(priv->regmap, MULE_PWM_DCY_REG, duty_cycle);
-> +	if (ret)
-> +		dev_err(chip->dev,
-> +			"Failed to set duty cycle: %u: %d\n", duty_cycle, ret);
-
-Please document how the hardware behaves here in a "Limitations" section
-as several other drivers do. Questions to answer include: Does it
-complete a period when the parameters are updated? Can it happen that a
-glitch is emitted while MULE_PWM_FREQ_[LH]_REG is updated but
-MULE_PWM_DCY_REG isn't yet? Maybe updating MULE_PWM_FREQ_[LH]_REG isn't
-even atomic? "Doesn't support disabling, configures duty_cycle=3D0 when
-disabled is requested."
-
-Maybe write all three registers in a bulk write, then you might even be
-able to drop the lock.
-
-Also please fail silently.
-
-> +out:
-> +	mutex_unlock(&priv->lock);
-> +	return ret;
-> +}
-> +
-> +static const struct pwm_ops pwm_mule_ops =3D {
-> +	.apply =3D pwm_mule_apply,
-
-Is .get_state not possible to implement (then please document that with a r=
-eason)?
-
-> +};
-> +
-> +static int pwm_mule_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev =3D &client->dev;
-> +	struct pwm_chip *chip;
-> +	struct mule_pwm *priv;
-> +
-> +	chip =3D devm_pwmchip_alloc(dev, 1, sizeof(*priv));
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-> +
-> +	priv =3D pwmchip_get_drvdata(chip);
-> +
-> +	mutex_init(&priv->lock);
-> +
-> +	priv->regmap =3D devm_regmap_init_i2c(client, &pwm_mule_config);
-> +	if (IS_ERR(priv->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
-> +				     "Failed to allocate i2c register map\n");
-> +
-> +	chip->ops =3D &pwm_mule_ops;
-> +
-> +	return devm_pwmchip_add(dev, chip);
-
-Error message if this fails, please.
-
-> +}
-
-Best regards
-Uwe
-
---wbrgntclef5fmbs4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaQ70AACgkQj4D7WH0S
-/k7/gQf/Q+SdZqNCkDwpvZRbQGIjpyKxHGDP30YB3HC97oU7mrFiybp5l20eBhSh
-n/WDFCvdBYeiKsMLuWgN7RVITqfHJNa0gT22Lhf6l0Sco1ZykjQDuAVPbkNyp/jd
-FFf+EFHa3QhLAxsCvCNc18TvnBImTasMPFQ1preymMa/ISA93OAL4paT5+7Pix/R
-zdD0oPZjQ3tul9MJhqOUBtPdh+QcRaYx9a8shRzmk6FMBAZFSVq0lwErIAgI7Zp7
-InKTINIO9Y/f+xLeMqi3X+cLzCOBY7AaqFGbOPNnyFKCRZYDH88knYaUSAzh4V49
-eqzPSd6OEKPEdcD5vCj1jt1Fcdna+A==
-=gYdx
------END PGP SIGNATURE-----
-
---wbrgntclef5fmbs4--
 
