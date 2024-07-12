@@ -1,193 +1,109 @@
-Return-Path: <linux-kernel+bounces-251206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4238F930213
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:19:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB80A930216
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFF27B21906
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:19:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93884283E7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3919061FF5;
-	Fri, 12 Jul 2024 22:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GjTegZnc"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA2512E1CE;
+	Fri, 12 Jul 2024 22:19:17 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17E21BDC3;
-	Fri, 12 Jul 2024 22:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A59151C21;
+	Fri, 12 Jul 2024 22:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720822713; cv=none; b=q5fFff2CxGuM6KYeigSy+dzSmkOH7ixf0vqivvyEs73NXSYcnql3ASaHGNOrEI1UB6VEeQpcfntOLsJ227I3ouakKbJzDZnY1sXlITRHYLjPmMbpvsKnBlsH5tGyPZ+6iZLMgzx3al7CyP68hYscseCsCKEyJslBIS46CBrGPPg=
+	t=1720822757; cv=none; b=fIwHvVOliUqQ2ELR0WHnSwIkgNK195/4jQt+K0IGntNpWNNNWCn7I5HXsFSEyVYy/x0TFgY9rlsAFXGkqJ+rkNGxpsXc4PU9PK6MR+pMZLFJepjCH6QArype858NsnoZJb+Y1mVnHPbZPA6NgDKkdWWtaTyYnl3HjMAJ2NvPn+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720822713; c=relaxed/simple;
-	bh=3Yd8//CkFdri8ix2BgzZkcKGGDyp6VbpdPgbhhaFr5Q=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UhIBm60cSnUI0RqH7yDnrbCleKOlPT0YKistM9SNYrNdbrDrN/6huOzxrdATnkyOT0B5fVz7Fe8Ls3QHVowm/FKi2im1YbFWsMx/Zv36ahpmggkke1novoVFP26ecqHvRCVZWKsPs8Y3BJIKhslqfE41wWK617Bs1Hpv+TeB4TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GjTegZnc; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4277a5ed48bso17832155e9.2;
-        Fri, 12 Jul 2024 15:18:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720822709; x=1721427509; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Gp997xfVUy47LFNuWEWNS+olZrom40X4hD1oREeaYw=;
-        b=GjTegZncTbnEywxJttSRz7WGAv/9JHT6BF1ciCjegPMJnI1LC3VoAkATj/g5J3LU5y
-         9WcnplEBK8UsJMWmAcjWTsGhWOZiE71/ps9Sm3/WO7YewWmBJccdocA5CBJ5VbimpTBX
-         NcWL0rPAIlmqIJTQru99buZbbRj2OsdkLl+r1HPJz++s9CfafPpDTScjDJkkx4e/fEb/
-         euR+8DxDt6udam4Qegsqn/xv1mANIFjHs1Pv6jOEmX+1ZfYtXSn9yIkCUSDfVv8lcRfN
-         /XfDrWBkna1CV1WS+32EugLH4i+cTTlcKNjDIMhQ7KUzg/MoALRA2R8WZIC+voAAbhFo
-         Jqlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720822709; x=1721427509;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Gp997xfVUy47LFNuWEWNS+olZrom40X4hD1oREeaYw=;
-        b=vi/I37c+dP2x6h2NJU5XR8l7lXHjEfvpa5Y32LcnsD4cny5CNUT7QjNpmyVORtsqLa
-         ZpUJtTy5ECQRC0wFbcM6WcPvDK+23olJQY2nz6iOyZvsOU9G+56LNGQSsqK/ePpBCdEs
-         5gNk+jOx1l0Xnw52j+h3J0yJNf/G8SllVwUZ2oYGdvKPKVaW+3E71I3wao3hPalCsZrX
-         oEQDf5BwnS6ezsn49XzFAf023upgvagt51HcVTb/DcO+HuB5AFjndM34U7zpG/R0uZEi
-         Dd+Rb837ZH6pkJx/u4G3kipLs03aT/y9BbX5r1eOJzicQhqBmJ/iDYe36PpW34QszPMb
-         BOtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCXwTMQfnKbbzw3+uEtyWD/8CBh/KRcUDAizSFIgomhHd0cv1paXaBjlF68rManxE9XkQtDSViZ9wkTie6Urh3rlWZ8skdcSeOA4QGUd6kHQO5iGmHBz5OjEx5
-X-Gm-Message-State: AOJu0YzGHTqgCY68WkREpWsuoqxLe9dkS9JNsZYs2JIg44Q44sD1sYCw
-	JHAZUA99d8Cs+H7TRJ3syb3itYTCxuW9Vdb0eq7Edy7FwNHfON8Z
-X-Google-Smtp-Source: AGHT+IFLpQM4YiEssHHVafXpVRO0//qzed86MvSdeVDSAkWApnTdHqlYS9RY2Uvh2+XC5IqgqUYtYA==
-X-Received: by 2002:a05:600c:2284:b0:426:5e91:391e with SMTP id 5b1f17b1804b1-426707f81a5mr81179955e9.26.1720822709159;
-        Fri, 12 Jul 2024 15:18:29 -0700 (PDT)
-Received: from krava (ip-94-113-247-30.net.vodafone.cz. [94.113.247.30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa067dsm11124788f8f.78.2024.07.12.15.18.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 15:18:28 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Sat, 13 Jul 2024 00:18:26 +0200
-To: Joe Damato <jdamato@fastly.com>, Kyle Huey <me@kylehuey.com>
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, acme@kernel.org, andrii.nakryiko@gmail.com,
-	elver@google.com, khuey@kylehuey.com, mingo@kernel.org,
-	namhyung@kernel.org, peterz@infradead.org, robert@ocallahan.org,
-	yonghong.song@linux.dev, mkarsten@uwaterloo.ca, kuba@kernel.org
-Subject: Re: [bpf?] [net-next ?] [RESEND] possible bpf overflow/output bug
- introduced in 6.10rc1 ?
-Message-ID: <ZpGrstyKD-PtWyoP@krava>
-References: <ZpFfocvyF3KHaSzF@LQ3V64L9R2>
+	s=arc-20240116; t=1720822757; c=relaxed/simple;
+	bh=h717j1pPM+dmnuB78dJ34+L723yB4wJVzBpp75WAGus=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pgQerEZJmynf2MWIP15RnpKntuUhhFVberwF6LXhN1x2gQqNxL7YgWuRxndp/Ef+aIGUrVBebMhOmq/TOqACCAD9IrzNpe1in2P1XdVNfJu3NfT6fuJGFufgeXl9l2Znai4yM/wdQsNsax2/ZjCBIin00ZlKAB5VGObAwSP2rSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav313.sakura.ne.jp (fsav313.sakura.ne.jp [153.120.85.144])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 46CMIgf6064247;
+	Sat, 13 Jul 2024 07:18:42 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav313.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp);
+ Sat, 13 Jul 2024 07:18:42 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 46CMIf83064242
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 13 Jul 2024 07:18:42 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <dfcb0456-dd75-4b9f-9cc8-f0658cd9ce29@I-love.SAKURA.ne.jp>
+Date: Sat, 13 Jul 2024 07:18:41 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpFfocvyF3KHaSzF@LQ3V64L9R2>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] driver core: Fix uevent_show() vs driver detach race
+To: Dan Williams <dan.j.williams@intel.com>, gregkh@linuxfoundation.org
+Cc: syzbot+4762dd74e32532cda5ff@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, Ashish Sangwan <a.sangwan@samsung.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-cxl@vger.kernel.org
+References: <172081332794.577428.9738802016494057132.stgit@dwillia2-xfh.jf.intel.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <172081332794.577428.9738802016494057132.stgit@dwillia2-xfh.jf.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 12, 2024 at 09:53:53AM -0700, Joe Damato wrote:
-> Greetings:
-> 
-> (I am reposting this question after 2 days and to a wider audience
-> as I didn't hear back [1]; my apologies it just seemed like a
-> possible bug slipped into 6.10-rc1 and I wanted to bring attention
-> to it before 6.10 is released.)
-> 
-> While testing some unrelated networking code with Martin Karsten (cc'd on
-> this email) we discovered what appears to be some sort of overflow bug in
-> bpf.
-> 
-> git bisect suggests that commit f11f10bfa1ca ("perf/bpf: Call BPF handler
-> directly, not through overflow machinery") is the first commit where the
-> (I assume) buggy behavior appears.
+On 2024/07/13 4:42, Dan Williams wrote:
+> @@ -2668,8 +2670,12 @@ static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
+>  	if (dev->type && dev->type->name)
+>  		add_uevent_var(env, "DEVTYPE=%s", dev->type->name);
+>  
+> -	if (dev->driver)
+> -		add_uevent_var(env, "DRIVER=%s", dev->driver->name);
+> +	/* Synchronize with module_remove_driver() */
+> +	rcu_read_lock();
+> +	driver = READ_ONCE(dev->driver);
+> +	if (driver)
+> +		add_uevent_var(env, "DRIVER=%s", driver->name);
+> +	rcu_read_unlock();
+>  
 
-heya, nice catch!
+Given that read of dev->driver is protected using RCU,
 
-I can reproduce.. it seems that after f11f10bfa1ca we allow to run tracepoint
-program as perf event overflow program 
+> @@ -97,6 +98,9 @@ void module_remove_driver(struct device_driver *drv)
+>  	if (!drv)
+>  		return;
+>  
 
-bpftrace's bpf program returns 1 which means that perf_trace_run_bpf_submit
-will continue to execute perf_tp_event and then:
+where is
 
-  perf_tp_event
-    perf_swevent_event
-      __perf_event_overflow
-        bpf_overflow_handler
+	dev->driver = NULL;
 
-bpf_overflow_handler then executes event->prog on wrong arguments, which
-results in wrong 'work' data in bpftrace output
+performed prior to
 
-I can 'fix' that by checking the event type before running the program like
-in the change below, but I wonder there's probably better fix
+> +	/* Synchronize with dev_uevent() */
+> +	synchronize_rcu();
+> +
 
-Kyle, any idea?
+this synchronize_rcu(), in order to make sure that
+READ_ONCE(dev->driver) in dev_uevent() observes NULL?
 
+>  	sysfs_remove_link(&drv->p->kobj, "module");
+>  
+>  	if (drv->owner)
 > 
-> Running the following on my machine as of the commit mentioned above:
-> 
->   bpftrace -e 'tracepoint:napi:napi_poll { @[args->work] = count(); }'
-> 
-> while simultaneously transferring data to the target machine (in my case, I
-> scp'd a 100MiB file of zeros in a loop) results in very strange output
-> (snipped):
-> 
->   @[11]: 5
->   @[18]: 5
->   @[-30590]: 6
->   @[10]: 7
->   @[14]: 9
-> 
-> It does not seem that the driver I am using on my test system (mlx5) would
-> ever return a negative value from its napi poll function and likewise for
-> the driver Martin is using (mlx4).
-> 
-> As such, I don't think it is possible for args->work to ever be a large
-> negative number, but perhaps I am misunderstanding something?
-> 
-> I would like to note that commit 14e40a9578b7 ("perf/bpf: Remove #ifdef
-> CONFIG_BPF_SYSCALL from struct perf_event members") does not exhibit this
-> behavior and the output seems reasonable on my test system. Martin confirms
-> the same for both commits on his test system, which uses different hardware
-> than mine.
-> 
-> Is this an expected side effect of this change? I would expect it is not
-> and that the output is a bug of some sort. My apologies in that I am not
-> particularly familiar with the bpf code and cannot suggest what the root
-> cause might be.
-> 
-> If it is not a bug:
->   1. Sorry for the noise :(
 
-your report is great, thanks a lot!
-
-jirka
-
-
->   2. Can anyone suggest what this output might mean or how the
->      script run above should be modified? AFAIK this is a fairly
->      common bpftrace that many folks run for profiling/debugging
->      purposes.
-> 
-> Thanks,
-> Joe
-> 
-> [1]: https://lore.kernel.org/bpf/Zo64cpho2cFQiOeE@LQ3V64L9R2/T/#u
-
----
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index c6a6936183d5..0045dc754ef7 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9580,7 +9580,7 @@ static int bpf_overflow_handler(struct perf_event *event,
- 		goto out;
- 	rcu_read_lock();
- 	prog = READ_ONCE(event->prog);
--	if (prog) {
-+	if (prog && prog->type == BPF_PROG_TYPE_PERF_EVENT) {
- 		perf_prepare_sample(data, event, regs);
- 		ret = bpf_prog_run(prog, &ctx);
- 	}
 
