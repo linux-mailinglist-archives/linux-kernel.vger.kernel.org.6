@@ -1,243 +1,199 @@
-Return-Path: <linux-kernel+bounces-250077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8B192F3FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:21:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE4892F401
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DDE91C21E40
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:20:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7071F23337
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE838F6A;
-	Fri, 12 Jul 2024 02:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B548F6A;
+	Fri, 12 Jul 2024 02:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZZAD32l"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K3w362H3"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C5E29AF;
-	Fri, 12 Jul 2024 02:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A6879D0
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720750848; cv=none; b=YwtA7h1OV4iHTkJBBE+xTiyvOC6wOXvJ7fQJRqonlcNCy5eAeOnXoOorl0qh9Zee1Wmd2/cbmIYQ7Cm+mPKqBTNVQN4/TuWUTeifZuI6WDiYwqWiSFo1NSflWrRZvDzvhJG1xNhthc/7xSAaJ1LfBO2iOMNJ53MVVgH1QihQElE=
+	t=1720751127; cv=none; b=lkj9VG9t8dWFRwEQOWmqnWWoWZI9dEFbu9oznXm3wfPWucnBe5LPWmvaWQEmOXAsxJpajsAa8YnTj68r4a+e7TPU4+rUb+h3+oWcCbSHtUyrWhbVtZsRf5Iobiq6OXxUU5DBQz6avFXLKAT0xz1ZzhfZu7uYsot9MQBMk8ib7B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720750848; c=relaxed/simple;
-	bh=FsGicn6It0IdjVyYCGOFfOXO19UiEP4ZzlKG06SrGL8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=o6Z+v+2XAmVw2IoFLYmeUMJSSy1r6c2JF++vYtKAGmvuFngJdnhMjOolcFFQRPH/C/Olb6w6WCV9S+N+5e1jV9YFB7Ydlb901WBsoUSwCIdPLaDtVZC6HiNniH6+SjIPKOShD3rFzroKsl5JKrSjSIn8/sOD+LMty37OvvmkbG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZZAD32l; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70b04cb28acso1262737b3a.0;
-        Thu, 11 Jul 2024 19:20:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720750846; x=1721355646; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jrcZh7/5eAxAnaK/inFnSGR8whfRR1WpLP2yOmwn2UY=;
-        b=PZZAD32l4t85Xe98sLBO+0oh9G3RQYVo5gYqVqHfE6XuBpVRzNYlZSOPu5uFWKWV9J
-         WGDMMm1mHzAUKTScAFUY7Rg8SkbzYszytvIkqsj5NGinp4DITnDolu9YOzg+kjovLDmq
-         GgPRCBPzyVca2px6tJKj+U+sa7QnKoe7JkKxnEW6HeRJvbQ8d87HlIHwEXPTBr6vwFxq
-         eyrtloCBX6UGZVMYfqUgYyN49hivTUYx8CoJFbPbwd5vtpvG90au933TD+LQbWIOd6y1
-         jM9koJiiSyGbCDB1U/kpn9XKzaBSDE6d0BkOwXmeZn4y4vHajrWv4jDxvzSZmkymAXid
-         kF7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720750846; x=1721355646;
-        h=content-transfer-encoding:in-reply-to:references:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jrcZh7/5eAxAnaK/inFnSGR8whfRR1WpLP2yOmwn2UY=;
-        b=qEBEqeJqxWYnDTVU4GjLS9GvgEkyrnPSlmuJ0brmcw5E9TQjnvWkttLvnCDWGRDpn1
-         9ATFxAUm8j9N2uItn+pi78flxZX/nRz9qa1btLKs/wYoV4cw+TrVSkoqvkKX92vMymrY
-         9dk3xJ3XUA/HbbfCjyImfy8euT7xPS3NR43fL9IHT0CQ3YlTiQ0gFguVF+Lew7eCussj
-         9oSpNkgTW0/ABTnGq3tZLLFUjWaasOKBawg70iqNFrNBR9bNQMAKvAwHPrHn451HQfXW
-         /u7G3bwvP0NaeizNEEzpFKoUk78Adr7iZJa992pyYn+Q/u4OHhRten5u5tJzKVjeZZd/
-         UPHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUkYaBkW5/Ufea1lnCp31qvhQ0Ge2OEOhXlzFwRZf91FqFdy+x+BXXifyEQeFvD/4DzTYCeQKiqesiMVdPZ1uGdCmuj2WARQp8StrNf47lKAotAuNLXhcqb+IZKcfTfMW1pCwRJejOhgA==
-X-Gm-Message-State: AOJu0YzB1uKFiQh2fJnOqasJ4dDOyht/azPDnD52yE/s6d2JR0F/iZL3
-	TT0iHZYZr8mbBBkdB2ulLBZGOvRzIEofFP+HBrvr+ynSn7m/gRun
-X-Google-Smtp-Source: AGHT+IEx+m5rQixAxjbiY1J03efNMMAB0DFZUIkj4YsvS+T7hcPSEuprbNhLGysxhw5CS/QdbWE8HA==
-X-Received: by 2002:a05:6a00:81c1:b0:705:ade3:2e79 with SMTP id d2e1a72fcca58-70b6c952b58mr1767176b3a.13.1720750845748;
-        Thu, 11 Jul 2024 19:20:45 -0700 (PDT)
-Received: from [0.0.0.0] (97.64.23.41.16clouds.com. [97.64.23.41])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43898de8sm6365451b3a.27.2024.07.11.19.20.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 19:20:45 -0700 (PDT)
-Message-ID: <af8d4040-6940-41a6-a889-fb687adbaf9a@gmail.com>
-Date: Fri, 12 Jul 2024 10:20:40 +0800
+	s=arc-20240116; t=1720751127; c=relaxed/simple;
+	bh=63QR4v2CyU2y+Gh3TqWF95gTl3In1wGWJ1lZyoFxy4o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=aOaW3irNJ4leVDjTHemDIvbmbGpOwbUKCvgvASQfigq6HI13DKgB1VgDxA6nnMOidsdUHo5+IeoUtsJ/L7Xt/+rusGs5yhWrRrjiP/ojgB9j+kRhupAGaNuuafqqGx06RTmFMLsIctKuhdgcTmY2w1qUA9W7VEO0Q579iPOsOUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K3w362H3; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: kent.overstreet@linux.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720751122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FJptSA34o+4TDzSkA0WYIYafChThJWndF65BevLfR4c=;
+	b=K3w362H33ahJqKBUoNiwjrlU4SZcOzJWvKGlJq6DrccS7F2cZ+NPLxnPOHqOqvVE2rAgTn
+	jJhsopatBYAWWcPNydV0GTDa+mty/5W1PxUMI+2XMvJNBI7kuj66yqhYQcszLwf8a/teTG
+	Qm/Cp7EV8Zdqjg41tfuOcPymlRhaFj4=
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: tangyouling@kylinos.cn
+Message-ID: <84de6cb1-57bd-42f7-8029-4203820ef0b4@linux.dev>
+Date: Fri, 12 Jul 2024 10:24:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] scsi: core: Add new helper to iterate all devices
- of host
-Content-Language: en-US
-From: Wenchao Hao <haowenchao22@gmail.com>
-To: Hannes Reinecke <hare@suse.de>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240605091731.3111195-1-haowenchao22@gmail.com>
- <20240605091731.3111195-2-haowenchao22@gmail.com>
- <3b24ef4a-996b-4a8b-89f3-385872573039@suse.de>
- <c1ecd21b-7b97-4ef6-94a1-86b2cf520a67@gmail.com>
- <698d4b22-719c-4e57-94ed-f507e425ee12@suse.de>
- <cb9b64a1-4c51-481a-ae5a-c20df70360ea@gmail.com>
-In-Reply-To: <cb9b64a1-4c51-481a-ae5a-c20df70360ea@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] bcachefs: Mark bch_inode_info as SLAB_ACCOUNT
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Youling Tang <youling.tang@linux.dev>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Youling Tang <tangyouling@kylinos.cn>
+References: <20240703070955.104163-1-youling.tang@linux.dev>
+ <m5jemgkisszzs564ikvo6q6qr73tadanvoyyqstthzyamzsr3n@33quhsmhaxhz>
+ <20589721-46c0-4344-b2ef-6ab48bbe2ea5@linux.dev>
+Content-Language: en-US, en-AU
+In-Reply-To: <20589721-46c0-4344-b2ef-6ab48bbe2ea5@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2024/6/13 15:10, Wenchao Hao wrote:
-> On 2024/6/13 14:27, Hannes Reinecke wrote:
->> On 6/12/24 17:06, Wenchao Hao wrote:
->>> On 6/12/24 4:33 PM, Hannes Reinecke wrote:
->>>> On 6/5/24 11:17, Wenchao Hao wrote:
->>>>> shost_for_each_device() would skip devices which is in SDEV_CANCEL or
->>>>> SDEV_DEL state, for some scenarios, we donot want to skip these devices,
->>>>> so add a new macro shost_for_each_device_include_deleted() to handle it.
->>>>>
->>>>> Following changes are introduced:
->>>>>
->>>>> 1. Rework scsi_device_get(), add new helper __scsi_device_get() which
->>>>>      determine if skip deleted scsi_device by parameter "skip_deleted".
->>>>> 2. Add new parameter "skip_deleted" to __scsi_iterate_devices() which
->>>>>      is used when calling __scsi_device_get()
->>>>> 3. Update shost_for_each_device() to call __scsi_iterate_devices() with
->>>>>      "skip_deleted" true
->>>>> 4. Add new macro shost_for_each_device_include_deleted() which call
->>>>>      __scsi_iterate_devices() with "skip_deleted" false
->>>>>
->>>>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
->>>>> ---
->>>>>    drivers/scsi/scsi.c        | 46 ++++++++++++++++++++++++++------------
->>>>>    include/scsi/scsi_device.h | 25 ++++++++++++++++++---
->>>>>    2 files changed, 54 insertions(+), 17 deletions(-)
->>>>>
->>>>> diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
->>>>> index 3e0c0381277a..5913de543d93 100644
->>>>> --- a/drivers/scsi/scsi.c
->>>>> +++ b/drivers/scsi/scsi.c
->>>>> @@ -735,20 +735,18 @@ int scsi_cdl_enable(struct scsi_device *sdev, bool enable)
->>>>>        return 0;
->>>>>    }
->>>>>    -/**
->>>>> - * scsi_device_get  -  get an additional reference to a scsi_device
->>>>> +/*
->>>>> + * __scsi_device_get  -  get an additional reference to a scsi_device
->>>>>     * @sdev:    device to get a reference to
->>>>> - *
->>>>> - * Description: Gets a reference to the scsi_device and increments the use count
->>>>> - * of the underlying LLDD module.  You must hold host_lock of the
->>>>> - * parent Scsi_Host or already have a reference when calling this.
->>>>> - *
->>>>> - * This will fail if a device is deleted or cancelled, or when the LLD module
->>>>> - * is in the process of being unloaded.
->>>>> + * @skip_deleted: when true, would return failed if device is deleted
->>>>>     */
->>>>> -int scsi_device_get(struct scsi_device *sdev)
->>>>> +static int __scsi_device_get(struct scsi_device *sdev, bool skip_deleted)
->>>>>    {
->>>>> -    if (sdev->sdev_state == SDEV_DEL || sdev->sdev_state == SDEV_CANCEL)
->>>>> +    /*
->>>>> +     * if skip_deleted is true and device is in removing, return failed
->>>>> +     */
->>>>> +    if (skip_deleted &&
->>>>> +        (sdev->sdev_state == SDEV_DEL || sdev->sdev_state == SDEV_CANCEL))
->>>>>            goto fail;
->>>>
->>>> Nack.
->>>> SDEV_DEL means the device is about to be deleted, so we _must not_ access it at all.
->>>>
->>>
->>> Sorry I added SDEV_DEL here at hand without understanding what it means.
->>> Actually, just include scsi_device which is in SDEV_CANCEL would fix the
->>> issues I described.
->>>
->>> The issues are because device removing concurrent with error handle.
->>> Normally, error handle would not be triggered when scsi_device is in
->>> SDEV_DEL. Below is my analysis, if it is wrong, please correct me.
->>>
->>> If there are scsi_cmnd remain unfinished when removing scsi_device,
->>> the removing process would waiting for all commands to be finished.
->>> If commands error happened and trigger error handle, the removing
->>> process would be blocked until error handle finished, because
->>> __scsi_remove_device called  del_gendisk() which would wait all
->>> requests to be finished. So now scsi_device is in SDEV_CANCEL.
->>>
->>> If the scsi_device is already in SDEV_DEL, then no scsi_cmnd has been
->>> dispatched to this scsi_device, then error handle would never triggered.
->>>
->>> I want to change the new function __scsi_device_get() as following,
->>> please help to review.
->>>
->>> /*
->>>   * __scsi_device_get  -  get an additional reference to a scsi_device
->>>   * @sdev:    device to get a reference to
->>>   * @skip_canceled: when true, would return failed if device is deleted
->>>   */
->>> static int __scsi_device_get(struct scsi_device *sdev, bool skip_canceled)
->>> {
->>>     /*
->>>      * if skip_canceled is true and device is in removing, return failed
->>>      */
->>>     if (sdev->sdev_state == SDEV_DEL ||
->>>         (sdev->sdev_state == SDEV_CANCEL && skip_canceled))
->>>         goto fail;
->>>     if (!try_module_get(sdev->host->hostt->module))
->>>         goto fail;
->>>     if (!get_device(&sdev->sdev_gendev))
->>>         goto fail_put_module;
->>>     return 0;
->>>
->>> fail_put_module:
->>>     module_put(sdev->host->hostt->module);
->>> fail:
->>>     return -ENXIO;
->>> }
->>>
->> I don't think that's required.
->> With your above analysis, wouldn't the problem be solved with:
->>
->> diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
->> index 775df00021e4..911fcfa80d69 100644
->> --- a/drivers/scsi/scsi_sysfs.c
->> +++ b/drivers/scsi/scsi_sysfs.c
->> @@ -1470,6 +1470,8 @@ void __scsi_remove_device(struct scsi_device *sdev)
->>          if (sdev->sdev_state == SDEV_DEL)
->>                  return;
->>
->> +       scsi_block_when_processing_errors(sdev);
->> +
->>          if (sdev->is_visible) {
->>                  /*
->>                   * If scsi_internal_target_block() is running concurrently,
->>
->> Hmm?
->>
-> 
-> We can not make sure no scsi_cmnd remain unfinished after scsi_block_when_processing_errors(). For example, there is a
-> command has been dispatched but it's not timeouted when removing
-> device, no error happened. After scsi_device is set to SDEV_CANCEL,
-> the removing process would be blocked by del_gendisk() because there
-> is still a request.
-> 
-> Then the request timeout and abort failed, error handle would be triggered, now scsi_device is SDEV_CANCEL.
-> 
-> The error handle would skip this scsi_device when doing device reset.
-> 
->> Cheers,
->>
->> Hannes
-> 
-Hi Hannes,
+Hi, Kent
 
-Would you review these patches? Or do how do you suggest to fix the issues?
+On 12/07/2024 09:39, Youling Tang wrote:
+> On 12/07/2024 08:03, Kent Overstreet wrote:
+>> On Wed, Jul 03, 2024 at 03:09:55PM GMT, Youling Tang wrote:
+>>> From: Youling Tang <tangyouling@kylinos.cn>
+>>>
+>>> After commit 230e9fc28604 ("slab: add SLAB_ACCOUNT flag"), we need 
+>>> to mark
+>>> the inode cache as SLAB_ACCOUNT, similar to commit 5d097056c9a0 
+>>> ("kmemcg:
+>>> account for certain kmem allocations to memcg")
+>>>
+>>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+>> Turns out this was never tested with memcg enabled (!).
+>>
+>> I'm reverting it, please feel free to send me a fixed version.
+> Sorry, my oversight.
+>
+> The following null pointer dereference is triggered after MEMCG 
+> configuration is enabled.
+> ```
+> BUG: kernel NULL pointer dereference, address: 0000000000000008
+> #PF: supervisor read access in kernel mode
+> #PF: error_code(0x0000) - not-present page
+> PGD 0 P4D 0
+> Oops: Oops: 0000 [#1] SMP
+> CPU: 5 PID: 1702 Comm: umount Not tainted 
+> 6.10.0-rc7-ktest-00003-g557bd05b0d4c-dirty #12
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.15.0-1 
+> 04/01/2014
+> RIP: 0010:list_lru_add+0x83/0x100
+> Code: 5f 5d c3 48 8b 45 d0 48 85 c0 74 13 41 80 7c 24 1c 00 48 63 b0 
+> 68 06 00 00 74 04 85 f6 79 5e 4d 03 2c 24 49 83 c5 08 4c 89 ea <49> 8b 
+> 45 08 49 89 5d 08 48 89 13 48 89 43 08 48 89 18 49 8b 45 10
+> RSP: 0018:ffff8881178efd10 EFLAGS: 00010246
+> RAX: 0000000000000000 RBX: ffff88810ec140f0 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: 0000000000000017 RDI: ffff8881178efcc8
+> RBP: ffff8881178efd48 R08: ffff8881009de780 R09: ffffffff822e0de0
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffff888102075c80
+> R13: 0000000000000000 R14: ffff88810443e6c0 R15: 0000000000000000
+> FS:  00007f9ed1840800(0000) GS:ffff888179940000(0000) 
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000000000008 CR3: 00000001062b9005 CR4: 0000000000370eb0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>
+> Call Trace:
+>  <TASK>
+>  ? show_regs+0x69/0x70
+>  ? __die+0x29/0x70
+>  ? page_fault_oops+0x14f/0x3c0
+>  ? do_user_addr_fault+0x2d0/0x5b0
+>  ? default_wake_function+0x1e/0x30
+>  ? exc_page_fault+0x6d/0x130
+>  ? asm_exc_page_fault+0x2b/0x30
+>  ? list_lru_add+0x83/0x100
+>  list_lru_add_obj+0x4b/0x60
+>  iput+0x1fe/0x220
+>  dentry_unlink_inode+0xbd/0x120
+>  __dentry_kill+0x78/0x180
+>  dput+0xc7/0x170
+>  shrink_dcache_for_umount+0xe8/0x120
+>  generic_shutdown_super+0x23/0x150
+>  bch2_kill_sb+0x1b/0x30
+>  deactivate_locked_super+0x34/0xb0
+>  deactivate_super+0x44/0x50
+>  cleanup_mnt+0x105/0x160
+>  __cleanup_mnt+0x16/0x20
+>  task_work_run+0x63/0x90
+>  syscall_exit_to_user_mode+0x10d/0x110
+>  do_syscall_64+0x57/0x100
+>  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+> RIP: 0033:0x7f9ed1a7a6e7
+> Code: 0c 00 f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 31 f6 
+> e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 
+> 00 f0 ff ff 77 01 c3 48 8b 15 09 97 0c 00 f7 d8 64 89 02 b8
+> RSP: 002b:00007ffef8a29128 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+> RAX: 0000000000000000 RBX: 000055f4671acad8 RCX: 00007f9ed1a7a6e7
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000055f4671b1240
+> RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9ed1bc6244
+> R13: 000055f4671b1240 R14: 000055f4671acde0 R15: 000055f4671ac9d0
+>  </TASK>
+> ```
+The direct cause of the BUG is that the return value of 
+list_lru_from_memcg_idx()
+is NULL, and the execution of l->list will cause NULL pointer dereference.
 
-thanks.
+The return value of list_lru_from_memcg_idx() needs to be determined, 
+similar to
+commit 5abc1e37afa0 ("mm: list_lru: allocate list_lru_one only when 
+needed").
+
+Modified as follows:
+diff --git a/mm/list_lru.c b/mm/list_lru.c
+index 3fd64736bc45..ee7424c3879d 100644
+--- a/mm/list_lru.c
++++ b/mm/list_lru.c
+@@ -94,6 +94,9 @@ bool list_lru_add(struct list_lru *lru, struct 
+list_head *item, int nid,
+         spin_lock(&nlru->lock);
+         if (list_empty(item)) {
+                 l = list_lru_from_memcg_idx(lru, nid, 
+memcg_kmem_id(memcg));
++               if (!l)
++                       goto out;
++
+                 list_add_tail(item, &l->list);
+                 /* Set shrinker bit if the first element was added */
+                 if (!l->nr_items++)
+@@ -102,6 +105,7 @@ bool list_lru_add(struct list_lru *lru, struct 
+list_head *item, int nid,
+                 spin_unlock(&nlru->lock);
+                 return true;
+         }
++out:
+         spin_unlock(&nlru->lock);
+         return false;
+  }
+
+
+After ktest test tests/bcachefs/xfstests.ktest can continue to test 
+(enable MEMCG
+and MEMCG_KMEM).
+
+Thanks,
+Youling.
 
