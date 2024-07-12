@@ -1,188 +1,263 @@
-Return-Path: <linux-kernel+bounces-250612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5651E92F9DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:02:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF74C92F9D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C407D1F231E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A297A282B1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A325116D31C;
-	Fri, 12 Jul 2024 12:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BE416D4F5;
+	Fri, 12 Jul 2024 12:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MrYl3G4K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q/QDS0r+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1DF26AED;
-	Fri, 12 Jul 2024 12:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E0038DCC
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720785767; cv=none; b=b37kc66t05Lort4tF6M6aigpxRH3GOHw8ISRijbmnA8F5LFxz2mxx4hscs3Io7F/KLwu+kOIvhq8qqUZKpMiDx12GtyuvO8fFqk8d4+KhwGvNc3kCQ4LkhdMedGjtLI+Rxis0ucri4+dckpqx6X+LlNyZPdrbKP6gp0F4YNE1WM=
+	t=1720785654; cv=none; b=gW0HpZd2cu6YR/pd5r/FXhG5A0Cx9XUZu3pyPKJMyNomWiKxpFGZ94GxPt2mrmz0fEHScel+e+b4fhTK/ZmH/Op1yiRpOV8E28N+5G9PBqYF/Xb7yl39PN4vk98xq4EVhcK006/7eD8o74I6IWCN9rkNEtuEUghUJsJHf41cf+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720785767; c=relaxed/simple;
-	bh=5rxqIu8eGYx5KmffsSFo9gVevBhAc4fDHQYpKo0bY0c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KRhn8EXJCI4PSyQ6Y7kNXovSBCJI9UUSCAWsnLM9swO4hRF5oQESvBLZ72CM0jZimddlSsucLWj3yt2KQnlsqktqn0el6wmnMmpxWsKN3W5BhNy28PIZ5gm5IiZF9P34Cl9wJdHSpbVG7EscMEpGCp/ZzSiAxWQyVMWyNXErbSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MrYl3G4K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 941DDC32782;
-	Fri, 12 Jul 2024 12:02:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720785767;
-	bh=5rxqIu8eGYx5KmffsSFo9gVevBhAc4fDHQYpKo0bY0c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MrYl3G4KkVblErIuk4+J48p1sOgqd3ZMTPkMlZmMPsJNoNRUP6n0GdA/WovqpaX6H
-	 Cbv+u1fSHq0uKO72dazih+wgJcJbhnxU+ZH2Br6sA4PwfWl0Xd/J30lShfQBAQwO44
-	 rrqw+wnBKQuThnlOaV0GxKucCQRBXnFov3B4TdOhDjxK6z2V3oLDsXFNi7Heh8uDVx
-	 KSI4X5To3dpsodn2TJ1vh6tuIkc6IXZlQS2ptHeEgyTq2/0TlCswnSLi/baxmUGQKb
-	 UzxwW6AYa167FoeJJ3CQeRYEiOeEbI3zMLekmL/DTjvGn/WsPC6ul66xtsh2rRFtkh
-	 wTcQZ/LDouVlA==
-Message-ID: <b6cf55a8-5032-4db9-9431-b938158a1706@kernel.org>
-Date: Fri, 12 Jul 2024 14:02:40 +0200
+	s=arc-20240116; t=1720785654; c=relaxed/simple;
+	bh=o7vz8xVIkT+hBTZntG1OJYZ9jPasws2I0t685Uabb5E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q2TI3lElvdqzJroj0sdUX3cVnoN47BUmXcp9y1O7LJVFKYdANVadih6UBWzO1dclBXWxpaSe5bvtCey9I5SSQhiN7GTWhPWEevb+gP3RkHRGcaDAI7KjMGUnT0GXo4svV7HDFq1+el6+/jlaZIGxdyryKDFhHbQSd2MyoenxB84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q/QDS0r+; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720785653; x=1752321653;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=o7vz8xVIkT+hBTZntG1OJYZ9jPasws2I0t685Uabb5E=;
+  b=Q/QDS0r+9gU2vaJ0BVOkqsTWygN/3Ozhf9u+Ni4rpX6Gb4vkI4CeilNC
+   xvzcrhObcIy5LTYqCuD0jC56q3B5neNo4u/VOhJFc865bzFAKMwl3Kx24
+   Tq9c9S8kZRizjPcebjQEfEsbu1u8UnqjjEAJpyTBBrLN94B3QJgJpyI1V
+   I6/9XExp+EAB6qYVN0tZoXzMCEbjKbAdHglwpwb9dco0x5AU3CbRtFfhU
+   yah+7uTGbe9cvWn98JTykf8xpOfgjLwcWyD3eLN3M9lhk3V0RweM6kwW/
+   wcKg1SGgkIKCx9+xq7maqJBpRCBJXLAQ9tUyJShnLiP5UcPJ5KuHr2BRL
+   g==;
+X-CSE-ConnectionGUID: tukDBv3xQCi3qrIa5AqEig==
+X-CSE-MsgGUID: YqXimWnJSN+YLjzCsIs3Aw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="18339979"
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="18339979"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 05:00:52 -0700
+X-CSE-ConnectionGUID: HMd4kqDCQjiGtIZmjDF6ww==
+X-CSE-MsgGUID: Xeebi1Q7QgOkf+GzHUNpUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="53463344"
+Received: from jraag-nuc8i7beh.iind.intel.com ([10.145.169.79])
+  by fmviesa004.fm.intel.com with ESMTP; 12 Jul 2024 05:00:45 -0700
+From: Raag Jadav <raag.jadav@intel.com>
+To: jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	tursulin@ursulin.net,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	anshuman.gupta@intel.com,
+	badal.nilawar@intel.com,
+	riana.tauro@intel.com,
+	ashutosh.dixit@intel.com,
+	karthik.poosa@intel.com,
+	andriy.shevchenko@linux.intel.com,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v1] drm/i915/hwmon: expose fan speed
+Date: Fri, 12 Jul 2024 17:53:56 +0530
+Message-Id: <20240712122356.360613-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/5] Add support for Awinic SAR sensor
-To: wangshuaijie@awinic.com, jeff@labundy.com
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
- dmitry.torokhov@gmail.com, kangjiajun@awinic.com, krzk+dt@kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- liweilei@awinic.com, robh@kernel.org
-References: <ZmEnMPhKzqkJssQE@nixie71>
- <20240712094925.2395733-1-wangshuaijie@awinic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240712094925.2395733-1-wangshuaijie@awinic.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 12/07/2024 11:49, wangshuaijie@awinic.com wrote:
-> Hi Jeff，
-> 
-> Thank you very much for your valuable suggestions. They are indeed a great help to me. 
-> 
-> There are some issues with this driver, but I will do my utmost to improve it 
-> based on your advice. I will change the input subsystem in the driver to the 
-> IIO subsystem and place it in the IIO/proximity directory. I will also modify 
-> the structure of the driver to make it appear more reasonable.
-> 
-> On Wed, 5 Jun 2024 22:04:16 -0500, jeff@labundy.com wrote:
->> Hi Shuaijie,
->>
->> On Wed, Jun 05, 2024 at 09:11:38AM +0000, wangshuaijie@awinic.com wrote:
->>> From: shuaijie wang <wangshuaijie@awinic.com>
->>>
->>> Add drivers that support Awinic SAR (Specific Absorption Rate)
->>> sensors to the Linux kernel.
->>>
->>> The AW9610X series and AW963XX series are high-sensitivity
->>> capacitive proximity detection sensors.
->>>
->>> This device detects human proximity and assists electronic devices
->>> in reducing SAR to pass SAR related certifications.
->>>
->>> The device reduces RF power and reduces harm when detecting human proximity.
->>> Increase power and improve signal quality when the human body is far away.
->>>
->>> This patch implements device initialization, registration,
->>> I/O operation handling and interrupt handling, and passed basic testing.
->>
->> Thank you for your submission! It's always great to see new devices
->> introduced to the kernel. Maybe I can give some high-level feedback
->> first.
->>
->> Unfortunately, I don't think we can review this driver in its current
->> form; the style and structure are simply too different from what is
->> expected in mainline. Many of these problems can be identified with
->> checkpatch [1].
->>
->> To that point, I don't think this driver belongs as an input driver.
->> The input subsystem tends to be a catch-all for sensors in downstream
->> kernels, and some bespoke SOC vendor HALs tend to follow this approach,
->> but that does not necessarily mean input is always the best choice.
->>
->> SAR devices are a special case where an argument could be made for the
->> driver to be an input driver, or an IIO/proximity driver. If the device
->> emits binary near/far events, then an input driver is a good choice;
->> typically the near/far event could be mapped to a switch code such as
->> SW_FRONT_PROXIMITY.
->>
->> If the device emits continuous proximity data (in arbitrary units or
->> otherwise), however, IIO/proximity seems like a better choice here. This
->> driver seems to report proximity using ABS_DISTANCE, which is kind of an
->> abuse of the input subsystem, and a strong indicator that this driver
->> should really be an IIO/proximity driver. If you disagree, I think we
->> at least need some compelling reasoning in the commit message.
->>
->> Regardless of this choice, this driver should really only be 2-3 patches
->> (not counting cover letter): one for the binding, and one for a single,
->> homogenous driver for each of the two devices, unless they have enough
->> in common that they can be supported by a single driver. Mainline tends
->> to avoid vendor-specific (and especially part-specific) entire directories.
->>
->> I agree with Krzysztof's advice in one of the other patches; I think it
->> would be best to study some existing drivers in mainline to gain a
->> better sense of how they are organized, then use those as a model. If I
->> may suggest, consider referring to drivers such as [2] and its cousins
->> in the same directory; these are capacitive proximity sensors that can
->> be used as buttons, but SAR devices tend to be built upon the same principle.
+Add hwmon support for fan1_input attribute, which will expose fan speed
+in RPM. With this in place we can monitor fan speed using lm-sensors tool.
 
-Not much improved in v3 in this regard.
+$ sensors
+i915-pci-0300
+Adapter: PCI adapter
+in0:         653.00 mV
+fan1:        3833 RPM
+power1:           N/A  (max =  43.00 W)
+energy1:      32.02 kJ
 
-Sorry, this code is not ready for review. There are so many trivial
-style issues, it's like someone sends us Windows drivers for Linux.
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+---
+ drivers/gpu/drm/i915/gt/intel_gt_regs.h |  2 +
+ drivers/gpu/drm/i915/i915_hwmon.c       | 71 +++++++++++++++++++++++++
+ 2 files changed, 73 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/gpu/drm/i915/gt/intel_gt_regs.h b/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+index e42b3a5d4e63..407d8152755a 100644
+--- a/drivers/gpu/drm/i915/gt/intel_gt_regs.h
++++ b/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+@@ -1553,6 +1553,8 @@
+ #define VLV_RENDER_C0_COUNT			_MMIO(0x138118)
+ #define VLV_MEDIA_C0_COUNT			_MMIO(0x13811c)
+ 
++#define GEN12_PWM_FAN_SPEED			_MMIO(0x138140)
++
+ #define GEN12_RPSTAT1				_MMIO(0x1381b4)
+ #define   GEN12_VOLTAGE_MASK			REG_GENMASK(10, 0)
+ #define   GEN12_CAGF_MASK			REG_GENMASK(19, 11)
+diff --git a/drivers/gpu/drm/i915/i915_hwmon.c b/drivers/gpu/drm/i915/i915_hwmon.c
+index 49db3e09826c..f829c7837d83 100644
+--- a/drivers/gpu/drm/i915/i915_hwmon.c
++++ b/drivers/gpu/drm/i915/i915_hwmon.c
+@@ -36,6 +36,7 @@ struct hwm_reg {
+ 	i915_reg_t pkg_rapl_limit;
+ 	i915_reg_t energy_status_all;
+ 	i915_reg_t energy_status_tile;
++	i915_reg_t fan_speed;
+ };
+ 
+ struct hwm_energy_info {
+@@ -43,11 +44,17 @@ struct hwm_energy_info {
+ 	long accum_energy;			/* Accumulated energy for energy1_input */
+ };
+ 
++struct hwm_fan_info {
++	u32 reg_val_prev;
++	u32 time_prev;
++};
++
+ struct hwm_drvdata {
+ 	struct i915_hwmon *hwmon;
+ 	struct intel_uncore *uncore;
+ 	struct device *hwmon_dev;
+ 	struct hwm_energy_info ei;		/*  Energy info for energy1_input */
++	struct hwm_fan_info fi;			/*  Fan info for fan1_input */
+ 	char name[12];
+ 	int gt_n;
+ 	bool reset_in_progress;
+@@ -276,6 +283,7 @@ static const struct hwmon_channel_info * const hwm_info[] = {
+ 	HWMON_CHANNEL_INFO(power, HWMON_P_MAX | HWMON_P_RATED_MAX | HWMON_P_CRIT),
+ 	HWMON_CHANNEL_INFO(energy, HWMON_E_INPUT),
+ 	HWMON_CHANNEL_INFO(curr, HWMON_C_CRIT),
++	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
+ 	NULL
+ };
+ 
+@@ -613,6 +621,55 @@ hwm_curr_write(struct hwm_drvdata *ddat, u32 attr, long val)
+ 	}
+ }
+ 
++static umode_t
++hwm_fan_is_visible(const struct hwm_drvdata *ddat, u32 attr)
++{
++	struct i915_hwmon *hwmon = ddat->hwmon;
++
++	switch (attr) {
++	case hwmon_fan_input:
++		return i915_mmio_reg_valid(hwmon->rg.fan_speed) ? 0444 : 0;
++	default:
++		return 0;
++	}
++}
++
++static int
++hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
++{
++	struct i915_hwmon *hwmon = ddat->hwmon;
++	u32 reg_val, rotation, time, time_now;
++	intel_wakeref_t wakeref;
++
++	switch (attr) {
++	case hwmon_fan_input:
++		with_intel_runtime_pm(ddat->uncore->rpm, wakeref)
++			reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
++
++		time_now = jiffies_to_msecs(jiffies);
++
++		/*
++		 * HW register value is accumulated count of pulses from
++		 * PWM fan with the scale of 2 pulses per rotation.
++		 */
++		rotation = (reg_val - ddat->fi.reg_val_prev) >> 1;
++		time = time_now - ddat->fi.time_prev;
++
++		if (!time)
++			return -EAGAIN;
++
++		/* Convert to minutes for calculating RPM. */
++		*val = DIV_ROUND_UP((long)rotation * (60 * 1000), time);
++
++		ddat->fi.reg_val_prev = reg_val;
++		ddat->fi.time_prev = time_now;
++
++		return 0;
++	default:
++		return -EOPNOTSUPP;
++	}
++}
++
+ static umode_t
+ hwm_is_visible(const void *drvdata, enum hwmon_sensor_types type,
+ 	       u32 attr, int channel)
+@@ -628,6 +685,8 @@ hwm_is_visible(const void *drvdata, enum hwmon_sensor_types type,
+ 		return hwm_energy_is_visible(ddat, attr);
+ 	case hwmon_curr:
+ 		return hwm_curr_is_visible(ddat, attr);
++	case hwmon_fan:
++		return hwm_fan_is_visible(ddat, attr);
+ 	default:
+ 		return 0;
+ 	}
+@@ -648,6 +707,8 @@ hwm_read(struct device *dev, enum hwmon_sensor_types type, u32 attr,
+ 		return hwm_energy_read(ddat, attr, val);
+ 	case hwmon_curr:
+ 		return hwm_curr_read(ddat, attr, val);
++	case hwmon_fan:
++		return hwm_fan_read(ddat, attr, val);
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
+@@ -739,12 +800,14 @@ hwm_get_preregistration_info(struct drm_i915_private *i915)
+ 		hwmon->rg.pkg_rapl_limit = PCU_PACKAGE_RAPL_LIMIT;
+ 		hwmon->rg.energy_status_all = PCU_PACKAGE_ENERGY_STATUS;
+ 		hwmon->rg.energy_status_tile = INVALID_MMIO_REG;
++		hwmon->rg.fan_speed = GEN12_PWM_FAN_SPEED;
+ 	} else {
+ 		hwmon->rg.pkg_power_sku_unit = INVALID_MMIO_REG;
+ 		hwmon->rg.pkg_power_sku = INVALID_MMIO_REG;
+ 		hwmon->rg.pkg_rapl_limit = INVALID_MMIO_REG;
+ 		hwmon->rg.energy_status_all = INVALID_MMIO_REG;
+ 		hwmon->rg.energy_status_tile = INVALID_MMIO_REG;
++		hwmon->rg.fan_speed = INVALID_MMIO_REG;
+ 	}
+ 
+ 	with_intel_runtime_pm(uncore->rpm, wakeref) {
+@@ -771,6 +834,14 @@ hwm_get_preregistration_info(struct drm_i915_private *i915)
+ 		for_each_gt(gt, i915, i)
+ 			hwm_energy(&hwmon->ddat_gt[i], &energy);
+ 	}
++
++	if (i915_mmio_reg_valid(hwmon->rg.fan_speed)) {
++		/* Take initial readings and use it while calculating actual fan speed. */
++		with_intel_runtime_pm(uncore->rpm, wakeref)
++			ddat->fi.reg_val_prev = intel_uncore_read(ddat->uncore,
++								  hwmon->rg.fan_speed);
++		ddat->fi.time_prev = jiffies_to_msecs(jiffies);
++	}
+ }
+ 
+ void i915_hwmon_register(struct drm_i915_private *i915)
+-- 
+2.34.1
 
 
