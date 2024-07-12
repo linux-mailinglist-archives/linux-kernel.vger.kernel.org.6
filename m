@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-250420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BAE92F7AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4670892F7AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05BBC1F24106
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:13:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E50CB1F24562
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E085146D7A;
-	Fri, 12 Jul 2024 09:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LyiUHIb5"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962B9144309;
+	Fri, 12 Jul 2024 09:13:37 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E757D528;
-	Fri, 12 Jul 2024 09:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CFDD528;
+	Fri, 12 Jul 2024 09:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720775611; cv=none; b=Yjh7l2N8yXMlrtglc1LXBU2RmUDJ2AqgcMrj+JehRMcfjZAY7PoZ7Xw94eBui9oEuVaOVk3lnNmVklvUKtmbizYMSye+o0Al1zv3ede8guihQDecFhW8h7THOfX+9+1M2HYglULWBFvUYXK5SUqSBTPv4BI71E8AyQFTicxavXQ=
+	t=1720775617; cv=none; b=p7vrxKWaI7dzPbWQXBRppJfOiTIJfxSf3h5nVXa+ue+k/KmLVCgmXMPFbAOZdxFE1kOmaygLnFqXUaa7gvMZKqTp/GM62EgJwhQkgMJWZWmc00i6f+YGf2EXqxyf9F1tsqHh4bijSC7q790O8aNjVFr5+fS7FlAWiXcUB88Oqfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720775611; c=relaxed/simple;
-	bh=hMvYO8BWkE32Nv4UoVWnX83NGmh2+P78oihiB8x7kBo=;
+	s=arc-20240116; t=1720775617; c=relaxed/simple;
+	bh=YPMBT9Ah5xgPaDYSc0W5Pvqk3DmMxE9QvAvShd4xUZE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ltj2O5LDjk3oeRksxd5Ghd4OBFda+3Sk+8czdZGsqK5ZIRQDZ5q4ygA9pj6lwyiZghBBEhQYdTNRHaPi1nbWHduT4/vj063ynUuw/w6bCISMtojnKjHZvRL6qBoKvFNLDnpbb8W8u96H/41NWxacCNV+1gF+9fgKOwpgt1bO1ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LyiUHIb5; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hMvYO8BWkE32Nv4UoVWnX83NGmh2+P78oihiB8x7kBo=; b=LyiUHIb5omPkbjuwl4YQqcEhFh
-	Qau7/17wV/cbw2pYK4+jUZVv74aJEpb3RIj4oTGh++T3F+SGRTmJTXeIJqKhFK+SDYr/EtdOH6SUo
-	chOqlFc9OuXVBspir+sjB8otq07+Tp2o3E3LRJRsCaAo/NOY3jXl7H/FRvWLZgTaxGv0MJLeTi3LC
-	0W+D89A0bCODYjRoM1c7tMkdwKdUbcebgWFNE5uBBjLZARrApjVlI1I7g5T83s5mNrDSPO1xW3wep
-	JKLf+HxnhsHvldF7kIRlLo1Ajm9ID/CpDu3inxhsTFi/i/38dUemVH1mp3rnl/iv4ss5Hz8Tnj7Jg
-	mA2NJu5A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sSCLE-00000001Ggk-0PIx;
-	Fri, 12 Jul 2024 09:13:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B591830050D; Fri, 12 Jul 2024 11:13:23 +0200 (CEST)
-Date: Fri, 12 Jul 2024 11:13:23 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: oleg@redhat.com, mingo@kernel.org, andrii@kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
-	clm@meta.com, paulmck@kernel.org
-Subject: Re: [PATCH v2 00/11] perf/uprobe: Optimize uprobes
-Message-ID: <20240712091323.GB19796@noisy.programming.kicks-ass.net>
-References: <20240711110235.098009979@infradead.org>
- <CAEf4BzZ+ygwfk8FKn5AS_Ny=igvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IkjDNYLyG83GvCG5KjfO1q6+zGGsyFclezFqeiY8uJ+iaLeMncAe+9Xi+SHBKIBoT+zPRbV/j/O5qcLO2TxcqXIBciEd/xoiYYtvzQKh2cKHBV8aS5Ug4Z+TFM4jBveqC8iFkTMvZKPPJBEnuN0xumZQsp41OQHHM1xiaHMXz7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Fri, 12 Jul 2024 09:13:23 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org,
+	Jesse Taube <jesse@rivosinc.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@spacemit.com>,
+	Meng Zhang <kevin.z.m@hotmail.com>, Yangyu Chen <cyy@cyyself.name>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Matthias Brugger <matthias.bgg@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>
+Subject: Re: [PATCH v4 00/10] riscv: add initial support for SpacemiT K1
+Message-ID: <20240712091323.GYA2136013.dlan.gentoo>
+References: <20240709-k1-01-basic-dt-v4-0-ae5bb5e56aaf@gentoo.org>
+ <20240711-zeppelin-property-aef2ee5fe999@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,26 +65,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEf4BzZ+ygwfk8FKn5AS_Ny=igvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com>
+In-Reply-To: <20240711-zeppelin-property-aef2ee5fe999@spud>
 
-On Thu, Jul 11, 2024 at 09:57:44PM -0700, Andrii Nakryiko wrote:
+Hi Conor:
 
-> You should only need not-too-old Clang to build everything (Clang 12+
-> should work, I believe). But do let me know if you run into troubles.
+On 17:08 Thu 11 Jul     , Conor Dooley wrote:
+> On Tue, Jul 09, 2024 at 03:18:43AM +0000, Yixun Lan wrote:
+> > SpacemiT K1 is an ideal chip for some new extension such as RISC-V Vector
+> > 1.0 and Zicond evaluation now. Add initial support for it to allow more
+> > people to participate in building drivers to mainline for it.
+> > 
+> > This kernel has been tested upon Banana Pi BPI-F3 board on vendor U-Boot
+> > bootflow generated by Armbian SDK[1] and patched OpenSBI[2] to enable
+> > Zicboz, which does not in the vendor dts on its U-Boot. Then successfully
+> > booted to busybox on initrd with this log[3].
+> > 
+> > As previous discussion in patch v1[4], maintainer expect more basic drivers
+> > ready before really merging it, which would be fine. For other follow-up patches, 
+> > that are clk, pinctrl/gpio, reset.. My current goal would target at a headless
+> > system including SD card, emmc, and ethernet.
+> 
+> This stuff is already too late for 6.11 as I already sent my PRs, so
+understood, no worry, let's target 6.12, I will send an updated version
+once next -rc1 tagged.
 
-A quick look at the thing shows me it's full of BPF gunk :/
+> there's no immediate rush. Is there any progress made on creating the
+> clock or pinctrl drivers?
+I'm working on pinctrl, probably will send an initial version next week
+(ideally should include gpio/gpio-irq, or at least will push pinctrl part out..)
 
-Which means, I probably also need a kernel with BPF and BTF and all that
-other gunk on -- which I don't have on any of my machines.
+for clk, I think Haylen is working on this..
+> 
+> Cheers,
+> Conor.
 
-Esp. the BTF stuff is a force kill on all my builds as it completely
-destroys build times.
 
-> But then I also ran it on Linux built from perf/uprobes branch (these
-> patches), and after a few seconds I see that there is no more
-> attachment/detachment happening. Eventually I got splats, which you
-> can see in [1]. I used `sudo ./uprobe-stress -a10 -t5 -m5 -f3` command
-> to run it inside my QEMU image.
 
-OK, I'll see if I can make it work.
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
