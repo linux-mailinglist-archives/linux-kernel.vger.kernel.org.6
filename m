@@ -1,97 +1,103 @@
-Return-Path: <linux-kernel+bounces-250700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FBBE92FB6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:29:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF29092FB6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15EAC1F21A92
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4482815C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C184516F907;
-	Fri, 12 Jul 2024 13:29:36 +0000 (UTC)
-Received: from relay162.nicmail.ru (relay162.nicmail.ru [91.189.117.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A5316F903;
+	Fri, 12 Jul 2024 13:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CsTYyZP4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FA116EB6E;
-	Fri, 12 Jul 2024 13:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.189.117.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98108D512;
+	Fri, 12 Jul 2024 13:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720790976; cv=none; b=SOSNsyskRH4ovpWbpWP/xcv+xfm1JO7dsDxHbv6j4TEw3MNjyA8ant3v4aJXJ82hdEkvceykQIHhthdeq97/uA9if4mRqfBqOSu4+A4hpGbuHNX9cCETxkrA/GHjxJjCPfvznxyGDDqcVvVnkx/HY7G20+1bEDFXXr4zRtQ0dlY=
+	t=1720791103; cv=none; b=o+WtEeof3w6fqBgf/EWSCLlRG9+SjIKF70x2/TrUrcVsQincbSnETkfUtc3Uj8TDqvFWEPEKRXVnhnXyqq6ZgaQrBgULbBcOGDx1p9CLsCwy54Ve9tElFF9q5ApKa3QwbHOEZiKyyZa2OGEuY0Y9f7XcBPzSqTVB5gcyoAgMj6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720790976; c=relaxed/simple;
-	bh=WUbnPtxtIzEtvHwNlGlO/l7CFkiPNGEz4QNZtg5HVYg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S8fuVPFow8Xugj5G3TSLvkl9MT7ehbMfeBHBsRNJX+xZ4IvpVq23GXjOXjpPWlzOMXs09+BkaE7hthHuHYh/Xm8ONdf1jHOrKg2KkdMc2I/9D+IHIz/vR7uEiGrC93f1uhwqwGdu2A4hAu6siExYkIlNkFeHzrB0JXrCHgcLJl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru; spf=pass smtp.mailfrom=ancud.ru; arc=none smtp.client-ip=91.189.117.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ancud.ru
-Received: from [10.28.138.148] (port=35280 helo=mitx-gfx..)
-	by relay.hosting.mail.nic.ru with esmtp (Exim 5.55)
-	(envelope-from <kiryushin@ancud.ru>)
-	id 1sSGKs-00037n-9Z;
-	Fri, 12 Jul 2024 16:29:19 +0300
-Received: from [87.245.155.195] (account kiryushin@ancud.ru HELO mitx-gfx..)
-	by incarp1101.mail.hosting.nic.ru (Exim 5.55)
-	with id 1sSGKs-0001vy-2j;
-	Fri, 12 Jul 2024 16:29:18 +0300
-From: Nikita Kiryushin <kiryushin@ancud.ru>
-To: Sudarsana Kalluru <skalluru@marvell.com>
-Cc: Nikita Kiryushin <kiryushin@ancud.ru>,
-	Manish Chopra <manishc@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH net-next] bnx2x: turn off FCoE if storage MAC-address setup failed
-Date: Fri, 12 Jul 2024 16:29:15 +0300
-Message-Id: <20240712132915.54710-1-kiryushin@ancud.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720791103; c=relaxed/simple;
+	bh=sR/sihvCMh1BZfVoEaY4FYooiXR7Eb9typ4klvGYYPg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ljDFKx5s7NXa0Jz1Le6mmEd0f3kIpGEh9x/JqBXoR3cQp2nkV4PqPAj2aiyLx2gsgNZOwEX2BEX6jAUDPlKu/oaTHv4TbWN7n2GJRvAX5G8o4FHBI2P6FSC3I3cVLwBWVgTlxlXVK/mwdpVEJ2vvtDwReClJINB5rhTsn8O52xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CsTYyZP4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 066D7C32782;
+	Fri, 12 Jul 2024 13:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720791103;
+	bh=sR/sihvCMh1BZfVoEaY4FYooiXR7Eb9typ4klvGYYPg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=CsTYyZP4oTZZUlI4ixOMLWd1L2t3aWYPbplp2Ci5ZjCFH9Bp5UivMHesYvOoZa+Zr
+	 6mTmMmkry4pay/9Ks8TvrKzcYLr73mtztD89+Ey2tyqYLF/X+R6OVvKjXM4JTGdpmO
+	 +kk6IDG+j7yKbP1cVxz+HI6XE1mPIq5RCDLe0x+cY3WdySuheVRqAE+SbsuTReEHPF
+	 KEq/p5HIs5l7co0ZZ+StTYzEb7bYf2NhdkkvuqN0sG5mBJab55kbiNZC8fZEp7WSYg
+	 8vvdfZeQeAYxcYXrSDg4Q5TOVMsgUTVrEf7XFIQcURL7R/x7aF0aZk8Aa981tBtNcY
+	 mXZezninWybIg==
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+ devicetree@vger.kernel.org, nicolas.ferre@microchip.com
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-spi@vger.kernel.org
+In-Reply-To: <20240711165402.373634-1-nicolas.ferre@microchip.com>
+References: <20240711165402.373634-1-nicolas.ferre@microchip.com>
+Subject: Re: [PATCH] dt-bindings: spi: at91: Add sama7d65 compatible string
+Message-Id: <172079110072.499335.9864167753803595728.b4-ty@kernel.org>
+Date: Fri, 12 Jul 2024 14:31:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MS-Exchange-Organization-SCL: -1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-As of now, initial storage MAC setup (in bnx2x_init_one) is not checked.
+On Thu, 11 Jul 2024 18:54:02 +0200, nicolas.ferre@microchip.com wrote:
+> Add compatible string for sama7d65. Like sam9x60 and sam9x7, it requires
+> to bind to "atmel,at91rm9200-spi".
+> Group these three under the same enum, sorted alphanumerically, and
+> remove previously added item.
+> 
+> 
 
-This can lead to unexpected FCoE behavior (as address will be in unexpected
-state) without notice.
+Applied to
 
-Check dev_addr_add for storage MAC and if it failes produce error message
-and turn off FCoE feature.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Signed-off-by: Nikita Kiryushin <kiryushin@ancud.ru>
----
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Thanks!
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 678829646cec..c5d5e85777d4 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -13988,8 +13988,12 @@ static int bnx2x_init_one(struct pci_dev *pdev,
- 	if (!NO_FCOE(bp)) {
- 		/* Add storage MAC address */
- 		rtnl_lock();
--		dev_addr_add(bp->dev, bp->fip_mac, NETDEV_HW_ADDR_T_SAN);
-+		rc = dev_addr_add(bp->dev, bp->fip_mac, NETDEV_HW_ADDR_T_SAN);
- 		rtnl_unlock();
-+		if (rc) {
-+			dev_err(&pdev->dev, "Cannot add storage MAC address\n");
-+			bp->flags |= NO_FCOE_FLAG;
-+		}
- 	}
- 	BNX2X_DEV_INFO(
- 	       "%s (%c%d) PCI-E found at mem %lx, IRQ %d, node addr %pM\n",
--- 
-2.34.1
+[1/1] dt-bindings: spi: at91: Add sama7d65 compatible string
+      commit: 3048dc8ba46b7ba11581f2a7e06849af0df13136
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
