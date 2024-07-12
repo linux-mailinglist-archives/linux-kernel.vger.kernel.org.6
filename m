@@ -1,126 +1,182 @@
-Return-Path: <linux-kernel+bounces-251226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A9293025A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:19:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE52593025E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43069283976
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:19:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 078121C21200
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FAD1304BD;
-	Fri, 12 Jul 2024 23:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E7F130E40;
+	Fri, 12 Jul 2024 23:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZcnUWAw"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IPfM0js4"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1B01094E;
-	Fri, 12 Jul 2024 23:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF80130496
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 23:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720826345; cv=none; b=Z+YNw2NLsTt+aNLsGo3QzyxxXCjZNg3H9y5S5y5x8k3h+ld1XTL215y9MLbtoHmt6us5uDxMrwNEVmn0vYkZhDeHJlp6WFtkBPh1cdV1CHt91UJacYE7dShRI0iviBtGGKHOE0pQJ9oXrZ1SgiAWt11iIWOtJVSBU032IsmEm30=
+	t=1720826981; cv=none; b=jI3GRdeGh04Eu0rdzhnEG5BgqJjq7rpXgiSf/653gQpiRqK350cB9Y0h74j+ra1oRSRm6Zj+AMIPRw1Ceh6zMlUb2mmu28t5pXzj3DiF2mrx77zsZuKsObykWO9JQbJ3SbY9G77Xp7UYUOjtnJwPctAMI7G/b7ZJ4nJVjmzlqIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720826345; c=relaxed/simple;
-	bh=FaWRzkVFlCgb0Nly3/8YbMF104vcT8a8AJ1smFpEqHg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xvj0XI00otcPpvvwmzr5CP/2e9SXB6VVD5hvP7xZz8lTe0EGVdFKfoRJGEgy9FXhh7YxmNhp/uC2b4HAdoxPP/C0YyMzDdrr5J2OGoHuma0GQ9dkw6XDQkTDOd+9C99RTaJlHWrwej2qDijtfzUfZ5zYhshYj/N4opoA+DekH5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZcnUWAw; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-48fde3a2b17so884377137.0;
-        Fri, 12 Jul 2024 16:19:04 -0700 (PDT)
+	s=arc-20240116; t=1720826981; c=relaxed/simple;
+	bh=HKSa+I+v6n4xxFPIipr5CjiQVuzATXIb8SNaZMvPPFw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qXe0my0L1a+hwv2ZaIVZ+N82c98C4r+XgRQJtRT0ERYAzs+Q9k++Jz5VAI4AYEs+UIToa/yTWlf6AsxyvzgQm9ksIv8so8n+f2N0FzJ1bxfeD3hQIYJlXl4qD4ARZMMpB1JTKu+n9of+YnC7ZtAVmvxa5ZWlGXKrR9gfKWbqUBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IPfM0js4; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fb168d630cso16300005ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:29:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720826343; x=1721431143; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sm3Z+3oSlCnKi1jgSrpl07U/rwEo7hHDUw7mZ5MPzPM=;
-        b=JZcnUWAwaGG8C54ZfUUdLT8Q7Xpgi8uGVtPCTTHrUmpizHCWNmbeSHR7WKAsOTd8kn
-         N8Fl07KBG1Bwki798Q6svwkkHr9dXPMT7f5jjASvKEOnm5xDe8HEALh0rgky8aLequ1a
-         8e86OxkqlF/rVbmvKWYDNEJaJMCHwB8j1/lFQlxlN7lR7adOS9rwZVUFS2aDwa1AwPBb
-         w8xDUxKxwKkcK+RXEht3ZRMopQcbhpiqDpsPDylFrr4HiHrJFOeuvqMiycmZW56PDgan
-         ZlCzSPmFJ1jDkQbr26WsuReKz/fHu7vbQrlLPa/bwQfpGQEsk7vQx9nTtnb0i98puSbP
-         JJKw==
+        d=google.com; s=20230601; t=1720826979; x=1721431779; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3ZzMQzTcLNpWOotcGFmeiz3+1hsAd4h/kpmJZcUSiZY=;
+        b=IPfM0js4s7fPTGbccQn11d5v9vxOECC6K+AtHve/uWYw25RlCGdCfsAK2ksc2uAD/c
+         G/6RkUAYXNlJruSSgXGxJQs/bIPzhEkHqzuZtTxLGTv4v86dHOCdaLwCpB2vTIzaQyl2
+         SauMlRXU0FLmVgFt/IEmzVmTEKVUs0hjTF8NBrBdsWDFLrWcRof1RCJYhZc9D0TVEYk+
+         Xp+gv1CyR+8k7Eq8n4vWjoNp/T7K4HgWw1C7sOaTJTC+BMCKXNArS1bVTFUpKhJVbB+A
+         bbVS07YuEPiaSW0Rk/eFpDDE9YYOvYYinxhbYZl4izNcgHacHt/mnuf9PcJLkMRgMhyb
+         6ORw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720826343; x=1721431143;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sm3Z+3oSlCnKi1jgSrpl07U/rwEo7hHDUw7mZ5MPzPM=;
-        b=OfpB2cVsC7YwN0dx5EIfXB0LkeJMMYOUpgq9PyxrXBQd8T79rKxf5ObnoddTOHsTMs
-         JiUeSVY3eJI8iLdGTMMrQTY0KAJ3zksr8/ZE4ZNuDhI83NgzaHfA3qRNYLWC8P3jCWrT
-         RDMpCiE5l50K7cmVvwiA0EfaFjuzL4zOWZePhleUJ5sTg3W8dtmCVed8mK7VloQj+af5
-         a8UFLEXliBwwhHCJlvFr7AFb78OpttxrOk3hZFXVszqny9cut/llSthLV62VQrHZKjyJ
-         CfogeKtS9HFh7H105lOQ0S+N2eeMiy9rzx/WgyjbFAd+ewQnocOfJ0b4Mc7SdHAqfd9R
-         2cRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOASbK0bZOukqutqYvolxa3pZ9SmvolQLnSRa+Bbdlj4gG//SRG2LrkYwLsLCdSZMrzkSQA/RX55Q9oxXHdolQVGPMacChudfDCb4VIPfBQPx0T5w4ouPk1aoB2H001CGyW5ao9JIk
-X-Gm-Message-State: AOJu0YzttgDKBMadjQVnxEFNJeMahL+SImem+ENCMenmGYc+EL2PeEKU
-	9uKulBUkopc/HvQ6j49zYVngzoiA/KZ6Ehcjvpxa7KDoZTkq3wrScHeWMsECBJm75NJSlzhuTIF
-	/jdKt4ivjnH5lFTE/CHTHZpL0yIA=
-X-Google-Smtp-Source: AGHT+IG37BJLgtBHkGv7Y3iibJrinYDDdhWJQVnbqgcbL4cpy4bo4GDWF65hOrpSJjiNSYNUi6IVbr9PF4yhXjlIH70=
-X-Received: by 2002:a05:6102:f10:b0:48f:db40:99e9 with SMTP id
- ada2fe7eead31-49031dd824amr16516144137.0.1720826343044; Fri, 12 Jul 2024
- 16:19:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720826979; x=1721431779;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3ZzMQzTcLNpWOotcGFmeiz3+1hsAd4h/kpmJZcUSiZY=;
+        b=IFxNp9Gx1JZc5LuFNFzGA4+o29XZUMZI5qE5X4q+Y+BNnVZds07kRm12tdb9gQovBd
+         3yfmCrlrby6EzwQa/iTbOv0b9/le4RDmBUJr8eQLeok/4PRQylURfoTRSJQlaUxN+MjP
+         aVtsCkWcAJysVqbj/G91jchoK34WUrcHMfe+ppITjF4VKFIuD18Dwyy4V2902Yg6Z6Mh
+         kK6IC1Ru8HDgjI+AWzz2Dr2y5AJt0CEsf1gioQPUWsweg3YyyGjsBo8a2kGLT7PiMTUO
+         0IjilPP3hhzg4+D1Zxlr4YyYKXjeTmu81WrRWDiZugVEkENkaXMfR966r8tCgicoVSCy
+         P//A==
+X-Forwarded-Encrypted: i=1; AJvYcCXc1r9trEmmhzB2d/CmYsrlDo/yQVEaZBE7YjK9m1yCJe9Lwwox+LCuW6kTI/lt2UTbWJplGB3/ATn5XqBRI+FIvaT/zZHHvM/1h3SC
+X-Gm-Message-State: AOJu0YwghDxBfOsEt5g75jDZv5/j4ku61wZL6qMgvHFXcVjweqpHX3nh
+	QP48IV3CeWsL6Y6tjCi73kxKDDFNrxyAoBGpKkiTk1ZUi4kFKTQfShJgdzUCOco18fOY6IlpnL2
+	StCxqpaEbGKGO1RBXqpsA/A==
+X-Google-Smtp-Source: AGHT+IFQY3bFW+Ec1W/jbxkBChGtxIDhrDnXJSKahhJ1TSz9fMywWTZ933D5uxR+un98Rl9u18eV+KxVPn9D87FWqw==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a17:902:c405:b0:1f7:3763:5ff0 with
+ SMTP id d9443c01a7336-1fbb6cd4279mr6343705ad.1.1720826979113; Fri, 12 Jul
+ 2024 16:29:39 -0700 (PDT)
+Date: Fri, 12 Jul 2024 23:29:37 +0000
+In-Reply-To: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240706022523.1104080-1-flintglass@gmail.com> <20240706022523.1104080-4-flintglass@gmail.com>
-In-Reply-To: <20240706022523.1104080-4-flintglass@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 12 Jul 2024 16:18:52 -0700
-Message-ID: <CAKEwX=M8vTfBsptOF=GdbFKK5V++5Lki+XSHkOmVKWYXPVbkOA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] mm: zswap: proactive shrinking before pool size
- limit is hit
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+References: <20240618-exclusive-gup-v1-0-30472a19c5d1@quicinc.com>
+X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
+Message-ID: <20240712232937.2861788-1-ackerleytng@google.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+From: Ackerley Tng <ackerleytng@google.com>
+To: quic_eberman@quicinc.com
+Cc: akpm@linux-foundation.org, david@redhat.com, kvm@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, maz@kernel.org, 
+	pbonzini@redhat.com, shuah@kernel.org, tabba@google.com, willy@infradead.org, 
+	vannapurve@google.com, hch@infradead.org, jgg@nvidia.com, rientjes@google.com, 
+	seanjc@google.com, jhubbard@nvidia.com, qperret@google.com, 
+	smostafa@google.com, fvdl@google.com, hughd@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 5, 2024 at 7:25=E2=80=AFPM Takero Funaki <flintglass@gmail.com>=
- wrote:
->
-> This patch implements proactive shrinking of zswap pool before the max
-> pool size limit is reached. This also changes zswap to accept new pages
-> while the shrinker is running.
->
-> To prevent zswap from rejecting new pages and incurring latency when
-> zswap is full, this patch queues the global shrinker by a pool usage
-> threshold between 100% and accept_thr_percent, instead of the max pool
-> size.  The pool size will be controlled between 90% to 91% for the
-> default accept_thr_percent=3D90.  Since the current global shrinker
-> continues to shrink until accept_thr_percent, we do not need to maintain
-> the hysteresis variable tracking the pool limit overage in
-> zswap_store().
->
-> Before this patch, zswap rejected pages while the shrinker is running
-> without incrementing zswap_pool_limit_hit counter. It could be a reason
-> why zswap writethrough new pages before writeback old pages.  With this
-> patch, zswap accepts new pages while shrinking, and zswap increments
-> the counter when and only when zswap rejects pages by the max pool size.
->
-> Now, reclaims smaller than the proactive shrinking amount finish
-> instantly and trigger background shrinking.  Admins can check if new
-> pages are buffered by zswap by monitoring the pool_limit_hit counter.
->
-> The name of sysfs tunable accept_thr_percent is unchanged as it is still
-> the stop condition of the shrinker.
-> The respective documentation is updated to describe the new behavior.
->
-> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+Here=E2=80=99s an update from the Linux MM Alignment Session on July 10 202=
+4, 9-10am
+PDT:
 
-Code-wise and idea-wise, I like this patch :) This is dependent on
-other changes (as you have pointed out), but if the series goes
-through, please feel free to include:
+The current direction is:
 
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
++ Allow mmap() of ranges that cover both shared and private memory, but dis=
+allow
+  faulting in of private pages
+  + On access to private pages, userspace will get some error, perhaps SIGB=
+US
+  + On shared to private conversions, unmap the page and decrease refcounts
+
++ To support huge pages, guest_memfd will take ownership of the hugepages, =
+and
+  provide interested parties (userspace, KVM, iommu) with pages to be used.
+  + guest_memfd will track usage of (sub)pages, for both private and shared
+    memory
+  + Pages will be broken into smaller (probably 4K) chunks at creation time=
+ to
+    simplify implementation (as opposed to splitting at runtime when privat=
+e to
+    shared conversion is requested by the guest)
+    + Core MM infrastructure will still be used to track page table mapping=
+s in
+      mapcounts and other references (refcounts) per subpage
+    + HugeTLB vmemmap Optimization (HVO) is lost when pages are broken up -=
+ to
+      be optimized later. Suggestions:
+      + Use a tracking data structure other than struct page
+      + Remove the memory for struct pages backing private memory from the
+        vmemmap, and re-populate the vmemmap on conversion from private to
+        shared
+  + Implementation pointers for huge page support
+    + Consensus was that getting core MM to do tracking seems wrong
+    + Maintaining special page refcounts for guest_memfd pages is difficult=
+ to
+      get working and requires weird special casing in many places. This wa=
+s
+      tried for FS DAX pages and did not work out: [1]
+
++ Implementation suggestion: use infrastructure similar to what ZONE_DEVICE
+  uses, to provide the huge page to interested parties
+  + TBD: how to actually get huge pages into guest_memfd
+  + TBD: how to provide/convert the huge pages to ZONE_DEVICE
+    + Perhaps reserve them at boot time like in HugeTLB
+
++ Line of sight to compaction/migration:
+  + Compaction here means making memory contiguous
+  + Compaction/migration scope:
+    + In scope for 4K pages
+    + Out of scope for 1G pages and anything managed through ZONE_DEVICE
+    + Out of scope for an initial implementation
+  + Ideas for future implementations
+    + Reuse the non-LRU page migration framework as used by memory ballonin=
+g
+    + Have userspace drive compaction/migration via ioctls
+      + Having line of sight to optimizing lost HVO means avoiding being lo=
+cked
+        in to any implementation requiring struct pages
+        + Without struct pages, it is hard to reuse core MM=E2=80=99s
+          compaction/migration infrastructure
+
++ Discuss more details at LPC in Sep 2024, such as how to use huge pages,
+  shared/private conversion, huge page splitting
+
+This addresses the prerequisites set out by Fuad and Elliott at the beginni=
+ng of
+the session, which were:
+
+1. Non-destructive shared/private conversion
+  + Through having guest_memfd manage and track both shared/private memory
+2. Huge page support with the option of converting individual subpages
+  + Splitting of pages will be managed by guest_memfd
+3. Line of sight to compaction/migration of private memory
+  + Possibly driven by userspace using guest_memfd ioctls
+4. Loading binaries into guest (private) memory before VM starts
+  + This was identified as a special case of (1.) above
+5. Non-protected guests in pKVM
+  + Not discussed during session, but this is a goal of guest_memfd, for al=
+l VM
+    types [2]
+
+David Hildenbrand summarized this during the meeting at t=3D47m25s [3].
+
+[1]: https://lore.kernel.org/linux-mm/cover.66009f59a7fe77320d413011386c3ae=
+5c2ee82eb.1719386613.git-series.apopple@nvidia.com/
+[2]: https://lore.kernel.org/lkml/ZnRMn1ObU8TFrms3@google.com/
+[3]: https://drive.google.com/file/d/17lruFrde2XWs6B1jaTrAy9gjv08FnJ45/view=
+?t=3D47m25s&resourcekey=3D0-LiteoxLd5f4fKoPRMjMTOw
 
