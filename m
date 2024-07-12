@@ -1,167 +1,222 @@
-Return-Path: <linux-kernel+bounces-250814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6A692FD24
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:06:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D388C92FD2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB78281F29
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 033E91C231EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43901172BDB;
-	Fri, 12 Jul 2024 15:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5361741C8;
+	Fri, 12 Jul 2024 15:07:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q8oTn/vo"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="M0cUmmqG"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012012.outbound.protection.outlook.com [52.101.66.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E92171E73
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720796806; cv=none; b=MjLfBgV8KdX5eEpcAM0O14mXPMmI8ACpy/O48+ygGHSxustRNke5Qc+sHRiz1nsgGyHzNzTseH5p8Q96Rr9UhShzOV7mVoLrHarLb/u3AWYsrCICR0pHJK9Jdch1rIH+nvdBx/h/IZkDPLC++lTdtYdxHjC1dJm+xxEbLXbf8x0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720796806; c=relaxed/simple;
-	bh=IRMr7qGL1jXVji2zM5H94uxxDduKUZFIvjlx9E9l6rI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FqTrk2rjb5dX5mmPSANNwW+DaT2nKW06OW4nFwhNfS+BeY0HID90z5RpvQuli1pbPySNQTASa6XPVxmK6NelH644C1qq5NW9E4sT1DRRRAtU+jaWs+w2AMAsqtiYgEkGVpP64q7tU77/hWlpwa4Vp4mOw5V8E8U/Zjy6AVF4yBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q8oTn/vo; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fb4e7cc5d5so13148915ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:06:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720796804; x=1721401604; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZWyWnNJQfLis8OltmFTp+D+i2eRVmZlaO2glliGRcpM=;
-        b=Q8oTn/voHhU1nR6xhOLR9ObopibWX7Wp1OVlm+AaD1ehuzWBJEbCse0G8m6wPAWKIV
-         5G6zTtXc04mR1PfAPfcV60J5+/1zpGER+zKT+VoYGrST4kYw9Pn1ZG2kHqbU8gpEGs6S
-         93szTtxfQYYCDHPJTcfLKQ81BIixkSKn22w0L/LxPLsZbRFDl29CjwMx8BrOS4zFwcbD
-         XjFP7T2OrGyLOpgP0oMWtmzU993VRnX8zmP5YM9en7aAtXkli9XkimUWLJ0Aw1VBYpFI
-         Cf5xaoouSrw2Chg7lCCsrNbgS/JsDCItP7eq4VVc7gwn+/l0SbgxJS7GCdAXYUJGP4Le
-         3p+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720796804; x=1721401604;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZWyWnNJQfLis8OltmFTp+D+i2eRVmZlaO2glliGRcpM=;
-        b=q2JS//Mv05aMTdmaRbLKLjQqYxw01pLdlFKew0C7OEC32JlCHMUDjyzD751r+A4Q9C
-         MNOZlVRg1+ANDwg6cqN761SUP+Pu9xkw/aV1aPf86ILzhEN6zS6fmSIfCo9RK5fHwtZu
-         5vdeu/jWFti7l/9bct8p/r0W9d929ZQEbE1gtwetGjA0kAjumJZJULCMo3FR1xUqgKFm
-         TNqlolpU1lppyIdBCS18xiR2RXPv0aQGdw6fgsscOvWZkgFwhmHKB8nXhWhiz+AsX6xC
-         rdSv3zTZ8v86OqIejKdTTirSzsqVE8ArhY2ipDI7pgwk73D0RRMldJi4eZIKPoXEAw2s
-         wVuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhCiY4xoseUakUQCTWxpWXVRvbH0k/XnjttvYmsrB2OH2/0tIE47n0idi9uviUviZJeE4XdMEAJd4ylv1DbOYOQ7E+sqHWJAUo9D0c
-X-Gm-Message-State: AOJu0YzUM7HfNn0hafX0/YjLC95BXzJYV9sBmbLvIxnpJiao8usuz/sU
-	DnTSj+ybBVTphm3rU9hyNRJDist1AUZOVcKwfjO26yspPYmYSBmf+no9n9C1w9uBXRv4wGvbLNf
-	tOw==
-X-Google-Smtp-Source: AGHT+IGDfGxGyoOOVJXHRxv/7+Ukhncjw5VneesB3o9h2h6VbTln8g5EPSE4uE3ENM6QWIp1Ic1twbCkqos=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:ec8b:b0:1fb:415d:81c5 with SMTP id
- d9443c01a7336-1fbb6eb7039mr251225ad.8.1720796804378; Fri, 12 Jul 2024
- 08:06:44 -0700 (PDT)
-Date: Fri, 12 Jul 2024 08:06:42 -0700
-In-Reply-To: <CADrL8HW4PLTeC9Gq3Fd43-idjzOw8mXOzzG_RP1TYVoGp1_g+g@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABE38821;
+	Fri, 12 Jul 2024 15:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720796873; cv=fail; b=e38Af7MD3uiueBDkeSaGGjAuK0uKso5bCksQtN55v0dwAhfV4Jknj9Bt3CCKHlcbaf1HyRcQ4rrT6XAINpmt0WUWBIR8DlGUDWcZoNi4dpNMQasChMqrxvufoUU2D8bXkWtjkp3wXQf4eUuq3sx0p61PGi3Hdmk7DKIXOplBW7k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720796873; c=relaxed/simple;
+	bh=7E0JO3Jg/Q7HpN6Lrs8MGC7yiQafE1N1pldN5Bub6X8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cRw1x8mdBhjm4DyHqsKXhmUnBPEchBwihQ6KNltxeq0Bu31gG09JLvcnFh4YzwXdT4otHr0wxJBdaVbbhcy2alkds2mkKIppnHnQJaRZz44ELMtHCsfv/YSqIB0/Z2wkSKvGLQCHfhu5sM5gHddwWfi/4feSt1dv0tv4Bt4Acmo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=2n.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=M0cUmmqG; arc=fail smtp.client-ip=52.101.66.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=2n.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bWB4lUWT8A5NZDbvXWxgWI2eMibm8/vbsJHxCfYNTrMDuZfLDnM3QgzSBTcfg3uf53PvT4TC2TFJqM+w9AEeKgKlU4Pv2W1PJjNBm/cCloSD6CLzBkrjZNbojsls4U77LGJTnu0k8ruV2wimwfJ6/JclRNlQxuzWjZBggklofaFeMy0PUW2B8Iy6imOzV14JScv8OXEELAMdp59+a8EOSytFxE2bfHJAtDQvNIpnnOLzQ9bdQFRAsrRBtV2QJV1cgO5PRr+Xzt/koWxzPr3m9A2DjGqJGEjgYw3Kf0i3uULOu5IhSX6Bz6iVYezMqsAZUY0UXbV1M2yms9O33WUivA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OWFWUE4kCue6kUyVwb4TNKUJeu7mRq2cw7a0fdNtUdI=;
+ b=coyQ4S4Ciw9d4LQhmsxXYnz7U5KDzkvCTSsc3GQs9In633bbeXe1qgWPzmVG6P3MhC3PPLa01m7Dt1Z7Paby1PvaVPW0CpvV3DzEefgvLPZEB8VXf7dUmPjVCKPrD1NSQTUXayFlfib68tRAU133o+6oomSRWYOuT1hKLYI5P4ujynHzucHIvQGwR5D03y5Xbn5/jxiNeLx5D5WnV1CoFWnPxgjp0aGPIaaJDx2s5ODxhlh7mnNGIyeL21TAzpneRLhdPv/dy4oE9FQSRDRFK6/Ma14P0gTlX86sGBGExk/TNLEmgponmQ3HQQmHdlPcsYHm3zHu7pT6e1ejL9rSKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=broadcom.com smtp.mailfrom=2n.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OWFWUE4kCue6kUyVwb4TNKUJeu7mRq2cw7a0fdNtUdI=;
+ b=M0cUmmqGf41URkm7D2v3Bw7veGYvh/PCgbJwAEXj3XGvtRHRGq94YL5mpfu925j71tZNpFWyeN049g0tecyg4GlDJsKw8UwY9Ae4jVZKfQO1HNYv5fjsHhfboP/dDgMv1h3+Ykg6Hl4of7n1Gz0blBuccHTnCXqbfVBn8hJQSyU=
+Received: from DU2PR04CA0230.eurprd04.prod.outlook.com (2603:10a6:10:2b1::25)
+ by DU0PR02MB8292.eurprd02.prod.outlook.com (2603:10a6:10:3bf::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.37; Fri, 12 Jul
+ 2024 15:07:47 +0000
+Received: from DU6PEPF0000B61F.eurprd02.prod.outlook.com
+ (2603:10a6:10:2b1:cafe::18) by DU2PR04CA0230.outlook.office365.com
+ (2603:10a6:10:2b1::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23 via Frontend
+ Transport; Fri, 12 Jul 2024 15:07:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=2n.com; dkim=none (message not signed) header.d=none;dmarc=fail
+ action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of 2n.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DU6PEPF0000B61F.mail.protection.outlook.com (10.167.8.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7762.17 via Frontend Transport; Fri, 12 Jul 2024 15:07:46 +0000
+Received: from pcczc3457tyd.2n.cz.axis.com (10.0.5.60) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 12 Jul
+ 2024 17:07:45 +0200
+From: =?UTF-8?q?Kamil=20Hor=C3=A1k=20=282N=29?= <kamilh@axis.com>
+To: <florian.fainelli@broadcom.com>, <bcm-kernel-feedback-list@broadcom.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <f.fainelli@gmail.com>, <kory.maincent@bootlin.com>
+CC: <kamilh@axis.com>, <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v12 0/4] net: phy: bcm5481x: add support for BroadR-Reach mode
+Date: Fri, 12 Jul 2024 17:07:05 +0200
+Message-ID: <20240712150709.3134474-1-kamilh@axis.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CADrL8HUW2q79F0FsEjhGW0ujij6+FfCqas5UpQp27Epfjc94Nw@mail.gmail.com>
- <ZmxsCwu4uP1lGsWz@google.com> <CADrL8HVDZ+m_-jUCaXf_DWJ92N30oqS=_9wNZwRvoSp5fo7asg@mail.gmail.com>
- <ZmzPoW7K5GIitQ8B@google.com> <CADrL8HW3rZ5xgbyGa+FXk50QQzF4B1=sYL8zhBepj6tg0EiHYA@mail.gmail.com>
- <ZnCCZ5gQnA3zMQtv@google.com> <CADrL8HW=kCLoWBwoiSOCd8WHFvBdWaguZ2ureo4eFy9D67+owg@mail.gmail.com>
- <CADrL8HUv6T4baOi=VTFV6ZA=Oyn3dEc6Hp9rXXH0imeYkwUhew@mail.gmail.com>
- <Zo137P7BFSxAutL2@google.com> <CADrL8HW4PLTeC9Gq3Fd43-idjzOw8mXOzzG_RP1TYVoGp1_g+g@mail.gmail.com>
-Message-ID: <ZpFGYvCAQWhldWJZ@google.com>
-Subject: Re: [PATCH v5 4/9] mm: Add test_clear_young_fast_only MMU notifier
-From: Sean Christopherson <seanjc@google.com>
-To: James Houghton <jthoughton@google.com>
-Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
-	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU6PEPF0000B61F:EE_|DU0PR02MB8292:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf3d433d-86b0-424f-9396-08dca284630f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U1BLeTkwelI3MWxiek5RV3MzYUNFUXorWVR1aUFQb1R4UU9aZG1LNXI2VTNR?=
+ =?utf-8?B?ZjcxY3BGZUpZR1N0blc1YVdPUXRVa0d4c1Nvd2VZcHBMWVBJMzdSL2FaZjkv?=
+ =?utf-8?B?aTU4dEVqdjdEbmNIRDVFMXp5bnFHbDBFeHJBQ3QyTzNWK1d2NXpZT3dOUHZp?=
+ =?utf-8?B?Wmc3NDQ3NGN1OUo0MzVtMEVtdk1xcDBhOFFBUmVaSmJYL1NOdnArVytZQjg5?=
+ =?utf-8?B?cC96TkZGQldGamQwWk81RE12NFhVRXk1ZWRZdGlOMEtCdmoyb1A1Yk5nY0Nz?=
+ =?utf-8?B?YzNQR3RMTm1Rb003dDdMR1pSeHpPbmNFTGNkNmJTTFNUVEpSSFRtaGNOejB3?=
+ =?utf-8?B?SGlNcHhwQWxCNkJLZ0V5cmI4ZHhOVElHTFpGcmVYTjBGMkRDMFVYbitrRExW?=
+ =?utf-8?B?dFhzbHpKK1REaUhlZ2tCQkhmSnUzdXhaRllUYXBrMkZxekkxMzZodSs2dVBO?=
+ =?utf-8?B?WnhrQW5RQllHZFd3eGkwaVpHaTR4VU9pY3hhRFlHQ0N5YVZDclJvbEhPdEtX?=
+ =?utf-8?B?dkt5TTc1NEZvbmhRU2tjSEJ5cDZDaytyS2Y3Q3BCcjg4YUs4QVZ5b3FGVlRY?=
+ =?utf-8?B?L25LbVI3RFZWUmh6aTFKcHppaGJTdnJjZFc5S3A1STVHcURQUGRlRjNFT2d6?=
+ =?utf-8?B?Z2IwZjJnOTNDaWVKZVVsZ1Vmd3E1dExxdXFRSVBxUUU2d2xDenZCMWpmMzFi?=
+ =?utf-8?B?MlRYUDZ1UE1lVytodU5aTFVXdHJvSEE1MEJnTFVicU0yWkRJejIzS0hKOUhG?=
+ =?utf-8?B?dWZZbjFNL0xRQlpaVWZvMGtBdGl4TmFFLzJLbFgvaUhWYTRneE1mcEYyVWtR?=
+ =?utf-8?B?K0lxSE5ySlk0SThqNVpvNDJuS0RJZzdOSzlFdGdnVGw3UzQrTTF5ZTFUdnRw?=
+ =?utf-8?B?dzQzU1ZGVVArdG9wL09DUG5IaHU2bUFSa1RqU1A4a0ptOUd2SVNLVFFNb2s0?=
+ =?utf-8?B?NGRhQ0RKSDk3c20wM3ExWTZJSEF2TU9qMzJDZ2FhNS9CZUFkLzZHVkc1ZVdx?=
+ =?utf-8?B?dmdDdXBBOXJYZ1RsOFNaVjF0RFhGOFVCc3R5RXJwTnpHdU5PckQ3aWhrOGN3?=
+ =?utf-8?B?RjJObk5qd05KWUpaZlNlK0Npd285eGo3QVpJTVZMTkFGb0N3Q2JkZXZteHE1?=
+ =?utf-8?B?YkwxTWlVZDI5NklKYTZYS3NTZnJpd3dpQTdsV2xhaXZZaTB3bHNnU1RsQmRr?=
+ =?utf-8?B?WXJQQ0l4N2JjT3lVenFKVEFWS1JJekIyZEk1R05iUDdzbURPd0x3WmROQlF6?=
+ =?utf-8?B?bElvUERvQWxEKyt4c0R4cXc3WlNSWHFrcEk4aGNCOHh5blpNd2ZaTVJGd2lD?=
+ =?utf-8?B?VURRVkN4UWFPZ2ZJd2NDOGw1VHZwZzIzR0ZITDdCN2VaOUhZSEdYeHA4TmNG?=
+ =?utf-8?B?cmxLaDl6SllUWG9yWFhETVpQb3piWmRmT2pRQndyTzhicGIrdlFWUXhjK2tu?=
+ =?utf-8?B?U2FRb1ZLMWhGM2xFNVIwTUVFMTZTRjIzajRtVm5seS82dmlGQ3c2MFVrK09P?=
+ =?utf-8?B?bTdYNGNNbWZiUk9Xc1lhNm5BY2lUdWZDZGxnK1NsMjBVU0p0K0pUbElQY3py?=
+ =?utf-8?B?aDYyUW9UZnVPa0I4dndwdUdHakdYenYwVGx3emtodFVHbEFMeVcwbmQ3MUt1?=
+ =?utf-8?B?blFqOUFna3RySU4xKzZlc2VzRTlvL2QxdG9pbWo2S1J3RHNxSzFKQmRrWnJl?=
+ =?utf-8?B?bmRwdUthaXYxdjVwTkJXemZQZHZvOWdZMVVvV0FuWXJncmFzaldIY295TkZ2?=
+ =?utf-8?B?QzM4VTFPVFFvS2VJQy9ES0ZwNkdBL2E1bE12QjN3VjU4VVhDcnA2bkV3ZzFt?=
+ =?utf-8?B?TWZWZC9aM2t6WFFTa0x2SEJyV256T1JiWGI0Y2t3R1JMMWdBKzBrSUhtbFpp?=
+ =?utf-8?B?WDlLUk9INnJ6bDBQR2RCL2VyMitwSjBBV1pUS250N1M2SXhIdm9zZ2Q4eVA5?=
+ =?utf-8?B?cFB2akw0d21qbUpvcXEwTzZzcTZzOU4raXViWk5rU3ZmWEhXTy8wQnQ0MWhQ?=
+ =?utf-8?B?Mk9sdmxETUxnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 15:07:46.0334
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf3d433d-86b0-424f-9396-08dca284630f
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF0000B61F.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR02MB8292
 
-On Wed, Jul 10, 2024, James Houghton wrote:
-> On Tue, Jul 9, 2024 at 10:49=E2=80=AFAM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Mon, Jul 08, 2024, James Houghton wrote:
-> > > On Fri, Jun 28, 2024 at 7:38=E2=80=AFPM James Houghton <jthoughton@go=
-ogle.com> wrote:
-> > > >
-> > > > On Mon, Jun 17, 2024 at 11:37=E2=80=AFAM Sean Christopherson <seanj=
-c@google.com> wrote:
-> > > I still don't think we should get rid of the WAS_FAST stuff.
-> >
-> > I do :-)
-> >
-> > > The assumption that the L1 VM will almost never share pages between L=
-2
-> > > VMs is questionable. The real question becomes: do we care to have
-> > > accurate age information for this case? I think so.
-> >
-> > I think you're conflating two different things.  WAS_FAST isn't about a=
-ccuracy,
-> > it's about supporting lookaround in conditionally fast secondary MMUs.
-> >
-> > Accuracy only comes into play when we're talking about the last-minute =
-check,
-> > which, IIUC, has nothing to do with WAS_FAST because any potential look=
-around has
-> > already been performed.
->=20
-> Sorry, I thought you meant: have the MMU notifier only ever be
-> lockless (when tdp_mmu_enabled), and just return a potentially wrong
-> result in the unlikely case that L1 is sharing pages between L2s.
->=20
-> I think it's totally fine to just drop WAS_FAST. So then we can either
-> do look-around (1) always, or (2) only when there is a secondary MMU
-> with has_fast_aging. (2) is pretty simple, I'll just do that.
->=20
-> We can add some shadow MMU lockless support later to make the
-> look-around not as useless for the nested TDP case.
+PATCH 1 - Add the 10baseT1BRR_Full link mode
 
-...
+PATCH 2 - Add the definitions of LRE registers, necessary to use
+   BroadR-Reach modes on the BCM5481x PHY
 
-> > Adding the locking isn't actually all that difficult, with the *huge* c=
-aveat that
-> > the below patch is compile-tested only.  The vast majority of the churn=
- is to make
-> > it so existing code ignores the new KVM_RMAP_LOCKED bit.
->=20
-> This is very interesting, thanks for laying out how this could be
-> done. I don't want to hold this series up on getting the details of
-> the shadow MMU lockless walk exactly right. :)
+PATCH 3 - Add brr-mode flag to switch between IEEE802.3 and BroadR-Reach
 
-...
+PATCH 4 - Implementation of the BroadR-Reach modes for the Broadcom
+   PHYs
 
-> 1. Drop the WAS_FAST complexity.
-> 2. Add a function like mm_has_fast_aging_notifiers(), use that to
-> determine if we should be doing look-around.
+Changes in v2:
+  - Divided into multiple patches, removed useless link modes
 
-I would prefer a flag over a function.  Long-term, if my pseudo-lockless rm=
-ap
-idea pans out, KVM can set the flag during VM creation.  Until then, KVM ca=
-n set
-the flag during creation and then toggle it in (un)account_shadowed().  Rac=
-es
-will be possible, but they should be extremely rare and quite benign, all t=
-hings
-considered.
+Changes in v3:
+  - Fixed uninitialized variable in bcm5481x_config_delay_swap function
+
+Changes in v4:
+  - Improved the division of functions between bcm-phy library and broadcom.c
+  - Changed the BroadR-Reach / IEEE mode switching to device tree boolean as
+    these modes are mutually exclusive and barely could coexist in one hardware
+  - Made the link mode selection compatible with current ethtool (i.e. the
+    linkmode is selected by choosing speed and master-slave)
+
+Changes in v5:
+  - Fixed the operator precedence as reported by the kernel test robot
+  - Fixed doc of bcm_linkmode_adv_to_mii_adv_t function
+
+Changes in v6:
+  - Moved the brr-mode flag to separate commit as required by the rules for 
+    DT binding patches
+  - Renamed some functions to make clear they handle LRE-related stuff
+  - Reordered variable definitions to match the coding style requirements
+
+Changes in v7:
+  - Fixed the changes distribution into patches (first one was not buildable)
+
+Changes in v8:
+  - Fixed coding style and did other changes on behalf of the reviewers
+
+Changes in v9:
+  - Applied reviewed tags to unchanged commits, reformatted the submitter's address
+
+Changes in v10:
+  - Fixed minor CR issues, clarified the embedded documentation and the commit message
+
+Changes in v11:
+  - Reworded the brr-mode flag documentation
+
+Changes in v12:
+  - Reworked the BroadR-Reach mode selection as suggested by the review
+  - Renamed some functions to make clear that they handle the alternative (LRE) register set
+  - Some minor changes as recommended
+
+Kamil Horák (2N) (4):
+  net: phy: bcm54811: New link mode for BroadR-Reach
+  net: phy: bcm54811: Add LRE registers definitions
+  dt-bindings: ethernet-phy: add optional brr-mode flag
+  net: phy: bcm-phy-lib: Implement BroadR-Reach link modes
+
+ .../devicetree/bindings/net/ethernet-phy.yaml |   8 +
+ drivers/net/phy/bcm-phy-lib.c                 | 115 +++++
+ drivers/net/phy/bcm-phy-lib.h                 |   4 +
+ drivers/net/phy/broadcom.c                    | 403 ++++++++++++++++--
+ drivers/net/phy/phy-core.c                    |   3 +-
+ include/linux/brcmphy.h                       |  88 ++++
+ include/uapi/linux/ethtool.h                  |   1 +
+ net/ethtool/common.c                          |   3 +
+ 8 files changed, 596 insertions(+), 29 deletions(-)
+
+-- 
+2.39.2
+
 
