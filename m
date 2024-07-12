@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-250127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B26292F483
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:52:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E05592F484
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDA771C230A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09F37283476
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F6A15E96;
-	Fri, 12 Jul 2024 03:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828BF1863F;
+	Fri, 12 Jul 2024 03:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XvA/h0f+"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SaMZAgeF"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8AEDDCD
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2613212E5D
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720756306; cv=none; b=GdaoNxEDcJuVaN8y6wk7gqsZKRAbghaskhInNxXJzqEHJIz7SW1O6E/k/bEEy55y/E5RBCGaHGmA7oBZx4GUZdCUTdTM5GgMN8UtxokBQYHo9DJN9HW5cp/jfmz8Tde8/Yqg7Fl+i8BEok/P+Bb8uwvREr415M1mmnxvJUVtTF4=
+	t=1720756307; cv=none; b=FbsO9aB7fw1Du3uZQy4FqSeyuQ48QDV7B5+uxHzddXo2CX3nf6Ruh5sCqDaHXUC3U0UzcZYFLfuNkybFNciDTYqBBJLEt564AaM2SClVska8wf6yij+j94sZWZRJ8j6ogwE0Ds47DbmwMVsQRMwnGaGtG1ysBUDXgGnulcQGGMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720756306; c=relaxed/simple;
-	bh=d7LTJV9IlxW8+L/AjKuDlqFR8ZMjHyraR64pPCkVqBw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=jdY/Ps+jTzMN1Wzax1FZWaC+hey80BMxn2Q8z86r/zC2GrQ+Qt8rUFArYG3udjhhM991f/HATdC9Z0igc5lbgZXfKHZIzZKOk6Pc7etFSMBQIOkkGT85xjKKus+KpZM8gBi4pZF6FmHQL7Nujz5PDeNGBuNQvlA1yWz54YmpkDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XvA/h0f+; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1720756307; c=relaxed/simple;
+	bh=jz++yfWXOdSw1TCpcBSMI2BPGY4+ubzO9uTur3cMn2c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=WR4yC3IliFat55WhZxpKbHMlXEHuoSRDKbvNc1Zd79Ml/xb6BqVxkFvPle2Wefea7S1aRnkSoXjjCIkx/+F2eZYVZCcHUSuDHjR7+7vV/QmhudSNHggpSKLfJzI4yPqYI4vOghk8naWJIcbm4TfwOdnCoHnGuZ7MLPTSAz87nFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SaMZAgeF; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77c9c5d68bso197159266b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:51:44 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso14429761fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:51:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720756303; x=1721361103; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720756304; x=1721361104; darn=vger.kernel.org;
         h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=YCFj880VNkxO0HYZD+OwyJox07xhsd/AqJTyvBPQ71U=;
-        b=XvA/h0f+OU/ivb/Qn7kKpXZ7yJy6y/QxbZaGhe95Es3N2ry72SAJKrj0bWc5IhGbKv
-         7wBRVJPiVAooontzlamLr3W6WwMgLrTp6Xz2xav5r6RsJTO4Tk7al9tYvOO8+YYE7HG5
-         mH9t/sqgN4CNFTWXuqSaQEjOfHGHPHU/W8sSdYRqpFsGEXCDuC+4nWUxhJ8wecfs0yRe
-         nH1ToHRNF4lPr0PZeJ3zOOZu8uvqPCgmCmE+/4wp03+TzLwE6RELx1zVw8jS/X07N914
-         3sL5sVc0cCAXaGXvWGV+yZTXwR49la8MkAAV8nkHHZV9jxeBrJRsO77spKT5kJQAU5PA
-         yj3Q==
+        bh=TyQlU6I/jiYkGlfq1197jGcyZ0KF+HN5OropbzcVk08=;
+        b=SaMZAgeFfcxnDDbxkFJROXS0j9G9slkd2HF1pLXmq15zAN761p1+PDGOKdC5KLW18B
+         0CcO6ER6OtKJvgvqLMPeJKbm9OJUt6JbRH2lKqIDGF0Sv8wpb0kjEk5iFZw4kG5GWEa7
+         xdVlHPVhIeWfVeF+f+XiAQ5ZJURmZCMj9KckvB1gs69UIqBFROGOhWtPUSIvHcSnr0rv
+         OtBtEmVuOPmqcExAl02ltkjhz8ttQ7agzU3qXaPX+Qto4WZgI6pOpHZOy26reNStDnuQ
+         dQDmIkT23p7Fl1p8SesqpLZpdNxnx/2ZV52VZW4J9ncfuyw6Guwb0bOGGRtBP9q5Yw04
+         ZNQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720756303; x=1721361103;
+        d=1e100.net; s=20230601; t=1720756304; x=1721361104;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YCFj880VNkxO0HYZD+OwyJox07xhsd/AqJTyvBPQ71U=;
-        b=Ut6vNvNKSpJ8su8/2CnPVl7Y5ZsFaXzpN2AsFFHRRyWc9FTfu1lo/JPq5c4RKM/mYl
-         uHgvxhyvblJiEnVtrNJIkDrife89AAN/3rtgkAMDrw0t/msl3ukuWNL8VMEYSz8hnSzm
-         lynTdWMYNaH6qEt90H5S7mgAhq55GG/MYxTn4KOhwNeuzocSVbfJ8AdR2Kv5V5Nq6dbE
-         mIg7KnYn3VHJL5Nnq13yRhvP+ncq51V0r/Pvg6KYkt9BCOsl6VHEJWmeRCplLyiGgAvC
-         Ir0km4fdhzczjEPWqWu/KX9HUjNwHMsJsaREcSJ3ozdNgk7hmOsjX+7weHpuRXKadMV4
-         hmTw==
-X-Gm-Message-State: AOJu0YxwYmiArk0jbONuHe0esPfy1kuhKktDIU8CDjobsXIcu0FCX+P2
-	7A3YsHyWKnvzhPuEvlntL4n070px0ScsZGpdPlZcGwYwO5d7EsKD
-X-Google-Smtp-Source: AGHT+IGU42SFOUlzrj7kRRzHWCymLPr+3FJfHb34KI045J585sywpXTtKt3Z7zk2SYVEJATzJEXU4Q==
-X-Received: by 2002:a17:906:260f:b0:a77:c364:c4e9 with SMTP id a640c23a62f3a-a780b705312mr604819766b.45.1720756302841;
-        Thu, 11 Jul 2024 20:51:42 -0700 (PDT)
+        bh=TyQlU6I/jiYkGlfq1197jGcyZ0KF+HN5OropbzcVk08=;
+        b=olIfg63GqBd4A0i/dUCIzQ6foCSSue3eIgieudMgUpN1sEn8mwUXht0mgQ22OIaYt5
+         MCAv5ngdK7uXg7Zkhg7DRnjcT8eJsYi2xWsMFlfVN6jqe7U7/NYaKHS2mu7OSQq/YjYc
+         c0CwfPZiuWc0V5bev+yZT+MCKsIDR0PYjIHYdBTZIcPQoCDGXcCu8+MUrHcS5B2CPHP2
+         7fC7y6KQSfXFGOoMepUYcD3Zb9hwfFfH6nGiE0V8YZ/xmj+nAn13RfRadirOHCE2v0CZ
+         lyaSq5Q4P+BcCnv+3wpXJJoeFzlS6qSxLZlvPbJ0PmxY05kHFXD+V9cZbb2z97u53svq
+         h0bQ==
+X-Gm-Message-State: AOJu0YwrbwWtVpvuwCxTwpCI3sIF2fHVD9w21SctP2YOU3oRWDVSDvZh
+	iAwPkDQhF4tE0umaQ74GIpbxN1y+6v1es0CYnGQ2+ON3Kh1jfn/5
+X-Google-Smtp-Source: AGHT+IEK9t2pOh9KJ0YSVooVs/Js8zZyCAua2NoCqtsWQcOWOWHE6kuCTkxYpkqw/hXZwXoTIs1YyA==
+X-Received: by 2002:a2e:a401:0:b0:2ea:7d8f:8d12 with SMTP id 38308e7fff4ca-2eeb31979bdmr63277511fa.48.1720756303816;
+        Thu, 11 Jul 2024 20:51:43 -0700 (PDT)
 Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff0bbsm303491266b.119.2024.07.11.20.51.41
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-595b1c0c869sm3285535a12.30.2024.07.11.20.51.43
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Jul 2024 20:51:41 -0700 (PDT)
+        Thu, 11 Jul 2024 20:51:43 -0700 (PDT)
 From: Wei Yang <richard.weiyang@gmail.com>
 To: rppt@kernel.org,
 	willy@infradead.org,
@@ -72,9 +72,9 @@ To: rppt@kernel.org,
 Cc: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	Wei Yang <richard.weiyang@gmail.com>
-Subject: [PATCH 2/3] memblock tests: include export.h in linkage.h as kernel dose
-Date: Fri, 12 Jul 2024 03:51:37 +0000
-Message-Id: <20240712035138.24674-2-richard.weiyang@gmail.com>
+Subject: [PATCH 3/3] tools/testing: abstract two init.h into common include directory
+Date: Fri, 12 Jul 2024 03:51:38 +0000
+Message-Id: <20240712035138.24674-3-richard.weiyang@gmail.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20240712035138.24674-1-richard.weiyang@gmail.com>
 References: <20240712035138.24674-1-richard.weiyang@gmail.com>
@@ -84,40 +84,93 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-In kernel code, linkage.h includes export.h. Let's sync with kernel.
+Currently we have two test suits define its own init.h. This is a little
+redundant.
 
-This is a preparation for move init.h in common include directory.
+Let's create a init.h in common include directory and merge these two
+into it.
 
 Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
 CC: Mike Rapoport <rppt@kernel.org>
+CC: "Liam R. Howlett" <Liam.Howlett@oracle.com>
 ---
- tools/include/linux/linkage.h       | 2 ++
- tools/testing/memblock/linux/init.h | 1 -
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ tools/include/linux/compiler.h                   |  4 ----
+ tools/{testing/memblock => include}/linux/init.h | 14 +++++++++++---
+ tools/testing/radix-tree/linux/init.h            |  2 --
+ tools/testing/radix-tree/maple.c                 |  2 +-
+ 4 files changed, 12 insertions(+), 10 deletions(-)
+ rename tools/{testing/memblock => include}/linux/init.h (81%)
+ delete mode 100644 tools/testing/radix-tree/linux/init.h
 
-diff --git a/tools/include/linux/linkage.h b/tools/include/linux/linkage.h
-index bc763d500262..20dee24d7e1b 100644
---- a/tools/include/linux/linkage.h
-+++ b/tools/include/linux/linkage.h
-@@ -1,4 +1,6 @@
- #ifndef _TOOLS_INCLUDE_LINUX_LINKAGE_H
- #define _TOOLS_INCLUDE_LINUX_LINKAGE_H
+diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
+index 8a63a9913495..e0aaabd18a99 100644
+--- a/tools/include/linux/compiler.h
++++ b/tools/include/linux/compiler.h
+@@ -122,10 +122,6 @@
+ # define unlikely(x)		__builtin_expect(!!(x), 0)
+ #endif
  
-+#include <linux/export.h>
-+
- #endif /* _TOOLS_INCLUDE_LINUX_LINKAGE_H */
-diff --git a/tools/testing/memblock/linux/init.h b/tools/testing/memblock/linux/init.h
-index 4aeddce53310..bd74abc5cba6 100644
+-#ifndef __init
+-# define __init
+-#endif
+-
+ #include <linux/types.h>
+ 
+ /*
+diff --git a/tools/testing/memblock/linux/init.h b/tools/include/linux/init.h
+similarity index 81%
+rename from tools/testing/memblock/linux/init.h
+rename to tools/include/linux/init.h
+index bd74abc5cba6..7ed407976dda 100644
 --- a/tools/testing/memblock/linux/init.h
-+++ b/tools/testing/memblock/linux/init.h
-@@ -3,7 +3,6 @@
- #define _LINUX_INIT_H
++++ b/tools/include/linux/init.h
+@@ -1,9 +1,17 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _LINUX_INIT_H
+-#define _LINUX_INIT_H
++#ifndef _TOOLS_LINUX_INIT_H_
++#define _TOOLS_LINUX_INIT_H_
  
  #include <linux/compiler.h>
--#include <asm/export.h>
  
++#ifndef __init
++# define __init
++#endif
++
++#ifndef __exit
++# define __exit
++#endif
++
  #define __section(section)              __attribute__((__section__(section)))
  
+ #define __initconst
+@@ -29,4 +37,4 @@ struct obs_kernel_param {
+ #define early_param(str, fn)						\
+ 	__setup_param(str, fn, fn, 1)
+ 
+-#endif
++#endif /*  _TOOLS_LINUX_INIT_H_ */
+diff --git a/tools/testing/radix-tree/linux/init.h b/tools/testing/radix-tree/linux/init.h
+deleted file mode 100644
+index 81563c3dfce7..000000000000
+--- a/tools/testing/radix-tree/linux/init.h
++++ /dev/null
+@@ -1,2 +0,0 @@
+-#define __init
+-#define __exit
+diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+index f1caf4bcf937..d6c72838652c 100644
+--- a/tools/testing/radix-tree/maple.c
++++ b/tools/testing/radix-tree/maple.c
+@@ -14,7 +14,7 @@
+ #include "test.h"
+ #include <stdlib.h>
+ #include <time.h>
+-#include "linux/init.h"
++#include <linux/init.h>
+ 
+ #define module_init(x)
+ #define module_exit(x)
 -- 
 2.34.1
 
