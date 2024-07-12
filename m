@@ -1,96 +1,105 @@
-Return-Path: <linux-kernel+bounces-250592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A85192F991
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:32:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313FD92F998
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C783628346A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:32:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F99283428
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD8D15ECE1;
-	Fri, 12 Jul 2024 11:32:08 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6911316A952;
+	Fri, 12 Jul 2024 11:32:37 +0000 (UTC)
+Received: from out198-3.us.a.mail.aliyun.com (out198-3.us.a.mail.aliyun.com [47.90.198.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D7615E83
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 11:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED419156F53;
+	Fri, 12 Jul 2024 11:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720783928; cv=none; b=ctdpn9DpoRqoX081EaFnZJbcMB0bHL6ZBCT7UAxarWz6Ly9p+fMK2vvkB338YRKjNuZQYB2m9MjeerAIYVFUqiakvgm+HHrFhYJE7BRIjeS0BmPKrm/ObOaki5NEZH+R0xH0KyXEirnNoPqmgH8HRqhhjx3rUYHLcBlqh43Z80A=
+	t=1720783957; cv=none; b=Kd186+mdTQ6XCUyilo4iO17Z61Ntl9RgHX1lHIKTCQWaOKjeW1rR7wBDI/CKU23bFfSBbQHQn1+GfzEtBl/yfLsU0xa7pAHv7TvGfuE1BZuhnLcbr5RB9qWMAxVtTmwWRo5QPPYp3RbKi1QSIfXvwDLuOXvx2RUUCKKSh3bxp60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720783928; c=relaxed/simple;
-	bh=1eRM1ZtSRT0P+RQJIcIpwsGwyFEoxbKRhlnltAi6gqw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RvIIF5JvK8qRGAcrAW9hnDJvXESvqTFDLxJQ0MSamiFLQ/B23Kl9RE+Gxt7Tt2P3V4snfiybao4vHb08cbN24ryDclxntv729S4Kd212xaqKFKmdbwzlPfaIAV7pE9S2UCdn4fWdYIY317Glx/iI+AcR4nKzXECaWup+mjD93lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WL8X416TJz6K93x;
-	Fri, 12 Jul 2024 19:29:56 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id E6C0F140B63;
-	Fri, 12 Jul 2024 19:32:02 +0800 (CST)
-Received: from A2303104131.china.huawei.com (10.48.147.152) by
- lhrpeml500005.china.huawei.com (7.191.163.240) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 12 Jul 2024 12:31:56 +0100
-From: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-To: <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>, <will@kernel.org>
-CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
-	<ryan.roberts@arm.com>, <kevin.tian@intel.com>, <joao.m.martins@oracle.com>,
-	<linuxarm@huawei.com>
-Subject: [PATCH] iommu: Move IOMMU_DIRTY_NO_CLEAR define
-Date: Fri, 12 Jul 2024 12:31:32 +0100
-Message-ID: <20240712113132.45100-1-shameerali.kolothum.thodi@huawei.com>
-X-Mailer: git-send-email 2.12.0.windows.1
+	s=arc-20240116; t=1720783957; c=relaxed/simple;
+	bh=AiGGL5G9Z0hWbcXZnuBJS1tPfi4zjidIWSJSHaWDukI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lRgmvqz4wW6nMLZZn5BadSGZiD18ebd3zV7I6w01RN1/ey5G5WJonFKv1tNyQRW2skPGGaakRJ+3PiGOgzkUDRWJVMh30DLdHBPPwPMHswS8oydje11aTHSf9piTysxsq9LqRWIXoDC9qz5ijHOrpAScid9jjRx6UOWHHXVMVKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=47.90.198.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08030076|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0128652-0.000250633-0.986884;FP=7877101106054591998|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033040106183;MF=wangshuaijie@awinic.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.YOU1nrM_1720783926;
+Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.YOU1nrM_1720783926)
+          by smtp.aliyun-inc.com;
+          Fri, 12 Jul 2024 19:32:13 +0800
+From: wangshuaijie@awinic.com
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	waqar.hameed@axis.com,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: wangshuaijie@awinic.com,
+	liweilei@awinic.com,
+	kangjiajun@awinic.com
+Subject: [PATCH V3 0/2] Add support for Awinic SAR sensor
+Date: Fri, 12 Jul 2024 11:31:58 +0000
+Message-ID: <20240712113200.2468249-1-wangshuaijie@awinic.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-Fixes the compile issue when CONFIG_IOMMU_API is not set.
+From: shuaijie wang <wangshuaijie@awinic.com>
 
-Fixes: 4fe88fd8b4ae ("iommu/io-pgtable-arm: Add read_and_clear_dirty() support")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407121602.HL9ih1it-lkp@intel.com/
-Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
----
- include/linux/iommu.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Add drivers that support Awinic SAR (Specific Absorption Rate)
+sensors to the Linux kernel.
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 7bc8dff7cf6d..104ce84647d4 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -317,6 +317,9 @@ enum iommu_dev_features {
- #define IOMMU_PASID_INVALID	(-1U)
- typedef unsigned int ioasid_t;
- 
-+/* Read but do not clear any dirty bits */
-+#define IOMMU_DIRTY_NO_CLEAR (1 << 0)
-+
- #ifdef CONFIG_IOMMU_API
- 
- /**
-@@ -353,9 +356,6 @@ struct iommu_dirty_bitmap {
- 	struct iommu_iotlb_gather *gather;
- };
- 
--/* Read but do not clear any dirty bits */
--#define IOMMU_DIRTY_NO_CLEAR (1 << 0)
--
- /**
-  * struct iommu_dirty_ops - domain specific dirty tracking operations
-  * @set_dirty_tracking: Enable or Disable dirty tracking on the iommu domain
+The AW9610X series and AW963XX series are high-sensitivity
+capacitive proximity detection sensors.
+
+This device detects human proximity and assists electronic devices
+in reducing SAR to pass SAR related certifications.
+
+The device reduces RF power and reduces harm when detecting human proximity.
+Increase power and improve signal quality when the human body is far away.
+
+This patch implements device initialization, registration,
+I/O operation handling and interrupt handling, and passed basic testing.
+
+shuaijie wang (2):
+  dt-bindings: iio: Add YAML to Awinic proximity sensor
+  Add support for Awinic proximity sensor
+
+ .../iio/proximity/awinic,aw96xxx.yaml         |  127 ++
+ drivers/iio/proximity/Kconfig                 |   10 +
+ drivers/iio/proximity/Makefile                |    2 +
+ drivers/iio/proximity/aw9610x.c               | 1150 ++++++++++
+ drivers/iio/proximity/aw963xx.c               | 1371 ++++++++++++
+ drivers/iio/proximity/aw_sar.c                | 1850 +++++++++++++++++
+ drivers/iio/proximity/aw_sar.h                |   23 +
+ drivers/iio/proximity/aw_sar_comm_interface.c |  550 +++++
+ drivers/iio/proximity/aw_sar_comm_interface.h |  172 ++
+ drivers/iio/proximity/aw_sar_type.h           |  371 ++++
+ 10 files changed, 5626 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw96xxx.yaml
+ create mode 100644 drivers/iio/proximity/aw9610x.c
+ create mode 100644 drivers/iio/proximity/aw963xx.c
+ create mode 100644 drivers/iio/proximity/aw_sar.c
+ create mode 100644 drivers/iio/proximity/aw_sar.h
+ create mode 100644 drivers/iio/proximity/aw_sar_comm_interface.c
+ create mode 100644 drivers/iio/proximity/aw_sar_comm_interface.h
+ create mode 100644 drivers/iio/proximity/aw_sar_type.h
+
+
+base-commit: 43db1e03c086ed20cc75808d3f45e780ec4ca26e
 -- 
-2.34.1
+2.45.1
 
 
