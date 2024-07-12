@@ -1,135 +1,131 @@
-Return-Path: <linux-kernel+bounces-250633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE17892FA40
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:27:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE9892FA4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AB77B20F4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:27:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4409828494C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A20B16E86B;
-	Fri, 12 Jul 2024 12:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC5116EBE9;
+	Fri, 12 Jul 2024 12:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="V5PMfiYd"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GvtxtZN9";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jwvNGdW3"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743ED15B96F;
-	Fri, 12 Jul 2024 12:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDE316EB65
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720787236; cv=none; b=tHJvSsDdim2kuE6TcdEEi1iq7WV7FrjuOdCJJGap73pw5XI/8BHbicrmyoAMgi6VE0KdkfaAQT7wrSpkquvpyRfeUgyERN8rH8Zs3OJKtKcdpK0wktRR9KNoAdLMSO9DijaxPqXxpOm5gpGy4i06vGvQoBnsGDbh5KxGDqfLLUM=
+	t=1720787344; cv=none; b=PBdKCVr0/3XZHw1GY1zv5t+Y1f5mR7W0jHhGV/eUCnY+pMxO2ediN22v9iovajYUeg9D7xR2LeSAfugJ/4TNHNGTYE5MmSXg2M/YZ3MNHmlaOJJT3dxm6BqbJ41yBQ+qQ5vMz8j9hk0MeBvH9iMNuU98nTHH1hrUg6pdmBZUY2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720787236; c=relaxed/simple;
-	bh=VFfujqGL4wmufeMpy4TXsgO2rW52SRPoW3j+ev/iI60=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JvhSUY9gOCPPMk6g1cZkoBPwOUyaVGZX8R2rp0RO009yHUl0+j4Oa+6vPhBDiZVjItOo0UzMQl46cOkSXrDu/MZyRj/s0GiF3RLyNyN7ZPD6LGGYxHH+a4ftzoZG0Wp5/guuNoXZt+kGAj2tp18srVEPQ38KIuUytFpCkm+oXvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=V5PMfiYd; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1720787233;
-	bh=4Vofh3nmGXbIRlscqKm0va6vapnmleNLgiTWfYE/btk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=V5PMfiYdHjm+q2zhG//PSDhbZxYuVaB/yWMCbKSb7YOZfB+YWffV8XUiFqmdJ+g+g
-	 /c6au7q5mVyEiJqj/pof4+FidWHw+Du77hF2RZBUglRFE//ThOFJQoTQqe6IUDIms0
-	 EJtVxRE/YpKncLPLY3tEkgutqHapFx9r3ZbshogxWBeGW6TCDCrXR4R0Buv6MKHije
-	 KTpMYbXdOCztwkqQk6lsuRJIWQqLg3eSog71GgUac4/5NigrRoqMUh20HyBAIopkIP
-	 3nRohakxnY0DT2cFAWUh7IiAjkavAFL6SZk+7SHz47UD7rpIBs0rGhqqwLOIEu+Cdo
-	 m8oeN6kVZK6ZA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WL9p73qQHz4x1V;
-	Fri, 12 Jul 2024 22:27:11 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>, Mark Brown
- <broonie@kernel.org>, Herve Codina <herve.codina@bootlin.com>, Arnd
- Bergmann <arnd@arndb.de>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Qiang Zhao <qiang.zhao@nxp.com>, Shengjiu Wang
- <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam
- <festevam@gmail.com>, Nicolin
- Chen <nicoleotsuka@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi
- Iwai <tiwai@suse.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 07/10] soc: fsl: cpm1: qmc: Introduce functions to
- get a channel from a phandle list
-In-Reply-To: <9423930f-8cb8-4b31-927f-a93b1006fb18@cs-soprasteria.com>
-References: <20240701113038.55144-1-herve.codina@bootlin.com>
- <20240701113038.55144-8-herve.codina@bootlin.com>
- <a8c44188-d5d8-445d-9d64-bbfce6b1b628@sirena.org.uk>
- <87a5ixkghq.fsf@mail.lhotse>
- <9423930f-8cb8-4b31-927f-a93b1006fb18@cs-soprasteria.com>
-Date: Fri, 12 Jul 2024 22:27:11 +1000
-Message-ID: <87v81a4wyo.fsf@mail.lhotse>
+	s=arc-20240116; t=1720787344; c=relaxed/simple;
+	bh=lJ23vDx6v+OivJuVkN9SXhsy0zNALvQx9pJz/uUZOEE=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=G0j2APqzBordAcHpOOanNkHdWm5VU7eq+ygLkB3epWy42Cr68Rzby9MaYZSHUOgUJAgIuKs5SSbcuBAvHFOb2+7U86W3PboQk84sLwIn2OIUfJbGs9c0w1rdb2X5SCNIy90vHEK3pxEEBCqKSqB42Fuo3D6/mpBxPVuYJI5IkPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GvtxtZN9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jwvNGdW3; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id A65401143995;
+	Fri, 12 Jul 2024 08:29:01 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 12 Jul 2024 08:29:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1720787341; x=1720873741; bh=eARDcejekm
+	zNYMJwYKo8pcFYVkx5npQBheYRXF8XDpA=; b=GvtxtZN9Sw31Hud51fOpdUdakl
+	msKdbZxb3rSKDAjYlBojdXebnVb1jB/D+LKzm7n7FnqANh8fuwBBc51ljiYuU+bs
+	+zC5lvWRr3jptSQCYsdpLEQA4zBZaGWz9Ini9qihTunEdFZe6BqUxcQc+tbPVXR9
+	ZtezT7tZxc393xgRqmzv5W0vLqUsIjX3GdcQ2Irt0NE9d8cppyEzyUCSOKkk+sC2
+	xWD8/MxzrYP8L90UfwhJ/i4VT4tb62fd47p4QUnVGSPpPKGquejZqXGNp/cBK8lA
+	6aDXK9y561ohfIvGZAzu87qBnvvFnJzGcdIeVQCiSU0lXxOBLSkMsZ+dpmTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720787341; x=1720873741; bh=eARDcejekmzNYMJwYKo8pcFYVkx5
+	npQBheYRXF8XDpA=; b=jwvNGdW37kLHQ/ZQ97OXn6GuYYGukE8lTs4Omd+h77vL
+	wkLvkNXq8gPRcuFCNZNnIzHIxh+KSZtgiAzjT4/mcfQGIZl8AYDjwdvMYamfhnqD
+	Y30UYgTEe3ETwY2aqbf60YYWlgs5MSV6fwSv+ar4s0+HwWwLCI4hhO9OvG2KWUyi
+	o0OaQvfkDNtO4tbosou+b0+PRr4NYNdubpHQ2/276SjWPruTN47nesZaorcgZ4XH
+	XQy8R+t4KSWTgY4MqvU1uJJ+v7VrUsPU7+8rLOact1vOpHs/8VyeyDJr7e+hD7kV
+	OL73t79y/w/yhWoFX//rqfVz90D4qOBOWXzYtRxPuQ==
+X-ME-Sender: <xms:jCGRZq3uUFVKhbwyMBw4NFA1gP44hW7S3Lzt_MNMc_u1VwoJvvvnwA>
+    <xme:jCGRZtEpV18r5psZRDuOFZRxPHh76jIWfmAD5dW7R3fS8ekVGiYP7c7nSE6pr8UL-
+    AlSNgTwkDByRo2sSrU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeeigdegjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:jCGRZi7suqma90bfZ8c6k0Aitfhxd0AifSdA-G0EUX0qA2fSa28rRQ>
+    <xmx:jCGRZr1PExgpIjPjwcIWQsizX0gbhgsbYWq5CUZTOnD-7TonQHtMQA>
+    <xmx:jCGRZtGFXD6YuR_xNQY-C9dw4EA6KOynwYXuRU00uJ0GGYEcCNnxww>
+    <xmx:jCGRZk9cMcmsty-WlzKFmmYyxFOdZLNm_gncMUdAiYzw7GY2M1py-w>
+    <xmx:jSGRZk3KkijdRMCWDTeDWtIZ8hoyhMGeHrRGUgYkRiAyX5NgzoDJOTs6>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id ED5C0B6008D; Fri, 12 Jul 2024 08:28:59 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <e25a690e-6cb9-4e00-ac1d-07cda43b12de@app.fastmail.com>
+In-Reply-To: 
+ <CA+G9fYv0xfJbt=+STRDu65G-Tq_w9wEH3C0q1ucyoAa7DbWLAQ@mail.gmail.com>
+References: 
+ <CA+G9fYv0xfJbt=+STRDu65G-Tq_w9wEH3C0q1ucyoAa7DbWLAQ@mail.gmail.com>
+Date: Fri, 12 Jul 2024 14:28:38 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ "open list" <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ "Linux Regressions" <regressions@lists.linux.dev>
+Cc: "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Anders Roxell" <anders.roxell@linaro.org>,
+ "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
+ "Peter Zijlstra" <peterz@infradead.org>
+Subject: Re: next-20240712: task_work.c:(.text+0xc2): undefined reference to
+ `irq_work_queue'
+Content-Type: text/plain
 
-LEROY Christophe <christophe.leroy2@cs-soprasteria.com> writes:
-> Le 04/07/2024 =C3=A0 05:01, Michael Ellerman a =C3=A9crit=C2=A0:
->> Mark Brown <broonie@kernel.org> writes:
->>> On Mon, Jul 01, 2024 at 01:30:34PM +0200, Herve Codina wrote:
->>>> qmc_chan_get_byphandle() and the resource managed version retrieve a
->>>> channel from a simple phandle.
->>>>
->>>> Extend the API and introduce qmc_chan_get_byphandles_index() and the
->>>> resource managed version in order to retrieve a channel from a phandle
->>>> list using the provided index to identify the phandle in the list.
->>>
->>> These two PowerPC patches seem trivial enough and have got no response,
->>> unless someone objects I'll go ahead and apply them.
->>=20
->> Ack.
->>=20
->> MAINTAINERS says:
->>=20
->> FREESCALE QUICC ENGINE LIBRARY
->> M:      Qiang Zhao <qiang.zhao@nxp.com>
->> L:      linuxppc-dev@lists.ozlabs.org
->> S:      Maintained
->> F:      drivers/soc/fsl/qe/
->> F:      include/soc/fsl/qe/
->>=20
->> But I see no email from that address since January 2021:
->>=20
->>    https://lore.kernel.org/all/?q=3Df%3Aqiang.zhao%40nxp.com
->>=20
->> And actually drivers/soc/fsl was marked orphan in April, maybe this
->> should be also.
->>=20
->> Or does Herve want to take over maintaining it?
+On Fri, Jul 12, 2024, at 14:13, Naresh Kamboju wrote:
+> The 32-bit arm, mips and powerpc the tinyconfig builds failed on today's
+> Linux next-20240712 tag with gcc and clang builds.
+> The defconfig builds pass.
 >
-> We had some discussion about that in April, see=20
-> https://lore.kernel.org/linuxppc-dev/20240219153016.ntltc76bphwrv6hn@skbu=
-f/T/#mf6d4a5eef79e8eae7ae0456a2794c01e630a6756
+>   GOOD: next-20240711
+>   BAD:  next-20240712
 >
-> Herv=C3=A9 has some of our hardware for a limited period of time because =
-he=20
-> is doing some implementation for us, but he won't keep that hardware on=20
-> the long run.
+> Build error:
+> ------
+> arm-linux-gnueabihf-ld: kernel/task_work.o: in function `task_work_add':
+> task_work.c:(.text+0xc2): undefined reference to `irq_work_queue'
 >
-> I will send a patch to take over maintaining drivers/soc/fsl/
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Thanks.
+The call to this function was added in 466e4d801cd4 ("task_work:
+Add TWA_NMI_CURRENT as an additional notify mode.").  It's possible
+that we may have to always enable IRQ_WORK even on non-SMP
+kernels now. In practice it is already enabled in most
+configurations for one reason or another, the the cost is
+likely very small.
 
-cheers
+Otherwise checking for CONFIG_HAVE_NMI in the new code might work.
+
+     Arnd
 
