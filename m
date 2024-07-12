@@ -1,260 +1,109 @@
-Return-Path: <linux-kernel+bounces-250263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3226B92F5CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:56:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A3392F5CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBF0C2836CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:56:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62D1B1F2511D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150D513D62F;
-	Fri, 12 Jul 2024 06:55:17 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D2E157E84;
-	Fri, 12 Jul 2024 06:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F2913E02A;
+	Fri, 12 Jul 2024 06:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tvDh6oTk"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8AF13DDBA;
+	Fri, 12 Jul 2024 06:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720767316; cv=none; b=LgqiBfsOssPwaoo4S4cqa8AjNxHrFyQp2ALkGGJqNMONQpEAQAjj9z2YDVsXBt5ygMO/2vwEa7GS82tar0z/eCUQkBWhT54XbZjsP/JyltPnr0cXpgv+NRZm+N9XeUszWQkFILXnfsF874UR00h6/27Y/fdgB1Lt2AkOi10zu84=
+	t=1720767332; cv=none; b=g3Gak4R5bI07YJqo5n+fjfsRxirsC6mftoAfzxtvgpdPQNH+hYBw5uaeVJpmV+KX1bkAkbBJLpLAkjjOiFuL5Xv/+IIw5suyLFBuRBbo7/e60TrxCbS5+PSuY2bn7AvR4XNNpm4kTkhSvLOJw6AOtG1LHwg0yJEsrR3gQMHjjUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720767316; c=relaxed/simple;
-	bh=usMyPBmwjlLAVglz+9yx79fn8nmpfP6b3u/cmknSBb4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=R3EXe0wrV5Jf2yT2uSu68erGJu1wm+b/aM2NvsGJ49nLoiNUsc0NswBDQ41R/8oyD1gn5vqb3hRGyrDa5vPhCMtV9l9JrQnPP9aJDpA7P9u51neR9kT4a4uxhLboq60VvVMCyXwFcwxvxpB2jCAJByVQCOfgGGW6/Bpd+B2CKGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8Cx_vBO05BmPJUDAA--.10561S3;
-	Fri, 12 Jul 2024 14:55:10 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Axw8RI05Bmn4BFAA--.16410S3;
-	Fri, 12 Jul 2024 14:55:07 +0800 (CST)
-Subject: Re: [PATCH 01/11] LoongArch: KVM: Add iocsr and mmio bus simulation
- in kernel
-To: Xianglai Li <lixianglai@loongson.cn>, linux-kernel@vger.kernel.org
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, kvm@vger.kernel.org,
- loongarch@lists.linux.dev, Min Zhou <zhoumin@loongson.cn>,
- Paolo Bonzini <pbonzini@redhat.com>, WANG Xuerui <kernel@xen0n.name>
-References: <20240705023854.1005258-1-lixianglai@loongson.cn>
- <20240705023854.1005258-2-lixianglai@loongson.cn>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <4bd4a664-25c8-d86d-533a-d3dc338e0bec@loongson.cn>
-Date: Fri, 12 Jul 2024 14:55:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1720767332; c=relaxed/simple;
+	bh=ZbbsLwoya6tixuPpRvni4f3DMKqspE6J9o10Q7PaI/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GCzMfIL6AnvMu7rXvyKjfF03cDGrAO0fPjZzGZDNLPcyDg665rv3vx6M1uh7h9yJ/j6euYpA4GFP7MWbYvyWq/G4mxOayjqb3HJV+WWNRfBBAHBczWGBBPO8DsaAJ8gy0GPO7XpCgpe/rozUXYpnKI9cYPhm4sWy0aOzOr/xgZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tvDh6oTk; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720767328;
+	bh=BZZNIcGexPgDWaQqyvGhePz6Fkk2rKYNueqzc4Ios+o=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tvDh6oTkI7B87eA/a2ltawR4KNia9dCODo36jEB1I48VYf5QK0GAq1hjfMzB/5VwY
+	 jOBt85hsSVIn560DS+sO9nEp1/oO1WirQtzfALTegdopRAJN7Qmri/UzAtTIx9QWh4
+	 DT8+loJgaHJPMy7NbKoN6VCW7yQSAHhC/fIHpQkEJ5w5YaG1LONxHNL8XMs1R42ftf
+	 CHIt3X4DZrUpRnnoKtZgyPrIi68wHQWhafIUKcLlCJsYFof2RqnJ1yJ3WDwPgnJmS6
+	 S86b4LlTFdVdy8NnepD1frLHOw/+y8BsMLKe5VVmxcAxzWZ7gIKgeSRrdMpH0tDwzb
+	 voqwXJEyEzdxQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WL2RM4Zsmz4wx5;
+	Fri, 12 Jul 2024 16:55:27 +1000 (AEST)
+Date: Fri, 12 Jul 2024 16:55:27 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the i2c-host tree
+Message-ID: <20240712165527.75e4ddc9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240705023854.1005258-2-lixianglai@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Axw8RI05Bmn4BFAA--.16410S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3JF18Xr4Uur4DGw1DXr17CFX_yoW7urWUpF
-	y5u3srZw4rtrZ7AwnrWrsa9ry2v395GFy7X3s7JrWfur1UtF95Ar40krWjvFWUJr9avF4x
-	Z3WfJFy7C3WUA3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jepB-UUUUU=
+Content-Type: multipart/signed; boundary="Sig_/OJ0DanheuLF5XTj8kKn+x8Z";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/OJ0DanheuLF5XTj8kKn+x8Z
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2024/7/5 上午10:38, Xianglai Li wrote:
-> Add iocsr and mmio memory read and write simulation to the kernel.
-> When the VM accesses the device address space through iocsr
-> instructions or mmio, it does not need to return to the qemu
-> user mode but directly completes the access in the kernel mode.
-> 
-> Signed-off-by: Tianrui Zhao <zhaotianrui@loongson.cn>
-> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
-> ---
-> Cc: Bibo Mao <maobibo@loongson.cn>
-> Cc: Huacai Chen <chenhuacai@kernel.org>
-> Cc: kvm@vger.kernel.org
-> Cc: loongarch@lists.linux.dev
-> Cc: Min Zhou <zhoumin@loongson.cn>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Tianrui Zhao <zhaotianrui@loongson.cn>
-> Cc: WANG Xuerui <kernel@xen0n.name>
-> Cc: Xianglai li <lixianglai@loongson.cn>
-> 
->   arch/loongarch/kvm/exit.c | 69 ++++++++++++++++++++++++++++-----------
->   include/linux/kvm_host.h  |  1 +
->   2 files changed, 51 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
-> index a68573e091c0..e8e37e135dd1 100644
-> --- a/arch/loongarch/kvm/exit.c
-> +++ b/arch/loongarch/kvm/exit.c
-> @@ -148,7 +148,7 @@ static int kvm_handle_csr(struct kvm_vcpu *vcpu, larch_inst inst)
->   int kvm_emu_iocsr(larch_inst inst, struct kvm_run *run, struct kvm_vcpu *vcpu)
->   {
->   	int ret;
-> -	unsigned long val;
-> +	unsigned long *val;
->   	u32 addr, rd, rj, opcode;
->   
->   	/*
-> @@ -161,6 +161,7 @@ int kvm_emu_iocsr(larch_inst inst, struct kvm_run *run, struct kvm_vcpu *vcpu)
->   	ret = EMULATE_DO_IOCSR;
->   	run->iocsr_io.phys_addr = addr;
->   	run->iocsr_io.is_write = 0;
-> +	val = &vcpu->arch.gprs[rd];
->   
->   	/* LoongArch is Little endian */
->   	switch (opcode) {
-> @@ -194,15 +195,21 @@ int kvm_emu_iocsr(larch_inst inst, struct kvm_run *run, struct kvm_vcpu *vcpu)
->   		break;
->   	default:
->   		ret = EMULATE_FAIL;
-> -		break;
-> +		return ret;
-How about directly return such as *return EMULATE_FAIL;* ?
+After merging the i2c-host tree, today's linux-next build (htmldocs)
+produced these warnings:
 
->   	}
->   
-> -	if (ret == EMULATE_DO_IOCSR) {
-> -		if (run->iocsr_io.is_write) {
-> -			val = vcpu->arch.gprs[rd];
-> -			memcpy(run->iocsr_io.data, &val, run->iocsr_io.len);
-> -		}
-> -		vcpu->arch.io_gpr = rd;
-> +	if (run->iocsr_io.is_write) {
-> +		if (!kvm_io_bus_write(vcpu, KVM_IOCSR_BUS, addr, run->iocsr_io.len, val))
-It exceeds 80 chars, it will be better if line wrapper is added.
+include/linux/i2c.h:583: warning: Function parameter or struct member 'xfer=
+' not described in 'i2c_algorithm'
+include/linux/i2c.h:583: warning: Function parameter or struct member 'xfer=
+_atomic' not described in 'i2c_algorithm'
+include/linux/i2c.h:583: warning: Function parameter or struct member 'reg_=
+target' not described in 'i2c_algorithm'
+include/linux/i2c.h:583: warning: Function parameter or struct member 'unre=
+g_target' not described in 'i2c_algorithm'
 
-> +			ret = EMULATE_DONE;
-> +		else
-> +			/* Save data and let user space to write it */
-> +			memcpy(run->iocsr_io.data, val, run->iocsr_io.len);
-> +	} else {
-> +		if (!kvm_io_bus_read(vcpu, KVM_IOCSR_BUS, addr, run->iocsr_io.len, val))
-Ditto.
-> +			ret = EMULATE_DONE;
-> +		else
-> +			/* Save register id for iocsr read completion */
-> +			vcpu->arch.io_gpr = rd;
->   	}
->   
->   	return ret;
-> @@ -438,19 +445,33 @@ int kvm_emu_mmio_read(struct kvm_vcpu *vcpu, larch_inst inst)
->   	}
->   
->   	if (ret == EMULATE_DO_MMIO) {
-> +		/*
-> +		 * if mmio device such as pch pic is emulated in KVM,
-> +		 * it need not return to user space to handle the mmio
-> +		 * exception.
-> +		 */
-> +		ret = kvm_io_bus_read(vcpu, KVM_MMIO_BUS, vcpu->arch.badv,
-> +				run->mmio.len, &vcpu->arch.gprs[rd]);
-> +		if (!ret) {
-> +			update_pc(&vcpu->arch);
-> +			vcpu->mmio_needed = 0;
-> +			return EMULATE_DONE;
-> +		}
-> +
->   		/* Set for kvm_complete_mmio_read() use */
->   		vcpu->arch.io_gpr = rd;
->   		run->mmio.is_write = 0;
->   		vcpu->mmio_is_write = 0;
->   		trace_kvm_mmio(KVM_TRACE_MMIO_READ_UNSATISFIED, run->mmio.len,
->   				run->mmio.phys_addr, NULL);
-Should the trace function be called for KVM_MMIO_BUS also? I think the 
-trace function should be called before kvm_io_bus_read.
+Introduced by commit
 
-> -	} else {
-> -		kvm_err("Read not supported Inst=0x%08x @%lx BadVaddr:%#lx\n",
-> -			inst.word, vcpu->arch.pc, vcpu->arch.badv);
-> -		kvm_arch_vcpu_dump_regs(vcpu);
-> -		vcpu->mmio_needed = 0;
-> +		return EMULATE_DO_MMIO;
->   	}
->   
-> +	kvm_err("Read not supported Inst=0x%08x @%lx BadVaddr:%#lx\n",
-> +			inst.word, vcpu->arch.pc, vcpu->arch.badv);
-> +	kvm_arch_vcpu_dump_regs(vcpu);
-> +	vcpu->mmio_needed = 0;
-> +
-Empty line is not necessary from my view :)
->   	return ret;
->   }
->   
-> @@ -591,19 +612,29 @@ int kvm_emu_mmio_write(struct kvm_vcpu *vcpu, larch_inst inst)
->   	}
->   
->   	if (ret == EMULATE_DO_MMIO) {
-> +		/*
-> +		 * if mmio device such as pch pic is emulated in KVM,
-> +		 * it need not return to user space to handle the mmio
-> +		 * exception.
-> +		 */
-> +		ret = kvm_io_bus_write(vcpu, KVM_MMIO_BUS, vcpu->arch.badv,
-> +				run->mmio.len, data);
-> +		if (!ret)
-> +			return EMULATE_DONE;
-> +
->   		run->mmio.is_write = 1;
->   		vcpu->mmio_needed = 1;
->   		vcpu->mmio_is_write = 1;
->   		trace_kvm_mmio(KVM_TRACE_MMIO_WRITE, run->mmio.len,
->   				run->mmio.phys_addr, data);
-Ditto, trace function should be put before kvm_io_bus_write.
+  a93c2e5fe766 ("i2c: reword i2c_algorithm according to newest specificatio=
+n")
 
-> -	} else {
-> -		vcpu->arch.pc = curr_pc;
-> -		kvm_err("Write not supported Inst=0x%08x @%lx BadVaddr:%#lx\n",
-> -			inst.word, vcpu->arch.pc, vcpu->arch.badv);
-> -		kvm_arch_vcpu_dump_regs(vcpu);
-> -		/* Rollback PC if emulation was unsuccessful */
-> +		return EMULATE_DO_MMIO;
->   	}
->   
-> +	vcpu->arch.pc = curr_pc;
-> +	kvm_err("Write not supported Inst=0x%08x @%lx BadVaddr:%#lx\n",
-> +			inst.word, vcpu->arch.pc, vcpu->arch.badv);
-> +	kvm_arch_vcpu_dump_regs(vcpu);
-> +	/* Rollback PC if emulation was unsuccessful */
->   	return ret;
->   }
->   
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 692c01e41a18..f51b2e53d81c 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -219,6 +219,7 @@ enum kvm_bus {
->   	KVM_PIO_BUS,
->   	KVM_VIRTIO_CCW_NOTIFY_BUS,
->   	KVM_FAST_MMIO_BUS,
-> +	KVM_IOCSR_BUS,
->   	KVM_NR_BUSES
->   };
-I just think this patch should be after PCH/EXTIOI/IPI is created and 
-IOCSR/MMIO space is registered in kernel space.It is only my points, I 
-am not good at this:(
+--=20
+Cheers,
+Stephen Rothwell
 
-Regards
-Bibo Mao
->   
-> 
+--Sig_/OJ0DanheuLF5XTj8kKn+x8Z
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQ018ACgkQAVBC80lX
+0GwfXwf/Who+FKMRc6v1oya5PAJzZ7PnQn+/ug6gJKQ4WeV/gbD3b30y9aThlPWn
+13DVdCCXkhMtBPusmm3LNu7nm56YMLjB8tUZn6hRxurNXfWrB7YQxf5tk9zCJh3L
+wsNgXLUPu1sXDreRtjNveU8TwaHeErjL2gPp+cKGWWuxqidmN+87d1RPNdxBz7eO
+g1TAn0EzR7YknXDVY/rHMGzX/zJcaQvG/ARJ5RcHIE8MEMqUKb05iit5caHmu3S4
+n5AEAEAMHVHhHDojXNzgvYT90MziyiZheeURrU1/66mG14mX32UDRYyhEJCwLD70
+weLhAH2u1Gbt/+wBCdWGSmZXWTFQJg==
+=Kx5I
+-----END PGP SIGNATURE-----
+
+--Sig_/OJ0DanheuLF5XTj8kKn+x8Z--
 
