@@ -1,265 +1,575 @@
-Return-Path: <linux-kernel+bounces-250908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5DB92FE6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:24:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A914B92FE6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4C78B21E3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:24:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BAEA1F23CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB9A17624A;
-	Fri, 12 Jul 2024 16:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4299176237;
+	Fri, 12 Jul 2024 16:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="hZbMgb/V"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="d4qWYCk8"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F011741F0
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329661741D3;
+	Fri, 12 Jul 2024 16:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720801485; cv=none; b=ViwHIR0M150lQ5InFJoA/XOwT11xzXfEHe5HT6EDqkQ3cpqCUoVVF0bdgsh7bPuiYrEkJoEs8PSdJXJ6JlMrFsXq+ijNucUuNp02HwKYCsJY3SlE+GQ3vO5nLdecsl3yLz6HnMmPKI9tYOpTpQFbY1cY/t8WfbKfN+N1Fp7+YtA=
+	t=1720801514; cv=none; b=ojSl6zb/crDZYKu0pE8KiBJKdBWW7f8xcmzZRTcnJ/MzSzToeU3bptwQjOURbkDIDNRTSVWbs4Y83S+aOzYejz3zVh4Q8S5zT29ZlwrQZ4pae0OWsY924vNCXe21zTJWnUkXCR7to6SCMJmxWtPwKicKMgGazBGRAPzUH2ZBaOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720801485; c=relaxed/simple;
-	bh=eG2h1wf1TFEiWSPh9EdPzDrruIV5y1r2B426i/gnRBI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K2dex4mmG7LOKk9dgo5mKXZLvmdVLsdMmA5/I1auT8WlZPcq6wTXNR6pdgcI6nfU9Asp40hUBk2N+k6YnRtV4aXmccnARM3JkIGU43bsrgg9F56l4ZxwAeYe69bQZfX8jYVvykrbwLNyTnQXlLi01XpXsN9HgSv+J2839RON/dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=hZbMgb/V; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eec7e431d9so28104161fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1720801481; x=1721406281; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B1SCEXL7m409mgdEhz113iPiFu7MKkY9LBrkPgvCZAU=;
-        b=hZbMgb/VbGmSxO6vS4R+eaL3ORjc698xVoJRBkaT8Ck7cByL/nglW0ayOhEHvTLSWH
-         +KBGhSgeD3xpWDk1DwQYpLJm6tMDSqQMoEUvR0p+C7yA5I9Qx7wx+BVQtqAwYhiqicJq
-         qN7sxtZAJ3ekf6AIVeCO/GfA48JqWuEFtIjh0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720801481; x=1721406281;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B1SCEXL7m409mgdEhz113iPiFu7MKkY9LBrkPgvCZAU=;
-        b=c3yQudzTUSLFU8wibBIgK+k15TwiaASg5qHFmMm8FxwUc6gfo3DiTl8dKWtqve+7bR
-         FtAXNctR2vlyu1Lf463KHylPfV8IdJu1npUj24HefmKjclSt/AOZ7bRVaBie7fqs+yAJ
-         LLtxx+EXYjrycnxI3K5UIHzMXVWSvAHtIB7k/njVpbjHkyU4ubXryxM3svHco590IH+L
-         uipndf1jbdXNgKq/HfVQt5kbJuCjnUhg0zZ0PnbaNAE3Vaakv/c7oZQU3MIkiIW7YcBI
-         H0ffFdxD9slDfiEhLpMagJHH3O35ozlX+lfDcs5R204P4izwPOdjf3QysGTUMWRhIXDb
-         kUvg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+obOXqDL3MKg8KQwmyZr7l7GH4VGBLSA1XsmepBn/i72IbUPgNC3xLcr/3QzjlsyPCO0T3xgSondmkYBphC4ru3c75TlzwBONu7Rt
-X-Gm-Message-State: AOJu0YwNqXjGNt/MbekCnd4f6vSMhGE1F5Jl/gY0sxXZ6xQRVZ7JIxmq
-	lexXDeTDNkIQ8SMlXGgJlfY9K8NWbysF2PZNJFoaIf6O1kgs+fYHDokG+Q4cAW6LtfDuIqVG0JN
-	zOn5P6m4ZgK55iKrRPMg4vk18DkIje3ZauBW9xw==
-X-Google-Smtp-Source: AGHT+IGlSO87Bo7uNXOMKQpx5nCroCN+tAZoOdFx62GddXCJPp7q0aGE7JWv5DPpAqmjrytfBmmRc4MT2aOC1wPAam8=
-X-Received: by 2002:a2e:8081:0:b0:2ec:522f:6443 with SMTP id
- 38308e7fff4ca-2eeb318282emr75009181fa.33.1720801481132; Fri, 12 Jul 2024
- 09:24:41 -0700 (PDT)
+	s=arc-20240116; t=1720801514; c=relaxed/simple;
+	bh=vBWp0eFBW3luhlfkfPlWk3c2EFS9kqF6BBVIgbv5R5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YygsomQRPxUoE+2EL10hziTJ8z8NYir0haiFNZAXA5Zw+ySnf7xtLlxD/7jlCvEdzBFGNjioyJyD6HGcGJntxZIfZlFD5kIzbmcxptpDz7vQBm/K6Mro3uZu3cQwGKWnNjH3COCBqVp0oj5kBngMtsAmv8PFWL4O+T7isgh/cIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=d4qWYCk8; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-56-63.net.vodafone.it [5.90.56.63])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 38CC47CC;
+	Fri, 12 Jul 2024 18:24:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1720801475;
+	bh=vBWp0eFBW3luhlfkfPlWk3c2EFS9kqF6BBVIgbv5R5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d4qWYCk82rIkXLWa4UiAB+RHW+0rnuYTqqydxuYaarrIcsS+ITnlFIBCOJKw+X3Zs
+	 Po5CMzcZFs3UiNvyGwAyKxj09ew5dkTYC7C5WKV7fXz5BbvTTonS8CtxOWXjP6n6cC
+	 3CgykYBfNSPzNdnOImBffyDQeCFTRfr1rU+TQLSI=
+Date: Fri, 12 Jul 2024 18:25:06 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Mingjia Zhang <mingjia.zhang@mediatek.com>, Jack Zhu <jack.zhu@starfivetech.com>, 
+	Keith Zhao <keith.zhao@starfivetech.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
+Subject: Re: =?utf-8?B?5Zue5aSNOiDlm57lpI06IOWbnuWkjTog5Zue5aSNOiBbUEFU?=
+ =?utf-8?Q?CH_v?= =?utf-8?Q?5?= 08/14] staging: media: starfive: Add for
+ StarFive ISP 3A SC
+Message-ID: <vxlefgqtdy6qucjxk7npq5snjful3apnsd43jefpxqs42ozkfz@v6ixvqw2vxvh>
+References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
+ <20240709083824.430473-9-changhuang.liang@starfivetech.com>
+ <hxv4l4t32a7il5zv2wk7btydlk6qokyborevbnrajpwziaalva@lly6nfkts2no>
+ <ZQ0PR01MB13024CFE2FCCF4D39E3FAEDEF2A52@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+ <b45mnwf4p4ygrvukzdmrvbffndmqg5fncyepg2yxize7wq3a75@v6doupiawwnt>
+ <ZQ0PR01MB1302A295EC18E19578026E0BF2A62@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+ <gppf6abnt3pjmaonnulszamnsusmnjreeygch7y3ty7sqzdbsl@xcxvrcaurkho>
+ <ZQ0PR01MB1302BD81B29FCC7B484AF68CF2A62@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+ <nyuphmofpqrytwsvi2rnhqoqk5y2zy74ihume4fh7r2yfnwqtm@cb6hxibfuzwq>
+ <ZQ0PR01MB1302FD6AE6EB5FA39B25803FF2A62@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240403140116.3002809-1-vineeth@bitbyteword.org>
- <ZjJf27yn-vkdB32X@google.com> <CAO7JXPgbtFJO6fMdGv3jf=DfiCNzcfi4Hgfn3hfotWH=FuD3zQ@mail.gmail.com>
- <CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com>
- <66912820.050a0220.15d64.10f5@mx.google.com> <19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
-In-Reply-To: <19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
-From: Joel Fernandes <joel@joelfernandes.org>
-Date: Fri, 12 Jul 2024 12:24:28 -0400
-Message-ID: <CAEXW_YRBNs30ZC1e+U3mco22=XxaCfhPO_5wEHe+wFJjAbbSvA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/5] Paravirt Scheduling (Dynamic vcpu priority management)
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Sean Christopherson <seanjc@google.com>, 
-	Ben Segall <bsegall@google.com>, Borislav Petkov <bp@alien8.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Suleiman Souhlal <suleiman@google.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, himadrics@inria.fr, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, graf@amazon.com, 
-	drjunior.org@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZQ0PR01MB1302FD6AE6EB5FA39B25803FF2A62@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 
-On Fri, Jul 12, 2024 at 10:09=E2=80=AFAM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
+Hi again
+
+On Fri, Jul 12, 2024 at 01:37:58PM GMT, Changhuang Liang wrote:
+> Hi, Jacopo
 >
-> On 2024-07-12 08:57, Joel Fernandes wrote:
-> > On Mon, Jun 24, 2024 at 07:01:19AM -0400, Vineeth Remanan Pillai wrote:
-> [...]
-> >> Existing use cases
-> >> -------------------------
-> >>
-> >> - A latency sensitive workload on the guest might need more than one
-> >> time slice to complete, but should not block any higher priority task
-> >> in the host. In our design, the latency sensitive workload shares its
-> >> priority requirements to host(RT priority, cfs nice value etc). Host
-> >> implementation of the protocol sets the priority of the vcpu task
-> >> accordingly so that the host scheduler can make an educated decision
-> >> on the next task to run. This makes sure that host processes and vcpu
-> >> tasks compete fairly for the cpu resource.
->
-> AFAIU, the information you need to convey to achieve this is the priority
-> of the task within the guest. This information need to reach the host
-> scheduler to make informed decision.
->
-> One thing that is unclear about this is what is the acceptable
-> overhead/latency to push this information from guest to host ?
-> Is an hypercall OK or does it need to be exchanged over a memory
-> mapping shared between guest and host ?
-
-Shared memory for the boost (Can do it later during host preemption).
-But for unboost, we possibly need a hypercall in addition to it as
-well.
-
->
-> Hypercalls provide simple ABIs across guest/host, and they allow
-> the guest to immediately notify the host (similar to an interrupt).
->
-> Shared memory mapping will require a carefully crafted ABI layout,
-> and will only allow the host to use the information provided when
-> the host runs. Therefore, if the choice is to share this information
-> only through shared memory, the host scheduler will only be able to
-> read it when it runs, so in hypercall, interrupt, and so on.
-
-The initial idea was to handle the details/format/allocation of the
-shared memory out-of-band in a driver, but then later the rseq idea
-came up.
-
-> >> - Guest should be able to notify the host that it is running a lower
-> >> priority task so that the host can reschedule it if needed. As
-> >> mentioned before, the guest shares the priority with the host and the
-> >> host takes a better scheduling decision.
->
-> It is unclear to me whether this information needs to be "pushed"
-> from guest to host (e.g. hypercall) in a way that allows the host
-> to immediately act on this information, or if it is OK to have the
-> host read this information when its scheduler happens to run.
-
-For boosting, there is no need to immediately push. Only on preemption.
-
-> >> - Proactive vcpu boosting for events like interrupt injection.
-> >> Depending on the guest for boost request might be too late as the vcpu
-> >> might not be scheduled to run even after interrupt injection. Host
-> >> implementation of the protocol boosts the vcpu tasks priority so that
-> >> it gets a better chance of immediately being scheduled and guest can
-> >> handle the interrupt with minimal latency. Once the guest is done
-> >> handling the interrupt, it can notify the host and lower the priority
-> >> of the vcpu task.
->
-> This appears to be a scenario where the host sets a "high priority", and
-> the guest clears it when it is done with the irq handler. I guess it can
-> be done either ways (hypercall or shared memory), but the choice would
-> depend on the parameters identified above: acceptable overhead vs accepta=
-ble
-> latency to inform the host scheduler.
-
-Yes, we have found ways to reduce/make fewer hypercalls on unboost.
-
-> >> - Guests which assign specialized tasks to specific vcpus can share
-> >> that information with the host so that host can try to avoid
-> >> colocation of those cpus in a single physical cpu. for eg: there are
-> >> interrupt pinning use cases where specific cpus are chosen to handle
-> >> critical interrupts and passing this information to the host could be
-> >> useful.
->
-> How frequently is this topology expected to change ? Is it something that
-> is set once when the guest starts and then is fixed ? How often it change=
-s
-> will likely affect the tradeoffs here.
-
-Yes, will be fixed.
-
-> >> - Another use case is the sharing of cpu capacity details between
-> >> guest and host. Sharing the host cpu's load with the guest will enable
-> >> the guest to schedule latency sensitive tasks on the best possible
-> >> vcpu. This could be partially achievable by steal time, but steal time
-> >> is more apparent on busy vcpus. There are workloads which are mostly
-> >> sleepers, but wake up intermittently to serve short latency sensitive
-> >> workloads. input event handlers in chrome is one such example.
->
-> OK so for this use-case information goes the other way around: from host
-> to guest. Here the shared mapping seems better than polling the state
-> through an hypercall.
-
-Yes, FWIW this particular part is for future and not initially required per=
--se.
-
-> >> Data from the prototype implementation shows promising improvement in
-> >> reducing latencies. Data was shared in the v1 cover letter. We have
-> >> not implemented the capacity based placement policies yet, but plan to
-> >> do that soon and have some real numbers to share.
-> >>
-> >> Ideas brought up during offlist discussion
-> >> -------------------------------------------------------
-> >>
-> >> 1. rseq based timeslice extension mechanism[1]
-> >>
-> >> While the rseq based mechanism helps in giving the vcpu task one more
-> >> time slice, it will not help in the other use cases. We had a chat
-> >> with Steve and the rseq mechanism was mainly for improving lock
-> >> contention and would not work best with vcpu boosting considering all
-> >> the use cases above. RT or high priority tasks in the VM would often
-> >> need more than one time slice to complete its work and at the same,
-> >> should not be hurting the host workloads. The goal for the above use
-> >> cases is not requesting an extra slice, but to modify the priority in
-> >> such a way that host processes and guest processes get a fair way to
-> >> compete for cpu resources. This also means that vcpu task can request
-> >> a lower priority when it is running lower priority tasks in the VM.
+> > Hi Changhuang
 > >
-> > I was looking at the rseq on request from the KVM call, however it does=
- not
-> > make sense to me yet how to expose the rseq area via the Guest VA to th=
-e host
-> > kernel.  rseq is for userspace to kernel, not VM to kernel.
+> > On Fri, Jul 12, 2024 at 01:00:03PM GMT, Changhuang Liang wrote:
+> > > Hi, Jacopo
+> > >
+> > > >
+> > > > Hi Changhuang
+> > > >
+> > > > On Fri, Jul 12, 2024 at 08:36:21AM GMT, Changhuang Liang wrote:
+> > > > > Hi, Jacopo
+> > > > >
+> > > > > [...]
+> > > > > > > > > +
+> > > > > > > > > +void stf_set_scd_addr(struct stfcamss *stfcamss,
+> > > > > > > > > +		      dma_addr_t yhist_addr, dma_addr_t scd_addr,
+> > > > > > > > > +		      enum stf_isp_type_scd type_scd) {
+> > > > > > > > > +	stf_isp_reg_set_bit(stfcamss, ISP_REG_SC_CFG_1,
+> > > > ISP_SC_SEL_MASK,
+> > > > > > > > > +			    SEL_TYPE(type_scd));
+> > > > > > > > > +	stf_isp_reg_write(stfcamss, ISP_REG_SCD_CFG_0, scd_addr);
+> > > > > > > > > +	stf_isp_reg_write(stfcamss, ISP_REG_YHIST_CFG_4,
+> > > > > > > > > +yhist_addr); }
+> > > > > > > > > +
+> > > > > > > > > +static void stf_isp_fill_yhist(struct stfcamss *stfcamss,
+> > > > > > > > > +void
+> > > > > > > > > +*vaddr) {
+> > > > > > > > > +	struct jh7110_isp_sc_buffer *sc = (struct
+> > > > > > > > > +jh7110_isp_sc_buffer
+> > > > > > *)vaddr;
+> > > > > > > > > +	u32 reg_addr = ISP_REG_YHIST_ACC_0;
+> > > > > > > > > +	u32 i;
+> > > > > > > > > +
+> > > > > > > > > +	for (i = 0; i < 64; i++, reg_addr += 4)
+> > > > > > > > > +		sc->y_histogram[i] = stf_isp_reg_read(stfcamss,
+> > > > reg_addr);
+> > > > > > > >
+> > > > > > > > If you have a contigous memory space to read, could
+> > > > > > > > memcpy_fromio() help instead of going through 64 reads ?
+> > > > > > > >
+> > > > > > >
+> > > > > > > I will try this function.
+> > > > > > >
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > > +static void stf_isp_fill_flag(struct stfcamss *stfcamss, void
+> > *vaddr,
+> > > > > > > > > +			      enum stf_isp_type_scd *type_scd) {
+> > > > > > > > > +	struct jh7110_isp_sc_buffer *sc = (struct
+> > > > > > > > > +jh7110_isp_sc_buffer *)vaddr;
+> > > > > > > > > +
+> > > > > > > > > +	*type_scd = stf_isp_get_scd_type(stfcamss);
+> > > > > > > > > +	if (*type_scd == TYPE_AWB) {
+> > > > > > > > > +		sc->flag = JH7110_ISP_SC_FLAG_AWB;
+> > > > > > > > > +		*type_scd = TYPE_OECF;
+> > > > > > > > > +	} else {
+> > > > > > > > > +		sc->flag = JH7110_ISP_SC_FLAG_AE_AF;
+> > > > > > > > > +		*type_scd = TYPE_AWB;
+> > > > > > > >
+> > > > > > > > Is this correct ? Why are you overwriting the value read
+> > > > > > > > from HW that indicates AE/AF stats with AWB ones ?
+> > > > > > >
+> > > > > > > The AWB frame and AE/AF frames will alternate, so the current
+> > > > > > > frame indicates the AE/AF, then set AWB type just for next AWB
+> > frame.
+> > > > > > >
+> > > > > >
+> > > > > > Ah! Shouldn't it be userspace configuring which type of
+> > > > > > statistics it wants to receive instead of the driver alternating the two ?
+> > > > > >
+> > > > >
+> > > > > No, this is determined by hardware, cannot be configured by userspace.
+> > > > >
+> > > >
+> > > >
+> > > > So this
+> > > > 	stf_isp_reg_set_bit(stfcamss, ISP_REG_SC_CFG_1, ISP_SC_SEL_MASK,
+> > > > 			    SEL_TYPE(type_scd));
+> > > >
+> > > > doesn't actually select which stats type you get from the HW
+> > > >
+> > >
+> > > You can understand it that way. But it still needs to be written to work with
+> > the hardware.
+> > >
 > >
-> > Steven Rostedt said as much as well, thoughts? Add Mathieu as well.
->
-> I'm not sure that rseq would help at all here, but I think we may want to
-> borrow concepts of data sitting in shared memory across privilege levels
-> and apply them to VMs.
->
-> If some of the ideas end up being useful *outside* of the context of VMs,
-> then I'd be willing to consider adding fields to rseq. But as long as it =
-is
-> VM-specific, I suspect you'd be better with dedicated per-vcpu pages whic=
-h
-> you can safely share across host/guest kernels.
-
-Yes, this was the initial plan. I also feel rseq cannot be applied here.
-
-> > This idea seems to suffer from the same vDSO over-engineering below, rs=
-eq
-> > does not seem to fit.
+> > ack, maybe a comment here as well would help
 > >
-> > Steven Rostedt told me, what we instead need is a tracepoint callback i=
-n a
-> > driver, that does the boosting.
 >
-> I utterly dislike changing the system behavior through tracepoints. They =
-were
-> designed to observe the system, not modify its behavior. If people start =
-abusing
-> them, then subsystem maintainers will stop adding them. Please don't do t=
-hat.
-> Add a notifier or think about integrating what you are planning to add in=
-to the
-> driver instead.
+> Agreed.
+>
+> > > > > > > >
+> > > > > > > > > +	}
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > >  irqreturn_t stf_line_irq_handler(int irq, void *priv)  {
+> > > > > > > > >  	struct stfcamss *stfcamss = priv;
+> > > > > > > > >  	struct stf_capture *cap =
+> > > > > > > > > &stfcamss->captures[STF_CAPTURE_YUV];
+> > > > > > > > > +	struct stf_capture *cap_scd =
+> > > > > > > > > +&stfcamss->captures[STF_CAPTURE_SCD];
+> > > > > > > > >  	struct stfcamss_buffer *change_buf;
+> > > > > > > > > +	enum stf_isp_type_scd type_scd;
+> > > > > > > > > +	u32 value;
+> > > > > > > > >  	u32 status;
+> > > > > > > > >
+> > > > > > > > >  	status = stf_isp_reg_read(stfcamss,
+> > ISP_REG_ISP_CTRL_0);
+> > > > @@
+> > > > > > > > > -467,6
+> > > > > > > > > +513,17 @@ irqreturn_t stf_line_irq_handler(int irq, void
+> > > > > > > > > +*priv)
+> > > > > > > > >  					stf_set_yuv_addr(stfcamss,
+> > > > change_buf->addr[0],
+> > > > > > > > >  							 change_buf->addr[1]);
+> > > > > > > > >  			}
+> > > > > > > > > +
+> > > > > > > > > +			value = stf_isp_reg_read(stfcamss,
+> > > > > > > > ISP_REG_CSI_MODULE_CFG);
+> > > > > > > > > +			if (value & CSI_SC_EN) {
+> > > > > > > > > +				change_buf =
+> > > > stf_change_buffer(&cap_scd->buffers);
+> > > > > > > > > +				if (change_buf) {
+> > > > > > > > > +					stf_isp_fill_flag(stfcamss,
+> > > > change_buf->vaddr,
+> > > > > > > > > +							  &type_scd);
+> > > > > > > > > +					stf_set_scd_addr(stfcamss,
+> > > > change_buf->addr[0],
+> > > > > > > > > +							 change_buf->addr[1], type_scd);
+> > > > > > > >
+> > > > > > > > Sorry if I'm un-familiar with the HW but this seems to be
+> > > > > > > > the
+> > > > line-interrupt.
+> > > > > > > > Are you swapping buffers every line or it's just that you
+> > > > > > > > have a single line irq for the stats ?
+> > > > > > > >
+> > > > > > >
+> > > > > > > Every frame triggers a line-interrupt, and we will swap buffers in it.
+> > > > > > >
+> > > > > >
+> > > > > > ah, frames completion triggers a line-interrupt ?
+> > > > > >
+> > > > >
+> > > > > Every frame will trigger line-interrupt and stf_isp_irq_handler.
+> > > > > We use line-interrupt changing buffer, the stf_isp_irq_handler
+> > > > > will indicate that image transfer to DDR is complete.
+> > > > >
+> > > > >
+> > > > > > > > > +				}
+> > > > > > > > > +			}
+> > > > > > > > >  		}
+> > > > > > > > >
+> > > > > > > > >  		stf_isp_reg_set_bit(stfcamss, ISP_REG_CSIINTS, @@
+> > > > -485,6
+> > > > > > +542,7
+> > > > > > > > @@
+> > > > > > > > > irqreturn_t stf_isp_irq_handler(int irq, void *priv)  {
+> > > > > > > > >  	struct stfcamss *stfcamss = priv;
+> > > > > > > > >  	struct stf_capture *cap =
+> > > > > > > > > &stfcamss->captures[STF_CAPTURE_YUV];
+> > > > > > > > > +	struct stf_capture *cap_scd =
+> > > > > > > > > +&stfcamss->captures[STF_CAPTURE_SCD];
+> > > > > > > > >  	struct stfcamss_buffer *ready_buf;
+> > > > > > > > >  	u32 status;
+> > > > > > > > >
+> > > > > > > > > @@ -496,6 +554,14 @@ irqreturn_t stf_isp_irq_handler(int
+> > > > > > > > > irq, void
+> > > > *priv)
+> > > > > > > > >  				vb2_buffer_done(&ready_buf->vb.vb2_buf,
+> > > > > > > > VB2_BUF_STATE_DONE);
+> > > > > > > > >  		}
+> > > > > > > > >
+> > > > > > > > > +		if (status & ISPC_SC) {
+> > > > > > > > > +			ready_buf = stf_buf_done(&cap_scd->buffers);
+> > > > > > > > > +			if (ready_buf) {
+> > > > > > > > > +				stf_isp_fill_yhist(stfcamss, ready_buf->vaddr);
+> > > > > > > > > +				vb2_buffer_done(&ready_buf->vb.vb2_buf,
+> > > > > > > > VB2_BUF_STATE_DONE);
+> > > > > > > > > +			}
+> > > > > > > > > +		}
+> > > > > > > > > +
+> > > > > > > > >  		stf_isp_reg_write(stfcamss, ISP_REG_ISP_CTRL_0,
+> > > > > > > > >  				  (status & ~ISPC_INT_ALL_MASK) |
+> > > > > > > > >  				  ISPC_ISP | ISPC_CSI | ISPC_SC); diff --git
+> > > > > > > > > a/drivers/staging/media/starfive/camss/stf-isp.h
+> > > > > > > > > b/drivers/staging/media/starfive/camss/stf-isp.h
+> > > > > > > > > index fcda0502e3b0..0af7b367e57a 100644
+> > > > > > > > > --- a/drivers/staging/media/starfive/camss/stf-isp.h
+> > > > > > > > > +++ b/drivers/staging/media/starfive/camss/stf-isp.h
+> > > > > > > > > @@ -10,6 +10,7 @@
+> > > > > > > > >  #ifndef STF_ISP_H
+> > > > > > > > >  #define STF_ISP_H
+> > > > > > > > >
+> > > > > > > > > +#include <linux/jh7110-isp.h>
+> > > > > > > > >  #include <media/v4l2-subdev.h>
+> > > > > > > > >
+> > > > > > > > >  #include "stf-video.h"
+> > > > > > > > > @@ -107,6 +108,12 @@
+> > > > > > > > >  #define Y_COOR(y)				((y) << 16)
+> > > > > > > > >  #define X_COOR(x)				((x) << 0)
+> > > > > > > > >
+> > > > > > > > > +#define ISP_REG_SCD_CFG_0			0x098
+> > > > > > > > > +
+> > > > > > > > > +#define ISP_REG_SC_CFG_1			0x0bc
+> > > > > > > > > +#define ISP_SC_SEL_MASK				GENMASK(31, 30)
+> > > > > > > > > +#define SEL_TYPE(n)				((n) << 30)
+> > > > > > > > > +
+> > > > > > > > >  #define ISP_REG_LCCF_CFG_2			0x0e0
+> > > > > > > > >  #define ISP_REG_LCCF_CFG_3			0x0e4
+> > > > > > > > >  #define ISP_REG_LCCF_CFG_4			0x0e8
+> > > > > > > > > @@ -305,6 +312,10 @@
+> > > > > > > > >  #define DNRM_F(n)				((n) << 16)
+> > > > > > > > >  #define CCM_M_DAT(n)				((n) << 0)
+> > > > > > > > >
+> > > > > > > > > +#define ISP_REG_YHIST_CFG_4			0xcd8
+> > > > > > > > > +
+> > > > > > > > > +#define ISP_REG_YHIST_ACC_0			0xd00
+> > > > > > > > > +
+> > > > > > > > >  #define ISP_REG_GAMMA_VAL0			0xe00
+> > > > > > > > >  #define ISP_REG_GAMMA_VAL1			0xe04
+> > > > > > > > >  #define ISP_REG_GAMMA_VAL2			0xe08
+> > > > > > > > > @@ -389,6 +400,15 @@
+> > > > > > > > >  #define IMAGE_MAX_WIDTH				1920
+> > > > > > > > >  #define IMAGE_MAX_HEIGH				1080
+> > > > > > > > >
+> > > > > > > > > +#define ISP_YHIST_BUFFER_SIZE			(64 * sizeof(__u32))
+> > > > > > > >
+> > > > > > > > Should this be in the uAPI header as it is useful to userspace as
+> > well ?
+> > > > > > > >
+> > > > > > > > you could:
+> > > > > > > >
+> > > > > > > > struct jh7110_isp_sc_buffer {
+> > > > > > > > 	__u8 y_histogram[ISP_YHIST_BUFFER_SIZE];
+> > > > > > > > 	__u32 reserv0[33];
+> > > > > > > > 	__u32 bright_sc[4096];
+> > > > > > > > 	__u32 reserv1[96];
+> > > > > > > > 	__u32 ae_hist_y[128];
+> > > > > > > > 	__u32 reserv2[511];
+> > > > > > > > 	__u16 flag;
+> > > > > > > > };
+> > > > > > > >
+> > > > > > > > ofc if the size is made part of the uAPI you need a more
+> > > > > > > > proper name such as JH7110_ISP_YHIST_SIZE
+> > > > > > > >
+> > > > > > >
+> > > > > > > OK, I will try this.
+> > > > > > >
+> > > > > > > > > +
+> > > > > > > > > +enum stf_isp_type_scd {
+> > > > > > > > > +	TYPE_DEC = 0,
+> > > > > > > > > +	TYPE_OBC,
+> > > > > > > > > +	TYPE_OECF,
+> > > > > > > > > +	TYPE_AWB,
+> > > > > > > > > +};
+> > > > > > > > > +
+> > > > > > > > >  /* pad id for media framework */  enum stf_isp_pad_id {
+> > > > > > > > >  	STF_ISP_PAD_SINK = 0,
+> > > > > > > > > @@ -429,5 +449,8 @@ int stf_isp_unregister(struct
+> > > > > > > > > stf_isp_dev *isp_dev);
+> > > > > > > > >
+> > > > > > > > >  void stf_set_yuv_addr(struct stfcamss *stfcamss,
+> > > > > > > > >  		      dma_addr_t y_addr, dma_addr_t uv_addr);
+> > > > > > > > > +void stf_set_scd_addr(struct stfcamss *stfcamss,
+> > > > > > > > > +		      dma_addr_t yhist_addr, dma_addr_t scd_addr,
+> > > > > > > > > +		      enum stf_isp_type_scd type_scd);
+> > > > > > > > >
+> > > > > > > > >  #endif /* STF_ISP_H */
+> > > > > > > > > diff --git
+> > > > > > > > > a/drivers/staging/media/starfive/camss/stf-video.c
+> > > > > > > > > b/drivers/staging/media/starfive/camss/stf-video.c
+> > > > > > > > > index 989b5e82bae9..2203605ec9c7 100644
+> > > > > > > > > --- a/drivers/staging/media/starfive/camss/stf-video.c
+> > > > > > > > > +++ b/drivers/staging/media/starfive/camss/stf-video.c
+> > > > > > > > > @@ -125,6 +125,14 @@ static int
+> > > > > > > > > stf_video_init_format(struct
+> > > > > > > > stfcamss_video *video)
+> > > > > > > > >  	return 0;
+> > > > > > > > >  }
+> > > > > > > > >
+> > > > > > > > > +static int stf_video_scd_init_format(struct
+> > > > > > > > > +stfcamss_video
+> > > > > > > > > +*video)
+> > > > > > > >
+> > > > > > > > Make it void if it can't fail (see below)
+> > > > > > > >
+> > > > > > >
+> > > > > > > OK.
+> > > > > > >
+> > > > > > > > > +{
+> > > > > > > > > +	video->active_fmt.fmt.meta.dataformat =
+> > > > > > > > video->formats[0].pixelformat;
+> > > > > > > > > +	video->active_fmt.fmt.meta.buffersize = sizeof(struct
+> > > > > > > > > +jh7110_isp_sc_buffer);
+> > > > > > > > > +
+> > > > > > > > > +	return 0;
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > >  /*
+> > -----------------------------------------------------------------------------
+> > > > > > > > >   * Video queue operations
+> > > > > > > > >   */
+> > > > > > > > > @@ -330,6 +338,78 @@ static const struct vb2_ops
+> > > > > > > > > stf_video_vb2_q_ops =
+> > > > > > > > {
+> > > > > > > > >  	.stop_streaming  = video_stop_streaming,  };
+> > > > > > > > >
+> > > > > > > > > +static int video_scd_queue_setup(struct vb2_queue *q,
+> > > > > > > > > +				 unsigned int *num_buffers,
+> > > > > > > > > +				 unsigned int *num_planes,
+> > > > > > > > > +				 unsigned int sizes[],
+> > > > > > > > > +				 struct device *alloc_devs[]) {
+> > > > > > > > > +	if (*num_planes)
+> > > > > > > > > +		return sizes[0] < sizeof(struct jh7110_isp_sc_buffer) ?
+> > > > -EINVAL :
+> > > > > > > > > +0;
+> > > > > > > > > +
+> > > > > > > > > +	*num_planes = 1;
+> > > > > > > > > +	sizes[0] = sizeof(struct jh7110_isp_sc_buffer);
+> > > > > > > > > +
+> > > > > > > > > +	return 0;
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > > +static int video_scd_buf_init(struct vb2_buffer *vb) {
+> > > > > > > > > +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+> > > > > > > > > +	struct stfcamss_buffer *buffer = to_stfcamss_buffer(vbuf);
+> > > > > > > > > +	dma_addr_t *paddr;
+> > > > > > > > > +
+> > > > > > > > > +	paddr = vb2_plane_cookie(vb, 0);
+> > > > > > > > > +	buffer->addr[0] = *paddr;
+> > > > > > > > > +	buffer->addr[1] = buffer->addr[0] +
+> > > > > > > > > +ISP_YHIST_BUFFER_SIZE;
+> > > > > > > >
+> > > > > > > > Interesting, I don't see many users of vb2_plane_cookie() in
+> > > > > > > > mainline and I'm not sure what this gives you as you use it
+> > > > > > > > to program the
+> > > > > > following registers:
+> > > > > > > >
+> > > > > > > > 	stf_isp_reg_write(stfcamss, ISP_REG_SCD_CFG_0, scd_addr);
+> > > > > > > > 	stf_isp_reg_write(stfcamss, ISP_REG_YHIST_CFG_4,
+> > > > > > > > yhist_addr);
+> > > > > > > >
+> > > > > > >
+> > > > > > > We set the value for ISP hardware, then ISP will transfer the
+> > > > > > > statistics to the
+> > > > > > buffer.
+> > > > > > > when the stf_isp_irq_handler interrupt is triggered, indicates
+> > > > > > > that the buffer fill is complete.
+> > > > > > >
+> > > > > >
+> > > > > > So I take this as
+> > > > > >
+> > > > > > 	paddr = vb2_plane_cookie(vb, 0);
+> > > > > > 	buffer->addr[0] = *paddr;
+> > > > > > 	buffer->addr[1] = buffer->addr[0] + ISP_YHIST_BUFFER_SIZE;
+> > > > > >
+> > > > > >         stf_set_scd_addr(stfcamss, change_buf->addr[0],
+> > > > > >                          change_buf->addr[1], type_scd);
+> > > > > >
+> > > > > > Makes the ISP transfer data directly to the memory areas in
+> > > > > > addr[0] and addr[1] (which explains why struct
+> > > > > > jh7110_isp_sc_buffer is packed, as it has to match the HW
+> > > > > > registers layout)
+> > > > > >
+> > > > > > If this is the case, why are you then manually copying the
+> > > > > > histograms and the flags to vaddr ?
+> > > > > >
+> > > > >
+> > > > > Yes, your are right.
+> > > > > But actually there is a problem with our ISP RTL.
+> > > > > We set this yhist_addr to ISP, but it actually not work.
+> > > > > 	stf_isp_reg_write(stfcamss, ISP_REG_YHIST_CFG_4, yhist_addr); or
+> > > > > I will drop this line in next version.
+> > > > >
+> > > > > So, in this structure
+> > > > > struct jh7110_isp_sc_buffer {
+> > > > > 	__u32 y_histogram[64];
+> > > > > 	__u32 reserv0[33];
+> > > > > 	__u32 bright_sc[4096];
+> > > > > 	__u32 reserv1[96];
+> > > > > 	__u32 ae_hist_y[128];
+> > > > > 	__u32 reserv2[511];
+> > > > > 	__u16 flag;
+> > > > > };
+> > > > >
+> > > > > Only
+> > > > >
+> > > > > 	__u32 reserv0[33];
+> > > > > 	__u32 bright_sc[4096];
+> > > > > 	__u32 reserv1[96];
+> > > > > 	__u32 ae_hist_y[128];
+> > > > > 	__u32 reserv2[511];
+> > > > >
+> > > > > transfer by ISP hardware.
+> > > > >
+> > > > > I need to fill
+> > > > > 	__u32 y_histogram[64];
+> > > > > 	__u16 flag;
+> > > > >
+> > > > > by vaddr.
+> > > >
+> > > > I see.
+> > > >
+> > > > Apart from the fact you can drop paddr and vb2_plane_cookie() and
+> > > > use vaddr for all (if I'm not mistaken), could you please record the
+> > > > above rationale for manually filling y_histogram and flag by hand in
+> > > > a comment to avoid future readers being confused by this as I was ?
+> > > >
+> > >
+> > > Still need to keep the paddr and vb2_plane_cookie() for
+> >
+> > If you were using the dma API to issue DMA transfers then I would understand
+> > you would have to use the dma_handles as set by dma_alloc_attrs(), but in
+> > the vb2 world buf->vaddr = buf->cookie.
+> >
+>
+> Yes, but vb2_plane_cookie() actually called the vb2_dc_cookie,
+>
+> const struct vb2_mem_ops vb2_dma_contig_memops = {
+> 	.alloc		= vb2_dc_alloc,
+> 	.put		= vb2_dc_put,
+> 	.get_dmabuf	= vb2_dc_get_dmabuf,
+> 	.cookie		= vb2_dc_cookie,
+> 	.vaddr		= vb2_dc_vaddr,
+> 	.mmap		= vb2_dc_mmap,
+> 	.get_userptr	= vb2_dc_get_userptr,
+> 	.put_userptr	= vb2_dc_put_userptr,
+> 	.prepare	= vb2_dc_prepare,
+> 	.finish		= vb2_dc_finish,
+> 	.map_dmabuf	= vb2_dc_map_dmabuf,
+> 	.unmap_dmabuf	= vb2_dc_unmap_dmabuf,
+> 	.attach_dmabuf	= vb2_dc_attach_dmabuf,
+> 	.detach_dmabuf	= vb2_dc_detach_dmabuf,
+> 	.num_users	= vb2_dc_num_users,
+> };
+>
+> static void *vb2_dc_cookie(struct vb2_buffer *vb, void *buf_priv)
+> {
+> 	struct vb2_dc_buf *buf = buf_priv;
+>
+> 	return &buf->dma_addr;
+> }
+>
+> It not return the buf->vaddr = buf->cookie.
 
-Well, we do have "raw" tracepoints not accessible from userspace, so
-you're saying even those are off limits for adding callbacks?
+right right
 
- - Joel
+I was only aware of vb2_dma_contig_plane_dma_addr() to get the
+dma_addr handle, and I just realized it internally gets the plane
+cookie:
+
+static inline dma_addr_t
+vb2_dma_contig_plane_dma_addr(struct vb2_buffer *vb, unsigned int plane_no)
+{
+	dma_addr_t *addr = vb2_plane_cookie(vb, plane_no);
+
+	return *addr;
+}
+
+>
+> Regards,
+> Changhuang
+>
+> > Anyway, I haven't run this part of the code, if you could verify the addresses of
+> > paddr and vaddr are different, then I'll be happy to shut up :)
+
+Now I'm happy to shut up then :)
+
+Thanks for explaining
+   j
+
+> >
+> >
+> > > 	__u32 reserv0[33];
+> > > 	__u32 bright_sc[4096];
+> > > 	__u32 reserv1[96];
+> > > 	__u32 ae_hist_y[128];
+> > >  	__u32 reserv2[511];
+> > >
+> > > Because this part is filled by the hardware.
+> > >
+> > > I will add more information for struct jh7110_isp_sc_buffer
+> > >
+> >
+> > Thanks, a comment in buf_init() to explain that part of the struct is filled by
+> > hw and part has to be manually filled would be enough. From an userspace
+> > API point of view 'struct jh7110_isp_sc_buffer' will just match the HW layout,
+> > regardless of how it is filled up.
+> >
+> > > Regards,
+> > > Changhuang
+> > >
+> > >
 
