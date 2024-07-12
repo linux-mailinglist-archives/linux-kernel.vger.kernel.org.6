@@ -1,176 +1,114 @@
-Return-Path: <linux-kernel+bounces-250202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB50192F51E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:40:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F1C92F51F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F3D5B21CB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:40:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACD391F23B1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2293318654;
-	Fri, 12 Jul 2024 05:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DA31BC37;
+	Fri, 12 Jul 2024 05:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fK4qrFH+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tSSKFLgk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15AEFC12;
-	Fri, 12 Jul 2024 05:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5722B1B978
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 05:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720762830; cv=none; b=SaKPjZWtKbUkUl7A8GWKzirgHJH87I3KxHN6k6zvutDYGiYmxCHkvLmIP4W+zJWMmqI3KnibjCWiX8SpRDc8aR9ZI0QwAjcNrVAXZ6qkUEoNPDL2eaS2225yqnql3MjBmmqn0RMvfJPmbbPHtW4rHdZx4GvK0ILqCxgoE9sKH7A=
+	t=1720762843; cv=none; b=CmCScHxPoDG4WvtVtEr70zPT6Qs4jWU1tbAIN/9VF1QDJpNOs2pa9gkbhg0WZiIjcJfj9tug63L1FxT8WA6q38NFRcXTZoZD/hltF9V9cuaNE1LtPADaVhMk4q6jQvcA0h+0o6JA7sMfD2YjIt5ZvsLjv7yr6rMmCi5JN6trrgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720762830; c=relaxed/simple;
-	bh=hvyFx3I4Ha1qkqZiA0VG/4TdPG0Oy8Q8M9MNYd24II4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gOuVLJqXwEC1c0cHE1793oB9cdTEpQSp/1/UuLjpJ4M058oOcjSfBEwWMn4aRi3WxuXCff/AbUl04gmiffoedCFB2JqfZeq4injGwlb9WMZU5nj56Q7YtPgl87NKYbihde6bnFvkdA5ys9ZSeARyWy378bfsn2ZQ0Ym9/9XDigA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fK4qrFH+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46C2eofX008746;
-	Fri, 12 Jul 2024 05:40:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S+lQpm2m3jaaBULrxGFN2wLiGoIoLBtU+dUdkmZdDK4=; b=fK4qrFH+7aywWD6S
-	DGMS4440AsziEWMn+oUvITgxViF+mzLu9gekwL2pDW//seGzL+vbNW+Blcxl/km3
-	c5c9ItlWcY7aY0Hcn22Uy12PwClh6WB6U/fdJbviYlVD3Dd+2jlvUF7BbdXtXXc0
-	+6f60JQz0LbpMKLXiWnjL9owweXbVxx48cYzgCGeorVsBimTNsVS0fEXktpneaRl
-	ZGKjXHY9WIwh64nYRasfXFMmXdUluOPQLshOpLKTarpAuzcOldfcaR/Y6DA88Hui
-	zeElgSEXHTUDT9nW5K5/MMDBfl6s/CJUTZaTG1J+MUQbtY4IzUNoqIgX9aDTg0Oa
-	iCaQoA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x51ef86-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Jul 2024 05:40:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46C5eI33002900
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Jul 2024 05:40:18 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 11 Jul
- 2024 22:40:13 -0700
-Message-ID: <072da4b0-2d6c-4342-a1f4-451f4ff791fc@quicinc.com>
-Date: Fri, 12 Jul 2024 13:40:11 +0800
+	s=arc-20240116; t=1720762843; c=relaxed/simple;
+	bh=PSWNyWU73EQqInxpASB2ScYA1nv0h1QBrxTVK5/K9Tg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E9++vHPLm8wlCTOgyvb+o8HM3pEGz8yxTHeVAdO8U1mj+Kxg8CAPApMNSOvo9+bfJsrKYlIACalb2L6xY9QynKWAfju5P9jIR7f9Qaz8SwZ8R3EWaBtXkWiQKwDEFqs0Y3DA8MuMkOiaczWiV6vooiZ2pQMFEECqW0RlGFlmcMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tSSKFLgk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21D44C3277B;
+	Fri, 12 Jul 2024 05:40:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720762842;
+	bh=PSWNyWU73EQqInxpASB2ScYA1nv0h1QBrxTVK5/K9Tg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tSSKFLgk/MjIM3OwBgy6wqcOPaOzMM01CwlvAaug2ie+bOxfSD5Lxj6T2aypKerbp
+	 KDm+71/QswAoYZG02gHAorXcZjXHbqpSxPRFNg0u4ErPAs73NHkKwl7LuWb1/ypoHy
+	 Q0FeYLmpN8tdfBSW8OHyKtRgfdtouoLxl6UnOl3g=
+Date: Fri, 12 Jul 2024 07:40:37 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Leesoo Ahn <lsahn@ooseel.net>
+Cc: Leesoo Ahn <lsahn@wewakecorp.com>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] android: binder: print error message on failure of
+ creating proc file
+Message-ID: <2024071214-onshore-moonbeam-4eeb@gregkh>
+References: <20240712032140.4012667-1-lsahn@wewakecorp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: soc: qcom,aoss-qmp: Document the QCS9100
- AOSS channel
-To: Chris Lew <quic_clew@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240709-document_qcs9100_aoss_qmp_compatible-v2-1-6c7f35bc9ec3@quicinc.com>
- <24302005-d9a5-400e-a28c-40276a3f7250@quicinc.com>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <24302005-d9a5-400e-a28c-40276a3f7250@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 7kv-dtF8Y_UZ0R4dBTVod6M61i7tHQDU
-X-Proofpoint-ORIG-GUID: 7kv-dtF8Y_UZ0R4dBTVod6M61i7tHQDU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-12_03,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407120037
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712032140.4012667-1-lsahn@wewakecorp.com>
 
+On Fri, Jul 12, 2024 at 12:21:40PM +0900, Leesoo Ahn wrote:
+> It better prints out an error message to give more information if
+> calling debugfs_create_file() is failure and the return value has an
+> error code.
+> 
+> Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
+> ---
+>  drivers/android/binder.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> index b21a7b246a0d..eb0fd1443d69 100644
+> --- a/drivers/android/binder.c
+> +++ b/drivers/android/binder.c
+> @@ -5673,6 +5673,7 @@ static int binder_open(struct inode *nodp, struct file *filp)
+>  
+>  	if (binder_debugfs_dir_entry_proc && !existing_pid) {
+>  		char strbuf[11];
+> +		struct dentry *debugfs_entry;
+>  
+>  		snprintf(strbuf, sizeof(strbuf), "%u", proc->pid);
+>  		/*
+> @@ -5681,10 +5682,19 @@ static int binder_open(struct inode *nodp, struct file *filp)
+>  		 * The printing code will anyway print all contexts for a given
+>  		 * PID so this is not a problem.
+>  		 */
+> -		proc->debugfs_entry = debugfs_create_file(strbuf, 0444,
+> +		debugfs_entry = debugfs_create_file(strbuf, 0444,
+>  			binder_debugfs_dir_entry_proc,
+>  			(void *)(unsigned long)proc->pid,
+>  			&proc_fops);
+> +		if (!IS_ERR(debugfs_entry)) {
+> +			proc->debugfs_entry = debugfs_entry;
+> +		} else {
+> +			int error;
+> +
+> +			error = PTR_ERR(debugfs_entry);
+> +			pr_warn("Unable to create file %s in debugfs (error %d)\n",
+> +				strbuf, error);
 
+Even if we wanted to warn about this (hint, you don't, see previous
+response), this way to check is incorrect and will fail if debugfs is
+not enabled, which you don't want to have happen.
 
-On 7/11/2024 3:58 AM, Chris Lew wrote:
-> Hi Tengfei,
-> 
-> On 7/9/2024 7:24 AM, Tengfei Fan wrote:
->> Document the Always-On Subsystem side channel on the QCS9100 Platform.
->> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
-> 
-> /s/drived/derived/
+So I'm guessing you did not test this with that config option disabled?
 
-ACK.
+thanks,
 
-> 
->> platform use non-SCMI resource. In the future, the SA8775p platform will
->> move to use SCMI resources and it will have new sa8775p-related device
->> tree. Consequently, introduce "qcom,qcs9100-aoss-qmp" to describe
->> non-SCMI based AOSS channel.
->>
-> 
-> Were there any differences between non-SCMI and SCMI based platforms 
-> specifically for the qcom_aoss.com driver?
-> 
-> 
->> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->> ---
->> Introduce support for the QCS9100 SoC device tree (DTSI) and the
->> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
->> While the QCS9100 platform is still in the early design stage, the
->> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
->> mounts the QCS9100 SoC instead of the SA8775p SoC.
->>
->> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
->> all the compatible strings will be updated from "SA8775p" to "QCS9100".
->> The QCS9100 device tree patches will be pushed after all the device tree
->> bindings and device driver patches are reviewed.
->>
->> The final dtsi will like:
->> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
->>
->> The detailed cover letter reference:
->> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
->> ---
->> Changes in v2:
->>    - Split huge patch series into different patch series according to
->>      subsytems
->>    - Update patch commit message
->>
->> prevous disscussion here:
->> [1] v1: 
->> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
->> ---
->>   Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git 
->> a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml 
->> b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
->> index 7afdb60edb22..80e1a8b43586 100644
->> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
->> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
->> @@ -25,6 +25,7 @@ properties:
->>     compatible:
->>       items:
->>         - enum:
->> +          - qcom,qcs9100-aoss-qmp
->>             - qcom,qdu1000-aoss-qmp
->>             - qcom,sa8775p-aoss-qmp
->>             - qcom,sc7180-aoss-qmp
->>
->> ---
->> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
->> change-id: 20240709-document_qcs9100_aoss_qmp_compatible-a7376629ea6c
->>
->> Best regards,
-
--- 
-Thx and BRs,
-Tengfei Fan
+greg k-h
 
