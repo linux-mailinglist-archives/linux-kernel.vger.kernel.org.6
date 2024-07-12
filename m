@@ -1,342 +1,143 @@
-Return-Path: <linux-kernel+bounces-250476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE9292F842
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:46:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3928F92F812
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE5621F22997
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:46:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48A8F1C21B8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15A116D9DC;
-	Fri, 12 Jul 2024 09:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA5214B978;
+	Fri, 12 Jul 2024 09:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b5/sHhyU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Y/eOyjZT"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAC116191E;
-	Fri, 12 Jul 2024 09:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F5A13D51E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720777500; cv=none; b=YCWOMAiLQTIOtqfDWaIhm3xyoxS22MuEoic46ezGv9u3fG/CviRr6DmwAMUSeG0C4onzpWv6hxDNnBLnAJtK4yTRqj8dWQwosMzhiRwgM6ITQ8Oeod6PnGbiDw7DYxdwm4LacgJwI7kTOQLFoZsV5w9sgYhf3XrURt2BHCrqEj4=
+	t=1720776938; cv=none; b=faBDqp6QxzDDeBlKgFhV9S1CLbAMaJO7qb39d28akJINTQH2SgfCQYgXrNyrX8hN4QVSNv1GwaWnqMZhcMkAkv2ToniTwZY8HmzeZ/oXfNC1ROY8QfkkTZ25/7yTuArO3fEUjxw1HXQ3+EOcjByfVl+ABvRCAQSQ0cnFy7JG3fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720777500; c=relaxed/simple;
-	bh=tX/q0fTw9m6ieC+UmmbGKmEl0FvW8c1JEqZGZzmtFOA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IjYYEeBBajSn8tfEhAzPWSEUbQe/AZ1Sz0OvYcmG+9dVn9Qu0XQtf5qnM5Qu8dNwu+8x0R8iZLH189/YiXcJpsuqL8FmN/ud4kP9J8nnqO0KZC8kfs+ZUSveYbbGG0V5J5d8Dwx0nrcz3aNgV7wrMtwf+IJA/yR2cD/Eax0HTLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b5/sHhyU; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720777499; x=1752313499;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=tX/q0fTw9m6ieC+UmmbGKmEl0FvW8c1JEqZGZzmtFOA=;
-  b=b5/sHhyUrhESsfcomLQC56tQLMGJq4RRceCGV2rTD9zLmxRotJd14/BN
-   4px/cxyfr5a3r40RbKK3OAH0O/wFUev1Pvr/oIiF2vEzrgMw5ipIwp8QG
-   aLtz7gjyXylDkxreQrm+rObqBbNkFke5HRWRUW2ut3Jo4mMBgEzb6orz2
-   SpzvCNWqXaVCjhxxHV4X91prJbIk+/wmkxdLysmTF/vjXT2ATzdcOgLdQ
-   j3XRT72KJJcwaJuo6t2WZj/cgT3LQ3l0wvZQ5ZKqKxuXOvQijp8o9gWQJ
-   t86wwAfhHQLXEKQZM04kgXV4oRqr4Cww3mYFEMD4vEfOKUmbHym73NxUU
-   Q==;
-X-CSE-ConnectionGUID: ttctN885Taehj9hW95hkjQ==
-X-CSE-MsgGUID: aGDzZNUwTEenm8PY8rmRfg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="18076995"
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="18076995"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 02:44:57 -0700
-X-CSE-ConnectionGUID: yf2VA5M8TxOUkSwkTLeh5g==
-X-CSE-MsgGUID: hMFeL0atSW+qflhmHc0qTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="49524319"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by orviesa007.jf.intel.com with ESMTP; 12 Jul 2024 02:44:53 -0700
-Received: from fedora.igk.intel.com (Metan_eth.igk.intel.com [10.123.220.124])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id 378DF72;
-	Fri, 12 Jul 2024 10:44:52 +0100 (IST)
-From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-To: intel-wired-lan@lists.osuosl.org
-Cc: apw@canonical.com,
-	joe@perches.com,
-	dwaipayanray1@gmail.com,
-	lukas.bulwahn@gmail.com,
-	akpm@linux-foundation.org,
-	willemb@google.com,
-	edumazet@google.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Wojciech Drewek <wojciech.drewek@intel.com>,
-	Simon Horman <horms@kernel.org>,
-	Mateusz Polchlopek <mateusz.polchlopek@intel.com>
-Subject: [Intel-wired-lan] [PATCH iwl-next v2 6/6] ice: devlink health: dump also skb on Tx hang
-Date: Fri, 12 Jul 2024 05:32:51 -0400
-Message-Id: <20240712093251.18683-7-mateusz.polchlopek@intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20240712093251.18683-1-mateusz.polchlopek@intel.com>
-References: <20240712093251.18683-1-mateusz.polchlopek@intel.com>
+	s=arc-20240116; t=1720776938; c=relaxed/simple;
+	bh=kXV0109FCOzso+L559vqF0BSPt0UUb6aogVBVgHjZvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u2Tgi+vTONcHULeVVjQoRYIydQiHQBzntaMnJJO7w+WSe9mbQbkaOljcNN0uEWA87egPGBsuLIYvS6D7zG/SnKBGhBy73BQygsZK5QT2rJ2NFRoV3O8pJRhdgkOoF1fmbSWgXor+zhSTGJ601Reketad6d3JPynOeGPPJwLEwLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Y/eOyjZT; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a77abe5c709so230291866b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720776933; x=1721381733; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wn8z9cRdOEh+xpEHyWfRewfBG/LWm9irdSwzJQPt4vg=;
+        b=Y/eOyjZThmcsdw6Hs5Fxg2/ty7n1UbXh1E9545jEWIOAYdXgug5ZpTkA8Lvg2e2h+R
+         Y5HR4L8gwKUlpMapiyRxRLiGoWgDzgMN28UTRm+rxVl/KE+sxsin3Ug4WrHgxoYVliWc
+         KH2TXcFTLb2bObM8sSVTcVRlR3+9w8Kml0E8XpBMmuBSYXqhFtGhpvIbNKw8wAZPjlvc
+         qKqh/8UCN9nEDhs0xUj7F5LUk7J8VEpDsNtWF5tzcp8N7awPa0uNyQv5wVy/vWiXm3Fy
+         8LrryUtoN94wC8G0vVT53eMB+2Sgsmj7feJn2+1zS1+7Yfi6GMGLv032xVQ4tJxOaazL
+         9LaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720776933; x=1721381733;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wn8z9cRdOEh+xpEHyWfRewfBG/LWm9irdSwzJQPt4vg=;
+        b=aP+DN15qIBc2FBaTJ04XHRA946UNOBYKYFlhyifIghNJVwgV7FZUxP8L53zX2RH3zm
+         x68sD6lWS+ex0bMCXxYJELS5919hCq5m0GeyTh/YWDfcCspVs5AfAlNevTKw0Ls5boGu
+         BAOFinBaZNU+bS+wW864ajIKCwPF8ZFSVhM/oAESE+7PgVdNbLl0nG2BLXcnnFPslZzu
+         QcPvHLPIm0OiwkQytZm03T8gmAREcFXXG5GvmRSMPMBzTpL5ZkJa3KDu21k4z22x9yvx
+         CGwMefHk4WzFVF3T0P106vXAAqKW0b71B2oRIDVP7Ns72yLAttoso3y9uyZxivB/gyGo
+         Em0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX/sE1rY1dvTRSjBVAMDGqIhTKIGFbtyiGwSL6YBWYnXEZv/nIFhgVJQ3kuc+IwmLOvpdUWFymOj/wTpPXbsiZK40jdKotUl5hj20UP
+X-Gm-Message-State: AOJu0YyFQcjOUUPsuQq5Uwn5oOAOw2mYeXW1G2YFWlfGC0YD7ZLMYEMA
+	xPG+xRN+19ilOmIXlvOzCDx3HOo8U7Tf4IA7ug30PFkD3LqagRw3AHLkzbyVpT0=
+X-Google-Smtp-Source: AGHT+IHSQezVZTQQW1YWOTobbr+S5uTMZDEaxVRC5FiDnpQtUZO1W5xkFdreFDBnucdlNuc1el1aSg==
+X-Received: by 2002:a17:906:128d:b0:a77:e2e3:354f with SMTP id a640c23a62f3a-a780b6b180dmr793845966b.23.1720776932757;
+        Fri, 12 Jul 2024 02:35:32 -0700 (PDT)
+Received: from localhost (p50915eb1.dip0.t-ipconnect.de. [80.145.94.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7300a5sm330569366b.94.2024.07.12.02.35.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 02:35:32 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] UAPI/ioctl: Improve parameter name of ioctl request definition helpers
+Date: Fri, 12 Jul 2024 11:35:23 +0200
+Message-ID: <20240712093524.905556-2-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2732; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=kXV0109FCOzso+L559vqF0BSPt0UUb6aogVBVgHjZvk=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmkPjdS6x38g4I61Cvhedr2EMZsoXcs7g4Pv0tO SONUGjNnLSJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZpD43QAKCRCPgPtYfRL+ Tvk/CAChvDEQCj5h5oxdkskTo+bNDeXrjti5iVsuEITNMn2N53JRn/kfWCAavFKe+AJPEKhy9rX brrBDiHCQ9nnDaRmA8f9p0iX0mnaDTlMs1PczrrS8YfZRMAP0QyMHXgiV/YlK/kUiSZTn/5z9v4 PFrD9Q4ogmKYm/n5aO7YwwBewnJThBjfTxs8uOijks8qLdrRQn79kqNiKnPe1IwQLnbhiLx6waY v8gW6Ep0LCrU1pyDSTIpiGaJcL5mv4wwBto8Lw8FzdA6lhGeqFsH3+FAEg9idYCME8SD6ZuIJzG QNsTpTqGcr2qXR8tGfbZaszEE2869L+MtVpCRrEbyxssqFxC
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+The third parameter to _IOR et al is a type name, not a size. So the
+parameter being named "size" is irritating. Rename it to "argtype"
+instead to reduce confusion.
 
-Extend Tx hang devlink health reporter dump by skb content.
+There is a very minor chance that this breaks stuff. It only hurts
+however if there is a variable (or macro) in userspace that is called
+"argtype" *and* it's used in the parameters of _IOR and friends. IMHO
+this is negligible because usually definitions making use of these
+macros are provided by kernel headers (i.e. us) or if they are
+replicated in userspace code, they are replicated and so supposed to
+match the kernel definitions (e.g. to make them usable by programs
+without the need to update the kernel headers used to compile the
+program).
 
-This commit includes much code copy-pasted from:
-- net/core/skbuff.c (function skb_dump() - modified to dump into buffer)
-- lib/hexdump.c (function print_hex_dump())
-
-Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Signed-off-by: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 ---
- .../intel/ice/devlink/devlink_health.c        | 197 ++++++++++++++++++
- 1 file changed, 197 insertions(+)
+Hello,
 
-diff --git a/drivers/net/ethernet/intel/ice/devlink/devlink_health.c b/drivers/net/ethernet/intel/ice/devlink/devlink_health.c
-index f9edfabc9be8..1a9b19a7e7e1 100644
---- a/drivers/net/ethernet/intel/ice/devlink/devlink_health.c
-+++ b/drivers/net/ethernet/intel/ice/devlink/devlink_health.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2024, Intel Corporation. */
+if there are doubts about using "argtype": Would "_argtype" be better?
+
+Best regards
+Uwe
+
+ include/uapi/asm-generic/ioctl.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/include/uapi/asm-generic/ioctl.h b/include/uapi/asm-generic/ioctl.h
+index a84f4db8a250..e3290a5824c9 100644
+--- a/include/uapi/asm-generic/ioctl.h
++++ b/include/uapi/asm-generic/ioctl.h
+@@ -82,13 +82,13 @@
+  * NOTE: _IOW means userland is writing and kernel is reading. _IOR
+  * means userland is reading and kernel is writing.
+  */
+-#define _IO(type,nr)		_IOC(_IOC_NONE,(type),(nr),0)
+-#define _IOR(type,nr,size)	_IOC(_IOC_READ,(type),(nr),(_IOC_TYPECHECK(size)))
+-#define _IOW(type,nr,size)	_IOC(_IOC_WRITE,(type),(nr),(_IOC_TYPECHECK(size)))
+-#define _IOWR(type,nr,size)	_IOC(_IOC_READ|_IOC_WRITE,(type),(nr),(_IOC_TYPECHECK(size)))
+-#define _IOR_BAD(type,nr,size)	_IOC(_IOC_READ,(type),(nr),sizeof(size))
+-#define _IOW_BAD(type,nr,size)	_IOC(_IOC_WRITE,(type),(nr),sizeof(size))
+-#define _IOWR_BAD(type,nr,size)	_IOC(_IOC_READ|_IOC_WRITE,(type),(nr),sizeof(size))
++#define _IO(type,nr)			_IOC(_IOC_NONE,(type),(nr),0)
++#define _IOR(type,nr,argtype)		_IOC(_IOC_READ,(type),(nr),(_IOC_TYPECHECK(argtype)))
++#define _IOW(type,nr,argtype)		_IOC(_IOC_WRITE,(type),(nr),(_IOC_TYPECHECK(argtype)))
++#define _IOWR(type,nr,argtype)		_IOC(_IOC_READ|_IOC_WRITE,(type),(nr),(_IOC_TYPECHECK(argtype)))
++#define _IOR_BAD(type,nr,argtype)	_IOC(_IOC_READ,(type),(nr),sizeof(argtype))
++#define _IOW_BAD(type,nr,argtype)	_IOC(_IOC_WRITE,(type),(nr),sizeof(argtype))
++#define _IOWR_BAD(type,nr,argtype)	_IOC(_IOC_READ|_IOC_WRITE,(type),(nr),sizeof(argtype))
  
-+#include <net/genetlink.h>
- #include "devlink_health.h"
- #include "ice.h"
- #include "ice_ethtool_common.h"
-@@ -136,6 +137,188 @@ static void ice_dump_ethtool_stats_to_fmsg(struct devlink_fmsg *fmsg,
- 	kfree(stats);
- }
- 
-+/**
-+ * ice_emit_to_buf - print to @size sized buffer
-+ *
-+ * @buf: buffer to print into
-+ * @at: current pos to write in @buf
-+ * @size: total space in @buf (incl. prior to @at)
-+ * @fmt: format of the message to print
-+ *
-+ * Return: position in the @buf for next write, @size at most, to ease out
-+ * error handling.
-+ */
-+static __printf(4, 5)
-+int ice_emit_to_buf(char *buf, int size, int at, const char *fmt, ...)
-+{
-+	va_list args;
-+	int len;
-+
-+	va_start(args, fmt);
-+	len = vscnprintf(buf + at, size - at, fmt, args);
-+	va_end(args);
-+
-+	return min(at + len, size);
-+}
-+
-+/**
-+ * ice_emit_hex_to_buf - copy of print_hex_dump() from lib/hexdump.c modified to
-+ * dump into buffer
-+ *
-+ * @out: buffer to print to
-+ * @out_size: total size of @out
-+ * @out_pos: position in @out to write at
-+ * @prefix: string to prefix each line with;
-+ *  caller supplies trailing spaces for alignment if desired
-+ * @buf: data blob to dump
-+ * @buf_len: number of bytes in the @buf
-+ *
-+ * Return: position in the buf for next write, buf_len at most, to ease out
-+ * error handling.
-+ */
-+static int ice_emit_hex_to_buf(char *out, int out_size, int out_pos,
-+			       const char *prefix, const void *buf,
-+			       size_t buf_len)
-+{
-+	unsigned char linebuf[32 * 3 + 2 + 32 + 1];
-+	const int rowsize = 16, groupsize = 1;
-+	int i, linelen, remaining = buf_len;
-+	const u8 *ptr = buf;
-+
-+	for (i = 0; i < buf_len; i += rowsize) {
-+		linelen = min(remaining, rowsize);
-+		remaining -= rowsize;
-+
-+		hex_dump_to_buffer(ptr + i, linelen, rowsize, groupsize,
-+				   linebuf, sizeof(linebuf), false);
-+		out_pos = ice_emit_to_buf(out, out_size, out_pos,
-+					  "%s%.8x: %s\n", prefix, i, linebuf);
-+
-+		if (out_pos == out_size)
-+			break;
-+	}
-+
-+	return out_pos;
-+}
-+
-+/**
-+ * ice_skb_dump_buf - Dump skb information and contents.
-+ *
-+ * copy of skb_dump() from net/core/skbuff.c, modified to dump into buffer
-+ *
-+ * @skb: skb to dump
-+ * @buf: buffer to dump into
-+ * @buf_size: size of @buf
-+ * @buf_pos: current position to write in @buf
-+ *
-+ * Return: position in the buf for next write.
-+ */
-+static int ice_skb_dump_buf(char *buf, int buf_size, int buf_pos,
-+			    const struct sk_buff *skb)
-+{
-+	struct skb_shared_info *sh = skb_shinfo(skb);
-+	struct net_device *dev = skb->dev;
-+	const bool toplvl = !buf_pos;
-+	struct sock *sk = skb->sk;
-+	struct sk_buff *list_skb;
-+	bool has_mac, has_trans;
-+	int headroom, tailroom;
-+	int i, len, seg_len;
-+
-+	len = skb->len;
-+
-+	headroom = skb_headroom(skb);
-+	tailroom = skb_tailroom(skb);
-+
-+	has_mac = skb_mac_header_was_set(skb);
-+	has_trans = skb_transport_header_was_set(skb);
-+
-+	buf_pos = ice_emit_to_buf(buf, buf_size, buf_pos,
-+		"skb len=%u headroom=%u headlen=%u tailroom=%u\n"
-+		"mac=(%d,%d) net=(%d,%d) trans=%d\n"
-+		"shinfo(txflags=%u nr_frags=%u gso(size=%hu type=%u segs=%hu))\n"
-+		"csum(0x%x ip_summed=%u complete_sw=%u valid=%u level=%u)\n"
-+		"hash(0x%x sw=%u l4=%u) proto=0x%04x pkttype=%u iif=%d\n",
-+		skb->len, headroom, skb_headlen(skb), tailroom,
-+		has_mac ? skb->mac_header : -1,
-+		has_mac ? skb_mac_header_len(skb) : -1,
-+		skb->network_header,
-+		has_trans ? skb_network_header_len(skb) : -1,
-+		has_trans ? skb->transport_header : -1,
-+		sh->tx_flags, sh->nr_frags,
-+		sh->gso_size, sh->gso_type, sh->gso_segs,
-+		skb->csum, skb->ip_summed, skb->csum_complete_sw,
-+		skb->csum_valid, skb->csum_level,
-+		skb->hash, skb->sw_hash, skb->l4_hash,
-+		ntohs(skb->protocol), skb->pkt_type, skb->skb_iif);
-+
-+	if (dev)
-+		buf_pos = ice_emit_to_buf(buf, buf_size, buf_pos,
-+					  "dev name=%s feat=%pNF\n", dev->name,
-+					  &dev->features);
-+	if (sk)
-+		buf_pos = ice_emit_to_buf(buf, buf_size, buf_pos,
-+					  "sk family=%hu type=%u proto=%u\n",
-+					  sk->sk_family, sk->sk_type,
-+					  sk->sk_protocol);
-+
-+	if (headroom)
-+		buf_pos = ice_emit_hex_to_buf(buf, buf_size, buf_pos,
-+					      "skb headroom: ", skb->head,
-+					      headroom);
-+
-+	seg_len = min_t(int, skb_headlen(skb), len);
-+	if (seg_len)
-+		buf_pos = ice_emit_hex_to_buf(buf, buf_size, buf_pos,
-+					      "skb linear:   ", skb->data,
-+					      seg_len);
-+	len -= seg_len;
-+
-+	if (tailroom)
-+		buf_pos = ice_emit_hex_to_buf(buf, buf_size, buf_pos,
-+					      "skb tailroom: ",
-+					      skb_tail_pointer(skb), tailroom);
-+
-+	for (i = 0; len && i < skb_shinfo(skb)->nr_frags; i++) {
-+		skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
-+		u32 p_off, p_len, copied;
-+		struct page *p;
-+		u8 *vaddr;
-+
-+		skb_frag_foreach_page(frag, skb_frag_off(frag),
-+				      skb_frag_size(frag), p, p_off, p_len,
-+				      copied) {
-+			seg_len = min_t(int, p_len, len);
-+			vaddr = kmap_local_page(p);
-+			buf_pos = ice_emit_hex_to_buf(buf, buf_size, buf_pos,
-+						      "skb frag:     ",
-+						      vaddr + p_off, seg_len);
-+			kunmap_local(vaddr);
-+			len -= seg_len;
-+
-+			if (!len || buf_pos == buf_size)
-+				break;
-+		}
-+	}
-+
-+	if (skb_has_frag_list(skb)) {
-+		buf_pos = ice_emit_to_buf(buf, buf_size, buf_pos,
-+					  "skb fraglist:\n");
-+		skb_walk_frags(skb, list_skb) {
-+			buf_pos = ice_skb_dump_buf(buf, buf_size, buf_pos,
-+						   list_skb);
-+
-+			if (buf_pos == buf_size)
-+				break;
-+		}
-+	}
-+
-+	if (toplvl)
-+		buf_pos = ice_emit_to_buf(buf, buf_size, buf_pos, ".");
-+
-+	return buf_pos;
-+}
-+
- /**
-  * ice_fmsg_put_ptr - put hex value of pointer into fmsg
-  *
-@@ -167,6 +350,10 @@ static int ice_tx_hang_reporter_dump(struct devlink_health_reporter *reporter,
- 				     struct netlink_ext_ack *extack)
- {
- 	struct ice_tx_hang_event *event = priv_ctx;
-+	char *skb_txt = NULL;
-+	struct sk_buff *skb;
-+
-+	skb = event->tx_ring->tx_buf->skb;
- 
- 	devlink_fmsg_obj_nest_start(fmsg);
- 	ICE_DEVLINK_FMSG_PUT_FIELD(fmsg, event, head);
-@@ -178,8 +365,18 @@ static int ice_tx_hang_reporter_dump(struct devlink_health_reporter *reporter,
- 	devlink_fmsg_put(fmsg, "irq-mapping", event->tx_ring->q_vector->name);
- 	ice_fmsg_put_ptr(fmsg, "desc-ptr", event->tx_ring->desc);
- 	ice_fmsg_put_ptr(fmsg, "dma-ptr", (void *)(long)event->tx_ring->dma);
-+	ice_fmsg_put_ptr(fmsg, "skb-ptr", skb);
- 	devlink_fmsg_binary_pair_put(fmsg, "desc", event->tx_ring->desc,
- 				     (event->tx_ring->count * sizeof(struct ice_tx_desc)));
-+	if (skb)
-+		skb_txt = kvmalloc(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
-+
-+	if (skb_txt) {
-+		ice_skb_dump_buf(skb_txt, GENLMSG_DEFAULT_SIZE, 0, skb);
-+		devlink_fmsg_put(fmsg, "skb", skb_txt);
-+		kvfree(skb_txt);
-+	}
-+
- 	ice_dump_ethtool_stats_to_fmsg(fmsg, event->tx_ring->vsi->netdev);
- 	devlink_fmsg_obj_nest_end(fmsg);
- 
+ /* used to decode ioctl numbers.. */
+ #define _IOC_DIR(nr)		(((nr) >> _IOC_DIRSHIFT) & _IOC_DIRMASK)
+
+base-commit: 3fe121b622825ff8cc995a1e6b026181c48188db
+prerequisite-patch-id: 816efa50518af0814a168f7f0ac5904b7128e5b1
 -- 
-2.38.1
+2.43.0
 
 
