@@ -1,143 +1,133 @@
-Return-Path: <linux-kernel+bounces-250355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D1A92F6DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:23:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706D992F6AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98B7A283631
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:23:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A168C1C22370
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374F71422B4;
-	Fri, 12 Jul 2024 08:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288F113B5A5;
+	Fri, 12 Jul 2024 08:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="f4X13abJ"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjpGG0kV"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312F02E3E5
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D168D3BBE2
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720772606; cv=none; b=PmYrMMsoiUU7BnwV9CFC86Pv1/VQg4KDa8DDLYKEC+OcjGIOPAn1XkpudhLxwaDNFL/FRruYch1XZ4rBeIVvb+x+5Rm/Z2IBc9A9WkoRuHRcKmM6uZVL6euDcJa05pERZTpLmxvqAchaXS4GCgB06xiIKW3ZaDbJu898/PCl82c=
+	t=1720771484; cv=none; b=gpW1M2QwjFuaOBJRUr63V0NnJ4LVu2joaF8vomT633PT97tTYBhz+1j4iXZd2qzQY2nktzaLEOGJeW7IT/kyJ2N/oxnQ69clkTREIpSeuUlOiaKU/6586HM8YMJy3THZyGgBNBZ/koHglj49AsE/XstBCxESVu+FOcR/Fr2/2so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720772606; c=relaxed/simple;
-	bh=k4DqjM+f2mpsIHVU3sYPFhWs1zxrgHI2U6K0amjP790=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=XuzjgRny/E9iluhXXTwYCjB3U4Ek5OQM/KeguvYcwq1SQf5C4evwkPNadtBKAzp1Cqe5kvLCc55kK3PRVpK4jJ52JXekePzoD3oQwZET9CC1Ss3mHSJcyWG7VDJWJ/r2IqP/myqgU/4ZoImkgavSxJdkQAqcWHCX3+dOZr/SPqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=f4X13abJ; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240712082316epoutp01df2ed7ddfa8e85ba90bd211a6d42cbdc~haY84U1_V1784517845epoutp01e
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:23:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240712082316epoutp01df2ed7ddfa8e85ba90bd211a6d42cbdc~haY84U1_V1784517845epoutp01e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720772596;
-	bh=EN2jPuqsDevY28zpnNxB4ovNHRij5bWkyvMEhUSw2Sg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f4X13abJ596q46JWe9vPb+8ZFybe1rCxJUe78G/h2H8VtbWZLiSTPScQ+98d1Xzdj
-	 szrn025sLmd32gTAVUj8Hls0hwKsni6FlT3vfwDR/PqI4B0vqLYK+gqYLR+zExPDv1
-	 gMRIFRbJTzuB0l8wnPJRfivaagY2ukZASE8KTySg=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240712082316epcas5p35604a34dfcf2354a6b13fe6b8b4a5fc2~haY8obsCL2635226352epcas5p36;
-	Fri, 12 Jul 2024 08:23:16 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.176]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4WL4Nf14bWz4x9Q2; Fri, 12 Jul
-	2024 08:23:14 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	6D.C7.19174.AE7E0966; Fri, 12 Jul 2024 17:23:06 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240712065750epcas5p2149131922a27554e6a40313e5c73699e~hZOXCVf222681526815epcas5p2B;
-	Fri, 12 Jul 2024 06:57:50 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240712065750epsmtrp2ca7a7789bd9d3112d069765defcde925~hZOXA82723072830728epsmtrp2N;
-	Fri, 12 Jul 2024 06:57:50 +0000 (GMT)
-X-AuditID: b6c32a50-87fff70000004ae6-88-6690e7eafd35
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BF.FC.18846.EE3D0966; Fri, 12 Jul 2024 15:57:50 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240712065749epsmtip163077e8f8b8a31d4f3c51eb31c04eb76~hZOWAz0Y31597715977epsmtip1W;
-	Fri, 12 Jul 2024 06:57:49 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: hch@infradead.org
-Cc: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xue01.he@samsung.com
-Subject: Re: Re: [PATCH v2] io_uring: Avoid polling configuration errors
-Date: Fri, 12 Jul 2024 14:57:45 +0800
-Message-Id: <20240712065745.808422-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <ZpC9HxJnokkbjKAO@infradead.org>
+	s=arc-20240116; t=1720771484; c=relaxed/simple;
+	bh=hj2VG2Q8d9319KAMG4IfhYrlDB52h7Si/pjHysrh1e8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jgCEpAGl2L1dXqqdS9U8RAIHA9IpYnrc9dnUfmwmg8e+DGvY+4PV72xTouFyT385COZZbun689c/cWsxYrTqSoTGIKeX+drJtZT+48NghKNjUV/EUFelK5Nk9WDip+4vwqPE8O0/6KJSOUV2RIcfWZ2qRlwYSapu7EquE2c08Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjpGG0kV; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e99060b41so1810331e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 01:04:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720771481; x=1721376281; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7DzpNgmhLJVBu5qe1LjZ6WkA9IlvA+byqn+kY68Fw58=;
+        b=BjpGG0kVR1i4P540h8nPHWJMp2V+xsJdKgca1KypULcgnL6uMDXVcxJTXuKWuZnxMB
+         0YmSZxHFWOvvqe+DWULZm+CHy54+LLoBWHjSrsxIe+AFm/CZIUIrSr+TKwCDDT4QUmt0
+         pBRHG8W56fJwIEy787M4eNDPtlm0K2l1UH3A6TmwjGkBfjkOttIIAiPjSOGmEFkwlI2f
+         +wDQgYDGON0Hpkc5KmxxJufCBkLIl3kf7k3jNiW4PJu5og1ZYR5ycEdLkxAfkH8nukhq
+         X21KBC4aVEyf60ildrW69q6tcS9x+DY2GSIsmx+KSQzzxXdu/+yWHjBqqqyKP0XPCQWQ
+         5Geg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720771481; x=1721376281;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7DzpNgmhLJVBu5qe1LjZ6WkA9IlvA+byqn+kY68Fw58=;
+        b=OUE5KRmYJkfI/hMu5RhAc+gv6dSTrUz+N4BGH2xnZ0SqhX18fxiIetgxIBqmU9JsnN
+         Fqr8wVfEm+1E+yZ9avfRx+oxKhDNoGyS4loNqxyea4KqLAfD257QAc+C+vKaTOHjtjT6
+         2sXKh2/1r9H7SsMBvtr+H9v8f3FwQhy+C7DzCuAro1aDf6W8CXxk9FtXYnMqYlsX5SzJ
+         XB+CwJCWtZAfnZHKNigSlslaRsm44+ajgm2WtajN/5tmAT6CpoiD68C3+uu7DKoqk+OP
+         6sH9+koeH/Z2Hy5+L0zHT/hO5Fhv/21Hq1MErASxwocoXDjIl44HK95Yu/k1QyfnNpOT
+         CmDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdS6hzfXF7e0PqoxNQFGm9MixdC4PpEMlw4GqF0zUXd886MIs2p2kq57mRsYsH1Wma9saSJK0S9oSRJzOOWypfNPS2FvzaL7fSss53
+X-Gm-Message-State: AOJu0YxQjRdU7KBWx7biO3I5WM5LgpaQhnLODJRAfxM/n0KbONwOAHIr
+	HBJE6tUAxyshSaHYKYlpGayDNB4CgHEaOeXaP9bs51xJI6ICnPA2MlEyw/vjpd/gx9VWzOdkh+I
+	NNHH1dzNiOjD5aVsEy7Sg6faZo8Q=
+X-Google-Smtp-Source: AGHT+IEzGpTobVaTkEb3+i5LAPU3czDFriS9G7PWIRglcmKBHYVGpdf+/uEgEfJdKuMf+a+GRig9hdCn/WRpD20tp1M=
+X-Received: by 2002:a05:6512:2252:b0:52e:bdfc:1d09 with SMTP id
+ 2adb3069b0e04-52ebdfc1f65mr6202809e87.18.1720771480680; Fri, 12 Jul 2024
+ 01:04:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmlu6r5xPSDBbPUrGYs2obo8Xqu/1s
-	FqcnLGKyeNd6jsXiV/ddRovLu+awWZyd8IHVouvCKTYHDo+ds+6ye2xeoeVx+WypR9+WVYwe
-	nzfJBbBGZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXm
-	AF2ipFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwKdArTswtLs1L18tLLbEyNDAw
-	MgUqTMjOOD69j6mgn6Vi39HEBsZFzF2MHBwSAiYS2x74djFycQgJ7GGUePHrHwuE84lR4kn7
-	eyY45++3L0AZTrCO9Tf2QiV2Mkq0TWtmhHB+MEo03WhiBqliE1CS2L/lAyOILSIgKnFv+hUw
-	m1mgWuL/sh52EFtYwENiwrvVYFNZBFQlvnzdDlbDK2AlsWv+enaIbfISN7v2g83kFNCVaDh1
-	mA2iRlDi5MwnLBAz5SWat85mBjlCQuARu8TViR+ZIZpdJFY3/GKCsIUlXh3fAjVUSuLzu71s
-	EHa+xOTv6xkh7BqJdZvfQb1pLfHvyh4WUCAxC2hKrN+lDxGWlZh6ah0TxF4+id7fT6DG80rs
-	mAdjK0ksObICaqSExO8Ji1ghbA+J3T2rmCGB1cAosW7bJ/YJjAqzkPwzC8k/sxBWL2BkXsUo
-	lVpQnJuemmxaYKibl1oOj+Xk/NxNjODUqRWwg3H1hr96hxiZOBgPMUpwMCuJ8Hqe7U8T4k1J
-	rKxKLcqPLyrNSS0+xGgKDPGJzFKiyfnA5J1XEm9oYmlgYmZmZmJpbGaoJM77unVuipBAemJJ
-	anZqakFqEUwfEwenVAPT7iiTHc8MgvcK8i19MGlmSr/zltyc6XkR1UwPvHYK1SXGTNawOXxr
-	z+1+z8Rp+hlv7946dWmP1s05s+dpWzTNK9NtPLL41dFTH15d5fiyX/Hp/S+NcsvDOQ/cfeMv
-	fGC9rWF68xejvknB4pNNSxLfc09vOv+06nlYkbe68pKrHgmHDO7nv7NPYJ6e66G49MKx6TFB
-	2mrHLp4p2vYpwPXC3jBFA3MR9soLDbfksiamaq8z1p2acJnVZmZ6ZeDWTcpXM0z4NV1n/Qp2
-	2t5iI1j4Y4PjYjmhCas01u+tUOorW8AqPHvp47dTJgiHya0y3qT5bAWzlOqke8eecH0wf6P8
-	cvaZ/ROvL3o7/9ll4ZU7pymxFGckGmoxFxUnAgDI/fY8JgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsWy7bCSnO67yxPSDCZ0K1jMWbWN0WL13X42
-	i9MTFjFZvGs9x2Lxq/suo8XlXXPYLM5O+MBq0XXhFJsDh8fOWXfZPTav0PK4fLbUo2/LKkaP
-	z5vkAlijuGxSUnMyy1KL9O0SuDKOT+9jKuhnqdh3NLGBcRFzFyMnh4SAicT6G3uZuhi5OIQE
-	tjNK/Ns7mQ0iISGx49EfVghbWGLlv+fsEEXfGCUuXGlkBEmwCShJ7N/yAcwWERCVuDf9CiNI
-	EbNAI6PE8h0HWUASwgIeEhPerQazWQRUJb583Q7WwCtgJbFr/np2iA3yEje79oOdxCmgK9Fw
-	6jDYFUICOhLLbjayQtQLSpyc+QRsDjNQffPW2cwTGAVmIUnNQpJawMi0ilE0taA4Nz03ucBQ
-	rzgxt7g0L10vOT93EyM4qLWCdjAuW/9X7xAjEwfjIUYJDmYlEV7Ps/1pQrwpiZVVqUX58UWl
-	OanFhxilOViUxHmVczpThATSE0tSs1NTC1KLYLJMHJxSDUwTtxiG79Fzlgwqz2E49KGv4fsU
-	GyP/hXP59VgOF4gHSDG9vPa4S+aj/Za1zGFOq74cNlh6RTx1g9Aew93ljcpni13+MDw7FcfI
-	+t66+UXr+eqqk480H/kceGdt1iTnVp1THb7k5ONdgSmf1mjscd9x8cOCqIYrfgom8yxElP6s
-	lbDPelBbdVMpIYFN07vQr8iK79/aR+ejbucF/gleyHo8MHfBJttmV2333uTzkvcN56mvfCL2
-	VMvbYK/R4U+z2T2qPtzZ5a359M2f7XN0gzWenOx1DvG86eMv5zvXpubc0a2BXQyJuob/S+9J
-	tGV1JE9+GlWdcz/+1PPXXwvclpS77JzBf/fWGV5ZTQ13BSWW4oxEQy3mouJEALsA1vvZAgAA
-X-CMS-MailID: 20240712065750epcas5p2149131922a27554e6a40313e5c73699e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240712065750epcas5p2149131922a27554e6a40313e5c73699e
-References: <ZpC9HxJnokkbjKAO@infradead.org>
-	<CGME20240712065750epcas5p2149131922a27554e6a40313e5c73699e@epcas5p2.samsung.com>
+References: <20240625121652.1189095-1-lgs156412@gmail.com> <Znug8e2cUzuA9qGu@kernel.org>
+In-Reply-To: <Znug8e2cUzuA9qGu@kernel.org>
+From: liangxi Liu <lgs156412@gmail.com>
+Date: Fri, 12 Jul 2024 16:04:03 +0800
+Message-ID: <CAPRrSS-MTfoeKkbOMdtCMhVjxE8HDQu1Jt9HaY2RHBHUF-DrLA@mail.gmail.com>
+Subject: Re: [PATCH v2] memblock: export memblock_free() to free reserved memory.
+To: Mike Rapoport <rppt@kernel.org>
+Cc: akpm@linux-foundation.org, liangxi Liu <lgs156412@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->This is wrong for multiple reasons.  One is that we can't simply poke
->into block device internals like this in a higher layer like io_uring.
->Second blkdev_get_no_open is in no way available for use outside the
->block layer.  The fact that the even exist as separate helpers that
->aren't entirely hidden is a decade old layering violation in blk-cgroup.
+Yes. we have a reserved memory used for display the image, which needs
+to be deleted from memblock.reserved list(memblock_free
+()) after display and then released into the buddy system(free_reserved_pag=
+e
+()). Should I use memblock_free() or another API?
 
-Got it, thanks.
-
->If you want to advertize this properly we'll need a flag in struct
->file or something similar.
-
-Thanks, I will try to do this.
-
---
-hexue
+Mike Rapoport <rppt@kernel.org> =E4=BA=8E2024=E5=B9=B46=E6=9C=8826=E6=97=A5=
+=E5=91=A8=E4=B8=89 13:05=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Tue, Jun 25, 2024 at 08:16:52PM +0800, Guanshun Liu wrote:
+> > On architectures that support the preservation of memblock metadata
+> > after __init, allow drivers to call memblock_free() to free a
+> > reservation configured in dts. This is a hack to support the
+>
+> "This is a hack" implies that it's not a proper solution, right?
+>
+> And anyway, memblock_free() will not actually free the memory after __ini=
+t.
+>
+> > freeing of bootsplash reservations passed to Linux by the bootloader.
+> >
+> > Signed-off-by: Guanshun Liu <lgs156412@gmail.com>
+> > ---
+> >  mm/memblock.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/mm/memblock.c b/mm/memblock.c
+> > index 6d18485571b4..20e7f81fc076 100644
+> > --- a/mm/memblock.c
+> > +++ b/mm/memblock.c
+> > @@ -848,6 +848,9 @@ void __init_memblock memblock_free(void *ptr, size_=
+t size)
+> >       if (ptr)
+> >               memblock_phys_free(__pa(ptr), size);
+> >  }
+> > +#ifdef CONFIG_ARCH_KEEP_MEMBLOCK
+> > +EXPORT_SYMBOL_GPL(memblock_free);
+> > +#endif
+> >
+> >  /**
+> >   * memblock_phys_free - free boot memory block
+> > --
+> > 2.25.1
+> >
+>
+> --
+> Sincerely yours,
+> Mike.
 
