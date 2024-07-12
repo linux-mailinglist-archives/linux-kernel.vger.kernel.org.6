@@ -1,58 +1,61 @@
-Return-Path: <linux-kernel+bounces-250836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48EB92FD65
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A55292FD67
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9823D286021
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:19:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A1EA2864A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFF117332B;
-	Fri, 12 Jul 2024 15:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B90173338;
+	Fri, 12 Jul 2024 15:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPqJSl4Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GPuOOp5z"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9606A440C;
-	Fri, 12 Jul 2024 15:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19D317107F;
+	Fri, 12 Jul 2024 15:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720797580; cv=none; b=tV3PFAacjUG1+Rf8MLX1MbvuWioB2bjRt41ZCgRItmqY3UvvEWV/qhfQaEiJWyfA5XndPv2ldiaud3ZyO85s+mlRaptKSnSiTijaVwAxTEKqqvx7906AWyQ2HcsXMHvEX9Oe2HlY+idx5iiSBc9Mr22GD+OyI2fgzx0tuUcOZuU=
+	t=1720797630; cv=none; b=admOfr5tEzyMjXLst/jsvLESnaCo95SXjLu4hqB44NW25Qa+BIq3xwz/Uxm2ICSKDQ36euS4Jhq1FxaHhoph7EHp5+ZsgEctt+oMJf/8zc2c+OHWwtBZWjUG22LxjSCkns+81yPszUfVLjgWvnWcNj3ySIgkjuoAxBx38Kznmqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720797580; c=relaxed/simple;
-	bh=1aWPDrLVCK4aP22T5tyX3D1uSz8ajQJ3TSOvHn2sEaQ=;
+	s=arc-20240116; t=1720797630; c=relaxed/simple;
+	bh=7uKOgDp7TAdj58LAb9mS2Yvc9w/hBsmlsfwEPcUWUgc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SBNk5KvxySktviXtCNhwi1bzdlZIzZ9qMa6/dd+fL0i7FoUCcdVWQq//u9gvTPR2Lv/xP+kvNpRtxhQSpFsmY2gtujIVZ1c1Yd3oeJup3JXkazCdKmgOS8QRQdgvLpYPKQq1ti7w/jb1N7MGNh8sg66jrXZKBGgRFS+fbxP3n1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPqJSl4Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E1CC32782;
-	Fri, 12 Jul 2024 15:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720797580;
-	bh=1aWPDrLVCK4aP22T5tyX3D1uSz8ajQJ3TSOvHn2sEaQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uPqJSl4ZPIKlj453qNkRZRUX2zQm5FoN4ZiR86uVW2Zqd+Q/KD/q7ATFwcJMPe/oq
-	 Fvd++Xx7nfTB+bUqHkHASiDP3dK2avToCzQRUx/s4kW26VxqtShcgv67RcJk6lvFWX
-	 afbUvQUPNwE369ES4D4oHMyPmjfB+zAUbN6JoKOichEGylcKzbNaWSaQxzIwBC2IUR
-	 PCfRBWWwxNpys8CSvbW6ZqkT2DKNVTqnRtWiyyg0zEl9QzXy9Mv3zWzAXpGUNfJk8m
-	 qOzeOPjh7BsIm0vyoIyTh6M0BfCAj80jXhLCeJOt/iQZD/nAOGvAy2phNxZp7sEKd2
-	 sqvFSdO9ywBuA==
-Date: Fri, 12 Jul 2024 17:19:34 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" <linux-ide@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] dt-bindings: ata: ahci-fsl-qoriq: add
- fsl,ls1046a-ahci and fsl,ls1012a-ahci
-Message-ID: <ZpFJhk_HgQhGAQMU@ryzen.lan>
-References: <20240712142922.3292722-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CWDRS23M0LQpBQh45g+qVIrZMnLGedHBU9+k0aiJiikq6LMQCOCBitaqTFTQqvJaKdfGQL/M1VuJmiztY5jqQown+W6/iP47fBeXPrJH4aLavMzSHqayNr1DcSyjB7tEBAOtOR5kzW/RAMSVR2JgM7YAkxdUWqReVi5QFEtUWG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GPuOOp5z; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=gqKXjyZVYfRhKhuyUliBeWu5ezOtZdik8oAcq3I5nyc=; b=GPuOOp5zvgEPeHTqvHY0JriRps
+	2B5+pYtt44kVLPkQulGoAj/Y0XYx+9uP5TJztyYxbC7a63onCKr4ZIt0KMR1fVogSZkG25Hjw4EvI
+	4HwU5ZFvONDTQkyw5a0FPc1E74o22HuUsWlLLn966SUnWqDw/ewSZAFO4WQVBR7nggb8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sSI46-002Pku-MD; Fri, 12 Jul 2024 17:20:06 +0200
+Date: Fri, 12 Jul 2024 17:20:06 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/1] net: phy: dp83td510: add cable testing
+ support
+Message-ID: <3e1103cf-6023-475d-9532-2e5840ed14f8@lunn.ch>
+References: <20240708140542.2424824-1-o.rempel@pengutronix.de>
+ <a14ae101-d492-45a0-90fe-683e2f43fa3e@lunn.ch>
+ <ZpE_WwtSSdxGyWtC@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,85 +64,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240712142922.3292722-1-Frank.Li@nxp.com>
+In-Reply-To: <ZpE_WwtSSdxGyWtC@pengutronix.de>
 
-On Fri, Jul 12, 2024 at 10:29:22AM -0400, Frank Li wrote:
-> Add missing documented compatible strings 'fsl,ls1046a-ahci' and
-> 'fsl,ls1012a-ahci'. Allow 'fsl,ls1012a-ahci' to fallback to
-> 'fsl,ls1043a-ahci'.
+> > > +#define DP83TD510E_TDR_CFG2			0x301
+> > > +#define DP83TD510E_TDR_END_TAP_INDEX_1		GENMASK(14, 8)
+> > > +#define DP83TD510E_TDR_END_TAP_INDEX_1_DEF	36
+> > > +#define DP83TD510E_TDR_START_TAP_INDEX_1	GENMASK(6, 0)
+> > > +#define DP83TD510E_TDR_START_TAP_INDEX_1_DEF	3
+> > 
+> > Does this correspond the minimum and maximum distance it will test?
+> > Is this 3m to 36m?
 > 
-> Fix below CHECK_DTB warnings
-> arch/arm64/boot/dts/freescale/fsl-ls1012a-frwy.dtb: /soc/sata@3200000: failed to match any schema with compatible: ['fsl,ls1012a-ahci', 'fsl,ls1043a-ahci']
+> No. At least, i can't confirm it with tests.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v1 to v2
-> - rework commit message to show fix CHECK_DTB warning.
-> ---
->  .../devicetree/bindings/ata/fsl,ahci.yaml     | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
+> If I see it correctly, this PHY is using SSTDR instead of usual TDR.
+> Instead of pulses it will send modulated transmission with default
+> length of 16ms
 > 
-> diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-> index 162b3bb5427ed..a244bc603549d 100644
-> --- a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-> +++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-> @@ -11,13 +11,18 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - fsl,ls1021a-ahci
-> -      - fsl,ls1043a-ahci
-> -      - fsl,ls1028a-ahci
-> -      - fsl,ls1088a-ahci
-> -      - fsl,ls2080a-ahci
-> -      - fsl,lx2160a-ahci
-> +    oneOf:
-> +      - items:
-> +          - const: fsl,ls1012a-ahci
-> +          - const: fsl,ls1043a-ahci
-> +      - enum:
-> +          - fsl,ls1021a-ahci
-> +          - fsl,ls1043a-ahci
-> +          - fsl,ls1046a-ahci
-> +          - fsl,ls1028a-ahci
-> +          - fsl,ls1088a-ahci
-> +          - fsl,ls2080a-ahci
-> +          - fsl,lx2160a-ahci
+> I tried my best google foo, but was not able to find anything
+> understandable about "Start/End tap index for echo coeff sweep for segment 1"
+> im context of SSTDR. If anyone know more about this, please tell me :)
 
-I think that you should add the following Fixes-tag:
-Fixes: e58e12c5c34c ("dt-bindings: ata: ahci-fsl-qoriq: convert to yaml format")
+I was just curious. Does not really matter with respect to getting the
+patch applied.
 
-Considering that the commit that your are fixing is only in libata for-6.11,
-and has thus never been in a released kernel version, perhaps the following
-patch would be better (if it also solves the warnings):
-
-diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-index 162b3bb5427e..8953b1847305 100644
---- a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-+++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-@@ -12,8 +12,10 @@ maintainers:
- properties:
-   compatible:
-     enum:
-+      - fsl,ls1012a-ahci
-       - fsl,ls1021a-ahci
-       - fsl,ls1043a-ahci
-+      - fsl,ls1046a-ahci
-       - fsl,ls1028a-ahci
-       - fsl,ls1088a-ahci
-       - fsl,ls2080a-ahci
-
-
-This assumes that we can get the patch included before 6.11 final is released,
-but considering that the merge window hasn't even opened yet, that should be
-doable.
-
-
-Thoughts from DT maintainers?
-
-
-
-Kind regards,
-Niklas
+      Andrew
 
