@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-250574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320DD92F93C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B0B92F941
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B095BB237B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1AD1F22B53
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BEB915F407;
-	Fri, 12 Jul 2024 11:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD8416A957;
+	Fri, 12 Jul 2024 11:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IZvQEFXA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fl09nFMz"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051AD15ECC6
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 11:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5715715FA66
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 11:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720782227; cv=none; b=Zb0elXDt02ORRBMimi5Jv/OHu+CYp/Guc2UzENFqYFcNyAAV3JLj3yrhU6g2JsSZoGf2YV11+wtmlmEfkscu35dragcyhSleAwgn4vugUBGChhKPI5zyJx5Z3itLksUacDCftclP4wSl/d2BHdEeNM+SRC77wR/I5FmJ/Jgmqhw=
+	t=1720782230; cv=none; b=CtgZcX+JLu+rVMP0fs3649lQoMaVTDBCWmB9u1a+CggKuG8/ajgY9suqC3ZoBqUtdhLRWNEzxPaMyHk6yowaIp+08Gziw+NNclHWkZbHHxJC2RsdlBA/dXwagb2rxnPzngr3sFLCZnK9fIvBLMuWNvjbAjrOQkVo8IVCftf5r8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720782227; c=relaxed/simple;
-	bh=ukDXw37dhq+dYuSOWjdciN0yQwOu+nqVZTB9iN2+Ls4=;
+	s=arc-20240116; t=1720782230; c=relaxed/simple;
+	bh=dLBBaMqHPPQsYGXel7Tg/y3cknFXfDOZMFogS4bCL30=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qW57Q4lL9W1c2JfZ0kVYjFLizjcnsxFD7E0X9E1MfGy7lHLfsAkjllBNX6m0izWSCMgrdxWvQIsu+imaJ1+XnWUY0T3Sygm6wew1uoAu09lKNz+T2REVLnwSbGDEKS2YFRmE1QLHsWTHKE3wNqYu/wRWbAGEQTzVSCBADuOBMjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IZvQEFXA; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=kf5H5zbO/e5Y9h08G0M0ujan8rwxA4uoN1I7DqkfBF2Ifdg3aCRcNEgxWeltLOsJOKjrqxEmxLdEBFa54BZ1IJO/ZCoJIN0vTav1YpSeHaJPXuoTv8ufyL3ReWs0yvrGmB9PbAGywhadcGWOCKoInIsJYB4DRk8zIq0VreEHBJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fl09nFMz; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720782225;
+	s=mimecast20190719; t=1720782227;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=veUUGt+GBKRUflAP/4u3UadYVzXIYYKM+vDLIvIs2Yc=;
-	b=IZvQEFXAaS9RkhLBqbNJSTm0SHl+N/VVgGEqKfY67SVb9GvOUPvf8dDEzJfyDt3VAVFO18
-	9vPpyoE5UvdAHf+VlDU2sl+uy+X8mf2i0dwgyv0L9MguC4rWFCc6/pqQXGrybVVyrtQlOd
-	VA4J3GyGbll5CwWLnYBQZNqXNsi/G9E=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=6xAST+V6lWXBsnEaGTLUMH67LdmttdDtWSOQgal7aQQ=;
+	b=fl09nFMz0m/iK5a+qpblsgugVTnT/DC50bU8CMwGLMpFRu+7sTEOkQQrq51NawNFsl8unM
+	R6Zo48YsIJ8p4Q3r7w2PywZ2o2KMXo6O3F9Mmr9s+yMj5J5oXhBQlIjPMZAJdlhT8j/fPW
+	MDrw2m4v/dPaR6CcPvdAGIRNVN0Zf7M=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-534-1c-q5B2RNa2t4E10s6wEXw-1; Fri, 12 Jul 2024 07:03:44 -0400
-X-MC-Unique: 1c-q5B2RNa2t4E10s6wEXw-1
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d1c48fafe4so1291394b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 04:03:43 -0700 (PDT)
+ us-mta-638-l3g6O4n_NuymK5JRXtSUBQ-1; Fri, 12 Jul 2024 07:03:46 -0400
+X-MC-Unique: l3g6O4n_NuymK5JRXtSUBQ-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-79f0283223eso244761685a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 04:03:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720782222; x=1721387022;
+        d=1e100.net; s=20230601; t=1720782225; x=1721387025;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=veUUGt+GBKRUflAP/4u3UadYVzXIYYKM+vDLIvIs2Yc=;
-        b=Yn6DytkNC7Qtur3pqmPhg718ojO7kklnH3ImmWz0BRqiC1nG7lNoCFU4zWtJo2dcEh
-         CRau3PO7GUt4kj9uwsUj/HEA1rM91yNxdtNWmkL9e33CQ/ha3O6zFqLV5qgGEbb4P0vC
-         nTwUKrY0LteY0on7MJGTjs0IZcxnoGUJdePkT7M93FvYIW23O+FIdPqxPesGK506+nSY
-         ktYeYbWIbT8DpS7Ck7Ff/8cXnD4uW0u60FtSiqZE5nRVB52WqCNWqAsn+H7PptNxzvX2
-         dDrObB4vf8SV1No3uJzXci9QAtnOARIIfgQOF0gNIZelsCcNmPuVwXC/yFIICR3b9DSd
-         JuPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkl4377hUlSWw0KAewGU5+6V9i2f8l6PMhgUBbdjnHZntkxUUSeHB3BqggoIv6XN0jzUsVdfV8TMoMwSFLOtkQdswpKM/81XmEETDA
-X-Gm-Message-State: AOJu0YxP0X1RPwHncdKVRjyehjdvX5eFj6Al75o2dHcBPMe1/RTLNocg
-	oHaAZJqSADRgcnzU5qIkH+hxZh3+w58tWMEQp6yooL4wR7r5+31UYaqw8lK28lWvVysUDkoX/h6
-	Q37+5NKdyxcWgm5GV5f5SAYJmgikDg5qawj+Fb01fdlPRcgRmjyAnxm/JAnJOGgTob7cm9Q==
-X-Received: by 2002:a05:6808:1451:b0:3d6:2fb8:2905 with SMTP id 5614622812f47-3d93c08ccc9mr12087097b6e.42.1720782222495;
-        Fri, 12 Jul 2024 04:03:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHaYoe9jS++ITWpl1K24bjqJ7Ih4Tcqa5GejquSQMQtKX8znz1DvmZfOWT4pcFyOh59vOw1Ew==
-X-Received: by 2002:a05:6808:1451:b0:3d6:2fb8:2905 with SMTP id 5614622812f47-3d93c08ccc9mr12087065b6e.42.1720782222096;
-        Fri, 12 Jul 2024 04:03:42 -0700 (PDT)
+        bh=6xAST+V6lWXBsnEaGTLUMH67LdmttdDtWSOQgal7aQQ=;
+        b=SQuOYVLhMchgiQPU4rFGXtrqlVgZ6Xtez4tOz3MLj2cBBSvG8+Q+iVg/nK8AkM4NvD
+         FV5Dja0uu0LufYj/RXKRjhvnRk4EZMBS1Y3AiG7BYZNyqt2RCRl+ez1a3oNdnMybEZmE
+         MfIDeufekhV9d1G0BsYDXSbpbrTOPWoa0tVx48dldGJWvyklG2EIugGgeF5bv/DgAcyd
+         QxHSN7cLUDwA0wBUSV4/zqtfg9rp5jRgezy00XXeQKdSjQz1gd+90O+YHxudWIk4SrgE
+         nxmldq2gvwW8MtKjbI4ghXsDeGqbwjKGGEVPJp9wPksZYYmBXATBG5lXIKAuBZBLbYgX
+         /6Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUZa+ucNm08FOE+HhaF3M4N9YcOFW9VVlUGLIvH8LLhBMFvblsmnWEhWuHL2IJ+onjoi3xSZrhg7ebCrynVs9rdRpt/ZD3VZawEDfT
+X-Gm-Message-State: AOJu0Yw+1GoqnW1sMNlH7hxiII/dUiKOLDGWdeNrmcrm4qhlEX3n4I9e
+	Cz6GQx2nr9J1+n1PKzohSgQMykBzNUUI9Zt9M4Fm6S4wJ/KsdXEqfHKi/hffdbpfZvJs/d49tKg
+	QoaGh4o3Uy0gPLZLpxgYdhuHanQ0yE00iOmHoMKewcBWrneOLc6yks9qyHxm92A==
+X-Received: by 2002:a05:620a:909:b0:79e:f850:e4de with SMTP id af79cd13be357-79f1991b083mr1092096485a.0.1720782225622;
+        Fri, 12 Jul 2024 04:03:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRtK3var3gfeKJIjD1DbrBau/cSSmMTHNiKReqsoRwrLr/R+k8zDdqm587bqmZ6Jq9LLcrog==
+X-Received: by 2002:a05:620a:909:b0:79e:f850:e4de with SMTP id af79cd13be357-79f1991b083mr1092094585a.0.1720782225283;
+        Fri, 12 Jul 2024 04:03:45 -0700 (PDT)
 Received: from rh.redhat.com (p200300c93f45e50062e5f8c654844c9a.dip0.t-ipconnect.de. [2003:c9:3f45:e500:62e5:f8c6:5484:4c9a])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f18ff834csm390498685a.5.2024.07.12.04.03.39
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f18ff834csm390498685a.5.2024.07.12.04.03.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 04:03:41 -0700 (PDT)
+        Fri, 12 Jul 2024 04:03:44 -0700 (PDT)
 From: Sebastian Ott <sebott@redhat.com>
 To: linux-arm-kernel@lists.infradead.org,
 	kvmarm@lists.linux.dev,
@@ -83,9 +83,9 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
 	Zenghui Yu <yuzenghui@huawei.com>
-Subject: [PATCH 1/3] KVM: arm64: fix override-init warnings in W=1 builds
-Date: Fri, 12 Jul 2024 13:03:30 +0200
-Message-ID: <20240712110332.10970-2-sebott@redhat.com>
+Subject: [PATCH 2/3] KVM: arm64: fix kdoc warnings in W=1 builds
+Date: Fri, 12 Jul 2024 13:03:31 +0200
+Message-ID: <20240712110332.10970-3-sebott@redhat.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240712110332.10970-1-sebott@redhat.com>
 References: <20240712110332.10970-1-sebott@redhat.com>
@@ -97,107 +97,166 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove double initializations in cases where that's easily possible
-- like extra NULL initialization in static global structures. In the
-other cases just silence -Woverride-init.
-
-To fix warnings like the following:
-arch/arm64/kvm/hyp/vhe/switch.c:271:43: warning: initialized field overwritten [-Woverride-init]
-  271 |         [ESR_ELx_EC_CP15_32]            = kvm_hyp_handle_cp15_32,
-      |                                           ^~~~~~~~~~~~~~~~~~~~~~
+Fix kdoc warnings by adding missing function parameter
+descriptions or by conversion to a normal comment.
 
 Signed-off-by: Sebastian Ott <sebott@redhat.com>
 ---
- arch/arm64/kvm/handle_exit.c     | 5 +++++
- arch/arm64/kvm/hyp/nvhe/switch.c | 6 ++----
- arch/arm64/kvm/hyp/vhe/switch.c  | 3 +--
- arch/arm64/kvm/sys_regs.c        | 5 +++++
- 4 files changed, 13 insertions(+), 6 deletions(-)
+ arch/arm64/kvm/arm.c             |  1 +
+ arch/arm64/kvm/vgic/vgic-irqfd.c |  7 ++++---
+ arch/arm64/kvm/vgic/vgic-its.c   | 18 +++++++++++-------
+ arch/arm64/kvm/vgic/vgic-v3.c    |  2 +-
+ 4 files changed, 17 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
-index d7c2990e7c9e..2c049746657c 100644
---- a/arch/arm64/kvm/handle_exit.c
-+++ b/arch/arm64/kvm/handle_exit.c
-@@ -291,6 +291,9 @@ static int handle_svc(struct kvm_vcpu *vcpu)
+diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+index c818818398a5..2cbc23dd554d 100644
+--- a/arch/arm64/kvm/arm.c
++++ b/arch/arm64/kvm/arm.c
+@@ -164,6 +164,7 @@ static int kvm_arm_default_max_vcpus(void)
+ /**
+  * kvm_arch_init_vm - initializes a VM data structure
+  * @kvm:	pointer to the KVM struct
++ * @type:	kvm device type
+  */
+ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ {
+diff --git a/arch/arm64/kvm/vgic/vgic-irqfd.c b/arch/arm64/kvm/vgic/vgic-irqfd.c
+index 8c711deb25aa..c314c016659a 100644
+--- a/arch/arm64/kvm/vgic/vgic-irqfd.c
++++ b/arch/arm64/kvm/vgic/vgic-irqfd.c
+@@ -9,7 +9,7 @@
+ #include <kvm/arm_vgic.h>
+ #include "vgic.h"
+ 
+-/**
++/*
+  * vgic_irqfd_set_irq: inject the IRQ corresponding to the
+  * irqchip routing entry
+  *
+@@ -75,7 +75,8 @@ static void kvm_populate_msi(struct kvm_kernel_irq_routing_entry *e,
+ 	msi->flags = e->msi.flags;
+ 	msi->devid = e->msi.devid;
+ }
+-/**
++
++/*
+  * kvm_set_msi: inject the MSI corresponding to the
+  * MSI routing entry
+  *
+@@ -98,7 +99,7 @@ int kvm_set_msi(struct kvm_kernel_irq_routing_entry *e,
+ 	return vgic_its_inject_msi(kvm, &msi);
+ }
+ 
+-/**
++/*
+  * kvm_arch_set_irq_inatomic: fast-path for irqfd injection
+  */
+ int kvm_arch_set_irq_inatomic(struct kvm_kernel_irq_routing_entry *e,
+diff --git a/arch/arm64/kvm/vgic/vgic-its.c b/arch/arm64/kvm/vgic/vgic-its.c
+index 40bb43f20bf3..ba945ba78cc7 100644
+--- a/arch/arm64/kvm/vgic/vgic-its.c
++++ b/arch/arm64/kvm/vgic/vgic-its.c
+@@ -2040,6 +2040,7 @@ typedef int (*entry_fn_t)(struct vgic_its *its, u32 id, void *entry,
+  * @start_id: the ID of the first entry in the table
+  * (non zero for 2d level tables)
+  * @fn: function to apply on each entry
++ * @opaque: pointer to opaque data
+  *
+  * Return: < 0 on error, 0 if last element was identified, 1 otherwise
+  * (the last element may not be found on second level tables)
+@@ -2079,7 +2080,7 @@ static int scan_its_table(struct vgic_its *its, gpa_t base, int size, u32 esz,
  	return 1;
  }
  
-+__diag_push();
-+__diag_ignore_all("-Woverride-init", "Allow field overrides in exit_handlers");
-+
- static exit_handle_fn arm_exit_handlers[] = {
- 	[0 ... ESR_ELx_EC_MAX]	= kvm_handle_unknown_ec,
- 	[ESR_ELx_EC_WFx]	= kvm_handle_wfx,
-@@ -319,6 +322,8 @@ static exit_handle_fn arm_exit_handlers[] = {
- 	[ESR_ELx_EC_PAC]	= kvm_handle_ptrauth,
- };
+-/**
++/*
+  * vgic_its_save_ite - Save an interrupt translation entry at @gpa
+  */
+ static int vgic_its_save_ite(struct vgic_its *its, struct its_device *dev,
+@@ -2099,6 +2100,8 @@ static int vgic_its_save_ite(struct vgic_its *its, struct its_device *dev,
  
-+__diag_pop();
-+
- static exit_handle_fn kvm_get_exit_handler(struct kvm_vcpu *vcpu)
- {
- 	u64 esr = kvm_vcpu_get_esr(vcpu);
-diff --git a/arch/arm64/kvm/hyp/nvhe/switch.c b/arch/arm64/kvm/hyp/nvhe/switch.c
-index 6af179c6356d..bf49afc01542 100644
---- a/arch/arm64/kvm/hyp/nvhe/switch.c
-+++ b/arch/arm64/kvm/hyp/nvhe/switch.c
-@@ -200,8 +200,7 @@ static void kvm_hyp_save_fpsimd_host(struct kvm_vcpu *vcpu)
- 	}
+ /**
+  * vgic_its_restore_ite - restore an interrupt translation entry
++ *
++ * @its: its handle
+  * @event_id: id used for indexing
+  * @ptr: pointer to the ITE entry
+  * @opaque: pointer to the its_device
+@@ -2231,6 +2234,7 @@ static int vgic_its_restore_itt(struct vgic_its *its, struct its_device *dev)
+  * @its: ITS handle
+  * @dev: ITS device
+  * @ptr: GPA
++ * @dte_esz: device table entry size
+  */
+ static int vgic_its_save_dte(struct vgic_its *its, struct its_device *dev,
+ 			     gpa_t ptr, int dte_esz)
+@@ -2313,7 +2317,7 @@ static int vgic_its_device_cmp(void *priv, const struct list_head *a,
+ 		return 1;
  }
  
--static const exit_handler_fn hyp_exit_handlers[] = {
--	[0 ... ESR_ELx_EC_MAX]		= NULL,
-+static const exit_handler_fn hyp_exit_handlers[ESR_ELx_EC_MAX + 1] = {
- 	[ESR_ELx_EC_CP15_32]		= kvm_hyp_handle_cp15_32,
- 	[ESR_ELx_EC_SYS64]		= kvm_hyp_handle_sysreg,
- 	[ESR_ELx_EC_SVE]		= kvm_hyp_handle_fpsimd,
-@@ -212,8 +211,7 @@ static const exit_handler_fn hyp_exit_handlers[] = {
- 	[ESR_ELx_EC_MOPS]		= kvm_hyp_handle_mops,
- };
- 
--static const exit_handler_fn pvm_exit_handlers[] = {
--	[0 ... ESR_ELx_EC_MAX]		= NULL,
-+static const exit_handler_fn pvm_exit_handlers[ESR_ELx_EC_MAX + 1] = {
- 	[ESR_ELx_EC_SYS64]		= kvm_handle_pvm_sys64,
- 	[ESR_ELx_EC_SVE]		= kvm_handle_pvm_restricted,
- 	[ESR_ELx_EC_FP_ASIMD]		= kvm_hyp_handle_fpsimd,
-diff --git a/arch/arm64/kvm/hyp/vhe/switch.c b/arch/arm64/kvm/hyp/vhe/switch.c
-index 77010b76c150..4e4ff2bd51c9 100644
---- a/arch/arm64/kvm/hyp/vhe/switch.c
-+++ b/arch/arm64/kvm/hyp/vhe/switch.c
-@@ -415,8 +415,7 @@ static bool kvm_hyp_handle_sysreg_vhe(struct kvm_vcpu *vcpu, u64 *exit_code)
- 	return kvm_hyp_handle_sysreg(vcpu, exit_code);
+-/**
++/*
+  * vgic_its_save_device_tables - Save the device table and all ITT
+  * into guest RAM
+  *
+@@ -2386,7 +2390,7 @@ static int handle_l1_dte(struct vgic_its *its, u32 id, void *addr,
+ 	return ret;
  }
  
--static const exit_handler_fn hyp_exit_handlers[] = {
--	[0 ... ESR_ELx_EC_MAX]		= NULL,
-+static const exit_handler_fn hyp_exit_handlers[ESR_ELx_EC_MAX + 1] = {
- 	[ESR_ELx_EC_CP15_32]		= kvm_hyp_handle_cp15_32,
- 	[ESR_ELx_EC_SYS64]		= kvm_hyp_handle_sysreg_vhe,
- 	[ESR_ELx_EC_SVE]		= kvm_hyp_handle_fpsimd,
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index c90324060436..00fb6f1e9a48 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -2255,6 +2255,9 @@ static bool access_zcr_el2(struct kvm_vcpu *vcpu,
- 	return true;
+-/**
++/*
+  * vgic_its_restore_device_tables - Restore the device table and all ITT
+  * from guest RAM to internal data structs
+  */
+@@ -2478,7 +2482,7 @@ static int vgic_its_restore_cte(struct vgic_its *its, gpa_t gpa, int esz)
+ 	return 1;
  }
  
-+__diag_push();
-+__diag_ignore_all("-Woverride-init", "Allow field overrides in sys_reg_descs");
-+
- /*
-  * Architected system registers.
-  * Important: Must be sorted ascending by Op0, Op1, CRn, CRm, Op2
-@@ -2803,6 +2806,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 	EL2_REG(SP_EL2, NULL, reset_unknown, 0),
- };
+-/**
++/*
+  * vgic_its_save_collection_table - Save the collection table into
+  * guest RAM
+  */
+@@ -2518,7 +2522,7 @@ static int vgic_its_save_collection_table(struct vgic_its *its)
+ 	return ret;
+ }
  
-+__diag_pop();
-+
- static bool kvm_supported_tlbi_s12_op(struct kvm_vcpu *vpcu, u32 instr)
- {
- 	struct kvm *kvm = vpcu->kvm;
+-/**
++/*
+  * vgic_its_restore_collection_table - reads the collection table
+  * in guest memory and restores the ITS internal state. Requires the
+  * BASER registers to be restored before.
+@@ -2556,7 +2560,7 @@ static int vgic_its_restore_collection_table(struct vgic_its *its)
+ 	return ret;
+ }
+ 
+-/**
++/*
+  * vgic_its_save_tables_v0 - Save the ITS tables into guest ARM
+  * according to v0 ABI
+  */
+@@ -2571,7 +2575,7 @@ static int vgic_its_save_tables_v0(struct vgic_its *its)
+ 	return vgic_its_save_collection_table(its);
+ }
+ 
+-/**
++/*
+  * vgic_its_restore_tables_v0 - Restore the ITS tables from guest RAM
+  * to internal data structs according to V0 ABI
+  *
+diff --git a/arch/arm64/kvm/vgic/vgic-v3.c b/arch/arm64/kvm/vgic/vgic-v3.c
+index ed6e412cd74b..3eecdd2f4b8f 100644
+--- a/arch/arm64/kvm/vgic/vgic-v3.c
++++ b/arch/arm64/kvm/vgic/vgic-v3.c
+@@ -370,7 +370,7 @@ static void map_all_vpes(struct kvm *kvm)
+ 						dist->its_vm.vpes[i]->irq));
+ }
+ 
+-/**
++/*
+  * vgic_v3_save_pending_tables - Save the pending tables into guest RAM
+  * kvm lock and all vcpu lock must be held
+  */
 -- 
 2.42.0
 
