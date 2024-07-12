@@ -1,138 +1,107 @@
-Return-Path: <linux-kernel+bounces-251179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F9699301A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:30:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5499301A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490B5285083
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:30:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E5CC1F23E1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C858F4D5AA;
-	Fri, 12 Jul 2024 21:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4757B4DA04;
+	Fri, 12 Jul 2024 21:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Tgo1ogS2"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ha+GnrHY"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5D21BDD5;
-	Fri, 12 Jul 2024 21:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5957D1BDD5;
+	Fri, 12 Jul 2024 21:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720819835; cv=none; b=kOStfGXUOfgbKW04CWROadtNdvLy4bar6hrfgwuz2IObO8IiWfZ8nt+k+1SGobvA2ghqPQ3o2TPMnJzH1yaiaYXQ6qQxY6jFnOiZ/xC1cIxpxFL5UBW8DtO4o1P8hyCQoDyR8m0/hUIdbK+pEsKQPTyOd435FluH3NaT/aF+DOg=
+	t=1720819966; cv=none; b=LKKv1IOF1PJXAXrGfkrVkw48WAjfuE7ZvAa2A5MoI+WCptebRPnNVchFMWMPyRPeuBwg6oVXDT4G8ThYSc5/xp0EsSD2qC9kxfsm+LdfABIs1vjmjWvMe9+pQ8wwTj9jxHokmzdw+OyLxzZRQKQjmmuFqK5vyk9relF8uKwljis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720819835; c=relaxed/simple;
-	bh=NzRkn/29Wj6nv+39Cr7Y+df+r0V60+dHb8zRmS+u6JA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOMvMKjiOLwDdab9gx73oIilvl1g3O+rbKZMAyPjaKhbVaKNkRpxKi8uMKtUKLDlTPxOR3yXyI8WBQ4Qhskig9hY9Xtat8p8LJeP5Rzz3T4roI3SaWW/vI/Xu6SK5d/P/Ynvwt5C8RMu13z3199pvAU+JYR2ax5XtkwfCKv1tWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Tgo1ogS2; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 297AC120003;
-	Sat, 13 Jul 2024 00:30:21 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 297AC120003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1720819821;
-	bh=ra6Rb9PMS8Llilt6imdK07tpVm8s3Fl+HA/RmvYV5V4=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=Tgo1ogS2Znu5Ad5RjPIiKkjtk3XGjKEK0PGh62+KcC2Fi/GldeD12Ur7NBtL2moFd
-	 VihaVgB5VFXMIwTqDi8RalopqOnkqXSvXjzys5HkTL2hJn+7kJ4B856rUsFX7DdVIt
-	 9R1KhNesppbmPF+bsDBqG+k75BtvBiFj7s4O24H0jpzcYS/450hHshj2109vOw4fkw
-	 qJH8VM+TfqJ+D4wHY4nHnHhqVBh1Add0z7L9uqQWoKfN//cdFcug2lBEtTDbtjKLMT
-	 OwgwNc6gX1niVjh6HneMnsfr7A8GdXwGvVWxto24n2B0R/vdCh384eZIBqos/AClQl
-	 kFcbSM0UaQmlA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Sat, 13 Jul 2024 00:30:20 +0300 (MSK)
-Received: from pc (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Sat, 13 Jul
- 2024 00:30:20 +0300
-Date: Sat, 13 Jul 2024 00:30:20 +0300
-From: Igor Prusov <ivprusov@salutedevices.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<prusovigor@gmail.com>, <kernel@salutedevices.com>,
-	<linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/6] dt-bindings: vendor-prefixes: Add NeoFidelity, Inc
-Message-ID: <20240712213020.a5n3x677bp4sxseh@pc>
-References: <20240709221203.92167-1-ivprusov@salutedevices.com>
- <20240709221203.92167-2-ivprusov@salutedevices.com>
- <c59fc09d-e178-4acd-a825-4f00978c167e@kernel.org>
+	s=arc-20240116; t=1720819966; c=relaxed/simple;
+	bh=4yV+Y+Isy4NlODiQmLxepE/5olCq+aVwhhCjsJEBfoc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KDuTbDAC/GCt0ezEhTJBTryAZUUK5ozk0vQnz6xIP96y1IbSB12vAp1W5fqpnXeqRZZYR14/ysW+nUzmZHB5I/Ik9XFtjXGd7WvAqoN+XfIJK2bF2ozQC5zWXU3kGRRDkXhIwfdng6w+xY46b2V/9JIBbIVEkmSytt3MyomteCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ha+GnrHY; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-78512d44a13so1696260a12.1;
+        Fri, 12 Jul 2024 14:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720819964; x=1721424764; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bdb8iLY8j3LfEYpNrsOtjdWoyeeoNEdGzwsVwa4WdIk=;
+        b=ha+GnrHYrS5qkAEPMi8VEjlOdxd8gV9T9y5hDTf18AfrcW/NVHOODpCj8agZGM7Sro
+         FnQOlI3J3ow/+r/lfzyxeBY6qWHrhRNaTQkmcvvWJrWWdxtr8o7PkVxbZEkjw9qfKPNj
+         rOy/1J5ZIr2E6FAOvMsTXmc88zdQ5sc5SwSOLt/n40MmXfSNL3BICWeUdJ6hMfOg298d
+         AM2pf8H1J+pmBY5fAQ7JxObS6Zh/BXVnWL8IdRjTcjCHbbH6isHccb7oMUSsvp5JqqDs
+         cZrXomGEA8/hgw66BsT5EmDY/w1CX3zTf8YExWKr3d+rIROEcH8ocxXmBOzNdvIsYPBr
+         Mdnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720819964; x=1721424764;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bdb8iLY8j3LfEYpNrsOtjdWoyeeoNEdGzwsVwa4WdIk=;
+        b=OlzCAXAB0+mrC/2hRtLs23sGHDjYNyiOo4+piRB38L1/eMRVtUwgoOu9oeBhiM+Kom
+         2sImpQD4z+IYNKbagE795WTEjA+58qo/ZvftqpnvUGCnOTBZoyEizqTkfkkVZebTNO9O
+         CZIvq+sPyaNXnf7C6x6yFSDd8nsMgKeXpGOSpJ5bf/TsjsGOEHwfmxYxeHTzHNDD6XCE
+         wEpsk7dPTw7hva59qfhrdUQb2EE3aOkX2ct3zHZzM8FIujFgbtkkgTZZooRvdabT0nXb
+         Qm0YITyG22BAZ+MxXXgs+h4ehHjDY+gtwanreg0ul9S/0zfBQN0fFR32MJQCKUiv71UV
+         jRAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUT0i8wJqEbVRIms+3I149xXzv4xfoRZ2xf9EyDWm0YxjCE2QUzuW8uNJ4MRPnTOEuS9AHnqXdUEPmhSI2L+/Ikf/bDiMVvvCY2rEvc
+X-Gm-Message-State: AOJu0YwC0T7kT1fqeBSBiKu12ASPvvBl4YX17NjQFBeK9ruIOD+MT/C9
+	WFkSy04rDWezUb/Qevw2wnmPFNfgNSpKpniyYYsH9oCFYRnnHWTRgqIMnWmI4hA=
+X-Google-Smtp-Source: AGHT+IFyu37Mh3VjGkOV5stHrdrcwAkFDKg3F2UO3btSPW4wGqPztITaV3Xg/SVo0WV8/nAkgFOn9Q==
+X-Received: by 2002:a05:6a20:3941:b0:1be:d1bf:a371 with SMTP id adf61e73a8af0-1c2982430e4mr15656377637.33.1720819964483;
+        Fri, 12 Jul 2024 14:32:44 -0700 (PDT)
+Received: from lenovo.. ([2405:201:e000:8836:de69:176a:52b:96cc])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70b54ec749esm5443239b3a.52.2024.07.12.14.32.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 14:32:44 -0700 (PDT)
+From: aditya-chari25 <adi25charis@gmail.com>
+To: laurent.pinchart@ideasonboard.com,
+	mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	aditya-chari25 <adi25charis@gmail.com>
+Subject: [PATCH] Drivers: media: usb: uvc: added kernel log msg
+Date: Sat, 13 Jul 2024 03:02:22 +0530
+Message-Id: <20240712213222.43185-1-adi25charis@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <c59fc09d-e178-4acd-a825-4f00978c167e@kernel.org>
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186497 [Jul 12 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ivprusov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;elixir.bootlin.com:7.1.1;100.64.160.123:7.1.2;127.0.0.199:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/12 20:10:00
-X-KSMG-LinksScanning: Clean, bases: 2024/07/12 20:10:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/12 20:31:00 #25975503
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 12, 2024 at 09:55:47AM +0200, Krzysztof Kozlowski wrote:
-> On 10/07/2024 00:11, Igor Prusov wrote:
-> > Add vendor prefix for NeoFidelity, Inc
-> > 
-> > Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
-> 
-> Did you just ignored every response?
-> 
-Hello, Krzysztof,
+Added a kernel log msg using fn pr_info
 
-Sorry about that, I sent v2 right away after Rob's bot comment. I'll
-make sure to wait for more replies in the future and will address all
-comments in v3.
-> 
-> <form letter>
-> This is a friendly reminder during the review process.
-> 
-> It looks like you received a tag and forgot to add it.
-> 
-> If you do not know the process, here is a short explanation:
-> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-> versions, under or above your Signed-off-by tag. Tag is "received", when
-> provided in a message replied to you on the mailing list. Tools like b4
-> can help here. However, there's no need to repost patches *only* to add
-> the tags. The upstream maintainer will do that for tags received on the
-> version they apply.
-> 
-> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> </form letter>
-> 
-> Best regards,
-> Krzysztof
-> 
+Signed-off-by: Aditya Chari S <adi25charis@gmail.com>
+---
+ drivers/media/usb/uvc/uvc_driver.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index 91a41aa3ced2..6e25c5d7d7c0 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -2096,6 +2096,7 @@ static int uvc_probe(struct usb_interface *intf,
+ 	int function;
+ 	int ret;
+ 
++	pr_info("I changed uvcvideo driver in the Linux Kernel \n");
+ 	/* Allocate memory for the device and initialize it. */
+ 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+ 	if (dev == NULL)
 -- 
-Best Regards,
-Igor Prusov
+2.34.1
+
 
