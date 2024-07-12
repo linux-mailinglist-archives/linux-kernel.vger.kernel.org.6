@@ -1,241 +1,205 @@
-Return-Path: <linux-kernel+bounces-250280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B4092F604
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:13:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF6692F60B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF6B2838DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:13:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B8181C227DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435DB13DDA3;
-	Fri, 12 Jul 2024 07:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B8813DDA2;
+	Fri, 12 Jul 2024 07:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NSreOB76"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="MTcmh01m"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010050.outbound.protection.outlook.com [52.101.229.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FAAEAC7;
-	Fri, 12 Jul 2024 07:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720768403; cv=none; b=VhogKle9z6wa2IWbjPEFzZ7VScAFnIyzf7ioCLzTVFK94N0Lf/UR6/x40eAum+TAAe0fOsvsAMlEPIA/O7spiyXUEuWnraXXzGh/iQP+bbDC2dDE1EPXlurWN7plUIXS3srm2tFUXB/9rIn3bsaThgXGrx48NKIui4qcgdGETS0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720768403; c=relaxed/simple;
-	bh=lguFy7ie7xiFALB8XkV6YA3LPO9i1zDJTC2XMbmzKpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=si8r8HiRLN5OZBHJ9pfhhgMgeNZlL2IVDH5421+mQi3UFmV4L76X+MH0cKFIqw4uL28LHae/io3xjdVFLGN1kQJO+8Gxqk83zIHhTzrvPpdJciK2jFohJ/cZh5sPFiNNge9Iq+gVZg7CYqCDh6O2i6xcLYyyLe/gpcBJN6hHpyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NSreOB76; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720768401; x=1752304401;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lguFy7ie7xiFALB8XkV6YA3LPO9i1zDJTC2XMbmzKpc=;
-  b=NSreOB76LhVnw6lkPvuFPzPIpuCXzneQcIwvxc2K47zB0OkQxuCEAKEx
-   vgCqCEepHJ87/CAib+rV8BLR9BDfy09dogkYBGdpRuy3mLCHlKRpcpwQB
-   mOJqc0a3mWvFPGIYpp3Vg2PgYNsAS+Y8k5pygtR+fuCFt4cpuzSNg3VN/
-   b7t3CukMxoC8NMxRQL26jeWvceF+nhEl9H9ES68EaVYe4u+HS62ao5nh8
-   NFZCS+9KCzl15rMuu1TpEjyU4kLjHSZSZDOCfS4tnSXbCUFbZGk7gdGVG
-   +ixen9Tyz0d2KOtcoZ9dHr0EJ9kIkq21n3U/zKR/yb7M9gfyplVKw7/aa
-   w==;
-X-CSE-ConnectionGUID: aW9WT7H3SMG6yKqVdY3flg==
-X-CSE-MsgGUID: 0gwk6g6SQgeShswcUWtOFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="21955160"
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="21955160"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 00:13:20 -0700
-X-CSE-ConnectionGUID: dqx0W5X5QRS0YfbGRC0+RA==
-X-CSE-MsgGUID: k+OJOAsMRZ+/QmrE/5evOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="49589918"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 12 Jul 2024 00:13:13 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sSASs-000aTy-2V;
-	Fri, 12 Jul 2024 07:13:10 +0000
-Date: Fri, 12 Jul 2024 15:12:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tao Zhang <quic_taozha@quicinc.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, Tao Zhang <quic_taozha@quicinc.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] coresight: Add source filtering for multi-port
- output
-Message-ID: <202407121435.uBdrJO8u-lkp@intel.com>
-References: <20240711081750.21792-3-quic_taozha@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9452212B71;
+	Fri, 12 Jul 2024 07:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720768550; cv=fail; b=R0+QgC+zkJXyP31K03QyzMMor/KcmXnv4D1uuMVAHsAJgwIRWooshw1WgGc3GlvWQ2h5zVnBrgRldhLh4bpbmhw64roQ4yS8crt7Z0gPUvvov6sR07oHkcI6EkQYsEzUA6zMIj3+WxGVz0ws2mFwJpNs/mVRiW6Qo8zhTEf4wlE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720768550; c=relaxed/simple;
+	bh=oGp2s1AHRxSRztQnFVnKMi+Nvrzl21s9paKwcDYzIYo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=u17QuwKANWegvirMnpdOHiMp7Ekip4LcOjbMd9XZsxPDCjilT7mdn4wuAOPSG7/BSFJF0hRAZh2WMyoSBkRR76sFVuh68SAVgGn+xKcC78EDpQNWxrBsDmVEb7IqMjiTo3fmeUZq34IWfc16/XLZT+H1W+rKAv7AxjYEH2GpZZM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=MTcmh01m; arc=fail smtp.client-ip=52.101.229.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dR2BGIYjnXtaA4gOubycpdOqJYRdDx/jwoPpdxoY40peS2Iv2nuMoiPTZoALlaOsVL8SU3vwxz/YIjjTwuREZJqpr0imNN68XCXChOIWt00SEa0V7ieEqw+I7XvAo4bYq5NeCB/PuvynXKDSoV9t1pFFZkV+QXLbm2scbvbQdKc7uPO9MoEVcQWPN7OGz404oxM2sxlExeyiWVbv1oFR7rnMvguX5roLpmfCXK5EOYChGAfvOyRz0Hw8uDVURmB+IQrA0pqIgG6KweqytySATI1at5wX4e1NV443U6oYC+uE1anXISi+87YaVRy0gTLlIPxMeVDlLEL5f9jWpkgRPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oGp2s1AHRxSRztQnFVnKMi+Nvrzl21s9paKwcDYzIYo=;
+ b=BYuHr7Ao6s0IxXxYxTvjf4m1N9w3jScws7cQ9x188u23X0j+390kdtC2nX452DrwZztsfUTgZrimB2y0451iOIBKUnbdLiYSCuRjKGwB8Lz6Cf9v2LAk2HWsakVTkZIV7LPoNow5ycu75vxXt0THbiVzHpp/HWru+ay1tFP+3hDjmRuyH9PpT5fWagDokEX+zDayn4ObK8yVOXgKyEzVFnlWTjrqS01IH1bbuaQYPmJYqJIVYjJbPaEEK1C9Nf+s02nDQr2BZAU8f7Yty7uG+Ozc+TfCIZGCXvAR3CPmOQMdKq05dJdLjpa94dyW+KdKN4Q3R9Tv/Kr157oPRkOn+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oGp2s1AHRxSRztQnFVnKMi+Nvrzl21s9paKwcDYzIYo=;
+ b=MTcmh01mghFmmSTyFytx97Ye8YFaUbIBRzfpgCQZtGMCadaXZ/puv7fbfDYm0EHc7hIeP1j4oQTaOBhLg24Spl3qKLvfPr7sgLUWpN0PZ36Ubmde4TZH7e4QUQyiC1j7k3uzRpS5cxzjnmXj/ViGCPTjhNme4iiC7MudJjrLmb8=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OSOPR01MB12219.jpnprd01.prod.outlook.com (2603:1096:604:2dd::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22; Fri, 12 Jul
+ 2024 07:15:43 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
+ 07:15:43 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, Chris Brandt
+	<Chris.Brandt@renesas.com>, "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>, "magnus.damm@gmail.com"
+	<magnus.damm@gmail.com>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Claudiu.Beznea
+	<claudiu.beznea@tuxon.dev>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: RE: [PATCH v3 04/11] i2c: riic: Enable runtime PM autosuspend support
+Thread-Topic: [PATCH v3 04/11] i2c: riic: Enable runtime PM autosuspend
+ support
+Thread-Index: AQHa04j2mz4Dz3PEykickJkh+EMpYrHyrpZQ
+Date: Fri, 12 Jul 2024 07:15:43 +0000
+Message-ID:
+ <TY3PR01MB1134615117603F62796558D1486A62@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240711115207.2843133-5-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240711115207.2843133-5-claudiu.beznea.uj@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OSOPR01MB12219:EE_
+x-ms-office365-filtering-correlation-id: 90eec293-3ca8-4738-19ca-08dca2427194
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?wQz6BqaLqeiuHGLFefXl6bgDVmTQIlRNzHshJ9uM/cW57cR0d8g6omy1eWtP?=
+ =?us-ascii?Q?+Q2tofSDLu75+l77o87+NRVNM34KucEPAxv7zZPbBh+oJasPCa4aAITmT+dl?=
+ =?us-ascii?Q?qsUtxmT35xniSuUnv2hDv6i30AsuQDPMPjVaNn9I4iIeKJBQgAxhlANLVSTa?=
+ =?us-ascii?Q?dLPT5WTaVyA2w0lh6Y0QFxAD4N3RkpzLstf0NbNqGigYckVUObqZcAibE5Ur?=
+ =?us-ascii?Q?qylSR9KuOujAp6cnLAZ6ujcrZcXbDyeCJtBq5fdoCnbfwmm9XdTOjzrUUhKE?=
+ =?us-ascii?Q?HB89+1cqtuu0BBHvn95TgwC9aZ41Ovn+w/UWS6SaDqNT72YlmR3nO0V34RSw?=
+ =?us-ascii?Q?ditTU6FZsrODN1oNkZ1Uxv5qIXv2rHx+DmDpCoKBKWPM7UXICELWk+7Lthfm?=
+ =?us-ascii?Q?f0PJkydP16brQC4g01hXok3L972QgVvE3gkcG+f/p0EO1use+XUXnmYDXp6I?=
+ =?us-ascii?Q?gGKcHzDt4TAnV/ANAW1e12qJLAfLYiv8flCv1ksz5JyUg2ET39ebGt5GWvcN?=
+ =?us-ascii?Q?dVDlyUrNPoPmWUt+ai3bD6Xb5kI9rUqkHN8Vf1gRbLMDjfl3HPc3omXorxSv?=
+ =?us-ascii?Q?3Rr10pk3gao9wXtP+nI1mOkk/gMlrjwr5jjDbEvWiGfMrCq8Qk/pGBYe35LI?=
+ =?us-ascii?Q?KIOd/VC7FmbefdikNkX5NOCQqlX/QxWwTMjWq+02MX+U3MmnZcywjBSNnyw7?=
+ =?us-ascii?Q?u1a5TgGa2GpbueJ6MPBfGlLhH3tWbA0ACZcVj1QM5gs/1RhxqNGq5dFPpr49?=
+ =?us-ascii?Q?LMbcEmuImhRf2+IzFyfxGArrK1TOfNp/WDUCFf819IYPy+/+6WtujATrYrw/?=
+ =?us-ascii?Q?EKSfiSL8jYLxrlWlKL9XGXgtMwOkrWs9XbMeyTPCm39/gXkm2uiPtoPtKVqz?=
+ =?us-ascii?Q?Y6tufozCSSo01kw2HCOY4HHGBcyqcyDpdoN1ojpatIqHB78/os4FTKe9PTJ2?=
+ =?us-ascii?Q?ZA4EAxyJCg35DS56wlzkh8ILOuX9mMVR38dMDs+Pcj1J9tSNTzmF7ECh2sbN?=
+ =?us-ascii?Q?OFfxdElAhUCmOLBPKBshBY4WTuvmOfW90tC8NPvzonpVnv9qz0fQaJQe+a5d?=
+ =?us-ascii?Q?HyBW52fwnYkmB6PzR9RuPP2rO0rCWg5O0ZcTavhgZdZPTcoEYzYzrQw/8dK4?=
+ =?us-ascii?Q?7Cw6ZajGESDQL2+VeokPFnX/MgikBrokaDy2qLsQMwlzIvbuVzLBvW3LuSmE?=
+ =?us-ascii?Q?wFCDbpY7RM1rmKRefFr1wf7CPo/TMjPDGNosEs8BTQdOTfwTUHj34633SA81?=
+ =?us-ascii?Q?/uDkoN29pI1fvBP9DrOlh4RH7wZSVo0bvQpJz9yHT6YTO5Qhulhy18cGPNyG?=
+ =?us-ascii?Q?3BU3i8c26yPOYK2nKj3Lbo092tvEg4XLk+JMClzQF1SdCsGPQ0uenyLM2x3O?=
+ =?us-ascii?Q?Io0NYTCI1MuPEcP7yXDMDQFS1qzz1gjH7loyidcd8j0ScmqzrNXMOrfwxwTo?=
+ =?us-ascii?Q?h64etwUP0FM=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?qkBLw18+hEQQDffbIOMqhXJyRAGRIMLWfILB7p/Z+Cv8WKo6sNpPYv/IeSh9?=
+ =?us-ascii?Q?DbeggfkgXrlLi2EZWk12qM1UAxp0YuuclivURCUuHjINjtlqMt/D0wIjj+PJ?=
+ =?us-ascii?Q?wRjGOaTBUD6ntX5p7EXV3vucwhwG8/ofrrWXUfUvtbfLJg5zhxovkgG5zgqZ?=
+ =?us-ascii?Q?MJxwtnRwbNWIzpRXKfqvf+Cd9f+BuL4rSKvSyiBEh+cDqdJ/hiLFo7obTaid?=
+ =?us-ascii?Q?NK9An1MVbAsl36UwqPFT865jrxDi0Wnmt9aLPdJ2XGtxHNXmXJVa2brUbM8X?=
+ =?us-ascii?Q?rj31aw/Vx0HBulblA8sltazRw/vnu7b65p5paKrj2/+d72U4qzf44SdZhw+U?=
+ =?us-ascii?Q?LhjA4rwIjMFqwkalBM1AHUlK3HFohkk6ZiGOEGhLzGDC84otwW9wGKnHsuUv?=
+ =?us-ascii?Q?RCyeMi8y3hcuWshUS6FaMrKjxBpC5wbAKzjLckNX7ZM11+xKUHMWrUg2lh5F?=
+ =?us-ascii?Q?kOxoj0QqoocyI13JGZURlR/c9RzFG9c2CkHR+7fdVwAVmwhK5/jEf++dhNt6?=
+ =?us-ascii?Q?F3YT9CaM49uljAAU1kW0SELaI8MDasgMVL6v0GN3VeQVrYYedxweNKSrWAlF?=
+ =?us-ascii?Q?3UAZUjtDXKVCPW/IPaHJALRx8U6OkonTCLPu9705We5a6I7AuVgItWk/6GLX?=
+ =?us-ascii?Q?mOs+iYluQIpax7KQCDkaRdWjKQvsqIz5PoZqMOh5FCpHn7SRpbLeDv8nhkVl?=
+ =?us-ascii?Q?odAidC/EC97bf5ocjABYzSLKaGP6rbi+JxMJ9E65iQHsQTtpzOUjDw3hdujn?=
+ =?us-ascii?Q?z5yS5puuP8osIYHkARQfQzuTPDUMcgrJglJNq1WPmvlDeqaKpiF0Egm9zdYZ?=
+ =?us-ascii?Q?SxoUhb94n05w5zb/UH08dJHYKzMJEWqoMI1U4clMgw0PGPHGQAUGLWcB9Uia?=
+ =?us-ascii?Q?mout2ayoL+YJyB3nmKG2VJN7xgoq9wm68CZPuznnivUwySvDkBDpc5kG89dL?=
+ =?us-ascii?Q?XsxgQq13DnBvgZ173J7l0xEYZPYRatioPvIN0TdeakaZ/29LnpxjOnoe7VKj?=
+ =?us-ascii?Q?Yjh5otcWg6pCppgx6wnutygI48sgLD03rJ3V03dfV2h6APafC+hg3g6FgFkt?=
+ =?us-ascii?Q?a/2iFAOyIozP3uvMRrLloCAkaEYwtA/ivWh3RsevvTj5FxTrA4ZG5wiZtcmT?=
+ =?us-ascii?Q?HdRFwXpd6e+ZI5uIcsiU+laIMFGhwEF9bOoqHE5/mDXmQKVDZF036h7lO6ii?=
+ =?us-ascii?Q?Cbu/KMWzK+RspOKaj7xiS6mtejNekVlTF7iGUJL0nPAFKSG+eSOCTkdXZIkv?=
+ =?us-ascii?Q?I9WSNaLQk6GRs2hheGWalrTp5W13aHJeLr29JsQwJju/Ur5TOQBb8uAvo66Q?=
+ =?us-ascii?Q?eNHkrQ0J/d2jMef4/ZdKQxzoAZLcry/zq4BCUf5sRTqajyot+Oq0GcSgQiik?=
+ =?us-ascii?Q?Z4gE9UgjJUyZsSjA64DPpoVuDpOVGpJjd5QOIoAlfAN6qn8hUc46FzV5oTx+?=
+ =?us-ascii?Q?VQqG2VYPFjJznbIOnhYDEdjDf0zGK6ndQCNNpxheDn86qvgGNd49o+dfNFEI?=
+ =?us-ascii?Q?4Jx6RwQRWJFB8wTBjP6UFd6aL35lSA5UJrX/BXt8bT3kzywCQLe8e1KaB/GT?=
+ =?us-ascii?Q?TAASJHftqK/zBg0JOOpRs+REZr4V1s4Ut8FmGmCr0qQzB0rqd06uwnzQiAUG?=
+ =?us-ascii?Q?Ww=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711081750.21792-3-quic_taozha@quicinc.com>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90eec293-3ca8-4738-19ca-08dca2427194
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2024 07:15:43.6753
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Q2YSP40Y3Mcft9nY4gaNH038KnKoe5rWL2hq3bkMoZBuYKgo92tx4DW2PMhD8AMzR2Vq98RsntNKtfjEIA90fQmTIBIptITmwUD9FFKdDzQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSOPR01MB12219
 
-Hi Tao,
+Hi Claudiu,
 
-kernel test robot noticed the following build warnings:
+> -----Original Message-----
+> From: Claudiu <claudiu.beznea@tuxon.dev>
+> Sent: Thursday, July 11, 2024 12:52 PM
+> Subject: [PATCH v3 04/11] i2c: riic: Enable runtime PM autosuspend suppor=
+t
+>=20
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Enable runtime PM autosuspend support for the RIIC driver. With this, in =
+case there are consecutive
+> xfer requests the device wouldn't be runtime enabled/disabled after each =
+consecutive xfer but after
+> the the delay configured by user. With this, we can avoid touching hardwa=
+re registers involved in
+> runtime PM suspend/resume saving in this way some cycles. The default cho=
+sen autosuspend delay is
+> zero to keep the previous driver behavior.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.10-rc7 next-20240711]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On the other hand, you are saving power. Currently the driver is highly opt=
+imized for=20
+Power usage.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Tao-Zhang/dt-bindings-arm-qcom-coresight-static-replicator-Add-property-for-source-filtering/20240711-162200
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240711081750.21792-3-quic_taozha%40quicinc.com
-patch subject: [PATCH v2 2/3] coresight: Add source filtering for multi-port output
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20240712/202407121435.uBdrJO8u-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240712/202407121435.uBdrJO8u-lkp@intel.com/reproduce)
+Before transfer turn on the clock
+After transfer turn off the clock, this is the optimal power usage correspo=
+nd to suspend delay.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407121435.uBdrJO8u-lkp@intel.com/
+By adding suspend delay, you are consuming power corresponding to
+that delay.
 
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/device.h:15,
-                    from include/linux/acpi.h:14,
-                    from drivers/hwtracing/coresight/coresight-platform.c:6:
-   drivers/hwtracing/coresight/coresight-platform.c: In function 'of_coresight_parse_endpoint':
->> drivers/hwtracing/coresight/coresight-platform.c:261:35: warning: format '%s' expects a matching 'char *' argument [-Wformat=]
-     261 |                                   "Filter source %s is not a source device\n");
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:156:61: note: in expansion of macro 'dev_fmt'
-     156 |         dev_printk_index_wrap(_dev_warn, KERN_WARNING, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                             ^~~~~~~
-   drivers/hwtracing/coresight/coresight-platform.c:260:33: note: in expansion of macro 'dev_warn'
-     260 |                                 dev_warn(&conn.filter_src_dev->dev,
-         |                                 ^~~~~~~~
-   drivers/hwtracing/coresight/coresight-platform.c:261:51: note: format string is defined here
-     261 |                                   "Filter source %s is not a source device\n");
-         |                                                  ~^
-         |                                                   |
-         |                                                   char *
-
-
-vim +261 drivers/hwtracing/coresight/coresight-platform.c
-
-   185	
-   186	/*
-   187	 * of_coresight_parse_endpoint : Parse the given output endpoint @ep
-   188	 * and fill the connection information in @pdata->out_conns
-   189	 *
-   190	 * Parses the local port, remote device name and the remote port.
-   191	 *
-   192	 * Returns :
-   193	 *	 0	- If the parsing completed without any fatal errors.
-   194	 *	-Errno	- Fatal error, abort the scanning.
-   195	 */
-   196	static int of_coresight_parse_endpoint(struct device *dev,
-   197					       struct device_node *ep,
-   198					       struct coresight_platform_data *pdata)
-   199	{
-   200		int ret = 0;
-   201		struct of_endpoint endpoint, rendpoint;
-   202		struct device_node *rparent = NULL;
-   203		struct device_node *rep = NULL;
-   204		struct device *rdev = NULL;
-   205		struct fwnode_handle *rdev_fwnode;
-   206		struct coresight_connection conn = {};
-   207		struct coresight_connection *new_conn;
-   208	
-   209		do {
-   210			/* Parse the local port details */
-   211			if (of_graph_parse_endpoint(ep, &endpoint))
-   212				break;
-   213			/*
-   214			 * Get a handle on the remote endpoint and the device it is
-   215			 * attached to.
-   216			 */
-   217			rep = of_graph_get_remote_endpoint(ep);
-   218			if (!rep)
-   219				break;
-   220			rparent = of_coresight_get_port_parent(rep);
-   221			if (!rparent)
-   222				break;
-   223			if (of_graph_parse_endpoint(rep, &rendpoint))
-   224				break;
-   225	
-   226			rdev_fwnode = of_fwnode_handle(rparent);
-   227			/* If the remote device is not available, defer probing */
-   228			rdev = coresight_find_device_by_fwnode(rdev_fwnode);
-   229			if (!rdev) {
-   230				ret = -EPROBE_DEFER;
-   231				break;
-   232			}
-   233	
-   234			conn.src_port = endpoint.port;
-   235			/*
-   236			 * Hold the refcount to the target device. This could be
-   237			 * released via:
-   238			 * 1) coresight_release_platform_data() if the probe fails or
-   239			 *    this device is unregistered.
-   240			 * 2) While removing the target device via
-   241			 *    coresight_remove_match()
-   242			 */
-   243			conn.dest_fwnode = fwnode_handle_get(rdev_fwnode);
-   244			conn.dest_port = rendpoint.port;
-   245	
-   246			/*
-   247			 * Get the firmware node of the filter source through the
-   248			 * reference. This could be used to filter the source in
-   249			 * building path.
-   250			 */
-   251			conn.filter_src_fwnode =
-   252				fwnode_find_reference(&ep->fwnode, "filter-src", 0);
-   253			if (IS_ERR(conn.filter_src_fwnode))
-   254				conn.filter_src_fwnode = NULL;
-   255			else {
-   256				conn.filter_src_dev =
-   257				 coresight_find_csdev_by_fwnode(conn.filter_src_fwnode);
-   258				if (conn.filter_src_dev && (conn.filter_src_dev->type
-   259				    != CORESIGHT_DEV_TYPE_SOURCE))
-   260					dev_warn(&conn.filter_src_dev->dev,
- > 261					  "Filter source %s is not a source device\n");
-   262			}
-   263	
-   264			new_conn = coresight_add_out_conn(dev, pdata, &conn);
-   265			if (IS_ERR_VALUE(new_conn)) {
-   266				fwnode_handle_put(conn.dest_fwnode);
-   267				return PTR_ERR(new_conn);
-   268			}
-   269			/* Connection record updated */
-   270		} while (0);
-   271	
-   272		of_node_put(rparent);
-   273		of_node_put(rep);
-   274		put_device(rdev);
-   275	
-   276		return ret;
-   277	}
-   278	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Biju
 
