@@ -1,176 +1,206 @@
-Return-Path: <linux-kernel+bounces-251212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D759930229
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:36:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 735B093022D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BE41C210C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:36:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C8A1F22E77
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B72085298;
-	Fri, 12 Jul 2024 22:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745717346C;
+	Fri, 12 Jul 2024 22:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0RF8ug1"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MdmBOtXp"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AAB7F7FB;
-	Fri, 12 Jul 2024 22:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24D840870;
+	Fri, 12 Jul 2024 22:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720823803; cv=none; b=sZHFw7Ua7c7WcHb9An0fr2l7m8WoWOT/oD2ORVSMWa0sxNDgQQGjII01eCtYSGeoIJp3Eluk8QguGz569bT4VxTPRFbtha7VuXOHj/dgXWFFHs3xA7V3OlSibcw3HwWVjkP2e4xj54WIl5ykesh3vU7QyhfJeJtrkCfHALGexPw=
+	t=1720823974; cv=none; b=bUe3jlwQhyACMQS7qVH59Eydh0FSDL3RRSO4vRVgDe1zx7F22P0wGPGGpMj2ImbOoTB/t3iETgKXRRSC6ZR7e3quzMcpOI1rqPe1LO34YOzg+urin9da5DAUVP7AMPE/B+AjY5K/LjKmHhpx96UO9q9t11yaCtygj2afVjXWsBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720823803; c=relaxed/simple;
-	bh=qkASzPzjNMSeYMQLDsLAKiFjJF2MAimi/PdOy1+z6fI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OOQtd167mdzE4ek/7i4Dd7sbX1aHk9cAMrQJN1ah4BYPV8oGgRaIda9wqQRG4FYZgTmPH5l2Re0Y8z8pMaJlqvAeZiCDaapuMxUIaquHlEuwFcf3shBANN9bnBsQta7Tek3kWozUbFd7E1OK8WR8wkmufzaCnv8QaKrds/ZSIiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0RF8ug1; arc=none smtp.client-ip=209.85.219.175
+	s=arc-20240116; t=1720823974; c=relaxed/simple;
+	bh=YR6e95qWKNK/3cZ3WYhqUY3n4USd1+bl0Wn5VWR6PV8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jBWxilCQN1z3tqVXiApVuE+t70cpnLm/Y6N+SlD0Cw9OKfsmTofuaf8mEc6K/pnyrIwwgIi9x5FjGp1WB5TziKiIAUfWzoxFWByjt1vsznUYy+VmsH5kurKyvuUrCc3b8Zj7JMbferY2dmml9b4uMQlfWX2XB5NvfBBqvUoYmnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MdmBOtXp; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e035f4e3473so2357174276.3;
-        Fri, 12 Jul 2024 15:36:41 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77c25beae1so284172466b.2;
+        Fri, 12 Jul 2024 15:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720823801; x=1721428601; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qkASzPzjNMSeYMQLDsLAKiFjJF2MAimi/PdOy1+z6fI=;
-        b=i0RF8ug1Iwzl1yIbQ4pofuDD6SNJIELVk9Lf3916WlzMozlDt1P92bDImvz8jHqtBc
-         57u2DVAHOLmBaoOVn+eRRz5ij6IX9L54tLjsrck7rNOFGKETh1KdRqSP/WuuwoTaAMIm
-         9Yuoz1huy7K5kYC/wVHQRhgMFUhjbkK76RIIT8c4SWbji84mh4NzLFzFm5mFOJibR1JC
-         VOmmNpLuAp6rI4LNSQD/jab37ZkpfJOPZjyPjtSptBRFDjjc41fSYuUbQBaIibPbVvqn
-         yk0McQuN0DfHhUw3sTVIFTTX6nZadhF0sYI5ESbVF+kQGsD16KknGMEc+0azgwUnGIhy
-         j+kA==
+        d=gmail.com; s=20230601; t=1720823971; x=1721428771; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CV4MWNGj/jtOVQdvN2+NhX25AtQ3SQ1usq+AOzbBUP0=;
+        b=MdmBOtXpe3RzTyNarimDnrzIUz5rvJHZst5p5Yv7Ku92917h5VjsZbvnb+8r3q9lj3
+         MQ416OhHpcmv+UfELkCpyqjffcUTqhB1MNS7SIP6lTPiplcb6OTdL2O+8mdJoGcP5ONC
+         0yW7GNJ6dreZL2BHUSf2wkInYtGWqyQacJj6rAFQ0nxZ53qOWA9UX1vta53JAfeTpqF1
+         RjdHJ6WCqQC+zi2QdrkC9R61lyw3N934idcN6RLGjWuAjEt441zTVuqitBueO3TgGAIJ
+         vo672lCvU84BNZBefccoCNQwHFIEc5o1enkEnKfh8gi/KMivmROdztpIUsIUj47Ks3sw
+         I7LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720823801; x=1721428601;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qkASzPzjNMSeYMQLDsLAKiFjJF2MAimi/PdOy1+z6fI=;
-        b=wOg603HpddM39yCmUZH95unBOJ/xJUjTX6j0GptUzbHEiv2jGnTgvipS+0G9GT+SkW
-         jNKc+aThYMpOnukpTRQt3KjCgxf+hOsLFt/mlz4y7FOfN9OexFnHdCTmVQdBdaz/50DM
-         ruFahXQT22lZXxadIXivCL9qYioNamk1YpkXQ1PyiRLPB/F/Wl+uWmJirDDXSEDdLqiR
-         Zy52aeG5Ky9IcBTp2dnjWuEEcZo8n6y3eL/0cVPz3hzPeVLgK96uRsbyEQtb2Wbr3SpN
-         XvPpkMhsc7cqbM+9rSSD22feVzbmpbRzgmPt0+x2NAfNIZ59cVCIKeYKlx5K3GbSODwR
-         sMnA==
-X-Forwarded-Encrypted: i=1; AJvYcCULIJK0cVo1l1Yot2KGRrO0zAE1GE6QFN4qAhyA42hYkWu4juz6isWiV0SSBUyGfFL5zReg3i5j5Wyk6SMHPBgvFpgGxAjl/Zpk+JXEjpIWfIAlpzw7x49eNzwLJ9tOCWOgoaznH4S9
-X-Gm-Message-State: AOJu0YxZfBS3XW8geLhrqW9c4+183kFb80g2JQdHjwOIMBItPwI7JyNe
-	Qe0/dSr3BJDsUYy7GgEQDCYGXQcqsQcRptnaRV9atQiu5xQkohFcfMa8cjOb3YB9c/nvcrblPQe
-	43v1LWyjfzTazxh6HyRqRqziRvFs=
-X-Google-Smtp-Source: AGHT+IEfRngAry3fAk2Q0OflTPBnSqJsQeCzMJqXZvzmBdMAdeDaSX1xQkT/TMFBVwfkVTmmZPmrn/0AjlgcY2vWGa0=
-X-Received: by 2002:a5b:b92:0:b0:e03:b61f:22e6 with SMTP id
- 3f1490d57ef6-e041b039ad6mr14440524276.9.1720823800917; Fri, 12 Jul 2024
- 15:36:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720823971; x=1721428771;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CV4MWNGj/jtOVQdvN2+NhX25AtQ3SQ1usq+AOzbBUP0=;
+        b=FiDj0zlcb1QfqNbwUmh/Dc6KbS7fJpTwoQbCITi4x9tS55xV0zVXwVnYJtHgfOdoz+
+         HeN00D04V2CmEPLC/IhbrFDhOXRalZLBK6Qrife5p/U+XCd9T9fCWVfBgqxwTaesfc9+
+         PF9Eq4DOF+vr1kwYPwnhHapxFDJdh88sZJTQqvibh8jMF+aiqLwxlCb5lLlja+/DM01W
+         clu44QerS3uCH/tPyIQXdNqPxBaT8SMYTHA+7W/vWQzdkclrNHdFn4JbY0b9wpxg5B9O
+         cXnfbMg4K73bkF16zjendKyK0OiM2okp8JjO2vbPn+NbVEY0rdzrIv3B7AEzt/AsfRti
+         pKWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsjN8pQgcwGTwlWqhBLb3i6GP80U2r4sfx2Zu4U4m0f9iDOBsKbiO2LnTBQ6LTUqlG1D/aBhWy1y9mRMo/XwKrGL5a2E0UPtuTdA/NOVrTRooNgVW+I6KyfOA7zNxMdrbY56kEP0SADevHEYTKQtLggBVhS5GN8amk
+X-Gm-Message-State: AOJu0Yz3u+9oh4dbUR0uLdspbkCIolI4xo/QPkJ3BpbSssgSWF/waZeq
+	4K4xqY2QMYpZoZFLbhxvPRGV/xa6GWW4ASZbWwZrjHQE4Yvqszim
+X-Google-Smtp-Source: AGHT+IEAnbb8PRUYlmVCmmu0XJ+yJVkU2QMJ2jtemSmWY/zcN4R0utqbyWulRI3mlWV6p+AZqa7+Dw==
+X-Received: by 2002:a17:906:384b:b0:a77:b664:c078 with SMTP id a640c23a62f3a-a780b6b1935mr781846566b.27.1720823970896;
+        Fri, 12 Jul 2024 15:39:30 -0700 (PDT)
+Received: from krava (ip-94-113-247-30.net.vodafone.cz. [94.113.247.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc52sm379188166b.4.2024.07.12.15.39.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 15:39:30 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Sat, 13 Jul 2024 00:39:28 +0200
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Joe Damato <jdamato@fastly.com>, Kyle Huey <me@kylehuey.com>,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, acme@kernel.org, andrii.nakryiko@gmail.com,
+	elver@google.com, khuey@kylehuey.com, mingo@kernel.org,
+	namhyung@kernel.org, peterz@infradead.org, robert@ocallahan.org,
+	yonghong.song@linux.dev, mkarsten@uwaterloo.ca, kuba@kernel.org,
+	Viktor Malik <vmalik@redhat.com>
+Subject: Re: [bpf?] [net-next ?] [RESEND] possible bpf overflow/output bug
+ introduced in 6.10rc1 ?
+Message-ID: <ZpGwoGW51sp8vutX@krava>
+References: <ZpFfocvyF3KHaSzF@LQ3V64L9R2>
+ <ZpGrstyKD-PtWyoP@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706022523.1104080-1-flintglass@gmail.com>
- <20240706022523.1104080-6-flintglass@gmail.com> <CAKEwX=MmwqevpoGnskXrsYQWKOR8yx4t0moasVO=risu0P7-uA@mail.gmail.com>
- <CAPpoddenrRxWkSHTrrWEN9=uYGiQtvLDCifhAPyy2jkcdwfE-A@mail.gmail.com>
-In-Reply-To: <CAPpoddenrRxWkSHTrrWEN9=uYGiQtvLDCifhAPyy2jkcdwfE-A@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 12 Jul 2024 15:36:29 -0700
-Message-ID: <CAKEwX=O+7=rTjaUEQ+3v=f9UHF_GOXWQO9HVZtLZOPCTRh6sVw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] mm: zswap: store incompressible page as-is
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpGrstyKD-PtWyoP@krava>
 
-On Sun, Jul 7, 2024 at 2:38=E2=80=AFAM Takero Funaki <flintglass@gmail.com>=
- wrote:
->
-> 2024=E5=B9=B47=E6=9C=887=E6=97=A5(=E6=97=A5) 8:53 Nhat Pham <nphamcs@gmai=
-l.com>:
-> >
-> > I tried to propose something similar in the past. Please read the
-> > following discussion:
-> >
-> > https://lore.kernel.org/all/CAJD7tka6XRyzYndRNEFZmi0Zj4DD2KnVzt=3DvMGhf=
-F4iN2B4VKw@mail.gmail.com/
-> >
-> > But, the TLDR is Yosry was (rightly) concerned that with this
-> > approach, memory reclaiming could end up increasing memory usage
-> > rather than reducing (since we do not free up the page that fail to
-> > zswap-out, and we need extra memory for the zswap metadata of that
-> > page).
-> >
-> > So my vote on this patch would be NACK, until we get around this issue
-> > somehow :)
->
-> It seems the discussion on the thread mixed up memory allocation
-> failure (system runs out of memory reserve) and incompressible pages
-> (compression algorithm successfully compressed but the result is equal
-> to or larger than PAGE_SIZE).
->
-> zswap has been storing pages into dedicated pages 1:1 when compressed
-> to near PAGE_SIZE. Using zsmalloc, current zswap stores pages
-> compressed to between 3633 bytes (=3Dhugeclass+1) to 4095 bytes
-> (=3DPAGE_SIZE-1) into 1 page. This patch changes the range to 3633 to
-> 4096 by treating PAGE_SIZE as a special case. I could not find a
-> reason to reject only PAGE_SIZE while accepting PAGE_SIZE-1.
->
+On Sat, Jul 13, 2024 at 12:18:26AM +0200, Jiri Olsa wrote:
+> On Fri, Jul 12, 2024 at 09:53:53AM -0700, Joe Damato wrote:
+> > Greetings:
+> > 
+> > (I am reposting this question after 2 days and to a wider audience
+> > as I didn't hear back [1]; my apologies it just seemed like a
+> > possible bug slipped into 6.10-rc1 and I wanted to bring attention
+> > to it before 6.10 is released.)
+> > 
+> > While testing some unrelated networking code with Martin Karsten (cc'd on
+> > this email) we discovered what appears to be some sort of overflow bug in
+> > bpf.
+> > 
+> > git bisect suggests that commit f11f10bfa1ca ("perf/bpf: Call BPF handler
+> > directly, not through overflow machinery") is the first commit where the
+> > (I assume) buggy behavior appears.
+> 
+> heya, nice catch!
+> 
+> I can reproduce.. it seems that after f11f10bfa1ca we allow to run tracepoint
+> program as perf event overflow program 
+> 
+> bpftrace's bpf program returns 1 which means that perf_trace_run_bpf_submit
+> will continue to execute perf_tp_event and then:
 
-I'm not actually sure if this is true in practice. While yes, zsmalloc
-has the capability to store near-PAGE_SIZE objects, this also depends
-on the compression algorithm.
+also bpftrace should perhaps return 0 in tracepoint programs
+and cut the extra processing in any case
 
-At Meta, we use zstd. What I have found is that a lot of the time, it
-just flat out rejects the page if it's too poorly compressed. Without
-this change, we will not have to suffer the memory overhead of the
-zswap_entry structures for these rejected pages, whereas we will with
-this change.
+cc-ing Viktor
 
-We might need to run some tracing to get a histogram of the
-distribution of post-compression sizes.
+jirka
 
-> zswap wastes memory for metadata for all accepted pages but reduces IO
 
-Key word: accepted. The compression algorithm might already have some
-built in logic to reject poorly compressed pages, preventing the cases
-where the overhead might be too high for the saving.
-
-> amount and latency by compressed buffer memory. For pages between 3633
-> to 4096 bytes, zswap reduces the latency only. This is still
-> beneficial because the rare incompressible pages trigger urgent
-> pageout IO and incur a head-of-line blocking on the subsequent pages.
-> It also keeps LRU priority for pagein latency.
->
-> In the worst case or with a malicious dataset, zswap will waste a
-> significant amount of memory, but this patch does not affect nor
-> resolve the scenario. For example, if a user allocates pages
-> compressed to 3633 bytes, current zswap using zsmalloc cannot gain
-> memory as the compression ratio, including zsmalloc overhead, becomes
-> 1:1. This also applies to zbud. The compression ratio will be 1:1 as
-> zbud cannot find buddies smaller than 463 bytes. zswap will be less
-> efficient but still work in this situation since the max pool percent
-> and background writeback ensure the pool size does not overwhelm
-> usable memory.
->
-> I suppose the current zswap has accepted the possible waste of memory,
-> at least since the current zswap_compress() logic was implemented. If
-> zswap had to ensure the compression ratio is better than 1:1, and only
-> prefers reducing IO amount (not latency), there would have been a
-> compression ratio threshold to reject pages not compressible to under
-> 2048 bytes. I think accepting nearly incompressible pages is
-> beneficial and changing the range to 4096 does not negatively affect
-> the current behavior.
-
-FWIW, I do agree with your approach (storing incompressible pages in
-the zswap pool to maintain LRU ordering) - this is *essentially* what
-I was trying to do too with the attempt I mentioned above.
-
-I'll let Johannes and Yosry chime in as well, since they were the
-original folks who raised these concerns :) If they're happy then I'll
-revoke my NACK.
+> 
+>   perf_tp_event
+>     perf_swevent_event
+>       __perf_event_overflow
+>         bpf_overflow_handler
+> 
+> bpf_overflow_handler then executes event->prog on wrong arguments, which
+> results in wrong 'work' data in bpftrace output
+> 
+> I can 'fix' that by checking the event type before running the program like
+> in the change below, but I wonder there's probably better fix
+> 
+> Kyle, any idea?
+> 
+> > 
+> > Running the following on my machine as of the commit mentioned above:
+> > 
+> >   bpftrace -e 'tracepoint:napi:napi_poll { @[args->work] = count(); }'
+> > 
+> > while simultaneously transferring data to the target machine (in my case, I
+> > scp'd a 100MiB file of zeros in a loop) results in very strange output
+> > (snipped):
+> > 
+> >   @[11]: 5
+> >   @[18]: 5
+> >   @[-30590]: 6
+> >   @[10]: 7
+> >   @[14]: 9
+> > 
+> > It does not seem that the driver I am using on my test system (mlx5) would
+> > ever return a negative value from its napi poll function and likewise for
+> > the driver Martin is using (mlx4).
+> > 
+> > As such, I don't think it is possible for args->work to ever be a large
+> > negative number, but perhaps I am misunderstanding something?
+> > 
+> > I would like to note that commit 14e40a9578b7 ("perf/bpf: Remove #ifdef
+> > CONFIG_BPF_SYSCALL from struct perf_event members") does not exhibit this
+> > behavior and the output seems reasonable on my test system. Martin confirms
+> > the same for both commits on his test system, which uses different hardware
+> > than mine.
+> > 
+> > Is this an expected side effect of this change? I would expect it is not
+> > and that the output is a bug of some sort. My apologies in that I am not
+> > particularly familiar with the bpf code and cannot suggest what the root
+> > cause might be.
+> > 
+> > If it is not a bug:
+> >   1. Sorry for the noise :(
+> 
+> your report is great, thanks a lot!
+> 
+> jirka
+> 
+> 
+> >   2. Can anyone suggest what this output might mean or how the
+> >      script run above should be modified? AFAIK this is a fairly
+> >      common bpftrace that many folks run for profiling/debugging
+> >      purposes.
+> > 
+> > Thanks,
+> > Joe
+> > 
+> > [1]: https://lore.kernel.org/bpf/Zo64cpho2cFQiOeE@LQ3V64L9R2/T/#u
+> 
+> ---
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index c6a6936183d5..0045dc754ef7 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -9580,7 +9580,7 @@ static int bpf_overflow_handler(struct perf_event *event,
+>  		goto out;
+>  	rcu_read_lock();
+>  	prog = READ_ONCE(event->prog);
+> -	if (prog) {
+> +	if (prog && prog->type == BPF_PROG_TYPE_PERF_EVENT) {
+>  		perf_prepare_sample(data, event, regs);
+>  		ret = bpf_prog_run(prog, &ctx);
+>  	}
 
