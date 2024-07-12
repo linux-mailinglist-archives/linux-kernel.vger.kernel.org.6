@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-250971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D171792FF0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:08:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E39392FF10
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83444285F11
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:08:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC4DE1C229DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED3E17DE1B;
-	Fri, 12 Jul 2024 17:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B3917E441;
+	Fri, 12 Jul 2024 17:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mntdEWTU"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zhMe8Kzt"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA16B17DA3B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC00B17DA05
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720803725; cv=none; b=HXPwwn3NShHGzbtpgcbLCY0LHoZe/En3WqnsBmlzFK4RphSuqZLU2+RDWAPpnM/C2Sp8EKDBI4Wb1GlMqgp/C+Yznb6rCYISYBhBzW71scCtTJufvygVKjieG6Gt15nl+Xc7N2QK3OPWQApR+qSo47NtIGhjj2rBs/ZG/FS7UMg=
+	t=1720803728; cv=none; b=KXCPJ1fnqqQ6IGQGqb8cywPdyOD+7Plcwl4GnlN5ISn6URD080jOWtvTNgPXfuvPQhwFq0BFODNQHyQsSZSIjcd6jxGe6jxXbtllYh1eTC4H1H1aN82JRrSfBzEKAopYX3WWHthBD/GcPT7SFHbADa4Dgej1lbE2Nn7wsvJ423g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720803725; c=relaxed/simple;
-	bh=NZYj7MLt+2lxNLGEUfzWJwn+jAe/yUlHRhssEDgRpv8=;
+	s=arc-20240116; t=1720803728; c=relaxed/simple;
+	bh=YkaJF7Xf4QM1+szW+WKOyK5ItJOpiRPMrYEvbEfqZbU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WLnBDeujOuQP0v6MgJ3huYINjzgvn3fFaPrZc9L10LPyFhQqjgx+dpHlkG+qBPZGxvieNjvBNf1v07BhE+ElgDTit8i7apUUPAn1of1atJzr5Jlg5GiOEZPoIzR0ufqPz/WafBRR8Xx2OJEikgJlwVNVBByfgtOfO0le4G5hkes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mntdEWTU; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=NgwjF3Qos49sUPwWKjp7OGGkncsCZ3jKqU/h5gZfHB1KjYEcEMtKz1Qi8fYYLXf3OzVg1VieySX+VZbGtUJGFBDg63d9DXgIzJgjwU6cAVZcsgErp5NlBD6PG+Avh2EqoRGX9oXLUS1CyFgr18OTxuzkSl2YfWEKqDFWE/l/Kvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zhMe8Kzt; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-65be82a3241so37994167b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:02:03 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4266fbae4c6so15471925e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:02:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720803723; x=1721408523; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720803725; x=1721408525; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2i/EY2B7r1Db+9uC+ppZJ+s/pV+Uwv0UgdTvi6uATis=;
-        b=mntdEWTUwpsEtrLjZI18CSEwPWTr6TECPUpfek0CIR0nTCtb36AYk5CGBjD9Rowu8u
-         CLyq9Qs1ztU1IVVyYhYsMmLTkP0BRCcnV6xoAOnJxYY3eR2DRCTWi2VlBNlwmEndZTV8
-         DIgBSpn1UPIw8ISEusfy+OIHr644WXt4Z0xxfQDmUJbFA2irLXzaw/8nr2MoUPvTBI/b
-         jnzgzPD2GxElJ1yokguoNcgToUy0LZ8VKpvlP37RlF2adZyzxu5WkYgOj0o+9Nyk2DJM
-         1X5uz4HZBimhBzu9KB4gZqOsnk3bLq9Dx1UsnCvTV/G0ZJp9CSBJORZsUyqypBUnoxUa
-         p9KQ==
+        bh=dYEbdVw49p7KL3LM6Ug+7tiHwUhfthVzlKoBikBuWUA=;
+        b=zhMe8KzterI1hpUMnNShaiFtQ2RejWo5Y//TQSed6cpWSJDdYvktR1jx6DMuJfXEsu
+         7YSE25yCEifXGNsgY96Klzq/ck0jgcsydSPLbXBmQwDo4guflswu0HwGlN/qbNvbrVXc
+         xuiVd3cEPd3JQZ8Q6PFgjRMFhmxO2BCOHDQOdvhZv+h1EBT0sC+XpnFT8JnqeULewl8z
+         8XECTYGso5RoFe6gLv9M3b11Sv66A0YaIHCVPqqoGFiKXWllfFsim5eVWg2esyzaj6eD
+         wY5YOTIe1wxX0jiiC09uC7wgUEFY9GSg0zL5qd7zwZ2VPZAnu/0DBSLDnToFNDzOz1c2
+         1Vjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720803723; x=1721408523;
+        d=1e100.net; s=20230601; t=1720803725; x=1721408525;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2i/EY2B7r1Db+9uC+ppZJ+s/pV+Uwv0UgdTvi6uATis=;
-        b=JNs0QbSS5FRI7Z5pdj312Sy3TeF9GZA7SpK5lrq74c9EjioQBBRiMyvwxin1ZT4zJZ
-         aaY+fp/XAmRyQPV/02PdsZrF1qgHlCch36N1Uy3zIjydt0WKYiCh48PUOEdkAFveT0t0
-         cCPlKCGvJx0zNZ12hJ/RNzJ2tb0hrfBRarsYHInnseDzJLyS7P/iji36Aa/Iuhf8kk79
-         TlUd9BwlBjl+bkjZbPWy+1+qeZthsXfHp8sFx+A4Zw5rEoim8iusHTQqbM3weAWqaiE9
-         eQXA/WKFhXSqfDoyYFOuC4TPZVagCZQd+Twmgeb06OQ7B+XrEKro7wJvpxwC3ItXgIxB
-         kVyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAphYA/uiiYY5LJjTCD9iYM3+3Q2296UgZtViMHk0wL7V5D8XXwT7xcOG+0lvvf1m1s3O/VjDJLkOarnjyZDb+W6EE9gIzkbLpznU/
-X-Gm-Message-State: AOJu0YwKqPriwxtQ2OLr6NOc2bBU4N3mhq9+nqUoIHP5Z1EqCAUUoOk3
-	NesDRGh7C+DMNKaBP6hMaN06VWA671Y545BjXzeq4Mm0MyDfcZZG3WayEpsfRx0LVSlagSZm41w
-	D6WdJMfiXWQ==
-X-Google-Smtp-Source: AGHT+IFNgdBalbrX784MJSkG7g28jv3ta6SaiIVV2y32vALYWfCkCKFBAZMdIemQeL1Zf8yLiAeIuqRY45gfTg==
+        bh=dYEbdVw49p7KL3LM6Ug+7tiHwUhfthVzlKoBikBuWUA=;
+        b=Pw4VCYhD9TOtqQHLOqhNGUO8mEzFN4ZYN4xL3Zvh9gZzPUY/rvtoFH+YMhKRplfJWg
+         uR6AZOOtM3XtZEBT59SP9CuzkAC8RrSgKVLlw99zZwyUaD5jwyS88glkhxe124vHpjx1
+         U3Uz0xC3QoJRNTVbD44SfNHKvyx5J09R4TqEZtfRkMh0FLehDJVutr2HOLZB8PSy10fp
+         XYpis25pOUUjtLrfA0Q8t6sFZtLdXoqA1B/mK4Iuw53dYNlTEIqSFW2nMScTSic+SB9k
+         JbqNCXQvAsQj9eOYrAXmsQAhwIqWoeftqYiGL5zPOnzx2aH1qyhE8q1h1JA733UmFE5r
+         4OWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3ogZceQz5iAO3StBc+ApvTIzao0192KUe3lha8vT6kwTjlW0z534O+NqKFt38sSs6GqxdkqYi2bF0qoZNaI/d+jWjOL3Ye/Jn1Vni
+X-Gm-Message-State: AOJu0YxNbbvdXeM5vMdyLwOBzahgLWX5VGw/AVg78n2ERwsFYZxlmBVl
+	FdxE682hk9a84pmFmCQ/P70AvN2QmMDMBRVcrRONpEVN+PmvGfbku0l+hO2yUeFfeWz5tHV3uU8
+	K00ZtFrjNXw==
+X-Google-Smtp-Source: AGHT+IEpFjrIcdozWeccrHJ18iMfCUI+HuVuPHUhyCg9CuNp5bbpeH6dXY+Lf29VqG6hp3YNWuNGMoEtsiBUuQ==
 X-Received: from beeg.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:11db])
- (user=jackmanb job=sendgmr) by 2002:a05:6902:154d:b0:dfe:fe5e:990a with SMTP
- id 3f1490d57ef6-e041b1134demr24774276.9.1720803722717; Fri, 12 Jul 2024
- 10:02:02 -0700 (PDT)
-Date: Fri, 12 Jul 2024 17:00:42 +0000
+ (user=jackmanb job=sendgmr) by 2002:a05:600c:5129:b0:426:6a14:8e62 with SMTP
+ id 5b1f17b1804b1-4266ff87a5fmr1913465e9.0.1720803725228; Fri, 12 Jul 2024
+ 10:02:05 -0700 (PDT)
+Date: Fri, 12 Jul 2024 17:00:43 +0000
 In-Reply-To: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
 X-Mailer: b4 0.14-dev
-Message-ID: <20240712-asi-rfc-24-v1-24-144b319a40d8@google.com>
-Subject: [PATCH 24/26] mm: asi: Make TLB flushing correct under ASI
+Message-ID: <20240712-asi-rfc-24-v1-25-144b319a40d8@google.com>
+Subject: [PATCH 25/26] mm: asi: Stop ignoring asi=on cmdline flag
 From: Brendan Jackman <jackmanb@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
@@ -97,96 +97,35 @@ Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	kvm@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-This is the absolute minimum change for TLB flushing to be correct under
-ASI. There are two arguably orthogonal changes in here but they feel
-small enough for a single commit.
-
-.:: CR3 stabilization
-
-As noted in the comment ASI can destabilize CR3, but we can stabilize it
-again by calling asi_exit, this makes it safe to read CR3 and write it
-back.
-
-This is enough to be correct - we don't have to worry about invalidating
-the other ASI address space (i.e. we don't need to invalidate the
-restricted address space if we are currently unrestricted / vice versa)
-because we currently never set the noflush bit in CR3 for ASI
-transitions.
-
-Even without using CR3's noflush bit there are trivial optimizations
-still on the table here: on where invpcid_flush_single_context is
-available (i.e. with the INVPCID_SINGLE feature) we can use that in lieu
-of the CR3 read/write, and avoid the extremely costly asi_exit.
-
-.:: Invalidating kernel mappings
-
-Before ASI, with KPTI off we always either disable PCID or use global
-mappings for kernel memory. However ASI disables global kernel mappings
-regardless of factors. So we need to invalidate other address spaces to
-trigger a flush when we switch into them.
-
-Note that there is currently a pointless write of
-cpu_tlbstate.invalidate_other in the case of KPTI and !PCID. We've added
-another case of that (ASI, !KPTI and !PCID). I think that's preferable
-to expanding the conditional in flush_tlb_one_kernel.
+At this point the minimum requirements are in place for the kernel to
+operate correctly with ASI enabled.
 
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- arch/x86/mm/tlb.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ arch/x86/mm/asi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index a9804274049e..1d9a300fe788 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -219,7 +219,7 @@ static void clear_asid_other(void)
- 	 * This is only expected to be set if we have disabled
- 	 * kernel _PAGE_GLOBAL pages.
- 	 */
--	if (!static_cpu_has(X86_FEATURE_PTI)) {
-+	if (!static_cpu_has(X86_FEATURE_PTI) && !static_cpu_has(X86_FEATURE_ASI)) {
- 		WARN_ON_ONCE(1);
- 		return;
+diff --git a/arch/x86/mm/asi.c b/arch/x86/mm/asi.c
+index 891b8d351df8..6cf0af1bfa07 100644
+--- a/arch/x86/mm/asi.c
++++ b/arch/x86/mm/asi.c
+@@ -174,14 +174,14 @@ void __init asi_check_boottime_disable(void)
+ 		pr_info("ASI disabled through kernel command line.\n");
+ 	} else if (ret == 2 && !strncmp(arg, "on", 2)) {
+ 		enabled = true;
+-		pr_info("Ignoring asi=on param while ASI implementation is incomplete.\n");
++		pr_info("ASI enabled through kernel command line.\n");
+ 	} else {
+ 		pr_info("ASI %s by default.\n",
+ 			enabled ? "enabled" : "disabled");
  	}
-@@ -1178,15 +1178,19 @@ void flush_tlb_one_kernel(unsigned long addr)
- 	 * use PCID if we also use global PTEs for the kernel mapping, and
- 	 * INVLPG flushes global translations across all address spaces.
- 	 *
--	 * If PTI is on, then the kernel is mapped with non-global PTEs, and
--	 * __flush_tlb_one_user() will flush the given address for the current
--	 * kernel address space and for its usermode counterpart, but it does
--	 * not flush it for other address spaces.
-+	 * If PTI or ASI is on, then the kernel is mapped with non-global PTEs,
-+	 * and __flush_tlb_one_user() will flush the given address for the
-+	 * current kernel address space and, if PTI is on, for its usermode
-+	 * counterpart, but it does not flush it for other address spaces.
- 	 */
- 	flush_tlb_one_user(addr);
  
--	if (!static_cpu_has(X86_FEATURE_PTI))
-+	/* Nothing more to do if PTI and ASI are completely off. */
-+	if (!static_cpu_has(X86_FEATURE_PTI) && !static_cpu_has(X86_FEATURE_ASI)) {
-+		VM_WARN_ON_ONCE(static_cpu_has(X86_FEATURE_PCID) &&
-+				!(__default_kernel_pte_mask & _PAGE_GLOBAL));
- 		return;
-+	}
- 
- 	/*
- 	 * See above.  We need to propagate the flush to all other address
-@@ -1275,6 +1279,13 @@ STATIC_NOPV void native_flush_tlb_local(void)
- 
- 	invalidate_user_asid(this_cpu_read(cpu_tlbstate.loaded_mm_asid));
- 
-+	/*
-+	 * Restricted ASI CR3 is unstable outside of critical section, so we
-+	 * couldn't flush via a CR3 read/write.
-+	 */
-+	if (!asi_in_critical_section())
-+		asi_exit();
-+
- 	/* If current->mm == NULL then the read_cr3() "borrows" an mm */
- 	native_write_cr3(__native_read_cr3());
+ 	if (enabled)
+-		pr_info("ASI enablement ignored due to incomplete implementation.\n");
++		setup_force_cpu_cap(X86_FEATURE_ASI);
  }
+ 
+ /*
 
 -- 
 2.45.2.993.g49e7a77208-goog
