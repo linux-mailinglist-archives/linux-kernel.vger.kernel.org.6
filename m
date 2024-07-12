@@ -1,231 +1,163 @@
-Return-Path: <linux-kernel+bounces-251132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2824593010B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:42:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1CED93010F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D07CE281677
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:42:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B8DA1F238FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490AB38DD9;
-	Fri, 12 Jul 2024 19:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0733A1DA;
+	Fri, 12 Jul 2024 19:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cktrqCsx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bLENL5rZ"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AF52032A;
-	Fri, 12 Jul 2024 19:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986853715E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 19:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720813334; cv=none; b=R2VzcApKeqJeNMwI90+HN+lF0Qm1wqFuF2gy6UQL+OTWHNvkj6D9oJkfFi/zfUg2kIjfFfQD7m6ExnJ0xKo32xJDLzu4bALT0dP4PlLHhzEM5g0/mYxyuIa+bEvu38rRtNuEsiJg2q04TAokhlzlHP3+1HVd3Cdsad1OV21MlH8=
+	t=1720813423; cv=none; b=dK+ORBTpyEyZ8yJvAwY6wW+690kDhFttfVyxR2uDC4wvvc4oM8uw+c5My4pAztgu3WaucN1460W/ea/ltPAeYv5l+VwC8g7NxDiwY5z4p9tPBxVaZhtsA+wmet+vkSrMUNCBdRlF8E7slaj5NXkLYERIl6U/sGotGcb50cIc/Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720813334; c=relaxed/simple;
-	bh=TgRCdc2jdk93faAJSlXtDv3nImud6PYYBQfTIb7ydxE=;
-	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=DC1qeBT2qhlNumxAUUxDIHZZJZN/OTnu6/sz5iaicB3/AdD/egImUTCmW/MQB56bU+korZkABcJ/UPu4316k/YMbd3YP005BDcSbk660qKFjJnsSw8bDmg0AOaKzUCfF+Cc4HYRcx8xkz1S9DjCnbs07IDVlQEt4ij2H07WXEc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cktrqCsx; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720813332; x=1752349332;
-  h=subject:from:to:cc:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TgRCdc2jdk93faAJSlXtDv3nImud6PYYBQfTIb7ydxE=;
-  b=cktrqCsxk6s/BTAqzq5X094L3D/Eguh5LF3Vf7N62aAYm0O4trwuUINI
-   iI7Cuzrqy22piQ61cnKj3FwNqupP+8608iWZ11K+VROsiqfRwkddFzViv
-   tcYVKdyPKhIZSLRaOyF9LL2HtVUU+dkD39FhRPsdyFrXuu8ToqvFRK6Ns
-   b7Xe3/Xs4iUrtslUzA6eWkHZqbxdo5OklMg6WhEchNirIF032oxTlJ7lP
-   x4mRn4u3hb40bYD5LwqMPprQdxARU05vkAIKDYh9ddwe8lZGeN+W/GbnI
-   85hKaBY9QysM3PHLl1wqzJDBFmP6wbLCTLoZTeG+Xwnh9PyNuP2md1xiQ
-   Q==;
-X-CSE-ConnectionGUID: YeMiUY/1SmSRffp0DNnr2g==
-X-CSE-MsgGUID: uuWnC/y5Rju/cQ+sNasEow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="35813289"
-X-IronPort-AV: E=Sophos;i="6.09,203,1716274800"; 
-   d="scan'208";a="35813289"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 12:42:12 -0700
-X-CSE-ConnectionGUID: +FGsCYj1TGWmcg4WjdjiCg==
-X-CSE-MsgGUID: vjGVLZT5TvaFY6q+LMl7qA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,203,1716274800"; 
-   d="scan'208";a="53366204"
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO dwillia2-xfh.jf.intel.com) ([10.125.110.177])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 12:42:11 -0700
-Subject: [PATCH] driver core: Fix uevent_show() vs driver detach race
-From: Dan Williams <dan.j.williams@intel.com>
-To: gregkh@linuxfoundation.org
-Cc: syzbot+4762dd74e32532cda5ff@syzkaller.appspotmail.com,
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, stable@vger.kernel.org,
- Ashish Sangwan <a.sangwan@samsung.com>, Namjae Jeon <namjae.jeon@samsung.com>,
- Dirk Behme <dirk.behme@de.bosch.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Date: Fri, 12 Jul 2024 12:42:09 -0700
-Message-ID: <172081332794.577428.9738802016494057132.stgit@dwillia2-xfh.jf.intel.com>
-User-Agent: StGit/0.18-3-g996c
+	s=arc-20240116; t=1720813423; c=relaxed/simple;
+	bh=1lEUspWAaO5u1XSmEkkpRCZaASP5SBuIUGMnwoj8aY4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pG95yXzHKh9EwumUfl3AtgyNUJdXXXZrQF+ItElE1KoWG/BzDF8QlYtPC75oRWzdRHTC/RG7Yr/lJ6XhpPJsbesbcC7LcgmcYNjG/0Pt0jEbKW6gST8da9+a+Z4uEeZbdEEkRuIV3rFEEjIVGjMX5pO6RcCD94Cb7dsbafBAz94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bLENL5rZ; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7523f0870cso277035066b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:43:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720813419; x=1721418219; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=jdmhCOprl+my3R8CgZP6ngYaYIZyq201uioObhwKcnA=;
+        b=bLENL5rZ5aNqqbfRvgVtWWvJ6+r7lOnAq5pOe/wGhANz3o35o7V1kqAeSX7X6lNUQ8
+         dJRC+V11e+L3bPKcdzbYsDnUAId/bV02/tXxnX0MKGAiPgrx9bCaCRqSq1l0l+85Xdjz
+         pp0kRELmW8p+TmUDoYvHSP0ysTZaYXfwn/GE8E7KuT/fl7xtuSCu3MZNkJ2ok7WpFLh2
+         ROm7zAb3hZsKr/yPA9QTHokBzhhr1Foh/9924+8T8DxoFmLhVVk0ovfjsPv0B0epqOpb
+         IOUS57ssmMo4oxJcH4R3FV9fqDE4q/JuLXc3j4AtCzjtf5tzs/5O7TDeBkAHf8vQLvhd
+         RlMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720813419; x=1721418219;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jdmhCOprl+my3R8CgZP6ngYaYIZyq201uioObhwKcnA=;
+        b=Zj1eqrA27Nz6RGO/aZSjhY9lttxrLNy7+JN5BgLDOakErA2wV0b4kxRWG7LE5hnUfC
+         NiLEGn6Mgg/GfKfPTd8ewhDwOErvP3t1ECgVKIZUpXzW91JqZtuCFOueEVW1ehF7k5K2
+         xEybVGj110MJKo+P2bGdDRbMqhGHr9ii8+ht9viOovsW6qfqD740OQy87HfHV/tZ//v0
+         P3Sp7VUwgM85bREPuwbKG4NICsAkh5Ed/fEIEXCWnxJOH9duxYSf+pgH3dPQvEXGtAb0
+         1AXc2aE1oqErRD7mvjimVLMq3Qy+ScULHrbtKx+8LyhHZXGmT0BazFequwtXAgYpNa+G
+         tjEw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPIrJPe6RsnwrIwdQIpRefy5rbsnvjBi+3fyvtXPnt5xdPKZg3Yny0ij9cQ7PDRKRob7GQ1oSzQOBsFjpyeJ2PXY46Ow+VfqLILVIB
+X-Gm-Message-State: AOJu0YzdG70LBIrW/gmDZUeGy+15qIYDBacXRgBgv0XcXcBPFbFwyxD2
+	SsMZk65kXhHumS9pGezbbU6g0gjqqS2apceQIA3hlVZZC1OwA31rBesnLDFxhRE=
+X-Google-Smtp-Source: AGHT+IENsgMX+uB30BzFuKiY0VK7jTYuAcwlOSncj3lPj2Y1ijF/x3cXaWJqdaGwyXkblGalqYwh7Q==
+X-Received: by 2002:a17:907:38f:b0:a77:e48d:bad with SMTP id a640c23a62f3a-a780b6b1f20mr818567666b.32.1720813418498;
+        Fri, 12 Jul 2024 12:43:38 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bc8a2sm377290966b.15.2024.07.12.12.43.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 12:43:37 -0700 (PDT)
+Message-ID: <ec59e5a0-81c1-4a2a-be9d-b28fa63ee473@linaro.org>
+Date: Fri, 12 Jul 2024 21:43:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] ARM: dts: qcom: Add support for MBG TM for pm8775 on
+ SA8775P
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>,
+ Thara Gopinath <thara.gopinath@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Kamal Wadhwa <quic_kamalw@quicinc.com>, Taniya Das
+ <quic_tdas@quicinc.com>, Jishnu Prakash <quic_jprakash@quicinc.com>,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240712-mbg-tm-support-v1-0-7d78bec920ca@quicinc.com>
+ <20240712-mbg-tm-support-v1-5-7d78bec920ca@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240712-mbg-tm-support-v1-5-7d78bec920ca@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-uevent_show() wants to de-reference dev->driver->name. There is no clean
-way for a device attribute to de-reference dev->driver unless that
-attribute is defined via (struct device_driver).dev_groups. Instead, the
-anti-pattern of taking the device_lock() in the attribute handler risks
-deadlocks with code paths that remove device attributes while holding
-the lock.
+On 12.07.2024 2:43 PM, Satya Priya Kakitapalli wrote:
+> Add support for MBG TM peripheral for pm8775 sail pmics on SA8775P.
+> 
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi | 120 ++++++++++++++++++++++++++++
+>  1 file changed, 120 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
+> index bd4f5f51e094..69910306885e 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
+> @@ -89,6 +89,62 @@ trip1 {
+>  				};
+>  			};
+>  		};
+> +
+> +		pmm8654au_0_mbg_tm: pmm8654au_0_mbg_tz {
+> +			polling-delay-passive = <100>;
+> +			polling-delay = <0>;
 
-This deadlock is typically invisible to lockdep given the device_lock()
-is marked lockdep_set_novalidate_class(), but some subsystems allocate a
-local lockdep key for @dev->mutex to reveal reports of the form:
+0 is the default polling delay, you can drop this
 
- ======================================================
- WARNING: possible circular locking dependency detected
- 6.10.0-rc7+ #275 Tainted: G           OE    N
- ------------------------------------------------------
- modprobe/2374 is trying to acquire lock:
- ffff8c2270070de0 (kn->active#6){++++}-{0:0}, at: __kernfs_remove+0xde/0x220
-
- but task is already holding lock:
- ffff8c22016e88f8 (&cxl_root_key){+.+.}-{3:3}, at: device_release_driver_internal+0x39/0x210
-
- which lock already depends on the new lock.
-
-
- the existing dependency chain (in reverse order) is:
-
- -> #1 (&cxl_root_key){+.+.}-{3:3}:
-        __mutex_lock+0x99/0xc30
-        uevent_show+0xac/0x130
-        dev_attr_show+0x18/0x40
-        sysfs_kf_seq_show+0xac/0xf0
-        seq_read_iter+0x110/0x450
-        vfs_read+0x25b/0x340
-        ksys_read+0x67/0xf0
-        do_syscall_64+0x75/0x190
-        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
- -> #0 (kn->active#6){++++}-{0:0}:
-        __lock_acquire+0x121a/0x1fa0
-        lock_acquire+0xd6/0x2e0
-        kernfs_drain+0x1e9/0x200
-        __kernfs_remove+0xde/0x220
-        kernfs_remove_by_name_ns+0x5e/0xa0
-        device_del+0x168/0x410
-        device_unregister+0x13/0x60
-        devres_release_all+0xb8/0x110
-        device_unbind_cleanup+0xe/0x70
-        device_release_driver_internal+0x1c7/0x210
-        driver_detach+0x47/0x90
-        bus_remove_driver+0x6c/0xf0
-        cxl_acpi_exit+0xc/0x11 [cxl_acpi]
-        __do_sys_delete_module.isra.0+0x181/0x260
-        do_syscall_64+0x75/0x190
-        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-The observation though is that driver objects are typically much longer
-lived than device objects. It is reasonable to perform lockless
-de-reference of a @driver pointer even if it is racing detach from a
-device. Given the infrequency of driver unregistration, use
-synchronize_rcu() in module_remove_driver() to close any potential
-races.  It is potentially overkill to suffer synchronize_rcu() just to
-handle the rare module removal racing uevent_show() event.
-
-Thanks to Tetsuo Handa for the debug analysis of the syzbot report [1].
-
-Fixes: c0a40097f0bc ("drivers: core: synchronize really_probe() and dev_uevent()")
-Reported-by: syzbot+4762dd74e32532cda5ff@syzkaller.appspotmail.com
-Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Closes: http://lore.kernel.org/5aa5558f-90a4-4864-b1b1-5d6784c5607d@I-love.SAKURA.ne.jp [1]
-Link: http://lore.kernel.org/669073b8ea479_5fffa294c1@dwillia2-xfh.jf.intel.com.notmuch
-Cc: stable@vger.kernel.org
-Cc: Ashish Sangwan <a.sangwan@samsung.com>
-Cc: Namjae Jeon <namjae.jeon@samsung.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/base/core.c   |   13 ++++++++-----
- drivers/base/module.c |    4 ++++
- 2 files changed, 12 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 2b4c0624b704..b5399262198a 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -25,6 +25,7 @@
- #include <linux/mutex.h>
- #include <linux/pm_runtime.h>
- #include <linux/netdevice.h>
-+#include <linux/rcupdate.h>
- #include <linux/sched/signal.h>
- #include <linux/sched/mm.h>
- #include <linux/string_helpers.h>
-@@ -2640,6 +2641,7 @@ static const char *dev_uevent_name(const struct kobject *kobj)
- static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
- {
- 	const struct device *dev = kobj_to_dev(kobj);
-+	struct device_driver *driver;
- 	int retval = 0;
- 
- 	/* add device node properties if present */
-@@ -2668,8 +2670,12 @@ static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
- 	if (dev->type && dev->type->name)
- 		add_uevent_var(env, "DEVTYPE=%s", dev->type->name);
- 
--	if (dev->driver)
--		add_uevent_var(env, "DRIVER=%s", dev->driver->name);
-+	/* Synchronize with module_remove_driver() */
-+	rcu_read_lock();
-+	driver = READ_ONCE(dev->driver);
-+	if (driver)
-+		add_uevent_var(env, "DRIVER=%s", driver->name);
-+	rcu_read_unlock();
- 
- 	/* Add common DT information about the device */
- 	of_device_uevent(dev, env);
-@@ -2739,11 +2745,8 @@ static ssize_t uevent_show(struct device *dev, struct device_attribute *attr,
- 	if (!env)
- 		return -ENOMEM;
- 
--	/* Synchronize with really_probe() */
--	device_lock(dev);
- 	/* let the kset specific function add its keys */
- 	retval = kset->uevent_ops->uevent(&dev->kobj, env);
--	device_unlock(dev);
- 	if (retval)
- 		goto out;
- 
-diff --git a/drivers/base/module.c b/drivers/base/module.c
-index a1b55da07127..b0b79b9c189d 100644
---- a/drivers/base/module.c
-+++ b/drivers/base/module.c
-@@ -7,6 +7,7 @@
- #include <linux/errno.h>
- #include <linux/slab.h>
- #include <linux/string.h>
-+#include <linux/rcupdate.h>
- #include "base.h"
- 
- static char *make_driver_name(struct device_driver *drv)
-@@ -97,6 +98,9 @@ void module_remove_driver(struct device_driver *drv)
- 	if (!drv)
- 		return;
- 
-+	/* Synchronize with dev_uevent() */
-+	synchronize_rcu();
-+
- 	sysfs_remove_link(&drv->p->kobj, "module");
- 
- 	if (drv->owner)
-
+Konrad
 
