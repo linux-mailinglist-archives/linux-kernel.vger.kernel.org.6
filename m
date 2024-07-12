@@ -1,193 +1,204 @@
-Return-Path: <linux-kernel+bounces-250764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38ADC92FC8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:28:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1121F92FC8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD6E31F229A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:28:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32C1F1C22190
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167F8171E57;
-	Fri, 12 Jul 2024 14:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB610171E62;
+	Fri, 12 Jul 2024 14:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Fx9LagAW"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2055.outbound.protection.outlook.com [40.107.101.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="roNTJVle"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B78417166F;
-	Fri, 12 Jul 2024 14:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720794513; cv=fail; b=lzxUOh8MxeLXJqEYVwpiRrDwgprV1kKCjjCNVDbuZzTMDU2TcNhv7k/bdryIgq3WY/s/EF5ig3zBrlx8N3dCckIbmxA50SFuueBLZP++KzmRqReR5+5ej+jqKHCtymMlTBjqcKt8QgL69rCYrBGn6zEG3Ip+rJxrnCnp/E4p+Pg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720794513; c=relaxed/simple;
-	bh=3qFRi1M7ZXq1MW3WpaE14AAgksZpLHMM+6yuNc7v/aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=ODqS2tx+5JDimc0qnX63sUVOOaZatro3LYLQD4rd4xjcbNaQl0H1YAWR60zdGMMNLrQTcEa7jkVB5WA2X3bwmOXfmhUzI21upX3Kvdgs1cPlTZRC3+59xMtYARuaKwy2WOORg3NmnP8WYssJnGSgHapY33a7ABvF2C3Ac0xOPqs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Fx9LagAW; arc=fail smtp.client-ip=40.107.101.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rhx1CsKHS7IkDKDAwzWwCv+8rnOImMCRsTHGuRFqwHyf9rAyCLvK0DVZ65i5dO7INejrjVTD4lDCx+ThRSWsH0PvxVcIuo4pO4hdzsQsmfQlVmTZvsUpc0f4tB8mDTqs9c3UW83a/Ja3M4h/tDakPZjeOn63cT36hJRgaiCa4dmorOnJFXbleH2V9JA0GJUU0/oRAxUJWgKUCm65E+QY4XxP09xeAobLn7aEVtVqgK/xHR2jy+g+TuZhH6wbxkY/6xas+pWE+fwZICwPf1b5Rf0wnmKLVdg29QrM/q1oekLHc7ResCRNMNQfUa3bMw8x6Zy0Jy7AvJeGkpp2Q50a3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/iz7itMvqJMF9fmQ7U1oNPWl6KjAilTsokRSxzbOthE=;
- b=nLYZ5L5h6Mrg7DxFEx6FRvFCvHR5o6FQilPmvjZN6XYvrVGFF4bwdAxQN2wFwbqbgUGWu6De7F9B2aKrd/SnfuqpfxR1FJiefnNrol6rD2cPcXezwd6fHaNQ5hTaP0O5rVEs564C/PWs1U6tzP+BQ4U/ut0UrgjxGO7x0Dh2zSdVnJMBdwO6FDeL0k0/GOPOi1a4cDm9RHAJn/f2mdZcWVn0zGocwYBaUUIyAgI1chTta1WFt6IqSnOznVf+vUILAbUYRXw31mXdmrqD+mUQ4cTYmh90LCSqZeIxgmVyNqhpRmmJOCeZWKd/6lnfMj7E1kOC0eXrh53OdJ9WdAWDNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/iz7itMvqJMF9fmQ7U1oNPWl6KjAilTsokRSxzbOthE=;
- b=Fx9LagAWl9t/9lmPXgFXc7xG+xLESTcCTP6VUq2dpXXES6AJkeSothpyhiZFp/N+RcufpxenzdKq1TuCoFKfp/CrbqHID97aUttiGETxwDWj9/hg2x3cMo8mzPL5ZfvMbCda/TxI5oWMAHOrSdcY7xtaY1tlk42ZJZCBYHgEMNE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BN8PR12MB3108.namprd12.prod.outlook.com (2603:10b6:408:40::20)
- by DM6PR12MB4156.namprd12.prod.outlook.com (2603:10b6:5:218::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
- 2024 14:28:28 +0000
-Received: from BN8PR12MB3108.namprd12.prod.outlook.com
- ([fe80::43a5:ed10:64c2:aba3]) by BN8PR12MB3108.namprd12.prod.outlook.com
- ([fe80::43a5:ed10:64c2:aba3%6]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
- 14:28:28 +0000
-Date: Fri, 12 Jul 2024 10:28:21 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
-	avadhut.naik@amd.com, john.allen@amd.com
-Subject: Re: [PATCH v2 1/5] x86/topology: Export helper to get CPU number
- from APIC ID
-Message-ID: <20240712142821.GA10846@yaz-khff2.amd.com>
-References: <20240624212008.663832-1-yazen.ghannam@amd.com>
- <20240624212008.663832-2-yazen.ghannam@amd.com>
- <87ed8l7byy.ffs@tglx>
- <20240626014212.GA1086@yaz-khff2.amd.com>
- <20240628083722.GFZn52QnltR_2gjuO5@fat_crate.local>
- <20240628141542.GA124261@yaz-khff2.amd.com>
- <20240628144535.GAZn7Mj4jofP3Vz2xf@fat_crate.local>
- <20240701175142.GA4681@yaz-khff2.amd.com>
- <20240701190704.GKZoL-WBZ19-z8s7UR@fat_crate.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701190704.GKZoL-WBZ19-z8s7UR@fat_crate.local>
-X-ClientProxiedBy: BN9PR03CA0609.namprd03.prod.outlook.com
- (2603:10b6:408:106::14) To BN8PR12MB3108.namprd12.prod.outlook.com
- (2603:10b6:408:40::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F5E171E49
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720794564; cv=none; b=nB/FotVeCMhSGOD/+4wB98tYrlvzxq8R88bV8mnhzdgNhgtJqZjKdZ5EaEudIA8hVHPoDI+gRy3nFxtfKqe6qG4pcaKEhoA9qyR+Agp28IhQPG9+j2p7DtUuupYDF7RdUNE6hM1DaSePcpW6nQtkRy33ipY6kveGHw+pFlqRLgU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720794564; c=relaxed/simple;
+	bh=LbTNChU8bTRD5sx7/n91xzehW9iyZBQZchWZoFuWKPM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lVGpHKAUndv/pHhVCss19KE5A7D6TrLvtNDG0I0dkezsCKuTws1EZRyBQzffZaAsza7sSJlfI43T1OeffDuUZXFK59dEqFyE9EYwuf7a23c8bxZ9kF+HPUkzyARjeaa8gWzzIzEZx6iyUH7ckvBjnI06to8eoCO041LSXDrfdEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=roNTJVle; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-76cb5b6b3e4so1381393a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:29:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720794562; x=1721399362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OfRcvqvyLWqqw4VZbdos3kGou0KYGp4KID6MEMi5E0s=;
+        b=roNTJVlerqpbJkUY1MGAuKTk42El2peVPGbGYggrhIXI59s7T81VmDIyD6C7zRtuAy
+         nIv6LPJykdimV0EhYa8UrncPzrEZXWH9SQQY46L2xj5rWvpNJzxdmf55JShgpH0tKxdF
+         Khg8fs7MbGjD9sjckP7lRJJxBs+Tjsca7F4d06hMB6KvDxtZ9m8LyHJOt2qnd5FoFW3A
+         DKLrDQmZ7nXxr4m8Nrki99Dbhhadr6D8nABdZCUiX33dpbEhSMR5nJKXRFpRq+gjUTGo
+         YrDpLmhtvcn1Ow0wrp6aHAgfH9u/S5XaVqOZge09cXxTHh6XFAyQ6IZfERMu3XTmro88
+         FeQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720794562; x=1721399362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OfRcvqvyLWqqw4VZbdos3kGou0KYGp4KID6MEMi5E0s=;
+        b=pa8eqJ+6xfD+xrcBuvYwpuz0w4qpB/ruiH/fnF+8OMxZFdY0P30zF+2arOALEuU3tQ
+         gP9pl/S95GjVGfLMP1a53WkEYy5heOiTALUvZg/7DUkJXCHpOWEU76BE9V3OtRytIlZb
+         1664Z9CPoTO+wEDMLYyWdwm++/DuGl1xBwpcbeQuQ2IWEcl8avUfc0Rg+Sffrl18uHAO
+         lmLM2/2UPUrWl2korBlrfrxFYktd/To4CYjPbgF0OUwSYLHXPL7glLU3gYLV3G0M6BAL
+         2TFpY/Cfq97yEAUb044AogFAyekHplFDIWyfordZ3e1l5V1dFkvEzejbCiWvwkLzbFYW
+         pGmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbyScT3KKwrxcIu4Gx87QOPslsPFthYXF3a+rR28Wp1PBbW8068jHFY0rHiaEyAGE5sYqq3mNI8iUuzz6TO1QmF3jkTONsbVUM15/V
+X-Gm-Message-State: AOJu0YwKA1W7GCmDMC/nIGWlRCoB14/K1OkrIQZYHGU5KV7qnaI2X0U8
+	0h4G/CrFuLYZQkCYmEvNKveBvZjMOke1tHei/K0nftNCnPVYAmcGWQIg2/Rbhg==
+X-Google-Smtp-Source: AGHT+IHbEdR45IjDHcAMoLP6rDlFFdiSoFMz5LWcZABCTasJiEG5qGfVuq47Emz5imjJVxqZsw3w+A==
+X-Received: by 2002:a05:6a20:cd0e:b0:1c2:8cc4:c361 with SMTP id adf61e73a8af0-1c2981fc191mr12859114637.10.1720794561783;
+        Fri, 12 Jul 2024 07:29:21 -0700 (PDT)
+Received: from localhost.localdomain ([120.60.61.81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ad141fsm67508075ad.277.2024.07.12.07.29.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 07:29:21 -0700 (PDT)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: mst@redhat.com,
+	jasowang@redhat.co
+Cc: xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	mie@igel.co.jp,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] virtio-pci: Add MSI support
+Date: Fri, 12 Jul 2024 19:59:14 +0530
+Message-Id: <20240712142914.16979-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3108:EE_|DM6PR12MB4156:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5d249b60-b426-4d93-8399-08dca27ee568
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wLDJL2xp0gEdbjtBSjJBj/ZTLmHZd+Vfmx1LApzdChGEqwyOsnaZ3JG/l5hi?=
- =?us-ascii?Q?xJN4rN+FuB2xPeBX+tBYisQxlTKeTwlhIkLhLdRqDOuEnGr6QIzHVHok+rp2?=
- =?us-ascii?Q?qNvWV6gPPA5pwsJHhQ+EJjiMPcs/PFPzexqLoEmBnMPjTusZwWoR5M4SCEcF?=
- =?us-ascii?Q?z4GkiM3fyJv0XW3NYwrq+sT2ou+15AK1GBsA2FWXcZWFrFGBI5Tx4o0LMbAc?=
- =?us-ascii?Q?dIymuzHxnxXU7zeEg68/OTCdaanJiLsH+GISNdLp0Pu3A+dv/qHg6pLWxxSZ?=
- =?us-ascii?Q?AMMnv92LgSDuHH2EZHUVlDkaUbzb5UTl72kEEPRFBgkaYduLhmzgfigbPdkJ?=
- =?us-ascii?Q?T9qkm5Q4CBkHCxfSIogNpGDQm6qQ9GGCfzLY5AEfAiMHrnliKTLUq0OcqWW6?=
- =?us-ascii?Q?YsDMe21/WEAQnNmtyDWWlJCowLY+p2Qzb00vMI0rD/MeMG4vjbxzJyRyW9Js?=
- =?us-ascii?Q?KK4MDXZDZJisgnmgRMF+94zgAXgwDSN+WUHhpYneZH8BLBC7uWC5bAcJsmPJ?=
- =?us-ascii?Q?N1XdTqc8JI77Wavl35exutvl1NvI5gT49I5p1s1P1gDeZU4BCujxE/4OPNjC?=
- =?us-ascii?Q?AP52zgZiVk/qkwUkSZ0tokEDUk4iXGBvBVqXj6a+6sr+fKgrGUIK3cdxWAG4?=
- =?us-ascii?Q?M5Z3R5EwCaDd04tSMagX3xYhzB8Gxxkf+8Psp88hH8NF9GZDSV3PjwgDe+AC?=
- =?us-ascii?Q?71MuhtbdxCRb06kAUI/rk2+T1ko6PwtAZqHSPuZfuOlAov6X3JuW8uAOm6Dx?=
- =?us-ascii?Q?feZMIdn9WAhm2l8KpkCfCDUR5XLFwGBD+qF7jUiXHsQjr/5bjSoOiVghq3d2?=
- =?us-ascii?Q?r8QSzmN995LHFslIH8cJkPrWrXQ5tvCQTxhpzRnhx1XbF0NiSqRT2OyN+/zG?=
- =?us-ascii?Q?aORJq5VvyDlSPjRGJcG5ZxvK6jYkQM+Tv26DiTv7eSSFzA5CZ7XuV/r6J2mS?=
- =?us-ascii?Q?zEPoTS/2ITlcIgzdzQphH4ox/WPpxS+ih0BRGeWZGQTF+RBBxwXx0/GjlwHF?=
- =?us-ascii?Q?2S6J6/v4U++FvnraWXvZu9xuyJgDRRVYG12c9kr50T9YluJRM9kVrwZY4xTT?=
- =?us-ascii?Q?RpoYiIRZKST8kGLJIdFp7QC272t9gY2spkapjlYOKjLcyYUvlwHpXxVTCOjk?=
- =?us-ascii?Q?BjBKKz9ZUN3Hi1kwjgT0TUlezGox4gDyEI6b6ei5s229nYzAbeweNhg2ZByb?=
- =?us-ascii?Q?Kv58kKJpzPQk6+ePGnBzkM0iHnHHxe7DWoDQICM3am5avGr5oDnaiJvIhVAj?=
- =?us-ascii?Q?WpogJlLL2H3Jw/3Ww8y09xhYrGilBNafPjM5pgAozyCQpKms/NqvCWws/BDh?=
- =?us-ascii?Q?KLCxCK/CA1hOAXdVGMRbMwrdjReleFBtoLFv2yfDLUWCbg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3108.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qL1UVLQ0dCdMITH2mtM9xKyOodtojdXHezE0WDJ3pr7Hnsg8laydWAqbBc/A?=
- =?us-ascii?Q?+eR4SmDYHgoXaTEp2lhBbTvrQyTapZ2PEhXKFekU/X7REa6+HpCtiN1I1TC2?=
- =?us-ascii?Q?X6mlC5RzkbHDMndKLQTbs1X0qe2fwSfV6QI3pdDbefyXhEoM/yai9DEu8b7V?=
- =?us-ascii?Q?m7p2mKXKC3BOFWIjjVotrcnL8EL48ZIgUgued61XCtRUswvwQZj6LtxhzFje?=
- =?us-ascii?Q?B5C8mlpAibAQKNa6nfSeqVhAOc7WFY9sS42FDrrgpzV1o3JA9iXnXNr2wHaw?=
- =?us-ascii?Q?5qFgWFliDZkUZVnT357x6MJnawD355cAItUcyc9RWXxE1zsS2kzEpKEyC2fc?=
- =?us-ascii?Q?Bqwf8sFZDCO6r2NAFdQXet7eT77RCg5wQig9++iYlW5KMSS8KgRKQO0Ym+jA?=
- =?us-ascii?Q?aMlxHT7ieH+9QyocgfZwhTDNjeOZoGbEmLcGCdLUEaIYFrqOoTMwsO054SxK?=
- =?us-ascii?Q?3GHeF3o0pqn/kXIyOR9Q4Xa9zeXASRBhWXeegYJXKlKQu3BVRg5YYPOHBPId?=
- =?us-ascii?Q?Ft2gwr59djBB0sxfYDKNth5HCOBZQnoWV/wctXapOHyg9UbiJpZKFlNHbWYG?=
- =?us-ascii?Q?kfNrNoUQVIpdHhlcWbJqZCTM1J+D0pV49nPxWIpgXXlg7oD3ePIhSzTjkKpv?=
- =?us-ascii?Q?3D92eImVj11VyMVVpLXkKIjrOfsW1JWEr+3ypS99CSXviaYnV4U0Rw/VNxnt?=
- =?us-ascii?Q?6s4w/6fu2iY2Me7VNhqaEctwAAZU+UrEpJATfPPaIopaMwF1vm2LVRwyevbk?=
- =?us-ascii?Q?60GfaG7nPDkbTUHlmJBrJKVmZJAnzk6NtO0FeJA792c9FT/8pQSPOYarNMg7?=
- =?us-ascii?Q?KYK5NZZKy8NlanmOlxQQ7HgbeFswOTcqn0txIMCzQNwW8wJ9Y+fZx7kTDQfp?=
- =?us-ascii?Q?pCRg0+C2QKhLlRGcguoNKp9TLbK2D2GFKWGlijuxlohbYHxDoIEb2iGpbwlj?=
- =?us-ascii?Q?2ig06JOeAupbDRJcAW/anpZAKWwumFIII4C9DMsRpwd/gjUGpqf4J9OFYYw2?=
- =?us-ascii?Q?cYc6VHK2+eAm71PKUT3hCdyeCCd8NlW2WeUMvR2FcQkfxscrzofI0p6g7iHZ?=
- =?us-ascii?Q?YVCADGFi4Dq+avMnft0ZBYT73Ozz/6/vo0a7SqcTbmonLi7XN8tJUvOPSwcV?=
- =?us-ascii?Q?Hn2R9QQIficiYYTaUpIj3iukJh1832jPy8v6M3yultFHkGJagl8bql5jqnHu?=
- =?us-ascii?Q?LTMWpUZBASQcKe9OgSl+biud09h1dFIJGvANeSSBqaFxM+4TR9NVefb/AYRj?=
- =?us-ascii?Q?UW/o1hvjpDJOWWam9ra4X3u2tkELLxNGld85fr1NRkKaLa/rmrkckpYY/VgV?=
- =?us-ascii?Q?WNKGkM1C0qqlea3Nut2rPmQXoTIDt+DqoCmaBYYzmjc7AdXa6z/Scgoallxd?=
- =?us-ascii?Q?TfzwVMyOUz7/7h6wx26XB5a9h226XN5IykuaW42M8cAbSbK9cpUco+9XXOoM?=
- =?us-ascii?Q?/RRONuzWig92FYir5ZHo42PJWV4BkvIPJmxVcStWp1N920kkXvntrcPAnxmg?=
- =?us-ascii?Q?ASEDZGeFVO224MCPFgkSXBw0y9TB/X1nEKXMZaRlUYACA8FOsol6UceSJ2co?=
- =?us-ascii?Q?s4b6xGk9tQx7x4NxrVEVo5b40zvk9oXmXVGU/50+?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d249b60-b426-4d93-8399-08dca27ee568
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3108.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 14:28:28.0626
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ke/fygVCJwD+aeTLrEpGb19TfvjLsq8fKV8xp2ciA31XEw7HXnAG3KLZ7kUHO78vHNza+pmxZ3O6LAUgF+nQMQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4156
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 01, 2024 at 09:07:04PM +0200, Borislav Petkov wrote:
-> On Mon, Jul 01, 2024 at 01:51:42PM -0400, Yazen Ghannam wrote:
-> > X86_LOCAL_APIC depends on the logical OR of a bunch of options. So it
-> > depends on "any one" of the options to be enabled. But it doesn't need
-> > all of them.
-> 
-> Yes, I can see that.
-> 
-> How does any of that info answer your initial question?
-> 
-> IOW, if you don't have LAPIC support in the kernel, what CPU number should we
-> return for any APIC ID serving as input, and why?
->
+Virtio spec has so far only supported MSI-X and INTX for receiving the
+interrupts from the virtio device on PCI transport. But this becomes a
+limiting factor for devices supporting only MSI (plus INTX emulation) as
+they have to use the legacy INTX emulation which is limited to one IRQ per
+PCIe function.
 
-I still think it should return an error code, because theoretically
-LAPIC can be disabled and SMP can be enabled.
+But this now addressed with the help of a proposal to the Virtio spec
+adding MSI support [1]. Based on that, let's implement MSI support in the
+virtio-pci driver.
 
-But I spent some time trying to see if this would work in practice, and
-it looks like you can't disable X86_LOCAL_APIC without hitting a bunch
-of build errors on x86_64. It seems like a lot of common APIC and SMP
-code implicitly depends on X86_LOCAL_APIC. This was true even for a tiny
-config. However, this worked for an i386 build (with SMP=n).
+The Virtio spec proposal reuses the existing MSI-X infrastructure, like the
+config_msix_vector/queue_msix_vector fields of the Virito common config
+structure. Following that, MSI support in virtio-pci driver is also added
+on top of the existing MSI-X implementation and it mostly reuses the MSI-X
+code base. The existing vp_find_vqs_msix() API is modified to support MSI
+along with MSI-X.
 
-I think the most practical option is to keep the local search routine in
-mce/apei. I don't think all the additional complexity is worth it for a
-simple for-loop.
+The preference for interrupt allocation is still given to MSI-X as per the
+spec. The driver will try to allocate MSI only if both of the MSI-X
+allocations (one vector for each queue and 2 vectors) fails. As like MSI-X,
+driver will try to allocate one MSI vector for each queue first, and if
+that fails, it will try to allocate 2 vectors (one for config queue and one
+shared for queues). If both of them fails, driver will fallback to the
+legacy INTX as usual.
 
-Regarding the X86_LOCAL_APIC=n build issues, should these be
-investigated?
+For keeping the changes minimal, existing 'virtio_pci_device::msix_enabled'
+flag is used to indicate the status of MSI and MSI-X. Rest of the MSI-X
+functionalities such as IRQ affinity are also reused for MSI (but the
+affinity setting really depends on the underlying IRQCHIP controller).
 
-Thanks,
-Yazen
+[1] https://lore.kernel.org/virtio-comment/20240712140144.12066-1-manivannan.sadhasivam@linaro.org/
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/virtio/virtio_pci_common.c | 24 ++++++++++++++++++------
+ drivers/virtio/virtio_pci_common.h |  2 +-
+ 2 files changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+index f6b0b00e4599..6f80b0c46c5f 100644
+--- a/drivers/virtio/virtio_pci_common.c
++++ b/drivers/virtio/virtio_pci_common.c
+@@ -100,11 +100,11 @@ static irqreturn_t vp_interrupt(int irq, void *opaque)
+ }
+ 
+ static int vp_request_msix_vectors(struct virtio_device *vdev, int nvectors,
+-				   bool per_vq_vectors, struct irq_affinity *desc)
++				   bool per_vq_vectors, struct irq_affinity *desc,
++				   unsigned int flags)
+ {
+ 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+ 	const char *name = dev_name(&vp_dev->vdev.dev);
+-	unsigned int flags = PCI_IRQ_MSIX;
+ 	unsigned int i, v;
+ 	int err = -ENOMEM;
+ 
+@@ -288,7 +288,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
+ 		struct virtqueue *vqs[], vq_callback_t *callbacks[],
+ 		const char * const names[], bool per_vq_vectors,
+ 		const bool *ctx,
+-		struct irq_affinity *desc)
++		struct irq_affinity *desc, unsigned int flags)
+ {
+ 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+ 	u16 msix_vec;
+@@ -310,7 +310,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
+ 	}
+ 
+ 	err = vp_request_msix_vectors(vdev, nvectors, per_vq_vectors,
+-				      per_vq_vectors ? desc : NULL);
++				      per_vq_vectors ? desc : NULL, flags);
+ 	if (err)
+ 		goto error_find;
+ 
+@@ -407,11 +407,23 @@ int vp_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
+ 	int err;
+ 
+ 	/* Try MSI-X with one vector per queue. */
+-	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, true, ctx, desc);
++	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, true, ctx,
++			       desc, PCI_IRQ_MSIX);
+ 	if (!err)
+ 		return 0;
+ 	/* Fallback: MSI-X with one vector for config, one shared for queues. */
+-	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, false, ctx, desc);
++	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, false, ctx,
++			       desc, PCI_IRQ_MSIX);
++	if (!err)
++		return 0;
++	/* Try MSI with one vector per queue. */
++	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, true, ctx,
++			       desc, PCI_IRQ_MSI);
++	if (!err)
++		return 0;
++	/* Fallback: MSI with one vector for config, one shared for queues. */
++	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, false, ctx,
++			       desc, PCI_IRQ_MSI);
+ 	if (!err)
+ 		return 0;
+ 	/* Is there an interrupt? If not give up. */
+diff --git a/drivers/virtio/virtio_pci_common.h b/drivers/virtio/virtio_pci_common.h
+index 7fef52bee455..a5062ca85f3b 100644
+--- a/drivers/virtio/virtio_pci_common.h
++++ b/drivers/virtio/virtio_pci_common.h
+@@ -77,7 +77,7 @@ struct virtio_pci_device {
+ 
+ 	struct virtio_pci_admin_vq admin_vq;
+ 
+-	/* MSI-X support */
++	/* MSI/MSI-X support */
+ 	int msix_enabled;
+ 	int intx_enabled;
+ 	cpumask_var_t *msix_affinity_masks;
+-- 
+2.25.1
+
 
