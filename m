@@ -1,169 +1,224 @@
-Return-Path: <linux-kernel+bounces-251175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05883930189
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A92FA930191
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2D61F242C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:21:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333F81F22A0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D074965E;
-	Fri, 12 Jul 2024 21:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26CE44AEDA;
+	Fri, 12 Jul 2024 21:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRujuvTb"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVaddDwa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7475481C4;
-	Fri, 12 Jul 2024 21:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512372F855;
+	Fri, 12 Jul 2024 21:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720819309; cv=none; b=g4RtsRZdQ9TylKXWFQlu1R3swA7JlUXlH8D1I16fhWJw2M9y11Xkz/fjCgrdA+/SPVzpAuAm9J8nlHx5dO4bOLwLg4HfZ7GWZSv8IZuLmosj6gucsgEDBljbFV1xqPla6jEA5x5luV4G6aT08/7RKDuPJ3Vhfn91+csvuOzBwlM=
+	t=1720819558; cv=none; b=OI6k/QzQKPWD7ON/zewntg36M3+kXt4JVb6ISRf1MMfLZ2XGvxzMXFvC5CcI5no/CG/TicdqzdzNKxMsGtcnG82JiKgCraD7cNd80yzVdPCUyMpRV/9NDz4V4ZFOKLDL+RrpYj5W8YFGbwp8Zyy4Dq0yzVThLVgxSdLpKFifjHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720819309; c=relaxed/simple;
-	bh=v+xXYnxlsAxleAOTA1ncvDt5Xi1Xg9rGIfFCOE4Ol2o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oGrYKJ/zCBdo7NOIt4Gxe6bt6RsMjPntBDHraW1CubvnpuqYnDuM9QSXCDVP2HDHcHQJKktdrWHSOc2V4y7Hxp85k34Fs8QRnJEg5ag6GGi1HR4sKsIpruzn809xjJpYDLPeLJvemxTygJyGrN0GqrVUWCRT4X7pfD+4w2sq43M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GRujuvTb; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2c2dee9d9cfso1868965a91.3;
-        Fri, 12 Jul 2024 14:21:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720819307; x=1721424107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y24z6qGDcPXhbPxvOoVUfJxIvbX7B5X90OmhrVqoPw4=;
-        b=GRujuvTbE++iVbpT/mLSbs9WtXpjfbCXLOribxL5+b9qGcAP5Oflz18mm+tX2bNclw
-         GLygEPoOiPL9GIBpgFr5QnHvdUROPl6hczaLMtyhe4kYqGLjfxX4nfzQ6OoXRfxgz0HG
-         3udOtvGA0XlJXm5IdYwNSgRDqyL9R5fu2GgFuZFvDTfJijOGZhh1GnLcsNRVJbDDUSkP
-         OWzVv5Oul/STXnWWiCgZmbx1DOxm9hexrX/ROHfig9aFgh7J0XNtZiiBlooGhSaRDSWO
-         m8Xja4KFJeXDqJKywuXQVi6C0TlAhGh+fLncJ48ZwUeM2C6A8m6/SX2hc9mumfOZ9iFa
-         iN2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720819307; x=1721424107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y24z6qGDcPXhbPxvOoVUfJxIvbX7B5X90OmhrVqoPw4=;
-        b=Ssi1osDlKPaJV2nmIRfsYyrhdVboqu9qNz1mI8o/7q9ZfhiFrxTpqa1+DaIuhSwojM
-         xIezsoinZ5WEp4VlFJAHFPfMhNbKzJQrSujtW5bfr230kNxl6CwBMIN80FMu73twrNKc
-         KAbF4VPNsF0m9FLFWvBbpb9Y0mV6DhgWgWJ08Si0JwIi1gX7FV9OJX5H0b0bvj2v8xJp
-         RxcZTyyLsRyAbi7U9bxnLT/fFjm5VEbuLd7Gn6sj3UBHfPb7q324AHau9h8f2mp3wcQ6
-         qmT3D4DLQk704QEHqBdOBmy/IBs/W108dWpmYY0ZVBWCXBxKlao6qyltdg+rfhA6XQnr
-         TLxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqeDP+ytK99n56H8ErjQ+EwpLMHy/0mhITNxx01slgJOo9zStY9XNblAajjMBRkCQsCNR8S6bUboq+uZ6nvrY4n1YmSiZQrYuj+tQrnDNVN6f+zhOorwSlZmeqteROi+pioCtUId1flzN+AFzd4S+0CcXji6SWiYb+9YzxQMfIoqWP9Lan
-X-Gm-Message-State: AOJu0YwqST441PxbYtQcLYGcBD5fPwdy2xzj8lnzzD5P3l1HP9pawLbF
-	Kzfjxg9t9foy3lRnlNwfSkkpiGx9vcaucbTyk1Cmij78TPD310iHiJunVh60T8GKABqtJk5ngXL
-	84hTQiD+zXKMAdH9uH4rt/lzxHh8=
-X-Google-Smtp-Source: AGHT+IHxt/alBNukSln4XzuPDvUKYqFRc6yKjlD0M68iVlDQJwJsU+oEfZZVlVTmJDE/w0RwnJS7ML9pcS/f8E6jmpA=
-X-Received: by 2002:a17:90b:4f4b:b0:2ca:7f1f:9ae5 with SMTP id
- 98e67ed59e1d1-2ca7f1fa19emr6760289a91.19.1720819307246; Fri, 12 Jul 2024
- 14:21:47 -0700 (PDT)
+	s=arc-20240116; t=1720819558; c=relaxed/simple;
+	bh=TJOTVL8Qfjld2mG1BrVlr/IK8zvwxsJT6xvBzh3OQ/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjtLf0+WFQmqie7PZYFYhcoaBfyOGGluLBJpZkaaI+5t+wcFuWNcT0qvEMVmRfs/RBFEqyYXDbifNR7E9VGTeHktGf/0b76EcgzdRhXTj+HrJwdiAfUg1hY0twX/IKfG4PGYqbLyeskfZnqq9v9BdWDOnLJLgifd8KxCMzUiZNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVaddDwa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 588E3C32782;
+	Fri, 12 Jul 2024 21:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720819557;
+	bh=TJOTVL8Qfjld2mG1BrVlr/IK8zvwxsJT6xvBzh3OQ/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kVaddDwayhtho980xcTLCPM+IcoipB/HxJc34yFg49mOhSljtR+h1kGgMkjuVqOlG
+	 /azB/8GRDZ6SBvvhplfAAwk2PUciRUmDkkOOhQPQV/G+mUMGDQiYot3fxM0HiG18rv
+	 U0u4yaDaAQf8DAuQkN0KtyKgtvoRIOjxbH1nmEXlLwJ69Ifkmqoa31XS5HYF5P0vwv
+	 CmYuEJKkTNpj4r1ArVuuXHWg91hk/ot7iZk/+eoFOqzTd8AbbDr9WWV5zYJQUS0qI1
+	 l+gsJgkWYBRxinOhE9aX5n5cwszSGlUfTueG7p25O60sDL9VykDmLwbLnrjZYfI+AI
+	 uloarlLX0IMow==
+Date: Fri, 12 Jul 2024 16:25:53 -0500
+From: Namhyung Kim <namhyung@kernel.org>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+	irogers@google.com, segher@kernel.crashing.org,
+	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
+	disgoel@linux.vnet.ibm.com
+Subject: Re: [PATCH V6 17/18] tools/perf: Update data_type_cmp and
+ sort__typeoff_sort function to include var_name in comparison
+Message-ID: <ZpGfYVc_ewcsQxWL@google.com>
+References: <20240707144419.92510-1-atrajeev@linux.vnet.ibm.com>
+ <20240707144419.92510-18-atrajeev@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711110235.098009979@infradead.org> <20240711110401.096506262@infradead.org>
-In-Reply-To: <20240711110401.096506262@infradead.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 12 Jul 2024 14:21:34 -0700
-Message-ID: <CAEf4BzazYsP9uDJfwJJRP6wscgDo8tJpK2vp7eAWS2ca_KQvsA@mail.gmail.com>
-Subject: Re: [PATCH v2 08/11] perf/uprobe: Convert (some) uprobe->refcount to SRCU
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com, 
-	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240707144419.92510-18-atrajeev@linux.vnet.ibm.com>
 
-+ bpf
+On Sun, Jul 07, 2024 at 08:14:18PM +0530, Athira Rajeev wrote:
+> Currently data_type_cmp() only compares size and type name.
+> But in cases where the type name of two data type entries
+> is same, but var_name is different, the comparison can't distinguish
+> two different types.
+> 
+> Consider there is a "long unsigned int" with var_name as "X" and there
+> is global variable "long unsigned int". Currently since
+> data_type_cmp uses only type_name for comparison ( "long unsigned int"),
+> it won't distinguish these as separate entries. Update the
 
-On Thu, Jul 11, 2024 at 4:07=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> With handle_swbp() hitting concurrently on (all) CPUs, potentially on
-> the same uprobe, the uprobe->refcount can get *very* hot. Move the
-> struct uprobe lifetime into uprobes_srcu such that it covers both the
-> uprobe and the uprobe->consumers list.
->
-> With this, handle_swbp() can use a single large SRCU critical section
-> to avoid taking a refcount on the uprobe for it's duration.
->
-> Notably, the single-step and uretprobe paths need a reference that
-> leaves handle_swbp() and will, for now, still use ->refcount.
->
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+I'm still not sure if it's ok.  It intentionally merges different
+instances of the same type together as it's a data 'type' profile.
+
+
+> functions "data_type_cmp" as well as "sort__typeoff_sort" to
+> compare variable names after type name if it exists.
+> 
+> Also updated "hist_entry__typeoff_snprintf" to print var_name if
+> it is set. With the changes,
+> 
+>      11.42%  long unsigned int  long unsigned int +0 (current_stack_pointer)
+>      4.68%  struct paca_struct  struct paca_struct +2312 (__current)
+>      4.57%  struct paca_struct  struct paca_struct +2354 (irq_soft_mask)
+>      2.69%  struct paca_struct  struct paca_struct +2808 (canary)
+>      2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
+>      2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
+>      1.43%  long unsigned int  long unsigned int +0 (no field)
+
+It seems like an output of `perf report -s type,typeoff`.  But I'm
+curious how it'd work with -s type only?  I guess it'd have two separate
+entries for 'long unsigned int'.  Ideally we can have a single entry
+with two different fields.
+
+For example, `perf report -s type,typeoff -H`:
+
+  12.85%     long unsigned int
+     11.42%     long unsigned int +0 (current_stack_pointer)
+      1.43%     long unsigned int +0 (no field)
+  ...
+
+> 
+> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
 > ---
->  kernel/events/uprobes.c |   68 ++++++++++++++++++++++++++++-------------=
--------
->  1 file changed, 41 insertions(+), 27 deletions(-)
->
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -51,7 +51,7 @@ static struct mutex uprobes_mmap_mutex[U
->  DEFINE_STATIC_PERCPU_RWSEM(dup_mmap_sem);
->
-
-[...]
-
-> @@ -1982,22 +1990,31 @@ pre_ssout(struct uprobe *uprobe, struct
->         if (!utask)
->                 return -ENOMEM;
->
-> +       utask->active_uprobe =3D try_get_uprobe(uprobe);
-> +       if (!utask->active_uprobe)
-> +               return -ESRCH;
-> +
->         xol_vaddr =3D xol_get_insn_slot(uprobe);
-> -       if (!xol_vaddr)
-> -               return -ENOMEM;
-> +       if (!xol_vaddr) {
-> +               err =3D -ENOMEM;
-> +               goto err_uprobe;
-> +       }
->
->         utask->xol_vaddr =3D xol_vaddr;
->         utask->vaddr =3D bp_vaddr;
->
->         err =3D arch_uprobe_pre_xol(&uprobe->arch, regs);
-> -       if (unlikely(err)) {
-> -               xol_free_insn_slot(current);
-
-let's keep this here, because you later remove err_uprobe part and
-err_xol is only jumped to from here; it's better to just drop err_xol
-and err_uprobe altogether and keep the original xol_free_insn_slot()
-here.
-
-> -               return err;
-> -       }
-> +       if (unlikely(err))
-> +               goto err_xol;
->
-> -       utask->active_uprobe =3D uprobe;
->         utask->state =3D UTASK_SSTEP;
->         return 0;
-> +
-> +err_xol:
-> +       xol_free_insn_slot(current);
-> +err_uprobe:
-> +       put_uprobe(utask->active_uprobe);
-
-utask->active_uprobe =3D NULL;
-
-let's not leave garbage in utask (even if you remove this later anyways)
-
-> +       return err;
+>  tools/perf/util/annotate-data.c | 24 ++++++++++++++++++++++--
+>  tools/perf/util/sort.c          | 23 +++++++++++++++++++++--
+>  2 files changed, 43 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+> index 8d05f3dbddf6..759c6a22e719 100644
+> --- a/tools/perf/util/annotate-data.c
+> +++ b/tools/perf/util/annotate-data.c
+> @@ -167,7 +167,7 @@ static void exit_type_state(struct type_state *state)
 >  }
->
+>  
 >  /*
+> - * Compare type name and size to maintain them in a tree.
+> + * Compare type name, var_name  and size to maintain them in a tree.
+>   * I'm not sure if DWARF would have information of a single type in many
+>   * different places (compilation units).  If not, it could compare the
+>   * offset of the type entry in the .debug_info section.
+> @@ -176,12 +176,32 @@ static int data_type_cmp(const void *_key, const struct rb_node *node)
+>  {
+>  	const struct annotated_data_type *key = _key;
+>  	struct annotated_data_type *type;
+> +	int64_t ret = 0;
+>  
+>  	type = rb_entry(node, struct annotated_data_type, node);
+>  
+>  	if (key->self.size != type->self.size)
+>  		return key->self.size - type->self.size;
+> -	return strcmp(key->self.type_name, type->self.type_name);
+> +
+> +	ret = strcmp(key->self.type_name, type->self.type_name);
+> +	if (ret) {
+> +		return ret;
+> +	}
 
-[...]
+No need for the parentheses.
+
+> +
+> +	/*
+> +	 * Compare var_name if it exists for key and type.
+> +	 * If both nodes doesn't have var_name, but one of
+> +	 * them has, return non-zero. This is to indicate nodes
+> +	 * are not the same if one has var_name, but other doesn't.
+> +	 */
+> +	if (key->self.var_name && type->self.var_name) {
+> +		ret = strcmp(key->self.var_name, type->self.var_name);
+> +		if (ret)
+> +			return ret;
+> +	} else if (key->self.var_name || type->self.var_name)
+> +		return 1;
+
+I think you need to compare the order properly like in cmp_null() in
+util/sort.c.  Please see below.
+
+> +
+> +	return ret;
+>  }
+>  
+>  static bool data_type_less(struct rb_node *node_a, const struct rb_node *node_b)
+> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+> index cd39ea972193..c6d885060ee7 100644
+> --- a/tools/perf/util/sort.c
+> +++ b/tools/perf/util/sort.c
+> @@ -2267,9 +2267,25 @@ sort__typeoff_sort(struct hist_entry *left, struct hist_entry *right)
+>  		right_type = right->mem_type;
+>  	}
+>  
+> +	/*
+> +	 * Compare type_name first. Next, ompare var_name if it exists
+> +	 * for left and right hist_entry. If both entries doesn't have
+> +	 * var_name, but one of them has, return non-zero. This is to
+> +	 * indicate entries are not the same if one has var_name, but the
+> +	 * other doesn't.
+> +	 * If type_name and var_name is same, use mem_type_off field.
+> +	 */
+>  	ret = strcmp(left_type->self.type_name, right_type->self.type_name);
+>  	if (ret)
+>  		return ret;
+> +
+> +	if (left_type->self.var_name && right_type->self.var_name) {
+> +		ret = strcmp(left_type->self.var_name, right_type->self.var_name);
+> +		if (ret)
+> +			return ret;
+> +	} else if (right_type->self.var_name || left_type->self.var_name)
+> +		return 1;
+
+	} else if (!left_type->self.var_name != !right_type->self.var_name)
+		return cmp_null(left_type->self.var_name, right_type->self.var_name);
+
+Thanks,
+Namhyung
+
+> +
+>  	return left->mem_type_off - right->mem_type_off;
+>  }
+>  
+> @@ -2305,9 +2321,12 @@ static int hist_entry__typeoff_snprintf(struct hist_entry *he, char *bf,
+>  	char buf[4096];
+>  
+>  	buf[0] = '\0';
+> -	if (list_empty(&he_type->self.children))
+> +	if (list_empty(&he_type->self.children)) {
+>  		snprintf(buf, sizeof(buf), "no field");
+> -	else
+> +		if (he_type->self.var_name)
+> +			strcpy(buf, he_type->self.var_name);
+> +
+> +	} else
+>  		fill_member_name(buf, sizeof(buf), &he_type->self,
+>  				 he->mem_type_off, true);
+>  	buf[4095] = '\0';
+> -- 
+> 2.43.0
+> 
 
