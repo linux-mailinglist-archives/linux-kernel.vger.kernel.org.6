@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-251141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 648F493011C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:53:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC0193011F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:53:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6517B21EE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:52:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EAB01F23914
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00353A8C0;
-	Fri, 12 Jul 2024 19:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DD03B1A4;
+	Fri, 12 Jul 2024 19:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Cix14nq6"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LVtLZ6G4"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC7C1B95B;
-	Fri, 12 Jul 2024 19:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC8F2C879
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 19:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720813968; cv=none; b=js0WxOWRtoSyMSZS6rzHAEOWGHD98bs6N8utLJWdtIhABgSA3FL7o3I9VdT5ZWA4GHk3JkUel+HvacpoWNluW8XV00vb5wmfklqtmsY2MmhSDsu+wDy8MygRvPD8Y5g0DdNuOHuUR3APnl3GLdbrf4ZOgdliPZ3caUd53vVRbLw=
+	t=1720814012; cv=none; b=oOZyHneccLHYNX8MC1B8Ef+dkmbSlLdney6pNYOHO+/VECU3Ac4adQXKoLkDGyDGZ1Xwx+5AZuSXVNCW2TMvvfxGg+m6t2OUjP8L07Z4X90C2b63zqHqjLpAdGeLP8IfEWH/85Gj2TaKi384t7VemE1g8Ot2UtvZ1O8ohfSmnhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720813968; c=relaxed/simple;
-	bh=4JpOdrHF9yVIaqkkjK73+x67qt6NLBvjC+qQbGZmaIs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=eFPlUDdr514e3dH9knHmUdvaOL09AvtJKBWz3eiX0QWii52uxULmW5Ap71nADtcD3CTRgjwPdTPqKUz2FPJlsbyW2UK6gSnLOQXpTRq9/t6a9W+x38HOwUMswA5B08xHHc1QkDM0ocZG3AM4zZ8dL1bMX2zgtW2eF97LFeLLMEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Cix14nq6; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720813935; x=1721418735; i=markus.elfring@web.de;
-	bh=fihKUc/kaj99ERsbRn7CbqhY5SiZXokiELceXjSmV9g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Cix14nq66GzkZtyXdh6PdQ52Vd+idDVTP8YUDE4w3KNJ/5XpTPwmTfRo1OcG1GU3
-	 uRp+mm8YCIgH817ZxwqVgDyixShkTULs2RhWwY/0EUyRMYQfvyihPfkKI/nM4xsyq
-	 0LyyVSH0oWGxWvSh/PAxstj/oiSaib1f/Uj6p7LuHuh1xToaq/dVH6IqufY+V+uxP
-	 ZbhC+R/M6/phWtkt/AsgjsN2eCICVpuPQLJnB9hmYXYSrhgLrh3CDW855UFD+LHGI
-	 ShfU29XWfeK33PAGdWA3I1Vr0eN0GCKf7CYW1GqvuGMeG7uxMpOE1aNVDVU/Ke04q
-	 Gm0UCGwgjViboTzmPA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiMEM-1rqIXZ3XXi-00bNg9; Fri, 12
- Jul 2024 21:52:15 +0200
-Message-ID: <fd40e1b9-cb76-4617-b699-19f1f580fe98@web.de>
-Date: Fri, 12 Jul 2024 21:52:14 +0200
+	s=arc-20240116; t=1720814012; c=relaxed/simple;
+	bh=StUJdV7TFg7NGKUMdDCwe2aGMaXQXh1UOAGwUqGnrkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I16vh9HKDLOfP8W8QiokfwSvFvzYjrTmCijXtsvho+eJJxgzsyFrSjZOYQRjyPdy1eJaXtQkqoazvb3rM6VEescekdATF2IzChnplmakl+/GeRJoNLp3SQ6WQZTwVWSThkWrqjFRD9Vp4DkT5dbyMze70X3Zyzzt5jOSJkB9NvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LVtLZ6G4; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so3109664a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:53:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720814009; x=1721418809; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CD9Gf2WFD/32n/g3oQVjierG/CJPtNZszx3tKsXb1rc=;
+        b=LVtLZ6G4KOHaaC2LmGk0n4LQn3QtScvHgY4BZzTL6DAMkIuldcqg+90wAJ7z20/YhS
+         nbo9bWT5LAKZMCgUo+yGgfvujb0xUgYwXjOaC5T6aN92PjXV2XfG7v4gUenRDTsDJSQa
+         KPSSMaZVRT31Y8rz/nEHH8W6SJ0e4iBzqcD3MvQOYmsapM8fRunpQeTW6BgBclLDv60T
+         pRjlDvLkSVJJ/oDLhBDCQKYNqRjJ1JzOBD5tzbjmTQEdnU6Xhq77ZSSz4AnDCLYJ6s67
+         c4WaQZwr4/+mVmAzrQQxnaEHhH7iRYT1cvNivH2ASTz7ruEEfqSYmwfRoyNMXjgkoYpt
+         27aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720814009; x=1721418809;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CD9Gf2WFD/32n/g3oQVjierG/CJPtNZszx3tKsXb1rc=;
+        b=eV1OG4nrJCv5JzWLpT1gmebIwkSzLVGAHFWeN7A79y/Z32xqNDouU8czC9xoaoPL2v
+         XXSmVIPJ6ZGvDae7n4lw3wUMH+cEhbE2lztdufk1gNtskY8WtUFmnQXHj8/u30u+2UCU
+         Kh/LCuuMQLaAWWTUlqgsUgJYt9lEl9AdNkVW1yh3z7KPjpCF93474i4SYvQlsY4XI4QZ
+         Qn/tMOM0t9UJhlQ9azrv/xFgVL9ZB0FxAaM8pisiVHguuNwF3jnwPp/ulqz2wRqehS6Z
+         Na5MJDNvjxOwu79LtzpIsM/3FFj2njm5ZuyTolgvGsXybUnC2cnu1LlLn3CxO4lEUfXa
+         exuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgtM/DvwH1Cf3XSD28mZH6wBFrWSmgJ1PFVRQb0OMGGUEjWwflBusNrl43mueZn+EfsmP5DAwZOKd97ANFEKBOLOtUMKYENNtbvn3A
+X-Gm-Message-State: AOJu0Yw0XiDqsqS7W9QsRuPP8BT/gyPzWwbFONjbqe40uHFWuQijVQXB
+	XprWwFYtj4BlWN3HUMtBteFf2zNVh1AKoxuVL/A9iHO2RZpyP5n7VAE/K/9eKSM=
+X-Google-Smtp-Source: AGHT+IGzHghaUPM+/bov9+aj6s70/HQdZmAWPCba2bpobclhNx22aZiNLnZzv0YAXaDzEBtl4s4OAA==
+X-Received: by 2002:a17:906:2650:b0:a6f:5698:ab5b with SMTP id a640c23a62f3a-a780b6882camr908158566b.8.1720814008716;
+        Fri, 12 Jul 2024 12:53:28 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a854592sm375063466b.146.2024.07.12.12.53.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 12:53:28 -0700 (PDT)
+Message-ID: <2146ca56-6c2c-48a3-8e77-75aa04cb2b4c@linaro.org>
+Date: Fri, 12 Jul 2024 21:53:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,68 +76,190 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Geetha sowjanya <gakula@marvell.com>, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Hariprasad Kelam <hkelam@marvell.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
- Sunil Goutham <sgoutham@marvell.com>
-References: <20240712175520.7013-6-gakula@marvell.com>
-Subject: Re: [net-next PATCH v9 05/11] octeontx2-af: Add packet path between
- representor and VF
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240712175520.7013-6-gakula@marvell.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: msm8939-wingtech-wt82918: Add
+ Lenovo Vibe K5 devices
+To: Nikita Travkin <nikita@trvn.ru>, Bjorn Andersson <andersson@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ =?UTF-8?B?QWRhbSBTxYJhYm/FhA==?= <asaillen@protonmail.com>
+References: <20240712-msm89xx-wingtech-init-v1-0-64f4aa1870bd@trvn.ru>
+ <20240712-msm89xx-wingtech-init-v1-3-64f4aa1870bd@trvn.ru>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240712-msm89xx-wingtech-init-v1-3-64f4aa1870bd@trvn.ru>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UVFUEjtxhb49QRh8eHS0Pk5+rTIm5E+GbTko8+MUbvbEXPGzkIO
- prHH1DXI4rcdARZlEnnhECgPI6owbmhRPyOzQoCdMOODNxpgI74N7jCQM8EQ315eLwoSajH
- yz8LbzdzY9gM2TR5FEl1Lr2lMcKajZ6NCPYLM23d1pdEJNTxdpe/Q94TyF6EWm5YuN5GzP5
- iX6MdXblpoPRSti7E/zMw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9yQUEHdKTxw=;PL8fLEJFKJrcIdKxT2nkYBU/gwa
- 5sagHM9rfCKc8r8nDtUMv8jh3W8tSYC40LrEpd5hjt7CWZbLbIMvIAtGLWoy6ujY3SUQLz85F
- s++duNiRt8LOkLyQWLFUU6ZNOjTfXUoigUcpwjgH5UVC4j6r7+NJX/282ZvkTy23J8CiHVdGG
- OoIPUn0GMbauo2iPtT8HjSkTyjR94a4xzI9UEUPGg2Ahl7ZBEMRBkD+OWqsm766zW27Mt07mj
- nYNGK7fBd8+1crqJhpvomD1ixEC9gIkUcAfueMW+sUIS5Fms782iTX/Y0ko7lCijW/MTqTCMX
- VU/KdnWHt9O0zcuQvgV8Wg7LQhgHpzG14a5Ah9ALR9hW8SWksEq9gc0bj77RqBgTqqJuqsJ7d
- U33XertiyKhpd77reZKPltfpmJjIrc+zsNFpQYToOACN4O8HPV39NrgGkqXHEjyhDkcBFOpro
- yawQBAP2jdjftcqxCyQTCpzU0zc5dliAf4s9yzseXb2Dww/dNEPL6qR4G5Su283jFnfTYT+SB
- v36k7PX20CZe9txgUb4HCtZsxNhSAhNiRYxAABV7f/9vSv3r6Y0h9C5vADrp9TiFn6C/EGVsI
- yAo5NtEfS+JbxiCqnE6fL6c1UHxnI+2z+GkbAfV2XRu42BzXvkS0BHkvzJDRN/CEeNTeVbOJ4
- gCg7T0t3YY37zPRGI7wjODl2Yh1J0I0EO0athtbhnepUutdFCys4tFF+75OechXhumyHi5Tk2
- UgeJddfbeMqSevDuYXjjVgejP8Oa1Jym5jZ/vcqNcSevZolhIRJ1sp91HNQPMlAsnNjE9jheX
- U7KbRMKOb84wa4qbXkXdf9Aw==
+Content-Transfer-Encoding: 8bit
 
-> Current HW, do not support in-built switch which will forward pkts
-=E2=80=A6
-              does?          built-in?
+On 12.07.2024 6:04 PM, Nikita Travkin wrote:
+> From: Adam Słaboń <asaillen@protonmail.com>
+> 
+> This commit introduces multiple hardware variants of Lenovo Vibe K5.
+> 
+> - A6020a40 (msm8929-wingtech-wt82918hd)
+> - A6020a46/A6020l36 (msm8939-wingtech-wt82918)
+> - A6020a40 S616 H39 (msm8939-wingtech-wt82918hd)
+> 
+> These devices are added with support for many features, notably:
+> 
+> - Basic features like USB, mmc/sd storage, wifi, buttons, leds;
+> - Accelerometer;
+> - Touchscreen;
+> - Sound and modem.
+> 
+> Note that "HD" variant of K5 is based on msm8929 which is a lower bin
+> of msm8939 SoC. A simple dtsi is added for this soc along with the new
+> devices.
+> 
+> Unfortunately, despite the heavy similarities, the combination of minor
+> differences between variants make them incompatible between each other.
+> 
+> Signed-off-by: Adam Słaboń <asaillen@protonmail.com>
+> [Nikita: Minor cleanup, commit message]
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile                  |   3 +
+>  .../boot/dts/qcom/msm8929-wingtech-wt82918hd.dts   |  17 ++
+>  arch/arm64/boot/dts/qcom/msm8929.dtsi              |   5 +
+>  .../boot/dts/qcom/msm8939-wingtech-wt82918.dts     |  16 ++
+>  .../boot/dts/qcom/msm8939-wingtech-wt82918.dtsi    | 254 +++++++++++++++++++++
+>  .../boot/dts/qcom/msm8939-wingtech-wt82918hd.dts   |  16 ++
+>  6 files changed, 311 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index fd4c7c41ddc4..48ec781fa1d8 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -58,10 +58,13 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt86518.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt86528.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt88047.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-yiming-uz801v3.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= msm8929-wingtech-wt82918hd.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-huawei-kiwi.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-longcheer-l9100.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-samsung-a7.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-sony-xperia-kanuti-tulip.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-wingtech-wt82918.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-wingtech-wt82918hd.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-motorola-potter.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-xiaomi-daisy.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-xiaomi-mido.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/msm8929-wingtech-wt82918hd.dts b/arch/arm64/boot/dts/qcom/msm8929-wingtech-wt82918hd.dts
+> new file mode 100644
+> index 000000000000..f9a358e852f8
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/msm8929-wingtech-wt82918hd.dts
+> @@ -0,0 +1,17 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +/dts-v1/;
+> +
+> +#include "msm8939-wingtech-wt82918.dtsi"
+> +#include "msm8929.dtsi"
+> +
+> +/ {
+> +	model = "Lenovo Vibe K5 (HD) (Wingtech WT82918)";
+> +	compatible = "wingtech,wt82918hd", "qcom,msm8929";
+> +	chassis-type = "handset";
+> +};
+> +
+> +&touchscreen {
+> +	touchscreen-size-x = <720>;
+> +	touchscreen-size-y = <1280>;
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/msm8929.dtsi b/arch/arm64/boot/dts/qcom/msm8929.dtsi
+> new file mode 100644
+> index 000000000000..c3d1d1ace2f6
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/msm8929.dtsi
+> @@ -0,0 +1,5 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +&opp_table {
 
-How do you think about to avoid any abbreviations for another improved cha=
-nge description?
+No way somebody called the gpu opp table "opp table"..
 
+> +	/delete-node/ opp-550000000;
 
-=E2=80=A6
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
-=E2=80=A6
-> +void rvu_rep_update_rules(struct rvu *rvu, u16 pcifunc, bool ena)
-> +{
-=E2=80=A6
-> +	rvu_switch_enable_lbk_link(rvu, pcifunc, ena);
-> +	mutex_lock(&mcam->lock);
-> +	for (entry =3D 0; entry < max; entry++) {
-=E2=80=A6
-> +	}
-> +	mutex_unlock(&mcam->lock);
-> +}
-=E2=80=A6
+Looking at downstream, seems like there isn't a speedbin fuse for
+this :(
 
-Under which circumstances would you become interested to apply a construct
-like =E2=80=9Cscoped_guard(mutex, &mcam->lock)=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.10-rc7/source/include/linux/cleanup.h#=
-L137
+[...]
 
-Regards,
-Markus
+> +
+> +&blsp_i2c2 {
+> +	status = "okay";
+> +
+> +	accelerometer@68 {
+> +		compatible = "invensense,icm20608";
+> +		reg = <0x68>;
+> +
+> +		pinctrl-0 = <&accelerometer_default>;
+> +		pinctrl-names = "default";
+
+interesting choice to stick pintrl before interrupts
+
+> +
+> +		interrupts-extended = <&tlmm 115 IRQ_TYPE_EDGE_FALLING>;
+> +
+> +		vdd-supply = <&pm8916_l17>;
+> +		vddio-supply = <&pm8916_l6>;
+> +
+> +		mount-matrix = "-1", "0", "0",
+> +				"0", "1", "0",
+> +				"0", "0", "1";
+> +	};
+> +};
+
+[...]
+
+> +&pm8916_mpps {
+> +	pwm_out: mpp4-state {
+> +		pins = "mpp4";
+> +		function = "digital";
+> +		power-source = <PM8916_MPP_VPH>;
+> +		output-low;
+> +		qcom,dtest = <1>;
+
+I think you meant qcom,dtest-output
+
+looks good otherwise
+
+Konrad
 
