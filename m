@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-250786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3DB92FCD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:45:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C2992FCD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39405283F37
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:45:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062FE1C210BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:46:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B1F172BCC;
-	Fri, 12 Jul 2024 14:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59D3171650;
+	Fri, 12 Jul 2024 14:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="synOcHlc"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DOQoBHpE"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE98172791
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675F615ECE2
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720795504; cv=none; b=Mez7O97GF/ovT+CnDSp8v0k2MP+s4BfEyK5LMVL+YKSVJALxU6EZoAPv7vpQ39Y3JQP40+JubI+q8cs40czC7RVG2Iv8kLHucRqeWxZVKAwlSESSCk/UONeuWnbZ15TODQkMFUaBR/2SF7UJaMAgIiXYwcMwvqtXLLbWjagcbpk=
+	t=1720795557; cv=none; b=LwT1DlN5iuq4F2tixqeRpl3CnKzj0+dYpJpgGidz/ykq6uFuRi4LbIWJUAfPTOQyOyL86RYw2+PyCzudVCpe/EA7KJIv/gbx18TpzxsCnKxtPNmGRYYnZhVrIOhe/NYvIT362HIf6w6EgOgGsfk/Ama097l2VRPoqbhkc8EC544=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720795504; c=relaxed/simple;
-	bh=+YtTtxGbBziQHCzvi1efpwobTUyygckgfzKma2ANla0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n4Rbf3+XJNRN8vHrLL/MCwUfkBJ1Z64vRTR4w1Ms10hu5EEZG742R9OyocZTIBdg0kEmiZNY0umM2XaXUoJRD/6xq0GkOrBE0UwtjtsooWym664ZrWpcIFGp9hOdq2oP6+EXXL2SgIUUi74YgruUdcFNiH/jV10vGJdxkQmKOjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=synOcHlc; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52ea33671ffso2157544e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:45:01 -0700 (PDT)
+	s=arc-20240116; t=1720795557; c=relaxed/simple;
+	bh=23GKNyE9PLGr6YAiYTbtJm8q7GT6UoIX+SmnMPRgnhM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rXRwXNOxmYvze7eJT5eeGM0gR/HGe8Hxr+oLzREf3WjvRnkvYH2f10sj9xHoRQVpuA2/d/jTIgyeQQ8BGiHw2f+nQq+jj0U7Kvn4wArcmIJuuh4JlVfXGw76kHczAYe/E9mFILOlTDqkH4Z4Tn2JHtml1Gt05cEOzhbOQwJuRnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DOQoBHpE; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-36798779d75so1880370f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:45:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720795500; x=1721400300; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720795553; x=1721400353; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DHPNyb/tJ1VWWeymMmdH4zoCwAXbQXpyF4Qjg1xHg1Q=;
-        b=synOcHlcnT58Lgj4kLkkPAwdqnEZ4+c14qb0s41H+Pw7yVE9NqGUy+KFyNhvQcL/UD
-         UHPTUSulAcv262xIu6NzRmk2ypx8jYUhYuTtunWAiLoRfNn6D5mXOSyC4odSpJtMUMnn
-         qCGbi+FBQJALGpa4tzUeJ3lXvmUQFMiP2sHHCgZ3lwNAbv/4ZWRaeJnynHAyighvx+/T
-         0t2tlPYT/9AaLFSfyofXfilRaOnP+2t+HzQZsTDj/OuO3AGFoVQCSdaxIYRyV/DFMdof
-         PSlr9UR8I01QA9cQae/Rf09iKNG2z3/8uKiByWqSjRHD/Hc4gohUjgFdSmoNRilK+plU
-         yd+Q==
+        bh=r7DJWJIBnnLN7/m2qPdHFhTG1iO/GpmbvrntFpTu3ic=;
+        b=DOQoBHpEX5SP4KiB0pKAbKTrkLhOfxC5SeKlk7mWT1zTgv20XVMeCC6go4O4oSBqm6
+         uLSGbyS7fzmsf6vW62jy72UovOV+ORXq2wiQxgwaVZZtEO/q8L8+/6UDGAOPTKZYtOzS
+         N8E6r4bYeCddarkfPBAi1JK4WQtExdxECHmHx1oKF+uumcOqSucH7/FubZtlgVvyoEnD
+         4tqaUW010/xVnPMYWtD5la1sOYdVaX8OQ04O1P/pF0mgjy9Y+IASOqCGKFf+w5Xn5e8Z
+         /sCb3q1pXM7xi9/XIUj8iRAEo9ZBceiwMm3PhP5n3ctXchmQmUmLz1sjyQhtG62jKxLU
+         imdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720795500; x=1721400300;
+        d=1e100.net; s=20230601; t=1720795553; x=1721400353;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DHPNyb/tJ1VWWeymMmdH4zoCwAXbQXpyF4Qjg1xHg1Q=;
-        b=PxT12B88H9wSchJn8Z508Xh6PJfLf3UFSIiErNLX65Pfnx2ZGPTfyt81LjNuEiq3GK
-         /RgLDe27+PMWi2/RDsrSLEVwVNkd6kruFXfkUxeK9kr7R0dayK8TN5gSHHxtUJFvrWwa
-         GB7H2Xm5pRDy+kh87UThyXnADDatBHOiYN4Bw7t72V3IRNtAxqMPCAsSFVUaN+IATUtq
-         M4aMRYUsnW4wJX6wL9uqMkNIdHAPchSZ150lAY0yzPnfLcqNT5sOdLcRZbmwK/PBkREw
-         bNh2bp3jXrJ3aBwpbR6w1lIMJdRmsCUGa8RYBkR5MEMNsy4szlYRjfHqibSgTAdLcTu2
-         LbNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXWtiHIIlcYk/Dc0qya89u6tD2XhLbEQEl4WmlY0R2PtpvFfSsTO7heGwezXbI4xeZ3+SYNHuUlW6ZFUWole2ndrXcZn6za1aaTPu0
-X-Gm-Message-State: AOJu0Yzk44oExTqgf+LsdUkscs8h6hjPcjHrbM3Ow2LGcR0qE5dlEygF
-	j/FCm/gvJ0uc4AygM05nqlBrDkrj/MXl1gVtN8mioxVTymyJUXpoElChIrHKk1s=
-X-Google-Smtp-Source: AGHT+IGzE/OcadTjDAGe2TP8Cuo9c94sqsqcU4eLkqtdPUECgrzsl+GfWxtdin0klh12Cy8BNzpK3Q==
-X-Received: by 2002:ac2:46e5:0:b0:52e:7684:a385 with SMTP id 2adb3069b0e04-52eb99d3265mr6232252e87.52.1720795499568;
-        Fri, 12 Jul 2024 07:44:59 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb906e739sm1293862e87.252.2024.07.12.07.44.58
+        bh=r7DJWJIBnnLN7/m2qPdHFhTG1iO/GpmbvrntFpTu3ic=;
+        b=YeBb80p3x/9Za1RUAiRQpxaFPGAqLGZVIX5+tfQlkcXJDcH8ssY5vPTe0gAZchHswn
+         5efXyJ82FN5a5C2rya+ZUhiOrRNqZ4OnCmgrwz9wt/Dai2GizPZB29nKWXweQQaZp3/J
+         IajoJGNVNzkiKc/DWQXgqdY4Mbako08sj0IQkryMSgt3g04/AKFl+stk435D61GuqxkS
+         uE/7uy0mutp057GhRRBATtRCEd1WYWjS8dGN621kl5ezUWeQVB7XdclXV1wqPXSIp0Zl
+         LzjM4aWrMHC95X9vluGJVWvObGmkhVf0KHp3GkYTUUudiEdXs2+9AAvBN4bU/Wn7vvqZ
+         YFOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXe/e9r6wZmZDikkAnkO7l2Cl/xKXmxo10oLkL2WE0QJoSluAVfjkRYElOtXfov+h2wFbztGhByaU5o8e0E6o+imTngYHOi6qsnSwS/
+X-Gm-Message-State: AOJu0YxBvpyOwJmm80zHZhnvsOhuHmBo9FNu1fQ+HJK8OJq9s3QS79sr
+	XZ4s4ouqpRKG2bSCbbC7l1I6vrXjFD/MR2J8qAIO5YGCAxjtKYFGXG0wnZsf7yI=
+X-Google-Smtp-Source: AGHT+IE/Bg/DxrK0231HQRehavFFx39v8TMrRX01cM7LMiVJJoDkf8F0um2u6yjqf0Pd+5Vl6oos9Q==
+X-Received: by 2002:adf:eac9:0:b0:367:9511:b612 with SMTP id ffacd0b85a97d-367ceadc704mr9958447f8f.61.1720795553543;
+        Fri, 12 Jul 2024 07:45:53 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ac5f:fcfa:c856:a4d9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab106sm10362309f8f.103.2024.07.12.07.45.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:44:59 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v6.10-rc8
-Date: Fri, 12 Jul 2024 16:44:57 +0200
-Message-Id: <20240712144457.169093-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Fri, 12 Jul 2024 07:45:53 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] power: sequencing: fix NULL-pointer dereference in error path
+Date: Fri, 12 Jul 2024 16:45:46 +0200
+Message-ID: <20240712144546.222119-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,42 +82,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Here's a PR with a couple of MMC fixes intended for v6.10-rc8. Details about the
-highlights are as usual found in the signed tag.
+We may call pwrseq_target_free() on a target without the final unit
+assigned yet. In this case pwrseq_unit_put() will dereference
+a NULL-pointer. Add a check to the latter function.
 
-Please pull this in!
+Fixes: 249ebf3f65f8 ("power: sequencing: implement the pwrseq core")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-pm/62a3531e-9927-40f8-b587-254a2dfa47ef@stanley.mountain/
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/power/sequencing/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Kind regards
-Ulf Hansson
+diff --git a/drivers/power/sequencing/core.c b/drivers/power/sequencing/core.c
+index 9c32b07a55e7..fe07100e4b33 100644
+--- a/drivers/power/sequencing/core.c
++++ b/drivers/power/sequencing/core.c
+@@ -119,7 +119,8 @@ static void pwrseq_unit_release(struct kref *ref);
+ 
+ static void pwrseq_unit_put(struct pwrseq_unit *unit)
+ {
+-	kref_put(&unit->ref, pwrseq_unit_release);
++	if (unit)
++		kref_put(&unit->ref, pwrseq_unit_release);
+ }
+ 
+ /**
+-- 
+2.43.0
 
-
-The following changes since commit ab069ce125965a5e282f7b53b86aee76ab32975c:
-
-  mmc: sdhci: Do not lock spinlock around mmc_gpio_get_ro() (2024-06-20 16:42:30 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.10-rc4-2
-
-for you to fetch changes up to 16198eef11c1929374381d7f6271b4bf6aa44615:
-
-  mmc: davinci_mmc: Prevent transmitted data size from exceeding sgm's length (2024-07-11 17:48:54 +0200)
-
-----------------------------------------------------------------
-MMC host:
- - davinci_mmc: Prevent transmitted data size from exceeding sgm's length
- - sdhci: Fix max_seg_size for 64KiB PAGE_SIZE
-
-----------------------------------------------------------------
-Adrian Hunter (1):
-      mmc: sdhci: Fix max_seg_size for 64KiB PAGE_SIZE
-
-Bastien Curutchet (1):
-      mmc: davinci_mmc: Prevent transmitted data size from exceeding sgm's length
-
- drivers/mmc/host/davinci_mmc.c |  3 +++
- drivers/mmc/host/sdhci.c       | 15 +++++++++++++++
- 2 files changed, 18 insertions(+)
 
