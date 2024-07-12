@@ -1,186 +1,185 @@
-Return-Path: <linux-kernel+bounces-250803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7293592FCFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:55:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD1F92FD04
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1BA51F2437E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:55:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7A51F24238
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9927C172BCC;
-	Fri, 12 Jul 2024 14:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D5E172BC8;
+	Fri, 12 Jul 2024 14:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EuwfydU0"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T6f2aYu9"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7448172BAC
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203441E4A9
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720796126; cv=none; b=e0ET+M8NA/9UTN/uTavEf4AKk12HEMsk+NXFyPgogCUCsnAWur3obKXhW+0egMyA85oMPMkT+Y4b/PZvEUu1JJphCg3L+cRiI30jQbypPyia8JUFZWVBtcQ/PmIZlkZgHcPJ0WFenrdpaV+elTG8SZKCHHfX7/n9rSuKvTqizRE=
+	t=1720796197; cv=none; b=kXB/7odchksu2LGYXCg86bgeNIa9EOR98R45L6CSCzIwHiF+vZxfw/Ih5QWcXP3+6MMP3cQMP0K5DaTpkgFdSRlWHGXtePAOHSt3enRbGGTMvR4HPfE1YkVYO8PLWE+ATh3+Hmoffk6vvSxWHeE1JYmrJAFq/UXGAFPajTL7p3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720796126; c=relaxed/simple;
-	bh=73F18xIA3vDI+ZmMawEj1EVW+eDWAP9vK2MCOHI734E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qR/3r1BRbNjf6fFr7Xl5tHBVDUK5ukVvhhA+VAsoyx/ga1gL7xjmdfP4ioT9a7b0cAgz8blvqHnLKiebPGdDs2A8NQxOYjwzBSTKY1PuPhaaDGqC+t9fAu2w4BpwsgjSqNfMNsHlzCP9p8qlVcMv/DjbnPZ3VfXUHySVprukSE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EuwfydU0; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-64e81cd12cdso18553377b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:55:23 -0700 (PDT)
+	s=arc-20240116; t=1720796197; c=relaxed/simple;
+	bh=SSKRtsXyzHZFJ2vEEJZxayCvLBN10jSdkeQ4SPgwQyc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XD4R2Irq7uBy4CIBrpDuZX9Zby3VTjEramttybIKIiU7wzpRMfYnxHjjvpJUr4d/e7FGIleGLbIySppyysOKkuOaTfdBz0Fl+8BemaP92lpoZMydfDTSTzvq/2s/nKGaZUXnjimhYg9Ujtz+Y7mqNNcWc50LpgYJUKSpb7GLzVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T6f2aYu9; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e9fe05354so3052703e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:56:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720796123; x=1721400923; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+w0ThLzwl4n5JC8vmDZjECC7gppb/LdI/W8aReQd8fE=;
-        b=EuwfydU0qQx2EH5nFQG0ClX9oBPsLIUMgs8dfYfSmCkmPlFa3WmweA7nF+eYOFte1g
-         GQ0pX/d2DHUSiTAHPYkqZRucY6l8wR1UqL1Ojz2xrd02Fbq4bP+JKVxu0OsTbmUBE3VQ
-         aGhfbbTR3Z8HqWxYr7yAWF3yvSoXRDB+iy8Dnhp/M+lI0e33i7dWsIrF9XFzgC/Rv4E8
-         p+riLr08VQCNE7z2gkXb3/xOzpO4lueGsjYKj/Y2q5DF0ijr5KTXAnGSQDJGJCV0nXBJ
-         rgn+gAM8mPjloMoFzE6fCttDmkigijYmeTaipJye6PEtxfOyY8AXi216+xnwoyqFJqtO
-         OT1g==
+        d=linaro.org; s=google; t=1720796194; x=1721400994; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i7PJER1WcNMLVoA4+jwbRI3bEuqBAe5uHPV+6MR3WXI=;
+        b=T6f2aYu9RviWKPb2+dVH0v4WygtLep6m4svNThn/T3ggMHCJI0t9REfbF0Xu/5F/II
+         i9Ek3Bl7/KbUBW+PCvOgQv5noEeYNIE5bPldkaPJ4SqjAw95XupR1PRdlwGBiYHW0eso
+         0wpSCj+FlM6iooed1xNOb0LOOoPo6KboLY016pex67kAEGMaTJ1+w4UTu9i1T1rsRx8Q
+         P4/sGeoY49314TZTg65pizG2mJLlHlKAfxbMQiDjOoeoyUGwFINDJ0/HIH/39muVtUBP
+         coBwrVoB5j12U0UoYawkwelAVnv/9w+FLtSgXoYHksw+kMOuVwTD4bmVY/1iQXcvCsXL
+         a77g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720796123; x=1721400923;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+w0ThLzwl4n5JC8vmDZjECC7gppb/LdI/W8aReQd8fE=;
-        b=KLfbphSPZHQLHqgi4kH3mGm0b80BUAfXvjbdb9aGaVt7GFedHKuxam25i5plavmIYJ
-         QyW8pJECRuFPMAZi8/AkSiCkjPInHHunPbAc42cfCvB/MrXFm/cj9O3bBOvZJ0GZvPIo
-         LOyyTiAbBrQpAdaP9q/ikecklDzkPqkHeCi8mn3DHZ65DkOdY5B1zAOruoaJuRU/VJRr
-         cxuo4f+izjYNHHXu9Pj1KZZ7xeYNjK2sgAn+Q4G8CFQGdQyZfMUuPVBs66Z1NR4/CeNI
-         CfwACzULGVHj+1LP7uWh0sSKuqJ8ZwWQOKxBjTlroD+wMVassHzaEwVBbT31QBL6UQRg
-         JRMw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8IFzbAUKrcToW9XTKF6HYFvzKwAXVp73DD+YGvPKwhk0e2xH8lbL6sN4Mwu9cbFwJSzFlQWuff1oXLANBt3WuHnLOhSa5CPb1zD/R
-X-Gm-Message-State: AOJu0YzKCtf9ZHDT+ASYaKSybPm2zP2JPIpP5w/eDdXBVJOYGBRfha7+
-	8EQ1oYLwC9KdpWrDYs7BjBxMVaS8Fd3YCViR8QlCbR7jOy0fOv2aYOEfsOUE7NoQTIvZmR0MDIs
-	T4RR8E88q0fLx2xES/1L4kbtQ83eGCnyVro7J
-X-Google-Smtp-Source: AGHT+IGtTJfKjxJFBMAT3WhbKFh9iKNbitKZrRcvtSjKO3EbB6yzB+X89ynWybhr/PmImBWmBCV15sArfXJOZr1B98k=
-X-Received: by 2002:a05:690c:30f:b0:64b:b7e:3313 with SMTP id
- 00721157ae682-65dfd56ddf2mr26316757b3.13.1720796122674; Fri, 12 Jul 2024
- 07:55:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720796194; x=1721400994;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=i7PJER1WcNMLVoA4+jwbRI3bEuqBAe5uHPV+6MR3WXI=;
+        b=jWYPcYZCFDL8WB8kaXO4SEJ0iZ5q10SvcqcCTf34Zf3A1po0nEVN9PRjDVjvO7vaG/
+         OuYAK0ITV8h5BMU2z8Xo+DKovUhUJdHrelYBjMiv8T+CkAPVzNaNArYNiLfxVjMFmKHX
+         6mLV6JVuTgCfREDmnL6pi8CFbqs5cOEBuA1dkvl5UNHY4B6N3qLYRT+e3bBKZitxRRhy
+         nSBqmHbZjAtLbFybeuxKktM02HOBR0fuJ5yvLqZ8LIdopQyoYRF250RTGfw9y+AGWtTu
+         p1nitalOzAVzua1/ODnNfDwQcnQGQ4s22iAS+bm7fNEMf5yo0r+wtkAA+m4OTC0Pjrx7
+         OeyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTygiY6F1jIzWPHAFya9g864K0iRtv1mDfT3IROa9uPB/3W3flvvgwZ9BpbqaNnNGTKD0VsvKZASOnTELZUJJcvhBi4+sBhATf9Y4y
+X-Gm-Message-State: AOJu0Yx5bEFH3rPxWCQjND4IUhJA86FIH1bIMvInRHE6N2zNn0jNsc8t
+	cr1/XU8NQFbVPALQNoGwGPX7LCwheaOv8oxBt8gJ4measAjyzMS3amMiH054eho=
+X-Google-Smtp-Source: AGHT+IFKsQa4tj4EnMtXSYCImi7RYxWXOxCwTzx3qALEfPlt1OtJI1helQ394X7LtJ9DSijPFxVFiQ==
+X-Received: by 2002:a05:6512:3b20:b0:52c:adc4:137c with SMTP id 2adb3069b0e04-52eb99949a2mr8484666e87.20.1720796193960;
+        Fri, 12 Jul 2024 07:56:33 -0700 (PDT)
+Received: from ?IPV6:2a0d:e487:123f:f92c:4c8f:b8cc:9804:975e? ([2a0d:e487:123f:f92c:4c8f:b8cc:9804:975e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f27846bsm25959965e9.25.2024.07.12.07.56.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 07:56:33 -0700 (PDT)
+Message-ID: <4f3b24d6-9638-49d0-8308-00da09c7ed76@linaro.org>
+Date: Fri, 12 Jul 2024 16:56:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000a65b35061cffca61@google.com>
-In-Reply-To: <000000000000a65b35061cffca61@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 12 Jul 2024 10:55:11 -0400
-Message-ID: <CAHC9VhT_XpUeaxtkz0+4+YbWgK6=NDeDQikmPVYZ=RXDt+NOgw@mail.gmail.com>
-Subject: Re: [syzbot] [lsm?] WARNING in current_check_refer_path
-To: syzbot <syzbot+34b68f850391452207df@syzkaller.appspotmail.com>
-Cc: gnoack@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, mic@digikod.net, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v1 4/4] drm/panel: ili9806e: Break some CMDS into helper
+ functions
+To: Doug Anderson <dianders@chromium.org>,
+ cong yang <yangcong5@huaqin.corp-partner.google.com>
+Cc: Michael Walle <mwalle@kernel.org>, quic_jesszhan@quicinc.com,
+ linus.walleij@linaro.org, airlied@gmail.com, dmitry.baryshkov@linaro.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240710084715.1119935-1-yangcong5@huaqin.corp-partner.google.com>
+ <20240710084715.1119935-5-yangcong5@huaqin.corp-partner.google.com>
+ <D2LQJROQYIY3.2Q88EXS8HUDLQ@kernel.org>
+ <CAD=FV=WAosZPSKdpwR6pjOmiy4hih=jXaMg2guuVgmc+qj-Csw@mail.gmail.com>
+ <D2M42ODWQPAU.I0BMEOLKUP29@kernel.org>
+ <CAHwB_NJ+YEMoL18Sr9HFmTVH_ErDztyF7vxxPFAE0Y2ta3dO0A@mail.gmail.com>
+ <CAD=FV=VNx5qEyWDvVz6AVDryqvw09tkYRYMjbFuUQS4Wvyok6Q@mail.gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <CAD=FV=VNx5qEyWDvVz6AVDryqvw09tkYRYMjbFuUQS4Wvyok6Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 5:53=E2=80=AFPM syzbot
-<syzbot+34b68f850391452207df@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    8a03d70c27fc Merge remote-tracking branch 'tglx/devmsi-ar=
-m..
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux=
-.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D174b0e6e98000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D15349546db652=
-fd3
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D34b68f850391452=
-207df
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D13cd1b69980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12667fd198000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/efb354033e75/dis=
-k-8a03d70c.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/c747c205d094/vmlinu=
-x-8a03d70c.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/5641f4fb7265/I=
-mage-8a03d70c.gz.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/4e4d1faacd=
-ef/mount_0.gz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
->
-> bcachefs (loop0): resume_logged_ops... done
-> bcachefs (loop0): delete_dead_inodes... done
-> bcachefs (loop0): done starting filesystem
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 6284 at security/landlock/fs.c:971 current_check_ref=
-er_path+0x4e0/0xaa8 security/landlock/fs.c:1132
+On 11/07/2024 21:36, Doug Anderson wrote:
+> Hi,
+> 
+> On Wed, Jul 10, 2024 at 6:09 PM cong yang
+> <yangcong5@huaqin.corp-partner.google.com> wrote:
+>>
+>> Hi,
+>>
+>> Michael Walle <mwalle@kernel.org> 于2024年7月11日周四 03:38写道：
+>>>
+>>> On Wed Jul 10, 2024 at 9:12 PM CEST, Doug Anderson wrote:
+>>>> Hi,
+>>>>
+>>>> On Wed, Jul 10, 2024 at 2:02 AM Michael Walle <mwalle@kernel.org> wrote:
+>>>>>
+>>>>> On Wed Jul 10, 2024 at 10:47 AM CEST, Cong Yang wrote:
+>>>>>> Break select page cmds into helper function.
+>>>>>
+>>>>> Why though? I don't find that anything easier to read. In fact, I
+>>>>> deliberately chose not to factor that out into a function. It's just
+>>>>> a sequence of magic commands, taken straight from the datasheet. So,
+>>>>> I'd like to keep it that way.
+>>>>
+>>>> The consensus of previous discussion on the lists was that folks
+>>>> agreed that we should, where possible, make it more obvious what these
+>>>> magic sequences of commands were doing. IMO separating out the page
+>>>> switch command helps. Certainly I'm always happy to hear other
+>>>> opinions, though.
+>>>
+>>> Fair enough, but in that case, one should take the datasheet (which
+>>> you can find online) and replace all the magic numbers with the
+>>> correct command names from it. E.g. 0xff is the ENEXTC register. To
+>>> be clear, I'm not just talking about the "switch page command".
+>>>
+>>> As patch stands, I don't see much value, TBH. On the contrary, you
+>>> make it harder to compare it with the Ortustech panel datasheet.
+>>>
+>>> just my 2c,
+>>> -michael
+>>
+>> If all drivers replace all the magic numbers with the correct command names,
+>> it will be a huge amount of work (assuming that the datasheet can be found).
+>>   I am afraid I don't have enough time to complete it.  Thanks.
+> 
+> Makes sense. I'd be interested in hearing the opinion of others in the
+> DRM community about whether they'd prefer to land something long this
+> patch as-is or drop it.
 
-I'll let Micka=C3=ABl answer this for certain, but based on a quick look it
-appears that the fs object being moved has a umode_t that Landlock is
-not setup to handle?
+I don't have a strong opinion, but I think only changing the switch
+page operations doesn't make a lot of sense by itself.
 
-> Modules linked in:
-> CPU: 0 PID: 6284 Comm: syz-executor169 Not tainted 6.10.0-rc6-syzkaller-g=
-8a03d70c27fc #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 06/07/2024
-> pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
-> pc : current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
-> lr : get_mode_access security/landlock/fs.c:953 [inline]
-> lr : current_check_refer_path+0x4dc/0xaa8 security/landlock/fs.c:1132
-> sp : ffff80009bb47840
-> x29: ffff80009bb47980 x28: ffff80009bb478e0 x27: 0000000000000001
-> x26: 1fffe0001b7a831f x25: ffff0000d713ef00 x24: ffff700013768f14
-> x23: 000000000000f1ed x22: dfff800000000000 x21: ffff0000dbd418f8
-> x20: 0000000000000000 x19: 0000000000001fff x18: ffff80009bb46be0
-> x17: ffff800080b8363c x16: ffff80008afaca80 x15: 0000000000000004
-> x14: 1ffff00013768f24 x13: 0000000000000000 x12: 0000000000000000
-> x11: ffff700013768f28 x10: 0000000000ff0100 x9 : 0000000000000000
-> x8 : ffff0000d6845ac0 x7 : 0000000000000000 x6 : 0000000000000000
-> x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000020
-> x2 : 0000000000000000 x1 : 000000000000f1ed x0 : 000000000000d000
-> Call trace:
->  current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
->  hook_path_rename+0x4c/0x60 security/landlock/fs.c:1416
->  security_path_rename+0x154/0x1f0 security/security.c:1918
->  do_renameat2+0x724/0xe40 fs/namei.c:5031
->  __do_sys_renameat2 fs/namei.c:5078 [inline]
->  __se_sys_renameat2 fs/namei.c:5075 [inline]
->  __arm64_sys_renameat2+0xe0/0xfc fs/namei.c:5075
->  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
->  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
->  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-> irq event stamp: 67226
-> hardirqs last  enabled at (67225): [<ffff80008b1683b4>] __raw_spin_unlock=
-_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
-> hardirqs last  enabled at (67225): [<ffff80008b1683b4>] _raw_spin_unlock_=
-irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
-> hardirqs last disabled at (67226): [<ffff80008b06e498>] el1_dbg+0x24/0x80=
- arch/arm64/kernel/entry-common.c:470
-> softirqs last  enabled at (66914): [<ffff8000800307e0>] local_bh_enable+0=
-x10/0x34 include/linux/bottom_half.h:32
-> softirqs last disabled at (66912): [<ffff8000800307ac>] local_bh_disable+=
-0x10/0x34 include/linux/bottom_half.h:19
-> ---[ end trace 0000000000000000 ]---
+Having a much larger register coverage would be preferred.
 
---=20
-paul-moore.com
+Neil
+
+> 
+> -Doug
+
 
