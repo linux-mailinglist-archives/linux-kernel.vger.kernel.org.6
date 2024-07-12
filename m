@@ -1,114 +1,120 @@
-Return-Path: <linux-kernel+bounces-251046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1B993002D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:07:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D73F8930031
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 777DEB212BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:07:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DCE7B2192C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0635176FD8;
-	Fri, 12 Jul 2024 18:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D60177991;
+	Fri, 12 Jul 2024 18:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wi2bw6vp"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d110yPXS"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090D11426C;
-	Fri, 12 Jul 2024 18:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E0F176ACE;
+	Fri, 12 Jul 2024 18:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720807629; cv=none; b=hGDHkvOBo3qqyahQ69uThFoDBGfX9PFXa1P7d3pvfBqO6PVKyEEhJcJ2aYcdaE2u2A6hvSIqvbv7CXyxDQR4+uAlafLXpANqg19IvWVQs34frL0YDjj3/SHABJcHcwwW5+/KpKeUBJ3oAduZ2SM3nP5v/vebqjBJte7MGoRkwUQ=
+	t=1720807714; cv=none; b=cB5uLZVKa3s/rfIhQ7k5eW0bQyZW9L0N9IefuMjc5BIYS9JDVJlQolIPdNJjZCaKKANm5g5E1Rk2v1Q9xRZ5h6wydFCSLXszTmE6C8BUyuSRjQAS0ExKZMcrEkm1MupnmZJELg0RIhKHWFmwsQBFg5IVR64yuVNdG2898PkGYus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720807629; c=relaxed/simple;
-	bh=vsfX2dO6Arg3oSXsJxfGBpfSTooOyOlxt7F+JaA1HMI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d343l0KypJgC1AKKgLEQPOy+74cEA8m8UG3SrxgSAlL2i8YxF3i4sqM93OtpHRkAkB269nANrOjVLIA0MB7Mow/sfNub6XsZ2bLHxlEq6F4MSQA7u4BNcAXukgvld+LwGuDPoJlDeh3e1pT/ZPAutVwzTqB2i5C/2etvBqJKQ4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wi2bw6vp; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1720807714; c=relaxed/simple;
+	bh=4214trYlTDT2VcfjYRLHzdKd/CxYkIWS14MOQpiZM/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rvh003BKd0ni5PgxjC/LQCAKc1Acy6oH9B1UKv9hztRxIuXnj8A4ovmyvWMuSP9j47MXqh98uCJhvLzTqzG+pRmtBeNNe7hnynMikrbULnhff1w4YHU8FKj5aYLKvEjTpJo4InjCffJy01O8xegNdl/6PQ6kjgc7Ah9GpsfK7k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d110yPXS; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fb05b0be01so16448265ad.2;
-        Fri, 12 Jul 2024 11:07:07 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52e98087e32so2661053e87.2;
+        Fri, 12 Jul 2024 11:08:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720807627; x=1721412427; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aiB90U2wXLnecL+PHz3PwRGrDUIgjvhch/dJg0IVRXM=;
-        b=Wi2bw6vpiBtnrl9B1RqEIWQUHqUjvx6Dc2im1qCjRRp89e2mXBtZuRVPUGqwl74+tu
-         Y7eN8kiENPKjiiuSVIZgbU8QBamU2gO6hPKbtWp48LJPdwuDOO9KEQlnDRm+fDXhYJ9h
-         il9eC6CWekGCWD7K/iZaQ1wcGhVzQQXOtWS1U/sWgItZTmbDfZyoDCsoXWJF2zVRAkMC
-         7wcUl5b2lGcRqZ6d5UUlUYxqAyg3y8GlWjzOyqlMQFBjD1Bzj0tqqqEb8T2gHgVTKpzY
-         zag6VEL6yrO6vLmG4q2aStAjsSrBxO5aLkm1dGOBnqZzKnF7O4PF/hPk5ExVm2r3Sus+
-         g9tw==
+        d=gmail.com; s=20230601; t=1720807711; x=1721412511; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4214trYlTDT2VcfjYRLHzdKd/CxYkIWS14MOQpiZM/4=;
+        b=d110yPXSfgMDZu6bWUTZnwYufK8k23rJYfpk2KajHQFekDDZEtfFtdzuQSfLSphHfJ
+         nCy2nkQDSob/OQclK7i8fKsUbclzxXDK7EKToZU4z6OzwBZ9FJz8cK6aqq//O5RiDUTT
+         fIMXaffYk9vnXWMbtGjlTIAg2j+qwiePRTAyx631j8zTP12N3IxfpnydoU3h6+ixm1j8
+         SQbSKwVEIZNU67W3X45iA8ygUbNj6BTNNL/35dhJF+FLKL16d/PdgN4pMh26xoU6JeU6
+         8+l3Bkb1xw2HezDWNG6vzRJKsiQaeW4YDnKNvPaJn2mv++1+zUxhZQcwW6czGEcIldvJ
+         SMiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720807627; x=1721412427;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1720807711; x=1721412511;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aiB90U2wXLnecL+PHz3PwRGrDUIgjvhch/dJg0IVRXM=;
-        b=PMZg4X4G4lgBazxcU48Zbiq8LNjpFH2hOZnH1I6tZEM2DmtchQmQy9YIbZlu0lkgk5
-         36dPlihXLpuKwfzLUHdCO1uMdZyB6W2eMb1tzJCocfZHAQucAaYN+khdvXAfB5f/e8rj
-         qT1FrYRUgJki3agxNsiQaKMz7FsrkG3VPr8WVtv+Fb+WbsiZZT/gMWBDtIl+Be1FkR1n
-         ZaFqoo/3WQyIlSsWXY310DNd+zkcU/kDrW+v4EJ8qxABaCMj7n3lj/aogxDuzD0HE515
-         7vLX5uZzOjgozOEmAGOZBdxPzLJxtVjEztY3eoOQwFb9VO4Yy/LEMLOp/gnoLIqX1J8f
-         NptQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvU3avxl7gAUZTHV9KHXoZKjInU+Xdnvaay/7BXLlOlSgL6ZVYrXvB5h4+O0LC619XnThvLtFtIccM2zC/QnL47aWkMnDzX37Wk0Xf8v0++pr327ReZQ4JQRLgYq2gcHDxL75NSVEw94w=
-X-Gm-Message-State: AOJu0YzfqvZZcOYd1xaBE13yaDq3DpFO0DSu7wao/hYB4xe3pJ0I5Nbd
-	gFumDtsJxMf/5GEpoy4xvq+Xxvq88qkGXRWCiCpYesGNtKhfmfYS
-X-Google-Smtp-Source: AGHT+IHjKjYrkPOa/jPXpOKQoCQBPygf6mc8a0vlUpWptHpRO24LnqprJjd1fUAjp/jZ1qCMScHibQ==
-X-Received: by 2002:a17:902:fa10:b0:1fb:9cb0:3e2f with SMTP id d9443c01a7336-1fbb6d53fdemr73542525ad.27.1720807627071;
-        Fri, 12 Jul 2024 11:07:07 -0700 (PDT)
-Received: from localhost.localdomain ([187.17.229.99])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ac54d0sm69763235ad.230.2024.07.12.11.07.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 11:07:06 -0700 (PDT)
-From: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
-To: tiwai@suse.com
-Cc: perex@perex.cz,
-	sbinding@opensource.cirrus.com,
-	kailang@realtek.com,
-	shenghao-ding@ti.com,
-	simont@opensource.cirrus.com,
-	foss@athaariq.my.id,
-	rf@opensource.cirrus.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	edson.drosdeck@gmail.com
-Subject: [PATCH] ALSA: hda/realtek: Enable headset mic on Positivo SU C1400
-Date: Fri, 12 Jul 2024 15:06:42 -0300
-Message-Id: <20240712180642.22564-1-edson.drosdeck@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        bh=4214trYlTDT2VcfjYRLHzdKd/CxYkIWS14MOQpiZM/4=;
+        b=pmn1cjhZp7HjjNIq9acx8B7PH9RtCw4KpAgXHEiwS/6BFUuYFhBr+ukaG+xsA6KB46
+         2uGVsKi1Az4wEWUS6/7o5hzUCxodyotgq9B4q0nWFZ4bV+jXfwvQrWgKhgLl/I9BuTlg
+         b2Ti0e4HtzUQkCKOg9dH1KDorv0n6acUmWFYzJfAUMyb+ATGRY7DP7RlIXTF91Qyf8/1
+         lkkt/3pamzBX2/2JU5bYxX+eX93T3H7mDipgMEro/rSlalUdd8o/qqN5ZBRq3swyBMsI
+         rRfsxrmRbJDyxQ/WNaEuKoS7hSuq6xXewADNxo5kyxbvIqUEXkMzECC+PZ+DvFGtUPlF
+         kQtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCdDukNBko5qPukkfq8WXN08pWY6YPa0dnpLSDkfCDtbiRbnIpr0gAUL9a0D6n0H9DGPcwPFscGzYAPi7no7BdBsEqvZ+ZUjA1wS7qVGWpP71PN86Ns4dAP6BMkoc7E2g4UiCxqigjLcaE/wUZhovWcCoaSK4bG0jpnvUHh+8UiIuX
+X-Gm-Message-State: AOJu0YyzVjTwpm0gPkMCQgr6drqXlYNKMRBrHVM33XlUSbwXUQ/KXZjJ
+	s5MuXWsAkt09EVLR4WgXOApG1DyqikRT7sqwmJNNj09O4M9Rt2BWIFeLPwUxYX4FTTVMKVcdn7A
+	qmenmk0AV5tfzw2vfCWwGsChB87M=
+X-Google-Smtp-Source: AGHT+IEDQM4plrvR0qzlJhHQ3z3hykayws0uw290JWA9DNYxOLC1xf1vbjlSaW7ujt67A174DKIPqVgxkXxuq1pLv1c=
+X-Received: by 2002:a05:6512:6d3:b0:52e:a008:8f41 with SMTP id
+ 2adb3069b0e04-52eb99916damr9379815e87.25.1720807710699; Fri, 12 Jul 2024
+ 11:08:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240705145009.32340-1-puranjay@kernel.org> <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
+ <mb61pjzhwvshc.fsf@kernel.org> <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
+ <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net> <mb61ped836gn7.fsf@kernel.org>
+ <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net> <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
+ <890d23f2-636e-12d1-31cc-eb6469f2a9ac@iogearbox.net> <SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com>
+ <mb61p5xtcyqo5.fsf@kernel.org> <SJ0PR15MB4615BF10FDB6D4577AC84D87CBA62@SJ0PR15MB4615.namprd15.prod.outlook.com>
+In-Reply-To: <SJ0PR15MB4615BF10FDB6D4577AC84D87CBA62@SJ0PR15MB4615.namprd15.prod.outlook.com>
+From: Puranjay Mohan <puranjay12@gmail.com>
+Date: Fri, 12 Jul 2024 20:08:19 +0200
+Message-ID: <CANk7y0gYSix9fVUC1Q+DLqu8UFaJgFbxCF+_zAzjMCyFzzM4uA@mail.gmail.com>
+Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
+To: Manu Bretelle <chantra@meta.com>
+Cc: Puranjay Mohan <puranjay@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	KP Singh <kpsingh@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@meta.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Florent Revest <revest@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Positivo SU C1400 is equipped with ALC256, and it needs
-ALC269_FIXUP_ASPIRE_HEADSET_MIC quirk to make its headset mic work.
+Hi Manu,
 
-Signed-off-by: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
----
- sound/pci/hda/patch_realtek.c | 1 +
- 1 file changed, 1 insertion(+)
+>
+> I was able to confirm the fix using the artifacts from https://github.com/kernel-patches/bpf/actions/runs/9905842936
+> Thanks
+>
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 766f0b1d3e9d..34cb731b40bc 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -10384,6 +10384,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x10cf, 0x1845, "Lifebook U904", ALC269_FIXUP_LIFEBOOK_EXTMIC),
- 	SND_PCI_QUIRK(0x10ec, 0x10f2, "Intel Reference board", ALC700_FIXUP_INTEL_REFERENCE),
- 	SND_PCI_QUIRK(0x10ec, 0x118c, "Medion EE4254 MD62100", ALC256_FIXUP_MEDION_HEADSET_NO_PRESENCE),
-+	SND_PCI_QUIRK(0x10ec, 0x119e, "Positivo SU C1400", ALC269_FIXUP_ASPIRE_HEADSET_MIC),
- 	SND_PCI_QUIRK(0x10ec, 0x11bc, "VAIO VJFE-IL", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
- 	SND_PCI_QUIRK(0x10ec, 0x1230, "Intel Reference board", ALC295_FIXUP_CHROME_BOOK),
- 	SND_PCI_QUIRK(0x10ec, 0x124c, "Intel Reference board", ALC295_FIXUP_CHROME_BOOK),
--- 
-2.39.2
+Thanks for testing the fix.
 
+This bug has been resolved now but the test still hangs sometimes.
+Unfortunately, I am not able to reproduce this hang
+using vmtest. Can you extract some logs from the CI somehow?? If it is
+hanging in the kernel there should be some
+soft lockup or RCU lockup related messages.
+
+I was talking about this with Kumar and we think that this test is
+hanging in the userspace in the following loop:
+
+while (READ_ONCE(fexit_skel->bss->fentry_cnt) != 2);
+
+Could it be that fentry_cnt is > 2 somehow before we reach this?? This
+is only a random guess though.
+
+Thanks,
+Puranjay
 
