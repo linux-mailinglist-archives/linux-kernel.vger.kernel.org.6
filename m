@@ -1,82 +1,86 @@
-Return-Path: <linux-kernel+bounces-250577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFAC92F945
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:05:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0504E92F94C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 191712842AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:05:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B135A1F23632
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC2915E5B5;
-	Fri, 12 Jul 2024 11:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+LmOE0v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0475D15EFA1;
+	Fri, 12 Jul 2024 11:06:32 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F579155C81;
-	Fri, 12 Jul 2024 11:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE2215957E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 11:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720782321; cv=none; b=nn+LZ32AI4/wNyq8Qf6ruQV2X7ylA7Sd5FP/SK17J1P6OPZieuPWG+1F0uiB8NcfoNINYoInSOCEWNJxup8Vg7ldPrq+qQEtcM5o8murQxzCjHLwK82H1rJu3cMXy9/4bvT4GZqc8HfYAv6dkQmLpkB6kNkzwVFuK/qpeSBOolo=
+	t=1720782391; cv=none; b=fMPDl8MQpF5BHhAcYM1adGCeAFyO36CQc9tcNE33gEjVBdDWTVdynmHK2Y1T9j3b7W2U7zwvmXonodRe0WHfMyuoteqTVr1X9/u0a+dijPFoTt+GEfeg1mLFcfQ56dkfmCK5y6agDCp8asKGQMdB2L2uN94zTS2i6y2rX5HazuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720782321; c=relaxed/simple;
-	bh=unUnZrzQDbLTHX8IxU2OqJG/Uuo0p7Wp3yVGpGZ1y3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UTuOAiqo5rdfDNOKCx/YWBXZxVTjoEuHoZZvzaUCHRIk2IMbpNo1xUb4/131CK/60Q5oqhEoiz+pgoP5590fMrLWnK5voyvrGZQMCbFwqB5JBZyUhSe+tOHM6F/ErAHJj4lad8jyIPX4lumtY8mj2iDv+7skm+XltaLS+kXZ6s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+LmOE0v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7314C32782;
-	Fri, 12 Jul 2024 11:05:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720782319;
-	bh=unUnZrzQDbLTHX8IxU2OqJG/Uuo0p7Wp3yVGpGZ1y3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p+LmOE0voQNkdTM24c6YelqbF+WKuW+aj+ega3wVdAb5wfTi+2DRDmng8t7oTE1vN
-	 vGBL1sDF8MctKfKtvB9fSb0HdIJgcAxcJ5nqRekWMbvoLDqhE1enQI8dPk5dPlyXUy
-	 hHhpdhXlEo0bRzo4hqoou+hL+3dfgUYttFBJrik84TRJD1MyD43gejG12tyPymfMQu
-	 OCPpTCFATrFNVVl1pduJEpQ976NHLew4bJxTPdDJ+YI9stXRT+cjOLCjtOfqJsGlca
-	 S07hQfLBdp8L90Aw8tEOofXxDYx8vUHRZyKHcKbLZ+Zc+cXrmN5msLWh/L0Q7prnbb
-	 vEeIu/T4Y3dhQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sSE5W-000000001YH-2ZN0;
-	Fri, 12 Jul 2024 13:05:18 +0200
-Date: Fri, 12 Jul 2024 13:05:18 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-crd: Add LID switch
-Message-ID: <ZpEN7u0u4LSFY01p@hovoldconsulting.com>
-References: <20240710-x1e80100-crd-lid-v1-1-0156e8a62af6@linaro.org>
+	s=arc-20240116; t=1720782391; c=relaxed/simple;
+	bh=dBuFWJgHaFgnL4Th6Unn/BSFEZnxfuKfpuWlHaiz4PQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Le2BmTix4rZbgMjdu5Y1E61e9lbEct/1KydjWzc9aL8FprY+/AIyq+pF7euyvELSW/Lcv1Y1DrQRPUTl2FpA7dTJdEjPl/jGdPWkEzH2C/QxNrEvY0B+VoZs9GPV/ikr1BE/O1pb/uXHiz8OgW2mveZs+qOZc+7sjqtsFSH41q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <s.trumtrar@pengutronix.de>)
+	id 1sSE6G-0001hW-3t; Fri, 12 Jul 2024 13:06:04 +0200
+From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Subject: [PATCH 0/2] drm/panel: simple: add Innolux G070ACE-LH3
+Date: Fri, 12 Jul 2024 13:05:54 +0200
+Message-Id: <20240712-b4-v6-10-topic-innolux-v1-0-bb0acf273d0d@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710-x1e80100-crd-lid-v1-1-0156e8a62af6@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABIOkWYC/x3MTQqAIBBA4avErBsYTQq6SrToZ6yB0NCSQLp70
+ vJbvJchchCO0FcZAieJ4l2BqitY9sltjLIWgyZtqFMaZ4OpRUV4+VMWFOf8cT/YWGJLllczKyj
+ xGdjK84+H8X0/jUxS72gAAAA=
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
+ kernel@pengutronix.de
+X-Mailer: b4 0.14.0
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2024 at 10:18:20AM +0200, Stephan Gerhold wrote:
-> Add gpio-keys for exposing the LID switch state, similar to
-> sc8280xp-lenovo-thinkpad-x13s.dts. Only the GPIO number is different.
-> 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+This series adds support for the Innolux G070ACE-LH3 to the panel-simple
+driver and adds the according compatible to the devicetree bindings.
 
-Looks good, even if I can't test it currently with the debug board
-connected directly to the CRD:
+Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+---
+Steffen Trumtrar (2):
+      dt-bindings: display: simple: Document support for Innolux G070ACE-LH3
+      drm/panel: simple: add Innolux G070ACE-LH3 LVDS display support
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+ .../bindings/display/panel/panel-simple.yaml       |  2 ++
+ drivers/gpu/drm/panel/panel-simple.c               | 35 ++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240712-b4-v6-10-topic-innolux-3f0ef0fed4b1
 
-Johan
+Best regards,
+-- 
+Steffen Trumtrar <s.trumtrar@pengutronix.de>
+
 
