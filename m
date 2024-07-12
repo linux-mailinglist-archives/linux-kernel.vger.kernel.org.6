@@ -1,175 +1,178 @@
-Return-Path: <linux-kernel+bounces-250991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0C392FF40
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:13:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04A592FF41
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E6A285421
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:13:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD79C1C2246C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DE4179965;
-	Fri, 12 Jul 2024 17:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GjmjTNaj"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9211717836D;
+	Fri, 12 Jul 2024 17:11:28 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9266017799F;
-	Fri, 12 Jul 2024 17:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E4F176ABA
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720804259; cv=none; b=iTQm9hQPIAE+M7tc35boUvP4fpIBrzJo+zIVxI565xO0gTHJK/jkUIKCqm6xwkf8fKREXYMH9SsBqFX0FFNtpamNwax4FnlyXNL1r88emqqcTa8/HAw/bgH3JmmH+Q2mRFlrv8l56Ik/erVIT+o8vA2L265ZqhgANWG5HewdvCg=
+	t=1720804288; cv=none; b=FDNclhh3Au3cxu/eOBwxc5Is5BduqXK5v81Pdi1iXtw5CBUGBMXD2yUIXLs3Rpn0fGBXEHMOb5BxeTLSG66GMwEcPisIvn1ZIKrYoWw3TjnQFe7ExgixLj6h9MEGe4x8PYkfAkcQs4K/4h+sOYMCvE8x6ql/YBk9ks1bg3vTIjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720804259; c=relaxed/simple;
-	bh=SMOskrIxYKC4O6emQHBW68wMQEv/leiHAjttfBN/gl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tG5Vow9MXosO7fCEt1ARezcuLkA3OZjU9nl1a8vxzWeWYzvGGaKJLYCmsawqdVhcppNGRfl3jjof9rEJUi5cB+e3n3/u8AgkO6Wn6H2OxacwjrlTf7kEB6wTQKbYHlgYDh7C82W0+P6Q6jo8nEG9guvfSzI00LmM0XEzbPeOJOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GjmjTNaj; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b09cb7776so1866220b3a.1;
-        Fri, 12 Jul 2024 10:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720804257; x=1721409057; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ky0nWnwJmHd6zu8RRtvg8wvKZFzCwLW2MVRtue5Z0Es=;
-        b=GjmjTNajcOc96G5ZMYNdJfZO+HX1JlSCXorCoSLfoB+jJz7CaQtrJ/r8dP3FA8SE0i
-         bd+765JqGLNRRwpnOcDyXi+aa/jODJ4Cr9N4kLTIGMbhT5fqEbYiuRaDoCiXMrjIGMcq
-         D9hB+pQ9N/cIy0l+w4t12jcix/ntX3BKH36pK9Fy1yELFAZo8IbjjDhJMRddqhxSE501
-         WEMRdpk04sztJh6P0vVb5ybhLeV6yBxhoeufSPww7pWP77tb3hoM9rIr4ZlOo9DueKes
-         6vgbqFhQZvD2jYUsEasJqlCrFBC+7Bklo06JO9ju7Ue8CvT4R9K1PlDFfeeaAw2TlGq6
-         0Mow==
+	s=arc-20240116; t=1720804288; c=relaxed/simple;
+	bh=cUTmJsYWIyv2lWpS6iZ5v3r3f3dID01bTiMy4ErkVtk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=UtV7DQW4hlqOXBl4gQG5cWQ8zzquxEzbIv+V1uoKNlu4/U4UhbUFzMpQ/V9FKOp2eLB5CUl7xFDYtfQ4gWJVmkAv2SBEzxj/NOwdZRLPm9N7CvGe3LC6BPJqOs+A16yfClEZtMcC3S2po+SmVOuuRJAQhPACxFDU2ytuEsZsClc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f684ab3f9cso174260139f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:11:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720804257; x=1721409057;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ky0nWnwJmHd6zu8RRtvg8wvKZFzCwLW2MVRtue5Z0Es=;
-        b=N3mPkmnW2O4JiSYREtUnEWk6O10xcU8Qi7uDvk4YFklo/HP0fvxhA7wyzDLqVfCYSr
-         uMPRlS4gYZnbDCNX3IMpIgb6UFnhqxHPZmko6zNEXWrZ5KKDXnQ240/x5R80ImWoyqtY
-         Bd4oM1JFx5jroh+ivTI3F12oRHQDwEzBsFESXs/KtiHNYlIWWDzl13+YSqoGaDqpMYqg
-         ENm5H/K3N00USBUSO+wV0eqHM+Y8IZD9Zd1yhehWDunMDpxFLK+6ynfgUiDx65QZaniF
-         r2YAvABNCKwaTMDboXzYCKAGzJmUsQnPTF3cdRVk44PJAMjeNgd7Htw4Q4x61k+ClxQ2
-         2R3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJn4DHZoU4vzJbq1f+i2H5ksJpuO6q+v6/ixjBl3Zl1Xoh+BTAz2fYyNucjVmcECysMMI9z4aw570cdalemTUkNmTwvTmRUrOxXs+i/GwWWrwpluZ78wMUX90VD/+av2dAnU1o/1g=
-X-Gm-Message-State: AOJu0YyKNPWXRbgSc0x21KD/IvXFuuecn3hVAnpDpA/u72WKXkOUC557
-	WFAcL+2BmisF4iRgKSIFKs+oe4p8cz9drQluaUV9aAUpHBA/muSk
-X-Google-Smtp-Source: AGHT+IHWY0PYRkiaZE96Ze+d5DJRCgHcTNMFPwfFIdu5MuD5uzpo6HG5J+QpX4y0rCmOlsKcUHtxkQ==
-X-Received: by 2002:a05:6a00:1142:b0:706:5cd9:655d with SMTP id d2e1a72fcca58-70b435f0138mr15253231b3a.22.1720804256643;
-        Fri, 12 Jul 2024 10:10:56 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b438c3910sm7742080b3a.51.2024.07.12.10.10.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 10:10:56 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 12 Jul 2024 07:10:55 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-	void@manifault.com, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
-	David Vernet <dvernet@meta.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH v2 2/2] sched_ext: Add cpuperf support
-Message-ID: <ZpFjn4GXNXvSnWnK@slm.duckdns.org>
-References: <Zog5-Yd5wV0-Y76y@slm.duckdns.org>
- <CAKfTPtDeA4OTPJmEHd-wKToYwDVizcny-_qxEuDUA-OcaVm2Uw@mail.gmail.com>
- <ZonzAdyd6zb2Sm06@slm.duckdns.org>
- <CAKfTPtDE2rWbRouf8zRyM3UpTfK1k_xrWmvAs-zfoRZqM3zGsw@mail.gmail.com>
- <Zowt7pVWFB-Of-me@slm.duckdns.org>
- <CAKfTPtB=77c-RsJ23suNZVf7qByeGSjYQJbiEU4JpXU6DezNLQ@mail.gmail.com>
- <ZoxVZPCrWokjfmFY@slm.duckdns.org>
- <CAKfTPtAjFvOPByPyeAURN3gw0yp8ByVmpa99_dGEZiTGw_Fawg@mail.gmail.com>
- <Zo1omq73-ESGsVVg@slm.duckdns.org>
- <CAKfTPtDdG+fhZjG0JEtXm+rq3w_v3iSrYxDLe0XXurOLEcOuNw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1720804285; x=1721409085;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0HYZrmlt2CJl1taAOj3XOxe1FP4RfDOgX8Y2vDOl42Y=;
+        b=ntf+tF+z44/DSjzEq5WnzKBYMBKEWb7a5mCe61fvAkrvB1s5iMsqu6pR69O+QeZGuI
+         Z+vz+H/W6tgILU340HJ8N09TB1HC80Ht+ybg/tKLF09YQnrZfvtqLwe7RWV8j3iZ7/Gt
+         ION+2hXKeyMF3VHI0zooXWPthD2ONyy7U+ChP2UNLYgQBRvR6Ewv6rKYgaQG961IGMBT
+         0Xc7wHb5FIlR1ARzjG7xAiu1/MlkcMJZDdbruRC+jPHfGoCqEOHC8EMHBEjSO6CuQl5/
+         IyDiJieBSvWbo1AXJnECrNLXAL0mqeYd0glRoJe/jBa/blU6Dvdh6gHQWSY+/cAt7ojI
+         WiiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlfXQ0QtvUuM0/AH68BGOwV5faWLcui6WFLpXtO9EjdAa0VLiYHN9Ydp+Ccimkybz7wnSjnChnHceGkBw9SFJ2mnhIlaELhLUgr+lI
+X-Gm-Message-State: AOJu0YyQJF9YKdajjALGUjKv+s0zqvkdiPOXrBXWvITMDvQREoqjDHM9
+	zW7GCPsvxPHRCRliI64X0ofONlfl37mjOAe0UQN70FsAIdVlHTV/AhzZcv1laY4Pz3VOpe2+y79
+	HItzW4V9iNmV6IKyxuwc8necuuQHgdRo3NQmClGOgZciHttfdlR2Njbg=
+X-Google-Smtp-Source: AGHT+IGuVxch4O93wBkamMYLrat7LvTMr8d7ZoZ9bwpW9iv9UdhmRVYDcKEaLYtTbThGGCJxL66SX25jPLJPJSXBf2EQR0YIh8M5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtDdG+fhZjG0JEtXm+rq3w_v3iSrYxDLe0XXurOLEcOuNw@mail.gmail.com>
+X-Received: by 2002:a05:6638:9819:b0:4b9:ad94:2074 with SMTP id
+ 8926c6da1cb9f-4c1cb7669d7mr185444173.3.1720804285684; Fri, 12 Jul 2024
+ 10:11:25 -0700 (PDT)
+Date: Fri, 12 Jul 2024 10:11:25 -0700
+In-Reply-To: <0000000000006d415806048a9aee@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002d320c061d0ff813@google.com>
+Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in list_lru_add
+From: syzbot <syzbot+2403e3909382fbdeaf6c@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+syzbot has found a reproducer for the following issue on:
 
-On Fri, Jul 12, 2024 at 12:12:32PM +0200, Vincent Guittot wrote:
-...
-> II failed to setup my dev system for reproducing your use case in time
-> and I'm going to be away for the coming weeks so I suppose that you
-> should move forward and I will look at that when back to my dev system
+HEAD commit:    43db1e03c086 Merge tag 'for-6.10/dm-fixes-2' of git://git...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16f39ee1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
+dashboard link: https://syzkaller.appspot.com/bug?extid=2403e3909382fbdeaf6c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141c864e980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b1da7e980000
 
-Thankfully, this should be pretty easy to fix up however we want afterwards.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/709e8f085073/disk-43db1e03.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1ab1fd5e8c1c/vmlinux-43db1e03.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dc7484cb3765/bzImage-43db1e03.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/40d14eae864b/mount_0.gz
 
-> It seems that "make -C tools/sched_ext ARCH=arm64 LLVM=-16" doesn't
-> use clang-16 everywhere like the rest of the kernel which triggers
-> error on my system:
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2403e3909382fbdeaf6c@syzkaller.appspotmail.com
 
-Hmm... there is llvm prefix/suffix handling in the Makefile. I wonder what's
-broken.
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
+CPU: 1 PID: 5077 Comm: syz-executor294 Not tainted 6.10.0-rc7-syzkaller-00141-g43db1e03c086 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:list_add_tail include/linux/list.h:183 [inline]
+RIP: 0010:list_lru_add+0x1b1/0x390 mm/list_lru.c:97
+Code: 89 ef e8 e2 06 1c 00 48 8b 45 00 48 8b 4c 24 30 48 8d 6c 08 40 4c 8d 6d 08 4d 89 ec 49 c1 ec 03 48 b8 00 00 00 00 00 fc ff df <41> 80 3c 04 00 74 08 4c 89 ef e8 b0 06 1c 00 4c 8b 7d 08 4c 89 f7
+RSP: 0018:ffffc90003bbfa78 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 1ffff1100fada037 RCX: 0000000000000000
+RDX: 0000000000000003 RSI: ffffffff8bcaccc0 RDI: ffffffff8c1f54c0
+RBP: 0000000000000000 R08: ffffffff8fac686f R09: 1ffffffff1f58d0d
+R10: dffffc0000000000 R11: fffffbfff1f58d0e R12: 0000000000000001
+R13: 0000000000000008 R14: ffff88807d6d01b8 R15: 0000000000000000
+FS:  000055557a070380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000045bdd0 CR3: 0000000023864000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __inode_add_lru fs/inode.c:467 [inline]
+ iput_final fs/inode.c:1718 [inline]
+ iput+0x87a/0x930 fs/inode.c:1767
+ __dentry_kill+0x20d/0x630 fs/dcache.c:607
+ dput+0x19f/0x2b0 fs/dcache.c:849
+ shrink_dcache_for_umount+0x7d/0x130 fs/dcache.c:1559
+ generic_shutdown_super+0x6a/0x2d0 fs/super.c:620
+ bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2052
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
+ ptrace_report_syscall include/linux/ptrace.h:415 [inline]
+ ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
+ syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
+ syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
+ syscall_exit_to_user_mode+0x273/0x360 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f232c4c5e77
+Code: 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007fffde2e9f38 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f232c4c5e77
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fffde2e9ff0
+RBP: 00007fffde2e9ff0 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000202 R12: 00007fffde2eb060
+R13: 000055557a0716c0 R14: 00007fffde2eb05c R15: 431bde82d7b634db
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:list_add_tail include/linux/list.h:183 [inline]
+RIP: 0010:list_lru_add+0x1b1/0x390 mm/list_lru.c:97
+Code: 89 ef e8 e2 06 1c 00 48 8b 45 00 48 8b 4c 24 30 48 8d 6c 08 40 4c 8d 6d 08 4d 89 ec 49 c1 ec 03 48 b8 00 00 00 00 00 fc ff df <41> 80 3c 04 00 74 08 4c 89 ef e8 b0 06 1c 00 4c 8b 7d 08 4c 89 f7
+RSP: 0018:ffffc90003bbfa78 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 1ffff1100fada037 RCX: 0000000000000000
+RDX: 0000000000000003 RSI: ffffffff8bcaccc0 RDI: ffffffff8c1f54c0
+RBP: 0000000000000000 R08: ffffffff8fac686f R09: 1ffffffff1f58d0d
+R10: dffffc0000000000 R11: fffffbfff1f58d0e R12: 0000000000000001
+R13: 0000000000000008 R14: ffff88807d6d01b8 R15: 0000000000000000
+FS:  000055557a070380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000045bdd0 CR3: 0000000023864000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	89 ef                	mov    %ebp,%edi
+   2:	e8 e2 06 1c 00       	call   0x1c06e9
+   7:	48 8b 45 00          	mov    0x0(%rbp),%rax
+   b:	48 8b 4c 24 30       	mov    0x30(%rsp),%rcx
+  10:	48 8d 6c 08 40       	lea    0x40(%rax,%rcx,1),%rbp
+  15:	4c 8d 6d 08          	lea    0x8(%rbp),%r13
+  19:	4d 89 ec             	mov    %r13,%r12
+  1c:	49 c1 ec 03          	shr    $0x3,%r12
+  20:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  27:	fc ff df
+* 2a:	41 80 3c 04 00       	cmpb   $0x0,(%r12,%rax,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	4c 89 ef             	mov    %r13,%rdi
+  34:	e8 b0 06 1c 00       	call   0x1c06e9
+  39:	4c 8b 7d 08          	mov    0x8(%rbp),%r15
+  3d:	4c 89 f7             	mov    %r14,%rdi
 
-> make -C <path-to-linux>/linux/tools/sched_ext ARCH=arm64
-> LOCALVERSION=+ LLVM=-16
-> O=<path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext
-> ...
-> clang-16 -g -O0 -fPIC -std=gnu89 -Wbad-function-cast
-> -Wdeclaration-after-statement -Wformat-security -Wformat-y2k
-> -Winit-self -Wmissing-declarations -Wmissing-prototypes
-> -Wnested-externs -Wno-system-headers -Wold-style-definition -Wpacked
-> -Wredundant-decls -Wstrict-prototypes -Wswitch-default -Wswitch-enum
-> -Wundef -Wwrite-strings -Wformat -Wno-type-limits -Wshadow
-> -Wno-switch-enum -Werror -Wall
-> -I<path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext/build/obj/libbpf/
-> -I<path-to-linux>/linux/tools/include
-> -I<path-to-linux>/linux/tools/include/uapi -fvisibility=hidden
-> -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  \
-> --shared -Wl,-soname,libbpf.so.1 \
-> -Wl,--version-script=libbpf.map
-> <path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext/build/obj/libbpf/sharedobjs/libbpf-in.o
-> -lelf -lz -o <path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext/build/obj/libbpf/libbpf.so.1.5.0
 
-So, thi sis regular arm target buliding.
-
-> clang -g -D__TARGET_ARCH_arm64 -mlittle-endian
-> -I<path-to-linux>/linux/tools/sched_ext/include
-> -I<path-to-linux>/linux/tools/sched_ext/include/bpf-compat
-> -I<path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext/build/include
-> -I<path-to-linux>/linux/tools/include/uapi -I../../include -idirafter
-> /usr/lib/llvm-14/lib/clang/14.0.0/include -idirafter
-> /usr/local/include -idirafter /usr/include/x86_64-linux-gnu -idirafter
-> /usr/include  -Wall -Wno-compare-distinct-pointer-types -O2 -mcpu=v3
-> -target bpf -c scx_simple.bpf.c -o
-> <path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext/build/obj/sched_ext/scx_simple.bpf.o
-> In file included from scx_simple.bpf.c:23:
-> <path-to-linux>/linux/tools/sched_ext/include/scx/common.bpf.h:27:17:
-> error: use of undeclared identifier 'SCX_DSQ_FLAG_BUILTIN'
->         _Static_assert(SCX_DSQ_FLAG_BUILTIN,
->                        ^
-> fatal error: too many errors emitted, stopping now [-ferror-limit=]
-> 5 warnings and 20 errors generated.
-
-This is BPF.
-
-The Makefile is mostly copied from other existing BPF Makefiles under tools,
-so I don't quite understand why things are set up this way but
-
-  CC := $(LLVM_PREFIX)clang$(LLVM_SUFFIX) $(CLANG_FLAGS) -fintegrated-as
-
-is what's used to build regular targets, while
-
-  $(CLANG) $(BPF_CFLAGS) -target bpf -c $< -o $@
-
-is what's used to build BPF targets. It's not too out there to use a
-different compiler for BPF targtes, so maybe that's why? I'll ask BPF folks.
-
-Thanks.
-
--- 
-tejun
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
