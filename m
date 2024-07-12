@@ -1,114 +1,137 @@
-Return-Path: <linux-kernel+bounces-250237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE5592F590
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:30:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D704F92F585
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F7A428384A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:30:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2DF1F22A58
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2363713D601;
-	Fri, 12 Jul 2024 06:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFF313D539;
+	Fri, 12 Jul 2024 06:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="MsLatVbt"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="VvK2WtOX"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CDF13D520;
-	Fri, 12 Jul 2024 06:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC3B17BBE;
+	Fri, 12 Jul 2024 06:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720765807; cv=none; b=m76PoDcvxscBHzK9BUmxCW0FIfkSNmJcoFvvTjjOqBD2cO05rMJkaYzR7WkGxz6dBsp447Z0OVT6k8OktbxzJMS1VfvmzN30/hg8M/IdZSEKPP6EGRuKoQcLlL8U4ajJ2wXbREYb+0Bca44d1AWo978xkk0J/kFBO1hWzEddJeI=
+	t=1720765595; cv=none; b=OXZM+32B7LTg/jFodhJidOVuoGsenNa7bEMSD66i55IPr5CY9N6Baom0x6lxG6HaRu/56H7EkVv7+/JusqfLY3aou49tTF0XnZykEbxaGpP3kmfLikmvKUP14cYASMSVEvY5jzcXToq5U6evdF9Vf4amUPP16FcDNF+paFYE14g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720765807; c=relaxed/simple;
-	bh=KuZfxdNvcEKZcB/S7+Dx2Tux/HsIBYp3cDVVxqENwhw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oAR+zCJe+VpFQgU2bGftnnJE97lBNGKfeXb8a9EZ/K47BxpeY/dILQSd59Nqfcxf7Iz7DfYH8xxjFXdXu9J7kk3tOcHNIXJRRUI6FjJu8MHXQn2XSjkfopPuoVAI/GoTifdutDl4KWkVZsaKIJyti6bMEfCZzQzcLyL1kgSpD8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=MsLatVbt; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from HP-EliteBook-x360-830-G8-Notebook-PC.. (114-136-183-165.emome-ip.hinet.net [114.136.183.165])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 9CEE63F2EF;
-	Fri, 12 Jul 2024 06:24:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1720765459;
-	bh=i6hzXoHNLWliF1K00cSPyBGiejHxlcP1pWL+nbbCtIk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=MsLatVbtWA+f7aS/jR6sttFvHsfUYQzIbkW21uybxoUDdDSRGZ4jHyW9dhM6bAXMU
-	 E8kVQZ9cZAucXN65xTypQUAkbHlAVibOYzXPNBfqnBSTsv2F5YiLP6YX6j8JIqJbPz
-	 cazeKJVD4uGSN1nLA0Sn/r4glSK7jPPhGOG/sA3SM+2umRWcXCk3JEHOdpU6IJ6Ik6
-	 jUhoN1fXgqK/ZjqJo1IP4cPzxMLkefhel0Rd3MnESo7lA2czTQcrVfvu0xBaKoWd0A
-	 74qDWcMNT1114zlXjm+OAb9nmvWYW0V8zua5WYrPmCXU6P30olw1faxZSoLjjQfPUo
-	 6mn3C1pKVQU3A==
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-To: bhelgaas@google.com
-Cc: mario.limonciello@amd.com,
-	mika.westerberg@linux.intel.com,
-	linux-pci@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH] PCI/PM: Put devices to low power state on shutdown
-Date: Fri, 12 Jul 2024 14:24:11 +0800
-Message-ID: <20240712062411.35732-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720765595; c=relaxed/simple;
+	bh=TmSLg3cGo8e+RfLvNoIr5p2SU527l8ZLtxxAgdMewyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KVp3qNZZufAMbuHiDnHh9/MzqxbzlXgy5M8ym5TGbCSzFiuxPvgnyN4uXiSzqyJd104WeHwrVuUBBcC8JV6urIokkAN0kXePniUloOrP/4+lj8E/GP/XHbQ4KVL7oDjrQzv7OI7ZIpEA3KKcN61gW4SU2Ni71jhprUaWVeP41jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=VvK2WtOX; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1720765579; x=1721370379; i=wahrenst@gmx.net;
+	bh=TmSLg3cGo8e+RfLvNoIr5p2SU527l8ZLtxxAgdMewyo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=VvK2WtOXwkIH86PI/FIG6CW9xhznvkL88pY+uoa2fYIlQbF2+44xMrcjKvqKGkMp
+	 ZE5TAtEFAW+piTo6mQ7ZcZd7d1Kh2bA8n4tgRpQ24gT48EfeDFoQ1y24DMYQ0Jtm/
+	 /G1BmFx6kCiaUYwjr6LmkOWwRytMMNXZ9XCpCBZOd7Zzhtv4vT2X1ST7mvbZBTip2
+	 S/tpkZqxAIM6YyH+DcXG0dgv9mFV4CoP2Bzo0E4FGL9e3ofXajzGXlYHi4KfoCORJ
+	 ASs1aVp73C1/dnNuz0jKkfNlaCUOO76PX8BrF6Kj5qBMqZ2FdSji8gZYHg7CRKw9c
+	 qb4BmBotUhgRvhpAHg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MBm1e-1seHDy3ly0-00E9ed; Fri, 12
+ Jul 2024 08:26:19 +0200
+Message-ID: <78119193-98b7-446f-82d6-37884a5b03ad@gmx.net>
+Date: Fri, 12 Jul 2024 08:26:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] pwm: imx27: workaround of the pwm output bug when
+ decrease the duty cycle
+To: Frank Li <Frank.Li@nxp.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Clark Wang <xiaoning.wang@nxp.com>,
+ Jun Li <jun.li@nxp.com>, pratikmanvar09@gmail.com
+References: <20240711-pwm-v1-0-4d5766f99b8b@nxp.com>
+ <20240711-pwm-v1-3-4d5766f99b8b@nxp.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240711-pwm-v1-3-4d5766f99b8b@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:lAnRdLo/NzQOq22G2oDt0rwsAIoHHWZflscox3YXMhJtJ1InvcD
+ 2xDGz3CIruiicfCSBF1XCZ7t7tKw5mVL6BFN1FY8rVtg1/t2fBYsX3ipl9XjbPs+RLAqaUo
+ xwao/7pFGcQHOzxxfZQM0gQ4qFidpJ3BGeeqLJSVq5PFR2XQoUPq3B3L/lkFPTzqy5ENLhd
+ 59jjDy6JPhjZOQm5XYEJw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4qvoVPpZ5vg=;CqThS0ovliZ34aePm5IljqA3g7M
+ eFJUg+mi1DiRQMo6XQK4zS7G/mDOrh90AxqTHrW5jLGHbk5BUD4SyE64N9qn4ySVW/5kR+YuM
+ LMl8jBNel7WhwBkgHJS33MuDGCzgjet8wSjd8fPJMBIAoIQtOTEPytvRqJm17P5Bt4EwRtSo3
+ KRH79Id68PWGjYp72gLNmTClEGy57q0dMF5rG3Z76ILcsri6Z/mKLS8H+cRfKm9ZEGdfuRXcF
+ Gj/u40Ed4Z5BN/QS6W350veFGHWjYhOYZVrnhd1q47JoS3uC7xMxhtbkSSGBz8o1uksvq/zes
+ MmRVfFn2TKoaPcFgdspdykWezoIGDhohm33bxM1pi8ROMfTyQVcDP4fSFvxyTopByos1aVsMO
+ jtDnjW9QZc7wIGE80lStJ3FHU2tL3atstd6KxWTy9lcp7dnwo5E8HILBGBFWoJXfuAX9/xcAN
+ 93UboUEl6F8IE+Su9HPYxdzmJvLawaOZF78y2UHMkCdykbamD0CzJ29x6WH863NI6AsVzfjhi
+ /J6XsOG81wTosh3dCvHTd34ym7tOCWb9zUEvdkznYsphzKqMzLPlkSf/U9YhjfrIlL4RCaWuf
+ OkI87OTpTM0oyLxP7zh4bipuqhuqNyncOr27ESNuuiU72xCGWL9wcVE0+Z2PlmlYnpGKnNnH9
+ tIMSvbcNQZTJ5bdfFoqkepmhQkzEvD07xxM5f9T9TpVaLJwpTLo8CZbpcQDYPIqxxJBhS1z1w
+ oR0z5L4Z2pAPdW0FG3i/tTlKgrTMm7Wiu80qxo24pdQrubmPisvw9XSNVmKWPOBJ7xl1gKqtR
+ rL1TARzAGofrI7h85VaAte7Q==
 
-Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
-connected.
+Hi Frank,
 
-The following error message can be found during shutdown:
-pcieport 0000:00:1d.0: AER: Correctable error message received from 0000:09:04.0
-pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable, type=Data Link Layer, (Receiver ID)
-pcieport 0000:09:04.0:   device [8086:0b26] error status/mask=00000080/00002000
-pcieport 0000:09:04.0:    [ 7] BadDLLP
+Am 11.07.24 um 23:08 schrieb Frank Li:
+> From: Clark Wang <xiaoning.wang@nxp.com>
+>
+> When the SAR FIFO is empty, the write value is directly applied to SAR e=
+ven
+> though the current period is not over. If the new SAR value is less than
+> the old one and the counter is greater than the new SAR value, the curre=
+nt
+> period will not flip the level. This result in a pulse with a 100% duty
+> cycle.
+>
+> Write the old SAR value before updating the new duty cycle to SAR. This
+> avoids writing the new value into an empty FIFO.
+>
+> This only resolves the issue when the PWM period is longer than 2us
+> (or <500KHz) because write register is not quick enough when PWM period =
+is
+> very short.
+>
+> Reviewed-by: Jun Li <jun.li@nxp.com>
+> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+the same patch has been submitted from other people in the past and they
+received many review comments [1], [2].
 
-Calling aer_remove() during shutdown can quiesce the error message,
-however the spurious wakeup still happens.
+Can you please explain which version of the patch this is and does it
+address any review comments?
 
-The issue won't happen if the device is in D3 before system shutdown, so
-putting device to low power state before shutdown to solve the issue.
+Best regards
 
-I don't have a sniffer so this is purely guesswork, however I believe
-putting device to low power state it's the right thing to do.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=219036
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/pci/pci-driver.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index af2996d0d17f..4c6f66f3eb54 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *dev)
- 	if (drv && drv->shutdown)
- 		drv->shutdown(pci_dev);
- 
-+	/*
-+	 * If driver already changed device's power state, it can mean the
-+	 * wakeup setting is in place, or a workaround is used. Hence keep it
-+	 * as is.
-+	 */
-+	if (!kexec_in_progress && pci_dev->current_state == PCI_D0)
-+		pci_prepare_to_sleep(pci_dev);
-+
- 	/*
- 	 * If this is a kexec reboot, turn off Bus Master bit on the
- 	 * device to tell it to not continue to do DMA. Don't touch
--- 
-2.43.0
-
+[1] -
+https://lore.kernel.org/linux-pwm/20211220073130.1429723-1-xiaoning.wang@n=
+xp.com/
+[2] -
+https://lore.kernel.org/linux-pwm/20231229063013.1786-1-pratikmanvar09@gma=
+il.com/
 
