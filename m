@@ -1,149 +1,92 @@
-Return-Path: <linux-kernel+bounces-251095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5095593008E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:49:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7112930099
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F59CB22E7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:49:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71BBC283CEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7386208B6;
-	Fri, 12 Jul 2024 18:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128F622097;
+	Fri, 12 Jul 2024 18:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwgfdLSn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmmh/NJ4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1779A2C6B7;
-	Fri, 12 Jul 2024 18:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E2118C08;
+	Fri, 12 Jul 2024 18:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720810132; cv=none; b=ewwkjsCQws07JGEuz0itzVC0ch9T/zUCcV4yaTjLLZ2z1bwtrstBzwGrVtfmQkthk6S1xkuoJ+nGovhHG2TDm8E6nEZ3iv6Ty0N28S4v9l+BPtpwM1ryaBueA49PpczGHt/lHvMlDMQzz5o22E9YfQqNciblVHX2UzMF5LAc3nc=
+	t=1720810463; cv=none; b=hZc6d32lPfB+bmwMeztfM+VFU0ZDGsUeeVEyDChmKn4g9QhlIzgy4JvWU0IIe5GRoygMR4eIQtREpn4JG1FM7wuKKNFrcKHaMV3NpXrs/am0jq+bpoaK9r6PiW26nL9hDIZlPpaw0xV18Q6o9+AtXljf64hgq+j99L6iz3JDRhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720810132; c=relaxed/simple;
-	bh=gdz48EmSjgoy/izHwN+e2FaoXzRR7IwtCVpXbxR4jNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kReOD4NpX//EqNVz0+l7MHVv470RjFnyCBCUzfPZk+y+/pCQc0gvsWbJzssXXMqm6tmIYSGNVUYt8xWnN+Otat1yXWKQBBufKAUgpULJX8BWjHtprH2tf+xjBHFhewoZTXwYJctWa6KgCwLTVmwQ9GBiwufOb4fN9V+qQL0Uilw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwgfdLSn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A6DDC32782;
-	Fri, 12 Jul 2024 18:48:51 +0000 (UTC)
+	s=arc-20240116; t=1720810463; c=relaxed/simple;
+	bh=/FRO0tmyhfcgTXW2WSGH+l5CQEbA0ZXqOR+40diEmPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rqCwzdmEXbtShNGn1/3o75j7CjKatinplIkMRbluvkpIJ+4rDC9m6+ABLaOZmc/VV7Rmg4oDomv3vXohUCtJSvDXJDlkXY5HGVJ8ODdFzU/v7gdhtJdEwibhpa0UOhUyeyeWczBx/OXtCG/x7jq3ayzFEEWB/5BUxxlsaHYQSYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmmh/NJ4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A053C32782;
+	Fri, 12 Jul 2024 18:54:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720810131;
-	bh=gdz48EmSjgoy/izHwN+e2FaoXzRR7IwtCVpXbxR4jNQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=MwgfdLSngAJm7yURAc4SXppRMHlTQEY1QwDeu8yJ5QAl+eUNgYr0Kb3ChYE1BlOxa
-	 i16UNmPCS1L3cNiJxB/u8Z83Oa/GdVyRhhUr2uUWLQpv3yPibtSL8ZwR1pvLCMr2JS
-	 QNV+ogiYb0+qDbl5jxOfBv9Ak4QSINyZgSWqRlswxuBusurJDmP9bpOc/oJ1EEpYCX
-	 zIJciBobInXEx8PbnKk2vIoJHINughAaULKb2tF8I4SyO0YKl/XIjYUFS+YNaQ/t2r
-	 EI9Pz3O0A/bqBfHSBb4+4kjPImrdubMa5z3OD2tOfscbnWziKSZTDfM1iUEO2nCL0r
-	 1c9NXyLfziWZA==
-Date: Fri, 12 Jul 2024 13:48:49 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, lkp@intel.com,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v4] Subject: PCI: Enable io space 1k granularity for
- intel cpu root port
-Message-ID: <20240712184849.GA330337@bhelgaas>
+	s=k20201202; t=1720810462;
+	bh=/FRO0tmyhfcgTXW2WSGH+l5CQEbA0ZXqOR+40diEmPU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pmmh/NJ42eA0VurfR3KqgY/cQuV4L+J80Bc4cu1eyHNinRr0dyaWGHDylmhv25Aae
+	 oBHNd7I9UplI3/XFTzirKc08fJqWHLfznHyk7U0132YOg6iM8IcQtZaJ4NcfIlSeHu
+	 +NY00kC8hoo2q84STU3Q1UjBpLhN1m/lmOf231pBBKQPHJxdHlGCVU4tWuSzW4Mg1t
+	 3sLSnVdep2hqiwYyD9zB/Bl5IvJQDWw+hGRTyXsnfc00LeQ57Z4qdK+Idv3JfsAcip
+	 E/uh5qsY9LvWYBuAnz7PLvVljBiH2Ir1TNC59r1U1g9xAPJ/eCa68OTIgYmjrTj+Gi
+	 cR717kmQfRnAg==
+From: superm1@kernel.org
+To: Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org (open list:USB XHCI DRIVER),
+	linux-kernel@vger.kernel.org (open list),
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	mika.westerberg@linux.intel.com,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH 0/2] Put XHCI controllers into D3 at S4/S5
+Date: Fri, 12 Jul 2024 13:54:16 -0500
+Message-ID: <20240712185418.937087-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240702035649.26039-1-zhoushengqing@ttyinfo.com>
 
-On Tue, Jul 02, 2024 at 03:56:49AM +0000, Zhou Shengqing wrote:
-> This patch add 1k granularity for intel root port bridge. Intel latest
-> server CPU support 1K granularity, And there is an BIOS setup item named
-> "EN1K", but linux doesn't support it. if an IIO has 5 IOU (SPR has 5 IOUs)
-> all are bifurcated 2x8.In a 2P server system,There are 20 P2P bridges
-> present. if keep 4K granularity allocation,it need 20*4=80k io space,
-> exceeding 64k. I test it in a 16*nvidia 4090s system under intel eaglestrem
-> platform. There are six 4090s that cannot be allocated I/O resources.
-> So I applied this patch. And I found a similar implementation in quirks.c,
-> but it only targets the Intel P64H2 platform.
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-I think this has potential.  Can you include a more complete citation
-for the Intel spec?  Complete name, document number if available,
-revision, section?  Hopefully it's publically available?
+When the system is put into S4 or S5 XHCI controllers remain in D0.  This
+causes higher power consumption and may compromise energy certifications.
+Consequently some systems consume more power in S5 than s0i3.
 
-> Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-> ---
->  drivers/pci/quirks.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index 568410e64ce6..f30083d51e15 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -2562,6 +2562,36 @@ static void quirk_p64h2_1k_io(struct pci_dev *dev)
->  }
->  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x1460, quirk_p64h2_1k_io);
->  
-> +/* Enable 1k I/O space granularity on the intel root port */
-> +static void quirk_intel_rootport_1k_io(struct pci_dev *dev)
-> +{
-> +	struct pci_dev *d = NULL;
-> +	u16 en1k = 0;
-> +	struct pci_dev *root_port = pcie_find_root_port(dev);
-> +
-> +	if (!root_port)
-> +		return;
+This affects all PCIe devices, but looking at breakdowns XHCI is the
+biggest offender for power consumption.
 
-This doesn't seem quite right to me.  The point is to set
-dev->io_window_1k when "dev" is a Root Port itself and when the EN1K
-bit is set in a [8086:09a2] device.
+This series checks if any wakeups are needed and puts controllers into D3
+if no wakeup necessary.
 
-So I don't think we need to *look* for the Root Port, we just need to
-check that "dev" itself *is* a Root Port, e.g.,
+This series is a spiritual successor to [1] which aimed to do this more
+generally in PCI.  It also accomplishes similar goals as [2], but aims for
+both S4 and S5.
 
-  if (!pci_is_pcie(dev) || pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT)
-    return;
+[1] https://lore.kernel.org/linux-pci/20231213182656.6165-1-mario.limonciello@amd.com/#t
+[2] https://lore.kernel.org/linux-pci/9d2f1619-1c61-4e8c-b28d-d4eddefa45c3@amd.com/T/
 
-> +	/*
-> +	 * Per intel sever CPU EDS vol2(register) spec,
-> +	 * Intel Memory Map/Intel VT-d configuration space,
-> +	 * IIO MISC Control (IIOMISCCTRL_1_5_0_CFG) — Offset 1C0h
-> +	 * bit 2.
-> +	 * Enable 1K (EN1K):
-> +	 * This bit when set, enables 1K granularity for I/O space decode
-> +	 * in each of the virtual P2P bridges
-> +	 * corresponding to root ports, and DMI ports.
-> +	 */
-> +	while ((d = pci_get_device(PCI_VENDOR_ID_INTEL, 0x09a2, d))) {
+Mario Limonciello (2):
+  xhci: pci: If no ports have wakeup enabled then disable PCI device at
+    S4
+  xhci: pci: Put XHCI controllers into D3hot at shutdown
 
-To be safe, "d" (the [8086:09a2] device) should be on the same bus as
-"dev" (with VMD, I think we get Root Ports *below* the VMD bridge,
-which would be a different bus, and they presumably are not influenced
-by the EN1K bit.
+ drivers/usb/host/xhci-pci.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-> +		pci_read_config_word(d, 0x1c0, &en1k);
-> +		if (en1k & 0x4) {
-> +			pci_info(d, "INTEL: System should support 1k io window\n");
+-- 
+2.43.0
 
-If we log this, I think it should be with "dev", not "d", since we
-likely will have several Root Ports, and this would lead to several
-identical messages.  Maybe something like this:
-
-  pci_info(dev, "1K I/O windows enabled per %s EN1K setting\n", pci_name(d));
-
-> +			dev->io_window_1k = 1;
-> +		}
-> +	}
-> +}
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL,	PCI_ANY_ID,	quirk_intel_rootport_1k_io);
-> +
->  /*
->   * Under some circumstances, AER is not linked with extended capabilities.
->   * Force it to be linked by setting the corresponding control bit in the
-> -- 
-> 2.39.2
-> 
 
