@@ -1,299 +1,225 @@
-Return-Path: <linux-kernel+bounces-250875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 558B792FE03
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:59:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B17EC92FE05
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76E241C23116
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:59:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2D651C236E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D7C174EF0;
-	Fri, 12 Jul 2024 15:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F91F174EFB;
+	Fri, 12 Jul 2024 15:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ipbKcPhs"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="Tf5p0h0N"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4307212B171;
-	Fri, 12 Jul 2024 15:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE74812B171;
+	Fri, 12 Jul 2024 15:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720799945; cv=none; b=ZCi9xchuZdk5LAaUZjAknL4AhHoz1YXcfrAOCi96FWJXRx9rxhhmR84MS2ag5jJScL0sVvrhLFPHZ60yHfmZtSn5EWIQ5BeJ9g69K/IYzM9zVuSHSf408IreAOQLl987wfyUJn7t41cGHbu+RfMcHPRGOOlKaPe9ZC/r2Vut+mk=
+	t=1720799956; cv=none; b=iB6omTZRsRq8pEEIM14YYAyjDQn34wyN5dLdqv60UYDG09aEWpJoUPUyhoeTFFBSkyuTKvQDwM5Pe8k1IFbH68tWcxH+H8fmFKobGc/fsKpiExQfqOzoY5D88NiQM2gaOqvdAW20coIsu+lta8X/Z2MNpcPyIhLfqMpSJP4kpvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720799945; c=relaxed/simple;
-	bh=2Ugv1jiVfwwJ9oYOA6esGHBNP3BzQlNgxve8Nyki/Xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DffUHpgw7uA2Zxe/4ARcXl2N5dB2NNDMQ2JQswUh4iyQEVOaKO+eIl8sAm6kly3HVbxqyW739TIVW6yjj/TU9Oe2j5J0dYcjsp8FW4tdSSbhWKGykkQ94FjZY5mevg7jKDGyu4/UpRNjdqHT7m2YELySKVlGtQoAXdIxudJuodg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ipbKcPhs; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720799941;
-	bh=2Ugv1jiVfwwJ9oYOA6esGHBNP3BzQlNgxve8Nyki/Xk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ipbKcPhsMsQG1xBWbTeLT9v1e+dwC5VvbBARfYvyMy9IvmazJSeQdQZAj4ykpcDxz
-	 OT63+K001JNu1cZ9LNXUDsQP5XPLVuZkD1WWFqQu40HLn7FDeDSNOZQcj0nvIHpGNq
-	 d68HIVnVGjq3/qdYIKFjf/gjtTSE9pJXTuDLuKlq8R8msvLg+byEeqhSm++9vITlI3
-	 FJwXux4BZUsfrOo7RKq+G0YOf/6CX8WIPyx1AbFD5kFmyezowZk79W8zmdtC2dWQ+L
-	 z5uecZIhtpKTQP26dEFJGmUXT9pziXErj9vbA3zzdViDAEIfeBzcSaY1NecpCFw/yY
-	 GIE3BZvB+N11A==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D293F3782102;
-	Fri, 12 Jul 2024 15:58:58 +0000 (UTC)
-Date: Fri, 12 Jul 2024 11:58:56 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Macpaul Lin <macpaul.lin@mediatek.com>,
-	Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel@collabora.com,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Bear Wang <bear.wang@mediatek.com>,
-	Pablo Sun <pablo.sun@mediatek.com>
-Subject: Re: Probe failure of usb controller @11290000 on MT8195 after
- next-20231221
-Message-ID: <ea97fb15-684e-4009-b312-f39c2acdde5b@notapiano>
-References: <9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano>
- <064935d8-fbda-4eda-b013-8c8fc63b561c@collabora.com>
- <375b2345-657a-4b8f-b5e3-dc16784ffde9@notapiano>
- <da27d957-866f-f055-9e83-cdc362d98dc7@mediatek.com>
- <2dba1638-f155-463b-8f87-421101b8f4f2@collabora.com>
- <521df3a8-5bc2-4e81-a819-02b755c88d3a@notapiano>
- <ac0d1ba5-1ed0-4d4d-a287-1d3e6efadc0a@collabora.com>
+	s=arc-20240116; t=1720799956; c=relaxed/simple;
+	bh=1XxPkXT2cZSD8gaND0V1dsa/Ud1ckMXhXBO5kB+gWLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fLV2z51amVlHdgRlKEBvKuGapLtCbR6Fm3kYFlte/xEVcY4DivilGKk/FfHHM90dXISW+yrV8Q7aKKSPDKLoFMiB1FMsASoUvsczsAfxQ+2b53s4Iy9RQB+P5HqDRSzox71GB22/De1F/5wO16YqJKBW3tRv9Lh8bMVhG3yELgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=Tf5p0h0N; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1720799955; x=1752335955;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GwKqpMAjyij41rR5tqu84wg1nwS/hoIAR0ee3YtldEI=;
+  b=Tf5p0h0Nekm3iMbX/p0qiUmy83IznfXz8jjbLIneGP5S8ReY5OwpzCHY
+   l5xFtHDdwACwA42exis0azlrbLMlWyFm65GhfnrNnx9OQREAbIPW2LP6P
+   4N0y7R09D8B7JVU6SekBKtwrpXk+hecVx9PeVZf7Pa9P1MTbMgv8uSz+9
+   8=;
+X-IronPort-AV: E=Sophos;i="6.09,203,1716249600"; 
+   d="scan'208";a="666998267"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 15:59:11 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.38.20:9937]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.123:2525] with esmtp (Farcaster)
+ id 58fbeed2-d56e-4815-89ca-4919342de76b; Fri, 12 Jul 2024 15:59:11 +0000 (UTC)
+X-Farcaster-Flow-ID: 58fbeed2-d56e-4815-89ca-4919342de76b
+Received: from EX19D003UWB003.ant.amazon.com (10.13.138.116) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 12 Jul 2024 15:59:10 +0000
+Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
+ EX19D003UWB003.ant.amazon.com (10.13.138.116) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 12 Jul 2024 15:59:10 +0000
+Received: from [127.0.0.1] (172.19.88.180) by mail-relay.amazon.com
+ (10.250.64.254) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34 via Frontend
+ Transport; Fri, 12 Jul 2024 15:59:06 +0000
+Message-ID: <e26ec0bb-3c20-4732-a09b-83b6b6a6419a@amazon.co.uk>
+Date: Fri, 12 Jul 2024 16:59:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 8/8] kvm: gmem: Allow restricted userspace mappings
+To: David Hildenbrand <david@redhat.com>, <seanjc@google.com>, Fuad Tabba
+	<tabba@google.com>
+CC: <pbonzini@redhat.com>, <akpm@linux-foundation.org>, <dwmw@amazon.co.uk>,
+	<rppt@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<willy@infradead.org>, <graf@amazon.com>, <derekmn@amazon.com>,
+	<kalyazin@amazon.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <dmatlack@google.com>, <chao.p.peng@linux.intel.com>,
+	<xmarcalx@amazon.co.uk>, James Gowans <jgowans@amazon.com>
+References: <20240709132041.3625501-1-roypat@amazon.co.uk>
+ <20240709132041.3625501-9-roypat@amazon.co.uk>
+ <CA+EHjTynVpsqsudSVRgOBdNSP_XjdgKQkY_LwdqvPkpJAnAYKg@mail.gmail.com>
+ <47ce1b10-e031-4ac1-b88f-9d4194533745@redhat.com>
+ <f7106744-2add-4346-b3b6-49239de34b7f@amazon.co.uk>
+ <f21d8157-a5e9-4acb-93fc-d040e9b585c8@redhat.com>
+From: Patrick Roy <roypat@amazon.co.uk>
+Content-Language: en-US
+Autocrypt: addr=roypat@amazon.co.uk; keydata=
+ xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
+ NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
+ wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
+ CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
+ AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
+ AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
+ IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
+ 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
+ 8hlxFQM=
+In-Reply-To: <f21d8157-a5e9-4acb-93fc-d040e9b585c8@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ac0d1ba5-1ed0-4d4d-a287-1d3e6efadc0a@collabora.com>
 
-On Fri, Jul 12, 2024 at 10:12:39AM +0200, AngeloGioacchino Del Regno wrote:
-> Il 11/07/24 18:33, Nícolas F. R. A. Prado ha scritto:
-> > On Thu, Jul 11, 2024 at 11:21:14AM +0200, AngeloGioacchino Del Regno wrote:
-> > > Il 11/07/24 06:13, Macpaul Lin ha scritto:
-> > > > 
-> > > > 
-> > > > On 7/11/24 03:15, Nícolas F. R. A. Prado wrote:
-> > > > > On Fri, Jan 19, 2024 at 10:12:07AM +0100, AngeloGioacchino Del Regno wrote:
-> > > > > > Il 18/01/24 19:36, Nícolas F. R. A. Prado ha scritto:
-> > > > > > > Hi,
-> > > > > > > 
-> > > > > > > KernelCI has identified a failure in the probe of one of the USB controllers on
-> > > > > > > the MT8195-Tomato Chromebook [1]:
-> > > > > > > 
-> > > > > > > [   16.336840] xhci-mtk 11290000.usb: uwk - reg:0x400, version:104
-> > > > > > > [   16.337081] xhci-mtk 11290000.usb: xHCI Host Controller
-> > > > > > > [   16.337093] xhci-mtk 11290000.usb: new USB bus
-> > > > > > > registered, assigned bus number 5
-> > > > > > > [   16.357114] xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
-> > > > > > > [   16.357119] xhci-mtk 11290000.usb: can't setup: -110
-> > > > > > > [   16.357128] xhci-mtk 11290000.usb: USB bus 5 deregistered
-> > > > > > > [   16.359484] xhci-mtk: probe of 11290000.usb failed with error -110
-> > > > > > > 
-> > > > > > > A previous message [2] suggests that a force-mode phy property that has been
-> > > > > > > merged might help with addressing the issue, however it's not clear to me how,
-> > > > > > > given that the controller at 1129000 uses a USB2 phy and the phy driver patch
-> > > > > > > only looks for the property on USB3 phys.
-> > > > > > > 
-> > > > > > > Worth noting that the issue doesn't always happen. For instance the test did
-> > > > > > > pass for next-20240110 and then failed again on today's next [3]. But it does
-> > > > > > > seem that the issue was introduced, or at least became much more likely, between
-> > > > > > > next-20231221 and next-20240103, given that it never happened out of 10 runs
-> > > > > > > before, and after that has happened 5 out of 7 times.
-> > > > > > > 
-> > > > > > > Note: On the Tomato Chromebook specifically this USB controller is not connected
-> > > > > > > to anything.
-> > > > > > > 
-> > > > > > > [1] https://urldefense.com/v3/__https://linux.kernelci.org/test/case/id/659ce3506673076a8c52a428/__;!!CTRNKA9wMg0ARbw!jtg5drII8WUPwTiL4sWZiSRPXN-EBN8ctTGI85sirqvkmaUbA5z-wrLqPPfxlZZkQ7NItOWDT97OSdENT5oGHKY$
-> > > > > > > [2] https://lore.kernel.org/all/239def9b-437b-9211-7844-af4332651df0@mediatek.com/
-> > > > > > > [3] https://urldefense.com/v3/__https://linux.kernelci.org/test/case/id/65a8c66ee89acb56ac52a405/__;!!CTRNKA9wMg0ARbw!jtg5drII8WUPwTiL4sWZiSRPXN-EBN8ctTGI85sirqvkmaUbA5z-wrLqPPfxlZZkQ7NItOWDT97OSdENi-d0sVc$
-> > > > > > > 
-> > > > > > > Thanks,
-> > > > > > > Nícolas
-> > > > > > 
-> > > > > > Hey Nícolas,
-> > > > > > 
-> > > > > > I wonder if this is happening because of async probe... I have seen those happening
-> > > > > > once in a (long) while on MT8186 as well with the same kind of flakiness and I am
-> > > > > > not even able to reproduce anymore.
-> > > > > > 
-> > > > > > For MT8195 Tomato, I guess we can simply disable that controller without any side
-> > > > > > effects but, at the same time, I'm not sure that this would be the right thing to
-> > > > > > do in this case.
-> > > > > > 
-> > > > > > Besides, the controller at 11290000 is the only one that doesn't live behind MTU3,
-> > > > > > but I don't know if that can ring any bell....
-> > > > > 
-> > > > > An update on this issue: it looks like it only happens if "xhci-mtk
-> > > > > 11290000.usb" probes before "mtk-pcie-gen3 112f8000.pcie". What they have in
-> > > > > common is that both of those nodes use phys that share the same t-phy block:
-> > > > > pcie uses the usb3 phy while xhci uses the usb2 phy. So it seems that some of
-> > > > > the initialization done by the pcie controller might be implicitly needed by the
-> > > > > usb controller.
-> > > > > 
-> > > > > This should help to narrow down the issue and find a proper fix for it.
-> > > > > 
-> > > > > Thanks,
-> > > > > Nícolas
-> > > > 
-> > > > 'force-mode' should only applied to the boards which require XHCI
-> > > > function instead of a PCIE port.
-> > > > 
-> > > > For example, mt8395-genio-1200-evk.dts requires property 'force-mode' to
-> > > > fix probe issue for USBC @11290000.
-> > > > 
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/mediatek/linux.git/commit/?h=v6.10-next/dts64&id=666e6f39faff05fe12bfc64c64aa9015135ce783
-> > > > 
-> > > > 'force-mode' should be no need for tomato boards and the behavior should
-> > > > be the same as before.
-> > > > 
-> > > > Another possibility is the firmware change on tomato boards. I'm not
-> > > > sure if there is any changes on tomato's recent firmware for tphy of
-> > > > this port, which could also be a reason causes this kind of failure.
-> > > > I don't have tomato boards on hand.
-> > > > 
-> > > 
-> > > Hello Macpaul,
-> > > 
-> > > it's just about the usb node missing a power domain: as the PCIE_MAC_P1 domain
-> > > seems to be shared between USB and PCIe, adding it to the USB node fixes the
-> > > setup phase.
-> > > 
-> > > I'll send a devicetree fix soon.
-> > 
-> > Hi,
-> > 
-> > As I replied to that patch
-> > (https://lore.kernel.org/all/20240711093230.118534-1-angelogioacchino.delregno@collabora.com)
-> > it didn't fix the issue for me, but I have more updates:
-> > 
-> > I confirmed the pcie was doing some required setup since disabling the pcie1
-> > node made the issue always happen, and that also made it easier to test.
-> > 
-> > I was able to track the issue down to the following clock:
-> > <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>
-> > 
-> > Adding it to the clocks property of the xhci1 node fixed the issue.
-> > 
+Hey,
+
+On Wed, 2024-07-10 at 22:12 +0100, David Hildenbrand wrote:
+> On 10.07.24 11:51, Patrick Roy wrote:
+>>
+>>
+>> On 7/9/24 22:13, David Hildenbrand wrote:
+>>> On 09.07.24 16:48, Fuad Tabba wrote:
+>>>> Hi Patrick,
+>>>>
+>>>> On Tue, Jul 9, 2024 at 2:21â€¯PM Patrick Roy <roypat@amazon.co.uk> wrote:
+>>>>>
+>>>>> Allow mapping guest_memfd into userspace. Since AS_INACCESSIBLE is set
+>>>>> on the underlying address_space struct, no GUP of guest_memfd will be
+>>>>> possible.
+>>>>
+>>>> This patch allows mapping guest_memfd() unconditionally. Even if it's
+>>>> not guppable, there are other reasons why you wouldn't want to allow
+>>>> this. Maybe a config flag to gate it? e.g.,
+>>>
+>>>
+>>> As discussed with Jason, maybe not the direction we want to take with
+>>> guest_memfd.
+>>> If it's private memory, it shall not be mapped. Also not via magic
+>>> config options.
+>>>
+>>> We'll likely discuss some of that in the meeting MM tomorrow I guess
+>>> (having both shared and private memory in guest_memfd).
+>>
+>> Oh, nice. I'm assuming you mean this meeting:
+>> https://lore.kernel.org/linux-mm/197a2f19-c71c-fbde-a62a-213dede1f4fd@google.com/T/?
+>> Would it be okay if I also attend? I see it also mentions huge pages,
+>> which is another thing we are interested in, actually :)
 > 
-> Clocks is what I tried first, and didn't do anything for me...
+> Hi,
 > 
-> ..anyway, can you at this point try to run that solution on the multiple
-> devices that we have in the lab through KernelCI?
+> sorry for the late reply. Yes, you could have joined .... too late.
+
+No worries, I did end up joining to listen in to y'all's discussion
+anyway :)
+
+> There will be a summary posted soon. So far the agreement is that we're
+> planning on allowing shared memory as part guest_memfd, and will allow
+> that to get mapped and pinned. Private memory is not going to get mapped
+> and pinned.
 > 
-> That would help validating that you're not facing the same false positive
-> as mine from yesterday...
-
-Hi,
-
-I've ran 10 times with and 10 times without the following patch:
-
-  diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-  index 2ee45752583c..611afe4de968 100644
-  --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-  +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
-  @@ -1453,9 +1453,10 @@ xhci1: usb@11290000 {
-                                   <&topckgen CLK_TOP_SSUSB_P1_REF>,
-                                   <&apmixedsys CLK_APMIXED_USB1PLL>,
-                                   <&clk26m>,
-  -                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
-  +                                <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
-  +                                <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>;
-                          clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck",
-  -                                     "xhci_ck";
-  +                                     "xhci_ck", "frmcnt_ck";
-                          mediatek,syscon-wakeup = <&pericfg 0x400 104>;
-                          wakeup-source;
-                          status = "disabled";
-
-In both cases I also had
-
-  diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-  index fe5400e17b0f..e50be8a82d49 100644
-  --- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-  +++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-  @@ -613,7 +613,7 @@ flash@0 {
-   };
-  
-   &pcie1 {
-  -       status = "okay";
-  +       /* status = "okay"; */
-  
-          pinctrl-names = "default";
-          pinctrl-0 = <&pcie1_pins_default>;
-
-to make the issue always happen.
-
-For reproducibility purposes, this was tested on next-20240703 with the
-following config: http://0x0.st/XMGM.txt
-
-And the results confirm that every run (10/10) with the patch didn't experience
-the issue:
-
-   https://lava.collabora.dev/scheduler/job/14805738
-   https://lava.collabora.dev/scheduler/job/14805757
-   https://lava.collabora.dev/scheduler/job/14805759
-   https://lava.collabora.dev/scheduler/job/14805789
-   https://lava.collabora.dev/scheduler/job/14805791
-   https://lava.collabora.dev/scheduler/job/14805792
-   https://lava.collabora.dev/scheduler/job/14805795
-   https://lava.collabora.dev/scheduler/job/14805799
-   https://lava.collabora.dev/scheduler/job/14805816
-   https://lava.collabora.dev/scheduler/job/14805820
-
-While every run (10/10) without the patch experienced the issue:
-
-   https://lava.collabora.dev/scheduler/job/14805740
-   https://lava.collabora.dev/scheduler/job/14805758
-   https://lava.collabora.dev/scheduler/job/14805787
-   https://lava.collabora.dev/scheduler/job/14805790
-   https://lava.collabora.dev/scheduler/job/14805793
-   https://lava.collabora.dev/scheduler/job/14805796
-   https://lava.collabora.dev/scheduler/job/14805803
-   https://lava.collabora.dev/scheduler/job/14805818
-   https://lava.collabora.dev/scheduler/job/14805822
-   https://lava.collabora.dev/scheduler/job/14805876
-
-These runs are across different units of tomato-r2. I also tried on tomato-r3
-with the same result:
-without clock, fail: https://lava.collabora.dev/scheduler/job/14806546
-with clock, pass: https://lava.collabora.dev/scheduler/job/14806547
-
-So this definitely fixes it. Whether or not this is the right fix, or how to
-describe this clock, I'll need your and MediaTek's help to figure out.
-
-Thanks,
-Nícolas
-
+> If we have to disallow pinning of shared memory on top for some use
+> cases (i.e., no directmap), I assume that could be added.
 > 
-> > I'm just not sure from a DT perspective what's the right way to describe this
-> > clock. The node doesn't have the frmcnt_ck, is this that clock? Or is it
-> > another clock that currently isn't described in the dt-bindings and driver?
-> > 
+>>
+>>> Note that just from staring at this commit, I don't understand the
+>>> motivation *why* we would want to do that.
+>>
+>> Fair - I admittedly didn't get into that as much as I probably should
+>> have. In our usecase, we do not have anything that pKVM would (I think)
+>> call "guest-private" memory. I think our memory can be better described
+>> as guest-owned, but always shared with the VMM (e.g. userspace), but
+>> ideally never shared with the host kernel. This model lets us do a lot
+>> of simplifying assumptions: Things like I/O can be handled in userspace
+>> without the guest explicitly sharing I/O buffers (which is not exactly
+>> what we would want long-term anyway, as sharing in the guest_memfd
+>> context means sharing with the host kernel), we can easily do VM
+>> snapshotting without needing things like TDX's TDH.EXPORT.MEM APIs, etc.
 > 
-> That's the PCI-Express Root Port (RP) Transaction Layer (TL) clock... and I have
-> no idea why this has anything to do with USB.
+> Okay, so essentially you would want to use guest_memfd to only contain
+> shard memory and disallow any pinning like for secretmem.
+
+Yeah, this is pretty much what I thought we wanted before listening in
+on Wednesday.
+
+I've actually be thinking about this some more since then though. With
+hugepages, if the VM is backed by, say, 2M pages, our on-demand direct
+map insertion approach runs into the same problem that CoCo VMs have
+when they're backed by hugepages: How to deal with the guest only
+sharing a 4K range in a hugepage? If we want to restore the direct map
+for e.g. the page containing kvm-clock data, then we can't simply go
+ahead and restore the direct map for the entire 2M page, because there
+very well might be stuff in the other 511 small guest pages that we
+really do not want in the direct map. And we can't even take the
+approach of letting the guest deal with the problem, because here
+"sharing" is driven by the host, not the guest, so the guest cannot
+possibly know that it maybe should avoid putting stuff it doesn't want
+shared into those remaining 511 pages! To me that sounds a lot like the
+whole "breaking down huge folios to allow GUP to only some parts of it"
+thing mentioned on Wednesday.
+
+Now, if we instead treat "guest memory without direct map entries" as
+"private", and "guest memory with direct map entries" as "shared", then
+the above will be solved by whatever mechanism allows gupping/mapping of
+only the "shared" parts of huge folios, IIUC. The fact that GUP is then
+also allowed for the "shared" parts is not actually a problem for us -
+we went down the route of disabling GUP altogether here because based on
+[1] it sounded like GUP for anything gmem related would never happen.
+But after something is re-inserted into the direct map, we don't very
+much care if it can be GUP-ed or not. In fact, allowing GUP for the
+shared parts probably makes some things easier for us, as we can then do
+I/O without bounce buffers by just in-place converting I/O-buffers to
+shared, and then treating that shared slice of guest_memfd the same way
+we treat traditional guest memory today. In a very far-off future, we'd
+like to be able to do I/O without ever reinserting pages into the direct
+map, but I don't think adopting this private/shared model for gmem would
+block us from doing that?
+
+Although all of this does hinge on us being able to do the in-place
+shared/private conversion without any guest involvement. Do you envision
+that to be possible?
+
+> If so, I wonder if it wouldn't be better to simply add KVM support to
+> consume *real* secretmem memory? IIRC so far there was only demand to
+> probably remove the directmap of private memory in guest_memfd, not of
+> shared memory.
+> -- 
+> Cheers,
 > 
-> MediaTek, is that a hardware quirk? What is the relation between this clock and
-> the USB controller at 11290000?
-> 
-> Thanks,
-> Angelo
-> 
-> > Thanks,
-> > Nícolas
-> 
+> David / dhildenb
+
+Best, 
+Patrick
+
+[1]: https://lore.kernel.org/all/ZdfoR3nCEP3HTtm1@casper.infradead.org/
+
 
