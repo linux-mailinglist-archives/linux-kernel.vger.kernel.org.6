@@ -1,90 +1,177 @@
-Return-Path: <linux-kernel+bounces-250095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4AA92F42D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:50:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A7092F435
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0B331C21F0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:50:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73539282381
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A941C8FF;
-	Fri, 12 Jul 2024 02:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D54BE4A;
+	Fri, 12 Jul 2024 02:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJGls8lx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cvzfR1Ch"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466D98F7D;
-	Fri, 12 Jul 2024 02:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCBC635
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720752632; cv=none; b=pg64OtAR7KJ5pMrh7qthdA8AH6z/Omu1X66eDw/f0fHmj5MMOg1lZoVK77A6RmaJctPuzi0HaQ0/5XIUz1mK48wkDFv1O5f07kKR2wcCHJ1aOR6f17vHSmHQoDcnCAyjrkqFCp56kC0WtiNlz9uFhWr0jpTNEfRW+a9JZhO/O/c=
+	t=1720753029; cv=none; b=oqS87spnDWqqg5wU4J5kHHnupAoQMoI8rmo2uQ/O9Hq47WS5ipbHjc/95tAw6Vb0aJB9BiyYMJjxhyWLfm/tP8VEFBAIFKNdsYAjjxAGWICUaJ4SHVFxwtgqsh5z3zDZxCFDOEqWYSaHt19VrnuXr2rW1Fo5Q+6B//Cdb/J18IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720752632; c=relaxed/simple;
-	bh=nSWffd1bPlJG+fHntjmwZPKvBwDInwS+pa97uXQTnCA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=IbbbGNWDL7S6XgyR3Sd+so9sfMIDpBMiFCcDvRzJXPQsIrxmORRGZ0Z+H1pA0k5+MbtWZsLrPR2LVuDik7xTegANpeVWGhRMvAZCFOgmj+GWs31MkLYlFvyW0BntavUj+Lns1fzd1i4ldGBil/lATn1COA9cqnPoihPgGDE/zto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJGls8lx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B34EDC32786;
-	Fri, 12 Jul 2024 02:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720752631;
-	bh=nSWffd1bPlJG+fHntjmwZPKvBwDInwS+pa97uXQTnCA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nJGls8lx46tKB+MF0N1Z2pamJ6N+GUh4VlNnxPXdUnQminrg286qV4Cn2PlrFA2EL
-	 q33hqqiOlqx+fBKTNnfJC+AM+bTAVi+HqBhi25JHqP4slERbwxWaXODQA0KVBqn/++
-	 gGmOtYfGNkPBjd5dF1SAjA305a90H5yZZqFO/EwnpUJNzIVgM4u8a6EDchMti369SO
-	 6WPLQ/bfRlhtLc7XS0wlBirYPM6XEbCytKr65Hu5tZHy9xC/xLlctIzdNkrBVmisw9
-	 P4e6LkugxW60aID+HhKJQ9E4y3TNppekcRgHVcLg9zKHduKx9aCp0iJtiFvcOU6ewf
-	 X4cc1Ye6BsbwQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A29BDC43468;
-	Fri, 12 Jul 2024 02:50:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720753029; c=relaxed/simple;
+	bh=FYo0BamwG4FGl/+5ft6++Keb8TRPabI7ieLWG9opyyA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=HE/nqDcaW2XwGeGFJbrR6uIg2H6HAUTw7iX4rkuuwQ7xZI7Ddfqte8Uv/ZBMDpwFSicfOX7VoI8In5kG1nqIgRtp92tXFCsakxYoPF+lPZtGmlw8wnicpDUxmSH0nmjFQo2guzclKenzCHg3xDYa9Q0D03cu1caxUxEFfAZMovM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cvzfR1Ch; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720753028; x=1752289028;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FYo0BamwG4FGl/+5ft6++Keb8TRPabI7ieLWG9opyyA=;
+  b=cvzfR1ChqI3jm6D+ILuixI1hj+b80QnD0pZGRYKUA48Hc/blLaVKp7LB
+   +PdO1VcLi89IySIHfjxQySbZCckfws/UO2Ln5HJlZKucn/8673M83+Fdd
+   6nPsullEIc0w1zBSzplyNzhAxrnXh+f8doiUHnToeaQ1bmcpM7+ZIkPjE
+   /xzfSHyOUwee3NSgjvuFdGS+vg/AD5Ye/J9hFw/Plq3oZdRLnv23rWMNF
+   43mqZlmFaPKG9lXIjfKv8Z9DJ+aJngp485LGyvYJyRKuJPRVigx4f2CDz
+   F7OnpnyFYlUAdSJBQEU3asqlVipiKBwTFS/ly+lDjqdgoLBQpFeUdn20P
+   A==;
+X-CSE-ConnectionGUID: 2cK0hYdfTr+t0mP5i34M/A==
+X-CSE-MsgGUID: Pq8ykQ13S16JXjQldEo4QQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="28770290"
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="28770290"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 19:57:07 -0700
+X-CSE-ConnectionGUID: A1+mpcN3QbapRwjBt84bpQ==
+X-CSE-MsgGUID: KlvtoFbRQF6riYJo+sFl4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="48785504"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa009.fm.intel.com with ESMTP; 11 Jul 2024 19:57:04 -0700
+Message-ID: <b4758476-6de2-4d3e-91b2-10599a37d00e@linux.intel.com>
+Date: Fri, 12 Jul 2024 10:54:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] tipc: Remove unused struct declaration
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172075263166.5411.2775735137223201720.git-patchwork-notify@kernel.org>
-Date: Fri, 12 Jul 2024 02:50:31 +0000
-References: <20240709143410.352006-1-syoshida@redhat.com>
-In-Reply-To: <20240709143410.352006-1-syoshida@redhat.com>
-To: Shigeru Yoshida <syoshida@redhat.com>
-Cc: jmaloy@redhat.com, ying.xue@windriver.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Kevin Tian <kevin.tian@intel.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Nicolin Chen <nicolinc@nvidia.com>,
+ Yi Liu <yi.l.liu@intel.com>, iommu@lists.linux.dev,
  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] iommufd: Add check on user response code
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20240710083341.44617-1-baolu.lu@linux.intel.com>
+ <20240710083341.44617-3-baolu.lu@linux.intel.com>
+ <20240711233950.GU14050@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240711233950.GU14050@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Tue,  9 Jul 2024 23:34:10 +0900 you wrote:
-> struct tipc_name_table in core.h is not used. Remove this declaration.
+On 7/12/24 7:39 AM, Jason Gunthorpe wrote:
+> On Wed, Jul 10, 2024 at 04:33:40PM +0800, Lu Baolu wrote:
+>> The response code from user space is only allowed to be SUCCESS or
+>> INVALID. All other values are treated by the device as a response
+>> code of Response Failure according to PCI spec, section 10.4.2.1.
+>> This response disables the Page Request Interface for the Function.
+>>
+>> Add a check in iommufd_fault_fops_write() to avoid invalid response
+>> code.
+>>
+>> Fixes: 07838f7fd529 ("iommufd: Add iommufd fault object")
+>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/iommufd/fault.c | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
+>> index 54d6cd20a673..044b9b97da31 100644
+>> --- a/drivers/iommu/iommufd/fault.c
+>> +++ b/drivers/iommu/iommufd/fault.c
+>> @@ -305,6 +305,12 @@ static ssize_t iommufd_fault_fops_write(struct file *filep, const char __user *b
+>>   		if (rc)
+>>   			break;
+>>   
+>> +		if (response.code != IOMMUFD_PAGE_RESP_SUCCESS &&
+>> +		    response.code != IOMMUFD_PAGE_RESP_INVALID) {
+>> +			rc = -EINVAL;
+>> +			break;
+>> +		}
 > 
-> Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
-> ---
->  net/tipc/core.h | 1 -
->  1 file changed, 1 deletion(-)
+> I added this:
+> 
+> 		static_assert(IOMMUFD_PAGE_RESP_SUCCESS ==
+> 			      IOMMU_PAGE_RESP_SUCCESS);
+> 		static_assert(IOMMUFD_PAGE_RESP_INVALID ==
+> 			      IOMMU_PAGE_RESP_INVALID);
 
-Here is the summary with links:
-  - [net-next] tipc: Remove unused struct declaration
-    https://git.kernel.org/netdev/net-next/c/534ea0a95e2d
+Above change cause below build warning:
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+drivers/iommu/iommufd/fault.c: In function ‘iommufd_fault_fops_write’:
+drivers/iommu/iommufd/fault.c:308:57: warning: comparison between ‘enum 
+iommufd_page_response_code’ and ‘enum iommu_page_response_code’ 
+[-Wenum-compare]
+   308 |                 static_assert(IOMMUFD_PAGE_RESP_SUCCESS ==
+       |                                                         ^~
+./include/linux/build_bug.h:78:56: note: in definition of macro 
+‘__static_assert’
+    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+       |                                                        ^~~~
+drivers/iommu/iommufd/fault.c:308:17: note: in expansion of macro 
+‘static_assert’
+   308 |                 static_assert(IOMMUFD_PAGE_RESP_SUCCESS ==
+       |                 ^~~~~~~~~~~~~
+drivers/iommu/iommufd/fault.c:310:57: warning: comparison between ‘enum 
+iommufd_page_response_code’ and ‘enum iommu_page_response_code’ 
+[-Wenum-compare]
+   310 |                 static_assert(IOMMUFD_PAGE_RESP_INVALID ==
+       |                                                         ^~
+./include/linux/build_bug.h:78:56: note: in definition of macro 
+‘__static_assert’
+    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+       |                                                        ^~~~
+drivers/iommu/iommufd/fault.c:310:17: note: in expansion of macro 
+‘static_assert’
+   310 |                 static_assert(IOMMUFD_PAGE_RESP_INVALID ==
+       |                 ^~~~~~~~~~~~~
 
+Perhaps convert them to 'int' before compare?
 
+diff --git a/drivers/iommu/iommufd/fault.c b/drivers/iommu/iommufd/fault.c
+index 29f522819759..a643d5c7c535 100644
+--- a/drivers/iommu/iommufd/fault.c
++++ b/drivers/iommu/iommufd/fault.c
+@@ -305,10 +305,10 @@ static ssize_t iommufd_fault_fops_write(struct 
+file *filep, const char __user *b
+                 if (rc)
+                         break;
+
+-               static_assert(IOMMUFD_PAGE_RESP_SUCCESS ==
+-                             IOMMU_PAGE_RESP_SUCCESS);
+-               static_assert(IOMMUFD_PAGE_RESP_INVALID ==
+-                             IOMMU_PAGE_RESP_INVALID);
++               static_assert((int)IOMMUFD_PAGE_RESP_SUCCESS ==
++                             (int)IOMMU_PAGE_RESP_SUCCESS);
++               static_assert((int)IOMMUFD_PAGE_RESP_INVALID ==
++                             (int)IOMMU_PAGE_RESP_INVALID);
+                 if (response.code != IOMMUFD_PAGE_RESP_SUCCESS &&
+                     response.code != IOMMUFD_PAGE_RESP_INVALID) {
+                         rc = -EINVAL;
+
+Thanks,
+baolu
 
