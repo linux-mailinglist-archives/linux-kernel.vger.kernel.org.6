@@ -1,154 +1,118 @@
-Return-Path: <linux-kernel+bounces-250493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA5692F879
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:55:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76ECB92F87C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346A22838D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:55:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A661E1C2108E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B0614F109;
-	Fri, 12 Jul 2024 09:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06887158A35;
+	Fri, 12 Jul 2024 09:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="abOh2T+A"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZecFFwwt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A3C14600B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4EB14A4C8
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720778091; cv=none; b=DDtzXfttyzQpohlMa39BkC3NmTog1PudEjH1L5OAYA+brHoU82gDHITbGYWNRZd18qAgXiatEqQTlXBOlkV0Alc4tJanVmYjzNM24VxPqq2bZLX1irfZEEJTtVBmbv1rIM5o4L3rc7reqb0vNuakH8QY9y95q/MtNJT38GiJkuQ=
+	t=1720778113; cv=none; b=tj6Fgg/UABLNLXOFOY9B09CS2+2e//qsRR8vNr/14XsEX/eIRQojTeKPLNe3DQg4X6Ku8pA+Ip0PD40z4MftaauhGVFKMhkdt+ihJJkFzavo/A9WWq1dQGetQSXZnf6QJRr8lWl0WlX72ND16zv/sv0PK+50rIoTug+YNWP/UxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720778091; c=relaxed/simple;
-	bh=0EHyVYUm+nhOIMyjF0qXrLcKScZWSXFE3KlYuk5bhag=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dLqsZvjnyjVP12rfMSzFmaW5iswzgfEqR5UsisbPsAPrORLQppCB51e6uNpbLVG0tc0xmUVgsOAhYQ8tAb2ItN36ktKeKf49jg4/Fua71mmZjDSgg+30W6jCWRKuNi04J1QUH9dLCkq1hnmlEQty2+YszvXQQ2WUV0Nn2nkB6TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=abOh2T+A; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-59a47d5c22aso136812a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:54:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720778088; x=1721382888; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pFarToQcBAfs6/zZ3KxBjQqvHfbYLRHa6Rvj0qeALC8=;
-        b=abOh2T+AyxwvdZwl8sykbeEIh81eCN5aYImMrh7J34cBZ9uxG9mFlDU19sdVXqczRy
-         1WtD9Ls2HhmE/+9sUg1ux2d3bl9lwFLvxjGh9JZBPjOTCU3qFMZwgNubG2XFc/lJnqX5
-         EfD73p3jlDVDV2/SMT2lwvxrv6yQphWC/xbpxd6AUPcDjELcocOOj+YLjfEf603b7lQm
-         87wgefVutb7oqHJUpSvKHVfpMTv0IlZSVxYGDWKMg8YxlRRNI+lWuE3DketG493YECow
-         icLHoMAemr9tJvN7RQcPDgMwHH0Kj73qsdsUKTqOS8j4dAOFco6jRBNRr+1NAqrnuSHc
-         7R0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720778088; x=1721382888;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pFarToQcBAfs6/zZ3KxBjQqvHfbYLRHa6Rvj0qeALC8=;
-        b=B+eTKkAp1mI17rhIb2PLF2EYEYJpYmlNGp7drQYi+rFJ+SpXLHitW4scnGgwySrBuI
-         Yjh8n/5LvegpMe9gW/yMh14qBKHtzFaWABHU6mqtd5Sew2cIjzDSoJzygMz07U1P5jYj
-         IftNQQ6e9/yfxyV/4GVEmgj/8dRNX8mEOAmU0KW5Ijg7dJHSMsvA1iMeZpkjaDHiiZD0
-         kCE13+3kgjE1i20h9NfutBA+KJ5WcR1cG94D5gCGhLkvqPTVmntun3w0CDbj+0rYgv/B
-         ItGtLas0/VVcDDjET25XAPQISC4tGpO57Gf1PbE/uoimKT648wW+e0PRtUB585r6WSEP
-         NknA==
-X-Forwarded-Encrypted: i=1; AJvYcCXb9wuwQOZQfbWXpfid+X0Il8nVnYvJayP2kgmqNMQQWdCS6OKHyAD9+TN0FH6tX2sV5QO3sIRrr7hnz9swgHl4ezeIpmKPjZuWmQR8
-X-Gm-Message-State: AOJu0Yz4ghBRkP98Oz7A/hYSgclUd0yjiZ+BgHCl1PgNUqN431uUNuXn
-	CKc26uz5b6EIhYRKww7URXmVH+LMtd2a700A2YgACms03t9jFs3xoI/apmD54jSWDkD69RP5mlB
-	l
-X-Google-Smtp-Source: AGHT+IFe9k8flo1HTWUWxTj4wgCOcEsCxMxM2KjHvlE6NvwP3oNQDCf6EAaxugji8FXkF5AGVu/Tsw==
-X-Received: by 2002:a05:6402:2794:b0:58d:ebf9:4e2b with SMTP id 4fb4d7f45d1cf-594ba98f46bmr7884764a12.2.1720778086737;
-        Fri, 12 Jul 2024 02:54:46 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bc4e81a6sm4369823a12.49.2024.07.12.02.54.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 02:54:46 -0700 (PDT)
-Message-ID: <512601f7-0299-487b-ba7d-7941cf1f0151@linaro.org>
-Date: Fri, 12 Jul 2024 11:54:44 +0200
+	s=arc-20240116; t=1720778113; c=relaxed/simple;
+	bh=VHgWyoWjIKaO1gLhmwyqxCG0NgL1aQmum5wsVrDPiiE=;
+	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
+	 In-Reply-To; b=k7vntSGtCnmofk1YSfjo3SwvGRKOT7P3OtXHRQ0GmqolRbsjlFeXTZ4q1AoiB7hxRVqXZSrPfBYOra+C0qAESt0pqu2Y5WfK2N5gyuP+eDLaWx6BzX36FjS2JL8+iVO3U6sj1LR9XYhms1IE8tOIp5qes1N0ThTznnv4MUvfM2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZecFFwwt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D3E2C32786;
+	Fri, 12 Jul 2024 09:55:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720778112;
+	bh=VHgWyoWjIKaO1gLhmwyqxCG0NgL1aQmum5wsVrDPiiE=;
+	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
+	b=ZecFFwwtAOOh80u9qYekts6l8YtCdGU8XuUm+MNK8HHev1vlPyexWEISjh0+hvUBG
+	 1ayBH6kTc2hC/9xkViVT/C1PqnzHi4riccGduaeyeSKvkwWNNyNK1vXVteWzbt1xzR
+	 VeMkpwkv5WclR9EqxIEq7y2n9nPq+Xh43YnebkzySOHBlCgYKLuHkqvP2E749NDGXz
+	 tq0rfl7Fx9l0cwnOpwuMqjdhzkozLhZrEtSB6L3qszO87Ax1ukfa1qPYxR5xtR3R2g
+	 8bgkzOCE0NwnVv6RLOhJWzXfNLbJbLBUOLv/Rb3Obak1Miezs+gsvrjIzqsi7SrFvn
+	 ahkJeQYZ4mzpA==
+Content-Type: multipart/signed;
+ boundary=aee9b33c528211d8b06b0c46e19f7e654e98074c381b0b5a8e637c093686;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Fri, 12 Jul 2024 11:55:08 +0200
+Message-Id: <D2NGXHZ2VTK0.M0AOB4CM7MHM@kernel.org>
+Cc: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Rasmus
+ Villemoes" <rasmus.villemoes@prevas.dk>,
+ <linux-arm-kernel@lists.infradead.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Esben Haabendal" <esben@geanix.com>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Pratyush Yadav" <pratyush@kernel.org>, "Miquel
+ Raynal" <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>, "Nicolas Ferre"
+ <nicolas.ferre@microchip.com>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, "Claudiu Beznea"
+ <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH v3 00/15] mtd: spi-nor: macronix: workaround for device
+ id re-use
+X-Mailer: aerc 0.16.0
+References: <20240711-macronix-mx25l3205d-fixups-v3-0-99353461dd2d@geanix.com>
+In-Reply-To: <20240711-macronix-mx25l3205d-fixups-v3-0-99353461dd2d@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drivers/clocksource/qcom: Add missing iounmap() on
- errors in msm_dt_timer_init() function.
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-To: Ankit Agrawal <agrawal.ag.ankit@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240712082747.GA182658@bnew-VirtualBox>
- <a6ae5f72-76e2-4c80-8039-b3bb07ce3a3d@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <a6ae5f72-76e2-4c80-8039-b3bb07ce3a3d@linaro.org>
+
+--aee9b33c528211d8b06b0c46e19f7e654e98074c381b0b5a8e637c093686
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 12.07.2024 11:51 AM, Konrad Dybcio wrote:
-> On 12.07.2024 10:27 AM, Ankit Agrawal wrote:
->> Add the missing iounmap() when clock frequency fails to get read by the
->> of_property_read_u32() call, or if the call to msm_timer_init() fails.
->>
->> Signed-off-by: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
->> ---
-> 
-> For your future submissions: run:
-> 
-> /scripts/checkpatch.pl -g $(git describe --abbrev=0)..
-> 
-> to run some static checks, such as "title is rather long"
-> 
-> 
-> ..but I don't mind!
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Hi,
 
-Also:
+On Thu Jul 11, 2024 at 3:00 PM CEST, Esben Haabendal wrote:
+> As a consequence, the SPI_NOR_SKIP_SFDP flag is no more, and all
+> drivers that have been doing optional SFDP is now marked explicitly to
+> do that using the SPI_NOR_TRY_SFDP.
 
-Fixes: 6e3321631ac2 ("ARM: msm: Add DT support to msm_timer")
+First, I haven't looked at your patchset at the moment. But I'd like
+to take the opportunity to discuss the following (and excuse me that
+I didn't had this idea before all your work on this).
 
-Konrad
+First, I'd like to see it the other way around, that is, doing SFDP
+by default and let the driver opt-out instead of opt-in. This will
+also align with the current "SFDP only driver", i.e. if a flash is
+not known we try SFDP anyway. Going forward, I'd say this is also
+the sane behavior and we don't have to add any flags if someone want
+to add support for an (older) flash with the same ID but without
+SFDP. With the current approach, we'd have to add the TRY_SFDP flag.
+
+Now we might play it safe and add that SPI_NOR_SKIP_SFDP to any
+flash which doesn't do the SFDP parsing (because it has size !=3D 0
+and not any of the magic flags set) - or we might just go ahead and
+do the probing first for *any* flashes. Yes we might issue an
+unsupported opcode, but we already do that with the generic SFDP
+flash driver. So no big deal maybe (?). Vendors where we know for a
+fact that they don't have any SFDP (Everspin I'm looking at you),
+would of course set the SKIP_SFDP flag.
+
+-michael
+
+--aee9b33c528211d8b06b0c46e19f7e654e98074c381b0b5a8e637c093686
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZpD9fRIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/gW0QF/aA10t5iors/5JcBokw9E47uTSzUvxCoi
+NSOzc/Px3FUg1ZGuj0lS82ccJeCIbR69AX4gt2bRjp5TWDp7clxAH0mAE0UWreMw
+ZHmZ6GClSkkuvrktzl8GLR5tFulIDA5Xabo=
+=LhXX
+-----END PGP SIGNATURE-----
+
+--aee9b33c528211d8b06b0c46e19f7e654e98074c381b0b5a8e637c093686--
 
