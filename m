@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-250092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739E092F427
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:45:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC1892F428
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03A2F1F229D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97BBF1C217E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67CBF9D9;
-	Fri, 12 Jul 2024 02:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C5279D0;
+	Fri, 12 Jul 2024 02:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="nZefoTlK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MTIp+Eg2"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="UzhrMi6K";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="At1TRM8p"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80DF945A
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766D6C8D7
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720752311; cv=none; b=aGEL2MzQgV2dMFPsFXfbsJyrQ9p6LFLh0ipYAYJbMT/Sn/hC2N6p6bdrhlkIregD7u8mL7gw6jmw6sDbfTwneKmIiQzTgf4kc2i85gEnWZE2N62ZiNYFT0FHoMI8wxQleyej2ltQeEWFHO74NY3OuBtO6Ym3DN/yy3e/gNnoIy4=
+	t=1720752313; cv=none; b=iSThJjywbM4gdESDzdeaJesm1gUrU/7LpWzuvwAqL+UTc6uC4dbQfI54L7sS2WPHpmVBUoqWyTkHDEtkmuDsFUuG+mZXZ9YjwX+7H11LGxxhcBtR/iU3qK9hTog4vxcEhiKC/1+2jn0nECfhsXTk7bfUya8djMo+HVoRfyPbSHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720752311; c=relaxed/simple;
-	bh=c0nRaAa/DcrhA+LAqIClyN3TmqGUz4A01EWlnFq00zs=;
+	s=arc-20240116; t=1720752313; c=relaxed/simple;
+	bh=yGl+Vm21WAbpoDJw2xN1jKUePiteO4Emne3TzFKScTs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ttxuLrtGAxDrW4uVMj+5Fraz05tOLBYVTcQwJsK71u3BaIx6zENifI+PgvhWO5OOkxQmMxwE9O0VXQMLgHwGcCmQMPlsdDa+a3DMzIWo3xWhbStHoVcGXw/JlAPRuyY9eLUQ7e+gu3BkcPmNHglHAgMN9LMfpMItFTKCW1VjHA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=nZefoTlK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MTIp+Eg2; arc=none smtp.client-ip=103.168.172.154
+	 MIME-Version; b=nyMToV7F6JndwhUf7Vws9ZRJsds+haRNAGtefgPcMhXHxmG06/VOSzK9EFOYAtjFLEWZ1E7AVoQAZVK9RUK2lWkPNn9mHHDt83iNIoP5zlj0jVV0RBDLctk3EH3ZtafF0zvo2BU4nMqeiei67JOsG+gBODewivaDjj+eF1IP+/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=UzhrMi6K; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=At1TRM8p; arc=none smtp.client-ip=103.168.172.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sent.com
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id DC88711403D2;
-	Thu, 11 Jul 2024 22:45:08 -0400 (EDT)
+	by mailfout.nyi.internal (Postfix) with ESMTP id 7F0D11388636;
+	Thu, 11 Jul 2024 22:45:10 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 11 Jul 2024 22:45:08 -0400
+  by compute2.internal (MEProxy); Thu, 11 Jul 2024 22:45:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:reply-to:subject:subject:to:to; s=fm2; t=1720752308;
-	 x=1720838708; bh=to4wnXa/PHhQKWIeEkU0XgFAJrxVOY/Z7C32sHOwamo=; b=
-	nZefoTlKwQe9WlVRNw7pzFUFeLBTgJkzPIKJJcV7IkC8gOOEOkpF/+sUO4S9C4Jk
-	1C2FaybJ4DXMwA7Pez1e80TZ3vZc8awY36g8T3RuZtpvx92qWbrUohOL6q1juGt5
-	5ZXBFk0mcJsAFUMM+IkE4Rjs8GjRRdll7kSkl+v6VlXTMr3wPoPl6TMEp5VY3NfV
-	WEBOxvHbTZSM/rFmP/EhwvWIP5kXhcFPP0HV/6EOI0mJq5VQHyfUQBWIRC8/wiiG
-	KTjRsswYWjfhH6w/2cZ1cagkZx43LbrJAHHgUPP0WaqqEJcVkKE+R8C/EYAFiCA6
-	KdNztpxOHA3QrIjFj5GURA==
+	:reply-to:reply-to:subject:subject:to:to; s=fm2; t=1720752310;
+	 x=1720838710; bh=qOLH68BAMXmJaL/17ag+VBuU12QsIrePjVshhM6Mfe0=; b=
+	UzhrMi6KRCDGISUUfYy8VY1O+HNyLY+YsDCfn7vyNqLyKNGyvCiSp9lSx4DIlrdH
+	Wz+A0c1HnuV444dIAMSJgLwkaNNhtz4lhfpX+gTZnqbMokGPCg7uxg8j0zaAtrnr
+	EWxIehnk0SV9nHHyDxbY5U7RiN7QcbagxPxt/rOmTQVH+1epuEnFG0iYOIUOCVfG
+	XgncIdsqnEve7p5ol3AcczTUYpTAXmqf2ow/fkmJaK4zZhrSsewoCoxNgq1mcoQf
+	/fqXqJW4PGGdUQZiIhi3ZDvNr/Zo5QpZ7OaHn12I9iLFunXjwZGLOVapaaxzpiHH
+	fxJGpWsU1BKUjU5L/bydTQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720752308; x=
-	1720838708; bh=to4wnXa/PHhQKWIeEkU0XgFAJrxVOY/Z7C32sHOwamo=; b=M
-	TIp+Eg20hq6uumef+91PiN0qYVH0tM/c8uB8w49KQCgTFTGrGtWPWdZe15NWsy6n
-	T0AA5SOVHVb9WJKmUZoI4mmIHgcTavU/OFrpxgZdneIAOfE2kwsFTLxBoj3xq7ql
-	UwC/ALDV6I/LMKPKwn7XUD1g31YN8bzInB5V2FdVVBX54OGWcLIYfuyyd1nOybWL
-	8bI1hXYwvT+OMpNzRJQuWYHV74FdETCbCSSSx8Fy352mPoWFqzigFMv0TC0pkTV0
-	hH3VPQXGcus4psENBuTi/tiMXGh/nqRVyAbipDYxmCLqpQ0TFdz3s14ZXIq9Vy/n
-	p/NKrviCBDq2kFrzFVFgg==
-X-ME-Sender: <xms:s5iQZmZzscTBVeqkiw1HNAs1TY7KeLe9eB3u23lVPSc5iK0TuKgZPA>
-    <xme:s5iQZpbiOUuTI56OUePARE3ba5IC4UqqMsUbetU7AxwVFxM8WPeADhMnDQBRxYQ8n
-    1OLBo6uqAjXlefgjw>
-X-ME-Received: <xmr:s5iQZg-W4PaSFRYoF8yODKNZtp8dzaGvD5U3rc0V3S2RZnHSIGyJKcdAsEW7hYaDhu0_cqv5UNwPzANcBkPv6ALtUg8voVB24hYM3o3YMlMtQ-NoB97wXusX>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720752310; x=
+	1720838710; bh=qOLH68BAMXmJaL/17ag+VBuU12QsIrePjVshhM6Mfe0=; b=A
+	t1TRM8pYiC+yDef6ArSXq6vIeVDSlwZcsQDCaVLGNIxE4y0f/Vhbnx2bSXtCH/Ki
+	Wui7qzOwtG6EfE/TvSOU8G+iFjPFvFISE5JCp4PJ1M21fMSKoKD9mrRaTxEhIj6j
+	6O0/Xlo1boRKbeFqZeKuidvP05NIVdUBWzKO7qRECwyYbtGYqh8OHWnyflHUMvZ5
+	q7nXoI7kEY4k+bQmvSGAbpfXR/qck3i9ctyTJmlrh2/coeF06LvghZoDLzpyDnhG
+	qZQ6lrNiySmt77S9XhQ8BJBeKfv1GurePGryUThlB7g7ALS7nA0QzLZ0Lybi6N/P
+	/VLW4r2XyjIn89dqDqGKw==
+X-ME-Sender: <xms:tZiQZiOq6f3SpLPQRuFNdKZ-zRNH21wMIcg7lHa93A3J27rW1CHjbQ>
+    <xme:tZiQZg__koWvxT1mK4fCcpLqBua7V2RK-UEQzVjb6vhm3tOCk07CWkPqm3oIHVnSR
+    KVEZvB_pbY0kEEA-g>
+X-ME-Received: <xmr:tZiQZpRr8gt9wzGHva4mdf57W6121nw_Dh-Ti_y1ey2BFbNOBstr75jE2vxItBZ8D_rtIHCHc5CO8s8YGgVrHNMaTxv9PSAaM19QapIPGUF5PfI_r-i89J6l>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeehgdeigecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
@@ -72,14 +72,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeehgdeigecutefuodetggdote
     elhfekiefgtedvudfghfduffefieefffejvefhlefhhffgkedtfeevhfevnecuvehluhhs
     thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepiihirdihrghnsehsvg
     hnthdrtghomh
-X-ME-Proxy: <xmx:s5iQZorKKIE2dPmJjo44QetEisTcKSwjoj-g0VM20ldUhiuTgYs68A>
-    <xmx:s5iQZhr90UNyPdEk4oCtzXKK2HYcXn5h7OfW6JP6pM0bWfT5nMF5WQ>
-    <xmx:s5iQZmS8rOpbYCvtFCSMMp7emUAOgxXxgC1-X_SeqLj2hEPCZYuQvA>
-    <xmx:s5iQZhqgm_MYYxsQao0U84hCVX6w_-Xc39l-oUnDMJBEXVbx2ukPnA>
-    <xmx:tJiQZlI-2Ws8X1OBY6x_OcoeffxcE-nstTk3KtGPBN63QhIowPgmvgEB>
+X-ME-Proxy: <xmx:tZiQZisyMqz7e4UlrPzwD4dob1rmKn9y1o-gDYDXvn5JbN4vPGKafQ>
+    <xmx:tZiQZqfCWTCKMgc4-OmBUld586A7fTnfi1EYKJae1n-TxwgZ5z-W1g>
+    <xmx:tZiQZm2H9P_Q4zPYcNenk5-fUVkvHwEkVlTJCS1jaAkBFMRUkaZ6FQ>
+    <xmx:tZiQZu8o4322HOAZJZ7wmwexl8JJQuSdQxf-lNWjPH13OXIqaSd1Fw>
+    <xmx:tpiQZgtrhjUvj8B5jn0Y8Y1L1dnRjkM0v8lg0kdslOXayY4El4xzBML->
 Feedback-ID: iccd040f4:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 Jul 2024 22:45:07 -0400 (EDT)
+ 11 Jul 2024 22:45:08 -0400 (EDT)
 From: Zi Yan <zi.yan@sent.com>
 To: David Hildenbrand <david@redhat.com>,
 	"Huang, Ying" <ying.huang@intel.com>,
@@ -88,9 +88,9 @@ Cc: Zi Yan <ziy@nvidia.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/3] memory tiering: introduce folio_has_cpupid() check
-Date: Thu, 11 Jul 2024 22:44:54 -0400
-Message-ID: <20240712024455.163543-3-zi.yan@sent.com>
+Subject: [RFC PATCH 3/3] mm/migrate: move common code to numa_migrate_check (was numa_migrate_prep)
+Date: Thu, 11 Jul 2024 22:44:55 -0400
+Message-ID: <20240712024455.163543-4-zi.yan@sent.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240712024455.163543-1-zi.yan@sent.com>
 References: <20240712024455.163543-1-zi.yan@sent.com>
@@ -105,145 +105,243 @@ Content-Transfer-Encoding: 8bit
 
 From: Zi Yan <ziy@nvidia.com>
 
-Instead of open coded check for if memory tiering mode is on and a folio
-is in the top tier memory, use a function to encapsulate the check.
+do_numa_page() and do_huge_pmd_numa_page() share a lot of common code. To
+reduce redundancy, move common code to numa_migrate_prep() and rename
+the function to numa_migrate_check() to reflect its functionality.
+
+There is some code difference between do_numa_page() and
+do_huge_pmd_numa_page() before the code move:
+
+1. do_huge_pmd_numa_page() did not check shared folios to set TNF_SHARED.
+2. do_huge_pmd_numa_page() did not check and skip zone device folios.
 
 Signed-off-by: Zi Yan <ziy@nvidia.com>
 ---
- include/linux/memory-tiers.h |  8 ++++++++
- kernel/sched/fair.c          |  3 +--
- mm/huge_memory.c             |  6 ++----
- mm/memory-tiers.c            | 17 +++++++++++++++++
- mm/memory.c                  |  3 +--
- mm/mprotect.c                |  3 +--
- 6 files changed, 30 insertions(+), 10 deletions(-)
+ mm/huge_memory.c | 28 ++++++-----------
+ mm/internal.h    |  5 +--
+ mm/memory.c      | 81 +++++++++++++++++++++++-------------------------
+ 3 files changed, 52 insertions(+), 62 deletions(-)
 
-diff --git a/include/linux/memory-tiers.h b/include/linux/memory-tiers.h
-index 0dc0cf2863e2..10c127d461c4 100644
---- a/include/linux/memory-tiers.h
-+++ b/include/linux/memory-tiers.h
-@@ -73,6 +73,10 @@ static inline bool node_is_toptier(int node)
- }
- #endif
- 
-+
-+bool folio_has_cpupid(struct folio *folio);
-+
-+
- #else
- 
- #define numa_demotion_enabled	false
-@@ -151,5 +155,9 @@ static inline struct memory_dev_type *mt_find_alloc_memory_type(int adist,
- static inline void mt_put_memory_types(struct list_head *memory_types)
- {
- }
-+static inline bool folio_has_cpupid(struct folio *folio)
-+{
-+	return true;
-+}
- #endif	/* CONFIG_NUMA */
- #endif  /* _LINUX_MEMORY_TIERS_H */
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 8a5b1ae0aa55..03de808cb3cc 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1840,8 +1840,7 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
- 	 * The pages in slow memory node should be migrated according
- 	 * to hot/cold instead of private/shared.
- 	 */
--	if (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING &&
--	    !node_is_toptier(src_nid)) {
-+	if (!folio_has_cpupid(folio)) {
- 		struct pglist_data *pgdat;
- 		unsigned long rate_limit;
- 		unsigned int latency, th, def_th;
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 07d9dde4ca33..8c11d6da4b36 100644
+index 8c11d6da4b36..66d67d13e0dc 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -1705,8 +1705,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
- 	 * For memory tiering mode, cpupid of slow memory page is used
- 	 * to record page access time.  So use default value.
- 	 */
--	if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) ||
--	    node_is_toptier(nid))
-+	if (folio_has_cpupid(folio))
- 		last_cpupid = folio_last_cpupid(folio);
- 	target_nid = numa_migrate_prep(folio, vmf, haddr, nid, &flags);
+@@ -1670,10 +1670,10 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+ 	pmd_t pmd;
+ 	struct folio *folio;
+ 	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+-	int nid = NUMA_NO_NODE;
+-	int target_nid, last_cpupid = (-1 & LAST_CPUPID_MASK);
++	int target_nid = NUMA_NO_NODE;
++	int last_cpupid = (-1 & LAST_CPUPID_MASK);
+ 	bool writable = false;
+-	int flags = 0;
++	int flags = 0, nr_pages;
+ 
+ 	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+ 	if (unlikely(!pmd_same(oldpmd, *vmf->pmd))) {
+@@ -1693,21 +1693,13 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+ 		writable = true;
+ 
+ 	folio = vm_normal_folio_pmd(vma, haddr, pmd);
+-	if (!folio)
++	if (!folio || folio_is_zone_device(folio))
+ 		goto out_map;
+ 
+-	/* See similar comment in do_numa_page for explanation */
+-	if (!writable)
+-		flags |= TNF_NO_GROUP;
++	nr_pages = folio_nr_pages(folio);
+ 
+-	nid = folio_nid(folio);
+-	/*
+-	 * For memory tiering mode, cpupid of slow memory page is used
+-	 * to record page access time.  So use default value.
+-	 */
+-	if (folio_has_cpupid(folio))
+-		last_cpupid = folio_last_cpupid(folio);
+-	target_nid = numa_migrate_prep(folio, vmf, haddr, nid, &flags);
++	target_nid = numa_migrate_check(folio, vmf, haddr, writable,
++			&flags, &last_cpupid);
  	if (target_nid == NUMA_NO_NODE)
-@@ -2059,8 +2058,7 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		    toptier)
- 			goto unlock;
+ 		goto out_map;
+ 	if (migrate_misplaced_folio_prepare(folio, vma, target_nid)) {
+@@ -1720,8 +1712,8 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
  
--		if (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING &&
--		    !toptier)
-+		if (!folio_has_cpupid(folio))
- 			folio_xchg_access_time(folio,
- 					       jiffies_to_msecs(jiffies));
+ 	if (!migrate_misplaced_folio(folio, vma, target_nid)) {
+ 		flags |= TNF_MIGRATED;
+-		nid = target_nid;
+ 	} else {
++		target_nid = NUMA_NO_NODE;
+ 		flags |= TNF_MIGRATE_FAIL;
+ 		vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
+ 		if (unlikely(!pmd_same(oldpmd, *vmf->pmd))) {
+@@ -1732,8 +1724,8 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
  	}
-diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
-index 4775b3a3dabe..7f0360d4e3a0 100644
---- a/mm/memory-tiers.c
-+++ b/mm/memory-tiers.c
-@@ -6,6 +6,7 @@
- #include <linux/memory.h>
- #include <linux/memory-tiers.h>
- #include <linux/notifier.h>
-+#include <linux/sched/sysctl.h>
  
- #include "internal.h"
+ out:
+-	if (nid != NUMA_NO_NODE)
+-		task_numa_fault(last_cpupid, nid, HPAGE_PMD_NR, flags);
++	if (target_nid != NUMA_NO_NODE)
++		task_numa_fault(last_cpupid, target_nid, nr_pages, flags);
  
-@@ -50,6 +51,22 @@ static const struct bus_type memory_tier_subsys = {
- 	.dev_name = "memory_tier",
- };
+ 	return 0;
  
-+/**
-+ * folio_has_cpupid - check if a folio has cpupid information
-+ * @folio: folio to check
-+ *
-+ * folio's _last_cpupid field is repurposed by memory tiering. In memory
-+ * tiering mode, cpupid of slow memory folio (not toptier memory) is used to
-+ * record page access time.
-+ *
-+ * Return: the folio _last_cpupid is used as cpupid
-+ */
-+bool folio_has_cpupid(struct folio *folio)
-+{
-+	return !(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) ||
-+	       node_is_toptier(folio_nid(folio));
-+}
-+
- #ifdef CONFIG_MIGRATION
- static int top_tier_adistance;
- /*
+diff --git a/mm/internal.h b/mm/internal.h
+index b4d86436565b..7782b7bb3383 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -1217,8 +1217,9 @@ void vunmap_range_noflush(unsigned long start, unsigned long end);
+ 
+ void __vunmap_range_noflush(unsigned long start, unsigned long end);
+ 
+-int numa_migrate_prep(struct folio *folio, struct vm_fault *vmf,
+-		      unsigned long addr, int page_nid, int *flags);
++int numa_migrate_check(struct folio *folio, struct vm_fault *vmf,
++		      unsigned long addr, bool writable,
++		      int *flags, int *last_cpupid);
+ 
+ void free_zone_device_folio(struct folio *folio);
+ int migrate_device_coherent_page(struct page *page);
 diff --git a/mm/memory.c b/mm/memory.c
-index dceb62f3fa34..96c2f5b3d796 100644
+index 96c2f5b3d796..a252c0f13755 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -5344,8 +5344,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
- 	 * For memory tiering mode, cpupid of slow memory page is used
- 	 * to record page access time.  So use default value.
+@@ -5209,16 +5209,42 @@ static vm_fault_t do_fault(struct vm_fault *vmf)
+ 	return ret;
+ }
+ 
+-int numa_migrate_prep(struct folio *folio, struct vm_fault *vmf,
+-		      unsigned long addr, int page_nid, int *flags)
++int numa_migrate_check(struct folio *folio, struct vm_fault *vmf,
++		      unsigned long addr, bool writable,
++		      int *flags, int *last_cpupid)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 
++	/*
++	 * Avoid grouping on RO pages in general. RO pages shouldn't hurt as
++	 * much anyway since they can be in shared cache state. This misses
++	 * the case where a mapping is writable but the process never writes
++	 * to it but pte_write gets cleared during protection updates and
++	 * pte_dirty has unpredictable behaviour between PTE scan updates,
++	 * background writeback, dirty balancing and application behaviour.
++	 */
++	if (!writable)
++		*flags |= TNF_NO_GROUP;
++
++	/*
++	 * Flag if the folio is shared between multiple address spaces. This
++	 * is later used when determining whether to group tasks together
++	 */
++	if (folio_likely_mapped_shared(folio) && (vma->vm_flags & VM_SHARED))
++		*flags |= TNF_SHARED;
++
++	/*
++	 * For memory tiering mode, cpupid of slow memory page is used
++	 * to record page access time.
++	 */
++	if (folio_has_cpupid(folio))
++		*last_cpupid = folio_last_cpupid(folio);
++
+ 	/* Record the current PID acceesing VMA */
+ 	vma_set_access_pid_bit(vma);
+ 
+ 	count_vm_numa_event(NUMA_HINT_FAULTS);
+-	if (page_nid == numa_node_id()) {
++	if (folio_nid(folio) == numa_node_id()) {
+ 		count_vm_numa_event(NUMA_HINT_FAULTS_LOCAL);
+ 		*flags |= TNF_FAULT_LOCAL;
+ 	}
+@@ -5284,12 +5310,11 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct folio *folio = NULL;
+-	int nid = NUMA_NO_NODE;
++	int target_nid = NUMA_NO_NODE;
+ 	bool writable = false, ignore_writable = false;
+ 	bool pte_write_upgrade = vma_wants_manual_pte_write_upgrade(vma);
+-	int last_cpupid;
+-	int target_nid;
+-	pte_t pte, old_pte;
++	int last_cpupid = (-1 & LAST_CPUPID_MASK);
++	pte_t pte, old_pte = vmf->orig_pte;
+ 	int flags = 0, nr_pages;
+ 
+ 	/*
+@@ -5297,10 +5322,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 	 * table lock, that its contents have not changed during fault handling.
  	 */
--	if ((sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
--	    !node_is_toptier(nid))
-+	if (!folio_has_cpupid(folio))
- 		last_cpupid = (-1 & LAST_CPUPID_MASK);
- 	else
- 		last_cpupid = folio_last_cpupid(folio);
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 222ab434da54..787c3c2bf1b6 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -161,8 +161,7 @@ static long change_pte_range(struct mmu_gather *tlb,
- 				if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
- 				    toptier)
- 					continue;
--				if (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING &&
--				    !toptier)
-+				if (!folio_has_cpupid(folio))
- 					folio_xchg_access_time(folio,
- 						jiffies_to_msecs(jiffies));
- 			}
+ 	spin_lock(vmf->ptl);
+-	/* Read the live PTE from the page tables: */
+-	old_pte = ptep_get(vmf->pte);
+-
+-	if (unlikely(!pte_same(old_pte, vmf->orig_pte))) {
++	if (unlikely(!pte_same(old_pte, *vmf->pte))) {
+ 		pte_unmap_unlock(vmf->pte, vmf->ptl);
+ 		goto out;
+ 	}
+@@ -5320,35 +5342,10 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 	if (!folio || folio_is_zone_device(folio))
+ 		goto out_map;
+ 
+-	/*
+-	 * Avoid grouping on RO pages in general. RO pages shouldn't hurt as
+-	 * much anyway since they can be in shared cache state. This misses
+-	 * the case where a mapping is writable but the process never writes
+-	 * to it but pte_write gets cleared during protection updates and
+-	 * pte_dirty has unpredictable behaviour between PTE scan updates,
+-	 * background writeback, dirty balancing and application behaviour.
+-	 */
+-	if (!writable)
+-		flags |= TNF_NO_GROUP;
+-
+-	/*
+-	 * Flag if the folio is shared between multiple address spaces. This
+-	 * is later used when determining whether to group tasks together
+-	 */
+-	if (folio_likely_mapped_shared(folio) && (vma->vm_flags & VM_SHARED))
+-		flags |= TNF_SHARED;
+-
+-	nid = folio_nid(folio);
+ 	nr_pages = folio_nr_pages(folio);
+-	/*
+-	 * For memory tiering mode, cpupid of slow memory page is used
+-	 * to record page access time.  So use default value.
+-	 */
+-	if (!folio_has_cpupid(folio))
+-		last_cpupid = (-1 & LAST_CPUPID_MASK);
+-	else
+-		last_cpupid = folio_last_cpupid(folio);
+-	target_nid = numa_migrate_prep(folio, vmf, vmf->address, nid, &flags);
++
++	target_nid = numa_migrate_check(folio, vmf, vmf->address, writable,
++			&flags, &last_cpupid);
+ 	if (target_nid == NUMA_NO_NODE)
+ 		goto out_map;
+ 	if (migrate_misplaced_folio_prepare(folio, vma, target_nid)) {
+@@ -5362,9 +5359,9 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 
+ 	/* Migrate to the requested node */
+ 	if (!migrate_misplaced_folio(folio, vma, target_nid)) {
+-		nid = target_nid;
+ 		flags |= TNF_MIGRATED;
+ 	} else {
++		target_nid = NUMA_NO_NODE;
+ 		flags |= TNF_MIGRATE_FAIL;
+ 		vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+ 					       vmf->address, &vmf->ptl);
+@@ -5378,8 +5375,8 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 	}
+ 
+ out:
+-	if (nid != NUMA_NO_NODE)
+-		task_numa_fault(last_cpupid, nid, nr_pages, flags);
++	if (target_nid != NUMA_NO_NODE)
++		task_numa_fault(last_cpupid, target_nid, nr_pages, flags);
+ 	return 0;
+ out_map:
+ 	/*
 -- 
 2.43.0
 
