@@ -1,86 +1,119 @@
-Return-Path: <linux-kernel+bounces-250484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C518F92F857
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:50:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB3392F85A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0286C1C21F85
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:50:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 298752825E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182A5143C51;
-	Fri, 12 Jul 2024 09:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="YWXaT/gn"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E521494BC;
+	Fri, 12 Jul 2024 09:51:07 +0000 (UTC)
+Received: from out28-148.mail.aliyun.com (out28-148.mail.aliyun.com [115.124.28.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0095A17BB6
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CDF17BB6;
+	Fri, 12 Jul 2024 09:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720777798; cv=none; b=OsLzbopQ451CenNnuPAriY2vFQX0MaWGGx+g7y5Zu1fTQWyBpwSl12MmxaljvxrNEix1pP0PT1hWlHHaqa4RyXyOTBi7u4ZJtamHvhRj9E6TME/DZkCyMvMve+9BJCU+k9XM2vYBE32y3bzBOalqO2TrLwxr4OuAfp5u/7rGIRU=
+	t=1720777867; cv=none; b=n7cM58veBi/kd7uPuzFzLQR31N38YYO0nofHWejmyENJIn4JW50dAS1of2yP926tsB2+iqb37yNHh8ijuWfIXQTEHRKNxO8jUXOaI7RYo9LpAyof4tB5n0PzQJxRqbUHxOBuP0ZsOUZWGYrFIQIe8xKlP6yoMZfQmqYshR025oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720777798; c=relaxed/simple;
-	bh=Xt4865nA6FKxAlh+m0+aqm9hP4TKUQZNYBGl2HLyLjM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YMpfxG4zvX9A7c9okr8mn+qg5TSy46ZYYABvqidJMmNkierkKTaeEf2yI0PhhOC7EZWujb+8quXLa+RFQOmxaX3OmTPWxTatcpL91qPEJmjEAEq9dVXkwWjJa3aECEQLQTAi2OAGjsTCOVgWJPKO1fx64A/tPy6AD6CmnKoh8YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=YWXaT/gn; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1720777788;
-	bh=Xt4865nA6FKxAlh+m0+aqm9hP4TKUQZNYBGl2HLyLjM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=YWXaT/gn1YuRNLaAOGUH97Bh24wfvMQ8g7VhSAO/3Yq7lE6k6ERNLHJxRwwuBM7GY
-	 N0vE15qICHogSjDGFxK2Yh3Ynw4eYwEpya39O7znJjYN/OQ+eBug3GfHQOi8a1I3iU
-	 VNB5958Q3YIlbQSZ9qL0//tHyd4cTeeBrlr7bm1A=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id CF024661FC;
-	Fri, 12 Jul 2024 05:49:46 -0400 (EDT)
-Message-ID: <0adc4126e7fbb8fcf84bae67ebe39ff6da4721cd.camel@xry111.site>
-Subject: Re: [RFC PATCH 4/4] LoongArch: Remove -fno-jump-tables for objtool
-From: Xi Ruoyao <xry111@xry111.site>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf
- <jpoimboe@kernel.org>,  Peter Zijlstra <peterz@infradead.org>, Huacai Chen
- <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Fri, 12 Jul 2024 17:49:44 +0800
-In-Reply-To: <20240712091506.28140-5-yangtiezhu@loongson.cn>
-References: <20240712091506.28140-1-yangtiezhu@loongson.cn>
-	 <20240712091506.28140-5-yangtiezhu@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1720777867; c=relaxed/simple;
+	bh=pUaulvtdD9qQg/45WX1ET2WbuAUsRQxwcTQt/oHElw8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hvvfrHbGrt9ateHdZYlivh6JfHo6F31+y6ukHzUCQWtJ80IF3yEaKSBgIhSa2cZoeP+rCRSL0W2D6vq8kqdGZlWD0bkCurkTF1UnGeG7Mp5jRsVH4B3HGRtXosAEx9Fh93s6o/eZQsIwOJpZAJJYBNUEyA5rB36LpXVGoeHyRbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=115.124.28.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08055284|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.211365-0.00225663-0.786379;FP=16534973576804402570|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033023108233;MF=wangshuaijie@awinic.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.YOOi3cV_1720777846;
+Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.YOOi3cV_1720777846)
+          by smtp.aliyun-inc.com;
+          Fri, 12 Jul 2024 17:50:54 +0800
+From: wangshuaijie@awinic.com
+To: krzk@kernel.org
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dmitry.torokhov@gmail.com,
+	jeff@labundy.com,
+	kangjiajun@awinic.com,
+	krzk+dt@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liweilei@awinic.com,
+	robh@kernel.org,
+	wangshuaijie@awinic.com
+Subject: Re: [PATCH V2 3/5] Add aw9610x series related interfaces to the aw_sar driver
+Date: Fri, 12 Jul 2024 09:50:46 +0000
+Message-ID: <20240712095046.2396720-1-wangshuaijie@awinic.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <4d8b7fe5-a566-49f7-8924-3c310af2f7cd@kernel.org>
+References: <4d8b7fe5-a566-49f7-8924-3c310af2f7cd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-07-12 at 17:15 +0800, Tiezhu Yang wrote:
-> -ifdef CONFIG_OBJTOOL
-> -KBUILD_CFLAGS			+=3D -fno-jump-tables
-> -endif
-> +KBUILD_AFLAGS			+=3D $(call cc-option,-mannotate-tablejump) $(call cc-op=
-tion,-Wa$(comma)-mannotate-tablejump)
-> +KBUILD_CFLAGS			+=3D $(call cc-option,-mannotate-tablejump) $(call cc-op=
-tion,-Wa$(comma)-mannotate-tablejump)
-
-KBUILD_AFLAGS isn't needed, and $(call cc-option,-Wa$(comma)-mannotate-
-tablejump) will always expand to nothing because the assembler does not
-have -mannotate-tablejump.
-
-The assembler never creates a jump table itself.
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+Hi Krzysztof,=0D
+=0D
+On Wed, 5 Jun 2024 12:22:16, krzk@kernel.org wrote:=0D
+>On 05/06/2024 11:11, wangshuaijie@awinic.com wrote:=0D
+>> From: shuaijie wang <wangshuaijie@awinic.com>=0D
+>> =0D
+>=0D
+>No commit msg, no proper subject prefix.=0D
+>=0D
+=0D
+The patch for v3 will fix these issues.=0D
+=0D
+>> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>=0D
+>> | Reported-by: kernel test robot <lkp@intel.com>=0D
+>> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>=0D
+>> | Reported-by: Dan Carpenter <error27@gmail.com>=0D
+>=0D
+>Drop all these, this is some bogus tags. Tag never starts with pipe, btw.=
+=0D
+>=0D
+=0D
+The patch for v3 will fix these issues.=0D
+=0D
+>> ---=0D
+>>  drivers/input/misc/aw_sar/aw9610x/aw9610x.c | 884 ++++++++++++++++++++=
+=0D
+>>  drivers/input/misc/aw_sar/aw9610x/aw9610x.h | 327 ++++++++=0D
+>>  2 files changed, 1211 insertions(+)=0D
+>>  create mode 100644 drivers/input/misc/aw_sar/aw9610x/aw9610x.c=0D
+>>  create mode 100644 drivers/input/misc/aw_sar/aw9610x/aw9610x.h=0D
+>=0D
+>...=0D
+>=0D
+>> +struct aw_reg_data {=0D
+>> +	unsigned char rw;=0D
+>> +	unsigned short reg;=0D
+>> +};=0D
+>> +/********************************************=0D
+>> + * Register Access=0D
+>> + *******************************************/=0D
+>> +#define REG_NONE_ACCESS					(0)=0D
+>> +#define REG_RD_ACCESS					(1 << 0)=0D
+>> +#define REG_WR_ACCESS					(1 << 1)=0D
+>> +=0D
+>> +static const struct aw_reg_data g_aw9610x_reg_access[] =3D {=0D
+>=0D
+>Ehh... so we are at basics of C. Data structures do not go to headers.=0D
+>=0D
+=0D
+The patch for v3 will fix these issues.=0D
+=0D
+>=0D
+>Best regards,=0D
+>Krzysztof=0D
+=0D
+Kind regards,=0D
+Wang Shuaijie=0D
 
