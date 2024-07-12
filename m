@@ -1,378 +1,290 @@
-Return-Path: <linux-kernel+bounces-250481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A112A92F84E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:48:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9A092F84D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BE55282583
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:48:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E2B61C218C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D1514D44E;
-	Fri, 12 Jul 2024 09:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PMP5etHV"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2069.outbound.protection.outlook.com [40.107.223.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BC415B104;
+	Fri, 12 Jul 2024 09:47:33 +0000 (UTC)
+Received: from out198-13.us.a.mail.aliyun.com (out198-13.us.a.mail.aliyun.com [47.90.198.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638C114A4EF;
-	Fri, 12 Jul 2024 09:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720777672; cv=fail; b=FdJDsW3g6ENDH4Zt7/WrEfdEa1QLRbwQpsJChQ+kn8+k3A6Sa4cTTEwME+iA2OiEal5hA9aGDExhROdsMroMpFNnpICIjB3OBWD+leTEP6P4k69WTB3W3KUvYbxQuwDg3I7PaPKUWqimW7BsvsPx3C0SnU+eFYMBYyOWzMJFOFI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720777672; c=relaxed/simple;
-	bh=/YIl099R1IzUrVYgqkwVkmtob/gBxcLmBowM4L30pLA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lo4rqJ95ktPjlFyMqO0FW0tDijnp+30BDoXHLflEwMOeqkMlJVhoIvmYj6hvuJqJNjplQfOHOCQq31G03wfD//f1wcKqa9phW/dqBSBUDDZRNEKk4aSZYMvonHJS+F8KHJfbHy13q1/CVxDfGHOee3MhBCbjZ3Lt6RQtzW9K1aY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PMP5etHV; arc=fail smtp.client-ip=40.107.223.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TloulxvpNgblgiofl7HLLQs83AnA/+2bOSyyNqMuNpaLW2XrVHz0VT/QTFmosw9QNJ8pZejOGdMnKshxkZg00jL7aDraht9kUtetCtu3K5dBGbQEXjxfR5Oif9MxWuFl6mvAL86FjlSPmndtGaaHhLd/o6a03G4pHIBgA8PReXlU7ZSiQIIT7onKxuQxtHzy72SD0JUoXPBR2eF/ArNfyu6VownO+7x12NJPfRlsrwvkeOnZGacKNxLcYrs/gQF1qH5/iOy0F0vWqmM5+5vZziqHiLgjvZ/l3zjlPaNu9GNISU5UlYmp/ilmZW6hNI26hY7sBKt6ZIBcRQCoRlps7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=387FX6VvX1AVmkl2PCG9EQ6GwRBthuvgIJiY+5NMILc=;
- b=RLUiqgrVakoho6ipaY/EqkIPzf2EVF3vxE5uPJHd3SuXqXe866xjdP0BiKGtXy8dQw0uOsfxwx7ADySy45OrM7S8PqEpdZc75JL3ahFLto8krBtIGv2jqUI0EvQ0TCvwX3zSHq2kECaZcnxguHWxS5sP+EmqFPx77ZOITXBHyuyExvHQv1NfyNIZYD/Uwy8YnHFcoRv5kwRpUksA5ujFr1FIKHDpt4tWqntABUVkdii/zKNA5keUm3EM1nzV8eW+D5tfkHzzCygnLsgCnX8LCLYJtEDOEqJtkn0FTsS3+OH1lCilcVr4V5zOiMzi+9jUf0kvT/HxFR3dwHH5z/cBvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=387FX6VvX1AVmkl2PCG9EQ6GwRBthuvgIJiY+5NMILc=;
- b=PMP5etHV3P3Dpp4TrlZhslwcRi/vjmCLmMviv1D4QuOXQmVxiQcpdqfVQH/5b1xZvbX+J6HMwEjcXQHcGIWJQz0pzGuYw1lqnYZTSLds32ILgR6dy6rwxbZtQeg16HVhlUO9QuXhorvUPvPkUoHrmH6foxgIZMKVKd9gg0nenmM=
-Received: from BN9PR03CA0423.namprd03.prod.outlook.com (2603:10b6:408:113::8)
- by CH3PR12MB9283.namprd12.prod.outlook.com (2603:10b6:610:1cd::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
- 2024 09:47:46 +0000
-Received: from BN1PEPF0000467F.namprd03.prod.outlook.com
- (2603:10b6:408:113:cafe::a2) by BN9PR03CA0423.outlook.office365.com
- (2603:10b6:408:113::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23 via Frontend
- Transport; Fri, 12 Jul 2024 09:47:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF0000467F.mail.protection.outlook.com (10.167.243.84) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7762.17 via Frontend Transport; Fri, 12 Jul 2024 09:47:45 +0000
-Received: from amd-System-Product-Name.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 12 Jul 2024 04:47:40 -0500
-From: Vignesh Balasubramanian <vigbalas@amd.com>
-To: <linux-kernel@vger.kernel.org>, <linux-toolchains@vger.kernel.org>
-CC: <mpe@ellerman.id.au>, <npiggin@gmail.com>, <christophe.leroy@csgroup.eu>,
-	<aneesh.kumar@kernel.org>, <naveen.n.rao@linux.ibm.com>,
-	<ebiederm@xmission.com>, <keescook@chromium.org>, <x86@kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-mm@kvack.org>, <bpetkov@amd.com>,
-	<jinisusan.george@amd.com>, <matz@suse.de>, <binutils@sourceware.org>,
-	<jhb@FreeBSD.org>, <felix.willgerodt@intel.com>, <tglx@linutronix.de>,
-	Vignesh Balasubramanian <vigbalas@amd.com>, Borislav Petkov <bp@alien8.de>
-Subject: [PATCH v3 1/1] x86/elf: Add a new .note section containing xfeatures buffer layout info to x86 core files
-Date: Fri, 12 Jul 2024 15:16:31 +0530
-Message-ID: <20240712094630.29757-2-vigbalas@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240712094630.29757-1-vigbalas@amd.com>
-References: <20240712094630.29757-1-vigbalas@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BBF148300;
+	Fri, 12 Jul 2024 09:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720777652; cv=none; b=VRF1nFaXo3VTS0psmH+PxaCiUECnisKB6AL2JsM0bCmn0i+lO6i5YJImEtr1HGWgoHhmDBd9ITGimU46zCY8rK675V9IcuyTs0uoz8IxurgdZ/EB7yKYcMGoYlS86gOVsurplyomoGs4Y9vAi1/W6RCnUw1djouyt9PKmqz87Ug=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720777652; c=relaxed/simple;
+	bh=mbPMrEjdN9LcCh7mNH7mMXaAwzDeqWfigO0ycI5zsV4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=M5t5acdalaLDAmNnaMFuz9rhzA/MioEs2XGNGhGp7AVwYzVQT/W6G2H8B/oXbxEOXfFHnMCUKdV0O5qMJwWUKc8RFCEh8DJAtoKU+qmC+SGAfMwVyPVEaP2VQUBhWInrre/ntbu88UaFuBI54zV1p0AuwQDNglcyq0bD+iUMna8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=47.90.198.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07436259|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.246811-0.00114254-0.752047;FP=8030687512528426034|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033068159080;MF=wangshuaijie@awinic.com;NM=1;PH=DS;RN=12;RT=12;SR=0;TI=SMTPD_---.YOOztHC_1720777621;
+Received: from awinic..(mailfrom:wangshuaijie@awinic.com fp:SMTPD_---.YOOztHC_1720777621)
+          by smtp.aliyun-inc.com;
+          Fri, 12 Jul 2024 17:47:08 +0800
+From: wangshuaijie@awinic.com
+To: krzk@kernel.org
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dmitry.torokhov@gmail.com,
+	jeff@labundy.com,
+	kangjiajun@awinic.com,
+	krzk+dt@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liweilei@awinic.com,
+	robh@kernel.org,
+	wangshuaijie@awinic.com
+Subject: Re: [PATCH V2 1/5] dt-bindings: input: Add YAML to Awinic sar sensor
+Date: Fri, 12 Jul 2024 09:47:01 +0000
+Message-ID: <20240712094701.2393968-1-wangshuaijie@awinic.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <1c61d5b5-d9c0-4fa3-8267-8aaf6c441b75@kernel.org>
+References: <1c61d5b5-d9c0-4fa3-8267-8aaf6c441b75@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF0000467F:EE_|CH3PR12MB9283:EE_
-X-MS-Office365-Filtering-Correlation-Id: e10d0301-d48a-4eae-55c5-08dca257aee2
-X-LD-Processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pnGMH4dFB8D4uMQ3QbOMjhYEP3hcSoRCqE9CWQXDz/S2qnOpK1JEtfDkdUUW?=
- =?us-ascii?Q?hHxaHRaMpDFRGSFxaULl1NayJEoLr+AnqCn2mF5xCQWACsqyE5TCq5/xd5J3?=
- =?us-ascii?Q?DcaVtXU34uVwK6ZjXQKJaF5bJ/O2hR2QTHv9xovFeX2dDC7o89Mzyv2p2T6g?=
- =?us-ascii?Q?bCxEEQ3HNbza0RvWEi3+xFvl3sMCan15AqXh11YEJ/IoGO/QmiLuvq2Riuow?=
- =?us-ascii?Q?UAZXdhoDOp8yY572MBa/wjkhzBLkaNBigktItrxfI9M0GanX2z8lHKv/Ijpb?=
- =?us-ascii?Q?f28+d40LAmahfgWsDQnI346UQ/z0mE/wWn8XZze1nDFXnYbE+Ol2YZT4HOcy?=
- =?us-ascii?Q?kKH9/YEytJwz7zx3rgb+7EdBDTfIhj9oVNYWmjlUJGSFhRRGBOrtuhUWDf/9?=
- =?us-ascii?Q?XiPSDVOv4CG/j8PEs/+nUkYf+4Qq62G7NU+qtsqOpChzYJlEv+/tfvKny/NL?=
- =?us-ascii?Q?3bFYF8PeXq00nP7wU8URTucuM+3UE02oSdES11kL+1w3rNnJVns6fuK3KhRS?=
- =?us-ascii?Q?gLbtxwXjuybWCxHm9cyABlrzIIK/PaPUH5WekVLtrpRg3XDUGTraGaaxmDDB?=
- =?us-ascii?Q?p9ZDLJR3c7qazhe4YJQxuWTkOPOp41TAEEGSVYz5uAlLI5oY6ntW2m1PROq+?=
- =?us-ascii?Q?o8YM12jnYmj0uebAeGLpsVwKbITj+Ig9n9EpCbaZLog+esaAcT+T3H7WUQSl?=
- =?us-ascii?Q?Uat8Y390l2zEuKQvN2CVEVD/8GEl6rwYyq/k2UbdgXGGOT1tiMwh9W3SKsqN?=
- =?us-ascii?Q?o4kK2KR2KlZMSYq/e7/ldsEJS06+qiHayK5da9teVIIsSdHLQOlpu4FmDjrl?=
- =?us-ascii?Q?e6gEy7UMmuqwHHQHEp0sWKG7TMk6+hHFvA64mU1AQveyEAdobAKrKAJoi9QI?=
- =?us-ascii?Q?wcpuSAw6dL7zMqBDU3PhALiPBumFvwvtdEJ5CpE7oCIAU9pVprP5pl/KpE7t?=
- =?us-ascii?Q?yrSwoTYNLeM/gidP93879xmzg7oxq/9JJRUViSxskW8z/TYSiL2hy5+ngo8m?=
- =?us-ascii?Q?logIWViY0kyUEeR7lSSEtNUCISP6FvfVhPqO3pIRTpj3lMLdBZQoTnABQ6AW?=
- =?us-ascii?Q?reTAl67G74OIo6fQ7hR/3sODkBkqqbjndfkEtmBk6MPC7UNVnW1WKsvBxvWj?=
- =?us-ascii?Q?ZznKpXGJLEZeMuOWhvcz4o7PTGYqG6ky4SOOAEIoqT3xMiyf1kk+FNTXG8bQ?=
- =?us-ascii?Q?TCieZJKHnSeriE3DJEwlUcmDfV/0KxYZOJ6QXv5Nllaam4XSAgQ7eihK7gAN?=
- =?us-ascii?Q?ud8l8cpPaFLun8MOr+CvKXvCwtwJlCuTXh6qVIHKTzL3Fe9dZh0d6wZ/9Szl?=
- =?us-ascii?Q?Kc0PE5jYXeKEVSG8+udXOt7cTVbcTWqYDs/ynbzeMnFGp6T+DUJeZGd9y9hz?=
- =?us-ascii?Q?lFyi2Kc7wp1An418w2KQLDUnyWQh?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 09:47:45.8909
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e10d0301-d48a-4eae-55c5-08dca257aee2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF0000467F.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9283
+Content-Transfer-Encoding: quoted-printable
 
-Add a new .note section containing type, size, offset and flags of every
-xfeature that is present.
-
-This information will be used by debuggers to understand the XSAVE
-layout of the machine where the core file has been dumped, and to read
-XSAVE registers, especially during cross-platform debugging.
-
-The XSAVE layouts of modern AMD and Intel CPUs differ, especially since
-Memory Protection Keys and the AVX-512 features have been inculcated into
-the AMD CPUs.
-
-Since AMD never adopted (and hence never left room in the XSAVE
-layout for) the Intel MPX feature. Tools like GDB had assumed a fixed
-XSAVE layout matching that of Intel (based on the XCR0 mask).
-
-Hence, core dumps from AMD CPUs didn't match the known size for the
-XCR0 mask. This resulted in GDB and other tools not being able to access
-the values of the AVX-512 and PKRU registers on AMD CPUs.
-
-To solve this, an interim solution has been accepted into GDB, and is
-already a part of GDB 14, see
-https://sourceware.org/pipermail/gdb-patches/2023-March/198081.html.
-
-But it depends on heuristics based on the total XSAVE register set size
-and the XCR0 mask to infer the layouts of the various register blocks
-for core dumps, and hence, is not a foolproof mechanism to determine the
-layout of the XSAVE area.
-
-Therefore, add a new core dump note in order to allow GDB/LLDB and other
-relevant tools to determine the layout of the XSAVE area of the machine
-where the corefile was dumped.
-
-The new core dump note (which is being proposed as a per-process .note
-section), NT_X86_XSAVE_LAYOUT (0x205) contains an array of structures.
-
-Each structure describes an individual extended feature containing
-offset, size and flags in this format:
-
-struct xfeat_component {
-       u32 type;
-       u32 size;
-       u32 offset;
-       u32 flags;
-};
-
-and in an independent manner, allowing for future extensions without
-depending on hw arch specifics like CPUID etc.
-
-Co-developed-by: Jini Susan George <jinisusan.george@amd.com>
-Signed-off-by: Jini Susan George <jinisusan.george@amd.com>
-Co-developed-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Vignesh Balasubramanian <vigbalas@amd.com>
----
-V2->v3: simplified code as per review comments.
- arch/x86/Kconfig             |  1 +
- arch/x86/include/asm/elf.h   |  9 ++++
- arch/x86/kernel/fpu/xstate.c | 87 ++++++++++++++++++++++++++++++++++++
- fs/binfmt_elf.c              |  4 +-
- include/uapi/linux/elf.h     |  1 +
- 5 files changed, 100 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1d7122a18..0ea43da0b 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -107,6 +107,7 @@ config X86
- 	select ARCH_HAS_DEBUG_WX
- 	select ARCH_HAS_ZONE_DMA_SET if EXPERT
- 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
-+	select ARCH_HAVE_EXTRA_ELF_NOTES
- 	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
- 	select ARCH_MIGHT_HAVE_ACPI_PDC		if ACPI
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
-diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
-index 1fb83d477..cad37090b 100644
---- a/arch/x86/include/asm/elf.h
-+++ b/arch/x86/include/asm/elf.h
-@@ -13,6 +13,15 @@
- #include <asm/auxvec.h>
- #include <asm/fsgsbase.h>
- 
-+struct xfeat_component {
-+	u32 type;
-+	u32 size;
-+	u32 offset;
-+	u32 flags;
-+} __packed;
-+
-+_Static_assert(sizeof(struct xfeat_component)%4 == 0, "xfeat_component is not aligned");
-+
- typedef unsigned long elf_greg_t;
- 
- #define ELF_NGREG (sizeof(struct user_regs_struct) / sizeof(elf_greg_t))
-diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
-index c5a026fee..5d59f390c 100644
---- a/arch/x86/kernel/fpu/xstate.c
-+++ b/arch/x86/kernel/fpu/xstate.c
-@@ -13,6 +13,7 @@
- #include <linux/seq_file.h>
- #include <linux/proc_fs.h>
- #include <linux/vmalloc.h>
-+#include <linux/coredump.h>
- 
- #include <asm/fpu/api.h>
- #include <asm/fpu/regset.h>
-@@ -1838,3 +1839,89 @@ int proc_pid_arch_status(struct seq_file *m, struct pid_namespace *ns,
- 	return 0;
- }
- #endif /* CONFIG_PROC_PID_ARCH_STATUS */
-+
-+#ifdef CONFIG_COREDUMP
-+static const char owner_name[] = "LINUX";
-+
-+/*
-+ * Dump type, size, offset and flag values for every xfeature that is present.
-+ */
-+static int dump_xsave_layout_desc(struct coredump_params *cprm)
-+{
-+	int num_records = 0;
-+	int i;
-+
-+	for_each_extended_xfeature(i, fpu_user_cfg.max_features) {
-+		struct xfeat_component xc = {
-+			.type   = i,
-+			.size   = xstate_sizes[i],
-+			.offset = xstate_offsets[i],
-+			/* reserved for future use */
-+			.flags  = 0,
-+		};
-+
-+		if (!dump_emit(cprm, &xc, sizeof(xc)))
-+			return 0;
-+
-+		num_records++;
-+	}
-+	return num_records;
-+}
-+
-+static u32 get_xsave_desc_size(void)
-+{
-+	u32 cnt = 0;
-+	u32 i;
-+
-+	for_each_extended_xfeature(i, fpu_user_cfg.max_features)
-+		cnt++;
-+
-+	return cnt * (sizeof(struct xfeat_component));
-+}
-+
-+int elf_coredump_extra_notes_write(struct coredump_params *cprm)
-+{
-+	int num_records = 0;
-+	struct elf_note en;
-+
-+	if (!fpu_user_cfg.max_features)
-+		return 0;
-+
-+	en.n_namesz = sizeof(owner_name);
-+	en.n_descsz = get_xsave_desc_size();
-+	en.n_type = NT_X86_XSAVE_LAYOUT;
-+
-+	if (!dump_emit(cprm, &en, sizeof(en)))
-+		return 1;
-+	if (!dump_emit(cprm, owner_name, en.n_namesz))
-+		return 1;
-+	if (!dump_align(cprm, 4))
-+		return 1;
-+
-+	num_records = dump_xsave_layout_desc(cprm);
-+	if (!num_records)
-+		return 1;
-+
-+	/* Total size should be equal to the number of records */
-+	if ((sizeof(struct xfeat_component) * num_records) != en.n_descsz)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+int elf_coredump_extra_notes_size(void)
-+{
-+	int size;
-+
-+	if (!fpu_user_cfg.max_features)
-+		return 0;
-+
-+	/* .note header */
-+	size  = sizeof(struct elf_note);
-+	/*  Name plus alignment to 4 bytes */
-+	size += roundup(sizeof(owner_name), 4);
-+	size += get_xsave_desc_size();
-+
-+	return size;
-+}
-+#endif /* CONFIG_COREDUMP */
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index a43897b03..3d15c7369 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -2006,7 +2006,7 @@ static int elf_core_dump(struct coredump_params *cprm)
- 	{
- 		size_t sz = info.size;
- 
--		/* For cell spufs */
-+		/* For cell spufs and x86 xstate */
- 		sz += elf_coredump_extra_notes_size();
- 
- 		phdr4note = kmalloc(sizeof(*phdr4note), GFP_KERNEL);
-@@ -2070,7 +2070,7 @@ static int elf_core_dump(struct coredump_params *cprm)
- 	if (!write_note_info(&info, cprm))
- 		goto end_coredump;
- 
--	/* For cell spufs */
-+	/* For cell spufs and x86 xstate */
- 	if (elf_coredump_extra_notes_write(cprm))
- 		goto end_coredump;
- 
-diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-index b54b313bc..e30a9b47d 100644
---- a/include/uapi/linux/elf.h
-+++ b/include/uapi/linux/elf.h
-@@ -411,6 +411,7 @@ typedef struct elf64_shdr {
- #define NT_X86_XSTATE	0x202		/* x86 extended state using xsave */
- /* Old binutils treats 0x203 as a CET state */
- #define NT_X86_SHSTK	0x204		/* x86 SHSTK state */
-+#define NT_X86_XSAVE_LAYOUT	0x205	/* XSAVE layout description */
- #define NT_S390_HIGH_GPRS	0x300	/* s390 upper register halves */
- #define NT_S390_TIMER	0x301		/* s390 timer register */
- #define NT_S390_TODCMP	0x302		/* s390 TOD clock comparator register */
--- 
-2.34.1
-
+Hi Krzysztof,=0D
+=0D
+Thank you very much for your valuable suggestions. I will fix the related i=
+ssues in V3.=0D
+=0D
+On Wed, 5 Jun 2024 12:20:31, krzk@kernel.org wrote:=0D
+>On 05/06/2024 11:11, wangshuaijie@awinic.com wrote:=0D
+>> From: shuaijie wang <wangshuaijie@awinic.com>=0D
+>> =0D
+>> Add the awinic,aw_sar.yaml file to adapt to the awinic sar sensor driver=
+.=0D
+>=0D
+>Subject: drop final stops. From all your patches.=0D
+>=0D
+=0D
+The patch for V3 will fix this issue.=0D
+=0D
+>> =0D
+>> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>=0D
+>> ---=0D
+>=0D
+>No changelog, so nothing improved?=0D
+>=0D
+=0D
+The patch for V3 will fix this issue.=0D
+I will include a changelog in the next version.=0D
+=0D
+>>  .../bindings/input/awinic,aw_sar.yaml         | 125 ++++++++++++++++++=
+=0D
+>=0D
+>No underscores, but rather awinic,aw96103.yaml=0D
+=0D
+I will change the name to awinic,aw96xxx.yaml in the next version.=0D
+=0D
+>=0D
+>>  1 file changed, 125 insertions(+)=0D
+>>  create mode 100644 Documentation/devicetree/bindings/input/awinic,aw_sa=
+r.yaml=0D
+>> =0D
+>> diff --git a/Documentation/devicetree/bindings/input/awinic,aw_sar.yaml =
+b/Documentation/devicetree/bindings/input/awinic,aw_sar.yaml=0D
+>> new file mode 100644=0D
+>> index 000000000000..2560ef09d3d0=0D
+>> --- /dev/null=0D
+>> +++ b/Documentation/devicetree/bindings/input/awinic,aw_sar.yaml=0D
+>> @@ -0,0 +1,125 @@=0D
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)=0D
+>> +%YAML 1.2=0D
+>> +---=0D
+>> +$id: http://devicetree.org/schemas/input/awinic,aw_sar.yaml#=0D
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#=0D
+>> +=0D
+>> +title: Awinic sar sensor driver family=0D
+>=0D
+>driver as Linux driver or some other hardware meaning? If first, then=0D
+>drop and describe hardware.=0D
+>=0D
+>=0D
+=0D
+The patch for V3 will fix this issue.=0D
+(title: Awinic's AW96XXX capacitive proximity sensor)=0D
+=0D
+>> +=0D
+>> +maintainers:=0D
+>> +  - Shuaijie Wang <wangshuaijie@awinic.com>=0D
+>=0D
+>Missing description. You already got question about meaning of sar and=0D
+>indeed nothing improved.=0D
+>=0D
+=0D
+The patch for V3 will fix this issue.=0D
+=0D
+>> +=0D
+>> +properties:=0D
+>> +  compatible:=0D
+>> +    enum:=0D
+>> +      - awinic,aw96103=0D
+>> +      - awinic,aw96105=0D
+>> +      - awinic,aw96303=0D
+>> +      - awinic,aw96305=0D
+>> +      - awinic,aw96308=0D
+>> +=0D
+>> +  reg:=0D
+>> +    maxItems: 1=0D
+>> +=0D
+>> +  irq-gpio:=0D
+>> +    maxItems: 1=0D
+>> +=0D
+>> +  awinic,sar-label:=0D
+>=0D
+>label is a string, not number.=0D
+>=0D
+>> +    $ref: /schemas/types.yaml#/definitions/uint32=0D
+>> +    description:=0D
+>> +      Set the label of the SAR(Specific Absorption Rate) sensor.=0D
+>> +      It is set to 0 if one awinic sar chip is used.=0D
+>> +      If two awinic sar chips are used, awinic,sar-label in the first=0D
+>> +      awinic-sar should be set to 0 and awinic,sar-label in the second=
+=0D
+>> +      awinic-sar should be set to 1.=0D
+>=0D
+>Sorry, no instance indexing. Drop.=0D
+>=0D
+=0D
+I will modify the relevant descriptions in the V3.=0D
+=0D
+>> +=0D
+>> +=0D
+>=0D
+>No need for two line breaks.=0D
+>=0D
+>> +  awinic,regulator-power-supply:=0D
+>> +    description:=0D
+>> +      Choose if you want to use a regulator to power the chip. Then the=
+=0D
+>> +      vccX-supply has to be set.=0D
+>> +=0D
+>> +  vcc0-supply:=0D
+>> +    description:=0D
+>> +      Optional regulator for chip, 1.7V-3.6V.=0D
+>> +      If two awinic sar chips are used, the first regulator=0D
+>> +      should set the ID to vcc0-supply and the second regulator=0D
+>> +      should set the ID to vcc1-supply.=0D
+>> +=0D
+>> +  awinic,channel-use-mask:=0D
+>> +    $ref: /schemas/types.yaml#/definitions/uint32=0D
+>> +    description:=0D
+>> +      The mask of channels used.=0D
+>> +      Configure according to the specific chip channel used.=0D
+>> +      Bit[31:0] Each bit represents a channel.=0D
+>> +      If the customer uses ch0 and ch2, then channel_use_mask=3D<0x05>=
+=0D
+>> +      For a 3-channel chip, the maximum value is 0x07;=0D
+>> +      For a 5-channel chip, the maximum value is 0x1F;=0D
+>> +      For a 8-channel chip, the maximum value is 0xFF;=0D
+>> +=0D
+>> +  awinic,update-fw:=0D
+>> +    type: boolean=0D
+>> +    description:=0D
+>> +      Choose if you want to update the firmware.=0D
+>=0D
+>Not much improve in explanation or rationale. Why do you want to update=0D
+>FW every time? Explain this in property description.=0D
+>=0D
+=0D
+In the next version, I will remove the relevant feature.=0D
+=0D
+>I mostly skipped the rest, because it does not look like you addresses=0D
+>previous feedback.=0D
+>=0D
+>...=0D
+>> +=0D
+>> +required:=0D
+>> +  - compatible=0D
+>> +  - reg=0D
+>> +  - irq-gpio=0D
+>> +  - awinic,sar-label=0D
+>> +  - awinic,channel-use-mask=0D
+>> +=0D
+>> +unevaluatedProperties: false=0D
+>=0D
+>Missing some ref, like dai-common or component... or this is supposed to=0D
+>be additionalProperties: false instead.=0D
+>=0D
+=0D
+In the next version, I will change it to additionalProperties: false.=0D
+=0D
+>> +=0D
+>> +examples:=0D
+>> +  - |=0D
+>> +    #include <dt-bindings/gpio/gpio.h>=0D
+>> +    #include <dt-bindings/interrupt-controller/irq.h>=0D
+>> +    i2c {=0D
+>> +        #address-cells =3D <1>;=0D
+>> +        #size-cells =3D <0>;=0D
+>> +        awinic-sar@12 {=0D
+>=0D
+>Node names should be generic. See also an explanation and list of=0D
+>examples (not exhaustive) in DT specification:=0D
+>https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicet=
+ree-basics.html#generic-names-recommendation=0D
+>=0D
+=0D
+In the next version, I will change it to proximity.=0D
+=0D
+>=0D
+>I still have no clue what is sar and there is no description in this=0D
+>binding.=0D
+>=0D
+=0D
+I will add relevant descriptions in the next version.=0D
+=0D
+The specific absorption rate (SAR) is a metric that measures=0D
+the degree of absorption of electromagnetic radiation emitted by wireless=0D
+devices, such as mobile phones and tablets, by human tissue.=0D
+=0D
+In mobile phone applications, the proximity sensor is primarily used to det=
+ect=0D
+the proximity of the human body to the phone. When the phone approaches the=
+ human body,=0D
+it will actively reduce the transmit power of the antenna to keep the SAR w=
+ithin a safe=0D
+range. Therefore, we also refer to the proximity sensor as a SAR sensor.=0D
+=0D
+>> +            compatible =3D "awinic,aw96308";=0D
+>> +            reg =3D <0x12>;=0D
+>> +            irq-gpio =3D <&tlmm 72 0>;=0D
+>=0D
+>Use proper defines.=0D
+>=0D
+=0D
+In the next version, I will change it to interrupts.=0D
+=0D
+>> +            awinic,sar-label =3D < 0 >;=0D
+>=0D
+>Do not introduce different coding style. Drop spaces. See DTS coding style=
+.=0D
+>=0D
+=0D
+The patch for V3 will fix this issue.=0D
+=0D
+>=0D
+>=0D
+>Best regards,=0D
+>Krzysztof=0D
+=0D
+Kind regards,=0D
+Wang Shuaijie=0D
 
