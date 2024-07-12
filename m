@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-251006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB23892FFAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:22:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F1F92FFB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A69A1C2219F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:22:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641E31F23810
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1893D1EB56;
-	Fri, 12 Jul 2024 17:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AA5171085;
+	Fri, 12 Jul 2024 17:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dPzogAYd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYivK8Xm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A198176241;
-	Fri, 12 Jul 2024 17:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB8F17BCD;
+	Fri, 12 Jul 2024 17:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720804929; cv=none; b=p9X9hbPXMyAxoxVGKIrERO25Pg6Ab2L3eTxLCQyPaQjxyjqfodp6UvZDevwkG/Dr24mTNemSoiL7pCuYVqYX+scfmD8YXJPx6omD94YVXzhdSMSHFZXxKx/4B+03DwPIFpbZZjiYPsmiVHjq08Cq+dNVObLVJyeCu9oHKhfq8TE=
+	t=1720805085; cv=none; b=VEhjoYzYsoxCNyo6NWd0MqNsBHPz9NO+XNzRHardo29ZfUWiYBhTcq8hEfxdS86tUch2PJGH+a77M4YgCKUhOU5QEjP7ln13cV/bdqTm+mcaQ9+nCVnr4z8rnS+/2elOh73vZwfLqkqbWwJ6wll52VO2P7pdz0dAQILedlJxvDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720804929; c=relaxed/simple;
-	bh=2Ex1ON+s+j0TUr6WcjiGdR8GVnK+27jup8cEzaO7AuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rn0+6AjMzyDnGuLnI/F9qxrMsZAcGF3voT2Jptr/OBkWOF6pEGoi1hYtQvkduEycgZqNkNbeLNiX+mN94TaGHTx8v8y9IvbfpEMh4g2EcQUfD2HIzzvDC09EKZbnE6urJLGB2SolnVZpJQFf3Uqtp4b2owq57jAaq55LrRCFwNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dPzogAYd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89D8DC32782;
-	Fri, 12 Jul 2024 17:22:05 +0000 (UTC)
+	s=arc-20240116; t=1720805085; c=relaxed/simple;
+	bh=OJu4VM4Q1azvsXUV3mG/arjvP6QdbSHXfdhgStH8WLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZsFLN/Ic43fONaQ/5WBlBwIzjqy8xdkRfPoEazRbTE8p6tWch6eF/OvsCPCjmq0K7wE4Kias6CPN3I/aqalAbQEXfpaXZZ/Mfw310C+YE4d4MFrWRzYVRWyRN/dXVgjSa/b/719ZOB+FMnuL1hZf9h3F+FIJJKPfAgy6DUMNq38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYivK8Xm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB81DC32782;
+	Fri, 12 Jul 2024 17:24:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720804929;
-	bh=2Ex1ON+s+j0TUr6WcjiGdR8GVnK+27jup8cEzaO7AuA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dPzogAYd1M03xYPWV/tq6Gh8clQyxdEXWEaMuEHj0VR5ZH+c9GjxsGSe0BzmheaCw
-	 7tyzrwwny3QeOmTQXqgOPeKlXIJuPa7BGbN127lurYvXfIYRPh1E63lI7CSNBlfbRR
-	 Mhl0WhZ7Uf5UHskXYg5ZmHWCR6YoLR/T2ludKwNdOUVSUzIAzkThYz4GhzM/YBs7Tn
-	 XQX1X9jwdqOk3iiz2NWd9r1O3eRVHZBPJ/p8RG5xn2zUhVomejKjCfzJXBOj7yLS0L
-	 1MHq0CSJCAfkqdGBSrMd36PetRiHGEkF2u3zfEHj91nDPYMwo/ttUOdXfuwvQH1eKp
-	 67gV5RhYrEx9A==
-Message-ID: <ffa6a941-0e01-4f88-90cd-6673b602a7d3@kernel.org>
-Date: Fri, 12 Jul 2024 19:22:03 +0200
+	s=k20201202; t=1720805084;
+	bh=OJu4VM4Q1azvsXUV3mG/arjvP6QdbSHXfdhgStH8WLs=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=pYivK8Xm29iWhXe/4lO73xQKwhGrr80KecX+kIf/gKQWlEcR4+iOahnbH5IQivOvI
+	 f4UVAdj2PJHaNyNipeeby3YoP/TwBMC4GMWPYnFl0qXqC3vFju7Omfw80mq6yEwGz/
+	 npn+CDKs/IeuBePQWrTY0bvOYM4bJOYSfThl6nRNmF1SwE4ph/yATcUrofMk1SDFHa
+	 2AUrkWzbhb3B7zWWF6jy+nf6tHUTLID+4lF+qAl7FQQc9yvgTCWuUtAxQWTKOwqYwJ
+	 Jwdp/gDOsZ4R6Bv46Z+P5N8ldOjmXNAsYvUJfL/U0t0+tDZz9E79JZkDYVprruLK4F
+	 EEaCtq28MMg9Q==
+Message-ID: <a6e2d6ea-a377-48f5-9481-764af1766593@kernel.org>
+Date: Fri, 12 Jul 2024 19:24:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: i3c: add header for generic I3C flags
-To: Frank Li <Frank.Li@nxp.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
+Subject: Re: [PATCH] dt-bindings: display: st,stm32-ltdc: Document stm32mp25
+ compatible
+To: Yannick Fertre <yannick.fertre@foss.st.com>,
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+ Philippe Cornu <philippe.cornu@foss.st.com>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Miquel Raynal
- <miquel.raynal@bootlin.com>,
- "moderated list:I3C SUBSYSTEM" <linux-i3c@lists.infradead.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20240712170640.3635096-1-Frank.Li@nxp.com>
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240712131624.98898-1-yannick.fertre@foss.st.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,82 +110,92 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240712170640.3635096-1-Frank.Li@nxp.com>
+In-Reply-To: <20240712131624.98898-1-yannick.fertre@foss.st.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/07/2024 19:06, Frank Li wrote:
-> From: Carlos Song <carlos.song@nxp.com>
+On 12/07/2024 15:16, Yannick Fertre wrote:
+> Add "st,stm32mp25-ltdc" compatible for SOC MP25. This new SOC introduces
+> new clocks (bus, ref & lvds). Bus clock was separated from lcd clock.
+> New sources are possible for lcd clock (lvds / ref).
 > 
-> Add header file for generic I3C flags to avoid hard code in dts file.
-> 
-> Signed-off-by: Carlos Song <carlos.song@nxp.com>
-> Reviewed-by: Frank Li <frank.li@nxp.com>
-> Acked-by: Jason Liu <jason.hui.liu@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
 > ---
->  Documentation/devicetree/bindings/i3c/i3c.yaml |  5 ++++-
->  MAINTAINERS                                    |  1 +
->  include/dt-bindings/i3c/i3c.h                  | 16 ++++++++++++++++
->  3 files changed, 21 insertions(+), 1 deletion(-)
->  create mode 100644 include/dt-bindings/i3c/i3c.h
+>  .../bindings/display/st,stm32-ltdc.yaml       | 29 +++++++++++++++++--
+>  1 file changed, 27 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/i3c/i3c.yaml b/Documentation/devicetree/bindings/i3c/i3c.yaml
-> index 113957ebe9f1d..90f3610725185 100644
-> --- a/Documentation/devicetree/bindings/i3c/i3c.yaml
-> +++ b/Documentation/devicetree/bindings/i3c/i3c.yaml
-> @@ -91,6 +91,7 @@ patternProperties:
->                - const: 0
->                - description: |
->                    Shall encode the I3C LVR (Legacy Virtual Register):
-> +                  See dt-bindings/i3c/i3c.h
-
-Use full paths.
-
->                      bit[31:8]: unused/ignored
->                      bit[7:5]: I2C device index. Possible values:
->                        * 0: I2C device has a 50 ns spike filter
-> @@ -153,6 +154,8 @@ additionalProperties: true
+> diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> index d6ea4d62a2cf..680669c44b80 100644
+> --- a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> +++ b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
+> @@ -12,7 +12,9 @@ maintainers:
 >  
->  examples:
->    - |
-> +    #include <dt-bindings/i3c/i3c.h>
+>  properties:
+>    compatible:
+> -    const: st,stm32-ltdc
+> +    enum:
+> +      - st,stm32-ltdc
+> +      - st,stm32mp25-ltdc
+>  
+>    reg:
+>      maxItems: 1
+> @@ -24,7 +26,9 @@ properties:
+>      minItems: 1
+>  
+>    clocks:
+> -    maxItems: 1
+> +    minItems: 1
+
+You miss maxItems
+
+> +    items:
+> +      description: Lcd Clock
+
+That's not correct and drop... or describe the items like:
+items:
+ - description:
+
+>  
+>    clock-names:
+
+So clock-names are probably de-synced now...
+
+>      items:
+> @@ -42,6 +46,27 @@ properties:
+>        - for internal dpi input of the MIPI DSI host controller.
+>        Note: These 2 endpoints cannot be activated simultaneously.
+>  
 > +
->      i3c@d040000 {
->          compatible = "cdns,i3c-master";
->          clocks = <&coreclock>, <&i3csysclock>;
-> @@ -166,7 +169,7 @@ examples:
->          /* I2C device. */
->          eeprom@57 {
->              compatible = "atmel,24c01";
-> -            reg = <0x57 0x0 0x10>;
-> +            reg = <0x57 0x0 (I2C_FM | I2C_FILTER)>;
->              pagesize = <0x8>;
->          };
->  
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3c4fdf74a3f9d..f0ce22e04d467 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10479,6 +10479,7 @@ F:	Documentation/ABI/testing/sysfs-bus-i3c
->  F:	Documentation/devicetree/bindings/i3c/
->  F:	Documentation/driver-api/i3c
->  F:	drivers/i3c/
-> +F:	include/dt-bindings/i3c/
->  F:	include/linux/i3c/
->  
->  IBM Operation Panel Input Driver
-> diff --git a/include/dt-bindings/i3c/i3c.h b/include/dt-bindings/i3c/i3c.h
-> new file mode 100644
-> index 0000000000000..2513947e70cd2
-> --- /dev/null
-> +++ b/include/dt-bindings/i3c/i3c.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
+> +allOf:
 
-Do not introduce new license, even if it is compatible.
-s/MIT/BSD-2-Clause/ - see binding and checkpatch.
+This goes after required: block, see example schema
 
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - st,stm32mp25-ltdc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: bus clock
+> +            - description: reference clock
+> +            - description: lvds clock
+> +        clock-names:
+> +          items:
+> +            - const: bus
+> +            - const: ref
+> +            - const: lvds
+
+else:
+  maxItems for both entries
+
+> +
+>  required:
+>    - compatible
+>    - reg
 
 Best regards,
 Krzysztof
