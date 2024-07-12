@@ -1,142 +1,117 @@
-Return-Path: <linux-kernel+bounces-250012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BA8792F2F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:13:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E732A92F2F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8CB81F228FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A73462848FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786FF635;
-	Fri, 12 Jul 2024 00:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BAB2563;
+	Fri, 12 Jul 2024 00:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dTpZ/ADO"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lVjESjg4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA23376
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 00:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80200621;
+	Fri, 12 Jul 2024 00:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720743222; cv=none; b=f/yDcEx+pPAaos5C4QHCTS3jXTcc80f/1s1ncqfrHcFHYrtxBCzBY+bEW9sg3Fe2LxEVPxpKwocguB4Q8fY0bE5IVMTs1IYJ5HAiSANG6lUCr0Pk07Zt6fWLy3E4rA5a19EeaqvlXOrdCPSNXQXYmW6paz1+Y7LxHr9Y+9+T3ds=
+	t=1720743439; cv=none; b=me/cEs+RTpCNMMOcQAslji3F2mbjcf/tH3wxvYihJ0J6Sbg3VEEyLYnJBf/POlVfGa78jUmMSyEhk2klJWIOqBRHiFwaIv4lGCuV4+SepaRZV6ysEwjt58kHGcv3F48PzJsAW0ywYiRt7BJzbTQDyApGjDkxxe9JndNRdQQuAQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720743222; c=relaxed/simple;
-	bh=5a8vBn/YHW4mLzVnW5So/Jm3wAhZJ78cpeMq82a27lA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gJy35Q/dXhIh4J/GZjx+42wCZ/eIn0gyWWHnlUhrDNWyrU3+/aa2ntFbfWWHyZy0HBJ6TxF0Uv+CWMjxRub3KPgSJe72xUfq85upzrbobS7H3CW1GfTiiKQJgEQBm0sa+Riz2aVc+Nnt1fTPMNLhdQx1kgEA+isSx3vn4HxeQYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dTpZ/ADO; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-447df43324fso69141cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 17:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720743220; x=1721348020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FvmJJCnLXZLr1KbbD5fKBqYw5WHyRFvoxJIcU+eMWec=;
-        b=dTpZ/ADOQmm+mqKXztmACMd/f82S9JeRII1UdB+3DW0Sp8YvI4fWR++ciqXi8KSxfs
-         XBDgjz5B/1bCcOLIZMaWaGVsHwZKEDTd66+5RSZMQE2rsEQ1IF49Xd/rqVws8Qn6hJ0n
-         JlSFx+OxPN29j+iSt7WrI3wN2OOR1xbZ75HwFRE2Va4TD0utLqgKwuHg4sRE6f2UQtwC
-         EKbD/1JlaUBOL2xZNQ84zZU3qZAVRyCrN1pW0WKtFBK081ok3d0W3A1iYUaPDcQAw8TE
-         KStNRPCOM4iCyUhy6ViHI9CCC61hS293/ZTOiM+GyptFygyphwp2Lo3sCaG4fDG30l+i
-         0afA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720743220; x=1721348020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FvmJJCnLXZLr1KbbD5fKBqYw5WHyRFvoxJIcU+eMWec=;
-        b=V41rneISWADCiKFQicBivtgUjs6PQ0aEM2LhnIPEqyoF6A/zdWzzE0IkiKKb6hUatR
-         UuLw9TtezsT5zbMwNK4ySnXGcFZsOHCe1n1q12HqASrWJeSn6JAJMnB2Yaw3zPtD9WXm
-         ExEF8NOoA20zPDqxMx1Rtscgz34PmJ59h+6M1xNYfj65xGgAgSUBEraHeAQueOrKsbqt
-         sEs+FAQrv/PVYBMTcLZF8Acy88S8/4N+rXr4m6QrHQ8tCUSoGfzV2vlXfX/7fttf42Ng
-         2syQivgvHL9gnHnHyBjdAFRsx9rDO8P03nvUMHPX7V0raF+xhiVx4hOKffVZi0K9++/A
-         +7yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDa52SpK4Hw4G93B9sWFEKJvaXs+dQz+MR4LfGNtqMiUpEprefVVbe8csXjAb0z/nv3U+X5I1leszJSpTu5mUH6jkmFG+gOMg4HGwP
-X-Gm-Message-State: AOJu0YzgTcWCKq7X6488/bkt67TECWTIW7srXmXCYxBG0QWYdQXQFlRJ
-	3B3K2qSKC/vnSQlkDQPL7UnwmwMnDovTGqlpb3k2TRAqqn5OyhIBL/8jLc9wDz7MGti7wemx37d
-	UYw3fZe+iVgGKga1omzwGSm6Ust4wCXDoSON7c3nOUq2YqOwezp+n
-X-Google-Smtp-Source: AGHT+IFAD8sqxPusycnznfFlRILtgKPfwSQZVQ/Kk7PE0REcOpbukysMQqB4REQvgqThSoihTZy/us5ruUkCyrSKJFk=
-X-Received: by 2002:ac8:5994:0:b0:446:64ad:ee91 with SMTP id
- d75a77b69052e-44e75322eefmr1457141cf.20.1720743219959; Thu, 11 Jul 2024
- 17:13:39 -0700 (PDT)
+	s=arc-20240116; t=1720743439; c=relaxed/simple;
+	bh=n+l8j3zXDVmrCyjD/AKm3cdf3Dekt08k92V5tenRSow=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d2uQtKcBNeKXH7vabHx6J4c/iVHb6xB8+Jn7MltXbQVElsaKVMYM1KmXJNuZnTG/IMjpTZq4SUzBeWw64+BmbQQMQ2IaalOgixCXTwVkrShhBeY23rn4yU9Qf8Rft60ofZCdTBAnWZO0MRB6dDe7oheHIIuFX9n/onSBic5YWww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lVjESjg4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720743433;
+	bh=Bw03T/wXA3hX+oFkbo08Y3OH9ztHLzh+baF8k8tN74Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lVjESjg4k6s1GG2NZLeADAtRJPYJdUw+Yf8zh1lze6ptbQlTpQf18j030KIYVqfBi
+	 aAimcdiirfc74mMKqPHF+3sihskpvyvJd0M1bmlEwF9kuW+FBQXI1/fgVjJ13wF2Kt
+	 5ph5kHLiO/TfhsyZdeoSOJOfat3fp4BzS/k0mWDyxHfgL35zYt2lDCrPhWQ70o3BEq
+	 61Gxa8q6Mxl8/MU6nLiSGkwAUcNSVUSyKPtXFPKcg25/bcv/DsLVMcSeCYmN3o0ntj
+	 IzUMO4DybGC4Eia2o4Fr3tad+gqGKNpYMNjINKfWVlX3zHzPO5rmIduILjlyay7v48
+	 05hea2m4NWf3w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKsbr3pxSz4wxs;
+	Fri, 12 Jul 2024 10:17:12 +1000 (AEST)
+Date: Fri, 12 Jul 2024 10:17:11 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, David Miller
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, bpf <bpf@vger.kernel.org>, Networking
+ <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the bpf-next tree
+Message-ID: <20240712101711.272eda17@canb.auug.org.au>
+In-Reply-To: <CAADnVQKVC4NGsEU0X3XJmmCot40Vvik-9KNFU07F=VBF-4UVRQ@mail.gmail.com>
+References: <20240712083603.10cbdec3@canb.auug.org.au>
+	<CAADnVQKVC4NGsEU0X3XJmmCot40Vvik-9KNFU07F=VBF-4UVRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711212514.2372780-1-yoann.congal@smile.fr>
- <CAGETcx--FNpz3o5TiZ3T6UkMHKBUjD8cwHR6eQAjM-U86=p_Eg@mail.gmail.com> <f2044667-e235-4abc-924e-3615c60681f1@smile.fr>
-In-Reply-To: <f2044667-e235-4abc-924e-3615c60681f1@smile.fr>
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 11 Jul 2024 17:13:01 -0700
-Message-ID: <CAGETcx-ioF=jTbyQMeD2fsYKz8q5vw_TWYWS9m8H5=pCo5KFYA@mail.gmail.com>
-Subject: Re: [PATCH] regulator: core: Set the fwnode for regulator_dev
-To: Yoann Congal <yoann.congal@smile.fr>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/lBVNIj918H/bfEVTwa/d5bZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/lBVNIj918H/bfEVTwa/d5bZ
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 3:19=E2=80=AFPM Yoann Congal <yoann.congal@smile.fr=
-> wrote:
+Hi Alexei,
+
+On Thu, 11 Jul 2024 16:51:28 -0700 Alexei Starovoitov <alexei.starovoitov@g=
+mail.com> wrote:
 >
-> Le 11/07/2024 =C3=A0 23:29, Saravana Kannan a =C3=A9crit :
-> > On Thu, Jul 11, 2024 at 2:25=E2=80=AFPM Yoann Congal <yoann.congal@smil=
-e.fr> wrote:
-> >>
-> >> From: Yoann Congal <yoann.congal@smile.fr>
-> >>
-> >> After commit 3fb16866b51d ("driver core: fw_devlink: Make cycle
-> >> detection more robust"), fw_devlink prints an error when consumer
-> >> devices don't have their fwnode set. This used to be ignored silently.
-> >>
-> >> Set the fwnode in regulator_dev so fw_devlink can find them and proper=
-ly
-> >> track their dependencies.
-> >>
-> >> This fixes errors like this:
-> >>   stpmic1-regulator 5c002000.i2c:stpmic@33:regulators: Failed to creat=
-e device link (0x180) with 2-0033
-> >>
-> >> NB: This is similar to the commit a26cc2934331 ("drm/mipi-dsi: Set the
-> >> fwnode for mipi_dsi_device") applied to the regulator framework.
-> >>
-> >> Cc: Saravana Kannan <saravanak@google.com>
-> >> Cc: stable@vger.kernel.org # 5.13.x
-> >> Fixes: 63c7c9e16c8e ("regulator: core: Get and put regulator of_node")
-> >> Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
-> >
-> > The change is valid but the problem is that managed device links don't
-> > work correctly for "class" type devices. So, we can't merge this
-> > change yet.
->
-> I was totally unaware of that.
+> Argh.
+> So the fix was applied to bpf-next back in May and the same people
+> come back to complain in July that it's somehow still broken and must be
+> fixed in Linus's tree.
+> So the new patch was applied to bpf and pulled to net
+> and on the way to Linus now.
+>=20
+> We will ffwd bpf-next in a day or so, if git cannot handle it,
+> we will revert from bpf-next.
 
-Yeah, it's not obvious. The TL;DR of the problem is that your consumer
-will end up waiting for ever for the supplier to probe but a "class"
-device never probes.
+Don't bother, it is not causing any conflicts.  Occasional duplicates
+like this are not really a problem.  I report them just in case they
+were done in error.
 
-And the fix is non-trivial. So, it's been on my todo list for a bit.
+--=20
+Cheers,
+Stephen Rothwell
 
-> > So, for now, we shouldn't land this. Are you not seeing probing issues
-> > when you do this? Or significant changes/delays in probing?
->
-> I just checked my logs : No probing issue nor noticeable delay.
+--Sig_/lBVNIj918H/bfEVTwa/d5bZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-With your change, I'm guessing you see more links under /sys/class/devlink
+-----BEGIN PGP SIGNATURE-----
 
-Are all the consumers in these new links "class" type consumers too
-(like other regulator devices, etc)?
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQdgcACgkQAVBC80lX
+0GzBiQf/W+jGo/+m8c27dNIUHQUGYmS9UmptbTzzgDyglqx89/bMp8rfDmkrUgM/
+ULhUhLmPilTJOnOb3lz7kdyTPNFsSFSFPm2KsvZqg5pRwcPsZ0sKv999IoLoFwIN
+jzvxJbW2Uz+YUEedLxLhBuCgZChj9t5ujx2gY4sdzSduyYAHzS9J8cjs9c2rf2P3
+Prz4JudqiXoeS40dfwCk+2xKqQI0cWXFYIqrlt5uMjClsU8dm8+S+u9Qvh++lT9A
+HNfCQQlPAMKAnRl6YMu7814GRaTuG8sC8aDMPTua8P8ffG7L7gDYgy/AekybGlBL
+zCUv/M7VYrxb/Kz3an5gmVMJV8BHJw==
+=vcnk
+-----END PGP SIGNATURE-----
 
-> Thanks for your answer, I'll drop this for now.
-
-Thanks.
-
--Saravana
+--Sig_/lBVNIj918H/bfEVTwa/d5bZ--
 
