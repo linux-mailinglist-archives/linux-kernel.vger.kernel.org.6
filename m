@@ -1,188 +1,121 @@
-Return-Path: <linux-kernel+bounces-251129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10EFA930101
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37679930104
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98992842C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:38:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68E321C21AA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA7138384;
-	Fri, 12 Jul 2024 19:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC04381D5;
+	Fri, 12 Jul 2024 19:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMYT0Kxr"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="HJMnYMS3"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE56BE65;
-	Fri, 12 Jul 2024 19:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A56B2E639
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 19:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720813122; cv=none; b=INv27WakXI3zml9km7anERbRLzp9oe3h7edwMwVFmgL4xLlwOfMEIn/YxdYGB6FEUlPGjh3Eh+XbxaB+N2W0WyHjVAnL80pBww1Q4QQE+O3exDjGd+tle70y3b2oihIeUf/YMkXnT5vpCOYeY8Cc22M9MWd3uZt5jmDj30kN7Xc=
+	t=1720813211; cv=none; b=hdWOrMsL1D1t9jLRORKS0EKgFWmHot8+6k65hs898n6/4wdiQnt50OKa4gGt9wU1RMCj0xMtVLwjSle/2jP7NpPA7HqLJl9OMy82/0R4XI8lYOvy2zsxrj9cE4hYhNXnz4Huovck838K/GoB/ffqan6PCC4eo0qPq7w+s4Xw25k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720813122; c=relaxed/simple;
-	bh=eU80/SHzM9zfUD2s2UKYMH3sX2bKdh9zL0swUl003EQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k/XQ1FcP++W8K9Fy7L0rokDpOExFeuTAjubb5xsQWYI4g4WYjIp4c+Th1Vqtk3VyHBBvt1fv7zlSDlFFMVW5w6FhMG3BsHN5lYrXgBoeTXqMSBhvzEnJF4TVrF0fU+Zl3smYAWScznFts93XTZiSh14YS/WaCFlTvTX9EPvCO/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMYT0Kxr; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-77d3f00778cso1776288a12.3;
-        Fri, 12 Jul 2024 12:38:41 -0700 (PDT)
+	s=arc-20240116; t=1720813211; c=relaxed/simple;
+	bh=MIU3owLLrwypm5/MgWUvunJsmR9PY6tV2qPUPU8aLZw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QDNluFeds2roCYcx+wlJNdwwZzf2eFdfrQ+HW701I76gvXlZLVPcSm21FZ9wCAovfUIfsMQjmhdknlhhxqHuaJ4TolJ0ThQZ74ByXL4/ye6I3fSRek3fvf1Vq2omb1ngsI6Er8JdlCw92TuBJEVvNtJ5r1lbHYl8AjD5xVDpnZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=HJMnYMS3; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso16174165e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:40:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720813120; x=1721417920; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kmnmy4k0ZE5aqRykzl3xnNbgqOchAuqitUDaQSLA3rE=;
-        b=FMYT0KxrE3YqF7Yc17phStl7k3+0K4YihiLGPsC8sacRZHRwseLxFj+g8drLkFnAcb
-         lO9bfbfJCclJXX+xVLLDg8YttUg7C02nKAekCRgQ+9KLxLWfdW7ljk0Kcm8tvtCuMEFx
-         2MWr8j+Ud28BSn9T+IYYiwoBH4pRzFtwVjNPTJdY7mw8rO2FeMI/SvmRu2h89bsWGe+V
-         WNOWm9gVQGysn7gAUAyEVc+NERzWELFr8LLL4mCRJlRrPHbqamQT+Mww0rUIxqJqIkgh
-         sC1VnUP+WmNCWVyZlvIQJmLL+uTTSicSpE+vZxpcHc+V5Fj8oJ2bZH26VK4ARZwGpZ4i
-         cypA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720813207; x=1721418007; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FvuQrQGGQIwwog/EnWsNcgH7JSV94m6PJ1TUizGo8OI=;
+        b=HJMnYMS3Nv+hSX5/QYJeog+MLpSwIUrVlyJzKagzQh2yQ8bGopGHHNOCQk+08rwvyl
+         bZUKeGAuoNbuAmEdwFW3kzM/4ds96Q8mc2L1gF6TpYaAaUQgRMpV/otuvpPgkY5v28+x
+         /dfdIABQavA8eMGrFtA2A2XJv5s3l2mkjUQJcV9ZfryPxupuKFWjn+Z+OFbAs2+SuDzr
+         6Ir5clbdIIXMGfcQDg0CVGyN2H6cp4ZFuqaphAe+klUMT4meybiZP3vGnzCgUNCgvugO
+         S4lkLiAyZ9GdXyYpxn2t0XZqffq9aIfCXYrJB+byhWn84NVI9MJJ8Kv62LJeM/kjJ/68
+         8+zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720813120; x=1721417920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kmnmy4k0ZE5aqRykzl3xnNbgqOchAuqitUDaQSLA3rE=;
-        b=xLCFWjEBl24YW6QDZn+gH2KD7xihdK4ndeyuU1jFcz1fU6fuE6CK3D+8AiGun36Ghq
-         4c+i4hWysHdWU+/TrBXnMH2Hk1ynazjzbiceFcXRxYZPNDF5D7BtJThusASQp9I7eYuV
-         cH52iRgrh5UyudU+ekdf8/+DH8m/dw4fP4/d02wj3BwXEq9d5ntsjrKHvrhBZnk6i9Yp
-         X4WEQ9uJqrzCyKgvgBzVILRxb9KAAzizXIaDiaaNqKA/heaZA+shmh2YT4NFBiUSIYrn
-         L3WZBAAfKlZZuK/O+Byh8+dklkX4ZX2g1vp2OySOuyZanIBn7w2g9b0PDPn+ufsshYev
-         e1HA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqzSXr1fZ5j+ovISdTNoLFVyYL+yjI6dJ+NWJhd4/Qzlzd6TKsAI6a9lREWEBgBSBEPuAAXY/VKL6Sg34kBWb4j6+IHxE/YnGnfwvfYjuXgU0FLoGmchANAtYYwruLsMDnD7A1pmU553cql1qeWmjG0KZdSAOiHZhAVHPzDBg0
-X-Gm-Message-State: AOJu0YxMuGtQVy/FyERl21l3Bc6otXB7NmMkwaSoSZ2jbHRyv4L7LOIg
-	zKq29saW7oJS+229hongnSekjyY9G4kJ3czYKzutacRXfyWtSCsj058e5GXvxAHgwNDGYD5jWa9
-	9avExL2bdX8Lh4/DrwM4TtK6mSrk=
-X-Google-Smtp-Source: AGHT+IEkYnIKZnwHEfRtBSBINEAoGjGPp7B+wrUPdkTTmh+byt4UPf2Fue9+13vnLFXEZOMLaAdMdmDHRfcvVg/F0yY=
-X-Received: by 2002:a17:90b:1e42:b0:2c8:6118:11a8 with SMTP id
- 98e67ed59e1d1-2ca35d90dc7mr9306588a91.49.1720813120419; Fri, 12 Jul 2024
- 12:38:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720813207; x=1721418007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FvuQrQGGQIwwog/EnWsNcgH7JSV94m6PJ1TUizGo8OI=;
+        b=TOjYlvmv8blTYDJ78JmpAhOfGmZIDtCuvUeng9c9Sei+KHLMQJ0xJGBOtre62pKjin
+         /0zal3Y361zf9NhRfzqdb4F9trHe4FZcfxkjlXv7xNP9ZWa9dJvTROmaBq9vvPgkUG5u
+         y2v5gL/7FxggRVcZFLg01dfyxqcz31yFGR3WJSMvIZKYjf1nB3YV0hdXQzUXq/8UCcJN
+         2JY+y45FBTS1ImZN9ylIrS2zhvl7ecVqh0XT7O6i9pgusMRObNwpF5MYiyEdHVeXQzI9
+         dOqg6UY/zV5DTRjnybWL8/Si4vYzNZQj9Ez87pwG3guCFhJqrpJF5aoEQQmXraTWO3E9
+         fcaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKVAmVM77L1D3+uNRAV9nNNo/1wnGEybXuWf87X1wfWg2JGFGU2yyhPv3DDh0qudPS9fEbILmfL6hC22dh3AEVg0mrA0gxur1vCqmm
+X-Gm-Message-State: AOJu0YyXM/7v38dNuTvcTp2Zw6JDUqUnW9jPsFCHJrdcS+UtJIMHejtJ
+	fVlJ4rCjD28SaZ+VvMY3eIPjDZojqPb/eqX6ZGTdy9iJjOD7nRqxRSpow61tM00=
+X-Google-Smtp-Source: AGHT+IHNcSqKCNvMJWlQ3+gm4ni/DPQb7E7vc0oXSqOGorhg1y87UCQAfw7iqfKkb+xvsPeDXJZ4fg==
+X-Received: by 2002:adf:ee4f:0:b0:367:8a68:e749 with SMTP id ffacd0b85a97d-367cea964ecmr9035312f8f.37.1720813207457;
+        Fri, 12 Jul 2024 12:40:07 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:ac5f:fcfa:c856:a4d9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367df88b1c5sm8862467f8f.4.2024.07.12.12.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 12:40:07 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v2] power: sequencing: fix an invalid pointer dereference in error path
+Date: Fri, 12 Jul 2024 21:40:04 +0200
+Message-ID: <20240712194004.241939-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709204203.1481851-1-briannorris@chromium.org> <20240709204203.1481851-4-briannorris@chromium.org>
-In-Reply-To: <20240709204203.1481851-4-briannorris@chromium.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 12 Jul 2024 12:38:28 -0700
-Message-ID: <CAEf4Bzb6-DLL966XKyMhe+nmpvdqYVrzfmfkAiDdFHNyD0qGWw@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] tools build: Correct bpf fixdep dependencies
-To: Brian Norris <briannorris@chromium.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Masahiro Yamada <masahiroy@kernel.org>, Jiri Olsa <jolsa@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 9, 2024 at 1:43=E2=80=AFPM Brian Norris <briannorris@chromium.o=
-rg> wrote:
->
-> The dependencies in tools/lib/bpf/Makefile are incorrect. Before we
-> recurse to build $(BPF_IN_STATIC), we need to build its 'fixdep'
-> executable.
->
-> I can't use the usual shortcut from Makefile.include:
->
->   <target>: <sources> fixdep
->
-> because its 'fixdep' target relies on $(OUTPUT), and $(OUTPUT) differs
-> in the parent 'make' versus the child 'make' -- so I imitate it via
-> open-coding.
->
-> I tweak a few $(MAKE) invocations while I'm at it, because
-> 1. I'm adding a new recursive make; and
-> 2. these recursive 'make's print spurious lines about files that are "up
->    to date" (which isn't normally a feature in Kbuild subtargets) or
->    "jobserver not available" (see [1])
->
-> I also need to tweak the assignment of the OUTPUT variable, so that
-> relative path builds work. For example, for 'make tools/lib/bpf', OUTPUT
-> is unset, and is usually treated as "cwd" -- but recursive make will
-> change cwd and so OUTPUT has a new meaning. For consistency, I ensure
-> OUTPUT is always an absolute path.
->
-> And $(Q) gets a backup definition in tools/build/Makefile.include,
-> because Makefile.include is sometimes included without
-> tools/build/Makefile, so the "quiet command" stuff doesn't actually work
-> consistently without it.
->
-> After this change, top-level builds result in an empty grep result from:
->
->   $ grep 'cannot find fixdep' $(find tools/ -name '*.cmd')
->
-> [1] https://www.gnu.org/software/make/manual/html_node/MAKE-Variable.html
-> If we're not using $(MAKE) directly, then we need to use more '+'.
->
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Acked-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I almost gave my acked-by and tested-by, but then I noticed that this
-leaves fixdep, staticobjs and sharedobjs directories as
-to-be-committed files. Please check, something is off with .gitignore
-or where those are put:
+We may end up calling pwrseq_target_free() on a partially initialized
+target object whose unit is either NULL or an ERR_PTR(). Avoid
+dereferencing invalid memory by adding an appropriate check to
+pwrseq_target_free().
 
-$ cd ~/linux/tools/lib/bpf
-$ make -j90
-$ git st
-On branch master
-Your branch is ahead of 'bpf-next/master' by 4 commits.
-  (use "git push" to publish your local commits)
+Fixes: 249ebf3f65f8 ("power: sequencing: implement the pwrseq core")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-pm/62a3531e-9927-40f8-b587-254a2dfa47ef@stanley.mountain/
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+- check for ERR_PTR() in addition to checking for NULL
+- only add the check to pwrseq_target_free() as anywhere else unit is
+  always set and if it's not then it's another bug that needs fixing
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-        fixdep
-        sharedobjs/
-        staticobjs/
+ drivers/power/sequencing/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-nothing added to commit but untracked files present (use "git add" to track=
-)
+diff --git a/drivers/power/sequencing/core.c b/drivers/power/sequencing/core.c
+index 9c32b07a55e7..0ffc259c6bb6 100644
+--- a/drivers/power/sequencing/core.c
++++ b/drivers/power/sequencing/core.c
+@@ -212,7 +212,8 @@ pwrseq_target_new(const struct pwrseq_target_data *data)
+ 
+ static void pwrseq_target_free(struct pwrseq_target *target)
+ {
+-	pwrseq_unit_put(target->unit);
++	if (!IS_ERR_OR_NULL(target->unit))
++		pwrseq_unit_put(target->unit);
+ 	kfree_const(target->name);
+ 	kfree(target);
+ }
+-- 
+2.43.0
 
-
-Other than that the changes look good, but we should be leaving
-uncommitted (and unignored) files around.
-
-
-Also (in it's less the question to the author, but rather all the
-maintainers involved), which kernel tree is this intended to go
-through, seems like it was marked as "Not Applicable" for bpf, so I'm
-wondering where is the proper destination?
-
-> Changes in v3:
->  - add Jiri's Acked-by
->
-> Changes in v2:
->  - also fix libbpf shared library rules
->  - ensure OUTPUT is always set, and always an absolute path
->  - add backup $(Q) definition in tools/build/Makefile.include
->
->  tools/build/Makefile.include | 12 +++++++++++-
->  tools/lib/bpf/Makefile       | 14 ++++++++++++--
->  2 files changed, 23 insertions(+), 3 deletions(-)
->
-
-[...]
-
-> -$(BPF_IN_SHARED): force $(BPF_GENERATED)
-> +$(SHARED_OBJDIR):
-> +       $(Q)mkdir -p $@
-> +
-> +$(STATIC_OBJDIR):
-> +       $(Q)mkdir -p $@
-
-I'd probably combine the above two rules into one, but it's minor
-
-[...]
 
