@@ -1,103 +1,103 @@
-Return-Path: <linux-kernel+bounces-250826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E8692FD4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:13:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8931692FD4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6013F2849FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:13:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B53781C2325A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF85817332A;
-	Fri, 12 Jul 2024 15:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4D91741DB;
+	Fri, 12 Jul 2024 15:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="0+K/iYoW"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2HV4JFHS"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFC6171E73;
-	Fri, 12 Jul 2024 15:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6E71741C3
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720797216; cv=none; b=YijjXJwu2lzY4B3QOlxDppCa215EvzO5G3ebEm/ZgWgyxON5mhi6iiZ0O+QfcIBQWF/Uabz7WDLusze5g0YZ921cZMyUE3ETU0E7ST7uFiOKBV4DqM1zpZR5gs5nkVTJcVdOJy0MTlTmUYIqZBf+X26eryAfDwkPQce8SNN0YHI=
+	t=1720797220; cv=none; b=ZhWnd5Z4HddMBHIlilsWtqZAQmC1LeAYyDdrflzSZvt1bLNEhk51A0XbqjCMxnFaGRe+r0ZT6LdFd5kd07GksFYsC7kbHT+nRawjw4cqshAYhCrE12JbbjmgEGtlCf2sdUSWnOQU0ettbV1Xx3Eb3aSq0IscUuXUKnWr04WivYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720797216; c=relaxed/simple;
-	bh=MnzR0VjdJ5NoBmz1xLLAIhcfaMNgCeiuxKwyJbWLlEo=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=f69BuxvnfxGqoITy3O+DUR5q2njwKCjLkck+tZo2FYHlfYKY60M8y4vtgJCsbTXMMQcFyWA/oITVmZCgZc+OcNAasAqUvxvCPykpIDbMKTGEFlnYnb7pLzBfUlfGsYekFZbWkqr+weBJzLxNncKFX17gX7l2w8YxLQJ0zzb1lPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=0+K/iYoW; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720797212;
-	bh=MnzR0VjdJ5NoBmz1xLLAIhcfaMNgCeiuxKwyJbWLlEo=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
-	b=0+K/iYoW68JAOflPcuy9TwjDOY5gFuRs08GQ7ZhxZCUZQfNvA5gu3AE4peaZhvqsj
-	 4ahC/HaLLhZjZKGja1SO/7MXctzd6i1lU5dcEpG69vZe1h2mcSbc4lhRgrtrhgZimE
-	 RnYybGCq0zZx/ShTchOJflUXReep6P+UJ5mZEatRdWkeSNMP3Li+HJ7N8iUdb5gmdB
-	 Sl2ox1fXBkDWcvD2TjbIdliXkCjxTYCQo1z36XyXY62sW6aHjC4JItDiLB173CV1qe
-	 Ld1uhRY9pJwC3GvM1ayCTuVC3TI3lVJblnrP0BS+ittNtDUkCIk3nKCjIEgLH+bDM+
-	 lJ85rLPZfHNwQ==
-Received: from smtpclient.apple (cola.collaboradmins.com [IPv6:2a01:4f8:1c1c:5717::1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: dwlsalmeida)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 250E93780844;
-	Fri, 12 Jul 2024 15:13:28 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1720797220; c=relaxed/simple;
+	bh=fHx8roCBigOuv5dL+stx4nu0lHPpoaj2yAnLzpWevyk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gX0AB/+EoRA7HSjKot3Xj1uieFzdPZZSmELGBDsL5oACW6Nxsrv11iW2t/VCreZombk2wB64DmJNJ+qIRR6C+hLBzQuqup05w30uNwA+dPAQdTuMlCeItVG95MuJNMexK3HYqmqf/tUW3xoZngiHcnAmBKxTBmz59lLPKt95L10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2HV4JFHS; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0335450936so3884482276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:13:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720797218; x=1721402018; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pMBbMkJX7zmz4UDXazHpxT2FCAKHZXQ8TyK0Rbrgj28=;
+        b=2HV4JFHSmXnWx8mAIJDjoIYa/DoksToXVwAJKVVY8fzZqXGUpvJ/Dmj6AoBo71WSSY
+         Yy8kV3ruB7z4LjgxmlYfYCiFGM7C9B/UukJCZZA6UMebXCbeC/M2cfrQe4kwbScy9ZHy
+         Czbj43zzPRlsMLS/kY+o+2MU2kXFpyCsLQ5Sn1cBj9HKsm5VcseM0APmjJ1IDnEP2C0N
+         B8GHS2F0LShSgoy86JlqBKqb94JysKJpFhM9Uha6fxd4hxTa6cvU7+r1876V2tYqMEpE
+         dHBAsUyFf7fTgxmslJerLDSbPnpsKE0/kX7usXP/BYfPDmgPc7v+CK8x3mK76ui4bYw3
+         llcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720797218; x=1721402018;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pMBbMkJX7zmz4UDXazHpxT2FCAKHZXQ8TyK0Rbrgj28=;
+        b=Z0ts+juqgulWjtiYgJKQaxR63IKf9OOKiQIOhwWmpfrQYjuDxJwoOPdsRmsv9pCbLx
+         M1BMbbRGhy5mOQjf/CUI0jwwcxVkjnBumvFO9Eaqe0dIIGSQW8qt9Em7Z3q2GGHxj2D3
+         X5GfwY0xgP48Q+gs3oWC+gKxUqmj16K/X44CW0NJbqNtSQIePzVE+Wo7Ea8gqiQZNg4n
+         pbdOzMg31L1/aTZc30LIMH1eDxbW0WSIK4sUUNK8zqFI8g7pStKXi84MpbO53JdF+hFs
+         Gu1jW5V3OXpjsOIsmuZhcYPH+H1vvDaZUVZR+h+Jy4s1eNnfM1NqTjeMz8ioDRJpvizP
+         jcDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpo/jYbq5J7n2SNeEzthRsrCZ+fuVzZ1I3sAoMRVKnWW4Xdyt9JelZXhh9wmji2YiHQ2lMyoAdohJ1vtSoTlUTaNWFLJvvNzdy6EmE
+X-Gm-Message-State: AOJu0YzPjhR0kigsQf+kqUOs9+tkPFvpR5kA2k+2OtsZdohyZcgSJApx
+	O2vUWuo2XLld0lyTeLWLuUIXRz+sDPZc+//VMWwm6H9JksnVhfT9jXXQwmjcX9hgVG1lrQjIAwn
+	kjA==
+X-Google-Smtp-Source: AGHT+IH0rczfJl9S7uUejXGuj2VCmgs/pCiBU7IUiJYL350tuI8YPdO5kWLf5JJJSkCI5YzF+/Av5eqK09k=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1002:b0:de4:654f:9ad0 with SMTP id
+ 3f1490d57ef6-e041b058ccbmr24885276.6.1720797218047; Fri, 12 Jul 2024 08:13:38
+ -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 12 Jul 2024 08:13:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [RFC PATCH] drm: panthor: add dev_coredumpv support
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <ZpFDeajsuVONbSYJ@cassiopeiae>
-Date: Fri, 12 Jul 2024 12:13:15 -0300
-Cc: Steven Price <steven.price@arm.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- ojeda@kernel.org,
- lyude@redhat.com,
- robh@kernel.org,
- lina@asahilina.net,
- mcanal@igalia.com,
- airlied@gmail.com,
- rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0A0C1EFC-29A1-4D73-8B02-CC1C693D6A7A@collabora.com>
-References: <20240710225011.275153-1-daniel.almeida@collabora.com>
- <fe84a028-01a8-4987-b1b7-141fb76d263c@arm.com>
- <4344B22F-D859-4C64-A351-69FFB5208362@collabora.com>
- <ZpFDeajsuVONbSYJ@cassiopeiae>
-To: Danilo Krummrich <dakr@redhat.com>
-X-Mailer: Apple Mail (2.3774.600.62)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
+Message-ID: <20240712151335.1242633-1-seanjc@google.com>
+Subject: [PATCH 0/2] KVM: x86/mmu: Clean up hugepage split error handling
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+
+"Fix" an impossible scenario where KVM would install a '0' SPTE instead of
+using SHADOW_NONPRESENT_VALUE.  In quotes because (a) there's not truly anything
+to fix (the code should never be hit), and (b) bugging the VM doesn't guarantee
+KVM won't get confused (though it's still better than installing an empty SPTE).
+
+The main motivation for this is to eliminate installing a '0' SPTE so that
+future audits of the MMU don't complain about not using SHADOW_NONPRESENT_VALUE.
+
+Sean Christopherson (2):
+  KVM: x86/mmu: Bug the VM if KVM tries to split a !hugepage SPTE
+  KVM: x86/mmu: Clean up make_huge_page_split_spte() definition and
+    intro
+
+ arch/x86/kvm/mmu/spte.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
 
-
-> On 12 Jul 2024, at 11:53, Danilo Krummrich <dakr@redhat.com> wrote:
->=20
-> You could also just define those structures in a C header directly and =
-use it
-> from Rust, can't you?
->=20
-
-
-Sure, I am open to any approach here. Although this looks a bit reversed =
-to me.
-
-i.e.: why should I declare these structs in a separate language and =
-file, and then use them in Rust through bindgen? Sounds clunky.
-
-Right now, they are declared right next to where they are used in the =
-code, i.e.: in the same Rust file. And so long as they=E2=80=99re =
-#[repr(C)] we know that an equivalent C version can generated by =
-cbindgen.
-
+base-commit: 771df9ffadb8204e61d3e98f36c5067102aab78f
+-- 
+2.45.2.993.g49e7a77208-goog
 
 
