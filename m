@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-250040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B2892F364
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:20:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B74F92F365
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDFF51F24EBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD82A1C21C77
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBA39463;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB1ABA3F;
 	Fri, 12 Jul 2024 01:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndHwvBpn"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtP5j/j5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F363E4683;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0904A3D;
 	Fri, 12 Jul 2024 01:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720747232; cv=none; b=bwbdZN6wXv//P17eWID10bMY1gCa3UZYqjez+jB4ThJsjUiqpEGISjbx+KKUJKtalcqwmhfqEZp3AqFKG9scAhz89FFarMEPBYHIMbbx6g3L7aFvl5jSxWAZq0BDQnsG9ODwGrxVgHptP09jnd1p6pXBRlNY6GBr7hlwGVosO2o=
+	t=1720747232; cv=none; b=S0YSw996CqRxhPeCW2gk/LVAuv8th2xxtMsAMynnMyvs8L/bNDDSURUavh9Gv1YfDk0h46NTfkP+J6sZjMqrWrZlgR9c95q87s5R+PmWIHhD46g1RE2p9U5Pl8KTRAGbR4VVVuBP6kVtOCClOMYGfT6/kcqxtxOut1oFWMSpEhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720747232; c=relaxed/simple;
-	bh=NDv+xcjC3JODqlDkyIwFKrZbzw3ElybaRCkFK/Rf7Wo=;
+	bh=YYEVwX5fFwqXSybfJsHPpFva9pFyBW1Ezfs7IMC1A7Q=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=bwSEDY/DA5KqVeOIkWW51v09T4pDhQsVieXZJ6+iFd9Av4Z7CzbuKnDySLrM1R2qkT6StUknF3ejiMHYWD3aDHY0Qqm+gTzzj1o1JGUKL+FpaP2XCC6jfh2T2BHN92Z0dB4Grs8PS5/yuwwZX//xtSnGuFf3T/D8ZMKoOI5G4TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndHwvBpn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ABB00C4AF12;
+	 In-Reply-To:To:Cc; b=B5Pmw/FsGIxW2EyHUlIDq8ggy+4EP98Tfgcg5h6IvJZ6rZjaQMCv/8ObiyDYIFq8K/OHTjAWY2Hu+wkeL2bWxOvJq3GwUYDWuii/nROK1iS3BK4GLEM7SMPW1YW4JKj5KzGaEr3RQVTYBVdWoU+ZKvJPEH/dR5mbEPfTJwwwQrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtP5j/j5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 94EEAC4AF09;
 	Fri, 12 Jul 2024 01:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1720747231;
-	bh=NDv+xcjC3JODqlDkyIwFKrZbzw3ElybaRCkFK/Rf7Wo=;
+	bh=YYEVwX5fFwqXSybfJsHPpFva9pFyBW1Ezfs7IMC1A7Q=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ndHwvBpnCs+Ru7Rw8f65j54fHl/y4RRpNwIAvINORGlMEMFf8e+RjKNibremplvwK
-	 BNGewEkKnDE/nW/+Mh2UaSVo8ozk9m9/BxQ6AsUV86HsuGvtLu1lyK6WrDHz/LWFWg
-	 F3LRErKsLRExBEBhWYmNGwHuDP1BrSRghMyFiaWxLXtJWrX76rsI+PTp9gKlPdam3c
-	 6OuXjQQCOBY8rsNjVODN2D1mlxTK+RzQIBJWWbUzDAPrkyftPA2/8VzYuyZrAmfC30
-	 a5ZP9GaPhh8N9YgneRUJ11XGX1c7g3omVwPnR03UCtOsrxdAAVaJTBbwjAhFKBJIoh
-	 Rrfh8CMYIFrzQ==
+	b=jtP5j/j5rHkrIwOBZQXwfOXh7rkG9eHyu1+QVmksG4BaIVuIiXSK6OMJppMDR6vD+
+	 sORNubHCUYf/dtqyvrKl9UMUfghEPBOylvg98b42LwCt3PNiCZfewUMmMJmQJ7XsBO
+	 Np7weUhHQxzLKKN1WZM1ScGOFBTg+JoDWKS4wyTHksGRdF9xyZkU8yVOzItc8smxz2
+	 7ExMNEtSVW/MvHARt4preL12RnibGD6kf+LGupGm+ObQ98BuPxC1ztJX86V7K07n1q
+	 wyXAyI92YYuq72QiZiY7wlJSPpvmM3CZlrO9Nh5OQ1TNpywmhwkKObhwARyGMX1lPl
+	 NT4ixUv/z08BQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9CB71C4332C;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 88E6AC433E9;
 	Fri, 12 Jul 2024 01:20:31 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,47 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3] netdevice: define and allocate &net_device
- _properly_
+Subject: Re: [PATCH net-next v3] net: psample: fix flag being set in wrong skb
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172074723163.25041.6587317350607512702.git-patchwork-notify@kernel.org>
+ <172074723155.25041.14359118298478567151.git-patchwork-notify@kernel.org>
 Date: Fri, 12 Jul 2024 01:20:31 +0000
-References: <20240710113036.2125584-1-leitao@debian.org>
-In-Reply-To: <20240710113036.2125584-1-leitao@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, kees@kernel.org, gustavoars@kernel.org,
- keescook@chromium.org, horms@kernel.org, linux-hardening@vger.kernel.org,
- aleksander.lobakin@intel.com, przemyslaw.kitszel@intel.com, jiri@resnulli.us,
- bigeasy@linutronix.de, daniel@iogearbox.net, lorenzo@kernel.org,
- johannes.berg@intel.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240710171004.2164034-1-amorenoz@redhat.com>
+In-Reply-To: <20240710171004.2164034-1-amorenoz@redhat.com>
+To: =?utf-8?q?Adri=C3=A1n_Moreno_=3Camorenoz=40redhat=2Ecom=3E?=@codeaurora.org
+Cc: netdev@vger.kernel.org, echaudro@redhat.com, yotam.gi@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ aconole@redhat.com, idosch@nvidia.com, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Wed, 10 Jul 2024 04:30:28 -0700 you wrote:
-> From: Alexander Lobakin <aleksander.lobakin@intel.com>
+On Wed, 10 Jul 2024 19:10:04 +0200 you wrote:
+> A typo makes PSAMPLE_ATTR_SAMPLE_RATE netlink flag be added to the wrong
+> sk_buff.
 > 
-> In fact, this structure contains a flexible array at the end, but
-> historically its size, alignment etc., is calculated manually.
-> There are several instances of the structure embedded into other
-> structures, but also there's ongoing effort to remove them and we
-> could in the meantime declare &net_device properly.
-> Declare the array explicitly, use struct_size() and store the array
-> size inside the structure, so that __counted_by() can be applied.
-> Don't use PTR_ALIGN(), as SLUB itself tries its best to ensure the
-> allocated buffer is aligned to what the user expects.
-> Also, change its alignment from %NETDEV_ALIGN to the cacheline size
-> as per several suggestions on the netdev ML.
+> Fix the error and make the input sk_buff pointer "const" so that it
+> doesn't happen again.
+> 
+> Acked-by: Eelco Chaudron <echaudro@redhat.com>
+> Fixes: 7b1b2b60c63f ("net: psample: allow using rate as probability")
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v3] netdevice: define and allocate &net_device _properly_
-    https://git.kernel.org/netdev/net-next/c/13cabc47f8ae
+  - [net-next,v3] net: psample: fix flag being set in wrong skb
+    https://git.kernel.org/netdev/net-next/c/8341eee81c79
 
 You are awesome, thank you!
 -- 
