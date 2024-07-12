@@ -1,481 +1,284 @@
-Return-Path: <linux-kernel+bounces-250099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7201692F43E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:00:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A2E92F442
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D18E284773
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:00:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 935111F23A36
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243A7C153;
-	Fri, 12 Jul 2024 03:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C24D502;
+	Fri, 12 Jul 2024 03:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dhyCQTQL"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OOrHv7V5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163F410F7
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720753217; cv=none; b=RZPEE85rOIv+hIVK9yaz4ABDkPgCIDCOoR+f+GKncAXg9qpyvt1S0ZfZgkG/mT9KJFuRwC9/MJIz74bg3GaGE+VltkZUywdLJETaB+3av3BLadoGCFIW62JOXRa6IrMmtvpNyIGlp/XuACwDeJiL2BwonMWBD70C12aK9dRBeEA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720753217; c=relaxed/simple;
-	bh=n6TQA8cONOvGN5SYvV4sXkSbBZAoULNdbxsnNLx49fU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iPulVd4DQCuVTS3AicAaucBbg8/WVfcijbWISFzbF7AHPukJrSPZx+pSFVemYztUwdzLJUcD8uiSEz5noQB1ltEhEEvEUOpqblthRBDFDln8IYRu4wskVQwinKD735AK9kSrb9sK7paWJxEur8j7HXqzWcEx++RP+SbRmCH6jk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dhyCQTQL; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720753206; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=eSQYGgN4s+E4rRsSe1VH/Ty65y3hJ+g8d86PG4r+SKA=;
-	b=dhyCQTQLGnkf9Bt0hAoOmbbp1wPkVhaJovrlx7KnBPgX3P17anvuKnCFOlyPs2O7DDz5w/IDm9RYvZ+OpxKQqrd7zmuq0vi4ieiCH04j9Ha1JqV26TW62A1W87AijeEKvo3kr9kDDz+yNKMYDyMjpZW2HYZwvCKzRcd+BZseRV0=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0WAMVO0d_1720753204;
-Received: from 30.97.56.66(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WAMVO0d_1720753204)
-          by smtp.aliyun-inc.com;
-          Fri, 12 Jul 2024 11:00:04 +0800
-Message-ID: <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
-Date: Fri, 12 Jul 2024 11:00:03 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E799EC2C6;
+	Fri, 12 Jul 2024 03:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720753413; cv=fail; b=HgzKPb5imSMTHDFWy6jeXYRfsCXen0cy0+WLO0KDk/9JUBV/PfIkRheZmRkFRqbhmOPSzPTFDJbdNnDKzFUAEdCgsVsEJmJ/ms3mm807lVb4DJdD97LenwNscZKsqQI6sYd/5hYVImjAwPfPaJqDxd3/Ti1M1tHwW71iQu/RXlc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720753413; c=relaxed/simple;
+	bh=URajL45sokqUMPED8iHecrdWQN01FWuChgHgmQR6UO8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gjsOaf7mww89zlku3BDDxIeUzWuT0fVM33mBJ5JfyBQhTsSeOEy9s1FCfex592EaVGNxV78OdpweR9dAhZQQXxyAzDVe9zT8KDgq1qItVSg6blQ+906oqAq7i/xvHQlF6bPfFaYlsCgRzs5qHQQGutFLYp/KABdk3yx/92wZwas=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OOrHv7V5; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720753411; x=1752289411;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=URajL45sokqUMPED8iHecrdWQN01FWuChgHgmQR6UO8=;
+  b=OOrHv7V5QRXseyB4AKiJJnFWiGqO8LWLUOq0hxDjgSOG8Fnl9mi+prZv
+   EuWMHIA3MhHLWWZEwoD/wgHVE0c4k7OfdaHvpL2lOF569T24DXoqUd64q
+   A3URd7mIlhMoFTN6+Jc7gOCnpd4QWs3hIXpwTO035E06gA2wtayMAPO9t
+   1cpbrbl7Uwh6H+x8+pbvQtAbjOaMRikIaX6uFoKeeeQiSrOMpi7X00/i/
+   5CISQ2I1SdYjUzRpzzb4eFzwpa0V0W4fGNFq1gKwIRi761WTXxOXRZDGo
+   eHCeYUy3Ec6EQt9zmU3CW4svsO1OQQ3qqFVcaKoj0kBc13bqP4C3lRVQt
+   Q==;
+X-CSE-ConnectionGUID: Xd0t8MvWQZKzR6spPDbyXg==
+X-CSE-MsgGUID: ZzxyC7ddSu6JDpJlZyoSOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="18319989"
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="18319989"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 20:03:30 -0700
+X-CSE-ConnectionGUID: 3/bzFIZ+Quqe5iQz12X5cw==
+X-CSE-MsgGUID: 1fnMdEl9QDmqTAiuRM+KLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="53361109"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Jul 2024 20:03:30 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 11 Jul 2024 20:03:29 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 11 Jul 2024 20:03:29 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.40) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 11 Jul 2024 20:03:06 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PIgbnnUwd3vRfvPQ+w7liUWyuWWE9jgBXOKvnVYrj0xfVrgOEYryWx8O5pFhTK2KBFGgPUmznr4oUGJdcQIB4diiCMopD8zaCcteg0zlJ5SIgy8D/9LCrk8Xj2KuH8WuF3u908+T5EndrgJU+a6KJcLxJmFSJqf9riiAwSfHwboRUakkFs646pdFGmZodIc3B8iMw4ivYIGs6gA6PNTTxyatybF4mtg5geYEYB3ffQb05PVozd/k/VkckSEKgOt/3NHFLr8taB0z5LtWOYu1FNYRyOu4zJ5tuobjgd1goEOB5gmZcDfczO7MEm8MI6dZ/d6rk8A1o8+j85R1j/JfNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=URajL45sokqUMPED8iHecrdWQN01FWuChgHgmQR6UO8=;
+ b=MxAFh8SeKr0n85uMMcmwbCFzNaYEAAOaTfvFAMF7blKYt9TSm9D35dLDOMpfV6Ztv4LYYGODPWz4z80/hxl4m4L2oQfpZNVw1mViKrjn8jjn8vL+B3nruIYnxPtIhgr+okKVyRjKaYI7vKpPkIyikWEYZKzKm5gv+yu6OapJv+qLWikY6K5COvoN9TsRTsvBjGDArmbmzaPtYUQpyQ+i5zYyZApHoxDmu1rV/BGWkzS8vklPxiIRyJLZsLhW41LdEhrkv+SNIgr4vS+sgaL9oG//broMEdEAGg8kwqoeVXc9I6PXrDiZkXMCb3uz/wO1RYnxCTWJn+D/oga2i12kog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ0PR11MB6622.namprd11.prod.outlook.com (2603:10b6:a03:478::6)
+ by IA1PR11MB6370.namprd11.prod.outlook.com (2603:10b6:208:3ae::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.20; Fri, 12 Jul
+ 2024 03:03:02 +0000
+Received: from SJ0PR11MB6622.namprd11.prod.outlook.com
+ ([fe80::727d:4413:2b65:8b3d]) by SJ0PR11MB6622.namprd11.prod.outlook.com
+ ([fe80::727d:4413:2b65:8b3d%4]) with mapi id 15.20.7741.033; Fri, 12 Jul 2024
+ 03:03:02 +0000
+From: "Zhang, Rui" <rui.zhang@intel.com>
+To: "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "Hunter, Adrian"
+	<adrian.hunter@intel.com>, "mingo@redhat.com" <mingo@redhat.com>,
+	"irogers@google.com" <irogers@google.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "gustavoars@kernel.org" <gustavoars@kernel.org>,
+	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, "kees@kernel.org"
+	<kees@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"peterz@infradead.org" <peterz@infradead.org>, "Dhananjay.Ugwekar@amd.com"
+	<Dhananjay.Ugwekar@amd.com>, "bp@alien8.de" <bp@alien8.de>, "acme@kernel.org"
+	<acme@kernel.org>, "oleksandr@natalenko.name" <oleksandr@natalenko.name>,
+	"jolsa@kernel.org" <jolsa@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+	"namhyung@kernel.org" <namhyung@kernel.org>
+CC: "ravi.bangoria@amd.com" <ravi.bangoria@amd.com>, "kprateek.nayak@amd.com"
+	<kprateek.nayak@amd.com>, "gautham.shenoy@amd.com" <gautham.shenoy@amd.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+	"sandipan.das@amd.com" <sandipan.das@amd.com>, "ananth.narayan@amd.com"
+	<ananth.narayan@amd.com>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v4 04/11] perf/x86/rapl: Make rapl_model struct global
+Thread-Topic: [PATCH v4 04/11] perf/x86/rapl: Make rapl_model struct global
+Thread-Index: AQHa030n7qOcCPmnyEqGHLoKmyEMS7HyaPyA
+Date: Fri, 12 Jul 2024 03:03:02 +0000
+Message-ID: <f73f64390c0479c962b591d94c89b3eb4aa55e84.camel@intel.com>
+References: <20240711102436.4432-1-Dhananjay.Ugwekar@amd.com>
+	 <20240711102436.4432-5-Dhananjay.Ugwekar@amd.com>
+In-Reply-To: <20240711102436.4432-5-Dhananjay.Ugwekar@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR11MB6622:EE_|IA1PR11MB6370:EE_
+x-ms-office365-filtering-correlation-id: f1ced899-df5e-4a77-48c4-08dca21f249a
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014|38070700018|921020;
+x-microsoft-antispam-message-info: =?utf-8?B?K2RkWUdveGVyTkt5MW1kdVdaNTkvSmg3RStXTzBOUGJ3MUpYZlMyYVRQZlQr?=
+ =?utf-8?B?UHBjWk5hb1dNb1ZMdFl6M2xxOFhRcjJqQk5IbDBoUU02OC9pa210Y05vL0o2?=
+ =?utf-8?B?YzF2Tys3MkZ6MnRmMHVOVlFVeTJLUHlsVHBiMEhndFRiU2tLdWd5MHNIM2Vj?=
+ =?utf-8?B?OGVWc1NPOTRJZG5yaWlpQW05OVh1Nk1IVWQ1OXBCSUVqRlhCRXhtMG1lOUhC?=
+ =?utf-8?B?QmJ1N0kycGRIVjhia0dtUzAwRkJ2V0JCdjN4NmRIOFFiejZ5aE11cTcyRE1V?=
+ =?utf-8?B?VHdNRTkyMTdXUy9Jc2hEYU1NUjVMOVlUQkdESWV0RmYrYUV5cnlmNFE5RDgx?=
+ =?utf-8?B?UjluK1B1Qk5EajBKOHlSTzVQS09reFBvMFdIQXVhTVBPSXRwQzArcjBxOTJZ?=
+ =?utf-8?B?R3BqVXlRUjFmZ3ZyR3FPUVhvbUNxSmd1WndmdldPbnUvYWNSWXl5YjhHK2hh?=
+ =?utf-8?B?R3JtNHUvTzZLQzJidnBmdEduazRSRUZpSy96cWdvam5UWXo1bzhtWS9NYXpW?=
+ =?utf-8?B?aVFWT2xjMVVRMnZ5VjU3K3orMGZDQVFMNTA2dnM4NVpkV3N1cmgyT1VXamNy?=
+ =?utf-8?B?YkMrMytDSjg4WE4yRExyUWJITmdaUE9jd256WHB6ejdsbFk5NzljajlsS04x?=
+ =?utf-8?B?anNKVzBvL3pYMk1Pa1pKTm5QRlowWjM4TWVOUTMwVmovTXJxMHovUHBFZEFB?=
+ =?utf-8?B?MXpoc3pzRmxIcEI2YnV3V21JWFhUWmR3M1NuTE9XdGFWWENaUjBVS0VMZ1Ex?=
+ =?utf-8?B?dFVTVERSTUp6WVNMLzFPdVM2MlZTdnorWEM0bjhSWGcvaUgyWDJaaENFZUlT?=
+ =?utf-8?B?OEZvcHBiTDluWVBPTkZkM1NYQ0s1T3hIckhLOU9HY3ZKQVB4M25sM3Z6anJF?=
+ =?utf-8?B?QU0wOFVFUzltWlUreEU2dVFZQmhUaWYzdGtNZnF6b0VkeGJYSmFZWTBpWkRw?=
+ =?utf-8?B?ZXMyc09xUmNtOGNJMnV5dDEwankvL05pVDlyU0YzNjJHWkRxdjEyNERNUTZ4?=
+ =?utf-8?B?UFpYUDFMQTRpMVErUnNzU2p0cnNkQkhUa24zdUZ1RHhqdjhaV0RvT0ZDYVR3?=
+ =?utf-8?B?NHdITWc5dFlwcm5BZ3VtKzZJb1dYUlZBSUg2L09tSC9Ud3UyVHpFL01yODlh?=
+ =?utf-8?B?QWxLTnQ1N2pPZUphTHpSYURFRExXQXVDbkgyaWI5Uytub1o4RUltTDRyQjlq?=
+ =?utf-8?B?eVhPazNvb2ZyMjBpbUdKNUZwalltdjB2V0hTYldaRlFDdXBXOEtlRE9iOEl2?=
+ =?utf-8?B?Uy9DQ293b2cvNGg0RnY4WTlrSzZLaEJNcHpGYmFrV2JacHhYTU1Yd3ZGNklD?=
+ =?utf-8?B?TTVwdCtkdXpQenlYUG90UzdONDhuRXJ5S1VsbFNpaVh3TElBK0VIYkl3cFlR?=
+ =?utf-8?B?bnJNNWhXNVJYZFFQM0xXdE93K1BBREV3dHg4U28xWk1mRDc3bm5ucDBLNCs4?=
+ =?utf-8?B?cUhvb1pHOWVocEh1NkdYeW5yUmt1QkxBaThUUlZhU1VsOElMQXFlYWFLOUhz?=
+ =?utf-8?B?bEoyRnpLdkgrNGhZV1FSazM5Z3o2NGE5RVVvUE5ZV2s0L0wvSyt1SXJWSjNK?=
+ =?utf-8?B?Um9RL2ZXanY1blBWWUJnZHR1elBNb0VqWGxWcFE4Z1NGUTVGUXYzNHFXY2ZV?=
+ =?utf-8?B?L0RLbFd6MVRpMDd1VkFFNlpTaHpSYVhwZE1IQ0FxWEtua29mZjRlN3A3elYr?=
+ =?utf-8?B?ZDhSNlIzQWhqYUxtWFN3clpUQTVLR1ZaQVdPS0NzUk4ybnc2amI5SnpzRWRC?=
+ =?utf-8?B?TDQzQTliMTBvVEFKbHRjcU04UExmVjRmNkhtV1Fxbi8yMENFNmlUN01kN202?=
+ =?utf-8?B?ekRYemtpaGRGc0N5YkZtYWI1ZmdIdHo0WnZzUmpaUVdaN2VUOGg3bitsQUcw?=
+ =?utf-8?B?ZmtNbmxoeVN2dWk4emtkMktUa2xWSC9adjJ6aCt5djBKczVFVHhwazgxUXQ1?=
+ =?utf-8?Q?4CzFdNzdfAg=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB6622.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?V21DNDVlNzVEbkx3TWh3VDFQL25yckJqQ1c5enJNT09lbHNPSTZza3RiZURh?=
+ =?utf-8?B?NTFQYXlqRGRUcEh5c0NzM2VQemRLQ0V3WDcvbGFnOUt2eWEzMjZqTkJlSUpO?=
+ =?utf-8?B?MEx1cldvQURGQlAraENlQS9jcWw2Zm9vWUZlY3RHVTJjekdvR3MvL2dTRTBh?=
+ =?utf-8?B?dzZZNXlvVDdFdWZudGp3Q2NJdDBEUEEzbUxXYVNoUmZtY0R0dmJpdzA5ZndT?=
+ =?utf-8?B?RU9qem9HUmZGVXYvdjFncVlsS2NqUFZJVER1Ri9YQzF5OXNUdm5uNk1QV3Ez?=
+ =?utf-8?B?Smxmazg0YUNtNjErTXM5K0M5eUoyTmNNaGxzc21jbno5MTQzZitjalRYSHVF?=
+ =?utf-8?B?dmMrdzZCeEZKV0o5TlFYRzhyYnViWDcxdjBaV1AvSi9sa09rbHZTWUZ0MXB1?=
+ =?utf-8?B?WG1aTE93YS9EOS9LMmRTVjVPdnYxZTdqN2JvUnRLc3pBeEZLaFQ4RGZReG5K?=
+ =?utf-8?B?VTNKeUZjQjJVY2RSSFkxQ25ES05lMzdBRG90czNNMHBlbEhzcGZDYjUyTW9L?=
+ =?utf-8?B?SmVpVy9OZ0YxcE9uTzFrcjlEMU04Uld0SmJ0cXJUUHoxNXZNUFdVQ1d2UGVC?=
+ =?utf-8?B?aTBVUVdEYlZPeGVJNUdCdWVKeWJDSVZqT2RDekF5TkFPU1MxKzlYTG1VZ1E3?=
+ =?utf-8?B?bW9rbUZobHJ1WHdBVWEyRUZPN092dStkbEVacS85cVlvWGwwZ1YvbW03RmNv?=
+ =?utf-8?B?U28yZzYwSXh2anlWbjBIR015ZUNwR0EzSTBMNlhxNkl6b05RN1lzcjZ4VzBM?=
+ =?utf-8?B?dGJEV3VITlBnZ1FwS1FmOW5BdUVlMVhnSjQySHBlaVNEZXYyNkNWcVpjTXFG?=
+ =?utf-8?B?REJGU0RQck5OY0ZkaVF6dmRDRWNUWlluZjFOU2FpS0x1ZncwK2pBMzltRnR5?=
+ =?utf-8?B?OXNsN0RDM2FZM3ZwV1AyY25ZYm5jQVFPZSsvVEdPUCtUUEUwQmRiM0hXZ1FH?=
+ =?utf-8?B?N3hZeWsvSXk1QUVsaFVCcFhjMnE3SWJmNGpiUy9lK0t1bGhDbnUvMXJMN2dy?=
+ =?utf-8?B?azlxN211TzNTZDFjUUJ0Rkp6RW9MdlZwMWh3WkRCeEhScEpjWWJsVjRzc3VN?=
+ =?utf-8?B?T2Q4a0pGSW50TnNCRDFTRSttempZSVh6NzRuWmpGSkRwQmlJOHdQK09RTHMx?=
+ =?utf-8?B?b293NSthNGk5ZmRNNXBwUzNSaG9oYUcxUmIzYkNiNEdsK0RoZE1JVUhrYWkr?=
+ =?utf-8?B?YlMvVVZSSzhaWkk1bzN5TUZmSFJzUmJtK0hoSnhhMGYwMFZySEhtWEova2kz?=
+ =?utf-8?B?cVBMQ2sxM2lLREJtRjdhd2p2TDZ2aWY3RFZPcDBPZGNnc2dkWmNQaGtpU0tI?=
+ =?utf-8?B?dE5ESzBDYldjcWI1QmxWV3hwWStDbXBoaDdRMi90ODhXdlp2cEhodmhrN29k?=
+ =?utf-8?B?THdOdnVycVZWSEExb3BGczFhUk5yV1NTMFYyOXV3cDhXOEUwNTIzQi96TE83?=
+ =?utf-8?B?eTBSVk1JL0RhWUZpd01HcG12R2krVVZycDlLMytPWVVMM2VvRlBRTjJ6STcx?=
+ =?utf-8?B?OWpDVGl2QVIzRW1FdFZYWi9obWpGa3BzeDloNnZBZnVJM2EwTU04SUg3QXpM?=
+ =?utf-8?B?S3crL2luaXNhNElPWUlzMmU3dnFmbkFURjZMcGUzaUwzRVEycWQvdFVwdVB1?=
+ =?utf-8?B?bkdRY2ptR25RcUdZeG84bGNhdHI1NzN6U2VsUnVZZVJuV010ejZXU2N4Z0lu?=
+ =?utf-8?B?V1FBNmx5NTdraUY5TWRTaUJTSWhGY3BtT0h0dzhiYStzMHVtYld0c1VmUmlQ?=
+ =?utf-8?B?cDRDelRrSUFFWEJmNW5FMjlEVGpQeVFYODVxRmhkWlIvYlYzL0FUTmZ1eXlu?=
+ =?utf-8?B?ejFMczZZT3JHK0NZNEk5VnZkYkp5cXMrRXpUNGRsazdlb0ROMStNekZZaWhy?=
+ =?utf-8?B?S1FDUm9uaTlmd1U5clpjVE1aRFpsQUtYUjl2TzhxUVlPcDFzQzl2YXVUWEZT?=
+ =?utf-8?B?a2RVWFNmbWNSTzhCb2Q3U05RVXNBK05BWi8vR1NzYnkwMnBXQmlWTHovNjQv?=
+ =?utf-8?B?bUpXZlZHejVZbnRPeWFSOUNTOUs4YnVLL25XcjdYWkcyM1l0NW1RYldCU3J1?=
+ =?utf-8?B?bkdwdFVZUlRSMEtnS0s1cGplSW5wTSsvZTduUG1yL0VvcHl1UDRtV0JuYXY2?=
+ =?utf-8?B?b1BaYU0zamlNVGh6VHZHT2puSnFzVW1PQnA3djBjNjR3WjhlUmhhanlSL1BC?=
+ =?utf-8?B?bEE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0CAD29A11D275B439C9CACD16E1424CF@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <ioworker0@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240711072929.3590000-1-ryan.roberts@arm.com>
- <20240711072929.3590000-3-ryan.roberts@arm.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20240711072929.3590000-3-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB6622.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1ced899-df5e-4a77-48c4-08dca21f249a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2024 03:03:02.1522
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NTZZ1jqtRvLasUJElvCqeuPk0PPVQtq/pUWqLmOVCC9BGzqC6hanvlAx/Ek6nqCym7HVrizt0JS/sQtCxYjLEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6370
+X-OriginatorOrg: intel.com
 
-
-
-On 2024/7/11 15:29, Ryan Roberts wrote:
-> Expose 3 new mTHP stats for file (pagecache) folio allocations:
-> 
->    /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_alloc
->    /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_fallback
->    /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_fallback_charge
-> 
-> This will provide some insight on the sizes of large folios being
-> allocated for file-backed memory, and how often allocation is failing.
-> 
-> All non-order-0 (and most order-0) folio allocations are currently done
-> through filemap_alloc_folio(), and folios are charged in a subsequent
-> call to filemap_add_folio(). So count file_fallback when allocation
-> fails in filemap_alloc_folio() and count file_alloc or
-> file_fallback_charge in filemap_add_folio(), based on whether charging
-> succeeded or not. There are some users of filemap_add_folio() that
-> allocate their own order-0 folio by other means, so we would not count
-> an allocation failure in this case, but we also don't care about order-0
-> allocations. This approach feels like it should be good enough and
-> doesn't require any (impractically large) refactoring.
-> 
-> The existing mTHP stats interface is reused to provide consistency to
-> users. And because we are reusing the same interface, we can reuse the
-> same infrastructure on the kernel side. The one small wrinkle is that
-> the set of folio sizes supported by the pagecache are not identical to
-> those supported by anon and shmem; pagecache supports order-1, unlike
-> anon and shmem, and the max pagecache order may be less than PMD-size
-> (see arm64 with 64K base pages), again unlike anon and shmem. So we now
-> create a hugepages-*kB directory for the union of the sizes supported by
-> all 3 memory types and populate it with the relevant stats and controls.
-
-Personally, I like the idea that can help analyze the allocation of 
-large folios for the page cache.
-
-However, I have a slight concern about the consistency of the interface.
-
-For 64K, the fields layout:
-├── hugepages-64kB
-│   ├── enabled
-│   ├── shmem_enabled
-│   └── stats
-│       ├── anon_fault_alloc
-│       ├── anon_fault_fallback
-│       ├── anon_fault_fallback_charge
-│       ├── file_alloc
-│       ├── file_fallback
-│       ├── file_fallback_charge
-│       ├── shmem_alloc
-│       ├── shmem_fallback
-│       ├── shmem_fallback_charge
-│       ├── split
-│       ├── split_deferred
-│       ├── split_failed
-│       ├── swpout
-│       └── swpout_fallback
-
-But for 8K (for pagecache), you removed some fields (of course, I 
-understand why they are not supported).
-
-├── hugepages-8kB
-│   └── stats
-│       ├── file_alloc
-│       ├── file_fallback
-│       └── file_fallback_charge
-
-This might not be user-friendly for some user-space parsing tools, as 
-they lack certain fields for the same pattern interfaces. Of course, 
-this might not be an issue if we have clear documentation describing the 
-differences here:)
-
-Another possible approach is to maintain the same field layout to keep 
-consistent, but prohibit writing to the fields that are not supported by 
-the pagecache, and any stats read from them would be 0.
-
-
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->   Documentation/admin-guide/mm/transhuge.rst |  13 +++
->   include/linux/huge_mm.h                    |   6 +-
->   include/linux/pagemap.h                    |  17 ++-
->   mm/filemap.c                               |   6 +-
->   mm/huge_memory.c                           | 117 ++++++++++++++++-----
->   5 files changed, 128 insertions(+), 31 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-> index 058485daf186..d4857e457add 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -512,6 +512,19 @@ shmem_fallback_charge
->   	falls back to using small pages even though the allocation was
->   	successful.
->   
-> +file_alloc
-> +	is incremented every time a file huge page is successfully
-> +	allocated.
-> +
-> +file_fallback
-> +	is incremented if a file huge page is attempted to be allocated
-> +	but fails and instead falls back to using small pages.
-> +
-> +file_fallback_charge
-> +	is incremented if a file huge page cannot be charged and instead
-> +	falls back to using small pages even though the allocation was
-> +	successful.
-> +
->   split
->   	is incremented every time a huge page is successfully split into
->   	smaller orders. This can happen for a variety of reasons but a
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index cb93b9009ce4..b4fba11976f2 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -117,6 +117,9 @@ enum mthp_stat_item {
->   	MTHP_STAT_SHMEM_ALLOC,
->   	MTHP_STAT_SHMEM_FALLBACK,
->   	MTHP_STAT_SHMEM_FALLBACK_CHARGE,
-> +	MTHP_STAT_FILE_ALLOC,
-> +	MTHP_STAT_FILE_FALLBACK,
-> +	MTHP_STAT_FILE_FALLBACK_CHARGE,
->   	MTHP_STAT_SPLIT,
->   	MTHP_STAT_SPLIT_FAILED,
->   	MTHP_STAT_SPLIT_DEFERRED,
-> @@ -292,11 +295,10 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
->   
->   struct thpsize {
->   	struct kobject kobj;
-> -	struct list_head node;
->   	int order;
->   };
->   
-> -#define to_thpsize(kobj) container_of(kobj, struct thpsize, kobj)
-> +#define to_thpsize(_kobj) container_of(_kobj, struct thpsize, kobj)
->   
->   #define transparent_hugepage_use_zero_page()				\
->   	(transparent_hugepage_flags &					\
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 6e2f72d03176..f45a1ba6d9b6 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -365,6 +365,7 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
->    */
->   #define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
->   #define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
-> +#define PAGECACHE_LARGE_ORDERS	((BIT(MAX_PAGECACHE_ORDER + 1) - 1) & ~BIT(0))
->   
->   /**
->    * mapping_set_large_folios() - Indicate the file supports large folios.
-> @@ -562,14 +563,26 @@ static inline void *detach_page_private(struct page *page)
->   }
->   
->   #ifdef CONFIG_NUMA
-> -struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order);
-> +struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order);
->   #else
-> -static inline struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
-> +static inline struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->   {
->   	return folio_alloc_noprof(gfp, order);
->   }
->   #endif
->   
-> +static inline struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
-> +{
-> +	struct folio *folio;
-> +
-> +	folio = __filemap_alloc_folio_noprof(gfp, order);
-> +
-> +	if (!folio)
-> +		count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
-> +
-> +	return folio;
-> +}
-> +
->   #define filemap_alloc_folio(...)				\
->   	alloc_hooks(filemap_alloc_folio_noprof(__VA_ARGS__))
->   
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 53d5d0410b51..131d514fca29 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -963,6 +963,8 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
->   	int ret;
->   
->   	ret = mem_cgroup_charge(folio, NULL, gfp);
-> +	count_mthp_stat(folio_order(folio),
-> +		ret ? MTHP_STAT_FILE_FALLBACK_CHARGE : MTHP_STAT_FILE_ALLOC);
->   	if (ret)
->   		return ret;
->   
-> @@ -990,7 +992,7 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
->   EXPORT_SYMBOL_GPL(filemap_add_folio);
->   
->   #ifdef CONFIG_NUMA
-> -struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
-> +struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->   {
->   	int n;
->   	struct folio *folio;
-> @@ -1007,7 +1009,7 @@ struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->   	}
->   	return folio_alloc_noprof(gfp, order);
->   }
-> -EXPORT_SYMBOL(filemap_alloc_folio_noprof);
-> +EXPORT_SYMBOL(__filemap_alloc_folio_noprof);
->   #endif
->   
->   /*
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index f9696c94e211..559553e2a662 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -452,8 +452,9 @@ static const struct attribute_group hugepage_attr_group = {
->   
->   static void hugepage_exit_sysfs(struct kobject *hugepage_kobj);
->   static void thpsize_release(struct kobject *kobj);
-> +static void thpsize_child_release(struct kobject *kobj);
->   static DEFINE_SPINLOCK(huge_anon_orders_lock);
-> -static LIST_HEAD(thpsize_list);
-> +static LIST_HEAD(thpsize_child_list);
->   
->   static ssize_t thpsize_enabled_show(struct kobject *kobj,
->   				    struct kobj_attribute *attr, char *buf)
-> @@ -537,6 +538,18 @@ static const struct kobj_type thpsize_ktype = {
->   	.sysfs_ops = &kobj_sysfs_ops,
->   };
->   
-> +static const struct kobj_type thpsize_child_ktype = {
-> +	.release = &thpsize_child_release,
-> +	.sysfs_ops = &kobj_sysfs_ops,
-> +};
-> +
-> +struct thpsize_child {
-> +	struct kobject kobj;
-> +	struct list_head node;
-> +};
-> +
-> +#define to_thpsize_child(_kobj) container_of(_kobj, struct thpsize, kobj)
-> +
->   DEFINE_PER_CPU(struct mthp_stat, mthp_stats) = {{{0}}};
->   
->   static unsigned long sum_mthp_stat(int order, enum mthp_stat_item item)
-> @@ -557,7 +570,7 @@ static unsigned long sum_mthp_stat(int order, enum mthp_stat_item item)
->   static ssize_t _name##_show(struct kobject *kobj,			\
->   			struct kobj_attribute *attr, char *buf)		\
->   {									\
-> -	int order = to_thpsize(kobj)->order;				\
-> +	int order = to_thpsize(kobj->parent)->order;			\
->   									\
->   	return sysfs_emit(buf, "%lu\n", sum_mthp_stat(order, _index));	\
->   }									\
-> @@ -591,41 +604,93 @@ static struct attribute *stats_attrs[] = {
->   };
->   
->   static struct attribute_group stats_attr_group = {
-> -	.name = "stats",
->   	.attrs = stats_attrs,
->   };
->   
-> -static struct thpsize *thpsize_create(int order, struct kobject *parent)
-> +DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
-> +DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
-> +DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
-> +
-> +static struct attribute *file_stats_attrs[] = {
-> +	&file_alloc_attr.attr,
-> +	&file_fallback_attr.attr,
-> +	&file_fallback_charge_attr.attr,
-> +	NULL,
-> +};
-> +
-> +static struct attribute_group file_stats_attr_group = {
-> +	.attrs = file_stats_attrs,
-> +};
-> +
-> +static int thpsize_create(int order, struct kobject *parent)
->   {
->   	unsigned long size = (PAGE_SIZE << order) / SZ_1K;
-> +	struct thpsize_child *stats;
->   	struct thpsize *thpsize;
->   	int ret;
->   
-> +	/*
-> +	 * Each child object (currently only "stats" directory) holds a
-> +	 * reference to the top-level thpsize object, so we can drop our ref to
-> +	 * the top-level once stats is setup. Then we just need to drop a
-> +	 * reference on any children to clean everything up. We can't just use
-> +	 * the attr group name for the stats subdirectory because there may be
-> +	 * multiple attribute groups to populate inside stats and overlaying
-> +	 * using the name property isn't supported in that way; each attr group
-> +	 * name, if provided, must be unique in the parent directory.
-> +	 */
-> +
->   	thpsize = kzalloc(sizeof(*thpsize), GFP_KERNEL);
-> -	if (!thpsize)
-> -		return ERR_PTR(-ENOMEM);
-> +	if (!thpsize) {
-> +		ret = -ENOMEM;
-> +		goto err;
-> +	}
-> +	thpsize->order = order;
->   
->   	ret = kobject_init_and_add(&thpsize->kobj, &thpsize_ktype, parent,
->   				   "hugepages-%lukB", size);
->   	if (ret) {
->   		kfree(thpsize);
-> -		return ERR_PTR(ret);
-> +		goto err;
->   	}
->   
-> -	ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
-> -	if (ret) {
-> +	stats = kzalloc(sizeof(*stats), GFP_KERNEL);
-> +	if (!stats) {
->   		kobject_put(&thpsize->kobj);
-> -		return ERR_PTR(ret);
-> +		ret = -ENOMEM;
-> +		goto err;
->   	}
->   
-> -	ret = sysfs_create_group(&thpsize->kobj, &stats_attr_group);
-> +	ret = kobject_init_and_add(&stats->kobj, &thpsize_child_ktype,
-> +				   &thpsize->kobj, "stats");
-> +	kobject_put(&thpsize->kobj);
->   	if (ret) {
-> -		kobject_put(&thpsize->kobj);
-> -		return ERR_PTR(ret);
-> +		kfree(stats);
-> +		goto err;
->   	}
->   
-> -	thpsize->order = order;
-> -	return thpsize;
-> +	if (BIT(order) & THP_ORDERS_ALL_ANON) {
-> +		ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
-> +		if (ret)
-> +			goto err_put;
-> +
-> +		ret = sysfs_create_group(&stats->kobj, &stats_attr_group);
-> +		if (ret)
-> +			goto err_put;
-> +	}
-> +
-> +	if (BIT(order) & PAGECACHE_LARGE_ORDERS) {
-> +		ret = sysfs_create_group(&stats->kobj, &file_stats_attr_group);
-> +		if (ret)
-> +			goto err_put;
-> +	}
-> +
-> +	list_add(&stats->node, &thpsize_child_list);
-> +	return 0;
-> +err_put:
-
-IIUC, I think you should call 'sysfs_remove_group' to remove the group 
-before putting the kobject.
-
-> +	kobject_put(&stats->kobj);
-> +err:
-> +	return ret;
->   }
->   
->   static void thpsize_release(struct kobject *kobj)
-> @@ -633,10 +698,14 @@ static void thpsize_release(struct kobject *kobj)
->   	kfree(to_thpsize(kobj));
->   }
->   
-> +static void thpsize_child_release(struct kobject *kobj)
-> +{
-> +	kfree(to_thpsize_child(kobj));
-> +}
-> +
->   static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
->   {
->   	int err;
-> -	struct thpsize *thpsize;
->   	unsigned long orders;
->   	int order;
->   
-> @@ -665,16 +734,14 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
->   		goto remove_hp_group;
->   	}
->   
-> -	orders = THP_ORDERS_ALL_ANON;
-> +	orders = THP_ORDERS_ALL_ANON | PAGECACHE_LARGE_ORDERS;
->   	order = highest_order(orders);
->   	while (orders) {
-> -		thpsize = thpsize_create(order, *hugepage_kobj);
-> -		if (IS_ERR(thpsize)) {
-> +		err = thpsize_create(order, *hugepage_kobj);
-> +		if (err) {
->   			pr_err("failed to create thpsize for order %d\n", order);
-> -			err = PTR_ERR(thpsize);
->   			goto remove_all;
->   		}
-> -		list_add(&thpsize->node, &thpsize_list);
->   		order = next_order(&orders, order);
->   	}
->   
-> @@ -692,11 +759,11 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
->   
->   static void __init hugepage_exit_sysfs(struct kobject *hugepage_kobj)
->   {
-> -	struct thpsize *thpsize, *tmp;
-> +	struct thpsize_child *child, *tmp;
->   
-> -	list_for_each_entry_safe(thpsize, tmp, &thpsize_list, node) {
-> -		list_del(&thpsize->node);
-> -		kobject_put(&thpsize->kobj);
-> +	list_for_each_entry_safe(child, tmp, &thpsize_child_list, node) {
-> +		list_del(&child->node);
-> +		kobject_put(&child->kobj);
->   	}
->   
->   	sysfs_remove_group(hugepage_kobj, &khugepaged_attr_group);
+T24gVGh1LCAyMDI0LTA3LTExIGF0IDEwOjI0ICswMDAwLCBEaGFuYW5qYXkgVWd3ZWthciB3cm90
+ZToKPiBUbyBzdXBwb3J0IEFNRCdzIHBlcl9jb3JlIFJBUEwgY291bnRlciwgd2Ugd2lsbCBuZWVk
+IHRvIGNoZWNrCj4gcGVyX2NvcmUgY2FwYWJpbGl0eSBvZiB0aGUgY3VycmVudCByYXBsX21vZGVs
+IG11bHRpcGxlIHRpbWVzIGluCj4gcmFwbF9jcHVfb25saW5lL29mZmxpbmUsIGluaXRfcmFwbF9w
+bXVzIGZ1bmN0aW9ucywgc28gY2FjaGUgdGhlCj4gbWF0Y2hlZCByYXBsIG1vZGVsIGluIGEgZ2xv
+YmFsIHZhcmlhYmxlLCB0byBhdm9pZCBjYWxsaW5nCj4geDg2X21hdGNoX2NwdSgpIG11bHRpcGxl
+IHRpbWVzLgo+IAo+IE5vIGZ1bmN0aW9uYWwgY2hhbmdlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IERo
+YW5hbmpheSBVZ3dla2FyIDxEaGFuYW5qYXkuVWd3ZWthckBhbWQuY29tPgoKUmV2aWV3ZWQtYnk6
+IFpoYW5nIFJ1aSA8cnVpLnpoYW5nQGludGVsLmNvbT4KCi1ydWkKPiAtLS0KPiDCoGFyY2gveDg2
+L2V2ZW50cy9yYXBsLmMgfCAxNiArKysrKysrKy0tLS0tLS0tCj4gwqAxIGZpbGUgY2hhbmdlZCwg
+OCBpbnNlcnRpb25zKCspLCA4IGRlbGV0aW9ucygtKQo+IAo+IGRpZmYgLS1naXQgYS9hcmNoL3g4
+Ni9ldmVudHMvcmFwbC5jIGIvYXJjaC94ODYvZXZlbnRzL3JhcGwuYwo+IGluZGV4IGMzYWZlYWY2
+NzljMi4uNGVlMDg3N2ViNGQ4IDEwMDY0NAo+IC0tLSBhL2FyY2gveDg2L2V2ZW50cy9yYXBsLmMK
+PiArKysgYi9hcmNoL3g4Ni9ldmVudHMvcmFwbC5jCj4gQEAgLTE0Niw2ICsxNDYsNyBAQCBzdGF0
+aWMgY3B1bWFza190IHJhcGxfY3B1X21hc2s7Cj4gwqBzdGF0aWMgdW5zaWduZWQgaW50IHJhcGxf
+Y250cl9tYXNrOwo+IMKgc3RhdGljIHU2NCByYXBsX3RpbWVyX21zOwo+IMKgc3RhdGljIHN0cnVj
+dCBwZXJmX21zciAqcmFwbF9tc3JzOwo+ICtzdGF0aWMgc3RydWN0IHJhcGxfbW9kZWwgKnJhcGxf
+bW9kZWw7Cj4gwqAKPiDCoC8qCj4gwqAgKiBIZWxwZXIgZnVuY3Rpb25zIHRvIGdldCB0aGUgY29y
+cmVjdCB0b3BvbG9neSBtYWNyb3MgYWNjb3JkaW5nIHRvCj4gdGhlCj4gQEAgLTYyMSwxOCArNjIy
+LDE4IEBAIHN0YXRpYyBpbnQgcmFwbF9jcHVfb25saW5lKHVuc2lnbmVkIGludCBjcHUpCj4gwqDC
+oMKgwqDCoMKgwqDCoHJldHVybiAwOwo+IMKgfQo+IMKgCj4gLXN0YXRpYyBpbnQgcmFwbF9jaGVj
+a19od191bml0KHN0cnVjdCByYXBsX21vZGVsICpybSkKPiArc3RhdGljIGludCByYXBsX2NoZWNr
+X2h3X3VuaXQodm9pZCkKPiDCoHsKPiDCoMKgwqDCoMKgwqDCoMKgdTY0IG1zcl9yYXBsX3Bvd2Vy
+X3VuaXRfYml0czsKPiDCoMKgwqDCoMKgwqDCoMKgaW50IGk7Cj4gwqAKPiDCoMKgwqDCoMKgwqDC
+oMKgLyogcHJvdGVjdCByZG1zcmwoKSB0byBoYW5kbGUgdmlydHVhbGl6YXRpb24gKi8KPiAtwqDC
+oMKgwqDCoMKgwqBpZiAocmRtc3JsX3NhZmUocm0tPm1zcl9wb3dlcl91bml0LAo+ICZtc3JfcmFw
+bF9wb3dlcl91bml0X2JpdHMpKQo+ICvCoMKgwqDCoMKgwqDCoGlmIChyZG1zcmxfc2FmZShyYXBs
+X21vZGVsLT5tc3JfcG93ZXJfdW5pdCwKPiAmbXNyX3JhcGxfcG93ZXJfdW5pdF9iaXRzKSkKPiDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAtMTsKPiDCoMKgwqDCoMKgwqDC
+oMKgZm9yIChpID0gMDsgaSA8IE5SX1JBUExfRE9NQUlOUzsgaSsrKQo+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgcmFwbF9od191bml0W2ldID0gKG1zcl9yYXBsX3Bvd2VyX3VuaXRf
+Yml0cyA+PiA4KSAmCj4gMHgxRlVMTDsKPiDCoAo+IC3CoMKgwqDCoMKgwqDCoHN3aXRjaCAocm0t
+PnVuaXRfcXVpcmspIHsKPiArwqDCoMKgwqDCoMKgwqBzd2l0Y2ggKHJhcGxfbW9kZWwtPnVuaXRf
+cXVpcmspIHsKPiDCoMKgwqDCoMKgwqDCoMKgLyoKPiDCoMKgwqDCoMKgwqDCoMKgICogRFJBTSBk
+b21haW4gb24gSFNXIHNlcnZlciBhbmQgS05MIGhhcyBmaXhlZCBlbmVyZ3kgdW5pdAo+IHdoaWNo
+IGNhbiBiZQo+IMKgwqDCoMKgwqDCoMKgwqAgKiBkaWZmZXJlbnQgdGhhbiB0aGUgdW5pdCBmcm9t
+IHBvd2VyIHVuaXQgTVNSLiBTZWUKPiBAQCAtODQ2LDIxICs4NDcsMjAgQEAgTU9EVUxFX0RFVklD
+RV9UQUJMRSh4ODZjcHUsIHJhcGxfbW9kZWxfbWF0Y2gpOwo+IMKgc3RhdGljIGludCBfX2luaXQg
+cmFwbF9wbXVfaW5pdCh2b2lkKQo+IMKgewo+IMKgwqDCoMKgwqDCoMKgwqBjb25zdCBzdHJ1Y3Qg
+eDg2X2NwdV9pZCAqaWQ7Cj4gLcKgwqDCoMKgwqDCoMKgc3RydWN0IHJhcGxfbW9kZWwgKnJtOwo+
+IMKgwqDCoMKgwqDCoMKgwqBpbnQgcmV0Owo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoGlkID0geDg2
+X21hdGNoX2NwdShyYXBsX21vZGVsX21hdGNoKTsKPiDCoMKgwqDCoMKgwqDCoMKgaWYgKCFpZCkK
+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAtRU5PREVWOwo+IMKgCj4g
+LcKgwqDCoMKgwqDCoMKgcm0gPSAoc3RydWN0IHJhcGxfbW9kZWwgKikgaWQtPmRyaXZlcl9kYXRh
+Owo+ICvCoMKgwqDCoMKgwqDCoHJhcGxfbW9kZWwgPSAoc3RydWN0IHJhcGxfbW9kZWwgKikgaWQt
+PmRyaXZlcl9kYXRhOwo+IMKgCj4gLcKgwqDCoMKgwqDCoMKgcmFwbF9tc3JzID0gcm0tPnJhcGxf
+bXNyczsKPiArwqDCoMKgwqDCoMKgwqByYXBsX21zcnMgPSByYXBsX21vZGVsLT5yYXBsX21zcnM7
+Cj4gwqAKPiDCoMKgwqDCoMKgwqDCoMKgcmFwbF9jbnRyX21hc2sgPSBwZXJmX21zcl9wcm9iZShy
+YXBsX21zcnMsIFBFUkZfUkFQTF9NQVgsCj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGZhbHNlLCAo
+dm9pZCAqKSAmcm0tPmV2ZW50cyk7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGZhbHNlLCAodm9p
+ZCAqKSAmcmFwbF9tb2RlbC0KPiA+ZXZlbnRzKTsKPiDCoAo+IC3CoMKgwqDCoMKgwqDCoHJldCA9
+IHJhcGxfY2hlY2tfaHdfdW5pdChybSk7Cj4gK8KgwqDCoMKgwqDCoMKgcmV0ID0gcmFwbF9jaGVj
+a19od191bml0KCk7Cj4gwqDCoMKgwqDCoMKgwqDCoGlmIChyZXQpCj4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gcmV0Owo+IMKgCgo=
 
