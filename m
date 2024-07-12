@@ -1,206 +1,246 @@
-Return-Path: <linux-kernel+bounces-251213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 735B093022D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:39:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2868293022F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9C8A1F22E77
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D326E2833A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745717346C;
-	Fri, 12 Jul 2024 22:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE886EB55;
+	Fri, 12 Jul 2024 22:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MdmBOtXp"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Uh9UlnLP"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011016.outbound.protection.outlook.com [52.101.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24D840870;
-	Fri, 12 Jul 2024 22:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720823974; cv=none; b=bUe3jlwQhyACMQS7qVH59Eydh0FSDL3RRSO4vRVgDe1zx7F22P0wGPGGpMj2ImbOoTB/t3iETgKXRRSC6ZR7e3quzMcpOI1rqPe1LO34YOzg+urin9da5DAUVP7AMPE/B+AjY5K/LjKmHhpx96UO9q9t11yaCtygj2afVjXWsBQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720823974; c=relaxed/simple;
-	bh=YR6e95qWKNK/3cZ3WYhqUY3n4USd1+bl0Wn5VWR6PV8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jBWxilCQN1z3tqVXiApVuE+t70cpnLm/Y6N+SlD0Cw9OKfsmTofuaf8mEc6K/pnyrIwwgIi9x5FjGp1WB5TziKiIAUfWzoxFWByjt1vsznUYy+VmsH5kurKyvuUrCc3b8Zj7JMbferY2dmml9b4uMQlfWX2XB5NvfBBqvUoYmnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MdmBOtXp; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77c25beae1so284172466b.2;
-        Fri, 12 Jul 2024 15:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720823971; x=1721428771; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CV4MWNGj/jtOVQdvN2+NhX25AtQ3SQ1usq+AOzbBUP0=;
-        b=MdmBOtXpe3RzTyNarimDnrzIUz5rvJHZst5p5Yv7Ku92917h5VjsZbvnb+8r3q9lj3
-         MQ416OhHpcmv+UfELkCpyqjffcUTqhB1MNS7SIP6lTPiplcb6OTdL2O+8mdJoGcP5ONC
-         0yW7GNJ6dreZL2BHUSf2wkInYtGWqyQacJj6rAFQ0nxZ53qOWA9UX1vta53JAfeTpqF1
-         RjdHJ6WCqQC+zi2QdrkC9R61lyw3N934idcN6RLGjWuAjEt441zTVuqitBueO3TgGAIJ
-         vo672lCvU84BNZBefccoCNQwHFIEc5o1enkEnKfh8gi/KMivmROdztpIUsIUj47Ks3sw
-         I7LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720823971; x=1721428771;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CV4MWNGj/jtOVQdvN2+NhX25AtQ3SQ1usq+AOzbBUP0=;
-        b=FiDj0zlcb1QfqNbwUmh/Dc6KbS7fJpTwoQbCITi4x9tS55xV0zVXwVnYJtHgfOdoz+
-         HeN00D04V2CmEPLC/IhbrFDhOXRalZLBK6Qrife5p/U+XCd9T9fCWVfBgqxwTaesfc9+
-         PF9Eq4DOF+vr1kwYPwnhHapxFDJdh88sZJTQqvibh8jMF+aiqLwxlCb5lLlja+/DM01W
-         clu44QerS3uCH/tPyIQXdNqPxBaT8SMYTHA+7W/vWQzdkclrNHdFn4JbY0b9wpxg5B9O
-         cXnfbMg4K73bkF16zjendKyK0OiM2okp8JjO2vbPn+NbVEY0rdzrIv3B7AEzt/AsfRti
-         pKWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsjN8pQgcwGTwlWqhBLb3i6GP80U2r4sfx2Zu4U4m0f9iDOBsKbiO2LnTBQ6LTUqlG1D/aBhWy1y9mRMo/XwKrGL5a2E0UPtuTdA/NOVrTRooNgVW+I6KyfOA7zNxMdrbY56kEP0SADevHEYTKQtLggBVhS5GN8amk
-X-Gm-Message-State: AOJu0Yz3u+9oh4dbUR0uLdspbkCIolI4xo/QPkJ3BpbSssgSWF/waZeq
-	4K4xqY2QMYpZoZFLbhxvPRGV/xa6GWW4ASZbWwZrjHQE4Yvqszim
-X-Google-Smtp-Source: AGHT+IEAnbb8PRUYlmVCmmu0XJ+yJVkU2QMJ2jtemSmWY/zcN4R0utqbyWulRI3mlWV6p+AZqa7+Dw==
-X-Received: by 2002:a17:906:384b:b0:a77:b664:c078 with SMTP id a640c23a62f3a-a780b6b1935mr781846566b.27.1720823970896;
-        Fri, 12 Jul 2024 15:39:30 -0700 (PDT)
-Received: from krava (ip-94-113-247-30.net.vodafone.cz. [94.113.247.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc52sm379188166b.4.2024.07.12.15.39.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 15:39:30 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Sat, 13 Jul 2024 00:39:28 +0200
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Joe Damato <jdamato@fastly.com>, Kyle Huey <me@kylehuey.com>,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, acme@kernel.org, andrii.nakryiko@gmail.com,
-	elver@google.com, khuey@kylehuey.com, mingo@kernel.org,
-	namhyung@kernel.org, peterz@infradead.org, robert@ocallahan.org,
-	yonghong.song@linux.dev, mkarsten@uwaterloo.ca, kuba@kernel.org,
-	Viktor Malik <vmalik@redhat.com>
-Subject: Re: [bpf?] [net-next ?] [RESEND] possible bpf overflow/output bug
- introduced in 6.10rc1 ?
-Message-ID: <ZpGwoGW51sp8vutX@krava>
-References: <ZpFfocvyF3KHaSzF@LQ3V64L9R2>
- <ZpGrstyKD-PtWyoP@krava>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEFE1BDC3;
+	Fri, 12 Jul 2024 22:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720824262; cv=fail; b=pMt3QslKdx9ynF5Mycwht7lGh0DD9CmQVeEXJrOtxfDfP//EKZB5BZVMGrt5VJJYQEuprXHBmG4dlG8A5HJP4xgMy631/fZBbh4YnJx0/b7+Oe4jYu4fhmjFAfZzR0j/K81GWQZ/oigqLNYacz4JT1H5l3e620/OzLoHPvBmehM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720824262; c=relaxed/simple;
+	bh=94Q3jp5CIjN0i4xBe7GoqqedUYSgDrD9wnBe9HLhaJA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=n9ilLR2xzYCwwcI7Q+Cdjk8pFMnOscmpPM+9Fvb+mBSHnKkKIIjCPF8t2lpSyjw5NxxOf1IfN4ZwuuYpJU7eZ9slazBa6Vl9DdXgose86cvtkTNO9hY9gjqpStjsozzcqZb55hqY05BXfJeFUzvOx76qoEzhlccfCofuznqoqzw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Uh9UlnLP; arc=fail smtp.client-ip=52.101.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=x9MPkP+5NgzjYN4c/mQUwdT59iXTa/hHxlxAST8PdEWJClwaSOIlc+i+ngMPgwKTpyvG1tPiU/oP70gRXu7Z91mjDbkE+aIbQTV4V2qG28uFttW1eoiAKBBlnQrFWBEt37Oq//0LxRq33aPY/vPrqvIhbNEa7Ou8zrwdU3jsA/Y8xYmUuGoMz3BbLQ+ZnlOxpGzQu6lhAk9AnFxXtYiVXS9VCC7FQuRyCn/LmTwDaEOhx5Y5Hfr/8SStkdYSBPmB8qOQ59YMsyTY9EoSulTiX1CR+JHWzHarbU7Ko5xlRr253iIpnN5qdOUKcQMOVMa8SIHkJQbpXBwd4mcck66e3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=v1At1qRQ966YIkNvxAD3/Z/+dP+7bqsMTYhaI6lzAXU=;
+ b=rth/G6KIJQmAtDmjhnmc/d4DOqOTcorpyB4MVWlDl9TNZ1EORWk/aHMytm8RoCO+u7J9qfFtyj+M89PwfeAcQYZF3SCaB6MFgWxVJgSxtCkxtYz49Zg0MxuOk4gLVo4OzviVTisv5PnAx0p9ypHGMD87YSekXyFNFkADRsHSKiYX7xP+ApM/ez5frXiUEdKSXQ7w6ZbFWGF1AsQHFF00RJWGueuaG/4ibhJjT0Q9mnELSGby/G4pBzWCfjU2uKBRBU13beaXMO5xMA8G8sBDmN+aG1w5MFXf5JjhPmVUfDuvBBrfI3FV6P0B5OfdxCb56j9TIaSROZOQifc1J3W9PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v1At1qRQ966YIkNvxAD3/Z/+dP+7bqsMTYhaI6lzAXU=;
+ b=Uh9UlnLPnzGNyXyCQBUBHkElNOoQHfbZvAwDdhD3BpL6c+j5chGzM48/PVP09SqwqRqucHetXFH7ToFpijfa3MFh4yimuvRJDzBKpwauhqEYGZM/C6KPEuwzde3xXjjnZxgLFR55gM8h5Gm50+JNgrYvQmodt7AaqMwKS7UJVtg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB8460.eurprd04.prod.outlook.com (2603:10a6:102:1db::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
+ 2024 22:44:17 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
+ 22:44:16 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Jason Liu <jason.hui.liu@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] input: bbnsm_pwrkey: Fix missed key press after suspend
+Date: Fri, 12 Jul 2024 18:43:51 -0400
+Message-Id: <20240712224352.82190-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0332.namprd03.prod.outlook.com
+ (2603:10b6:a03:39c::7) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpGrstyKD-PtWyoP@krava>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8460:EE_
+X-MS-Office365-Filtering-Correlation-Id: f68bda36-8aa3-432a-d664-08dca2c4292b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0Tjs45ycOomdN7t4g2KoPUnUvvRh5hyTPCt0hs7qbH/P2sUjb01/w0RJZkhi?=
+ =?us-ascii?Q?g8o22VRkRX+mZPDg9FYGkMHSSX+mRi7ThSj55wl4drRHbfGPCRpj/tTVrj2q?=
+ =?us-ascii?Q?5o5YSFJnBsq2oxSCL/vcCDOwI6ytQYJIaT/U5qVjuZcyrFyWu7dajHF8BYRt?=
+ =?us-ascii?Q?Pp5qfflQUfLaegOAJI7aj8FW/1n51o/RWoPrc3IINEKJz6ZX76jAbtmmFjO6?=
+ =?us-ascii?Q?gDas930BM/SwcfmvONSipDy3AbsGcaeUFQ9sLVeTzpAjZCtSPXq8CNn1RrUs?=
+ =?us-ascii?Q?gQfkivMfmiWLtGgN2d9D1MVasO+Acghp2yeIIq8+4eerb8ckxw3R6uCH0Jwh?=
+ =?us-ascii?Q?2gBI+/HwnyGK74PWQsy9tsspOYl4kGxSPmV+JDeVGJUX6GJr2i35diH5jRZj?=
+ =?us-ascii?Q?c7KdpcLrIiqPj9KbsxKoqMhAyui0lAuRWgFy7eFNtipGWx7KG4PKBnOPh2VV?=
+ =?us-ascii?Q?AktSKQTvhD5MUoovJNtFBoYFxMAaxrMdcgkikcNL8ecttc27/UKT4z4Ujp6q?=
+ =?us-ascii?Q?8q6vLGLyl50Nmla/MlpfbH2lbtT5xI3/GP2Dn9g8dPB+iHC7Zhk0AljvH9QJ?=
+ =?us-ascii?Q?bisKguMU0Fg44BJ5gzB1u3jnuIxSB+FLtpl1KqF7dsO08GHFTQaWWwcTSc2p?=
+ =?us-ascii?Q?4vVtTmRjX5Vgu+pt5r1EnvSEXptjpXE25AIIabQ6Jw4xlsmAs+c1vb19jd8i?=
+ =?us-ascii?Q?i/RKBVX8E1c4uDjjlFpxJoAtQa9hHL4NCw0VEtXZeEg+BLL3WXHshLYsXP8j?=
+ =?us-ascii?Q?E5uTf+GOFOYzQxQGnk4OZTQenF2S38/E4pA9x2z9zZG6vcGHdjORNKfDbP6T?=
+ =?us-ascii?Q?hk90jsL56tP+rRtqe8E/MsojDxYzWapsXsIbH7TX8QiaFE739k2iGMnaeeWE?=
+ =?us-ascii?Q?GFsnh9JpaWNYib2PZ+I32pRO7Ill6mhwOdBdJyTdFeduj5d2JxKMYuDY4vkO?=
+ =?us-ascii?Q?XMXel5gkNe6Rext8KvDSmFHGfl9/8rBNwNFX/itIJlpS0+fGwrNM4NGJZBJA?=
+ =?us-ascii?Q?jkmxAVbYfNIJNlwNmDWFlpLB7m3zPC0W3M8VxiAiRkbDIxPWHxGcaeObjUGY?=
+ =?us-ascii?Q?Il09+5wz0XWeTyUVt3wSyTGlWkzD53At7LIM7tR2QSSdR1xhL/IFSyTpLEVS?=
+ =?us-ascii?Q?Xi5UjWkO4aQrctFAdwkZnHqJBQ8be5Un+OZEw8+a67jya7DW/+mOq6hgDCV3?=
+ =?us-ascii?Q?8sC/04v16OA1jWyZtWcyjN4BuOcWofyLHuB3dsz42rK9wstdb3he3+dHoW17?=
+ =?us-ascii?Q?tb4NCMC8ZYGa9NYaDYeNU7+zudaOjDTCu0JhgulEfFpz1zEAX6r9hDX7mEMp?=
+ =?us-ascii?Q?ye3tLIWgQB7El8FpOIctzMV2xS9cyODNAAD+H9hq9rJ5++5XC0BbIozJEy6P?=
+ =?us-ascii?Q?GdHXsxvU+wQ8WsqVsde3eASag3bflSmprzslnOzK2N5n8jDJZA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HANVajNxGDwBCVXYbSsrC2/dU25n3y7Du0Ckjc0d8yIw8wnCLcqFTdhUnNJ1?=
+ =?us-ascii?Q?ytuFpjtViHFobCTRU3Tg/6HkskR5XO0NaCf5gluMY1HLS0JJBykPPU9wDSCO?=
+ =?us-ascii?Q?zPdEeidDXnOvkBKSMOD2QAcidwN5YV0NZ4Sz72zGw0WV9r6MWlN6UqYhnj6W?=
+ =?us-ascii?Q?EWREFYPCd9gcMR6Xh15AV+gQ8U9tT+M3nfeu1TUuVCG9ZVmVIktYEGGmZ1Fs?=
+ =?us-ascii?Q?1C8PhunF0prLqxjdl7gPwQ/+MXF+QkiONJKbYsi43X7QcT5FeWKxNl5kD4M4?=
+ =?us-ascii?Q?81JZaL5qG08WaAstVVUj6f388C5LU+Ydl3uURk2QXAstYuBZhk9YDfvbOb5q?=
+ =?us-ascii?Q?crbAT5/FYKO3wREK6muNA4zKotUMfuJt+e71jM+Vfxv1pysQ/WEA83MWAOII?=
+ =?us-ascii?Q?FBTCsUnBZGL6eeZdB6il3sGw/jNzWEiIU57/6PPstgXsY9NPeuYewKmm2DBX?=
+ =?us-ascii?Q?eHiQX4TRy1q0E3Kb68oQrCIlGvMhjfbpvuaRRUfbbLD9jWCh4ht1wf0bQuFu?=
+ =?us-ascii?Q?AHS+2E+k6WfFJVnYnswj6hiSS2kMr/vGKP0yiYYDYd8IIYVseHYHPrzYI0wy?=
+ =?us-ascii?Q?aWMyJhG5gTKQLwsgU33JeK9POWrPdeY2ao+ti8fvJVWYGOKoW4KngNE1qyj8?=
+ =?us-ascii?Q?BNV2zJ7YtMSMPn6Hum/DZ+S/+wZFKGonvg4CfiBqTlJwqo04/Ud8kSZyWCOX?=
+ =?us-ascii?Q?1ljeFgXH6An0/XoXAsmKwIR2b07dfnOvi8VUuT0sgZ7o7HIRsIFgyCIk4Obb?=
+ =?us-ascii?Q?D6+P6ilZRZDx9/J6tCbAQ75y/OP0e9E+vO+mz36wnH8+zJ3DTEZcHPjzK2E8?=
+ =?us-ascii?Q?oO9C2EAEcS478YMT0nk9VAt58tX1G6XXxjuyfpdAoD0o10Sd8/BC6z2/xhUW?=
+ =?us-ascii?Q?PCc0jxXCXM7e8Hb/9ZmAvnkqQ5ThOVBOQgms5yFNwTRpVNX4FAEmOnj+o+72?=
+ =?us-ascii?Q?l5keMzroHeXtcsfSlmHZfPa5zX8FhZEV+9wkhIj9LqXzs5nPbRvKp6ZU5NQu?=
+ =?us-ascii?Q?LA4smGIaDmH+ak9jKyqFaLWEcyRPeBdTFZVpg9YGAabyKpabkHFNBIM/a8l5?=
+ =?us-ascii?Q?CwWdmifObpIC/nz9UxDkMgO5ir6bkheopbKbxw8pw5OyF/LIVruwgJj2+5XX?=
+ =?us-ascii?Q?axVAu8c+SLvgdBbnywPvkFkQUFnZg4r7guE8YC6maVpEcjNbK3QjfXcuXCen?=
+ =?us-ascii?Q?dAsd8OfHhL0yVNTQkNXr7p/Cg425fkjLdw/ppAYXhHEOMT6PeRxGY0ShRG4m?=
+ =?us-ascii?Q?2iMiFoPWYH6gXmIYqrW5A1uxfK8KGHeOaUSUqj5i5daeWahehtrufFOuQQhd?=
+ =?us-ascii?Q?YyMLkR2LeNRlbM8GKMfXTa1yWDR5f2+0izxvo9NohQpD5BHMnRS9/uHcYumG?=
+ =?us-ascii?Q?h2Gj0Cv6xK+a4rshiBUgNZMkJyLTOFslahTrdow/tIVuUP5TzepUn70sYzhR?=
+ =?us-ascii?Q?bfHf4Tr5BUPzR3Li4OrYRo9B43e2IOHf9RWZQeFGOethjiOvtMQoj4kqyhAW?=
+ =?us-ascii?Q?k6ygPW/3BfxNnSHUbTL+GzPuJn/B7HEcn4uWWUNGFum0Ic/M9NB3i/xyCsRE?=
+ =?us-ascii?Q?nJUhWAmLhRlebY2j9ALtjQkkAp5MRr454amLP8k+?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f68bda36-8aa3-432a-d664-08dca2c4292b
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 22:44:16.9181
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Lw8fpq4ujLU6tPp5oTEV4CJEEQvocNMIzHIYPAImye/xmNBJP9QgwHaZWv+JiMe+tkTh0G3VYq+1m0aW6Zw7Wg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8460
 
-On Sat, Jul 13, 2024 at 12:18:26AM +0200, Jiri Olsa wrote:
-> On Fri, Jul 12, 2024 at 09:53:53AM -0700, Joe Damato wrote:
-> > Greetings:
-> > 
-> > (I am reposting this question after 2 days and to a wider audience
-> > as I didn't hear back [1]; my apologies it just seemed like a
-> > possible bug slipped into 6.10-rc1 and I wanted to bring attention
-> > to it before 6.10 is released.)
-> > 
-> > While testing some unrelated networking code with Martin Karsten (cc'd on
-> > this email) we discovered what appears to be some sort of overflow bug in
-> > bpf.
-> > 
-> > git bisect suggests that commit f11f10bfa1ca ("perf/bpf: Call BPF handler
-> > directly, not through overflow machinery") is the first commit where the
-> > (I assume) buggy behavior appears.
-> 
-> heya, nice catch!
-> 
-> I can reproduce.. it seems that after f11f10bfa1ca we allow to run tracepoint
-> program as perf event overflow program 
-> 
-> bpftrace's bpf program returns 1 which means that perf_trace_run_bpf_submit
-> will continue to execute perf_tp_event and then:
+From: Jacky Bai <ping.bai@nxp.com>
 
-also bpftrace should perhaps return 0 in tracepoint programs
-and cut the extra processing in any case
+Report input event directly on wakeup to ensure no press event is missed
+when resuming from suspend.
 
-cc-ing Viktor
+Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Acked-by: Jason Liu <jason.hui.liu@nxp.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ drivers/input/misc/nxp-bbnsm-pwrkey.c | 36 +++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-jirka
+diff --git a/drivers/input/misc/nxp-bbnsm-pwrkey.c b/drivers/input/misc/nxp-bbnsm-pwrkey.c
+index 1d99206dd3a8b..9675717ecbdfe 100644
+--- a/drivers/input/misc/nxp-bbnsm-pwrkey.c
++++ b/drivers/input/misc/nxp-bbnsm-pwrkey.c
+@@ -38,6 +38,7 @@ struct bbnsm_pwrkey {
+ 	int irq;
+ 	int keycode;
+ 	int keystate;  /* 1:pressed */
++	bool suspended;
+ 	struct timer_list check_timer;
+ 	struct input_dev *input;
+ };
+@@ -70,6 +71,7 @@ static irqreturn_t bbnsm_pwrkey_interrupt(int irq, void *dev_id)
+ {
+ 	struct platform_device *pdev = dev_id;
+ 	struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
++	struct input_dev *input = bbnsm->input;
+ 	u32 event;
+ 
+ 	regmap_read(bbnsm->regmap, BBNSM_EVENTS, &event);
+@@ -81,6 +83,16 @@ static irqreturn_t bbnsm_pwrkey_interrupt(int irq, void *dev_id)
+ 	mod_timer(&bbnsm->check_timer,
+ 		   jiffies + msecs_to_jiffies(DEBOUNCE_TIME));
+ 
++	/*
++	 * Directly report key event after resume to make sure key press
++	 * event is never missed.
++	 */
++	if (bbnsm->suspended) {
++		bbnsm->keystate = 1;
++		input_event(input, EV_KEY, bbnsm->keycode, 1);
++		input_sync(input);
++	}
++
+ 	/* clear PWR OFF */
+ 	regmap_write(bbnsm->regmap, BBNSM_EVENTS, BBNSM_BTN_OFF);
+ 
+@@ -173,6 +185,29 @@ static int bbnsm_pwrkey_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int __maybe_unused bbnsm_pwrkey_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
++
++	bbnsm->suspended = true;
++
++	return 0;
++}
++
++static int __maybe_unused bbnsm_pwrkey_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
++
++	bbnsm->suspended = false;
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(bbnsm_pwrkey_pm_ops, bbnsm_pwrkey_suspend,
++		bbnsm_pwrkey_resume);
++
+ static const struct of_device_id bbnsm_pwrkey_ids[] = {
+ 	{ .compatible = "nxp,imx93-bbnsm-pwrkey" },
+ 	{ /* sentinel */ }
+@@ -182,6 +217,7 @@ MODULE_DEVICE_TABLE(of, bbnsm_pwrkey_ids);
+ static struct platform_driver bbnsm_pwrkey_driver = {
+ 	.driver = {
+ 		.name = "bbnsm_pwrkey",
++		.pm = &bbnsm_pwrkey_pm_ops,
+ 		.of_match_table = bbnsm_pwrkey_ids,
+ 	},
+ 	.probe = bbnsm_pwrkey_probe,
+-- 
+2.34.1
 
-
-> 
->   perf_tp_event
->     perf_swevent_event
->       __perf_event_overflow
->         bpf_overflow_handler
-> 
-> bpf_overflow_handler then executes event->prog on wrong arguments, which
-> results in wrong 'work' data in bpftrace output
-> 
-> I can 'fix' that by checking the event type before running the program like
-> in the change below, but I wonder there's probably better fix
-> 
-> Kyle, any idea?
-> 
-> > 
-> > Running the following on my machine as of the commit mentioned above:
-> > 
-> >   bpftrace -e 'tracepoint:napi:napi_poll { @[args->work] = count(); }'
-> > 
-> > while simultaneously transferring data to the target machine (in my case, I
-> > scp'd a 100MiB file of zeros in a loop) results in very strange output
-> > (snipped):
-> > 
-> >   @[11]: 5
-> >   @[18]: 5
-> >   @[-30590]: 6
-> >   @[10]: 7
-> >   @[14]: 9
-> > 
-> > It does not seem that the driver I am using on my test system (mlx5) would
-> > ever return a negative value from its napi poll function and likewise for
-> > the driver Martin is using (mlx4).
-> > 
-> > As such, I don't think it is possible for args->work to ever be a large
-> > negative number, but perhaps I am misunderstanding something?
-> > 
-> > I would like to note that commit 14e40a9578b7 ("perf/bpf: Remove #ifdef
-> > CONFIG_BPF_SYSCALL from struct perf_event members") does not exhibit this
-> > behavior and the output seems reasonable on my test system. Martin confirms
-> > the same for both commits on his test system, which uses different hardware
-> > than mine.
-> > 
-> > Is this an expected side effect of this change? I would expect it is not
-> > and that the output is a bug of some sort. My apologies in that I am not
-> > particularly familiar with the bpf code and cannot suggest what the root
-> > cause might be.
-> > 
-> > If it is not a bug:
-> >   1. Sorry for the noise :(
-> 
-> your report is great, thanks a lot!
-> 
-> jirka
-> 
-> 
-> >   2. Can anyone suggest what this output might mean or how the
-> >      script run above should be modified? AFAIK this is a fairly
-> >      common bpftrace that many folks run for profiling/debugging
-> >      purposes.
-> > 
-> > Thanks,
-> > Joe
-> > 
-> > [1]: https://lore.kernel.org/bpf/Zo64cpho2cFQiOeE@LQ3V64L9R2/T/#u
-> 
-> ---
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index c6a6936183d5..0045dc754ef7 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -9580,7 +9580,7 @@ static int bpf_overflow_handler(struct perf_event *event,
->  		goto out;
->  	rcu_read_lock();
->  	prog = READ_ONCE(event->prog);
-> -	if (prog) {
-> +	if (prog && prog->type == BPF_PROG_TYPE_PERF_EVENT) {
->  		perf_prepare_sample(data, event, regs);
->  		ret = bpf_prog_run(prog, &ctx);
->  	}
 
