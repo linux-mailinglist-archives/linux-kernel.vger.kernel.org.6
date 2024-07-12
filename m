@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-250870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF0192FDDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:49:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8EE092FDE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2866288376
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:49:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948A528838D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DACB174EF8;
-	Fri, 12 Jul 2024 15:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2C4176227;
+	Fri, 12 Jul 2024 15:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xtLVN6IQ"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="PrNMAGQt"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4651802B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB1C1802B;
+	Fri, 12 Jul 2024 15:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720799355; cv=none; b=Z+4VntyfWmz3K9EMJzqF/dEEWFPRh3ihtS5hOHYBRAtbZJAAfTSlxIoGhd4aO6dkeTNUsCIExsXJV1WjDhyhWvpHD+tKAg6kwLettHfIgN7cvHF7gzr8yLoumgf4H+eCtgeUeIeetliRXEdu5wkJoxF71/tgWRljtyKRQpxK9iM=
+	t=1720799411; cv=none; b=W7E/6hIhk4bQdwKnU8lP5dn11yyYIugpl2w/dCSXmN3aO7nxevgWnAIejFwmZcZqhnl/d5cPUbX7upwbYHHExfP4k2ODS/v1GVCwR98gXGPejZWMnL5HbgaH1UTuETxXPfm7Ofb5Dz8z3g/EXePRoiTyn0TVkz1IZjb8Qo6s/vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720799355; c=relaxed/simple;
-	bh=fbgk9v8TdlavMHwNJw2AYHzxCpNkaIh5ZUOHJAqm1ig=;
+	s=arc-20240116; t=1720799411; c=relaxed/simple;
+	bh=Mla2qp4P6f3s5qVeM8q9ZP4JyeIRnpixetFiScwef/M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PcUREWkXcPXYVIYrgOi0d/L3PJg2kQsF7+iEyQCZ1//rYR1tMzWiE7vqNNgmGbfS1rMksRRPw65ZpXRLN38whFn81giqENNmmP8BsGnLNrB7tNo84yPxLEkgvJ4vPbpTmXDmiQDy1kZcpAfF+vIUVZ1HapowC45oYD/Ssyy2Ldk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xtLVN6IQ; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: youling.tang@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720799347;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2EEPTXJLIRMcjxlu21hs5uJVsFBKvELtY6GyRCfbYlQ=;
-	b=xtLVN6IQ+p4gD3MHciKv3oCaxJMGILkS9Q00aIsZkJWAzoG9JgDIfVqdDO6GjcS56bVoj1
-	6lxD44PgH4XWpS1aQP+IpTf9YicdJHJQqx7SMrYHwWfyJv0FGijO9gVMJxvkVmv0/GLYHI
-	N2WdgpMfFG/qpNjg60Mm0YZYaYJxNr0=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: tangyouling@kylinos.cn
-Date: Fri, 12 Jul 2024 11:49:05 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Youling Tang <youling.tang@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH] mm: list_lru: Fix NULL pointer dereference in
- list_lru_add()
-Message-ID: <oxzh24oit3ulkl5at66c4g3bsyo7z6jd54757yrkgqbeftfgjz@qlzktn3nrkpl>
-References: <20240712032554.444823-1-youling.tang@linux.dev>
- <sd32qchit33aafht27utinrz5dizw62qbtwdmwbtugqrlglmtx@6aitsotgqnpi>
- <8ce42a2e-783f-4244-8e75-21dcd578adf5@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d8YtkUoglkc0+w9XS08Qid6KOYjkqTiU1AywfBQXMl+5cFoDIcn0AILFT2PGDFoBJ0uNzGfrk4q9HT5SH1qOafMxHcb65j+RiPkxC9xE1stCeL7R8LIvHoFdDmBUV2jwYvVmOizbtTH8lLjCO4SZtnSoP8GMMrNK16SlUdLLKfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=PrNMAGQt; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=qHv8yTSFLSMtZ0q84mBoE6pXrYioa5FC1WI8FEKczCU=; b=PrNMAGQtDyPU4I3f++s9YdpEz4
+	lDCdmD19nDMykbBZtgKuKWpA3LWGxZ447iSGCGAiAlGxwzHmKfUQBNo2FOFk2PxGfr0mkPe0YUrwc
+	Mjr6HfzgscaryKWkvRolrwyyO8rL47XdVVEclOIH6hHpQoSCoypw/O22nNXDyCB6AMCk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sSIX4-002Puk-1w; Fri, 12 Jul 2024 17:50:02 +0200
+Date: Fri, 12 Jul 2024 17:50:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/1] net: phy: dp83td510: add cable testing
+ support
+Message-ID: <210b2feb-5a54-4c3a-8a85-8a61334153ce@lunn.ch>
+References: <20240712152848.2479912-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,28 +62,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8ce42a2e-783f-4244-8e75-21dcd578adf5@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240712152848.2479912-1-o.rempel@pengutronix.de>
 
-On Fri, Jul 12, 2024 at 12:28:57PM GMT, Youling Tang wrote:
-> Hi, Kent
+On Fri, Jul 12, 2024 at 05:28:48PM +0200, Oleksij Rempel wrote:
+> This patch implements the TDR test procedure as described in
+> "Application Note DP83TD510E Cable Diagnostics Toolkit revC", section 3.2.
 > 
-> On 12/07/2024 12:07, Kent Overstreet wrote:
-> > On Fri, Jul 12, 2024 at 11:25:54AM GMT, Youling Tang wrote:
-> > > From: Youling Tang <tangyouling@kylinos.cn>
-> > > 
-> > > Note that list_lru_from_memcg_idx() may return NULL, so it is necessary
-> > > to error handle the return value to avoid triggering NULL pointer
-> > > dereference BUG.
-> > > 
-> > > The issue was triggered for discussion [1],
-> > > Link [1]: https://lore.kernel.org/linux-bcachefs/84de6cb1-57bd-42f7-8029-4203820ef0b4@linux.dev/T/#m901bb26cdb1d9d4bacebf0d034f0a5a712cc93a6
-> > I see no explanation for why this is the correct fix, and I doubt it is.
-> > What's the real reason for the NULL lru_list_one, and why doesn't this
-> > come up on other filesystems?
-> We can break it down into two questions (independent of each other):
-> 1) Error handling is necessary when l (lru_list_one) is NULL here.
+> The procedure was tested with "draka 08 signalkabel 2x0.8mm". The reported
+> cable length was 5 meters more for each 20 meters of actual cable length.
+> For instance, a 20-meter cable showed as 25 meters, and a 40-meter cable
+> showed as 50 meters. Since other parts of the diagnostics provided by this
+> PHY (e.g., Active Link Cable Diagnostics) require accurate cable
+> characterization to provide proper results, this tuning can be implemented
+> in a separate patch/interface.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> changes v2:
+> - add comments
+> - change post silence time to 1000ms
 
-No, you're just hiding the actual bug - since I wasn't clear, I'm naking
-this patch.
+Nice comments, thanks.
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
