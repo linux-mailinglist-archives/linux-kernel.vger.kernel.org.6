@@ -1,315 +1,230 @@
-Return-Path: <linux-kernel+bounces-250975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82CD92FF18
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:09:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB13B92FF1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 743682808FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C0971F2222D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18833179647;
-	Fri, 12 Jul 2024 17:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C41179965;
+	Fri, 12 Jul 2024 17:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7irPire"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMLc+WCK"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1745C176AC8;
-	Fri, 12 Jul 2024 17:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277C9179652
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720803779; cv=none; b=RmhzZwx8RB+wyVDXCLkOozR9bV5hi39r6tmBSiYAtSSlXtOf0kIvpLvX4WhvsTjGl9LbsrU4k/+3N3yQ81kuaPBKE85DNCBrNl2fSZx9kg+8X3kBe82yu4Qkcd72QQNdxI2oB9j3/ZsTUUs9ijfmBDydYZHh+hKWm+qRe2il31o=
+	t=1720803782; cv=none; b=abp/KnFzXetYHXv6QTCLNVNtWsrU7PSmD36KI28BKcRYUYozDjQnOx9y5yCo7ADxWKkPbXo22h5dScE/UvzgJVOn9Goq1bKzCxi7LlyE7wCIuj/+tNIq9ctW47dxLYtwmhdjMqlAdYydRvOaxR126ax1ssgeYvXxLa2b+VzfWqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720803779; c=relaxed/simple;
-	bh=dlPqmeE8Q4QGZcuhPcklfXhhOofyZPKEXZiy9NXGSEM=;
+	s=arc-20240116; t=1720803782; c=relaxed/simple;
+	bh=gNabTLThOc2f6ozdrdD/9quDBaHTdCEFYGdZRW78KIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EKpevkf7PH/NoNk6Yc+16VxjZrBu4xVNQIp7nhTXbJL0n3iVAfll6wRUYL3YEKUf8Z8ltrHhOM6KJ09A3mYwzUHCbdmoFLO776H4qmfFHdy1C1I+h8EUPOQKD5cf7hTNfoLXIjH4tYCUlzo3zQJMYTJ3iG3CHbaVr8syKj8T1WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7irPire; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8008BC32782;
-	Fri, 12 Jul 2024 17:02:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720803778;
-	bh=dlPqmeE8Q4QGZcuhPcklfXhhOofyZPKEXZiy9NXGSEM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L7irPireP2nHd3Z0epS3S4z5qFm76PsDU3wCz8KAdQ0iuO/MUTGWnXYd7D+d6+R/u
-	 9biOqcuyYkTbWTKm3X//HlaURIT0RpLHx8uHHmNjpRkRkQGKjeOgkKAiVxWIwXHieO
-	 isSp2t820qeCcVoiPiewwHcKvEYAjLyDpnopd0fi6gdH7XOr+VBxq6Qrkt9MkKVv/T
-	 HuCHpNLJg1yeaSePu8f9qBzm6gfFIRjPxN95kDnrwlu6vuSsLNYW6n0cirTP+7Xpgf
-	 svhG+7R+m/5O+8m/mKz7BJJ+jNfvSeZb3izMYWiiLjGMfeWDPC0SHTiEZy2bLwdJJN
-	 hAL8+VTe0IYog==
-Date: Fri, 12 Jul 2024 18:02:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Marius.Cristea@microchip.com
-Cc: jic23@kernel.org, matteomartelli3@gmail.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	lars@metafoo.de, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] iio: adc: add support for pac1921
-Message-ID: <20240712-octopus-coerce-52c52e9cfb41@spud>
-References: <20240704-iio-pac1921-v2-0-0deb95a48409@gmail.com>
- <20240704-iio-pac1921-v2-2-0deb95a48409@gmail.com>
- <20240707160442.6bab64c9@jic23-huawei>
- <668bec2a8b23a_6e037017@njaxe.notmuch>
- <88a54c736e0c39ead34dbde53c813526484d767d.camel@microchip.com>
- <668f84e2f3e10_2b423707a@njaxe.notmuch>
- <ea72561a1ab953d3f2a99272c24cf5124c0c72ec.camel@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IFOQLL+IZUPQfZ/LKOXPeWBpYxkjM2vtWM04zvLQrKkAZsG87meAZ9Gk9GD7GJSQVfNaxiNw8Stt/iE6amVShEcijC/I11B0gQYREKIx46C2BRfGeaZeL9EmIuP5iLPT1KqeiRnoAxZShxjU8QS7rT0NtMs7+14a9lciMev9rww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMLc+WCK; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70b5117ae06so1697720b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:02:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720803779; x=1721408579; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TrHfge3cImJHlYA6NM3anxaSPcz1+CBkdutsXVaHFjs=;
+        b=BMLc+WCKHOkGqEky4y/B+bkSZbfNihxF0FqN4laPR7/nR/LxttfLUNzesdd5Fi34ZF
+         KJ8Ci1pFf93/ScqBKpDxJywYRvF5f2e43WeyiXHFKO8V0AYzJuoCgYMDC7KOR5cKnyJs
+         xZHEgxtLl9WvXGjfxH2XkQWX3YYIq+3J6XrVfrcHOxYH1hZ9wuxcqe+SJE3sOtWGq+Rk
+         lh1H6bk4bMMiUQDlQ5XX/c9ZvKC8TZsJwpBr7XLINx8hvidynGUSIIzDRvsnXDG9x9eB
+         vPLU3lKZ1t9FpQMLOdLGOBiYUogLpeGa3CijMriHvWZnI6TXFrkyHynJ2OZwFWWBXXba
+         n+YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720803779; x=1721408579;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TrHfge3cImJHlYA6NM3anxaSPcz1+CBkdutsXVaHFjs=;
+        b=FUAeIbCPzUeLSLEbA03drkVhPRL/xGAkyE/ulMaND82b4sJFWHZxy+4vQK9cmUMbBB
+         xgZmNz0kEN359haih43LSVF6/Gskd4UgedsMtB7eELKeQprkBZBnJNQtPrkafzaj5YFv
+         BjwWsAg1iYJyS/4IYTHl0kC8LF7DMoG/xiIFWBQ8CFjHATiEu8qDWmbTANKjo5UnPv2q
+         +xAYt2g68wP02Rwvr27SQBSBL6AHE6EhCRFFtYFFFld56ta8Tslivcot23fBKyQjpMcG
+         +HvwZsfEiyPlnuFCYEy5jZ/OzdSurduMEjzGbmXNw04QZEqJ/0oW8U659yLaL09PXBD8
+         d33A==
+X-Forwarded-Encrypted: i=1; AJvYcCXeaN5wBAMj9iX8DZYyAsmv3eJRsiSsmEqelfqiUFSIVH+QRwliI3b4m6ThNh7a6QH5DWzssobGnsvJzRkPNFysB9pZDe38he+vrUXG
+X-Gm-Message-State: AOJu0Yx/+wW+k4UiMJ+7l3DbMskQh7nstA3lNKNGzB/M6p2U2aHWYA63
+	qJd4hfvTwV8Y08rPT5TaoSntrVjXycB1H2UrZY1UMR1pcCBTLIV8
+X-Google-Smtp-Source: AGHT+IFpuEEhUyUhjkwwZj5q7H2H8x6VfJ2ZhC6k9UrPS0354tkbHk7R8jYxM0ZgRCG6X2iAnQALbg==
+X-Received: by 2002:a05:6a20:918d:b0:1bd:2710:de5c with SMTP id adf61e73a8af0-1c29821d0b3mr15445685637.22.1720803779146;
+        Fri, 12 Jul 2024 10:02:59 -0700 (PDT)
+Received: from localhost ([216.228.127.128])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b438cd96esm7744368b3a.81.2024.07.12.10.02.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 10:02:58 -0700 (PDT)
+Date: Fri, 12 Jul 2024 10:02:55 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v2] bitmap: Switch from inline to __always_inline
+Message-ID: <ZpFhv5VSYZ6jnsd4@yury-ThinkPad>
+References: <20240711163732.1837271-1-briannorris@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nR8aezpUfA6LYt7E"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ea72561a1ab953d3f2a99272c24cf5124c0c72ec.camel@microchip.com>
+In-Reply-To: <20240711163732.1837271-1-briannorris@chromium.org>
 
+Hi Brian,
 
---nR8aezpUfA6LYt7E
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for taking over this!
 
-On Fri, Jul 12, 2024 at 02:41:51PM +0000, Marius.Cristea@microchip.com wrot=
-e:
-> Hi Matteo,
->=20
->=20
-> On Thu, 2024-07-11 at 09:08 +0200, Matteo Martelli wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you
-> > know the content is safe
-> >=20
-> > Hi Marius,
-> >=20
-> > Marius.Cristea@ wrote:
-> > > > I think that the OUT pin might not be used at all in many use
-> > > > cases
-> > > > so I would
-> > > > leave the OUT pin setting as fixed for now and maybe extend it in
-> > > > the
-> > > > future
-> > > > when more use cases arise. I am open to reconsider this though.
-> > > >=20
-> > >=20
-> > > The OUT functionality could be set from the device tree.
-> >=20
-> > I think this should to be controlled during runtime since it's a
-> > configuration
-> > that changes the device operation mode and so also what measurements
-> > are
-> > exposed to the user. An additional DT property could be useful but I
-> > am not
-> > sure it would fit in the DT scope.
-> > Anyway I will leave this for future extensions.
-> >=20
->=20
-> I think there are 2 different things here. Setting the configuration at
-> startup by hard-coding things at probe time or taken those from device
-> tree (we can add multiple properties here, as long those properties are
-> documented into the dt-binding file) and the user controlled part at
-> runtime.
-> Because there is no standard interface to change the functionality, it
-> will be easy to startup from the device tree and let the user to do
-> some minor adjustments and not hardcode configuration.
->=20
->=20
-> > ...
-> > > > > > ---
-> > > > > > =A0.../ABI/testing/sysfs-bus-iio-adc-pac1921=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0 |=A0=A0 45 +
-> > > > > > =A0MAINTAINERS=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=
-=A0=A0 7 +
-> > > > > > =A0drivers/iio/adc/Kconfig=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0 10 +
-> > > > > > =A0drivers/iio/adc/Makefile=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0=A0 1 +
-> > > > > > =A0drivers/iio/adc/pac1921.c=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 | 1038
-> > > > > > ++++++++++++++++++++
-> > > > > > =A05 files changed, 1101 insertions(+)
-> > > > > >=20
-> > > > > > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-
-> > > > > > pac1921
-> > > > > > b/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1921
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..4a32e2d4207b
-> > > > > > --- /dev/null
-> > > > > > +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1921
-> > > > > Quite a bit of custom ABI in here.
-> > > > >=20
-> > > > > Rule of thumb is that custom ABI is more or less pointless ABI
-> > > > > for
-> > > > > 99% of users
-> > > > > because standard userspace won't use it.=A0 So keep that in mind
-> > > > > when
-> > > > > defining it.
-> > > > >=20
-> > > > > > @@ -0,0 +1,45 @@
-> > > > > > +What:
-> > > > > > /sys/bus/iio/devices/iio:deviceX/resolution_bits
-> > > > > > +KernelVersion:=A0=A0=A0=A0 6.10
-> > > > > > +Contact:=A0=A0 linux-iio@vger.kernel.org
-> > > > > > +Description:
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ADC measurement resolution. Can=
- be either 11 bits
-> > > > > > or
-> > > > > > 14 bits
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 (default). The driver sets the =
-same resolution
-> > > > > > for
-> > > > > > both VBUS and
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 VSENSE measurements even if the=
- hardware could be
-> > > > > > configured to
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 measure VBUS and VSENSE with di=
-fferent
-> > > > > > resolutions.
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 This attribute affects the inte=
-gration time: with
-> > > > > > 14
-> > > > > > bits
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 resolution the integration time=
- is increased by a
-> > > > > > factor of
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 1.9 (the driver considers a fac=
-tor of 2). See
-> > > > > > Table
-> > > > > > 4-5 in
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device datasheet for details.
-> > > > >=20
-> > > > > Is the integration time ever high enough that it matters?
-> > > > > People tend not to do power measurement 'quickly'.
-> > > > >=20
-> > > > > If we are doing it quickly then you'll probably want to be
-> > > > > providing buffered
-> > > > > support and that does allow you to 'read' the resolution for a
-> > > > > part
-> > > > > where
-> > > > > it changes for some other reason.=A0=A0 I haven't yet understood
-> > > > > this
-> > > > > case.
-> > > >=20
-> > > > I will remove this control and fix the resolution bits to 14
-> > > > (highest
-> > > > value),
-> > > > same as the HW default.
-> > >=20
-> > > The resolution could be set from the device tree. As default it
-> > > could
-> > > be 14 bits like into the hardware. The user could add
-> > > "microchip,low_resolution_voltage" into the device tree in order to
-> > > use
-> > > only 11 bits for voltage samples.
-> >=20
-> > I think this should be controlled during runtime since it does not
-> > depend on
-> > the HW design but more on the user preferences about measurements
-> > precision.
-> > As Jonathan pointed out, since custom ABIs should be avoided when
-> > possible, I
-> > will leave it out from now until it becomes necessary and fix the
-> > resolution to
-> > 14 bits, as the HW default.
-> >=20
->=20
-> Set the configuration from the device tree, will avoid custom ABI. The
-> device tree could be changed also at runtime.
++ Kees Cook for GCC
 
-Custom ABI in devicetree is not a replacement for custom ABI in userspace.
-If things are fixed by the hardware and non-discoverable, then sure add
-devicetree properties - but if it is things like "the user wants 11-bit
-mode", then that does not sound suitable for a devicetree property at
-all.
-And no, you can't just change the devicetree at runtime like that either
-as far as I understand - that's gonna cause memory leaks etc and I don't
-think can be done from userspace without out-of-tree patches anyway.
+On Thu, Jul 11, 2024 at 09:37:11AM -0700, Brian Norris wrote:
+> On recent (v6.6+) builds with Clang (based on Clang 18.0.0) and certain
+> configurations [0], I'm finding that (lack of) inlining decisions may
+> lead to section mismatch warnings like the following:
+> 
+>   WARNING: modpost: vmlinux.o: section mismatch in reference:
+>   cpumask_andnot (section: .text) ->
+>   cpuhp_bringup_cpus_parallel.tmp_mask (section: .init.data) ERROR:
+>   modpost: Section mismatches detected.
+> 
+> or more confusingly:
+> 
+>   WARNING: modpost: vmlinux: section mismatch in reference:
+>   cpumask_andnot+0x5f (section: .text) -> efi_systab_phys (section:
+>   .init.data)
+> 
+> The first warning makes a little sense, because
+> cpuhp_bringup_cpus_parallel() (an __init function) calls
+> cpumask_andnot() on tmp_mask (an __initdata symbol). If the compiler
+> doesn't inline cpumask_andnot(), this may appear like a mismatch.
+> 
+> The second warning makes less sense, but might be because efi_systab_phys
+> and cpuhp_bringup_cpus_parallel.tmp_mask are laid out near each other,
+> and the latter isn't a proper C symbol definition.
+> 
+> In any case, it seems a reasonable solution to suggest more strongly to
+> the compiler that these cpumask macros *must* be inlined, as 'inline' is
+> just a recommendation.
+> 
+> Based on recent discussions, it seems like a good idea to inline the
+> bitmap functions which make up cpumask*() implementations, as well as a
+> few other bitmap users, to ensure the inlining doesn't break in the
+> future and produce the same problems, as well as to give the best chance
+> that the intended small_const_nbits() optimizations carry through.
 
-Cheers,
-Conor.
+small_const_nbits() optimization always carries through. As far as I
+understand this things, the problem is that inliner may make a (wrong)
+no-go decision before unwinding the small_const_nbits() part.
 
->=20
-> > ...
-> > > > > > +What:=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0
-> > > > > > /sys/bus/iio/devices/iio:devices/filters_en
-> > > > > > +KernelVersion:=A0=A0=A0=A0 6.10
-> > > > > > +Contact:=A0=A0 linux-iio@vger.kernel.org
-> > > > > > +Description:
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 Attribute to enable/disable ADC=
- post filters.
-> > > > > > Enabled
-> > > > > > by
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 default.
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 This attribute affects the inte=
-gration time: with
-> > > > > > filters
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 enabled the integration time is=
- increased by 50%.
-> > > > > > See
-> > > > > > Table 4-5
-> > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 in device datasheet for details.
-> > > > >=20
-> > > > > Do we have any idea what this filter is? Datasheet seems very
-> > > > > vague
-> > > > > indeed and from
-> > > > > a control point of view that makes this largely useless. How
-> > > > > does
-> > > > > userspace know
-> > > > > whether to turn it on?
-> > > > >=20
-> > > > > We have an existing filter ABI but with so little information
-> > > > > no
-> > > > > way to fit this in.
-> > > > > Gut feeling, leave it on all the time and drop the control
-> > > > > interface.
-> > > >=20
-> > > > I will remove this control and leave it on all the time as the HW
-> > > > default.
-> > > >=20
-> > >=20
-> > > The filters could be enabled from the device tree. As default it
-> > > could
-> > > be disabled.
-> > > As a small detail here this is a post processing digital filter
-> > > that
-> > > could be enabled/disabled inside the PAC module.
-> > >=20
-> >=20
-> > Same reasoning of the resolution_bits parameter applies here. I will
-> > fix the
-> > filters to enabled, as the HW default. If there is any particular
-> > reason to
-> > prefer the filters fixed as disabled I will change that.
-> >=20
-> If the user can change the on/off for the filters it doesn't matter
-> what will be the default behavior. Being a single channel device, the
-> probability for the user to change the filter behavior during runtime
-> is minimal, that was the main reason for letting the user to change the
-> configuration from the device tree and not hardcode it.
->=20
-> > ...
-> > > Thanks,
-> > > Marius
-> >=20
-> > Thanks,
-> > Matteo
->=20
-> Thanks,
-> Marius
+small_const_nbits() always leads to eliminating either inline or outline
+code, but inliner seemingly doesn't understand it. This leads to having
+those tiny functions uninlined.
 
---nR8aezpUfA6LYt7E
-Content-Type: application/pgp-signature; name="signature.asc"
+But I'm not sure about that and don't know how to check what happens
+under the compilers' hood. Can compiler gurus please clarify?
 
------BEGIN PGP SIGNATURE-----
+> This change has been previously proposed in the past as:
+> 
+>   Subject: [PATCH 1/3] bitmap: switch from inline to __always_inline
+>   https://lore.kernel.org/all/20221027043810.350460-2-yury.norov@gmail.com/
+> 
+> In the end, this looks like a rebase of Yury's work, although
+> technically it's a rewrite.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpFhvgAKCRB4tDGHoIJi
-0hjUAQDW3W3K3mXk5S0YBMh2tS818oJfGzXzfglKonPqGzk6pAD/QCNS3GlZ3wxK
-9gKlK64XgLXQWOh9KsMoVlHm4zbJhQA=
-=Fi4N
------END PGP SIGNATURE-----
+I like it more, when it's split onto several patches. We already have
+my bitmap.h rework and your cpumask.h one with their own reasonable
+motivations. Can you keep that patch structure please? Then, we can add
+separate patches for find.h and nodemask.h. If rebasing the old bitmap.h
+patch isn't clean and takes some effort, feel free to add your
+co-developed-by.
+ 
+> According to bloat-o-meter, my vmlinux decreased in size by a total of
+> 1538 bytes (-0.01%) with this change.
+> 
+> [0] CONFIG_HOTPLUG_PARALLEL=y ('select'ed for x86 as of [1]) and
+>     CONFIG_GCOV_PROFILE_ALL.
+> 
+> [1] commit 0c7ffa32dbd6 ("x86/smpboot/64: Implement
+>     arch_cpuhp_init_parallel_bringup() and enable it")
+> 
+> Cc: Yury Norov <yury.norov@gmail.com>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
 
---nR8aezpUfA6LYt7E--
+So... This whole optimization is only worth the reviewer's time if we
+can prove it's sustainable across different compilers and configurations.
+
+Just saying that under some particular config it works, brings little
+value for those who are not interested in that config. Moreover, if
+one enables GCOV, he likely doesn't care much about the .text size.
+And for those using release configs, it only brings uncertainty.
+
+Let's test it broader? We've got 2 main compilers - gcc and llvm, and
+at least two configurations that may be relevant: defconfig and your
+HOTPLUG_PARALLEL + GCOV_PROFILE_ALL. And it would be nice to prove
+that the optimization is sustainable across compiler versions.
+
+I have the following table in mind:
+
+           defconfig   your conf  
+GCC    9 |  -1900    |           |
+CLANG 13 |           |           |
+GCC   13 |           |           |
+CLANG 18 |  -100     |  -1538    |
+
+The defconfig nubmers above are from my past experiments. And you can
+add more configs/compilers, of course.
+
+> ---
+> 
+> Changes in v2:
+>  - rebase, update cpumask.h based on recent additions and removals
+>  - also convert bitmap.h, find.h, nodemask.h
+> 
+>  include/linux/bitmap.h   | 122 ++++++++++++----------
+>  include/linux/cpumask.h  | 216 +++++++++++++++++++++------------------
+>  include/linux/find.h     |  50 ++++-----
+>  include/linux/nodemask.h |  86 ++++++++--------
+>  4 files changed, 249 insertions(+), 225 deletions(-)
+> 
+> diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+> index 8c4768c44a01..7f44b4428d77 100644
+> --- a/include/linux/bitmap.h
+> +++ b/include/linux/bitmap.h
+> @@ -203,7 +203,7 @@ unsigned long bitmap_find_next_zero_area_off(unsigned long *map,
+>   * the bit offset of all zero areas this function finds is multiples of that
+>   * power of 2. A @align_mask of 0 means no alignment is required.
+>   */
+> -static inline unsigned long
+> +static __always_inline unsigned long
+>  bitmap_find_next_zero_area(unsigned long *map,
+>  			   unsigned long size,
+>  			   unsigned long start,
+
+Let's split them such that return type would be at the same line as
+the function name. It would help to distinguish function declaration
+from invocations in grep output:
+
+   static __always_inline
+   unsigned long bitmap_find_next_zero_area(unsigned long *map,
+   			   unsigned long size,
+   			   unsigned long start,
+
+Thanks,
+Yury
 
