@@ -1,161 +1,222 @@
-Return-Path: <linux-kernel+bounces-250401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E420F92F770
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:59:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55A2D92F774
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A75C281753
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:59:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E771C22018
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69198143743;
-	Fri, 12 Jul 2024 08:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E731428F9;
+	Fri, 12 Jul 2024 09:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0uZRHqb8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p6TLCviy"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF2D13D8A4;
-	Fri, 12 Jul 2024 08:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AB114884E;
+	Fri, 12 Jul 2024 09:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720774785; cv=none; b=sVsdxjc7sP0YfxNtP69w9dB3JD/7DHkR/BR2L6oi9wCtJpl3zhhp8enoOb9+KQdOQZtbuKQImLFTzCP3WZ60AYsZLljJaAQExa1WjXjxo7q0wdfnSmYY6i1SKQthp+INp7+tKh+m9BHqgvUsXnHDIPihjD4Va6YakpqdcuSILWc=
+	t=1720774823; cv=none; b=o567Sy3+Cp33s23ciG3e1Sn3shk8D3/YlNzvwUota8nmuzgQ8PmEUrvEmFzylavNU0LPO8bbe8u4mjNaUvz50BOvNJrNCWRAFG+6nfyxSuDhwZGBkWI7epy/NFcbsHk2xvqxHmiXrt1Vh+rTIGNNEpWJ9RfgfTkOL/NEPLWpPrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720774785; c=relaxed/simple;
-	bh=0V/UzY4npvWb0NaKofMtzEIjIcMV1S6JXCcxXoOhmAE=;
+	s=arc-20240116; t=1720774823; c=relaxed/simple;
+	bh=uxYO52ltdR2PNRJ6oSXEONigvyRNjnTBKwbjZQwPy+Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxyEb+bfRk3lM0zWs7i+dyUm2duGmkodnfC7ZV0TnBAJeMo5hRtK9G7FOSKhKVXfcLHsLf2MFT7bgee5iTOZITpRMgAvhIjP2GC1MFVkhiDi6eiXVGyh3Tc8yZ552CpKaHug+fDT67If+8R4gvNOAqNw5/4XobzmOmgzHTDwOXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0uZRHqb8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA6C7C4AF09;
-	Fri, 12 Jul 2024 08:59:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720774785;
-	bh=0V/UzY4npvWb0NaKofMtzEIjIcMV1S6JXCcxXoOhmAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0uZRHqb8dHBx8mMiPKcNvtKUcyAm7Cy16eIBzT5By5WMu5eeZLy4g4qdQ0mhxReyV
-	 cGziAOHNRlcp/CnP2wrGfkC5aOWUDFQwHuVMrBEwrleD1tiBRN2fdLZhXNPG8tl+W2
-	 XS4IOOrGjFuLkiBnkLIAreFUdyQ5WGruOvpxWyog=
-Date: Fri, 12 Jul 2024 10:59:37 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Shuah Khan <shuah@kernel.org>, kernel@collabora.com,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernelci@lists.linux.dev
-Subject: Re: [PATCH v2 0/3] kselftest: Add test to report device log errors
-Message-ID: <2024071229-mule-statistic-dc17@gregkh>
-References: <20240705-dev-err-log-selftest-v2-0-163b9cd7b3c1@collabora.com>
- <2024071003-islamist-expediter-a22c@gregkh>
- <71c479fb-cd25-45ec-8dd3-0521ef951f58@linuxfoundation.org>
- <e1e32c72-6bd3-4c15-b301-c5670690ba99@linuxfoundation.org>
- <1417b57a-ac0b-4e8c-b157-bbe9ebb14e57@notapiano>
- <e73c745a-5e2f-46f3-806a-739cfde72e8d@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TJoNVcVDKEu77nwPjZZJVGiyoAajyYeEqvO3LMw1PJN5tFQ0eseQeItT1Q41ZC7KMvEfV45aQEivD8BEqtWI1IT7tNXNypgnLD6JwnukOTgGMoPW3HVlnaURyrHCSbeA2fdB9aKUGRm5s90J/nDd2UhGyp1PpbSZt4+X0B1SDWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p6TLCviy; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vIxJ9d7tmxDH2tQfYINrnWcP20UCiZxZZimj0EyFxIs=; b=p6TLCviySBKdIDFJzxXsnjUVVJ
+	bv8DOoPPcHDB2D+0aKzFXVBtT25P3IDF72Lf4xs/8vb07qREVQabQY436Jxf7pmJ4GGoLdORzIkPk
+	TFuTkS4WllYd7k6yXXn4uylaMWy8Fgtldp3f1rQKwMcF4UT3SH71WpzWdW8oYvpqVfFobF60C6q4L
+	JI/m8a2CjJKq22iASmLkcAKg/mQnjMIgxcNFhmOviQ7oKesYhvK3DL/kuT+OsPlexsNFcY1Y9NzMe
+	vYEVTrChnOkEnxm68jIyNEOKelMBXV2aOglMns/MpGLtaU46kYrWFZ3Rx4GRyUzZPIJEnePaBA/P7
+	3tLEV0XQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sSC8P-00000001GbO-1EGG;
+	Fri, 12 Jul 2024 09:00:09 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AE4FC30050D; Fri, 12 Jul 2024 11:00:08 +0200 (CEST)
+Date: Fri, 12 Jul 2024 11:00:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Mirsad Todorovac <mtodorovac69@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Peter Collingbourne <pcc@google.com>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] x86/syscall: Avoid memcpy() for ia32
+ syscall_get_arguments()
+Message-ID: <20240712090008.GA19796@noisy.programming.kicks-ass.net>
+References: <20240708202202.work.477-kees@kernel.org>
+ <20240711214450.GG27299@noisy.programming.kicks-ass.net>
+ <202407111500.B86485B3@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e73c745a-5e2f-46f3-806a-739cfde72e8d@linuxfoundation.org>
+In-Reply-To: <202407111500.B86485B3@keescook>
 
-On Thu, Jul 11, 2024 at 03:56:25PM -0600, Shuah Khan wrote:
-> On 7/11/24 15:44, Nícolas F. R. A. Prado wrote:
-> > On Thu, Jul 11, 2024 at 01:53:37PM -0600, Shuah Khan wrote:
-> > > On 7/10/24 15:49, Shuah Khan wrote:
-> > > > On 7/10/24 07:11, Greg Kroah-Hartman wrote:
-> > > > > On Fri, Jul 05, 2024 at 07:29:53PM -0400, Nícolas F. R. A. Prado wrote:
-> > > > > > Log errors are the most widely used mechanism for reporting issues in
-> > > > > > the kernel. When an error is logged using the device helpers, eg
-> > > > > > dev_err(), it gets metadata attached that identifies the subsystem and
-> > > > > > device where the message is coming from. This series makes use of that
-> > > > > > metadata in a new test to report which devices logged errors.
-> > > > > > 
-> > > > > > The first two patches move a test and a helper script to keep things
-> > > > > > organized before this new test is added in the third patch.
-> > > > > > 
-> > > > > > It is expected that there might be many false-positive error messages
-> > > > > > throughout the drivers code which will be reported by this test. By
-> > > > > > having this test in the first place and working through the results we
-> > > > > > can address those occurrences by adjusting the loglevel of the messages
-> > > > > > that turn out to not be real errors that require the user's attention.
-> > > > > > It will also motivate additional error messages to be introduced in the
-> > > > > > code to detect real errors where they turn out to be missing, since
-> > > > > > it will be possible to detect said issues automatically.
-> > > > > > 
-> > > > > > As an example, below you can see the test result for
-> > > > > > mt8192-asurada-spherion. The single standing issue has been investigated
-> > > > > > and will be addressed in an EC firmware update [1]:
-> > > > > > 
-> > > > > > TAP version 13
-> > > > > > 1..1
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `model_name' property: -6
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `energy_full_design' property: -6
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > >    power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
-> > > > > > not ok 1 +power_supply:sbs-8-000b
-> > > > > >    Totals: pass:0 fail:1 xfail:0 xpass:0 skip:0 error:0
-> > > > > > 
-> > > > > > [1] https://lore.kernel.org/all/cf4d8131-4b63-4c7a-9f27-5a0847c656c4@notapiano
-> > > > > > 
-> > > > > > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> > > > > 
-> > > > > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > 
-> > > > Is this dependent on a linux-next?
-> > > > 
-> > > > Didn't apply to linux-kselftest next.
-> > > > 
-> > > 
-> > > I tried applying these on top of linux-kselftest next which is at
-> > > Linux 6.10-rc7 + other patches.
-> > > 
-> > > I am not sure what is wrong - first patch applies and the second
-> > > and third don't.
-> > > 
-> > > git am fails and manual patch application worked for 2/3, same thing
-> > > with 3.3 - these should apply cleanly since they don't have obvious
-> > > conflicts.
-> > > 
-> > > Please clean this up and send me updated series adding Greg's ack.
-> > 
-> > Oh, now I see what happened. I recently sent another series that touches the
-> > same file (tools/testing/selftests/devices/test_discoverable_devices.py):
-> > "kselftest: devices: Allow running test on more platforms"
-> > https://lore.kernel.org/all/20240613-kselftest-discoverable-probe-mt8195-kci-v1-1-7b396a9b032d@collabora.com/
-> > 
-> > That was already merged through the usb tree, and is present on next (on which I
-> > based this series).
-> > 
-> > In this case I imagine it's best if this series gets picked through the usb
-> > tree, right? Even if I rebase on kselftest's next, there will be conflicts.
-> > 
+On Thu, Jul 11, 2024 at 04:10:43PM -0700, Kees Cook wrote:
+
+> The long answer is long, and comes in two halves: the language half and
+> the fortify half.
 > 
-> I see. No problem. It can go through usb tree
+> First, the C standard requires that all function argument arrays be
+> decayed to pointers, so your prototype is semantically handled as if
+> it were:
 > 
-> Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+> void syscall_get_arguments(struct pt_regs *regs, unsigned long *args)
+> 
+> The "6" is just totally thrown away by the language. :(
 
-Ok, taken through the usb tree now, thanks.
+Bah. I mean, I understand why, they *are* pointers after all. But to
+then also discard the object size is just silly. I mean, traditionally C
+doesn't give a crap about object size -- it is irrelevant.
 
-greg k-h
+But with alias analysis (which we switch off) and doubly so with this
+fortify stuff, you do care about it.
+
+So why throw it out?
+
+> *However* the compilers _will_ do things with it while generating
+> diagnostics, but only from the caller's perspective (code _inside_
+> has no awareness of the "6" unless the function has been inlined, sort
+> of). For example:
+> 
+> 	unsigned long toosmall[4];
+> 	...
+> 	syscall_get_arguments(regs, toosmall);
+> 
+> Produces:
+> 
+> <source>:60:5: warning: 'syscall_get_arguments' accessing 48 bytes in a region of size 32 [-Wstringop-overflow=]
+>    60 |     syscall_get_arguments(regs, toosmall);
+>       |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Makes sense.
+
+> But syscall_get_arguments() internally has no idea what size "args" is:
+> 
+> void noinline syscall_get_arguments(struct pt_regs *regs, unsigned long args[6])
+> {
+> 	report(sizeof(args));
+> 	report(__builtin_object_size(args, 1));
+> 	report(__builtin_dynamic_object_size(args, 1));
+>         memcpy(args, (typeof(args))&regs->bx, 6*sizeof(args[0]));
+> }
+> 
+> Which reports 8, SIZE_MAX (unknown), and SIZE_MAX (unknown) respectively.
+
+And that's just daft :/
+
+> And the language is so busted about this that there is actually a
+> diagnostic for "don't do that" that shows up with this code:
+> 
+> <source>: In function 'syscall_get_arguments':
+> <source>:53:22: warning: 'sizeof' on array function parameter 'args' will return size of 'long unsigned int *' [-Wsizeof-array-argument]
+>    53 |         report(sizeof(args));
+>       |                      ^
+
+:-( This just doesn't make sense. How can you be so inconsistent about
+things.
+
+What will actually break if you 'fix' this? Given that inlining (see
+below) changes the rules willy nilly, I feel we can (and should!) just
+fix this.
+
+> _However_, if we _inline_ the function, suddenly _bos and _bdos know
+> what's going on since they have visibility into the actual objection
+> definition:
+> 
+> void inline syscall_get_arguments(struct pt_regs *regs, unsigned long args[6])
+
+*sigh* yes ofcourse, inlineing in C is a mess, it really does change the
+meaning of what you've written.
+
+Combine this with the fact that 'inline' doesn't actually mean anything
+much these days because the compiler will do whatever it feels like
+anyway, and you've got a language that's like *really* hard to use.
+
+Hence our noinline and __always_inline attributes to force it where we
+need to.
+
+> Now it reports 8, 32 (8 * the "toosmall" array size 4), 32 (same: _bdos
+> falls back to _bos if there is no dynamic component). Note this is _not_
+> 6, but 4, the actual object size.
+> 
+> Using the newer arg-sized array prototypes using a named argument _does_
+> inform the internals, but that requires changing the calling convention
+> for what is supposed to be a fixed size, and only behaves at runtime,
+> which is just silly for compile-time fixed sizes. For example:
+> 
+> void noinline syscall_get_arguments(struct pt_regs *regs, int n, unsigned long args[n])
+> ...
+> 	syscall_get_arguments(regs, 6, toosmall);
+> 
+> Does report the expected things for _bdos internally (48), but not for
+> sizeof (8) nor _bos (SIZE_MAX). Of course if we inline it, _bos starts
+> working and, along with _bdos, realizes it was lied to, and reports
+> 32 again.
+
+WTF ?!?! How can all this be so inconsistent and why are people okay
+with that?
+
+> For the patch in this thread, the W=1 case was reported (overread of
+> "bx"), because normally fortify would just ignore the overread of
+> the source.
+
+So I'm not entirely sure I agree with that argument. Yes, &regs->bx is
+'unsigned long *' and sizeof(unsigned long) is 8 (if we assume 64bit).
+However, you can also read it as the point of pt_regs where bx sits --
+which is a far more sensible interpretation IMO.
+
+Because then we're looking at struct pt_regs and an offset therein.
+
+> Finally to answer your question about working around this case, _bos/_bdos
+> will see right through the casting because it operates on the actual
+> object behind it. (And casts to an array type are illegal too.)
+> 
+>     unsigned long args[6];
+> 
+>     report(__builtin_object_size((typeof(args))&regs->bx, 1));
+> 
+> <source>: In function 'show':
+> <source>:76:34: error: cast specifies array type
+>    76 |     report(__builtin_object_size((typeof(args))&regs->bx, 1));
+>       |                                  ^
+> 
+> And a (char *) cast doesn't work: _bos(1) reports 8, the size of bx. Using
+> locals doesn't help either:
+> 
+>     void *ptr = (void *)&regs->bx;
+> 
+>     report(__builtin_object_size(ptr, 1));
+> 
+> Still 8. And ultimately this is good, since fortify will see through to
+> the actual object that could get overflowed, etc. It's the behavior we
+> want for the overflow defense.
+
+So really pt_regs *is* an array of unsigned long, and I feel it is
+really unfortunate we cannot express this in a way that is more concise.
+
 
