@@ -1,134 +1,228 @@
-Return-Path: <linux-kernel+bounces-251218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB2F93023A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:47:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7519B93023D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5687B283961
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:47:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F101C212F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC74762FF;
-	Fri, 12 Jul 2024 22:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9753C7F7FB;
+	Fri, 12 Jul 2024 22:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZW5+6xRc"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="eJMIpkTi"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABF451C21;
-	Fri, 12 Jul 2024 22:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60876F085
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 22:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720824464; cv=none; b=uLxrSTP6mQ4uFXGKr/W1TEjQ7Kr9d0Nk/VzUTN/KazpqDm+ml9AL4QogN43JZNoqKKiZX12ILGT30TTt8vM0HX9j+IXrqMqU0mVjkSy1hiVQ9+Kmk/nQpHOIh4KrKZrUOxdltlZb76R4w5qSQwmPX+gAz+ayaRizKEKb7gaBKvA=
+	t=1720824567; cv=none; b=n3rjL6xhtY3xkXBSMBLLUohRSoyX26wPPGTx13rNpi2JzoyvN5+kYaogHH11vcuVEykz4UwKE+d8AKn8rQS1gB/jkwpxLx9kMxlzc8RDIMEHlNANm9+dxXzAe97hHt+6C+pD7jYg4SOqpaDrPdoeR31djjXyB5DTUpQKk4RwT64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720824464; c=relaxed/simple;
-	bh=93N5LhNbppX6DibUZOyQ9a4CYvTrdXRCEM5Ojg9KJEI=;
+	s=arc-20240116; t=1720824567; c=relaxed/simple;
+	bh=yzrZqcsuq4CzUEEp7agdi5M1qVJCH/6gW70AV7UgS5M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e86Lt4qfG7+7W0cTUZqqQByAlXSe62E7vN4MtMYgjsZeqw0YVrP1SPsLto/l1Lg2URH5dDphWrrWKkPYHyCQ8wjQ8OIUICKmnhccunvtRhHd2Jk0qXyn2s9up/JIwMGifily68p67tY91+Nja9MwYuXmhCLnkx8IhPnjIXjDCUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZW5+6xRc; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b2c95b6c5aso13222576d6.2;
-        Fri, 12 Jul 2024 15:47:42 -0700 (PDT)
+	 To:Cc:Content-Type; b=svR/jXzvpLnTPfEKOreGyP1StNWK/NtU5XPaj26f2swxMtScckDS+vSl8tEQiSIKHmTY0ON+xZJNy+L1q2X9ip4M+5SLlP3RGhCC+Oi6+Q76Qm3FGf+otUPROMM3v80MKe8zwrqZIc1/M7P9nQ7g+4MoKN76/pfwaNHcEt3VAX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com; spf=pass smtp.mailfrom=kylehuey.com; dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b=eJMIpkTi; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylehuey.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eeb1ba040aso31497711fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:49:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720824461; x=1721429261; darn=vger.kernel.org;
+        d=kylehuey.com; s=google; t=1720824564; x=1721429364; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5ngiJf14XEWABtOeJ3ozB6Gsd22dnKoZDQl3XHj467I=;
-        b=ZW5+6xRcNorfAjVn+i/5X+xVOynbXHoTm8NrMsMERnxr8/iUB1ZO0tHYn9Qc0fcV6/
-         THBnZ1eoEMO2p0/EAJO5/4HSr+gYjr21/SE24c9ts8jn5a6s3D0FyXjZ5f6lFQ3nj4fD
-         bvXZHPH4jL9yBjOkNZzZRC8L8gJ5FkvZB2CN75TOCrJEeK6ewRgzyEsozowZON9g001N
-         pBi/1y5Aj0DBw9q//MRvrJonDoQfXjp9LQjmN3h/Ua0Kzt+pnSAgOfdvMw5hvHKU5lpp
-         BdBDjSYAWr8IQIPtaxKl+h6lZv4KnY49rX8teqe9t92Nnfk2xXMx+ULg8rXPgfz1gJEP
-         Mb7A==
+        bh=iNbG9SPw6ODdqm0X1D1P5bIp1TAPpaaOK+IcIxDrqlA=;
+        b=eJMIpkTikkEt1IEhNVOJSF0qjn7LsbHJirBjROi3lfMRkK1+n/TQiVRjyfbOeqDF5a
+         49W+lhLYoAVIPxe+H2TPstwePMhbWhLxMw/LIChAC6v2zqHWovkTINrVRCWf+xDhrQG5
+         qRPvgst+nc5cjJJpr6GmhLbcV2CECEmAF6Uu7/p6sLtvZVbujq98qoflVwUwbU5EzIwK
+         Ra5TmuMBIchekmL4J+74NtPb7KXghbseixjbvPsvx3UygsV7KoIOPdX7myCVMsHnyuOa
+         w9uwt/ag2ofLGaCWTfGtOiLR4kjGmaZKVN5VRBPPUNqzT7i/1qAjofL0FscCLG4No8di
+         YLWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720824461; x=1721429261;
+        d=1e100.net; s=20230601; t=1720824564; x=1721429364;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5ngiJf14XEWABtOeJ3ozB6Gsd22dnKoZDQl3XHj467I=;
-        b=AEX9y//DycfgihFjxG+DVjjVJ2/grhEwt01LKfmw6TGGVdQiAkWDeZQB2brbCti14j
-         IX/IZonRVmXW6XiTI8MEGe1lXf0MkF5ZtDQ1xSN0FN2KK+CPRMoX0ed2YXfcRwTRJkiU
-         u7ewW4UJisuhnCeNQQwAcPK7tky1TkLz2KLRhhJwVSQ4rDc42F2+dVeQEMDsORAtJDJJ
-         SpSNHUSrMAms3AL1CL+8uzLl+ugAQpP/bkSpVAteDM4QrJItTdUFQ+SVDJcQFpi1FDI+
-         vJRx2ntAWxNKIOBbnxKsXAX9r+rV6uOWibb0qdkoiI3zrsww+xSkdXq0Lvg/6/PLFiTp
-         buJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUANOk6fv4f/46u2UUM6BTftF4bFiS8tSY+gaP7HZw0Vawv49xVKj21iOlDXT/+dljzcmCe3NU/g871YvjxyrvcCd49BwjRf3DJI3jbrraQG38uo3BsCC7tGh8Zhm7tqZG3yvP7ho4D
-X-Gm-Message-State: AOJu0Yy1qX84c5TJu2njf0RwVZNTF87dZ61G9k+iiHkNa8X4zCtLPGkD
-	yBKVNee12fjmTvwGb61rC3SUvG9ZKjVud7CIagp67VgMfinHfX9WfPTngMVHYrAtZwN0EaEgipV
-	RKvrM9zcAK1ZjULkM8yEkDh6mnJg=
-X-Google-Smtp-Source: AGHT+IGTFXf8puoeZ5MyN9OXLWTgTyU6STMwzKLWRJXmrpsdd3JWi3k+aSwvASu4YXbdUjpZiK89WwJzJgF/GnYNF80=
-X-Received: by 2002:a05:6214:1c86:b0:6b5:dd7d:f899 with SMTP id
- 6a1803df08f44-6b61bc7e962mr146069556d6.1.1720824461341; Fri, 12 Jul 2024
- 15:47:41 -0700 (PDT)
+        bh=iNbG9SPw6ODdqm0X1D1P5bIp1TAPpaaOK+IcIxDrqlA=;
+        b=Q+zmJWuHNivqrDLMd6vyqTE9LYcal32+4wqGDd85cSqf67Msw2fDFUrmDIbMKBr6LB
+         UZ08d5tfobgBE85EGvBFS6T0wpwTKt/5TYdskyq4lcRSA13tpL8tTXnUoFxzodERHfey
+         1h0QSxZlt2VgpWBECoW55VRmE8jHzBaNiNKG82Um9xa0IG8j3vUH3Vdkno7GxWhPNUGj
+         0c0bGI5W+C4qVWW2asCQvjgSjMg6uHDv5qjStMyaQ4e2hnhKqf0LIXtpDTs4yOCMd6+o
+         rM4bSitOpnSBNbMwfXPydKRCfYfJRqpG2X/54a1YUt3cFGXDs7GQKeOWwdFlB2lsNy1G
+         cg8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXjorS4vfxGWsfYLdzMjc52CozEJg2peqvvVaAEM/X9tGPVJZVQIQea3r8X6S0FVOzUvBmL9Kt4KD8JI6HLi8cLtpPPgQate7tnykbQ
+X-Gm-Message-State: AOJu0YxhJHMAweyVSqmU3tgzUHudnEPeszrN3xdkneVfIr7EFR39bUGG
+	rOXuJnalqmHQUZacPnVtSdghaITxKPK5KGOZG1OdHuut4ixfBpcVRtxCXxMKHihYO6bfS5WNrS9
+	wuKZDB6t5aMWH7AanYIDM0nc9kr8FozqMWiXh
+X-Google-Smtp-Source: AGHT+IFQTYMXfqyYBs8TBsM8FGOvJi8uuLScFLRKAzHQL5X7ONHmwQeJ/BxhMJmn063fY3YFc597TbdshfS7b5JGoXU=
+X-Received: by 2002:a05:651c:198c:b0:2ee:46ec:60bc with SMTP id
+ 38308e7fff4ca-2eeb30fc98amr101773481fa.27.1720824563679; Fri, 12 Jul 2024
+ 15:49:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706022523.1104080-1-flintglass@gmail.com>
- <20240706022523.1104080-6-flintglass@gmail.com> <0afc769e-241a-404e-b2c9-a6a27bdd3c72@linux.dev>
- <CAPpoddfySkGpD5hKgqUAAMgMp2vWcivg1AzcyYh_NP1-ZsGkug@mail.gmail.com> <cc5ba793-59a4-4904-a1b3-723ebaa3a93e@linux.dev>
-In-Reply-To: <cc5ba793-59a4-4904-a1b3-723ebaa3a93e@linux.dev>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 12 Jul 2024 15:47:30 -0700
-Message-ID: <CAKEwX=Oqe8qz0YKi1pJaEgXAPC-7cXg7_NRfXb1_0VJp35X7AQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] mm: zswap: store incompressible page as-is
-To: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: Takero Funaki <flintglass@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Yosry Ahmed <yosryahmed@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <ZpFfocvyF3KHaSzF@LQ3V64L9R2> <ZpGrstyKD-PtWyoP@krava>
+In-Reply-To: <ZpGrstyKD-PtWyoP@krava>
+From: Kyle Huey <me@kylehuey.com>
+Date: Fri, 12 Jul 2024 15:49:10 -0700
+Message-ID: <CAP045ApgYjQLVgvPeB0jK4LjfBB+XMo89gdVkZH8XJAdD=a6sg@mail.gmail.com>
+Subject: Re: [bpf?] [net-next ?] [RESEND] possible bpf overflow/output bug
+ introduced in 6.10rc1 ?
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	netdev@vger.kernel.org, acme@kernel.org, andrii.nakryiko@gmail.com, 
+	elver@google.com, khuey@kylehuey.com, mingo@kernel.org, namhyung@kernel.org, 
+	peterz@infradead.org, robert@ocallahan.org, yonghong.song@linux.dev, 
+	mkarsten@uwaterloo.ca, kuba@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 9, 2024 at 6:26=E2=80=AFAM Chengming Zhou <chengming.zhou@linux=
-.dev> wrote:
+On Fri, Jul 12, 2024 at 3:18=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
 >
-> On 2024/7/8 21:44, Takero Funaki wrote:
-> > 2024=E5=B9=B47=E6=9C=888=E6=97=A5(=E6=9C=88) 12:56 Chengming Zhou <chen=
-gming.zhou@linux.dev>:
+> On Fri, Jul 12, 2024 at 09:53:53AM -0700, Joe Damato wrote:
+> > Greetings:
 > >
-> >>>        comp_ret =3D crypto_wait_req(crypto_acomp_compress(acomp_ctx->=
-req), &acomp_ctx->wait);
-> >>>        dlen =3D acomp_ctx->req->dlen;
-> >>> -     if (comp_ret)
-> >>> +
-> >>> +     /* coa_compress returns -EINVAL for errors including insufficie=
-nt dlen */
-> >>> +     if (comp_ret && comp_ret !=3D -EINVAL)
-> >>>                goto unlock;
-> >>
-> >> Seems we don't need to care about? "comp_ret" is useless anymore.
-> >>
-> >> Just:
-> >>
-> >> if (comp_ret || dlen > PAGE_SIZE - 64)
-> >>          dlen =3D PAGE_SIZE;
-> >>
-> >> And remove the checkings of comp_ret at the end.
-> >>
+> > (I am reposting this question after 2 days and to a wider audience
+> > as I didn't hear back [1]; my apologies it just seemed like a
+> > possible bug slipped into 6.10-rc1 and I wanted to bring attention
+> > to it before 6.10 is released.)
 > >
-> >>
-> >> We actually don't need to hold mutex if we are just copying folio.
-> >>
-> >> Thanks.
-> >>
+> > While testing some unrelated networking code with Martin Karsten (cc'd =
+on
+> > this email) we discovered what appears to be some sort of overflow bug =
+in
+> > bpf.
 > >
-> > Thanks for reviewing.
-> >
-> > For comp_ret, can we consolidate all possible error codes as
-> > incompressible data?
+> > git bisect suggests that commit f11f10bfa1ca ("perf/bpf: Call BPF handl=
+er
+> > directly, not through overflow machinery") is the first commit where th=
+e
+> > (I assume) buggy behavior appears.
 >
-> Maybe we still want these debug counters? I'm not sure.
+> heya, nice catch!
+>
+> I can reproduce.. it seems that after f11f10bfa1ca we allow to run tracep=
+oint
+> program as perf event overflow program
+>
+> bpftrace's bpf program returns 1 which means that perf_trace_run_bpf_subm=
+it
+> will continue to execute perf_tp_event and then:
+>
+>   perf_tp_event
+>     perf_swevent_event
+>       __perf_event_overflow
+>         bpf_overflow_handler
+>
+> bpf_overflow_handler then executes event->prog on wrong arguments, which
+> results in wrong 'work' data in bpftrace output
+>
+> I can 'fix' that by checking the event type before running the program li=
+ke
+> in the change below, but I wonder there's probably better fix
+>
+> Kyle, any idea?
 
-I'm a bit torn, but ATM I have no strong opinions on these two error
-codes. If you do decide to consolidate these two, may I ask you to
-separate it into its own patch so that we can review + discuss it
-separately?
+Thanks for doing the hard work here Jiri. I did see the original email
+a couple days ago but the cause was far from obvious to me so I was
+waiting until I had more time to dig in.
+
+The issue here is that kernel/trace/bpf_trace.c pokes at event->prog
+directly, so the assumption made in my patch series (based on the
+suggested patch at
+https://lore.kernel.org/lkml/ZXJJa5re536_e7c1@google.com/) that having
+a BPF program in event->prog means we also use the BPF overflow
+handler is wrong.
+
+I'll think about how to fix it.
+
+- Kyle
+
+
+> >
+> > Running the following on my machine as of the commit mentioned above:
+> >
+> >   bpftrace -e 'tracepoint:napi:napi_poll { @[args->work] =3D count(); }=
+'
+> >
+> > while simultaneously transferring data to the target machine (in my cas=
+e, I
+> > scp'd a 100MiB file of zeros in a loop) results in very strange output
+> > (snipped):
+> >
+> >   @[11]: 5
+> >   @[18]: 5
+> >   @[-30590]: 6
+> >   @[10]: 7
+> >   @[14]: 9
+> >
+> > It does not seem that the driver I am using on my test system (mlx5) wo=
+uld
+> > ever return a negative value from its napi poll function and likewise f=
+or
+> > the driver Martin is using (mlx4).
+> >
+> > As such, I don't think it is possible for args->work to ever be a large
+> > negative number, but perhaps I am misunderstanding something?
+> >
+> > I would like to note that commit 14e40a9578b7 ("perf/bpf: Remove #ifdef
+> > CONFIG_BPF_SYSCALL from struct perf_event members") does not exhibit th=
+is
+> > behavior and the output seems reasonable on my test system. Martin conf=
+irms
+> > the same for both commits on his test system, which uses different hard=
+ware
+> > than mine.
+> >
+> > Is this an expected side effect of this change? I would expect it is no=
+t
+> > and that the output is a bug of some sort. My apologies in that I am no=
+t
+> > particularly familiar with the bpf code and cannot suggest what the roo=
+t
+> > cause might be.
+> >
+> > If it is not a bug:
+> >   1. Sorry for the noise :(
+>
+> your report is great, thanks a lot!
+>
+> jirka
+>
+>
+> >   2. Can anyone suggest what this output might mean or how the
+> >      script run above should be modified? AFAIK this is a fairly
+> >      common bpftrace that many folks run for profiling/debugging
+> >      purposes.
+> >
+> > Thanks,
+> > Joe
+> >
+> > [1]: https://lore.kernel.org/bpf/Zo64cpho2cFQiOeE@LQ3V64L9R2/T/#u
+>
+> ---
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index c6a6936183d5..0045dc754ef7 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -9580,7 +9580,7 @@ static int bpf_overflow_handler(struct perf_event *=
+event,
+>                 goto out;
+>         rcu_read_lock();
+>         prog =3D READ_ONCE(event->prog);
+> -       if (prog) {
+> +       if (prog && prog->type =3D=3D BPF_PROG_TYPE_PERF_EVENT) {
+>                 perf_prepare_sample(data, event, regs);
+>                 ret =3D bpf_prog_run(prog, &ctx);
+>         }
 
