@@ -1,247 +1,106 @@
-Return-Path: <linux-kernel+bounces-250463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBE692F81E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:41:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7434492F82B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74D0285052
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E6441F23E27
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDBA156971;
-	Fri, 12 Jul 2024 09:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F6214B978;
+	Fri, 12 Jul 2024 09:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="paLaA0pZ"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="EvOYAsIa"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A398C155735
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2134B13D51E;
+	Fri, 12 Jul 2024 09:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720777269; cv=none; b=OBLhMuebUUptSqeaik8ZhjiaKwvsWr276CVeV1PdWzzWCL/9rqwnZsxp0Br4x5lSnRbMuLEkPF5rViKJ9BwymVu8cvdvMrtGdIZ/49EFi1rrTH/MTMQzyq0GpYOLCFGEUtX6fFrIXiKfXb1Ulms+r0GnF/hs6Itkki1Q/I8GZsg=
+	t=1720777462; cv=none; b=YZPsgXLv5gz9XfdKwslPIWhyScoInYjChYv/vibo1ONbMxFmFRvNQjT/hbATU21iXLxWxrW1F4Rmtd5pRjHAgZ7QhZXOE8WUwi78LSw5XQb5Q6iaH9RL5jlw7STvWYMYKuJLRYFcuRMlQAqIGMb4CbsGTQk9VMVIZEYRTssB2j8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720777269; c=relaxed/simple;
-	bh=lP/NXfk3Az1Fxv0p95F6EcTegJ4Jy3/k9NUrssWZaK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RB7qLsThlenlejHD1PRgmyZJyANI9SsHBMIs4tvpLW+FnG+hybVjxhrfuhLeKEq76dUM8GoiaiChrhCzsOZoJoPlo0q/SvD/lQHuuBgd8yaXAnafFln36d8ODmsIUINmgQlecnW1DDcCz/dATgdIWkBPjVN95PQa8hWCAW4OU/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=paLaA0pZ; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4265c2b602aso11968295e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720777266; x=1721382066; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9cim3kTnG+uAdFS+huiCL6rzqD8JsA5JCt8clCGoh+w=;
-        b=paLaA0pZfzod2lMg2NxTN9UykT/Gq7xi7sTEqlIhS/O8LAb9YDkKYFdJGzTzYRiiNZ
-         KVvQQ8OcgrEdQDZXJdBPmD2N7iQhxjKqBBcDumq6nXtqafjJU7K20f5p0jfS0+vXUspH
-         V0Dp9P/XdSfPuOux32G+MLWrK2hayRBNr5s/IZ1IU2PrR3wTJN9ir7fjGOopUU3G5Jqc
-         W1o/kKg1zvKqE9J+cHQl+jT8DBphw92AvyPYq5Y9ayNviq/FvDqBPnri9L/gy1YQK4mI
-         O3irwixpaAajVgz5mabONe3AXAW4UcWmQ9QRVtAOlI2d0x1xh+WcLY5i8LQLG7bL2qKm
-         2+Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720777266; x=1721382066;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9cim3kTnG+uAdFS+huiCL6rzqD8JsA5JCt8clCGoh+w=;
-        b=QTocKH+BiSA+3nOogImlDffV1q6KyN/ooW3Qow3bcVvTQ7pkfNcQEbYdiw6BUmzwEj
-         5xf6LU8e0qKJfFEu7tvwLvUMBFRLNCygWccqv1yQ4uUhTZcc33OAbpcLgrWmOTXr1zUU
-         Nt1sUL9pDnq4U6/tsC+CabpdCzPUs5w8i9tibq88vc/iMwOQ95Us6YLztjaCcaECHLLV
-         o77/Y7VDiq/LRxZA8ggN0vTchiPtNeJ/v2ttQShhYpMRF18729xn12vt15yxoPNPEo6o
-         cCuwITJycXNWum9XJo2DgOIffupdf6GBKZ1RneccEM9QIfaLX58Ob6f2f5YRRfhTd93S
-         loNg==
-X-Forwarded-Encrypted: i=1; AJvYcCViFYdBzSg1IEMjxwa4fuRbi231yl9hEEdUHtk/tx7xx8eIm0Z2XxJdD+SjDJ93fx+tv4dnm85zQ2naugynPSp5AGWreJ9PVgaNgs4l
-X-Gm-Message-State: AOJu0YyvkzRtEAtAN/EzYePRAj0J1oyh+ind0Uym01wzCxJ5nLDb99ta
-	FDVyvhQhTBjwE4dTU0EDbEZRJj/q8nbrptbucu8QezNf5gvbv/eBLKQZiXffX3w=
-X-Google-Smtp-Source: AGHT+IG41/cUWWFH60QXrnFgYOhb3mS6IQfWyMP/e6KJ2vD98NIDINkh+l1XAFN4MUuyg3E3huUWQQ==
-X-Received: by 2002:a05:600c:460a:b0:426:51d1:63c3 with SMTP id 5b1f17b1804b1-426708fa8e2mr70579945e9.38.1720777266022;
-        Fri, 12 Jul 2024 02:41:06 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f268295sm17098945e9.20.2024.07.12.02.41.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 02:41:05 -0700 (PDT)
-Message-ID: <73038a80-ce58-4967-a258-d6befe23c777@linaro.org>
-Date: Fri, 12 Jul 2024 11:41:03 +0200
+	s=arc-20240116; t=1720777462; c=relaxed/simple;
+	bh=q13i1UrJbetK34WE2V5NdO5LnYAjKeg/a8WeJvLRFjo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uvkWQQz0KFbqtJYDvFaT6tkI0lJZ67NAMWMAjUp2QAsIBtM8AiEH2zSglslC3UHKqC5Jo/07FOqTd+g+3E+KCLMuYuZ75YvwGWpbcrexGaxlFUaBpS2jmNb3mWyUrlcTz7FP5FPgFjvHlkyV1swuxlmnjj4Nix1pG/dslEUgaoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=EvOYAsIa; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=sDiUZ4QoH7yxeVq4sOH+f1iqy4IHQrCh16bS9Hu+pw8=; t=1720777459; x=1721382259; 
+	b=EvOYAsIanIjfp/bvdXJj749oc7pauSuKW4wiwCTuhFlgbq7A+iKtF7Vzd22Pnc3dXmhbjikD2LV
+	/7vIWQfDGCeOecbb/295ctLN2aL0yE1UncV20v+4iEdgVh6AQIhAC2FIBLl0wBAh2s/1xEU8v6ycC
+	HG1mPLMeawuw0KjF3AuN0fRiI7X1+W5j/PCauwEZvrCCZgw9l0H6LWiLoK2FhAZBRQFnLCQ+X9dsT
+	8pcm05IfhTEkkKF0xUnibdyEQDTADXbzpDgIbMLGpwgUycAFRRNSI3M/LlWXtRM0Nf7IsVjsg5GkS
+	v/2/N1YiXrUvtQkJjQ8VNIgJ3i+ODwiT5arQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1sSCp5-00000000KCN-3kgO; Fri, 12 Jul 2024 11:44:15 +0200
+Received: from p5b13a475.dip0.t-ipconnect.de ([91.19.164.117] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1sSCp5-00000000RTp-2shE; Fri, 12 Jul 2024 11:44:15 +0200
+Message-ID: <d2f868b2184bf05e782374d4316a4ed4c1e4fe2c.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v3] sh: Restructure setup code to reserve memory regions
+ earlier
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, 
+	ysato@users.sourceforge.jp, dalias@libc.org
+Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
+ robh+dt@kernel.org,  kernel@quicinc.com
+Date: Fri, 12 Jul 2024 11:44:15 +0200
+In-Reply-To: <fd55bf91-cc59-403f-bbba-88b63c8535df@quicinc.com>
+References: <20240520175802.2002183-1-quic_obabatun@quicinc.com>
+	 <47f3716dd48ecdc35d823fbab087332fbf3a24d5.camel@physik.fu-berlin.de>
+	 <fd55bf91-cc59-403f-bbba-88b63c8535df@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: incomplete-devices: document devices
- without bindings
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Marek Vasut <marex@denx.de>,
- Jonathan Cameron <jic23@kernel.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-References: <20240711085930.26252-1-krzysztof.kozlowski@linaro.org>
- <CAL_Jsq+WdctoTMNoakiY5kh4nDoNx5h522s76LoHyD_yKYvvSg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAL_Jsq+WdctoTMNoakiY5kh4nDoNx5h522s76LoHyD_yKYvvSg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On 11/07/2024 15:01, Rob Herring wrote:
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
->> +      - description:
->> +          Rejected compatibles in Devicetree, but used in ACPI-based devices
->> +          with non-updatable firmware/ACPI tables (via ACPI PRP0001)
->> +        enum:
->> +          - broadcom,bcm5241
->> +          - ltr,ltrf216a
->> +
->> +      - description: Incorrect compatibles used on Macintosh devices
-> 
-> They were correct at the time. Rules/standards evolve though. I would
-> just say 'Legacy" rather than "Incorrect".
+Hi Oreoluwa,
 
-ack
+On Thu, 2024-07-11 at 14:50 -0700, Oreoluwa Babatunde wrote:
+> Thanks for taking a look and testing the patch!
+>=20
+> I have made the changes you mentioned and
+> uploaded the new version of the patch here:
+> https://lore.kernel.org/all/20240711214438.3920702-1-quic_obabatun@quicin=
+c.com/
+>=20
+> Please let me know if you need me to do anything else.
 
-> 
->> +        enum:
->> +          - adm1030
->> +          - bmac+
->> +          - heathrow-media-bay
->> +          - keylargo-media-bay
->> +          - lm87cimt
->> +          - MAC,adm1030
->> +          - MAC,ds1775
->> +          - max6690
->> +          - ohare-media-bay
->> +          - ohare-swim3
->> +          - smu-sat
->> +          - swim3
->> +
->> +      - description: Incorrect compatibles used on other PowerPC devices
->> +        enum:
->> +          - 1682m-rng
->> +          - IBM,lhca
->> +          - IBM,lhea
->> +          - IBM,lhea-ethernet
-> 
->> +          - mpc5200b-fec-phy
->> +          - mpc5200-serial
->> +          - mpc5200-sram
-> 
-> Tell Grant he needs to document these. ;) JK
-> 
->> +          - ohci-bigendian
->> +          - ohci-le
->> +          - ohci-littledian
-> 
-> Given the typo, I think we can just drop this one from the driver.
+Perfect, thanks a lot! I will retest this updated version as well as review
+it and then add the R-B and T-B tags, then merge the patch this evening.
 
-Sure, I'll send a patch. It could affect some ancient user, though...
-Although I really wonder if any of these PowerPC boxes are still alive.
+Thanks a lot for your patience!
 
-> 
->> +
->> +      - description: Incorrect compatibles used on SPARC devices
->> +        enum:
->> +          - bq4802
->> +          - ds1287
->> +          - isa-m5819p
->> +          - isa-m5823p
->> +          - m5819
->> +          - sab82532
->> +          - SUNW,bbc-beep
->> +          - SUNW,bbc-i2c
->> +          - SUNW,CS4231
->> +          - SUNW,ebus-pic16f747-env
->> +          - SUNW,kt-cwq
->> +          - SUNW,kt-mau
->> +          - SUNW,n2-cwq
->> +          - SUNW,n2-mau
->> +          - SUNW,niusl
->> +          - SUNW,smbus-beep
->> +          - SUNW,sun4v-console
->> +          - SUNW,sun4v-pci
->> +          - SUNW,vf-cwq
->> +          - SUNW,vf-mau
->> +
->> +      - description: Incomplete and incorrect compatibles for unknown devices
->> +        enum:
->> +          - electra-cf
->> +          - i2cpcf,8584
->> +          - virtio,uml
->> +
->> +      - description: Linux kernel unit tests and sample code
->> +        enum:
->> +          - audio-graph-card2-custom-sample
->> +          - compat1
->> +          - compat2
->> +          - compat3
->> +          - linux,spi-loopback-test
->> +          - mailbox-test
->> +          - regulator-virtual-consumer
->> +          - unittest-gpio
->> +          - unittest-pci
-> 
-> We recently added "test" as a vendor prefix and don't complain if
-> "test,.*" compatible is not documented. It's on my todo to change
-> these. So I'd drop the unittest ones.
+Adrian
 
-Ack
-
-Best regards,
-Krzysztof
-
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
