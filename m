@@ -1,137 +1,138 @@
-Return-Path: <linux-kernel+bounces-250232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D704F92F585
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:26:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2522C92F586
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D2DF1F22A58
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:26:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C341F21FC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFF313D539;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FEA13D603;
 	Fri, 12 Jul 2024 06:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="VvK2WtOX"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CSdNAIg8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC3B17BBE;
-	Fri, 12 Jul 2024 06:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5E813D2B5
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720765595; cv=none; b=OXZM+32B7LTg/jFodhJidOVuoGsenNa7bEMSD66i55IPr5CY9N6Baom0x6lxG6HaRu/56H7EkVv7+/JusqfLY3aou49tTF0XnZykEbxaGpP3kmfLikmvKUP14cYASMSVEvY5jzcXToq5U6evdF9Vf4amUPP16FcDNF+paFYE14g=
+	t=1720765595; cv=none; b=VQlRMICFsTGtmTdDb9VcNIm98nTeHO1mNL0y8dsf8KSXAhx2v+fP/Plp69S+asV5DXxkvutFOMgrM6/OZJsiE12azoYfqI1buVg6zMU0tUfrviM+FQ1Dr97pqvXLbEnczKZzJ9a5DJTmdWWc8gdxL5PgUNpikJUr65uxm8x6ZKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720765595; c=relaxed/simple;
-	bh=TmSLg3cGo8e+RfLvNoIr5p2SU527l8ZLtxxAgdMewyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KVp3qNZZufAMbuHiDnHh9/MzqxbzlXgy5M8ym5TGbCSzFiuxPvgnyN4uXiSzqyJd104WeHwrVuUBBcC8JV6urIokkAN0kXePniUloOrP/4+lj8E/GP/XHbQ4KVL7oDjrQzv7OI7ZIpEA3KKcN61gW4SU2Ni71jhprUaWVeP41jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=VvK2WtOX; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1720765579; x=1721370379; i=wahrenst@gmx.net;
-	bh=TmSLg3cGo8e+RfLvNoIr5p2SU527l8ZLtxxAgdMewyo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=VvK2WtOXwkIH86PI/FIG6CW9xhznvkL88pY+uoa2fYIlQbF2+44xMrcjKvqKGkMp
-	 ZE5TAtEFAW+piTo6mQ7ZcZd7d1Kh2bA8n4tgRpQ24gT48EfeDFoQ1y24DMYQ0Jtm/
-	 /G1BmFx6kCiaUYwjr6LmkOWwRytMMNXZ9XCpCBZOd7Zzhtv4vT2X1ST7mvbZBTip2
-	 S/tpkZqxAIM6YyH+DcXG0dgv9mFV4CoP2Bzo0E4FGL9e3ofXajzGXlYHi4KfoCORJ
-	 ASs1aVp73C1/dnNuz0jKkfNlaCUOO76PX8BrF6Kj5qBMqZ2FdSji8gZYHg7CRKw9c
-	 qb4BmBotUhgRvhpAHg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MBm1e-1seHDy3ly0-00E9ed; Fri, 12
- Jul 2024 08:26:19 +0200
-Message-ID: <78119193-98b7-446f-82d6-37884a5b03ad@gmx.net>
-Date: Fri, 12 Jul 2024 08:26:17 +0200
+	bh=u6FNmlZeQMto0upixwU3exVMCHI8HT2oAnTcwPvWRSY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tQKvOFHpwHPb72O1hNsX7MsQ6VZCkNvJDicWqBrgPbCamwCL6h0NPvxPT6/ZBYXQiLcQjJLnCzFyXZKmxKAjpKotejYxylXfomSgsidXuZpEfVjGzzBoDPNHfxshb87voftiXviHnnyWW9LhgqPA7JUBzFzSTlGliYa+XxMxAQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CSdNAIg8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720765593;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9a5IayKbXBKJrNi/QMZz5s0Prw5V2adYI5z3/V5xH40=;
+	b=CSdNAIg8KOETOlz1x/TX16d1L93YNSyEDD4uj38DEjjL9wP2RIKskPubZDohHVt10oYJur
+	nNcevPFAJE3vmkaH+7nd4kOgE47VWPduZVc46YM1KdF8GsaUqOCHLBM9J4h0xaECdSPXmo
+	6vrRNRJEqb8bdZYrycZZyNgjbHbpHcU=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-628-r2lohZS6PbKmIl5snPI1bw-1; Fri, 12 Jul 2024 02:26:28 -0400
+X-MC-Unique: r2lohZS6PbKmIl5snPI1bw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4266fcb3166so730635e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:26:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720765587; x=1721370387;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9a5IayKbXBKJrNi/QMZz5s0Prw5V2adYI5z3/V5xH40=;
+        b=T0LggSUTW/z95BhRh1pEH1GYl/xwMYOnjQAjDn1ku4Oqb+E+YFZPctTJh/rv3uU1nQ
+         rdKoTfryCB7ZPVW4AQeVc366tDYPFi3VX5nddGPxICteJvW3rXfGmkzRXPSI5RHJtR5e
+         N3uopK/RVOjssf7nK/5+jS2VhFGGGvq/OjSHFnR1Fcd1y2vDV+DEl2/59djyoH4uhsaS
+         YvBjxTAFWZVZVCx/Sh6J5TLYeCb2vaaSQdxOZqLIf/yutWDKWmF+Eb2p3ULExnmWoiDS
+         LtPpa3ggqbE/Z1lEq9+pc5akSI/0unjMtQnhBfWCvfWagRyTKHM64qshZwhRXg2EjdEq
+         dfbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPAvD0VcL9Ynm4+8NLS/6MqJwDceE8g1gSKPDhtSvlBVpWhaKIbmKCjrVVSj/vO0hOwn7QNfVaJ/434WFe00HRFID/rNKFfWFjwy84
+X-Gm-Message-State: AOJu0YwvxeljqkHDgBXOg5CqJU/w8L9fA/nddzpQr/df66aPSkm36XxS
+	jVB8hlMBWoCeSGNCOTDg9HShXgQnZ/YV1kaUYS2OLbZlQElzd4jWZGHxm4ytL2f158hrUYzdJ1L
+	pRowVQJ0Kc5q98Se204oufn2uwHv60gJ5x31h4hNhQqCfbrsyKOUD2b9TBs5m+Q==
+X-Received: by 2002:a5d:64cb:0:b0:362:1322:affc with SMTP id ffacd0b85a97d-367ceac1af6mr7196236f8f.5.1720765587436;
+        Thu, 11 Jul 2024 23:26:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFKURcKatRXBWbit8UsmQ0Qm94LXmqPcy3DdNqKx6medY7O8ZyGlJX5YS/xZ14HpSQcyTLjgg==
+X-Received: by 2002:a5d:64cb:0:b0:362:1322:affc with SMTP id ffacd0b85a97d-367ceac1af6mr7196220f8f.5.1720765587025;
+        Thu, 11 Jul 2024 23:26:27 -0700 (PDT)
+Received: from pstanner-thinkpadt14sgen1.fritz.box (200116b82df8b300fbf278adc06b342f.dip.versatel-1u1.de. [2001:16b8:2df8:b300:fbf2:78ad:c06b:342f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde891a3sm9322535f8f.61.2024.07.11.23.26.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 23:26:26 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Philipp Stanner <pstanner@redhat.com>
+Subject: [PATCH v2] drm/nouveau: Improve variable names in nouveau_sched_init()
+Date: Fri, 12 Jul 2024 08:26:18 +0200
+Message-ID: <20240712062618.8057-1-pstanner@redhat.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] pwm: imx27: workaround of the pwm output bug when
- decrease the duty cycle
-To: Frank Li <Frank.Li@nxp.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Clark Wang <xiaoning.wang@nxp.com>,
- Jun Li <jun.li@nxp.com>, pratikmanvar09@gmail.com
-References: <20240711-pwm-v1-0-4d5766f99b8b@nxp.com>
- <20240711-pwm-v1-3-4d5766f99b8b@nxp.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240711-pwm-v1-3-4d5766f99b8b@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lAnRdLo/NzQOq22G2oDt0rwsAIoHHWZflscox3YXMhJtJ1InvcD
- 2xDGz3CIruiicfCSBF1XCZ7t7tKw5mVL6BFN1FY8rVtg1/t2fBYsX3ipl9XjbPs+RLAqaUo
- xwao/7pFGcQHOzxxfZQM0gQ4qFidpJ3BGeeqLJSVq5PFR2XQoUPq3B3L/lkFPTzqy5ENLhd
- 59jjDy6JPhjZOQm5XYEJw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4qvoVPpZ5vg=;CqThS0ovliZ34aePm5IljqA3g7M
- eFJUg+mi1DiRQMo6XQK4zS7G/mDOrh90AxqTHrW5jLGHbk5BUD4SyE64N9qn4ySVW/5kR+YuM
- LMl8jBNel7WhwBkgHJS33MuDGCzgjet8wSjd8fPJMBIAoIQtOTEPytvRqJm17P5Bt4EwRtSo3
- KRH79Id68PWGjYp72gLNmTClEGy57q0dMF5rG3Z76ILcsri6Z/mKLS8H+cRfKm9ZEGdfuRXcF
- Gj/u40Ed4Z5BN/QS6W350veFGHWjYhOYZVrnhd1q47JoS3uC7xMxhtbkSSGBz8o1uksvq/zes
- MmRVfFn2TKoaPcFgdspdykWezoIGDhohm33bxM1pi8ROMfTyQVcDP4fSFvxyTopByos1aVsMO
- jtDnjW9QZc7wIGE80lStJ3FHU2tL3atstd6KxWTy9lcp7dnwo5E8HILBGBFWoJXfuAX9/xcAN
- 93UboUEl6F8IE+Su9HPYxdzmJvLawaOZF78y2UHMkCdykbamD0CzJ29x6WH863NI6AsVzfjhi
- /J6XsOG81wTosh3dCvHTd34ym7tOCWb9zUEvdkznYsphzKqMzLPlkSf/U9YhjfrIlL4RCaWuf
- OkI87OTpTM0oyLxP7zh4bipuqhuqNyncOr27ESNuuiU72xCGWL9wcVE0+Z2PlmlYnpGKnNnH9
- tIMSvbcNQZTJ5bdfFoqkepmhQkzEvD07xxM5f9T9TpVaLJwpTLo8CZbpcQDYPIqxxJBhS1z1w
- oR0z5L4Z2pAPdW0FG3i/tTlKgrTMm7Wiu80qxo24pdQrubmPisvw9XSNVmKWPOBJ7xl1gKqtR
- rL1TARzAGofrI7h85VaAte7Q==
+Content-Transfer-Encoding: 8bit
 
-Hi Frank,
+nouveau_sched_init() uses the function drm_sched_init(). The latter
+function has parameters called "hang_limit" and "timeout" in its API
+documentation.
 
-Am 11.07.24 um 23:08 schrieb Frank Li:
-> From: Clark Wang <xiaoning.wang@nxp.com>
->
-> When the SAR FIFO is empty, the write value is directly applied to SAR e=
-ven
-> though the current period is not over. If the new SAR value is less than
-> the old one and the counter is greater than the new SAR value, the curre=
-nt
-> period will not flip the level. This result in a pulse with a 100% duty
-> cycle.
->
-> Write the old SAR value before updating the new duty cycle to SAR. This
-> avoids writing the new value into an empty FIFO.
->
-> This only resolves the issue when the PWM period is longer than 2us
-> (or <500KHz) because write register is not quick enough when PWM period =
-is
-> very short.
->
-> Reviewed-by: Jun Li <jun.li@nxp.com>
-> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-the same patch has been submitted from other people in the past and they
-received many review comments [1], [2].
+nouveau_sched_init(), however, defines a variable called
+"job_hang_limit" which is passed to drm_sched_init()'s "timeout"
+parameter. The actual "hang_limit" parameter is directly set to 0.
 
-Can you please explain which version of the patch this is and does it
-address any review comments?
+Rename "job_hang_limit" to "timeout".
 
-Best regards
+Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+---
+Changes in v2:
+- Remove variable "hang_limit". (Danilo)
+---
+ drivers/gpu/drm/nouveau/nouveau_sched.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1] -
-https://lore.kernel.org/linux-pwm/20211220073130.1429723-1-xiaoning.wang@n=
-xp.com/
-[2] -
-https://lore.kernel.org/linux-pwm/20231229063013.1786-1-pratikmanvar09@gma=
-il.com/
+diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
+index 32fa2e273965..ba4139288a6d 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_sched.c
++++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
+@@ -404,7 +404,7 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
+ {
+ 	struct drm_gpu_scheduler *drm_sched = &sched->base;
+ 	struct drm_sched_entity *entity = &sched->entity;
+-	long job_hang_limit = msecs_to_jiffies(NOUVEAU_SCHED_JOB_TIMEOUT_MS);
++	const long timeout = msecs_to_jiffies(NOUVEAU_SCHED_JOB_TIMEOUT_MS);
+ 	int ret;
+ 
+ 	if (!wq) {
+@@ -418,7 +418,7 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
+ 
+ 	ret = drm_sched_init(drm_sched, &nouveau_sched_ops, wq,
+ 			     NOUVEAU_SCHED_PRIORITY_COUNT,
+-			     credit_limit, 0, job_hang_limit,
++			     credit_limit, 0, timeout,
+ 			     NULL, NULL, "nouveau_sched", drm->dev->dev);
+ 	if (ret)
+ 		goto fail_wq;
+-- 
+2.45.0
+
 
