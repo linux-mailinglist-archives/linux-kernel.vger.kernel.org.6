@@ -1,358 +1,144 @@
-Return-Path: <linux-kernel+bounces-250245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AE092F5A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:41:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D5BD92F5A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CBC51C21DBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:41:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 865FEB212A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D50C13D533;
-	Fri, 12 Jul 2024 06:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEB513D600;
+	Fri, 12 Jul 2024 06:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="to+5WwXn"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2052.outbound.protection.outlook.com [40.107.93.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYWdu5wP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14324567D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720766459; cv=fail; b=P1LqIGsCX7ZVivt/qoXKnjh48tJVDtTz/LHDt0t8BhjnP9R7FEJVxnE7S3RFUR2loV2btsKqxYXBz/orYHyCwueu7IFMkRZ851Tg+k2jgVxgToAznx6GwpfGkdbBGcXBtfvE8FDiDLfyLmTRm3FZvEpcx2n1D7EBTadAAjdk59o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720766459; c=relaxed/simple;
-	bh=qtNtchaSP+ij8hDE9Sc8cf99/YXDPaqsudAVn2tGbCE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n7SD3mt2jQaao0oV03fDOo0b0Z+OkKnvrNRWAWtC9USxP5oGfSzxNScOHlfDvIeFwDFv30ZLlhYSuJWGoz9AUC/HIlv7UdP35KTHqvdi5PCJkt4gFgMWdNX4cZLtJx3Q/mFcWCGr5WqXoEmcErJ2WfbhtcWXMYEVAxmaHu8xS+8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=to+5WwXn; arc=fail smtp.client-ip=40.107.93.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eHObyKlwPuNcNkwcSERBR0VaM1QxhOihicOm0cCzJx02UFKPGFRXU+T+qSeLzTyC1D9aTPC1p8Tx3XpCJd7YYAygZGixrkfKBr+uaRR1ukiirwDBsn7mTLuyii92xcjZGUDuJrT4kUeuOs59lt0bcvBPpKrhFmL3NF14vXno3cOP+vaU93ovQcQVP/0NOnsoTZrSsnM6qDMylDjqCtMgcv0nKEGA2EdhYZhKlwJyuj7OWTImy8jucjH9fyMvPcavk+xhr7ZhFDz8+9ZeLkOCBY7A0TUIV7UzmIrwzxEyw9TsksOp1hwgBaYIAma2jJogIos0xHbhgxM8EEkNujyE/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A9+meeKbqcREQ+jIB/wduntdstilgdis8dsW2MOeHlQ=;
- b=m6PWyGr/9X4Lu6pR5NxAsgfMuLavBKkHvHytQ9zGY8Bi5t6ibr93d9VHlWsqNjtGB1UpBlTkYUON47H3g0ZO911LqPI7jCFjxWBKwfoQmB4sYBd/GUAEaohZDnkxTTpjmdM0PBQTiR/Ut35N7AP4Ntrzy0Gk5BpFccVGEECFHOKftSNvid3yIowb8HzytE32UB55WBlO52MrJEPAhPytHBNkWEP/VxH1DIM5g+T4I10EC1tbbEPr+y0TWanfJPbqLapFO8diPYQQFaYOY+oSQa+WPDmmOLuMgr+l7O/yh0Jnm9/r9AxchIL3vhsbK1J+NqR346P+yTp2NrN5bDCM5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A9+meeKbqcREQ+jIB/wduntdstilgdis8dsW2MOeHlQ=;
- b=to+5WwXnATJe+gYopdyiZBzhKr6uu9jDiNThDYcCE+LxQqeiYxda215xZLo5dZrHs9+Pn0kQsGgHIvfTpJFDNwIdNRQS2XEfHIGoJMeKgs+MQ5KpcrWXjlmEoH798siNESNk85Rko36E236acu0K6c/S0kvIy05Fe4LPyf+BrwU=
-Received: from SN6PR04CA0086.namprd04.prod.outlook.com (2603:10b6:805:f2::27)
- by CY5PR12MB6549.namprd12.prod.outlook.com (2603:10b6:930:43::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Fri, 12 Jul
- 2024 06:40:53 +0000
-Received: from SN1PEPF0002636C.namprd02.prod.outlook.com
- (2603:10b6:805:f2:cafe::8e) by SN6PR04CA0086.outlook.office365.com
- (2603:10b6:805:f2::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23 via Frontend
- Transport; Fri, 12 Jul 2024 06:40:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002636C.mail.protection.outlook.com (10.167.241.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7762.17 via Frontend Transport; Fri, 12 Jul 2024 06:40:53 +0000
-Received: from [10.136.47.23] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 12 Jul
- 2024 01:40:47 -0500
-Message-ID: <a01aea0c-f5bd-ff19-4c90-63e94392bd6d@amd.com>
-Date: Fri, 12 Jul 2024 12:10:45 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C15317996;
+	Fri, 12 Jul 2024 06:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720766512; cv=none; b=ePbnCRh8QlQwh0qyWV2KMBr0EiUsQg6xDJHWgG23UFvH59qEG1kAAPs6z1uh3cGY4105XOSZ/1Qvr8cn036cgErX4ySHyHx8/p03/nlHXpenCo4U1ArqHODbBBaWGmYUMvuMO9hcn/zdYE3SpSrdQQEM325Dqnnp+pQ6s04SMgM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720766512; c=relaxed/simple;
+	bh=yAw59STucqdoVIH1PxfAXM1wGfcmkq3fRDsmT9Q1lIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FXWKyR14E2JEvAZkctG0uNdEqb3zDhsolFgvX2/OQWKHHaf1yaoMh6zZuzvL/iRPV6Lb69aSe4K9zyx8tqdYSfT0jJ4KDtn7A4xVKbkiQz7tSmcDxWdU1klz8q40fthbniRpCd9oIxzsL8HIecSRL9+KJtSaN2ua1DXJyB8RMIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYWdu5wP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9312EC3277B;
+	Fri, 12 Jul 2024 06:41:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720766511;
+	bh=yAw59STucqdoVIH1PxfAXM1wGfcmkq3fRDsmT9Q1lIo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hYWdu5wP1CDRiGy7DGdfX+QAz6OaQlFYYsuD99o3STjYrye+JuMGfXhHyQylgllba
+	 KADh1OaLyalIS6kjvYKY0noagZOEsCsr0x/Q7dubPAA9aLBUulnjEJX1NUKbsZz7h7
+	 Z5Bm8iGp7fsNOMZIKCZzWxIgvw7d0jCSZSRCXvwd0jrnVg1RF4fcQxqOflbr3fg0MW
+	 VkSyNhj3sLVszp4HM4HOaZkee9vD0L8uTfYRk9osv9jLfk3WJHSwCUNR6nozUXvZOO
+	 WmlDJtoFaHgZU9ep/5O209f3wWneWypAZ99ILMH81qgHfmQ/IiHEbkknhhWdoYnV8D
+	 secw2Tbw2VveQ==
+From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+To: tglx@linutronix.de
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH] irqdomain: Fix the kernel-doc and plug it into Documentation
+Date: Fri, 12 Jul 2024 08:41:48 +0200
+Message-ID: <20240712064148.157040-1-jirislaby@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH 2/3] sched/core: Introduce SM_IDLE and an idle re-entry
- fast-path in __schedule()
-Content-Language: en-US
-To: Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra
-	<peterz@infradead.org>
-CC: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	<linux-kernel@vger.kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, "Mel
- Gorman" <mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>, "Paul E. McKenney"
-	<paulmck@kernel.org>, Imran Khan <imran.f.khan@oracle.com>, Leonardo Bras
-	<leobras@redhat.com>, Guo Ren <guoren@kernel.org>, Rik van Riel
-	<riel@surriel.com>, Tejun Heo <tj@kernel.org>, Cruz Zhao
-	<CruzZhao@linux.alibaba.com>, Lai Jiangshan <jiangshanlai@gmail.com>, "Joel
- Fernandes" <joel@joelfernandes.org>, Zqiang <qiang.zhang1211@gmail.com>,
-	"Julia Lawall" <julia.lawall@inria.fr>, "Gautham R. Shenoy"
-	<gautham.shenoy@amd.com>
-References: <20240710090210.41856-1-kprateek.nayak@amd.com>
- <20240710090210.41856-3-kprateek.nayak@amd.com>
- <CAKfTPtCNJUC-gNNPkEBRT5a2UVcPUHLdzUJ+-egZGQ5ihnU0Kw@mail.gmail.com>
- <20240711091936.GJ4587@noisy.programming.kicks-ass.net>
- <CAKfTPtCDUhqZz2Q=k--=y8o4iiSeseLXMMruhZAuEd2Bb6iEoA@mail.gmail.com>
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <CAKfTPtCDUhqZz2Q=k--=y8o4iiSeseLXMMruhZAuEd2Bb6iEoA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002636C:EE_|CY5PR12MB6549:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2904468b-6d36-40e0-4a0c-08dca23d93dd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZHMzR0RCbXU3eVlXTk5LZ3BWc0wrdHRDVzRya2htN3dsSmsvVUJEZlpOdVZX?=
- =?utf-8?B?bnhvbC83Vk1IM0EyMTRHalRodnUwZW1jaWsyUlZFcjl4c0huU3dxZHE2TmJm?=
- =?utf-8?B?djhrTW9RejZkSEV4VzlhL284Wm0zN3lvSTNZU1MxbnYvMkFrUFJ2bVRYQzBD?=
- =?utf-8?B?QVhhVFJ6S28ycE9nY08zR2t1aFJKeklPdlJUSFVYdEJEY2FaNGVHQlh3d3I1?=
- =?utf-8?B?M2hPMUdLdHpJaG1PWVNWOFVickFycjRvTkU3aEFhZGJCZG1sLy9idi82S3U4?=
- =?utf-8?B?RTQ1TTgrMTR6emtyWWxmVFZyMU1TVWdETDR2dFdjaGlQM1V4TnR4M1AxSVR5?=
- =?utf-8?B?cGFSZUIyS0JUTTA4YlAvUWUyYSsxeXFsMGIxZm5SUmtMNjF3cVRkRzFKUkpX?=
- =?utf-8?B?N1VYTFhKdXpaYUt5T3ljdTRQV0JSL0JBM1FYUXJMZmVmTWFFQ2JCc3dTVWN0?=
- =?utf-8?B?S1krbUxWc2ZXOHZnMTVuNk9kR3lXdHArMjNHZjEyWU5ySDdITmY0S1VYVXo5?=
- =?utf-8?B?aE1zOTc1aGFzd0xvOXVFTUZmOHV3ZUVydlF6SENpNWhxUWZDVFphTjNPanVj?=
- =?utf-8?B?VEJjVXpYQ2MwRlBpNUZkV211TWthaXg3Wmk5d0RvcVNidzN6Y1lZeXFBc0tD?=
- =?utf-8?B?TFJ1Q01IMHdKUGkxUUxoeGluRWdiM0xQK25Ba3ozUkxObW1qeCttaHVoTzBx?=
- =?utf-8?B?bkR0NHJMNEtzYTZ6cUkva0dxSk5VNlpUT29mUVVqaUpxS3lUWGxhRGsyOTYr?=
- =?utf-8?B?Q2MvQlJuS2t0NUlXZUwwMFpyRDBoZjFhdmxZbWxzTVIrN2lXYmNFc3JDSVVQ?=
- =?utf-8?B?R0t6U3dGa1JHWVhRaEFQSU51aUNQQ1J2ZWpSbmw2dFV0a01xdDNjNEVJeUdS?=
- =?utf-8?B?c0puSkFVeU5ObVQwaitqM1pNa1hhRFZGamc3aWtLczl0cEs0VnZwaUVjclFr?=
- =?utf-8?B?R3dXRWlwNXpEQmIxcFVIeXBuOHZZcHZwYnc3NHJ0aHBCL3lQZ0hJWjhZTnhG?=
- =?utf-8?B?Zi9yOE9MWFhIZUdVMEZDSGJRL1d4WnlydzlqUlpHS2oxQWY1Y3pnVkJjRXdM?=
- =?utf-8?B?cnl2dW01Y3ovczJPejBraU13aHl5eTdKMHoyajdUMEdNdXN0WVRaSUNUb0NR?=
- =?utf-8?B?c2RCMnJLb0ZyS2lZQ3lnM3JLMm9JTEN6MFU3R0tkamRsZDcrMzJXN2FvUFJN?=
- =?utf-8?B?NWlaVWxyMmRWWE5OT0k5STZuaHBGNHk2Tmo2WHVFaVZCeGxRQWNxWlFwemhU?=
- =?utf-8?B?MFBLakJuUjN2ME1iV1cwMXU5dEk2ZEFlM3ZtVWpDZTJyYk9ydWphRXVLd2pO?=
- =?utf-8?B?RUVwbXVDY3VBYzd3WDVyY0djbTNwT1BpN0RSRCtudHRxbzZrc1lHa0tqbnNV?=
- =?utf-8?B?Z1lMdis3OWw0QTIzcVNZbjFXV0Q0K3pqa055MXB1R2lQcVZ4N1c4QUpVeU11?=
- =?utf-8?B?U3lhOWpLNFAvMUdGS1R1TGU2ejJYMEhmRnc2Z3kyS2x1alZ4UHFUcDJZTEtw?=
- =?utf-8?B?dmF3dXJzVm5ZbTY1b1haTCtLWVZOdWxJYkRSYk40dGh6cXJaTk9KcW1zRjZh?=
- =?utf-8?B?SHZhSXRVZHgrLzVVdlNZU1NWOTBnYTJBMDFTNk5JZjRWNzNFVTcrMkM2S2Ix?=
- =?utf-8?B?SWtEMlN0dUo0cUtxcG82OFozNzJ4TjhGVjQxdnpyY2lBbUwwVEcvS1Y3aXA1?=
- =?utf-8?B?N3p5N01uMkxSMkl2Q1I3ZDZxbmNCVVNidUpuYlZiVTkvb0FsZXBUTzJrQWtV?=
- =?utf-8?B?cHU4bXNxUWRDRGJIWExiUG9hNC9nZnhrWldZem8zMnJhWS93RlRQYTdURDg2?=
- =?utf-8?B?TGQ5WmZpQzYwOWh0TXR5QmtnS0h3RGhrY3VIaXppZjl3UkpkRlZuYkRuUVBn?=
- =?utf-8?B?N3JlY3NUbGt0QU5EbXd1b1Jpa3NtUm5aU21iaVdiVFBYdzVYTUc4aUdkRm5o?=
- =?utf-8?Q?nKRbogJqMnIwkh2VMbbyJTrCF/0W3z8w?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 06:40:53.6288
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2904468b-6d36-40e0-4a0c-08dca23d93dd
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002636C.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6549
+Content-Transfer-Encoding: 8bit
 
-Hello Vincent, Peter,
+There were several undocumented fields in structs irq_domain_ops and
+irq_domain_info. Document them.
 
-On 7/11/2024 6:44 PM, Vincent Guittot wrote:
-> On Thu, 11 Jul 2024 at 11:19, Peter Zijlstra <peterz@infradead.org> wrote:
->>
->> On Thu, Jul 11, 2024 at 10:00:15AM +0200, Vincent Guittot wrote:
->>> On Wed, 10 Jul 2024 at 11:03, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
->>
->>>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->>>> index 1e0c77eac65a..417d3ebbdf60 100644
->>>> --- a/kernel/sched/core.c
->>>> +++ b/kernel/sched/core.c
->>>> @@ -6343,19 +6343,12 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
->>>>    * Constants for the sched_mode argument of __schedule().
->>>>    *
->>>>    * The mode argument allows RT enabled kernels to differentiate a
->>>> - * preemption from blocking on an 'sleeping' spin/rwlock. Note that
->>>> - * SM_MASK_PREEMPT for !RT has all bits set, which allows the compiler to
->>>> - * optimize the AND operation out and just check for zero.
->>>> + * preemption from blocking on an 'sleeping' spin/rwlock.
->>>>    */
->>>> -#define SM_NONE                        0x0
->>>> -#define SM_PREEMPT             0x1
->>>> -#define SM_RTLOCK_WAIT         0x2
->>>> -
->>>> -#ifndef CONFIG_PREEMPT_RT
->>>> -# define SM_MASK_PREEMPT       (~0U)
->>>> -#else
->>>> -# define SM_MASK_PREEMPT       SM_PREEMPT
->>>> -#endif
->>>> +#define SM_IDLE                        (-1)
->>>> +#define SM_NONE                        0
->>>> +#define SM_PREEMPT             1
->>>> +#define SM_RTLOCK_WAIT         2
->>>>
->>>>   /*
->>>>    * __schedule() is the main scheduler function.
->>>> @@ -6396,11 +6389,12 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
->>>>    *
->>>>    * WARNING: must be called with preemption disabled!
->>>>    */
->>>> -static void __sched notrace __schedule(unsigned int sched_mode)
->>>> +static void __sched notrace __schedule(int sched_mode)
->>>>   {
->>>>          struct task_struct *prev, *next;
->>>>          unsigned long *switch_count;
->>>>          unsigned long prev_state;
->>>> +       bool preempt = sched_mode > 0;
->>>>          struct rq_flags rf;
->>>>          struct rq *rq;
->>>>          int cpu;
->>>> @@ -6409,13 +6403,13 @@ static void __sched notrace __schedule(unsigned int sched_mode)
->>>>          rq = cpu_rq(cpu);
->>>>          prev = rq->curr;
->>>>
->>>> -       schedule_debug(prev, !!sched_mode);
->>>> +       schedule_debug(prev, preempt);
->>>>
->>>>          if (sched_feat(HRTICK) || sched_feat(HRTICK_DL))
->>>>                  hrtick_clear(rq);
->>>>
->>>>          local_irq_disable();
->>>> -       rcu_note_context_switch(!!sched_mode);
->>>> +       rcu_note_context_switch(preempt);
->>>>
->>>>          /*
->>>>           * Make sure that signal_pending_state()->signal_pending() below
->>>> @@ -6449,7 +6443,12 @@ static void __sched notrace __schedule(unsigned int sched_mode)
->>>>           * that we form a control dependency vs deactivate_task() below.
->>>>           */
->>>>          prev_state = READ_ONCE(prev->__state);
->>>> -       if (!(sched_mode & SM_MASK_PREEMPT) && prev_state) {
->>>> +       if (sched_mode == SM_IDLE) {
->>>> +               if (!rq->nr_running) {
->>>> +                       next = prev;
->>>> +                       goto picked;
->>>> +               }
->>>> +       } else if (!preempt && prev_state) {
->>>
->>> With CONFIG_PREEMPT_RT, it was only for SM_PREEMPT but not for SM_RTLOCK_WAIT
->>
->> Bah, yes. But then schedule_debug() and rcu_note_context_switch() have
->> an argument that is called 'preempt' but is set for SM_RTLOCK_WAIT.
->>
->> Now, I think the RCU think is actually correct here, it doesn't want to
->> consider SM_RTLOCK_WAIT as a voluntary schedule point, because spinlocks
->> don't either. But it is confusing as heck.
->>
->> We can either write things like:
->>
->>          } else if (sched_mode != SM_PREEMPT && prev_state) {
-> 
-> this would work with something like below
-> 
-> #ifdef CONFIG_PREEMPT_RT
->            # define SM_RTLOCK_WAIT       2
-> #else
->           # define SM_RTLOCK_WAIT       SM_PREEMPT
-> #endif
+irq_domain_ops::revmap_size contained "[]" in the description, which is
+not allowed in sphinx. Remove that.
 
-Since "SM_RTLOCK_WAIT" is only used by "schedule_rtlock()" which is only
-defined for PREEMPT_RT kernels (from a quick grep on linux-6.10.y-rt),
-it should just work (famous last words) and we can perhaps skip the else
-part too?
+Finally, plug the whole header (irqdomain.h) into genericirq.rst, so
+that the docs is autogenerated and hyperlinks to these structure
+created.
 
-With this patch, we need to have the following view of what "preempt"
-should be for the components in __schedule() looking at "sched_mode":
+Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jonathan Corbet <corbet@lwn.net>
+---
+ Documentation/core-api/genericirq.rst |  2 ++
+ include/linux/irqdomain.h             | 20 +++++++++++++++++++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
-		schedule_debug()/		SM_MASK_PREEMPT check/
-		rcu_note_context_switch()	trace_sched_switch()
-SM_IDLE			F				F
-SM_NONE			F				F
-SM_PREEMPT		T				T
-SM_RTLOCK_WAIT *	T				F
-
-   * SM_RTLOCK_WAIT  is only used in PREEMPT_RT
-
-> 
->>
->> or do silly things like:
-
-... and since we are talking about silly ideas, here is one:
-
-(only build tested on tip:sched/core and linux-6.10.y-rt)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 417d3ebbdf60..d9273af69f9e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6345,10 +6345,12 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-   * The mode argument allows RT enabled kernels to differentiate a
-   * preemption from blocking on an 'sleeping' spin/rwlock.
-   */
--#define SM_IDLE			(-1)
--#define SM_NONE			0
--#define SM_PREEMPT		1
--#define SM_RTLOCK_WAIT		2
-+#ifdef CONFIG_PREEMPT_RT
-+#define SM_RTLOCK_WAIT		(-2)
-+#endif
-+#define SM_IDLE			0
-+#define SM_NONE			1
-+#define SM_PREEMPT		2
-  
-  /*
-   * __schedule() is the main scheduler function.
-@@ -6391,10 +6393,15 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
-   */
-  static void __sched notrace __schedule(int sched_mode)
-  {
-+	/*
-+	 * For PREEMPT_RT kernel, SM_RTLOCK_WAIT is considered as
-+	 * preemption by schedule_debug() and
-+	 * rcu_note_context_switch().
-+	 */
-+	bool preempt = (unsigned int) sched_mode > SM_NONE;
-  	struct task_struct *prev, *next;
-  	unsigned long *switch_count;
-  	unsigned long prev_state;
--	bool preempt = sched_mode > 0;
-  	struct rq_flags rf;
-  	struct rq *rq;
-  	int cpu;
-@@ -6438,6 +6445,14 @@ static void __sched notrace __schedule(int sched_mode)
-  
-  	switch_count = &prev->nivcsw;
-  
-+#ifdef CONFIG_PREEMPT_RT
-+	/*
-+	 * PREEMPT_RT kernel do not consider SM_RTLOCK_WAIT as
-+	 * preemption when looking at prev->state.
-+	 */
-+	preempt = sched_mode > SM_NONE;
-+#endif
+diff --git a/Documentation/core-api/genericirq.rst b/Documentation/core-api/genericirq.rst
+index 582bde9bf5a9..25f94dfd66fa 100644
+--- a/Documentation/core-api/genericirq.rst
++++ b/Documentation/core-api/genericirq.rst
+@@ -410,6 +410,8 @@ which are used in the generic IRQ layer.
+ .. kernel-doc:: include/linux/interrupt.h
+    :internal:
+ 
++.. kernel-doc:: include/linux/irqdomain.h
 +
-  	/*
-  	 * We must load prev->state once (task_struct::state is volatile), such
-  	 * that we form a control dependency vs deactivate_task() below.
---
-
->>
->> #define SM_IDLE (-16)
->>
->> keep the SM_MASK_PREEMPT trickery and do:
->>
->>          } else if (!(sched_mode & SM_MASK_PREEMPT) && prev_state) {
->>
->> Not sure that is actually going to matter at this point though.
-
+ Public Functions Provided
+ =========================
+ 
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 02cd486ac354..de6105f68fec 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -74,11 +74,24 @@ void of_phandle_args_to_fwspec(struct device_node *np, const u32 *args,
+  * struct irq_domain_ops - Methods for irq_domain objects
+  * @match: Match an interrupt controller device node to a host, returns
+  *         1 on a match
++ * @select: Match an interrupt controller fw specification. It is more generic
++ *	    than @match as it receives a complete struct irq_fwspec. Therefore,
++ *	    @select is preferred if provided. Returns 1 on a match.
+  * @map: Create or update a mapping between a virtual irq number and a hw
+  *       irq number. This is called only once for a given mapping.
+  * @unmap: Dispose of such a mapping
+  * @xlate: Given a device tree node and interrupt specifier, decode
+  *         the hardware irq number and linux irq type value.
++ * @alloc: Allocate @nr_irqs interrupts starting from @virq.
++ * @free: Free @nr_irqs interrupts starting from @virq.
++ * @activate: Activate one interrupt in HW (@irqd). If @reserve is set, only
++ *	      reserve the vector. If unset, assign the vector (called from
++ *	      request_irq()).
++ * @deactivate: Disarm one interrupt (@irqd).
++ * @translate: Given @fwspec, decode the hardware irq number (@out_hwirq) and
++ *	       linux irq type value (@out_type). This is a generalised @xlate
++ *	       (over struct irq_fwspec) and is preferred if provided.
++ * @debug_show: For domains to show specific data for an interrupt in debugfs.
+  *
+  * Functions below are provided by the driver and called whenever a new mapping
+  * is created or an old mapping is disposed. The driver can then proceed to
+@@ -131,6 +144,9 @@ struct irq_domain_chip_generic;
+  * Optional elements:
+  * @fwnode:	Pointer to firmware node associated with the irq_domain. Pretty easy
+  *		to swap it for the of_node via the irq_domain_get_of_node accessor
++ * @bus_token:	@fwnode's device_node might be used for several irq domains. But
++ *		in connection with @bus_token, the pair shall be unique in a
++ *		system.
+  * @gc:		Pointer to a list of generic chips. There is a helper function for
+  *		setting up one or more generic chips for interrupt controllers
+  *		drivers using the generic chip library which uses this pointer.
+@@ -144,7 +160,9 @@ struct irq_domain_chip_generic;
+  * @exit:	Function called when the domain is destroyed
+  *
+  * Revmap data, used internally by the irq domain code:
+- * @revmap_size:	Size of the linear map table @revmap[]
++ * @hwirq_max:		Top limit for the HW irq number. Especially to avoid
++ *			conflicts/failures with reserved HW irqs. Can be ~0.
++ * @revmap_size:	Size of the linear map table @revmap
+  * @revmap_tree:	Radix map tree for hwirqs that don't fit in the linear map
+  * @revmap:		Linear table of irq_data pointers
+  */
 -- 
-Thanks and Regards,
-Prateek
+2.45.2
+
 
