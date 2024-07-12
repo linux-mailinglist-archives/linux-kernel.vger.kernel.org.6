@@ -1,217 +1,264 @@
-Return-Path: <linux-kernel+bounces-250047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA33492F371
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:27:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C4E592F373
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4381C21C3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB26B281E85
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7C5567D;
-	Fri, 12 Jul 2024 01:27:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB7E5C96;
+	Fri, 12 Jul 2024 01:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HNssDpFL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="UFepnNHQ"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836D246B5;
-	Fri, 12 Jul 2024 01:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720747663; cv=fail; b=CHN9bFcCf8NGlmWRkXUu2AaqazIYP0pPObmZrc7aDKX9znAhuUlOJoOcxcUqldx4Lc1nRGSvl64Dx8W5G6fIXBU5xKNTBTrjxYS8z+c4vC56mKmKP5X0kEN2vwD1/c1IU9k2FvbKahha3e4Mp/Hq9G20+xRc5EoUOFMh6bFqT1k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720747663; c=relaxed/simple;
-	bh=OzSNoR2narLPxKu66I7ndrka+KdicHg8ak+oOutbFkw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=f+IGJomVneOVF9Lj1rWBJgjLEpZaH1OGyMw5cyx/qIyqVdtwkxXWj3PCE3UIrSrbKxAvVyG6RQtmEgZXb7jyBWWZENbqhl2q07aZXfm8aSV7gCa8TftcqercUFWA4uv42pkCaVnFZmStA9Qufq1XFTImy4gVYzaQxDfSHO+LI30=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HNssDpFL; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720747662; x=1752283662;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=OzSNoR2narLPxKu66I7ndrka+KdicHg8ak+oOutbFkw=;
-  b=HNssDpFLl5W9RorHfMSZ8rJbp/zn/bDNBeMLjQTGW9qXf182RiIyBRQB
-   dRLZlc/8Yx+EjgMWa99VBQ5soFsq1FG5UXP5WoQYZgZwnNDjlbbD3ovPW
-   JwEyU76c9alLiGss8YU/PpuKemqC54xOISd+HyWkPbgvU+E5RuYXNyfFZ
-   L9jHhoDj6ETmIcCLlbTnP6KcIYZHCH+NAEreqRweclqEfQS0Dm7/fFSvo
-   OPr6kIfBe56hutwnMY16IgUx5zMt+6OpMRyXqy0LJECsYaVNHDo31ZAEd
-   QHBwanUa9+57VAEo8ZZ33mjT8UZ6D2AyKWRiFBF9Gj4aPV6/YD2z04U4G
-   g==;
-X-CSE-ConnectionGUID: V2d0Zox7QQyRpD30xKmRTQ==
-X-CSE-MsgGUID: ORvLl5EWRzKZRG3L1y93Ag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="21990290"
-X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
-   d="scan'208";a="21990290"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 18:27:41 -0700
-X-CSE-ConnectionGUID: /qVsz/2HTZ+eKnPRUh58/g==
-X-CSE-MsgGUID: PkeNFtqKQoSluttMKBchXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
-   d="scan'208";a="49519109"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Jul 2024 18:27:41 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 11 Jul 2024 18:27:40 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 11 Jul 2024 18:27:40 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 11 Jul 2024 18:27:40 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ORtXSOivAeCWuJvYapX0+juna/0epVNWYvC1Zm+0Pd74Jwucq268Uuu2m3YO4DUwYSlf6c/cwHI0xeQJiFyJ9vz53iiKI0dBnaGSVQTVQ94GiWFUiBFYpp2dJvKtpiiFLfR0I67uO9p5GXphIZ1KhikuBuofVumhrBjvwjQbW6KzF8BXheAuQIlHFwAVNC690xuBxW2bGoc17eu8RvMqTHHaUYcAbYTZ6nj7L0nxlCv3MJhXiCSnTlldxbPEDq9fgQ0z0kemzId76/m4hF252jf+VRp1cyArhqWhf+7hPVlms5uO03f8XVIHcbyKmYsBDXWcFcRzHyj1xJvJOacBoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xjPmaaKHOucgQgpAj7HBIbkTqGtGql5j2r6faM4t92M=;
- b=uHAW8Xb12SSKtww2cAWtvvV7dK2CUYm+/kYol/4kq3o6bjrTkAmsHiQfaFHc3cTkAnQkdHC4rJojXudhR6K1uy5YHdKxEkgVtK9PBiPOCxePRcWbHDY4Ka/l3MbfArRHWHRFGkTB6ZpNQrcCHktdigKXNa7tEJeLGm3uyfirb4ELlgwokIQbMZJkYcBBoJdWXxtXVpoXj/cgqmO7RbkZ+BHQROswXDIT794KXJPpESdd0gGGe8QMNMDBzjR5fdIdebTGTsB06v0oT+ZdOSQlpBev0Ce1WbrVnAgp9STaPo06lpRayc2Yy6zdorjJ8sHo/uic6m9cSDcEU9MZplxftQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by BL1PR11MB5270.namprd11.prod.outlook.com (2603:10b6:208:313::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22; Fri, 12 Jul
- 2024 01:27:33 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
- 01:27:33 +0000
-Date: Thu, 11 Jul 2024 18:27:30 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Robert Richter <rrichter@amd.com>, Alison Schofield
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Dave Jiang
-	<dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Robert
- Richter" <rrichter@amd.com>
-Subject: Re: [PATCH v2 3/5] cxl/acpi: Add platform flag for HPA address
- translation
-Message-ID: <669086821f136_5fffa29473@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20240701174754.967954-1-rrichter@amd.com>
- <20240701174754.967954-4-rrichter@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240701174754.967954-4-rrichter@amd.com>
-X-ClientProxiedBy: MW4PR03CA0008.namprd03.prod.outlook.com
- (2603:10b6:303:8f::13) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE212114
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 01:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720747838; cv=none; b=RKjGXL5kdiJyhPlGDCJ10Lc7+ckHDaihdNNVvFTdWLmoyxfw5dcmTYv68Dwke0VN5KO14Yuxt31SOOey/EGJ5qvASPv8ulaNDdulaF8O1vrX3HH36DiG2sNzsT0BsVAkKzXkxBuOTsVy2ephMkPyeWpLUgsMF5baKVcg+CGu6Bs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720747838; c=relaxed/simple;
+	bh=NlCD2N/GTA25z+Lv3QJ4ioPnzGqSDCz42FqtGeEExpw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YV2J6H9p/gFMraiAkLK6F6aE2QlsfTTyp/C5ZBrV103JXSKudwDqriU3xzQrpHJgpImqhi3tUUFv5tykgDzb+BZt2jQZVHdv9NcTvVLULbzzJLLXhXHiVix2ntnzS5L1oP2NsHQzGoU2hjGnl20YuWBbnXgGS4F9FNsCtU6YcR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=UFepnNHQ; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E2B623FE2B
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 01:30:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1720747833;
+	bh=KlZHJQ1gZb5CHVxW02hQaRdYCM2wgPQ+hnanLrc4+9g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=UFepnNHQfPcmZ4JWHsvAMkvkvWkM1pcjtRP/xDtHksN1Tjjosq+QS23y4cNaRFGUn
+	 mtMbhVcFpWvpKH5VViP5GJ9NomzHgoh7tRI4N23GZMUWGNNBOb1chf8PEIOucZQ2Lu
+	 bKE/j6rPVQ2E7uwNtyym1aw+I7PDRTL7ARbmEf5ynmRhiWToN74PVuG+WWhFXkN5kf
+	 KtbfV90eDAVRf/Lk/10SDnd3IphveI6elPx5SLbY323kjI4azw/1DJnTHZBb8C/80c
+	 0J4FYzdaHfFlsQ14/bM179SzWB3HWvE94PcJL80tjMzmfRZ/16pCViV7lRQ2Mpic+F
+	 vAot5HdKEIWWg==
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-70b06b3439fso1106121b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 18:30:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720747831; x=1721352631;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KlZHJQ1gZb5CHVxW02hQaRdYCM2wgPQ+hnanLrc4+9g=;
+        b=FVsMmbx3mmt2W1YrDOFKJ4f1V40IbvDdGxMFJuNu9oMFIvdwlYp42SqpsKB5/phn4p
+         MKibhHR5livsGc7g/aUHytaN88UGuDnfLnPrqY9c3i6LG36+rjcByXzMX1f+2u5/Rs8d
+         p/MBta6lUnl2r31WItWho5m3OSBFdUm9n7Uy73YDs1X1QmABwPlKEHyFFlShxIqRtQNe
+         Vf3zqgAI3bN2dtuCs+c6B41lTRCxKTj1IUwgbW2ZyjAOVCNb2SOzNCd66jbOJsIoZwy2
+         BmUOMTDti33zUCDpIE7PTB13fbWiOB8+0GkDeONnSFJXsYt4BBOl//vJGRE3WJA7ehfJ
+         v0Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1IUWSfRKKQrRbrqEIiurJww9CaDIcud14hViuBapxSA5fcgC+JQ8bA9DNxgBE1wFqg93Ceut/RWuDp9OiEKohzj/TtkCm6Wen5Ydk
+X-Gm-Message-State: AOJu0Yx3lZ+RJoxH8jq9GPUcsR1zpXUTP2H0DIkpZS8kIuJteWRAQrBw
+	4ACHsx5RoP3PnYFepHaGNp7gLFdQr03OQtJYYXBhRb184s16gQUp+2au+GKinbRMU7en0nQ8zgZ
+	Ncch4QfNxLcoss7EixwYTchY+gc9SBhllbudVSFYuy2hxEXyYwqG/I+6XcoHnRq+LfwqrX9IJsx
+	A6a+g+GJ0B788X2Ws=
+X-Received: by 2002:a05:6a00:1142:b0:706:5cd9:655d with SMTP id d2e1a72fcca58-70b435f0138mr12853705b3a.22.1720747831454;
+        Thu, 11 Jul 2024 18:30:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/ixhoVzGPJtCBK2hGPZAloXzsTCLG5S6o+60wt8uR9BFh6w0LpLnsU1SfNGIGVF6cQHuZGg==
+X-Received: by 2002:a05:6a00:1142:b0:706:5cd9:655d with SMTP id d2e1a72fcca58-70b435f0138mr12853691b3a.22.1720747830989;
+        Thu, 11 Jul 2024 18:30:30 -0700 (PDT)
+Received: from chengendu.. (2001-b011-381c-1f42-c48a-cb4d-0ee1-65a8.dynamic-ip6.hinet.net. [2001:b011:381c:1f42:c48a:cb4d:ee1:65a8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4398e086sm6317024b3a.164.2024.07.11.18.30.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 18:30:30 -0700 (PDT)
+From: Chengen Du <chengen.du@canonical.com>
+To: willemdebruijn.kernel@gmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	kaber@trash.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chengen Du <chengen.du@canonical.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v9] af_packet: Handle outgoing VLAN packets without hardware offloading
+Date: Fri, 12 Jul 2024 09:29:56 +0800
+Message-ID: <20240712012956.10408-1-chengen.du@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|BL1PR11MB5270:EE_
-X-MS-Office365-Filtering-Correlation-Id: c527872a-a290-4f6b-1531-08dca211cdc3
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?VgCvqvogDNJcmCxJ/HQKK32Ff5jNx7I2fyzt4JOsxzLeCx4MucQE7/FB7+gn?=
- =?us-ascii?Q?A0oZXVViH803d5WoobIu6/1oD41qgqqBsLqUxNFJxO651+sd9fT8SpIiVKvM?=
- =?us-ascii?Q?/t4UCjUFns94umzMhKsqpGbuLBuRrdp00glN3rwaKY3qGph4AONVHvTG1xnN?=
- =?us-ascii?Q?4eCdzmhpLboiGOiSG9hd8zZZbNdxsuepMYhPx3+hs9VFSpq+XDd9KVq5nyxk?=
- =?us-ascii?Q?Vx+M+TQkxmjC2KQ7oBha9xOda33i2y/oTsU31Cr0zApW95JW2AWIglPl0ZAX?=
- =?us-ascii?Q?LOnROplMfrmFd+pNDXFF+h9382hSj7ULpUD+CXyQrygxv2g1m0TK1q7xL1sE?=
- =?us-ascii?Q?Dr6dBSJChxdeC7YCWezSqgSeYCYSEcuGKylER9BGbRWkBlOHVGHE9cTnh5Jk?=
- =?us-ascii?Q?+SEWPIkcn9mIQPfU4/9+b9/Rab6zW+Bx8KiaeA6Q+NT2T6ptHtjac2S+K3Pu?=
- =?us-ascii?Q?XS0+ZeqTWrxsIP+fez/mBnNlvYlqcOwyOXO0DECgU7McH5QBxZqmXB0tta4g?=
- =?us-ascii?Q?DJ5npDjMsnsFcIrXI03Qw0guXb4Aom92LbsVax028FzQVY+kJyaopRu3tvhL?=
- =?us-ascii?Q?vvumHP4Wtad7plLcw2s877fbTJVyr4lbCFbn29Bi6BMWPIiUMby4H1CDJafa?=
- =?us-ascii?Q?IfYDHRqby3En7nwOsoo0kjuaqz/5NlgDjO1Hs/fsGNnr1vHUiMVeffkgDC2z?=
- =?us-ascii?Q?XG5UMOdirDBe12gfFpiDKBhiXbkzVc10uVRvZ7AhueeC8BTadmvYW36T4f9l?=
- =?us-ascii?Q?+ooS9UmJ05TBTtwD+1ZQm69WzGSttsM0pLYPkEhW9l4eiTaV+YnQhRwApgb0?=
- =?us-ascii?Q?mjxfwJuSOfvsgcfGetjwSakbfdZM2/IWB0yQAP681Dq/k0zDajOGYmg9H4+l?=
- =?us-ascii?Q?uzLoC9IWp3cVIiz/I9FEzqanK+j6DaPaWwR7VG8p86kGO3frFHGcg7zzZNG0?=
- =?us-ascii?Q?viSuGOyBPkU59iLJmtzuVDbt1Mn/ioxuxqqFp31nPRFeI5hknybzdmzbF8vz?=
- =?us-ascii?Q?6fbj/3Q12+pd8+ALBZ6wWIxz8f216p+s1dLGpba74KHGUQuUoay2361CTcSV?=
- =?us-ascii?Q?ecVdgbzYhyYGojKir9YLHrfTBF9RlRSm706cgf7KOYk++YNOJp7VXq4DROQN?=
- =?us-ascii?Q?crft9lqEz4SdkXu59SHxTpA7TxdvdgPi2kz1Ag1YaGHArrVU4nhc8Xf+KsSD?=
- =?us-ascii?Q?YwmDCyczL+AiG5Sw3NwThoKinX03ROx4/NPkaApB3Cnaw8972OptT5DTGv0l?=
- =?us-ascii?Q?U71p88acqfdGJhO8fm5fyjyc/Qolg1YiodkUF5KTy5VeYbHUiuHcTQlMrkb0?=
- =?us-ascii?Q?H+rlBICxKUoYCRa8FOGbMXCs6Rlkxhz7ckY+C1HmC/AOIg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?K1Ms1yxFvTtqHaOvlDIuKQy3AM1B2Y/n8tmeVdiUzQi18YpU9I/kc+rT5hK6?=
- =?us-ascii?Q?NQlyFGQ0+xTQ2hc67R+dEcl2wx8mM4Hs1rl1UqPpnyzv8plWhyHZ2zXPM244?=
- =?us-ascii?Q?awx/heVltUKPKBw+6omjlGvivNrV8TQqrk6eAJ+HzK7aMqPOLTiC63GYhqwr?=
- =?us-ascii?Q?mvKLVp895WsBYLyAwKZI2hthpJHgKo19uzsFhJdg4g3tuvGBKp1oGCIloyRv?=
- =?us-ascii?Q?QVDAa/pyVFW+4GBbPm46SRISDF7kndqIXSIU0ZUkrehtYUoY2dT19UCYVpIR?=
- =?us-ascii?Q?Efn7DpoVQn1usmpTt1mQqbJwL/RL3gDNvd/3JbgrWiozHAVLQRA22mRPIhiJ?=
- =?us-ascii?Q?b0SBKCWFI023WuG0dQwNbl9GOZMIOAtJC1iXNkoWSWSrHAMUni3e5kw9yxBe?=
- =?us-ascii?Q?vB5tno2LhIY+NQ8+isClXa3vHsf8wQPuBt7JPsE9kgngkHchufI6Y59/POcB?=
- =?us-ascii?Q?CsxyCCqf9i81AXWei/rVlv54KOxC53YshGFhu0wTDzX/R+HGy21ZqhH/uzN8?=
- =?us-ascii?Q?mx17yUa/iULumrCzSkW0eX+SerFyC+M6vJTO5za01nbI6SdPGuccqk3/32gw?=
- =?us-ascii?Q?rAif8R7NmRwQ7piqXvC+5WEWqnlo0yS18+9P4Ku/zCZ7Ds706136x7AmHaps?=
- =?us-ascii?Q?Ox8vmTGUbdaKF0DWG0rJnuT/InGFCcOgo5/ikpsRypv2LGKjbMyVA7q7R5pM?=
- =?us-ascii?Q?k/24+8e4p1XwJQY4VwCw7QT2TSracUTb1S19fwgWuNBPRTg850jrhv+qakEs?=
- =?us-ascii?Q?qF4vO82gdi++0eEw17LchAHZyM4DFB+u/7Gyw4aL/Wl2VMhpspXBiVJlHHTI?=
- =?us-ascii?Q?2kllV7VCn59U5cRn1vFDthyvjWxP6ylLHeMtWGpEXMHOSIKYBVov2V1ajoWi?=
- =?us-ascii?Q?EY2MnRYn04nthDcwBS3k+kA+IoNC/90CockJTwCNVpWwloqDGgFkW3+8DS9f?=
- =?us-ascii?Q?nP0C5eYimXLdFDSkCqvAwGOjvrFt94oorXZkQI6cOmKY/PutiG97SmPNz67w?=
- =?us-ascii?Q?TudXjX9AXBOxw0CRP4VDSVhI25kgZYf10N7poJKfndlr7OwTNWcmm50hJEOC?=
- =?us-ascii?Q?Aa+2HikjSWD6qYiZfNuuPcMxukfw72ljJAM/Om8YqTFGCR7AkPLgcPV03uNl?=
- =?us-ascii?Q?0CwI3CsEl6ZOmkK/Fg7olz7shacnsdjXEA5iAEuSwBDcgN7TCsEqpweAkSQs?=
- =?us-ascii?Q?cREWsLHg8cqhrwVyX1/3cTZoUibnKjqhr+Dn0xBq+fK8Q/ECZzoatIyMwjLP?=
- =?us-ascii?Q?hUBy1n1z1p0l1UYMVeznNbLk7ZpOZaLPs5GqUKF7Jo3Gqt56vrbdA7UjZJQB?=
- =?us-ascii?Q?kyozOieGOqazPQETh4eRfeSMH5yn66+Ffgo/KSQ9LZUMADQ6uhiDhVzETFhd?=
- =?us-ascii?Q?ytRv7DJjB6YXasvw0ccoFsw0+ZSh6pEWpzPNVqVM8dL+LMo+W+SiAhbO25/R?=
- =?us-ascii?Q?hTHCmrbXAH3ugt8a+J7BxI3zP4Of8GzGkZuLmVc1AuR+7scgcA4ZQUWvHJ1l?=
- =?us-ascii?Q?mkrNCBFn8O0I6TC8zYDCZayqWUkbGhIh5bVa4GedpU2edHVlYHCcDSaGcskR?=
- =?us-ascii?Q?pyBFR6wlNz2/9sCQmNVro/VUjzdjvASoDmVb27ahLLy+8frUykURt4lTiDi3?=
- =?us-ascii?Q?wg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c527872a-a290-4f6b-1531-08dca211cdc3
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 01:27:33.1011
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xICOEVvmGLksnxT2Mnj8Wd5qOGfJ6f1W3iy6Z5Rl4aXSRb1JSxcW2Y5iDmHdo8mB4gdfdIEwH2YmD2d2tiJlf/ns/ZgfZtXc7OxPBIuP3nQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5270
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Robert Richter wrote:
-> Adding an early check to detect platform specifics to (later) enable
-> HPA address translation. The cxl_root structure is used to store that
-> information.
-> 
-> Note: The platform check will be added later when enabling address
-> translation.
+The issue initially stems from libpcap. The ethertype will be overwritten
+as the VLAN TPID if the network interface lacks hardware VLAN offloading.
+In the outbound packet path, if hardware VLAN offloading is unavailable,
+the VLAN tag is inserted into the payload but then cleared from the sk_buff
+struct. Consequently, this can lead to a false negative when checking for
+the presence of a VLAN tag, causing the packet sniffing outcome to lack
+VLAN tag information (i.e., TCI-TPID). As a result, the packet capturing
+tool may be unable to parse packets as expected.
 
-It feels odd to have a flag at the root for this because the translation
-is at the host-bridge level, right?
+The TCI-TPID is missing because the prb_fill_vlan_info() function does not
+modify the tp_vlan_tci/tp_vlan_tpid values, as the information is in the
+payload and not in the sk_buff struct. The skb_vlan_tag_present() function
+only checks vlan_all in the sk_buff struct. In cooked mode, the L2 header
+is stripped, preventing the packet capturing tool from determining the
+correct TCI-TPID value. Additionally, the protocol in SLL is incorrect,
+which means the packet capturing tool cannot parse the L3 header correctly.
 
-I was more thinking of a solution that does:
+Link: https://github.com/the-tcpdump-group/libpcap/issues/1105
+Link: https://lore.kernel.org/netdev/20240520070348.26725-1-chengen.du@canonical.com/T/#u
+Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspace")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chengen Du <chengen.du@canonical.com>
+---
+ net/packet/af_packet.c | 86 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 84 insertions(+), 2 deletions(-)
 
-spa = cxld_hpa_to_spa(cxld);
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index ea3ebc160e25..84e8884a77e3 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -538,6 +538,61 @@ static void *packet_current_frame(struct packet_sock *po,
+ 	return packet_lookup_frame(po, rb, rb->head, status);
+ }
+ 
++static u16 vlan_get_tci(struct sk_buff *skb, struct net_device *dev)
++{
++	struct vlan_hdr vhdr, *vh;
++	u8 *skb_orig_data = skb->data;
++	int skb_orig_len = skb->len;
++	unsigned int header_len;
++
++	if (!dev)
++		return 0;
++
++	/* In the SOCK_DGRAM scenario, skb data starts at the network
++	 * protocol, which is after the VLAN headers. The outer VLAN
++	 * header is at the hard_header_len offset in non-variable
++	 * length link layer headers. If it's a VLAN device, the
++	 * min_header_len should be used to exclude the VLAN header
++	 * size.
++	 */
++	if (dev->min_header_len == dev->hard_header_len)
++		header_len = dev->hard_header_len;
++	else if (is_vlan_dev(dev))
++		header_len = dev->min_header_len;
++	else
++		return 0;
++
++	skb_push(skb, skb->data - skb_mac_header(skb));
++	vh = skb_header_pointer(skb, header_len, sizeof(vhdr), &vhdr);
++	if (skb_orig_data != skb->data) {
++		skb->data = skb_orig_data;
++		skb->len = skb_orig_len;
++	}
++	if (unlikely(!vh))
++		return 0;
++
++	return ntohs(vh->h_vlan_TCI);
++}
++
++static __be16 vlan_get_protocol_dgram(struct sk_buff *skb)
++{
++	__be16 proto = skb->protocol;
++
++	if (unlikely(eth_type_vlan(proto))) {
++		u8 *skb_orig_data = skb->data;
++		int skb_orig_len = skb->len;
++
++		skb_push(skb, skb->data - skb_mac_header(skb));
++		proto = __vlan_get_protocol(skb, proto, NULL);
++		if (skb_orig_data != skb->data) {
++			skb->data = skb_orig_data;
++			skb->len = skb_orig_len;
++		}
++	}
++
++	return proto;
++}
++
+ static void prb_del_retire_blk_timer(struct tpacket_kbdq_core *pkc)
+ {
+ 	del_timer_sync(&pkc->retire_blk_timer);
+@@ -1007,10 +1062,16 @@ static void prb_clear_rxhash(struct tpacket_kbdq_core *pkc,
+ static void prb_fill_vlan_info(struct tpacket_kbdq_core *pkc,
+ 			struct tpacket3_hdr *ppd)
+ {
++	struct packet_sock *po = container_of(pkc, struct packet_sock, rx_ring.prb_bdqc);
++
+ 	if (skb_vlan_tag_present(pkc->skb)) {
+ 		ppd->hv1.tp_vlan_tci = skb_vlan_tag_get(pkc->skb);
+ 		ppd->hv1.tp_vlan_tpid = ntohs(pkc->skb->vlan_proto);
+ 		ppd->tp_status = TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
++	} else if (unlikely(po->sk.sk_type == SOCK_DGRAM && eth_type_vlan(pkc->skb->protocol))) {
++		ppd->hv1.tp_vlan_tci = vlan_get_tci(pkc->skb, pkc->skb->dev);
++		ppd->hv1.tp_vlan_tpid = ntohs(pkc->skb->protocol);
++		ppd->tp_status = TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+ 	} else {
+ 		ppd->hv1.tp_vlan_tci = 0;
+ 		ppd->hv1.tp_vlan_tpid = 0;
+@@ -2428,6 +2489,10 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+ 			h.h2->tp_vlan_tci = skb_vlan_tag_get(skb);
+ 			h.h2->tp_vlan_tpid = ntohs(skb->vlan_proto);
+ 			status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
++		} else if (unlikely(sk->sk_type == SOCK_DGRAM && eth_type_vlan(skb->protocol))) {
++			h.h2->tp_vlan_tci = vlan_get_tci(skb, skb->dev);
++			h.h2->tp_vlan_tpid = ntohs(skb->protocol);
++			status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
+ 		} else {
+ 			h.h2->tp_vlan_tci = 0;
+ 			h.h2->tp_vlan_tpid = 0;
+@@ -2457,7 +2522,8 @@ static int tpacket_rcv(struct sk_buff *skb, struct net_device *dev,
+ 	sll->sll_halen = dev_parse_header(skb, sll->sll_addr);
+ 	sll->sll_family = AF_PACKET;
+ 	sll->sll_hatype = dev->type;
+-	sll->sll_protocol = skb->protocol;
++	sll->sll_protocol = (sk->sk_type == SOCK_DGRAM) ?
++		vlan_get_protocol_dgram(skb) : skb->protocol;
+ 	sll->sll_pkttype = skb->pkt_type;
+ 	if (unlikely(packet_sock_flag(po, PACKET_SOCK_ORIGDEV)))
+ 		sll->sll_ifindex = orig_dev->ifindex;
+@@ -3482,7 +3548,8 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 		/* Original length was stored in sockaddr_ll fields */
+ 		origlen = PACKET_SKB_CB(skb)->sa.origlen;
+ 		sll->sll_family = AF_PACKET;
+-		sll->sll_protocol = skb->protocol;
++		sll->sll_protocol = (sock->type == SOCK_DGRAM) ?
++			vlan_get_protocol_dgram(skb) : skb->protocol;
+ 	}
+ 
+ 	sock_recv_cmsgs(msg, sk, skb);
+@@ -3539,6 +3606,21 @@ static int packet_recvmsg(struct socket *sock, struct msghdr *msg, size_t len,
+ 			aux.tp_vlan_tci = skb_vlan_tag_get(skb);
+ 			aux.tp_vlan_tpid = ntohs(skb->vlan_proto);
+ 			aux.tp_status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
++		} else if (unlikely(sock->type == SOCK_DGRAM && eth_type_vlan(skb->protocol))) {
++			struct sockaddr_ll *sll = &PACKET_SKB_CB(skb)->sa.ll;
++			struct net_device *dev;
++
++			rcu_read_lock();
++			dev = dev_get_by_index_rcu(sock_net(sk), sll->sll_ifindex);
++			if (dev) {
++				aux.tp_vlan_tci = vlan_get_tci(skb, dev);
++				aux.tp_vlan_tpid = ntohs(skb->protocol);
++				aux.tp_status |= TP_STATUS_VLAN_VALID | TP_STATUS_VLAN_TPID_VALID;
++			} else {
++				aux.tp_vlan_tci = 0;
++				aux.tp_vlan_tpid = 0;
++			}
++			rcu_read_unlock();
+ 		} else {
+ 			aux.tp_vlan_tci = 0;
+ 			aux.tp_vlan_tpid = 0;
+-- 
+2.43.0
 
-...and then internal to that the code walks the port hierarchy from it's
-host port to the host bridge. Then does something like
-
-hb->hpa_to_spa(hb, hpa)
-
-Where @hb is:
-
-struct cxl_hb {
-	struct cxl_port port;
-	u64 (*hpa_to_spa)(struct cxl_hb *, u64);
-}
 
