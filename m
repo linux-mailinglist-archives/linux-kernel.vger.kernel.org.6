@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-250307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF4492F64D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:34:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6EA92F652
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58EFA282209
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:34:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC663B220DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B555E13DDDD;
-	Fri, 12 Jul 2024 07:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE84413D88C;
+	Fri, 12 Jul 2024 07:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ki261NVV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JQXye5Ft"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056E713DDA3
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C165534CC4
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720769663; cv=none; b=tzRD8oCfLMUjHO7IDD2QoQPhYvjFO+R7xo8NhRmil5g+Z9MHULUUs2O79FGJGq+BoQk1lOhyeODhzey78FssDBdDv3iRNpyztA58tlUJK0nLeXm+cBQbrBVxnWGHIO8elaRBfypxmAYa0ZN5ZnhNJl+JjYsUJjgmUkG0BVpjES0=
+	t=1720769909; cv=none; b=n55BLpxG4RSkWeAEQP8+BBUF7e8r5M8EI4gQskVfmfqbtMxXNQY7v902iV17ATFNhZ7+iO14lO5dPy7eo6+fvgXJDSz248wX8Lbm+Y69bXBEzCcaexqbBB2ACuQX7mjLU+WAC650pK1TjVc6HccisZgbL3daEkexByxT4W4qAMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720769663; c=relaxed/simple;
-	bh=pQDRxA/hn4GoB35hMTWuxnTZbA6PilRZeqm+y7oKfkY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iGtDn7M29lCa98alE/Ywwk8hxT0x1dOEZyD8bVRHEtbn2WuvQbh0xD1hQuirHYN23ATumDW5XHTTdRf3oixnT/Mn27vEFAyoxuuJxNJ+DSlUlD1zjgMvrjmtprB/Rva1foldET+65UcXC1vbBrF0I5PjQBD2BTsV2/cqqk5KLcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ki261NVV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C45FC3277B;
-	Fri, 12 Jul 2024 07:34:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720769662;
-	bh=pQDRxA/hn4GoB35hMTWuxnTZbA6PilRZeqm+y7oKfkY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ki261NVVkOo6/fkukqcGMmIUAvLrT3KwM+lh0WXotJcJ5QfGsr3G3lSOeE5KO1IYw
-	 zSsM2REhgYqHv/J7N4uVVQC/bmoxwvm6kH/VxhSU7QcS6DxSeKQz4SAqeIWSee6vuW
-	 qUUmLEfGhSJe8V86Q4nzBEKlQ+NnudwBSGeFeoPtHGpEdwUSi4f46vxEQpA2GSI0cm
-	 KWVIalevvudV0mnJmM/oh7weYngkOz8W5nlHmfz3WLtIrr35a5udQrmMWz+oBCDPRc
-	 E7N99QseG1xfjGxCDwcoELIByug2rgrQzlOKn3jRZ81WbQVcJWZn59jycBMpYvr/W/
-	 4SKPmX3EjxE5Q==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
+	s=arc-20240116; t=1720769909; c=relaxed/simple;
+	bh=ye7wXbcNIIa89jC4Vj43ONgKIfW4gqaNk0cyyruTMoA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iunxkKeOJXmU1kT61Fu9o/wpimuo5zJpeKt8dZpDK61PPYn1Xpn9qizaLqE3oF7+1YCps7/v2+J4kkT5SF6gPjw0W1wZocvuLf83SkoeifKWo4TbWWrdu+0Em1uKGcSKllvZLXo7hTJAFEWw0yHxvddV9BO94zjK/xyK96PLuBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JQXye5Ft; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720769898; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=ywK4ki7xtX77OnJnErKp32Ajn4mO+woZuazV6SE+LGc=;
+	b=JQXye5Ftc6VgBEm73OVTOiQwBd1btJi/M9itUCCquu+8z8pQKA/wlop8794pDrAHpyjlOTFY0dQ/OiNzfSfiQOg1uHlNhQy0fnu+E6AsXSPgPvd/NeVmio/KItI/Hv2+6YJXnJxzZkw/Sio4eXW8RfkY6MVzt6h88ScbigpeNIA=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0WANFw0s_1720769897;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WANFw0s_1720769897)
+          by smtp.aliyun-inc.com;
+          Fri, 12 Jul 2024 15:38:17 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: hch@lst.de,
+	m.szyprowski@samsung.com,
+	robin.murphy@arm.com
+Cc: iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: don't traverse directory blocks after EOF
-Date: Fri, 12 Jul 2024 15:34:15 +0800
-Message-Id: <20240712073415.227226-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] swiotlb: Add missing kernel-doc function comments for swiotlb_del_transient
+Date: Fri, 12 Jul 2024 15:38:16 +0800
+Message-Id: <20240712073816.38772-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,61 +58,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-All directory blocks are within the scope of i_size, so let's limit
-the end_block to just check valid dirent blocks.
+Add kernel-doc style comments for swiotlb_del_transient function.
 
-Meanwhile, it uses dir_blocks() instead of variable for cleanup in
-__f2fs_find_entry().
-
-Signed-off-by: Chao Yu <chao@kernel.org>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9513
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 ---
- fs/f2fs/dir.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ kernel/dma/swiotlb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 02c9355176d3..d4591c215f07 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -305,18 +305,21 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
- 	int s = GET_DENTRY_SLOTS(fname->disk_name.len);
- 	unsigned int nbucket, nblock;
- 	unsigned int bidx, end_block;
-+	unsigned long last_block;
- 	struct page *dentry_page;
- 	struct f2fs_dir_entry *de = NULL;
- 	pgoff_t next_pgofs;
- 	bool room = false;
- 	int max_slots;
- 
-+	last_block = dir_blocks(dir);
- 	nbucket = dir_buckets(level, F2FS_I(dir)->i_dir_level);
- 	nblock = bucket_blocks(level);
- 
- 	bidx = dir_block_index(level, F2FS_I(dir)->i_dir_level,
- 			       le32_to_cpu(fname->hash) % nbucket);
- 	end_block = bidx + nblock;
-+	end_block = min_t(unsigned int, end_block, last_block);
- 
- 	while (bidx < end_block) {
- 		/* no need to allocate new dentry pages to all the indices */
-@@ -361,7 +364,6 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
- 					 const struct f2fs_filename *fname,
- 					 struct page **res_page)
- {
--	unsigned long npages = dir_blocks(dir);
- 	struct f2fs_dir_entry *de = NULL;
- 	unsigned int max_depth;
- 	unsigned int level;
-@@ -373,7 +375,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
- 		goto out;
- 	}
- 
--	if (npages == 0)
-+	if (dir_blocks(dir) == 0)
- 		goto out;
- 
- 	max_depth = F2FS_I(dir)->i_current_depth;
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index b4d8167b2f8d..df68d29740a0 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -1500,6 +1500,7 @@ static void swiotlb_release_slots(struct device *dev, phys_addr_t tlb_addr,
+  * swiotlb_del_transient() - delete a transient memory pool
+  * @dev:	Device which mapped the buffer.
+  * @tlb_addr:	Physical address within a bounce buffer.
++ * @pool:       Pointer to the transient memory pool to be checked and deleted.
+  *
+  * Check whether the address belongs to a transient SWIOTLB memory pool.
+  * If yes, then delete the pool.
 -- 
-2.40.1
+2.20.1.7.g153144c
 
 
