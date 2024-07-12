@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-251076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3F8A93005C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:18:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20BC93005D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7F5D1C214B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:18:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E391C226AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4826F17E8E1;
-	Fri, 12 Jul 2024 18:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC36C17E901;
+	Fri, 12 Jul 2024 18:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bOD/Bbt9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rlrBGB07"
 Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0662A17E446
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 18:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B2B17E8E7
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 18:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720807981; cv=none; b=V8Ka714YG7h1bdDSngQgptv/XyX7k6uun8GYl25IKl0wgxhIp++aoWUPt50a9K1yyEzPC/xbxp15zzs6JBtNBOOA25uMQG9OJOw7FuKOGYct8itDAmH4y7UtWTJNDvo8CpVEImB0bA1aolNgq9jLYmKSRrXCQqxvhCAWW6PnoPo=
+	t=1720807984; cv=none; b=PLD2Rb3rX7XodMD9ymGGjPu82k86zISZ1eEfOIXtVQprY6uarzqWSvZikwIsxK0waKXiieB3mmnTdROzKVkSXmWpV0vJqbWopeCirM5HCujYI4BnSjXkIByAbX5A+uQqN06HPa+Zb9uaw+bmce6svFv9IgdpkU5Wffz8WHJcj5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720807981; c=relaxed/simple;
-	bh=Zg5U84S1ofRY2jiFZPVeAVTNxheJYumCpecsmhgwjUo=;
+	s=arc-20240116; t=1720807984; c=relaxed/simple;
+	bh=IiOUbHu6Xz1VISLL+B0ayGxLanWqPidsSe75Qtiw59I=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=gLTMI7tWrXfu5EUvbntgoktZntxw+NqZbwVhcexHM3G32WsJOwEb/RoG1eG9aFsxPOxjUV0mCf1XPXerxNv5ZBCzF6OCM8pcrSF9K6HirvEaXB9Tba4L0ezMXI9pK5ssR7NyNJb5k6g6PFH2clt9oXk4zoDgZ233JDKGCgecpdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bOD/Bbt9; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=TXvAsPTDSSLDcgKR29OD70pINWf7SSODnOflwGqtRSG/Jh8y+sNueXKnaEBJSNqCFpe9wsy9jHt7nkutgDUq2ofdkA+tocebZqDF2AsOvLa3H+gx/MBj9I28fsC6JxqGMlXL1iRD2mehOqYmvc6Km+gheaPHbQ7uWTMnyDE7q78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rlrBGB07; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6533680c788so40101197b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 11:12:59 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-654d96c2bb5so38505127b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 11:13:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720807979; x=1721412779; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720807981; x=1721412781; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QqtdDMsD55pEoQfMNz6zeYZQAoeVSzSneBvTBBwc7VY=;
-        b=bOD/Bbt9p0oq+UIlI6yQUt/3spsVvCQJ45K8QxXKMW+tF/zvIdPBb34i+2VMJy0Gl8
-         2RFtgNNDXFTZb048q++osDhntcY833jldIYkcECeAn0iP8agOxhP/8D8AdTYsHoZ+/QT
-         IA4TY6qYRo1am7amPf0sOP2I+WC5jIWaqkUTTy46mGkW0y0G96BLvdaVCcGBS8FwhRYo
-         F69fXKDa4pOmNVvEHxRuZR+JvTHUZ+s8DjD4wWMbmIZq7gsxb2fUJzW02bmPMkOopS7k
-         /Hrc6TMetBU/d3Vao7HD3M60SXQZeDOkbQr8BFUoyN4QyoKYNVESbmY7QM7lymbtmUxH
-         rvvA==
+        bh=I9Nrbi73tEJWZxPfyj1GxchBACZKBze8WVP6UfEoRnc=;
+        b=rlrBGB07ulbu38xgl3cGaQeG9QqD1iHSJBKuxu1e6/yw9E+xSDkoP3McAA+VD3sFFP
+         3sT7TDEisyHiglyNfTGNzMc3HEnKEokO/FiJSj1gB+j5LVbNs2pCVMU/m9N6phRqqU2R
+         sPADzogBaXBnk2yqY+l5tZarWHR8uOZilBqy50DPbWSDs4Hn5GhBmfI6okx8PEjljbnh
+         6894QmX/uUN/o6IDh5Udp5AN/eZEdcioEwp2d4n7ersmdfgYGk1YEKeumtsHPKXAWvA9
+         CTT54B98ulcuyrkZum3m7hvVtjK7AkiCRyd1EVkkCsS6tYupLm0kW9m5Flg6T1lGOe/R
+         cpvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720807979; x=1721412779;
+        d=1e100.net; s=20230601; t=1720807981; x=1721412781;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QqtdDMsD55pEoQfMNz6zeYZQAoeVSzSneBvTBBwc7VY=;
-        b=E7JXJT9aWDM1UU7Z7n+g1bu6u0lyUMC75kJWKpWmBxQMgo8Ey9M9dUNisirdWUZD+G
-         eygAWkW+auAKdTIhEy0+3i490KNz0jPfDCpMyFgIP9tCs70knmMCCIwsI8RKBEoHJFRB
-         IwUFlzzSVLn+JxVt3YndrFxyCKIbcDcOvCeNg13WW0gZAJ1DGXtgvMiLCf4fKctWqAze
-         nKZockqcI9SohSphfY/0T77WGi/eXPW5VGvIUu0BlDVdBrcTDs6B0atWYPL8dQCfrnrH
-         b3ilaNhrZ7yHLZVcGHGCJ9SrSz0874TGtVBBp1DFSOXsG7/rLRqvtqnsk4y0L9jx0XP2
-         dNyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUz4CeTGz0X+FqOa+R3j8zUuu2TirpI7W1muwTT6kXz2N0WbdWhKsG+7dJ49Rx3ck8g+X5XkSxGp6YMPHzD0Ga00xSr97DBNAq0teV2
-X-Gm-Message-State: AOJu0Yx06WnWR0Ta+mLrvemG0qjHKTm+EDbduJT+T81I+Yz/ecGXq6iq
-	0ksHlR+VBl0vStBfG9FuRo+JotEE5xmuGfn/SiQo80C5MCt1nrraqiMLx5tosSOeueljwkVG+JW
-	FjXooMw==
-X-Google-Smtp-Source: AGHT+IEnchojDdZ76Vxn9f7h4DhTLRV8huHLPOkuO6TlwqAevAk9P1WjzXQqv38Bbw3agIDos4xIMuc27TcD
+        bh=I9Nrbi73tEJWZxPfyj1GxchBACZKBze8WVP6UfEoRnc=;
+        b=YztraMvt0KUrZJmUXpp6T9l8oDPqrluyLZbGC6jtLd+qwMWLtV+05B2+5tzOdxkEOs
+         G13oTm5mcLHU/QKCF0UQBhhVHqn6dkyODR5KrchhPe2MOeKdTzu5OpT64HAtwrNB1Ij+
+         1u2/JuvWBe4F+h7Eh4u4LWvJriz+b41mDerhCGxjeduB1ffqPxYbaN7KUL7t1e6utdRj
+         ge/N4eAG+8oQJso8DkoHYPxeGN2FEDpSi74jp0o6NUC08CQ9DXEhPlzBJvc4I5mrG3SG
+         AA1KszpU/7RGWmL9CSkVX+xt/5ah9PxEk0XmncBFoSiMhkFRlyXyuOljtrQmRSJ63yuq
+         mm4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVgFxuqQnlmFWuzj1Gq8jpooEQ7FsA8jM1mGZqfkqELSFSKgUj7eXNukBNCt13L/2UHoU+WX4K0NSZ46ZDGv6BnqPB9mxlAhQ1imWeq
+X-Gm-Message-State: AOJu0Yy5FZRtNtFG9NKWc2glmR0iqQlTVE10IfLQebzL9ivpPJysckrh
+	HRO4ORKppYZ4Wt1uyxl9JNams8f010elkx6745Qn5jhg1Aa9JbohJvA0858ppmNBU5dKZEEb6cT
+	R37JTOg==
+X-Google-Smtp-Source: AGHT+IHbbwHCzdchAfHj2SPmGVg9X+8SLDnkVDWoP3VU6MRCDTDk07UDfpwPw7rKkSi8K/BWJzAXGMd4QWb8
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:2e7d:d47a:a0c6:e3b1])
- (user=irogers job=sendgmr) by 2002:a05:6902:1208:b0:dfa:48f9:186a with SMTP
- id 3f1490d57ef6-e041b0370bbmr26212276.3.1720807978826; Fri, 12 Jul 2024
- 11:12:58 -0700 (PDT)
-Date: Fri, 12 Jul 2024 11:11:03 -0700
+ (user=irogers job=sendgmr) by 2002:a05:6902:2b0d:b0:dda:d7cf:5c2c with SMTP
+ id 3f1490d57ef6-e041b17798cmr23901276.13.1720807981253; Fri, 12 Jul 2024
+ 11:13:01 -0700 (PDT)
+Date: Fri, 12 Jul 2024 11:11:04 -0700
 In-Reply-To: <20240712181108.475336-1-irogers@google.com>
-Message-Id: <20240712181108.475336-23-irogers@google.com>
+Message-Id: <20240712181108.475336-24-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240712181108.475336-1-irogers@google.com>
 X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Subject: [PATCH v5 22/27] perf data convert json: Use perf_tool__init
+Subject: [PATCH v5 23/27] perf data convert ctf: Use perf_tool__init
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -99,73 +99,53 @@ and not relying on perf_tool__fill_defaults.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/data-convert-json.c | 43 ++++++++++++++---------------
- 1 file changed, 20 insertions(+), 23 deletions(-)
+ tools/perf/util/data-convert-bt.c | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-diff --git a/tools/perf/util/data-convert-json.c b/tools/perf/util/data-convert-json.c
-index 905ea9823f9d..20bfb0884e9e 100644
---- a/tools/perf/util/data-convert-json.c
-+++ b/tools/perf/util/data-convert-json.c
-@@ -316,39 +316,36 @@ int bt_convert__perf2json(const char *input_name, const char *output_name,
- 	struct perf_session *session;
- 	int fd;
- 	int ret = -1;
--
- 	struct convert_json c = {
+diff --git a/tools/perf/util/data-convert-bt.c b/tools/perf/util/data-convert-bt.c
+index 9e2170604b66..021e9b1d5cc5 100644
+--- a/tools/perf/util/data-convert-bt.c
++++ b/tools/perf/util/data-convert-bt.c
+@@ -1607,25 +1607,23 @@ int bt_convert__perf2ctf(const char *input, const char *path,
+ 		.mode      = PERF_DATA_MODE_READ,
+ 		.force     = opts->force,
+ 	};
+-	struct convert c = {
 -		.tool = {
--			.sample         = process_sample_event,
--			.mmap           = perf_event__process_mmap,
--			.mmap2          = perf_event__process_mmap2,
--			.comm           = perf_event__process_comm,
--			.namespaces     = perf_event__process_namespaces,
--			.cgroup         = perf_event__process_cgroup,
--			.exit           = perf_event__process_exit,
--			.fork           = perf_event__process_fork,
--			.lost           = perf_event__process_lost,
--#ifdef HAVE_LIBTRACEEVENT
--			.tracing_data   = perf_event__process_tracing_data,
--#endif
--			.build_id       = perf_event__process_build_id,
--			.id_index       = perf_event__process_id_index,
--			.auxtrace_info  = perf_event__process_auxtrace_info,
--			.auxtrace       = perf_event__process_auxtrace,
--			.event_update   = perf_event__process_event_update,
--			.ordered_events = true,
+-			.sample          = process_sample_event,
+-			.mmap            = perf_event__process_mmap,
+-			.mmap2           = perf_event__process_mmap2,
+-			.comm            = perf_event__process_comm,
+-			.exit            = perf_event__process_exit,
+-			.fork            = perf_event__process_fork,
+-			.lost            = perf_event__process_lost,
+-			.tracing_data    = perf_event__process_tracing_data,
+-			.build_id        = perf_event__process_build_id,
+-			.namespaces      = perf_event__process_namespaces,
+-			.ordered_events  = true,
 -			.ordering_requires_timestamps = true,
 -		},
- 		.first = true,
- 		.events_count = 0,
- 	};
--
- 	struct perf_data data = {
- 		.mode = PERF_DATA_MODE_READ,
- 		.path = input_name,
- 		.force = opts->force,
- 	};
+-	};
++	struct convert c = {};
+ 	struct ctf_writer *cw = &c.writer;
+ 	int err;
  
 +	perf_tool__init(&c.tool, /*ordered_events=*/true);
-+	c.tool.sample         = process_sample_event;
-+	c.tool.mmap           = perf_event__process_mmap;
-+	c.tool.mmap2          = perf_event__process_mmap2;
-+	c.tool.comm           = perf_event__process_comm;
-+	c.tool.namespaces     = perf_event__process_namespaces;
-+	c.tool.cgroup         = perf_event__process_cgroup;
-+	c.tool.exit           = perf_event__process_exit;
-+	c.tool.fork           = perf_event__process_fork;
-+	c.tool.lost           = perf_event__process_lost;
-+#ifdef HAVE_LIBTRACEEVENT
-+	c.tool.tracing_data   = perf_event__process_tracing_data;
-+#endif
-+	c.tool.build_id       = perf_event__process_build_id;
-+	c.tool.id_index       = perf_event__process_id_index;
-+	c.tool.auxtrace_info  = perf_event__process_auxtrace_info;
-+	c.tool.auxtrace       = perf_event__process_auxtrace;
-+	c.tool.event_update   = perf_event__process_event_update;
++	c.tool.sample          = process_sample_event;
++	c.tool.mmap            = perf_event__process_mmap;
++	c.tool.mmap2           = perf_event__process_mmap2;
++	c.tool.comm            = perf_event__process_comm;
++	c.tool.exit            = perf_event__process_exit;
++	c.tool.fork            = perf_event__process_fork;
++	c.tool.lost            = perf_event__process_lost;
++	c.tool.tracing_data    = perf_event__process_tracing_data;
++	c.tool.build_id        = perf_event__process_build_id;
++	c.tool.namespaces      = perf_event__process_namespaces;
 +	c.tool.ordering_requires_timestamps = true;
 +
  	if (opts->all) {
- 		pr_err("--all is currently unsupported for JSON output.\n");
- 		goto err;
+ 		c.tool.comm = process_comm_event;
+ 		c.tool.exit = process_exit_event;
 -- 
 2.45.2.993.g49e7a77208-goog
 
