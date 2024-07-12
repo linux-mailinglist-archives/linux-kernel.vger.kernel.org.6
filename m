@@ -1,88 +1,85 @@
-Return-Path: <linux-kernel+bounces-251237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5C9930285
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:56:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC76930286
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFB16B22831
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 688291C21102
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04856132C39;
-	Fri, 12 Jul 2024 23:56:35 +0000 (UTC)
-Received: from norbury.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85BE132811;
+	Fri, 12 Jul 2024 23:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Okj4PtaD"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B954E132133;
-	Fri, 12 Jul 2024 23:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED7038DD9
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 23:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720828594; cv=none; b=SwtVnG38wlJvXaomgVtu7Enmkedlf8znKzmIKn0Ih833fKvESesCp/EwSDourLwgZXrvT0xyy0OAfBDezwX5wVkytJqbp5CHW08xEXA7Hq6dLXs2w0yGysDt/2NTqFO+J2eAU900EYsEtt3ukRTc9evqhWNsV52IMAqO64QUd1k=
+	t=1720828626; cv=none; b=PloSmajnVTJK9yhYdnoNVa2dX0Xg+iYbdKX8qiG9S3y7JcNYy/cw9gA/Ku8UCxlQf+6SlLnSh6XWzaTX8M/7nRBIM+bvAyg+1eTwSTe4FfMhuvgvRqnd1BdNpuVb43QP8niGYGcFAhZgeXFOn/0XyAFAWMumqKgJP2AGautYlX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720828594; c=relaxed/simple;
-	bh=fJmqQadkjuCKEKTMCucxpfaXrsiC+Dv+QQEqQnIBCwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UABXF/ZI0mqJTM7JPpxHNcgRuSImb/sle5TYJqcmb5meEoiX7Qdo0j7LJ23ZGMbc/cyL53t4ZFKMeuFiVfBdtpFeZRw0ckScXEhzFQaxDg1IwL/mxw3k0GUh2kvW4WNZQ3WUXJC/BYIyz2jV4rXuCgTBnHiYz3m4eUO9JhwlC3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sSQ7C-001q3t-1x;
-	Sat, 13 Jul 2024 09:55:51 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 13 Jul 2024 11:55:50 +1200
-Date: Sat, 13 Jul 2024 11:55:50 +1200
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: David Gstir <david@sigma-star.at>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	David Oberhollenzer <david.oberhollenzer@sigma-star.at>,
-	Richard Weinberger <richard@nod.at>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-crypto@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	sigma star Kernel Team <upstream+dcp@sigma-star.at>,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH] crypto: mxs-dcp: Ensure payload is zero when using key
- slot
-Message-ID: <ZpHChqeDBhddyY+e@gondor.apana.org.au>
-References: <20240703124958.45898-1-david@sigma-star.at>
+	s=arc-20240116; t=1720828626; c=relaxed/simple;
+	bh=v5MFUcY2KTqANwH586uLxyoUInEK6dGefZwvJWBcGP8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eiDVwOJodG3mH7pjkBZomA6cG15Am8zwjtHzDwBIRav3Or0lsZNSr404PVhdmCZT3KarsBYxT+Stz+QEdvUmDm6ADYq61X8YoO+GtGCoiQAML3bsdLBLKCb9file2Xiz50X4wGi8uajhrt6C+kHfm/dGD0v7L8+KH8XA/HrEJP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Okj4PtaD; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-5e4df21f22dso1859504a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720828624; x=1721433424; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ze3wACVXpWLgwdUW1sUj3dn7jbqIRwBSX0Q8OyWjcao=;
+        b=Okj4PtaDidIX0lqRxSfffJ8TOvJOL0ZOp6pO2kXH+3UyXqxOjhHInqaSlIAqUlc6Ny
+         ZH+3h9Q5hdceOYUEBB0sM4pt0Grhdbx4KeOGZOORu9vVdc3I49Th8ienoWtcQy+VxkZB
+         Lv0WNcj/n9i8JUJCXs4pElXcI8YSB2bd53hqqYBFUkY6kQYM65mbXBFm4siuxwf3FRjw
+         Y8b0ShaXZHV4ZsImSusUnAxvVPKZrdi037BajjxgOyYnnyk6sKEfcjD1VS7vhSoPEWo2
+         VoRFLllQTF5GMwl3/VTWSFWYZKZuFbYq4Wk80eXOMVx97j67yAyZOXoLtCDtWW+xQBBx
+         r7Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720828624; x=1721433424;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ze3wACVXpWLgwdUW1sUj3dn7jbqIRwBSX0Q8OyWjcao=;
+        b=RLuSFRJXYdZFk/c/XG/OgEHHlg/F4UpmpRUr1rOuRIMYIN3om0KZ/J48tPrdsX8XE0
+         F8ZJyZjCLmp6xq2XgXIrxKjQWxwMJv7VuCIBJHlTQAWfPAiAvEzjkegTsuAXufDuG0uK
+         2uBVqzAiudQloTixs+q3a93ogsJTtlSr/H8eeKbBgllTlpoE8T8puoQU2IBKQPvOE38P
+         F0TVYyklAZ8vwLrK08rPR+yBBJlPz7Sl4/Yis2cCrAHZUUDhWnL8KXIIfJ07Gx8l6GKo
+         OWc+zLplwf/MoFIqk3jZJ8yv+ZLJAypcFaYR32WO3jyv7KKsLSwx48e9a2QFJN7tKACv
+         r1VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8IgrjKdxwmEm+nvaJHCiWPGyj8cyui2rYbxIrtlWQLHLab81QfjR6i6VFc42rCDtxYj9/cBjjPRgQoSZ9Uyog9mcp3kcJoF2mDI6n
+X-Gm-Message-State: AOJu0YwWG6YIXogWgS17uu2JMZ4odb8PKf3vOO74WrGo9tgyfnVbIedG
+	p719lOqlKOAmHqRTXOr/89XRGp1QdluMGV5fm2qgPLfBM6c9tb2AU+wpHI0B4ISRgiX8fPaz0tC
+	0bA==
+X-Google-Smtp-Source: AGHT+IGuOjZyfAICM5hPYltKwK8MUxEufx6QRd2bStK4KRbVp9LndHSZuW7wfQXLiJscub/n62KMNN+4NeU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:5215:b0:2c8:632:7efe with SMTP id
+ 98e67ed59e1d1-2cac53aceddmr45484a91.4.1720828624214; Fri, 12 Jul 2024
+ 16:57:04 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 12 Jul 2024 16:56:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703124958.45898-1-david@sigma-star.at>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
+Message-ID: <20240712235701.1458888-1-seanjc@google.com>
+Subject: [GIT PULL] KVM: x86 pull requests for 6.11
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sean Christopherson <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 03, 2024 at 02:49:58PM +0200, David Gstir wrote:
-> We could leak stack memory through the payload field when running
-> AES with a key from one of the hardware's key slots. Fix this by
-> ensuring the payload field is set to 0 in such cases.
-> 
-> This does not affect the common use case when the key is supplied
-> from main memory via the descriptor payload.
-> 
-> Signed-off-by: David Gstir <david@sigma-star.at>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202405270146.Y9tPoil8-lkp@intel.com/
-> Fixes: 3d16af0b4cfa ("crypto: mxs-dcp: Add support for hardware-bound keys")
-> ---
->  drivers/crypto/mxs-dcp.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+There's a trivial conflict between "misc" and "vmx" in kvm-x86-ops.h, they
+both delete ops that happen to be _right_ next to each other.  Otherwise, should
+apply cleanly.
 
