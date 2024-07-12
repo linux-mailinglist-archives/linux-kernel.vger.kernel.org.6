@@ -1,160 +1,138 @@
-Return-Path: <linux-kernel+bounces-250730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58FF92FBF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:58:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC89192FBF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48A9F1F23717
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:58:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704EC1F22F45
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5913171677;
-	Fri, 12 Jul 2024 13:58:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFD4171640;
+	Fri, 12 Jul 2024 13:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E0805MYh"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnvGcZis"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB58171657
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 13:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2222142E77;
+	Fri, 12 Jul 2024 13:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720792698; cv=none; b=G56yWCgEWLCdcifwInRkzwzQkziXEKSXvZx58jAKESb+HuOc7unUvMxks0KzrOdKV23yjrAeggXFfzbO7ICVW95r1rPovQWeohhRYNjbiB4gzCNzOtwVyYg/TIf/nalszBK74ADIT60o5W1ky5VuxAJptBzlQxcufzO+S/bsVwg=
+	t=1720792742; cv=none; b=nfaKKge+56vwonAX9Oq8dd/eCG9huUke7HNWmYK+3dR4PT/L60KRUBdTmmG1iK2jSHD2DnuevYKA5t82oNpCtju8kMjf73XkLuRLmNp/LEpD+olClIh68qWzjvlCkb+dOEVO7QMrQtiAdwRtPgo6vogvAyBAa4czCYEWqJaoBEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720792698; c=relaxed/simple;
-	bh=b6dnjmu5Un6BaihZYwhsVjWgYHYNPIaQ3XZE4PzSCTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RbfjHas4+++HoW0yWZe6Gf9XMHEDmEPjz4muTiGaCeL9ocxeJ64IFUQRCR2DWVhR1TNkEClAc/f/5TJ2KWj3hdQGhOCX6HyDJEveffNh6VKCH5j6vqDUnIPn9yVMYVsu2PZrAzYZSaL00vZHhXwyjo4PF/J1+kadyJUMtnu5KDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E0805MYh; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5c47ad9967cso1063107eaf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720792695; x=1721397495; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cAcXE+wc7QWairZz7uXKkhgYgUCoU38OEuEQx+dCRCw=;
-        b=E0805MYhaRlpYslA/dNHCakxYtySIoCGGjK7Gu00uZvmQuXm+JQ2nIMyrxtw/WoQPG
-         vaEL5AULKbX5J3XIlZ3wCJicm3vg7TmELUb4XGpJnHO/UQZIAJpsUDYK7C+7UEn3/BUX
-         ENK8NXG6Ka7RObIj7AdqHQbv7cq8Kp0u36vDvbAEzJsfQ0Phhl/Gx5LVD6VDATjNu5Vu
-         bvipDJ3nDsdDYkncwLK0CzzAFADYVZ95KPFu7AmM8XqHzn0GeOTRLuGn5WpkaeUHGzTQ
-         e5KA4v2/4gnIt1Ai57nRXgKGsLKJNxJ5y+BtDvLor6OHoTEewiq008LHuZwhbwCX+mKS
-         utnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720792695; x=1721397495;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cAcXE+wc7QWairZz7uXKkhgYgUCoU38OEuEQx+dCRCw=;
-        b=B05pqNDVx4JLBy8X6LRrdU2F4uhy8QWH2z+XVL6YOREt+UuNU2SXrLPRKXxEr1/C/R
-         KMYMKbGn0xMwxsXJi2KVimaJJQkr/K2uWq8Vfo1gG2snfhJ49EcePo96hTb2FmynMTzf
-         VCymoplJJKLOKPaFZ/uCeouEVOKgMrVhYDj5Kd/pC+PtaVgV7ViUyFgQb+zA0MBMyiiV
-         vkiFf53Wu1UI56Kv9ER5/dQKSysRlhXY7UjRDx8pi9dea9COJZNothcb7UQYKr8y0AkR
-         qmGyjjD9Rz0FMCSq/m+pZKKLPUUAtjOv7/MJfIbaGgWDvFJhmcPRfsqVRQp2Q06zQI+s
-         jmmg==
-X-Forwarded-Encrypted: i=1; AJvYcCX94IbwkZEXshqTkT8ajcFxXxgFinMk5aDQ9X48iYKVaUHsx3j4GGrTXIcvVDdNu196bmTLnUAzXIs3cEyhh2DP/rQwIwhJ3MQFkwze
-X-Gm-Message-State: AOJu0YwAPFTF1XLphaqZK82P7BgKPNHaf+XQaR2ktID3b5oogNqhLPxL
-	xCK5pLSTQth9FXhyftsslUeVoJwK095mDZiDwYqQFrp6G/FlHAvrPXF3tEYppvs=
-X-Google-Smtp-Source: AGHT+IH+Qfww+/ZstMAIBoDDATVHZnf4rg7cXRA8cOA6yKWm44pWlxf+b36T0xd3Qr7tRoC0SBzCQw==
-X-Received: by 2002:a05:6820:2686:b0:5cc:a794:9ea7 with SMTP id 006d021491bc7-5ccde7cbbdamr2594439eaf.7.1720792695556;
-        Fri, 12 Jul 2024 06:58:15 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700::17c0])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c7b2fbd78csm745281eaf.24.2024.07.12.06.58.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 06:58:15 -0700 (PDT)
-Date: Fri, 12 Jul 2024 08:58:08 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	lkft-triage@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Subject: Re: next: arm64: defconfig: gcc-8:
- drivers/bluetooth/hci_qca.c:2501:2: error: label at end of compound
- statement
-Message-ID: <b833c93e-ae8f-449f-b7bd-8d315aa52703@suswa.mountain>
-References: <CA+G9fYuCp7Q71_o74yo9ge_5-G=Ho9bC3kJdX_JvtoqWOQujkA@mail.gmail.com>
- <CAMRc=Md5zmFxXXM89LQs6dspC0xnp_6=z=+a2SQypWjwpiRgow@mail.gmail.com>
+	s=arc-20240116; t=1720792742; c=relaxed/simple;
+	bh=X8636AljHJoYrtKyFyyr59/HGScQY7Ic0JGcHN0bzY8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gNoZf359+8sAocDrObUPxPCRt5+OgTlr2PRhHqVJtVQn936iHdc8wp878sUebSDNZ0LjVaewFdLiVe5wX/6H5MPEgwiUvE55AUy1yjZHhrYCLyZMleq3TM7XLURz3UmOBJJOI7RpHlEOZ1pgBZCvxmXbabR2r5GtZkNormWvn8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnvGcZis; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E01EBC32782;
+	Fri, 12 Jul 2024 13:58:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720792742;
+	bh=X8636AljHJoYrtKyFyyr59/HGScQY7Ic0JGcHN0bzY8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gnvGcZisVWk/FLvujHDslQPmnFJREJG7neDU1Okc3TuB1dbpJ8a55pz+opdYrrrXG
+	 h1rmvWgltAwbn3EYDAop7kSpqQyBf2ECqtbUTtD1ajXy/GPjvNI/3Dw/Sxe+s3x300
+	 pBgS/DIV7sBBUOjq1U+jejcpt5JiNg7Do9r5dO0q/SGuXI8UqjKsMwkBluMxmINm+V
+	 7TE20M+FlsCvSl6FM5oK6lquS89dRzI0BE/fh8IAUpcanxNzbFxjBUO9c8ZoSMwDyU
+	 +9lmbav9cvIy7nG527vDlVXScMs9N3PeCyGqAKeKWvyde2O6nNPBpuyx8nv3oD0ibM
+	 9svKsSfqAmFoQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL for v6.11] vfs procfs
+Date: Fri, 12 Jul 2024 15:58:52 +0200
+Message-ID: <20240712-vfs-procfs-ce7e6c7cf26b@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=Md5zmFxXXM89LQs6dspC0xnp_6=z=+a2SQypWjwpiRgow@mail.gmail.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3146; i=brauner@kernel.org; h=from:subject:message-id; bh=X8636AljHJoYrtKyFyyr59/HGScQY7Ic0JGcHN0bzY8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNNJu7RSzoa7Wm9eU8l/hnfy6dS5vSoah89HC3wM/3j rYFt6/s6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIpGWMDBtdmaf3G0esivJv eLHs0Oo461KJWWnMp4qtAh3+GFRKPWf4p/rYcJmr/v4plucumIoKS/VmCHAUHXq66vOmQotg06m XmQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 12, 2024 at 03:34:19AM -0500, Bartosz Golaszewski wrote:
-> On Thu, 11 Jul 2024 16:34:35 +0200, Naresh Kamboju
-> <naresh.kamboju@linaro.org> said:
-> > The arm64 defconfig gcc-8 build failed [1] due to these warnings / errors on the
-> > Linux next-20230711 tag. But the gcc-13 builds pass.
-> >
-> > LKFT is testing older toolchain support till gcc-8.
-> >
-> > The following recent changes cause this failure.
-> > a887c8dede8e1 Bluetooth: hci_qca: schedule a devm action for disabling the clock
-> >
-> > Build errors with gcc-8:
-> > -----------
-> > drivers/bluetooth/hci_qca.c: In function 'qca_serdev_remove':
-> > drivers/bluetooth/hci_qca.c:2501:2: error: label at end of compound statement
-> >   default:
-> >   ^~~~~~~
-> > make[5]: *** [scripts/Makefile.build:244: drivers/bluetooth/hci_qca.o]
-> > Error 1a887c8dede8e1 Bluetooth: hci_qca: schedule a devm action for
-> > disabling the clock
-> >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >
-> > Build data:
-> > ------
-> >   * Build name: gcc-8-defconfig
-> >   * git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-> >   * git_sha: f477dd6eede3ecedc8963478571d99ec3bf3f762
-> >   * git_short_log: f477dd6eede3 ("Add linux-next specific files for 20240711")
-> >   * Config: defconfig
-> >   * arch: arm64
-> >   * toolchain: gcc-8
-> >
-> > Steps to reproduce:
-> > -------
-> > # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-8
-> > --kconfig defconfig
-> >
-> > Build log links,
-> > ---------------
-> >  [1] https://storage.tuxsuite.com/public/linaro/lkft/builds/2j5nr85T4iLl99RjcJ9oy9O3eo2/
-> >
-> > --
-> > Linaro LKFT
-> > https://lkft.linaro.org
-> >
-> >
-> 
-> The actual code looks like this now:
-> 
-> 	case QCA_WCN7850:
-> 		if (power->vregs_on)
-> 			qca_power_shutdown(&qcadev->serdev_hu);
-> 		break;
-> 	default:
-> 
-> What can be done to silence this warning? Or should we just ignore it because
-> it's gcc 8?
+Hey Linus,
 
-Just add a break statement.
+/* Summary */
+This contains work to allow restricting access to /proc/<pid>/mem. Over the
+years various exploits started abusing /proc/<pid>/mem (cf. [1] and [2]).
+Specifically [2] is interesting as it installed an arbitrary payload from
+noexec storage into a running process and then executed it. That payload itself
+included an ELF loader to run arbitrary code off of noexec storage.
 
-	default:
-+		break;
-	}
+The biggest problem is that /proc/<pid>/mem ignores page permissions by using
+FOLL_FORCE which was discussed several times on- and off-list.
 
-regards,
-dan carpenter
+Unfortunately there are various use-cases using /proc/<pid>/mem making it
+impossible to just turn it off. They at least include PTRACE_POKEDATA and the
+seccomp notifier which is used to emulate system calls.
 
+So give userspace a way to restrict access to /proc/<pid>/mem via kernel
+command line options. Setting them to "all" restricts access for all processes
+while "ptracer" will allow access to ptracers:
+
+(1) Restrict the use of FOLL_FORCE via proc_mem.restrict_foll_force
+(2) Restrict opening /proc/<pid>/mem for reading.
+(3) Restrict opening /proc/<pid>/mem for writing.
+(4) Restrict writing to /proc/<pid>/mem.
+
+---
+
+The level of fine-grained management isn't my favorite as it requires
+distributions to have some level of knowledge around the implications of
+FOLL_FORCE and /proc/<pid>/mem access in general. But the use-cases where
+/proc/<pid>/mem access is needed do already imply a sophisticated knowledge
+around its implications. Especially when it comes to the seccomp notifier and
+gdb to inspect or emulate process state. So that ultimately swayed me to accept
+this. If we need something simpler I'm all ears.
+
+/* Testing */
+clang: Debian clang version 16.0.6 (26)
+gcc: (Debian 13.2.0-24)
+
+All patches are based on v6.10-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+No known conflicts.
+
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11.procfs
+
+for you to fetch changes up to 39efa92f9e5fceb44edef5536c58e3750b9d638d:
+
+  proc: restrict /proc/pid/mem (2024-06-18 12:26:54 +0200)
+
+Please consider pulling these changes from the signed vfs-6.11.procfs tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.11.procfs
+
+----------------------------------------------------------------
+Adrian Ratiu (2):
+      proc: pass file instead of inode to proc_mem_open
+      proc: restrict /proc/pid/mem
+
+ Documentation/admin-guide/kernel-parameters.txt |  38 +++++
+ fs/proc/base.c                                  | 203 +++++++++++++++++++++++-
+ fs/proc/internal.h                              |   2 +-
+ fs/proc/task_mmu.c                              |   6 +-
+ fs/proc/task_nommu.c                            |   2 +-
+ security/Kconfig                                | 121 ++++++++++++++
+ 6 files changed, 363 insertions(+), 9 deletions(-)
 
