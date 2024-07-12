@@ -1,231 +1,206 @@
-Return-Path: <linux-kernel+bounces-250236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4AE992F58D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:30:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6473692F593
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CF9F1F2261E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:30:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4C7AB20CF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB93D13D518;
-	Fri, 12 Jul 2024 06:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36AC13D52F;
+	Fri, 12 Jul 2024 06:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F85v0U4r"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ntwirua3"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F6813D502
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9D04683
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720765795; cv=none; b=ACec9zklE1z+mHx4sCZL8+3gjVdi2SjH+xEdmvShRszxw8VnXp5ldKo1Ve1mDHBUIrcMh5YDjEzFL83HLQk2v6Ml/ZFLxYiMzhozY9cj1zR/Qi0dZmT0VMFs/uHNVAxDq6hYpSdq65uQ7gZzwJbzu5zSLzA8CqIPF/VJ4SikgmI=
+	t=1720765873; cv=none; b=Qoys4ZjfYgo4T66GvMIoza8jYXhSwDV2Ujp41PniumXUNToywGKhnRgvKJwE1A0vq22tuDj5blVfdFoDjH04p06BHCl9FBMVdlkqzAr0ovQB9JhkQ7zwcJ/PRRpE7hPwj23uUb/e6JKDo1iTZjB3D6cN0Jmd81VVy1zjkN/sKys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720765795; c=relaxed/simple;
-	bh=mftHE/QeNr6HnahxP6N5M6hsdpF/qFxGbp6B0PMSRsE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Z7Nnd36dvMsM2DWEaetWZffN4JuSZRf3hGciOg/FyksPo2xRr/Wa8Rv+Ll+ZR+Hic9vaqpSPkXsUcLVKPYY8F6aKb/ODsW121uht4RtVZQzp1qkpmnpPzvvm2hjk7scyCmSOGoLkXl6YRU5xMunh98LZjzcOFYnmZPmc4TM+SBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F85v0U4r; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720765793; x=1752301793;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=mftHE/QeNr6HnahxP6N5M6hsdpF/qFxGbp6B0PMSRsE=;
-  b=F85v0U4rmrngD65N+UaCBxKbyQMeFIXimjYPDbV/DWiwtKh2Vjqs43/F
-   h/KSpwmIVuKAJ91aaI5NLdNNB4bsvRbBWM5fC+JYOe3TOLNWnDbZxuhTP
-   UTzGtGOekr6b+SAYjxq9g6Y5Y4B6Kjbgn76m7qSOSc01yJe3v1qIO8yDs
-   BRL2CY6i4fHe8E+Q995P9YrRVY3P8vXotMFCd0gssyfuHdbcjddR081fT
-   IptHbW086ERONn94o9dVRrFe/tXHj0g7YRB/cYNn8rUxa15OwKZYntRts
-   JvjJ8lK/nkZHE0YQXRDutKVaXvRTi0WGdh/wPSCcNYT8o2s7JYqsJ7Jh/
-   Q==;
-X-CSE-ConnectionGUID: uMu6HtWHSImRbtjLG4GzGA==
-X-CSE-MsgGUID: jjuZeLyCTi6A7Po/FOjF+w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="29343126"
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="29343126"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 23:29:53 -0700
-X-CSE-ConnectionGUID: mOhgefi9SASqp2u152Obig==
-X-CSE-MsgGUID: 9uswyLFpQfWQZuvGnx8xHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="86315535"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 23:29:50 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Zi Yan <zi.yan@sent.com>
-Cc: David Hildenbrand <david@redhat.com>,  linux-mm@kvack.org,  Zi Yan
- <ziy@nvidia.com>,  Andrew Morton <akpm@linux-foundation.org>,  Baolin Wang
- <baolin.wang@linux.alibaba.com>,  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] memory tiering: introduce folio_has_cpupid() check
-In-Reply-To: <20240712024455.163543-3-zi.yan@sent.com> (Zi Yan's message of
-	"Thu, 11 Jul 2024 22:44:54 -0400")
-References: <20240712024455.163543-1-zi.yan@sent.com>
-	<20240712024455.163543-3-zi.yan@sent.com>
-Date: Fri, 12 Jul 2024 14:27:59 +0800
-Message-ID: <878qy786q8.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1720765873; c=relaxed/simple;
+	bh=BrPornM1GVRLlzxaI5v6mYI5RbypMdiVyZqIlvBZuEc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uoHtFnpUaXGnOG26Cc79uxUbIk+hziZ5YgLmRNOpJKy0AMamBTnDPY1gNEXAGm08Xyz4I5H0swQdpAj2CW5BtfTDNi/yRoy7FiplkY8naLbZ53GHNLvoLO1QH4a5hZDmwwmbBNWaioucBcwBu/e72iSsVkHC0SJ6eEysCiwyJ4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ntwirua3; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-44e534a1fbeso118951cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 23:31:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720765870; x=1721370670; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TwKslhnGgNSeeklnBQbXwfXtaI+IJJQgQd0FPkjw1kw=;
+        b=ntwirua3nO/y5Z7dSSxd5xQV4kejQfHbz18OhqJieEZTjCye5NDJ2Weyl/E84moqhP
+         B9QFXORyrwfdkBiCZ5uVkEhstP4fb20PdYLcSw5NZl5qKjvvL5Pepv4szUZ2eSCw0Xvz
+         TOq0qmLhnInHCrBP8v+6Fli0+5qCeTfvpHo+PI7IxAdyLPqUckGPxttoH06j+AIUxS2Z
+         SplTikNHNlSeLflIEgYIwnTpfRRnPvqq5VGZas9/tw8kpOt7bleCz/lsUMjYPfzf6ggw
+         ZfREWweRl7cJZLpcGf9mLBfdsLzhnmQXjVO3DKj89Gq9obxWcvXxeqHFrCd8EMGJtOqt
+         6u2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720765870; x=1721370670;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TwKslhnGgNSeeklnBQbXwfXtaI+IJJQgQd0FPkjw1kw=;
+        b=W7bWOIFiLW8jtALpXvHugvvvqhUdmhTGIVBG1kFA/MEYBxW7N7i4KPDt8rG/T4YwCf
+         pF31K5ndbt6PKRINXQTIlVy2SEdrGFSJouNjfcLPQA4CqrdxQ2bO0GeS6NziSVMQwzP3
+         kI/g1NSLs0M2Zi2uYzkIDzYCZpxq+LKYP3qiOo7i/FrkMvMEUWmerGs9PL87YXDJg16n
+         YQICeoo4xsvVjWDuqQpNXC9rDuqAxFgfKOq5BE5i66be8XqWLUUD+93Yz+qPC1CRQ1xY
+         tmuteu2EdaMIMksGQQWJOhEAGcAeoS1xJoIU/ylkkgGmpyuBMe5WsAvQbRYLKKos2AF3
+         KJWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVG+Ua4l6Mj7Bm40/L6a0B7zzLx65IwSu3+yx7flXuL+nPqBN6RDZRqaGkQoDGj3g9xnsRSlJFrPSZQMdRbzPEKPOb4rHHsEo1Ibl0O
+X-Gm-Message-State: AOJu0Ywp1XgD/45ZztZY57ewPEI115HM+ofDV2fclYK6y5zEgU61MyTY
+	MsJghlOWDegQI8NrHrUJyPNmNEh2GHhBTxXBP+BgdQ4HP5g2r9D3n37aKoKT/1MOiGlWJDenvGo
+	MYRhTvVc0WkQp3hKjpdjWNt+vVl3YxyuuAAAU
+X-Google-Smtp-Source: AGHT+IECHi4Kcm+OnR5krlgw01mHCPsKYlovxeJ8I7Z6JxOsEVd+/xIR6yZkS2nGwZEBW9G4WtM/AiDCFSlo47/yCcI=
+X-Received: by 2002:ac8:528d:0:b0:447:f958:ab83 with SMTP id
+ d75a77b69052e-44e9e36a42emr1287931cf.21.1720765870107; Thu, 11 Jul 2024
+ 23:31:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+References: <20240711193729.108720-1-ericchancf@google.com> <20240711193917.109380-1-ericchancf@google.com>
+In-Reply-To: <20240711193917.109380-1-ericchancf@google.com>
+From: David Gow <davidgow@google.com>
+Date: Fri, 12 Jul 2024 14:30:57 +0800
+Message-ID: <CABVgOS=hdXSFkWGOiNhPm4z9KF_UTMGSZR36sKbzOjxCcS0p=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] kunit: Fix the comment of KUNIT_ASSERT_STRNEQ as assertion
+To: Eric Chan <ericchancf@google.com>
+Cc: brendan.higgins@linux.dev, rmoar@google.com, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000075b93d061d0706d4"
 
-Zi Yan <zi.yan@sent.com> writes:
+--00000000000075b93d061d0706d4
+Content-Type: text/plain; charset="UTF-8"
 
-> From: Zi Yan <ziy@nvidia.com>
+On Fri, 12 Jul 2024 at 03:39, Eric Chan <ericchancf@google.com> wrote:
 >
-> Instead of open coded check for if memory tiering mode is on and a folio
-> is in the top tier memory, use a function to encapsulate the check.
+> The current comment for KUNIT_ASSERT_STRNEQ incorrectly describes it as
+> an expectation. Since KUNIT_ASSERT_STRNEQ is an assertion, updates the
+> comment to correctly refer to it as such.
 >
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-
-LGTM, Thanks!  Feel free to add
-
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
-
-in your future versions.
-
+> Signed-off-by: Eric Chan <ericchancf@google.com>
 > ---
->  include/linux/memory-tiers.h |  8 ++++++++
->  kernel/sched/fair.c          |  3 +--
->  mm/huge_memory.c             |  6 ++----
->  mm/memory-tiers.c            | 17 +++++++++++++++++
->  mm/memory.c                  |  3 +--
->  mm/mprotect.c                |  3 +--
->  6 files changed, 30 insertions(+), 10 deletions(-)
+
+Reviewed-by: David Gow <davidgow@google.com>
+
+Thanks,
+-- David
+
+>  include/kunit/test.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/include/linux/memory-tiers.h b/include/linux/memory-tiers.h
-> index 0dc0cf2863e2..10c127d461c4 100644
-> --- a/include/linux/memory-tiers.h
-> +++ b/include/linux/memory-tiers.h
-> @@ -73,6 +73,10 @@ static inline bool node_is_toptier(int node)
->  }
->  #endif
->  
-> +
-> +bool folio_has_cpupid(struct folio *folio);
-> +
-> +
->  #else
->  
->  #define numa_demotion_enabled	false
-> @@ -151,5 +155,9 @@ static inline struct memory_dev_type *mt_find_alloc_memory_type(int adist,
->  static inline void mt_put_memory_types(struct list_head *memory_types)
->  {
->  }
-> +static inline bool folio_has_cpupid(struct folio *folio)
-> +{
-> +	return true;
-> +}
->  #endif	/* CONFIG_NUMA */
->  #endif  /* _LINUX_MEMORY_TIERS_H */
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 8a5b1ae0aa55..03de808cb3cc 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1840,8 +1840,7 @@ bool should_numa_migrate_memory(struct task_struct *p, struct folio *folio,
->  	 * The pages in slow memory node should be migrated according
->  	 * to hot/cold instead of private/shared.
->  	 */
-> -	if (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING &&
-> -	    !node_is_toptier(src_nid)) {
-> +	if (!folio_has_cpupid(folio)) {
->  		struct pglist_data *pgdat;
->  		unsigned long rate_limit;
->  		unsigned int latency, th, def_th;
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 07d9dde4ca33..8c11d6da4b36 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1705,8 +1705,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
->  	 * For memory tiering mode, cpupid of slow memory page is used
->  	 * to record page access time.  So use default value.
->  	 */
-> -	if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) ||
-> -	    node_is_toptier(nid))
-> +	if (folio_has_cpupid(folio))
->  		last_cpupid = folio_last_cpupid(folio);
->  	target_nid = numa_migrate_prep(folio, vmf, haddr, nid, &flags);
->  	if (target_nid == NUMA_NO_NODE)
-> @@ -2059,8 +2058,7 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->  		    toptier)
->  			goto unlock;
->  
-> -		if (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING &&
-> -		    !toptier)
-> +		if (!folio_has_cpupid(folio))
->  			folio_xchg_access_time(folio,
->  					       jiffies_to_msecs(jiffies));
->  	}
-> diff --git a/mm/memory-tiers.c b/mm/memory-tiers.c
-> index 4775b3a3dabe..7f0360d4e3a0 100644
-> --- a/mm/memory-tiers.c
-> +++ b/mm/memory-tiers.c
-> @@ -6,6 +6,7 @@
->  #include <linux/memory.h>
->  #include <linux/memory-tiers.h>
->  #include <linux/notifier.h>
-> +#include <linux/sched/sysctl.h>
->  
->  #include "internal.h"
->  
-> @@ -50,6 +51,22 @@ static const struct bus_type memory_tier_subsys = {
->  	.dev_name = "memory_tier",
->  };
->  
-> +/**
-> + * folio_has_cpupid - check if a folio has cpupid information
-> + * @folio: folio to check
-> + *
-> + * folio's _last_cpupid field is repurposed by memory tiering. In memory
-> + * tiering mode, cpupid of slow memory folio (not toptier memory) is used to
-> + * record page access time.
-> + *
-> + * Return: the folio _last_cpupid is used as cpupid
-> + */
-> +bool folio_has_cpupid(struct folio *folio)
-> +{
-> +	return !(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) ||
-> +	       node_is_toptier(folio_nid(folio));
-> +}
-> +
->  #ifdef CONFIG_MIGRATION
->  static int top_tier_adistance;
->  /*
-> diff --git a/mm/memory.c b/mm/memory.c
-> index dceb62f3fa34..96c2f5b3d796 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -5344,8 +5344,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
->  	 * For memory tiering mode, cpupid of slow memory page is used
->  	 * to record page access time.  So use default value.
->  	 */
-> -	if ((sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING) &&
-> -	    !node_is_toptier(nid))
-> +	if (!folio_has_cpupid(folio))
->  		last_cpupid = (-1 & LAST_CPUPID_MASK);
->  	else
->  		last_cpupid = folio_last_cpupid(folio);
-> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> index 222ab434da54..787c3c2bf1b6 100644
-> --- a/mm/mprotect.c
-> +++ b/mm/mprotect.c
-> @@ -161,8 +161,7 @@ static long change_pte_range(struct mmu_gather *tlb,
->  				if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
->  				    toptier)
->  					continue;
-> -				if (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING &&
-> -				    !toptier)
-> +				if (!folio_has_cpupid(folio))
->  					folio_xchg_access_time(folio,
->  						jiffies_to_msecs(jiffies));
->  			}
+> diff --git a/include/kunit/test.h b/include/kunit/test.h
+> index 61637ef32302..87a232421089 100644
+> --- a/include/kunit/test.h
+> +++ b/include/kunit/test.h
+> @@ -1420,12 +1420,12 @@ do {                                                                           \
+>                                    ##__VA_ARGS__)
+>
+>  /**
+> - * KUNIT_ASSERT_STRNEQ() - Expects that strings @left and @right are not equal.
+> + * KUNIT_ASSERT_STRNEQ() - An assertion that strings @left and @right are not equal.
+>   * @test: The test context object.
+>   * @left: an arbitrary expression that evaluates to a null terminated string.
+>   * @right: an arbitrary expression that evaluates to a null terminated string.
+>   *
+> - * Sets an expectation that the values that @left and @right evaluate to are
+> + * Sets an assertion that the values that @left and @right evaluate to are
+>   * not equal. This is semantically equivalent to
+>   * KUNIT_ASSERT_TRUE(@test, strcmp((@left), (@right))). See KUNIT_ASSERT_TRUE()
+>   * for more information.
+> --
+> 2.45.2.993.g49e7a77208-goog
+>
+
+--00000000000075b93d061d0706d4
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
+BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
+BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
+Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
+Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
+FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
+YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
+AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
+DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
+4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
+GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
+kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
+MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
+IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
+hvcNAQkEMSIEIKbfDTgIPL+WlrlxTn3StBoeGiMzhclzFPrOWbAxi+lQMBgGCSqGSIb3DQEJAzEL
+BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDcxMjA2MzExMFowaQYJKoZIhvcNAQkPMVww
+WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
+hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBl4a/z
+Z1tG/QjMwZSA8juy7YWMy0UwFbLkHDXTQMbLLAul0a3bl+PwmGkJNBXPw0a4erjWbrCSwTVK1bzG
+7ES4ERQsJRo4Px/UgLybD1vQUwgTyFJPFdRZ6u9pKwMZ6AKsd62+YcDmIP6TuZElGRiHLMB1+EU+
+5AqQyMFEZc1eQsAkJ8OMLkNIdMQ/bKRENkQk3WAau5J5X2CUpgXTZcEpUsLv3HD5lYYDMYSsWcSI
+B2y8VA5Cbdaqq3Faewmq5UkWCo2bq2LsXqWg7M01HHeUFn7SyWXFYP62/s1K13EpfxerQJyh249s
+0NGt9rHOfeVRQ2dTMAzTtTP0qPRba70f
+--00000000000075b93d061d0706d4--
 
