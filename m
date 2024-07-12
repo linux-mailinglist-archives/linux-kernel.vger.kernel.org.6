@@ -1,271 +1,180 @@
-Return-Path: <linux-kernel+bounces-250809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23BF592FD15
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2915992FD1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:02:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A32CE1F2408A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6AAA28272D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E25172BCD;
-	Fri, 12 Jul 2024 14:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7DE171E74;
+	Fri, 12 Jul 2024 15:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OCIEgAZq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cgcbCq/f"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97861171650
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7258821
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720796395; cv=none; b=gsCDQ/DLA5MqBBOk3BCDuxkeK9qLITFI3kO/PaYKJx9K588sn6uDAKPZeN42S+uuocbEE7PF/uIS1GZj8iHSY0vGQIaE7q2x9nudnOJ+77hEjIfJErglfhJFTfMcGK4qLDwOeUGQgUqDvgn4u4u6liyGzOQV7KbhIJSZEqmvLvs=
+	t=1720796535; cv=none; b=Ff+lzRifoKE0HNn9i7iZt2aL3tLZYsAnabVzddiBuMnhGBOBwcPVzp50x3gvgAFh2NVPjoncTmBaNrTu6wPx4rYi478WAxs6+dsp7vuZXwxCP3vfsCjC3pGwtHb7jntoxXZNmEolEOOZimx7MFnic69+oHkQN6qhyq5TouCaGX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720796395; c=relaxed/simple;
-	bh=njc0Tryaj+gnTabFhoUKQb0tdpkfmgAYkSWyWDBz2hs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OQ/nGuXGhDFzwnldVVhbPWNcbNWimr0au7f6k84Qq6NiOiwdP8tSc8h0Hb0MK4U5m2q/xQqbHmUeJRxVRw1JtiPWi2xy8gl1UTFsqfGZ4WC4L/EfNuFUC6n4c1gnDO8FdBRY7NPv9mslg7tzeXQV3cYTPFOyB19Oz7e7+Sj1cPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OCIEgAZq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720796392;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a1pbDIwqRwH2CzZyij/gklhjZFHA6b2MOhWlqjxKvJ0=;
-	b=OCIEgAZqdV7X1x6Agvb9GENnfGVN43iD4OtODXf9MJS0fyhj0SbrdihyM46ytJdOsASIoV
-	o1SPMThDFx3q3ZetlUYINHEwGvtLEGjzyR9H9MpY0jvAl+T91pGWmXie2CfH8YmIfDDlEs
-	amor8NDFRRH/DpMnjedB5U8o7boeLJ8=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-418-Tl_-YE06PVGqy88x5m_6Ww-1; Fri, 12 Jul 2024 10:59:50 -0400
-X-MC-Unique: Tl_-YE06PVGqy88x5m_6Ww-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a7251ca4d3dso181383566b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:59:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720796389; x=1721401189;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a1pbDIwqRwH2CzZyij/gklhjZFHA6b2MOhWlqjxKvJ0=;
-        b=JizMJ9lc40F3rV6eUf2QTKNYXkGIObPjtiTcwRuHY05voiBLmRLqXiYtbopge8ZMfc
-         wByGyILJni5K6t+DzqP4ztDbGBs7Hd663WuqmlCEvXdOYcEewdFYO1qglaVs+Ir1LHlt
-         UTBYrapqJg3Uuje0khj5BGayA0M1DOzAaeG9IlcklPV5MGjf9p8uiwqgJJveseLBXcmm
-         avR1ZBiwxEQkNKvJ/N7vzKNPylxeD5pkt23iFpHgFiftksPiKsB26/pDyM/nI1Hi8kRZ
-         rspWdiKl0lb7StmXSB1s3DFeUiUvwG0Y6mh5XD8dxCuHPaBzFoDJH2x3O2FSKgLpxsC5
-         w/1g==
-X-Gm-Message-State: AOJu0YzgaTeBTWjB5h9ZTIcozf/8ybJ9hIpY7AItk3q2nQ7FzU222L1e
-	7XGqoJdpzDiYhBX0FPcQaG1dq6dq8T2t/meGdFWLlzEMu4IHIPmYk+u0yg2LHx4b4HoqSXdOQXh
-	H/YIl61w73UTBIs/61uDkxS0QMNU9XjtCv+Rb/Jb1D6QCxpVCuxmv2XIiyzJ+ljoZ4Sup/Q==
-X-Received: by 2002:a17:907:6d26:b0:a77:e0ed:8b8 with SMTP id a640c23a62f3a-a780b6891c0mr1165752366b.9.1720796389619;
-        Fri, 12 Jul 2024 07:59:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjvOoLvnH8hxFK6vCDs4ol5qAbiKmziXZz+dsbtgEWxwWXDvs1Kzyh6Z49EzYanK92V2IYqQ==
-X-Received: by 2002:a17:907:6d26:b0:a77:e0ed:8b8 with SMTP id a640c23a62f3a-a780b6891c0mr1165750266b.9.1720796389171;
-        Fri, 12 Jul 2024 07:59:49 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a871ea8sm352811666b.193.2024.07.12.07.59.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 07:59:48 -0700 (PDT)
-Message-ID: <bfe71ef4-2fa2-406b-927d-5b045204dacc@redhat.com>
-Date: Fri, 12 Jul 2024 16:59:48 +0200
+	s=arc-20240116; t=1720796535; c=relaxed/simple;
+	bh=8E9j3ZAKWdl+n60rLkky2PxV9OV2pVNk7/Cp7ddbJKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JzJZlfKc4mK18MjdTty/jzIEUvwzPw7JFn3wfX9HbsLd7VK9BJhZbc3yQJ0rT8b4KWQA2zsAmn6akn3zcAux/ea2kM5eLfcNyiKgxcjneZb/YxxQEqP4xQXPnCbHC5dZ4ArvFoUP5G75ZD88OxlUyTS7S+ej6v0tbV9Ftn9Emn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cgcbCq/f; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Bx6/Jc8wr5QcWBMYhgxcnmehYZKsuTxKPdrZgXfalRA=; b=cgcbCq/fUfmKi3awvdVo2FF7wF
+	383NzLjLSOgDY0lgXSc93Tc549PqkC2KGivxL3OpkJuWWmKQ2CGAA+1kd6TaPXxZUV9ET3UAYjSFB
+	ZaPdisWYePwAPhupo1HLoG4SFVMnH5C416kIdli3pajCpOmoBBgP7cmuUxsdzr1anTB3SitfCqaHg
+	yHAAWZ16OSRcY35eIIfL8wH51SrJW0X4O7HVzbrr+JAxpauZfqgu4ov/U4wJzH5hphrILROcqNOBF
+	qH288DS+kkVlpwsIOMn5DpRrRy7FTeH0ASJTygknLBWPAHrCG6TK5NIu0sHkBLtIj53ZzFWm4G/45
+	xzEyngDA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sSHmY-00000001Jps-30mI;
+	Fri, 12 Jul 2024 15:01:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 38CD330050D; Fri, 12 Jul 2024 17:01:58 +0200 (CEST)
+Date: Fri, 12 Jul 2024 17:01:58 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>,
+	Youssef Esmat <youssefesmat@google.com>,
+	Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
+	Connor O'Brien <connoro@google.com>
+Subject: Re: [PATCH v11 7/7] sched: Split scheduler and execution contexts
+Message-ID: <20240712150158.GM27299@noisy.programming.kicks-ass.net>
+References: <20240709203213.799070-1-jstultz@google.com>
+ <20240709203213.799070-8-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ACPI: EC: Do not release locks during operation region
- accesses
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Armin Wolf <w_armin@gmx.de>
-References: <12473338.O9o76ZdvQC@rjwysocki.net>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <12473338.O9o76ZdvQC@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709203213.799070-8-jstultz@google.com>
 
-Hi,
-
-On 7/4/24 6:26 PM, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Jul 09, 2024 at 01:31:50PM -0700, John Stultz wrote:
+> From: Peter Zijlstra <peterz@infradead.org>
 > 
-> It is not particularly useful to release locks (the EC mutex and the
-> ACPI global lock, if present) and re-acquire them immediately thereafter
-> during EC address space accesses in acpi_ec_space_handler().
+> Let's define the scheduling context as all the scheduler state
+> in task_struct for the task selected to run, and the execution
+> context as all state required to actually run the task.
 > 
-> First, releasing them for a while before grabbing them again does not
-> really help anyone because there may not be enough time for another
-> thread to acquire them.
+> Currently both are intertwined in task_struct. We want to
+> logically split these such that we can use the scheduling
+> context of the task selected to be scheduled, but use the
+> execution context of a different task to actually be run.
 > 
-> Second, if another thread successfully acquires them and carries out
-> a new EC write or read in the middle if an operation region access in
-> progress, it may confuse the EC firmware, especially after the burst
-> mode has been enabled.
-> 
-> Finally, manipulating the locks after writing or reading every single
-> byte of data is overhead that it is better to avoid.
-> 
-> Accordingly, modify the code to carry out EC address space accesses
-> entirely without releasing the locks.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> To this purpose, introduce rq_selected() macro to point to the
+> task_struct selected from the runqueue by the scheduler, and
+> will be used for scheduler state, and preserve rq->curr to
+> indicate the execution context of the task that will actually be
+> run.
 
-Thanks, patch looks good to me:
+> * Swapped proxy for selected for clarity
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+I'm not loving this naming...  what does selected even mean? What was
+wrong with proxy? -- (did we have this conversation before?)
 
-Regards,
-
-Hans
-
-
-
-
-> ---
-> 
-> For 6.12.
-> 
-> ---
->  drivers/acpi/ec.c |   55 ++++++++++++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 49 insertions(+), 6 deletions(-)
-> 
-> Index: linux-pm/drivers/acpi/ec.c
-> ===================================================================
-> --- linux-pm.orig/drivers/acpi/ec.c
-> +++ linux-pm/drivers/acpi/ec.c
-> @@ -783,6 +783,9 @@ static int acpi_ec_transaction_unlocked(
->  	unsigned long tmp;
->  	int ret = 0;
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 493de4cc320a..7ee8c7fa0ae8 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -1051,7 +1051,7 @@ struct rq {
+>  	 */
+>  	unsigned int		nr_uninterruptible;
 >  
-> +	if (t->rdata)
-> +		memset(t->rdata, 0, t->rlen);
-> +
->  	/* start transaction */
->  	spin_lock_irqsave(&ec->lock, tmp);
->  	/* Enable GPE for command processing (IBF=0/OBF=1) */
-> @@ -819,8 +822,6 @@ static int acpi_ec_transaction(struct ac
+> -	struct task_struct __rcu	*curr;
+> +	struct task_struct __rcu	*curr;       /* Execution context */
+>  	struct task_struct	*idle;
+>  	struct task_struct	*stop;
+>  	unsigned long		next_balance;
+> @@ -1246,6 +1246,13 @@ DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+>  #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
+>  #define raw_rq()		raw_cpu_ptr(&runqueues)
 >  
->  	if (!ec || (!t) || (t->wlen && !t->wdata) || (t->rlen && !t->rdata))
->  		return -EINVAL;
-> -	if (t->rdata)
-> -		memset(t->rdata, 0, t->rlen);
->  
->  	mutex_lock(&ec->mutex);
->  	if (ec->global_lock) {
-> @@ -847,7 +848,7 @@ static int acpi_ec_burst_enable(struct a
->  				.wdata = NULL, .rdata = &d,
->  				.wlen = 0, .rlen = 1};
->  
-> -	return acpi_ec_transaction(ec, &t);
-> +	return acpi_ec_transaction_unlocked(ec, &t);
->  }
->  
->  static int acpi_ec_burst_disable(struct acpi_ec *ec)
-> @@ -857,7 +858,7 @@ static int acpi_ec_burst_disable(struct
->  				.wlen = 0, .rlen = 0};
->  
->  	return (acpi_ec_read_status(ec) & ACPI_EC_FLAG_BURST) ?
-> -				acpi_ec_transaction(ec, &t) : 0;
-> +				acpi_ec_transaction_unlocked(ec, &t) : 0;
->  }
->  
->  static int acpi_ec_read(struct acpi_ec *ec, u8 address, u8 *data)
-> @@ -873,6 +874,19 @@ static int acpi_ec_read(struct acpi_ec *
->  	return result;
->  }
->  
-> +static int acpi_ec_read_unlocked(struct acpi_ec *ec, u8 address, u8 *data)
+> +/* For now, rq_selected == rq->curr */
+> +#define rq_selected(rq)		((rq)->curr)
+> +static inline void rq_set_selected(struct rq *rq, struct task_struct *t)
 > +{
-> +	int result;
-> +	u8 d;
-> +	struct transaction t = {.command = ACPI_EC_COMMAND_READ,
-> +				.wdata = &address, .rdata = &d,
-> +				.wlen = 1, .rlen = 1};
-> +
-> +	result = acpi_ec_transaction_unlocked(ec, &t);
-> +	*data = d;
-> +	return result;
+> +	/* Do nothing */
 > +}
 > +
->  static int acpi_ec_write(struct acpi_ec *ec, u8 address, u8 data)
->  {
->  	u8 wdata[2] = { address, data };
-> @@ -883,6 +897,16 @@ static int acpi_ec_write(struct acpi_ec
->  	return acpi_ec_transaction(ec, &t);
+>  struct sched_group;
+>  #ifdef CONFIG_SCHED_CORE
+>  static inline struct cpumask *sched_group_span(struct sched_group *sg);
+> @@ -2151,11 +2158,25 @@ static inline u64 global_rt_runtime(void)
+>  	return (u64)sysctl_sched_rt_runtime * NSEC_PER_USEC;
 >  }
 >  
-> +static int acpi_ec_write_unlocked(struct acpi_ec *ec, u8 address, u8 data)
-> +{
-> +	u8 wdata[2] = { address, data };
-> +	struct transaction t = {.command = ACPI_EC_COMMAND_WRITE,
-> +				.wdata = wdata, .rdata = NULL,
-> +				.wlen = 2, .rlen = 0};
-> +
-> +	return acpi_ec_transaction_unlocked(ec, &t);
-> +}
-> +
->  int ec_read(u8 addr, u8 *val)
+> +/*
+> + * Is p the current execution context?
+> + */
+>  static inline int task_current(struct rq *rq, struct task_struct *p)
 >  {
->  	int err;
-> @@ -1323,6 +1347,7 @@ acpi_ec_space_handler(u32 function, acpi
->  	struct acpi_ec *ec = handler_context;
->  	int result = 0, i, bytes = bits / 8;
->  	u8 *value = (u8 *)value64;
-> +	u32 glk;
+>  	return rq->curr == p;
+>  }
 >  
->  	if ((address > 0xFF) || !value || !handler_context)
->  		return AE_BAD_PARAMETER;
-> @@ -1330,13 +1355,25 @@ acpi_ec_space_handler(u32 function, acpi
->  	if (function != ACPI_READ && function != ACPI_WRITE)
->  		return AE_BAD_PARAMETER;
->  
-> +	mutex_lock(&ec->mutex);
-> +
-> +	if (ec->global_lock) {
-> +		acpi_status status;
-> +
-> +		status = acpi_acquire_global_lock(ACPI_EC_UDELAY_GLK, &glk);
-> +		if (ACPI_FAILURE(status)) {
-> +			result = -ENODEV;
-> +			goto unlock;
-> +		}
-> +	}
-> +
->  	if (ec->busy_polling || bits > 8)
->  		acpi_ec_burst_enable(ec);
->  
->  	for (i = 0; i < bytes; ++i, ++address, ++value) {
->  		result = (function == ACPI_READ) ?
-> -			acpi_ec_read(ec, address, value) :
-> -			acpi_ec_write(ec, address, *value);
-> +			acpi_ec_read_unlocked(ec, address, value) :
-> +			acpi_ec_write_unlocked(ec, address, *value);
->  		if (result < 0)
->  			break;
->  	}
-> @@ -1344,6 +1381,12 @@ acpi_ec_space_handler(u32 function, acpi
->  	if (ec->busy_polling || bits > 8)
->  		acpi_ec_burst_disable(ec);
->  
-> +	if (ec->global_lock)
-> +		acpi_release_global_lock(glk);
-> +
-> +unlock:
-> +	mutex_unlock(&ec->mutex);
-> +
->  	switch (result) {
->  	case -EINVAL:
->  		return AE_BAD_PARAMETER;
-> 
-> 
-> 
+> +/*
+> + * Is p the current scheduling context?
+> + *
+> + * Note that it might be the current execution context at the same time if
+> + * rq->curr == rq_selected() == p.
+> + */
+> +static inline int task_current_selected(struct rq *rq, struct task_struct *p)
+> +{
+> +	return rq_selected(rq) == p;
+> +}
 
+
+And I think I hated on the macros before, and you said you needed them
+to to allow !PROXY builds.
+
+But what about something like:
+
+#ifdef CONFIG_PROXY_EXEC
+	struct task_struct __rcu *proxy;
+	struct task_struct __rcu *curr;
+#else
+	union {
+		struct task_struct __rcu *proxy;
+		struct task_struct __rcu *curr;
+	};
+#endif
+
+
+And then we can use rq->proxy and rq->curr like the good old days?
+
+
+I realize this is going to be a lot of typing to fix up, and perhaps
+there's a reason to not do this. But...
 
