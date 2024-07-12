@@ -1,199 +1,157 @@
-Return-Path: <linux-kernel+bounces-250078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE4892F401
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:25:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B4E792F404
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7071F23337
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:25:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 278281F233A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B548F6A;
-	Fri, 12 Jul 2024 02:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C50B8F5B;
+	Fri, 12 Jul 2024 02:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="K3w362H3"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QRATs0aw"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A6879D0
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDAC79D0;
+	Fri, 12 Jul 2024 02:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720751127; cv=none; b=lkj9VG9t8dWFRwEQOWmqnWWoWZI9dEFbu9oznXm3wfPWucnBe5LPWmvaWQEmOXAsxJpajsAa8YnTj68r4a+e7TPU4+rUb+h3+oWcCbSHtUyrWhbVtZsRf5Iobiq6OXxUU5DBQz6avFXLKAT0xz1ZzhfZu7uYsot9MQBMk8ib7B8=
+	t=1720751331; cv=none; b=Oc4vEsFkOAH+01f8cBolwWcd5GTVKJgQYG4XsvDP8g4YrryarqYJhxM+V3ODS1GcBdjBugBwYTrMaUfkJkb775GIA6XKrkzieoq8EBd+OBHlp8i1hJvEd1nx1QdM0aZDIEHbutn+DE7K055k36fpNynlB/e5hu/AAPebrh0qFD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720751127; c=relaxed/simple;
-	bh=63QR4v2CyU2y+Gh3TqWF95gTl3In1wGWJ1lZyoFxy4o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=aOaW3irNJ4leVDjTHemDIvbmbGpOwbUKCvgvASQfigq6HI13DKgB1VgDxA6nnMOidsdUHo5+IeoUtsJ/L7Xt/+rusGs5yhWrRrjiP/ojgB9j+kRhupAGaNuuafqqGx06RTmFMLsIctKuhdgcTmY2w1qUA9W7VEO0Q579iPOsOUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=K3w362H3; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: kent.overstreet@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720751122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FJptSA34o+4TDzSkA0WYIYafChThJWndF65BevLfR4c=;
-	b=K3w362H33ahJqKBUoNiwjrlU4SZcOzJWvKGlJq6DrccS7F2cZ+NPLxnPOHqOqvVE2rAgTn
-	jJhsopatBYAWWcPNydV0GTDa+mty/5W1PxUMI+2XMvJNBI7kuj66yqhYQcszLwf8a/teTG
-	Qm/Cp7EV8Zdqjg41tfuOcPymlRhaFj4=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: tangyouling@kylinos.cn
-Message-ID: <84de6cb1-57bd-42f7-8029-4203820ef0b4@linux.dev>
-Date: Fri, 12 Jul 2024 10:24:55 +0800
+	s=arc-20240116; t=1720751331; c=relaxed/simple;
+	bh=N0u3WEUNNmZu+qZYjviTlBy5Lg5i17OUTz2r/3xw56Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n7CLy4AS2jKXSLLEuVyjBi3P6/Zd/whFNzjGr4SxXWZ5YolpTDIDyknuIZKCkf4rcJ8YYIOG17BzozQPyHKtchifKo+QpfN9JxVwBNR+aRd0pn1MJ7wfePC3I79v+kJqaFA+PtHSqTHpTL6ObtBLXthctszCL7fWmv64CsEfvCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=QRATs0aw; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720751325;
+	bh=776BhMmb21jisugPehbvK83vs4KqO37PlFEa+bKwYmU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QRATs0awvti9IbE4hdeNyKsmvZ7nPdqDpB6SYH0SQCFUwR1XWt4/3RWfVW+knaCrN
+	 7M8+XqYN2ZMNeRAarGigCgkCNMFTm9flvANvT8L1kzGW3YrVRvViMK0F3cx8n8QsPI
+	 krR67X+l72x+BYtfiPW6/j65miQsVPgfXi+cEOo7mALFAjKJc+9bq3TB6URX4MmP9Y
+	 FKlgUvhRqr1nHgl9KdmC4hFN31NumtZ+8Cgfk145NfXBnPME7gpl4dgvYvzNP0hjU4
+	 shlcp3VDRUgNfca9J4JoVqslkeXGRrZvYJPh3DfW6oFp+Xx/7h4+CJUwe0yO7ivDul
+	 VlVe97f2ZPb/w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKwWc1XWlz4w2R;
+	Fri, 12 Jul 2024 12:28:44 +1000 (AEST)
+Date: Fri, 12 Jul 2024 12:28:43 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Ville =?UTF-8?B?U3lyasOkbMOk?=
+ <ville.syrjala@linux.intel.com>, DRI <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the drm tree
+Message-ID: <20240712122843.312313a4@canb.auug.org.au>
+In-Reply-To: <20240701171901.GA882812@thelio-3990X>
+References: <20240701191319.087b227e@canb.auug.org.au>
+	<20240701171901.GA882812@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] bcachefs: Mark bch_inode_info as SLAB_ACCOUNT
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Youling Tang <tangyouling@kylinos.cn>
-References: <20240703070955.104163-1-youling.tang@linux.dev>
- <m5jemgkisszzs564ikvo6q6qr73tadanvoyyqstthzyamzsr3n@33quhsmhaxhz>
- <20589721-46c0-4344-b2ef-6ab48bbe2ea5@linux.dev>
-Content-Language: en-US, en-AU
-In-Reply-To: <20589721-46c0-4344-b2ef-6ab48bbe2ea5@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; boundary="Sig_/H/iDkLlMHsM8Mgav8Y0_chz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi, Kent
+--Sig_/H/iDkLlMHsM8Mgav8Y0_chz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 12/07/2024 09:39, Youling Tang wrote:
-> On 12/07/2024 08:03, Kent Overstreet wrote:
->> On Wed, Jul 03, 2024 at 03:09:55PM GMT, Youling Tang wrote:
->>> From: Youling Tang <tangyouling@kylinos.cn>
->>>
->>> After commit 230e9fc28604 ("slab: add SLAB_ACCOUNT flag"), we need 
->>> to mark
->>> the inode cache as SLAB_ACCOUNT, similar to commit 5d097056c9a0 
->>> ("kmemcg:
->>> account for certain kmem allocations to memcg")
->>>
->>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
->> Turns out this was never tested with memcg enabled (!).
->>
->> I'm reverting it, please feel free to send me a fixed version.
-> Sorry, my oversight.
+Hi all,
+
+On Mon, 1 Jul 2024 10:19:01 -0700 Nathan Chancellor <nathan@kernel.org> wro=
+te:
 >
-> The following null pointer dereference is triggered after MEMCG 
-> configuration is enabled.
-> ```
-> BUG: kernel NULL pointer dereference, address: 0000000000000008
-> #PF: supervisor read access in kernel mode
-> #PF: error_code(0x0000) - not-present page
-> PGD 0 P4D 0
-> Oops: Oops: 0000 [#1] SMP
-> CPU: 5 PID: 1702 Comm: umount Not tainted 
-> 6.10.0-rc7-ktest-00003-g557bd05b0d4c-dirty #12
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.15.0-1 
-> 04/01/2014
-> RIP: 0010:list_lru_add+0x83/0x100
-> Code: 5f 5d c3 48 8b 45 d0 48 85 c0 74 13 41 80 7c 24 1c 00 48 63 b0 
-> 68 06 00 00 74 04 85 f6 79 5e 4d 03 2c 24 49 83 c5 08 4c 89 ea <49> 8b 
-> 45 08 49 89 5d 08 48 89 13 48 89 43 08 48 89 18 49 8b 45 10
-> RSP: 0018:ffff8881178efd10 EFLAGS: 00010246
-> RAX: 0000000000000000 RBX: ffff88810ec140f0 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: 0000000000000017 RDI: ffff8881178efcc8
-> RBP: ffff8881178efd48 R08: ffff8881009de780 R09: ffffffff822e0de0
-> R10: 0000000000000000 R11: 0000000000000000 R12: ffff888102075c80
-> R13: 0000000000000000 R14: ffff88810443e6c0 R15: 0000000000000000
-> FS:  00007f9ed1840800(0000) GS:ffff888179940000(0000) 
-> knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000008 CR3: 00000001062b9005 CR4: 0000000000370eb0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->
-> Call Trace:
->  <TASK>
->  ? show_regs+0x69/0x70
->  ? __die+0x29/0x70
->  ? page_fault_oops+0x14f/0x3c0
->  ? do_user_addr_fault+0x2d0/0x5b0
->  ? default_wake_function+0x1e/0x30
->  ? exc_page_fault+0x6d/0x130
->  ? asm_exc_page_fault+0x2b/0x30
->  ? list_lru_add+0x83/0x100
->  list_lru_add_obj+0x4b/0x60
->  iput+0x1fe/0x220
->  dentry_unlink_inode+0xbd/0x120
->  __dentry_kill+0x78/0x180
->  dput+0xc7/0x170
->  shrink_dcache_for_umount+0xe8/0x120
->  generic_shutdown_super+0x23/0x150
->  bch2_kill_sb+0x1b/0x30
->  deactivate_locked_super+0x34/0xb0
->  deactivate_super+0x44/0x50
->  cleanup_mnt+0x105/0x160
->  __cleanup_mnt+0x16/0x20
->  task_work_run+0x63/0x90
->  syscall_exit_to_user_mode+0x10d/0x110
->  do_syscall_64+0x57/0x100
->  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> RIP: 0033:0x7f9ed1a7a6e7
-> Code: 0c 00 f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 31 f6 
-> e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 
-> 00 f0 ff ff 77 01 c3 48 8b 15 09 97 0c 00 f7 d8 64 89 02 b8
-> RSP: 002b:00007ffef8a29128 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-> RAX: 0000000000000000 RBX: 000055f4671acad8 RCX: 00007f9ed1a7a6e7
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000055f4671b1240
-> RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9ed1bc6244
-> R13: 000055f4671b1240 R14: 000055f4671acde0 R15: 000055f4671ac9d0
->  </TASK>
-> ```
-The direct cause of the BUG is that the return value of 
-list_lru_from_memcg_idx()
-is NULL, and the execution of l->list will cause NULL pointer dereference.
+> On Mon, Jul 01, 2024 at 07:13:19PM +1000, Stephen Rothwell wrote:
+> >=20
+> > After merging the drm tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> >=20
+> > In file included from arch/powerpc/include/asm/mmu.h:144,
+> >                  from arch/powerpc/include/asm/paca.h:18,
+> >                  from arch/powerpc/include/asm/current.h:13,
+> >                  from include/linux/sched.h:12,
+> >                  from include/linux/ratelimit.h:6,
+> >                  from include/linux/dev_printk.h:16,
+> >                  from include/linux/device.h:15,
+> >                  from include/linux/dma-mapping.h:8,
+> >                  from drivers/gpu/drm/omapdrm/omap_gem.c:7:
+> > drivers/gpu/drm/omapdrm/omap_gem.c: In function 'omap_gem_pin_tiler':
+> > arch/powerpc/include/asm/page.h:25:33: error: conversion from 'long uns=
+igned int' to 'u16' {aka 'short unsigned int'} changes value from '65536' t=
+o '0' [-Werror=3Doverflow]
+> >    25 | #define PAGE_SIZE               (ASM_CONST(1) << PAGE_SHIFT)
+> >       |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/gpu/drm/omapdrm/omap_gem.c:758:42: note: in expansion of macro =
+'PAGE_SIZE'
+> >   758 |                                          PAGE_SIZE);
+> >       |                                          ^~~~~~~~~
+> > drivers/gpu/drm/omapdrm/omap_gem.c: In function 'omap_gem_init':
+> > arch/powerpc/include/asm/page.h:25:33: error: conversion from 'long uns=
+igned int' to 'u16' {aka 'short unsigned int'} changes value from '65536' t=
+o '0' [-Werror=3Doverflow]
+> >    25 | #define PAGE_SIZE               (ASM_CONST(1) << PAGE_SHIFT)
+> >       |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/gpu/drm/omapdrm/omap_gem.c:1504:65: note: in expansion of macro=
+ 'PAGE_SIZE'
+> >  1504 |                         block =3D tiler_reserve_2d(fmts[i], w, =
+h, PAGE_SIZE);
+> >       |                                                                =
+ ^~~~~~~~~
+> > cc1: all warnings being treated as errors
+> >=20
+> > Exposed by commit
+> >=20
+> >   dc6fcaaba5a5 ("drm/omap: Allow build with COMPILE_TEST=3Dy")
+> >=20
+> > PowerPC 64 bit uses 64k pages.
+> >=20
+> > I have reverted that commit for today. =20
+>=20
+> FWIW, I sent a patch to address this in a bit of a more targeted manner
+> over a week ago:
+>=20
+> https://lore.kernel.org/20240620-omapdrm-restrict-compile-test-to-sub-64k=
+b-page-size-v1-1-5e56de71ffca@kernel.org/
+>=20
+> Although somehow, I left off Ville from that patch :/
 
-The return value of list_lru_from_memcg_idx() needs to be determined, 
-similar to
-commit 5abc1e37afa0 ("mm: list_lru: allocate list_lru_one only when 
-needed").
+I am still reverting that commit (as of yesterday, the failure still
+occurs) ...
 
-Modified as follows:
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index 3fd64736bc45..ee7424c3879d 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -94,6 +94,9 @@ bool list_lru_add(struct list_lru *lru, struct 
-list_head *item, int nid,
-         spin_lock(&nlru->lock);
-         if (list_empty(item)) {
-                 l = list_lru_from_memcg_idx(lru, nid, 
-memcg_kmem_id(memcg));
-+               if (!l)
-+                       goto out;
-+
-                 list_add_tail(item, &l->list);
-                 /* Set shrinker bit if the first element was added */
-                 if (!l->nr_items++)
-@@ -102,6 +105,7 @@ bool list_lru_add(struct list_lru *lru, struct 
-list_head *item, int nid,
-                 spin_unlock(&nlru->lock);
-                 return true;
-         }
-+out:
-         spin_unlock(&nlru->lock);
-         return false;
-  }
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/H/iDkLlMHsM8Mgav8Y0_chz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-After ktest test tests/bcachefs/xfstests.ktest can continue to test 
-(enable MEMCG
-and MEMCG_KMEM).
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Youling.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQlNsACgkQAVBC80lX
+0Gy4vggAiVPl92oeXBiXBv07+6oFM8mgQZicXoV1qRz8CFGEjrhw7r15r0U+wR1P
+YQFSPtg8lADO3oSBHjzm1YeCIsECq8QAi9GY4YF2bTsRgIgMnpOFAyeZoCv0uMR0
+1otR5Z8ztH5nvpz7SPthIHSfh3Auf1C1ruQMgCxpUzgRjZnoP74n9Zm67wHE2edX
+YscNPi+pLWdqfQwvpH/pJqGRXG8QaQSr4U9W7Np9I3oYRgNfqb3LDszjju22H9OO
+h5G9dcuBckSa+dDcsdYowpLb6tVsRSQX8EQRdz6Z+CZzV8AcRdbDrhzfBVDWvYHN
+BacfJ8E3KYL+sO7m1NeEBRRIXR46ng==
+=15md
+-----END PGP SIGNATURE-----
+
+--Sig_/H/iDkLlMHsM8Mgav8Y0_chz--
 
