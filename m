@@ -1,193 +1,152 @@
-Return-Path: <linux-kernel+bounces-250904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A65192FE53
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:17:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 202F492FE5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:19:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B711F2369E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:17:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF5628231F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DB0175545;
-	Fri, 12 Jul 2024 16:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC75817622F;
+	Fri, 12 Jul 2024 16:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lYZFlM0J"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="m4vydiEH"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B0D16F8F5
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB0816F8F5;
+	Fri, 12 Jul 2024 16:19:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720801060; cv=none; b=GrYn6CUBIC6BG/KRjzANfXuK9Y5wTu34xfHFRKQtXOOgNhPApjReO+e9V6hhezO4gOVC6o6FQZC/4Ho1S7H4jHCV27tBs+9oOiaIjee7i2jRhKGVhnJGk70bJRWBIUj/6S4Dz8qoVG9g5pZQoP8p0OEmPY0kxbPC1E7w+Qe0guU=
+	t=1720801188; cv=none; b=Y31Z2uJmEpIskd4iAGZHhzSd5efb1W+ZIRhyGAT9DE7UJrcU3ozugTax6tuRbhuAFc9XDxytUsFUi3+Ih1qVUcjxkdF3HLxiMmMHzTdVWWSL8hGfrKjGrJDmUhGiRiuXJsNeUljE/4mSGWOgCFWBwffv3lLCmOPBxPGFPSqadEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720801060; c=relaxed/simple;
-	bh=+BuxBqLkeYknLpgwiO7RECh7lc6o9xlgcLK4jpb35o8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YsNmhgiFppRA1WpIrGo9aoTlwu/L7Ug6oEA0YI6s6RVCcoZ8vF/ELG0YwiRbOxdDJTPMURha2ATokeJ90m9H+av7VJNmWF3U2zOsKBn3YERItU/w7IHUr7kmXCkjWP0UcAg0cfHKx8xmtlZWVS32jdFSVQq5FzEjtW8pL4yKYN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lYZFlM0J; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-367aa05bf9dso1259918f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:17:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720801057; x=1721405857; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lbJoy2m5aoNCDq8f3t+gfMSoffEHVypJP0uEKVRuHxA=;
-        b=lYZFlM0JoaoYoGhGTZ1kV2lmyV9uiIAW2tl7boVnLc8W6hHD8d7dUyQ69o9Fo6dCex
-         iu/019hO73IrqLe/+wokySZoftYBViFRupJIhgQoq8XRTb4UcQtEeqIpZ0QnNSDbotJz
-         Kzqt1AD3GGCVIAgauq3MTq6SQq9oGD15obw2oBIrahhx98CvD767G4zJd8fBM+VVs3GN
-         0KXrpLZD8Qg54g/z/ty8Lwq9upD3fhifRHpLnu1Ku+FSkwp2yR4YlBu7bZI4/pHDZ2Y9
-         JrXI5lwhj1EY185Ff9wYaIUMi5+8QIQ3uENLcOqGph/cTzfSaFDfuc/dleR1gQG6K4X9
-         kkIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720801057; x=1721405857;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lbJoy2m5aoNCDq8f3t+gfMSoffEHVypJP0uEKVRuHxA=;
-        b=NwetOu+MCaL5QWzsOSvej5GhxAm+2EcA3gxd44HLtbGhmlRekMwS/WOe6tywRj4dAD
-         sXYFNAhWcoLJzEO8uF95gJf6GY6vDFNnwtKS9wdiOAn7D+WHVWWBVG/qNH3djQQbsZCe
-         ksvsK3x4B31eRDh+/o0iiMHJ25i8DGCVRWKoBbOqnxylwF6mrEmLC7BaQQQUMNTByFnv
-         YZ7wi67NyjftiDbrWHlJZAA2cyQrJhuuZhy11hiq6EQjk3rIDWyi3e8w/SN1FHRgBYIa
-         y6v2dL3Yb5cMQW+r+yhWvbVflEW3qHB1qwF9uH26Wv7pMOMnf1r4p4coNyDPiKf5zBHb
-         7MPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpogfe49p5/GyPe0ToGVUWotMPh9maMNK5rjOZQ1xoAifuRfJuYlmSq/22m9YtWI8vHxOTlhYFATOyIakJhZ0lcqkq1Bs5fehpYh80
-X-Gm-Message-State: AOJu0Ywv+dXT2qTgo/t0rkJmuSB00Kjfel7K5sYoy4Vzxs1A3kqr1cMf
-	Cl2rwZm6tWe6rKq0v+2l8z7gZATIEKTABuN8lGUU8yMfpRxIeFNI
-X-Google-Smtp-Source: AGHT+IFWxN4rabKRUz5jKXIs3M8YQGe2GEQUzwOkpeAL4/186T7kLbwYdXf5FMtAiaktuiwnfpiNqA==
-X-Received: by 2002:a05:6000:2c3:b0:367:f281:260e with SMTP id ffacd0b85a97d-367f2812acamr4537665f8f.3.1720801057085;
-        Fri, 12 Jul 2024 09:17:37 -0700 (PDT)
-Received: from fedora.. ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa0650sm10568385f8f.69.2024.07.12.09.17.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 09:17:36 -0700 (PDT)
-From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-To: rodrigosiqueiramelo@gmail.com
-Cc: melissa.srw@gmail.com,
-	mairacanal@riseup.net,
-	hamohammed.sa@gmail.com,
-	daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	louis.chauvet@bootlin.com,
-	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH] drm/vkms: Fix cpu_to_le16()/le16_to_cpu() warnings
-Date: Fri, 12 Jul 2024 18:16:56 +0200
-Message-ID: <20240712161656.7480-1-jose.exposito89@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720801188; c=relaxed/simple;
+	bh=spTcCUAvIKeRiZqhNrAtZXqPPUtuzdfi0TREE6gKYyA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=F93M9vm1LqlM63Q07+S9RN7EdXaIWdo/eQFuqGFGOxTmTS5hMPTWmu77As3nI8UHs4uM3ekZuU4mDfpmV+07/hpi/f3AzSrqXn68/dv1f7afmAph8wQkR7uR8zyy9t8mYTUqR4Ky+BTn6DWTOJEOFYqCQwRgupZv5iPN+gEwK0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=m4vydiEH; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=fnfBwcbL3Qe8863nzBkCMy1pP5U04LNp3AM575Iq/Ys=; b=m4vydiEHqcGM57I27dW0pq2LMN
+	mJxl3/wDSZ/XwciUK9IeeSgA1RP463FcySbP6SYAG7luhN020GBbc4d0JwSsYNo5mqfINp6GzkE+n
+	lfAsOeJNx10Bzyx8XiWeNCvO8j3gfTd5Zl6I2jfE2zj7G7A6m6RQD0sRuXpjAAl2wRzazslN79xUy
+	e+af9LUvwEal2OezBb8vbcs92ukgFWewM9cpjPPI5mJwH/vEhHZbderWWjdfsKtPynH4bIUnLlEos
+	x1bcEbAzvI2ipaSDjTusPu0RwantiAZpKE65HlONKqO9w4WtYCL6JFm9E+OkL22BxKMlVP3bDpeXk
+	8nt+e7Aw==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1sSIzb-000KYz-6O; Fri, 12 Jul 2024 18:19:31 +0200
+Received: from [178.197.248.35] (helo=linux.home)
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1sSIza-000C6s-0O;
+	Fri, 12 Jul 2024 18:19:30 +0200
+Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Puranjay Mohan <puranjay@kernel.org>, Manu Bretelle <chantra@meta.com>,
+ KP Singh <kpsingh@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@meta.com>,
+ Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Florent Revest <revest@google.com>
+References: <20240705145009.32340-1-puranjay@kernel.org>
+ <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
+ <mb61pjzhwvshc.fsf@kernel.org>
+ <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
+ <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net>
+ <mb61ped836gn7.fsf@kernel.org>
+ <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
+ <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
+ <890d23f2-636e-12d1-31cc-eb6469f2a9ac@iogearbox.net>
+ <SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com>
+ <mb61p5xtcyqo5.fsf@kernel.org>
+ <978e127b-4967-950d-ccca-8575d1a885ae@iogearbox.net>
+ <CAADnVQJXcGB69o1s5GcLYV=OYS+hmqxGJVvtDH3YrVQc1o_=Tg@mail.gmail.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <e35b2a2b-aa5e-b107-1fb9-927e43e06d88@iogearbox.net>
+Date: Fri, 12 Jul 2024 18:19:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAADnVQJXcGB69o1s5GcLYV=OYS+hmqxGJVvtDH3YrVQc1o_=Tg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27334/Fri Jul 12 10:35:53 2024)
 
-Building with Sparse enabled prints this warning for cpu_to_le16()
-calls:
+On 7/12/24 6:07 PM, Alexei Starovoitov wrote:
+> On Fri, Jul 12, 2024 at 6:50 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>> On 7/11/24 4:00 PM, Puranjay Mohan wrote:
+>> [...]
+>>> I was able find the root cause of this bug and will send a fix soon!
+>>>
+>>>> Unable to handle kernel paging request at virtual address ffff0000c2a80e68
+>>>
+>>> We are running this test on Qemu with '-cpu max', this means 52-bit
+>>> virtual addresses are being used.
+>>>
+>>> The trampolines generation code has the following two lines:
+>>>
+>>>                emit_addr_mov_i64(A64_R(0), (const u64)im, ctx);
+>>>                emit_call((const u64)__bpf_tramp_enter, ctx);
+>>>
+>>> here the address of struct bpf_tramp_image is moved to R0 and passed as
+>>> an argument to __bpf_tramp_enter().
+>>>
+>>> emit_addr_mov_i64() assumes that the address passed to it is in the
+>>> vmalloc space and uses at most 48 bits. It sets all the remaining bits
+>>> to 1.
+>>>
+>>> but struct bpf_tramp_image is allocated using kzalloc() and when 52-bit
+>>> VAs are used, its address is not guaranteed to be 48-bit, therefore we
+>>> see this bug, where  0xfff[0]0000c2a80e68 is converted to
+>>> 0xfff[f]0000c2a80e68 when the trampoline is generated.
+>>>
+>>> The fix would be use emit_a64_mov_i64() for moving this address into R0.
+>>
+>> It looks like there is still an issue left. A recent CI run on bpf-next is
+>> still hitting the same on arm64:
+>>
+>> Base:
+>>
+>>     https://github.com/kernel-patches/bpf/commits/series/870746%3D%3Ebpf-next/
+>>
+>> CI:
+>>
+>>     https://github.com/kernel-patches/bpf/actions/runs/9905842936/job/27366435436
+>>
+>>     [...]
+>>     #89/11   fexit_bpf2bpf/func_replace_global_func:OK
+>>     #89/12   fexit_bpf2bpf/fentry_to_cgroup_bpf:OK
+>>     #89/13   fexit_bpf2bpf/func_replace_progmap:OK
+>>     #89      fexit_bpf2bpf:OK
+>>     Error: The operation was canceled.
+> 
+> Let's denylist that test again for now?
 
-    warning: incorrect type in assignment (different base types)
-        expected unsigned short [usertype]
-        got restricted __le16 [usertype]
-
-And this warning for le16_to_cpu() calls:
-
-    warning: cast to restricted __le16
-
-Add casts to fix both warnings.
-
-Signed-off-by: José Expósito <jose.exposito89@gmail.com>
----
- drivers/gpu/drm/vkms/vkms_formats.c | 32 ++++++++++++++---------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index 36046b12f296..053fa6ce41a9 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.c
-+++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -77,10 +77,10 @@ static void ARGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_
- {
- 	u16 *pixels = (u16 *)src_pixels;
- 
--	out_pixel->a = le16_to_cpu(pixels[3]);
--	out_pixel->r = le16_to_cpu(pixels[2]);
--	out_pixel->g = le16_to_cpu(pixels[1]);
--	out_pixel->b = le16_to_cpu(pixels[0]);
-+	out_pixel->a = le16_to_cpu((__force __le16)pixels[3]);
-+	out_pixel->r = le16_to_cpu((__force __le16)pixels[2]);
-+	out_pixel->g = le16_to_cpu((__force __le16)pixels[1]);
-+	out_pixel->b = le16_to_cpu((__force __le16)pixels[0]);
- }
- 
- static void XRGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
-@@ -88,9 +88,9 @@ static void XRGB16161616_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_
- 	u16 *pixels = (u16 *)src_pixels;
- 
- 	out_pixel->a = (u16)0xffff;
--	out_pixel->r = le16_to_cpu(pixels[2]);
--	out_pixel->g = le16_to_cpu(pixels[1]);
--	out_pixel->b = le16_to_cpu(pixels[0]);
-+	out_pixel->r = le16_to_cpu((__force __le16)pixels[2]);
-+	out_pixel->g = le16_to_cpu((__force __le16)pixels[1]);
-+	out_pixel->b = le16_to_cpu((__force __le16)pixels[0]);
- }
- 
- static void RGB565_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
-@@ -100,7 +100,7 @@ static void RGB565_to_argb_u16(u8 *src_pixels, struct pixel_argb_u16 *out_pixel)
- 	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
- 	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
- 
--	u16 rgb_565 = le16_to_cpu(*pixels);
-+	u16 rgb_565 = le16_to_cpu((__force __le16)*pixels);
- 	s64 fp_r = drm_int2fixp((rgb_565 >> 11) & 0x1f);
- 	s64 fp_g = drm_int2fixp((rgb_565 >> 5) & 0x3f);
- 	s64 fp_b = drm_int2fixp(rgb_565 & 0x1f);
-@@ -180,10 +180,10 @@ static void argb_u16_to_ARGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_p
- {
- 	u16 *pixels = (u16 *)dst_pixels;
- 
--	pixels[3] = cpu_to_le16(in_pixel->a);
--	pixels[2] = cpu_to_le16(in_pixel->r);
--	pixels[1] = cpu_to_le16(in_pixel->g);
--	pixels[0] = cpu_to_le16(in_pixel->b);
-+	pixels[3] = (__force u16)cpu_to_le16(in_pixel->a);
-+	pixels[2] = (__force u16)cpu_to_le16(in_pixel->r);
-+	pixels[1] = (__force u16)cpu_to_le16(in_pixel->g);
-+	pixels[0] = (__force u16)cpu_to_le16(in_pixel->b);
- }
- 
- static void argb_u16_to_XRGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
-@@ -191,9 +191,9 @@ static void argb_u16_to_XRGB16161616(u8 *dst_pixels, struct pixel_argb_u16 *in_p
- 	u16 *pixels = (u16 *)dst_pixels;
- 
- 	pixels[3] = 0xffff;
--	pixels[2] = cpu_to_le16(in_pixel->r);
--	pixels[1] = cpu_to_le16(in_pixel->g);
--	pixels[0] = cpu_to_le16(in_pixel->b);
-+	pixels[2] = (__force u16)cpu_to_le16(in_pixel->r);
-+	pixels[1] = (__force u16)cpu_to_le16(in_pixel->g);
-+	pixels[0] = (__force u16)cpu_to_le16(in_pixel->b);
- }
- 
- static void argb_u16_to_RGB565(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
-@@ -211,7 +211,7 @@ static void argb_u16_to_RGB565(u8 *dst_pixels, struct pixel_argb_u16 *in_pixel)
- 	u16 g = drm_fixp2int(drm_fixp_div(fp_g, fp_g_ratio));
- 	u16 b = drm_fixp2int(drm_fixp_div(fp_b, fp_rb_ratio));
- 
--	*pixels = cpu_to_le16(r << 11 | g << 5 | b);
-+	*pixels = (__force u16)cpu_to_le16(r << 11 | g << 5 | b);
- }
- 
- void vkms_writeback_row(struct vkms_writeback_job *wb,
--- 
-2.45.2
-
+Agree, done/pushed now.
 
