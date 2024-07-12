@@ -1,498 +1,211 @@
-Return-Path: <linux-kernel+bounces-250063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1B292F39F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:42:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A5592F3A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DB8CB20C97
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:42:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A051C21F69
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9875E1BC3C;
-	Fri, 12 Jul 2024 01:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E3B881E;
+	Fri, 12 Jul 2024 01:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="npxSPjjX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NayDDShJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508A41B28D;
-	Fri, 12 Jul 2024 01:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720748432; cv=none; b=pAupPTdNwJWKaSyA+smSG8yLgEkwBOXZdJ7ezG9ILtSNOZPtqIE/d56fEiATq9pj3CNSLZFIQ7s7I0fv8KywMwV//hzMr2s0gR5cU0oDOWTFyM0MWDua99qNTNqNe9txXSwnaftPF6C26kM5E3WR8gT3JbLxpWTBSa6wf1unoWE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720748432; c=relaxed/simple;
-	bh=pDpSaUF2aKpaOsHnmWdXwhyv8ZRWxcEbxPpQ216Y1rY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TOuit/tygYPvlTnAZtM2gz0NphfPeluOFoX0x6zMrsJ8dNeinoeUUfJvmlsC9RkZai1BS/I26pyC0ExNWXjkEl6oGCloVxOsncxm+xjoxWmIvnNzFXPLceW5fse3RWOy4yTUDl5LPXtmaggaSQAgFCSfnEnmjPQmYBl8nwHKjmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=npxSPjjX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B25C32782;
-	Fri, 12 Jul 2024 01:40:30 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="npxSPjjX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1720748429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yscdnv8ChATgSLaQ85J9cCq6xYERukZSn9rz6W9VJl0=;
-	b=npxSPjjX5OZRCr+eWUEYVUNpY5flvuRKedPecqYe34AHbK7/XR+SPdEgozfUqxG5tvs3Dx
-	0DuAK8yZOxLX7UhS8azfGUDxot73SsrgTm9rnL4i73uRo2jlcvTIhdI2VNPj1XXSYninMk
-	WnfVsU0GMM/8ItUcam0IAOUFXggrqDo=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 669d26e9 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 12 Jul 2024 01:40:29 +0000 (UTC)
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	tglx@linutronix.de
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	x86@kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v23 4/4] selftests/vDSO: add tests for vgetrandom
-Date: Fri, 12 Jul 2024 03:40:08 +0200
-Message-ID: <20240712014009.281406-5-Jason@zx2c4.com>
-In-Reply-To: <20240712014009.281406-1-Jason@zx2c4.com>
-References: <20240712014009.281406-1-Jason@zx2c4.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805C91373;
+	Fri, 12 Jul 2024 01:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720748636; cv=fail; b=PkE7f+tW7VeT2GdBMKL6EcQ/npvRFRWFfEh6Jol9UcdkZcZaUkWZfSOQupdNNYISxBYpXIUV5H54da0winDJEOnGGW0l5gySSo30v3o5095Ri3eSdoM9qYAbt9lfxlMsRG8gSW+3kQPE59I1NED+JZMXWA0xChhMmml/sJwQ1Yc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720748636; c=relaxed/simple;
+	bh=3N5OV6Kxbco5cpDJ2yWlLCyPmhrJYxxe3oZR9q4BQ30=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=AdVqwr3QA1AT8OJGjzKmwesTVdchDp550e6bCPWN5HkGBQ2WLnp28UmwVwzLhw+9rQ+8EvuXb1s+/ufz+zGHzf+pAjAdfmmm4ZKYMO1G+zS8DvlyaXU2ismHSZ4eymjkcAOlRaEZXZthvwqqbPs8hifRM9N6Oslx9Iod65Soxp0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NayDDShJ; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720748636; x=1752284636;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=3N5OV6Kxbco5cpDJ2yWlLCyPmhrJYxxe3oZR9q4BQ30=;
+  b=NayDDShJ54JEirrUIppDzWrDt6i9/iSdmjCcr4dFN9RvimdlH0YSwK3j
+   Ao7gwy26Ow85dooYXTgBEeWPO4DcqYziepamB5IFy3cDajtdrqQNssqJv
+   Q2xp2hk6urh6PVBaGNvdrUL6TrcP9LzjdFk67GP/u0GQRmM43MBuwLiAk
+   Fb/iKIjw2KJnaXgLuX/jzMETvIrL56Bv87340qe4XPtqw5rE65nibJrbA
+   StzVs1oodXy4ApnsidZmVZ4GY1hFdUKQEViOPy8AHcckrL9WY+ciwkqyf
+   FLNAuNDKhDDJQVpf39tt5qo1hQ1H6K/rLL+rAF+KF3UKK3LEocEjZkW9y
+   Q==;
+X-CSE-ConnectionGUID: jV9fF/ESR8mTFx5L67eZTw==
+X-CSE-MsgGUID: 5230AeNDTxG19rCgkRw4Og==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="18311598"
+X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
+   d="scan'208";a="18311598"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 18:43:55 -0700
+X-CSE-ConnectionGUID: hIYKMTV4QyOwL1G516S1nA==
+X-CSE-MsgGUID: JPhs97rJSoiVu0C5Tn0Dsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,201,1716274800"; 
+   d="scan'208";a="53141219"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Jul 2024 18:43:53 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 11 Jul 2024 18:43:53 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 11 Jul 2024 18:43:53 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.49) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 11 Jul 2024 18:43:52 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c8M3t/NMmEoR4FZ/L4ilkis/NUCdsola6ye6hsVGPo+srlsY7YvFTbV1mDmrZ4AD37lCbbf45+hHjwGkG16MBqoLRnUK5iFOx4BZ55YF6FXKmATFpm66e6GQL4auFhKt89er9fMFi5P5Mi813Myuben88t2JooxaNLMea30ioHxLOQNboF6V131Vmp1d1RzFwpbe4zffLZsVMnL3fOG4DfmPGw9+CtUv611NxfTD7IdDw+3c9Le8ywp9Yepg3sel1gw8CHKYvC2j2xf0pqRUPG9KUdskPGeNgilW4Y3glzAoCPy3Z/8ZYpKT9Ty8TSaaqiN4Z/SWQTgWTdKw0Vb9vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r7VWYNVGlSpMCUu+0/sGfpJ0Zu5CiRJ1OzMtabi7NW0=;
+ b=L6oPk9V7nseVHvmuZ8AE60HnlQxmSRm9nkJ0XFujG7ht7MOeqs/DLGZN5RptOhe02qg0WVENJjbRv6m/IuEFJnoj6ikqJleKcU0akFQoDVeWSkJ9/yjum0IOy4KuvucV+oAYh0BKaS0zRRgXxOufP5H2AFEX6vMH4ly9cwuBFNKIRUtlbKORAGcKHD5JfUqDTCXUa9rjOvLFU8PTLfAXh4mYZlq0n3pw6NkO1IWTFElLNfO4zt8GKPM22tzsMFejfQvvbXyVKeue5KQE9XjJGuVpilmnM757fKDIA1Qyx9PE2y1U8LtDnH2BDKyq72Z9P2vGb0jnvcQyZX5c6mz0JA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ SA1PR11MB6757.namprd11.prod.outlook.com (2603:10b6:806:25c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
+ 2024 01:43:50 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%2]) with mapi id 15.20.7741.033; Fri, 12 Jul 2024
+ 01:43:50 +0000
+Date: Fri, 12 Jul 2024 09:42:29 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+CC: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai"
+	<kai.huang@intel.com>, "sagis@google.com" <sagis@google.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Aktas, Erdem"
+	<erdemaktas@google.com>, "dmatlack@google.com" <dmatlack@google.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "Yamahata, Isaku"
+	<isaku.yamahata@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>
+Subject: Re: [PATCH v3 13/17] KVM: x86/tdp_mmu: Support mirror root for TDP
+ MMU
+Message-ID: <ZpCKBSS6fB9s30Wp@yzhao56-desk>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20240619223614.290657-1-rick.p.edgecombe@intel.com>
+ <20240619223614.290657-14-rick.p.edgecombe@intel.com>
+ <ZoZiopPQIkoZ0V4T@yzhao56-desk.sh.intel.com>
+ <81b3bfa46a457ba19ce32e7a34b793867ebeebbe.camel@intel.com>
+ <03eccdf96e917e178acbc3cc53a965328a5690b6.camel@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <03eccdf96e917e178acbc3cc53a965328a5690b6.camel@intel.com>
+X-ClientProxiedBy: SI2PR01CA0007.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::11) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SA1PR11MB6757:EE_
+X-MS-Office365-Filtering-Correlation-Id: d5c5c458-2f67-48b3-3e18-08dca214147f
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?nK/ncV2lBYxWVQIvRhmEARmjBd8QXN7wvovDsWrm9fbHhgPMA5gsfIp9LozW?=
+ =?us-ascii?Q?NvkUXxlgZIA2v3fczG0BLiAvNGA7Wqlw9WhMCY5lkpvQaeqh3keeoa6Et12O?=
+ =?us-ascii?Q?/0rcxXWAnQW2XQAtB+metarg2H9fQlmk/xQ9LbjJiCCV1Jl+El8btHUVo4gQ?=
+ =?us-ascii?Q?OjRqpwUgzEbnHkU6qVXAPy6lIwpO0RjFnbSbLYdCmqH18vITcBnm2RFDva7a?=
+ =?us-ascii?Q?fNxInngU08dMbh+cWHk0VIS9m7ChBAvJtnxAIN+9j2LPVTuiRlJJpUt378kZ?=
+ =?us-ascii?Q?sm0O0+ImbXaz3l1+JdnsTiwaGM03OJ/37Sx69nD5zTHygMzsesPKat8WkJXY?=
+ =?us-ascii?Q?92V4+hbqbcXzds4MJLkW5GPFNXWpyrJbjRN9iDwOw/Ctz8ERGVUCalT6iSJY?=
+ =?us-ascii?Q?jqTqbe/RDqkIPChGLXQo8brUKjpsBJ0XGPYCgHuyM1kFIXoak+Px6cu/H49m?=
+ =?us-ascii?Q?4WEJQWKGxkBjTYcKzbmgAb/9q0T891udFG+ssRAX7BOZSC9u98hrLXRU6mKs?=
+ =?us-ascii?Q?nZuQMKzpfs3Awv+HYJdqfr+cDh0uEoWtVGU10Baq/8JPkhPtaax/RrLFBCKj?=
+ =?us-ascii?Q?S3LSDY2q1qAgZaWjhEAOO4+Gw0Ewx7UVdXU2G2Y/3hHXalYF7m3oHV53LhUz?=
+ =?us-ascii?Q?+tQjAd3CG7GgA/MR08jPbn8se3FhaXjKkz6LzKBP3SQyTtLcmpMsuHYhYFHR?=
+ =?us-ascii?Q?EizmjU/Dbx7OrSy0dLwBToFa15zfuMjFJNMeLRgFW9hPFFA0WcZ3wQRx0obP?=
+ =?us-ascii?Q?vWmDIfDqPmKpANXmKpAVqeMCP4G0BQ+aRHuclLxARIzLyGfTpajxZbMIIy6p?=
+ =?us-ascii?Q?NtAt125Z6q7wUpr/h990MtidRhC5mQxyngE3I8JXLXT92SbAdYd8Q9minpmT?=
+ =?us-ascii?Q?wri7gmF4/wTGTYjAkL70FtOp8Y+IXSDEdobTL4pFLWCIVtI+SbqmyPw1tT9A?=
+ =?us-ascii?Q?LdZe/mYS5sryQKt6Nr0ksHTlW14pPs1LJGRzxE9UJfreOvdBKdAhPwjDg4hC?=
+ =?us-ascii?Q?HKefdFEgwUnHQWr/KauztJXOOmTx2okdRbId6iwZwzxFmf3BWag3rNc51+Ge?=
+ =?us-ascii?Q?xea/ja3q4jN/9PSWOre+7lm6sBrjj9QMES3edIEfEVsql9MC4HIkJVpT/HT0?=
+ =?us-ascii?Q?dpaS1o3MGFqg94w/Vt9kZdEvn1PR52mv2HmMS63AKLLivYFAx02T1GfwFSPT?=
+ =?us-ascii?Q?Fd/YaRLQZMiQ+w6KikE+wcEuN6MiC0wJbHSy6NYMUUyA3O9rsn/3M6Rjk+zU?=
+ =?us-ascii?Q?p4RUzXKX7oAEnA4auSIa0u2hKBI3DkfNF15gUVa1l10GF5zrIp9wubR/NxLM?=
+ =?us-ascii?Q?2dVe/E1uUYtTRBlVCSJMpQpWHSxyhagt/pVw3ltk1qxfzQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?LTCWmRIv4WlPkhLCpqmHfaE9NpJdbFVSJE7lE03fDZpFoZYRK1xUNQCIq/gP?=
+ =?us-ascii?Q?6NPT9h7Js7SnwLAGHVI1TL/xNNKeEdPIRQ2pkA+ViaMCX5e7m4mzoHNeTxp+?=
+ =?us-ascii?Q?sxWPKrB4o2K96xF6A7FiT3DIZ1sxGuIPzcQs4xxG8EZbLFxuZnp/qsa6Byy8?=
+ =?us-ascii?Q?AX7+pxYxkNLFK5gdIIu2982kdvPg7bbBoPgaoy+PKhR7gRx6/fLX4tbgSeNV?=
+ =?us-ascii?Q?HPMFN5VGSKLl9Iz7refyrVuxgpE2krbvlul0K+pXKivDsA7gtc+OdPQdpX7K?=
+ =?us-ascii?Q?C7EKdw/cGi4cvwAIDPu0O4NNSjrGUyZD7h/xbCEOsmaBlwb+lWcDpfRF9VdZ?=
+ =?us-ascii?Q?4/wy+aTrbax6Kt9Q6uplX+9WtnNKpsE+nToTKJrobUd0Eg+ViBIAhZC+vKiR?=
+ =?us-ascii?Q?7k0I9bxwm6X/0GswviOs70OaI+uH5AkGwj0p2DAQ0FG5sKjWFVR2PleUXaxU?=
+ =?us-ascii?Q?KkBRF13+ndOztSuKlvD4X8Xbsu5ETH0K8qHUdE+oL0okD6PYuuHONmcRi7hb?=
+ =?us-ascii?Q?x5a3MP/MniKtEOoLGdxxRWiJ+FoFcrjMAXQV0akoxAcBMqeCsRM+MLsJDmMT?=
+ =?us-ascii?Q?US8w5KCKx7jZb2e1AHmL6r0k4N9yp+w348HES17b0Pe2nLiciKWk0PvM2m5K?=
+ =?us-ascii?Q?ShgkXoTV1IUtpnHpHchXCdS6n37lF89pNn++Fdjmhv0WUpsdKn2gZb9eHL8G?=
+ =?us-ascii?Q?hQbneISZ2pA8CYofsSvv9kR8emBTMLr9PLv2Wvw1mEl3oUJLyBAmfIDOis16?=
+ =?us-ascii?Q?vT1cLAVJkO++kqKNwb5JpcAR8HrZL6rZTnqAvOsN0R6y7jF0NLi7IwE/AEjh?=
+ =?us-ascii?Q?U3mm7RI2v5TT7yaJlHrG+8Owc7bueuvTMmZsZnLFMWNDw4M2c/eQp9YQ3dem?=
+ =?us-ascii?Q?W9VV4Ub1rifk5qs16QPP6cuuxiVBsbaTd+MU96fm/73ALC2kDJoP0uBRWNp1?=
+ =?us-ascii?Q?IeCXpj6mh/BZJj0ADvSOZ6gQsqIj5EqM3kCyU41A/SxHG9BQnHGwQbAWZHGx?=
+ =?us-ascii?Q?tCC5gzgUSB7iqA0katAYfXIrftji3oowvc3G8WkiIdKoUperb9XkvinlPhzM?=
+ =?us-ascii?Q?RqcgvWaz6zPlc1oMNLrEKeQAXHPvbBiaFQ+uD6fPV/itsrL1A2t227VDht8G?=
+ =?us-ascii?Q?TyNkt1lIoJWfLhDVM+rlJXHazs789tfg/MsWh4EbXZrqaKrjRs9NBA4ctgxo?=
+ =?us-ascii?Q?KKt4JBpOKdz4hgcxlx6DaAIAZuG+FkZRL3TP+aZVKB+m7SWOqE38gxtjPDTj?=
+ =?us-ascii?Q?01D60i8xc0agiGq/xGhv37oZHBRjem9cZtFIKAtGwuee4Ct/2QM6wao5+SNR?=
+ =?us-ascii?Q?wj8NWeoacfy8jSDWlSjVyhRdjMMN8Usxor7/WbSfa1c3aEd70Mxstwm1BPSu?=
+ =?us-ascii?Q?Bf4fpFZqDHzjocOSeN6aNKd7QGRX0XSrPgjocAHrGa5EWsaZwSuSZjAJlZEr?=
+ =?us-ascii?Q?bBYJ0N8ts8iNcgZUQtuNe64G6eYOmmjdtNxpWeIUWBxxgSqoANS+08CPW/8Q?=
+ =?us-ascii?Q?Xmxxtr/KDLeWF5aUGvR4lPMFlU71gfahsiQVdEkLfv6esWsX+yU8KFxoRygf?=
+ =?us-ascii?Q?05UzeD7m5Ct3crR7lAYGct2gkPzcGGorCzIYVht3?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5c5c458-2f67-48b3-3e18-08dca214147f
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 01:43:50.7539
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ft+PPcTlE0IB2GzbbgUvJnq7IUPrtPYuf/uw7EkVS5RPuWXc/B1BY1pD/YBfwjaQPRpyb9iCkGLDMxVwNZtt3g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6757
+X-OriginatorOrg: intel.com
 
-This adds two tests for vgetrandom. The first one, vdso_test_chacha,
-simply checks that the assembly implementation of chacha20 matches that
-of libsodium, a basic sanity check that should catch most errors. The
-second, vdso_test_getrandom, is a full "libc-like" implementation of the
-userspace side of vgetrandom() support. It's meant to be used also as
-example code for libcs that might be integrating this.
-
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- tools/include/asm/rwonce.h                    |   0
- tools/testing/selftests/vDSO/.gitignore       |   2 +
- tools/testing/selftests/vDSO/Makefile         |  18 ++
- .../testing/selftests/vDSO/vdso_test_chacha.c |  43 +++
- .../selftests/vDSO/vdso_test_getrandom.c      | 288 ++++++++++++++++++
- 5 files changed, 351 insertions(+)
- create mode 100644 tools/include/asm/rwonce.h
- create mode 100644 tools/testing/selftests/vDSO/vdso_test_chacha.c
- create mode 100644 tools/testing/selftests/vDSO/vdso_test_getrandom.c
-
-diff --git a/tools/include/asm/rwonce.h b/tools/include/asm/rwonce.h
-new file mode 100644
-index 000000000000..e69de29bb2d1
-diff --git a/tools/testing/selftests/vDSO/.gitignore b/tools/testing/selftests/vDSO/.gitignore
-index a8dc51af5a9c..30d5c8f0e5c7 100644
---- a/tools/testing/selftests/vDSO/.gitignore
-+++ b/tools/testing/selftests/vDSO/.gitignore
-@@ -6,3 +6,5 @@ vdso_test_correctness
- vdso_test_gettimeofday
- vdso_test_getcpu
- vdso_standalone_test_x86
-+vdso_test_getrandom
-+vdso_test_chacha
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index 98d8ba2afa00..3de8e7e052ae 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- uname_M := $(shell uname -m 2>/dev/null || echo not)
- ARCH ?= $(shell echo $(uname_M) | sed -e s/i.86/x86/ -e s/x86_64/x86/)
-+SODIUM := $(shell pkg-config --libs libsodium 2>/dev/null)
- 
- TEST_GEN_PROGS := vdso_test_gettimeofday
- TEST_GEN_PROGS += vdso_test_getcpu
-@@ -10,6 +11,12 @@ ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
- TEST_GEN_PROGS += vdso_standalone_test_x86
- endif
- TEST_GEN_PROGS += vdso_test_correctness
-+ifeq ($(uname_M),x86_64)
-+TEST_GEN_PROGS += vdso_test_getrandom
-+ifneq ($(SODIUM),)
-+TEST_GEN_PROGS += vdso_test_chacha
-+endif
-+endif
- 
- CFLAGS := -std=gnu99
- 
-@@ -28,3 +35,14 @@ $(OUTPUT)/vdso_standalone_test_x86: CFLAGS +=-nostdlib -fno-asynchronous-unwind-
- 
- $(OUTPUT)/vdso_test_correctness: vdso_test_correctness.c
- $(OUTPUT)/vdso_test_correctness: LDFLAGS += -ldl
-+
-+$(OUTPUT)/vdso_test_getrandom: parse_vdso.c
-+$(OUTPUT)/vdso_test_getrandom: CFLAGS += -isystem $(top_srcdir)/tools/include \
-+                                         -isystem $(top_srcdir)/include/uapi
-+
-+$(OUTPUT)/vdso_test_chacha: $(top_srcdir)/arch/$(ARCH)/entry/vdso/vgetrandom-chacha.S
-+$(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
-+                                      -isystem $(top_srcdir)/arch/$(ARCH)/include \
-+                                      -isystem $(top_srcdir)/include \
-+                                      -D__ASSEMBLY__ -DBULID_VDSO -DCONFIG_FUNCTION_ALIGNMENT=0 \
-+                                      -Wa,--noexecstack $(SODIUM)
-diff --git a/tools/testing/selftests/vDSO/vdso_test_chacha.c b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-new file mode 100644
-index 000000000000..e38f44e5f803
---- /dev/null
-+++ b/tools/testing/selftests/vDSO/vdso_test_chacha.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#include <sodium/crypto_stream_chacha20.h>
-+#include <sys/random.h>
-+#include <string.h>
-+#include <stdint.h>
-+#include "../kselftest.h"
-+
-+extern void __arch_chacha20_blocks_nostack(uint8_t *dst_bytes, const uint8_t *key, uint32_t *counter, size_t nblocks);
-+
-+int main(int argc, char *argv[])
-+{
-+	enum { TRIALS = 1000, BLOCKS = 128, BLOCK_SIZE = 64 };
-+	static const uint8_t nonce[8] = { 0 };
-+	uint32_t counter[2];
-+	uint8_t key[32];
-+	uint8_t output1[BLOCK_SIZE * BLOCKS], output2[BLOCK_SIZE * BLOCKS];
-+
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
-+	for (unsigned int trial = 0; trial < TRIALS; ++trial) {
-+		if (getrandom(key, sizeof(key), 0) != sizeof(key)) {
-+			printf("getrandom() failed!\n");
-+			return KSFT_SKIP;
-+		}
-+		crypto_stream_chacha20(output1, sizeof(output1), nonce, key);
-+		for (unsigned int split = 0; split < BLOCKS; ++split) {
-+			memset(output2, 'X', sizeof(output2));
-+			memset(counter, 0, sizeof(counter));
-+			if (split)
-+				__arch_chacha20_blocks_nostack(output2, key, counter, split);
-+			__arch_chacha20_blocks_nostack(output2 + split * BLOCK_SIZE, key, counter, BLOCKS - split);
-+			if (memcmp(output1, output2, sizeof(output1)))
-+				return KSFT_FAIL;
-+		}
-+	}
-+	ksft_test_result_pass("chacha: PASS\n");
-+	return KSFT_PASS;
-+}
-diff --git a/tools/testing/selftests/vDSO/vdso_test_getrandom.c b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-new file mode 100644
-index 000000000000..05122425a873
---- /dev/null
-+++ b/tools/testing/selftests/vDSO/vdso_test_getrandom.c
-@@ -0,0 +1,288 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022-2024 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
-+ */
-+
-+#include <assert.h>
-+#include <pthread.h>
-+#include <stdint.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <time.h>
-+#include <unistd.h>
-+#include <signal.h>
-+#include <sys/auxv.h>
-+#include <sys/mman.h>
-+#include <sys/random.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <linux/random.h>
-+
-+#include "../kselftest.h"
-+#include "parse_vdso.h"
-+
-+#ifndef timespecsub
-+#define	timespecsub(tsp, usp, vsp)					\
-+	do {								\
-+		(vsp)->tv_sec = (tsp)->tv_sec - (usp)->tv_sec;		\
-+		(vsp)->tv_nsec = (tsp)->tv_nsec - (usp)->tv_nsec;	\
-+		if ((vsp)->tv_nsec < 0) {				\
-+			(vsp)->tv_sec--;				\
-+			(vsp)->tv_nsec += 1000000000L;			\
-+		}							\
-+	} while (0)
-+#endif
-+
-+static struct {
-+	pthread_mutex_t lock;
-+	void **states;
-+	size_t len, cap;
-+} grnd_allocator = {
-+	.lock = PTHREAD_MUTEX_INITIALIZER
-+};
-+
-+static struct {
-+	ssize_t(*fn)(void *, size_t, unsigned long, void *, size_t);
-+	pthread_key_t key;
-+	pthread_once_t initialized;
-+	struct vgetrandom_opaque_params params;
-+} grnd_ctx = {
-+	.initialized = PTHREAD_ONCE_INIT
-+};
-+
-+static void *vgetrandom_get_state(void)
-+{
-+	void *state = NULL;
-+
-+	pthread_mutex_lock(&grnd_allocator.lock);
-+	if (!grnd_allocator.len) {
-+		size_t page_size = getpagesize();
-+		size_t new_cap;
-+		size_t alloc_size, num = sysconf(_SC_NPROCESSORS_ONLN); /* Just a decent heuristic. */
-+		void *new_block, *new_states;
-+
-+		alloc_size = (num * grnd_ctx.params.size_of_opaque_state + page_size - 1) & (~(page_size - 1));
-+		num = (page_size / grnd_ctx.params.size_of_opaque_state) * (alloc_size / page_size);
-+		new_block = mmap(0, alloc_size, grnd_ctx.params.mmap_prot, grnd_ctx.params.mmap_flags, -1, 0);
-+		if (new_block == MAP_FAILED)
-+			goto out;
-+
-+		new_cap = grnd_allocator.cap + num;
-+		new_states = reallocarray(grnd_allocator.states, new_cap, sizeof(*grnd_allocator.states));
-+		if (!new_states)
-+			goto unmap;
-+		grnd_allocator.cap = new_cap;
-+		grnd_allocator.states = new_states;
-+
-+		for (size_t i = 0; i < num; ++i) {
-+			if (((uintptr_t)new_block & (page_size - 1)) + grnd_ctx.params.size_of_opaque_state > page_size)
-+				new_block = (void *)(((uintptr_t)new_block + page_size - 1) & (~(page_size - 1)));
-+			grnd_allocator.states[i] = new_block;
-+			new_block += grnd_ctx.params.size_of_opaque_state;
-+		}
-+		grnd_allocator.len = num;
-+		goto success;
-+
-+	unmap:
-+		munmap(new_block, alloc_size);
-+		goto out;
-+	}
-+success:
-+	state = grnd_allocator.states[--grnd_allocator.len];
-+
-+out:
-+	pthread_mutex_unlock(&grnd_allocator.lock);
-+	return state;
-+}
-+
-+static void vgetrandom_put_state(void *state)
-+{
-+	if (!state)
-+		return;
-+	pthread_mutex_lock(&grnd_allocator.lock);
-+	grnd_allocator.states[grnd_allocator.len++] = state;
-+	pthread_mutex_unlock(&grnd_allocator.lock);
-+}
-+
-+static void vgetrandom_init(void)
-+{
-+	if (pthread_key_create(&grnd_ctx.key, vgetrandom_put_state) != 0)
-+		return;
-+	unsigned long sysinfo_ehdr = getauxval(AT_SYSINFO_EHDR);
-+	if (!sysinfo_ehdr) {
-+		printf("AT_SYSINFO_EHDR is not present!\n");
-+		exit(KSFT_SKIP);
-+	}
-+	vdso_init_from_sysinfo_ehdr(sysinfo_ehdr);
-+	grnd_ctx.fn = (__typeof__(grnd_ctx.fn))vdso_sym("LINUX_2.6", "__vdso_getrandom");
-+	if (!grnd_ctx.fn) {
-+		printf("__vdso_getrandom is missing!\n");
-+		exit(KSFT_FAIL);
-+	}
-+	if (grnd_ctx.fn(NULL, 0, 0, &grnd_ctx.params, ~0UL) != 0) {
-+		printf("failed to fetch vgetrandom params!\n");
-+		exit(KSFT_FAIL);
-+	}
-+}
-+
-+static ssize_t vgetrandom(void *buf, size_t len, unsigned long flags)
-+{
-+	void *state;
-+
-+	pthread_once(&grnd_ctx.initialized, vgetrandom_init);
-+	state = pthread_getspecific(grnd_ctx.key);
-+	if (!state) {
-+		state = vgetrandom_get_state();
-+		if (pthread_setspecific(grnd_ctx.key, state) != 0) {
-+			vgetrandom_put_state(state);
-+			state = NULL;
-+		}
-+		if (!state) {
-+			printf("vgetrandom_get_state failed!\n");
-+			exit(KSFT_FAIL);
-+		}
-+	}
-+	return grnd_ctx.fn(buf, len, flags, state, grnd_ctx.params.size_of_opaque_state);
-+}
-+
-+enum { TRIALS = 25000000, THREADS = 256 };
-+
-+static void *test_vdso_getrandom(void *)
-+{
-+	for (size_t i = 0; i < TRIALS; ++i) {
-+		unsigned int val;
-+		ssize_t ret = vgetrandom(&val, sizeof(val), 0);
-+		assert(ret == sizeof(val));
-+	}
-+	return NULL;
-+}
-+
-+static void *test_libc_getrandom(void *)
-+{
-+	for (size_t i = 0; i < TRIALS; ++i) {
-+		unsigned int val;
-+		ssize_t ret = getrandom(&val, sizeof(val), 0);
-+		assert(ret == sizeof(val));
-+	}
-+	return NULL;
-+}
-+
-+static void *test_syscall_getrandom(void *)
-+{
-+	for (size_t i = 0; i < TRIALS; ++i) {
-+		unsigned int val;
-+		ssize_t ret = syscall(__NR_getrandom, &val, sizeof(val), 0);
-+		assert(ret == sizeof(val));
-+	}
-+	return NULL;
-+}
-+
-+static void bench_single(void)
-+{
-+	struct timespec start, end, diff;
-+
-+	clock_gettime(CLOCK_MONOTONIC, &start);
-+	test_vdso_getrandom(NULL);
-+	clock_gettime(CLOCK_MONOTONIC, &end);
-+	timespecsub(&end, &start, &diff);
-+	printf("   vdso: %u times in %lu.%09lu seconds\n", TRIALS, diff.tv_sec, diff.tv_nsec);
-+
-+	clock_gettime(CLOCK_MONOTONIC, &start);
-+	test_libc_getrandom(NULL);
-+	clock_gettime(CLOCK_MONOTONIC, &end);
-+	timespecsub(&end, &start, &diff);
-+	printf("   libc: %u times in %lu.%09lu seconds\n", TRIALS, diff.tv_sec, diff.tv_nsec);
-+
-+	clock_gettime(CLOCK_MONOTONIC, &start);
-+	test_syscall_getrandom(NULL);
-+	clock_gettime(CLOCK_MONOTONIC, &end);
-+	timespecsub(&end, &start, &diff);
-+	printf("syscall: %u times in %lu.%09lu seconds\n", TRIALS, diff.tv_sec, diff.tv_nsec);
-+}
-+
-+static void bench_multi(void)
-+{
-+	struct timespec start, end, diff;
-+	pthread_t threads[THREADS];
-+
-+	clock_gettime(CLOCK_MONOTONIC, &start);
-+	for (size_t i = 0; i < THREADS; ++i)
-+		assert(pthread_create(&threads[i], NULL, test_vdso_getrandom, NULL) == 0);
-+	for (size_t i = 0; i < THREADS; ++i)
-+		pthread_join(threads[i], NULL);
-+	clock_gettime(CLOCK_MONOTONIC, &end);
-+	timespecsub(&end, &start, &diff);
-+	printf("   vdso: %u x %u times in %lu.%09lu seconds\n", TRIALS, THREADS, diff.tv_sec, diff.tv_nsec);
-+
-+	clock_gettime(CLOCK_MONOTONIC, &start);
-+	for (size_t i = 0; i < THREADS; ++i)
-+		assert(pthread_create(&threads[i], NULL, test_libc_getrandom, NULL) == 0);
-+	for (size_t i = 0; i < THREADS; ++i)
-+		pthread_join(threads[i], NULL);
-+	clock_gettime(CLOCK_MONOTONIC, &end);
-+	timespecsub(&end, &start, &diff);
-+	printf("   libc: %u x %u times in %lu.%09lu seconds\n", TRIALS, THREADS, diff.tv_sec, diff.tv_nsec);
-+
-+	clock_gettime(CLOCK_MONOTONIC, &start);
-+	for (size_t i = 0; i < THREADS; ++i)
-+		assert(pthread_create(&threads[i], NULL, test_syscall_getrandom, NULL) == 0);
-+	for (size_t i = 0; i < THREADS; ++i)
-+		pthread_join(threads[i], NULL);
-+	clock_gettime(CLOCK_MONOTONIC, &end);
-+	timespecsub(&end, &start, &diff);
-+	printf("   syscall: %u x %u times in %lu.%09lu seconds\n", TRIALS, THREADS, diff.tv_sec, diff.tv_nsec);
-+}
-+
-+static void fill(void)
-+{
-+	uint8_t weird_size[323929];
-+	for (;;)
-+		vgetrandom(weird_size, sizeof(weird_size), 0);
-+}
-+
-+static void kselftest(void)
-+{
-+	uint8_t weird_size[1263];
-+
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
-+	for (size_t i = 0; i < 1000; ++i) {
-+		ssize_t ret = vgetrandom(weird_size, sizeof(weird_size), 0);
-+		if (ret != sizeof(weird_size))
-+			exit(KSFT_FAIL);
-+	}
-+
-+	ksft_test_result_pass("getrandom: PASS\n");
-+	exit(KSFT_PASS);
-+}
-+
-+static void usage(const char *argv0)
-+{
-+	fprintf(stderr, "Usage: %s [bench-single|bench-multi|fill]\n", argv0);
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	if (argc == 1) {
-+		kselftest();
-+		return 0;
-+	}
-+
-+	if (argc != 2) {
-+		usage(argv[0]);
-+		return 1;
-+	}
-+	if (!strcmp(argv[1], "bench-single"))
-+		bench_single();
-+	else if (!strcmp(argv[1], "bench-multi"))
-+		bench_multi();
-+	else if (!strcmp(argv[1], "fill"))
-+		fill();
-+	else {
-+		usage(argv[0]);
-+		return 1;
-+	}
-+	return 0;
-+}
--- 
-2.45.2
-
+On Fri, Jul 12, 2024 at 07:54:50AM +0800, Edgecombe, Rick P wrote:
+> On Tue, 2024-07-09 at 15:38 -0700, Rick Edgecombe wrote:
+> > > Could we move them to tdp_mmu.c and rename them to something like
+> > > tdp_mmu_type_to_root() and tdp_mmu_fault_to_root() ?
+> > 
+> > tdp_mmu_get_root_for_fault() was proposed by Paolo, and tdp_mmu_get_root() was
+> > discussed without comment. Not to say there is anything wrong with the names
+> > proposed, but I think this is wading into bikeshedding territory at this
+> > stage.
+> 
+> I kept thinking about this comment. On more consideration tdp_mmu_get_root() is
+> a problematically terrible name since "get" usually means take a reference to
+> something which is something you can do to roots and (and what
+> kvm_tdp_mmu_get_root() is doing). So people might think tdp_mmu_get_root() is
+> taking a reference.
+Right, I have exactly the same feeling to "get".
 
