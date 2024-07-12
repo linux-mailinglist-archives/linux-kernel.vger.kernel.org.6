@@ -1,109 +1,119 @@
-Return-Path: <linux-kernel+bounces-250756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA5F92FC52
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:13:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CF292FC59
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC04E1C21F6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:13:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21DCC1C22193
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990DF171664;
-	Fri, 12 Jul 2024 14:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB5B171655;
+	Fri, 12 Jul 2024 14:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JtlEYOS1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pSE6bfg+"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQAL5MpM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A93A22318;
-	Fri, 12 Jul 2024 14:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE99B12B71;
+	Fri, 12 Jul 2024 14:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720793587; cv=none; b=mwdoOr6J2SmTw2nmF1N1RHo/l2gK84A0abYJgnSgw4y7Uy5Ygv3k29p8F0S9hKAfgNdOiLVIjqIC0J67f3voHDdeiLQp0qiNicmT6iN6DAvhzpKSpmdezCHPgMM/bWGII6ZR9Pfo+bMpRBYoWkd/0ejf+av+EpuoLpq9zEuf98o=
+	t=1720793757; cv=none; b=I7iAS/odP2GBNKvVfJcuPpQEkQr/LCm33gzQ1QI/dae8a1v9O1mGIa8Aw9LrDgrpDcxp9ug+4wY+LfQ38ErYjSvWMW+rGXhIv8aCqvg+1qL1anqfQUAzLjIkzKnLIY/oI99bKwGZfwD2mIo0iegd6puRTue13h7HOLYLGWokGXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720793587; c=relaxed/simple;
-	bh=BhfudW1t57qBbkL+ZRpI46jU4jO+ayHu43f3qvIWQ0M=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=XZ87qYNbm6SNpoMcl6wkjpeYEZyyzGvkHDWLZ24w65iHQwzUyb0b1V+LbQu3xTEFjLrSYNOvsO499GzoozlxkWA4gjSshgyxnhwDXZ9+PO177fmjLkBH8WRHobvePlbvdvtosBEfmBOrIcZZjO6DRSIjdx5dPI3rHmA7DmZpGhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JtlEYOS1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pSE6bfg+; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 435DE114014E;
-	Fri, 12 Jul 2024 10:13:05 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 12 Jul 2024 10:13:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1720793585; x=1720879985; bh=BhfudW1t57
-	qBbkL+ZRpI46jU4jO+ayHu43f3qvIWQ0M=; b=JtlEYOS1gVBGEHudnHSrqLU7Gu
-	SiEawUdD/hiXVUSIdjtJyP9f8FdBCKpGs07lQ4rWJ2ilRqTVSIqZujXCm5qW1tLJ
-	oOtdiVT+63NbX9TgYdMI8ykhJFb43liDvtGhSfbwfLtEwP3K6y4mSPhHEu3ZBeNI
-	FkrW1zP1TZpC+Y2yBrVHWgOLrdBvERjO1NxvnPPdew7RyOfVIvggJ7fe7jEwihPI
-	sa1NTvttkTMahqyMU/jSpKR6lJdNGLE8NbJjdjNZJx4+bCn438b9Qz7a8Q2NTeZ4
-	lvD+hEG2u/vqksP8C81S35eJ7OpPP04YoysT1qb/bqBMdN2M5C0blcZlhKww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720793585; x=1720879985; bh=BhfudW1t57qBbkL+ZRpI46jU4jO+
-	ayHu43f3qvIWQ0M=; b=pSE6bfg+a7O27urS/jGZPrAFwG9h7eT6qapM1ZeStloS
-	SkX2sHI7Gc7lHYrASDupZm5hvlRnpik/zzULp7XIqBGL7m4UPhevMHaVolRDQkA0
-	KvF1MV9sWd4tojNza7ybArSxMEX9syNzgURo+FMBRZAzmRzNx3QeSqDnd3g0WBv/
-	p/umsiBLvk39UZxy42F6PwkVXZY+0bXRMjLZ+q4Zro6W9+PlHcr4EYLTpPB4atog
-	I6WiWiuZBrqeKVbEvW63oWAly4rfmxuT0Q+Vf2PQQ2pA189yxx/rZdfURE5kuhyO
-	B7oqRmPC2v9aTl6gIs+9l5gts3YH3HIGdTzbgVUCJg==
-X-ME-Sender: <xms:7zmRZog0TNvUHyax7-bhPwGR08XMoRT5vm0TIV9bCGs35Q6KgNZNzA>
-    <xme:7zmRZhCq-nt1o7wvQYz_iZZ-5lP6s0gZ1wlKKTeUa53yO354A6AcDw4BGx37JzKtX
-    QlqHNW-cDS3q-Xr8vE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeeigdeikecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:7zmRZgEhpZzJ7IbLnJMoiTVRpG_UEub7NW0d3JB7WQPb8ehXTZoeKQ>
-    <xmx:7zmRZpRfxZ1wXJ5G5swTt7vd1t-IKbQ1Wr55z20rGoN0Y9pszkEULA>
-    <xmx:7zmRZlxunDEWphHir41anaWP2rrrH3grNTOOcW8LKNpaYVevX8lHRw>
-    <xmx:7zmRZn5BeLCOQYJ3cdGo2xybtmxVRXToCml7tpMh5sVPjAkv0P4wvA>
-    <xmx:8TmRZkzYonEQMJyJUV_iETYWtl2y2F08zjMSZqJWk3XDdwqkHzg0eLDq>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id BC047B6008D; Fri, 12 Jul 2024 10:13:03 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1720793757; c=relaxed/simple;
+	bh=ch41kibjRBBxFx9iHDsW9CuCoAzUjhiU43ELAHGZ/mU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IM5qygytkvjsUP++MOg8RW9/qQPTXzZkNkUJrOPwt3y0i3vZ/Y983NhtP6To5i8dvzrChXtw3TVMTQ0z3ciZVzA+x+Xx7ltnASZqESpaF2vrmVz5qujwxdoqG4YiEAuAIfXlrwEj7CYLovJm/7jjRdC2O8VOlsvajicKAt/xNaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQAL5MpM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3241C32782;
+	Fri, 12 Jul 2024 14:15:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720793757;
+	bh=ch41kibjRBBxFx9iHDsW9CuCoAzUjhiU43ELAHGZ/mU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qQAL5MpMNxeToJCFz2+47nR4IjzfKHkoPikemcBAazqHYXnpQSTMornQcaEkUsZJI
+	 14UnLevgUT/w1k4RXbOcsRMIJKnGlltMjYhhpLX0U7niNzpsdy9Bki77OlJV5ARgax
+	 MTmOu3SCDNqju94lQ4ND7JJkaIEOT7yno56R7GJgS2pareSm8w/m3sWaRVPynI3+EM
+	 MataYf9L49yGTf6D+sgqKL6JYKL28KXNndO457a5vK728mnqYauceBhDq1gSYIe9rF
+	 6bx2K3wqY4XDSpNZu50SHAwhc8qlK+2otsI2upoiwBqjfsk6otwDMzVXn7FyCbzbxN
+	 svhCFavOJvMjg==
+Date: Fri, 12 Jul 2024 15:15:51 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Chen Wang <unicorn_wang@outlook.com>
+Cc: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chao Wei <chao.wei@sophgo.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v4 0/4] Add board support for Sipeed LicheeRV Nano
+Message-ID: <20240712-bacon-untruth-5230df76fdad@spud>
+References: <20240711-sg2002-v4-0-d97ec2367095@bootlin.com>
+ <MA0P287MB2822C4E2EEFB67F82458C390FEA62@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <5dc4eded-aa3d-478a-826d-b184b4eb0c8b@app.fastmail.com>
-In-Reply-To: <b5c51026-a2de-434b-8f45-44a641ab1c82@stanley.mountain>
-References: <b5c51026-a2de-434b-8f45-44a641ab1c82@stanley.mountain>
-Date: Fri, 12 Jul 2024 16:12:42 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dan Carpenter" <dan.carpenter@linaro.org>, "Armin Wolf" <W_Armin@gmx.de>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Heiner Kallweit" <hkallweit1@gmail.com>,
- "Guenter Roeck" <linux@roeck-us.net>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] eeprom: ee1004: Unlock on error path in probe()
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iogMxGxzPj5XhGQB"
+Content-Disposition: inline
+In-Reply-To: <MA0P287MB2822C4E2EEFB67F82458C390FEA62@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
 
-On Fri, Jul 12, 2024, at 16:04, Dan Carpenter wrote:
-> Call mutex_unlock() before returning an error in ee1004_probe()
->
-> Fixes: 55d57ef6fa97 ("eeprom: ee1004: Use devres for bus data cleanup")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+--iogMxGxzPj5XhGQB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jul 12, 2024 at 09:33:46AM +0800, Chen Wang wrote:
+> >   .../interrupt-controller/sifive,plic-1.0.0.yaml    |  1 +
+> >   .../devicetree/bindings/riscv/sophgo.yaml          |  5 ++
+> >   arch/riscv/boot/dts/sophgo/Makefile                |  1 +
+> >   .../boot/dts/sophgo/sg2002-licheerv-nano-b.dts     | 54 +++++++++++++=
++++++++++
+> >   arch/riscv/boot/dts/sophgo/sg2002.dtsi             | 32 +++++++++++++
+> >   5 files changed, 93 insertions(+)
+>=20
+> How about letting me PR all the four patches in this patchset? Because th=
+ey
+> are all related to sophgo, it would be better to PR them together to avoid
+> confusion.
+> Especially about the change of sifive,plic-1.0.0.yaml, my original
+> understanding was that it should be handled by you.
+
+No, stuff like the plic should really be handled by Thomas as he is the
+interrupt controller maintainer, not by me. Usually though, neither the
+timer or interrupt controller maintainers seem to care about these sorts
+of binding patches which is why they ended up going with the dts.
+Ideally the plic patch would go through the tip tree, but I think
+there's unlikely to be sleep lost over a trivial binding change going
+with the dts user.
+
+--iogMxGxzPj5XhGQB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpE6lwAKCRB4tDGHoIJi
+0sJKAP9dpbfYKJDSQ60Qo1ABlLHqnJectYBdLgu/6h0FFvPyAwEA5NHbfYT1fqvM
+Mx6qCDcDOXh78ASp8DNIOkfIFfrWfwk=
+=nLo1
+-----END PGP SIGNATURE-----
+
+--iogMxGxzPj5XhGQB--
 
