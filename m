@@ -1,110 +1,115 @@
-Return-Path: <linux-kernel+bounces-250843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5C992FD7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:25:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84DDE92FD84
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 479271F239E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:25:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F62D1F22BCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC35173344;
-	Fri, 12 Jul 2024 15:25:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D371741C8;
+	Fri, 12 Jul 2024 15:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YknbULhx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69536440C
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5BA172BB9;
+	Fri, 12 Jul 2024 15:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720797950; cv=none; b=tgbWmaHfoXRV0P6Yt/r4kA5KW1gjeAtSE251z5DeE5HVaQJkcunO5m7cKuTBtTYvXoO66PnUdDvr2fH6tAddxz9nlyNA/ZpGKLL6IjF/2KXP5k6hlQuF3ggHKuMPzcNxb53cZrvs9L+xUxCpol5TqQo0+0Il/8YLtw2fXPOCDeQ=
+	t=1720797979; cv=none; b=lMD/GeGhjK4MU4Ii2XHsCDv6IRbIgn+U2VSDFXzcJFWNFSIw0ptttp+fSWsxYJs1yp8te4RdmWXEmHv98D3TAVy/Z2srQab5TwMZ/8eFe9dELs/F+18GAXUaOoEliflDd708K2Wn8/oOAfU97/LodlQGcAtGJd715DLktlWN77M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720797950; c=relaxed/simple;
-	bh=3eUESbWw7CZsZFdS41zOQ9g+h/GToJLx+xh933r+pfE=;
+	s=arc-20240116; t=1720797979; c=relaxed/simple;
+	bh=8y7K6bnc0wy+XvnY3lIRwJq+zBdXbg30jzZxKtYYGAM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RjosPQ+p7bUYkkeVZ2DAKgeMNUP4diTdNLv4te571tZdUaH1HwrYQxKnY/72kp/WIk+Ro23hH6v0fWjZVtsJBvswF14cf+uGhAcqnQ2ig6vrczhAjiHJ1d8eMqC45rjXPnA/UuKjgpN6XskdesM3OlPDvN5DwJ3TeB4hpgEawVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sSI9U-00037k-C6; Fri, 12 Jul 2024 17:25:40 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sSI9T-0091pv-Hx; Fri, 12 Jul 2024 17:25:39 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sSI9T-00CLua-1U;
-	Fri, 12 Jul 2024 17:25:39 +0200
-Date: Fri, 12 Jul 2024 17:25:39 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v1 1/1] net: phy: dp83td510: add cable testing
- support
-Message-ID: <ZpFK8-1d9ZAPUF_m@pengutronix.de>
-References: <20240708140542.2424824-1-o.rempel@pengutronix.de>
- <a14ae101-d492-45a0-90fe-683e2f43fa3e@lunn.ch>
- <ZpE_WwtSSdxGyWtC@pengutronix.de>
- <3e1103cf-6023-475d-9532-2e5840ed14f8@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ds5bon9z66qhrSxJkRbsBFPRR9CIqDiTCFlWrsp8+qqf/Wf8zmTI+u4nBUT37XlZNgWnWbs2R0Mo+p3C16DQ3ptR4B6vP6DDBkcDUncHnrCahnYh+rCAiompdlqikQxgTDCcJyYQpGbIqn8LnpR9WjkVJOUjY9TXIXXqNKFkxvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YknbULhx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105E4C32782;
+	Fri, 12 Jul 2024 15:26:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720797979;
+	bh=8y7K6bnc0wy+XvnY3lIRwJq+zBdXbg30jzZxKtYYGAM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YknbULhxMSm3hPP99gb5VI1dokKXYba/KyPvUwol2xVaLyVbILvl0lOc9jRo0WO45
+	 z16c0gfZRbC001ShDcCLBjaya329FTL/rbPi+5TidLOEwfEyitJl/PVnyaTp+SpiPR
+	 i6kIqXBRh2M3LFNiUzUbko+OOneSCfuI75BGIwzCzMC/FQti1wwt8LKsJaDccKT0/P
+	 5WSzMfloZZ51tONUKTj/cC61t+4KlAKKJO3F7BNfrw8+JEB/nJnWhYcDe2MKJM5L9C
+	 s04cfkqCguV42jM1yxtG1QvO/c7Hv+ZE5BdCaeGjGlVT1MmPPno3TvulYgZezs+H1A
+	 i02nCDCsJa+/Q==
+Date: Fri, 12 Jul 2024 16:26:12 +0100
+From: Will Deacon <will@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 2/5] iommu: Resolve fwspec ops automatically
+Message-ID: <20240712152612.GA16474@willie-the-truck>
+References: <cover.1719919669.git.robin.murphy@arm.com>
+ <0e2727adeb8cd73274425322f2f793561bdc927e.1719919669.git.robin.murphy@arm.com>
+ <0eec5f84-6b39-43ba-ab2f-914688a5cf45@nvidia.com>
+ <01c05fb2-16ce-450c-befb-8a92ac2a8af9@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <3e1103cf-6023-475d-9532-2e5840ed14f8@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <01c05fb2-16ce-450c-befb-8a92ac2a8af9@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Fri, Jul 12, 2024 at 05:20:06PM +0200, Andrew Lunn wrote:
-> > > > +#define DP83TD510E_TDR_CFG2			0x301
-> > > > +#define DP83TD510E_TDR_END_TAP_INDEX_1		GENMASK(14, 8)
-> > > > +#define DP83TD510E_TDR_END_TAP_INDEX_1_DEF	36
-> > > > +#define DP83TD510E_TDR_START_TAP_INDEX_1	GENMASK(6, 0)
-> > > > +#define DP83TD510E_TDR_START_TAP_INDEX_1_DEF	3
-> > > 
-> > > Does this correspond the minimum and maximum distance it will test?
-> > > Is this 3m to 36m?
+On Fri, Jul 12, 2024 at 12:48:31PM +0100, Robin Murphy wrote:
+> On 2024-07-12 12:01 pm, Jon Hunter wrote:
+> > I am seeing some failures on -next with some of our devices. Bisect is
+> > pointing to this commit. Looks like the host1x device is no longer
+> > probing successfully. I see the following ...
 > > 
-> > No. At least, i can't confirm it with tests.
+> >   tegra-host1x 50000000.host1x: failed to initialize fwspec: -517
+> >   nouveau 57000000.gpu: failed to initialize fwspec: -517
 > > 
-> > If I see it correctly, this PHY is using SSTDR instead of usual TDR.
-> > Instead of pulses it will send modulated transmission with default
-> > length of 16ms
-> > 
-> > I tried my best google foo, but was not able to find anything
-> > understandable about "Start/End tap index for echo coeff sweep for segment 1"
-> > im context of SSTDR. If anyone know more about this, please tell me :)
+> > The probe seems to be deferred forever. The above is seen on Tegra210
+> > but Tegra30 and Tegra194 are also having the same problem. Interestingly
+> > it is not all devices and so make me wonder if we are missing something
+> > on these devices? Let me know if you have any thoughts.
 > 
-> I was just curious. Does not really matter with respect to getting the
-> patch applied.
- 
-No problem, I was so nerd sniped that I had to dive deeper into the
-matter :)
+> Ugh, tegra-smmu has been doing a complete nonsense this whole time - on
+> closer inspection, it's passing the fwnode of the *client device* where it
+> should be that of the IOMMU device :(
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Ha, so it is!
+
+> I *think* it should probably just be a case of:
+> 
+> -    err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
+> +    err = iommu_fwspec_init(dev, of_fwnode_handle(smmu->dev->of_node));
+> 
+> since smmu->dev appears to be the same one initially passed to
+> iommu_device_register(), so it at least ought to match and work, but the
+> SMMU device vs. MC device thing leaves me mildly wary of how correct it
+> might be overall.
+
+Jon -- any chance you could give this fix a go, please? I'm hesitant to
+drop the whole branch just for this, but we've basically run out of time
+for 6.11 and so knowing we have a working fix would be really helpful.
+
+Cheers,
+
+Will
 
