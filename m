@@ -1,178 +1,180 @@
-Return-Path: <linux-kernel+bounces-250992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B04A592FF41
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:13:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36B592FF45
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD79C1C2246C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:13:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976022871DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9211717836D;
-	Fri, 12 Jul 2024 17:11:28 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E762A176FDB;
+	Fri, 12 Jul 2024 17:11:54 +0000 (UTC)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E4F176ABA
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C54A176ABA;
+	Fri, 12 Jul 2024 17:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720804288; cv=none; b=FDNclhh3Au3cxu/eOBwxc5Is5BduqXK5v81Pdi1iXtw5CBUGBMXD2yUIXLs3Rpn0fGBXEHMOb5BxeTLSG66GMwEcPisIvn1ZIKrYoWw3TjnQFe7ExgixLj6h9MEGe4x8PYkfAkcQs4K/4h+sOYMCvE8x6ql/YBk9ks1bg3vTIjw=
+	t=1720804314; cv=none; b=k1csL7gvAhsPDWF0XYzZSSVxmoPDHQPj3WF5YvDRH61Nh6kWZLQ/DcuPJLj+SkMIp6umJxSNzyxPFG4rzNypqXrdwJ7ekVdpM3DJLg17D1ERLcdk66ZlXoet3jRBv8YKS/NdDvEckuT/S+QQssWdBWMHfmUBwJkb9i+m8p37Q+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720804288; c=relaxed/simple;
-	bh=cUTmJsYWIyv2lWpS6iZ5v3r3f3dID01bTiMy4ErkVtk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UtV7DQW4hlqOXBl4gQG5cWQ8zzquxEzbIv+V1uoKNlu4/U4UhbUFzMpQ/V9FKOp2eLB5CUl7xFDYtfQ4gWJVmkAv2SBEzxj/NOwdZRLPm9N7CvGe3LC6BPJqOs+A16yfClEZtMcC3S2po+SmVOuuRJAQhPACxFDU2ytuEsZsClc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f684ab3f9cso174260139f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:11:26 -0700 (PDT)
+	s=arc-20240116; t=1720804314; c=relaxed/simple;
+	bh=ToX8IFguKI6AuYIu5THsWwJhz6qwI3H0hiFjFo2ZBhU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O4UyBBpGz17T2bYut6pyIMYKAKq4cmQkaCzk6NxpsbMXOl8dRg2+v49ucW0+h1bfLpGsqWGR+gyXXk6Et3tQt+r7Y0S+npkqDRFgzN1jHMuWC+CSA90egoqF5x6xr3HNd/tC6jVTty3ArDeEBJGgmpTqhIQifYPU2Tox6nSmscQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e03a17a50a9so2432306276.1;
+        Fri, 12 Jul 2024 10:11:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720804285; x=1721409085;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0HYZrmlt2CJl1taAOj3XOxe1FP4RfDOgX8Y2vDOl42Y=;
-        b=ntf+tF+z44/DSjzEq5WnzKBYMBKEWb7a5mCe61fvAkrvB1s5iMsqu6pR69O+QeZGuI
-         Z+vz+H/W6tgILU340HJ8N09TB1HC80Ht+ybg/tKLF09YQnrZfvtqLwe7RWV8j3iZ7/Gt
-         ION+2hXKeyMF3VHI0zooXWPthD2ONyy7U+ChP2UNLYgQBRvR6Ewv6rKYgaQG961IGMBT
-         0Xc7wHb5FIlR1ARzjG7xAiu1/MlkcMJZDdbruRC+jPHfGoCqEOHC8EMHBEjSO6CuQl5/
-         IyDiJieBSvWbo1AXJnECrNLXAL0mqeYd0glRoJe/jBa/blU6Dvdh6gHQWSY+/cAt7ojI
-         WiiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlfXQ0QtvUuM0/AH68BGOwV5faWLcui6WFLpXtO9EjdAa0VLiYHN9Ydp+Ccimkybz7wnSjnChnHceGkBw9SFJ2mnhIlaELhLUgr+lI
-X-Gm-Message-State: AOJu0YyQJF9YKdajjALGUjKv+s0zqvkdiPOXrBXWvITMDvQREoqjDHM9
-	zW7GCPsvxPHRCRliI64X0ofONlfl37mjOAe0UQN70FsAIdVlHTV/AhzZcv1laY4Pz3VOpe2+y79
-	HItzW4V9iNmV6IKyxuwc8necuuQHgdRo3NQmClGOgZciHttfdlR2Njbg=
-X-Google-Smtp-Source: AGHT+IGuVxch4O93wBkamMYLrat7LvTMr8d7ZoZ9bwpW9iv9UdhmRVYDcKEaLYtTbThGGCJxL66SX25jPLJPJSXBf2EQR0YIh8M5
+        d=1e100.net; s=20230601; t=1720804311; x=1721409111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/nkm6YLkplxvAGXzVBdoGkR8cn0AreohBASNrv2JryM=;
+        b=W60o/9zDv5jHa9dYyLfte0gmQTMUE2xpqh+A4BjwDgpy9Lya4if9Cg29LD/alo+ccM
+         dOusYt0tA43xW43az0a2nLwb0+mBxuBvGJTDQVf5SrjlInx8mTyMK2peUDVb0Wb65Htk
+         +KKsv1LjojGljZHiaYxA9CrifrgLA0hhjMhRvMFMif6HHeeiYkogsh86kXTQwPBYubCV
+         8KypJXNTMrVnYA0k8dccQhWs66Udrl1RLsjkvkH01Ro2s0miPmh63VOrJiVKHi262Dg8
+         A918EbA2P+9wzAB9L0Ga1KIZ1a+evLkd2JygFa/snDGVQG6VXtTIpRZ6b+8vYhDb4Khu
+         FqSA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3/QKQmqJeC4DxhTMbw0DjohSKxZh3mFY792UVCVtMgsv2jSsbBBGdgjaqFbThIkKRtb/SDBalvsCQVgV2VLsaThme0x5hgdF3BxjnGj/mbX22JYASB1s3/LO9QP4oWCDoPEldqNsmXJyulqRGyJ4Ziu8A2B+wI1oj3vVKr63cnsePa/U6lZzEP6z0ncr0OBZK3IaVeMUo63oyZG38H3FG0+8PncE9
+X-Gm-Message-State: AOJu0Yw/djsJy9fmV95FETkrrMeueWMNxKqmxzRV13whSiujGSMg/Exc
+	mdX/0RsdlocpDg6YpK2b1QLc/RHEEGuLeYCtFXchdPYd9cOYjDEOr6jXBKQA
+X-Google-Smtp-Source: AGHT+IE91bI4TtQdMlMmUqo/ujIqZ+GzMKeXKzadtp6pU+2IDLsOLZjp+hanPxXO5E0PjRrrzWkOhA==
+X-Received: by 2002:a05:690c:3403:b0:631:2dc5:34ef with SMTP id 00721157ae682-658ee790bb1mr151417827b3.2.1720804310680;
+        Fri, 12 Jul 2024 10:11:50 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4d2a8d9sm15669467b3.34.2024.07.12.10.11.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 10:11:50 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-650469f59d7so23285087b3.2;
+        Fri, 12 Jul 2024 10:11:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXs33hHv7wvlPb7RJrdsWfGefTKb3OV7yHSZkJv6bfV5Lxzt0ndbZ3KU/7Qje/K6Uy0Ul9OoHVl94C/nDz7ZkHmvzcK6qaGJutQXgqcYLzaTScbcKgIndG401BRr0Hbig/rKUBjdoqDoWME0ztn0cw/zZozxfqjNuWdX7vHmVAk3wUGni2aU/fhB8vmwi/jdQIjjrxG9iL2hhMAeyPHpVOla5AY/sQ9
+X-Received: by 2002:a81:84cc:0:b0:627:de70:f2f8 with SMTP id
+ 00721157ae682-658eed5e08fmr121918067b3.14.1720804309901; Fri, 12 Jul 2024
+ 10:11:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:9819:b0:4b9:ad94:2074 with SMTP id
- 8926c6da1cb9f-4c1cb7669d7mr185444173.3.1720804285684; Fri, 12 Jul 2024
- 10:11:25 -0700 (PDT)
-Date: Fri, 12 Jul 2024 10:11:25 -0700
-In-Reply-To: <0000000000006d415806048a9aee@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002d320c061d0ff813@google.com>
-Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in list_lru_add
-From: syzbot <syzbot+2403e3909382fbdeaf6c@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+References: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240627161315.98143-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVLSpaUtdXFv3VXFc5G61dmRX2C1iW9C+km23g6EgZJOg@mail.gmail.com>
+ <CA+V-a8vABF6vg+J7DAGzgnw8612oe6VfJkc5y-krySvnpAnPkQ@mail.gmail.com>
+ <CAMuHMdXuyQZ=SFfQa5kvZTwYa0uRXc7khJ-vOYBRE5SCd11rPw@mail.gmail.com> <CA+V-a8ui9AKDOZzg_dgPXeGhGE-+rBHU8O1tpdb8w8myo-1p5Q@mail.gmail.com>
+In-Reply-To: <CA+V-a8ui9AKDOZzg_dgPXeGhGE-+rBHU8O1tpdb8w8myo-1p5Q@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 Jul 2024 19:11:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVyqBmipMLeYd0nw3kEHwc=RvWJvrD8EYKVt+36E7oS+A@mail.gmail.com>
+Message-ID: <CAMuHMdVyqBmipMLeYd0nw3kEHwc=RvWJvrD8EYKVt+36E7oS+A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] clk: renesas: Add family-specific clock driver for RZ/V2H(P)
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+Hi Prabhakar,
 
-HEAD commit:    43db1e03c086 Merge tag 'for-6.10/dm-fixes-2' of git://git...
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=16f39ee1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=2403e3909382fbdeaf6c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141c864e980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b1da7e980000
+On Fri, Jul 12, 2024 at 5:29=E2=80=AFPM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Fri, Jul 12, 2024 at 4:23=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Fri, Jul 12, 2024 at 5:14=E2=80=AFPM Lad, Prabhakar
+> > <prabhakar.csengg@gmail.com> wrote:
+> > > On Fri, Jul 12, 2024 at 12:59=E2=80=AFPM Geert Uytterhoeven
+> > > > On Thu, Jun 27, 2024 at 6:14=E2=80=AFPM Prabhakar <prabhakar.csengg=
+@gmail.com> wrote:
+> > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > >
+> > > > > Add family-specific clock driver for RZ/V2H(P) SoCs.
+> > > > >
+> > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas=
+.com>
+> > > > > ---
+> > > > > v2->v3
+> > > > > - Dropped num_hw_resets from struct rzv2h_cpg_priv
+> > > > > - Dropped range_check for module clocks
+> > > > > - Made mon_index to s8 instead of u8 in struct rzv2h_mod_clk
+> > > > > - Added support for critical module clocks with DEF_MOD_CRITICAL
+> > > > > - Added check for mon_index in rzv2h_mod_clock_endisable and
+> > > > >   rzv2h_mod_clock_is_enabled()
+> >
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/clk/renesas/rzv2h-cpg.h
+> >
+> > > > > +/**
+> > > > > + * struct rzv2h_reset - Reset definitions
+> > > > > + *
+> > > > > + * @reset_index: reset register index
+> > > > > + * @reset_bit: reset bit
+> > > > > + * @mon_index: monitor register index
+> > > > > + * @mon_bit: monitor bit
+> > > > > + */
+> > > > > +struct rzv2h_reset {
+> > > > > +       u8 reset_index;
+> > > > > +       u8 reset_bit;
+> > > > > +       u8 mon_index;
+> > > > > +       u8 mon_bit;
+> > > > > +};
+> > > > > +
+> > > > > +#define RST_ID(x, y)   ((((x) * 16)) + (y))
+> > > > > +
+> > > > > +#define DEF_RST_BASE(_id, _resindex, _resbit, _monindex, _monbit=
+)      \
+> > > > > +       [_id] =3D { \
+> > > >
+> > > > Indexing by _id means the reset array will be very sparse.  E.g. th=
+e
+> > > > innocent-looking r9a09g057_resets[] with only a single entry takes
+> > > > 600 bytes.
+> > > >
+> > > > If you do need the full array for indexing, please allocate and
+> > > > populate it at runtime.
+> > > >
+> > > OK, I will use the radix tree for resets (is that OK)?
+> >
+> > You mean XArray? include/linux/radix-tree.h has:
+> >
+> >     /* Keep unconverted code working */
+> >     #define radix_tree_root         xarray
+> >     #define radix_tree_node         xa_node
+> >
+> Yes, I meant the above.
+>
+> > Given a single xa_node is already 576 bytes, just allocating the full
+> > linear reset array at runtime is probably better.
+> >
+> Agreed, I will create a linear reset array and loop through the array
+> based on reset index and reset bit to match with id whenever required.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/709e8f085073/disk-43db1e03.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1ab1fd5e8c1c/vmlinux-43db1e03.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dc7484cb3765/bzImage-43db1e03.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/40d14eae864b/mount_0.gz
+With a full allocated linear reset array you do not need to loop,
+but you can just index it by the reset ID??
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2403e3909382fbdeaf6c@syzkaller.appspotmail.com
+Gr{oetje,eeting}s,
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 1 PID: 5077 Comm: syz-executor294 Not tainted 6.10.0-rc7-syzkaller-00141-g43db1e03c086 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:list_add_tail include/linux/list.h:183 [inline]
-RIP: 0010:list_lru_add+0x1b1/0x390 mm/list_lru.c:97
-Code: 89 ef e8 e2 06 1c 00 48 8b 45 00 48 8b 4c 24 30 48 8d 6c 08 40 4c 8d 6d 08 4d 89 ec 49 c1 ec 03 48 b8 00 00 00 00 00 fc ff df <41> 80 3c 04 00 74 08 4c 89 ef e8 b0 06 1c 00 4c 8b 7d 08 4c 89 f7
-RSP: 0018:ffffc90003bbfa78 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 1ffff1100fada037 RCX: 0000000000000000
-RDX: 0000000000000003 RSI: ffffffff8bcaccc0 RDI: ffffffff8c1f54c0
-RBP: 0000000000000000 R08: ffffffff8fac686f R09: 1ffffffff1f58d0d
-R10: dffffc0000000000 R11: fffffbfff1f58d0e R12: 0000000000000001
-R13: 0000000000000008 R14: ffff88807d6d01b8 R15: 0000000000000000
-FS:  000055557a070380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000045bdd0 CR3: 0000000023864000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __inode_add_lru fs/inode.c:467 [inline]
- iput_final fs/inode.c:1718 [inline]
- iput+0x87a/0x930 fs/inode.c:1767
- __dentry_kill+0x20d/0x630 fs/dcache.c:607
- dput+0x19f/0x2b0 fs/dcache.c:849
- shrink_dcache_for_umount+0x7d/0x130 fs/dcache.c:1559
- generic_shutdown_super+0x6a/0x2d0 fs/super.c:620
- bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2052
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- ptrace_notify+0x2d2/0x380 kernel/signal.c:2402
- ptrace_report_syscall include/linux/ptrace.h:415 [inline]
- ptrace_report_syscall_exit include/linux/ptrace.h:477 [inline]
- syscall_exit_work+0xc6/0x190 kernel/entry/common.c:173
- syscall_exit_to_user_mode_prepare kernel/entry/common.c:200 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:205 [inline]
- syscall_exit_to_user_mode+0x273/0x360 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f232c4c5e77
-Code: 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007fffde2e9f38 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f232c4c5e77
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fffde2e9ff0
-RBP: 00007fffde2e9ff0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000202 R12: 00007fffde2eb060
-R13: 000055557a0716c0 R14: 00007fffde2eb05c R15: 431bde82d7b634db
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:list_add_tail include/linux/list.h:183 [inline]
-RIP: 0010:list_lru_add+0x1b1/0x390 mm/list_lru.c:97
-Code: 89 ef e8 e2 06 1c 00 48 8b 45 00 48 8b 4c 24 30 48 8d 6c 08 40 4c 8d 6d 08 4d 89 ec 49 c1 ec 03 48 b8 00 00 00 00 00 fc ff df <41> 80 3c 04 00 74 08 4c 89 ef e8 b0 06 1c 00 4c 8b 7d 08 4c 89 f7
-RSP: 0018:ffffc90003bbfa78 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 1ffff1100fada037 RCX: 0000000000000000
-RDX: 0000000000000003 RSI: ffffffff8bcaccc0 RDI: ffffffff8c1f54c0
-RBP: 0000000000000000 R08: ffffffff8fac686f R09: 1ffffffff1f58d0d
-R10: dffffc0000000000 R11: fffffbfff1f58d0e R12: 0000000000000001
-R13: 0000000000000008 R14: ffff88807d6d01b8 R15: 0000000000000000
-FS:  000055557a070380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000045bdd0 CR3: 0000000023864000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	89 ef                	mov    %ebp,%edi
-   2:	e8 e2 06 1c 00       	call   0x1c06e9
-   7:	48 8b 45 00          	mov    0x0(%rbp),%rax
-   b:	48 8b 4c 24 30       	mov    0x30(%rsp),%rcx
-  10:	48 8d 6c 08 40       	lea    0x40(%rax,%rcx,1),%rbp
-  15:	4c 8d 6d 08          	lea    0x8(%rbp),%r13
-  19:	4d 89 ec             	mov    %r13,%r12
-  1c:	49 c1 ec 03          	shr    $0x3,%r12
-  20:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  27:	fc ff df
-* 2a:	41 80 3c 04 00       	cmpb   $0x0,(%r12,%rax,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	4c 89 ef             	mov    %r13,%rdi
-  34:	e8 b0 06 1c 00       	call   0x1c06e9
-  39:	4c 8b 7d 08          	mov    0x8(%rbp),%r15
-  3d:	4c 89 f7             	mov    %r14,%rdi
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
