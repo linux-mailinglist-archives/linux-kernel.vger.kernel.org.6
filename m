@@ -1,153 +1,139 @@
-Return-Path: <linux-kernel+bounces-250456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264CC92F80B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:28:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A77792F80F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8141F212BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:28:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62D051C22A4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3865316E873;
-	Fri, 12 Jul 2024 09:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B0F114D44E;
+	Fri, 12 Jul 2024 09:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="x458Hlnl"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SVgVS8Sk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F56143C51
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1933313D51E;
+	Fri, 12 Jul 2024 09:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720776398; cv=none; b=QNcQfUVD1BCg2DSf0xmTEdX2Wjh8Jt2sN6UuKTDxaoksbQhi0NFe9bbtYKuTWjwdQNA3BvD1OLY+CgEaG2LDqVuSmSXq3Br9yEmFvcBre5/NGwejTD6JCPhopblq74bSkbGGiyZjdZuECAdmiGWpEhwtcALyB64GM1lnBCkv0LU=
+	t=1720776741; cv=none; b=mvIYC5l4JI86Jytn5HwzqAD8Fqf7GOyutF1oqJFLk7Hp8DHtB785ZO9cghN9LtmAcWNy8HPx+vrEkAotiyV+9jT3tSy7Cne8kj7KtAcNQK51qEproaY9983UICEIfTDsvIuIWzkp5UanVMAdJWoC8DzJYiBEAx+DcbcgE8Z7RUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720776398; c=relaxed/simple;
-	bh=XTHhkNfW6DjDt9wKWePcdKsctLMF24Lq3kjl0NCYTl0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aE9/DERGmBAKb85D1DVd7nCbkbNWT5xrqveHPYqWKJccmfUiNrGeiNmk3b0DEhRZcff6SpKbbyZ9On/oCVfwdlhIKDvdIRAFV5pRvG62GgR7TfAHpWsUtmq/Pzjpvi7VAPMsnNJh7zfHtdSxc5eB/a76MMmKgz+rnoxT5bxrZzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=x458Hlnl; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=Mr/oLSebsAjrIhR//GSxa555Ns9T6USHYiGG2DRTKnM=; b=x458Hlnls9sQkvci39L51g2Oej
-	21LoK3PM7sE9QmB2meixSowq0mOeFojd4kxI/Ea+DdLWktGZW5LClgC/L+OLPkHISp56Kf0pPIPv/
-	YltrOgtC1nyTYPiZ1JWBD/BxoHBVECAKqY4RG6g03Hi5/JU0nHO6w0YNvIUa5dhIRNf3ypq5hSiOy
-	8cEQs3ZYms+XzQTi9RJp1JlXJFSTxcIuUGkjlaI56cnpl3x0qGadsPQHiV46K+xcKb/C33whJ1Mfj
-	xsTvhkcOnkf465yS8dR6TXdqKuhYkOTOsvIeUX4KFgopTjt41W6oTd0Y4vBzKl/l/oiDCctJUZ5N/
-	uArKweyw==;
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sSCXv-000CeK-MD; Fri, 12 Jul 2024 11:26:31 +0200
-Received: from [87.49.147.209] (helo=localhost)
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sSCXv-000I8s-00;
-	Fri, 12 Jul 2024 11:26:31 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Michael Walle
- <mwalle@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,  Richard
- Weinberger <richard@nod.at>,  Vignesh Raghavendra <vigneshr@ti.com>,
-  Nicolas Ferre <nicolas.ferre@microchip.com>,  Alexandre Belloni
- <alexandre.belloni@bootlin.com>,  Claudiu Beznea
- <claudiu.beznea@tuxon.dev>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  Rasmus Villemoes
- <rasmus.villemoes@prevas.dk>,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 15/15] mtd: spi-nor: spansion: Drop redundant
- SPI_NOR_SKIP_SFDP flag
-In-Reply-To: <20240711-macronix-mx25l3205d-fixups-v3-15-99353461dd2d@geanix.com>
-	(Esben Haabendal's message of "Thu, 11 Jul 2024 15:00:15 +0200")
-References: <20240711-macronix-mx25l3205d-fixups-v3-0-99353461dd2d@geanix.com>
-	<20240711-macronix-mx25l3205d-fixups-v3-15-99353461dd2d@geanix.com>
-Date: Fri, 12 Jul 2024 11:26:30 +0200
-Message-ID: <87zfqnufjt.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1720776741; c=relaxed/simple;
+	bh=8iefBGM96ctsdDGFRvk1ahWXyNMMiTzENkPqMtJu2Ao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ia/4vOWEz2TJl5uMdRg+0cu9yXKATGK03Y+T4bBdWDK+UumJRENEVwsshFX4f/3GZW8jv4/8b+PWSUKh6pgwdW5nOqTU0rcApI+DQe7hU0S/etjTd0QBJpSn6kEbT6KJxd78PE6zv1Es2qmzetTpqG2OA3Ce+medDDyrr8Kq/Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SVgVS8Sk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46C3VjwE018024;
+	Fri, 12 Jul 2024 09:32:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hnXnSVS56ZktY58WGte3gtVrfnzt9eLfrLksiWv/ZuM=; b=SVgVS8Skzg/nuXFF
+	GSumgnfNAygUZ3cHsjoMOCcsSBz5aMt8SMMglI4mMrrFT5jqNpXU/AxEOBMljGjF
+	q6pddO038tFD6yXwTiR8E+mmhVHr/jLVPx3xHd+FSm0srBGLRebBpHIOZEP+1dHK
+	X+61FBPPY4Ni2vvuQf2H5KTfkdBbIMx8UXAwn2NbBTdv7dFBAkR4MsLDQ0xPJU1m
+	ArMVQvaLrf3AGHTSnHYhtaI+lcUTt05xmzBtCpi3vXNMcqwk6o4M7R23cTf/K2PA
+	6tKZHUFQOfeS3C2VIlx0paRJ2Ig0YB6hQE2i6hJIaDIWrJ7z7jteKGtsKlL5ocWK
+	rcuhKg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40a8uhugfu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 09:32:09 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46C9W8WA011454
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 09:32:08 GMT
+Received: from [10.216.3.84] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 12 Jul
+ 2024 02:32:04 -0700
+Message-ID: <045d7a80-378d-4622-b2e1-01665f627818@quicinc.com>
+Date: Fri, 12 Jul 2024 15:02:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27333/Thu Jul 11 10:35:59 2024)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: dts: qcom: sa8775p: Add UART node
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>, <andersson@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>
+References: <20240710094149.13299-1-quic_vdadhani@quicinc.com>
+ <2e309d52-8180-4922-9a5a-022fc8bf8ef5@kernel.org>
+ <f5ed3285-82da-4ba8-9b4d-a0cc7323fde4@linaro.org>
+ <fa189b4c-d407-4d48-9677-528f07f81efa@quicinc.com>
+ <b2c88f85-eefb-411c-bfe0-6a476b449753@kernel.org>
+From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+In-Reply-To: <b2c88f85-eefb-411c-bfe0-6a476b449753@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Us_qZCvzH_D9x-ifSAJBkoxV1wIB4bmp
+X-Proofpoint-ORIG-GUID: Us_qZCvzH_D9x-ifSAJBkoxV1wIB4bmp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-12_07,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 bulkscore=0 clxscore=1015 mlxscore=0 malwarescore=0
+ mlxlogscore=999 lowpriorityscore=0 suspectscore=0 spamscore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407120067
 
-Esben Haabendal <esben@geanix.com> writes:
 
-> With the implementation of SPI_NOR_TRY_SFDP flag, the removal of the
-> deprecated mechanism for trying SFDP parsing, and the alignment of
-> ->default_init() hooks handling, the SPI_NOR_SKIP_SFDP flag has become a
-> no-op, so it can safely be removed.
->
-> Signed-off-by: Esben Haabendal <esben@geanix.com>
 
-Should I split this into a commit for the spansion change, and one for
-the core change?
+On 7/11/2024 11:47 AM, Krzysztof Kozlowski wrote:
+> On 11/07/2024 07:04, Viken Dadhaniya wrote:
+>>>>> +				clock-names = "se";
+>>>>> +				interconnects = <&clk_virt MASTER_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS
+>>>>> +						 &clk_virt SLAVE_QUP_CORE_2 QCOM_ICC_TAG_ALWAYS>,
+>>>>> +						<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+>>>>> +						 &config_noc SLAVE_QUP_2 QCOM_ICC_TAG_ALWAYS>;
+>>>>> +				interconnect-names = "qup-core", "qup-config";
+>>>>> +				power-domains = <&rpmhpd SA8775P_CX>;
+>>>>
+>>>> All the clocks, interconenct and power domains look to me questionable.
+>>>> AFAIK, most of it (if not all) is going to be removed.
+>>>
+>>> Yeah.. I'm lukewarm on accepting any sa8775p changes until that qcs9100(?)
+>>> situation is squared out first
+>>>
+>>> Konrad
+>>
+>> Thanks for clarification. Please help to sign-off or let me know in case
+>> of any concern.
+> 
+> I think I was quite explicit, so I feel above suggestion as still
+> pushing your choice even though to reviewers gave you their opinion.
+> 
+> In such case:
+> 
+> No, NAK, for the reasons stated above.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-/Esben
+Sure, taken the notes from both of you.
+Shall we wait for the shifting of DTSI file from sc8775p to qcs9100 ?
+OR is there any other way to move ahead ?
+Please suggest, we shall do whatever guidance from you both.
 
-> ---
->  drivers/mtd/spi-nor/core.c     | 2 +-
->  drivers/mtd/spi-nor/core.h     | 5 +----
->  drivers/mtd/spi-nor/spansion.c | 2 +-
->  3 files changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-> index d58f107f62ec..518b2707ce80 100644
-> --- a/drivers/mtd/spi-nor/core.c
-> +++ b/drivers/mtd/spi-nor/core.c
-> @@ -3024,7 +3024,7 @@ static int spi_nor_init_params(struct spi_nor *nor)
->  	if (spi_nor_needs_sfdp(nor)) {
->  		ret = spi_nor_parse_sfdp(nor);
->  		if (ret) {
-> -			dev_err(nor->dev, "BFPT parsing failed. Please consider using SPI_NOR_SKIP_SFDP or SPI_NOR_TRY_SFDP when declaring the flash\n");
-> +			dev_err(nor->dev, "BFPT parsing failed. Please consider using SPI_NOR_TRY_SFDP when declaring the flash\n");
->  			return ret;
->  		}
->  	} else {
-> diff --git a/drivers/mtd/spi-nor/core.h b/drivers/mtd/spi-nor/core.h
-> index f4a76f42051a..ae10e12e9078 100644
-> --- a/drivers/mtd/spi-nor/core.h
-> +++ b/drivers/mtd/spi-nor/core.h
-> @@ -485,9 +485,7 @@ struct spi_nor_id {
->   *
->   * @no_sfdp_flags:  flags that indicate support that can be discovered via SFDP.
->   *                  Used when SFDP tables are not defined in the flash. These
-> - *                  flags are used together with the SPI_NOR_SKIP_SFDP or
-> - *                  SPI_NOR_TRY_SFDP flag.
-> - *   SPI_NOR_SKIP_SFDP:       skip parsing of SFDP tables.
-> + *                  flags are used together with the SPI_NOR_TRY_SFDP flag.
->   *   SECT_4K:                 SPINOR_OP_BE_4K works uniformly.
->   *   SPI_NOR_TRY_SFDP:        try parsing SFDP tables before using the
->   *                            parameters specified in this struct.
-> @@ -536,7 +534,6 @@ struct flash_info {
->  #define SPI_NOR_RWW			BIT(9)
->  
->  	u8 no_sfdp_flags;
-> -#define SPI_NOR_SKIP_SFDP		BIT(0)
->  #define SECT_4K				BIT(1)
->  #define SPI_NOR_TRY_SFDP		BIT(2)
->  #define SPI_NOR_DUAL_READ		BIT(3)
-> diff --git a/drivers/mtd/spi-nor/spansion.c b/drivers/mtd/spi-nor/spansion.c
-> index a58c0229003d..afcb684ffe4d 100644
-> --- a/drivers/mtd/spi-nor/spansion.c
-> +++ b/drivers/mtd/spi-nor/spansion.c
-> @@ -793,7 +793,7 @@ static const struct flash_info spansion_nor_parts[] = {
->  		.name = "s25fl256s0",
->  		.size = SZ_32M,
->  		.sector_size = SZ_256K,
-> -		.no_sfdp_flags = SPI_NOR_SKIP_SFDP | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-> +		.no_sfdp_flags = SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
->  		.mfr_flags = USE_CLSR,
->  	}, {
->  		.id = SNOR_ID(0x01, 0x02, 0x19, 0x4d, 0x00, 0x81),
 
