@@ -1,155 +1,104 @@
-Return-Path: <linux-kernel+bounces-250702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2045892FB76
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:32:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7019492FB77
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80237B229F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:32:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1FAC1C223D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AA7171092;
-	Fri, 12 Jul 2024 13:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E876517164E;
+	Fri, 12 Jul 2024 13:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r3tSohrQ"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kntL+IZA"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6D616F907
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 13:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0194217085C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 13:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720791115; cv=none; b=gq9ZU5j04nGK8db/WEJb9em34RUFHLbtiGH+elFExToALwHolrqdgqt9tjlBV24SVTKmOgNX+F/KNzYWg/Yw/qz4vr6/3bGazaxuH8o5hLR2ZgRzvPjtKUWPTkSlQwyPKkumPMIZPfULUawf6MH3bCNY86FSXfvu6O4xlNogIVU=
+	t=1720791123; cv=none; b=TF6Wzk7Bdhi4ogPjXUZnsYLoc+N80fRGqNGyBIIP1ybOGSc2+L+L9uCiAtGD/OpuJxIg8WO7IhoVjopYX3ZtV7VKsVWhEau5wImlZvJYqI7Vet3xQvtOj6ZfQoauQYix+mAcMfq6ITYns9u1wShntNFygTWAar+nexURoGkaK88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720791115; c=relaxed/simple;
-	bh=Gx+vHHboITSxTD8ajdFGt5OOusQRXYoFCsCj33l6W74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lTVVh0N2cMfjzlqnFgjsDsau4ajG62alpO7UMQgJ8sHjy3mnS2/ng10j4CYv++7OsUmFKHORumk3UyrQkwkE48GcanxMUcu/XojT1tgnEnbjKJ2K4K1fIKona7auQa1a2jp6IeOKHptYCWIKjg6Nu5T/4VtJMQxjAKV4cb/+Tng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r3tSohrQ; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-6eab07ae82bso1336689a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:31:53 -0700 (PDT)
+	s=arc-20240116; t=1720791123; c=relaxed/simple;
+	bh=XwEHyALYRExbX2pRbkL3utJyLPIwlkRBZVdNdRJYw+4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mjx/qZioG1VgvaOLKmtWz8XB4eCq98/Ov3FVx+mbVPB20VO66D4uco3ODhoPZ1eeEfkFXQNA+ycgej7a+Z7cGj/rILsticcla6yzB/Dmv8oWTAXazBFpsK9lSL9t/CBKFRULI/CrkD5KOj6N2b2tTiGhK7to16CE45TSeYBfKMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kntL+IZA; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c98c453912so1697064a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:32:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720791113; x=1721395913; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1kNb1ihN1alFz3/BtElcEqrqIl7ltF2VXYhD6Fw2SPo=;
-        b=r3tSohrQQoa67C62ojSQJtLlHTLvIdjTQZXiihqaiJZq0ANdzAMPcZQHure74usB3c
-         lr5xv/vlCGSuy6AU/Lv9SvgESRaeybEq8oY4dasE0oPNCcihfXImVQpXD7oOXw/OjJfi
-         Fgo49ff/VD2qK6BWx9a5LiyZLSWdSrA78/b5Ot0kCrsXkGn2WntloSgwmZ6cayNYHQ/G
-         hJNNhwLnPVlDPIjasr9IDujExzQ9gbzRGiGfZX3AVZfabCxAO52kCB/Ht1P+TLuLvjfQ
-         OtnYb9Y6dEqL+0GWIxPjrKiI84Bk6BHI/OF51/e8eiO9an4Glsv774/AAjB8DJl7wKIR
-         4PbA==
+        d=google.com; s=20230601; t=1720791121; x=1721395921; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wlcXnTAyG1qwnoAXhkdhe6yOcbdDru78Zg28CF9eSjM=;
+        b=kntL+IZAc9twDfCQrDu4zvBe4qgM3ss9BJRX11wbNmAly5ikWZyUsLbci1Pvj73E2o
+         zyTTLgOIaUVx+RLlDSOBNLpSGJadfjn+ZlwS2xxKL1eAVQNx/Qg8/gcpIylcTTvUa1gi
+         VWQmN2jUEiy95eEK6P0h45tw/1eCPTvbzhPmQsEJ+Ewl8USxQPuGFngdKr5atKTtzrsM
+         xabSPh9dvmSeO1I/KZMdXAA3FL1gOQJ3/30tJBHgAE+z0Zys7bRdAER1KdXg40RuAxxQ
+         o4znqdyVCSbl7anCJNL6YBlcn4XzyoSbhiaINuS1fonoGzMrwN2sbEaSexiEtDpdXdMC
+         ysYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720791113; x=1721395913;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1kNb1ihN1alFz3/BtElcEqrqIl7ltF2VXYhD6Fw2SPo=;
-        b=X4QqeTK6zO1C3KX6UqVnuq2w3wIupKtqWnPiZqDlmWLJqpTg0/9RtMP77p93z+aoD7
-         d4vrpDtvDt+R3RRn/Kij7ugaUncxyl7hIWRPmsxN5H/KM7tfWKkBQULeuzOApelOgjzj
-         vSdemOo9UxEv1tO+bx0P8LpqxJTMiesFRTcfGveVJLKQi31rDnu5l+kxo4r6qPuqMYBy
-         LIPhlSmOexymWS4lOaLtr9nwpDww4X+psD30Ivp8u2yB5N6ZH2JT7U2H+UAFJApN6LfM
-         BpAgwxCqGWrFmYa2Nf6QLHJiM9iJ469WA6mDwOgTzmY5ED0O3JSgOjqgDZK+vcvgH9tP
-         VzpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUT/XxcTLGd6lnc9e6BaQ4e1IYr+xJiTMqQmKUD2rAoKUi4Gkg4JCMRay3AOtxKrND357exHfhg3VXHwurzqXHeKT/l6jJ1zdcgo5c9
-X-Gm-Message-State: AOJu0YxpPkmbqqyvBeMJQ8w7AY4DsK7kh6tR8FC/HWnPhiatsoESOfdX
-	KHlohIgh4o1IAmRc4daJpC+DZH4lv0Lk39D4+aZpXmFZBX+PTEMoo+tGAUqpVA==
-X-Google-Smtp-Source: AGHT+IHvSnptOIGLGWHgBJP/C2JCqmDto3SZp+VT8rSojPWOme5D6SRGpVvn0QeDNYQBBYogNgGhKg==
-X-Received: by 2002:a05:6a21:670f:b0:1c2:8bcf:a38e with SMTP id adf61e73a8af0-1c29824a910mr12747708637.37.1720791113269;
-        Fri, 12 Jul 2024 06:31:53 -0700 (PDT)
-Received: from thinkpad ([120.60.61.81])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ac80d6sm67108565ad.234.2024.07.12.06.31.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 06:31:52 -0700 (PDT)
-Date: Fri, 12 Jul 2024 19:01:42 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe
-Message-ID: <20240712133142.GA3571@thinkpad>
-References: <20240711090250.20827-1-johan+linaro@kernel.org>
- <f7e74a6f-0548-4caa-a8fc-8180c619c9aa@linaro.org>
- <Zo-ssBBDbHRLtAwG@hovoldconsulting.com>
- <Zo_zu-RmbZyKijVQ@hovoldconsulting.com>
- <20240711161947.GA4434@thinkpad>
- <20240711164153.GA4992@thinkpad>
- <ZpAPaker8mulvKCj@hovoldconsulting.com>
- <ZpDnSL8as7km9_0b@hovoldconsulting.com>
+        d=1e100.net; s=20230601; t=1720791121; x=1721395921;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wlcXnTAyG1qwnoAXhkdhe6yOcbdDru78Zg28CF9eSjM=;
+        b=eJiOinExSNr8esose9TxNyMU1cXGVLw7YtsV+q/WtbnLQ8AVz8M1rnw3GBjk4UHDp0
+         pwgtjnO2CwNCDUft8uuZDWsyt5nV9UMk4khmDtTMW9urxSXoQiHkRYC0k18L6W/CvUR4
+         bvyFd/We5gx8f7vw1n7G8psaDFyIV1iIFXd/aid7K5mDDlIea/3Fz4DGAwMdtCeTBIlL
+         XprcNwdk8sS/KzfHJuXI0LE4bYNacGlrcJKHAxH7sFpXoLcMFdFs9ThVbO82a3gNVj4u
+         EqXnsPVxQstL8oHoPTnTY70RNuB2RK8ezEK1ZbFOC4t6eE/vQXDGxmoZLoXOC7IBC9rO
+         mhaw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4u47sBt+ROKXaFUw/xc9DDl8EQscjQWyTuzdq/DIdIMTeumlOvRVq7jpGUR5Fn4z3WfkObgxAZ04iN6zBFMBeDJjCfcgfmqRBmJB6
+X-Gm-Message-State: AOJu0YxJSD1AZ723bLUS0wkCDkV62LtS3rjuGCpt9uHd1LAHj/PUreLA
+	FfFRWLGSAkZzoKdV+dESdqZr6ezr4SnceU1YwShy+p0wKrAjJeJQ7cNmXgmyNYASmvc+eJKGF0p
+	DWA==
+X-Google-Smtp-Source: AGHT+IEVDawGmhURpZGLMNfqqfdjGi+eb1+WnZuWI/OM/9laSwCR3IXn8ahwQlyxin/gJx1/hmD7pDFxvqE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:cb93:b0:2c9:61f9:9aea with SMTP id
+ 98e67ed59e1d1-2ca35d39330mr44466a91.5.1720791121058; Fri, 12 Jul 2024
+ 06:32:01 -0700 (PDT)
+Date: Fri, 12 Jul 2024 06:31:59 -0700
+In-Reply-To: <5a9d0c9c-ef97-4a77-b81b-a67bd27603aa@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZpDnSL8as7km9_0b@hovoldconsulting.com>
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-13-seanjc@google.com>
+ <5a9d0c9c-ef97-4a77-b81b-a67bd27603aa@intel.com>
+Message-ID: <ZpEwT59eveCC79uN@google.com>
+Subject: Re: [PATCH v2 12/49] KVM: x86: Reject disabling of MWAIT/HLT
+ interception when not allowed
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Yang Weijiang <weijiang.yang@intel.com>, Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Jul 12, 2024 at 10:20:24AM +0200, Johan Hovold wrote:
-> On Thu, Jul 11, 2024 at 06:59:22PM +0200, Johan Hovold wrote:
-> > On Thu, Jul 11, 2024 at 10:11:53PM +0530, Manivannan Sadhasivam wrote:
-> > > On Thu, Jul 11, 2024 at 09:49:52PM +0530, Manivannan Sadhasivam wrote:
+On Fri, Jul 12, 2024, Xiaoyao Li wrote:
+> On 5/18/2024 1:38 AM, Sean Christopherson wrote:
+> > @@ -6565,33 +6571,29 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+> >   		break;
+> >   	case KVM_CAP_X86_DISABLE_EXITS:
+> >   		r = -EINVAL;
+> > -		if (cap->args[0] & ~KVM_X86_DISABLE_VALID_EXITS)
+> > +		if (cap->args[0] & ~kvm_get_allowed_disable_exits())
 > 
-> > > > My hunch is the PHY settings. But Abel cross checked the PHY settings with
-> > > > internal documentation and they seem to match. Also, Qcom submitted a series
-> > > > that is supposed to fix stability issues with Gen4 [1]. With this series, Gen 4
-> > > > x4 setup is working on SA8775P-RIDE board as reported by Qcom. But Abel
-> > > > confirmed that it didn't help him with the link downgrade issue.
-> > > > 
-> > > > Perhaps you can give it a try and see if it makes any difference for
-> > > > this issue?
-> > 
-> > If there are known issues with running at Gen4 speed without that
-> > series, then it seems quite likely that doing so anyway could also cause
-> > correctable errors.
-> > 
-> > Unfortunately, I get a hypervisor reset when I tried booting with that
-> > series so there appears to be some implicit dependency on something
-> > else (e.g. the 4l stuff).
+> sigh.
 > 
-> The first patch in that series breaks icc handling, which crashes
-> machines like the X13s and the x1e80100 CRD on boot. I've just reported
-> this here:
-> 
-> 	https://lore.kernel.org/lkml/ZpDlf5xD035x2DqL@hovoldconsulting.com/
-> 
+> KVM_X86_DISABLE_VALID_EXITS has no user now. But we cannot remove it since
+> it's in uapi header, right?
 
-Ah, what a blinder... Thanks for reporting.
-
-But I'm wondering why Abel was not seeing this crash when he tested this series
-for 4L.
-
-> With that fixed, and with the hacky dependency on having max-link-speed
-> specified in the DT for the series to have any affect at all, the gen4
-> stability series indeed seems to make the AER error go away (Abel just
-> confirmed using a branch I'd prepared).
-> 
-
-Cool, good to know.
-
-> Let's try to get that series in shape and merged in some form as
-> everyone will be hitting these Correctable Errors currently with the
-> NVMe on x1e80100.
-> 
-
-Sure. This series anyway needs respin due to the dependency with the OPP series
-that just got merged. But merging it for 6.11 is quite unlikely.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+We can, actually.  Forcing userspace to make changes when userspace updates their
+copy of the headers is ok (building directly against kernel headers is discouraged).
 
