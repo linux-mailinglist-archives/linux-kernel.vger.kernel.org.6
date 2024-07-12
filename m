@@ -1,53 +1,58 @@
-Return-Path: <linux-kernel+bounces-250835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08EF892FD61
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:19:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E48EB92FD65
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15261F24AE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:18:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9823D286021
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FDD173336;
-	Fri, 12 Jul 2024 15:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFF117332B;
+	Fri, 12 Jul 2024 15:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctgqHdtA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPqJSl4Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1048440C;
-	Fri, 12 Jul 2024 15:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9606A440C;
+	Fri, 12 Jul 2024 15:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720797529; cv=none; b=glsl/UDK5qhYGnuwyJ5pi379jupmfa+3tohgiJ6QPTFdVGvBDsAHJcA04u4lmvIXxAx7Z7u9u2MEF62D+7D933bKLEj1zRrBMXkg5GznwfhQOdA4W7pL4FQJQA5cg4gRDzvMl1At7dWMK42x1hblBmsSL9QA+YdRm3TUkVZfkTE=
+	t=1720797580; cv=none; b=tV3PFAacjUG1+Rf8MLX1MbvuWioB2bjRt41ZCgRItmqY3UvvEWV/qhfQaEiJWyfA5XndPv2ldiaud3ZyO85s+mlRaptKSnSiTijaVwAxTEKqqvx7906AWyQ2HcsXMHvEX9Oe2HlY+idx5iiSBc9Mr22GD+OyI2fgzx0tuUcOZuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720797529; c=relaxed/simple;
-	bh=M/p6+O1hBUvWmBfOokNka/pO7EbQq2s+zuwR9vSFEv0=;
+	s=arc-20240116; t=1720797580; c=relaxed/simple;
+	bh=1aWPDrLVCK4aP22T5tyX3D1uSz8ajQJ3TSOvHn2sEaQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e/8rXiGtExp1VjTT1b+7LLWScmuNgQpCTrDRgJiKB1FIqHYkU/rVocgTH/8wmb/cJiKoquVHLGydvuurWWHkueKEOqSrXvc1NxGTOW6YR03iLNq4zObeVj2q/NMKZFSTrOkHLb7HyMqiYQbw/vO/eTjjGHeIrVNtdBACMQy0FzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctgqHdtA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60003C32782;
-	Fri, 12 Jul 2024 15:18:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SBNk5KvxySktviXtCNhwi1bzdlZIzZ9qMa6/dd+fL0i7FoUCcdVWQq//u9gvTPR2Lv/xP+kvNpRtxhQSpFsmY2gtujIVZ1c1Yd3oeJup3JXkazCdKmgOS8QRQdgvLpYPKQq1ti7w/jb1N7MGNh8sg66jrXZKBGgRFS+fbxP3n1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPqJSl4Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07E1CC32782;
+	Fri, 12 Jul 2024 15:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720797529;
-	bh=M/p6+O1hBUvWmBfOokNka/pO7EbQq2s+zuwR9vSFEv0=;
+	s=k20201202; t=1720797580;
+	bh=1aWPDrLVCK4aP22T5tyX3D1uSz8ajQJ3TSOvHn2sEaQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ctgqHdtACHhfnQSeLWPfph3tHQNwG0p1SOYjCosiMn38IoB1ZxDFFaL/iBlU8k0ga
-	 aZeLshB03MKios0YWjg0AdphwLnzlDDiqux2+gx+EvaP7cKXQsCw7GPtOfwL96VQUy
-	 GcEZW/uPILOAp+DmOVGv07jNWjz7ckr1KKjmQwzoDFSZtx7xoFlbKh1clt1fMFzM+n
-	 ogbGDOa05svsEQl+T7f6TnczeITR2bfvZXVczlIvNUZifRMNTpwotkG4UweaSCF55S
-	 oE3DBboBU5VP8PRM9r2iFE7h0pREQAL9XNPL7/uis2SpPvq2mhierKP5embuLhsTyx
-	 nP7rm+8sFXLZA==
-Date: Fri, 12 Jul 2024 08:18:48 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: remove unnecessary check
-Message-ID: <20240712151848.GS612460@frogsfrogsfrogs>
-References: <a6c945f8-b07c-4474-a603-ff360b8fb0f4@stanley.mountain>
+	b=uPqJSl4ZPIKlj453qNkRZRUX2zQm5FoN4ZiR86uVW2Zqd+Q/KD/q7ATFwcJMPe/oq
+	 Fvd++Xx7nfTB+bUqHkHASiDP3dK2avToCzQRUx/s4kW26VxqtShcgv67RcJk6lvFWX
+	 afbUvQUPNwE369ES4D4oHMyPmjfB+zAUbN6JoKOichEGylcKzbNaWSaQxzIwBC2IUR
+	 PCfRBWWwxNpys8CSvbW6ZqkT2DKNVTqnRtWiyyg0zEl9QzXy9Mv3zWzAXpGUNfJk8m
+	 qOzeOPjh7BsIm0vyoIyTh6M0BfCAj80jXhLCeJOt/iQZD/nAOGvAy2phNxZp7sEKd2
+	 sqvFSdO9ywBuA==
+Date: Fri, 12 Jul 2024 17:19:34 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" <linux-ide@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: ata: ahci-fsl-qoriq: add
+ fsl,ls1046a-ahci and fsl,ls1012a-ahci
+Message-ID: <ZpFJhk_HgQhGAQMU@ryzen.lan>
+References: <20240712142922.3292722-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,38 +61,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a6c945f8-b07c-4474-a603-ff360b8fb0f4@stanley.mountain>
+In-Reply-To: <20240712142922.3292722-1-Frank.Li@nxp.com>
 
-On Fri, Jul 12, 2024 at 09:07:36AM -0500, Dan Carpenter wrote:
-> We checked that "pip" is non-NULL at the start of the if else statement
-> so there is no need to check again here.  Delete the check.
+On Fri, Jul 12, 2024 at 10:29:22AM -0400, Frank Li wrote:
+> Add missing documented compatible strings 'fsl,ls1046a-ahci' and
+> 'fsl,ls1012a-ahci'. Allow 'fsl,ls1012a-ahci' to fallback to
+> 'fsl,ls1043a-ahci'.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Yep.
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
+> Fix below CHECK_DTB warnings
+> arch/arm64/boot/dts/freescale/fsl-ls1012a-frwy.dtb: /soc/sata@3200000: failed to match any schema with compatible: ['fsl,ls1012a-ahci', 'fsl,ls1043a-ahci']
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  fs/xfs/libxfs/xfs_inode_util.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Change from v1 to v2
+> - rework commit message to show fix CHECK_DTB warning.
+> ---
+>  .../devicetree/bindings/ata/fsl,ahci.yaml     | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
 > 
-> diff --git a/fs/xfs/libxfs/xfs_inode_util.c b/fs/xfs/libxfs/xfs_inode_util.c
-> index 032333289113..cc38e1c3c3e1 100644
-> --- a/fs/xfs/libxfs/xfs_inode_util.c
-> +++ b/fs/xfs/libxfs/xfs_inode_util.c
-> @@ -308,7 +308,7 @@ xfs_inode_init(
->  		    !vfsgid_in_group_p(i_gid_into_vfsgid(args->idmap, inode)))
->  			inode->i_mode &= ~S_ISGID;
+> diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> index 162b3bb5427ed..a244bc603549d 100644
+> --- a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> +++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> @@ -11,13 +11,18 @@ maintainers:
 >  
-> -		ip->i_projid = pip ? xfs_get_initial_prid(pip) : 0;
-> +		ip->i_projid = xfs_get_initial_prid(pip);
->  	}
->  
->  	ip->i_disk_size = 0;
-> -- 
-> 2.43.0
-> 
-> 
+>  properties:
+>    compatible:
+> -    enum:
+> -      - fsl,ls1021a-ahci
+> -      - fsl,ls1043a-ahci
+> -      - fsl,ls1028a-ahci
+> -      - fsl,ls1088a-ahci
+> -      - fsl,ls2080a-ahci
+> -      - fsl,lx2160a-ahci
+> +    oneOf:
+> +      - items:
+> +          - const: fsl,ls1012a-ahci
+> +          - const: fsl,ls1043a-ahci
+> +      - enum:
+> +          - fsl,ls1021a-ahci
+> +          - fsl,ls1043a-ahci
+> +          - fsl,ls1046a-ahci
+> +          - fsl,ls1028a-ahci
+> +          - fsl,ls1088a-ahci
+> +          - fsl,ls2080a-ahci
+> +          - fsl,lx2160a-ahci
+
+I think that you should add the following Fixes-tag:
+Fixes: e58e12c5c34c ("dt-bindings: ata: ahci-fsl-qoriq: convert to yaml format")
+
+Considering that the commit that your are fixing is only in libata for-6.11,
+and has thus never been in a released kernel version, perhaps the following
+patch would be better (if it also solves the warnings):
+
+diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+index 162b3bb5427e..8953b1847305 100644
+--- a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
++++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+@@ -12,8 +12,10 @@ maintainers:
+ properties:
+   compatible:
+     enum:
++      - fsl,ls1012a-ahci
+       - fsl,ls1021a-ahci
+       - fsl,ls1043a-ahci
++      - fsl,ls1046a-ahci
+       - fsl,ls1028a-ahci
+       - fsl,ls1088a-ahci
+       - fsl,ls2080a-ahci
+
+
+This assumes that we can get the patch included before 6.11 final is released,
+but considering that the merge window hasn't even opened yet, that should be
+doable.
+
+
+Thoughts from DT maintainers?
+
+
+
+Kind regards,
+Niklas
 
