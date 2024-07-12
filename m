@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-250828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EED192FD4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:14:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7305792FD50
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA1EC1F21A33
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D0B5284BEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99E1174ECD;
-	Fri, 12 Jul 2024 15:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9415F175560;
+	Fri, 12 Jul 2024 15:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hkHU+PvO"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VAaIEFTp"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25181741D1
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D39A1741FD
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720797222; cv=none; b=MPajxMYZVGYyps6X56NeDSJlFfSi3RjpXblJpJDYUVZD+Hk0+gQvmoqo3ouSf3XNjDDUiby4dUEBayDm2e0cEZtNtgHLRgwLOvESKcLelNz9hv/95jWlYSCeemD9XAiKysCTbUuzXK/S0BGwIFdnAPspWX1mWdtRlnEbsUkavtI=
+	t=1720797223; cv=none; b=fg6ySMxQsBESNO1HXJSAOGX6ymkZojjaWUA7StmaJ+EjDZJRejR1KufT2DxT1VEhiNFYoEGQgDJ0zpdf4xEOMmIkI0LvhQIAnUZUzak7eoXEjegEMidzBmF5587eJb32z8uotaM+T/ZgpwOAQl63xUh0MG+MJqHdwWok4WgrlPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720797222; c=relaxed/simple;
-	bh=FMK1JNQzZMC+LLZ+NnGfOW2CO/G1iLTvC9MBzV8N/ss=;
+	s=arc-20240116; t=1720797223; c=relaxed/simple;
+	bh=BUzUp5RWHqaySVY5+BeOJD2jf/JigFe4Y+aXQC4Sk6g=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=q07cmBcvCNK5DZK9TV5Q8b4UE9LNCjShw6e21uhBt0j3FOQGs0eU99l3NPCjzS41y4Z5IbVrFuTdB3lrN4VGCX7VPBlJ/iWv3BGy7fRbBcr8R2A/r7l2hAX+tFOLUJ977d78sRaH4xFxBKebe3pGUUorY7YoWOhLLvJRqTTaMlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hkHU+PvO; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=M+ZvFKryl4pIlnCSiS1YWy++RET0J7ospyi15IAjmBX+HneorNfmBafgYdhRvFBhAOJc5+RjIqtuGcFWH935yytclyqb7uPPfgpkrUwdN3y0TUt12bD6YtOsnesXEDWVd7oY78FC8uO8Qm5aTT2/n8KjjB2aEzTSHCiFC64i2to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VAaIEFTp; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e03b3f48c65so3432410276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:13:40 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6507e2f0615so1487802a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:13:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720797220; x=1721402020; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720797222; x=1721402022; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=uNeBBWCFWkfC6m3nRC4ikAjguGNDe/LUsyASgE65KAs=;
-        b=hkHU+PvOezwwEOba4ULpklfsCbN9d+iWkYw9EYM2zfI6lSoxVdZqBU0r5Plo1tuzsP
-         YNoWUy2nQTGq/M34PjUj5lnvbRvJov8bz1kIoNksFmUkYRMqGjaPPNQNW9r+Bz5cOvwx
-         yY9Sz4xklNaijMBDzta3bVBk8EYxtrN6pgRkKv4Fo3zo7qEOHHMG4u8McwfTpQtML33K
-         eCu/ZM4WxWDYizhH4d8NAUaMGLXoZGkDRfobXbBHc2wAZlwDZrPLKHJIy8bD1OW8iwNb
-         mQ6P5DOQQfj5oE8/0xzm82WWCDAMYK99WUDqDL1FB4WcsjH5eRjgsB1UoZfOiA9pltf1
-         EaLA==
+        bh=xhil9fMKdOmNNY/hw6eHjeaj/nT3knlY7TdVcvRm4IE=;
+        b=VAaIEFTp18j1yt0awEGjyi3hVxwnrmekeh8nwZ33E41yTegnnGTu5Is9jw3CT3TkEy
+         hhiZSqog1H4YvrNTFi95rXfxmkgPOvMS+urUpMd4/DUOFh6NGMORvO2ZpBlsdkdc7hDQ
+         xsdAzng7vU5ON1R1APCiraC2kcf2JKc/vF/0NO+UwIGtnRMEghjy7s06zD81J84qva9F
+         6+8SSl93aa2TIMQR4Lic9S69I/uP+upeyTWmVfPHc0iGNATNdd/yys5PyfoOoNAMHp2n
+         2y1lIDd8ILA8OGh9HaSEBibPmL176bHlG4Q4waBr8YZsHsXB4HmjjBO1wjZaF+kBA+C4
+         0JvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720797220; x=1721402020;
+        d=1e100.net; s=20230601; t=1720797222; x=1721402022;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uNeBBWCFWkfC6m3nRC4ikAjguGNDe/LUsyASgE65KAs=;
-        b=iCIXDV8hCCiQQCeaQlSOupYxfz7F0wujQ/mvH1o7S2jT59aE/y527jDGKzApeErrCE
-         BXPFVxqQyoHdBf73mH0T0VfFu99Gu1LXqI5R/fQAUV6gIUR0Ws9RBadGKD9+dW4kuOvs
-         vk756qoDJNRnmrwlxn+xJkqm43AFrti3k3WsxZCASWp2fVFQAVmQnSa3EaJbYwjBlLDw
-         Dp3OSyPC72m2mxEHoH4Ro1EWsNPgUtjB3O/qYJvQyA7eWLx3mJi31EZD4aIcZMhP4DCy
-         epAB8SgOKcTdubpOym0Qfx/DPrq1lZmva7PkrorVp50wal31HWOm8yqSmiVNto47rrOk
-         Bf4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXchkB6/uB1CxYKlG8LPRLZ1IiQLd2Xx9uMkfaKR4ny45tOZWsuOAyZV0LG4wO18sa34SGvVdNYX+11O1nZdcXOStO/ljxY70Sm9ahl
-X-Gm-Message-State: AOJu0YwpTxLMpAZzfvcTLdvBwf8dH9pCTM9fTJZ5JgPmdTzKlr61zuT7
-	orYGDUI/DwdjL9yCunR91rRhhYuXkPt65n9wElD5Ue72rlu+ZM2sKT0S/LY7LKEVKE30RLq14FT
-	AFQ==
-X-Google-Smtp-Source: AGHT+IFb18rrVSrijY3yb9YIXcErdEDiSDk80QlE2yIt+GQ0EP5KOyZY2pb43G390lTTX4jv/Y2p7iSY+m0=
+        bh=xhil9fMKdOmNNY/hw6eHjeaj/nT3knlY7TdVcvRm4IE=;
+        b=pjJKJneMVg87EKWkxk5lAn1FNTxNHKYDK/XsnFZ+xLOP55aXT81woCiElayj4WABie
+         oNKIzOcUw94v2mOvsKHoVLn+qknYOMhOB/xgSobNwI7IPKtJfWLibV/Lgms4wDt1XCG1
+         eGReBGQGrYSFWZ9xpx4E2ifC7kC7/S7c7JhaYHbpaycpQdG00b1ssptuTmxde5ARUOD3
+         xQ/xt7XLgtFgElra4PAb5KhrupaFgQM7LOpvGa0abQBNRbC7K0dbehzX4gJJ6uH3uq6g
+         F8BI1bGEHS7aDjuwJSxFFy2J2kevX04feImsXmxYjNF/wCyyKHVFlcJjfOb31Jm5ymdr
+         hPPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXw5Jd8uR6AtG/WTGr8u7Jc2YI4BNRCxyKCc7tDpMBwFMDl0CsmApeljVfXIleSPxAFx5iMzjiD713XtMBP6WE+5OhXyR6zCKYvaMRu
+X-Gm-Message-State: AOJu0YyD/eWMR95yTNSm40knoAmGngcMLm8ltQHD7KypDsyrCArVkPNl
+	diI6H4dzTham2is4LvufUQA0WdQYStD+Df+QgYNHEusaJk3xjYloC400SPLhh+mgu6jXQxVHyf2
+	tYQ==
+X-Google-Smtp-Source: AGHT+IHuT8K9rOPRCiT1msZ0/9yu35XkKU/imCLWZDOybsPwvXfpkO4uEj7EHjAiqcRPow2eblVNuQyIq1c=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:114b:b0:e05:74ca:70ce with SMTP id
- 3f1490d57ef6-e0574ca77fbmr435165276.4.1720797219866; Fri, 12 Jul 2024
- 08:13:39 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a63:3759:0:b0:6e7:95d3:b35c with SMTP id
+ 41be03b00d2f7-77db673944fmr23291a12.5.1720797221803; Fri, 12 Jul 2024
+ 08:13:41 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 12 Jul 2024 08:13:34 -0700
+Date: Fri, 12 Jul 2024 08:13:35 -0700
 In-Reply-To: <20240712151335.1242633-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,51 +75,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240712151335.1242633-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Message-ID: <20240712151335.1242633-2-seanjc@google.com>
-Subject: [PATCH 1/2] KVM: x86/mmu: Bug the VM if KVM tries to split a
- !hugepage SPTE
+Message-ID: <20240712151335.1242633-3-seanjc@google.com>
+Subject: [PATCH 2/2] KVM: x86/mmu: Clean up make_huge_page_split_spte()
+ definition and intro
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	David Matlack <dmatlack@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Bug the VM instead of simply warning if KVM tries to split a SPTE that is
-non-present or not-huge.  KVM is guaranteed to end up in a broken state as
-the callers fully expect a valid SPTE, e.g. the shadow MMU will add an
-rmap entry, and all MMUs will account the expected small page.  Returning
-'0' is also technically wrong now that SHADOW_NONPRESENT_VALUE exists,
-i.e. would cause KVM to create a potential #VE SPTE.
+Tweak the definition of make_huge_page_split_spte() to eliminate an
+unnecessarily long line, and opportunistically initialize child_spte to
+make it more obvious that the child is directly derived from the huge
+parent.
 
-While it would be possible to have the callers gracefully handle failure,
-doing so would provide no practical value as the scenario really should be
-impossible, while the error handling would add a non-trivial amount of
-noise.
+No functional change intended.
 
-Fixes: a3fe5dbda0a4 ("KVM: x86/mmu: Split huge pages mapped by the TDP MMU when dirty logging is enabled")
-Cc: David Matlack <dmatlack@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/mmu/spte.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/x86/kvm/mmu/spte.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
-index c8fe13217ff7..bc55e3b26045 100644
+index bc55e3b26045..10390eecd85d 100644
 --- a/arch/x86/kvm/mmu/spte.c
 +++ b/arch/x86/kvm/mmu/spte.c
-@@ -296,11 +296,7 @@ u64 make_huge_page_split_spte(struct kvm *kvm, u64 huge_spte, union kvm_mmu_page
+@@ -291,15 +291,13 @@ static u64 make_spte_executable(u64 spte)
+  * This is used during huge page splitting to build the SPTEs that make up the
+  * new page table.
+  */
+-u64 make_huge_page_split_spte(struct kvm *kvm, u64 huge_spte, union kvm_mmu_page_role role,
+-			      int index)
++u64 make_huge_page_split_spte(struct kvm *kvm, u64 huge_spte,
++			      union kvm_mmu_page_role role, int index)
  {
- 	u64 child_spte;
+-	u64 child_spte;
++	u64 child_spte = huge_spte;
  
--	if (WARN_ON_ONCE(!is_shadow_present_pte(huge_spte)))
--		return 0;
+ 	KVM_BUG_ON(!is_shadow_present_pte(huge_spte) || !is_large_pte(huge_spte), kvm);
+ 
+-	child_spte = huge_spte;
 -
--	if (WARN_ON_ONCE(!is_large_pte(huge_spte)))
--		return 0;
-+	KVM_BUG_ON(!is_shadow_present_pte(huge_spte) || !is_large_pte(huge_spte), kvm);
- 
- 	child_spte = huge_spte;
- 
+ 	/*
+ 	 * The child_spte already has the base address of the huge page being
+ 	 * split. So we just have to OR in the offset to the page at the next
 -- 
 2.45.2.993.g49e7a77208-goog
 
