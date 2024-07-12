@@ -1,207 +1,190 @@
-Return-Path: <linux-kernel+bounces-250850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA78B92FD9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58CAA92FD9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 072AA1C22C85
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:29:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B4C81C20B8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDC31741EA;
-	Fri, 12 Jul 2024 15:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B9F17107F;
+	Fri, 12 Jul 2024 15:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQPQ6hsD"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNYUBMXJ"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA98173355;
-	Fri, 12 Jul 2024 15:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A085256
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720798181; cv=none; b=MAX3spxzefOmf3f+YfqiEMMywRApKgT/k+1n5Yuuln1k1tayoNU7bfiCk3n/gJ0RInWGqNqDuZgNRaGlrnF7NSgcUh4LZ+dHdUDa65XD+GbORZ2ad8176rNQfomAhtepGrUxxbrVv6XIaMwfJ34yKAJ+kUiWFmkyICOOetfbxcY=
+	t=1720798279; cv=none; b=fE/QqMKmL+JI6B5ZWAtnl8I7GpzjQSF7ovoBQYaD4BS2S65VDObaPpFRgBeywIzyIjU02n8JXsZ41/HlH70bQpivS0g5/bCAaBDuWUBl3cH52VpYFUjslW7SW+HgGCHqCwlQRWrW5CRHshbRBGZr/kMTxXwP0Bb/admXFBybMv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720798181; c=relaxed/simple;
-	bh=HPOa7SO7k3gMpMxm2fStIX1ktgAqbZGZTR/v8zwBfK8=;
+	s=arc-20240116; t=1720798279; c=relaxed/simple;
+	bh=fxT+bOfiyP6lMl9D/ZxbBbEhTvwULS07dK6DtYz/Lnc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o9R8hz6S46XFmE6Gx12WN/ubMRWRhWYKPsmvSRlETuv3QPO+rl4vlzTneQJTc3ZSgTxfVBQqbVW7xxou3mfYT2aHKqcpy01L70SiSRJCfQyDfrWoB//2G26Lc0+ezjd8/mqQGtGXVkWGvngiMYU4sDgKFkGwrUFP83Hyxwhk7to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bQPQ6hsD; arc=none smtp.client-ip=209.85.167.45
+	 To:Cc:Content-Type; b=NQoNe/FoHds021y1A9fF/+nFiDjEk59g1C6vT5uI77ICFfjZOkz+wzh7zvthby/43CGRJV9OVRwMGne1OrqaJfH+yhutSWC52hQFVU54CIr/zgh+JiIIzjn+B2fge5D8Fup6rQayAw5yGAmPnhK9A7geiYjnn9rtGQpkvl39lLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNYUBMXJ; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ea5dc3c66so3499302e87.3;
-        Fri, 12 Jul 2024 08:29:39 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d05e0017aso2879975a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:31:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720798178; x=1721402978; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720798276; x=1721403076; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zaX0XYEC7+5BC2mmjhTtFBMlwPorZ67nD0Jvqe+jk94=;
-        b=bQPQ6hsDFJaf4nBVRyxVJtxdty5L4gwK9HqVuwLUFmL6quXMjD9E69jcLXD4/1MdII
-         5evOqU+zZIOKZ2Ebiz+arK7IJsWR/lG8fS2b5tGIHhGAhWExEq4hy3oVnt/PY1Cef7EP
-         pzenLabj56VxdJRUbh+oNmIW6fMLVBeaUDDpwcjR4GKufUs9Pd/qL4zDQsmjBwSU+1aI
-         C8Q+UjH4c1Wjo3/EUfmm2T1flFBiUoClZxy2KlOp/mzpwLSgPEaD+oU/Hxf7NniSyMKK
-         /4GTHEkz0pbo/qEFJiDHTVx2i8NCI8Ku0Qk8cB4A1dvfbyIULk1rtbss1B1At8XqqiA9
-         6WcA==
+        bh=v8ApIoZLrTCReZSKKI4weCLSWhQdEbq1c8nSmFnk/F8=;
+        b=gNYUBMXJD2/GbyXqdiLPEzzH7+rDrnshbZQPTx5egdXBuDVM8PGjh1z4C/YNvODcd+
+         5DxJ2UZ1RL3IZxjKPzvxg0Qdcgc+NRa92QF/TNe39G1k+otlpw9Ge9hKLvA1vVro7bpG
+         2FKm6PdZDk0zrhx+Nh5EKcDm5VdDDyGe5PBRb3Y7ZZH9G8g67gcbAqxKB1JQeLEtiLep
+         CKcNcapAZ5Ls4mpmUEe5Hi28bKEPCHnPR5kzntJG8GE59Bq8DdQMEI2M4bt2UvYvTsEg
+         mIUH2zC/WIz8CwNzmG6tuaNxuws0Do2TLB1gOIBZUfaRcC6ocHpfsqk1d5MkiN7l4/Gi
+         g+/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720798178; x=1721402978;
+        d=1e100.net; s=20230601; t=1720798276; x=1721403076;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zaX0XYEC7+5BC2mmjhTtFBMlwPorZ67nD0Jvqe+jk94=;
-        b=mhhaCgsYcfM/gKjcmuvU8uVDssbou+MIwE6JodOk13QLNWDGKzta/wXhs84u4zfrP5
-         OrMVJvmMBMKS58PzbyFApQAM3enPXoBhJR4QOBmIu4gZeX8fkaG1vbXmvoehdBgs1pp9
-         nkCyYf8jedldBupc/7yeIIXndvqFd/QkZ0zWjs4GMNbNh64j7MbUmAPCh2BNKzbtXdIU
-         OMAiZGorvJsHGi8C1gT06j+LF8arnFTawdOZ+NELTVrlIOV/YLzcDiH7PZBnIwuZoXoe
-         wexTh7Jd+gvJL4viK17R4oZKG5EizxGQLv8IhL7N5DGLm0Hz467RDf/foooZ7IekgrHn
-         c+Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBdME+dB9P5XmcUfjYMSvz+GuzM1Q98wUnYip+9Esho2xg66FlkgdDyg48Lspm1ID8aMkKR7T/9iyJjLE6JYKn5mbGcHbzxI+VjdS4zMutJwuSwM+JX+/HLttYEALXXG/lYlmpV6OgK+/WJrI3R3qy
-X-Gm-Message-State: AOJu0Yw5PiMOKDd2bd+wjkmCTnXWvj+zhTCm+GZNtNbH0lS497SWOQX2
-	XW9bjNxmUUMnQZmxX4GIthAtwE3pGgJri1qZp3eNVkKJpT6lqLJq/t6AHkVMINaCjdg2OIUPcLE
-	rqrOrsjVAxDmU5gNbi1+mwUf37Ag=
-X-Google-Smtp-Source: AGHT+IGCLqcRVIjkEweK3/aJoRkXomVZUL7NSVyAYSUancplZJbd0v8xwYtl00L4HXyB8SfTVbQss29eUX0O33rWZDQ=
-X-Received: by 2002:a05:6512:2349:b0:52c:a20e:4da4 with SMTP id
- 2adb3069b0e04-52eb99d6033mr11893379e87.57.1720798178042; Fri, 12 Jul 2024
- 08:29:38 -0700 (PDT)
+        bh=v8ApIoZLrTCReZSKKI4weCLSWhQdEbq1c8nSmFnk/F8=;
+        b=Th+L3voeG4e1pg4m2t14cwm27QX5/Jop46r9OX2QV+C72K16rZKCJ+d76VqDBR3MMw
+         3oj8Ssd7MBHcYNLkh9NFsbgQWQ9c0ijBu3ddxtWC0uFwG1oASvMPimgPN+/WzSTP/Kn2
+         kDOCF1K8nPkmcOvLa8ojKXCRYlcYNZiNtPuGk9shscXH0BUeq6XRUlJ2c0hPl6x0GdX/
+         elpP6J8W/tMmSru/qM35WbuTdPIN3JR2+GiBKSZ0SMQbv6fGkuvFriRp/yT7937Jx31D
+         cC+tjE3bQZxLzHLfYxeXN5hKIFKc9vYGJEwqCRdARuY0okgX6cLSnsPyp7xGwDJofLp5
+         +5FA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8L9rqU5is/D421zUDSNBY118+C927rI2GgjuJ7uLgWINzy/qza5OVHWOgPJsjRxZdaY81mJ5qEZLIgWwE3acs5XpWa1HS6mJ86RpI
+X-Gm-Message-State: AOJu0YyLFneRcyHrg2pWBy0qykd2pDcECLYqd3uWx65mgM58SpBsvKlm
+	hrjgT/1o2VfnHPQT5nP6RWo5Jq7Xp7h5SEgBfQVEL9Mop5XOigFWuR4cCEOrgtx082fqm8Pe7Lf
+	udKEGMNU6/dAtLROy6QIZGR8GC4MQFQ==
+X-Google-Smtp-Source: AGHT+IHW6bgxiPp+ikEfLCczpHOanG7A6v2Xf9yn4cokyZip30mOrT/z7TOmpNN8hw8IzgP7O5CrZttxImjpv233EDU=
+X-Received: by 2002:a17:906:6804:b0:a75:2781:a5c4 with SMTP id
+ a640c23a62f3a-a780b6b2f3cmr744849366b.29.1720798275357; Fri, 12 Jul 2024
+ 08:31:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711110235.098009979@infradead.org> <CAEf4BzZ+ygwfk8FKn5AS_Ny=igvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com>
- <20240712131016.GI27299@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240712131016.GI27299@noisy.programming.kicks-ass.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 12 Jul 2024 08:29:21 -0700
-Message-ID: <CAEf4BzZqKCR-EQz6LTi-YvFY4RnYb_NnQXtwgZCv6aUo7gjkHg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] perf/uprobe: Optimize uprobes
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: oleg@redhat.com, mingo@kernel.org, andrii@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com, 
-	paulmck@kernel.org
+References: <20240118133504.2910955-1-shy828301@gmail.com> <2d7bd8b2b9736d4a7d0a26169978372b5e002a62.camel@debian.org>
+ <CAHbLzkr1LwH3pcTgM+aGQ31ip2bKqiqEQ8=FQB+t2c3dhNKNHA@mail.gmail.com>
+ <ZpBFjzIEpq6RIM8I@casper.infradead.org> <CAHbLzkpitWRK2q3JidRdyQxajz+MixiO1bX08btVu9Ch0i6Kxw@mail.gmail.com>
+ <ZpFAt6ha2KbFRoFn@corsac.net>
+In-Reply-To: <ZpFAt6ha2KbFRoFn@corsac.net>
+From: Yang Shi <shy828301@gmail.com>
+Date: Fri, 12 Jul 2024 08:31:02 -0700
+Message-ID: <CAHbLzkq_NHZdxNcWD-WXLEP+DRUGcNsavH6uMTAGdgXrwjX24Q@mail.gmail.com>
+Subject: Re: [PATCH] mm: huge_memory: don't force huge page alignment on 32 bit
+To: Yves-Alexis Perez <corsac@debian.org>
+Cc: Matthew Wilcox <willy@infradead.org>, jirislaby@kernel.org, surenb@google.com, 
+	riel@surriel.com, cl@linux.com, akpm@linux-foundation.org, 
+	yang@os.amperecomputing.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Salvatore Bonaccorso <carnil@debian.org>, Ben Hutchings <ben@decadent.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 12, 2024 at 6:10=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+On Fri, Jul 12, 2024 at 7:43=E2=80=AFAM Yves-Alexis Perez <corsac@debian.or=
 g> wrote:
 >
-> On Thu, Jul 11, 2024 at 09:57:44PM -0700, Andrii Nakryiko wrote:
->
-> > Anyways, if you'd like to use it, it's at [0]. All you should need to
-> > build and run it is:
+> On Thu, Jul 11, 2024 at 01:53:04PM -0700, Yang Shi wrote:
+> > On Thu, Jul 11, 2024 at 1:50=E2=80=AFPM Matthew Wilcox <willy@infradead=
+.org> wrote:
+> > >
+> > > On Thu, Jul 11, 2024 at 01:47:00PM -0700, Yang Shi wrote:
+> > > > +++ b/mm/huge_memory.c
+> > > > @@ -857,7 +857,8 @@ static unsigned long
+> > > > __thp_get_unmapped_area(struct file *filp,
+> > > >         loff_t off_align =3D round_up(off, size);
+> > > >         unsigned long len_pad, ret, off_sub;
+> > > >
+> > > > -       if (IS_ENABLED(CONFIG_32BIT) || in_compat_syscall())
+> > > > +       if (IS_ENABLED(CONFIG_32BIT) || IS_ENABLED(CONFIG_X86_32) |=
+|
+> > > > +           in_compat_syscall())
+> > >
+> > > Why not:
+> > >
+> > >         if (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall())
 > >
-> >   $ cd examples/c
-> >   $ make -j$(nproc) uprobe-stress
-> >   $ sudo ./uprobe-stress -tN -aM -mP -fR
+> > Nothing specific, just didn't think of it, sigh...
+> >
+> > Thanks for the suggestion. Definitely preferable way.
+> >
+> And I just did a quick test rebuilding a kernel with
+> !IS_ENABLED(CONFIG_64BIT) and running on an i386 Debian sid
+> installation.
 >
-> >   [0] https://github.com/libbpf/libbpf-bootstrap/commit/2f88cef90f9728e=
-c8c7bee7bd48fdbcf197806c3
+> I can confirm it seems to work as intended:
 >
-> So, I cannot clone that [0] URL I had to click around github shite for a
-> while to figure out wtf to clone and where your commit lives, turns out
-> it is:
-
-Sorry, my bad, it's just "normal" Github stuff, but yes, I also find
-it quite confusing, so should have been more explicit that this is
-uprobe-stress branch in libbpf/libbpf-bootstrap Github repo.
-
->
->         $ git clone https://github.com/libbpf/libbpf-bootstrap.git
->         $ cd libbpf-bootstrap
->         $ git checkout uprobe-stress
-
-Yes, sorry, as I said, I should have been more thorough in my
-instructions. You did a great job figuring all the above out, the next
-step is to make sure all the git submodules are checked out, so, in
-addition to the above you are just missing git submodule
-initialization:
-
-$ git submodule update --init --recursive
-$ cd examples/c
-$ make -j%(nproc) uprobe-stress
-
-NOTE: Don't run just `make`, because it will build all the examples,
-which have extra dependencies, and we don't want to go over that with
-you :) Stick to `make uprobe-stress` to build just an uprobe-stress
-binary.
-
-The only extra thing that you might need (if you don't have that
-already on your build machine) is development versions of libelf and
-zlib, as dependencies of libbpf (that would be elfutils-libelf-devel
-and zlib-devel packages in Fedora, I think). libbpf-bootstrap is
-trying to be as self-contained and dependency free as possible (which
-is also why git submodules).
-
-You were worried about BTF. This tool doesn't need BTF and it should
-work without it enabled in kernel config (but if you do want BTF
-generation to succeed, I think the only kernel build requirement for
-that is up-to-date pahole from dwarves package).
-
-As for the kernel config, I don't think you need anything BPF-specific beyo=
-nd:
-
-CONFIG_BPF=3Dy
-CONFIG_BPF_EVENTS=3Dy
-CONFIG_BPF_SYSCALL=3Dy
-
-But just in case, we maintain a list of kernel configuration that *all
-of BPF selftests* require (see [0]), so worst case just append that to
-your config (but really, above three is probably all you need,
-assuming you have all the non-BPF perf/tracing/uprobe configs
-enabled).
-
-  [0] https://github.com/torvalds/linux/blob/master/tools/testing/selftests=
-/bpf/config
-
->
-> But then I do the above and I'm greeted with:
->
-> root@ivb-ep:/usr/src/libbpf-bootstrap/examples/c# make -j40
->   MKDIR    .output
->   MKDIR    .output/libbpf
->   MKDIR    bpftool
->   LIB      libbpf.a
->   BPFTOOL  bpftool/bootstrap/bpftool
-> make[1]: *** /usr/src/libbpf-bootstrap/libbpf/src: No such file or direct=
-ory.  Stop.
-> make: *** [Makefile:87: /usr/src/libbpf-bootstrap/examples/c/.output/libb=
-pf.a] Error 2
-> make: *** Waiting for unfinished jobs....
-> make[1]: *** /usr/src/libbpf-bootstrap/bpftool/src: No such file or direc=
-tory.  Stop.
-> make: *** [Makefile:95: /usr/src/libbpf-bootstrap/examples/c/.output/bpft=
-ool/bootstrap/bpftool] Error 2
+> Before:
+> root@testvm:~# uname -a
+> Linux testvm 6.9.8-686-pae #1 SMP PREEMPT_DYNAMIC Debian 6.9.8-1 (2024-07=
+-07) i686 GNU/Linux
+> root@testvm:~# for i in {0..9}; do cat /proc/self/maps |grep libc.so |hea=
+d -n1; done
+> b7c00000-b7c22000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7c00000-b7c22000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7c00000-b7c22000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7c00000-b7c22000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7c00000-b7c22000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7c00000-b7c22000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7c00000-b7c22000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7c00000-b7c22000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7c00000-b7c22000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7c00000-b7c22000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
 >
 >
-> Now what ?!?
+> After:
 >
-> BPF is ever such unusable shite :/ It's very near as bad as qemu.
+> root@testvm:~# uname -a
+> Linux testvm 6.9.8+ #1 SMP PREEMPT_DYNAMIC Fri Jul 12 15:23:07 CEST 2024 =
+i686 GNU/Linux
+> root@testvm:~# for i in {0..9}; do cat /proc/self/maps |grep libc.so |hea=
+d -n1; done
+> b7cf3000-b7d15000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7d7a000-b7d9c000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7d8b000-b7dad000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7d4b000-b7d6d000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7d64000-b7d86000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7d15000-b7d37000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7c9e000-b7cc0000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7d68000-b7d8a000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7cf6000-b7d18000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
+> b7ce6000-b7d08000 r--p 00000000 fe:00 933        /usr/lib/i386-linux-gnu/=
+libc.so.6
 >
+> So:
+> Tested-By: Yves-Alexis Perez <corsac@debian.org>
 
-Sorry, not going into discussions about this :) I do agree initial
-setup is not straightforward, and this libbpf-bootstrap repo is
-actually an attempt to let users start quickly by doing a minimal and
-more-or-less straightforward BPF setup (which is why I built
-uprobe-stress on top of libbpf-bootstrap setup instead of BPF
-selftests; that would be even more painful process for you which I
-didn't want to force you through, see above about
-selftests/bpf/config).
+Thank you so much. Will submit the formal patch soon.
 
-But just keep in mind that using BPF here isn't some sort of random
-choice just because I tend to work mostly with BPF. BPF is the only
-interface to multi-uprobe attachment, it's a lightweight and
-low-overhead way to know whether uprobes are triggered (I do
-memory-mapped sharing of per-cpu counters between BPF/kernel and user
-space, no extra syscall overhead, blocking, or unnecessary memory
-ordering is added). And in general, whether you like it or not, most
-people would never care to use uprobes if not for BPF as an interface
-into that.
-
-I'm not trying to convert you into BPF or anything like that, but this
-has to use BPF for end-to-end testing.
-
-But you are close, please don't give up!
+>
+> I didn't try on other 32b architectures though.
+>
+> Regards,
+> --
+> Yves-Alexis Perez
 
