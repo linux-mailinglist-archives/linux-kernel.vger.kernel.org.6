@@ -1,204 +1,133 @@
-Return-Path: <linux-kernel+bounces-250765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1121F92FC8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:29:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D4192FC95
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32C1F1C22190
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8BCF1C22670
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB610171E62;
-	Fri, 12 Jul 2024 14:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3ED171E5A;
+	Fri, 12 Jul 2024 14:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="roNTJVle"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hGUiEDUY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F5E171E49
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF6E441D
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720794564; cv=none; b=nB/FotVeCMhSGOD/+4wB98tYrlvzxq8R88bV8mnhzdgNhgtJqZjKdZ5EaEudIA8hVHPoDI+gRy3nFxtfKqe6qG4pcaKEhoA9qyR+Agp28IhQPG9+j2p7DtUuupYDF7RdUNE6hM1DaSePcpW6nQtkRy33ipY6kveGHw+pFlqRLgU=
+	t=1720794604; cv=none; b=Zvmt41HdbQSAE8WrtJZdZbEjMoN8OnuQ9sIxUL6b63AGAoRL7buOMCGVfBKRpywj4aIU23CICT41MF28DVh+ZpHGFTySgE+doaSuGU6StzWqSuO6gBWdT6tbXBWIf0K1au09l+Xktt5tCZL4u8cE7MJoYG3X+QHnMSFmTl7HGKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720794564; c=relaxed/simple;
-	bh=LbTNChU8bTRD5sx7/n91xzehW9iyZBQZchWZoFuWKPM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lVGpHKAUndv/pHhVCss19KE5A7D6TrLvtNDG0I0dkezsCKuTws1EZRyBQzffZaAsza7sSJlfI43T1OeffDuUZXFK59dEqFyE9EYwuf7a23c8bxZ9kF+HPUkzyARjeaa8gWzzIzEZx6iyUH7ckvBjnI06to8eoCO041LSXDrfdEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=roNTJVle; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-76cb5b6b3e4so1381393a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:29:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720794562; x=1721399362; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OfRcvqvyLWqqw4VZbdos3kGou0KYGp4KID6MEMi5E0s=;
-        b=roNTJVlerqpbJkUY1MGAuKTk42El2peVPGbGYggrhIXI59s7T81VmDIyD6C7zRtuAy
-         nIv6LPJykdimV0EhYa8UrncPzrEZXWH9SQQY46L2xj5rWvpNJzxdmf55JShgpH0tKxdF
-         Khg8fs7MbGjD9sjckP7lRJJxBs+Tjsca7F4d06hMB6KvDxtZ9m8LyHJOt2qnd5FoFW3A
-         DKLrDQmZ7nXxr4m8Nrki99Dbhhadr6D8nABdZCUiX33dpbEhSMR5nJKXRFpRq+gjUTGo
-         YrDpLmhtvcn1Ow0wrp6aHAgfH9u/S5XaVqOZge09cXxTHh6XFAyQ6IZfERMu3XTmro88
-         FeQA==
+	s=arc-20240116; t=1720794604; c=relaxed/simple;
+	bh=xNf1tJFXF2XZo5kA4RL74P4CbwPpLhsf5gbnmAkL9hI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nu3hFRbqX8hygH7cRRDsfk1yAkSl875L9/SuVflH+lYtrNxVqSllKY2MR6KnMoWYp+MNDFDQcL5UwpMH093ipMAGa0EFG4Obhb0pwQ6J1an2+mXneWgt2yHMn3R81Jcu3g7uqHK1tef6LhoYG5G/fHnRLiw9BDfDY0608/awxk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hGUiEDUY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720794602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Em+4lpr48F+sTPUkNgk9R0TQyrZ2qwV17RRP7sfDWpk=;
+	b=hGUiEDUYXMYqBEK6OouKdEyiBHzpEyeEsqLPmLnKwnIxERD3aoniJRFu3WSvugJ0F8chOd
+	hY5zrk45q95ue2PjGBZm+GrBNO4IGx6h0snMTScMW7uTru9rotg5vU4WafXfoEzW4lbmzj
+	fNNwiaSSSN7JCXS6AOwPO3porhUB7mQ=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-vrWwab8kOD-6noca_F_X7A-1; Fri, 12 Jul 2024 10:30:00 -0400
+X-MC-Unique: vrWwab8kOD-6noca_F_X7A-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2c96e73c886so1836599a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:30:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720794562; x=1721399362;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1720794599; x=1721399399;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OfRcvqvyLWqqw4VZbdos3kGou0KYGp4KID6MEMi5E0s=;
-        b=pa8eqJ+6xfD+xrcBuvYwpuz0w4qpB/ruiH/fnF+8OMxZFdY0P30zF+2arOALEuU3tQ
-         gP9pl/S95GjVGfLMP1a53WkEYy5heOiTALUvZg/7DUkJXCHpOWEU76BE9V3OtRytIlZb
-         1664Z9CPoTO+wEDMLYyWdwm++/DuGl1xBwpcbeQuQ2IWEcl8avUfc0Rg+Sffrl18uHAO
-         lmLM2/2UPUrWl2korBlrfrxFYktd/To4CYjPbgF0OUwSYLHXPL7glLU3gYLV3G0M6BAL
-         2TFpY/Cfq97yEAUb044AogFAyekHplFDIWyfordZ3e1l5V1dFkvEzejbCiWvwkLzbFYW
-         pGmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbyScT3KKwrxcIu4Gx87QOPslsPFthYXF3a+rR28Wp1PBbW8068jHFY0rHiaEyAGE5sYqq3mNI8iUuzz6TO1QmF3jkTONsbVUM15/V
-X-Gm-Message-State: AOJu0YwKA1W7GCmDMC/nIGWlRCoB14/K1OkrIQZYHGU5KV7qnaI2X0U8
-	0h4G/CrFuLYZQkCYmEvNKveBvZjMOke1tHei/K0nftNCnPVYAmcGWQIg2/Rbhg==
-X-Google-Smtp-Source: AGHT+IHbEdR45IjDHcAMoLP6rDlFFdiSoFMz5LWcZABCTasJiEG5qGfVuq47Emz5imjJVxqZsw3w+A==
-X-Received: by 2002:a05:6a20:cd0e:b0:1c2:8cc4:c361 with SMTP id adf61e73a8af0-1c2981fc191mr12859114637.10.1720794561783;
-        Fri, 12 Jul 2024 07:29:21 -0700 (PDT)
-Received: from localhost.localdomain ([120.60.61.81])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ad141fsm67508075ad.277.2024.07.12.07.29.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:29:21 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: mst@redhat.com,
-	jasowang@redhat.co
-Cc: xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	mie@igel.co.jp,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH] virtio-pci: Add MSI support
-Date: Fri, 12 Jul 2024 19:59:14 +0530
-Message-Id: <20240712142914.16979-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        bh=Em+4lpr48F+sTPUkNgk9R0TQyrZ2qwV17RRP7sfDWpk=;
+        b=R9lUYNViak3BSuZNhgoNmE8Z+mFfpcw8JIQ+v61RNaawaaOz+u5ViWwdCuHv5Km6Pd
+         DDdw+EeyJ91dUbbTEBwoDzO3Dkrwk9WfJ+Aeeq5GD8y59XT+HTStT97YxLy12fyUZQbq
+         Cnys6WHL74y8B/uzzknnZiEHmIcRFflWUXXRD4+MXcA97IN6CMlF44B/SA+8yJDYBhVM
+         oOuRbbnPmYJlhLmZlOFIQvg7o94xRZd9Nz8vE/Zm8BsJArQ+59r6M0W7ChttrBhlJq8w
+         +2zmnR+edDF4B6q1lasfEVfJ/YkohB38iqUlFdpchvqSY9ZMHPh8ubAYYFMqlE4NZ0Xo
+         KuXw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+zgJ5uvRwb8sn12wPwxb92tvl6LYSv28+T9G/E5I5SEZr5sm3siWC6f1D12zw6ZzWykRKj8Ua2kR4w5zzBDsbU+NX0i6zBTrofNEH
+X-Gm-Message-State: AOJu0YwOOmQlBvaT5wjeGN7i5ANFCL26AZmBKdXWDaxqbwK5Q+1Kl7In
+	lLRAELiw1lml67skVwhCHi686G5YL7kjQLOnU+yPzA2ewVwK/9JEMZtdsQlseUfdb7FzUEWPuJP
+	afrVUUuoMRB+fMXjWqAzOCvzR3PbqX4cRdXH4nldvzPSXQq2IaO/wHw+vuc8kPXFIJiNKl81FYj
+	TwYSgi7TM3lGUPtbc/q4srKXgAuTAsl0wupvin
+X-Received: by 2002:a17:90a:70c6:b0:2c8:87e:c2d9 with SMTP id 98e67ed59e1d1-2ca35d43887mr9092110a91.39.1720794599179;
+        Fri, 12 Jul 2024 07:29:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEyEXCNphbXM4G/rPhQQo3eVo3TcpH/vUgTlLXnK+HK0NsMDnIjoeWz76/qY2/k2Ca8KWUcmscnLjrUmqi++Q=
+X-Received: by 2002:a17:90a:70c6:b0:2c8:87e:c2d9 with SMTP id
+ 98e67ed59e1d1-2ca35d43887mr9092063a91.39.1720794598057; Fri, 12 Jul 2024
+ 07:29:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <124bbda3-7ccf-4e6b-b30d-7115e1c2620f@stanley.mountain>
+In-Reply-To: <124bbda3-7ccf-4e6b-b30d-7115e1c2620f@stanley.mountain>
+From: Eric Curtin <ecurtin@redhat.com>
+Date: Fri, 12 Jul 2024 15:29:21 +0100
+Message-ID: <CAOgh=Fx6hcJdbQpna2JJhnzp=YG_nyg-gpd=ZH7CewudtgDhAA@mail.gmail.com>
+Subject: Re: [PATCH] nvme: apple: remove some dead code
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Virtio spec has so far only supported MSI-X and INTX for receiving the
-interrupts from the virtio device on PCI transport. But this becomes a
-limiting factor for devices supporting only MSI (plus INTX emulation) as
-they have to use the legacy INTX emulation which is limited to one IRQ per
-PCIe function.
+On Fri, 12 Jul 2024 at 15:13, Dan Carpenter <dan.carpenter@linaro.org> wrote:
+>
+> platform_get_irq() never returns zero so we can remove his dead code.
+> Checking for zero is a historical artifact from over ten years ago.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-But this now addressed with the help of a proposal to the Virtio spec
-adding MSI support [1]. Based on that, let's implement MSI support in the
-virtio-pci driver.
+There's quite a few return paths in platform_get_irq_optional, are we
+sure it can never be zero?
 
-The Virtio spec proposal reuses the existing MSI-X infrastructure, like the
-config_msix_vector/queue_msix_vector fields of the Virito common config
-structure. Following that, MSI support in virtio-pci driver is also added
-on top of the existing MSI-X implementation and it mostly reuses the MSI-X
-code base. The existing vp_find_vqs_msix() API is modified to support MSI
-along with MSI-X.
+Not calling out a specific case here, but it's not so clear to me how
+we can guarantee platform_get_irq() is never zero,
 
-The preference for interrupt allocation is still given to MSI-X as per the
-spec. The driver will try to allocate MSI only if both of the MSI-X
-allocations (one vector for each queue and 2 vectors) fails. As like MSI-X,
-driver will try to allocate one MSI vector for each queue first, and if
-that fails, it will try to allocate 2 vectors (one for config queue and one
-shared for queues). If both of them fails, driver will fallback to the
-legacy INTX as usual.
+Is mise le meas/Regards,
 
-For keeping the changes minimal, existing 'virtio_pci_device::msix_enabled'
-flag is used to indicate the status of MSI and MSI-X. Rest of the MSI-X
-functionalities such as IRQ affinity are also reused for MSI (but the
-affinity setting really depends on the underlying IRQCHIP controller).
+Eric Curtin
 
-[1] https://lore.kernel.org/virtio-comment/20240712140144.12066-1-manivannan.sadhasivam@linaro.org/
-
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/virtio/virtio_pci_common.c | 24 ++++++++++++++++++------
- drivers/virtio/virtio_pci_common.h |  2 +-
- 2 files changed, 19 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-index f6b0b00e4599..6f80b0c46c5f 100644
---- a/drivers/virtio/virtio_pci_common.c
-+++ b/drivers/virtio/virtio_pci_common.c
-@@ -100,11 +100,11 @@ static irqreturn_t vp_interrupt(int irq, void *opaque)
- }
- 
- static int vp_request_msix_vectors(struct virtio_device *vdev, int nvectors,
--				   bool per_vq_vectors, struct irq_affinity *desc)
-+				   bool per_vq_vectors, struct irq_affinity *desc,
-+				   unsigned int flags)
- {
- 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
- 	const char *name = dev_name(&vp_dev->vdev.dev);
--	unsigned int flags = PCI_IRQ_MSIX;
- 	unsigned int i, v;
- 	int err = -ENOMEM;
- 
-@@ -288,7 +288,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
- 		struct virtqueue *vqs[], vq_callback_t *callbacks[],
- 		const char * const names[], bool per_vq_vectors,
- 		const bool *ctx,
--		struct irq_affinity *desc)
-+		struct irq_affinity *desc, unsigned int flags)
- {
- 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
- 	u16 msix_vec;
-@@ -310,7 +310,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
- 	}
- 
- 	err = vp_request_msix_vectors(vdev, nvectors, per_vq_vectors,
--				      per_vq_vectors ? desc : NULL);
-+				      per_vq_vectors ? desc : NULL, flags);
- 	if (err)
- 		goto error_find;
- 
-@@ -407,11 +407,23 @@ int vp_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
- 	int err;
- 
- 	/* Try MSI-X with one vector per queue. */
--	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, true, ctx, desc);
-+	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, true, ctx,
-+			       desc, PCI_IRQ_MSIX);
- 	if (!err)
- 		return 0;
- 	/* Fallback: MSI-X with one vector for config, one shared for queues. */
--	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, false, ctx, desc);
-+	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, false, ctx,
-+			       desc, PCI_IRQ_MSIX);
-+	if (!err)
-+		return 0;
-+	/* Try MSI with one vector per queue. */
-+	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, true, ctx,
-+			       desc, PCI_IRQ_MSI);
-+	if (!err)
-+		return 0;
-+	/* Fallback: MSI with one vector for config, one shared for queues. */
-+	err = vp_find_vqs_msix(vdev, nvqs, vqs, callbacks, names, false, ctx,
-+			       desc, PCI_IRQ_MSI);
- 	if (!err)
- 		return 0;
- 	/* Is there an interrupt? If not give up. */
-diff --git a/drivers/virtio/virtio_pci_common.h b/drivers/virtio/virtio_pci_common.h
-index 7fef52bee455..a5062ca85f3b 100644
---- a/drivers/virtio/virtio_pci_common.h
-+++ b/drivers/virtio/virtio_pci_common.h
-@@ -77,7 +77,7 @@ struct virtio_pci_device {
- 
- 	struct virtio_pci_admin_vq admin_vq;
- 
--	/* MSI-X support */
-+	/* MSI/MSI-X support */
- 	int msix_enabled;
- 	int intx_enabled;
- 	cpumask_var_t *msix_affinity_masks;
--- 
-2.25.1
+> ---
+>  drivers/nvme/host/apple.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/drivers/nvme/host/apple.c b/drivers/nvme/host/apple.c
+> index b1387dc459a3..f5a3a4e8b1e5 100644
+> --- a/drivers/nvme/host/apple.c
+> +++ b/drivers/nvme/host/apple.c
+> @@ -1417,10 +1417,6 @@ static struct apple_nvme *apple_nvme_alloc(struct platform_device *pdev)
+>                 ret = anv->irq;
+>                 goto put_dev;
+>         }
+> -       if (!anv->irq) {
+> -               ret = -ENXIO;
+> -               goto put_dev;
+> -       }
+>
+>         anv->mmio_coproc = devm_platform_ioremap_resource_byname(pdev, "ans");
+>         if (IS_ERR(anv->mmio_coproc)) {
+> --
+> 2.43.0
+>
+>
 
 
