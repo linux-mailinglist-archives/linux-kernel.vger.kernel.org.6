@@ -1,105 +1,168 @@
-Return-Path: <linux-kernel+bounces-250405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193AA92F77D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:03:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A4992F77E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48BA11C22E5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7BFA1F23D1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D72E1487CC;
-	Fri, 12 Jul 2024 09:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6B914374D;
+	Fri, 12 Jul 2024 09:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dMO7EnYl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Yz3NEP/0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nUK9ASdu"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E2B142904;
-	Fri, 12 Jul 2024 09:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFB81428F9
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720775002; cv=none; b=UuUWXZXkzE80HgKUB6EQobmZv0Yx9+2YYixiybexn9nFiCZRRp89GckPu7UPVMAYSq4UX+MlwFF9z7HK29BzT5FNcsJOQlOWRL6Pyff7cwelfNdi9zrh5/GuGcZsSaHxWpJGqxMToVwcxG9wrFB24vn8BaykrIlEj8to82gFyso=
+	t=1720775057; cv=none; b=XN+hl71DnUXpYrKW7riivrWtSDxdDfLQz6yW4nxLSf+rumKWQgkyKMalGlQNWidPI3puy1OGiMeyDu1fxKmCQdYcseHZ92ok/MOl+NopkS9OEb7ELvqx+HuGEAU3clIu+JbpboZTagVHQe0Vwzy2aB3iW0m7k2BdHE785HzWhu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720775002; c=relaxed/simple;
-	bh=3Hsipd0VmP8oXyuyf0778po9QtJb1clkgZOD2L/FF4g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qIrO0jz0hLX4iApQHaZdddoQS9ev9Dr+ndXg2ZKnxYn9QCWCfJypWZBTvAQ5bf7EYhGUx1yUNRlnHR2NJx/kbJWzZfi59OAZVD0QX4s00cKaV67e5FHmbrnH3TmXjwYeb/5TZTffKpSJA7s7dbcphwCf9bEGAmD5tLcJ0s8CDNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dMO7EnYl; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720775000; x=1752311000;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=3Hsipd0VmP8oXyuyf0778po9QtJb1clkgZOD2L/FF4g=;
-  b=dMO7EnYlfjSo82Q3pN2/noFLN00/WDE2Msm+2zISi8kE+E/QzfNXXXng
-   uQln/gfGtM6Ckm3PDUyJ1Lk4z/nx9N1koQfBwmTjEWOLrlwMmZeVEPi9H
-   rkUN2lBJEB7HEgBti8mr2IIxTy4UpWoq1s8Ay7+bS1YDSNGwdKkO2G2Jp
-   4JVthHNoo7qq7JgqIzimhvUFpa+TA8saF4TCvTG7zYDVMqnHLky6BGbdy
-   WnrLRL8RqZaPTo1lKk6vniXGBwwG9BXIeQw5lcjc1IAdqizrfpWfS9u0s
-   FIBOwDM3QNa795RJyP+wvfd4yuhgZG6Sg95kmSzuvERJzP5xJCSqyYsNJ
-   g==;
-X-CSE-ConnectionGUID: iaLvSnrvQtqE0JvA1zXCXw==
-X-CSE-MsgGUID: VTh14nMAS3O9nZO1npB5qg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="18022820"
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="18022820"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 02:03:18 -0700
-X-CSE-ConnectionGUID: 2eTqNaolTwGq1hSiKBVoGA==
-X-CSE-MsgGUID: 7fKehRgvQxKD8ubV/VxmQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="53154580"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.129])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 02:03:15 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <0e4c9ffdc8a5caffcda2afb8d5480900f7adebf6.1720707932.git.geert+renesas@glider.be>
-References: <80e17dffa8f4c1d3fdedd4d82df3a722aa4044ff.1720707932.git.geert+renesas@glider.be>
- <0e4c9ffdc8a5caffcda2afb8d5480900f7adebf6.1720707932.git.geert+renesas@glider.be>
-Subject: Re: [PATCH] platform: arm64: EC_LENOVO_YOGA_C630 should depend on
- ARCH_QCOM
-Message-Id: <172077498937.2264.1630580390229940631.b4-ty@linux.intel.com>
-Date: Fri, 12 Jul 2024 12:03:09 +0300
+	s=arc-20240116; t=1720775057; c=relaxed/simple;
+	bh=HYQPf702jtmtqHwiiK93ZD9gJb6Bh2+y1F+SU4mhwLs=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=hKzcHJ/cDPg8h2gE0Dn/pijvM0o8QtlDv4L5jHyzvvUPqU8Qg96eYqDr6bj8Uo+pETZJn3n2oj3xGleter+R/QdoGGlr5kNJCGAZxKT5zPZySrTGiRoGXV7JehCLA5LdTYp5aVg7Smoe37OvgVVnY2WCnuR2YV6o+ikmkKSZZfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Yz3NEP/0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nUK9ASdu; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 5B97C13887B7;
+	Fri, 12 Jul 2024 05:04:14 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 12 Jul 2024 05:04:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1720775054;
+	 x=1720861454; bh=S8kuUOlqHAm/2VJ6W9Kwa2XQoBvPPN3nr/A5wlnpq5c=; b=
+	Yz3NEP/0xzZyReGOGNEw6xOL4NVLyDEP7UOpusBZmSClo4WdGthhRAgkXR2doFeR
+	8O1MP/wflOpyyfSARyoGmUaWy+RF3LwM4L48l763R+yWgts3uLKziNGDlGbnBhOb
+	BKNt9Oj4415M2tAQZSnM7EX6vXYwUACW401K7qfZRgRe1kOk9Z1mjoXU6lnTJHlF
+	0ntNvZ3H2qxYEufVgNXmt3QVjX1H3cCtEaViefcuDwTZ+gg38VEGtRD0PIcwr0Kq
+	l2AOBBnMiC4uO2RHnVWRjvJdmTA3uIAgVOlJCre7zKcZSoXjG5KvN2Wx0NntM7K9
+	eu7YVGACn1qaYrpSAsLShw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720775054; x=
+	1720861454; bh=S8kuUOlqHAm/2VJ6W9Kwa2XQoBvPPN3nr/A5wlnpq5c=; b=n
+	UK9ASduNUHCTKrDR4Dp5EgYaXpxiZpLceWGcB3abXRUJjYJpqS000oNpgtrZFjzt
+	T4EX8i7rjuVsMTn83OS9yp893rEEjuu8WBAMJTu48ldsHWslq4+XyPe2daiHFXdI
+	Q5/knwv85DuxUcRLoocIIBzOrDGNzl0ZuyxZz36oXbxEZUgK7nbwVmhG+jk9Ia0w
+	VSbLP6/XUnWmAELtF7dhsC85Ip9QqObKXyxavpOlgsCyehczSpn2hwlQqbjKrATh
+	GKNJ3PqBuYpJGzzlpR2cximRgz5B5cYTPOCwBIWYqVL3EwVIQO70FRIvXpjsSW12
+	KFzIS5tjT0YA8bTpRTkcw==
+X-ME-Sender: <xms:jfGQZpFrTsPjWdIizStOXl17PoLcawGsG7KcN-7GwUPZWfmCJzF6lQ>
+    <xme:jfGQZuUuqszBzRdj92sF9rL5pgrbj3bb6r0srg1h446MEthV5S2n-uNu4D9odU50D
+    lDC48ZJdssNcz0wTbc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeeigddtjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
+    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:jfGQZrINFNOX7NB8bYk1eRK0bnO8Id9I2X2V9ZEStOa8RcuJ49yf7w>
+    <xmx:jfGQZvEs0yQSneJn9bNcG9hsmD1xR_Y5vyv7L5cPqz4usHhrgV3MgA>
+    <xmx:jfGQZvVsuhDeo6qqwbvbNo6kvmdl-ABHh_Fg42HmPLmi7NYovExmuQ>
+    <xmx:jfGQZqMeBwbWLQwutuRZeOorVkZILoIKiZvXGy1vRU6oRWiWJ9RGeA>
+    <xmx:jvGQZhLX4fzJCokTY_FYC0eYRRFDCx_tk3dmg3VDwtjSm8Gz5-8k7K0U>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 0AFF4B6008F; Fri, 12 Jul 2024 05:04:12 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Message-Id: <f6afe212-8b28-450e-ae54-0de996be078e@app.fastmail.com>
+In-Reply-To: 
+ <CAMRc=Md5zmFxXXM89LQs6dspC0xnp_6=z=+a2SQypWjwpiRgow@mail.gmail.com>
+References: 
+ <CA+G9fYuCp7Q71_o74yo9ge_5-G=Ho9bC3kJdX_JvtoqWOQujkA@mail.gmail.com>
+ <CAMRc=Md5zmFxXXM89LQs6dspC0xnp_6=z=+a2SQypWjwpiRgow@mail.gmail.com>
+Date: Fri, 12 Jul 2024 11:03:52 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Naresh Kamboju" <naresh.kamboju@linaro.org>
+Cc: "open list" <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
+ "Luiz Augusto von Dentz" <luiz.von.dentz@intel.com>
+Subject: Re: next: arm64: defconfig: gcc-8: drivers/bluetooth/hci_qca.c:2501:2: error:
+ label at end of compound statement
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 11 Jul 2024 16:32:35 +0200, Geert Uytterhoeven wrote:
+On Fri, Jul 12, 2024, at 10:34, Bartosz Golaszewski wrote:
 
-> The Lenovo Yoga C630 Embedded Controller is only present on the Qualcomm
-> Snapdragon-based Lenovo Yoga C630 laptop.  Hence add a dependency on
-> ARCH_QCOM, to prevent asking the user about this driver when configuring
-> a kernel without Qualcomm SoC support.
-> 
-> 
+> The actual code looks like this now:
+>
+> 	case QCA_WCN7850:
+> 		if (power->vregs_on)
+> 			qca_power_shutdown(&qcadev->serdev_hu);
+> 		break;
+> 	default:
+>
+> What can be done to silence this warning? Or should we just ignore it =
+because
+> it's gcc 8?
 
+clang-18 and gcc-10 still warn as well:
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
+5:1: warning: label at end of compound statement is a C23 extension [-Wc=
+23-extensions]
 
-The list of commits applied:
-[1/1] platform: arm64: EC_LENOVO_YOGA_C630 should depend on ARCH_QCOM
-      commit: 1e02e317470b1c68d5971e51e8c62967ec1bc828
+It's easy enough to fix it by dropping the redundant 'default:'
+line or adding a 'break;' Luiz just committed a fix, see below.
 
---
- i.
+     Arnd
+
+commit f14c0bb78769f2670fdd8bcd28ca5543a7601c33
+Author: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date:   Wed Jul 10 22:30:57 2024 -0400
+
+    Bluetooth: hci_qca: Fix build error
+   =20
+    This fixes the following build error introduced by a887c8dede8e
+    ("Bluetooth: hci_qca: schedule a devm action for disabling the clock=
+"):
+   =20
+    drivers/bluetooth/hci_qca.c: In function =E2=80=98qca_serdev_remove=E2=
+=80=99:
+    drivers/bluetooth/hci_qca.c:2501:2: error: label at end of compound =
+statement
+     2501 |  default:
+          |  ^~~~~~~
+   =20
+    Fixes: a887c8dede8e ("Bluetooth: hci_qca: schedule a devm action for=
+ disabling the clock")
+    Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 030153d468bf..ca6466676902 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -2499,6 +2499,7 @@ static void qca_serdev_remove(struct serdev_device=
+ *serdev)
+                        qca_power_shutdown(&qcadev->serdev_hu);
+                break;
+        default:
++               break;
+        }
+=20
+        hci_uart_unregister_device(&qcadev->serdev_hu);
 
 
