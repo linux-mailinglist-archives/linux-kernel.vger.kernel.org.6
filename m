@@ -1,195 +1,126 @@
-Return-Path: <linux-kernel+bounces-250520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FC292F8CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:20:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54F8292F8CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6063E282AA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053441F237B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A454D15748B;
-	Fri, 12 Jul 2024 10:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="M3Nrm7bl"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDD310F7;
-	Fri, 12 Jul 2024 10:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486AF154C1E;
+	Fri, 12 Jul 2024 10:19:44 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCD9149000
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720779592; cv=none; b=us1AG/eCsXGMwKZfaf+nSvbbjjhjTDtzXBVazJPbzRZ9dhwkQ6QOOVp+H9bsZVIBXDfuaXihJaZx12tnmpVaRnORGz0ETEvhpLuLoyAA0MBbFG3Nb+zuOuZbKxCSC/ltm00lvJ/B2VcNkFfvRxFpFIixiQz7Ca5tbhD1HwJkP8s=
+	t=1720779583; cv=none; b=OQF+wvp7hak/KzoXNQIzWUAvFGGhDfzPUKkgZGBHQzyB+UYj/jnmqZxjFORGybeizm+nPv+vcF2WwlL6mr52/QowLTcLfmFcjIC20PK/L9VPV6eZj0GEmstuXhwHn0LaVMni/isSyYXFW0ywT7JmxJFJPlGhnjJgcOvwQe8E4/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720779592; c=relaxed/simple;
-	bh=Un1a07FROyat4k4vFZaNMvE2EYoFghmOeX+5Sma2rwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=prur91YNHlrh7YH9uifDGFu7HKX78hTo7id38j/m0jSnRhLuaMvaybt4JtcKwrc7dYkaqyfN1Brb73J+tztY1ryWoSg1hmLMEPbAJXacUU/Em2uaydltoKP2v81mtuCfeoA8bVBDBEgk9W6+FOBrV/cn8y25J+lySbzc/xC9dwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=M3Nrm7bl; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1720779573; x=1721384373; i=quwenruo.btrfs@gmx.com;
-	bh=1rH2oPl6vD8El3SjAFZFJYh6+D8M67DLs4BC4nadSq4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=M3Nrm7blML4d9Ydaa+pvws78ZwQ3DSlMbpD6dOrx9HuJZkqlfjypFuw4Z8G8Yqwt
-	 kImymFKV+uFcgTE+5yzEw85X1GzfQ7vdYgGBJS5qL55AoGHZKl/WJyUpbocAEFcTU
-	 g6SirJPwxsh76pOjjS0EpLMZuCV7HWSVT7YgXWxgzheLoiB+VkVyDWosTSC9DIU91
-	 wj6NDO37wF/eebLIs2Bcv5WBUW1Y7y9pnp+bQK23HIf1p/AL1d4+HZx0NBueF4U3f
-	 Hd3fzlhWu76Yz+yEpiKOPYhy1oZ1aU3xOTdnkkE5JvUEe58oyxVNnKqT7TJj6g5nf
-	 H4fclbM+Hr/h3CbiAg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1Mkpap-1s5Zb00N5T-00cXHr; Fri, 12
- Jul 2024 12:19:33 +0200
-Message-ID: <3252790e-1b13-45b2-bacc-96b502b55eb3@gmx.com>
-Date: Fri, 12 Jul 2024 19:49:28 +0930
+	s=arc-20240116; t=1720779583; c=relaxed/simple;
+	bh=m8Fo37dbQHXF1VOFOJdFLjATgdftBN4o1j2llJWm8TU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ZCcjqi+d5iSexgAipDXRmhMaH3/qC6uPABwkGZstoOl+DdOpzXsvZm44Yp+08c8EZSrpKthRUByKdFRC0JcDxR6rObyxkJt/mVqj1XxL47MK/jz5LDAkTtdF8xeJwPFfFjpkcdsHhyR9ktqwEwR6LZqnoroSyKQYwn2SbzaN5tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [111.9.175.10])
+	by gateway (Coremail) with SMTP id _____8BxbPA5A5Fmz6YDAA--.10356S3;
+	Fri, 12 Jul 2024 18:19:37 +0800 (CST)
+Received: from [10.136.12.26] (unknown [111.9.175.10])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxBMU2A5FmC8JFAA--.17381S3;
+	Fri, 12 Jul 2024 18:19:35 +0800 (CST)
+Subject: Re: [RFC PATCH 0/4] Add jump table support for objtool on LoongArch
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240712091506.28140-1-yangtiezhu@loongson.cn>
+From: Jinyang He <hejinyang@loongson.cn>
+Message-ID: <307bcd3e-f4fe-8cc0-c557-4069c97c6072@loongson.cn>
+Date: Fri, 12 Jul 2024 18:19:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] btrfs: replace stripe extents
-To: Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Qu Wenru <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>,
- Johannes Thumshirn <johannes.thumshirn@wdc.com>
-References: <20240712-b4-rst-updates-v3-0-5cf27dac98a7@kernel.org>
- <20240712-b4-rst-updates-v3-2-5cf27dac98a7@kernel.org>
+In-Reply-To: <20240712091506.28140-1-yangtiezhu@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <20240712-b4-rst-updates-v3-2-5cf27dac98a7@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ZUCvNtrx+nO4HyMSGfqN2xfllP+uG8nKfyGG0H6EOElDxM5ASBc
- g7tOLqSboys3/qapLsvTxKkKrfOMry+bHjh+6Eno9qhlFMPHhqnchzh9RMna7QLSePTrRKO
- Fw1TLgSLTLYYRYdwXNedrQ6Kp26iFMiXASe1L4JDGSONa7qWBA/uVGKmiwIpRX2ojUpRFOi
- xZSRRs4f7ICLF1rf/xbDA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jOLZHsSVuAw=;uKkGdp2tfD6WDS8nsPwjU5eGtfG
- X0t77OejWRuX3nqz1K7UptrDNH7aSORC69SuyKC4yx2BtGT4GwxOLORWf27G1zhJa4t8GH4On
- QVHPZZY8gm03MIDVsCMwtydPdaSn8OxwJpgP4y0pTmddkIJ6I0YXxV+EbDf/G393hBmlnPD0V
- c7jg3JfL83lLf3ABq0+aMWsHDebL83hm1ApfrZ8ajXbe74pzLS9RFfNUDShnhBKQ2W/d7FHaD
- 8fFnSZnRt2rHaB2NrFKXKssr8h0+8DT2kgHNd/CSs64EA/lIFcz3LhHdm45bfjRCRUqX4XvrY
- QmC5zvo/mtTNDTHNNmqeOKJ83+ElczgKdljohslWADTOH8C19nsSOfcrKaU/1XsS8PhmelDuh
- BKbGadfRleyljSc3eev1xgNovQndRcal9IJ41wd4uYBWrtu6SQ9t4z3Ng0i62RGWwSk/We/48
- 2BArLW/QHdgLYHlzgXJ2dkLwkNmpo2zowtuFtMD0yzC5EarKWBSxg+8lQuIEUJUVSxepRwjNL
- ZAnlUBt2wIcevXal+x/PsO+WxqxldrYzPjypuCgauYpqYyVUQjWPkAAGCfF9V3o3yyxPVJEjb
- jqcZiYLcCS3Htt7G+sreBjEvO4W+sAGYKqvg6nOvo63wmEvPwUZZo5IleMrDKZJzfyIa4MD8u
- nNeEbl52/cD84V53dFBPlm2X+iE+/CZ5e0iAW7JJQc/AIr4cv2NTKhhNXlErgwKJOD/Cq5e6S
- rvaaH8EWQLiDCYxsEy7FgPT9dyr+W9/EOsPkNBO5NnqFLcaB8jQWuXgIBBcQF//sc0eq9eK6W
- WdNpx2/wmDTzLsB4bXxfCYcw==
+X-CM-TRANSID:AQAAf8AxBMU2A5FmC8JFAA--.17381S3
+X-CM-SenderInfo: pkhmx0p1dqwqxorr0wxvrqhubq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7KFyDAr4DGry7Kr45Gry8WFX_yoW8uFyfpF
+	W7CrWfKFs8WFnaqwsxJw12gFy5Jr4fG34Utr43try09w4UXr1aqr4xtF9xZ3ZrW395W3y2
+	qr1YgFy7KF4vkacCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zw
+	Z7UUUUU==
+
+Are we always avoid our problems?
+
+1, When text section not support "R_LARCH_32_PCREL", update compiler
+    to add AS_HAS_THIN_ADD_SUB.
+2, When not support jump-table, use "-fno-jump-tables" to avoid it,
+    (and now update compiler to add CC_HAS_ANNOTATE_TABLEJUMP).
+3, When not support relax, use "-mno-relax" to avoid it.
+4, When some where in asm can be backtraced but generate warning,
+    use STACK_FRAME_NON_STANDARD to avoid it.
+5, When the goto-table cannot be handled (I guess the Ruoyao's
+    patch cannot handle goto table), use CONFIG_BPF_JIT_ALWAYS_ON
+    to avoid compile ___bpf_prog_run.
+6, And other $fp warnings not be solved in clang. Do we only care gcc?
+
+So how to do in the future if compilers have other changed? Do we
+need update compilers (both gcc and clang) again and again? Why
+not just update objtool codes to solves these problems? As many
+RISC arch not support directly find jump table, can we support
+more generic ways to find it?
 
 
+On 2024-07-12 17:15, Tiezhu Yang wrote:
+> This RFC version is based on Linux 6.10-rc7, there are no detailed
+> commit messages for each patch for now and the code are relatively
+> clear and simple.
+>
+> This series is tested with the latest upstream gcc applied with patch
+> "LoongArch: Add support to annotate tablejump" [1] which adds a new
+> section discard.tablejump_annotate to record the jump info, it makes
+> life much easier, special thanks to Ruoyao.
+>
+> I will address all the review comments and update the commit messages
+> after the merge window.
+>
+> [1] https://inbox.sourceware.org/gcc-patches/20240711114415.4420-1-xry111@xry111.site/
+>
+> Tiezhu Yang (4):
+>    objtool: Check local label in find_jump_table()
+>    objtool: Check various types in add_jump_table()
+>    objtool/LoongArch: Add support for jump table
+>    LoongArch: Remove -fno-jump-tables for objtool
+>
+>   arch/loongarch/Kconfig                 |  8 +++-
+>   arch/loongarch/Makefile                |  6 +--
+>   tools/objtool/arch/loongarch/special.c | 54 +++++++++++++++++++++++++-
+>   tools/objtool/check.c                  | 36 +++++++++++++++--
+>   4 files changed, 94 insertions(+), 10 deletions(-)
+>
 
-=E5=9C=A8 2024/7/12 17:18, Johannes Thumshirn =E5=86=99=E9=81=93:
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->
-> Update stripe extents in case a write to an already existing address
-> incoming.
->
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-
-> ---
->   fs/btrfs/raid-stripe-tree.c | 33 +++++++++++++++++++++++++++++++++
->   1 file changed, 33 insertions(+)
->
-> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
-> index e6f7a234b8f6..53ca2c1a32ac 100644
-> --- a/fs/btrfs/raid-stripe-tree.c
-> +++ b/fs/btrfs/raid-stripe-tree.c
-> @@ -73,6 +73,36 @@ int btrfs_delete_raid_extent(struct btrfs_trans_handl=
-e *trans, u64 start, u64 le
->   	return ret;
->   }
->
-> +static int update_raid_extent_item(struct btrfs_trans_handle *trans,
-> +				   struct btrfs_key *key,
-> +				   struct btrfs_stripe_extent *stripe_extent,
-> +				   const size_t item_size)
-> +{
-> +	struct btrfs_path *path;
-> +	struct extent_buffer *leaf;
-> +	int ret;
-> +	int slot;
-> +
-> +	path =3D btrfs_alloc_path();
-> +	if (!path)
-> +		return -ENOMEM;
-> +
-> +	ret =3D btrfs_search_slot(trans, trans->fs_info->stripe_root, key, pat=
-h,
-> +				0, 1);
-> +	if (ret)
-> +		return ret =3D=3D 1 ? ret : -EINVAL;
-> +
-> +	leaf =3D path->nodes[0];
-> +	slot =3D path->slots[0];
-> +
-> +	write_extent_buffer(leaf, stripe_extent,
-> +			    btrfs_item_ptr_offset(leaf, slot), item_size);
-
-Since the replace one should be the same size, an ASSERT() would make it
-easier to catch future problems.
-
-Thanks,
-Qu
-> +	btrfs_mark_buffer_dirty(trans, leaf);
-> +	btrfs_free_path(path);
-> +
-> +	return ret;
-> +}
-> +
->   static int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *tra=
-ns,
->   					struct btrfs_io_context *bioc)
->   {
-> @@ -112,6 +142,9 @@ static int btrfs_insert_one_raid_extent(struct btrfs=
-_trans_handle *trans,
->
->   	ret =3D btrfs_insert_item(trans, stripe_root, &stripe_key, stripe_ext=
-ent,
->   				item_size);
-> +	if (ret =3D=3D -EEXIST)
-> +		ret =3D update_raid_extent_item(trans, &stripe_key, stripe_extent,
-> +					      item_size);
->   	if (ret)
->   		btrfs_abort_transaction(trans, ret);
->
->
 
