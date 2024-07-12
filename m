@@ -1,129 +1,86 @@
-Return-Path: <linux-kernel+bounces-250364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07D192F6EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:28:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C12D92F6ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 775A0B2240F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D64201F22D60
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73ED1422C2;
-	Fri, 12 Jul 2024 08:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805B01422B5;
+	Fri, 12 Jul 2024 08:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZPg5w9D"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kZ6ICVUS"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EB312E4D;
-	Fri, 12 Jul 2024 08:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4993BBF6
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720772875; cv=none; b=OfmYvRy2K7G5FmK1SGXpoILMoTRxIKrZWI1h79D8qxzlJyWRxILiGZqX9Mj/fufBVaDyyJp53J3zvywDw6r5ZbNAwoSwvXsO1DBqn/64OlpvRFV91oAuhhyCNMEyIdlLzyf2qrnz2CIJejeGA+hLVIebWeKTUkGtBrSpEMJDtGg=
+	t=1720772898; cv=none; b=gahGGDDatjoQMHlVB5KH7BtcBBY+wWhUWMlbUhud63qW5ti3DQRkHNcsaop20AURg3O2w9iJq/+NbBQVP0Xxr7q+CHpH+p43bZLsH1mTQo6KW74I9cgB6ttlti4GhWKTBbzGXK8P1b/2WfakAYIu45DZbwg/4XsewLu9O5rkFnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720772875; c=relaxed/simple;
-	bh=le5dYeKeMN72cFGphIh3Zjwmzh+E29gcZbJr9tLoWiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aG+DFdZbNc2QeNJ6CgoNbR45GrH7CFy6nVZFLUTa1wn+JegTgJLMv2zCFJNZrvfZYY4LogN2NMbNAQC6vn97igCttoDWBzeFAcRpQKhgQeLbOqKUNusWdxITxiN+0xWmls9/slxqnmQihsxQGoBNwNNc9ojgRaWHV3OPdt5sVzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZPg5w9D; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fb3b7d0d3aso11159035ad.2;
-        Fri, 12 Jul 2024 01:27:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720772873; x=1721377673; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pUH4Ta/QRdnRhyzc2SMs3g2de0B3R+JsmqJYPNB7zhk=;
-        b=PZPg5w9D4BiNi8/fTZKIaatiFtpOY/Dt40q9rrBDCNhbCi25fs+e4WywZwZY6oL4dT
-         jUzx9PEH4/0NT8cuO06yKbU5qbP0dDvtRzpT2JArM5/cAvu1O20uMVDOFZOJzpoRdsnV
-         D+lwdpgOnwgs/qtNrnC+h5x7IZT+fS9NZ35eBFGslZED7LI2Garo61op1qJFKW3cMp4d
-         z4Sa8W1xGC15HUywt4eRO9nNQVLW2cdHm/vBa4w3h7NAZtKgaaIFQtKdk2mAmPBNXlnh
-         zOSQf5UpmW//cXKR8BgB9/i0Vlin51l1xEsOeK7OD712A3AcxSnT+VBjvvOaasuH6gka
-         HT1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720772873; x=1721377673;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pUH4Ta/QRdnRhyzc2SMs3g2de0B3R+JsmqJYPNB7zhk=;
-        b=lBrjy87lkDjRGWu/uVIZhIrgojKai+zwtcOvpVJ98VWG15h4fEv2d953lEpHuW5lSs
-         JD2eYxJxyN2sC5uT4qxqIqceKJazPK0yqlHugYXgtacAqZuTBrA/j2B/C4o3BGe3EboY
-         F3iEu6zK4/4myMr2KL4WulMeGbGbQ2jYaLHjzkolV4MkCoovadp471QBxUO/xRJVMOJT
-         bnvV3G+5xv5y/IFof1eERPwhpX1r/zsnDjdSyvvkQ60IOalCzoCa7DPUoEMvuLxfkMbD
-         drNCCoPHnr08PYaOqZfpLyqhUon8BDtnqsQMmgWkCmMvDutAh3V/DkKousVeL+qxl+RB
-         PXLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpPun/9jiRc0wxoWd85lB11dne99klkwR+bl7LklSPD2AovbOMBYPgqilFcmQKquADPgETjzT7PNEZlFXhbIK2d5uyEd71iM4hO9fayEXWTjOltxUi2HT70aR7xSmFFPRFdeqGpeTnYkW2yg==
-X-Gm-Message-State: AOJu0Yw65fgqt/q82oHDMDGZm+z1b8kmUeSz5Y3zPCmWNNciYHOGe3WK
-	519XBX26u47fwPt/8Ya0wQNTaFAkp0PY8QSiEu4dLv8zEJtwUyIMEF50pK4s
-X-Google-Smtp-Source: AGHT+IHnj9sXK5oRYwp2GFRckd6tuQls03MuSd64jLQFj1cYdnZLjOfUUmo8IQ2Emib66b1FAEoXTQ==
-X-Received: by 2002:a17:902:e80d:b0:1fb:52b3:68af with SMTP id d9443c01a7336-1fbb6d03e42mr100607195ad.24.1720772873083;
-        Fri, 12 Jul 2024 01:27:53 -0700 (PDT)
-Received: from bnew-VirtualBox ([2405:201:3020:7812:62ae:9a8b:a942:6b7f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ac0c82sm62040785ad.185.2024.07.12.01.27.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 01:27:52 -0700 (PDT)
-Date: Fri, 12 Jul 2024 13:57:47 +0530
-From: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drivers/clocksource/qcom: Add missing iounmap() on errors
- in msm_dt_timer_init() function.
-Message-ID: <20240712082747.GA182658@bnew-VirtualBox>
+	s=arc-20240116; t=1720772898; c=relaxed/simple;
+	bh=a9m1zjaq4LV77fAPkesH4ladjL21NUFf2xIpkhPo3y4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bwpPJTvDOWyTqdYGoxxd+OP9HwgTz4HM5pbfyiEfiYj1uG3YyZDJ7A+puYOWd38e1k6IaWkCULdAUzqoZ4PVt2w3Ja8pmRc71VV9jY4811pRbXXVpdo7D+CGlPoz7bI6fKf9kbPjMSL29j1XeDo4R+fDjrEWysAzelxZcWzK7Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kZ6ICVUS; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720772887; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=N7aJHwqiqCJi0t4/+kQXsTYMwz9HxmQ/g1e6LfOCtpM=;
+	b=kZ6ICVUS+f3ZsOJJssvp3QCh5u2/eEsGK+fnb9djNl6kNeiO4uxtfawx0Q8FnD8Sf5JhaCnlHu8Rwc1gAZyzXvBvQxftfNNk2jBOS9FaiC5U1ciYGIiSxusA/l39V1dJ9w8fUqAAEQnO0/ckRBOTgtI1d+2W5AB8lr7rODO5vhw=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0WANTBc0_1720772886;
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WANTBc0_1720772886)
+          by smtp.aliyun-inc.com;
+          Fri, 12 Jul 2024 16:28:07 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: daniel@zonque.org
+Cc: haojian.zhuang@gmail.com,
+	robert.jarzmik@free.fr,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] ARM: spitz: Remove duplicated include in spitz.c
+Date: Fri, 12 Jul 2024 16:28:05 +0800
+Message-Id: <20240712082805.98629-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Add the missing iounmap() when clock frequency fails to get read by the
-of_property_read_u32() call, or if the call to msm_timer_init() fails.
+The header files linux/property.h is included twice in spitz.c,
+so one inclusion of each can be removed.
 
-Signed-off-by: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9519
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
 ---
-Changes in v2:
- - Add iounmap() if msm_timer_init() fails
- - Update patch commit message
+ arch/arm/mach-pxa/spitz.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Previous discussion here:
-[1] v1: https://lore.kernel.org/linux-arm-msm/20240710110813.GA15351@bnew-VirtualBox/
----
- drivers/clocksource/timer-qcom.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clocksource/timer-qcom.c b/drivers/clocksource/timer-qcom.c
-index b4afe3a67..eac4c95c6 100644
---- a/drivers/clocksource/timer-qcom.c
-+++ b/drivers/clocksource/timer-qcom.c
-@@ -233,6 +233,7 @@ static int __init msm_dt_timer_init(struct device_node *np)
- 	}
+diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
+index 452bf7aac1fa..97ecd79c9679 100644
+--- a/arch/arm/mach-pxa/spitz.c
++++ b/arch/arm/mach-pxa/spitz.c
+@@ -29,7 +29,6 @@
+ #include <linux/input/matrix_keypad.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/io.h>
+-#include <linux/property.h>
+ #include <linux/reboot.h>
+ #include <linux/memblock.h>
  
- 	if (of_property_read_u32(np, "clock-frequency", &freq)) {
-+		iounmap(cpu0_base);
- 		pr_err("Unknown frequency\n");
- 		return -EINVAL;
- 	}
-@@ -243,7 +244,11 @@ static int __init msm_dt_timer_init(struct device_node *np)
- 	freq /= 4;
- 	writel_relaxed(DGT_CLK_CTL_DIV_4, source_base + DGT_CLK_CTL);
- 
--	return msm_timer_init(freq, 32, irq, !!percpu_offset);
-+	ret = msm_timer_init(freq, 32, irq, !!percpu_offset);
-+	if (ret)
-+		iounmap(cpu0_base);
-+
-+	return ret;
- }
- TIMER_OF_DECLARE(kpss_timer, "qcom,kpss-timer", msm_dt_timer_init);
- TIMER_OF_DECLARE(scss_timer, "qcom,scss-timer", msm_dt_timer_init);
 -- 
-2.25.1
+2.20.1.7.g153144c
 
 
