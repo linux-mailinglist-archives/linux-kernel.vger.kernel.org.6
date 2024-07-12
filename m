@@ -1,158 +1,212 @@
-Return-Path: <linux-kernel+bounces-250029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD5392F32D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:46:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3840192F335
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46B41C21DBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:46:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7CE1C219E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8C48BF0;
-	Fri, 12 Jul 2024 00:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SFBbOVup"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD74F3C28;
+	Fri, 12 Jul 2024 00:51:27 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A97B1FB4;
-	Fri, 12 Jul 2024 00:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7B4441D;
+	Fri, 12 Jul 2024 00:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720745170; cv=none; b=JZ0Zn3ubFr/FrTlCpCPRJphn6qpCXpVfzs4A6428yg9oxwkre6YQYQ+UiCc6dt3PHPnoj+SSbK+vIZ21ov86QYS3mfRwbhm4zjgekeyou5QPOlt5EiGIZsPjQZk1npdTtfkgO0/3cSW/6zl8E/FITvR6Jv+WQhcbvb9T4mFbEuo=
+	t=1720745487; cv=none; b=eEtk6j2/m8TUEo8DpB0YA5mNqOBXqUHEkTP0MK6A/T0w/s8+kMOWGlJ0FemKgXsrizRJbxvqPSSCaP8kxg4uPLWbozk01y8Z5pm9FCFlTvM9jS57ynAd2rNN+maJSbIHKvJvkeeEekYvIpkkhGOltQsQsUi2dnKISOtbIlOCdk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720745170; c=relaxed/simple;
-	bh=Ft+bULkOvKpiRslAqGbnPlImeK31vypsXjE1hv7OKq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bBdHFHGMNNkKafzi/Pns9ovtnhm2ZRkViXw13vO8RHmQqGee1PZDW59HAP19q3L1XAE3NgZSiRqzkzQd7BDGkg+EW1SZKGFMf3qH3MDoh7L67XONXwdulq/4X9jOmWpevr6ij/o86u3v4u1DSiNHxSCFrxL4NtsmM6TgFB3idn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SFBbOVup; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-36796d2e5a9so886188f8f.3;
-        Thu, 11 Jul 2024 17:46:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720745167; x=1721349967; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LCAi0flqUXL4Me7fS5qTgsqEBR3RQCY28CC7AMIpeIo=;
-        b=SFBbOVupiy1N3E+uZYtPsUQbuPUnfZGEmov4Xz5l3u0wVe6Oc53DMVTaUCCgnzvMGZ
-         qTz8DrGwx52pdAdRCORFX/01nnAJZRHrzkysNPAippGZ7wd+cdzJ6p8D7XlhKaGFgfwp
-         7NL3On06HCm0jhPC+678MdcjR44QLfcR2mcLLceAgolgYyyNtnhj4B/KXM9jJrCmh5bX
-         T+3w5rUFVcRqaALaQZo7ivwvRRKXk9LW6WwfheDGaiin7PHMSCkL+KFGd0AFVJu7O4M9
-         WX8OkozdPHDXY22Lmu4dAC8dPz2YIBZoYvfcnCr3dH+zIJSC6i+qwelm6Azxc325tyHv
-         6PqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720745167; x=1721349967;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LCAi0flqUXL4Me7fS5qTgsqEBR3RQCY28CC7AMIpeIo=;
-        b=RatjyKnlT8hyV9QpB0BWS8nCWBWegq48VabDs9JEXXdYGiO+iS0sVXbI/ut2Bx+5/o
-         K3XwHsEESyZLMq0nco9EtuKcAZuqh452V5/KjQ3X31DP7U4LozLoGGWIQUUTS6L5PQGs
-         ugA0CggiML5B9NBB0HWT7ilL2hc3ypEHc5H45ve0vKz1Lwx0bAh/M+9LRTqrc0+QDYWY
-         ozyZOGrzjPiRGgHesTU6TPtly7uuXDGEi8AmXUKAKcQxtk+BFLMur00HHpN5B/YGyo/N
-         YdFYngOVX/39eUJvQ9leHIzww/0OPJNkLC51xHSc9pi2SQmMQMlkDU05/KwLzciHaNca
-         anIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkOTQAPItqQrPCWk6lk8qjG1x+W1k8rQYGioqODN20/gzpKqmQlzAka9vpOjUd67dnSjBmhgerxM9y2pOw81IZXUaPUPkah+TTXHaVUonqUO2vo9tjp4gvNrcNsTK+iGgDRxq4vTU9UA==
-X-Gm-Message-State: AOJu0YyJTXEyN+glB7HkNXutk6t/MAx2plc5v6gs0eRHNMnSgFNO3tBN
-	u0eCjjHgH++/AGwULiJ8Yp0iDCddedEodetO0Cr7UggplGskXsYk
-X-Google-Smtp-Source: AGHT+IGhH5ZObszahXfY8XRZStAXraA1V7saFQ8UWc4MVfpTFFdf0jmqGFShOad5iuHdvMHAzgjdFA==
-X-Received: by 2002:adf:f648:0:b0:367:918e:a106 with SMTP id ffacd0b85a97d-367cead9226mr6301569f8f.59.1720745166809;
-        Thu, 11 Jul 2024 17:46:06 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367f1990dd5sm3118803f8f.105.2024.07.11.17.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 17:46:06 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v2 3/3] leds: leds-lp5569: Enable chip after chip configuration
-Date: Fri, 12 Jul 2024 02:45:54 +0200
-Message-ID: <20240712004556.15601-3-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240712004556.15601-1-ansuelsmth@gmail.com>
-References: <20240712004556.15601-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1720745487; c=relaxed/simple;
+	bh=eIipzsjF9INeb2Be7id72lKKfgyjHErMwuec/jln4qo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cuhk7iX4n+RDNGIAF4n8O1y6H5tTeC4aeJ0+uKVzc504Fcr4gSHWHxd6NwPiWc1HZ6i4I7xWYykDmeE8DS2sXxDjRe6ob/IjXr6lPz3saOIHHsbXAGt2pu5Qc+12ycanStHYqS6ZTjKQ6SkmhgwdxuxrA0wqI4lYAyr5yixgvHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WKtKM4njYz1xtW6;
+	Fri, 12 Jul 2024 08:49:43 +0800 (CST)
+Received: from kwepemf200016.china.huawei.com (unknown [7.202.181.9])
+	by mail.maildlp.com (Postfix) with ESMTPS id 276E61A0188;
+	Fri, 12 Jul 2024 08:51:20 +0800 (CST)
+Received: from [10.108.234.194] (10.108.234.194) by
+ kwepemf200016.china.huawei.com (7.202.181.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 12 Jul 2024 08:51:19 +0800
+Message-ID: <39c8b5c1-8c8c-40de-9b09-b28b24cc270d@huawei.com>
+Date: Fri, 12 Jul 2024 08:51:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] ext4: fix fast commit inode enqueueing during a full
+ journal commit
+To: Andreas Dilger <adilger@dilger.ca>, Wang Jianjian
+	<wangjianjian0@foxmail.com>
+CC: Luis Henriques <luis.henriques@linux.dev>, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+	<linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240711083520.6751-1-luis.henriques@linux.dev>
+ <4f9d5881-11e6-4064-ab69-ca6ef81582b3@huawei.com>
+ <878qy8nem5.fsf@brahms.olymp>
+ <tencent_CF3DC37BEB2026CB2F68408A2B62314E0C08@qq.com>
+ <A90C7898-B704-4B2A-BFE6-4A32050763F0@dilger.ca>
+Content-Language: en-US
+From: "wangjianjian (C)" <wangjianjian3@huawei.com>
+In-Reply-To: <A90C7898-B704-4B2A-BFE6-4A32050763F0@dilger.ca>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemf200016.china.huawei.com (7.202.181.9)
 
-Documentation say that clock internal config needs to be set BEFORE chip
-is enabled. Align code to this and move the CHIP enable after the CHIP
-is configured.
-
-While at it also make use of STATUS reg and check when STARTUP is
-completed instead of sleep for 1-2 ms.
-
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
-Changes v2:
-- Fix compilation warning (u8 instead of int)
-
- drivers/leds/leds-lp5569.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/leds/leds-lp5569.c b/drivers/leds/leds-lp5569.c
-index 2b4f358bc63a..313dbf80ddec 100644
---- a/drivers/leds/leds-lp5569.c
-+++ b/drivers/leds/leds-lp5569.c
-@@ -7,6 +7,7 @@
- #include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/i2c.h>
-+#include <linux/iopoll.h>
- #include <linux/leds.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-@@ -91,6 +92,8 @@
- #define LP5569_ENG2_MUX_ADDR		0xd0
- #define LP5569_ENG3_MUX_ADDR		0xe0
- 
-+#define LP5569_STARTUP_SLEEP		500
-+
- #define LEDn_STATUS_FAULT(n, status)	((status) >> (n) & BIT(0))
- 
- #define LP5569_DEFAULT_CONFIG \
-@@ -168,14 +171,7 @@ static int lp5569_init_program_engine(struct lp55xx_chip *chip)
- static int lp5569_post_init_device(struct lp55xx_chip *chip)
- {
- 	int ret;
--	int val;
--
--	ret = lp55xx_write(chip, LP5569_REG_ENABLE, LP5569_ENABLE);
--	if (ret)
--		return ret;
--
--	/* Chip startup time is 500 us, 1 - 2 ms gives some margin */
--	usleep_range(1000, 2000);
-+	u8 val;
- 
- 	val = LP5569_DEFAULT_CONFIG;
- 	val |= FIELD_PREP(LP5569_CP_MODE_MASK, chip->pdata->charge_pump_mode);
-@@ -198,6 +194,13 @@ static int lp5569_post_init_device(struct lp55xx_chip *chip)
- 			return ret;
- 	}
- 
-+	ret = lp55xx_write(chip, LP5569_REG_ENABLE, LP5569_ENABLE);
-+	if (ret)
-+		return ret;
-+
-+	read_poll_timeout(lp55xx_read, ret, !(val & LP5569_STARTUP_BUSY),
-+			  LP5569_STARTUP_SLEEP, LP5569_STARTUP_SLEEP * 10, false,
-+			  chip, LP5569_REG_STATUS, &val);
- 
- 	return lp5569_init_program_engine(chip);
- }
+On 2024/7/12 3:28, Andreas Dilger wrote:
+> On Jul 11, 2024, at 10:16 AM, Wang Jianjian <wangjianjian0@foxmail.com> wrote:
+>> On 2024/7/11 23:16, Luis Henriques wrote:
+>>> On Thu, Jul 11 2024, wangjianjian (C) wrote:
+>>>
+>>>> On 2024/7/11 16:35, Luis Henriques (SUSE) wrote:
+>>>>> When a full journal commit is on-going, any fast commit has to be enqueued
+>>>>> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
+>>>>> is done only once, i.e. if an inode is already queued in a previous fast
+>>>>> commit entry it won't be enqueued again.  However, if a full commit starts
+>>>>> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
+>>>>> be done into FC_Q_STAGING.  And this is not being done in function
+>>>>> ext4_fc_track_template().
+>>>>> This patch fixes the issue by re-enqueuing an inode into the STAGING queue
+>>>>> during the fast commit clean-up callback if it has a tid (i_sync_tid)
+>>>>> greater than the one being handled.  The STAGING queue will then be spliced
+>>>>> back into MAIN.
+>>>>> This bug was found using fstest generic/047.  This test creates several 32k
+>>>>> bytes files, sync'ing each of them after it's creation, and then shutting
+>>>>> down the filesystem.  Some data may be loss in this operation; for example a
+>>>>> file may have it's size truncated to zero.
+>>>>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>>>>> ---
+>>>>> Hi!
+>>>>> v4 of this patch enqueues the inode into STAGING *only* if the current tid
+>>>>> is non-zero.  It will be zero when doing an fc commit, and this would mean
+>>>>> to always re-enqueue the inode.  This fixes the regressions caught by Ted
+>>>>> in v3 with fstests generic/472 generic/496 generic/643.
+>>>>> Also, since 2nd patch of v3 has already been merged, I've rebased this patch
+>>>>> to be applied on top of it.
+>>>>>    fs/ext4/fast_commit.c | 10 ++++++++++
+>>>>>    1 file changed, 10 insertions(+)
+>>>>> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+>>>>> index 3926a05eceee..facbc8dbbaa2 100644
+>>>>> --- a/fs/ext4/fast_commit.c
+>>>>> +++ b/fs/ext4/fast_commit.c
+>>>>> @@ -1290,6 +1290,16 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
+>>>>>    				       EXT4_STATE_FC_COMMITTING);
+>>>>>    		if (tid_geq(tid, iter->i_sync_tid))
+>>>>>    			ext4_fc_reset_inode(&iter->vfs_inode);
+>>>>> +		} else if (tid) {
+>>>>> +			/*
+>>>>> +			 * If the tid is valid (i.e. non-zero) re-enqueue the
+>>>> one quick question about tid, if one disk is using long time and its tid   get
+>>>> wrapped to 0, is it a valid seq? I don't find code handling this situation.
+>>> Hmm... OK.  So, to answer to your question, the 'tid' is expected to wrap.
+>>> That's why we use:
+>>>
+>>> 	if (tid_geq(tid, iter->i_sync_tid))
+>> Yes, I know this.
+>>>
+>>> instead of:
+>>>
+>>> 	if (tid >= iter->i_sync_tid)
+>>>
+>>> (The second patch in v3 actually fixed a few places where the tid_*()
+>>> helpers weren't being used.)
+>>>
+>>> But your question shows me that my patch is wrong as '0' may actually be a
+>>> valid 'tid' value.
+>>
+>> Actually my question is,  there are some place use '0' to check if a transaction is valid, e.g.
+>>
+>> In ext4_wait_for_tail_page_commit()
+>>
+>> 5218         while (1) {
+>> 5219                 struct folio *folio = filemap_lock_folio(inode->i_mapping,
+>> 5220                                       inode->i_size >> PAGE_SHIFT);
+>> 5221                 if (IS_ERR(folio))
+>> 5222                         return;
+>> 5223                 ret = __ext4_journalled_invalidate_folio(folio, offset,
+>> 5224 folio_size(folio) - offset);
+>> 5225                 folio_unlock(folio);
+>> 5226                 folio_put(folio);
+>> 5227                 if (ret != -EBUSY)
+>> 5228                         return;
+>> 5229                 commit_tid = 0;
+>> 5230                 read_lock(&journal->j_state_lock);
+>> 5231                 if (journal->j_committing_transaction)
+>> 5232                         commit_tid = journal->j_committing_transaction->t_tid;
+>> 5233                 read_unlock(&journal->j_state_lock);
+>> 5234                 if (commit_tid)
+>> 5235                         jbd2_log_wait_commit(journal, commit_tid);
+>> 5236         }
+>> 5237  We only wait commit if tid is not zero.
+>>
+>> And in __jbd2_log_wait_for_space()
+>>
+>> 79                 if (space_left < nblocks) {
+>>   80                         int chkpt = journal->j_checkpoint_transactions != NULL;
+>>   81                         tid_t tid = 0;
+>>   82
+>>   83                         if (journal->j_committing_transaction)
+>>   84                                 tid = journal->j_committing_transaction->t_tid;
+>>   85 spin_unlock(&journal->j_list_lock);
+>>   86 write_unlock(&journal->j_state_lock);
+>>   87                         if (chkpt) {
+>>   88 jbd2_log_do_checkpoint(journal);
+>>   89                         } else if (jbd2_cleanup_journal_tail(journal) == 0) {
+>>   90                                 /* We were able to recover space; yay! */
+>>   91                                 ;
+>>   92                         } else if (tid) {
+>>   93                                 /*
+>>   94                                  * jbd2_journal_commit_transaction() may want
+>>   95                                  * to take the checkpoint_mutex if JBD2_FLUSHED
+>>   96                                  * is set.  So we need to temporarily drop it.
+>>   97                                  */
+>>   98 mutex_unlock(&journal->j_checkpoint_mutex);
+>>   99                                 jbd2_log_wait_commit(journal, tid);
+>> 100 write_lock(&journal->j_state_lock);
+>> 101                                 continue;
+>> We also only wait commit if tid is not zero.
+>>
+>> Does it mean all these have bugs if '0' is a valid 'tid' ?
+>>
+>> But on the other hand, if we don't consider sync and fsync, and default commit interval is 5s,
+>>
+>> time of tid wrap to 0 is nearly 680 years. However, we can run sync/fsync to make tid to increase
+>>
+>> more quickly in real world ?
+> 
+> The simple solution is that "0" is not a valid sequence.  It looks like
+> this is a bug in jbd2_get_transaction() where it is incrementing the TID:
+> 
+>          transaction->t_tid = journal->j_transaction_sequence++;
+> 
+> it should add a check to handle the wrap-around:
+> 
+>          if (unlikely(transaction->t_tid == 0))
+>                  transaction->t_tid = journal->j_transaction_sequence++;
+Yes, I had ever thought about this, just curious why nobody encounter 
+problems here.
+> 
+> Cheers, Andreas
+> 
+> 
+> 
+> 
+> 
 -- 
-2.45.2
+Regards
 
 
