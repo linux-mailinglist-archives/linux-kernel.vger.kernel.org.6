@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-250882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A4692FE1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:04:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AAA592FE1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 230451C21639
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:04:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFB6BB221CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106AE17557B;
-	Fri, 12 Jul 2024 16:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7A3177992;
+	Fri, 12 Jul 2024 16:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XADlh/Ml"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hyVDVXVd"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904A817622F
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AD2176254
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720800249; cv=none; b=h246FTkydE3u8XOY19q/su3xskm7a7RMzh0V7Km3RxkqRNgCQQ+2XXmRrb+wvEVYN/N0Js9CpDQ7a5ukOScMYYChS1zW6wjR4yaYXoxeFydVdgTL7DphcXuhaw1/+c0uhWfdnvuDKQTSdOXrIq4a0q79ILQ8+NstPCBagwX7frE=
+	t=1720800250; cv=none; b=h5tbP6YHTV5HlsJC9wBiQ9ohVQBUnQB1CIxIgwSXjftXT6rKIusEgbvyDTA6PPiNziifIq/R6CNu6bKwI+Y2y98yAPBmx96JFtUqurQL9VNbPqt+RTmiIH0AAvuZxL+NQf0DHlxGa8X3cOdhfcOy2aDtzuqZW8CqBuZxiP7ho2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720800249; c=relaxed/simple;
-	bh=jcbI0ILmzg2rz8ajY9fDpFx5bxGc9dBImltD76qGtXE=;
+	s=arc-20240116; t=1720800250; c=relaxed/simple;
+	bh=mIcfdse/+rlP58eFFA/PEI/fcZHOFfe3jGuPELWLLNY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I506oqGvfnF2AReoVklFUegUgvUgSANul3viLLcJL23cGb8R8KPz7L+Zy0jxCEQxl7HdqXJCf69AMTczQOFxDOczyKM5t5AS0xFnu/Or4s9Ap+Hn4i+2USehxAAmWTtLVddS6+JN5d0rLsuYhzZoSjP56M4Sp+iiWGb46t3SX6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XADlh/Ml; arc=none smtp.client-ip=209.85.210.45
+	 MIME-Version:Content-Type; b=uRu8HNTh1NMkm3Pm+eXn5v/DL0Vxi27a3wwky69vDJYY45fpJqE+UAYb6R/6vNzWZRKRmhz1/htp/PGVTFQmEyrcKA3KpdOmhiavtKyJDDzaMMFpwUOnKpi7HY9pHJxp3AQ114RnGFPdR0spee9LHuWnBYmbEFZM+Out2V6VfDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hyVDVXVd; arc=none smtp.client-ip=209.85.160.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-703ba2477bdso1037463a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:04:07 -0700 (PDT)
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-25e3d8d9f70so1209235fac.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:04:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720800247; x=1721405047; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=60eUVwKVeZ7BrLO6pxv9nbYIZ9oGCgCB8H4hO/TeI/g=;
-        b=XADlh/MlstSnuIy9Po0NBK6gB/5MwLA2JBwujo5/dxAw6HK0PCWcxbpCuQbYr9lAi5
-         0H33dyyCBQ2Sh4TlCY5zASlVDiQSwtO0/Z63h5e0evVqQMXRuk0voySi52RFC6M/fjv4
-         Yl+tMyWXs36VMO3BlJRCfGiyIcbVRC99BQieuhqLE49y7jzQ20VtPMVN9cUigcnV9/6F
-         2mgqm9Mz7ZY3BtRzObZa2u+5Sjj47f/PzIk2vz4CQ9TLsJvJRoB9LiPgYGNCcKbd8s3U
-         iuS9s/N/hZtvLJVMexCHFs2cSu48EcWtl3u6ximw+xehO740PWhBn6RK5lnhZ8FoOwLe
-         iufQ==
+        bh=z+LRn09+VizRf0JvYt3kqJDUqFvXhYNVL1CgwtRvMbM=;
+        b=hyVDVXVdn8zVBcBwnsijd87+hvKjKmk9DpM8yFsXqEv2ffQPrY5ait+aLtvhjdJ6zB
+         0sMQWmrEJP6Rsb0XDA8BLosrNpuIkU/zMl+lVv8itTpDN2G4z3/qsoZBcnX9ybaZoefy
+         J/vCkUm13mnVOg95cnwQr/tIpMfOuQ9fHsZ0lWNgQn0V+PK0VmVzZabzdvGy0X1uohl2
+         LVx0h0JwnEi63kjGr+5Eu0+MMxvnHbGrxe8wivdGP0H7i5bCsqwONGUrLaqUNR3kVCsS
+         EibPBag1O2ggWfdW2NrZyblueo7QnNCzG+s3d1hCeI5Zo8yowJcltiDxHptKiFgTHJlz
+         zDtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1720800247; x=1721405047;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=60eUVwKVeZ7BrLO6pxv9nbYIZ9oGCgCB8H4hO/TeI/g=;
-        b=GO9sby822n3/WYkZtaleN6nwW0froQN96sDJVhOxutnwNdxrTLXuj1ir3qsRc+fbmy
-         LhiApPEy/Xqs6TtYUMhHCxg0TZIExtfo6UkA5J0ooFBfkHkHMT2ICPT/0MzFUFQIWLyQ
-         He5fFUSQc2b1LQBkOpOsnlCUqXMLmhC/pmKKm8Rb9IO/Hxc6k8w7HG4gYHvuIHt27f1j
-         kuseuZCsERsu12xoHZE2SznHg37a+wvMQrd+GgaHgkcYSTgoU06pv0aBg4Ob7p8N82oT
-         viCPfIBYbClMG3IiEZRjzCVOl77BvckyKvgQWLjxEcIcTj94JYg3chsqs+yaZDHIAG16
-         CcIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlahOXhBMoxYpYPNZdoxcgA2b4tTpr8sJTQMU9OoYUOFEP7IwfDktvTHREm6s2mb7b+50AjupQqieqa8Y+/NVNnObhoyZYIkmF5ynJ
-X-Gm-Message-State: AOJu0YxdRo/G9Q9TuJF9licF1Pv4xXxF90Od320FEs+gnleaI6JqH1JD
-	0CvEGblEelPMdN6P06pEHq2iR9PHDgkwrLRs4uQTT+3bfpGt7hlAbNmCbOAqTPzrrqkQKSpRX8X
-	A
-X-Google-Smtp-Source: AGHT+IEuQNhkpjMbmrtQ5ogRBVhUZBpJ4I4zgpDiKAPbDUpxqOcQNOVerUGUqq5HZO5btAfIiNVRjw==
-X-Received: by 2002:a9d:6a56:0:b0:704:45bb:267f with SMTP id 46e09a7af769-70445bb3223mr13140566a34.5.1720800246613;
-        Fri, 12 Jul 2024 09:04:06 -0700 (PDT)
+        bh=z+LRn09+VizRf0JvYt3kqJDUqFvXhYNVL1CgwtRvMbM=;
+        b=ai5uzHZxoo7mvDZEYuR9VdThEPElBBteQ9Fm9VZ53jhjUgo/P8jElwRTa3s1jia2o2
+         9rKkGk5AIUg/av76HlWxdO7QMO25arkUThiHUXbPpx4hmRTFGTMdmckndu7T4K5tPjyQ
+         rmHc4UF9FvYOZq7i3bH03X5lv7li7Vtwoj/M6ZmZRf7miKPLACQgUIb24Ht+WJV5FNZY
+         5YZ30jyRYqTDdnakGhqKR2z4ghkGrvl6HdsafHZXfjVfnHM0Msf26DKI/fWEgdFCKoJx
+         eynF/TyedM/gfW88USce+4YcyTsjYgERY/ki/A2Sw76ktzxM92kOrPK9q7XcA+mzgz0o
+         YUYA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+bJpUT/J8xNMs7qH49w1D8WSeOz0Ba+Gbt9aLX/8+4w5p7I/1pyodOBb6eh+X6qWDe1Qd6gNW4kI35PL9GDv41QYtjMXNGKltT1J/
+X-Gm-Message-State: AOJu0Yyzj7KHvakct43mqQe6johlrKkZsBh5MzTpAwlaaWW5i/lah/K0
+	y5JQD1CcIj4KjUmQHLDmz71oxer1o1vgiM4Yg/sXOqUjMqsSmrfLxjRf2tDVZdo=
+X-Google-Smtp-Source: AGHT+IFJqQ4jVYwcPc+YyB6lTtaO4ZRCyIF+arWnpBOToBO1d5MfWdt5nWxhs6AalNLw9FExThA36Q==
+X-Received: by 2002:a05:6870:c110:b0:25e:1f67:b3bb with SMTP id 586e51a60fabf-25eae784d0cmr10096191fac.10.1720800247429;
+        Fri, 12 Jul 2024 09:04:07 -0700 (PDT)
 Received: from localhost.localdomain (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70374f78d35sm1615131a34.23.2024.07.12.09.04.05
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70374f78d35sm1615131a34.23.2024.07.12.09.04.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 09:04:06 -0700 (PDT)
+        Fri, 12 Jul 2024 09:04:07 -0700 (PDT)
 From: David Lechner <dlechner@baylibre.com>
 To: Jonathan Cameron <jic23@kernel.org>,
 	Marius Cristea <marius.cristea@microchip.com>,
@@ -77,9 +76,9 @@ Cc: David Lechner <dlechner@baylibre.com>,
 	Mark Brown <broonie@kernel.org>,
 	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] iio: dac: mcp4922: drop remove() callback
-Date: Fri, 12 Jul 2024 11:03:55 -0500
-Message-ID: <20240712-iio-regulator-refactor-round-3-v1-4-835017bae43d@baylibre.com>
+Subject: [PATCH 5/6] iio: adc: mcp3564: use devm_regulator_get_enable_read_voltage()
+Date: Fri, 12 Jul 2024 11:03:56 -0500
+Message-ID: <20240712-iio-regulator-refactor-round-3-v1-5-835017bae43d@baylibre.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240712-iio-regulator-refactor-round-3-v1-0-835017bae43d@baylibre.com>
 References: <20240712-iio-regulator-refactor-round-3-v1-0-835017bae43d@baylibre.com>
@@ -93,62 +92,162 @@ Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.14.0
 Content-Transfer-Encoding: 8bit
 
-By using devm_iio_device_register(), we can drop the remove() callback
-in the mcp4922 driver. We can also remove spi_set_drvdata() since there
-are no more callers of spi_get_drvdata(). Also use dev_err_probe()
-while we are at it.
+This makes use of the new devm_regulator_get_enable_read_voltage()
+helper function to reduce boilerplate code in the MCP3564 ADC driver.
+
+The error message is slightly changed since there are fewer error
+return paths.
+
+Setting adc->vref_mv is consolidated into a single place to make the
+logic easier to follow.
+
+A use_auto_zeroing_ref_attr local variable is added to make it more
+obvious what the difference between the two iio info structures is.
+
+The return value of the "Unknown Vref" dev_err_probe() is hard-coded to
+-ENODEV instead of ret since it was getting a bit far from where ret
+was set and logically that is the only value it could have.
 
 Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- drivers/iio/dac/mcp4922.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+ drivers/iio/adc/mcp3564.c | 54 ++++++++++++++---------------------------------
+ 1 file changed, 16 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/iio/dac/mcp4922.c b/drivers/iio/dac/mcp4922.c
-index f89af70fa5af..26aa99059813 100644
---- a/drivers/iio/dac/mcp4922.c
-+++ b/drivers/iio/dac/mcp4922.c
-@@ -138,7 +138,6 @@ static int mcp4922_probe(struct spi_device *spi)
- 
- 	state->vref_mv = ret / 1000;
- 
--	spi_set_drvdata(spi, indio_dev);
- 	id = spi_get_device_id(spi);
- 	indio_dev->info = &mcp4922_info;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
-@@ -149,22 +148,13 @@ static int mcp4922_probe(struct spi_device *spi)
- 		indio_dev->num_channels = MCP4922_NUM_CHANNELS;
- 	indio_dev->name = id->name;
- 
--	ret = iio_device_register(indio_dev);
--	if (ret) {
--		dev_err(&spi->dev, "Failed to register iio device: %d\n",
--				ret);
--		return ret;
--	}
-+	ret = devm_iio_device_register(&spi->dev, indio_dev);
-+	if (ret)
-+		return dev_err_probe(&spi->dev, ret, "Failed to register iio device\n");
- 
+diff --git a/drivers/iio/adc/mcp3564.c b/drivers/iio/adc/mcp3564.c
+index d83bed0e63d2..34903b7b3cc4 100644
+--- a/drivers/iio/adc/mcp3564.c
++++ b/drivers/iio/adc/mcp3564.c
+@@ -349,8 +349,6 @@ struct mcp3564_chip_info {
+  * struct mcp3564_state - working data for a ADC device
+  * @chip_info:		chip specific data
+  * @spi:		SPI device structure
+- * @vref:		the regulator device used as a voltage reference in case
+- *			external voltage reference is used
+  * @vref_mv:		voltage reference value in miliVolts
+  * @lock:		synchronize access to driver's state members
+  * @dev_addr:		hardware device address
+@@ -369,7 +367,6 @@ struct mcp3564_chip_info {
+ struct mcp3564_state {
+ 	const struct mcp3564_chip_info	*chip_info;
+ 	struct spi_device		*spi;
+-	struct regulator		*vref;
+ 	unsigned short			vref_mv;
+ 	struct mutex			lock; /* Synchronize access to driver's state members */
+ 	u8				dev_addr;
+@@ -1085,11 +1082,6 @@ static int mcp3564_parse_fw_children(struct iio_dev *indio_dev)
  	return 0;
  }
  
--static void mcp4922_remove(struct spi_device *spi)
+-static void mcp3564_disable_reg(void *reg)
 -{
--	struct iio_dev *indio_dev = spi_get_drvdata(spi);
--
--	iio_device_unregister(indio_dev);
+-	regulator_disable(reg);
 -}
+-
+ static void mcp3564_fill_scale_tbls(struct mcp3564_state *adc)
+ {
+ 	unsigned int pow = adc->chip_info->resolution - 1;
+@@ -1110,7 +1102,7 @@ static void mcp3564_fill_scale_tbls(struct mcp3564_state *adc)
+ 	}
+ }
  
- static const struct spi_device_id mcp4922_id[] = {
- 	{"mcp4902", ID_MCP4902},
-@@ -180,7 +170,6 @@ static struct spi_driver mcp4922_driver = {
- 		   .name = "mcp4922",
- 		   },
- 	.probe = mcp4922_probe,
--	.remove = mcp4922_remove,
- 	.id_table = mcp4922_id,
- };
- module_spi_driver(mcp4922_driver);
+-static int mcp3564_config(struct iio_dev *indio_dev)
++static int mcp3564_config(struct iio_dev *indio_dev, bool *use_auto_zeroing_ref_attr)
+ {
+ 	struct mcp3564_state *adc = iio_priv(indio_dev);
+ 	struct device *dev = &adc->spi->dev;
+@@ -1119,6 +1111,7 @@ static int mcp3564_config(struct iio_dev *indio_dev)
+ 	enum mcp3564_ids ids;
+ 	int ret = 0;
+ 	unsigned int tmp = 0x01;
++	bool internal_vref;
+ 	bool err = false;
+ 
+ 	/*
+@@ -1218,36 +1211,22 @@ static int mcp3564_config(struct iio_dev *indio_dev)
+ 
+ 	dev_dbg(dev, "Found %s chip\n", adc->chip_info->name);
+ 
+-	adc->vref = devm_regulator_get_optional(dev, "vref");
+-	if (IS_ERR(adc->vref)) {
+-		if (PTR_ERR(adc->vref) != -ENODEV)
+-			return dev_err_probe(dev, PTR_ERR(adc->vref),
+-					     "failed to get regulator\n");
++	ret = devm_regulator_get_enable_read_voltage(dev, "vref");
++	if (ret < 0 && ret != -ENODEV)
++		return dev_err_probe(dev, ret, "Failed to get vref voltage\n");
++
++	internal_vref = ret == -ENODEV;
++	adc->vref_mv = internal_vref ? MCP3564R_INT_VREF_MV : ret / MILLI;
++	*use_auto_zeroing_ref_attr = internal_vref;
+ 
++	if (internal_vref) {
+ 		/* Check if chip has internal vref */
+ 		if (!adc->have_vref)
+-			return dev_err_probe(dev, PTR_ERR(adc->vref),
+-					     "Unknown Vref\n");
+-		adc->vref = NULL;
++			return dev_err_probe(dev, -ENODEV, "Unknown Vref\n");
++
+ 		dev_dbg(dev, "%s: Using internal Vref\n", __func__);
+ 	} else {
+-		ret = regulator_enable(adc->vref);
+-		if (ret)
+-			return ret;
+-
+-		ret = devm_add_action_or_reset(dev, mcp3564_disable_reg,
+-					       adc->vref);
+-		if (ret)
+-			return ret;
+-
+ 		dev_dbg(dev, "%s: Using External Vref\n", __func__);
+-
+-		ret = regulator_get_voltage(adc->vref);
+-		if (ret < 0)
+-			return dev_err_probe(dev, ret,
+-					     "Failed to read vref regulator\n");
+-
+-		adc->vref_mv = ret / MILLI;
+ 	}
+ 
+ 	ret = mcp3564_parse_fw_children(indio_dev);
+@@ -1350,10 +1329,8 @@ static int mcp3564_config(struct iio_dev *indio_dev)
+ 	tmp_reg |= FIELD_PREP(MCP3564_CONFIG0_CLK_SEL_MASK, MCP3564_CONFIG0_USE_INT_CLK);
+ 	tmp_reg |= MCP3456_CONFIG0_BIT6_DEFAULT;
+ 
+-	if (!adc->vref) {
++	if (internal_vref)
+ 		tmp_reg |= FIELD_PREP(MCP3456_CONFIG0_VREF_MASK, 1);
+-		adc->vref_mv = MCP3564R_INT_VREF_MV;
+-	}
+ 
+ 	ret = mcp3564_write_8bits(adc, MCP3564_CONFIG0_REG, tmp_reg);
+ 
+@@ -1412,6 +1389,7 @@ static int mcp3564_probe(struct spi_device *spi)
+ 	int ret;
+ 	struct iio_dev *indio_dev;
+ 	struct mcp3564_state *adc;
++	bool use_auto_zeroing_ref_attr;
+ 
+ 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*adc));
+ 	if (!indio_dev)
+@@ -1428,7 +1406,7 @@ static int mcp3564_probe(struct spi_device *spi)
+ 	 * enable/disable certain channels
+ 	 * change the sampling rate to the requested value
+ 	 */
+-	ret = mcp3564_config(indio_dev);
++	ret = mcp3564_config(indio_dev, &use_auto_zeroing_ref_attr);
+ 	if (ret)
+ 		return dev_err_probe(&spi->dev, ret,
+ 				     "Can't configure MCP356X device\n");
+@@ -1440,7 +1418,7 @@ static int mcp3564_probe(struct spi_device *spi)
+ 	indio_dev->name = adc->chip_info->name;
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
+ 
+-	if (!adc->vref)
++	if (use_auto_zeroing_ref_attr)
+ 		indio_dev->info = &mcp3564r_info;
+ 	else
+ 		indio_dev->info = &mcp3564_info;
 
 -- 
 2.43.0
