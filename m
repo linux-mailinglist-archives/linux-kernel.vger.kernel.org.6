@@ -1,107 +1,167 @@
-Return-Path: <linux-kernel+bounces-250071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EDF92F3EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:08:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C44692F3F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A3C01C223A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:08:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E9511C220B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25098BF0;
-	Fri, 12 Jul 2024 02:08:28 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5FDBE46;
+	Fri, 12 Jul 2024 02:08:45 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AC14C6C
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F39DBA49
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720750108; cv=none; b=PzLSr0Tq+Z5aChEAsgncJRW3eB01k8cbFGdjIlyZYIfDXw/Mjz4/U6cFPJch6VK1IgaoJv2WklUADplQtOGb8j9HqX9q/QQsWzFCcv+vY3qxPenHiW5DY///3YIpxUzfDv7ZkgRpF1yPY86xocOcRKZSdWcWAEi25H7J1WY+z88=
+	t=1720750125; cv=none; b=oidsEUjO43H3L12Wvl8k48ye/vTohPoDDAsHxTf1DlCP8hzGmIinewlh0N0XMoqVbTxWpqqidfufEPPsVo4M0ORli3dN89S20z8bJWOIouwkj/jVCt7FY6FCcRx08zwOarNUhbe+vGK0XMsqht6bWoIkqcvW2Q7WBdVxS1JMo1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720750108; c=relaxed/simple;
-	bh=Z8lHIf2L5e/WXNnk/CJQuyhgt0SQMV6BADSjTn5qGTY=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eH9d8bhLY1ZA54H3mBF4PB8+BPkr/XALv0t8bnS2BDxoQ0xpDowCwOraPVBHRZQyUJ6sq68vW6EcRTE9RQLMszUuElivGgQbZJwwvWdWeZkMwQrcJj8SiwAG6/1AN4dnE99FwwKtaYKtYNNsnNV3B8stNA4ncg5BVheR407jaZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	s=arc-20240116; t=1720750125; c=relaxed/simple;
+	bh=tNCNQS7Dw7J2AA0Cc6RnEjSA39CrtltyEjxuzAgPbO8=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=FJ++mf0IqbLQM1VKsN6Rac8/za05fPrYRik6JSQ6quaLN40Wh8Nm3IESVJEqax2aSCa5Ua2SCk/M+FtSzL537iviYimpVcMGC/IoV8zIfSGMar5a7RR8tby8Yt2BtamC4+5uygEGxA66y3eJ9f6sRq+RklNpKVg8e3wvv9Miejo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WKvyn0Zd3zxWDM;
-	Fri, 12 Jul 2024 10:03:45 +0800 (CST)
-Received: from dggpemd200001.china.huawei.com (unknown [7.185.36.224])
-	by mail.maildlp.com (Postfix) with ESMTPS id 15A37140413;
-	Fri, 12 Jul 2024 10:08:22 +0800 (CST)
-Received: from [10.174.178.120] (10.174.178.120) by
- dggpemd200001.china.huawei.com (7.185.36.224) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WKvzR4DFrz1X4k0;
+	Fri, 12 Jul 2024 10:04:19 +0800 (CST)
+Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
+	by mail.maildlp.com (Postfix) with ESMTPS id C6C04140337;
+	Fri, 12 Jul 2024 10:08:33 +0800 (CST)
+Received: from [10.173.127.72] (10.173.127.72) by
+ kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 12 Jul 2024 10:08:21 +0800
-Message-ID: <e66bb4c1-f1bc-4aeb-a413-fcdbb327e73f@huawei.com>
-Date: Fri, 12 Jul 2024 10:08:21 +0800
+ 15.2.1544.11; Fri, 12 Jul 2024 10:08:33 +0800
+Subject: Re: [PATCH] mm/hugetlb: fix possible recursive locking detected
+ warning
+To: Muchun Song <muchun.song@linux.dev>
+CC: Andrew Morton <akpm@linux-foundation.org>, Linux-MM <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>
+References: <20240711071001.3475337-1-linmiaohe@huawei.com>
+ <4A12CD33-A3C4-4328-ACB5-CF08C8202DC9@linux.dev>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <ad3dcd0c-4d99-54ae-1f48-77dbbe4a7f44@huawei.com>
+Date: Fri, 12 Jul 2024 10:08:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <mawupeng1@huawei.com>, <kasan-dev@googlegroups.com>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [Question] race during kasan_populate_vmalloc_pte
-To: <akpm@linux-foundation.org>, <ryabinin.a.a@gmail.com>,
-	<glider@google.com>, <andreyknvl@gmail.com>, <dvyukov@google.com>,
-	<vincenzo.frascino@arm.com>
-References: <20240618064022.1990814-1-mawupeng1@huawei.com>
+In-Reply-To: <4A12CD33-A3C4-4328-ACB5-CF08C8202DC9@linux.dev>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-From: mawupeng <mawupeng1@huawei.com>
-In-Reply-To: <20240618064022.1990814-1-mawupeng1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemd200001.china.huawei.com (7.185.36.224)
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd200019.china.huawei.com (7.221.188.193)
 
-Hi maintainers,
+On 2024/7/11 16:27, Muchun Song wrote:
+> 
+> 
+>> On Jul 11, 2024, at 15:10, Miaohe Lin <linmiaohe@huawei.com> wrote:
+>>
+>> When tries to demote 1G hugetlb folios, a lockdep warning is observed:
+>>
+>> ============================================
+>> WARNING: possible recursive locking detected
+>> 6.10.0-rc6-00452-ga4d0275fa660-dirty #79 Not tainted
+>> --------------------------------------------
+>> bash/710 is trying to acquire lock:
+>> ffffffff8f0a7850 (&h->resize_lock){+.+.}-{3:3}, at: demote_store+0x244/0x460
+>>
+>> but task is already holding lock:
+>> ffffffff8f0a6f48 (&h->resize_lock){+.+.}-{3:3}, at: demote_store+0xae/0x460
+>>
+>> other info that might help us debug this:
+>> Possible unsafe locking scenario:
+>>
+>>       CPU0
+>>       ----
+>>  lock(&h->resize_lock);
+>>  lock(&h->resize_lock);
+>>
+>> *** DEADLOCK ***
+>>
+>> May be due to missing lock nesting notation
+>>
+>> 4 locks held by bash/710:
+>> #0: ffff8f118439c3f0 (sb_writers#5){.+.+}-{0:0}, at: ksys_write+0x64/0xe0
+>> #1: ffff8f11893b9e88 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_fop_write_iter+0xf8/0x1d0
+>> #2: ffff8f1183dc4428 (kn->active#98){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x100/0x1d0
+>> #3: ffffffff8f0a6f48 (&h->resize_lock){+.+.}-{3:3}, at: demote_store+0xae/0x460
+>>
+>> stack backtrace:
+>> CPU: 3 PID: 710 Comm: bash Not tainted 6.10.0-rc6-00452-ga4d0275fa660-dirty #79
+>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+>> Call Trace:
+>> <TASK>
+>> dump_stack_lvl+0x68/0xa0
+>> __lock_acquire+0x10f2/0x1ca0
+>> lock_acquire+0xbe/0x2d0
+>> __mutex_lock+0x6d/0x400
+>> demote_store+0x244/0x460
+>> kernfs_fop_write_iter+0x12c/0x1d0
+>> vfs_write+0x380/0x540
+>> ksys_write+0x64/0xe0
+>> do_syscall_64+0xb9/0x1d0
+>> entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7fa61db14887
+>> RSP: 002b:00007ffc56c48358 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+>> RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007fa61db14887
+>> RDX: 0000000000000002 RSI: 000055a030050220 RDI: 0000000000000001
+>> RBP: 000055a030050220 R08: 00007fa61dbd1460 R09: 000000007fffffff
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+>> R13: 00007fa61dc1b780 R14: 00007fa61dc17600 R15: 00007fa61dc16a00
+>> </TASK>
+>>
+>> Lockdep considers this an AA deadlock because the different resize_lock
+>> mutexes reside in the same lockdep class, but this is a false positive.
+>> Place them in distinct classes to avoid these warnings.
+>>
+>> Fixes: 8531fc6f52f5 ("hugetlb: add hugetlb demote page support")
+>> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+>> ---
+>> mm/hugetlb.c | 3 +++
+>> 1 file changed, 3 insertions(+)
+>>
+>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>> index 45fd3bc75332..2004e6d3f7ca 100644
+>> --- a/mm/hugetlb.c
+>> +++ b/mm/hugetlb.c
+>> @@ -4659,6 +4659,8 @@ bool __init __attribute((weak)) arch_hugetlb_valid_size(unsigned long size)
+>> return size == HPAGE_SIZE;
+>> }
+>>
+>> +static struct lock_class_key hugetlb_resize_keys[HUGE_MAX_HSTATE];
+> 
+> It's better to let this into "struct hstate".
+> 
+>> +
+>> void __init hugetlb_add_hstate(unsigned int order)
+>> {
+>> 	struct hstate *h;
+>> @@ -4671,6 +4673,7 @@ void __init hugetlb_add_hstate(unsigned int order)
+>> 	BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
+>> 	h = &hstates[hugetlb_max_hstate++];
+>> 	mutex_init(&h->resize_lock);
+> 
+> mutex_init() already declares a lock_class_key structure by itself, in
+> order to avoid this, you should use __mutex_init().
 
-kingly ping.
+While searching the code, I find we can do this in two ways:
+1.__mutex_init with separate lock_class_key
+2.mutex_init + lockdep_set_class
 
-On 2024/6/18 14:40, Wupeng Ma wrote:
-> Hi maintainers,
-> 
-> During our testing, we discovered that kasan vmalloc may trigger a false
-> vmalloc-out-of-bounds warning due to a race between kasan_populate_vmalloc_pte
-> and kasan_depopulate_vmalloc_pte.
-> 
-> cpu0				cpu1				cpu2
->   kasan_populate_vmalloc_pte	kasan_populate_vmalloc_pte	kasan_depopulate_vmalloc_pte
-> 								spin_unlock(&init_mm.page_table_lock);
->   pte_none(ptep_get(ptep))
->   // pte is valid here, return here
-> 								pte_clear(&init_mm, addr, ptep);
-> 				pte_none(ptep_get(ptep))
-> 				// pte is none here try alloc new pages
-> 								spin_lock(&init_mm.page_table_lock);
-> kasan_poison
-> // memset kasan shadow region to 0
-> 				page = __get_free_page(GFP_KERNEL);
-> 				__memset((void *)page, KASAN_VMALLOC_INVALID, PAGE_SIZE);
-> 				pte = pfn_pte(PFN_DOWN(__pa(page)), PAGE_KERNEL);
-> 				spin_lock(&init_mm.page_table_lock);
-> 				set_pte_at(&init_mm, addr, ptep, pte);
-> 				spin_unlock(&init_mm.page_table_lock);
-> 
-> 
-> Since kasan shadow memory in cpu0 is set to 0xf0 which means it is not
-> initialized after the race in cpu1. Consequently, a false vmalloc-out-of-bounds
-> warning is triggered when a user attempts to access this memory region.
-> 
-> The root cause of this problem is the pte valid check at the start of
-> kasan_populate_vmalloc_pte should be removed since it is not protected by
-> page_table_lock. However, this may result in severe performance degradation
-> since pages will be frequently allocated and freed.
-> 
-> Is there have any thoughts on how to solve this issue?
-> 
-> Thank you.
+These are all fine to me. And I will use __mutex_init and move hugetlb_resize_keys
+into "struct hstate" as you suggested.
+Thanks.
+.
 
