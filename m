@@ -1,134 +1,230 @@
-Return-Path: <linux-kernel+bounces-250853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BEE192FDA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:31:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1824092FDA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC02F1C236E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:31:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C5F1B22B63
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C011741EB;
-	Fri, 12 Jul 2024 15:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655FC1741C8;
+	Fri, 12 Jul 2024 15:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOJII4t+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="iQJWzRTn"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC6F5256;
-	Fri, 12 Jul 2024 15:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBFF5256;
+	Fri, 12 Jul 2024 15:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720798305; cv=none; b=CAFc3Ti6MWodqjzlootOJU8Z5ybGffOGj99Uh2Y4PrMkQUsUqJLmVVK4TEDOdIyZlFbQkfPdoc9ybohF67WEc7dA43TBNZvVlAIpP8Vr01tsqcIPmdh8nbYskXDyctjMLkUQ3RJyn2PnDfrnkQa4+lywxUv6tvmVHmYN6gNN4rU=
+	t=1720798355; cv=none; b=uiSl5sJNIhgsGvUG5fBKwHgT6N9mf2iTScci8co03KOy4mKmUWT5SpJ/XVcvxsoxqfwHN+3y9eJcIHFRwl/BYmtJf76xE8aEG/eh6qsFNCJNpXhPGGa8UPfQ8pp0Ef49i8CrcPfCyiStGHiGui2TeoBpHbSFfSNSiRP6JBHzvik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720798305; c=relaxed/simple;
-	bh=LRIkw/BD/2bNKPTenaVDfImH7SQgH4W77dv2MrBSNeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DaX1DycmdwjTUNLleZqB9e9jZWNcmnZn83pMn3Cra/t6BMTF0uk8rvKKtkfIGknCnpCWmv/nSiNy77OPZ1Jma/GkPluKWz0f68JmskveXNq+1XW7qyyI7YVMFw+gMtc/h7+shYEjkYNajg48kZxkXetIJAOSY8n0JkQzaVcnFLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOJII4t+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2705DC32782;
-	Fri, 12 Jul 2024 15:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720798304;
-	bh=LRIkw/BD/2bNKPTenaVDfImH7SQgH4W77dv2MrBSNeA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pOJII4t+nzeUYk/FDfYFaC8VCyuM8gYvhGilJncEL8JtJkWXM6myojtFCMEP3Hb8n
-	 Kc/QU2x200MvaCRwdHHIb8atLTYMulbj376mWD/yCkEiaSTgY43ZRlHUrU+10WRNC9
-	 rTx2RLItwbOhPLessYmbRBFlrTAX+5dZfVLcE30wBRRCpge8DPVrwqEmQiXRTU3U2y
-	 wcUM6KG7DckJzr5/TbAfI7ELhT8MvfZpAdYBhAz5o/oKtJfURDCvbHEEfauIpIGQVd
-	 qg5DULx27TrtvnqHceCFoaJuExYKFyo2bgA3Ypm6M0EBcQhnrMFTtz/zZw0AieFyjg
-	 LhwXuHo8O1KSQ==
-Date: Fri, 12 Jul 2024 16:31:38 +0100
-From: Will Deacon <will@kernel.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
-	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 2/5] iommu: Resolve fwspec ops automatically
-Message-ID: <20240712153137.GC16474@willie-the-truck>
-References: <cover.1719919669.git.robin.murphy@arm.com>
- <0e2727adeb8cd73274425322f2f793561bdc927e.1719919669.git.robin.murphy@arm.com>
- <0eec5f84-6b39-43ba-ab2f-914688a5cf45@nvidia.com>
- <01c05fb2-16ce-450c-befb-8a92ac2a8af9@arm.com>
- <ee24cb5f-d170-41d3-9928-5507b8ab22a7@nvidia.com>
- <82624cf6-98ad-47df-8dcd-368117600805@arm.com>
+	s=arc-20240116; t=1720798355; c=relaxed/simple;
+	bh=AgqkuDLmqvlAMs/vYiBU4mSmTAYDOgKQnXRDiMrp7nc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NWLMcrKgney3KWyJ+aN8hInvHIVkhB8hepcSIPBPkffhpeamVUOjCinCT6D59Nq4ryiT//Y6nMF3NuAJU+jymfoACf8S1pO/6kId2z9gJsNKzrC6ul7s2Zw9ORa23gWZyFSokfFFGlpd31BBTP3QLQE37e5AHuA9RYuMNvSwZsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=iQJWzRTn; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1720798351;
+	bh=AgqkuDLmqvlAMs/vYiBU4mSmTAYDOgKQnXRDiMrp7nc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iQJWzRTn4ZXEkzHAfk4OVmsY1HZ0jbzmnUSp3O/f38r8v5duFftiUJJ/0MjxXhE8r
+	 evG1ecc6dpiT7WeASVQuLkO4jqwiMEbhghIml6I8cfx0ZN0KJijyVAZfUf/bxH7xTt
+	 +TyZbAgtVULTrzZ9D8GbHPe7gCN17tsCj4IdBClV+ZZom+gKmLCc4wBbvXDi/eeakD
+	 wa8bQ70db/PeT5WWAEOmZwaRBLt1POLSlTugdZCWJGZ52ZFafno0cZ8ZU+4RrspXyk
+	 qkn51nhmiwVjX5BBYHgqfm6v+ovVKri/PJ8rbJCKCig1v4tUP7r5/kVoRBhAH3JKWj
+	 nZb+K9TflqxTQ==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4WLFvz0QXQz19dM;
+	Fri, 12 Jul 2024 11:32:31 -0400 (EDT)
+Message-ID: <01c3e7de-0c1a-45e0-aed6-c11e9fa763df@efficios.com>
+Date: Fri, 12 Jul 2024 11:32:30 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <82624cf6-98ad-47df-8dcd-368117600805@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 0/5] Paravirt Scheduling (Dynamic vcpu priority
+ management)
+To: Sean Christopherson <seanjc@google.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>,
+ Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+ Ben Segall <bsegall@google.com>, Borislav Petkov <bp@alien8.de>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, "H . Peter Anvin"
+ <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>,
+ Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Suleiman Souhlal
+ <suleiman@google.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+ himadrics@inria.fr, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, graf@amazon.com, drjunior.org@gmail.com
+References: <20240403140116.3002809-1-vineeth@bitbyteword.org>
+ <ZjJf27yn-vkdB32X@google.com>
+ <CAO7JXPgbtFJO6fMdGv3jf=DfiCNzcfi4Hgfn3hfotWH=FuD3zQ@mail.gmail.com>
+ <CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com>
+ <66912820.050a0220.15d64.10f5@mx.google.com>
+ <19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
+ <ZpFCKrRKluacu58x@google.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <ZpFCKrRKluacu58x@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 12, 2024 at 04:28:37PM +0100, Robin Murphy wrote:
-> On 12/07/2024 4:24 pm, Jon Hunter wrote:
-> > 
-> > On 12/07/2024 12:48, Robin Murphy wrote:
-> > 
-> > ...
-> > 
-> > > > I am seeing some failures on -next with some of our devices.
-> > > > Bisect is pointing to this commit. Looks like the host1x device
-> > > > is no longer probing successfully. I see the following ...
-> > > > 
-> > > >   tegra-host1x 50000000.host1x: failed to initialize fwspec: -517
-> > > >   nouveau 57000000.gpu: failed to initialize fwspec: -517
-> > > > 
-> > > > The probe seems to be deferred forever. The above is seen on
-> > > > Tegra210 but Tegra30 and Tegra194 are also having the same
-> > > > problem. Interestingly it is not all devices and so make me
-> > > > wonder if we are missing something on these devices? Let me know
-> > > > if you have any thoughts.
-> > > 
-> > > Ugh, tegra-smmu has been doing a complete nonsense this whole time -
-> > > on closer inspection, it's passing the fwnode of the *client device*
-> > > where it should be that of the IOMMU device :(
-> > > 
-> > > I *think* it should probably just be a case of:
-> > > 
-> > > -    err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
-> > > +    err = iommu_fwspec_init(dev, of_fwnode_handle(smmu->dev->of_node));
-> > > 
-> > > since smmu->dev appears to be the same one initially passed to
-> > > iommu_device_register(), so it at least ought to match and work, but
-> > > the SMMU device vs. MC device thing leaves me mildly wary of how
-> > > correct it might be overall.
-> > > 
-> > > (Also now I'm wondering why I didn't just use dev_fwnode() there...)
-> > 
-> > 
-> > Yes making that change in the tegra-smmu driver does fix it.
+On 2024-07-12 10:48, Sean Christopherson wrote:
+> On Fri, Jul 12, 2024, Mathieu Desnoyers wrote:
+>> On 2024-07-12 08:57, Joel Fernandes wrote:
+>>> On Mon, Jun 24, 2024 at 07:01:19AM -0400, Vineeth Remanan Pillai wrote:
+>> [...]
+>>>> Existing use cases
+>>>> -------------------------
+>>>>
+>>>> - A latency sensitive workload on the guest might need more than one
+>>>> time slice to complete, but should not block any higher priority task
+>>>> in the host. In our design, the latency sensitive workload shares its
+>>>> priority requirements to host(RT priority, cfs nice value etc). Host
+>>>> implementation of the protocol sets the priority of the vcpu task
+>>>> accordingly so that the host scheduler can make an educated decision
+>>>> on the next task to run. This makes sure that host processes and vcpu
+>>>> tasks compete fairly for the cpu resource.
+>>
+>> AFAIU, the information you need to convey to achieve this is the priority
+>> of the task within the guest. This information need to reach the host
+>> scheduler to make informed decision.
+>>
+>> One thing that is unclear about this is what is the acceptable
+>> overhead/latency to push this information from guest to host ?
+>> Is an hypercall OK or does it need to be exchanged over a memory
+>> mapping shared between guest and host ?
+>>
+>> Hypercalls provide simple ABIs across guest/host, and they allow
+>> the guest to immediately notify the host (similar to an interrupt).
 > 
-> Ace, thanks for confirming! I was just writing a follow-up to say that I've
-> pretty much convinced myself that this (proper diff below) should in fact be
-> the right thing to do in general as well :)
+> Hypercalls have myriad problems.  They require a VM-Exit, which largely defeats
+> the purpose of boosting the vCPU priority for performance reasons.  They don't
+> allow for delegation as there's no way for the hypervisor to know if a hypercall
+> from guest userspace should be allowed, versus anything memory based where the
+> ability for guest userspace to access the memory demonstrates permission (else
+> the guest kernel wouldn't have mapped the memory into userspace).
+
+OK, this answers my question above: the overhead of the hypercall pretty
+much defeats the purpose of this priority boosting.
+
 > 
-> Will, Joerg, would you prefer to have a standalone fix patch for the
-> nvidia/tegra branch to then re-merge fwspec-ops-removal and fix up the
-> conflict, or just a patch on top of fwspec-ops-removal as below?
+>>>> Ideas brought up during offlist discussion
+>>>> -------------------------------------------------------
+>>>>
+>>>> 1. rseq based timeslice extension mechanism[1]
+>>>>
+>>>> While the rseq based mechanism helps in giving the vcpu task one more
+>>>> time slice, it will not help in the other use cases. We had a chat
+>>>> with Steve and the rseq mechanism was mainly for improving lock
+>>>> contention and would not work best with vcpu boosting considering all
+>>>> the use cases above. RT or high priority tasks in the VM would often
+>>>> need more than one time slice to complete its work and at the same,
+>>>> should not be hurting the host workloads. The goal for the above use
+>>>> cases is not requesting an extra slice, but to modify the priority in
+>>>> such a way that host processes and guest processes get a fair way to
+>>>> compete for cpu resources. This also means that vcpu task can request
+>>>> a lower priority when it is running lower priority tasks in the VM.
+> 
+> Then figure out a way to let userspace boot a task's priority without needing a
+> syscall.  vCPUs are not directly schedulable entities, the task doing KVM_RUN
+> on the vCPU fd is what the scheduler sees.  Any scheduling enhancement that
+> benefits vCPUs by definition can benefit userspace tasks.
 
-I've just fixed it locally on the tegra branch, so I'll then just
-resolve the conflict with fwspec-ops-removal the right way. That way, we
-can backport the thing if we need to.
+Yes.
 
-Cheers,
+> 
+>>> I was looking at the rseq on request from the KVM call, however it does not
+>>> make sense to me yet how to expose the rseq area via the Guest VA to the host
+>>> kernel.  rseq is for userspace to kernel, not VM to kernel.
+> 
+> Any memory that is exposed to host userspace can be exposed to the guest.  Things
+> like this are implemented via "overlay" pages, where the guest asks host userspace
+> to map the magic page (rseq in this case) at GPA 'x'.  Userspace then creates a
+> memslot that overlays guest RAM to map GPA 'x' to host VA 'y', where 'y' is the
+> address of the page containing the rseq structure associated with the vCPU (in
+> pretty much every modern VMM, each vCPU has a dedicated task/thread).
+> 
+> A that point, the vCPU can read/write the rseq structure directly.
 
-Will
+This helps me understand what you are trying to achieve. I disagree with
+some aspects of the design you present above: mainly the lack of
+isolation between the guest kernel and the host task doing the KVM_RUN.
+We do not want to let the guest kernel store to rseq fields that would
+result in getting the host task killed (e.g. a bogus rseq_cs pointer).
+But this is something we can improve upon once we understand what we
+are trying to achieve.
+
+> 
+> The reason us KVM folks are pushing y'all towards something like rseq is that
+> (again, in any modern VMM) vCPUs are just tasks, i.e. priority boosting a vCPU
+> is actually just priority boosting a task.  So rather than invent something
+> virtualization specific, invent a mechanism for priority boosting from userspace
+> without a syscall, and then extend it to the virtualization use case.
+> 
+[...]
+
+OK, so how about we expose "offsets" tuning the base values ?
+
+- The task doing KVM_RUN, just like any other task, has its "priority"
+   value as set by setpriority(2).
+
+- We introduce two new fields in the per-thread struct rseq, which is
+   mapped in the host task doing KVM_RUN and readable from the scheduler:
+
+   - __s32 prio_offset; /* Priority offset to apply on the current task priority. */
+
+   - __u64 vcpu_sched;  /* Pointer to a struct vcpu_sched in user-space */
+
+     vcpu_sched would be a userspace pointer to a new vcpu_sched structure,
+     which would be typically NULL except for tasks doing KVM_RUN. This would
+     sit in its own pages per vcpu, which takes care of isolation between guest
+     kernel and host process. Those would be RW by the guest kernel as
+     well and contain e.g.:
+
+     struct vcpu_sched {
+         __u32 len;  /* Length of active fields. */
+
+         __s32 prio_offset;
+         __s32 cpu_capacity_offset;
+         [...]
+     };
+
+So when the host kernel try to calculate the effective priority of a task
+doing KVM_RUN, it would basically start from its current priority, and offset
+by (rseq->prio_offset + rseq->vcpu_sched->prio_offset).
+
+The cpu_capacity_offset would be populated by the host kernel and read by the
+guest kernel scheduler for scheduling/migration decisions.
+
+I'm certainly missing details about how priority offsets should be bounded for
+given tasks. This could be an extension to setrlimit(2).
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
