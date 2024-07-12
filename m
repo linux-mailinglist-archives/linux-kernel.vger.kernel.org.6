@@ -1,123 +1,100 @@
-Return-Path: <linux-kernel+bounces-250504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8AB92F89C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:00:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B7AA92F8AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D411F23DC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0420283D7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9D9155A39;
-	Fri, 12 Jul 2024 10:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3EhOmRa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8CCE154C09;
+	Fri, 12 Jul 2024 10:05:45 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C774624;
-	Fri, 12 Jul 2024 10:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC7910F7;
+	Fri, 12 Jul 2024 10:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720778439; cv=none; b=W3cGY7+HbklqkA+p2SDTgd034af79gR/FOFQOKH+0c9YIyu2G4cjPCQpuwpV45BicQ6NEkunN8roYx/lQ5vv2y3Hhq01d9HkYd3qaIxnsbSgL7EhilGhzxZHTgsXgdYl8CwgakdCjAoRxXpeIfqcutl91ojBmOY/efZ7JEt+J6U=
+	t=1720778745; cv=none; b=sHMq5/OaZZRw6xZ6oZljGcMwo+kY1t9jf/nt+vYudTjxvzVo9DY6riCH8o8Q5CAzYnpccBXGj/90gzpulh4DDs2x3zU9x++PoQbNcyJZOqWoaqwec1AwF8LoLmHWHPSvN4qAKL6/kcYmLpGx0Pj08xYBRf8PAJ8ICeH/2iZT3wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720778439; c=relaxed/simple;
-	bh=OjZcO5Y/p3VJkM8yC5RnwUbNTQGbECoPCnl3MYrvQP4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=udTjRk3ze7Gxft0HomF0S3nboKj5cdMliTWTsnIoCBv/yNeBZ8xVI35zOs6pf/n8N2nDl9qpA3GpYO4a/OsAZ76LEF3mBLG/rDMYWwW6U/iuxifS17VSysZmcV/ciTUQ8dz/1BXINMo/gyG2vXKBmhyJwAeUoSndVUiLz7iXhUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3EhOmRa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0644C32786;
-	Fri, 12 Jul 2024 10:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720778439;
-	bh=OjZcO5Y/p3VJkM8yC5RnwUbNTQGbECoPCnl3MYrvQP4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Y3EhOmRawcToB8Y50dXh3LvRY9xDs8zUPNyNvuxFSd+QIxAJjjZ/Y8B5/qnIBKYvM
-	 iH1GMM+xEe021s+FhioMF6mT780Ef2JcAyyPpTTE8zIIR3FR3mrd25OP+P7OqeHmRe
-	 DqPEIQQs81OdkqK0RwdW4KVRNkLC6ySq/aK/GDxLmMs2z8jNvpK7bahbmZLDRaPRVh
-	 Zt/xYd5Irzt6k8fwRazrKh4xwunJk671+nmHsCiSkGhcWOKbdWoJ3hsF7JsXlNgRFO
-	 Nu1YGciVSzWFEybhPEpshSN/iRrHqGrsTIUYCTeoBOpnKTqRW6Bi9KaR/mvZuR4zz7
-	 nR+6pkhRc4ouA==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Fri, 12 Jul 2024 12:00:15 +0200
-Subject: [PATCH net-next] selftests: mptcp: lib: fix shellcheck errors
+	s=arc-20240116; t=1720778745; c=relaxed/simple;
+	bh=eNpOohRTg3sL6MiRjtOVbuLFKyzUozLlvJcudOSO/xI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MH4tNTxLi+14tYUQBiApFrFf52JskKr5WTYaZNOuzkiG1/vbzal4012kxzSsYhCGP9YA3A7SstifTWLxmKlrK6evHiCOtru3KS1qX28TYFLD3Avn4ZvbUegzQKOTVgcs06kO3eUaCan7CZUk47Js3TVUEEAPpd4PMnNjbpYKwU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WL6YP4rH4zQlTd;
+	Fri, 12 Jul 2024 18:00:57 +0800 (CST)
+Received: from kwepemf200016.china.huawei.com (unknown [7.202.181.9])
+	by mail.maildlp.com (Postfix) with ESMTPS id A224D14097F;
+	Fri, 12 Jul 2024 18:04:55 +0800 (CST)
+Received: from [10.108.234.194] (10.108.234.194) by
+ kwepemf200016.china.huawei.com (7.202.181.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 12 Jul 2024 18:04:54 +0800
+Message-ID: <20b9015d-80ed-4864-811a-ff4b0e3774dd@huawei.com>
+Date: Fri, 12 Jul 2024 18:04:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] jbd2: make '0' an invalid transaction sequence
+To: Luis Henriques <luis.henriques@linux.dev>, Andreas Dilger
+	<adilger@dilger.ca>
+CC: Wang Jianjian <wangjianjian0@foxmail.com>, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+	<linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240711083520.6751-1-luis.henriques@linux.dev>
+ <4f9d5881-11e6-4064-ab69-ca6ef81582b3@huawei.com>
+ <878qy8nem5.fsf@brahms.olymp>
+ <tencent_CF3DC37BEB2026CB2F68408A2B62314E0C08@qq.com>
+ <A90C7898-B704-4B2A-BFE6-4A32050763F0@dilger.ca> <87ed7znf8n.fsf@linux.dev>
+ <87wmlrkkch.fsf_-_@linux.dev>
+Content-Language: en-US
+From: "wangjianjian (C)" <wangjianjian3@huawei.com>
+In-Reply-To: <87wmlrkkch.fsf_-_@linux.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240712-upstream-net-next-20240712-selftests-mptcp-fix-shellcheck-v1-1-1cb7180db40a@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAK7+kGYC/z2NwQrCMBBEf6Xs2YUmaAv+iniocWKCaQzZrRRK/
- 90g6GEOjxnebCSoEULnbqOKd5T4yg3MoSMXpvwAx3tjsr099qOxvBTRimnmDG1Zlf+VIHmFqPB
- c1BX2cWUJSMkFuCcP3owYTm5w5kbNXyra4vt9oZ+Nrvv+AYb/eS6VAAAA
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1485; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=OjZcO5Y/p3VJkM8yC5RnwUbNTQGbECoPCnl3MYrvQP4=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmkP7EQ2BR/zeb4cBmw6GrnLDEFoqjy7o5IjRyR
- UtuB5lfEpyJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZpD+xAAKCRD2t4JPQmmg
- c0B/EADj9aUj3KGhZb3TKEu0tg9TQlcryAThbXO+qf93el1zpeiDYHl0ZyaWOwj2oMDV2QGaG/s
- +blKSoMWZZTj3Aju0EwC8vmst5YZIJAfet5+F4yN4Nzlxyz1ZDxfqzLad8Wm/X9ZweG5ZA58OTO
- Pca8Nc9ew+r2rTt/UWdwQ82fTZXHoXxSPVdSp7oBrW58E3kvkrSGrobuIahinr9hA7jzyVSd1Jr
- dQZfNqbcmF+O8uD1youEoU7zW79wCwsAt5HvbESlul0Zso/qo0WNzBLNIH7UGwAUXh0efOzs4KG
- 45vUHf5Wnc2Yd56hMi4n2thIOIaT7SAd44EdVrVm888kuelRVk0LLShY0m3KOLdPFq6Qi/Hin8e
- Woe/zPqLgTGfTA+7TNJJYv8Ctv0jqT5tfdIJF1z0+oUzFQfOJwLPIfe/TvkZlTW0uj8OVS4YEow
- hClhNu3LkkRSmfJXkHddWRa3bAmsCCrrNMhmWSQV6dvUqndq8g/NA7+CckZ6kGBk/mvj0m2Tax9
- 0T+35EJQt9ra7m0zcUpXPq8XekHar3Wfzyg22RlNk3uD0tKrdWsHWuM1zfHi3V+A7tzaFrAV6Z2
- a5d+FUir/WWaU/WovxBcin4oghOlMTV0yqzB1L+Gp4EW8ckoeLxpEjSgOGBJqd32a+aTQCkcoVX
- H5+6gUuKn6t/+ew==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf200016.china.huawei.com (7.202.181.9)
 
-It looks like we missed these two errors recently:
+On 2024/7/12 17:53, Luis Henriques wrote:
+> Since there's code (in fast-commit) that already handles a '0' tid as a
+> special case, it's better to ensure that jbd2 never sets it to that value
+> when journal->j_transaction_sequence increment wraps.
+> 
+> Suggested-by: Andreas Dilger <adilger@dilger.ca>
+> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+> ---
+>   fs/jbd2/transaction.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+> index 66513c18ca29..4dbdd37349c3 100644
+> --- a/fs/jbd2/transaction.c
+> +++ b/fs/jbd2/transaction.c
+> @@ -84,6 +84,8 @@ static void jbd2_get_transaction(journal_t *journal,
+>   	transaction->t_state = T_RUNNING;
+>   	transaction->t_start_time = ktime_get();
+>   	transaction->t_tid = journal->j_transaction_sequence++;
+> +	if (unlikely(transaction->t_tid == 0))
+> +		transaction->t_tid = journal->j_transaction_sequence++;
+Do we need add j_transaction_sequence again here? if tansanction->t_tid 
+== 0, then journal->j_trnasaction_sequence must be 1
 
-  - SC2068: Double quote array expansions to avoid re-splitting elements.
-  - SC2145: Argument mixes string and array. Use * or separate argument.
-
-Two simple fixes, it is not supposed to change the behaviour as the
-variable names should not have any spaces in their names. Still, better
-to fix them to easily spot new issues.
-
-Fixes: f265d3119a29 ("selftests: mptcp: lib: use setup/cleanup_ns helpers")
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
-Notes:
-  - The mentioned commit is currently only in 'net-next', not in 'net'.
----
- tools/testing/selftests/net/mptcp/mptcp_lib.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_lib.sh b/tools/testing/selftests/net/mptcp/mptcp_lib.sh
-index 194c8fc2e55a..438280e68434 100644
---- a/tools/testing/selftests/net/mptcp/mptcp_lib.sh
-+++ b/tools/testing/selftests/net/mptcp/mptcp_lib.sh
-@@ -428,8 +428,8 @@ mptcp_lib_check_tools() {
- }
- 
- mptcp_lib_ns_init() {
--	if ! setup_ns ${@}; then
--		mptcp_lib_pr_fail "Failed to setup namespace ${@}"
-+	if ! setup_ns "${@}"; then
-+		mptcp_lib_pr_fail "Failed to setup namespaces ${*}"
- 		exit ${KSFT_FAIL}
- 	fi
- 
-
----
-base-commit: 2146b7dd354c2a1384381ca3cd5751bfff6137d6
-change-id: 20240712-upstream-net-next-20240712-selftests-mptcp-fix-shellcheck-6f17e65c6c1b
-
-Best regards,
+>   	transaction->t_expires = jiffies + journal->j_commit_interval;
+>   	atomic_set(&transaction->t_updates, 0);
+>   	atomic_set(&transaction->t_outstanding_credits,
 -- 
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Regards
 
 
