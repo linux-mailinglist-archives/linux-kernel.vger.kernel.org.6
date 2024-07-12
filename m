@@ -1,156 +1,117 @@
-Return-Path: <linux-kernel+bounces-250415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D670D92F79C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:09:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC1292F79F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E72E1C2109B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:09:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801E21C22261
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87F514430D;
-	Fri, 12 Jul 2024 09:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E5C145326;
+	Fri, 12 Jul 2024 09:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cfy0oVu6"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZDRxxwMq"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51722143747
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07EA9143758
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720775361; cv=none; b=ArmzzptfNYx6+wfNz1TR0eK6Szax0FphXtYZzzNvRLgcYEyrVkfcf+pmp7/ogPBwVcqIPi0ptdYSC4yhGMvcnhBwYtHJFszJxqGq6gltIJMB8LvSr8MGAOwY0+ErKAGTkOAg+cBQobGNS8rRTg2IfSIFgmbHLEup6ERpXqO0tv4=
+	t=1720775407; cv=none; b=JOehpy9mE02iCAgASl86NgdBo3Pp3Ar64i9JEB4qqUjGS2ChLb/BpBwPUdVpHBMYofyYRr907Jgl2oI4FUhOLdHC8hzbdeCvr2dNyIj0S/Vka68bT7nSy+gxP5lqoioesntyZOuA2FiwpTgOtdthxiz3Z/MIz90PunB8l9Qo6JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720775361; c=relaxed/simple;
-	bh=FRMwaS7pbLLRvTwAaGpoDBvcuIzMitqPS+0MpEDLaeU=;
+	s=arc-20240116; t=1720775407; c=relaxed/simple;
+	bh=92ARlhMrFxnltJoEG/KO+vFy4IkhU7sCILYUeEcc59U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o3JAs4NS2q+rTTN1nRkDmbIu8aVF1iVO7ShLz2q+rvBYhR9yzBghoqizUPp17IpN/vCu8XYR0OeTMMpWx/I2a3sO5O1ZGmM3eBX0kIPKmD0P1erVB/t1eN+nx9nXmq702YkDyWHARBfbmY653oSRpBhgW15UToNvskrsTvq2yfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cfy0oVu6; arc=none smtp.client-ip=209.85.219.174
+	 To:Cc:Content-Type; b=QMMI2nDRDS8RI6olXjXO+k9SAjvBVnnSppFPvug573wcpH9TfjRMV/QyKZJSQOMpVrM6Hv5/87OUae6YPDNYqC5qdwu/z/YcmKtQs5kxC7Y0+/4C8znCPBCTM80RGBgMpxZ/mZWqOZ4tT8TnK64z6h5uDXJBAAx6Uf5T5BBxCfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZDRxxwMq; arc=none smtp.client-ip=209.85.219.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e03618fc78bso1623640276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:09:18 -0700 (PDT)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e03a63ec15eso1728306276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:10:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720775358; x=1721380158; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SCNPSZL1ytzjE/7mUpIJ/u/e4A8RUCUKfpqrgKWdK38=;
-        b=cfy0oVu6GxJsi0WxhM7lOt9ySNp2dKWdqa1bUUE/XYdpQKAycfcWAyzAPB+1K+CUkh
-         RL1Ie7cVhDeq1r+hLO5nLcLR3KYSJupdch9GHIYGxL+sK79SmD/jRcKzlO60EL2eEJmP
-         70srzDWptQ5HglE2KMhT1SnXEQXgQ1YVBK/sTBnrYVkhrG0kjH+joN6sgUWpvqaauaQ0
-         019qN1cTAXFiaycUJDc+qcu0rWIy6Y2+f8JJjMD5/9+Eg+so6Cqe9b14Gm/6xzmbnUBR
-         hJZRiNoxcADeff7WoXmS5dtUtprlWdPtLh2+hFxok1FI7NAw3N0sx+OdhznigX4pdlss
-         HQFw==
+        d=linaro.org; s=google; t=1720775405; x=1721380205; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hp1jgtDDKp2yfm23SCirsWH2DTom7+EqUMqjaOQMl8s=;
+        b=ZDRxxwMqJmoRDPLP7dH9E9jpMk71/QoGUf2ECb4jZj+4pF1t2GBGJe3l3SwyhQ67o2
+         mAjgDHFokj3v17519JNJfbq25ilBq132jODpr4ugCWjG0kTqYzy1a3Arv0vNXCWwCYfc
+         nbZaBXiSi4VoM5TWrwC3xEu17WbHp3MP8kqjT02qE3Unr68NIw9tWW5/bESHB4qpmxyw
+         2wc77vtErItuPHKN0SSkFumtBGBk4EA5tj8C6yJ4zWO+7bvWr7vZjCBseydCwHjbrlvW
+         u7OI+bm2EoDR/j2n8UJlL43owxfROht9K74qxQ7pOdHdAdKUq7e99w/zlS4RYsdCiGgp
+         Hl2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720775358; x=1721380158;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SCNPSZL1ytzjE/7mUpIJ/u/e4A8RUCUKfpqrgKWdK38=;
-        b=unEuVPZBxh3cpKi6ZS3cGa7ZFYgjErdqcX1od+S5cEpP1tl6Wf117Gpjy/ibm97oba
-         Rgb4xbAYoGaW8snfPlGe7DXyzCD8DV8+fiXITYxw99YaeA/aYZhbzA3satNfPRFL4qvx
-         Xqv+Ytegdts/XOWS9DJkbvSjDBrEytpLMaohL2zu7cgherA7AGTowGzFOWCh25pAy4+f
-         FJ3Hb2m0osejxf2zDu7T+5xERpQFhGzxs+ugOOjLivCk7XksclN3Jl2nQyoXBtHlIgBO
-         x5bwP3f1EClHlkb09iQEUCPXE9dMgENIsjqRb7Soo6INOyN0zXzoYr+X46ZB+Bh5vLaV
-         7ELA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3QiPFb0XEgSPXH24RO7yQaf2QEu45kZu+C68iWYN7rW4OpqWmSGnBYWoNu+OjYNsu1mnt1amvZouBEEA58j+tMiQIzcdEDKHhi467
-X-Gm-Message-State: AOJu0YwF27D6TZXVsH0R+Mq6CrjV0bwI4YP4VM9E/t0smKF+NPQrTW21
-	iQTgVEcmjOdsB9FQm9LC1eor3PuM3WozmJ0h9mvcN3+xzQLfWpGt1imT95pCW8MLztjsrs5yES5
-	xjfKZc7N+/W1cNhjiwghMTxrl5ybh5nyyJprEoQ==
-X-Google-Smtp-Source: AGHT+IH2ZhkNSr3lAO0ISZV3PDaROoLe9tlom5kTqum4o5uFiWztS750eAeqlWthH+6h3mahZ3jiz9uDI9AN/j+tZEY=
-X-Received: by 2002:a5b:503:0:b0:e03:6085:33ef with SMTP id
- 3f1490d57ef6-e041b166fa3mr12051590276.41.1720775358054; Fri, 12 Jul 2024
- 02:09:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720775405; x=1721380205;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hp1jgtDDKp2yfm23SCirsWH2DTom7+EqUMqjaOQMl8s=;
+        b=O4zIar8efzPCeMXRp0yXeFTZfmmZOGgh+8pQzL7N22O9idvvje+WaLsSEn9ReUHV+u
+         Au/nfDTWL51kuNPW6iMJyTFr+HCKsC6hw3ok0VrN1r0+42i6eRbF0PMR0SYZKj1WSFiV
+         /ebzodRIJjkxebov/H/eYPgktYVx3vjcwOo5Xzjro+JLLjRjoGqYan4OFe2LzsP0k97Z
+         ZFMuQHuLGmmkIu92ncYfgC+Q6+k5Q26xRjaZ9RfS7aATlwKHW0A2SjPkpDsLMYGmVYSL
+         RIFQSafdTESMzi0w8Psq2oebhBA37++m7Jj4RQ52AjbqBv6xWmBRtg0nFWq63i3OiOcQ
+         o60w==
+X-Forwarded-Encrypted: i=1; AJvYcCUwfxSQ74SEipBCkEYpPKw+UjVDDM+zUp8fCqbkkM6Oj74RaeC3WNESqbUA2y00uyX2Eac9fe8LiFC/L5Q2kPv5ZbLyUlmNCZWD7c8z
+X-Gm-Message-State: AOJu0Yz5WEuuC4UBoWZUNEUiemz60qCCx204kE6MzII8Rf9K9YF2zLb4
+	j3kRTogT9STYs2K0XNgK6kOi5DVNkja0jeEYKMHnyqDCOE8N8h/0o0JMsUqLcoIhVdZq1Oz6ac6
+	+puFSCWxuLRrhzhswy20hcpHttkcPwKqufD4Tdg==
+X-Google-Smtp-Source: AGHT+IEhhN868PqjoOtPt4/HXGxzNPUJJGslyFKUXQCrTsbztUttPEoG4X/T5cjLdpglfCj2+mvP6vMuVbajMoDBAHo=
+X-Received: by 2002:a5b:1cd:0:b0:e03:5895:31b8 with SMTP id
+ 3f1490d57ef6-e041b059200mr12504526276.26.1720775404920; Fri, 12 Jul 2024
+ 02:10:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYuCp7Q71_o74yo9ge_5-G=Ho9bC3kJdX_JvtoqWOQujkA@mail.gmail.com>
- <CAMRc=Md5zmFxXXM89LQs6dspC0xnp_6=z=+a2SQypWjwpiRgow@mail.gmail.com> <f6afe212-8b28-450e-ae54-0de996be078e@app.fastmail.com>
-In-Reply-To: <f6afe212-8b28-450e-ae54-0de996be078e@app.fastmail.com>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Fri, 12 Jul 2024 11:09:07 +0200
-Message-ID: <CACMJSetxpEL0pomsiZffXr3bFYEGLMBvOcZDZHkizxRx92HVQg@mail.gmail.com>
-Subject: Re: next: arm64: defconfig: gcc-8: drivers/bluetooth/hci_qca.c:2501:2:
- error: label at end of compound statement
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Naresh Kamboju <naresh.kamboju@linaro.org>, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Dan Carpenter <dan.carpenter@linaro.org>, 
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+References: <20240708121018.246476-1-ciprianmarian.costea@oss.nxp.com>
+In-Reply-To: <20240708121018.246476-1-ciprianmarian.costea@oss.nxp.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 12 Jul 2024 11:09:28 +0200
+Message-ID: <CAPDyKFoWdRdi-NZbtj4yXeBxiH9o1+J0uux+Aiaw8AQbUGpM5A@mail.gmail.com>
+Subject: Re: [PATCH 0/3] address S32G2/S32G3 SoC based boards particularities
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Haibo Chen <haibo.chen@nxp.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-mmc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, s32@nxp.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 12 Jul 2024 at 11:04, Arnd Bergmann <arnd@arndb.de> wrote:
+On Mon, 8 Jul 2024 at 14:10, Ciprian Costea
+<ciprianmarian.costea@oss.nxp.com> wrote:
 >
-> On Fri, Jul 12, 2024, at 10:34, Bartosz Golaszewski wrote:
+> This patchset addresses S32G2/S32G3 SoC based boards
+> uSDHC controller particularities such as:
+> - GPIO card detect wake mechanism is not available
 >
-> > The actual code looks like this now:
-> >
-> >       case QCA_WCN7850:
-> >               if (power->vregs_on)
-> >                       qca_power_shutdown(&qcadev->serdev_hu);
-> >               break;
-> >       default:
-> >
-> > What can be done to silence this warning? Or should we just ignore it b=
-ecause
-> > it's gcc 8?
+> It also fixes a clocking usage issue on 'clk_get_rate',
+> in case of 'per' clock.
 >
-> clang-18 and gcc-10 still warn as well:
+> Changes in v2:
+>  - Dropped option to not change pinctrl during PM.
+> Instead, when S32G2/S32G3 uSDHC pinctrl entries will be
+> upstream'ed, 'sleep' pinctrl will not be defined.
 >
-> 5:1: warning: label at end of compound statement is a C23 extension [-Wc2=
-3-extensions]
+> Ciprian Costea (3):
+>   mmc: sdhci-esdhc-imx: disable card detect wake for S32G based
+>     platforms
+>   mmc: sdhci-esdhc-imx: obtain the 'per' clock rate after its enablement
+>   MAINTAINERS: add 's32@nxp.com' as relevant mailing list for
+>     'sdhci-esdhc-imx' driver
 >
-> It's easy enough to fix it by dropping the redundant 'default:'
-> line or adding a 'break;' Luiz just committed a fix, see below.
->
->      Arnd
->
-> commit f14c0bb78769f2670fdd8bcd28ca5543a7601c33
-> Author: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-> Date:   Wed Jul 10 22:30:57 2024 -0400
->
->     Bluetooth: hci_qca: Fix build error
->
->     This fixes the following build error introduced by a887c8dede8e
->     ("Bluetooth: hci_qca: schedule a devm action for disabling the clock"=
-):
->
->     drivers/bluetooth/hci_qca.c: In function =E2=80=98qca_serdev_remove=
-=E2=80=99:
->     drivers/bluetooth/hci_qca.c:2501:2: error: label at end of compound s=
-tatement
->      2501 |  default:
->           |  ^~~~~~~
->
->     Fixes: a887c8dede8e ("Bluetooth: hci_qca: schedule a devm action for =
-disabling the clock")
->     Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
->
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index 030153d468bf..ca6466676902 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -2499,6 +2499,7 @@ static void qca_serdev_remove(struct serdev_device =
-*serdev)
->                         qca_power_shutdown(&qcadev->serdev_hu);
->                 break;
->         default:
-> +               break;
->         }
->
->         hci_uart_unregister_device(&qcadev->serdev_hu);
+>  MAINTAINERS                        |  1 +
+>  drivers/mmc/host/sdhci-esdhc-imx.c | 16 +++++++++++++---
+>  2 files changed, 14 insertions(+), 3 deletions(-)
 >
 
-Ah, I saw the break in the file and thought it was me who had it in
-the code in the first place but obviously not. Thanks, nevermind my
-comment.
+Applied for next, thanks!
 
-Bart
+Kind regards
+Uffe
 
