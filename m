@@ -1,109 +1,324 @@
-Return-Path: <linux-kernel+bounces-250264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A3392F5CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:56:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C00592F5B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62D1B1F2511D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:56:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA7D228365A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F2913E02A;
-	Fri, 12 Jul 2024 06:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087D513D619;
+	Fri, 12 Jul 2024 06:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tvDh6oTk"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7TKs2gb"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8AF13DDBA;
-	Fri, 12 Jul 2024 06:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40AC013B2A8;
+	Fri, 12 Jul 2024 06:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720767332; cv=none; b=g3Gak4R5bI07YJqo5n+fjfsRxirsC6mftoAfzxtvgpdPQNH+hYBw5uaeVJpmV+KX1bkAkbBJLpLAkjjOiFuL5Xv/+IIw5suyLFBuRBbo7/e60TrxCbS5+PSuY2bn7AvR4XNNpm4kTkhSvLOJw6AOtG1LHwg0yJEsrR3gQMHjjUU=
+	t=1720767190; cv=none; b=HzOw/gTt2W1dzKLQ2lSu4GIp498AXTXzFaLpwN5ikRePLTZtEfsN8UQoY5yDrY0AX57CyHIUPo2YCuTiLM/2y7xH11HBL4SQGQEjeG0p+hqyDkOSfL5QIJonRlDdLcPlRWmJc6GCiwWFLkhlE0ArB8ZSEDNPLUZ+huJjNCNcYz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720767332; c=relaxed/simple;
-	bh=ZbbsLwoya6tixuPpRvni4f3DMKqspE6J9o10Q7PaI/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GCzMfIL6AnvMu7rXvyKjfF03cDGrAO0fPjZzGZDNLPcyDg665rv3vx6M1uh7h9yJ/j6euYpA4GFP7MWbYvyWq/G4mxOayjqb3HJV+WWNRfBBAHBczWGBBPO8DsaAJ8gy0GPO7XpCgpe/rozUXYpnKI9cYPhm4sWy0aOzOr/xgZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tvDh6oTk; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720767328;
-	bh=BZZNIcGexPgDWaQqyvGhePz6Fkk2rKYNueqzc4Ios+o=;
-	h=Date:From:To:Cc:Subject:From;
-	b=tvDh6oTkI7B87eA/a2ltawR4KNia9dCODo36jEB1I48VYf5QK0GAq1hjfMzB/5VwY
-	 jOBt85hsSVIn560DS+sO9nEp1/oO1WirQtzfALTegdopRAJN7Qmri/UzAtTIx9QWh4
-	 DT8+loJgaHJPMy7NbKoN6VCW7yQSAHhC/fIHpQkEJ5w5YaG1LONxHNL8XMs1R42ftf
-	 CHIt3X4DZrUpRnnoKtZgyPrIi68wHQWhafIUKcLlCJsYFof2RqnJ1yJ3WDwPgnJmS6
-	 S86b4LlTFdVdy8NnepD1frLHOw/+y8BsMLKe5VVmxcAxzWZ7gIKgeSRrdMpH0tDwzb
-	 voqwXJEyEzdxQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WL2RM4Zsmz4wx5;
-	Fri, 12 Jul 2024 16:55:27 +1000 (AEST)
-Date: Fri, 12 Jul 2024 16:55:27 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the i2c-host tree
-Message-ID: <20240712165527.75e4ddc9@canb.auug.org.au>
+	s=arc-20240116; t=1720767190; c=relaxed/simple;
+	bh=O5VBXpqJ+9U+4H7Q/wM6kgTXFMevkRjYnuE++Y3XvrE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iIHSCA9ubwx1NWxDX05MpWsmXQX2pas6OxnUVzSklKum3mVwfwN2d+PFyN22zmN0yh/Gf2ulh1wxZlWXtalnffSeyvxJLz1RM8nGu93KfoPpmDo24RScUVqxOBerOrnIMNyUSvDU6cykft/gAXIhJ4xv1xsDbRSZTkH6nLTUW1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e7TKs2gb; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a77d9217e6fso218701066b.2;
+        Thu, 11 Jul 2024 23:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720767186; x=1721371986; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XXFbQXPtGb/+GNQzqGBVwiqUU8qK0zWwlp6dRJu4EPY=;
+        b=e7TKs2gbGSc/Br9AcqK2VD8eTqvktVkyPprzFpXYKY3+cu1wsH5v+azVY/KSvplUXv
+         WrWzYQjbV36JWIZOOCi8Y+0fgt489PJ272FR0i+EVk2hsl9Kj1bt9YwUvrUajgInrQY8
+         vJVJb4vcXhY3g/kQHHJVBnUJNcCaqSLZ647rsPiKNXTHckjuu7D6G7+R73YqV7eXD/Ye
+         3r0UwZldLgUZ/2rLrsctm5KHHBxiOO4rQZ3ul11GktT0uSv0sV68OmZNMI2rRQMEGDef
+         5fzHeCHCp47JrZe0jIAv+UTHfdENVn0hJ7Jd5VcM5asJX2Vu+/bvpZaDf5S2eachBZM6
+         hVFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720767186; x=1721371986;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XXFbQXPtGb/+GNQzqGBVwiqUU8qK0zWwlp6dRJu4EPY=;
+        b=Sq4issAsTbqp+kjL/9B8Pq2ds3lYQ6zH31e5spVxguSpIBJf1zzmPiQcMz489LTTXK
+         /wGmJcJxyZ8eHYfti/xMXeeXeOi0dcXWYjYnmUH5cQF/OYVYmou0XlD6pol/GjP56rmP
+         2sfiQEv0JTAEtgnNE3zNitR9kLnrsr9kaQghuNXBzrkXCQgiVVQXtwEgG5frIfwNFU4W
+         zWMnOGt2UDYZUcmt0BnlBQss/3mxQ4l64tTuXEySg/UW0U7KPX/7nq4w99m/2hgHqrwx
+         6iq2G1G772uEwom5CSaBPcWbjckHJFCd5pprftwgnmhdsebJTZhO1/Bc5O4wRemp39Ul
+         32XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUS54gm/tPOFCCxx1+8WYPmRjsmyhJlWbcoIEEtX5TxRscQSIu3m4JRIZ0e5giZfijKsFRw37M3A+AKJf7eilnl57NtjQEiQ9iPkH9EP07RXBdvpFsbHORrWqs3RG92IF5aFvN3n1iuXLas7NXa1EutS4JeQowS6tD2mgow1Gmp2BWUww==
+X-Gm-Message-State: AOJu0YzlFRrm6hnbnrVwsYBEpF7lxkkNSIuC/5SOQJzp8qP+XIMVvfE1
+	aFxPlKWrCuYl0hpmaTRFZs35Iq1Vws0UDDgxAXaExx4ePmvJ9sw0
+X-Google-Smtp-Source: AGHT+IFCJKh4sLArYjTnbB0nGhUrzlB2tvngFTC7NTzAQMeZzbab4y1gGt01y8cztsXxNaiOErShrQ==
+X-Received: by 2002:a17:906:3c1a:b0:a77:cd4f:e4ef with SMTP id a640c23a62f3a-a780b89f428mr652622866b.63.1720767186147;
+        Thu, 11 Jul 2024 23:53:06 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:994e:fbde:478:1ce1? (p200300f6ef1cc500994efbde04781ce1.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:994e:fbde:478:1ce1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a86f636sm315628666b.208.2024.07.11.23.53.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 23:53:05 -0700 (PDT)
+Message-ID: <468b5725d0f191c20ada9524ecb7da8a48d56d97.camel@gmail.com>
+Subject: Re: [PATCH 2/2] iio: dac: support the ad8460 Waveform DAC
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+	 <Jonathan.Cameron@Huawei.com>, "Tinaco, Mariel" <Mariel.Tinaco@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>, "Hennerich, Michael"
+ <Michael.Hennerich@analog.com>,  Marcelo Schmitt
+ <marcelo.schmitt1@gmail.com>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Guenter Roeck <linux@roeck-us.net>, Nuno Sa <nuno.sa@analog.com>
+Date: Fri, 12 Jul 2024 08:57:00 +0200
+In-Reply-To: <733f4f7b-53b2-46c1-8bf8-5ed357adab30@baylibre.com>
+References: <20240510064053.278257-1-Mariel.Tinaco@analog.com>
+	 <20240510064053.278257-3-Mariel.Tinaco@analog.com>
+	 <20240511174405.10d7fce8@jic23-huawei>
+	 <SJ0PR03MB62241801F72B21EEC9CDCCBD91D42@SJ0PR03MB6224.namprd03.prod.outlook.com>
+	 <20240628194546.2f608365@jic23-huawei>
+	 <SJ0PR03MB62246270CC24E70732D0288F91DA2@SJ0PR03MB6224.namprd03.prod.outlook.com>
+	 <20240708170504.00006c9d@Huawei.com>
+	 <ccce603d36fa2fd590b563955bcd2cda085773e5.camel@gmail.com>
+	 <733f4f7b-53b2-46c1-8bf8-5ed357adab30@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/OJ0DanheuLF5XTj8kKn+x8Z";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/OJ0DanheuLF5XTj8kKn+x8Z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2024-07-11 at 16:31 -0500, David Lechner wrote:
+> On 7/11/24 4:20 AM, Nuno S=C3=A1 wrote:
+> > On Mon, 2024-07-08 at 17:05 +0100, Jonathan Cameron wrote:
+> > > On Mon, 8 Jul 2024 05:17:55 +0000
+> > > "Tinaco, Mariel" <Mariel.Tinaco@analog.com> wrote:
+> > >=20
+> > > > > -----Original Message-----
+> > > > > From: Jonathan Cameron <jic23@kernel.org>
+> > > > > Sent: Saturday, June 29, 2024 2:46 AM
+> > > > > To: Tinaco, Mariel <Mariel.Tinaco@analog.com>
+> > > > > Cc: linux-iio@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> > > > > kernel@vger.kernel.org; Lars-Peter Clausen <lars@metafoo.de>; Rob
+> > > > > Herring
+> > > > > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Cono=
+r
+> > > > > Dooley
+> > > > > <conor+dt@kernel.org>; Liam Girdwood <lgirdwood@gmail.com>; Mark =
+Brown
+> > > > > <broonie@kernel.org>; Hennerich, Michael
+> > > > > <Michael.Hennerich@analog.com>;
+> > > > > Marcelo Schmitt <marcelo.schmitt1@gmail.com>; Dimitri Fedrau
+> > > > > <dima.fedrau@gmail.com>; Guenter Roeck <linux@roeck-us.net>
+> > > > > Subject: Re: [PATCH 2/2] iio: dac: support the ad8460 Waveform DA=
+C
+> > > > >=20
+> > > > > [External]
+> > > > > =C2=A0=20
+> > > > > > > > +};
+> > > > > > > > +
+> > > > > > > > +static int ad8460_get_powerdown_mode(struct iio_dev *indio=
+_dev,
+> > > > > > > > +				=C2=A0=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec
+> > > > > > > > *chan) {
+> > > > > > > > +	return 0;=C2=A0=20
+> > > > > > >=20
+> > > > > > > Why have the stubs in here?=C2=A0=20
+> > > > > >=20
+> > > > > > Should I move the stubs to a different place in the code or rem=
+ove
+> > > > > > them altogether since there is only a single powerdown mode
+> > > > > > available=C2=A0=20
+> > > > > Ah. I'd not really understood what was going on here.=C2=A0 This =
+is fine as
+> > > > > is.
+> > > > > =C2=A0=20
+> > > > > > > AD8460_HVDAC_DATA_WORD_HIGH(index),=C2=A0=20
+> > > > > > > > +			=C2=A0=C2=A0=C2=A0 ((val >> 8) & 0xFF));=C2=A0=20
+> > > > > > >=20
+> > > > > > > bulk write? or do these need to be ordered?=C2=A0=20
+> > > > > >=20
+> > > > > > For this I used bulk read/write this way.
+> > > > > >=20
+> > > > > > static int ad8460_set_hvdac_word(struct ad8460_state *state,
+> > > > > > 				 int index,
+> > > > > > 				 int val)
+> > > > > > {
+> > > > > > 	u8 regvals[AD8460_DATA_BYTE_WORD_LENGTH];=C2=A0=20
+> > > > > regmap bulk accesses (when spi anyway) should be provided with DM=
+A
+> > > > > safe
+> > > > > buffers.
+> > > > > Easiest way to do that is add one with __aligned(IIO_DMA_MINALIGN=
+) to
+> > > > > the
+> > > > > end of the ad8460_state structure.=C2=A0 Possibly you'll need a l=
+ock to
+> > > > > protect it -
+> > > > > I
+> > > > > haven't checked.=C2=A0=20
+> > > > > >=20
+> > > > > > 	regvals[0] =3D val & 0xFF;
+> > > > > > 	regvals[1] =3D (val >> 8) & 0xFF;=C2=A0=20
+> > > > >=20
+> > > > > That is an endian conversion so use appropriate endian function t=
+o
+> > > > > fill it
+> > > > > efficiently and document clearly what is going on.
+> > > > >=20
+> > > > >=20
+> > > > > 	put_unaligned_le16()
+> > > > > =C2=A0=20
+> > > > > >=20
+> > > > > > 	return regmap_bulk_write(state->regmap,=C2=A0=20
+> > > > > AD8460_HVDAC_DATA_WORD_LOW(index),=C2=A0=20
+> > > > > > 				 regvals,=C2=A0=20
+> > > > > AD8460_DATA_BYTE_WORD_LENGTH); }=C2=A0=20
+> > > > > >=20
+> > > > > > =C2=A0
+> > > > > > > > +}=C2=A0=20
+> > > > > =C2=A0=20
+> > > > > > > > +	state->regmap =3D devm_regmap_init_spi(spi,
+> > > > > > > > &ad8460_regmap_config);
+> > > > > > > > +	if (IS_ERR(state->regmap))
+> > > > > > > > +		return dev_err_probe(&spi->dev, PTR_ERR(state-
+> > > > > > > > >regmap),
+> > > > > > > > +				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to initialize
+> > > > > > > > regmap");
+> > > > > > > > +
+> > > > > > > > +	ret =3D devm_iio_dmaengine_buffer_setup_ext(&spi->dev,
+> > > > > > > > indio_dev,
+> > > > > > > > +"tx",
+> > > > > > > > +=C2=A0=20
+> > > > > > > IIO_BUFFER_DIRECTION_OUT);
+> > > > > > >=20
+> > > > > > > Ah. I take back my binding comment. I assume this is mapping =
+some
+> > > > > > > non standard interface for the parallel data flow?=C2=A0=20
+> > > > > >=20
+> > > > > > Yes, the HDL side doesn't follow yet the standard IIO backend f=
+rom
+> > > > > > which this driver was tested=C2=A0=20
+> > > > >=20
+> > > > > Hmm. I'd like to see this brought inline with the other iio backe=
+nd
+> > > > > drivers if
+> > > > > possible.=C2=A0=20
+> > > >=20
+> > > > Does this mean that we would need to implement an AXI IP core on th=
+e
+> > > > FPGA side to be able to test this?
+> > >=20
+> > > Don't think so.=C2=A0 That framework is meant to support any equivale=
+nt IP.
+> > > So whatever you have should be supportable. Maybe it's somewhat of a =
+stub
+> > > driver though if there isn't anything controllable.
+> > >=20
+> > > It's Nuno's area of expertise though +CC.
+> > >=20
+> >=20
+> > Hi Jonathan,
+> >=20
+> > Yeah, I did reply David (IIRC) about the very same question. In the
+> > design/HW Mariel
+> > is working on the DAC is directly connected to the DMA core which is ha=
+ndled
+> > already
+> > by a proper dma controller driver. So in this case I'm really not seein=
+g the
+> > backend
+> > need right now (maybe in the future we may have another design for this
+> > device that
+> > could justify for a backend device but no idea on that).
+> >=20
+> > As you mention, we could very well do a stub platform driver so we can =
+use
+> > the
+> > backend framework (like dma-backend or something) that could pretty muc=
+h be
+> > a stub
+> > for the DMA controller. But is it worth it though? We'd actually be "ly=
+ing"
+> > in terms
+> > of HW description as the DMA is a property of the actual converter.
+> >=20
+> > - Nuno S=C3=A1
+> >=20
+> >=20
+>=20
+> I'm a bit inclined to agree with Jonathan here. I could see someone in th=
+e
+> future,
+> wanting to, e.g., use DMA + a GPIO controller for the parallel interface =
+if
+> they
+> didn't have an FPGA. So it seems a bit more future-proof to just always u=
+se
+> the
+> IIO backend framework for the parallel interface.
 
-Hi all,
+I do agree it's more future but guessing usecases is not something I tend t=
+o
+like much (often just results in code that never gets __really__ used). We =
+can
+very well take care of it when a usecase pops up and we have an actual devi=
+ce
+that can be represented by a backend :).
 
-After merging the i2c-host tree, today's linux-next build (htmldocs)
-produced these warnings:
+>=20
+> FWIW, I don't think it would be "lying" since the io-backend DT node woul=
+d be
+> representing physical parallel bus between the DMA controller and the ADC
+> chip.
 
-include/linux/i2c.h:583: warning: Function parameter or struct member 'xfer=
-' not described in 'i2c_algorithm'
-include/linux/i2c.h:583: warning: Function parameter or struct member 'xfer=
-_atomic' not described in 'i2c_algorithm'
-include/linux/i2c.h:583: warning: Function parameter or struct member 'reg_=
-target' not described in 'i2c_algorithm'
-include/linux/i2c.h:583: warning: Function parameter or struct member 'unre=
-g_target' not described in 'i2c_algorithm'
+To me, it's really a stretch having a backend with the only reason (op) of
+requesting the DMA channel. I still think you're pushing to much and going
+around with wording to justify for the DMA property :). The parallel bus is=
+ part
+of the DAC and directly connects to the DMA data lines so it really looks t=
+o me
+the dma is a property of the actual DAC.
 
-Introduced by commit
+That said and Mariel can help here, I did not really looked into the design
+myself and I'm just stating (or what I understood) what Mariel told me. But=
+ if
+there's some other piece of HW sitting between the DMA and the bus then it =
+would
+be easier for me to agree even if we don't have any real control over that
+device.
 
-  a93c2e5fe766 ("i2c: reword i2c_algorithm according to newest specificatio=
-n")
+> But if DT maintainers are OK with the idea that a DMA channel can be dire=
+ctly
+> wired to an external chip, I guess I won't complain. :-)
 
---=20
-Cheers,
-Stephen Rothwell
+That's the case in here so I don't see why it should be a problem :). It's =
+the
+same with the axi-dac/adc. It's all inside the FPGA but different cores/IPS=
+.
 
---Sig_/OJ0DanheuLF5XTj8kKn+x8Z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+FWIW, I'm ok if we go the backend direction even if I don't fully agree wit=
+h it
+(at least with the understanding I have so far about the design). I definit=
+ely
+want to see more users of it but I also don't think it should be a rule for=
+ any
+fairly high speed converter to have a backend associated.
 
------BEGIN PGP SIGNATURE-----
+- Nuno S=C3=A1
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQ018ACgkQAVBC80lX
-0GwfXwf/Who+FKMRc6v1oya5PAJzZ7PnQn+/ug6gJKQ4WeV/gbD3b30y9aThlPWn
-13DVdCCXkhMtBPusmm3LNu7nm56YMLjB8tUZn6hRxurNXfWrB7YQxf5tk9zCJh3L
-wsNgXLUPu1sXDreRtjNveU8TwaHeErjL2gPp+cKGWWuxqidmN+87d1RPNdxBz7eO
-g1TAn0EzR7YknXDVY/rHMGzX/zJcaQvG/ARJ5RcHIE8MEMqUKb05iit5caHmu3S4
-n5AEAEAMHVHhHDojXNzgvYT90MziyiZheeURrU1/66mG14mX32UDRYyhEJCwLD70
-weLhAH2u1Gbt/+wBCdWGSmZXWTFQJg==
-=Kx5I
------END PGP SIGNATURE-----
-
---Sig_/OJ0DanheuLF5XTj8kKn+x8Z--
 
