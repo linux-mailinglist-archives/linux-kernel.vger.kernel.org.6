@@ -1,132 +1,404 @@
-Return-Path: <linux-kernel+bounces-250847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FE892FD90
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:28:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C971192FD96
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2AAB285232
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522C81F24097
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A371741D3;
-	Fri, 12 Jul 2024 15:28:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9CA16F90C;
-	Fri, 12 Jul 2024 15:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F1D1741D1;
+	Fri, 12 Jul 2024 15:29:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB0016F90C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720798131; cv=none; b=tLE03nskiAL1VfI2gNdmq7cApXLl7ycwjeoVVpAelsD07oxjF+hoHiO3+TD+Z6EloWW6hCRCnEJduXrEK/GeAirWaSF/Ryr3ydCsSVbZN8Vt2yvcWO7IXZZpnLs4TcEFL2gjBmAq6DVrWl+8KwVoXpU2H6Pou3aC+/TdiKSWdrY=
+	t=1720798140; cv=none; b=KIUyx8CRyJmmNO4vt+mW3qao6JjZqD3M3Lb2Bo1kkYq5hSXaqRRNjbTuNoSgNoJPXd0sfPW50yDBqh0ez85Gn+a4X9kZ81NWrICX/F9YTeoHaeLqAl7T0LG45fBNyPajlntLqShx21wK5YWwIAYae1MyNkSRc+HDKZ0JxO3DSzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720798131; c=relaxed/simple;
-	bh=uwGQwHUwIKmO0WrMKy795caJ2WJJg6ayOmxx7WBL4ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SsZXOna7DAFnwYYZcIh57p4xBf8nNf2OFvpbmE1TaFsAWaD5AiOOko5GwkLyioX6BLilQfqTNaC8MarD21oJo9CUYql8+rAy9j9kBCwE2Yw3x8T+Sck0hu6VxNqyVKJUU4vnjq5dWzHiCdHCb7Xd0TVruEdg71/aD3tR2Pd2LOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B2E51007;
-	Fri, 12 Jul 2024 08:29:12 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F32233F762;
-	Fri, 12 Jul 2024 08:28:38 -0700 (PDT)
-Message-ID: <82624cf6-98ad-47df-8dcd-368117600805@arm.com>
-Date: Fri, 12 Jul 2024 16:28:37 +0100
+	s=arc-20240116; t=1720798140; c=relaxed/simple;
+	bh=vAZkvgSq4JcEqKV4rgGpXHYU3ZoRIdAvjSzs2zjQWyY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GIJCA0vfhI/EJgR7gThxmXtaIolw7ak4WiuJqHpK1+Ikhef8Ae4OMVP8lmmAEIS8NgYszoj3Yph6RA90EzZEcUQe5ev/FgCHcb8JY2NqF5lLvn3YG7VHCG7Sn8y0hTGLMchtcVHRj3dUYRGO63BtK1POSGLCaH+EmYYJcReDHM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sSICY-0003Ok-I3; Fri, 12 Jul 2024 17:28:50 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sSICX-0091uO-Ud; Fri, 12 Jul 2024 17:28:49 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sSICX-00AP8t-2r;
+	Fri, 12 Jul 2024 17:28:49 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH net-next v2 1/1] net: phy: dp83td510: add cable testing support
+Date: Fri, 12 Jul 2024 17:28:48 +0200
+Message-Id: <20240712152848.2479912-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] iommu: Resolve fwspec ops automatically
-To: Jon Hunter <jonathanh@nvidia.com>, Will Deacon <will@kernel.org>,
- Joerg Roedel <joro@8bytes.org>
-Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>, Yong Wu <yong.wu@mediatek.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <cover.1719919669.git.robin.murphy@arm.com>
- <0e2727adeb8cd73274425322f2f793561bdc927e.1719919669.git.robin.murphy@arm.com>
- <0eec5f84-6b39-43ba-ab2f-914688a5cf45@nvidia.com>
- <01c05fb2-16ce-450c-befb-8a92ac2a8af9@arm.com>
- <ee24cb5f-d170-41d3-9928-5507b8ab22a7@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <ee24cb5f-d170-41d3-9928-5507b8ab22a7@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 12/07/2024 4:24 pm, Jon Hunter wrote:
-> 
-> On 12/07/2024 12:48, Robin Murphy wrote:
-> 
-> ...
-> 
->>> I am seeing some failures on -next with some of our devices. Bisect 
->>> is pointing to this commit. Looks like the host1x device is no longer 
->>> probing successfully. I see the following ...
->>>
->>>   tegra-host1x 50000000.host1x: failed to initialize fwspec: -517
->>>   nouveau 57000000.gpu: failed to initialize fwspec: -517
->>>
->>> The probe seems to be deferred forever. The above is seen on Tegra210 
->>> but Tegra30 and Tegra194 are also having the same problem. 
->>> Interestingly it is not all devices and so make me wonder if we are 
->>> missing something on these devices? Let me know if you have any 
->>> thoughts.
->>
->> Ugh, tegra-smmu has been doing a complete nonsense this whole time - 
->> on closer inspection, it's passing the fwnode of the *client device* 
->> where it should be that of the IOMMU device :(
->>
->> I *think* it should probably just be a case of:
->>
->> -    err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
->> +    err = iommu_fwspec_init(dev, of_fwnode_handle(smmu->dev->of_node));
->>
->> since smmu->dev appears to be the same one initially passed to 
->> iommu_device_register(), so it at least ought to match and work, but 
->> the SMMU device vs. MC device thing leaves me mildly wary of how 
->> correct it might be overall.
->>
->> (Also now I'm wondering why I didn't just use dev_fwnode() there...)
-> 
-> 
-> Yes making that change in the tegra-smmu driver does fix it.
+This patch implements the TDR test procedure as described in
+"Application Note DP83TD510E Cable Diagnostics Toolkit revC", section 3.2.
 
-Ace, thanks for confirming! I was just writing a follow-up to say that 
-I've pretty much convinced myself that this (proper diff below) should 
-in fact be the right thing to do in general as well :)
+The procedure was tested with "draka 08 signalkabel 2x0.8mm". The reported
+cable length was 5 meters more for each 20 meters of actual cable length.
+For instance, a 20-meter cable showed as 25 meters, and a 40-meter cable
+showed as 50 meters. Since other parts of the diagnostics provided by this
+PHY (e.g., Active Link Cable Diagnostics) require accurate cable
+characterization to provide proper results, this tuning can be implemented
+in a separate patch/interface.
 
-Will, Joerg, would you prefer to have a standalone fix patch for the 
-nvidia/tegra branch to then re-merge fwspec-ops-removal and fix up the 
-conflict, or just a patch on top of fwspec-ops-removal as below?
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+changes v2:
+- add comments
+- change post silence time to 1000ms
+---
+ drivers/net/phy/dp83td510.c | 264 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 264 insertions(+)
 
-Thanks,
-Robin.
+diff --git a/drivers/net/phy/dp83td510.c b/drivers/net/phy/dp83td510.c
+index d7616b13c5946..551e37786c2da 100644
+--- a/drivers/net/phy/dp83td510.c
++++ b/drivers/net/phy/dp83td510.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/bitfield.h>
++#include <linux/ethtool_netlink.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/phy.h>
+@@ -29,6 +30,10 @@
+ #define DP83TD510E_INT1_LINK			BIT(13)
+ #define DP83TD510E_INT1_LINK_EN			BIT(5)
+ 
++#define DP83TD510E_CTRL				0x1f
++#define DP83TD510E_CTRL_HW_RESET		BIT(15)
++#define DP83TD510E_CTRL_SW_RESET		BIT(14)
++
+ #define DP83TD510E_AN_STAT_1			0x60c
+ #define DP83TD510E_MASTER_SLAVE_RESOL_FAIL	BIT(15)
+ 
+@@ -53,6 +58,117 @@ static const u16 dp83td510_mse_sqi_map[] = {
+ 	0x0000  /* 24dB =< SNR */
+ };
+ 
++/* Time Domain Reflectometry (TDR) Functionality of DP83TD510 PHY
++ *
++ * I assume that this PHY is using a variation of Spread Spectrum Time Domain
++ * Reflectometry (SSTDR) rather than the commonly used TDR found in many PHYs.
++ * Here are the following observations which likely confirm this:
++ * - The DP83TD510 PHY transmits a modulated signal of configurable length
++ *   (default 16000 µs) instead of a single pulse pattern, which is typical
++ *   for traditional TDR.
++ * - The pulse observed on the wire, triggered by the HW RESET register, is not
++ *   part of the cable testing process.
++ *
++ * I assume that SSTDR seems to be a logical choice for the 10BaseT1L
++ * environment due to improved noise resistance, making it suitable for
++ * environments  with significant electrical noise, such as long 10BaseT1L cable
++ * runs.
++ *
++ * Configuration Variables:
++ * The SSTDR variation used in this PHY involves more configuration variables
++ * that can dramatically affect the functionality and precision of cable
++ * testing. Since most of  these configuration options are either not well
++ * documented or documented with minimal details, the following sections
++ * describe my understanding and observations of these variables and their
++ * impact on TDR functionality.
++ *
++ * Timeline:
++ *     ,<--cfg_pre_silence_time
++ *     |            ,<-SSTDR Modulated Transmission
++ *     |	    |            ,<--cfg_post_silence_time
++ *     |	    |            |             ,<--Force Link Mode
++ * |<--'-->|<-------'------->|<--'-->|<--------'------->|
++ *
++ * - cfg_pre_silence_time: Optional silence time before TDR transmission starts.
++ * - SSTDR Modulated Transmission: Transmission duration configured by
++ *   cfg_tdr_tx_duration and amplitude configured by cfg_tdr_tx_type.
++ * - cfg_post_silence_time: Silence time after TDR transmission.
++ * - Force Link Mode: If nothing is configured after cfg_post_silence_time,
++ *   the PHY continues in force link mode without autonegotiation.
++ */
++
++#define DP83TD510E_TDR_CFG				0x1e
++#define DP83TD510E_TDR_START				BIT(15)
++#define DP83TD510E_TDR_DONE				BIT(1)
++#define DP83TD510E_TDR_FAIL				BIT(0)
++
++#define DP83TD510E_TDR_CFG1				0x300
++/* cfg_tdr_tx_type: Transmit voltage level for TDR.
++ * 0 = 1V, 1 = 2.4V
++ * Note: Using different voltage levels may not work
++ * in all configuration variations. For example, setting
++ * 2.4V may give different cable length measurements.
++ * Other settings may be needed to make it work properly.
++ */
++#define DP83TD510E_TDR_TX_TYPE				BIT(12)
++#define DP83TD510E_TDR_TX_TYPE_1V			0
++#define DP83TD510E_TDR_TX_TYPE_2_4V			1
++/* cfg_post_silence_time: Time after the TDR sequence. Since we force master mode
++ * for the TDR will proceed with forced link state after this time. For Linux
++ * it is better to set max value to avoid false link state detection.
++ */
++#define DP83TD510E_TDR_CFG1_POST_SILENCE_TIME		GENMASK(3, 2)
++#define DP83TD510E_TDR_CFG1_POST_SILENCE_TIME_0MS	0
++#define DP83TD510E_TDR_CFG1_POST_SILENCE_TIME_10MS	1
++#define DP83TD510E_TDR_CFG1_POST_SILENCE_TIME_100MS	2
++#define DP83TD510E_TDR_CFG1_POST_SILENCE_TIME_1000MS	3
++/* cfg_pre_silence_time: Time before the TDR sequence. It should be enough to
++ * settle down all pulses and reflections. Since for 10BASE-T1L we have
++ * maximum 2000m cable length, we can set it to 1ms.
++ */
++#define DP83TD510E_TDR_CFG1_PRE_SILENCE_TIME		GENMASK(1, 0)
++#define DP83TD510E_TDR_CFG1_PRE_SILENCE_TIME_0MS	0
++#define DP83TD510E_TDR_CFG1_PRE_SILENCE_TIME_10MS	1
++#define DP83TD510E_TDR_CFG1_PRE_SILENCE_TIME_100MS	2
++#define DP83TD510E_TDR_CFG1_PRE_SILENCE_TIME_1000MS	3
++
++#define DP83TD510E_TDR_CFG2				0x301
++#define DP83TD510E_TDR_END_TAP_INDEX_1			GENMASK(14, 8)
++#define DP83TD510E_TDR_END_TAP_INDEX_1_DEF		36
++#define DP83TD510E_TDR_START_TAP_INDEX_1		GENMASK(6, 0)
++#define DP83TD510E_TDR_START_TAP_INDEX_1_DEF		4
++
++#define DP83TD510E_TDR_CFG3				0x302
++/* cfg_tdr_tx_duration: Duration of the TDR transmission in microseconds.
++ * This value sets the duration of the modulated signal used for TDR
++ * measurements.
++ * - Default: 16000 µs
++ * - Observation: A minimum duration of 6000 µs is recommended to ensure
++ *   accurate detection of cable faults. Durations shorter than 6000 µs may
++ *   result in incomplete data, especially for shorter cables (e.g., 20 meters),
++ *   leading to false "OK" results. Longer durations (e.g., 6000 µs or more)
++ *   provide better accuracy, particularly for detecting open circuits.
++ */
++#define DP83TD510E_TDR_TX_DURATION_US			GENMASK(15, 0)
++#define DP83TD510E_TDR_TX_DURATION_US_DEF		16000
++
++#define DP83TD510E_TDR_FAULT_CFG1			0x303
++#define DP83TD510E_TDR_FLT_LOC_OFFSET_1			GENMASK(14, 8)
++#define DP83TD510E_TDR_FLT_LOC_OFFSET_1_DEF		4
++#define DP83TD510E_TDR_FLT_INIT_1			GENMASK(7, 0)
++#define DP83TD510E_TDR_FLT_INIT_1_DEF			62
++
++#define DP83TD510E_TDR_FAULT_STAT			0x30c
++#define DP83TD510E_TDR_PEAK_DETECT			BIT(11)
++#define DP83TD510E_TDR_PEAK_SIGN			BIT(10)
++#define DP83TD510E_TDR_PEAK_LOCATION			GENMASK(9, 0)
++
++/* Not documented registers and values but recommended according to
++ * "DP83TD510E Cable Diagnostics Toolkit revC"
++ */
++#define DP83TD510E_UNKN_030E				0x30e
++#define DP83TD510E_030E_VAL				0x2520
++
+ static int dp83td510_config_intr(struct phy_device *phydev)
+ {
+ 	int ret;
+@@ -198,6 +314,151 @@ static int dp83td510_get_sqi_max(struct phy_device *phydev)
+ 	return DP83TD510_SQI_MAX;
+ }
+ 
++/**
++ * dp83td510_cable_test_start - Start the cable test for the DP83TD510 PHY.
++ * @phydev: Pointer to the phy_device structure.
++ *
++ * This sequence is implemented according to the "Application Note DP83TD510E
++ * Cable Diagnostics Toolkit revC".
++ *
++ * Returns: 0 on success, a negative error code on failure.
++ */
++static int dp83td510_cable_test_start(struct phy_device *phydev)
++{
++	int ret;
++
++	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_CTRL,
++			       DP83TD510E_CTRL_HW_RESET);
++	if (ret)
++		return ret;
++
++	ret = genphy_c45_an_disable_aneg(phydev);
++	if (ret)
++		return ret;
++
++	/* Force master mode */
++	ret = phy_set_bits_mmd(phydev, MDIO_MMD_PMAPMD, MDIO_PMA_PMD_BT1_CTRL,
++			       MDIO_PMA_PMD_BT1_CTRL_CFG_MST);
++	if (ret)
++		return ret;
++
++	/* There is no official recommendation for this register, but it is
++	 * better to use 1V for TDR since other values seems to be optimized
++	 * for this amplitude. Except of amplitude, it is better to configure
++	 * pre TDR silence time to 10ms to avoid false reflections (value 0
++	 * seems to be too short, otherwise we need to implement own silence
++	 * time). Also, post TDR silence time should be set to 1000ms to avoid
++	 * false link state detection, it fits to the polling time of the
++	 * PHY framework. The idea is to wait until
++	 * dp83td510_cable_test_get_status() will be called and reconfigure
++	 * the PHY to the default state within the post silence time window.
++	 */
++	ret = phy_modify_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_CFG1,
++			     DP83TD510E_TDR_TX_TYPE |
++			     DP83TD510E_TDR_CFG1_POST_SILENCE_TIME |
++			     DP83TD510E_TDR_CFG1_PRE_SILENCE_TIME,
++			     DP83TD510E_TDR_TX_TYPE_1V |
++			     DP83TD510E_TDR_CFG1_PRE_SILENCE_TIME_10MS |
++			     DP83TD510E_TDR_CFG1_POST_SILENCE_TIME_1000MS);
++	if (ret)
++		return ret;
++
++	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_CFG2,
++			    FIELD_PREP(DP83TD510E_TDR_END_TAP_INDEX_1,
++				       DP83TD510E_TDR_END_TAP_INDEX_1_DEF) |
++			    FIELD_PREP(DP83TD510E_TDR_START_TAP_INDEX_1,
++				       DP83TD510E_TDR_START_TAP_INDEX_1_DEF));
++	if (ret)
++		return ret;
++
++	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_FAULT_CFG1,
++			    FIELD_PREP(DP83TD510E_TDR_FLT_LOC_OFFSET_1,
++				       DP83TD510E_TDR_FLT_LOC_OFFSET_1_DEF) |
++			    FIELD_PREP(DP83TD510E_TDR_FLT_INIT_1,
++				       DP83TD510E_TDR_FLT_INIT_1_DEF));
++	if (ret)
++		return ret;
++
++	/* Undocumented register, from the "Application Note DP83TD510E Cable
++	 * Diagnostics Toolkit revC".
++	 */
++	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_UNKN_030E,
++			    DP83TD510E_030E_VAL);
++	if (ret)
++		return ret;
++
++	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_CFG3,
++			    DP83TD510E_TDR_TX_DURATION_US_DEF);
++	if (ret)
++		return ret;
++
++	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_CTRL,
++			       DP83TD510E_CTRL_SW_RESET);
++	if (ret)
++		return ret;
++
++	return phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_CFG,
++				DP83TD510E_TDR_START);
++}
++
++/**
++ * dp83td510_cable_test_get_status - Get the status of the cable test for the
++ *                                   DP83TD510 PHY.
++ * @phydev: Pointer to the phy_device structure.
++ * @finished: Pointer to a boolean that indicates whether the test is finished.
++ *
++ * The function sets the @finished flag to true if the test is complete.
++ *
++ * Returns: 0 on success or a negative error code on failure.
++ */
++static int dp83td510_cable_test_get_status(struct phy_device *phydev,
++					   bool *finished)
++{
++	int ret, stat;
++
++	*finished = false;
++
++	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TD510E_TDR_CFG);
++	if (ret < 0)
++		return ret;
++
++	if (!(ret & DP83TD510E_TDR_DONE))
++		return 0;
++
++	if (!(ret & DP83TD510E_TDR_FAIL)) {
++		int location;
++
++		ret = phy_read_mmd(phydev, MDIO_MMD_VEND2,
++				   DP83TD510E_TDR_FAULT_STAT);
++		if (ret < 0)
++			return ret;
++
++		if (ret & DP83TD510E_TDR_PEAK_DETECT) {
++			if (ret & DP83TD510E_TDR_PEAK_SIGN)
++				stat = ETHTOOL_A_CABLE_RESULT_CODE_OPEN;
++			else
++				stat = ETHTOOL_A_CABLE_RESULT_CODE_SAME_SHORT;
++
++			location = FIELD_GET(DP83TD510E_TDR_PEAK_LOCATION,
++					     ret) * 100;
++			ethnl_cable_test_fault_length(phydev,
++						      ETHTOOL_A_CABLE_PAIR_A,
++						      location);
++		} else {
++			stat = ETHTOOL_A_CABLE_RESULT_CODE_OK;
++		}
++	} else {
++		/* Most probably we have active link partner */
++		stat = ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
++	}
++
++	*finished = true;
++
++	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A, stat);
++
++	return phy_init_hw(phydev);
++}
++
+ static int dp83td510_get_features(struct phy_device *phydev)
+ {
+ 	/* This PHY can't respond on MDIO bus if no RMII clock is enabled.
+@@ -221,6 +482,7 @@ static struct phy_driver dp83td510_driver[] = {
+ 	PHY_ID_MATCH_MODEL(DP83TD510E_PHY_ID),
+ 	.name		= "TI DP83TD510E",
+ 
++	.flags          = PHY_POLL_CABLE_TEST,
+ 	.config_aneg	= dp83td510_config_aneg,
+ 	.read_status	= dp83td510_read_status,
+ 	.get_features	= dp83td510_get_features,
+@@ -228,6 +490,8 @@ static struct phy_driver dp83td510_driver[] = {
+ 	.handle_interrupt = dp83td510_handle_interrupt,
+ 	.get_sqi	= dp83td510_get_sqi,
+ 	.get_sqi_max	= dp83td510_get_sqi_max,
++	.cable_test_start = dp83td510_cable_test_start,
++	.cable_test_get_status = dp83td510_cable_test_get_status,
+ 
+ 	.suspend	= genphy_suspend,
+ 	.resume		= genphy_resume,
+-- 
+2.39.2
 
------>8-----
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 4365d9936e68..7f633bb5efef 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -837,7 +837,7 @@ static int tegra_smmu_configure(struct tegra_smmu 
-*smmu, struct device *dev,
-  	const struct iommu_ops *ops = smmu->iommu.ops;
-  	int err;
-
--	err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
-+	err = iommu_fwspec_init(dev, dev_fwnode(smmu->dev));
-  	if (err < 0) {
-  		dev_err(dev, "failed to initialize fwspec: %d\n", err);
-  		return err;
 
