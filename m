@@ -1,190 +1,150 @@
-Return-Path: <linux-kernel+bounces-251164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A0693016B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:03:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 313C493016D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97D6282809
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:03:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADA87B219DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14313481C4;
-	Fri, 12 Jul 2024 21:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3C649622;
+	Fri, 12 Jul 2024 21:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UHy4r4np"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hePgEzVT"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D6D47F41;
-	Fri, 12 Jul 2024 21:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D243A32C8E;
+	Fri, 12 Jul 2024 21:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720818218; cv=none; b=cgLCQIMrmwYQ77OlXiIeLiTScKpeaMwZVGS7nLZ5W9285jLiTPcrvUyjEmQsf4bT1nqO+Yn9X4DVGQW7iAVCiBNaIn3E5Ev8HgQ6Egmq8h2Ki2altzzHro5+5xBi7QXGeXxc230rFQ57j/d4EqloqJ/2u+iPJCkJq/RwTZ1r46o=
+	t=1720818382; cv=none; b=PY+qE2PKFe8DSEzxWBJ38rAV80sTbvO4XlcNt0yA8G3ebkY84331PQsRbxWzqQ5pJhAfv4O146GDFQQXt+l4SMgP53oMVjf1deXa0x7gNBH5THI5OePJG7NGWyKXNH6+ReF6CKnSeYPPKP8MEE9U0SoX18wBH/DM469ItxWCaTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720818218; c=relaxed/simple;
-	bh=xzSr4rTygjq40NySqIzPz/YhF/sBRLmGmXQ9xrTIJYQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SlEWNO/BXmh35zCmzPeU8oMv+aU4nOlNHuPt+rEw7oe68LV7N0JLc5xLdPTTXXH42uBOf2+SswOWYFgSZF9p7WkxNZbvmwcXiEDtrI6rJs6RqH2eabVuAyQ6Ba+6+WN6ftoyhvTZeueFc89ATCbZyAKEA+0Ti0IjHGXq8GjR37w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UHy4r4np; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46CEB3ul009130;
-	Fri, 12 Jul 2024 21:03:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BQNyKzaB1t/sXuLQaAphOIYHQ+AM6KkZNjTtrGtunoc=; b=UHy4r4npUwwJ7u/O
-	LF4+qrCtnkF+igi18P0qDQ/4f6s8LzL5eOUT6X0XSjO4SYtIBBtX2ESUZcpjRdFs
-	zjizt+Gpbtq+Pxw3eI8QAU/b8/JeN1C9wvJqokoIlLCYzic0GzhJJPKfRcCL2j4r
-	CeWEdADKTML95pCOHMKjBIURkfJsIeDH9dpW28XoZQYMTcOZdd23jTqApn4SNno7
-	ZXMJ5WfR04lLYorOuaOygdm22lPm1VBILCyQnlm3sunR9lJ15L3/LYZcmuL83Em/
-	j+Jux4Djq8cpXYyoTBWUDz90D1cTqexUlV0RWvSPCwHt/WMjzjIJa6BHLHaD752a
-	xJxibg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4091jdtjxv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Jul 2024 21:03:19 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46CL3Iq3032258
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Jul 2024 21:03:18 GMT
-Received: from [10.71.108.229] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 12 Jul
- 2024 14:03:18 -0700
-Message-ID: <4f1a3bcb-31b0-4688-b6e5-92a940cf2881@quicinc.com>
-Date: Fri, 12 Jul 2024 14:03:17 -0700
+	s=arc-20240116; t=1720818382; c=relaxed/simple;
+	bh=BXxasLL2dSiVoNp3qZuBOAuYRWfKuW7KBSh1o5r3EH0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ku/KtHFMuMztppTdZORAuObY3qtto0Yy5Xtr/JPKsRdoOYSjbQBw+NYvBcgKwVH5BgdS2bFEsYD//qoUhY1ubdm/s3IR1zud7VFIe0guRS4tQg4g7AWWgfqm3bbD0JwSVKk3R98ITEdYnuqWkbNRR5TLbWeYO0C4YNHH0NLyI/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hePgEzVT; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c980b08b4bso1917258a91.1;
+        Fri, 12 Jul 2024 14:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720818380; x=1721423180; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=otj7B7h+dOv/dHqdgyGNrdLcl7BUozT2O9Id54ZPVNo=;
+        b=hePgEzVT3H01+ur1ODVcSdxh1dNg53nG3q3yWiIU4gZguqKpYF1vo2QLVLd+BRApgo
+         g3ex9bW4zcJ+vEkrvA3XTp1oBtA3atQYqKcg/gHdqJ7tswj7bomtJAIhySCgWX+YDUiM
+         pfe7+Ok8ROwFMJkWl1+kffX4pmg5Dcz41rJO+FIrrRTebFdqo0zdJYCgMqdlYS/2vMHT
+         eBlgJBTbwoqNXg1wqjtcy7J2htTS3y5tr2i3SBYFdnkaAG1AWbzRKFm4a1Wtie2sxEsg
+         O4P9c3VIO35DbLOB8zBdgy4/TG6Vv0umRw3qWD6Pt2deuGo8bHP0ndBBCcmtDUv2aa9n
+         OU8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720818380; x=1721423180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=otj7B7h+dOv/dHqdgyGNrdLcl7BUozT2O9Id54ZPVNo=;
+        b=oNOR/rFz1rY6soNjni8gHBFRSHDtz3YdOs5OssbMX4Ud8OrMQ2KLRIE/B/4h/XGq+G
+         XXEv0d2WMRyzlAuWkLVH75PR0739d7jPd8GkMbgqxKqP/f6Nq9H8/YxhYdWrknBdn2zx
+         +qZXG0OMHibJkMBRPz1CKQjq/fvjgXQ6JXVXQxPvoiJzt8nualSus93IfAzVRYQ2jyGz
+         vBUlI/um9VC46N919m1UuqOh4NVTBgwgU1atk/sppHjo7IVQ1UWABx2CkHYPQP+/St27
+         VUW12iCmt1KvoTE++hHaAt5v/zs4YQgSDej7+w7+IYP2WOYusUlR6mM0cKs3rWWSB9R3
+         ZpCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVE3XJhukMiCER0o0RGcZvXXayQ/QakyDkj660g6lhaZ51TGnPYPcvIo84c6FbOUht0ZOj6H73lAkgSja3OLDB7uhpATS2Sb0fuOspItK8QDt0Eof/+NM8WNuGL3goW4A5mdxDl3S/Tk1JrtRkL15MezecbEaPmgegotHsCaUsQDxc9TbX3
+X-Gm-Message-State: AOJu0YwqFveUJLR/aQn7kzUs4OVQNndpMaegHalGwVi2Si0CdH8yEMDe
+	zupMb+tKUN1i6DquhButjndmHkMaw1Aq1myAgUaq1rdg+qQOvESyAVLG4AlULzfDs9cwaXMolIJ
+	TN5up0HCxnel2OV2PbE8zAQAzkus=
+X-Google-Smtp-Source: AGHT+IESUNbr3fMnFylMWVGExO3I59c3mocYvhlsB63I4RZCwKOm32acU5VnVGf+GzudJ3nJOGfvpHC/6+xdmZ51+9g=
+X-Received: by 2002:a17:90b:238a:b0:2c8:143d:f22b with SMTP id
+ 98e67ed59e1d1-2ca35d54733mr10446026a91.42.1720818380076; Fri, 12 Jul 2024
+ 14:06:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/panel: simple: add Innolux G070ACE-LH3 LVDS
- display support
-To: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@pengutronix.de>
-References: <20240712-b4-v6-10-topic-innolux-v1-0-bb0acf273d0d@pengutronix.de>
- <20240712-b4-v6-10-topic-innolux-v1-2-bb0acf273d0d@pengutronix.de>
-Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240712-b4-v6-10-topic-innolux-v1-2-bb0acf273d0d@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jWJj7v02I0_F3zGgfULG9Tfor_3n9vKU
-X-Proofpoint-ORIG-GUID: jWJj7v02I0_F3zGgfULG9Tfor_3n9vKU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-12_16,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 malwarescore=0 mlxlogscore=999
- mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1011 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407120143
+References: <20240711110235.098009979@infradead.org> <20240711110400.880800153@infradead.org>
+In-Reply-To: <20240711110400.880800153@infradead.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 12 Jul 2024 14:06:08 -0700
+Message-ID: <CAEf4BzZUVe-dQNcb1VQbEcN4kBFOYrFOB537q4Vhtpm_ebL9aQ@mail.gmail.com>
+Subject: Re: [PATCH v2 06/11] perf/uprobe: SRCU-ify uprobe->consumer list
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com, 
+	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
++ bpf@vger, please cc bpf ML for the next revision, these changes are
+very relevant there as well, thanks
 
-
-On 7/12/2024 4:05 AM, Steffen Trumtrar wrote:
-> The G070ACE-LH3 is a 7" TFT Color LCD module with WLED backlight.
-> 
-> https://www.data-modul.com/sites/default/files/products/G070ACE-LH3-specification-12058417.pdf
-> 
-> Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+On Thu, Jul 11, 2024 at 4:07=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> With handle_swbp() hitting concurrently on (all) CPUs the
+> uprobe->register_rwsem can get very contended. Add an SRCU instance to
+> cover the consumer list and consumer lifetime.
+>
+> Since the consumer are externally embedded structures, unregister will
+> have to suffer a synchronize_srcu().
+>
+> A notably complication is the UPROBE_HANDLER_REMOVE logic which can
+> race against uprobe_register() such that it might want to remove a
+> freshly installer handler that didn't get called. In order to close
+> this hole, a seqcount is added. With that, the removal path can tell
+> if anything changed and bail out of the removal.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 > ---
->   drivers/gpu/drm/panel/panel-simple.c | 35 +++++++++++++++++++++++++++++++++++
->   1 file changed, 35 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index dcb6d0b6ced06..d3ce78643fd86 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -2509,6 +2509,38 @@ static const struct panel_desc innolux_g070y2_l01 = {
->   	.connector_type = DRM_MODE_CONNECTOR_LVDS,
->   };
->   
-> +static const struct display_timing innolux_g070ace_lh3_timing = {
-> +	.pixelclock = { 25200000, 25400000, 35700000 },
-> +	.hactive = { 800, 800, 800 },
-> +	.hfront_porch = { 32, 32, 32 },
-> +	.hback_porch = { 31, 31, 31 },
-> +	.hsync_len = { 1, 1, 1 },
+>  kernel/events/uprobes.c |   60 ++++++++++++++++++++++++++++++++++++++++-=
+-------
+>  1 file changed, 50 insertions(+), 10 deletions(-)
+>
 
-Hi Steffen,
+[...]
 
-The min/max horizontal and vertical porches here don't seem to add up to 
-the min/max [HV]blanks specified in the datasheet linked in the commit 
-msg. Any reason for that?
+> @@ -800,7 +808,7 @@ static bool consumer_del(struct uprobe *
+>         down_write(&uprobe->consumer_rwsem);
+>         for (con =3D &uprobe->consumers; *con; con =3D &(*con)->next) {
+>                 if (*con =3D=3D uc) {
+> -                       *con =3D uc->next;
+> +                       WRITE_ONCE(*con, uc->next);
 
-Thanks,
+I have a dumb and mechanical question.
 
-Jessica Zhang
+Above in consumer_add() you are doing WRITE_ONCE() for uc->next
+assignment, but rcu_assign_pointer() for uprobe->consumers. Here, you
+are doing WRITE_ONCE() for the same operation, if it so happens that
+uc =3D=3D *con =3D=3D uprobe->consumers. So is rcu_assign_pointer() necessa=
+ry
+in consumer_addr()? If yes, we should have it here as well, no? And if
+not, why bother with it in consumer_add()?
 
-> +	.vactive = { 480, 480, 480 },
-> +	.vfront_porch = { 5, 5, 5 },
-> +	.vback_porch = { 4, 4, 4 },
-> +	.vsync_len = { 1, 1, 1 },
-> +	.flags = DISPLAY_FLAGS_DE_HIGH,
-> +};
+>                         ret =3D true;
+>                         break;
+>                 }
+> @@ -1139,9 +1147,13 @@ void uprobe_unregister(struct inode *ino
+>                 return;
+>
+>         down_write(&uprobe->register_rwsem);
+> +       raw_write_seqcount_begin(&uprobe->register_seq);
+>         __uprobe_unregister(uprobe, uc);
+> +       raw_write_seqcount_end(&uprobe->register_seq);
+>         up_write(&uprobe->register_rwsem);
+>         put_uprobe(uprobe);
 > +
-> +static const struct panel_desc innolux_g070ace_lh3 = {
-> +	.timings = &innolux_g070ace_lh3_timing,
-> +	.num_timings = 1,
-> +	.bpc = 8,
-> +	.size = {
-> +		.width = 152,
-> +		.height = 91,
-> +	},
-> +	.delay = {
-> +		.prepare = 10,
-> +		.enable = 450,
-> +		.disable = 200,
-> +		.unprepare = 510,
-> +	},
-> +	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
-> +	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
-> +	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-> +};
-> +
->   static const struct drm_display_mode innolux_g070y2_t02_mode = {
->   	.clock = 33333,
->   	.hdisplay = 800,
-> @@ -4599,6 +4631,9 @@ static const struct of_device_id platform_of_match[] = {
->   	}, {
->   		.compatible = "innolux,g070ace-l01",
->   		.data = &innolux_g070ace_l01,
-> +	}, {
-> +		.compatible = "innolux,g070ace-lh3",
-> +		.data = &innolux_g070ace_lh3,
->   	}, {
->   		.compatible = "innolux,g070y2-l01",
->   		.data = &innolux_g070y2_l01,
-> 
-> -- 
-> 2.45.1
-> 
+> +       synchronize_srcu(&uprobes_srcu);
+>  }
+>  EXPORT_SYMBOL_GPL(uprobe_unregister);
+
+[...]
 
