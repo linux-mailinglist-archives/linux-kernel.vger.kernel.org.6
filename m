@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-250328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F5392F680
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:50:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B911992F683
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CDB81F23B03
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCCAB1C22BAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC9213E02A;
-	Fri, 12 Jul 2024 07:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B4B140384;
+	Fri, 12 Jul 2024 07:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EyUkElFw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gQ7mc+DE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E6618E0E;
-	Fri, 12 Jul 2024 07:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC2A18E0E;
+	Fri, 12 Jul 2024 07:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720770576; cv=none; b=bVXSIo5RWw18f6ExkDp7tMi75+QQIvjZEeHhI/4nfa9D996g05r5gPmKWriasVpv+0V98vlFa8wSzvcxTkV3p/dIGe6wwFE9FwwgQVRf2GfuWjbkKyCBDBl8nRkZrlIpwb5hqioLNlJw0KlumjFbTq+xv6b0Hudu66ST28xsBVI=
+	t=1720770706; cv=none; b=AaG9PKg6VsRETBJ13pOVqAmjy9WqsDysiMhe/DNqGn510QVlnPYB3hc89JEZDT4ZN8mpj8F/7f84OBsiup5qO2o5WnxokTFVzPO6/AjurU+BOOeHZG0cqltOzSNNVgcVTQD6YC494yqK6YsuK4sPEdnIcXyNteo5kyDyYMe07Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720770576; c=relaxed/simple;
-	bh=3Xy0AWoFKijnyeboEO/jP9e9E0N7YQrUq/9LCT+Bszw=;
+	s=arc-20240116; t=1720770706; c=relaxed/simple;
+	bh=/WIurWJG+oKfW+i69cYnWTy8/zE+GskbYcFddxQcYq0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OcaO2Bm7RIGX0g8+3xKZqIwv4Cw6D0ESdP0botsb2ogVj7OZyU9nM9PDEWmXAefkof8WgC4wKmGUTVWW4M6uXAETRx3E9vV2yu4KZkt49c+MGaGGNfG7FMamvEXpQjzncDGc52+Z+9gScKwLkB/DYqX3kNhAyWvfg2knHFwQJxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EyUkElFw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5618BC3277B;
-	Fri, 12 Jul 2024 07:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720770575;
-	bh=3Xy0AWoFKijnyeboEO/jP9e9E0N7YQrUq/9LCT+Bszw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EyUkElFwy7+NAT23KHxX9xUJBFkcxE+qLbe+jYilhf99phl3dejLA1LIRVoMSYMmS
-	 sp2lJj4xQGA/usW0p3GrbHODv4IFQNEZTa/yF7Uunjoteed5m2+Et9AKDdUoQ7K5Ph
-	 KrBKK0dAh6ISGC7XE5dGJ7dm5oBI/g9cYhZvxfKoH9ZoshSrd6MXm2IwRKdvm/kcxi
-	 Bm5PDKzbng+OZMTpwtpSSlm82GmKSSNhXLZVOHlNooEMeFOf429W+6xJvKqW1/OB6X
-	 bvdOnf9DqHZA/Vg0SuUD27zRocAyDlLREgMY4U0bBry3RE8WoZNSr4FrY0EXqz+t3K
-	 PgO8Q3X1M+LxA==
-Message-ID: <bc3b08ee-f500-458a-b23f-0be4bbe0ed8b@kernel.org>
-Date: Fri, 12 Jul 2024 09:49:30 +0200
+	 In-Reply-To:Content-Type; b=uDL8KXUJ0mrdUNcwgbzJe6n8pGmtc3bJtvELSpwIQSd2bh9Nm60AoZb6yMoag6ZHQOoFS+We8g2176y5TYyu/gCMl7IwRaTVtN2+xETcOfnHOXQ6YjMGPkdLN41jqdcxBdB+C1V67kIMLhYAuyPRDibSHGMKkhaz6YxoE/b4IDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gQ7mc+DE; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720770705; x=1752306705;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/WIurWJG+oKfW+i69cYnWTy8/zE+GskbYcFddxQcYq0=;
+  b=gQ7mc+DE3AL0nOwMthyZoxE8cqYVtYNX9xagjkTE4GnhnTrBlTggc4K3
+   IqddXKLZ+GAaG5NMi0H2fEAiZ+siV6fC15rnQlIcYNg63zzltUDs8rZxL
+   G4zOicHrGydnrwN6xJa01/UbXyN3TAh2L1QJ19BELDbnSaD+oi820o7ye
+   qVymfEQyKca5XMjH7bYgAetFtKpBs8vYMp06ROizfsCdtlcdB6QS7WZaH
+   03NlGGtoz0mPsnI1bcUhhBQ/DzxnehPiLilyf2hQCuOExnhj0HbcIKece
+   XyKmpGan9OttOXIsMA9l6y8BfqGvhiOH3rYSRR99r/3akHdH0KYm9Tz2X
+   g==;
+X-CSE-ConnectionGUID: DyuZ8dKDRjGPiJjcJ+TmSw==
+X-CSE-MsgGUID: 9gSrHZceRPusW/4pYRQq/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="18403450"
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="18403450"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 00:51:45 -0700
+X-CSE-ConnectionGUID: i8tcuoWoT3mwX1qLEIsMtA==
+X-CSE-MsgGUID: AsTAu88CTI+WNwC/+gaFYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="79537595"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 00:51:41 -0700
+Message-ID: <5a9d0c9c-ef97-4a77-b81b-a67bd27603aa@intel.com>
+Date: Fri, 12 Jul 2024 15:51:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,95 +66,139 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] arm64: dts: amlogic: s4: add ao secure node
-To: xianwei.zhao@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240712-soc_info-v1-0-05ba95929d5a@amlogic.com>
- <20240712-soc_info-v1-2-05ba95929d5a@amlogic.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 12/49] KVM: x86: Reject disabling of MWAIT/HLT
+ interception when not allowed
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Maxim Levitsky <mlevitsk@redhat.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>,
+ Yang Weijiang <weijiang.yang@intel.com>,
+ Robert Hoo <robert.hoo.linux@gmail.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+ <20240517173926.965351-13-seanjc@google.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240712-soc_info-v1-2-05ba95929d5a@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20240517173926.965351-13-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/07/2024 08:54, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+On 5/18/2024 1:38 AM, Sean Christopherson wrote:
+> Reject KVM_CAP_X86_DISABLE_EXITS if userspace attempts to disable MWAIT or
+> HLT exits and KVM previously reported (via KVM_CHECK_EXTENSION) that
+> disabling the exit(s) is not allowed.  E.g. because MWAIT isn't supported
+> or the CPU doesn't have an aways-running APIC timer, or because KVM is
+> configured to mitigate cross-thread vulnerabilities.
 > 
-> Add node for board info registers, which allows getting SoC family and
-> board revision.
-> 
-> For example, with MESON_GX_SOCINFO config enabled we can get the
-> following information for board with Amlogic S4 SoC:
-> soc soc0: Amlogic S4 (S805X2) Revision 37:a (2:1) Detecte
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> Cc: Kechen Lu <kechenl@nvidia.com>
+> Fixes: 4d5422cea3b6 ("KVM: X86: Provide a capability to disable MWAIT intercepts")
+> Fixes: 6f0f2d5ef895 ("KVM: x86: Mitigate the cross-thread return address predictions bug")
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Just realize the same issue when reading the MWAIT code then find your 
+this fix.
+
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+
 > ---
->  arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
+>   arch/x86/kvm/x86.c | 54 ++++++++++++++++++++++++----------------------
+>   1 file changed, 28 insertions(+), 26 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-> index c11c947fa18c..316905ec191c 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-> @@ -763,6 +763,12 @@ reset: reset-controller@2000 {
->  				#reset-cells = <1>;
->  			};
->  
-> +			sec_ao: ao-secure@10220 {
-> +				compatible = "amlogic,meson-gx-ao-secure", "syscon";
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 4cb0c150a2f8..c729227c6501 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -4590,6 +4590,20 @@ static inline bool kvm_can_mwait_in_guest(void)
+>   		boot_cpu_has(X86_FEATURE_ARAT);
+>   }
+>   
+> +static u64 kvm_get_allowed_disable_exits(void)
+> +{
+> +	u64 r = KVM_X86_DISABLE_EXITS_PAUSE;
+> +
+> +	if (!mitigate_smt_rsb) {
+> +		r |= KVM_X86_DISABLE_EXITS_HLT |
+> +			KVM_X86_DISABLE_EXITS_CSTATE;
+> +
+> +		if (kvm_can_mwait_in_guest())
+> +			r |= KVM_X86_DISABLE_EXITS_MWAIT;
+> +	}
+> +	return r;
+> +}
+> +
+>   #ifdef CONFIG_KVM_HYPERV
+>   static int kvm_ioctl_get_supported_hv_cpuid(struct kvm_vcpu *vcpu,
+>   					    struct kvm_cpuid2 __user *cpuid_arg)
+> @@ -4726,15 +4740,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>   		r = KVM_CLOCK_VALID_FLAGS;
+>   		break;
+>   	case KVM_CAP_X86_DISABLE_EXITS:
+> -		r = KVM_X86_DISABLE_EXITS_PAUSE;
+> -
+> -		if (!mitigate_smt_rsb) {
+> -			r |= KVM_X86_DISABLE_EXITS_HLT |
+> -			     KVM_X86_DISABLE_EXITS_CSTATE;
+> -
+> -			if (kvm_can_mwait_in_guest())
+> -				r |= KVM_X86_DISABLE_EXITS_MWAIT;
+> -		}
+> +		r |= kvm_get_allowed_disable_exits();
+>   		break;
+>   	case KVM_CAP_X86_SMM:
+>   		if (!IS_ENABLED(CONFIG_KVM_SMM))
+> @@ -6565,33 +6571,29 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
+>   		break;
+>   	case KVM_CAP_X86_DISABLE_EXITS:
+>   		r = -EINVAL;
+> -		if (cap->args[0] & ~KVM_X86_DISABLE_VALID_EXITS)
+> +		if (cap->args[0] & ~kvm_get_allowed_disable_exits())
 
-This is not gx, but s4, so incorrect compatible used. Same for all other
-patches.
+sigh.
 
-Best regards,
-Krzysztof
+KVM_X86_DISABLE_VALID_EXITS has no user now. But we cannot remove it 
+since it's in uapi header, right?
+
+>   			break;
+>   
+>   		mutex_lock(&kvm->lock);
+>   		if (kvm->created_vcpus)
+>   			goto disable_exits_unlock;
+>   
+> -		if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
+> -			kvm->arch.pause_in_guest = true;
+> -
+>   #define SMT_RSB_MSG "This processor is affected by the Cross-Thread Return Predictions vulnerability. " \
+>   		    "KVM_CAP_X86_DISABLE_EXITS should only be used with SMT disabled or trusted guests."
+>   
+> -		if (!mitigate_smt_rsb) {
+> -			if (boot_cpu_has_bug(X86_BUG_SMT_RSB) && cpu_smt_possible() &&
+> -			    (cap->args[0] & ~KVM_X86_DISABLE_EXITS_PAUSE))
+> -				pr_warn_once(SMT_RSB_MSG);
+> -
+> -			if ((cap->args[0] & KVM_X86_DISABLE_EXITS_MWAIT) &&
+> -			    kvm_can_mwait_in_guest())
+> -				kvm->arch.mwait_in_guest = true;
+> -			if (cap->args[0] & KVM_X86_DISABLE_EXITS_HLT)
+> -				kvm->arch.hlt_in_guest = true;
+> -			if (cap->args[0] & KVM_X86_DISABLE_EXITS_CSTATE)
+> -				kvm->arch.cstate_in_guest = true;
+> -		}
+> +		if (!mitigate_smt_rsb && boot_cpu_has_bug(X86_BUG_SMT_RSB) &&
+> +		    cpu_smt_possible() &&
+> +		    (cap->args[0] & ~KVM_X86_DISABLE_EXITS_PAUSE))
+> +			pr_warn_once(SMT_RSB_MSG);
+>   
+> +		if (cap->args[0] & KVM_X86_DISABLE_EXITS_PAUSE)
+> +			kvm->arch.pause_in_guest = true;
+> +		if (cap->args[0] & KVM_X86_DISABLE_EXITS_MWAIT)
+> +			kvm->arch.mwait_in_guest = true;
+> +		if (cap->args[0] & KVM_X86_DISABLE_EXITS_HLT)
+> +			kvm->arch.hlt_in_guest = true;
+> +		if (cap->args[0] & KVM_X86_DISABLE_EXITS_CSTATE)
+> +			kvm->arch.cstate_in_guest = true;
+>   		r = 0;
+>   disable_exits_unlock:
+>   		mutex_unlock(&kvm->lock);
 
 
