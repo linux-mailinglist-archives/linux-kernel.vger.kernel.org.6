@@ -1,329 +1,291 @@
-Return-Path: <linux-kernel+bounces-251229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C92930264
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B4D930266
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 464F01F22B49
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:30:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943FE1F2296B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7EF61FEB;
-	Fri, 12 Jul 2024 23:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AB97E59A;
+	Fri, 12 Jul 2024 23:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KjhUYGuy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="R8hW/7gE"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EE51BC20
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 23:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B323A49630
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 23:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720827030; cv=none; b=oFsF7WZhdJEtW6Oyq+JA9aQzCeMgWTAB2tnO149hGZ5f3QdrJstiu7QUG8co0vdOeRx/5yai9sJoIMlQ5xPQsXuFKyKwk7CcO2ENgywzLv36siH98f0c82uU7l8brI8ohhYPuBzvb2HZPHN13UJMPaAM8oe2vUV5of1tyGe/zwM=
+	t=1720827047; cv=none; b=isR7BjQy4XhlGrKGuQhaqxQhSaBhYw1qe7SiJ36Ghpb1PG4MuNsHtWu5YY9YL01nxlr2fG2jZQLLvRs1u6G3hekL+/DhGM+JFZ6OzwbowZvwe4Lu+6TRrC99lcvXcTlJC/dfeotGh562iAOLJ30YoeF+P8Yzc+v98Jz7Sggnyf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720827030; c=relaxed/simple;
-	bh=VmVKqaB7jqqAKMN4+Z+1eEJ1RHJxxA86lrh01Rhd8Ts=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T3n5NtxIVOmxCaHgqq0dhtV32G84JFupWElUVn2T4QHq5O+SAIMTprm3AuvKJ1P3TxqyQBCnupMK+S+7BDOiirFKIz1G3Dn36oUKP7WgIkVSeO+8WjySm9+gU0f/pa4QLIbjlY1Io/b2dG086dTBl5XJGOXobeFEkA1i3f1zey8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KjhUYGuy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720827026;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uIkp6RmbXs4BLA2X/tPJblcMbPcHu2pOAxQo4xSKoe4=;
-	b=KjhUYGuySJXwLxGAthL1Y/5B/arsiaRvPguVHJU1pQnHm6fa19xIp08EwgAELkj4VS6pd2
-	EPN354kGcQgA4I2xacDqyp4S5FOWtUqCrhOzMa9cYANy2hQywTCt89u1S8CJxsN2fGxSMn
-	lg82BqxNm6x6ljTyMLXsjzNZ7uoC6vE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-161-LehBhNO1Oa-iPGUD-6ZsNA-1; Fri,
- 12 Jul 2024 19:30:20 -0400
-X-MC-Unique: LehBhNO1Oa-iPGUD-6ZsNA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 802981956064;
-	Fri, 12 Jul 2024 23:30:12 +0000 (UTC)
-Received: from llong.com (unknown [10.22.17.116])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 68A451955F40;
-	Fri, 12 Jul 2024 23:30:09 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH-patch v6] cgroup: Show # of subsystem CSSes in cgroup.stat
-Date: Fri, 12 Jul 2024 19:29:59 -0400
-Message-Id: <20240712232959.2494935-1-longman@redhat.com>
+	s=arc-20240116; t=1720827047; c=relaxed/simple;
+	bh=nL0cRCxe2VRn5wqpS7DSg3ERZFxeayCU16AF7kaHA5I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vGrfIEMjHp07jmBzOXWsRu2JsR2n/LNi5rLKpfMoUFz1FYjS8qpgcoZlQfFku0T9jd5ax7PftnstG5ELLH4mm+lXh6c47b3T9WxzQ4KRQQcTacHJV8iorQ3eeskMBzAFF2aEsTNYfu2jGIGaZ/NtY5Te1xEy2RWIBKy84f2Hy64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com; spf=pass smtp.mailfrom=kylehuey.com; dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b=R8hW/7gE; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylehuey.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eeb1ba040aso31764901fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:30:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kylehuey.com; s=google; t=1720827044; x=1721431844; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MwuBrPwzCORM2gf6knUVH7sdI90nrwysVUU69ktUrio=;
+        b=R8hW/7gEqGJ6sgo2Hk7f8zCWqSt9mdFoy0LxBqXrekDBz8ow4i/M5ib1bGfjzUtSde
+         7AsiEX8lB+usHZDPzSfMvPnWZAq+KXnrdqoOwY4zAkMEVo9AO2LXZg/CB6iwxRLSgCAz
+         Za4T2Q42i9fIa1LvqEl0qXRriPDEWJD38l4bSOnpoAhsWYSwca22K+PymRlsb84L/aMT
+         Vy5+ZAbNyA4RtN49uD3hEmR85ZrYeYJHHurnl5WMIVF9FubuuAKMF/ReYeuIvbRrL+pP
+         i/Crqj95aoRH69WLhNTizt7i5CUEqXHeBKv12ktNLk4tBcOeksWVrh0pcXI2hTfM4jD8
+         YRrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720827044; x=1721431844;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MwuBrPwzCORM2gf6knUVH7sdI90nrwysVUU69ktUrio=;
+        b=sJKtU00Douadu7m+pVXBGxDxhkhm+mEDlviINfdOvByVsM8OSeb9bOgFm/E1tZpJwu
+         PO9Zjl1J3ZMeM5dQRBtgpHZAPVoIdM7GGYaAi9Y+xTR2wT7a08hsn7IneoHKGuzDDLhh
+         6s0RwOiuRs1kvASu1paIJ6H+uL5maHcbYhkexrSXq2sGAd85T24CYr5d1NGibJkbcK0K
+         WQ//Nh/eXg+4+CsmXIkq015ZB+tpla2ZKDmkFEtLvZvAEcCtbRGXkEDiBE7tFCDyr2n6
+         FJK/vXfGA93kGAY0BJV22SwRswLENOC5cY6JhZfveZsOLyyFPAI3iXItgkckarnAxAfN
+         dPDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqlTiLgKt8OVfcVncQCmez4V6a0n8wzfboFaoYe/NPV4UEyTIWu+lZzDHn50xfeKce6OkFn2vkdpRXq6C9L8UlSqL7TMkqTYyzfB3l
+X-Gm-Message-State: AOJu0YzXqLVMVq9aIAxQFX66ZAYVju6JGJljVnoJeM6nmAfEEgwZFn8Y
+	PyW2HWTkcPxeISvELU/DT+vnBoGdOO/g4gtdmjWVv9fpxDOiqXVU9syRjMjFW2HVJHuuk2ME5jx
+	nlOTNOlSzIX0WoBcdHK/TJ90/rr8dEUpHzH55
+X-Google-Smtp-Source: AGHT+IEPVuVWsYpsRC2HRqIIUOCKH7saR32IY0rtft8ys3HjYGbfM3zPIoXAMMXK8ItFQZgG/PI6KNH7YTQSp2/3RXA=
+X-Received: by 2002:a2e:9015:0:b0:2ee:4c66:6828 with SMTP id
+ 38308e7fff4ca-2eeb30fc7bbmr80854651fa.24.1720827043852; Fri, 12 Jul 2024
+ 16:30:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <ZpFfocvyF3KHaSzF@LQ3V64L9R2> <ZpGrstyKD-PtWyoP@krava>
+ <CAP045ApgYjQLVgvPeB0jK4LjfBB+XMo89gdVkZH8XJAdD=a6sg@mail.gmail.com> <CAP045ApsNDc-wJSSY0-BC+HMvWErUYk=GAt6P+J_8Q6dcdXj4Q@mail.gmail.com>
+In-Reply-To: <CAP045ApsNDc-wJSSY0-BC+HMvWErUYk=GAt6P+J_8Q6dcdXj4Q@mail.gmail.com>
+From: Kyle Huey <me@kylehuey.com>
+Date: Fri, 12 Jul 2024 16:30:31 -0700
+Message-ID: <CAP045AqqfU3g2+-groEHzzdJvO3nyHPM5_faUao5UdbSOtK48A@mail.gmail.com>
+Subject: Re: [bpf?] [net-next ?] [RESEND] possible bpf overflow/output bug
+ introduced in 6.10rc1 ?
+To: Joe Damato <jdamato@fastly.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	netdev@vger.kernel.org, acme@kernel.org, andrii.nakryiko@gmail.com, 
+	elver@google.com, khuey@kylehuey.com, mingo@kernel.org, namhyung@kernel.org, 
+	peterz@infradead.org, robert@ocallahan.org, yonghong.song@linux.dev, 
+	mkarsten@uwaterloo.ca, kuba@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
-help manage different structures in various cgroup subsystems by being
-an embedded element inside a larger structure like cpuset or mem_cgroup.
+Joe, can you test this?
 
-The /proc/cgroups file shows the number of cgroups for each of the
-subsystems.  With cgroup v1, the number of CSSes is the same as the
-number of cgroups.  That is not the case anymore with cgroup v2. The
-/proc/cgroups file cannot show the actual number of CSSes for the
-subsystems that are bound to cgroup v2.
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 8f908f077935..f0d7119585dc 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9666,6 +9666,8 @@ static inline void
+perf_event_free_bpf_handler(struct perf_event *event)
+  * Generic event overflow handling, sampling.
+  */
 
-So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
-we can't tell by looking at /proc/cgroups which cgroup subsystems may
-be responsible.
-
-As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
-cgroup.stat file is now being extended to show the number of live and
-dying CSSes associated with all the non-inhibited cgroup subsystems
-that have been bound to cgroup v2 as long as they are not both zero.
-The number includes CSSes in the current cgroup as well as in all the
-descendants underneath it.  This will help us pinpoint which subsystems
-are responsible for the increasing number of dying (nr_dying_descendants)
-cgroups.
-
-The CSSes dying counts are stored in the cgroup structure itself
-instead of inside the CSS as suggested by Johannes. This will allow
-us to accurately track dying counts of cgroup subsystems that have
-recently been disabled in a cgroup. It is now possible that a zero
-subsystem number is coupled with a non-zero dying subsystem number.
-
-The cgroup-v2.rst file is updated to discuss this new behavior.
-
-With this patch applied, a sample output from root cgroup.stat file
-was shown below.
-
-	nr_descendants 56
-	nr_subsys_cpuset 1
-	nr_subsys_cpu 43
-	nr_subsys_io 43
-	nr_subsys_memory 56
-	nr_subsys_perf_event 57
-	nr_subsys_hugetlb 1
-	nr_subsys_pids 56
-	nr_subsys_rdma 1
-	nr_subsys_misc 1
-	nr_dying_descendants 30
-	nr_dying_subsys_cpuset 0
-	nr_dying_subsys_cpu 0
-	nr_dying_subsys_io 0
-	nr_dying_subsys_memory 30
-	nr_dying_subsys_perf_event 0
-	nr_dying_subsys_hugetlb 0
-	nr_dying_subsys_pids 0
-	nr_dying_subsys_rdma 0
-	nr_dying_subsys_misc 0
-
-Another sample output from system.slice/cgroup.stat was:
-
-	nr_descendants 32
-	nr_subsys_cpu 30
-	nr_subsys_io 30
-	nr_subsys_memory 32
-	nr_subsys_perf_event 33
-	nr_subsys_pids 32
-	nr_dying_descendants 32
-	nr_dying_subsys_cpu 0
-	nr_dying_subsys_io 0
-	nr_dying_subsys_memory 32
-	nr_dying_subsys_perf_event 0
-	nr_dying_subsys_pids 0
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- Documentation/admin-guide/cgroup-v2.rst | 16 ++++++-
- include/linux/cgroup-defs.h             | 14 ++++++
- kernel/cgroup/cgroup.c                  | 58 ++++++++++++++++++++++++-
- 3 files changed, 84 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 52763d6b2919..eac1ec0e0069 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -981,6 +981,18 @@ All cgroup core files are prefixed with "cgroup."
- 		A dying cgroup can consume system resources not exceeding
- 		limits, which were active at the moment of cgroup deletion.
- 
-+	  nr_subsys_<cgroup_subsys>
-+		Total number of live cgroup subsystems (e.g memory
-+		cgroup) at and beneath the current cgroup.  An entry
-+		will only be shown if the cgroup subsystem is enabled
-+		in the current cgroup or dying subsystems are present.
++static bool perf_event_is_tracing(struct perf_event *event);
 +
-+	  nr_dying_subsys_<cgroup_subsys>
-+		Total number of dying cgroup subsystems (e.g. memory
-+		cgroup) at and beneath the current cgroup.  An entry
-+		will only be shown if the cgroup subsystem is enabled
-+		in the current cgroup or dying subsystems are present.
+ static int __perf_event_overflow(struct perf_event *event,
+                  int throttle, struct perf_sample_data *data,
+                  struct pt_regs *regs)
+@@ -9682,7 +9684,9 @@ static int __perf_event_overflow(struct perf_event *e=
+vent,
+
+     ret =3D __perf_event_account_interrupt(event, throttle);
+
+-    if (event->prog && !bpf_overflow_handler(event, data, regs))
++    if (event->prog &&
++        !perf_event_is_tracing(event) &&
++        !bpf_overflow_handler(event, data, regs))
+         return ret;
+
+     /*
+@@ -10612,6 +10616,11 @@ void perf_event_free_bpf_prog(struct perf_event *e=
+vent)
+
+ #else
+
++static inline bool perf_event_is_tracing(struct perf_event *event)
++{
++    return false;
++}
 +
-   cgroup.freeze
- 	A read-write single value file which exists on non-root cgroups.
- 	Allowed values are "0" and "1". The default is "0".
-@@ -2930,8 +2942,8 @@ Deprecated v1 Core Features
- 
- - "cgroup.clone_children" is removed.
- 
--- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
--  at the root instead.
-+- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
-+  "cgroup.stat" files at the root instead.
- 
- 
- Issues with v1 and Rationales for v2
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index b36690ca0d3f..3cb049f104f6 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -210,6 +210,14 @@ struct cgroup_subsys_state {
- 	 * fields of the containing structure.
- 	 */
- 	struct cgroup_subsys_state *parent;
-+
-+	/*
-+	 * Keep track of total numbers of visible descendant CSSes.
-+	 * The total number of dying CSSes is tracked in
-+	 * css->cgroup->nr_dying_subsys[ssid].
-+	 * Protected by cgroup_mutex.
-+	 */
-+	int nr_descendants;
- };
- 
- /*
-@@ -470,6 +478,12 @@ struct cgroup {
- 	/* Private pointers for each registered subsystem */
- 	struct cgroup_subsys_state __rcu *subsys[CGROUP_SUBSYS_COUNT];
- 
-+	/*
-+	 * Keep track of total number of dying CSSes at and below this cgroup.
-+	 * Protected by cgroup_mutex.
-+	 */
-+	int nr_dying_subsys[CGROUP_SUBSYS_COUNT];
-+
- 	struct cgroup_root *root;
- 
- 	/*
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index c8e4b62b436a..73774c841100 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -3669,12 +3669,43 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
- static int cgroup_stat_show(struct seq_file *seq, void *v)
+ static inline void perf_tp_register(void)
  {
- 	struct cgroup *cgroup = seq_css(seq)->cgroup;
-+	struct cgroup_subsys_state *css;
-+	int dying_cnt[CGROUP_SUBSYS_COUNT];
-+	int ssid;
- 
- 	seq_printf(seq, "nr_descendants %d\n",
- 		   cgroup->nr_descendants);
-+
-+	/*
-+	 * Show the number of live and dying csses associated with each of
-+	 * non-inhibited cgroup subsystems that is either enabled in current
-+	 * cgroup or has non-zero dying count.
-+	 *
-+	 * Without proper lock protection, racing is possible. So the
-+	 * numbers may not be consistent when that happens.
-+	 */
-+	rcu_read_lock();
-+	for (ssid = 0; ssid < CGROUP_SUBSYS_COUNT; ssid++) {
-+		dying_cnt[ssid] = -1;
-+		if (BIT(ssid) & cgrp_dfl_inhibit_ss_mask)
-+			continue;
-+		css = rcu_dereference_raw(cgroup->subsys[ssid]);
-+		if (!css && !cgroup->nr_dying_subsys[ssid])
-+			continue;
-+
-+		dying_cnt[ssid] = cgroup->nr_dying_subsys[ssid];
-+		seq_printf(seq, "nr_subsys_%s %d\n", cgroup_subsys[ssid]->name,
-+			   css ? (css->nr_descendants + 1) : 0);
-+	}
-+
- 	seq_printf(seq, "nr_dying_descendants %d\n",
- 		   cgroup->nr_dying_descendants);
--
-+	for (ssid = 0; ssid < CGROUP_SUBSYS_COUNT; ssid++) {
-+		if (dying_cnt[ssid] >= 0)
-+			seq_printf(seq, "nr_dying_subsys_%s %d\n",
-+				   cgroup_subsys[ssid]->name, dying_cnt[ssid]);
-+	}
-+	rcu_read_unlock();
- 	return 0;
  }
- 
-@@ -5424,6 +5455,8 @@ static void css_release_work_fn(struct work_struct *work)
- 	list_del_rcu(&css->sibling);
- 
- 	if (ss) {
-+		struct cgroup *parent_cgrp;
-+
- 		/* css release path */
- 		if (!list_empty(&css->rstat_css_node)) {
- 			cgroup_rstat_flush(cgrp);
-@@ -5433,6 +5466,14 @@ static void css_release_work_fn(struct work_struct *work)
- 		cgroup_idr_replace(&ss->css_idr, NULL, css->id);
- 		if (ss->css_released)
- 			ss->css_released(css);
-+
-+		cgrp->nr_dying_subsys[ss->id]--;
-+		WARN_ON_ONCE(css->nr_descendants || cgrp->nr_dying_subsys[ss->id]);
-+		parent_cgrp = cgroup_parent(cgrp);
-+		while (parent_cgrp) {
-+			parent_cgrp->nr_dying_subsys[ss->id]--;
-+			parent_cgrp = cgroup_parent(parent_cgrp);
-+		}
- 	} else {
- 		struct cgroup *tcgrp;
- 
-@@ -5517,8 +5558,11 @@ static int online_css(struct cgroup_subsys_state *css)
- 		rcu_assign_pointer(css->cgroup->subsys[ss->id], css);
- 
- 		atomic_inc(&css->online_cnt);
--		if (css->parent)
-+		if (css->parent) {
- 			atomic_inc(&css->parent->online_cnt);
-+			while ((css = css->parent))
-+				css->nr_descendants++;
-+		}
- 	}
- 	return ret;
- }
-@@ -5540,6 +5584,16 @@ static void offline_css(struct cgroup_subsys_state *css)
- 	RCU_INIT_POINTER(css->cgroup->subsys[ss->id], NULL);
- 
- 	wake_up_all(&css->cgroup->offline_waitq);
-+
-+	css->cgroup->nr_dying_subsys[ss->id]++;
-+	/*
-+	 * Parent css and cgroup cannot be freed until after the freeing
-+	 * of child css, see css_free_rwork_fn().
-+	 */
-+	while ((css = css->parent)) {
-+		css->nr_descendants--;
-+		css->cgroup->nr_dying_subsys[ss->id]++;
-+	}
- }
- 
- /**
--- 
-2.39.3
 
+- Kyle
+
+On Fri, Jul 12, 2024 at 4:05=E2=80=AFPM Kyle Huey <me@kylehuey.com> wrote:
+>
+> On Fri, Jul 12, 2024 at 3:49=E2=80=AFPM Kyle Huey <me@kylehuey.com> wrote=
+:
+> >
+> > On Fri, Jul 12, 2024 at 3:18=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> =
+wrote:
+> > >
+> > > On Fri, Jul 12, 2024 at 09:53:53AM -0700, Joe Damato wrote:
+> > > > Greetings:
+> > > >
+> > > > (I am reposting this question after 2 days and to a wider audience
+> > > > as I didn't hear back [1]; my apologies it just seemed like a
+> > > > possible bug slipped into 6.10-rc1 and I wanted to bring attention
+> > > > to it before 6.10 is released.)
+> > > >
+> > > > While testing some unrelated networking code with Martin Karsten (c=
+c'd on
+> > > > this email) we discovered what appears to be some sort of overflow =
+bug in
+> > > > bpf.
+> > > >
+> > > > git bisect suggests that commit f11f10bfa1ca ("perf/bpf: Call BPF h=
+andler
+> > > > directly, not through overflow machinery") is the first commit wher=
+e the
+> > > > (I assume) buggy behavior appears.
+> > >
+> > > heya, nice catch!
+> > >
+> > > I can reproduce.. it seems that after f11f10bfa1ca we allow to run tr=
+acepoint
+> > > program as perf event overflow program
+> > >
+> > > bpftrace's bpf program returns 1 which means that perf_trace_run_bpf_=
+submit
+> > > will continue to execute perf_tp_event and then:
+> > >
+> > >   perf_tp_event
+> > >     perf_swevent_event
+> > >       __perf_event_overflow
+> > >         bpf_overflow_handler
+> > >
+> > > bpf_overflow_handler then executes event->prog on wrong arguments, wh=
+ich
+> > > results in wrong 'work' data in bpftrace output
+> > >
+> > > I can 'fix' that by checking the event type before running the progra=
+m like
+> > > in the change below, but I wonder there's probably better fix
+> > >
+> > > Kyle, any idea?
+> >
+> > Thanks for doing the hard work here Jiri. I did see the original email
+> > a couple days ago but the cause was far from obvious to me so I was
+> > waiting until I had more time to dig in.
+> >
+> > The issue here is that kernel/trace/bpf_trace.c pokes at event->prog
+> > directly, so the assumption made in my patch series (based on the
+> > suggested patch at
+> > https://lore.kernel.org/lkml/ZXJJa5re536_e7c1@google.com/) that having
+> > a BPF program in event->prog means we also use the BPF overflow
+> > handler is wrong.
+> >
+> > I'll think about how to fix it.
+> >
+> > - Kyle
+>
+> The good news is that perf_event_attach_bpf_prog() (where we have a
+> program but no overflow handler) and perf_event_set_bpf_handler()
+> (where we have a program and an overflow handler) appear to be
+> mutually exclusive, gated on perf_event_is_tracing(). So I believe we
+> can fix this with a more generic version of your patch.
+>
+> - Kyle
+>
+> >
+> > > >
+> > > > Running the following on my machine as of the commit mentioned abov=
+e:
+> > > >
+> > > >   bpftrace -e 'tracepoint:napi:napi_poll { @[args->work] =3D count(=
+); }'
+> > > >
+> > > > while simultaneously transferring data to the target machine (in my=
+ case, I
+> > > > scp'd a 100MiB file of zeros in a loop) results in very strange out=
+put
+> > > > (snipped):
+> > > >
+> > > >   @[11]: 5
+> > > >   @[18]: 5
+> > > >   @[-30590]: 6
+> > > >   @[10]: 7
+> > > >   @[14]: 9
+> > > >
+> > > > It does not seem that the driver I am using on my test system (mlx5=
+) would
+> > > > ever return a negative value from its napi poll function and likewi=
+se for
+> > > > the driver Martin is using (mlx4).
+> > > >
+> > > > As such, I don't think it is possible for args->work to ever be a l=
+arge
+> > > > negative number, but perhaps I am misunderstanding something?
+> > > >
+> > > > I would like to note that commit 14e40a9578b7 ("perf/bpf: Remove #i=
+fdef
+> > > > CONFIG_BPF_SYSCALL from struct perf_event members") does not exhibi=
+t this
+> > > > behavior and the output seems reasonable on my test system. Martin =
+confirms
+> > > > the same for both commits on his test system, which uses different =
+hardware
+> > > > than mine.
+> > > >
+> > > > Is this an expected side effect of this change? I would expect it i=
+s not
+> > > > and that the output is a bug of some sort. My apologies in that I a=
+m not
+> > > > particularly familiar with the bpf code and cannot suggest what the=
+ root
+> > > > cause might be.
+> > > >
+> > > > If it is not a bug:
+> > > >   1. Sorry for the noise :(
+> > >
+> > > your report is great, thanks a lot!
+> > >
+> > > jirka
+> > >
+> > >
+> > > >   2. Can anyone suggest what this output might mean or how the
+> > > >      script run above should be modified? AFAIK this is a fairly
+> > > >      common bpftrace that many folks run for profiling/debugging
+> > > >      purposes.
+> > > >
+> > > > Thanks,
+> > > > Joe
+> > > >
+> > > > [1]: https://lore.kernel.org/bpf/Zo64cpho2cFQiOeE@LQ3V64L9R2/T/#u
+> > >
+> > > ---
+> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > > index c6a6936183d5..0045dc754ef7 100644
+> > > --- a/kernel/events/core.c
+> > > +++ b/kernel/events/core.c
+> > > @@ -9580,7 +9580,7 @@ static int bpf_overflow_handler(struct perf_eve=
+nt *event,
+> > >                 goto out;
+> > >         rcu_read_lock();
+> > >         prog =3D READ_ONCE(event->prog);
+> > > -       if (prog) {
+> > > +       if (prog && prog->type =3D=3D BPF_PROG_TYPE_PERF_EVENT) {
+> > >                 perf_prepare_sample(data, event, regs);
+> > >                 ret =3D bpf_prog_run(prog, &ctx);
+> > >         }
 
