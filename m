@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-250251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FF192F5B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:51:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D500A92F5B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E4D1C213A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:51:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858FA1F22CF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A830413D607;
-	Fri, 12 Jul 2024 06:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rLxGdSvc"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80EAB13D622;
+	Fri, 12 Jul 2024 06:51:58 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE00D39B;
-	Fri, 12 Jul 2024 06:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB14C39B;
+	Fri, 12 Jul 2024 06:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720767073; cv=none; b=UAFvVFONfFliwdYtv+QSE8ZwEg+WyGFqvDcMurIVLJSo1+C9DuWh+BS1dpqu9PJ/eFOiM5uZT8kpaNMsAghdlz6P5YFeA2cHO4+JI7j+XdQSuFEJgaKl73RfWmhCGEnFJp+m8x05zNwrvgNwaXirP7jVeMVte3jFuNzaonDAuLI=
+	t=1720767118; cv=none; b=R45vwn+BKKOg5U/kVd4gAu+BIH3so6BAtg2XRjcifoBJ1NxKQRsGTvkETv1GXf2PUwmNe+U2SAeWoWnV+YgQUMzwGVcOuxG8KOCWUEKWHbw6AE8g3CA8p9av4fxOCT/3as/heWtB6thyOKurg/51IPGaLCrRStUzCGpm0OT+cuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720767073; c=relaxed/simple;
-	bh=UPanOI9zKGSDL7AzLQdR3hDfJaQcntsKpWvsuBdX0kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UyfBIlsQAo6JM+KuVqKwqcpNNHLA7CfxBP0vycYHXqz4kgPn7zjemUSOYzwqQTdCApiaMW9rkaRwrGBqNouz+aH2vYKDAcvznveDiTaPDX8MV61lrSZFth/SJaZKaT4YDbKriBA6kxDUgw21SNGLU7xfSsNwoAxC8Osn/YvNqgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rLxGdSvc; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720767068;
-	bh=bTZG00kGVPd/R/JT/8M5/xrkYpDXgBqQSDDm07g9Yok=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rLxGdSvc93KlG8pcA4oIt0qUyIeWMtRiu195er+23qf/DtGhdR8g0s8GqB3qA3Ga9
-	 1YWWmbu249SBl1QD1hrzNK79g8IXZRAZUJra64ojqYFc+3/rT91JFoLandzwDg+cvh
-	 p9J9qnN3TPMWeGgkPeXfq3DnMrxoYgpPTLUVCKIvlpPsrRsmtninsv5aNeJaIJwV7Y
-	 cVUnaYUEkA55LdVWab5JQiF6FIkiyM8Ro196shK+AEd4gdMhXsZ9Iz6ym+WbYZiCjp
-	 cUfAU9R244vIxEL/fyIz9aIjdISeupbMZnWuPhfHMCcaLTWWtjpewB95OlwKM22F2P
-	 cV2wrE4T8/Y1Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WL2LN5sTyz4wx5;
-	Fri, 12 Jul 2024 16:51:08 +1000 (AEST)
-Date: Fri, 12 Jul 2024 16:51:07 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Tejun Heo <tj@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the cgroup tree
-Message-ID: <20240712165107.7b46a640@canb.auug.org.au>
-In-Reply-To: <20240712164354.65cb32bc@canb.auug.org.au>
-References: <20240712164354.65cb32bc@canb.auug.org.au>
+	s=arc-20240116; t=1720767118; c=relaxed/simple;
+	bh=N6YChGETgXAsTATwIa3SBIwBb+q0UqUKKngV4F/vp5E=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=S3i6QhYwHzTUQE4FEuYQTqON4+x8ebdZ0nx+igNrJTkVQ/LsgP+yTt+Txcc2fTGASxQLOetfw4jpmJa3mbjZi+PV9dR2lhiaQliOxcch22wCaBybFuERcHF177hUb4vq3DhjAk1+cBUsWO24MH57eH6FJbLOFJk7G30gGUUHQdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WL2M02NSzz4f3jXw;
+	Fri, 12 Jul 2024 14:51:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 161211A0572;
+	Fri, 12 Jul 2024 14:51:52 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP2 (Coremail) with SMTP id Syh0CgCXAIaG0pBmEsGABw--.32319S3;
+	Fri, 12 Jul 2024 14:51:51 +0800 (CST)
+Subject: Re: [PATCH 2/2] blk-ioprio: remove per-disk structure
+To: Christoph Hellwig <hch@infradead.org>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, tj@kernel.org,
+ josef@toxicpanda.com, jack@suse.cz, axboe@kernel.dk,
+ cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240711090059.3998565-1-yukuai1@huaweicloud.com>
+ <20240711090059.3998565-3-yukuai1@huaweicloud.com>
+ <4c8f1e4e-1b15-4afa-b1e2-084e0c4caeec@acm.org>
+ <520b9c10-c152-77f3-bd5a-b86a1f5ac8ea@huaweicloud.com>
+ <ZpC9le_FsIO0FCJQ@infradead.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <7803ebeb-32a1-57a9-2a65-b44de8f42eed@huaweicloud.com>
+Date: Fri, 12 Jul 2024 14:51:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/nt75AuTn/SB2PGUgmc7gJWX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <ZpC9le_FsIO0FCJQ@infradead.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgCXAIaG0pBmEsGABw--.32319S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7JFyxZF1fWF1fKw1xCr4UArb_yoWfWrcEgF
+	WkZa9Fk3sxWF9rWFsrZr4UZr9ayFyqgry2qFy7tFZrtrWagrWDGF1DG34fZFyfGw4xKryU
+	KF909r1rKrW2kjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+	ACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkI
+	wI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
---Sig_/nt75AuTn/SB2PGUgmc7gJWX
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+ÔÚ 2024/07/12 13:22, Christoph Hellwig Ð´µÀ:
+> On Fri, Jul 12, 2024 at 09:10:30AM +0800, Yu Kuai wrote:
+>>> As one can see in the output of git grep -nHEB1 '>pd_(alloc|free)_fn\(',
+>>> none of the pd_alloc_fn / pd_free_fn callers checks whether or not these
+>>> pointers are NULL. Hence my question why this patch does not trigger any
+>>> NULL pointer dereferences?
+>>
+>> Because the blkcg_deactivate_policy() is removed as well, there are no
+>> callers now... blkcg_policy_register() is still called to make sure
+>> cpd_(alloc|free)_fn will still be called.
+> 
+> Can you throw in a patch documenting this?  Any maybe add a check
+> that pd_alloc_fn / pd_free_fn exist in blkcg_activate_policy and
+> WARN and return an error otherwise?
 
-On Fri, 12 Jul 2024 16:43:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the cgroup tree, today's linux-next build (htmldocs)
-> failed like this:
->=20
-> Sphinx parallel build error:
-> UnicodeDecodeError: 'utf-8' codec can't decode byte 0xfd in position 558:=
- invalid start byte
->=20
-> Caused by commit
->=20
->   704f684e15ad ("cgroup: Add Michal Koutn=C3=BD as a maintainer")
->=20
-> I tracked this down using
->=20
->   git diff stable.. | cat -v | grep -F 'M-}'
->=20
-> and finding the commit that added the line that was output.
-> I tested it by building with the commit temporarily reverted.  I have
-> left that commit in today's linux-next.
->=20
-> Clearly (I think) there is nothing wrong with the commit, but the Sphinx
-> utf-8 decoder also clearly does not think it is valid UTF-8 :-(
+Of course, I realized now that just mention don't activate the policy
+from commit message is too little explanation.
 
-Actually my character map app says that it should be the two bytes 0xC3
-0xBD in UTF-8 (it is 0x00FD in UTF-16).
+Thanks,
+Kuai
 
---=20
-Cheers,
-Stephen Rothwell
+> 
+> .
+> 
 
---Sig_/nt75AuTn/SB2PGUgmc7gJWX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQ0lwACgkQAVBC80lX
-0Gwu9AgAoENiwYThdcwHnRS4J7TF/9GSC0qYIur8pNcqhpOAc+CmcQO3dorpNEHx
-RQagzDvVHPsDk+8aNrcFqD/sXSU20N2BA2wD6VqHPwTNKeD1W3Rmy0IzmtlmlY3B
-m37ib5KqIKJkWTTViqULv3X6NbFQEttb2DarTnqqi7FNNS7fJooBbiU55emJfxmr
-RjpDfShrrN4xrWDMIpVUoqFeA4eOOcU7R2zx3GF56IH2Y0KbiJVDxjpTJo7D3YaV
-OQ6FCkDQFA7n8fKnhBPgMVdnrXFJGfLthpV1nZ1O5uwUy9IDNsnNJyD0xdP8kbuG
-u78FljSCTNM+1l9KSSMgLbQj9iRb7Q==
-=DFZj
------END PGP SIGNATURE-----
-
---Sig_/nt75AuTn/SB2PGUgmc7gJWX--
 
