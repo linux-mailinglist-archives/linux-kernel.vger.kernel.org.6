@@ -1,113 +1,96 @@
-Return-Path: <linux-kernel+bounces-250591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9B892F987
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:27:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A85192F991
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE13C1C22298
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:27:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C783628346A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CEB15EFCC;
-	Fri, 12 Jul 2024 11:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9OsW5rK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD8D15ECE1;
+	Fri, 12 Jul 2024 11:32:08 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22E013CFB0;
-	Fri, 12 Jul 2024 11:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D7615E83
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 11:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720783620; cv=none; b=iPRzRMsFnHWZK3+h1VKNxNqT/c/OuaL0ZXy4OZe2iu7G9szAytXGp3NV2uM1n6RwR64wYo/NYJqctUYppq06gUvb16C5Fa7tGv5z0Y/X1Ft6WzPUc3uFCqNtXJMGCmSXDI1LBFw5oL54grmuSXKHhBvu4zPG18CMsWAOdjeejhA=
+	t=1720783928; cv=none; b=ctdpn9DpoRqoX081EaFnZJbcMB0bHL6ZBCT7UAxarWz6Ly9p+fMK2vvkB338YRKjNuZQYB2m9MjeerAIYVFUqiakvgm+HHrFhYJE7BRIjeS0BmPKrm/ObOaki5NEZH+R0xH0KyXEirnNoPqmgH8HRqhhjx3rUYHLcBlqh43Z80A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720783620; c=relaxed/simple;
-	bh=d+i6p3adtKB4lAk4zPNrKwoUSQaYQ4zTp32AjrUwHvs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JlxpgyHSM3fHFBumjyGNK8rrH4JJAZ1468o1nQXgL+xWFjIy10P+jKN444DGENso9CQqLqBsRCKdPNlN0V+h/cEpIN2As9oLoj3GHZUYVRKq7MS+l8zhSV641IBErFnui5lXmQjozM41JDtvsyEYpJuINNQczw2UuCMFyixTveg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9OsW5rK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C66DAC32782;
-	Fri, 12 Jul 2024 11:26:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720783619;
-	bh=d+i6p3adtKB4lAk4zPNrKwoUSQaYQ4zTp32AjrUwHvs=;
-	h=From:Date:Subject:To:Cc:From;
-	b=V9OsW5rKEwG2lQtqGRJH5USGQUL/mDgX7CF8DH/315oFwWrTdNVIZNTOeFLhEe7Gk
-	 es8a0Y1i2g1upkzVEG+e6Vg1FzdFgGSRqNsDCoB9j6ZtT/R6cgq2QJocTbWJwKsNK9
-	 pkrKNei7+oLDUf1fGu8k2tWPeUucJoF0iC8TAOEgMPQ8G2NyLXAq87D3znAOQc1JYm
-	 x8xLU9U2i8EzXJhKxkoODZX7kaC/QTWzf7byrdty8uBFweM5FTMHRmSNWOnWa/tf6a
-	 PVC+BeNv2ysojEPzGt8qqLOX+kbnVjyK0vS4s+DL4HV2r7wr6CrpTIhA4C5W0dKcT8
-	 sJtZGeVws9FkA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Fri, 12 Jul 2024 07:26:44 -0400
-Subject: [PATCH] nfsd: nfsd_file_lease_notifier_call gets a file_lease as
- an argument
+	s=arc-20240116; t=1720783928; c=relaxed/simple;
+	bh=1eRM1ZtSRT0P+RQJIcIpwsGwyFEoxbKRhlnltAi6gqw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RvIIF5JvK8qRGAcrAW9hnDJvXESvqTFDLxJQ0MSamiFLQ/B23Kl9RE+Gxt7Tt2P3V4snfiybao4vHb08cbN24ryDclxntv729S4Kd212xaqKFKmdbwzlPfaIAV7pE9S2UCdn4fWdYIY317Glx/iI+AcR4nKzXECaWup+mjD93lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WL8X416TJz6K93x;
+	Fri, 12 Jul 2024 19:29:56 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id E6C0F140B63;
+	Fri, 12 Jul 2024 19:32:02 +0800 (CST)
+Received: from A2303104131.china.huawei.com (10.48.147.152) by
+ lhrpeml500005.china.huawei.com (7.191.163.240) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 12 Jul 2024 12:31:56 +0100
+From: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+To: <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>, <will@kernel.org>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
+	<ryan.roberts@arm.com>, <kevin.tian@intel.com>, <joao.m.martins@oracle.com>,
+	<linuxarm@huawei.com>
+Subject: [PATCH] iommu: Move IOMMU_DIRTY_NO_CLEAR define
+Date: Fri, 12 Jul 2024 12:31:32 +0100
+Message-ID: <20240712113132.45100-1-shameerali.kolothum.thodi@huawei.com>
+X-Mailer: git-send-email 2.12.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240712-nfsd-next-v1-1-58c5f2557436@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAPMSkWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDc0Mj3by04hTdvNSKEt2kRFODlCRDk7RkC1MloPqCotS0zAqwWdGxtbU
- A/yearlsAAAA=
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1000; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=d+i6p3adtKB4lAk4zPNrKwoUSQaYQ4zTp32AjrUwHvs=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmkRL8O3mpdod0yII9RJTTjU6UmyzKpxZ1dNxH2
- TjeopISUM2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZpES/AAKCRAADmhBGVaC
- FX9uD/4qj3yarbtD70WTCTlJIi9x/C5fhd0FI0fMiDwnBKUb0OgXS44+ONiAEGQQG3y59k0KlBO
- /OGY4mcX7zTOiWBqxqT6aZtev1DQjef5hh7pWNWpeJ8e5jFaFOl+2wVf1e/T0P/0aTZ3CzRjJyj
- 3NvFgYbG+SLsk/ybFhBacqxEqmjw4xdV0/85quPOjdp8JnBLJtlx6lfFjryML0+NpSduuy+33Tw
- tyStyYnMUSj/ccx2WlWGwWeCrHJoYlxW8gGAVXDi7LqtGMshUKAGtkSeCAn74yFTcKVAQVJy0K4
- hY/1AXXp3OIhRS0AnGlJEFeEmRSIu3T/rdQ9CHDY5LyyTYdxRL+4espSt5BaP/anYKg2kNwKoif
- alaGIfltCfL8nnXRc5BlgUqlG3pp+QJbwJBgngdWqTW82c9tc2TU+zWnj1QHyWWKehUYBI6T9uh
- kab2nHqJavITSlEJbPB9eY19iWjtV7MbLZmbF8KcaeNGWHHphEt/gX3+EME9nDTQ32T5WOvbWcd
- BJjJTZKXxdrhiCpwpQ1qorDzO2T6tkONPzPOwW5NZQuu6VYmY4qu5h0mvEMKKVwN3Xfnl/Rd6Fr
- C5S6bBC9XncVV4vJkYpyQhbObUe8eaKuOriXM1SSrFPQGLKNYkvY8QoiNFPbt1czrLRyMM+0rNp
- ZJMYeHfHGpPtDKg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-"data" actually refers to a file_lease and not a file_lock. Both structs
-have their file_lock_core as the first field though, so this bug should
-be harmless without struct randomization in play.
+Fixes the compile issue when CONFIG_IOMMU_API is not set.
 
-Fixes: 05580bbfc6bc ("nfsd: adapt to breakup of struct file_lock")
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Fixes: 4fe88fd8b4ae ("iommu/io-pgtable-arm: Add read_and_clear_dirty() support")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407121602.HL9ih1it-lkp@intel.com/
+Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 ---
- fs/nfsd/filecache.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/iommu.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-index 88dac1abdde3..ea506882fec2 100644
---- a/fs/nfsd/filecache.c
-+++ b/fs/nfsd/filecache.c
-@@ -667,7 +667,7 @@ static int
- nfsd_file_lease_notifier_call(struct notifier_block *nb, unsigned long arg,
- 			    void *data)
- {
--	struct file_lock *fl = data;
-+	struct file_lease *fl = data;
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 7bc8dff7cf6d..104ce84647d4 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -317,6 +317,9 @@ enum iommu_dev_features {
+ #define IOMMU_PASID_INVALID	(-1U)
+ typedef unsigned int ioasid_t;
  
- 	/* Only close files for F_SETLEASE leases */
- 	if (fl->c.flc_flags & FL_LEASE)
-
----
-base-commit: f862772862db0e2bbd711a03ac6e6cff89e306cb
-change-id: 20240712-nfsd-next-ba50db14fc85
-
-Best regards,
++/* Read but do not clear any dirty bits */
++#define IOMMU_DIRTY_NO_CLEAR (1 << 0)
++
+ #ifdef CONFIG_IOMMU_API
+ 
+ /**
+@@ -353,9 +356,6 @@ struct iommu_dirty_bitmap {
+ 	struct iommu_iotlb_gather *gather;
+ };
+ 
+-/* Read but do not clear any dirty bits */
+-#define IOMMU_DIRTY_NO_CLEAR (1 << 0)
+-
+ /**
+  * struct iommu_dirty_ops - domain specific dirty tracking operations
+  * @set_dirty_tracking: Enable or Disable dirty tracking on the iommu domain
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.34.1
 
 
