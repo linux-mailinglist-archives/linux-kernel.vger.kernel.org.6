@@ -1,149 +1,255 @@
-Return-Path: <linux-kernel+bounces-250717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7908192FBD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:51:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C3D92FBDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98CA81C22514
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:51:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DA43283009
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEDD171098;
-	Fri, 12 Jul 2024 13:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B09171650;
+	Fri, 12 Jul 2024 13:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="DgEbzBux"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hrPwU5Z1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6151170855;
-	Fri, 12 Jul 2024 13:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9A526AFF;
+	Fri, 12 Jul 2024 13:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720792254; cv=none; b=bhe6aflciE0KeXNVPTD1cvyYicrNamAPUe0wf+p02h4SreD2Yjg0UUKHzlJ0rQ33+hwDfFSZBcSD4IgYLB1yG4mR7c39QLiHZ+YSGgCuvr1UiQjh83moRfE+NvZ0Juc0dry/7hA1uBgcCJEWtLTKqDTKvWWgWYZajw3XDRnP94U=
+	t=1720792407; cv=none; b=kSkNJUc55Q/ZY6kIkxnA114efKduK/w8yY5OSSPaGDn9i/j06or/pS613B+Ubsw39y+dEQUqbxWciainhBr08wfRBIj3eI4a1B8A4ga1che0C5B8Krtq365HMCJDT8+Q8fKf516NtMne0q4OzhgcCJ9XDOho1dMk70qGdBfd8I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720792254; c=relaxed/simple;
-	bh=I4s3pgMz9i4x52INpWCVjdgMEszmPrFIycRjFHUxwUI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FIzf1ipvC7jRKUqd5d1nWp0ByxUSlHPh9NMAcEG5zXVN3HoWF+ZjcVLRoAqwYPYGtf5aeYnj+qy4+toG6yR4Y+zCOUkIjoQMYromQ4c0clqyLaxUF+kfQMEd65FlXyjULJYP+u8AsF5BZkA/8gujJTjgAApV+Yjv2x8kU9Y6EqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=DgEbzBux; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=11Vk88tlyuFmzDsyuNNsYY0Ie7tF1wOIOkc5fFbyGsI=; b=DgEbzBuxtGhLQ7NIeBsJYtQK98
-	/plQR9kp9kWmr0xA2rIQrxesq+S3mXAxGonR2HKfe1CzG6pLVxU5HF4V+LKbdW46MhSrM20okOWUH
-	UQwaFuJqChfyT12CSkf4wsspfdoHJHq6fPEQ3xq2BEg/ibknYZ3StQpy/AYNGB2n3dksrt7V3IS3/
-	WCNWtLKXBM/HF2QGRzwJ2huH6aYlEGdY/Brn2uiPSOl17FNc1iC5C8dz/7qqpxW1MY8wYbIv0qW/4
-	kXs57L84gvpkg7Ijjt9ofkuaFtXEZE+jIdr5+snp6FWsmxjXpnmvbeqDZzISYwNGlmAEAMzsu0uA0
-	qoaOX7iw==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1sSGfL-0002si-Io; Fri, 12 Jul 2024 15:50:27 +0200
-Received: from [178.197.248.35] (helo=linux.home)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1sSGfK-000DNZ-1o;
-	Fri, 12 Jul 2024 15:50:26 +0200
-Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
-To: Puranjay Mohan <puranjay@kernel.org>, Manu Bretelle <chantra@meta.com>,
- KP Singh <kpsingh@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@meta.com>,
- Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Florent Revest <revest@google.com>
-References: <20240705145009.32340-1-puranjay@kernel.org>
- <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
- <mb61pjzhwvshc.fsf@kernel.org>
- <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
- <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net>
- <mb61ped836gn7.fsf@kernel.org>
- <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
- <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
- <890d23f2-636e-12d1-31cc-eb6469f2a9ac@iogearbox.net>
- <SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com>
- <mb61p5xtcyqo5.fsf@kernel.org>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <978e127b-4967-950d-ccca-8575d1a885ae@iogearbox.net>
-Date: Fri, 12 Jul 2024 15:50:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+	s=arc-20240116; t=1720792407; c=relaxed/simple;
+	bh=60wSl/LCqerIR63hFWz9UxaousNhI6XtvAhmqdf3tuE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YmzK7No7CY79NLY1uOOhQDguM+k5lxDBstXBvEEA+CFSHNEzWZnj9BPds26TyaDqBXZtXLyiSYq3qS031+AUv9dYtA1XNHtAKRML/h7GusaqnW98yPj+l9Nc2GDmfEVxZoIA8vlaHLAF4fxXgbeinnZUD0zHUiHDBbDBw2oH3TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hrPwU5Z1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 793F1C4AF07;
+	Fri, 12 Jul 2024 13:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720792407;
+	bh=60wSl/LCqerIR63hFWz9UxaousNhI6XtvAhmqdf3tuE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hrPwU5Z14vE30xK/TLbg5TDpPCYkurLL4+eUZ6dR7McWhUzJvt1kb6GSUY+8hM1ip
+	 OxixCqcnEjBFGyhNafvjtt8IMJC9vVkNNhxrxiWwODDcdXjs0rVK7VyU3oD2hz0Bsa
+	 D3wxBRZ2iMcosqvUDFobakMp2WseXYwDyPhZJX29rCT9RnW7+I/WORY34dgOr4Z0Ki
+	 6gQSf2FX2A1EmnBfjocxdMv7XU48cYBRnnfKe8zUretxenRFzz88tZNZxGYqFMPB8+
+	 pr91OEhg0z16dmXzqANzuFJJJs0RRQ79mQBmCouYpygzxqjgEP+yGB8lFeYfIFuFtp
+	 X/V0hIQdFJ3qw==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL for v6.11] vfs misc
+Date: Fri, 12 Jul 2024 15:50:34 +0200
+Message-ID: <20240712-vfs-misc-c1dbbc5eaf82@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <mb61p5xtcyqo5.fsf@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27334/Fri Jul 12 10:35:53 2024)
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6754; i=brauner@kernel.org; h=from:subject:message-id; bh=60wSl/LCqerIR63hFWz9UxaousNhI6XtvAhmqdf3tuE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNNFn3SPeLz/S3d946fV/z5YzDMfMzsX13Svief9I8u 3dRaOAx7o5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJZAsx/PfsdfNZU88rePRF 0fza/2bLFz/9fXDh2krfzyz8YsU9hs4MPxnPqshkPueQq+lhFfqvsDWtSvWvVZj//6X7N7Getuz u4gcA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Puranjay,
+Hey Linus,
 
-On 7/11/24 4:00 PM, Puranjay Mohan wrote:
-[...]
-> I was able find the root cause of this bug and will send a fix soon!
-> 
->> Unable to handle kernel paging request at virtual address ffff0000c2a80e68
-> 
-> We are running this test on Qemu with '-cpu max', this means 52-bit
-> virtual addresses are being used.
-> 
-> The trampolines generation code has the following two lines:
-> 
-> 		emit_addr_mov_i64(A64_R(0), (const u64)im, ctx);
-> 		emit_call((const u64)__bpf_tramp_enter, ctx);
-> 
-> here the address of struct bpf_tramp_image is moved to R0 and passed as
-> an argument to __bpf_tramp_enter().
-> 
-> emit_addr_mov_i64() assumes that the address passed to it is in the
-> vmalloc space and uses at most 48 bits. It sets all the remaining bits
-> to 1.
-> 
-> but struct bpf_tramp_image is allocated using kzalloc() and when 52-bit
-> VAs are used, its address is not guaranteed to be 48-bit, therefore we
-> see this bug, where  0xfff[0]0000c2a80e68 is converted to
-> 0xfff[f]0000c2a80e68 when the trampoline is generated.
-> 
-> The fix would be use emit_a64_mov_i64() for moving this address into R0.
+/* Summary */
+Features:
 
-It looks like there is still an issue left. A recent CI run on bpf-next is
-still hitting the same on arm64:
+- Support passing NULL along AT_EMPTY_PATH for statx(). NULL paths with any
+  flag value other than AT_EMPTY_PATH go the usual route and end up with
+  -EFAULT to retain compatibility (Rust is abusing calls of the sort to detect
+  availability of statx).
 
-Base:
+  This avoids path lookup code, lockref management, memory allocation and in
+  case of NULL path userspace memory access (which can be quite expensive with
+  SMAP on x86_64).
 
-   https://github.com/kernel-patches/bpf/commits/series/870746%3D%3Ebpf-next/
+- Don't block i_writecount during exec. Remove the deny_write_access()
+  mechanism for executables.
 
-CI:
+- Relax open_by_handle_at() permissions in specific cases where we can prove
+  that the caller had sufficient privileges to open a file.
 
-   https://github.com/kernel-patches/bpf/actions/runs/9905842936/job/27366435436
+- Switch timespec64 fields in struct inode to discrete integers freeing up 4
+  bytes.
 
-   [...]
-   #89/11   fexit_bpf2bpf/func_replace_global_func:OK
-   #89/12   fexit_bpf2bpf/fentry_to_cgroup_bpf:OK
-   #89/13   fexit_bpf2bpf/func_replace_progmap:OK
-   #89      fexit_bpf2bpf:OK
-   Error: The operation was canceled.
+Fixes:
 
-Thanks,
-Daniel
+- Fix false positive circular locking warning in hfsplus.
+
+- Initialize hfs_inode_info after hfs_alloc_inode() in hfs.
+
+- Avoid accidental overflows in vfs_fallocate().
+
+- Don't interrupt fallocate with EINTR in tmpfs to avoid constantly restarting
+  shmem_fallocate().
+
+- Add missing quote in comment in fs/readdir.
+
+Cleanups:
+- Don't assign and test in an if statement in mqueue. Move the assignment out
+  of the if statement.
+
+- Reflow the logic in may_create_in_sticky().
+
+- Remove the usage of the deprecated ida_simple_xx() API from procfs.
+
+- Reject FSCONFIG_CMD_CREATE_EXCL requets that depend on the new mount api early.
+
+- Rename variables in copy_tree() to make it easier to understand.
+
+- Replace WARN(down_read_trylock, ...) abuse with proper asserts in various
+  places in the VFS.
+
+- Get rid of user_path_at_empty() and drop the empty argument from
+  getname_flags().
+
+- Check for error while copying and no path in one branch in getname_flags().
+
+- Avoid redundant smp_mb() for THP handling in do_dentry_open().
+
+- Rename parent_ino to d_parent_ino and make it use RCU.
+
+- Remove unused header include in fs/readdir.
+
+- Export in_group_capable() helper and switch f2fs and fuse over to it instead
+  of open-coding the logic in both places.
+
+/* Testing */
+clang: Debian clang version 16.0.6 (26)
+gcc: (Debian 13.2.0-24)
+
+All patches are based on v6.10-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with other trees
+================================
+
+[1]: linux-next: manual merge of the block tree with the vfs-brauner tree
+     https://lore.kernel.org/linux-next/Zn76C70F9QB_Z0bw@sirena.org.uk
+
+[2]: linux-next: manual merge of the block tree with the vfs-brauner tree
+     https://lore.kernel.org/linux-next/Zn76HPyBbHbnmGmw@sirena.org.uk
+
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11.misc
+
+for you to fetch changes up to b80cc4df1124702c600fd43b784e423a30919204:
+
+  ipc: mqueue: remove assignment from IS_ERR argument (2024-07-09 06:47:40 +0200)
+
+Please consider pulling these changes from the signed vfs-6.11.misc tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.11.misc
+
+----------------------------------------------------------------
+Chao Yu (2):
+      hfsplus: fix to avoid false alarm of circular locking
+      hfs: fix to initialize fields of hfs_inode_info after hfs_alloc_inode()
+
+Chen Ni (1):
+      ipc: mqueue: remove assignment from IS_ERR argument
+
+Christian Brauner (5):
+      fhandle: relax open_by_handle_at() permission checks
+      fs: don't block i_writecount during exec
+      fs: reflow may_create_in_sticky()
+      fs: new helper vfs_empty_path()
+      stat: use vfs_empty_path() helper
+
+Christophe JAILLET (1):
+      proc: Remove usage of the deprecated ida_simple_xx() API
+
+Hongbo Li (1):
+      fs: fsconfig: intercept non-new mount API in advance for FSCONFIG_CMD_CREATE_EXCL command
+
+Jeff Layton (1):
+      fs: switch timespec64 fields in inode to discrete integers
+
+Jemmy (1):
+      Improve readability of copy_tree
+
+Justin Stitt (1):
+      fs: remove accidental overflow during wraparound check
+
+Mateusz Guzik (8):
+      vfs: replace WARN(down_read_trylock, ...) abuse with proper asserts
+      vfs: stop using user_path_at_empty in do_readlinkat
+      vfs: retire user_path_at_empty and drop empty arg from getname_flags
+      vfs: shave a branch in getname_flags
+      vfs: reorder checks in may_create_in_sticky
+      vfs: remove redundant smp_mb for thp handling in do_dentry_open
+      vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+      vfs: rename parent_ino to d_parent_ino and make it use RCU
+
+Mikulas Patocka (1):
+      tmpfs: don't interrupt fallocate with EINTR
+
+Thorsten Blum (2):
+      readdir: Remove unused header include
+      readdir: Add missing quote in macro comment
+
+Youling Tang (3):
+      fs: Export in_group_or_capable()
+      f2fs: Use in_group_or_capable() helper
+      fuse: Use in_group_or_capable() helper
+
+ fs/attr.c                |   2 -
+ fs/binfmt_elf.c          |   2 -
+ fs/binfmt_elf_fdpic.c    |   5 +-
+ fs/binfmt_misc.c         |   7 +-
+ fs/dcache.c              |  30 +++++++-
+ fs/exec.c                |  14 +---
+ fs/exportfs/expfs.c      |   9 ++-
+ fs/f2fs/acl.c            |   3 +-
+ fs/f2fs/file.c           |   6 +-
+ fs/fhandle.c             | 178 +++++++++++++++++++++++++++++++++++++----------
+ fs/fsopen.c              |   7 +-
+ fs/fuse/acl.c            |   4 +-
+ fs/hfs/inode.c           |   3 +
+ fs/hfsplus/bfind.c       |  15 +---
+ fs/hfsplus/extents.c     |   9 ++-
+ fs/hfsplus/hfsplus_fs.h  |  21 ++++++
+ fs/hfsplus/ioctl.c       |   4 +-
+ fs/inode.c               |   1 +
+ fs/internal.h            |  14 ++++
+ fs/mount.h               |   1 +
+ fs/namei.c               |  98 ++++++++++++++++----------
+ fs/namespace.c           |  74 +++++++++-----------
+ fs/nfsd/nfsfh.c          |   2 +-
+ fs/open.c                |  17 +++--
+ fs/proc/generic.c        |   6 +-
+ fs/quota/dquot.c         |   8 +--
+ fs/readdir.c             |   4 +-
+ fs/stat.c                | 172 +++++++++++++++++++++++++++++----------------
+ include/linux/dcache.h   |   2 +
+ include/linux/exportfs.h |   2 +
+ include/linux/fs.h       |  85 +++++++++++++---------
+ include/linux/namei.h    |   8 +--
+ io_uring/statx.c         |   3 +-
+ io_uring/xattr.c         |   4 +-
+ ipc/mqueue.c             |   3 +-
+ kernel/fork.c            |  26 +------
+ mm/khugepaged.c          |  10 +--
+ mm/shmem.c               |   9 ++-
+ 38 files changed, 539 insertions(+), 329 deletions(-)
 
