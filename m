@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-250852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDE692FD9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:31:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEE192FDA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502DF1C20CEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:31:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC02F1C236E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F9D173355;
-	Fri, 12 Jul 2024 15:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C011741EB;
+	Fri, 12 Jul 2024 15:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T9IgT1Cx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOJII4t+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA106BE65
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC6F5256;
+	Fri, 12 Jul 2024 15:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720798294; cv=none; b=YI6FrWRRwqSj9XLyTqBW5mRkW7E+woH93pa2bwunLrOU2EJ9SNtSm/tIglp99EVTLYmAhvafR0mIBobd4/uzVqrrNLji4X5+lRLNJwyTKJhn3mdvG3HvvOAjVd/ZO9LmYVHEC8RXkMRAH8pVWxclmd3trVueqNCrhuSmrUsJeaQ=
+	t=1720798305; cv=none; b=CAFc3Ti6MWodqjzlootOJU8Z5ybGffOGj99Uh2Y4PrMkQUsUqJLmVVK4TEDOdIyZlFbQkfPdoc9ybohF67WEc7dA43TBNZvVlAIpP8Vr01tsqcIPmdh8nbYskXDyctjMLkUQ3RJyn2PnDfrnkQa4+lywxUv6tvmVHmYN6gNN4rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720798294; c=relaxed/simple;
-	bh=yuUkgSUd6vmj6tHpzYFlSGQESGT/hX3N3hMolRd/53s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qWFn/zvjQ9ACV9TmTzIE4hsaMHr8zHUNcgZ0zzg1BwCbPvG/UjzGZ+ukd3g0f9Q5HIgvn1ZTpu4WF+b/MT/v7nbU4xvHDzBMYQix7nxNht/Wgw46mRDi1Ays3nX/1g7A8N3si44Ly+y8TMV7W07y64zCb/+45zIOwqgWa7wi7CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T9IgT1Cx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720798291;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8pYjkzLgzHvy7cWc4vPkKfOHo7WvPjxKqpxHFA0Pgts=;
-	b=T9IgT1CxOHdDT5rcAtJn6HFxX0KytrpnUMO+N+bdXtjHJifW9eJhQEtoGEaM+ZR5ZSIuXw
-	eRkXXNvC8QI4vPdzKwuUcu+3eodlM276ZQoRIAPvW6QHDj2OBEqhK49nMnARejXPcgRVYi
-	OFKwwIOmJ6VrDou6SVavceG2t8I//rw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-390-TiPba2mkMWukFnmbuDV-0g-1; Fri, 12 Jul 2024 11:31:28 -0400
-X-MC-Unique: TiPba2mkMWukFnmbuDV-0g-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42490ae735dso19863675e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:31:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720798286; x=1721403086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8pYjkzLgzHvy7cWc4vPkKfOHo7WvPjxKqpxHFA0Pgts=;
-        b=vqiKb2EmZQLAiG8RvTSG8H67/RubKTEssfxNrl0tEiQEjXWMRTSNq0QfNgpBX4r76n
-         cPVJwhG7X2NbIjFe8UclZ8AvFkX/snrz+UG5zEeeEs0SZP3rNDYx2Ic+Q53B+H/HJAie
-         vzdrKykmjcJRFGfXrxp0AvHNZEjsIEr7LivapFApwpDr+Y9K42MGz6GOl2XRDkgmD4mt
-         0Tpr7kUCgICQvQZ12D2/HSbqrPbUlE7Tjx79NJuJraR2tv+3LnUhMJoNyUE/6EdZwcyF
-         NlyFeLkglpoMRzReuhjaOHnAyCfYlf9usP/aW/oLkI3Ffti4Fl7ZL7Qob2vEI82sTPKg
-         51YA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5YnFHWUL34TNl67+s1BFfDWvjnDjoOTOj9qDdl70lpK91mHpsqFAF2GjleXW8YbDSCSEA9NyhoTJxaLQ152c9tyL2kwojNEggnriY
-X-Gm-Message-State: AOJu0Yx15IpdinVkzXDt7vh704HgvNuoo5pQ3eFmWHV2+eTnhBGY3Fnx
-	6W4sbcm1Z1YqUk6scXt9/4+yAAPMylMDx0c0WOrAPoLAejvhB3l1WwGC12KvT2SgNbfSzg/WAWl
-	DcirvVvGRFOj3CotwsBM3lqvOPkxpUwLNQwD10rfGLXwgDqYigrBrDKaBrGLGBqCIcd1av2Dm3I
-	2luBbEUZ+IVu11A2XBmvZLv9qNlajfzrfeTHhXkOvVIqHF
-X-Received: by 2002:a05:600c:47c7:b0:426:6ed5:fcb with SMTP id 5b1f17b1804b1-426706c62c0mr103472105e9.4.1720798286750;
-        Fri, 12 Jul 2024 08:31:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpwU6rx2/rdjP1qBUZaPIgntGNbKwFTW7FjwPn5/uO82kUiFkIG1Brg/z5ZHfnsc9cT0EpUfc5/AnoXthMn3k=
-X-Received: by 2002:a05:600c:47c7:b0:426:6ed5:fcb with SMTP id
- 5b1f17b1804b1-426706c62c0mr103471885e9.4.1720798286392; Fri, 12 Jul 2024
- 08:31:26 -0700 (PDT)
+	s=arc-20240116; t=1720798305; c=relaxed/simple;
+	bh=LRIkw/BD/2bNKPTenaVDfImH7SQgH4W77dv2MrBSNeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DaX1DycmdwjTUNLleZqB9e9jZWNcmnZn83pMn3Cra/t6BMTF0uk8rvKKtkfIGknCnpCWmv/nSiNy77OPZ1Jma/GkPluKWz0f68JmskveXNq+1XW7qyyI7YVMFw+gMtc/h7+shYEjkYNajg48kZxkXetIJAOSY8n0JkQzaVcnFLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOJII4t+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2705DC32782;
+	Fri, 12 Jul 2024 15:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720798304;
+	bh=LRIkw/BD/2bNKPTenaVDfImH7SQgH4W77dv2MrBSNeA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pOJII4t+nzeUYk/FDfYFaC8VCyuM8gYvhGilJncEL8JtJkWXM6myojtFCMEP3Hb8n
+	 Kc/QU2x200MvaCRwdHHIb8atLTYMulbj376mWD/yCkEiaSTgY43ZRlHUrU+10WRNC9
+	 rTx2RLItwbOhPLessYmbRBFlrTAX+5dZfVLcE30wBRRCpge8DPVrwqEmQiXRTU3U2y
+	 wcUM6KG7DckJzr5/TbAfI7ELhT8MvfZpAdYBhAz5o/oKtJfURDCvbHEEfauIpIGQVd
+	 qg5DULx27TrtvnqHceCFoaJuExYKFyo2bgA3Ypm6M0EBcQhnrMFTtz/zZw0AieFyjg
+	 LhwXuHo8O1KSQ==
+Date: Fri, 12 Jul 2024 16:31:38 +0100
+From: Will Deacon <will@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 2/5] iommu: Resolve fwspec ops automatically
+Message-ID: <20240712153137.GC16474@willie-the-truck>
+References: <cover.1719919669.git.robin.murphy@arm.com>
+ <0e2727adeb8cd73274425322f2f793561bdc927e.1719919669.git.robin.murphy@arm.com>
+ <0eec5f84-6b39-43ba-ab2f-914688a5cf45@nvidia.com>
+ <01c05fb2-16ce-450c-befb-8a92ac2a8af9@arm.com>
+ <ee24cb5f-d170-41d3-9928-5507b8ab22a7@nvidia.com>
+ <82624cf6-98ad-47df-8dcd-368117600805@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710104923.2569660-1-chenhuacai@loongson.cn>
-In-Reply-To: <20240710104923.2569660-1-chenhuacai@loongson.cn>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Fri, 12 Jul 2024 17:31:15 +0200
-Message-ID: <CABgObfZd1ugY4cFygnvFtiO9p3iE1GA3Wn7Avdkajz_9iXVNTQ@mail.gmail.com>
-Subject: Re: [GIT PULL] LoongArch KVM changes for v6.11
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <82624cf6-98ad-47df-8dcd-368117600805@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, Jul 10, 2024 at 12:58=E2=80=AFPM Huacai Chen <chenhuacai@loongson.c=
-n> wrote:
->
-> The following changes since commit 256abd8e550ce977b728be79a74e1729438b49=
-48:
->
->   Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson=
-.git tags/loongarch-kvm-6.11
->
-> for you to fetch changes up to 492ac37fa38faf520b5beae44c930063265ee183:
->
->   perf kvm: Add kvm-stat for loongarch64 (2024-07-10 16:50:27 +0800)
->
-> ----------------------------------------------------------------
-> LoongArch KVM changes for v6.11
->
-> 1. Add ParaVirt steal time support.
-> 2. Add some VM migration enhancement.
-> 3. Add perf kvm-stat support for loongarch.
->
-> ----------------------------------------------------------------
+On Fri, Jul 12, 2024 at 04:28:37PM +0100, Robin Murphy wrote:
+> On 12/07/2024 4:24 pm, Jon Hunter wrote:
+> > 
+> > On 12/07/2024 12:48, Robin Murphy wrote:
+> > 
+> > ...
+> > 
+> > > > I am seeing some failures on -next with some of our devices.
+> > > > Bisect is pointing to this commit. Looks like the host1x device
+> > > > is no longer probing successfully. I see the following ...
+> > > > 
+> > > >   tegra-host1x 50000000.host1x: failed to initialize fwspec: -517
+> > > >   nouveau 57000000.gpu: failed to initialize fwspec: -517
+> > > > 
+> > > > The probe seems to be deferred forever. The above is seen on
+> > > > Tegra210 but Tegra30 and Tegra194 are also having the same
+> > > > problem. Interestingly it is not all devices and so make me
+> > > > wonder if we are missing something on these devices? Let me know
+> > > > if you have any thoughts.
+> > > 
+> > > Ugh, tegra-smmu has been doing a complete nonsense this whole time -
+> > > on closer inspection, it's passing the fwnode of the *client device*
+> > > where it should be that of the IOMMU device :(
+> > > 
+> > > I *think* it should probably just be a case of:
+> > > 
+> > > -    err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
+> > > +    err = iommu_fwspec_init(dev, of_fwnode_handle(smmu->dev->of_node));
+> > > 
+> > > since smmu->dev appears to be the same one initially passed to
+> > > iommu_device_register(), so it at least ought to match and work, but
+> > > the SMMU device vs. MC device thing leaves me mildly wary of how
+> > > correct it might be overall.
+> > > 
+> > > (Also now I'm wondering why I didn't just use dev_fwnode() there...)
+> > 
+> > 
+> > Yes making that change in the tegra-smmu driver does fix it.
+> 
+> Ace, thanks for confirming! I was just writing a follow-up to say that I've
+> pretty much convinced myself that this (proper diff below) should in fact be
+> the right thing to do in general as well :)
+> 
+> Will, Joerg, would you prefer to have a standalone fix patch for the
+> nvidia/tegra branch to then re-merge fwspec-ops-removal and fix up the
+> conflict, or just a patch on top of fwspec-ops-removal as below?
 
-Pulled, thanks.
+I've just fixed it locally on the tegra branch, so I'll then just
+resolve the conflict with fwspec-ops-removal the right way. That way, we
+can backport the thing if we need to.
 
-Paolo
+Cheers,
 
+Will
 
