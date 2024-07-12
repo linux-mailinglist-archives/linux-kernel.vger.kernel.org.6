@@ -1,95 +1,97 @@
-Return-Path: <linux-kernel+bounces-250669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6251792FAD6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:01:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F7C92FAE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C8D91C22117
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:01:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35CFE1C20CBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C4316EBF6;
-	Fri, 12 Jul 2024 13:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF62416F8E3;
+	Fri, 12 Jul 2024 13:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="nOvxLF2P"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="R2KyjV6r"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFC81607B2
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 13:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A415315957E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 13:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720789241; cv=none; b=JkJVe8sGIXLpDKrqJgEri8mNqDQasog592Zu6ApySE4bb0n9HBBmQ8bKXUPYE1b3dBccAuO48rm1Ex+5QpokYXaAL/B4EOWa9TOVth8oT8X0hhpYaFWJvnN6S4iNiSqg7uL3+aWQT6m+3BLcxMRJZPub5ljM9xGpLmS8QALewps=
+	t=1720789740; cv=none; b=hlOqeTUagoWJc1FNKfJ+WFLi4mwDJmXCAkoVijkG3nDVI7S0fSxymnAqraplEM0AAQjI2oz2cgFG1ocVmutP3MCXa8SgY3SO6RxFAMn6z8LdgMuGjH51lhrfvC8rAahgJoqsDhogEggV8P6oJhm6uOx6vL3soAf6gLqUMOfh94U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720789241; c=relaxed/simple;
-	bh=4vaan9lVCWHn6tCkQmfCAQNwBS43BDI/yL/E404vsrY=;
+	s=arc-20240116; t=1720789740; c=relaxed/simple;
+	bh=3AmsmophFLKT3bJXWf1OtdfGj5X9gQP2Z52esz+0lGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vGRQElcA7ci0//YKhazGcBk57L+K02Moki/kHIfD3lJevbdWCS2vpIp5VvEP5XqwIZZuGYJ6V6McD6kZ80ggxV0OZ9wHcyPzncbte9GsHUYOJX6edHYvGQKA02OE4RI0EQoh6O+KpAK66g6x4rVpR3qLTpY30v+feC+WkPwT//0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=nOvxLF2P; arc=none smtp.client-ip=209.85.219.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=DEZMoPwFz7EwhIwZ/GWxP/GhekC9cC/RKdn/K4GUAQJcSYNvPC1IxRzIqBrV03yu+KH5HP+evVzclQMP+nF/VTiKNLk+YPTRcHXuZJrnF13JGaD4BC6OZyg/gMOpyXv+n4WcQEA+SJf+Dq+png52kMTEOTgbwFcD9ERY0jxaXcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=R2KyjV6r; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e03caab48a2so1528206276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:00:40 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b624f4180bso11475616d6.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:08:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1720789239; x=1721394039; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1720789737; x=1721394537; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T/w0zwGhNPKt9SyZTMl06PaCMjOKZYwYdrSeXLeSiM4=;
-        b=nOvxLF2P1HOzcYWDPm3r1I/lpvQNlV3bC0CTGnBWOdYvHizdrDfgf8fb+y2JXDXRow
-         GoBz3OPJrewoWpLEjSWQzjwBk8wDwannigJPG16JSOzXzF3YsufCA6rx1jaVfeE+2Cwy
-         wci2OekUB5NxkaopPpr07CnXBrQhsXTn95U9JLLpIw5EIBzZVJZFDwG3DQF7l7YvqZ/I
-         VWtPUQfDioPmmSxCWYIOL4orwq7+7FEEw/7ICKNH2riuWy31T0/zZqmplsw9r8zX+ZX/
-         GA5Lo9lY/chHhOqk7/YqKdeaFHqzhrVo9rDTYUhsProyJjmNQNtvfxiYJUv3D6ezC2UL
-         N81w==
+        bh=B4jYmwN/QXFZLbYovizkcE85YvZFmyIlwRDsiMLcnTs=;
+        b=R2KyjV6rwsuu+X4NshNd2w33RropfVMMzywkLf2+Vn8abcdTYxt0pG1mYkQ4rmLQ6V
+         2u8/6sl3/9rMaDyK0Ys46vTOR5GUOCYw8wBkJ3pkFDjPgeziUxCDLGIleAk3l165B9ne
+         Hi4d0sV4Kll5GFNwhvP5EGgh3GDJrNb6mBs0BtqPIhbadr2pC1z7WBIl0GzUbfS4nhZt
+         OeEK3+KA9qy/6dDdYbuzjtWTdkHlmoWKuOwJvBhlZR4BMl2UAyE4s5n0+8BAZ8HvTPE5
+         aWxfCG/Uglwd/mhUJ4tcTtty29KCirADW+lSI7dVRTHhj1fv9rH5/BTIr8bKFTp77n2c
+         GcPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720789239; x=1721394039;
+        d=1e100.net; s=20230601; t=1720789737; x=1721394537;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T/w0zwGhNPKt9SyZTMl06PaCMjOKZYwYdrSeXLeSiM4=;
-        b=W2OTBKUKEaJQUhxAlQ+DCRWwfbeERrOqAE/IDUysltl6TKnp5BAucx8SPr0lvresgW
-         iRlhcxTnzUm87EucXx5i+JtmuVaogNcMpQ66IZMxT6mW4jMUvV24vwSnxNV+Y1xopx6E
-         Ra/WTXEfYFG36pdRv1W5QO0p2o8GWzeFhehI19pfNLn1quvjBVKrA+vzzVasayYyG4Ky
-         qKQazqiHSFsCZ91Wj279kwHZN9DNom805GoCXr/fItKVwjK1kpD/xQN+Rjxh4MwTRiCP
-         9ahOUFnS5WiQCRKm4CxGlZOk/9g+wjy3vxJLPAveeznECTVoj5eoCyn1K3s64l5GOiKG
-         rhzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUA93L65zbezwyaXD9U0os9gvquQ1vaAo6ikwxvapO1gOsv3EBXTeMponY+lwTSZjyj4gqjtR1Pd1h1ZMkG2l1CBb8mh+Aas0Wz8Cqs
-X-Gm-Message-State: AOJu0YzJxm9OF45xezsz1O0niJp7SBqz5TJVPKp/01WGl5W4KZGtO7Gz
-	ATDN/+S22aokBgpnlKw0zy5Mu+4uBumtt1nmQAI0ihD1Q3CDtC7jMp9Hn8vyG30=
-X-Google-Smtp-Source: AGHT+IGrtfbkVyeqhWaqWAqPeH9PGe1fIAllaalk3hPaJxwrAsvjR5TxMPnud6p1klxpbKWWS6qKSA==
-X-Received: by 2002:a25:69ca:0:b0:dff:2b97:b06b with SMTP id 3f1490d57ef6-e058a4eb6c3mr1874869276.18.1720789238613;
-        Fri, 12 Jul 2024 06:00:38 -0700 (PDT)
+        bh=B4jYmwN/QXFZLbYovizkcE85YvZFmyIlwRDsiMLcnTs=;
+        b=P+0lWN30670nSuCIVxAweFxeQVU2r5zZh3zDooHzYRosdtgLt+JMHdPRtpkKgbXFJw
+         v98Ld3bFLsv3e9nOLAoe8+UO/CMzGVICEOS/sJrHHAWdTVfWfu65HFUia20f8QP9Ik7E
+         Fefvx22UHAGZX8Kax1vjSAOtgWje8ZZcW8Zid52rEGf4CToJCiL6YMu6fmCtzW9j3izo
+         iNgBtCw+vIqW82aCYar2be6af5v1PJfwrPNsXJ1mAYynFrmcasDAI/Vb/FijTw+K+QGo
+         W833N31O5Rw+HZhzHXKTwYrqUEXm7sv3ooLkeUsmqEhv5HVjmBKJSwAIinFEPIK2LhG+
+         D5rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtokm7OG19pBwRGByGefllmSEsRFBCYomskIY+UnSYrWoZskE6lipJ3eAZzJv4tAgVmQULZ6DjZhKUmRMM7WrfbrGm7jsCMP39q7R3
+X-Gm-Message-State: AOJu0YyyBFJjyHOezdEOBai5GoeBImSRmOjTc2m0JvKlAFJ+iDEEJZ7T
+	A8ZBhlDXG+uBgi7PzxsaibNUF+rywgARRxaZ5JpcHxOxB4QdTPCoFCVipiVNPAE=
+X-Google-Smtp-Source: AGHT+IFoKtdu5vK1LEfozhtRvZwJjwwZjN4Ys9l4HkSqkcIyDGM+PoG745Jm0+Iu/Vp9ngs915k4vw==
+X-Received: by 2002:a05:6214:27ee:b0:6b2:d335:e914 with SMTP id 6a1803df08f44-6b61c219e19mr144274106d6.52.1720789737313;
+        Fri, 12 Jul 2024 06:08:57 -0700 (PDT)
 Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9bd25d2sm40132481cf.61.2024.07.12.06.00.37
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61b9c4daasm35005856d6.18.2024.07.12.06.08.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 06:00:38 -0700 (PDT)
+        Fri, 12 Jul 2024 06:08:56 -0700 (PDT)
 Received: from jgg by wakko with local (Exim 4.95)
 	(envelope-from <jgg@ziepe.ca>)
-	id 1sSFt7-000J4s-JG;
-	Fri, 12 Jul 2024 10:00:37 -0300
-Date: Fri, 12 Jul 2024 10:00:37 -0300
+	id 1sSG1A-000Kbx-Bd;
+	Fri, 12 Jul 2024 10:08:56 -0300
+Date: Fri, 12 Jul 2024 10:08:56 -0300
 From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Kevin Tian <kevin.tian@intel.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Yi Liu <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 06/10] iommufd: Add iommufd fault object
-Message-ID: <20240712130037.GA14050@ziepe.ca>
-References: <20240702063444.105814-1-baolu.lu@linux.intel.com>
- <20240702063444.105814-7-baolu.lu@linux.intel.com>
- <ZoXZZ2SJ/WdlMJaX@Asurada-Nvidia>
- <20240708162957.GB14050@ziepe.ca>
- <ZowxyUQAcqDJ4yZ6@Asurada-Nvidia>
- <20240709170038.GG14050@ziepe.ca>
- <Zo10duoguPCADKSY@Asurada-Nvidia>
+To: Omer Shpigelman <oshpigelman@habana.ai>
+Cc: Leon Romanovsky <leon@kernel.org>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"ogabbay@kernel.org" <ogabbay@kernel.org>,
+	Zvika Yehudai <zyehudai@habana.ai>
+Subject: Re: [PATCH 11/15] RDMA/hbl: add habanalabs RDMA driver
+Message-ID: <20240712130856.GB14050@ziepe.ca>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-12-oshpigelman@habana.ai>
+ <20240613191828.GJ4966@unreal>
+ <fbb34afa-8a38-4124-9384-9b858ce2c4e5@habana.ai>
+ <20240617190429.GB4025@unreal>
+ <461bf44e-fd2f-4c8b-bc41-48d48e5a7fcb@habana.ai>
+ <20240618125842.GG4025@unreal>
+ <b4bda963-7026-4037-83e6-de74728569bd@habana.ai>
+ <20240619105219.GO4025@unreal>
+ <a5554266-55b7-4e96-b226-b686b8a6af89@habana.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,30 +100,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zo10duoguPCADKSY@Asurada-Nvidia>
+In-Reply-To: <a5554266-55b7-4e96-b226-b686b8a6af89@habana.ai>
 
-On Tue, Jul 09, 2024 at 10:33:42AM -0700, Nicolin Chen wrote:
+On Fri, Jun 28, 2024 at 10:24:32AM +0000, Omer Shpigelman wrote:
 
-> > We are potentially talking about 5-10 physical smmus and 2-3 FDs per
-> > physical? Does that scare anyone?
+> We need the core driver to access the IB driver (and to the ETH driver as
+> well). As you wrote, we can't use exported symbols from our IB driver nor
+> rely on function pointers, but what about providing the core driver an ops
+> structure? meaning exporting a register function from the core driver that
+> should be called by the IB driver during auxiliary device probe.
+> Something like:
 > 
-> I think we can share the same FD by adding a viommu_id somewhere
-> to indicate what the data/event belongs to. Yet, it seemed that
-> you had a counter-argument that a shared FD (queue) might have a
-> security concern as well?
-> https://lore.kernel.org/linux-iommu/20240522232833.GH20229@nvidia.com/
+> int hbl_cn_register_ib_aux_dev(struct auxiliary_device *adev,
+> 			       struct hbl_ib_ops *ops)
+> {
+> ...
+> }
+> EXPORT_SYMBOL(hbl_cn_register_ib_aux_dev);
 
-That was for the physical HW queue not so much the FD.
+Definately do not do some kind of double-register like this.
 
-We need to be mindful that these events can't DOS the hypervisor, that
-constrains how we track pending events in the kernel, not how they get
-marshaled to FDs to deliver to user space.
+The auxiliary_device scheme can already be extended to provide ops for
+each sub device.
 
-Thinking more, it makes sense that a FD would tie 1:1 with a queue in
-the VM.
+Like
 
-That way backpressure on a queue will not cause head of line blocking
-to other queues because they multiplex onto a single FD.
+struct habana_driver {
+   struct auxiliary_driver base;
+   const struct habana_ops *ops;
+};
+
+If the ops are justified or not is a different question.
+
+> module reference counter. But we also get the ability to access the IB
+> driver from the core driver (to report a HW error for example).
+
+Report a HW error seems reasonable to me
+
+Other driver have used notifier chains for this kind of stuff though.
 
 Jason
 
