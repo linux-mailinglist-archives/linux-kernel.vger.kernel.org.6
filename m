@@ -1,152 +1,130 @@
-Return-Path: <linux-kernel+bounces-250398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D612F92F767
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:56:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E2392F769
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B0262814A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:56:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C57C81C2288B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F43A143732;
-	Fri, 12 Jul 2024 08:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE79143C5C;
+	Fri, 12 Jul 2024 08:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jB/1F2M1"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oxvxumuJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B532B13E41A
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6701140E58;
+	Fri, 12 Jul 2024 08:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720774589; cv=none; b=hZ42XecDDoxl31svUX9Fy0szwz8SQHIv8OYiG8nDYRws30OAnRduEUb+kJCIuCURL9KhoVUqq0Uir4/dSfxXIiziyX8f7nIvj3XR0HALe2qfKd5oc+ngOdvrmeO/8Jd+v+LfDBs06rZmPJQDiIi5uUVodtkOTM0i0q6hQt5ewHQ=
+	t=1720774611; cv=none; b=kdG5yO5VKDjqk65cNKjKFZuLVNyPw9L8RP4bAGPIMX3t0AYWDpIb9YkbUw7CX4zjh0UPO2tB8WdTR05LuRDCQVoYAN2nOPUdIoQQ+ME4SGjVVsXwVS7hEFGeKRH/D3MwaJzql8+7Kds6M56BnA4vV86+SO5XxpNo6TxbHbJOxKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720774589; c=relaxed/simple;
-	bh=8IEUg8/eSlzQvlwuZ/W3Z+vIWwo5Zej2UShiVakZwGM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Z4vh09amr5l3jCFE992bkQd+64zVlF1vph7fzdTk05A/izy4mtw/XVaE8sMFV6OrhDRzQRYw8RuB6IM6tPQmq+ZDi8TH8tP1c7qQYKPkG865fSozak0AHsr8GFoExQ6JYLua2Ngyf3opoyy8kX8HW5LlBf34Ot2ivaaneHBdTrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jB/1F2M1; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-65cd720cee2so16217537b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 01:56:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720774586; x=1721379386; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZKEGbykYk5TZAEolv3veio4AcHQ3n9AaxWALsKzF+q8=;
-        b=jB/1F2M1CfrFJrpErj8MWSntgkfWHY7f5jgyfs+34ihLuAUrKTZzs4MoFYe5WcYaO7
-         xnUobB4fCm8RGJTB033hV4pixQi4/YA7Ol0X/AyIHvQGyAVzoCbexGKA+QqAbFumwlcV
-         GnNjymHqDYOpTXYJdZm7QGPk5DEToXsANsTSeGrW06uhpO910j0GX+caY4X9BUWSg4ZD
-         +/aXPLjxg5kIYxJaUddV75cgFbGxREdEuGv+sfzQbI7np/0qRLxMLi9l7o3BTMgjKOQF
-         hvIPqNJO/KdfEqwuvAZv3facBuQDENQMQylU9DMqYBmXOguQn80LTa8DUAetOotN3noI
-         5Smw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720774586; x=1721379386;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZKEGbykYk5TZAEolv3veio4AcHQ3n9AaxWALsKzF+q8=;
-        b=XrPUlGeZ0ZWPex7fFSrwp6b79Z7HcG7udroOXEPgdvcJgygnrgk7M+dJzWnW/LDFUw
-         +7adGIxF7hLo1MRwCsbKwwYgvgqUVmlgQBev1tTymsLCewVDPkbYJ4fXvFnReSuwX7r5
-         DP8cfUu5Nv2KO49nPM3Wdc5vKQO/2qD4T5UJNXgOM9HlcRXm5P91ZYZtNvb6d1uGelrd
-         g9LfDjLk/fXCWghapDwLwMwCqxaoSx1aQONBnzm68mrX8c+i4Ui+pVtpIeIUKdLk4vyR
-         p44nHovfvziWgfPvuETAFuDNaBc54+ivt5wVvtEsVXqS75xqZcLEurzzL6y2aMyNuqIh
-         cdCw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0mvz2yow4esLAFD0htPHfz//4daa33B3j6BHJLGmTLPVYS0z9hVsa0fFZYsOjwEXaB/JoDrKflhyxW05n3olElhN+/dTL7SLofmWv
-X-Gm-Message-State: AOJu0YyUxD1Rnt45Qzb40/LYMteXmQ+JS+cZ4dAuRf2nOUgovp3Gszsk
-	cYuYTRGA1vrFCVNS3ZptS70AlX9JGC2qij0kwwJn1biGDFrx8/NfDQDI1Ygn8w==
-X-Google-Smtp-Source: AGHT+IG42qjdytaoa1iAmt27ZcGzYpIdyY5FTx+R68VeXp1fc8qPNJCDIUt/qzCmpk8baLbEnC/TSg==
-X-Received: by 2002:a81:8ac3:0:b0:646:5f95:9c7d with SMTP id 00721157ae682-658f01fda1bmr108621857b3.36.1720774586407;
-        Fri, 12 Jul 2024 01:56:26 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e69d9dfcsm14260607b3.118.2024.07.12.01.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 01:56:25 -0700 (PDT)
-Date: Fri, 12 Jul 2024 01:56:04 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: yangge <yangge1116@126.com>, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org, 21cnbao@gmail.com, david@redhat.com, 
-    baolin.wang@linux.alibaba.com, aneesh.kumar@linux.ibm.com, 
-    liuzixing@hygon.cn, hughd@google.com
-Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding
- to LRU batch
-In-Reply-To: <1720075944-27201-1-git-send-email-yangge1116@126.com>
-Message-ID: <503f0df7-91e8-07c1-c4a6-124cad9e65e7@google.com>
-References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
+	s=arc-20240116; t=1720774611; c=relaxed/simple;
+	bh=bSq7Nc3adHyPGYFGHIoS1jiGq8sFkJXkLR8MDpxbgrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kR2yoYUXxk6+C+93LhizcVrkFH9Rd8RkJlga5e/QhQDhFCeFS9gb7+nvulV8uTxHvHzbzPJlzTp09WtQFOcOBImbna+h9fWNJrmWQYQPeWAbLpdJJX8ZJQeciSX83/n40h6UsMq72T1T43A2lUDe9ygt9sUyrMRJjbgrEfwdaQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oxvxumuJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E14BDC4AF09;
+	Fri, 12 Jul 2024 08:56:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720774611;
+	bh=bSq7Nc3adHyPGYFGHIoS1jiGq8sFkJXkLR8MDpxbgrk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oxvxumuJM4jYPgzAfBRxcGx2E7VS/yZWNuTEj+yCPEVXWKm0ArJYl5sWU0K8cNSCj
+	 wlCByUAAl8Y2yIvZDvHpVdIV8r2nJfs5YocWA1n+zIzLgJxHJvYfQvVbV5wbLHAjUB
+	 J+YkZ3sUJzQl1WC6y7bnG0xQll2AadnJEADRsr3M=
+Date: Fri, 12 Jul 2024 10:56:48 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
+	Rafael J Wysocki <rafael@kernel.org>,
+	Eugeniu Rosca <eugeniu.rosca@bosch.com>,
+	syzbot+ffa8143439596313a85a@syzkaller.appspotmail.com,
+	Ashish Sangwan <a.sangwan@samsung.com>,
+	Namjae Jeon <namjae.jeon@samsung.com>, linux-cxl@vger.kernel.org
+Subject: Re: [PATCH v2] drivers: core: synchronize really_probe() and
+ dev_uevent()
+Message-ID: <2024071227-surname-satirical-1184@gregkh>
+References: <20240513050634.3964461-1-dirk.behme@de.bosch.com>
+ <669073b8ea479_5fffa294c1@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <669073b8ea479_5fffa294c1@dwillia2-xfh.jf.intel.com.notmuch>
 
-On Thu, 4 Jul 2024, yangge1116@126.com wrote:
-
-> From: yangge <yangge1116@126.com>
+On Thu, Jul 11, 2024 at 05:07:21PM -0700, Dan Williams wrote:
+> Dirk Behme wrote:
+> > Synchronize the dev->driver usage in really_probe() and dev_uevent().
+> > These can run in different threads, what can result in the following
+> > race condition for dev->driver uninitialization:
 > 
-> If a large number of CMA memory are configured in system (for example, the
-> CMA memory accounts for 50% of the system memory), starting a virtual
-> virtual machine with device passthrough, it will
-> call pin_user_pages_remote(..., FOLL_LONGTERM, ...) to pin memory.
-> Normally if a page is present and in CMA area, pin_user_pages_remote()
-> will migrate the page from CMA area to non-CMA area because of
-> FOLL_LONGTERM flag. But the current code will cause the migration failure
-> due to unexpected page refcounts, and eventually cause the virtual machine
-> fail to start.
+> This fix introduces an ABBA deadlock scenario via the known antipattern
+> of taking the device_lock() within device attributes that are removed
+> while the lock is held.
+
+Ugh, yes :(
+
+device attributes should not be taking that lock, don't we have a
+different call for an attribute that will be removing itself?
+
+> Lockdep splat below. I previously reported this on a syzbot report
+> against nvdimm subsytems with a more complicated splat [1], but this one
+> is more straightforward.
 > 
-> If a page is added in LRU batch, its refcount increases one, remove the
-> page from LRU batch decreases one. Page migration requires the page is not
-> referenced by others except page mapping. Before migrating a page, we
-> should try to drain the page from LRU batch in case the page is in it,
-> however, folio_test_lru() is not sufficient to tell whether the page is
-> in LRU batch or not, if the page is in LRU batch, the migration will fail.
+> Recall that the reason this lockdep report is not widespread is because
+> CXL and NVDIMM are among the only subsystems that add lockdep coverage
+> to device_lock() with a local key.
 > 
-> To solve the problem above, we modify the logic of adding to LRU batch.
-> Before adding a page to LRU batch, we clear the LRU flag of the page so
-> that we can check whether the page is in LRU batch by folio_test_lru(page).
-> It's quite valuable, because likely we don't want to blindly drain the LRU
-> batch simply because there is some unexpected reference on a page, as
-> described above.
+> [1]: http://lore.kernel.org/667a2ae44c0c0_5be92947e@dwillia2-mobl3.amr.corp.intel.com.notmuch
 > 
-> This change makes the LRU flag of a page invisible for longer, which
-> may impact some programs. For example, as long as a page is on a LRU
-> batch, we cannot isolate it, and we cannot check if it's an LRU page.
-> Further, a page can now only be on exactly one LRU batch. This doesn't
-> seem to matter much, because a new page is allocated from buddy and
-> added to the lru batch, or be isolated, it's LRU flag may also be
-> invisible for a long time.
+> One potential hack is something like this if it is backstopped with
+> synchronization between unregistering drivers from buses relative to
+> uevent callbacks for those buses:
 > 
-> Fixes: 9a4e9f3b2d73 ("mm: update get_user_pages_longterm to migrate pages allocated from CMA region")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: yangge <yangge1116@126.com>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index 2b4c0624b704..dfba73ef39af 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -2640,6 +2640,7 @@ static const char *dev_uevent_name(const struct kobject *kobj)
+>  static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
+>  {
+>         const struct device *dev = kobj_to_dev(kobj);
+> +       struct device_driver *driver;
+>         int retval = 0;
+>  
+>         /* add device node properties if present */
+> @@ -2668,8 +2669,14 @@ static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
+>         if (dev->type && dev->type->name)
+>                 add_uevent_var(env, "DEVTYPE=%s", dev->type->name);
+>  
+> -       if (dev->driver)
+> -               add_uevent_var(env, "DRIVER=%s", dev->driver->name);
+> +       /*
+> +        * While it is likely that this races driver detach, it is
+> +        * unlikely that any driver attached with this device is racing being
+> +        * freed relative to a uevent for the same device
+> +        */
+> +       driver = READ_ONCE(dev->driver);
+> +       if (driver)
+> +               add_uevent_var(env, "DRIVER=%s", driver->name);
+>  
+>         /* Add common DT information about the device */
+>         of_device_uevent(dev, env);
+> 
 
-This is an interesting patch, and may (but might not) be a very good one.
+I'll take this patch for now if you want to also include the removal of
+the lock patch that caused your splat.
 
-I have no objection to it going forward to 6.11-rc, but I do object to
-the Cc stable, and its current placing in mm-hotfixes-unstable (if that
-means it's to be rushed into 6.10 final).
+thanks,
 
-This is a subtle change to PG_lru handling, altering how that has been
-managed since 5.11 (and before).  I have not observed any ill effect
-from this patch, but I'm not at all confident in understanding its
-implications - though perhaps braver and quicker minds are confident.
-
-To judge by the commit message, it's entirely to suit the
-		if (!folio_test_lru(folio) && drain_allow) {
-line in collect_longterm_unpinnable_folios(). And it is attractive
-to associate the PG_lru with the unraised refcount.
-
-But I worry that it may not be to the benefit of others: for example,
-page reclaim's isolate_lru_folios() will no longer be able to isolate
-folios on the LRU while they're on an fbatch.  Which may be okay (in
-the dirty case, pageout() loses interest once it finds refcount raised,
-so nothing lost there), or might not be.
-
-It's good to try this, but please don't rush it in.
-Thanks,
-Hugh
+greg k-h
 
