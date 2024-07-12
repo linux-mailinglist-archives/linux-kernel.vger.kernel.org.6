@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-250956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F63492FEF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:04:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A24B92FEF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3D241C22405
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:04:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2E7BB2113E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E9817B412;
-	Fri, 12 Jul 2024 17:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47789176FBD;
+	Fri, 12 Jul 2024 17:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TcR3Tt4M"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FZbsFT+f"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19109176FA1
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1570B17B41F
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720803680; cv=none; b=aQAXuzHa8a6GMUWF+xtR/Xz4T7E12xOACha6sGSgWep4ie36w4SqfnhfuIGoFgZ8CEfSIGOJFlYOFb77XQqSdl4k4xkT/9WEGeUpEY8g9cyJpvGW/YwQTy/r58oy1zhjj+nsgNwcY5U3HxeBv3uuXbpoLxRF42eweGP20QXrAhg=
+	t=1720803683; cv=none; b=OaHE14K+uIUcVvdcwu7PErLTLwtupr1JW6BukfzrfJ7IskHT6+J43X9I8HOiB5p4hu47b2m4gWRjTNA5jSOo6RajB5ZnutU9+aPWahMlx3P40/14NFXaYXUbl+wQ6am64hbYxvO/I3U7k3dJiUUEaDdovwprAHFOwrdaTNdZqqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720803680; c=relaxed/simple;
-	bh=GLYAN/kV7nMWH7raHmImHFUkFRo8aYGtdJRB09Hyu5E=;
+	s=arc-20240116; t=1720803683; c=relaxed/simple;
+	bh=JV+LctEmZ8RVScnNvPDQmSmCQdrPRydUorU75kWraZk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PeCl2AVaP4WiKQ/cp9fDuntvGOZO+lXU4Jo6c8iropVb3QrVoqDMl6XbOBE2UndXDrrDSi0LfFCAoNljc3U7yTf1qJ5dBkJlpuuSE2Uz82BUdfrXmjcjEBvXoNCd3ZJCTrUY/1T+EWXbRJNp5kS2Zng8xvL/0zkgorQRnS5XyZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TcR3Tt4M; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=p9wXEem6RUzMsTgdvPtf3jaUrm/+tCjy3tkE8t743AFAqnrepWsL/xE7ak4rRAWRLKbzpj9VNd1f+BfSHJ4Tvs2jO/kHa1XjbXMR0oAKyc06fEFR7o7a1Ji6PR37OymWsO24hZSGuWIMJQKe2URQFYF8xeCsiqKeNF0ZRdz00qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FZbsFT+f; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-42668796626so14700325e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:01:18 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-426703ac975so12905095e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:01:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720803677; x=1721408477; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720803680; x=1721408480; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=STKCp8fX1eTmkj5Bbc4ElFS0AmmAwYWDzWQm15HV9Io=;
-        b=TcR3Tt4MErZrNXdoflAGqLhy0CV9tAuAPZwTeZTxRpYUkjvadVNgybEv6jwjDIkaAV
-         BnmlXu6x2Lu/hG8aR5igl0eg63BMPedFfyG6zOjkqklyeMPRTrq7qN7qY9BTk8BrBXDP
-         7b4kl7/uXUKouL2H+lxiGlC+aO1w5cYurSlObuo/YwLDyOCu+Q/FJgIS6Ur0wh6/re76
-         x6/GlLYNq5H6VUR+DpOVteW82c7iJz4xngpj+SFa+SvduXjbtqo+nuVWjYIRv/0a7ztp
-         ys7mJYtXPGkNno+IVC96qi1aZ94Lu/ovqHF9iPRSIUiZaydWiWvk+MW7pixnt9UkIFQ7
-         6dIA==
+        bh=jms+qnUoGWR3Ok8D5PSRh1HvZeNFLLNfdQwhqdA9AN8=;
+        b=FZbsFT+fMDAuUgio48QK61G8Yxlx/8W5pbGp04kifviTcGbOfXubWv+6lPj7XuuRIm
+         JoGdvNbW7IXh54dcdDR+0Gx8G0PABCk6RdhxkKcKyNzcLq2s+baZ67N6sT0u07UaefZt
+         i8A//X66F5F9HiH7RkFxhKM4y3gnO8h99dP5blKtBPczwkXB2gd9BvgY7x955J44ueCF
+         nz/W+DYg3rXxwQAvJPPCdh3QEIefThWUbVRRRJr7fN5vwjmNG5+9ayeZPc08Tc4i/tr6
+         /+Q8LnNcd9K7msMIe1kBVfg9P/U3Lg6zC00FNdq9vuRHaAGGhvnuedXt8QX29oWTTNB5
+         Cz+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720803677; x=1721408477;
+        d=1e100.net; s=20230601; t=1720803680; x=1721408480;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=STKCp8fX1eTmkj5Bbc4ElFS0AmmAwYWDzWQm15HV9Io=;
-        b=wq7bLtCRKMu+ZzDksPu0I1gSRIJfAlMu1rVwE8DDxCqwCQfaDNfVwssTzrF1P2lq8d
-         AmWCy60Ff3vB7wqFK1SvzjWJm2qo6cK2LJC/oUeWAv0QR1QAk9A+hDKMZXc/OdZk10z1
-         2+01qulMbvc9aEz51veER0D8LGKM7m+Rii1wkYZYwwkmUF3YYBnNCyk9mOQAju7OY2mH
-         K0CmsTJGg2xIIJEKGQOZz1oQxYiCD8WROF7gYC4ZwF2EYgDwb22l61x6LM3jc7XxFYoO
-         NRWSvaxuRRoxBzEZyPclawWvGfmPR+cADkN7cTLJCmI/37tf3cElh/0PJueLt4YMnCcs
-         4uOw==
-X-Forwarded-Encrypted: i=1; AJvYcCV47//ml3/Swfe2gWEf7691xYhLJDDJo8S1xDIla9GHZlwSJ+KhMa8AhnDHMO9LFkJqz+HoS7WXXxS0u049B7H2EkpdRKu3Q80fGslG
-X-Gm-Message-State: AOJu0YyJYljYLUDCoGiDB5ETRl6onYFMK5RTM19BJupDnG/eoZDPBHM4
-	mnUI0lUscW09Qkr1IMMHalRQwi5bHtupeJL+lXsqd0NcKOgsfNVS/7dghB/XWYjE68JialxSJlo
-	ZTnF/pNK8dw==
-X-Google-Smtp-Source: AGHT+IFyt7OjPNZMl6PbkdfYNDPh8L+dPRBgusnHtzyUmHnXcEp/uNI1T+enUzqfuMGxALw2f3LiWe2F0njYig==
+        bh=jms+qnUoGWR3Ok8D5PSRh1HvZeNFLLNfdQwhqdA9AN8=;
+        b=r1SnNLoO/CC8B6K7wp3whVzkd6vHxPHNpvHkfv2OfJg/LyrL7Rp2QLfFsv35PW6CG4
+         bzmz4W3Q339FpdvGpucsZiElLnJ1ZdhZWOyX4JMg5Hi/qPkIvEBX4TbtSA+3MWD0Iic9
+         O/fGiWa5HLt559vqUjkTTF5z9vLu7MH9/i+zyj2naOHedK3OFA1BH72HpM7SEKWgPMQ2
+         nGxe6wy8S22KcCZUJpKrHmpNHJ6l/d5owbAwwE4pNg1tTcvLg+ik5Ycfg6O0PDcWCtDp
+         QqFaOs2uXMOiOHdXB1DdGkSPQ8GUZAZZy4bnotCf/5AwyEawWIyQo5fHIPhGwz/R3DSz
+         p1xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlRd4LFnkZraenI2QdUMSENg0HOfTTM98hoqVXvJImlcPLg7m6V0dnhZdgyZ+Zv+2+CGiBHHXmRwiKI4Li1eLNB+HbL/nW7eAZgVXd
+X-Gm-Message-State: AOJu0YwIUKAeJtt6EDKaj+Vq1uSYTqh4DZC3bX5YnQ5iloyyJx+Fh6Lc
+	l0aLPSY4JEBqMkz/y77tXFcXEe8fZclNY/Ms+41Q1QHoMMl//D3zNTmimkPQ4Q0URRAOnCS3fjb
+	of18qzWx5oA==
+X-Google-Smtp-Source: AGHT+IGisRm/zH5xPuc3vZntkMct9zRaY/l9dILlFDVOJcrKy+wGrjnqUwhX4l9eAthBD2p9mDlo+nx2x2+a6A==
 X-Received: from beeg.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:11db])
- (user=jackmanb job=sendgmr) by 2002:a05:600c:358a:b0:426:5ff0:1b48 with SMTP
- id 5b1f17b1804b1-426708ef8b5mr784025e9.4.1720803677551; Fri, 12 Jul 2024
- 10:01:17 -0700 (PDT)
-Date: Fri, 12 Jul 2024 17:00:27 +0000
+ (user=jackmanb job=sendgmr) by 2002:a7b:cb11:0:b0:426:670b:20bf with SMTP id
+ 5b1f17b1804b1-427a0a24cb6mr168765e9.0.1720803680269; Fri, 12 Jul 2024
+ 10:01:20 -0700 (PDT)
+Date: Fri, 12 Jul 2024 17:00:28 +0000
 In-Reply-To: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
 X-Mailer: b4 0.14-dev
-Message-ID: <20240712-asi-rfc-24-v1-9-144b319a40d8@google.com>
-Subject: [PATCH 09/26] mm: asi: Make __get_current_cr3_fast() ASI-aware
+Message-ID: <20240712-asi-rfc-24-v1-10-144b319a40d8@google.com>
+Subject: [PATCH 10/26] mm: asi: Avoid warning from NMI userspace accesses in
+ ASI context
 From: Brendan Jackman <jackmanb@google.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
@@ -97,65 +98,67 @@ Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
 	kvm@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-From: Junaid Shahid <junaids@google.com>
+nmi_uaccess_okay() emits a warning if current CR3 != mm->pgd.
+Limit the warning to only when ASI is not active.
 
-When ASI is active, __get_current_cr3_fast() adjusts the returned CR3
-value accordingly to reflect the actual ASI CR3.
-
-Signed-off-by: Junaid Shahid <junaids@google.com>
+Co-developed-by: Junaid Shahid <junaids@google.com>
 Signed-off-by: Brendan Jackman <jackmanb@google.com>
 ---
- arch/x86/mm/tlb.c | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
+ arch/x86/mm/tlb.c | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 34d61b56d33f..02f73a71d4ea 100644
+index 02f73a71d4ea..e80cd67a5239 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -18,6 +18,7 @@
- #include <asm/cache.h>
- #include <asm/cacheflush.h>
- #include <asm/apic.h>
-+#include <asm/asi.h>
- #include <asm/perf_event.h>
+@@ -1326,6 +1326,24 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
+ 	put_cpu();
+ }
  
- #include "mm_internal.h"
-@@ -1125,14 +1126,32 @@ void flush_tlb_kernel_range(unsigned long start, unsigned long end)
-  */
- inline_or_noinstr unsigned long __get_current_cr3_fast(void)
- {
--	unsigned long cr3 =
--		build_cr3(this_cpu_read(cpu_tlbstate.loaded_mm)->pgd,
--			  this_cpu_read(cpu_tlbstate.loaded_mm_asid),
--			  tlbstate_lam_cr3_mask());
-+	unsigned long cr3;
-+	pgd_t *pgd;
-+	u16 asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
++static inline bool cr3_matches_current_mm(void)
++{
 +	struct asi *asi = asi_get_current();
-+	u16 pcid;
++	pgd_t *cr3_pgd;
 +
-+	if (asi) {
-+		pgd = asi_pgd(asi);
-+		pcid = asi_pcid(asi, asid);
-+	} else {
-+		pgd = this_cpu_read(cpu_tlbstate.loaded_mm)->pgd;
-+		pcid = kern_pcid(asid);
-+	}
-+
-+	cr3 = build_cr3_pcid(pgd, pcid, tlbstate_lam_cr3_mask(), false);
- 
- 	/* For now, be very restrictive about when this can be called. */
- 	VM_WARN_ON(in_nmi() || preemptible());
- 
 +	/*
-+	 * Outside of the ASI critical section, an ASI-restricted CR3 is
-+	 * unstable because an interrupt (including an inner interrupt, if we're
-+	 * already in one) could cause a persistent asi_exit.
++	 * Prevent read_cr3_pa -> [NMI, asi_exit] -> asi_get_current,
++	 * otherwise we might find CR3 pointing to the ASI PGD but not
++	 * find a current ASI domain.
 +	 */
-+	VM_WARN_ON_ONCE(asi && (asi_is_relaxed() || asi_intr_nest_depth()));
++	barrier();
++	cr3_pgd = __va(read_cr3_pa());
 +
- 	VM_BUG_ON(cr3 != __read_cr3());
- 	return cr3;
++	if (cr3_pgd == current->mm->pgd)
++		return true;
++	return asi && (cr3_pgd == asi_pgd(asi));
++}
++
+ /*
+  * Blindly accessing user memory from NMI context can be dangerous
+  * if we're in the middle of switching the current user task or
+@@ -1341,10 +1359,10 @@ bool nmi_uaccess_okay(void)
+ 	VM_WARN_ON_ONCE(!loaded_mm);
+ 
+ 	/*
+-	 * The condition we want to check is
+-	 * current_mm->pgd == __va(read_cr3_pa()).  This may be slow, though,
+-	 * if we're running in a VM with shadow paging, and nmi_uaccess_okay()
+-	 * is supposed to be reasonably fast.
++	 * The condition we want to check that CR3 points to either
++	 * current_mm->pgd or an appropriate ASI PGD. Reading CR3 may be slow,
++	 * though, if we're running in a VM with shadow paging, and
++	 * nmi_uaccess_okay() is supposed to be reasonably fast.
+ 	 *
+ 	 * Instead, we check the almost equivalent but somewhat conservative
+ 	 * condition below, and we rely on the fact that switch_mm_irqs_off()
+@@ -1353,7 +1371,7 @@ bool nmi_uaccess_okay(void)
+ 	if (loaded_mm != current_mm)
+ 		return false;
+ 
+-	VM_WARN_ON_ONCE(current_mm->pgd != __va(read_cr3_pa()));
++	VM_WARN_ON_ONCE(!cr3_matches_current_mm());
+ 
+ 	return true;
  }
 
 -- 
