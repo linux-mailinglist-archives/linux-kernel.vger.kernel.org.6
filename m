@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-250302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CC392F642
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:31:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CB792F645
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67B54B22EC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:31:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8AF31F23662
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABF214036E;
-	Fri, 12 Jul 2024 07:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936EA13DDDD;
+	Fri, 12 Jul 2024 07:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DpTqH1Hy"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Y+P9mpOv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A2E13DDB8;
-	Fri, 12 Jul 2024 07:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A318F58;
+	Fri, 12 Jul 2024 07:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720769473; cv=none; b=Pg0sGH42TXn1E5RqPmqiRQ1Fiodfu8xxkDrgiRbghCodjpk8YV8osHPLFHJs5cszxv5yjjvh9IAW+vURTi8sFzMPHhPAyzldj7W7c+7g1BR5PiL6LvVK6MDS/HOtsAEmBflOxrr1R+2BT9oS/SHu3BO55ukgdICCB4Mh5S5hkF4=
+	t=1720769491; cv=none; b=jQSLnYRKlR79YNFa7vL+c3CxhKsC7yR0na/5U67Hyc/Ij/Cx/mF95QLXGVweexr781ttiM5BnNWQkmGBQNyHPyQcuRDBfbbalLxGQYavczaf88W5Apl72ji8+Y/0tcaN/uDMXCzUrrTODmcovRIRqW5wjNpFexMi/+h9I/LAQpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720769473; c=relaxed/simple;
-	bh=pMIJq6XzjEqCqqiGFtz3aDAVbL3U30hnnFJZLgD2If4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cxt184YoucM2Nau1OWc2/NetaIE2XDEFjtSDlEJoD0IsBc4mn1nO4SJUIVBWNnbgM57u63aF1YxRnmbkoZGa5g9KJm4Bhf5VuRf1QxQoYQGmezKGFH4AMefqsycZy8neK9jKOQxhsCfg6v6CBYhGvrI+O3DHPPNGCKjYPTkRv/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DpTqH1Hy; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720769470;
-	bh=pMIJq6XzjEqCqqiGFtz3aDAVbL3U30hnnFJZLgD2If4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DpTqH1HyGaaKETYA4WNTHM/EuiASMH+yfpaZTqzzHT0AjKbYyjwbCdQmPou0ydHt1
-	 KM4Z5f3usNuOjnd9M6HGOLn0TBaiIC0CU2KGKlGkz6HiKuoGHkcpN6zWqb4tKVpp9N
-	 SC++HGTY13p53OJsHiL3r/MteuraxnoHRjlQBUvM5hCqPFG+6UfH4LcUwo4MYVCS8q
-	 ta1o5zCws8xKj68G4PqTfpEH45cJO4cMnzilObf5SrnSZFlCRLZqNah7u+kj5yT7KV
-	 1z0c7bAtCwj63tnLwf+gAb49TGNXtYPNcCkMlIYaMwmEx8aCJQuHtbz2KeCsUmFw5k
-	 PoTT2eFpH/CTA==
-Received: from localhost.localdomain (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E641C3782212;
-	Fri, 12 Jul 2024 07:31:07 +0000 (UTC)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: kernel@collabora.com,
-	"Chang S . Bae" <chang.seok.bae@intel.com>,
-	Binbin Wu <binbin.wu@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] selftests: x86: vdso_restorer: Return correct exit statuses
-Date: Fri, 12 Jul 2024 12:30:43 +0500
-Message-Id: <20240712073045.110014-2-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240712073045.110014-1-usama.anjum@collabora.com>
-References: <20240712073045.110014-1-usama.anjum@collabora.com>
+	s=arc-20240116; t=1720769491; c=relaxed/simple;
+	bh=J6L70/0E91iG7uWlu2BCX4sUocMyTLY/ZH60hrueklk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vq1KWLtkNW6wky5K3HS3EqlRjgNoa+vyJ9JapZbZq0aKaVTQRjvZwWYELVDdmVZ+RDODmGo6TKZAT4jy4hzP3RR0oMlRYWtvLf5Xlx/eKt2Barzh28lrGn6vPuT91+jxvu9fnijFe3Wqoa2nZcH7Xf/PkoVVNd/CT3jvxaOn7ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Y+P9mpOv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AB80C3277B;
+	Fri, 12 Jul 2024 07:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720769490;
+	bh=J6L70/0E91iG7uWlu2BCX4sUocMyTLY/ZH60hrueklk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y+P9mpOvYdW3/S5b7axG8utyPbXFPSg/IAkOgrQHaWl0r1nhlUiu9C9kqMG/M0dKb
+	 0d6k9QEQ8rK46FZPp7aSqapIU2xjOzMXXeGfPcuN51p1V6FAQFwqAbaVCxUA3OTenE
+	 5XG1T7IvdKnuOssww09/L7ipNDWwM/EigRv9Z7sk=
+Date: Fri, 12 Jul 2024 09:31:27 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>,
+	David Airlie <airlied@redhat.com>, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] agp: uninorth: add missing MODULE_DESCRIPTION() macro
+Message-ID: <2024071209-squatting-nacho-60b0@gregkh>
+References: <20240615-md-powerpc-drivers-char-agp-v1-1-b79bfd07da42@quicinc.com>
+ <99d6c483-9291-4bd0-8e62-76022abb762c@quicinc.com>
+ <7b7e2952-fb54-48b0-93bc-f96c04e5cdd3@quicinc.com>
+ <ce7863a7-f84e-42f0-9aa5-54b43edcd260@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ce7863a7-f84e-42f0-9aa5-54b43edcd260@quicinc.com>
 
-Return correct exit status, KSFT_SKIP if the pre-conditions aren't met.
-Return KSFT_FAIL if error occurs. Use ksft_finished() which will
-compmare the total planned tests with passed tests to return the exit
-value.
+On Thu, Jul 11, 2024 at 01:27:23PM -0600, Jeffrey Hugo wrote:
+> On 7/11/2024 12:19 PM, Jeff Johnson wrote:
+> > On 6/28/24 20:14, Jeff Johnson wrote:
+> > > On 6/15/2024 2:01 PM, Jeff Johnson wrote:
+> > > > With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
+> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in
+> > > > drivers/char/agp/uninorth-agp.o
+> > > > 
+> > > > Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> > > > 
+> > > > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> > > > ---
+> > > >   drivers/char/agp/uninorth-agp.c | 1 +
+> > > >   1 file changed, 1 insertion(+)
+> > > > 
+> > > > diff --git a/drivers/char/agp/uninorth-agp.c
+> > > > b/drivers/char/agp/uninorth-agp.c
+> > > > index 84411b13c49f..b8d7115b8c9e 100644
+> > > > --- a/drivers/char/agp/uninorth-agp.c
+> > > > +++ b/drivers/char/agp/uninorth-agp.c
+> > > > @@ -726,4 +726,5 @@ MODULE_PARM_DESC(aperture,
+> > > >            "\t\tDefault: " DEFAULT_APERTURE_STRING "M");
+> > > >   MODULE_AUTHOR("Ben Herrenschmidt & Paul Mackerras");
+> > > > +MODULE_DESCRIPTION("Apple UniNorth & U3 AGP support");
+> > > >   MODULE_LICENSE("GPL");
+> > > > 
+> > > > ---
+> > > > base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> > > > change-id: 20240615-md-powerpc-drivers-char-agp-db644db58c24
+> > > 
+> > > Following up to see if anything else is needed from me. Hoping to
+> > > see this in
+> > > linux-next so I can remove it from my tracking spreadsheet :)
+> > 
+> > I still don't see this in linux-next.
+> > Adding Greg KH since he's picked up many of these fixes.
+> > Hope to have all of these warnings fixed tree-wide in 6.11.
+> 
+> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+> 
+> Dave, this seems like a trivial fix that is stuck, but normally routed
+> through DRM.  I hope I'm not over stepping, but I think I'll drop this in
+> drm-misc-next on the 19th if there isn't any other activity.
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- tools/testing/selftests/x86/vdso_restorer.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+I can take it now, otherwise you will miss the 6.11-rc1 merge window.
 
-diff --git a/tools/testing/selftests/x86/vdso_restorer.c b/tools/testing/selftests/x86/vdso_restorer.c
-index 8e173d71291f6..54f33e8cda5cc 100644
---- a/tools/testing/selftests/x86/vdso_restorer.c
-+++ b/tools/testing/selftests/x86/vdso_restorer.c
-@@ -56,7 +56,7 @@ int main()
- 			      RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
- 	if (!vdso) {
- 		printf("[SKIP]\tFailed to find vDSO.  Tests are not expected to work.\n");
--		return 0;
-+		return KSFT_SKIP;
- 	}
- 
- 	ksft_set_plan(2);
-@@ -69,7 +69,7 @@ int main()
- 	printf("[RUN]\tRaise a signal, SA_SIGINFO, sa.restorer == NULL\n");
- 
- 	if (syscall(SYS_rt_sigaction, SIGUSR1, &sa, NULL, 8) != 0)
--		err(1, "raw rt_sigaction syscall");
-+		err(KSFT_FAIL, "raw rt_sigaction syscall");
- 
- 	raise(SIGUSR1);
- 
-@@ -80,10 +80,12 @@ int main()
- 	sa.flags = 0;
- 	sa.handler = handler_without_siginfo;
- 	if (syscall(SYS_sigaction, SIGUSR1, &sa, 0) != 0)
--		err(1, "raw sigaction syscall");
-+		err(KSFT_FAIL, "raw sigaction syscall");
- 	handler_called = 0;
- 
- 	raise(SIGUSR1);
- 
- 	ksft_test_result(handler_called, "SA_SIGINFO handler returned\n");
-+
-+	ksft_finished();
- }
--- 
-2.39.2
+thanks,
 
+greg k-h
 
