@@ -1,228 +1,246 @@
-Return-Path: <linux-kernel+bounces-251219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7519B93023D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:49:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B49930248
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F101C212F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686E41F23432
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9753C7F7FB;
-	Fri, 12 Jul 2024 22:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39FB4130486;
+	Fri, 12 Jul 2024 23:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="eJMIpkTi"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZWl7dUUs"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60876F085
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 22:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0F51BC3C;
+	Fri, 12 Jul 2024 23:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720824567; cv=none; b=n3rjL6xhtY3xkXBSMBLLUohRSoyX26wPPGTx13rNpi2JzoyvN5+kYaogHH11vcuVEykz4UwKE+d8AKn8rQS1gB/jkwpxLx9kMxlzc8RDIMEHlNANm9+dxXzAe97hHt+6C+pD7jYg4SOqpaDrPdoeR31djjXyB5DTUpQKk4RwT64=
+	t=1720825362; cv=none; b=gFgGL7G2U3Tu4Zr9qmeI1pg0fw9stQ8qZPi19STU3+KQSl2C3YBgxd+UoHFOJSWm8/CVZV0+HLFnWT4CNTNMSwXPuRpGzPYPXMfm8q9rnHd6IuVXBzTk6qVfEc//egdGixfdxEeyecfcsKX08/CXA0XOGuFUEBkhcr2JxzxAkLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720824567; c=relaxed/simple;
-	bh=yzrZqcsuq4CzUEEp7agdi5M1qVJCH/6gW70AV7UgS5M=;
+	s=arc-20240116; t=1720825362; c=relaxed/simple;
+	bh=R87N7Gh7XUizx7Z1+TJNWFt1ny5hyy/xtNYvrq4QkCc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=svR/jXzvpLnTPfEKOreGyP1StNWK/NtU5XPaj26f2swxMtScckDS+vSl8tEQiSIKHmTY0ON+xZJNy+L1q2X9ip4M+5SLlP3RGhCC+Oi6+Q76Qm3FGf+otUPROMM3v80MKe8zwrqZIc1/M7P9nQ7g+4MoKN76/pfwaNHcEt3VAX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com; spf=pass smtp.mailfrom=kylehuey.com; dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b=eJMIpkTi; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylehuey.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eeb1ba040aso31497711fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:49:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=NJ9rpE7Qw+EBoZheuZq0YqLYsK1Vg7M8LhxAtptcHgsfVmfsOLBUuVBbKVmIRDprfHk9fmY+tiPvpiOagkTxpHy4E42bELFHF/UlRKE9Wm4+OrhXMhe++1614X027Bjxdam0ue2BMGVOhFidAvEVZ2gwaIxSEG4DB6IWDzJ5+bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZWl7dUUs; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b5ecafbf88so12362406d6.3;
+        Fri, 12 Jul 2024 16:02:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kylehuey.com; s=google; t=1720824564; x=1721429364; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720825359; x=1721430159; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iNbG9SPw6ODdqm0X1D1P5bIp1TAPpaaOK+IcIxDrqlA=;
-        b=eJMIpkTikkEt1IEhNVOJSF0qjn7LsbHJirBjROi3lfMRkK1+n/TQiVRjyfbOeqDF5a
-         49W+lhLYoAVIPxe+H2TPstwePMhbWhLxMw/LIChAC6v2zqHWovkTINrVRCWf+xDhrQG5
-         qRPvgst+nc5cjJJpr6GmhLbcV2CECEmAF6Uu7/p6sLtvZVbujq98qoflVwUwbU5EzIwK
-         Ra5TmuMBIchekmL4J+74NtPb7KXghbseixjbvPsvx3UygsV7KoIOPdX7myCVMsHnyuOa
-         w9uwt/ag2ofLGaCWTfGtOiLR4kjGmaZKVN5VRBPPUNqzT7i/1qAjofL0FscCLG4No8di
-         YLWQ==
+        bh=JJGaZblzwmJYZ+hIO/WBo5zQB6Wjp1o6IoOSbordWiU=;
+        b=ZWl7dUUs/TDzNDt4hbo9C7xmcNbYUEDwwAQDZdJfHVQdnK1W8fc1UkBHXDICXTurbm
+         6R4WhJFruYl97NkIbVdVp7Jhg7iG+6uwMZx3ck+YOlpCDPRVYAH3nKgMABctCbh/Rk+m
+         KoocRTEn11LAFqiXqEoKEDq/9oBvwWCIYxMHx8rK6ypwDeXkVfl0J4/DZ/J0Qm9+rDib
+         GlxilnLcraPtGrLyijlqWZYFfjWCUhs0sl+f1QOgV3ODP1dRWXN9yNuzvwbO0h1mGi4r
+         QTFZ65zuASWgOA1VxeuMsi3U72DUj2fbLujwR3Cv+5drG0d0jm/TnpqiXwrWNqxyyilI
+         MDIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720824564; x=1721429364;
+        d=1e100.net; s=20230601; t=1720825359; x=1721430159;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iNbG9SPw6ODdqm0X1D1P5bIp1TAPpaaOK+IcIxDrqlA=;
-        b=Q+zmJWuHNivqrDLMd6vyqTE9LYcal32+4wqGDd85cSqf67Msw2fDFUrmDIbMKBr6LB
-         UZ08d5tfobgBE85EGvBFS6T0wpwTKt/5TYdskyq4lcRSA13tpL8tTXnUoFxzodERHfey
-         1h0QSxZlt2VgpWBECoW55VRmE8jHzBaNiNKG82Um9xa0IG8j3vUH3Vdkno7GxWhPNUGj
-         0c0bGI5W+C4qVWW2asCQvjgSjMg6uHDv5qjStMyaQ4e2hnhKqf0LIXtpDTs4yOCMd6+o
-         rM4bSitOpnSBNbMwfXPydKRCfYfJRqpG2X/54a1YUt3cFGXDs7GQKeOWwdFlB2lsNy1G
-         cg8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXjorS4vfxGWsfYLdzMjc52CozEJg2peqvvVaAEM/X9tGPVJZVQIQea3r8X6S0FVOzUvBmL9Kt4KD8JI6HLi8cLtpPPgQate7tnykbQ
-X-Gm-Message-State: AOJu0YxhJHMAweyVSqmU3tgzUHudnEPeszrN3xdkneVfIr7EFR39bUGG
-	rOXuJnalqmHQUZacPnVtSdghaITxKPK5KGOZG1OdHuut4ixfBpcVRtxCXxMKHihYO6bfS5WNrS9
-	wuKZDB6t5aMWH7AanYIDM0nc9kr8FozqMWiXh
-X-Google-Smtp-Source: AGHT+IFQTYMXfqyYBs8TBsM8FGOvJi8uuLScFLRKAzHQL5X7ONHmwQeJ/BxhMJmn063fY3YFc597TbdshfS7b5JGoXU=
-X-Received: by 2002:a05:651c:198c:b0:2ee:46ec:60bc with SMTP id
- 38308e7fff4ca-2eeb30fc98amr101773481fa.27.1720824563679; Fri, 12 Jul 2024
- 15:49:23 -0700 (PDT)
+        bh=JJGaZblzwmJYZ+hIO/WBo5zQB6Wjp1o6IoOSbordWiU=;
+        b=gFAmlhJ0qPETK6mfOb/1OG0KD7+i01rVD2I5sxZUz38jEMLILt9OTTQ8yXPnasonrG
+         9kDTk6Ob2ZWQc/x8aLs8CNRBAazxTbgiwrUM5NsMTnnzvELkzHcJM1wAQ2GNM313Z2rh
+         IPXnMg3rKQWOWZqUWMCN9ov9RCy394Co8MscIwgY2c6SudKqRUeUO+ODiqt6oF9b1yEF
+         qs0akhXd2KdGe/LOtEQDRdQX1+afrOgwJD9g6WBJ9G9uGHghVyIvPovOZIhIFkCtMl15
+         OtQOprylggKJz+32b9CSihL6jcKu7keyCxnHszc2bOFahiXyjT9uFxkeHyITx4c7bg6w
+         RakA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkKaNIRmNzvz52CtUg+5Ieap75mOnsh6+CIqpQj3ofP9pZWFUNf7XOmzmEQzbTs8zW0dfNrFKGJGNF9KC1xaoc8DoUHbeOUVM4tg/l7RqEjSM3egBi6RpHC0vV7DtwVuK2HiCac9r7
+X-Gm-Message-State: AOJu0Yy6Mukb2KRxBLqZUj078IEvUFb7Gd2STna32c7W+y4sU/fNp1Tp
+	/X0ZSU6tSj3aHGvggI1zqqsrWktDCyYbCpeOTbtPmxSBs1t1mJdC+EoOAutYhADWfk2A/6KkbXM
+	mbOTDLyFj18QsmbIsbThwGU1hbcy+qQ==
+X-Google-Smtp-Source: AGHT+IGM/qvRuhFSgMKJltrgTEGOD3Cl0bznZEGGmwukrLJp0k6aQJUOKLkl6cIk0pebPaezVfYeX8z1llyEySJnusQ=
+X-Received: by 2002:a05:6214:250a:b0:6b5:413a:3f96 with SMTP id
+ 6a1803df08f44-6b61bc7ec67mr165235596d6.10.1720825359376; Fri, 12 Jul 2024
+ 16:02:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZpFfocvyF3KHaSzF@LQ3V64L9R2> <ZpGrstyKD-PtWyoP@krava>
-In-Reply-To: <ZpGrstyKD-PtWyoP@krava>
-From: Kyle Huey <me@kylehuey.com>
-Date: Fri, 12 Jul 2024 15:49:10 -0700
-Message-ID: <CAP045ApgYjQLVgvPeB0jK4LjfBB+XMo89gdVkZH8XJAdD=a6sg@mail.gmail.com>
-Subject: Re: [bpf?] [net-next ?] [RESEND] possible bpf overflow/output bug
- introduced in 6.10rc1 ?
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	netdev@vger.kernel.org, acme@kernel.org, andrii.nakryiko@gmail.com, 
-	elver@google.com, khuey@kylehuey.com, mingo@kernel.org, namhyung@kernel.org, 
-	peterz@infradead.org, robert@ocallahan.org, yonghong.song@linux.dev, 
-	mkarsten@uwaterloo.ca, kuba@kernel.org
+References: <20240706022523.1104080-1-flintglass@gmail.com>
+ <CAKEwX=NL1gOe9k5+JB8Q-UAoZ4ie8SBGg7XTjaqM7j4-hiHv=A@mail.gmail.com> <CAPpoddefXD1RAjyW2+X_ankGYNpQgY0Y0+xd1yOFgCc_egaX8A@mail.gmail.com>
+In-Reply-To: <CAPpoddefXD1RAjyW2+X_ankGYNpQgY0Y0+xd1yOFgCc_egaX8A@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Fri, 12 Jul 2024 16:02:27 -0700
+Message-ID: <CAKEwX=MFdjryQRDm9b-Oxquhw954HUipCCpABSLwH9mrV4D3WA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] mm: zswap: global shrinker fix and proactive shrink
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 12, 2024 at 3:18=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
+On Wed, Jul 10, 2024 at 3:27=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
+> wrote:
 >
-> On Fri, Jul 12, 2024 at 09:53:53AM -0700, Joe Damato wrote:
-> > Greetings:
+> 2024=E5=B9=B47=E6=9C=889=E6=97=A5(=E7=81=AB) 9:53 Nhat Pham <nphamcs@gmai=
+l.com>:
+>
+> > > post-patch, 6.10-rc4 with patch 1 to 5
 > >
-> > (I am reposting this question after 2 days and to a wider audience
-> > as I didn't hear back [1]; my apologies it just seemed like a
-> > possible bug slipped into 6.10-rc1 and I wanted to bring attention
-> > to it before 6.10 is released.)
+> > You mean 1 to 6? There are 6 patches, no?
+>
+> oops. with patches 1 to 6.
+>
 > >
-> > While testing some unrelated networking code with Martin Karsten (cc'd =
-on
-> > this email) we discovered what appears to be some sort of overflow bug =
-in
-> > bpf.
+> > Just out of pure curiosity, could you include the stats from patch 1-3 =
+only?
 > >
-> > git bisect suggests that commit f11f10bfa1ca ("perf/bpf: Call BPF handl=
-er
-> > directly, not through overflow machinery") is the first commit where th=
+>
+> I will rerun the bench in v3. I assume this bench does not reflect
+> patches 4 to 6, as delta pool_limit_hit=3D0 means no rejection from
+> zswap.
+>
+> > Ah this is interesting. Did you actually see improvement in your real
+> > deployment (i.e not the benchmark) with patch 4-6 in?
+> >
+>
+> As replied in patch 6, memory consuming tasks like `apt upgrade` for inst=
+ance.
+>
+> > >
+> > > Intended scenario for memory reclaim:
+> > > 1. zswap pool < accept_threshold as the initial state. This is achiev=
+ed
+> > >    by patch 3, proactive shrinking.
+> > > 2. Active processes start allocating pages. Pageout is buffered by zs=
+wap
+> > >    without IO.
+> > > 3. zswap reaches shrink_start_threshold. zswap continues to buffer
+> > >    incoming pages and starts writeback immediately in the background.
+> > > 4. zswap reaches max pool size. zswap interrupts the global shrinker =
+and
+> > >    starts rejecting pages. Write IO for the rejected page will consum=
 e
-> > (I assume) buggy behavior appears.
+> > >    all IO resources.
+> >
+> > This sounds like the proactive shrinker is still not aggressive
+> > enough, and/or there are some sort of misspecifications of the zswap
+> > setting... Correct me if I'm wrong, but the new proactive global
+> > shrinker begins 1% after the acceptance threshold, and shrinks down to
+> > acceptance threshold, right? How are we still hitting the pool
+> > limit...
+> >
 >
-> heya, nice catch!
+> Proactive shrinking should not be aggressive. With patches 4 and 6, I
+> modified the global shrinker to be less aggressive against pagein/out.
+> Shrinking proactively cannot avoid hitting the pool limit when memory
+> pressure grows faster.
 >
-> I can reproduce.. it seems that after f11f10bfa1ca we allow to run tracep=
-oint
-> program as perf event overflow program
+> > My concern is that we are knowingly (and perhaps unnecessarily)
+> > creating an LRU inversion here - preferring swapping out the rejected
+> > pages over the colder pages in the zswap pool. Shouldn't it be the
+> > other way around? For instance, can we spiral into the following
+> > scenario:
+> >
+> > 1. zswap pool becomes full.
+> > 2. Memory is still tight, so anonymous memory will be reclaimed. zswap
+> > keeps rejecting incoming pages, and putting a hold on the global
+> > shrinker.
+> > 3. The pages that are swapped out are warmer than the ones stored in
+> > the zswap pool, so they will be more likely to be swapped in (which,
+> > IIUC, will also further delay the global shrinker).
+> >
+> > and the cycle keeps going on and on?
 >
-> bpftrace's bpf program returns 1 which means that perf_trace_run_bpf_subm=
-it
-> will continue to execute perf_tp_event and then:
->
->   perf_tp_event
->     perf_swevent_event
->       __perf_event_overflow
->         bpf_overflow_handler
->
-> bpf_overflow_handler then executes event->prog on wrong arguments, which
-> results in wrong 'work' data in bpftrace output
->
-> I can 'fix' that by checking the event type before running the program li=
-ke
-> in the change below, but I wonder there's probably better fix
->
-> Kyle, any idea?
+> I agree this does not follow LRU, but I think the LRU priority
+> inversion is unavoidable once the pool limit is hit.
+> The accept_thr_percent should be lowered to reduce the probability of
+> LRU inversion if it matters. (it is why I implemented proactive
+> shrinker.)
 
-Thanks for doing the hard work here Jiri. I did see the original email
-a couple days ago but the cause was far from obvious to me so I was
-waiting until I had more time to dig in.
+And yet, in your own benchmark it fails to prevent that, no? I think
+you lower it all the way down to 50%.
 
-The issue here is that kernel/trace/bpf_trace.c pokes at event->prog
-directly, so the assumption made in my patch series (based on the
-suggested patch at
-https://lore.kernel.org/lkml/ZXJJa5re536_e7c1@google.com/) that having
-a BPF program in event->prog means we also use the BPF overflow
-handler is wrong.
-
-I'll think about how to fix it.
-
-- Kyle
-
-
-> >
-> > Running the following on my machine as of the commit mentioned above:
-> >
-> >   bpftrace -e 'tracepoint:napi:napi_poll { @[args->work] =3D count(); }=
-'
-> >
-> > while simultaneously transferring data to the target machine (in my cas=
-e, I
-> > scp'd a 100MiB file of zeros in a loop) results in very strange output
-> > (snipped):
-> >
-> >   @[11]: 5
-> >   @[18]: 5
-> >   @[-30590]: 6
-> >   @[10]: 7
-> >   @[14]: 9
-> >
-> > It does not seem that the driver I am using on my test system (mlx5) wo=
-uld
-> > ever return a negative value from its napi poll function and likewise f=
-or
-> > the driver Martin is using (mlx4).
-> >
-> > As such, I don't think it is possible for args->work to ever be a large
-> > negative number, but perhaps I am misunderstanding something?
-> >
-> > I would like to note that commit 14e40a9578b7 ("perf/bpf: Remove #ifdef
-> > CONFIG_BPF_SYSCALL from struct perf_event members") does not exhibit th=
-is
-> > behavior and the output seems reasonable on my test system. Martin conf=
-irms
-> > the same for both commits on his test system, which uses different hard=
-ware
-> > than mine.
-> >
-> > Is this an expected side effect of this change? I would expect it is no=
-t
-> > and that the output is a bug of some sort. My apologies in that I am no=
-t
-> > particularly familiar with the bpf code and cannot suggest what the roo=
-t
-> > cause might be.
-> >
-> > If it is not a bug:
-> >   1. Sorry for the noise :(
 >
-> your report is great, thanks a lot!
+> When the writeback throughput is slower than memory usage grows,
+> zswap_store() will have to reject pages sooner or later.
+> If we evict the oldest stored pages synchronously before rejecting a
+> new page (rotating pool to keep LRU), it will affect latency depending
+> how much writeback is required to store the new page. If the oldest
+> pages were compressed well, we would have to evict too many pages to
+> store a warmer page, which blocks the reclaim progress. Fragmentation
+> in the zspool may also increase the required writeback amount.
+> We cannot accomplish both maintaining LRU priority and maintaining
+> pageout latency.
+
+Hmm yeah, I guess this is fair. Looks like there is not a lot of
+choice, if you want to maintain decent pageout latency...
+
+I could suggest that you have a budgeted zswap writeback on zswap
+store - i.e if the pool is full, then try to zswap writeback until we
+have enough space or if the budget is reached. But that feels like
+even more engineering - the IO priority approach might even be easier
+at that point LOL.
+
+Oh well, global shrinker delay it is :)
+
 >
-> jirka
+> Additionally, zswap_writeback_entry() is slower than direct pageout. I
+> assume this is because shrinker performs 4KB IO synchronously. I am
+> seeing shrinking throughput is limited by disk IOPS * 4KB while much
+> higher throughput can be achieved by disabling zswap. direct pageout
+> can be faster than zswap writeback, possibly because of bio
+> optimization or sequential allocation of swap.
+
+Hah, this is interesting!
+
+I wonder though, if the solution here is to perform some sort of
+batching for zswap writeback.
+
+BTW, what is the type of the storage device you are using for swap? Is
+it SSD or HDD etc?
+
 >
 >
-> >   2. Can anyone suggest what this output might mean or how the
-> >      script run above should be modified? AFAIK this is a fairly
-> >      common bpftrace that many folks run for profiling/debugging
-> >      purposes.
+> > Have you experimented with synchronous reclaim in the case the pool is
+> > full? All the way to the acceptance threshold is too aggressive of
+> > course - you might need to find something in between :)
 > >
-> > Thanks,
-> > Joe
-> >
-> > [1]: https://lore.kernel.org/bpf/Zo64cpho2cFQiOeE@LQ3V64L9R2/T/#u
 >
-> ---
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index c6a6936183d5..0045dc754ef7 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -9580,7 +9580,7 @@ static int bpf_overflow_handler(struct perf_event *=
-event,
->                 goto out;
->         rcu_read_lock();
->         prog =3D READ_ONCE(event->prog);
-> -       if (prog) {
-> +       if (prog && prog->type =3D=3D BPF_PROG_TYPE_PERF_EVENT) {
->                 perf_prepare_sample(data, event, regs);
->                 ret =3D bpf_prog_run(prog, &ctx);
->         }
+> I don't get what the expected situation is.
+> The benchmark of patch 6 is performing synchronous reclaim in the case
+> the pool is full, since bulk memory allocation (write to mmapped
+> space) is much faster than writeback throughput. The zswap pool is
+> filled instantly at the beginning of benchmark runs. The
+> accept_thr_percent is not significant for the benchmark, I think.
+
+No. I meant synchronous reclaim as in triggering zswap writeback
+within the zswap store path, to make space for the incoming new zswap
+pages. But you already addressed it above :)
+
+
+>
+>
+> >
+> > I wonder if this contention would show up in PSI metrics
+> > (/proc/pressure/io, or the cgroup variants if you use them ). Maybe
+> > correlate reclaim counters (pgscan, zswpout, pswpout, zswpwb etc.)
+> > with IO pressure to show the pattern, i.e the contention problem was
+> > there before, and is now resolved? :)
+>
+> Unfortunately, I could not find a reliable metric other than elapsed
+> time. It seems PSI does not distinguish stalls for rejected pageout
+> from stalls for shrinker writeback.
+> For counters, this issue affects latency but does not increase the
+> number of pagein/out. Is there any better way to observe the origin of
+> contention?
+>
+> Thanks.
 
