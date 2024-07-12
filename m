@@ -1,265 +1,157 @@
-Return-Path: <linux-kernel+bounces-251142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC0193011F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:53:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6AF930120
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EAB01F23914
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:53:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44091F2372A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DD03B1A4;
-	Fri, 12 Jul 2024 19:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0273A8C0;
+	Fri, 12 Jul 2024 19:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LVtLZ6G4"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zh4xxaN0"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC8F2C879
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 19:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2035744C86
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 19:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720814012; cv=none; b=oOZyHneccLHYNX8MC1B8Ef+dkmbSlLdney6pNYOHO+/VECU3Ac4adQXKoLkDGyDGZ1Xwx+5AZuSXVNCW2TMvvfxGg+m6t2OUjP8L07Z4X90C2b63zqHqjLpAdGeLP8IfEWH/85Gj2TaKi384t7VemE1g8Ot2UtvZ1O8ohfSmnhw=
+	t=1720814033; cv=none; b=qS/KButKK7GBOHz2DjSZN21r8hjw68i02EhBjRah+nm7v2qVfr8E5XYPf8xe0brQ7KAxFitb4IEJbstJlEmkRqzhC5InxnxqTgqt3p8QtzqV3QPBbH8qstrIcJHEZWeAP+U+Qj86Jyrlbqwk7vI4iAZcFsxbzY8hv271yGmEnSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720814012; c=relaxed/simple;
-	bh=StUJdV7TFg7NGKUMdDCwe2aGMaXQXh1UOAGwUqGnrkc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I16vh9HKDLOfP8W8QiokfwSvFvzYjrTmCijXtsvho+eJJxgzsyFrSjZOYQRjyPdy1eJaXtQkqoazvb3rM6VEescekdATF2IzChnplmakl+/GeRJoNLp3SQ6WQZTwVWSThkWrqjFRD9Vp4DkT5dbyMze70X3Zyzzt5jOSJkB9NvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LVtLZ6G4; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so3109664a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:53:30 -0700 (PDT)
+	s=arc-20240116; t=1720814033; c=relaxed/simple;
+	bh=0iJLLgIAj1GDbOz5eCaLhDF160omVeDVbc9/Ai6siRA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m7Zy0TC2vigngvyyUTTl+0Rw7riHpT45+V1ThW+fCGPbc89y4CoNYgsK68xYXGxB8Q18MY4dkfixnJl8EwdC99Z/cZ0BJ5ZSQX1A7MiBnoip5RuWwbgOSKBEOGJ4xfkvBTSmFGmuH5UziZdzhPKrSXe6vi1pH3YoT0+exl7D8W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zh4xxaN0; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4266f796e67so315e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:53:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720814009; x=1721418809; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CD9Gf2WFD/32n/g3oQVjierG/CJPtNZszx3tKsXb1rc=;
-        b=LVtLZ6G4KOHaaC2LmGk0n4LQn3QtScvHgY4BZzTL6DAMkIuldcqg+90wAJ7z20/YhS
-         nbo9bWT5LAKZMCgUo+yGgfvujb0xUgYwXjOaC5T6aN92PjXV2XfG7v4gUenRDTsDJSQa
-         KPSSMaZVRT31Y8rz/nEHH8W6SJ0e4iBzqcD3MvQOYmsapM8fRunpQeTW6BgBclLDv60T
-         pRjlDvLkSVJJ/oDLhBDCQKYNqRjJ1JzOBD5tzbjmTQEdnU6Xhq77ZSSz4AnDCLYJ6s67
-         c4WaQZwr4/+mVmAzrQQxnaEHhH7iRYT1cvNivH2ASTz7ruEEfqSYmwfRoyNMXjgkoYpt
-         27aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720814009; x=1721418809;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1720814030; x=1721418830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CD9Gf2WFD/32n/g3oQVjierG/CJPtNZszx3tKsXb1rc=;
-        b=eV1OG4nrJCv5JzWLpT1gmebIwkSzLVGAHFWeN7A79y/Z32xqNDouU8czC9xoaoPL2v
-         XXSmVIPJ6ZGvDae7n4lw3wUMH+cEhbE2lztdufk1gNtskY8WtUFmnQXHj8/u30u+2UCU
-         Kh/LCuuMQLaAWWTUlqgsUgJYt9lEl9AdNkVW1yh3z7KPjpCF93474i4SYvQlsY4XI4QZ
-         Qn/tMOM0t9UJhlQ9azrv/xFgVL9ZB0FxAaM8pisiVHguuNwF3jnwPp/ulqz2wRqehS6Z
-         Na5MJDNvjxOwu79LtzpIsM/3FFj2njm5ZuyTolgvGsXybUnC2cnu1LlLn3CxO4lEUfXa
-         exuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgtM/DvwH1Cf3XSD28mZH6wBFrWSmgJ1PFVRQb0OMGGUEjWwflBusNrl43mueZn+EfsmP5DAwZOKd97ANFEKBOLOtUMKYENNtbvn3A
-X-Gm-Message-State: AOJu0Yw0XiDqsqS7W9QsRuPP8BT/gyPzWwbFONjbqe40uHFWuQijVQXB
-	XprWwFYtj4BlWN3HUMtBteFf2zNVh1AKoxuVL/A9iHO2RZpyP5n7VAE/K/9eKSM=
-X-Google-Smtp-Source: AGHT+IGzHghaUPM+/bov9+aj6s70/HQdZmAWPCba2bpobclhNx22aZiNLnZzv0YAXaDzEBtl4s4OAA==
-X-Received: by 2002:a17:906:2650:b0:a6f:5698:ab5b with SMTP id a640c23a62f3a-a780b6882camr908158566b.8.1720814008716;
-        Fri, 12 Jul 2024 12:53:28 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a854592sm375063466b.146.2024.07.12.12.53.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 12:53:28 -0700 (PDT)
-Message-ID: <2146ca56-6c2c-48a3-8e77-75aa04cb2b4c@linaro.org>
-Date: Fri, 12 Jul 2024 21:53:26 +0200
+        bh=rXUjyIfuqHSmLdUVCSqOhZ01RJJ/uPsJn5yQv7GDqYE=;
+        b=zh4xxaN00FH4YBs3uTOx5QmT0xIiP7pJ3YQf6ruo5c0Do5V0QkMhQqdiaHJkiIMIYP
+         htq3Kcm8eJdiP4wjR9mqRGg/UAe+nlE980cCFjZL05Q0XfUntsUZSIXN7s3hP38/iN6O
+         TuhQp1Ighflp94zgPz3xCktPhuLp7WmMbyqEXHII/Kkq4PU5RVTTP3gOy65V3GGonPb/
+         i+E5oJHO5X1qjOQss77gp/yLtGD0n/onGS9XZd/9rOK+V/sAQjqnwySl7jw+McQjmzct
+         nMN1ZdGaKtE2ugffTYQxaazyvEJ+qlgMuCHcGtRP88pfAK3rYdxKItJcUFFyI7cfCMQA
+         m7mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720814030; x=1721418830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rXUjyIfuqHSmLdUVCSqOhZ01RJJ/uPsJn5yQv7GDqYE=;
+        b=rKPlZxHajW4dK18ANcfUKcVLrMoVRbZF3W1eZA+qdhn/jOXhSKKc0S27PCTIEivQHS
+         Gt8buorhYEGl4gUClTYTv1ORUpoyCZFY4Y7qSwRLU1uXF5B0DvIAI1CRQpERxUMte7Gb
+         pnSQlOFkoQH1LQte+5mUONMGWS37yY6V/dorvJXkoKmY+h0gH4aketoepPYztudcOBGH
+         kXEeTLFUGXFYnC0WD9DyCXWmk8DhKxFtVu0Fi2YOH4O9IoUgRV2w1HJumY1YfOVoDyqV
+         D4gtISsSBZEpWerMeFUjUP0EcXeu2NU/aSouGBGrk9/ABnTEk3JmYEtN+8U9hFLBLK8k
+         r83Q==
+X-Gm-Message-State: AOJu0Yxv8XfQYBTTuTyviC3CeXE0ee/Slti2WiWoH78ZqHwK3Tf7YkqM
+	VYd35P70b+SzExaWTsTvUq34AiOl04IrUpXMPmEyfwbYqsn6F1HPfCGiwXc4VQxaMvQe0+3uIzY
+	4Wam7dtXjhjw1aLS7OxIYCqE1EpoHItxff3U=
+X-Google-Smtp-Source: AGHT+IHs0Yu7EKzUkZS/fdsAekQWWCBELn3tw56//UTXPfClEaUH8zP+oxxwG6i4xBoUHnPH8okJlX/l0yXdvQ5x4zw=
+X-Received: by 2002:a05:600c:3b0c:b0:426:6e95:6ea7 with SMTP id
+ 5b1f17b1804b1-427a42796a7mr357145e9.0.1720814030266; Fri, 12 Jul 2024
+ 12:53:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: msm8939-wingtech-wt82918: Add
- Lenovo Vibe K5 devices
-To: Nikita Travkin <nikita@trvn.ru>, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- =?UTF-8?B?QWRhbSBTxYJhYm/FhA==?= <asaillen@protonmail.com>
-References: <20240712-msm89xx-wingtech-init-v1-0-64f4aa1870bd@trvn.ru>
- <20240712-msm89xx-wingtech-init-v1-3-64f4aa1870bd@trvn.ru>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240712-msm89xx-wingtech-init-v1-3-64f4aa1870bd@trvn.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240709203213.799070-1-jstultz@google.com> <20240709203213.799070-2-jstultz@google.com>
+ <d293d88c-b83b-a955-de5e-db775f20c1e1@amd.com>
+In-Reply-To: <d293d88c-b83b-a955-de5e-db775f20c1e1@amd.com>
+From: John Stultz <jstultz@google.com>
+Date: Fri, 12 Jul 2024 12:53:38 -0700
+Message-ID: <CANDhNCoTnsUXU9iHj=gW9fhSZs4BZs8UVdQck_N=3-M-NHDdbg@mail.gmail.com>
+Subject: Re: [PATCH v11 1/7] locking/mutex: Remove wakeups from under mutex::wait_lock
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Joel Fernandes <joelaf@google.com>, Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+	Zimuzo Ezeozue <zezeozue@google.com>, Youssef Esmat <youssefesmat@google.com>, 
+	Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Metin Kaya <Metin.Kaya@arm.com>, Xuewen Yan <xuewen.yan94@gmail.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com, 
+	Davidlohr Bueso <dave@stgolabs.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12.07.2024 6:04 PM, Nikita Travkin wrote:
-> From: Adam Słaboń <asaillen@protonmail.com>
-> 
-> This commit introduces multiple hardware variants of Lenovo Vibe K5.
-> 
-> - A6020a40 (msm8929-wingtech-wt82918hd)
-> - A6020a46/A6020l36 (msm8939-wingtech-wt82918)
-> - A6020a40 S616 H39 (msm8939-wingtech-wt82918hd)
-> 
-> These devices are added with support for many features, notably:
-> 
-> - Basic features like USB, mmc/sd storage, wifi, buttons, leds;
-> - Accelerometer;
-> - Touchscreen;
-> - Sound and modem.
-> 
-> Note that "HD" variant of K5 is based on msm8929 which is a lower bin
-> of msm8939 SoC. A simple dtsi is added for this soc along with the new
-> devices.
-> 
-> Unfortunately, despite the heavy similarities, the combination of minor
-> differences between variants make them incompatible between each other.
-> 
-> Signed-off-by: Adam Słaboń <asaillen@protonmail.com>
-> [Nikita: Minor cleanup, commit message]
-> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile                  |   3 +
->  .../boot/dts/qcom/msm8929-wingtech-wt82918hd.dts   |  17 ++
->  arch/arm64/boot/dts/qcom/msm8929.dtsi              |   5 +
->  .../boot/dts/qcom/msm8939-wingtech-wt82918.dts     |  16 ++
->  .../boot/dts/qcom/msm8939-wingtech-wt82918.dtsi    | 254 +++++++++++++++++++++
->  .../boot/dts/qcom/msm8939-wingtech-wt82918hd.dts   |  16 ++
->  6 files changed, 311 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index fd4c7c41ddc4..48ec781fa1d8 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -58,10 +58,13 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt86518.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt86528.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt88047.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-yiming-uz801v3.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= msm8929-wingtech-wt82918hd.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-huawei-kiwi.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-longcheer-l9100.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-samsung-a7.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-sony-xperia-kanuti-tulip.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-wingtech-wt82918.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-wingtech-wt82918hd.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-motorola-potter.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-xiaomi-daisy.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-xiaomi-mido.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/msm8929-wingtech-wt82918hd.dts b/arch/arm64/boot/dts/qcom/msm8929-wingtech-wt82918hd.dts
-> new file mode 100644
-> index 000000000000..f9a358e852f8
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/msm8929-wingtech-wt82918hd.dts
-> @@ -0,0 +1,17 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +/dts-v1/;
-> +
-> +#include "msm8939-wingtech-wt82918.dtsi"
-> +#include "msm8929.dtsi"
-> +
-> +/ {
-> +	model = "Lenovo Vibe K5 (HD) (Wingtech WT82918)";
-> +	compatible = "wingtech,wt82918hd", "qcom,msm8929";
-> +	chassis-type = "handset";
-> +};
-> +
-> +&touchscreen {
-> +	touchscreen-size-x = <720>;
-> +	touchscreen-size-y = <1280>;
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/msm8929.dtsi b/arch/arm64/boot/dts/qcom/msm8929.dtsi
-> new file mode 100644
-> index 000000000000..c3d1d1ace2f6
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/msm8929.dtsi
-> @@ -0,0 +1,5 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +&opp_table {
+On Wed, Jul 10, 2024 at 10:42=E2=80=AFAM 'K Prateek Nayak' via kernel-team
+<kernel-team@android.com> wrote:
+> On 7/10/2024 2:01 AM, John Stultz wrote:
+> > @@ -681,6 +682,11 @@ __mutex_lock_common(struct mutex *lock, unsigned i=
+nt state, unsigned int subclas
+> >               }
+> >
+> >               raw_spin_unlock(&lock->wait_lock);
+> > +             /* Make sure we do wakeups before calling schedule */
+> > +             if (!wake_q_empty(&wake_q)) {
+>
+> nit.
+>
+> This checks seems unnecessary (to my untrained eye). Any harm in
+> skipping it and simply doing a wake_up_q() followed by wake_q_init()
+> unconditionally?
+>
+> > +                     wake_up_q(&wake_q);
+> > +                     wake_q_init(&wake_q);
+> > +             }
+> >               schedule_preempt_disabled();
 
-No way somebody called the gpu opp table "opp table"..
+Ah, thank you for the suggestion. I've reworked this in my tree!
 
-> +	/delete-node/ opp-550000000;
+> > @@ -1207,6 +1209,7 @@ static int __sched task_blocks_on_rt_mutex(struct=
+ rt_mutex_base *lock,
+> >       struct rt_mutex_waiter *top_waiter =3D waiter;
+> >       struct rt_mutex_base *next_lock;
+> >       int chain_walk =3D 0, res;
+> > +     DEFINE_WAKE_Q(wake_q);
+> >
+> >       lockdep_assert_held(&lock->wait_lock);
+> >
+> > @@ -1245,7 +1248,10 @@ static int __sched task_blocks_on_rt_mutex(struc=
+t rt_mutex_base *lock,
+> >
+> >               /* Check whether the waiter should back out immediately *=
+/
+> >               rtm =3D container_of(lock, struct rt_mutex, rtmutex);
+> > -             res =3D __ww_mutex_add_waiter(waiter, rtm, ww_ctx);
+> > +             preempt_disable();
+> > +             res =3D __ww_mutex_add_waiter(waiter, rtm, ww_ctx, &wake_=
+q);
+> > +             wake_up_q(&wake_q);
+> > +             preempt_enable();
+>
+> I'm trying to understand this - we enter task_blocks_on_rt_mutex() with
+> "wait_lock" held (I believe the lockdep_assert_held() in the previous
+> hunk checks for the same). I walked down the call chain (although
+> briefly) and could only spot "task->pi_lock" being locked and unlocked
+> before this call to "wake_up_q()" but the "wait_lock" seems to be held
+> throughout, only being unlocked and locked again for
+> "rt_mutex_adjust_prio_chain()" later down.
+>
+> Did I miss something or is disabling preemption for this specific hunk
+> enough to enable safe nesting?
 
-Looking at downstream, seems like there isn't a speedbin fuse for
-this :(
+Thank you for pointing this out! It looks like I need to pipe the
+wake_q down through task_blocks_on_rt_mutex(), and
+rtlock_slowlock_locked() and define one in rtlock_slowlock().
 
-[...]
-
-> +
-> +&blsp_i2c2 {
-> +	status = "okay";
-> +
-> +	accelerometer@68 {
-> +		compatible = "invensense,icm20608";
-> +		reg = <0x68>;
-> +
-> +		pinctrl-0 = <&accelerometer_default>;
-> +		pinctrl-names = "default";
-
-interesting choice to stick pintrl before interrupts
-
-> +
-> +		interrupts-extended = <&tlmm 115 IRQ_TYPE_EDGE_FALLING>;
-> +
-> +		vdd-supply = <&pm8916_l17>;
-> +		vddio-supply = <&pm8916_l6>;
-> +
-> +		mount-matrix = "-1", "0", "0",
-> +				"0", "1", "0",
-> +				"0", "0", "1";
-> +	};
-> +};
-
-[...]
-
-> +&pm8916_mpps {
-> +	pwm_out: mpp4-state {
-> +		pins = "mpp4";
-> +		function = "digital";
-> +		power-source = <PM8916_MPP_VPH>;
-> +		output-low;
-> +		qcom,dtest = <1>;
-
-I think you meant qcom,dtest-output
-
-looks good otherwise
-
-Konrad
+Really appreciate the review and feedback here!
+-john
 
