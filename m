@@ -1,401 +1,197 @@
-Return-Path: <linux-kernel+bounces-250598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1397D92F9AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE8992F9B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C2F11F21C34
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0BE1F22E5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC6016B3A5;
-	Fri, 12 Jul 2024 11:48:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1C3157E6B;
-	Fri, 12 Jul 2024 11:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720784919; cv=none; b=MlZuHG4kVDnLp1+vZarjzaiq4510CU4RxM2eL+F93tMBxSJ5ITTHsEJEl8nWXi3vYDhDPA30EqkT0gvL2IS4Xa+3jrv8VDgswmNKTtTipKFaMf/Y60xrkB9Ty6wIZ5GIaC6U3YZwCHapULYpnhG7USdgJtcaRFPGO4EovnWh1cc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720784919; c=relaxed/simple;
-	bh=egGOy+DbgfmJ0SM1cWXRVqAWOpUqsSRDpLQhMuuU0c8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AhaN5+tgtTfHAy2akoj6Z6hAo5hhl4PXmUOJBY4y8sC8KRmaxVI7ooCX0vxBkNUYQKBKIi5y4CAbuqM7U5Ax/yZDo++q6lXtgBGAXs4U/Vyv1efuYyrK0F6VGwudpGSqnuRSqXQRYddahORMXQoGc7bEyPaDm6iiowJXy5ymvs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C15D01007;
-	Fri, 12 Jul 2024 04:49:01 -0700 (PDT)
-Received: from [10.57.93.135] (unknown [10.57.93.135])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B23B3F762;
-	Fri, 12 Jul 2024 04:48:33 -0700 (PDT)
-Message-ID: <01c05fb2-16ce-450c-befb-8a92ac2a8af9@arm.com>
-Date: Fri, 12 Jul 2024 12:48:31 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5418216B3A5;
+	Fri, 12 Jul 2024 11:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="NvxPBt4p"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013047.outbound.protection.outlook.com [52.101.67.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582431411E0;
+	Fri, 12 Jul 2024 11:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720784975; cv=fail; b=gFrzPLs1hoP0/sFjhq97q2IanozvgfWnQJYwFnPihVc/BkjxnIm98YgeuKwc0q3I/xLLFgAd3pVTOJegmlMOo1VSZdUHj+5XSOvy2bPhmXXZzubo3ZA/Fx5HsfKKgh/Mpxrt5/R5SNQhBKL1ciKsUy8cgaPqK9enuqv2P9TCjnQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720784975; c=relaxed/simple;
+	bh=sIdValDDH2yXBJi3rRXzBUktxlnBaIxT9GL6T07WWyo=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nm+XQN2kUVI8sWGTwaVJ3d6NPd1C0o3cJ0iOpnH4YVqq0PoptzzH0rjLbYe9qmWQpbCehj59FJpkV7ZCzOYBZ4b7nWv/DWpwAGwLxcTv9Unma4o9vLlO2MJ5+wkP2wduOgfTlLuN64IznDIzpcoLqJOYs/uHWlmG75XiZb3MNbM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=NvxPBt4p; arc=fail smtp.client-ip=52.101.67.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XZSOm5yQ5nUHI2ss3i9IwicTjPtbAHLNv91ceHvO6Ae7dLfsS2gJQ4Mp1iMqpicPFocmG3pdt0AWW8GuxpKDhNIqEpUZKiP30jtZcj/b/MfyMJNHsu3eXIRH18IA8Q0EtUgDTa5fxsqpbq15qa2JlltMK4fZbqOt0CHCRscN/7VnePmVGv8f2ZN1stmUTxibTodsaFR4z464RD6bdeAHfesnMg1otOMlGY2IikWHqk6AOCIeTPH+Eixzw0WExiW8zDM8wAVTPgB8S+OzbulRT2X6Yr4Ouv88UjlRRpyVZin7L8YJWCPE4/5tEXZusUKBf/i+FmQlpm80VRbfkemdBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MpvbjznTxLZ+DpHkub5e8gFHZM/ZA+67WcC0Z3yHSkE=;
+ b=M7qMI/sPWoGHcXiZPzYbjXemnLkxCyAP93VlXVKiXdc3oyBl/siWd5hyYMHWQ5Q7Rzx/P8KXmbYUC8hqbja4ynCMVNNQ6oprBUl0HhQOxpWFspJYtphGFyPKDAuEHpWBJDrahcpTd9TZNMBFTiftR0h0qbP3qcH4MUoVu+tz2IxYKC0+VsHiIhuavN5XUXPuZT2J4R1/I2VyVmY0QD84tNipe6W9U2+xVWRu1BxMGUdLOwcyv+KJLqBFe5j1Hznnr6UFmjIOJUb4lfqjCeIT1Ak6Ncf8p6ybh293y0XMdCHGOG5CTzPGRNMCkochCW8v7xwmToGnSWY2KHF9pA6L7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=awinic.com smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MpvbjznTxLZ+DpHkub5e8gFHZM/ZA+67WcC0Z3yHSkE=;
+ b=NvxPBt4p25ZYxmIG8NllNnuza4VrjuU3SADQ8RaNdqLWh8B/yvdhJmAGasKOCwe0y54igMVmUbum0X+R/Gcps90vQaoEBeY/UviFlyrwcFdZx4jP7DfP7EBKHaw0eJHQI/tdLSSWQVTFZdaEWhBJAoHuRrNAUE/gnm/mRMoEhKw=
+Received: from AS9PR06CA0258.eurprd06.prod.outlook.com (2603:10a6:20b:45f::30)
+ by VI1PR02MB6432.eurprd02.prod.outlook.com (2603:10a6:800:197::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
+ 2024 11:49:29 +0000
+Received: from AM4PEPF00027A60.eurprd04.prod.outlook.com
+ (2603:10a6:20b:45f:cafe::e4) by AS9PR06CA0258.outlook.office365.com
+ (2603:10a6:20b:45f::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23 via Frontend
+ Transport; Fri, 12 Jul 2024 11:49:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AM4PEPF00027A60.mail.protection.outlook.com (10.167.16.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7762.17 via Frontend Transport; Fri, 12 Jul 2024 11:49:28 +0000
+Received: from pc52311-2249 (10.0.5.60) by se-mail01w.axis.com (10.20.40.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 12 Jul
+ 2024 13:49:28 +0200
+From: Waqar Hameed <waqar.hameed@axis.com>
+To: <wangshuaijie@awinic.com>
+CC: <jic23@kernel.org>, <lars@metafoo.de>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<liweilei@awinic.com>, <kangjiajun@awinic.com>
+Subject: Re: [PATCH V3 0/2] Add support for Awinic SAR sensor
+In-Reply-To: <20240712113200.2468249-1-wangshuaijie@awinic.com>
+	(wangshuaijie@awinic.com's message of "Fri, 12 Jul 2024 11:31:58 +0000")
+References: <20240712113200.2468249-1-wangshuaijie@awinic.com>
+Date: Fri, 12 Jul 2024 13:49:28 +0200
+Message-ID: <pndbk32vnhz.fsf@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/5] iommu: Resolve fwspec ops automatically
-To: Jon Hunter <jonathanh@nvidia.com>, Will Deacon <will@kernel.org>,
- Joerg Roedel <joro@8bytes.org>
-Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>, Yong Wu <yong.wu@mediatek.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <cover.1719919669.git.robin.murphy@arm.com>
- <0e2727adeb8cd73274425322f2f793561bdc927e.1719919669.git.robin.murphy@arm.com>
- <0eec5f84-6b39-43ba-ab2f-914688a5cf45@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <0eec5f84-6b39-43ba-ab2f-914688a5cf45@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: se-mail02w.axis.com (10.20.40.8) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM4PEPF00027A60:EE_|VI1PR02MB6432:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a4be820-941f-4b75-7a3f-08dca268afb7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FyXLmMnXdhvaLfmZFZNW2DkVNoweCkUAK4Q/z3++n3dScJh/bwX6stA5VHYt?=
+ =?us-ascii?Q?qnGV/LvG/cXVE+o08GUUu/D4K/FeJza0u2ZrAYO3rRXaCdUlU5uRvU/76w0e?=
+ =?us-ascii?Q?IHKyGM/kF8naCaoFxZeZ3klxv98xJt2DhJgLhHLLePWkVOmzIDI5b8mqd9zE?=
+ =?us-ascii?Q?hM7HyW1sHvxh6CSqdbaXJHq9URuHgv77lq+OyYg4PNSKSEgS8HqHStWfoiHE?=
+ =?us-ascii?Q?DkQRRNVHL67/8xJawvFHghz8KtzoDWZjps1p1MiF5RPpUqcY82YMiDTy+rvv?=
+ =?us-ascii?Q?z0zQp09uVOuftrTgntkfFZHM9HuWCsEi6XfE/DS5kOjxLMiG4GzkdN5IR23f?=
+ =?us-ascii?Q?hgNNG6ZBrNMi7IKwIq3BXTuN19bq5O8b9ocCQPx5j6U+JzbzIttrS5rLpPtg?=
+ =?us-ascii?Q?mSpqDU2HcCOt70C0t/UR6GX1NuVKOSelzQT55IsFkS9PPNvB1LgptA26ztod?=
+ =?us-ascii?Q?O+1aef6AH4u0s4tDdrQaOE1HhoMCJK71sUAECHxUnHXiPA4Ja3XcRG0h1zOD?=
+ =?us-ascii?Q?6PYG2Z8O95ulq39TS9vXvOnLS3v3hr9gKMSAWA5zaegEKCQBwZbsyRXupLh4?=
+ =?us-ascii?Q?wwPHudoxiHIQpEi2QmfvGJSpCI8OI/TyXcMwVf3JO9tlP3Amh+Ya0unq636k?=
+ =?us-ascii?Q?VQvOoOXOvZc0RGPci8Z+HNR+O71fFu/Wcjb75KyEDulCTCpkcJcN2vp3kvas?=
+ =?us-ascii?Q?svUetd5l0lvZB67H1Qs0tG9O11qs6TwlexVFATaz5dIwVz0psSQtPUu9nI7F?=
+ =?us-ascii?Q?RkQzaH6r0WWUJ0gMFPkboEh2tnHk8mV6MeADxWcPLdzLRsRnkneje/7JvkOU?=
+ =?us-ascii?Q?Bke8OHUYB6Fxdxtq1k3/7m3QuYDELD24WxAbgklmrIPxOfK882esRfdddr8A?=
+ =?us-ascii?Q?kZJ1X1hHx8vKKl81kwY/MmINQRX/1sYFsuQsbWTn4IRL2cBzXj34BYmjEpkU?=
+ =?us-ascii?Q?3fg6HIcdWH+GUccH8UGlNXz3LfD/UMFp7tASccEqXAS47BERCCFmF/zdoaLN?=
+ =?us-ascii?Q?Q9OOjqrFhudsnjzzjQVXZb04t9H87Q7wbG3tGHyZKsLPBuxM6O3S59WDL2V0?=
+ =?us-ascii?Q?knb0yupFwRfoT1uHaSL9649XCzFfqtilT2vMSCv5AlO8SdLjXKx9PCa3LKL6?=
+ =?us-ascii?Q?CqSkA9S4LRUyfoQvBkycq9QKyLywmywjXjqv0+14vdbp/JI3j337g65XPGLA?=
+ =?us-ascii?Q?CA2xOQAY8x7L9K7QvvSBwsVoEcUXTlK4GyWymI8qofPfTlTYj/y2w1Bc7GC/?=
+ =?us-ascii?Q?xfafZPe1Le69qjg9pw5UL592NkQbuNt90PsMrmjrIYJW5qDVpCdpiuGBHAcO?=
+ =?us-ascii?Q?ET1J0u0+MCpUct5aIrwsFu2jtDOZ+T1gi7lfiqYKUOPilZt9cJeZLkWFoRaB?=
+ =?us-ascii?Q?eqUTFsWizXeT9q5rDVs/NZH97FXRnVF0HvUp7VKxo/QyDb5gbg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 11:49:28.7634
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a4be820-941f-4b75-7a3f-08dca268afb7
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM4PEPF00027A60.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR02MB6432
 
-On 2024-07-12 12:01 pm, Jon Hunter wrote:
-> Hi Robin,
-> 
-> On 02/07/2024 12:40, Robin Murphy wrote:
->> There's no real need for callers to resolve ops from a fwnode in order
->> to then pass both to iommu_fwspec_init() - it's simpler and more sensible
->> for that to resolve the ops itself. This in turn means we can centralise
->> the notion of checking for a present driver, and enforce that fwspecs
->> aren't allocated unless and until we know they will be usable.
->>
->> Also use this opportunity to modernise with some "new" helpers that
->> arrived shortly after this code was first written; the generic
->> fwnode_handle_get() clears up that ugly get/put mismatch, while
->> of_fwnode_handle() can now abstract those open-coded dereferences.
->>
->> Tested-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->> ---
->> v2: Add of_fwnode_handle() cleanup as well
->> ---
->>   drivers/acpi/arm64/iort.c             | 19 +++++--------------
->>   drivers/acpi/scan.c                   |  8 +++-----
->>   drivers/acpi/viot.c                   | 11 ++---------
->>   drivers/iommu/arm/arm-smmu/arm-smmu.c |  3 +--
->>   drivers/iommu/iommu-priv.h            |  2 ++
->>   drivers/iommu/iommu.c                 |  9 ++++++---
->>   drivers/iommu/mtk_iommu_v1.c          |  2 +-
->>   drivers/iommu/of_iommu.c              | 19 ++++++-------------
->>   drivers/iommu/tegra-smmu.c            |  2 +-
->>   include/acpi/acpi_bus.h               |  3 +--
->>   include/linux/iommu.h                 | 13 ++-----------
->>   11 files changed, 30 insertions(+), 61 deletions(-)
->>
->> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
->> index c0b1c2c19444..1b39e9ae7ac1 100644
->> --- a/drivers/acpi/arm64/iort.c
->> +++ b/drivers/acpi/arm64/iort.c
->> @@ -1221,10 +1221,10 @@ static bool iort_pci_rc_supports_ats(struct 
->> acpi_iort_node *node)
->>   static int iort_iommu_xlate(struct device *dev, struct 
->> acpi_iort_node *node,
->>                   u32 streamid)
->>   {
->> -    const struct iommu_ops *ops;
->>       struct fwnode_handle *iort_fwnode;
->> -    if (!node)
->> +    /* If there's no SMMU driver at all, give up now */
->> +    if (!node || !iort_iommu_driver_enabled(node->type))
->>           return -ENODEV;
->>       iort_fwnode = iort_get_fwnode(node);
->> @@ -1232,19 +1232,10 @@ static int iort_iommu_xlate(struct device 
->> *dev, struct acpi_iort_node *node,
->>           return -ENODEV;
->>       /*
->> -     * If the ops look-up fails, this means that either
->> -     * the SMMU drivers have not been probed yet or that
->> -     * the SMMU drivers are not built in the kernel;
->> -     * Depending on whether the SMMU drivers are built-in
->> -     * in the kernel or not, defer the IOMMU configuration
->> -     * or just abort it.
->> +     * If the SMMU drivers are enabled but not loaded/probed
->> +     * yet, this will defer.
->>        */
->> -    ops = iommu_ops_from_fwnode(iort_fwnode);
->> -    if (!ops)
->> -        return iort_iommu_driver_enabled(node->type) ?
->> -               -EPROBE_DEFER : -ENODEV;
->> -
->> -    return acpi_iommu_fwspec_init(dev, streamid, iort_fwnode, ops);
->> +    return acpi_iommu_fwspec_init(dev, streamid, iort_fwnode);
->>   }
->>   struct iort_pci_alias_info {
->> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
->> index 503773707e01..8d5a589db141 100644
->> --- a/drivers/acpi/scan.c
->> +++ b/drivers/acpi/scan.c
->> @@ -1577,12 +1577,11 @@ int acpi_dma_get_range(struct device *dev, 
->> const struct bus_dma_region **map)
->>   #ifdef CONFIG_IOMMU_API
->>   int acpi_iommu_fwspec_init(struct device *dev, u32 id,
->> -               struct fwnode_handle *fwnode,
->> -               const struct iommu_ops *ops)
->> +               struct fwnode_handle *fwnode)
->>   {
->>       int ret;
->> -    ret = iommu_fwspec_init(dev, fwnode, ops);
->> +    ret = iommu_fwspec_init(dev, fwnode);
->>       if (ret)
->>           return ret;
->> @@ -1639,8 +1638,7 @@ static int acpi_iommu_configure_id(struct device 
->> *dev, const u32 *id_in)
->>   #else /* !CONFIG_IOMMU_API */
->>   int acpi_iommu_fwspec_init(struct device *dev, u32 id,
->> -               struct fwnode_handle *fwnode,
->> -               const struct iommu_ops *ops)
->> +               struct fwnode_handle *fwnode)
->>   {
->>       return -ENODEV;
->>   }
->> diff --git a/drivers/acpi/viot.c b/drivers/acpi/viot.c
->> index c8025921c129..2aa69a2fba73 100644
->> --- a/drivers/acpi/viot.c
->> +++ b/drivers/acpi/viot.c
->> @@ -307,21 +307,14 @@ void __init acpi_viot_init(void)
->>   static int viot_dev_iommu_init(struct device *dev, struct viot_iommu 
->> *viommu,
->>                      u32 epid)
->>   {
->> -    const struct iommu_ops *ops;
->> -
->> -    if (!viommu)
->> +    if (!viommu || !IS_ENABLED(CONFIG_VIRTIO_IOMMU))
->>           return -ENODEV;
->>       /* We're not translating ourself */
->>       if (device_match_fwnode(dev, viommu->fwnode))
->>           return -EINVAL;
->> -    ops = iommu_ops_from_fwnode(viommu->fwnode);
->> -    if (!ops)
->> -        return IS_ENABLED(CONFIG_VIRTIO_IOMMU) ?
->> -            -EPROBE_DEFER : -ENODEV;
->> -
->> -    return acpi_iommu_fwspec_init(dev, epid, viommu->fwnode, ops);
->> +    return acpi_iommu_fwspec_init(dev, epid, viommu->fwnode);
->>   }
->>   static int viot_pci_dev_iommu_init(struct pci_dev *pdev, u16 dev_id, 
->> void *data)
->> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c 
->> b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> index 87c81f75cf84..c200e6d3aed5 100644
->> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> @@ -178,8 +178,7 @@ static int arm_smmu_register_legacy_master(struct 
->> device *dev,
->>           it.cur_count = 1;
->>       }
->> -    err = iommu_fwspec_init(dev, &smmu_dev->of_node->fwnode,
->> -                &arm_smmu_ops);
->> +    err = iommu_fwspec_init(dev, NULL);
->>       if (err)
->>           return err;
->> diff --git a/drivers/iommu/iommu-priv.h b/drivers/iommu/iommu-priv.h
->> index 5f731d994803..078cafcf49b4 100644
->> --- a/drivers/iommu/iommu-priv.h
->> +++ b/drivers/iommu/iommu-priv.h
->> @@ -17,6 +17,8 @@ static inline const struct iommu_ops 
->> *dev_iommu_ops(struct device *dev)
->>       return dev->iommu->iommu_dev->ops;
->>   }
->> +const struct iommu_ops *iommu_ops_from_fwnode(const struct 
->> fwnode_handle *fwnode);
->> +
->>   int iommu_group_replace_domain(struct iommu_group *group,
->>                      struct iommu_domain *new_domain);
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index 9df7cc75c1bc..7618c4285cf9 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -2822,11 +2822,14 @@ const struct iommu_ops 
->> *iommu_ops_from_fwnode(const struct fwnode_handle *fwnode
->>       return ops;
->>   }
->> -int iommu_fwspec_init(struct device *dev, struct fwnode_handle 
->> *iommu_fwnode,
->> -              const struct iommu_ops *ops)
->> +int iommu_fwspec_init(struct device *dev, struct fwnode_handle 
->> *iommu_fwnode)
->>   {
->> +    const struct iommu_ops *ops = iommu_ops_from_fwnode(iommu_fwnode);
->>       struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(dev);
->> +    if (!ops)
->> +        return -EPROBE_DEFER;
->> +
->>       if (fwspec)
->>           return ops == fwspec->ops ? 0 : -EINVAL;
->> @@ -2838,7 +2841,7 @@ int iommu_fwspec_init(struct device *dev, struct 
->> fwnode_handle *iommu_fwnode,
->>       if (!fwspec)
->>           return -ENOMEM;
->> -    of_node_get(to_of_node(iommu_fwnode));
->> +    fwnode_handle_get(iommu_fwnode);
->>       fwspec->iommu_fwnode = iommu_fwnode;
->>       fwspec->ops = ops;
->>       dev_iommu_fwspec_set(dev, fwspec);
->> diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
->> index 2b64ea46318f..c6ea5b4baff3 100644
->> --- a/drivers/iommu/mtk_iommu_v1.c
->> +++ b/drivers/iommu/mtk_iommu_v1.c
->> @@ -412,7 +412,7 @@ static int mtk_iommu_v1_create_mapping(struct 
->> device *dev,
->>           return -EINVAL;
->>       }
->> -    ret = iommu_fwspec_init(dev, &args->np->fwnode, &mtk_iommu_v1_ops);
->> +    ret = iommu_fwspec_init(dev, of_fwnode_handle(args->np));
->>       if (ret)
->>           return ret;
->> diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
->> index 3afe0b48a48d..08c523ad55ad 100644
->> --- a/drivers/iommu/of_iommu.c
->> +++ b/drivers/iommu/of_iommu.c
->> @@ -21,26 +21,19 @@ static int of_iommu_xlate(struct device *dev,
->>                 struct of_phandle_args *iommu_spec)
->>   {
->>       const struct iommu_ops *ops;
->> -    struct fwnode_handle *fwnode = &iommu_spec->np->fwnode;
->>       int ret;
->> -    ops = iommu_ops_from_fwnode(fwnode);
->> -    if ((ops && !ops->of_xlate) ||
->> -        !of_device_is_available(iommu_spec->np))
->> +    if (!of_device_is_available(iommu_spec->np))
->>           return -ENODEV;
->> -    ret = iommu_fwspec_init(dev, fwnode, ops);
->> +    ret = iommu_fwspec_init(dev, of_fwnode_handle(iommu_spec->np));
->> +    if (ret == -EPROBE_DEFER)
->> +        return driver_deferred_probe_check_state(dev);
->>       if (ret)
->>           return ret;
->> -    /*
->> -     * The otherwise-empty fwspec handily serves to indicate the 
->> specific
->> -     * IOMMU device we're waiting for, which will be useful if we 
->> ever get
->> -     * a proper probe-ordering dependency mechanism in future.
->> -     */
->> -    if (!ops)
->> -        return driver_deferred_probe_check_state(dev);
->> -    if (!try_module_get(ops->owner))
->> +    ops = dev_iommu_fwspec_get(dev)->ops;
->> +    if (!ops->of_xlate || !try_module_get(ops->owner))
->>           return -ENODEV;
->>       ret = ops->of_xlate(dev, iommu_spec);
->> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
->> index f86c7ae91814..4365d9936e68 100644
->> --- a/drivers/iommu/tegra-smmu.c
->> +++ b/drivers/iommu/tegra-smmu.c
->> @@ -837,7 +837,7 @@ static int tegra_smmu_configure(struct tegra_smmu 
->> *smmu, struct device *dev,
->>       const struct iommu_ops *ops = smmu->iommu.ops;
->>       int err;
->> -    err = iommu_fwspec_init(dev, &dev->of_node->fwnode, ops);
->> +    err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
->>       if (err < 0) {
->>           dev_err(dev, "failed to initialize fwspec: %d\n", err);
->>           return err;
->> diff --git a/include/acpi/acpi_bus.h b/include/acpi/acpi_bus.h
->> index 1a4dfd7a1c4a..9d815837e297 100644
->> --- a/include/acpi/acpi_bus.h
->> +++ b/include/acpi/acpi_bus.h
->> @@ -736,8 +736,7 @@ struct iommu_ops;
->>   bool acpi_dma_supported(const struct acpi_device *adev);
->>   enum dev_dma_attr acpi_get_dma_attr(struct acpi_device *adev);
->>   int acpi_iommu_fwspec_init(struct device *dev, u32 id,
->> -               struct fwnode_handle *fwnode,
->> -               const struct iommu_ops *ops);
->> +               struct fwnode_handle *fwnode);
->>   int acpi_dma_get_range(struct device *dev, const struct 
->> bus_dma_region **map);
->>   int acpi_dma_configure_id(struct device *dev, enum dev_dma_attr attr,
->>                  const u32 *input_id);
->> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->> index 17b3f36ad843..81893aad9ee4 100644
->> --- a/include/linux/iommu.h
->> +++ b/include/linux/iommu.h
->> @@ -1005,11 +1005,9 @@ struct iommu_mm_data {
->>       struct list_head    sva_handles;
->>   };
->> -int iommu_fwspec_init(struct device *dev, struct fwnode_handle 
->> *iommu_fwnode,
->> -              const struct iommu_ops *ops);
->> +int iommu_fwspec_init(struct device *dev, struct fwnode_handle 
->> *iommu_fwnode);
->>   void iommu_fwspec_free(struct device *dev);
->>   int iommu_fwspec_add_ids(struct device *dev, const u32 *ids, int 
->> num_ids);
->> -const struct iommu_ops *iommu_ops_from_fwnode(const struct 
->> fwnode_handle *fwnode);
->>   static inline struct iommu_fwspec *dev_iommu_fwspec_get(struct 
->> device *dev)
->>   {
->> @@ -1315,8 +1313,7 @@ static inline void iommu_device_unlink(struct 
->> device *dev, struct device *link)
->>   }
->>   static inline int iommu_fwspec_init(struct device *dev,
->> -                    struct fwnode_handle *iommu_fwnode,
->> -                    const struct iommu_ops *ops)
->> +                    struct fwnode_handle *iommu_fwnode)
->>   {
->>       return -ENODEV;
->>   }
->> @@ -1331,12 +1328,6 @@ static inline int iommu_fwspec_add_ids(struct 
->> device *dev, u32 *ids,
->>       return -ENODEV;
->>   }
->> -static inline
->> -const struct iommu_ops *iommu_ops_from_fwnode(const struct 
->> fwnode_handle *fwnode)
->> -{
->> -    return NULL;
->> -}
->> -
->>   static inline int
->>   iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features 
->> feat)
->>   {
-> 
-> 
-> I am seeing some failures on -next with some of our devices. Bisect is 
-> pointing to this commit. Looks like the host1x device is no longer 
-> probing successfully. I see the following ...
-> 
->   tegra-host1x 50000000.host1x: failed to initialize fwspec: -517
->   nouveau 57000000.gpu: failed to initialize fwspec: -517
-> 
-> The probe seems to be deferred forever. The above is seen on Tegra210 
-> but Tegra30 and Tegra194 are also having the same problem. Interestingly 
-> it is not all devices and so make me wonder if we are missing something 
-> on these devices? Let me know if you have any thoughts.
+On Fri, Jul 12, 2024 at 11:31 +0000 wangshuaijie@awinic.com wrote:
 
-Ugh, tegra-smmu has been doing a complete nonsense this whole time - on 
-closer inspection, it's passing the fwnode of the *client device* where 
-it should be that of the IOMMU device :(
+> From: shuaijie wang <wangshuaijie@awinic.com>
+>
+> Add drivers that support Awinic SAR (Specific Absorption Rate)
+> sensors to the Linux kernel.
+>
+> The AW9610X series and AW963XX series are high-sensitivity
+> capacitive proximity detection sensors.
+>
+> This device detects human proximity and assists electronic devices
+> in reducing SAR to pass SAR related certifications.
+>
+> The device reduces RF power and reduces harm when detecting human proximity.
+> Increase power and improve signal quality when the human body is far away.
+>
+> This patch implements device initialization, registration,
+> I/O operation handling and interrupt handling, and passed basic testing.
+>
+> shuaijie wang (2):
+>   dt-bindings: iio: Add YAML to Awinic proximity sensor
+>   Add support for Awinic proximity sensor
+>
+>  .../iio/proximity/awinic,aw96xxx.yaml         |  127 ++
+>  drivers/iio/proximity/Kconfig                 |   10 +
+>  drivers/iio/proximity/Makefile                |    2 +
+>  drivers/iio/proximity/aw9610x.c               | 1150 ++++++++++
+>  drivers/iio/proximity/aw963xx.c               | 1371 ++++++++++++
+>  drivers/iio/proximity/aw_sar.c                | 1850 +++++++++++++++++
+>  drivers/iio/proximity/aw_sar.h                |   23 +
+>  drivers/iio/proximity/aw_sar_comm_interface.c |  550 +++++
+>  drivers/iio/proximity/aw_sar_comm_interface.h |  172 ++
+>  drivers/iio/proximity/aw_sar_type.h           |  371 ++++
+>  10 files changed, 5626 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw96xxx.yaml
+>  create mode 100644 drivers/iio/proximity/aw9610x.c
+>  create mode 100644 drivers/iio/proximity/aw963xx.c
+>  create mode 100644 drivers/iio/proximity/aw_sar.c
+>  create mode 100644 drivers/iio/proximity/aw_sar.h
+>  create mode 100644 drivers/iio/proximity/aw_sar_comm_interface.c
+>  create mode 100644 drivers/iio/proximity/aw_sar_comm_interface.h
+>  create mode 100644 drivers/iio/proximity/aw_sar_type.h
+>
+>
+> base-commit: 43db1e03c086ed20cc75808d3f45e780ec4ca26e
 
-I *think* it should probably just be a case of:
+This is version 3, but I cannot see a description of the incremental
+changes between the versions (or links) in this cover letter. It will
+therefore make it harder to review...
 
--    err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
-+    err = iommu_fwspec_init(dev, of_fwnode_handle(smmu->dev->of_node));
+It also looks like the _actual_ commit messages in the patch series have
+some kind of description of the changes from previous versions. That is
+also not correct. Please read
+https://docs.kernel.org/process/submitting-patches.html#respond-to-review-comments
+and
+https://docs.kernel.org/process/submitting-patches.html#the-canonical-patch-format
 
-since smmu->dev appears to be the same one initially passed to 
-iommu_device_register(), so it at least ought to match and work, but the 
-SMMU device vs. MC device thing leaves me mildly wary of how correct it 
-might be overall.
-
-(Also now I'm wondering why I didn't just use dev_fwnode() there...)
-
-Thanks,
-Robin.
 
