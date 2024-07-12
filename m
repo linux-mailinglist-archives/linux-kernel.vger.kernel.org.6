@@ -1,153 +1,242 @@
-Return-Path: <linux-kernel+bounces-250912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86DAF92FE75
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:26:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C4892FE71
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D91F284152
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:26:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3859B21B16
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F320176ACF;
-	Fri, 12 Jul 2024 16:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="GhgfAKxw"
-Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829E9176AA8;
+	Fri, 12 Jul 2024 16:25:27 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE0017622F;
-	Fri, 12 Jul 2024 16:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E77176223
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720801541; cv=none; b=Jv6dCOvwmXhPfvNgiEgTCQHiA9SXK1pVf56J2psOZerVhWIUKcAXhcoxDjyhQqrv81hqjcjBOTo75ThX8ilQ8vHIyqgy6VWgbYN1JmntTMC1BmuBmrj8yyT2KVyAKhm3OtCVJV0C3vOXqrTBMc96xruac0RV9qs96nRxEz+zS2g=
+	t=1720801526; cv=none; b=FYHiwqG5LVppZHFJKZrX5NL/b8slIBZr26w7GVe1VEhTs5hkPoemi3hrNFxANinwN4Nm8NnEBwm8fYDbPIV8D8d/yM8VteS+FpnliupNL95gmAygk47VEa+9hJ60+PPkZAMKaoy6xoE6YHr+EkWnTzww/x8uTJUHwvVyIK1zz3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720801541; c=relaxed/simple;
-	bh=Z5kmgF9LvYBeJxCKb81WkdtZxSg4mhdw/2J4+GixorM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ea0Ayz+bRQDy7ZhS9DLVkP5C4XfBvWtUI4d4nwOAfkhSLlZXhssVVoISLpAzTeRwukt38MVQm8shnPT+H3+kvkHccwZMLb8WcWpX1pQ+NW2XO7big1daSmT36jfd9JFHCD+R9LfDlEKBtD33xvCaeApuWlXqoJLBBxA9LvYJThs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=GhgfAKxw; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id E04A33622B;
-	Fri, 12 Jul 2024 18:25:28 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz E04A33622B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1720801528; bh=5yaBTIvXUpa60kxJ7bIM2RSzaH80TJaXXzx7FGpu3zQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GhgfAKxwA51q91q4Kj4kCDThva9oo67LRJiv23szUaLjiMpN2dJ6/cvkfFlINwZFT
-	 WClrR2eGx1t+Ea6pw9A7BkQGy4BbCkx5seMK0LsGyaEnpMiP6qmZgvjYBuugx5gB8g
-	 WKrmBp4cVIZHd7OA8dfUk1NHk9LYyVTgQHc5pbXE=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Fri, 12 Jul 2024 18:25:21 +0200 (CEST)
-Message-ID: <c1be6bec-90f5-4bb3-b6b0-8524095fc490@perex.cz>
-Date: Fri, 12 Jul 2024 18:25:21 +0200
+	s=arc-20240116; t=1720801526; c=relaxed/simple;
+	bh=EHvFOFdqxiALWutzm4ZbIEBVQoN9CChrKBm3c+x5CXU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=V1nMebNwcGrGjt/Abnq6HZ+m20JNyF05Fa9Qk+PSl+S44Az+ZdJ+fqK5kYwcHl8qJ6T9vEI7AoaPqM0FMyoYA9xA3yf6a9U2BrJCn2JuXS5FbxGPgUow800/iw3Tv6uQO9S7NZfOl2ZS4sGsYG9cbOhLQeeKHwKTSSlOA4QOdaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-37492fe22cdso16191445ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:25:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720801524; x=1721406324;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RY8tmSXFtFicyqMKxNE6cQXAsZnp+myCf3QfOjYv+Lg=;
+        b=oqO1MVzHetLKu/7w/ZZjhf0/ggx+TOGObP3zftJ8RrFdqysAldSAtrjUPx0PdUSAyc
+         y7lHyQKS7uBZfPt16t4BvVDVjU0TB22f+bprVkehBA4tNFnfMKB1RQwVBoSklfBbNxR7
+         kLrQI4NbmG8fPWY1k/QzYtBO+gruppmYOj8iKSlucOOpT0ZbidiYRe6LI/vf3RFLSx9m
+         nxfY5akBRAjwi7IXXxA60fJB9szP8g7V5lCSDD2VVawyBgVQmeEI6xnVhSySSPgzyhCb
+         UQDxYOjMh/1bwRIE85stkTpp323yWr4Z/4OtYf9Pehx57g+Db+ysnruaxQorQDfBfHZF
+         7q3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWOoD8N6GkW0inBP4boW6Fc3oh4Ljb5W4xVcxprJJzjx7zvYXqeZqLG2s74qz5/wxf2yy+HBDw4LO32dGhJY2vI32hjib0Im1bEO14y
+X-Gm-Message-State: AOJu0YxMrvfo79Q90zLOmXoWv3U3x15rgXQjbkG2wm+ZVOtmTOzFFpbF
+	ndk/bdnftWeq5vgnBfAly22BpOnyuLIuPTubqy+PdkEiLa7UW5D8YRTA0jwJwZ7SI9bR2AYkUc1
+	MGnQP1d5//hTP4my0w2ediV8RvSB9wVpYZeC8tRKw1QuBgqtFPtTYJ5E=
+X-Google-Smtp-Source: AGHT+IF4ct2kNSmu9fhsnfd3q+UitUMPmnfPORcpf4BJuOQ+z91JPwGev+iuCYx12kXNnIb7JbTt7bTnkW/p8L1feEtLDMupnW+6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kselftest/alsa: Use card name rather than number in test
- names
-To: Mark Brown <broonie@kernel.org>
-Cc: Takashi Iwai <tiwai@suse.de>, Takashi Iwai <tiwai@suse.com>,
- Shuah Khan <shuah@kernel.org>, linux-sound@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240711-alsa-kselftest-board-name-v1-1-ab5cf2dbbea6@kernel.org>
- <7cd921b3-fed9-4b0c-9ba8-381e45ef4218@perex.cz>
- <b3fdbb63-067b-4ff4-8fd8-1c2455a553a5@sirena.org.uk>
- <877cdrt3zc.wl-tiwai@suse.de> <e4962ea0-3f03-43b5-b773-68abe1d73cc9@perex.cz>
- <bb42afb8-48a7-4daf-b28b-b82bd5c77d57@sirena.org.uk>
-From: Jaroslav Kysela <perex@perex.cz>
-Content-Language: en-US
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-In-Reply-To: <bb42afb8-48a7-4daf-b28b-b82bd5c77d57@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:c562:0:b0:381:f3bf:c5d2 with SMTP id
+ e9e14a558f8ab-38ee37a005bmr1384515ab.3.1720801524344; Fri, 12 Jul 2024
+ 09:25:24 -0700 (PDT)
+Date: Fri, 12 Jul 2024 09:25:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000968ac6061d0f53ba@google.com>
+Subject: [syzbot] [bpf?] [net?] KASAN: stack-out-of-bounds Read in xdp_do_check_flushed
+From: syzbot <syzbot+709e4c85c904bcd62735@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bigeasy@linutronix.de, bp@alien8.de, 
+	bpf@vger.kernel.org, daniel@iogearbox.net, dave.hansen@linux.intel.com, 
+	davem@davemloft.net, eddyz87@gmail.com, edumazet@google.com, 
+	haoluo@google.com, hawk@kernel.org, hpa@zytor.com, 
+	jacob.jun.pan@linux.intel.com, jasowang@redhat.com, jiri@resnulli.us, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
+	mingo@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	pbonzini@redhat.com, peterz@infradead.org, sdf@fomichev.me, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, wei.liu@kernel.org, 
+	willemdebruijn.kernel@gmail.com, x86@kernel.org, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On 12. 07. 24 15:00, Mark Brown wrote:
-> On Fri, Jul 12, 2024 at 11:20:05AM +0200, Jaroslav Kysela wrote:
->> On 12. 07. 24 10:21, Takashi Iwai wrote:
-> 
->>> OTOH, longname can be really ugly to read, and it can vary because it
->>> often embeds address or irq numbers in the string.
-> 
-> Capturing that variation is one of the goals - it should mostly be
-> stable between runs.
-> 
->>> If a general name is the goal, how about using shortname instead?
-> 
->>> Or use id field, as Jaroslav suggested, but without the card number
->>> suffix; then it's unique among multiple cards.
-> 
->> I prefer this (use only ID field). This string can be also set in the user
->> space using sysfs/udev, so the administrator may change it if the default is
->> not ideal.
-> 
-> The trouble with the ID field is that it's too short and seems likely to
-> create collisions, for example HDA stuff just seems to default to NVidia
-> for nVidia cards which seems very likely to create collisions if someone
-> has two graphics cards in their system.
+Hello,
 
-The default IDs are always unique - see snd_card_set_id_no_lock() in 
-sound/core/init.c . Basically, the suffix will follow the device probe order 
-in this case.
+syzbot found the following issue on:
 
-				Jaroslav
+HEAD commit:    523b23f0bee3 Add linux-next specific files for 20240710
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13187c7e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=98dd8c4bab5cdce
+dashboard link: https://syzkaller.appspot.com/bug?extid=709e4c85c904bcd62735
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=106dd859980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111637b9980000
 
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/345bcd25ed2f/disk-523b23f0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a4508962d345/vmlinux-523b23f0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4ba5eb555639/bzImage-523b23f0.xz
 
+The issue was bisected to:
+
+commit fecef4cd42c689a200bdd39e6fffa71475904bc1
+Author: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Date:   Thu Jul 4 14:48:15 2024 +0000
+
+    tun: Assign missing bpf_net_context.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=164d6f76980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=154d6f76980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=114d6f76980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+709e4c85c904bcd62735@syzkaller.appspotmail.com
+Fixes: fecef4cd42c6 ("tun: Assign missing bpf_net_context.")
+
+==================================================================
+BUG: KASAN: stack-out-of-bounds in bpf_net_ctx_get_all_used_flush_lists include/linux/filter.h:837 [inline]
+BUG: KASAN: stack-out-of-bounds in xdp_do_check_flushed+0x231/0x240 net/core/filter.c:4298
+Read of size 4 at addr ffffc90003def7f8 by task syz-executor156/5107
+
+CPU: 0 UID: 0 PID: 5107 Comm: syz-executor156 Not tainted 6.10.0-rc7-next-20240710-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ bpf_net_ctx_get_all_used_flush_lists include/linux/filter.h:837 [inline]
+ xdp_do_check_flushed+0x231/0x240 net/core/filter.c:4298
+ __napi_poll+0xe4/0x490 net/core/dev.c:6774
+ napi_poll net/core/dev.c:6840 [inline]
+ net_rx_action+0x89b/0x1240 net/core/dev.c:6962
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ do_softirq+0x11b/0x1e0 kernel/softirq.c:455
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ tun_get_user+0x2884/0x4720 drivers/net/tun.c:1936
+ tun_chr_write_iter+0x113/0x1f0 drivers/net/tun.c:2052
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa72/0xc90 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f26cdb99d90
+Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d 11 e3 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+RSP: 002b:00007ffd1139eb08 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f26cdb99d90
+RDX: 000000000000fdef RSI: 0000000020000200 RDI: 00000000000000c8
+RBP: 0000000000000000 R08: 00007ffd1139ec38 R09: 00007ffd1139ec38
+R10: 00007ffd1139ec38 R11: 0000000000000202 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ffd1139eb40 R15: 00007ffd1139eb30
+ </TASK>
+
+The buggy address belongs to stack of task syz-executor156/5107
+ and is located at offset 88 in frame:
+ do_softirq+0x0/0x1e0
+
+This frame has 2 objects:
+ [32, 40) 'flags.i.i.i105'
+ [64, 72) 'flags.i.i.i'
+
+The buggy address belongs to the virtual mapping at
+ [ffffc90003de8000, ffffc90003df1000) created by:
+ copy_process+0x5d1/0x3d90 kernel/fork.c:2206
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x6b798
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN|__GFP_ZERO), pid 5089, tgid 5089 (sshd), ts 45267990588, free_ts 13316620078
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x2ccb/0x2d80 mm/page_alloc.c:3480
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4738
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2263
+ vm_area_alloc_pages mm/vmalloc.c:3584 [inline]
+ __vmalloc_area_node mm/vmalloc.c:3660 [inline]
+ __vmalloc_node_range_noprof+0x971/0x1460 mm/vmalloc.c:3841
+ alloc_thread_stack_node kernel/fork.c:314 [inline]
+ dup_task_struct+0x444/0x8c0 kernel/fork.c:1115
+ copy_process+0x5d1/0x3d90 kernel/fork.c:2206
+ kernel_clone+0x226/0x8f0 kernel/fork.c:2788
+ __do_sys_clone kernel/fork.c:2931 [inline]
+ __se_sys_clone kernel/fork.c:2915 [inline]
+ __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2915
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 1 tgid 1 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_page+0xd22/0xea0 mm/page_alloc.c:2644
+ free_contig_range+0x9e/0x160 mm/page_alloc.c:6694
+ destroy_args+0x8a/0x890 mm/debug_vm_pgtable.c:1017
+ debug_vm_pgtable+0x4be/0x550 mm/debug_vm_pgtable.c:1397
+ do_one_initcall+0x248/0x880 init/main.c:1267
+ do_initcall_level+0x157/0x210 init/main.c:1329
+ do_initcalls+0x3f/0x80 init/main.c:1345
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1578
+ kernel_init+0x1d/0x2b0 init/main.c:1467
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffffc90003def680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90003def700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc90003def780: 00 00 00 00 f1 f1 f1 f1 00 f2 f2 f2 00 f3 f3 f3
+                                                                ^
+ ffffc90003def800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90003def880: f1 f1 f1 f1 00 f3 f3 f3 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
