@@ -1,92 +1,107 @@
-Return-Path: <linux-kernel+bounces-250986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E2692FF34
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:12:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6088D92FF3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8BF3B25644
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:12:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 915B01C22449
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E49178CF1;
-	Fri, 12 Jul 2024 17:10:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE14176AD6;
+	Fri, 12 Jul 2024 17:10:28 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE04C1EA85
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F431741ED;
+	Fri, 12 Jul 2024 17:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720804205; cv=none; b=Svx9lQ11buDs5skXvXooJV1w+sYINEarS97hUubNi9GLYR5jvPgMIkXOxrJjDMOACReOGDAxZinSM/wXBiKpOsHd8LkVi/8wKL5wJ82Sjkx5CjzGNW7bS9JptO1sV2aWt3v1BEb4y7ulPk2qZZARK8OhhGtTFgA0c0AidX5YQWs=
+	t=1720804227; cv=none; b=WkX/N8GHjCxgoIW/wZILxuDiqJsGPkZNCyZUcleOxhr1PRTEEGukXwHhbiS0qrvfXnxKJzQXvRUQ0avOIF/8ZT4jAd3P/OGm0zb+XUHDT0LIaHdfp8qd7h1ovM0UXhaoShbu6ttLWFwHSGXmTFMQaPbx+Z2Jnlj1A6phF40P5EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720804205; c=relaxed/simple;
-	bh=16jfph0RZCWtvIyndElAe3dvIat1XCr05PdV7AU7tV8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sg0mF0FxPq+Nk3e4iCrGeyzxfhtWo5oa9KKl+lq+I7DpHn25AWmK1wK3eNtg09G33Lmkwb2bi0DkM/2gjWhO+e1sZW4hs+zD5ZWgBWJ2xaCTJVN6p0B/VZXDapTu9HwWddXyECo+wgD6jZQwhRlGrg36r8dBf35rroaMF1FF4Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-804888d4610so233138939f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:10:03 -0700 (PDT)
+	s=arc-20240116; t=1720804227; c=relaxed/simple;
+	bh=P/vj0tML+5sLhokNg//BJblNlTH8Oeuu7lKQm4cUE5c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D0rdxQ5eFp/ivWj62X3DwI7Sy6aUpDmZq2xxDA1FPd+e1xclv1UXK4f1TiEZ/aYNUEqQIePqpWSiFYgE6GTTct3cP7GX1ST1hNqU1696KduTFH/TBJJZimwfbQ6ykaMHzVl9D+KKe/0DcCrQPupSXUjWDYJrXNjEpukfQvbHs9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6561850a7bcso21995497b3.3;
+        Fri, 12 Jul 2024 10:10:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720804203; x=1721409003;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UMTg6foxnmww8UGT4+LezD+QiVNDfhqGjXbeHbYDlWQ=;
-        b=WDOLdqUBm+pZIIi5ycBD6ap8vgZjVwbjkXOiJybsS/BQUOcdW2EJM8/kSwTFepnhIg
-         uzdboK8CCMfC+qU4aWVTbsYlR5F7BoJpMMgWaaYuj+CB2u0TJ1DD4+xaQIuR9t7Brj3p
-         skiXsoxj/xLzhlg93QN/Zs7GZbps0LPacXMk4XXdlvQBgI4Kds6YM4ocs/To1MXskWPx
-         5I3m6xGz+XLnXL7ewxXRK8iB0YRO7TT5rJL0UX/rmgiiTfpigTV54pcmCEku4AOOQWyE
-         yOb0nkvRNLvMqLiTA/DFYedQDJpRCC+ts9G7aughMg+Bed6Kkd3OIAHJBwB2p8/3ty5W
-         v9qw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOV/V8WW72+//wyJ2oF/OvjQ8Eh5OUHWNgUm5D8ZFWXJrqvmB59JvpBYw2sosOTyJ8NSbHpsqxGK6OV+FmC43ow1qm+1PdxISsXbbG
-X-Gm-Message-State: AOJu0YzCQbDQjKmcbxirH8r6xXZ0mEvOlYrf3cxe15phPu4i1iB/BE/b
-	DydvQIm26Ku5o98qD7s5o7Xq0V6HR4AbNEfu0otnIdBT5GrsaG8aXFuoHiK1fisziZxLDjehy2A
-	A0LFN0xH+Zh+dbqKEJ3V3zFlEUqf7ZsVE1+Isp7aDnj5pXn4Gp1MtZ8A=
-X-Google-Smtp-Source: AGHT+IEJZjuf2gYy+pY3NG98U4qzYz9im6X+ZVcZFK4JUGIwyXYeq3SI6ARl39NV5HXFsilDRS+qHnJ5t/xjG8gxi5VZZXF3EzeB
+        d=1e100.net; s=20230601; t=1720804224; x=1721409024;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vdymif93j3WT4mEDNRmiwZsKR34HhTzNWp4qIqS/+dY=;
+        b=SxPD3cVbnj83SefefqmxovTfPmuP43q3ntbz4PwBZwSVfsp5+hmf01qmR8yF58MKZA
+         ZPscituCejy2nM+qiYt8fUJqnDJ4M8fGNlTYM2S+oXcIoB1OxgiAXcJKvbC7DMhQ7hv2
+         7yEzgf+qJB+JxdPq368vu9pDYj4S8a5tLEmANRqAVskap+w/hK/EjT76rEBxUb94u+kb
+         MmMp8ngyAJUo9ujC+S+zFTFNsAZaHBXZqUhjjTfCrdFFwqrXHmlk6nLeNgotHi6wp2o5
+         /kYrE1+CfyAIBpIFscpydHNK+wPtfruBPYFzZNu6L5Eazf+3njZHILOb0FXl9y4MIBqH
+         KMXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWbSw9StlwKH9F3SnwDQ6t8pV04t1vWABhyYHnhn4s3vh6AX8LzTf7Vfg1ml4pQrEb76aACSOvPL0L2qdfpnCItJJRt9Pw/dONBL+liogzywXE+KSMAdTTPrHOvOhOVlszAhBDwcVa33AtRi4aSk9E4pdtplVkkQ7j5TDkr1PqBm0Ei6IPmhxwSB/YTxJtUUvn4tZNXTiFuXbyG1twT67jFY/kmEi9vYklhjV8=
+X-Gm-Message-State: AOJu0Yx4VNFFWC7F1hPYxZNgL0t38vQNSl4ii5dyv2qeIpQKLq+KU9hJ
+	nqJUUy/7CrBjb5BNbVq+ZsU1fRcV5ntTELyE8RG5Iy97QOdJtQYucUkAVq6g
+X-Google-Smtp-Source: AGHT+IHbf1ZPWpkegIvxeEaUwk3tdCIsPvIM0Lan2AbRp1z8YEmauvQDap3uRs+T9+W+hsHPz4rJOw==
+X-Received: by 2002:a0d:e616:0:b0:643:c2bf:c156 with SMTP id 00721157ae682-658eed628fbmr120677577b3.19.1720804223695;
+        Fri, 12 Jul 2024 10:10:23 -0700 (PDT)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4f18f0csm15634707b3.58.2024.07.12.10.10.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 10:10:23 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6510c0c8e29so21731097b3.0;
+        Fri, 12 Jul 2024 10:10:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXVNQLREwE8XbTI6KT0K8QI0ML84eUK6q+dAUhRupR0Thzp+ThOAilG3t0nc9wIxb2S6x84ofQBYKLEf3ENLZb5RVdm6B3oQrkZ1HEgnmeEO7qRz0Sa6M0IQ6SFyhBxuynj/596NGOwGcH6grOXNLnWzxeOuha8njb80LhE/ysw393W0rfacR/1v9j0OgiMr/OL5ZBSWj0toS80GOygagc9rWEciu7qqDBLLWk=
+X-Received: by 2002:a0d:eec6:0:b0:646:fe8e:f03b with SMTP id
+ 00721157ae682-658ee791211mr114821107b3.2.1720804223028; Fri, 12 Jul 2024
+ 10:10:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152f:b0:38b:462b:8dd with SMTP id
- e9e14a558f8ab-38e62268c4bmr2588145ab.3.1720804202911; Fri, 12 Jul 2024
- 10:10:02 -0700 (PDT)
-Date: Fri, 12 Jul 2024 10:10:02 -0700
-In-Reply-To: <0000000000001e3b8505e9f95e3d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003e26e7061d0ff386@google.com>
-Subject: Re: [syzbot] [ntfs3?] possible deadlock in ntfs_read_folio
-From: syzbot <syzbot+8ef76b0b1f86c382ad37@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, anton@tuxera.com, 
-	brauner@kernel.org, david@fromorbit.com, linkinjeon@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, willy@infradead.org
+References: <20240531065723.1085423-1-claudiu.beznea.uj@bp.renesas.com> <7f99cb63-0c6b-460e-934b-4e7e8d84bb3a@tuxon.dev>
+In-Reply-To: <7f99cb63-0c6b-460e-934b-4e7e8d84bb3a@tuxon.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 Jul 2024 19:10:10 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXN7xCtjRraTu=3JS6x8GCo7iuS40PVTN_DPvhA-AMqfw@mail.gmail.com>
+Message-ID: <CAMuHMdXN7xCtjRraTu=3JS6x8GCo7iuS40PVTN_DPvhA-AMqfw@mail.gmail.com>
+Subject: Re: [PATCH v9 0/9] watchdog: rzg2l_wdt: Add support for RZ/G3S
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: wim@linux-watchdog.org, linux@roeck-us.net, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, 
+	geert+renesas@glider.be, magnus.damm@gmail.com, biju.das.jz@bp.renesas.com, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	claudiu.beznea.uj@bp.renesas.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot suspects this issue was fixed by commit:
+Hi Claudiu,
 
-commit 7ffa8f3d30236e0ab897c30bdb01224ff1fe1c89
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Mon Jan 15 07:20:25 2024 +0000
+On Fri, Jul 12, 2024 at 5:39=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxo=
+n.dev> wrote:
+> Can you please let me know if there is anything you would like me to
+> address for this series?
 
-    fs: Remove NTFS classic
+Your series was merged in watchdog/master two days ago, and is part
+of next-20240711 and later.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17bc0ea5980000
-start commit:   2a6526c4f389 Merge tag 'linux_kselftest-kunit-fixes-6.8-rc..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b0b9993d7d6d1990
-dashboard link: https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117f19fde80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ceb0cbe80000
+Gr{oetje,eeting}s,
 
-If the result looks correct, please mark the issue as fixed by replying with:
+                        Geert
 
-#syz fix: fs: Remove NTFS classic
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
