@@ -1,122 +1,170 @@
-Return-Path: <linux-kernel+bounces-250846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90D092FD8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:27:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5FB92FD9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAE111C2280A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:27:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C4C3B214B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799231741F9;
-	Fri, 12 Jul 2024 15:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627301741DE;
+	Fri, 12 Jul 2024 15:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f47l6tyO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gs/ng3Sm"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0791741E3;
-	Fri, 12 Jul 2024 15:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8BD17085D;
+	Fri, 12 Jul 2024 15:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720798015; cv=none; b=WoGyNXmaPP5Zg1pRFU22UR12YwV7hItfybXbRM70Kf6B+gvHBCR0wCLihd73ULMS1+O/O+L2peOu0xkUbh5iHIwgJYFdaXiioKsZy1mYIdNGVWXwaL6ZZdYm1ehU6Nm7pxy9uRtPTIXMuV+fTjdOD3DhhYx8Aa/8Os+eXDxV/c0=
+	t=1720798181; cv=none; b=ZG2UOqCOp+2pAyGEBGrCt2bm8hqbrICEFBmwRnEo+CzdBlNKDq+JobroMmenfPwlgD64QM2WUupDzJd791MqOqemaJioUaNjcw7RQDu2XJyi4DXvhIXdeLyTLNX5IjLX04/cWcmg6V70grp2G+6HJK5KZoDr0cLjpFVSzWAUtY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720798015; c=relaxed/simple;
-	bh=LW8POJE80nNCIpTSXQaoVXIVEDk5dceoKuSUVxEF+K8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWjpOCIRC6jrMHDSwen7o9Du8nlHqy68v24JygpPWDV+SBddWJWvumVXqhT3Q48DQyGNXcVvop4voBVutVxGi2FKBvUIru1vXiLaF+P/w7VgXzoDrVySKkC9qUpw03icreRjP7JTzqH77M/SAJdhpIe40GdEtQDO7Dfh2ygkeEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f47l6tyO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22298C32782;
-	Fri, 12 Jul 2024 15:26:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720798015;
-	bh=LW8POJE80nNCIpTSXQaoVXIVEDk5dceoKuSUVxEF+K8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f47l6tyOCFs9Co7u1Dm/Hy9msa9L6eZRxZxd3I9AF3CyyTFx8r5RVebrVAOl7PG2a
-	 Wj0WJJB9bIDDb783QoZjqEL9+FXil26hz2IddeQhxS8hz61RZWHeJPo6maNCnZ9RIu
-	 MQ7Jbf1REHqTLd8wL1ClapwkWJGVagxa5HxOo2kPAkQxDajELOoJCOULJ2AQZw3Ry/
-	 s5fw3Eu9EPHYlBlGzYZq/NsPv2JC+hxsltwT5ypGfyfP7tM+V3PbjlEerJIX91/X69
-	 H65+qv6cgobgUKd9PV4K4CkRlzbVYovZge8k254la0T1XOfLjx1KW6rZZm7qLExJeU
-	 IMR8UKaGcGhkA==
-Date: Fri, 12 Jul 2024 16:26:48 +0100
-From: Will Deacon <will@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 2/5] iommu: Resolve fwspec ops automatically
-Message-ID: <20240712152648.GB16474@willie-the-truck>
-References: <cover.1719919669.git.robin.murphy@arm.com>
- <0e2727adeb8cd73274425322f2f793561bdc927e.1719919669.git.robin.murphy@arm.com>
- <0eec5f84-6b39-43ba-ab2f-914688a5cf45@nvidia.com>
- <01c05fb2-16ce-450c-befb-8a92ac2a8af9@arm.com>
- <ee24cb5f-d170-41d3-9928-5507b8ab22a7@nvidia.com>
+	s=arc-20240116; t=1720798181; c=relaxed/simple;
+	bh=+IMZBOwNJ5AwNiX0hjiRah2gQJchIdnWIXPtSSevNfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gDNx5UtgIzDxKaCWkeYPCigEpjqsD81yX6r8CLDqHOCVpmL+jys03WnBqT3LCOTcp/sgthkCF3TzgNbkjRwisPyZmccKdg4CKyVetln+hM2rKqDg2pO4N7C6ZjjDjKTzciLlcLpaOi6TM/mpBbdo5PuNIL0Ks7piDqjmG/wRlxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gs/ng3Sm; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-447e1eb0117so11454851cf.3;
+        Fri, 12 Jul 2024 08:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720798179; x=1721402979; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ve3CcOjeMtMU8bzJnjUvgQ5PtDwAZqsbHa46kIGMMDU=;
+        b=Gs/ng3SmCWOHPfHf9Kx4U32hL24IXUw9X8PM/AxENhOrwkybRcT8uAb2L9aXZR2dAi
+         pS0j1gm8oE0wy61CdzgIbufthnb+8iQFd3BhSgxHSuoC1Dm5vZz4u0BIirfN/y63Zk9t
+         udEXZc311R3vXqNWd2lwMaH4c0kkdXq8FhiImutgrvp1EmIIddVeJ53+WD2zUb3hswgR
+         kGbXbi1GGfvIKxTMWiEXwzusvAJYSzMAMT0bI5t9TeHCWjX75l+u3xJRVsXY5D1YJ9jo
+         VGuH2uwJM8VCUEAMORHCEjl5GL0kHcPym4SfdLVIk+Q1T5UmN8Wv0U9SXe6ZWt7qfyva
+         eT5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720798179; x=1721402979;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ve3CcOjeMtMU8bzJnjUvgQ5PtDwAZqsbHa46kIGMMDU=;
+        b=F85XHUhepzZqCV2QLPHeAOFb/M4Iag/AnY/TzDXsfVu0vxp/TSlgVNJ916VA4TuikR
+         IzjNdTX7hPRiQp4pG2hHx49zcHi7dcDc2uZG+PVhD3+5yYdWS+cTPLYZQDk8EuUoUKAx
+         jUPgkuIQiX1xJnsPH5WoaC7HVISxMmwougCCSYx4gv4ohbCVDdvVVwCqE+JTfiBgsVeV
+         1t/ytZViUBmZOtf80EOGsYFtVlwXMsWaWpL9ghN9B1R5ORwVAP2ZJ7DnMz+E99bE7kC6
+         ah/Ova79DiA/WFWnnuLY92QOKUxdEqDnAX8camHXSmZeTxid4nCd3fT9OexfeEkOvQVi
+         K3sA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Qz3iabkSWcbTmnrdl3pGpkdhnvijJMhwPGgQUAXIUqfhSlGSVXIRUcHBhzB1Xbs8BXkVSazeGauamGHiBaNeV6n0qfJq7MjC7NcbgMk6iLIQ2+WNjHFTxBIewCACfIaFoTUdDO+Wv75ttNF3nyVBvhFvNpyUTDONuRPkbftsBENJj8x1vezAHSjlAg6bMPqPJEqO68vsXhR1W+gZhe8UGjTfSKlj
+X-Gm-Message-State: AOJu0YwP/60a7lw7PNCn+CiV42nakblYO3IpBQwkFVPQz9dFx/zktrm1
+	zBLRFGBTXKdZldoU9NALeFOC3ADD0+nw0yaMptzN3AQ96JsxZbMnEATQ1M0pI1UfSaNcQKnSUWJ
+	29Z9qSGgBRIwRPQp6cIgCx1Qbn4bg5sKl
+X-Google-Smtp-Source: AGHT+IHedDfgr4oxy9l8g1SV0quzS/13qgZuFj80DhQ5BESrPL+1aCpiI5uk0XVyzQs7IElyHA+EFOWUbNnnwSnOSC8=
+X-Received: by 2002:a05:622a:3c9:b0:446:49f1:79a with SMTP id
+ d75a77b69052e-447fa89dfc5mr148250941cf.24.1720798178892; Fri, 12 Jul 2024
+ 08:29:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ee24cb5f-d170-41d3-9928-5507b8ab22a7@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240627161315.98143-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVLSpaUtdXFv3VXFc5G61dmRX2C1iW9C+km23g6EgZJOg@mail.gmail.com>
+ <CA+V-a8vABF6vg+J7DAGzgnw8612oe6VfJkc5y-krySvnpAnPkQ@mail.gmail.com> <CAMuHMdXuyQZ=SFfQa5kvZTwYa0uRXc7khJ-vOYBRE5SCd11rPw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXuyQZ=SFfQa5kvZTwYa0uRXc7khJ-vOYBRE5SCd11rPw@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 12 Jul 2024 16:28:08 +0100
+Message-ID: <CA+V-a8ui9AKDOZzg_dgPXeGhGE-+rBHU8O1tpdb8w8myo-1p5Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] clk: renesas: Add family-specific clock driver for RZ/V2H(P)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 12, 2024 at 04:24:48PM +0100, Jon Hunter wrote:
-> 
-> On 12/07/2024 12:48, Robin Murphy wrote:
-> 
-> ...
-> 
-> > > I am seeing some failures on -next with some of our devices. Bisect
-> > > is pointing to this commit. Looks like the host1x device is no
-> > > longer probing successfully. I see the following ...
-> > > 
-> > >   tegra-host1x 50000000.host1x: failed to initialize fwspec: -517
-> > >   nouveau 57000000.gpu: failed to initialize fwspec: -517
-> > > 
-> > > The probe seems to be deferred forever. The above is seen on
-> > > Tegra210 but Tegra30 and Tegra194 are also having the same problem.
-> > > Interestingly it is not all devices and so make me wonder if we are
-> > > missing something on these devices? Let me know if you have any
-> > > thoughts.
-> > 
-> > Ugh, tegra-smmu has been doing a complete nonsense this whole time - on
-> > closer inspection, it's passing the fwnode of the *client device* where
-> > it should be that of the IOMMU device :(
-> > 
-> > I *think* it should probably just be a case of:
-> > 
-> > -    err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
-> > +    err = iommu_fwspec_init(dev, of_fwnode_handle(smmu->dev->of_node));
-> > 
-> > since smmu->dev appears to be the same one initially passed to
-> > iommu_device_register(), so it at least ought to match and work, but the
-> > SMMU device vs. MC device thing leaves me mildly wary of how correct it
-> > might be overall.
-> > 
-> > (Also now I'm wondering why I didn't just use dev_fwnode() there...)
-> 
-> 
-> Yes making that change in the tegra-smmu driver does fix it.
+Hi Geert,
 
-Fantastic! I'll pick it up right now.
+On Fri, Jul 12, 2024 at 4:23=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Fri, Jul 12, 2024 at 5:14=E2=80=AFPM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> > On Fri, Jul 12, 2024 at 12:59=E2=80=AFPM Geert Uytterhoeven
+> > > On Thu, Jun 27, 2024 at 6:14=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
+mail.com> wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Add family-specific clock driver for RZ/V2H(P) SoCs.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > ---
+> > > > v2->v3
+> > > > - Dropped num_hw_resets from struct rzv2h_cpg_priv
+> > > > - Dropped range_check for module clocks
+> > > > - Made mon_index to s8 instead of u8 in struct rzv2h_mod_clk
+> > > > - Added support for critical module clocks with DEF_MOD_CRITICAL
+> > > > - Added check for mon_index in rzv2h_mod_clock_endisable and
+> > > >   rzv2h_mod_clock_is_enabled()
+>
+> > > > --- /dev/null
+> > > > +++ b/drivers/clk/renesas/rzv2h-cpg.h
+>
+> > > > +/**
+> > > > + * struct rzv2h_reset - Reset definitions
+> > > > + *
+> > > > + * @reset_index: reset register index
+> > > > + * @reset_bit: reset bit
+> > > > + * @mon_index: monitor register index
+> > > > + * @mon_bit: monitor bit
+> > > > + */
+> > > > +struct rzv2h_reset {
+> > > > +       u8 reset_index;
+> > > > +       u8 reset_bit;
+> > > > +       u8 mon_index;
+> > > > +       u8 mon_bit;
+> > > > +};
+> > > > +
+> > > > +#define RST_ID(x, y)   ((((x) * 16)) + (y))
+> > > > +
+> > > > +#define DEF_RST_BASE(_id, _resindex, _resbit, _monindex, _monbit) =
+     \
+> > > > +       [_id] =3D { \
+> > >
+> > > Indexing by _id means the reset array will be very sparse.  E.g. the
+> > > innocent-looking r9a09g057_resets[] with only a single entry takes
+> > > 600 bytes.
+> > >
+> > > If you do need the full array for indexing, please allocate and
+> > > populate it at runtime.
+> > >
+> > OK, I will use the radix tree for resets (is that OK)?
+>
+> You mean XArray? include/linux/radix-tree.h has:
+>
+>     /* Keep unconverted code working */
+>     #define radix_tree_root         xarray
+>     #define radix_tree_node         xa_node
+>
+Yes, I meant the above.
+
+> Given a single xa_node is already 576 bytes, just allocating the full
+> linear reset array at runtime is probably better.
+>
+Agreed, I will create a linear reset array and loop through the array
+based on reset index and reset bit to match with id whenever required.
 
 Cheers,
-
-Will
+Prabhakar
 
