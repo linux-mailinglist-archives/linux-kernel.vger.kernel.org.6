@@ -1,169 +1,217 @@
-Return-Path: <linux-kernel+bounces-250651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA5292FA96
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:47:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3210A92FA9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2311F282ECC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:47:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77A9CB2294D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8293D16FF2A;
-	Fri, 12 Jul 2024 12:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4934816D9A4;
+	Fri, 12 Jul 2024 12:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BiM2v/Ja"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2052.outbound.protection.outlook.com [40.107.92.52])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NSRq5EBl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F12916D337
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720788328; cv=fail; b=WcdpFgsoht+yH8Ow3Ua+ZMI3gKwuG3SZobfhD+qHxSvN9FkJae1p6wtRBFfQGQb/uC+NMJz7qj1wHqDx9jvS/TLrAhO84zqulq7/drO+PCjJZnbBb/OfZ+EoOVCUBmsP3o5Yc/qcu5uOcdxBijRcGyweWObgMJYlGoXKwiKEb/Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720788328; c=relaxed/simple;
-	bh=vYto3C4NApZauDFZ+MRTUypDndTOTOk54royVN/YV5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YKyZ3/OpngY1DMapteN7P6Y5sCNoyhEvp01OneuZKwydVdcEylBqx0H4xo9vfAHO1OwlCNFCfGZB8dJY9waRIu3WYV7ctHbh5WHg7e2vClKkuLaoHvD3nbVA0K7KaMkQ7QYacqJYPBsv2K5CXsnYrOa+vtMGTvycMelwdGqrfYI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BiM2v/Ja; arc=fail smtp.client-ip=40.107.92.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fQcGfSQFMZ6K5EMjEwV6oY3m/nMDM84+RVOeecvnkhtUV/I8mgXNiMSJrZayLI2Qka3CqwRmyWgiYSSQklulLh8QdYBE76VVbWuLM8J5Ast84yeJgI0eRORVQUvDrdj3aKTCM2miJqvik4RBR7D+BPIg6nsvdqOET5usaW7NTYaTgExEYhxB2bHY04dq17Ad3YhP19eAZ66CN0Y0S9RuWTf69UJLh6LSK7qwpR2EVwk92gVk9NIyGHWTzcWMoY3dKWH3FBmP0cfgi1iIIkYG9H/jGsUWR4DFGNXXBpvuoALTZ7VQhMnkp1QqhCzxVTto9Sdkrq65xZR4nvWA8mUvdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xtEZp5mR8IuckxLHjZHCy9MVFwPcX/UFDENLUUIA0MQ=;
- b=biOzHgRXIZp160nuEgm9hrG5/GkoChkL8wQoMyWnOERPLVxSz+mkNjcptZW2+ZJOuk+2PAtmmPmuA75Jo7RgMcNDCnERDWmvWNhjCH8koAiTzMtKPfbBVU8jG5xqZXtTiV2SrTmlElaCVxskh3NIVnpfLhDy1mM8d9/UYarLdOyeKXtwT7Nt+A1WUuOdfEssZY7Wr15yvMqyuYkHJ6B7XkeTE5/UVyGQcCtyqKePeMX5lZuXpcoNSKnUbI21SrfoUFvIr1U1mDHcqziTWsgk4Ew1vQZpDSM5MfPRH460EUi98ASzFXUmpoM8jdlMjD7Ee0KRUTAX34ngErqWei06hw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xtEZp5mR8IuckxLHjZHCy9MVFwPcX/UFDENLUUIA0MQ=;
- b=BiM2v/JaenLO9KeIL2G2SU8mshqHdu2LOpAOQxhIOr6cNLObUTKQwMRKYzdUiFiDjYRYI0YeWvLsTM0w/UCbT81dSXg3MbBahSdzjZYn+5/8m1wZS6kQALQmGXDfQNkU77QS1z26y9gj93OpnoFVKuO8vr8ED0ouQtVe/9Mc7E0ZbUgXXpGSAK1m42oAAoj7i11w127EzSoPBEy970ZuYnSke9HjeluCJTAnM/VzrCMvRCZBDqkf0MX6Sc2TkPZihPeguI7m1dKTpEyupHbeuA/AmMceux0CaF/ZMkgu3pADQ+S2doimXUOXW4+W3t5LSJeTUI5jqDktBbOCyaTe5g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by MN2PR12MB4408.namprd12.prod.outlook.com (2603:10b6:208:26c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
- 2024 12:45:23 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%5]) with mapi id 15.20.7741.033; Fri, 12 Jul 2024
- 12:45:23 +0000
-Date: Fri, 12 Jul 2024 09:45:22 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, will@kernel.org,
-	robin.murphy@arm.com, joro@8bytes.org, ryan.roberts@arm.com,
-	kevin.tian@intel.com, joao.m.martins@oracle.com,
-	linuxarm@huawei.com
-Subject: Re: [PATCH] iommu: Move IOMMU_DIRTY_NO_CLEAR define
-Message-ID: <20240712124522.GP1482543@nvidia.com>
-References: <20240712113132.45100-1-shameerali.kolothum.thodi@huawei.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712113132.45100-1-shameerali.kolothum.thodi@huawei.com>
-X-ClientProxiedBy: MN2PR13CA0007.namprd13.prod.outlook.com
- (2603:10b6:208:160::20) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1D716EBFC;
+	Fri, 12 Jul 2024 12:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720788391; cv=none; b=lc7V4tBSt9BQcZTMSQI8t1EnzAj8rFEvzLAIwaCwYWdF645MKK1SZlWIWCcm+nLi1ZVt9YAwfjv3dAZBq8H3iqj3a8rfTroWgeZZE3tA5xnEJbIzmPihhFWBz7bV8owvXdS0E4L2DbELvxw92SfY5rRle/nq6p2baVl7PAK7u88=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720788391; c=relaxed/simple;
+	bh=Erx0gIUMC5sqOzJTfoUmK6Hj8OfOwuZt+Y0hxU1mY18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZI25YuMAugGi8j++nXTuCwpXFka7cYn6/GmC51AVBWaChQL/qi+0aTCzZSBAB9PB7QS5DZ2+3CE9J2wD2PSvmIRQZQIZUhVlUBGmH8tYY+9LjaKjtJwZVPxqweyrm1Qj9at7FcR/PIODS6l21uFpvPE/2oZ95aHROz9NtMOdrUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NSRq5EBl; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720788389; x=1752324389;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Erx0gIUMC5sqOzJTfoUmK6Hj8OfOwuZt+Y0hxU1mY18=;
+  b=NSRq5EBlb7K1nWYJMVgbGsxa5K+WmXsTh/9iLhMO7sHQ26CMB7qBH5R+
+   erFAiW5u0y/6KdsbiX+amyULqvuHcVawEG92Hf1ZlNOBrLwD6YrzTbWEI
+   RwqDkuU+QK8IYx/tNm5x8qiEbXF8uh31uOU9uOkOuRaBKitd5FsqA9gYt
+   hrmn2UjxRGEmV5ZXcpMqeNvHu7KEbxblzBQwQE55YcC1uohi362e+d8Pw
+   xqcnh2uEHUevAttYnlSaWvwrunmXisZt9DaqWPUZGsA3q1uS0QjieeVau
+   UV7BxM1OOs58DjpIvXXm+V6RszjzwPe5w0tFLDXWyi9/bFi7TsPiw6BPI
+   w==;
+X-CSE-ConnectionGUID: ntrCyXSGS9KrCPMN/hLpoQ==
+X-CSE-MsgGUID: J3UFfIr9T5WHWSqejI+GiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="18092313"
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="18092313"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 05:46:28 -0700
+X-CSE-ConnectionGUID: EDVtn1l5QK2eRdquepR0IA==
+X-CSE-MsgGUID: 7jGGRIxoQjiXaAkF7BUY2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="86398888"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 12 Jul 2024 05:46:24 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sSFfJ-000am6-39;
+	Fri, 12 Jul 2024 12:46:21 +0000
+Date: Fri, 12 Jul 2024 20:45:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, jdelvare@suse.com,
+	linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ukleinek@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH v5 3/3] hwmon: (adt7475) Add support for configuring
+ initial PWM state
+Message-ID: <202407122021.YFqdjjQS-lkp@intel.com>
+References: <20240711234614.3104839-4-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|MN2PR12MB4408:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef74c96a-bf22-4fd5-5f1f-08dca2707f0c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CjDNPaV+P1I70ZNRFMBzMM/bFB6nDhqqfj3p6rEm1Fu1K4vx5vlgRQrblcLa?=
- =?us-ascii?Q?dItwOv+In0H0v8dfTOBDiOmefb0e8ObxzV6jb9IMYaC6P7zLL9XZ6minYGPB?=
- =?us-ascii?Q?yRsbanY/zyCCLg+7TGzBW04PEuC81WJvUUfnE37X5/xylqyxVFh2Gg1wLt73?=
- =?us-ascii?Q?K0CeN/2qQ81xXS31Bkbi+litJga31nLgoq5Ymr1lxkc4E+LgZdzVYQauUL5Z?=
- =?us-ascii?Q?rWPgUqxNEz/XG2AS6vCM1V3FfHKgyeAEoV0TPA7hRxzn6rSvRQM6Zq0HRXvK?=
- =?us-ascii?Q?Ad/eAOE3BYekWXLI5ZEps/ZfzDzMimjze5mVm+lv4UelozR9Eo0XAs3lPYP7?=
- =?us-ascii?Q?ixye3cBXwe/diRtIxdm3m9l3+2URe20UpC1FXwnjIVgR/CfEvXNCDhZxqtvY?=
- =?us-ascii?Q?8+bVXZ6nF1qzgZUkl4H2StZX4zl+f77RkmvrwLj6gLWH17v3EB4sdFlNVCQp?=
- =?us-ascii?Q?EqSIEP6yczbNpEmAmmrgpZjj1i0SSwiksBTlW4M2N+/ASh6aoXWvLhf3yQC1?=
- =?us-ascii?Q?uAhhplTosgYTS787UuI4+9P51/mI6BVt7t0adSSOG3K6Cme8yTpjsZI3TrS3?=
- =?us-ascii?Q?F10wTpl20vFCPd7j0uwBIWKxBDDDp0LLixMcU4E1wRTxHDpV/d7iLQgF+6ez?=
- =?us-ascii?Q?zfPyqPrFT2p2qJvnsQVa1Xt4j9vjwB9ie/gGRxEVjdf63S601zJ4SfMAhKJV?=
- =?us-ascii?Q?OZ2I587lwc8EPq+UEN7m4iYGHnS8quZP0hM1su7+avT0VoshwBnkyxYdMKNL?=
- =?us-ascii?Q?LRCVEgd+8JAg8TODKXX1mm4FeZ/kFfi2qz3V9cpVu4Enu4DikwDucb7TLU4H?=
- =?us-ascii?Q?7Yc77/8RH9Gh45ITerqFMr8nz2LaOoak4Dv6uUr5cSFatLyr+/xe8q4tVCwU?=
- =?us-ascii?Q?Ifn0HwmXXfqh35rNl5RTH3moKOrSe7LoFFqY8xgg5DphqSdR8oqzXzmGkJK/?=
- =?us-ascii?Q?hNgSjoLAq661qxi4d7xzlvdXoGqcDebPhiOuG/bes8x9AKE8/gPKwGsVu0Rs?=
- =?us-ascii?Q?IrWZmP/vHMidxPirJj/evuJaZRGgKMdYweChid/m7DKuF5J/A9xya/tp8NNs?=
- =?us-ascii?Q?RsyYWpgiVa8Ry0JSZkoss99KZRMobaRIMe1GMQjratd23ByrtplAV/bpN0cV?=
- =?us-ascii?Q?D3pR9PiyuhU7Gw6zkVZFsPAPpFvbRxl1BTGVE6XHYWAgrvBKuxfEzbIvVAjZ?=
- =?us-ascii?Q?jWhuHn+ay44taVq9z40UUX3vR8xKjLvmYLkHUrBLh2y/tx+fgD8+Pb/r81kK?=
- =?us-ascii?Q?k6S7VAG6wzwYscNlhT327hnqqLbD37+IRcgcSnfpF58s9nGqc/PrYh4AW5fJ?=
- =?us-ascii?Q?OleyL1YZoIOUIB/f3WytvxIZqcI0jxg+dJcQmxTOMsMueCXJX5wlqBmtr6yi?=
- =?us-ascii?Q?6mqmSi8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?G8p1re/U2CfFX69/vA7r3qdyZQYOAYB9YBtZlU0+nOfOcqsWmyxzWBeOgds3?=
- =?us-ascii?Q?kV0nCxWrX7AiG9672JpK5wHGGfxnX1dG5TAlZzFJ7JXT3j9uuVtrXAUBbyfg?=
- =?us-ascii?Q?x0yT1ca9p+DzTVFQhuL6D/LglLct3rQDl/ijBBtLlTZgU2Lg460YzWZLaV+V?=
- =?us-ascii?Q?Bk+00DnU9BzqNnfLNcHpyPUy0PVyac5pe8wtRfaGq2S3b2APtE3d1uE+OTQ1?=
- =?us-ascii?Q?uoxURtgGjiMtGaF1302gGjbeVIDup30qGwiyZuLm2fkhcBbtLfPHvjiU1kBE?=
- =?us-ascii?Q?e/hVmnXZSbBIjQFxXqXlCOIwF20g1NwVOP/EOVZLlgYv0pZ9s0zHQp1r1S57?=
- =?us-ascii?Q?8UZ7CLpP6inKEUzDkgYLnIK082OevJV98yP5LuWswM8MaU7NkSmFDTVzz6lm?=
- =?us-ascii?Q?ijmirYiB+kn3A6xYafp9HuthlczrZqcx7c1egIrjr/E+rj0IkpHEx+hw2Zib?=
- =?us-ascii?Q?6V4/hwCehjE6/ju6ehdQ7XLU2alfFsMivOcA3aMj4wF4pASf05ViM5Af9B8o?=
- =?us-ascii?Q?7226R2z+KpjpHyr3ukMrR9D68Zhk4f/h+LqFvc7sEsH5R3LmcctHrpkt+FnV?=
- =?us-ascii?Q?puxf5rBGui2N5X2aliEVDiKLN1c9qwGUMAcXxeQJ++tbF2X8z8iV39EKrdtT?=
- =?us-ascii?Q?VrxZQ8SjMqWDaY3Y8DrNlA02Io5zlTEFtu13l9vGSNGHFeyNsBSMHgD9lHmY?=
- =?us-ascii?Q?ADMr6wvxjR6Lf9lH+3/zq5lerWoQaFYCLt0QGunib6kadBF10yRkrZ23tJvt?=
- =?us-ascii?Q?+Ufe4WoBb2b+n1cgT4THcV+26x/5uBbPN2dcu+tiX4AQAtQYcGbwrfl/MKnk?=
- =?us-ascii?Q?85gBeG5rGKEkXUm5qDSxmqP1VAZX9FdVRgzIaRdzpQDC7kFsKdFPs2hdpqya?=
- =?us-ascii?Q?2cAmguOSazIp6gpridEs7CymICux5RS4YrZAJyx3As7yLC28xnxfk21ytXF5?=
- =?us-ascii?Q?wD90Z108wEvYYn1hgfVyBRXpPLb3FkGxNkuMUvjBfoTNFqRosTRW9kN9B9kB?=
- =?us-ascii?Q?zBHlIh2P65zGeYGpjZYGw1NSuuIV7hDyARD4lyPWqLoeBfOJpxntpuQuMwUX?=
- =?us-ascii?Q?4CulZOaA6S9scvlkyWwuxbK9ZBFmDT5GcKu2/JJa4O8LdFVtXve5erigosd3?=
- =?us-ascii?Q?pCn9BlewypL7HqRMiejWmdNI+rS/X5RdHbFTxkMc7iQLHqzzUfAizpY0GH+P?=
- =?us-ascii?Q?Ln9jlDYHbU6NLouhpVdvOVzbGRW8SvS7/pR4dOmLFvl+WlR3OmICp1VLPer0?=
- =?us-ascii?Q?kPZWD8Uq2/yufBFQtuMKKIwKFEeOGzEBLaZuLi3OQkleh+jjP3OxXE0EXjTT?=
- =?us-ascii?Q?EH1sQC8Ha2yKgyfIYk+hgbWJ40KAbRxRm991e98sRsTsvoIAeuROMV2Bj0EQ?=
- =?us-ascii?Q?MOFl71zcJNaTvuqGcsQcPIHIEa6JjNMN/sR8Y4C3A+Qs/CxTYkCS2FTqzc9H?=
- =?us-ascii?Q?Ynp6kdq2FiKsXnPI/i0uKLj2kbw/T0Dg2EkoaqcvqYmlfF+GgeWFdFoS3qP4?=
- =?us-ascii?Q?KQ/ShECg/nyvqMNDpSGn6JwMSotLH2Vx0YufDNjDo74SZgOKDi6PA5KZVH87?=
- =?us-ascii?Q?3t5Tcs6QSXdTLI4ZQqOG0pCjSSQDMrPlvrlX39wG?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef74c96a-bf22-4fd5-5f1f-08dca2707f0c
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 12:45:23.2349
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rpYmYiwLlO3B+l89z9+pfVMrHmNuW7mO2DNA5aOtnXz5xWRp85pubTZVA3wAp7pa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4408
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240711234614.3104839-4-chris.packham@alliedtelesis.co.nz>
 
-On Fri, Jul 12, 2024 at 12:31:32PM +0100, Shameer Kolothum wrote:
-> Fixes the compile issue when CONFIG_IOMMU_API is not set.
-> 
-> Fixes: 4fe88fd8b4ae ("iommu/io-pgtable-arm: Add read_and_clear_dirty() support")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202407121602.HL9ih1it-lkp@intel.com/
-> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> ---
->  include/linux/iommu.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+Hi Chris,
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+kernel test robot noticed the following build errors:
 
-Jason
+[auto build test ERROR on groeck-staging/hwmon-next]
+[also build test ERROR on linus/master v6.10-rc7 next-20240712]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Packham/dt-bindings-hwmon-Add-adt7475-fan-pwm-properties/20240712-074936
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20240711234614.3104839-4-chris.packham%40alliedtelesis.co.nz
+patch subject: [PATCH v5 3/3] hwmon: (adt7475) Add support for configuring initial PWM state
+config: i386-randconfig-002-20240712 (https://download.01.org/0day-ci/archive/20240712/202407122021.YFqdjjQS-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240712/202407122021.YFqdjjQS-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407122021.YFqdjjQS-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_plane_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_probe_helper_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_rect_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-abt-y030xx067a.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-novatek-nt39016.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/panel/panel-orisetech-ota5601a.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611uxc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sil-sii8620.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sii9234.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_panel_orientation_quirks.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_mipi_dbi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/udl/udl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-kunit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-i2c.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-ram.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-raw-ram.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-slimbus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-w1.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/open-dice.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-fsl-lib.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/uapi-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/packet-serdes-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/yenta_socket.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/storage/uas.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/ch341.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/navman.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/ezusb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/isight_firmware.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/yurex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/mon/usbmon.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/chipidea/ci_hdrc_msm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/libcomposite.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_acm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_ss_lb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/u_serial.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_serial.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_obex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_mass_storage.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_fs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_hid.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_printer.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/function/usb_f_tcm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/gadget/legacy/g_dbgp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-ccgx-ucsi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/framebuffer-coreboot.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-belkin.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-betopff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-chicony.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cypress.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-holtek-kbd.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-holtek-mouse.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-keytouch.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kye.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-letsketch.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-logitech.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lg-g15.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-logitech-hidpp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-megaworld.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-primax.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-redragon.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-saitek.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-speedlink.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gaff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-tmff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-uclogic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-xinmo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zpff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zydacron.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-viewsonic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-winwing.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-bootrom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-hid.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-log.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-loopback.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-power-supply.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-raw.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-vibrator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-gbphy.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-pwm.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-spi.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-spilib.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-uart.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-usb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/x86/siemens/simatic-ipc-batt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/x86/ibm_rtl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_performance.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/parport/parport.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
+>> ERROR: modpost: "__udivdi3" [drivers/hwmon/adt7475.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
