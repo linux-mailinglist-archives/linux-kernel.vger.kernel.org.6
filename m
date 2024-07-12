@@ -1,150 +1,144 @@
-Return-Path: <linux-kernel+bounces-251165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313C493016D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 860B5930172
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADA87B219DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:06:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0957BB22A06
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3C649622;
-	Fri, 12 Jul 2024 21:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0526549630;
+	Fri, 12 Jul 2024 21:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hePgEzVT"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="gSpGb5Qt"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D243A32C8E;
-	Fri, 12 Jul 2024 21:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D31D219FF;
+	Fri, 12 Jul 2024 21:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720818382; cv=none; b=PY+qE2PKFe8DSEzxWBJ38rAV80sTbvO4XlcNt0yA8G3ebkY84331PQsRbxWzqQ5pJhAfv4O146GDFQQXt+l4SMgP53oMVjf1deXa0x7gNBH5THI5OePJG7NGWyKXNH6+ReF6CKnSeYPPKP8MEE9U0SoX18wBH/DM469ItxWCaTQ=
+	t=1720818450; cv=none; b=fWq56q6arKRbKVw3qpAC40Znu07ekXhMXgtMzc7nhc8/rRa/gTfZvM7aRk1h4Ua7TUFsJK3ejBciKIsxqPHipY+tqqfzYUiYsNWedPwundi6gs72kc8flJq9BM/KERYp/Cf/LNdrj5RsbV394Aki7uiZmk/tgm7WGm3TvLploVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720818382; c=relaxed/simple;
-	bh=BXxasLL2dSiVoNp3qZuBOAuYRWfKuW7KBSh1o5r3EH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ku/KtHFMuMztppTdZORAuObY3qtto0Yy5Xtr/JPKsRdoOYSjbQBw+NYvBcgKwVH5BgdS2bFEsYD//qoUhY1ubdm/s3IR1zud7VFIe0guRS4tQg4g7AWWgfqm3bbD0JwSVKk3R98ITEdYnuqWkbNRR5TLbWeYO0C4YNHH0NLyI/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hePgEzVT; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c980b08b4bso1917258a91.1;
-        Fri, 12 Jul 2024 14:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720818380; x=1721423180; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=otj7B7h+dOv/dHqdgyGNrdLcl7BUozT2O9Id54ZPVNo=;
-        b=hePgEzVT3H01+ur1ODVcSdxh1dNg53nG3q3yWiIU4gZguqKpYF1vo2QLVLd+BRApgo
-         g3ex9bW4zcJ+vEkrvA3XTp1oBtA3atQYqKcg/gHdqJ7tswj7bomtJAIhySCgWX+YDUiM
-         pfe7+Ok8ROwFMJkWl1+kffX4pmg5Dcz41rJO+FIrrRTebFdqo0zdJYCgMqdlYS/2vMHT
-         eBlgJBTbwoqNXg1wqjtcy7J2htTS3y5tr2i3SBYFdnkaAG1AWbzRKFm4a1Wtie2sxEsg
-         O4P9c3VIO35DbLOB8zBdgy4/TG6Vv0umRw3qWD6Pt2deuGo8bHP0ndBBCcmtDUv2aa9n
-         OU8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720818380; x=1721423180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=otj7B7h+dOv/dHqdgyGNrdLcl7BUozT2O9Id54ZPVNo=;
-        b=oNOR/rFz1rY6soNjni8gHBFRSHDtz3YdOs5OssbMX4Ud8OrMQ2KLRIE/B/4h/XGq+G
-         XXEv0d2WMRyzlAuWkLVH75PR0739d7jPd8GkMbgqxKqP/f6Nq9H8/YxhYdWrknBdn2zx
-         +qZXG0OMHibJkMBRPz1CKQjq/fvjgXQ6JXVXQxPvoiJzt8nualSus93IfAzVRYQ2jyGz
-         vBUlI/um9VC46N919m1UuqOh4NVTBgwgU1atk/sppHjo7IVQ1UWABx2CkHYPQP+/St27
-         VUW12iCmt1KvoTE++hHaAt5v/zs4YQgSDej7+w7+IYP2WOYusUlR6mM0cKs3rWWSB9R3
-         ZpCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVE3XJhukMiCER0o0RGcZvXXayQ/QakyDkj660g6lhaZ51TGnPYPcvIo84c6FbOUht0ZOj6H73lAkgSja3OLDB7uhpATS2Sb0fuOspItK8QDt0Eof/+NM8WNuGL3goW4A5mdxDl3S/Tk1JrtRkL15MezecbEaPmgegotHsCaUsQDxc9TbX3
-X-Gm-Message-State: AOJu0YwqFveUJLR/aQn7kzUs4OVQNndpMaegHalGwVi2Si0CdH8yEMDe
-	zupMb+tKUN1i6DquhButjndmHkMaw1Aq1myAgUaq1rdg+qQOvESyAVLG4AlULzfDs9cwaXMolIJ
-	TN5up0HCxnel2OV2PbE8zAQAzkus=
-X-Google-Smtp-Source: AGHT+IESUNbr3fMnFylMWVGExO3I59c3mocYvhlsB63I4RZCwKOm32acU5VnVGf+GzudJ3nJOGfvpHC/6+xdmZ51+9g=
-X-Received: by 2002:a17:90b:238a:b0:2c8:143d:f22b with SMTP id
- 98e67ed59e1d1-2ca35d54733mr10446026a91.42.1720818380076; Fri, 12 Jul 2024
- 14:06:20 -0700 (PDT)
+	s=arc-20240116; t=1720818450; c=relaxed/simple;
+	bh=vKFZ7VhhVPwDMBl1L3Jwa9uOyxKi/wF0dZAUg/xUYoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RcfxGAhNmJ0i1diy3a30bthBXK33ExUGsqvErnBM/DBf2H806IdKuwtLzvW9a08/gJ6jR6mXPqmCzqdxAQsyBDYU0zsoZzg23RtpjH2+490xl4iA0SIIeX/hKwL9Ny+hYR2VEekJ26mYRZV5BfM2mWcoghKkEC0PCdwHa2Hsyv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=gSpGb5Qt; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=4fyXkYyDXPeoIA7KiK11Pb/8YiiA2kBtTpxn1oy5Xfg=; b=gSpGb5Qt1QavJ4twGDivqpU9x1
+	kJt7FGBvbK2aTCJXowAhCepe19G36RO0QZWmVH4ZPnVqIYIfznu7g94inYaiaa4BZwbr0mfO7JKmq
+	hYRy6/W3yREkiAKPS246SXVVNa0BVKo1HZe+daKDFlZ9wbhS0rpTOJi6AfDKYl1fydKTSjE4zeaFA
+	T2PD/MI/JPC74BKmrhhAdrEh2TjJz5S2lgouEjh1E/aDlO28e1Khlw1472v0LlmBo1AWQJStJIzSv
+	XuNycvvbN48jEJAU5oiGYqzSk8+UlLvMw5zPEmKVQbAREOVeGYIr8Ia4mlMgVp51XfHHXOziLrjME
+	hkmO4NzA==;
+Date: Fri, 12 Jul 2024 23:06:56 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Andy
+ Shevchenko <andriy.shevchenko@linux.intel.com>, Rob Herring
+ <robh@kernel.org>, Daniel Scally <djrscally@gmail.com>, Heikki Krogerus
+ <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Jean Delvare <jdelvare@suse.com>, Guenter
+ Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>, Lee Jones
+ <lee@kernel.org>, Marcin Wojtas <marcin.s.wojtas@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-leds@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 3/6] leds: bd2606mvv: use device_for_each_child_node()
+ to access device child nodes
+Message-ID: <20240712230656.67e89eb2@akphone>
+In-Reply-To: <2cd45260-e737-43e9-9bf6-c267d6f86ad3@gmail.com>
+References: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com>
+	<20240706-device_for_each_child_node-available-v1-3-8a3f7615e41c@gmail.com>
+	<20240707175713.4deb559f@jic23-huawei>
+	<4cf71de7-dc47-475c-bba0-a9e755f66d49@gmail.com>
+	<2cd45260-e737-43e9-9bf6-c267d6f86ad3@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.37; aarch64-alpine-linux-musl)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711110235.098009979@infradead.org> <20240711110400.880800153@infradead.org>
-In-Reply-To: <20240711110400.880800153@infradead.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 12 Jul 2024 14:06:08 -0700
-Message-ID: <CAEf4BzZUVe-dQNcb1VQbEcN4kBFOYrFOB537q4Vhtpm_ebL9aQ@mail.gmail.com>
-Subject: Re: [PATCH v2 06/11] perf/uprobe: SRCU-ify uprobe->consumer list
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com, 
-	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-+ bpf@vger, please cc bpf ML for the next revision, these changes are
-very relevant there as well, thanks
+On Mon, 8 Jul 2024 17:45:43 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-On Thu, Jul 11, 2024 at 4:07=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> With handle_swbp() hitting concurrently on (all) CPUs the
-> uprobe->register_rwsem can get very contended. Add an SRCU instance to
-> cover the consumer list and consumer lifetime.
->
-> Since the consumer are externally embedded structures, unregister will
-> have to suffer a synchronize_srcu().
->
-> A notably complication is the UPROBE_HANDLER_REMOVE logic which can
-> race against uprobe_register() such that it might want to remove a
-> freshly installer handler that didn't get called. In order to close
-> this hole, a seqcount is added. With that, the removal path can tell
-> if anything changed and bail out of the removal.
->
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/events/uprobes.c |   60 ++++++++++++++++++++++++++++++++++++++++-=
--------
->  1 file changed, 50 insertions(+), 10 deletions(-)
->
+> On 08/07/2024 10:14, Javier Carrasco wrote:
+> > On 07/07/2024 18:57, Jonathan Cameron wrote:  
+> >> On Sat, 06 Jul 2024 17:23:35 +0200
+> >> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> >>  
+> >>> The iterated nodes are direct children of the device node, and the
+> >>> `device_for_each_child_node()` macro accounts for child node
+> >>> availability.
+> >>>
+> >>> `fwnode_for_each_available_child_node()` is meant to access the
+> >>> child nodes of an fwnode, and therefore not direct child nodes of
+> >>> the device node.
+> >>>
+> >>> Use `device_for_each_child_node()` to indicate device's direct
+> >>> child nodes.
+> >>>
+> >>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
+> >> Why not the scoped variant?
+> >> There look to be two error paths in there which would be
+> >> simplified. 
+> > 
+> > I did not use the scoped variant because "child" is used outside
+> > the loop.
+> > 
+> > On the other hand, I think an fwnode_handle_get() is missing for
+> > every "led_fwnodes[reg] = child" because a simple assignment does
+> > not increment the refcount.
+> > 
+> > After adding fwnode_handle_get(), the scoped variant could be used,
+> > and the call to fwnode_handle_put() would act on led_fwnodes[reg]
+> > instead. 
+> 
+> Actually, the whole trouble comes from doing the processing in two
+> consecutive loops, where the second loop accesses a child node that
+> gets released at the end of the first one. It seems that some code
+> got moved from one loop to a new one between two versions of the
+> patchset.
+> 
+> @Andreas Kemnade: I see that you had a single loop until v4 (the
+> driver got applied with v6), and then you split it into two loops,
+> but I don't see any mention to this modification in the change log.
+> 
+> What was the reason for this modification? Apparently, similar drivers
+> do everything in one loop to avoid such issues.
+> 
+The reason for two loops is that we check in the first loop whether
+broghtness can be individually controlled so we can set max_brightness
+in the second loop. I had the assumption that max_brightness should be
+set before registering leds.
 
-[...]
+Some LEDs share brightness register, in the case where leds are defined
+with a shared register, we revert to on-off.
 
-> @@ -800,7 +808,7 @@ static bool consumer_del(struct uprobe *
->         down_write(&uprobe->consumer_rwsem);
->         for (con =3D &uprobe->consumers; *con; con =3D &(*con)->next) {
->                 if (*con =3D=3D uc) {
-> -                       *con =3D uc->next;
-> +                       WRITE_ONCE(*con, uc->next);
+> Maybe refactoring to have a single loop again (if possible) would be
+> the cleanest solution. Otherwise a get/put mechanism might be
+> necessary.
+> 
+I had no idea how to do it the time I wrote the patch.
 
-I have a dumb and mechanical question.
-
-Above in consumer_add() you are doing WRITE_ONCE() for uc->next
-assignment, but rcu_assign_pointer() for uprobe->consumers. Here, you
-are doing WRITE_ONCE() for the same operation, if it so happens that
-uc =3D=3D *con =3D=3D uprobe->consumers. So is rcu_assign_pointer() necessa=
-ry
-in consumer_addr()? If yes, we should have it here as well, no? And if
-not, why bother with it in consumer_add()?
-
->                         ret =3D true;
->                         break;
->                 }
-> @@ -1139,9 +1147,13 @@ void uprobe_unregister(struct inode *ino
->                 return;
->
->         down_write(&uprobe->register_rwsem);
-> +       raw_write_seqcount_begin(&uprobe->register_seq);
->         __uprobe_unregister(uprobe, uc);
-> +       raw_write_seqcount_end(&uprobe->register_seq);
->         up_write(&uprobe->register_rwsem);
->         put_uprobe(uprobe);
-> +
-> +       synchronize_srcu(&uprobes_srcu);
->  }
->  EXPORT_SYMBOL_GPL(uprobe_unregister);
-
-[...]
+Regards,
+Andreas
 
