@@ -1,159 +1,111 @@
-Return-Path: <linux-kernel+bounces-250402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C04F92F773
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:00:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99F7F92F73F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCB8C1C227CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:00:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8B32B2241A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148A1146D57;
-	Fri, 12 Jul 2024 09:00:19 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D779142645;
+	Fri, 12 Jul 2024 08:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IoIGoh7/"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B7413E02D;
-	Fri, 12 Jul 2024 09:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4269385C56
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720774818; cv=none; b=NZho6i5h34JU0WmUev56Y+rNpMZkdZxd87pvMIW1p6+on5f7Mr/RXUDeh1YQ5H0BRwv+s18/+HoAivzo4i+t8Ac1axaB9YQD4Ceu/W7wjTC13WZgSxfhZbDU5vUCl0y/mINnx3oV9ikt5Kzv5jUDjpUAMAsnOTkee1E1Ug9e+cg=
+	t=1720774386; cv=none; b=Ol3XgxtL1dmTsFo9dlzxFSVUTqsivLuVhcioAG3BtyAZJb6QZI7zxMxKxYgute7m76HSNIOMe38DmVEOF0rgQTqEgFCWUvFnAB7VcoOLW/QQKwusFAaPRvomyyrF66el6/m5wLWvYkK4iT4cnCHjRSgnb5oyfvjLlAtz1h6/XG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720774818; c=relaxed/simple;
-	bh=IUjQuc+xzVDbHxpaTQ8Oy+CrD0FdWfp/rAI9b+8o2Ek=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PF3gMjh0ffLqUpGwJAhH+VNZkRRpXGcULnl3B3aOrhHdz+LiubY/N3QGBvFrVUQpAwDn3uxUubUCKAXoSW2lOtrwJGL5FuO/93AMzvXSLGuHazD9ftYwWsfpoHZWh/tMLGL4iL1/kvxQu882bwnkTzdCwWbzHyEm+8/0RrWP/0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WL55q38Mvz1T68n;
-	Fri, 12 Jul 2024 16:55:27 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 845ED140361;
-	Fri, 12 Jul 2024 17:00:12 +0800 (CST)
-Received: from hulk-vt.huawei.com (10.67.174.26) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 12 Jul 2024 17:00:12 +0800
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-To: <tj@kernel.org>, <josef@toxicpanda.com>, <axboe@kernel.dk>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>
-CC: <cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] blk-cgroup: move congestion_count to struct blkcg
-Date: Fri, 12 Jul 2024 08:51:41 +0000
-Message-ID: <20240712085141.3288708-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720774386; c=relaxed/simple;
+	bh=ERln6ANfm4V3FgCRBQwskodZpiUliJusdGPv9KO0N7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pjjKzc1j0bZx2DxO/xkGQP219Qg72VNEAhgfsEbTz+LSgq1g+Uge2encZT+AQghTkVpefKiLbgJIUMZsbjJY66NlgHN49xl/0iZytZxcm9Bw1Oidm3n6mAZ8sJZLuG8jN0ywitmU2sQc39GhMd9+yUalDx6r9JpZdeVPrqOFyYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IoIGoh7/; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5c46c8b0defso937522eaf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 01:53:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720774384; x=1721379184; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cDeEBNsECTEzDJAMZtRgJ6mOC8T74qNfEAw7Y4fVc5A=;
+        b=IoIGoh7/9qR/U28sWOoNyYDSDmGuZzlLRiiakrJ7QgzTO5YEKhEUPPHyQmwyn7WaES
+         RYPyvRBzliHhXMNA3U25vCCScR8sDSqzIO+DNx/YRaeb5JI1yUZTpiT27thsJWYyLnOm
+         +CjdcsBiTbIo2VWeKzj0LE5NbUyZVxfhhEijJEYhmQqqjLJrhnOtTicJiSpoVdjfOoGs
+         1mS9AZYpzXEN0Zw8gpMHv5GljQ52KPMQGOoj/mzg6mB7kiKVLPMebsHoT8iqD3iq/3aH
+         lmOp9DdGg6P/vDJ+FFEn++sNxeMs/QS25iISzN1oPlbQq5ClNkxfRTsIiZmGl43vEWm+
+         LA9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720774384; x=1721379184;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cDeEBNsECTEzDJAMZtRgJ6mOC8T74qNfEAw7Y4fVc5A=;
+        b=lwa1e1pW8OrDQT0qDEZji3bUbdTJfhQ4LgcjCPs/LsKvaIjc7zjOJ7HyYFTO0LGVRj
+         538+HpMCAQJ5B8aLF55I272xDNvl1T2H4inenHraRB9ze1zhO+ySH96vJ5ouzsgBNpDh
+         ubHRSNwDvlpVl9CIMBqr/pk1LfP12xp16OKacpIHD+CEoMPnX+qi7aVPYjUAssNWhVHc
+         P+D5JjFEek9lBGP/UMvHiRmrAGD5KezgRuIykMCvWx2zziMQ4CX7Qt4sls8fxBR/eKJW
+         dV7cDs+iMRMt18OjsuWkdsRjDqTsyfFURTZS3k8N8n1uYIHC9PCfHaJiYD9kpiJbMD5v
+         f3/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUNs1n/mskWNO6yDOrIbM3J9EFMAcOnJ2qN7/ksF5Bo7rcdLt92Dpf1py7a6pxvHadBmp8RUcKJPIFWGBD1sZkXz3gZblrD3cJz+EJs
+X-Gm-Message-State: AOJu0Yy5ZrAr1JpaUZr3JOkjFJMvWdrOD1o/A9z4LxGcJ8hQtDEoyknJ
+	LpU1yrM0O7QvBzXpBKXRp32G+kiwk3McEznI835m+jK3z85bBwD6fRUEoNqArNoslhFqier54HY
+	t37bURuhz9E+2g0r/OCN5lL7Ex8KFQV6t
+X-Google-Smtp-Source: AGHT+IG7X9ov+Kjt4xcWzka8j4byAJ8l+zRDjVgf1o65CanW/SsCf879lW3a9gyK1alwrR1qViax2w48g1Ky5FqBNmk=
+X-Received: by 2002:a05:6358:c119:b0:1a6:82c6:a429 with SMTP id
+ e5c5f4694b2df-1aade12cd65mr829097455d.31.1720774384104; Fri, 12 Jul 2024
+ 01:53:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+References: <SJ1PR11MB612946A115B182F4C81692EDB9A62@SJ1PR11MB6129.namprd11.prod.outlook.com>
+In-Reply-To: <SJ1PR11MB612946A115B182F4C81692EDB9A62@SJ1PR11MB6129.namprd11.prod.outlook.com>
+From: Lai Jiangshan <jiangshanlai@gmail.com>
+Date: Fri, 12 Jul 2024 16:52:52 +0800
+Message-ID: <CAJhGHyAFn96n8vW4z_cmXLCd4p1HfxQBLR-u81m8HipWRVsJZg@mail.gmail.com>
+Subject: Re: Regression on linux-next (next-20240709)
+To: "Borah, Chaitanya Kumar" <chaitanya.kumar.borah@intel.com>
+Cc: "jiangshan.ljs@antgroup.com" <jiangshan.ljs@antgroup.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Nikula, Jani" <jani.nikula@intel.com>, 
+	"Saarinen, Jani" <jani.saarinen@intel.com>, 
+	"Kurmi, Suresh Kumar" <suresh.kumar.kurmi@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The congestion_count was introduced by commit d09d8df3a294 ("blkcg:
-add generic throttling mechanism"), but since it is closely related
-to the blkio subsys, it is not appropriate to put it in the struct
-cgroup, so move it to struct blkcg.
+Hello
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
-only compiling tested
----
- block/blk-cgroup.c          |  4 +++-
- block/blk-cgroup.h          | 10 ++++++----
- include/linux/cgroup-defs.h |  3 ---
- 3 files changed, 9 insertions(+), 8 deletions(-)
+On Fri, Jul 12, 2024 at 1:42=E2=80=AFPM Borah, Chaitanya Kumar
+> commit 1726a17135905e2d2773f18d47bd4e17dd26e1ed
+> Author: Lai Jiangshan mailto:jiangshan.ljs@antgroup.com
+> Date:   Thu Jul 4 11:49:13 2024 +0800
+>
+>     workqueue: Put PWQ allocation and WQ enlistment in the same lock C.S.
+> `````````````````````````````````````````````````````````````````````````=
+````````````````````````````````
+>
+> We could not revert the patch because of merge conflict but resetting to =
+the parent of the commit seems to fix the issue
+>
+> Could you please check why the patch causes this regression and provide a=
+ fix if necessary?
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 37e6cc91d576..01d3408c2fc6 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -2183,11 +2183,13 @@ void blk_cgroup_bio_start(struct bio *bio)
- bool blk_cgroup_congested(void)
- {
- 	struct cgroup_subsys_state *css;
-+	struct blkcg *blkcg;
- 	bool ret = false;
- 
- 	rcu_read_lock();
- 	for (css = blkcg_css(); css; css = css->parent) {
--		if (atomic_read(&css->cgroup->congestion_count)) {
-+		blkcg = css_to_blkcg(css);
-+		if (atomic_read(&blkcg->congestion_count)) {
- 			ret = true;
- 			break;
- 		}
-diff --git a/block/blk-cgroup.h b/block/blk-cgroup.h
-index bd472a30bc61..16a2fbd4adca 100644
---- a/block/blk-cgroup.h
-+++ b/block/blk-cgroup.h
-@@ -95,6 +95,8 @@ struct blkcg {
- 	struct cgroup_subsys_state	css;
- 	spinlock_t			lock;
- 	refcount_t			online_pin;
-+	/* If there is block congestion on this cgroup. */
-+	atomic_t congestion_count;
- 
- 	struct radix_tree_root		blkg_tree;
- 	struct blkcg_gq	__rcu		*blkg_hint;
-@@ -374,7 +376,7 @@ static inline void blkcg_use_delay(struct blkcg_gq *blkg)
- 	if (WARN_ON_ONCE(atomic_read(&blkg->use_delay) < 0))
- 		return;
- 	if (atomic_add_return(1, &blkg->use_delay) == 1)
--		atomic_inc(&blkg->blkcg->css.cgroup->congestion_count);
-+		atomic_inc(&blkg->blkcg->congestion_count);
- }
- 
- static inline int blkcg_unuse_delay(struct blkcg_gq *blkg)
-@@ -399,7 +401,7 @@ static inline int blkcg_unuse_delay(struct blkcg_gq *blkg)
- 	if (old == 0)
- 		return 0;
- 	if (old == 1)
--		atomic_dec(&blkg->blkcg->css.cgroup->congestion_count);
-+		atomic_dec(&blkg->blkcg->congestion_count);
- 	return 1;
- }
- 
-@@ -418,7 +420,7 @@ static inline void blkcg_set_delay(struct blkcg_gq *blkg, u64 delay)
- 
- 	/* We only want 1 person setting the congestion count for this blkg. */
- 	if (!old && atomic_try_cmpxchg(&blkg->use_delay, &old, -1))
--		atomic_inc(&blkg->blkcg->css.cgroup->congestion_count);
-+		atomic_inc(&blkg->blkcg->congestion_count);
- 
- 	atomic64_set(&blkg->delay_nsec, delay);
- }
-@@ -435,7 +437,7 @@ static inline void blkcg_clear_delay(struct blkcg_gq *blkg)
- 
- 	/* We only want 1 person clearing the congestion count for this blkg. */
- 	if (old && atomic_try_cmpxchg(&blkg->use_delay, &old, 0))
--		atomic_dec(&blkg->blkcg->css.cgroup->congestion_count);
-+		atomic_dec(&blkg->blkcg->congestion_count);
- }
- 
- /**
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index 293af7f8a694..ae04035b6cbe 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -539,9 +539,6 @@ struct cgroup {
- 	/* used to store eBPF programs */
- 	struct cgroup_bpf bpf;
- 
--	/* If there is block congestion on this cgroup. */
--	atomic_t congestion_count;
--
- 	/* Used to store internal freezer state */
- 	struct cgroup_freezer_state freezer;
- 
--- 
-2.34.1
 
+It has been fixed and it is in wq/for-6.11.
+
+https://lore.kernel.org/lkml/ZpASNBN0hpTVcjE-@slm.duckdns.org/
+
+Thanks
+Lai
 
