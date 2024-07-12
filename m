@@ -1,136 +1,88 @@
-Return-Path: <linux-kernel+bounces-250215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C5992F545
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:59:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E85E92F547
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4082F1F22CD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:59:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457DE1C2169C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD1613B58D;
-	Fri, 12 Jul 2024 05:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9D113CFB6;
+	Fri, 12 Jul 2024 06:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="K3OHIhU7"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oWqZaVMy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81CC13A86D;
-	Fri, 12 Jul 2024 05:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A95F17BBE;
+	Fri, 12 Jul 2024 06:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720763933; cv=none; b=Jy8SMwfbPOCQYPsPzT+15GHaoJ0wMRpMOTvQQ/khFnMeb0ujOhrdCAJgLEPbqpYd9+TjsV0h1mKhdDo5By/+0t6Y4BCiqfEHVQzriOlnyx6bEJ76vtMD6cO3ubjZCMEc9X2MaZR28HikmCqtR/OwipQnRAN4iJe3GxtortK0Ivk=
+	t=1720764180; cv=none; b=pIt2N80oLNIBaQ5sQq5e3hqVFIAFwxlNYgtqguC4R5VvuAyF40nBxhL88cBkMKV17Pf/bbQg/K/PmW+7cvj5DHNdAAzjee2btpXUWlyrk8h4iO7X3Vnw9VdsdSZ9YQb0x/GagrXyRW6F9DFelG6pafLXRKMGuMix1wVgPkwH7JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720763933; c=relaxed/simple;
-	bh=lAxaCBrzhRlkFX9SSx0qkLYqR7+Wzdcd6us4sOF/HRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=E5HmVufI1AwUr0C0/kQO597bWfaoGP/8UFCK4FJal4YwzeoQhoRfbDN63nQm1lEEk4hI6eOXA7a5y+dRqE2IY0AP4Qt7zoRC1Ag8i51QhY4LhhcVH/uWh7VY2FJgFm46KScrps8hNRMTgSbdTzpi79GiE+lCpHrccfanQcbpZr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=K3OHIhU7; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720763923;
-	bh=f4oChVHotZcLPWAj4I3MpuIu4/cNsZms0INNC0g2sLk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=K3OHIhU7r17c9GLRQKB8JmdrlrdQTqcHtW+BM0+AMDQWFnXqYIVU0WRZopxoO7GAa
-	 arNBSY7HTcFyOpwMdoqkhX0si5dXWAMr50s0L04mmgi8FAxD5WENuHrq5Cr6VBi0a8
-	 P0CwsYKmfh8y6rabY6cqeR6orNdKRdnOJduY1RKC1c8b64I/Jds04GP+Wxgxvv9wax
-	 q7dHtuc+EvvgBJ6VUPcyyf/VNp0yLuVujL8YjESCrtdeel9m+VT4Ma1rtW2WX2LqYs
-	 ZcEtWWaGwIUJ2oplw0HqVMR9jB04a2g5bB2lp3kFY3K4puxQpe8/j6o89zaRly48WE
-	 mS6s/iMIHj0Xw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WL19t5mDlz4wx5;
-	Fri, 12 Jul 2024 15:58:42 +1000 (AEST)
-Date: Fri, 12 Jul 2024 15:58:42 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Lu Baolu <baolu.lu@linux.intel.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the iommufd tree
-Message-ID: <20240712155842.240a85e3@canb.auug.org.au>
+	s=arc-20240116; t=1720764180; c=relaxed/simple;
+	bh=RsAXgj9MwgndFd4GQNPnkS4lbDaoNLWMLSj6/Z2CJmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=llBdApXejjBw/HWQ2RyH5S1qq/oCvcP8PXqit8pFY9xQnagf6p3GlRePNyCsJ89YEUruFcOKgSzgYIm4JXla5qsmTZYmYiqcQvsjW1XGCDdbqw3xnvoI7Jzc9AmoD7f6RB91EjlYeG8fYHfAsnIcHeBGQHZouz5c7eet725zhVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oWqZaVMy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05BFAC3277B;
+	Fri, 12 Jul 2024 06:02:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720764179;
+	bh=RsAXgj9MwgndFd4GQNPnkS4lbDaoNLWMLSj6/Z2CJmc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oWqZaVMyyZT0ByT2wHTfH3Yak5jgh8ecS4eOJ3cBOPs4+8jIlIQX3CEwsYPQGWxYD
+	 4eBhH0RF4PpG0/6+nPEghQSzGZzBYQMWtAjGmU9wmiiUQ3GO9lIy5pJsjf0+bkP7jA
+	 vF7GcKeDJUohzO3J0bCEl+Y7drbx07vOoUeUrQofboe/BEmygFNAlJaJW8epSv6yuE
+	 jm1WfefO7VIrECJQjkxGjKYdnjAD495HyJ1nugAY6mXYTIOeHa40TglS9Z/OSCiWfB
+	 BTXg9OqNN5Z59l4yEuSwMWaVO8NNAPsn2947UaSvUmLc+31BQ05NmuxBLfKXIaYHmw
+	 A+tpZQQZYMAdw==
+Date: Fri, 12 Jul 2024 09:02:55 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH 2/2] dma: Add IOMMU static calls with clear default ops
+Message-ID: <20240712060255.GF1815706@unreal>
+References: <98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org>
+ <f2b699aea8fff5589a674da2a567fd593ed2d386.1720693745.git.leon@kernel.org>
+ <28309b7f-9809-452f-95fe-3448c15bdf1b@arm.com>
+ <20240712044937.GA4709@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/opC3uHI9ru4P2979A3A73rd";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712044937.GA4709@lst.de>
 
---Sig_/opC3uHI9ru4P2979A3A73rd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 12, 2024 at 06:49:37AM +0200, Christoph Hellwig wrote:
+> On Thu, Jul 11, 2024 at 07:23:20PM +0100, Robin Murphy wrote:
+> > If so, I'd much rather see this done properly, i.e. hook everything up 
+> > similarly to dma-direct and be able to drop CONFIG_DMA_OPS for "modern" 
+> > dma-direct/iommu-dma architectures entirely.
+> 
+> Yes.  That is much better than doing hacks based on missing ops.
 
-Hi all,
+There is nothing wrong to do conversion to iommu direct in the steps.
+The first step is to add the dma-iommu calls with if (!..) checks,
+so everyone will get better performance right now. The second step
+is to remove the if (!..) checks together with dummy ops.
 
-After merging the iommufd tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Thanks
 
-In file included from include/linux/container_of.h:5,
-                 from include/linux/list.h:5,
-                 from include/linux/wait.h:7,
-                 from include/linux/wait_bit.h:8,
-                 from include/linux/fs.h:6,
-                 from drivers/iommu/iommufd/fault.c:7:
-drivers/iommu/iommufd/fault.c: In function 'iommufd_fault_fops_write':
-drivers/iommu/iommufd/fault.c:308:57: error: comparison between 'enum iommu=
-fd_page_response_code' and 'enum iommu_page_response_code' [-Werror=3Denum-=
-compare]
-  308 |                 static_assert(IOMMUFD_PAGE_RESP_SUCCESS =3D=3D
-      |                                                         ^~
-include/linux/build_bug.h:78:56: note: in definition of macro '__static_ass=
-ert'
-   78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-      |                                                        ^~~~
-drivers/iommu/iommufd/fault.c:308:17: note: in expansion of macro 'static_a=
-ssert'
-  308 |                 static_assert(IOMMUFD_PAGE_RESP_SUCCESS =3D=3D
-      |                 ^~~~~~~~~~~~~
-drivers/iommu/iommufd/fault.c:310:57: error: comparison between 'enum iommu=
-fd_page_response_code' and 'enum iommu_page_response_code' [-Werror=3Denum-=
-compare]
-  310 |                 static_assert(IOMMUFD_PAGE_RESP_INVALID =3D=3D
-      |                                                         ^~
-include/linux/build_bug.h:78:56: note: in definition of macro '__static_ass=
-ert'
-   78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-      |                                                        ^~~~
-drivers/iommu/iommufd/fault.c:310:17: note: in expansion of macro 'static_a=
-ssert'
-  310 |                 static_assert(IOMMUFD_PAGE_RESP_INVALID =3D=3D
-      |                 ^~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-
-Caused by commit
-
-  c7a0991733cc ("iommufd: Add check on user response code")
-
-I have used the iommufd tree from next-20240711 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/opC3uHI9ru4P2979A3A73rd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQxhIACgkQAVBC80lX
-0GyKTQf/UBP3aXqEV6Tz1KZHVO/yT9juZ2zy9vXD/3jYno0s5fs+x3jNWefStPrN
-toZRHc6524FvkwqHBdLIG4DPp3X7lHSa8sg3tdG9cDLdKOpx2hTvoYx4fXW8G+e4
-vNQ3H/GBO10Q3wpg7M0z0/lIzsLBvJhfrmQoeW0EAtMg+SKOGjOfUOjwg5a9kXwy
-DX7lD77eSJJouZX1JqnAWkxPpgQPK2+4PemV9EJA1Iz78RUZp1PMpWVWhbCVsCEc
-cAQA0UcSzpXns9VWGBjwDidwyVGbiAplmfiWIDZawDbb7sCQ03Yn1nPvz8dsSOTs
-a8bcljiY5biMLwkejtaf/9j0jWbwoA==
-=VInl
------END PGP SIGNATURE-----
-
---Sig_/opC3uHI9ru4P2979A3A73rd--
+> 
+> Note that the media subsystems just added another abuse of dma_map_ops
+> in drivers/ in addition to the existing vdpa one that we'll need to
+> kill again to fully get rid of dma_map_ops for common setups (in
+> addition to merging swiotlb-xen into main swiotlb finally).
+> 
 
