@@ -1,168 +1,142 @@
-Return-Path: <linux-kernel+bounces-250724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C8192FBE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF3D92FBEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:55:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFC76B21399
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:55:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEF35B210F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2166171644;
-	Fri, 12 Jul 2024 13:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hIN9X43K"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012020.outbound.protection.outlook.com [52.101.66.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD50C17164B;
+	Fri, 12 Jul 2024 13:55:12 +0000 (UTC)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F406916CD12;
-	Fri, 12 Jul 2024 13:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720792496; cv=fail; b=B4rBcenRTg0v5Mo6rsWbSxE4TeV4Tz1wVz6kWZ3gHSLlZ92o9MqbAlidT3Sb+euWL0UktxchktNqTrT2RNFKsjl59cdAcWNK09sPNCnMx0ZDoBkLGP4L2ZEaZoSUViY/13nWIJvuCAOzB3cPm6wGcJ9Y2hj0eo0EolBKoUy7tJA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720792496; c=relaxed/simple;
-	bh=uA93U13abOwRgVBWi28hQt24i7nIxMAGd4fIOa1nlXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=a8tS/6fUj8asTRWv+0gYBikGNvkhvG4PAypjmp/8o0VmsBHIWlBynHofSx1Xl4bhyOUvjX/NkUEc7zq0YguyLiUKZuGIjH8lWzkjVu34nQ4kiIdvzowVvHQJyiXEXd5m3u4uIQguVHEUW8z1a1q2IWdp9E0rgMb9EoAk990tlCo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=hIN9X43K; arc=fail smtp.client-ip=52.101.66.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=elaw1KlUak/PTzQg3KlU2S/uw3qX+LNStGJwlhpZG8smToMBDyrvd0AkU3Brae9Zr9t427OmCpzR3r14wwFGhtQxwe+HVdhVstTOez6Sd2x06fD7RqdVO6iKeyMrpa5HdssqkyhqtlDAFkVEnYQBnBeZreTy80BfYdpFDbvGyI5+4sMm43A2uNTw+PZ5dhdg4aYLQTcT72ELVkgZC1vTKNwubOmBBwGy2JIEuhB3FtebAIL+4kXmSZqi5yVTr3ujMFRx1wr3O2PQXoABHITx5mnpPaIrNSf9K15mBQFBea4BJBV8HKN9+FHyCf6+HO7VNqXxeaKBvHzF38GcFc91Pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BZQZMH/E+U+68F159rDS7TlLRCOciTMRaAR9pEwIJc4=;
- b=YjTCBGtKPi2+dJPre7EJb156GJYctef/dVJr+bYCJJGAgrSP7wlw71VFoq9edUuQF7HWvqImTiYLSG7Rmc2Dg/U476kc6pUaLf2NdrIE2/fqvcBkSvh5pP8OlmPCgbmky2lSaQXn8VdEYuMJyEU7KTTDachTZWsG4KM65BhhlFpy8W+hXcduaTgbh0U6R+vKb4uuL/5LkDtZCYUOMUsmcABj2DDD2DBc65uyPY4U9nAMowa+VcwfeTl0dIVqRoCfIYdvT3OlF8w49sUZTsn2jra7MOBGJgkQUHztGiwOh/Uw9vfXpYZIWKBg3aywuVU9Jvg/FV5Z+xy5EUkwL5cHKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BZQZMH/E+U+68F159rDS7TlLRCOciTMRaAR9pEwIJc4=;
- b=hIN9X43K3O1IxAnm/B72VvyR2RzLVa4cSBOsic/sQuRHFlusiF+vubHEG/fxFxDCAgn7hC5S/cFsqxF7W74AteAb9WSU5iZZGh+ipVlvx0B55Iy1AHQq9T1Dcqae2rhjwgmmmXxQMagxSEYr88mb3yIW0nB6JqkXI4zFyj5rptk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB7PR04MB4555.eurprd04.prod.outlook.com (2603:10a6:5:33::26) by
- AS4PR04MB9689.eurprd04.prod.outlook.com (2603:10a6:20b:4fc::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.36; Fri, 12 Jul 2024 13:54:51 +0000
-Received: from DB7PR04MB4555.eurprd04.prod.outlook.com
- ([fe80::86ff:def:c14a:a72a]) by DB7PR04MB4555.eurprd04.prod.outlook.com
- ([fe80::86ff:def:c14a:a72a%4]) with mapi id 15.20.7741.017; Fri, 12 Jul 2024
- 13:54:51 +0000
-Date: Fri, 12 Jul 2024 16:54:48 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Madalin Bucur <madalin.bucur@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	leit@meta.com,
-	"open list:FREESCALE QORIQ DPAA ETHERNET DRIVER" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] net: dpaa: Fix compilation Warning
-Message-ID: <20240712135448.6sxgevfu7hwgkve3@skbuf>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712134817.913756-1-leitao@debian.org>
-X-ClientProxiedBy: VE1PR08CA0001.eurprd08.prod.outlook.com
- (2603:10a6:803:104::14) To DB7PR04MB4555.eurprd04.prod.outlook.com
- (2603:10a6:5:33::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B59171E66;
+	Fri, 12 Jul 2024 13:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720792512; cv=none; b=suUE8rnjF3Ll0w8PLt/OCxVasFG8nu4a95I83cEzQ2vfXc697kivpvrtyh62dXH/HQLiyKKnfbr7+itaHlFp/hFHPwcKGy4cuh5XJh3Hwg2E5xQ/C0szhMjdPhtVM51B8dV6ZBELcAUDtyvWhEPu+5GlZmIU2Wa5az608+6eW0E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720792512; c=relaxed/simple;
+	bh=PG7WDG2wxP6E4zUX9w3RjCYf8TYepGOJj7vXvWmU9zk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cZNKL5fS4udFglMIKKUB1glPZSwOIXookq+gv5yT5w8JBb2eiTkHhLu+iCeXbmpxu/4juxU5Uvs1j2Or3s/5//wX3IZpwIMDVxWeIFeEQkg2C22CGLFyTx4z4S5kEmmbl7I26EPPO6FBD6z3QFpofjDvwUSPgoMg9TxsPS5HyBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-651da7c1531so19825387b3.0;
+        Fri, 12 Jul 2024 06:55:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720792507; x=1721397307;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=66ZxvuflQ1CFAf8nLezfYlKzbT94Oozorkv5Eix20iA=;
+        b=Jho4WBH+1ZJq8L0X1xykC0sIJ9uz3mhsOe2dwNRivYno71uAI0lmEGksMtVe457aFw
+         yj49DaGr1cxdVoPzwBvhPSYIVm0nUXZ/4FTxyD2azXgneAN3v9DclnhPPrFnFLB6iZ5v
+         OGFTFugPP+ArtxJAi07483Z7gg0W6RelrI+4rUnIDKPWNKNoBTdXtSvukNmUjyG+n/Nt
+         AsKs8MlQBoexgkULiY8POo/n5jvZF3/0B6vHBuogCvB4bwCIDorCRBho991MLBNixXbt
+         wcu7MzE77DiDQPi1xzu0lyVtxmRcu6LSxFxcb9zM6WpWK7S3ja3ydSifmAaw8PF2LK0f
+         578g==
+X-Forwarded-Encrypted: i=1; AJvYcCWRIus5vYtqoG/Uag2dSUcXyE3OVdY0vIbtiXgBsy5iKCgrBOCRkwFC8HCenrXU5gFi9fZC6U50hUx2cDW7/xnqWMlPJRas7WswJXmD5vIDN7/V1s3BYdlm9j6oq+b997Hd2bmE9K+dVuuiTjcoJgAVu+ZbC7wTo89oNvBCwZTXU7MX/VRpe7e+nSM=
+X-Gm-Message-State: AOJu0YwMtUsCxlqVq4hGacc7SPozY4sZvBZ/zJBO/0Pyz/0ng5xHm6N9
+	t1hRuQyyuOBkCE5TAgM0imSUrf/NfHaQDqeIozfhzEUmfCItIUGyJunxFBu9
+X-Google-Smtp-Source: AGHT+IGlpMZ4Bh2/+PjLddF/OgtvWciafZOaq/PuNY40RMa1Y8XZBmGVRjK412QkLzARZdMakpvZzw==
+X-Received: by 2002:a81:8a84:0:b0:648:2c60:fdee with SMTP id 00721157ae682-658f0bc6201mr114554107b3.38.1720792507472;
+        Fri, 12 Jul 2024 06:55:07 -0700 (PDT)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e521c7bcsm14706647b3.65.2024.07.12.06.55.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 06:55:07 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e03a581276eso1850321276.2;
+        Fri, 12 Jul 2024 06:55:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVp+rs2cuTf1yUBSBZlkLGyQzuj8EVY11psplgqPcwlcP0vKkIL6lz4cyrRaIoSiOKPNVcygngaEvGQYPlIvfUBgdG1clryrnuy2WLHUyOHelkKa8fYAjmzVR6ur7Ejd1tAe4pR8UuP1WJZQSZ5yljgd7JQV4qA38vuU/swIeMZC3g3dzPwIezx75Q=
+X-Received: by 2002:a25:c787:0:b0:e03:606b:ad2b with SMTP id
+ 3f1490d57ef6-e041b15aae9mr13588579276.57.1720792506677; Fri, 12 Jul 2024
+ 06:55:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB7PR04MB4555:EE_|AS4PR04MB9689:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7b71c578-a111-4ef8-4329-08dca27a3371
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WiADx88k/7VTU0kp73Ev9M+4ULBC7aSsX5WxYbkRuOYtUBR81tvTeHK+fjy7?=
- =?us-ascii?Q?fYxhpvsDI2rcAM5EiVfhAYsVQExnrUcm+/H6KFizvE8YieK3iWehWGOV/Qwy?=
- =?us-ascii?Q?T4PC1a0bdJWJN1zijunqNKZ4AmKBVKe5499gApfoAocLpPL5Y0dhWgOQUm/F?=
- =?us-ascii?Q?/5kb9qjp0b/kfRc4gXvP33zD7e8d7EcA63YRU2ILzcPfn3QiW2xEHfXzAXC8?=
- =?us-ascii?Q?Vu+ORfScjxZH9n1/yOX7GuN6TNsrIgd7MJBpByTxaGPcRFF6eHfVNogOgwGz?=
- =?us-ascii?Q?6fqf8+EAue990geDC4l0jWOSnbEMg0mBmBct4YLUZVsmcOS0poTxGCWwZOOs?=
- =?us-ascii?Q?AzxAwit56pprmBPrtp7Wodz80dM6VWtu9kpoNPcNLE0dZjl4ceaODT+ZUVgn?=
- =?us-ascii?Q?rUvlJ7JR62n0NAyGTHkmDIH/xQ/n8QU7vXvjX8FgV+JbVEV+qBuSv0Xqk+D1?=
- =?us-ascii?Q?nTXSr/Vlye2k4pRxJ2BZgubN2JisOJTPcbdFk3uzqJRwizdwM4HmAmh2Cxrx?=
- =?us-ascii?Q?5DqRVhWM8V4Sbj1kjj7tp+4vPigatjIe6S0ae04UKjd7NsVnAq91ODOU++RI?=
- =?us-ascii?Q?SFTylTec9jjfwpV51YDV93XA455Dk3xFZKl36Hp1j4L7TjmZgB9SkSJNLxvK?=
- =?us-ascii?Q?w5w6DOO7XCZEj4wKWO1ugknF//yA/4kvTjb5b5G5MJ3q1HRLO3GJd8szyzdX?=
- =?us-ascii?Q?zJ0za9WbBlWs9xzSZm+2l176M7G5R3OKCRyREJRppK8mh4wifFKePGv6zts9?=
- =?us-ascii?Q?k2NdZsE/O18FR1QmSVkMYQq1zwonjB4110+2yGMEreBlzhUWX6qU6lJ34/Ku?=
- =?us-ascii?Q?6woJwpEHbWBLGHFs4NX4MuMKdDL259kB1D09su+xD13MmlGv4YXN/rNT2UtH?=
- =?us-ascii?Q?hFh+vuvL26DspkJOdPpvSc0TuCRbtsoSQ+LulTKsasveuFEg/MsxOESuc7Zk?=
- =?us-ascii?Q?sdMdbYZgXDemQiZWjmtO5pWfJEwihrp92m+9XgN8jx3Q1e8sDqUy+/MDoTuG?=
- =?us-ascii?Q?Qr3Fz7YMAFgfRarjTKj6doecEm2a+GMzrgJp9+75NUp60xVgy+jMzzZOiWuP?=
- =?us-ascii?Q?h3lKQSP5b4IQVU2Da5giOyvgNoU1uPXjHHXIVumXrXxsLyEygTQnju6FMwLQ?=
- =?us-ascii?Q?dumMWcTwgQqq264VvT1EMj1g2X3HZZTH+hTODq5DB+OC14ipnPcOuO9YL26k?=
- =?us-ascii?Q?YsXSmWfoBXzSk6YDZDKMX9teStsYHJFecrpAXp0eZPXIR1mnwubTopYchMqx?=
- =?us-ascii?Q?R3pLTxO0MUHz5+IEjINkQwFs2NLJVFgAvOWd68sQuqEOW+s4t/t6Nuea/vXU?=
- =?us-ascii?Q?ua8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR04MB4555.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?cbstIaxErW5SC9quCTOc/PfXzXObgcQ1/qnaVYRIJ4UzDAljjmf75R30rj2y?=
- =?us-ascii?Q?pFoopqwFCkhmgbE3ju11B1QuUXVhObmQVwCNf0v5YNdiyJPEjA3pzHOt9SQh?=
- =?us-ascii?Q?ed1aLlEOYriLxA3j4wSDbfiekt6Edma4PAKxZghX/TN02mzdxGzFWIFty71E?=
- =?us-ascii?Q?po+7Sq2M6gwobQxFrxB7Hdy/WNWr87+GNzcC3iq+AEYk2/lyxL02D4REPqqS?=
- =?us-ascii?Q?ohSEwHObHZ0wxqSJjcuy+eCk1yzlTMXV0T/a6AkyutXQurKj5nWJH/0Sa4e6?=
- =?us-ascii?Q?fG8DeGHzOlJyBAywzjTAnUWRGSZlRi1tzRrJ2RWhXtVTk3SrIWByIugvPXWG?=
- =?us-ascii?Q?wPOn1R+efTfYHAr+E8br65M2IHzgG7dj26Z/jXd+NP2wLW/lb2ME3HemVPlb?=
- =?us-ascii?Q?J3eU1vHWRodMJJp8qcc70GmYMd1FVjdKss0om9EhEwF0LkdopXsQdt8TsXIj?=
- =?us-ascii?Q?hU2XMCF9Ui6tfeK0Q/jzwOagFGmJ0UCsRXrb+DhtYwdOqBY+qjKQGXJsbSxd?=
- =?us-ascii?Q?2yxWPOxfuzgGSuhWgZ50vGW6VMIElxYZfSj2ltR6G4PMvP8eDNIlf2HBLmHb?=
- =?us-ascii?Q?2YJwwx1uJaVO+t8XQG6Bkpaf3QvOSzz1GTBWM7h0zsPvh6GKcNE2pyT/48+l?=
- =?us-ascii?Q?7i+C/alS/xC1uTBjNg9d9sMr1HSfgRmAsVcU2WSDhKAOLI/Wwivz0l+Hu09c?=
- =?us-ascii?Q?myB9NYlMf+RL64Sh0D2GDdBJD/T6CgBFj8HUOBaY37Fq+Ny561zU13r1+VZI?=
- =?us-ascii?Q?bB0h41FBLQRbIIu0HMTc38A1mlCaBEg1YVzXmiYX2lxLpDl2/ZGQabNZKf2Z?=
- =?us-ascii?Q?XN8YjFZveTxVkgz2ar2t6YdDdsbKOPBqLod3CWEb0dJcP5w3DgAqpslfZF2h?=
- =?us-ascii?Q?I2B9s4n6Q7rogvJ6DJ9HoqLGUFh5AXUYdhs1/n7VqQH8K+slOUc8F7WonqxB?=
- =?us-ascii?Q?BLgNk+cE4nQkWLq0SMwIrLcAPAyys7qNg9PR633WZFA4wMHJGxqFnJGcEsCv?=
- =?us-ascii?Q?ltVvMMOoUA2NEc9oMbhrtnu3KOlILZflnXgYnrIMo97leTJgMqlB3DoqQISp?=
- =?us-ascii?Q?cBr78mXfgkeCfeOAprkpCYIY/IMvE/CeYZhd/TmwtDrh1iMYr1nCEUl1eyFk?=
- =?us-ascii?Q?f+V5EJ9QJWViyXQ2VX8YHjsCd3+DN4B9zk+Tr3vAvb0+RRad5sYcU8cNQ14U?=
- =?us-ascii?Q?cBiDUyeMnkTh+eIkc+Vp57f+M2iFoLnOPpxKWZDGSXYECvtNZjwRfJqynPH+?=
- =?us-ascii?Q?l2K/Gxt4WnrmlHEAsYQrbIiPUbCE4M9MdEISw7egqbNHIDQItu2bDjWkp7/g?=
- =?us-ascii?Q?7rxEz+9RxeLS/NptY2qi6/84eeNaDun8R7pu9g0vz4bKTtBbZR7bPgOCo5E+?=
- =?us-ascii?Q?E6Rq8aJepISww5H0gyJW2GKQIPxWJaSdl++RfMCXrCRbbmk6oEwPBOkgNll4?=
- =?us-ascii?Q?sEZJ2ixa8RsP8j+5I4vMfxfmgazlCBMnqZPnVp7t+OOFIUe4sRJWoONoyvQ3?=
- =?us-ascii?Q?JbiISFCzhDVZSIer/QdNl/Bg2a/gbRnBoCEAj7mEN5e77BETjgwKy6eIgJvD?=
- =?us-ascii?Q?pYhsQGQ2y6sz2tPEtiQv0oWXIqnhzUwDsCQctMksCXtotPPnYQHItHy/HSYV?=
- =?us-ascii?Q?Kw=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b71c578-a111-4ef8-4329-08dca27a3371
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR04MB4555.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 13:54:51.5858
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t3+MywDOVCJb+2u3LILxKhQG9rG37JNqJo2iaH42F9Hz1QMORZoxKw/C4+KYaLfh3jT/knRvAqjQs5VGgZjDeA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9689
+References: <20240628131021.177866-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240628131021.177866-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240628131021.177866-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 Jul 2024 15:54:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVd2k7WsPU9htW1LmDrjOgoQ1C8J=8i7ZAs7LS5XYBCXQ@mail.gmail.com>
+Message-ID: <CAMuHMdVd2k7WsPU9htW1LmDrjOgoQ1C8J=8i7ZAs7LS5XYBCXQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: renesas: rzg2l-cpg: Use devres API to register clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 12, 2024 at 06:48:16AM -0700, Breno Leitao wrote:
-> Remove variables that are defined and incremented but never read.
-> This issue appeared in network tests[1] as:
-> 
-> 	drivers/net/ethernet/freescale/dpaa/dpaa_eth_sysfs.c:38:6: warning: variable 'i' set but not used [-Wunused-but-set-variable]
-> 	38 |         int i = 0;
-> 	   |             ^
-> 
-> Link: https://netdev.bots.linux.dev/static/nipa/870263/13729811/build_clang/stderr [1]
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
+Hi Prabhakar,
 
-Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+On Fri, Jun 28, 2024 at 3:11=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> We are using devres APIs for divider, mux and pll5 clocks so for
+> consistency use the devres APIs for module and PLL clocks.
+>
+> While at it switched to clk_hw_register() instead of clk_register()
+> as this has been marked as deprecated interface.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -1023,6 +1023,7 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_cl=
+k *core,
+>         struct clk_init_data init;
+>         const char *parent_name;
+>         struct pll_clk *pll_clk;
+> +       int ret;
+>
+>         parent =3D clks[core->parent & 0xffff];
+>         if (IS_ERR(parent))
+> @@ -1045,7 +1046,11 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_c=
+lk *core,
+>         pll_clk->priv =3D priv;
+>         pll_clk->type =3D core->type;
+>
+> -       return clk_register(NULL, &pll_clk->hw);
+> +       ret =3D devm_clk_hw_register(dev, &pll_clk->hw);
+> +       if (ret)
+> +               return NULL;
+
+rzg2l_cpg_pll_clk_register() can return an ERR_PTR, so please
+propagate the error code.
+
+> +
+> +       return pll_clk->hw.clk;
+>  }
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
