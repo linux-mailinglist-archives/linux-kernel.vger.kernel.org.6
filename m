@@ -1,145 +1,95 @@
-Return-Path: <linux-kernel+bounces-251149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E5F930131
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:03:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B004930136
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DF8D1C2272C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:03:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D771F22716
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331433CF58;
-	Fri, 12 Jul 2024 20:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZGDt0YzQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFC53C6BA;
+	Fri, 12 Jul 2024 20:13:14 +0000 (UTC)
+Received: from relay162.nicmail.ru (relay162.nicmail.ru [91.189.117.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34D22C6B7
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 20:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC06BE46;
+	Fri, 12 Jul 2024 20:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.189.117.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720814576; cv=none; b=Wbm/VQRdzwto2Fz9ceRY9MthUl+92+21gUx9fmmnHgu2GZ+J6/tIAX5ccl2vWb9A72uLE5Cs4OdfMlDSfjzy+WA9rVb1w2qnWBKSIdOqZDfkpHx7GrFfMQhcHYU0CgH4s3EpCzNtrUxs1F76ELI6CRSH4ZTGlS49fWOwdUTUhNY=
+	t=1720815194; cv=none; b=bfZGytA5rWJ8sKaIKAZfohum3pKgoe/qIdeGH/bODC5EIJDZgAZ450u4JM1nqVqNtse1Y/ASUsAJbrBEOG1wb+0brZ1FaNdFW/GvnWKslvmFJtlzaIdjJRC4Ojg4qljWBQf63PFd7XN0Z6Dbf47MZ3Fiuw/+oc+JAx80jEEt29c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720814576; c=relaxed/simple;
-	bh=1zUPhysoViSxlYcRngclA3bOaQJucOi1Pj/v9a+PX74=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Disposition; b=MkvL3Rxts+pdDclXBScqtZELtAryF/JZIFaIxYUokn6z8GLCkTkDHEv787gt1Vl07CjHV8PVCgl3kDtS65pZ3gy1ECxSUFC/XKCdNIxkgRQukHc+bbmRxfb1pDHHt0Dz+V81QxCCxE+rGUpq7jeZDjbpVDuQBggCTmEVkG1Jyc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZGDt0YzQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720814573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WALHv74WV2cVjzZCL39eKCy6GimLkLb+2S99yNQNkn0=;
-	b=ZGDt0YzQ7yBDe6FQzeSmt5qDS6ByfGKhz9KbZY91uby0W2w63mksgM00Msa4VWWW8df+N9
-	csWWvZ/UwA3c8ZCw737HsFCAqq03mjQHqqCEAiMZOeQj1JFyC9HicjN2zKWdHNTfw+nAdI
-	KCGZFVS7Q3HABV+6q7tgg+RChkx3H3Q=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-37-dRU8d-8vPLmYRmMmrN_f4w-1; Fri, 12 Jul 2024 16:02:52 -0400
-X-MC-Unique: dRU8d-8vPLmYRmMmrN_f4w-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-70b2793d2ffso2206963b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 13:02:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720814571; x=1721419371;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WALHv74WV2cVjzZCL39eKCy6GimLkLb+2S99yNQNkn0=;
-        b=k9kndivRH8jT8mlGebATnf4WShkI9YMBmmfzoWPLMsZaXVIp77Suisjs4a9J/d9csD
-         mo5XIB7tCr21M8k2duvUFtEFuNoxnTFm3SvCUThean9tFfpDG36Zh5OOmtqPz3MeUlU+
-         BhLOEd9htMHKrs38g8HsV/Ml7y8HMQ/o4VeUfsORhwhYIVcX+PUu0U8T2ROKp0Z3nPXC
-         bPo3ZZvC7ps53/t9IcHqG3GX1VzlX7JGtC4dXteW0Rn3zjALinwHpA0IC8WsrRQptgN3
-         BRUNtIyina0o9Q8LUKsJ3iEh1p6Q3jOf6wYllf0JtgQXcMs05NLELoE+XQpLRHWvJt2g
-         t4Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPPN1QGWujDG2W2hx/rp5FwWJhI3ymcFbfQRC+sO6+a494VJL5NYZLsq7mZ4fzH8aYKMu8wrVhnzB5I3cbg7e4i3E11V6/WkVIuWw/
-X-Gm-Message-State: AOJu0YzeRNEc3c2+8DJ66ADP96IVgqDxmlNOOFL6aP7QExuSy+c8dvvQ
-	QGBjZmFiEntW4yNpbxFjZw82+0CBXOyzqk+qjcj83MLmQVe2OXccIZDuK+tOK8UnjpM9l9flZdg
-	hJ3oxRkHZGbXI4XOAs18d2FzyZtE3BE6D9NKU88+NB1O3k4smzlWgKhVBoD81rQ==
-X-Received: by 2002:a05:6a00:3e25:b0:705:9fc7:9133 with SMTP id d2e1a72fcca58-70b435e7ee2mr15391780b3a.23.1720814571359;
-        Fri, 12 Jul 2024 13:02:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNmlk9BsIdDCqjINYXL5lLBoE++woDa8pnC7jaIuaU38uh72LjbkqaARCHNWnS5/S8BJKC3A==
-X-Received: by 2002:a05:6a00:3e25:b0:705:9fc7:9133 with SMTP id d2e1a72fcca58-70b435e7ee2mr15391739b3a.23.1720814570900;
-        Fri, 12 Jul 2024 13:02:50 -0700 (PDT)
-Received: from localhost.localdomain ([2804:1b3:a802:5d71:55fb:289:f049:5d12])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43967791sm7901658b3a.118.2024.07.12.13.02.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 13:02:50 -0700 (PDT)
-From: Leonardo Bras <leobras@redhat.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Leonardo Bras <leobras@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Leonardo Bras <leobras.c@gmail.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
+	s=arc-20240116; t=1720815194; c=relaxed/simple;
+	bh=tw55h07OSfjQ937dzNTNMQpm5DrEVMeQv1t95oTNcU4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JW/nNNWebJ6Bt9WWlIQnPfeGViuCKaL1aL30VwfZzqsDTSuAZZCe9a5B7cMzJjuwbCw897TRy3s2lNrAR+ZRG/wphMYSpUJRPpxYBIq+NYziaPhPtTRrOyGJ7wQnBmkZ0Ovx83lHRWPAotV2psjwiN81PpNwme3FJbkO/tgm7xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru; spf=pass smtp.mailfrom=ancud.ru; arc=none smtp.client-ip=91.189.117.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ancud.ru
+Received: from [10.28.138.152] (port=29428 helo=mitx-gfx..)
+	by relay.hosting.mail.nic.ru with esmtp (Exim 5.55)
+	(envelope-from <kiryushin@ancud.ru>)
+	id 1sSMdZ-00080c-9f;
+	Fri, 12 Jul 2024 23:13:02 +0300
+Received: from [87.245.155.195] (account kiryushin@ancud.ru HELO mitx-gfx..)
+	by incarp1104.mail.hosting.nic.ru (Exim 5.55)
+	with id 1sSMdZ-00FWm2-2q;
+	Fri, 12 Jul 2024 23:13:01 +0300
+From: Nikita Kiryushin <kiryushin@ancud.ru>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Nikita Kiryushin <kiryushin@ancud.ru>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
-Date: Fri, 12 Jul 2024 17:02:30 -0300
-Message-ID: <ZpGL1rEHNild9CG5@LeoBras>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <f06ef91d-7f8c-4f69-8535-fee372766a7f@redhat.com>
-References: <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com> <68c39823-6b1d-4368-bd1e-a521ade8889b@paulmck-laptop> <ZkQ97QcEw34aYOB1@LeoBras> <17ebd54d-a058-4bc8-bd65-a175d73b6d1a@paulmck-laptop> <ZnPUTGSdF7t0DCwR@LeoBras> <ec8088fa-0312-4e98-9e0e-ba9a60106d58@paulmck-laptop> <ZnosF0tqZF72XARQ@LeoBras> <ZnosnIHh3b2vbXgX@LeoBras> <Zo8WuwOBSeAcHMp9@LeoBras> <f06ef91d-7f8c-4f69-8535-fee372766a7f@redhat.com>
+	linux-trace-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] tracing: remove unreachable trace_array_put
+Date: Fri, 12 Jul 2024 23:12:58 +0300
+Message-Id: <20240712201258.99070-1-kiryushin@ancud.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+X-MS-Exchange-Organization-SCL: -1
 
-On Fri, Jul 12, 2024 at 05:57:10PM +0200, Paolo Bonzini wrote:
-> On 7/11/24 01:18, Leonardo Bras wrote:
-> > What are your thoughts on above results?
-> > Anything you would suggest changing?
-> 
+There is a trace_array_put() in check result for
+nonseekable_open() in tracing_buffers_open(). However,
+it would be never executed as nonseekable_open never fails
+(by design).
 
-Hello Paolo, thanks for the feedback!
+Remove the check and associated unreachable code.
 
-> Can you run the test with a conditional on "!tick_nohz_full_cpu(vcpu->cpu)"?
-> 
-> If your hunch is correct that nohz-full CPUs already avoid invoke_rcu_core()
-> you might get the best of both worlds.
-> 
-> tick_nohz_full_cpu() is very fast when there is no nohz-full CPU, because
-> then it shortcuts on context_tracking_enabled() (which is just a static
-> key).
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-But that would mean not noting an RCU quiescent state in guest_exit of 
-nohz_full cpus, right?
+Fixes: 7b85af630348 ("tracing: Get trace_array ref counts when accessing trace files")
+Signed-off-by: Nikita Kiryushin <kiryushin@ancud.ru>
+---
+ kernel/trace/trace.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-The original issue we were dealing was having invoke_rcu_core() running on 
-nohz_full cpus, and messing up the latency of RT workloads inside the VM.
-
-While most of the invoke_rcu_core() get ignored by the nohz_full rule, 
-there are some scenarios in which it the vcpu thread may take more than 1s 
-between a guest_entry and the next one (VM busy), and those which did 
-not get ignored have caused latency peaks in our tests.
-
-The main idea of this patch is to note RCU quiescent states on guest_exit 
-at nohz_full cpus (and use rcu.patience) to avoid running invoke_rcu_core()
-between a guest_exit and the next guest_entry if it takes less than 
-rcu.patience miliseconds between exit and entry, and thus avoiding the 
-latency increase.
-
-What I tried to prove above is that it also improves non-Isolated cores as 
-well, since rcu_core will not be running as often, saving cpu cycles that 
-can be used by the VM.
-
-
-What are your thoughts on that?
-
-Thanks!
-Leo
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 578a49ff5c32..7e480501b509 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -7883,11 +7883,7 @@ static int tracing_buffers_open(struct inode *inode, struct file *filp)
+ 
+ 	mutex_unlock(&trace_types_lock);
+ 
+-	ret = nonseekable_open(inode, filp);
+-	if (ret < 0)
+-		trace_array_put(tr);
+-
+-	return ret;
++	return nonseekable_open(inode, filp);
+ }
+ 
+ static __poll_t
+-- 
+2.34.1
 
 
