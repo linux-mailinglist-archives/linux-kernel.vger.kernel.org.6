@@ -1,95 +1,59 @@
-Return-Path: <linux-kernel+bounces-250397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34C7F92F756
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:55:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCF7F92F754
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCF83283E6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:55:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 072CF1C21E40
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9967914F135;
-	Fri, 12 Jul 2024 08:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA90014D2B2;
+	Fri, 12 Jul 2024 08:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GKVzHXLp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lzNWrdPF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF1A143C6B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F3F13E41A
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720774492; cv=none; b=NBrkFb6r47hBkKZiXN/Yy8Mr5YH1g3lDi+6jJHr1UCgyb0NLFSB5toSUisD/u846y5by8NxtAVBE+YLBcVadvERnRsOQdKfxATdjWgbZ4yXvCPSVum8bfS4q6BSM4G/GbdhcThGxpcbKwEYPKRVAMpj3H0nbviNIyqTd4IepGiA=
+	t=1720774485; cv=none; b=qZzQDb4WW0yjkN/axYob+rz178XTG9i3f7BmlWrKalqWQ/Zo0PGGt99Cf1HlFPONCbvT+yRF89Z6zF46W6Y8IzHkN0ErMcLzlBmNxzCEZREgMVzTt0f3bB1F0ZBf7o+RW0e89BW2oW8+V/B7UfYx4cTctDa5hqs+Zq9pf3+dNno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720774492; c=relaxed/simple;
-	bh=xCYPR3PI6bxPO/fQptRxI7tJvEMtvWLt8trPp7HUf7k=;
+	s=arc-20240116; t=1720774485; c=relaxed/simple;
+	bh=KBF1tbOWGnT1tf80E0eOFPpWPxkx+z9V0AzaHMrmLKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SYWCmG3yF9IQ0EYT1X+ymiuLaM8yH7aj7efG51NDtBZGs02RKL4CUs/k+SePTwWoVvrB356RLTZgs0bspXoDPJ5Tgm4dSCDA4f7txhb8kGhMTQW0bXxVuF6Jzbsaz/DRezw8mfeyXGone1aQGTIfknz7lwjpGK/pUdZROgPtLVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GKVzHXLp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720774489;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YGUwzKz1FC7XKNssvzh/Aj+HVOd49bkbQ0nivkkXFmg=;
-	b=GKVzHXLpcM1ziU5NbEeYl3y7/uzxpz2jU7aJY0BXFKFtDaqx13OOQuxQI3L9JgbCi2/pD0
-	HwrYlHEXbIORFlIB+dQdRNEJTzmEIJ4SY0RP3GX7kFClpCtmuLJLbrUroqdHi/4udA8FHv
-	jgpBmqzVhO8sWPREMKEVdSY+slXj+2M=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-609-kJKUVUC5NPCFIfWixtsu9g-1; Fri, 12 Jul 2024 04:54:41 -0400
-X-MC-Unique: kJKUVUC5NPCFIfWixtsu9g-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-426724679f0so14459515e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 01:54:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720774480; x=1721379280;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YGUwzKz1FC7XKNssvzh/Aj+HVOd49bkbQ0nivkkXFmg=;
-        b=cHyhOXzx+tVjY35JZcXn+V1c2morH599xbiay/fXDigEYGrPzNplrilCY8xrKnlVSh
-         70Rk98SZMlKWTlnbHXcOe9Kq4bdEmM/Omt8suJts8CIDm1ZLIQlKzfCZhGYG4YIqjXJJ
-         Nk6LzsRrhbmFjDfXu+HN6zVQIdctmYOwfgJHafNpAj9S8ZfiI1FMONjdly7/L4TVOjRh
-         a/w9K3NolgAr2wr+udLpN7w3FHvM+6ymV3llhyWW39DO0UUznTcq+dKa64tgMOuZz2Oy
-         Lh8I4tcqsb7ATKPVLc2B2zzh2vtsRiKdxwWyUGaJtdRmb24lgOREKDClspWyN1Qyw0sr
-         vVEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlViT3UwbUM/UunrdsLzmfIPm64LRtyyglxejyf9/qx1oALG3vs6zLnZwR2VnreOYU9wIj4QpXcGkSb+dhR/wOltMMLmeMbBP63UY1
-X-Gm-Message-State: AOJu0YxHDeIuB3Bx8WKuY40F+AdYRGWRmcAE58t9TSwMhewUgWao9uJ9
-	TwecZjC84Xm6YbeZgKUYcLyf26ERxL69Z6g/SPzLm4JX8DkqF0UQTvGa7o6bGZIlOMOUCV+6it+
-	0IM6c38rnkB09THzJ02BFCLxp6tBon8WHesslzOsk539K/w85P49BGK07vhKfhg==
-X-Received: by 2002:a05:600c:1c1c:b0:424:8be4:f2c with SMTP id 5b1f17b1804b1-4279dabdfa1mr19063595e9.2.1720774480472;
-        Fri, 12 Jul 2024 01:54:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFkkoUJWogIxc8aAVkgm7MgPD/u3veQ1A4xDoDJJYafBVdLp0C0nWIxuogLeydo1P5/GhsYSA==
-X-Received: by 2002:a05:600c:1c1c:b0:424:8be4:f2c with SMTP id 5b1f17b1804b1-4279dabdfa1mr19063395e9.2.1720774480104;
-        Fri, 12 Jul 2024 01:54:40 -0700 (PDT)
-Received: from fedora ([2a01:e0a:257:8c60:80f1:cdf8:48d0:b0a1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8476dsm9631003f8f.36.2024.07.12.01.54.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 01:54:39 -0700 (PDT)
-Date: Fri, 12 Jul 2024 10:54:37 +0200
-From: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v4 00/15] arm64: Support for running as a guest in Arm CCA
-Message-ID: <ZpDvTXMDq6i+4O0m@fedora>
-References: <20240701095505.165383-1-steven.price@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X2k4m2SedPZI9y0xBbeMJr2lSeW74j5v4EGRmBj1EzVZXcG54/JUU16R8GN68D7Eh3v2ULb5AzwpUE9JEsbzpJQht7G1LpKRvptGvYGk3XiiYK0SaChLO9+dk9hw6aEx7sstqF4aNEW8Qt9+Qi+LxI+U4wFFLaoWN+8X6IeWtR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lzNWrdPF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF83FC4AF0B;
+	Fri, 12 Jul 2024 08:54:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720774485;
+	bh=KBF1tbOWGnT1tf80E0eOFPpWPxkx+z9V0AzaHMrmLKw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lzNWrdPFcsNcDn32Kx9K26QKyltPBG1z5fLwk8BH542fx7TjLWHG7JdkhOeHyG+d/
+	 kJhsUWugSFcwBhGr8gmBztqkUpZCfQ1X7h2HaHOR9+ESrLmojbO197iOISepk2AAmI
+	 /x+FqXfBu/n+OED9Mny4LHI+5Kk8bJQHbgzbUBCo=
+Date: Fri, 12 Jul 2024 10:54:42 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+Cc: "arnd@arndb.de" <arnd@arndb.de>, Jerin Jacob <jerinj@marvell.com>,
+	Srujana Challa <schalla@marvell.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [EXTERNAL] Re: [PATCH v10 1/1] misc: mrvl-cn10k-dpi: add Octeon
+ CN10K DPI administrative driver
+Message-ID: <2024071232-kindling-either-de2c@gregkh>
+References: <2024070333-matchless-batch-57ec@gregkh>
+ <20240706153009.3775333-1-vattunuru@marvell.com>
+ <2024071026-squirt-trustful-5845@gregkh>
+ <MW4PR18MB52442E363AE0BED30607F251A6A42@MW4PR18MB5244.namprd18.prod.outlook.com>
+ <2024071053-mahogany-cavalier-6692@gregkh>
+ <MW4PR18MB524491EEA2A628469595FE47A6A42@MW4PR18MB5244.namprd18.prod.outlook.com>
+ <2024071012-backpedal-punctured-5d7b@gregkh>
+ <SJ0PR18MB52467C544972534F6DECDC48A6A62@SJ0PR18MB5246.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,184 +62,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240701095505.165383-1-steven.price@arm.com>
+In-Reply-To: <SJ0PR18MB52467C544972534F6DECDC48A6A62@SJ0PR18MB5246.namprd18.prod.outlook.com>
 
-On Mon, Jul 01, 2024 at 10:54:50AM +0100, Steven Price wrote:
-> This series adds support for running Linux in a protected VM under the
-> Arm Confidential Compute Architecture (CCA). This has been updated
-> following the feedback from the v3 posting[1]. Thanks for the feedback!
-> Individual patches have a change log. But things to highlight:
+On Fri, Jul 12, 2024 at 08:44:22AM +0000, Vamsi Krishna Attunuru wrote:
 > 
->  * a new patch ("firmware/psci: Add psci_early_test_conduit()") to
->    prevent SMC calls being made on systems which don't support them -
->    i.e. systems without EL2/EL3 - thanks Jean-Philippe!
+> >> >> >>
+> >> >> >> +config MARVELL_CN10K_DPI
+> >> >> >> +	tristate "Octeon CN10K DPI driver"
+> >> >> >> +	depends on ARM64 && PCI
+> >> >> >
+> >> >> >Why does ARM64 matter here?  I don't see any dependency required
+> >of it.
+> >> >> >
+> >> >> Thanks, Greg, for your time. This DPI device is an on-chip PCIe
+> >> >> device and only present on Marvell's CN10K platforms(which are
+> >> >> 64-bit ARM SoC
+> >> >processors), so added those dependency.
+> >> >
+> >> >Then perhaps keep the ARM64 and add a COMPILE_TEST option as well so
+> >> >that we can build this as part of normal testing?
+> >> >
+> >> >So that would be:
+> >> >	depends on PCI && (ARM64 || COMPILE_TEST) right?
+> >> >
+> >> Yes, it makes sense to add. Can I send this fix as next version now so
+> >> that it will show up in next release, please suggest.
+> >
+> >Send it as a follow-on patch on top of my tree, doing what Arnd suggested.
 > 
->  * two patches dropped (overriding set_fixmap_io). Instead
->    FIXMAP_PAGE_IO is modified to include PROT_NS_SHARED. When support
->    for assigning hardware devices to a realm guest is added this will
->    need to be brought back in some form. But for now it's just adding
->    complixity and confusion for no gain.
-> 
->  * a new patch ("arm64: mm: Avoid TLBI when marking pages as valid")
->    which avoids doing an extra TLBI when doing the break-before-make.
->    Note that this changes the behaviour in other cases when making
->    memory valid. This should be safe (and saves a TLBI for those cases),
->    but it's a separate patch in case of regressions.
-> 
->  * GIC ITT allocation now uses a custom genpool-based allocator. I
->    expect this will be replaced with a generic way of allocating
->    decrypted memory (see [4]), but for now this gets things working
->    without wasting too much memory.
-> 
-> The ABI to the RMM from a realm (the RSI) is based on the final RMM v1.0
-> (EAC 5) specification[2]. Future RMM specifications will be backwards
-> compatible so a guest using the v1.0 specification (i.e. this series)
-> will be able to run on future versions of the RMM without modification.
-> 
-> This series is based on v6.10-rc1. It is also available as a git
-> repository:
-> 
-> https://gitlab.arm.com/linux-arm/linux-cca cca-guest/v4
-> 
-> This series (the guest side) should be in a good state so please review
-> with the intention that this could be merged soon. The host side will
-> require more iteration so the versioning of the series will diverge -
-> so for now continue to use v3 for the host support.
-> 
-> Introduction (unchanged from v2 posting)
-> ============
-> A more general introduction to Arm CCA is available on the Arm
-> website[3], and links to the other components involved are available in
-> the overall cover letter.
-> 
-> Arm Confidential Compute Architecture adds two new 'worlds' to the
-> architecture: Root and Realm. A new software component known as the RMM
-> (Realm Management Monitor) runs in Realm EL2 and is trusted by both the
-> Normal World and VMs running within Realms. This enables mutual
-> distrust between the Realm VMs and the Normal World.
-> 
-> Virtual machines running within a Realm can decide on a (4k)
-> page-by-page granularity whether to share a page with the (Normal World)
-> host or to keep it private (protected). This protection is provided by
-> the hardware and attempts to access a page which isn't shared by the
-> Normal World will trigger a Granule Protection Fault.
-> 
-> Realm VMs can communicate with the RMM via another SMC interface known
-> as RSI (Realm Services Interface). This series adds wrappers for the
-> full set of RSI commands and uses them to manage the Realm IPA State
-> (RIPAS) and to discover the configuration of the realm.
-> 
-> The VM running within the Realm needs to ensure that memory that is
-> going to use is marked as 'RIPAS_RAM' (i.e. protected memory accessible
-> only to the guest). This could be provided by the VMM (and subject to
-> measurement to ensure it is setup correctly) or the VM can set it
-> itself.  This series includes a patch which will iterate over all
-> described RAM and set the RIPAS. This is a relatively cheap operation,
-> and doesn't require memory donation from the host. Instead, memory can
-> be dynamically provided by the host on fault. An alternative would be to
-> update booting.rst and state this as a requirement, but this would
-> reduce the flexibility of the VMM to manage the available memory to the
-> guest (as the initial RIPAS state is part of the guest's measurement).
-> 
-> Within the Realm the most-significant active bit of the IPA is used to
-> select whether the access is to protected memory or to memory shared
-> with the host. This series treats this bit as if it is attribute bit in
-> the page tables and will modify it when sharing/unsharing memory with
-> the host.
-> 
-> This top bit usage also necessitates that the IPA width is made more
-> dynamic in the guest. The VMM will choose a width (and therefore which
-> bit controls the shared flag) and the guest must be able to identify
-> this bit to mask it out when necessary. PHYS_MASK_SHIFT/PHYS_MASK are
-> therefore made dynamic.
-> 
-> To allow virtio to communicate with the host the shared buffers must be
-> placed in memory which has this top IPA bit set. This is achieved by
-> implementing the set_memory_{encrypted,decrypted} APIs for arm64 and
-> forcing the use of bounce buffers. For now all device access is
-> considered to required the memory to be shared, at this stage there is
-> no support for real devices to be assigned to a realm guest - obviously
-> if device assignment is added this will have to change.
-> 
-> Finally the GIC is (largely) emulated by the (untrusted) host. The RMM
-> provides some management (including register save/restore) but the
-> ITS buffers must be placed into shared memory for the host to emulate.
-> There is likely to be future work to harden the GIC driver against a
-> malicious host (along with any other drivers used within a Realm guest).
-> 
-> [1] https://lore.kernel.org/lkml/20240605093006.145492-1-steven.price%40arm.com
-> [2] https://developer.arm.com/documentation/den0137/1-0eac5/
-> [3] https://www.arm.com/architecture/security-features/arm-confidential-compute-architecture
-> [4] https://lore.kernel.org/lkml/ZmNJdSxSz-sYpVgI%40arm.com
-> 
-> Jean-Philippe Brucker (1):
->   firmware/psci: Add psci_early_test_conduit()
-> 
-> Sami Mujawar (2):
->   arm64: rsi: Interfaces to query attestation token
->   virt: arm-cca-guest: TSM_REPORT support for realms
-> 
-> Steven Price (7):
->   arm64: realm: Query IPA size from the RMM
->   arm64: Mark all I/O as non-secure shared
->   arm64: Make the PHYS_MASK_SHIFT dynamic
->   arm64: Enforce bounce buffers for realm DMA
->   arm64: mm: Avoid TLBI when marking pages as valid
->   irqchip/gic-v3-its: Share ITS tables with a non-trusted hypervisor
->   irqchip/gic-v3-its: Rely on genpool alignment
-> 
-> Suzuki K Poulose (5):
->   arm64: rsi: Add RSI definitions
->   arm64: Detect if in a realm and set RIPAS RAM
->   arm64: Enable memory encrypt for Realms
->   arm64: Force device mappings to be non-secure shared
->   efi: arm64: Map Device with Prot Shared
-> 
->  arch/arm64/Kconfig                            |   3 +
->  arch/arm64/include/asm/fixmap.h               |   2 +-
->  arch/arm64/include/asm/io.h                   |   8 +-
->  arch/arm64/include/asm/mem_encrypt.h          |  17 ++
->  arch/arm64/include/asm/pgtable-hwdef.h        |   6 -
->  arch/arm64/include/asm/pgtable-prot.h         |   3 +
->  arch/arm64/include/asm/pgtable.h              |  13 +-
->  arch/arm64/include/asm/rsi.h                  |  64 ++++++
->  arch/arm64/include/asm/rsi_cmds.h             | 134 +++++++++++
->  arch/arm64/include/asm/rsi_smc.h              | 142 ++++++++++++
->  arch/arm64/include/asm/set_memory.h           |   3 +
->  arch/arm64/kernel/Makefile                    |   3 +-
->  arch/arm64/kernel/efi.c                       |   2 +-
->  arch/arm64/kernel/rsi.c                       | 104 +++++++++
->  arch/arm64/kernel/setup.c                     |   8 +
->  arch/arm64/mm/init.c                          |  10 +-
->  arch/arm64/mm/pageattr.c                      |  76 ++++++-
->  drivers/firmware/psci/psci.c                  |  25 +++
->  drivers/irqchip/irq-gic-v3-its.c              | 142 +++++++++---
->  drivers/virt/coco/Kconfig                     |   2 +
->  drivers/virt/coco/Makefile                    |   1 +
->  drivers/virt/coco/arm-cca-guest/Kconfig       |  11 +
->  drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
->  .../virt/coco/arm-cca-guest/arm-cca-guest.c   | 211 ++++++++++++++++++
->  include/linux/psci.h                          |   5 +
->  25 files changed, 953 insertions(+), 44 deletions(-)
->  create mode 100644 arch/arm64/include/asm/mem_encrypt.h
->  create mode 100644 arch/arm64/include/asm/rsi.h
->  create mode 100644 arch/arm64/include/asm/rsi_cmds.h
->  create mode 100644 arch/arm64/include/asm/rsi_smc.h
->  create mode 100644 arch/arm64/kernel/rsi.c
->  create mode 100644 drivers/virt/coco/arm-cca-guest/Kconfig
->  create mode 100644 drivers/virt/coco/arm-cca-guest/Makefile
->  create mode 100644 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-> 
-> -- 
-> 2.34.1
-> 
-> 
+> Hi Greg, I submitted the follow-on patch on top of your char-misc-testing.
+> Please let me know if there is any additional action required on my part.
 
-Hello,
+Just now applied, this crossed in the email ether.
 
-I tested this series on QEMU/KVM with the CCA patches(v2) and the FVP
-model. I could not find any evident issue.
-
-Tested-by: Matias Ezequiel Vara Larsen <mvaralar@redhat.com>
-
+greg k-h
 
