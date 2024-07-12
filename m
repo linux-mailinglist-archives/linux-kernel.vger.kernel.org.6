@@ -1,157 +1,144 @@
-Return-Path: <linux-kernel+bounces-250759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A3C92FC62
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:19:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3281492FC67
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22DE61F227BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:19:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63E751C21603
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E540C17165F;
-	Fri, 12 Jul 2024 14:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C997E171666;
+	Fri, 12 Jul 2024 14:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xjVqiMFJ"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b="vNJgNKl+"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7557816FF28
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4B5171641;
+	Fri, 12 Jul 2024 14:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720793967; cv=none; b=NddSE62076K7W7KsXLV0cFyZn5XoEfz1hDnoSiUt9EMTzoeCNQpuetlgfJHF7lEih1Eh0CpOoEW5MBqvNwxsVuPbmv9i8sUfU5YOT3lrsPCekk0mUssUBadxJ/Qb6ONKSvqH5+IrwKDgKrr10L1QWMjDCSQxP6zU0f34+BCt5ck=
+	t=1720794028; cv=none; b=fso1hS9Nrs21ITWfiwecp7+C1SqfgDpuNooKJw7Yz8ukScFF/Y0UVsSt5/sImmF8n1wBMaKfQoXLYHQB/Iu91KZREdfd5l37tHepYSeF7qkpr1mE9YGElqm3MAPNWzb5XR6Vz/Trh/bdC5byUH38PI39D/ln5CyOZmoZxfVn04o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720793967; c=relaxed/simple;
-	bh=bLsNBKMCo23yjeOx3HG7eMC+4hTmeK8khZfw73qKBGs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K6LY2shizHO/zB6QphK/BDwmKQoVieB40FQ+ARs8Uw4hA+TVJ4WsRKXBn0Zc0s+YAOPUCK76JcrBu9S2zDDLSgJNlG14Zx1gPHy4Gqa/qKmwk5u7Q0uLz6QU359rlgDfWE1Q5P5RDLR0nbDV12xjRUzthTcrZ/vsg/Qj8WSosw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xjVqiMFJ; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-65bceed88a2so18997077b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:19:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720793964; x=1721398764; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Va4y9B5heielT69BIMm119BAdoXPwpSgrlukrq1xmq4=;
-        b=xjVqiMFJdkuR0aLdO86IRxcBryf6gXDnmElJwcxaS6Tx3gcQue4z7HpcR1BGTmWKTh
-         s+MlIG5kLkYU0xK8CAtyM/vO1cekXx/ZlHguF9ipmHzBbZSswLQ0iDPdXfCzNREatD40
-         lBcLcvUkG9K7aNKbw8hud1qSRUTFuIT3Rqa34+atEcaTo+N/qdX/HznsHx9qWD94i6qV
-         tdNbVlsRanWS+w81ZwcLy/0q+v1rwHReMNr7SMC29mcpe7lGRlVKBbPp0TH3MuvLKO5x
-         AdHOC00eO4IbtvzMONZyzt/8OkRxMWmBC7HCCbIcmzOpMUy8icQzu51InJnkzqyFiwMr
-         CNHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720793964; x=1721398764;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Va4y9B5heielT69BIMm119BAdoXPwpSgrlukrq1xmq4=;
-        b=B7nbEyEXzzx511I+Ii2lSrlwQlWufY5UxDRNWc+YN7z+utAPNlDMxEwwMqEpaaN4ZR
-         B2wGpXVD15+H9mvRkxKIeV/hd5PvaYyCPBhup5XjMpJ6EjNJBenl9Nf8hxY8A3ICvQ9e
-         ugNTELC/X95OiJku1d4JLlpHwaVNwXHzfTT8kTWqQ/w5omftf3V69wGbRZOy802Y1eO7
-         f+29t57lIXyX/u4sAKUnolrBVuhtEpattdYTTvDSJ1zJLn/jm4ryp3NKY699EVVvP4lO
-         WXTNqeqvCw9qW1SJkPpHgSlzehOjO4mey/+mJ4YbP5rZs8ijWpFZbXxBZndRegn2v3YS
-         I6ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUxW9FhNstPb02b3IlsXwsrc3W3gE92Q/zjfoXao05o9ylsKp50j5vqqTdGo3EPbTMDF8P11jj66x79pbQWWDZW4Rf6EBXJdNBlOZSM
-X-Gm-Message-State: AOJu0YyZZKrmfu+gXaV6XLd3Goq4BKpw/juLVsbO0OYvnt4PfCHTlhQd
-	If/decppLn09lwzv7gil2j+EjHYgdQ3TYC88AM7uA2b/7LO2A3fZSgy6e48Ci28MJ7brXt7JJ9M
-	VSCA8JSB/krqPiRihdJlYHGv9r2ZNBtIqopweyg==
-X-Google-Smtp-Source: AGHT+IEkX6jQZ9TaNPruelUJVLjkK+umjiJ57WKLuEuaKgKpUSMdwD5mUaTD/Fqj+UovSuUiuJAUfTVDOlR2XKlAy0o=
-X-Received: by 2002:a0d:f684:0:b0:646:4cd7:76aa with SMTP id
- 00721157ae682-658f09c910dmr128553817b3.36.1720793964377; Fri, 12 Jul 2024
- 07:19:24 -0700 (PDT)
+	s=arc-20240116; t=1720794028; c=relaxed/simple;
+	bh=cS5f9Lj8zBxQ16npRLhSgU1/vGtRs8rLFaOzpHaWCec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VaqHnuefJqn7RXeeluwWo2gh7SLABJg0P3hpRRaEv2o5/wAKRHFwZyYERcUgiCDAin3JkBcZBpGo5xZQiQIhAwxYhRaWQP03TmvH8jOHjp2wZkQ4ZB1Ih/wxU/yYqbd6EK4po+6VbbXov2Uqn5q7J/agj/zyDJwlU7o4qP8B0PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b=vNJgNKl+; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720793982; x=1721398782; i=frank.scheiner@web.de;
+	bh=cS5f9Lj8zBxQ16npRLhSgU1/vGtRs8rLFaOzpHaWCec=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=vNJgNKl+q33X4KbsvOZXMsOvk0/hofdk+Wpo138isp8hoWv9B/iU6yIcAIGXen1C
+	 OrkYV59Y+Y196hBg8kA8xGa0og+ku8SEUotcmdbrMYJDNrM+ZL+i5J/kYzKooh1Cu
+	 pZqUsPv788vz013wfgwOt8SdEpjWAPnHa7BScDWkWGPoiLaWYzTThaK5L8atZ6xBT
+	 er38pBMJWHTDjIa7jkL9DPuJ3epyr5BGZa18huLa9rQp3GLAB0ennuHwYMFbanR0U
+	 Ir86aEk8vp/eXhHq0tR87oY3OsYtDZJMADWxk+hNSI/pdJQZWEMweKQrl5eZOuFGe
+	 Ld+VVWZlWNFDHUfSow==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.30] ([217.247.34.12]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M9Zdw-1sOxjO1x4u-001VWu; Fri, 12
+ Jul 2024 16:19:42 +0200
+Message-ID: <07a7bc4b-9b71-486f-8666-d3b3593d682c@web.de>
+Date: Fri, 12 Jul 2024 16:19:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYuCp7Q71_o74yo9ge_5-G=Ho9bC3kJdX_JvtoqWOQujkA@mail.gmail.com>
- <CAMRc=Md5zmFxXXM89LQs6dspC0xnp_6=z=+a2SQypWjwpiRgow@mail.gmail.com> <b833c93e-ae8f-449f-b7bd-8d315aa52703@suswa.mountain>
-In-Reply-To: <b833c93e-ae8f-449f-b7bd-8d315aa52703@suswa.mountain>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Fri, 12 Jul 2024 16:19:13 +0200
-Message-ID: <CACMJSevheOfX91Up2_fphzemmzpqsckwHSQLHpEaCEKBEfGUkA@mail.gmail.com>
-Subject: Re: next: arm64: defconfig: gcc-8: drivers/bluetooth/hci_qca.c:2501:2:
- error: label at end of compound statement
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Naresh Kamboju <naresh.kamboju@linaro.org>, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Arnd Bergmann <arnd@arndb.de>, Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.10 000/284] 5.10.221-rc2 review
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, akpm@linux-foundation.org, allen.lkml@gmail.com,
+ broonie@kernel.org, conor@kernel.org, f.fainelli@gmail.com,
+ jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux@roeck-us.net,
+ lkft-triage@lists.linaro.org, patches@kernelci.org, patches@lists.linux.dev,
+ pavel@denx.de, rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
+ sudipm.mukherjee@gmail.com, torvalds@linux-foundation.org,
+ =?UTF-8?B?VG9tw6HFoSBHbG96YXI=?= <tglozar@gmail.com>
+References: <20240704094505.095988824@linuxfoundation.org>
+ <76458f11-0ca4-4d3b-a9bc-916399f76b54@web.de>
+ <2024071237-hypnotize-lethargic-98f2@gregkh>
+Content-Language: en-US
+From: Frank Scheiner <frank.scheiner@web.de>
+In-Reply-To: <2024071237-hypnotize-lethargic-98f2@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6U+O4I/AFDR73G+CviYFhi4NjdFi9e/ZJ2vjQu6dslp5gQGruFd
+ kIC2O2REqB/X4Zk1kJJrCYTT5heZNdY/AZ7Y9dW5P9FbS0qLEJZw456T4+HogsHu9dSvwBU
+ TiWTRqKEr1y9NNHtkGjfcXWxi7/2RDOegbID5UALVvvHrj3VX6qFvbfhvRKZczdfASmLtX7
+ U3zvCN1C8pm4cWHVnS7FQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:cuxzBxk0N8c=;oR18Rmj5r6I7ejRvaJONqFM/B/y
+ fUiz0a83J3iQlM6mp75UGFtqJw/klWWY4T5npuNCzKCMmoowMI2UnuNjlELG5z0tlE0e0+tm0
+ 3XRFL6/s+ADvc5VO6ei6y9YQ8Lx/8njEH/WWi2EWSyq/XAxiPUY78i7mc/bRK2+h8Pvpfg9Bf
+ RZyV0Gf7ncRZgndptUWT60rp9UuCk4icKiaV42YEq/edoiLmxb4X8ABhw7lQ2BH2VC86htwYa
+ 9RDc3lUp2wsSKc0RTBUY18CWqleA7IkbRwklbgyxIjaP3p9H4k4aikhSRa701wzCk3WJtpS/k
+ G46rq0aXCN0v6X4Zo0I3AfwH1gcM8EsOFszUTAIXntjdA2ol0KMlHrpnb4CVp5sgPavsGI3ja
+ GqGW5KBFVtl0bK6TlGeQEHXf48NNTjYlr2UMrtn0/2XW4NY80inzaeesyW4EcQjKT0A9MJuGy
+ E0LrblMYRY0aZEThPYcSqx7Plqo2xW9d4Z/lOJpqDZklxECfPc+Ptf904SQkKK49bfStDBbYR
+ 4MkESz18RY+S0Qgy86Mz6EJ04Bouc5mq7MQKUDCg517B6xm0YDmZbJmqRTuwaqS+w0Nm+q5hj
+ owtWyZf7pr8phmrXS5wwAoE5fIpVWxauAhAN4jvuQM7Goqw838GqmY9Hg/k0VHrmnhsr858ts
+ 5Mj0e5zhkJFlLKe0IOYvjaamNdxezcR1ZgGdMo5s7hPZkMs67nrJswoVN1awc6gh62Pp70sok
+ CBTc3c928VrKzIIUhu3UByIw70v1cf9ZRDF2cNGdLjAwHfX3OrmPLOhHtPxj8E3ZMgq6R+L+Y
+ XDpvzqFjUi7ALMjn5LQUqeQtTqansVg2ACoJvzNdR3BDAkFThbKosv3dGGFE3FWbaiCjyCnP4
+ nxBeCWSWNP6mOwQ==
 
-On Fri, 12 Jul 2024 at 15:58, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> On Fri, Jul 12, 2024 at 03:34:19AM -0500, Bartosz Golaszewski wrote:
-> > On Thu, 11 Jul 2024 16:34:35 +0200, Naresh Kamboju
-> > <naresh.kamboju@linaro.org> said:
-> > > The arm64 defconfig gcc-8 build failed [1] due to these warnings / errors on the
-> > > Linux next-20230711 tag. But the gcc-13 builds pass.
-> > >
-> > > LKFT is testing older toolchain support till gcc-8.
-> > >
-> > > The following recent changes cause this failure.
-> > > a887c8dede8e1 Bluetooth: hci_qca: schedule a devm action for disabling the clock
-> > >
-> > > Build errors with gcc-8:
-> > > -----------
-> > > drivers/bluetooth/hci_qca.c: In function 'qca_serdev_remove':
-> > > drivers/bluetooth/hci_qca.c:2501:2: error: label at end of compound statement
-> > >   default:
-> > >   ^~~~~~~
-> > > make[5]: *** [scripts/Makefile.build:244: drivers/bluetooth/hci_qca.o]
-> > > Error 1a887c8dede8e1 Bluetooth: hci_qca: schedule a devm action for
-> > > disabling the clock
-> > >
-> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > >
-> > > Build data:
-> > > ------
-> > >   * Build name: gcc-8-defconfig
-> > >   * git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-> > >   * git_sha: f477dd6eede3ecedc8963478571d99ec3bf3f762
-> > >   * git_short_log: f477dd6eede3 ("Add linux-next specific files for 20240711")
-> > >   * Config: defconfig
-> > >   * arch: arm64
-> > >   * toolchain: gcc-8
-> > >
-> > > Steps to reproduce:
-> > > -------
-> > > # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-8
-> > > --kconfig defconfig
-> > >
-> > > Build log links,
-> > > ---------------
-> > >  [1] https://storage.tuxsuite.com/public/linaro/lkft/builds/2j5nr85T4iLl99RjcJ9oy9O3eo2/
-> > >
-> > > --
-> > > Linaro LKFT
-> > > https://lkft.linaro.org
-> > >
-> > >
-> >
-> > The actual code looks like this now:
-> >
-> >       case QCA_WCN7850:
-> >               if (power->vregs_on)
-> >                       qca_power_shutdown(&qcadev->serdev_hu);
-> >               break;
-> >       default:
-> >
-> > What can be done to silence this warning? Or should we just ignore it because
-> > it's gcc 8?
->
-> Just add a break statement.
->
->         default:
-> +               break;
->         }
->
+On 12.07.24 15:32, Greg KH wrote:
+> I'm confused, which commit should we add, or should we just revert what
+> we have now?
 
-Yeah, it was already there in the file added by Luiz, that's why I was confused.
+Sorry for the confusion. Let me try again:
 
-Bart
+1. efi: memmap: Move manipulation routines into x86 arch tree
+
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git=
+/commit/?h=3Dlinux-5.10.y&id=3D31e0721aeabde29371f624f56ce2f403508527a5
+
+...breaks the build for ia64, because it requires a header that does not
+exist before 8ff059b8531f3b98e14f0461859fc7cdd95823e4 for ia64.
+
+2. efi: ia64: move IA64-only declarations to new asm/efi.h header
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/=
+?id=3D8ff059b8531f3b98e14f0461859fc7cdd95823e4
+
+adds this header and fixes the ia64 build, see for example [1].
+
+[1]:
+https://github.com/linux-ia64/linux-stable-rc/actions/runs/9871144965#summ=
+ary-27258970494
+
+ From my understanding 31e0721aeabde29371f624f56ce2f403508527a5 should
+not be merged w/o 8ff059b8531f3b98e14f0461859fc7cdd95823e4, which also
+seems to be the case for all other stable kernels from linux-5.12.y up.
+
+So 8ff059b8531f3b98e14f0461859fc7cdd95823e4 should be added, too, if
+31e0721aeabde29371f624f56ce2f403508527a5 stays in.
+
+> And I thought that ia64 was dead?
+
+No, actually it's alive and well - just currently outside of mainline -
+but still in the stable kernels up to linux-6.6.y and for newer kernels
+patched back in. If you want to check on our CI ([2]), all current
+stable kernels build fine for ia64 and run in Ski - but linux-5.10.y
+currently only because I manually added
+8ff059b8531f3b98e14f0461859fc7cdd95823e4 to the list of patches applied
+by the CI.
+
+[2]: https://github.com/linux-ia64/linux-stable-rc/actions/runs/9901808825
+
+Cheers,
+Frank
+
 
