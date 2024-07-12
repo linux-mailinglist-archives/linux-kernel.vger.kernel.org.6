@@ -1,159 +1,163 @@
-Return-Path: <linux-kernel+bounces-250104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2296292F44A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:11:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886C092F44D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 05:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A440A1F23E0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:11:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABA931C22A56
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E00125D6;
-	Fri, 12 Jul 2024 03:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B76D272;
+	Fri, 12 Jul 2024 03:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nEmg8zVP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jOv1ke1r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A46D53F
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AD4C2C8
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720753868; cv=none; b=YeSY5PEr5yvo6yzsCRUTKy1k5MvfiNrEAG5WVJNUZUu2Rr5jcNTeseUevJz3b0cGThTkFjD5aBsj33V5qen7GmAhyByw+Yi5mJqFR00+7r0ML+fd3qiRvgGscr8x5OftBJsJXRl/rHIBk6tqTC0N/KzQIMV0jG1oboQTDBBh64g=
+	t=1720753979; cv=none; b=Eh4zcV8iNT2Yr0nypCJMxgXZqc/BeqI9yj/6ordpPdcDJiqMTK4uZw4Dg7W+c73gar/dotKPoLAI6lNES510fAknALDi6mH6beFPcekhz2Wx5ALAMevSybAcQrcyVimJDsIAPMjoX3fDAFdgHelmrBQQzFxpOPOPR2WI6Ev7Qrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720753868; c=relaxed/simple;
-	bh=aJVkxQ/xVk5L53c2YF4SBrKRia2Lv9rlLl7UvJoTx7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2hPUle0DFK3nQgiAA0hf8vr22L1IlNyyJsppcFO8Q7vTwHKkHQVnk4hJw9WW53Q2hsChIaeNr+9CGCYZa3jhhQusp7xCdHJvhZp/IQ+6G7e3iItpRpGuYZ2h8upXDeT1XWX0hluYilRUbv02vVZnxB2pHLAntVpUmR8N8WeFnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nEmg8zVP; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720753866; x=1752289866;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aJVkxQ/xVk5L53c2YF4SBrKRia2Lv9rlLl7UvJoTx7Q=;
-  b=nEmg8zVPI+wHZSHCCNOX4OsPINN9uLAyiIoYSMxpWp0EJ33aiCPhPg1D
-   9BJRalnKJbm78AGf5ABmmaAHHG02wqZM2lkuhWMK8yDRAMMrvVa8qaMIC
-   DJaWckJl1GSn0Fzytev487edwMssX7Hk3rMFFgJGQYxbehFckz2LgoIl6
-   fKFPrbmLyEyf80UdhegC+9GTmJkhX5tcVOce0MujPwPiFBpYMwdCUsaiC
-   AVsrq0kR7uKco9UhUo6t2DJ9QxwO719Xz7mJDD1vTh8a94jaOTzWOoGTO
-   xGh3N3Ac/iYjmyaZ2owgS4ohpQWFIFjpcKrLpLaWlU5mZJV01JOxpygtt
-   w==;
-X-CSE-ConnectionGUID: Fy8JFZzrSF+/u9WOiHRTfA==
-X-CSE-MsgGUID: gf6/qaf7S1CPb+AFVKzJwA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="17888788"
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="17888788"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 20:11:05 -0700
-X-CSE-ConnectionGUID: 6GUNPpf2QqC6fMK+LkQWvQ==
-X-CSE-MsgGUID: psOZ6S2lSDSga1uTussQJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="48853841"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 11 Jul 2024 20:11:03 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sS6gW-000aHm-2i;
-	Fri, 12 Jul 2024 03:11:00 +0000
-Date: Fri, 12 Jul 2024 11:10:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
-	hughd@google.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	willy@infradead.org, david@redhat.com, 21cnbao@gmail.com,
-	ryan.roberts@arm.com, ziy@nvidia.com, ioworker0@gmail.com,
-	baolin.wang@linux.alibaba.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] mm: shmem: move shmem_huge_global_enabled() into
- shmem_allowable_huge_orders()
-Message-ID: <202407121052.Jbq6PSIi-lkp@intel.com>
-References: <6e5858d345304d0428c1c2c2a25c289c062b4ea8.1720668581.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1720753979; c=relaxed/simple;
+	bh=4CMnMmZKlqqfGQs63MdCFUNUoJWF+9xTEqu+cn+eEz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rgDvQdUHWFGWShy0Tg2zLQasIeySXevaZC93rXyTC1WZ9zYIlARotmemIlEhdZM8DOdtYhr3i2jdV7Ltp4pmW7wnej5h0IpgGQpI7himMQObgiAJwAL93ocIImESFfzMcdnstXBWU9J+cqRafAjGNSCbSBkPwvTgoBAl9gjYfBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jOv1ke1r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720753976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BXY/sZpO06n+Rdcmg5Em3FyGZZSOlUrDiJ4rTK+vojA=;
+	b=jOv1ke1rDH2TAwQEBORqbNaj3C9fBblJxVihhQLiq1Dyx/RqYLU4mfq9QPioY+9WuxVn/Q
+	bCgmgNFVOZISmdMDTUeRbUuRaFxfxrHxbAoX0gI98C34RWe4/FTtorZtiKqMC8hC13QiS5
+	i3nP0qiFMaGqkC5EE7cog3JVBzCKwlQ=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-292-Yv-i1pd9PT6wjftiDvpOQQ-1; Thu, 11 Jul 2024 23:12:54 -0400
+X-MC-Unique: Yv-i1pd9PT6wjftiDvpOQQ-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2c9015b0910so1965297a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 20:12:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720753974; x=1721358774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BXY/sZpO06n+Rdcmg5Em3FyGZZSOlUrDiJ4rTK+vojA=;
+        b=e84QypFsmeDPUHJUMHQSjpFbC8X7tR7K2iV7x1zKuuwr3TY+AltzDVT8KqxZhkEYlG
+         1NBMMs/62tDAteGl2KSTLC5q/A1fac0xpcFfzsb1M7wrkxGw72A+7TCuk10j35FFN+Jk
+         Ql2enUnRwQDfWU5MJChhvqjKrpPyzbhd43QEVHImQAtolzVklSScpToyln4nkJT91Ovg
+         fb+3+aXfL5o7xjWhX8oB+eipLS9dRKHcMYTC717qfttdx3PLX9VaDQShWuaz/61SF0/3
+         cGA+0mMoI2YvCjVaL1XucKSssl2uKbxXtSuv2gPHkUYuGwKveomzcTVUB+Wf7XsWz+6l
+         QuQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXD3UgfPqQ7s4uA/6TQ6uLcTN9njLTersDYUE73SEy2npF6UeLGUo8ZFBYaacukKsqI+4czNH0rOqxwp21xRuubm2AVcu00ngq2TIup
+X-Gm-Message-State: AOJu0Yz0M+mqO7JR0QlbsnoSPhWAsT8ALGaT8ilRA3SwBlwKpt6kt1O6
+	/O+/G2IXH3USNcDLxYC91ckqH3leFnAbe1KpKV13/NyEoyefXxjU+4P4cddkUIBZBX4hw24dJHy
+	q/LJ0GtbBcBSeyMFXTE4S+mvh8aAC/oNigUfVBV4RMLMILeRTcUUUWPKpty6OyFsY8RxfjMz6hl
+	BQvX4IorTq8MmzqetNMkH9Y3JC//LtJw3Fri/8
+X-Received: by 2002:a17:90b:1bc3:b0:2c8:2236:e2c3 with SMTP id 98e67ed59e1d1-2cac509b515mr2201880a91.17.1720753973688;
+        Thu, 11 Jul 2024 20:12:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEtAK2n6iWFwX5bM16eYpsf4GlrruFMJ7fNUbwgy0bcVCD8qdJ7sxCfFWVabHQR0P0ve6dq9fYfAk7ofO0SHvs=
+X-Received: by 2002:a17:90b:1bc3:b0:2c8:2236:e2c3 with SMTP id
+ 98e67ed59e1d1-2cac509b515mr2201859a91.17.1720753973198; Thu, 11 Jul 2024
+ 20:12:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e5858d345304d0428c1c2c2a25c289c062b4ea8.1720668581.git.baolin.wang@linux.alibaba.com>
+References: <20240701191319.087b227e@canb.auug.org.au> <20240701171901.GA882812@thelio-3990X>
+ <20240712122843.312313a4@canb.auug.org.au>
+In-Reply-To: <20240712122843.312313a4@canb.auug.org.au>
+From: David Airlie <airlied@redhat.com>
+Date: Fri, 12 Jul 2024 13:12:41 +1000
+Message-ID: <CAMwc25oaX1K1Co0vSsN1H3busBLH9xA3-f4OAHZXN4iB4_d=gg@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the drm tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Nathan Chancellor <nathan@kernel.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
+	DRI <dri-devel@lists.freedesktop.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Baolin,
+On Fri, Jul 12, 2024 at 12:28=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
+>
+> Hi all,
+>
+> On Mon, 1 Jul 2024 10:19:01 -0700 Nathan Chancellor <nathan@kernel.org> w=
+rote:
+> >
+> > On Mon, Jul 01, 2024 at 07:13:19PM +1000, Stephen Rothwell wrote:
+> > >
+> > > After merging the drm tree, today's linux-next build (powerpc
+> > > allyesconfig) failed like this:
+> > >
+> > > In file included from arch/powerpc/include/asm/mmu.h:144,
+> > >                  from arch/powerpc/include/asm/paca.h:18,
+> > >                  from arch/powerpc/include/asm/current.h:13,
+> > >                  from include/linux/sched.h:12,
+> > >                  from include/linux/ratelimit.h:6,
+> > >                  from include/linux/dev_printk.h:16,
+> > >                  from include/linux/device.h:15,
+> > >                  from include/linux/dma-mapping.h:8,
+> > >                  from drivers/gpu/drm/omapdrm/omap_gem.c:7:
+> > > drivers/gpu/drm/omapdrm/omap_gem.c: In function 'omap_gem_pin_tiler':
+> > > arch/powerpc/include/asm/page.h:25:33: error: conversion from 'long u=
+nsigned int' to 'u16' {aka 'short unsigned int'} changes value from '65536'=
+ to '0' [-Werror=3Doverflow]
+> > >    25 | #define PAGE_SIZE               (ASM_CONST(1) << PAGE_SHIFT)
+> > >       |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > drivers/gpu/drm/omapdrm/omap_gem.c:758:42: note: in expansion of macr=
+o 'PAGE_SIZE'
+> > >   758 |                                          PAGE_SIZE);
+> > >       |                                          ^~~~~~~~~
+> > > drivers/gpu/drm/omapdrm/omap_gem.c: In function 'omap_gem_init':
+> > > arch/powerpc/include/asm/page.h:25:33: error: conversion from 'long u=
+nsigned int' to 'u16' {aka 'short unsigned int'} changes value from '65536'=
+ to '0' [-Werror=3Doverflow]
+> > >    25 | #define PAGE_SIZE               (ASM_CONST(1) << PAGE_SHIFT)
+> > >       |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > drivers/gpu/drm/omapdrm/omap_gem.c:1504:65: note: in expansion of mac=
+ro 'PAGE_SIZE'
+> > >  1504 |                         block =3D tiler_reserve_2d(fmts[i], w=
+, h, PAGE_SIZE);
+> > >       |                                                              =
+   ^~~~~~~~~
+> > > cc1: all warnings being treated as errors
+> > >
+> > > Exposed by commit
+> > >
+> > >   dc6fcaaba5a5 ("drm/omap: Allow build with COMPILE_TEST=3Dy")
+> > >
+> > > PowerPC 64 bit uses 64k pages.
+> > >
+> > > I have reverted that commit for today.
+> >
+> > FWIW, I sent a patch to address this in a bit of a more targeted manner
+> > over a week ago:
+> >
+> > https://lore.kernel.org/20240620-omapdrm-restrict-compile-test-to-sub-6=
+4kb-page-size-v1-1-5e56de71ffca@kernel.org/
+> >
+> > Although somehow, I left off Ville from that patch :/
+>
+> I am still reverting that commit (as of yesterday, the failure still
+> occurs) ...
 
-kernel test robot noticed the following build errors:
+I'll merge this directly to drm-next today.
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on next-20240711]
-[cannot apply to linus/master v6.10-rc7]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Dave.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Baolin-Wang/mm-shmem-simplify-the-suitable-huge-orders-validation-for-tmpfs/20240711-134512
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/6e5858d345304d0428c1c2c2a25c289c062b4ea8.1720668581.git.baolin.wang%40linux.alibaba.com
-patch subject: [PATCH 3/3] mm: shmem: move shmem_huge_global_enabled() into shmem_allowable_huge_orders()
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240712/202407121052.Jbq6PSIi-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240712/202407121052.Jbq6PSIi-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407121052.Jbq6PSIi-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> mm/shmem.c:1160:6: error: call to undeclared function 'shmem_huge_global_enabled'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1160 |         if (shmem_huge_global_enabled(inode, 0, false, NULL, 0))
-         |             ^
-   1 error generated.
-
-
-vim +/shmem_huge_global_enabled +1160 mm/shmem.c
-
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1138  
-b74d24f7a74ffd Christian Brauner 2023-01-13  1139  static int shmem_getattr(struct mnt_idmap *idmap,
-549c7297717c32 Christian Brauner 2021-01-21  1140  			 const struct path *path, struct kstat *stat,
-a528d35e8bfcc5 David Howells     2017-01-31  1141  			 u32 request_mask, unsigned int query_flags)
-44a30220bc0a17 Yu Zhao           2015-09-08  1142  {
-a528d35e8bfcc5 David Howells     2017-01-31  1143  	struct inode *inode = path->dentry->d_inode;
-44a30220bc0a17 Yu Zhao           2015-09-08  1144  	struct shmem_inode_info *info = SHMEM_I(inode);
-44a30220bc0a17 Yu Zhao           2015-09-08  1145  
-3c1b7528d8969a Hugh Dickins      2023-08-03  1146  	if (info->alloced - info->swapped != inode->i_mapping->nrpages)
-3c1b7528d8969a Hugh Dickins      2023-08-03  1147  		shmem_recalc_inode(inode, 0, 0);
-3c1b7528d8969a Hugh Dickins      2023-08-03  1148  
-e408e695f5f1f6 Theodore Ts'o     2022-07-14  1149  	if (info->fsflags & FS_APPEND_FL)
-e408e695f5f1f6 Theodore Ts'o     2022-07-14  1150  		stat->attributes |= STATX_ATTR_APPEND;
-e408e695f5f1f6 Theodore Ts'o     2022-07-14  1151  	if (info->fsflags & FS_IMMUTABLE_FL)
-e408e695f5f1f6 Theodore Ts'o     2022-07-14  1152  		stat->attributes |= STATX_ATTR_IMMUTABLE;
-e408e695f5f1f6 Theodore Ts'o     2022-07-14  1153  	if (info->fsflags & FS_NODUMP_FL)
-e408e695f5f1f6 Theodore Ts'o     2022-07-14  1154  		stat->attributes |= STATX_ATTR_NODUMP;
-e408e695f5f1f6 Theodore Ts'o     2022-07-14  1155  	stat->attributes_mask |= (STATX_ATTR_APPEND |
-e408e695f5f1f6 Theodore Ts'o     2022-07-14  1156  			STATX_ATTR_IMMUTABLE |
-e408e695f5f1f6 Theodore Ts'o     2022-07-14  1157  			STATX_ATTR_NODUMP);
-0d72b92883c651 Jeff Layton       2023-08-07  1158  	generic_fillattr(idmap, request_mask, inode, stat);
-89fdcd262fd407 Yang Shi          2018-06-07  1159  
-dca7b12ffe751b Baolin Wang       2024-07-11 @1160  	if (shmem_huge_global_enabled(inode, 0, false, NULL, 0))
-89fdcd262fd407 Yang Shi          2018-06-07  1161  		stat->blksize = HPAGE_PMD_SIZE;
-89fdcd262fd407 Yang Shi          2018-06-07  1162  
-f7cd16a55837f3 Xavier Roche      2022-03-22  1163  	if (request_mask & STATX_BTIME) {
-f7cd16a55837f3 Xavier Roche      2022-03-22  1164  		stat->result_mask |= STATX_BTIME;
-f7cd16a55837f3 Xavier Roche      2022-03-22  1165  		stat->btime.tv_sec = info->i_crtime.tv_sec;
-f7cd16a55837f3 Xavier Roche      2022-03-22  1166  		stat->btime.tv_nsec = info->i_crtime.tv_nsec;
-f7cd16a55837f3 Xavier Roche      2022-03-22  1167  	}
-f7cd16a55837f3 Xavier Roche      2022-03-22  1168  
-44a30220bc0a17 Yu Zhao           2015-09-08  1169  	return 0;
-44a30220bc0a17 Yu Zhao           2015-09-08  1170  }
-44a30220bc0a17 Yu Zhao           2015-09-08  1171  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
