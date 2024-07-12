@@ -1,158 +1,196 @@
-Return-Path: <linux-kernel+bounces-250874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A434192FE00
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:57:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C20892FE08
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11AF4B21D73
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:57:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1C4A1F2370F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A40174EF9;
-	Fri, 12 Jul 2024 15:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E95176235;
+	Fri, 12 Jul 2024 15:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WDN5wQ57"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Q5BU/txJ"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2116.outbound.protection.outlook.com [40.107.237.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396E0174EE7
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720799838; cv=none; b=rbyKk2lljjL+YYp3+cNZXwBBKejOKJPY3QFRxZlfTlCvads3AH5K7JsrH/KJ8KBQNXOfu6w8lyoLGvE1DrNNucr4RQrBARtebcya7mblFekNONGHW2NZxx99LbybbGWNavkBbpHWEY3YP7CtGT4OMuH6k1Mr7WZhxxdEdhA+BzU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720799838; c=relaxed/simple;
-	bh=92LbG9az5ZEmo10Huxxe9QhBwRq7LYH80MayzdsZijw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kOnXqmPKJ2Bjuss7tfGmQsIYN07DV2oS4t4oacRnaNtv+9MG6Z3HDAwUjqjXgSCuS4gyhPIBAs2w+pRZWauP6y7cvkBfkssZeU8/khwCCM7Ty4EFs/Vz9c1Jw0YicjKzHuaSp+IiG/LCfghDWlj8tHw37nVYFx1HQw6QaZL3l3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WDN5wQ57; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720799836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=unIhgmQoVncSJ3ToST2Rwgc1eOZuFM/cCjT8vffTDPA=;
-	b=WDN5wQ57QkrzoRc0TMmssXZNtDHVN+I4KcOODNciog+K93M1z9Wq6CgMZx+TYGP1VL0XvC
-	H1INBfsxek7hIRr1e1yXY0BpcdNw4ARaXIo+n4lcVZufRaBLWteZMVdcqDvknmQc6XF0/d
-	88zQYLSQfl5XHMy3eDSMSk+Sqm7tslM=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-450-uXImx0XKMVui_bxBm6uGQg-1; Fri, 12 Jul 2024 11:57:14 -0400
-X-MC-Unique: uXImx0XKMVui_bxBm6uGQg-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52e969d0198so2295108e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:57:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720799833; x=1721404633;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=unIhgmQoVncSJ3ToST2Rwgc1eOZuFM/cCjT8vffTDPA=;
-        b=R+kmfHR9VbdWyyByeqWguzpyi10W2M/W9tPXFQQtEoaFKJAgJCkVTgCi0l5PaMRm3v
-         Xdn8w0V2GzpBUIyKUsAPMQ8rU4lAKpSCQH7diF2WPSQq9E0rTpFwg8JKUWDGJBpq1iKd
-         WpPzyYA6KYa8g3KXkFYsd5cIVbqt+bYUOWLg07V716OGUe+hq6u9arKoA9dz5SPdSBwF
-         aG4YKr5iNVGkFpWxfs3Yrsz+gztSxCiy9L2jb34XSI0F0giCv+B7J1aD7S/6v8ZEuKLY
-         3Jk9M6PIqXbd2j7H8Ov9a2wvJ1yruVsMoLRb27pE0oyHJtnudatzi+0F+GUFO7M5FFWV
-         1OZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCtypDXcnE+l3jyedMxFIO9beZqXaZCgpTWreGWqoqq0qQwtGnYW/QTJH7N9B2iGmcEsYMNl5VDsJDVYpHfkZyVOeTMNipTkApxX5Y
-X-Gm-Message-State: AOJu0YyzyO+9X15oyQNeaYP72BMDL5mqZVk+7YbHtFs8CA0WUZH4Jqdr
-	n6UTn/FaSj1hwjug94QxdFJxFnVyHFKGNlxYp5yVimhZ/wEmmSxRF5IHUbRzt6mbsvayLi+L0MY
-	0pxhGqburWVCOfViZK/Qt1/r1fYxtl4w3IM5tUwljXEIVZsIi6m/P2QGlUpMYAg==
-X-Received: by 2002:a05:6512:3d87:b0:52c:df77:6507 with SMTP id 2adb3069b0e04-52eb99a1482mr10843653e87.37.1720799833508;
-        Fri, 12 Jul 2024 08:57:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHblt6jVYY/WnfcCaSWSerVrk0LdnPIVMWY7Mr9poNBoiIc9yN4ioDL526CLoIo6o3GqO2tDg==
-X-Received: by 2002:a05:6512:3d87:b0:52c:df77:6507 with SMTP id 2adb3069b0e04-52eb99a1482mr10843635e87.37.1720799833133;
-        Fri, 12 Jul 2024 08:57:13 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4279f2c254dsm27493245e9.46.2024.07.12.08.57.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 08:57:12 -0700 (PDT)
-Message-ID: <f06ef91d-7f8c-4f69-8535-fee372766a7f@redhat.com>
-Date: Fri, 12 Jul 2024 17:57:10 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0361176232;
+	Fri, 12 Jul 2024 15:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.116
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720799962; cv=fail; b=CntZcPwvWYKpknflNlYU5adaNMS3NCHuOEhqMkqJkBQgtNXBsxQN3DUmrl1i8xcSzFTg/kC/PQDtYkl6x3TMf7P/szw2PkI4bgeU0RGYfV7/7v2y26M0DiS7aUSjvEz8/utA1lpottHB21YiGt1qAoFiXlAomZiEXDhhksD3Kkc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720799962; c=relaxed/simple;
+	bh=KfkWm2sHJYxiKCck6h/NmiL9hMiXtI2UoZI9Gr1i+1w=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ClN69gOgaaq1/gO06bcajbVJISbvpfQ+WqoZ60ZqM+iU4JVEJD/O2WxyeDRh4lLKwsOwKoZvxbTkNo58V+S0842rhPlIXRTY9NXzTvSQtgGRFo0ZVLWYutbt4A9VkZdEW6kwMe5z+YSm4k8NQ5QZMoSIkp7/pgsyPsLaoXAsA10=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Q5BU/txJ; arc=fail smtp.client-ip=40.107.237.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pqpJ+KnlghOLt99Rw7fvCBXS34cJ/nY8HKXX8QBUymIQ04wYc1banI+XuFMjIVPdp0DEoeXKtCJTBY21adoujoEP4AJXTXoRkarIKrdj8Nw2y1GuVINWmRXLCZACLhTxDfYA+T1rlvMrrHoEGsUisxPdAXd62WBKfKvASrkN8g+oHG7m15xiDrJZqDtHgnlFJLb8Qm2tjT9rYNWpN7vwccGc8xE8Y3S8Z+kTqnaZzddwf1GTy1Fr2Qxc2BjtCARqYPICJs/cOnhrHt2S64Hw0SskSowplL67kMS19RWwBp+ACDJPw9v/WMX/hCPcVN4VlAsxpKY5Ec7qKecEtg6YIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m6xTkbfCKHtPsLO9wNV8wJbADLLHwaAOm6JsLtOK1q0=;
+ b=AHVBkIs0nzEt2b0pkGqNq1eq1Hx0dSsGyl1vj5rEquE56othST6T7prOkkERsvzbVBg2LiSTYl/lv/3RwZtvjnej8uGLLaWHK5zP62G5A41dii7FuV+htkvAcD73yX7NH+UQJ6cFU2iV5FXEzEU+UOTVmN4/3OVmjPl8ludJtF2t2gkspb9DRBw6lKqFVZ7V6Eb9tYc64q7DWDVOnpVsYodkb58ZATb4jHWbXO7A2NR6KzJuo6pik2Kfc/DlaxgJ0AZXzH2Ik8/5ftpMDimzL9tcrVtJ/d3bv5ktczlBCGPlhn7f42UmL266dechX/eWI2BzLt1dgXMopc3DYM0OIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m6xTkbfCKHtPsLO9wNV8wJbADLLHwaAOm6JsLtOK1q0=;
+ b=Q5BU/txJFxToyFu9tyH+Mw3Azg4McnsAr4abSrtiW+RdCQuuA6liZ+1W75queLpqxeWHzEB32PjO+5O5OmNqsa1JF1cl6ykoNAxWD4BHnBZlUFhC2sL1jIXpi5NxNtwQ7k+Cu6OyBpooMYhpGQCvT/K81EsUV9sA7SpYYTp/X9c=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MN2PR01MB5471.prod.exchangelabs.com (2603:10b6:208:11b::13) by
+ PH0PR01MB8070.prod.exchangelabs.com (2603:10b6:510:295::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7741.35; Fri, 12 Jul 2024 15:59:12 +0000
+Received: from MN2PR01MB5471.prod.exchangelabs.com
+ ([fe80::dba1:7502:f7ff:3f80]) by MN2PR01MB5471.prod.exchangelabs.com
+ ([fe80::dba1:7502:f7ff:3f80%7]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
+ 15:59:12 +0000
+From: Yang Shi <yang@os.amperecomputing.com>
+To: corsac@debian.org,
+	willy@infradead.org,
+	jirislaby@kernel.org,
+	surenb@google.com,
+	riel@surriel.com,
+	cl@linux.com,
+	carnil@debian.org,
+	ben@decadent.org.uk,
+	akpm@linux-foundation.org
+Cc: yang@os.amperecomputing.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] mm: huge_memory: use !CONFIG_64BIT to relax huge page alignment on 32 bit machines
+Date: Fri, 12 Jul 2024 08:58:55 -0700
+Message-ID: <20240712155855.1130330-1-yang@os.amperecomputing.com>
+X-Mailer: git-send-email 2.41.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH0PR03CA0313.namprd03.prod.outlook.com
+ (2603:10b6:610:118::34) To MN2PR01MB5471.prod.exchangelabs.com
+ (2603:10b6:208:11b::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
-To: Leonardo Bras <leobras@redhat.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
- Leonardo Bras <leobras.c@gmail.com>, Sean Christopherson
- <seanjc@google.com>, Frederic Weisbecker <frederic@kernel.org>,
- Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20240511020557.1198200-1-leobras@redhat.com>
- <ZkJsvTH3Nye-TGVa@google.com>
- <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com>
- <68c39823-6b1d-4368-bd1e-a521ade8889b@paulmck-laptop>
- <ZkQ97QcEw34aYOB1@LeoBras>
- <17ebd54d-a058-4bc8-bd65-a175d73b6d1a@paulmck-laptop>
- <ZnPUTGSdF7t0DCwR@LeoBras>
- <ec8088fa-0312-4e98-9e0e-ba9a60106d58@paulmck-laptop>
- <ZnosF0tqZF72XARQ@LeoBras> <ZnosnIHh3b2vbXgX@LeoBras>
- <Zo8WuwOBSeAcHMp9@LeoBras>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <Zo8WuwOBSeAcHMp9@LeoBras>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR01MB5471:EE_|PH0PR01MB8070:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6cad084f-0dca-4ea0-3413-08dca28b921b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|7416014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qOMWv5Buihvnv4kf+N7KGVlnZVRBx5syrjXJJ57trN1ieRsKnG10hC68xvRh?=
+ =?us-ascii?Q?Kx04b7oXUXoLwydCh8f40qQzZpkV4AR7KvsusdkvJiVJp7YC3sEOVxrIXwuO?=
+ =?us-ascii?Q?b40DX2R7PYYAYz7vVCnU5aIEuuhHMPuW0AhNLr6s+N/VDWMI7As9kCI/UjrN?=
+ =?us-ascii?Q?L7+XjWKlsv5IhbQmoI+47JPah8yYJITWa5QzG45n1jSzcplPP3o0kpxlugKd?=
+ =?us-ascii?Q?jBYydbS2HamVlikL20h5x4rnThU6mk9A1TPHGdFHtMp51B45BL4tV2wSHPR1?=
+ =?us-ascii?Q?ya/dBKbHm2689Zf7KbUh0IcLSXyVuy9zNofL4T78u74iv61jlbmbSeu9Puku?=
+ =?us-ascii?Q?tGytWj+omfZLyA2psBX4Su5PsoVSsckOhkoYKf8jrzKgbP7uPQU3z3IjxhrM?=
+ =?us-ascii?Q?5mQbZ1uAmsC3bE4J7xokA/jSCAaG17GZtzmyE4njMlTzsukmdPBZI0wpwFvz?=
+ =?us-ascii?Q?hjUJ86LgaBFGflmXXOQJjWjcwKr8OJY390bI0BnE6wyBKcvotuRq83Kfijxs?=
+ =?us-ascii?Q?seCIMaeJ0LDo2UvEGSjcDqdVI765vxcLrKtthk5zYlFkNpGF2u4EGTOdnWNq?=
+ =?us-ascii?Q?CL3lZZt+gqpHh+iJxNKp2o2G6XikC67TgriJBorLcQw+F8M+Uc+XSPhe26oM?=
+ =?us-ascii?Q?ejuJz97Cv++p2/SbLF2ArC53VcW3uSQjn/94eQeuaU1r7pcbrB1aApOyEPVK?=
+ =?us-ascii?Q?QfGwFYT8qYvP6OjWn1yLe0kYTaT08bHLOaDmRp7fKCU5PXzg1CqmHbzrl+me?=
+ =?us-ascii?Q?LcaBAPWYTZBuU1rOqSfXKgdQYX6J68j4K2pSHgsH/v/DWhN4kPpKGxytFUQd?=
+ =?us-ascii?Q?RXQP8Yyflbr3+faAE7EPms7syUeyAeix2q1+7ZNdwZTTE48mypGb84U8jYA7?=
+ =?us-ascii?Q?/ala6nbtKErPDUG4vRWHLQZBKAWJ9BVkx3RFBJORK71yjKk76Vt3GZFwBsNb?=
+ =?us-ascii?Q?zW/hZdpeY9Zy3AjUzsU2ak6avUmZfylmMY5ARwOyAhi1UNv03Uy9KNtLdW0t?=
+ =?us-ascii?Q?gKq2rMUypZAXGfJ90U0POod/ywgLDI6D2t4a3fLo56GgALjxkQZvLdHBa9qF?=
+ =?us-ascii?Q?IksHxs70guE/zKhzEkk28bakMhPpSE/bZe6T3Lwlo8Sd9oTPU8y+mX0tMCio?=
+ =?us-ascii?Q?BuxOE0F3V5l7lHLzb50PIegTAfLmbFzFB2nJfFWpyF4exEUIQ+fMkMGR1g3H?=
+ =?us-ascii?Q?er0mSlnp+kQAb0cv6yDE/nMZdhPHE3rrIK/O3vnJehgdbI0+OGw1C6KzQpQH?=
+ =?us-ascii?Q?7XneyrHbixrcxRlSfDOLAYktcBLfSpxGS368ea9EgikqmP2hyX3nZfelAFVB?=
+ =?us-ascii?Q?TpAkk4dPu7XHqLtuHd23cZbkWh2yvzGnckoColtHNBDepwaR69VB7T2zeBxS?=
+ =?us-ascii?Q?OOfQHhE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR01MB5471.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?U4DlLOuWwDbuxw+Le71Xiio+SO2z1160fPtX1zqrYHaKwr076dQ1BaNRAfs9?=
+ =?us-ascii?Q?qGCp5AHxgvfZm+i69i4g5M0ASFDXCOQoDaSPS8CB/0ElYWc7yEKll1VpL/kp?=
+ =?us-ascii?Q?5QSJcp/YZgkXWFKRKSXpzkEZCGH0u9Lp2pq3jfo8ssgW2afSNuWSknkySbfH?=
+ =?us-ascii?Q?lrQz6q9yATjF/D61MW+miQYSMO2y7cmhi+TcGGjWB0kPhUV1MJ59bs1BF/jF?=
+ =?us-ascii?Q?cZrCngCMr2YOyTCVNIQXCmSd4/11y7g0VXXk7CydqkXWH98ZY7JC8VXUwArw?=
+ =?us-ascii?Q?vMEY4Z6tsYC5InI9GTkzzDgjDnHQwRLCBG65pQSZLMCLSV9BkwZTvm2R6F+v?=
+ =?us-ascii?Q?A3KsRsUz2PYQ7dKkQrogFXdVRiU9zHyh5+LEEtrqOACucfaZkjhV2K8k6uNF?=
+ =?us-ascii?Q?nE3l58IVYptWgtNgVv6rfACwrkYrF1SHeapNEo6SvwrzFGBBrE7l4pzvYxr2?=
+ =?us-ascii?Q?H9pQ8jWa/Vq0BSPWnj0a/cl4fWyEV92cpYmr1yEq2kC/ecSmV1YOLbZlGdMY?=
+ =?us-ascii?Q?yW0CWvZ1Cxmg4xqC8fGygwxkvlECkpxszWwU71aGXAzKLAiahJNcag75azCU?=
+ =?us-ascii?Q?AQZ40J3BLjN1OSLNcts/czId3iAYMO96Mi0mtElhDBWUKmZHsgJajsBJVqMf?=
+ =?us-ascii?Q?COjrYrZUPnWwJ3VnGP9aMpw81gVFsmh1yQ0aUwWiCsAdYSrJXbqAwqsWzsJ8?=
+ =?us-ascii?Q?cZ7Gotl1uGbQYwyz3iGe7reSuF6y/jo02MPYXmxH60nublhg2vjeKO7SllZT?=
+ =?us-ascii?Q?dJvm6ycqihpttC66m4OAWL/uWnuKHLH+yHpikYvSqNVs5wenmxYBlj/jKepF?=
+ =?us-ascii?Q?r+Avx2g4pUMEXjLayJyQdu/ISYoEpv58SnshlE3eB2s7gd1dPSrzL9lt46hl?=
+ =?us-ascii?Q?gRnFEKwKWQa0X7qH4HjGCH5ZY45UqESDx30Zq5XJrdBznph5ppirNvmljmTb?=
+ =?us-ascii?Q?AulDYF9BOLWbz3oNQh7i0xdOPkA55ggTWX7X0FTx3O1ypoXyTutW3o0Ib0uU?=
+ =?us-ascii?Q?OkSVuU6355dCibQPmHodXonGs4COfmIzU8XRR1aj3zT5v4xvFzP0a2eUURdb?=
+ =?us-ascii?Q?gQYsKPJosll5O8gaYf3wRaHgbDr9NV6qrCiNjlEsAWAswSEFx7IOpwQ7lJNR?=
+ =?us-ascii?Q?yWQ9dJxlFFR1dDCb6T3ydSrOQx51rSpoT+5xLtAcwKQTjnskDSXWkgj/e0xk?=
+ =?us-ascii?Q?DOf3FAG8WlbLIh5S/BmbVWRWUDUIwwKyS+xkDSxp25tUTK0k/9Wp2BPcnpt7?=
+ =?us-ascii?Q?La8xWssNiou5hJwaSyFTiBjqlOPpGvQSOXVBDKpLBc5PkQm4uuXbRKcCoPdB?=
+ =?us-ascii?Q?i3/x+d3kiiaZS6pv2tLwYq0BUe058HQRPSrUP0AfbXAGj7du+vC8cGz9TRaV?=
+ =?us-ascii?Q?+Qo5NlWXQuk8xhu28/FhwmGGrzLCLkNVn8qyLqpJHw7Ydbj5JRszM5272t/n?=
+ =?us-ascii?Q?nVYrZW9o7s/RWYIt3WT9KrUCWvDyCzdNyBH8rLpLCcx1+jeo4+hT0+fG0cZI?=
+ =?us-ascii?Q?MhKJAa7FoePsEgAkMsKyx7Q2v3KR1WbrphMzEpXmOvTBo8L3D1dm+1aktFlz?=
+ =?us-ascii?Q?CBFjRflUg1pFGponPqfo8OrrtlZbW261L+z6h2P1tt8+nh4zxWspT4JNaouM?=
+ =?us-ascii?Q?7mEQ5aSn06k7ZDqJUklytK8=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cad084f-0dca-4ea0-3413-08dca28b921b
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR01MB5471.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 15:59:12.4443
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4RMN5p0BTSd93bsOosD15ba3QU+zoN7WlgSADaPQReCV1r/U813IBZ8K4/MPKOL7sA+ASADPp0fCwtUxvPV+wZmmCFLWc9DtqgsqCHkgvS0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB8070
 
-On 7/11/24 01:18, Leonardo Bras wrote:
-> What are your thoughts on above results?
-> Anything you would suggest changing?
+Yves-Alexis Perez reported commit 4ef9ad19e176 ("mm: huge_memory: don't
+force huge page alignment on 32 bit") didn't work for x86_32 [1].  It is
+because x86_32 uses CONFIG_X86_32 instead of CONFIG_32BIT.
 
-Can you run the test with a conditional on "!tick_nohz_full_cpu(vcpu->cpu)"?
+!CONFIG_64BIT should cover all 32 bit machines.
 
-If your hunch is correct that nohz-full CPUs already avoid 
-invoke_rcu_core() you might get the best of both worlds.
+[1] https://lore.kernel.org/linux-mm/CAHbLzkr1LwH3pcTgM+aGQ31ip2bKqiqEQ8=FQB+t2c3dhNKNHA@mail.gmail.com/
 
-tick_nohz_full_cpu() is very fast when there is no nohz-full CPU, 
-because then it shortcuts on context_tracking_enabled() (which is just a 
-static key).
+Fixes: 4ef9ad19e176 ("mm: huge_memory: don't force huge page alignment on 32 bit")
+Reported-by: Yves-Alexis Perez <corsac@debian.org>
+Tested-By: Yves-Alexis Perez <corsac@debian.org>
+Cc: <stable@vger.kernel.org>    [6.8+]
+Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+---
+ mm/huge_memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Paolo
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2120f7478e55..64f00aedf9af 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -857,7 +857,7 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
+ 	loff_t off_align = round_up(off, size);
+ 	unsigned long len_pad, ret, off_sub;
+ 
+-	if (IS_ENABLED(CONFIG_32BIT) || in_compat_syscall())
++	if (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall())
+ 		return 0;
+ 
+ 	if (off_end <= off_align || (off_end - off_align) < size)
+-- 
+2.41.0
 
 
