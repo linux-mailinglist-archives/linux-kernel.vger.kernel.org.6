@@ -1,222 +1,112 @@
-Return-Path: <linux-kernel+bounces-251183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412419301B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:44:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B74F9301BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32D1D1C224D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:44:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC281F238B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A05851C21;
-	Fri, 12 Jul 2024 21:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC0D59B71;
+	Fri, 12 Jul 2024 21:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cild3n5D"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424854AECE;
-	Fri, 12 Jul 2024 21:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VmAgXu1r"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F46BA2E;
+	Fri, 12 Jul 2024 21:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720820646; cv=none; b=IknUSCVKbcIY9FItv/IjPKmqS5D1OEsXpT9SmSQbAFkAmTGqq6BGHzyTr7gcETk4bYbBdH+5rmq4CE5eGvCSiBT9ftZMyuyxTqvnwplS4Q1pzPKgvYySPu0tNPEqemHH5ysZCqMKLZCRJe23Bm1hjdkq4RIcO+wtj86NfHTP76o=
+	t=1720821157; cv=none; b=gZdbPLUciU3ky2Fa/Coo6zcFM2KaAssrPcYUALOi5Uoog8Nz4MsQ2lE54/rm9aDK9cYK7Bl63TWZzq1esSiDBM9nqQsZIrtiDiIZzzwDKhGTrL7Ez2HH0L3cv6M0hmaXZ0Sfe7ZPTTvtFD0sUi9k430YS21o8lhxLdCTOGMsmG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720820646; c=relaxed/simple;
-	bh=kSsKQPuK7oyozBFA3sg9mWvKyLr4Thvo3hOzmz2YU0Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qb8C//m2ELi9MNBZ+ekPvFylV7ubLPIl0G9rHUNTsH6GJSJzhLEGHuH1/FlZLVPd4pAqYiVRfsy9BvHTKBSAXxGVEHVy1uA2iuvGtGknNI/hedhF6+UtJyvLH97IdH8jFnJ07zE7+pqZTgC8+G6pbbHnUxxLR3SYdDaW3yD3Ayk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cild3n5D; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c96187b3d1so1870677a91.3;
-        Fri, 12 Jul 2024 14:44:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720820644; x=1721425444; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gmq1pCxKvJ1kyS2dIS+YPGG2LxnLKYrRDFXRW+UjEyg=;
-        b=cild3n5DoBOzEoIOIb7hxQqFVkIuNW+U+WobfYfkvkMUb9D2FL3w3F1PTbyHNAKuZq
-         80cfoOG36fvqb0T4qDA85kU2AaxLILvuCLIJ4LKG837ztqpw+2MFFVbE2286YgrCfV8h
-         5j4pxfQfxvRk0kD3bLYpN+X+uJAUmBfsyg0GPp6+Y4y39+t79pBnXYYjWYUJ9t47Gcpp
-         628ebJac8tjLY53d1YPzxN9i43vxkdfYAES8i4QoA4M+FWhekceyeaZ7h9+2P5su5JjH
-         OASyweo8LoGmSiMP8Ra1st3uZf4+7/t+PQe0F72j05/oMUnCtOPPBT9eCsDPeuS7Jd3I
-         wx7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720820644; x=1721425444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gmq1pCxKvJ1kyS2dIS+YPGG2LxnLKYrRDFXRW+UjEyg=;
-        b=scuekm9CgJ4AW2u2B5mx0RBzMpOefw7aMYCYTCKZ4XRFeE54xOuoggcfKOYzJKRA0E
-         yVNBTXw4VSWaPTKSgpRzce68DsRMXNwIRjNAiKcYCr7TjDrB0aT1793g3VYoJu386CJ8
-         hAUHDhPmvtrp/cbUy6vEqKpNGs7XhLRr+YeetzId50BKodm4jkZIJCzYV7wJ+TkMI7i7
-         FM13nqnytsRZ/hEyQJAZssS1xfOBBDzAPkWEg0456WR3oiwHSKaBuqWQ2SIq6L2562do
-         83z/dKq/ky5roMTJYzivhhzbSBP4uyNd7l5tJUgjfDP+X0wVMdvqy9HwOu7HAtJB+azU
-         NOUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXw0TcGggbItcPRYLbsBofOj83P3xzci9M1eCNwPCPVAWFA3tQV47ayWti1K+xuiwhSIB2YuBQRpjw/bDfApCfQU1uXlDzyCsAf4YaWURe7s3NoJHjX97feKjDfZRaaDFndrjuc2I8gfKrPDPJYK2rHhK0BYYgDXGUr/3t1vDYoF7blUmrq
-X-Gm-Message-State: AOJu0YxMw/hu9eXmuS+IuxYeSP0Kf71j94NmeK28ZxXCGrLkQ6p1cxLj
-	KzFEeN8e0b92Gt8MqRnk2ZOgGlsAtSOB69pbFRh8ARjqrHnuaMjyT2kHhDGGSR0n4pHNSy5is28
-	fKAswS6JxBhdX53od5NGeGow702k=
-X-Google-Smtp-Source: AGHT+IE2Iln2pnBfx5RRwfNDrywBJ/2uI8jB96yufCjL8MRWhhZD+kUBl5CAtoU4zbfZJbHCVlNMcSNElL76l4+IqKU=
-X-Received: by 2002:a17:90a:65c1:b0:2ca:5e9f:51ab with SMTP id
- 98e67ed59e1d1-2ca5e9f53b4mr7704368a91.45.1720820644504; Fri, 12 Jul 2024
- 14:44:04 -0700 (PDT)
+	s=arc-20240116; t=1720821157; c=relaxed/simple;
+	bh=5U0cBbanT80LXMxVb9Ookx7PdC/5es8wJ8tF2S12pwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y6SE8U9g9ggZ98lpxkqKI0XNU14tmkuedJa7CPfBdm++pZxX6pNvrzKinDNQUPDBMVB42ndY3SxZYvFTLFs5xxvX0W7b/v2+NLQaAHPaGLHRdYpYW1lOENyyDvRR0UDihi3qAP9osnbdfcPlTGXIevWIf0IAdm7aqhLANsq3ne4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VmAgXu1r; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from xps-8930.corp.microsoft.com (unknown [131.107.160.48])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2591020B7165;
+	Fri, 12 Jul 2024 14:52:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2591020B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1720821155;
+	bh=eHr8WwKDOcEjp7b6WIE3GryqDegtAKq8kVAnn5nr2xo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VmAgXu1r2HrEzEnyN+4oOnb/poIF7I78+1DqtfH3by3DmZZ9JgTQJcuEBRtOS7uFv
+	 Fm37C5q0pzge5bu2mhtDrExv3TROQ6c58RFMNKezAfZy3LRXHCA8tpuBQPXrVBSlry
+	 WjU01Qt0PRjkZf2N6vMUBnEhgK7UZi3ORmRXHqSc=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: akpm@linux-foundation.org,
+	apais@linux.microsoft.com,
+	ardb@kernel.org,
+	bigeasy@linutronix.de,
+	brauner@kernel.org,
+	ebiederm@xmission.com,
+	jack@suse.cz,
+	keescook@chromium.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	nagvijay@microsoft.com,
+	oleg@redhat.com,
+	tandersen@netflix.com,
+	vincent.whitchurch@axis.com,
+	viro@zeniv.linux.org.uk
+Cc: apais@microsoft.com,
+	benhill@microsoft.com,
+	ssengar@microsoft.com,
+	sunilmut@microsoft.com,
+	vdso@hexbites.dev
+Subject: [PATCH v2 0/1] binfmt_elf, coredump: Log the reason of the failed core dumps
+Date: Fri, 12 Jul 2024 14:50:55 -0700
+Message-ID: <20240712215223.605363-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711110235.098009979@infradead.org> <20240711110401.412779774@infradead.org>
-In-Reply-To: <20240711110401.412779774@infradead.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 12 Jul 2024 14:43:52 -0700
-Message-ID: <CAEf4BzZCzqOsk55E0b8i9y5zFuf8t=zwrjORnVaLGK0ZVgJTFg@mail.gmail.com>
-Subject: Re: [PATCH v2 11/11] perf/uprobe: Add uretprobe timer
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com, 
-	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-+ bpf
+A powerful way to diagnose crashes is to analyze the core dump produced upon
+the failure. Missing or malformed core dump files hinder these investigations.
+I'd like to propose changes that add logging as to why the kernel would not
+finish writing out the core dump file.
 
-On Thu, Jul 11, 2024 at 4:07=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> In order to put a bound on the uretprobe_srcu critical section, add a
-> timer to uprobe_task. Upon every RI added or removed the timer is
-> pushed forward to now + 1s. If the timer were ever to fire, it would
-> convert the SRCU 'reference' to a refcount reference if possible.
->
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  include/linux/uprobes.h |    8 +++++
->  kernel/events/uprobes.c |   67 +++++++++++++++++++++++++++++++++++++++++=
-+++----
->  2 files changed, 69 insertions(+), 6 deletions(-)
->
-> --- a/include/linux/uprobes.h
-> +++ b/include/linux/uprobes.h
-> @@ -15,6 +15,7 @@
->  #include <linux/rbtree.h>
->  #include <linux/types.h>
->  #include <linux/wait.h>
-> +#include <linux/timer.h>
->
->  struct vm_area_struct;
->  struct mm_struct;
-> @@ -79,6 +80,10 @@ struct uprobe_task {
->         struct return_instance          *return_instances;
->         unsigned int                    depth;
->         unsigned int                    active_srcu_idx;
-> +
-> +       struct timer_list               ri_timer;
-> +       struct callback_head            ri_task_work;
-> +       struct task_struct              *task;
->  };
->
->  struct return_instance {
-> @@ -86,7 +91,8 @@ struct return_instance {
->         unsigned long           func;
->         unsigned long           stack;          /* stack pointer */
->         unsigned long           orig_ret_vaddr; /* original return addres=
-s */
-> -       bool                    chained;        /* true, if instance is n=
-ested */
-> +       u8                      chained;        /* true, if instance is n=
-ested */
-> +       u8                      has_ref;
+To help in diagnosing the user mode helper not writing out the entire coredump
+contents, the changes also log short statistics on the dump collection. I'd
+advocate for keeping this at the info level on these grounds.
 
-Why bool -> u8 switch? You don't touch chained, so why change its
-type? And for has_ref you interchangeably use 0 and true for the same
-field. Let's stick to bool as there is nothing wrong with it?
+For validation, I built the kernel and a simple user space to exercize the new
+code.
 
->         int                     srcu_idx;
->
->         struct return_instance  *next;          /* keep as stack */
+[V2]
+  - Used _ratelimited to avoid spamming the system log
+  - Added comm and PID to the log messages
+  - Added logging to the failure paths in dump_interrupted, dump_skip, and dump_emit
+  - Fixed compiler warnings produced when CONFIG_COREDUMP is disabled
 
-[...]
+[V1]
+  https://lore.kernel.org/all/20240617234133.1167523-1-romank@linux.microsoft.com/
 
-> @@ -1822,13 +1864,20 @@ static int dup_utask(struct task_struct
->                         return -ENOMEM;
->
->                 *n =3D *o;
-> -               __srcu_clone_read_lock(&uretprobes_srcu, n->srcu_idx);
-> +               if (n->uprobe) {
-> +                       if (n->has_ref)
-> +                               get_uprobe(n->uprobe);
-> +                       else
-> +                               __srcu_clone_read_lock(&uretprobes_srcu, =
-n->srcu_idx);
-> +               }
->                 n->next =3D NULL;
->
->                 *p =3D n;
->                 p =3D &n->next;
->                 n_utask->depth++;
->         }
-> +       if (n_utask->return_instances)
-> +               mod_timer(&n_utask->ri_timer, jiffies + HZ);
+Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
 
-let's add #define for HZ, so it's adjusted in just one place (instead
-of 3 as it is right now)
+Roman Kisel (1):
+  binfmt_elf, coredump: Log the reason of the failed core dumps
 
-Also, we can have up to 64 levels of uretprobe nesting, so,
-technically, the user can cause a delay of 64 seconds in total. Maybe
-let's use something smaller than a full second? After all, if the
-user-space function has high latency, then this refcount congestion is
-much less of a problem. I'd set it to something like 50-100 ms for
-starters.
+ fs/binfmt_elf.c          |  60 ++++++++++++++++-----
+ fs/coredump.c            | 109 ++++++++++++++++++++++++++++++++-------
+ include/linux/coredump.h |   8 ++-
+ kernel/signal.c          |  22 +++++++-
+ 4 files changed, 165 insertions(+), 34 deletions(-)
 
->
->         return 0;
->  }
-> @@ -1967,6 +2016,7 @@ static void prepare_uretprobe(struct upr
->
->         ri->srcu_idx =3D __srcu_read_lock(&uretprobes_srcu);
->         ri->uprobe =3D uprobe;
-> +       ri->has_ref =3D 0;
->         ri->func =3D instruction_pointer(regs);
->         ri->stack =3D user_stack_pointer(regs);
->         ri->orig_ret_vaddr =3D orig_ret_vaddr;
-> @@ -1976,6 +2026,8 @@ static void prepare_uretprobe(struct upr
->         ri->next =3D utask->return_instances;
->         utask->return_instances =3D ri;
->
-> +       mod_timer(&utask->ri_timer, jiffies + HZ);
-> +
->         return;
->
->  err_mem:
-> @@ -2204,6 +2256,9 @@ handle_uretprobe_chain(struct return_ins
->         struct uprobe *uprobe =3D ri->uprobe;
->         struct uprobe_consumer *uc;
->
-> +       if (!uprobe)
-> +               return;
-> +
->         guard(srcu)(&uprobes_srcu);
->
->         for_each_consumer_rcu(uc, uprobe->consumers) {
-> @@ -2250,8 +2305,10 @@ static void handle_trampoline(struct pt_
->
->                 instruction_pointer_set(regs, ri->orig_ret_vaddr);
->                 do {
-> -                       if (valid)
-> +                       if (valid) {
->                                 handle_uretprobe_chain(ri, regs);
-> +                               mod_timer(&utask->ri_timer, jiffies + HZ)=
-;
-> +                       }
->                         ri =3D free_ret_instance(ri);
->                         utask->depth--;
->                 } while (ri !=3D next);
->
->
+
+base-commit: 831bcbcead6668ebf20b64fdb27518f1362ace3a
+-- 
+2.45.2
+
 
