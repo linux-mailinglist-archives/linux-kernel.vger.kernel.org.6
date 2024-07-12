@@ -1,126 +1,163 @@
-Return-Path: <linux-kernel+bounces-250323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F6192F673
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:49:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F8A92F67C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E00C1C22EBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:49:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F3151F23CB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA611422C2;
-	Fri, 12 Jul 2024 07:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD66140E25;
+	Fri, 12 Jul 2024 07:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYV8zkMl"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GBeS11TK"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B78C41C79;
-	Fri, 12 Jul 2024 07:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4374213E02A
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720770527; cv=none; b=b8F4HHcJxR9hNVVXfbQZuNWoG2nkdYzseL3AxPrkaQlOkx2yIi1fCQr3D80EzlRYIlRapSswAh8Y0IAaXDLTk6D2hd+7vxIhznAQhy6ybBclF5RLtAvm/QUvRszLSdFMGe+rlbDqVA9Q+xJwLQ8iwCWxs1u7AgzWh6h8XGj9mgo=
+	t=1720770554; cv=none; b=l6WmMf0VT9e4UJs9LWZ+1n4uB872E0HQ6lW3mOvSxBP53F4Nukkz9pdDtluVOWNytQG1WnrBawmBfs8aHH9a/3VBy26I94PPkYdBHTguNCqP+JcOfTVdgb/YbzfbDQTpy/765o7fNjWvZKGkXfWOWAOjQh7I3sNhwISXz1R57p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720770527; c=relaxed/simple;
-	bh=/Lq2JNS7VxeYoVgHFt/V8DeU1iX5HnKJpzdJEAmjv6o=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J376G3a1hqAVP/7HtiuE6rgXqAxaLaU08PvCQfyRBIrf+DOrn6ltG+u2Uk1uG+RY4KQh1XODtnJ4NLm1V8VjMO9dX6cULbVC9s/SpI/kv/iC9WB2z2bNjQTpI6D26SclnCGY/GCxQbg6u/z+ZbAbTQfPk077x2XnZxaFJvSKB8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYV8zkMl; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-36798e62aeeso1006551f8f.1;
-        Fri, 12 Jul 2024 00:48:45 -0700 (PDT)
+	s=arc-20240116; t=1720770554; c=relaxed/simple;
+	bh=GgyXeX6vRq/B+zT7c/I8o809APEqFYzIqOfSPZTJV4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EbCel0i0zP5R1NkH34XhyLgK0qdzVG+xpcUsHbh3NrBNk99HyRCzNGRVkmeF+389ze/i0u4Ojk1kIh6wdDgCpP/8mdCF+1/Fw/ObgV7UgQkX508uq0kTrx6ICLbysjaysHHUN7Y6GFxLhECyZnTT61I6cgomIMRwC8z+EiufTO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GBeS11TK; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-367b8a60b60so952841f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 00:49:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720770524; x=1721375324; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrjeLS8hT87E8k9W17JKY3tphrxKAS2U+oTS99s7jFo=;
-        b=YYV8zkMle14h2WaIEaHdrjQFSV90O5UZrP/G4OaUWCI+U/SG+0p6J2JSB2ZpOeL2ss
-         51DEQAGFRJGV6SnHJQ7N19ydROja2Qo7PeTWoyD4vVoidKBVwt2IZ+Mkhwzq+9B1eCKe
-         IbWz+x2hbXlHqzubrf37qA575E22iDQKZi6AK5OgYfD62y3JZyjSF7u0Y4TQcv+HsfBL
-         VeUK3q5Z9ouuo7rrU9qGlvYfoox7OW6SoCPm3a4PZEmBC65avzh8RmbPPXckesT61OQZ
-         /Q3cuSgK3TMS7pV1zWLMGZFekbj2G7TmSKBQPj0B0hVJdnUbOOY7I4H5nqTQk5YLZ96k
-         vKXw==
+        d=tuxon.dev; s=google; t=1720770550; x=1721375350; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gQ8ijy1w9qa1wZbbcvL0kjrbjKmo8bNSB+DJPQwcHnU=;
+        b=GBeS11TKS4Dv9SbQt0K/2wJJka/oijyLSL7jo67WmEc0CgUBWt0jTY6KaaQnYoJsEu
+         KaaBAZ3KLEXJopq9hqgRNVg3auTJ1qYEPBGzzU+fj8wJ/SMknu6T156AVDMyDhhfKNGJ
+         bmJ1k1hmNZ5ngZP18QheQsejDeV4XdF38TRL8NocmJITO2ZUtqWA5Lqzqzrps1EgFZtF
+         A+6peCmg4j+ekRtIw8f7pRneMlHEn3R+pV9lCG7nLuYCSc6E60fHeUXTGkKjjaD2nsjV
+         NZMsrgLyQehbPrWOQ1lPLnycoP/wshuOteyuuXK4Yaax1QvLsXYxvldzwMvTIwXAocqE
+         HG+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720770524; x=1721375324;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qrjeLS8hT87E8k9W17JKY3tphrxKAS2U+oTS99s7jFo=;
-        b=KRNmMQn1uqI1Y/7yQg4YerLu8fw61KVa32zZKu4dzwroRluB1xE5q2EhAd9D2gJYt0
-         Ae4btvjYyZyOFiMOmqP0OJVO2PasaquImKn2L5MSauHnjt1MdDgkhkKTn1VWsBVOPbRT
-         41qHhM6I62Px/ykhvy0lSC4K7oqUGYL71n3xag/W6Lr8im7+Z1GMnYI10LeHaJ+mA+OF
-         FUZj2hHwEGPFu549p6PnXPEbSp9zkjJPHoNmY/gjYy2KrxoUeftLv9WIXolh/yEtit8g
-         GSrksEEqy0c8kj9EGAw5YSrJf2ibgXTd6fXkKrkVFVH0u1HnnViPBMQ3avF06RVhcDoR
-         7Wbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIrxFBamSYG5Obe2T24sbndKRYs54FlIvpA6CLQ5xkref8/1PIHu8wIH/WjDdg/SgSJH3lxNGyi2O+SvFJ5P+bA7pBv3e9vVTZ+Dy9KlDkdceCuWg3a1Zv/ibpX/kmazsvF3qWiKmxgA==
-X-Gm-Message-State: AOJu0Yx7WMnvyxEt84ZXbgQXrC5e6FCRE63UrZUi0A7/pZ/NBKBmuXmP
-	itG62/Fhw+L7UZ7gptzpRbSkkeuunp8JMKMGGhNioqhIsigKSH1q9hGHUg==
-X-Google-Smtp-Source: AGHT+IGtY8Qgva4djAjov2S7pdB3wwqKHxNIpD/W8Gm0jAAbxY0/IIXRdg1WtWKoZEwesV3Tkbs1cA==
-X-Received: by 2002:a5d:45ce:0:b0:367:99a7:42df with SMTP id ffacd0b85a97d-367cead1644mr6914611f8f.46.1720770523517;
-        Fri, 12 Jul 2024 00:48:43 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e17csm9634651f8f.7.2024.07.12.00.48.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 00:48:43 -0700 (PDT)
-Message-ID: <6690dfdb.df0a0220.90a81.64f1@mx.google.com>
-X-Google-Original-Message-ID: <ZpDf2e3KAnNiC9Jk@Ansuel-XPS.>
-Date: Fri, 12 Jul 2024 09:48:41 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the leds-lj tree
-References: <20240712144831.269b1bc6@canb.auug.org.au>
- <20240712073139.GO501857@google.com>
+        d=1e100.net; s=20230601; t=1720770550; x=1721375350;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gQ8ijy1w9qa1wZbbcvL0kjrbjKmo8bNSB+DJPQwcHnU=;
+        b=nVnUrZdw+Prrn1nXZPG/+QW/pg+igmUi13HuSLAWROXjupMRjBIsAM/x/R+tpz+08x
+         w3rstITicmk6wmYgtdGx3tw6VQ2xh3V61bpx9fhA+d/gj1+D31z8wGz+HnyE8zD3LIc8
+         iJoJNa+lZRP0n7doDGfOuucU2LlEwX2H0OXPlnDCKdpjoA1gGO4llyfpFyjNibc0Sp/Z
+         Q0AeK8Ra+wxZb1E3n4UIHVrjiHRq5GZnOmHuOSC80deXUqGZSGH655DKCGoajKwWBdW3
+         5GNfYdvhbi8I1FMpQphvrojts5Cz5GHNR4QqFjvNhtkR/sE34aOQzYKg+7YGky8RdeNs
+         2sZA==
+X-Forwarded-Encrypted: i=1; AJvYcCX61GLTKDm8gBNZ4bHp+TnvpwdJhIMi7M95FAlM27BMEqtwQQZlirTamQ18dWl2pUPu1bTEc9beUX/XlZr4qr6ksPvPMnSQh5G8D6hE
+X-Gm-Message-State: AOJu0Ywrx4g3WJaYDQgoZKERUC1xNDiftIt6wYZCCCyPrpQvT0Q8BJl1
+	anMq1CTeWjlL3oYn82RO6uviIS8uQSsf94cdFEDPsphlbFRf53DkMm+1kgFvcvi1aVi88rCax3G
+	1
+X-Google-Smtp-Source: AGHT+IGHj2HvbZP4hc88ihdmh15kc6PiOMtrsrZeH+p1UwP0kL1uZIIQk4Qau93XYXPUg/qe5DNZZw==
+X-Received: by 2002:a5d:654d:0:b0:367:8f98:c503 with SMTP id ffacd0b85a97d-367cea45cffmr6602885f8f.1.1720770550532;
+        Fri, 12 Jul 2024 00:49:10 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa0613sm9565691f8f.88.2024.07.12.00.49.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 00:49:10 -0700 (PDT)
+Message-ID: <b5dd19d3-9a08-4187-b976-c197a2c0d9d7@tuxon.dev>
+Date: Fri, 12 Jul 2024 10:49:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712073139.GO501857@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/11] i2c: riic: Enable runtime PM autosuspend support
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240711115207.2843133-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240711115207.2843133-5-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB1134615117603F62796558D1486A62@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <e574e2a6-b231-4737-9501-342445923542@tuxon.dev>
+ <TY3PR01MB1134611DB941585B340D09B7186A62@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB1134611DB941585B340D09B7186A62@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 12, 2024 at 08:31:39AM +0100, Lee Jones wrote:
-> Christian,
+
+
+On 12.07.2024 10:45, Biju Das wrote:
+> Hi Claudiu,
 > 
-> > Hi all,
-> > 
-> > After merging the leds-lj tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > In file included from drivers/leds/leds-lp5569.c:11:
-> > drivers/leds/leds-lp5569.c: In function 'lp5569_post_init_device':
-> > drivers/leds/leds-lp5569.c:204:52: error: passing argument 3 of 'lp55xx_read' from incompatible pointer type [-Werror=incompatible-pointer-types]
-> >   204 |                           chip, LP5569_REG_STATUS, &val);
-> >       |                                                    ^~~~
-> >       |                                                    |
-> >       |                                                    int *
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Friday, July 12, 2024 8:41 AM
+>> Subject: Re: [PATCH v3 04/11] i2c: riic: Enable runtime PM autosuspend support
+>>
+>> Hi, Biju,
+>>
+>> On 12.07.2024 10:15, Biju Das wrote:
+>>> Hi Claudiu,
+>>>
+>>>> -----Original Message-----
+>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>> Sent: Thursday, July 11, 2024 12:52 PM
+>>>> Subject: [PATCH v3 04/11] i2c: riic: Enable runtime PM autosuspend
+>>>> support
+>>>>
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> Enable runtime PM autosuspend support for the RIIC driver. With this,
+>>>> in case there are consecutive xfer requests the device wouldn't be
+>>>> runtime enabled/disabled after each consecutive xfer but after the
+>>>> the delay configured by user. With this, we can avoid touching
+>>>> hardware registers involved in runtime PM suspend/resume saving in this way some cycles. The
+>> default chosen autosuspend delay is zero to keep the previous driver behavior.
+>>>
+>>> On the other hand, you are saving power. Currently the driver is
+>>> highly optimized for Power usage.
+>>>
+>>> Before transfer turn on the clock
+>>> After transfer turn off the clock, this is the optimal power usage correspond to suspend delay.
+>>>
+>>> By adding suspend delay, you are consuming power corresponding to that
+>>> delay.
+>>
+>> The default delay is zero, see the following diff in this patch:
+>>
+>> @@ -479,6 +481,8 @@ static int riic_i2c_probe(struct platform_device *pdev)
+>>
+>>  	i2c_parse_fw_timings(dev, &i2c_t, true);
+>>
+>> +	pm_runtime_set_autosuspend_delay(dev, 0);
 > 
-> The only reason for applying this set this late in the cycle was that
-> they appeared to be fixes for other brokenness.
+> I just provided justification, why you addes 0  msec here, compared to xx msec
+> in the original internal version.
+
+Isn't it in the commit description already?
+
+"The default chosen autosuspend delay is zero to keep the
+previous driver behavior."
+
 > 
-> This is the second set that you've submitted in recent days that has
-> caused build breakages.  Something is wrong with your current
-> development practices.  Are you able to identify and rectify these
-> issue(s) before a lose trust in your submissions?
->
-
-Yes, I identified the problem and the config was silently getting
-disabled and hiding all the errors/warning. Driver also was tested on
-OpenWrt build system where the option WERROR wasn't enabled as I was
-devloping other stuff so this added on top of it of not noticing stuff.
-
-I promise this won't ever happen again. Also I sent v2 for this hoping
-things can get reverted and the correct series can be applied. If not I
-can quickly send a followup that fix this. I verified with the repro
-that the warning/error gets solved. (it's just channging the int to u8)
-
--- 
-	Ansuel
+> Cheers,
+> Biju
 
