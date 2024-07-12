@@ -1,334 +1,128 @@
-Return-Path: <linux-kernel+bounces-250305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0E992F649
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:32:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60CDF92F64C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45A64B22B34
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:32:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030BA1F22D9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4145213D88C;
-	Fri, 12 Jul 2024 07:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="k78EhUZD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jqa4Giwo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fgAEA1Ww";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4dB1TG3N"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3FE13D619;
+	Fri, 12 Jul 2024 07:33:44 +0000 (UTC)
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E24142631;
-	Fri, 12 Jul 2024 07:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70AE8F58
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720769508; cv=none; b=X5G7wIwBUYH1WEcMvaShGYp3B3Otvl8gn3xuOwTc/Z4nK3AZY2NbNm1u4a8XzKeEaDkHRBsQ6tzMHyxAXr3tgqwdol35ocYfBM9U9AUhiPKU4980NKXekK2imYGLMUM1jZFDmRPGJ7W5zauwzfZ2+wnX1AIqEbNyCnPyNetMRrk=
+	t=1720769623; cv=none; b=co1RJhpaA05cTkxSkdmZVo5Nck4rFLKzLKGxJ9xmypGnGP9dOEMlBwxguWxc2Smf2zwvPYYxeCPAbf7Ox8ZVDtZ0x+p/GuHefNx0gC1zGLy8QBIMMCXphz5PH8/MwpNMRouPgDiuUgf1e2m1pNAZyiQXA+hbkkzA6nIirsvQCL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720769508; c=relaxed/simple;
-	bh=HiR9R3mJ8RDZXDmyVdyHEkCbsFJI0FdbRhc2b1AU9c0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PgbUVWQUyGlgolm3Wk1pIflw6c4kSXZ6Qt34C7onZX3x0WkwZbjLQZIhcYxJ7/zP+hX27vvg36tLz0+CrfQ+jes1AI8fyAbpTkxQ7EMae7E8wVeMuFH6eBQupjYfYj2lS4uhGo5Ax2aXNyovmF4wHpIfCZ7ZoDrq92+k2g/oYV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=k78EhUZD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jqa4Giwo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fgAEA1Ww; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4dB1TG3N; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 467151FB6B;
-	Fri, 12 Jul 2024 07:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720769504; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SjZVBzIUaf1khRP/YIvYQuEOJxhVyi3gzEMJbGBqfc0=;
-	b=k78EhUZDIung5HU9QU76XWgv4Zf2/0CbK8Ei6WCFaFLMzBXcy/2UCuk7IWKw4JBrqs5DVE
-	akMtNHqZjKw2bWJmQOi48fadpsTVkAPjHq64hHDK9iIUW1JYrEZtYozPiZqA/BlCQEM4Co
-	FrKyTMVtk7v3yhWc7/LvF8e6fGff5UA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720769504;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SjZVBzIUaf1khRP/YIvYQuEOJxhVyi3gzEMJbGBqfc0=;
-	b=Jqa4GiwoDVi64v34AcsZ5oPG4crdf/B/iWA4e7savTcsR263Tvs23fFHbiaV07GsJ0xMhL
-	N5rawFd/XjjCpFAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720769503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SjZVBzIUaf1khRP/YIvYQuEOJxhVyi3gzEMJbGBqfc0=;
-	b=fgAEA1WwVTuPAWzPNyTPkq5YWnNNkIgYbSSBMB45JZutj+CHzvQ+mN0RgUk6QXPO9I2TwY
-	OYSXuHFm1gg7XaxhuvKN3T6FBQ75qAHs2+UOMLrevyIBuXOGr0WFtvl8O43VTrLFQf8IZM
-	pfyz3hDMZ9u08uPd0kVin+X31f/lZwM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720769503;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=SjZVBzIUaf1khRP/YIvYQuEOJxhVyi3gzEMJbGBqfc0=;
-	b=4dB1TG3N6zLUNfGJq2a2noiJp0D6cJjBxWJFvOOzeLB59ggaGhS0qFXyEe27bt9vqUAd/I
-	xtM4Fd2ml+onfVAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 33FF313686;
-	Fri, 12 Jul 2024 07:31:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id edNfDN/bkGalcgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 12 Jul 2024 07:31:43 +0000
-Message-ID: <089a7f92-edfe-40c8-a111-f8b3d94e2bfc@suse.cz>
-Date: Fri, 12 Jul 2024 09:31:42 +0200
+	s=arc-20240116; t=1720769623; c=relaxed/simple;
+	bh=V/kKfskmGeohcGgTh/TWitjQ2ktSVRQ+jrz7Poi2ZCM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M+SHc8jsJvDPg/6KmVvVZQV27TWhpSvE+acJG59zsLVanzvBYaUH+spHZMRswQd4egGrTAesMLzqTeElQaryddFmvXi3+1ssOMnwqhCJTarLAxcCUmjf6ZbmSU1KijRAN9/UhTJjq4looWo2jmHUS+IC8fGYTohx63t2gKG+0XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-382458be75bso7101945ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 00:33:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720769621; x=1721374421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hn+o8AqZLo3hb96gEPNbR8OJxXzWCm+T0yWulB6rTQs=;
+        b=MSmYAYU5Gcc98QhfPQkW9cjM2DNaxOuHcIT6B6hfLMHxU1GWBmzucihPPG95M3/6HG
+         Fj9CM0dbB3f1lM55KAjElZyz4r9GkISgoHgiknd9+FjrddFdk1Ni95VD4hrdSSke2N4M
+         rfsIpVWyah3fRtSot41l6iR+GeWVNo/cL7GmTZHeC9vCbZ31a+20io3XBgJ9j9LPWJPF
+         dck3pfwg0e11ruCH1eFHjMbVquxxRxB15PIgAXudTdf346oBU0pidWQ3A9fo/2nftcDa
+         kgTFsi9Mzc8V263K0XIXoxI8dVsE8UDekg5AhwbcSQMWoQQ5C4LmNaznZGEqq3Tk/K8d
+         qMwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWLTPsefAKnG8mOLUBsksKl+r82HPEC0rFRSLHpERFRdvjcFyIH3tou6REaydqTD8tT6z2Fiw65zuXJ8bNC5mwarZN3BFOuVsQo5px
+X-Gm-Message-State: AOJu0YwAZTUkUdY9VMzswt7oxTV7hcjDhH5lZBPv0Slb0/P5qRuBjXrd
+	SIhRCHn1/MEj8L/RD+w7j4Z+QjZuLbth8p1r1xw4+oYjfv8lId6hMqypId35
+X-Google-Smtp-Source: AGHT+IGbQMjqFMpaULo80E2uxbUpy3EgGlFwaqZ+ciPbdnh24W4/zLrHJxvlMFHsD4vKrRb/CUQoUg==
+X-Received: by 2002:a05:6e02:1985:b0:375:dc39:cfd2 with SMTP id e9e14a558f8ab-38a580a7215mr122140005ab.11.1720769620754;
+        Fri, 12 Jul 2024 00:33:40 -0700 (PDT)
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com. [209.85.166.169])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-38a4b870e83sm18431885ab.55.2024.07.12.00.33.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 00:33:40 -0700 (PDT)
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-382458be75bso7101865ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 00:33:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVR03iz4mfhzJYSaYO7ZZpVowwM6vxqKZmpezHb8iv9O7AS+BBwfzjQwhNaJx3nkMOhCHwElJ5pAqUygfBEnC1/QolW/ruKisCWvIy4
+X-Received: by 2002:a05:6e02:1906:b0:375:efde:97a6 with SMTP id
+ e9e14a558f8ab-38a570f909fmr133671515ab.7.1720769620042; Fri, 12 Jul 2024
+ 00:33:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm, virt: merge AS_UNMOVABLE and AS_INACCESSIBLE
-Content-Language: en-US
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-Cc: david@redhat.com, seanjc@google.com, michael.roth@amd.com,
- linux-mm@kvack.org
-References: <20240711180305.15626-1-pbonzini@redhat.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240711180305.15626-1-pbonzini@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -0.29
-X-Spamd-Result: default: False [-0.29 / 50.00];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,kvack.org:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
+References: <20240712032140.4012667-1-lsahn@wewakecorp.com>
+ <ZpCqkPIOCsnmf5lF@google.com> <CANTT7qi_qZfFH+T1z22GMQ-LmG1vHG1adzD=hxXiXyKT4kkhOQ@mail.gmail.com>
+ <2024071241-entail-icing-58cf@gregkh>
+In-Reply-To: <2024071241-entail-icing-58cf@gregkh>
+From: Leesoo Ahn <lsahn@ooseel.net>
+Date: Fri, 12 Jul 2024 16:33:40 +0900
+X-Gmail-Original-Message-ID: <CANTT7qijsbExBqD0WNC-V+w8BWXDCB+s_Vn+=8GXoeA3D5c1Xg@mail.gmail.com>
+Message-ID: <CANTT7qijsbExBqD0WNC-V+w8BWXDCB+s_Vn+=8GXoeA3D5c1Xg@mail.gmail.com>
+Subject: Re: [PATCH] android: binder: print error message on failure of
+ creating proc file
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Carlos Llamas <cmllamas@google.com>, Leesoo Ahn <lsahn@wewakecorp.com>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/11/24 8:03 PM, Paolo Bonzini wrote:
-> The flags AS_UNMOVABLE and AS_INACCESSIBLE were both added just for guest_memfd;
-> AS_UNMOVABLE is already in existing versions of Linux, while AS_INACCESSIBLE was
-> acked for inclusion in 6.11.
-> 
-> But really, they are the same thing: only guest_memfd uses them, at least for
-> now, and guest_memfd pages are unmovable because they should not be
-> accessed by the CPU.
-> 
-> So merge them into one; use the AS_INACCESSIBLE name which is more comprehensive.
-> At the same time, this fixes an embarrassing bug where AS_INACCESSIBLE was used
-> as a bit mask, despite it being just a bit index.
-> 
-> The bug was mostly benign, becaus AS_INACCESSIBLE's bit representation (1010)
-> corresponded to setting AS_UNEVICTABLE (which is already set) and AS_ENOSPC
-> (except no async writes can happen on the guest_memfd).  So the AS_INACCESSIBLE
-> flag simply had no effect.
+2024=EB=85=84 7=EC=9B=94 12=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 4:19, G=
+reg Kroah-Hartman <gregkh@linuxfoundation.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=
+=EC=84=B1:
+>
+> On Fri, Jul 12, 2024 at 03:52:32PM +0900, Leesoo Ahn wrote:
+> > 2024=EB=85=84 7=EC=9B=94 12=EC=9D=BC (=EA=B8=88) =EC=98=A4=ED=9B=84 1:0=
+1, Carlos Llamas <cmllamas@google.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1=
+:
+> > >
+> > > On Fri, Jul 12, 2024 at 12:21:40PM +0900, Leesoo Ahn wrote:
+> > > > It better prints out an error message to give more information if
+> > > > calling debugfs_create_file() is failure and the return value has a=
+n
+> > > > error code.
+> > > >
+> > > > Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
+> > > > ---
+> > >
+> > > What are you trying to fix? My understanding is that users of the
+> > > debugfs API can safely ignore any errors and move on. IMO it doesn't
+> > > make sense to add this without a real reason.
+> >
+> > What I was trying to say, users would predict that a file under
+> > debugfs will be created while they are opening a binder device. But if
+> > it failed for some reason without any debug message, they would get
+> > confused that the file doesn't exist and have no clue what happened
+> > without a message.
+>
+> And that's fine, again, the kernel does not care if debugfs is working
+> or not.  It's just a debugging help, it does not affect the normal
+> operation of a system at all, and as such, userspace can't rely on it
+> being present for any functionality other than debugging issues that
+> might happen at times.
 
-Oops, thanks for catching that before becoming mainline.
+Thank you for explaining in detail.
+I hadn't thought about it from that perspective.
 
-> Fixes: 1d23040caa8b ("KVM: guest_memfd: Use AS_INACCESSIBLE when creating guest_memfd inode")
-> Fixes: c72ceafbd12c ("mm: Introduce AS_INACCESSIBLE for encrypted/confidential memory")
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Let me close this issue.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-
-> ---
->  include/linux/pagemap.h | 14 +++++++-------
->  mm/compaction.c         | 12 ++++++------
->  mm/migrate.c            |  2 +-
->  mm/truncate.c           |  2 +-
->  virt/kvm/guest_memfd.c  |  3 +--
->  5 files changed, 16 insertions(+), 17 deletions(-)
-> 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index ce7bac8f81da..e05585eda771 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -208,8 +208,8 @@ enum mapping_flags {
->  	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
->  	AS_STABLE_WRITES,	/* must wait for writeback before modifying
->  				   folio contents */
-> -	AS_UNMOVABLE,		/* The mapping cannot be moved, ever */
-> -	AS_INACCESSIBLE,	/* Do not attempt direct R/W access to the mapping */
-> +	AS_INACCESSIBLE,	/* Do not attempt direct R/W access to the mapping,
-> +				   including to move the mapping */
->  };
->  
->  /**
-> @@ -310,20 +310,20 @@ static inline void mapping_clear_stable_writes(struct address_space *mapping)
->  	clear_bit(AS_STABLE_WRITES, &mapping->flags);
->  }
->  
-> -static inline void mapping_set_unmovable(struct address_space *mapping)
-> +static inline void mapping_set_inaccessible(struct address_space *mapping)
->  {
->  	/*
-> -	 * It's expected unmovable mappings are also unevictable. Compaction
-> +	 * It's expected inaccessible mappings are also unevictable. Compaction
->  	 * migrate scanner (isolate_migratepages_block()) relies on this to
->  	 * reduce page locking.
->  	 */
->  	set_bit(AS_UNEVICTABLE, &mapping->flags);
-> -	set_bit(AS_UNMOVABLE, &mapping->flags);
-> +	set_bit(AS_INACCESSIBLE, &mapping->flags);
->  }
->  
-> -static inline bool mapping_unmovable(struct address_space *mapping)
-> +static inline bool mapping_inaccessible(struct address_space *mapping)
->  {
-> -	return test_bit(AS_UNMOVABLE, &mapping->flags);
-> +	return test_bit(AS_INACCESSIBLE, &mapping->flags);
->  }
->  
->  static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
-> diff --git a/mm/compaction.c b/mm/compaction.c
-> index e731d45befc7..714afd9c6df6 100644
-> --- a/mm/compaction.c
-> +++ b/mm/compaction.c
-> @@ -1172,22 +1172,22 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
->  		if (((mode & ISOLATE_ASYNC_MIGRATE) && is_dirty) ||
->  		    (mapping && is_unevictable)) {
->  			bool migrate_dirty = true;
-> -			bool is_unmovable;
-> +			bool is_inaccessible;
->  
->  			/*
->  			 * Only folios without mappings or that have
->  			 * a ->migrate_folio callback are possible to migrate
->  			 * without blocking.
->  			 *
-> -			 * Folios from unmovable mappings are not migratable.
-> +			 * Folios from inaccessible mappings are not migratable.
->  			 *
->  			 * However, we can be racing with truncation, which can
->  			 * free the mapping that we need to check. Truncation
->  			 * holds the folio lock until after the folio is removed
->  			 * from the page so holding it ourselves is sufficient.
->  			 *
-> -			 * To avoid locking the folio just to check unmovable,
-> -			 * assume every unmovable folio is also unevictable,
-> +			 * To avoid locking the folio just to check inaccessible,
-> +			 * assume every inaccessible folio is also unevictable,
->  			 * which is a cheaper test.  If our assumption goes
->  			 * wrong, it's not a correctness bug, just potentially
->  			 * wasted cycles.
-> @@ -1200,9 +1200,9 @@ isolate_migratepages_block(struct compact_control *cc, unsigned long low_pfn,
->  				migrate_dirty = !mapping ||
->  						mapping->a_ops->migrate_folio;
->  			}
-> -			is_unmovable = mapping && mapping_unmovable(mapping);
-> +			is_inaccessible = mapping && mapping_inaccessible(mapping);
->  			folio_unlock(folio);
-> -			if (!migrate_dirty || is_unmovable)
-> +			if (!migrate_dirty || is_inaccessible)
->  				goto isolate_fail_put;
->  		}
->  
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index dd04f578c19c..50b60fb414e9 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -965,7 +965,7 @@ static int move_to_new_folio(struct folio *dst, struct folio *src,
->  
->  		if (!mapping)
->  			rc = migrate_folio(mapping, dst, src, mode);
-> -		else if (mapping_unmovable(mapping))
-> +		else if (mapping_inaccessible(mapping))
->  			rc = -EOPNOTSUPP;
->  		else if (mapping->a_ops->migrate_folio)
->  			/*
-> diff --git a/mm/truncate.c b/mm/truncate.c
-> index 60388935086d..581977d2356f 100644
-> --- a/mm/truncate.c
-> +++ b/mm/truncate.c
-> @@ -233,7 +233,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
->  	 * doing a complex calculation here, and then doing the zeroing
->  	 * anyway if the page split fails.
->  	 */
-> -	if (!(folio->mapping->flags & AS_INACCESSIBLE))
-> +	if (!mapping_inaccessible(folio->mapping))
->  		folio_zero_range(folio, offset, length);
->  
->  	if (folio_has_private(folio))
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 9148b9679bb1..1c509c351261 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -416,11 +416,10 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
->  	inode->i_private = (void *)(unsigned long)flags;
->  	inode->i_op = &kvm_gmem_iops;
->  	inode->i_mapping->a_ops = &kvm_gmem_aops;
-> -	inode->i_mapping->flags |= AS_INACCESSIBLE;
->  	inode->i_mode |= S_IFREG;
->  	inode->i_size = size;
->  	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-> -	mapping_set_unmovable(inode->i_mapping);
-> +	mapping_set_inaccessible(inode->i_mapping);
->  	/* Unmovable mappings are supposed to be marked unevictable as well. */
->  	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
->  
-
+BR,
+Leesoo
 
