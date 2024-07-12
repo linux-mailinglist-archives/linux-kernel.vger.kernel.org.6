@@ -1,142 +1,226 @@
-Return-Path: <linux-kernel+bounces-250256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A772492F5BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:54:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7393192F5BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47F12B21C16
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C492835AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A8A13D613;
-	Fri, 12 Jul 2024 06:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBA313D622;
+	Fri, 12 Jul 2024 06:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="UK4VZkrQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PgIg7rp2"
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="AipPJD7b"
+Received: from forward100a.mail.yandex.net (forward100a.mail.yandex.net [178.154.239.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1A313B2A8;
-	Fri, 12 Jul 2024 06:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FE913D538;
+	Fri, 12 Jul 2024 06:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720767275; cv=none; b=Uq+kuPnGkUyote9Rma0xaYk+onOQT6RQmSRRC4xC4b2sGQwaXc0vTWx6qlTsYsdFyNaFfmhkZB29jNatZwQGHr0y0EJJiAmfcDpm/lR7y56mdgNd4nSR8ErYxgG4WdDqIAUxVytuE0yJaI+L1ZyOxCgPUNnvqzTCdn3IQhLMOPg=
+	t=1720767209; cv=none; b=WLyZrzHBtEAXoc57ybxvkvpATPfc8fvjQ6cPHlAKKZz9iwL1nzKuZnqhWQARYNiOSu7kvDBP3KdLA+cjQa7TzbE31YipsUztendTzRj5ltuB/JbNIERTUeOPsW3FIQ1CaDIpJvPU5gbcXAISpB+OyDLTeAH6+afpfJFCX5n1Xgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720767275; c=relaxed/simple;
-	bh=R/n1S2lU3wjKVB5Twt0F6ddDg+D3Vh0Kp3XTwGX53ZA=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=eQEnkiSRbl+FHoXgNTnWfloE1mPH7mWDT48oi100pk79WQWJVqYuEV6OTRDqqpcK194Kf2Hiy9QKtYKG8PoDL8+6Gkv0MSSTvWn/fhRkwgoW6NC4y8JkQi/EGzyUCxrkROHAHDmYY01PATFh8Im5l4q96UzRpsvIExna15LA/UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=UK4VZkrQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PgIg7rp2; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 66076138880C;
-	Fri, 12 Jul 2024 02:54:32 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 12 Jul 2024 02:54:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1720767272; x=1720853672; bh=PDVQUKl+Ba
-	T+zis/3VmiEmMf8+afWtbIXBJXNSBs60U=; b=UK4VZkrQNX5quSRwdSj5FvyrUU
-	XZLceuSSzhbaPZyuj0pTmdzLm8v5CbhcUW+YnniE9xTVzgBU67SaqMq1JH+YVxxy
-	1RNppFuMcl4cfZwlFcxmNa1yG/goYFOeJ+7o+x094rp2uDAA2haiVZhdk9sYNyPi
-	9B4PjeV21dAZIIovuX01EoyYVgTK9J9mrVmNHfFsDYh3JTccRbmuaqFEm9KlqhdI
-	5+CLkue46PQSB4gFp8qaERxRfoskwUC4EFJU2lIHCqe5UoMAq5bTeN75Dj8vpj2Z
-	lNWK8B02B0zp/GWU1wsjZPdkWp4o4ERgpFTdoQ8t1dU5e68ZeYnnLBc6R6rQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720767272; x=1720853672; bh=PDVQUKl+BaT+zis/3VmiEmMf8+af
-	WtbIXBJXNSBs60U=; b=PgIg7rp2MgujU27m7rkpXci6myMoHKnc8qeuBTcn0wD2
-	shRTEsaG+v3KINiTDCRwP5VqQko8Jd2uIkcle6mVqTrRMdohC1n3VVmNWGGtoCPq
-	g8UoNo0QK+YiQXjjrSuPl8bN+Glx6kocaOO9b11kSbZKhqe8ABV/Z9oBRoGSdvLw
-	a7aHz4yndw5FHo1XxgDVcD/f10LFA5bmgOmwNwia9k80VfpIKtOchKjvsg/LbM9Q
-	RGj8WxapwDgB+kzSH8u5v23OCOyd/wh+Xlra4Rrm1yeiffyTRNyhWXzucqVqPM1/
-	4NNx54PuUtTaqKyYX2ze/1k63AhUCOJ/JybNfYAE/Q==
-X-ME-Sender: <xms:JtOQZoZIhW9iqZDb3amQNZQ83lfZCw3Lh086Q4pzGBV_daCdNu9k7w>
-    <xme:JtOQZjZhZpLUJ3Lf7jQGduMZ0kOcA_CKRa764OL5Cf-9AYnVbhb3zSwfm-tOqiqJ8
-    znJRMpfjs39KeAYlQc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeehgdduudehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnheplefgieffiedtvdffteeiheekfeeifefgtdejgefhheetkeeigfeltdevtdek
-    heejnecuffhomhgrihhnpehkrghllhhshihmshdurdhsrghspdhkrghllhhshihmshdvrd
-    hsrghspdhkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgr
-    mhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:JtOQZi9AFrpx2QSmrtYgZX4XZT0QlGRTubNZqWj1VsiliNSZ0C75BQ>
-    <xmx:JtOQZir6WmskDXpvoPq156kau3NCS_FhVIGZkfpcnGuc3iP8qlR4wA>
-    <xmx:JtOQZjoEerkZ23eMfFyGfMkN1qMEMYxpkhzux-ybCvgJVMYH5lhe9g>
-    <xmx:JtOQZgSFHku4PJm0UIoOfOkXAVs8DZpGW2WeRlVhv7-pMhuSPI0vbQ>
-    <xmx:KNOQZm35KjA5oNEUEGBsAMlTc3KNniGeZdq0N3TeI_zT3BUKEnRvP1sv>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 7B5CDB6008D; Fri, 12 Jul 2024 02:54:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1720767209; c=relaxed/simple;
+	bh=lQr3zTV4Hs4Qve7Qg4aH4x9tajKv/zU8LjRs62XLFJU=;
+	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=cTMgXqob3MvHBq0S+2IUuEn6q5F19wYmqgyNxF60JQqDPdM2u07BjIuJQTpgyUYbfUI6Eatrrc58TQ1fUoniAvHLKxJUbUbn3HgTG6KdedxELKvVyKmy9UqndqHiNhI81LKnTAKpC46yLIa4Y1jHjvEF9EVsFhsSSvlm++gFDCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=AipPJD7b; arc=none smtp.client-ip=178.154.239.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:610c:0:640:1005:0])
+	by forward100a.mail.yandex.net (Yandex) with ESMTPS id 868A146DDF;
+	Fri, 12 Jul 2024 09:53:16 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id ErZAAk8r94Y0-BFVgIa0Q;
+	Fri, 12 Jul 2024 09:53:15 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1720767195; bh=s0W+M7SwbaRwDy5FEB7++51ukOT+SMdA/kwv36UdyZA=;
+	h=Date:To:From:Subject:Message-ID;
+	b=AipPJD7b8v/04bB12hqVsVe0cnQQcT6S62HPJ9WjyYdfkKVABl6iBwKfxQ+0jCv0L
+	 TJMk/1crh2btfkrh5yGeJbON6tcc3f2JLOJj7LNzeg49LzF5EzdrrJLLt3YZWEfkhy
+	 gclio198T/ZpjQdKiHsk+9g2wDbhOJEiWoHC2Miw=
+Authentication-Results: mail-nwsmtp-smtp-production-main-74.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
+Subject: Lockup of (raid5 or raid6) + vdo after taking out a disk under load
+From: Konstantin Kharlamov <Hi-Angel@yandex.ru>
+To: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>, 
+	linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 12 Jul 2024 09:53:14 +0300
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <1a9e8039-0bf8-40b4-ad07-a51ea569b7b2@app.fastmail.com>
-In-Reply-To: 
- <1f28df2a177cf632ac70162b345dc59711959f48.1720763318.git.christophe.leroy@csgroup.eu>
-References: 
- <1f28df2a177cf632ac70162b345dc59711959f48.1720763318.git.christophe.leroy@csgroup.eu>
-Date: Fri, 12 Jul 2024 08:53:08 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Alexander Lobakin" <alobakin@pm.me>,
- "Nathan Chancellor" <nathan@kernel.org>, "Kees Cook" <kees@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "kernel test robot" <lkp@intel.com>
-Subject: Re: [PATCH] vmlinux.lds.h: catch .bss..L* sections into BSS")
-Content-Type: text/plain
 
-On Fri, Jul 12, 2024, at 07:51, Christophe Leroy wrote:
-> Commit 9a427556fb8e ("vmlinux.lds.h: catch compound literals into
-> data and BSS") added catches for .data..L* and .rodata..L* but missed
-> .bss..L*
->
-> Since commit 5431fdd2c181 ("ptrace: Convert ptrace_attach() to use
-> lock guards") the following appears at build:
->
->   LD      .tmp_vmlinux.kallsyms1
-> powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data33' from 
-> `kernel/ptrace.o' being placed in section `.bss..Lubsan_data33'
->   NM      .tmp_vmlinux.kallsyms1.syms
->   KSYMS   .tmp_vmlinux.kallsyms1.S
->   AS      .tmp_vmlinux.kallsyms1.S
->   LD      .tmp_vmlinux.kallsyms2
-> powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data33' from 
-> `kernel/ptrace.o' being placed in section `.bss..Lubsan_data33'
->   NM      .tmp_vmlinux.kallsyms2.syms
->   KSYMS   .tmp_vmlinux.kallsyms2.S
->   AS      .tmp_vmlinux.kallsyms2.S
->   LD      vmlinux
-> powerpc64-linux-ld: warning: orphan section `.bss..Lubsan_data33' from 
-> `kernel/ptrace.o' being placed in section `.bss..Lubsan_data33'
->
-> Lets add .bss..L* to BSS_MAIN macro to catch those sections into BSS.
->
-> Fixes: 9a427556fb8e ("vmlinux.lds.h: catch compound literals into data 
-> and BSS")
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: 
-> https://lore.kernel.org/oe-kbuild-all/202404031349.nmKhyuUG-lkp@intel.com/
+(this is a dup of yesterday's bugzilla bug 219030 as some maintainers
+prefer bugreporting over bugzilla some over ML, and the cases are
+indistinguishable)
 
-Applied to the asm-generic tree, thanks!
+We're seeing this on both LTS `6.1.97` as well the newest stable
+`6.9.8` (note though that VDO was only merged in 6.9, so for upstream
+it's probably the only one that matters. Traces below are from 6.9.8).
 
-         Arnd
+Creating a raid5 (alternatively raid6) + VDO, then starting a load and
+after a minute physically taking out a disk of the VG results in a
+lockup stack getting spammed over and over.
+
+Seems unreproducible by removing a disk through software means of
+`/sys/block/sdX/device/delete`, i.e. it seem to only happen when either
+removing the disk physically or by disabling power on the JBOD slot
+with a command like `sg_ses --dev-slot-num=3D9 --set=3D3:4:1 /dev/sg26`.
+
+Also when lockup happens, `reboot -ff` no longer does anything.
+
+When looking at repeating stacktraces, the execution seems to loop
+around `raid5_get_active_stripe`, `raid5_compute_sector`,
+`raid5_release_stripe`.
+
+# Steps to reproduce
+
+1. Create raid5 LV + VDO by executing a `./mk_lvm_raid5.sh /dev/sdX1
+/dev/sdY1 /dev/sdZ1` where `mk_lvm_raid5.sh` has the following content:
+
+    #!/bin/bash
+
+    set -exu
+
+    if [ "$#" -ne 3 ]; then
+        echo "Wrong number of parameters.
+    Usage: $(basename $0) disk1 disk2 disk3"
+        exit 1
+    fi
+
+    # create the VG
+    pvcreate -f "$1" "$2" "$3"
+    vgcreate p_r5 "$1" "$2" "$3"
+
+    # create the LV
+    lvcreate --type raid5 -i 2 -L 21474836480b -I 64K -n
+vdo_internal_deco_vol p_r5 -y
+    lvconvert -y --type vdo-pool --virtualsize 107374182400B -n
+deco_vol p_r5/vdo_internal_deco_vol
+
+2. Start load by executing `fio ./fio-30%write.fio` with the `fio-
+30%write.fio` having the following content:
+
+    [test IOPS]
+    blocksize=3D8k
+    filename=3D/dev/p_r5/deco_vol
+    filesize=3D100G
+    direct=3D1
+    buffered=3D0
+    ioengine=3Dlibaio
+    iodepth=3D32
+    rw=3Drandrw
+    rwmixwrite=3D30
+    numjobs=3D4
+    group_reporting
+    time_based
+    runtime=3D99h
+    clat_percentiles=3D0
+    unlink=3D1
+
+3. Wait for about a minute
+4. Remove a disk of the volume group, either physically, or by turning
+off jbod slot's power (DO NOT use /=E2=80=A6/device/delete).
+5. Wait 30 seconds
+
+## Expected
+
+`dmesg -w` won't show anything interesting
+
+## Actual
+
+`dmesg -w` starts showing up traces as follows (not sure why the
+missing line numbers, I have debug symbols locally, I can decode them
+manually with `gdb` if needed):
+
+    [=E2=80=A6]
+    [  869.086048] mpt3sas_cm0: log_info(0x31110e05): originator(PL),
+code(0x11), sub_code(0x0e05)
+    [  869.139959] mpt3sas_cm0: mpt3sas_transport_port_remove: removed:
+sas_addr(0x5002538a67b01303)
+    [  869.140085] mpt3sas_cm0: removing handle(0x0022),
+sas_addr(0x5002538a67b01303)
+    [  869.140191] mpt3sas_cm0: enclosure logical
+id(0x50015b2140128f7f), slot(12)
+    [  869.140293] mpt3sas_cm0: enclosure level(0x0000), connector
+name(     )
+    [  893.262506] watchdog: BUG: soft lockup - CPU#5 stuck for 26s!
+[mdX_raid5:24608]
+    [  893.262641] Modules linked in: dm_raid mptctl mptbase bonding
+fcoe libfcoe 8021q garp mrp libfc stp llc scsi_transport_fc
+sch_fq_codel softdog dm_round_robin scsi_dh_alua intel_rapl_msr
+coretemp intel_rapl_common sb_edac x86_pkg_temp_thermal
+intel_powerclamp ast kvm_intel drm_shmem_helper drm_kms_helper kvm
+crct10dif_pclmul crc32_pclmul ghash_clmulni_intel sha512_ssse3
+sha256_ssse3 sha1_ssse3 aesni_intel crypto_simd cryptd rapl
+intel_cstate wdat_wdt intel_pch_thermal ipmi_ssif dm_multipath
+acpi_ipmi sg ipmi_si ipmi_devintf ipmi_msghandler acpi_pad
+acpi_power_meter ramoops reed_solomon efi_pstore drm ip_tables x_tables
+autofs4 raid10 raid456 async_raid6_recov async_memcpy async_pq
+async_xor xor async_tx raid6_pq libcrc32c raid0 ses enclosure mlx5_ib
+ib_core raid1 ixgbe igb mlx5_core mdio_devres xfrm_algo i2c_algo_bit
+e1000e mpt3sas hwmon dca mdio i2c_i801 ahci lpc_ich ptp i2c_smbus
+mfd_core raid_class libahci pps_core libphy scsi_transport_sas
+    [  893.264033] CPU: 5 PID: 24608 Comm: mdX_raid5 Not tainted 6.9.8-
+bstrg #3
+    [  893.264254] Hardware name: AIC HA401-LB2/LIBRA, BIOS LIBBV071
+04/19/2017
+    [  893.264479] RIP: 0010:_raw_spin_lock_irqsave+0xe/0x30
+    [  893.264714] Code: 48 89 ef 5d e9 13 33 47 ff 0f 1f 00 90 90 90
+90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 41 54 55 48 89 fd
+9c 41 5c <fa> bf 01 00 00 00 e8 07 96 43 ff 48 89 ef e8 df 32 47 ff 4c
+89 e0
+    [  893.265229] RSP: 0018:ffffbc306091fd70 EFLAGS: 00000246
+    [  893.265502] RAX: 0000000000000001 RBX: 0000000000000001 RCX:
+0000000000000000
+    [  893.265783] RDX: 0000000000000001 RSI: 0000000000000003 RDI:
+ffff9fbacf48c430
+    [  893.266069] RBP: ffff9fbacf48c430 R08: ffff9fcac1254d58 R09:
+00000000ffffffff
+    [  893.266366] R10: 0000000000000000 R11: ffffbc306091fe20 R12:
+0000000000000246
+    [  893.266664] R13: ffff9fcac1254dc0 R14: 0000000000000000 R15:
+0000000000739d18
+    [  893.266968] FS:  0000000000000000(0000)
+GS:ffff9fc9fff40000(0000) knlGS:0000000000000000
+    [  893.267282] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+    [  893.267603] CR2: 000055f91452ff88 CR3: 0000000124c74004 CR4:
+00000000003706f0
+    [  893.267933] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+0000000000000000
+    [  893.268268] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+0000000000000400
+    [  893.268605] Call Trace:
+    [  893.268945]  <IRQ>
+    [  893.269285]  ? watchdog_timer_fn+0x24b/0x2d0
+    [  893.269638]  ? __pfx_watchdog_timer_fn+0x10/0x10
+    [  893.269990]  ? __hrtimer_run_queues+0x112/0x2b0
+    [  893.270347]  ? hrtimer_interrupt+0x101/0x240
+    [  893.270708]  ? __sysvec_apic_timer_interrupt+0x6e/0x180
+    [  893.271075]  ? sysvec_apic_timer_interrupt+0x9d/0xd0
+    [  893.271448]  </IRQ>
+    [  893.271816]  <TASK>
+    [  893.272184]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+    [  893.272568]  ? _raw_spin_lock_irqsave+0xe/0x30
+    [  893.272956]  __wake_up+0x1d/0x60
+    [  893.273345]  md_wakeup_thread+0x38/0x70
+    [  893.273738]  raid5d+0x32a/0x5d0 [raid456]
+    [  893.274147]  md_thread+0xc1/0x170
+    [  893.274545]  ? __pfx_autoremove_wake_function+0x10/0x10
+    [  893.274951]  ? __pfx_md_thread+0x10/0x10
+    [  893.275358]  kthread+0xff/0x130
+    [  893.275760]  ? __pfx_kthread+0x10/0x10
+    [  893.276172]  ret_from_fork+0x30/0x50
+    [  893.276568]  ? __pfx_kthread+0x10/0x10
+    [  893.276961]  ret_from_fork_asm+0x1a/0x30
+    [  893.277351]  </TASK>
+
 
