@@ -1,149 +1,123 @@
-Return-Path: <linux-kernel+bounces-251134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E7C930111
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:44:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 648F493011C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A26281DFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:44:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6517B21EE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E3938DE0;
-	Fri, 12 Jul 2024 19:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00353A8C0;
+	Fri, 12 Jul 2024 19:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a8zKat8A"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Cix14nq6"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA1D18C08;
-	Fri, 12 Jul 2024 19:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC7C1B95B;
+	Fri, 12 Jul 2024 19:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720813493; cv=none; b=JPkA7J0OahdNP8Bq1AccuDC1nGgFCMlaMbWBcyPP79xvPGvTPTF2pMpbSMHFQprD76qnfdE4NXX6Pp/NTS3k63efO+7Gw+vlPEjrQoL6E2ii1PnbjWU7Cayo64IyGWHsEPD12K7IjU4ZtCy/DrEC//DTCnk1WtJLJhKPTEvnNog=
+	t=1720813968; cv=none; b=js0WxOWRtoSyMSZS6rzHAEOWGHD98bs6N8utLJWdtIhABgSA3FL7o3I9VdT5ZWA4GHk3JkUel+HvacpoWNluW8XV00vb5wmfklqtmsY2MmhSDsu+wDy8MygRvPD8Y5g0DdNuOHuUR3APnl3GLdbrf4ZOgdliPZ3caUd53vVRbLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720813493; c=relaxed/simple;
-	bh=Xs0O2s+oSugsI3ZvzFon2V/CPImOC2vIfiyCeloaF50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YYvFh+9yaX+8gIYW2rYVTBoxG51tp3qNndCEFxo/iA/4USGQzQlQE+Fj+45n08P/aujDoSMo6pXauW0B/Bs0iT+V+yLxB6/DRZ/uoJF3ZsjqHw1hALWfjAajYHQ/5ZA/LsyC7mqAt+8mIWCSjLOVjV2sYWZIZXWCUAXPMLp5Fyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a8zKat8A; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720813490; x=1752349490;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Xs0O2s+oSugsI3ZvzFon2V/CPImOC2vIfiyCeloaF50=;
-  b=a8zKat8AnWbWtEITTe3xmFZVTgMbc7+n67jtUFi7OiOs7Jodyg+3AjVb
-   sjrASiY1ZES2Q62GXhLHeXuyAt7acJBSk97ADafgtYanf5yGO66OUs2D3
-   hZbq4DqR800QQPuacJuCT07aZBE715olyqDKsXUcE2uJQIS38zFBNdQOq
-   +YXHce3BjjlC4IIdXYtxEN3mseIPN7zepGWjBV7pZ6uOe7ycUM7ovIkc0
-   krSwi6QPzgCDwy0wYGnOvCmMZtPi4PZGH0uA8TlGs/HZohFGiOKJa9m+s
-   Ka/mjJImIzfaeTTW4I8g1FYD9RpnSfSRzr4LnNbVwsbbPBgrau/zz6OGa
-   A==;
-X-CSE-ConnectionGUID: cvOUlNZxRoWWjYilZ4mQWg==
-X-CSE-MsgGUID: SKyLEqzZQJ2dxumhEO95eA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="18410756"
-X-IronPort-AV: E=Sophos;i="6.09,203,1716274800"; 
-   d="scan'208";a="18410756"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 12:44:50 -0700
-X-CSE-ConnectionGUID: KbSQTBy9RoSsODOpBO4kLw==
-X-CSE-MsgGUID: IYmtyCCoQICB0UX5f2j4pQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,203,1716274800"; 
-   d="scan'208";a="80104949"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 12 Jul 2024 12:44:44 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sSMCA-000bCo-1u;
-	Fri, 12 Jul 2024 19:44:42 +0000
-Date: Sat, 13 Jul 2024 03:44:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, sudeep.holla@arm.com,
-	james.quinlan@broadcom.com, f.fainelli@gmail.com,
-	vincent.guittot@linaro.org, etienne.carriere@st.com,
-	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
-	quic_nkela@quicinc.com, ptosi@google.com, dan.carpenter@linaro.org,
-	souvik.chakravarty@arm.com, Peng Fan <peng.fan@nxp.com>,
-	Cristian Marussi <cristian.marussi@arm.com>
-Subject: Re: [PATCH v2 1/8] firmware: arm_scmi: Introduce setup_shmem_iomap
-Message-ID: <202407130355.IWguWKJm-lkp@intel.com>
-References: <20240710173153.4060457-2-cristian.marussi@arm.com>
+	s=arc-20240116; t=1720813968; c=relaxed/simple;
+	bh=4JpOdrHF9yVIaqkkjK73+x67qt6NLBvjC+qQbGZmaIs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=eFPlUDdr514e3dH9knHmUdvaOL09AvtJKBWz3eiX0QWii52uxULmW5Ap71nADtcD3CTRgjwPdTPqKUz2FPJlsbyW2UK6gSnLOQXpTRq9/t6a9W+x38HOwUMswA5B08xHHc1QkDM0ocZG3AM4zZ8dL1bMX2zgtW2eF97LFeLLMEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Cix14nq6; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720813935; x=1721418735; i=markus.elfring@web.de;
+	bh=fihKUc/kaj99ERsbRn7CbqhY5SiZXokiELceXjSmV9g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Cix14nq66GzkZtyXdh6PdQ52Vd+idDVTP8YUDE4w3KNJ/5XpTPwmTfRo1OcG1GU3
+	 uRp+mm8YCIgH817ZxwqVgDyixShkTULs2RhWwY/0EUyRMYQfvyihPfkKI/nM4xsyq
+	 0LyyVSH0oWGxWvSh/PAxstj/oiSaib1f/Uj6p7LuHuh1xToaq/dVH6IqufY+V+uxP
+	 ZbhC+R/M6/phWtkt/AsgjsN2eCICVpuPQLJnB9hmYXYSrhgLrh3CDW855UFD+LHGI
+	 ShfU29XWfeK33PAGdWA3I1Vr0eN0GCKf7CYW1GqvuGMeG7uxMpOE1aNVDVU/Ke04q
+	 Gm0UCGwgjViboTzmPA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiMEM-1rqIXZ3XXi-00bNg9; Fri, 12
+ Jul 2024 21:52:15 +0200
+Message-ID: <fd40e1b9-cb76-4617-b699-19f1f580fe98@web.de>
+Date: Fri, 12 Jul 2024 21:52:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710173153.4060457-2-cristian.marussi@arm.com>
+User-Agent: Mozilla Thunderbird
+To: Geetha sowjanya <gakula@marvell.com>, netdev@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Hariprasad Kelam <hkelam@marvell.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
+ Sunil Goutham <sgoutham@marvell.com>
+References: <20240712175520.7013-6-gakula@marvell.com>
+Subject: Re: [net-next PATCH v9 05/11] octeontx2-af: Add packet path between
+ representor and VF
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240712175520.7013-6-gakula@marvell.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UVFUEjtxhb49QRh8eHS0Pk5+rTIm5E+GbTko8+MUbvbEXPGzkIO
+ prHH1DXI4rcdARZlEnnhECgPI6owbmhRPyOzQoCdMOODNxpgI74N7jCQM8EQ315eLwoSajH
+ yz8LbzdzY9gM2TR5FEl1Lr2lMcKajZ6NCPYLM23d1pdEJNTxdpe/Q94TyF6EWm5YuN5GzP5
+ iX6MdXblpoPRSti7E/zMw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9yQUEHdKTxw=;PL8fLEJFKJrcIdKxT2nkYBU/gwa
+ 5sagHM9rfCKc8r8nDtUMv8jh3W8tSYC40LrEpd5hjt7CWZbLbIMvIAtGLWoy6ujY3SUQLz85F
+ s++duNiRt8LOkLyQWLFUU6ZNOjTfXUoigUcpwjgH5UVC4j6r7+NJX/282ZvkTy23J8CiHVdGG
+ OoIPUn0GMbauo2iPtT8HjSkTyjR94a4xzI9UEUPGg2Ahl7ZBEMRBkD+OWqsm766zW27Mt07mj
+ nYNGK7fBd8+1crqJhpvomD1ixEC9gIkUcAfueMW+sUIS5Fms782iTX/Y0ko7lCijW/MTqTCMX
+ VU/KdnWHt9O0zcuQvgV8Wg7LQhgHpzG14a5Ah9ALR9hW8SWksEq9gc0bj77RqBgTqqJuqsJ7d
+ U33XertiyKhpd77reZKPltfpmJjIrc+zsNFpQYToOACN4O8HPV39NrgGkqXHEjyhDkcBFOpro
+ yawQBAP2jdjftcqxCyQTCpzU0zc5dliAf4s9yzseXb2Dww/dNEPL6qR4G5Su283jFnfTYT+SB
+ v36k7PX20CZe9txgUb4HCtZsxNhSAhNiRYxAABV7f/9vSv3r6Y0h9C5vADrp9TiFn6C/EGVsI
+ yAo5NtEfS+JbxiCqnE6fL6c1UHxnI+2z+GkbAfV2XRu42BzXvkS0BHkvzJDRN/CEeNTeVbOJ4
+ gCg7T0t3YY37zPRGI7wjODl2Yh1J0I0EO0athtbhnepUutdFCys4tFF+75OechXhumyHi5Tk2
+ UgeJddfbeMqSevDuYXjjVgejP8Oa1Jym5jZ/vcqNcSevZolhIRJ1sp91HNQPMlAsnNjE9jheX
+ U7KbRMKOb84wa4qbXkXdf9Aw==
 
-Hi Cristian,
+> Current HW, do not support in-built switch which will forward pkts
+=E2=80=A6
+              does?          built-in?
 
-kernel test robot noticed the following build warnings:
+How do you think about to avoid any abbreviations for another improved cha=
+nge description?
 
-[auto build test WARNING on soc/for-next]
-[also build test WARNING on next-20240712]
-[cannot apply to linus/master v6.10-rc7]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Marussi/firmware-arm_scmi-Introduce-setup_shmem_iomap/20240711-062033
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20240710173153.4060457-2-cristian.marussi%40arm.com
-patch subject: [PATCH v2 1/8] firmware: arm_scmi: Introduce setup_shmem_iomap
-config: arm64-randconfig-r132-20240712 (https://download.01.org/0day-ci/archive/20240713/202407130355.IWguWKJm-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce: (https://download.01.org/0day-ci/archive/20240713/202407130355.IWguWKJm-lkp@intel.com/reproduce)
+=E2=80=A6
+> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
+=E2=80=A6
+> +void rvu_rep_update_rules(struct rvu *rvu, u16 pcifunc, bool ena)
+> +{
+=E2=80=A6
+> +	rvu_switch_enable_lbk_link(rvu, pcifunc, ena);
+> +	mutex_lock(&mcam->lock);
+> +	for (entry =3D 0; entry < max; entry++) {
+=E2=80=A6
+> +	}
+> +	mutex_unlock(&mcam->lock);
+> +}
+=E2=80=A6
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407130355.IWguWKJm-lkp@intel.com/
+Under which circumstances would you become interested to apply a construct
+like =E2=80=9Cscoped_guard(mutex, &mcam->lock)=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.10-rc7/source/include/linux/cleanup.h#=
+L137
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/firmware/arm_scmi/shmem.c:153:31: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
-   drivers/firmware/arm_scmi/shmem.c:153:31: sparse:     expected void [noderef] __iomem *
-   drivers/firmware/arm_scmi/shmem.c:153:31: sparse:     got void *
-   drivers/firmware/arm_scmi/shmem.c:156:31: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
-   drivers/firmware/arm_scmi/shmem.c:156:31: sparse:     expected void [noderef] __iomem *
-   drivers/firmware/arm_scmi/shmem.c:156:31: sparse:     got void *
-   drivers/firmware/arm_scmi/shmem.c:165:31: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
-   drivers/firmware/arm_scmi/shmem.c:165:31: sparse:     expected void [noderef] __iomem *
-   drivers/firmware/arm_scmi/shmem.c:165:31: sparse:     got void *
-   drivers/firmware/arm_scmi/shmem.c:172:31: sparse: sparse: incorrect type in return expression (different address spaces) @@     expected void [noderef] __iomem * @@     got void * @@
-   drivers/firmware/arm_scmi/shmem.c:172:31: sparse:     expected void [noderef] __iomem *
-   drivers/firmware/arm_scmi/shmem.c:172:31: sparse:     got void *
-
-vim +153 drivers/firmware/arm_scmi/shmem.c
-
-   138	
-   139	void __iomem *setup_shmem_iomap(struct scmi_chan_info *cinfo,
-   140					struct device *dev, bool tx,
-   141					struct resource *res)
-   142	{
-   143		struct device_node *shmem __free(device_node);
-   144		const char *desc = tx ? "Tx" : "Rx";
-   145		int ret, idx = tx ? 0 : 1;
-   146		struct device *cdev = cinfo->dev;
-   147		struct resource lres = {};
-   148		resource_size_t size;
-   149		void __iomem *addr;
-   150	
-   151		shmem = of_parse_phandle(cdev->of_node, "shmem", idx);
-   152		if (!shmem)
- > 153			return ERR_PTR(-ENODEV);
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Markus
 
