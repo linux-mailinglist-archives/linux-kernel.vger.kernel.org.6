@@ -1,150 +1,92 @@
-Return-Path: <linux-kernel+bounces-250987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78F192FF35
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:12:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E2692FF34
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE1C283358
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:12:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8BF3B25644
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D06617B4FC;
-	Fri, 12 Jul 2024 17:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Epp83Y2f"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E49178CF1;
+	Fri, 12 Jul 2024 17:10:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071B3179658
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE04C1EA85
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720804207; cv=none; b=X/4cde8dX7Oh5SIvTQMasZYai9LBmjv/dT6Va0ptVTr4MKAdk6h6KLEdHq+QDpYgHdr/AxWISkztiuwQM3IbOI9vMCFMZiwVawOcMdW0vSUAIavQ4Hqi/wSdhyqPIfPgj0mnWz4H7u7l+uWG2WO4iYNaEZWHKNxyx0gWRh++7KE=
+	t=1720804205; cv=none; b=Svx9lQ11buDs5skXvXooJV1w+sYINEarS97hUubNi9GLYR5jvPgMIkXOxrJjDMOACReOGDAxZinSM/wXBiKpOsHd8LkVi/8wKL5wJ82Sjkx5CjzGNW7bS9JptO1sV2aWt3v1BEb4y7ulPk2qZZARK8OhhGtTFgA0c0AidX5YQWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720804207; c=relaxed/simple;
-	bh=iG2xqENYZFTFr1IbouCj87WCkOw9JaByFRY/xIAfdYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fwrr7ASmpcKwGL34O+dtRIcA3gAWGl2abvCueJzKC9z7OwNQG1gv9oGMxIGNmIm7BFCylUpYLxt/qJFB0SPzxnbLOi+ZSRZ/PUZQiP2hvK9gWX3LmA2fzwZfL5iOjfXax1Nlux8yaNED10QCTyrePHVrBuh4b07+vCCYsult7KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Epp83Y2f; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4266edcc54cso1385e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720804204; x=1721409004; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rMZXVu60zJG58GKh3Q1lSirg7a2qt1HU65yEcaRG7AA=;
-        b=Epp83Y2fdc0xyoLw+mqFMtIY1yYxQGg7he4PNAs7yf+32ywBhW60uvKKpJexsNnQ53
-         IHBZkffIMHFxw+WBFB/JWg+ADWjTYvRZFPKLBYNkZtslJxSKhTFZYg/gOMrjNoun2UbR
-         G1+7h+cIimpCpaQzWZeMS9QKSGsyJ1CdoppEzxz/JzC6RSYV/VuurffUp2nCDMdJs12x
-         QJeIQIUgZl3p4ExQWvefvQCfFs5FknQNxjKIXxLqFEHG55r31Xv2jlsQxJTVfgMRvx7O
-         ZdC9d6hAFL+f+zfOcG4hqxQBWp35Jz3kTxp5EUCBiPTxX3dlI23u8hWNkLhuMLLzlvwx
-         wM5A==
+	s=arc-20240116; t=1720804205; c=relaxed/simple;
+	bh=16jfph0RZCWtvIyndElAe3dvIat1XCr05PdV7AU7tV8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sg0mF0FxPq+Nk3e4iCrGeyzxfhtWo5oa9KKl+lq+I7DpHn25AWmK1wK3eNtg09G33Lmkwb2bi0DkM/2gjWhO+e1sZW4hs+zD5ZWgBWJ2xaCTJVN6p0B/VZXDapTu9HwWddXyECo+wgD6jZQwhRlGrg36r8dBf35rroaMF1FF4Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-804888d4610so233138939f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:10:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720804204; x=1721409004;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rMZXVu60zJG58GKh3Q1lSirg7a2qt1HU65yEcaRG7AA=;
-        b=hhcO1FDEC5Wcx8qglhBPb7qFHy1FkT+8+sCM21QYT+5XUVXGNmMHY5wRpo0T2XwgJz
-         vPyM/FZv+g35llD3lNCFmppMUbynN/ujjowfAT8kU9pjBiCkIfhDNPOVQomZrvQKR46G
-         jNHlr6EJq9q4YrXFAj+pyRiggJITrVRbpt14cjbRUkGvXLrOzNalDFWSRw+NejJhVces
-         S6zxaj1vErqqHErnHaHdxxzaC80lI6anmFewYghRxFjKDlQNsfN+nbyJoVOijdCW6m3Q
-         R8SFpy3BRd8R86KSy2Bl4XeUd2Ech/mZMAbyw8p71y5iJbYOnK/O6BPwA8PIVpfSZrzu
-         8O+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWKZZRS2suw3i2bdgg/LUQ0LXTQ2uPRCbUhFnhME5OvtpFW0Cr2HBaylGOLqIdz3D3ijDcfD5pBU27tCCojAVEGGMGNlbcdlEWB2THx
-X-Gm-Message-State: AOJu0YwrG0FySfhB93KtlkJnuxVeyS87VHtVKv5nxFvX2PyoD+8HPsw0
-	fdYw7c/2KI8+BrgzH/U2B56GE4wT6Mux2YLyUy0qNvS54Fc1ifmRqNf9HFm1+A==
-X-Google-Smtp-Source: AGHT+IHW4j/Ai/a9CGXSUWjW4J7ti0hzG99uRbbUAmwE86eZrQEMYyuJ3dymC0HiUJLsh8BfgBWNwg==
-X-Received: by 2002:a05:600c:378d:b0:426:6edd:61a7 with SMTP id 5b1f17b1804b1-4279f09320amr1596615e9.7.1720804204187;
-        Fri, 12 Jul 2024 10:10:04 -0700 (PDT)
-Received: from google.com (60.58.155.104.bc.googleusercontent.com. [104.155.58.60])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-426740daf6dsm60948655e9.1.2024.07.12.10.10.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 10:10:03 -0700 (PDT)
-Date: Fri, 12 Jul 2024 17:09:57 +0000
-From: Brendan Jackman <jackmanb@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Alexandre Chartre <alexandre.chartre@oracle.com>,
-	Liran Alon <liran.alon@oracle.com>,
-	Jan Setje-Eilers <jan.setjeeilers@oracle.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mel Gorman <mgorman@suse.de>, Lorenzo Stoakes <lstoakes@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-	Khalid Aziz <khalid.aziz@oracle.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Paul Turner <pjt@google.com>, Reiji Watanabe <reijiw@google.com>,
-	Junaid Shahid <junaids@google.com>,
-	Ofir Weisse <oweisse@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	Patrick Bellasi <derkling@google.com>,
-	KP Singh <kpsingh@google.com>,
-	Alexandra Sandulescu <aesa@google.com>,
-	Matteo Rizzo <matteorizzo@google.com>, Jann Horn <jannh@google.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kvm@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
-Subject: Re: [PATCH 00/26] Address Space Isolation (ASI) 2024
-Message-ID: <ZpFjZfgrmhHwZLJU@google.com>
-References: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
+        d=1e100.net; s=20230601; t=1720804203; x=1721409003;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UMTg6foxnmww8UGT4+LezD+QiVNDfhqGjXbeHbYDlWQ=;
+        b=WDOLdqUBm+pZIIi5ycBD6ap8vgZjVwbjkXOiJybsS/BQUOcdW2EJM8/kSwTFepnhIg
+         uzdboK8CCMfC+qU4aWVTbsYlR5F7BoJpMMgWaaYuj+CB2u0TJ1DD4+xaQIuR9t7Brj3p
+         skiXsoxj/xLzhlg93QN/Zs7GZbps0LPacXMk4XXdlvQBgI4Kds6YM4ocs/To1MXskWPx
+         5I3m6xGz+XLnXL7ewxXRK8iB0YRO7TT5rJL0UX/rmgiiTfpigTV54pcmCEku4AOOQWyE
+         yOb0nkvRNLvMqLiTA/DFYedQDJpRCC+ts9G7aughMg+Bed6Kkd3OIAHJBwB2p8/3ty5W
+         v9qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOV/V8WW72+//wyJ2oF/OvjQ8Eh5OUHWNgUm5D8ZFWXJrqvmB59JvpBYw2sosOTyJ8NSbHpsqxGK6OV+FmC43ow1qm+1PdxISsXbbG
+X-Gm-Message-State: AOJu0YzCQbDQjKmcbxirH8r6xXZ0mEvOlYrf3cxe15phPu4i1iB/BE/b
+	DydvQIm26Ku5o98qD7s5o7Xq0V6HR4AbNEfu0otnIdBT5GrsaG8aXFuoHiK1fisziZxLDjehy2A
+	A0LFN0xH+Zh+dbqKEJ3V3zFlEUqf7ZsVE1+Isp7aDnj5pXn4Gp1MtZ8A=
+X-Google-Smtp-Source: AGHT+IEJZjuf2gYy+pY3NG98U4qzYz9im6X+ZVcZFK4JUGIwyXYeq3SI6ARl39NV5HXFsilDRS+qHnJ5t/xjG8gxi5VZZXF3EzeB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
+X-Received: by 2002:a05:6e02:152f:b0:38b:462b:8dd with SMTP id
+ e9e14a558f8ab-38e62268c4bmr2588145ab.3.1720804202911; Fri, 12 Jul 2024
+ 10:10:02 -0700 (PDT)
+Date: Fri, 12 Jul 2024 10:10:02 -0700
+In-Reply-To: <0000000000001e3b8505e9f95e3d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003e26e7061d0ff386@google.com>
+Subject: Re: [syzbot] [ntfs3?] possible deadlock in ntfs_read_folio
+From: syzbot <syzbot+8ef76b0b1f86c382ad37@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, anton@tuxera.com, 
+	brauner@kernel.org, david@fromorbit.com, linkinjeon@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Well, off to a good start...
+syzbot suspects this issue was fixed by commit:
 
-REFLECT MODE:
-    The To: and Cc: headers will be fully populated, but the only
-    address given to the mail server for actual delivery will be
-    Brendan Jackman <jackmanb@google.com>
+commit 7ffa8f3d30236e0ab897c30bdb01224ff1fe1c89
+Author: Matthew Wilcox (Oracle) <willy@infradead.org>
+Date:   Mon Jan 15 07:20:25 2024 +0000
 
-    Addresses in To: and Cc: headers will NOT receive this series.
+    fs: Remove NTFS classic
 
-Apparently gmail is too clever for this and sent my mail out anyway.
-So, some corrections, more probably to come on monday.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17bc0ea5980000
+start commit:   2a6526c4f389 Merge tag 'linux_kselftest-kunit-fixes-6.8-rc..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b0b9993d7d6d1990
+dashboard link: https://syzkaller.appspot.com/bug?extid=8ef76b0b1f86c382ad37
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117f19fde80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ceb0cbe80000
 
-On Fri, Jul 12, 2024 at 05:00:18PM +0000, Brendan Jackman wrote:
-> Overview
-> ========
-> This RFC 
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Yes, this is an RFC, definitely not a PATCH. Sorry for the bogus
-subject...
+#syz fix: fs: Remove NTFS classic
 
-> Rough structure of this series:
-> 
-> - 01-14: Establish ASI infrastructure, e.g. for manipulating pagetables,
->   performing address space transitions.
-> - 15-19: Map data into the restricted address space.
-
-Actually 15-20
-
-> - 20-23: Finalize a functionality correct ASI for KVM. 
-
-21-24
-
-> - 24-26: Switch it on and demonstrate actual vuln mitigation.
-
-25-26
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
