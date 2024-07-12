@@ -1,203 +1,176 @@
-Return-Path: <linux-kernel+bounces-251211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5406A930227
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:36:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D759930229
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D434A1F2285C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:36:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BE41C210C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5493F73501;
-	Fri, 12 Jul 2024 22:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B72085298;
+	Fri, 12 Jul 2024 22:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NFJ/GbFa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0RF8ug1"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6933651C21
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 22:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AAB7F7FB;
+	Fri, 12 Jul 2024 22:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720823789; cv=none; b=ghdNKEXrnqAOR+4Ne/0YpdfTDMYsx03dMEwb9vYzPWAUfnxVc9LiY4XdYxpm2/2qUBzovxMGHnSv8Jcq+WPkpsh4kcwmJUatX02jd/B/o2Jlg1mruLLecpLsVxSag8wJRJueyOSroyJoBDFLmbtpEKeWc0pc05HEMELA7cYMoio=
+	t=1720823803; cv=none; b=sZHFw7Ua7c7WcHb9An0fr2l7m8WoWOT/oD2ORVSMWa0sxNDgQQGjII01eCtYSGeoIJp3Eluk8QguGz569bT4VxTPRFbtha7VuXOHj/dgXWFFHs3xA7V3OlSibcw3HwWVjkP2e4xj54WIl5ykesh3vU7QyhfJeJtrkCfHALGexPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720823789; c=relaxed/simple;
-	bh=TNXcGKx0oO0INQoUwhNKp6sd7FDNWObHlJOZyFifFs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TEdINUvreaWWP7qIgSa6lTOHbIMmzUMei1iyGqFuWqkQCLrHRewUaRgsj6R7E6rMlJ9T3R7FwmfjumiQCuZ0Pce4Y4vbkk8FQcfO880VelTRK79nw0aoX9YAzBYTYNCOJefFZO0K+yKvCCIOWs/1elyW9B64jHtJz6Uag21sGfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NFJ/GbFa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720823786;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UD+jsIB9utwUuMD5D9RKKWQHJKFtMYpx4nMjcv9KoxQ=;
-	b=NFJ/GbFacmMjFCx2KCrY2h1GIzSPKDh051sxNVOB1yjwe8sWB5ub3PwenAXZxNREKge1lH
-	xaDqLxYAw7z+8+unq3xcRvXLZ1vYNK6a4dEei4k3+KsVRtB+mRT3CPEiPUbQkcJALEqnBn
-	4dzURTrAh8gFBLZfK7+dofKkAX8SPRQ=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-172-wNTFWPeMOqGXWRHcu9FHTA-1; Fri, 12 Jul 2024 18:36:24 -0400
-X-MC-Unique: wNTFWPeMOqGXWRHcu9FHTA-1
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f3b0bc9cf6so274264539f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:36:24 -0700 (PDT)
+	s=arc-20240116; t=1720823803; c=relaxed/simple;
+	bh=qkASzPzjNMSeYMQLDsLAKiFjJF2MAimi/PdOy1+z6fI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OOQtd167mdzE4ek/7i4Dd7sbX1aHk9cAMrQJN1ah4BYPV8oGgRaIda9wqQRG4FYZgTmPH5l2Re0Y8z8pMaJlqvAeZiCDaapuMxUIaquHlEuwFcf3shBANN9bnBsQta7Tek3kWozUbFd7E1OK8WR8wkmufzaCnv8QaKrds/ZSIiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0RF8ug1; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e035f4e3473so2357174276.3;
+        Fri, 12 Jul 2024 15:36:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720823801; x=1721428601; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qkASzPzjNMSeYMQLDsLAKiFjJF2MAimi/PdOy1+z6fI=;
+        b=i0RF8ug1Iwzl1yIbQ4pofuDD6SNJIELVk9Lf3916WlzMozlDt1P92bDImvz8jHqtBc
+         57u2DVAHOLmBaoOVn+eRRz5ij6IX9L54tLjsrck7rNOFGKETh1KdRqSP/WuuwoTaAMIm
+         9Yuoz1huy7K5kYC/wVHQRhgMFUhjbkK76RIIT8c4SWbji84mh4NzLFzFm5mFOJibR1JC
+         VOmmNpLuAp6rI4LNSQD/jab37ZkpfJOPZjyPjtSptBRFDjjc41fSYuUbQBaIibPbVvqn
+         yk0McQuN0DfHhUw3sTVIFTTX6nZadhF0sYI5ESbVF+kQGsD16KknGMEc+0azgwUnGIhy
+         j+kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720823784; x=1721428584;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720823801; x=1721428601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UD+jsIB9utwUuMD5D9RKKWQHJKFtMYpx4nMjcv9KoxQ=;
-        b=DndtMTzFtoMxaNoy+lAes72WTJno/dbOKQofMJi6dU9kebF331b9okZuu9arY1v7nE
-         pDM2YgLPsbIvt7sKUUeS8iA3/xHZkBbqO10zQp7+FZKdwpdzvdwl0ZHRYmqfRlcznuLs
-         h3D86GUaJvBVI/I/fyvPiLTK5t6nrdR/pjwfND1Vl0xId5mti/QQ2o4A++llXLqzc7yC
-         5VO0MQ800Vgj0BO5VGIbOgsGN+qSQh01JEGzbyxIFcf0a3rDRbdmwEKBc7XPGHQtF7Kc
-         eMqu7SH1y6nXrvvzemAU/P1/dcttaham2E2Etemcar9GWOeGl1gERP9Gi31nJWLwDm4z
-         pV7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWqfSZ2+6qvFlKSFZaSMxwEV0f4ieAs/6GeYtWiqiZH8UhVSkS2JeDlg6AsfQNwdN8oPS5GVXom8P68a9yH3HmfnCC2Z2tTtn3M7b1B
-X-Gm-Message-State: AOJu0Yy3BG3UxMZfWz+eOU8rBc3/lgn2wDoBJRM3/w27p56zSk1u0x3Y
-	eBE9ceV5nAxHtmm1n9x/bVwzGaGZOYa9Vij28yDVKmYSMTdl7fJN7hFZYwCfGLzWEKGC84kp2h2
-	mAnEZZZrxu9CtbWpG1eShoYuEvXpJmgStVL4tCxysUhZ2vpkZVwErjz0Ajdd+fQ==
-X-Received: by 2002:a05:6602:1615:b0:7f6:f93d:e6a0 with SMTP id ca18e2360f4ac-800034fd528mr1822795339f.15.1720823783806;
-        Fri, 12 Jul 2024 15:36:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSyar8qW8JkxVFrshE2XwMjaVLy7kugEr4dBZXEvrYReUj5BJaoGKYAE5t07ynIbmqrbCK4g==
-X-Received: by 2002:a05:6602:1615:b0:7f6:f93d:e6a0 with SMTP id ca18e2360f4ac-800034fd528mr1822794539f.15.1720823783398;
-        Fri, 12 Jul 2024 15:36:23 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1af8108sm2710939173.14.2024.07.12.15.36.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 15:36:22 -0700 (PDT)
-Date: Fri, 12 Jul 2024 16:36:21 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Kirti Wankhede <kwankhede@nvidia.com>, Jeff Johnson
- <quic_jjohnson@quicinc.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH] vfio-mdev: add MODULE_DESCRIPTION() macros
-Message-ID: <20240712163621.6f34ae98.alex.williamson@redhat.com>
-In-Reply-To: <MN2PR12MB420688C51B3F2CC8BF8CA3A8DCA62@MN2PR12MB4206.namprd12.prod.outlook.com>
-References: <20240523-md-vfio-mdev-v1-1-4676cd532b10@quicinc.com>
-	<a94604eb-7ea6-4813-aa78-6c73f7d4253a@quicinc.com>
-	<MN2PR12MB420688C51B3F2CC8BF8CA3A8DCA62@MN2PR12MB4206.namprd12.prod.outlook.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+        bh=qkASzPzjNMSeYMQLDsLAKiFjJF2MAimi/PdOy1+z6fI=;
+        b=wOg603HpddM39yCmUZH95unBOJ/xJUjTX6j0GptUzbHEiv2jGnTgvipS+0G9GT+SkW
+         jNKc+aThYMpOnukpTRQt3KjCgxf+hOsLFt/mlz4y7FOfN9OexFnHdCTmVQdBdaz/50DM
+         ruFahXQT22lZXxadIXivCL9qYioNamk1YpkXQ1PyiRLPB/F/Wl+uWmJirDDXSEDdLqiR
+         Zy52aeG5Ky9IcBTp2dnjWuEEcZo8n6y3eL/0cVPz3hzPeVLgK96uRsbyEQtb2Wbr3SpN
+         XvPpkMhsc7cqbM+9rSSD22feVzbmpbRzgmPt0+x2NAfNIZ59cVCIKeYKlx5K3GbSODwR
+         sMnA==
+X-Forwarded-Encrypted: i=1; AJvYcCULIJK0cVo1l1Yot2KGRrO0zAE1GE6QFN4qAhyA42hYkWu4juz6isWiV0SSBUyGfFL5zReg3i5j5Wyk6SMHPBgvFpgGxAjl/Zpk+JXEjpIWfIAlpzw7x49eNzwLJ9tOCWOgoaznH4S9
+X-Gm-Message-State: AOJu0YxZfBS3XW8geLhrqW9c4+183kFb80g2JQdHjwOIMBItPwI7JyNe
+	Qe0/dSr3BJDsUYy7GgEQDCYGXQcqsQcRptnaRV9atQiu5xQkohFcfMa8cjOb3YB9c/nvcrblPQe
+	43v1LWyjfzTazxh6HyRqRqziRvFs=
+X-Google-Smtp-Source: AGHT+IEfRngAry3fAk2Q0OflTPBnSqJsQeCzMJqXZvzmBdMAdeDaSX1xQkT/TMFBVwfkVTmmZPmrn/0AjlgcY2vWGa0=
+X-Received: by 2002:a5b:b92:0:b0:e03:b61f:22e6 with SMTP id
+ 3f1490d57ef6-e041b039ad6mr14440524276.9.1720823800917; Fri, 12 Jul 2024
+ 15:36:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240706022523.1104080-1-flintglass@gmail.com>
+ <20240706022523.1104080-6-flintglass@gmail.com> <CAKEwX=MmwqevpoGnskXrsYQWKOR8yx4t0moasVO=risu0P7-uA@mail.gmail.com>
+ <CAPpoddenrRxWkSHTrrWEN9=uYGiQtvLDCifhAPyy2jkcdwfE-A@mail.gmail.com>
+In-Reply-To: <CAPpoddenrRxWkSHTrrWEN9=uYGiQtvLDCifhAPyy2jkcdwfE-A@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Fri, 12 Jul 2024 15:36:29 -0700
+Message-ID: <CAKEwX=O+7=rTjaUEQ+3v=f9UHF_GOXWQO9HVZtLZOPCTRh6sVw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] mm: zswap: store incompressible page as-is
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 12 Jul 2024 07:27:33 +0000
-Kirti Wankhede <kwankhede@nvidia.com> wrote:
+On Sun, Jul 7, 2024 at 2:38=E2=80=AFAM Takero Funaki <flintglass@gmail.com>=
+ wrote:
+>
+> 2024=E5=B9=B47=E6=9C=887=E6=97=A5(=E6=97=A5) 8:53 Nhat Pham <nphamcs@gmai=
+l.com>:
+> >
+> > I tried to propose something similar in the past. Please read the
+> > following discussion:
+> >
+> > https://lore.kernel.org/all/CAJD7tka6XRyzYndRNEFZmi0Zj4DD2KnVzt=3DvMGhf=
+F4iN2B4VKw@mail.gmail.com/
+> >
+> > But, the TLDR is Yosry was (rightly) concerned that with this
+> > approach, memory reclaiming could end up increasing memory usage
+> > rather than reducing (since we do not free up the page that fail to
+> > zswap-out, and we need extra memory for the zswap metadata of that
+> > page).
+> >
+> > So my vote on this patch would be NACK, until we get around this issue
+> > somehow :)
+>
+> It seems the discussion on the thread mixed up memory allocation
+> failure (system runs out of memory reserve) and incompressible pages
+> (compression algorithm successfully compressed but the result is equal
+> to or larger than PAGE_SIZE).
+>
+> zswap has been storing pages into dedicated pages 1:1 when compressed
+> to near PAGE_SIZE. Using zsmalloc, current zswap stores pages
+> compressed to between 3633 bytes (=3Dhugeclass+1) to 4095 bytes
+> (=3DPAGE_SIZE-1) into 1 page. This patch changes the range to 3633 to
+> 4096 by treating PAGE_SIZE as a special case. I could not find a
+> reason to reject only PAGE_SIZE while accepting PAGE_SIZE-1.
+>
 
-> + Alex.
-> 
-> Reviewed by : Kirti Wankhede <kwankhede@nvidia.com>
+I'm not actually sure if this is true in practice. While yes, zsmalloc
+has the capability to store near-PAGE_SIZE objects, this also depends
+on the compression algorithm.
 
-Mind the syntax, Reviewed-by:
+At Meta, we use zstd. What I have found is that a lot of the time, it
+just flat out rejects the page if it's too poorly compressed. Without
+this change, we will not have to suffer the memory overhead of the
+zswap_entry structures for these rejected pages, whereas we will with
+this change.
 
-Also a comment below...
+We might need to run some tracing to get a histogram of the
+distribution of post-compression sizes.
 
-> > -----Original Message-----
-> > From: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > Sent: Friday, July 12, 2024 12:01 AM
-> > To: Kirti Wankhede <kwankhede@nvidia.com>
-> > Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-
-> > janitors@vger.kernel.org
-> > Subject: Re: [PATCH] vfio-mdev: add MODULE_DESCRIPTION() macros
-> > 
-> > On 5/23/24 17:12, Jeff Johnson wrote:  
-> > > Fix the 'make W=1' warnings:
-> > > WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-  
-> > mdev/mtty.o  
-> > > WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-  
-> > mdev/mdpy.o  
-> > > WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-  
-> > mdev/mdpy-fb.o  
-> > > WARNING: modpost: missing MODULE_DESCRIPTION() in samples/vfio-  
-> > mdev/mbochs.o  
-> > >
-> > > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > > ---
-> > >   samples/vfio-mdev/mbochs.c  | 1 +
-> > >   samples/vfio-mdev/mdpy-fb.c | 1 +
-> > >   samples/vfio-mdev/mdpy.c    | 1 +
-> > >   samples/vfio-mdev/mtty.c    | 1 +
-> > >   4 files changed, 4 insertions(+)
-> > >
-> > > diff --git a/samples/vfio-mdev/mbochs.c b/samples/vfio-mdev/mbochs.c
-> > > index 9062598ea03d..836456837997 100644
-> > > --- a/samples/vfio-mdev/mbochs.c
-> > > +++ b/samples/vfio-mdev/mbochs.c
-> > > @@ -88,6 +88,7 @@
-> > >   #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
-> > >
-> > >
-> > > +MODULE_DESCRIPTION("Mediated virtual PCI display host device driver");
-> > >   MODULE_LICENSE("GPL v2");
-> > >
-> > >   static int max_mbytes = 256;
-> > > diff --git a/samples/vfio-mdev/mdpy-fb.c b/samples/vfio-mdev/mdpy-fb.c
-> > > index 4598bc28acd9..149af7f598f8 100644
-> > > --- a/samples/vfio-mdev/mdpy-fb.c
-> > > +++ b/samples/vfio-mdev/mdpy-fb.c
-> > > @@ -229,4 +229,5 @@ static int __init mdpy_fb_init(void)
-> > >   module_init(mdpy_fb_init);
-> > >
-> > >   MODULE_DEVICE_TABLE(pci, mdpy_fb_pci_table);
-> > > +MODULE_DESCRIPTION("Framebuffer driver for mdpy (mediated virtual pci  
-> > display device)");  
-> > >   MODULE_LICENSE("GPL v2");
-> > > diff --git a/samples/vfio-mdev/mdpy.c b/samples/vfio-mdev/mdpy.c
-> > > index 27795501de6e..8104831ae125 100644
-> > > --- a/samples/vfio-mdev/mdpy.c
-> > > +++ b/samples/vfio-mdev/mdpy.c
-> > > @@ -40,6 +40,7 @@
-> > >   #define STORE_LE32(addr, val)	(*(u32 *)addr = val)
-> > >
-> > >
-> > > +MODULE_DESCRIPTION("Mediated virtual PCI display host device driver");
-> > >   MODULE_LICENSE("GPL v2");
-> > >
-> > >   #define MDPY_TYPE_1 "vga"
-> > > diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-> > > index 2284b3751240..40e7d154455e 100644
-> > > --- a/samples/vfio-mdev/mtty.c
-> > > +++ b/samples/vfio-mdev/mtty.c
-> > > @@ -2059,5 +2059,6 @@ module_exit(mtty_dev_exit)
-> > >
-> > >   MODULE_LICENSE("GPL v2");
-> > >   MODULE_INFO(supported, "Test driver that simulate serial port over PCI");
-> > > +MODULE_DESCRIPTION("Test driver that simulate serial port over PCI");
+> zswap wastes memory for metadata for all accepted pages but reduces IO
 
-Seems the preceding MODULE_INFO needs to be removed here.  At best the
-added MODULE_DESCRIPTION is redundant, but "supported" is not a
-standard tag, so it's not clear what the purpose of that tag was meant
-to be anyway.  Thanks,
+Key word: accepted. The compression algorithm might already have some
+built in logic to reject poorly compressed pages, preventing the cases
+where the overhead might be too high for the saving.
 
-Alex
+> amount and latency by compressed buffer memory. For pages between 3633
+> to 4096 bytes, zswap reduces the latency only. This is still
+> beneficial because the rare incompressible pages trigger urgent
+> pageout IO and incur a head-of-line blocking on the subsequent pages.
+> It also keeps LRU priority for pagein latency.
+>
+> In the worst case or with a malicious dataset, zswap will waste a
+> significant amount of memory, but this patch does not affect nor
+> resolve the scenario. For example, if a user allocates pages
+> compressed to 3633 bytes, current zswap using zsmalloc cannot gain
+> memory as the compression ratio, including zsmalloc overhead, becomes
+> 1:1. This also applies to zbud. The compression ratio will be 1:1 as
+> zbud cannot find buddies smaller than 463 bytes. zswap will be less
+> efficient but still work in this situation since the max pool percent
+> and background writeback ensure the pool size does not overwhelm
+> usable memory.
+>
+> I suppose the current zswap has accepted the possible waste of memory,
+> at least since the current zswap_compress() logic was implemented. If
+> zswap had to ensure the compression ratio is better than 1:1, and only
+> prefers reducing IO amount (not latency), there would have been a
+> compression ratio threshold to reject pages not compressible to under
+> 2048 bytes. I think accepting nearly incompressible pages is
+> beneficial and changing the range to 4096 does not negatively affect
+> the current behavior.
 
-> > >   MODULE_VERSION(VERSION_STRING);
-> > >   MODULE_AUTHOR(DRIVER_AUTHOR);
-> > >
-> > > ---
-> > > base-commit: 5c4069234f68372e80e4edfcce260e81fd9da007
-> > > change-id: 20240523-md-vfio-mdev-381f74bf87f1
-> > >  
-> > 
-> > I don't see this in linux-next yet so following up to see if anything
-> > else is needed to get this merged.
-> > 
-> > I hope to have these warnings fixed tree-wide in 6.11.
-> > 
-> > /jeff  
+FWIW, I do agree with your approach (storing incompressible pages in
+the zswap pool to maintain LRU ordering) - this is *essentially* what
+I was trying to do too with the attempt I mentioned above.
 
+I'll let Johannes and Yosry chime in as well, since they were the
+original folks who raised these concerns :) If they're happy then I'll
+revoke my NACK.
 
