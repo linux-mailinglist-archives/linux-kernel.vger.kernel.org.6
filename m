@@ -1,138 +1,138 @@
-Return-Path: <linux-kernel+bounces-250731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC89192FBF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:59:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311BE92FBFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704EC1F22F45
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:59:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B21EAB2262A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFD4171640;
-	Fri, 12 Jul 2024 13:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnvGcZis"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198D917109D;
+	Fri, 12 Jul 2024 13:59:39 +0000 (UTC)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2222142E77;
-	Fri, 12 Jul 2024 13:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD10B16FF48;
+	Fri, 12 Jul 2024 13:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720792742; cv=none; b=nfaKKge+56vwonAX9Oq8dd/eCG9huUke7HNWmYK+3dR4PT/L60KRUBdTmmG1iK2jSHD2DnuevYKA5t82oNpCtju8kMjf73XkLuRLmNp/LEpD+olClIh68qWzjvlCkb+dOEVO7QMrQtiAdwRtPgo6vogvAyBAa4czCYEWqJaoBEQ=
+	t=1720792778; cv=none; b=aen9Ye7ZDljCJgGfZlraRIzRL22dLLb9X09hHgXOCHfvFUveccl3iKhJtC0CNuFdMwDGg7QSaZE9GxEgpOauwT04o+KhUGqWBC3xDcOsCfQCHO6cF1REdF5CiafSKpdvzPNP3xwWGSSKw6DQhD3UFSuXgqIA2NnvDDciZF4ArfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720792742; c=relaxed/simple;
-	bh=X8636AljHJoYrtKyFyyr59/HGScQY7Ic0JGcHN0bzY8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gNoZf359+8sAocDrObUPxPCRt5+OgTlr2PRhHqVJtVQn936iHdc8wp878sUebSDNZ0LjVaewFdLiVe5wX/6H5MPEgwiUvE55AUy1yjZHhrYCLyZMleq3TM7XLURz3UmOBJJOI7RpHlEOZ1pgBZCvxmXbabR2r5GtZkNormWvn8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnvGcZis; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E01EBC32782;
-	Fri, 12 Jul 2024 13:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720792742;
-	bh=X8636AljHJoYrtKyFyyr59/HGScQY7Ic0JGcHN0bzY8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gnvGcZisVWk/FLvujHDslQPmnFJREJG7neDU1Okc3TuB1dbpJ8a55pz+opdYrrrXG
-	 h1rmvWgltAwbn3EYDAop7kSpqQyBf2ECqtbUTtD1ajXy/GPjvNI/3Dw/Sxe+s3x300
-	 pBgS/DIV7sBBUOjq1U+jejcpt5JiNg7Do9r5dO0q/SGuXI8UqjKsMwkBluMxmINm+V
-	 7TE20M+FlsCvSl6FM5oK6lquS89dRzI0BE/fh8IAUpcanxNzbFxjBUO9c8ZoSMwDyU
-	 +9lmbav9cvIy7nG527vDlVXScMs9N3PeCyGqAKeKWvyde2O6nNPBpuyx8nv3oD0ibM
-	 9svKsSfqAmFoQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL for v6.11] vfs procfs
-Date: Fri, 12 Jul 2024 15:58:52 +0200
-Message-ID: <20240712-vfs-procfs-ce7e6c7cf26b@brauner>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720792778; c=relaxed/simple;
+	bh=3PJpSb7syoI8d0MnBStlZ7y6aXYPJZKQxMhWdXI/3cQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=plt1UQI8q6Ktv6liq4RXuIr2o9V6SDpmBgpJa4g31qz4ss/Z9psLMCz6gzu342UdJo89tB8RMZ6jDyLjuYxS+7LZCHKu0h9M7eC1nfeut8rRXAgzFu3Ivm2VX0bXXDcgDciqJwcexzTGDaPnYbRSYqovr4P9vHpmUohyx2UXHHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-64b3655297aso18930927b3.1;
+        Fri, 12 Jul 2024 06:59:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720792775; x=1721397575;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jAqV2pI3+2hLKtYJunekzdt/QFbIQwqqn0RUxdKplAY=;
+        b=cz4mSDFMc43i5+lvTgTOQMI78TKugfvjE/vRnptHFmn/GypUMrBMerGqLQPzTKs09X
+         U9IvZfngWe0mpg9L++FCJBJqzBQ+iYZEKl/Ch/SNAFoAU2hSMW0KaY4Jj6Bsh3vBE9BF
+         u1IgPmld9GWDs4O1e0eOpY8foS7KLlpGx+txoK3I94OS7xtqmxzj/HFSt5Hoak2/vFx3
+         +KNCSUlylEsL61gEBCorB1h3Y4TQqRx1q6tiR0+5NlARgzAKX6pfsHSBEcCUwuo3Fzbb
+         nSYjCBubAE+92CV5uTE+L1Ti+A5ZPkpAgr84SpfClhNbT8ooTOwduXTgxRkUdOWknkqW
+         5eKw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/rMe2GzT+RAEBm4FXqIUVzFPM/q+LAmsY6v1GAoCtH3ocLYZoEnOgauwLS6iRJ899cLvWI24pew1x1zCcrqDyS+LF3J9q551MboKhU9ZMQ7aq8Bf7jnzs7JBTEevEamHf6xC06JiJP1ykFexgfU/FDprFiojp/vgmZjY4HJJrHAb5Gb+sN2ChGjA=
+X-Gm-Message-State: AOJu0YxbRSlKyD1lsmVn6hDmEEYZgT1HuEXzIAEAXL4emX0nnnVRarXy
+	9Z6QMF3Uj/s7LhjYnaE/MYJJuBpgVXfZfRDdSO34wOHo61YC/sMYHw4bLPPg
+X-Google-Smtp-Source: AGHT+IHW1GiixNeOY5HxuG5NNPUzgcg+MnoZNcKuo6HjJKxZ0Szb/z9vXiXd8LQiXS7QewBeTYUoCA==
+X-Received: by 2002:a81:8486:0:b0:649:8f00:5254 with SMTP id 00721157ae682-658ee791033mr116819027b3.1.1720792775565;
+        Fri, 12 Jul 2024 06:59:35 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e69da06csm15102427b3.113.2024.07.12.06.59.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 06:59:35 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-64b3655297aso18930447b3.1;
+        Fri, 12 Jul 2024 06:59:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWv2KVpWjJvOif7VZ5Y36dVIiTbK1PjkCBkvZ++iXdHaQNlZokC5mUOIWaf2ze2lXPTFjZC+UJ8MbLYUHQGdNxE8BqitdNSXmus72/wZY1L2Tpwv4qJvz4wEPmYnT7bTUIK4mWR9RpGcsaD8+xflClcp8Dq/MADNapk/m1bFU4qYG9+zlUq4PaMQvY=
+X-Received: by 2002:a81:5cc6:0:b0:64b:13f6:46ea with SMTP id
+ 00721157ae682-658eef599cfmr114962707b3.22.1720792775195; Fri, 12 Jul 2024
+ 06:59:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3146; i=brauner@kernel.org; h=from:subject:message-id; bh=X8636AljHJoYrtKyFyyr59/HGScQY7Ic0JGcHN0bzY8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNNJu7RSzoa7Wm9eU8l/hnfy6dS5vSoah89HC3wM/3j rYFt6/s6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIpGWMDBtdmaf3G0esivJv eLHs0Oo461KJWWnMp4qtAh3+GFRKPWf4p/rYcJmr/v4plucumIoKS/VmCHAUHXq66vOmQotg06m XmQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240628131021.177866-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240628131021.177866-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240628131021.177866-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 Jul 2024 15:59:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWEcVjPwnW+wXonv_Pt0jtXNnZSKp9wPY93GqeSugVC5Q@mail.gmail.com>
+Message-ID: <CAMuHMdWEcVjPwnW+wXonv_Pt0jtXNnZSKp9wPY93GqeSugVC5Q@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: renesas: rzg2l-cpg: Simplify rzg3s_cpg_div_clk_register
+ function
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hey Linus,
+Hi Prabhakar,
 
-/* Summary */
-This contains work to allow restricting access to /proc/<pid>/mem. Over the
-years various exploits started abusing /proc/<pid>/mem (cf. [1] and [2]).
-Specifically [2] is interesting as it installed an arbitrary payload from
-noexec storage into a running process and then executed it. That payload itself
-included an ELF loader to run arbitrary code off of noexec storage.
+On Fri, Jun 28, 2024 at 3:11=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+>
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Refactor the `rzg3s_cpg_div_clk_register` function to eliminate the
+> unnecessary `base` parameter and streamline parameter usage. The `base`
+> pointer was unused, and the `clks` pointer can be accessed directly from
+> the `priv` structure.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The biggest problem is that /proc/<pid>/mem ignores page permissions by using
-FOLL_FORCE which was discussed several times on- and off-list.
+Thanks for your patch!
 
-Unfortunately there are various use-cases using /proc/<pid>/mem making it
-impossible to just turn it off. They at least include PTRACE_POKEDATA and the
-seccomp notifier which is used to emulate system calls.
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -339,9 +339,9 @@ static const struct clk_ops rzg3s_div_clk_ops =3D {
+>  };
+>
+>  static struct clk * __init
+> -rzg3s_cpg_div_clk_register(const struct cpg_core_clk *core, struct clk *=
+*clks,
+> -                          void __iomem *base, struct rzg2l_cpg_priv *pri=
+v)
+> +rzg3s_cpg_div_clk_register(const struct cpg_core_clk *core, struct rzg2l=
+_cpg_priv *priv)
+>  {
+> +       struct clk **clks =3D priv->clks;
 
-So give userspace a way to restrict access to /proc/<pid>/mem via kernel
-command line options. Setting them to "all" restricts access for all processes
-while "ptracer" will allow access to ptracers:
+"clks" is used only once in this function, so I'd rather use priv->clks[...=
+]
+directly below instead of adding another local variable.
 
-(1) Restrict the use of FOLL_FORCE via proc_mem.restrict_foll_force
-(2) Restrict opening /proc/<pid>/mem for reading.
-(3) Restrict opening /proc/<pid>/mem for writing.
-(4) Restrict writing to /proc/<pid>/mem.
+>         struct div_hw_data *div_hw_data;
+>         struct clk_init_data init =3D {};
+>         const struct clk_div_table *clkt;
 
----
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The level of fine-grained management isn't my favorite as it requires
-distributions to have some level of knowledge around the implications of
-FOLL_FORCE and /proc/<pid>/mem access in general. But the use-cases where
-/proc/<pid>/mem access is needed do already imply a sophisticated knowledge
-around its implications. Especially when it comes to the seccomp notifier and
-gdb to inspect or emulate process state. So that ultimately swayed me to accept
-this. If we need something simpler I'm all ears.
+Gr{oetje,eeting}s,
 
-/* Testing */
-clang: Debian clang version 16.0.6 (26)
-gcc: (Debian 13.2.0-24)
+                        Geert
 
-All patches are based on v6.10-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-/* Conflicts */
-No known conflicts.
-
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11.procfs
-
-for you to fetch changes up to 39efa92f9e5fceb44edef5536c58e3750b9d638d:
-
-  proc: restrict /proc/pid/mem (2024-06-18 12:26:54 +0200)
-
-Please consider pulling these changes from the signed vfs-6.11.procfs tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.11.procfs
-
-----------------------------------------------------------------
-Adrian Ratiu (2):
-      proc: pass file instead of inode to proc_mem_open
-      proc: restrict /proc/pid/mem
-
- Documentation/admin-guide/kernel-parameters.txt |  38 +++++
- fs/proc/base.c                                  | 203 +++++++++++++++++++++++-
- fs/proc/internal.h                              |   2 +-
- fs/proc/task_mmu.c                              |   6 +-
- fs/proc/task_nommu.c                            |   2 +-
- security/Kconfig                                | 121 ++++++++++++++
- 6 files changed, 363 insertions(+), 9 deletions(-)
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
