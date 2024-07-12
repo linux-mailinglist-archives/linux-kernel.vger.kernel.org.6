@@ -1,112 +1,114 @@
-Return-Path: <linux-kernel+bounces-250657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E468792FAB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:53:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4584C92FABF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 768E1B2233C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:53:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEDC01F2321B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F4016F838;
-	Fri, 12 Jul 2024 12:53:23 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8380B171677;
+	Fri, 12 Jul 2024 12:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="EC/Ml+f7"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EC516F297
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95434171086
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720788803; cv=none; b=edM8RHDtW9co8YJg+hbAhgyZxbxRS+WP4eDESYV9YY6UT9TLutDl026xHkcnRNuK9+ZbFGiPxHCuvs5jiQKeo8inhjrTk+Nw9hlXRgOQk8wVc9w2vxVElNj/kvdLjDCemB61jAekMvtaG2tOIyjRDCO+OMW4ADKmdMWkgh1djJU=
+	t=1720788840; cv=none; b=lcIWmC6O7VHCHfnLGbJXUpCuDXMQaSmyH6jj83VEaKQT8ypRa+EdTExavnHDuzUW6GuN8oAUYh4ysuN7aDMB2IBc5sZwtshnCgodXEFxfVf7BKTE13Mr8gDnZAt0p6h4HoHGnRONOXZIYytphGqToZdPn6ihphXXplGjmL1+xO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720788803; c=relaxed/simple;
-	bh=0zU0dnesDNO6/UoaCmox2MOvYlnQ+ed6qQjU5rQWhTk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Z3HlzUW7DyYAzil1/sA50uoJO1fKsrO3I4Ss/QXlvtb9JWvQKU78SpOMNaqDh24YuJuZ7OJJQ7fkpWLuhZ+V87zTBkF5B261x+3fbLA4adK2dcu6C98I5N2a2s+ZqUSrfPLWfAi9oVMzrDrj21fxVZo/3Ag+GXN4rQp/BAy0yCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-807b123d985so207782539f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 05:53:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720788801; x=1721393601;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NxqGbRT3LVL+0nPrwFQVVNOEcAeth5EOD0Me+bIoZgI=;
-        b=WDeRbrdct4e+jIC5UDp/mvvDuJQdW75HyPsS3ksLymjfyPx+pQCeQWBcJT79QDoUh1
-         SjVxESlNe64Udr6lrT9YeW81+7mpLrpP0pszjo1fH1H7/IUABy2iImyRo6YAzUuk6N0G
-         rAhUIpuXNDHwXzK0htCDytiCuxikJ7cSATji14V+ajrqUSn16TiqP2StFktw9F+gNZm+
-         Ut5nFeQsSOJP3O0L5Cm5PchNxlI3DfrESyYFJhPBZmhbA/+WHyOW4lkXOWBDIAISYSRG
-         YRQ3uPmxAr2HYR6ogTaA+nXhfNi6502OdbV3A+Em/itzOIZ6+UmoBtNSWH5m/kinuMaV
-         KKYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV50XaD52LM5+KZBlgUZkBX5nh5XL2sTqSIDjaWDpfTfToFpqodjKp4TnNz5nKdJGnkvBx0VbBldXMGjLPIw3hoTJfGmGvGwnahyo6E
-X-Gm-Message-State: AOJu0Yyt+MGI+0WVMy2Tp5flYoH8oOupNDyo97O79S2g5sRa2BlfBrvD
-	Eep8hEFEYEsYzuVFcD2DwdgmoRuwm5Gt01S/t1Fp1y42D6hX4gMEjgixhQJG1DMr8XOFKBnkW7U
-	aNWZeU6VNQd/jAxsdiip/2+oga/RV5v9jttv+eVlDvm45jH5Izxv/Y00=
-X-Google-Smtp-Source: AGHT+IGjub6L3WCBvgOy2x0vV3c46oeVod9k9qcIbPFsr9/IXO96bBm9CyEelbZWlGaJJPVQfxle1JR4H443w2hVHyQENSx96/mD
+	s=arc-20240116; t=1720788840; c=relaxed/simple;
+	bh=lkOJSeMDPmHfxOmZ/3yKhxJTW2hX5GpNfY8zByBRLTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hdMgzPYToNRl5PVfeEg5aF3E3Vtx6MxkJvuxh3VU9qiryeFyp5lyCRGprsOB5D1l1BRfkLF8YmB3z4CJ5WDX+d9v/j59E8NPihOTW+LLTBhhtEB3yUVv3YYnLtuYeM/whJ4BAnkbn++HmMlU7MM1kzMkMLQFk9ssQr3IziPxSGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=EC/Ml+f7; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=lkOJ
+	SeMDPmHfxOmZ/3yKhxJTW2hX5GpNfY8zByBRLTY=; b=EC/Ml+f7jVBnuHkHw6fB
+	jnQZgCRjHgTnpsrnX5yqDCvEl4lnQa89wotHmvpLQr1LpN4PxzQHN7RuG90xaFWm
+	9qbfkPMgBVR5GU1B+aZ8KLt42EsrqVskUXZlK7paUqVZii9TcFuSZotlIgmceAu2
+	lvxdsE7s8einOcXUDexDBoBcqilBn7QTMg3NbxYZY1Fg1vLTzEnsI+zlu/4uKqAv
+	1EmSYkvyMJ1DNFXvDo/xMqI1QD8aDRSTyj1ZYt0z7oNsdQTVpFTJFbHlrQJTCl8K
+	hv2+e9F0H/07UGFr8ampE7OuKYiHkoJCdZj2xhsvY7mB3eFY21uhHJ+lOvWIPBni
+	Cw==
+Received: (qmail 1160635 invoked from network); 12 Jul 2024 14:53:50 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2024 14:53:50 +0200
+X-UD-Smtp-Session: l3s3148p1@StfvXgwd9JVehhtW
+Date: Fri, 12 Jul 2024 14:53:49 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v3 2/2] i2c: piix4: Register SPDs
+Message-ID: <ZpEnXaRYnPIr1vG3@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+References: <20240709-piix4-spd-v3-0-9d1daa204983@weissschuh.net>
+ <20240709-piix4-spd-v3-2-9d1daa204983@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3797:b0:4bd:4861:d7f8 with SMTP id
- 8926c6da1cb9f-4c0b2b3e265mr1027688173.4.1720788801253; Fri, 12 Jul 2024
- 05:53:21 -0700 (PDT)
-Date: Fri, 12 Jul 2024 05:53:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003b859a061d0c5d81@google.com>
-Subject: [syzbot] Monthly bcachefs report (Jul 2024)
-From: syzbot <syzbot+listb7d496953d366304c3b9@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="w1J4ypOOYEfzSIbv"
+Content-Disposition: inline
+In-Reply-To: <20240709-piix4-spd-v3-2-9d1daa204983@weissschuh.net>
 
-Hello bcachefs maintainers/developers,
 
-This is a 31-day syzbot report for the bcachefs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/bcachefs
+--w1J4ypOOYEfzSIbv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-During the period, 7 new issues were detected and 16 were fixed.
-In total, 69 issues are still open and 50 have been fixed so far.
 
-Some of the still happening issues:
+> Only the first 8 slots are supported. If the system has more,
+> then these will not be visible.
+>=20
+> The AUX bus can not be probed as on some platforms it reports all
+> devices present and all reads return "0".
+> This would allow the ee1004 to be probed incorrectly.
 
-Ref  Crashes Repro Title
-<1>  2759    Yes   kernel BUG in bch2_fs_journal_stop
-                   https://syzkaller.appspot.com/bug?extid=10b936c5eaee2819b49b
-<2>  2696    Yes   WARNING in bch2_trans_srcu_unlock
-                   https://syzkaller.appspot.com/bug?extid=1e515cab343dbe5aa38a
-<3>  2424    Yes   INFO: task hung in __closure_sync
-                   https://syzkaller.appspot.com/bug?extid=7bf808f7fe4a6549f36e
-<4>  1100    Yes   BUG: MAX_LOCK_DEPTH too low! (4)
-                   https://syzkaller.appspot.com/bug?extid=46405fa9afa07e6c8c40
-<5>  240     No    INFO: task hung in bch2_readahead
-                   https://syzkaller.appspot.com/bug?extid=a6060114362257e9798a
-<6>  156     No    WARNING in bch2_trans_put
-                   https://syzkaller.appspot.com/bug?extid=291aef749c5cbb9ca2fd
-<7>  131     Yes   INFO: task hung in __bch2_fs_stop
-                   https://syzkaller.appspot.com/bug?extid=6d3e28b33490b3085412
-<8>  82      Yes   possible deadlock in bch2_gc_mark_key
-                   https://syzkaller.appspot.com/bug?extid=050e797ad21ccc3f5d1a
-<9>  80      Yes   WARNING in __bch2_truncate_folio
-                   https://syzkaller.appspot.com/bug?extid=3d11e35eeafe176a6c5b
-<10> 56      Yes   WARNING in bchfs_truncate
-                   https://syzkaller.appspot.com/bug?extid=247ac87eabcb1f8fa990
+I think this information would also be helpful as a comment above the
+code. But to allow this series to be applied now, I think an incremental
+patch will do. With Heiner's ack, I think this can go in now.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+--w1J4ypOOYEfzSIbv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+-----BEGIN PGP SIGNATURE-----
 
-You may send multiple commands in a single email message.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaRJ10ACgkQFA3kzBSg
+KbYZ1hAAqYTJXeZzVFzCYQS5NSpfIxEYYZMzuo6rcEbAP3Kubzko3HOLB2RdsXyG
+GcgaBONEP2WIDwKtgvQ6E5nN03nilHxkLUJNpOWjUrNZ8YgwifWRpwY4qkW/krsy
+sFLLNjyOccCI1vu1VAFEiKh6s7+gBTW5/K2zQ1yxvCoJWwdcfIv8Ba84WiqWFHVM
+MZMydTIwVbH80pX/ypdkIOcSpKN4cQI+e7fiFK48AxdUS6IbLOP3FlHHIAvcVtkN
+SFB84HGG/7oDIUmsySjLON/ueyHehIfePVqjQyZj8k6/BdeVkkXohACqojHP0Lee
+aOxm9MpndwMkuoKDSUW7EY+cfCgqGqkqa+8k/HZTgBsWVP9oVNNiwDs0PBUSMm3s
+RuYNtR92xD1cWMDy/sLkvQ+DBbN6xwrloAfOsx1r85FPd4QsZeX0TaCGTs4xMQUq
+qdnyRFo1N3n5Ngo80DWdn9/a6IUj6pqGCBTrWHwAV+jZjsVmbBl/tSaOijgg0MqQ
+BGq7yPfKDSyz0/UoQt1U1dhtF9JEIUlw7vKHscOjWMFtk0PniyxtdsRNYRlrb0G0
+PYLpMnX/mP8PAP+qGxK9jV8DYejATsWfHvROjock+vLbP/ddVxZEmIr1Q4YJcL4d
+WEmTcgG8LwMb01zwkURJtDljJUHTlBCVim7gnLSHJzcQZ6EgEAU=
+=I3ee
+-----END PGP SIGNATURE-----
+
+--w1J4ypOOYEfzSIbv--
 
