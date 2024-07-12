@@ -1,151 +1,122 @@
-Return-Path: <linux-kernel+bounces-250845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356C392FD87
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B90D092FD8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:27:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 661E11C21C27
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:26:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAE111C2280A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2E417335E;
-	Fri, 12 Jul 2024 15:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799231741F9;
+	Fri, 12 Jul 2024 15:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kn9WkQBO"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f47l6tyO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B52173343;
-	Fri, 12 Jul 2024 15:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0791741E3;
+	Fri, 12 Jul 2024 15:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720798012; cv=none; b=VRHLI5baTT4Z517LcVwcSYElv3lUGJLb81nffWsUERaUPHw76blk+Aq0A9RJ9bmGsWpa9hhLEoMp52WJZ9X0YulRueQ9MTiJykwjNVumcwTXZ0i01avCPHzVOpwXl/3wbDIYmOAmry1Zkq1HwL3lPJmut1q4OKYtxUe8ywdIOhw=
+	t=1720798015; cv=none; b=WoGyNXmaPP5Zg1pRFU22UR12YwV7hItfybXbRM70Kf6B+gvHBCR0wCLihd73ULMS1+O/O+L2peOu0xkUbh5iHIwgJYFdaXiioKsZy1mYIdNGVWXwaL6ZZdYm1ehU6Nm7pxy9uRtPTIXMuV+fTjdOD3DhhYx8Aa/8Os+eXDxV/c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720798012; c=relaxed/simple;
-	bh=AwR32hI79pq34iLUnplYhEp9KLrM0KNwTOmaqgesFyg=;
+	s=arc-20240116; t=1720798015; c=relaxed/simple;
+	bh=LW8POJE80nNCIpTSXQaoVXIVEDk5dceoKuSUVxEF+K8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=druwHkcF76JsraKll7XubvWZQWA3V/zQh4MWseGTFoTk7hflUKvBXG3EtNZcsvpQJGHdHok2L7qURllA+cFSE/CLK9wi4e/qU3VTaee94EBs+2ST2fPqfBgLRVs8CKFLt19SDekqduEB8fAr5pLQyrN7UhNbRurEvJU3sgjrUKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kn9WkQBO; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OKzQcMqejI2tskEZBY0hayIN8mjT8vws1907kDbSF9U=; b=kn9WkQBO/GELUNO/D9IlgH23MB
-	aFRDcjPSa33oOwJTkRCglZDYqflWbWJ3wW535DVPImxHinud5+MBJqSP7JjoZnbLIC4wO2M5NjkaZ
-	m4GjzfSNDAXMVsyxwwOrWK2ZnC4lmstpFBQHuLhG69rdyu+mS2IORLJ7hemVZSJZomfVd1J/F9wxq
-	0dB5y+zyCfzkKZ1SBeqXFCaJF2IbzjqLnCrZRLVyIeOy2huem+fLGRm6W9OauaDQL6iPEuFHBbg3m
-	/zK8TdqeNMnUpH5nPr7U4dsiceTrGU8hb2ta+v0WgGfYTaDw81VCDnRg7WZARrXks5n6OctaBapCl
-	LSkvIr9w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sSIAU-0000000Cbt9-1Wi4;
-	Fri, 12 Jul 2024 15:26:42 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0335230050D; Fri, 12 Jul 2024 17:26:42 +0200 (CEST)
-Date: Fri, 12 Jul 2024 17:26:41 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Phil Auld <pauld@redhat.com>, Clark Williams <williams@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [RFC PATCH v3 06/10] sched/fair: Prepare switched_from &
- switched_to for per-task throttling
-Message-ID: <20240712152641.GT27299@noisy.programming.kicks-ass.net>
-References: <20240711130004.2157737-1-vschneid@redhat.com>
- <20240711130004.2157737-7-vschneid@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SWjpOCIRC6jrMHDSwen7o9Du8nlHqy68v24JygpPWDV+SBddWJWvumVXqhT3Q48DQyGNXcVvop4voBVutVxGi2FKBvUIru1vXiLaF+P/w7VgXzoDrVySKkC9qUpw03icreRjP7JTzqH77M/SAJdhpIe40GdEtQDO7Dfh2ygkeEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f47l6tyO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22298C32782;
+	Fri, 12 Jul 2024 15:26:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720798015;
+	bh=LW8POJE80nNCIpTSXQaoVXIVEDk5dceoKuSUVxEF+K8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f47l6tyOCFs9Co7u1Dm/Hy9msa9L6eZRxZxd3I9AF3CyyTFx8r5RVebrVAOl7PG2a
+	 Wj0WJJB9bIDDb783QoZjqEL9+FXil26hz2IddeQhxS8hz61RZWHeJPo6maNCnZ9RIu
+	 MQ7Jbf1REHqTLd8wL1ClapwkWJGVagxa5HxOo2kPAkQxDajELOoJCOULJ2AQZw3Ry/
+	 s5fw3Eu9EPHYlBlGzYZq/NsPv2JC+hxsltwT5ypGfyfP7tM+V3PbjlEerJIX91/X69
+	 H65+qv6cgobgUKd9PV4K4CkRlzbVYovZge8k254la0T1XOfLjx1KW6rZZm7qLExJeU
+	 IMR8UKaGcGhkA==
+Date: Fri, 12 Jul 2024 16:26:48 +0100
+From: Will Deacon <will@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v3 2/5] iommu: Resolve fwspec ops automatically
+Message-ID: <20240712152648.GB16474@willie-the-truck>
+References: <cover.1719919669.git.robin.murphy@arm.com>
+ <0e2727adeb8cd73274425322f2f793561bdc927e.1719919669.git.robin.murphy@arm.com>
+ <0eec5f84-6b39-43ba-ab2f-914688a5cf45@nvidia.com>
+ <01c05fb2-16ce-450c-befb-8a92ac2a8af9@arm.com>
+ <ee24cb5f-d170-41d3-9928-5507b8ab22a7@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240711130004.2157737-7-vschneid@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ee24cb5f-d170-41d3-9928-5507b8ab22a7@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Jul 11, 2024 at 03:00:00PM +0200, Valentin Schneider wrote:
-> Later commits will change CFS bandwidth control throttling from a
-> per-cfs_rq basis to a per-task basis. This means special care needs to be
-> taken around any transition a task can have into and out of a cfs_rq.
+On Fri, Jul 12, 2024 at 04:24:48PM +0100, Jon Hunter wrote:
 > 
-> To ease reviewing, the transitions are patched with dummy-helpers that are
-> implemented later on.
+> On 12/07/2024 12:48, Robin Murphy wrote:
 > 
-> Add helpers to switched_from_fair() and switched_to_fair() to cover class
-> changes. If switching from CFS, a task may need to be unthrottled. If
-> switching to CFS, a task may need to be throttled.
+> ...
 > 
-> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
-> ---
->  kernel/sched/fair.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> > > I am seeing some failures on -next with some of our devices. Bisect
+> > > is pointing to this commit. Looks like the host1x device is no
+> > > longer probing successfully. I see the following ...
+> > > 
+> > >   tegra-host1x 50000000.host1x: failed to initialize fwspec: -517
+> > >   nouveau 57000000.gpu: failed to initialize fwspec: -517
+> > > 
+> > > The probe seems to be deferred forever. The above is seen on
+> > > Tegra210 but Tegra30 and Tegra194 are also having the same problem.
+> > > Interestingly it is not all devices and so make me wonder if we are
+> > > missing something on these devices? Let me know if you have any
+> > > thoughts.
+> > 
+> > Ugh, tegra-smmu has been doing a complete nonsense this whole time - on
+> > closer inspection, it's passing the fwnode of the *client device* where
+> > it should be that of the IOMMU device :(
+> > 
+> > I *think* it should probably just be a case of:
+> > 
+> > -    err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
+> > +    err = iommu_fwspec_init(dev, of_fwnode_handle(smmu->dev->of_node));
+> > 
+> > since smmu->dev appears to be the same one initially passed to
+> > iommu_device_register(), so it at least ought to match and work, but the
+> > SMMU device vs. MC device thing leaves me mildly wary of how correct it
+> > might be overall.
+> > 
+> > (Also now I'm wondering why I didn't just use dev_fwnode() there...)
 > 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 095357bd17f0e..acac0829c71f3 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5694,6 +5694,10 @@ static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
->  	return cfs_bandwidth_used() && cfs_rq->throttle_count;
->  }
->  
-> +static inline bool task_needs_throttling(struct task_struct *p) { return false; }
-> +static inline void task_throttle_setup(struct task_struct *p) { }
-> +static inline void task_throttle_cancel(struct task_struct *p) { }
-> +
->  /*
->   * Ensure that neither of the group entities corresponding to src_cpu or
->   * dest_cpu are members of a throttled hierarchy when performing group
-> @@ -6622,6 +6626,10 @@ static inline int throttled_lb_pair(struct task_group *tg,
->  	return 0;
->  }
->  
-> +static inline bool task_needs_throttling(struct task_struct *p) { return false; }
-> +static inline void task_throttle_setup(struct task_struct *p) { }
-> +static inline void task_throttle_cancel(struct task_struct *p) { }
-> +
->  #ifdef CONFIG_FAIR_GROUP_SCHED
->  void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent) {}
->  static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
-> @@ -12847,11 +12855,15 @@ static void attach_task_cfs_rq(struct task_struct *p)
->  static void switched_from_fair(struct rq *rq, struct task_struct *p)
->  {
->  	detach_task_cfs_rq(p);
-> +	if (cfs_bandwidth_used())
-> +		task_throttle_cancel(p);
->  }
->  
->  static void switched_to_fair(struct rq *rq, struct task_struct *p)
->  {
->  	attach_task_cfs_rq(p);
-> +	if (cfs_bandwidth_used() && task_needs_throttling(p))
-> +		task_throttle_setup(p);
->  
->  	set_task_max_allowed_capacity(p);
+> 
+> Yes making that change in the tegra-smmu driver does fix it.
 
-Other functions seem to have cfs_bandwidth_used() inside them, and not
-bother the caller with this detail.
+Fantastic! I'll pick it up right now.
+
+Cheers,
+
+Will
 
