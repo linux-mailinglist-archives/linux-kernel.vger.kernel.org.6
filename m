@@ -1,159 +1,407 @@
-Return-Path: <linux-kernel+bounces-250607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60E692F9D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:00:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CEA92F9D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D28C1F21C7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52201F23104
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5234816C6A6;
-	Fri, 12 Jul 2024 12:00:49 +0000 (UTC)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BF638DCC;
+	Fri, 12 Jul 2024 12:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xdvsr3pa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E492638DCC;
-	Fri, 12 Jul 2024 12:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51C2D15EFA6;
+	Fri, 12 Jul 2024 12:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720785648; cv=none; b=lwlm2R9GsYe54DdFVuVYyMg8UQqQepZvX9GZKAQYhcDyNUbkdAFwLj7qFXBl3WFTdzK2RfvZNeRwVgvK7JuZUSZTS8G9Ml/vSpyttBJgBPEj/W0K11YWYiuakh5I4H7oFDcoUig3WbV1iHUT7hGyscoUHzTyHPNmpwgkWqLGVrc=
+	t=1720785674; cv=none; b=RUQcGM9qxOkACkznoEIUwy0japOD94ViEWwS9P8qtQVVZPY6w2GV0ZyinluO+b67rLfV1yPnjbyu3JaWPtQRTRoUHBN7w22xM7l2R4lGA9ceMAQBhxh12cny9q+saw/EQnVSH9QdZqkhP+Hh6PaUZ9j99jWN7Rv4qOfkSS/q/Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720785648; c=relaxed/simple;
-	bh=In64+BK1f95T8kQ3bF8ZWFRLmfrggmOQVRLQ1JlCY38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dzV99z3ltveFtgnywDk5eb7aU3+zFwbGWwQavIeucP2qJf9JuPYBuo1lXF5/PEx464nhml1PzGvscxfwPJWcYL+fExcUE9IN2M1ZcEgTJ3rqesoryW/CHC/8s6dEeCCj3aIaT8puhKYwFHo4I2fPcJXJkr7drJhBhh2pmyAwgcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-64b417e1511so18983707b3.3;
-        Fri, 12 Jul 2024 05:00:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720785645; x=1721390445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p4Wd774CAaehOrbdx8VCAr7EdqZrXN0YFUIfMg8Pkdk=;
-        b=YMPu2q3I8B/RvUCL82jHV6MgX1EAVwaVCdNa2K6l4YaaX9xFtuHnVaf34ZftVWxb28
-         PFtHvBM1/s635gDO4tKgY1HbSjxQUYjg5kr0X5Zj1+Xi69MzWAYvcDAdMkb7TWHDq+5N
-         519DKDX0/Miz+rLxmSJUlCCLJWA18+ESal7OsuYTHElEPCZMGn8GqXTWe31d/MWdHZyJ
-         B/tOUH33xpEJDjPEZWDuiBxjgTEHq774xWU0RKUN/EN7jC/d9LnGoGH1G2otKc4LrXf1
-         yRoc+P5/gEWs5Mg+pEKu/s7UyjP7kEAH8ICxrELWDHhFTq9mABy2EwNiwpMPZ49n6txe
-         j8FA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHXwey8llu/WOCzkI7DDwSUkwbNMD+eAy3gKbHH5CTTevDI/D2SeOLOG9DWIdJMVPm2iB+IPxiNxiHJ3/egkfA1o4WLuN4lKWkQpJBHmg1MBRlgKyDnai3ikKWtlC0ktth95tXcgCehDV52vFSdvPZvw14QczWcs8SK/dmZ5/xlgJC4sC0Tue4sjnDG8l1003zYR+D9OTi/C5XHwe7vqUxS+LgBPb7
-X-Gm-Message-State: AOJu0YzicLG6lzta/NaskiCTltIITnK2vYFE8q04Pj+sWkfMesZnz+bp
-	g1c6aEmELIN/8psRn/WTZFAKMRS16Lxeye49eLsqmEvTjMVAisAPBANcuMZA
-X-Google-Smtp-Source: AGHT+IHhpLR3kvHemArCQTx3acNRJmito+FVEQ8fbnMfIQfCV8IxM0kzewzCcqSH75hJXTSijSm5pg==
-X-Received: by 2002:a05:690c:6c84:b0:651:79ee:d14b with SMTP id 00721157ae682-658ef24bc7fmr133580527b3.29.1720785615423;
-        Fri, 12 Jul 2024 05:00:15 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e6ad81f4sm14722237b3.122.2024.07.12.05.00.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 05:00:14 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-65240d22f7cso17599367b3.0;
-        Fri, 12 Jul 2024 05:00:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXvkrjfV0d1QpRa8i2d9mJkRXfcMiuWeOfzbYNJOstwNv8LEg2EnSNLv/5qC8d5A5c2TfREJl3DXvwh1+BBQDkGnFQD5N8yuR7yOCyVxZRaBbY6vLoESEhKaeqENeUJXQ/BSD2NO+TKj5eNtlMGR+I77n5T0wwSZ7k/zan3tke+CiTz+zu9+eBfwY5tUP32735fvzFQ1iz7xlcN69v1Bpusi79iz9gl
-X-Received: by 2002:a81:84d0:0:b0:64a:3d7c:2782 with SMTP id
- 00721157ae682-658f02f4b2dmr123670157b3.41.1720785614119; Fri, 12 Jul 2024
- 05:00:14 -0700 (PDT)
+	s=arc-20240116; t=1720785674; c=relaxed/simple;
+	bh=m8gxeVTMeFpQG9BUlRSXLTmcL9t4lHKryB0B+cWJTAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rqFgM7vJqjKuXlgMsJtz69/axD2UT4MxI31oOws+EaLhG4qcH7SZGOrAgHUjV4E15mlmN+g94C2SuwG6zjuUGx2DaAcg++htcfZ9htmQPlurGWu1f/LjZi5LeAI9Fb0CeV5P8tvVg5IAXQDzJgoKQF3PzX6RGmX6gXHcWtfdDvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xdvsr3pa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD511C32782;
+	Fri, 12 Jul 2024 12:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720785673;
+	bh=m8gxeVTMeFpQG9BUlRSXLTmcL9t4lHKryB0B+cWJTAs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xdvsr3paoPtZWEZaqNQhOTsV/wBYIMfNJy3JLo0PtNZ7YS1oTQUErqheVhUU+eVWb
+	 aBCHp7K8HU8rqox8QUe2/EnmLY3GKg6M62S8+TBKRvYcX2NQaygUB+qPhKSaBxCXu5
+	 Ywcet5SycQTGGbQNcmsjBoyrETtr9BONcoaJYYflBGf++jaEaUYMoWhGorzhitSloV
+	 xR/AQnSUihaxQRdMcLoqCeRODWk6x8sYGGHp5AiGncpAAwDEHZT5t23ncqxobFcl3H
+	 DEfJ7gxQH5y6eoPS1u3bZ4Rk8sAf2x9fIDG/fRjlv5pU2Al5VpbtFCpdJOuokkGgbh
+	 eBq97Q63qMlSw==
+Message-ID: <dad53de8-eb62-4d9b-b760-dc2548f05232@kernel.org>
+Date: Fri, 12 Jul 2024 14:01:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240627161315.98143-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240627161315.98143-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 Jul 2024 14:00:02 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV5Pyy=5-N9nUZZSOnnpGf2Kp3miDMM5H3b+ah2QUUMtA@mail.gmail.com>
-Message-ID: <CAMuHMdV5Pyy=5-N9nUZZSOnnpGf2Kp3miDMM5H3b+ah2QUUMtA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] clk: renesas: Add RZ/V2H(P) CPG driver
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/2] Add support for Awinic proximity sensor
+To: wangshuaijie@awinic.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ waqar.hameed@axis.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: liweilei@awinic.com, kangjiajun@awinic.com
+References: <20240712113200.2468249-1-wangshuaijie@awinic.com>
+ <20240712113200.2468249-3-wangshuaijie@awinic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240712113200.2468249-3-wangshuaijie@awinic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Prabhakar,
+On 12/07/2024 13:32, wangshuaijie@awinic.com wrote:
+> From: shuaijie wang <wangshuaijie@awinic.com>
+> 
+> 1. Modify the structure of the driver.
+> 2. Change the style of the driver's comments.
+> 3. Remove unnecessary log printing.
+> 4. Modify the function used for memory allocation.
+> 5. Modify the driver registration process.
+> 6. Remove the functionality related to updating firmware.
+> 7. Change the input subsystem in the driver to the iio subsystem.
+> 8. Modify the usage of the interrupt pin.
 
-On Thu, Jun 27, 2024 at 6:14=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add RZ/V2H(P) CPG driver.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+I don't understand why do you put some sort of changelog into commit
+msg. Please read submitting patches.
+
+> 
+> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
 > ---
-> v2->v3
-> - Added CLK_PLLDTY
-> - Added core clocks sys_0_pclk and iotop_0_shclk
-> - Dropped r9a09g057_crit_mod_clks
 
-Thanks for the update!
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-> --- /dev/null
-> +++ b/drivers/clk/renesas/r9a09g057-cpg.c
-
-> +static const struct cpg_core_clk r9a09g057_core_clks[] __initconst =3D {
-> +       /* External Clock Inputs */
-> +       DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
-> +       DEF_INPUT("rtxin", CLK_RTXIN),
-> +       DEF_INPUT("qextal", CLK_QEXTAL),
+>  drivers/iio/proximity/Kconfig                 |   10 +
+>  drivers/iio/proximity/Makefile                |    2 +
+>  drivers/iio/proximity/aw9610x.c               | 1150 ++++++++++
+>  drivers/iio/proximity/aw963xx.c               | 1371 ++++++++++++
+>  drivers/iio/proximity/aw_sar.c                | 1850 +++++++++++++++++
+>  drivers/iio/proximity/aw_sar.h                |   23 +
+>  drivers/iio/proximity/aw_sar_comm_interface.c |  550 +++++
+>  drivers/iio/proximity/aw_sar_comm_interface.h |  172 ++
+>  drivers/iio/proximity/aw_sar_type.h           |  371 ++++
+>  9 files changed, 5499 insertions(+)
+>  create mode 100644 drivers/iio/proximity/aw9610x.c
+>  create mode 100644 drivers/iio/proximity/aw963xx.c
+>  create mode 100644 drivers/iio/proximity/aw_sar.c
+>  create mode 100644 drivers/iio/proximity/aw_sar.h
+>  create mode 100644 drivers/iio/proximity/aw_sar_comm_interface.c
+>  create mode 100644 drivers/iio/proximity/aw_sar_comm_interface.h
+>  create mode 100644 drivers/iio/proximity/aw_sar_type.h
+> 
+> diff --git a/drivers/iio/proximity/Kconfig b/drivers/iio/proximity/Kconfig
+> index 2ca3b0bc5eba..a60d3dc955b3 100644
+> --- a/drivers/iio/proximity/Kconfig
+> +++ b/drivers/iio/proximity/Kconfig
+> @@ -219,4 +219,14 @@ config VL53L0X_I2C
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called vl53l0x-i2c.
+>  
+> +config AWINIC_SAR
+> +	tristate "Awinic AW96XXX proximity sensor"
+> +	depends on I2C
+> +	help
+> +	  Say Y here to build a driver for Awinic's AW96XXX capacitive
+> +	  proximity sensor.
 > +
-> +       /* PLL Clocks */
-> +       DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
-> +       DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
-> +       DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called awinic_sar.
 > +
-> +       /* Internal Core Clocks */
-> +       DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16=
-),
+>  endmenu
+> diff --git a/drivers/iio/proximity/Makefile b/drivers/iio/proximity/Makefile
+> index f36598380446..d4bd9edd8362 100644
+> --- a/drivers/iio/proximity/Makefile
+> +++ b/drivers/iio/proximity/Makefile
+> @@ -21,4 +21,6 @@ obj-$(CONFIG_SX_COMMON) 	+= sx_common.o
+>  obj-$(CONFIG_SX9500)		+= sx9500.o
+>  obj-$(CONFIG_VCNL3020)		+= vcnl3020.o
+>  obj-$(CONFIG_VL53L0X_I2C)	+= vl53l0x-i2c.o
+> +obj-$(CONFIG_AWINIC_SAR)	+= awinic_sar.o
+> +awinic_sar-objs			:= aw_sar_comm_interface.o aw_sar.o aw9610x.o aw963xx.o
+>  
+
+
+
 > +
+> +static void aw_sar_power_deinit(struct aw_sar *p_sar)
+> +{
+> +	if (p_sar->power_enable) {
+> +		/*
+> +		 * Turn off the power output. However,
+> +		 * it may not be turned off immediately
+> +		 * There are scenes where power sharing can exist
+> +		 */
+> +		regulator_disable(p_sar->vcc);
+> +		regulator_put(p_sar->vcc);
+> +	}
+> +}
+> +
+> +static void aw_sar_power_enable(struct aw_sar *p_sar, bool on)
+> +{
+> +	int rc;
+> +
+> +	if (on) {
+> +		rc = regulator_enable(p_sar->vcc);
+> +		if (rc) {
+> +			dev_err(p_sar->dev, "regulator_enable vol failed rc = %d", rc);
 
-Missing comment "/* Core Clocks */"?
+Again example of ugly code.
 
-> +       DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
-> +       DEF_FIXED("iotop_0_shclk", R9A09G057_IOTOP_0_SHCLK, CLK_PLLCM33_D=
-IV16, 1, 1),
+> +		} else {
+> +			p_sar->power_enable = AW_TRUE;
+
+NAK.
+
+All this driver is some ancient, downstream or user-space-generic-code.
+Sorry, you already got such comment.
+
+First, your control of power seems like entire code is spaghetti.
+Basically, your control flow is random, no functions know when they are
+called. To solve this, you introduce "power_enable" so the functions can
+figure out if they are called with power enabled or not.
+
+That's just crappy and spaghetti design.
+
+This redefinition of true and false is a cherry on top. DO NOT EVER send
+such code. NEVER.
+
+You must clean up all such user-space/Windows/whatever you have there stuff.
+
+> +			msleep(20);
+> +		}
+> +	} else {
+> +		rc = regulator_disable(p_sar->vcc);
+> +		if (rc)
+> +			dev_err(p_sar->dev, "regulator_disable vol failed rc = %d", rc);
+> +		else
+> +			p_sar->power_enable = AW_FALSE;
+> +	}
+> +}
+> +
+> +static int regulator_is_get_voltage(struct aw_sar *p_sar)
+> +{
+> +	unsigned int cnt = 10;
+> +	int voltage_val;
+> +
+> +	while (cnt--) {
+> +		voltage_val = regulator_get_voltage(p_sar->vcc);
+
+What is that?
+
+Did you just forgot to set proper ramp delays?
+
+> +		if (voltage_val >= AW_SAR_VCC_MIN_UV)
+> +			return 0;
+> +		mdelay(1);
+> +	}
+> +	/* Ensure that the chip initialization is completed */
+> +	msleep(20);
+> +
+> +	return -EINVAL;
+> +}
+> +/* AW_SAR_REGULATOR_POWER_ON end */
+
+
+...
+
+> +static int aw_sar_regulator_power(struct aw_sar *p_sar)
+> +{
+> +	struct aw_sar_dts_info *p_dts_info = &p_sar->dts_info;
+> +	int ret = 0;
+> +
+> +	p_dts_info->use_regulator_flag =
+> +		of_property_read_bool(p_sar->i2c->dev.of_node, "awinic,regulator-power-supply");
+> +
+> +	/* Configure the use of regulator power supply in DTS */
+> +	if (p_sar->dts_info.use_regulator_flag == true) {
+> +		ret = aw_sar_regulator_power_init(p_sar);
+> +		if (ret != 0) {
+> +			dev_err(p_sar->dev, "power init failed");
+> +			return ret;
+> +		}
+> +		aw_sar_power_enable(p_sar, AW_TRUE);
+> +		ret = regulator_is_get_voltage(p_sar);
+> +		if (ret != 0) {
+> +			dev_err(p_sar->dev, "get_voltage failed");
+> +			aw_sar_power_deinit(p_sar);
+> +		}
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static int aw_sar_get_chip_info(struct aw_sar *p_sar)
+> +{
+> +	int ret;
+> +	unsigned char i;
+> +
+> +	for (i = 0; i < AW_SAR_DRIVER_MAX; i++) {
+> +		if (g_aw_sar_driver_list[i].p_who_am_i != NULL) {
+
+Sorry, this overall code is just ugly and with poor readability.
+Variables like "g_aw_sar_driver_list" are just not helping.
+
+The driver is really huge for a "simple" proximity sensor, so I wonder
+if this was somehow over-engineered or is not really simple, but quite
+complex sensor.
+
+Anyway, huge driver with poor code is not helping to review.
+
+
+> +
+> +
+> +/* Drive logic entry */
+> +static int aw_sar_i2c_probe(struct i2c_client *i2c)
+> +{
+> +	struct iio_dev *sar_iio_dev;
+> +	struct aw_sar *p_sar;
+> +	int ret;
+> +
+> +	if (!i2c_check_functionality(i2c->adapter, I2C_FUNC_I2C)) {
+> +		pr_err("check_functionality failed!\n");
+> +		return -EIO;
+> +	}
+> +
+> +	sar_iio_dev = devm_iio_device_alloc(&i2c->dev, sizeof(*p_sar));
+> +	if (!sar_iio_dev)
+> +		return -ENOMEM;
+> +	p_sar = iio_priv(sar_iio_dev);
+> +	p_sar->aw_iio_dev = sar_iio_dev;
+> +	p_sar->dev = &i2c->dev;
+> +	p_sar->i2c = i2c;
+> +	i2c_set_clientdata(i2c, p_sar);
+> +
+> +	/* 1.Judge whether to use regular power supply. If yes, supply power */
+> +	ret = aw_sar_regulator_power(p_sar);
+> +	if (ret != 0) {
+> +		dev_err(&i2c->dev, "regulator_power error!");
+> +		return ret;
+> +	}
+> +
+> +	/* 2.Get chip initialization resources */
+> +	ret = aw_sar_get_chip_info(p_sar);
+> +	if (ret != 0) {
+> +		dev_err(&i2c->dev, "chip_init error!");
+
+Not much improved.
+
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+
+Thank you.
+</form letter>
+
+> +
+> +static const struct dev_pm_ops aw_sar_pm_ops = {
+> +	.suspend = aw_sar_suspend,
+> +	.resume = aw_sar_resume,
 > +};
 > +
-> +static const struct rzv2h_mod_clk r9a09g057_mod_clks[] =3D {
-
-__initconst
-
-> +       DEF_MOD("scif_0_clk_pck",               CLK_PLLCM33_DIV16, 8, 15,=
- 4, 15),
+> +static const struct of_device_id aw_sar_dt_match[] = {
+> +	{ .compatible = "awinic,aw96103" },
+> +	{ .compatible = "awinic,aw96105" },
+> +	{ .compatible = "awinic,aw96303" },
+> +	{ .compatible = "awinic,aw96305" },
+> +	{ .compatible = "awinic,aw96308" },
+> +	{ },
 > +};
 > +
-> +static const struct rzv2h_reset r9a09g057_resets[] =3D {
-> +       DEF_RST(9, 5, 4, 6),            /* SCIF_0_RST_SYSTEM_N */
+> +static const struct i2c_device_id aw_sar_i2c_id[] = {
+> +	{ AW_SAR_I2C_NAME, 0 },
+
+Having device_id tables not in sync is usually bad sign. Why do you need
+i2c_device_id in the first place?
+
+> +	{ },
 > +};
->
-> +const struct rzv2h_cpg_info r9a09g057_cpg_info =3D {
+> +MODULE_DEVICE_TABLE(i2c, aw_sar_i2c_id);
+> +
+> +static struct i2c_driver aw_sar_i2c_driver = {
+> +	.driver = {
+> +		.name = AW_SAR_I2C_NAME,
+> +		.of_match_table = aw_sar_dt_match,
+> +		.pm = &aw_sar_pm_ops,
+> +	},
+> +	.probe = aw_sar_i2c_probe,
+> +	.remove = aw_sar_i2c_remove,
+> +	.shutdown = aw_sar_i2c_shutdown,
+> +	.id_table = aw_sar_i2c_id,
+> +};
+> +module_i2c_driver(aw_sar_i2c_driver);
+> +
+> +MODULE_DESCRIPTION("AWINIC SAR Driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_IMPORT_NS(AWINIC_PROX);
 
-With my suggested changes to [2/3], these two can be __initconst, too.
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Best regards,
+Krzysztof
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
