@@ -1,285 +1,158 @@
-Return-Path: <linux-kernel+bounces-250873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D00F892FDF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:52:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A434192FE00
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:57:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80DA4284EA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:52:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11AF4B21D73
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59245174EF8;
-	Fri, 12 Jul 2024 15:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A40174EF9;
+	Fri, 12 Jul 2024 15:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PmgWxvM6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WDN5wQ57"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB4D1741EA
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396E0174EE7
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720799557; cv=none; b=QgmXZMWGK9kolDFzaYWOo4fhavUD6FR5y6BcfiqhDXYB1qO/QH4ZCBs99yC/QApdlT3Z6EmM+GxWMwZKCIotQfcSYmbouN/tNsI8t+UaMvp7A9WIFgKJPJaPBUfYSQzNMBTvGXuTIAmlcXJeamYK+iduZuUSqF3PY90MrMURX1s=
+	t=1720799838; cv=none; b=rbyKk2lljjL+YYp3+cNZXwBBKejOKJPY3QFRxZlfTlCvads3AH5K7JsrH/KJ8KBQNXOfu6w8lyoLGvE1DrNNucr4RQrBARtebcya7mblFekNONGHW2NZxx99LbybbGWNavkBbpHWEY3YP7CtGT4OMuH6k1Mr7WZhxxdEdhA+BzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720799557; c=relaxed/simple;
-	bh=ZnYtEwQmRhSInSuZM5bGERSfZOhYNMj6nDH2d7KOFRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V2NzCglidZ28dQEXjKAhkGN9QCN7K+T9PjX9y6M+6eQbr/SMALn7jksR7MxJvQBhY27idrn6SG2kwWO76U4jB0UntrD7ieDHqbfcsR9RPc/YDD6cKJcEmyKrGD+mZiUUs/eKTu/Tnqel6iCC0vA4O0izihvQyThYK7gNKyBKXvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PmgWxvM6; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1720799838; c=relaxed/simple;
+	bh=92LbG9az5ZEmo10Huxxe9QhBwRq7LYH80MayzdsZijw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kOnXqmPKJ2Bjuss7tfGmQsIYN07DV2oS4t4oacRnaNtv+9MG6Z3HDAwUjqjXgSCuS4gyhPIBAs2w+pRZWauP6y7cvkBfkssZeU8/khwCCM7Ty4EFs/Vz9c1Jw0YicjKzHuaSp+IiG/LCfghDWlj8tHw37nVYFx1HQw6QaZL3l3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WDN5wQ57; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720799554;
+	s=mimecast20190719; t=1720799836;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CBPZJXhtPTYw9uGWwBpC8EVMxJRjwQ/Iz+iND+SW6sA=;
-	b=PmgWxvM6EAtMenNTAoVwv7W1mM4igF78kfNKy8xvpx2q7dWoVO4rxrJMgEE1CNP8gMpLdx
-	fxJL1qPAA1I9W9VMMFNivK/+6SxnrDYuLCmyI1Q4pnPF5K1gyayTcAIbvYbP+F2uRlIs/l
-	feDCZyHcGPHXqBMK3qGG6XtnElhqilc=
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
- [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=unIhgmQoVncSJ3ToST2Rwgc1eOZuFM/cCjT8vffTDPA=;
+	b=WDN5wQ57QkrzoRc0TMmssXZNtDHVN+I4KcOODNciog+K93M1z9Wq6CgMZx+TYGP1VL0XvC
+	H1INBfsxek7hIRr1e1yXY0BpcdNw4ARaXIo+n4lcVZufRaBLWteZMVdcqDvknmQc6XF0/d
+	88zQYLSQfl5XHMy3eDSMSk+Sqm7tslM=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-182-_URbEGBmNse6BIapq_5Xlw-1; Fri, 12 Jul 2024 11:52:32 -0400
-X-MC-Unique: _URbEGBmNse6BIapq_5Xlw-1
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3d62ad9f453so22258b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:52:32 -0700 (PDT)
+ us-mta-450-uXImx0XKMVui_bxBm6uGQg-1; Fri, 12 Jul 2024 11:57:14 -0400
+X-MC-Unique: uXImx0XKMVui_bxBm6uGQg-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52e969d0198so2295108e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:57:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720799552; x=1721404352;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CBPZJXhtPTYw9uGWwBpC8EVMxJRjwQ/Iz+iND+SW6sA=;
-        b=xHm0qqNwwfnh4imlsx8iom+FrZREG/kbqzRPEeXFgsOHiDaQeP6d9MBVkdmZb0XwWX
-         5dpbZq5Hf9K8TOzircExZRydG5DUPP6U+rJVNzEf5adJIW6TjWpvv+HXvGlCaLSoqThI
-         /elxB5k2ntKAYndcYRyg6Q0CUEc/RJPkDI9ahBUpxGVOP/GENGVAv2O62wgkOJ+r61O8
-         kcmetEJm6qv8Jw8CiM3bZ6VlVELsJTFTtTzGKiIyxJ5Fod0HVAsp34cEI6ss+sqqXiB2
-         GKYfpgK22uSbLczdv0nxOzhjQSu6kC/weltR0NTx0GItmkFiZS/wUTYkitgV7WlXeNmg
-         1y1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUP2MAbuprZisgo5RZhRdwy5DUpR/g24DKNzjfoO/OaySp8Q09Su+/cNN/Ut64f81CrqFkzB1Xkq0l8a6bL5gAtqKi0kB1HWYv9ugar
-X-Gm-Message-State: AOJu0YzWKqgWvh8DxOvaIgjtl/d1YVkqh2AOwzov/EzXeAJvco7S7xF3
-	TN74XafouOzgLY7UNSR/ZcpjXPQfoELrGvQf3KkBf81NODJPyK7DJ8ReYE2UbfQJZogWgT0QtOC
-	y7LkctG6CiTafdmj5Quw6ZruQdBSdZAMvZkgzaJDB2xG/EhQ12XNfOzNAVSsnMw==
-X-Received: by 2002:a05:6808:18a4:b0:3d9:3f72:7147 with SMTP id 5614622812f47-3daa0cc727emr5077538b6e.3.1720799551946;
-        Fri, 12 Jul 2024 08:52:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG/ZIrWNSDLGpdOzmVtr7gg5txILa2tK9NGlD5tHXAm+7q1klaoYYw+zZj//kgznCBpBAfzHQ==
-X-Received: by 2002:a05:6808:18a4:b0:3d9:3f72:7147 with SMTP id 5614622812f47-3daa0cc727emr5077526b6e.3.1720799551507;
-        Fri, 12 Jul 2024 08:52:31 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f19012fa9sm414621985a.46.2024.07.12.08.52.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 08:52:31 -0700 (PDT)
-Date: Fri, 12 Jul 2024 11:52:27 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com,
-	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
-	linmiaohe@huawei.com, david@redhat.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
-	david@fromorbit.com, Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH 11/13] huge_memory: Remove dead vmf_insert_pXd code
-Message-ID: <ZpFROxbDINDc43m_@x1n>
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
- <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
- <ZogCDpfSyCcjVXWH@x1n>
- <87zfqrw69i.fsf@nvdebian.thelocal>
- <Zo1dqTPLn_gosrSO@x1n>
- <87sewf48s6.fsf@nvdebian.thelocal>
+        d=1e100.net; s=20230601; t=1720799833; x=1721404633;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=unIhgmQoVncSJ3ToST2Rwgc1eOZuFM/cCjT8vffTDPA=;
+        b=R+kmfHR9VbdWyyByeqWguzpyi10W2M/W9tPXFQQtEoaFKJAgJCkVTgCi0l5PaMRm3v
+         Xdn8w0V2GzpBUIyKUsAPMQ8rU4lAKpSCQH7diF2WPSQq9E0rTpFwg8JKUWDGJBpq1iKd
+         WpPzyYA6KYa8g3KXkFYsd5cIVbqt+bYUOWLg07V716OGUe+hq6u9arKoA9dz5SPdSBwF
+         aG4YKr5iNVGkFpWxfs3Yrsz+gztSxCiy9L2jb34XSI0F0giCv+B7J1aD7S/6v8ZEuKLY
+         3Jk9M6PIqXbd2j7H8Ov9a2wvJ1yruVsMoLRb27pE0oyHJtnudatzi+0F+GUFO7M5FFWV
+         1OZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCtypDXcnE+l3jyedMxFIO9beZqXaZCgpTWreGWqoqq0qQwtGnYW/QTJH7N9B2iGmcEsYMNl5VDsJDVYpHfkZyVOeTMNipTkApxX5Y
+X-Gm-Message-State: AOJu0YyzyO+9X15oyQNeaYP72BMDL5mqZVk+7YbHtFs8CA0WUZH4Jqdr
+	n6UTn/FaSj1hwjug94QxdFJxFnVyHFKGNlxYp5yVimhZ/wEmmSxRF5IHUbRzt6mbsvayLi+L0MY
+	0pxhGqburWVCOfViZK/Qt1/r1fYxtl4w3IM5tUwljXEIVZsIi6m/P2QGlUpMYAg==
+X-Received: by 2002:a05:6512:3d87:b0:52c:df77:6507 with SMTP id 2adb3069b0e04-52eb99a1482mr10843653e87.37.1720799833508;
+        Fri, 12 Jul 2024 08:57:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHblt6jVYY/WnfcCaSWSerVrk0LdnPIVMWY7Mr9poNBoiIc9yN4ioDL526CLoIo6o3GqO2tDg==
+X-Received: by 2002:a05:6512:3d87:b0:52c:df77:6507 with SMTP id 2adb3069b0e04-52eb99a1482mr10843635e87.37.1720799833133;
+        Fri, 12 Jul 2024 08:57:13 -0700 (PDT)
+Received: from [192.168.10.81] ([151.95.101.29])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4279f2c254dsm27493245e9.46.2024.07.12.08.57.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 08:57:12 -0700 (PDT)
+Message-ID: <f06ef91d-7f8c-4f69-8535-fee372766a7f@redhat.com>
+Date: Fri, 12 Jul 2024 17:57:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87sewf48s6.fsf@nvdebian.thelocal>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
+To: Leonardo Bras <leobras@redhat.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+ Leonardo Bras <leobras.c@gmail.com>, Sean Christopherson
+ <seanjc@google.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20240511020557.1198200-1-leobras@redhat.com>
+ <ZkJsvTH3Nye-TGVa@google.com>
+ <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com>
+ <68c39823-6b1d-4368-bd1e-a521ade8889b@paulmck-laptop>
+ <ZkQ97QcEw34aYOB1@LeoBras>
+ <17ebd54d-a058-4bc8-bd65-a175d73b6d1a@paulmck-laptop>
+ <ZnPUTGSdF7t0DCwR@LeoBras>
+ <ec8088fa-0312-4e98-9e0e-ba9a60106d58@paulmck-laptop>
+ <ZnosF0tqZF72XARQ@LeoBras> <ZnosnIHh3b2vbXgX@LeoBras>
+ <Zo8WuwOBSeAcHMp9@LeoBras>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <Zo8WuwOBSeAcHMp9@LeoBras>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 12, 2024 at 12:40:39PM +1000, Alistair Popple wrote:
-> 
-> Peter Xu <peterx@redhat.com> writes:
-> 
-> > On Tue, Jul 09, 2024 at 02:07:31PM +1000, Alistair Popple wrote:
-> >> 
-> >> Peter Xu <peterx@redhat.com> writes:
-> >> 
-> >> > Hi, Alistair,
-> >> >
-> >> > On Thu, Jun 27, 2024 at 10:54:26AM +1000, Alistair Popple wrote:
-> >> >> Now that DAX is managing page reference counts the same as normal
-> >> >> pages there are no callers for vmf_insert_pXd functions so remove
-> >> >> them.
-> >> >> 
-> >> >> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> >> >> ---
-> >> >>  include/linux/huge_mm.h |   2 +-
-> >> >>  mm/huge_memory.c        | 165 +-----------------------------------------
-> >> >>  2 files changed, 167 deletions(-)
-> >> >> 
-> >> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> >> >> index 9207d8e..0fb6bff 100644
-> >> >> --- a/include/linux/huge_mm.h
-> >> >> +++ b/include/linux/huge_mm.h
-> >> >> @@ -37,8 +37,6 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
-> >> >>  		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
-> >> >>  		    unsigned long cp_flags);
-> >> >>  
-> >> >> -vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
-> >> >> -vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
-> >> >>  vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
-> >> >>  vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
-> >> >
-> >> > There's a plan to support huge pfnmaps in VFIO, which may still make good
-> >> > use of these functions.  I think it's fine to remove them but it may mean
-> >> > we'll need to add them back when supporting pfnmaps with no memmap.
-> >> 
-> >> I'm ok with that. If we need them back in future it shouldn't be too
-> >> hard to add them back again. I just couldn't find any callers of them
-> >> once DAX stopped using them and the usual policy is to remove unused
-> >> functions.
-> >
-> > True.  Currently the pmd/pud helpers are only used in dax.
-> >
-> >> 
-> >> > Is it still possible to make the old API generic to both service the new
-> >> > dax refcount plan, but at the meantime working for pfn injections when
-> >> > there's no page struct?
-> >> 
-> >> I don't think so - this new dax refcount plan relies on having a struct
-> >> page to take references on so I don't think it makes much sense to
-> >> combine it with something that doesn't have a struct page. It sounds
-> >> like the situation is the analogue of vm_insert_page()
-> >> vs. vmf_insert_pfn() - it's possible for both to exist but there's not
-> >> really anything that can be shared between the two APIs as one has a
-> >> page and the other is just a raw PFN.
-> >
-> > I still think most of the codes should be shared on e.g. most of sanity
-> > checks, pgtable injections, pgtable deposits (for pmd) and so on.
-> 
-> Yeah, it was mostly the BUG_ON's that weren't applicable once pXd_devmap
-> went away.
-> 
-> > To be explicit, I wonder whether something like below diff would be
-> > applicable on top of the patch "huge_memory: Allow mappings of PMD sized
-> > pages" in this series, which introduced dax_insert_pfn_pmd() for dax:
-> >
-> > $ diff origin new
-> > 1c1
-> > < vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
-> > ---
-> >> vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
-> > 55,58c55,60
-> > <       folio = page_folio(page);
-> > <       folio_get(folio);
-> > <       folio_add_file_rmap_pmd(folio, page, vma);
-> > <       add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
-> > ---
-> >>         if (page) {
-> >>                 folio = page_folio(page);
-> >>                 folio_get(folio);
-> >>                 folio_add_file_rmap_pmd(folio, page, vma);
-> >>                 add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
-> >>         }
-> 
-> We get the page from calling pfn_t_to_page(pfn). This is safe for the
-> DAX case but is it safe to use a page returned by this more generally?
+On 7/11/24 01:18, Leonardo Bras wrote:
+> What are your thoughts on above results?
+> Anything you would suggest changing?
 
-Good question.  I thought it should work when the caller doesn't set any
-bit in PFN_FLAGS_MASK, but it turns out it's not the case?  As I just
-notice:
+Can you run the test with a conditional on "!tick_nohz_full_cpu(vcpu->cpu)"?
 
-static inline bool pfn_t_has_page(pfn_t pfn)
-{
-	return (pfn.val & PFN_MAP) == PFN_MAP || (pfn.val & PFN_DEV) == 0;
-}
+If your hunch is correct that nohz-full CPUs already avoid 
+invoke_rcu_core() you might get the best of both worlds.
 
-So it looks like "no PFN_FLAGS" case should also fall into this category of
-"(pfn.val & PFN_DEV) == 0"..
+tick_nohz_full_cpu() is very fast when there is no nohz-full CPU, 
+because then it shortcuts on context_tracking_enabled() (which is just a 
+static key).
 
-I'm not sure whether my understanding is correct, though.  Maybe we'd want
-to double check with pfn_valid() when it's a generic function.
-
-> 
-> From an API perspective it would make more sense for the DAX code to
-> pass the page rather than the pfn. I didn't do that because device DAX
-> just had the PFN and this was DAX-specific code. But if we want to make
-> it generic I'd rather have callers pass the page in.
-> 
-> Of course that probably doesn't help you, because then the call would be
-> vmf_insert_page_pmd() rather than a raw pfn, but as you point out there
-> might be some common code we could share.
-
-It'll be fine if it needs page*, then it'll be NULL for VFIO.
-
-So far it looks cleaner if it has the pgtable entry anyway to me, as that
-indeed contains the pfn.  But I'd trust you more on what should it look
-like, as I didn't read the whole series here.
-
-> 
-> >
-> > As most of the rest look very similar to what pfn injections would need..
-> > and in the PoC of ours we're using vmf_insert_pfn_pmd/pud().
-> 
-> Do you have the PoC posted anywhere so I can get an understanding of how
-> this might be used?
-
-https://github.com/xzpeter/linux/commits/vfio-pfnmap-all/
-
-Specifically Alex's commit here:
-
-https://github.com/xzpeter/linux/commit/afd05f1082bc78738e280f1fc1937da52b2572ed
-
-Just a note that it's still work in progress.  Alex did run it through (not
-this tree, but an older one) and it works pretty well so far.
-
-I think it's because so far nothing involves the pfn flags, the only one
-has it involved is (taking pmd as example):
-
-insert_pfn_pmd():
-	if (!pmd_none(*pmd)) {
-		if (write) {
-			if (pmd_pfn(*pmd) != pfn_t_to_pfn(pfn)) {
-				WARN_ON_ONCE(!is_huge_zero_pmd(*pmd));
-				goto out_unlock;
-			}
-			entry = pmd_mkyoung(*pmd);
-			entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
-			if (pmdp_set_access_flags(vma, addr, pmd, entry, 1))
-				update_mmu_cache_pmd(vma, addr, pmd);
-		}
-
-		goto out_unlock;
-	}
-
-But for VFIO it'll definitely be pmd_none() here, so the whole path ignores
-pfn flags so far here, I assume.
-
-> 
-> > That also reminds me on whether it'll be easier to implement the new dax
-> > support for page struct on top of vmf_insert_pfn_pmd/pud, rather than
-> > removing the 1st then adding the new one.  Maybe it'll reduce code churns,
-> > and would that also make reviews easier?
-> 
-> Yeah, that's a good observation. I think it was just a quirk of how I
-> was developing this and also not caring about the PFN case so I'll see
-> what that looks like.
-
-Great!  I hope it'll reduce the diff for this series too, so it could be a
-win-win.
-
-Thanks,
-
--- 
-Peter Xu
+Paolo
 
 
