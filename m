@@ -1,131 +1,155 @@
-Return-Path: <linux-kernel+bounces-250545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63AB592F8EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:25:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54AD92F8F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:26:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20326285F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:25:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81773286E93
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1904916F8F3;
-	Fri, 12 Jul 2024 10:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B558216D4FF;
+	Fri, 12 Jul 2024 10:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="F+opiLwp"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jYU2kw9Y"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC49F16F844
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5D815F404;
+	Fri, 12 Jul 2024 10:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720779791; cv=none; b=dg32HWi7XH/Fqmt5j9mEWpP+JP+IF+IusQnaYPMb+3+KZ3b67Z8/Uos6h2i8AJRGY9mjFAqP96McLeyAk+Xc5Yo6+JBk1E91QCavqmb+xymsi/MLyD+34FjimuyWPLP8DNsCPKenTV/qBjYlK1ji6IQiy0X0VMw2uq6pzGfCew8=
+	t=1720779821; cv=none; b=WeLPufpXtOZozMpIVE8U72r7bAu3xUQbsHclTcAoMZj4EmpTMdJwRl03RgxLJUpZRyV3wCbb8pajcze5Fok2yDFTX+IyYGd/37bPbIT0pCq6fD9ZzbIIYYZhIdbWrJKFk0EXI5GX/WNj37vO0/iLRytmGfumpneSEupBdXsmxUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720779791; c=relaxed/simple;
-	bh=qrk0LVcmuVjiEcv7KyZeL00+thrBnOd8/EoHt4sBkOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K2aiyHwkQpT+Uk1n6hZyBio4ctO472eZs5QXVO+u+Vre555ei/NQMlo6ORG80hy2Ttn8M3ohEoUPgP+SUdFx7ERxVsaB33YkZJPyQxFLHx8zdns+Tx8wnvJgpL79/cx+JYRu4bulk+mDkiO33npTo0ZxI66fU8P4VIFyaAilWcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=F+opiLwp; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77b60cafecso232506566b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720779787; x=1721384587; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrk0LVcmuVjiEcv7KyZeL00+thrBnOd8/EoHt4sBkOg=;
-        b=F+opiLwp3R97klDdaMLuiKOsIdTDMJTeRCFZ5YQH1XHqf0VqRrBUvLDPSYW+ugTo3f
-         oeKGVPtJIOzIDZV+8aHHABTsg1O0dIsXIr1qTmx0FQ8jACm0sh3ecIo9/Awbp2wWqnrf
-         2Hvk0WniTApHhyqrVexgK69jr6stBhW5vzKuvUKff+hlJxKLqJaF7rsuN/lwZwHChauR
-         IUPj3tOYRtz0XYTipCiRQcjbsIYPaDszVgb26NclK0w5anNAuFS9Y+jNAxRR+BNjOMl8
-         FPpLk6Sl7/UwXBjuC9XDUCQ+bSja4kvQa5/9olguJgp2/FBZQ718fz5YFioyheCI1+eO
-         W4vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720779787; x=1721384587;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qrk0LVcmuVjiEcv7KyZeL00+thrBnOd8/EoHt4sBkOg=;
-        b=Y8KWLtnpwjjF8JiZXbnndTkhFmOcsaafkektIpzg8GvPu761zHRXrS+I1+morbrdTp
-         HVEQveVY+MsccN59/165agOLYvGPyy6ot0srhR5zTHjkgcZuIblqQxYcozZRSZTfS2au
-         xwnY8bM197G3HC7JD3zt3TBddx2TX8euoK2InwD2eMYiUBgTeUt4FolFg/rrWtSKbcHf
-         ESA71C5/URwZhxq2R7+PuiAcWSNQpvgqa1uFTRDXyKlH2jyLKyBrpKdrSdP6imJf1Vzx
-         QjIYQvRHaHjZscSGzGnCS27LvIC0UM4htkWjMV+DSTxblq/UQKduL1wRP/UKtEKstMR8
-         dGfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVr5S8GL8CV8a9XVwu7z7KZsY6sojjteJ09fwNpbzbIzp/xTBzl4DMZETxwqdNAfYAGJgMlfc+1jweN9h+UnkAqurdUODV+Q0CbfQ4b
-X-Gm-Message-State: AOJu0YzSwEb6Uu98hB5Af3gM7HYWdK46dFOFItqzSvmHKLWnS1oUrx9k
-	tb1s/mW5SHdxbXmLW63E8arr4rtnrjZFrsj15wvFJCQ4+2PnU2QiH5cntS0LftTnNPYhgDV5THv
-	2
-X-Google-Smtp-Source: AGHT+IFG0J6IkxmWgik1JhA9krrIT763djjpb2/xyRINL7DV5Gi3UhRk38CA3x9QcfjUIWGM5OvikQ==
-X-Received: by 2002:a17:906:1583:b0:a72:4a4f:23d6 with SMTP id a640c23a62f3a-a780b6882d5mr698656466b.8.1720779787038;
-        Fri, 12 Jul 2024 03:23:07 -0700 (PDT)
-Received: from localhost (p50915eb1.dip0.t-ipconnect.de. [80.145.94.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a797e3b160dsm216698866b.204.2024.07.12.03.23.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 03:23:06 -0700 (PDT)
-Date: Fri, 12 Jul 2024 12:23:05 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] UAPI/ioctl: Improve parameter name of ioctl request
- definition helpers
-Message-ID: <payyjsywrmqt6wirl3eiq2bndfbfgk2epp2cgojm3oetj5fx7l@apfkwfprjwe4>
-References: <20240712093524.905556-2-u.kleine-koenig@baylibre.com>
- <7351db74-fb04-4d0f-93ae-d3a3a3a310ff@app.fastmail.com>
+	s=arc-20240116; t=1720779821; c=relaxed/simple;
+	bh=r9Nir9nHKFqMWTP64jknuRaUZbPA4clneH4hIAp26VI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyXkLbepvERZpg/x1/rg48gJlSoxa1PtWUZ6SRQgOeTslaF3g8qwNTeGATEp//3b2DMPDb+hp3zqB/UY7PEMjsUAn11GNZJ3wN0EKiNmkUbTXJ49V2WfV+UtuI32YT7M7g8ZrndTklWndqYglA835Y9rAzyTIWYsCbgUFpIyBa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jYU2kw9Y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46C8DWnt000654;
+	Fri, 12 Jul 2024 10:23:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=+WSERfV4WDrYPUnpXBv0VWqk
+	PgUULNV8YcS92iNukv0=; b=jYU2kw9Y+E8E8bv/y5kTB/xI8jretwl6z4gwmXHX
+	QTC4VVa3BargNghTvnry7CdJbdWa+mNoWns0zI6TEj3sZatR+cLQTAnzPOXS+ejp
+	mNgjO9/O5AY+It9z2VxzYJFaras964RUQ/8hKq6u2EUnvO+urF1Ozi25PVFkwhzb
+	HfNJxgdZJ/wb8eb484nnSslVfxH2LNNDixnQ0hq3J8o7atQS82pgTZ9c32s0iv0j
+	IqpB7dqo9kkVmeSWeZRWRqXTNgy3Bioxy5f1VuGi7b41ZtNahLjJZSSmNoNggLvm
+	5WbznNNjAgU5Wr/Tb3Tab0ibDKxjiqU2LT/5YSCq6UYvGg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ac0gk3kc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 10:23:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46CANX07008929
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 10:23:33 GMT
+Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 12 Jul 2024 03:23:29 -0700
+Date: Fri, 12 Jul 2024 15:53:27 +0530
+From: Pavan Kondeti <quic_pkondeti@quicinc.com>
+To: "Maulik Shah (mkshah)" <quic_mkshah@quicinc.com>
+CC: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>,
+        Caleb Connolly
+	<caleb.connolly@linaro.org>,
+        "andersson@kernel.org >> Bjorn Andersson"
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] soc: qcom: cmd-db: map shared memory as WT, not WB
+Message-ID: <053b96d7-9af7-4afe-88c8-48a71b2d309f@quicinc.com>
+References: <20240327200917.2576034-1-volodymyr_babchuk@epam.com>
+ <19bb6ff0-04ff-4e88-8c8a-499c054bdea4@quicinc.com>
+ <87sf0axanc.fsf@epam.com>
+ <629a2983-8db4-4ae0-8f68-72750985d5b3@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r7vzfxn6wa55mgjx"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <7351db74-fb04-4d0f-93ae-d3a3a3a310ff@app.fastmail.com>
+In-Reply-To: <629a2983-8db4-4ae0-8f68-72750985d5b3@quicinc.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _NdS-g9M6RgbKZ1CIS8uEsn4hRcg-2w3
+X-Proofpoint-GUID: _NdS-g9M6RgbKZ1CIS8uEsn4hRcg-2w3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-12_07,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 mlxlogscore=714
+ mlxscore=0 impostorscore=0 clxscore=1011 suspectscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407120072
 
+Hi Volodymyr/Maulik,
 
---r7vzfxn6wa55mgjx
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 29, 2024 at 10:22:47AM +0530, Maulik Shah (mkshah) wrote:
+> 
+> 
+> On 3/29/2024 3:49 AM, Volodymyr Babchuk wrote:
+> > 
+> > Hi Maulik
+> > 
+> > "Maulik Shah (mkshah)" <quic_mkshah@quicinc.com> writes:
+> > 
+> > > On 3/28/2024 1:39 AM, Volodymyr Babchuk wrote:
+> > > > It appears that hardware does not like cacheable accesses to this
+> > > > region. Trying to access this shared memory region as Normal Memory
+> > > > leads to secure interrupt which causes an endless loop somewhere in
+> > > > Trust Zone.
+> > > 
+> > > Linux does not write into cmd-db region. This region is write
+> > > protected by XPU. Making this region uncached magically solves the XPU
+> > > write fault
+> > > issue.
+> > > 
+> > > Can you please include above details?
+> > 
+> > Sure, I'll add this to the next version.
+> > 
+> 
+> Thanks.
+> 
+> > > 
+> > > In downstream, we have below which resolved similar issue on qcm6490.
+> > > 
+> > > cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WC);
+> > > 
+> > > Downstream SA8155P also have MEMREMAP_WC. Can you please give it a try
+> > > on your device?
+> > 
+> > Yes, MEMREMAP_WC works as well. This opens the question: which type is
+> > more correct? I have no deep understanding in QCOM internals so it is
+> > hard to me to answer this question.
+> > 
+> 
+> XPU may have falsely detected clean cache eviction as "write" into the write
+> protected region so using uncached flag MEMREMAP_WC may be helping here and
+> is more correct in my understanding.
+> 
 
-Hey Arnd,
+I have got the very same explanation from my other colleagues at Qualcomm. I could
+reproduce the problem 100% of the time on QCS6490 RB3 board with Linux booting
+in EL2. The problem goes away with non-cached mapping
+(MEMREMAP_WC/MEMREMAP_WB).
 
-On Fri, Jul 12, 2024 at 11:51:38AM +0200, Arnd Bergmann wrote:
-> On Fri, Jul 12, 2024, at 11:35, Uwe Kleine-K=F6nig wrote:
-> > if there are doubts about using "argtype": Would "_argtype" be better?
->=20
-> The patch looks good to me, and I think using 'argtype'
-> is fine. I would apply it directly, but not with the current
-> timing just ahead of the merge window.
+Do you guys plan to send V2? Please CC me on the V2.
 
-Yes, having it in next for some time is a good idea for sure.
-
-> If there are no other comments, how about I take this after -rc1?
-> You may have to remind me about it.
-
-I'll ping you.
-
-Best regards
-Uwe
-
---r7vzfxn6wa55mgjx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaRBAcACgkQj4D7WH0S
-/k6KtggApbi7Ik4HZeeYZvYBZz+oozbuGzdDpSgxs3GFjXkpHZupaca0Rxc2eqlD
-Sa1SlUev0zSeZnbzCq099fqqwDxyKGFGVQ7esLwrVbliA+Dum0ZWK7RslLKFCDLy
-SRnLeeONYE5eJt4fPz7qRUE3ba8R+zgaGS36l9nSZ7ey0aWPRMuSzoY0pOJSxCPH
-Vkn7R1ao6WbvbUn+qrso5Lqwe5vl92+ntaVWcHC62IR2JGcwCHj2YF6nUtxidNwT
-zE/GG0X7+pa1ywVxhQ5BBk75gu7F/pSAX+Fj7pagfTsUQzV9lw//EBqpoYlNEvwS
-hHZD+Erp7OmdMfm88TVrHdjnJ4Q/Hw==
-=YQPz
------END PGP SIGNATURE-----
-
---r7vzfxn6wa55mgjx--
+Thanks,
+Pavan
 
