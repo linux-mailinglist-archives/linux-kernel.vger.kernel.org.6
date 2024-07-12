@@ -1,284 +1,183 @@
-Return-Path: <linux-kernel+bounces-250097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E89ED92F43B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:57:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1169292F424
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D491F2357C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:57:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C191C21EB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC69CEAFA;
-	Fri, 12 Jul 2024 02:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C79B944D;
+	Fri, 12 Jul 2024 02:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kgxI2Z3D"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2046.outbound.protection.outlook.com [40.107.93.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGgMsKCZ"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9DBBA41;
-	Fri, 12 Jul 2024 02:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720753043; cv=fail; b=EDJV3fQGwNm+J36LOp5tCZfDZpsDSiXfy2Tc3sjLhRDy8/jc+QpdfsuOkBpLbOFLtzGACyfH7Samj51+MskOJs6AcEwpffOlBPry+cn9Jn3L7l6MYP/4cnKaXB3fdL3HD4Z9TSmO7+lEch9QZFnLC9VSehYc92hw/Mxw5oDxdig=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720753043; c=relaxed/simple;
-	bh=Ixsm6B4C+bc7hgI700WqLD472Yy6ysLOP58lINxADkc=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 Content-Type:MIME-Version; b=qp/9Wr7eTf8jkv7yW5j8LSj97kO7GmywGguL/+4rE+VKhW6Fv0oWxgPgaFKAbIM2g1eC2X4MGQCMTuqG+FI7lXmXPgKfiibJTcpjmi6j5HYMvL2FZ7qKcTBIOrLsb7Yz7IgOPpMN08lmLX8ovL1xbE9XARow3gjwF9MKX6PAK0M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kgxI2Z3D; arc=fail smtp.client-ip=40.107.93.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VEengKGlulAiPcctVleZLqRN4HuBF4n0q99p84lRtYAQD+MdMONNONtFO9tL91VwqkwfNdMHifi0zWaQDIbO/q8YO2aArUvxx2tCKT9KDLQTKVjW8iN4OmWFzbHUJjOTZhBWxgNO1ACspXBg1I9BFSTZcpcQCV4SCQxJoOFDTRwLQJun6pFOtwSKEehdWKgyknrwDJEcW+MgEZX/9R2aFQEHut6PQki2LuMDc3MtjRjA4909Q3SpS4ZefTeXl3+jymbPCRsffph4NEwJTu1/It5+bRUxYW8UgiNCza5sVXfQ1EwAR6U0PzSYJZjL2XmtDdKs1u/c06g6/sS3GyEWuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1ZDgUYwcLj4KTqeYki9xIFtWtXWvuNOu8Iq63IYvC4g=;
- b=iSHD1djpWo4JluB0K3kngvAkcCnDKhp8+ww7SLLLB5Vxb2o1ERhUsdQPpS7wsl9W1aICWjmSIGHiOP58bqB2NjQAw0uzYU3aBysAQcLkN7F4blzw1/xIcG2SQsJMdZlvYkieE0jN7Ekrp+gqCHaZDOuV6HSXIRa1UIL+ntHOlIJRATxYsGhud4TFZY2/WpIz3pisFOxnnljt3KIuSTFXv183Rl748++TwTlj6DU+eNrZt5/FY4QxAo5gH9Y9kr1kibZmLY++AKoujJ7tVNo3in0AMYosoc6ldKMN6g7rl/37qynjjZI58WTL7ebSKme1lB7ZFq4bSEuBAQ6LePHQgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1ZDgUYwcLj4KTqeYki9xIFtWtXWvuNOu8Iq63IYvC4g=;
- b=kgxI2Z3DV7DTyaqabop893MqrrlQwa+D7r53Y2BqmDScqsEdrOzmAC9AnVr5AEgHJKZI8DwTfjAq21vi4YBZqlcSsEs+ujsgiVaUCouZAlL1g1B0f8Tc4es3nScXi0v+izve4BG0AEH+arg4VyM/d5Bwsk7obtYgyHkwSTz0FNPA+hBAg/rvuSdQ/mwyZlwUmyBY0YoRk6PBWyT601bUlErvWUesigr6NLdXzwKspgCnxeVou3c7uHZsk05VcG68OMmV3JBsWtBYa8/8fWvGhv9MXB7kqP+042NDkH40W6wp0jt1orqwr3eFFl0bRW9dlNovFMZjrezKn9LbreT2zg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- MN2PR12MB4341.namprd12.prod.outlook.com (2603:10b6:208:262::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22; Fri, 12 Jul
- 2024 02:57:18 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%2]) with mapi id 15.20.7741.033; Fri, 12 Jul 2024
- 02:57:18 +0000
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
- <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
- <ZogCDpfSyCcjVXWH@x1n> <87zfqrw69i.fsf@nvdebian.thelocal>
- <Zo1dqTPLn_gosrSO@x1n>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Alistair Popple <apopple@nvidia.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
- dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
- jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
- mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
- ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
- tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
- jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com, Alex Williamson
- <alex.williamson@redhat.com>
-Subject: Re: [PATCH 11/13] huge_memory: Remove dead vmf_insert_pXd code
-Date: Fri, 12 Jul 2024 12:40:39 +1000
-In-reply-to: <Zo1dqTPLn_gosrSO@x1n>
-Message-ID: <87sewf48s6.fsf@nvdebian.thelocal>
-Content-Type: text/plain
-X-ClientProxiedBy: SY5P282CA0140.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:205::16) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A888BE5;
+	Fri, 12 Jul 2024 02:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720752078; cv=none; b=p7xMVz4mTT6vSmc7Ce1w81WKNkNtXs23QruUlCwBDdOMhTD/kAd1iKWh7q9qNwbt85g6qfLfTO/3V89aS7kGtmOoakS7RmLtVLcnlACReFl71kHr7Z7fotZ1SRZ0iQ6wdp1PcSBynlkxKzGAXWn+gwzlbllKKVWDjT8DX1x1GQY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720752078; c=relaxed/simple;
+	bh=nNz8Np3BqnYRV4U4GsSfjjIgJJguONYrhvjHGtvS/Iw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RatMFqubWtMQwqj36FOkFTfhqzcR0LARgEsLpYuNaQV5uRqJ48Q2rJ+WKFV7pxqQknB9Atpl4O+LItX90g4ZWv1u59xP634OO2/rwWCT8dXc6CUMhq6HbbYR6D29wvX3IgRL0sR6e5gl9PdEtoEb3CIlWZ1oiOOXIL4eSOCsVeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGgMsKCZ; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70b04cb28acso1272070b3a.0;
+        Thu, 11 Jul 2024 19:41:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720752076; x=1721356876; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=v214KiYeqf8G1PHh+bBlPbq7O1sJRmEyJnCngtloDPM=;
+        b=JGgMsKCZMc2+Gf/amgvMcojWMqjA6ZmzygUkV6f+zf2WKYh1Y5UmiQjd77+YRnwBzd
+         HJjPZsXsijxRJwc2ab8Zw/Jeuo4423u45EFLgSQSxNDJn4yXmD8NAW/9lxbhu6shNEqw
+         o/sQtRvKUUQyhgg6ldG+qEtQmejrzWKpMYOvpa1TZ7qFT/8UEx3yd9S3lSi9sH/wBTOu
+         IP1myR2jTSCOVpca1+FoorwpoEygHDGjGPwk3nGHgvKk8FfbRggUx5v/zBNNSJZ6IazK
+         9ZCqtF372Z/x1ojxN2u1EmPfM7bNZv22bqk4lzWtEcjOAvrBD83nVtP/xx2Z23rHoORy
+         CESg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720752076; x=1721356876;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v214KiYeqf8G1PHh+bBlPbq7O1sJRmEyJnCngtloDPM=;
+        b=qjdgKMknK1WeUQkvKtON0iMQZwUMCwCmlyfs8MNgS58l7kjDX2NY5Hh9FN30sl1hVk
+         D79MUYZMjmQb+jaDZA5Q3O7bdJ6zKCBev5qkkmEieXuQ90d4iwhW7CGsTVLAlSaltIfB
+         K5aetq/O9tbOA4Hmu9gmLQ7lcXL5k3FPRv5m0D6yhCg/aTv9d7v9ejogBf3YtLJPXSmr
+         ASm84loTa8w07s/vxATPvBHjfoNOJF2AiOFkGRWZ3aIT8/U9A+05Pqy4QSjeOefdJ0QU
+         ezBfSGevJwTRoUg3xKwUyqhZrWysQUsFyygHhD4XT4GXZbTf9jxG/qnmGp7M28I91CR/
+         RsPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYkqs5pIIU2fdOiS6hV5lACh0EpAsXd5kSJ6cRTfoTJSsexKxJ6Jey4ewQPbGYWTdMZD0eTL2mVrA4+2+weScz6N+nXmSyCi40F4D20QoAaPO78Iwqg/B4sHzLXZezLjbDsSUd94a2tqjcDtE=
+X-Gm-Message-State: AOJu0YwkrsC0VEvUp0sBXjYM/Xy8EEolpGhP0TusTQnNG3bDeHxVl0Eq
+	rI/03ZRnZw+41mAcMKk5SLtxwDtbalYM3EaJuw3+feUYyIHuhMcS
+X-Google-Smtp-Source: AGHT+IFvNQj3igaMR3/Ml0SwuwpnsHLlnyo0OSBUvDad/una4zeYIBACJZle31z2IfugFnm88OjGPQ==
+X-Received: by 2002:a05:6a00:4b51:b0:706:3d61:4b21 with SMTP id d2e1a72fcca58-70b6cae4c6amr1965416b3a.3.1720752076418;
+        Thu, 11 Jul 2024 19:41:16 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b438c7146sm6389899b3a.66.2024.07.11.19.41.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 19:41:15 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <273b53a5-c71d-423c-b27d-22c20a2eea51@roeck-us.net>
+Date: Thu, 11 Jul 2024 19:41:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MN2PR12MB4341:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b9b0fbe-f440-496b-3a5d-08dca21e5775
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YXSHomOL9R3zN5UMsAXBlzsyDK1/0vOcMRpuYuJvDQeQ3Yn+xovbMIVWLIv6?=
- =?us-ascii?Q?Sh7kGA77t7dn0LpsnXiVBs2bUkgAKU22D9n+13JEAc+1ILrLTsq81AsvWzU6?=
- =?us-ascii?Q?ZLQjy377CmCuxZTOp3JktXerxUIXNfTWAZV2IRMCO5xmtlEuImwmlRRIGynQ?=
- =?us-ascii?Q?0swzN/V32bbP9dp7kvcx5GponB7V55xl/uJAm3ofbodvfsW13+8l0DnGYHIb?=
- =?us-ascii?Q?x1/ZebZrHklnx5UaFQbvC5p16tjoBTGMDPCCHELilAZoCXMiZDwIg/mjG/Yb?=
- =?us-ascii?Q?3CUmz3VAxvT4GwFFXF8FR8SdUiKXfnjQYelBKhY+Mc+K+WjGmdeZO46q/eBp?=
- =?us-ascii?Q?+uoWcdCEqC3pKbwZT8k1Z2bbkSdYDjvSW+asgxCJo/w+UqawjnhWmo+3eXJV?=
- =?us-ascii?Q?yGeiHoadvp280PKkk9FqGcCQ6bZvFk7LA3OWh6R3k8IRyjVRmCBcBjlmb4Ku?=
- =?us-ascii?Q?QuFhj2rONBkz15GYHF3u+OxT5+LewX6ctRJXlY+d7unqZMfWG3ysqRN2rSMc?=
- =?us-ascii?Q?a8ew7r9BkHeBstuE5pNYNkv3geeAdKu3ZiNzORyB8ZaBWRaO5wMxvLw01OCl?=
- =?us-ascii?Q?ww2wr7qu6PFak80oBAjcDq3Ym6XOAEY7qukMa3yTgPSVlXrR3VL2bV06Zz26?=
- =?us-ascii?Q?Ex0RglrPYPwr/ONYKeq7/3SJ3eZV3mRr8/lHqoDG6OxgaTjjMno2raRnnlHg?=
- =?us-ascii?Q?HZbbFSPe8/rUZdpw7n/3s3Av1KWA2gLli4J8+RxO6P9Am475bIc4C7hJGM22?=
- =?us-ascii?Q?zEC+RkNbavvZAvrH0ietWeYHVUvZ8PDtfJFvTpJb7sLA93igE22LFu4jhUe4?=
- =?us-ascii?Q?VLI7Q+pqLEtqZoCkvyGkmmPgnuaNOBg+OlinBQwzItd3/BY54/SPLybCWA0I?=
- =?us-ascii?Q?CihXAwd0Tz78GNnqrXutH6bu0fxBJHwTnurUvaIAmPu+EB5C0uLPAnqIKiNq?=
- =?us-ascii?Q?uR/DURP65sJuSiLdDgJ0v/yy8WqcuokmAcdAgVQ87IDYxnUPuFiS1OOQVzVS?=
- =?us-ascii?Q?zJnM85/J8I8jp71zuDj36GN8+dG1xz67ma0vwH9mgvpalorN+W3oPrPENz5y?=
- =?us-ascii?Q?4pDuQxPEV3m6AcOplzPNDtrNDIcSiy17a2dM6u1IMVh23xJ0E7BK4J/aR9PW?=
- =?us-ascii?Q?OoccZo4ASXx769lP66i2czgX1zaQRB4XUEXeeAJ0QOvupo8LwsmsWvgUNzRZ?=
- =?us-ascii?Q?Tzy4B0EX83941a4HsrrXBfLOpbX0ULDCtFVfujtWMcDfufAXLt/NAd54up0C?=
- =?us-ascii?Q?UotDbQTFa1pxtzexiJ0MoxCJzW2SHIrXhPHihD4gMWwJN+PblTKj+1fctnAQ?=
- =?us-ascii?Q?A8D2fAetx34DtnvozhOaQc++t1AVNwwjCXpvzLqY38FaqA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vgtA6iMvqgnAKqilLOMHC+keCd1WuJFIumGppKiWAI7rrrOYPC1DLGGDJ54G?=
- =?us-ascii?Q?9blzK9724yhyk2Lzp298/RIZCSbH5y1TiUAEBjoTzThECaknKb20UmOIfImx?=
- =?us-ascii?Q?62vz9YrU6JyQ7Pt/UW9cN8myt8hpf/awr6iiejLev3FHdr2YvZqcpanD+fWX?=
- =?us-ascii?Q?8toDB2kHgxq+x4cSp1QlDWlOOEskQJ2AjNmzXTkZZGMmhmXNk9vAwwywzPlg?=
- =?us-ascii?Q?dMgHEmTPRGcM1SKaYCqulIhZvsQc4wjXGmLRIHkdJToODM7UI00mB4ummQWU?=
- =?us-ascii?Q?B/a/C096lZUlEDvoSL4PfiX2LkiAN+sof213ah/VRupjyXbOGha0PZ4O+/51?=
- =?us-ascii?Q?mN9EAYvVRiqcOFMp27FvttYaX2zjaSenb5yHIZYRXee1T2MNL9HXP6j+gbgt?=
- =?us-ascii?Q?k+vO7K4iaw7OD+tDTWxtxiQl8QkIMrB8q8yK7jfHBRRTFW9m7vimS8mZswWW?=
- =?us-ascii?Q?wEBVo55cLc9kAh7pi5tbddxKxSI7XVtYbikVLJYUhhNy/dMP+r8hWE8FMTRT?=
- =?us-ascii?Q?55d7CDsJBq7+JPTWHveIf133b0qvS5eTcLD+WQzHnhK5mtcczFfD8PjeHhC3?=
- =?us-ascii?Q?mfzWV+df/RoQWW3GbqhdYEGjV+YrMGz561RO44TKw0YDFCjU1oDQj7BCyVS2?=
- =?us-ascii?Q?HJgYHO/27i2eciyi7PoTYXWSR4tWm9Idyny6iy4OywMkRNxZtqjIOsTnwGTe?=
- =?us-ascii?Q?pHrxcUF2GiI6MhzjHqlJX6X8OGtw44DJ678gxIjRdUXlCu8/pUek9kQn7v6P?=
- =?us-ascii?Q?myLwX3PI0R/koeTTMe0wApEw3mBu5TkVZwhYOvzK8Pq/VawsLlz8OTypF3SC?=
- =?us-ascii?Q?y7UVsTMtmQb2eaF3kxQmJgSGBuWRb/uzPLIXXHDI2WtxcVSvbZ+WLMlEFuix?=
- =?us-ascii?Q?7vqZkrjkkTGmTld7IrFfLotX//HdYnHw3vFyr5DU55HY/KWmc8O8LK3YIdfx?=
- =?us-ascii?Q?v+lc+cH6M+CdWM2iWNUsZVSUo0K8qjong9Pj3LYvFjHQvupafNj4NKiAim3A?=
- =?us-ascii?Q?8B8Nz2Z2Iq/VUyyCZdIx+EGG0TfxQ/2Rv2jC3QUmMXe3K75ZPiriFgdAf79j?=
- =?us-ascii?Q?sRWVOYOR0IgdKOWGYuUMsKLFPLwgxw426SNFI3B/314AnXKIirwd0PNSN6kX?=
- =?us-ascii?Q?1UdWgo3xsmDKpj0hnnVqopfjB9YGqxBTucz3oGrTwXg+0Qwtc4F04NvneDxB?=
- =?us-ascii?Q?66F+Hhc+I1QWe8lro4grbFOu8PmxsaATM85cOTZBmKIegRRG5xrDkOtr2M6A?=
- =?us-ascii?Q?ExVZEDh4JKdBJx1f2O3hKMoECV10ABjqszPGIEx/yAr/edicX9G/JRTWMJtf?=
- =?us-ascii?Q?VSu95kY6Br0iEFkFvUndI+5aloLbtnmVmSZ2obrMNUu1POJMFv5dMMN4U0JL?=
- =?us-ascii?Q?uVrj01QC+YBtOZ525ZHWbI7UegZfhAYx3bVWmnQXPUj3sJyd2wnaE6SpyNJq?=
- =?us-ascii?Q?nRelLlQ8QoXiS8866M6jWl8UopG9XycfqX8YjoFNlsWpOe9HvsGL6oaTkv/T?=
- =?us-ascii?Q?7QGW4YrWeSKqrHNUHNKgSqsrEhJWnLUoK2IlPFPEkpB3fQdwZvGY3IO9YJJ/?=
- =?us-ascii?Q?auQW2S0HbVEzblznM67x/kvx7Ny0R4NC20KtUu0p?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b9b0fbe-f440-496b-3a5d-08dca21e5775
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 02:57:18.2893
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RlDee7WbkxGPuO4R3/88Yk1r43LvWGYanshUDQoQB3H6ip3n80+MRLsNwV9XiS83NYyzmcgNwKNIhMIeS1foSw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4341
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] watchdog: imx7ulp_wdt: needn't wait 2.5 clocks after
+ RCS is done for iMX93
+To: Frank Li <Frank.li@nxp.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, linux-watchdog@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Ye Li <ye.li@nxp.com>,
+ Alice Guo <alice.guo@nxp.com>
+References: <20240711-wdt-v1-0-8955a9e05ba0@nxp.com>
+ <20240711-wdt-v1-2-8955a9e05ba0@nxp.com>
+ <696425a1-8e71-464f-9fe7-b965452b9d84@roeck-us.net>
+ <ZpCJZZNDeTgi7Lzy@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <ZpCJZZNDeTgi7Lzy@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 7/11/24 18:39, Frank Li wrote:
+> On Thu, Jul 11, 2024 at 03:55:52PM -0700, Guenter Roeck wrote:
+>> On 7/11/24 15:41, Frank Li wrote:
+>>> From: Alice Guo <alice.guo@nxp.com>
+>>>
+>>> i.MX93 watchdog needn't wait 2.5 clocks after RCS is done. So set
+>>> post_rcs_wait to false for "fsl,imx93-wdt".
+>>>
+>>> Signed-off-by: Alice Guo <alice.guo@nxp.com>
+>>> Reviewed-by: Ye Li <ye.li@nxp.com>
+>>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>>> ---
+>>>    drivers/watchdog/imx7ulp_wdt.c | 1 -
+>>>    1 file changed, 1 deletion(-)
+>>>
+>>> diff --git a/drivers/watchdog/imx7ulp_wdt.c b/drivers/watchdog/imx7ulp_wdt.c
+>>> index 904b9f1873856..3a75a6f98f8f0 100644
+>>> --- a/drivers/watchdog/imx7ulp_wdt.c
+>>> +++ b/drivers/watchdog/imx7ulp_wdt.c
+>>> @@ -405,7 +405,6 @@ static const struct imx_wdt_hw_feature imx8ulp_wdt_hw = {
+>>>    static const struct imx_wdt_hw_feature imx93_wdt_hw = {
+>>>    	.prescaler_enable = true,
+>>>    	.wdog_clock_rate = 125,
+>>> -	.post_rcs_wait = true,
+>>>    };
+>>>    static const struct of_device_id imx7ulp_wdt_dt_ids[] = {
+>>>
+>> Introducing that flag in the previous patch just to remove it here doesn't
+>> make sense to me, sorry.
+> 
+> Some maintainer want create function equal patch first if just code
+> restructure/re-originzed. Then add additional change base on it.
+> 
 
-Peter Xu <peterx@redhat.com> writes:
+In general I would ask you to do that as well, but not if patch 1/2 introduces
+a change and patch 2/2 does nothing but to remove part of the change introduced
+in patch 1/2.
 
-> On Tue, Jul 09, 2024 at 02:07:31PM +1000, Alistair Popple wrote:
->> 
->> Peter Xu <peterx@redhat.com> writes:
->> 
->> > Hi, Alistair,
->> >
->> > On Thu, Jun 27, 2024 at 10:54:26AM +1000, Alistair Popple wrote:
->> >> Now that DAX is managing page reference counts the same as normal
->> >> pages there are no callers for vmf_insert_pXd functions so remove
->> >> them.
->> >> 
->> >> Signed-off-by: Alistair Popple <apopple@nvidia.com>
->> >> ---
->> >>  include/linux/huge_mm.h |   2 +-
->> >>  mm/huge_memory.c        | 165 +-----------------------------------------
->> >>  2 files changed, 167 deletions(-)
->> >> 
->> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> >> index 9207d8e..0fb6bff 100644
->> >> --- a/include/linux/huge_mm.h
->> >> +++ b/include/linux/huge_mm.h
->> >> @@ -37,8 +37,6 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->> >>  		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
->> >>  		    unsigned long cp_flags);
->> >>  
->> >> -vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
->> >> -vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
->> >>  vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
->> >>  vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
->> >
->> > There's a plan to support huge pfnmaps in VFIO, which may still make good
->> > use of these functions.  I think it's fine to remove them but it may mean
->> > we'll need to add them back when supporting pfnmaps with no memmap.
->> 
->> I'm ok with that. If we need them back in future it shouldn't be too
->> hard to add them back again. I just couldn't find any callers of them
->> once DAX stopped using them and the usual policy is to remove unused
->> functions.
->
-> True.  Currently the pmd/pud helpers are only used in dax.
->
->> 
->> > Is it still possible to make the old API generic to both service the new
->> > dax refcount plan, but at the meantime working for pfn injections when
->> > there's no page struct?
->> 
->> I don't think so - this new dax refcount plan relies on having a struct
->> page to take references on so I don't think it makes much sense to
->> combine it with something that doesn't have a struct page. It sounds
->> like the situation is the analogue of vm_insert_page()
->> vs. vmf_insert_pfn() - it's possible for both to exist but there's not
->> really anything that can be shared between the two APIs as one has a
->> page and the other is just a raw PFN.
->
-> I still think most of the codes should be shared on e.g. most of sanity
-> checks, pgtable injections, pgtable deposits (for pmd) and so on.
-
-Yeah, it was mostly the BUG_ON's that weren't applicable once pXd_devmap
-went away.
-
-> To be explicit, I wonder whether something like below diff would be
-> applicable on top of the patch "huge_memory: Allow mappings of PMD sized
-> pages" in this series, which introduced dax_insert_pfn_pmd() for dax:
->
-> $ diff origin new
-> 1c1
-> < vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
-> ---
->> vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
-> 55,58c55,60
-> <       folio = page_folio(page);
-> <       folio_get(folio);
-> <       folio_add_file_rmap_pmd(folio, page, vma);
-> <       add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
-> ---
->>         if (page) {
->>                 folio = page_folio(page);
->>                 folio_get(folio);
->>                 folio_add_file_rmap_pmd(folio, page, vma);
->>                 add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
->>         }
-
-We get the page from calling pfn_t_to_page(pfn). This is safe for the
-DAX case but is it safe to use a page returned by this more generally?
-
-From an API perspective it would make more sense for the DAX code to
-pass the page rather than the pfn. I didn't do that because device DAX
-just had the PFN and this was DAX-specific code. But if we want to make
-it generic I'd rather have callers pass the page in.
-
-Of course that probably doesn't help you, because then the call would be
-vmf_insert_page_pmd() rather than a raw pfn, but as you point out there
-might be some common code we could share.
-
->
-> As most of the rest look very similar to what pfn injections would need..
-> and in the PoC of ours we're using vmf_insert_pfn_pmd/pud().
-
-Do you have the PoC posted anywhere so I can get an understanding of how
-this might be used?
-
-> That also reminds me on whether it'll be easier to implement the new dax
-> support for page struct on top of vmf_insert_pfn_pmd/pud, rather than
-> removing the 1st then adding the new one.  Maybe it'll reduce code churns,
-> and would that also make reviews easier?
-
-Yeah, that's a good observation. I think it was just a quirk of how I
-was developing this and also not caring about the PFN case so I'll see
-what that looks like.
-
-> It's also possible I missed something important so the old function must be
-> removed.
->
-> Thanks,
+Guenter
 
 
