@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-250335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2DF92F698
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:56:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6161892F69D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8A21F2437E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:56:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22876281981
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D08141987;
-	Fri, 12 Jul 2024 07:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38020141987;
+	Fri, 12 Jul 2024 07:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oaggY18t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQ9GOWJT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A0713F454;
-	Fri, 12 Jul 2024 07:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7775513F454;
+	Fri, 12 Jul 2024 07:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720771000; cv=none; b=JyKFV5xCiUOApMzQimcHTUiM8qDKAUfbZBsLbInCkgsOj6D2CDsJ0ZUbmYyqvejMOIoar4TYv9+kIiD4+885qVjAMUcREe/YJLo7ebcaoY7Z2Htcl6PHUDX1OLl9R8SYVuYYpihjLviALdVH7iLUykzhQgESdo+eLirZl+5MUFs=
+	t=1720771141; cv=none; b=PPv/cmxB8GcHd9lCG4qGYucvcQ6BjYKevg8YpvmuoGMiIWNsUU4UmRMYV0Bpdi8mXwCqLPe668iUfTTjozzY2gi+0VAGsSIPjLjevT2n0h5u+lBWEGULQfdJ060ZNH/nkM7WGcriy07ANPvD9mtXMB4bCTMG9CEYZ9ZwazNGC9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720771000; c=relaxed/simple;
-	bh=4nqnrfbma1FOIXo7yWm/ETMNpe4w1ZYLSHRE5qI5MF0=;
+	s=arc-20240116; t=1720771141; c=relaxed/simple;
+	bh=VkwnDE7EbrkWv2GDVB/LnC45A3P6Kr9jPSeSK0jj0aM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B/1zdD9BeluDWQg5UEV7W0De2PgYvBhYRRkmH1ZWhmzlDmBNk7yrVtALOskYCrCFb0lgS7ot0+z8NUQ8wxlnyCG8RQsPE3DT1KO8znIVb9PLYpilw83FTccC+2QbK1Cdq16sHzQyWajG7EMy3+3P6QGMMybJQBXGRo2HG9nSpF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oaggY18t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FFEEC3277B;
-	Fri, 12 Jul 2024 07:56:35 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=aRiSp0EK+0kHAFZimTiSZtSv6w7BFmLzFEr6iYNTQqlMnJyCOLDMv6KspiK+rIEyLzWGw7PigyRG4WwiC4fMUhR8g8lWCParyHuze0fAIiSEsI515/zWxNiAAEP3QkRy/fegOkDNuIOsfeNbkGgRPu/aiABWjNF9+MjaPpKyqd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IQ9GOWJT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6EA5C4AF09;
+	Fri, 12 Jul 2024 07:58:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720771000;
-	bh=4nqnrfbma1FOIXo7yWm/ETMNpe4w1ZYLSHRE5qI5MF0=;
+	s=k20201202; t=1720771141;
+	bh=VkwnDE7EbrkWv2GDVB/LnC45A3P6Kr9jPSeSK0jj0aM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oaggY18tFdC9DacThTweerQCfJpgHKIfuC7W+nqk8kAuOP15Y6RWgB8VkoaDKon/D
-	 ekCxFa3K7rb10p82wj2aefDD22g0x2oja97JsFoTbMWyH63xgNwYQwsyUjCT2L+db8
-	 R3us8OqrLr4rmx1/znuEBWdbPukUdHK7FoZ/9+DGb9ufj71YxSbxXAqLP5ynFVwAno
-	 uqDAtN5KPTtYLY/vahGdiM0fpc6tL05mZXisXImQek5k0Ix0QqhfYpGoLk/5h+kTD0
-	 LrpmlssFR1qVH0TBio2MydunoeeCHXeFW2TtVMGtysyuEKKCR/PGf4p5bnvlN1Q51B
-	 g5FOOpC0xrxcg==
-Message-ID: <735b615b-d31a-4b90-8aa4-73972e7dc467@kernel.org>
-Date: Fri, 12 Jul 2024 09:56:35 +0200
+	b=IQ9GOWJT7bqnQQt+NYkV0R+xBn9CSWtUBCCe5GOQOgeGzTrqV5x0CvKYymkNaqckb
+	 /OZwNkmQujf0Sb7Z/BNnbeT71AxvxOyVuCsVH8ME+FMDOcZnNlqrCt6y/xrMGy28fV
+	 ARL6jj58qcsBmwhk/icP41pM1oqhQdWvIX7YkBSUOISbDyCkPD+FEwU0y7A7uOiCge
+	 4DTv4HgyzJXQ/bORi+XERk5O9CLn0tQvinbq5WpyoV7hn4KiczhzXKUz/6D+DO/8zd
+	 lqMjl93uWdDrWkDU1vbLXJ99YdD3PPJS0NpuEqYVGKpin1VcZLbDAWB69B4wTIO+cD
+	 81xPsUhGm2AOA==
+Message-ID: <03a9f1f7-cd7b-4a6e-ab61-632fd70ae63f@kernel.org>
+Date: Fri, 12 Jul 2024 09:58:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] ASoC: dt-bindings: Add bindings for NeoFidelity
- NTP8835
-To: Igor Prusov <ivprusov@salutedevices.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: prusovigor@gmail.com, kernel@salutedevices.com,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH v2] dt-bindings: phy: hisilicon,hi3798cv200-combphy:
+ Convert to DT schema
+To: "Rob Herring (Arm)" <robh@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20240709221203.92167-1-ivprusov@salutedevices.com>
- <20240709221203.92167-6-ivprusov@salutedevices.com>
+References: <20240711152313.2364383-1-robh@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,25 +103,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240709221203.92167-6-ivprusov@salutedevices.com>
+In-Reply-To: <20240711152313.2364383-1-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/07/2024 00:12, Igor Prusov wrote:
-> Add dt-bindings for NeoFidelity NTP8835C/NTP8835C Amplifiers
+On 11/07/2024 17:23, Rob Herring (Arm) wrote:
+> Convert the hisilicon,hi3798cv200-combphy binding to DT schema format.
 > 
-> Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
+> Drop the example as arm/hisilicon/controller/hi3798cv200-perictrl.yaml
+> already contains an example of this binding.
+> 
+> Acked-by: Shawn Guo <shawn.guo@linaro.org>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
-</form letter>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
