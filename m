@@ -1,142 +1,155 @@
-Return-Path: <linux-kernel+bounces-250726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF3D92FBEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FE992FBE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEF35B210F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:55:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024F51C21BAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD50C17164B;
-	Fri, 12 Jul 2024 13:55:12 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765F717166E;
+	Fri, 12 Jul 2024 13:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTobzlFA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B59171E66;
-	Fri, 12 Jul 2024 13:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAECA16CD12;
+	Fri, 12 Jul 2024 13:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720792512; cv=none; b=suUE8rnjF3Ll0w8PLt/OCxVasFG8nu4a95I83cEzQ2vfXc697kivpvrtyh62dXH/HQLiyKKnfbr7+itaHlFp/hFHPwcKGy4cuh5XJh3Hwg2E5xQ/C0szhMjdPhtVM51B8dV6ZBELcAUDtyvWhEPu+5GlZmIU2Wa5az608+6eW0E=
+	t=1720792506; cv=none; b=joqbdUGyb4ShR1aLjXZhFjl3aHFxvFjKGTIO1vueLLWYbhXXsD80bj8z0wNccUdTR/WkZ5fgpko0E6ifXct2ZCQiUHjgX+iIcCF80NaKwd9S+X1Uu+5tiacFAk2cSWTQb2iML5xW2Cp4ioUuwhjeUrbQfyBS6Lwy++9A2VAXXqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720792512; c=relaxed/simple;
-	bh=PG7WDG2wxP6E4zUX9w3RjCYf8TYepGOJj7vXvWmU9zk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cZNKL5fS4udFglMIKKUB1glPZSwOIXookq+gv5yT5w8JBb2eiTkHhLu+iCeXbmpxu/4juxU5Uvs1j2Or3s/5//wX3IZpwIMDVxWeIFeEQkg2C22CGLFyTx4z4S5kEmmbl7I26EPPO6FBD6z3QFpofjDvwUSPgoMg9TxsPS5HyBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-651da7c1531so19825387b3.0;
-        Fri, 12 Jul 2024 06:55:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720792507; x=1721397307;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=66ZxvuflQ1CFAf8nLezfYlKzbT94Oozorkv5Eix20iA=;
-        b=Jho4WBH+1ZJq8L0X1xykC0sIJ9uz3mhsOe2dwNRivYno71uAI0lmEGksMtVe457aFw
-         yj49DaGr1cxdVoPzwBvhPSYIVm0nUXZ/4FTxyD2azXgneAN3v9DclnhPPrFnFLB6iZ5v
-         OGFTFugPP+ArtxJAi07483Z7gg0W6RelrI+4rUnIDKPWNKNoBTdXtSvukNmUjyG+n/Nt
-         AsKs8MlQBoexgkULiY8POo/n5jvZF3/0B6vHBuogCvB4bwCIDorCRBho991MLBNixXbt
-         wcu7MzE77DiDQPi1xzu0lyVtxmRcu6LSxFxcb9zM6WpWK7S3ja3ydSifmAaw8PF2LK0f
-         578g==
-X-Forwarded-Encrypted: i=1; AJvYcCWRIus5vYtqoG/Uag2dSUcXyE3OVdY0vIbtiXgBsy5iKCgrBOCRkwFC8HCenrXU5gFi9fZC6U50hUx2cDW7/xnqWMlPJRas7WswJXmD5vIDN7/V1s3BYdlm9j6oq+b997Hd2bmE9K+dVuuiTjcoJgAVu+ZbC7wTo89oNvBCwZTXU7MX/VRpe7e+nSM=
-X-Gm-Message-State: AOJu0YwMtUsCxlqVq4hGacc7SPozY4sZvBZ/zJBO/0Pyz/0ng5xHm6N9
-	t1hRuQyyuOBkCE5TAgM0imSUrf/NfHaQDqeIozfhzEUmfCItIUGyJunxFBu9
-X-Google-Smtp-Source: AGHT+IGlpMZ4Bh2/+PjLddF/OgtvWciafZOaq/PuNY40RMa1Y8XZBmGVRjK412QkLzARZdMakpvZzw==
-X-Received: by 2002:a81:8a84:0:b0:648:2c60:fdee with SMTP id 00721157ae682-658f0bc6201mr114554107b3.38.1720792507472;
-        Fri, 12 Jul 2024 06:55:07 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e521c7bcsm14706647b3.65.2024.07.12.06.55.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 06:55:07 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e03a581276eso1850321276.2;
-        Fri, 12 Jul 2024 06:55:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVp+rs2cuTf1yUBSBZlkLGyQzuj8EVY11psplgqPcwlcP0vKkIL6lz4cyrRaIoSiOKPNVcygngaEvGQYPlIvfUBgdG1clryrnuy2WLHUyOHelkKa8fYAjmzVR6ur7Ejd1tAe4pR8UuP1WJZQSZ5yljgd7JQV4qA38vuU/swIeMZC3g3dzPwIezx75Q=
-X-Received: by 2002:a25:c787:0:b0:e03:606b:ad2b with SMTP id
- 3f1490d57ef6-e041b15aae9mr13588579276.57.1720792506677; Fri, 12 Jul 2024
- 06:55:06 -0700 (PDT)
+	s=arc-20240116; t=1720792506; c=relaxed/simple;
+	bh=ziAkUQPSRF/ipI1Oq+b7qdZXl5boe3MmXIx+Ir7QFbg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PlO5ctjQb+bo9PovJZc4Zg3484LbC+ynV0Yv3S+0kSAii/xZpmSlS9+jj6nbZCTFidaBu6B9KrjGFL5N7b3H8eZpeys2UuRzFTXv4kFFrrrcbmH+bGFbhd9mJx0eEpXY0/d1CDa0xF8bcvoL12SvqWDeZNsFNJKgKR4QKhAHYp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTobzlFA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30795C32782;
+	Fri, 12 Jul 2024 13:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720792506;
+	bh=ziAkUQPSRF/ipI1Oq+b7qdZXl5boe3MmXIx+Ir7QFbg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TTobzlFA/dkCJIbNe8s/ReWoRPe3eu/mXZzYXoaFou+qhUOkg5LTx+aPlRH6NgJ6P
+	 e0TI7vdmxGnNA2uwvY6V0nZa3xLAjsuCW9mOb8puCMSCyly56ynetc4gxN22Fm7d6j
+	 as0U1yag3LlX3R7se5667e74ltEgxsNUvXjKqq+FPYOXrcxxZGCWZjtgmdUqxqyocM
+	 pdmZVcRJS6jyK8Du0qDXaAhYGaIeZ95G7BtKrgDtQPNPxpyBaIRwkIab1d9Xgob726
+	 iDCdFH957CUcNztdfpei2pNY/ehqeNQn6EJ7ZbItAi6kPtxyzQDK9DsFjDBepzuMmg
+	 PFNffqI9k18Yg==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL for v6.11] vfs pg_error
+Date: Fri, 12 Jul 2024 15:54:57 +0200
+Message-ID: <20240712-vfs-pgerror-ced219c8c800@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628131021.177866-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240628131021.177866-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240628131021.177866-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 Jul 2024 15:54:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVd2k7WsPU9htW1LmDrjOgoQ1C8J=8i7ZAs7LS5XYBCXQ@mail.gmail.com>
-Message-ID: <CAMuHMdVd2k7WsPU9htW1LmDrjOgoQ1C8J=8i7ZAs7LS5XYBCXQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: renesas: rzg2l-cpg: Use devres API to register clocks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3822; i=brauner@kernel.org; h=from:subject:message-id; bh=ziAkUQPSRF/ipI1Oq+b7qdZXl5boe3MmXIx+Ir7QFbg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRNNN2889gJ09lbZFNrMj522rK+PX/jZW2erxfX6Zeq0 l5/yh74dJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyk2pWR4dWLqL0le25eqJv0 QXTZuZmuZ9hUPLpkjjaqzTj0uTdntybDX2Hhn44Xzk9L+BXeF7V75sZZpxJf/88Q4uZ2vFjdNGN iPisA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+Hey Linus,
 
-On Fri, Jun 28, 2024 at 3:11=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> We are using devres APIs for divider, mux and pll5 clocks so for
-> consistency use the devres APIs for module and PLL clocks.
->
-> While at it switched to clk_hw_register() instead of clk_register()
-> as this has been marked as deprecated interface.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+/* Summary */
+This contains work to remove almost all remaining users of PG_error from
+filesystems and filesystem helper libraries. An additional patch will be coming
+in via the jfs tree which tests the PG_error bit. Afterwards nothing will be
+testing it anymore and it's safe to remove all places which set or clear the
+PG_error bit. The goal is to fully remove PG_error by the next merge window.
 
-Thanks for your patch!
+/* Testing */
+clang: Debian clang version 16.0.6 (26)
+gcc: (Debian 13.2.0-24)
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -1023,6 +1023,7 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_cl=
-k *core,
->         struct clk_init_data init;
->         const char *parent_name;
->         struct pll_clk *pll_clk;
-> +       int ret;
->
->         parent =3D clks[core->parent & 0xffff];
->         if (IS_ERR(parent))
-> @@ -1045,7 +1046,11 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_c=
-lk *core,
->         pll_clk->priv =3D priv;
->         pll_clk->type =3D core->type;
->
-> -       return clk_register(NULL, &pll_clk->hw);
-> +       ret =3D devm_clk_hw_register(dev, &pll_clk->hw);
-> +       if (ret)
-> +               return NULL;
+All patches are based on v6.10-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
 
-rzg2l_cpg_pll_clk_register() can return an ERR_PTR, so please
-propagate the error code.
+/* Conflicts */
 
-> +
-> +       return pll_clk->hw.clk;
->  }
+Merge conflicts with mainline
+=============================
 
-The rest LGTM.
+There's one merge conflict in fs/nsfs/symlink.c
+After conflict resolution the function should look like this:
 
-Gr{oetje,eeting}s,
+static int nfs_symlink_filler(struct file *file, struct folio *folio)
+{
+        struct inode *inode = folio->mapping->host;
+        int error;
 
-                        Geert
+        error = NFS_PROTO(inode)->readlink(inode, &folio->page, 0, PAGE_SIZE);
+        folio_end_read(folio, error == 0);
+        return error;
+}
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.11.pg_error
+
+for you to fetch changes up to 7ad635ea82704a64c40aba67a7d04293d4780f0f:
+
+  buffer: Remove calls to set and clear the folio error flag (2024-05-31 12:31:43 +0200)
+
+Please consider pulling these changes from the signed vfs-6.11.pg_error tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.11.pg_error
+
+----------------------------------------------------------------
+Matthew Wilcox (Oracle) (16):
+      befs: Convert befs_symlink_read_folio() to use folio_end_read()
+      coda: Convert coda_symlink_filler() to use folio_end_read()
+      cramfs: Convert cramfs_read_folio to use a folio
+      efs: Convert efs_symlink_read_folio to use a folio
+      hpfs: Convert hpfs_symlink_read_folio to use a folio
+      isofs: Convert rock_ridge_symlink_read_folio to use a folio
+      hostfs: Convert hostfs_read_folio() to use a folio
+      jffs2: Remove calls to set/clear the folio error flag
+      nfs: Remove calls to folio_set_error
+      orangefs: Remove calls to set/clear the error flag
+      reiserfs: Remove call to folio_set_error()
+      romfs: Convert romfs_read_folio() to use a folio
+      ufs: Remove call to set the folio error flag
+      vboxsf: Convert vboxsf_read_folio() to use a folio
+      iomap: Remove calls to set and clear folio error flag
+      buffer: Remove calls to set and clear the folio error flag
+
+ fs/befs/linuxvfs.c            | 10 ++++------
+ fs/buffer.c                   |  7 +------
+ fs/coda/symlink.c             | 10 +---------
+ fs/cramfs/inode.c             | 25 ++++++++++---------------
+ fs/efs/symlink.c              | 14 +++++---------
+ fs/hostfs/hostfs_kern.c       | 23 ++++++-----------------
+ fs/hpfs/namei.c               | 15 +++------------
+ fs/iomap/buffered-io.c        |  8 --------
+ fs/isofs/rock.c               | 17 ++++++++---------
+ fs/jffs2/file.c               | 14 +++-----------
+ fs/mpage.c                    | 13 +++----------
+ fs/nfs/read.c                 |  2 --
+ fs/nfs/symlink.c              | 12 ++----------
+ fs/nfs/write.c                |  1 -
+ fs/orangefs/inode.c           | 13 +++----------
+ fs/orangefs/orangefs-bufmap.c |  4 +---
+ fs/reiserfs/inode.c           |  1 -
+ fs/romfs/super.c              | 22 ++++++----------------
+ fs/ufs/dir.c                  |  1 -
+ fs/vboxsf/file.c              | 18 +++++-------------
+ 20 files changed, 61 insertions(+), 169 deletions(-)
 
