@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-250572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F3E92F939
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:02:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE6592F93B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC4721C21F60
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:02:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8ED1C221B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB6A15B546;
-	Fri, 12 Jul 2024 11:02:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7598713D52C;
-	Fri, 12 Jul 2024 11:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0BF15B122;
+	Fri, 12 Jul 2024 11:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CFKCaOb6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3CB13D52C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 11:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720782132; cv=none; b=MGdT4Fh+SMovEW3zCIR3yNpC8CHviHk+CMoDHL4ZnvapeO3Gdv4ClTIhfEyuBCzn+26JnTULkwML5sKYljx6xm/tkG6DFG+d3UuwMm6QmZheDAy4v0zcJm+7WwizFgj6tP8C3dHm37LEJFMkfuy3iw3zYCMEGNEDTJDZh4X2jsU=
+	t=1720782224; cv=none; b=MaK+Qa4ckX7eJfPnt/OyknvqamCilG8ievRob/RgNikeU+eaUMXXxqrHWbSXBF3eWp4KfNsQMO89W9q9ODUHXKu46Jhp7rMO5F73RWeyazQtx0ZJVLy80bizyt2c+ECKuVSoG+KcSnUZcOeln6eihieCB3xqipFcIqL4wYDr048=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720782132; c=relaxed/simple;
-	bh=DmUEk6EM7gl56GdYXFypUxyuamk0ZO+1DP5TRyf29gs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VzGhKs3Mho1mRiUf+FsXEr0MliHJ+CLQf1QJZd9DqnqjMXmLgp0A6dhuL6XfhxT/m6um095ItjGM6a4i4HlT7DU3nPwbMgwgFvmsz76txh66AOgjV0Ap7fWAohwhZ01vRi0/tCB4zNiVE13cEMI9EmPmmxln/re86CH1gbmchgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD7931007;
-	Fri, 12 Jul 2024 04:02:34 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E73293F762;
-	Fri, 12 Jul 2024 04:02:06 -0700 (PDT)
-Message-ID: <3b16778b-f825-42a2-b53d-17c9b8c22a52@arm.com>
-Date: Fri, 12 Jul 2024 12:02:05 +0100
+	s=arc-20240116; t=1720782224; c=relaxed/simple;
+	bh=jUFzN99UWeSNj/5MosN+5qznAKMKEz//NePA30M+fHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Epv5Op2Gf4W8fDXWExolWWiJbtF5XC4g/tCH4+yNfBA8Sje9TfS0mbMDS2SH6Qdr+GzT2RyHM8z40yfSBKyWiO5FSDlaTWnxDSqBnWXlL4BUYpAMz4HKLp+jYoInyxJdM2vt1jSlfxo6lxpBl9YYkhjBkuLRrwcTEWtB1wIPNUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CFKCaOb6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720782221;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1qQ7l0GWU5+sbaI9jPARmVRN2+U8L5NQD4xZcBL2aSc=;
+	b=CFKCaOb6aXDKrgScPogruvrp9fijrq4MzsI9Pfc7E/mUJ4btfrY7AFWl9mTy3NYC/z9txi
+	Z9sNiYdm2KwoZCTXVAVOwWm0tfNGyFSkasJcWMaxujYVVNzLQd6l0ZPZkDMoZ4PvoPfo1T
+	p8/EC/lTF3qRwZsUX6yX0OpaKIMfNEY=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-391-rODjqOHXOcWBvFe3D10DMg-1; Fri, 12 Jul 2024 07:03:40 -0400
+X-MC-Unique: rODjqOHXOcWBvFe3D10DMg-1
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-79f00fbac96so275079985a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 04:03:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720782219; x=1721387019;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1qQ7l0GWU5+sbaI9jPARmVRN2+U8L5NQD4xZcBL2aSc=;
+        b=tu3j5UdBLSbAtNjeaApfIZmwtPtpvPaj/m4xDN6cPypfoDFYTvG/VnOHdJMvockHkT
+         VeG1wWJW0xdnMqeVV9VCu3WJfpkiLQjLZWWQaENOpMBteUG6FsE0L9zgseQOe18iuIsx
+         cOMrXG2e5R9NwfMY4EJMvaWuXwwhnqop3WO7hkCgjNmI11Vr1vOaUjKiMlfFQ//As7HL
+         NLwmW5An3AsTPdB92TyFx38zX1V88zXUFR3DpqSty/LBbdaLmUB+9FClhIgG25fTWDLI
+         fzqqzkAdBsK+uMTlH1fsX6KkjAFUh3HZZKL1Ceh6JxqiPTQzjuVicCbc6+oLMBpMW8NC
+         /Mew==
+X-Forwarded-Encrypted: i=1; AJvYcCWILMHy/LQaU/KMDtT4Hjp3KQ4uBw7t13WCF2Qwtzyp6xTIpbasRh2/7pjlg2UNYHSkjEIAjaDjlA/6AYR4QLrbwrllF/+EOj0BvXW6
+X-Gm-Message-State: AOJu0Yy72bhs+El4+QC6IQF6+Klch1C8zLaIO9rpx9K/FVt+oIGKjv9F
+	VMoZesVpvPu78XauZDDI7lbkPKrEbphMYqJADZC66eigppNmSL28toFvWni+G4CTFDTPwei8RRa
+	KD1Tsx0hUJdJnGGn4x0UUzXSJluIoxy1eFimt2PbXX5Q3c6pRYQE5ZxBPwW/OBw==
+X-Received: by 2002:ae9:e702:0:b0:79d:5a5a:61f0 with SMTP id af79cd13be357-79f19a7fba1mr1120360885a.34.1720782219452;
+        Fri, 12 Jul 2024 04:03:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF49CeTtgwI6pw84NFDsgZPcLaXJC9eRYBAhVwf5iFp0zhdiGyDc2Go8V8cwq39LwXuNxN/xw==
+X-Received: by 2002:ae9:e702:0:b0:79d:5a5a:61f0 with SMTP id af79cd13be357-79f19a7fba1mr1120357785a.34.1720782219139;
+        Fri, 12 Jul 2024 04:03:39 -0700 (PDT)
+Received: from rh.redhat.com (p200300c93f45e50062e5f8c654844c9a.dip0.t-ipconnect.de. [2003:c9:3f45:e500:62e5:f8c6:5484:4c9a])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f18ff834csm390498685a.5.2024.07.12.04.03.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 04:03:38 -0700 (PDT)
+From: Sebastian Ott <sebott@redhat.com>
+To: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH 0/3] KVM: arm64: fix warnings in W=1 build
+Date: Fri, 12 Jul 2024 13:03:29 +0200
+Message-ID: <20240712110332.10970-1-sebott@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] perf docs: Remove the Android cross building
- document
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Adrian Hunter
- <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>,
- Nick Terrell <terrelln@fb.com>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Thomas Richter <tmricht@linux.ibm.com>, Changbin Du
- <changbin.du@huawei.com>, James Clark <james.clark@linaro.org>,
- amadio@gentoo.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <20240706182912.222780-1-leo.yan@arm.com>
- <20240706182912.222780-8-leo.yan@arm.com> <ZpC3-p0kG7dGkp_5@google.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <ZpC3-p0kG7dGkp_5@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Namhyung,
+Building arch/arm64/kvm/ with W=1 spills out a lot of warnings. When
+changing stuff I try to use as much tooling as possible to make sure
+that I don't screw up - having a clean baseline imho helps with that.
 
-On 7/12/24 05:58, Namhyung Kim wrote:
-> On Sat, Jul 06, 2024 at 07:29:12PM +0100, Leo Yan wrote:
+With the first 2 patches applied make W=1 arch/arm64/kvm/ runs without
+warnings for me (fedora userspace, kvm-arm/next). Patch 3 gets rid
+of sparse lock warnings in arch/arm64/kvm/vgic/.
 
-[...]
+Sebastian Ott (3):
+  KVM: arm64: fix override-init warnings in W=1 builds
+  KVM: arm64: fix kdoc warnings in W=1 builds
+  KVM: arm64: vgic: fix unexpected unlock sparse warnings
 
->> The Android NDK (as time being the latest LTS version is r26d) changes
->> toolchain to LLVM / Clang, so GCC compilers is not included in the NDK
->> anymore. Therefore, the Android document contains obsolete info for
->> building perf binary with NDK.
-> 
-> Do you know if the version prior to the change is still used?
+ arch/arm64/kvm/arm.c             |  1 +
+ arch/arm64/kvm/handle_exit.c     |  5 +++++
+ arch/arm64/kvm/hyp/nvhe/switch.c |  6 ++----
+ arch/arm64/kvm/hyp/vhe/switch.c  |  3 +--
+ arch/arm64/kvm/sys_regs.c        |  5 +++++
+ arch/arm64/kvm/vgic/vgic-irqfd.c |  7 ++++---
+ arch/arm64/kvm/vgic/vgic-its.c   | 18 +++++++++++-------
+ arch/arm64/kvm/vgic/vgic-v3.c    |  2 +-
+ arch/arm64/kvm/vgic/vgic.c       |  2 +-
+ arch/arm64/kvm/vgic/vgic.h       |  2 +-
+ 10 files changed, 32 insertions(+), 19 deletions(-)
 
-Based on the Android NDK wiki claims [1], since NDK r15 (backed to 26th
-July, 2017) "GCC is no longer supported. It will not be removed from the NDK
-just yet, but is no longer receiving backports".
+-- 
+2.42.0
 
->> Furthermore, the Clang included in the Android NDK is problematic for
->> cross compilation Aarch64 target. The building reports multiple errors
->> with the compiler aarch64-linux-android34-clang.
->>
->> Thus, delete Documentation/android.txt to avoid confusion.
-> 
-> If so, maybe we can keep the document little more and add a note that
-> this works only for some old versions.
-> 
-> I'm also curious if it's still broken after your fixes.
-
-When I tried Android NDK for cross building perf, it is still broken after
-applied this series.
-
- From my testing, now using LLVM for native building works well:
-
-   make LLVM=-15 VF=1 DEBUG=1 -C tools/perf
-
-But it failed for cross compilation. Since Android NDK system root does not
-contain some dependency libs, we must use extra options to disable some
-features (e.g. NO_LIBELF=1 NO_LIBTRACEEVENT=1). The commands I tried for
-cross building but failed:
-
-   make ARCH=arm64 CC=$NDK_TOOLCHAIN/aarch64-linux-android-clang \
-     LD=$NDK_TOOLCHAIN/ld.lld AR=$NDK_TOOLCHAIN/llvm-ar \
-     NM=$NDK_TOOLCHAIN/llvm-nm STRIP=$NDK_TOOLCHAIN/llvm-strip \
-     OBJCOPY=$NDK_TOOLCHAIN/llvm-objcopy \
-     OBJDUMP=$NDK_TOOLCHAIN/llvm-objdump \
-     READELF=$NDK_TOOLCHAIN/llvm-readelf \
-     HOSTCC=$NDK_TOOLCHAIN/clang \
-     HOSTCXX=$NDK_TOOLCHAIN/clang++ HOSTAR=$NDK_TOOLCHAIN/llvm-ar \
-     HOSTLD=$NDK_TOOLCHAIN/ld.lld VF=1 DEBUG=1 NO_LIBELF=1 \
-     NO_LIBTRACEEVENT=1 EXTRA_CFLAGS=-fgnuc-version=0 \
-     -C tools/perf
-
-Given the test result, my conclusion is the doc for Android cross building
-is not useful for a long while. If we really want to support it, I would
-like to suggest to take a separate task for fixing LLVM / Clang cross
-compilation.
-
-Thanks,
-Leo
-
-[1] https://github.com/android/ndk/wiki/Changelog-r15
 
