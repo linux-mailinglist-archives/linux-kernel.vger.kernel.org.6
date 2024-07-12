@@ -1,135 +1,108 @@
-Return-Path: <linux-kernel+bounces-250746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6202C92FC3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:08:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366D792FC3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DDBD281B88
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6697D1C224EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C60B17164F;
-	Fri, 12 Jul 2024 14:08:05 +0000 (UTC)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E136317166F;
+	Fri, 12 Jul 2024 14:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwhnwjHe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9540416F856;
-	Fri, 12 Jul 2024 14:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D85A171094
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720793285; cv=none; b=sfEu8bUurgG26pW3sgtImNbIDz8hJw+Vj+C5wOvJluC9y3GzHCnV871/dSV3XoEZKrupK2KMR0iTCAdSQ7Y7VX8i4zqd90kjxjy/xvW3gCTt8fBVRqHkS6+/JBPnit1q9N8GY8QWTjkmc6KxKzy7TIethq+D7yGXcxQtkDYSJQU=
+	t=1720793319; cv=none; b=MjCmsc0fHUxvjZfLwSUBXF6yrMlNWe5GGRCx1myc/a7cSwPB/81X/mYQ7cnP5tACdgOJb+QzQBVIoOs05XQbr67Y1uJgq/0d8v7LYy9JA/Zp0L8nqjuKdEEE9zyTVYu67CbWkBQ9YYhq/vtkacdG5YEp2GpAd3qxxGtU2v75uAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720793285; c=relaxed/simple;
-	bh=OEkXmnJv1Va64K3BAw9ZpLQK/PeP8omSQYGhtCvKTWs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B8Av53IE8UgpVe5lmKHPPCoX4dPR7np+iYNhipJDgmYF2wCOnp8mojiVIL4j8fVPCiPevFEmeI2HTwC8OQ/ANhIXzXtJZfRwFZ7Aq5vlXpepEkSgDkhOxqTGauEFxveR0cBaKEQTX+5MINNVDxycGluADC6OCe9YAp0VsNJ53pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e03a8955ae3so2057165276.1;
-        Fri, 12 Jul 2024 07:08:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720793282; x=1721398082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KJU2bngvyaK5TX7ldRu1TpOwr67dBrlCem9HBqyBt+0=;
-        b=F8PoWPtkEwwekC7E01ME1XCsxE7AN5JvPvJbsJ3BPHn4X+PE9exHnG+KKHBj0ojAvJ
-         D1K+M0mLsvg9/US9xnBKH4vkFCL0AjsjtGnmZr9Tbcwtc4f5IDHQEaSeGJARxE1QG4+E
-         Ae+Io1PAUDII1XimiRwUbmSccBxUuevxv509Skq38K+70OvIfe4yLdL03aQrtPvwBWwf
-         zZI6L4XOieXVmAp+G0DHKkOsh6eurJCC84ahwNT3v4ab5JZtLKSqdlgya1KdNC6E3SYo
-         bkkJHxzOoDWQ+yfK3votZX3g18aFVLTNG5tdfpbAVJJJNbDUyPwq1GeMNcG5/gmd6jhn
-         IBMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXAcgK8xJSYXXa8hPdIhJJtPyPiux8R7llfaAynvXesxzJcWAiW9mVZuZ6wFyl1fxy5xocKEjdC11G4qeJp1upcpBGfZPo0JfiwL/1PRTY6kowunUKieSB2v7Qc0XbwT6h1QrhtKvMfZr/BDsVzlO9L+CV5cPgJrIcAAM7Pz3fuDNF+RwDGmuILGOw=
-X-Gm-Message-State: AOJu0YyHhQ8YQclO5nTMRskqQeBfB6O7AmhpDsJUrlTSiVPGO5CVsdyO
-	ffiXbzKXwnKdUog6/K9qTTJvgsp0JwQmd85mFhxBp1Ongq21J4uFV/V4f/k2
-X-Google-Smtp-Source: AGHT+IH2tOiSJnRXo1xo3f7K5spMFA2W8kxovuO4agbqZU8EjIoMCe1g7vr5J/6AE2or7lKGJvRGjA==
-X-Received: by 2002:a81:8483:0:b0:650:8d5c:9615 with SMTP id 00721157ae682-658ef2494damr128215907b3.23.1720793282290;
-        Fri, 12 Jul 2024 07:08:02 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4d2ab4bsm15142747b3.33.2024.07.12.07.08.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 07:08:02 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e03a8955ae3so2057145276.1;
-        Fri, 12 Jul 2024 07:08:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUTz0o0bx3EnGDuAloRaqqJqUsjDckXZdLLjvi/xj3UIkDJ04f663t42v1dXNA4uJDBxzkL566fmn6Z371CZ2AbRQu7yiZMkXTEkUiNL8eePn0mrY+M2m2fQ4lbX3LiMfjYm3e9wghL1xc0fSFmchS/VcH+DlsLtubi2H3K3PnVzTxUDn7j5/cLbns=
-X-Received: by 2002:a81:834b:0:b0:62a:2a7d:b512 with SMTP id
- 00721157ae682-658ee791db8mr131746987b3.10.1720793281776; Fri, 12 Jul 2024
- 07:08:01 -0700 (PDT)
+	s=arc-20240116; t=1720793319; c=relaxed/simple;
+	bh=ow9AJ//jVwfGZhSB8AYloU9hYnkv2FQyvwvJeG3Nqb8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gvq5B89AUv+s4uZ5TGKmudNI7PhzCyzkNP1ZLuF8QXVFZBqPwNugN+8fO/PMNxE7W9OWmHUpheS1DZumlbk7LmJaRKzMY7YYCaWMCbw8/EUkzVVN+mv63tD4ZvqCtWBqqrT/QIh03opYx/JYYPSazDoS5TC0vHJIfP0rpIxRt1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwhnwjHe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5964C4AF0B;
+	Fri, 12 Jul 2024 14:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720793318;
+	bh=ow9AJ//jVwfGZhSB8AYloU9hYnkv2FQyvwvJeG3Nqb8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qwhnwjHe/bs9hFRqPBA5OcGzX/+Ph3eCc2+KHYf3Ln0cdqVHqUh0Uj4z+OkdzJepN
+	 pelVzaV+IbazGfsjf89t67zvzw2n0CyAP2eL2IQ2HBCB803pjx2xqYgtl41w70fxkd
+	 pykJ9PL+oAVz5aOxXpew8ycct/bo2+Zm3pmDOEHtnGlhgv4NaxDOSqsczCOhV6z2SK
+	 2r3iDRg8Lxr0tABGbLmqXv9Y/HKshe0otW1PUhLruxFqwRBF9fsAH+1hruxT/06xZi
+	 td24v/o1hl7FJDSH/Y3UdsObYXGqm3tlUrkq7+AfouLAcTKo4HhFas1N0RbLbzxZ1r
+	 nlgZ2SKiERTKA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1sSGwv-000000006KB-2TJT;
+	Fri, 12 Jul 2024 16:08:38 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Sanyog Kale <sanyog.r.kale@intel.com>,
+	alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH v3 0/3] soundwire: bus: suppress probe deferral errors
+Date: Fri, 12 Jul 2024 16:07:58 +0200
+Message-ID: <20240712140801.24267-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628131021.177866-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240628131021.177866-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240628131021.177866-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 Jul 2024 16:07:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW-NUdK23h7_tLe5nfgXHzFmJySFNCNTciZmJeHcxNSKw@mail.gmail.com>
-Message-ID: <CAMuHMdW-NUdK23h7_tLe5nfgXHzFmJySFNCNTciZmJeHcxNSKw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] clk: renesas: rzg2l-cpg: Refactor to use priv for
- clks and base in clock register functions
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Prabhakar,
+The soundwire bus code is incorrectly logging probe deferrals as errors.
 
-On Fri, Jun 28, 2024 at 3:11=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Simplify the `rzg2l-cpg` driver by removing explicit passing of `clks` an=
-d
-> `base` parameters in various clock registration functions. These values
-> are now accessed directly from the `priv` structure.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+This series addresses that, cleans up the soundwire bus logging and
+drops the unused soudwire driver name field.
 
-Thanks for your patch!
+Vinod, I booted linux-next yesterday and realised that these bogus error
+messages are still spamming the logs when booting x1e80100 and making it
+harder to see the valid warnings (which there were too many of). Would
+be nice to have this fixed in 6.11:
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> @@ -400,10 +400,10 @@ rzg3s_cpg_div_clk_register(const struct cpg_core_cl=
-k *core, struct rzg2l_cpg_pri
->
->  static struct clk * __init
->  rzg2l_cpg_div_clk_register(const struct cpg_core_clk *core,
-> -                          struct clk **clks,
-> -                          void __iomem *base,
->                            struct rzg2l_cpg_priv *priv)
->  {
-> +       void __iomem *base =3D priv->base;
-> +       struct clk **clks =3D priv->clks;
+[   18.815950] wsa884x-codec sdw:4:0:0217:0204:00:0: Probe of wsa884x-codec failed: -517
+[   18.825093] wsa884x-codec sdw:1:0:0217:0204:00:0: Probe of wsa884x-codec failed: -517
+[   18.832335] wsa884x-codec sdw:4:0:0217:0204:00:1: Probe of wsa884x-codec failed: -517
+[   18.840870] wsa884x-codec sdw:1:0:0217:0204:00:1: Probe of wsa884x-codec failed: -517
+[   18.848463] wsa884x-codec sdw:1:0:0217:0204:00:0: Probe of wsa884x-codec failed: -517
 
-If "clks" is used only once in a function, then please use priv->clks[...]
-directly instead of adding another local variable.
-This applies to other functions in this patch.
+Johan
 
-BTW, why did you decide to have separate patch [2/4], [3/4],  and [4/4]?
-They all follow the same pattern.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Changes in v3
+ - amend the update status error message with "at probe" to make it more
+   descriptive (it's already unique)
+ - drop the patch dropping a probe debug message
 
-Gr{oetje,eeting}s,
+Changes in v2
+ - drop probe error message completely
+ - drop soundwire driver name field
+ - cleanup probe warning messages
+ - drop probe debug message
 
-                        Geert
+Johan Hovold (3):
+  soundwire: bus: suppress probe deferral errors
+  soundwire: bus: drop unused driver name field
+  soundwire: bus: clean up probe warnings
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+ drivers/soundwire/bus_type.c  | 19 ++++---------------
+ include/linux/soundwire/sdw.h |  2 --
+ 2 files changed, 4 insertions(+), 17 deletions(-)
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+2.44.2
+
 
