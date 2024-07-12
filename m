@@ -1,110 +1,128 @@
-Return-Path: <linux-kernel+bounces-250801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70F892FCF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:55:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B50992FCDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20B701C22E4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC4FC1C22C17
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5541741C2;
-	Fri, 12 Jul 2024 14:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C83172BAC;
+	Fri, 12 Jul 2024 14:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="lP3VY3Ng"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nc75KCV1"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5F4EAC7;
-	Fri, 12 Jul 2024 14:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B9B171075
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720796077; cv=none; b=bmXEta5+uBszesfszVlVFHpcB51Ke7xhQv8eUHZj10K/614kGcjomGBE52LBHQF6gjxBAL+mqPV+BNAK+xuisEWJJHWEIdWCwMoNIOKciSzTVWsWb0iuPbk05XoGhv2ofsWz9J4jws1RhiMVWoqdr//qcl+XTeDni7oUPUpIees=
+	t=1720795726; cv=none; b=Ku2ds848lvO/nTOWeKGdpeJuAGvyXWgwLGMs1PcGFdvQ/XRl2J5gNbzuzVjlcamvS90gSuiaO9MwjgDoNQMyBTFbq40T0794hTZVIwaDSKFBz12Lam7i7U6LrnPPZ8ETNakfBmGMxPamwVTZ55s+L2jv2rYrSoS8Eu2X1VD03iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720796077; c=relaxed/simple;
-	bh=YW6LyqOG5vH7lucFATlUG1ixa82tnD7jzg0M9MsPa5A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BJCK4afF03fnfH7EiIGb5GKCULn65/S40jsans2REyG/S6gFRlq1WWqP78/Ol8w45MorTyhyNV7R3LDYJ1PFFlCoJknxc62v5WsP/DVbHtFGp5GhBAsQrijb7wn9KR/x9dyKONQSNavrMDTOwF5z9PhlDnUniY2xueY7TXS6ttE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=lP3VY3Ng; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 65CBA418AE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1720795700; bh=FODPk4cnpB7NBQQ/6uarYjITFGV79B8qfu0oUx5Z4dY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lP3VY3NgASYQEyeWBUhEQLsuTUaR9i+qhLSxz+KwMQnlRubV31pGZdww/d2b/G9qx
-	 JGY3kh048INk3uJaAhJR3rI5YjdRP9VX1kPfhySXavkssWcNrduIaXeuwR5eBgf7nj
-	 uBAmaR18F3Dyn9rRTqmA7PTkYWLSgxmJ3mfN79ba6/jHOXeTYv7rXEKUu9rPuosBIP
-	 NHhtFW2LVuXJbE+7A6hLUDuE70andtfVOMgtVPr1M+B3+YrFIFoy3WZBAEVUdhsHOv
-	 3dTIoFHzdzU/fqO3Qppoi+WkcoQUYSjGVdKzJCLIqhpVEmIfHx+i5sGpkq131ixdRv
-	 gH314FLN68RmQ==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 65CBA418AE;
-	Fri, 12 Jul 2024 14:48:20 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Tejun Heo <tj@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the cgroup tree
-In-Reply-To: <20240712165107.7b46a640@canb.auug.org.au>
-References: <20240712164354.65cb32bc@canb.auug.org.au>
- <20240712165107.7b46a640@canb.auug.org.au>
-Date: Fri, 12 Jul 2024 08:48:19 -0600
-Message-ID: <8734oe1xak.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1720795726; c=relaxed/simple;
+	bh=sBKA5wOw/8saolKPMgpYoFqxWMdR+xT7lkIyZhUM21k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=W6WkVNNd4swPPpcYUs521/6oppW+bLcYS1jHD2QxqEOPHGqTlhNkKvKpYAwVJJsM7qHj1E3KVMjvIPpJVg13C6BuHt0Y6En2W+2THq0cHrWd/t7I6VlvrJX9x1r7UzsKP3iRZAVAHNdQ/bSka1q4utOWzgNQEjuOawQSpMzVego=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nc75KCV1; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fb05b9e222so16429205ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720795724; x=1721400524; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Csfae5IaHZ5irxSaRzc6R9nWOwPBAYNbr4c2pq1OV6o=;
+        b=nc75KCV12kq06iCbspQcK78Ftb+LDGMgWYufirajxwey3MK3kmO4NHwd3zZxGVntOj
+         ID0r0oyr5l5FMv2RvH33yMUyryEttQobC9wmKAtnbs5j/guPn2JeYfKGgsBKH0I1cjYW
+         TRluBYIO2OiQ5FMKaE19Ai1+lHcQCHkAkgw75qMv1V7JQFDagsThB78aETJQFxBU9rVn
+         5kVn3wVqnNfWfYAZHahw1v+fAli4sChHLOsLtXMeJeVRC3nTMgn1mtMRUpN0/gWz5YI0
+         wKjVKrcqvrHdTh5dPrPqYreVF6xhuwXWzhoDV3tci+zx9JKAZmiiot6d5EDqquCeteXY
+         xHtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720795724; x=1721400524;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Csfae5IaHZ5irxSaRzc6R9nWOwPBAYNbr4c2pq1OV6o=;
+        b=rhUos22bfjTvdKMcfyqH9T2YsZF1fI83cbMi6/hHlG8vFMmqha7R+/6fve9g08wREe
+         fX4QF3PCDigX5H8OXCz/cbGhOVe5LdsceIh+Qk6rpuSJqt84+f8zsRlPUbg8LNchTuKg
+         w3iulPtCdhxtt+MKxvnb8Mkgoq4BPZpYmk1erkjR7nXzLN3KeDsKvH2/l6fV9fXL5Ko3
+         67DkVyo8vII50MIIZeYvQB27jxUKynfpnqOIKULlThiF8O5HGKu+Hq+yD3CmxL7CsAok
+         ja2vZ0tuidMP4FXtVnUZHaqfnCTfLsvlJUh1CeyFekZpwfjNmqjoRPZmAoSxjrt4ScDh
+         qZdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrIlgjg4XlcuIh1Ce0zEe6d7A6/wmC7YVu9jVyMEJnAcbQJHXlEejPou0uM9ChyfsEMWp/jAUH/oXfLcqorDVRhhln1aloGBVg/ke3
+X-Gm-Message-State: AOJu0YxOlOKB4cWwv2JP5Ypsn0Q53EVA+zEYg8no3JD7A65bZwDIYLG2
+	2XAVQWjRiNFIZaEUA5v3U7S4g7286ziAWuRWJCS0BXbaZnCq13Q8HITzL3a/cm4G2w+TYBuHwTs
+	5Cw==
+X-Google-Smtp-Source: AGHT+IGvE7hgPp4Cir+q8LOh2zwHROYE/mdrf2LLP/Npae94bB6VdUWcyzYzH//G6efie7ReQDu/31WzW6E=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:f691:b0:1fb:57f4:9057 with SMTP id
+ d9443c01a7336-1fbb6c15adcmr7214375ad.0.1720795724256; Fri, 12 Jul 2024
+ 07:48:44 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Fri, 12 Jul 2024 07:48:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
+Message-ID: <20240712144841.1230591-1-seanjc@google.com>
+Subject: [PATCH] KVM: x86: Suppress MMIO that is triggered during task switch emulation
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzbot+2fb9f8ed752c01bc9a3f@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Explicitly suppress userspace emulated MMIO exits that are triggered when
+emulating a task switch as KVM doesn't support userspace MMIO during
+complex (multi-step) emulation.  Silently ignoring the exit request can
+result in the WARN_ON_ONCE(vcpu->mmio_needed) firing if KVM exits to
+userspace for some other reason prior to purging mmio_needed.
 
-> Hi all,
->
-> On Fri, 12 Jul 2024 16:43:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
->>
->> After merging the cgroup tree, today's linux-next build (htmldocs)
->> failed like this:
->>=20
->> Sphinx parallel build error:
->> UnicodeDecodeError: 'utf-8' codec can't decode byte 0xfd in position 558=
-: invalid start byte
->>=20
->> Caused by commit
->>=20
->>   704f684e15ad ("cgroup: Add Michal Koutn=C3=BD as a maintainer")
->>=20
->> I tracked this down using
->>=20
->>   git diff stable.. | cat -v | grep -F 'M-}'
->>=20
->> and finding the commit that added the line that was output.
->> I tested it by building with the commit temporarily reverted.  I have
->> left that commit in today's linux-next.
->>=20
->> Clearly (I think) there is nothing wrong with the commit, but the Sphinx
->> utf-8 decoder also clearly does not think it is valid UTF-8 :-(
->
-> Actually my character map app says that it should be the two bytes 0xC3
-> 0xBD in UTF-8 (it is 0x00FD in UTF-16).
+See commit 0dc902267cb3 ("KVM: x86: Suppress pending MMIO write exits if
+emulator detects exception") for more details on KVM's limitations with
+respect to emulated MMIO during complex emulator flows.
 
-As you observed, the patch is encoded in ISO-8859, not UTF8; that
-doesn't fit well in a file that uses UTF8.  One could argue that Sphinx
-should be a bit more robust, but satisfactory results will not be had
-regardless.
+Reported-by: syzbot+2fb9f8ed752c01bc9a3f@syzkaller.appspotmail.com
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
 
-An encoding check might be a useful thing to have in checkpatch.pl,
-methinks.
+This is from a syzkaller report on a Google-internal kernel, but it repros
+on upstream (obviously).  There are unfortunately an absurd number of upstream
+reports with "WARNING in kvm_arch_vcpu_ioctl_run" as the title, so I haven't
+been able to hunt down an upstream report.
 
-jon
+ arch/x86/kvm/x86.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 994743266480..47bd8a9fdb21 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -11803,7 +11803,13 @@ int kvm_task_switch(struct kvm_vcpu *vcpu, u16 tss_selector, int idt_index,
+ 
+ 	ret = emulator_task_switch(ctxt, tss_selector, idt_index, reason,
+ 				   has_error_code, error_code);
+-	if (ret) {
++
++	/*
++	 * Report an error userspace if MMIO is needed, as KVM doesn't support
++	 * MMIO during a task switch (or any other complex operation).
++	 */
++	if (ret || vcpu->mmio_needed) {
++		vcpu->mmio_needed = false;
+ 		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
+ 		vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_EMULATION;
+ 		vcpu->run->internal.ndata = 0;
+
+base-commit: 771df9ffadb8204e61d3e98f36c5067102aab78f
+-- 
+2.45.2.993.g49e7a77208-goog
+
 
