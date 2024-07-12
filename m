@@ -1,155 +1,264 @@
-Return-Path: <linux-kernel+bounces-250602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2038592F9BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:54:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BC992F9C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A26D928479F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:54:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB36B1C21040
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E069716C69D;
-	Fri, 12 Jul 2024 11:54:24 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DEF16C69C;
+	Fri, 12 Jul 2024 11:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ty1kIG97"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0BF155A39;
-	Fri, 12 Jul 2024 11:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17722BB15;
+	Fri, 12 Jul 2024 11:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720785264; cv=none; b=S+0zJI4Yt6AWpygCAM2aDb0jcRLD/eVq8p1Q/cCsHTqVBijsCZoa4MgeyzZK0fDwFWG+HW34TDy3sP5T3FXgO/sze5WDPdwyrpM28zKhif8YPGZ316UDvB9/U/+7dBWSDBmHzSHJbIFoaz/aqm34gwGeBAJuakiYnT5zksNYrKQ=
+	t=1720785317; cv=none; b=m+hYrByABN4nVW59fbcw3mYNDgNC9obOVK0x0CZJpjXvPR8HDUxzxuWxWYxzGgm+UUtvjQW5iFRjmZsMex2EuSCDU1ugYrVgqm6SoSJM6zG0JthGx1yp9BMrPFOPsDlXd5N3kED5nu004QqfkExRqz+IDeFT9PpC8BZX7avg/JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720785264; c=relaxed/simple;
-	bh=6jQq9w4RlXoevsFAm7Zi5RQIGcv8h3svhEsJaymp9as=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=soYvhLa05BZ5QvQPy2zorxcfY2iqwS6e/lb93cOpl5Ra+8RpgyibiNjA8IT2foAWGsM4D72neKyfCj2ieOup+zpv83BK2/XiVXgfhzefbCFNMPZwlNje1SZL9pyKjX1ujDmbDgMcy0l3XWPvgE5waqf0bHS+M0qnLcRZsB/0QkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so2719276a12.2;
-        Fri, 12 Jul 2024 04:54:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720785261; x=1721390061;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aylUUjY+eZRZ5UTaJ9YsIwls7PGxo5tR8Y5wxZlssUg=;
-        b=lq6QWTv1KqfohSDEjC+sZX3/ukEzoL2DMRHfvycDwLjfoz5HbycbRNeGTxDK8vZlLy
-         +WSdbVN+Q4pa6ZuAdCEK+owKxPV65ewozrbLBnmwZVMhZ2Y0Po5fjELdbWThnhuz8uwi
-         /KcQE18Ck9v+t7ajYaXfqUOolN2kcPynq1NBsB4vLw1qB1tZ6iNXvMAkvnob7bG/c+uD
-         dDVDInp9tEB73PzqY9S6N/KQMUCGDx50RY608Mw2qYHa+Wdyooq6vvOlPUa2y/40FHe2
-         gs83nX8pv7tXRqzsJYotBLHeznOA3PSyKRmnXiuQwpR3s+EC0gNMreaaY/qQvuWnKwJm
-         jQIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOyobjqJ1fDunNNUIUYbNu5wMVu83mQe4bmHK0Zcn1ibLp4P7skXmHsgaMVztdlEP43uzxD8WumNCjQXhynkel3pPTZbdSUpOemhhOKgv4OyqwzHUaXtPH3BzWpBm5Dylb2zPH
-X-Gm-Message-State: AOJu0Yy7E+bM7S3Fpyb2XMWKyxoRnZsmYyxblnbPwzYVoRW7GhRU8zqA
-	Ag7xTsFIZT8U1nRCCXYZ3JiSqbD/cfIoBIv+8EhlFtYWJS0SmSkz
-X-Google-Smtp-Source: AGHT+IFjCvvGOIX9tsFRJ9Dy0AlCrRfCMApaUx1noM7pWNy8sfC/jqsyqBLhaPGYhuXidj8vb8G5sQ==
-X-Received: by 2002:a05:6402:210f:b0:58b:6096:5554 with SMTP id 4fb4d7f45d1cf-594bcba7e40mr9350900a12.37.1720785260712;
-        Fri, 12 Jul 2024 04:54:20 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bbe2d0f4sm4570995a12.35.2024.07.12.04.54.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 04:54:20 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: rbc@meta.com,
-	horms@kernel.org,
-	virtualization@lists.linux.dev (open list:VIRTIO CORE AND NET DRIVERS),
-	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] virtio_net: Fix napi_skb_cache_put warning
-Date: Fri, 12 Jul 2024 04:53:25 -0700
-Message-ID: <20240712115325.54175-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720785317; c=relaxed/simple;
+	bh=fq00OrXm4ESVMWuGZ9q3xU0NyJQJ344Ed3WenbJSvWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HYFPXIZIvhclCjFWv5ydtHJYUUvIyLqeoUXq4LNkXR8JP+OhdhZOypQddmXpJewKjKpVHVzuTb+VdaEK8ZIz+fToYQrUbflbBYh4K/DqZftoypifR8rswYS6MZ2dSI0mkqbL5DdjPuCK/6Y3AY/ohGx42wmjuCbiPl0mBr31xtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ty1kIG97; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27700C32782;
+	Fri, 12 Jul 2024 11:55:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720785317;
+	bh=fq00OrXm4ESVMWuGZ9q3xU0NyJQJ344Ed3WenbJSvWM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ty1kIG97eg7DRj8rQBBQzrL88UKim2tOOZ3Lq4+89HBWUv9y1dB8ZDKswGAZwzGq9
+	 GKcoPGcmjhqDhz3K4Q0vaYHWgI+EDwpdQKu3i5FZDxoXPA1rrk48gIEyurRSIGhLDJ
+	 sgs8rYsE2aaXiJm3//QNSXqJWGEJg9bZvlp7kgoKS9LxpG1nq2Aoy0YdW9wBdAUT2K
+	 K7b6KeZbjuIyBJeEn6UiW0V0ElZ+I1oa5FtKnnTr+UAWkSqT0WHh/xPVDg886p48zR
+	 rG8t/WtKffMOuBlfpIK/itw+E8n40LAshM1PZ2ohHRZA0uu6jep4qCiyf9WIoN4QHI
+	 DKNYESZXvPtTA==
+Message-ID: <c466de06-cbc3-4ce7-90fe-4decc6e0fb89@kernel.org>
+Date: Fri, 12 Jul 2024 13:55:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/2] dt-bindings: iio: Add YAML to Awinic proximity
+ sensor
+To: wangshuaijie@awinic.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ waqar.hameed@axis.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: liweilei@awinic.com, kangjiajun@awinic.com
+References: <20240712113200.2468249-1-wangshuaijie@awinic.com>
+ <20240712113200.2468249-2-wangshuaijie@awinic.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240712113200.2468249-2-wangshuaijie@awinic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-After the commit bdacf3e34945 ("net: Use nested-BH locking for
-napi_alloc_cache.") was merged, the following warning began to appear:
+On 12/07/2024 13:31, wangshuaijie@awinic.com wrote:
+> From: shuaijie wang <wangshuaijie@awinic.com>
+> 
+> Add the awinic,aw96xxx.yaml file to adapt to the awinic proximity sensor driver.
+> Addressing the issues raised in the previous version.
+> 1. Add a description about the hardware device.
+> 2. Remove inappropriate configuration items.
+> 3. Modify the formatting issues.
 
-	 WARNING: CPU: 5 PID: 1 at net/core/skbuff.c:1451 napi_skb_cache_put+0x82/0x4b0
+That's commit msg or changelog? Don't mix both. Read submitting patches.
 
-	  __warn+0x12f/0x340
-	  napi_skb_cache_put+0x82/0x4b0
-	  napi_skb_cache_put+0x82/0x4b0
-	  report_bug+0x165/0x370
-	  handle_bug+0x3d/0x80
-	  exc_invalid_op+0x1a/0x50
-	  asm_exc_invalid_op+0x1a/0x20
-	  __free_old_xmit+0x1c8/0x510
-	  napi_skb_cache_put+0x82/0x4b0
-	  __free_old_xmit+0x1c8/0x510
-	  __free_old_xmit+0x1c8/0x510
-	  __pfx___free_old_xmit+0x10/0x10
+> 
+> Signed-off-by: shuaijie wang <wangshuaijie@awinic.com>
+> ---
+>  .../iio/proximity/awinic,aw96xxx.yaml         | 127 ++++++++++++++++++
+>  1 file changed, 127 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/awinic,aw96xxx.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/proximity/awinic,aw96xxx.yaml b/Documentation/devicetree/bindings/iio/proximity/awinic,aw96xxx.yaml
+> new file mode 100644
+> index 000000000000..459cb1644d3c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/proximity/awinic,aw96xxx.yaml
+> @@ -0,0 +1,127 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/awinic,aw96xxx.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Awinic's AW96XXX capacitive proximity sensor
+> +
+> +maintainers:
+> +  - Shuaijie Wang <wangshuaijie@awinic.com>
+> +
+> +description: |
+> +  Awinic's AW96XXX proximity sensor.
+> +  The specific absorption rate (SAR) is a metric that measures
+> +  the degree of absorption of electromagnetic radiation emitted by wireless
+> +  devices, such as mobile phones and tablets, by human tissue.
+> +  In mobile phone applications, the proximity sensor is primarily used to detect
+> +  the proximity of the human body to the phone. When the phone approaches the human body,
+> +  it will actively reduce the transmit power of the antenna to keep the SAR within a safe
+> +  range. Therefore, we also refer to the proximity sensor as a SAR sensor.
 
-The issue arises because virtio is assuming it's running in NAPI context
-even when it's not, such as in the netpoll case.
+Wrap at 80 (see Coding style).
 
-To resolve this, modify virtnet_poll_tx() to only set NAPI when budget
-is available. Same for virtnet_poll_cleantx(), which always assumed that
-it was in a NAPI context.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - awinic,aw96103
+> +      - awinic,aw96105
+> +      - awinic,aw96303
+> +      - awinic,aw96305
+> +      - awinic,aw96308
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    description:
+> +      Generated by the device to announce that a close/far
+> +      proximity event has happened.
+> +    maxItems: 1
+> +
+> +  awinic,sar-num:
 
-Fixes: df133f3f9625 ("virtio_net: bulk free tx skbs")
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/net/virtio_net.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Drop the property. I already asked.
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 0b4747e81464..fb1331827308 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2341,7 +2341,7 @@ static int virtnet_receive(struct receive_queue *rq, int budget,
- 	return packets;
- }
- 
--static void virtnet_poll_cleantx(struct receive_queue *rq)
-+static void virtnet_poll_cleantx(struct receive_queue *rq, int budget)
- {
- 	struct virtnet_info *vi = rq->vq->vdev->priv;
- 	unsigned int index = vq2rxq(rq->vq);
-@@ -2359,7 +2359,7 @@ static void virtnet_poll_cleantx(struct receive_queue *rq)
- 
- 		do {
- 			virtqueue_disable_cb(sq->vq);
--			free_old_xmit(sq, txq, true);
-+			free_old_xmit(sq, txq, !!budget);
- 		} while (unlikely(!virtqueue_enable_cb_delayed(sq->vq)));
- 
- 		if (sq->vq->num_free >= 2 + MAX_SKB_FRAGS) {
-@@ -2404,7 +2404,7 @@ static int virtnet_poll(struct napi_struct *napi, int budget)
- 	unsigned int xdp_xmit = 0;
- 	bool napi_complete;
- 
--	virtnet_poll_cleantx(rq);
-+	virtnet_poll_cleantx(rq, budget);
- 
- 	received = virtnet_receive(rq, budget, &xdp_xmit);
- 	rq->packets_in_napi += received;
-@@ -2526,7 +2526,7 @@ static int virtnet_poll_tx(struct napi_struct *napi, int budget)
- 	txq = netdev_get_tx_queue(vi->dev, index);
- 	__netif_tx_lock(txq, raw_smp_processor_id());
- 	virtqueue_disable_cb(sq->vq);
--	free_old_xmit(sq, txq, true);
-+	free_old_xmit(sq, txq, !!budget);
- 
- 	if (sq->vq->num_free >= 2 + MAX_SKB_FRAGS) {
- 		if (netif_tx_queue_stopped(txq)) {
--- 
-2.43.0
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Set the number of the SAR(Specific Absorption Rate) sensor.
+> +      It is set to 0 if one awinic sar chip is used.
+> +      If two awinic sar chips are used, awinic,sar-label in the first
+> +      awinic-sar should be set to 0 and awinic,sar-label in the second
+> +      awinic-sar should be set to 1.
+> +      In an application where a device utilizes multiple proximity sensors,
+> +      it is used to retrieve the names of the register configuration files
+> +      that the drivers need to load. For example: aw963xx_reg_0.bin/aw963xx_reg_1.bin
+> +
+> +  awinic,regulator-power-supply:
+
+It does not look like you tested the bindings, at least after quick
+look. Please run `make dt_binding_check` (see
+Documentation/devicetree/bindings/writing-schema.rst for instructions).
+Maybe you need to update your dtschema and yamllint.
+
+> +    description:
+> +      Choose if you want to use a regulator to power the chip. Then the
+> +      vccX-supply has to be set.
+> +
+> +  vcc0-supply:
+> +    description:
+> +      Optional regulator for chip, 1.7V-3.6V.
+> +      If two awinic sar chips are used, the first regulator
+> +      should set the ID to vcc0-supply and the second regulator
+> +      should set the ID to vcc1-supply.
+> +
+> +  awinic,channel-use-mask:
+
+Aren't there existing IIO properties like this?
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      The mask of channels used.
+> +      Configure according to the specific chip channel used.
+> +      Bit[31:0] Each bit represents a channel.
+> +      If the customer uses ch0 and ch2, then channel_use_mask=<0x05>
+> +      For a 3-channel chip, the maximum value is 0x07;
+> +      For a 5-channel chip, the maximum value is 0x1F;
+> +      For a 8-channel chip, the maximum value is 0xFF;
+> +
+> +  awinic,monitor-esd:
+> +    type: boolean
+> +    description:
+> +      Choose if you want to monitor ESD.
+
+Why this is a choice? How does this describe hardware.
+
+> +
+> +  awinic,pin-set-inter-pull-up:
+> +    type: boolean
+> +    description:
+> +      Choose if you want to set the interrupt pin to internal pull-up.
+> +
+> +  awinic,using-pm-ops:
+
+NAK, drop all such OS policies.
+
+> +    type: boolean
+> +    description:
+> +      Choose if you want to change the chip mode on suppend and resume.
+> +
+> +  awinic,use-plug-cail:> +    type: boolean
+> +    description:
+> +      Choose If you want to perform calibration when plugging and unplugging the charger.
+
+And why this is board dependent?
+
+> +
+> +  awinic,irq-mux:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [2, 5]
+> +    description:
+> +      You only need to set this configuration item if you are using AW96308 adn AW96305BFOR.
+> +      If CS2 is used as the interrupt pin, this item should be set to 2.
+> +      If CS5 is used as the interrupt pin, this item should be set to 5.
+> +
+
+
+Best regards,
+Krzysztof
 
 
