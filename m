@@ -1,125 +1,201 @@
-Return-Path: <linux-kernel+bounces-250045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCF8192F36E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:26:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5157092F370
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70A68B2172A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:26:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1BA91F2235A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704316FD0;
-	Fri, 12 Jul 2024 01:25:56 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD695523A;
+	Fri, 12 Jul 2024 01:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="p67Ft2KF"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2047.outbound.protection.outlook.com [40.92.103.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39A81FBA;
-	Fri, 12 Jul 2024 01:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720747556; cv=none; b=o+bfmSChUQWfWQO2HO9znGbQG4jOTlDLTfS3XOZ+TBP+tdMhX2XSgX+d8WVPvkxyYAfo4Ntjg8IUSNAgK+TO90vVdWy87t6nNhvX/LIF/+YtOPBX+QQiRUM3n9AZEofxCuE0PtFMz9Rwx1UwNVZ0spwfpKWy/e/ECAuuikQlwC8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720747556; c=relaxed/simple;
-	bh=CD+Rwhbs9YWofJZlT1yp0uFKxRcBNsCaJR1THs4jp9I=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VhNHYAHuWIN6BLBH2nTaaujqVX2q9O2jhySTW2N/I8CWjn03c2u69NMEnGzfjSKHb4h2Mwk22bLallLSM2AWDR/0elLAy3YUp4jQoVfuFnwgfSCLCbAIL5hoGmwpj/nQbUtlGwAy7jbXgX4io+yt9p5gPW374uLfwQUGrkaLyW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WKv6n1cKzz4f3kvH;
-	Fri, 12 Jul 2024 09:25:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 271491A0572;
-	Fri, 12 Jul 2024 09:25:50 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP2 (Coremail) with SMTP id Syh0CgB34YYchpBmDu5qBw--.22968S3;
-	Fri, 12 Jul 2024 09:25:49 +0800 (CST)
-Subject: Re: [PATCH 2/2] blk-ioprio: remove per-disk structure
-To: Yu Kuai <yukuai1@huaweicloud.com>, Bart Van Assche <bvanassche@acm.org>,
- tj@kernel.org, josef@toxicpanda.com, jack@suse.cz, axboe@kernel.dk
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240711090059.3998565-1-yukuai1@huaweicloud.com>
- <20240711090059.3998565-3-yukuai1@huaweicloud.com>
- <4c8f1e4e-1b15-4afa-b1e2-084e0c4caeec@acm.org>
- <520b9c10-c152-77f3-bd5a-b86a1f5ac8ea@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <3113a4cc-c1e9-cd14-b165-d8d1d39a39a1@huaweicloud.com>
-Date: Fri, 12 Jul 2024 09:25:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA55B79D0;
+	Fri, 12 Jul 2024 01:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720747642; cv=fail; b=XGu2to8wxEuYnQzrs8aH7+EKBBTRdPj/GgkFptoU+GNSk6px31oJA5paPhGFvtdi2uzhuoyAcLRcPOB+U7mhJycHbb+vSSZVctzQKR0gWRvGkJrfO0gXWrsuq05Q2qhOWT0ikQlnszYO+wUUJye5fMtGVHFGJSkQ29TvUcQSFLo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720747642; c=relaxed/simple;
+	bh=gYbCTlkaSrK3nLnW51oDymNOSpz29kO92uf80NKl90c=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fmfUuFGehEx4jDauct0CD4qF//SFGBMXa46zI7KuE/ePo487NepRqJNilhUk3cgTuw8rVGP55XUu2ze7/dLQHJL7YtlOz2OPo0VwEkvfDjUh7UxsrgTvQxzB8pusi0DHNxbytSgfSI82psUN1c99undpyNMl4GFTSjAcTqUHRjc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=p67Ft2KF; arc=fail smtp.client-ip=40.92.103.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mDA2EeZXgwdBZutHMl+2Vk162bhJs8kYvNVPC61emnovS8DzGU+Tzbp3CLD6piUBLO3vdBGT1A3j/k1HLrZ6cCT/XpXwxcDCST+cHny5H18WuIx6zevnSZqVJzlc0o0+fb8xdwRDTX/4zmj52NAl3NyoFbmBuOP0QcqteRwFb81gLnVWqPOaO5ilSpedLMpj4y9+c2GDQ+jteEQ2TKNb6v1SeF4OxOhPzYpaDpETIWtmS5Tt/ohQEuoe/qm6+n4nOb4bJBxuGhQyd/HUAAwSQzRRRylqOUIhdVaV1lik0FgTOv1ISo4hV9VZZ1+cn80ygPY8zMPPYnphfISx7d7eMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IeSHRa69gSaT/Iz9uheBurlGd/xAzO8phN9WvKbBeW8=;
+ b=y235QmBvb00oJf4m/71sdOkdtm4SRUIa29Aw1QpdL9ZGB3p7kJ3gzmecMLiRPM9MKzPbtoEG8OuEEmj1zmo9EA2OBNamxyvdeobk+/IvEOpa8q0QIUTcSX84JPbBTycz21aOny3PddoXM7Uvq2AoPUJhmILUzj75GpN9nzXbbDFJBGTlYnAFXSWe+rPBNAsdY4NI2QzinU0BEU9G7JKU0TneP5Ya0e8OVvUyBnjmz46mB1e2/znkgMySI5zejWXNElHUdcSPluHcnV64B1ysHlO5eUvmFb1s5pj2UIDlYQ+hGPRNYssE9+E/04R2FEcimyuMxQsbOUiyX9JgZVIVEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IeSHRa69gSaT/Iz9uheBurlGd/xAzO8phN9WvKbBeW8=;
+ b=p67Ft2KF0l0NG5jnck1hXt5Ic60A3ybdgjkyEOTCVt25788ufIu1JuWq7lzUyvAKyJ/ZeGMomDIC2sVF4z45M2/+3i33r9iPkhlJm6uHfG7f1sn3nVg9PICXKWgD+jbKqE/eo3/g8r4tYhdIK8MHTqmb7XJbgWokdWB2IhNt9+zwuZmq6WQ+Wxq2GEWvw5mBtpe5w5hZarhXL3kwWmyR2ebHz9vDDLgmL6AbwWbjybLGci1qdQ41KWvt2ZqrvCuAOEjjHh1WPunwZywoLRJW8Z4zjMVInAu4gHqUNxRSEa0dJC2DWVSJonOWceZAMBJaqZoSh2pevpHT5k6DcgK/Ug==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN2P287MB1407.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:127::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
+ 2024 01:27:12 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%5]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
+ 01:27:12 +0000
+Message-ID:
+ <MA0P287MB2822406AE122B7257B8C57F1FEA62@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Fri, 12 Jul 2024 09:27:06 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] Add board support for Sipeed LicheeRV Nano
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Inochi Amaoto <inochiama@outlook.com>,
+ Chao Wei <chao.wei@sophgo.com>, Conor Dooley <conor@kernel.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Conor Dooley <conor.dooley@microchip.com>
+References: <20240711-sg2002-v4-0-d97ec2367095@bootlin.com>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <20240711-sg2002-v4-0-d97ec2367095@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TMN: [cuj/tQW+JT1Q8m2hZW1RrqtRtejeOrzW]
+X-ClientProxiedBy: SI1PR02CA0019.apcprd02.prod.outlook.com
+ (2603:1096:4:1f4::15) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <9758f109-5b13-4a35-ad58-6db0b61b2df3@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <520b9c10-c152-77f3-bd5a-b86a1f5ac8ea@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgB34YYchpBmDu5qBw--.22968S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruF15Ww4kJry7Gw1rJr43KFg_yoWDKFc_ua
-	95Z3s2k343ZFs7G3Z3Ar43XFZ7tFW0qry3Xr1jqF9xK3yFgrW5Wr1UW3yfuw13Cw48Cr9a
-	kryq9w18Gr429jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUba8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3
-	Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7VU1a9aPUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN2P287MB1407:EE_
+X-MS-Office365-Filtering-Correlation-Id: 083be0e6-adcc-4f18-9424-08dca211c119
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|8060799006|461199028|4302099013|440099028|3412199025|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	mtdGjbvLLFX8W9VUvu5G9Y3d1ndZbWQ+TSJ2hsUZTfADGFoCMZS4225DPLrCOXgyzVoYtbHQijHYZFz02FZAuVi6xlb+/6g/exvNUE2DiP9GEAt4URmDDcpdcs8WVVYr1IpiM9g1bJIzI6bXDd1uhuqZhd+YFuaDSgr9IXrLUpRxyS6whLCaxeTDIfvuGeesAmteyIjU9mnOrJOuXKkIGrBh5a6bxtr9IYnVLzZ3vHHX3h+ogStmnFNga1F8z7tof9uHOty+Sx+rEeOXuCIX2mnXCqnPf/p624tj3lWyQXJ0vsfgIweP4qKECz8QBSkhAy1ioTe73Ztta2wZ1dW5V2AOWLj+kexQCL3wG6V2yrONBYAtjL99j68jwFWRH60SMRvI7iymqTaKkUhtfYJH4+MtaLrQ1/KQ/Z9D5o7QAAnK23D2W/SLzSjqdtiv9vWOYOaUg0I/GVIN8SR0CetGJr+8qWMEdDpR1N/pA5ruqH+ReuyQYC6jYrkkZlokRVX4/5vbToyo21aNlZRBuKPvAtRRYBPUOA3qfm7Z5pLCVKODdyLySlXM5labFh+dSh4t+bQX5cdL981/eyJ0Qq14i7jUxwmgeBfhHsSP2CPB7YQVZGhgJ8uTs6QCEL4DS6d0JuAu8KJgMGm3EVCv8VaSQyYK7p3SBTd2J4812eHXUtbFx/1cwmSnGUN5grEyUKP3Jlbh0WDtzAz2uYRpZ2D5pfV8qx5GS8eXCor4C7yEI9mqgX8tG7dmMxe7m4KRs4NiJTT2/Et0u+aQF/CU1Ka+/g==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZnJkUjhSWlZ5QzBsc3B2ckhyZkNLK2oydldQUVlWVmNHTzlQNlRPTTZubURP?=
+ =?utf-8?B?UGFZbElFRmtzc1VhZjk3NkxnUkRBblVSUk1ZK1g3dnZrL2xFTmdjdGNqN3dy?=
+ =?utf-8?B?U0hSZnFjRjNJSFlOK1A3Z201V1NmVXd3QnlGdDR5YTB2MVIzeVpNRTd1RndV?=
+ =?utf-8?B?VUs2aVlMYlQwelRTNC8xaEFaOWZzelpnMnZnVEREQmNaUnc3N2pKVStpOVZG?=
+ =?utf-8?B?TmFHdVNLS2YyVjR1dzFvQmJoRkp1TWErNW1wYmRMNFQ4bDVmZENDQ1JTT3ZX?=
+ =?utf-8?B?Ulczd1IyUHBLM3pmQ1FQb1JlUHRSSVZTRWFQaVFjaSsycndWM1Z3Ymx1TEFs?=
+ =?utf-8?B?WnlQSmY2aEhXZGM5VUt3dmNkVng1V2NOVC8wYnkyMG9OK25JdjVHeVl3V3NK?=
+ =?utf-8?B?c3RpanUxK3puLytYbGpzVkVHMjdrSWlRbjM0WFhJVU1sQjA3TVQ4SjZNV1RW?=
+ =?utf-8?B?L3VGR3M2WTBpdmVNVm5jMjZoNFRwL003U1FhaStrVFE2TFBIMEQ0c214KzMy?=
+ =?utf-8?B?ZURIZVpGcWdmeXVReVp0TFZYYk5SVi9aM2pTTzVweXpyRmFrYWZpMEY3OWl2?=
+ =?utf-8?B?WnFBSjJjcWJvZnZ2WVUyWkpLYys0V2FmZTdnSlgwa2VoSnk0aGxvTTR6eWVq?=
+ =?utf-8?B?a1N2NnNzU1lITHBtTUx4aHpmQXUxVzZRSzI4YmU1UjJ2eEg4RzdoRTgwQ0JS?=
+ =?utf-8?B?QjBmNmdOK1Q4WXFBSStXZmZ2VElXRlB0WDhWKy9vbXR3K1VtUjdqUTlLN20r?=
+ =?utf-8?B?R2hsSmhuaEFPaDNSQ2NMQlhZREpVUHJpaCtwYVUyTHpoNVFyemwyNXlOaVNL?=
+ =?utf-8?B?b1ROMkVqWGt6eEphQk5icUoxcTZKSk9rS1YzdjhLMnFYYXNxU3F1WGJUSWRo?=
+ =?utf-8?B?QmJyTG1pTElWQjBrOVVRNlN3N0NWYmJRUUgwNkJLNk91VTVPZDVUb21wNXJQ?=
+ =?utf-8?B?dXpwTDhQTVl2R25CODNQZEZFR1VkQmlKOTE0L2FFb3hsd1Q2K09sYlFpdFZM?=
+ =?utf-8?B?NjIydGJhLzhPR0JNRm5PdjVsT3RNY0dBZTZnNm9sbVdsY1VnQzRJUmZEWFZC?=
+ =?utf-8?B?Q2FhZU5rMkVpczROdDRmdksyU0VXanJxSlQvVnZTU1QyeVUrYXFMWUk0bmda?=
+ =?utf-8?B?OEI2RHRna0NvcHdnbWtydkdRVExleG13YjEySUVwOEZMMGs0RzliWURqZDdS?=
+ =?utf-8?B?OEVxK3poaFFrQzZCRmcybzFFeXNDdCtkWmtXQW9USzhQU2pCZGU2L1FIL09U?=
+ =?utf-8?B?SmlFdUVCMjl6RkI2TmhsYWx5a0FXUUVtY21zdW05bzJvcGJDTmdnc2JaamRw?=
+ =?utf-8?B?RnFBd3ZNYVI3SmF3ekMyZjA2UFlVUmxvbVgrUnM2Y1d6U1JJOHJqWU8zby9E?=
+ =?utf-8?B?clNMdS9GTG9hVzJEU3p1b0twMWYzZHZkd0w2WFNBYlNRSHA1eHBUSkh6SFdC?=
+ =?utf-8?B?QTRhdXN1Y1pVVU8wVXNla3drcko2L2IybnBjb3NseVNBelppMXMyWDAvRjdF?=
+ =?utf-8?B?YWZQZ1hmZkZmSDJSV1Zrek1zWlh5SFRmY1Qrb2JPWEwyMU5tU1l6OTg1R3pB?=
+ =?utf-8?B?TE9seWIyOVdkd2pyVlJ3YVNwRWtzMFJwNXozUTBhRXBmcEUyaEwxMGNGUWM4?=
+ =?utf-8?B?TFFKdUVOTmczMU5RTHR6ZDBPSWNQSUxraWZxM252bVd4cFQ0QXNKV2lIdmFj?=
+ =?utf-8?Q?C0IBClaKvxVkaO0Szhr3?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 083be0e6-adcc-4f18-9424-08dca211c119
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 01:27:12.2888
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB1407
 
-Hi,
 
-在 2024/07/12 9:10, Yu Kuai 写道:
-> Hi,
-> 
-> 在 2024/07/12 2:03, Bart Van Assche 写道:
->> On 7/11/24 2:00 AM, Yu Kuai wrote:
->>> ioprio works on the blk-cgroup level, all disks in the same cgroup
->>> are the same, and the struct ioprio_blkg doesn't have anything in it.
->>> Hence register the policy is enough, because cpd_alloc/free_fn will
->>> be handled for each blk-cgroup, and there is no need to activate the
->>> policy for disk.
->>
->> As one can see in the output of git grep -nHEB1 '>pd_(alloc|free)_fn\(',
->> none of the pd_alloc_fn / pd_free_fn callers checks whether or not these
->> pointers are NULL. Hence my question why this patch does not trigger any
->> NULL pointer dereferences?
-> 
-> Because the blkcg_deactivate_policy() is removed as well, there are no
+On 2024/7/11 18:01, Thomas Bonnefille wrote:
+> The LicheeRV Nano is a RISC-V SBC based on the Sophgo SG2002 chip. Adds
+> minimal device tree files for this board to make it boot to a basic
+> shell.
+>
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> ---
+> Changes in v4:
+> - Add correct bindings configuration for SG2002 sdhci
+> - Drop commit "dt-bindings: timer: Add SOPHGO SG2002 clint" because it
+>    has already been merged in Daniel Lezcano git tree.
+> - Link to v3: https://lore.kernel.org/r/20240709-sg2002-v3-0-af779c3d139d@bootlin.com
+>
+> Changes in v3:
+> - Remove /dts-v1/ directive from sg2002.dtsi file
+> - Add disable-wp property to sdhci node to avoid having a write
+>    protected SD card
+> - Drop changes in cv18xx.dtsi and cv1800b.dtsi
+> - Add fallback compatible to cv1800b in SDHCI node of sg2002.dtsi
+> - Link to v2: https://lore.kernel.org/r/20240612-sg2002-v2-0-19a585af6846@bootlin.com
+>
+> Changes in v2:
+> - Add SDHCI support
+> - Change device tree name to match the Makefile
+> - Add oscillator frequency
+> - Add aliases to other UARTs
+> - Add aliases to GPIOs
+> - Move compatible for SDHCI from common DT to specific DT
+> - Link to v1: https://lore.kernel.org/r/20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com
+>
+> ---
+> Thomas Bonnefille (4):
+>        dt-bindings: interrupt-controller: Add SOPHGO SG2002 plic
+>        dt-bindings: riscv: Add Sipeed LicheeRV Nano board compatibles
+>        riscv: dts: sophgo: Add initial SG2002 SoC device tree
+>        riscv: dts: sophgo: Add LicheeRV Nano board device tree
+>
+>   .../interrupt-controller/sifive,plic-1.0.0.yaml    |  1 +
+>   .../devicetree/bindings/riscv/sophgo.yaml          |  5 ++
+>   arch/riscv/boot/dts/sophgo/Makefile                |  1 +
+>   .../boot/dts/sophgo/sg2002-licheerv-nano-b.dts     | 54 ++++++++++++++++++++++
+>   arch/riscv/boot/dts/sophgo/sg2002.dtsi             | 32 +++++++++++++
+>   5 files changed, 93 insertions(+)
+> ---
+> base-commit: d20f6b3d747c36889b7ce75ee369182af3decb6b
+> change-id: 20240515-sg2002-93dce1d263be
+>
+> Best regards,
+Hi, Thomas,
 
-Sorry about the typo, blkcg_activate_policy() is removed, all the places
-of pd_(alloc|free)_fn can't be reached.
+This stuff is already too late for 6.11 as I already sent my PRs. I will 
+handle this next period.
 
-Thanks,
-Kuai
+Cheers,
 
-> callers now... blkcg_policy_register() is still called to make sure
-> cpd_(alloc|free)_fn will still be called.
-> 
-> Thanks,
-> Kuai
-> 
->>
->> Thanks,
->>
->> Bart.
->> .
->>
-> 
-> .
-> 
+Chen
+
 
 
