@@ -1,161 +1,124 @@
-Return-Path: <linux-kernel+bounces-250868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0B692FDCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:44:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14AF492FDD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACD651F22231
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:44:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3ADC1F22D59
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3371741EF;
-	Fri, 12 Jul 2024 15:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1841741F4;
+	Fri, 12 Jul 2024 15:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OzouaXA5"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Su8ukl/W"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3087171E53
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 15:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FA11802B;
+	Fri, 12 Jul 2024 15:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720799061; cv=none; b=V/mISmc+bBpIUDgTLRl1d33Zsr3J9n4uNIk/tu9cLW9npz5j1OJsPCjR0/Fmu+UGRpp3xEDHt3gH5wDcIDJXctlRBC1tSQDbmC6epheyJf9dUHPPlhlksgLY5k9NEkSDtB5iWCgQ7XX4Gty0nIVuxyy1cTufDV5mqzewJkyL7cY=
+	t=1720799145; cv=none; b=PTuzUgWhz1Y6Mp082bEO7nFxOhwig4OaiZKbOJurLByv8Z+j6LaPx+sns6REiLZ4m33pTpkyON1W8G7wE18i/wFmgAQQJB9FiD5tDeR0zd+iQKA4ulgHcEORdKpiPpYeRqrot5qb7/JeuYnrD/yPoKu1AxTcj8Z1QK4m/2Lk81k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720799061; c=relaxed/simple;
-	bh=Jw7ALA7hpmXnAP/Kypfcn/ibIEv2TWlznMpwoyfzncw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t6uOIOcDRHJIuGbrCr1OVsSwptUqkNQ7oJbmlqvtz1MwyQ+ZwhulBzyvDibM0em9aJnAXVSKs6dXso6pHKaRiwoZjKd3z4BdUll91xRzOvS9rTn58c/W0DHO9bi/oUmE2urRmTyO5djk0LJr2Ll3uTZ9SS884Xz+hl4T43fqfUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OzouaXA5; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ea34ffcdaso2413980e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:44:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720799058; x=1721403858; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gm+dL+hq2H7t5EiDDEM1tOdPxkkuckw7URFjri0hY5Y=;
-        b=OzouaXA5DuZCpAnHID8zf+s9TcNug9pKyrNVtHLWyUb/H2dJInq9gmgQZ0aE+44dbZ
-         eTGq8g1eR7kknIKMEGum/BVvv4vMa7WJcM/iB3LOSxBkWKVaakfcpGQ/mgCiW7xnm4i7
-         VCUI2eDUo7lvr6s09UCr0NT0fQloFZ4IcvM/Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720799058; x=1721403858;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gm+dL+hq2H7t5EiDDEM1tOdPxkkuckw7URFjri0hY5Y=;
-        b=VLq4kl01Ou0uyViyMJ7eSSIGrfrfAvHQ/Rdpq9uSNE4P/EPy9s4yUPQc3thPfod2A/
-         rNMHNO9X6ElkxFLgUkjEIszh+wrxexwlKIPXJrfrJK2esFG+1HrhXSowHfQHvr8Xgaj3
-         rhL7t1ScIMP72qw3/PfvPQCwXwMjk5ZGc/Rka7nPOVjaodRrHIYMtpldzftAhjgB5SEy
-         y9NgwF5fUnkkLPOdli7i1kYKx27AHipsnOCkpX9Vw3gFYJZbp6YF+0koUX5euhtrEPJN
-         9yE+M3k3+FuabVDKXHv/tXv6IYwutCyG6pphL5DAciB3Bcba1hxsqxS/dmJ+4/dH24Pm
-         /U+w==
-X-Forwarded-Encrypted: i=1; AJvYcCX/1TAkXKq6ilfWf79CXy5reqKj8yHN5mvz/CqKhOpzsZoNJHGnIjQreO1/4+YnjMsCs1tWTdZQxmZ9Tk9CthnERAyJGxao95RwLi4d
-X-Gm-Message-State: AOJu0Yy2HB7+x3G1U8Fbj4G5Mswn5/oUcSLux8Su2wbLp5ECFYQcf48G
-	+/y4nXa7Vng1hG0RsrLcZvPthIO13Hs23YugDIxBHg4vhS6b6I+iFHmKs86oGBrkYaPZM01dCK7
-	FNQE+nHQjrXPCEaxgjACAW3MEq08A9ioNZYc=
-X-Google-Smtp-Source: AGHT+IH9pJBNkOUybx5L7VzoPfxzDl6G5bgrKTfUB/1jjytiloEd89f5W+QGClFOQf+tuEha2LiMoViJKAOxrZ9jfME=
-X-Received: by 2002:a05:6512:ea1:b0:52c:df6f:a66 with SMTP id
- 2adb3069b0e04-52eb99d4f5dmr8246097e87.58.1720799058056; Fri, 12 Jul 2024
- 08:44:18 -0700 (PDT)
+	s=arc-20240116; t=1720799145; c=relaxed/simple;
+	bh=L2JKt6/Zlr5nDNVV0e3G0fjAh34YvW7l5yQ2teHM8ew=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QKL0cGwWQYfwrKwdbGhmXKQRiAgfu6i21Vex904VlUnTmnvLtd4Qa2WQSw1BiuWyp4X3qwQ/lTveYQQbWYuVsSQvEE+cI5Q9zY4fao0snrLGtp59qtFPK2ySY18m1hMP2FXgPIx4ZKAAHLY5QHIKzx9mMgtBO1bGRDTJfndbrE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Su8ukl/W; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=V+hVLKlnw9flmcT/HXHKBgl0FZ5CMsd/j0BjaZpZ8mU=; b=Su
+	8ukl/WTPEmSL5dqfZmLvkRyvijsIjBcyMnhJHWRxKocBTKwVt7ldFeewF1L0sxAaGY0gF8S9bg7S9
+	3KOm/AloB7s2XzoRJBnTA1DXugy2IYjpxwH7YjsmQEhKtC9S+9ub+VkMrDUJo0GkA65YqWDNrIYTe
+	2dl+0JPyk6T71fo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sSISe-002Psa-HP; Fri, 12 Jul 2024 17:45:28 +0200
+Date: Fri, 12 Jul 2024 17:45:28 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Kamil =?iso-8859-1?Q?Hor=E1k_=282N=29?= <kamilh@axis.com>
+Cc: florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 4/4] net: phy: bcm-phy-lib: Implement BroadR-Reach
+ link modes
+Message-ID: <ca6a5b50-6b34-4455-bd22-cfe152df4728@lunn.ch>
+References: <20240708102716.1246571-1-kamilh@axis.com>
+ <20240708102716.1246571-5-kamilh@axis.com>
+ <885eec03-b4d0-4bd1-869f-c334bb22888c@lunn.ch>
+ <bc1ce748-7620-45b0-b1ad-17d77f6d6331@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702215804.2201271-1-jim.cromie@gmail.com>
- <ZoR40nWmpEV2Ly_6@bombadil.infradead.org> <CAJfuBxyxamRhOyz8WuL+7=eJkEKSw8jnAWjyAuqU2i7gvg-rsQ@mail.gmail.com>
-In-Reply-To: <CAJfuBxyxamRhOyz8WuL+7=eJkEKSw8jnAWjyAuqU2i7gvg-rsQ@mail.gmail.com>
-From: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
-Date: Fri, 12 Jul 2024 17:44:06 +0200
-Message-ID: <CALwA+NbUCfEj_DzT5eMQ7_pSNpyp-zBe6PEL2XnMZrb303J4_Q@mail.gmail.com>
-Subject: Re: [PATCH v9 00/53] fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y
-To: jim.cromie@gmail.com
-Cc: Luis Chamberlain <mcgrof@kernel.org>, daniel.vetter@ffwll.ch, 
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
-	ville.syrjala@linux.intel.com, jbaron@akamai.com, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
-	intel-gfx@lists.freedesktop.org, linux@rasmusvillemoes.dk, joe@perches.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bc1ce748-7620-45b0-b1ad-17d77f6d6331@axis.com>
 
-On Wed, Jul 3, 2024 at 12:14=E2=80=AFAM <jim.cromie@gmail.com> wrote:
->
-> On Tue, Jul 2, 2024 at 4:01=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.or=
-g> wrote:
-> >
-> > On Tue, Jul 02, 2024 at 03:56:50PM -0600, Jim Cromie wrote:
-> > > This fixes dynamic-debug support for DRM.debug, added via classmaps.
-> > > commit bb2ff6c27bc9 (drm: Disable dynamic debug as broken)
-> > >
-> > > CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy was marked broken because drm.debug=
-=3Dval
-> > > was applied when drm.ko was modprobed; too early for the yet-to-load
-> > > drivers, which thus missed the enablement.  My testing with
-> > > /etc/modprobe.d/ entries and modprobes with dyndbg=3D$querycmd option=
-s
-> > > obscured this omission.
-> > >
-> > > The fix is to replace invocations of DECLARE_DYNDBG_CLASSMAP with
-> > > DYNDBG_CLASSMAP_DEFINE for core, and DYNDBG_CLASSMAP_USE for drivers.
-> > > The distinction allows dyndbg to also handle the users properly.
-> > >
-> > > DRM is the only current classmaps user, and is not really using it,
-> > > so if you think DRM could benefit from zero-off-cost debugs based on
-> > > static-keys, please test.
-> > >
-> > > HISTORY
-> > >
-> > > 9/4/22  - ee879be38bc8..ace7c4bbb240 commited - classmaps-v1 dyndbg p=
-arts
-> > > 9/11/22 - 0406faf25fb1..16deeb8e18ca commited - classmaps-v1 drm part=
-s
-> > >
-> > > https://lore.kernel.org/lkml/Y3XUrOGAV4I7bB3M@kroah.com/
-> > > greg k-h says:
-> > > This should go through the drm tree now.  The rest probably should al=
-so
-> > > go that way and not through my tree as well.
-> >
-> > Can't this just be defined as a coccinelle smpl patch? Must easier
-> > to read than 53 patches?
-> >
->
-> perhaps it could - Im not sure that would be easier to review
-> than a file-scoped struct declaration or reference per driver
->
-> Also, I did it hoping to solicit more Tested-by:s with drm.debug=3D0x1ff
->
-> Jim
->
+On Fri, Jul 12, 2024 at 05:10:48PM +0200, Kamil Horák (2N) wrote:
+> 
+> On 7/11/24 21:01, Andrew Lunn wrote:
+> > > +static int bcm5481x_get_brrmode(struct phy_device *phydev, u8 *data)
+> > >   {
+> > > -	int err, reg;
+> > > +	int reg;
+> > > -	/* Disable BroadR-Reach function. */
+> > >   	reg = bcm_phy_read_exp(phydev, BCM54810_EXP_BROADREACH_LRE_MISC_CTL);
+> > > -	reg &= ~BCM54810_EXP_BROADREACH_LRE_MISC_CTL_EN;
+> > > -	err = bcm_phy_write_exp(phydev, BCM54810_EXP_BROADREACH_LRE_MISC_CTL,
+> > > -				reg);
+> > > -	if (err < 0)
+> > bcm_phy_read_exp() could fail. So you should keep the test. Also, the
+> > caller of this function does look at the return value.
+> True - it can at least return -EOPNOTSUPP from __mdiobus_read()
+> Trying to handle it.
+> 
+> This neglect can be found elsewhere such as bcm-phy-ptp.c  and eg.
+> bcm54xx_config_init()
+> 
+> function. I feel that at least the latest one should be fixed but it would
+> be unrelated to bcm54811,
+> 
+> so leaving it as-is for now.
 
-Jim,
+In general PHY drivers are a bit hit and miss with checking error
+codes. If the first access works, it is very likely all further
+accesses will work. If they fail, the hardware is probably dead and
+there is little you can do about it other than report the error. So i
+would say probe, suspend and resume should always check the error
+codes, since that is where clock problems are likely to be. But after
+that it is good practice to check error codes, but a driver is
+unlikely to be NACKed because of missing checks.
 
-When testing different combinations of Y/M for TEST_DYNAMIC_DEBUG and
-TEST_DYNAMIC_DEBUG_SUBMOD in virtme-ng I spotted test failures:
+> Done. Now we rely on the DT setting and never read the PHY state. It is
+> vulnerable to external manipulation
+> 
+> of MDIO registers and PHY reset as both hardware and software (bit 15 of
+> register 0 in both
+> 
+> IEEE and LRE modes) reset switch to IEEE mode.
 
-When the TEST_DYNAMIC_DEBUG=3DM and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
-BASIC_TESTS, COMMA_TERMINATOR_TESTS, TEST_PERCENT_SPLITTING,
-TEST_MOD_SUBMOD selftests passed
-When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
-BASIC_TESTS, COMMA_TERMINATOR_TESTS selftests passed, however
-TEST_PERCENT_SPLITTING selftest fails with ": ./dyndbg_selftest.sh:270
-check failed expected 1 on =3Dpf, got 0"
-When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DY -
-BASIC_TESTS, COMMA_TERMINATOR_TESTS selftests passed, however
-TEST_PERCENT_SPLITTING selftest fails also with ":
-./dyndbg_selftest.sh:270 check failed expected 1 on =3Dpf, got 0"
+I don't think this is any worse. With the old code you would of
+silently swapped to standard IEEE modes, which cannot work. Now you
+continue programming BRR registers, which just get ignored because it
+is no longer in that mode.
 
-Have I missed something ?
+But if somebody performed some sort of external manipulation, all bets
+are off anyway. 
 
-Thanks,
-Lukasz
-
-> >   Luis
-> >
+	Andrew
 
