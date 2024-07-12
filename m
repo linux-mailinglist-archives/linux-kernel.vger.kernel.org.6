@@ -1,453 +1,134 @@
-Return-Path: <linux-kernel+bounces-250455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C7F92F80A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:28:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11BAA92F831
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B8541F20B67
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:28:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84D73B20EDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C7715CD74;
-	Fri, 12 Jul 2024 09:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435883398E;
+	Fri, 12 Jul 2024 09:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="babR7y0T"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013055.outbound.protection.outlook.com [52.101.67.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LyBIbhzZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4601442F7;
-	Fri, 12 Jul 2024 09:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720776395; cv=fail; b=MFOWhDQivZirxEDa1fUjaRygwudk2/TrHV53/NKDVfdZdN2TckeVCkCl+XbQgq9sNTRVeKetXaf4BStLNKG1ZGhCbeRn9nnmNQGFxt2cocqcLLaKCHyi2PUZ4MpPJOvN0wKmKnOdU5qKnmBV2/AWzaSTJEc+UMW7KmZChMNgSSw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720776395; c=relaxed/simple;
-	bh=ZW5VUdc3IBiHSCnuEZ0jJWdPFaCBEMIZhu4c5aJFtKQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lAEKSzAQpRlL/InlBx5tUUOMliYrW6tX7HnbkMNFtNtfenWud/XM+w4wVRAx22an1DEpFNp9oOhKwQMl0YkBcfx7JwuysHWUQHZ9Whb7+wLqWHQBA5vGUFxiQ4Lx32hkp7vUff58eTchU3sjOjnAX3tJO2vcCjZLXbMHKFfACq4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=babR7y0T; arc=fail smtp.client-ip=52.101.67.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IozinDbC+sA/WatyxNjXbOVIDntYO/PoHIa5EKRBLHb/0bUnxzLI5pQ0ESZ+GCUNH5B+XRofFOPgGj8yLBpsPjg9EHCHetEv0epXLzMCGdV1+H8WMo9H/0PUPmZm58FYX/Xzg0/+CVppE7hDUNthYag1zA4VBf0i+Yr3M0ZsFI3k2TB8cxmRRbzAyUKL7OgkLKVYb2pQjC1KrD32zIuhQ7ep8Zhp3s8MVrgXxAJAyuOy6HHFRnlGFkV1GpPVkqYPJAkkpTMhrub0fTOCr+H9I222mokSOKt3P/Q5G/HKqePLHmXXjXUAVyHBM6vtVDTNg1fPzHslfibRDUgOngi1Zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gxvJmSbW8JauPoVbLzhu4Vb+YpmEesx3Xp/kZ30aEHo=;
- b=rCXBADRV5L74y1X/+L4L1MmtioehZ3RvpmpbNEsNbXF++bdJ5WWhKO/C3JYeEXg/9BrPOtKuybycYycRykaQiIoXQ9DpXfVvkcCLep9KzUuCj+O29YtNxKlCLeQwh1KmSUzz47P4+86iBmgxgH8fxBIXxBR6M01wMpG9TURYJWLeeJWDh5VOam78ntxxP4SBaG27ss9e71eV6Eync2l6L77XRL/ajAvn3g3PtzUD4JZ1RyjAerMDGAH0Pu0JQJh1R8pSeUuQ5/OYm8lnK71/iIajYXFHpohFv4vT+xxZZ7XbnkGCnTi+MhUFKZbvyHosH5UePhqiS7onTQkAXikV2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gxvJmSbW8JauPoVbLzhu4Vb+YpmEesx3Xp/kZ30aEHo=;
- b=babR7y0TtKB/VH3c5sFi3XFgmj+TbftBdOBtFrAOgM/H7CE3pTE7C7vqbWP1CdQ0iwLnteYHa71GmRsLMBWXK1svvd0NwdEVSQ+ZsPOEkZOhQxe5b6eU5APXcrs5Ehc5LcQHs+lN/HBIWmtZJslyq11mOk3NlGt659+uTXQLpc8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by GV1PR04MB10242.eurprd04.prod.outlook.com (2603:10a6:150:1a8::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.20; Fri, 12 Jul
- 2024 09:26:31 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%2]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
- 09:26:31 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AF3143C51;
+	Fri, 12 Jul 2024 09:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720777493; cv=none; b=POiWDyDt5K/S5HLIq85/VrvAU/cY4IvSTvX4kxf+G0cEGtTgGPDMP54mOnJwxd+fNJfbvCK9FU+6hVgswcBkpwIx61cvf3fCj5zFytrZdewqIxWEtFxBgT7yulJaDfLwS9q/7yuNWPu3s23ISX7RwWgX9YeDJN2WK3FoJDi3sUQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720777493; c=relaxed/simple;
+	bh=pye52lxJTMqD0ED0N9d93NrRojesTispGsNfpnuU8S4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aGc0E2q12NIwlIhrQHGRf9YK81RkHzJVg/COIckGhuxC+mgDcITF8NJe/2FWx+qA9Izd50iJSUuaYIj+BkaSyRg87CPQcd8p32C9IP7Juie7ghtLvaZsNsba3nAiqFheXE/anrN8j+9WdAARQN5PNNrZSwBeJntir5LgexIeGG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LyBIbhzZ; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720777491; x=1752313491;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=pye52lxJTMqD0ED0N9d93NrRojesTispGsNfpnuU8S4=;
+  b=LyBIbhzZhxUFWjTOsedoiY0dgWo0EOi+NcAPucNMhVdTp/MDwyT8peSA
+   mUpZHpHkz8+wHvZiTaHtpMjgHgGKu4Z8U+Fkzj1LlgKDAsrwkos/4wcVl
+   K+2JW8IhZBKQHcctUB7eRghchWzqr7gUMx22iXqurVCvIeK9BUvtii2vf
+   b/jllQIb6aBj7BtKZDidvLRqISblQmVxBucA2IJRXRY6974rmmIp498Yg
+   EaULivB/sg3+YSocw6YneIJSXJT5jYpHodccPu8V+T3KKJ9KLLTw16OzB
+   wikR+T9FM2MrWS5M0mu+8DGbTanJlm/l4h+zzChf8kj4qb8B33UVGb9hZ
+   g==;
+X-CSE-ConnectionGUID: pMjvJMMrQFebfrtl5fsSFQ==
+X-CSE-MsgGUID: zXTLhCynQxiXVlideBB7VA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="18076945"
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="18076945"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 02:44:51 -0700
+X-CSE-ConnectionGUID: G4rJcSO1Qeu3ga65EOemYQ==
+X-CSE-MsgGUID: tiuiRH0xSFm8EmaZmNG+vg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="49524299"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by orviesa007.jf.intel.com with ESMTP; 12 Jul 2024 02:44:48 -0700
+Received: from fedora.igk.intel.com (Metan_eth.igk.intel.com [10.123.220.124])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 7D46D12409;
+	Fri, 12 Jul 2024 10:44:46 +0100 (IST)
+From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+To: intel-wired-lan@lists.osuosl.org
+Cc: apw@canonical.com,
+	joe@perches.com,
+	dwaipayanray1@gmail.com,
+	lukas.bulwahn@gmail.com,
+	akpm@linux-foundation.org,
+	willemb@google.com,
+	edumazet@google.com,
 	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Cc: p.zabel@pengutronix.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	tglx@linutronix.de,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	aisheng.dong@nxp.com,
-	agx@sigxcpu.org,
-	francesco@dolcini.it,
-	frank.li@nxp.com
-Subject: [DO NOT MERGE PATCH v2 16/16] arm64: dts: imx8qxp-mek: Add MX8-DLVDS-LCD1 display module support
-Date: Fri, 12 Jul 2024 17:32:43 +0800
-Message-Id: <20240712093243.2108456-17-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20240712093243.2108456-1-victor.liu@nxp.com>
-References: <20240712093243.2108456-1-victor.liu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0054.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::13) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	netdev@vger.kernel.org,
+	Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+Subject: [Intel-wired-lan] [PATCH iwl-next v2 0/6] Add support for devlink health events
+Date: Fri, 12 Jul 2024 05:32:45 -0400
+Message-Id: <20240712093251.18683-1-mateusz.polchlopek@intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|GV1PR04MB10242:EE_
-X-MS-Office365-Filtering-Correlation-Id: 256092d4-8da7-4dc0-4008-08dca254b6d5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?y8G/rRwvZ4q7mc/viQ/huduXwT92sVVGcDna7M+ULGMqG2TPv+v6h38JYwNF?=
- =?us-ascii?Q?kIDql/s/tSvdBlrfI79TE19YXBBYsmOrkw/ulT9KrUNa1VMXPmGMYwurRzuu?=
- =?us-ascii?Q?DWvMlFosVFpR6vP25YngVZC9+FZTpVuyr4jG8Nhu5gC0NIssFp8AVhytpQCe?=
- =?us-ascii?Q?4bF/jVxg3xnePAQ9QW+aTfqZiuQP9xZpt6CpHoFmDEU6JNTDhnGYqUBpIkEa?=
- =?us-ascii?Q?L0jvKDQ51+g6AgTws/MgbXSL983wFyx5gA9TzhYd6W5seuPFHB0gNrZIjDid?=
- =?us-ascii?Q?jfGbswZS3sdzsqknVdv9aMvtNsDVpfA0sADGFkJWqSWm6LEha5hqslA0oZle?=
- =?us-ascii?Q?B3DSmkqsQ4uMIbJ/4Yug5/y64oSImFzn1b71aVw8/JL9d+EUTQwcEUktEF7s?=
- =?us-ascii?Q?ENjtIMLbi2xNoIYXZG9Q+i78M7akIi9hPMTSf0Ed7aFCgLr0HqYfy1pHXnfB?=
- =?us-ascii?Q?c4N05H9fwQDj5pYb3GwhvOz3Cop47WmLBkRa0laC3fxxoKRvW8/ncNMOZ39b?=
- =?us-ascii?Q?ooH88lvnlCnK24cdTcRb5s42bI3fV3Kyg/qXrkPSBzvXyJiBeuLGDmX/AFba?=
- =?us-ascii?Q?QatlqkKoHe/N/0oSbrEqmBFKneY3PGPGuM426B0x77/4Su2E+N8/7ag1l9Zq?=
- =?us-ascii?Q?0QatIxTNGX93eciQxywcKtVrNDuaTsoBDiwZs5j/EbwVPPAMXf++FZLLzQg6?=
- =?us-ascii?Q?HkmGE6b4DHijChyIxYy8B6tpjhR21JamXRB/NKbm97VsJKpo/0A1bm3ACHpr?=
- =?us-ascii?Q?Nb57vAsDOlNfN58aW7MgNNZKORJ1GrNN7LiKoI9ud/FLlHDr4+Rc+EmPqJ1F?=
- =?us-ascii?Q?/JPEW0911Bo/x/YDv+w5Irn5O/gscHgvMI7prRCKi5gRnlqBoOSBihjjqazq?=
- =?us-ascii?Q?bJXHVgmGBf6rk9vHMIAHW1fmjIS6IXCnHsuexh1M+6TcKtJN1gfUN3BCv9QZ?=
- =?us-ascii?Q?YG+5+PhusL20U4piHH/g0xJ5Bu3AGjNCBsUS3HloRwcmTM9a+HTS3JT0Nu0I?=
- =?us-ascii?Q?SkxkU1M47mbpw44E5kRk1wZC1yHe2MMuglX+sWYblSCig8YF83u8hju5l5k0?=
- =?us-ascii?Q?Gwf/S0YifbmVT8MjgtkcwU0vZoNeok2C8gLBS7iHMaFUu85SAPGRwJWUd+Rx?=
- =?us-ascii?Q?FUXG21iV++PyLrrVfcfZtew3feIxAzWqR+FcxQT2VphNI5omJXBDJ6jSQqsT?=
- =?us-ascii?Q?GTsLMUglgfmIRcJCMisDL5229KdLCp2hppXubeqennSrvlVuu8Vdua8kRTp7?=
- =?us-ascii?Q?2j9KcUJBfWsbfA6V4+1nDXrSILl2YBzJnHMmyam+EWRYDSQ0wtAFOsMOhhrR?=
- =?us-ascii?Q?e7DxZ1rkg4loTS+cipVbkTm82IXT4c3nuIcArN197foM7eBzYzEzPDsqw7v+?=
- =?us-ascii?Q?CNUL+y/g8xMGzqgy1qUk2ceJ9Z5OzzdzIE0dnusYi3rvTr+PUQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ebo8UCXkL83iJYDNkpXdG2x5qZh8oXv8G7HU5AWaGAaKw27UkYbe6mtYQBCe?=
- =?us-ascii?Q?dFdQY8j34LgSvlAytJbD12LJ8o3N2atvWNDsx8rUoTof+jfUaCT67twBV2+o?=
- =?us-ascii?Q?FY8PIrR+G8Q+q8ODfYZ9cFj5mvQsZOhu83R7rwB3F5vZRdv71Qyx1yHP0+OA?=
- =?us-ascii?Q?kQovNLVMVslab0L/Ols3SvzW6DSsVPeOtqTK20pv8opOQ2OLQ+c6U5T6B11z?=
- =?us-ascii?Q?njEkPjqVODLCu82OBRUfKWIeBe+xGRxlphLvnymAseL4ELi/QAhCeNJCYqWr?=
- =?us-ascii?Q?z2LObuGbEhqyam9m1nlLGId3xU5U7K/TKWqDxrZVxmEU2g4EG2Ko+Z5Ha/38?=
- =?us-ascii?Q?YK5PyQHjgtKkjK2PJZQETf1Xpt2sqWU4zgGrf13bTQyTQYmtSZTUc9khj29n?=
- =?us-ascii?Q?T0UuA593ygMFiiiZAla+FCBL/cZT6xk487otTqEpp6mLXp8IkHFOtZnOhUOi?=
- =?us-ascii?Q?1EmO87GKeoAzZAVEUWIJZvaiqTDmivsnDZyymC+GyXfwrnPLdnAZGUsg/yOk?=
- =?us-ascii?Q?PxvWcZJvOG9UaThIGGYM3gLxnKC+ZhKiakyjXKgtKk425G6Ka3qSavFuPxcc?=
- =?us-ascii?Q?EWi0yNCYueW/CHdglBhWpmf/H70lOoO6a5lFM9YCY6ri9g1HMDsJGWnTNo2U?=
- =?us-ascii?Q?yyIJiE7g5MDYArupjXHWfypUE7ymIPcp30BLxm5nvIdyX7GteBvDoJzw87h8?=
- =?us-ascii?Q?k+B2JEIk2YxA5lwEvThCzOcaqBlifoHy/ipnpo3lhXiXBeOth6nq9ip99v7V?=
- =?us-ascii?Q?OtOMBXRrxzARQ3T3TzQZklzHSyYSJkQL9ewxd6pQEe/+RMj/d6J6XmyX2pTp?=
- =?us-ascii?Q?TrXdGkCoIjHW1nDARiCY4IgSaj9U/kaSVhwevvak9RbLEz42MJ+tM0Pgc27v?=
- =?us-ascii?Q?1CCQY0gvkPH5uCB+9nkwwtyH6s8Dp1zUT2SJXTg2KkVOUs4NvqJ32kyxuDnW?=
- =?us-ascii?Q?3rRqXNXchZa/fyvHwu5kfLaeWgVa5v5XHRqaaJDv9WbONcb9HgTNUPb54vOb?=
- =?us-ascii?Q?uh/vh33zzSQ6gq9NZHPteItTDQuu7SbpbrCwQIDGTpJPkpFVvqogh7fYwBXh?=
- =?us-ascii?Q?DSUAX9KiuWrpNtkdJPFU3hJOmEWADx1rStvQhl0A1L2GOnaRBlMN3yRknfEc?=
- =?us-ascii?Q?OVMl+lvZvwKYdh/a4yBQmuohbDvh5iKf7++KodUkS1z3ioC9kIlIfOccwzpy?=
- =?us-ascii?Q?Mk24Doe9q7WceIJ6eRSoy3sxN5yZVigPXE5bulfxjfkVJjA8yNePnwSD/3iU?=
- =?us-ascii?Q?bjIf/dZYfQj02kwFP6yAv6+O5M7uRMF61GgjekeK1RO11W+v8/F0zMmN1Ib1?=
- =?us-ascii?Q?mR0CBvp+eVgfrkKmXbkuBxx7LxT5kyZEc/0l7I2meM842GvfzApg/p5sYZy6?=
- =?us-ascii?Q?OUTwYAI4n7sDMfGPjhzrwX2m928nSV+w06Dl6mwJr+cg1XyBodWyJAo5nxSA?=
- =?us-ascii?Q?nuntnjKAGEbJxPKBvX8YjHQ3LcyD4OSaKW7/kdb3WNfZoAxdXnRyVaiBdxeK?=
- =?us-ascii?Q?mwVWeFtpEawp4YhDwqONWTaaa0RXlOV7OmKiZJxK4bg5KM+xbBofT8NIq2JS?=
- =?us-ascii?Q?QZgwdMO6+JtbDroEWeyeLgwO3+DwQtZheVUj/R5S?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 256092d4-8da7-4dc0-4008-08dca254b6d5
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 09:26:31.0366
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zJLWtVEf3vxBvF2cGSMTdAYH92zI/vkMK1maKxrTOiDNcLOPi7Zjzn+ZyRJuwxQyqY3gGN7nq14uSP3YGiIqqg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10242
+Content-Transfer-Encoding: 8bit
 
-MX8-DLVDS-LCD1 display module integrates a KOE TX26D202VM0BWA LCD panel
-and a touch IC.  Add an overlay to support the LCD panel on i.MX8qxp
-MEK.  mipi_lvds_0_ldb channel0 and mipi_lvds_1_ldb channel1 send odd
-and even pixels to the panel respectively.
+Reports for two kinds of events are implemented, Malicious Driver
+Detection (MDD) and Tx hang.
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
+Patches 1, 2: minor core improvements (checkpatch.pl and devlink extension)
+Patches 3, 4, 5: ice devlink health infra + straightforward status reports
+Patch 6: extension to dump also skb on Tx hang, this patch have much of
+ copy-paste from:
+ - net/core/skbuff.c (function skb_dump() - modified to dump into buffer)
+ - lib/hexdump.c (function print_hex_dump() - adjusted)
+
 ---
 v2:
-* New patch. (Francesco)
+- added additional cast to long in function ice_tx_hang_reporter_dump() - patch 3
+- removed size_mul() in devlink_fmsg_binary_pair_put() call - patch 3
 
- arch/arm64/boot/dts/freescale/Makefile        |   4 +
- .../imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtso | 183 ++++++++++++++++++
- arch/arm64/boot/dts/freescale/imx8qxp-mek.dts |  30 +++
- 3 files changed, 217 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtso
+v1:
+- initial series
+https://lore.kernel.org/netdev/20240703125922.5625-1-mateusz.polchlopek@intel.com/
+---
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index f04c22b7de72..289e4b2b4f20 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -234,6 +234,10 @@ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-colibri-eval-v3.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-colibri-iris.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-colibri-iris-v2.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek.dtb
-+
-+imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd-dtbs += imx8qxp-mek.dtb imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtbo
-+dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtb
-+
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqp-mba8xx.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8ulp-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-9x9-qsb.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtso b/arch/arm64/boot/dts/freescale/imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtso
-new file mode 100644
-index 000000000000..7ddd90e68754
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp-mek-mx8-dlvds-lcd1-lvds0-odd.dtso
-@@ -0,0 +1,183 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/firmware/imx/rsrc.h>
-+
-+&{/} {
-+	panel-lvds0 {
-+		compatible = "koe,tx26d202vm0bwa";
-+		backlight = <&backlight_lvds1>;
-+		power-supply = <&reg_vcc_per_3v3>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				dual-lvds-odd-pixels;
-+
-+				panel_lvds0_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				dual-lvds-even-pixels;
-+
-+				panel_lvds1_in: endpoint {
-+					remote-endpoint = <&lvds1_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&backlight_lvds1 {
-+	status = "okay";
-+};
-+
-+&dc0_framegen0 {
-+	assigned-clocks = <&clk IMX_SC_R_DC_0_PLL_0 IMX_SC_PM_CLK_PLL>,
-+			  <&clk IMX_SC_R_DC_0 IMX_SC_PM_CLK_MISC0>;
-+	assigned-clock-parents = <0>,
-+				 <&clk IMX_SC_R_DC_0_PLL_0 IMX_SC_PM_CLK_PLL>;
-+	assigned-clock-rates = <940320000>;
-+};
-+
-+&dc0_pixel_link0 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			status = "okay";
-+		};
-+	};
-+};
-+
-+&dc0_pc {
-+	status = "okay";
-+
-+	channel@0 {
-+		status = "okay";
-+	};
-+};
-+
-+&mipi_lvds_0_ldb {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	fsl,companion-ldb = <&mipi_lvds_1_ldb>;
-+	status = "okay";
-+
-+	channel@0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0>;
-+		status = "okay";
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&panel_lvds0_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&mipi_lvds_0_phy {
-+	status = "okay";
-+};
-+
-+&mipi_lvds_0_pxl2dpi {
-+	fsl,companion-pxl2dpi = <&mipi_lvds_1_pxl2dpi>;
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			mipi_lvds_0_pxl2dpi_dc0_pixel_link0: endpoint@0 {
-+				status = "okay";
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			mipi_lvds_0_pxl2dpi_mipi_lvds_0_ldb_ch0: endpoint@0 {
-+				status = "okay";
-+			};
-+		};
-+	};
-+};
-+
-+&mipi_lvds_1_ldb {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	channel@1 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <1>;
-+		status = "okay";
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			lvds1_out: endpoint {
-+				remote-endpoint = <&panel_lvds1_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&mipi_lvds_1_phy {
-+	status = "okay";
-+};
-+
-+&mipi_lvds_1_pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm_mipi_lvds1>;
-+	status = "okay";
-+};
-+
-+&mipi_lvds_1_pxl2dpi {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			mipi_lvds_1_pxl2dpi_dc0_pixel_link0: endpoint@1 {
-+				status = "okay";
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+
-+			mipi_lvds_1_pxl2dpi_mipi_lvds_1_ldb_ch1: endpoint@1 {
-+				status = "okay";
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts b/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
-index bf88f189c6fe..6389c32eb910 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp-mek.dts
-@@ -16,11 +16,35 @@ chosen {
- 		stdout-path = &lpuart0;
- 	};
- 
-+	backlight_lvds1: backlight-lvds1 {
-+		compatible = "pwm-backlight";
-+		pwms = <&mipi_lvds_1_pwm 0 100000 0>;
-+		brightness-levels = <0 100>;
-+		num-interpolated-steps = <100>;
-+		default-brightness-level = <100>;
-+		power-supply = <&reg_vcc_12v0>;
-+		status = "disabled";
-+	};
-+
- 	memory@80000000 {
- 		device_type = "memory";
- 		reg = <0x00000000 0x80000000 0 0x40000000>;
- 	};
- 
-+	reg_vcc_12v0: regulator-vcc-12v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_12V0";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+	};
-+
-+	reg_vcc_per_3v3: regulator-vcc-per-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC_PER_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+
- 	reg_usdhc2_vmmc: usdhc2-vmmc {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SD1_SPWR";
-@@ -497,6 +521,12 @@ IMX8QXP_FLEXCAN2_RX_ADMA_UART3_RX       0x06000020
- 		>;
- 	};
- 
-+	pinctrl_pwm_mipi_lvds1: mipilvds1pwmgrp {
-+		fsl,pins = <
-+			IMX8QXP_MIPI_DSI1_GPIO0_00_MIPI_DSI1_PWM0_OUT		0x00000020
-+		>;
-+	};
-+
- 	pinctrl_typec: typecgrp {
- 		fsl,pins = <
- 			IMX8QXP_SPI2_SCK_LSIO_GPIO1_IO03                        0x06000021
+Ben Shelton (1):
+  ice: Add MDD logging via devlink health
+
+Przemek Kitszel (5):
+  checkpatch: don't complain on _Generic() use
+  devlink: add devlink_fmsg_put() macro
+  ice: add Tx hang devlink health reporter
+  ice: print ethtool stats as part of Tx hang devlink health reporter
+  ice: devlink health: dump also skb on Tx hang
+
+ drivers/net/ethernet/intel/ice/Makefile       |   1 +
+ .../intel/ice/devlink/devlink_health.c        | 484 ++++++++++++++++++
+ .../intel/ice/devlink/devlink_health.h        |  45 ++
+ drivers/net/ethernet/intel/ice/ice.h          |   2 +
+ drivers/net/ethernet/intel/ice/ice_ethtool.c  |  10 +-
+ drivers/net/ethernet/intel/ice/ice_ethtool.h  |   2 +
+ .../ethernet/intel/ice/ice_ethtool_common.h   |  19 +
+ drivers/net/ethernet/intel/ice/ice_main.c     |  17 +-
+ include/net/devlink.h                         |  11 +
+ scripts/checkpatch.pl                         |   2 +
+ 10 files changed, 585 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/net/ethernet/intel/ice/devlink/devlink_health.c
+ create mode 100644 drivers/net/ethernet/intel/ice/devlink/devlink_health.h
+ create mode 100644 drivers/net/ethernet/intel/ice/ice_ethtool_common.h
+
 -- 
-2.34.1
+2.38.1
 
 
