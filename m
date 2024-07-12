@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-251009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC1792FFB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45FD792FFBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E74BD1C221E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775601C2165C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7A6172BD6;
-	Fri, 12 Jul 2024 17:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA34172BD2;
+	Fri, 12 Jul 2024 17:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="LzQ4is3I"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gL7zn3ZE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83B21DFE1
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D4917BCD;
+	Fri, 12 Jul 2024 17:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720805100; cv=none; b=L5tihcw+JFvt6R5XW5VmNc6tzmAAw5dHmXKIBP8xw00gFQjHOYu1a2xrho9zwYWj0i9GSPMtk14w+mgUFpXrOd9M4UpT4ysILcfzwpfFW0t/wNSrypYFsyEj2SOMho4443fdWkBrG+uzLI+t0nKqGnjqvG5JR0HcLq6NGXV6i8A=
+	t=1720805119; cv=none; b=mio5+8832O/jR0EujsktV3yWsYs4R77/3kP69AZkUeg2va8wiWsX1fzkhcwcrBzM4aMJKeJhRugeziWPngP9itRnv1o5rOgnI97duqT5WIx7q5TDOMP7qiLJzDYfGLR119vbx/1VdRs0y9aR6tAvfuLjD8ZuFtWwPvfzk6ocYmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720805100; c=relaxed/simple;
-	bh=oItytILQOCwm+LxnV+klJYRd5+wEjT3G4pzPFdDn7vM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a4SAhRL9jWENrl5TXz+YKzlyfO/SGE6El9c+JiRrXExa5iYa5NKmtilWIFodNnnMzzg2kqRg92wcSgbRdldaYw/SbqWxc4NhjdQBZ3mwAzJ6pjy9aa59w//Q45m5MFgf0jW+7n548Nye7CZ/9GBIo0Bbr3COMBmnH9Q6C0zmaa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=LzQ4is3I; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso15536365e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1720805097; x=1721409897; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/kcUOj+B7ix4wFrjmiIqRB4s9K/GptfFcWjVq2YUd68=;
-        b=LzQ4is3IurDoCi3XW0F4F9lk/YERMzt6QzeJ3GPRsPjE2cXMgaFewe2/YPfHkYG7DG
-         GZt2zEhcIIVDxsxZEjWctCQ1VWGjOGh3O0XpdAKLeSoYyR/Amfp8fO9qvFPrxIcoOCJv
-         imjVXsEz26M2lfPQGK540oY+yg0e8Yg18lJx5uNOb8ZJfMqAkjBfO8nHQJ9292vxqASp
-         qIALyw/2DuYB31gv03kx16mq7Alq8iioCJ4Ac3pHChftZdI1w1N9K18HBpYzblwWCT+i
-         i5gjrRf+0vHhmx4KBV9ygTA4L0pgA4eJyNSyl0YM4im0G9g5Ufdobp5djhBVSgUjvwYe
-         xdGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720805097; x=1721409897;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/kcUOj+B7ix4wFrjmiIqRB4s9K/GptfFcWjVq2YUd68=;
-        b=wkZvDxJ+8rEMdsbYzR8OpIl2qZbZfFQxeM+O2AS1BjLURKsLooEPUd0xdj1Xjto8lb
-         wuBK4JOr0pUBE+ellKxiKLSF/Dc5tHcJ701x6CYQCYeRrgP4h4QDOLvIkU0y4Na6WAfw
-         0BrydEC6ra3n51dtk+W3rPs1kEMbGRkQ9SaOiA3gE6cjnhVv9x3uEilJMXN2cKmWTVr7
-         Gw4puMZzXlYzzGrqKXIGLnumB6VHEm8Um3VKiGs+00T6rNb2ZbyLpk7lmJynQYcGQ8xc
-         6vG3X+HXYYu941d4n2kX2a0clmsvtBXRQak8tutuSWuGZGHmN6pcNLCjnqYTSpR+ZIJY
-         DiOA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9EOItVAG4CIPzZbiAvhaFLthxjuhI0VSLgrjgZh7gQJExLHYDnaQwToMVBnWfklakPWFaCxHFtdoSxAXOZ04/Srw6B1n1V83yp6Eb
-X-Gm-Message-State: AOJu0YyXWZOYWJyQ73GQfleEst3QSGHYtlbw7T9Pn2YQzoiBEgQhqPX2
-	0lxKy0BADORtjr5y7cRSGZG2vZ+ybIb1j1IR8g1ALq9xC0JsvJy2TB1uYKL7sFw=
-X-Google-Smtp-Source: AGHT+IEbwv2aqYJrQ4eYr+eTCvp2ZVYaXErHbWTEnoJWSTMpnS3FoLzus6WA+pYLiP74DOnPbffshw==
-X-Received: by 2002:a05:600c:1505:b0:427:98b4:624b with SMTP id 5b1f17b1804b1-42798b4628bmr39930825e9.24.1720805097322;
-        Fri, 12 Jul 2024 10:24:57 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367fba1b15esm4218403f8f.22.2024.07.12.10.24.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 10:24:56 -0700 (PDT)
-Message-ID: <3ad435b0-c110-4254-9071-b2397cdc7f9e@tuxon.dev>
-Date: Fri, 12 Jul 2024 20:24:55 +0300
+	s=arc-20240116; t=1720805119; c=relaxed/simple;
+	bh=EHHm0Sx1Rf/GXUncn/Q9g3D2TSgJHw2pODcLQHE2toE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CcI2z5o1kgrmfWjM9AZ6RllljB960p45VKjr8EJEbZ1/eHSHakDIQzIYz+R2Hh44RVNNUraz+qmao9aNh3l07vY5RapDBV15NmDhP4V20VdMG0XlZZY96JO8U5CRZsGp2o3BEoMYrDNpc5cWYkeZFvkXQO9J2qJERJhAjkMTJPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gL7zn3ZE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57990C4AF0B;
+	Fri, 12 Jul 2024 17:25:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720805119;
+	bh=EHHm0Sx1Rf/GXUncn/Q9g3D2TSgJHw2pODcLQHE2toE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gL7zn3ZElLG62Hhp169bHN0LxJlvNV4m39PQD46rXeCanhuNsxPeyjIOegbOPDH9S
+	 8rjuPlpQ8rCXw52FQb90MVrgYDQ4HC/gU9vvpjXGSBhaZvfPnzP/9O+09rDVLL5Pia
+	 woFrYOaU1pR7mK9jMYyVSdVNDjnsSDmRDD3bzWeNuJLizWvqMiBcXVEXOBlw1wKu9M
+	 Blw39eLnRKOHpInWyX4S86dOxL7r0eIsh6UX32CCUzDuzKUlOlzm7I9X6+wZckQsv+
+	 LeTP4RpEA+fOR/T3AJ3oS4emRHlGBFxxWf8VM30RQ05Q2QkoVVLhEO6i4Ku14OyiLM
+	 EnYw/az9duLWw==
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d92563bea4so108488b6e.3;
+        Fri, 12 Jul 2024 10:25:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUho2e2Tqyitfd9L4/9IH5HBSkQW+9WZp+pSF4DDc3ehLuMittbAjZOIcz63PjlGjyGkVAiQT+ZkYIskj2NYyu46L9s7fYP+kMnM9OzIxPP7hiKnGwtKlh+7Snlb2lxmdUGzoCYGq2XIA==
+X-Gm-Message-State: AOJu0YwfHOVxE24VgwxAZKcaObCS6EFEWYk6dxq5NhZRb/3OiuRcHsks
+	Z2dpMZvtXL1eumJ+OSr/iqBxL7nXvKRpqJMj+libsLNnDl06vRtMFSW62jziIpSmwDGQQSbbh6h
+	6T1Uu8gPRPqOlwEB27u5gyqT6ALQ=
+X-Google-Smtp-Source: AGHT+IFDYkb+iK07P6LlWHxtrvE9/weXybYbirPlqOe6CMZK+cRqSK3AHUS+VIgORVfPw5lvByKCGnue0BqrIxS46cQ=
+X-Received: by 2002:a05:6871:582c:b0:25e:b7e1:d20d with SMTP id
+ 586e51a60fabf-2603a351666mr5953094fac.0.1720805118471; Fri, 12 Jul 2024
+ 10:25:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/9] watchdog: rzg2l_wdt: Add support for RZ/G3S
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: wim@linux-watchdog.org, linux@roeck-us.net, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
- geert+renesas@glider.be, magnus.damm@gmail.com, biju.das.jz@bp.renesas.com,
- linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- claudiu.beznea.uj@bp.renesas.com
-References: <20240531065723.1085423-1-claudiu.beznea.uj@bp.renesas.com>
- <7f99cb63-0c6b-460e-934b-4e7e8d84bb3a@tuxon.dev>
- <CAMuHMdXN7xCtjRraTu=3JS6x8GCo7iuS40PVTN_DPvhA-AMqfw@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdXN7xCtjRraTu=3JS6x8GCo7iuS40PVTN_DPvhA-AMqfw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240710-fix-modpost-warning-default_dram_nodes-v1-1-8961453cc82d@kernel.org>
+ <87jzhsa05p.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAJZ5v0gHHkFnJEf2CQ5Rmz9+_7u1EqBPiycuFL1huPJf9Pvc6Q@mail.gmail.com>
+ <23ab3394-8862-4da5-97ee-1355d9a21e40@intel.com>
+In-Reply-To: <23ab3394-8862-4da5-97ee-1355d9a21e40@intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 12 Jul 2024 19:25:07 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jyPKoQM6DCqKtXR11ZwBrs64Nd8BApjcFk1Gv7F0YPpg@mail.gmail.com>
+Message-ID: <CAJZ5v0jyPKoQM6DCqKtXR11ZwBrs64Nd8BApjcFk1Gv7F0YPpg@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: HMAT: Mark hmat_set_default_dram_perf() as __init
+To: Dave Jiang <dave.jiang@intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Len Brown <lenb@kernel.org>, Ho-Ren Chuang <horen.chuang@linux.dev>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Geert,
+On Fri, Jul 12, 2024 at 6:59=E2=80=AFPM Dave Jiang <dave.jiang@intel.com> w=
+rote:
+>
+>
+>
+> On 7/12/24 2:40 AM, Rafael J. Wysocki wrote:
+> > On Thu, Jul 11, 2024 at 8:56=E2=80=AFAM Huang, Ying <ying.huang@intel.c=
+om> wrote:
+> >>
+> >> Nathan Chancellor <nathan@kernel.org> writes:
+> >>
+> >>> After commit 4dc70b711dbc ("memory tier: consolidate the initializati=
+on
+> >>> of memory tiers"), there is a modpost warning when
+> >>> hmat_set_default_dram_perf() is not inlined into its callsite, as it
+> >>> appears that default_dram_nodes may be accessed after its memory has
+> >>> been freed.
+> >>>
+> >>>   WARNING: modpost: vmlinux: section mismatch in reference: hmat_set_=
+default_dram_perf+0x18 (section: .text) -> default_dram_nodes (section: .in=
+it.data)
+> >>>
+> >>> The single callsite, hmat_init(), is __init, so this warning is not a
+> >>> problem in reality but it is easily solvable by marking
+> >>> hmat_set_default_dram_perf() as __init, which should have been done w=
+hen
+> >>> this function was added in commit 3718c02dbd4c ("acpi, hmat: calculat=
+e
+> >>> abstract distance with HMAT").
+> >>
+> >> Good catch!  Thanks for your fix!  If it's necessary, feel free to add
+> >>
+> >> Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+> >
+> > Thanks for the patch and the review!
+> >
+> > I'm expecting Dan/Dave to take care of it (or please let me know if
+> > I'm expected to pick it up).
+> >
+> >>> Reported-by: kernel test robot <lkp@intel.com>
+> >>> Closes: https://lore.kernel.org/oe-kbuild-all/202406292310.hlRATeZJ-l=
+kp@intel.com/
+> >>> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> >>> ---
+> >>> I left off a fixes tag as I assume this is going to be squashed into =
+the
+> >>> former change mentioned above, as it is still in mm-unstable, but fee=
+l
+> >>> free to add one if the patch is going to be standalone.
+>
+> Should this be picked up by Andrew instead since it's already in mm-unsta=
+ble?
 
-On 12.07.2024 20:10, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, Jul 12, 2024 at 5:39 PM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
->> Can you please let me know if there is anything you would like me to
->> address for this series?
-> 
-> Your series was merged in watchdog/master two days ago, and is part
-> of next-20240711 and later.
-
-Didn't noticed, thanks!
-
-And sorry for the noise.
-
-Claudiu
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+This works too as long as someone picks it up. :-)
 
