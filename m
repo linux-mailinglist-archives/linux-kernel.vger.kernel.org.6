@@ -1,1397 +1,1271 @@
-Return-Path: <linux-kernel+bounces-250569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A64792F92D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:55:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6125A92F933
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98C281F24474
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:55:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D1D1C21B25
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73C4157E62;
-	Fri, 12 Jul 2024 10:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947E315B141;
+	Fri, 12 Jul 2024 10:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQbwxKT9"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Mfsd8FWT"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2055.outbound.protection.outlook.com [40.107.93.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FF5146D7A;
-	Fri, 12 Jul 2024 10:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720781726; cv=none; b=KBJF4FTrT7MOfl30VXDLWXljXSV4fsrNDFk5NcGIEEiNmh+FBGdSaNyivQFsFC8nlVB8mRX40gcgiOQh4WcGPRPdbePrUWzcv39faMaEaZbapMyw1025Omui6iW5vtVxiq9lDxSWeL5qgpya2Kr0BZX+XhxF9jivZUFys5yGh0c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720781726; c=relaxed/simple;
-	bh=kKz6VTsqXwyID2a6ed/Ydl1GkqBGeKoB5ftmQYpwfOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YKvgtLRTLjYJZ4hwXOAywyLduoPUs2zlpNVVf7Zwr01wATRVNrX+D9LOFAmWQTsieP0Yr7F0vv88ZvBp0oUqA0sGRc62DgxJU300CUQ1nNPu5J5VVoNv/necn76fbudZt+ym4hgL5ekiKx+656+mz1Xt4obW5hYIYJQExqXMEt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQbwxKT9; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4f2fd568899so1566281e0c.1;
-        Fri, 12 Jul 2024 03:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720781722; x=1721386522; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Ip7nAkfjdJg0Ep9o2FA4DKelO2WCNh+gTcL/m/EyHY=;
-        b=LQbwxKT9i9eLpvHvXQDRt7WMpb3mDiEvZvFQcYg4sKr3oXPxvsBicBOwN2IM9q/Efx
-         KUDS8iWKhmw4shZK9PG3COlRxviaeLvMpG1+NZdmnPyNPCpQKiU2EQ+VDVcTfIpvps5J
-         Dp7+AS1HPym/knbrOfmny+DgX7z8NWvOoHVE4aTTMCFFHZ9lpo2V4LVhwT4ukE7agDZb
-         ezubu3zejtpfUDFi9TZsXHI0RnFcUTpyvCDt2CzkrNxa6TxtSvDTn4eR6uhr0MnkJJ2Q
-         BVd7pAh0bwuAcpXqg9+X9ZzE0SQH3gHV2eySCKQY2BMo9llYkI9FrdMfipT84YhSEkYU
-         tsnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720781722; x=1721386522;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9Ip7nAkfjdJg0Ep9o2FA4DKelO2WCNh+gTcL/m/EyHY=;
-        b=bS9WJE2eTJoTHPkg4hw39SEo+HeHosS0uiPy60UH6oF4gVbOkAiTnWW40IpekeBFzN
-         FnZJdhUxPnoRZYr793HiDolIxa9VwFrtA/N347VylKLccYjKSk8mxUZvV+RqsMhzpJXJ
-         l6DEE9K8gS7Kc6B/6o1UOfDuNrS2nW8jNWdc8QTrwtyIpkPZU7Zi/RdBaGdrjALLqnPP
-         jnPyYjQe4/I8enO56mbbrpuvBlrVvtMKuy7GAw/eXN8pNrTsajYIsLv3Clpiz05BYuME
-         KhZSaa+7NkIprO7TieEltrVag1mYrX2LDCc2umV7Ir7bWanDXFAy5ry2+Je7Z94e5xoG
-         CF7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXJzqDYOTBy7yKk3ms9W5OV2FjSEKhzBX91sNwzRRArDWuuFtKr+/IybgJlDSq6EzhpuLuWEdE8+QzMZs0bIHoAgJ7rYAp/Yh1Rwd2jZzn6vjPHI+pj/6M8jLNpK+WbwPOwNUPRqvER
-X-Gm-Message-State: AOJu0Ywo/MPJnIDQ31zOOILK+j354Gn/RHcqNct+hIN2YeJ9+PxJcns+
-	QWpXOetn62hRQOrRSJcXRENIdYquxd38+w1Nrs+OXHkczBmDoaJBUhK35beGemiYfFzfxGhsTXr
-	v+YPys/gBlGJtdL6O4A062BGglvE=
-X-Google-Smtp-Source: AGHT+IH3xwgR8LR0GGlPnCCuY+jzTj32O+vdQ3Hph6LINjuaBBqFpj8pRkKpJcNC5/Wjt1ygZFUYycUG0wLquSjYgxU=
-X-Received: by 2002:a05:6122:1e08:b0:4ed:fc4:d502 with SMTP id
- 71dfb90a1353d-4f4924f7366mr1612942e0c.3.1720781720253; Fri, 12 Jul 2024
- 03:55:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F927146D7A;
+	Fri, 12 Jul 2024 10:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720781959; cv=fail; b=BoK9Zf/kYx1Xis/sEpAHWGEoeB67fid6+iXOfFW0ZfzK/S46EkuGc4lJDLfICnjsmnlqCospfhySg3eQ9R2qYe+NHYVlZ87gogIiIW6XMT6H658kwGcxlSbqza3LN8r6mszafC/NstAGJzYF99EQYPe4Hwz+LLcksJllNnNZYBg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720781959; c=relaxed/simple;
+	bh=Oc4e/gUdZ6R1BCcTIOlYm8dIVxBHdM3U7qc90SCGBWk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pDN+5Jzw4Gxjm1T22mgLLLyDCRRYa4CsRoULmu07bmkwWLrtNGUmxxUdHkE0U1O92z4YECHJwjTvo0Wa2zyJpES+TOTUZ0DpM5uIE8C/WX/driv947xT3StdtnsYfN4yfAJAFxJeTiMfOtin+mECTuG4/4PU2OaGM+bqct7Usfg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Mfsd8FWT; arc=fail smtp.client-ip=40.107.93.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Rude1vNoLIpcAJsxVJtHE3a6hThJuIn+1WX9AqE0/A7r8UlMfJfDjQsT9/MaxcdtYTCRenmu9dF1oox1Vjr+fAvbYpBxx49J2GepJYR0xD2licMaVIbio7li9fPL1b9ZO7ql/l0x1JFFAGCU1jM60HSpEkV+ShHcEqrhUGf+itXOTR5Rhwe5PNpHsAaVoPtGw/H0k+ooF90SjyVU0pZ2SHBku5+nhEooKp/34ykPYE66/K1Kp65AiJA96W+bfQ4OQkPivRDe9mghBQESHFE48x0GmlRfpUj8i+iJBjYD1gO7BlzCkn6cS0twJsS9yEX2H7tkQOVAeUIMVT/khcWQCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7cAKARd2OUuffIZw3hmTfLigX3g2glIjUC1Jv1JxgaA=;
+ b=jRIFDS2R6VwTzFyE88XHHS1gLGCO8MMo00584zBT9WhWsCBCNTfkL4BXGIzxJY60bkGEOp2o7RhZ0jg2JNdJUiTqp9I5ed59wtrYnzkZjJtPjsoUBRlRzHwd7MLpoZ4941GHM782ft9K6r/9DXgHKeHdMltEXPRwmcvlzcHrWj2S0jf1wXDk1etsQf1WUaeTIAq4tJkBIdiekm5V1qZhTWja2y4FBzG3sfp9WpNuGYgNUZwY4ERPpbqxAQ0T1RE1/MA5Gk1DeQReJAl9uafL5QjlWq1/ebXcnmp671wfHHn4iblbRDG/txicVLfA92bEQ7STEScBLRBLqZumFaLnCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7cAKARd2OUuffIZw3hmTfLigX3g2glIjUC1Jv1JxgaA=;
+ b=Mfsd8FWTtmj0lAXtPJg9SsDOLOOTY5ewfs7gnpQuKPbOoz1ihQNjPd2bVruYdV5XhalIRei0CmT6q05otL7emHkHcA+ph9sdQiU/B4Lx8r2cCHAd304R34VhIofz3XxCNi0m79Up01TcKsnGcaJijwWsc+jmA4N6DbWpnCcWn8A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by IA0PR12MB7674.namprd12.prod.outlook.com (2603:10b6:208:434::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Fri, 12 Jul
+ 2024 10:59:12 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
+ 10:59:12 +0000
+Message-ID: <9b70db2e-e562-4771-be6b-1fa8df19e356@amd.com>
+Date: Fri, 12 Jul 2024 12:59:06 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dma-buf: heaps: DMA_HEAP_IOCTL_ALLOC_READ_FILE
+ framework
+To: Huan Yang <link@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T.J. Mercier" <tjmercier@google.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240711074221.459589-1-link@vivo.com>
+ <20240711074221.459589-2-link@vivo.com>
+ <5ccbe705-883c-4651-9e66-6b452c414c74@amd.com>
+ <a95dece8-b530-4add-a664-ebab81f8b5d5@vivo.com>
+ <63189ac3-7725-4ad7-966a-4ca679a25d12@amd.com>
+ <72cfdad2-ba33-4b90-acfa-7e50b8d9ec51@vivo.com>
+ <ea841c1c-fd7f-4958-add1-d3e96f68a11b@vivo.com>
+ <df605c4a-56a4-44cb-9b7c-d466f9cc80ae@amd.com>
+ <80426e64-d334-4e61-8870-a3da08705f9d@vivo.com>
+ <6d18c552-37e0-4566-8b63-b0095239bad9@amd.com>
+ <54d2d0c0-a620-450d-9d16-6d106ab62414@vivo.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <54d2d0c0-a620-450d-9d16-6d106ab62414@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0265.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e8::8) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620104444.5862-1-victorshihgli@gmail.com>
- <bcd46d4c-fc60-430a-ba9b-4884f4428fea@intel.com> <CAK00qKAYwFV_Bz8n+KxxsEwRrfo-itZpv2+OyZHRfqU-dBWYAA@mail.gmail.com>
- <CAK00qKA5up+8gXxiXs2+NMtAKiqkK=2dDcaWfYztnv2XmqKeyw@mail.gmail.com>
-In-Reply-To: <CAK00qKA5up+8gXxiXs2+NMtAKiqkK=2dDcaWfYztnv2XmqKeyw@mail.gmail.com>
-From: Victor Shih <victorshihgli@gmail.com>
-Date: Fri, 12 Jul 2024 18:55:07 +0800
-Message-ID: <CAK00qKCdmM1RA8ik_XqP54wgUvKd=S8musP0s4bTJFKv-eayBQ@mail.gmail.com>
-Subject: Re: [PATCH V17 00/22] Add support UHS-II for GL9755 and GL9767
-To: ulf.hansson@linaro.org
-Cc: Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
-	HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw, dlunev@chromium.org, 
-	Victor Shih <victor.shih@genesyslogic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|IA0PR12MB7674:EE_
+X-MS-Office365-Filtering-Correlation-Id: d7b2693f-179e-41c1-5d7d-08dca261a9cf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q0ovVktJVjE2QUVqTTI4djZ1WWo5RkZMcnk0OXM2Z3dtUWcyZ0Z1b2xyVkUv?=
+ =?utf-8?B?VnRxM3h3ZS9UeDhhcUVLclpTWm9PZWxJNUsrUlcvbEh1Nkdpc2NlOXh6SUp6?=
+ =?utf-8?B?QXZJcUQyNzZFN2FMMDBaaHZSRnBYTXExdmpNNVdOODhQdkM1cm15Qy9SR1p1?=
+ =?utf-8?B?Y2dzM09pS0JSRDh2ZEsxQ1poN2Z3UjZOemN2QnpFaXFlQzNseGtZNDUrOGNG?=
+ =?utf-8?B?NW1TOUExN3dQZ1Y1aFpjckViUTdlUG5yMEFyU3pYRnNtdldaZ2hENTMwVEdK?=
+ =?utf-8?B?Z3dkdmtBU0V1emxsdDR0M1pBTGhSbFQ2S0RMV3dPMWhhaG5EL2cwSHlCeFJq?=
+ =?utf-8?B?eC9rZUZyNjFnekovLzVENk9rTGpob3JyTFQwVUw0WjhQelZRVUhENlN1RjhX?=
+ =?utf-8?B?QzlkYmZtT3JtMi8xaHF5Z0paU1diMzhQUy92aUJPbGczL2VBdUVEVVZsT2Jt?=
+ =?utf-8?B?VlB3MUtOaUVYU1g5R2VBUWRGSkRSRk9CL1pBZVlOS2JzUkJWMXU0NDJTOWlW?=
+ =?utf-8?B?QTZGb1JnV3hCNXZ1WXNCRHZ4QnplUHBFc0ZDY0Q1M053ZENPZ0lSK25rcnFF?=
+ =?utf-8?B?SWUrbEIwQnp2UVJoYnJBSEQrdDcyYzhZeURBdDc3NjBZVWVZSXhLUm9hekRM?=
+ =?utf-8?B?NHphUWZ2dllFYk1GVmFLZXJYQ2ZXVkZyeFhMYzYzbHVTdGFjY1VCd2NpQWtj?=
+ =?utf-8?B?RFViT0JnT3dZbzQwWGRvemF0enplNytvWUhlM296VFBrQm5ta040T2tVUTFH?=
+ =?utf-8?B?bnpqMllBYWJlVXIyamdXN1VVNnd6UENrZTl5RERjdjJ1WEFNaU5UbUszbDNS?=
+ =?utf-8?B?cERkVCtuRTQyN2RzVHpaR1dyY0FycnIrenpZMTBrYnptdDlUR21XNUkxL3BR?=
+ =?utf-8?B?ZHBaRjQ1eTBxbzN3YXZ4ZU9kcTlISjFhVWtxeUlRWDBjSkVwcFlxVzBCcTBS?=
+ =?utf-8?B?RUJreTNYcFVXNGhQbFV0bzJENzMzV3l2b09NZUYwWU1oemhCZ1R4ckw4b2Uw?=
+ =?utf-8?B?b1NMc05aSnI3VmRUNGQzTEdFSk1lekt2WGJqL1kvcE81cnppdFlKRDJLY1By?=
+ =?utf-8?B?L0dzU1RlbjE1bnNscEdFMzZteklmd0VnVmcrYTZwQjNZeUxRUUpuNmVZWnZB?=
+ =?utf-8?B?WDNmbTdLUll6WFdaSzBLWC9wbHVRYkVYdDZYbS8velRFcU8xOWdyZHMrS3ln?=
+ =?utf-8?B?V08yV3dxa2dpcmJKK2t2eGtlZFVTWjRjTzFoVXgvc0FTYW8xM3AvUW1ua2xu?=
+ =?utf-8?B?R0lMSlBYTVRQSUtGMmZoS25kUTR1ZDhDZW8xNmF1OFBNUitOYkswS0JnYnU0?=
+ =?utf-8?B?TkhVeTV1LzBqalFPK3NuVHArUmJDS0ZLZGsxR1lOM3E5TmdLblFpMkxpQzlY?=
+ =?utf-8?B?ekJ0ZDIreVEwbE8wQm5CWUdJbGZqUks4Z1Rsc3ltNjFnanFUV041YjUycWhW?=
+ =?utf-8?B?RGpvTnRGSXJkdXh2NVlrbEFUVzhNOEFoUEIxWGtGMVR3OUw0VmxiNVg1c0JF?=
+ =?utf-8?B?MEE5ZGppSzlrM0RwTkF3OTRaQzJDdnRRQUhQM3ptUll1ZDRQeXlycmZUMDRF?=
+ =?utf-8?B?SWIrSXJ4QnhTY1F0YTV5Q05zeE92NUZ4Qnk0ZU9oK0VDT01tV3FmM2ExOUpl?=
+ =?utf-8?B?SWR0T05BRUxIeUtyOXZsWHc0bURUanFXbFd4Ykg2WXQ3bVorZ3VoT2ZJRmF5?=
+ =?utf-8?B?RWg3NlFJaDFQTVBkM0RzTUpGT3BRRHhkTCtiYnlYV2x6eVVvNVMvajIzRldC?=
+ =?utf-8?B?NmZOWEVOc3cyTkE3WlNRQXcwdDY5TWdQQlN2TGsrSi8vQ1VhcjI3QW9Zdlli?=
+ =?utf-8?B?SGxiWW1zVURMQTkvaGVWQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QWJGbUVXMVR5WVMzazlVaUJ6SGJZTjc5SGJNY2RveWlJSTBSalA4RkdrVk03?=
+ =?utf-8?B?SVBZTWFMQ0hUbVZqZVVWcmZ4eDdnWlhoSHJGYktBazh5Vk1GT2U4V0xNS1BY?=
+ =?utf-8?B?alg3NFVHYkNOd0NPTlZVK0t2dGp4MUhMN2EyRHU5N1RzNFA2c21hWlNPaFc2?=
+ =?utf-8?B?TmxQSjRKZjRZU3VyblkxQW5nK21qVHBOTGlCL1dlcGFKbSszMlg4aWlNOCsw?=
+ =?utf-8?B?Rm5Jcmx3UU1GNHI3aWJhUytVb3ZmSDVyZVFMcFVDNVF5YjgyenFlRDFRYUJJ?=
+ =?utf-8?B?TndQTXNnRXkzQlVEOGhVRzkvMk5ybWo0VW9SN3Z4SVZ0WnZtTjhQdVpYK2c5?=
+ =?utf-8?B?dnUvMlU2Q1lzcFpSZ213L0tXSkNVTjVQOVJQV0NzVUo2UlplY1JLRXZuQWZ4?=
+ =?utf-8?B?b0VGNzhabkhmOXc3Ymhjb2prbHVhWjVoaXI1TEFzVUJCSTZHWkIzUmRYeFpB?=
+ =?utf-8?B?V0kvQ1pqRjc1c2JuZ1l2RjViZEtPUWVEZXFKbnVKa05FcUFjSk1WZEhoV2ho?=
+ =?utf-8?B?SjNxVW9INzZSbEhZeGNNQ1pQbm1DOVNxeERmRDArd2ZTb05rQ2xaWG0wK20r?=
+ =?utf-8?B?QVhHT2JQdUpyaml6MDhWUUYvU3FVcFFlcWQ3UjcvVTRxeC91bHNFM1h1M1Qr?=
+ =?utf-8?B?ZVhhTy93elNGVFRVUzExV1NpOUNKS0ZoR0NjR1ViTUcxNi9McW1sUjJWRmVk?=
+ =?utf-8?B?Rnc3eTE1N2k4cEdieHkxVCtlUGk0akU4M0s0OG9LMDUxdVBtSUQxZ1Z3U2tr?=
+ =?utf-8?B?SDI4R3h4UWVtVWZ0R1FPTUxBd1B3T3lKbGxRRjVxN0hzVmQzL3IvN08xRlZw?=
+ =?utf-8?B?YVFXS0tzL0N2ZDFVdVJlZ3F3TUJTdHZ1YThNWHpETVovQVZ2M0FPRGZVYkh6?=
+ =?utf-8?B?L3ZVb095UGw3VVlSbGRhN0JiYXlTY3NtK291UTBUUmdGTkxRK0x3Wk9QbWw4?=
+ =?utf-8?B?ellCWjJwQnRJT0Y3aHB1bUJsWXVUNWdJS1d0SWRBNy8vZWVhR1JxYURDVUJC?=
+ =?utf-8?B?bGM2dGhxeW9zZ2lEK3F3ZnZrVUZoOVloYzA5cHZBVFFpWlFDQjJFYnJNNmVS?=
+ =?utf-8?B?eWR0R2dKVlYzY1hqV1Frc0c1YWE0bGJ3NTZJQ21mRXZOODFpQ1FUSENaUlFh?=
+ =?utf-8?B?N1FIa04xUFJLd1hEKzNKbVNEay8xN2l2MmZUdGxXQVpNcUJGS0ZzREVjaGNk?=
+ =?utf-8?B?TlpNVTZWZEpncU52bUNUK2xtZ0NVS2JVeEFvOGp6VXVuRGFzY3lDMjJLNk9N?=
+ =?utf-8?B?dGFHVzJmUFpockMvbURmMGwxdTFqOFduZERWTEh0c0tSN2JvTWhwV3B3V20w?=
+ =?utf-8?B?SHI5ZWlxSk5qVmxReXdZenFFRGNjaSsxTTNPV1MwRjI1SW9EZDdLMnRsZXU5?=
+ =?utf-8?B?ZUE4eFVFYmk4NTRDS2c1MDBCb2NrOHpFdmE0b2g4cDBDS0k2dTdwcmlPQmpV?=
+ =?utf-8?B?WE15Q0JsS2xyTHpsUjBtaUdwNG1IWEorWHkxei9Yci9oQzM1bytyRHBkakJC?=
+ =?utf-8?B?RHNhRGJPTENCbHJUSVJvTTJkQ0RqNCsraDNoendnVVd1RVRmK3N4YjNSclQ0?=
+ =?utf-8?B?eU9SZ3JDTU5OY2x2ZnVpNE1uQ0NNYW5PMWE1WjBzK0VFWlBSMTlRSUZiUzk2?=
+ =?utf-8?B?SmtKUnhNb0p6bWsrZ3lkbStvdTg3MGZzS3o2WkFRNFdvdnpodFBITXZWVnIv?=
+ =?utf-8?B?Myt0UEFydXBjVFNEa3VyeDlpQlppOERGcENvWHRYU3kvcmE4eEFCY0dOQXlM?=
+ =?utf-8?B?SXpQUnRrcUQrS1A5STBMZEJCNks0L1ZOWDlrcngyRFZMN2hrNXc5cEZOUHAr?=
+ =?utf-8?B?ZGJLYXBJRlQ0ZWhMQ241VnlOY1JqZW5aVnRPYUMvZ3NwditJcVpHK2FoOGZX?=
+ =?utf-8?B?NzFaUmJiL0pXOFRoYnE2amY3bzNTSWpkN2FvalVCdUIvYU1BK1JyOEEvYmwx?=
+ =?utf-8?B?QkNDSTNLM2dUSWVyeGVudUh6bmJHcU9lV2I1d2JlMitaazI0OWp3ZjlYaFJi?=
+ =?utf-8?B?RklxYlhsSWNUTHd3RXQ2ajVmTnRVcTRjYVBNRU5uUVdXUG9ycDlVaE1OQjY1?=
+ =?utf-8?B?VXZzVFRHb3pxMzJLdzlhWUlIVzkvQWl3c3JtbWZGaUh0bHNLYXQyQmxlTHhQ?=
+ =?utf-8?Q?MJ1rftN+0LstevMpQVxJnA66S?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7b2693f-179e-41c1-5d7d-08dca261a9cf
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 10:59:12.6472
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5RYuJS/ZLTFRiE7q+0OPHTCrT3CvEl7b20qaR0JSsnPQpV3LI6yCVl2/aI2J8Tbl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7674
 
-Hi, Ulf
+Am 12.07.24 um 09:52 schrieb Huan Yang:
+>
+> 在 2024/7/12 15:41, Christian König 写道:
+>> Am 12.07.24 um 09:29 schrieb Huan Yang:
+>>> Hi Christian,
+>>>
+>>> 在 2024/7/12 15:10, Christian König 写道:
+>>>> Am 12.07.24 um 04:14 schrieb Huan Yang:
+>>>>> 在 2024/7/12 9:59, Huan Yang 写道:
+>>>>>> Hi Christian,
+>>>>>>
+>>>>>> 在 2024/7/11 19:39, Christian König 写道:
+>>>>>>> Am 11.07.24 um 11:18 schrieb Huan Yang:
+>>>>>>>> Hi Christian,
+>>>>>>>>
+>>>>>>>> Thanks for your reply.
+>>>>>>>>
+>>>>>>>> 在 2024/7/11 17:00, Christian König 写道:
+>>>>>>>>> Am 11.07.24 um 09:42 schrieb Huan Yang:
+>>>>>>>>>> Some user may need load file into dma-buf, current
+>>>>>>>>>> way is:
+>>>>>>>>>>    1. allocate a dma-buf, get dma-buf fd
+>>>>>>>>>>    2. mmap dma-buf fd into vaddr
+>>>>>>>>>>    3. read(file_fd, vaddr, fsz)
+>>>>>>>>>> This is too heavy if fsz reached to GB.
+>>>>>>>>>
+>>>>>>>>> You need to describe a bit more why that is to heavy. I can 
+>>>>>>>>> only assume you need to save memory bandwidth and avoid the 
+>>>>>>>>> extra copy with the CPU.
+>>>>>>>>
+>>>>>>>> Sorry for the oversimplified explanation. But, yes, you're 
+>>>>>>>> right, we want to avoid this.
+>>>>>>>>
+>>>>>>>> As we are dealing with embedded devices, the available memory 
+>>>>>>>> and computing power for users are usually limited.(The maximum 
+>>>>>>>> available memory is currently
+>>>>>>>>
+>>>>>>>> 24GB, typically ranging from 8-12GB. )
+>>>>>>>>
+>>>>>>>> Also, the CPU computing power is also usually in short supply, 
+>>>>>>>> due to limited battery capacity and limited heat dissipation 
+>>>>>>>> capabilities.
+>>>>>>>>
+>>>>>>>> So, we hope to avoid ineffective paths as much as possible.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> This patch implement a feature called 
+>>>>>>>>>> DMA_HEAP_IOCTL_ALLOC_READ_FILE.
+>>>>>>>>>> User need to offer a file_fd which you want to load into 
+>>>>>>>>>> dma-buf, then,
+>>>>>>>>>> it promise if you got a dma-buf fd, it will contains the file 
+>>>>>>>>>> content.
+>>>>>>>>>
+>>>>>>>>> Interesting idea, that has at least more potential than trying 
+>>>>>>>>> to enable direct I/O on mmap()ed DMA-bufs.
+>>>>>>>>>
+>>>>>>>>> The approach with the new IOCTL might not work because it is a 
+>>>>>>>>> very specialized use case.
+>>>>>>>>
+>>>>>>>> Thank you for your advice. maybe the "read file" behavior can 
+>>>>>>>> be attached to an existing allocation?
+>>>>>>>
+>>>>>>> The point is there are already system calls to do something like 
+>>>>>>> that.
+>>>>>>>
+>>>>>>> See copy_file_range() 
+>>>>>>> (https://man7.org/linux/man-pages/man2/copy_file_range.2.html) 
+>>>>>>> and send_file() 
+>>>>>>> (https://man7.org/linux/man-pages/man2/sendfile.2.html).
+>>>>>>
+>>>>>> That's helpfull to learn it, thanks.
+>>>>>>
+>>>>>> In terms of only DMA-BUF supporting direct I/O, 
+>>>>>> copy_file_range/send_file may help to achieve this functionality.
+>>>>>>
+>>>>>> However, my patchset also aims to achieve parallel copying of 
+>>>>>> file contents while allocating the DMA-BUF, which is something 
+>>>>>> that the current set of calls may not be able to accomplish.
+>>>>
+>>>> And exactly that is a no-go. Use the existing IOCTLs and system 
+>>>> calls instead they should have similar performance when done right.
+>>>
+>>> Get it, but In my testing process, even without memory pressure, it 
+>>> takes about 60ms to allocate a 3GB DMA-BUF. When there is 
+>>> significant memory pressure, the allocation time for a 3GB
+>>
+>> Well exactly that doesn't make sense. Even if you read the content of 
+>> the DMA-buf from a file you still need to allocate it first.
+>
+> Yes, need allocate first, but in kernelspace, no need to wait all 
+> memory allocated done and then trigger file load.
 
-Sorry for bothering you again, because I want to submit a new v18
-uhs-ii series patches
-to modify the gl9767 settings, so I want to know your opinions on the
-v17 uhs-ii series patches
-so that I can add it to the new v18 uhs-ii series patches.
-If you already have a closer look at a paragraph in the series, could
-you let me know your opinions first.
+That doesn't really make sense. Allocating a large bunch of memory is 
+more efficient than allocating less multiple times because of cache 
+locality for example.
 
-Thanks, Victor Shih
+You could of course hide latency caused by operations to reduce memory 
+pressure when you have a specific use case, but you don't need to use an 
+in kernel implementation for that.
 
-On Fri, Jul 5, 2024 at 6:53=E2=80=AFPM Victor Shih <victorshihgli@gmail.com=
-> wrote:
+Question is do you have clear on allocation or clear on free enabled?
+
+> This patchset use `batch` to done(default 128MB), ever 128MB 
+> allocated, vmap and get vaddr, then trigger this vaddr load file's 
+> target pos content.
+
+Again that sounds really not ideal to me. Creating the vmap alone is 
+complete unnecessary overhead.
+
+>> So the question is why should reading and allocating it at the same 
+>> time be better in any way?
 >
-> Hi, Ulf
+> Memory pressure will trigger reclaim, it must to wait.(ms) Asume I 
+> already allocated 512MB(need 3G) without enter slowpath,
 >
-> Excuse me, please help review this series of patches.
-> If you already have a closer look at a paragraph in the series,
-> could you let me know your comments first, let me check it first.
+> Even I need to enter slowpath to allocated remain memory, the already 
+> allocated memory is using load file content.(Save time compare to 
+> allocated done and read)
 >
-> I look forward to your reply.
+> The time difference between them can be expressed by the formula:
 >
-> Thanks, Victor Shih
+> 1. Allocate dmabuf time + file load time -- for original
 >
-> On Fri, Jul 5, 2024 at 6:25=E2=80=AFPM Victor Shih <victorshihgli@gmail.c=
-om> wrote:
-> >
-> > On Sat, Jun 29, 2024 at 1:17=E2=80=AFAM Adrian Hunter <adrian.hunter@in=
-tel.com> wrote:
-> > >
-> > > On 20/06/24 13:44, Victor Shih wrote:
-> > > > From: Victor Shih <victor.shih@genesyslogic.com.tw>
-> > > >
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 and GL9767
-> > > > UHS-II compatibility.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p
-> > > >   Sequence[2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence
-> > > >   [2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude
-> > > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-=
-II
-> > > >   Setting Register Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy
-> > > >   SD compatibility and preserve Legacy SD infrastructures (Section =
-7.1.1
-> > > >   Packet Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#7:  for core
-> > > > patch#8-#20: for sdhci
-> > > > patch#21:    for GL9755
-> > > > patch#22:    for GL9767
-> > > >
-> > > > Changes in v17 (June. 20, 2024)
-> > > > * Rebase on latest mmc/next.
-> > > > * Drop patch#8 of uhs2 patches series v16.
-> > > > * Patch#11: Move the sdhci_uhs2_reset_cmd_data() to the other patch
-> > > >             it was used for the first time.
-> > > > * Patch#12: Export sdhci_uhs2_set_power() function.
-> > > > * Patch#16: Add new parameter to __sdhci_finish_data_common().
-> > > > * Patch#17: Add sdhci_uhs2_reset_cmd_data() and sdhci_uhs2_needs_re=
-set() to
-> > > >             resolve the data error or cmd error.
-> > > > * Patch#21: Rname gl9755_overcurrent_event_enable() to
-> > > >             sdhci_gli_overcurrent_event_enable().
-> > > > * Patch#22: Use mmc_card_uhs2() to simplify the code in the
-> > > >             sdhci_gl9767_reset().
-> > > >             Use mmc_card_uhs2() to simplify the code in the
-> > > >             sdhci_gl9767_set_power().
-> > > >             Add sdhci_gli_overcurrent_event_enable() to
-> > > >             sdhci_gl9767_set_power().
-> > >
-> > > The changes in V17 look fine.
-> > >
-> > > I have no further comments for SDHCI at this stage.
-> > >
-> > > AFAICT because SD-TRAN is used, CMD12 is OK to abort
-> > > data transfers if necessary.
-> > >
-> > > Can you confirm that the current patchset is working
-> > > on your platform?
-> >
-> > Hi, Adrian
-> >
-> > Yes, please refer to the test data below.
-> >
-> > Tests
-> > =3D=3D=3D=3D=3D
-> > Ran 'dd' command to evaluate the performance:
-> > (SanDisk UHS-II card on GL9755 controller)
-> >                              Read    Write
-> > UHS-II disabled (UHS-I): 84.8MB/s 50.0MB/s
-> > UHS-II enabled         :  199MB/s 76.9MB/s
-> >
-> > (SanDisk UHS-II card on GL9767 controller)
-> >                              Read    Write
-> > UHS-II disabled (UHS-I): 84.6MB/s 49.6MB/s
-> > UHS-II enabled         :  155MB/s 67.4MB/s
-> >
-> > Thanks, Victor Shih
-> >
-> > >
-> > > In other respects you probably need to get some feedback
-> > > from Ulf.
-> > >
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2024052211=
-0909.10060-1-victorshihgli@gmail.com/
-> > > >
-> > > > ----------------- original cover letter from v16 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 and GL9767
-> > > > UHS-II compatibility.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p
-> > > >   Sequence[2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence
-> > > >   [2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude
-> > > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-=
-II
-> > > >   Setting Register Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy
-> > > >   SD compatibility and preserve Legacy SD infrastructures (Section =
-7.1.1
-> > > >   Packet Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#8:  for core
-> > > > patch#9-#21: for sdhci
-> > > > patch#22:    for GL9755
-> > > > patch#23:    for GL9767
-> > > >
-> > > > Changes in v16 (May. 22, 2024)
-> > > > * rebased to the linux-kernel-v6.9.0-rc2 in Ulf Hansson next branch=
-.
-> > > > * according to the comments provided by Adrian Hunter to modify the
-> > > >   patches base on the [V14 00/21] Add support UHS-II for GL9755.
-> > > > * Patch#8: Separate the Error Recovery mechanism from patch#7 to pa=
-tch#8.
-> > > > * Patch#16: Remove irrelevant definition in the sdhci_calc_timeout_=
-uhs2().
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2024012306=
-2827.8525-1-victorshihgli@gmail.com/
-> > > >
-> > > > ----------------- original cover letter from v15 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 and GL9767
-> > > > UHS-II compatibility.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p
-> > > >   Sequence[2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence
-> > > >   [2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude
-> > > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-=
-II
-> > > >   Setting Register Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy
-> > > >   SD compatibility and preserve Legacy SD infrastructures (Section =
-7.1.1
-> > > >   Packet Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#7:  for core
-> > > > patch#8-#20: for sdhci
-> > > > patch#21:    for GL9755
-> > > > patch#22:    for GL9767
-> > > >
-> > > > Changes in v15 (April. 22, 2024)
-> > > > * rebased to the linux-kernel-v6.9.0-rc2 in Ulf Hansson next branch=
-.
-> > > > * according to the comments provided by Adrian Hunter to modify the
-> > > >   patches base on the [V14 00/21] Add support UHS-II for GL9755.
-> > > > * Patch#07: Move struct uhs2_command uhs2_cmd to struct mmc_request=
- and
-> > > >             modify whatever other changers to make it work.
-> > > >             Refer the SD Host Controller Standard Specification
-> > > >             Section 3.10 to add Error Recovery mechanism to recover
-> > > >             the command error.
-> > > > * Patch#11: Refer the SD Host Controller Standard Specification
-> > > >             Section 3.10 to add reset command data mechanism.
-> > > > * Patch#15: Resolve merge conflicts and reduce unnecessary line bre=
-aks.
-> > > > * Patch#16: Adjust the parameters used in the __sdhci_uhs2_finish_c=
-ommand()
-> > > >             to match changes in the Patch#7.
-> > > > * Patch#21: Adjust gl9755_vendor_init() to the correct function.
-> > > > * Patch#22: Add gl9767 to support uhs2 function.
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2024012306=
-2827.8525-1-victorshihgli@gmail.com/
-> > > >
-> > > > ----------------- original cover letter from v14 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p
-> > > >   Sequence[2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence
-> > > >   [2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude
-> > > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-=
-II
-> > > >   Setting Register Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy
-> > > >   SD compatibility and preserve Legacy SD infrastructures (Section =
-7.1.1
-> > > >   Packet Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#7:  for core
-> > > > patch#8-#20: for sdhci
-> > > > patch#21:    for GL9755
-> > > >
-> > > > Changes in v14 (January. 23, 2024)
-> > > > * rebased to the linux-kernel-v6.7.0-rc4 in Ulf Hansson next branch=
-.
-> > > > * according to the comments provided by Adrian Hunter to modify the
-> > > >   patches base on the [V13 00/21] Add support UHS-II for GL9755.
-> > > > * Patch#03: Move mmc_card_uhs2() to include/linux/mmc/host.h, so th=
-at
-> > > >             mmc_card_uhs2() can be available for host drivers.
-> > > > * Patch#10: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> > > >             sdhci_uhs2_dump_regs().
-> > > > * Patch#11: Since mmc_card_uhs2() is the same as sdhci_uhs2_mode(),=
- so
-> > > >             drop sdhci_uhs2_mode() and use mmc_card_uhs2() instead =
-of
-> > > >             sdhci_uhs2_mode().
-> > > > * Patch#13: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> > > >             sdhci_uhs2_set_timeout().
-> > > > * Patch#14: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> > > >             sdhci_uhs2_set_ios().
-> > > > * Patch#16: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> > > >             sdhci_uhs2_request().
-> > > > * Patch#17: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> > > >             sdhci_uhs2_complete_work(), sdhci_uhs2_irq() and
-> > > >             sdhci_uhs2_thread_irq().
-> > > > * Patch#18: Use mmc_card_uhs2() to stead sdhci_uhs2_mode() in the
-> > > >             __sdhci_uhs2_remove_host().
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2023091509=
-4351.11120-1-victorshihgli@gmail.com/
-> > > >
-> > > > ----------------- original cover letter from v13 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p
-> > > >   Sequence[2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence
-> > > >   [2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude
-> > > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-=
-II
-> > > >   Setting Register Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy
-> > > >   SD compatibility and preserve Legacy SD infrastructures (Section =
-7.1.1
-> > > >   Packet Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#7:  for core
-> > > > patch#8-#20: for sdhci
-> > > > patch#21:    for GL9755
-> > > >
-> > > > Changes in v13 (November. 17, 2023)
-> > > > * rebased to the linux-kernel-v6.7.0-rc1 in Ulf Hansson next branch=
-.
-> > > > * according to the comments provided by Adrian Hunter to modify the
-> > > >   patches base on the [V12 00/23] Add support UHS-II for GL9755.
-> > > > * according to the comments provided by Ulf Hansson to modify the
-> > > >   patches base on the [V12 00/23] Add support UHS-II for GL9755.
-> > > > * Add new patch#6 to re-factoring the code.
-> > > > * Patch#7: Separate __mmc_go_idle() into one patch for re-factorrin=
-g the code.
-> > > >            Move mmc_decode_scr declaration to sd.h.
-> > > >            Ues uhs2_sd_tran to stead MMC_UHS2_SD_TRAN.
-> > > >            Drop unnecessary comment.
-> > > > * Patch#11: Use ios timing to stead MMC_UHS2_SUPPORT for indicate t=
-he UHS2 mode.
-> > > > * Patch#12: Drop use vmmc2.
-> > > >             Modify comment message.
-> > > > * Patch#13: Modify comment message.
-> > > > * Patch#14: Add judgment condition for power mode in the __sdhci_uh=
-s2_set_ios().
-> > > >             Modify comment message.
-> > > > * Patch#15: Merge Patch#15, Patch#16 and Patch#17 of v12 version in=
-to Patch#15 in v13 version.
-> > > >             Use definitions to simplify code.
-> > > >             Modify comment message.
-> > > > * Patch#16: Re-order function to avoid declaration.
-> > > >             Remove unnecessary function.
-> > > > * Patch#17: Re-order function to avoid declaration.
-> > > >             Remove unnecessary definitions.
-> > > > * Patch#18: Re-order function to avoid declaration.
-> > > >             Use vqmmc2 to stead vmmc2.
-> > > > * Patch#21: Ues uhs2_sd_tran to stead MMC_UHS2_SD_TRAN.
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2023091509=
-4351.11120-1-victorshihgli@gmail.com/
-> > > >
-> > > > ----------------- original cover letter from v12 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p
-> > > >   Sequence[2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence
-> > > >   [2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude
-> > > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-=
-II
-> > > >   Setting Register Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy
-> > > >   SD compatibility and preserve Legacy SD infrastructures (Section =
-7.1.1
-> > > >   Packet Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#6:  for core
-> > > > patch#7-#22: for sdhci
-> > > > patch#23:    for GL9755
-> > > >
-> > > > Changes in v12 (September. 15, 2023)
-> > > > * rebased to the linux-kernel-v6.6.0-rc1 in Ulf Hansson next branch=
-.
-> > > > * according to the comments provided by Adrian Hunter to modify the
-> > > >   patches base on the [V11 00/23] Add support UHS-II for GL9755.
-> > > > * according to the comments provided by Ulf Hansson to modify the
-> > > >   patches base on the [V11 00/23] Add support UHS-II for GL9755.
-> > > > * Patch#5: Remove unused max_current_180_vdd2.
-> > > > * Patch#6: Use mmc_op_multi() to check DCMD which supports multi
-> > > >            read/write in mmc_uhs2_prepare_cmd().
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2023090809=
-5330.12075-1-victorshihgli@gmail.com/
-> > > >
-> > > > ----------------- original cover letter from v11 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p
-> > > >   Sequence[2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence
-> > > >   [2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude
-> > > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-=
-II
-> > > >   Setting Register Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy
-> > > >   SD compatibility and preserve Legacy SD infrastructures (Section =
-7.1.1
-> > > >   Packet Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#6:  for core
-> > > > patch#7-#22: for sdhci
-> > > > patch#23:    for GL9755
-> > > >
-> > > > Changes in v11 (September. 08, 2023)
-> > > > * rebased to the linux-kernel-v6.5.0-rc5 in Ulf Hansson next branch=
-.
-> > > > * according to the comments provided by Adrian Hunter to modify the
-> > > >   patches base on the [V10 00/23] Add support UHS-II for GL9755.
-> > > > * Patch#18: Drop the check mmc_card_uhs2_hd_mode(host->mmc)
-> > > >             in sdhci_uhs2_set_transfer_mode().
-> > > > * Patch#20: Remove unused ocr_avail_uhs2.
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2023072110=
-1349.12387-1-victorshihgli@gmail.com/
-> > > >
-> > > > ----------------- original cover letter from v10 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p
-> > > >   Sequence[2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence
-> > > >   [2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude
-> > > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-=
-II
-> > > >   Setting Register Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy
-> > > >   SD compatibility and preserve Legacy SD infrastructures (Section =
-7.1.1
-> > > >   Packet Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#6:  for core
-> > > > patch#7-#22: for sdhci
-> > > > patch#23:    for GL9755
-> > > >
-> > > > Changes in v10 (August. 18, 2023)
-> > > > * rebased to the linux-kernel-v6.5.0-rc5 in Ulf Hansson next branch=
-.
-> > > > * according to the comments provided by Ulf Hansson to modify the
-> > > >   patches base on the [V9 00/23] Add support UHS-II for GL9755.
-> > > > * Patch#2: Drop unnecessary definitions and code.
-> > > > * Patch#3: Modify the commit message.
-> > > > * Patch#4: Modify the commit message.
-> > > > * Patch#5: Drop unnecessary definitions.
-> > > > * Patch#6: Move some definitions of PatchV9[02/23] to PatchV10[06/2=
-3].
-> > > >            Move some definitions of PatchV9[05/23] to PatchV10[06/2=
-3].
-> > > >            Drop do_multi in the mmc_blk_rw_rq_prep().
-> > > >            Use tmode_half_duplex to instead of uhs2_tmode0_flag.
-> > > >            Move entire control of the tmode into mmc_uhs2_prepare_c=
-md().
-> > > > * Patch#11: Move some definitions of PatchV9[05/23] to PatchV10[11/=
-23].
-> > > > * Patch#18: Use tmode_half_duplex to instead of uhs2_tmode0_flag
-> > > >             in sdhci_uhs2_set_transfer_mode().
-> > > > * Patch#20: Move some definitions of PatchV9[05/23] to PatchV10[20/=
-23].
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2023072110=
-1349.12387-1-victorshihgli@gmail.com/
-> > > >
-> > > > ----------------- original cover letter from v9 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p
-> > > >   Sequence[2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence
-> > > >   [2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude
-> > > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-=
-II
-> > > >   Setting Register Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy
-> > > >   SD compatibility and preserve Legacy SD infrastructures (Section =
-7.1.1
-> > > >   Packet Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#6:  for core
-> > > > patch#7-#22: for sdhci
-> > > > patch#23:    for GL9755
-> > > >
-> > > > Changes in v9 (July. 21, 2023)
-> > > > * rebased to the linux-kernel-v6.5.0-rc1 in Ulf Hansson next branch=
-.
-> > > > * according to the comments provided by Adrian Hunter to modify the
-> > > >   patches base on the [V8 00/23] Add support UHS-II for GL9755.
-> > > > * Patch#2: move sd_uhs2_operation definition of PatchV8[05/23]
-> > > >            to PatchV9[02/23] for avoid compilation errors.
-> > > >            move uhs2_control definition of PatchV8[05/23]
-> > > >            to PatchV9[02/23] for avoid compilation errors.
-> > > >            move mmc_host flags definition of PatchV8[05/23]
-> > > >            to PatchV9[02/23] for avoid compilation errors.
-> > > >            move mmc_host flags MMC_UHS2_SUPPORT definition of
-> > > >            PatchV8[05/23] to PatchV9[02/23] for avoid compilation e=
-rrors.
-> > > >            move mmc_host flags MMC_UHS2_SD_TRAN definition of
-> > > >            PatchV8[05/23] to PatchV9[02/23] for avoid compilation e=
-rrors.
-> > > > * Patch#7: Modify the commit message.
-> > > > * Patch#8: Modify the commit message.
-> > > > * Patch#11: Modify annotations in sdhci_get_vdd_value().
-> > > > * Patch#14: Simplity the turning_on_clk in sdhci_set_ios().
-> > > > * Patch#18: Modify the annotations in __sdhci_uhs2_send_command().
-> > > > * Patch#19: Cancel export state of sdhci_set_mrq_done() function.
-> > > > * Patch#23: Rename gl9755_pre_detect_init() to sdhci_gli_pre_detect=
-_init().
-> > > >             Rename gl9755_uhs2_reset_sd_tran() to
-> > > >             sdhci_gli_uhs2_reset_sd_tran().
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2023062110=
-0151.6329-1-victorshihgli@gmail.com/
-> > > >
-> > > > ----------------- original cover letter from v8 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p
-> > > >   Sequence[2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence
-> > > >   [2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude
-> > > >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-=
-II
-> > > >   Setting Register Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy
-> > > >   SD compatibility and preserve Legacy SD infrastructures (Section =
-7.1.1
-> > > >   Packet Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#6:  for core
-> > > > patch#7-#22: for sdhci
-> > > > patch#23:    for GL9755
-> > > >
-> > > > Changes in v8 (June. 21, 2023)
-> > > > * rebased to the linux-kernel-v6.4.0-rc6 in Ulf Hansson next branch=
-.
-> > > > * fix most of checkpatch warnings/errors.
-> > > > * according to the comments provided by Adrian Hunter to modify the
-> > > >   patches base on the [V7 00/23] Add support UHS-II for GL9755.
-> > > > * Patch#6: Add MMC_UHS2_SUPPORT to be cleared in sd_uhs2_detect().
-> > > >            Modify return value in sd_uhs2_attach().
-> > > > * Patch#7: Use tabs instead of spaces.
-> > > > * Patch#8: Modify MODULE_LICENSE from "GPL v2" to "GPL".
-> > > > * Patch#10: Adjust the position of matching brackets.
-> > > > * Patch#11: Adjust the position of matching brackets.
-> > > >             Add the initial value of the pwr in sdhci_uhs2_set_powe=
-r().
-> > > > * Patch#13: Initialization be combined with declaration and realign=
-ed
-> > > >             in sdhci_calc_timeout_uhs2().
-> > > >             Forward declare struct mmc_command in sdhci_uhs2.h.
-> > > > * Patch#14: Add the judgment formula for MMC_TIMING_SPEED_A_HD,
-> > > >             MMC_TIMING_SPEED_B and MMC_TIMING_SPEED_B_HD in
-> > > >             __sdhci_uhs2_set_ios().
-> > > >             Add the switch case for MMC_TIMING_SPEED_A_HD,
-> > > >             MMC_TIMING_SPEED_B and MMC_TIMING_SPEED_B_HD in
-> > > >             sdhci_get_preset_value().
-> > > >             mmc_opt_regulator_set_ocr() to instead of
-> > > >             mmc_regulator_set_ocr() in sdhci_uhs2_set_ios().
-> > > > * Patch#15: usleep_range() to instead of udelay() in
-> > > >             sdhci_uhs2_interface_detect().
-> > > >             read_poll_timeout() to instead of read_poll_timeout_ato=
-mic()
-> > > >             in sdhci_uhs2_interface_detect().
-> > > >             Modify return value in sdhci_uhs2_do_detect_init().
-> > > > * Patch#16: Remove unnecessary include file.
-> > > >             read_poll_timeout() to instead of read_poll_timeout_ato=
-mic()
-> > > >             in sdhci_uhs2_enable_clk().
-> > > >             Put the comment on the end and put the lines in descend=
-ing
-> > > >             line length in sdhci_uhs2_enable_clk().
-> > > >             Modify return value in sdhci_uhs2_enable_clk().
-> > > > * Patch#17: Reorder the definitions and lose the parentheses in
-> > > >             sdhci_uhs2_set_config().
-> > > >             read_poll_timeout() to instead of read_poll_timeout_ato=
-mic()
-> > > >             in sdhci_uhs2_check_dormant().
-> > > > * Patch#18: Adjust the position of matching brackets in
-> > > >             sdhci_uhs2_send_command_retry().
-> > > >             Modify CameCase definition in __sdhci_uhs2_finish_comma=
-nd().
-> > > >             Modify error message in __sdhci_uhs2_finish_command().
-> > > >             sdhci_uhs2_send_command_retry() to instead of
-> > > >             sdhci_uhs2_send_command() in sdhci_uhs2_request().
-> > > >             Use sdhci_uhs2_mode() to simplify code in
-> > > >             sdhci_uhs2_request_atomic().
-> > > >             Add forward declaration for sdhci_send_command().
-> > > > * Patch#19: Forward declare struct mmc_request in sdhci_uhs2.h.
-> > > >             Remove forward declaration of sdhci_send_command().
-> > > >             Use mmc_dev() to simplify code in sdhci_request_done_dm=
-a().
-> > > > * Patch#20: Change return type to void for __sdhci_uhs2_add_host_v4=
-().
-> > > >             Remove unused variables in __sdhci_uhs2_add_host_v4().
-> > > > * Patch#22: Add config select MMC_SDHCI_UHS2 in Kconfig.
-> > > > * Patch#23: Use sdhci_get_vdd_value() to simplify code in
-> > > >             gl9755_set_power().
-> > > >             Use read_poll_timeout_atomic() to simplify code in
-> > > >             sdhci_wait_clock_stable().
-> > > >             Use read_poll_timeout_atomic() to simplify code in
-> > > >             sdhci_gl9755_reset().
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2023033110=
-5546.13607-1-victor.shih@genesyslogic.com.tw/
-> > > >
-> > > > ----------------- original cover letter from v7 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p Sequence
-> > > >   [2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence[2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude Section
-> > > >   3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II Setti=
-ng Register
-> > > >   Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy SD
-> > > >   compatibility and preserve Legacy SD infrastructures (Section 7.1=
-.1 Packet
-> > > >   Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#6:  for core
-> > > > patch#7-#22: for sdhci
-> > > > patch#23:    for GL9755
-> > > >
-> > > > Changes in v7 (Mar. 31, 2023)
-> > > > * rebased to the linux-kernel-v6.3.0-rc3 in Ulf Hansson next branch=
-.
-> > > > * according to the guidance and overall architecture provided
-> > > >   by Ulf Hansson, Ben Chuang and Jason Lai to implement the
-> > > >   UHS-2 Core function based on the patches of the [V4,0/6]
-> > > >   Preparations to support SD UHS-II cards[5].
-> > > > * according to the guidance and comments provided by
-> > > >   Adrian Hunter, Ben Chuang and AKASHI Takahiro to implement
-> > > >   the UHS-2 Host function based on the patches of the
-> > > >   [RFC,v3.1,00/27] Add support UHS-II for GL9755[4].
-> > > > * implement the necessary function to let the UHS-2 Core/Host
-> > > >   work properly.
-> > > > * fix most of checkpatch warnings/errors.
-> > > > * according to the guidance and comments provided by
-> > > >   Adrian Hunter, Ben Chuang to implement the UHS-2
-> > > >   Host function based on the patches of the
-> > > >   [V5,00/26] Add support UHS-II for GL9755[6].
-> > > > * according to the guidance and comments provided by
-> > > >   Ulf Hanssion, Adrian Hunter, Ben Chuang to implement the UHS-2
-> > > >   Host function based on the patches of the
-> > > >   [V6,00/24] Add support UHS-II for GL9755[7].
-> > > > * The uhs2_post_attach_sd() function is no longer needed so drop
-> > > >   the V6 version of the Patch#22.
-> > > > * Modifies the usage of the flags used by the sdhci host for
-> > > >   MMC_UHS2_INITIALIZED.
-> > > > * Patch#1: Drop unnecessary bracket.
-> > > > * Patch#2: Drop sd_uhs2_set_ios function.
-> > > >            Used ->uhs2_control() callback for uhs2_set_ios
-> > > >            in sd_uhs2_power_up().
-> > > >            Used ->uhs2_control() callback for uhs2_set_ios
-> > > >            in sd_uhs2_power_off().
-> > > >            Drop MMC_TIMING_SD_UHS2 in favor of MMC_TIMING_UHS2_SPEE=
-D_A.
-> > > >            Modify sd_uhs2_legacy_init to avoid the
-> > > >            sd_uhs2_reinit cycle issue.
-> > > > * Patch#5: Drop unnecessary definitions.
-> > > > * Patch#6: Drop unnecessary function.
-> > > >            Drop uhs2_state in favor of ios->timing.
-> > > > * Patch#7: Reorder values and positions of definitions.
-> > > > * Patch#9: Used sdhci_uhs2_mode function to simplify.
-> > > > * Patch#11: Drop pwr variable in sdhci_uhs2_set_power function.
-> > > > * Patch#14: Modify some descriptions.
-> > > >             Drop unnecessary function.
-> > > > * Patch#15: Drop using uhs2_reset ops and use sdhci_uhs2_reset func=
-tion
-> > > >             in the sdhci_do_detect_init function.
-> > > > * Patch#17: Drop unnecessary function.
-> > > > * Patch#18: Drop unnecessary whitespace changes.
-> > > >             Cancel the export state of some functions.
-> > > > * Patch#19: Drop unnecessary function.
-> > > >             Used sdhci_uhs2_mode function to simplify.
-> > > >             Modify some descriptions.
-> > > >             Cancel the export state of some functions.
-> > > > * Patch#20: Drop using __sdhci_uhs2_host function and use
-> > > >             __sdhci_add_host function in sdhci_uhs2_add_host functi=
-on.
-> > > >             Cancel the export state of some functions.
-> > > > * Patch#23: Drop using uhs2_post_attach_sd function.
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/ben.chuang/linux-uhs2-gl9755.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2020110602=
-2726.19831-1-takahiro.akashi@linaro.org/
-> > > > [5] https://patchwork.kernel.org/project/linux-mmc/cover/2022041811=
-5833.10738-1-jasonlai.genesyslogic@gmail.com/
-> > > > [6] https://patchwork.kernel.org/project/linux-mmc/cover/2022101911=
-0647.11076-1-victor.shih@genesyslogic.com.tw/
-> > > > [7] https://patchwork.kernel.org/project/linux-mmc/cover/2022121309=
-0047.3805-1-victor.shih@genesyslogic.com.tw/
-> > > >
-> > > > ----------------- original cover letter from v6 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p Sequence
-> > > >   [2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence[2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude Section
-> > > >   3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II Setti=
-ng Register
-> > > >   Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy SD
-> > > >   compatibility and preserve Legacy SD infrastructures (Section 7.1=
-.1 Packet
-> > > >   Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#6:  for core
-> > > > patch#7-#23: for sdhci
-> > > > patch#24:    for GL9755
-> > > >
-> > > > Changes in v6 (Dec. 12, 2022)
-> > > > * rebased to the linux-kernel-v6.1.0-rc8 in Ulf Hansson next branch=
-.
-> > > > * according to the guidance and overall architecture provided
-> > > >   by Ulf Hansson, Ben Chuang and Jason Lai to implement the
-> > > >   UHS-2 Core function based on the patches of the [V4,0/6]
-> > > >   Preparations to support SD UHS-II cards[5].
-> > > > * according to the guidance and comments provided by
-> > > >   Adrian Hunter, Ben Chuang and AKASHI Takahiro to implement
-> > > >   the UHS-2 Host function based on the patches of the
-> > > >   [RFC,v3.1,00/27] Add support UHS-II for GL9755[4].
-> > > > * implement the necessary function to let the UHS-2 Core/Host
-> > > >   work properly.
-> > > > * fix most of checkpatch warnings/errors.
-> > > > * according to the guidance and comments provided by
-> > > >   Adrian Hunter, Ben Chuang to implement the UHS-2
-> > > >   Host function based on the patches of the
-> > > >   [V5,00/26] Add support UHS-II for GL9755[6].
-> > > > * The uhs2_post_attach_sd() has implemented in Patch#6 and
-> > > >   Patch#17 so drop the V5 version of the Patch#23.
-> > > > * Modifies the usage of the flags used by the sdhci host for
-> > > >   MMC_UHS2_INITIALIZED.
-> > > > * Patch#5: Drop unused definitions and functions.
-> > > > * Patch#7: Rename definitions.
-> > > >            Use BIT() GENMASK() in some cases.
-> > > > * Patch#8: Merge V5 version of Patch[7] and Patch[9] into
-> > > >            V6 version of Patch[8].
-> > > > * Patch#9: Drop unnecessary function.
-> > > >            Rename used definitions.
-> > > > * Patch#10: Drop unnecessary function and simplify some code.
-> > > > * Patch#11: Drop unnecessary function.
-> > > >             Add new mmc_opt_regulator_set_ocr function.
-> > > > * Patch#13: Drop unnecessary function.
-> > > >             Use GENMASK() and FIELD_PREP() in some cases.
-> > > > * Patch#14: Drop unnecessary function.
-> > > >             Modify return value in some function.
-> > > >             Use GENMASK() and FIELD_PREP() in some cases.
-> > > > * Patch#15: Drop unnecessary function.
-> > > >             Rename used definitions.
-> > > >             Use GENMASK() and FIELD_GET() in some cases.
-> > > >             Wrap at 100 columns in some functions.
-> > > > * Patch#16: Drop unnecessary function.
-> > > > * Patch#17: Drop unnecessary function.
-> > > >             Drop the unnecessary parameter when call the DBG()
-> > > >             function.
-> > > >             Rename used definitions.
-> > > >             Cancel the export state of some functions.
-> > > >             Use GENMASK() and FIELD_PREP() in some cases.
-> > > > * Patch#18: Drop unnecessary function.
-> > > >             Add uhs2_dev_cmd function to simplify some functions.
-> > > >             Rename used definitions.
-> > > >             Cancel the export state of some functions.
-> > > >             Use GENMASK() and FIELD_PREP() in some cases.
-> > > > * Patch#19: Drop unnecessary function.
-> > > >             Add sdhci_uhs2_mode() in some functions.
-> > > >             Rename used definitions.
-> > > >             Cancel the export state of some functions.
-> > > > * Patch#20: Add new complete_work_fn/thread_irq_fn variables in
-> > > >             struct sdhci_host.
-> > > >             Use complete_work_fn/thread_irq_fn variables in
-> > > >             sdhci_alloc_host()/sdhci_uhs2_add_host().
-> > > >             Rename used definitions.
-> > > > * Patch[24]: Rename used definitions.
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/ben.chuang/linux-uhs2-gl9755.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2020110602=
-2726.19831-1-takahiro.akashi@linaro.org/
-> > > > [5] https://patchwork.kernel.org/project/linux-mmc/cover/2022041811=
-5833.10738-1-jasonlai.genesyslogic@gmail.com/
-> > > > [6] https://patchwork.kernel.org/project/linux-mmc/cover/2022101911=
-0647.11076-1-victor.shih@genesyslogic.com.tw/
-> > > >
-> > > > ----------------- original cover letter from v5 -----------------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p Sequence
-> > > >   [2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence[2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude Section
-> > > >   3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II Setti=
-ng Register
-> > > >   Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy SD
-> > > >   compatibility and preserve Legacy SD infrastructures (Section 7.1=
-.1 Packet
-> > > >   Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#6:  for core
-> > > > patch#7-#25: for sdhci
-> > > > patch#26:    for GL9755
-> > > >
-> > > > Changes in v5 (Oct. 19, 2022)
-> > > > * rebased to the linux-kernel-v6.1-rc1 in Ulf Hansson next branch.
-> > > > * according to the guidance and overall architecture provided
-> > > >   by Ulf Hansson, Ben Chuang and Jason Lai to implement the
-> > > >   UHS-2 Core function based on the patches of the [V4,0/6]
-> > > >   Preparations to support SD UHS-II cards[5].
-> > > > * according to the guidance and comments provided by
-> > > >   Adrian Hunter, Ben Chuang and AKASHI Takahiro to implement
-> > > >   the UHS-2 Host function based on the patches of the
-> > > >   [RFC,v3.1,00/27] Add support UHS-II for GL9755[4].
-> > > > * implement the necessary function to let the UHS-2 Core/Host
-> > > >   work properly.
-> > > > * fix most of checkpatch warnings/errors
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/ben.chuang/linux-uhs2-gl9755.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > > [4] https://patchwork.kernel.org/project/linux-mmc/cover/2020110602=
-2726.19831-1-takahiro.akashi@linaro.org/
-> > > > [5] https://patchwork.kernel.org/project/linux-mmc/cover/2022041811=
-5833.10738-1-jasonlai.genesyslogic@gmail.com/
-> > > >
-> > > > ----------------- original cover letter from v3.1 -----------------
-> > > > This is an interim snapshot of our next version, v4, for enabling
-> > > > UHS-II on MMC/SD.
-> > > >
-> > > > It is focused on 'sdhci' side to address Adrian's comments regardin=
-g
-> > > > "modularising" sdhci-uhs2.c.
-> > > > The whole aim of this version is to get early feedback from Adrian =
-(and
-> > > > others) on this issue. Without any consensus about the code structu=
-re,
-> > > > it would make little sense to go further ahead on sdhci side.
-> > > > (Actually, Adrian has made no comments other than "modularising" so=
- far.)
-> > > >
-> > > > I heavily reworked/refactored sdhci-uhs2.c and re-organised the pat=
-ch
-> > > > set to meet what I believe Adrian expects; no UHS-II related code i=
-n
-> > > > Legacy (UHS-I) code or sdhci.c.
-> > > >
-> > > > Nevertheless, almost of all changes I made are trivial and straight=
-forward
-> > > > in this direction, and I believe that there is no logic changed sin=
-ce v3
-> > > > except sdhci_uhs2_irq(), as ops->irq hook, where we must deal with =
-UHS-II
-> > > > command sequences in addition to UHS-II errors. So I added extra ha=
-ndlings.
-> > > >
-> > > > I admit that there is plenty of room for improvements (for example,
-> > > > handling host->flags), but again the focal point here is how sdhci-=
-uhs2.c
-> > > > should be built as a module.
-> > > >
-> > > > Please review this series (particularly Patch#8-#26 and #27) from t=
-his
-> > > > viewpoint in the first place.
-> > > > (Ben is working on 'host' side but there is no change on 'host' sid=
-e
-> > > > in this submission except a minor tweak.)
-> > > >
-> > > > Thanks,
-> > > > -Takahiro Akashi
-> > > >
-> > > > ------ original cover letter from v3 ------
-> > > > Summary
-> > > > =3D=3D=3D=3D=3D=3D=3D
-> > > > These patches[1] support UHS-II and fix GL9755 UHS-II compatibility=
-.
-> > > >
-> > > > About UHS-II, roughly deal with the following three parts:
-> > > > 1) A UHS-II detection and initialization:
-> > > > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setu=
-p Sequence
-> > > >   [2]).
-> > > > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequ=
-ence[2]).
-> > > > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is inc=
-lude Section
-> > > >   3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II Setti=
-ng Register
-> > > >   Setup Sequence.
-> > > >
-> > > > 2) Send Legacy SD command through SD-TRAN
-> > > > - Encapsulated SD packets are defined in SD-TRAN in order to ensure=
- Legacy SD
-> > > >   compatibility and preserve Legacy SD infrastructures (Section 7.1=
-.1 Packet
-> > > >   Types and Format Overview[3]).
-> > > > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 =
-UHS-II
-> > > >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing=
-[2]).
-> > > >
-> > > > 3) UHS-II Interrupt
-> > > > - Except for UHS-II error interrupts, most interrupts share the ori=
-ginal
-> > > >   interrupt registers.
-> > > >
-> > > > Patch structure
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > patch#1-#7: for core
-> > > > patch#8-#17: for sdhci
-> > > > patch#18-#21: for GL9755
-> > > >
-> > > > Tests
-> > > > =3D=3D=3D=3D=3D
-> > > > Ran 'dd' command to evaluate the performance:
-> > > > (SanDisk UHS-II card on GL9755 controller)
-> > > >                              Read    Write
-> > > > UHS-II disabled (UHS-I): 88.3MB/s 60.7MB/s
-> > > > UHS-II enabled         :  206MB/s   80MB/s
-> > > >
-> > > > TODO
-> > > > =3D=3D=3D=3D
-> > > > - replace some define with BIT macro
-> > > >
-> > > > Reference
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > [1] https://gitlab.com/ben.chuang/linux-uhs2-gl9755.git
-> > > > [2] SD Host Controller Simplified Specification 4.20
-> > > > [3] UHS-II Simplified Addendum 1.02
-> > > >
-> > > > Changes in v3 (Jul. 10, 2020)
-> > > > * rebased to v5.8-rc4
-> > > > * add copyright notice
-> > > > * reorganize the patch set and split some commits into smaller ones
-> > > > * separate uhs-2 headers from others
-> > > > * correct wrong spellings
-> > > > * fix most of checkpatch warnings/errors
-> > > > * remove all k[cz]alloc() from the code
-> > > > * guard sdhci-uhs2 specific code with
-> > > >       'if (IS_ENABLED(CONFIG_MMC_SDHCI_UHS2))'
-> > > > * make sdhci-uhs2.c as a module
-> > > > * trivial changes, including
-> > > >   - rename back sdhci-core.c to sdhci.c
-> > > >   - allow vendor code to disable uhs2 if v4_mode =3D=3D 0
-> > > >       in __sdhci_add_host()
-> > > >   - merge uhs2_power_up() into mmc_power_up()
-> > > >   - remove flag_uhs2 from mmc_attach_sd()
-> > > >   - add function descriptions to EXPORT'ed functions
-> > > >   - other minor code optimization
-> > > >
-> > > > Changes in v2 (Jan. 9, 2020)
-> > > > * rebased to v5.5-rc5
-> > > >
-> > > > Ben Chuang (1):
-> > > >   mmc: sdhci-uhs2: add pre-detect_init hook
-> > > >
-> > > > Ulf Hansson (4):
-> > > >   mmc: core: Cleanup printing of speed mode at card insertion
-> > > >   mmc: core: Prepare to support SD UHS-II cards
-> > > >   mmc: core: Announce successful insertion of an SD UHS-II card
-> > > >   mmc: core: Extend support for mmc regulators with a vqmmc2
-> > > >
-> > > > Victor Shih (17):
-> > > >   mmc: core: Add definitions for SD UHS-II cards
-> > > >   mmc: core: Add New function to re-factoring the code
-> > > >   mmc: core: Support UHS-II card control and access
-> > > >   mmc: sdhci: add UHS-II related definitions in headers
-> > > >   mmc: sdhci: add UHS-II module and add a kernel configuration
-> > > >   mmc: sdhci-uhs2: dump UHS-II registers
-> > > >   mmc: sdhci-uhs2: add reset function function
-> > > >   mmc: sdhci-uhs2: add set_power() to support vdd2
-> > > >   mmc: sdhci-uhs2: add set_timeout()
-> > > >   mmc: sdhci-uhs2: add set_ios()
-> > > >   mmc: sdhci-uhs2: add uhs2_control() to initialise the interface
-> > > >   mmc: sdhci-uhs2: add request() and others
-> > > >   mmc: sdhci-uhs2: add irq() and others
-> > > >   mmc: sdhci-uhs2: add add_host() and others to set up the driver
-> > > >   mmc: sdhci-pci: add UHS-II support framework
-> > > >   mmc: sdhci-pci-gli: enable UHS-II mode for GL9755
-> > > >   mmc: sdhci-pci-gli: enable UHS-II mode for GL9767
-> > > >
-> > > >  drivers/mmc/core/Makefile         |    2 +-
-> > > >  drivers/mmc/core/bus.c            |   38 +-
-> > > >  drivers/mmc/core/core.c           |   23 +-
-> > > >  drivers/mmc/core/core.h           |    1 +
-> > > >  drivers/mmc/core/mmc_ops.c        |   24 +-
-> > > >  drivers/mmc/core/mmc_ops.h        |    1 +
-> > > >  drivers/mmc/core/regulator.c      |   34 +
-> > > >  drivers/mmc/core/sd.c             |   10 +-
-> > > >  drivers/mmc/core/sd.h             |    5 +
-> > > >  drivers/mmc/core/sd_ops.c         |    9 +
-> > > >  drivers/mmc/core/sd_ops.h         |   13 +
-> > > >  drivers/mmc/core/sd_uhs2.c        | 1326 +++++++++++++++++++++++++=
-++++
-> > > >  drivers/mmc/host/Kconfig          |   10 +
-> > > >  drivers/mmc/host/Makefile         |    1 +
-> > > >  drivers/mmc/host/sdhci-pci-core.c |   16 +-
-> > > >  drivers/mmc/host/sdhci-pci-gli.c  |  382 ++++++++-
-> > > >  drivers/mmc/host/sdhci-pci.h      |    3 +
-> > > >  drivers/mmc/host/sdhci-uhs2.c     | 1272 +++++++++++++++++++++++++=
-++
-> > > >  drivers/mmc/host/sdhci-uhs2.h     |  190 +++++
-> > > >  drivers/mmc/host/sdhci.c          |  281 +++---
-> > > >  drivers/mmc/host/sdhci.h          |   75 +-
-> > > >  include/linux/mmc/card.h          |   36 +
-> > > >  include/linux/mmc/core.h          |   17 +
-> > > >  include/linux/mmc/host.h          |   80 ++
-> > > >  include/linux/mmc/sd_uhs2.h       |  240 ++++++
-> > > >  25 files changed, 3939 insertions(+), 150 deletions(-)
-> > > >  create mode 100644 drivers/mmc/core/sd_uhs2.c
-> > > >  create mode 100644 drivers/mmc/host/sdhci-uhs2.c
-> > > >  create mode 100644 drivers/mmc/host/sdhci-uhs2.h
-> > > >  create mode 100644 include/linux/mmc/sd_uhs2.h
-> > > >
-> > >
+> 2. first prepare batch time + Max(file load time, allocate remain 
+> dma-buf time) + latest batch prepare time -- for new
+>
+>  When the file reaches the gigabyte level, the significant difference 
+> between the two can be clearly observed.
+
+I have strong doubts about that. The method you describe above is 
+actually really inefficient.
+
+First of all you create a memory mapping just to load data, that is 
+superfluous and TLB flushes are usually extremely costly. Both for 
+userspace as well as kernel.
+
+I strongly suggest to try to use copy_file_range() instead. But could be 
+that copy_file_range() doesn't even work right now because of some 
+restrictions, never tried that on a DMA-buf.
+
+When that works as far as I can see what could still be saved on 
+overhead is the following:
+
+1. Clearing of memory on allocation. That could potentially be done with 
+delayed allocation or clear on free instead.
+
+2. CPU copy between the I/O target buffer and the DMA-buf backing pages. 
+In theory it should be possible to avoid that by implementing the 
+copy_file_range() callback, but I'm not 100% sure.
+
+Regards,
+Christian.
+
+>
+>>
+>> Regards,
+>> Christian.
+>>
+>>>
+>>>
+>>> DMA-BUF can increase to 300ms-1s. (The above test times can also 
+>>> demonstrate the difference.)
+>>>
+>>> But, talk is cheap, I agree to research use existing way to 
+>>> implements it and give a test.
+>>>
+>>> I'll show this if I done .
+>>>
+>>> Thanks for your suggestions.
+>>>
+>>>>
+>>>> Regards,
+>>>> Christian.
+>>>>
+>>>>>
+>>>>> You can see cover-letter, here are the normal test and this 
+>>>>> IOCTL's compare in memory pressure, even if buffered I/O in this 
+>>>>> ioctl can have 50% improve by  parallel.
+>>>>>
+>>>>> dd a 3GB file for test, 12G RAM phone, UFS4.0, stressapptest 4G 
+>>>>> memory pressure.
+>>>>>
+>>>>> 1. original
+>>>>> ```shel
+>>>>> # create a model file
+>>>>> dd if=/dev/zero of=./model.txt bs=1M count=3072
+>>>>> # drop page cache
+>>>>> echo 3 > /proc/sys/vm/drop_caches
+>>>>> ./dmabuf-heap-file-read mtk_mm-uncached normal
+>>>>>
+>>>>>> result is total cost 13087213847ns
+>>>>>
+>>>>> ```
+>>>>>
+>>>>> 2.DMA_HEAP_IOCTL_ALLOC_AND_READ O_DIRECT
+>>>>> ```shel
+>>>>> # create a model file
+>>>>> dd if=/dev/zero of=./model.txt bs=1M count=3072
+>>>>> # drop page cache
+>>>>> echo 3 > /proc/sys/vm/drop_caches
+>>>>> ./dmabuf-heap-file-read mtk_mm-uncached direct_io
+>>>>>
+>>>>>> result is total cost 2902386846ns
+>>>>>
+>>>>> # use direct_io_check can check the content if is same to file.
+>>>>> ```
+>>>>>
+>>>>> 3. DMA_HEAP_IOCTL_ALLOC_AND_READ BUFFER I/O
+>>>>> ```shel
+>>>>> # create a model file
+>>>>> dd if=/dev/zero of=./model.txt bs=1M count=3072
+>>>>> # drop page cache
+>>>>> echo 3 > /proc/sys/vm/drop_caches
+>>>>> ./dmabuf-heap-file-read mtk_mm-uncached normal_io
+>>>>>
+>>>>>> result is total cost 5735579385ns
+>>>>>
+>>>>> ```
+>>>>>
+>>>>>>
+>>>>>> Perhaps simply returning the DMA-BUF file descriptor and then 
+>>>>>> implementing copy_file_range, while populating the memory and 
+>>>>>> content during the copy process, could achieve this? At present, 
+>>>>>> it seems that it will be quite complex - We need to ensure that 
+>>>>>> only the returned DMA-BUF file descriptor will fail in case of 
+>>>>>> memory not fill, like mmap, vmap, attach, and so on.
+>>>>>>
+>>>>>>>
+>>>>>>> What we probably could do is to internally optimize those.
+>>>>>>>
+>>>>>>>> I am currently creating a new ioctl to remind the user that 
+>>>>>>>> memory is being allocated and read, and I am also unsure
+>>>>>>>>
+>>>>>>>> whether it is appropriate to add additional parameters to the 
+>>>>>>>> existing allocate behavior.
+>>>>>>>>
+>>>>>>>> Please, give me more suggestion. Thanks.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> But IIRC there was a copy_file_range callback in the 
+>>>>>>>>> file_operations structure you could use for that. I'm just not 
+>>>>>>>>> sure when and how that's used with the copy_file_range() 
+>>>>>>>>> system call.
+>>>>>>>>
+>>>>>>>> Sorry, I'm not familiar with this, but I will look into it. 
+>>>>>>>> However, this type of callback function is not currently 
+>>>>>>>> implemented when exporting
+>>>>>>>>
+>>>>>>>> the dma_buf file, which means that I need to implement the 
+>>>>>>>> callback for it?
+>>>>>>>
+>>>>>>> If I'm not completely mistaken the copy_file_range, splice_read 
+>>>>>>> and splice_write callbacks on the struct file_operations 
+>>>>>>> (https://elixir.bootlin.com/linux/v6.10-rc7/source/include/linux/fs.h#L1999).
+>>>>>>>
+>>>>>>> Can be used to implement what you want to do.
+>>>>>> Yes.
+>>>>>>>
+>>>>>>> Regards,
+>>>>>>> Christian.
+>>>>>>>
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Regards,
+>>>>>>>>> Christian.
+>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> Notice, file_fd depends on user how to open this file. So, 
+>>>>>>>>>> both buffer
+>>>>>>>>>> I/O and Direct I/O is supported.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Huan Yang <link@vivo.com>
+>>>>>>>>>> ---
+>>>>>>>>>>   drivers/dma-buf/dma-heap.c    | 525 
+>>>>>>>>>> +++++++++++++++++++++++++++++++++-
+>>>>>>>>>>   include/linux/dma-heap.h      |  57 +++-
+>>>>>>>>>>   include/uapi/linux/dma-heap.h |  32 +++
+>>>>>>>>>>   3 files changed, 611 insertions(+), 3 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/dma-buf/dma-heap.c 
+>>>>>>>>>> b/drivers/dma-buf/dma-heap.c
+>>>>>>>>>> index 2298ca5e112e..abe17281adb8 100644
+>>>>>>>>>> --- a/drivers/dma-buf/dma-heap.c
+>>>>>>>>>> +++ b/drivers/dma-buf/dma-heap.c
+>>>>>>>>>> @@ -15,9 +15,11 @@
+>>>>>>>>>>   #include <linux/list.h>
+>>>>>>>>>>   #include <linux/slab.h>
+>>>>>>>>>>   #include <linux/nospec.h>
+>>>>>>>>>> +#include <linux/highmem.h>
+>>>>>>>>>>   #include <linux/uaccess.h>
+>>>>>>>>>>   #include <linux/syscalls.h>
+>>>>>>>>>>   #include <linux/dma-heap.h>
+>>>>>>>>>> +#include <linux/vmalloc.h>
+>>>>>>>>>>   #include <uapi/linux/dma-heap.h>
+>>>>>>>>>>     #define DEVNAME "dma_heap"
+>>>>>>>>>> @@ -43,12 +45,462 @@ struct dma_heap {
+>>>>>>>>>>       struct cdev heap_cdev;
+>>>>>>>>>>   };
+>>>>>>>>>>   +/**
+>>>>>>>>>> + * struct dma_heap_file - wrap the file, read task for 
+>>>>>>>>>> dma_heap allocate use.
+>>>>>>>>>> + * @file:        file to read from.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @cred:        kthread use, user cred copy to use for the 
+>>>>>>>>>> read.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @max_batch:        maximum batch size to read, if collect 
+>>>>>>>>>> match batch,
+>>>>>>>>>> + *            trigger read, default 128MB, must below file 
+>>>>>>>>>> size.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @fsz:        file size.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @direct:        use direct IO?
+>>>>>>>>>> + */
+>>>>>>>>>> +struct dma_heap_file {
+>>>>>>>>>> +    struct file *file;
+>>>>>>>>>> +    struct cred *cred;
+>>>>>>>>>> +    size_t max_batch;
+>>>>>>>>>> +    size_t fsz;
+>>>>>>>>>> +    bool direct;
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +/**
+>>>>>>>>>> + * struct dma_heap_file_work - represents a dma_heap file 
+>>>>>>>>>> read real work.
+>>>>>>>>>> + * @vaddr:        contigous virtual address alloc by vmap, 
+>>>>>>>>>> file read need.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @start_size:        file read start offset, same to 
+>>>>>>>>>> @dma_heap_file_task->roffset.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @need_size:        file read need size, same to 
+>>>>>>>>>> @dma_heap_file_task->rsize.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @heap_file:        file wrapper.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @list:        child node of @dma_heap_file_control->works.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @refp:        same @dma_heap_file_task->ref, if end of 
+>>>>>>>>>> read, put ref.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @failp:        if any work io failed, set it true, pointp 
+>>>>>>>>>> @dma_heap_file_task->fail.
+>>>>>>>>>> + */
+>>>>>>>>>> +struct dma_heap_file_work {
+>>>>>>>>>> +    void *vaddr;
+>>>>>>>>>> +    ssize_t start_size;
+>>>>>>>>>> +    ssize_t need_size;
+>>>>>>>>>> +    struct dma_heap_file *heap_file;
+>>>>>>>>>> +    struct list_head list;
+>>>>>>>>>> +    atomic_t *refp;
+>>>>>>>>>> +    bool *failp;
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +/**
+>>>>>>>>>> + * struct dma_heap_file_task - represents a dma_heap file 
+>>>>>>>>>> read process
+>>>>>>>>>> + * @ref:        current file work counter, if zero, allocate 
+>>>>>>>>>> and read
+>>>>>>>>>> + *            done.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @roffset:        last read offset, current prepared work' 
+>>>>>>>>>> begin file
+>>>>>>>>>> + *            start offset.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @rsize:        current allocated page size use to read, 
+>>>>>>>>>> if reach rbatch,
+>>>>>>>>>> + *            trigger commit.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @rbatch:        current prepared work's batch, below 
+>>>>>>>>>> @dma_heap_file's
+>>>>>>>>>> + *            batch.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @heap_file:        current dma_heap_file
+>>>>>>>>>> + *
+>>>>>>>>>> + * @parray:        used for vmap, size is @dma_heap_file's 
+>>>>>>>>>> batch's number
+>>>>>>>>>> + *            pages.(this is maximum). Due to single thread 
+>>>>>>>>>> file read,
+>>>>>>>>>> + *            one page array reuse each work prepare is OK.
+>>>>>>>>>> + *            Each index in parray is PAGE_SIZE.(vmap need)
+>>>>>>>>>> + *
+>>>>>>>>>> + * @pindex:        current allocated page filled in 
+>>>>>>>>>> @parray's index.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @fail:        any work failed when file read?
+>>>>>>>>>> + *
+>>>>>>>>>> + * dma_heap_file_task is the production of file read, will 
+>>>>>>>>>> prepare each work
+>>>>>>>>>> + * during allocate dma_buf pages, if match current batch, 
+>>>>>>>>>> then trigger commit
+>>>>>>>>>> + * and prepare next work. After all batch queued, user going 
+>>>>>>>>>> on prepare dma_buf
+>>>>>>>>>> + * and so on, but before return dma_buf fd, need to wait 
+>>>>>>>>>> file read end and
+>>>>>>>>>> + * check read result.
+>>>>>>>>>> + */
+>>>>>>>>>> +struct dma_heap_file_task {
+>>>>>>>>>> +    atomic_t ref;
+>>>>>>>>>> +    size_t roffset;
+>>>>>>>>>> +    size_t rsize;
+>>>>>>>>>> +    size_t rbatch;
+>>>>>>>>>> +    struct dma_heap_file *heap_file;
+>>>>>>>>>> +    struct page **parray;
+>>>>>>>>>> +    unsigned int pindex;
+>>>>>>>>>> +    bool fail;
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +/**
+>>>>>>>>>> + * struct dma_heap_file_control - global control of dma_heap 
+>>>>>>>>>> file read.
+>>>>>>>>>> + * @works:        @dma_heap_file_work's list head.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @lock:        only lock for @works.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @threadwq:        wait queue for @work_thread, if commit 
+>>>>>>>>>> work, @work_thread
+>>>>>>>>>> + *            wakeup and read this work's file contains.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @workwq:        used for main thread wait for file read 
+>>>>>>>>>> end, if allocation
+>>>>>>>>>> + *            end before file read. @dma_heap_file_task ref 
+>>>>>>>>>> effect this.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @work_thread:    file read kthread. the 
+>>>>>>>>>> dma_heap_file_task work's consumer.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @heap_fwork_cachep:    @dma_heap_file_work's cachep, it's 
+>>>>>>>>>> alloc/free frequently.
+>>>>>>>>>> + *
+>>>>>>>>>> + * @nr_work:        global number of how many work committed.
+>>>>>>>>>> + */
+>>>>>>>>>> +struct dma_heap_file_control {
+>>>>>>>>>> +    struct list_head works;
+>>>>>>>>>> +    spinlock_t lock;
+>>>>>>>>>> +    wait_queue_head_t threadwq;
+>>>>>>>>>> +    wait_queue_head_t workwq;
+>>>>>>>>>> +    struct task_struct *work_thread;
+>>>>>>>>>> +    struct kmem_cache *heap_fwork_cachep;
+>>>>>>>>>> +    atomic_t nr_work;
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>> +static struct dma_heap_file_control *heap_fctl;
+>>>>>>>>>>   static LIST_HEAD(heap_list);
+>>>>>>>>>>   static DEFINE_MUTEX(heap_list_lock);
+>>>>>>>>>>   static dev_t dma_heap_devt;
+>>>>>>>>>>   static struct class *dma_heap_class;
+>>>>>>>>>>   static DEFINE_XARRAY_ALLOC(dma_heap_minors);
+>>>>>>>>>>   +/**
+>>>>>>>>>> + * map_pages_to_vaddr - map each scatter page into 
+>>>>>>>>>> contiguous virtual address.
+>>>>>>>>>> + * @heap_ftask:        prepared and need to commit's work.
+>>>>>>>>>> + *
+>>>>>>>>>> + * Cached pages need to trigger file read, this function map 
+>>>>>>>>>> each scatter page
+>>>>>>>>>> + * into contiguous virtual address, so that file read can 
+>>>>>>>>>> easy use.
+>>>>>>>>>> + * Now that we get vaddr page, cached pages can return to 
+>>>>>>>>>> original user, so we
+>>>>>>>>>> + * will not effect dma-buf export even if file read not end.
+>>>>>>>>>> + */
+>>>>>>>>>> +static void *map_pages_to_vaddr(struct dma_heap_file_task 
+>>>>>>>>>> *heap_ftask)
+>>>>>>>>>> +{
+>>>>>>>>>> +    return vmap(heap_ftask->parray, heap_ftask->pindex, VM_MAP,
+>>>>>>>>>> +            PAGE_KERNEL);
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +bool dma_heap_prepare_file_read(struct dma_heap_file_task 
+>>>>>>>>>> *heap_ftask,
+>>>>>>>>>> +                struct page *page)
+>>>>>>>>>> +{
+>>>>>>>>>> +    struct page **array = heap_ftask->parray;
+>>>>>>>>>> +    int index = heap_ftask->pindex;
+>>>>>>>>>> +    int num = compound_nr(page), i;
+>>>>>>>>>> +    unsigned long sz = page_size(page);
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_ftask->rsize += sz;
+>>>>>>>>>> +    for (i = 0; i < num; ++i)
+>>>>>>>>>> +        array[index++] = &page[i];
+>>>>>>>>>> +    heap_ftask->pindex = index;
+>>>>>>>>>> +
+>>>>>>>>>> +    return heap_ftask->rsize >= heap_ftask->rbatch;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static struct dma_heap_file_work *
+>>>>>>>>>> +init_file_work(struct dma_heap_file_task *heap_ftask)
+>>>>>>>>>> +{
+>>>>>>>>>> +    struct dma_heap_file_work *heap_fwork;
+>>>>>>>>>> +    struct dma_heap_file *heap_file = heap_ftask->heap_file;
+>>>>>>>>>> +
+>>>>>>>>>> +    if (READ_ONCE(heap_ftask->fail))
+>>>>>>>>>> +        return NULL;
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_fwork = 
+>>>>>>>>>> kmem_cache_alloc(heap_fctl->heap_fwork_cachep, GFP_KERNEL);
+>>>>>>>>>> +    if (unlikely(!heap_fwork))
+>>>>>>>>>> +        return NULL;
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_fwork->vaddr = map_pages_to_vaddr(heap_ftask);
+>>>>>>>>>> +    if (unlikely(!heap_fwork->vaddr)) {
+>>>>>>>>>> + kmem_cache_free(heap_fctl->heap_fwork_cachep, heap_fwork);
+>>>>>>>>>> +        return NULL;
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_fwork->heap_file = heap_file;
+>>>>>>>>>> +    heap_fwork->start_size = heap_ftask->roffset;
+>>>>>>>>>> +    heap_fwork->need_size = heap_ftask->rsize;
+>>>>>>>>>> +    heap_fwork->refp = &heap_ftask->ref;
+>>>>>>>>>> +    heap_fwork->failp = &heap_ftask->fail;
+>>>>>>>>>> +    atomic_inc(&heap_ftask->ref);
+>>>>>>>>>> +    return heap_fwork;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static void destroy_file_work(struct dma_heap_file_work 
+>>>>>>>>>> *heap_fwork)
+>>>>>>>>>> +{
+>>>>>>>>>> +    vunmap(heap_fwork->vaddr);
+>>>>>>>>>> +    atomic_dec(heap_fwork->refp);
+>>>>>>>>>> +    wake_up(&heap_fctl->workwq);
+>>>>>>>>>> +
+>>>>>>>>>> + kmem_cache_free(heap_fctl->heap_fwork_cachep, heap_fwork);
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +int dma_heap_submit_file_read(struct dma_heap_file_task 
+>>>>>>>>>> *heap_ftask)
+>>>>>>>>>> +{
+>>>>>>>>>> +    struct dma_heap_file_work *heap_fwork = 
+>>>>>>>>>> init_file_work(heap_ftask);
+>>>>>>>>>> +    struct page *last = NULL;
+>>>>>>>>>> +    struct dma_heap_file *heap_file = heap_ftask->heap_file;
+>>>>>>>>>> +    size_t start = heap_ftask->roffset;
+>>>>>>>>>> +    struct file *file = heap_file->file;
+>>>>>>>>>> +    size_t fsz = heap_file->fsz;
+>>>>>>>>>> +
+>>>>>>>>>> +    if (unlikely(!heap_fwork))
+>>>>>>>>>> +        return -ENOMEM;
+>>>>>>>>>> +
+>>>>>>>>>> +    /**
+>>>>>>>>>> +     * If file size is not page aligned, direct io can't 
+>>>>>>>>>> process the tail.
+>>>>>>>>>> +     * So, if reach to tail, remain the last page use buffer 
+>>>>>>>>>> read.
+>>>>>>>>>> +     */
+>>>>>>>>>> +    if (heap_file->direct && start + heap_ftask->rsize > fsz) {
+>>>>>>>>>> +        heap_fwork->need_size -= PAGE_SIZE;
+>>>>>>>>>> +        last = heap_ftask->parray[heap_ftask->pindex - 1];
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>> +    spin_lock(&heap_fctl->lock);
+>>>>>>>>>> +    list_add_tail(&heap_fwork->list, &heap_fctl->works);
+>>>>>>>>>> +    spin_unlock(&heap_fctl->lock);
+>>>>>>>>>> +    atomic_inc(&heap_fctl->nr_work);
+>>>>>>>>>> +
+>>>>>>>>>> +    wake_up(&heap_fctl->threadwq);
+>>>>>>>>>> +
+>>>>>>>>>> +    if (last) {
+>>>>>>>>>> +        char *buf, *pathp;
+>>>>>>>>>> +        ssize_t err;
+>>>>>>>>>> +        void *buffer;
+>>>>>>>>>> +
+>>>>>>>>>> +        buf = kmalloc(PATH_MAX, GFP_KERNEL);
+>>>>>>>>>> +        if (unlikely(!buf))
+>>>>>>>>>> +            return -ENOMEM;
+>>>>>>>>>> +
+>>>>>>>>>> +        start = PAGE_ALIGN_DOWN(fsz);
+>>>>>>>>>> +
+>>>>>>>>>> +        pathp = file_path(file, buf, PATH_MAX);
+>>>>>>>>>> +        if (IS_ERR(pathp)) {
+>>>>>>>>>> +            kfree(buf);
+>>>>>>>>>> +            return PTR_ERR(pathp);
+>>>>>>>>>> +        }
+>>>>>>>>>> +
+>>>>>>>>>> +        buffer = kmap_local_page(last); // use page's kaddr.
+>>>>>>>>>> +        err = kernel_read_file_from_path(pathp, start, &buffer,
+>>>>>>>>>> +                         fsz - start, &fsz,
+>>>>>>>>>> +                         READING_POLICY);
+>>>>>>>>>> +        kunmap_local(buffer);
+>>>>>>>>>> +        kfree(buf);
+>>>>>>>>>> +        if (err < 0) {
+>>>>>>>>>> +            pr_err("failed to use buffer kernel_read_file 
+>>>>>>>>>> %s, err=%ld, [%ld, %ld], f_sz=%ld\n",
+>>>>>>>>>> +                   pathp, err, start, fsz, fsz);
+>>>>>>>>>> +
+>>>>>>>>>> +            return err;
+>>>>>>>>>> +        }
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_ftask->roffset += heap_ftask->rsize;
+>>>>>>>>>> +    heap_ftask->rsize = 0;
+>>>>>>>>>> +    heap_ftask->pindex = 0;
+>>>>>>>>>> +    heap_ftask->rbatch = min_t(size_t,
+>>>>>>>>>> +                   PAGE_ALIGN(fsz) - heap_ftask->roffset,
+>>>>>>>>>> +                   heap_ftask->rbatch);
+>>>>>>>>>> +    return 0;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +bool dma_heap_wait_for_file_read(struct dma_heap_file_task 
+>>>>>>>>>> *heap_ftask)
+>>>>>>>>>> +{
+>>>>>>>>>> +    wait_event_freezable(heap_fctl->workwq,
+>>>>>>>>>> + atomic_read(&heap_ftask->ref) == 0);
+>>>>>>>>>> +    return heap_ftask->fail;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +bool dma_heap_destroy_file_read(struct dma_heap_file_task 
+>>>>>>>>>> *heap_ftask)
+>>>>>>>>>> +{
+>>>>>>>>>> +    bool fail;
+>>>>>>>>>> +
+>>>>>>>>>> +    dma_heap_wait_for_file_read(heap_ftask);
+>>>>>>>>>> +    fail = heap_ftask->fail;
+>>>>>>>>>> +    kvfree(heap_ftask->parray);
+>>>>>>>>>> +    kfree(heap_ftask);
+>>>>>>>>>> +    return fail;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +struct dma_heap_file_task *
+>>>>>>>>>> +dma_heap_declare_file_read(struct dma_heap_file *heap_file)
+>>>>>>>>>> +{
+>>>>>>>>>> +    struct dma_heap_file_task *heap_ftask =
+>>>>>>>>>> +        kzalloc(sizeof(*heap_ftask), GFP_KERNEL);
+>>>>>>>>>> +    if (unlikely(!heap_ftask))
+>>>>>>>>>> +        return NULL;
+>>>>>>>>>> +
+>>>>>>>>>> +    /**
+>>>>>>>>>> +     * Batch is the maximum size which we prepare work will 
+>>>>>>>>>> meet.
+>>>>>>>>>> +     * So, direct alloc this number's page array is OK.
+>>>>>>>>>> +     */
+>>>>>>>>>> +    heap_ftask->parray = kvmalloc_array(heap_file->max_batch 
+>>>>>>>>>> >> PAGE_SHIFT,
+>>>>>>>>>> +                        sizeof(struct page *), GFP_KERNEL);
+>>>>>>>>>> +    if (unlikely(!heap_ftask->parray))
+>>>>>>>>>> +        goto put;
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_ftask->heap_file = heap_file;
+>>>>>>>>>> +    heap_ftask->rbatch = heap_file->max_batch;
+>>>>>>>>>> +    return heap_ftask;
+>>>>>>>>>> +put:
+>>>>>>>>>> +    kfree(heap_ftask);
+>>>>>>>>>> +    return NULL;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static void __work_this_io(struct dma_heap_file_work 
+>>>>>>>>>> *heap_fwork)
+>>>>>>>>>> +{
+>>>>>>>>>> +    struct dma_heap_file *heap_file = heap_fwork->heap_file;
+>>>>>>>>>> +    struct file *file = heap_file->file;
+>>>>>>>>>> +    ssize_t start = heap_fwork->start_size;
+>>>>>>>>>> +    ssize_t size = heap_fwork->need_size;
+>>>>>>>>>> +    void *buffer = heap_fwork->vaddr;
+>>>>>>>>>> +    const struct cred *old_cred;
+>>>>>>>>>> +    ssize_t err;
+>>>>>>>>>> +
+>>>>>>>>>> +    // use real task's cred to read this file.
+>>>>>>>>>> +    old_cred = override_creds(heap_file->cred);
+>>>>>>>>>> +    err = kernel_read_file(file, start, &buffer, size, 
+>>>>>>>>>> &heap_file->fsz,
+>>>>>>>>>> +                   READING_POLICY);
+>>>>>>>>>> +    if (err < 0) {
+>>>>>>>>>> +        pr_err("use kernel_read_file, err=%ld, [%ld, %ld], 
+>>>>>>>>>> f_sz=%ld\n",
+>>>>>>>>>> +               err, start, (start + size), heap_file->fsz);
+>>>>>>>>>> +        WRITE_ONCE(*heap_fwork->failp, true);
+>>>>>>>>>> +    }
+>>>>>>>>>> +    // recovery to my cred.
+>>>>>>>>>> +    revert_creds(old_cred);
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static int dma_heap_file_control_thread(void *data)
+>>>>>>>>>> +{
+>>>>>>>>>> +    struct dma_heap_file_control *heap_fctl =
+>>>>>>>>>> +        (struct dma_heap_file_control *)data;
+>>>>>>>>>> +    struct dma_heap_file_work *worker, *tmp;
+>>>>>>>>>> +    int nr_work;
+>>>>>>>>>> +
+>>>>>>>>>> +    LIST_HEAD(pages);
+>>>>>>>>>> +    LIST_HEAD(workers);
+>>>>>>>>>> +
+>>>>>>>>>> +    while (true) {
+>>>>>>>>>> + wait_event_freezable(heap_fctl->threadwq,
+>>>>>>>>>> + atomic_read(&heap_fctl->nr_work) > 0);
+>>>>>>>>>> +recheck:
+>>>>>>>>>> +        spin_lock(&heap_fctl->lock);
+>>>>>>>>>> + list_splice_init(&heap_fctl->works, &workers);
+>>>>>>>>>> +        spin_unlock(&heap_fctl->lock);
+>>>>>>>>>> +
+>>>>>>>>>> +        if (unlikely(kthread_should_stop())) {
+>>>>>>>>>> +            list_for_each_entry_safe(worker, tmp, &workers, 
+>>>>>>>>>> list) {
+>>>>>>>>>> +                list_del(&worker->list);
+>>>>>>>>>> +                destroy_file_work(worker);
+>>>>>>>>>> +            }
+>>>>>>>>>> +            break;
+>>>>>>>>>> +        }
+>>>>>>>>>> +
+>>>>>>>>>> +        nr_work = 0;
+>>>>>>>>>> +        list_for_each_entry_safe(worker, tmp, &workers, list) {
+>>>>>>>>>> +            ++nr_work;
+>>>>>>>>>> +            list_del(&worker->list);
+>>>>>>>>>> +            __work_this_io(worker);
+>>>>>>>>>> +
+>>>>>>>>>> +            destroy_file_work(worker);
+>>>>>>>>>> +        }
+>>>>>>>>>> +        atomic_sub(nr_work, &heap_fctl->nr_work);
+>>>>>>>>>> +
+>>>>>>>>>> +        if (atomic_read(&heap_fctl->nr_work) > 0)
+>>>>>>>>>> +            goto recheck;
+>>>>>>>>>> +    }
+>>>>>>>>>> +    return 0;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +size_t dma_heap_file_size(struct dma_heap_file *heap_file)
+>>>>>>>>>> +{
+>>>>>>>>>> +    return heap_file->fsz;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static int prepare_dma_heap_file(struct dma_heap_file 
+>>>>>>>>>> *heap_file, int file_fd,
+>>>>>>>>>> +                 size_t batch)
+>>>>>>>>>> +{
+>>>>>>>>>> +    struct file *file;
+>>>>>>>>>> +    size_t fsz;
+>>>>>>>>>> +    int ret;
+>>>>>>>>>> +
+>>>>>>>>>> +    file = fget(file_fd);
+>>>>>>>>>> +    if (!file)
+>>>>>>>>>> +        return -EINVAL;
+>>>>>>>>>> +
+>>>>>>>>>> +    fsz = i_size_read(file_inode(file));
+>>>>>>>>>> +    if (fsz < batch) {
+>>>>>>>>>> +        ret = -EINVAL;
+>>>>>>>>>> +        goto err;
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>> +    /**
+>>>>>>>>>> +     * Selinux block our read, but actually we are reading 
+>>>>>>>>>> the stand-in
+>>>>>>>>>> +     * for this file.
+>>>>>>>>>> +     * So save current's cred and when going to read, 
+>>>>>>>>>> override mine, and
+>>>>>>>>>> +     * end of read, revert.
+>>>>>>>>>> +     */
+>>>>>>>>>> +    heap_file->cred = prepare_kernel_cred(current);
+>>>>>>>>>> +    if (unlikely(!heap_file->cred)) {
+>>>>>>>>>> +        ret = -ENOMEM;
+>>>>>>>>>> +        goto err;
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_file->file = file;
+>>>>>>>>>> +    heap_file->max_batch = batch;
+>>>>>>>>>> +    heap_file->fsz = fsz;
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_file->direct = file->f_flags & O_DIRECT;
+>>>>>>>>>> +
+>>>>>>>>>> +#define DMA_HEAP_SUGGEST_DIRECT_IO_SIZE (1UL << 30)
+>>>>>>>>>> +    if (!heap_file->direct && fsz >= 
+>>>>>>>>>> DMA_HEAP_SUGGEST_DIRECT_IO_SIZE)
+>>>>>>>>>> +        pr_warn("alloc read file better to use O_DIRECT to 
+>>>>>>>>>> read larget file\n");
+>>>>>>>>>> +
+>>>>>>>>>> +    return 0;
+>>>>>>>>>> +
+>>>>>>>>>> +err:
+>>>>>>>>>> +    fput(file);
+>>>>>>>>>> +    return ret;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static void destroy_dma_heap_file(struct dma_heap_file 
+>>>>>>>>>> *heap_file)
+>>>>>>>>>> +{
+>>>>>>>>>> +    fput(heap_file->file);
+>>>>>>>>>> +    put_cred(heap_file->cred);
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>> +static int dma_heap_buffer_alloc_read_file(struct dma_heap 
+>>>>>>>>>> *heap, int file_fd,
+>>>>>>>>>> +                       size_t batch, unsigned int fd_flags,
+>>>>>>>>>> +                       unsigned int heap_flags)
+>>>>>>>>>> +{
+>>>>>>>>>> +    struct dma_buf *dmabuf;
+>>>>>>>>>> +    int fd;
+>>>>>>>>>> +    struct dma_heap_file heap_file;
+>>>>>>>>>> +
+>>>>>>>>>> +    fd = prepare_dma_heap_file(&heap_file, file_fd, batch);
+>>>>>>>>>> +    if (fd)
+>>>>>>>>>> +        goto error_file;
+>>>>>>>>>> +
+>>>>>>>>>> +    dmabuf = heap->ops->allocate_read_file(heap, &heap_file, 
+>>>>>>>>>> fd_flags,
+>>>>>>>>>> +                           heap_flags);
+>>>>>>>>>> +    if (IS_ERR(dmabuf)) {
+>>>>>>>>>> +        fd = PTR_ERR(dmabuf);
+>>>>>>>>>> +        goto error;
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>> +    fd = dma_buf_fd(dmabuf, fd_flags);
+>>>>>>>>>> +    if (fd < 0) {
+>>>>>>>>>> +        dma_buf_put(dmabuf);
+>>>>>>>>>> +        /* just return, as put will call release and that 
+>>>>>>>>>> will free */
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>> +error:
+>>>>>>>>>> +    destroy_dma_heap_file(&heap_file);
+>>>>>>>>>> +error_file:
+>>>>>>>>>> +    return fd;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>>   static int dma_heap_buffer_alloc(struct dma_heap *heap, 
+>>>>>>>>>> size_t len,
+>>>>>>>>>>                    u32 fd_flags,
+>>>>>>>>>>                    u64 heap_flags)
+>>>>>>>>>> @@ -93,6 +545,38 @@ static int dma_heap_open(struct inode 
+>>>>>>>>>> *inode, struct file *file)
+>>>>>>>>>>       return 0;
+>>>>>>>>>>   }
+>>>>>>>>>>   +static long dma_heap_ioctl_allocate_read_file(struct file 
+>>>>>>>>>> *file, void *data)
+>>>>>>>>>> +{
+>>>>>>>>>> +    struct dma_heap_allocation_file_data 
+>>>>>>>>>> *heap_allocation_file = data;
+>>>>>>>>>> +    struct dma_heap *heap = file->private_data;
+>>>>>>>>>> +    int fd;
+>>>>>>>>>> +
+>>>>>>>>>> +    if (heap_allocation_file->fd || 
+>>>>>>>>>> !heap_allocation_file->file_fd)
+>>>>>>>>>> +        return -EINVAL;
+>>>>>>>>>> +
+>>>>>>>>>> +    if (heap_allocation_file->fd_flags & 
+>>>>>>>>>> ~DMA_HEAP_VALID_FD_FLAGS)
+>>>>>>>>>> +        return -EINVAL;
+>>>>>>>>>> +
+>>>>>>>>>> +    if (heap_allocation_file->heap_flags & 
+>>>>>>>>>> ~DMA_HEAP_VALID_HEAP_FLAGS)
+>>>>>>>>>> +        return -EINVAL;
+>>>>>>>>>> +
+>>>>>>>>>> +    if (!heap->ops->allocate_read_file)
+>>>>>>>>>> +        return -EINVAL;
+>>>>>>>>>> +
+>>>>>>>>>> +    fd = dma_heap_buffer_alloc_read_file(
+>>>>>>>>>> +        heap, heap_allocation_file->file_fd,
+>>>>>>>>>> +        heap_allocation_file->batch ?
+>>>>>>>>>> + PAGE_ALIGN(heap_allocation_file->batch) :
+>>>>>>>>>> +            DEFAULT_ADI_BATCH,
+>>>>>>>>>> +        heap_allocation_file->fd_flags,
+>>>>>>>>>> +        heap_allocation_file->heap_flags);
+>>>>>>>>>> +    if (fd < 0)
+>>>>>>>>>> +        return fd;
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_allocation_file->fd = fd;
+>>>>>>>>>> +    return 0;
+>>>>>>>>>> +}
+>>>>>>>>>> +
+>>>>>>>>>>   static long dma_heap_ioctl_allocate(struct file *file, void 
+>>>>>>>>>> *data)
+>>>>>>>>>>   {
+>>>>>>>>>>       struct dma_heap_allocation_data *heap_allocation = data;
+>>>>>>>>>> @@ -121,6 +605,7 @@ static long 
+>>>>>>>>>> dma_heap_ioctl_allocate(struct file *file, void *data)
+>>>>>>>>>>     static unsigned int dma_heap_ioctl_cmds[] = {
+>>>>>>>>>>       DMA_HEAP_IOCTL_ALLOC,
+>>>>>>>>>> +    DMA_HEAP_IOCTL_ALLOC_AND_READ,
+>>>>>>>>>>   };
+>>>>>>>>>>     static long dma_heap_ioctl(struct file *file, unsigned 
+>>>>>>>>>> int ucmd,
+>>>>>>>>>> @@ -170,6 +655,9 @@ static long dma_heap_ioctl(struct file 
+>>>>>>>>>> *file, unsigned int ucmd,
+>>>>>>>>>>       case DMA_HEAP_IOCTL_ALLOC:
+>>>>>>>>>>           ret = dma_heap_ioctl_allocate(file, kdata);
+>>>>>>>>>>           break;
+>>>>>>>>>> +    case DMA_HEAP_IOCTL_ALLOC_AND_READ:
+>>>>>>>>>> +        ret = dma_heap_ioctl_allocate_read_file(file, kdata);
+>>>>>>>>>> +        break;
+>>>>>>>>>>       default:
+>>>>>>>>>>           ret = -ENOTTY;
+>>>>>>>>>>           goto err;
+>>>>>>>>>> @@ -316,11 +804,44 @@ static int dma_heap_init(void)
+>>>>>>>>>>         dma_heap_class = class_create(DEVNAME);
+>>>>>>>>>>       if (IS_ERR(dma_heap_class)) {
+>>>>>>>>>> -        unregister_chrdev_region(dma_heap_devt, 
+>>>>>>>>>> NUM_HEAP_MINORS);
+>>>>>>>>>> -        return PTR_ERR(dma_heap_class);
+>>>>>>>>>> +        ret = PTR_ERR(dma_heap_class);
+>>>>>>>>>> +        goto fail_class;
+>>>>>>>>>>       }
+>>>>>>>>>>       dma_heap_class->devnode = dma_heap_devnode;
+>>>>>>>>>>   +    heap_fctl = kzalloc(sizeof(*heap_fctl), GFP_KERNEL);
+>>>>>>>>>> +    if (unlikely(!heap_fctl)) {
+>>>>>>>>>> +        ret =  -ENOMEM;
+>>>>>>>>>> +        goto fail_alloc;
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>> +    INIT_LIST_HEAD(&heap_fctl->works);
+>>>>>>>>>> + init_waitqueue_head(&heap_fctl->threadwq);
+>>>>>>>>>> + init_waitqueue_head(&heap_fctl->workwq);
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_fctl->work_thread = 
+>>>>>>>>>> kthread_run(dma_heap_file_control_thread,
+>>>>>>>>>> +                         heap_fctl, "heap_fwork_t");
+>>>>>>>>>> +    if (IS_ERR(heap_fctl->work_thread)) {
+>>>>>>>>>> +        ret = -ENOMEM;
+>>>>>>>>>> +        goto fail_thread;
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>> +    heap_fctl->heap_fwork_cachep = 
+>>>>>>>>>> KMEM_CACHE(dma_heap_file_work, 0);
+>>>>>>>>>> +    if (unlikely(!heap_fctl->heap_fwork_cachep)) {
+>>>>>>>>>> +        ret = -ENOMEM;
+>>>>>>>>>> +        goto fail_cache;
+>>>>>>>>>> +    }
+>>>>>>>>>> +
+>>>>>>>>>>       return 0;
+>>>>>>>>>> +
+>>>>>>>>>> +fail_cache:
+>>>>>>>>>> +    kthread_stop(heap_fctl->work_thread);
+>>>>>>>>>> +fail_thread:
+>>>>>>>>>> +    kfree(heap_fctl);
+>>>>>>>>>> +fail_alloc:
+>>>>>>>>>> +    class_destroy(dma_heap_class);
+>>>>>>>>>> +fail_class:
+>>>>>>>>>> +    unregister_chrdev_region(dma_heap_devt, NUM_HEAP_MINORS);
+>>>>>>>>>> +    return ret;
+>>>>>>>>>>   }
+>>>>>>>>>>   subsys_initcall(dma_heap_init);
+>>>>>>>>>> diff --git a/include/linux/dma-heap.h b/include/linux/dma-heap.h
+>>>>>>>>>> index 064bad725061..9c25383f816c 100644
+>>>>>>>>>> --- a/include/linux/dma-heap.h
+>>>>>>>>>> +++ b/include/linux/dma-heap.h
+>>>>>>>>>> @@ -12,12 +12,17 @@
+>>>>>>>>>>   #include <linux/cdev.h>
+>>>>>>>>>>   #include <linux/types.h>
+>>>>>>>>>>   +#define DEFAULT_ADI_BATCH (128 << 20)
+>>>>>>>>>> +
+>>>>>>>>>>   struct dma_heap;
+>>>>>>>>>> +struct dma_heap_file_task;
+>>>>>>>>>> +struct dma_heap_file;
+>>>>>>>>>>     /**
+>>>>>>>>>>    * struct dma_heap_ops - ops to operate on a given heap
+>>>>>>>>>>    * @allocate:        allocate dmabuf and return struct 
+>>>>>>>>>> dma_buf ptr
+>>>>>>>>>> - *
+>>>>>>>>>> + * @allocate_read_file: allocate dmabuf and read file, then 
+>>>>>>>>>> return struct
+>>>>>>>>>> + * dma_buf ptr.
+>>>>>>>>>>    * allocate returns dmabuf on success, ERR_PTR(-errno) on 
+>>>>>>>>>> error.
+>>>>>>>>>>    */
+>>>>>>>>>>   struct dma_heap_ops {
+>>>>>>>>>> @@ -25,6 +30,11 @@ struct dma_heap_ops {
+>>>>>>>>>>                       unsigned long len,
+>>>>>>>>>>                       u32 fd_flags,
+>>>>>>>>>>                       u64 heap_flags);
+>>>>>>>>>> +
+>>>>>>>>>> +    struct dma_buf *(*allocate_read_file)(struct dma_heap 
+>>>>>>>>>> *heap,
+>>>>>>>>>> +                          struct dma_heap_file *heap_file,
+>>>>>>>>>> +                          u32 fd_flags,
+>>>>>>>>>> +                          u64 heap_flags);
+>>>>>>>>>>   };
+>>>>>>>>>>     /**
+>>>>>>>>>> @@ -65,4 +75,49 @@ const char *dma_heap_get_name(struct 
+>>>>>>>>>> dma_heap *heap);
+>>>>>>>>>>    */
+>>>>>>>>>>   struct dma_heap *dma_heap_add(const struct 
+>>>>>>>>>> dma_heap_export_info *exp_info);
+>>>>>>>>>>   +/**
+>>>>>>>>>> + * dma_heap_destroy_file_read - waits for a file read to 
+>>>>>>>>>> complete then destroy it
+>>>>>>>>>> + * Returns: true if the file read failed, false otherwise
+>>>>>>>>>> + */
+>>>>>>>>>> +bool dma_heap_destroy_file_read(struct dma_heap_file_task 
+>>>>>>>>>> *heap_ftask);
+>>>>>>>>>> +
+>>>>>>>>>> +/**
+>>>>>>>>>> + * dma_heap_wait_for_file_read - waits for a file read to 
+>>>>>>>>>> complete
+>>>>>>>>>> + * Returns: true if the file read failed, false otherwise
+>>>>>>>>>> + */
+>>>>>>>>>> +bool dma_heap_wait_for_file_read(struct dma_heap_file_task 
+>>>>>>>>>> *heap_ftask);
+>>>>>>>>>> +
+>>>>>>>>>> +/**
+>>>>>>>>>> + * dma_heap_alloc_file_read - Declare a task to read file 
+>>>>>>>>>> when allocate pages.
+>>>>>>>>>> + * @heap_file:        target file to read
+>>>>>>>>>> + *
+>>>>>>>>>> + * Return NULL if failed, otherwise return a struct pointer.
+>>>>>>>>>> + */
+>>>>>>>>>> +struct dma_heap_file_task *
+>>>>>>>>>> +dma_heap_declare_file_read(struct dma_heap_file *heap_file);
+>>>>>>>>>> +
+>>>>>>>>>> +/**
+>>>>>>>>>> + * dma_heap_prepare_file_read - cache each allocated page 
+>>>>>>>>>> until we meet this batch.
+>>>>>>>>>> + * @heap_ftask:        prepared and need to commit's work.
+>>>>>>>>>> + * @page:        current allocated page. don't care which 
+>>>>>>>>>> order.
+>>>>>>>>>> + *
+>>>>>>>>>> + * Returns true if reach to batch, false so go on prepare.
+>>>>>>>>>> + */
+>>>>>>>>>> +bool dma_heap_prepare_file_read(struct dma_heap_file_task 
+>>>>>>>>>> *heap_ftask,
+>>>>>>>>>> +                struct page *page);
+>>>>>>>>>> +
+>>>>>>>>>> +/**
+>>>>>>>>>> + * dma_heap_commit_file_read -  prepare collect enough 
+>>>>>>>>>> memory, going to trigger IO
+>>>>>>>>>> + * @heap_ftask:            info that current IO needs
+>>>>>>>>>> + *
+>>>>>>>>>> + * This commit will also check if reach to tail read.
+>>>>>>>>>> + * For direct I/O submissions, it is necessary to pay 
+>>>>>>>>>> attention to file reads
+>>>>>>>>>> + * that are not page-aligned. For the unaligned portion of 
+>>>>>>>>>> the read, buffer IO
+>>>>>>>>>> + * needs to be triggered.
+>>>>>>>>>> + * Returns:
+>>>>>>>>>> + *   0 if all right, -errno if something wrong
+>>>>>>>>>> + */
+>>>>>>>>>> +int dma_heap_submit_file_read(struct dma_heap_file_task 
+>>>>>>>>>> *heap_ftask);
+>>>>>>>>>> +size_t dma_heap_file_size(struct dma_heap_file *heap_file);
+>>>>>>>>>> +
+>>>>>>>>>>   #endif /* _DMA_HEAPS_H */
+>>>>>>>>>> diff --git a/include/uapi/linux/dma-heap.h 
+>>>>>>>>>> b/include/uapi/linux/dma-heap.h
+>>>>>>>>>> index a4cf716a49fa..8c20e8b74eed 100644
+>>>>>>>>>> --- a/include/uapi/linux/dma-heap.h
+>>>>>>>>>> +++ b/include/uapi/linux/dma-heap.h
+>>>>>>>>>> @@ -39,6 +39,27 @@ struct dma_heap_allocation_data {
+>>>>>>>>>>       __u64 heap_flags;
+>>>>>>>>>>   };
+>>>>>>>>>>   +/**
+>>>>>>>>>> + * struct dma_heap_allocation_file_data - metadata passed 
+>>>>>>>>>> from userspace for
+>>>>>>>>>> + * allocations and read file
+>>>>>>>>>> + * @fd:            will be populated with a fd which 
+>>>>>>>>>> provides the
+>>>>>>>>>> + *     ��      handle to the allocated dma-buf
+>>>>>>>>>> + * @file_fd:        file descriptor to read from(suggested 
+>>>>>>>>>> to use O_DIRECT open file)
+>>>>>>>>>> + * @batch:        how many memory alloced then file 
+>>>>>>>>>> read(bytes), default 128MB
+>>>>>>>>>> + *            will auto aligned to PAGE_SIZE
+>>>>>>>>>> + * @fd_flags:        file descriptor flags used when allocating
+>>>>>>>>>> + * @heap_flags:        flags passed to heap
+>>>>>>>>>> + *
+>>>>>>>>>> + * Provided by userspace as an argument to the ioctl
+>>>>>>>>>> + */
+>>>>>>>>>> +struct dma_heap_allocation_file_data {
+>>>>>>>>>> +    __u32 fd;
+>>>>>>>>>> +    __u32 file_fd;
+>>>>>>>>>> +    __u32 batch;
+>>>>>>>>>> +    __u32 fd_flags;
+>>>>>>>>>> +    __u64 heap_flags;
+>>>>>>>>>> +};
+>>>>>>>>>> +
+>>>>>>>>>>   #define DMA_HEAP_IOC_MAGIC        'H'
+>>>>>>>>>>     /**
+>>>>>>>>>> @@ -50,4 +71,15 @@ struct dma_heap_allocation_data {
+>>>>>>>>>>   #define DMA_HEAP_IOCTL_ALLOC _IOWR(DMA_HEAP_IOC_MAGIC, 0x0,\
+>>>>>>>>>>                         struct dma_heap_allocation_data)
+>>>>>>>>>>   +/**
+>>>>>>>>>> + * DOC: DMA_HEAP_IOCTL_ALLOC_AND_READ - allocate memory from 
+>>>>>>>>>> pool and both
+>>>>>>>>>> + *                    read file when allocate memory.
+>>>>>>>>>> + *
+>>>>>>>>>> + * Takes a dma_heap_allocation_file_data struct and returns 
+>>>>>>>>>> it with the fd field
+>>>>>>>>>> + * populated with the dmabuf handle of the allocation. When 
+>>>>>>>>>> return, the dma-buf
+>>>>>>>>>> + * content is read from file.
+>>>>>>>>>> + */
+>>>>>>>>>> +#define DMA_HEAP_IOCTL_ALLOC_AND_READ \
+>>>>>>>>>> +    _IOWR(DMA_HEAP_IOC_MAGIC, 0x1, struct 
+>>>>>>>>>> dma_heap_allocation_file_data)
+>>>>>>>>>> +
+>>>>>>>>>>   #endif /* _UAPI_LINUX_DMABUF_POOL_H */
+>>>>>>>>>
+>>>>>>>
+>>>>
+>>
+
 
