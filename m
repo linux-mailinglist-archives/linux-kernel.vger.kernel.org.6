@@ -1,82 +1,53 @@
-Return-Path: <linux-kernel+bounces-250834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E06792FD5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08EF892FD61
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E842D1F24C0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:17:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15261F24AE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A8D171E73;
-	Fri, 12 Jul 2024 15:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FDD173336;
+	Fri, 12 Jul 2024 15:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T6cmDhn5"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctgqHdtA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741BC440C;
-	Fri, 12 Jul 2024 15:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1048440C;
+	Fri, 12 Jul 2024 15:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720797462; cv=none; b=eSlzFwGNHripWmOxbdKQhKGGOcm4L7WbLjLzAiM5HXB4TUvj6lySjlDdzx33C92Vu2K5F4qtyCznkqojdcUetRDPuKzc10b+/iOfUWCfNikpSY94Bj79numhJw/MCgESgzEX2w5LpufJ0RF0z8BG9rfPaviSsKLEcr35eAEUHTY=
+	t=1720797529; cv=none; b=glsl/UDK5qhYGnuwyJ5pi379jupmfa+3tohgiJ6QPTFdVGvBDsAHJcA04u4lmvIXxAx7Z7u9u2MEF62D+7D933bKLEj1zRrBMXkg5GznwfhQOdA4W7pL4FQJQA5cg4gRDzvMl1At7dWMK42x1hblBmsSL9QA+YdRm3TUkVZfkTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720797462; c=relaxed/simple;
-	bh=mnhCRqO2PZx6WI2111F6Qo7KzuZY9QNIjNpFSIP3YRI=;
+	s=arc-20240116; t=1720797529; c=relaxed/simple;
+	bh=M/p6+O1hBUvWmBfOokNka/pO7EbQq2s+zuwR9vSFEv0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=khZPtUpZQhZ+u9dZoWw4CKZnmw6Bj1NAVCWAKRkpv2aw8fcvUAVaZDBYgK6Yxfvbv/XFm9DTYWKw/c1+NINRZbgFXtgbcBaBcFnkZHPTNRAUvQTIhdf7z312u2Bww51Hf8nbq7wGraxL2vTCryXxZtBRnftDQf97bXdVSJtABqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T6cmDhn5; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KgAgHjkNVVrh+oOOmdhTy+ri84P0GulqGbUwPI3o38A=; b=T6cmDhn5T5pbn5Zdf/mstAjnmF
-	CSIAZW7+RPwR1MDsZbEe1KPdJUT3LavA1pcv/gGIf7ECZI5F84vOjm3fv0g9XoO8ikRP58fuPFvF4
-	McYqgOzGqlbslM7LSVltgYI83EF/A42BSmNz9nbVOWXjUUpsx1PQvhvXv9Hi1y/7Apk2YzCy8wLSB
-	QSVunGnsHvUjTbDML3Q4BF859lJmlE9w1pM99ZD0UINfq5bUZGbiVKge2/R1IiZNSo8JStGa91D7L
-	z4A9peWH+71vLrKp2X0v5NfhpF0JSZi5q3ZqD9kMTWIZy0r8w6onTNshVX05YbpBT8c3vibZ6KJLR
-	CvVJzIWw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sSI1c-0000000CbSH-3VHD;
-	Fri, 12 Jul 2024 15:17:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4F97630050D; Fri, 12 Jul 2024 17:17:32 +0200 (CEST)
-Date: Fri, 12 Jul 2024 17:17:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Phil Auld <pauld@redhat.com>, Clark Williams <williams@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [RFC PATCH v3 02/10] irq_work: Split type definition to its own
- header
-Message-ID: <20240712151732.GQ27299@noisy.programming.kicks-ass.net>
-References: <20240711130004.2157737-1-vschneid@redhat.com>
- <20240711130004.2157737-3-vschneid@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e/8rXiGtExp1VjTT1b+7LLWScmuNgQpCTrDRgJiKB1FIqHYkU/rVocgTH/8wmb/cJiKoquVHLGydvuurWWHkueKEOqSrXvc1NxGTOW6YR03iLNq4zObeVj2q/NMKZFSTrOkHLb7HyMqiYQbw/vO/eTjjGHeIrVNtdBACMQy0FzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctgqHdtA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60003C32782;
+	Fri, 12 Jul 2024 15:18:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720797529;
+	bh=M/p6+O1hBUvWmBfOokNka/pO7EbQq2s+zuwR9vSFEv0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ctgqHdtACHhfnQSeLWPfph3tHQNwG0p1SOYjCosiMn38IoB1ZxDFFaL/iBlU8k0ga
+	 aZeLshB03MKios0YWjg0AdphwLnzlDDiqux2+gx+EvaP7cKXQsCw7GPtOfwL96VQUy
+	 GcEZW/uPILOAp+DmOVGv07jNWjz7ckr1KKjmQwzoDFSZtx7xoFlbKh1clt1fMFzM+n
+	 ogbGDOa05svsEQl+T7f6TnczeITR2bfvZXVczlIvNUZifRMNTpwotkG4UweaSCF55S
+	 oE3DBboBU5VP8PRM9r2iFE7h0pREQAL9XNPL7/uis2SpPvq2mhierKP5embuLhsTyx
+	 nP7rm+8sFXLZA==
+Date: Fri, 12 Jul 2024 08:18:48 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: remove unnecessary check
+Message-ID: <20240712151848.GS612460@frogsfrogsfrogs>
+References: <a6c945f8-b07c-4474-a603-ff360b8fb0f4@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,73 +56,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240711130004.2157737-3-vschneid@redhat.com>
+In-Reply-To: <a6c945f8-b07c-4474-a603-ff360b8fb0f4@stanley.mountain>
 
-On Thu, Jul 11, 2024 at 02:59:56PM +0200, Valentin Schneider wrote:
-> A later commit will add a struct irq_work member to struct task_struct, which
-> would require <linux/sched.h> to include the definition of struct
-> irq_work.
+On Fri, Jul 12, 2024 at 09:07:36AM -0500, Dan Carpenter wrote:
+> We checked that "pip" is non-NULL at the start of the if else statement
+> so there is no need to check again here.  Delete the check.
 > 
-> Thanks to header dependency hell, incudling <linux/irq_work.h> in <linux/sched.h>
-> results in defining inline helpers using not-yet-defined fields (mm_struct,
-> task_struct, various task states...).
-> 
-> Break off the definition of struct irq_work into its own header file.
-> 
-> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Yep.
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
 > ---
->  include/linux/irq_work.h       |  8 ++------
->  include/linux/irq_work_types.h | 14 ++++++++++++++
->  2 files changed, 16 insertions(+), 6 deletions(-)
->  create mode 100644 include/linux/irq_work_types.h
+>  fs/xfs/libxfs/xfs_inode_util.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/irq_work.h b/include/linux/irq_work.h
-> index 136f2980cba30..7f6d2af360d91 100644
-> --- a/include/linux/irq_work.h
-> +++ b/include/linux/irq_work.h
-> @@ -5,6 +5,8 @@
->  #include <linux/smp_types.h>
->  #include <linux/rcuwait.h>
+> diff --git a/fs/xfs/libxfs/xfs_inode_util.c b/fs/xfs/libxfs/xfs_inode_util.c
+> index 032333289113..cc38e1c3c3e1 100644
+> --- a/fs/xfs/libxfs/xfs_inode_util.c
+> +++ b/fs/xfs/libxfs/xfs_inode_util.c
+> @@ -308,7 +308,7 @@ xfs_inode_init(
+>  		    !vfsgid_in_group_p(i_gid_into_vfsgid(args->idmap, inode)))
+>  			inode->i_mode &= ~S_ISGID;
 >  
-> +#include <linux/irq_work_types.h>
-> +
->  /*
->   * An entry can be in one of four states:
->   *
-> @@ -14,12 +16,6 @@
->   * busy      NULL, 2 -> {free, claimed} : callback in progress, can be claimed
->   */
+> -		ip->i_projid = pip ? xfs_get_initial_prid(pip) : 0;
+> +		ip->i_projid = xfs_get_initial_prid(pip);
+>  	}
 >  
-> -struct irq_work {
-> -	struct __call_single_node node;
-> -	void (*func)(struct irq_work *);
-> -	struct rcuwait irqwait;
-> -};
-> -
->  #define __IRQ_WORK_INIT(_func, _flags) (struct irq_work){	\
->  	.node = { .u_flags = (_flags), },			\
->  	.func = (_func),					\
-> diff --git a/include/linux/irq_work_types.h b/include/linux/irq_work_types.h
-> new file mode 100644
-> index 0000000000000..108cbc514733b
-> --- /dev/null
-> +++ b/include/linux/irq_work_types.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _LINUX_IRQ_WORK_TYPES_H
-> +#define _LINUX_IRQ_WORK_TYPES_H
-> +
-> +#include <linux/smp_types.h>
-> +#include <linux/rcuwait_types.h>
-> +
-> +struct irq_work {
-> +	struct __call_single_node node;
-> +	void (*func)(struct irq_work *);
-> +	struct rcuwait irqwait;
-> +};
-> +
-> +#endif
-
-Since smp_types.h already mentions IRQ_WORK, given how I tangled the
-whole things together, should we just put this struct there as well?
+>  	ip->i_disk_size = 0;
+> -- 
+> 2.43.0
+> 
+> 
 
