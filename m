@@ -1,157 +1,150 @@
-Return-Path: <linux-kernel+bounces-251143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6AF930120
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:53:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA51A930123
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44091F2372A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:53:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B24282B62
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0273A8C0;
-	Fri, 12 Jul 2024 19:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98AE3A1DA;
+	Fri, 12 Jul 2024 19:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zh4xxaN0"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E74S57r8"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2035744C86
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 19:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC2544C9B
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 19:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720814033; cv=none; b=qS/KButKK7GBOHz2DjSZN21r8hjw68i02EhBjRah+nm7v2qVfr8E5XYPf8xe0brQ7KAxFitb4IEJbstJlEmkRqzhC5InxnxqTgqt3p8QtzqV3QPBbH8qstrIcJHEZWeAP+U+Qj86Jyrlbqwk7vI4iAZcFsxbzY8hv271yGmEnSk=
+	t=1720814056; cv=none; b=jDL2f9gNNarQw9Nkry437fx6VXe0yPOE8sCw5vZp5Jyt+xcfDg4zsMPr28U63jUCKrFFDQPHra8Ndw+qCxO/KVCcJEMowv8bIALXAtJUov49jyJMJVvewCgyycx/GKTay5IOQ1diZRdEePCJ59YyHpropUG/cDMJYveeXFs0Xjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720814033; c=relaxed/simple;
-	bh=0iJLLgIAj1GDbOz5eCaLhDF160omVeDVbc9/Ai6siRA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m7Zy0TC2vigngvyyUTTl+0Rw7riHpT45+V1ThW+fCGPbc89y4CoNYgsK68xYXGxB8Q18MY4dkfixnJl8EwdC99Z/cZ0BJ5ZSQX1A7MiBnoip5RuWwbgOSKBEOGJ4xfkvBTSmFGmuH5UziZdzhPKrSXe6vi1pH3YoT0+exl7D8W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zh4xxaN0; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4266f796e67so315e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:53:51 -0700 (PDT)
+	s=arc-20240116; t=1720814056; c=relaxed/simple;
+	bh=f5jO4v5h4HSSIUY7LAsod2tYpiu/afgmmVVLyhJ+j+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qUhaDCQrlhMrzyixfv79sGBr8cO7XJM/gvX8/3yUR+eaHeT62W6aN3pVPt/LCcgJnXTmvbsEZt5H95FjatanGT3qtlyXb8A7ikMu6mMkWyJV3qLueknt9EOnP/viGruq9ZQH8/k+HUyqWjImEQznRzNhb/G/uSoGD5hm0f+6GYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E74S57r8; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so40033761fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:54:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720814030; x=1721418830; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rXUjyIfuqHSmLdUVCSqOhZ01RJJ/uPsJn5yQv7GDqYE=;
-        b=zh4xxaN00FH4YBs3uTOx5QmT0xIiP7pJ3YQf6ruo5c0Do5V0QkMhQqdiaHJkiIMIYP
-         htq3Kcm8eJdiP4wjR9mqRGg/UAe+nlE980cCFjZL05Q0XfUntsUZSIXN7s3hP38/iN6O
-         TuhQp1Ighflp94zgPz3xCktPhuLp7WmMbyqEXHII/Kkq4PU5RVTTP3gOy65V3GGonPb/
-         i+E5oJHO5X1qjOQss77gp/yLtGD0n/onGS9XZd/9rOK+V/sAQjqnwySl7jw+McQjmzct
-         nMN1ZdGaKtE2ugffTYQxaazyvEJ+qlgMuCHcGtRP88pfAK3rYdxKItJcUFFyI7cfCMQA
-         m7mw==
+        d=linaro.org; s=google; t=1720814053; x=1721418853; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFjv710SIVqWcm9hWgEm1m6RPWcEtHDSyAm3w4DCuwI=;
+        b=E74S57r82VLJfu0ugm5ApNaMsbLx/a969cDYcPbyWuiMz2BMn3q+RTn0oWYPorqb73
+         6jEUZkB7DzSMPwiUYvHf3QxQk/K0kilOeAu4zaSxf1psNgeqVK5H+c6wkL2/06qGn9Ay
+         v1WY/Y5OuMv2RhT1Re2rGV2SOjN27TvlxVMUZxOxooHcRFg85ISmRIHt9AOihM2As9Z/
+         Z26RmnAls7NzwcgwanXv+19OtXMBBj/MOQvFlECJ/ZgzaxeZzK1PvGzZnuscX4tsG6Hi
+         Vh9fDTAp3PciC/Rf6r6s/9earOk/rzqW8RXFswBjvFlj/BBhKP7/WOkA/6zukML6xQ5R
+         aT3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720814030; x=1721418830;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rXUjyIfuqHSmLdUVCSqOhZ01RJJ/uPsJn5yQv7GDqYE=;
-        b=rKPlZxHajW4dK18ANcfUKcVLrMoVRbZF3W1eZA+qdhn/jOXhSKKc0S27PCTIEivQHS
-         Gt8buorhYEGl4gUClTYTv1ORUpoyCZFY4Y7qSwRLU1uXF5B0DvIAI1CRQpERxUMte7Gb
-         pnSQlOFkoQH1LQte+5mUONMGWS37yY6V/dorvJXkoKmY+h0gH4aketoepPYztudcOBGH
-         kXEeTLFUGXFYnC0WD9DyCXWmk8DhKxFtVu0Fi2YOH4O9IoUgRV2w1HJumY1YfOVoDyqV
-         D4gtISsSBZEpWerMeFUjUP0EcXeu2NU/aSouGBGrk9/ABnTEk3JmYEtN+8U9hFLBLK8k
-         r83Q==
-X-Gm-Message-State: AOJu0Yxv8XfQYBTTuTyviC3CeXE0ee/Slti2WiWoH78ZqHwK3Tf7YkqM
-	VYd35P70b+SzExaWTsTvUq34AiOl04IrUpXMPmEyfwbYqsn6F1HPfCGiwXc4VQxaMvQe0+3uIzY
-	4Wam7dtXjhjw1aLS7OxIYCqE1EpoHItxff3U=
-X-Google-Smtp-Source: AGHT+IHs0Yu7EKzUkZS/fdsAekQWWCBELn3tw56//UTXPfClEaUH8zP+oxxwG6i4xBoUHnPH8okJlX/l0yXdvQ5x4zw=
-X-Received: by 2002:a05:600c:3b0c:b0:426:6e95:6ea7 with SMTP id
- 5b1f17b1804b1-427a42796a7mr357145e9.0.1720814030266; Fri, 12 Jul 2024
- 12:53:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720814053; x=1721418853;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yFjv710SIVqWcm9hWgEm1m6RPWcEtHDSyAm3w4DCuwI=;
+        b=wAem/nVHNMrFldcS99p7XeF6zeszdCOxY9ACjNbmUtT1S0idcdxOYNqeKTRQPpNhCT
+         PLgK8BhzVN6/Ycp+QhvMlRcpC4Rodsorx9WyKVWlElWaRTEPeGNrmajukKwaDYBEkn9M
+         y7TJpt9M34Wv8jvwjSPWL4p4YywKpIWioJ+qL0HVJKB2p+XwpKGMz/+1P8RNIuz8xD84
+         /9QAhtQqMpHJLJr8w8lSDD5pd5zI4Z/gugtY2Mlr44xToWbPy8PZIscJTi7DVcG1ZrQ5
+         OCaN7e2nCtBYReagkmnrUR1Wv8Fp9HMEUbBYx6hWZmRM27aP3svfLaRzHQSx2/djnoEC
+         fk7w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/qr65xZaXdjn3QGo60s3N1hVvGy9kkPSeundz9oLCaWqyAFd2TqcfWcUzXNOznstO1UU9Z4f3IrEmJZlriVXGV+eWKPlVShmspfdC
+X-Gm-Message-State: AOJu0YxwIQcIaTNXM052A+LByUqWDirJQSOb+a1gKrxY+C+Di7PU9U1L
+	gaZaJRZ20iMVPWcD8R8GS92WrpjZbEwgkzrsAJ0tO4Wb+MleU9L7317QnssfRaQ=
+X-Google-Smtp-Source: AGHT+IFrnDCE2DhRwi0ZogNbSJPfUmV9sglnkKeXIz6ZAQeinBlxJj0WQOuYW1N9sLJEFIuMyLmKjQ==
+X-Received: by 2002:a2e:a603:0:b0:2ee:9521:1443 with SMTP id 38308e7fff4ca-2eeb316b0a3mr95547971fa.35.1720814052500;
+        Fri, 12 Jul 2024 12:54:12 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6e172csm373572866b.86.2024.07.12.12.54.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 12:54:12 -0700 (PDT)
+Message-ID: <a05951f8-792d-4c83-802b-0350dd8760cb@linaro.org>
+Date: Fri, 12 Jul 2024 21:54:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709203213.799070-1-jstultz@google.com> <20240709203213.799070-2-jstultz@google.com>
- <d293d88c-b83b-a955-de5e-db775f20c1e1@amd.com>
-In-Reply-To: <d293d88c-b83b-a955-de5e-db775f20c1e1@amd.com>
-From: John Stultz <jstultz@google.com>
-Date: Fri, 12 Jul 2024 12:53:38 -0700
-Message-ID: <CANDhNCoTnsUXU9iHj=gW9fhSZs4BZs8UVdQck_N=3-M-NHDdbg@mail.gmail.com>
-Subject: Re: [PATCH v11 1/7] locking/mutex: Remove wakeups from under mutex::wait_lock
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Joel Fernandes <joelaf@google.com>, Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
-	Zimuzo Ezeozue <zezeozue@google.com>, Youssef Esmat <youssefesmat@google.com>, 
-	Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Metin Kaya <Metin.Kaya@arm.com>, Xuewen Yan <xuewen.yan94@gmail.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com, 
-	Davidlohr Bueso <dave@stgolabs.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: msm8939-wingtech-wt82918: Add
+ Lenovo Vibe K5 devices
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+To: Nikita Travkin <nikita@trvn.ru>, Bjorn Andersson <andersson@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ =?UTF-8?B?QWRhbSBTxYJhYm/FhA==?= <asaillen@protonmail.com>
+References: <20240712-msm89xx-wingtech-init-v1-0-64f4aa1870bd@trvn.ru>
+ <20240712-msm89xx-wingtech-init-v1-3-64f4aa1870bd@trvn.ru>
+ <2146ca56-6c2c-48a3-8e77-75aa04cb2b4c@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <2146ca56-6c2c-48a3-8e77-75aa04cb2b4c@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 10, 2024 at 10:42=E2=80=AFAM 'K Prateek Nayak' via kernel-team
-<kernel-team@android.com> wrote:
-> On 7/10/2024 2:01 AM, John Stultz wrote:
-> > @@ -681,6 +682,11 @@ __mutex_lock_common(struct mutex *lock, unsigned i=
-nt state, unsigned int subclas
-> >               }
-> >
-> >               raw_spin_unlock(&lock->wait_lock);
-> > +             /* Make sure we do wakeups before calling schedule */
-> > +             if (!wake_q_empty(&wake_q)) {
->
-> nit.
->
-> This checks seems unnecessary (to my untrained eye). Any harm in
-> skipping it and simply doing a wake_up_q() followed by wake_q_init()
-> unconditionally?
->
-> > +                     wake_up_q(&wake_q);
-> > +                     wake_q_init(&wake_q);
-> > +             }
-> >               schedule_preempt_disabled();
+On 12.07.2024 9:53 PM, Konrad Dybcio wrote:
+> On 12.07.2024 6:04 PM, Nikita Travkin wrote:
 
-Ah, thank you for the suggestion. I've reworked this in my tree!
+[...]
 
-> > @@ -1207,6 +1209,7 @@ static int __sched task_blocks_on_rt_mutex(struct=
- rt_mutex_base *lock,
-> >       struct rt_mutex_waiter *top_waiter =3D waiter;
-> >       struct rt_mutex_base *next_lock;
-> >       int chain_walk =3D 0, res;
-> > +     DEFINE_WAKE_Q(wake_q);
-> >
-> >       lockdep_assert_held(&lock->wait_lock);
-> >
-> > @@ -1245,7 +1248,10 @@ static int __sched task_blocks_on_rt_mutex(struc=
-t rt_mutex_base *lock,
-> >
-> >               /* Check whether the waiter should back out immediately *=
-/
-> >               rtm =3D container_of(lock, struct rt_mutex, rtmutex);
-> > -             res =3D __ww_mutex_add_waiter(waiter, rtm, ww_ctx);
-> > +             preempt_disable();
-> > +             res =3D __ww_mutex_add_waiter(waiter, rtm, ww_ctx, &wake_=
-q);
-> > +             wake_up_q(&wake_q);
-> > +             preempt_enable();
->
-> I'm trying to understand this - we enter task_blocks_on_rt_mutex() with
-> "wait_lock" held (I believe the lockdep_assert_held() in the previous
-> hunk checks for the same). I walked down the call chain (although
-> briefly) and could only spot "task->pi_lock" being locked and unlocked
-> before this call to "wake_up_q()" but the "wait_lock" seems to be held
-> throughout, only being unlocked and locked again for
-> "rt_mutex_adjust_prio_chain()" later down.
->
-> Did I miss something or is disabling preemption for this specific hunk
-> enough to enable safe nesting?
 
-Thank you for pointing this out! It looks like I need to pipe the
-wake_q down through task_blocks_on_rt_mutex(), and
-rtlock_slowlock_locked() and define one in rtlock_slowlock().
+>> +&pm8916_mpps {
+>> +	pwm_out: mpp4-state {
+>> +		pins = "mpp4";
+>> +		function = "digital";
+>> +		power-source = <PM8916_MPP_VPH>;
+>> +		output-low;
+>> +		qcom,dtest = <1>;
+> 
+> I think you meant qcom,dtest-output
 
-Really appreciate the review and feedback here!
--john
+No, I apparently found this in msm-3.10, ignore this comment
+
+Konrad
 
