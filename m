@@ -1,82 +1,92 @@
-Return-Path: <linux-kernel+bounces-250990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE76A92FF3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:13:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0C392FF40
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C8491C225A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41E6A285421
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5A81779B8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DE4179965;
 	Fri, 12 Jul 2024 17:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C+nq+HEm"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GjmjTNaj"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DE6176AA1;
-	Fri, 12 Jul 2024 17:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9266017799F;
+	Fri, 12 Jul 2024 17:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720804258; cv=none; b=WhDOuwysNgY52M6+l6gdzsboOzUVGnwlhG5pUDl7EZAsDpUnhUbJ5PmtngYTMGQ6S9DWdCjeiRvPUyrxVFFh0+TXdPE4hnh470E9j5XyCBtBDgKhEkM8gH8gb95F78V95MuYTs1Eul+xxcySITCXIy9UVgEscohXkU51ZiiaEIo=
+	t=1720804259; cv=none; b=iTQm9hQPIAE+M7tc35boUvP4fpIBrzJo+zIVxI565xO0gTHJK/jkUIKCqm6xwkf8fKREXYMH9SsBqFX0FFNtpamNwax4FnlyXNL1r88emqqcTa8/HAw/bgH3JmmH+Q2mRFlrv8l56Ik/erVIT+o8vA2L265ZqhgANWG5HewdvCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720804258; c=relaxed/simple;
-	bh=YFYW7ohFwexZPRCFEIjsdZvv0rsAI9C0gJZmdR/i08c=;
+	s=arc-20240116; t=1720804259; c=relaxed/simple;
+	bh=SMOskrIxYKC4O6emQHBW68wMQEv/leiHAjttfBN/gl0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6LgUrLrkhWQiLXQTAfdOtUbxvcJs9QSPSj4SuOt4glpUq4qs/+qr1AShGzizSQ8SwjTcRlBpL2X4VSXtzaUFvUoWUVUjfglVHy8riFs3EIi+vUF7PI+mE8Ms/PvuQksZbTRAca8hVEpEkINVKOe9e2DwHMb1CSfXoqsJp41aIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C+nq+HEm; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4Mxbf8FLitTOfjwNEoKYOmBRT92nDTE315anxQnCaks=; b=C+nq+HEmmQT4iTtlElJ7vJyFnE
-	upbha1rtgSC1dpxmKlpsVsCV1QBvxXbVtq0//zEkErDif30cMAMpo1g6mrc54gir+eSDMj7rnAU/5
-	Y2GwKKT+qkFxW8JFyS6u9jIEYIU8YM7SWnJ6WqRR6sGa5wBiTWxIL0Qf8W2Jgs26Tse3zIPuYcZ1U
-	YskYcLpz98Ic1Gh5eH5tJwjYSEiDSt21SeZk6g1mh15Hg3nanjKoidC68RPyXV+U1bJ3FsRAnTQWD
-	SwpaOHLuZDyIWDzpYVMsTlGpfyr5UFJWtH3ppsf1n7VW8jtDwd316IGQ8OlyfDZanUkbsVBY9jvpi
-	A+avs9Yw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sSJnD-00000001Ko4-0qFy;
-	Fri, 12 Jul 2024 17:10:47 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D051530050D; Fri, 12 Jul 2024 19:10:46 +0200 (CEST)
-Date: Fri, 12 Jul 2024 19:10:46 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Phil Auld <pauld@redhat.com>, Clark Williams <williams@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [RFC PATCH v3 10/10] sched/fair: Throttle CFS tasks on return to
- userspace
-Message-ID: <20240712171046.GV27299@noisy.programming.kicks-ass.net>
-References: <20240711130004.2157737-1-vschneid@redhat.com>
- <20240711130004.2157737-11-vschneid@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tG5Vow9MXosO7fCEt1ARezcuLkA3OZjU9nl1a8vxzWeWYzvGGaKJLYCmsawqdVhcppNGRfl3jjof9rEJUi5cB+e3n3/u8AgkO6Wn6H2OxacwjrlTf7kEB6wTQKbYHlgYDh7C82W0+P6Q6jo8nEG9guvfSzI00LmM0XEzbPeOJOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GjmjTNaj; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b09cb7776so1866220b3a.1;
+        Fri, 12 Jul 2024 10:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720804257; x=1721409057; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ky0nWnwJmHd6zu8RRtvg8wvKZFzCwLW2MVRtue5Z0Es=;
+        b=GjmjTNajcOc96G5ZMYNdJfZO+HX1JlSCXorCoSLfoB+jJz7CaQtrJ/r8dP3FA8SE0i
+         bd+765JqGLNRRwpnOcDyXi+aa/jODJ4Cr9N4kLTIGMbhT5fqEbYiuRaDoCiXMrjIGMcq
+         D9hB+pQ9N/cIy0l+w4t12jcix/ntX3BKH36pK9Fy1yELFAZo8IbjjDhJMRddqhxSE501
+         WEMRdpk04sztJh6P0vVb5ybhLeV6yBxhoeufSPww7pWP77tb3hoM9rIr4ZlOo9DueKes
+         6vgbqFhQZvD2jYUsEasJqlCrFBC+7Bklo06JO9ju7Ue8CvT4R9K1PlDFfeeaAw2TlGq6
+         0Mow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720804257; x=1721409057;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ky0nWnwJmHd6zu8RRtvg8wvKZFzCwLW2MVRtue5Z0Es=;
+        b=N3mPkmnW2O4JiSYREtUnEWk6O10xcU8Qi7uDvk4YFklo/HP0fvxhA7wyzDLqVfCYSr
+         uMPRlS4gYZnbDCNX3IMpIgb6UFnhqxHPZmko6zNEXWrZ5KKDXnQ240/x5R80ImWoyqtY
+         Bd4oM1JFx5jroh+ivTI3F12oRHQDwEzBsFESXs/KtiHNYlIWWDzl13+YSqoGaDqpMYqg
+         ENm5H/K3N00USBUSO+wV0eqHM+Y8IZD9Zd1yhehWDunMDpxFLK+6ynfgUiDx65QZaniF
+         r2YAvABNCKwaTMDboXzYCKAGzJmUsQnPTF3cdRVk44PJAMjeNgd7Htw4Q4x61k+ClxQ2
+         2R3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJn4DHZoU4vzJbq1f+i2H5ksJpuO6q+v6/ixjBl3Zl1Xoh+BTAz2fYyNucjVmcECysMMI9z4aw570cdalemTUkNmTwvTmRUrOxXs+i/GwWWrwpluZ78wMUX90VD/+av2dAnU1o/1g=
+X-Gm-Message-State: AOJu0YyKNPWXRbgSc0x21KD/IvXFuuecn3hVAnpDpA/u72WKXkOUC557
+	WFAcL+2BmisF4iRgKSIFKs+oe4p8cz9drQluaUV9aAUpHBA/muSk
+X-Google-Smtp-Source: AGHT+IHWY0PYRkiaZE96Ze+d5DJRCgHcTNMFPwfFIdu5MuD5uzpo6HG5J+QpX4y0rCmOlsKcUHtxkQ==
+X-Received: by 2002:a05:6a00:1142:b0:706:5cd9:655d with SMTP id d2e1a72fcca58-70b435f0138mr15253231b3a.22.1720804256643;
+        Fri, 12 Jul 2024 10:10:56 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b438c3910sm7742080b3a.51.2024.07.12.10.10.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 10:10:56 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Fri, 12 Jul 2024 07:10:55 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+	void@manifault.com, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
+	David Vernet <dvernet@meta.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH v2 2/2] sched_ext: Add cpuperf support
+Message-ID: <ZpFjn4GXNXvSnWnK@slm.duckdns.org>
+References: <Zog5-Yd5wV0-Y76y@slm.duckdns.org>
+ <CAKfTPtDeA4OTPJmEHd-wKToYwDVizcny-_qxEuDUA-OcaVm2Uw@mail.gmail.com>
+ <ZonzAdyd6zb2Sm06@slm.duckdns.org>
+ <CAKfTPtDE2rWbRouf8zRyM3UpTfK1k_xrWmvAs-zfoRZqM3zGsw@mail.gmail.com>
+ <Zowt7pVWFB-Of-me@slm.duckdns.org>
+ <CAKfTPtB=77c-RsJ23suNZVf7qByeGSjYQJbiEU4JpXU6DezNLQ@mail.gmail.com>
+ <ZoxVZPCrWokjfmFY@slm.duckdns.org>
+ <CAKfTPtAjFvOPByPyeAURN3gw0yp8ByVmpa99_dGEZiTGw_Fawg@mail.gmail.com>
+ <Zo1omq73-ESGsVVg@slm.duckdns.org>
+ <CAKfTPtDdG+fhZjG0JEtXm+rq3w_v3iSrYxDLe0XXurOLEcOuNw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,21 +95,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240711130004.2157737-11-vschneid@redhat.com>
+In-Reply-To: <CAKfTPtDdG+fhZjG0JEtXm+rq3w_v3iSrYxDLe0XXurOLEcOuNw@mail.gmail.com>
 
-On Thu, Jul 11, 2024 at 03:00:04PM +0200, Valentin Schneider wrote:
-> +static void task_throttle_cancel_irq_work_fn(struct irq_work *work)
-> +{
-> +	struct task_struct *p = container_of(work, struct task_struct, unthrottle_irq_work);
-> +	int cpu = raw_smp_processor_id();
-> +
-> +	CLASS(task_rq_lock, rq_guard)(p);
+Hello,
 
-	guard(task_rq_lock)(p);
+On Fri, Jul 12, 2024 at 12:12:32PM +0200, Vincent Guittot wrote:
+...
+> II failed to setup my dev system for reproducing your use case in time
+> and I'm going to be away for the coming weeks so I suppose that you
+> should move forward and I will look at that when back to my dev system
 
-> +	WARN_ON_ONCE(task_cpu(p) != cpu);
-> +
-> +	if (task_has_throttle_work(p) && !task_needs_throttling(p))
-> +		task_throttle_do_cancel_work(p);
-> +}
+Thankfully, this should be pretty easy to fix up however we want afterwards.
+
+> It seems that "make -C tools/sched_ext ARCH=arm64 LLVM=-16" doesn't
+> use clang-16 everywhere like the rest of the kernel which triggers
+> error on my system:
+
+Hmm... there is llvm prefix/suffix handling in the Makefile. I wonder what's
+broken.
+
+> make -C <path-to-linux>/linux/tools/sched_ext ARCH=arm64
+> LOCALVERSION=+ LLVM=-16
+> O=<path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext
+> ...
+> clang-16 -g -O0 -fPIC -std=gnu89 -Wbad-function-cast
+> -Wdeclaration-after-statement -Wformat-security -Wformat-y2k
+> -Winit-self -Wmissing-declarations -Wmissing-prototypes
+> -Wnested-externs -Wno-system-headers -Wold-style-definition -Wpacked
+> -Wredundant-decls -Wstrict-prototypes -Wswitch-default -Wswitch-enum
+> -Wundef -Wwrite-strings -Wformat -Wno-type-limits -Wshadow
+> -Wno-switch-enum -Werror -Wall
+> -I<path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext/build/obj/libbpf/
+> -I<path-to-linux>/linux/tools/include
+> -I<path-to-linux>/linux/tools/include/uapi -fvisibility=hidden
+> -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  \
+> --shared -Wl,-soname,libbpf.so.1 \
+> -Wl,--version-script=libbpf.map
+> <path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext/build/obj/libbpf/sharedobjs/libbpf-in.o
+> -lelf -lz -o <path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext/build/obj/libbpf/libbpf.so.1.5.0
+
+So, thi sis regular arm target buliding.
+
+> clang -g -D__TARGET_ARCH_arm64 -mlittle-endian
+> -I<path-to-linux>/linux/tools/sched_ext/include
+> -I<path-to-linux>/linux/tools/sched_ext/include/bpf-compat
+> -I<path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext/build/include
+> -I<path-to-linux>/linux/tools/include/uapi -I../../include -idirafter
+> /usr/lib/llvm-14/lib/clang/14.0.0/include -idirafter
+> /usr/local/include -idirafter /usr/include/x86_64-linux-gnu -idirafter
+> /usr/include  -Wall -Wno-compare-distinct-pointer-types -O2 -mcpu=v3
+> -target bpf -c scx_simple.bpf.c -o
+> <path-to-linux>/out/kernel/arm64-llvm/tools/sched_ext/build/obj/sched_ext/scx_simple.bpf.o
+> In file included from scx_simple.bpf.c:23:
+> <path-to-linux>/linux/tools/sched_ext/include/scx/common.bpf.h:27:17:
+> error: use of undeclared identifier 'SCX_DSQ_FLAG_BUILTIN'
+>         _Static_assert(SCX_DSQ_FLAG_BUILTIN,
+>                        ^
+> fatal error: too many errors emitted, stopping now [-ferror-limit=]
+> 5 warnings and 20 errors generated.
+
+This is BPF.
+
+The Makefile is mostly copied from other existing BPF Makefiles under tools,
+so I don't quite understand why things are set up this way but
+
+  CC := $(LLVM_PREFIX)clang$(LLVM_SUFFIX) $(CLANG_FLAGS) -fintegrated-as
+
+is what's used to build regular targets, while
+
+  $(CLANG) $(BPF_CFLAGS) -target bpf -c $< -o $@
+
+is what's used to build BPF targets. It's not too out there to use a
+different compiler for BPF targtes, so maybe that's why? I'll ask BPF folks.
+
+Thanks.
+
+-- 
+tejun
 
