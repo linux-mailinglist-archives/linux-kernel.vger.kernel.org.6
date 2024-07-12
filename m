@@ -1,138 +1,100 @@
-Return-Path: <linux-kernel+bounces-250494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90A4B92F87B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:55:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BE592F86A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E133B2411A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:55:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DAC0B22289
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FD5154BE8;
-	Fri, 12 Jul 2024 09:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07841494BC;
+	Fri, 12 Jul 2024 09:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UltaTzy0"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XPrGjomU"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE85114F132
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F791459E3
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720778106; cv=none; b=jW9SC7oZg9Zg+/Q5hlBJQr2MA546UpiKzTy41KkMG0kWGGjdDurNTILBa039AqQSCPH3+s/juoPK9twIJfeBwJDw1Vh1wKdXR/8ZP7kWxAH9Nm3cef2td27QnWjyEC1o95gxd9PU79EUfLyIkuHrPUiqRMfaSka3n059PUPYtFw=
+	t=1720778000; cv=none; b=uY9xeUIGlevTjCJ6Mt1Bdq2cFu/Ljhbp2fAJ8UuVPbijKVCdcDDEnQ2Yo3UasusgqCfnpxhbZ0ZsnzaRjI3DWKm0uoT4Njl9whnIsJ6EHPGhNG9HtZFgcxaAnal0KJy1K+dLtANMrsO7f8YwGqtqio85xDo4Ve+dmeEhUP80ymE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720778106; c=relaxed/simple;
-	bh=BKoJFwAmycB7Kma4J/9n0dCdGo15MiIP+EskSWqagKA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GZ3SAl1VAloIltvMSlOELcSZciffc2MTK188Uil0sLTyRQFsqR8nEE978o2PLu6lEJwmfv44m1t4W4N2CahssP9br/rbOgDUBvTnt0AwFNa5r9A5R415udUFUYfZogqjta3gvPbdeRK2SzIz4UE5s9vtCEBmHcDmLsxbZRNMFxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UltaTzy0; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=xQaGUFxI3F9bIC
-	0Je/JYNWxB96sa3rnzDYmiL5jgjgk=; b=UltaTzy0hvYwLJ0qoR6z2j8fk7Rcz6
-	jTfDIa9dBX/FgFGKg66+2r6i/qrdgANRyCQVAEMwgjeKYlvg+DItt4wm9OjUSRg5
-	NabgnPUZSM2MHPFJW8UXC23kxfRGiEjTsn9iK5b7ABzQpoB7eUNr0SOKhUxnRAjx
-	ucCStDEDpjZ/zR78BMAqyx88q8+53Sd7P/eDlC3H5A32FyzeyJoIvE3hpcIGXvYs
-	+fuLqOqILwWtW43iB5G1j6BTVVSnbcBo4id/bkDmg98MxkNWebGMdq14HguOIQe5
-	6Vynv5s4XDahMeAjrPcuft2Z6iP0Df8OCYyOp6ZrYW2D108ODyOfvu8w==
-Received: (qmail 1114581 invoked from network); 12 Jul 2024 11:54:59 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2024 11:54:59 +0200
-X-UD-Smtp-Session: l3s3148p1@jbJP3wkdeKIgAwDPXwmZAIsFIv4n+Dpm
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] i2c: document new callbacks in i2c_algorithm
-Date: Fri, 12 Jul 2024 11:52:40 +0200
-Message-ID: <20240712095453.11440-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720778000; c=relaxed/simple;
+	bh=fGqiR3p2twEgtGIGqX8CX2k7VlpahxZtzaoWMggY8kw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UjZTkYH4H41GwI45dWs5aevNmm7lADivGTUWQVbijNaketTjYZqN9q3W7GjLXyS5U1+8dXmmdvOZlnb5yN6B93UO3je3d0ymBBx7rFnqcJ14UYA53CTOHWXzGPfWo9wRw/6jxxrf2R0FfUA6QzdVtLKf4V3yDjlU/MqJM4iZnf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XPrGjomU; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: adilger@dilger.ca
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720777994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=420HDkg/RbN0mlADGGoKNBBDxwvgvCBrqnNYOxwbTVc=;
+	b=XPrGjomUdpQXr8zzgWOyfZg9XSmmiI8C7K193g3xRpQJmNn0jFmIfRAQVwf+/srxGfZ5D5
+	UcopNtbfhdANN/+cvHNdZQZJWGjY95hpE46Smx6mO3v2Ra6SCHcNSGRrCbrKEaQrhMRRdg
+	L1LDZD5DwGQZVTwLA6vLAF4dGTyWd6U=
+X-Envelope-To: wangjianjian0@foxmail.com
+X-Envelope-To: wangjianjian3@huawei.com
+X-Envelope-To: tytso@mit.edu
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: harshadshirwadkar@gmail.com
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Andreas Dilger <adilger@dilger.ca>
+Cc:  Wang Jianjian <wangjianjian0@foxmail.com>,  "wangjianjian (C)"
+ <wangjianjian3@huawei.com>,  Theodore Ts'o <tytso@mit.edu>,  Jan Kara
+ <jack@suse.cz>,  Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+  linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] jbd2: make '0' an invalid transaction sequence
+In-Reply-To: <87ed7znf8n.fsf@linux.dev> (Luis Henriques's message of "Fri, 12
+	Jul 2024 10:15:04 +0100")
+References: <20240711083520.6751-1-luis.henriques@linux.dev>
+	<4f9d5881-11e6-4064-ab69-ca6ef81582b3@huawei.com>
+	<878qy8nem5.fsf@brahms.olymp>
+	<tencent_CF3DC37BEB2026CB2F68408A2B62314E0C08@qq.com>
+	<A90C7898-B704-4B2A-BFE6-4A32050763F0@dilger.ca>
+	<87ed7znf8n.fsf@linux.dev>
+Date: Fri, 12 Jul 2024 10:53:02 +0100
+Message-ID: <87wmlrkkch.fsf_-_@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-When updating the callbacks, adding their kernel-doc was forgotten. Add
-it now.
+Since there's code (in fast-commit) that already handles a '0' tid as a
+special case, it's better to ensure that jbd2 never sets it to that value
+when journal->j_transaction_sequence increment wraps.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/r/20240712165527.75e4ddc9@canb.auug.org.au
-Fixes: a93c2e5fe766 ("i2c: reword i2c_algorithm according to newest specification")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Suggested-by: Andreas Dilger <adilger@dilger.ca>
+Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 ---
+ fs/jbd2/transaction.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Andi, this is the minimal fix for the the regression reported by
-Stephen. Please apply it on top of the rewording series. There will be
-more fixes in this paragraph but these should go better via my tree, I
-guess, after I pulled yours.
-
- include/linux/i2c.h | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 9d45b7b912dd..e9cc14b1f9a1 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -513,10 +513,10 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
- 
- /**
-  * struct i2c_algorithm - represent I2C transfer method
-- * @master_xfer: Issue a set of i2c transactions to the given I2C adapter
-+ * @xfer: Issue a set of i2c transactions to the given I2C adapter
-  *   defined by the msgs array, with num messages available to transfer via
-  *   the adapter specified by adap.
-- * @master_xfer_atomic: same as @master_xfer. Yet, only using atomic context
-+ * @xfer_atomic: same as @xfer. Yet, only using atomic context
-  *   so e.g. PMICs can be accessed very late before shutdown. Optional.
-  * @smbus_xfer: Issue smbus transactions to the given I2C adapter. If this
-  *   is not present, then the bus layer will try and convert the SMBus calls
-@@ -525,27 +525,33 @@ i2c_register_board_info(int busnum, struct i2c_board_info const *info,
-  *   so e.g. PMICs can be accessed very late before shutdown. Optional.
-  * @functionality: Return the flags that this algorithm/adapter pair supports
-  *   from the ``I2C_FUNC_*`` flags.
-- * @reg_slave: Register given client to I2C slave mode of this adapter
-- * @unreg_slave: Unregister given client from I2C slave mode of this adapter
-+ * @reg_target: Register given client to local target mode of this adapter
-+ * @unreg_target: Unregister given client from local target mode of this adapter
-+ *
-+ * @master_xfer: deprecated, use @xfer
-+ * @master_xfer_atomic: deprecated, use @xfer_atomic
-+ * @reg_slave: deprecated, use @reg_target
-+ * @unreg_slave: deprecated, use @unreg_target
-+ *
-  *
-  * The following structs are for those who like to implement new bus drivers:
-  * i2c_algorithm is the interface to a class of hardware solutions which can
-  * be addressed using the same bus algorithms - i.e. bit-banging or the PCF8584
-  * to name two of the most common.
-  *
-- * The return codes from the ``master_xfer{_atomic}`` fields should indicate the
-+ * The return codes from the ``xfer{_atomic}`` fields should indicate the
-  * type of error code that occurred during the transfer, as documented in the
-  * Kernel Documentation file Documentation/i2c/fault-codes.rst. Otherwise, the
-  * number of messages executed should be returned.
-  */
- struct i2c_algorithm {
- 	/*
--	 * If an adapter algorithm can't do I2C-level access, set master_xfer
-+	 * If an adapter algorithm can't do I2C-level access, set xfer
- 	 * to NULL. If an adapter algorithm can do SMBus access, set
- 	 * smbus_xfer. If set to NULL, the SMBus protocol is simulated
- 	 * using common I2C messages.
- 	 *
--	 * master_xfer should return the number of messages successfully
-+	 * xfer should return the number of messages successfully
- 	 * processed, or a negative value on error
- 	 */
- 	union {
--- 
-2.43.0
-
+diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+index 66513c18ca29..4dbdd37349c3 100644
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -84,6 +84,8 @@ static void jbd2_get_transaction(journal_t *journal,
+ 	transaction->t_state = T_RUNNING;
+ 	transaction->t_start_time = ktime_get();
+ 	transaction->t_tid = journal->j_transaction_sequence++;
++	if (unlikely(transaction->t_tid == 0))
++		transaction->t_tid = journal->j_transaction_sequence++;
+ 	transaction->t_expires = jiffies + journal->j_commit_interval;
+ 	atomic_set(&transaction->t_updates, 0);
+ 	atomic_set(&transaction->t_outstanding_credits,
 
