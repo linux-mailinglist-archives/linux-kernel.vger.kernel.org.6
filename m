@@ -1,170 +1,68 @@
-Return-Path: <linux-kernel+bounces-250155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDCEE92F4C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:58:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3A392F4B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 931541F23ED9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:58:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FCC0B2146B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E71179BC;
-	Fri, 12 Jul 2024 04:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sE0X3RQt"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD04C17555;
+	Fri, 12 Jul 2024 04:49:50 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D9217C96;
-	Fri, 12 Jul 2024 04:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC94C15E83
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 04:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720760294; cv=none; b=It8Psnp+7PNmJThCXV0uCGmAd6TEVm6rLiDE7g1wIYnEZi/tV2ysoHfRlgbRWwTwsYtZRpU6NkYb77WHdRtdg+hkpDbeRymX8IxWif+RyRQ0h/+vNEjI9siEKcBIXrwgceKtt/O2WHNq0YW/dfd+UUOZAkTTo7wax4JTfENLrg8=
+	t=1720759790; cv=none; b=FG3lIoaGGYFfXm9M2tr0886YIiVundSWhQ2QNzk5XzuMvIWBXN1kGnxtnOS67t2RpN8ZqcgY4AakJHOAFgXCUk+9nMp6fxwg5hYgBpVdkozMxR0XnnKl8uRJcvPQJTySsbo1ben3/tHPlDono/HvYiNMQGnhVAqGcMho454WQ08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720760294; c=relaxed/simple;
-	bh=4Dh4BhQU/enHyhgZOhpsslzQX5NTr6GaYASU2sFsAZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZC7crVKXUmolhDjdjE3JBZSrrEF0ZVGiovsdij2qfzF2qHgKNDAYM4NeBip0122E4tAPOaWBOBmjGwUKZZeOisL69UMzeArgfH/GiPh2D4RiZlBP0DerIAvKWqxrkAXpinv+AlICyiwNAco7Dzg+Sga9Pxui9OVlegsXHEwmTfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sE0X3RQt; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720759712;
-	bh=9FwLU3TuUr3CTim33ErSUoBRj8iBha51//MEqJpMSaQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=sE0X3RQtTgS7a1gIPMkfoH/k+C10RwKe1Ruwgv5mtgGpY7QeAjIPGlX3FefJGHZ81
-	 s/dxnFue97CPzwEMwcjvPT0wrMHlbeEafPCHh0iy6f3RjMlQJ9p1CsHtvqoGtsXbdL
-	 USocc7ijb3tWW6zrJ7Gu6PQnMdIO9BeMZiTteusvSeWbhMaVTxoFi0pkuEWIqwFg4u
-	 2p7lM0V2tYFrR53pIfPFYVSBdqlMTwzFjXh5CbqA8JviTlHQbPlPejja/++fOjrNpA
-	 RE/0tKWdsRAIxH0kKDwNay2Nui6qwErKofx4WWfV/kWUAhId1TofP/zqeOlmzbqg2V
-	 BvQe3KnY7Fj+Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKzcw3vHZz4wZx;
-	Fri, 12 Jul 2024 14:48:32 +1000 (AEST)
-Date: Fri, 12 Jul 2024 14:48:31 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lee Jones <lee@kernel.org>
-Cc: Christian Marangi <ansuelsmth@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the leds-lj tree
-Message-ID: <20240712144831.269b1bc6@canb.auug.org.au>
+	s=arc-20240116; t=1720759790; c=relaxed/simple;
+	bh=eT+2Tn9tNWfYujr6Xw3ipSat7lOQN+3gndXGPjHZ9go=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hePZf3qQ45AYRXhANENp+nvX1ApAXIBkkzj4XrmrLZtPScOVtARe8PUEyR0ghQdj5wXfXssAhJcvjYtUPijQaX+zFsg6Kk6X2DggklxX4eK6y4iaPMsD8IXRQNlbdsaBkyHvlpfUte2VKt63YSEDbdBcG1vEmDwnMzFydvn43oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 13E1968BEB; Fri, 12 Jul 2024 06:49:38 +0200 (CEST)
+Date: Fri, 12 Jul 2024 06:49:37 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Leon Romanovsky <leonro@nvidia.com>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH 2/2] dma: Add IOMMU static calls with clear default ops
+Message-ID: <20240712044937.GA4709@lst.de>
+References: <98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org> <f2b699aea8fff5589a674da2a567fd593ed2d386.1720693745.git.leon@kernel.org> <28309b7f-9809-452f-95fe-3448c15bdf1b@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//7Cb_No.v3_Dz+SvTz/xHuP";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <28309b7f-9809-452f-95fe-3448c15bdf1b@arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
---Sig_//7Cb_No.v3_Dz+SvTz/xHuP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jul 11, 2024 at 07:23:20PM +0100, Robin Murphy wrote:
+> If so, I'd much rather see this done properly, i.e. hook everything up 
+> similarly to dma-direct and be able to drop CONFIG_DMA_OPS for "modern" 
+> dma-direct/iommu-dma architectures entirely.
 
-Hi all,
+Yes.  That is much better than doing hacks based on missing ops.
 
-After merging the leds-lj tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Note that the media subsystems just added another abuse of dma_map_ops
+in drivers/ in addition to the existing vdpa one that we'll need to
+kill again to fully get rid of dma_map_ops for common setups (in
+addition to merging swiotlb-xen into main swiotlb finally).
 
-In file included from drivers/leds/leds-lp5569.c:11:
-drivers/leds/leds-lp5569.c: In function 'lp5569_post_init_device':
-drivers/leds/leds-lp5569.c:204:52: error: passing argument 3 of 'lp55xx_rea=
-d' from incompatible pointer type [-Werror=3Dincompatible-pointer-types]
-  204 |                           chip, LP5569_REG_STATUS, &val);
-      |                                                    ^~~~
-      |                                                    |
-      |                                                    int *
-include/linux/iopoll.h:46:28: note: in definition of macro 'read_poll_timeo=
-ut'
-   46 |                 (val) =3D op(args); \
-      |                            ^~~~
-In file included from drivers/leds/leds-lp5569.c:20:
-drivers/leds/leds-lp55xx-common.h:229:62: note: expected 'u8 *' {aka 'unsig=
-ned char *'} but argument is of type 'int *'
-  229 | extern int lp55xx_read(struct lp55xx_chip *chip, u8 reg, u8 *val);
-      |                                                          ~~~~^~~
-drivers/leds/leds-lp5569.c:204:52: error: passing argument 3 of 'lp55xx_rea=
-d' from incompatible pointer type [-Werror=3Dincompatible-pointer-types]
-  204 |                           chip, LP5569_REG_STATUS, &val);
-      |                                                    ^~~~
-      |                                                    |
-      |                                                    int *
-include/linux/iopoll.h:51:36: note: in definition of macro 'read_poll_timeo=
-ut'
-   51 |                         (val) =3D op(args); \
-      |                                    ^~~~
-drivers/leds/leds-lp55xx-common.h:229:62: note: expected 'u8 *' {aka 'unsig=
-ned char *'} but argument is of type 'int *'
-  229 | extern int lp55xx_read(struct lp55xx_chip *chip, u8 reg, u8 *val);
-      |                                                          ~~~~^~~
-cc1: all warnings being treated as errors
-
-Caused by commit
-
-  d9cc80b1c9b4 ("leds: leds-lp5569: Enable chip after chip configuration")
-
-I have applied the folloing patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 12 Jul 2024 14:40:23 +1000
-Subject: [PATCH] fixup for "leds: leds-lp5569: Enable chip after chip confi=
-guration"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/leds/leds-lp5569.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/leds/leds-lp5569.c b/drivers/leds/leds-lp5569.c
-index 52fb83f35bb7..623030f2f5ac 100644
---- a/drivers/leds/leds-lp5569.c
-+++ b/drivers/leds/leds-lp5569.c
-@@ -173,6 +173,7 @@ static int lp5569_post_init_device(struct lp55xx_chip *=
-chip)
- {
- 	int ret;
- 	int val;
-+	u8 u8val;
-=20
- 	val =3D LP5569_DEFAULT_CONFIG;
- 	val |=3D FIELD_PREP(LP5569_CP_MODE_MASK, chip->pdata->charge_pump_mode);
-@@ -201,7 +202,7 @@ static int lp5569_post_init_device(struct lp55xx_chip *=
-chip)
-=20
- 	read_poll_timeout(lp55xx_read, ret, !(val & LP5569_STARTUP_BUSY),
- 			  LP5569_STARTUP_SLEEP, LP5569_STARTUP_SLEEP * 10, false,
--			  chip, LP5569_REG_STATUS, &val);
-+			  chip, LP5569_REG_STATUS, &u8val);
-=20
- 	return lp5569_init_program_engine(chip);
- }
---=20
-2.43.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_//7Cb_No.v3_Dz+SvTz/xHuP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaQtZ8ACgkQAVBC80lX
-0Gz+ZwgAnV2MJqxmT9iVUINH8mireQ1MCzb9jY05YbCA7vvCJXvNIGXn02bAqqae
-WN1YkMtjEzLSQp6RVvM/vr4ASWHJPywYuSbUbZImO8H/gmtqdkHDbp5SAO5VJk20
-Ga8Aqb/7AY1U0dCRhwYHbHQuMC+Cq8zLMeWeQVG3whWShv05wv+iwb+YCOD4nGUb
-TLeugztkwB9Kf1na1Y623UY48Q+0xfRzPMZZGVzmSX9inOiSxD7jiTMFJwv8o9Oo
-zmEDzRwv6LRT1m5TWFp6RJqOimkCOjERQvFZzsNYyeX3XOaV4FrJHG53YEBQ8ivA
-tsnzzLuZH/F/K126A2f5B76ZYZoKTg==
-=jaMN
------END PGP SIGNATURE-----
-
---Sig_//7Cb_No.v3_Dz+SvTz/xHuP--
 
