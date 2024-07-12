@@ -1,2365 +1,284 @@
-Return-Path: <linux-kernel+bounces-250088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 216AD92F41D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E89ED92F43B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7CF1F224D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D491F2357C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405AA8F5B;
-	Fri, 12 Jul 2024 02:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC69CEAFA;
+	Fri, 12 Jul 2024 02:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W+X5uhiw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kgxI2Z3D"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2046.outbound.protection.outlook.com [40.107.93.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E755739B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720751955; cv=none; b=Kz/K5YOYrQ9aLKLtvY4m//wWV7hmc0xKjqEns6RgR2r49auvPaA+pVNRLv+OT5WvTVGIZVg+bkihU0nVtdmWeXbLTVOoeHbGWP2TQmuQvm7RhssE9bWvhSqvxra1n74IAms5OixVkR7ARkjlJuyfd4Zd3MM+Q8BgR3ewQsqcF/Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720751955; c=relaxed/simple;
-	bh=jnSaB3ERcQZ8U8jyKbOpH3A6kJKKOApAEoWF+sXX70s=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=eVxRD8qX7Q+d1M/r+W9d1OOrg781kd9yhTy9Yvbn6PBCIvXROKjh3sw53VksMuYw/1m7JKWZ8/wgxIbe/2fm2/rm75p/PN8gWQgjvu9KyYWGwQ07LA+0oAzJnOyTabxjQ9aGrffEN2DHeN0ydZu6pMchgzluHuFS6bheYpCescA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W+X5uhiw; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720751945; x=1752287945;
-  h=date:from:to:cc:subject:message-id;
-  bh=jnSaB3ERcQZ8U8jyKbOpH3A6kJKKOApAEoWF+sXX70s=;
-  b=W+X5uhiwC/qPsaAPRWsG0McB0Sm/kESehRDz/lTskFc9dErONySZklET
-   5NGmPCL6I7uqv5QfETkE98qh50pMWaHSqBtt9dUcoRWtwgV6DEIEXMiSw
-   pCz+lh3EhA3WB39sr2wUHNDB2yDGxvT35j5wO91VxgcFF8PXqHjvt0ozs
-   Uo0tP5bR6lzcVHLvNzyoWBXUh3eE+f0JGy8taILuZdZGBlq/uiD/phAo0
-   MQaImoeYVlkp235HYH/5dJ6ljELr/Hlj6xR8ggw8sOLrVEJgQ8v1uDRbG
-   VtH3JsNhPWBbmMh6WfGSV4fMR4uGQoO2ycmOpHCWWWppReQ7E+zW+jlJB
-   g==;
-X-CSE-ConnectionGUID: 8g5n5iIHTmmNkuE6Mrw32A==
-X-CSE-MsgGUID: BPrdY5huQR28yBxwIiUAbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="17887027"
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="17887027"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 19:39:04 -0700
-X-CSE-ConnectionGUID: swikuoOQTZq4t3RGj4JbhQ==
-X-CSE-MsgGUID: fh7CpKC6TNm4+61+iXHwGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="48525532"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 11 Jul 2024 19:39:02 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sS6BY-000aGb-0T;
-	Fri, 12 Jul 2024 02:39:00 +0000
-Date: Fri, 12 Jul 2024 10:38:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/WFAMNAE-next20240621-CbC] BUILD SUCCESS
- 30867ef8ad076c11ed274d76f99e8bb0346790af
-Message-ID: <202407121007.QQtEgoeR-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9DBBA41;
+	Fri, 12 Jul 2024 02:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720753043; cv=fail; b=EDJV3fQGwNm+J36LOp5tCZfDZpsDSiXfy2Tc3sjLhRDy8/jc+QpdfsuOkBpLbOFLtzGACyfH7Samj51+MskOJs6AcEwpffOlBPry+cn9Jn3L7l6MYP/4cnKaXB3fdL3HD4Z9TSmO7+lEch9QZFnLC9VSehYc92hw/Mxw5oDxdig=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720753043; c=relaxed/simple;
+	bh=Ixsm6B4C+bc7hgI700WqLD472Yy6ysLOP58lINxADkc=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=qp/9Wr7eTf8jkv7yW5j8LSj97kO7GmywGguL/+4rE+VKhW6Fv0oWxgPgaFKAbIM2g1eC2X4MGQCMTuqG+FI7lXmXPgKfiibJTcpjmi6j5HYMvL2FZ7qKcTBIOrLsb7Yz7IgOPpMN08lmLX8ovL1xbE9XARow3gjwF9MKX6PAK0M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kgxI2Z3D; arc=fail smtp.client-ip=40.107.93.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VEengKGlulAiPcctVleZLqRN4HuBF4n0q99p84lRtYAQD+MdMONNONtFO9tL91VwqkwfNdMHifi0zWaQDIbO/q8YO2aArUvxx2tCKT9KDLQTKVjW8iN4OmWFzbHUJjOTZhBWxgNO1ACspXBg1I9BFSTZcpcQCV4SCQxJoOFDTRwLQJun6pFOtwSKEehdWKgyknrwDJEcW+MgEZX/9R2aFQEHut6PQki2LuMDc3MtjRjA4909Q3SpS4ZefTeXl3+jymbPCRsffph4NEwJTu1/It5+bRUxYW8UgiNCza5sVXfQ1EwAR6U0PzSYJZjL2XmtDdKs1u/c06g6/sS3GyEWuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1ZDgUYwcLj4KTqeYki9xIFtWtXWvuNOu8Iq63IYvC4g=;
+ b=iSHD1djpWo4JluB0K3kngvAkcCnDKhp8+ww7SLLLB5Vxb2o1ERhUsdQPpS7wsl9W1aICWjmSIGHiOP58bqB2NjQAw0uzYU3aBysAQcLkN7F4blzw1/xIcG2SQsJMdZlvYkieE0jN7Ekrp+gqCHaZDOuV6HSXIRa1UIL+ntHOlIJRATxYsGhud4TFZY2/WpIz3pisFOxnnljt3KIuSTFXv183Rl748++TwTlj6DU+eNrZt5/FY4QxAo5gH9Y9kr1kibZmLY++AKoujJ7tVNo3in0AMYosoc6ldKMN6g7rl/37qynjjZI58WTL7ebSKme1lB7ZFq4bSEuBAQ6LePHQgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1ZDgUYwcLj4KTqeYki9xIFtWtXWvuNOu8Iq63IYvC4g=;
+ b=kgxI2Z3DV7DTyaqabop893MqrrlQwa+D7r53Y2BqmDScqsEdrOzmAC9AnVr5AEgHJKZI8DwTfjAq21vi4YBZqlcSsEs+ujsgiVaUCouZAlL1g1B0f8Tc4es3nScXi0v+izve4BG0AEH+arg4VyM/d5Bwsk7obtYgyHkwSTz0FNPA+hBAg/rvuSdQ/mwyZlwUmyBY0YoRk6PBWyT601bUlErvWUesigr6NLdXzwKspgCnxeVou3c7uHZsk05VcG68OMmV3JBsWtBYa8/8fWvGhv9MXB7kqP+042NDkH40W6wp0jt1orqwr3eFFl0bRW9dlNovFMZjrezKn9LbreT2zg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ MN2PR12MB4341.namprd12.prod.outlook.com (2603:10b6:208:262::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22; Fri, 12 Jul
+ 2024 02:57:18 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%2]) with mapi id 15.20.7741.033; Fri, 12 Jul 2024
+ 02:57:18 +0000
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+ <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
+ <ZogCDpfSyCcjVXWH@x1n> <87zfqrw69i.fsf@nvdebian.thelocal>
+ <Zo1dqTPLn_gosrSO@x1n>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+ dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+ jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
+ mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
+ ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
+ tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+ jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com, Alex Williamson
+ <alex.williamson@redhat.com>
+Subject: Re: [PATCH 11/13] huge_memory: Remove dead vmf_insert_pXd code
+Date: Fri, 12 Jul 2024 12:40:39 +1000
+In-reply-to: <Zo1dqTPLn_gosrSO@x1n>
+Message-ID: <87sewf48s6.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY5P282CA0140.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:205::16) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MN2PR12MB4341:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b9b0fbe-f440-496b-3a5d-08dca21e5775
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YXSHomOL9R3zN5UMsAXBlzsyDK1/0vOcMRpuYuJvDQeQ3Yn+xovbMIVWLIv6?=
+ =?us-ascii?Q?Sh7kGA77t7dn0LpsnXiVBs2bUkgAKU22D9n+13JEAc+1ILrLTsq81AsvWzU6?=
+ =?us-ascii?Q?ZLQjy377CmCuxZTOp3JktXerxUIXNfTWAZV2IRMCO5xmtlEuImwmlRRIGynQ?=
+ =?us-ascii?Q?0swzN/V32bbP9dp7kvcx5GponB7V55xl/uJAm3ofbodvfsW13+8l0DnGYHIb?=
+ =?us-ascii?Q?x1/ZebZrHklnx5UaFQbvC5p16tjoBTGMDPCCHELilAZoCXMiZDwIg/mjG/Yb?=
+ =?us-ascii?Q?3CUmz3VAxvT4GwFFXF8FR8SdUiKXfnjQYelBKhY+Mc+K+WjGmdeZO46q/eBp?=
+ =?us-ascii?Q?+uoWcdCEqC3pKbwZT8k1Z2bbkSdYDjvSW+asgxCJo/w+UqawjnhWmo+3eXJV?=
+ =?us-ascii?Q?yGeiHoadvp280PKkk9FqGcCQ6bZvFk7LA3OWh6R3k8IRyjVRmCBcBjlmb4Ku?=
+ =?us-ascii?Q?QuFhj2rONBkz15GYHF3u+OxT5+LewX6ctRJXlY+d7unqZMfWG3ysqRN2rSMc?=
+ =?us-ascii?Q?a8ew7r9BkHeBstuE5pNYNkv3geeAdKu3ZiNzORyB8ZaBWRaO5wMxvLw01OCl?=
+ =?us-ascii?Q?ww2wr7qu6PFak80oBAjcDq3Ym6XOAEY7qukMa3yTgPSVlXrR3VL2bV06Zz26?=
+ =?us-ascii?Q?Ex0RglrPYPwr/ONYKeq7/3SJ3eZV3mRr8/lHqoDG6OxgaTjjMno2raRnnlHg?=
+ =?us-ascii?Q?HZbbFSPe8/rUZdpw7n/3s3Av1KWA2gLli4J8+RxO6P9Am475bIc4C7hJGM22?=
+ =?us-ascii?Q?zEC+RkNbavvZAvrH0ietWeYHVUvZ8PDtfJFvTpJb7sLA93igE22LFu4jhUe4?=
+ =?us-ascii?Q?VLI7Q+pqLEtqZoCkvyGkmmPgnuaNOBg+OlinBQwzItd3/BY54/SPLybCWA0I?=
+ =?us-ascii?Q?CihXAwd0Tz78GNnqrXutH6bu0fxBJHwTnurUvaIAmPu+EB5C0uLPAnqIKiNq?=
+ =?us-ascii?Q?uR/DURP65sJuSiLdDgJ0v/yy8WqcuokmAcdAgVQ87IDYxnUPuFiS1OOQVzVS?=
+ =?us-ascii?Q?zJnM85/J8I8jp71zuDj36GN8+dG1xz67ma0vwH9mgvpalorN+W3oPrPENz5y?=
+ =?us-ascii?Q?4pDuQxPEV3m6AcOplzPNDtrNDIcSiy17a2dM6u1IMVh23xJ0E7BK4J/aR9PW?=
+ =?us-ascii?Q?OoccZo4ASXx769lP66i2czgX1zaQRB4XUEXeeAJ0QOvupo8LwsmsWvgUNzRZ?=
+ =?us-ascii?Q?Tzy4B0EX83941a4HsrrXBfLOpbX0ULDCtFVfujtWMcDfufAXLt/NAd54up0C?=
+ =?us-ascii?Q?UotDbQTFa1pxtzexiJ0MoxCJzW2SHIrXhPHihD4gMWwJN+PblTKj+1fctnAQ?=
+ =?us-ascii?Q?A8D2fAetx34DtnvozhOaQc++t1AVNwwjCXpvzLqY38FaqA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vgtA6iMvqgnAKqilLOMHC+keCd1WuJFIumGppKiWAI7rrrOYPC1DLGGDJ54G?=
+ =?us-ascii?Q?9blzK9724yhyk2Lzp298/RIZCSbH5y1TiUAEBjoTzThECaknKb20UmOIfImx?=
+ =?us-ascii?Q?62vz9YrU6JyQ7Pt/UW9cN8myt8hpf/awr6iiejLev3FHdr2YvZqcpanD+fWX?=
+ =?us-ascii?Q?8toDB2kHgxq+x4cSp1QlDWlOOEskQJ2AjNmzXTkZZGMmhmXNk9vAwwywzPlg?=
+ =?us-ascii?Q?dMgHEmTPRGcM1SKaYCqulIhZvsQc4wjXGmLRIHkdJToODM7UI00mB4ummQWU?=
+ =?us-ascii?Q?B/a/C096lZUlEDvoSL4PfiX2LkiAN+sof213ah/VRupjyXbOGha0PZ4O+/51?=
+ =?us-ascii?Q?mN9EAYvVRiqcOFMp27FvttYaX2zjaSenb5yHIZYRXee1T2MNL9HXP6j+gbgt?=
+ =?us-ascii?Q?k+vO7K4iaw7OD+tDTWxtxiQl8QkIMrB8q8yK7jfHBRRTFW9m7vimS8mZswWW?=
+ =?us-ascii?Q?wEBVo55cLc9kAh7pi5tbddxKxSI7XVtYbikVLJYUhhNy/dMP+r8hWE8FMTRT?=
+ =?us-ascii?Q?55d7CDsJBq7+JPTWHveIf133b0qvS5eTcLD+WQzHnhK5mtcczFfD8PjeHhC3?=
+ =?us-ascii?Q?mfzWV+df/RoQWW3GbqhdYEGjV+YrMGz561RO44TKw0YDFCjU1oDQj7BCyVS2?=
+ =?us-ascii?Q?HJgYHO/27i2eciyi7PoTYXWSR4tWm9Idyny6iy4OywMkRNxZtqjIOsTnwGTe?=
+ =?us-ascii?Q?pHrxcUF2GiI6MhzjHqlJX6X8OGtw44DJ678gxIjRdUXlCu8/pUek9kQn7v6P?=
+ =?us-ascii?Q?myLwX3PI0R/koeTTMe0wApEw3mBu5TkVZwhYOvzK8Pq/VawsLlz8OTypF3SC?=
+ =?us-ascii?Q?y7UVsTMtmQb2eaF3kxQmJgSGBuWRb/uzPLIXXHDI2WtxcVSvbZ+WLMlEFuix?=
+ =?us-ascii?Q?7vqZkrjkkTGmTld7IrFfLotX//HdYnHw3vFyr5DU55HY/KWmc8O8LK3YIdfx?=
+ =?us-ascii?Q?v+lc+cH6M+CdWM2iWNUsZVSUo0K8qjong9Pj3LYvFjHQvupafNj4NKiAim3A?=
+ =?us-ascii?Q?8B8Nz2Z2Iq/VUyyCZdIx+EGG0TfxQ/2Rv2jC3QUmMXe3K75ZPiriFgdAf79j?=
+ =?us-ascii?Q?sRWVOYOR0IgdKOWGYuUMsKLFPLwgxw426SNFI3B/314AnXKIirwd0PNSN6kX?=
+ =?us-ascii?Q?1UdWgo3xsmDKpj0hnnVqopfjB9YGqxBTucz3oGrTwXg+0Qwtc4F04NvneDxB?=
+ =?us-ascii?Q?66F+Hhc+I1QWe8lro4grbFOu8PmxsaATM85cOTZBmKIegRRG5xrDkOtr2M6A?=
+ =?us-ascii?Q?ExVZEDh4JKdBJx1f2O3hKMoECV10ABjqszPGIEx/yAr/edicX9G/JRTWMJtf?=
+ =?us-ascii?Q?VSu95kY6Br0iEFkFvUndI+5aloLbtnmVmSZ2obrMNUu1POJMFv5dMMN4U0JL?=
+ =?us-ascii?Q?uVrj01QC+YBtOZ525ZHWbI7UegZfhAYx3bVWmnQXPUj3sJyd2wnaE6SpyNJq?=
+ =?us-ascii?Q?nRelLlQ8QoXiS8866M6jWl8UopG9XycfqX8YjoFNlsWpOe9HvsGL6oaTkv/T?=
+ =?us-ascii?Q?7QGW4YrWeSKqrHNUHNKgSqsrEhJWnLUoK2IlPFPEkpB3fQdwZvGY3IO9YJJ/?=
+ =?us-ascii?Q?auQW2S0HbVEzblznM67x/kvx7Ny0R4NC20KtUu0p?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b9b0fbe-f440-496b-3a5d-08dca21e5775
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 02:57:18.2893
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RlDee7WbkxGPuO4R3/88Yk1r43LvWGYanshUDQoQB3H6ip3n80+MRLsNwV9XiS83NYyzmcgNwKNIhMIeS1foSw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4341
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/WFAMNAE-next20240621-CbC
-branch HEAD: 30867ef8ad076c11ed274d76f99e8bb0346790af  perf: Avoid -Wflex-array-member-not-at-end warnings
 
-Unverified Warning (likely false positive, please contact us if interested):
+Peter Xu <peterx@redhat.com> writes:
 
-arch/powerpc/include/asm/hvcall.h:697:48: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-arch/powerpc/perf/core-book3s.c:56:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h:296:30: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/crypto/allwinner/sun8i-ss/sun8i-ss.h:251:30: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/crypto/bcm/util.c:189:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/crypto/starfive/jh7110-cryp.h:218:49: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/firewire/core-cdev.c:1130:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/firmware/efi/libstub/efi-stub-helper.c:519:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/firmware/efi/libstub/file.c:33:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/si_dpm.h:816:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/amd/amdgpu/../pm/legacy-dpm/sislands_smc.h:218:49: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/nouveau/dispnv50/disp.c:783:47: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/nouveau/nouveau_chan.c:279:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/nouveau/nouveau_fence.c:187:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/nouveau/nvif/client.c:67:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/nouveau/nvif/conn.c:34:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/nouveau/nvif/fifo.c:29:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/nouveau/nvif/outp.c:199:45: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/gpu/drm/radeon/sislands_smc.h:222:49: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c:37:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/iio/proximity/cros_ec_mkbp_proximity.c:63:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/infiniband/hw/irdma/cm.h:294:9: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/infiniband/hw/mlx5/fs.c:1187:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/infiniband/sw/rxe/rxe_verbs.h:187:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/md/bcache/request.c:481:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/md/raid5-cache.c:114:20: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/md/raid5-ppl.c:153:20: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/message/fusion/mptbase.h:809:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/misc/bcm-vk/bcm_vk.h:415:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/aquantia/atlantic/aq_hw.h:197:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/aquantia/atlantic/hw_atl/../aq_hw.h:197:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/chelsio/cxgb4/cxgb4.h:1215:29: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_io.c:163:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/chelsio/libcxgb/../cxgb4/cxgb4.h:1215:29: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/fungible/funcore/fun_dev.c:550:43: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/fungible/funeth/funeth_main.c:185:50: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/mellanox/mlx5/core/en.h:664:48: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/netronome/nfp/crypto/fw.h:58:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/netronome/nfp/nfd3/../crypto/fw.h:58:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/ethernet/netronome/nfp/nfdk/../crypto/fw.h:58:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/ath/ath12k/core.h:281:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/ath/ath12k/dp.h:1498:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlegacy/commands.h:1196:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlegacy/common.h:550:30: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlegacy/iwl-spectrum.h:60:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlwifi/dvm/commands.h:2315:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlwifi/fw/api/tx.h:743:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlwifi/mvm/../fw/api/tdls.h:53:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlwifi/mvm/../fw/api/tx.h:743:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlwifi/mvm/d3.c:124:52: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c:6339:41: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wireless/mediatek/mt76/mt7915/mcu.h:32:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/net/wwan/mhi_wwan_mbim.c:79:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/nvme/target/../target/nvmet.h:382:49: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/nvme/target/loop.c:36:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/nvme/target/nvmet.h:382:49: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/platform/chrome/cros_ec.c:106:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/platform/chrome/cros_kbd_led_backlight.c:130:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/platform/surface/surface_dtx.c:579:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/aic94xx/aic94xx_sas.h:323:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/hisi_sas/hisi_sas.h:596:47: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/megaraid/megaraid_sas_fusion.h:1153:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/pm8001/pm8001_hwi.h:342:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/pm8001/pm80xx_hwi.h:561:32: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/scsi/sd.c:3117:50: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/usb/host/ehci-fsl.c:414:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/watchdog/cros_ec_wdt.c:29:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/bcachefs/btree_types.h:532:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/bcachefs/inode.h:86:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/dlm/dlm_internal.h:608:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/ext4/mballoc.c:3039:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/hpfs/hpfs.h:456:23: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/namespace.c:4747:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/nfs_common/nfsacl.c:44:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/nfsd/nfsd.h:69:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/nfsd/nfsfh.h:79:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/nfsd/state.h:490:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/notify/fanotify/fanotify.h:287:28: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/smb/client/cached_dir.h:48:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/smb/client/cifsglob.h:2310:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/xfs/xfs_log_priv.h:208:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/asm-generic/tlb.h:351:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/linux/ethtool.h:170:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/linux/jbd2.h:1788:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/linux/mlx5/mlx5_ifc.h:2448:57: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/linux/netfilter_arp/arp_tables.h:20:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/linux/netfilter_ipv4/ip_tables.h:34:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/linux/tty_buffer.h:40:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/net/bluetooth/hci.h:1430:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/net/compat.h:33:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/net/inet_sock.h:64:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/net/ip.h:48:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/net/netfilter/nf_tables.h:1063:28: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/net/nfc/nci.h:555:45: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/net/sctp/structs.h:306:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/uapi/linux/if_arp.h:118:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/uapi/linux/route.h:33:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/uapi/linux/wireless.h:751:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-kernel/trace/trace_events_filter.c:2669:51: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-lib/crc-t10dif.c:66:35: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-net/ethtool/ioctl.c:427:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-net/tls/tls.h:131:29: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-security/keys/trusted-keys/trusted_tpm1.c:31:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/soc/amd/../sof/amd/../sof-audio.h:350:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/soc/soc-topology-test.c:138:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/soc/sof/amd/../sof-audio.h:350:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/soc/sof/intel/../ipc4-topology.h:307:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/soc/sof/intel/../sof-audio.h:350:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/soc/sof/ipc4-topology.h:307:37: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/soc/sof/mediatek/mt8186/../../sof-audio.h:350:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/soc/sof/sof-audio.h:350:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/usb/6fire/comm.h:22:20: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/usb/6fire/pcm.h:28:20: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/usb/caiaq/device.h:63:20: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-sound/usb/misc/ua101.c:112:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> On Tue, Jul 09, 2024 at 02:07:31PM +1000, Alistair Popple wrote:
+>> 
+>> Peter Xu <peterx@redhat.com> writes:
+>> 
+>> > Hi, Alistair,
+>> >
+>> > On Thu, Jun 27, 2024 at 10:54:26AM +1000, Alistair Popple wrote:
+>> >> Now that DAX is managing page reference counts the same as normal
+>> >> pages there are no callers for vmf_insert_pXd functions so remove
+>> >> them.
+>> >> 
+>> >> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>> >> ---
+>> >>  include/linux/huge_mm.h |   2 +-
+>> >>  mm/huge_memory.c        | 165 +-----------------------------------------
+>> >>  2 files changed, 167 deletions(-)
+>> >> 
+>> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> >> index 9207d8e..0fb6bff 100644
+>> >> --- a/include/linux/huge_mm.h
+>> >> +++ b/include/linux/huge_mm.h
+>> >> @@ -37,8 +37,6 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+>> >>  		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
+>> >>  		    unsigned long cp_flags);
+>> >>  
+>> >> -vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+>> >> -vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+>> >>  vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+>> >>  vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+>> >
+>> > There's a plan to support huge pfnmaps in VFIO, which may still make good
+>> > use of these functions.  I think it's fine to remove them but it may mean
+>> > we'll need to add them back when supporting pfnmaps with no memmap.
+>> 
+>> I'm ok with that. If we need them back in future it shouldn't be too
+>> hard to add them back again. I just couldn't find any callers of them
+>> once DAX stopped using them and the usual policy is to remove unused
+>> functions.
+>
+> True.  Currently the pmd/pud helpers are only used in dax.
+>
+>> 
+>> > Is it still possible to make the old API generic to both service the new
+>> > dax refcount plan, but at the meantime working for pfn injections when
+>> > there's no page struct?
+>> 
+>> I don't think so - this new dax refcount plan relies on having a struct
+>> page to take references on so I don't think it makes much sense to
+>> combine it with something that doesn't have a struct page. It sounds
+>> like the situation is the analogue of vm_insert_page()
+>> vs. vmf_insert_pfn() - it's possible for both to exist but there's not
+>> really anything that can be shared between the two APIs as one has a
+>> page and the other is just a raw PFN.
+>
+> I still think most of the codes should be shared on e.g. most of sanity
+> checks, pgtable injections, pgtable deposits (for pmd) and so on.
 
-Warning ids grouped by kconfigs:
+Yeah, it was mostly the BUG_ON's that weren't applicable once pXd_devmap
+went away.
 
-recent_errors
-|-- arm-allmodconfig
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-clk-clk-loongson2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-allwinner-sun8i-ce-sun8i-ce.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-allwinner-sun8i-ss-sun8i-ss.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-atmel-aes.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-bcm-util.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-img-hash.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-starfive-jh7110-cryp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-efi-stub-helper.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-file.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-xlnx-zynqmp_disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-common-cros_ec_sensors-cros_ec_sensors_core.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-proximity-cros_ec_mkbp_proximity.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-cxgb4-t4fw_ri_api.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-irdma-cm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-mlx5-fs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bcache.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bset.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-journal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-request.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-media-platform-xilinx-xilinx-dma.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-message-fusion-mptbase.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es581_4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es58x_fd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-hw_atl-..-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4_tc_u32_parse.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-inline_crypto-chtls-chtls_io.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-libcxgb-..-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funcore-fun_dev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funeth-funeth_main.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-mellanox-mlx5-core-en.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfd3-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfdk-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-vxlan-vxlan_mdb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-common.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-iwl-spectrum.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-dvm-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-d3.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-mac80211.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-mediatek-mt76-mt7915-mcu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-realtek-rtl8xxxu-rtl8xxxu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wwan-mhi_wwan_mbim.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nfc-pn533-usb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-..-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-loop.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_debugfs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto_test_util.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_kbd_led_backlight.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-pwm-pwm-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-rtc-rtc-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-aic94xx-aic94xx_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-hisi_sas-hisi_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-megaraid-megaraid_sas_fusion.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8001_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8x_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pmcraid.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-staging-ks7010-ks_wlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-gadget-function-uvc_configfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-ehci-fsl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-oxu210hp-hcd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-w1-w1_netlink.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-watchdog-cros_ec_wdt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bcachefs_format.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bkey_sort.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-btree_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-disk_accounting.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-ec_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-inode.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-io_read.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-move.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-tests-..-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-erofs-fscache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-f2fs-f2fs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-hpfs-hpfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfs_common-nfsacl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsfh.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-state.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-xdr4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ocfs2-xattr.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cached_dir.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cifsglob.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-xfs-xfs_log_priv.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-mlx5-mlx5_ifc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_arp-arp_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_ipv4-ip_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-bluetooth-hci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-netfilter-nf_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-nfc-nci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-sctp-structs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-bluetooth-mgmt_config.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-spectmgmt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-util.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-tls-tls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- security-keys-trusted-keys-trusted_tpm1.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-amd-..-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-soc-topology-test.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8186-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8195-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-comm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-midi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-pcm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-caiaq-device.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-hiface-pcm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-usb-misc-ua101.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- arm-allyesconfig
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-clk-clk-loongson2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-allwinner-sun8i-ce-sun8i-ce.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-allwinner-sun8i-ss-sun8i-ss.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-atmel-aes.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-img-hash.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-starfive-jh7110-cryp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-efi-stub-helper.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-file.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-xlnx-zynqmp_disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-common-cros_ec_sensors-cros_ec_sensors_core.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-proximity-cros_ec_mkbp_proximity.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-cxgb4-t4fw_ri_api.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-irdma-cm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-mlx5-fs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bcache.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bset.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-journal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-request.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-media-platform-xilinx-xilinx-dma.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-message-fusion-mptbase.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es581_4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es58x_fd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-hw_atl-..-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4_tc_u32_parse.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-inline_crypto-chtls-chtls_io.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-libcxgb-..-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funcore-fun_dev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funeth-funeth_main.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-mellanox-mlx5-core-en.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfd3-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfdk-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-vxlan-vxlan_mdb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-common.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-iwl-spectrum.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-dvm-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-d3.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-mac80211.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-mediatek-mt76-mt7915-mcu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-realtek-rtl8xxxu-rtl8xxxu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wwan-mhi_wwan_mbim.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nfc-pn533-usb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-..-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-loop.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_debugfs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto_test_util.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_kbd_led_backlight.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-pwm-pwm-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-rtc-rtc-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-aic94xx-aic94xx_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-hisi_sas-hisi_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-megaraid-megaraid_sas_fusion.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8001_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8x_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pmcraid.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-staging-ks7010-ks_wlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-gadget-function-uvc_configfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-ehci-fsl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-oxu210hp-hcd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-w1-w1_netlink.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-watchdog-cros_ec_wdt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bcachefs_format.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bkey_sort.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-btree_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-disk_accounting.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-ec_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-inode.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-io_read.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-move.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-tests-..-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-erofs-fscache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-f2fs-f2fs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-hpfs-hpfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfs_common-nfsacl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsfh.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-state.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-xdr4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ocfs2-xattr.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cached_dir.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cifsglob.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-xfs-xfs_log_priv.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-mlx5-mlx5_ifc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_arp-arp_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_ipv4-ip_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-bluetooth-hci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-netfilter-nf_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-nfc-nci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-sctp-structs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-bluetooth-mgmt_config.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-spectmgmt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-util.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-tls-tls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- security-keys-trusted-keys-trusted_tpm1.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-amd-..-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-soc-topology-test.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8186-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8195-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-comm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-midi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-pcm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-caiaq-device.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-hiface-pcm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-usb-misc-ua101.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- arm-randconfig-002-20240711
-|   |-- drivers-firmware-efi-libstub-efi-stub-helper.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-file.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- arm-randconfig-004-20240711
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- arm64-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- arm64-randconfig-002-20240711
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- arm64-randconfig-003-20240711
-|   |-- drivers-firmware-efi-libstub-efi-stub-helper.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-file.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- arm64-randconfig-004-20240711
-|   |-- drivers-firmware-efi-libstub-efi-stub-helper.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-file.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- csky-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- csky-randconfig-001-20240711
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- csky-randconfig-002-20240711
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- loongarch-allmodconfig
-|   |-- drivers-crypto-allwinner-sun8i-ce-sun8i-ce.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-allwinner-sun8i-ss-sun8i-ss.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-efi-stub-helper.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-file.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-cxgb4-t4fw_ri_api.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-irdma-cm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-mlx5-fs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-sw-rxe-rxe_verbs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-message-fusion-mptbase.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-hw_atl-..-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4_tc_u32_parse.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-inline_crypto-chtls-chtls_io.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-libcxgb-..-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funcore-fun_dev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funeth-funeth_main.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-mellanox-mlx5-core-en.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfd3-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfdk-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-common.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-iwl-spectrum.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-dvm-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-d3.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-mac80211.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-mediatek-mt76-mt7915-mcu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-surface-surface_dtx.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-aic94xx-aic94xx_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-megaraid-megaraid_sas_fusion.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8001_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8x_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pmcraid.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-ehci-fsl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-bpf_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-mlx5-mlx5_ifc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-soc-sof-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- loongarch-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- loongarch-allyesconfig
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- loongarch-randconfig-001-20240711
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- loongarch-randconfig-002-20240711
-|   |-- drivers-firmware-efi-libstub-efi-stub-helper.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-file.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- m68k-allmodconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- m68k-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- m68k-allyesconfig
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-clk-clk-loongson2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-atmel-aes.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-img-hash.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-starfive-jh7110-cryp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-xlnx-zynqmp_disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-common-cros_ec_sensors-cros_ec_sensors_core.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-proximity-cros_ec_mkbp_proximity.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bcache.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bset.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-journal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-request.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-media-platform-xilinx-xilinx-dma.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es581_4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es58x_fd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-vxlan-vxlan_mdb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-realtek-rtl8xxxu-rtl8xxxu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wwan-mhi_wwan_mbim.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nfc-pn533-usb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-..-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-loop.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_debugfs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto_test_util.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_kbd_led_backlight.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-pwm-pwm-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-rtc-rtc-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-hisi_sas-hisi_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-staging-ks7010-ks_wlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-gadget-function-uvc_configfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-oxu210hp-hcd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-w1-w1_netlink.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-watchdog-cros_ec_wdt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bcachefs_format.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bkey_sort.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-btree_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-disk_accounting.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-ec_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-inode.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-io_read.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-move.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-tests-..-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-erofs-fscache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-f2fs-f2fs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-hpfs-hpfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfs_common-nfsacl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsfh.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-state.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-xdr4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ocfs2-xattr.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cached_dir.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cifsglob.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-xfs-xfs_log_priv.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_arp-arp_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_ipv4-ip_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-bluetooth-hci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-netfilter-nf_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-nfc-nci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-sctp-structs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-bluetooth-mgmt_config.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-spectmgmt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-util.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-tls-tls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- security-keys-trusted-keys-trusted_tpm1.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-amd-..-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-soc-topology-test.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8186-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8195-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-comm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-midi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-pcm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-caiaq-device.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-hiface-pcm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-usb-misc-ua101.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- microblaze-allmodconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- microblaze-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- microblaze-allyesconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- mips-allmodconfig
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- mips-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- mips-allyesconfig
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-clk-clk-loongson2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-allwinner-sun8i-ce-sun8i-ce.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-allwinner-sun8i-ss-sun8i-ss.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-atmel-aes.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-img-hash.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-starfive-jh7110-cryp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-xlnx-zynqmp_disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-common-cros_ec_sensors-cros_ec_sensors_core.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-proximity-cros_ec_mkbp_proximity.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-cxgb4-t4fw_ri_api.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-irdma-cm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-mlx5-fs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bcache.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bset.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-journal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-request.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-media-platform-xilinx-xilinx-dma.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-message-fusion-mptbase.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es581_4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es58x_fd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-hw_atl-..-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4_tc_u32_parse.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-inline_crypto-chtls-chtls_io.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-libcxgb-..-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funcore-fun_dev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funeth-funeth_main.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-mellanox-mlx5-core-en.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfd3-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfdk-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-vxlan-vxlan_mdb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-common.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-iwl-spectrum.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-dvm-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-d3.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-mac80211.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-mediatek-mt76-mt7915-mcu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-realtek-rtl8xxxu-rtl8xxxu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wwan-mhi_wwan_mbim.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nfc-pn533-usb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-..-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-loop.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_debugfs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto_test_util.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_kbd_led_backlight.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-pwm-pwm-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-rtc-rtc-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-aic94xx-aic94xx_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-hisi_sas-hisi_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-megaraid-megaraid_sas_fusion.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8001_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8x_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pmcraid.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-staging-ks7010-ks_wlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-gadget-function-uvc_configfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-ehci-fsl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-oxu210hp-hcd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-w1-w1_netlink.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-watchdog-cros_ec_wdt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bcachefs_format.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bkey_sort.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-btree_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-disk_accounting.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-ec_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-inode.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-io_read.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-move.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-tests-..-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-erofs-fscache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-f2fs-f2fs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-hpfs-hpfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfs_common-nfsacl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsfh.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-state.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-xdr4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ocfs2-xattr.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cached_dir.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cifsglob.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-xfs-xfs_log_priv.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-mlx5-mlx5_ifc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_arp-arp_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_ipv4-ip_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-bluetooth-hci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-netfilter-nf_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-nfc-nci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-sctp-structs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-bluetooth-mgmt_config.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-spectmgmt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-util.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-tls-tls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- security-keys-trusted-keys-trusted_tpm1.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-amd-..-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-soc-topology-test.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8186-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8195-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-comm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-midi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-pcm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-caiaq-device.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-hiface-pcm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-usb-misc-ua101.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- nios2-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- nios2-randconfig-001-20240711
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- nios2-randconfig-002-20240711
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- openrisc-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- openrisc-allyesconfig
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-clk-clk-loongson2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-atmel-aes.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-img-hash.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-starfive-jh7110-cryp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-xlnx-zynqmp_disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-common-cros_ec_sensors-cros_ec_sensors_core.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-proximity-cros_ec_mkbp_proximity.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-cxgb4-t4fw_ri_api.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-irdma-cm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-mlx5-fs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-sw-rxe-rxe_verbs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bcache.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bset.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-journal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-request.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-media-platform-xilinx-xilinx-dma.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es581_4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es58x_fd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-hw_atl-..-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4_tc_u32_parse.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-inline_crypto-chtls-chtls_io.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-libcxgb-..-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funcore-fun_dev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funeth-funeth_main.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-mellanox-mlx5-core-en.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfd3-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfdk-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-vxlan-vxlan_mdb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-common.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-iwl-spectrum.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-dvm-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-mac80211.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-mediatek-mt76-mt7915-mcu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-realtek-rtl8xxxu-rtl8xxxu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wwan-mhi_wwan_mbim.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nfc-pn533-usb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-..-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-loop.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_debugfs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto_test_util.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_kbd_led_backlight.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-pwm-pwm-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-rtc-rtc-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-hisi_sas-hisi_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-megaraid-megaraid_sas_fusion.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8001_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8x_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pmcraid.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-staging-ks7010-ks_wlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-gadget-function-uvc_configfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-oxu210hp-hcd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-w1-w1_netlink.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-watchdog-cros_ec_wdt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bcachefs_format.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bkey_sort.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-btree_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-disk_accounting.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-ec_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-inode.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-io_read.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-move.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-tests-..-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-erofs-fscache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-f2fs-f2fs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-hpfs-hpfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfs_common-nfsacl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsfh.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-state.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-xdr4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ocfs2-xattr.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cached_dir.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cifsglob.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-xfs-xfs_log_priv.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-mlx5-mlx5_ifc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_arp-arp_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_ipv4-ip_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-bluetooth-hci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-netfilter-nf_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-nfc-nci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-sctp-structs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-bluetooth-mgmt_config.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-spectmgmt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-util.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-tls-tls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- security-keys-trusted-keys-trusted_tpm1.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-amd-..-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-soc-topology-test.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8186-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8195-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-comm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-midi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-pcm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-caiaq-device.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-hiface-pcm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-usb-misc-ua101.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- openrisc-defconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- parisc-allmodconfig
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-clk-clk-loongson2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-atmel-aes.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-img-hash.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-starfive-jh7110-cryp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-xlnx-zynqmp_disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-common-cros_ec_sensors-cros_ec_sensors_core.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-proximity-cros_ec_mkbp_proximity.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-cxgb4-t4fw_ri_api.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-irdma-cm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-mlx5-fs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-sw-rxe-rxe_verbs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bcache.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bset.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-journal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-request.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-media-platform-xilinx-xilinx-dma.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-message-fusion-mptbase.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es581_4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es58x_fd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-hw_atl-..-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4_tc_u32_parse.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-inline_crypto-chtls-chtls_io.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-libcxgb-..-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funcore-fun_dev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funeth-funeth_main.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-mellanox-mlx5-core-en.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfd3-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfdk-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-vxlan-vxlan_mdb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-common.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-iwl-spectrum.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-dvm-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-mac80211.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-mediatek-mt76-mt7915-mcu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-realtek-rtl8xxxu-rtl8xxxu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wwan-mhi_wwan_mbim.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nfc-pn533-usb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-..-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-loop.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_debugfs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto_test_util.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_kbd_led_backlight.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-pwm-pwm-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-rtc-rtc-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-aic94xx-aic94xx_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-hisi_sas-hisi_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-megaraid-megaraid_sas_fusion.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8001_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8x_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pmcraid.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-staging-ks7010-ks_wlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-gadget-function-uvc_configfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-oxu210hp-hcd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-w1-w1_netlink.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-watchdog-cros_ec_wdt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bcachefs_format.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bkey_sort.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-btree_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-disk_accounting.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-ec_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-inode.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-io_read.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-move.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-tests-..-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-erofs-fscache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-f2fs-f2fs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-hpfs-hpfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfs_common-nfsacl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsfh.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-state.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-xdr4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ocfs2-xattr.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cached_dir.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cifsglob.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-xfs-xfs_log_priv.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-mlx5-mlx5_ifc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_arp-arp_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_ipv4-ip_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-bluetooth-hci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-netfilter-nf_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-nfc-nci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-sctp-structs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-bluetooth-mgmt_config.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-spectmgmt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-util.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-tls-tls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- security-keys-trusted-keys-trusted_tpm1.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-amd-..-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-soc-topology-test.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8186-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8195-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-comm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-midi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-pcm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-caiaq-device.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-hiface-pcm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-usb-misc-ua101.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- parisc-allyesconfig
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-clk-clk-loongson2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-atmel-aes.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-img-hash.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-starfive-jh7110-cryp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-xlnx-zynqmp_disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-common-cros_ec_sensors-cros_ec_sensors_core.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-proximity-cros_ec_mkbp_proximity.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-cxgb4-t4fw_ri_api.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-irdma-cm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-mlx5-fs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-sw-rxe-rxe_verbs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bcache.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bset.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-journal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-request.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-media-platform-xilinx-xilinx-dma.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-message-fusion-mptbase.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es581_4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es58x_fd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-hw_atl-..-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4_tc_u32_parse.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-inline_crypto-chtls-chtls_io.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-libcxgb-..-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funcore-fun_dev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funeth-funeth_main.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-mellanox-mlx5-core-en.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfd3-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfdk-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-vxlan-vxlan_mdb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-common.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-iwl-spectrum.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-dvm-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-mac80211.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-mediatek-mt76-mt7915-mcu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-realtek-rtl8xxxu-rtl8xxxu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wwan-mhi_wwan_mbim.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nfc-pn533-usb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-..-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-loop.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_debugfs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto_test_util.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_kbd_led_backlight.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-pwm-pwm-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-rtc-rtc-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-aic94xx-aic94xx_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-hisi_sas-hisi_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-megaraid-megaraid_sas_fusion.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8001_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8x_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pmcraid.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-staging-ks7010-ks_wlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-gadget-function-uvc_configfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-oxu210hp-hcd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-w1-w1_netlink.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-watchdog-cros_ec_wdt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bcachefs_format.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bkey_sort.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-btree_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-disk_accounting.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-ec_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-inode.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-io_read.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-move.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-tests-..-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-erofs-fscache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-f2fs-f2fs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-hpfs-hpfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfs_common-nfsacl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsfh.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-state.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-xdr4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ocfs2-xattr.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cached_dir.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cifsglob.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-xfs-xfs_log_priv.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-mlx5-mlx5_ifc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_arp-arp_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_ipv4-ip_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-bluetooth-hci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-netfilter-nf_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-nfc-nci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-sctp-structs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-bluetooth-mgmt_config.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-spectmgmt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-util.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-tls-tls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- security-keys-trusted-keys-trusted_tpm1.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-amd-..-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-soc-topology-test.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8186-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8195-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-comm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-midi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-pcm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-caiaq-device.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-hiface-pcm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-usb-misc-ua101.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- parisc-defconfig
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsfh.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-state.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-xdr4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cached_dir.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cifsglob.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- parisc-randconfig-001-20240711
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- parisc-randconfig-002-20240711
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- powerpc-allmodconfig
-|   |-- arch-powerpc-include-asm-hvcall.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- arch-powerpc-perf-core-book3s.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-clk-clk-loongson2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-allwinner-sun8i-ce-sun8i-ce.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-allwinner-sun8i-ss-sun8i-ss.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-atmel-aes.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-img-hash.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-starfive-jh7110-cryp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-xlnx-zynqmp_disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-common-cros_ec_sensors-cros_ec_sensors_core.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-iio-proximity-cros_ec_mkbp_proximity.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-cxgb4-t4fw_ri_api.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-irdma-cm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-hw-mlx5-fs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-infiniband-sw-rxe-rxe_verbs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bcache.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bset.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-journal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-request.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-media-platform-xilinx-xilinx-dma.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-message-fusion-mptbase.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es581_4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-can-usb-etas_es58x-es58x_fd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-aquantia-atlantic-hw_atl-..-aq_hw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4_tc_u32_parse.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-inline_crypto-chtls-chtls_io.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-libcxgb-..-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funcore-fun_dev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funeth-funeth_main.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-mellanox-mlx5-core-en.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfd3-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfdk-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-vxlan-vxlan_mdb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath11k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-core.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-ath-ath12k-dp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-common.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-iwl-spectrum.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-dvm-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tdls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-..-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-d3.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-mvm-mac80211.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-mediatek-mt76-mt7915-mcu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-realtek-rtl8xxxu-rtl8xxxu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wwan-mhi_wwan_mbim.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nfc-pn533-usb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-..-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-loop.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_debugfs.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto_test_util.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_kbd_led_backlight.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-pwm-pwm-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-rtc-rtc-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-aic94xx-aic94xx_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-hisi_sas-hisi_sas.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-megaraid-megaraid_sas_fusion.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8001_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8x_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pmcraid.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-staging-ks7010-ks_wlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-gadget-function-uvc_configfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-ehci-fsl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-oxu210hp-hcd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-w1-w1_netlink.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-watchdog-cros_ec_wdt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bcachefs_format.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bkey_sort.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-btree_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-disk_accounting.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-ec_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-inode.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-io_read.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-move.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-tests-..-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-erofs-fscache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-f2fs-f2fs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-hpfs-hpfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfs_common-nfsacl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsd.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-nfsfh.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-state.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-nfsd-xdr4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ocfs2-xattr.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cached_dir.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cifsglob.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-xfs-xfs_log_priv.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-mlx5-mlx5_ifc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_arp-arp_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_ipv4-ip_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-bluetooth-hci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-netfilter-nf_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-nfc-nci.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-sctp-structs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-bluetooth-mgmt_config.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-spectmgmt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-mac80211-util.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-tls-tls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- security-keys-trusted-keys-trusted_tpm1.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-amd-..-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-soc-topology-test.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-intel-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-ipc4-topology.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8186-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-mediatek-mt8195-..-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-comm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-midi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-6fire-pcm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-caiaq-device.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-usb-hiface-pcm.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-usb-misc-ua101.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- powerpc-allnoconfig
-|   `-- arch-powerpc-include-asm-hvcall.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- powerpc-randconfig-001-20240711
-|   |-- arch-powerpc-include-asm-hvcall.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- arch-powerpc-perf-core-book3s.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- powerpc64-randconfig-001-20240711
-|   |-- arch-powerpc-include-asm-hvcall.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-dispnv50-disp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_chan.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nouveau_fence.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-client.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-conn.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-fifo.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-object.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-nouveau-nvif-outp.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- powerpc64-randconfig-003-20240711
-|   |-- arch-powerpc-include-asm-hvcall.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-si_dpm.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-amd-amdgpu-..-pm-legacy-dpm-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- riscv-allnoconfig
-|   |-- drivers-firmware-efi-libstub-efi-stub-helper.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- drivers-firmware-efi-libstub-file.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- riscv-randconfig-002-20240711
-|   |-- drivers-firmware-efi-libstub-efi-stub-helper.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firmware-efi-libstub-file.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-message-fusion-mptbase.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-cxgb4-cxgb4_tc_u32_parse.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-chelsio-libcxgb-..-cxgb4-cxgb4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funcore-fun_dev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-fungible-funeth-funeth_main.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfd3-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-ethernet-netronome-nfp-nfdk-..-crypto-fw.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-common.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlegacy-iwl-spectrum.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-dvm-commands.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-intel-iwlwifi-fw-api-tx.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wireless-mediatek-mt76-mt7915-mcu.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-megaraid-megaraid_sas_fusion.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8001_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pm8001-pm8x_hwi.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-pmcraid.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- s390-allyesconfig
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- s390-randconfig-002-20240711
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sh-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sh-defconfig
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sh-randconfig-001-20240711
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sh-randconfig-002-20240711
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sparc-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sparc-randconfig-001-20240711
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-nislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-gpu-drm-radeon-sislands_smc.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bcache.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-bset.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-journal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-bcache-request.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-message-fusion-mptbase.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-misc-bcm-vk-bcm_vk.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-f2fs-f2fs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sparc-randconfig-002-20240711
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-loop.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-nvme-target-nvmet.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-gadget-function-uvc_configfs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-ehci-fsl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-usb-host-oxu210hp-hcd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bcachefs_format.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-bkey_sort.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-btree_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-disk_accounting.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-ec_types.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-inode.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-io_read.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-bcachefs-move.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-tests-..-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-btrfs-volumes.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-f2fs-f2fs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-xfs-xfs_log_priv.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- security-keys-trusted-keys-trusted_tpm1.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-soc-topology-test.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-soc-sof-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sparc64-defconfig
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-cache.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5-ppl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-md-raid5.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-scsi-sd.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-ext4.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-ext4-mballoc.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-jbd2.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sparc64-randconfig-001-20240711
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-clk-clk-loongson2.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-vxlan-vxlan_mdb.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-net-wwan-mhi_wwan_mbim.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cached_dir.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-smb-client-cifsglob.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_arp-arp_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-netfilter_ipv4-ip_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-netfilter-nf_tables.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-sctp-structs.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-trace-events-..-..-..-fs-dlm-dlm_internal.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-tls-tls.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- sound-soc-amd-..-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- sound-soc-soc-topology-test.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- sparc64-randconfig-002-20240711
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-img-hash.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-crypto-starfive-jh7110-cryp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-platform-chrome-cros_ec_proto.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-rtc-rtc-cros-ec.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- drivers-watchdog-cros_ec_wdt.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- xtensa-allnoconfig
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|-- xtensa-randconfig-001-20240711
-|   |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-net-vxlan.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- include-uapi-linux-wireless.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-bch.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- lib-crc64-rocksoft.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   |-- net-core-flow_dissector.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-|   `-- net-ethtool-ioctl.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-`-- xtensa-randconfig-002-20240711
-    |-- crypto-asymmetric_keys-restrict.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- crypto-drbg.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- drivers-firewire-core-cdev.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- fs-namespace.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- fs-notify-fanotify-fanotify.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- include-asm-generic-tlb.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- include-linux-ethtool.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- include-linux-tty_buffer.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- include-net-compat.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- include-net-inet_sock.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- include-net-ip.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- include-uapi-linux-if_arp.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- include-uapi-linux-route.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- kernel-trace-trace_events_filter.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    |-- lib-crc-t10dif.c:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
-    `-- sound-soc-amd-..-sof-amd-..-sof-audio.h:warning:structure-containing-a-flexible-array-member-is-not-at-the-end-of-another-structure
+> To be explicit, I wonder whether something like below diff would be
+> applicable on top of the patch "huge_memory: Allow mappings of PMD sized
+> pages" in this series, which introduced dax_insert_pfn_pmd() for dax:
+>
+> $ diff origin new
+> 1c1
+> < vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
+> ---
+>> vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
+> 55,58c55,60
+> <       folio = page_folio(page);
+> <       folio_get(folio);
+> <       folio_add_file_rmap_pmd(folio, page, vma);
+> <       add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
+> ---
+>>         if (page) {
+>>                 folio = page_folio(page);
+>>                 folio_get(folio);
+>>                 folio_add_file_rmap_pmd(folio, page, vma);
+>>                 add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
+>>         }
 
-elapsed time: 1153m
+We get the page from calling pfn_t_to_page(pfn). This is safe for the
+DAX case but is it safe to use a page returned by this more generally?
 
-configs tested: 119
-configs skipped: 2
+From an API perspective it would make more sense for the DAX code to
+pass the page rather than the pfn. I didn't do that because device DAX
+just had the PFN and this was DAX-specific code. But if we want to make
+it generic I'd rather have callers pass the page in.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Of course that probably doesn't help you, because then the call would be
+vmf_insert_page_pmd() rather than a raw pfn, but as you point out there
+might be some common code we could share.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                   randconfig-001-20240711   gcc-13.2.0
-arc                   randconfig-002-20240711   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-19
-arm                              allyesconfig   gcc-14.1.0
-arm                   randconfig-001-20240711   clang-19
-arm                   randconfig-002-20240711   gcc-14.1.0
-arm                   randconfig-003-20240711   clang-19
-arm                   randconfig-004-20240711   gcc-14.1.0
-arm64                            allmodconfig   clang-19
-arm64                             allnoconfig   gcc-14.1.0
-arm64                 randconfig-001-20240711   clang-19
-arm64                 randconfig-002-20240711   gcc-14.1.0
-arm64                 randconfig-003-20240711   gcc-14.1.0
-arm64                 randconfig-004-20240711   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                  randconfig-001-20240711   gcc-14.1.0
-csky                  randconfig-002-20240711   gcc-14.1.0
-hexagon                          allmodconfig   clang-19
-hexagon                           allnoconfig   clang-19
-hexagon                          allyesconfig   clang-19
-hexagon               randconfig-001-20240711   clang-19
-hexagon               randconfig-002-20240711   clang-19
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240711   gcc-13
-i386         buildonly-randconfig-002-20240711   gcc-10
-i386         buildonly-randconfig-003-20240711   gcc-13
-i386         buildonly-randconfig-004-20240711   gcc-8
-i386         buildonly-randconfig-005-20240711   gcc-10
-i386         buildonly-randconfig-006-20240711   gcc-13
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240711   gcc-13
-i386                  randconfig-002-20240711   gcc-10
-i386                  randconfig-003-20240711   gcc-8
-i386                  randconfig-004-20240711   gcc-13
-i386                  randconfig-005-20240711   clang-18
-i386                  randconfig-006-20240711   gcc-13
-i386                  randconfig-011-20240711   gcc-9
-i386                  randconfig-012-20240711   clang-18
-i386                  randconfig-013-20240711   gcc-13
-i386                  randconfig-014-20240711   clang-18
-i386                  randconfig-015-20240711   clang-18
-i386                  randconfig-016-20240711   gcc-9
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch             randconfig-001-20240711   gcc-14.1.0
-loongarch             randconfig-002-20240711   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                 randconfig-001-20240711   gcc-14.1.0
-nios2                 randconfig-002-20240711   gcc-14.1.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240711   gcc-14.1.0
-parisc                randconfig-002-20240711   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-19
-powerpc               randconfig-001-20240711   gcc-14.1.0
-powerpc               randconfig-002-20240711   clang-19
-powerpc               randconfig-003-20240711   clang-19
-powerpc64             randconfig-001-20240711   gcc-14.1.0
-powerpc64             randconfig-002-20240711   clang-16
-powerpc64             randconfig-003-20240711   gcc-14.1.0
-riscv                            allmodconfig   clang-19
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-19
-riscv                               defconfig   clang-19
-riscv                 randconfig-001-20240711   clang-14
-riscv                 randconfig-002-20240711   gcc-14.1.0
-s390                             allmodconfig   clang-19
-s390                              allnoconfig   clang-19
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   clang-19
-s390                  randconfig-001-20240711   clang-19
-s390                  randconfig-002-20240711   gcc-14.1.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                    randconfig-001-20240711   gcc-14.1.0
-sh                    randconfig-002-20240711   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240711   gcc-14.1.0
-sparc64               randconfig-002-20240711   gcc-14.1.0
-um                               allmodconfig   clang-19
-um                                allnoconfig   clang-17
-um                               allyesconfig   gcc-13
-um                                  defconfig   clang-19
-um                             i386_defconfig   gcc-13
-um                    randconfig-001-20240711   gcc-8
-um                    randconfig-002-20240711   gcc-8
-um                           x86_64_defconfig   clang-15
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240711   gcc-14.1.0
-xtensa                randconfig-002-20240711   gcc-14.1.0
+>
+> As most of the rest look very similar to what pfn injections would need..
+> and in the PoC of ours we're using vmf_insert_pfn_pmd/pud().
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Do you have the PoC posted anywhere so I can get an understanding of how
+this might be used?
+
+> That also reminds me on whether it'll be easier to implement the new dax
+> support for page struct on top of vmf_insert_pfn_pmd/pud, rather than
+> removing the 1st then adding the new one.  Maybe it'll reduce code churns,
+> and would that also make reviews easier?
+
+Yeah, that's a good observation. I think it was just a quirk of how I
+was developing this and also not caring about the PFN case so I'll see
+what that looks like.
+
+> It's also possible I missed something important so the old function must be
+> removed.
+>
+> Thanks,
+
 
