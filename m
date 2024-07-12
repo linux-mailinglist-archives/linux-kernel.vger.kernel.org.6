@@ -1,260 +1,224 @@
-Return-Path: <linux-kernel+bounces-250234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0A092F589
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:28:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CED292F58B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B631F22A7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:28:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F7401C22795
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB74A13D607;
-	Fri, 12 Jul 2024 06:27:47 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A903013D897;
+	Fri, 12 Jul 2024 06:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LBjoRcp6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AACD17BBE;
-	Fri, 12 Jul 2024 06:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720765667; cv=none; b=XJPb9lT+497dbvsgQO+voJyGedvdmINpZJpnRXyKxA/zXBLEYLlDAexOapVHMtZJuzt0oPzZPjNBwIWUGUbax78nSvIHxb+bIS9fMX0zZws9vkh51opzK/iDVDcEzFgyfoYaZSHxnpy5/XRtrtvavlV5f8wqnb/Qqy2DWoMw0H4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720765667; c=relaxed/simple;
-	bh=3L4Y7nsXbhrfQy+s59yoRG1+TN1gXL3IuWxdlQYndxw=;
-	h=To:From:Subject:Message-ID:Date:MIME-Version:Content-Type; b=VpZP5GwoHfUtHRw6Em9ez1S7x7gLysT4iYmPWpSc2I9MmdKwaMxr5TYGmhdQE0PF++qp4nhA75ST2uW3Sf5I3qMwdlj3q28UYwjMXNrQbCdwbFT9nzuaxRGVkbqvpm2gkfxj5ZccTGsr7PFAGn9OZf3h382nfB1goqdjnNPqfsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WL1q24LWdz4f3kvq;
-	Fri, 12 Jul 2024 14:27:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 8ADAC1A0568;
-	Fri, 12 Jul 2024 14:27:39 +0800 (CST)
-Received: from [10.174.178.46] (unknown [10.174.178.46])
-	by APP2 (Coremail) with SMTP id Syh0CgB34YbZzJBmRSN_Bw--.31285S3;
-	Fri, 12 Jul 2024 14:27:37 +0800 (CST)
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Ted Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
- Christoph Hellwig <hch@infradead.org>,
- linux-mtd <linux-mtd@lists.infradead.org>,
- Richard Weinberger <richard@nod.at>, "zhangyi (F)" <yi.zhang@huawei.com>,
- yangerkun <yangerkun@huawei.com>, "wangzhaolong (A)"
- <wangzhaolong1@huawei.com>
-From: Zhihao Cheng <chengzhihao@huaweicloud.com>
-Subject: [BUG REPORT] potential deadlock in inode evicting under the inode lru
- traversing context on ext4 and ubifs
-Message-ID: <37c29c42-7685-d1f0-067d-63582ffac405@huaweicloud.com>
-Date: Fri, 12 Jul 2024 14:27:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53E217BBE;
+	Fri, 12 Jul 2024 06:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720765672; cv=fail; b=Fwg4DgzfbMGTxX2gZ5Ry3HW3F9EFZwtt2mJ4ayHei8Gvkfhrklb8gLk7Hb33W1m2KBeV0mWcl4sVHsmrAHn3AxJB6tFTAdf2Ds2saCiUgX6PhIZL9ZemzwhwxtQzPu5fd194gSHfwCKHGeXq1RXuUI/Gb+pZV0S9ghYYh4dOPWY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720765672; c=relaxed/simple;
+	bh=euU2ZFJPjlE76gXkdy4MD9y346ssuweU7slqyz9pt+E=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Gdwt0lrtEyM6MlkMwD1qI0vPX7ePsIfGBwI2VDMOCdgS+yukqYlQxg7+YsO8jBnrsOex88l6da1PJg1cpHDFPgUwAbJaE5aRviAI3O1ig5u/egM/JKnNuiEAS9KzP7Rh7WSOCST+F7fZISaib5ipr0cItDfZQAQfNU5qJev0zVs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LBjoRcp6; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720765671; x=1752301671;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=euU2ZFJPjlE76gXkdy4MD9y346ssuweU7slqyz9pt+E=;
+  b=LBjoRcp6rXjicOLHsOjs2livERQMuVjbLPELyh7svZxbL85SuTWCTZMS
+   XjSMgcCB+ffhMzBlN1b+B3QVoQA8oHdMngXsxdu9rEQVvLkoERsvJw1Z2
+   ZJeORZF037PyVuwgtxeg+c9SPrA6BzLBk7aJeXjjvWhITgtf0EmoNFJXP
+   YBACeJV5gjaUw/FXeK7J0r6Jcg21O02c7sF/CBw9eNaIjypYTMtEmJivr
+   BPA1lkTaYyJkimHjeDDiY1VXuZboSapEN1k3eJ4T/Evd9Rd9VhTSpOf2N
+   fY+3E3Wqfx3MN3PqUszeMXEAbAYsjnSH8Wtd+3XRGGOo/IrLTvTqTHVdX
+   g==;
+X-CSE-ConnectionGUID: BdEwjbgJQl+MBFIEqNAbSQ==
+X-CSE-MsgGUID: iNgiG1pUQmCFTemGazrBFQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="17809797"
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="17809797"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 23:27:50 -0700
+X-CSE-ConnectionGUID: bn+qQmDeRz2sVzJOnFTisg==
+X-CSE-MsgGUID: s/kY6ZShQHKwOo+wQsQfgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
+   d="scan'208";a="48777576"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Jul 2024 23:27:51 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 11 Jul 2024 23:27:49 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 11 Jul 2024 23:27:48 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 11 Jul 2024 23:27:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sH3aYlLIodg6RProFUE8PELeI3F6FAujBSGJgFkp4zN1effv38+7AOGDTHO9SalrUtmFHKM/vnSVWwt0DhpZnxZRRAL+BiofFOXCHRladbn9M/4+vnD2bNYQwx+9ZFQy9ldl/sVqT02vQFNtE5GjEP/80ORdv6IgBbKgmrcGqIhTf6XnlMCW/+BnYzKXpIYKujOjmp6a6VUtTb9RjG9CxGtFWwaAnlJIceHglTwQh74rvjBZgkkXUzkUwSdBqzFjdhX9VnzrjU3LOzH9wUvyuI/pxAFZmEdbfnszcK9ob1j5ikPDcYlEJkirQtoQvAfIgqB/XfweDClal6i+iIiK6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=838ziyL5A8vEn8FaaiAmakMzWekw67zSodhtGvPzAxY=;
+ b=mBsZevmqaKWyBWLtBjzDOCyi0oAwts6uxNLyDGnV/eIWqqMLvbykOpwmcp5AuOsQ/d5pTGuIgFZcQvU3otYL9Avao35l91BuJ7KDE7AOfw849RxpUJp4EA/9CoeKegs2p8Ves4SufCEekxK8e18qKfVYd6E1UBATZaVWmR9eeHs+iF9QZmzQ0vWXNaUWiZ6sgXZUAd4cvHkPZCw2HwcnkHaS8dZ1UampjyHIe6cDLa1FsKCjkntXKB4IxK26N9uYgHQLlAjrSBcf7Zd3htAiI05lGyp6JXTVsPH1O0vhERxabxI4aVICkxiZcne0yw8KkoZ74vAwh78b6ntdHPBHHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB4965.namprd11.prod.outlook.com (2603:10b6:510:34::7)
+ by CY8PR11MB7845.namprd11.prod.outlook.com (2603:10b6:930:72::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.21; Fri, 12 Jul
+ 2024 06:27:46 +0000
+Received: from PH0PR11MB4965.namprd11.prod.outlook.com
+ ([fe80::36c3:f638:9d28:2cd4]) by PH0PR11MB4965.namprd11.prod.outlook.com
+ ([fe80::36c3:f638:9d28:2cd4%5]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
+ 06:27:46 +0000
+Message-ID: <c35ef9a7-433e-4904-93ec-3e6d3deab1c5@intel.com>
+Date: Fri, 12 Jul 2024 14:27:33 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] Introduce CET supervisor state support
+To: Dave Hansen <dave.hansen@intel.com>, <tglx@linutronix.de>,
+	<x86@kernel.org>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
+CC: <peterz@infradead.org>, <chao.gao@intel.com>,
+	<rick.p.edgecombe@intel.com>, <mlevitsk@redhat.com>, <john.allen@amd.com>
+References: <20240531090331.13713-1-weijiang.yang@intel.com>
+ <67c5a358-0e40-4b2f-b679-33dd0dfe73fb@intel.com>
+ <1c2fd06e-2e97-4724-80ab-8695aa4334e7@intel.com>
+Content-Language: en-US
+From: "Yang, Weijiang" <weijiang.yang@intel.com>
+In-Reply-To: <1c2fd06e-2e97-4724-80ab-8695aa4334e7@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0030.apcprd02.prod.outlook.com
+ (2603:1096:4:195::17) To PH0PR11MB4965.namprd11.prod.outlook.com
+ (2603:10b6:510:34::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgB34YbZzJBmRSN_Bw--.31285S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFWfKr4xZF17AF1rArWUArb_yoWxJw45pr
-	WDWrySyr4kXFyY934vqr4kXw1093WkKF4UXr95CrnrZ3WDJF1IqF17try5AFW7GrWkA3s0
-	qa1UCr1DCa1ay3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UQzVbUUUUU=
-X-CM-SenderInfo: xfkh0wx2klxt3r6k3tpzhluzxrxghudrp/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB4965:EE_|CY8PR11MB7845:EE_
+X-MS-Office365-Filtering-Correlation-Id: a32b05f8-86b2-45a9-4728-08dca23bbe69
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?UFZVWUIxVnNMbHVwRHV6a1A1Vks4eHhNTkNlWVAyRlkrN1ZnMFU0eWg3b0py?=
+ =?utf-8?B?YzRnMWpMVFBkRysycDRPUFcxNXdEQU1sb2g5QzNaa1cyWWpNVUtaUjUrTFdJ?=
+ =?utf-8?B?ZFNaa1ZaMjBFWE51MEFpRm52ZEE1M0R1VDV5R3lZVTNPbVd5dUF6STdDUVAr?=
+ =?utf-8?B?ZnpkdHZCUi9TRHRKVFd0Vm1vZlNKZXo0Q3RJMERjTjN0RUNkTzN1VHRDVlRM?=
+ =?utf-8?B?alpvbE9TTVJ1TEhkSkVYVFA4QzNSTzdIeWR0YVZDRE9WVzJBc244Kzh6bmYv?=
+ =?utf-8?B?b2UrZlhUdURsSDdoZ1Zqem9WUUpXK2cwUUhCbGRTWE1QTXM1ZEpJMUtCekQ1?=
+ =?utf-8?B?RHpmMjhNMUl1WDBwb2Z0R1pUK0VFRlYza0lmNjk3LzR0RGgxUEc1Y0RJQU9O?=
+ =?utf-8?B?bXgvbFo5WHN3WXh2Zll2ZEpLMjlhR2RmYlRqeHpwcktuZm1XNzlVUkl0bStm?=
+ =?utf-8?B?aWZvRmNxUDdkbDNhL1lEZ0REeGFIRFkzOVNFbkFKc2xpSmJVb1pNTUZ5UkR3?=
+ =?utf-8?B?SzdSQlJlZDllTHg5cTdoclljcE5Mb2lPd3JYbTNzOHBGRzFJMTE3UkZGMC9P?=
+ =?utf-8?B?L0JJSmIrem44U1JraUh2VVk0MHFXY3pRaFJNQ2pwQ0lhVFkyeEpkTWRKVWFV?=
+ =?utf-8?B?VHJCZ3BrdnVLN2VhRlh3S0gwaGNGazNYM3J4OG45NlI3WnZFU1BFbkQxTnJh?=
+ =?utf-8?B?SmkzcEtObzZ2a05xWVRnNkl5bmFYL0VIcTVMYkF0enZSVDdtOUY5RUhzQmUv?=
+ =?utf-8?B?SHNjOVA1aEVhbUJXOGtsR0h2M1pHdzNVS1RtY1JxV1ZsWU92Z216ekQ3WVdU?=
+ =?utf-8?B?OWhDZVk1L012eW1MeTRibGNRZTZRbzRlL0FhTTNaUkVWYU04SjhnUGNPKzRZ?=
+ =?utf-8?B?MHk5MjNwWjlrUUhHRzIwMXF5K0VuN3Y4OUQ2aW12Z0Y1TG5HTnR2SjlWOHRG?=
+ =?utf-8?B?eXNNdXB1Y0gxa2JkZGtDNTRtRHJjSG1IUFVheGdkc05XVlI3akhmUjdyUlV3?=
+ =?utf-8?B?SFlTMVJReWtzM3E4K1ljaDhvNmZVWjhlbmthRXB1TVRPVkEzRjBRVVNBWGxz?=
+ =?utf-8?B?RTQ4Zy9VWTlSS3pDc0ZyMUt4aTVIeE9YNmxRQ2VLZEVmdE5zeTRqLzcvSEhi?=
+ =?utf-8?B?cWRZcnZWQTdDTEFGTFVLaUJNNTh4YnJvbHFaWHQraEhiR2hvS1ZzNjU4dllK?=
+ =?utf-8?B?Z2IyelRTNVNuWDBpV1NmT1JBcWZGZmdjT3lrYW5CZFZhK0FxWVJsR2RMaEp6?=
+ =?utf-8?B?RGorc2ZvK3l3T3RBWUxFeURlMUNRS1YvWmRGV2E5Q2l2VHRHbmJWaHF3RUFn?=
+ =?utf-8?B?djRPM2tBdk1yOGhsY3lwVk9Dcko2NVVhWW0wNWc0QWcvOGQ4TzNacWgrRkxj?=
+ =?utf-8?B?cStFaldjYVUxRWpOMzRPMG9lV29QamkwSHJPLzBqTG82ZnAxRGp1SzFCTEhV?=
+ =?utf-8?B?QkR0RndmVHhMV2dhTGdRQUc2bzZqQ2ExRVUreW9pLzY1ckt3SmRLTlhvczlK?=
+ =?utf-8?B?a09HdU9EQjV4UkUybFZVdTVWSlUySnk1U2ExQ0tPTXMyWTVsWlJkL2R2VjNX?=
+ =?utf-8?B?VlluNjg3VXhvRHgxblQycVZWL1Z0eUU2UklWUzJqVVZtWnN5SXJRcmJDWmFW?=
+ =?utf-8?B?TDVKT2Q5eU01eUlRTHNRMDJZQzVwU25pYUNwZTFaUkdnVTNPaERuaDV5c3I0?=
+ =?utf-8?B?MWhleHBJcGhGS1A3MnBiY1A0K2hFREZKb0hsU0NCUk1WRXhjcERoaGlZMXlW?=
+ =?utf-8?B?bWVpS016ZkxUZW51RTVyL29xTW5VcjhZUFlKeUJEb3lWb2xWSTdIeWo4cTNW?=
+ =?utf-8?B?cS9RMmxtRXh4MDVoaGpHZz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB4965.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VjMwYStZM2RQbTFGTWZ2eHZIaXB2ejVhcjc4SWdHUnhaTXRlNmpHRm9ZUytY?=
+ =?utf-8?B?aTJWT3RuWFU1Zzh6K1QwZG9CVFZHblliNVJucTgxWXNPL0toOEFMeGRoZXFD?=
+ =?utf-8?B?TVdSL05FZ05FMDFXb0hQMnhyWEZ2NE1abWZucjlROFlIR09wWUQrWUluY3Yw?=
+ =?utf-8?B?ZTBHYm52WnIrUjh2VTFQamxPMmlZUFo1L3p0aXJDL0VJNFZHVEJldlJmWC9s?=
+ =?utf-8?B?UE9GelZIeXdVMWJxKzFiNlZ4bGIxVXNDcURmVkEvWTNiRkFoSityalZRNmV3?=
+ =?utf-8?B?YXFwcG1OL2s2RjBuV0N1UXpZbGtSNE0zSnloaW1Ic2tBZERvRE16VzlPLzhj?=
+ =?utf-8?B?ekpRK3F3dVdqaXlYb0hwOHdNZlpObEREYVhLSHRhS0w2V0Q1dWQxcEphbkxj?=
+ =?utf-8?B?Z3RaR0d6THV5UGdKam84MExSN3BWN25WUWFCNlIvNStTOTlSTnN6bCsvUys1?=
+ =?utf-8?B?c1hqamcwcDQrU3VLWnFqYWtkeldpS2lnVWd0RGx4RHFWZzVIajRaMkJKTGt0?=
+ =?utf-8?B?a1h6ckR3Q3AxZEcwQ1g2REVlRy9lSmU5aE5SSFlzTm9icFNHOS9vTHZQT2pQ?=
+ =?utf-8?B?YjhaVTVzRFZTVzRwN3dQa2hsdFRvY015Q2NyUjd0RkxVVE1icmlLM3h6Y2ky?=
+ =?utf-8?B?OURtdXFzclBkU3lUK0xSZWNyZUxCc2l6d1RaemMzeHVDYlZpa0ZxYzhZMXV3?=
+ =?utf-8?B?b0tRbC9yQU5EVm53OGhranNXMlorY1BsbTNFZVZ5dk1uTG13M3J1NEMrYU9x?=
+ =?utf-8?B?NWFFYWpEMnlZaWhCbnc2R3RpYXJGaGl2WGVGQ3RpS3RJU3JEWlFkUU1MQTRR?=
+ =?utf-8?B?aFZvWGxrc0EwcFFSS3N3dzA4ZkZnRUhPa2o5N1F5YldWbkFReHdicUZMbmJr?=
+ =?utf-8?B?M01WRDJZY0szdEMrc0IvSHlad05lU0g5TXBoUUcySFdlMHMrMVZZUldVbDFH?=
+ =?utf-8?B?bi9DeFE0dFdYZG0ydXRRb0tJaDFOT3hPODE2T0hTeG5oeUtUOGhrNkZpSlJY?=
+ =?utf-8?B?RGVHTDlMYTR2cGpVMUdob3VlYmZCVmdNdFRsZWczMW1XQXNrMHZLTnI5VERO?=
+ =?utf-8?B?c0w2NFo3SUpJUTlYTjRzWXVDS3JnMVBSNTlENDdSRm9DSDlIc3VobEsrUHNS?=
+ =?utf-8?B?cVpZVnVuY3JjRDQzcjQxdFg3RnpMdDNHcGR4RnpJZFZaTHBDZ0ZxUXdGeTVp?=
+ =?utf-8?B?R2tQTjJWVGxhbjdOZFlOWnlqeCtLNWVreFdUQzlXbSttaXI0RVR2bFQ0U3Za?=
+ =?utf-8?B?ZWZSM0x0TXpCRmEyQmREdjAwQW02QWFCb0J1aWhwN1l4QVVsSTMzRnlFUExL?=
+ =?utf-8?B?cUw1N2IvSjgzSUhiaFkxUVNVbHhGVWdRYmVsYXJDQk9VZHJNbENEOXBKZFNL?=
+ =?utf-8?B?OGQrMlBvSEtEc0RXdFpYYnlNRFJmblJRRjBTd1l6RUZ3bm9vSm1mSzVpS2hR?=
+ =?utf-8?B?VkVvOUQ3T2hzTlF6TXZzcFk1N205UnFQNkpGZjVoQlp2a2cvWWhZRTZuTUFY?=
+ =?utf-8?B?RUxCWGRpVHJyeXJFa29sOXVrSTF3TTJ0TjN0aU5MaDQreXRydnN2ZkIzU2FG?=
+ =?utf-8?B?b0ZvMDNrSkFLRVhzMk5xRW41WDJEckJyenpxSjFIZ0V4NXZjbU5leklsbWl0?=
+ =?utf-8?B?Z2ZVVTFEem9aaklsODBldTh6cXljaXVQZnR1Q3ozbmp3YStGSDZXRzRWNDUy?=
+ =?utf-8?B?TmtRd1hMV2FnMXV6WS93V080ZzlKSVVwYmlZSkxOdWR2MUZzcGJrcXFkd2Vi?=
+ =?utf-8?B?ZG0vWVBDMTRJd2pjdnR5L0Vxdk91akVSVUJjQ0ZGSFZGZWZ4SUxSS05uQnFM?=
+ =?utf-8?B?WkhDeDVIekF5UGlNS295T01yWGUzRlJObjAzWnprdmJMeXc1ZUU2RFhvTTAy?=
+ =?utf-8?B?d1dOL3R5bWdjdnNUUUt2WUMyMWdGTzBmVzFqeFNVbnRVTVJrVmRjcUw2TEdY?=
+ =?utf-8?B?YlEvZUN6cTJieXpyZDgzR3dwQmxndUozOFV2TnFRSENWSmZlaFFCblZycWti?=
+ =?utf-8?B?Y0ExOUMxeER3Ri9yVXZvdUR4ZDJiM2x1cEFsL1N0SkVkZTErMlB6U3NPSE50?=
+ =?utf-8?B?ME1CMFZaYmZTWWpFRG1LWmpOWTJhMFBuZGZ1akxic0l5OFIxODdWUUJNR0lZ?=
+ =?utf-8?B?anZwVFhTRUVtNXI2VisxRGk4Znpva2wvQ0dpb3JsRGZCUlBwc3JhUHZQZ1Jt?=
+ =?utf-8?B?L2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a32b05f8-86b2-45a9-4728-08dca23bbe69
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB4965.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 06:27:46.3821
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zlTeiDWoFxCwh0o6S20bDZXX0dZHvWESJj26lwiUs0IcU03Ea30L3uKLsaZuf/dHib38IMRrfDVQiBRlu4b+zA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7845
+X-OriginatorOrg: intel.com
 
-Hi. Recently, we found a deadlock in inode recliaiming process caused by 
-circular dependence between file inode and file's xattr inode.
+On 7/12/2024 4:58 AM, Dave Hansen wrote:
+> On 7/8/24 20:17, Yang, Weijiang wrote:
+>> So I'm not sure whether XFEATURE_MASK_KERNEL_DYNAMIC and related changes
+>> are worth or not for this series.
+>>
+>> Could you share your thoughts?
+> First of all, I really do appreciate when folks make the effort to _try_
+> to draw their own conclusions before asking the maintainers to share
+> theirs.  Next time, OK? ;)
 
-Problem description
-===================
-
-The inode reclaiming process(See function prune_icache_sb) collects all 
-reclaimable inodes and mark them with I_FREEING flag at first, at that 
-time, other processes will be stuck if they try getting these inodes(See 
-function find_inode_fast), then the reclaiming process destroy the 
-inodes by function dispose_list().
-Some filesystems(eg. ext4 with ea_inode feature, ubifs with xattr) may 
-do inode lookup in the inode evicting callback function, if the inode 
-lookup is operated under the inode lru traversing context, deadlock 
-problems may happen.
-
-Case 1: In function ext4_evict_inode(), the ea inode lookup could happen 
-if ea_inode feature is enabled, the lookup process will be stuck under 
-the evicting context like this:
-
-  1. File A has inode i_reg and an ea inode i_ea
-  2. getfattr(A, xattr_buf) // i_ea is added into lru // lru->i_ea
-  3. Then, following three processes running like this:
-
-     PA                              PB
-  echo 2 > /proc/sys/vm/drop_caches
-   shrink_slab
-    prune_dcache_sb
-    // i_reg is added into lru, lru->i_ea->i_reg
-    prune_icache_sb
-     list_lru_walk_one
-      inode_lru_isolate
-       i_ea->i_state |= I_FREEING // set inode state
-      inode_lru_isolate
-       __iget(i_reg)
-       spin_unlock(&i_reg->i_lock)
-       spin_unlock(lru_lock)
-                                      rm file A
-                                       i_reg->nlink = 0
-       iput(i_reg) // i_reg->nlink is 0, do evict
-        ext4_evict_inode
-         ext4_xattr_delete_inode
-          ext4_xattr_inode_dec_ref_all
-       ext4_xattr_inode_iget
-            ext4_iget(i_ea->i_ino)
-             iget_locked
-              find_inode_fast
-               __wait_on_freeing_inode(i_ea) ----¡ú AA deadlock
-     dispose_list // cannot be executed by prune_icache_sb
-      wake_up_bit(&i_ea->i_state)
-
-Case 2: In deleted inode writing function ubifs_jnl_write_inode(), file 
-deleting process holds BASEHD's wbuf->io_mutex while getting the xattr 
-inode, which could race with inode reclaiming process(The reclaiming 
-process could try locking BASEHD's wbuf->io_mutex in inode evicting 
-function), then an ABBA deadlock problem would happen as following:
-
-  1. File A has inode ia and a xattr(with inode ixa), regular file B has
-     inode ib and a xattr.
-  2. getfattr(A, xattr_buf) // ixa is added into lru // lru->ixa
-  3. Then, following three processes running like this:
-
-         PA                PB                        PC
-                 echo 2 > /proc/sys/vm/drop_caches
-                  shrink_slab
-           prune_dcache_sb
-           // ib and ia are added into lru, lru->ixa->ib->ia
-                   prune_icache_sb
-                    list_lru_walk_one
-                     inode_lru_isolate
-                      ixa->i_state |= I_FREEING // set inode state
-                     inode_lru_isolate
-                      __iget(ib)
-                      spin_unlock(&ib->i_lock)
-                      spin_unlock(lru_lock)
-                                                    rm file B
-                                                     ib->nlink = 0
-  rm file A
-   iput(ia)
-    ubifs_evict_inode(ia)
-     ubifs_jnl_delete_inode(ia)
-      ubifs_jnl_write_inode(ia)
-       make_reservation(BASEHD) // Lock wbuf->io_mutex
-       ubifs_iget(ixa->i_ino)
-        iget_locked
-         find_inode_fast
-          __wait_on_freeing_inode(ixa)
-           |          iput(ib) // ib->nlink is 0, do evict
-           |           ubifs_evict_inode
-           |            ubifs_jnl_delete_inode(ib)
-          ¡ý             ubifs_jnl_write_inode
-      ABBA deadlock ¡û-----make_reservation(BASEHD)
-                    dispose_list // cannot be executed by prune_icache_sb
-                     wake_up_bit(&ixa->i_state)
-
-Reproducer:
-===========
-
-https://bugzilla.kernel.org/show_bug.cgi?id=219022
-
-About solutions
-===============
-
-We have thought some solutions, but all of them will import new influence.
-
-Solution 1: Don't cache xattr inode, make drop_inode callback return 
-true for xattr inode. It will make getting xattr slower.
-Test code:
-     gettimeofday(&s, NULL);
-     for (i = 0; i < 10000; ++i)
-         if (getxattr("/root/temp/file_a", "user.a", buf, 4098) < 0)
-             perror("getxattr");
-     gettimeofday(&e, NULL);
-     printf("cost %ld us\n", 1000000 * (e.tv_sec - s.tv_sec) + e.tv_usec 
-- s.tv_usec);
-Result:
-ext4:
-cost 151068 us // without fix
-cost 321594 us // with fix
-ubifs:
-134125 us // without fix
-371023 us // with fix
-
-Solution 2: Don't put xattr inode into lru, which is implemented by 
-holding xattr inode's refcnt until the file inode is evicted, besides 
-that, make drop_inode callback return true for xattr inode. The solution 
-pins xattr inode in memory until the file inode is evicted, file inode 
-won't be evicted if it has pagecahes, specifically:
-inode_lru_isolate
-  if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) { // 
-file inode won't be evicted, so its' xattr inode won't be reclaimed too, 
-which will increase the memory noise.
-   __iget(inode);
-   if (remove_inode_buffers(inode))
-   ...
-   iput(inode);
-  }
-
-Solution 3: Forbid inode evicting under the inode lru traversing 
-context. Specifically, mark inode with 'I_FREEING' instead of getting 
-its' refcnt to eliminate the inode getting chance in 
-inode_lru_isolate(). The solution is wrong, because the pagecahes may 
-still alive after invalidate_mapping_pages(), so we cannot destroy the 
-file inode after clearing I_WILL_FREE.
-diff --git a/fs/inode.c b/fs/inode.c
-index 3a41f83a4ba5..c649be22f841 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -843,7 +844,7 @@ static enum lru_status inode_lru_isolate(struct 
-list_head *item,
-       * be under pressure before the cache inside the highmem zone.
-       */
-      if (inode_has_buffers(inode) || !mapping_empty(&inode->i_data)) {
--        __iget(inode);
-+        inode->i_state |= I_WILL_FREE;
-          spin_unlock(&inode->i_lock);
-          spin_unlock(lru_lock);
-          if (remove_inode_buffers(inode)) {
-@@ -855,9 +856,9 @@ static enum lru_status inode_lru_isolate(struct 
-list_head *item,
-                  __count_vm_events(PGINODESTEAL, reap);
-              mm_account_reclaimed_pages(reap);
-          }
--        iput(inode);
-+        spin_lock(&inode->i_lock);
-+        inode->i_state &= ~I_WILL_FREE;
-          spin_lock(lru_lock);
--        return LRU_RETRY;
-      }
-
-Solution 4: Break the circular dependence between file inode and file's 
-xattr inode, for example, after comparing 
-inode_lru_isolate(prune_icache_sb) with invalidate_inodes, we found that 
-invalidate_mapping_pages is not invoked by invalidate_inodes, can we 
-directly remove the branch 'if (inode_has_buffers(inode) || 
-!mapping_empty(&inode->i_data))' from inode_lru_isolate?
-
-Any better solutions?
+Hi, Dave,
+Sorry for not doing that and thanks for making the conclusion clear!
+I personally prefer applying the whole series so as to eliminates storage space issue and make
+guest fpu config on its own settings. But also not sure the changes are worthwhile from kernel's
+point of view.
 
 
