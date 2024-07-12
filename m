@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-250435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E673392F7CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B680292F7D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B5D91C230DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CBAB2823DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E25145B0C;
-	Fri, 12 Jul 2024 09:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9770614830D;
+	Fri, 12 Jul 2024 09:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="QVl3ekrY"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="uzO6BkiU"
+Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BB11422B4;
-	Fri, 12 Jul 2024 09:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDCF1F5FA;
+	Fri, 12 Jul 2024 09:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720776011; cv=none; b=rBh/lJ3yJFApm/A79KdSmWdq70u1KBqdzJN/Vmaib0YJHYpUkFjagk/pbSGPkdPDUFfvmfDLbypbDs32jg6rP1qQ3CRt+vuNPJMf5cDzIRgiUU16dPxVhjf5/jrp1FWBfEsHNwbxlLx1JkDDtsc2d79yI/e91O7xmBHqS9BSScw=
+	t=1720776020; cv=none; b=S8BFfzrRHb+X88doCyzKjtswizGtoSpcw0YUaVXDCx+PsE2h1uAURE3tzL5fn68YGvpx6/u2oKtnFjXdEaV7LvML4ENF4OT5vfCnfWyVgXOzOP800KL4zbHYtgTSbMDFFCvEbJcTmcWKeIECdspHxzLksiwWo7N1BD890KzIWG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720776011; c=relaxed/simple;
-	bh=JFV3wuE42s862gFMz1W1mKhz2VN8ZG4mVI/AHJKGWFI=;
+	s=arc-20240116; t=1720776020; c=relaxed/simple;
+	bh=tdzkJkLOFwwePr3kGCnzpbNrpUb7DMKq2cad8ChXv50=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jd+ltJR5x8DN+5JJqXeDqE701J5NqWex5XPpOC9vksh4l0+lJWwQFN+CDRWHe6YuB2cYlQXgxHvUo2EiyotWJFPcda6StxQxxwMBSRxkQu8XtDdZZoAbTiqKpKrNHMpKK6R9eDz/ZK9vG6KMVZNTl1dD9E//aIBX3Pb9TaPhqLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=QVl3ekrY; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CV+7c2KCoiFZRjgIBxG8BPV9ZzjPkMf+tPSeCNTaUYY=; b=QVl3ekrYNZ1CuEcNgpGSUVyyy1
-	z7rXUCBm+Y7yVtn4dEZ2OtNNiZDMaWe8LShWXyksLVQJYcbI0DGvdRZTOwHUSg2s3aBG+LM+Zh/db
-	yqQ9Ze4dSG6yM4A/KijzF4sj/nFzVVLjRMSaXKk5OEAYvkRzlTvjMZ5CG3kXpxImtUEiBvTsAcLPq
-	rjtFbWVWGURSYkJUeQ2QtopkFYfzAE5JAiVhuWC/FiyMiEWA/HlXd7wQnYZyeusMpUlsEz8jYnbow
-	JboWDKr5vGJAPtE+YtHQBXihXc4dvBMJWSovzPHtI7FFTlmIAlZAC4rb7qbthIYMphKJmwvnFgnOw
-	HGY0tVsA==;
-Received: from [84.69.19.168] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1sSCRM-00EDWr-OU; Fri, 12 Jul 2024 11:19:44 +0200
-Message-ID: <916e4781-54b5-417a-be22-499739e4d818@igalia.com>
-Date: Fri, 12 Jul 2024 10:19:43 +0100
+	 In-Reply-To:Content-Type; b=bIafbcOaxV1K0LjvLsbncUTVurx0yNeYGxiNt/27JylG9JZuqxDFnHFXxwCkha9aKee8kGnB9+XJdi1Qfg+oB3v9Xoquv0FIGNxLp6fvK9xr3ZMaQrfcG9SESITHsADckHeaWawkmih6cab8fRavdqnsp/K+nNy66H3sMQ19kDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=uzO6BkiU; arc=none smtp.client-ip=77.48.224.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
+Received: from mail1.perex.cz (localhost [127.0.0.1])
+	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 6944E3622A;
+	Fri, 12 Jul 2024 11:20:13 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 6944E3622A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
+	t=1720776013; bh=DNe657zGIo46NggYhJP/fMsHQReTMxTLdwUibXC0l10=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uzO6BkiUkolBiBkzH4twlKAc9tuMN2cnLeCtfB0LX3ER0fcloeXMTOj7KSUPu/9M7
+	 H/tyJty1eJuu2auunosxxqHkHfXCusqJ4i+RmZPxxYeU1iTZ8sctyQt/u+07VvdpOv
+	 q6NWxNCkw1QUXy/AP5fB3CUYLZs/buvJgsi3QvAs=
+Received: from [192.168.100.98] (unknown [192.168.100.98])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: perex)
+	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
+	Fri, 12 Jul 2024 11:20:06 +0200 (CEST)
+Message-ID: <e4962ea0-3f03-43b5-b773-68abe1d73cc9@perex.cz>
+Date: Fri, 12 Jul 2024 11:20:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,160 +56,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] mm/numa_balancing: Teach mpol_to_str about the
- balancing mode
-To: "Huang, Ying" <ying.huang@intel.com>, Tvrtko Ursulin
- <tursulin@igalia.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
- Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Rik van Riel <riel@surriel.com>,
- Johannes Weiner <hannes@cmpxchg.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Dave Hansen <dave.hansen@intel.com>, Andi Kleen <ak@linux.intel.com>,
- Michal Hocko <mhocko@suse.com>, David Rientjes <rientjes@google.com>,
- stable@vger.kernel.org
-References: <20240708075632.95857-1-tursulin@igalia.com>
- <87ttgzaxzi.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <87ttgzaxzi.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Subject: Re: [PATCH] kselftest/alsa: Use card name rather than number in test
+ names
+To: Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.com>, Shuah Khan <shuah@kernel.org>,
+ linux-sound@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240711-alsa-kselftest-board-name-v1-1-ab5cf2dbbea6@kernel.org>
+ <7cd921b3-fed9-4b0c-9ba8-381e45ef4218@perex.cz>
+ <b3fdbb63-067b-4ff4-8fd8-1c2455a553a5@sirena.org.uk>
+ <877cdrt3zc.wl-tiwai@suse.de>
+From: Jaroslav Kysela <perex@perex.cz>
+Content-Language: en-US
+Autocrypt: addr=perex@perex.cz; keydata=
+ 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
+In-Reply-To: <877cdrt3zc.wl-tiwai@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-On 09/07/2024 07:19, Huang, Ying wrote:
-> Tvrtko Ursulin <tursulin@igalia.com> writes:
+On 12. 07. 24 10:21, Takashi Iwai wrote:
+> On Thu, 11 Jul 2024 18:19:25 +0200,
+> Mark Brown wrote:
+>>
+>> On Thu, Jul 11, 2024 at 06:08:38PM +0200, Jaroslav Kysela wrote:
+>>> On 11. 07. 24 16:33, Mark Brown wrote:
+>>
+>>>> Address this by replacing our use of card numbers with card names which are
+>>>> more likely to be stable across runs. We use the long name since in the
+>>
+>>> I think that a combination of card number and card ID may be sufficient (and
+>>> a compromise). It's shorter and user-friendly. Additionally, a table may be
+>>> printed at the beginning of report with card number, card ID and long card
+>>> name for further processing and identification.
+>>
+>> These don't help, the problem is that anything which includes the card
+>> number in the test name result is going to result in unstable test names
+>> depending on race conditions at boot.  There are automated systems that
+>> parse kselftest output generically, I'm not sure there's a great deal of
+>> enthusiasm for writing a custom parser for the ALSA selftests
+>> specifically.
 > 
->> From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->>
->> Since balancing mode was added in
->> bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes"),
->> it was possible to set this mode but it wouldn't be shown in
->> /proc/<pid>/numa_maps since there was no support for it in the
->> mpol_to_str() helper.
->>
->> Furthermore, because the balancing mode sets the MPOL_F_MORON flag, it
->> would be displayed as 'default' due a workaround introduced a few years
->> earlier in
->> 8790c71a18e5 ("mm/mempolicy.c: fix mempolicy printing in numa_maps").
->>
->> To tidy this up we implement two changes:
->>
->> Replace the MPOL_F_MORON check by pointer comparison against the
->> preferred_node_policy array. By doing this we generalise the current
->> special casing and replace the incorrect 'default' with the correct
->> 'bind' for the mode.
->>
->> Secondly, we add a string representation and corresponding handling for
->> the MPOL_F_NUMA_BALANCING flag.
->>
->> With the two changes together we start showing the balancing flag when it
->> is set and therefore complete the fix.
->>
->> Representation format chosen is to separate multiple flags with vertical
->> bars, following what existed long time ago in kernel 2.6.25. But as
->> between then and now there wasn't a way to display multiple flags, this
->> patch does not change the format in practice.
->>
->> Some /proc/<pid>/numa_maps output examples:
->>
->>   555559580000 bind=balancing:0-1,3 file=...
->>   555585800000 bind=balancing|static:0,2 file=...
->>   555635240000 prefer=relative:0 file=
->>
->> v2:
->>   * Fully fix by introducing MPOL_F_KERNEL.
->>
->> v3:
->>   * Abandoned the MPOL_F_KERNEL approach in favour of pointer comparisons.
->>   * Removed lookup generalisation for easier backporting.
->>   * Replaced commas as separator with vertical bars.
->>   * Added a few more words about the string format in the commit message.
->>
->> v4:
->>   * Use is_power_of_2.
->>   * Use ARRAY_SIZE and update recommended buffer size for two flags.
->>
->> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->> Fixes: bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes")
->> References: 8790c71a18e5 ("mm/mempolicy.c: fix mempolicy printing in numa_maps")
->> Cc: Huang Ying <ying.huang@intel.com>
->> Cc: Mel Gorman <mgorman@suse.de>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Rik van Riel <riel@surriel.com>
->> Cc: Johannes Weiner <hannes@cmpxchg.org>
->> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
->> Cc: Dave Hansen <dave.hansen@intel.com>
->> Cc: Andi Kleen <ak@linux.intel.com>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: David Rientjes <rientjes@google.com>
->> Cc: <stable@vger.kernel.org> # v5.12+
+> OTOH, longname can be really ugly to read, and it can vary because it
+> often embeds address or irq numbers in the string.
 > 
-> LGTM, Thanks!
+> If a general name is the goal, how about using shortname instead?
 > 
-> Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+> Or use id field, as Jaroslav suggested, but without the card number
+> suffix; then it's unique among multiple cards.
 
-Thank you!
+I prefer this (use only ID field). This string can be also set in the user 
+space using sysfs/udev, so the administrator may change it if the default is 
+not ideal.
 
-Andrew, this appears safe to pick up now as a replacement for the 
-identically named patch you previously picked up but then had to back 
-out from the queue.
+					Jaroslav
 
-Thanks!
+-- 
+Jaroslav Kysela <perex@perex.cz>
+Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
 
-Tvrtko
-
->> ---
->>   mm/mempolicy.c | 18 ++++++++++++++----
->>   1 file changed, 14 insertions(+), 4 deletions(-)
->>
->> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
->> index aec756ae5637..a1bf9aa15c33 100644
->> --- a/mm/mempolicy.c
->> +++ b/mm/mempolicy.c
->> @@ -3293,8 +3293,9 @@ int mpol_parse_str(char *str, struct mempolicy **mpol)
->>    * @pol:  pointer to mempolicy to be formatted
->>    *
->>    * Convert @pol into a string.  If @buffer is too short, truncate the string.
->> - * Recommend a @maxlen of at least 32 for the longest mode, "interleave", the
->> - * longest flag, "relative", and to display at least a few node ids.
->> + * Recommend a @maxlen of at least 51 for the longest mode, "weighted
->> + * interleave", plus the longest flag flags, "relative|balancing", and to
->> + * display at least a few node ids.
->>    */
->>   void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
->>   {
->> @@ -3303,7 +3304,10 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
->>   	unsigned short mode = MPOL_DEFAULT;
->>   	unsigned short flags = 0;
->>   
->> -	if (pol && pol != &default_policy && !(pol->flags & MPOL_F_MORON)) {
->> +	if (pol &&
->> +	    pol != &default_policy &&
->> +	    !(pol >= &preferred_node_policy[0] &&
->> +	      pol <= &preferred_node_policy[ARRAY_SIZE(preferred_node_policy) - 1])) {
->>   		mode = pol->mode;
->>   		flags = pol->flags;
->>   	}
->> @@ -3331,12 +3335,18 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
->>   		p += snprintf(p, buffer + maxlen - p, "=");
->>   
->>   		/*
->> -		 * Currently, the only defined flags are mutually exclusive
->> +		 * Static and relative are mutually exclusive.
->>   		 */
->>   		if (flags & MPOL_F_STATIC_NODES)
->>   			p += snprintf(p, buffer + maxlen - p, "static");
->>   		else if (flags & MPOL_F_RELATIVE_NODES)
->>   			p += snprintf(p, buffer + maxlen - p, "relative");
->> +
->> +		if (flags & MPOL_F_NUMA_BALANCING) {
->> +			if (!is_power_of_2(flags & MPOL_MODE_FLAGS))
->> +				p += snprintf(p, buffer + maxlen - p, "|");
->> +			p += snprintf(p, buffer + maxlen - p, "balancing");
->> +		}
->>   	}
->>   
->>   	if (!nodes_empty(nodes))
 
