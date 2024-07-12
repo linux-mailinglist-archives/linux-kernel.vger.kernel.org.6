@@ -1,68 +1,51 @@
-Return-Path: <linux-kernel+bounces-250385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5765292F736
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:48:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C04F92F773
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D066282DF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCB8C1C227CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B04148314;
-	Fri, 12 Jul 2024 08:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PBzRRGF3"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148A1146D57;
+	Fri, 12 Jul 2024 09:00:19 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9B21474D8;
-	Fri, 12 Jul 2024 08:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B7413E02D;
+	Fri, 12 Jul 2024 09:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720774052; cv=none; b=UF3kQEKJ69qJ2OCCPoJkkWJ57cPiVmHI13eLOBSC6DSpgaMWjrmy02O5TATFJWSeRlUrEUhmFDpf+C4YtdH0hhm2I3t7r4VK+JbzllQs33oByEdFeYWT0ZJkp3WRywZbyEsLX2k5qk6/M1YZojFnjcla4+RUbEIhBStGAY1qx54=
+	t=1720774818; cv=none; b=NZho6i5h34JU0WmUev56Y+rNpMZkdZxd87pvMIW1p6+on5f7Mr/RXUDeh1YQ5H0BRwv+s18/+HoAivzo4i+t8Ac1axaB9YQD4Ceu/W7wjTC13WZgSxfhZbDU5vUCl0y/mINnx3oV9ikt5Kzv5jUDjpUAMAsnOTkee1E1Ug9e+cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720774052; c=relaxed/simple;
-	bh=JBnSgEtjvbqAYAYT7HqqfFOQJ7n55CtQ798gF9GpfEc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=t4E0ISK1y7uOHLbsndF+TeRc/NyGaVGE5jGVdfLcggBfxAj1/c3rd8R6fjTLDURThOuNsatdxg1jsyPKpI5gpPz74IF0DxK590C4vjOkXphQ5JJQBOAUXxXMvELTnqOq3J41aE5xmkCkvZqJHrHky7gf0RdINKh6MwtgMRcdU/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PBzRRGF3; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720774048;
-	bh=JBnSgEtjvbqAYAYT7HqqfFOQJ7n55CtQ798gF9GpfEc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PBzRRGF3Dl11CaD6DbX1JSpLGw73n0X2bPd94QBh5e6DWu3ck8uBrs2Ytqx3i7nuW
-	 4zds/x/Iommi6hM0o9UtH4P3f8aHe2qc0/UTLNc+pc65LbO3sMkhQxw7wuD0sw1d9W
-	 HGqr441ByQ2aaKd9P9qlgcafCYrpdKFu0Rc74wGu9OxmgEmOwGgtDMwkaBJb2u0BUv
-	 XrqNFWyezZzkGDh+rJ2E+wChJTOElylo4oMqjJejsbKysEnc3qGnNk/YX42aT3wJfQ
-	 xMzJi5/ScVa59t8Yj5pOQ5TO250Q644cGTI0BSzo1GL5VODux1o/WZrKgHskunrY2F
-	 YiP8UuTOIC+TA==
-Received: from localhost.localdomain (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 472D237821DB;
-	Fri, 12 Jul 2024 08:47:26 +0000 (UTC)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Shuah Khan <shuah@kernel.org>,
-	Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel@collabora.com,
-	"Chang S . Bae" <chang.seok.bae@intel.com>,
-	Binbin Wu <binbin.wu@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH v2 4/4] selftests: x86: entry_from_vm86: remove manual counting and increase maintainability
-Date: Fri, 12 Jul 2024 13:46:25 +0500
-Message-Id: <20240712084625.297249-5-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240712084625.297249-1-usama.anjum@collabora.com>
-References: <20240712084625.297249-1-usama.anjum@collabora.com>
+	s=arc-20240116; t=1720774818; c=relaxed/simple;
+	bh=IUjQuc+xzVDbHxpaTQ8Oy+CrD0FdWfp/rAI9b+8o2Ek=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PF3gMjh0ffLqUpGwJAhH+VNZkRRpXGcULnl3B3aOrhHdz+LiubY/N3QGBvFrVUQpAwDn3uxUubUCKAXoSW2lOtrwJGL5FuO/93AMzvXSLGuHazD9ftYwWsfpoHZWh/tMLGL4iL1/kvxQu882bwnkTzdCwWbzHyEm+8/0RrWP/0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WL55q38Mvz1T68n;
+	Fri, 12 Jul 2024 16:55:27 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 845ED140361;
+	Fri, 12 Jul 2024 17:00:12 +0800 (CST)
+Received: from hulk-vt.huawei.com (10.67.174.26) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 12 Jul 2024 17:00:12 +0800
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
+To: <tj@kernel.org>, <josef@toxicpanda.com>, <axboe@kernel.dk>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>
+CC: <cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] blk-cgroup: move congestion_count to struct blkcg
+Date: Fri, 12 Jul 2024 08:51:41 +0000
+Message-ID: <20240712085141.3288708-1-xiujianfeng@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,230 +53,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-- Remove manual pass/fail tests counting
-- Increase readability
-- Print details about errno if error occurs
-- Print logs in standard format
+The congestion_count was introduced by commit d09d8df3a294 ("blkcg:
+add generic throttling mechanism"), but since it is closely related
+to the blkio subsys, it is not appropriate to put it in the struct
+cgroup, so move it to struct blkcg.
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 ---
- tools/testing/selftests/x86/entry_from_vm86.c | 109 +++++++++---------
- 1 file changed, 53 insertions(+), 56 deletions(-)
+only compiling tested
+---
+ block/blk-cgroup.c          |  4 +++-
+ block/blk-cgroup.h          | 10 ++++++----
+ include/linux/cgroup-defs.h |  3 ---
+ 3 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/tools/testing/selftests/x86/entry_from_vm86.c b/tools/testing/selftests/x86/entry_from_vm86.c
-index d1e919b0c1dc8..a4efa4588e6f8 100644
---- a/tools/testing/selftests/x86/entry_from_vm86.c
-+++ b/tools/testing/selftests/x86/entry_from_vm86.c
-@@ -23,9 +23,9 @@
- #include <stdbool.h>
- #include <errno.h>
- #include <sys/vm86.h>
-+#include "../kselftest.h"
- 
- static unsigned long load_addr = 0x10000;
--static int nerrs = 0;
- 
- static void sethandler(int sig, void (*handler)(int, siginfo_t *, void *),
- 		       int flags)
-@@ -36,7 +36,7 @@ static void sethandler(int sig, void (*handler)(int, siginfo_t *, void *),
- 	sa.sa_flags = SA_SIGINFO | flags;
- 	sigemptyset(&sa.sa_mask);
- 	if (sigaction(sig, &sa, 0))
--		err(1, "sigaction");
-+		ksft_exit_fail_perror("sigaction");
- }
- 
- static void clearhandler(int sig)
-@@ -46,7 +46,7 @@ static void clearhandler(int sig)
- 	sa.sa_handler = SIG_DFL;
- 	sigemptyset(&sa.sa_mask);
- 	if (sigaction(sig, &sa, 0))
--		err(1, "sigaction");
-+		ksft_exit_fail_perror("sigaction");
- }
- 
- static sig_atomic_t got_signal;
-@@ -56,10 +56,8 @@ static void sighandler(int sig, siginfo_t *info, void *ctx_void)
- 	ucontext_t *ctx = (ucontext_t*)ctx_void;
- 
- 	if (ctx->uc_mcontext.gregs[REG_EFL] & X86_EFLAGS_VM ||
--	    (ctx->uc_mcontext.gregs[REG_CS] & 3) != 3) {
--		printf("[FAIL]\tSignal frame should not reflect vm86 mode\n");
--		nerrs++;
--	}
-+	    (ctx->uc_mcontext.gregs[REG_CS] & 3) != 3)
-+		ksft_test_result_fail("Signal frame should not reflect vm86 mode\n");
- 
- 	const char *signame;
- 	if (sig == SIGSEGV)
-@@ -69,9 +67,9 @@ static void sighandler(int sig, siginfo_t *info, void *ctx_void)
- 	else
- 		signame = "unexpected signal";
- 
--	printf("[INFO]\t%s: FLAGS = 0x%lx, CS = 0x%hx\n", signame,
--	       (unsigned long)ctx->uc_mcontext.gregs[REG_EFL],
--	       (unsigned short)ctx->uc_mcontext.gregs[REG_CS]);
-+	ksft_test_result_pass("%s: FLAGS = 0x%lx, CS = 0x%hx\n", signame,
-+			      (unsigned long)ctx->uc_mcontext.gregs[REG_EFL],
-+			      (unsigned short)ctx->uc_mcontext.gregs[REG_CS]);
- 
- 	got_signal = 1;
- }
-@@ -137,13 +135,13 @@ static bool do_test(struct vm86plus_struct *v86, unsigned long eip,
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 37e6cc91d576..01d3408c2fc6 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -2183,11 +2183,13 @@ void blk_cgroup_bio_start(struct bio *bio)
+ bool blk_cgroup_congested(void)
  {
- 	long ret;
+ 	struct cgroup_subsys_state *css;
++	struct blkcg *blkcg;
+ 	bool ret = false;
  
--	printf("[RUN]\t%s from vm86 mode\n", text);
-+	ksft_print_msg("%s from vm86 mode\n", text);
- 	v86->regs.eip = eip;
- 	ret = vm86(VM86_ENTER, v86);
+ 	rcu_read_lock();
+ 	for (css = blkcg_css(); css; css = css->parent) {
+-		if (atomic_read(&css->cgroup->congestion_count)) {
++		blkcg = css_to_blkcg(css);
++		if (atomic_read(&blkcg->congestion_count)) {
+ 			ret = true;
+ 			break;
+ 		}
+diff --git a/block/blk-cgroup.h b/block/blk-cgroup.h
+index bd472a30bc61..16a2fbd4adca 100644
+--- a/block/blk-cgroup.h
++++ b/block/blk-cgroup.h
+@@ -95,6 +95,8 @@ struct blkcg {
+ 	struct cgroup_subsys_state	css;
+ 	spinlock_t			lock;
+ 	refcount_t			online_pin;
++	/* If there is block congestion on this cgroup. */
++	atomic_t congestion_count;
  
- 	if (ret == -1 && (errno == ENOSYS || errno == EPERM)) {
--		printf("[SKIP]\tvm86 %s\n",
--		       errno == ENOSYS ? "not supported" : "not allowed");
-+		ksft_test_result_skip("vm86 %s\n",
-+				      errno == ENOSYS ? "not supported" : "not allowed");
- 		return false;
- 	}
- 
-@@ -159,29 +157,27 @@ static bool do_test(struct vm86plus_struct *v86, unsigned long eip,
- 		else
- 			sprintf(trapname, "%d", trapno);
- 
--		printf("[INFO]\tExited vm86 mode due to #%s\n", trapname);
-+		ksft_print_msg("Exited vm86 mode due to #%s\n", trapname);
- 	} else if (VM86_TYPE(ret) == VM86_UNKNOWN) {
--		printf("[INFO]\tExited vm86 mode due to unhandled GP fault\n");
-+		ksft_print_msg("Exited vm86 mode due to unhandled GP fault\n");
- 	} else if (VM86_TYPE(ret) == VM86_TRAP) {
--		printf("[INFO]\tExited vm86 mode due to a trap (arg=%ld)\n",
--		       VM86_ARG(ret));
-+		ksft_print_msg("Exited vm86 mode due to a trap (arg=%ld)\n",
-+			       VM86_ARG(ret));
- 	} else if (VM86_TYPE(ret) == VM86_SIGNAL) {
--		printf("[INFO]\tExited vm86 mode due to a signal\n");
-+		ksft_print_msg("Exited vm86 mode due to a signal\n");
- 	} else if (VM86_TYPE(ret) == VM86_STI) {
--		printf("[INFO]\tExited vm86 mode due to STI\n");
-+		ksft_print_msg("Exited vm86 mode due to STI\n");
- 	} else {
--		printf("[INFO]\tExited vm86 mode due to type %ld, arg %ld\n",
--		       VM86_TYPE(ret), VM86_ARG(ret));
-+		ksft_print_msg("Exited vm86 mode due to type %ld, arg %ld\n",
-+			       VM86_TYPE(ret), VM86_ARG(ret));
- 	}
- 
- 	if (rettype == -1 ||
--	    (VM86_TYPE(ret) == rettype && VM86_ARG(ret) == retarg)) {
--		printf("[OK]\tReturned correctly\n");
--	} else {
--		printf("[FAIL]\tIncorrect return reason (started at eip = 0x%lx, ended at eip = 0x%lx)\n", eip, v86->regs.eip);
--		nerrs++;
--	}
--
-+	    (VM86_TYPE(ret) == rettype && VM86_ARG(ret) == retarg))
-+		ksft_test_result_pass("Returned correctly\n");
-+	else
-+		ksft_test_result_fail("Incorrect return reason (started at eip = 0x%lx, ended at eip = 0x%lx)\n",
-+				      eip, v86->regs.eip);
- 	return true;
+ 	struct radix_tree_root		blkg_tree;
+ 	struct blkcg_gq	__rcu		*blkg_hint;
+@@ -374,7 +376,7 @@ static inline void blkcg_use_delay(struct blkcg_gq *blkg)
+ 	if (WARN_ON_ONCE(atomic_read(&blkg->use_delay) < 0))
+ 		return;
+ 	if (atomic_add_return(1, &blkg->use_delay) == 1)
+-		atomic_inc(&blkg->blkcg->css.cgroup->congestion_count);
++		atomic_inc(&blkg->blkcg->congestion_count);
  }
  
-@@ -215,26 +211,20 @@ void do_umip_tests(struct vm86plus_struct *vm86, unsigned char *test_mem)
- 	/* Results when using register operands */
- 	msw3 = *(unsigned short *)(test_mem + 2080);
- 
--	printf("[INFO]\tResult from SMSW:[0x%04x]\n", msw1);
--	printf("[INFO]\tResult from SIDT: limit[0x%04x]base[0x%08lx]\n",
--	       idt1.limit, idt1.base);
--	printf("[INFO]\tResult from SGDT: limit[0x%04x]base[0x%08lx]\n",
--	       gdt1.limit, gdt1.base);
-+	ksft_print_msg("Result from SMSW:[0x%04x]\n", msw1);
-+	ksft_print_msg("Result from SIDT: limit[0x%04x]base[0x%08lx]\n",
-+		       idt1.limit, idt1.base);
-+	ksft_print_msg("Result from SGDT: limit[0x%04x]base[0x%08lx]\n",
-+		       gdt1.limit, gdt1.base);
- 
--	if (msw1 != msw2 || msw1 != msw3)
--		printf("[FAIL]\tAll the results of SMSW should be the same.\n");
--	else
--		printf("[PASS]\tAll the results from SMSW are identical.\n");
-+	ksft_test_result((msw1 == msw2 && msw1 == msw3),
-+			 "All the results from SMSW are identical.\n");
- 
--	if (memcmp(&gdt1, &gdt2, sizeof(gdt1)))
--		printf("[FAIL]\tAll the results of SGDT should be the same.\n");
--	else
--		printf("[PASS]\tAll the results from SGDT are identical.\n");
-+	ksft_test_result(!memcmp(&gdt1, &gdt2, sizeof(gdt1)),
-+			 "All the results from SGDT are identical.\n");
- 
--	if (memcmp(&idt1, &idt2, sizeof(idt1)))
--		printf("[FAIL]\tAll the results of SIDT should be the same.\n");
--	else
--		printf("[PASS]\tAll the results from SIDT are identical.\n");
-+	ksft_test_result(!memcmp(&idt1, &idt2, sizeof(idt1)),
-+			 "All the results from SIDT are identical.\n");
- 
- 	sethandler(SIGILL, sighandler, 0);
- 	do_test(vm86, vmcode_umip_str - vmcode, VM86_SIGNAL, 0,
-@@ -250,11 +240,15 @@ void do_umip_tests(struct vm86plus_struct *vm86, unsigned char *test_mem)
- int main(void)
- {
- 	struct vm86plus_struct v86;
--	unsigned char *addr = mmap((void *)load_addr, 4096,
--				   PROT_READ | PROT_WRITE | PROT_EXEC,
--				   MAP_ANONYMOUS | MAP_PRIVATE, -1,0);
-+	unsigned char *addr;
-+
-+	ksft_print_header();
-+	ksft_set_plan(18);
-+
-+	addr = mmap((void *)load_addr, 4096, PROT_READ | PROT_WRITE | PROT_EXEC,
-+		    MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
- 	if (addr != (unsigned char *)load_addr)
--		err(1, "mmap");
-+		ksft_exit_fail_perror("mmap");
- 
- 	memcpy(addr, vmcode, end_vmcode - vmcode);
- 	addr[2048] = 2;
-@@ -270,7 +264,8 @@ int main(void)
- 	/* Use the end of the page as our stack. */
- 	v86.regs.esp = 4096;
- 
--	assert((v86.regs.cs & 3) == 0);	/* Looks like RPL = 0 */
-+	if (v86.regs.cs & 3)
-+		ksft_exit_fail_msg("Looks like RPL = 0\n");
- 
- 	/* #BR -- should deliver SIG??? */
- 	do_test(&v86, vmcode_bound - vmcode, VM86_INTx, 5, "#BR");
-@@ -333,16 +328,18 @@ int main(void)
- 	v86.regs.ss = 0;
- 	sethandler(SIGSEGV, sighandler, 0);
- 	got_signal = 0;
--	if (do_test(&v86, 0, VM86_SIGNAL, 0, "Execute null pointer") &&
--	    !got_signal) {
--		printf("[FAIL]\tDid not receive SIGSEGV\n");
--		nerrs++;
--	}
-+	if (do_test(&v86, 0, VM86_SIGNAL, 0, "Execute null pointer"))
-+		ksft_test_result(got_signal, "Received SIGSEGV\n");
-+	else
-+		ksft_test_result_skip("Received SIGSEGV\n");
-+
- 	clearhandler(SIGSEGV);
- 
- 	/* Make sure nothing explodes if we fork. */
- 	if (fork() == 0)
+ static inline int blkcg_unuse_delay(struct blkcg_gq *blkg)
+@@ -399,7 +401,7 @@ static inline int blkcg_unuse_delay(struct blkcg_gq *blkg)
+ 	if (old == 0)
  		return 0;
- 
--	return (nerrs == 0 ? 0 : 1);
-+	ksft_test_result_pass("fork succeeded\n");
-+
-+	ksft_finished();
+ 	if (old == 1)
+-		atomic_dec(&blkg->blkcg->css.cgroup->congestion_count);
++		atomic_dec(&blkg->blkcg->congestion_count);
+ 	return 1;
  }
+ 
+@@ -418,7 +420,7 @@ static inline void blkcg_set_delay(struct blkcg_gq *blkg, u64 delay)
+ 
+ 	/* We only want 1 person setting the congestion count for this blkg. */
+ 	if (!old && atomic_try_cmpxchg(&blkg->use_delay, &old, -1))
+-		atomic_inc(&blkg->blkcg->css.cgroup->congestion_count);
++		atomic_inc(&blkg->blkcg->congestion_count);
+ 
+ 	atomic64_set(&blkg->delay_nsec, delay);
+ }
+@@ -435,7 +437,7 @@ static inline void blkcg_clear_delay(struct blkcg_gq *blkg)
+ 
+ 	/* We only want 1 person clearing the congestion count for this blkg. */
+ 	if (old && atomic_try_cmpxchg(&blkg->use_delay, &old, 0))
+-		atomic_dec(&blkg->blkcg->css.cgroup->congestion_count);
++		atomic_dec(&blkg->blkcg->congestion_count);
+ }
+ 
+ /**
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 293af7f8a694..ae04035b6cbe 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -539,9 +539,6 @@ struct cgroup {
+ 	/* used to store eBPF programs */
+ 	struct cgroup_bpf bpf;
+ 
+-	/* If there is block congestion on this cgroup. */
+-	atomic_t congestion_count;
+-
+ 	/* Used to store internal freezer state */
+ 	struct cgroup_freezer_state freezer;
+ 
 -- 
-2.39.2
+2.34.1
 
 
