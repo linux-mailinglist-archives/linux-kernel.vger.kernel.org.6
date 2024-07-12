@@ -1,61 +1,82 @@
-Return-Path: <linux-kernel+bounces-250837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A55292FD67
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A70E92FD68
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A1EA2864A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:20:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D712A28479C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B90173338;
-	Fri, 12 Jul 2024 15:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7D017107F;
+	Fri, 12 Jul 2024 15:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GPuOOp5z"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qcBtCw+v"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19D317107F;
-	Fri, 12 Jul 2024 15:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E090173343;
+	Fri, 12 Jul 2024 15:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720797630; cv=none; b=admOfr5tEzyMjXLst/jsvLESnaCo95SXjLu4hqB44NW25Qa+BIq3xwz/Uxm2ICSKDQ36euS4Jhq1FxaHhoph7EHp5+ZsgEctt+oMJf/8zc2c+OHWwtBZWjUG22LxjSCkns+81yPszUfVLjgWvnWcNj3ySIgkjuoAxBx38Kznmqs=
+	t=1720797633; cv=none; b=aC5jxQ0pNvBQjR/AGdcht35ZtGlcOmUu4Pf5pXSfqagsC1Px11et8cc8i+mW3NgqYUmSxRyEMENtFd+ypbgVJrlsMrQjRkS8/p5rYlvbiDNWhK5OLVnx5laRb37zliJKz5IZm3jhoea/HIVUesNuu/cf/44BaVMLSwjUW57GdPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720797630; c=relaxed/simple;
-	bh=7uKOgDp7TAdj58LAb9mS2Yvc9w/hBsmlsfwEPcUWUgc=;
+	s=arc-20240116; t=1720797633; c=relaxed/simple;
+	bh=nvcLfmmtRTNLzyLmqu+KOrZedlfhy3Um77GnvO0gRMA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CWDRS23M0LQpBQh45g+qVIrZMnLGedHBU9+k0aiJiikq6LMQCOCBitaqTFTQqvJaKdfGQL/M1VuJmiztY5jqQown+W6/iP47fBeXPrJH4aLavMzSHqayNr1DcSyjB7tEBAOtOR5kzW/RAMSVR2JgM7YAkxdUWqReVi5QFEtUWG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GPuOOp5z; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=gqKXjyZVYfRhKhuyUliBeWu5ezOtZdik8oAcq3I5nyc=; b=GPuOOp5zvgEPeHTqvHY0JriRps
-	2B5+pYtt44kVLPkQulGoAj/Y0XYx+9uP5TJztyYxbC7a63onCKr4ZIt0KMR1fVogSZkG25Hjw4EvI
-	4HwU5ZFvONDTQkyw5a0FPc1E74o22HuUsWlLLn966SUnWqDw/ewSZAFO4WQVBR7nggb8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sSI46-002Pku-MD; Fri, 12 Jul 2024 17:20:06 +0200
-Date: Fri, 12 Jul 2024 17:20:06 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v1 1/1] net: phy: dp83td510: add cable testing
- support
-Message-ID: <3e1103cf-6023-475d-9532-2e5840ed14f8@lunn.ch>
-References: <20240708140542.2424824-1-o.rempel@pengutronix.de>
- <a14ae101-d492-45a0-90fe-683e2f43fa3e@lunn.ch>
- <ZpE_WwtSSdxGyWtC@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQe/7snQ4sevbmQAuBrmdtAFnlaaHuUaP+ypebcZRWvMmHZuP9wC1K+Iwyq6haMDLESvFUDd70ojIbFlLJRdbaZqZQJ0jqWqUVBWhObjnxPI+fnoF7QKVNZg/DqsAyUZKpwPqSq0u6X7vavz9B+8MXrniXgRicOk2GmT7bdSsJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qcBtCw+v; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yFOSfw59CiTTN0H3xVZks2pDZosjWrgrRj4r2pLl3K8=; b=qcBtCw+vAhRixTf52pCIhw1Irt
+	TDVPz0nNUzGGMN7qmh+4dmGtzwt0jX6fJdH4AIFykCTVTPPyytKfh8pdwOT9vvliqBJDb4TNlQuJv
+	Oi12YUIASAYOVPDSFEENyaBpMl+G0pJ9jE9XewES1GdaUN4TCwBjD4NWhi6OflP0UTyY2gePTyY8B
+	1k4zNmjVy3W4bXvToPJ9YeQHFnnOoySeSr1SywX2Pp2DQ8IRSv4KyBXc2G47D5TYQZfpANo9CKtku
+	ztLS0APDqgMuSntG0i7pbtrxtnRzEowvP0fRvauoFmMoSpvWSDzGmQEb0oxcsVhwCEfhgmedEdbmH
+	kO4OFg9A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sSI4M-0000000Cbbg-1OIy;
+	Fri, 12 Jul 2024 15:20:22 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E7D1B30050D; Fri, 12 Jul 2024 17:20:21 +0200 (CEST)
+Date: Fri, 12 Jul 2024 17:20:21 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Phil Auld <pauld@redhat.com>, Clark Williams <williams@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [RFC PATCH v3 03/10] task_work, sched: Add a _locked variant to
+ task_work_cancel()
+Message-ID: <20240712152021.GR27299@noisy.programming.kicks-ass.net>
+References: <20240711130004.2157737-1-vschneid@redhat.com>
+ <20240711130004.2157737-4-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,29 +85,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZpE_WwtSSdxGyWtC@pengutronix.de>
+In-Reply-To: <20240711130004.2157737-4-vschneid@redhat.com>
 
-> > > +#define DP83TD510E_TDR_CFG2			0x301
-> > > +#define DP83TD510E_TDR_END_TAP_INDEX_1		GENMASK(14, 8)
-> > > +#define DP83TD510E_TDR_END_TAP_INDEX_1_DEF	36
-> > > +#define DP83TD510E_TDR_START_TAP_INDEX_1	GENMASK(6, 0)
-> > > +#define DP83TD510E_TDR_START_TAP_INDEX_1_DEF	3
-> > 
-> > Does this correspond the minimum and maximum distance it will test?
-> > Is this 3m to 36m?
+On Thu, Jul 11, 2024 at 02:59:57PM +0200, Valentin Schneider wrote:
+> Later commits will need to issue a task_work_cancel() from within the
+> scheduler with the task's ->pi_lock held.
 > 
-> No. At least, i can't confirm it with tests.
+> Add a _locked variant that expects p->pi_lock to be held. Expose it in a
+> separate scheduler header file, as this really is a scheduler-only
+> interface.
 > 
-> If I see it correctly, this PHY is using SSTDR instead of usual TDR.
-> Instead of pulses it will send modulated transmission with default
-> length of 16ms
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+> ---
+>  kernel/sched/task_work_sched.h | 14 +++++++
+>  kernel/task_work.c             | 67 ++++++++++++++++++++++++++--------
+>  2 files changed, 66 insertions(+), 15 deletions(-)
+>  create mode 100644 kernel/sched/task_work_sched.h
 > 
-> I tried my best google foo, but was not able to find anything
-> understandable about "Start/End tap index for echo coeff sweep for segment 1"
-> im context of SSTDR. If anyone know more about this, please tell me :)
+> diff --git a/kernel/sched/task_work_sched.h b/kernel/sched/task_work_sched.h
+> new file mode 100644
+> index 0000000000000..e235da456427f
+> --- /dev/null
+> +++ b/kernel/sched/task_work_sched.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Scheduler internal task_work methods
+> + */
+> +#ifndef _KERNEL_TASK_WORK_SCHED_H
+> +#define _KERNEL_TASK_WORK_SCHED_H
+> +
+> +#include <linux/task_work.h>
+> +#include <linux/sched.h>
+> +
+> +struct callback_head *
+> +task_work_cancel_locked(struct task_struct *task, task_work_func_t func);
+> +
+> +#endif
 
-I was just curious. Does not really matter with respect to getting the
-patch applied.
 
-      Andrew
+Do we really need that exposed? Can't we squirrel that way in
+kernel/sched/sched.h and forget about it?
+
+
+> @@ -74,33 +76,20 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
+>  	return 0;
+>  }
+>  
+> -/**
+> - * task_work_cancel_match - cancel a pending work added by task_work_add()
+> - * @task: the task which should execute the work
+> - * @match: match function to call
+> - * @data: data to be passed in to match function
+> - *
+> - * RETURNS:
+> - * The found work or NULL if not found.
+> - */
+> -struct callback_head *
+> -task_work_cancel_match(struct task_struct *task,
+> +static struct callback_head *
+> +task_work_cancel_match_locked(struct task_struct *task,
+>  		       bool (*match)(struct callback_head *, void *data),
+>  		       void *data)
+>  {
+>  	struct callback_head **pprev = &task->task_works;
+>  	struct callback_head *work;
+> -	unsigned long flags;
+>  
+> -	if (likely(!task_work_pending(task)))
+> -		return NULL;
+>  	/*
+>  	 * If cmpxchg() fails we continue without updating pprev.
+>  	 * Either we raced with task_work_add() which added the
+>  	 * new entry before this work, we will find it again. Or
+>  	 * we raced with task_work_run(), *pprev == NULL/exited.
+>  	 */
+> -	raw_spin_lock_irqsave(&task->pi_lock, flags);
+>  	work = READ_ONCE(*pprev);
+>  	while (work) {
+>  		if (!match(work, data)) {
+> @@ -109,6 +98,32 @@ task_work_cancel_match(struct task_struct *task,
+>  		} else if (try_cmpxchg(pprev, &work, work->next))
+>  			break;
+>  	}
+> +
+> +	return work;
+> +}
+
+> @@ -136,6 +151,28 @@ task_work_cancel(struct task_struct *task, task_work_func_t func)
+>  	return task_work_cancel_match(task, task_work_func_match, func);
+>  }
+>  
+> +/**
+> + * task_work_cancel - cancel a pending work added by task_work_add()
+> + * @task: the task which should execute the work
+> + * @func: identifies the work to remove
+> + *
+> + * Find the last queued pending work with ->func == @func and remove
+> + * it from queue.
+> + *
+> + * RETURNS:
+> + * The found work or NULL if not found.
+> + */
+> +struct callback_head *
+> +task_work_cancel_locked(struct task_struct *task, task_work_func_t func)
+> +{
+> +	lockdep_assert_held(&task->pi_lock);
+
+I'm thinking that lockde_assert wants to live in your _locked function
+above.
+
+> +	if (likely(!task_work_pending(task)))
+> +		return NULL;
+> +
+> +	return task_work_cancel_match_locked(task, task_work_func_match, func);
+> +}
+> +
+>  /**
+>   * task_work_run - execute the works added by task_work_add()
+>   *
+> -- 
+> 2.43.0
+> 
 
