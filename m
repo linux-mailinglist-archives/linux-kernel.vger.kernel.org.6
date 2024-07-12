@@ -1,96 +1,109 @@
-Return-Path: <linux-kernel+bounces-251082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CD2930065
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:20:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901D9930067
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 113F11F23B83
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:20:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C13651C20E06
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AD61BC59;
-	Fri, 12 Jul 2024 18:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5AD2260C;
+	Fri, 12 Jul 2024 18:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sBhmwunQ"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQI8qW35"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE08182C3;
-	Fri, 12 Jul 2024 18:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225ED2232A;
+	Fri, 12 Jul 2024 18:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720808173; cv=none; b=pLBUJc/8r0KataBKqy66zgg90LMmjCAgEaJKznTHG+c6neUP3pBbrxRuEhW9YMNNO7YFqW+cNCshqKHhDlDOSOEkLf5LYsjf2lEmFssbTH0AtNoGrtpqdTbFCltoCko8rkit4vzxbGSc99mkzVkodPStoITFiNhVVoV88KhktsU=
+	t=1720808378; cv=none; b=TpmvQL5KAATSYmPQ8g5P96Aqxt2VV0skFkZykhmZEsJEYZp9qH+2+rsAYVC1/UmUrsHuO27I1V2J/pX+ojyEEd9ALVlvYgn0bTUkfYY1f30HhrfHcYyxAbUeNpjJx5X2/Cb7aCqFg0LzjCzhGacIh59xPiJfTGjuQsIXQSC58i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720808173; c=relaxed/simple;
-	bh=t8snUp8OlpFu84YVregM/JCFkWMWslnOdGZMoDXezMA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=telkF/hHJXsXBXWWIca5KkOKnyXMBCEhKVMDt/IIV0PrceTd4G4a19wutrwFfINFH7U2nFddWz4Lv/HBuCCUHRvM+wAv8lD222xZQ5EPh+HTqFTFgnw+2VpZzKWVxUyBbSx32bSLGvgxFbtjdICX37t6unk+4OBYgQ8+vyNd0bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sBhmwunQ; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720808139; x=1721412939; i=markus.elfring@web.de;
-	bh=t8snUp8OlpFu84YVregM/JCFkWMWslnOdGZMoDXezMA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=sBhmwunQYOeOrhcHiiqMEEhfttL86bQ6UpIJ7eurXNKlxyEXUHj72ldM7RkJK1/C
-	 HSvcDboK/o8S34W3v+z3vwAceoWMgW4xD2CKlZePx+F4kOGPNHK/T+PL8F2/2aZVX
-	 Paaa0DA6Yzet+1vGesTjcvmNfzElXDMZMoPVeHgkry5D5uRZzKhpao6rGM5h9BNAm
-	 I5NzoerbMTF3RaCzTo1XULvGUXtc1T5lmS+Mq0sptl0eZNNQoIYzQXtBTD5pnmlcY
-	 Itr2zHuXNGDUnyt+qmajJJz7pnu2wQ+LdkjLnF7lWZPnu04c+jbydEr9W6F3/mtx/
-	 UFxX5juKkLcYvBPx7A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MgRQJ-1rsRYi1UkB-00gF3g; Fri, 12
- Jul 2024 20:15:39 +0200
-Message-ID: <10a70b9a-4ae5-4293-9fee-317b46390179@web.de>
-Date: Fri, 12 Jul 2024 20:15:37 +0200
+	s=arc-20240116; t=1720808378; c=relaxed/simple;
+	bh=4qXCwhc3Ht324DPghKg9o1bQweXFtYyDMdOwIxYAexg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X7ZLc1jBHgLPcqm4UbqhllKcsrBgBc8E7m1x35Bl4a9KtcORfqQDO9pysNws1Q1wKsxnWeWoBlQ09TqEwc/L3/ZQiA8jr84n6jzD7XyA3WSixGKlMhtWiGHnwCKAWyhyZz2a5vluLPu8oP5thMYswLKOv/LJsSffSRuYmqxEixs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQI8qW35; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0745EC4AF07;
+	Fri, 12 Jul 2024 18:19:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720808377;
+	bh=4qXCwhc3Ht324DPghKg9o1bQweXFtYyDMdOwIxYAexg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hQI8qW35NrXllSjy0JuiLhzn0HS9/1BSaOnRCXeH3DkXosjMPoNmthgca9OSu61ak
+	 F8su8lZOR6TVx5ZdZXrY1AnogutvRdSiEviND2V+WEw0CSPxvqTT5UjKsUNLRGAOfG
+	 7oISj27lMOx8bJB0KLPO1wmahYSFkMa4F2aUSFdv9aPY+hH5rTGT/NIiB9DKOMLmyX
+	 BSPk6xqDKa1F7sJW8VsWUUQYr2Nw2wk0EdJvJ1xVJZV37tfDKGm4PmSyNPMUI9ii+H
+	 ESE4IazYd0pLyV6PPwySYJ2NxvaMhUSJ55NyPH2mqfRCOurrDdlvHj4u9kMEjYiP9v
+	 ZF6v0Bk4HltLA==
+Date: Fri, 12 Jul 2024 19:19:33 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Takashi Iwai <tiwai@suse.com>,
+	Shuah Khan <shuah@kernel.org>, linux-sound@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/alsa: Use card name rather than number in test
+ names
+Message-ID: <31e73e81-e60f-4d0b-b0ac-118f1dc72610@sirena.org.uk>
+References: <20240711-alsa-kselftest-board-name-v1-1-ab5cf2dbbea6@kernel.org>
+ <7cd921b3-fed9-4b0c-9ba8-381e45ef4218@perex.cz>
+ <b3fdbb63-067b-4ff4-8fd8-1c2455a553a5@sirena.org.uk>
+ <877cdrt3zc.wl-tiwai@suse.de>
+ <e4962ea0-3f03-43b5-b773-68abe1d73cc9@perex.cz>
+ <bb42afb8-48a7-4daf-b28b-b82bd5c77d57@sirena.org.uk>
+ <c1be6bec-90f5-4bb3-b6b0-8524095fc490@perex.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Pankaj Gupta <pankaj.gupta@nxp.com>, devicetree@vger.kernel.org,
- linux-doc@vger.kernel.org, imx@lists.linux.dev, kernel@pengutronix.de,
- linux-arm-kernel@lists.infradead.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>
-References: <20240712-imx-se-if-v5-0-66a79903a872@nxp.com>
-Subject: Re: [PATCH v5 0/5] Changes in v5:
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240712-imx-se-if-v5-0-66a79903a872@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:RnONSGcbcr2GQOx/W/vt/PcQTj0CXwIS349iWWj5F/2VEFs7rgf
- 1wyaCcRS7m/gvK1PsNgspSi/TI7yFkPR0jKr/hAWhuX2CQxfWuP9Bl+qwVuTSl2BoSrGiYE
- XXxe5TygU/1NcgBIH1twGqP7yngMnjaJWoL7yOmBR3uah5jtqHMsh1fcnuZScBGmxj8Xt3M
- ouJUI1xNTK8AGskf2Ge1g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:J+whdxPLS+w=;1+u74jRR5R8v8owJqhj4Udbaom0
- gn0WvXhiefGxk7qvXxJmgcorpzUD1SLyNDTYQfAYadbmKDTB5dvm/jqaiC0nQVz3X/QKm1oAN
- Swbtydo8YfFPHce0W76VpqbJM78L0CTtw9sKZwmxBq4W7Nz+lIUjp+C9drnmh87Qqzl2r11lV
- 0uRx0MsP+QvNG0st9Q5dYL5T4hGVoythYs+VTSJ2PnWs26KxG0hYVS021gL0vRaM6dPrhVSM1
- SjIkTbWzDZbRXat8LAvEc8n/vQ2TXXUqLjNqiwr4uA8uIy4Oxa7jdhMZt4jAFujwU1Mu6kEAa
- EIGp+daHUoH8S121f9dR0e/lBaEqIJ5+xEikiYldyXzhokdLtbpSWz8ctt4DioNN8Me0i8UGP
- mMM2E+938CHFba6EHEZVl4W2gcwWMIZsyxX+UAowfhtA3hfEAsyHw8dsZ+bc8gcX+NsXDNS+3
- QSx1t4IonG23OZbMpb5Gcf6WKKFAvP0Wt6kVt2wCqGq9Hizq79Ir7LG3FI5Ge9rrgNn3m92El
- 6diMjONEMuHqLEFAZHAiBPTPd5PxbehAS1s199q8w++wdLHr7IJQw/coHpxuugm7kpH76QeCT
- KKDqZOikl+O3oV/drKBEopwE6svqv04KPhZKJkH7h2jLgU8MFjxqi13Mb6F5DYreKyjP4c38o
- i1HtgnvmnDBgjYEuHF7mWHqQSl1rK/Ppm+W3Od9+npPkml9OGOfaDyAhWNBpJ/PyhBt5VrGpb
- STPkO0MsBuaCkFYriSwXPy7FbHlS2hF9D0gmhB8y6ah/BKGCcm+YgcwjL/OQijx/RwLCas3k5
- rcP9xgywgNqZR8Nl8fDC6m6g==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GVDNSq3mvasxxHGo"
+Content-Disposition: inline
+In-Reply-To: <c1be6bec-90f5-4bb3-b6b0-8524095fc490@perex.cz>
+X-Cookie: Individualists unite!
 
-Please choose more appropriate subjects (also for subsequent cover letter variations).
 
-Regards,
-Markus
+--GVDNSq3mvasxxHGo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Jul 12, 2024 at 06:25:21PM +0200, Jaroslav Kysela wrote:
+> On 12. 07. 24 15:00, Mark Brown wrote:
+
+> > The trouble with the ID field is that it's too short and seems likely to
+> > create collisions, for example HDA stuff just seems to default to NVidia
+> > for nVidia cards which seems very likely to create collisions if someone
+> > has two graphics cards in their system.
+
+> The default IDs are always unique - see snd_card_set_id_no_lock() in
+> sound/core/init.c . Basically, the suffix will follow the device probe order
+> in this case.
+
+Sure, but the genesis of this patch is that probe order isn't
+sufficiently stable and we want to avoid names based on it...  using the
+ID will be more likely to work out stable than just pure probe order but
+it's still got the same issue.
+
+--GVDNSq3mvasxxHGo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaRc7QACgkQJNaLcl1U
+h9Ad/Qf/bEIAL3IjEmfQSY110JrjxgHzIskjULbaZWwIlHfRu4ijZ6mCyeQ4JHOR
+eMJT+OWX7rXBsZOHRNKB0f1decsJbb6yixfeq29mEiAriZ8yIri7kd17xM9girp9
+X6mvTvBcWGK3O4yG1gDdkRsNFRt5kLjGGnTmyQ5d2c/0D2li1eM+8KiIpHsKIfFi
+KYFeqeonr5aH0SX/Fv6JLiJMozPl2+0aY+O1LjOlls6heJhmmLqpYQgNA2tcwBWF
+3sqBXid+TcyYl/AkadBZ9bG4VEZzJAidFSm4Oe2qWPquUDKWi/A133oFDqbV62uD
+opkNiHNpJiQFzeZxt9ZJ435v5WE7+w==
+=jt7Y
+-----END PGP SIGNATURE-----
+
+--GVDNSq3mvasxxHGo--
 
