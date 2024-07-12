@@ -1,141 +1,219 @@
-Return-Path: <linux-kernel+bounces-251168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BDD930178
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:09:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2EB993017B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 23:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 548A3282BB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADC8282871
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8788149624;
-	Fri, 12 Jul 2024 21:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5004963C;
+	Fri, 12 Jul 2024 21:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Z5dFQlJE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GHhR0SBA"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA16C482C1
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 21:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEB8482C1;
+	Fri, 12 Jul 2024 21:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720818563; cv=none; b=NkEW9Bto9Psy9wT9HsCAHq67V/9qoviLlRlPru3ddUt3grL6j4HL58J6Op2/K6PuKLyrrps6zGiRMcV7A9UG+QkEviDlnVJ6/2yAgMnVho5/6XRddGoKzKlLJ82R2yDSiXrVRruh5N5j9Oc9iTRE6DHXUuXpnz0FsqPWfyrbUHo=
+	t=1720818648; cv=none; b=K6ESFYq5ZcsdVU6MmNyX0Cr9PO7jW0DOHG0CmzGxGTjq5G9H2EZ46Al8heJ0h8sB48CWo+swRYO5qe0KWoz4nJd5MG8ZlufJqkTy02MPbl8D98/oM0LdRBlaiOd71eruNJ5VY8quTazYlgfqUaQeWyM8Anejg+IxHFgXC4ZK3Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720818563; c=relaxed/simple;
-	bh=R274oE0i6C8f+zj2r4ya+8raQGqMtavQcoAxIuhk+o4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=NYW5nNx6dEeqrGdTkyfBzuAEUdg+U/gegvuMtfNg+5pBJF+E9Levt7fsB8v3sRAZsCD9OCIbsOtdq+S/47Gciu5WKGm7qsLh0KKBl/lsxhJ42UiUNCExQriZZZpy1kv4weFlNkiFGuqPh9pPjsjh5EChYMNdXdyqK4+HPe+bS4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Z5dFQlJE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2976FC4AF09;
-	Fri, 12 Jul 2024 21:09:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1720818563;
-	bh=R274oE0i6C8f+zj2r4ya+8raQGqMtavQcoAxIuhk+o4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Z5dFQlJEQZ5wQfYBl99RcFCGNf/3DQY5ic+0EOdONPRQp3/avV6RRICnHA2x8mMAE
-	 8u8dWV0GEaFuWWgbsTkl3oJ2kNTmzQ0dDvrfvlKhliDGb3mhAMJjLInZ89U73JSaSg
-	 A9MHPJTwJG375Y/ixCHg/rAppIhzvJBEP0COpoAA=
-Date: Fri, 12 Jul 2024 14:09:21 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Miaohe Lin <linmiaohe@huawei.com>
-Cc: <nao.horiguchi@gmail.com>, <linux-mm@kvack.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm/memory-failure: fix
- VM_BUG_ON_PAGE(PagePoisoned(page)) when unpoison memory
-Message-Id: <20240712140921.9aa90b18d22e67417d59dfc1@linux-foundation.org>
-In-Reply-To: <20240712064249.3882707-1-linmiaohe@huawei.com>
-References: <20240712064249.3882707-1-linmiaohe@huawei.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720818648; c=relaxed/simple;
+	bh=zDbO6xLtTCNacqRRdoOMN2oMJchbaFfBsFGhw3kW614=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OSViGn3uZj+PwmPs0NNjnK4ukJIzc7wkAAdM16w2ccOlq4/+yS3dyUL9kUGaUAjhhlBB5+JseN7+EMoyRjQAMQnuEiN4gfZY2aeJGYj8FhgcYuii7PvyU3DcUPGT83r0KLgedltEKct3cBXqveovxdRGtMu62jpfAd0RFA5spiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GHhR0SBA; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c2c6b27428so1863291a91.3;
+        Fri, 12 Jul 2024 14:10:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720818646; x=1721423446; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=osL5RsL4I3MAxv4yWEcC/Fmi6h/xumUZNQhXdy/KXFA=;
+        b=GHhR0SBAoRQASiHi6NfeUZ1iUxuSgF2fXHBjWWEbag1ggGhIPKZcCGXVRqX0VLFvhd
+         fEIuN9zC0Cik4s/NGU4tb62nN8GBz/eWp1ZdPEiblHnxgDBNz9NUhQZMFXDkbTqLPAXE
+         DapuillauAmDIwagbzbWCEfg3an/un81S1ZfCoAh+u/kla9fQfrFyXqjZMeUxuztdgUD
+         ZoixJKCUicxZJ80Qk815dJMGXwIq+5gtUt6e/mGySXuLKJQk8ZuU3x8dk2sgXEYF+B8/
+         M+WkMLXia/csVcIYFSNR0V4OOeYHU4cwG7NamcJYbuvFEcmwWD9ytaRQhZCMP5u+r30T
+         xw9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720818646; x=1721423446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=osL5RsL4I3MAxv4yWEcC/Fmi6h/xumUZNQhXdy/KXFA=;
+        b=Vk1S1B08uxxhPPPVoyUPR46xSlaXyWuCDYz/7CXgmcD+vLKtnkB5hkJs1+r+VixLv2
+         alYtx4lmyTkQFH/9iLEG42AMUbuzUSrPV3eneGFp4g2fxTCN4VP3sQWJ41a9hZEnnW97
+         NyvpHe/mN6vM73Z28ZY+ntX3MqLqe9V0kmheEVoj0VL5+10gmvuqOWGBoFHvSz2fMCLB
+         BJ7yG8HztjaBeUk4UsRb5m9qS/fVosdOmVFzDmB3OVoXrIIhSUTzr/bS9EYOk6V7rRsC
+         DsLOA74u888CLn+/zc9CzioqQ7eAoD2WmSyZ2GXX7Ts85301M9R+jtSIisHyKXdG10xO
+         8ZDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVV/1dJScR5sp1ymvY1PM4meS8Z3wPr3gFZM4nfrpdNNq/Ghhw1poDmEVPRXPl7pYD84mTXMzgliwyQbPTo726D6JBuQregSK+oKF3sKWY1bfv6V/8NuPE+wa0rcmYMLzlT/QHQpj8brnskLbANCkdz5zwWkCYQxqEJB+88dSTLZ86+ZLwG
+X-Gm-Message-State: AOJu0Yxrh032wrhdIy9j8ujsk3edWnl2yy2ibJ1ZMHhRGgbCIS7GHVve
+	BNOvzFHo1F1CUUZzKqHrv240Qqvmg02d23U8EOjpkwF3PvHAF2qx1E2Ew8j4xvVOOKl8bLGdjRF
+	n76lUl+Ys7pE91nKB0HnrA8B8edg=
+X-Google-Smtp-Source: AGHT+IGM0u+l2fsOK58q8QdceUrjA/fazPrDrNculkxFujOeTWuuA9Aq1OI2D3bxML3LPnYa2OiF1763SMFX683DtRI=
+X-Received: by 2002:a17:90a:708f:b0:2c8:64a:5f77 with SMTP id
+ 98e67ed59e1d1-2ca35d48c4bmr9917114a91.37.1720818646051; Fri, 12 Jul 2024
+ 14:10:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20240711110235.098009979@infradead.org> <20240711110400.987380024@infradead.org>
+In-Reply-To: <20240711110400.987380024@infradead.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 12 Jul 2024 14:10:33 -0700
+Message-ID: <CAEf4Bzbi55bzBPDhDa2mLqbKyo5V27AHOgdVyrBX7swJ2Ln7tg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/11] perf/uprobe: Split uprobe_unregister()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, andrii@kernel.org, oleg@redhat.com, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com, 
+	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 12 Jul 2024 14:42:49 +0800 Miaohe Lin <linmiaohe@huawei.com> wrote:
++ bpf
 
-> When I did memory failure tests recently, below panic occurs:
-> 
-> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(page))
-> kernel BUG at include/linux/page-flags.h:616!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-> CPU: 3 PID: 720 Comm: bash Not tainted 6.10.0-rc1-00195-g148743902568 #40
-> RIP: 0010:unpoison_memory+0x2f3/0x590
-> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
-> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
-> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
-> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
-> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
-> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
-> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
-> Call Trace:
->  <TASK>
->  unpoison_memory+0x2f3/0x590
->  simple_attr_write_xsigned.constprop.0.isra.0+0xb3/0x110
->  debugfs_attr_write+0x42/0x60
->  full_proxy_write+0x5b/0x80
->  vfs_write+0xd5/0x540
->  ksys_write+0x64/0xe0
->  do_syscall_64+0xb9/0x1d0
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f08f0314887
-> RSP: 002b:00007ffece710078 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f08f0314887
-> RDX: 0000000000000009 RSI: 0000564787a30410 RDI: 0000000000000001
-> RBP: 0000564787a30410 R08: 000000000000fefe R09: 000000007fffffff
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000009
-> R13: 00007f08f041b780 R14: 00007f08f0417600 R15: 00007f08f0416a00
->  </TASK>
-> Modules linked in: hwpoison_inject
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:unpoison_memory+0x2f3/0x590
-> RSP: 0018:ffffa57fc8787d60 EFLAGS: 00000246
-> RAX: 0000000000000037 RBX: 0000000000000009 RCX: ffff9be25fcdc9c8
-> RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff9be25fcdc9c0
-> RBP: 0000000000300000 R08: ffffffffb4956f88 R09: 0000000000009ffb
-> R10: 0000000000000284 R11: ffffffffb4926fa0 R12: ffffe6b00c000000
-> R13: ffff9bdb453dfd00 R14: 0000000000000000 R15: fffffffffffffffe
-> FS:  00007f08f04e4740(0000) GS:ffff9be25fcc0000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000564787a30410 CR3: 000000010d4e2000 CR4: 00000000000006f0
-> Kernel panic - not syncing: Fatal exception
-> Kernel Offset: 0x31c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> ---[ end Kernel panic - not syncing: Fatal exception ]---
-> 
-> The root cause is that unpoison_memory() tries to check the PG_HWPoison
-> flags of an uninitialized page. So VM_BUG_ON_PAGE(PagePoisoned(page)) is
-> triggered.
+On Thu, Jul 11, 2024 at 4:07=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> With uprobe_unregister() having grown a synchronize_srcu(), it becomes
+> fairly slow to call. Esp. since both users of this API call it in a
+> loop.
+>
+> Peel off the sync_srcu() and do it once, after the loop.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  include/linux/uprobes.h     |    8 ++++++--
+>  kernel/events/uprobes.c     |    8 ++++++--
+>  kernel/trace/bpf_trace.c    |    6 ++++--
+>  kernel/trace/trace_uprobe.c |    6 +++++-
+>  4 files changed, 21 insertions(+), 7 deletions(-)
+>
 
-I'm not seeing the call path.  Is this BUG happening via
+BPF side of things looks good:
 
-static __always_inline void __ClearPage##uname(struct page *page)	\
-{									\
-	VM_BUG_ON_PAGE(!Page##uname(page), page);			\
-	page->page_type |= PG_##lname;					\
-}
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-?
 
-If so, where's the callsite?
-
-> This can be reproduced by below steps:
-> 1.Offline memory block:
->  echo offline > /sys/devices/system/memory/memory12/state
-> 2.Get offlined memory pfn:
->  page-types -b n -rlN
-> 3.Write pfn to unpoison-pfn
->  echo <pfn> > /sys/kernel/debug/hwpoison/unpoison-pfn
-> 
-
-I guess cc:stable.  It looks old?  Can you help to identify the Fixes:
-target?
-
-Thanks.
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -113,7 +113,8 @@ extern int uprobe_write_opcode(struct ar
+>  extern int uprobe_register(struct inode *inode, loff_t offset, struct up=
+robe_consumer *uc);
+>  extern int uprobe_register_refctr(struct inode *inode, loff_t offset, lo=
+ff_t ref_ctr_offset, struct uprobe_consumer *uc);
+>  extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprob=
+e_consumer *uc, bool);
+> -extern void uprobe_unregister(struct inode *inode, loff_t offset, struct=
+ uprobe_consumer *uc);
+> +extern void uprobe_unregister_nosync(struct inode *inode, loff_t offset,=
+ struct uprobe_consumer *uc);
+> +extern void uprobe_unregister_sync(void);
+>  extern int uprobe_mmap(struct vm_area_struct *vma);
+>  extern void uprobe_munmap(struct vm_area_struct *vma, unsigned long star=
+t, unsigned long end);
+>  extern void uprobe_start_dup_mmap(void);
+> @@ -163,7 +164,10 @@ uprobe_apply(struct inode *inode, loff_t
+>         return -ENOSYS;
+>  }
+>  static inline void
+> -uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_cons=
+umer *uc)
+> +uprobe_unregister_nosync(struct inode *inode, loff_t offset, struct upro=
+be_consumer *uc)
+> +{
+> +}
+> +static inline void uprobes_unregister_sync(void)
+>  {
+>  }
+>  static inline int uprobe_mmap(struct vm_area_struct *vma)
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1138,7 +1138,7 @@ __uprobe_unregister(struct uprobe *uprob
+>   * @offset: offset from the start of the file.
+>   * @uc: identify which probe if multiple probes are colocated.
+>   */
+> -void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe=
+_consumer *uc)
+> +void uprobe_unregister_nosync(struct inode *inode, loff_t offset, struct=
+ uprobe_consumer *uc)
+>  {
+>         struct uprobe *uprobe;
+>
+> @@ -1152,10 +1152,14 @@ void uprobe_unregister(struct inode *ino
+>         raw_write_seqcount_end(&uprobe->register_seq);
+>         up_write(&uprobe->register_rwsem);
+>         put_uprobe(uprobe);
+> +}
+> +EXPORT_SYMBOL_GPL(uprobe_unregister_nosync);
+>
+> +void uprobe_unregister_sync(void)
+> +{
+>         synchronize_srcu(&uprobes_srcu);
+>  }
+> -EXPORT_SYMBOL_GPL(uprobe_unregister);
+> +EXPORT_SYMBOL_GPL(uprobe_unregister_sync);
+>
+>  /*
+>   * __uprobe_register - register a probe
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -3181,9 +3181,11 @@ static void bpf_uprobe_unregister(struct
+>         u32 i;
+>
+>         for (i =3D 0; i < cnt; i++) {
+> -               uprobe_unregister(d_real_inode(path->dentry), uprobes[i].=
+offset,
+> -                                 &uprobes[i].consumer);
+> +               uprobe_unregister_nosync(d_real_inode(path->dentry), upro=
+bes[i].offset,
+> +                                        &uprobes[i].consumer);
+>         }
+> +       if (cnt)
+> +               uprobe_unregister_sync();
+>  }
+>
+>  static void bpf_uprobe_multi_link_release(struct bpf_link *link)
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -1104,6 +1104,7 @@ static int trace_uprobe_enable(struct tr
+>  static void __probe_event_disable(struct trace_probe *tp)
+>  {
+>         struct trace_uprobe *tu;
+> +       bool sync =3D false;
+>
+>         tu =3D container_of(tp, struct trace_uprobe, tp);
+>         WARN_ON(!uprobe_filter_is_empty(tu->tp.event->filter));
+> @@ -1112,9 +1113,12 @@ static void __probe_event_disable(struct
+>                 if (!tu->inode)
+>                         continue;
+>
+> -               uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
+> +               uprobe_unregister_nosync(tu->inode, tu->offset, &tu->cons=
+umer);
+> +               sync =3D true;
+>                 tu->inode =3D NULL;
+>         }
+> +       if (sync)
+> +               uprobe_unregister_sync();
+>  }
+>
+>  static int probe_event_enable(struct trace_event_call *call,
+>
+>
 
