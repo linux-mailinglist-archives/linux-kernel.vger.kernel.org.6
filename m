@@ -1,170 +1,132 @@
-Return-Path: <linux-kernel+bounces-250849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B5FB92FD9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:29:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FE892FD90
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:28:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C4C3B214B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:29:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2AAB285232
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627301741DE;
-	Fri, 12 Jul 2024 15:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gs/ng3Sm"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8BD17085D;
-	Fri, 12 Jul 2024 15:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A371741D3;
+	Fri, 12 Jul 2024 15:28:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9CA16F90C;
+	Fri, 12 Jul 2024 15:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720798181; cv=none; b=ZG2UOqCOp+2pAyGEBGrCt2bm8hqbrICEFBmwRnEo+CzdBlNKDq+JobroMmenfPwlgD64QM2WUupDzJd791MqOqemaJioUaNjcw7RQDu2XJyi4DXvhIXdeLyTLNX5IjLX04/cWcmg6V70grp2G+6HJK5KZoDr0cLjpFVSzWAUtY8=
+	t=1720798131; cv=none; b=tLE03nskiAL1VfI2gNdmq7cApXLl7ycwjeoVVpAelsD07oxjF+hoHiO3+TD+Z6EloWW6hCRCnEJduXrEK/GeAirWaSF/Ryr3ydCsSVbZN8Vt2yvcWO7IXZZpnLs4TcEFL2gjBmAq6DVrWl+8KwVoXpU2H6Pou3aC+/TdiKSWdrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720798181; c=relaxed/simple;
-	bh=+IMZBOwNJ5AwNiX0hjiRah2gQJchIdnWIXPtSSevNfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gDNx5UtgIzDxKaCWkeYPCigEpjqsD81yX6r8CLDqHOCVpmL+jys03WnBqT3LCOTcp/sgthkCF3TzgNbkjRwisPyZmccKdg4CKyVetln+hM2rKqDg2pO4N7C6ZjjDjKTzciLlcLpaOi6TM/mpBbdo5PuNIL0Ks7piDqjmG/wRlxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gs/ng3Sm; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-447e1eb0117so11454851cf.3;
-        Fri, 12 Jul 2024 08:29:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720798179; x=1721402979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ve3CcOjeMtMU8bzJnjUvgQ5PtDwAZqsbHa46kIGMMDU=;
-        b=Gs/ng3SmCWOHPfHf9Kx4U32hL24IXUw9X8PM/AxENhOrwkybRcT8uAb2L9aXZR2dAi
-         pS0j1gm8oE0wy61CdzgIbufthnb+8iQFd3BhSgxHSuoC1Dm5vZz4u0BIirfN/y63Zk9t
-         udEXZc311R3vXqNWd2lwMaH4c0kkdXq8FhiImutgrvp1EmIIddVeJ53+WD2zUb3hswgR
-         kGbXbi1GGfvIKxTMWiEXwzusvAJYSzMAMT0bI5t9TeHCWjX75l+u3xJRVsXY5D1YJ9jo
-         VGuH2uwJM8VCUEAMORHCEjl5GL0kHcPym4SfdLVIk+Q1T5UmN8Wv0U9SXe6ZWt7qfyva
-         eT5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720798179; x=1721402979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ve3CcOjeMtMU8bzJnjUvgQ5PtDwAZqsbHa46kIGMMDU=;
-        b=F85XHUhepzZqCV2QLPHeAOFb/M4Iag/AnY/TzDXsfVu0vxp/TSlgVNJ916VA4TuikR
-         IzjNdTX7hPRiQp4pG2hHx49zcHi7dcDc2uZG+PVhD3+5yYdWS+cTPLYZQDk8EuUoUKAx
-         jUPgkuIQiX1xJnsPH5WoaC7HVISxMmwougCCSYx4gv4ohbCVDdvVVwCqE+JTfiBgsVeV
-         1t/ytZViUBmZOtf80EOGsYFtVlwXMsWaWpL9ghN9B1R5ORwVAP2ZJ7DnMz+E99bE7kC6
-         ah/Ova79DiA/WFWnnuLY92QOKUxdEqDnAX8camHXSmZeTxid4nCd3fT9OexfeEkOvQVi
-         K3sA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Qz3iabkSWcbTmnrdl3pGpkdhnvijJMhwPGgQUAXIUqfhSlGSVXIRUcHBhzB1Xbs8BXkVSazeGauamGHiBaNeV6n0qfJq7MjC7NcbgMk6iLIQ2+WNjHFTxBIewCACfIaFoTUdDO+Wv75ttNF3nyVBvhFvNpyUTDONuRPkbftsBENJj8x1vezAHSjlAg6bMPqPJEqO68vsXhR1W+gZhe8UGjTfSKlj
-X-Gm-Message-State: AOJu0YwP/60a7lw7PNCn+CiV42nakblYO3IpBQwkFVPQz9dFx/zktrm1
-	zBLRFGBTXKdZldoU9NALeFOC3ADD0+nw0yaMptzN3AQ96JsxZbMnEATQ1M0pI1UfSaNcQKnSUWJ
-	29Z9qSGgBRIwRPQp6cIgCx1Qbn4bg5sKl
-X-Google-Smtp-Source: AGHT+IHedDfgr4oxy9l8g1SV0quzS/13qgZuFj80DhQ5BESrPL+1aCpiI5uk0XVyzQs7IElyHA+EFOWUbNnnwSnOSC8=
-X-Received: by 2002:a05:622a:3c9:b0:446:49f1:79a with SMTP id
- d75a77b69052e-447fa89dfc5mr148250941cf.24.1720798178892; Fri, 12 Jul 2024
- 08:29:38 -0700 (PDT)
+	s=arc-20240116; t=1720798131; c=relaxed/simple;
+	bh=uwGQwHUwIKmO0WrMKy795caJ2WJJg6ayOmxx7WBL4ig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SsZXOna7DAFnwYYZcIh57p4xBf8nNf2OFvpbmE1TaFsAWaD5AiOOko5GwkLyioX6BLilQfqTNaC8MarD21oJo9CUYql8+rAy9j9kBCwE2Yw3x8T+Sck0hu6VxNqyVKJUU4vnjq5dWzHiCdHCb7Xd0TVruEdg71/aD3tR2Pd2LOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B2E51007;
+	Fri, 12 Jul 2024 08:29:12 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F32233F762;
+	Fri, 12 Jul 2024 08:28:38 -0700 (PDT)
+Message-ID: <82624cf6-98ad-47df-8dcd-368117600805@arm.com>
+Date: Fri, 12 Jul 2024 16:28:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240627161315.98143-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVLSpaUtdXFv3VXFc5G61dmRX2C1iW9C+km23g6EgZJOg@mail.gmail.com>
- <CA+V-a8vABF6vg+J7DAGzgnw8612oe6VfJkc5y-krySvnpAnPkQ@mail.gmail.com> <CAMuHMdXuyQZ=SFfQa5kvZTwYa0uRXc7khJ-vOYBRE5SCd11rPw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXuyQZ=SFfQa5kvZTwYa0uRXc7khJ-vOYBRE5SCd11rPw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 12 Jul 2024 16:28:08 +0100
-Message-ID: <CA+V-a8ui9AKDOZzg_dgPXeGhGE-+rBHU8O1tpdb8w8myo-1p5Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clk: renesas: Add family-specific clock driver for RZ/V2H(P)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] iommu: Resolve fwspec ops automatically
+To: Jon Hunter <jonathanh@nvidia.com>, Will Deacon <will@kernel.org>,
+ Joerg Roedel <joro@8bytes.org>
+Cc: linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>, Yong Wu <yong.wu@mediatek.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <cover.1719919669.git.robin.murphy@arm.com>
+ <0e2727adeb8cd73274425322f2f793561bdc927e.1719919669.git.robin.murphy@arm.com>
+ <0eec5f84-6b39-43ba-ab2f-914688a5cf45@nvidia.com>
+ <01c05fb2-16ce-450c-befb-8a92ac2a8af9@arm.com>
+ <ee24cb5f-d170-41d3-9928-5507b8ab22a7@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <ee24cb5f-d170-41d3-9928-5507b8ab22a7@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+On 12/07/2024 4:24 pm, Jon Hunter wrote:
+> 
+> On 12/07/2024 12:48, Robin Murphy wrote:
+> 
+> ...
+> 
+>>> I am seeing some failures on -next with some of our devices. Bisect 
+>>> is pointing to this commit. Looks like the host1x device is no longer 
+>>> probing successfully. I see the following ...
+>>>
+>>>   tegra-host1x 50000000.host1x: failed to initialize fwspec: -517
+>>>   nouveau 57000000.gpu: failed to initialize fwspec: -517
+>>>
+>>> The probe seems to be deferred forever. The above is seen on Tegra210 
+>>> but Tegra30 and Tegra194 are also having the same problem. 
+>>> Interestingly it is not all devices and so make me wonder if we are 
+>>> missing something on these devices? Let me know if you have any 
+>>> thoughts.
+>>
+>> Ugh, tegra-smmu has been doing a complete nonsense this whole time - 
+>> on closer inspection, it's passing the fwnode of the *client device* 
+>> where it should be that of the IOMMU device :(
+>>
+>> I *think* it should probably just be a case of:
+>>
+>> -    err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
+>> +    err = iommu_fwspec_init(dev, of_fwnode_handle(smmu->dev->of_node));
+>>
+>> since smmu->dev appears to be the same one initially passed to 
+>> iommu_device_register(), so it at least ought to match and work, but 
+>> the SMMU device vs. MC device thing leaves me mildly wary of how 
+>> correct it might be overall.
+>>
+>> (Also now I'm wondering why I didn't just use dev_fwnode() there...)
+> 
+> 
+> Yes making that change in the tegra-smmu driver does fix it.
 
-On Fri, Jul 12, 2024 at 4:23=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, Jul 12, 2024 at 5:14=E2=80=AFPM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Fri, Jul 12, 2024 at 12:59=E2=80=AFPM Geert Uytterhoeven
-> > > On Thu, Jun 27, 2024 at 6:14=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
-mail.com> wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Add family-specific clock driver for RZ/V2H(P) SoCs.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
-> > > > ---
-> > > > v2->v3
-> > > > - Dropped num_hw_resets from struct rzv2h_cpg_priv
-> > > > - Dropped range_check for module clocks
-> > > > - Made mon_index to s8 instead of u8 in struct rzv2h_mod_clk
-> > > > - Added support for critical module clocks with DEF_MOD_CRITICAL
-> > > > - Added check for mon_index in rzv2h_mod_clock_endisable and
-> > > >   rzv2h_mod_clock_is_enabled()
->
-> > > > --- /dev/null
-> > > > +++ b/drivers/clk/renesas/rzv2h-cpg.h
->
-> > > > +/**
-> > > > + * struct rzv2h_reset - Reset definitions
-> > > > + *
-> > > > + * @reset_index: reset register index
-> > > > + * @reset_bit: reset bit
-> > > > + * @mon_index: monitor register index
-> > > > + * @mon_bit: monitor bit
-> > > > + */
-> > > > +struct rzv2h_reset {
-> > > > +       u8 reset_index;
-> > > > +       u8 reset_bit;
-> > > > +       u8 mon_index;
-> > > > +       u8 mon_bit;
-> > > > +};
-> > > > +
-> > > > +#define RST_ID(x, y)   ((((x) * 16)) + (y))
-> > > > +
-> > > > +#define DEF_RST_BASE(_id, _resindex, _resbit, _monindex, _monbit) =
-     \
-> > > > +       [_id] =3D { \
-> > >
-> > > Indexing by _id means the reset array will be very sparse.  E.g. the
-> > > innocent-looking r9a09g057_resets[] with only a single entry takes
-> > > 600 bytes.
-> > >
-> > > If you do need the full array for indexing, please allocate and
-> > > populate it at runtime.
-> > >
-> > OK, I will use the radix tree for resets (is that OK)?
->
-> You mean XArray? include/linux/radix-tree.h has:
->
->     /* Keep unconverted code working */
->     #define radix_tree_root         xarray
->     #define radix_tree_node         xa_node
->
-Yes, I meant the above.
+Ace, thanks for confirming! I was just writing a follow-up to say that 
+I've pretty much convinced myself that this (proper diff below) should 
+in fact be the right thing to do in general as well :)
 
-> Given a single xa_node is already 576 bytes, just allocating the full
-> linear reset array at runtime is probably better.
->
-Agreed, I will create a linear reset array and loop through the array
-based on reset index and reset bit to match with id whenever required.
+Will, Joerg, would you prefer to have a standalone fix patch for the 
+nvidia/tegra branch to then re-merge fwspec-ops-removal and fix up the 
+conflict, or just a patch on top of fwspec-ops-removal as below?
 
-Cheers,
-Prabhakar
+Thanks,
+Robin.
+
+----->8-----
+diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+index 4365d9936e68..7f633bb5efef 100644
+--- a/drivers/iommu/tegra-smmu.c
++++ b/drivers/iommu/tegra-smmu.c
+@@ -837,7 +837,7 @@ static int tegra_smmu_configure(struct tegra_smmu 
+*smmu, struct device *dev,
+  	const struct iommu_ops *ops = smmu->iommu.ops;
+  	int err;
+
+-	err = iommu_fwspec_init(dev, of_fwnode_handle(dev->of_node));
++	err = iommu_fwspec_init(dev, dev_fwnode(smmu->dev));
+  	if (err < 0) {
+  		dev_err(dev, "failed to initialize fwspec: %d\n", err);
+  		return err;
 
