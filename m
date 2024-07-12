@@ -1,260 +1,387 @@
-Return-Path: <linux-kernel+bounces-251002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96EF992FF9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D052392FFA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C55C281F12
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84DDB281EE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD68174EF8;
-	Fri, 12 Jul 2024 17:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51096171085;
+	Fri, 12 Jul 2024 17:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FG3pFX/v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pTa1Lz4N"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DE2168C4;
-	Fri, 12 Jul 2024 17:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720804705; cv=fail; b=AJRItcfXVZLEn3jgeB6IYCPPYD1lZIfJ1GiTQjQfYdSzym3efP673DhXFCS2fq6VkwMkwbx11p4CJSRixE60CXYWB9RAD3wto9aL3NvsV6qhKXMv//kDZa7rNetGXkE4qHUCsqi08xFw6+QmV6NecSjdnyC0n+smGGlqPu//gkE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720804705; c=relaxed/simple;
-	bh=S8Z+kXUFC72/UyUQICqiH4MJvAazBAdICYpn+vSphEE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=r1ltREfs1sePGoBc6g25fhyLlwHonxeHHk7mGyHQsHl7iuZMsOBj6G69mqZrRE7aoeZi8MnjWVL4MmBgzRpnebhdfdnrzsgM9h+h7zM4Psx3WqjLVM4fe6zCVHJVu0HLyK7+YIO5SQZrRTILULd+HoIzbMA5sfvPaRpx2c0xqyM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FG3pFX/v; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720804703; x=1752340703;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=S8Z+kXUFC72/UyUQICqiH4MJvAazBAdICYpn+vSphEE=;
-  b=FG3pFX/vxWqdbEzw69TjzlgSOYHiMPGb3UB0fveKaoA+OBT7ix8XVRx/
-   jPnw3cblwr05RKEuR9b5Yhjn9JzWg1rOUqkbZY8vaTMpnF/FYBOB68kKk
-   xvxk2FnfrVw2BzYjPLOZgu72LwytgHLR3fkXysupmsvqPOP4WSo+EORyd
-   8dKgRirnNy21X9+42itf5bJfQTHMgBU2RffpdzLd2Akad8FrEMP4y0oUj
-   4tsiGkfQkjwYvELPxyMSlMwIjbT3Q1cFTPzfFcU14UTMAxxMQF6V9u8G/
-   WSrAZVPqDxQgAXtdu26PpmdjA5n8jvtESxYCzBaBHu6n9iQioMNrwa5Z9
-   w==;
-X-CSE-ConnectionGUID: u4vXKxuzTPa1kSi4zcf2nA==
-X-CSE-MsgGUID: yMuYqZ4yRbqmi/rJ2/HoZw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="29406103"
-X-IronPort-AV: E=Sophos;i="6.09,203,1716274800"; 
-   d="scan'208";a="29406103"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 10:17:42 -0700
-X-CSE-ConnectionGUID: yxLlpiBcSNW7cN2HXuoIhg==
-X-CSE-MsgGUID: /QI4qReeRKGxielYPIlIHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,203,1716274800"; 
-   d="scan'208";a="53544866"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Jul 2024 10:17:41 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 12 Jul 2024 10:17:40 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 12 Jul 2024 10:17:39 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 12 Jul 2024 10:17:39 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 12 Jul 2024 10:17:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fAx0896miiQiY8YmYe6GbqoG5xAqb+vxKfYcNzmIRD146Q6c6EonGtFyIar++8buFyfw8ZsvTo4i8hXsJjSD+h93zt7raBdNUrzohnMNdG+rGopNCJUrFEz6devrsZhaJyF2CyGNv4wjUfb9sQm1rNJaiE3rfu4hfPpMwWQCeHKl4zB7mYAcQoP5/LDiI+J0jpNFm/j1p6rZtIuNsL6PB7f91r1mIIYwukj3ocVf8KtNsaQQCostNXf0rLKccpAnIHmGX5Z+h/tD/uhedjTL9tKwOrTjXAWT6z2aiBoF/MVGDKHtP43EFvJlEB7HuOdeHu5Qun/f+1lCWWL+Yb8oew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZRyFAwAJDoKBxLjeiRBFnKvqBA1zNr8RcA1WUm0E6h8=;
- b=KPoKG9vRZxaVy9jtnzGUGSWG/8AIQO7eMkBu8Voak/IvOmbAH8v503C0gOcn7q49PQ9xYaB3b4ZBlV+cOqrMd5e0zVI0TXWz5qzOdzAEPSxENewqEwHDL5zyykBKOUdB3dPJtCGTlaRa8guyWFbcQHzt77v8W2T8ur/oYhj1QB4HmnU2hKlyC96gAmQa0/QpUCvcR0MdtaTyj+Mm1oagX/ekooEO3A6lpFDcETLk0R+Ha2xUL2FWv7MhN50XC98bEMbFl2EtONLDr/yIJq7ATYRXib9upbcGGCQ6/vO+1t+phZnqAvBV08iC2znTMWc+4vKH01QPDt/DFAkGkhP6Og==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SA1PR11MB6734.namprd11.prod.outlook.com (2603:10b6:806:25d::22)
- by DS0PR11MB7443.namprd11.prod.outlook.com (2603:10b6:8:148::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Fri, 12 Jul
- 2024 17:17:37 +0000
-Received: from SA1PR11MB6734.namprd11.prod.outlook.com
- ([fe80::fcf6:46d6:f050:8a8c]) by SA1PR11MB6734.namprd11.prod.outlook.com
- ([fe80::fcf6:46d6:f050:8a8c%4]) with mapi id 15.20.7741.033; Fri, 12 Jul 2024
- 17:17:37 +0000
-From: "Li, Xin3" <xin3.li@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "shuah@kernel.org"
-	<shuah@kernel.org>, "vkuznets@redhat.com" <vkuznets@redhat.com>,
-	"peterz@infradead.org" <peterz@infradead.org>, "Shankar, Ravi V"
-	<ravi.v.shankar@intel.com>, "xin@zytor.com" <xin@zytor.com>
-Subject: RE: [PATCH v2 09/25] KVM: VMX: Switch FRED RSP0 between host and
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87114168C4;
+	Fri, 12 Jul 2024 17:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720804785; cv=none; b=Nc1kWHsOjs0GT169hhPR0HPYoOjplai3Lbjj7BkHAHoV13MMLkv8VwdziG2S/88zA4n2FqJLuECwBJRXZgjnLGZkbSAdjp+s4jqnogPkKJVsGtPuKbmhjLaisplXKomTERnpa+oUHx8zUGmLpP96ZjgS2cMARI+egPcpmFOSLJo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720804785; c=relaxed/simple;
+	bh=jnRhT7ArZ/dsV+9o7ONQPq3w6RnKrbvARoEhLJOnquQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ehP21Lm1MQlqFYg4q0eFvzcyByU8hs5aJfgWgEpwoQIf6FTt+G5fZ1umJRopD0QW8xwVJM9ENzul2LCvKsIfDTsgqD5rQE9zfETdZZ8CRsz62cJgBjUXrtQjrRjjfmq2UzoLdSCQUFveWUGloWI/pNowW5EotZtYp9qmORV+lG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pTa1Lz4N; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46CFvUvD014723;
+	Fri, 12 Jul 2024 17:19:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:content-transfer-encoding:in-reply-to; s=pp1; bh=P
+	KLdN+4HvBPUBpPcjX23XjukBoXJmaIgK0lpyBVPehs=; b=pTa1Lz4N4kcksyH25
+	aui4MTWaA6mHQS9axVcYmtR4CBTepfVSa+CDXN08hm71FdZWdUzen3OUGhrdtSMy
+	KKcxBbHxTvq/BuJL5oUxwSyWJY3KUTgAfNtwXAVqljrFIAzwoYwa8CE8DjCjkKpp
+	kZvILS7XC4SrDquKE74oSMAiWzFg9EEdpPBHxVy/kBLRD46zvQgTeCLBRorfnuOP
+	lY/zTAeShcR3CYb1lDL+auybtsERiSyTyNwy5jQ5Q6CvWuTQOVZIsLTpmt4HHdIY
+	A2HEbvtsLP/kjIJcMy716uBLOourR9ebkT9VaoV/42BuCbQ7DN/7gkwWnbKpNIxQ
+	9+/mA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40b4y7gmbv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 17:19:26 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46CHJPgM023228;
+	Fri, 12 Jul 2024 17:19:25 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40b4y7gmbs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 17:19:25 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46CE1mO1024583;
+	Fri, 12 Jul 2024 17:19:25 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407hrn7k5n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Jul 2024 17:19:24 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46CHJJua34996642
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 12 Jul 2024 17:19:21 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5171520043;
+	Fri, 12 Jul 2024 17:19:19 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5C46E20040;
+	Fri, 12 Jul 2024 17:19:16 +0000 (GMT)
+Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.195.45.199])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 12 Jul 2024 17:19:16 +0000 (GMT)
+Date: Fri, 12 Jul 2024 22:49:10 +0530
+From: Amit Machhiwal <amachhiw@linux.ibm.com>
+To: Lizhi Hou <lizhi.hou@amd.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh@kernel.org>, Vaibhav Jain <vaibhav@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
+        Kowshik Jois B S <kowsjois@linux.ibm.com>,
+        Lukas Wunner <lukas@wunner.de>
+Subject: Re: [PATCH] PCI: Fix crash during pci_dev hot-unplug on pseries KVM
  guest
-Thread-Topic: [PATCH v2 09/25] KVM: VMX: Switch FRED RSP0 between host and
- guest
-Thread-Index: AQHaWe/p8mDo/Zfb1Ue0O++EkKDe07HFceqAgCsrPICAA4rmgIAADUkwgAAHp4CAAADDQA==
-Date: Fri, 12 Jul 2024 17:17:37 +0000
-Message-ID: <SA1PR11MB67349D5D7B0E26A49B8A1112A8A62@SA1PR11MB6734.namprd11.prod.outlook.com>
-References: <20240207172646.3981-1-xin3.li@intel.com>
- <20240207172646.3981-10-xin3.li@intel.com> <ZmoYvcbFBPJ5ARma@google.com>
- <SA1PR11MB67348BD07CCCF8D52FCAC8FEA8A42@SA1PR11MB6734.namprd11.prod.outlook.com>
- <ZpFH86n_YY5ModwK@google.com>
- <SA1PR11MB67341A4D3E4D11DAE8AF6D2EA8A62@SA1PR11MB6734.namprd11.prod.outlook.com>
- <ZpFZg-9MTveHfn_4@google.com>
-In-Reply-To: <ZpFZg-9MTveHfn_4@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR11MB6734:EE_|DS0PR11MB7443:EE_
-x-ms-office365-filtering-correlation-id: b43710d9-23d5-4e5b-7334-08dca2968700
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?GzupyUNsJPdzldmlbwYY+jMPlnTuahmbs7WZrYtQIWy2OmGfU7CeFvyldiFH?=
- =?us-ascii?Q?zMKnYC8eAZ4F9pHnzN0whbcL20lhIm17f0TFqnHNimVuJivXKwly1Pm0oeYU?=
- =?us-ascii?Q?1FnpNUYdUKvI4IaTmHIbHGer/OFW0/tIuBXEREnHTURtpIZ7OcowrG6iwDXi?=
- =?us-ascii?Q?/wfB1e7pLuFoO/+qA7YNTqT44gjjlX0Schv2OqBUg5DmoMLteggKTkgbb1yE?=
- =?us-ascii?Q?qjBxNX5PcGPm2fFbEslMVwuzjJcnnivMCCurV1bs3Eh4fscyipFPgPImSzsg?=
- =?us-ascii?Q?0ClxN9HBYIPkIl7O0Yzx02MIvzykfrV1NiLj4MTnutiZAErx8iX7GGDMKlXv?=
- =?us-ascii?Q?nFfxrUUa7STITOV0eHOrkqEGtfTGrqIlm1EkIK3vXAymVTxo0MFjJbh3g/RB?=
- =?us-ascii?Q?OtIwkzKNob/3BQ6OvrAczGKQApPHc4AhLg0AeZzxbcVjj+ZDMEyZhw9m+cOc?=
- =?us-ascii?Q?EYd/4Y0OICxUzWh4cIbUPgib/9cndmzeMyICsoT90MeUOktxWr4D8IwbjT4P?=
- =?us-ascii?Q?M31wh9uLP/70DCUz9oVC5TpKkuIz2GGU2GVa2KIJBzRxSJvNyYw5252sG2ro?=
- =?us-ascii?Q?PPKvJ0RzoAoizguLd0TOgwVr6GmzM3Bpjx3xm/gOfszN/iNZKW3yCn5dSwjR?=
- =?us-ascii?Q?XEGo6GhZz9cRUFo/3quwQBxjamXLb66hdb5OOj+6WIVpWQH8XyRxaoAFOUq5?=
- =?us-ascii?Q?aiW27qkbW9dbG631CTfhiEish9ZwciN1tQWshrmkRwhIq5w/KsrME6zk+iCA?=
- =?us-ascii?Q?GNdXZamW36AiWwaYVuWnN/v+vdJaB8aLOaqs7AURnjgnSIuZd0QHwTWhW3Mk?=
- =?us-ascii?Q?bGMwDxsuZ3+uMzbKHLhXkskZHmij0dSKjgH81k5NqZQMWWyKLFbAbkQVSujP?=
- =?us-ascii?Q?C2+N3lzKpmf5sNKhKO74tG3MlchyxwtzVRlCdJ4Cih4k37eDebeSuYUWSBtX?=
- =?us-ascii?Q?RuGLGcMcCPfT6WetRa8yWoX9Ug8imkFJzHBw3/7Wm477JIvYJDhVnkpgfDU/?=
- =?us-ascii?Q?NTNL6H1E0VnBb4OtW3A9puHL1+h7duOK3pqY5V+3hpu/wTmMHG5/tDb9VcSf?=
- =?us-ascii?Q?kB2pJas3aNq/LfzcM3y6mdQYxgPnRe+/V0XJsjRbJeM7T3rlnBixumVhYY6G?=
- =?us-ascii?Q?OvRQF+YXg507/HOyPXq7VFiM7iqw1ZDL4IQJ8SIXRGLNNInqo3/lK3/i9Pjr?=
- =?us-ascii?Q?soSblb9v8YWAII7B2uoL738cVLyk9QIPvTQZF34IITsyUxLZE9BHxY18zwul?=
- =?us-ascii?Q?Xc/aPFNQHHf2aFIffSOJeQtJ+UbPN+fZd1kvYORrBmA2/RGzLC5xSR13s1qF?=
- =?us-ascii?Q?IZriHNqntkRkA9Z+q+G7Gg4Z1Tvu02mLwlHrxpD7d1opKm/S+KIKxj560kxI?=
- =?us-ascii?Q?UzW/8avq7C6H8/G65/SG/hOi4zkqvnQFoSNI8czyCo8OnkrC4A=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6734.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?nIlXcm1AmTwQV6+//6mx5eSzlmcdRWg/yp5oEKBynIoaOSB9SJCDOVpL2box?=
- =?us-ascii?Q?AHWslguG5t9YOjaBhQYhRDYO9b9803DbZKML+8eIEy7XjjvOKmQFheiVhEJF?=
- =?us-ascii?Q?TzQksbjR+QBRphBl0YbjI2S+e9RCyZL5fUKNTv+agDCAyU3YXv+6G/JAHRF8?=
- =?us-ascii?Q?WkYzOCOreFp8LX2AuoN21zC+Uf9xf3rLQdPdhK0XOstaXkoYC3lpW3XMU70q?=
- =?us-ascii?Q?8IgI6hHK6w2KkglnJFVoppwrYBzUofPz1nqnZ6XMbIC8JuK24EFZKEVc1PbH?=
- =?us-ascii?Q?YMdWwPFQDnRT4hM4Qr6oiU/tEWEJGt2Lsn8ICtG9lcH1FDO4S0P/TsswtdfB?=
- =?us-ascii?Q?q2tYv412hm4QnizxN5p/I4BmSkd6wHwIWJ4BAi9mfw7cB4G97INvZEopVm5L?=
- =?us-ascii?Q?eqBKuSKK0k2mnc38KXzEcmKr2DqocRenOhMv7Y20HcPiWDFxDO5i5p7WCQls?=
- =?us-ascii?Q?+EpRLShDWW+VGm3yTduZ9nyg6J1XFvxiXgwegPDUKhjB1vCe86A2GgyRWCwo?=
- =?us-ascii?Q?NdfD7XX/fAbrUWT5eCvikaLx+HFdvBXvXlLXy3IpxUJtjBkYb3M0I4b6CPA1?=
- =?us-ascii?Q?3ZzgXbeNG+q3YfbAEGpb5AoWktEI5by2U+aHXFl7Ib70e8RAt1hxrGJKpBCm?=
- =?us-ascii?Q?PLF/KiOxk1a+zQ/Vdf+4mnfoRLcKkMB8k9rxK4l1Lojzv6kyJpV3zuSn/YBM?=
- =?us-ascii?Q?kZE1Qvd0u0EFYGdBLq+okgbKQeEkvsMAC/GdgM+e2bn/igiE+5Rc14+nMh4n?=
- =?us-ascii?Q?JkHhKBu4vrZbZUfJ9ebRWgg2QIP1QXy9VO1QejuupiTFdY6E7/T+8oL9bh2t?=
- =?us-ascii?Q?l0DYaCBZVpVBVSAdJn83qEpCY3bmKHumIxI232rn+9ASjMEydSXUzPxjLCvX?=
- =?us-ascii?Q?FYWzzkcQoSgkXnAntLJQeXGtZy1MMwKsodU+dU1H44w0WrAT3n44uL08LHGJ?=
- =?us-ascii?Q?ei4uONUigxfp3pXVMwbVgCCl67aiu3lnzI7m1oMNDNj9/DgppH4wQ8XIAaZT?=
- =?us-ascii?Q?EwszLiiDBtw9F346yL4gvWNzIQJwoxy1luK0agZo/1EKAC2QxQqnnpJon4Gk?=
- =?us-ascii?Q?kiiYU363yGOWiLSL2YlXSA8nHWTHE3te/TdbLKXJEL6YoBzfKwVLzygYddIa?=
- =?us-ascii?Q?7KF/JerT2EyqplNPIroCG5Y+a1qz1vs080d7e6OmL5FwR/YwEGFY9U466SSI?=
- =?us-ascii?Q?y/Pitg4uaMGAHWpHtvMUln3p+CmAb1kAwAoCZ3jBKFiicEulOe4D6LdJqTGi?=
- =?us-ascii?Q?jdFLNXSj8UKR0aS0SfFJH2n9OUC0aJM59jX3CgwGQa7QBMN+vnRI8JO1WwWI?=
- =?us-ascii?Q?pgqQc1qRTt2MqtV2JtQj9x1hrJnvBkco2A0XI48EgTL1K5rDKBLUNA7gP7Nq?=
- =?us-ascii?Q?N5YQmPPh3hWxUsP7BJlusdX+irlvLKIXPgdvn4a2xV1GZ3JaPJpjZirOh4Gq?=
- =?us-ascii?Q?g7PdXhlULqnAjrI6Fr0vddeOqXabtF+1IqQ4XYvC7N+8agIx99iEUHZsHMY2?=
- =?us-ascii?Q?abKGnQ6wUGmS7txDX/uXd3WcFH+QUE+DOAanFbo7/7s0WweGSwtSGdTDf6ht?=
- =?us-ascii?Q?4IW0FlIjSRa9FXQlYWU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <parclvdotds2m44iphcy7qlhnxg6ugdtk7ad7wxodtktj6m5zj@wpuwa7xc6ve4>
+Mail-Followup-To: Lizhi Hou <lizhi.hou@amd.com>, 
+	Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-ppc@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+	Rob Herring <robh@kernel.org>, Vaibhav Jain <vaibhav@linux.ibm.com>, 
+	Nicholas Piggin <npiggin@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Vaidyanathan Srinivasan <svaidy@linux.ibm.com>, Kowshik Jois B S <kowsjois@linux.ibm.com>, 
+	Lukas Wunner <lukas@wunner.de>
+References: <20240705192034.GA73447@bhelgaas>
+ <2359de90-1712-903e-c3c9-1f1f694718db@amd.com>
+ <k5h7tto6kdwcgtxoeglqncojjwact6xxqnin4inffol74jdows@fj5ujezqwb24>
+ <f1c2125e-c87e-d816-c92b-db814f501134@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6734.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b43710d9-23d5-4e5b-7334-08dca2968700
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2024 17:17:37.3353
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZN8+v9FC61Gr+iOCM/ipbsqXgE8F0sQ2jkt9i8LCTnfB02HmSzqe8B5E20SbMxG/Av5H+ZFMv6YQMIMpz3mJfQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7443
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f1c2125e-c87e-d816-c92b-db814f501134@amd.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: sEAC1-5TYDh5GqKpo8s93-VQZKLYqtNZ
+X-Proofpoint-ORIG-GUID: qmakTHWV9aEhnRW0UZq7bentTl0ZwFwN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-12_13,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 bulkscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 mlxscore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407120116
 
-> > > E.g. if it's somewhere in task_struct, then kvm_on_user_return()
-> > > would restore the current task's desired RSP0.
-> >
-> > So you're suggesting to extend the framework to allow per task constant=
-s?
->=20
-> Yeah, or more likely, special case MSR_IA32_FRED_RSP0.  If KVM didn't alr=
-eady
-> have the user return framework, I wouldn't suggest this as I doubt avoidi=
-ng
-> WRMSR when switching between vCPU tasks will be very meaningful, but it's
-> easy to handle FRED_RSP0, so why not.
+Hi Lizhi,
 
-Great, I will take the patch.
+On 2024/07/11 02:18 PM, Lizhi Hou wrote:
+> 
+> On 7/11/24 11:48, Amit Machhiwal wrote:
+> > On 2024/07/10 09:48 PM, Lizhi Hou wrote:
+> > > On 7/5/24 12:20, Bjorn Helgaas wrote:
+> > > > [+cc Lukas, FYI]
+> > > > 
+> > > > On Wed, Jul 03, 2024 at 07:46:34PM +0530, Amit Machhiwal wrote:
+> > > > > With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
+> > > > > of a PCI device attached to a PCI-bridge causes following kernel Oops on
+> > > > > a pseries KVM guest:
+> > > > > 
+> > > > >    RTAS: event: 2, Type: Hotplug Event (229), Severity: 1
+> > > > >    Kernel attempted to read user page (10ec00000048) - exploit attempt? (uid: 0)
+> > > > >    BUG: Unable to handle kernel data access on read at 0x10ec00000048
+> > > > >    Faulting instruction address: 0xc0000000012d8728
+> > > > >    Oops: Kernel access of bad area, sig: 11 [#1]
+> > > > >    LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA pSeries
+> > > > > <snip>
+> > > > >    NIP [c0000000012d8728] __of_changeset_entry_invert+0x10/0x1ac
+> > > > >    LR [c0000000012da7f0] __of_changeset_revert_entries+0x98/0x180
+> > > > >    Call Trace:
+> > > > >    [c00000000bcc3970] [c0000000012daa60] of_changeset_revert+0x58/0xd8
+> > > > >    [c00000000bcc39c0] [c000000000d0ed78] of_pci_remove_node+0x74/0xb0
+> > > > >    [c00000000bcc39f0] [c000000000cdcfe0] pci_stop_bus_device+0xf4/0x138
+> > > > >    [c00000000bcc3a30] [c000000000cdd140] pci_stop_and_remove_bus_device_locked+0x34/0x64
+> > > > >    [c00000000bcc3a60] [c000000000cf3780] remove_store+0xf0/0x108
+> > > > >    [c00000000bcc3ab0] [c000000000e89e04] dev_attr_store+0x34/0x78
+> > > > >    [c00000000bcc3ad0] [c0000000007f8dd4] sysfs_kf_write+0x70/0xa4
+> > > > >    [c00000000bcc3af0] [c0000000007f7248] kernfs_fop_write_iter+0x1d0/0x2e0
+> > > > >    [c00000000bcc3b40] [c0000000006c9b08] vfs_write+0x27c/0x558
+> > > > >    [c00000000bcc3bf0] [c0000000006ca168] ksys_write+0x90/0x170
+> > > > >    [c00000000bcc3c40] [c000000000033248] system_call_exception+0xf8/0x290
+> > > > >    [c00000000bcc3e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
+> > > > > <snip>
+> > > > > 
+> > > > > A git bisect pointed this regression to be introduced via [1] that added
+> > > > > a mechanism to create device tree nodes for parent PCI bridges when a
+> > > > > PCI device is hot-plugged.
+> > > > > 
+> > > > > The Oops is caused when `pci_stop_dev()` tries to remove a non-existing
+> > > > > device-tree node associated with the pci_dev that was earlier
+> > > > > hot-plugged and was attached under a pci-bridge. The PCI dev header
+> > > > > `dev->hdr_type` being 0, results a conditional check done with
+> > > > > `pci_is_bridge()` into false. Consequently, a call to
+> > > > > `of_pci_make_dev_node()` to create a device node is never made. When at
+> > > > > a later point in time, in the device node removal path, a memcpy is
+> > > > > attempted in `__of_changeset_entry_invert()`; since the device node was
+> > > > > never created, results in an Oops due to kernel read access to a bad
+> > > > > address.
+> > > > > 
+> > > > > To fix this issue the patch updates `pci_stop_dev()` to ensure that a
+> > > > > call to `of_pci_remove_node()` is only made for pci-bridge devices.
+> > > > > 
+> > > > > [1] commit 407d1a51921e ("PCI: Create device tree node for bridge")
+> > > > > 
+> > > > > Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
+> > > > > Reported-by: Kowshik Jois B S <kowsjois@linux.ibm.com>
+> > > > > Tested-by: Kowshik Jois B S <kowsjois@linux.ibm.com>
+> > > > > Signed-off-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+> > > > Thanks for the patch and testing!  Would like a reviewed-by from
+> > > > Lizhi.
+> > > of_pci_make_dev_node() will create of nodes for some endpoint devices (not a
+> > > bridge) as well. And actually this is the main purpose.
+> > > 
+> > > Maybe the patch as below would resolve the Oops?
+> > Thanks for the patch, Lizhi! I tried out this patch and don't see the issue with
+> > the same. The hot-plug and hot-unplug of PCI device seem to work fine as
+> > expected.
+> 
+> Cool! Thanks for trying it. Will you re-spin the patch or you would like me
+> to create a patch?
 
-It looks to me that this also works for KERNEL GS BASE MSR, no?
+Sure, I'll re-spin and send the V2 of the patch.
 
->=20
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c index
-> 1783986d8626..ebecb205e5de 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -352,6 +352,7 @@ static void kvm_on_user_return(struct
-> user_return_notifier *urn)
->                 =3D container_of(urn, struct kvm_user_return_msrs, urn);
->         struct kvm_user_return_msr_values *values;
->         unsigned long flags;
-> +       u64 host_val;
->=20
->         /*
->          * Disabling irqs at this point since the following code could be=
- @@ -365,9
-> +366,15 @@ static void kvm_on_user_return(struct user_return_notifier *ur=
-n)
->         local_irq_restore(flags);
->         for (slot =3D 0; slot < kvm_nr_uret_msrs; ++slot) {
->                 values =3D &msrs->values[slot];
-> -               if (values->host !=3D values->curr) {
-> -                       wrmsrl(kvm_uret_msrs_list[slot], values->host);
-> -                       values->curr =3D values->host;
-> +
-> +               if (kvm_uret_msrs_list[slot] =3D=3D MSR_IA32_FRED_RSP0)
-> +                       host_val =3D get_current_fred_rsp0();
-> +               else
-> +                       host_val =3D values->host;
-> +
-> +               if (host_val !=3D values->curr) {
-> +                       wrmsrl(kvm_uret_msrs_list[slot], host_val);
-> +                       values->curr =3D host_val;
->                 }
->         }
->  }
+~ Amit
+
+> 
+> Lizhi
+> 
+> > 
+> > ~ Amit
+> > 
+> > > diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+> > > index dda6092e6d3a..3c693b091ecf 100644
+> > > --- a/drivers/of/dynamic.c
+> > > +++ b/drivers/of/dynamic.c
+> > > @@ -492,21 +492,29 @@ struct device_node *__of_node_dup(const struct
+> > > device_node *np,
+> > >    * a given changeset.
+> > >    *
+> > >    * @ocs: Pointer to changeset
+> > > + * @np: Pointer to device node. If it is not null, init it directly instead
+> > > of
+> > > + *      allocate a new node.
+> > >    * @parent: Pointer to parent device node
+> > >    * @full_name: Node full name
+> > >    *
+> > >    * Return: Pointer to the created device node or NULL in case of an error.
+> > >    */
+> > >   struct device_node *of_changeset_create_node(struct of_changeset *ocs,
+> > > +                                            struct device_node *np,
+> > >                                               struct device_node *parent,
+> > >                                               const char *full_name)
+> > >   {
+> > > -       struct device_node *np;
+> > >          int ret;
+> > > 
+> > > -       np = __of_node_dup(NULL, full_name);
+> > > -       if (!np)
+> > > -               return NULL;
+> > > +       if (!np) {
+> > > +               np = __of_node_dup(NULL, full_name);
+> > > +               if (!np)
+> > > +                       return NULL;
+> > > +       } else {
+> > > +               of_node_set_flag(np, OF_DYNAMIC);
+> > > +               of_node_set_flag(np, OF_DETACHED);
+> > > +       }
+> > > +
+> > >          np->parent = parent;
+> > > 
+> > >          ret = of_changeset_attach_node(ocs, np);
+> > > diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> > > index 445ad13dab98..087de26852cc 100644
+> > > --- a/drivers/of/unittest.c
+> > > +++ b/drivers/of/unittest.c
+> > > @@ -871,7 +871,7 @@ static void __init of_unittest_changeset(void)
+> > >          unittest(!of_changeset_add_property(&chgset, parent, ppadd), "fail
+> > > add prop prop-add\n");
+> > >          unittest(!of_changeset_update_property(&chgset, parent, ppupdate),
+> > > "fail update prop\n");
+> > >          unittest(!of_changeset_remove_property(&chgset, parent, ppremove),
+> > > "fail remove prop\n");
+> > > -       n22 = of_changeset_create_node(&chgset, n2, "n22");
+> > > +       n22 = of_changeset_create_node(&chgset, NULL, n2, "n22");
+> > >          unittest(n22, "fail create n22\n");
+> > >          unittest(!of_changeset_add_prop_string(&chgset, n22, "prop-str",
+> > > "abcd"),
+> > >                   "fail add prop prop-str");
+> > > diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> > > index 51e3dd0ea5ab..92c079b2e570 100644
+> > > --- a/drivers/pci/of.c
+> > > +++ b/drivers/pci/of.c
+> > > @@ -608,18 +608,28 @@ int devm_of_pci_bridge_init(struct device *dev, struct
+> > > pci_host_bridge *bridge)
+> > > 
+> > >   #ifdef CONFIG_PCI_DYNAMIC_OF_NODES
+> > > 
+> > > +void of_pci_free_node(struct device_node *np)
+> > > +{
+> > > +       struct of_changeset *cset;
+> > > +
+> > > +       cset = (struct of_changeset *)(np + 1);
+> > > +
+> > > +       np->data = NULL;
+> > > +       of_changeset_revert(cset);
+> > > +       of_changeset_destroy(cset);
+> > > +       of_node_put(np);
+> > > +}
+> > > +
+> > >   void of_pci_remove_node(struct pci_dev *pdev)
+> > >   {
+> > >          struct device_node *np;
+> > > 
+> > >          np = pci_device_to_OF_node(pdev);
+> > > -       if (!np || !of_node_check_flag(np, OF_DYNAMIC))
+> > > +       if (!np || np->data != of_pci_free_node)
+> > >                  return;
+> > >          pdev->dev.of_node = NULL;
+> > > 
+> > > -       of_changeset_revert(np->data);
+> > > -       of_changeset_destroy(np->data);
+> > > -       of_node_put(np);
+> > > +       of_pci_free_node(np);
+> > >   }
+> > > 
+> > >   void of_pci_make_dev_node(struct pci_dev *pdev)
+> > > @@ -655,14 +665,18 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
+> > >          if (!name)
+> > >                  return;
+> > > 
+> > > -       cset = kmalloc(sizeof(*cset), GFP_KERNEL);
+> > > -       if (!cset)
+> > > +       np = kzalloc(sizeof(*np) + sizeof(*cset), GFP_KERNEL);
+> > > +       if (!np)
+> > >                  goto out_free_name;
+> > > +       np->full_name = name;
+> > > +       of_node_init(np);
+> > > +
+> > > +       cset = (struct of_changeset *)(np + 1);
+> > >          of_changeset_init(cset);
+> > > 
+> > > -       np = of_changeset_create_node(cset, ppnode, name);
+> > > +       np = of_changeset_create_node(cset, np, ppnode, NULL);
+> > >          if (!np)
+> > > -               goto out_destroy_cset;
+> > > +               goto out_free_node;
+> > > 
+> > >          ret = of_pci_add_properties(pdev, cset, np);
+> > >          if (ret)
+> > > @@ -672,9 +686,8 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
+> > >          if (ret)
+> > >                  goto out_free_node;
+> > > 
+> > > -       np->data = cset;
+> > > +       np->data = of_pci_free_node;
+> > >          pdev->dev.of_node = np;
+> > > -       kfree(name);
+> > > 
+> > >          return;
+> > > 
+> > > diff --git a/include/linux/of.h b/include/linux/of.h
+> > > index a0bedd038a05..f774459d0d84 100644
+> > > --- a/include/linux/of.h
+> > > +++ b/include/linux/of.h
+> > > @@ -1631,6 +1631,7 @@ static inline int of_changeset_update_property(struct
+> > > of_changeset *ocs,
+> > >   }
+> > > 
+> > >   struct device_node *of_changeset_create_node(struct of_changeset *ocs,
+> > > +                                            struct device_node *np,
+> > >                                               struct device_node *parent,
+> > >                                               const char *full_name);
+> > >   int of_changeset_add_prop_string(struct of_changeset *ocs,
+> > > 
+> > > Thanks,
+> > > 
+> > > Lizhi
+> > > 
+> > > > > ---
+> > > > >    drivers/pci/remove.c | 3 ++-
+> > > > >    1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
+> > > > > index d749ea8250d6..4e51c64af416 100644
+> > > > > --- a/drivers/pci/remove.c
+> > > > > +++ b/drivers/pci/remove.c
+> > > > > @@ -22,7 +22,8 @@ static void pci_stop_dev(struct pci_dev *dev)
+> > > > >    		device_release_driver(&dev->dev);
+> > > > >    		pci_proc_detach_device(dev);
+> > > > >    		pci_remove_sysfs_dev_files(dev);
+> > > > > -		of_pci_remove_node(dev);
+> > > > > +		if (pci_is_bridge(dev))
+> > > > > +			of_pci_remove_node(dev);
+> > > > IIUC, this basically undoes the work that was done by
+> > > > of_pci_make_dev_node().
+> > > > 
+> > > > The call of of_pci_make_dev_node() from pci_bus_add_device() was added
+> > > > by 407d1a51921e and is conditional on pci_is_bridge(), so it makes
+> > > > sense to me that the remove needs a similar condition.
+> > > > 
+> > > > >    		pci_dev_assign_added(dev, false);
+> > > > >    	}
+> > > > > 
+> > > > > base-commit: e9d22f7a6655941fc8b2b942ed354ec780936b3e
+> > > > > -- 
+> > > > > 2.45.2
+> > > > > 
 
