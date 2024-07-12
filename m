@@ -1,187 +1,137 @@
-Return-Path: <linux-kernel+bounces-251025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3CD92FFEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:43:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FD392FFF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 997B4B238BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:43:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB8FFB223AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5761176AD4;
-	Fri, 12 Jul 2024 17:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE83176AD7;
+	Fri, 12 Jul 2024 17:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="epiI7NKn"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7eTcqJc"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4609043AA9;
-	Fri, 12 Jul 2024 17:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3667D2747D
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720806205; cv=none; b=iiP1d0R50ZRfKOxGbCujRzOBuLNEu+O5tFKL3e0EKLiHVGu4dVH4AsjncOIzEdEfpT+lKg8v9IEpPyxY/gi3Xmiq3Ex6JEp5thXX1kJwpj7CnHmngEN4wdGDXof0HFxZM+xNTavvZAMm/gsdYuoN0IPOv5w81wnB4ys9d5fnKAI=
+	t=1720806342; cv=none; b=G8fzCghhumm8T0lJfvHC4RplfeNCxoU+qVoACjRDQVhJVEfmZYZzNaYhGUmlawNCEwqIuTkljceJGexxVTphccnnlvb+0B4tzfZ/cQg47EZXVzgRXMxqL7QuXyNkSUAV9aRAsgERoiFOP6p07Un0fqX/CdwBt45I0DEearzrwCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720806205; c=relaxed/simple;
-	bh=qqDxsW8JKNo4pUvPxIdtXjmqmRm9U7qlNWm3bk3xRVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UsHTatK0cAU33ZKZ1ezQlLVeQnQkMe3senGDwIen4K173/kfilxLAHE1K+xKK1izusaYs7Dr1lQAbbfJ9X0wmtmCgghARdU5jlty2rUCO+sbo89pd7J3r7E2E9Q5t5WC85nUyls9pu0wYAyqXLOz/0xTsKrnTvIi7IQpZ8dD5jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=epiI7NKn; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BaNbiP+w4TmaIHZFkKIxIGkit2bo/A0i+pALN4QBZkI=; b=epiI7NKnu3BMCNcQ1ZGCpK4wNO
-	oGOBbczEzsofAerhLjb+5E9D5xUZZv6sSvh0ZOr4JpEH7aIxNNb2lskWvheFGtnOlVYMvNJXRZKN4
-	e7XbYBhGixpAevHHnasnaBx2CtueoVwgnrCoFIeTl3jh69wR/td8oq9SZcPc9TYWwaNlfhDVYNSdQ
-	pzltnW/EoXIKLStkdD2r7oDKZ4dgSZlSDt8u+gp+byhdpLXok1zl6/TlT+2sriz9fw8ULPp3g6XTe
-	59cl7/TT9i42qnKhMp7cIzBSvrxZqJy0i4IAKAYLPB93htn+ydqZLmatZj0SQyP+aBUxPMuM4+w2V
-	uhplDG6Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sSKIb-0000000Cjju-2X8w;
-	Fri, 12 Jul 2024 17:43:13 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1E93D30050D; Fri, 12 Jul 2024 19:43:13 +0200 (CEST)
-Date: Fri, 12 Jul 2024 19:43:13 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Phil Auld <pauld@redhat.com>, Clark Williams <williams@redhat.com>,
-	Tomas Glozar <tglozar@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [RFC PATCH v3 10/10] sched/fair: Throttle CFS tasks on return to
- userspace
-Message-ID: <20240712174313.GW27299@noisy.programming.kicks-ass.net>
-References: <20240711130004.2157737-1-vschneid@redhat.com>
- <20240711130004.2157737-11-vschneid@redhat.com>
+	s=arc-20240116; t=1720806342; c=relaxed/simple;
+	bh=X13h60Czwbm2ujyxIP806a+AW/lW7IB0AqcSBAamTB4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i8fGX0Hd9fPOgCdZ5fhNpBFLyFjLMhsldOCi+KtODToeVsZOGq+OE19RWlnbqcLM4xNtgJLiYhdsKONWLhSVX88KhG6PDap2wO0cVdBBg/CeowMIIL6VGWrSrv82Zm29heuco4Yk4qW+1umsWHaZch8762zymbUlfqGSkAG4VO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V7eTcqJc; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c66b53232aso1060420eaf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720806340; x=1721411140; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tNXQMXtVVY9UI6zu3BBCUXELAve7Ltcp0DjuWc3krBw=;
+        b=V7eTcqJcSh5lrOvaKkDcybVRfsWTMArITu+BYJgwKi7wmGwZAjBhPPbJ2SLdNmj0+1
+         tvpo+gPS1Q8CHgje0/iLZS+RgWgplC04oyEBCDmNR4MB62Zxz7PY52SrLinXgb3fkiT8
+         wkvCTImCgNZg3UxNkA05zMDV05KPMImqK66p9XNEOC1AkoiyB6s8TRUbkleLcajnXq9U
+         EXxbWVnUrGXWmgPAB5nC3xvY/rl80u6amE+b6jJZSP0cUSQxjNigaybbPXDEUDHG4Wp9
+         K4Kcg97SHTnwtWMtJ5PiDdVZcQfgDS/88hu8bSY51KqA/y0MZS0Qfb9LmaVrLKxjd/gM
+         Lc6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720806340; x=1721411140;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tNXQMXtVVY9UI6zu3BBCUXELAve7Ltcp0DjuWc3krBw=;
+        b=X8mDaeV+lKF3u/M8ZQgRqB43WdtGN6MBCnv0/Z/ejWeoQ5/qpRM0D6IVc3h0caJr22
+         Azb/Rq3gepANOcU3ckMS4j/RCi/XrFroSYIlFaXPFCwukmXMSqA/9V3TXBPZ1Jgs1LrY
+         Rl7HuVNioA16SfGA01hBqF9YwFoWpo7o+n0d2LsESk4xk8yMFaazNbF+/PDKwAcsyAoa
+         xj50+TkhHsu7aN0Sp+fOTMK34YNkAix57/624wT68iC+T+31kmqAlcUwurinwHY2xI8V
+         p8AjYGc9DstVNRaqtjGcPfgZ52HO9IvdwXQzgiCEintZBBHP8wA1e7hR3CWgmQj98qJY
+         OfQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWqPbZ1aTlOg2fNwJlPaIWwdo4FQjFwxGEeUhP45wFa6rUQjweLnrGauk8yKTEZw3cUiLNerhH603qKkxKd2hGuXyCnBN0BacBGW+Az
+X-Gm-Message-State: AOJu0Yx2KUlt0Mc4aVF+yhvKmVmA1ErQf8z8hEWcvWrYsqeAqjaUNTnO
+	bV6aPnG+EDpA310xTICmUrrv3TXgS4xc8vP8PrAxq0Gg5CM9AWvd3V2CnYYY
+X-Google-Smtp-Source: AGHT+IF9PKjomOSMUJmoLDlemBt+PLgMux6m5VCf86phTvzU1z2v2Giz3TyPGWhJB2bd25AAHSvm3Q==
+X-Received: by 2002:a05:6359:5d25:b0:1aa:c73d:5a83 with SMTP id e5c5f4694b2df-1aade04191amr928556155d.1.1720806340226;
+        Fri, 12 Jul 2024 10:45:40 -0700 (PDT)
+Received: from embed-PC.. ([122.183.46.111])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-77d669d5282sm5097810a12.67.2024.07.12.10.45.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 10:45:39 -0700 (PDT)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: airlied@gmail.com,
+	daniel@ffwll.ch,
+	harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH] drm: Fix documentation warning for read_mpcc_state in mpc.h
+Date: Fri, 12 Jul 2024 23:15:10 +0530
+Message-Id: <20240712174510.70467-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711130004.2157737-11-vschneid@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 11, 2024 at 03:00:04PM +0200, Valentin Schneider wrote:
+Add detail description for the read_mpcc_state function in the
+mpc_funcs struct to resolve the documentation warning.
 
-> +static void throttle_one_task(struct cfs_rq *cfs_rq, struct task_struct *p)
->  {
-> +	long task_delta, idle_task_delta;
-> +	struct sched_entity *se = &p->se;
-> +
-> +	list_add(&p->throttle_node, &cfs_rq->throttled_limbo_list);
->  
-> +	task_delta = 1;
-> +	idle_task_delta = cfs_rq_is_idle(cfs_rq) ? 1 : 0;
-> +
-> +	for_each_sched_entity(se) {
-> +		cfs_rq = cfs_rq_of(se);
-> +
-> +		if (!se->on_rq)
-> +			return;
-> +
-> +		dequeue_entity(cfs_rq, se, DEQUEUE_SLEEP);
-> +		cfs_rq->h_nr_running -= task_delta;
-> +		cfs_rq->idle_h_nr_running -= idle_task_delta;
-> +
-> +		if (cfs_rq->load.weight) {
-> +			/* Avoid re-evaluating load for this entity: */
-> +			se = parent_entity(se);
-> +			break;
-> +		}
-> +	}
-> +
-> +	for_each_sched_entity(se) {
-> +		cfs_rq = cfs_rq_of(se);
-> +		/* throttled entity or throttle-on-deactivate */
-> +		if (!se->on_rq)
-> +			goto throttle_done;
-> +
-> +		update_load_avg(cfs_rq, se, 0);
-> +		se_update_runnable(se);
-> +		cfs_rq->h_nr_running -= task_delta;
-> +		cfs_rq->h_nr_running -= idle_task_delta;
-> +	}
-> +
-> +throttle_done:
-> +	/* At this point se is NULL and we are at root level*/
-> +	sub_nr_running(rq_of(cfs_rq), 1);
->  }
+A kernel-doc warning was addressed:
+./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:547: warning:
+Function parameter or struct member 'read_mpcc_state' not
+described in 'mpc_funcs'.
 
-I know you're just moving code around, but we should look if we can
-share code between this and dequeue_task_fair().
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+---
+ drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-I have patches around this in that eevdf series I should send out again,
-I'll try and have a stab.
+diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
+index 34a398f23fc6..9e65ecf1d3b0 100644
+--- a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
++++ b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
+@@ -282,6 +282,22 @@ struct mpcc_state {
+  * struct mpc_funcs - funcs
+  */
+ struct mpc_funcs {
++	/**
++	 * @read_mpcc_state:
++	 *
++	 * Reads the state of a given MPCC instance.
++	 *
++	 * Parameters:
++	 *
++	 * - [in/out] mpc - MPC context.
++	 * - [in] mpcc_inst - MPCC Instance whose state is to be read.
++	 * - [out] mpcc_state - MPCC state structure where the state
++	 *                    of the MPCC instance will be stored.
++	 *
++	 * Return:
++	 *
++	 * void
++	 */
+ 	void (*read_mpcc_state)(
+ 			struct mpc *mpc,
+ 			int mpcc_inst,
+-- 
+2.34.1
 
-> -static void task_throttle_cancel_irq_work_fn(struct irq_work *work)
-> +static void throttle_cfs_rq_work(struct callback_head *work)
->  {
-> -       /* Write me */
-> +	struct task_struct *p = container_of(work, struct task_struct, sched_throttle_work);
-> +	struct sched_entity *se;
-> +	struct rq *rq;
-> +	struct cfs_rq *cfs_rq;
-> +
-> +	WARN_ON_ONCE(p != current);
-> +	p->sched_throttle_work.next = &p->sched_throttle_work;
-> +	/*
-> +	 * If task is exiting, then there won't be a return to userspace, so we
-> +	 * don't have to bother with any of this.
-> +	 */
-> +	if ((p->flags & PF_EXITING))
-> +		return;
-> +
-> +	CLASS(task_rq_lock, rq_guard)(p);
-> +	rq = rq_guard.rq;
-
-The other way to write this is:
-
-	scoped_guard (task_rq_lock, p) {
-		struct rq *rq = scope.rq;
-
-> +	se = &p->se;
-> +	cfs_rq = cfs_rq_of(se);
-> +
-> +	/*
-> +	 * If not in limbo, then either replenish has happened or this task got
-> +	 * migrated out of the throttled cfs_rq, move along
-> +	 */
-> +	if (!cfs_rq->throttle_count)
-> +		return;
-> +
-> +	update_rq_clock(rq);
-> +
-> +	throttle_one_task(cfs_rq, p);
-> +
-> +	resched_curr(rq);
-
-	}
-
->  }
 
