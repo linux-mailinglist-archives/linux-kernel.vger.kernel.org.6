@@ -1,152 +1,259 @@
-Return-Path: <linux-kernel+bounces-250905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202F492FE5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:19:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1530C92FE67
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EF5628231F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:19:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3345B1C21C58
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC75817622F;
-	Fri, 12 Jul 2024 16:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C5817557C;
+	Fri, 12 Jul 2024 16:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="m4vydiEH"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvO5c4c9"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB0816F8F5;
-	Fri, 12 Jul 2024 16:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128D81741D3
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720801188; cv=none; b=Y31Z2uJmEpIskd4iAGZHhzSd5efb1W+ZIRhyGAT9DE7UJrcU3ozugTax6tuRbhuAFc9XDxytUsFUi3+Ih1qVUcjxkdF3HLxiMmMHzTdVWWSL8hGfrKjGrJDmUhGiRiuXJsNeUljE/4mSGWOgCFWBwffv3lLCmOPBxPGFPSqadEE=
+	t=1720801440; cv=none; b=ewDMLyeeBHJixThmvrmk7rB0UqiCtet3E+21hp/8FcTlzCr4v+twA8SFamcNOEbEuOIMfnhqiMMW8DgBwt6RdIlS9vBLL2p8wzBkLtDoZ9MZYIfCdSag9ovG2DEv7cTf8PzmszI98Av8CS+BU+7DFGms9DmLepzXWIIGRtj6uLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720801188; c=relaxed/simple;
-	bh=spTcCUAvIKeRiZqhNrAtZXqPPUtuzdfi0TREE6gKYyA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=F93M9vm1LqlM63Q07+S9RN7EdXaIWdo/eQFuqGFGOxTmTS5hMPTWmu77As3nI8UHs4uM3ekZuU4mDfpmV+07/hpi/f3AzSrqXn68/dv1f7afmAph8wQkR7uR8zyy9t8mYTUqR4Ky+BTn6DWTOJEOFYqCQwRgupZv5iPN+gEwK0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=m4vydiEH; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=fnfBwcbL3Qe8863nzBkCMy1pP5U04LNp3AM575Iq/Ys=; b=m4vydiEHqcGM57I27dW0pq2LMN
-	mJxl3/wDSZ/XwciUK9IeeSgA1RP463FcySbP6SYAG7luhN020GBbc4d0JwSsYNo5mqfINp6GzkE+n
-	lfAsOeJNx10Bzyx8XiWeNCvO8j3gfTd5Zl6I2jfE2zj7G7A6m6RQD0sRuXpjAAl2wRzazslN79xUy
-	e+af9LUvwEal2OezBb8vbcs92ukgFWewM9cpjPPI5mJwH/vEhHZbderWWjdfsKtPynH4bIUnLlEos
-	x1bcEbAzvI2ipaSDjTusPu0RwantiAZpKE65HlONKqO9w4WtYCL6JFm9E+OkL22BxKMlVP3bDpeXk
-	8nt+e7Aw==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1sSIzb-000KYz-6O; Fri, 12 Jul 2024 18:19:31 +0200
-Received: from [178.197.248.35] (helo=linux.home)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1sSIza-000C6s-0O;
-	Fri, 12 Jul 2024 18:19:30 +0200
-Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Puranjay Mohan <puranjay@kernel.org>, Manu Bretelle <chantra@meta.com>,
- KP Singh <kpsingh@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@meta.com>,
- Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Florent Revest <revest@google.com>
-References: <20240705145009.32340-1-puranjay@kernel.org>
- <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
- <mb61pjzhwvshc.fsf@kernel.org>
- <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
- <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net>
- <mb61ped836gn7.fsf@kernel.org>
- <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
- <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
- <890d23f2-636e-12d1-31cc-eb6469f2a9ac@iogearbox.net>
- <SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com>
- <mb61p5xtcyqo5.fsf@kernel.org>
- <978e127b-4967-950d-ccca-8575d1a885ae@iogearbox.net>
- <CAADnVQJXcGB69o1s5GcLYV=OYS+hmqxGJVvtDH3YrVQc1o_=Tg@mail.gmail.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <e35b2a2b-aa5e-b107-1fb9-927e43e06d88@iogearbox.net>
-Date: Fri, 12 Jul 2024 18:19:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+	s=arc-20240116; t=1720801440; c=relaxed/simple;
+	bh=ShhMsfhi+E7zGYGephLcWRruAeKJf2yYsvgYn+xHb4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WVlujS2uO4bkSyhogPu92biaE98CJV//KWnNrtCvB7GzUJl++hXd36wz8cMCoYjsB6q7H6rzljErqnLAXBvzLX3GmTtvwfFRNL6A0OOKYhyraB2ONjM02eczYbUB1E7oOzpckHRwSRTa27v7qE0n3bdEfXFzt8N72rMlMOI62gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvO5c4c9; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-367a081d1cdso1169969f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:23:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720801437; x=1721406237; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hn+GixGy3/wqCNmbaVUdcuRjiIfqGnrOXg+l5ek8FFw=;
+        b=PvO5c4c974slrcffEiSZ1NedOc9gIaaDjCoGat6vLW17OgrlKRC9RvWvczJ8giTgEI
+         rWigGvkfXwMwoxeY6jDDTt1YcIr1X3TFJS3axhRq5bofsApDXLM7kx37c12Ahx/2Pi2Q
+         3gfMtVxUrKQRra11bAloxU9HLFbjHZhIJoW21OIT9C63SppUeWxucbtGnF7ddiRslIsH
+         4vCULKLawWeW5J2aeFc4bw/qNpUP8p9iaNiGpxIOlbL8K8mErsI1VDyADOc3WiVz3Eu7
+         NjlpKBYOLBTe0buu1H7Y28PzKYqzG4pwkuYNyZpcS2G86+nBHo3LO+ZIfbbg9ifYkFp0
+         jndw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720801437; x=1721406237;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hn+GixGy3/wqCNmbaVUdcuRjiIfqGnrOXg+l5ek8FFw=;
+        b=F8H7FFbtH0AhW9DeBkIZf85iU0rNiYkeWpRPGnOUL0VzjyUZKAiFVPte/e4iJdDUF8
+         30PJ8RPw7MyduPgyR35QKTi68+QBAyFx5cHyE52cx9Py2MUfosQS8Ahfs+9oI+EdjCjG
+         nVehgMaF8xTCLTW1a80+3peJwg137CaAyJDDFER3YBj6hl1Waligj4E7toMvT24zF/kP
+         3Y1ruFH2oUlmtVACgz6+USOWDuYTOrz6dIy4/EQkTWu3aP5nJqkxQXJWIhoKrvxUKnO+
+         CHxTW0xoumVv1C24om8TJJFrYdl5GeVEI8nMLt4lN6Md2xOW8P276TnO7RM/O79dBuV6
+         YGtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWeWhnoT5dSRZJr6vEiGYP358E22qWf13OM3uOGN2LbEY5EWYVicDUHGdydVxBZiJV50NQKxfJ2traQKG1iocWJF/2sBcG+Cx2bNUpQ
+X-Gm-Message-State: AOJu0Yz6QhtsylIWEzrswF+/Befinv5S31ea0VJCVriHmDrn53kyLhbd
+	geHDejJJsu147VWki5ofj1ZlAZ9un+gDROXossLTv7+GXshlzA+1
+X-Google-Smtp-Source: AGHT+IFXRaZUXZvr3FGsTkx2MEPXnjbLliZ4mKa0YckpBF5gChle14p/17QJAUoUUg7mT8NHlqYVcw==
+X-Received: by 2002:a5d:60c5:0:b0:367:4dbb:ed4e with SMTP id ffacd0b85a97d-367ce5de7c8mr8005771f8f.0.1720801437223;
+        Fri, 12 Jul 2024 09:23:57 -0700 (PDT)
+Received: from fedora.. ([213.94.26.172])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde848e7sm10458852f8f.44.2024.07.12.09.23.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 09:23:56 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: harry.wentland@amd.com
+Cc: Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH] drm/amd/display: Implement bounds check for stream encoder creation
+Date: Fri, 12 Jul 2024 18:23:53 +0200
+Message-ID: <20240712162353.10220-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAADnVQJXcGB69o1s5GcLYV=OYS+hmqxGJVvtDH3YrVQc1o_=Tg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27334/Fri Jul 12 10:35:53 2024)
 
-On 7/12/24 6:07 PM, Alexei Starovoitov wrote:
-> On Fri, Jul 12, 2024 at 6:50 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
->> On 7/11/24 4:00 PM, Puranjay Mohan wrote:
->> [...]
->>> I was able find the root cause of this bug and will send a fix soon!
->>>
->>>> Unable to handle kernel paging request at virtual address ffff0000c2a80e68
->>>
->>> We are running this test on Qemu with '-cpu max', this means 52-bit
->>> virtual addresses are being used.
->>>
->>> The trampolines generation code has the following two lines:
->>>
->>>                emit_addr_mov_i64(A64_R(0), (const u64)im, ctx);
->>>                emit_call((const u64)__bpf_tramp_enter, ctx);
->>>
->>> here the address of struct bpf_tramp_image is moved to R0 and passed as
->>> an argument to __bpf_tramp_enter().
->>>
->>> emit_addr_mov_i64() assumes that the address passed to it is in the
->>> vmalloc space and uses at most 48 bits. It sets all the remaining bits
->>> to 1.
->>>
->>> but struct bpf_tramp_image is allocated using kzalloc() and when 52-bit
->>> VAs are used, its address is not guaranteed to be 48-bit, therefore we
->>> see this bug, where  0xfff[0]0000c2a80e68 is converted to
->>> 0xfff[f]0000c2a80e68 when the trampoline is generated.
->>>
->>> The fix would be use emit_a64_mov_i64() for moving this address into R0.
->>
->> It looks like there is still an issue left. A recent CI run on bpf-next is
->> still hitting the same on arm64:
->>
->> Base:
->>
->>     https://github.com/kernel-patches/bpf/commits/series/870746%3D%3Ebpf-next/
->>
->> CI:
->>
->>     https://github.com/kernel-patches/bpf/actions/runs/9905842936/job/27366435436
->>
->>     [...]
->>     #89/11   fexit_bpf2bpf/func_replace_global_func:OK
->>     #89/12   fexit_bpf2bpf/fentry_to_cgroup_bpf:OK
->>     #89/13   fexit_bpf2bpf/func_replace_progmap:OK
->>     #89      fexit_bpf2bpf:OK
->>     Error: The operation was canceled.
-> 
-> Let's denylist that test again for now?
+The same pattern fixed by commit 15dba12c5659 ("drm/amd/display:
+Implement bounds check for stream encoder creation in DCN301") was used
+in other create_stream_encoder() functions.
 
-Agree, done/pushed now.
+Apply the same fix.
+
+Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+---
+ drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c  | 2 +-
+ .../gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c    | 2 +-
+ .../gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c    | 2 +-
+ drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c  | 2 +-
+ .../gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c    | 2 +-
+ .../gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c    | 2 +-
+ .../gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c    | 2 +-
+ drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c  | 2 +-
+ .../gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c    | 2 +-
+ drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c  | 2 +-
+ .../gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c    | 2 +-
+ 11 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c
+index f35cc307830b..c8a538a6ea76 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c
+@@ -1029,7 +1029,7 @@ static struct stream_encoder *dcn30_stream_encoder_create(enum engine_id eng_id,
+ 	vpg = dcn30_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn30_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c
+index 5791b5cc2875..a12d880da586 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c
+@@ -407,7 +407,7 @@ static struct stream_encoder *dcn302_stream_encoder_create(enum engine_id eng_id
+ 	vpg = dcn302_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn302_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c
+index 8bc1bcaeaa47..75481c6d99b5 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c
+@@ -394,7 +394,7 @@ static struct stream_encoder *dcn303_stream_encoder_create(enum engine_id eng_id
+ 	vpg = dcn303_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn303_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c
+index d4c3e2754f51..3fd172788581 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c
+@@ -1237,7 +1237,7 @@ static struct stream_encoder *dcn31_stream_encoder_create(
+ 	vpg = dcn31_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn31_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c
+index ff50f43e4c00..83ad7a7d3fd7 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c
+@@ -1293,7 +1293,7 @@ static struct stream_encoder *dcn314_stream_encoder_create(
+ 	vpg = dcn31_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn31_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
+index 4ce0f4bf1d9b..cd6471eb01b2 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
+@@ -1236,7 +1236,7 @@ static struct stream_encoder *dcn315_stream_encoder_create(
+ 	vpg = dcn31_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn31_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c
+index 5fd52c5fcee4..1f40e150a478 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c
+@@ -1231,7 +1231,7 @@ static struct stream_encoder *dcn316_stream_encoder_create(
+ 	vpg = dcn31_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn31_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
+index abd76345d1e4..39cef0018dae 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
+@@ -1216,7 +1216,7 @@ static struct stream_encoder *dcn32_stream_encoder_create(
+ 	vpg = dcn32_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn32_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
+index e4b360d89b3b..1ed1c93f8e72 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
+@@ -1200,7 +1200,7 @@ static struct stream_encoder *dcn321_stream_encoder_create(
+ 	vpg = dcn321_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn321_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
+index 2df8a742516c..ed1c9cd1c30c 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
+@@ -1280,7 +1280,7 @@ static struct stream_encoder *dcn35_stream_encoder_create(
+ 	vpg = dcn31_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn31_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c b/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
+index ddf9560ab772..35dbb8641ed6 100644
+--- a/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
+@@ -1260,7 +1260,7 @@ static struct stream_encoder *dcn35_stream_encoder_create(
+ 	vpg = dcn31_vpg_create(ctx, vpg_inst);
+ 	afmt = dcn31_afmt_create(ctx, afmt_inst);
+ 
+-	if (!enc1 || !vpg || !afmt) {
++	if (!enc1 || !vpg || !afmt || eng_id >= ARRAY_SIZE(stream_enc_regs)) {
+ 		kfree(enc1);
+ 		kfree(vpg);
+ 		kfree(afmt);
+-- 
+2.45.2
+
 
