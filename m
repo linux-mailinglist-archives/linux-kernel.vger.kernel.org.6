@@ -1,131 +1,125 @@
-Return-Path: <linux-kernel+bounces-251126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9619300F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:28:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C6BF9300F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3CF1C21767
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:28:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D716AB224FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FA52F855;
-	Fri, 12 Jul 2024 19:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E64383B1;
+	Fri, 12 Jul 2024 19:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="f/GLhxog"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t485Ih32"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992682941C;
-	Fri, 12 Jul 2024 19:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50C52556E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 19:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720812502; cv=none; b=P8y5Ilq1NMSSTyyEHfpeFZzm9u0evo1e5ljld4tkBfJD4M8WN2q39N4+KhnBt27pYG2FutR9eLOqxCwqNFTEENM8yDTd2dzMYpbwhgOKIjHBYugKnXUUZzCSg0x7zblzrewwcjSlIGr+l9VzaQcS5udPiSgJwcBGIn3C/V8tqWA=
+	t=1720812613; cv=none; b=pyuCd1K6Rvl/ZyiwgiQ1fJ5CiW186BQM0IzoTolMPW0L1xkHRlxq5Oree6XLX6qaJHJ/KToFA3PeG7xgJwmleWncldXrECr+WhZzriucqtSaguHr/A3vvM9rhHm9wIGOhCUPHX4769M6bslMaxRvIYLbBZdWqgPfGzECnsLet1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720812502; c=relaxed/simple;
-	bh=W281CCmUUMiP3TQluVjVobFYoS5Y7Blsjj8LngTL8Hw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XVCar6ufZtPJ+j4jTTNcoqm0t9wV2bwmtUEabNZ/YSRjQyO7WoQtF/36iB8Ii8qGSERr3APitLB8e63fDjIY7rQW7abYi9Hw91T4JC1SHtYYTh7k5gvs3txZTdCJiD2xY79e4WhM1C4hrZMutZpRudQV9IjNWXz8TSZr2bFa6yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=f/GLhxog; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1720812479; x=1721417279; i=w_armin@gmx.de;
-	bh=ICQlSYkMltWe/isrb0y1hYVhfN3pn7hHveOTMdIriHI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=f/GLhxogaZF24DWIqW8y28nl6M6WrDFlaozJMoyHPCd8InC6ngLmGyf8EIiaf4Y4
-	 DNyQ/IiURrMmLP1MzF81BXX/wel090Lb1dsuYq7t0+g8aO+orE4+bRvTyBBDO+V5r
-	 VTsMUhucwGrzcaB+2Gy9N9P3rn3zS4sZGRPhK40ed5Db0IX60+1tt7LEHHchkBIam
-	 4PWsG+ej+TBaMPoD+4eDx1I2miRUhoXa5rhyXU9MVLmB0IGelqNr9xATCIbYYWpIA
-	 /gKUf4f68CsWCmdjj9pEG8pZG6C0ggdEdOS/rUc9DyByqGW8Ki/w54RAj+WH+WCg0
-	 q2mfFOzgh/bBUpkJIw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MuUnK-1sBEUP2c0w-00zwY5; Fri, 12
- Jul 2024 21:27:59 +0200
-Message-ID: <34a94b40-9532-45b0-b745-ba0c2e9846c3@gmx.de>
-Date: Fri, 12 Jul 2024 21:27:58 +0200
+	s=arc-20240116; t=1720812613; c=relaxed/simple;
+	bh=J1S9Co/gsUdc+1Ynd0QU/qO2abhM1ZoN3G8Rcdw3+Yc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JTVWrY4DTeFWjjzJSxBaeN8f5zRnpjNfZSONf1grTvOppUqx4u5sTa9C+2LiUg/D0dHFJBjtg6Q9sPK/XsN7ZkDvgdoZg0aA6PjjJp9jLUFyBxOIt6lFCrhVFKlO/FwejSns9M2+5nf9w8eYIq4pt5wshNfRpLo2RqQ0LbIMzxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t485Ih32; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-65ef46e8451so10622137b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:30:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720812611; x=1721417411; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jSam3OFYUTe13VOqHa17qoJuTdcVQF9rMQXxc9I3He4=;
+        b=t485Ih32RA0LWmsHUxeRNy7ExFkrZDYEeaewkl/7DCdFuG6occGvzO4BVrWYtjsZE/
+         prV+To05bCR7pkosC+zYi5EVpB/SY/B4rU+ykZrokfihdgpveNdspklpO9ScWlGUkAbf
+         oRs8k3cTBd8wUOBUAL8r9ejxnxwVQd9cdCqfI4LTLdkVRjSAejW2jszlduc2x2ipmSlv
+         ItnNI7lgu/D+ihPSEdwzY0U6LDSLUhQIpIujgm2Xwt15WQWUMCXXlgnFo1T1hbpMhvRS
+         TpDtnJ7Z7MAxZIYKGzPYyTEAlQXcxD5PT+K9iKluvN6pzoh0uPj93ncfR4seGkDdcmB6
+         jwGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720812611; x=1721417411;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jSam3OFYUTe13VOqHa17qoJuTdcVQF9rMQXxc9I3He4=;
+        b=ReN8QaGr+ZavbKzjjq7YZqGv96IMw6EVmpx4MB3L5Ndsvgm1vm7tih99ZKQLZ5l9qC
+         5CCFs+qnzI9dSn8s083dxK/i/Rfg5rgEJgaHeM3imoYDSafWmF6iQ6g/Y1PikaqbQ56y
+         G6gOXy75iY4dArMQlfx/2rhTI98SV4fFJqrStnJGudnUpwqQYgJKjDRNpl9ZBqY1LklZ
+         5pQ3XYOjSyaDtTFC0SYHdZLivpAyycLgIYNrXZKCLjVQsNbJCDl5wdNozNxf1cMPa14i
+         ScYXwKfTe33Z3/wlXYJ9xe8heDeekVbd9r4MfCdddcF+eRODLVTtNTHduPjvSF50oUU7
+         lYeg==
+X-Gm-Message-State: AOJu0YzAga8W1Kq4uuUvDSvi2otjDf6DED2hdgGh+SjmZM6zvcNggoeq
+	7vzhuo/ch0AkbfE82BKjJTk2I3UPa55dlypz3PkQNT40eFYziUFySGqpywcbpu44tUkm1Z7yCVB
+	rxA==
+X-Google-Smtp-Source: AGHT+IHDX6aq/IiCOt698IqpZ4MrQ2IJcf1EwlXXpiuV+/DiG8Es8j3Np/1XnI0oCcG1Eu1pGoFCApjvBVw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:6381:b0:64b:7f7e:910f with SMTP id
+ 00721157ae682-658f07d5705mr557917b3.7.1720812610774; Fri, 12 Jul 2024
+ 12:30:10 -0700 (PDT)
+Date: Fri, 12 Jul 2024 12:30:09 -0700
+In-Reply-To: <SA1PR11MB67349D5D7B0E26A49B8A1112A8A62@SA1PR11MB6734.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] eeprom: ee1004: Unlock on error path in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Heiner Kallweit <hkallweit1@gmail.com>, Guenter Roeck <linux@roeck-us.net>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <b5c51026-a2de-434b-8f45-44a641ab1c82@stanley.mountain>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <b5c51026-a2de-434b-8f45-44a641ab1c82@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XoJj1mClfAdiUnVK05XDWWLKjk8HkFbwyIsp6Of+TkrgvIcWzwH
- ZlHrUZpj8k00+FyYnExlQuSjs/DSRPST4eoGLMuMmzufcZCLUTFdi+n6W+589xaa3QCt7pH
- usKWVjIFuaOOVzoNbvO4MORzVMHgKdF+Pg0P7fJOT91bPP0ycHdKpz7vpTCQFVrlvHxz1/X
- s7qSXnPSAF+DOniGRrgsg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:cPJ8eIH9NMA=;Q+VH2abwOn3iEuQ71eCpIecVJmX
- hkoWishAL701nCFegn3V7uuiB7uZSemJUHORcmBWu5Wvn3Xvj14J7aCv7vAY0kUoAg33QNvAu
- 642vW4i1rd1iEXm+XC+cVKi3ywHBEsT8IgXfDsMT6VGYnLQJp3OLpbAvlS7HnOQQX6KKdQaSB
- 4c0q+u1vJvFSspfHshdT6JGwW0pttvb/mmXQkAq2AASt0zPmx3eipGO65UBCKa3UuFD1v2lmZ
- /rHOHQFS3U19GGlK9qL66pYQX4JldBo4bhvg1KNr9tAqZbT46FMUBJZlZSwhFFxvzzeSkPs+T
- 9/J01PomRIw+nnQMvbx+lZvzUgp0PEhthDJKPe6d6u/DHLt4BJI5lBT3yv0CO3Zp+HhAzSdrz
- Z/WY79eb7L9M5HdHxRxURJc3U7vnyPzpui87NzC4Q+TT7Nrsll0528oThwstL5lCOsfm3BF9T
- bQpnayVbbIABYa2+tDlRsr4OM48f18i8/OFlpP67EqT0Zz4yuZMHSXqO5wUBJiDCqzo/ed5MS
- LFYvKCrjTUXFZNX19CeqLyIG1MaUM1/R1kyhzivhz7ytRAVBkzlcwoEi/k4PiSDoC7LsI+blB
- 75mPgRQJn9UTtu6yZgIDroFUmU2YwAL6M/MXK0ffastQU4oVtshOMpskQ2nazug+89Pu8sONy
- rCd6qO2WQ6q/hEnOvnmGDebdn7QMx+8wiLnlWfxXHjCGC1090K4vsGR9IERxcrvg1JvBpVz5u
- iycGC4bmnqMOffXfalv0IXa0G8s40NIaNunNEMDYXI/BeoB+Exp25a0mfnOoPBwHtI/3goffR
- xyPx43lsVtVE+4bElXPqx5Gg==
+Mime-Version: 1.0
+References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-10-xin3.li@intel.com>
+ <ZmoYvcbFBPJ5ARma@google.com> <SA1PR11MB67348BD07CCCF8D52FCAC8FEA8A42@SA1PR11MB6734.namprd11.prod.outlook.com>
+ <ZpFH86n_YY5ModwK@google.com> <SA1PR11MB67341A4D3E4D11DAE8AF6D2EA8A62@SA1PR11MB6734.namprd11.prod.outlook.com>
+ <ZpFZg-9MTveHfn_4@google.com> <SA1PR11MB67349D5D7B0E26A49B8A1112A8A62@SA1PR11MB6734.namprd11.prod.outlook.com>
+Message-ID: <ZpGEQRJppKfp1tF8@google.com>
+Subject: Re: [PATCH v2 09/25] KVM: VMX: Switch FRED RSP0 between host and guest
+From: Sean Christopherson <seanjc@google.com>
+To: Xin3 Li <xin3.li@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net" <corbet@lwn.net>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>, 
+	Ravi V Shankar <ravi.v.shankar@intel.com>, "xin@zytor.com" <xin@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Am 12.07.24 um 16:04 schrieb Dan Carpenter:
+On Fri, Jul 12, 2024, Xin3 Li wrote:
+> > > > E.g. if it's somewhere in task_struct, then kvm_on_user_return()
+> > > > would restore the current task's desired RSP0.
+> > >
+> > > So you're suggesting to extend the framework to allow per task constants?
+> > 
+> > Yeah, or more likely, special case MSR_IA32_FRED_RSP0.  If KVM didn't already
+> > have the user return framework, I wouldn't suggest this as I doubt avoiding
+> > WRMSR when switching between vCPU tasks will be very meaningful, but it's
+> > easy to handle FRED_RSP0, so why not.
+> 
+> Great, I will take the patch.
+> 
+> It looks to me that this also works for KERNEL GS BASE MSR, no?
 
-> Call mutex_unlock() before returning an error in ee1004_probe()
+I don't think so, because the kernel expects MSR_KERNEL_GS_BASE to be accurate
+when querying GS.base for the current task:
 
-Good catch, but it seems that i messed up the locking part event more, sor=
-ry.
-Because if devm_add_action_or_reset() does a reset operation, a deadlock
-will occur since ee1004_cleanup_bus_data() will try to lock the mutex agai=
-n.
+  unsigned long x86_gsbase_read_task(struct task_struct *task)
+  {
+	unsigned long gsbase;
 
-I can provide a cleanup patch to fix both problems.
+	if (task == current)
+		gsbase = x86_gsbase_read_cpu_inactive();
+	else if (boot_cpu_has(X86_FEATURE_FSGSBASE) ||
+		 (task->thread.gsindex == 0))
+		gsbase = task->thread.gsbase;
+	else
+		gsbase = x86_fsgsbase_read_task(task, task->thread.gsindex);
 
-Thanks,
-Armin Wolf
-
->
-> Fixes: 55d57ef6fa97 ("eeprom: ee1004: Use devres for bus data cleanup")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/misc/eeprom/ee1004.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/misc/eeprom/ee1004.c b/drivers/misc/eeprom/ee1004.c
-> index d4aeeb2b2169..adba67cef1e7 100644
-> --- a/drivers/misc/eeprom/ee1004.c
-> +++ b/drivers/misc/eeprom/ee1004.c
-> @@ -272,8 +272,10 @@ static int ee1004_probe(struct i2c_client *client)
->   	}
->
->   	err =3D devm_add_action_or_reset(&client->dev, ee1004_cleanup_bus_dat=
-a, bd);
-> -	if (err < 0)
-> +	if (err < 0) {
-> +		mutex_unlock(&ee1004_bus_lock);
->   		return err;
-> +	}
->
->   	i2c_set_clientdata(client, bd);
->
+	return gsbase;
+  }
 
