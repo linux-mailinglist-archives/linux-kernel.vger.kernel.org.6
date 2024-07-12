@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-250554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6291592F8F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:28:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8142B92F8F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03843B2563D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A208285F8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804CC1581F5;
-	Fri, 12 Jul 2024 10:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A78Im2pJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A47E158DC1;
+	Fri, 12 Jul 2024 10:28:34 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836D4149000
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A2E155382;
+	Fri, 12 Jul 2024 10:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720780099; cv=none; b=lIDzvClFW66GVcSIVpXxI1HTShQHIrFm3gfahHE5FVC/08kMtC+vnEYQyPMFQIF6a7aTN//GbNX3ytyDJYSs6ZrVrKQj4oqLQWZgCU8CtrQ1LqVfCFXTCK2YNwtkGPl1vYlqrVTrNzCPKNAVbBo49TTyX8ZbZeSSlT6VH6X6D/8=
+	t=1720780114; cv=none; b=lUqNwZHSGU/KXdGa/0H9YnT3kLeG9nmCjnwcN0Zdq5yezKuIroCRrC77SU0fMH1huG+u7/ziw8pX9KLkkc7si+FPfMrvKDKmubBN8BbU5NxIigdDyzrfhWbbN8PJxFm+73FoMEl3gFxjac84ODygH32H76KDf3fllKZ8vuaUb3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720780099; c=relaxed/simple;
-	bh=858t69WfL/tj9FR/9VOg/7LQIGZGuDl9bR4EsN6LxjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qreBQlFbjDmtClBRBsQY6ABE4Jq/5kXqnahpjTDDd7nRgDJ5XXkOJoLf3L/MIkq5wUu5na8pUkpBY20haOVxqxDb2J8YycN2/ZKYz7VD/2PqJtx3LmgZUKfkTG30iReL8WVFslwvdJ/xQKVFjESfqMIsF3HGzVzk+MX1RjYr5os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A78Im2pJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720780097;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=epE1NcIup0vbrzaXG/uxhpSJU7vRRm4fO7gG8wrP94c=;
-	b=A78Im2pJoqwTejHvnT0pW3+OhceSwc+74UG9zYZLi6nUmAq4toAbiRlji/f/dI2rz//J7h
-	9pFvDpBLzhiHwR7+ky6Dkerkq30hmTB3pYQMMQxw/kV8rSJw/yCF8/ubbtpKKRDtovnJg7
-	r3HRtqVTFMKb2nsQHBiqqhDDg5tAYcs=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-111-FpBauZnNNbie9WNCv3t6PA-1; Fri,
- 12 Jul 2024 06:28:12 -0400
-X-MC-Unique: FpBauZnNNbie9WNCv3t6PA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 079AE1954B38;
-	Fri, 12 Jul 2024 10:28:10 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.173])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6910119560AA;
-	Fri, 12 Jul 2024 10:28:05 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 12 Jul 2024 12:26:32 +0200 (CEST)
-Date: Fri, 12 Jul 2024 12:26:27 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
-	mhiramat@kernel.org, jolsa@kernel.org, clm@meta.com,
-	paulmck@kernel.org
-Subject: Re: [PATCH v2 10/11] perf/uprobe: Convert single-step and uretprobe
- to SRCU
-Message-ID: <20240712102627.GA31100@redhat.com>
-References: <20240711110235.098009979@infradead.org>
- <20240711110401.311168524@infradead.org>
- <20240711160652.GE16902@redhat.com>
- <20240711184251.GD27299@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1720780114; c=relaxed/simple;
+	bh=/jwj4ZcFwoDhSg1cZkyLmP80Tipw6rXbgR83cx9X0p4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=BtfUXgFcKpDzjd6WSnbGwxGIbNCik/G0BQ6hi9S0UxvP2A6tO69mvntBWZhHSwExit6EZNDH0XUXN6Pa5dYtbaKNLzWnjGcqbuVHu9mnhV20CVtUX2I1jnxcfh2pYOMzKPAys5/xEIspUQo/qpFQG3xX2U3w+DtqmIre8Jbbrgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WL74F6lLSz1X4jC;
+	Fri, 12 Jul 2024 18:24:13 +0800 (CST)
+Received: from kwepemf200016.china.huawei.com (unknown [7.202.181.9])
+	by mail.maildlp.com (Postfix) with ESMTPS id 76B5F1A016C;
+	Fri, 12 Jul 2024 18:28:28 +0800 (CST)
+Received: from [10.108.234.194] (10.108.234.194) by
+ kwepemf200016.china.huawei.com (7.202.181.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 12 Jul 2024 18:28:27 +0800
+Message-ID: <2c8ba685-403e-4694-81ad-751c40895fa4@huawei.com>
+Date: Fri, 12 Jul 2024 18:28:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711184251.GD27299@noisy.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] jbd2: make '0' an invalid transaction sequence
+From: "wangjianjian (C)" <wangjianjian3@huawei.com>
+To: Luis Henriques <luis.henriques@linux.dev>, Andreas Dilger
+	<adilger@dilger.ca>
+CC: Wang Jianjian <wangjianjian0@foxmail.com>, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+	<linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240711083520.6751-1-luis.henriques@linux.dev>
+ <4f9d5881-11e6-4064-ab69-ca6ef81582b3@huawei.com>
+ <878qy8nem5.fsf@brahms.olymp>
+ <tencent_CF3DC37BEB2026CB2F68408A2B62314E0C08@qq.com>
+ <A90C7898-B704-4B2A-BFE6-4A32050763F0@dilger.ca> <87ed7znf8n.fsf@linux.dev>
+ <87wmlrkkch.fsf_-_@linux.dev>
+ <20b9015d-80ed-4864-811a-ff4b0e3774dd@huawei.com>
+Content-Language: en-US
+In-Reply-To: <20b9015d-80ed-4864-811a-ff4b0e3774dd@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemf200016.china.huawei.com (7.202.181.9)
 
-On 07/11, Peter Zijlstra wrote:
->
->   uprobe_free_stage1
->     call_srcu(&uretprobe_srcu, &uprobe->rcu, uprobe_free_stage2);
->
->   put_uprobe()
->     if (refcount_dec_and_test)
->       call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_stage1);
->
->
-> So my thinking was since we take uretprobe_srcu *inside* uprobe_srcu,
-
-Ah, indeed! Somehow misread the change in put_uprobe() as if it
-uses call_rcu(uretprobe_srcu).
-
-Thanks,
-
-Oleg.
+On 2024/7/12 18:04, wangjianjian (C) wrote:
+> On 2024/7/12 17:53, Luis Henriques wrote:
+>> Since there's code (in fast-commit) that already handles a '0' tid as a
+>> special case, it's better to ensure that jbd2 never sets it to that value
+>> when journal->j_transaction_sequence increment wraps.
+>>
+>> Suggested-by: Andreas Dilger <adilger@dilger.ca>
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>> ---
+>>   fs/jbd2/transaction.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+>> index 66513c18ca29..4dbdd37349c3 100644
+>> --- a/fs/jbd2/transaction.c
+>> +++ b/fs/jbd2/transaction.c
+>> @@ -84,6 +84,8 @@ static void jbd2_get_transaction(journal_t *journal,
+>>       transaction->t_state = T_RUNNING;
+>>       transaction->t_start_time = ktime_get();
+>>       transaction->t_tid = journal->j_transaction_sequence++;
+>> +    if (unlikely(transaction->t_tid == 0))
+>> +        transaction->t_tid = journal->j_transaction_sequence++;
+> Do we need add j_transaction_sequence again here? if tansanction->t_tid 
+> == 0, then journal->j_trnasaction_sequence must be 1
+still need add 1. Sorry for confuse.
+> 
+>>       transaction->t_expires = jiffies + journal->j_commit_interval;
+>>       atomic_set(&transaction->t_updates, 0);
+>>       atomic_set(&transaction->t_outstanding_credits,
+-- 
+Regards
 
 
