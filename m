@@ -1,73 +1,80 @@
-Return-Path: <linux-kernel+bounces-251020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4397692FFE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:39:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BBB92FFE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E24841F22BD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:39:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805AD283D58
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6653E176AD7;
-	Fri, 12 Jul 2024 17:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA2F176AD6;
+	Fri, 12 Jul 2024 17:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmFiD8uY"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yc4zCgtv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72308176AA1;
-	Fri, 12 Jul 2024 17:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2903043AA9
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:39:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720805935; cv=none; b=Dy4Vms4V54RtAAh7sLNFCEbn6Xou8GlyTlR86djt8H2JbNojpDmdeGtg5sOMjH8zeDlSAw7dNvihJYxgCpdvSXzIPHB/gWDnihfQ01P2ZrEkHbHVuiwGnQrJhMWl0wSU0U66TC8sC2J2ERXvQh7fZNJ47Z33XJh6M0pUXfk1NaI=
+	t=1720805942; cv=none; b=B1eO902BpDBTZGGZ2ZoXQ5KGpQ8wa/wZ3RIkGVrxeuymaYzQYEwb5Xl3Zih87ivxGv5NtWvWH/wTVZM6yuBm1meAbQwJXkbZFWfrfkBS40bVlKxNQMs3+ZnKh31GFn45G3WDWQ2bvBLy11kZ+Kk2kmYSlXjGRuxD7SYihDvvPII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720805935; c=relaxed/simple;
-	bh=1V/ENdQTei7MNCNaneHTy5T1yttqICLHC3xv6bU0BGc=;
+	s=arc-20240116; t=1720805942; c=relaxed/simple;
+	bh=Yl2R9WEiLRLloFtcSMn3rl9ebdywIs7N6zGMlEUTs5M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LgiYZH1JZNz6r2ffuUzn4+W42qZ5HSNQ438blrewWtCDKlMRytY/h5+BjXrCTvGNOcV9yiMwVVnMx0RomqRsEeTJfE4sdN9tMPAsn88mPCQhMt5Vlqq6J/3bRLLy2HEP3agP6zaf9+KNNgv/Ch/mMSopPvZB+ihr7UKnqHLoVJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LmFiD8uY; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-78c84837564so299028a12.3;
-        Fri, 12 Jul 2024 10:38:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720805934; x=1721410734; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L9FqVr/rhZyzwfnucHeAewr1d8dwEYOh9P/Sief1hgk=;
-        b=LmFiD8uYVfKLWOe9V9TvP0LPCszsCBpMG933NgkfOcV/Xc5sSw+QhdkOQ2HvBkPmTb
-         1QiRR/YKcH6M2coP84jcFwCu5BqRqX4Fzq413PCtAUURADbzkCb/EIbXmExijIPnF/nA
-         V6YUvsvyCc61zTcltLhuyCmyqcBSuOTGBrl2aTk+Eg6Vedr1VMhJGQ/4XNaz+7EUMD/l
-         X48O8hAJbhHVgnsiGvvCsnjfmwE4FNby3nGQPuicO6QQ9o7jAM4iWZ3HvKGlPJijpuGY
-         qTMalG/9c8O/GQ6hDIhMkP3e1eW24+SiL21HrtsezW0fgWTXClWE+sdpmswPmVLvrnoV
-         F6jQ==
+	 In-Reply-To:Content-Type; b=REv007D81S14cTDJD5W1ccZXD3Isbic8qi3lpPj8frRUMAQVRi3YUYjF8zDcI0icVcLO8wA3aU40ROIegeChULXzk4oYeDhrK+N0VNEUZBOMX7Z4AXfL8gl3P+Pb229EZEVmSn29PR3p15Km2S3KdWuyZVJjR7kd/caZph1ni7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yc4zCgtv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720805940;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sipNUbj7qIymRT+79qbVwcgrJBEdFVUgDof1TAUYRzU=;
+	b=Yc4zCgtvzEiOD9JbqhuimwLozjknBWgDS1uUiY5uDaXB7a8RD8jNE6wz04XG5aovD7K7ks
+	frTnONs+Qmks8WFWOwpFFzFrj/wy20d1J8XBJQltanomooVtk2BoZ50j6DD9/sLAZOSdFl
+	1gE2Kpw2xgrXXhH2YtYThb8nsqn9Qls=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-625-ccv0oHfCMe2HOu2dSiC1HQ-1; Fri, 12 Jul 2024 13:38:58 -0400
+X-MC-Unique: ccv0oHfCMe2HOu2dSiC1HQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-426703ac975so13225705e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:38:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720805934; x=1721410734;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L9FqVr/rhZyzwfnucHeAewr1d8dwEYOh9P/Sief1hgk=;
-        b=fUOckZpY0FOIt8bQZg1m4at/5elK9yXb88LxjuuHSkvWWCwDixB0ZMhuOFlheRP3Yt
-         Fg22AfQUppOgQ58LUFFZKoAOmEVHO/3gGe5Vx+e6kjhIpmKKfdtH694lAfgsik4QTq+q
-         MhkjInesLWDm5410bLpmoo5I2+sqzcdRh4DG6DnWKzhXRDmI3WW2MzfuNJZzrlcCzC69
-         aCZV4sYRjvHHR4njaDYmww5cnzFvom6F+o0eWHUgu+3O0uLPta4cM4sJzlwQbbx3hrOY
-         ov745uBEHk2UY1LCRi8M9y+0/wfvUaA9f0GK9Fyv1dvAuJfcW8F4ubi+dmragfonQUBe
-         h3xg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjc6ejoPrt1I2RTQsU0yYc/jnalOv1iyt4pU9ml11gCshQ94c4ZiP7yuUiN/Hy8jrH61QP8W4rlCAKz5kyS8lOcvs13NZpbpXeb92nybwF9Qq8IKX+ei0V5pGHf2prYdYG16rs
-X-Gm-Message-State: AOJu0YzIN9bNOV4W3EGYfzLa9GVQqqNnjhJNCoRHHqnCw4cYbB+rVPmJ
-	W1NpB9L75pXEkZ6p32fQQxMK8cxIk+g9Rz3bv+3j8tQDQqb1+hUK
-X-Google-Smtp-Source: AGHT+IHdX+ao63nA1fTMZfLSJG7Xybt0fUskH7EuIH0b1VguS4qarFsUTpYI3p+dG3HrORxzZF31lg==
-X-Received: by 2002:a05:6a21:3394:b0:1be:dd1c:a6e3 with SMTP id adf61e73a8af0-1c2984e11d9mr13338042637.54.1720805933399;
-        Fri, 12 Jul 2024 10:38:53 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fbb6a3ca56sm69551665ad.118.2024.07.12.10.38.49
+        d=1e100.net; s=20230601; t=1720805937; x=1721410737;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sipNUbj7qIymRT+79qbVwcgrJBEdFVUgDof1TAUYRzU=;
+        b=EszTSvlQX2etzje7isGaHQIuRdwltF5EFiTkecVp9IdxW8JlwnaKGbliRFbBAA0Xi8
+         aZA8n40RoGhkYjlTHPT3cSvQw8SiqqXtyH1MFgZt8S1jFURt+LXAh/SHeRleA86ViW14
+         Nkoof09JBIfysJghdJWQHTqKAQY/fRBviO2bSlFUs2wWENdKImuCR+WQyaGpqE98ZMqK
+         MsjaelTo9N5M6lgdl3oI7zuoySUs01lzSINVhgilUR8oX0tzcDGp+/SCUjxsng1Ityku
+         R+ynPaQC2vlZNNMujaJre6lLjatMk20DURgXciwEAXpEuSN3k7YzOnK7tpKnzfGhdc8h
+         kzlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWT1kCSkJInrxDvVChxC1wKJKiVq6b05qFws3n6i+JAhONIPd0rTlQo6iQUViJuZ0g5h33kT/Z82lcBJA/bTJP47pEAR3mK+57eqeuV
+X-Gm-Message-State: AOJu0YzE4ZlEYWLTZ/sVT9XPAh8l0sspt1GfZ04YXUU2+yP+f+YHDzs8
+	DrLszFVZkvtY227Y5y/+8Vpw1ON/n4U+grIQ2nk09yg4zFCuV55VlkWb1ySYWqbhFBhq36i2BDm
+	9C1s5FMpz0/zHzoKYzLJx7aczz6GVkXU1n7ybp7b4rnrivo1Dy6DKEowHCTzpGQ==
+X-Received: by 2002:a05:600c:4613:b0:426:526f:4a1f with SMTP id 5b1f17b1804b1-4279daf2585mr30621035e9.16.1720805937770;
+        Fri, 12 Jul 2024 10:38:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGwxyB3tY2Z4sxPaWpQBWCpnq//rThRXFxa0CLe10n5BDi1DzzpSy6RoH9nNF6GDL7AeQz3Ow==
+X-Received: by 2002:a05:600c:4613:b0:426:526f:4a1f with SMTP id 5b1f17b1804b1-4279daf2585mr30620885e9.16.1720805937464;
+        Fri, 12 Jul 2024 10:38:57 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde890f6sm10676030f8f.53.2024.07.12.10.38.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 10:38:51 -0700 (PDT)
-Message-ID: <191d8761-0784-44f6-9b8e-5d3c1c15c5ad@gmail.com>
-Date: Fri, 12 Jul 2024 10:38:48 -0700
+        Fri, 12 Jul 2024 10:38:56 -0700 (PDT)
+Message-ID: <6c5ba940-8e18-4b4f-9e30-5608b228ec8b@redhat.com>
+Date: Fri, 12 Jul 2024 19:38:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,45 +82,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240709110708.903245467@linuxfoundation.org>
+Subject: Re: [PATCH v2] drm/nouveau: Improve variable names in
+ nouveau_sched_init()
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240712062618.8057-1-pstanner@redhat.com>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240709110708.903245467@linuxfoundation.org>
+From: Danilo Krummrich <dakr@redhat.com>
+Organization: RedHat
+In-Reply-To: <20240712062618.8057-1-pstanner@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/9/24 04:07, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.9 release.
-> There are 197 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 7/12/24 8:26 AM, Philipp Stanner wrote:
+> nouveau_sched_init() uses the function drm_sched_init(). The latter
+> function has parameters called "hang_limit" and "timeout" in its API
+> documentation.
 > 
-> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
-> Anything received after that time might be too late.
+> nouveau_sched_init(), however, defines a variable called
+> "job_hang_limit" which is passed to drm_sched_init()'s "timeout"
+> parameter. The actual "hang_limit" parameter is directly set to 0.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
+> Rename "job_hang_limit" to "timeout".
 > 
-> thanks,
-> 
-> greg k-h
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Applied to drm-misc-next, thanks!
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+> ---
+> Changes in v2:
+> - Remove variable "hang_limit". (Danilo)
+> ---
+>   drivers/gpu/drm/nouveau/nouveau_sched.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/nouveau/nouveau_sched.c
+> index 32fa2e273965..ba4139288a6d 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
+> @@ -404,7 +404,7 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
+>   {
+>   	struct drm_gpu_scheduler *drm_sched = &sched->base;
+>   	struct drm_sched_entity *entity = &sched->entity;
+> -	long job_hang_limit = msecs_to_jiffies(NOUVEAU_SCHED_JOB_TIMEOUT_MS);
+> +	const long timeout = msecs_to_jiffies(NOUVEAU_SCHED_JOB_TIMEOUT_MS);
+>   	int ret;
+>   
+>   	if (!wq) {
+> @@ -418,7 +418,7 @@ nouveau_sched_init(struct nouveau_sched *sched, struct nouveau_drm *drm,
+>   
+>   	ret = drm_sched_init(drm_sched, &nouveau_sched_ops, wq,
+>   			     NOUVEAU_SCHED_PRIORITY_COUNT,
+> -			     credit_limit, 0, job_hang_limit,
+> +			     credit_limit, 0, timeout,
+>   			     NULL, NULL, "nouveau_sched", drm->dev->dev);
+>   	if (ret)
+>   		goto fail_wq;
 
 
