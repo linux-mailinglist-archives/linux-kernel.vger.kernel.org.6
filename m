@@ -1,360 +1,160 @@
-Return-Path: <linux-kernel+bounces-250409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA4892F786
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:05:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 048CC92F788
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71AA61C22EE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:05:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E1711C217CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B88F1465AB;
-	Fri, 12 Jul 2024 09:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36685143758;
+	Fri, 12 Jul 2024 09:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PLJSCWoP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q9wCDxXz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MKb7AGa0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q9wCDxXz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MKb7AGa0"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4F3143C5C;
-	Fri, 12 Jul 2024 09:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA392E3E5
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720775093; cv=none; b=OyUZwRBeXwiXt/3sTuNhAga4N5NYGadfI1K6LGzL9yEDSAj43Z4OTbmHCfGGSS+I1NTK6BnISBd/JctuCAAKzj14lr5zLNMrdBch8UM/qLAuobAJ7a83RX6v/QIVA1TbsB5h4tGunmFn2aNqahzgWLhtP5YIo/6rV225JnH9gDc=
+	t=1720775146; cv=none; b=jMM5VWZMXWPRtzSCcROb0D0ybEd1zZGyFOywjqP7nLIYNGTdP3GuEV0mtyiBnLnXjUP747JqDNwSU/fa62jCSw95fkNPZle6qo+98LZBN5SEFUNQ1jySNFV/8+qp4V6oraRWEa2cmaG8cH2KvSc5ll8F2HuwxcyITucoNl8mws8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720775093; c=relaxed/simple;
-	bh=0+fgMifr0gmoYZFNccD7HXPgEjE1eR0vEQY840VBkrA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FxxIvSKj3KmGmlWv2H3zClLHjWDSQtHTtr4bsvIEafbZvgbeIDX7lckPj8P+HE8/GzeuQiuRauNHGpEJ9VPflgt0M9PoEYrHKihzU/3RW8iljXuxfApZGwF9xpkdBdegAS7v/nFDEB8eEEtsIye7hf2wdSG7bMbjvek1qn8msMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PLJSCWoP; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720775092; x=1752311092;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0+fgMifr0gmoYZFNccD7HXPgEjE1eR0vEQY840VBkrA=;
-  b=PLJSCWoPgjLMRIUnhSxl/Zc7V9lQXSFP1/4+ZKhA/yKkC6ktxXP+ApOK
-   l1j+BqZWGFL0LWjnd3G5Ch7KBaVOL5NfdMIxxX5UnEJoBndUuawmkyYzE
-   JPjbtqy1BoR6kJrLofwA5oHuZfwNHLpTxhFDXHoAy5M9BLgkJB1dTe1r4
-   SHSrYksTQ6+hOWkFdWfhNf8S71Qr6DitlxdNLXQRbZUEJ9aD7H6B3DP/p
-   +oEppNLNMsupb6SqnM3FjlWk+1d9NvHalNZLD9JhPGJfP3YWxYZ38YPH+
-   pqdjrFM1fwOrMzmKt5xrznF7AqK7IK9aZSG36et1AEQcgYCtFbQ6bJ5K1
-   A==;
-X-CSE-ConnectionGUID: zw7aEuPbTPa3HIcmHrGQ1Q==
-X-CSE-MsgGUID: W2R9rlrKRWeCuQOqD/z1wQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="40731109"
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="40731109"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 02:04:51 -0700
-X-CSE-ConnectionGUID: RzlN50l+TNOLzcz41glhxQ==
-X-CSE-MsgGUID: GNFnqbqlRH+ndREu5422Hw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="53686650"
-Received: from dalessan-mobl3.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.245.74])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 02:04:49 -0700
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: fenghua.yu@intel.com,
-	reinette.chatre@intel.com,
-	shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	tony.luck@intel.com
-Subject: [PATCH v4 2/2] selftests/resctrl: Adjust SNC support messages
-Date: Fri, 12 Jul 2024 11:04:39 +0200
-Message-ID: <1fb2703ee27a0dfa13a7aa501b81439c433521ea.1720774981.git.maciej.wieczor-retman@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1720774981.git.maciej.wieczor-retman@intel.com>
-References: <cover.1720774981.git.maciej.wieczor-retman@intel.com>
+	s=arc-20240116; t=1720775146; c=relaxed/simple;
+	bh=n9zCnby7RStLsYiaqLC7s2b1p5UbHmaaIR2SSzrVCaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WrAnkSS0qYlfD5HBHIf0E/dZ9Py/GSzutdm637PrVUHWqe8Kdl1CQ4jiZ3lT/ic6/aXcgaagqPn39io8vaqJcvMFy1tLx79Dq45W9cvUDsZ73BUxwyeCWKQ8t06kFxuhtOnL6Co9RzesCeoaKmxLMIUgaN31v1+klzBD5WaAmHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q9wCDxXz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MKb7AGa0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q9wCDxXz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MKb7AGa0; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 110681FB72;
+	Fri, 12 Jul 2024 09:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720775143; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHPKYhyfY8y0bbRj9icGAe1iV34Xb9Ze5OLkT5Fpfys=;
+	b=Q9wCDxXzSlQNBycICSy9ZwNIGEdp9BX9rVWK18hsV9BuJJNJr92v+Q2mozzdorbpgaTWMi
+	qnMD40Aulb5C6kZqRdTelB1b18JQ+/kkOhDwIwGRIJlyf1pS2HgaFiemUd6Y2DBzgEfUyk
+	glgL7ChQVSOTmdcKcfBETjbhNKA1kUU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720775143;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHPKYhyfY8y0bbRj9icGAe1iV34Xb9Ze5OLkT5Fpfys=;
+	b=MKb7AGa0OjPupFeWs4IXmlqLYSlM0zJ0SSjeDrn5vvUQvPlUbicpV1i6jiKHgnH5ezHjn2
+	p1rs2R5/wVome8Bg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Q9wCDxXz;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MKb7AGa0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720775143; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHPKYhyfY8y0bbRj9icGAe1iV34Xb9Ze5OLkT5Fpfys=;
+	b=Q9wCDxXzSlQNBycICSy9ZwNIGEdp9BX9rVWK18hsV9BuJJNJr92v+Q2mozzdorbpgaTWMi
+	qnMD40Aulb5C6kZqRdTelB1b18JQ+/kkOhDwIwGRIJlyf1pS2HgaFiemUd6Y2DBzgEfUyk
+	glgL7ChQVSOTmdcKcfBETjbhNKA1kUU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720775143;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KHPKYhyfY8y0bbRj9icGAe1iV34Xb9Ze5OLkT5Fpfys=;
+	b=MKb7AGa0OjPupFeWs4IXmlqLYSlM0zJ0SSjeDrn5vvUQvPlUbicpV1i6jiKHgnH5ezHjn2
+	p1rs2R5/wVome8Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 229AF13686;
+	Fri, 12 Jul 2024 09:05:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id y6A7BObxkGbPDwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Fri, 12 Jul 2024 09:05:42 +0000
+Date: Fri, 12 Jul 2024 11:05:32 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Muchun Song <muchun.song@linux.dev>,
+	David Hildenbrand <david@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, Donet Tom <donettom@linux.ibm.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [RFC PATCH 2/8] arch/s390: Teach
+ arch_get_unmapped_area{_topdown} to handle hugetlb mappings
+Message-ID: <ZpDx3CWGzvZ02qFa@localhost.localdomain>
+References: <20240710105042.30165-1-osalvador@suse.de>
+ <20240710105042.30165-3-osalvador@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710105042.30165-3-osalvador@suse.de>
+X-Rspamd-Queue-Id: 110681FB72
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Score: -1.51
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 
-Resctrl selftest prints a message on test failure that Sub-Numa
-Clustering (SNC) could be enabled and points the user to check their BIOS
-settings. No actual check is performed before printing that message so
-it is not very accurate in pinpointing a problem.
+On Wed, Jul 10, 2024 at 12:50:36PM +0200, Oscar Salvador wrote:
+> We want to stop special casing hugetlb mappings and make them go
+> through generic channels, so teach arch_get_unmapped_area{_topdown}
+> to handle those.
+> s390 specific hugetlb function does not set info.align_offset, so do
+> the same here for compatibility.
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
 
-Figuring out if SNC is enabled is only one part of the problem, the
-others being whether the detected SNC mode is reliable and whether the
-kernel supports SNC in resctrl.
+I could finally grab a s390 machine and I realized I made some silly
+syntax mistakes here.
+I am running some tests on s390 to make sure all is smooth.
 
-When there is SNC support for kernel's resctrl subsystem and SNC is
-enabled then sub node files are created for each node in the resctrlfs.
-The sub node files exist in each regular node's L3 monitoring directory.
-The reliable path to check for existence of sub node files is
-/sys/fs/resctrl/mon_data/mon_L3_00/mon_sub_L3_00.
 
-To check if SNC detection is reliable one can check the
-/sys/devices/system/cpu/offline file. If it's empty, it means all cores
-are operational and the ratio should be calculated correctly. If it has
-any contents, it means the detected SNC mode can't be trusted and should
-be disabled.
-
-Add helpers for all operations mentioned above.
-
-Detect SNC mode once and let other tests inherit that information.
-
-Add messages to alert the user when SNC detection could return incorrect
-results. Correct old messages to account for kernel support of SNC in
-resctrl.
-
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
----
-Changelog v4:
-- Change messages at the end of tests and at the start of
-  run_single_test. (Reinette)
-- Add messages at the end of CAT since it can also fail due to enabled
-  SNC + lack of kernel support.
-- Remove snc_mode global variable. (Reinette)
-- Fix wrong description of snc_kernel_support(). (Reinette)
-- Move call to cpus_offline_empty() into snc_nodes_per_l3_cache() so the
-  whole detection flow is in one place as discussed. (Reinette)
-
-Changelog v3:
-- Change snc_ways() to snc_nodes_per_l3_cache(). (Reinette)
-- Add printing the discovered SNC mode. (Reinette)
-- Change method of kernel support discovery from cache sizes to
-  existance of sub node files.
-- Check if SNC detection is unreliable.
-- Move SNC detection to only the first run_single_test() instead on
-  error at the end of test runs.
-- Add global value to remind user at the end of relevant tests if SNC
-  detection was found to be unreliable.
-- Redo the patch message after the changes.
-
-Changelog v2:
-- Move snc_ways() checks from individual tests into
-  snc_kernel_support().
-- Write better comment for snc_kernel_support().
-
- tools/testing/selftests/resctrl/cat_test.c    |  8 +++
- tools/testing/selftests/resctrl/cmt_test.c    | 10 +++-
- tools/testing/selftests/resctrl/mba_test.c    |  7 +++
- tools/testing/selftests/resctrl/mbm_test.c    |  9 ++-
- tools/testing/selftests/resctrl/resctrl.h     |  3 +
- .../testing/selftests/resctrl/resctrl_tests.c |  8 ++-
- tools/testing/selftests/resctrl/resctrlfs.c   | 57 +++++++++++++++++++
- 7 files changed, 97 insertions(+), 5 deletions(-)
-
-diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/selftests/resctrl/cat_test.c
-index d4dffc934bc3..a8bb49f56755 100644
---- a/tools/testing/selftests/resctrl/cat_test.c
-+++ b/tools/testing/selftests/resctrl/cat_test.c
-@@ -285,6 +285,14 @@ static int cat_run_test(const struct resctrl_test *test, const struct user_param
- 
- 	ret = check_results(&param, test->resource,
- 			    cache_total_size, full_cache_mask, start_mask);
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.\n");
-+
-+	if ((get_vendor() == ARCH_INTEL) && snc_unreliable) {
-+		ksft_print_msg("Sub-NUMA Clustering could not be detected properly (see earlier messages for details).\n");
-+		ksft_print_msg("Intel CAT may be inaccurate.\n");
-+	}
-+
- 	return ret;
- }
- 
-diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/selftests/resctrl/cmt_test.c
-index 0c045080d808..471e134face0 100644
---- a/tools/testing/selftests/resctrl/cmt_test.c
-+++ b/tools/testing/selftests/resctrl/cmt_test.c
-@@ -175,8 +175,14 @@ static int cmt_run_test(const struct resctrl_test *test, const struct user_param
- 		goto out;
- 
- 	ret = check_results(&param, span, n);
--	if (ret && (get_vendor() == ARCH_INTEL))
--		ksft_print_msg("Intel CMT may be inaccurate when Sub-NUMA Clustering is enabled. Check BIOS configuration.\n");
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.\n");
-+
-+	if ((get_vendor() == ARCH_INTEL) && snc_unreliable) {
-+		ksft_print_msg("Sub-NUMA Clustering could not be detected properly (see earlier messages for details).\n");
-+		ksft_print_msg("Intel CMT may be inaccurate.\n");
-+	}
-+
- 
- out:
- 	free(span_str);
-diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
-index ab8496a4925b..a805c14fe04b 100644
---- a/tools/testing/selftests/resctrl/mba_test.c
-+++ b/tools/testing/selftests/resctrl/mba_test.c
-@@ -179,6 +179,13 @@ static int mba_run_test(const struct resctrl_test *test, const struct user_param
- 		return ret;
- 
- 	ret = check_results();
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.\n");
-+
-+	if ((get_vendor() == ARCH_INTEL) && snc_unreliable) {
-+		ksft_print_msg("Sub-NUMA Clustering could not be detected properly (see earlier messages for details).\n");
-+		ksft_print_msg("Intel MBA may be inaccurate.\n");
-+	}
- 
- 	return ret;
- }
-diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
-index 6b5a3b52d861..ce3c86989f8b 100644
---- a/tools/testing/selftests/resctrl/mbm_test.c
-+++ b/tools/testing/selftests/resctrl/mbm_test.c
-@@ -147,8 +147,13 @@ static int mbm_run_test(const struct resctrl_test *test, const struct user_param
- 		return ret;
- 
- 	ret = check_results(DEFAULT_SPAN);
--	if (ret && (get_vendor() == ARCH_INTEL))
--		ksft_print_msg("Intel MBM may be inaccurate when Sub-NUMA Clustering is enabled. Check BIOS configuration.\n");
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.\n");
-+
-+	if ((get_vendor() == ARCH_INTEL) && snc_unreliable) {
-+		ksft_print_msg("Sub-NUMA Clustering could not be detected properly (see earlier messages for details).\n");
-+		ksft_print_msg("Intel MBM may be inaccurate.\n");
-+	}
- 
- 	return ret;
- }
-diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
-index 851b37c9c38a..488bdca01e4f 100644
---- a/tools/testing/selftests/resctrl/resctrl.h
-+++ b/tools/testing/selftests/resctrl/resctrl.h
-@@ -121,6 +121,8 @@ struct perf_event_read {
-  */
- extern volatile int *value_sink;
- 
-+extern int snc_unreliable;
-+
- extern char llc_occup_path[1024];
- 
- int snc_nodes_per_l3_cache(void);
-@@ -167,6 +169,7 @@ void ctrlc_handler(int signum, siginfo_t *info, void *ptr);
- int signal_handler_register(const struct resctrl_test *test);
- void signal_handler_unregister(void);
- unsigned int count_bits(unsigned long n);
-+int snc_kernel_support(void);
- 
- void perf_event_attr_initialize(struct perf_event_attr *pea, __u64 config);
- void perf_event_initialize_read_format(struct perf_event_read *pe_read);
-diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/testing/selftests/resctrl/resctrl_tests.c
-index ecbb7605a981..4b84d6199a36 100644
---- a/tools/testing/selftests/resctrl/resctrl_tests.c
-+++ b/tools/testing/selftests/resctrl/resctrl_tests.c
-@@ -118,11 +118,17 @@ static bool test_vendor_specific_check(const struct resctrl_test *test)
- 
- static void run_single_test(const struct resctrl_test *test, const struct user_params *uparams)
- {
--	int ret;
-+	int ret, snc_mode;
- 
- 	if (test->disabled)
- 		return;
- 
-+	snc_mode = snc_nodes_per_l3_cache();
-+	if (snc_mode > 1)
-+		ksft_print_msg("SNC-%d mode discovered.\n", snc_mode);
-+	else if (snc_unreliable)
-+		ksft_print_msg("SNC detection unreliable due to offline CPUs. Test results may not be accurate if SNC enabled.\n");
-+
- 	if (!test_vendor_specific_check(test)) {
- 		ksft_test_result_skip("Hardware does not support %s\n", test->name);
- 		return;
-diff --git a/tools/testing/selftests/resctrl/resctrlfs.c b/tools/testing/selftests/resctrl/resctrlfs.c
-index 803dd415984c..4d0dbb332b8f 100644
---- a/tools/testing/selftests/resctrl/resctrlfs.c
-+++ b/tools/testing/selftests/resctrl/resctrlfs.c
-@@ -13,6 +13,8 @@
- 
- #include "resctrl.h"
- 
-+int snc_unreliable;
-+
- static int find_resctrl_mount(char *buffer)
- {
- 	FILE *mounts;
-@@ -186,6 +188,25 @@ static unsigned int count_sys_bitmap_bits(char *name)
- 	return count;
- }
- 
-+static bool cpus_offline_empty(void)
-+{
-+	char offline_cpus_str[64];
-+	FILE *fp;
-+
-+	fp = fopen("/sys/devices/system/cpu/offline", "r");
-+	if (fscanf(fp, "%s", offline_cpus_str) < 0) {
-+		if (!errno) {
-+			fclose(fp);
-+			return 1;
-+		}
-+		ksft_perror("Could not read offline CPUs file!");
-+	}
-+
-+	fclose(fp);
-+
-+	return 0;
-+}
-+
- /*
-  * Detect SNC by comparing #CPUs in node0 with #CPUs sharing LLC with CPU0.
-  * If some CPUs are offline the numbers may not be exact multiples of each
-@@ -199,6 +220,13 @@ int snc_nodes_per_l3_cache(void)
- 	static int snc_mode;
- 
- 	if (!snc_mode) {
-+		if (!cpus_offline_empty()) {
-+			ksft_print_msg("Runtime SNC detection unreliable due to offline CPUs.\n");
-+			ksft_print_msg("Setting SNC mode to disabled.\n");
-+			snc_mode = 1;
-+			snc_unreliable = 1;
-+			return snc_mode;
-+		}
- 		node_cpus = count_sys_bitmap_bits("/sys/devices/system/node/node0/cpumap");
- 		cache_cpus = count_sys_bitmap_bits("/sys/devices/system/cpu/cpu0/cache/index3/shared_cpu_map");
- 
-@@ -942,3 +970,32 @@ unsigned int count_bits(unsigned long n)
- 
- 	return count;
- }
-+
-+/**
-+ * snc_kernel_support - Check for existence of mon_sub_L3_00 file that indicates
-+ * SNC resctrl support on the kernel side.
-+ *
-+ * Return: 0 if not supported, 1 if SNC is disabled or SNC is both enabled and
-+ * supported.
-+ */
-+int snc_kernel_support(void)
-+{
-+	char node_path[PATH_MAX];
-+	struct stat statbuf;
-+	int ret;
-+
-+	ret = snc_nodes_per_l3_cache();
-+	/*
-+	 * If SNC is disabled then its kernel support isn't important.
-+	 */
-+	if (ret == 1)
-+		return ret;
-+
-+	snprintf(node_path, sizeof(node_path), "%s/%s/%s", RESCTRL_PATH, "mon_data",
-+		 "mon_L3_00/mon_sub_L3_00");
-+
-+	if (!stat(node_path, &statbuf))
-+		return 1;
-+
-+	return 0;
-+}
 -- 
-2.45.2
-
+Oscar Salvador
+SUSE Labs
 
