@@ -1,155 +1,122 @@
-Return-Path: <linux-kernel+bounces-250551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54AD92F8F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:26:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49CD692F8F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81773286E93
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:26:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B4981C22F08
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B558216D4FF;
-	Fri, 12 Jul 2024 10:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F7815ADA7;
+	Fri, 12 Jul 2024 10:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jYU2kw9Y"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tTIjKRqR"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5D815F404;
-	Fri, 12 Jul 2024 10:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B830915A851
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720779821; cv=none; b=WeLPufpXtOZozMpIVE8U72r7bAu3xUQbsHclTcAoMZj4EmpTMdJwRl03RgxLJUpZRyV3wCbb8pajcze5Fok2yDFTX+IyYGd/37bPbIT0pCq6fD9ZzbIIYYZhIdbWrJKFk0EXI5GX/WNj37vO0/iLRytmGfumpneSEupBdXsmxUU=
+	t=1720779874; cv=none; b=l/FhwEMTo74Lur8oBDEZS85GsOaAPEddMoR7fM4Rct+1rJr5Pj0maDL/y1sxtpd+7lJN4Hma0PW7WZQT7QqvJdB+54m9V4hpEWDmUdfFeLH8nzvUgnbaCCbpd/q4ieqZkOKZ2QH6NQGIf0apM5MT2GFJ+wJTTmi3xxS6ffiC4mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720779821; c=relaxed/simple;
-	bh=r9Nir9nHKFqMWTP64jknuRaUZbPA4clneH4hIAp26VI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WyXkLbepvERZpg/x1/rg48gJlSoxa1PtWUZ6SRQgOeTslaF3g8qwNTeGATEp//3b2DMPDb+hp3zqB/UY7PEMjsUAn11GNZJ3wN0EKiNmkUbTXJ49V2WfV+UtuI32YT7M7g8ZrndTklWndqYglA835Y9rAzyTIWYsCbgUFpIyBa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jYU2kw9Y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46C8DWnt000654;
-	Fri, 12 Jul 2024 10:23:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=+WSERfV4WDrYPUnpXBv0VWqk
-	PgUULNV8YcS92iNukv0=; b=jYU2kw9Y+E8E8bv/y5kTB/xI8jretwl6z4gwmXHX
-	QTC4VVa3BargNghTvnry7CdJbdWa+mNoWns0zI6TEj3sZatR+cLQTAnzPOXS+ejp
-	mNgjO9/O5AY+It9z2VxzYJFaras964RUQ/8hKq6u2EUnvO+urF1Ozi25PVFkwhzb
-	HfNJxgdZJ/wb8eb484nnSslVfxH2LNNDixnQ0hq3J8o7atQS82pgTZ9c32s0iv0j
-	IqpB7dqo9kkVmeSWeZRWRqXTNgy3Bioxy5f1VuGi7b41ZtNahLjJZSSmNoNggLvm
-	5WbznNNjAgU5Wr/Tb3Tab0ibDKxjiqU2LT/5YSCq6UYvGg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ac0gk3kc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Jul 2024 10:23:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46CANX07008929
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Jul 2024 10:23:33 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 12 Jul 2024 03:23:29 -0700
-Date: Fri, 12 Jul 2024 15:53:27 +0530
-From: Pavan Kondeti <quic_pkondeti@quicinc.com>
-To: "Maulik Shah (mkshah)" <quic_mkshah@quicinc.com>
-CC: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>,
-        Caleb Connolly
-	<caleb.connolly@linaro.org>,
-        "andersson@kernel.org >> Bjorn Andersson"
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] soc: qcom: cmd-db: map shared memory as WT, not WB
-Message-ID: <053b96d7-9af7-4afe-88c8-48a71b2d309f@quicinc.com>
-References: <20240327200917.2576034-1-volodymyr_babchuk@epam.com>
- <19bb6ff0-04ff-4e88-8c8a-499c054bdea4@quicinc.com>
- <87sf0axanc.fsf@epam.com>
- <629a2983-8db4-4ae0-8f68-72750985d5b3@quicinc.com>
+	s=arc-20240116; t=1720779874; c=relaxed/simple;
+	bh=HqZiCRw2NLU2XKAhHPCRc0/GWvY5VzMIPC+2HkzIaLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R+7Qo7/d45g/MVBA49ddWTXlVD6TKL1jN3YJFDNTU3Nowuf7+koq0SGcPAF6A1DCI4+cNc2L1kCmAL6NHFtF8NCqoBPS7EX23ZBfz3QYIIj+aqcbMTEFVgzv5RrwXw2yRrbhvFWy8Os3QvkTLXw9ZZfN1vcVqIhlsvGl/az6cQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tTIjKRqR; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfe43dca3bfso2041648276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:24:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720779871; x=1721384671; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+VRQCbcpx9R3q3II2rgwsC0Uz/Ighdl9GbELSByS5y8=;
+        b=tTIjKRqR+vuz1dMdeuIWiVQmIYtXiFlOITDNGelgfxc57jadda35UWTgJ0Q9HsCapn
+         crqsZOb4kxmTcin/grA4t4tXoHQfpEzCEiZ95ksSQx6+Ux9UIn7r2vYdA9b9esCACKie
+         Zmfrc9MdIQRXbiVfb59a1ZpYN3gIlbpMk/Ei7R95IrSGJ08ZfKUvLHWWqmhd2B7TsW5K
+         hvhaat62XpC/XqxocSgQFIGEu7H+iBlSplrf+a1vAhCvLA07biZ4RVDl8wgHRCMKDQAN
+         DHPMreqKx2YrB1LejNFwUGq6RPIf82OPzHKlaaUUIewW6zdj95YAK1aj2jY+kfUyin5Q
+         sS9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720779871; x=1721384671;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+VRQCbcpx9R3q3II2rgwsC0Uz/Ighdl9GbELSByS5y8=;
+        b=mvjp/d1hoXZ91L9Yoc6g2PG6qKemM8FbVAl8a0rkUPOx4LIrMnBOQg6BiCg/QQugt5
+         0JMoSdydJifAPmpnfWgmAQ+1phpmevsoQt2MYF/SWNoqDb+op7SBpPJeees4Bb+0PMJY
+         Pl1m6iz4O7GsK11tpEeAZPDcy/PA8Id2sQI6ZIz8T1a2WUaH6d7EmN1qr6j3dLzXoHj3
+         HEYLZAKsGuPBWb+6T377/L8KkSXVEZHfvdp46PraapnFFUQwoGd/fS8yoABqxy2zC/WB
+         kK4gUMI2UllqwxILh+SL5MHihBWo+C+PefcHmbXAWNhR3Ka8A7zKxSKcdi+TlkOaly1H
+         xDFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6drf0bpI73qZmjVbuMt89or6QSheSYEyAAt0BfXThehA+ntiytys8mQcQsCSiItnpJ0yy06FGS9vUwzF62AFR7VKYcuw1P0lrz3L+
+X-Gm-Message-State: AOJu0YyvD9hJaBQlcqaHXdCJrpCMv9AVwErujwD+iNHaLZDKmMmCA1Pr
+	vuml7mD1O7WEcFnM7/uJELWWZHzSPpXY9Wgst6arU0U5i7ha3y5CfHc+u599ladaSvfJ0j1m1ez
+	dTvNQgqi89tQllXDqpubdoSs/2QJvCPUE9P6MTsFr5mhxRJKN
+X-Google-Smtp-Source: AGHT+IG2u7oPYblciDyGiNZd4/9k+U/KQ8en3SG5yXyygHZBORuC+P7l6UYsZj1IX1HbtiJTKp1OpY8918TJtuYQ6jg=
+X-Received: by 2002:a25:ef09:0:b0:e03:a688:ab5e with SMTP id
+ 3f1490d57ef6-e041b0785b8mr12312862276.27.1720779871043; Fri, 12 Jul 2024
+ 03:24:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <629a2983-8db4-4ae0-8f68-72750985d5b3@quicinc.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _NdS-g9M6RgbKZ1CIS8uEsn4hRcg-2w3
-X-Proofpoint-GUID: _NdS-g9M6RgbKZ1CIS8uEsn4hRcg-2w3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-12_07,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 mlxlogscore=714
- mlxscore=0 impostorscore=0 clxscore=1011 suspectscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407120072
+References: <80e17dffa8f4c1d3fdedd4d82df3a722aa4044ff.1720707932.git.geert+renesas@glider.be>
+ <0e4c9ffdc8a5caffcda2afb8d5480900f7adebf6.1720707932.git.geert+renesas@glider.be>
+In-Reply-To: <0e4c9ffdc8a5caffcda2afb8d5480900f7adebf6.1720707932.git.geert+renesas@glider.be>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 12 Jul 2024 13:24:19 +0300
+Message-ID: <CAA8EJprLg8-BQT2OsLb5xSNVdFLf2mF6sSw_gAie0dBXawQFqQ@mail.gmail.com>
+Subject: Re: [PATCH] platform: arm64: EC_LENOVO_YOGA_C630 should depend on ARCH_QCOM
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, platform-driver-x86@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Volodymyr/Maulik,
+On Thu, 11 Jul 2024 at 17:32, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> The Lenovo Yoga C630 Embedded Controller is only present on the Qualcomm
+> Snapdragon-based Lenovo Yoga C630 laptop.  Hence add a dependency on
+> ARCH_QCOM, to prevent asking the user about this driver when configuring
+> a kernel without Qualcomm SoC support.
+>
+> Fixes: 5e5f2f92cccc29f3 ("platform: arm64: add Lenovo Yoga C630 WOS EC driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/platform/arm64/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 
-On Fri, Mar 29, 2024 at 10:22:47AM +0530, Maulik Shah (mkshah) wrote:
-> 
-> 
-> On 3/29/2024 3:49 AM, Volodymyr Babchuk wrote:
-> > 
-> > Hi Maulik
-> > 
-> > "Maulik Shah (mkshah)" <quic_mkshah@quicinc.com> writes:
-> > 
-> > > On 3/28/2024 1:39 AM, Volodymyr Babchuk wrote:
-> > > > It appears that hardware does not like cacheable accesses to this
-> > > > region. Trying to access this shared memory region as Normal Memory
-> > > > leads to secure interrupt which causes an endless loop somewhere in
-> > > > Trust Zone.
-> > > 
-> > > Linux does not write into cmd-db region. This region is write
-> > > protected by XPU. Making this region uncached magically solves the XPU
-> > > write fault
-> > > issue.
-> > > 
-> > > Can you please include above details?
-> > 
-> > Sure, I'll add this to the next version.
-> > 
-> 
-> Thanks.
-> 
-> > > 
-> > > In downstream, we have below which resolved similar issue on qcm6490.
-> > > 
-> > > cmd_db_header = memremap(rmem->base, rmem->size, MEMREMAP_WC);
-> > > 
-> > > Downstream SA8155P also have MEMREMAP_WC. Can you please give it a try
-> > > on your device?
-> > 
-> > Yes, MEMREMAP_WC works as well. This opens the question: which type is
-> > more correct? I have no deep understanding in QCOM internals so it is
-> > hard to me to answer this question.
-> > 
-> 
-> XPU may have falsely detected clean cache eviction as "write" into the write
-> protected region so using uncached flag MEMREMAP_WC may be helping here and
-> is more correct in my understanding.
-> 
+Could you please add the same condition to the Acer Aspire 1 entry?
 
-I have got the very same explanation from my other colleagues at Qualcomm. I could
-reproduce the problem 100% of the time on QCS6490 RB3 board with Linux booting
-in EL2. The problem goes away with non-cached mapping
-(MEMREMAP_WC/MEMREMAP_WB).
+>
+> diff --git a/drivers/platform/arm64/Kconfig b/drivers/platform/arm64/Kconfig
+> index 058a4baa216a83b8..f7539e5419cf1616 100644
+> --- a/drivers/platform/arm64/Kconfig
+> +++ b/drivers/platform/arm64/Kconfig
+> @@ -35,6 +35,7 @@ config EC_ACER_ASPIRE1
+>
+>  config EC_LENOVO_YOGA_C630
+>         tristate "Lenovo Yoga C630 Embedded Controller driver"
+> +       depends on ARCH_QCOM || COMPILE_TEST
+>         depends on I2C
+>         select AUXILIARY_BUS
+>         help
+> --
+> 2.34.1
+>
 
-Do you guys plan to send V2? Please CC me on the V2.
 
-Thanks,
-Pavan
+-- 
+With best wishes
+Dmitry
 
