@@ -1,183 +1,88 @@
-Return-Path: <linux-kernel+bounces-250054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E630B92F384
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00B5792F389
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A39F31C2244A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:37:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30CF11C223DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DF58BE5;
-	Fri, 12 Jul 2024 01:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="it2zKVl7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46CF4414;
-	Fri, 12 Jul 2024 01:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55CD6FD0;
+	Fri, 12 Jul 2024 01:39:29 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C72A567D;
+	Fri, 12 Jul 2024 01:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720748244; cv=none; b=F8ft4O1AG98bdoh9FdhvwOEg++3P9O66zLbZZ1Z/a6KrcAoQH9IhHDNvrEYxC+BEQUoZZDXnS0amtBpf1ELtoTa0nZrvgF8NWqInNJg2+qoXHp/9pJL7iqJuuyoXZuLSb0pRKLWi4jU+sI5Dk5g2NA69KDoM/5EVhrSSL6hFQ2k=
+	t=1720748369; cv=none; b=VFxLPez1WPfYnSURMU1QKl6FpIKdWONeKB+FccupTtjXWJGaTEhx80Hk4MkV4akOiED+Kgph6YSiPY12uLUwo6V92LmmS9U57vVgYMyr32uG8/49a8v71ud0YM5LGf6bvbOqDn7F/MCCPsEsIU/VBQ/HcrfkOMS/V9OU2qdd8Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720748244; c=relaxed/simple;
-	bh=vJTqTjhMKKJ/e8b0iJ8xcitxIe0iZVFSU5OyjZ/gx7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QTMtwKwMfA4dN54d99GLhJNPaQOH8/xa/s6rNL/XnX1/ABRx9aY0Mz5nDp1vQ6i6ZT+tlGbVNY2Sx+8H7e1xCRzI3JuNltZYV0z21Zsw8YY5k3apwtvC3PxA79Xj4oUiP/U1uCTlf0dk6vkMg0gqRZIeaTw2/l5ULyobQjuNYfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=it2zKVl7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD67C116B1;
-	Fri, 12 Jul 2024 01:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720748243;
-	bh=vJTqTjhMKKJ/e8b0iJ8xcitxIe0iZVFSU5OyjZ/gx7Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=it2zKVl7Y6K0QT6ulsvxcC32LLD8PMIwRJgRIZSs5//DYymBuQKogF/QdSWC5s1JV
-	 or3hOsTYqtZSN6TXhruh3+NZ3rITW9GpSVev3Q9rsL6DS4bXYvz5h/Q4+PMGFs7HRs
-	 RXBR1jZlat7BGsVONg1Q+mh9oXLFYFiRVYeL8MvGJG+oMHgTfNqs1gLfwfriIEoLXU
-	 oPp4UxV683o8mU9ADpJwc6K02AGQvQAximdwGGUAoMELkbQ/3J7sOgQN3hz3oA1yXU
-	 wfWQnF8GTlLwn/8bow1Fe0KIjNve3SeFB1b6Xwj67B8bNnJktHCZb8eRacS4hJ8juw
-	 9frVwQnCQfeTw==
-Date: Thu, 11 Jul 2024 18:37:22 -0700
-From: Saeed Mahameed <saeed@kernel.org>
-To: Anand Khoje <anand.a.khoje@oracle.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, saeedm@mellanox.com, leon@kernel.org,
-	tariqt@nvidia.com, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, davem@davemloft.net,
-	rama.nichanamatlu@oracle.com, manjunath.b.patil@oracle.com
-Subject: Re: [PATCH net-next] net/mlx5: Reclaim max 50K pages at once
-Message-ID: <ZpCI0mGJaNDFjMno@x130>
-References: <20240711151322.158274-1-anand.a.khoje@oracle.com>
+	s=arc-20240116; t=1720748369; c=relaxed/simple;
+	bh=6w6Plydr9zV5A7he2c9U+8Z6fT4gBZS4Y5Ikv+WT4hU=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=BihLTuCFVWJ9xdFkS2zoRP8Oxx3igetvIAc1Oo7vOS+Nm6SSmFs2RXNiecdcS7W8koBg91vOLNc2KVdocl8D47tO+RpETbIW0zMCIDhRrSjAhZXSa7bCj7z4NTtWvYDMAW8/SNft4UDLLRYBf+C2tosdHb2qJ7q5TLVYkBdoIgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee26690893ee73-6ee76;
+	Fri, 12 Jul 2024 09:39:12 +0800 (CST)
+X-RM-TRANSID:2ee26690893ee73-6ee76
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.54.5.252])
+	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee76690893fb0e-3357f;
+	Fri, 12 Jul 2024 09:39:12 +0800 (CST)
+X-RM-TRANSID:2ee76690893fb0e-3357f
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: shuah@kernel.org
+Cc: kees@kernel.org,
+	luto@amacapital.net,
+	wad@chromium.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhujun2@cmss.chinamobile.com
+Subject: [PATCH v2] selftests:Fix printf format string in kselftest_harness.h
+Date: Thu, 11 Jul 2024 18:39:10 -0700
+Message-Id: <20240712013910.2700-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240711151322.158274-1-anand.a.khoje@oracle.com>
 
-On 11 Jul 20:43, Anand Khoje wrote:
->In non FLR context, at times CX-5 requests release of ~8 million FW pages.
->This needs humongous number of cmd mailboxes, which to be released once
->the pages are reclaimed. Release of humongous number of cmd mailboxes is
->consuming cpu time running into many seconds. Which with non preemptible
->kernels is leading to critical process starving on that cpu’s RQ.
->To alleviate this, this change restricts the total number of pages
->a worker will try to reclaim maximum 50K pages in one go.
->The limit 50K is aligned with the current firmware capacity/limit of
->releasing 50K pages at once per MLX5_CMD_OP_MANAGE_PAGES + MLX5_PAGES_TAKE
->device command.
+'%u' in format string requires 'unsigned int' in __wait_for_test()
+but the argument type is 'signed int' that this problem was discovered 
+by reading code
 
-Where do you see this FW limit? currently we don't have it in the driver,
-the driver requests from FW to reclaim exactly as many pages as the FW
-already sent in the initial event. It is up to the FW to decide how many
-pages out of those it actually release to the driver.
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+Changes in v2:
+ - modify commit info add how to find the problem in the log
 
->
->Our tests have shown significant benefit of this change in terms of
->time consumed by dma_pool_free().
->During a test where an event was raised by HCA
->to release 1.3 Million pages, following observations were made:
->
->- Without this change:
->Number of mailbox messages allocated was around 20K, to accommodate
->the DMA addresses of 1.3 million pages.
->The average time spent by dma_pool_free() to free the DMA pool is between
->16 usec to 32 usec.
->           value  ------------- Distribution ------------- count
->             256 |                                         0
->             512 |@                                        287
->            1024 |@@@                                      1332
->            2048 |@                                        656
->            4096 |@@@@@                                    2599
->            8192 |@@@@@@@@@@                               4755
->           16384 |@@@@@@@@@@@@@@@                          7545
->           32768 |@@@@@                                    2501
->           65536 |                                         0
->
->- With this change:
->Number of mailbox messages allocated was around 800; this was to
->accommodate DMA addresses of only 50K pages.
->The average time spent by dma_pool_free() to free the DMA pool in this case
->lies between 1 usec to 2 usec.
->           value  ------------- Distribution ------------- count
->             256 |                                         0
->             512 |@@@@@@@@@@@@@@@@@@                       346
->            1024 |@@@@@@@@@@@@@@@@@@@@@@                   435
->            2048 |                                         0
->            4096 |                                         0
->            8192 |                                         1
->           16384 |                                         0
->
+ tools/testing/selftests/kselftest_harness.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sounds like you only release 50k pages out of the 1.3M! what happens to the
-rest? eventually we need to release them and waiting for driver unload
-isn't an option.
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index b634969cbb6f..dbbbcc6c04ee 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -1084,7 +1084,7 @@ void __wait_for_test(struct __test_metadata *t)
+ 		}
+ 	} else {
+ 		fprintf(TH_LOG_STREAM,
+-			"# %s: Test ended in some other way [%u]\n",
++			"# %s: Test ended in some other way [%d]\n",
+ 			t->name,
+ 			status);
+ 	}
+-- 
+2.17.1
 
-My theory here of what happened before the patch:
-1. FW: event to request to release 1.3M;
-2. driver: prepare a FW command to release 1.3M, send it to FW with 1.3M;
-3. FW: release 50K;
-4. goto 1;
 
-After the patch:
-1. FW: event to request to release 1.3M;
-2. driver: prepare a FW command to release 50k**, send it to FW with 50k*;
-3. FW: release 50K; Driver didn't ask for more. no event required.
-4. Done;
 
-After your patch it seems like there 1.25M pages that are lingering in FW
-ownership with no use.
-
->Signed-off-by: Anand Khoje <anand.a.khoje@oracle.com>
->Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
->Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
->---
-> drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c | 16 +++++++++++++++-
-> 1 file changed, 15 insertions(+), 1 deletion(-)
->
->diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
->index d894a88..972e8e9 100644
->--- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
->+++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
->@@ -608,6 +608,11 @@ enum {
-> 	RELEASE_ALL_PAGES_MASK = 0x4000,
-> };
->
->+/* This limit is based on the capability of the firmware as it cannot release
->+ * more than 50000 back to the host in one go.
->+ */
->+#define MAX_RECLAIM_NPAGES (-50000)
->+
-> static int req_pages_handler(struct notifier_block *nb,
-> 			     unsigned long type, void *data)
-> {
->@@ -639,7 +644,16 @@ static int req_pages_handler(struct notifier_block *nb,
->
-> 	req->dev = dev;
-> 	req->func_id = func_id;
->-	req->npages = npages;
->+
->+	/* npages > 0 means HCA asking host to allocate/give pages,
->+	 * npages < 0 means HCA asking host to reclaim back the pages allocated.
->+	 * Here we are restricting the maximum number of pages that can be
->+	 * reclaimed to be MAX_RECLAIM_NPAGES. Note that MAX_RECLAIM_NPAGES is
->+	 * a negative value.
->+	 * Since MAX_RECLAIM is negative, we are using max() to restrict
->+	 * req->npages (and not min ()).
->+	 */
->+	req->npages = max_t(s32, npages, MAX_RECLAIM_NPAGES);
-> 	req->ec_function = ec_function;
-> 	req->release_all = release_all;
-> 	INIT_WORK(&req->work, pages_work_handler);
->-- 
->1.8.3.1
->
->
 
