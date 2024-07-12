@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-250774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D218A92FCAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:35:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B3D92FCA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D775283C31
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A769C2835B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A5B172BDE;
-	Fri, 12 Jul 2024 14:34:39 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601D4172793;
+	Fri, 12 Jul 2024 14:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyCXAOeI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19DC172BAF;
-	Fri, 12 Jul 2024 14:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FB0171E49;
+	Fri, 12 Jul 2024 14:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720794878; cv=none; b=HbN7WlrtRtV0aLJDMEMZHusdiincbKBm81fQrAYEa19rjzQ2zDi2KOiuO6D00IkFQ6if1v0V65F04QRbagb3wfI0VWaX1IgXjtdQY1BjRgu7z4ywyivfL8/x7GZMsvDwPG++eg+SHeRq3Vur6Rp7FkBjJ17A0ho+EGNZ2y8H0D8=
+	t=1720794874; cv=none; b=hE3T95bi2EQtHRCgyrV84QdZpXR/croQAjJk+vVUWbDzZsTU4glfa4clitLQzU/u8SZuc/QMJZopcEuHWUjycLxN+mi6fo1/mQ254i+dVPZ0AcHoFFrj7LfkAXDfCi6qjPy9oOm8Bx7KuOvm9ma2EjRKioOTxKy0UPGtCuOq9Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720794878; c=relaxed/simple;
-	bh=l7PJwe3KWvK5haT5OB1kVY4lIVopAz5D0IUJmHHLV5o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EFHurp/tK+E8YqcBIaoduL/3tOJfHDh2mqh49Omh6N4wjOdJoOG8+oCPxCwgY9TYFHaOM0+AnwMr29cC5fVqOiObaO4fuv0lqcc3t/CKTnw1p7rXeDHLSdzm3WhB3IBoixxQu65hfBd724psfZMgOsDGImuuRTekDEwqP/y6Low=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-585e774fd3dso2852783a12.0;
-        Fri, 12 Jul 2024 07:34:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720794875; x=1721399675;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vTHbgE6h5G2xxuO/oI+Wjht6sqYDxcfoXzE4OLT7DJE=;
-        b=sS/gsoXbXu5miNMu3U4LZkuOQd1p5f/LcZaHLnXf/uw2eFNnujn/ZJ/49oCALt+Gee
-         Bp/+A3Uph3BXRtVd47O2M/T18voNlToQfBP0SqSk1/oOGBaLxP1JCnksxJVsj13c0D5c
-         2Rhu2CGIpGUCUKHlH0t+iEJ6wnWBZayWBAfeckekHyqpJzLsC0Z1rxVM4WHYXzUMFAih
-         EG2o9AHrunCLANQO/uScm2OYKolk0AzmT/p+xwWYqawO5fuSju6wbzjbtvYWF3IQwIDF
-         YBzoWqt7yj8aKzZXMrndFLAfPN3XMwWW8sVw0YkojePYQc478JgL+DoBLnp4WE6G+VwQ
-         kv8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWFE3C3m1+PltdtYhJVWyrjmITSHr381z4EN1DubS4oed5GrHnPdAWFpMNSyoqKsvOt9MrstTdXrHl4pL2DSqdOELYlBWh9JTWt3zMX1BkGKuxrPDM+soVcmYrN4bLbRxm2jZ4t1cBwcFbPfcnRg6ACVYCIM2oRCLv6+c7X
-X-Gm-Message-State: AOJu0YxdvOS1/aUkJwMFrT910BQl3yLMXLzTgYS3M+zwvQimdbzndvd3
-	vdl+s7nOD2weptjp2VZQduvjHYR9tob5rgKfDSaQrJ+E3dIdb8Pw
-X-Google-Smtp-Source: AGHT+IFx7bkphX+JOo4An8ROVYQ7B6+7lTK29sRJe5lcOp44HVCPT6mVOPXizz7IVkDmbqw4pyxUww==
-X-Received: by 2002:a05:6402:2742:b0:57c:610a:6e7f with SMTP id 4fb4d7f45d1cf-594baf8719fmr9753671a12.11.1720794874945;
-        Fri, 12 Jul 2024 07:34:34 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bb9605dcsm4634440a12.6.2024.07.12.07.34.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:34:34 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	Jakub Kicinski <kuba@kernel.org>,
-	=?UTF-8?q?Bruno=20Pr=C3=A9mont?= <bonbons@linux-vserver.org>,
-	Matt Mackall <mpm@selenic.com>
-Cc: thepacketgeek@gmail.com,
-	riel@surriel.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH net v2] net: netconsole: Disable target before netpoll cleanup
-Date: Fri, 12 Jul 2024 07:34:15 -0700
-Message-ID: <20240712143415.1141039-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720794874; c=relaxed/simple;
+	bh=Rsc8YZHaNuK+LM4JyoZlYijO2KWuj32xA3bxhSdG1Q8=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=VVKaYQxwnzYGPvNoUZ4YEOWyrW1ILlc4z9tFylWfRAe7wGcb8lTQQ4Fuuhq55/f34NNdnNFf9MNc1z9NPRgz2SN15vQMoKUF6vS8rvCUHGC8wk2ZbPAVQcwtO7g+VHx+ee6vWBJ1U5/SB98oCQSjFUdpOilsaUoN3+HKRpdCFWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyCXAOeI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C77F9C32782;
+	Fri, 12 Jul 2024 14:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720794874;
+	bh=Rsc8YZHaNuK+LM4JyoZlYijO2KWuj32xA3bxhSdG1Q8=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=kyCXAOeIT4s3VrsTFKGOZ6HJTOOZmELIG6yFsUjVNxpvuXN0kQt870rH0byDWLWeq
+	 Gxk8EYPjJ6UlJgt/7vLUs+2xkZlGm7hh4RVgo0WZUa6bG2d0QfagtsKGr0IhtNqdPw
+	 lwlm5zA8f3lzRoT0h4NAQvNUmlxrLLNoTlxzogQgM7n77GXGPgb97aQES7O/rgKemF
+	 gbgaf3xCVunUWjqQY0YQTiDp9LgaKi2oOAntihc/t4XHaZTT2SnMCOaGrVoc3W5qXL
+	 MqNmOVpVWAsjLOEyyZYdqQqlMl04P8rWZOBIxF/nswGb3+tPDxYrv09sH3ig6tMAKa
+	 b5NurYSXXnMug==
+Date: Fri, 12 Jul 2024 08:34:32 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Jishnu Prakash <quic_jprakash@quicinc.com>, 
+ Amit Kucheria <amitk@kernel.org>, linux-iio@vger.kernel.org, 
+ Lukasz Luba <lukasz.luba@arm.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Taniya Das <quic_tdas@quicinc.com>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, Zhang Rui <rui.zhang@intel.com>, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Kamal Wadhwa <quic_kamalw@quicinc.com>, devicetree@vger.kernel.org, 
+ Jagadeesh Kona <quic_jkona@quicinc.com>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Imran Shaik <quic_imrashai@quicinc.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-msm@vger.kernel.org, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
+ Ajit Pandey <quic_ajipan@quicinc.com>
+In-Reply-To: <20240712-mbg-tm-support-v1-2-7d78bec920ca@quicinc.com>
+References: <20240712-mbg-tm-support-v1-0-7d78bec920ca@quicinc.com>
+ <20240712-mbg-tm-support-v1-2-7d78bec920ca@quicinc.com>
+Message-Id: <172079487284.777333.16103955331263207845.robh@kernel.org>
+Subject: Re: [PATCH 2/5] dt-bindings: thermal: qcom: Add MBG thermal
+ monitor bindings
 
-Currently, netconsole cleans up the netpoll structure before disabling
-the target. This approach can lead to race conditions, as message
-senders (write_ext_msg() and write_msg()) check if the target is
-enabled before using netpoll. The sender can validate that the target is
-enabled, but, the netpoll might be de-allocated already, causing
-undesired behaviours.
 
-This patch reverses the order of operations:
-1. Disable the target
-2. Clean up the netpoll structure
+On Fri, 12 Jul 2024 18:13:29 +0530, Satya Priya Kakitapalli wrote:
+> Add bindings support for the MBG Temp alarm peripheral found on
+> pm8775 pmics.
+> 
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  .../bindings/thermal/qcom-spmi-mbg-tm.yaml         | 63 ++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+> 
 
-This change eliminates the potential race condition, ensuring that
-no messages are sent through a partially cleaned-up netpoll structure.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Fixes: 2382b15bcc39 ("netconsole: take care of NETDEV_UNREGISTER event")
-Cc: stable@vger.kernel.org
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changelog:
+yamllint warnings/errors:
 
-v2:
- * Targeting "net" instead of "net-dev" (Jakub)
+dtschema/dtc warnings/errors:
+In file included from Documentation/devicetree/bindings/thermal/qcom-spmi-mbg-tm.example.dts:25:
+./scripts/dtc/include-prefixes/dt-bindings/iio/adc/qcom,spmi-adc5-gen3-pm8775.h:9:10: fatal error: dt-bindings/iio/adc/qcom,spmi-vadc.h: No such file or directory
+    9 | #include <dt-bindings/iio/adc/qcom,spmi-vadc.h>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/thermal/qcom-spmi-mbg-tm.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
 
-v1:
- * https://lore.kernel.org/all/20240709144403.544099-4-leitao@debian.org/
+doc reference errors (make refcheckdocs):
 
- drivers/net/netconsole.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240712-mbg-tm-support-v1-2-7d78bec920ca@quicinc.com
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index d7070dd4fe73..aa66c923790f 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -974,6 +974,7 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 				/* rtnl_lock already held
- 				 * we might sleep in __netpoll_cleanup()
- 				 */
-+				nt->enabled = false;
- 				spin_unlock_irqrestore(&target_list_lock, flags);
- 
- 				__netpoll_cleanup(&nt->np);
-@@ -981,7 +982,6 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 				spin_lock_irqsave(&target_list_lock, flags);
- 				netdev_put(nt->np.dev, &nt->np.dev_tracker);
- 				nt->np.dev = NULL;
--				nt->enabled = false;
- 				stopped = true;
- 				netconsole_target_put(nt);
- 				goto restart;
--- 
-2.43.0
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
