@@ -1,110 +1,129 @@
-Return-Path: <linux-kernel+bounces-250353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B9B92F6D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:22:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07D192F6EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 132D31F22890
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:22:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 775A0B2240F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A881422AB;
-	Fri, 12 Jul 2024 08:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73ED1422C2;
+	Fri, 12 Jul 2024 08:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cL0fSDoF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZPg5w9D"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DEE13D509;
-	Fri, 12 Jul 2024 08:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EB312E4D;
+	Fri, 12 Jul 2024 08:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720772517; cv=none; b=c1HxQ8iG15oKY9H2adsLVDtfiGeV/TkMmGyMgr0pAvqDhECeBQGWutBIPTQ1bD4pEPnf9JVd2Uaxzkp5VgtIw2aNX7D3CBXy2wph6nuqtjUkPMtWbXmCh0ejCvCN609JJoHqHFQMsw+g/9+/2EG2+eA0z2GI8fPVXcdSeoxTFmk=
+	t=1720772875; cv=none; b=OfmYvRy2K7G5FmK1SGXpoILMoTRxIKrZWI1h79D8qxzlJyWRxILiGZqX9Mj/fufBVaDyyJp53J3zvywDw6r5ZbNAwoSwvXsO1DBqn/64OlpvRFV91oAuhhyCNMEyIdlLzyf2qrnz2CIJejeGA+hLVIebWeKTUkGtBrSpEMJDtGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720772517; c=relaxed/simple;
-	bh=8bMsk5SOo1mc2TFA8uYHzwh3XmMNKj9uKFyKVesNCCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oblxBbe9x7vaa+7VNa12YJ4eO2T6zm8wyczUPhPJQZzVvU7K58fQz15hRRg/l/9Moqo7zAAibls9RHuJ4dhQs5oyQCSzo7oTGbtSh21B9IbQB785nGw05933hUlSg0BpsU+SXD1DOzwyAocQ5yWCZkbLYJYY/KfRDVlvDjuLj/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cL0fSDoF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB6CC4AF09;
-	Fri, 12 Jul 2024 08:21:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720772516;
-	bh=8bMsk5SOo1mc2TFA8uYHzwh3XmMNKj9uKFyKVesNCCc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cL0fSDoFH1Rs0IQXdBwP/LY2Hyjz2pLFGrpxXKz4bURQxCTcIY6Wgo+6UlsJriUvQ
-	 dc4doYxAUUI7vMCuHAzektY2+59PdviQun9Ac6fosb59ZEj/HFWQLCF5BeyCWcZkfK
-	 /GG0+UOrdCoi3XZXkks2mYR6PkwwFqcNop6FuBUk+X/JzbpfutXQh1VXR12BjGYkE0
-	 OynHiMwE0i4ki0YSBC+dhvGKw+1xYwPdvZ7fog1uBCQXkGlnFC93JqStIUz5tAIG7Z
-	 vDla3tcl+wE8ivi2Jelt0jhTumPFXhYtg9QZc6XPo93xPSOjjQ+4qX6GG4rrT094x4
-	 5XeZtKs/PJ+sQ==
-Date: Fri, 12 Jul 2024 09:21:53 +0100
-From: Lee Jones <lee@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the leds-lj tree
-Message-ID: <20240712082153.GP501857@google.com>
-References: <20240712144831.269b1bc6@canb.auug.org.au>
- <20240712073139.GO501857@google.com>
- <6690dfdb.df0a0220.90a81.64f1@mx.google.com>
+	s=arc-20240116; t=1720772875; c=relaxed/simple;
+	bh=le5dYeKeMN72cFGphIh3Zjwmzh+E29gcZbJr9tLoWiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aG+DFdZbNc2QeNJ6CgoNbR45GrH7CFy6nVZFLUTa1wn+JegTgJLMv2zCFJNZrvfZYY4LogN2NMbNAQC6vn97igCttoDWBzeFAcRpQKhgQeLbOqKUNusWdxITxiN+0xWmls9/slxqnmQihsxQGoBNwNNc9ojgRaWHV3OPdt5sVzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZPg5w9D; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fb3b7d0d3aso11159035ad.2;
+        Fri, 12 Jul 2024 01:27:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720772873; x=1721377673; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pUH4Ta/QRdnRhyzc2SMs3g2de0B3R+JsmqJYPNB7zhk=;
+        b=PZPg5w9D4BiNi8/fTZKIaatiFtpOY/Dt40q9rrBDCNhbCi25fs+e4WywZwZY6oL4dT
+         jUzx9PEH4/0NT8cuO06yKbU5qbP0dDvtRzpT2JArM5/cAvu1O20uMVDOFZOJzpoRdsnV
+         D+lwdpgOnwgs/qtNrnC+h5x7IZT+fS9NZ35eBFGslZED7LI2Garo61op1qJFKW3cMp4d
+         z4Sa8W1xGC15HUywt4eRO9nNQVLW2cdHm/vBa4w3h7NAZtKgaaIFQtKdk2mAmPBNXlnh
+         zOSQf5UpmW//cXKR8BgB9/i0Vlin51l1xEsOeK7OD712A3AcxSnT+VBjvvOaasuH6gka
+         HT1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720772873; x=1721377673;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pUH4Ta/QRdnRhyzc2SMs3g2de0B3R+JsmqJYPNB7zhk=;
+        b=lBrjy87lkDjRGWu/uVIZhIrgojKai+zwtcOvpVJ98VWG15h4fEv2d953lEpHuW5lSs
+         JD2eYxJxyN2sC5uT4qxqIqceKJazPK0yqlHugYXgtacAqZuTBrA/j2B/C4o3BGe3EboY
+         F3iEu6zK4/4myMr2KL4WulMeGbGbQ2jYaLHjzkolV4MkCoovadp471QBxUO/xRJVMOJT
+         bnvV3G+5xv5y/IFof1eERPwhpX1r/zsnDjdSyvvkQ60IOalCzoCa7DPUoEMvuLxfkMbD
+         drNCCoPHnr08PYaOqZfpLyqhUon8BDtnqsQMmgWkCmMvDutAh3V/DkKousVeL+qxl+RB
+         PXLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpPun/9jiRc0wxoWd85lB11dne99klkwR+bl7LklSPD2AovbOMBYPgqilFcmQKquADPgETjzT7PNEZlFXhbIK2d5uyEd71iM4hO9fayEXWTjOltxUi2HT70aR7xSmFFPRFdeqGpeTnYkW2yg==
+X-Gm-Message-State: AOJu0Yw65fgqt/q82oHDMDGZm+z1b8kmUeSz5Y3zPCmWNNciYHOGe3WK
+	519XBX26u47fwPt/8Ya0wQNTaFAkp0PY8QSiEu4dLv8zEJtwUyIMEF50pK4s
+X-Google-Smtp-Source: AGHT+IHnj9sXK5oRYwp2GFRckd6tuQls03MuSd64jLQFj1cYdnZLjOfUUmo8IQ2Emib66b1FAEoXTQ==
+X-Received: by 2002:a17:902:e80d:b0:1fb:52b3:68af with SMTP id d9443c01a7336-1fbb6d03e42mr100607195ad.24.1720772873083;
+        Fri, 12 Jul 2024 01:27:53 -0700 (PDT)
+Received: from bnew-VirtualBox ([2405:201:3020:7812:62ae:9a8b:a942:6b7f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ac0c82sm62040785ad.185.2024.07.12.01.27.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 01:27:52 -0700 (PDT)
+Date: Fri, 12 Jul 2024 13:57:47 +0530
+From: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drivers/clocksource/qcom: Add missing iounmap() on errors
+ in msm_dt_timer_init() function.
+Message-ID: <20240712082747.GA182658@bnew-VirtualBox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6690dfdb.df0a0220.90a81.64f1@mx.google.com>
 
-On Fri, 12 Jul 2024, Christian Marangi wrote:
+Add the missing iounmap() when clock frequency fails to get read by the
+of_property_read_u32() call, or if the call to msm_timer_init() fails.
 
-> On Fri, Jul 12, 2024 at 08:31:39AM +0100, Lee Jones wrote:
-> > Christian,
-> > 
-> > > Hi all,
-> > > 
-> > > After merging the leds-lj tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > > 
-> > > In file included from drivers/leds/leds-lp5569.c:11:
-> > > drivers/leds/leds-lp5569.c: In function 'lp5569_post_init_device':
-> > > drivers/leds/leds-lp5569.c:204:52: error: passing argument 3 of 'lp55xx_read' from incompatible pointer type [-Werror=incompatible-pointer-types]
-> > >   204 |                           chip, LP5569_REG_STATUS, &val);
-> > >       |                                                    ^~~~
-> > >       |                                                    |
-> > >       |                                                    int *
-> > 
-> > The only reason for applying this set this late in the cycle was that
-> > they appeared to be fixes for other brokenness.
-> > 
-> > This is the second set that you've submitted in recent days that has
-> > caused build breakages.  Something is wrong with your current
-> > development practices.  Are you able to identify and rectify these
-> > issue(s) before a lose trust in your submissions?
-> >
-> 
-> Yes, I identified the problem and the config was silently getting
-> disabled and hiding all the errors/warning. Driver also was tested on
-> OpenWrt build system where the option WERROR wasn't enabled as I was
-> devloping other stuff so this added on top of it of not noticing stuff.
-> 
-> I promise this won't ever happen again. Also I sent v2 for this hoping
-> things can get reverted and the correct series can be applied. If not I
-> can quickly send a followup that fix this. I verified with the repro
-> that the warning/error gets solved. (it's just channging the int to u8)
+Signed-off-by: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
+---
+Changes in v2:
+ - Add iounmap() if msm_timer_init() fails
+ - Update patch commit message
 
-No need to follow up.
+Previous discussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240710110813.GA15351@bnew-VirtualBox/
+---
+ drivers/clocksource/timer-qcom.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-I've applied the new set and sent for pre-testing.
-
-Once passed, I'll push so it'll end up in -next again.
-
+diff --git a/drivers/clocksource/timer-qcom.c b/drivers/clocksource/timer-qcom.c
+index b4afe3a67..eac4c95c6 100644
+--- a/drivers/clocksource/timer-qcom.c
++++ b/drivers/clocksource/timer-qcom.c
+@@ -233,6 +233,7 @@ static int __init msm_dt_timer_init(struct device_node *np)
+ 	}
+ 
+ 	if (of_property_read_u32(np, "clock-frequency", &freq)) {
++		iounmap(cpu0_base);
+ 		pr_err("Unknown frequency\n");
+ 		return -EINVAL;
+ 	}
+@@ -243,7 +244,11 @@ static int __init msm_dt_timer_init(struct device_node *np)
+ 	freq /= 4;
+ 	writel_relaxed(DGT_CLK_CTL_DIV_4, source_base + DGT_CLK_CTL);
+ 
+-	return msm_timer_init(freq, 32, irq, !!percpu_offset);
++	ret = msm_timer_init(freq, 32, irq, !!percpu_offset);
++	if (ret)
++		iounmap(cpu0_base);
++
++	return ret;
+ }
+ TIMER_OF_DECLARE(kpss_timer, "qcom,kpss-timer", msm_dt_timer_init);
+ TIMER_OF_DECLARE(scss_timer, "qcom,scss-timer", msm_dt_timer_init);
 -- 
-Lee Jones [李琼斯]
+2.25.1
+
 
