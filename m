@@ -1,175 +1,192 @@
-Return-Path: <linux-kernel+bounces-250154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC0092F4C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:58:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BBA992F4CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:58:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66AE01F22123
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79D811C2226E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA9B17741;
-	Fri, 12 Jul 2024 04:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204A81799F;
+	Fri, 12 Jul 2024 04:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jzak3L1Y"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMbL4/XG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF2715E83;
-	Fri, 12 Jul 2024 04:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F17818AF9;
+	Fri, 12 Jul 2024 04:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720760278; cv=none; b=FDDEqjjfvqv/nEObbclCqJN9Ldpld7G23O7fwc/5wFYHDssLMZ+KBbwJTi1c4xrcYJrbbToc4na4mTIMYjxNx1BcIhNYMp2pOEzMfj27N/cmV6BqurNAI1AqXklERssVFFz7I5uNb72Vz2yJAnck1HPrT+92XtDSyOMrfg3g97Y=
+	t=1720760320; cv=none; b=FufSELgIR1b/Xjn/XU8bayIVm/9sEuqqMSFgKq7Mc+LYsPPBILsxTvecTJykLaVFCQb64L63qWKNHICX5Bt3WJXyx+h1ucQ1n4HAeF8YetjhdgTyuOIxJqotyOiNK3q/2Cc9MIGOagRmVnWwfFnfwNxFDBfKiBItdTNAZ/FyJug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720760278; c=relaxed/simple;
-	bh=XF/ip4QNMmObtpMNy5uwbrxVBFm5W7dTrDLY8KaJIIE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oFiNufLszvN3IaR25A0Ma3koAaJGdS8mXZaR2ovKP0yO+qI/mGTxyAQRkmiB7dY/yE3lekjCHBbxAGDF5sOJYs6qen7p8Tu7g23JYJlM9hYdpqkbhcMg/AE1zEu9bM0+zpr1160lPP+fyb29gHq2omhziCJnDJ14CRxsL7RRk3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jzak3L1Y; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b09cb7776so1346932b3a.1;
-        Thu, 11 Jul 2024 21:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720760276; x=1721365076; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cgc5qzxw5wK05hMWCEUdBVLXJ0/WrgFO139zlUvcUS4=;
-        b=Jzak3L1YcQe8kkaiizbvwRu/GquP85GqYgi9sRoQtUTL0lnTrbWo06VqhRPsvR4MQ0
-         kKvOsrsMgTvF5mjb0RneheQjiIFdyp6x1SRatVEyG/S261OF/kqqWlCGVknoWOnc9Knr
-         nZkZire9M26Z8Rg6PexeBxFe1sZCLe58D/MZSh4ihbAJE2xk5ouV86m5VPglywX3+P3X
-         zJJ/5RA49cdye2GbrW9TPan2EKIQu5QQQcD0GZAlYRN7pTCC3kHf/w3VIsujcFj1EqB/
-         9tf48fJXmm4N6gALddpJYV9kC5Ej3GQ+2Szp6QVaD7ylLZX3h5e2OWIXIJzh1jtaVr04
-         UkTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720760276; x=1721365076;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cgc5qzxw5wK05hMWCEUdBVLXJ0/WrgFO139zlUvcUS4=;
-        b=eO17Z8PNG75OURJkMB8/gyyaqaPHVbu7ochY1QFvFjTZgD4VSVzim3lhpE5fBuabZV
-         EEfRHATDSgBiWGQuhdcnMCBv4ML0SKKzZ/vDBu/K0VXQnP3g5peiDb3s/mKHZTxt11BZ
-         8Okl9uq31JNoKO/SXl24XY5ohm6Z8Wc+LLVcSxnUmc+mT0rR8/I5HowHn10zrsRiYUnr
-         zKcSy3kABXHssRUgcGcaOke458l7jpeujunc7qACdQ+sK3Of8PzLfgNyjLA59AJxvL6G
-         xYOGF1cBgEwNS1GRM7R+HiZVylSwSVbVN0zsEGYAw8GM8rD7vcq35AqbmMO0GZYgxh19
-         70dw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9Wp0Z6T4F4+wjyFcThx0DxLRFf+NFDDud/rDapcFeBo1XSOpTYmg2nxlI9wF96pXERxW/gsDFH/m/GoI/XcOBZRh5kHwuHV0oWMP8rMtP2uUhEEbnNsW2SvtL8BOJVOSfgAkKVilqH/KsB0Pl2dUk
-X-Gm-Message-State: AOJu0YxETB4IGHBYWYPC4jxc8yqujjURv+f/5BNqkCrdohpT4xNQAIrb
-	ubyimj+VSpqqFfNA3ExwcG5S2nWWM2QbTjzDYwCcTlrC3AxL4y3QYYMrjD2cJV4tOPu04XSRSYV
-	p6Qt78HqTgOZwddf4UuNwzlyfyjk=
-X-Google-Smtp-Source: AGHT+IEUkeZtcyGtlaj1RFsDY8XRb2zXNgRyQzpsu3Xb7SVhQeA1Hi5KxpSqWP6IoNyOD56FgMHHOTYrBBurmIi/o8Q=
-X-Received: by 2002:a05:6a21:39a:b0:1c0:f48e:a5ed with SMTP id
- adf61e73a8af0-1c29824d6d8mr10526627637.37.1720760276248; Thu, 11 Jul 2024
- 21:57:56 -0700 (PDT)
+	s=arc-20240116; t=1720760320; c=relaxed/simple;
+	bh=5Ji3ZmOKlD4NChkJywfgIH2PGeXGJZeyK0GuUptOlFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZKsP7/qWT+IhiHPzegVawjDrnviBPxJzgv3PA4gJcdgzFnR59z+BKVMOwYVCm4hcW3AOJMOh5f26KE2RJxH7d8y2p777utFbt/odVhZ3h1sagqp0KRepq47QdpMO/iJQFm45vcWLArdSTll3qEj0WecnlT9ryj7qbGOREp/WnhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMbL4/XG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 989DBC3277B;
+	Fri, 12 Jul 2024 04:58:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720760319;
+	bh=5Ji3ZmOKlD4NChkJywfgIH2PGeXGJZeyK0GuUptOlFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pMbL4/XG/xXjekFwnVT6Vm02GxVhIIptg2vJ+OujJbO6jOqd7J5CwZYrtazymwCak
+	 +Kf/qyKz/hj5xTnB4J5Eg7mvyoGjioyT9GdSkORRVbHvVlSJYyOo0cHZ+soNbJV4lR
+	 HJSo02cgF51/0kgWILtAiWl3ZzZUw36Ffa4U7gQ0zUzdQFhEYhozxE/yk1TLD8jSSv
+	 qsAz++sYfzHoxm8zPWgCZ61GOCaXM5Lx0uRYuOQ8ZaxZMEPHQNBBQMjRkSsE5S24Ok
+	 ItyDfGPiAG/lh4KxXtrTRXFmwm2RUWcPtDtMZ8SnvNOQz5UtOXnZSKyIzDxAfjFwU1
+	 LDwSwS/fEOC0A==
+Date: Thu, 11 Jul 2024 21:58:34 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Nick Terrell <terrelln@fb.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Changbin Du <changbin.du@huawei.com>,
+	James Clark <james.clark@linaro.org>, amadio@gentoo.org,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] perf docs: Remove the Android cross building
+ document
+Message-ID: <ZpC3-p0kG7dGkp_5@google.com>
+References: <20240706182912.222780-1-leo.yan@arm.com>
+ <20240706182912.222780-8-leo.yan@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711110235.098009979@infradead.org>
-In-Reply-To: <20240711110235.098009979@infradead.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 11 Jul 2024 21:57:44 -0700
-Message-ID: <CAEf4BzZ+ygwfk8FKn5AS_Ny=igvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] perf/uprobe: Optimize uprobes
-To: Peter Zijlstra <peterz@infradead.org>, oleg@redhat.com
-Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org, mhiramat@kernel.org, 
-	jolsa@kernel.org, clm@meta.com, paulmck@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240706182912.222780-8-leo.yan@arm.com>
 
-On Thu, Jul 11, 2024 at 4:07=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> Hi!
->
-> These patches implement the (S)RCU based proposal to optimize uprobes.
->
-> On my c^Htrusty old IVB-EP -- where each (of the 40) CPU calls 'func' in =
-a
-> tight loop:
->
->   perf probe -x ./uprobes test=3Dfunc
->   perf stat -ae probe_uprobe:test  -- sleep 1
->
->   perf probe -x ./uprobes test=3Dfunc%return
->   perf stat -ae probe_uprobe:test__return -- sleep 1
->
-> PRE:
->
->   4,038,804      probe_uprobe:test
->   2,356,275      probe_uprobe:test__return
->
-> POST:
->
->   7,216,579      probe_uprobe:test
->   6,744,786      probe_uprobe:test__return
->
-> (copy-paste FTW, I didn't do new numbers because the fast paths didn't ch=
-ange --
->  and quick test run shows similar numbers)
->
-> Patches also available here:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/upr=
-obes
->
->
-> Changes since last time:
->  - better split with intermediate inc_not_zero()
->  - fix UPROBE_HANDLER_REMOVE
->  - restored the lost rcu_assign_pointer()
->  - avoid lockdep for uretprobe_srcu
->  - add missing put_uprobe() -> srcu_read_unlock() conversion
->  - actually initialize return_instance::has_ref
->  - a few comments
->  - things I don't remember
->
->
+On Sat, Jul 06, 2024 at 07:29:12PM +0100, Leo Yan wrote:
+> The Android NDK (as time being the latest LTS version is r26d) changes
+> toolchain to LLVM / Clang, so GCC compilers is not included in the NDK
+> anymore. Therefore, the Android document contains obsolete info for
+> building perf binary with NDK.
 
-Hey Peter!
+Do you know if the version prior to the change is still used?
 
-Thanks for the v2, I plan to look at it more thoroughly tomorrow. But
-meanwhile I spent a good chunk of today to write an uprobes
-stress-test, so we can validate that we are not regressing anything
-(yes, I don't trust lockless code and people in general ;)
+> 
+> Furthermore, the Clang included in the Android NDK is problematic for
+> cross compilation Aarch64 target. The building reports multiple errors
+> with the compiler aarch64-linux-android34-clang.
+> 
+> Thus, delete Documentation/android.txt to avoid confusion.
 
-Anyways, if you'd like to use it, it's at [0]. All you should need to
-build and run it is:
+If so, maybe we can keep the document little more and add a note that
+this works only for some old versions.
 
-  $ cd examples/c
-  $ make -j$(nproc) uprobe-stress
-  $ sudo ./uprobe-stress -tN -aM -mP -fR
+I'm also curious if it's still broken after your fixes.
 
+Thanks,
+Namhyung
 
-N, M, P, R are number of threads dedicated to one of four functions of
-the stress test: triggering user space functions (N),
-attaching/detaching various random subsets of uprobes (M), mmap()ing
-parts of executable with uprobes (P), and forking the process and
-triggering uprobes for a little bit (R). The idea is to test various
-timings and interleavings of uprobe-related logic.
-
-You should only need not-too-old Clang to build everything (Clang 12+
-should work, I believe). But do let me know if you run into troubles.
-
-I did run this stress test for a little while on current
-bpf-next/master with no issues detected (yay!).
-
-But then I also ran it on Linux built from perf/uprobes branch (these
-patches), and after a few seconds I see that there is no more
-attachment/detachment happening. Eventually I got splats, which you
-can see in [1]. I used `sudo ./uprobe-stress -a10 -t5 -m5 -f3` command
-to run it inside my QEMU image.
-
-So there is still something off, hopefully this will help to debug and
-hammer out any remaining kinks. Thanks!
-
-  [0] https://github.com/libbpf/libbpf-bootstrap/commit/2f88cef90f9728ec8c7=
-bee7bd48fdbcf197806c3
-  [1] https://gist.github.com/anakryiko/f761690addf7aa5f08caec95fda9ef1a
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/perf/Documentation/android.txt | 78 ----------------------------
+>  1 file changed, 78 deletions(-)
+>  delete mode 100644 tools/perf/Documentation/android.txt
+> 
+> diff --git a/tools/perf/Documentation/android.txt b/tools/perf/Documentation/android.txt
+> deleted file mode 100644
+> index 24a59998fc91..000000000000
+> --- a/tools/perf/Documentation/android.txt
+> +++ /dev/null
+> @@ -1,78 +0,0 @@
+> -How to compile perf for Android
+> -=========================================
+> -
+> -I. Set the Android NDK environment
+> -------------------------------------------------
+> -
+> -(a). Use the Android NDK
+> -------------------------------------------------
+> -1. You need to download and install the Android Native Development Kit (NDK).
+> -Set the NDK variable to point to the path where you installed the NDK:
+> -  export NDK=/path/to/android-ndk
+> -
+> -2. Set cross-compiling environment variables for NDK toolchain and sysroot.
+> -For arm:
+> -  export NDK_TOOLCHAIN=${NDK}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-
+> -  export NDK_SYSROOT=${NDK}/platforms/android-24/arch-arm
+> -For x86:
+> -  export NDK_TOOLCHAIN=${NDK}/toolchains/x86-4.9/prebuilt/linux-x86_64/bin/i686-linux-android-
+> -  export NDK_SYSROOT=${NDK}/platforms/android-24/arch-x86
+> -
+> -This method is only tested for Android NDK versions Revision 11b and later.
+> -perf uses some bionic enhancements that are not included in prior NDK versions.
+> -You can use method (b) described below instead.
+> -
+> -(b). Use the Android source tree
+> ------------------------------------------------
+> -1. Download the master branch of the Android source tree.
+> -Set the environment for the target you want using:
+> -  source build/envsetup.sh
+> -  lunch
+> -
+> -2. Build your own NDK sysroot to contain latest bionic changes and set the
+> -NDK sysroot environment variable.
+> -  cd ${ANDROID_BUILD_TOP}/ndk
+> -For arm:
+> -  ./build/tools/build-ndk-sysroot.sh --abi=arm
+> -  export NDK_SYSROOT=${ANDROID_BUILD_TOP}/ndk/build/platforms/android-3/arch-arm
+> -For x86:
+> -  ./build/tools/build-ndk-sysroot.sh --abi=x86
+> -  export NDK_SYSROOT=${ANDROID_BUILD_TOP}/ndk/build/platforms/android-3/arch-x86
+> -
+> -3. Set the NDK toolchain environment variable.
+> -For arm:
+> -  export NDK_TOOLCHAIN=${ANDROID_TOOLCHAIN}/arm-linux-androideabi-
+> -For x86:
+> -  export NDK_TOOLCHAIN=${ANDROID_TOOLCHAIN}/i686-linux-android-
+> -
+> -II. Compile perf for Android
+> -------------------------------------------------
+> -You need to run make with the NDK toolchain and sysroot defined above:
+> -For arm:
+> -  make WERROR=0 ARCH=arm CROSS_COMPILE=${NDK_TOOLCHAIN} EXTRA_CFLAGS="-pie --sysroot=${NDK_SYSROOT}"
+> -For x86:
+> -  make WERROR=0 ARCH=x86 CROSS_COMPILE=${NDK_TOOLCHAIN} EXTRA_CFLAGS="-pie --sysroot=${NDK_SYSROOT}"
+> -
+> -III. Install perf
+> ------------------------------------------------
+> -You need to connect to your Android device/emulator using adb.
+> -Install perf using:
+> -  adb push perf /data/perf
+> -
+> -If you also want to use perf-archive you need busybox tools for Android.
+> -For installing perf-archive, you first need to replace #!/bin/bash with #!/system/bin/sh:
+> -  sed 's/#!\/bin\/bash/#!\/system\/bin\/sh/g' perf-archive >> /tmp/perf-archive
+> -  chmod +x /tmp/perf-archive
+> -  adb push /tmp/perf-archive /data/perf-archive
+> -
+> -IV. Environment settings for running perf
+> -------------------------------------------------
+> -Some perf features need environment variables to run properly.
+> -You need to set these before running perf on the target:
+> -  adb shell
+> -  # PERF_PAGER=cat
+> -
+> -IV. Run perf
+> -------------------------------------------------
+> -Run perf on your device/emulator to which you previously connected using adb:
+> -  # ./data/perf
+> -- 
+> 2.34.1
+> 
 
