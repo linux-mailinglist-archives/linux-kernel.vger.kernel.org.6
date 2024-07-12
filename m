@@ -1,181 +1,188 @@
-Return-Path: <linux-kernel+bounces-251128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E3999300FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:35:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EFA930101
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 21:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BB301F21F09
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98992842C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EE8381A4;
-	Fri, 12 Jul 2024 19:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA7138384;
+	Fri, 12 Jul 2024 19:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSmeegAG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FMYT0Kxr"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFE0DF49;
-	Fri, 12 Jul 2024 19:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE56BE65;
+	Fri, 12 Jul 2024 19:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720812931; cv=none; b=TUMs7VGvcrOz2MwmD78U5C3nG6yQulGdoEVs8UIBu87vRqh++7A7ezdrfD1d3iHp5LjrFW2FOAe9ZcKWmsRhNtHR7UU3u1tlTgmOJ+YafTdXf09JolHyTMC9v33uwjHlNm+kSZSIPsI/jTeKQkIgIg77lHD5+misosThGs66V4Q=
+	t=1720813122; cv=none; b=INv27WakXI3zml9km7anERbRLzp9oe3h7edwMwVFmgL4xLlwOfMEIn/YxdYGB6FEUlPGjh3Eh+XbxaB+N2W0WyHjVAnL80pBww1Q4QQE+O3exDjGd+tle70y3b2oihIeUf/YMkXnT5vpCOYeY8Cc22M9MWd3uZt5jmDj30kN7Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720812931; c=relaxed/simple;
-	bh=ph+XHcXLNuWCPF/ambgzBDtj0uCcrdSQ6Nyqt70Sp0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g8cD8pkfe7AnqKi9fWNbXid095KuZNOBTshUcGHam2GKwh3Z6v66EtC5Jz2A6KpWGWaTNOEDFZy51+2toTVu8pjh26f/qMLYiQ79aVXupXaq1xqMtcV7djIs8P6gRkKwRdv0nBKag1vs0Mo/GKgsERAXjR5qeBg9M8VCu5S6SgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NSmeegAG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BAD1C4AF09;
-	Fri, 12 Jul 2024 19:35:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720812930;
-	bh=ph+XHcXLNuWCPF/ambgzBDtj0uCcrdSQ6Nyqt70Sp0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NSmeegAGTJnqVeGZpgxL0B79yWg6SOmoog4/2EhdVO8cmsnkZJblV8kD2SEAXEKTr
-	 ya6CP7Md+x8UFORES2wlsI2vv0tQR8SV8KtZ6v+DZK/KoCT+VlXoBorzhVbWlZqIbs
-	 gaUaQFymapK9NIuUC10sgKQLx/dYqE/2FQkWLeO4LsD3qeYhxHWns0LHM8PCaBL1Mw
-	 1Y7mJMvXSAve/ERy/zjikMGz1DCZ07cP/oI7/MhQepOw+xqrinxQfGmiABBxihDTHD
-	 EWplRHYV/KRzzo7HWmgZqwCXJb/ibEKJKu3mMU+XBiuc9lRGqzrFaEuOaiHexYUNPM
-	 Wz3yyX922h35w==
-Date: Fri, 12 Jul 2024 14:35:26 -0500
-From: Namhyung Kim <namhyung@kernel.org>
-To: Casey Chen <cachen@purestorage.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yzhong@purestorage.com
-Subject: Re: [PATCH 1/1] perf tool: fix handling NULL al->maps returned from
- thread__find_map
-Message-ID: <ZpGFfjebaW9LGNBo@google.com>
-References: <20240708232302.15267-1-cachen@purestorage.com>
- <20240708232302.15267-2-cachen@purestorage.com>
- <CAM9d7cisBvfLTzNp8=0SG6g3CA9zJFNayjopSEDX0fxRyG05UA@mail.gmail.com>
- <CALCePG0_PpwKK_=YrpCGr-j51dG8xtDP-yzBYGeLwphscFobRg@mail.gmail.com>
+	s=arc-20240116; t=1720813122; c=relaxed/simple;
+	bh=eU80/SHzM9zfUD2s2UKYMH3sX2bKdh9zL0swUl003EQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k/XQ1FcP++W8K9Fy7L0rokDpOExFeuTAjubb5xsQWYI4g4WYjIp4c+Th1Vqtk3VyHBBvt1fv7zlSDlFFMVW5w6FhMG3BsHN5lYrXgBoeTXqMSBhvzEnJF4TVrF0fU+Zl3smYAWScznFts93XTZiSh14YS/WaCFlTvTX9EPvCO/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FMYT0Kxr; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-77d3f00778cso1776288a12.3;
+        Fri, 12 Jul 2024 12:38:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720813120; x=1721417920; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kmnmy4k0ZE5aqRykzl3xnNbgqOchAuqitUDaQSLA3rE=;
+        b=FMYT0KxrE3YqF7Yc17phStl7k3+0K4YihiLGPsC8sacRZHRwseLxFj+g8drLkFnAcb
+         lO9bfbfJCclJXX+xVLLDg8YttUg7C02nKAekCRgQ+9KLxLWfdW7ljk0Kcm8tvtCuMEFx
+         2MWr8j+Ud28BSn9T+IYYiwoBH4pRzFtwVjNPTJdY7mw8rO2FeMI/SvmRu2h89bsWGe+V
+         WNOWm9gVQGysn7gAUAyEVc+NERzWELFr8LLL4mCRJlRrPHbqamQT+Mww0rUIxqJqIkgh
+         sC1VnUP+WmNCWVyZlvIQJmLL+uTTSicSpE+vZxpcHc+V5Fj8oJ2bZH26VK4ARZwGpZ4i
+         cypA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720813120; x=1721417920;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kmnmy4k0ZE5aqRykzl3xnNbgqOchAuqitUDaQSLA3rE=;
+        b=xLCFWjEBl24YW6QDZn+gH2KD7xihdK4ndeyuU1jFcz1fU6fuE6CK3D+8AiGun36Ghq
+         4c+i4hWysHdWU+/TrBXnMH2Hk1ynazjzbiceFcXRxYZPNDF5D7BtJThusASQp9I7eYuV
+         cH52iRgrh5UyudU+ekdf8/+DH8m/dw4fP4/d02wj3BwXEq9d5ntsjrKHvrhBZnk6i9Yp
+         X4WEQ9uJqrzCyKgvgBzVILRxb9KAAzizXIaDiaaNqKA/heaZA+shmh2YT4NFBiUSIYrn
+         L3WZBAAfKlZZuK/O+Byh8+dklkX4ZX2g1vp2OySOuyZanIBn7w2g9b0PDPn+ufsshYev
+         e1HA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqzSXr1fZ5j+ovISdTNoLFVyYL+yjI6dJ+NWJhd4/Qzlzd6TKsAI6a9lREWEBgBSBEPuAAXY/VKL6Sg34kBWb4j6+IHxE/YnGnfwvfYjuXgU0FLoGmchANAtYYwruLsMDnD7A1pmU553cql1qeWmjG0KZdSAOiHZhAVHPzDBg0
+X-Gm-Message-State: AOJu0YxMuGtQVy/FyERl21l3Bc6otXB7NmMkwaSoSZ2jbHRyv4L7LOIg
+	zKq29saW7oJS+229hongnSekjyY9G4kJ3czYKzutacRXfyWtSCsj058e5GXvxAHgwNDGYD5jWa9
+	9avExL2bdX8Lh4/DrwM4TtK6mSrk=
+X-Google-Smtp-Source: AGHT+IEkYnIKZnwHEfRtBSBINEAoGjGPp7B+wrUPdkTTmh+byt4UPf2Fue9+13vnLFXEZOMLaAdMdmDHRfcvVg/F0yY=
+X-Received: by 2002:a17:90b:1e42:b0:2c8:6118:11a8 with SMTP id
+ 98e67ed59e1d1-2ca35d90dc7mr9306588a91.49.1720813120419; Fri, 12 Jul 2024
+ 12:38:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCePG0_PpwKK_=YrpCGr-j51dG8xtDP-yzBYGeLwphscFobRg@mail.gmail.com>
+References: <20240709204203.1481851-1-briannorris@chromium.org> <20240709204203.1481851-4-briannorris@chromium.org>
+In-Reply-To: <20240709204203.1481851-4-briannorris@chromium.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 12 Jul 2024 12:38:28 -0700
+Message-ID: <CAEf4Bzb6-DLL966XKyMhe+nmpvdqYVrzfmfkAiDdFHNyD0qGWw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] tools build: Correct bpf fixdep dependencies
+To: Brian Norris <briannorris@chromium.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>, Jiri Olsa <jolsa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Jul 9, 2024 at 1:43=E2=80=AFPM Brian Norris <briannorris@chromium.o=
+rg> wrote:
+>
+> The dependencies in tools/lib/bpf/Makefile are incorrect. Before we
+> recurse to build $(BPF_IN_STATIC), we need to build its 'fixdep'
+> executable.
+>
+> I can't use the usual shortcut from Makefile.include:
+>
+>   <target>: <sources> fixdep
+>
+> because its 'fixdep' target relies on $(OUTPUT), and $(OUTPUT) differs
+> in the parent 'make' versus the child 'make' -- so I imitate it via
+> open-coding.
+>
+> I tweak a few $(MAKE) invocations while I'm at it, because
+> 1. I'm adding a new recursive make; and
+> 2. these recursive 'make's print spurious lines about files that are "up
+>    to date" (which isn't normally a feature in Kbuild subtargets) or
+>    "jobserver not available" (see [1])
+>
+> I also need to tweak the assignment of the OUTPUT variable, so that
+> relative path builds work. For example, for 'make tools/lib/bpf', OUTPUT
+> is unset, and is usually treated as "cwd" -- but recursive make will
+> change cwd and so OUTPUT has a new meaning. For consistency, I ensure
+> OUTPUT is always an absolute path.
+>
+> And $(Q) gets a backup definition in tools/build/Makefile.include,
+> because Makefile.include is sometimes included without
+> tools/build/Makefile, so the "quiet command" stuff doesn't actually work
+> consistently without it.
+>
+> After this change, top-level builds result in an empty grep result from:
+>
+>   $ grep 'cannot find fixdep' $(find tools/ -name '*.cmd')
+>
+> [1] https://www.gnu.org/software/make/manual/html_node/MAKE-Variable.html
+> If we're not using $(MAKE) directly, then we need to use more '+'.
+>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>
 
-On Wed, Jul 10, 2024 at 03:29:27PM -0700, Casey Chen wrote:
-> On Mon, Jul 8, 2024 at 10:01 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Hello,
-> >
-> > On Mon, Jul 8, 2024 at 4:23 PM Casey Chen <cachen@purestorage.com> wrote:
-> > >
-> > > With 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions"),
-> > > thread__find_map() would return with al->maps or al->map being NULL
-> > > when cpumode is 3 (macro PERF_RECORD_MISC_HYPERVISOR),
-> > > later deferencing on it would crash.
-> > >
-> > > Fix callers of thread__find_map() or thread__find_symbol() to handle
-> > > this.
-> >
-> > It looks like you drop the callchain if it doesn't find a map/symbol.
-> > Can we keep the entries with raw hex numbers instead?
-> >
-> In add_callchain_ip(), my change let it return if either al.maps is
-> NULL or al.map is NULL after thread__find_symbol(), I'm not sure what
-> else can add_callchain_ip() could do to keep raw hex numbers. If it
-> proceeds, al.sym is NULL, the code inside 'if (al.sym != NULL)' would
-> skip. callchain_srcline() would return NULL. chain_cursor_append()
-> would append a node whose ms.maps/ ms.map are NULL. Later
-> dereferencing them would cause trouble. But we could add other
-> information to the node, like ip, branch, nr_loop_iter, iter_cycles,
-> branch_from, are these information good to have ? but how to avoid
-> dereferencing NULL maps/map later.
+I almost gave my acked-by and tested-by, but then I noticed that this
+leaves fixdep, staticobjs and sharedobjs directories as
+to-be-committed files. Please check, something is off with .gitignore
+or where those are put:
 
-By checking if it's NULL?  I think it's normal to have NULL map or sym
-due to missing events, stripped binaries and so on.  The callchain code
-used to print raw ip address when it doesn't have symbols.  And srcline
-can/should do the same.
+$ cd ~/linux/tools/lib/bpf
+$ make -j90
+$ git st
+On branch master
+Your branch is ahead of 'bpf-next/master' by 4 commits.
+  (use "git push" to publish your local commits)
 
-Thanks,
-Namhyung
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        fixdep
+        sharedobjs/
+        staticobjs/
 
-> >
-> > > ---
-> > >  tools/perf/arch/powerpc/util/skip-callchain-idx.c | 10 ++++++----
-> > >  tools/perf/util/machine.c                         |  5 +++++
-> > >  tools/perf/util/unwind-libdw.c                    |  6 ++++--
-> > >  3 files changed, 15 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/tools/perf/arch/powerpc/util/skip-callchain-idx.c b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-> > > index 5f3edb3004d8..25b0804df4c4 100644
-> > > --- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-> > > +++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
-> > > @@ -255,13 +255,14 @@ int arch_skip_callchain_idx(struct thread *thread, struct ip_callchain *chain)
-> > >
-> > >         thread__find_symbol(thread, PERF_RECORD_MISC_USER, ip, &al);
-> > >
-> > > -       if (al.map)
-> > > -               dso = map__dso(al.map);
-> > > +       if (!al.map)
-> > > +               goto out;
-> > > +
-> > > +       dso = map__dso(al.map);
-> > >
-> > >         if (!dso) {
-> > >                 pr_debug("%" PRIx64 " dso is NULL\n", ip);
-> > > -               addr_location__exit(&al);
-> > > -               return skip_slot;
-> > > +               goto out;
-> > >         }
-> > >
-> > >         rc = check_return_addr(dso, map__start(al.map), ip);
-> > > @@ -282,6 +283,7 @@ int arch_skip_callchain_idx(struct thread *thread, struct ip_callchain *chain)
-> > >                 skip_slot = 3;
-> > >         }
-> > >
-> > > +out:
-> > >         addr_location__exit(&al);
-> > >         return skip_slot;
-> > >  }
-> > > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > > index 8477edefc299..fa4037d7f3d4 100644
-> > > --- a/tools/perf/util/machine.c
-> > > +++ b/tools/perf/util/machine.c
-> > > @@ -2098,7 +2098,12 @@ static int add_callchain_ip(struct thread *thread,
-> > >                         }
-> > >                         goto out;
-> > >                 }
-> > > +
-> > >                 thread__find_symbol(thread, *cpumode, ip, &al);
-> > > +               if (!al.maps || !al.map) {
-> > > +                       err = 1;
-> > > +                       goto out;
-> > > +               }
-> > >         }
-> > >
-> > >         if (al.sym != NULL) {
-> > > diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
-> > > index b38d322734b4..fb038ef55be2 100644
-> > > --- a/tools/perf/util/unwind-libdw.c
-> > > +++ b/tools/perf/util/unwind-libdw.c
-> > > @@ -53,8 +53,10 @@ static int __report_module(struct addr_location *al, u64 ip,
-> > >          */
-> > >         thread__find_symbol(ui->thread, PERF_RECORD_MISC_USER, ip, al);
-> > >
-> > > -       if (al->map)
-> > > -               dso = map__dso(al->map);
-> > > +       if (!al->map)
-> > > +               return -1;
-> > > +
-> > > +       dso = map__dso(al->map);
-> > >
-> > >         if (!dso)
-> > >                 return 0;
-> > > --
-> > > 2.45.2
-> > >
-> > >
+nothing added to commit but untracked files present (use "git add" to track=
+)
+
+
+Other than that the changes look good, but we should be leaving
+uncommitted (and unignored) files around.
+
+
+Also (in it's less the question to the author, but rather all the
+maintainers involved), which kernel tree is this intended to go
+through, seems like it was marked as "Not Applicable" for bpf, so I'm
+wondering where is the proper destination?
+
+> Changes in v3:
+>  - add Jiri's Acked-by
+>
+> Changes in v2:
+>  - also fix libbpf shared library rules
+>  - ensure OUTPUT is always set, and always an absolute path
+>  - add backup $(Q) definition in tools/build/Makefile.include
+>
+>  tools/build/Makefile.include | 12 +++++++++++-
+>  tools/lib/bpf/Makefile       | 14 ++++++++++++--
+>  2 files changed, 23 insertions(+), 3 deletions(-)
+>
+
+[...]
+
+> -$(BPF_IN_SHARED): force $(BPF_GENERATED)
+> +$(SHARED_OBJDIR):
+> +       $(Q)mkdir -p $@
+> +
+> +$(STATIC_OBJDIR):
+> +       $(Q)mkdir -p $@
+
+I'd probably combine the above two rules into one, but it's minor
+
+[...]
 
