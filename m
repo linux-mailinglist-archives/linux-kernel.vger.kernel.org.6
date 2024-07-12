@@ -1,218 +1,145 @@
-Return-Path: <linux-kernel+bounces-250467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3ACC92F827
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:42:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9679B92F819
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BABC28263A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:42:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2032825BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294FB16191E;
-	Fri, 12 Jul 2024 09:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285A214D282;
+	Fri, 12 Jul 2024 09:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="usiOEBqX"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2052.outbound.protection.outlook.com [40.107.220.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLPjIF7J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79E814B95A;
-	Fri, 12 Jul 2024 09:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720777293; cv=fail; b=BlMs5fPidjr7A63TzFHVHINlWxa+UeeoK1GqWpL9y05dN/B/zQPJDsa2bf3Hnf/w3BRoYWWVgRQ/JRs/x/B0L6agTm1NphbyttzlfMJOLzlPZxuL4R1yhtzllm/iC8KzoErjBpRDBWBhDNVrt7ORux57NnCotLO6CGzi6sNX98M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720777293; c=relaxed/simple;
-	bh=5rtVdFPU5cEI4KrUx229jRVQzguTWV25lhXzYyQIT6k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HdYU3gUMKJC4mvTDv4djm1otda5/qwuwxYuA4kOitAPv0DqTQ9K6A1yEwN8/V/VSxtxZcoTTGoBy8l6xdk4vC5zZjNqxI9G+B+NbuwKzEaPcVvqfo4cKDo/0DgGdKRlNJ4k0aXC6TOUcu1XjuKtmmUHSZymnVWCDmjR1MZa0Fnw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=usiOEBqX; arc=fail smtp.client-ip=40.107.220.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Kgqm5fJeCEN0jFZW5k8TqpOzrUxkjFqbneBZGKtSJbGDFBbHwpZMjhrfWLkqyGEl9iG9C+pQ373TJnFNO2ebcZlXZCcU318EWHd5eQAxvouqulT9pD5WAdH4FCOP1P0Q3DqlRwveykenuhjolP3TY2va/q3qE7l/SckBzEW8svMBhr8zCg8mKEOoyTa5tYILu4xI8t/bM0eYrmVrbZW/L7/F5GrptNpFQ7A8aVofHEkY8eJ91tuuuF2VOIRZ/iEGkp4qoFMBvTeY0fy4VINNggrF67TAJTW1TOHAH4GL+Kd1hEXhMz/kaa8QbzLWozvtWSPMsJ0Dd+ObSEo3733/dA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0FJc+LLEm3A2DN67vA8hUOqchnflGEqrPUfUrqOJaBA=;
- b=yVozrWuYF89DeTFupgDW8dPmUHUClfBR3r9b8QCIRuQJb4t4bN2vguj7IaicJHyEmK7mZBSssNjgp+VUBeFuw2+mJKMV1rQfJgdk6b3Kh2KwbxwwssCr7tWrFIdwEp22R8qf/VRfmwV9SjhaQ6lpsLi/TzkDSU6TbLXRHCZbdmYREXphhPVbDLKcM5Dqd3KBJTSAdhzSNE70V4uEZNQmIplxpbLeaoNR6iklHBjBRA8Y7I9YIZYJjgaLoYej8wnqre2EmK1+E7C18sM1ECpADn3oOn1AoF9hHVprpzMrosKISeMardpQW8rHFfx1SjZWR+a2Pft1nfhotaQK/et9xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0FJc+LLEm3A2DN67vA8hUOqchnflGEqrPUfUrqOJaBA=;
- b=usiOEBqXNs80G4hSmO/ZTZaCuJxd3ddg9czaYrUUKy8XSRJbEwbxShkxsQw3XBTqLjopzoJC1lgf1hIhiTrNuba9BIIwYGbq/2p9YsWTNmkNss9vOaDrfOddSMrbWfRzIXw9sBcW1isaUiIuUGieS/WHVmxaLEn2WC6tjQe2rU8=
-Received: from DM6PR14CA0047.namprd14.prod.outlook.com (2603:10b6:5:18f::24)
- by DM6PR12MB4353.namprd12.prod.outlook.com (2603:10b6:5:2a6::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Fri, 12 Jul
- 2024 09:41:26 +0000
-Received: from DS3PEPF0000C37B.namprd04.prod.outlook.com
- (2603:10b6:5:18f:cafe::4) by DM6PR14CA0047.outlook.office365.com
- (2603:10b6:5:18f::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23 via Frontend
- Transport; Fri, 12 Jul 2024 09:41:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF0000C37B.mail.protection.outlook.com (10.167.23.5) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7762.17 via Frontend Transport; Fri, 12 Jul 2024 09:41:26 +0000
-Received: from BLR-L-RBANGORI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 12 Jul
- 2024 04:41:18 -0500
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<thomas.lendacky@amd.com>
-CC: <ravi.bangoria@amd.com>, <hpa@zytor.com>, <rmk+kernel@armlinux.org.uk>,
-	<peterz@infradead.org>, <james.morse@arm.com>, <lukas.bulwahn@gmail.com>,
-	<arjan@linux.intel.com>, <j.granados@samsung.com>, <sibs@chinatelecom.cn>,
-	<nik.borisov@suse.com>, <michael.roth@amd.com>, <nikunj.dadhania@amd.com>,
-	<babu.moger@amd.com>, <x86@kernel.org>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <santosh.shukla@amd.com>,
-	<ananth.narayan@amd.com>, <sandipan.das@amd.com>, <manali.shukla@amd.com>,
-	<jmattson@google.com>
-Subject: [PATCH v2 4/4] KVM: SVM: Add Bus Lock Detect support
-Date: Fri, 12 Jul 2024 09:39:43 +0000
-Message-ID: <20240712093943.1288-5-ravi.bangoria@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240712093943.1288-1-ravi.bangoria@amd.com>
-References: <20240712093943.1288-1-ravi.bangoria@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A10E143C6E;
+	Fri, 12 Jul 2024 09:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720777217; cv=none; b=Buiyc2wvpySBTY6+OloJHSyOQrA9kcybXW1olRESa3Fny5wqf812nyK9Rl9sFakzxYri7wxzD0NCSwPGYS1X4T47Lb7/9rNijF8DVbbr3UxGh4fC1cl9V/uSl3jBoqipq3qviS1JtyQeALg7TPfGTu7Mm1oNpvh26QdvjTeMUKw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720777217; c=relaxed/simple;
+	bh=0QB4avtqHAByN9Y/i8mu+GJUKZUD7/BNSTgpqU9Kt0Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W9RtEsQJYsgywKOB76uclqBxvOF4/gHcrlL21fu1sQXe5+qiZe8QkzK9MBv9x+iI+wPJurYlXL9/M8WaRbKQeWSSQi4tHSaEYq1rockvrlUbb4sOynCTQxfo+M84ZiJ7AZVhXR+QAWd1xKkqTWC48G9domZn6guipSoFEEGJutk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLPjIF7J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E46A6C4AF0B;
+	Fri, 12 Jul 2024 09:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720777216;
+	bh=0QB4avtqHAByN9Y/i8mu+GJUKZUD7/BNSTgpqU9Kt0Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FLPjIF7JNbVupl7884yK+FwM2TxooTjLKaA4sd/uigakeIBP89NOytxLO3wp1g5Xe
+	 JMrGPBXpKpeVghpqk7XnBPVu65MOGLlEr+dTt5AnKVG6BxGFIA2QLv5LAg4VSdeOtA
+	 zJZYjRi8U8zFUmiwJKaf3Zevjq3Rm+z3OSjKh3wJhPiBsHua6i1kRw7CB2WI2gBW6Q
+	 jkgJHwayT1McgLLb8xSgdshlHYsEfZZ5BA+yJa0sV1W4KBLgnf4isygCRwn3InQ5ux
+	 n99bKorxL6i9Jnw4BfqhEHgZ4eLe5VBPNj1QA7JF0Y+cH7WJUU8XpAd8SIalgZnGqk
+	 CsVHhGXfdpIWQ==
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5c680f40faeso49850eaf.1;
+        Fri, 12 Jul 2024 02:40:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVIB8o7YD99s7wDqw47/9CwWSsLpniS46Bm3XiBE4OWtVi2uAxDmUg/TKE0S60yJxf7MmtQkzB8nfO4385fcz+LXayK9Y6IYpHBk5nZoh/0IOVISJzLHIFpaVaaL5xliS8a9IHGSfjxkA==
+X-Gm-Message-State: AOJu0Yy3Q6qGB00wMwRk2RO2S/sMrqOeevIwkf+idZkWt5dfHc6tyU13
+	UV7oo9C19ViIptZ8hrSCMdcTrbpSGpV7Ew0E4sYSWjcHoh72uGozCQVuuQIXM7izs7TpARohqSY
+	pGPD3Ib5vwNRJzyzsXIHFK22/2SI=
+X-Google-Smtp-Source: AGHT+IEdhCaEWm8tJiXywb0s1a3ZSyKgNu5DyhAYYzrFaZq8wv5wjQ5n5SaUqhfGoTbY5Fdoi4gdY6AJTTGZvtWNZqE=
+X-Received: by 2002:a4a:e088:0:b0:5cd:13e0:b0d3 with SMTP id
+ 006d021491bc7-5cd13e0b282mr857068eaf.2.1720777216176; Fri, 12 Jul 2024
+ 02:40:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37B:EE_|DM6PR12MB4353:EE_
-X-MS-Office365-Filtering-Correlation-Id: 730c80cb-7f36-4dae-a784-08dca256ccdd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Bu4SAJgcpybN0oF42Y/lL+igxBUy9DHyuALgxFHRMa6P3g6ycgd7MC+h/cAz?=
- =?us-ascii?Q?d0FJdhP1qnDfNynFQh3fVsUBQNwifhq9tVBkI3ghG2W3V2XBOEy+Ukvi/F0L?=
- =?us-ascii?Q?u66GtvwdcCsjb9QFeZeHYDLJPMbmSVI6Xrucam/p8l4OI+Ion4W6/+4uMOyY?=
- =?us-ascii?Q?Ji6sPvgEP+K2VKicHTK8t4kf6mxxbMYrpDBbC2OPWbjLhnT3vsDZslejMblM?=
- =?us-ascii?Q?BFje9HY/mHYcmVNgfrnD6+eTHRn1j9RxaR9272vweLyigYfkQN8lPmAr2aq0?=
- =?us-ascii?Q?IliLF0GgnNTlONY2vOloA6wEV0bHvLAIKJGJSLSuqeReEv6XhC+yPLLN65pZ?=
- =?us-ascii?Q?wDcNgZ/DYRJttfk+Sprk3KAhffQ3V23eX9RQ7YwcL51GxkqmaACSvFFdtWUC?=
- =?us-ascii?Q?M6DhAXiV6Se2CVQIlYdCbORWtVW1RI1eOwv/gaQNY5E14NyBZiCBtE6+N0Lj?=
- =?us-ascii?Q?BDH9Y8jPlsj+xlLsTE6xrorCckxLlKWLNQ0ZMmPCCxuMZ+2f5ttAiuTHjZKh?=
- =?us-ascii?Q?MmdnNa98FUxc9NaBUYwdGpiw0CrihZ/yv0CR/bxaW4KnrwE3OikcxruAO9vC?=
- =?us-ascii?Q?jDdZc3vGmKWt9q3Jugqg+jIKh6dk+zjU/Usl4upAAKfN1QmWrZXIQA4Udpio?=
- =?us-ascii?Q?kUcCGwk+iukEJVq2QnNBY/Ks9Skve+39Nguaub5p0OElbJDfTdyiyDlpna03?=
- =?us-ascii?Q?WL5+jq0Nw6yAjkxi4Rhrrb+ExRhImEgHkMu3qMUSKX67SDanR1VIL0z1gOrM?=
- =?us-ascii?Q?xIjuVlWBVj4MIJB9CsqVz2ggzfOdx3Wyb+aMuXRFKXEXgYZ2l4BBO7s6ecgn?=
- =?us-ascii?Q?90Jf4BMCMO7zoXqPsV+R9b+8fnjDwFp3Zp/9OMwkDer44IH0k4byVSN9wdHR?=
- =?us-ascii?Q?HcJ2/73OLvMPWXy4P8Sgpw2oDDNy03EoOKmv2mMRY85IGRjkWxzNVuK6K7Le?=
- =?us-ascii?Q?QVClllbnDWHMtgNGHmWYO+JPrNM/JUGFYBnoUYulDbrqU8O9z579o1aNuWx4?=
- =?us-ascii?Q?ac2PKXcY6Jp4xOALba4zFoMNW4XzwGsaVwVgijOarPO/pv3HPCQwzrJtZ8/l?=
- =?us-ascii?Q?+3nve0FBXBxioMy+Jhl8CaYYHUZ2oYrwy5rpskyZ/Oj1t0aGwqa9jpyucxen?=
- =?us-ascii?Q?Xyb7031hLIY82roy6BuvntE+/NIaXblamt2Z2kf3mR7CcDg8fNB/Eenm0G/+?=
- =?us-ascii?Q?FOdqNWz2GpRl02AMqhNmu6G2aaH3X4H7b9KN0rzxsiGQwDPvXe1SOyaLKmvS?=
- =?us-ascii?Q?2sVBtNW/tClIK51zNiEMCiVhk7b5Ls6X2LkE4w+ZqiBeCXY+/buVKPEuzitL?=
- =?us-ascii?Q?lrbMQ34skq2/fcMFhkAz88806y18RlOpXRvGrU05kBg2T6zXnphiT0aRDmhD?=
- =?us-ascii?Q?cXHYbKvavr/mMAU9S4k7DLIiMaascsXUU83wAtPkVFiphZIpgR2J4e2ehXTX?=
- =?us-ascii?Q?Xbh2+v7e84sLRtaGkeHQZTEFW1hSqmUC?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 09:41:26.6170
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 730c80cb-7f36-4dae-a784-08dca256ccdd
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4353
+References: <20240710-fix-modpost-warning-default_dram_nodes-v1-1-8961453cc82d@kernel.org>
+ <87jzhsa05p.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <87jzhsa05p.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 12 Jul 2024 11:40:04 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gHHkFnJEf2CQ5Rmz9+_7u1EqBPiycuFL1huPJf9Pvc6Q@mail.gmail.com>
+Message-ID: <CAJZ5v0gHHkFnJEf2CQ5Rmz9+_7u1EqBPiycuFL1huPJf9Pvc6Q@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: HMAT: Mark hmat_set_default_dram_perf() as __init
+To: "Huang, Ying" <ying.huang@intel.com>, Nathan Chancellor <nathan@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, Ho-Ren Chuang <horen.chuang@linux.dev>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Upcoming AMD uarch will support Bus Lock Detect. Add support for it
-in KVM. Bus Lock Detect is enabled through MSR_IA32_DEBUGCTLMSR and
-MSR_IA32_DEBUGCTLMSR is virtualized only if LBR Virtualization is
-enabled. Add this dependency in the KVM.
+On Thu, Jul 11, 2024 at 8:56=E2=80=AFAM Huang, Ying <ying.huang@intel.com> =
+wrote:
+>
+> Nathan Chancellor <nathan@kernel.org> writes:
+>
+> > After commit 4dc70b711dbc ("memory tier: consolidate the initialization
+> > of memory tiers"), there is a modpost warning when
+> > hmat_set_default_dram_perf() is not inlined into its callsite, as it
+> > appears that default_dram_nodes may be accessed after its memory has
+> > been freed.
+> >
+> >   WARNING: modpost: vmlinux: section mismatch in reference: hmat_set_de=
+fault_dram_perf+0x18 (section: .text) -> default_dram_nodes (section: .init=
+.data)
+> >
+> > The single callsite, hmat_init(), is __init, so this warning is not a
+> > problem in reality but it is easily solvable by marking
+> > hmat_set_default_dram_perf() as __init, which should have been done whe=
+n
+> > this function was added in commit 3718c02dbd4c ("acpi, hmat: calculate
+> > abstract distance with HMAT").
+>
+> Good catch!  Thanks for your fix!  If it's necessary, feel free to add
+>
+> Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
----
- arch/x86/kvm/svm/nested.c |  3 ++-
- arch/x86/kvm/svm/svm.c    | 17 ++++++++++++++---
- 2 files changed, 16 insertions(+), 4 deletions(-)
+Thanks for the patch and the review!
 
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index 55b9a6d96bcf..6e93c2d9e7df 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -586,7 +586,8 @@ static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12
- 	/* These bits will be set properly on the first execution when new_vmc12 is true */
- 	if (unlikely(new_vmcb12 || vmcb_is_dirty(vmcb12, VMCB_DR))) {
- 		vmcb02->save.dr7 = svm->nested.save.dr7 | DR7_FIXED_1;
--		svm->vcpu.arch.dr6  = svm->nested.save.dr6 | DR6_ACTIVE_LOW;
-+		/* DR6_RTM is not supported on AMD as of now. */
-+		svm->vcpu.arch.dr6  = svm->nested.save.dr6 | DR6_FIXED_1 | DR6_RTM;
- 		vmcb_mark_dirty(vmcb02, VMCB_DR);
- 	}
- 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 4a1d0a8478a5..e00e1e2a0b78 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -1044,7 +1044,8 @@ void svm_update_lbrv(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_svm *svm = to_svm(vcpu);
- 	bool current_enable_lbrv = svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK;
--	bool enable_lbrv = (svm_get_lbr_vmcb(svm)->save.dbgctl & DEBUGCTLMSR_LBR) ||
-+	u64 dbgctl_buslock_lbr = DEBUGCTLMSR_BUS_LOCK_DETECT | DEBUGCTLMSR_LBR;
-+	bool enable_lbrv = (svm_get_lbr_vmcb(svm)->save.dbgctl & dbgctl_buslock_lbr) ||
- 			    (is_guest_mode(vcpu) && guest_can_use(vcpu, X86_FEATURE_LBRV) &&
- 			    (svm->nested.ctl.virt_ext & LBR_CTL_ENABLE_MASK));
- 
-@@ -3145,6 +3146,10 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 		if (data & DEBUGCTL_RESERVED_BITS)
- 			return 1;
- 
-+		if ((data & DEBUGCTLMSR_BUS_LOCK_DETECT) &&
-+		    !guest_cpuid_has(vcpu, X86_FEATURE_BUS_LOCK_DETECT))
-+			return 1;
-+
- 		svm_get_lbr_vmcb(svm)->save.dbgctl = data;
- 		svm_update_lbrv(vcpu);
- 		break;
-@@ -5212,8 +5217,14 @@ static __init void svm_set_cpu_caps(void)
- 	/* CPUID 0x8000001F (SME/SEV features) */
- 	sev_set_cpu_caps();
- 
--	/* Don't advertise Bus Lock Detect to guest if SVM support is absent */
--	kvm_cpu_cap_clear(X86_FEATURE_BUS_LOCK_DETECT);
-+	/*
-+	 * LBR Virtualization must be enabled to support BusLockTrap inside the
-+	 * guest, since BusLockTrap is enabled through MSR_IA32_DEBUGCTLMSR and
-+	 * MSR_IA32_DEBUGCTLMSR is virtualized only if LBR Virtualization is
-+	 * enabled.
-+	 */
-+	if (!lbrv)
-+		kvm_cpu_cap_clear(X86_FEATURE_BUS_LOCK_DETECT);
- }
- 
- static __init int svm_hardware_setup(void)
--- 
-2.34.1
+I'm expecting Dan/Dave to take care of it (or please let me know if
+I'm expected to pick it up).
 
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202406292310.hlRATeZJ-lkp=
+@intel.com/
+> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> > ---
+> > I left off a fixes tag as I assume this is going to be squashed into th=
+e
+> > former change mentioned above, as it is still in mm-unstable, but feel
+> > free to add one if the patch is going to be standalone.
+> > ---
+> >  drivers/acpi/numa/hmat.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+> > index a2f9e7a4b479..ca0c0ea3e1ef 100644
+> > --- a/drivers/acpi/numa/hmat.c
+> > +++ b/drivers/acpi/numa/hmat.c
+> > @@ -933,7 +933,7 @@ static int hmat_callback(struct notifier_block *sel=
+f,
+> >       return NOTIFY_OK;
+> >  }
+> >
+> > -static int hmat_set_default_dram_perf(void)
+> > +static __init int hmat_set_default_dram_perf(void)
+> >  {
+> >       int rc;
+> >       int nid, pxm;
+> >
+> > ---
+> > base-commit: 17bcc624e67da6383060ee24483db77aa17276aa
+> > change-id: 20240710-fix-modpost-warning-default_dram_nodes-38b6faffe3da
+> >
+> > Best regards,
+>
+> --
+> Best Regards,
+> Huang, Ying
+>
 
