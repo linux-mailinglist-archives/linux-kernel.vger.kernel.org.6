@@ -1,88 +1,108 @@
-Return-Path: <linux-kernel+bounces-250066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D6092F3D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:54:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CACE492F3DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E7191F22A97
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:54:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C35828381B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85798827;
-	Fri, 12 Jul 2024 01:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZ5gnElF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E952F44;
-	Fri, 12 Jul 2024 01:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3AA79E1;
+	Fri, 12 Jul 2024 01:59:15 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197A6524C;
+	Fri, 12 Jul 2024 01:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720749247; cv=none; b=WKjGnDG+rfAPJf4agK70OP843t5GCprwzOSRqfO7oiixZS+ywST6v09ZAzk47tPln5Jro+iYhl/cU2t4YaRyelsYjJGnbQOH+SQPRi5XwhUNUcGuF8GwVd4Uq59fhUCtlH2oVDd7Gz8YHgwQQzpnRlCGHACTFhbIuEpKDApnsCs=
+	t=1720749555; cv=none; b=p2c6nspNiADWtl2WA/QG8WmWtJCCbQV/piTJe85+4KbLxC4EbrPtRzSwUThG1sTVXoCeV2Azd6CR+uiM340ClFJ13ZiqEZBRc/bTdSzThb2c3PIS/mgpv89Uss2LHVyqwvBF8cxBxUhgE9xlMdzSFgSBiGjYHYL4ZhA2MhLyqWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720749247; c=relaxed/simple;
-	bh=5CTx6bCR6Kt8rrszmp+0ZDJmXxuBWBJA+2RDRefnq5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c8UqaQpjKyEGGTWQfWbYmG9JCLA8xM4fOINKBZoSHqxc7OcUNateQT5PW5L9hzrRKKIZ1cPoRtK5YzK3Ndvb4ySCXej1SCSzhiu9qu1Eq+D4nRkQ2N0XxQ85d1KoDNle9WAOQ152IY3DSIHzrNTzYllU9qOm/ZO1MAnJuTFwHGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZ5gnElF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C400DC116B1;
-	Fri, 12 Jul 2024 01:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720749246;
-	bh=5CTx6bCR6Kt8rrszmp+0ZDJmXxuBWBJA+2RDRefnq5g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OZ5gnElFiAPAk6+eo0g8Aw30BuglRBTb0e2dVnr4KxDzd4VCxKS5ggkznBOKbA3wa
-	 NIEFVo8TxWmNla6HfRR9AVqVVIehy8mKL5nM7ZAxXJ9NLj+6wdJKcqNyGrPPNuaype
-	 6IFjlqMABZBKGG4h0eLloCGTTBE+Cq/mHqfGf1cYzxvx2c0GKY6zfvfB8ieHcAcN9d
-	 Ny0AP9854CpJA56D90pQqEpBw5z36yAopKpiTnSS2/gG+JAKrj0tTm1fc+V2TJalEc
-	 O4GDYFsv0WkhH/rX2vOdTymsyfbTi2sQsGswACupOfv+UR/wq77BROScYVmDvTxzMM
-	 xnJ0bapNOnKyw==
-Date: Thu, 11 Jul 2024 18:54:04 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
- <ast@fiberby.net>
-Cc: netdev@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>, Ilya
- Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>, Cong
- Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, Simon Horman
- <horms@kernel.org>, Ratheesh Kannoth <rkannoth@marvell.com>, Florian
- Westphal <fw@strlen.de>, Alexander Lobakin <aleksander.lobakin@intel.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 03/10] net/sched: cls_flower: prepare
- fl_{set,dump}_key_flags() for ENC_FLAGS
-Message-ID: <20240711185404.2b1c4c00@kernel.org>
-In-Reply-To: <20240709163825.1210046-4-ast@fiberby.net>
-References: <20240709163825.1210046-1-ast@fiberby.net>
-	<20240709163825.1210046-4-ast@fiberby.net>
+	s=arc-20240116; t=1720749555; c=relaxed/simple;
+	bh=JtpI4NwjWgIkoEKZFJoiukOQ1YfwMkxr68FJ1EAWtYw=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=DwstAkx4U1rcV3JFNHp5uzbASIR46VuWqHjuSdfiqDypMgVTHjPRecHgPT+TPfpMxaU0OjufLAA3/D2cZdBkowYpAR1qk/4HaOrxy8oB5uiaZIl85s3uJ6zdTp5Av+SteqbkcF+KDrWJMs9irfy5ZyCpRTBJuzOz+MiOkxm6nsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee266908de91fd-6f200;
+	Fri, 12 Jul 2024 09:59:06 +0800 (CST)
+X-RM-TRANSID:2ee266908de91fd-6f200
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.54.5.252])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee866908de874e-36053;
+	Fri, 12 Jul 2024 09:59:06 +0800 (CST)
+X-RM-TRANSID:2ee866908de874e-36053
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: jolsa@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shuah@kernel.org,
+	zhujun2@cmss.chinamobile.com
+Subject: [RESEND bpf-next v2] selftests/bpf:fix a resource leak
+Date: Thu, 11 Jul 2024 18:59:04 -0700
+Message-Id: <20240712015904.2885-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-On Tue,  9 Jul 2024 16:38:17 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
-> +	if (NL_REQ_ATTR_CHECK(extack, NULL, tb, fl_mask)) {
+The requested resources should be closed before return
+in main(), otherwise resource leak will occur
 
-Does this work with nest as NULL?=20
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+Changes in v2:
+ - check for cg_fd >= 0 and have just one out label
 
-tb here is corresponding to attrs from tca[TCA_OPTIONS], so IIRC we need
-to pass tca[TCA_OPTIONS] as nest here. Otherwise the decoder will look
-for attribute with ID fl_mask at the root level, and the root attrs are
-from the TCA_ enum.
+ tools/testing/selftests/bpf/test_sockmap.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-Looks like Donald covered flower in Documentation/netlink/specs/tc.yaml
-so you should be able to try to hit this using the Python ynl CLI:
-https://docs.kernel.org/next/userspace-api/netlink/intro-specs.html#simple-=
-cli
-But to be honest I'm not 100% sure if the YNL reverse parser works with
-TC and its "sub-message" polymorphism ;)
---=20
-pw-bot: cr
+diff --git a/tools/testing/selftests/bpf/test_sockmap.c b/tools/testing/selftests/bpf/test_sockmap.c
+index a34e95040994..285a9a714666 100644
+--- a/tools/testing/selftests/bpf/test_sockmap.c
++++ b/tools/testing/selftests/bpf/test_sockmap.c
+@@ -2075,8 +2075,10 @@ int main(int argc, char **argv)
+ 
+ 	if (!cg_fd) {
+ 		cg_fd = cgroup_setup_and_join(CG_PATH);
+-		if (cg_fd < 0)
+-			return cg_fd;
++		if (cg_fd < 0) {
++			err = cg_fd;
++			goto out;
++		}
+ 		cg_created = 1;
+ 	}
+ 
+@@ -2092,7 +2094,7 @@ int main(int argc, char **argv)
+ 	if (err) {
+ 		fprintf(stderr, "populate program: (%s) %s\n",
+ 			bpf_file, strerror(errno));
+-		return 1;
++		goto out;
+ 	}
+ 	running = 1;
+ 
+@@ -2109,7 +2111,8 @@ int main(int argc, char **argv)
+ 		free(options.whitelist);
+ 	if (options.blacklist)
+ 		free(options.blacklist);
+-	close(cg_fd);
++	if (cg_fd >= 0)
++		close(cg_fd);
+ 	if (cg_created)
+ 		cleanup_cgroup_environment();
+ 	return err;
+-- 
+2.17.1
+
+
+
 
