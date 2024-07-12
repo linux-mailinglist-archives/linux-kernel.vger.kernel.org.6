@@ -1,86 +1,124 @@
-Return-Path: <linux-kernel+bounces-250365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C12D92F6ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6361592F6F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D64201F22D60
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CC8828362E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805B01422B5;
-	Fri, 12 Jul 2024 08:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936A11428E2;
+	Fri, 12 Jul 2024 08:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kZ6ICVUS"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="tFm+6zH7"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4993BBF6
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 08:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD39F13D891;
+	Fri, 12 Jul 2024 08:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720772898; cv=none; b=gahGGDDatjoQMHlVB5KH7BtcBBY+wWhUWMlbUhud63qW5ti3DQRkHNcsaop20AURg3O2w9iJq/+NbBQVP0Xxr7q+CHpH+p43bZLsH1mTQo6KW74I9cgB6ttlti4GhWKTBbzGXK8P1b/2WfakAYIu45DZbwg/4XsewLu9O5rkFnw=
+	t=1720773142; cv=none; b=j3vXjfu9gJtZuOfs57J2Ojs8A4qPRYqezue4hvEpXOKVCyLos6CzeB+42dAeHmJujjgOZmtS3muzM4b0hqidwY1q5PCvkkp4v576RhQvHfFpkKurS6FbczAa1Mrbcnw7N8B3jJnZlLIkxq2plUgEgU/7nS77NusMWZd83IOlQ24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720772898; c=relaxed/simple;
-	bh=a9m1zjaq4LV77fAPkesH4ladjL21NUFf2xIpkhPo3y4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bwpPJTvDOWyTqdYGoxxd+OP9HwgTz4HM5pbfyiEfiYj1uG3YyZDJ7A+puYOWd38e1k6IaWkCULdAUzqoZ4PVt2w3Ja8pmRc71VV9jY4811pRbXXVpdo7D+CGlPoz7bI6fKf9kbPjMSL29j1XeDo4R+fDjrEWysAzelxZcWzK7Ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kZ6ICVUS; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720772887; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=N7aJHwqiqCJi0t4/+kQXsTYMwz9HxmQ/g1e6LfOCtpM=;
-	b=kZ6ICVUS+f3ZsOJJssvp3QCh5u2/eEsGK+fnb9djNl6kNeiO4uxtfawx0Q8FnD8Sf5JhaCnlHu8Rwc1gAZyzXvBvQxftfNNk2jBOS9FaiC5U1ciYGIiSxusA/l39V1dJ9w8fUqAAEQnO0/ckRBOTgtI1d+2W5AB8lr7rODO5vhw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0WANTBc0_1720772886;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WANTBc0_1720772886)
-          by smtp.aliyun-inc.com;
-          Fri, 12 Jul 2024 16:28:07 +0800
-From: Yang Li <yang.lee@linux.alibaba.com>
-To: daniel@zonque.org
-Cc: haojian.zhuang@gmail.com,
-	robert.jarzmik@free.fr,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] ARM: spitz: Remove duplicated include in spitz.c
-Date: Fri, 12 Jul 2024 16:28:05 +0800
-Message-Id: <20240712082805.98629-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1720773142; c=relaxed/simple;
+	bh=n1zxY5qH8904VuJHNeImarl5a09WAl8K0FSrsBJ4FYE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QDn3Cuzh/OAT1Ni5ORfMEhHOfzn22p8arwVmYo6sMCVhTaA1I/eaXzEfFbVRgJ6O31TMWYVL/ISjEZWai/z1UkSwwasExh2p0STUQPkH2yuEnaJm8mgljzORqnhucdrzrCWJxyTA+PE+U5N0qwMLp5BoOPIkiv0XgRkE4S6Cdk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=tFm+6zH7; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46C8VgfiE313779, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1720773102; bh=n1zxY5qH8904VuJHNeImarl5a09WAl8K0FSrsBJ4FYE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=tFm+6zH7wRiw3WALQ3iK4Q3wGDDloNokBkw1Nl9WlEWJwsi8jLopXajw2RpdRttdT
+	 f38w3sqUSIZ8gMHGiXGsjzbQ3Ke5IRGJnyqCuAkjv8oTvNBr/Zt7FLStdQGn6jVCYw
+	 55Z3ib+RcKnWUd/C39KSc6bxfqkbLSXoMQVMfyUHELs6FbIPscfddHWiH3xT/agWZa
+	 cowp0T2I3ZFuZzCIDrpCepoep8lyoiKGnWzdxDq06xE1cc8OdLS08k1+4dC+dDzXLF
+	 RsjC6eBhD64TwkJXT4QfrQ+k748CPE38hXC6YDEuxEXJjwpLNLUgHD0NvNRrsiZ9eF
+	 X98GmQMDmDn6A==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46C8VgfiE313779
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 12 Jul 2024 16:31:42 +0800
+Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 12 Jul 2024 16:31:42 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 12 Jul 2024 16:31:42 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Fri, 12 Jul 2024 16:31:42 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "andrew@lunn.ch"
+	<andrew@lunn.ch>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "horms@kernel.org"
+	<horms@kernel.org>,
+        "rkannoth@marvell.com" <rkannoth@marvell.com>,
+        "jdamato@fastly.com" <jdamato@fastly.com>,
+        Ping-Ke Shih <pkshih@realtek.com>, Larry Chiu <larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next v23 04/13] rtase: Implement the interrupt routine and rtase_poll
+Thread-Topic: [PATCH net-next v23 04/13] rtase: Implement the interrupt
+ routine and rtase_poll
+Thread-Index: AQHa0no69wfdkW7mNUmbfRSXLRon/rHxzNEAgAD5ekA=
+Date: Fri, 12 Jul 2024 08:31:41 +0000
+Message-ID: <55abfcf00da1494fbc98fc0389ab7c3a@realtek.com>
+References: <20240710033234.26868-1-justinlai0215@realtek.com>
+	<20240710033234.26868-5-justinlai0215@realtek.com>
+ <20240711183640.02241a9a@kernel.org>
+In-Reply-To: <20240711183640.02241a9a@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The header files linux/property.h is included twice in spitz.c,
-so one inclusion of each can be removed.
+> On Wed, 10 Jul 2024 11:32:25 +0800 Justin Lai wrote:
+> > +#ifdef CONFIG_NET_POLL_CONTROLLER
+> > +/* Polling 'interrupt' - used by things like netconsole to send skbs
+> > + * without having to re-enable interrupts. It's not called while
+> > + * the interrupt routine is executing.
+> > + */
+> > +static void rtase_netpoll(struct net_device *dev) {
+> > +     const struct rtase_private *tp =3D netdev_priv(dev);
+> > +     const struct pci_dev *pdev =3D tp->pdev;
+> > +
+> > +     disable_irq(pdev->irq);
+> > +     rtase_interrupt(pdev->irq, dev);
+>=20
+> Why do you need to implement a separate netpoll handler?
+> netpoll is optional, if driver doesn't implement it core will just core y=
+our NAPI
+> handlers with a budget of 0 (to only clean up Tx, see NAPI documentation)=
+.
+>=20
+> disable_irq() sleeps, you most definitely can't call it here.
+> --
+> pw-bot: cr
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9519
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
----
- arch/arm/mach-pxa/spitz.c | 1 -
- 1 file changed, 1 deletion(-)
+Hi Jakub,
 
-diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
-index 452bf7aac1fa..97ecd79c9679 100644
---- a/arch/arm/mach-pxa/spitz.c
-+++ b/arch/arm/mach-pxa/spitz.c
-@@ -29,7 +29,6 @@
- #include <linux/input/matrix_keypad.h>
- #include <linux/regulator/machine.h>
- #include <linux/io.h>
--#include <linux/property.h>
- #include <linux/reboot.h>
- #include <linux/memblock.h>
- 
--- 
-2.20.1.7.g153144c
-
+After confirming, I think there is no need to implement the netpoll handler=
+,
+so I will remove it.
 
