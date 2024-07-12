@@ -1,164 +1,192 @@
-Return-Path: <linux-kernel+bounces-250917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D4C92FE97
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:30:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E508692FE9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 477C92820C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:30:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14DE11C2289B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D365C17624A;
-	Fri, 12 Jul 2024 16:30:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA4E17624A;
+	Fri, 12 Jul 2024 16:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PXCx75yV"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDE086AFA;
-	Fri, 12 Jul 2024 16:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C02415B134;
+	Fri, 12 Jul 2024 16:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720801825; cv=none; b=AWZGevE329kaZyX8BMrfYYDMo6OzCCdQk4gznDnmSRxHPIzuI7V7qnSDeXtZnHZbFkn7PblLzRVvA7ywTbGvzqy/whR5bIO9vM5HlW8txTiS4IrHjv6k8gYHOfAJVI9u8VPEVZoMKWY8EwtIoZ2FIvB5AKY5JsQ/BR7w5TxfW08=
+	t=1720801905; cv=none; b=e9+wyM0CFMDa0RywaaWhXoznh+x+OXHU6nAIirim2Wg95yyTqTLxohe5ch7J0+7EWr4sfthHChLsqUF++bpM7bQm+6ioKTnKep0MWdJMA/HEHxclvl3o3buVIlvTQnEmE0voOWfRfk4C/E2UjgS5Rm2VGWzfq1mM3UM4Giojefo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720801825; c=relaxed/simple;
-	bh=XxX1D7RCSdsNOTUhnzm3yP6ZokstYTzafBYtIMm5PbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JRhF5QHfrK/OQcfqz6SRu9nJEG3Xo6NC1ecuLsW983UP+U5fEiXSUFgxUV9r3JObawFa+y9ncvb/AA7mw7XGpPOTMhppXS460XRSFvtVmM4m88rCooSfKTjU0/mlL+KwLeCdfoTxSC1krRj769wZUvJ0S6bbUcFiZft8Da/DIAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03285C32782;
-	Fri, 12 Jul 2024 16:30:20 +0000 (UTC)
-Date: Fri, 12 Jul 2024 12:30:19 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Sean Christopherson <seanjc@google.com>, Joel Fernandes
- <joel@joelfernandes.org>, Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- Ben Segall <bsegall@google.com>, Borislav Petkov <bp@alien8.de>, Daniel
- Bristot de Oliveira <bristot@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Juri
- Lelli <juri.lelli@redhat.com>, Mel Gorman <mgorman@suse.de>, Paolo Bonzini
- <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Valentin
- Schneider <vschneid@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Vitaly Kuznetsov <vkuznets@redhat.com>,
- Wanpeng Li <wanpengli@tencent.com>, Suleiman Souhlal <suleiman@google.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, himadrics@inria.fr,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
- graf@amazon.com, drjunior.org@gmail.com
-Subject: Re: [RFC PATCH v2 0/5] Paravirt Scheduling (Dynamic vcpu priority
- management)
-Message-ID: <20240712123019.7e18c67a@rorschach.local.home>
-In-Reply-To: <01c3e7de-0c1a-45e0-aed6-c11e9fa763df@efficios.com>
-References: <20240403140116.3002809-1-vineeth@bitbyteword.org>
-	<ZjJf27yn-vkdB32X@google.com>
-	<CAO7JXPgbtFJO6fMdGv3jf=DfiCNzcfi4Hgfn3hfotWH=FuD3zQ@mail.gmail.com>
-	<CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com>
-	<66912820.050a0220.15d64.10f5@mx.google.com>
-	<19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
-	<ZpFCKrRKluacu58x@google.com>
-	<01c3e7de-0c1a-45e0-aed6-c11e9fa763df@efficios.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720801905; c=relaxed/simple;
+	bh=vy9bIt3NHsbXfwvD5QV3hUbwp4cLQleSUgeOMjdX/DE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tmB2h9szwKSepKWA3OLip0o80CvXbQqnOz9Gy0umFJjIzObnQgvJRitdbC/84dv+7Olc5hvoFIA7eW7S9JmpyGssVxMisomsU3InAgItVshqbvXXLmm/s4juCKVVfhLGw0ABa2zChT/4YCTuHCIZ+wbTUfbUZAn4pduQG9NP7Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PXCx75yV; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-56-63.net.vodafone.it [5.90.56.63])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0F6764AB;
+	Fri, 12 Jul 2024 18:31:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1720801867;
+	bh=vy9bIt3NHsbXfwvD5QV3hUbwp4cLQleSUgeOMjdX/DE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PXCx75yVOxTXK+7bDNMVjqmI3bSBNQtAMUs1MgByjd6EYdJmIdlGWJqGOyfRlGRgo
+	 UydDsDUm67oIt+rLBBFGlUHmoWEjXqnPvL7eDu4V6bruOquOyYaFnf55/x6lDDtN1P
+	 DBdzCrmndBks8MnXQyLYtrMHyW41Eqpg1exPXkHU=
+Date: Fri, 12 Jul 2024 18:31:37 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar, 
+	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v3 1/2] media: videodev2: Add flags to unconditionnaly
+ enumerate pixels formats
+Message-ID: <a4jvi5wg7ag6apodn4hkdr556r6dq6vknjzrqpti6mlsq56cpf@ygh6edcz5nci>
+References: <20240712103000.16655-1-benjamin.gaignard@collabora.com>
+ <20240712103000.16655-2-benjamin.gaignard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240712103000.16655-2-benjamin.gaignard@collabora.com>
 
-On Fri, 12 Jul 2024 11:32:30 -0400
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+Hi Benjamin
 
-> >>> I was looking at the rseq on request from the KVM call, however it does not
-> >>> make sense to me yet how to expose the rseq area via the Guest VA to the host
-> >>> kernel.  rseq is for userspace to kernel, not VM to kernel.  
-> > 
-> > Any memory that is exposed to host userspace can be exposed to the guest.  Things
-> > like this are implemented via "overlay" pages, where the guest asks host userspace
-> > to map the magic page (rseq in this case) at GPA 'x'.  Userspace then creates a
-> > memslot that overlays guest RAM to map GPA 'x' to host VA 'y', where 'y' is the
-> > address of the page containing the rseq structure associated with the vCPU (in
-> > pretty much every modern VMM, each vCPU has a dedicated task/thread).
-> > 
-> > A that point, the vCPU can read/write the rseq structure directly.  
+On Fri, Jul 12, 2024 at 12:29:59PM GMT, Benjamin Gaignard wrote:
+> Add new flags to enumerate all pixels formats when calling VIDIOC_ENUM_FMT ioctl.
+> When this V4L2_FMT_FLAG_ENUM_ALL_FORMATS flag is set drivers must
+> ignore the configuration and return the hardware supported pixel
+> formats for the specified queue.
+> To distinguish this particular enumeration case V4L2_FMT_FLAG_ALL_FORMATS
+> flag must be set by the drivers to highlight support of this feature
+> to user space applications.
+> This will permit to discover which pixel formats are supported
+> without setting codec-specific information so userland can more easily
+> know if the driver suits its needs well.
+> The main target are stateless decoders so update the documentation
+> about how to use this flag.
+>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> ---
+> changes in version 3:
+> - Add a flag to inform userspace application that driver
+>   as take care of the flag.
+>
+>  .../userspace-api/media/v4l/dev-stateless-decoder.rst    | 6 ++++++
+>  .../userspace-api/media/v4l/vidioc-enum-fmt.rst          | 9 +++++++++
+>  .../userspace-api/media/videodev2.h.rst.exceptions       | 2 ++
+>  drivers/media/v4l2-core/v4l2-ioctl.c                     | 3 +++
+>  include/uapi/linux/videodev2.h                           | 2 ++
+>  5 files changed, 22 insertions(+)
+>
+> diff --git a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
+> index 35ed05f2695e..b0b657de910d 100644
+> --- a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
+> +++ b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
+> @@ -58,6 +58,12 @@ Querying capabilities
+>       default values for these controls being used, and a returned set of formats
+>       that may not be usable for the media the client is trying to decode.
+>
+> +   * If the ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS`` flag is set the driver must enumerate
+> +     all the supported formats without taking care of codec-dependent controls
+> +     set on the ``OUTPUT`` queue. To indicate that the driver has take care of this
+> +     flag it must set ``V4L2_FMT_FLAG_ALL_FORMATS`` flag for each format while
+> +     enumerating.
+> +
+>  3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect supported
+>     resolutions for a given format, passing desired pixel format in
+>     :c:type:`v4l2_frmsizeenum`'s ``pixel_format``.
+> diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+> index 3adb3d205531..0399e0fc09b3 100644
+> --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+> +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
+> @@ -234,6 +234,15 @@ the ``mbus_code`` field is handled differently:
+>  	valid. The buffer consists of ``height`` lines, each having ``width``
+>  	Data Units of data and the offset (in bytes) between the beginning of
+>  	each two consecutive lines is ``bytesperline``.
+> +    * - ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS``
+> +      - 0x0400
+> +      - Set by userland applications to enumerate all possible pixel formats
+> +        without taking care of any OUTPUT or CAPTURE queue configuration.
 
-So basically, the vCPU thread can just create a virtio device that
-exposes the rseq memory to the guest kernel?
+This seems to be only relevant for codecs and m2m devices.
 
-One other issue we need to worry about is that IIUC rseq memory is
-allocated by the guest/user, not the host kernel. This means it can be
-swapped out. The code that handles this needs to be able to handle user
-page faults.
+For 'regular' capture (and I presume output) devices isn't the default
+behaviour to enumerate all pixel formats, and userspace can decide to
+restrict them by providing a media bus code (if the device reports the
+V4L2_CAP_IO_MC capability)
 
-> 
-> This helps me understand what you are trying to achieve. I disagree with
-> some aspects of the design you present above: mainly the lack of
-> isolation between the guest kernel and the host task doing the KVM_RUN.
-> We do not want to let the guest kernel store to rseq fields that would
-> result in getting the host task killed (e.g. a bogus rseq_cs pointer).
-> But this is something we can improve upon once we understand what we
-> are trying to achieve.
-> 
-> > 
-> > The reason us KVM folks are pushing y'all towards something like rseq is that
-> > (again, in any modern VMM) vCPUs are just tasks, i.e. priority boosting a vCPU
-> > is actually just priority boosting a task.  So rather than invent something
-> > virtualization specific, invent a mechanism for priority boosting from userspace
-> > without a syscall, and then extend it to the virtualization use case.
-> >   
-> [...]
-> 
-> OK, so how about we expose "offsets" tuning the base values ?
-> 
-> - The task doing KVM_RUN, just like any other task, has its "priority"
->    value as set by setpriority(2).
-> 
-> - We introduce two new fields in the per-thread struct rseq, which is
->    mapped in the host task doing KVM_RUN and readable from the scheduler:
-> 
->    - __s32 prio_offset; /* Priority offset to apply on the current task priority. */
-> 
->    - __u64 vcpu_sched;  /* Pointer to a struct vcpu_sched in user-space */
-> 
->      vcpu_sched would be a userspace pointer to a new vcpu_sched structure,
->      which would be typically NULL except for tasks doing KVM_RUN. This would
->      sit in its own pages per vcpu, which takes care of isolation between guest
->      kernel and host process. Those would be RW by the guest kernel as
->      well and contain e.g.:
 
-Hmm, maybe not make this only vcpu specific, but perhaps this can be
-useful for user space tasks that want to dynamically change their
-priority without a system call. It could do the same thing. Yeah, yeah,
-I may be coming up with a solution in search of a problem ;-)
-
--- Steve
-
-> 
->      struct vcpu_sched {
->          __u32 len;  /* Length of active fields. */
-> 
->          __s32 prio_offset;
->          __s32 cpu_capacity_offset;
->          [...]
->      };
-> 
-> So when the host kernel try to calculate the effective priority of a task
-> doing KVM_RUN, it would basically start from its current priority, and offset
-> by (rseq->prio_offset + rseq->vcpu_sched->prio_offset).
-> 
-> The cpu_capacity_offset would be populated by the host kernel and read by the
-> guest kernel scheduler for scheduling/migration decisions.
-> 
-> I'm certainly missing details about how priority offsets should be bounded for
-> given tasks. This could be an extension to setrlimit(2).
-> 
-> Thoughts ?
-> 
-> Thanks,
-> 
-> Mathieu
-> 
-
+> +    * - ``V4L2_FMT_FLAG_ALL_FORMATS``
+> +      - 0x0800
+> +      - Set by the driver to indicated that format have been enumerated because
+> +        :ref:`V4L2_FMT_FLAG_ENUM_ALL_FORMATS <v4l2-pix-fmt-flag-set-csc>` has
+> +        been set by the userland application.
+>
+>  Return Value
+>  ============
+> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> index bdc628e8c1d6..7a3a1e9dc055 100644
+> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
+> @@ -216,6 +216,8 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
+>  replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
+>  replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
+>  replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
+> +replace define V4L2_FMT_FLAG_ENUM_ALL_FORMATS fmtdesc-flags
+> +replace define V4L2_FMT_FLAG_ALL_FORMATS fmtdesc-flags
+>
+>  # V4L2 timecode types
+>  replace define V4L2_TC_TYPE_24FPS timecode-type
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 4c76d17b4629..5785a98b6ba2 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1569,6 +1569,7 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
+>  	int ret = check_fmt(file, p->type);
+>  	u32 mbus_code;
+>  	u32 cap_mask;
+> +	u32 flags;
+>
+>  	if (ret)
+>  		return ret;
+> @@ -1578,8 +1579,10 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
+>  		p->mbus_code = 0;
+>
+>  	mbus_code = p->mbus_code;
+> +	flags = p->flags & V4L2_FMT_FLAG_ENUM_ALL_FORMATS;
+>  	memset_after(p, 0, type);
+>  	p->mbus_code = mbus_code;
+> +	p->flags = flags;
+>
+>  	switch (p->type) {
+>  	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index fe6b67e83751..b6a5da79ba21 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -886,6 +886,8 @@ struct v4l2_fmtdesc {
+>  #define V4L2_FMT_FLAG_CSC_HSV_ENC		V4L2_FMT_FLAG_CSC_YCBCR_ENC
+>  #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
+>  #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
+> +#define V4L2_FMT_FLAG_ENUM_ALL_FORMATS		0x0400
+> +#define V4L2_FMT_FLAG_ALL_FORMATS		0x0800
+>
+>  	/* Frame Size and frame rate enumeration */
+>  /*
+> --
+> 2.43.0
+>
+>
 
