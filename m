@@ -1,90 +1,112 @@
-Return-Path: <linux-kernel+bounces-250939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594B092FEC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:47:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC1092FECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EDD41F221D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:47:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1593E1C22A2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCEB178370;
-	Fri, 12 Jul 2024 16:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49C65176AAD;
+	Fri, 12 Jul 2024 16:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNpQ6meE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+ZQgXm/"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C983B176ABE;
-	Fri, 12 Jul 2024 16:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C7B176224;
+	Fri, 12 Jul 2024 16:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720802814; cv=none; b=iWHmu9HNSkC5+eKQofY/5flxQhqA6zRETKZ3hfbyTWDbMsnY13VKwfKgp/dmWKQ9hNqdrJMCKEOXdhsSOK+TcYu3AATZcAEtF36+LHyagXLzdnY6JkyWgVUKruYwek9FhRZh2i7y0wm5m6+FtBDy8yuw/rTbA7e7GrRjSuyK83Q=
+	t=1720802886; cv=none; b=Dau8NQlOnPrb5GVZUeWSBZZNLVx7r0uZnZDK3xPULWL5JQogFWk6VHwDPrvo0NwxfVm3eYXH7iT/lTn2cHfoGCOTTj+w+HuJO1+UrwwOw7bpTisHONdv9ZbNQKK0eGxseYhUGA0ZsE+TV79rr6oJ6JfPTs3vCneOhPgFtmE3njg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720802814; c=relaxed/simple;
-	bh=bI2ezQh2M3Ni7Iiyoa9aHW8MY1yWFJgdpTY+fceKi40=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y21Qs8/wgF7nNWSzpauAzLxBPz1/TOzfEL2PqSwT/xj7QV1S9pL++jcV/q5fxC3Z9S3m2LHxg+PPHMr+EOkehlPrYubb1bKdURxxoyQ8/N8GPZGtyOceP1/cKde80E7U742gdWlXkhgu4lvyau2Pj3AlxT8yjDigxIoduTfAgLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GNpQ6meE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05F55C32782;
-	Fri, 12 Jul 2024 16:46:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720802814;
-	bh=bI2ezQh2M3Ni7Iiyoa9aHW8MY1yWFJgdpTY+fceKi40=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=GNpQ6meEAK6RcDPsD0PWUCWKTxyZRPVFh8RKGZ6up53eZa6Rca5suH67yLXud05Ia
-	 gj7Jw9WrmegWJQ32UknOHn5GZlozl6VGuTc3Liq37N7/YcbHsQsniu2WoI8iVnwKDo
-	 fe3eD0UuDnuEE3uYU9EVa0lP/exAbITVHInKxajx76Zt796y/dbqMPPphl6qkYleua
-	 3H+Mga7aM0rMrTEo6hoXtvi6ne6mJS90hVUnaYHM2eZmWOA0+3o7qOleuhl/8BY1br
-	 S6gmJm6l3EXmh2BtXJX6m6DaBKewkohCCMhrVQegxjOumBXd2tCzkb7BOJjNYE8M4c
-	 qFg5115H8M2GA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Yunseong Kim <yskelg@gmail.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ian Rogers <irogers@google.com>
-Subject: Re: [PATCH v1] perf dso: Fix address sanitizer build
-Date: Fri, 12 Jul 2024 09:46:52 -0700
-Message-ID: <172080280090.2773964.7861842320285043565.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-In-Reply-To: <20240704011745.1021288-1-irogers@google.com>
-References: <20240704011745.1021288-1-irogers@google.com>
+	s=arc-20240116; t=1720802886; c=relaxed/simple;
+	bh=RC2e7WlLSP3cm67j7LA8pW+VkQvhZE2UsAslIPnndY4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dCNecCmHtawmF5pTuIcdqjhkja8JPNYhouILualus3YC6ZrIUdp6ijjrpN7FGjQPE443IOXMNHyVD2CMk26CdpJOYEMjz06L63pM0emGamOQZ5GGP3aYe5OU/Yn/sigqzhKLnoD2FCKYdANtVPeMcuCY1J1HgX+olZNZwBAIQsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+ZQgXm/; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec61eeed8eso28548441fa.0;
+        Fri, 12 Jul 2024 09:48:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720802883; x=1721407683; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2/U3UtAsmtilaeUJhnEMoOOpsbq+nGei+Pt062zxp4s=;
+        b=Q+ZQgXm/wKOITTJrbPbKD70Tm1V2H+YxM0TMIW0kqU/jsvLRu3kQAKpfWEVlD9JONK
+         DMV0R7xG2IUg2OEBnUSoutdo9MlGRnIzxQVMbrbpH2ibzhsgzmQyoLMsIdyBaMm8fRd+
+         9JvTg/5C8ghwZUne7JU7srEhbz0DSuaVn/Waodhp4aJOzvA/A5ol4A0MMG+t7xZiE65p
+         8851NQpnmqcsSD2xJht/UjKzJquB66cRdrTtjNFffw9BvC2Ar6Z5TpvJzDXJUcwtSlJF
+         YLLZ/2zp/C+fN7HuXEqO0LHIZxWWnqHa1mD+PLQvF5G3emTbCtfnX9WC2e05uNoOiRWP
+         P33w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720802883; x=1721407683;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2/U3UtAsmtilaeUJhnEMoOOpsbq+nGei+Pt062zxp4s=;
+        b=mfSzGeHRKP9hOmC4wW14EAYMp9VqZaX7j4Vyymnp7LHDp+3y471x6VeUUwLePQBeiJ
+         59rFcnsV4VdkXRYW97a3B3vvJf+RHf8YroINPLwlf1sNCMoTLpiEHYreMnq5jdk0R4OK
+         wfxDRrC9zOxVu9SJzgxwZdg3Zxoy//kTW16qlObbYt25+p9MwC3FZn4EIyWGfwstEsjQ
+         i+vYUDFSCjAw3qVWBj9a9NOsVBkubbmTZQlWI9L7Nq2ofrfeeb/VS5lMds+7j3K1zqJD
+         R+zKHl4K2NPCS3HTBaH8iK391uaSu+Zvnbb+CXQBQdMXMiNoa4RuN3iKlz1FGV9iIdnZ
+         vmTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCaiztMlmYSzo7z7PACSSbFhi+kwwPwkYNhky79lHylzm4z/6duFNyudI7SJj7NyF94O9nzVpKSGo88lBiTM80+8acUL9P8ocSDHrz
+X-Gm-Message-State: AOJu0YwSNnl4SRJutzjY6DyfJfaXsUeeuFTT9reWEN/Ma+KoGTF6H9Nn
+	y/6+wQB/8cS9GlPBR31zDklUcV0UZviQkXOvhRXvrQzpmyTTebAB0EDl/Q==
+X-Google-Smtp-Source: AGHT+IGkaWht7sdKU8fH2BOaUvy9YY+CJ+N3osVpyEIVYDXuX1VYSjE1KbZ7ZamYbCHmcrW8iY3vEQ==
+X-Received: by 2002:a2e:9b0f:0:b0:2ec:3e02:972a with SMTP id 38308e7fff4ca-2eeb30bba8bmr76303221fa.11.1720802882883;
+        Fri, 12 Jul 2024 09:48:02 -0700 (PDT)
+Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab0fbsm10524210f8f.95.2024.07.12.09.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 09:48:02 -0700 (PDT)
+From: Ilya Dryomov <idryomov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 6.10-rc8
+Date: Fri, 12 Jul 2024 18:47:43 +0200
+Message-ID: <20240712164745.409957-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 03 Jul 2024 18:17:45 -0700, Ian Rogers wrote:
+Hi Linus,
 
-> Various files had been missed from having accessor functions added for
-> the sake of dso reference count checking. Add the function calls and
-> missing dso accessor functions.
-> 
-> 
+The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
 
-Applied to perf-tools-next, thanks!
+  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
 
-Best regards,
-Namhyung
+are available in the Git repository at:
+
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.10-rc8
+
+for you to fetch changes up to 359bc01d2ecc9093216d21cfa03a545c44413cb6:
+
+  libceph: fix crush_choose_firstn() kernel-doc warnings (2024-07-11 16:33:07 +0200)
+
+----------------------------------------------------------------
+A fix for a possible use-after-free following "rbd unmap" or "umount"
+marked for stable and two kernel-doc fixups.
+
+----------------------------------------------------------------
+Ilya Dryomov (1):
+      libceph: fix race between delayed_work() and ceph_monc_stop()
+
+Jeff Johnson (2):
+      libceph: suppress crush_choose_indep() kernel-doc warnings
+      libceph: fix crush_choose_firstn() kernel-doc warnings
+
+ net/ceph/crush/mapper.c |  7 +++++--
+ net/ceph/mon_client.c   | 14 ++++++++++++--
+ 2 files changed, 17 insertions(+), 4 deletions(-)
 
