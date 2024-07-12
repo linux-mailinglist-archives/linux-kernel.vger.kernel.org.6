@@ -1,56 +1,75 @@
-Return-Path: <linux-kernel+bounces-250399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E2392F769
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:57:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF0F92F76E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C57C81C2288B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:57:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2761B282793
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE79143C5C;
-	Fri, 12 Jul 2024 08:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0829D143C5D;
+	Fri, 12 Jul 2024 08:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oxvxumuJ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JPD76uEA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6701140E58;
-	Fri, 12 Jul 2024 08:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C44585C56;
+	Fri, 12 Jul 2024 08:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720774611; cv=none; b=kdG5yO5VKDjqk65cNKjKFZuLVNyPw9L8RP4bAGPIMX3t0AYWDpIb9YkbUw7CX4zjh0UPO2tB8WdTR05LuRDCQVoYAN2nOPUdIoQQ+ME4SGjVVsXwVS7hEFGeKRH/D3MwaJzql8+7Kds6M56BnA4vV86+SO5XxpNo6TxbHbJOxKA=
+	t=1720774676; cv=none; b=gxQWr/8/4MXwj9J9ueLyFIrncBeqpzsN2SaJuoi5kSshkKHLVt7atIfgxyZMecq28vcND8P9/WNpycrHMJJ+kuxeK23s1jN73EGG7vVsMJPfr+O9IVdVp8onUbBdfgbf0Qu6eiaKHEGnyIUdVZQ1U8UM0GFelUqt0ID4Tq4TadQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720774611; c=relaxed/simple;
-	bh=bSq7Nc3adHyPGYFGHIoS1jiGq8sFkJXkLR8MDpxbgrk=;
+	s=arc-20240116; t=1720774676; c=relaxed/simple;
+	bh=ZDPJYP6gEFHp66c3ESY9RhdT01J6PR01gUJB4J2mFHM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kR2yoYUXxk6+C+93LhizcVrkFH9Rd8RkJlga5e/QhQDhFCeFS9gb7+nvulV8uTxHvHzbzPJlzTp09WtQFOcOBImbna+h9fWNJrmWQYQPeWAbLpdJJX8ZJQeciSX83/n40h6UsMq72T1T43A2lUDe9ygt9sUyrMRJjbgrEfwdaQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oxvxumuJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E14BDC4AF09;
-	Fri, 12 Jul 2024 08:56:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qiMICaO9BpCNMlBylaY2aAlZIsFhqBGhwtOjgdKxLsb0tUevz5/SyEPVCuY9Pv8pj9+O3lyyEXrdeLQjE9bfSu959p5zbE8FyubLe/a+walgsX03pkz0wdQU7qJ8FyzcReLY8dj66lXfHamMmd+6+hKu3vygKqPeulAvsSK9+l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JPD76uEA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70DECC4AF07;
+	Fri, 12 Jul 2024 08:57:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720774611;
-	bh=bSq7Nc3adHyPGYFGHIoS1jiGq8sFkJXkLR8MDpxbgrk=;
+	s=korg; t=1720774676;
+	bh=ZDPJYP6gEFHp66c3ESY9RhdT01J6PR01gUJB4J2mFHM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oxvxumuJM4jYPgzAfBRxcGx2E7VS/yZWNuTEj+yCPEVXWKm0ArJYl5sWU0K8cNSCj
-	 wlCByUAAl8Y2yIvZDvHpVdIV8r2nJfs5YocWA1n+zIzLgJxHJvYfQvVbV5wbLHAjUB
-	 J+YkZ3sUJzQl1WC6y7bnG0xQll2AadnJEADRsr3M=
-Date: Fri, 12 Jul 2024 10:56:48 +0200
+	b=JPD76uEAdymfQ6rUYx7G7vVoXJ1i2ObDyz6P+jHwzw+AlM/MpAYOICVasBqnWnPyt
+	 bt8SzfCuc1oYrNxwSmtgbxvUGgZB+U5m5idnQ2RM20MPreSDu1sJMR6OjzY1gP8tcu
+	 iMvDNLxzaUpNRCY8Rgw4pW1A/YQyI82ki/+x48qE=
+Date: Fri, 12 Jul 2024 10:57:53 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>, linux-kernel@vger.kernel.org,
-	Rafael J Wysocki <rafael@kernel.org>,
-	Eugeniu Rosca <eugeniu.rosca@bosch.com>,
-	syzbot+ffa8143439596313a85a@syzkaller.appspotmail.com,
-	Ashish Sangwan <a.sangwan@samsung.com>,
-	Namjae Jeon <namjae.jeon@samsung.com>, linux-cxl@vger.kernel.org
-Subject: Re: [PATCH v2] drivers: core: synchronize really_probe() and
- dev_uevent()
-Message-ID: <2024071227-surname-satirical-1184@gregkh>
-References: <20240513050634.3964461-1-dirk.behme@de.bosch.com>
- <669073b8ea479_5fffa294c1@dwillia2-xfh.jf.intel.com.notmuch>
+To: Rob Herring <robh@kernel.org>
+Cc: Herve Codina <herve.codina@bootlin.com>, Lee Jones <lee@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	UNGLinuxDriver@microchip.com,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v3 6/7] mfd: Add support for LAN966x PCI device
+Message-ID: <2024071226-cherisher-stumble-56e7@gregkh>
+References: <20240627091137.370572-1-herve.codina@bootlin.com>
+ <20240627091137.370572-7-herve.codina@bootlin.com>
+ <20240711152952.GL501857@google.com>
+ <20240711184438.65446cc3@bootlin.com>
+ <2024071113-motocross-escalator-e034@gregkh>
+ <CAL_Jsq+1r3SSaXupdNAcXO-4rcV-_3_hwh0XJaBsB9fuX5nBCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,72 +78,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <669073b8ea479_5fffa294c1@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <CAL_Jsq+1r3SSaXupdNAcXO-4rcV-_3_hwh0XJaBsB9fuX5nBCQ@mail.gmail.com>
 
-On Thu, Jul 11, 2024 at 05:07:21PM -0700, Dan Williams wrote:
-> Dirk Behme wrote:
-> > Synchronize the dev->driver usage in really_probe() and dev_uevent().
-> > These can run in different threads, what can result in the following
-> > race condition for dev->driver uninitialization:
-> 
-> This fix introduces an ABBA deadlock scenario via the known antipattern
-> of taking the device_lock() within device attributes that are removed
-> while the lock is held.
+On Thu, Jul 11, 2024 at 02:33:26PM -0600, Rob Herring wrote:
+> In this case, all the child devices are already supported as platform
+> devices. There would be zero benefit to add all the boilerplate to
+> make their drivers both platform and aux bus drivers. Plus there is
+> zero DT support in aux bus.
 
-Ugh, yes :(
+It is by design that there is 0 DT support in aux bus :)
 
-device attributes should not be taking that lock, don't we have a
-different call for an attribute that will be removing itself?
-
-> Lockdep splat below. I previously reported this on a syzbot report
-> against nvdimm subsytems with a more complicated splat [1], but this one
-> is more straightforward.
-> 
-> Recall that the reason this lockdep report is not widespread is because
-> CXL and NVDIMM are among the only subsystems that add lockdep coverage
-> to device_lock() with a local key.
-> 
-> [1]: http://lore.kernel.org/667a2ae44c0c0_5be92947e@dwillia2-mobl3.amr.corp.intel.com.notmuch
-> 
-> One potential hack is something like this if it is backstopped with
-> synchronization between unregistering drivers from buses relative to
-> uevent callbacks for those buses:
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 2b4c0624b704..dfba73ef39af 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -2640,6 +2640,7 @@ static const char *dev_uevent_name(const struct kobject *kobj)
->  static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
->  {
->         const struct device *dev = kobj_to_dev(kobj);
-> +       struct device_driver *driver;
->         int retval = 0;
->  
->         /* add device node properties if present */
-> @@ -2668,8 +2669,14 @@ static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
->         if (dev->type && dev->type->name)
->                 add_uevent_var(env, "DEVTYPE=%s", dev->type->name);
->  
-> -       if (dev->driver)
-> -               add_uevent_var(env, "DRIVER=%s", dev->driver->name);
-> +       /*
-> +        * While it is likely that this races driver detach, it is
-> +        * unlikely that any driver attached with this device is racing being
-> +        * freed relative to a uevent for the same device
-> +        */
-> +       driver = READ_ONCE(dev->driver);
-> +       if (driver)
-> +               add_uevent_var(env, "DRIVER=%s", driver->name);
->  
->         /* Add common DT information about the device */
->         of_device_uevent(dev, env);
-> 
-
-I'll take this patch for now if you want to also include the removal of
-the lock patch that caused your splat.
-
-thanks,
+But ok, I'll trust you on this usage...
 
 greg k-h
 
