@@ -1,100 +1,155 @@
-Return-Path: <linux-kernel+bounces-251099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CE593009F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:55:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754269300A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F5261C20C9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20E151F218AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF1B32233B;
-	Fri, 12 Jul 2024 18:55:01 +0000 (UTC)
-Received: from relay162.nicmail.ru (relay162.nicmail.ru [91.189.117.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F066E2233B;
+	Fri, 12 Jul 2024 18:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nh4JaPaH"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CB21DA21;
-	Fri, 12 Jul 2024 18:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.189.117.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E255C1EB3E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 18:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720810501; cv=none; b=Koi52zOvNkprXeHY6K6aEYopAmXCzEkTzlBM26rf3YnXyUNby9ybbhiN3nPix/appnFUBqjjQWIYgYt6Yiq3S1EeUNNnKln1ySOUWz7NjM//FZOl9lUe2UtnLRU2pmO7L2H4ta9pqT/OciYauHm9aNKx7hM6HhBY3qfbUji2fto=
+	t=1720810576; cv=none; b=HYXt3lpuxxNasGc+gTOIlELAefdvb40TzTSZDgiwTFbbKZYK6OEOgbff0kSvKnBsSu3uJLR8uRWPI3B4WKs28/ie/3tGux9Ej7IE71cBIPHPp3u5IxmY5LVkyQHd2iv0K61XsdXrGq4FZzQx3rKu5OBQ4ghTDirnuZkdD8NsJzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720810501; c=relaxed/simple;
-	bh=EfrYKP/JO+F/p9IArrs8s8ePFtOhpBOMdprKxw03jGY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I8JnpU+ob0HNwq0Rbgs5CCAhX1lYnM2U8M8/re+aVmYIuaiblWjSnjOIrdNXrI712Ivu0308OAodZWd5hPkrz6v5SDnztKF1aJRWSbP7NHlAUT8MeLpSdEcZsdxZmxt92jiTMXJArlUXREsNSTGM5332nu12jRICyv2BwK1okfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru; spf=pass smtp.mailfrom=ancud.ru; arc=none smtp.client-ip=91.189.117.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ancud.ru
-Received: from [10.28.136.255] (port=28700 helo=mitx-gfx..)
-	by relay.hosting.mail.nic.ru with esmtp (Exim 5.55)
-	(envelope-from <kiryushin@ancud.ru>)
-	id 1sSLPs-0002cJ-6d;
-	Fri, 12 Jul 2024 21:54:48 +0300
-Received: from [87.245.155.195] (account kiryushin@ancud.ru HELO mitx-gfx..)
-	by incarp1105.mail.hosting.nic.ru (Exim 5.55)
-	with id 1sSLPr-001O2p-33;
-	Fri, 12 Jul 2024 21:54:48 +0300
-From: Nikita Kiryushin <kiryushin@ancud.ru>
-To: Sudarsana Kalluru <skalluru@marvell.com>
-Cc: Nikita Kiryushin <kiryushin@ancud.ru>,
-	Manish Chopra <manishc@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH net-next] bnx2x: remove redundant NULL-pointer check
-Date: Fri, 12 Jul 2024 21:54:31 +0300
-Message-Id: <20240712185431.81805-1-kiryushin@ancud.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720810576; c=relaxed/simple;
+	bh=IQCLsBi/RkvLOEgoSSl1XQ/GIxiJJy6agjjoG4e2ZU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1X+q8XxROXFEVr/q1+4IQG/LjvZFsJ0l82zTw5trctDHfms59zX/NjxPahKnj2bfs+FTCnJvFdlXXITElFbsmOvU+0wD/IslDKageYxyISfrMYJW7oOvwgN22v9HHjwe5iCcOEZBMsw52LlTH3HG2ULcG4ga0V0NE/GOReSm1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nh4JaPaH; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: dan.carpenter@linaro.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720810571;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bLOuCRQ0OaEn4CRs61suYHL8mnpNY/wKKFfs4K+hv9E=;
+	b=nh4JaPaHNlL6nLBdOjcY/PKNDiItVRVQ9xhllFUjjYbPY8sSv7cDsirO3xQuMT0ZvKms9G
+	ovvREJr4c5R9y4n1Ywc9Ojc8h94iUqjAG1SGNvQBK/IAMXdDxGubYPosMT2Qxj8IVnk/Ik
+	kVQb5jonTLZzT6dJxnsO15NVB3aM8RI=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: cgroups@vger.kernel.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: shakeel.butt@linux.dev
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Fri, 12 Jul 2024 18:56:03 +0000
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: cgroups@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [bug report] mm: memcg: move charge migration code to
+ memcontrol-v1.c
+Message-ID: <ZpF8Q9zBsIY7d2P9@google.com>
+References: <cf6a89aa-449b-4dad-a1a4-40c56a40d258@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MS-Exchange-Organization-SCL: -1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cf6a89aa-449b-4dad-a1a4-40c56a40d258@stanley.mountain>
+X-Migadu-Flow: FLOW_OUT
 
-bnx2x_get_vf_config() contains NULL-pointer checks for
-mac_obj and vlan_obj.
+On Fri, Jul 12, 2024 at 09:07:45AM -0500, Dan Carpenter wrote:
+> Hello Roman Gushchin,
+> 
+> Commit e548ad4a7cbf ("mm: memcg: move charge migration code to
+> memcontrol-v1.c") from Jun 24, 2024 (linux-next), leads to the
+> following Smatch static checker warning:
+> 
+> 	mm/memcontrol-v1.c:609 mem_cgroup_move_charge_write()
+> 	warn: was expecting a 64 bit value instead of '~(1 | 2)'
+> 
+> mm/memcontrol-v1.c
+>     599 #ifdef CONFIG_MMU
+>     600 static int mem_cgroup_move_charge_write(struct cgroup_subsys_state *css,
+>     601                                  struct cftype *cft, u64 val)
+>     602 {
+>     603         struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+>     604 
+>     605         pr_warn_once("Cgroup memory moving (move_charge_at_immigrate) is deprecated. "
+>     606                      "Please report your usecase to linux-mm@kvack.org if you "
+>     607                      "depend on this functionality.\n");
+>     608 
+> --> 609         if (val & ~MOVE_MASK)
+> 
+> val is a u64 and MOVE_MASK is a u32.  This only checks if something in the low
+> 32 bits is set and it ignores the high 32 bits.
 
-The fields checked are assigned to (after macro expansions):
+Hi Dan,
 
-mac_obj = &((vf)->vfqs[0].mac_obj);
-vlan_obj = &((vf)->vfqs[0].vlan_obj);
+thank you for the report!
 
-It is impossible to get NULL for those (and (vf)->vfqs was
-checked earlier in bnx2x_vf_op_prep).
+The mentioned commit just moved to code from memcontrol.c to memcontrol-v1.c,
+so the bug is actually much much older. Anyway, the fix is attached below.
 
-Remove superfluous NULL-pointer check and associated
-unreachable code to improve readability.
+Andrew, can you please pick it up?
 
-Signed-off-by: Nikita Kiryushin <kiryushin@ancud.ru>
+I don't think the problem and the fix deserve a stable backport.
+
+Thank you!
+
+--
+
+From 8b3d1ebb8d99cd9d3ab331f69ba9170f09a5c9b6 Mon Sep 17 00:00:00 2001
+From: Roman Gushchin <roman.gushchin@linux.dev>
+Date: Fri, 12 Jul 2024 18:35:14 +0000
+Subject: [PATCH] mm: memcg1: convert charge move flags to unsigned long long
+
+Currently MOVE_ANON and MOVE_FILE flags are defined as integers
+and it leads to the following Smatch static checker warning:
+    mm/memcontrol-v1.c:609 mem_cgroup_move_charge_write()
+    warn: was expecting a 64 bit value instead of '~(1 | 2)'
+
+Fix this be redefining them as unsigned long long.
+
+Even though the issue allows to set high 32 bits of mc.flags
+to an arbitrary number, these bits are never used, so it doesn't
+have any significant consequences.
+
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c | 4 ----
- 1 file changed, 4 deletions(-)
+ mm/memcontrol-v1.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
-index 77d4cb4ad782..3415bbe722a8 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sriov.c
-@@ -2619,10 +2619,6 @@ int bnx2x_get_vf_config(struct net_device *dev, int vfidx,
+diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+index 6b3e56e88a8a..2aeea4d8bf8e 100644
+--- a/mm/memcontrol-v1.c
++++ b/mm/memcontrol-v1.c
+@@ -44,8 +44,8 @@ static struct mem_cgroup_tree soft_limit_tree __read_mostly;
+ /*
+  * Types of charges to be moved.
+  */
+-#define MOVE_ANON	0x1U
+-#define MOVE_FILE	0x2U
++#define MOVE_ANON	0x1ULL
++#define MOVE_FILE	0x2ULL
+ #define MOVE_MASK	(MOVE_ANON | MOVE_FILE)
  
- 	mac_obj = &bnx2x_leading_vfq(vf, mac_obj);
- 	vlan_obj = &bnx2x_leading_vfq(vf, vlan_obj);
--	if (!mac_obj || !vlan_obj) {
--		BNX2X_ERR("VF partially initialized\n");
--		return -EINVAL;
--	}
- 
- 	ivi->vf = vfidx;
- 	ivi->qos = 0;
+ /* "mc" and its members are protected by cgroup_mutex */
 -- 
-2.34.1
+2.45.2.993.g49e7a77208-goog
 
 
