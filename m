@@ -1,133 +1,69 @@
-Return-Path: <linux-kernel+bounces-250290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A4092F628
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E51A692F62A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEEE41C22848
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:28:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22B921C22CA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AF51422D0;
-	Fri, 12 Jul 2024 07:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CE91428E7;
+	Fri, 12 Jul 2024 07:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="iL/KL6fT"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UIL61AFC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A52E1C2E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149F113DDBD;
+	Fri, 12 Jul 2024 07:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720769270; cv=none; b=hW7lESK6YTIrrVcADD1bYgMYx+cs7vmTd1eXtFTc+GeVR+hdgOjUb1a/qx4PQQW7ujBvjich3zaHmHVkp+vi7XDwRveGPnOxmd56ZKJjujDUn46nc8w2J8pVRx/3/J9zWfK3z1KO4ZtKXQd51BjeOd7XksFHYSQ08bre+W3iv2E=
+	t=1720769276; cv=none; b=EVD8t5+yDIikJNwTJQUmMBrv2A+PtO6f2QE9Qrpzdd//yG0VO+zRSVZ20jxKOc5J0eP607CfvZ22zK1LUKrZ98alBKUtZo/0RL3fo5oP1lZavZCXBX+HYhd7BlUzyHeNai2Uk/t07fRr4oQCniShjF6Qpq/5cgNq2Z6V+iCajjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720769270; c=relaxed/simple;
-	bh=P4mIafREpn6h7plQjYSpGs1UlyXzDra4OmllL9/yIZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t2VVr0BR0wHGOmiyU9jnV0VCVQxb2gRiz/XVgamwRM7LcJAzgZp8ss4/sRnEw76m24QyKHuXq8H0CVDjmkMSf8GNZ+SDXX8sYt+30sykkhBNN3CYBUKoE5uGoPPNSL+gWzvAuhho+LDcF1UbmBc5LQ6fqK5xUUnK+BeZ1Yx5lsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=iL/KL6fT; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-58ba3e38027so1879487a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 00:27:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1720769265; x=1721374065; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LlwpSi63N1z5BUSejLoMf5VZ8PuCQqb4+FkOedv3l0A=;
-        b=iL/KL6fTS0Rv/yPihzSnDn+CrxH8ZIadVV5+xldI7oQbXlMpb11mnWo9gKRljAV0nZ
-         A8gfmnNkBQ69Id4tNUaT6F5GJff6onQ+uCFq53hYJFfskniqnmv43XRQpqKHJ2n7/WCm
-         oxT6qneKoWExKiJJUakADIwTEUIFSs11sUqttXpUpQVVdd3FyLfWfOb4NZM+On87DaMJ
-         QPx9p8AZTiUOTDaQ0XDFL0hr0tIKH2jeiRZvueNtPi002QMJyZNAU0rYgZMokPAe6p5l
-         +N/r8CG/eWyXRXgAvmMgzulUPuPd6ZE84NqyH0yua2zVvRMGwgGcKf/VTSeauu6cEES8
-         /b8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720769265; x=1721374065;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LlwpSi63N1z5BUSejLoMf5VZ8PuCQqb4+FkOedv3l0A=;
-        b=FfFfwN48UOTWYNuDt74iYV3M/GNEnYwRlRHEG8PyLhH2C+P7KK5XLVtCQ4aERMzOHd
-         PdAOXjAwTZ5mFjbllW6slcMAjrTZSYekibMVAAu3G75A/TF7sMEHDVctsvdgnsdZxoOA
-         ClPT8YNvBSIv80830xQ3B6ZPgIxwzG75mMPhtN3HLF+NNOARDzKCZGpRAwEZ2vEPcn0i
-         CIKbugtehiyVKIoSN5rhceKor1BwXdSaeXlBUGHlFSss9faAVAb82HMHP1d79Vzxnymg
-         si+RKfZPBiepBKJkJE9xpQIbBuRiVqNMi15un2jlQ2PqsVUkdkIVKfcDAep6GILi3Y0H
-         3kQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUBnIVpJO2z0MyZee12iHLzc1sun/SkLz0hikm3KXD51kqW56nrIiDxOdujFxXNDEfQ9aeW2R8WPZAesED/DtNA2d5QuMDuImXIQLr
-X-Gm-Message-State: AOJu0YyolZgMy+uPmfVUkHvY4SxtGoAbB8p3LOoulDIB30N6aa4XDEJj
-	J1pOxLW9Dp1huUb4cOHuxUamvkcCgFXzlpbGESXsEfA1+2sHI8iNkdmWwKzqcW0=
-X-Google-Smtp-Source: AGHT+IHgpOHeaT3lVGJdaXi/tIr1BOqe27pQXQR344YC5suu3getWDIJlHps77AKEhLiL7Q5GgUxYg==
-X-Received: by 2002:a05:6402:11cd:b0:57d:2db9:15e7 with SMTP id 4fb4d7f45d1cf-594baf917e8mr10130318a12.12.1720769265456;
-        Fri, 12 Jul 2024 00:27:45 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bbe2ce4bsm4244511a12.25.2024.07.12.00.27.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 00:27:45 -0700 (PDT)
-Message-ID: <17d67de2-4f10-4454-addb-1fbb86a264ee@blackwall.org>
-Date: Fri, 12 Jul 2024 10:27:43 +0300
+	s=arc-20240116; t=1720769276; c=relaxed/simple;
+	bh=v9H4k+agOKBQTzRRfj/8IHMszwHmjLKJent2iDVGH1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJ+laMIe39JbwZDjoeRi9OeYGQxvmyiWLiQBmTGpafVo918AB7W2oQT/i/mbyKurxIat35LyRW38yFdxRtRG9/bCYyyibS8wdIYka+mYnJJSG2aqUEC5xQ8ISI2/ixgr4QhMorsTOwNGvpbmZD18bCmaDBS/FfcMcZmecglbYcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UIL61AFC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C9DBC3277B;
+	Fri, 12 Jul 2024 07:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720769275;
+	bh=v9H4k+agOKBQTzRRfj/8IHMszwHmjLKJent2iDVGH1Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UIL61AFCphLYjosca0V2Pm/X0Wuzh5BoGL3ZSFa3w0T2pDSlRhQIVmlVunMXv3g0e
+	 vsODSwExALisB5US+i9IAgEMrJVw3EdqDIkDNkhP2B6lfmokcov6aSLwXqXWQi5xtJ
+	 uVRLqgprdwwZWdnrD01IP0PTw4x8gZHOR3gbaUq0=
+Date: Fri, 12 Jul 2024 09:27:53 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/8] Input: usbtouchscreen - use driver core to
+ instantiate device attributes
+Message-ID: <2024071248-modify-annotate-4188@gregkh>
+References: <20240712051851.3463657-1-dmitry.torokhov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3] net: bridge: mst: Check vlan state for egress
- decision
-To: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>, davem@davemloft.net
-Cc: Roopa Prabhu <roopa@nvidia.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Tobias Waldekranz <tobias@waldekranz.com>, bridge@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240712013134.717150-1-elliot.ayrey@alliedtelesis.co.nz>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20240712013134.717150-1-elliot.ayrey@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712051851.3463657-1-dmitry.torokhov@gmail.com>
 
-On 12/07/2024 04:31, Elliot Ayrey wrote:
-> If a port is blocking in the common instance but forwarding in an MST
-> instance, traffic egressing the bridge will be dropped because the
-> state of the common instance is overriding that of the MST instance.
+On Thu, Jul 11, 2024 at 10:18:43PM -0700, Dmitry Torokhov wrote:
+> Instead of manually creating driver-specific device attributes
+> set struct usb_driver->dev_groups pointer to have the driver core
+> do it.
 > 
-> Fix this by skipping the port state check in MST mode to allow
-> checking the vlan state via br_allowed_egress(). This is similar to
-> what happens in br_handle_frame_finish() when checking ingress
-> traffic, which was introduced in the change below.
-> 
-> Fixes: ec7328b59176 ("net: bridge: mst: Multiple Spanning Tree (MST) mode")
-> Signed-off-by: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 > ---
-> 
-> v3:
->   - Properly reference port state to fix compile error
-> v2: https://lore.kernel.org/all/20240711045926.756958-1-elliot.ayrey@alliedtelesis.co.nz/
->   - Restructure the MST mode check to make it read better
-> v1: https://lore.kernel.org/all/20240705030041.1248472-1-elliot.ayrey@alliedtelesis.co.nz/
-> 
->  net/bridge/br_forward.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/bridge/br_forward.c b/net/bridge/br_forward.c
-> index d97064d460dc..e19b583ff2c6 100644
-> --- a/net/bridge/br_forward.c
-> +++ b/net/bridge/br_forward.c
-> @@ -25,8 +25,8 @@ static inline int should_deliver(const struct net_bridge_port *p,
->  
->  	vg = nbp_vlan_group_rcu(p);
->  	return ((p->flags & BR_HAIRPIN_MODE) || skb->dev != p->dev) &&
-> -		p->state == BR_STATE_FORWARDING && br_allowed_egress(vg, skb) &&
-> -		nbp_switchdev_allowed_egress(p, skb) &&
-> +		(br_mst_is_enabled(p->br) || p->state == BR_STATE_FORWARDING) &&
-> +		br_allowed_egress(vg, skb) && nbp_switchdev_allowed_egress(p, skb) &&
->  		!br_skb_isolated(p, skb);
->  }
->  
+>  drivers/input/touchscreen/usbtouchscreen.c | 31 +++++++++++++++-------
+>  1 file changed, 21 insertions(+), 10 deletions(-)
 
-Acked-by: Nikolay Aleksandrov <razor@blackwall.org>
-
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
