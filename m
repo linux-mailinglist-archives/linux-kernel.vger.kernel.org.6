@@ -1,92 +1,125 @@
-Return-Path: <linux-kernel+bounces-250044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B967792F36B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:22:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF8192F36E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 03:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AE8EB2257C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:22:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70A68B2172A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 01:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CFE8F5B;
-	Fri, 12 Jul 2024 01:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="WUkzWDQ4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704316FD0;
+	Fri, 12 Jul 2024 01:25:56 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7114C79D0;
-	Fri, 12 Jul 2024 01:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39A81FBA;
+	Fri, 12 Jul 2024 01:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720747324; cv=none; b=bgmSA61WpnsfFyJ3VaIBx1YI/GdD4kyyYGLGmmrOXIJJmb3S2czP4n0zVxrp5XHVH9n7UQEcKOOGU9PAiBJXyFYqlY+IwffKPp5cVkTrtRNC1dxYRwM2yGHhYdb1vbY9ox5ERd4q2vO9LQ3i/hCUfa5X/RpW3xupdwanH7bh3lw=
+	t=1720747556; cv=none; b=o+bfmSChUQWfWQO2HO9znGbQG4jOTlDLTfS3XOZ+TBP+tdMhX2XSgX+d8WVPvkxyYAfo4Ntjg8IUSNAgK+TO90vVdWy87t6nNhvX/LIF/+YtOPBX+QQiRUM3n9AZEofxCuE0PtFMz9Rwx1UwNVZ0spwfpKWy/e/ECAuuikQlwC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720747324; c=relaxed/simple;
-	bh=dTBSXX4hldEV6E/8Mkykp19IfJ3WJRarA59YTkKILMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kv8+vq3yEKMvkjk0EPCoAFO6CcClOSAXcrNZc71yx/MUYvOlp/xuCL+iHhFjNd5qUgFSQsr1CpgiFISKw3rMa/5Bg9etfo7QHt69aXyUKUEc/6USIN/a/OnUrKPaba3kxoy5NvzwLHSbM3r2M7A4kNO2awx1ERhUxj81QYTdQ8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=WUkzWDQ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B04FC116B1;
-	Fri, 12 Jul 2024 01:22:02 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="WUkzWDQ4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1720747320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Vyt2PhgTl2/lcxLnHuVCD7bBc8rUbtA1ocfd2dkczEI=;
-	b=WUkzWDQ4H72rOQrfYXBzv2Fy4QqEVW6ZNam5iC3qKQjmvFJL6T0fG91Ry8rwzVuTBFrNeA
-	UT451cR3hgre90cMumR03BOsPaNtjH617Bh/Lmy9myVg+EIeUAvFUSbKprkJFrYJdkGECh
-	flULe4Uo+6LqX8A7huoEeWhVwawPuN0=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 251cd471 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 12 Jul 2024 01:22:00 +0000 (UTC)
-Date: Fri, 12 Jul 2024 03:21:56 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-	tglx@linutronix.de, linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org, x86@kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
- lazily freeable mappings
-Message-ID: <ZpCFNA2VDoB_7waS@zx2c4.com>
-References: <20240709130513.98102-1-Jason@zx2c4.com>
- <20240709130513.98102-2-Jason@zx2c4.com>
- <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
- <5a875a3a-2243-4eab-856f-bc53ccfec3ea@redhat.com>
+	s=arc-20240116; t=1720747556; c=relaxed/simple;
+	bh=CD+Rwhbs9YWofJZlT1yp0uFKxRcBNsCaJR1THs4jp9I=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=VhNHYAHuWIN6BLBH2nTaaujqVX2q9O2jhySTW2N/I8CWjn03c2u69NMEnGzfjSKHb4h2Mwk22bLallLSM2AWDR/0elLAy3YUp4jQoVfuFnwgfSCLCbAIL5hoGmwpj/nQbUtlGwAy7jbXgX4io+yt9p5gPW374uLfwQUGrkaLyW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WKv6n1cKzz4f3kvH;
+	Fri, 12 Jul 2024 09:25:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 271491A0572;
+	Fri, 12 Jul 2024 09:25:50 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP2 (Coremail) with SMTP id Syh0CgB34YYchpBmDu5qBw--.22968S3;
+	Fri, 12 Jul 2024 09:25:49 +0800 (CST)
+Subject: Re: [PATCH 2/2] blk-ioprio: remove per-disk structure
+To: Yu Kuai <yukuai1@huaweicloud.com>, Bart Van Assche <bvanassche@acm.org>,
+ tj@kernel.org, josef@toxicpanda.com, jack@suse.cz, axboe@kernel.dk
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240711090059.3998565-1-yukuai1@huaweicloud.com>
+ <20240711090059.3998565-3-yukuai1@huaweicloud.com>
+ <4c8f1e4e-1b15-4afa-b1e2-084e0c4caeec@acm.org>
+ <520b9c10-c152-77f3-bd5a-b86a1f5ac8ea@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <3113a4cc-c1e9-cd14-b165-d8d1d39a39a1@huaweicloud.com>
+Date: Fri, 12 Jul 2024 09:25:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5a875a3a-2243-4eab-856f-bc53ccfec3ea@redhat.com>
+In-Reply-To: <520b9c10-c152-77f3-bd5a-b86a1f5ac8ea@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgB34YYchpBmDu5qBw--.22968S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruF15Ww4kJry7Gw1rJr43KFg_yoWDKFc_ua
+	95Z3s2k343ZFs7G3Z3Ar43XFZ7tFW0qry3Xr1jqF9xK3yFgrW5Wr1UW3yfuw13Cw48Cr9a
+	kryq9w18Gr429jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUba8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3
+	Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VU1a9aPUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, Jul 12, 2024 at 12:29:17AM +0200, David Hildenbrand wrote:
-> > I'll try to think of some corner cases we might be missing.
+Hi,
+
+在 2024/07/12 9:10, Yu Kuai 写道:
+> Hi,
 > 
-> Sorry that I keep coming up with corner cases :) But these should be easy to handle:
+> 在 2024/07/12 2:03, Bart Van Assche 写道:
+>> On 7/11/24 2:00 AM, Yu Kuai wrote:
+>>> ioprio works on the blk-cgroup level, all disks in the same cgroup
+>>> are the same, and the struct ioprio_blkg doesn't have anything in it.
+>>> Hence register the policy is enough, because cpd_alloc/free_fn will
+>>> be handled for each blk-cgroup, and there is no need to activate the
+>>> policy for disk.
+>>
+>> As one can see in the output of git grep -nHEB1 '>pd_(alloc|free)_fn\(',
+>> none of the pd_alloc_fn / pd_free_fn callers checks whether or not these
+>> pointers are NULL. Hence my question why this patch does not trigger any
+>> NULL pointer dereferences?
+> 
+> Because the blkcg_deactivate_policy() is removed as well, there are no
 
-Thank you for coming up with them!
+Sorry about the typo, blkcg_activate_policy() is removed, all the places
+of pd_(alloc|free)_fn can't be reached.
 
-> We don't want to suddenly get pages that are swapbacked.
- 
-> Otherwise someone could place swapbacked pages in there (using UFFDIO_MOVE)
+Thanks,
+Kuai
 
-Both seem like reasonable concerns. Added to v+1.
+> callers now... blkcg_policy_register() is still called to make sure
+> cpd_(alloc|free)_fn will still be called.
+> 
+> Thanks,
+> Kuai
+> 
+>>
+>> Thanks,
+>>
+>> Bart.
+>> .
+>>
+> 
+> .
+> 
 
-Jason
 
