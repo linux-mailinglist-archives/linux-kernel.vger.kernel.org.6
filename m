@@ -1,128 +1,125 @@
-Return-Path: <linux-kernel+bounces-251090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB48F93007C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:27:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F17930081
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30D1E1F23C82
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:27:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41EC0B21EB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08741BDDF;
-	Fri, 12 Jul 2024 18:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A474B1F946;
+	Fri, 12 Jul 2024 18:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOrHni/0"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELmdYRyZ"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2DD1B964;
-	Fri, 12 Jul 2024 18:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D3828F49;
+	Fri, 12 Jul 2024 18:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720808865; cv=none; b=CjvT6Xyr42V/gUJlzBr/qaRnbsAh2Irf3Qk1ulZcqXVM31VSEAxHELZadcDV4payesZlqnIlbi9TeqqWy+nm6/YQAL2lXR8I9KOqyKBGeEMcF16hlcnnbbI691QZShxlGzlwW/lG8TbvO5gIvMVSaFg4CKYCWXfXf6wdOuGveMc=
+	t=1720809538; cv=none; b=uifFqWgdhxSvRMowXA6wVfTd/r9/yZeg+FAfyPhSSewvAJcooybDqtcmrB15cbwPvXIeMTX1x+oeT9k73F605hbaWkhzaybLl+L8ECm31Qm3fKcm00mTMaAbpGbZ5WLbsSJZHLh8vEwt0qjpnU28qEv2x5SwkJu+k/8DDzHLSVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720808865; c=relaxed/simple;
-	bh=iwsBykJTfwtEHmY1cRlF9Ks9CabeLpmZUbIc6lAapJw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rqr1UGVLhVFjQ97NljxS92dBj4QFzdrBCdgshwcoPZ1pVeLlLNmAjWu9GUjXkUZYfK88UL6Xk5SfYrbB/vZ+gxcyMqvTxJouSA8fV8sj+c7sQW7UNo1PJy32Hv43eXltQd/Fdrf81aZRBJTEuRMGVKBHD5t02rDt9GDW3MpGHGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOrHni/0; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1720809538; c=relaxed/simple;
+	bh=qwtIvcloNQ/P5okHzl9ymO9M9S+Vgo4UDedzUtztzPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hh110+aI5YE92pmO4rkpxSxmGUTGDsA9DF0tEg4ClTeH7tQbLaTg56ecL5Xr60GpC0wrKZIUIpbJAVqxOx0SgZooDcdIwZSF8F7uIXbmt63nkc+h5PG8Jl2NN5Qhlwdoulc8wa6ZR6V4bSRbY94D+Ps65Cp5UO6Ij9VPum+s2Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ELmdYRyZ; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c9a10728abso1790891a91.0;
-        Fri, 12 Jul 2024 11:27:43 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70af5fbf0d5so1571646b3a.1;
+        Fri, 12 Jul 2024 11:38:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720808863; x=1721413663; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P6y/+mRSgdTXCwfuZp4ON2SVKhMv+FKJLXV4Rynx6Hs=;
-        b=SOrHni/0AMylrBKydwyo4gT8fsLyofaZxsGQD7JPXE0wdkh/AoAoY50qH+FLFqoA7U
-         0iJE9yY39+Dsm/qQyIOAHUDnOqCVIm3Nyehzvycq/qjA02HHrb2JiLzTaND2s/BvNUQ5
-         wzY6YliauQzDOCfdV+NqoLJ8lyFiqGGZcC8xHfG0u61P/0KIpbPtRamnC1lxRT900vta
-         MbHOxEZJVe7mMNjgeGMtJeSWoliP7doJzS5rhEgHhOV4tEuGQpbsejxGqLv5iuFRqEdy
-         i+pHH1NCDlJgStIydXSm4u45pI1mbR32gcOfZAbIIO4yb9U3povAVa9Fy86pF1LS7ZO7
-         +yAw==
+        d=gmail.com; s=20230601; t=1720809536; x=1721414336; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qiT8ueAJ+Ik9eGxQHnzcsayjjgwYfS8TKbVcB1sjgcI=;
+        b=ELmdYRyZh5nJyw38tpa1RNa+WkZg8TQOwDLB6cJ9YFpq4Ln5eS7NR+Qy0X1T1ZqrAU
+         akc/8p3nIWxEE5dZlEB3KT8iF6Ymxot7L6QAFzxFB5TsS2ppDu8VezrzYId0UGPnVcPp
+         CN5fuKZU+cCmIdLwtqx/NbAx9MwWd5OUbSddr/l4vECCU4cxLKdkI+P9MsEukWyNnUlc
+         3Qq9I8cYhPTjFsAIC3dCWUt8GD7SmCHpmzY+bVwsLz88gwQQdu5LJ/imdMJ4Bb2TbFQ4
+         /SZscm3GPnGDdIBHMC/LDlbiZauwg0K0E+kSyr8xVkJxvdcNoeyNdh9L4ZEdl0zC6/Cv
+         nIYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720808863; x=1721413663;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P6y/+mRSgdTXCwfuZp4ON2SVKhMv+FKJLXV4Rynx6Hs=;
-        b=qrrPUwU1cupnY2jPTJkRQzhSVWXvDo9aVVnO3RL2ZEQEb3uLYIq1Dbtrqn0OMW7697
-         Buw0QxGaGIa01bRC0g+X87CNF41KZqpy29nww66jdSCdJGfi5D7HqgIec+w7iwICkpFb
-         xOWvrdgEnQcBY1qo9Q/YP3uhwraDnH2Ssa+8Cki4+NHdSAcULdts+ytCqsvUdBFTZjNF
-         BUG07zvCjyBMzE15AlDg5Y0+OvqtGnBxTqNTZP87dITVbzqxQm+DmFsuJeMpJFLi3/vH
-         glDO7k6d5C+cAvXi4x/nY65WfHD8QIUt9+2v4zF7+M0IAVYvJiZTkAA/ySSASud8HDWd
-         3mTA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4Ww0uv1rdspNBVnk10ec9SP4N0d2AZVz/sPoIME65A6DDi8Q/fFHZeGdxjfJxCO7kArAYF9z+OtDBIMtOyEaYmh3lC9IMQNWqdfuvjwODfcGi0a4j/1w5L2huLrKX6DGjM+0s7PzzXa1r42DkL+HXXccZc+fHWRuaT2ksvdKaPbAHSYM54ANTXfM2c6QZKmD7qAxeMObAxppq2COYwCHN
-X-Gm-Message-State: AOJu0Yz6dVCjF6sbg+VoQVysB9CF/6g4OItIZtdbHpp8D/0iFKLC4gbV
-	ctb/LnmIuvu+Z7vYiWuhFNBP+2FHqw1tBAdM3YlqgbJ2YMs9qVGL1t7A5zcQlr+dkseUSabjvUD
-	+Yc7zHa6csh0FRKqovs28WMznsAA=
-X-Google-Smtp-Source: AGHT+IEgPvVUeUuSA/CFzcUIMNoQSffZuPeFhoBZLglEOIBkRC4i01xNCVM817RR+WIaf0eumMJMhcZMKgX3FoAPWwA=
-X-Received: by 2002:a17:90b:3ccd:b0:2c9:6f03:6fd6 with SMTP id
- 98e67ed59e1d1-2ca35c2e8ddmr9595383a91.17.1720808862979; Fri, 12 Jul 2024
- 11:27:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720809536; x=1721414336;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qiT8ueAJ+Ik9eGxQHnzcsayjjgwYfS8TKbVcB1sjgcI=;
+        b=H9a+O6V7CaJ1Fl5RuVTx8u2eeEk/RPDr5Bq3tNOVaK7QDcrPPtlabbX9SrzArZntca
+         HNT1rR+JWqmh2KanaxlkEA+1SSfsLfzGwNXbt6EEOVVknVWu9awensN/j1QbK/z7jCxD
+         9RfIynAQbnsfYDU9FphU7xAnWQLm04bk6iACjZ5iF3W2vVz7CxAsizm1B6X5QtEcM23y
+         fxVb95o1n2gEl2vSkfLyLhQIOJzMKnzetQ8goxP5WuZXVmiY+WdtsOYU9xc3L1bS/6bd
+         VvZychQhZbdMW8+4Mxq9/d8mtJzz3h2xDbBx9Te7YlaTBFxRMqosi7+r1Fn2CTOW64kv
+         iL9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUlGgXwuk9oKKDmXse02gl2M7mphpTCQhOU4Yydxzauo6YbGQs03B2tPSm2WUFQoTK/CC+7JciMZFcTdrv4gPePlsFxKRQv9b5WBKwGvVgwKXSQpaUqMO1GV66vBZ/CIkR2Pip9
+X-Gm-Message-State: AOJu0YwntCh9BE4HYoNQaTZOHhnMvy1IA70uPbGbwbuMbt2Wx5cvovUC
+	MKwLjtMkOeJHXtM5KtVlJ5AZsmYgne90z5tl31EQIistygixFOng
+X-Google-Smtp-Source: AGHT+IFo66xx+y6LX4NUko0NsUUhq/bMv8PhKj0aFdyuHdHX7Sc3p1A2XaQYMv6PApWMzwZOr8BxNA==
+X-Received: by 2002:a05:6a00:1acc:b0:704:2516:8d17 with SMTP id d2e1a72fcca58-70b6c8b282emr6137659b3a.8.1720809535678;
+        Fri, 12 Jul 2024 11:38:55 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-787089bc5f6sm2638479a12.92.2024.07.12.11.38.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 11:38:55 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Fri, 12 Jul 2024 08:38:53 -1000
+From: "tj@kernel.org" <tj@kernel.org>
+To: Boy Wu =?utf-8?B?KOWQs+WLg+iqvCk=?= <Boy.Wu@mediatek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"boris@bur.io" <boris@bur.io>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	Iverlin Wang =?utf-8?B?KOeOi+iLs+mclik=?= <Iverlin.Wang@mediatek.com>,
+	"josef@toxicpanda.com" <josef@toxicpanda.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2] blk-cgroup: Replace u64_sync with blkg_stat_lock for
+ stats update
+Message-ID: <ZpF4Pfu83W9Wp_R9@slm.duckdns.org>
+References: <20240710061334.1888-1-boy.wu@mediatek.com>
+ <Zo8HTD2AD-b51q0C@slm.duckdns.org>
+ <6114fbad7bce9b15806bb9fee25a1075ecb53dd1.camel@mediatek.com>
+ <ZpBIfwThiVwstlXL@slm.duckdns.org>
+ <70c37035f006de3a4fde895ceeee92826cd280e0.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712135228.1619332-1-jolsa@kernel.org> <20240712135228.1619332-3-jolsa@kernel.org>
-In-Reply-To: <20240712135228.1619332-3-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 12 Jul 2024 11:27:30 -0700
-Message-ID: <CAEf4BzY3Xo-g02r9TY9tHq49JLrrYoUNoXN=WXhJ02q4xUbGbA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selftests/bpf: Change uretprobe syscall number in
- uprobe_syscall test
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org, 
-	bpf@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	"Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
-	Deepak Gupta <debug@rivosinc.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <70c37035f006de3a4fde895ceeee92826cd280e0.camel@mediatek.com>
 
-On Fri, Jul 12, 2024 at 6:53=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> Fixing the syscall number value.
->
-> Fixes: 9e7f74e64ae5 ("selftests/bpf: Add uretprobe syscall call from user=
- space test")
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
+Hello, Boy.
 
-is this selftest in probes/for-next already? If yes, I'd combine these
-two patches to avoid any bisection problems
+On Fri, Jul 12, 2024 at 01:39:51AM +0000, Boy Wu (吳勃誼) wrote:
+...
+> I agree, but for multiple updaters, we not only need a spin lock but
+> also need u64_sync for 32bit SMP systems because u64_stats_fetch is not
+> protected by the spin lock blkg_stat_lock. If removing u64 sync, then
+> one CPU fetches data while another CPU is updating, may get a 64 bits
+> data with only 32 bits updated, while the other 32 bits are not updated
+> yet. We can see that blkcg_iostats_update is protected by both u64_sync
+> and the spin lock blkg_stat_lock in __blkcg_rstat_flush.
+> Thus, I think we should keep the u64_sync and just add the spin
+> lock blkg_stat_lock, not replace u64_sync with the spin lock.
 
-but either way
+I don't get it. The only reader of blkg->iostat is blkcg_print_one_stat().
+It can just grab the same spin lock that the updaters use, right? Why do we
+also need u64_sync for blkg->iostat?
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Thanks.
 
-
-> diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/to=
-ols/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-> index c8517c8f5313..bd8c75b620c2 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-> @@ -216,7 +216,7 @@ static void test_uretprobe_regs_change(void)
->  }
->
->  #ifndef __NR_uretprobe
-> -#define __NR_uretprobe 463
-> +#define __NR_uretprobe 467
->  #endif
->
->  __naked unsigned long uretprobe_syscall_call_1(void)
-> --
-> 2.45.2
->
+-- 
+tejun
 
