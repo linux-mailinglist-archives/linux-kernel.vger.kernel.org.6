@@ -1,127 +1,139 @@
-Return-Path: <linux-kernel+bounces-250267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26F892F5D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:59:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 719BC92F5D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0870281FD8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:59:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 015C1B212B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EED513D636;
-	Fri, 12 Jul 2024 06:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECA713D633;
+	Fri, 12 Jul 2024 07:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bWQcv0il"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="bz+HyEPu"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F59A14036E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 06:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A7A79CC
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720767539; cv=none; b=SAbsf8wqYesUnAz1tyxRqOyPOjzysojUzwQrrJcqlEkH51Qi0BAhYGEfVepswd4OHifby/JuPUP5NmpTZ/tihx9W/ZXgsLM4MpPAkhVpDYI7L7bMWbyFQM86Z3cu4bsF9zBFmTCe27mSKaYztlvTQi/QPQG07E5Wj+EdRNm1lHI=
+	t=1720767617; cv=none; b=RJ0CZ9HFKNiRKkTJPl5zKVk1ajYxrKZb+Xn+eteTty7ADEgcwYh/MW9W17OSOvSxT4Sf4MXm771GBicB2uN3zyZ5wbe/ar6Bf9tEzcSlLyjy39+kyrVJ3upHVcPYB/664UQx/jlOOIpCodEMitsqhuxEo9kajLy4rWrbWu4Q4bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720767539; c=relaxed/simple;
-	bh=VV6DhgTriiThLxLRRpj8iXco6Z+Sw9WamtlJvGJQhG4=;
+	s=arc-20240116; t=1720767617; c=relaxed/simple;
+	bh=jCpNPan1yvg4qm2JnvhWu+glmK8+IOzpGqlGEfGS4YU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6OYVt90EUm7FBaWKoQmy71uRr62FBBqsms94p2OJn4Qti5+mlN8KVJzQw65sIfAFlGbyPhzmPV9/uuYZgo7LW8XerQF80qORED2lXPLWkC3tAZabH1NxFGfE6+eFvp2Ij/KzalDvC7Eb9HxvVVoGmEz504kHpFYSpZYM4nwM58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bWQcv0il; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=L+rK
-	1GUVTyJmZkU9i4B/BF8719twozqAndEGTsl3AJo=; b=bWQcv0ilSWUbrH36V7mV
-	vVkMM8mU8JNcaG95GRuQrYQfsSNTVjvCQWjhLwVbWM3AhbkF732QEiwbpnZzRbGj
-	rUT8Lb/M7nTw5XdQ92Hwif2CEfVrtXMO0ji64re0Ys5yMqLLp/MnHxZXcNv7vBJ9
-	8IY+ABXKe+66bGagaolgjzMSkm0T3d3yFz+AlnpZy9L5jt0TqVX7PcF9J39KxYvI
-	OyjuSeyxXFJCJqjKfnVab5q/P9V17lcPZEhDYj9nPqVfke2ERGJnCk8IbtBguP08
-	ZEEOgST4z/PMmumBi5E/nCUZxKzBw8VBfzpG0qYl/tEbTQZbteH+phqFQVGkChRd
-	vA==
-Received: (qmail 1062089 invoked from network); 12 Jul 2024 08:58:55 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2024 08:58:55 +0200
-X-UD-Smtp-Session: l3s3148p1@xi6raQcdgpMgAwDPXwmZAIsFIv4n+Dpm
-Date: Fri, 12 Jul 2024 08:58:54 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Korsgaard <peter.korsgaard@barco.com>,
-	Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>
-Subject: Re: [PATCH v3 3/3] i2c: mux: gpio: Add support for the
- 'settle-time-us' property
-Message-ID: <ZpDULr25NYzBDS8E@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Korsgaard <peter.korsgaard@barco.com>,
-	Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>
-References: <20240617120818.81237-1-bastien.curutchet@bootlin.com>
- <20240617120818.81237-4-bastien.curutchet@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6zfP//yjP1/4qZa+5Rf5gC1UetNgu+kt90Wqkvn8qGBIA38ji3zPyf76lkw4yLqRF+8UdQlBDfTeNDzmNEHl/WGjZ2mBW9vhU+kY4twbDulFDiCwdolaCbsCsb4Yi/QKvdAAEqV/nJchXz/Us3VwiWOjC3VK/i6WLpu8023tkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=bz+HyEPu; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70af2b1a35aso1377864b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 00:00:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1720767614; x=1721372414; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aLOzcQxtgY1Ls90A6FAg8y/fu34jSjZXLr8QOaNq1HA=;
+        b=bz+HyEPuB8+Xgg7u15sQ2CE5zpu2SUN5hA8R76AFr7PsWS4MeJedVTEaKdA98pUWO6
+         x1A4oAZpLw+HkoJkvc5Z4Qyz4+PiyiLbd/2uXhSTOwZ830FiRrv5kbVChAFCzITbppLw
+         AEagWpi+sfuBmYm6zrmxIdJDC7LDG7yXgvv5QwuZCAs9+5Fu+Fh4aOPqnBnC5K7J5Lri
+         kggFApolr8ReO5TWQ92OS6ZH0owsCTibeqIDJW5Kg2Ng+uSJyo+RgJ6aA1sAmCS8D7aX
+         Xpui1MwIf+odYcQOnlLDr9bwVasLN04KLhIr4QwzM6tZbhZ92BfQZVFWVp1h8EWrX6c4
+         qQGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720767614; x=1721372414;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aLOzcQxtgY1Ls90A6FAg8y/fu34jSjZXLr8QOaNq1HA=;
+        b=ZXRCB0Zty0BgCHP349WF1jAewBcoHWZQvhZnNsVVjo2lR+3S4Bt0h7J705pAbFCicc
+         F+gykpj8j2CgmY0Kfkaebxx2GwyhA+6oT8b5eJJ5Kbtv3/xp8xO0CNrtUtaMB/U7idyR
+         UwhG/d7C9pUnQDIrA/q338t1uXgb8Zwuu8tVgDsbURpaQPN5n6Y+0g0jgxzn1FBY2Ie3
+         /nQ98LqfHJgqmWg8QXi1Ic5h5u5iY6qLqnDWLP4JyJSdsgWxhnNr6jPkntZC4EHcHreD
+         ggpqvgOtgR5hnd9B7oaZDb7Oy86BwAe+YCNvsJfLH+H1Dqty8jLitSTMFumuKkFr79St
+         jQBw==
+X-Forwarded-Encrypted: i=1; AJvYcCV40BfN0eQecFPC+MI7IKaWQSp9KNDDevnOWuSVnxHymfWObWfM9/mkICBD3Y7pfRUv0xOzq4OSmIt68zsWGW0vUZvKt6MTqhAN5yxe
+X-Gm-Message-State: AOJu0YwH7q43dEurgGcnBtGY/nY1fte//30XjXzguQA3B7lYp05l9fF7
+	eXvN+NuNnjtLDdf/s08nE5SGukCQucf4tzGXgik1ETyWTVJy8dUSYR3huMQ1b4U=
+X-Google-Smtp-Source: AGHT+IEmtd2yYJQoSBljsfSkChXU1mvTmqPJM7r+lNBjAP2ChBh/asoRVWE33A8FNfPrF2wpvJGaeA==
+X-Received: by 2002:a05:6a00:1a91:b0:706:5a51:7be4 with SMTP id d2e1a72fcca58-70b4367b361mr12565830b3a.29.1720767614523;
+        Fri, 12 Jul 2024 00:00:14 -0700 (PDT)
+Received: from x1 ([2601:1c2:1802:170:c949:fd63:7988:f01f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4396780dsm6739762b3a.111.2024.07.12.00.00.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 00:00:14 -0700 (PDT)
+Date: Fri, 12 Jul 2024 00:00:12 -0700
+From: Drew Fustini <dfustini@tenstorrent.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Olof Johansson <olof@lixom.net>,
+	Arnd Bergmann <arnd@arndb.de>,
+	ARM <linux-arm-kernel@lists.infradead.org>,
+	Drew Fustini <drew@pdp7.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Yangtao Li <frank.li@vivo.com>
+Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
+Message-ID: <ZpDUfIspyPL2wbLA@x1>
+References: <20240712095825.6e1224d9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Pdkz2/2fOjAy+l6B"
-Content-Disposition: inline
-In-Reply-To: <20240617120818.81237-4-bastien.curutchet@bootlin.com>
-
-
---Pdkz2/2fOjAy+l6B
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240712095825.6e1224d9@canb.auug.org.au>
 
-Hi Andi,
+On Fri, Jul 12, 2024 at 09:58:25AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the clk tree got a conflict in:
+> 
+>   MAINTAINERS
+> 
+> between commit:
+> 
+>   480d9a6083f4 ("MAINTAINERS: thead: add git tree")
+> 
+> from the arm-soc tree and commit:
+> 
+>   1037885b309c ("dt-bindings: clock: Document T-Head TH1520 AP_SUBSYS controller")
+> 
+> from the clk tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc MAINTAINERS
+> index 44cff47c2594,04eb5587ffa7..000000000000
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@@ -19382,8 -19322,9 +19382,10 @@@ M:	Guo Ren <guoren@kernel.org
+>   M:	Fu Wei <wefu@redhat.com>
+>   L:	linux-riscv@lists.infradead.org
+>   S:	Maintained
+>  +T:	git https://github.com/pdp7/linux.git
+> + F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+>   F:	arch/riscv/boot/dts/thead/
+> + F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+>   
+>   RNBD BLOCK DRIVERS
+>   M:	Md. Haris Iqbal <haris.iqbal@ionos.com>
 
-> +	int settle_time;
+Thank you for fixing this up. The resolution looks good to me.
 
-Could you change this to u32 when applying?
-
-Sorry for being late... if you already applied this, I can send an
-incremental patch.
-
-Happy hacking,
-
-   Wolfram
-
-
---Pdkz2/2fOjAy+l6B
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaQ1C4ACgkQFA3kzBSg
-Kba6yA/8CRcaTeW8YOj1sMHXecYV7qlNjo9hVwr6tej/gi8n45qLCvaGo/ZL5pz9
-6fY5AgvvoqdVytvrGui8p60dggB7ROxmUku6t6h3Yc+jaDy16cUJOQLycNalu2xt
-A369VOAYO3GbY8S360g6yS4Eg/T7pbdVZaSw9llnXqj+KXhbuOUs5yMVYVEEI38t
-YCT9FSVD1mU8OsI/VuRiCu5sQbK80QQy/qRlKgcQMEhjAkliUAwCnXKZleGE1lT5
-5FBRsMyhfemkhMXgxRX2w+kCDrk35hB0aJg1QxN4ipGzj50Vb5arK+/2AaNK5r08
-3+Z9c/zxVjvf9wRjlxHu+2ttjy2ohJcePHUEI5i+LfctFxUllqvDaCGf71iVeZcN
-4cDVgP3Y9DiHjZxancMhRms4cWttkRFjRQ10QjotJPfDZ7cDTNLl4WJg3HRsi6ph
-XBI5dO4GocicPJw+3+nuL+YsMuQ0QwSXQ0mpTrw02Ww/pJAC/5LI0bOQxcW5ruMe
-jdyZMcQMUoV3CQX7NqKj/xQNUwfVcp4QWOOpFNaXM3I7zwFeed9Vzozt4QigtNU1
-uzWMzRpMHw4X+9uxEgJiNe0yUcr2jemY9Om6ixBMvuexm1cMZ4wnFbU0A9BFo5r0
-xmb9eliGs78yzh6nbNigJqiXKP664abBqYvjWVrp5g0uGlDofmg=
-=JyJK
------END PGP SIGNATURE-----
-
---Pdkz2/2fOjAy+l6B--
+Drew
 
