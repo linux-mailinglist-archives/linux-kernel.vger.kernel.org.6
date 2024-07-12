@@ -1,198 +1,186 @@
-Return-Path: <linux-kernel+bounces-250802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78D092FCFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:55:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7293592FCFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F16F11C23081
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1BA51F2437E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1672E173336;
-	Fri, 12 Jul 2024 14:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9927C172BCC;
+	Fri, 12 Jul 2024 14:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dwe/ODxS"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EuwfydU0"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A384172791
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7448172BAC
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720796096; cv=none; b=Vlmt8BFeZnGGmHBxTSK1n0ROYh0L8i9EkuOGKrYy7mQZAf+b8V8Rt9OKAWI+wB4b8IpjiyuET+ft6xDjvwsDiUDK73pwdeZliMVzXqkAuSeTRthC3ti2OE0UmnTT9TWV/LTPAe+b7oR8pXu0h1J8Qagi8sleb3T5Vx0gdyvEU74=
+	t=1720796126; cv=none; b=e0ET+M8NA/9UTN/uTavEf4AKk12HEMsk+NXFyPgogCUCsnAWur3obKXhW+0egMyA85oMPMkT+Y4b/PZvEUu1JJphCg3L+cRiI30jQbypPyia8JUFZWVBtcQ/PmIZlkZgHcPJ0WFenrdpaV+elTG8SZKCHHfX7/n9rSuKvTqizRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720796096; c=relaxed/simple;
-	bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LoCUAbMd742xr/H1EJtei+6dBbx6aaeZqrZvCMD8/5hfphL4vfA7wSVqPoKBkS9Z9u6iX5BjyNWqyPzou54mrlEkHFqyxu76AgQBjscHfpqpZYIXsL+jDX4uJerahhgQjDcFhEb6fv0UgPXT032fA9SS3MqZL9cOFC+qpnpI4ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dwe/ODxS; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so23368361fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:54:54 -0700 (PDT)
+	s=arc-20240116; t=1720796126; c=relaxed/simple;
+	bh=73F18xIA3vDI+ZmMawEj1EVW+eDWAP9vK2MCOHI734E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qR/3r1BRbNjf6fFr7Xl5tHBVDUK5ukVvhhA+VAsoyx/ga1gL7xjmdfP4ioT9a7b0cAgz8blvqHnLKiebPGdDs2A8NQxOYjwzBSTKY1PuPhaaDGqC+t9fAu2w4BpwsgjSqNfMNsHlzCP9p8qlVcMv/DjbnPZ3VfXUHySVprukSE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EuwfydU0; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-64e81cd12cdso18553377b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:55:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720796093; x=1721400893; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
-        b=dwe/ODxSoHzs57C2ar+EytAtmV/DwRbrKTn3lVdr1EXQSqbLHVGI6ihfqChwyAPE2b
-         nKVGgmwIebc1dz2nimDeb9TbwGEyq4bMdFUbZmkK6kZYoUJL5mckrE/7U5wcLzQqe9/o
-         BOe5dOSE8/Xn5w0Bt+PHMF0ZguC8sQJ/XoItHZV9+x3+pzuxPZhVOsy1vjJbiV/ZtCTU
-         eHf6ZIyWCaY+hiyCp3MB7M0Y6AJVtFkyLnrY1fqmsD7v2jYlJ43yfZrXopmzZc2Dgw+p
-         +3rrm4hgxSj1WC5oyo7yoi2sCRUktEWyp3zPDlL22MYYBzYzuED0G3rdbwVmdUmGsU2U
-         6azw==
+        d=paul-moore.com; s=google; t=1720796123; x=1721400923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+w0ThLzwl4n5JC8vmDZjECC7gppb/LdI/W8aReQd8fE=;
+        b=EuwfydU0qQx2EH5nFQG0ClX9oBPsLIUMgs8dfYfSmCkmPlFa3WmweA7nF+eYOFte1g
+         GQ0pX/d2DHUSiTAHPYkqZRucY6l8wR1UqL1Ojz2xrd02Fbq4bP+JKVxu0OsTbmUBE3VQ
+         aGhfbbTR3Z8HqWxYr7yAWF3yvSoXRDB+iy8Dnhp/M+lI0e33i7dWsIrF9XFzgC/Rv4E8
+         p+riLr08VQCNE7z2gkXb3/xOzpO4lueGsjYKj/Y2q5DF0ijr5KTXAnGSQDJGJCV0nXBJ
+         rgn+gAM8mPjloMoFzE6fCttDmkigijYmeTaipJye6PEtxfOyY8AXi216+xnwoyqFJqtO
+         OT1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720796093; x=1721400893;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
-        b=ORBfbHl1L/LEFXdoLdi38vdsLCapTKymZtIcRIJyl4nL0F77pta6+4YR9m+ztK06Tl
-         1ab4N9mZmDVv1UXUqK7zU0OIRpYFIutzhH7jZElgPBzxPKydP/nMn4SfDRGv55REkBAN
-         rDntW1oxuajRKJbSEsneVrjCkRDAw86QjGykIyU7e0rQmiSnhkiXeaRBJlJXqq/NHKUy
-         AmfrJPh/TXkl+HHaiKa8jvrYmrv1IUnbNAgQDTn2mUxQgTfDNSFkzOAqfysqBfEsuRd6
-         3XgU/r9wZs6onpIleSzjUsnDu2z6Zoz7BsLqNjklHm4d+sqMnLs2ZXsHzXcjJhtAphui
-         F6pA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvbWnewcbQtqjNLnU3j2j9dRxElszHq8dUwJBo9fXvYZVtROVLwk7p2GH/hn6iSaoJHGH2Q7RfLvCJ9OfMktqaW0RNlF9XlSMdf0gd
-X-Gm-Message-State: AOJu0YzvCKv7BBDTZVLg5SDJyhTv/fap8BZycjIWGG9wBOcEVj6k6aqV
-	VAJsx8zPJ/RavNQMUklM68FqllWoyW+tdZM0FqUL5ipQcDKeVCARBiPxKlWqdCs=
-X-Google-Smtp-Source: AGHT+IHvPxH1nBAWvxsjHSCNyZ9t61rhyU1cxyB6YJQEzy0OWWC+/dfZi6vmuDEorYBOF0SyCrzU7w==
-X-Received: by 2002:a2e:3c16:0:b0:2ec:4d48:75f3 with SMTP id 38308e7fff4ca-2eeb3198617mr74112911fa.45.1720796091727;
-        Fri, 12 Jul 2024 07:54:51 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8491dsm10421734f8f.45.2024.07.12.07.54.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:54:51 -0700 (PDT)
-Message-ID: <58e355454db3670157645c0b6e727d8058ef0324.camel@linaro.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: serial: samsung: fix maxItems for
- gs101 & document earlycon requirements
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
- <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
- Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Sam
- Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
- kernel-team@android.com, linux-kernel@vger.kernel.org, 
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org
-Date: Fri, 12 Jul 2024 15:54:50 +0100
-In-Reply-To: <20240711212359.GA3023490-robh@kernel.org>
-References: 
-	<20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
-	 <20240710-gs101-non-essential-clocks-2-v3-1-5dcb8d040d1c@linaro.org>
-	 <CAL_JsqLsZAEx-c_12RPcR+HCjPcA_d12oKgZ7frX2Wo47sGTnA@mail.gmail.com>
-	 <e2f4a37e7c31d26449125a6265239c88162a1085.camel@linaro.org>
-	 <20240711212359.GA3023490-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+        d=1e100.net; s=20230601; t=1720796123; x=1721400923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+w0ThLzwl4n5JC8vmDZjECC7gppb/LdI/W8aReQd8fE=;
+        b=KLfbphSPZHQLHqgi4kH3mGm0b80BUAfXvjbdb9aGaVt7GFedHKuxam25i5plavmIYJ
+         QyW8pJECRuFPMAZi8/AkSiCkjPInHHunPbAc42cfCvB/MrXFm/cj9O3bBOvZJ0GZvPIo
+         LOyyTiAbBrQpAdaP9q/ikecklDzkPqkHeCi8mn3DHZ65DkOdY5B1zAOruoaJuRU/VJRr
+         cxuo4f+izjYNHHXu9Pj1KZZ7xeYNjK2sgAn+Q4G8CFQGdQyZfMUuPVBs66Z1NR4/CeNI
+         CfwACzULGVHj+1LP7uWh0sSKuqJ8ZwWQOKxBjTlroD+wMVassHzaEwVBbT31QBL6UQRg
+         JRMw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8IFzbAUKrcToW9XTKF6HYFvzKwAXVp73DD+YGvPKwhk0e2xH8lbL6sN4Mwu9cbFwJSzFlQWuff1oXLANBt3WuHnLOhSa5CPb1zD/R
+X-Gm-Message-State: AOJu0YzKCtf9ZHDT+ASYaKSybPm2zP2JPIpP5w/eDdXBVJOYGBRfha7+
+	8EQ1oYLwC9KdpWrDYs7BjBxMVaS8Fd3YCViR8QlCbR7jOy0fOv2aYOEfsOUE7NoQTIvZmR0MDIs
+	T4RR8E88q0fLx2xES/1L4kbtQ83eGCnyVro7J
+X-Google-Smtp-Source: AGHT+IGtTJfKjxJFBMAT3WhbKFh9iKNbitKZrRcvtSjKO3EbB6yzB+X89ynWybhr/PmImBWmBCV15sArfXJOZr1B98k=
+X-Received: by 2002:a05:690c:30f:b0:64b:b7e:3313 with SMTP id
+ 00721157ae682-65dfd56ddf2mr26316757b3.13.1720796122674; Fri, 12 Jul 2024
+ 07:55:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <000000000000a65b35061cffca61@google.com>
+In-Reply-To: <000000000000a65b35061cffca61@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 12 Jul 2024 10:55:11 -0400
+Message-ID: <CAHC9VhT_XpUeaxtkz0+4+YbWgK6=NDeDQikmPVYZ=RXDt+NOgw@mail.gmail.com>
+Subject: Re: [syzbot] [lsm?] WARNING in current_check_refer_path
+To: syzbot <syzbot+34b68f850391452207df@syzkaller.appspotmail.com>
+Cc: gnoack@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, mic@digikod.net, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+On Thu, Jul 11, 2024 at 5:53=E2=80=AFPM syzbot
+<syzbot+34b68f850391452207df@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    8a03d70c27fc Merge remote-tracking branch 'tglx/devmsi-ar=
+m..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux=
+.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D174b0e6e98000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D15349546db652=
+fd3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D34b68f850391452=
+207df
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D13cd1b69980=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12667fd198000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/efb354033e75/dis=
+k-8a03d70c.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c747c205d094/vmlinu=
+x-8a03d70c.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/5641f4fb7265/I=
+mage-8a03d70c.gz.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/4e4d1faacd=
+ef/mount_0.gz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+34b68f850391452207df@syzkaller.appspotmail.com
+>
+> bcachefs (loop0): resume_logged_ops... done
+> bcachefs (loop0): delete_dead_inodes... done
+> bcachefs (loop0): done starting filesystem
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 6284 at security/landlock/fs.c:971 current_check_ref=
+er_path+0x4e0/0xaa8 security/landlock/fs.c:1132
 
-On Thu, 2024-07-11 at 15:23 -0600, Rob Herring wrote:
-> On Thu, Jul 11, 2024 at 05:09:50PM +0100, Andr=C3=A9 Draszik wrote:
-> > Hi Rob,
-> >=20
-> > On Thu, 2024-07-11 at 09:51 -0600, Rob Herring wrote:
-> > > On Wed, Jul 10, 2024 at 7:29=E2=80=AFAM Andr=C3=A9 Draszik <andre.dra=
-szik@linaro.org> wrote:
-> > > > --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> > > > +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> > > > @@ -145,6 +145,20 @@ allOf:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,uart-fif=
-osize
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg-io-width: fals=
-e
-> > >=20
-> > > blank line between properties
-> >=20
-> > Do mean before clocks: below and before clock-names: below?=20
->=20
-> Yes.
->=20
-> > We don't do that normally,
-> > at least none of the bindings I looked at do that. Or did I misundersta=
-nd?
->=20
-> That style is pretty universal. If in doubt, look at example-schema.yaml=
-=20
-> for best practices. The exception is only for cases like this:
->=20
-> =C2=A0 foo: true
-> =C2=A0 bar: true
+I'll let Micka=C3=ABl answer this for certain, but based on a quick look it
+appears that the fs object being moved has a umode_t that Landlock is
+not setup to handle?
 
-example-schema.yaml doesn't have an example for that, so I suspect that's w=
-hy
-many (Samsung?) bindings ended up without the blank line. I have fixed it f=
-or
-this schema in the next version in
-https://lore.kernel.org/all/20240712-gs101-uart-binding-v4-1-24e9f8d4bdcb@l=
-inaro.org/
+> Modules linked in:
+> CPU: 0 PID: 6284 Comm: syz-executor169 Not tainted 6.10.0-rc6-syzkaller-g=
+8a03d70c27fc #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 06/07/2024
+> pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
+> pc : current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
+> lr : get_mode_access security/landlock/fs.c:953 [inline]
+> lr : current_check_refer_path+0x4dc/0xaa8 security/landlock/fs.c:1132
+> sp : ffff80009bb47840
+> x29: ffff80009bb47980 x28: ffff80009bb478e0 x27: 0000000000000001
+> x26: 1fffe0001b7a831f x25: ffff0000d713ef00 x24: ffff700013768f14
+> x23: 000000000000f1ed x22: dfff800000000000 x21: ffff0000dbd418f8
+> x20: 0000000000000000 x19: 0000000000001fff x18: ffff80009bb46be0
+> x17: ffff800080b8363c x16: ffff80008afaca80 x15: 0000000000000004
+> x14: 1ffff00013768f24 x13: 0000000000000000 x12: 0000000000000000
+> x11: ffff700013768f28 x10: 0000000000ff0100 x9 : 0000000000000000
+> x8 : ffff0000d6845ac0 x7 : 0000000000000000 x6 : 0000000000000000
+> x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000020
+> x2 : 0000000000000000 x1 : 000000000000f1ed x0 : 000000000000d000
+> Call trace:
+>  current_check_refer_path+0x4e0/0xaa8 security/landlock/fs.c:1132
+>  hook_path_rename+0x4c/0x60 security/landlock/fs.c:1416
+>  security_path_rename+0x154/0x1f0 security/security.c:1918
+>  do_renameat2+0x724/0xe40 fs/namei.c:5031
+>  __do_sys_renameat2 fs/namei.c:5078 [inline]
+>  __se_sys_renameat2 fs/namei.c:5075 [inline]
+>  __arm64_sys_renameat2+0xe0/0xfc fs/namei.c:5075
+>  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+>  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+>  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
+>  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
+>  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> irq event stamp: 67226
+> hardirqs last  enabled at (67225): [<ffff80008b1683b4>] __raw_spin_unlock=
+_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+> hardirqs last  enabled at (67225): [<ffff80008b1683b4>] _raw_spin_unlock_=
+irqrestore+0x38/0x98 kernel/locking/spinlock.c:194
+> hardirqs last disabled at (67226): [<ffff80008b06e498>] el1_dbg+0x24/0x80=
+ arch/arm64/kernel/entry-common.c:470
+> softirqs last  enabled at (66914): [<ffff8000800307e0>] local_bh_enable+0=
+x10/0x34 include/linux/bottom_half.h:32
+> softirqs last disabled at (66912): [<ffff8000800307ac>] local_bh_disable+=
+0x10/0x34 include/linux/bottom_half.h:19
+> ---[ end trace 0000000000000000 ]---
 
-> > >=20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 2
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- - const: uart
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- - const: clk_uart_baud0
-> > >=20
-> > > Which clock is pclk and ipclk?
-> >=20
-> > uart is pclk, clk_uart_baud0 is ipclk.
-> >=20
-> > > 'baud' would be sufficient for the
-> > > name. 'clk_' and 'uart' are redundant because it's all clocks and the=
-y
-> > > are all for the uart.
-> >=20
-> > TBH, this patch is just following the existing style & names as already=
- exist for
-> > various other SoCs in this same file. Furthermore, up until this patch =
-the default
-> > from this file applies, which is:
-> >=20
-> > =C2=A0 clock-names:
-> > =C2=A0=C2=A0=C2=A0 description: N =3D 0 is allowed for SoCs without int=
-ernal baud clock mux.
-> > =C2=A0=C2=A0=C2=A0 minItems: 2
-> > =C2=A0=C2=A0=C2=A0 items:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: uart
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
->=20
-> Then don't duplicate it. Ideally, the names are defined at the top level=
-=20
-> and the conditional schema just limits the number of clocks, and this is=
-=20
-> an example of why we want it that way. I have no context to see if this=
-=20
-> is consistent or not.
-
-I've fixed it in https://lore.kernel.org/all/20240712-gs101-uart-binding-v4=
--1-24e9f8d4bdcb@linaro.org/
-
-Hopefully you'll that's more acceptable :-)
-
-Cheers,
-Andre'
-
+--=20
+paul-moore.com
 
