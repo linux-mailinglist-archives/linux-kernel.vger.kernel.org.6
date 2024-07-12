@@ -1,133 +1,84 @@
-Return-Path: <linux-kernel+bounces-250579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB93E92F94D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:06:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B76BB92F953
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4CA2842E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:06:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44279B23388
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1600C15EFB6;
-	Fri, 12 Jul 2024 11:06:32 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FCE15ECE2;
+	Fri, 12 Jul 2024 11:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnwFS+fn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1E315B0FE
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 11:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA9F1422C3;
+	Fri, 12 Jul 2024 11:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720782391; cv=none; b=fT8qF328DFVkSVak9cEHZ3R9N159Vk3Em5+M1OAT3WBiAzbosrEY0GYzgO0qc3ZhD+oRjCZ3bNGq19MG0ZjX6mk+xpeBFdk+3qjhI06LZQ/2AzNVHW7MUIKnWSI8BGepI4W2f19ecno17KaXlpGlPXEpIym0KEj0pfwjHW9ZdBU=
+	t=1720782448; cv=none; b=gB8qR9nh0k6vFL6aH8CdvOq2ttomJ5lvFrWM7zc9yhsq6XBeHSxJe+8FYFjkLCH4PExxirTZw95BAYYD/UO2yvowy8PM5oQ/5hoo6i7fydmf1WNn4xFxZLOqNezRUKnuZuleuySBA2/NU/pOur+yEI5i4jSYARXidssfpTcaGig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720782391; c=relaxed/simple;
-	bh=g4uP4CxsmKsMmenuSS5tDFw5yfa9qRjUkj4Fq44ze2Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=of4zPj/a+q8YgkimfVEBxs5HxCjVAdR3qzPzYtDoiqw9jfixykgMwQeIOKZ6T/MvQLC1ZtGpwol/El5YRzEoUUQvKNAn3T+W7/oAB8azFzWFNNoBvJBr2E9bEfnpPW70/emBJXkRpbCFZoDFqZ116D0EOEHm9hVil1qSual9UFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1sSE6H-0001hW-0H; Fri, 12 Jul 2024 13:06:05 +0200
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Fri, 12 Jul 2024 13:05:56 +0200
-Subject: [PATCH 2/2] drm/panel: simple: add Innolux G070ACE-LH3 LVDS
- display support
+	s=arc-20240116; t=1720782448; c=relaxed/simple;
+	bh=J5B4V+GxjTUk/uTZIdgig3t7RPhLCkFHCun4ASHiAlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=blk+Iv6qRIhxGSELub5efZ2ynGyVJHf6+dXXVVI+7RjRb66BmOCKXx/Fn7sA0f9pJtp3eQjJG4DHrDFctjroHea+sm9LZH737GVqiFDXTXCFFZ/lM86UgjIJaTRDy6Z69k+xKmlXrLILWgTK1GhQDCZpbrEGqtE8jEFotlAHrlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnwFS+fn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C2BC32782;
+	Fri, 12 Jul 2024 11:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720782448;
+	bh=J5B4V+GxjTUk/uTZIdgig3t7RPhLCkFHCun4ASHiAlk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tnwFS+fnNraQw6n/j+xWTvycP5JpS8ghclHM/iG/fZx4sNZ05NqQo6pFCk0t8KGjj
+	 FnEqxNlq18vGbdPl2UpxLhTU+M6Qza5B3MWMlGGM5/UNlCqIwtNj4tDSBn/XyRUzo8
+	 XKqfboBT0h1xCkl6Z/auKnNT5pz8WEA0fu8KTwD9NijCYwcQepAb2836nPUjOi0P2i
+	 DlXGwVmSwCZuoUb0kV7IeA7IOMKUFanGXipOU/A4ElTTSfmM9RNKkMfjjV8ycwitPV
+	 wg1xtSZ4KifdFQdISyMhxdW/IPBRkIyyKtte6Q+IYjmTBH2AeLInOXUtrF5v4fuWfv
+	 fHYrM1rhgIWaA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sSE7b-000000001aF-1Odx;
+	Fri, 12 Jul 2024 13:07:27 +0200
+Date: Fri, 12 Jul 2024 13:07:27 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH] power: supply: qcom_battmgr: Ignore extra __le32 in info
+ payload
+Message-ID: <ZpEOb-fOc04bknxy@hovoldconsulting.com>
+References: <20240712-x1e80100-battmgr-v1-1-a253d767f493@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240712-b4-v6-10-topic-innolux-v1-2-bb0acf273d0d@pengutronix.de>
-References: <20240712-b4-v6-10-topic-innolux-v1-0-bb0acf273d0d@pengutronix.de>
-In-Reply-To: <20240712-b4-v6-10-topic-innolux-v1-0-bb0acf273d0d@pengutronix.de>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Steffen Trumtrar <s.trumtrar@pengutronix.de>, 
- kernel@pengutronix.de
-X-Mailer: b4 0.14.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712-x1e80100-battmgr-v1-1-a253d767f493@linaro.org>
 
-The G070ACE-LH3 is a 7" TFT Color LCD module with WLED backlight.
+On Fri, Jul 12, 2024 at 12:00:03PM +0200, Stephan Gerhold wrote:
+> Some newer ADSP firmware versions on X1E80100 report an extra __le32 at the
+> end of the battery information request payload, causing qcom_battmgr to
+> fail to initialize. Adjust the check to ignore the extra field in the info
+> payload so we can support both old and newer firmware versions.
+> 
+> Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 
-https://www.data-modul.com/sites/default/files/products/G070ACE-LH3-specification-12058417.pdf
+Can confirm that the old fw still works (didn't really look at the
+patch):
 
-Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
----
- drivers/gpu/drm/panel/panel-simple.c | 35 +++++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index dcb6d0b6ced06..d3ce78643fd86 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -2509,6 +2509,38 @@ static const struct panel_desc innolux_g070y2_l01 = {
- 	.connector_type = DRM_MODE_CONNECTOR_LVDS,
- };
- 
-+static const struct display_timing innolux_g070ace_lh3_timing = {
-+	.pixelclock = { 25200000, 25400000, 35700000 },
-+	.hactive = { 800, 800, 800 },
-+	.hfront_porch = { 32, 32, 32 },
-+	.hback_porch = { 31, 31, 31 },
-+	.hsync_len = { 1, 1, 1 },
-+	.vactive = { 480, 480, 480 },
-+	.vfront_porch = { 5, 5, 5 },
-+	.vback_porch = { 4, 4, 4 },
-+	.vsync_len = { 1, 1, 1 },
-+	.flags = DISPLAY_FLAGS_DE_HIGH,
-+};
-+
-+static const struct panel_desc innolux_g070ace_lh3 = {
-+	.timings = &innolux_g070ace_lh3_timing,
-+	.num_timings = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 152,
-+		.height = 91,
-+	},
-+	.delay = {
-+		.prepare = 10,
-+		.enable = 450,
-+		.disable = 200,
-+		.unprepare = 510,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
-+	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
-+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-+};
-+
- static const struct drm_display_mode innolux_g070y2_t02_mode = {
- 	.clock = 33333,
- 	.hdisplay = 800,
-@@ -4599,6 +4631,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "innolux,g070ace-l01",
- 		.data = &innolux_g070ace_l01,
-+	}, {
-+		.compatible = "innolux,g070ace-lh3",
-+		.data = &innolux_g070ace_lh3,
- 	}, {
- 		.compatible = "innolux,g070y2-l01",
- 		.data = &innolux_g070y2_l01,
-
--- 
-2.45.1
-
+Johan
 
