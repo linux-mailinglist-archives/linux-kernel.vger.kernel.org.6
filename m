@@ -1,199 +1,192 @@
-Return-Path: <linux-kernel+bounces-250788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702C892FCD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:46:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8528E92FCD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8773B22894
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:46:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0355B1F23E49
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7392172BA9;
-	Fri, 12 Jul 2024 14:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02804172BAA;
+	Fri, 12 Jul 2024 14:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="HgkqwxXH"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012040.outbound.protection.outlook.com [52.101.66.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4sJBUnPP"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16C379E1;
-	Fri, 12 Jul 2024 14:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720795564; cv=fail; b=eHwDsrhv4SX2Brdm5tshhBiqrW+JcjXRc644Dv4tnOvtYmzBS3sg3JBHlt9n+GuPA9I3qC7o8z1QxPn55pQZ1DkRPv8zGFka857MhkJcA0mFkB0WJsZsfv66OkCl4KZi5mf/HfUNT9Qj3ggluyGxRniXCgJqixVtYk+Q3shKJi0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720795564; c=relaxed/simple;
-	bh=CzbFr+oWw5lYXInfhUftKHD7dToIOL4KV7BclJ1Jx3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=B4XUVrNEdRc/7t3jX/6g8a0TZrCYAzsoRTa5X7ks7rSQLxE4lg9biQT6/P1596HLEnb94Sh9rPcZ6L667wipouXAQgMHDlAKvEiKPR2l6sWT7MacKeMBHkXzq66JuSvQipDWe8JJam6tFwK74kiYL5mBMHoKtXddb1vK6O8W8/U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=fail (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=HgkqwxXH reason="signature verification failed"; arc=fail smtp.client-ip=52.101.66.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HeDojaWcsP6+JwFvspV8ZwvVkANQUsm58gxnuQRPptuMcWy1jx/5mukeuQVSQVl5KLi/NCsuDD6cAJ50s6nIKVruSVEIoEn2Y9HZudoNjYnzGP6DnzogHpDowWo88Z8Y4fq1ZtwkxTlFLoHvagrI4GxwMdxi3ZdMEAiqpsUpK/DmwQ8PIYOgtztjW6QAwhTAPDDMVr326mHPtIfwhV8ZN0CudcC+vhP4aSlt3QA8nNBW74qXhYMPu90v4E/YhZYKGsDYLiWoB+jDcCn/zpDe+pHvonW9sj8UHfpwiOSaZ/C3uCnSdWIxAsuk8a+nCtcWYL+DhoXef6NC2fxv8JjBaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P903uT99vb1AdsPdL0iDgpUzro41rc0Pdyka3oMRrjM=;
- b=mV+Dc9MP3o68gsdBgCcNGFYzs89g5I1yAaQueuF7CP659V2l5/+x7gFkvpkleA1nu93Md1rKfSUIzVCeVqhV1zUsWRfUt0j3U1qyorLYIPReenXRW24dUJXvbTP3A/1JdstufX0SqtWwa33rm94PjQGmZsvbnKdxubCzq/GeywSg9if9JJYPszmBWjfm9wLHN/NKOfd7BL3rWPqfIdx0YY4X0LgTDNvsRkWDOH8yFLmncLpq2LA/7eOD5XZRh4qrHbjZbcHLHO9tvmRLNaom6Z+bIRThe/LVLDKzVSsdfSzZG2D3QOfoRxlqh46EQM/2iTmHwmJZ6zILgXZ+pdAvmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P903uT99vb1AdsPdL0iDgpUzro41rc0Pdyka3oMRrjM=;
- b=HgkqwxXHxiksCmP/5dYnw6G1XEoxnX74/BMjEbi8FOr6mmPz6WDhd3/qa1WU3lYWE/r3Dpo6V1iTScy/0IrWzGVOxHp8+ORU+FKJfiFuIHj+hnxDHyjfv2DUpe8EybkZF7adaJeAWbKVR94LTOMpBh2OiAtn0EDyxKsHGRI5gAg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU4PR04MB10598.eurprd04.prod.outlook.com (2603:10a6:10:580::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.22; Fri, 12 Jul
- 2024 14:45:59 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
- 14:45:59 +0000
-Date: Fri, 12 Jul 2024 10:45:50 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Han Xu <han.xu@nxp.com>,
-	Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Marek Vasut <marex@denx.de>,
-	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/6] dt-bindings: dma: fsl-mxs-dma: Add compatible
- string "fsl,imx8qxp-dma-apbh"
-Message-ID: <ZpFBnnbxD9VUs1zp@lizhi-Precision-Tower-5810>
-References: <20240520-gpmi_nand-v2-2-e3017e4c9da5@nxp.com>
- <20240527121836.178457-1-miquel.raynal@bootlin.com>
- <20240712163503.69dad6b1@xps-13>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240712163503.69dad6b1@xps-13>
-X-ClientProxiedBy: BYAPR06CA0006.namprd06.prod.outlook.com
- (2603:10b6:a03:d4::19) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19AC1428E5
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720795694; cv=none; b=lefSxu2pJL8ctf0R1L1JdN6HlMeWFYZ48OIPBH8h7NJoPHV2dJQwEBltKx43jZ9sABUfmqvu26LkyQDg8CRoCUktf7tptOcXAcuwR30ou8/GhHJApfkuChtu7u/TEsvqTLNGtuHMAKhXXVWESZIpW1Phi5hGDmi2a3fIkewd64k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720795694; c=relaxed/simple;
+	bh=80rcJMfWh81tg4yYUsIxsrVss197EKgxznoWXn6nA2U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qQgrQeUCRRs9DViBfEI38M0AJJITI5838YqJMds5cWSNZdfUzvzpSH1NsUFzUwMuU03uQb1AAOan0bwW4JL0gEw6teIZnRui6CVzWrRZeSleF/ngG1THwXGYPdDzZuHxcpRsmHWPUh74QNh9XAUCWRie8T/Ev2mpJxZ+3HhFYi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4sJBUnPP; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c96a0c27fcso1853099a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720795692; x=1721400492; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uZsqMw09jqxGLOzroUJQUOORh6B+OaGFknZXtQVFLK8=;
+        b=4sJBUnPPoSaY6Ra/RxEiyr1lmlwh0yEx7Tbjzzw7Ze+8kPBn2M6Ou/MnQa+4h1gIEM
+         pGgF9ZnNgtIGf6pbD8ww+BnsqZF+S9H9pgvqVB+MTrVGwBMEcwHS28MlhiXe16i0K4MY
+         Ia2rv9HKAf/iwZCzNkNjsoU7OWCxm3BktBTF7c8SNpXdHXurgdaNuyAYxjTyOUCqII5S
+         MzQkdtvIFLmV2CtYSdsy5mJTj/VMNQ18EWtP5MSf+xOTXIMYF14Q47t5mFAVRBe1m4Bs
+         d/2p6SPlOhE4bFywcXILDc7D3ARKcpzSLJk1MzjeDwWXtKlqg5geNT3xstj/DXMLZS/Y
+         /2lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720795692; x=1721400492;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uZsqMw09jqxGLOzroUJQUOORh6B+OaGFknZXtQVFLK8=;
+        b=HFiIYlyqIlLh8NC/xSTp2J6adClKmulcET0/84GvJhhEmySzrHZzd2svPktzaQtG43
+         xLCLOwfY0wM6vkGeNNCweg+C9HXDlt8O5b4sHsDK8tBBJjXEI0TGkDlpf3XQYJtG6SCl
+         qzS+bPgHpkb+d3L2TWixEpbm7gFOlEVJD1iEqLsMlqMquJQg7vs4CmUGAucweENf5vKM
+         E4XeqK30NFdU/SxOPKRwW7ZixoTIA0twsRG5kknb+qS4UE0J0816J7gONownyMr3jveQ
+         Q1DOFNSurxOMpW2MgxxY993T/9s7T+k05wwlvQt7rk65GBqBqAhyMLJpJMeI5x4mKLl9
+         OEuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYLqYXaY4W8ltZbr8m5IxcKdSH8qH3kbinWnTqf+WrLBD1wubQ4g4zdA9BfCPb0GZjQ2KCYRuq0o6e1YUQh0/MkRXhjq5wIiWso/VO
+X-Gm-Message-State: AOJu0YxY/zL5ZEmFFxn6OYRby/v7Qkz1iUE6/UEz9xy4s3EejrCe5cqX
+	anQNJXoYF/56Hc3IkCf2i0uMqMmYAAtwO21feMnj3xe1GV9hcf4JC0cs2+wAHDlgz1ZhWcIIGjz
+	8GA==
+X-Google-Smtp-Source: AGHT+IFluPogLhVxKc6h87CEUfyEI/dFcQcRiTFW+Xaf4GzF5S7AOO2yuhtcbygmcEwqy4s9eyQS8X+SVQ0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:cc0d:b0:2c9:9232:75e3 with SMTP id
+ 98e67ed59e1d1-2ca35d38532mr25446a91.4.1720795691618; Fri, 12 Jul 2024
+ 07:48:11 -0700 (PDT)
+Date: Fri, 12 Jul 2024 07:48:10 -0700
+In-Reply-To: <19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU4PR04MB10598:EE_
-X-MS-Office365-Filtering-Correlation-Id: 10884c1f-06db-4740-bcbb-08dca2815854
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|7416014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?rm92L7XYPWTMenIgY1nH6NgvMh9nzED142qXTOcxvxyt+ZIsZhDMvNeBos?=
- =?iso-8859-1?Q?T0HPtY+pF8BjWm6c9sO/wo1GNKip3emweZjZuMvdTioSa5fHAELrlIQ+K9?=
- =?iso-8859-1?Q?T5KNoOBn5bEARWDyNSJ5Cf9A9JrXmGRP8Sr8OYwlbQ6FQ/iMDN4a6IWGhE?=
- =?iso-8859-1?Q?YtZ4ub4jzgyZ93V+tPkmHrnP+KYx3/j32plu/Gp/iUBfA4qX507nrUlZuR?=
- =?iso-8859-1?Q?Q1EOXhCXhIvQx8/8j+XopxwAAIcy9KwHLnPfRO4hzDhbzPR90vzhkklWeV?=
- =?iso-8859-1?Q?NwQICli6+OYkwYoPR48RgRZZWLZGZPPxMOO+koPBUXfN+JDmdigVxo6M7R?=
- =?iso-8859-1?Q?Q09o9t+uQqOaz0W+nyqi/Jp2rEbQzu/JbGyYEDK22HyEGqLCJZ2BGPIhNh?=
- =?iso-8859-1?Q?LVBiYqt/kkol86F+2JE8bGD5UvTCJRFTDdf9QPBefxESjCldQHpHVsxOS+?=
- =?iso-8859-1?Q?PqfNkCuvm4ITaHyOnP19vNkDBZPDTTpWN007PSS69fEQ5oxsUA1tSli1nz?=
- =?iso-8859-1?Q?0PzYZEDXlZvTEw2QZq9HZoIgAgqrWS/Qcr8SSunOqOER+yOHzMZk3QxsUP?=
- =?iso-8859-1?Q?qMtztpqEV7jFTj89UMKBWe2BQC/K3VSWogWI10kD1W3hU/4IVzi24KNTBU?=
- =?iso-8859-1?Q?YSPyRtQs2/1v+b9P/CFx7os4+SQL6VKAEA8sXA63Mzsxt8M5D25W0JrImv?=
- =?iso-8859-1?Q?lD/hQ0wVGrKFvzUa+6iLpq5zCOGQ/HfK1Gl4Zxw1ToEFsyWPw7znR/RIb9?=
- =?iso-8859-1?Q?OpZvuNN6UZ1jitFoLlobv+opQlAT+Td6UIMjH5qTCMhxRfa9NELr1OFVlQ?=
- =?iso-8859-1?Q?PzigJk0Uk4IggJd9Mds/tcX0LwFqy2DzKJNMhZGzP9M8UijJFmoJV4MbTM?=
- =?iso-8859-1?Q?LHkfCm+Ph4X/ShXgllNfsOGKJSK22Coc2+kkglE2ndbTbsEG6ooZFa8gWK?=
- =?iso-8859-1?Q?je0ejig+jebEuDuAuWMcR35zFLmVbMiXpjFR2kY2lpfAu7X7HrKkiDvGr3?=
- =?iso-8859-1?Q?1zmt0J8az4KKPUxNWYC3w0JIiYdKAo3nQ9N63eY4nQ4vpyrwQxdI3L7DXe?=
- =?iso-8859-1?Q?ov2uqTTB+YDkj2cd29Nlmtd+daC9IuMyITkFaJpm581bDGC660nxt7qPqo?=
- =?iso-8859-1?Q?++Jzv8eMCnH0Su6gSdWtdp9cqUd7pVb5B8WucBpYdUOR/TDuO6P0BTCpNC?=
- =?iso-8859-1?Q?e+Bss9H0ANqjCF1cEfK9/jwt8PXsEz/kjLOO887vyWWHtyv0zJefHgxOrs?=
- =?iso-8859-1?Q?alWtevBYwC191e8b+NpOKd6+i1uyEPQ9d1p1xCjlvdynwIwNgH0CoaRNHL?=
- =?iso-8859-1?Q?4GAxFy5zfPJ9XG3dkmr3d16/xqhWV0qfcprlekiT4NoZlSyYUOGvE2vwLU?=
- =?iso-8859-1?Q?QnmEYcDnMgWL29nu+siQqW31lagnx5VT+Scs+T7PUj+PI8uzEorpg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?sNAjG5vVAafOCmmSPBzy+yfV8rJZYX7PM3gCjzXeCU9W22o1iCLulcCRbI?=
- =?iso-8859-1?Q?g85LFkr7WbK4UX13xAyuoIqaOvLl2WBU+G3Q0ipFP9gqo8XmammZm3s7UM?=
- =?iso-8859-1?Q?FvNGXQAL0/16aM1LRtOEsZfDmC6zBQMZfiBhT231psAOgA/lwEEVrMmCa+?=
- =?iso-8859-1?Q?oYJyCm36AFJUh/XPyzXCRFwnN6YTg5UIPNRwLFXwEsbkoYAOQOIeK3dY73?=
- =?iso-8859-1?Q?yNCZ9P8ah3U+C/XBQHZTHfd3/hQC9XslqUwXoJkTcxFrE7xNt2WKpa8P43?=
- =?iso-8859-1?Q?eYNYYlUa1No3P7XyisTLq8wFtAwPSyVUseKLsJYvYCVSjGaKS6eiNfnCCn?=
- =?iso-8859-1?Q?Fbs88WoEMyxg0x8C9upQs0TcFk3TweZ7KmfKhfHBLSAVR9l3zd6FlZQCEP?=
- =?iso-8859-1?Q?jlugj295p2JwRwTA+iIxp0sYLmCSOz+DsCWKuXyxN1A/W6Xn+587OBcvHE?=
- =?iso-8859-1?Q?IWTduWpJr6SbWlVewfY+6vol9NeySHCZhCPByIe9XC6xdz2z60QD/RqAli?=
- =?iso-8859-1?Q?r4rbS+10KI24OEryfNLwcmH+GQhvyyevzPrNi6qIRp0vYtewXqIEb//Q0I?=
- =?iso-8859-1?Q?O+TmKuuG3uOgvVpR+OZXBHXg0bKfkqJQjyOUqcJpeKW6JEl/gnrZDdA616?=
- =?iso-8859-1?Q?uYoUVRdY/AWx1cR4GwWYznJPssdSPrpGVWvv91fuMpF6bsbp+/pzxiyh2O?=
- =?iso-8859-1?Q?Esvwms1qrwtgZL4m5oJ4ky6kvbTssP52bep0cifLjDEa6PHbD/fFxjRi3s?=
- =?iso-8859-1?Q?kvXnHr7ceKlokiYaTx+l4SI6vcBlhYnfLTMo8GvZKPWRigmDkzevfpMTBO?=
- =?iso-8859-1?Q?NZ37Qm4TUiNUpOL9/Ih0KpkIU7O5/kPAACRXnEq7Ve8zLbhOyB1v1J4z5n?=
- =?iso-8859-1?Q?0z73OmvvtEey00B6KoBwWilJbJzdt85dw19qP0umBJdBZWKMhw8f44DgSX?=
- =?iso-8859-1?Q?dj8KmHjLVfpVFkKXaXc9km5yOnMu0IKk10elhYTte+5UTePGxVSB2svhZP?=
- =?iso-8859-1?Q?phGu6JyGjJ0mauDp1d4CFsulkBaY/bkvWEerv3YFKAZLnhf58rp2mWoEFC?=
- =?iso-8859-1?Q?f32QLsWGaE1EniHVwOayLdRJsjjScdlCWV+EjHYrHC29ZNa6i5NsH1plsM?=
- =?iso-8859-1?Q?v3vvmsdNvtk+ur1kJS3ekcEHpGVni1vJl9eWxOFnYQkEFJ5Pd3MGHwO4wW?=
- =?iso-8859-1?Q?Ars/6p5f+yO3Bf/DqWC7399r68TZDppT0hAir6TvHM/LTRAuhVpc1zSnsj?=
- =?iso-8859-1?Q?FSr+OVYMW4wH4r5/Gv0Rg2diU9MMRD3MiqD589AnPKkrlvXzrJC2MdUad1?=
- =?iso-8859-1?Q?zSYoBwC4tYlrp9o4tjm3fRBA+NGKXzhIMtISmwPd16JSR3Rq6YTLlIp9sZ?=
- =?iso-8859-1?Q?KNx6rnpH71GVQ/jXb59xHPXT2wyYc4P0v30AWxiFRC+jVmCCtsP5u9CIKi?=
- =?iso-8859-1?Q?aS/4/snw7gyeZ7QoKvmtL1umq77KtAosUwOAaz4019fWmjUNdrZ5zhXGur?=
- =?iso-8859-1?Q?8LOJ/npx2gmDemVCiWI1QPS8gOyk2sZC6fR9q4d2N6q90AU9OP9JsF66vT?=
- =?iso-8859-1?Q?SuKxdjeYuf8RXJ+JIuq6m+Kgkop4rwE1jNMOJeVf1HT0r0ZIx4DoTEyTgi?=
- =?iso-8859-1?Q?+XlTPXv/+iW3n4OaqOqVme1BCtpnK09IzP?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10884c1f-06db-4740-bcbb-08dca2815854
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 14:45:59.7237
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SMeXNah5iGMGIfV380JO496m40rNaCnSH24T7Y77SdWYPOcLSAQVAvEu/2NervidZGXLBI7Fr/QWGaYngGG/PQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10598
+Mime-Version: 1.0
+References: <20240403140116.3002809-1-vineeth@bitbyteword.org>
+ <ZjJf27yn-vkdB32X@google.com> <CAO7JXPgbtFJO6fMdGv3jf=DfiCNzcfi4Hgfn3hfotWH=FuD3zQ@mail.gmail.com>
+ <CAO7JXPhMfibNsX6Nx902PRo7_A2b4Rnc3UP=bpKYeOuQnHvtrw@mail.gmail.com>
+ <66912820.050a0220.15d64.10f5@mx.google.com> <19ecf8c8-d5ac-4cfb-a650-cf072ced81ce@efficios.com>
+Message-ID: <ZpFCKrRKluacu58x@google.com>
+Subject: Re: [RFC PATCH v2 0/5] Paravirt Scheduling (Dynamic vcpu priority management)
+From: Sean Christopherson <seanjc@google.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>, 
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>, Ben Segall <bsegall@google.com>, 
+	Borislav Petkov <bp@alien8.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Mel Gorman <mgorman@suse.de>, Paolo Bonzini <pbonzini@redhat.com>, Andy Lutomirski <luto@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Suleiman Souhlal <suleiman@google.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, himadrics@inria.fr, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, graf@amazon.com, 
+	drjunior.org@gmail.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, Jul 12, 2024 at 04:35:03PM +0200, Miquel Raynal wrote:
-> Hi Vinod,
-> 
-> miquel.raynal@bootlin.com wrote on Mon, 27 May 2024 14:18:36 +0200:
-> 
-> > On Mon, 2024-05-20 at 16:09:13 UTC, Frank Li wrote:
-> > > Add compatible string "fsl,imx8qxp-dma-apbh". It requires power-domains
-> > > compared with "fsl,imx28-dma-apbh".
+On Fri, Jul 12, 2024, Mathieu Desnoyers wrote:
+> On 2024-07-12 08:57, Joel Fernandes wrote:
+> > On Mon, Jun 24, 2024 at 07:01:19AM -0400, Vineeth Remanan Pillai wrote:
+> [...]
+> > > Existing use cases
+> > > -------------------------
 > > > 
-> > > Allow 'power-domains' property because i.MX8DXL i.MX8QM and i.MX8QXP need
-> > > it.
-> > > 
-> > > Keep the same restriction about 'power-domains' for other compatible
-> > > strings.
-> > > 
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>  
-> > 
-> > Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+> > > - A latency sensitive workload on the guest might need more than one
+> > > time slice to complete, but should not block any higher priority task
+> > > in the host. In our design, the latency sensitive workload shares its
+> > > priority requirements to host(RT priority, cfs nice value etc). Host
+> > > implementation of the protocol sets the priority of the vcpu task
+> > > accordingly so that the host scheduler can make an educated decision
+> > > on the next task to run. This makes sure that host processes and vcpu
+> > > tasks compete fairly for the cpu resource.
 > 
-> I just realize now I picked this up whereas it was not intended to be
-> merged through mtd. I'm fine keeping this patch for the next merge
-> window if I get your explicit agreement otherwise I'll drop it.
-
-I think it is fine. Basically this dma is only used for GPMI NAND now.
-
-Frank
-
+> AFAIU, the information you need to convey to achieve this is the priority
+> of the task within the guest. This information need to reach the host
+> scheduler to make informed decision.
 > 
-> Thanks,
-> Miquèl
+> One thing that is unclear about this is what is the acceptable
+> overhead/latency to push this information from guest to host ?
+> Is an hypercall OK or does it need to be exchanged over a memory
+> mapping shared between guest and host ?
+> 
+> Hypercalls provide simple ABIs across guest/host, and they allow
+> the guest to immediately notify the host (similar to an interrupt).
+
+Hypercalls have myriad problems.  They require a VM-Exit, which largely defeats
+the purpose of boosting the vCPU priority for performance reasons.  They don't
+allow for delegation as there's no way for the hypervisor to know if a hypercall
+from guest userspace should be allowed, versus anything memory based where the
+ability for guest userspace to access the memory demonstrates permission (else
+the guest kernel wouldn't have mapped the memory into userspace).
+
+> > > Ideas brought up during offlist discussion
+> > > -------------------------------------------------------
+> > > 
+> > > 1. rseq based timeslice extension mechanism[1]
+> > > 
+> > > While the rseq based mechanism helps in giving the vcpu task one more
+> > > time slice, it will not help in the other use cases. We had a chat
+> > > with Steve and the rseq mechanism was mainly for improving lock
+> > > contention and would not work best with vcpu boosting considering all
+> > > the use cases above. RT or high priority tasks in the VM would often
+> > > need more than one time slice to complete its work and at the same,
+> > > should not be hurting the host workloads. The goal for the above use
+> > > cases is not requesting an extra slice, but to modify the priority in
+> > > such a way that host processes and guest processes get a fair way to
+> > > compete for cpu resources. This also means that vcpu task can request
+> > > a lower priority when it is running lower priority tasks in the VM.
+
+Then figure out a way to let userspace boot a task's priority without needing a
+syscall.  vCPUs are not directly schedulable entities, the task doing KVM_RUN
+on the vCPU fd is what the scheduler sees.  Any scheduling enhancement that
+benefits vCPUs by definition can benefit userspace tasks.
+
+> > I was looking at the rseq on request from the KVM call, however it does not
+> > make sense to me yet how to expose the rseq area via the Guest VA to the host
+> > kernel.  rseq is for userspace to kernel, not VM to kernel.
+
+Any memory that is exposed to host userspace can be exposed to the guest.  Things
+like this are implemented via "overlay" pages, where the guest asks host userspace
+to map the magic page (rseq in this case) at GPA 'x'.  Userspace then creates a
+memslot that overlays guest RAM to map GPA 'x' to host VA 'y', where 'y' is the
+address of the page containing the rseq structure associated with the vCPU (in
+pretty much every modern VMM, each vCPU has a dedicated task/thread).
+
+A that point, the vCPU can read/write the rseq structure directly.
+
+The reason us KVM folks are pushing y'all towards something like rseq is that
+(again, in any modern VMM) vCPUs are just tasks, i.e. priority boosting a vCPU
+is actually just priority boosting a task.  So rather than invent something
+virtualization specific, invent a mechanism for priority boosting from userspace
+without a syscall, and then extend it to the virtualization use case.
+
+> > Steven Rostedt said as much as well, thoughts? Add Mathieu as well.
+> 
+> I'm not sure that rseq would help at all here, but I think we may want to
+> borrow concepts of data sitting in shared memory across privilege levels
+> and apply them to VMs.
+> 
+> If some of the ideas end up being useful *outside* of the context of VMs,
+
+Modulo the assertion above that this is is about boosting priority instead of
+requesting an extended time slice, this is essentially the same thing as the
+"delay resched" discussion[*].  The only difference is that the vCPU is in a
+critical section, e.q. IRQ handler, versus the userspace task being in a critical
+section.
+
+[*] https://lore.kernel.org/all/20231025054219.1acaa3dd@gandalf.local.home
+
+> then I'd be willing to consider adding fields to rseq. But as long as it is
+> VM-specific, I suspect you'd be better with dedicated per-vcpu pages which
+> you can safely share across host/guest kernels.
 
