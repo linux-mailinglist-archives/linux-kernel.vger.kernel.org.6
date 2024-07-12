@@ -1,65 +1,50 @@
-Return-Path: <linux-kernel+bounces-250564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FE892F918
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:41:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9E492F91A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47EF0B23EE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:41:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6792B1F24032
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACB915ECE7;
-	Fri, 12 Jul 2024 10:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBC215B122;
+	Fri, 12 Jul 2024 10:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwOv1qfx"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cazfjA0I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C2CD512;
-	Fri, 12 Jul 2024 10:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B08AD512;
+	Fri, 12 Jul 2024 10:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720780852; cv=none; b=kvGcyMQrMR6yFDmr370ZukQr+HzWx0TWKdE/IdLBZwHxg2rrT2J9ul+VA4JRy4qkRUfRACNYA6lq+Wka8GLRtlLamCIe6NKd3xzGUJrgfLRaZn3pdIofhLHx1py/HgZ6K2s9dyCXMzc8d760miafbmd/5iDzfIzjmLc0CI5ryjI=
+	t=1720780865; cv=none; b=XebR9K/1QwP5p3SEHslhd/hGDZnSb4H7oKWLnehDRuNHO/AOMHoOhKGJ9ndTSQ7zsl9mhBNsff4asbpuRUr0q9Yv7tNWYt5nMNVehZeEMlEsDmTKBj3ohlKr1QKIcTrbk+OAPRQH5XEHocd3cipv7MQt7Zi1fP0TaeYSFPlfaZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720780852; c=relaxed/simple;
-	bh=bOjn2VZ/JaTevNQ7X+A3Hi2dXS4RDmxT3adWzbfLPT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KyIkoBmQX9BMu86M9ynirNlmP5wdXeaDkPq4AoaFTNWET9kfYSAL2QdT9tTnsSNaejo0Kz577iAAxTYeB5WLtsHACjVlr2TfzktqxDCBKJAOSWUJWrJ6KyNXRn6uvnycxrSjVpD5vIGf/7G7SlhHWGuMrbNLJndxV8L03fB8VGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwOv1qfx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD33C4AF07;
-	Fri, 12 Jul 2024 10:40:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720780851;
-	bh=bOjn2VZ/JaTevNQ7X+A3Hi2dXS4RDmxT3adWzbfLPT4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jwOv1qfxwZzuyLqY1dIu/s8+Qx2Iw9fC2qZzln8sDB37wZ0k/HL6T/D6icz/O7v4E
-	 pYGTtgOjL9F6KSmtn2BMTnXpn8Kd9ggCDUmEO4OUJaJf1Om0Njb9V/HRToGqMNT+at
-	 mfFmRJHADeEucZEynxSCdJR3fUn0JGMrFwp/TpbWMEwhHMaI8VORKhZnpG64UFhHWJ
-	 WGeqNXt45ofxi7/Si7IPVDeIPee4dxkqkwuX8Ry4XV4uX/km0Uc0TM0jQ6PalwzZB4
-	 KM/61AI3emfHONXbccaqlkXAXrUJK+4a00mHdJN80x4TEDGMhVXNzPiCjFaSd3MdTW
-	 Ldu6YRKkSiWeQ==
-Date: Fri, 12 Jul 2024 12:40:45 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] PCI: ti: k3: Fix TI J721E PERST# polarity
-Message-ID: <ZpEILZ2DLhvYYGci@ryzen.lan>
-References: <20240703100036.17896-1-francesco@dolcini.it>
- <Zo_qbspq0vA_p8VC@ryzen.lan>
- <20240711152531.GA35875@francesco-nb>
- <ZpEGmeJUJxrDFQWa@ryzen.lan>
+	s=arc-20240116; t=1720780865; c=relaxed/simple;
+	bh=TDEL5hC57yul95B5udSlmhCRtwcFbbCO8GwyqgY7/7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=R0n8oM1wIZs4JDxCzCpF10JnIslIbF34KTGP4hlr3ABFLXeAaZDiwlV8VOp4+Z/d+25xrET+tTZqyy49F6d5MwFPU2kSWwKAN1Z77+dlTUc8h5XPRDffaPAkF5qkwpd0jCvSQiOh8d54Onil+4mdW4kfwh45UdXBfMQG41QZTo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cazfjA0I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 535ABC32782;
+	Fri, 12 Jul 2024 10:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720780864;
+	bh=TDEL5hC57yul95B5udSlmhCRtwcFbbCO8GwyqgY7/7M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cazfjA0ISbn5KKssDGxfuwBkzP9tCB/BkOmWBwgqMtdI/VcIZgCCtdDoSljQ51onZ
+	 8vfPEBmyEzx9LCRyYQBRxJLyrNNpuIGN8A1rTswXiSuxRWxMkS997YTq/j+kGdnzQX
+	 mOIsU2CbztUr0Fw1LBIsc4tifkgqNpWBiyPbxK6M=
+Date: Fri, 12 Jul 2024 12:41:01 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY / Serial driver fixes for 6.10-final
+Message-ID: <ZpEIPXujV_586zPp@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,13 +53,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZpEGmeJUJxrDFQWa@ryzen.lan>
 
-On Fri, Jul 12, 2024 at 12:34:01PM +0200, Niklas Cassel wrote:
-> 
-> If you knew about it, I think that you should have stated that your are
-> breaking DT compatibility in the commit message, while also explaining it
-> is acceptable in your specific case.
+The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
 
-s/while also explaining it is/while also explaining why it is/
+  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.10-final
+
+for you to fetch changes up to 2ac33975abda6921896e52372aec2be2cf51ab37:
+
+  serial: qcom-geni: do not kill the machine on fifo underrun (2024-07-04 12:30:30 +0200)
+
+----------------------------------------------------------------
+TTY/Serial fixes for 6.10-final
+
+Here are some small serial driver fixes for 6.10-final.  Included in
+here are:
+  - qcom-geni fixes for a much much much discussed issue and everyone
+    now seems to be agreed that this is the proper way forward to
+    resolve the reported lockups
+  - imx serial driver bugfixes
+  - 8250_omap errata fix
+  - ma35d1 serial driver bugfix
+
+All of these have been in linux-next for over a week with no reported
+issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Jacky Huang (1):
+      tty: serial: ma35d1: Add a NULL check for of_node
+
+Johan Hovold (3):
+      serial: qcom-geni: fix soft lockup on sw flow control and suspend
+      serial: qcom-geni: fix hard lockup on buffer flush
+      serial: qcom-geni: do not kill the machine on fifo underrun
+
+Rasmus Villemoes (1):
+      serial: imx: ensure RTS signal is not left active after shutdown
+
+Stefan Eichenberger (1):
+      serial: imx: only set receiver level if it is zero
+
+Udit Kumar (1):
+      serial: 8250_omap: Fix Errata i2310 with RX FIFO level check
+
+ drivers/tty/serial/8250/8250_omap.c   |  3 +-
+ drivers/tty/serial/imx.c              | 59 +++++++++++++++++++++++++++++++++--
+ drivers/tty/serial/ma35d1_serial.c    | 13 ++++----
+ drivers/tty/serial/qcom_geni_serial.c | 51 ++++++++++++++++++++++--------
+ 4 files changed, 104 insertions(+), 22 deletions(-)
 
