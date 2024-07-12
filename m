@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-250334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F47E92F696
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:56:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2DF92F698
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0758B20DA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:56:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8A21F2437E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0751411E1;
-	Fri, 12 Jul 2024 07:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D08141987;
+	Fri, 12 Jul 2024 07:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CFF0BgsJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oaggY18t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9553413B2BB;
-	Fri, 12 Jul 2024 07:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A0713F454;
+	Fri, 12 Jul 2024 07:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720770991; cv=none; b=S+MNdAlS06FQj35CMJQ2HpsF5S6ubFNikNmNZSARkFJBDDsPkOJ1/L/i0IN7UDGN8Fap/HdyvUU6J/N2sqEcEE4PnLKfL4+7Tl+wTvsYpK1rdfwGZyfL0XYApqio6ZwFE1Rg/IHb+8V0r/4Zs+dF2I1wYHkkw8GwRiAtSgNRAIM=
+	t=1720771000; cv=none; b=JyKFV5xCiUOApMzQimcHTUiM8qDKAUfbZBsLbInCkgsOj6D2CDsJ0ZUbmYyqvejMOIoar4TYv9+kIiD4+885qVjAMUcREe/YJLo7ebcaoY7Z2Htcl6PHUDX1OLl9R8SYVuYYpihjLviALdVH7iLUykzhQgESdo+eLirZl+5MUFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720770991; c=relaxed/simple;
-	bh=MqINh02XcFP025PLREXWYmAHFvyNbvlOquBvz7rV1S8=;
+	s=arc-20240116; t=1720771000; c=relaxed/simple;
+	bh=4nqnrfbma1FOIXo7yWm/ETMNpe4w1ZYLSHRE5qI5MF0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nbh/e2wYep8S3sA/1bjrwvXczaOHzX25YIxcECFSpKP8oLKLMwS6RqaqPcxByA3bM+dp5jDKeJREOJ/8cKstZ7GPV6HY5nptU3gF6+456r+6/GcB/KcBF40Qi29wDlZZHO5dsXMBgDrEXFop9FEt8ESjPhgbYDipAM03I4WNoXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CFF0BgsJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80622C3277B;
-	Fri, 12 Jul 2024 07:56:25 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=B/1zdD9BeluDWQg5UEV7W0De2PgYvBhYRRkmH1ZWhmzlDmBNk7yrVtALOskYCrCFb0lgS7ot0+z8NUQ8wxlnyCG8RQsPE3DT1KO8znIVb9PLYpilw83FTccC+2QbK1Cdq16sHzQyWajG7EMy3+3P6QGMMybJQBXGRo2HG9nSpF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oaggY18t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FFEEC3277B;
+	Fri, 12 Jul 2024 07:56:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720770990;
-	bh=MqINh02XcFP025PLREXWYmAHFvyNbvlOquBvz7rV1S8=;
+	s=k20201202; t=1720771000;
+	bh=4nqnrfbma1FOIXo7yWm/ETMNpe4w1ZYLSHRE5qI5MF0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CFF0BgsJMzKE+xFrKdBoPJGHamOMiDpWYJIG3kkqtDIwLNENP8Jbev223qdSb5eyi
-	 yZ+O7fvlBzxC63nAt84izYxHvxSf5Il0fKLcqloeTCCChS5Vo43C3wOLaiFa02oKCY
-	 4cyBsaqB2N3Ar+msvWtLquBfuurub0mNcprktX6xkwQrzj6V6MIy616hePFTh8eSzc
-	 4/RO8Tw2wANv4fMRAax4WHjj4RW7LR1Chu6X5xYn6QM+unSlhlsoAYnXWyoNsedG/0
-	 InJAhQETGvMdSKt2mOlbId0l8qs8Yx8GG+qN/K5DAh3LXIk1F/bgt8aPzEHh/0Fstm
-	 RuiZta/SVFL7Q==
-Message-ID: <7c612a24-86cf-40db-8214-42aa004d3b54@kernel.org>
-Date: Fri, 12 Jul 2024 09:56:23 +0200
+	b=oaggY18tFdC9DacThTweerQCfJpgHKIfuC7W+nqk8kAuOP15Y6RWgB8VkoaDKon/D
+	 ekCxFa3K7rb10p82wj2aefDD22g0x2oja97JsFoTbMWyH63xgNwYQwsyUjCT2L+db8
+	 R3us8OqrLr4rmx1/znuEBWdbPukUdHK7FoZ/9+DGb9ufj71YxSbxXAqLP5ynFVwAno
+	 uqDAtN5KPTtYLY/vahGdiM0fpc6tL05mZXisXImQek5k0Ix0QqhfYpGoLk/5h+kTD0
+	 LrpmlssFR1qVH0TBio2MydunoeeCHXeFW2TtVMGtysyuEKKCR/PGf4p5bnvlN1Q51B
+	 g5FOOpC0xrxcg==
+Message-ID: <735b615b-d31a-4b90-8aa4-73972e7dc467@kernel.org>
+Date: Fri, 12 Jul 2024 09:56:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] ASoC: dt-bindings: Add bindings for NeoFidelity
- NTP8918
+Subject: Re: [PATCH v2 5/6] ASoC: dt-bindings: Add bindings for NeoFidelity
+ NTP8835
 To: Igor Prusov <ivprusov@salutedevices.com>,
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -60,7 +60,7 @@ Cc: prusovigor@gmail.com, kernel@salutedevices.com,
  linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20240709221203.92167-1-ivprusov@salutedevices.com>
- <20240709221203.92167-4-ivprusov@salutedevices.com>
+ <20240709221203.92167-6-ivprusov@salutedevices.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,17 +106,14 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240709221203.92167-4-ivprusov@salutedevices.com>
+In-Reply-To: <20240709221203.92167-6-ivprusov@salutedevices.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 10/07/2024 00:12, Igor Prusov wrote:
-> Add dt-bindings for NeoFidelity NTP8918 Amplifier
+> Add dt-bindings for NeoFidelity NTP8835C/NTP8835C Amplifiers
 > 
 > Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
-> ---
-
-NAK, respond to review first.
 
 <form letter>
 This is a friendly reminder during the review process.
