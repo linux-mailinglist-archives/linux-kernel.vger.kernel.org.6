@@ -1,134 +1,118 @@
-Return-Path: <linux-kernel+bounces-250795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B8092FCE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:51:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC5992FCEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82C0A1C2296E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A662628469F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C12173344;
-	Fri, 12 Jul 2024 14:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5849172BD6;
+	Fri, 12 Jul 2024 14:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ftIL/2/j"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hVaarWED"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93771172796
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FDFEAC7
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720795882; cv=none; b=WeUIaKepFrjrtlcOtW/+OJkrQU/3RsMQmVNB5LR24VstMutyrkwgK7+WAKZLGwnMIbjjjHgy77IHDa83D6sbrAak99Sdj0EGYkIJpVwIZ58uvUl89kxLOviCen4PWGD8J+E+sgQT0LCNpH+Ciu34Eoiz7mtAiRPyD8pn7JaZ7T4=
+	t=1720795896; cv=none; b=EBWfFSRye6ECX6ikAf6uNirWcjMmupCe7FYePx3HUeNe+7hIpjoOUY+VvNIyDx4//DPZ9k60ljkAhviVNtjPwM9c5dXMaE4BFl3SztHD9O4HaGRw66qz+peMubngjxal+2lJxLIbS119tU/hkmTdjCtMjF1qajDLbomBxFqmkQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720795882; c=relaxed/simple;
-	bh=3B+bA/gVxf10QMJ/1auXkxH6EyxsVK0514t6LhufUHc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r25GC/xtsc8AsUvMzz8+Rr8zgMhfObqOLceGh7R8gPO17vLfigLVpicxrk7K9HVZzgTkyXXEMBjVnRVskWtjlc39OBPTLEGc6hAn2fAFcNeuODcrA10PTIzrqHbrAareN16f8JGNM2o51bJ4nPIuFcwDniXzWFoPXWzWMqrXNck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ftIL/2/j; arc=none smtp.client-ip=209.85.218.52
+	s=arc-20240116; t=1720795896; c=relaxed/simple;
+	bh=6Xme/fG7NEewAT3iCDuDM/s9b4eHsxK5bexy9nMN6Ew=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EE8jochNLgoROOYTamSMFTLwAGXwlhpebN8Ka0aab2uHV2MAxpb45mrRp6Hdt+dFTfrQaMzVPJrb8F8nedhRZH/2G/1iSrV8MlXvMkf3dCI69axNYehxyJRxqykXRSm1Qyi5+kUjLi8WjyyGDYpG/Qg5QXP3c+8Y6TVI2BWEop0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hVaarWED; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77bf336171so368548066b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:51:20 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52e94eaf5efso2685387e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:51:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720795879; x=1721400679; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F+NL4PjPlsV5Aezh+PbdIHqVYv1xGaptU+I8RFe1E6M=;
-        b=ftIL/2/jHHOXS83aV5XnpsKlHIu3oqQDVVvbGY2qStoN9b7P+4RKMo2txgtm9GYXSO
-         1am2CL4SBA59Ao9C/TQ7BaaF1Rpz2QQm1LamX0Aiw/Ym5Ntdh/2VEb7eUMCSCe+BF8J7
-         MUBF60elOuVY29vXQh/0FXe0S6R+PJw9CwJsgzCbaQ58sgIqAZPDP4oiyTFkqeAVTa6i
-         8tO/RgObe1vL7dU5esW0CMm/BBQIMQCUQXsCUsSMmUfnVa34HEopLu88ynz3XiLc5OCu
-         wLY9ZAE4CT+XFSHd9mHOZ+S0rWKaQuSLcpGyt2RkaCdZHdv4oImHxoTYowS9jXTiqAtk
-         7x5Q==
+        d=linaro.org; s=google; t=1720795892; x=1721400692; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ky4WPChWhIsghhn+5sM672ORVDTwy7ezIsC/I8SFrEU=;
+        b=hVaarWEDDueA/zJa+Cm7+u7dGK2+rjWsj5TcwJNC6L1+frYzbzOX7PpVqqKWldUHs/
+         470yi0V3WlaNEYc2k4YHiaz6zUO6eD/Kk+BXO4R9etzAxufrmhfTIiZDkYjTTUAkCyoj
+         H1i1dm9yfbg+ztG0W7XcRRyMuN8XmyJjb6eqyCoLQStwK5EbFCPucmRPhGtx1skO4kEr
+         sQeHoL1cCMcJTw5wHO0OQgqkMofVk2OxI+gJmEf4jOGrcH8naJc8KO09KcLA9NaMR4tK
+         FaQHgcE3gytyPLuHaarcTWaeVyxIzwGqg6vicrcABM6xFzIYr9hD773YR9Jq3mj3t6KR
+         NwMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720795879; x=1721400679;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F+NL4PjPlsV5Aezh+PbdIHqVYv1xGaptU+I8RFe1E6M=;
-        b=DhnVENKsRzvkvrDAWNkWtUepKICBVE8e35Gq2kKUyNWrqjFHOJqZ5uFuIqh1QMmyLf
-         adK9otW/dEVOFqFPJK3y3vu7UPiPFq0u8hLksYLFnP8/ov7TTTZhAEt+tU8XlQ9GSD8k
-         OANLr6khvz5VUoG5pn2l5UUT8nyuMm9Ig/9oI9SXUdNR7in+vKQExLEGV8iU3WWhiaRY
-         0Hy85MPX0D+MIOPQiAjSnqaPtrCuy9EdTA0wpj7jjrR6FtSpnEYS1CR7qdIzKskLU4F0
-         UMbnjwRMMPCA9zjGCFul3Xbpo+NqbByxUc5RL99baO2w7ieakmORW3aXcy1JflI6mwVC
-         KmxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVqwumAEiLmOw5Ew99QIdVywLBXEWGc2SeQ5rqrFLUvbn8K05HE5tAJUqwSHYE5FqRT2TnGYgIgeygaQzFQ0NEeKqyGLkyspIzZSqOp
-X-Gm-Message-State: AOJu0YwAYZTbnX80sSq6mo4bUZoBOShkSDVrobUhUJo+BMcM4R4nOqaL
-	tDfQ3kf/2gCIPYMVh+JEEEZDqwLDpDU0NSA/eymY3ImABfTo8KJiDNHJx9DZrAc=
-X-Google-Smtp-Source: AGHT+IEWh0eo40136UlPMO1KRG9lFC2+P8kNpSziH/HRtDbgli04Dg1wOiVe7M+EJjGD2P/C9zRVvQ==
-X-Received: by 2002:a17:907:9490:b0:a6f:996f:23ea with SMTP id a640c23a62f3a-a799d339b09mr217420666b.15.1720795878808;
-        Fri, 12 Jul 2024 07:51:18 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff213sm351406266b.107.2024.07.12.07.51.18
+        d=1e100.net; s=20230601; t=1720795892; x=1721400692;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ky4WPChWhIsghhn+5sM672ORVDTwy7ezIsC/I8SFrEU=;
+        b=wx4uUWgoOz1fXFjuKMvNhd+O6MWcZWqTyP7/RkXv6x6rqQfw15nnBptwNNOVms69c/
+         y2id9nJfo/QFL/0EcnwPs071Z6llkZVaoZm6pQITma/qcHaCXUGhl4hahKb7sG4eJT16
+         C72CsA9fVgl0Dn+bkaVAEq1tq+KJnmL4fYWLfmvwIuwj2uPjaWbY/A0OmLmhKJrCXwZw
+         /q0PbuYZr68fc2lB1D0TYIatcdBMxAyq7N/G0eQIweCmg8QCUtD0X1cJeYtQcnsJkych
+         AAqJAR3qlpf4o3geY9PZgssLnlrP24HPfLezzRFZxip5EDZffOrOKp7tHSEiOoadlYAg
+         p39A==
+X-Forwarded-Encrypted: i=1; AJvYcCWXi2Qa1kAC2SuYdXa8ALDP66EcUJlvD0eSChaY8ZThbqj3KIV7iQ43To6eeW5MYryvoo516hIe14S98xIWIHyeb8KnKumlsPXsOqyL
+X-Gm-Message-State: AOJu0Yzy5jyOelGfyS9r4HUPGxJBaU3v4nXs+W7GMA4OaubWU1i7eGqQ
+	mMPz3Uxl4G2veMxBwhwJVDGaKgfBivXnAhjCAkbXF34sB/K/XH2gxGDHzn4K58E=
+X-Google-Smtp-Source: AGHT+IE2vju82VfTfF5Xrs+6WtBUZDSZ/EBYY7uH6eZlCo/ZT85PKn9f8YK9Az7B5XqPdDfnn4EbmA==
+X-Received: by 2002:a05:6512:3a8a:b0:52e:954d:359a with SMTP id 2adb3069b0e04-52eb99d1eabmr8889644e87.43.1720795892533;
+        Fri, 12 Jul 2024 07:51:32 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb8e3454bsm1316600e87.61.2024.07.12.07.51.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:51:18 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 12 Jul 2024 15:51:18 +0100
-Subject: [PATCH v4 2/2] dt-bindings: serial: samsung: fix maxItems for
- gs101
+        Fri, 12 Jul 2024 07:51:32 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] pmdomain fixes for v6.10-rc8
+Date: Fri, 12 Jul 2024 16:51:31 +0200
+Message-Id: <20240712145131.169802-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240712-gs101-uart-binding-v4-2-24e9f8d4bdcb@linaro.org>
-References: <20240712-gs101-uart-binding-v4-0-24e9f8d4bdcb@linaro.org>
-In-Reply-To: <20240712-gs101-uart-binding-v4-0-24e9f8d4bdcb@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
 
-While gs101 needs exactly two clocks for the UART, the schema doesn't
-currently limit the maximum number to this and instead the default of
-five from this schema is applied.
+Hi Linus,
 
-Update the schema accordingly.
+Here's a PR with a pmdomain fixe intended for v6.10-rc8. Details about
+the highlights are as usual found in the signed tag.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
+Please pull this in!
 
----
-v4:
-* drop description from clocks:, it was Linux-specific and a we'll
-  implement something that makes it obsolete anyway
-* no need to duplicate clock-names anymore
----
- Documentation/devicetree/bindings/serial/samsung_uart.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+Kind regards
+Ulf Hansson
 
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-index cfa1c0de946f..37ffa953b064 100644
---- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -167,6 +167,12 @@ allOf:
-       properties:
-         reg-io-width: false
- 
-+        clocks:
-+          maxItems: 2
-+
-+        clock-names:
-+          maxItems: 2
-+
- unevaluatedProperties: false
- 
- examples:
 
--- 
-2.45.2.993.g49e7a77208-goog
+The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
 
+  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.10-rc2
+
+for you to fetch changes up to ddab91f4b2de5c5b46e312a90107d9353087d8ea:
+
+  pmdomain: qcom: rpmhpd: Skip retention level for Power Domains (2024-07-09 12:47:46 +0200)
+
+----------------------------------------------------------------
+pmdomain providers:
+ - qcom: Skip retention level for rpmhpd's
+
+----------------------------------------------------------------
+Taniya Das (1):
+      pmdomain: qcom: rpmhpd: Skip retention level for Power Domains
+
+ drivers/pmdomain/qcom/rpmhpd.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
