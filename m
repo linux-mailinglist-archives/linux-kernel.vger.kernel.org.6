@@ -1,305 +1,249 @@
-Return-Path: <linux-kernel+bounces-250138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D63D92F496
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4632592F499
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 06:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07571F22E5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:20:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7948D2846AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 04:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1C312B71;
-	Fri, 12 Jul 2024 04:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403F012B63;
+	Fri, 12 Jul 2024 04:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pisal5Gr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2UGuxpz"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC53517580
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 04:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720758010; cv=fail; b=YtF55blV+MMM9vSiRLVVIhoEqXzoz8+KXDv0iyxU/zbK3tAneHB4t8tApEFC6qs0QrFrsROHlM3nKqvKG8Yg6cDAGnbcdfMKGgd3v/Gyq4LTNSni0Z3Wb+z5fDnwmCwqkCr2ojebwRB6QpVDPTWDwDTLNlGJPk4hyqSam8zMqHY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720758010; c=relaxed/simple;
-	bh=PAwDjWOo6Vd+Iju49v1jTE0xu/WlFZv6buMSiWzenJ8=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=DJ6TEA68XkxlusR2t5zauViC0Lzs7XtnaerMze/6Mllz/mZsjzHV3Z4TAjVa0bwcHj9wGppu21lhylXtw1r7BfoJgBowfHY+4c9oIaJ+gaQRQBHnSGPzcADwCrbz7LMOmYo+cpgUsEJnsPkHIdBi7BDEcZktpBqfAQPgKvXJkoI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pisal5Gr; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720758009; x=1752294009;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=PAwDjWOo6Vd+Iju49v1jTE0xu/WlFZv6buMSiWzenJ8=;
-  b=Pisal5GrOHBx6ao+nrsKk7RdOo+C5dhiFz/CrJNZR3MPx2/IG15a2AvM
-   qCJ8aMSY7P2nepnl3YnjrPkjSKEpVvJ7VqDOvYXn4rslf8jAmdEIT7Vg5
-   vPAHNa5uzKGTfY4Dj1FzzofWNV3YBVx3y2S7a8JKUoopPwtz++aT02s97
-   hY+4vmMs97CwXYBPDltyvv2Rd4/tPCHhRgsdBaa/UC0v+c3MpV+eCrRUA
-   GrLIAFe6uQWIxtnCeOhxFgRuLIGFD6ZvdK04a29MUsNW+muw+mjEhgkN5
-   ZMICERfNwgdKFDMxqedfa2jULIXiB6t9F6G2S4Vtxzk/xi4wzp64oMSr3
-   g==;
-X-CSE-ConnectionGUID: NC12/05ET9CbBTofnHs64w==
-X-CSE-MsgGUID: lb1FuJkkQsKTnYiZFK3ELQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11130"; a="28858180"
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="28858180"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Jul 2024 21:20:08 -0700
-X-CSE-ConnectionGUID: Zp2ttPAmTwiZorscHKTQ/g==
-X-CSE-MsgGUID: HiVk5kgKStqEkbSPf9wYNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,202,1716274800"; 
-   d="scan'208";a="48877587"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Jul 2024 21:20:09 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 11 Jul 2024 21:20:07 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 11 Jul 2024 21:20:07 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 11 Jul 2024 21:20:07 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 11 Jul 2024 21:20:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gEmZOtBH6+f7uG12vKjw+tPW8V2OBfnHshW96uP6NlvWvdNej/komsGdFcDaBcQFGt0oJxKrtvmaevQaas7Kb6OgAdJgWIVFkucrKGyEohUCGS81GCdfittnDElvpUnB1dvTovBHhtOX0f16PCUCQGUMyg1/qw/HcnaldWWmHJTtmXeuwfEF60oGIDkyu8HSWGF/P1LmiIqqSkLS7geg4ukuA9IyRuwAOikn36GPyi+AluD4UhRVnbwK/mlLdZAPbPOdeIHD0zAYYksXW2z9WwTkO1zbVNM/TxbYAIDMPETnw1ECbXczGm3bASY+Lwh+A0k4cvwrHsgExoekHtF3hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XBH5VoHmLBrAfH397PIJrAVxXl0rEEuwSIMG2SejoNI=;
- b=rhNCcdJIh1KrgTb7MlOZJDwgXq73W9BPzDMev2HP6RA402qV4aXOmWDUXq3O9Ku/7nY7mvu6X+Aq6Jl0VzgHHWnl4nl1UWbAT3KfBUn6nDWzYMzplES3FZROa0oY58ubpqSAxGQJVprFbuf4bVcUCXIf0bgGnc0cx/S4kCXSJP2dBYKA9VncKJ21nWEZd52Y7TLVeo9lQHXsIeFzfg63j3PsdCkkF7pS8vHxdpSHN1HNaLnoNU5VrPmjOFwQ5QlaEdSs8/z7wUznPNvnLt1KqiXqVWSKClAKnwoqqE6o7/G1Mr4n3wGPpWzPfknLNwGEYDdwLTz4iEVlHh4x4b8R7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB6039.namprd11.prod.outlook.com (2603:10b6:8:76::6) by
- LV8PR11MB8486.namprd11.prod.outlook.com (2603:10b6:408:1e8::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Fri, 12 Jul
- 2024 04:20:05 +0000
-Received: from DS7PR11MB6039.namprd11.prod.outlook.com
- ([fe80::3f0c:a44c:f6a2:d3a9]) by DS7PR11MB6039.namprd11.prod.outlook.com
- ([fe80::3f0c:a44c:f6a2:d3a9%3]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
- 04:20:05 +0000
-Date: Fri, 12 Jul 2024 12:19:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-CC: <oe-kbuild-all@lists.linux.dev>, "Gustavo A. R. Silva"
-	<gustavo@embeddedor.com>, LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/WFAMNAE-next20240621-CbC 1/11]
- arch/powerpc/include/asm/hvcall.h:697:48: warning: structure containing a
- flexible array member is not at the end of another structure
-Message-ID: <ZpCu60T5pgm1LT5n@rli9-mobl>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SG2PR04CA0157.apcprd04.prod.outlook.com (2603:1096:4::19)
- To DS7PR11MB6039.namprd11.prod.outlook.com (2603:10b6:8:76::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF52F10979
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 04:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720758111; cv=none; b=GyY/ickR+8euL4PbS5A97yWh4+fjDR2SDBHq24enNGI+u7Zep95f7myEQzKd6+6xJE2QjwBji4dh7KxcqOGwmoHP8eJOfxnj0SI+4gJRLFt33ge47YdtXLkbVGfmmR7QpB5g21M/I9An56kaLmjmd/bxNw91xiW674IPI6gsHN0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720758111; c=relaxed/simple;
+	bh=REfpCaDkLhPXU5uJQEJr5/Ju2IHI6yByQC5OEK48f5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sDyc96AuC/EluAdA5X58tfGM90TKXP6ruFZnCv1zuXfmGfeEmuiEuMvt/4ja2oJIbR8uIR39X6+3PM4PCss7G6k+vnZBMTtnjq8PuKz135gxPAk4Mk3nlVSpDseVtrhxqLevVtf7hgaDS5FV2fpFxV4yaNY2eALOstOflBIghhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2UGuxpz; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70af5fbf0d5so1090989b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Jul 2024 21:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720758109; x=1721362909; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0bBLxjaqNYm/aQaWvWvN6K2lxER4ZUjX7/wDViAyzH0=;
+        b=a2UGuxpzg4Ti2C07zYIMU43wgjIYpALRlvJ4mS525QpmSfJUxhqDbE7VgzHzhDbij2
+         znf0avtt8L3BI6pzgBTzkVYpbwxeZ2aOPkUnyzweajdMn7LXRxc8EkdXx7SQyRMOj4hl
+         0BCW6g8wXUq1avesDbA/h/dHrrDQPgjDIDOu+OBW4smqoeanu5x7KwY6lRlIo/rH7DQ9
+         hjTs5S017xEz0UzCkdv3xxF3s8HhUhvCtwz6QSk4TAod3rYNiYww9bknsu5xO2BNPrH4
+         c9U5cT++0ez4V6ZmRZOX5C1bC0D45bD7/ye0gZF6s5i4eIp7TZgvLuXmzrW8oYdY+7M+
+         EqqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720758109; x=1721362909;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0bBLxjaqNYm/aQaWvWvN6K2lxER4ZUjX7/wDViAyzH0=;
+        b=gfLG8x8RLp+5wllpUxKEjec1Fo38HN7sNuXsnIRCo2t2SL+xO5JKAgGDHfzSvsCIDS
+         jezXAznaXS9kSD+cyI3i3jA5bDcvfh6ktg0cSOupgJTz2gl7nbVXuAARwU/PhgEMiPko
+         LlrWQeqLO700fZXLsGL41evhRBp3pVbIQZW1r5D22fXpJDL7SmcwH8YWxRuHbqi1sEU6
+         Ek89Iq/5hi0tBRUHiGInB/IGEcl/wuyD1Uhz6fjsdLza92WHMjwKCoDE9brIeqbxfQza
+         sb7K5BGBkQwY3CAIUUVrm1AToO1HG/4pqxWLzuS+3w3mqNY1hC3TWcX9ed5qZ1wkBgb8
+         iwdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWV5i3tYNZSNU5zCz1hXJODd3/XwX8BrmsLaTZS1MV4DDp7DuNYa8Qfinj7GAoQGasowRuREmnuNmJ9wy2Y97E8cO7EZn360FtsDyt8
+X-Gm-Message-State: AOJu0YzrbMXCKVeSCAXKOsDR1pDOD7wR+pIjhylKm1oqC0Y9UDFB/q6l
+	03P4xr1pAurX2ZENe2748+6Upem6n+rE8aWKEu9ddNX4+L4I0vwU
+X-Google-Smtp-Source: AGHT+IG5/dVmgjHUAUbfksEHuRudvz+2wssKf3QfELdS2lWraGP8RWFqGnn7PciJazFufV7eILtAeg==
+X-Received: by 2002:a05:6a00:188b:b0:706:5daf:efa5 with SMTP id d2e1a72fcca58-70b6c8b4bdemr3288344b3a.9.1720758108940;
+        Thu, 11 Jul 2024 21:21:48 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43968688sm6465867b3a.114.2024.07.11.21.21.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 21:21:48 -0700 (PDT)
+Message-ID: <059634b2-7346-4072-b5c2-5b1180bae694@gmail.com>
+Date: Fri, 12 Jul 2024 12:21:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB6039:EE_|LV8PR11MB8486:EE_
-X-MS-Office365-Filtering-Correlation-Id: bd8a40ce-03f2-48e7-e380-08dca229e7e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?0uiFrIjV7fdsVKjlEhYmZAAjqKD01X36ZaNdquidVCPss2fjjZ96/f2qFJ1b?=
- =?us-ascii?Q?phLyLabykICzF0KGYJ2MqR0bDY7o+snc/a/6EITWG8ZLmCbCGDs38ZSWMTNZ?=
- =?us-ascii?Q?LMrvlrZTAwKBeSZYxLP4YCiLM8t8+gLQIZ51uwr9E3mIW50b9sa1flfP3LWU?=
- =?us-ascii?Q?NlWp72l/3s5FhA2yO9EDbQ4VwgIwT/oqwLGZ64wNLqViBpDQ7sJhCGH5dXZ3?=
- =?us-ascii?Q?m5r0LA8Yi84XjQpSEn/Ed2WkD6flpysiarrLF0I/40+PqKxI5lAfARYp5kKj?=
- =?us-ascii?Q?UMuXMwGtAQxTRrU7/infDTs3yKfnqAvU35He5upVryhnE+7dy6p2GfnAVHUG?=
- =?us-ascii?Q?wgRjzzT4ouzs29VOqEgUjXXme7BmY8E+b26slcJG/k4TmZPy1NF7uH6fkO4s?=
- =?us-ascii?Q?OXqEzF3X1xzNZAjxmPcIiW4cA/T9TkhuMfF+dCFpD5GysHt7L22MFXomSUrw?=
- =?us-ascii?Q?2O1uT3VcFheZHChGGAlm9FKQ58l7VTxQmrUw99bwuzk0KrFLIl9D/y7JaoaK?=
- =?us-ascii?Q?1rpU15wlnV+22BNot3o6cGPVSUDaBw8LMCQGHDQaFIoD52zuRhEFXgOR/cCi?=
- =?us-ascii?Q?wGwrpj+wJK1vMrfTLCtL0uH9z7EpWnNYc+S7aZvdPgBRXIk2RF27PSVgNbfZ?=
- =?us-ascii?Q?0Yn+PA+PuSVsshNZJ1xWheb/ypEMNUXZVjEeJhdaXu84StZtAKrxUXwLieyj?=
- =?us-ascii?Q?+WoYKYvPctUSlC1Kk9pr3Y52pMRj63SiINw1ggDBUl9q7SYGgq+cy4bKVdtW?=
- =?us-ascii?Q?mEzJJtReY4ab36PDnFunshMh0/ugcvBIdZBz6PKLLox4Z3JddEduQ4edfIiV?=
- =?us-ascii?Q?7cgQuzLxOjRnUfE7kIpyGhe1zo4th2Tn+04pyyAezrwPiDnYJ0EzmVyUPlrD?=
- =?us-ascii?Q?xPs2Z4XVqVK1PaBYccDo2YgRepJeTcBelRZnuZCUGZ5R1gKZ4c+/tmKZSBx9?=
- =?us-ascii?Q?BNgSs5vSw9kS57uWcF+OX25e3D3LJP4Af8S2wr/2b2GTvA1xssPVFsCjb+s4?=
- =?us-ascii?Q?WjE6IeEWOypsnJvuzhcnPVpz0vxBUzrE38pik1UhLv2BYtR8zsFMHxy5MDLi?=
- =?us-ascii?Q?uVML6S9wDwuThFdBx935hNdtqIS2vbPfdPY2SoD/kWvLvMv2Wz0ujIR1ZntI?=
- =?us-ascii?Q?8LP14yD9fcF9fsugxqjTE6lYYwxWD5Mwbg0Uo6mrErAPkyGHzogpv2eTDhlh?=
- =?us-ascii?Q?+O7xre3rDGITryTesjrZXns1mLcsc0zU6FFkfkow8pxqtPTBmS0BuZ3HW9mN?=
- =?us-ascii?Q?pO42jyV3VyiXpa1O7J7W88+ri8oZ/oMIjTIrlqEJulo1+CZS7M/CxBZ9K6AG?=
- =?us-ascii?Q?eFJ8p35HQ6RyCGxV9HBJ6HbT?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB6039.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?FnpYtX22ue6I3LvyMfZJ2GksU8wHsZR/+IUSihDhIwaNd7bIM+1wH2vnZCYX?=
- =?us-ascii?Q?teNJpijB8eicK3mbP2D+fEZ3E+9yYzeKyBWb4sW0IQNco/ES6ZekmzV1JsFk?=
- =?us-ascii?Q?aQKwMkKYNdYuVpDDdHJ+hYWbTOIK2HbFL4toqvTqVcVQpY9RmRLFkom/Nmc9?=
- =?us-ascii?Q?9hGyVBLlZWw+KtNeXb26lHCWtbqsY37Mc9fSUYYzsg2chBZEAzI0BGKhFbNw?=
- =?us-ascii?Q?TFeJtPfXfJSENTRg0kXQTeStO4orXrAxRsfm8ENR0vCAENd0XD9BN1X1PxdM?=
- =?us-ascii?Q?I7F3NfsTrHuPc+tt2wQ0QkxcBrx27T3T9FkNWzHAW6ZYWgKLrfUCTvSc2U0h?=
- =?us-ascii?Q?3Sj22j27bflwsx139Rs9KmqbNaFzPoqon/X/Kl3oFthkqmY/KA+0tUH1hrdB?=
- =?us-ascii?Q?XQCFbiYrOADMfN7T4utAbKYlnZzqJdqTwWoqKGFy/UOOtMiPJkhDPwCdS9P1?=
- =?us-ascii?Q?pvq3dXf0ADwk+hypPsNRaKf8rlFGISr8TZ8JOwyFJB+O/WXZDU8BbLuPQJo2?=
- =?us-ascii?Q?St/Bgpw61ssM6k0jrgRtbM5FP+w9Ms1Yf+EHprLupJgbZaFAP0U/3tJbfmBo?=
- =?us-ascii?Q?LPX656qhnAZnPWUVLqJIcoLsLdqjVKRhPkfDpOrRleUzKP0j2umkIkqQjBiB?=
- =?us-ascii?Q?qlIUsyy7dMQfoii+5mTBPqCb/Hi8nwkWBR3oWHZfAGFi/ZclIssTF8ziLE2o?=
- =?us-ascii?Q?mopfceGGYBJn+RjYbcyAWxSO6VNmzarlc46/hAoZeIsieHE4lxUSS1hICiWE?=
- =?us-ascii?Q?Kog9zIZHbgbq8z/Gz1usSlmJG003yB1TfQF6bWZpVYRyHydG6DnerkAvoVJ9?=
- =?us-ascii?Q?w1til5bANRZVti3sdhViFtJKjnTtDDSiwAqW2mESqyI246moWELLu4YLbx/g?=
- =?us-ascii?Q?y9RBcJUYm4939aCeJQa3cNKXPv07QoGezya47wiDcAChz0dYRSyjcdnAOzY+?=
- =?us-ascii?Q?yY27TlTR/37zG4YfWNAwt0q9vFDRD5D9pjf7+OEpmdGNu+yOu2tdOf/LGBa6?=
- =?us-ascii?Q?QLl8AE02Jz+DVRo+gmT8FKW/+ENtb5aRowvfcHYuHss6YL+1tcS5btYwrjao?=
- =?us-ascii?Q?pqjXnsSAUZgja3Loay0jAJuj6Z0W9Kgdk3XIcZNwwkiFf54A93JrNwuZYfRr?=
- =?us-ascii?Q?rdwgQ17Gc5/Fdkg3jw4cNoP7b6YRvAFNsRfOV090CsFq57X8XOSvkLdtgpD0?=
- =?us-ascii?Q?G89LaTzYRKeSzh568F84OYhdSpzDU7jfP/+AT1Rq768Bnoie7p9+48YgkjnC?=
- =?us-ascii?Q?OhAHyWc71MxT68xcOHUHQG7PZJ5Py/glUtrzUHLf3vWV/7HtpAaBNtav74MM?=
- =?us-ascii?Q?A2uJMWlpA14zXTxsfVWMn2x0cf/SUM4dCAFbz0mXkOHwUT+OOAbF15qFJ6hT?=
- =?us-ascii?Q?BCUJZYWKvMg8k9Syuf4jPaaCmxDa3sByBnAYX5qlFfzCcPoPpEYwe4NXrhEV?=
- =?us-ascii?Q?aOaqOXd16jbjH+aTmdpCAsZRXULhseg2fGYXQ8augeUFa/JXw7wEi+6H41xX?=
- =?us-ascii?Q?jv9CEms0kpEvyVliv7G3n40/UvpL2DB2aJjbXvd1Hmcomtcl9AX6aotyG+2b?=
- =?us-ascii?Q?jsAuiwQMtpdMzUaM/Dzmp9xLC5AzGESb99lwZ/7CK254Q6xpUMq2+eHHm5wS?=
- =?us-ascii?Q?zA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd8a40ce-03f2-48e7-e380-08dca229e7e7
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB6039.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 04:20:05.0598
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: omdj1J0Er8MDWAYKjG7vqh+lZhSoBj1I2FIbpXcj8qHXny8zi71O1NMqM+rMlex9CHrzBjtBYrjOrw6PmzJNyg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8486
-X-OriginatorOrg: intel.com
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/WFAMNAE-next20240621-CbC
-head:   30867ef8ad076c11ed274d76f99e8bb0346790af
-commit: 18c8dad6dac24de88b5379ad4e367e50d06a96ec [1/11] Makefile: Enable -Wflex-array-member-not-at-end globally
-:::::: branch date: 5 hours ago
-:::::: commit date: 2 weeks ago
-config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20240711/202407111827.iLqomSUr-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240711/202407111827.iLqomSUr-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/r/202407111827.iLqomSUr-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from arch/powerpc/include/asm/kvm_host.h:26,
-                    from include/linux/kvm_host.h:45,
-                    from arch/powerpc/include/asm/kvm_ppc.h:19,
-                    from arch/powerpc/include/asm/dbell.h:17,
-                    from arch/powerpc/kernel/asm-offsets.c:36:
->> arch/powerpc/include/asm/hvcall.h:697:48: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-     697 |         struct hv_get_perf_counter_info_params params;
-         |                                                ^~~~~~
-   include/linux/kvm_host.h:1838:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-    1838 |         struct kvm_stats_desc desc;
-         |                               ^~~~
---
-   In file included from include/linux/security.h:35,
-                    from include/linux/perf_event.h:62,
-                    from include/linux/trace_events.h:10,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:94,
-                    from arch/powerpc/kernel/signal_32.c:26:
-   include/linux/bpf.h:2002:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-    2002 |         struct bpf_prog_array hdr;
-         |                               ^~~
-   In file included from include/linux/tty_port.h:8,
-                    from include/linux/tty.h:11,
-                    from arch/powerpc/kernel/signal_32.c:33:
-   include/linux/tty_buffer.h:40:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-      40 |         struct tty_buffer sentinel;
-         |                           ^~~~~~~~
-   In file included from arch/powerpc/include/asm/ultravisor-api.h:11,
-                    from arch/powerpc/include/asm/asm-prototypes.h:19,
-                    from arch/powerpc/kernel/signal_32.c:44:
->> arch/powerpc/include/asm/hvcall.h:697:48: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-     697 |         struct hv_get_perf_counter_info_params params;
-         |                                                ^~~~~~
---
-   In file included from include/linux/security.h:35,
-                    from include/linux/perf_event.h:62,
-                    from include/linux/hw_breakpoint.h:5,
-                    from arch/powerpc/kernel/process.c:37:
-   include/linux/bpf.h:2002:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-    2002 |         struct bpf_prog_array hdr;
-         |                               ^~~
-   In file included from arch/powerpc/include/asm/ultravisor-api.h:11,
-                    from arch/powerpc/include/asm/asm-prototypes.h:19,
-                    from arch/powerpc/kernel/process.c:61:
->> arch/powerpc/include/asm/hvcall.h:697:48: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-     697 |         struct hv_get_perf_counter_info_params params;
-         |                                                ^~~~~~
---
-   In file included from arch/powerpc/kernel/sysfs.c:17:
->> arch/powerpc/include/asm/hvcall.h:697:48: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-     697 |         struct hv_get_perf_counter_info_params params;
-         |                                                ^~~~~~
---
-   In file included from include/linux/tty_port.h:8,
-                    from include/linux/tty.h:11,
-                    from arch/powerpc/kernel/setup_32.c:14:
-   include/linux/tty_buffer.h:40:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-      40 |         struct tty_buffer sentinel;
-         |                           ^~~~~~~~
-   In file included from arch/powerpc/include/asm/ultravisor-api.h:11,
-                    from arch/powerpc/include/asm/asm-prototypes.h:19,
-                    from arch/powerpc/kernel/setup_32.c:45:
->> arch/powerpc/include/asm/hvcall.h:697:48: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-     697 |         struct hv_get_perf_counter_info_params params;
-         |                                                ^~~~~~
---
-   In file included from arch/powerpc/include/asm/kvm_host.h:26,
-                    from include/linux/kvm_host.h:45,
-                    from arch/powerpc/include/asm/kvm_ppc.h:19,
-                    from arch/powerpc/include/asm/dbell.h:17,
-                    from arch/powerpc/kernel/asm-offsets.c:36:
->> arch/powerpc/include/asm/hvcall.h:697:48: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-     697 |         struct hv_get_perf_counter_info_params params;
-         |                                                ^~~~~~
-   include/linux/kvm_host.h:1838:31: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-    1838 |         struct kvm_stats_desc desc;
-         |                               ^~~~
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REF PATCH v3 2/2] mm/slab: decouple the SLAB_OBJ_EXT from MEMCG
+To: Suren Baghdasaryan <surenb@google.com>, roman.gushchin@linux.dev
+Cc: Vlastimil Babka <vbabka@suse.cz>, alexs@kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
+ Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+ Yoann Congal <yoann.congal@smile.fr>, Masahiro Yamada
+ <masahiroy@kernel.org>, Petr Mladek <pmladek@suse.com>
+References: <20240710054336.190410-1-alexs@kernel.org>
+ <20240710054336.190410-2-alexs@kernel.org>
+ <d6bfed41-4c2b-4855-bcb4-522079f19bf4@suse.cz>
+ <9b1384e7-e75d-4d71-8798-0d47c33cece6@gmail.com>
+ <CAJuCfpEJKLi2kzwWxdDCfSHu0gtRtLAkUrovtUpBwQhftbF+1w@mail.gmail.com>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <CAJuCfpEJKLi2kzwWxdDCfSHu0gtRtLAkUrovtUpBwQhftbF+1w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
-vim +697 arch/powerpc/include/asm/hvcall.h
 
-59562b5c33d6ff Scott Cheloha 2020-07-27  691  
-59562b5c33d6ff Scott Cheloha 2020-07-27  692  #define HGPCI_REQ_BUFFER_SIZE	4096
-59562b5c33d6ff Scott Cheloha 2020-07-27  693  #define HGPCI_MAX_DATA_BYTES \
-59562b5c33d6ff Scott Cheloha 2020-07-27  694  	(HGPCI_REQ_BUFFER_SIZE - sizeof(struct hv_get_perf_counter_info_params))
-59562b5c33d6ff Scott Cheloha 2020-07-27  695  
-59562b5c33d6ff Scott Cheloha 2020-07-27  696  struct hv_gpci_request_buffer {
-59562b5c33d6ff Scott Cheloha 2020-07-27 @697  	struct hv_get_perf_counter_info_params params;
-59562b5c33d6ff Scott Cheloha 2020-07-27  698  	uint8_t bytes[HGPCI_MAX_DATA_BYTES];
-59562b5c33d6ff Scott Cheloha 2020-07-27  699  } __packed;
-59562b5c33d6ff Scott Cheloha 2020-07-27  700  
+On 7/11/24 9:55 PM, Suren Baghdasaryan wrote:
+> On Thu, Jul 11, 2024 at 4:49 AM Alex Shi <seakeel@gmail.com> wrote:
+>>
+>>
+>>
+>> On 7/11/24 4:11 PM, Vlastimil Babka wrote:
+>>> On 7/10/24 7:43 AM, alexs@kernel.org wrote:
+>>>> From: "Alex Shi (Tencent)" <alexs@kernel.org>
+>>>>
+>>>> commit 21c690a349ba ("mm: introduce slabobj_ext to support slab object
+>>>> extensions") selected SLAB_OBJ_EXT on MEMCG just for SLAB_MATCH
+>>>> memcg_data, that included SLAB_OBJ_EXT for MEMCG. In fact, I didn't see
+>>>> the necessary to enable SLAB_OBJ_EXT for MEMCG.
+>>>>
+>>>> Let's decouple the SLAB_OBJ_EXT from MEMCG and move out
+>>>> alloc_slab_obj_exts() definition from SLAB_OBJ_EXT only. To alignment
+>>>> the alloc_slab_obj_exts() return 0 for good. change its return value to
+>>>> '-1' for always failed with !SLAB_OBJ_EXT. Now we could save unnecessary
+>>>> code from MEMCG but !SLAB_OBJ_EXT.
+>>>>
+>>>> Signed-off-by: Alex Shi (Tencent) <alexs@kernel.org>
+>>>
+>>> This seems just wrong to me. The memcg hooks for slab do use obj_ext. You
+>>> made alloc_slab_obj_exts() return -1 and that will just fail all memcg
+>>> charging (unless alloc profiling selects obj_ext). The kernel will appear to
+>>> work, but memcg charging for slab won't happen at all.
+>>>
+>>> So no, it can't be decoupled for slab, only for pages/folios (patch 1).
+>>
+>> Hi Vlastimil,
+>>
+>> Thanks a lot for clarification! Yes, the patch isn't correct.
+>>
+>> Just forgive my stupidity, why the memcg needs SLAB_OBJ_EXT?
+> 
+> Because when CONFIG_MEMCG_KMEM=y, slabobj_ext contains obj_cgroup
+> (see: https://elixir.bootlin.com/linux/v6.10-rc7/source/include/linux/memcontrol.h#L1593)
 
-:::::: The code at line 697 was first introduced by commit
-:::::: 59562b5c33d6ff3685509ed58b2ed3c5b5712704 powerpc/perf: consolidate GPCI hcall structs into asm/hvcall.h
+Thanks for comments. 
+Yes, if the obj_cg is sth we must have in MEMCG, then MEMCG should take OBJ_EXT.
 
-:::::: TO: Scott Cheloha <cheloha@linux.ibm.com>
-:::::: CC: Michael Ellerman <mpe@ellerman.id.au>
+> and that's used for memcg accounting. Look into this call chain:
+> 
+> kfree
+>   slab_free
+>     memcg_slab_free_hook
+>       __memcg_slab_free_hook
+>         obj_cgroup_uncharge> 
+>>
+>> And why we need to alloc_slab_obj_exts() at line 3019 with !slab_obj_exts?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I checked the history of slab for this part. It introduced
+from commit 10befea91b61c ("mm: memcg/slab: use a single set of kmem_caches for all allocations")
+But still don't know why !page_has_obj_cgroups followed by memcg_alloc_page_obj_cgroups. Anyone like
+to give a hints?
 
+                        page = virt_to_head_page(p[i]);
++
++                       if (!page_has_obj_cgroups(page) &&
++                           memcg_alloc_page_obj_cgroups(page, s, flags)) {
++                               obj_cgroup_uncharge(objcg, obj_full_size(s));
++                               continue;
++                       }
+
+Thanks a lot
+Alex
+
+
+>> 3015         for (i = 0; i < size; i++) {
+>> 3016                 slab = virt_to_slab(p[i]);
+>> 3017
+>> 3018                 if (!slab_obj_exts(slab) &&
+>> 3019                     alloc_slab_obj_exts(slab, s, flags, false)) {
+>> 3020                         obj_cgroup_uncharge(objcg, obj_full_size(s));
+>> 3021                         continue;
+>> 3022                 }
+>>
+>> Thanks!
+>> Alex
+>>
+>>>
+>>>
+>>>> Cc: Randy Dunlap <rdunlap@infradead.org>
+>>>> Cc: Yoann Congal <yoann.congal@smile.fr>
+>>>> Cc: Masahiro Yamada <masahiroy@kernel.org>
+>>>> Cc: Petr Mladek <pmladek@suse.com>
+>>>> ---
+>>>>  init/Kconfig | 1 -
+>>>>  mm/slab.h    | 6 +++---
+>>>>  mm/slub.c    | 6 +++---
+>>>>  3 files changed, 6 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/init/Kconfig b/init/Kconfig
+>>>> index 26bf8bb0a7ce..61e43ac9fe75 100644
+>>>> --- a/init/Kconfig
+>>>> +++ b/init/Kconfig
+>>>> @@ -965,7 +965,6 @@ config MEMCG
+>>>>      bool "Memory controller"
+>>>>      select PAGE_COUNTER
+>>>>      select EVENTFD
+>>>> -    select SLAB_OBJ_EXT
+>>>>      help
+>>>>        Provides control over the memory footprint of tasks in a cgroup.
+>>>>
+>>>> diff --git a/mm/slab.h b/mm/slab.h
+>>>> index 8ffdd4f315f8..6c727ecc1068 100644
+>>>> --- a/mm/slab.h
+>>>> +++ b/mm/slab.h
+>>>> @@ -559,9 +559,6 @@ static inline struct slabobj_ext *slab_obj_exts(struct slab *slab)
+>>>>      return (struct slabobj_ext *)(obj_exts & ~OBJEXTS_FLAGS_MASK);
+>>>>  }
+>>>>
+>>>> -int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+>>>> -                        gfp_t gfp, bool new_slab);
+>>>> -
+>>>>  #else /* CONFIG_SLAB_OBJ_EXT */
+>>>>
+>>>>  static inline struct slabobj_ext *slab_obj_exts(struct slab *slab)
+>>>> @@ -571,6 +568,9 @@ static inline struct slabobj_ext *slab_obj_exts(struct slab *slab)
+>>>>
+>>>>  #endif /* CONFIG_SLAB_OBJ_EXT */
+>>>>
+>>>> +int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+>>>> +                    gfp_t gfp, bool new_slab);
+>>>> +
+>>>>  static inline enum node_stat_item cache_vmstat_idx(struct kmem_cache *s)
+>>>>  {
+>>>>      return (s->flags & SLAB_RECLAIM_ACCOUNT) ?
+>>>> diff --git a/mm/slub.c b/mm/slub.c
+>>>> index cc11f3869cc6..f531c2d67238 100644
+>>>> --- a/mm/slub.c
+>>>> +++ b/mm/slub.c
+>>>> @@ -2075,10 +2075,10 @@ alloc_tagging_slab_free_hook(struct kmem_cache *s, struct slab *slab, void **p,
+>>>>
+>>>>  #else /* CONFIG_SLAB_OBJ_EXT */
+>>>>
+>>>> -static int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+>>>> -                           gfp_t gfp, bool new_slab)
+>>>> +int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+>>>> +                    gfp_t gfp, bool new_slab)
+>>>>  {
+>>>> -    return 0;
+>>>> +    return -1;
+>>>>  }
+>>>>
+>>>>  static inline void free_slab_obj_exts(struct slab *slab)
+>>>
 
