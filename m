@@ -1,122 +1,102 @@
-Return-Path: <linux-kernel+bounces-250770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7F792FC9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:33:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6F592FCA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEBE4283683
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2702728337B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5CE171E62;
-	Fri, 12 Jul 2024 14:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A642171E69;
+	Fri, 12 Jul 2024 14:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nks7UVPQ"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PvT20OK/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E171E4A9;
-	Fri, 12 Jul 2024 14:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A360F16F910;
+	Fri, 12 Jul 2024 14:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720794815; cv=none; b=EfbtuUT2vwj11NkBsd3S/iwPzQYWPO6G9p1056gdQ2ER7v5RgQgj1u2CUIe5Uiz99MbFYUhRWo+0z+TapQdA9g1KF+r3jWpdpf91TRShUDM5lktc/b8oidcdv+gliV6CufKEhyL5HhmIaRcjvYrKhR3h5JerG8OK/gWYDBMVFys=
+	t=1720794836; cv=none; b=mIa/68svRYPUSZX+O3XV6abXdLQxEbhDIUXqAvq19WtzlyVKJ19dx/6txQUlKSBQsJZ6HOdDQp2igWHzyyjjtqIKWISj3unsADAEXn7QVKMDFwDA8FZxwn5HfT9VLa5LXdeUtD3WdqXkmD5nawhxWmg1FIN4gT10ZXHrH+4TKsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720794815; c=relaxed/simple;
-	bh=z0ahnSbppYt7pmmF7PIuvpeQfD5WebtYXp3vsX/l3/8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LOGDDsK7nkXYf0HnbXF1g9I0QDOLRVBmEaoqCAboRyPwNowOTxKutPQe9kJ/rm0v/KTwtBB4FNd0SH1+O5RkWA6KM2QZkeqBGjW+ZbpJXVdRQbJLO99M+FH8xtt5DjMlqx8kQlYRsJjhSSRDmug3It+rnXVDKAzuVEvyKr7PX1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nks7UVPQ; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720794792; x=1721399592; i=markus.elfring@web.de;
-	bh=hxuT+Hbd7wy8hEc4HWbbzcHkmuz5r+aDxi/+eSIYkro=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=nks7UVPQQOIV8NaVs+uRUWtJlePZd8jO5RKBspn3BRQ2gxA7WN2AFgS1CxfFvPFE
-	 lcfH0DSaO24AlSotJndPBEoSU3opXpx1EMYdEgvxdoNQfgY74hNtiCOUfmpD3DIt2
-	 8M8ilFS0nQ2Y8JBqB4Y5F/LrxbyIBFXjGqfgbe66uZBHMSLXmq+tQHPo97hoQTrW7
-	 AQkIoNlaSafOU0tzVVEToEiQzCCUD/LeySOWvHjYVBGBxLlsBC00YeaLHo2lCkx7e
-	 WF94FRUGKbn/xj9yU96UBW/w61xg3T1xUqHEIK843XffSBf0BONUve+FQb91ENFlk
-	 xWr+g0VHIo7kSt8NlA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MwR4D-1sBhvB15iH-00qrLJ; Fri, 12
- Jul 2024 16:33:12 +0200
-Message-ID: <dc509d3a-7e25-49f3-94a2-5a6bb36f062d@web.de>
-Date: Fri, 12 Jul 2024 16:33:04 +0200
+	s=arc-20240116; t=1720794836; c=relaxed/simple;
+	bh=gQcrFDGWggoe/ec5V49afFn7kmx2z7nIu9TGMMaHQNU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=cbqEwYmkMLVbaXqn0hunVIeIoCHRSAe0DVPC1giYEcxaXMNE42dS3FTBp+bxBjPAOrb/xUiH+NdeWgZon4q8WdjisbldA2RhWn5W6QZeebMmShfcteM2BjAgT36xgrzQrTsmltyjC5/Ab1MUKjC76MHOuCvfjlvRUnYpqmmQuAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PvT20OK/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6BAEC32782;
+	Fri, 12 Jul 2024 14:33:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720794836;
+	bh=gQcrFDGWggoe/ec5V49afFn7kmx2z7nIu9TGMMaHQNU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=PvT20OK/LujkSr3zquhW8ndmrLa4t0AyCFlAouH+u5qUV0T/+wbBZdJoOaOJuKUOf
+	 4xTPxY0rc//GzMP1GafqCstvmgMWh8cBnEBd4Nret4j3BtekCML+ARJ30L4lerVMYQ
+	 TZB5Xf+axxgkyW4vKKW+ktP4lLeIcKeq1VP5kqEmUWhAjlopTl+oZhkHjYub/yOS4c
+	 7ecO/8T/xtRH08WFSwtC8GAXMT6qQ6R9FpfkuOStenSdu6PwkFXTI/C2VS3NCUSH6W
+	 ducD/AsLjlJqKboNh9rDvns7ChSxNig8z79oVg2oDz9CWMFj/mSCa1taF5th9AiONW
+	 PmErLVNm/5/Ew==
+From: Mark Brown <broonie@kernel.org>
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, 
+ David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, patches@opensource.cirrus.com, 
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240710072756.99765-1-animeshagarwal28@gmail.com>
+References: <20240710072756.99765-1-animeshagarwal28@gmail.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: cirrus,cs42xx8: Convert to dtschema
+Message-Id: <172079483344.520799.13382073069252399762.b4-ty@kernel.org>
+Date: Fri, 12 Jul 2024 15:33:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: shuaijie wang <wangshuaijie@awinic.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Jonathan Cameron <jic23@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Waqar Hameed <waqar.hameed@axis.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kangjiajun@awinic.com,
- Nick Li <liweilei@awinic.com>
-References: <20240712113200.2468249-3-wangshuaijie@awinic.com>
-Subject: Re: [PATCH V3 2/2] Add support for Awinic proximity sensor
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240712113200.2468249-3-wangshuaijie@awinic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:H4eKD3Uf3BiWxrVZItGUlQHqUbqukHshvVPZ1sli3mcpJPkqjN3
- NUCi6quSvopxXguieyg8dn2k6yxTZnLppk6TKyzi1/fJpNpk4f7pe9ovOT7eFgCCfVHWNes
- C29SUNLoLjU1sVOjXordv6yPOrxtqbwdPiWNCtG5fnU9/pURpxgnfhAOqJR0DwDrrl8DGjB
- TMqP/t5z2ZK8FdSMt7ZUg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:op1lem1IDBY=;syVkAhnEwc2HUnMLJE8lKkQuPT7
- 7j50q8aG7IHbM9M7bbRqVEDoJB8OXmCCtkP61ZZiyQ+4ULTSSLwH3c+mCui5Ljn8PPAy7e485
- rupH36UbuZki4UKrFpx/N9n/aNsVT3RCVLflRxaBj6wJTIdG3DpTMmSb4MK7XtzcO2WkxpH+R
- q1/zt9Wo5pf+HrEZv+Med2gfWiZMSDlJEHDMI6K3PDkxo2zNu39c1NnrgxdjG/Wuc/GTxSLTY
- wml38XcrnL6B2+0UTRYXSgUJp8sPiXMvYCo9uejqOIqfjiXdMXUGvk5331cuAiUlPz4dL/4WU
- 3gHPVE4NOKlKq71PNSMfpM0HzGdsiAUtmeYAh25KuOv0CBruSHx1Ngday01RZFxnUsXQFXmfu
- H5iLD4K3F0u+fwfLkxDCM1n2kUvd5sV9P6T6tiH+6D4JEL3yBsd82rjn8Vg8aBRERBwr3p6Ig
- SgcxSjiyzbxGZx8b4z10jKEisrf8+fD3zeiru6CAcyHkTsvp+vj5awTZbVxqalreCoMCNyGqM
- G3Wk5TkIOOeG8lxc5viJ7+C3EOmeeEuFKk3tmu7vO4Sc2arAFCOXzCjknYSND4jiMl0/qLkfC
- EZsI3siLpc2kDMScYq/+rd1AzniGk0pVpenc30NrJjispKx9OY0zttpyt9nRuw3U/NRD3SXQw
- Oyh7o52iofyLIxzlFxjkRDp0owSrENQQO67w0Zgco0kG6ZXvtm+Q6ONevXcyfEUm0sDOvMO10
- 1IzfvMiRTRTHNORDLgsP9tec4opqOgZC7wF7TNm6NYjq9hTlpBGqpNQK8K1odOqecnkg3K9ua
- UJVNpf1VXIxK8D/FZrtHAW8A==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-Please add a subsystem specification to the message subject.
+On Wed, 10 Jul 2024 12:57:52 +0530, Animesh Agarwal wrote:
+> Convert the Cirrus Logic CS42448/CS42888 audio CODEC bindings to DT
+> schema format. Set power supply properties to required only for CS42888.
+> 
+> 
 
+Applied to
 
-=E2=80=A6
-> +++ b/drivers/iio/proximity/aw_sar.c
-> @@ -0,0 +1,1850 @@
-=E2=80=A6
-> +static ssize_t
-> +update_reg_store(struct device *dev, struct device_attribute *attr, con=
-st char *buf, size_t count)
-> +{
-=E2=80=A6
-> +	if (flag =3D=3D AW_TRUE) {
-> +		mutex_lock(&aw_sar_lock);
-> +		aw_sar_soft_reset(p_sar);
-> +		aw_sar_update_reg_set_func(p_sar);
-> +		mutex_unlock(&aw_sar_lock);
-> +	}
-> +
-> +	return count;
-> +}
-=E2=80=A6
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Under which circumstances would you become interested to apply a statement
-like =E2=80=9Cguard(mutex)(&aw_sar_lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.10-rc7/source/include/linux/mutex.h#L1=
-96
+Thanks!
 
-Regards,
-Markus
+[1/1] ASoC: dt-bindings: cirrus,cs42xx8: Convert to dtschema
+      commit: e3fff693da9fa0337d98dab496db3a04c5227aae
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
