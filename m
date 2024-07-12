@@ -1,145 +1,144 @@
-Return-Path: <linux-kernel+bounces-250460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9679B92F819
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:40:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654AD92F81A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2032825BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:40:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8815F1C21F70
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285A214D282;
-	Fri, 12 Jul 2024 09:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC75314D282;
+	Fri, 12 Jul 2024 09:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FLPjIF7J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8YhYKUj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A10E143C6E;
-	Fri, 12 Jul 2024 09:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9121494BC
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720777217; cv=none; b=Buiyc2wvpySBTY6+OloJHSyOQrA9kcybXW1olRESa3Fny5wqf812nyK9Rl9sFakzxYri7wxzD0NCSwPGYS1X4T47Lb7/9rNijF8DVbbr3UxGh4fC1cl9V/uSl3jBoqipq3qviS1JtyQeALg7TPfGTu7Mm1oNpvh26QdvjTeMUKw=
+	t=1720777236; cv=none; b=NAc0Mwg6/WAVemxsHHAz7IJUFr9Wl/7KwJKUf1mErQhy/RLNr+QaqRwXg0f86vaUJkiIlY9hisF7dtFeLwwCftV1G2G2Nb4MXTGZC614a0L3O0tJNrNxx0OstDXxu5NeO3V6e4n4fcrmYVaISp7TuiTi5dR4ZZa5gNEhNCBM3C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720777217; c=relaxed/simple;
-	bh=0QB4avtqHAByN9Y/i8mu+GJUKZUD7/BNSTgpqU9Kt0Y=;
+	s=arc-20240116; t=1720777236; c=relaxed/simple;
+	bh=bdil4uP/Y1K/s8nVUqnOIAceh5fft63Q5jINgGxdLpY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W9RtEsQJYsgywKOB76uclqBxvOF4/gHcrlL21fu1sQXe5+qiZe8QkzK9MBv9x+iI+wPJurYlXL9/M8WaRbKQeWSSQi4tHSaEYq1rockvrlUbb4sOynCTQxfo+M84ZiJ7AZVhXR+QAWd1xKkqTWC48G9domZn6guipSoFEEGJutk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FLPjIF7J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E46A6C4AF0B;
-	Fri, 12 Jul 2024 09:40:16 +0000 (UTC)
+	 To:Cc:Content-Type; b=YbgoWKQGNWkL/9pmzS8WygrkAuwvcgFUPZIylSQWRdSGt1yNPWRU+f0F7M+9HN1o2xN9veLEUTVuN/GJ4qZt/mX0tyJH0xyXwuwD5CMv8VzGBpCTFpFhQRstoCt9g2IaiXg0lM2Sf3GOA5TOGembAEekmg8z+fgZSTrV0jYzdv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8YhYKUj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A133FC32782
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:40:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720777216;
-	bh=0QB4avtqHAByN9Y/i8mu+GJUKZUD7/BNSTgpqU9Kt0Y=;
+	s=k20201202; t=1720777235;
+	bh=bdil4uP/Y1K/s8nVUqnOIAceh5fft63Q5jINgGxdLpY=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FLPjIF7JNbVupl7884yK+FwM2TxooTjLKaA4sd/uigakeIBP89NOytxLO3wp1g5Xe
-	 JMrGPBXpKpeVghpqk7XnBPVu65MOGLlEr+dTt5AnKVG6BxGFIA2QLv5LAg4VSdeOtA
-	 zJZYjRi8U8zFUmiwJKaf3Zevjq3Rm+z3OSjKh3wJhPiBsHua6i1kRw7CB2WI2gBW6Q
-	 jkgJHwayT1McgLLb8xSgdshlHYsEfZZ5BA+yJa0sV1W4KBLgnf4isygCRwn3InQ5ux
-	 n99bKorxL6i9Jnw4BfqhEHgZ4eLe5VBPNj1QA7JF0Y+cH7WJUU8XpAd8SIalgZnGqk
-	 CsVHhGXfdpIWQ==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5c680f40faeso49850eaf.1;
-        Fri, 12 Jul 2024 02:40:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVIB8o7YD99s7wDqw47/9CwWSsLpniS46Bm3XiBE4OWtVi2uAxDmUg/TKE0S60yJxf7MmtQkzB8nfO4385fcz+LXayK9Y6IYpHBk5nZoh/0IOVISJzLHIFpaVaaL5xliS8a9IHGSfjxkA==
-X-Gm-Message-State: AOJu0Yy3Q6qGB00wMwRk2RO2S/sMrqOeevIwkf+idZkWt5dfHc6tyU13
-	UV7oo9C19ViIptZ8hrSCMdcTrbpSGpV7Ew0E4sYSWjcHoh72uGozCQVuuQIXM7izs7TpARohqSY
-	pGPD3Ib5vwNRJzyzsXIHFK22/2SI=
-X-Google-Smtp-Source: AGHT+IEdhCaEWm8tJiXywb0s1a3ZSyKgNu5DyhAYYzrFaZq8wv5wjQ5n5SaUqhfGoTbY5Fdoi4gdY6AJTTGZvtWNZqE=
-X-Received: by 2002:a4a:e088:0:b0:5cd:13e0:b0d3 with SMTP id
- 006d021491bc7-5cd13e0b282mr857068eaf.2.1720777216176; Fri, 12 Jul 2024
- 02:40:16 -0700 (PDT)
+	b=F8YhYKUjPKxjDUNF8SW6mJfGo7hwe2lVL3NxKCc+qKZ2163AR6A7qhwYNBKljbw2O
+	 a0eoqvfr7UTpW/rUJ7SkmhneHGLwxwuXX6VDdRkQC3RshzdWdrrjhP8D1K3NbEXEb3
+	 3//W2ZrpyIoq9C8p+EjsBCec/JNemFsSyNcRcx4TOFfN4VTmO6OtwjvEakXYjWXjyY
+	 ZNPMxDhZKufB/kvdbyie+7z05o6dCopnLpXRc4BSLfpxwf8UavZGcw1E2wG3i1nyQM
+	 sp0xyX2+8LsTppQbbeOprLRkNYmtUdLo23krMC48evf/SF71zs1Y3jWB2/5wwRRpHQ
+	 Qsp8SyMGrP7zQ==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so3023971a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:40:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW7Q5UL6O1KvbvSTc4/uPtsst59S5VaxTxgYBsWOIJlxzrVZGYtqCMK1Z1YWC3dEwUqiIH9HbImrMFbcC8xFCMTeCE3ZwxSDrN8gwor
+X-Gm-Message-State: AOJu0YxxEqP7dWPEZJb0piec/6dHYvaBc4zZYMLyv0F9sFOrBBKHgA3c
+	VTpmBlkI2BA1/LXMVqRLwrOcxItebEaFefaV9dLYKb8zUa7h3+TOcTfWct3iTJDOKQIeD7NR/ox
+	v8MMvh1d5yEE+zXq/i5xhNSKkQ0Y=
+X-Google-Smtp-Source: AGHT+IENvC5KTbUrIoAa+LJp6jkAzFzcRy/GBh7O8aXK9H4i7J17bzLGyt2VeHNvl3QFh3I+ShXrGe2b+gD96H2r85k=
+X-Received: by 2002:a50:d744:0:b0:57c:a8e5:35f0 with SMTP id
+ 4fb4d7f45d1cf-59963bf4683mr1476060a12.2.1720777234300; Fri, 12 Jul 2024
+ 02:40:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710-fix-modpost-warning-default_dram_nodes-v1-1-8961453cc82d@kernel.org>
- <87jzhsa05p.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87jzhsa05p.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 12 Jul 2024 11:40:04 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gHHkFnJEf2CQ5Rmz9+_7u1EqBPiycuFL1huPJf9Pvc6Q@mail.gmail.com>
-Message-ID: <CAJZ5v0gHHkFnJEf2CQ5Rmz9+_7u1EqBPiycuFL1huPJf9Pvc6Q@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: HMAT: Mark hmat_set_default_dram_perf() as __init
-To: "Huang, Ying" <ying.huang@intel.com>, Nathan Chancellor <nathan@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Len Brown <lenb@kernel.org>, Ho-Ren Chuang <horen.chuang@linux.dev>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>
+References: <20240712091506.28140-1-yangtiezhu@loongson.cn> <20240712091506.28140-5-yangtiezhu@loongson.cn>
+In-Reply-To: <20240712091506.28140-5-yangtiezhu@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 12 Jul 2024 17:40:22 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4oi1mpP8JSG1D+8CQVojGtPOpzVybCn8y8mWuMPT=zxQ@mail.gmail.com>
+Message-ID: <CAAhV-H4oi1mpP8JSG1D+8CQVojGtPOpzVybCn8y8mWuMPT=zxQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/4] LoongArch: Remove -fno-jump-tables for objtool
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Xi Ruoyao <xry111@xry111.site>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 8:56=E2=80=AFAM Huang, Ying <ying.huang@intel.com> =
-wrote:
->
-> Nathan Chancellor <nathan@kernel.org> writes:
->
-> > After commit 4dc70b711dbc ("memory tier: consolidate the initialization
-> > of memory tiers"), there is a modpost warning when
-> > hmat_set_default_dram_perf() is not inlined into its callsite, as it
-> > appears that default_dram_nodes may be accessed after its memory has
-> > been freed.
-> >
-> >   WARNING: modpost: vmlinux: section mismatch in reference: hmat_set_de=
-fault_dram_perf+0x18 (section: .text) -> default_dram_nodes (section: .init=
-.data)
-> >
-> > The single callsite, hmat_init(), is __init, so this warning is not a
-> > problem in reality but it is easily solvable by marking
-> > hmat_set_default_dram_perf() as __init, which should have been done whe=
-n
-> > this function was added in commit 3718c02dbd4c ("acpi, hmat: calculate
-> > abstract distance with HMAT").
->
-> Good catch!  Thanks for your fix!  If it's necessary, feel free to add
->
-> Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+Hi, Tiezhu,
 
-Thanks for the patch and the review!
-
-I'm expecting Dan/Dave to take care of it (or please let me know if
-I'm expected to pick it up).
-
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202406292310.hlRATeZJ-lkp=
-@intel.com/
-> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> > ---
-> > I left off a fixes tag as I assume this is going to be squashed into th=
-e
-> > former change mentioned above, as it is still in mm-unstable, but feel
-> > free to add one if the patch is going to be standalone.
-> > ---
-> >  drivers/acpi/numa/hmat.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-> > index a2f9e7a4b479..ca0c0ea3e1ef 100644
-> > --- a/drivers/acpi/numa/hmat.c
-> > +++ b/drivers/acpi/numa/hmat.c
-> > @@ -933,7 +933,7 @@ static int hmat_callback(struct notifier_block *sel=
-f,
-> >       return NOTIFY_OK;
-> >  }
-> >
-> > -static int hmat_set_default_dram_perf(void)
-> > +static __init int hmat_set_default_dram_perf(void)
-> >  {
-> >       int rc;
-> >       int nid, pxm;
-> >
-> > ---
-> > base-commit: 17bcc624e67da6383060ee24483db77aa17276aa
-> > change-id: 20240710-fix-modpost-warning-default_dram_nodes-38b6faffe3da
-> >
-> > Best regards,
+On Fri, Jul 12, 2024 at 5:15=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
 >
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
+>  arch/loongarch/Kconfig  | 8 +++++++-
+>  arch/loongarch/Makefile | 6 ++----
+>  2 files changed, 9 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+> index ddc042895d01..57f28450a2ed 100644
+> --- a/arch/loongarch/Kconfig
+> +++ b/arch/loongarch/Kconfig
+> @@ -143,7 +143,7 @@ config LOONGARCH
+>         select HAVE_LIVEPATCH
+>         select HAVE_MOD_ARCH_SPECIFIC
+>         select HAVE_NMI
+> -       select HAVE_OBJTOOL if AS_HAS_EXPLICIT_RELOCS && AS_HAS_THIN_ADD_=
+SUB && !CC_IS_CLANG
+> +       select HAVE_OBJTOOL if TOOLCHAIN_SUPPORTS_OBJTOOL && !CC_IS_CLANG
+>         select HAVE_PCI
+>         select HAVE_PERF_EVENTS
+>         select HAVE_PERF_REGS
+> @@ -276,6 +276,12 @@ config AS_HAS_LBT_EXTENSION
+>  config AS_HAS_LVZ_EXTENSION
+>         def_bool $(as-instr,hvcl 0)
+>
+> +config CC_HAS_ANNOTATE_TABLEJUMP
+> +       def_bool $(cc-option,-mannotate-tablejump)
+> +
+> +config TOOLCHAIN_SUPPORTS_OBJTOOL
+> +       def_bool AS_HAS_EXPLICIT_RELOCS && AS_HAS_THIN_ADD_SUB && CC_HAS_=
+ANNOTATE_TABLEJUMP
+Can AS_HAS_THIN_ADD_SUB be removed now?
+
+Huacai
+
+> +
+>  menu "Kernel type and options"
+>
+>  source "kernel/Kconfig.hz"
+> diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+> index 8674e7e24c4a..186c75c80daa 100644
+> --- a/arch/loongarch/Makefile
+> +++ b/arch/loongarch/Makefile
+> @@ -99,10 +99,8 @@ KBUILD_AFLAGS                        +=3D $(call cc-op=
+tion,-mno-relax) $(call cc-option,-Wa$(comma)-mno
+>  KBUILD_CFLAGS                  +=3D $(call cc-option,-mno-relax) $(call =
+cc-option,-Wa$(comma)-mno-relax)
+>  KBUILD_AFLAGS                  +=3D $(call cc-option,-mthin-add-sub) $(c=
+all cc-option,-Wa$(comma)-mthin-add-sub)
+>  KBUILD_CFLAGS                  +=3D $(call cc-option,-mthin-add-sub) $(c=
+all cc-option,-Wa$(comma)-mthin-add-sub)
+> -
+> -ifdef CONFIG_OBJTOOL
+> -KBUILD_CFLAGS                  +=3D -fno-jump-tables
+> -endif
+> +KBUILD_AFLAGS                  +=3D $(call cc-option,-mannotate-tablejum=
+p) $(call cc-option,-Wa$(comma)-mannotate-tablejump)
+> +KBUILD_CFLAGS                  +=3D $(call cc-option,-mannotate-tablejum=
+p) $(call cc-option,-Wa$(comma)-mannotate-tablejump)
+>
+>  KBUILD_RUSTFLAGS               +=3D --target=3Dloongarch64-unknown-none-=
+softfloat
+>  KBUILD_RUSTFLAGS_MODULE                +=3D -Crelocation-model=3Dpic
 > --
-> Best Regards,
-> Huang, Ying
+> 2.42.0
+>
 >
 
