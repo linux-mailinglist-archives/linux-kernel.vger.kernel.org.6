@@ -1,81 +1,85 @@
-Return-Path: <linux-kernel+bounces-251198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248459301FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:10:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5389301FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6EBF1F22D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:10:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A9461C218CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA73155E49;
-	Fri, 12 Jul 2024 22:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BB855E49;
+	Fri, 12 Jul 2024 22:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LDfZXbUh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JXQLxhX4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF74B200CD;
-	Fri, 12 Jul 2024 22:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358CC44C9B;
+	Fri, 12 Jul 2024 22:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720822214; cv=fail; b=imK4PbgGtrtoJzU6T9CgGeOuGSLxyMSBW4mxFhf531Hc6fBVxSRtNJjGHIQIt4A0+bCqMCF/z64sge5+ArHFGDbS9A0fRzo0/EW2Nhqkxc3w7u4g8PToWPtzIRFiKAnVk9cO0035h3b7GhDZyX/mxGUUYEJGMXEJtsHKjmnFqw0=
+	t=1720822265; cv=fail; b=jhFiOktaIBnV7IG5s8Ft0CvnewQgS6YvnJareDEfNjN2tFpkJFUQ789OK1mt3YQBh2+RnYG8IU5tN2+ANQEWlbkxLKrzlqblS1YVd1imLAVwlPyOpBVkKswyWm6CQMoYJ7yUdBPOQ1AZD0RNa0SXfl3sFmqCEKQ0a/tVJKycdwY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720822214; c=relaxed/simple;
-	bh=rNLugxGFODqvhUYmIcUg3F0SP/F5AHmyHtl/FI5FCqw=;
+	s=arc-20240116; t=1720822265; c=relaxed/simple;
+	bh=M25E8Ifgq/+/z4ceOocuua3NfbeLgYaiAKkQDi7DNMY=;
 	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tbs4YQLRwOxDrVDjf+U2msfi+WvzQELWFn0axnl003I4r+0oaL1zYlgdyB5vt2qfJ0cTFcTo04Iz18fFX0bRfrXJIPVYhBQxkuYzQjtRVAgHiX51hogPnUqb+mpH4ApOYyFnlvYcOw6GT4+K3AbLh7guRj6wtU9EFd63gGGg2DY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LDfZXbUh; arc=fail smtp.client-ip=198.175.65.11
+	 Content-Type:MIME-Version; b=lL0+PGP55lkbu+8JNU3oCjnHhIyYzRrGSUZZ4E6GLqTMz/nm4fDg1LhrUoYGXngYJQuavd/k6yvkChdia7gkIiQMOP2dgBeQZ1KdP9+7KcgsLWBN5pAgXWW8H6sEUcFNKxEe7L26aZPWs7tNivuZrKsVncaRl/XMDInRqu4+6YQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JXQLxhX4; arc=fail smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720822213; x=1752358213;
+  t=1720822264; x=1752358264;
   h=message-id:date:subject:to:cc:references:from:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=rNLugxGFODqvhUYmIcUg3F0SP/F5AHmyHtl/FI5FCqw=;
-  b=LDfZXbUh3xDodRA+j4AFHPjaG0Fc/MZhXTJaPxcEwd+LTNPDmlISAJpc
-   PxH4IxsrEMh942pcbWC251+wyV8/4sxVHSbApkfjb7dNBJzBMbY50e1qu
-   DAg76ruEn3D2hzM/9IAs46ggyl1bn9HHinmGcTag1Lrl4xyW6uklqfniJ
-   axUvugee7EALX9ciig6aRs/BHDNy3bnSFBD2oBCes/qFKuelpuNBziVMe
-   0BtdGVre9gNLkv1Vd7uPcO27uk/x/PRtBwEN2wV//EmGPAuLxys8kAMwz
-   gMElSs4WBDhtzhZOXGy6RTQ1UpUyIc5wkf2vZVfSqc6z0MkevB5vahedO
-   w==;
-X-CSE-ConnectionGUID: aW0PdlkLQ/O2lrFikLJALw==
-X-CSE-MsgGUID: UO4jS7hnRZqmYBLy0nOGhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="28875286"
+  bh=M25E8Ifgq/+/z4ceOocuua3NfbeLgYaiAKkQDi7DNMY=;
+  b=JXQLxhX4loFx/AcR6Ou00UgZJ2kFRuYJJblIca7VYLMr+vynAY/uvmu0
+   eZ+b5QB+CdjIWNEjvnsRyfLeVavtO3OSTYCdBYy7Wix8kpzKAlIvbluWP
+   MnWlIau8hqmRH34/FCfX/qscAIoBiIjRYAHxDj1c/cn8o+PkEMdrwrOr8
+   2ZhDaylNyNBV5hdTqoN8J8dodO89gRRP3sQ8wekJXnTxNaG6DCtt34+Cs
+   A+pXFZ8CVzL+v7J7UGrwn0YKvW2xbiDiyzhBoVfWKaHATtZzWNWJv+gLz
+   GND8D9tPGaZ6sEyqBdABuiOckZnesUS7yyPWLSqAabMLIFwAN5AkLW0qw
+   g==;
+X-CSE-ConnectionGUID: s7q38OVnTCS85lWLv73RYQ==
+X-CSE-MsgGUID: LQM5s0zWTdCgFiVpyOVqyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="18422574"
 X-IronPort-AV: E=Sophos;i="6.09,204,1716274800"; 
-   d="scan'208";a="28875286"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 15:10:12 -0700
-X-CSE-ConnectionGUID: vuYQBXdbQk6j/bJuoew+aw==
-X-CSE-MsgGUID: XeNyDiAYRmelXUP9pnlQjA==
+   d="scan'208";a="18422574"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 15:11:03 -0700
+X-CSE-ConnectionGUID: sh9G/vTkTm2MXOiblDn+Bw==
+X-CSE-MsgGUID: VbAtjJ0TTdq4WPbcRy5rww==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,204,1716274800"; 
-   d="scan'208";a="48926254"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Jul 2024 15:10:13 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+   d="scan'208";a="49121515"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Jul 2024 15:11:02 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 12 Jul 2024 15:10:11 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ 15.1.2507.39; Fri, 12 Jul 2024 15:11:01 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 12 Jul 2024 15:10:11 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.41) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ 15.1.2507.39; Fri, 12 Jul 2024 15:11:00 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 12 Jul 2024 15:11:00 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.40) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 12 Jul 2024 15:10:11 -0700
+ 15.1.2507.39; Fri, 12 Jul 2024 15:11:00 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F790IOSQsMdh69GAS7YdvMSIY3oOsJCkVXwln5QY60TehIFu0YVxxPJJLJzWS6DJStHO/w8IEeRvm02PXLPIp//hefuhxRCOaeU3oEav59AGQSdiYu3iPaSH8XrcYEDtPRWD6BgWHQFw8bqm4TQESDkAbS7ftsWOcXlg0oBIs777/zDZwOIqW3/9wmk0DTQF5j0dOI9JmLLimpvuW2PfM02nY1QPI4fZpzWIVvZhqO7hALzrxNM8484biVX/K+6Tov43/5gZEhgeON8sy1spuXATpKnhrrgZ+bBWvlnGk26F+dZDTbhGODGNxkY3hFWuAM/mNf7FAxr33dG06lf7Kg==
+ b=TgIDMmO2JWH/3kBXHtyUxgZCjNZf3hSMNI4jEKrFdquvkCjaqVj2FobX1bUZGxEzEMv/8GjtHTchGqBf5LlcXY9zBCuudvvgQonbVDJ07c65kjtKiamzqKflyRvhmIJ292V9+KtZigoT95VIbrHFBGnWSXcBoRgOMwqNeuhdrMMySrL0C+z/+Szy07QPvVj7JioKUSEnL8f8PRgJqO0/ql7ZBHlhpg4Gm8M9G6dXA656A34SodJuBWx+tf2lImwpkwl+6ZmZ57KWesEyOCuQLr6rzJgMFSM8Wx5ak4ZXK8OBhJaNn5etwFaNcnkwYYcQKXKNjsoFhMw8ssrDk4Si6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n6vZa3tbDxc/Jb7px0ksTA1eTVC3frN43nGumIDttgo=;
- b=JF5MvsahkwBzSfX/dGLMAgnG0Vj6hwTzOv0gec3kXkFpdXm4tQecMYHEAl8kQFeHzPkZCtD0ezI2Y74JyM0YwN6T5Bpiuno2E5J5ICGfItJIa5R7eCInMUD954ZdHvVDQdo5F+wV0G1hNF0r8eq5CISKhwwf0EgdfaSKNgVLaZLEh9TZk0FGmm2Vnd003AYSv1uLEsvRtu21rlJwuCW32eU7m0yxKsNhQy0NVRiZaOUguccKnpYtIxJbJ+Ropv5YGw4Yk2v/wlByKxqSlTdWzTPGQuyF6BeIzx/WkSElfys49WGRzJFxLXIMbcvfpe5UcFRMNd39E9UWwPj0xSuCJw==
+ bh=iL+Uv46psB9qg0gcwQkJ9cHp5rUO2AHlecwji7+jvMk=;
+ b=c9djigqjXtVuJ0/n8DmYHtdzesHEL79LpD7sPfiK094Muc2tAvB6F0Znx3g57y+tZfkrdFODXN/TXw+3Opufoz03soU+VBl4hb+MpmI3pPIBC8US7mTlHDqzkl0Iwo9oJzfjXOcEEuCfStQRvGJxCKLJ17pQzhCUuvW1I8xg8rGM5rgQqZOs4GJh2uQAMA8OI7rVbUdQ+vHnWDPxHFE3sib6ALHpMzQH0hAvbjMyo/m6ImJ5ZAvZlM7bhWHTTes3tYLVBMEvKMQ0t7UzpIniGGxZLN6hUkHEIml70NGEUcufQfpuLFo9+rGK4iO6BfOIMKSEDpIBqnKQi40sREGiCA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -85,16 +89,16 @@ Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
  by PH7PR11MB7514.namprd11.prod.outlook.com (2603:10b6:510:276::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Fri, 12 Jul
- 2024 22:10:09 +0000
+ 2024 22:10:57 +0000
 Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7741.033; Fri, 12 Jul 2024
- 22:10:08 +0000
-Message-ID: <0ffec8d1-a27f-48b4-997a-8cc057de701e@intel.com>
-Date: Fri, 12 Jul 2024 15:10:05 -0700
+ 22:10:57 +0000
+Message-ID: <5877c7ea-45ad-431f-8595-3d8a49d3fe05@intel.com>
+Date: Fri, 12 Jul 2024 15:10:53 -0700
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 11/20] x86/resctrl: Remove MSR reading of event
- configuration value
+Subject: Re: [PATCH v5 15/20] x86/resctrl: Assign/unassign counters by default
+ when ABMC is enabled
 To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <fenghua.yu@intel.com>,
 	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
 	<dave.hansen@linux.intel.com>
@@ -111,14 +115,14 @@ CC: <x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
 	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<eranian@google.com>, <james.morse@arm.com>
 References: <cover.1720043311.git.babu.moger@amd.com>
- <82e8c5c888220b7659d7cd57fb291412ba62b120.1720043311.git.babu.moger@amd.com>
+ <89b7b4c59f3389034337301c1741ce224e19061e.1720043311.git.babu.moger@amd.com>
 From: Reinette Chatre <reinette.chatre@intel.com>
 Content-Language: en-US
-In-Reply-To: <82e8c5c888220b7659d7cd57fb291412ba62b120.1720043311.git.babu.moger@amd.com>
+In-Reply-To: <89b7b4c59f3389034337301c1741ce224e19061e.1720043311.git.babu.moger@amd.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0388.namprd04.prod.outlook.com
- (2603:10b6:303:81::33) To SJ2PR11MB7573.namprd11.prod.outlook.com
+X-ClientProxiedBy: MW4PR04CA0374.namprd04.prod.outlook.com
+ (2603:10b6:303:81::19) To SJ2PR11MB7573.namprd11.prod.outlook.com
  (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -128,338 +132,260 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH7PR11MB7514:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b8c801d-c816-4c05-1921-08dca2bf6471
+X-MS-Office365-Filtering-Correlation-Id: bb04dc3c-047b-4d83-73a0-08dca2bf8186
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?am5ZekYrMS9lcEJ0WVpnLzluZFREUWRtY1lJcDNBd3pvN1g3UmFzSWRnWHRj?=
- =?utf-8?B?MWxVcXU1NUxGVndJTTZnV2orWWFwY3JKTWJ6cXBDa3J2NGZYZm5sWHpZZExz?=
- =?utf-8?B?UUxxZ0ZuODZZcG8zUjlnSVhldmZpbk94R2RJWitmdEhYU09ZSy82QVBFUlZH?=
- =?utf-8?B?OFJpVVI3OFB6aVZzSnAvR2ljQ0lWVmlmMmpmKy93RG9wSXU4TjFwNzlla1ZV?=
- =?utf-8?B?YzY2WHAzOU5PT0RacHJobk12THdTYm5TOFh2dFhkMUp4VTFBN0lJUzBNa0Ns?=
- =?utf-8?B?Q0FRQ2RqWnMwam1ZZlNHSkZTeGU3STk2cDVjcWZKZGEvQzhaRVh4MkdvVlRY?=
- =?utf-8?B?TUZZejJIQUxsblJmOEV4aDB3MjdlQnNXdUxNcGt4SWhLZWhtWDI3T1BHSTVW?=
- =?utf-8?B?d0xIK0xHaG5KMFhZZlZxUTkwN0w5UlQ4MG9ZNno3bXYvYVRFYm8zSzB3Ungx?=
- =?utf-8?B?R1A1UzRlS3ZSSFpIR29FSW8zc0pHRnhzaXMyZGwyQjJ4L3UwUUZFeDI4VGdV?=
- =?utf-8?B?Z1NCTWc4LzdFUGl3aEREd0NPRWNGZWY4bUNLSEU4dE1DYVpOVVFjK3RxckNn?=
- =?utf-8?B?TjB0bFRuV2ljeHFzWFZDNStEeG9wSE5Kdk9VNmtsY0dpNWw4VEF5QkNlNXlH?=
- =?utf-8?B?ZGFITXh4aUdkRzRTV2V1K0UyT00zWFNCaEFyZERQUGlMOThzTHkvTDFQTVhx?=
- =?utf-8?B?Ly9qb3ZsOE5BSCtCSTNGSTFWTVFDWi9BblgrNnJsSjBBek92Mjh2M3E2ZEdI?=
- =?utf-8?B?eXpWS1V1VlRxNDN5SXg2QzBnOHJCTTFEOFVuU0dLS3NKRzh4VVhVUlZ6Nmxk?=
- =?utf-8?B?Q212UkduUE50Sm0xc3VCNzE3M2tBQmVWWENRQlVjbmZxRDFvdFpyVGs2T1Zq?=
- =?utf-8?B?SldxOG1tL2dKNWZYK3k1YWZQUXJYSlFKWERObmVDSWI1S3RERUw5ZVI1NzBh?=
- =?utf-8?B?aEpkZE1hYzNLRE90QitxeE8wVThBb3l5OGw4YUFXMFBRMUR4TTNtSzNpc1N0?=
- =?utf-8?B?RXB1Q2x4K2JzZXhmc2dnZ3NWOU0weWhrSjU0b2dOTnMvSmdaaHIxdDJIZWlk?=
- =?utf-8?B?OTZ0aUIzQm0rYUtCQVpXaDZYV0cyU1hZYVJXMzhIbEJJeVV4ZitFQ2VIMzlR?=
- =?utf-8?B?bUhTNTNXT1RvT090Q1UyWlBGRkY0RkNhRXlQZzloTXhBUWMzK3dqSUlLa1lK?=
- =?utf-8?B?R0lNMW5zWkdyR1hSdlkvVjA0N3FRdThTaysvWHhnU0V1bHkvUWF3WGtnL1Z6?=
- =?utf-8?B?S3pFVzRsMzBuc2IwMU9YckJub3lDK1lmV0ZnbGxVQUVXUW1GODlpNG1lVmta?=
- =?utf-8?B?QUJpWmg0L3EzTDdiSDRVSE8rVmk4ZXp0bndlOE1OTUdRbmVIczd0dlI5czBu?=
- =?utf-8?B?Y253bUZaU3JwRGF0a1I4U1ZLYnBQT3pBQW5DTmVNRmpvNWEyWnRFWGwrcHNI?=
- =?utf-8?B?VVZZSTdadTNiT0JzWU9Ka2V0ZlhDYjBrRklVNjBwdmVMbzJIMDcwRVdxd3lk?=
- =?utf-8?B?V09iUDBiTzFVMnEyREZPQzAwQTdyRXRpbXB2NUd5cFlQUnB1cTZQUCtCa3o4?=
- =?utf-8?B?RTA2aGRvdTcxcEU5eC91NFphajFEejc3TSszdDIwYmhnMmdzZkRTazIvL1B3?=
- =?utf-8?B?Z0FtOFpNOXpyMUN0ckdtdmYra3l0M295NmVzaEt1Ymg2REhLeGh6MHNHRE5j?=
- =?utf-8?B?OHRPVlNtaE51elRYRWJTbUc3Mk5YdVV2TUE4cWdlV21vdEU3V05HV2graytH?=
- =?utf-8?Q?CbWCjMKescL/iRDupk=3D?=
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?V1FOUFkzUHpNQ2pnY2ZhY3pqY2pENHZ3UWhYQ3VZOXVKSFNFNTlkOFpBUDdG?=
+ =?utf-8?B?eHlXMUgrUVdOaTVKekZBS3JBcVpxK2l3akRlNW5USE1iVEx2NzRVQUlUVUM3?=
+ =?utf-8?B?aFFoSUhZbER0d0VuOVpMdENlNVltaWtjVHYvUmtSTEJxSE5RemtBUjIvTTIy?=
+ =?utf-8?B?dUo4ckN2dzZHVzcyU3FlMk1kK0tmTVJXNEQ1N0RJamQyaE1hek52S1pjZDZQ?=
+ =?utf-8?B?enVwU1BWUkNWNlNyQWhCcURXdVdqRStWTHFlKy9sb3gwMk9jU1RiK1M0SlB2?=
+ =?utf-8?B?RWh3Skxvc0Z2SEVPc3VzY29xRnFham9FclI4b3ZzSWhGOGRSTzdNZlpKaDdB?=
+ =?utf-8?B?VVBPT0dzWWorN1pHSjJmNlkvWENYWFF6Yko5d0l0UXd0ZWc2c0hvbEpScUZp?=
+ =?utf-8?B?NHAvSDExSEg0RmlnZkpEQ0tYNTFFdnpwZkFMcHJxVm1kL3VVMWNOa1ZtbXVm?=
+ =?utf-8?B?ek5FTWFtdHdxb3ExTCtZUVVuZnA2cVUwQVJyQW1CTnVVNnlCb2pVRE0rNmRK?=
+ =?utf-8?B?NjFwZncyNWJUSWZ5NFRHTzlNd25CMEVQYzhPZFpKS2lOOVA0MVBDUEVOSHB4?=
+ =?utf-8?B?M1NKcHpsQmozcUF4eHVKTEFEVVEzbjJSMWNSZ1ZTdGZiWG9jRjJxdThqY2l5?=
+ =?utf-8?B?T21xNVZFT1dYWE1kRVBwUE81VXAzbVRQQm9nWUF2T0VSbnVnZkhPQW5PRFlC?=
+ =?utf-8?B?N2kyQmw3dEhkdFliTlJJRDBCMHNMNnU2MS9FWHpXTEFYRnpRS1JnQkdQc0l2?=
+ =?utf-8?B?amhFL3h6Ni9JRXkzR1c3cm5GU0gvYmsrblpvWElWYTNIYTI0VWxNOG5YcHpz?=
+ =?utf-8?B?NTlkUDFvOWVmR2RYRnVISGxKZ2tUcHhwRmtSQWZ5YURaYW94MDFBeVlGSzY5?=
+ =?utf-8?B?TE16bnVLY09WYmM4NkxnMUVRZFZHUXhDNjU5UjRINDdDREh6RFR5aWRqK1E0?=
+ =?utf-8?B?eDdkZW9HUHQyVXlQTFFvamNib2R1NkdZN0l6cjQ1WlJHek0vUXFwYWNtWU1I?=
+ =?utf-8?B?N1RqeWhrYWE5eU9sZ1NiQW1KbXFab3lkMjZjZ2NtK3hoVzFCUzJ4N0RHckhm?=
+ =?utf-8?B?SEhMTC9PUkpvSEg4UFRTcHZWa21GOVZIVkptZFlMcTh5bWhoM21OU2hUSnda?=
+ =?utf-8?B?NEwyd2tVWTNYc3VKY3RaKys4K0RQWG1zQVJqc1VsZ3dER01FOXhqN1NEOStP?=
+ =?utf-8?B?N09kdWlMOE1JNWxJalUrdlBKTDZiWW01UGU5dHJRVzdjR1I5clBma2RiOGw2?=
+ =?utf-8?B?V1VXUXZuWHhlUmsvSTdDd29uZllubUpVQk1VQk1tNVdRZ1QyTXJPL2RGUGxh?=
+ =?utf-8?B?RTBZRDJXNXVGNmZ5T0lsaXByRldERUdGOENTOFRmMk1vYkt0a2ZSS3k4UHNx?=
+ =?utf-8?B?Yml4ZGlJM0hZSk9vbGJYb1phemVHU0MxTVJMSW5VQytzUTdrV0pvVGNYR3lI?=
+ =?utf-8?B?MHVoZzRrTm4rL2V4NnNOUEN2aW9aUWZSNzc2SmJwUUpycS9Hc2xkYzV1RWtz?=
+ =?utf-8?B?dks0alJCNklEeVdWQitsT3g1SFhUNVpZdGtnWHhFd0ZaWHdKY3hVa2Q0TU0y?=
+ =?utf-8?B?WkwyY0lNODRqZ0JmOFErV3ZTQU5JaGpiMW8xRzdPSGhrRTgrZDVwTzUvR3Vs?=
+ =?utf-8?B?SG11VzlSeHBZMTQrYzY5L0Q5ZHcxbjZqTmcvcXV3SzRhVEI0cmZvNm1zME43?=
+ =?utf-8?B?WnVjaDdDNWpvd21sWWdIWXluc0UycS9FRGl5WWord1d4MzRpbnJ6VU9nUHYx?=
+ =?utf-8?B?eElyM1kwcjRraW8rODlTWndEbWw1TFVZa3Y4U1VzRys2N3U1QnVyZWI1czlD?=
+ =?utf-8?B?S3FUcGxnTmswMkVxNzM2UT09?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NUdzT1J0SmVWU0hjcGp0NTJJUCtCc2JQcjVzcnFSb0ljOFNYY1krSGV3Uk9q?=
- =?utf-8?B?cTI4SGgyRi9BcXFlNXlya2xQUGp3YWtCNkNLTFB5K2IrOC9nZTQ1SVdyTElv?=
- =?utf-8?B?TktCMEMrQ3JzYzVudzRMNGRwK1ZtQ2NxNVlNaG0wMEdlUWdhbTN4ODFRMzFx?=
- =?utf-8?B?bjFUaU13STR6TEt5V1FkS2hLS0lTNFFKREhSdVFaeGhOQXREYjVGa0czRVJU?=
- =?utf-8?B?eU1PaFliaGJmUU8wT0x6UXVLdFBNZTk0Uy9TU3d0eGgrVUhjMmdaaVZOSjdv?=
- =?utf-8?B?Q2syUHBNaFptYWRUVUlHMU9zdGhsblRLdTVXYnArUDJ6OTN4N3ExNFZJUG9Z?=
- =?utf-8?B?NUI0eFZHVGhRSmtaNDhkelQ2OWZKb3kvOEpDZ1RuTWVRRUh6QzZ3MnRGdEZu?=
- =?utf-8?B?R2Nwb1UzOHZFRkRsb2RUVE05VVBJVFFhZjliUVRFdGszMTU3NWNibXJnQ1NE?=
- =?utf-8?B?NktXQ210MjlRRHkwVlFZOTZIa0piQTJjR0oydXp0bHMxZ05mdWdES0FIU3gv?=
- =?utf-8?B?NUorOENXeGx0aU13S3gveTZpQWRrdUNKSUJ0WSswZENJZ1p3REkxaUU3eTl2?=
- =?utf-8?B?WXJ0bjFMRE5CN1dsOWN4czFRMjdLcU82RGV1dVBVQXlvYytDNnRqTExuNUJJ?=
- =?utf-8?B?YTc3S2UxZjlzWEN5cmQ0K3puK20rK1N2Q3pyaTRMa202MEFlSzVnWk1FRUta?=
- =?utf-8?B?TVFQQkplelpsaXk2c21TUVdPT1g3THVKd0lWYnl2VTdJZnBBbTM4YWJ6R3pt?=
- =?utf-8?B?ejFFMWMxSHFQYW5LTS82aURBZTlkdThiQmpwb3puVVdkbzlTZzUxZkQzbVgx?=
- =?utf-8?B?ZC9TTFhqSTJqa0UrL204NHJDQVpTNlJ2SkdoRCtVbENWc05nZklTSFNCVi9M?=
- =?utf-8?B?b3lORzI5TDROSno2Y2NNRXIyaUtIR0dWeXZ3akE4RUFxVll2MHRDYjZMS1RT?=
- =?utf-8?B?MlkwVEoxZUIwN2dzZGdza2hDbi9oRjUzblQ5bndRQnB0Y2pRa0pINGJCQ0xx?=
- =?utf-8?B?SEJoYjlVVDN6Qm5PY0ZhQ1pDc2NyOEk0L2FoRHRyd1U3ZXBhczZOVWlxS1lK?=
- =?utf-8?B?cmsxNUtNUW9OVVZMMmpUOStLb1YwT0NBbENGdmtSN1ltME1Wa000a21hK3l5?=
- =?utf-8?B?STI4ay8wSXk5WjR3N2o5SWxnNUJRMHEwejZBMXlhK2FoUTNKUE01VFpmZjJC?=
- =?utf-8?B?YXhMOVd3d2hDYWQ5YUxoU0ZtU3VyQitLWHBlNXBFZlVtbm5nZmJuTmt1SlZQ?=
- =?utf-8?B?T1VYTEowWWphQjVZK3o1cDh3cUZiQVNRSWFSeWpkbzhMTDhtK3oyaHBsMmVL?=
- =?utf-8?B?cU11eDl3T1A4RWpVZEE4MmtzTDQrZ2EvQTh3Sm1GN2g2RDVsRHlTb0FiWnht?=
- =?utf-8?B?b2hvTGVUQWszM0drWG5LNjdreEQzblpTdlBRMC81OHBGNXVBc1pCM0FZU2d3?=
- =?utf-8?B?S3M2WldOR2JlQlhJZHFqSnNaSE4ySEtZaVg2bzhUWDlSM3BjSlAzTmRTUW9v?=
- =?utf-8?B?VlhvTWJWZ2Uzek4xbCtjWTQvZ0MyZUJHdHRqT1VPcFpYUGRwRGk2Q2s1TzNl?=
- =?utf-8?B?UlloNlZRNExlM2htUG91amN5bUNRZTRHTW5RS0h6R2wwS2c1VktkN01ZNmdU?=
- =?utf-8?B?YzZneHVwSDdpSDRGSjF3TWFWY1liemVZbVRVbzZZdXBoN0E1SVVEdnZhK29D?=
- =?utf-8?B?ejVoL3JDVUdtbVJVNmQ4MWtib3BXZUp4dkRVYlZocGJ0MHhTM0VyWEI4dXo0?=
- =?utf-8?B?NHlKNERFK0wvQ2ZYelc1SlJzaExyck9JTmt5Q2tlQjkzTDFXWVhMZzdjWmZU?=
- =?utf-8?B?VmR2T0taTEpSUnFXQkl3MURsWFh5TzMrT3lrVGVMSWRUNHROUHV1cEl2aUpm?=
- =?utf-8?B?bkdnVW14ZWN0NlVQSEVxZ2hZem5yOTh5bmJiakI4OThLbWhrQ2FoUjYvakN6?=
- =?utf-8?B?OUZsQ1VwZ3N5ZzNHYnpjSEFQdng3UXlDOGJ4QUNhNGo2KzROM21hUUxlQjBW?=
- =?utf-8?B?cXE1RytNNVF1MWxEUVVkL2FNd2x3ZVJBZHV4YjdpdmdPMW5yMGtja2ZJck9r?=
- =?utf-8?B?bTFuRHFaeS9oclo1d2U2QUNGakNFa0ptb3ljWnlobFdxZEZpc2FBWkpXSjVl?=
- =?utf-8?B?bU8vcGNIRStyQkNaSkJqU3FWZS9Vdk9XUGMzU0tINXB3MGhHT0VQd2kyVVR2?=
- =?utf-8?B?dWc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b8c801d-c816-4c05-1921-08dca2bf6471
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eFRPNFA3R29UT053K3NId0R2ajRrOE9qK2pJcFdlYStHT0hkTVh4c2JaV3FO?=
+ =?utf-8?B?NFZFb0F3Nk45NDZjTTN1MSs3OUMyL0RSQitMMGVCVGZBUERzbXZwNjh0Q1RR?=
+ =?utf-8?B?em9hZzVwdXVkM3NIckttOXEzaUdoaUR3ODd6Uy9RS2VMQ0tlRTA0cGI0MmYz?=
+ =?utf-8?B?NVZsSlUxVUg5RFFHeW1iaVp5WHM4OU1Rcm01UFdTdE0yVlhWMWxHZmx2aFhy?=
+ =?utf-8?B?VWVmL3B1YTRudEQ2Zm90ZXQ2UHpHYk9SR2F1dlRRdFQyWmtxZ29FMjNIMDBD?=
+ =?utf-8?B?V05XdmtNWUxZeGVZbTJmeDBHNGVFRURyUnBDb2IvaVRsT0FOelBRRUVTRWxk?=
+ =?utf-8?B?YjRGZ3EyN21rRGFsemYybTE0Q1VibGNZRXVtMm4vYmp4a2xxdGE0QzAzT1h6?=
+ =?utf-8?B?R3FlQnVxSU5qS2hOU2NIMVc3MWpFRW0wQWZTSHpCcmZFSXltZnN3QytoSjNk?=
+ =?utf-8?B?SWtHZXJxS1pINk1TKzhLVTU3Qm1qZlR3eEMwTXlWWWpwWEw4VS9CM0lKK1RB?=
+ =?utf-8?B?VXp0VUZzM1lRQys2LzZQOGxMMnMwOGpGZlBvcEkrbFVVQU9hLysyTzlpRE4y?=
+ =?utf-8?B?RVR1ZGFJOE8yVDZiTDRrdEk2Q2Z6TUdhLzZPTEZQU050OFpJd2ZnT0ZYTnJp?=
+ =?utf-8?B?NVlZSnllQ1RHQkUyZ0lVRVlmZ0hHNTFzSmg4bVpSb0pYeGZOa1A5WWM1eGJL?=
+ =?utf-8?B?aGloL1ZFNEJZT2Q3dGdJdThjQmZabVFORFMrbG51T1FheDBGNk1BTXA1K3h5?=
+ =?utf-8?B?a3UyYTVnUkc0S05uUWs2K3pKa1ZDUWIyNWErSVdFamZob09FL0hSNHBUQ3hU?=
+ =?utf-8?B?Ykw0d3lTRTVTdmh1MVBkYVpFWG85V3BVZjUyTXNmUStCazB4QmF5dzNTQmlZ?=
+ =?utf-8?B?Qko3WVB6VmpScDF1RlFEYzVtNGJoRThFd0txVkRYUDFoZFJ5bGZKMWV3RTgy?=
+ =?utf-8?B?NXBGdmxSaW85MjBkakVwaG55ZE5NSU9qTVgwcDI1VkJyeXBzSGVZa1kvYlN6?=
+ =?utf-8?B?Y1lUaDBlT1NHUjFUUElkd1VOdHNhNkUwdGEyMHU5WlYxNTVyKzk2VUFNVU11?=
+ =?utf-8?B?K0ZjcDRTWDNHZmpUdTF3aDNxenc1OUFDczRxWG1LYm5VZlFLN2JTYXVmRFRh?=
+ =?utf-8?B?M0dpZElCbnd5QU0xa21OZjZkOWN6WGxxVXpxekROUFpPUVZYYytrRjNoSldy?=
+ =?utf-8?B?bjE5TWJZSlU1YUx1UlZZM3lGcEFkWERGTDZPa05lRjlwTmVSMnR0Ym96TTl2?=
+ =?utf-8?B?YWpmbE9Pbk1LZnlFZE5OWG9lUVdLTFlseVYrdWhKdlB0ejdNWGM4cjYyT2tY?=
+ =?utf-8?B?MXg3dUU3czQ0a2d0SUI4ZzJaQjF4cS9aMHY5MFA4UDAzcVBVOStPejZMUGxw?=
+ =?utf-8?B?YXUzVEtyN1cwOUd6NUJWOFpDeTVZRmdWeXczaVYwZG16MEE5b2RYZWNzYjN6?=
+ =?utf-8?B?V0lLOVpOVzhiL1dMMmpiYjVaRDRqYmJmTjRySmF5WWJnUlBpNThoTC9vUGow?=
+ =?utf-8?B?MjUvcFFTSDhpeHh1OVFtdXQ4TWR0VnJYN2ZwWG1NSVdMOVJ4ODU1SWxTVEZq?=
+ =?utf-8?B?T2V0aXJwaXp5MTF5ZDZkZGlqOHJyTms3UGVXdGRuTFYwVkJGR1Q5cGtDV0Qz?=
+ =?utf-8?B?UTErdXJJa0dYQmswNjR6WmNLN09BeHBXUDlMRnVOZHZRbFQ3NmZKQ3ZFQm5p?=
+ =?utf-8?B?ZHRkMWw2OXhmREdaYjc0MThwdGV0LzNqUWpzeFpOay96T2tOb3ZnRDkzYlNs?=
+ =?utf-8?B?TC91Q0g5T0h3aWJmYjc0U2xNU0tKMHFkQTNRajlkQUZIUm5LTGtac1RGd1Jx?=
+ =?utf-8?B?c2dkZ1ROaUVDN0ZNNzUzWElsbXVlMzBMcmtMOU9aYWxNR2dIZ1Eza0VaUldB?=
+ =?utf-8?B?bTZNc201VnN2TEZhTUh4L1lUTGdLMExQUGhLK0tGeUdoUDcyd1lzb0JJOFdp?=
+ =?utf-8?B?bzQ2SU1CTWxacEgyWDlybFJsdStrSkFUOXJEMVhIcmJKdFkvRFZPcUJSRVh6?=
+ =?utf-8?B?WEZpdWtJMmFqbnN5RE9CdERCb291TEllcXo5bUlOQnhxZmkxQmVWaGgzbEJj?=
+ =?utf-8?B?eElBYmVvS01rcGMyT0pkU3lnQjZBb1hLbWsxa3lkck9URzNDMDgxV1pPcHJY?=
+ =?utf-8?B?UUxPZExzN01ycjVqT09KUlJtZTF4blhwQThlRStFalovZkhPYTVWakxCVEth?=
+ =?utf-8?B?NkE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb04dc3c-047b-4d83-73a0-08dca2bf8186
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 22:10:08.8778
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 22:10:57.6760
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IvrqRCRUSN0AS3n7zl4guMhe/87VxMe+SfUjHSOnFL0VVOFM4PB7hgDA7WNHkeQICdLg8SkCL0asUfv6BrcfjkNXgBqL+Cb/9Jx0AKrRIsE=
+X-MS-Exchange-CrossTenant-UserPrincipalName: cVmfZtDab/8E9Vse4aO8WMwbJ2eYhVY+oLGTHtJqW0+JkhlPKn9Z8N3+O8DKmm+/5G04VuX6RQaFVMXIfgKQTyjl87zkwGlQZnin7bFPcf0=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7514
 X-OriginatorOrg: intel.com
 
 Hi Babu,
 
 On 7/3/24 2:48 PM, Babu Moger wrote:
-> The event configuration is domain specific and initialized during domain
-> initialization. It is not required to read the configuration register
-> every time user asks for it. Use the value stored in rdt_mon_hw_domain
-
-rdt_mon_hw_domain -> rdt_hw_mon_domain
-
-> instead. Also update the configuration value when user writes it.
-
-Please separate the context/problem/solution clearly.
-
-> 
-> Introduce resctrl_arch_event_config_get() and
-> resctrl_arch_event_config_set() to get/set architecture domain specific
-> mbm_total_cfg/mbm_local_cfg values.
+> Assign/unassign counters on resctrl group creation/deletion. If the
+> counters are exhausted, report the warnings and continue. It is not
+> required to fail group creation for assignment failures. Users have
+> the option to modify the assignments later.
 > 
 > Signed-off-by: Babu Moger <babu.moger@amd.com>
 > ---
-> v5: Introduced resctrl_arch_event_config_get and
->      resctrl_arch_event_config_get() based on our discussion.
->      https://lore.kernel.org/lkml/68e861f9-245d-4496-a72e-46fc57d19c62@amd.com/
+> v5: Removed the code to enable/disable ABMC during the mount.
+>      That will be another patch.
+>      Added arch callers to get the arch specific data.
+>      Renamed fuctions to match the other abmc function.
+>      Added code comments for assignment failures.
 > 
-> v4: New patch.
+> v4: Few name changes based on the upstream discussion.
+>      Commit message update.
+> 
+> v3: This is a new patch. Patch addresses the upstream comment to enable
+>      ABMC feature by default if the feature is available.
 > ---
->   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 112 +++++++++++++++----------
->   include/linux/resctrl.h                |   4 +
->   2 files changed, 72 insertions(+), 44 deletions(-)
+>   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 78 ++++++++++++++++++++++++++
+>   1 file changed, 78 insertions(+)
 > 
 > diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> index b2b751741dd8..91c5d45ac367 100644
+> index ffde30b36c1a..475a0c7b2a25 100644
 > --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
 > +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> @@ -1591,10 +1591,59 @@ static int rdtgroup_size_show(struct kernfs_open_file *of,
->   }
->   
->   struct mon_config_info {
-> +	struct rdt_mon_domain *d;
->   	u32 evtid;
->   	u32 mon_config;
->   };
-
-as seen above, mon_config is a u32
-
->   
-> +#define INVALID_CONFIG_VALUE   UINT_MAX
-
-So an invalid config value can be U32_MAX?
-
-> +
-> +unsigned int resctrl_arch_event_config_get(struct rdt_mon_domain *d,
-> +					   enum resctrl_event_id eventid)
-> +{
-> +	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
-> +
-> +	switch (eventid) {
-> +	case QOS_L3_OCCUP_EVENT_ID:
-> +		break;
-> +	case QOS_L3_MBM_TOTAL_EVENT_ID:
-> +		return hw_dom->mbm_total_cfg;
-> +	case QOS_L3_MBM_LOCAL_EVENT_ID:
-> +		return hw_dom->mbm_local_cfg;
-> +	}
-> +
-> +	/* Never expect to get here */
-> +	WARN_ON_ONCE(1);
-> +
-> +	return INVALID_CONFIG_VALUE;
-> +}
-> +
-> +void resctrl_arch_event_config_set(void *info)
-> +{
-> +	struct mon_config_info *mon_info = info;
-> +	struct rdt_hw_mon_domain *hw_dom;
-> +	unsigned int index;
-> +
-> +	index = mon_event_config_index_get(mon_info->evtid);
-> +	if (index == INVALID_CONFIG_VALUE) {
-
-INVALID_CONFIG_INDEX?
-
-> +		pr_warn_once("Invalid event id %d\n", mon_info->evtid);
-> +		return;
-> +	}
-> +	wrmsr(MSR_IA32_EVT_CFG_BASE + index, mon_info->mon_config, 0);
-> +
-> +	hw_dom = resctrl_to_arch_mon_dom(mon_info->d);
-> +
-> +	switch (mon_info->evtid) {
-> +	case QOS_L3_OCCUP_EVENT_ID:
-> +		break;
-> +	case QOS_L3_MBM_TOTAL_EVENT_ID:
-> +		hw_dom->mbm_total_cfg = mon_info->mon_config;
-> +		break;
-> +	case QOS_L3_MBM_LOCAL_EVENT_ID:
-> +		hw_dom->mbm_local_cfg =  mon_info->mon_config;
-
-Please add a break here.
-
-> +	}
-> +}
-> +
->   #define INVALID_CONFIG_INDEX   UINT_MAX
->   
->   /**
-> @@ -1619,33 +1668,11 @@ unsigned int mon_event_config_index_get(u32 evtid)
+> @@ -2910,6 +2910,46 @@ static void schemata_list_destroy(void)
 >   	}
 >   }
 >   
-> -static void mon_event_config_read(void *info)
-> -{
-> -	struct mon_config_info *mon_info = info;
-> -	unsigned int index;
-> -	u64 msrval;
-> -
-> -	index = mon_event_config_index_get(mon_info->evtid);
-> -	if (index == INVALID_CONFIG_INDEX) {
-> -		pr_warn_once("Invalid event id %d\n", mon_info->evtid);
-> -		return;
-> -	}
-> -	rdmsrl(MSR_IA32_EVT_CFG_BASE + index, msrval);
-> -
-> -	/* Report only the valid event configuration bits */
-> -	mon_info->mon_config = msrval & MAX_EVT_CONFIG_BITS;
-> -}
-> -
-> -static void mondata_config_read(struct rdt_mon_domain *d, struct mon_config_info *mon_info)
-> -{
-> -	smp_call_function_any(&d->hdr.cpu_mask, mon_event_config_read, mon_info, 1);
-> -}
-> -
->   static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid)
+> +/*
+> + * Called when new group is created. Assign the counters if ABMC is
+> + * already enabled. Two counters are required per group, one for total
+> + * event and one for local event. With limited number of counters,
+> + * the assignments can fail in some cases. But, it is not required to
+> + * fail the group creation. Users have the option to modify the
+> + * assignments after the group creation.
+> + */
+> +static int rdtgroup_assign_cntrs(struct rdtgroup *rdtgrp)
+> +{
+> +	int ret = 0;
+> +
+> +	if (!resctrl_arch_get_abmc_enabled())
+> +		return 0;
+> +
+> +	if (is_mbm_total_enabled())
+> +		ret = rdtgroup_assign_cntr(rdtgrp, QOS_L3_MBM_TOTAL_EVENT_ID);
+> +
+> +	if (!ret && is_mbm_local_enabled())
+> +		ret = rdtgroup_assign_cntr(rdtgrp, QOS_L3_MBM_LOCAL_EVENT_ID);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rdtgroup_unassign_cntrs(struct rdtgroup *rdtgrp)
+> +{
+> +	int ret = 0;
+> +
+> +	if (!resctrl_arch_get_abmc_enabled())
+> +		return 0;
+> +
+> +	if (is_mbm_total_enabled())
+> +		ret = rdtgroup_unassign_cntr(rdtgrp, QOS_L3_MBM_TOTAL_EVENT_ID);
+> +
+> +	if (!ret && is_mbm_local_enabled())
+> +		ret = rdtgroup_unassign_cntr(rdtgrp, QOS_L3_MBM_LOCAL_EVENT_ID);
+> +
+> +	return ret;
+> +}
+> +
+>   static int rdt_get_tree(struct fs_context *fc)
 >   {
-> -	struct mon_config_info mon_info = {0};
->   	struct rdt_mon_domain *dom;
->   	bool sep = false;
-> +	int val;
+>   	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
+> @@ -2972,6 +3012,16 @@ static int rdt_get_tree(struct fs_context *fc)
+>   		if (ret < 0)
+>   			goto out_mongrp;
+>   		rdtgroup_default.mon.mon_data_kn = kn_mondata;
+> +
+> +		/*
+> +		 * Assign the counters if ABMC is already enabled.
+> +		 * With limited number of counters, the assignments can
+> +		 * fail in some cases. But, it is not required to fail
+> +		 * the group creation. Users have the option to modify
+> +		 * the assignments after the group creation.
+> +		 */
+
+The function has detailed comments - it seems unnecessary to me that the
+same comments are duplicated at each call site.
+
+> +		if (rdtgroup_assign_cntrs(&rdtgroup_default) < 0)
+> +			rdt_last_cmd_puts("Monitor assignment failed\n");
+
+rdtgroup_assign_cntrs() already prints message, why print another? Error
+handling can then be dropped.
+
+>   	}
 >   
+>   	ret = rdt_pseudo_lock_init();
+> @@ -3246,6 +3296,8 @@ static void rdt_kill_sb(struct super_block *sb)
 >   	cpus_read_lock();
 >   	mutex_lock(&rdtgroup_mutex);
-> @@ -1654,11 +1681,13 @@ static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid
->   		if (sep)
->   			seq_puts(s, ";");
 >   
-> -		memset(&mon_info, 0, sizeof(struct mon_config_info));
-> -		mon_info.evtid = evtid;
-> -		mondata_config_read(dom, &mon_info);
-> +		val = resctrl_arch_event_config_get(dom, evtid);
-
-There are too many types used interchangeably. The mon_config is a "u32", but the new function
-returns "unsigned int", which is then assigned to an "int". Please just use one type
-consistently, it is a u32 so resctrl_arch_event_config_get() can return u32 and "val" should
-be u32.
-
-> +		if (val == INVALID_CONFIG_VALUE) {
-> +			rdt_last_cmd_puts("Invalid event configuration\n");
-
-I do not see a reason to print message to user space here. If this error is encountered
-then it is a kernel bug and resctrl_arch_event_config_get() would already have triggered
-a WARN.
-
-Since this is a "never should happen" scenario I wonder if we can not just print
-the INVALID_CONFIG_VALUE to user space?
-
-
-> +			break;
-> +		}
->   
-> -		seq_printf(s, "%d=0x%02x", dom->hdr.id, mon_info.mon_config);
-> +		seq_printf(s, "%d=0x%02x", dom->hdr.id, val);
->   		sep = true;
->   	}
->   	seq_puts(s, "\n");
-> @@ -1689,33 +1718,27 @@ static int mbm_local_bytes_config_show(struct kernfs_open_file *of,
->   	return 0;
->   }
->   
-> -static void mon_event_config_write(void *info)
-> -{
-> -	struct mon_config_info *mon_info = info;
-> -	unsigned int index;
-> -
-> -	index = mon_event_config_index_get(mon_info->evtid);
-> -	if (index == INVALID_CONFIG_INDEX) {
-> -		pr_warn_once("Invalid event id %d\n", mon_info->evtid);
-> -		return;
-> -	}
-> -	wrmsr(MSR_IA32_EVT_CFG_BASE + index, mon_info->mon_config, 0);
-> -}
->   
->   static void mbm_config_write_domain(struct rdt_resource *r,
->   				    struct rdt_mon_domain *d, u32 evtid, u32 val)
->   {
->   	struct mon_config_info mon_info = {0};
-> +	int config_val;
->   
->   	/*
-> -	 * Read the current config value first. If both are the same then
-> +	 * Check the current config value first. If both are the same then
->   	 * no need to write it again.
->   	 */
-> -	mon_info.evtid = evtid;
-> -	mondata_config_read(d, &mon_info);
-> -	if (mon_info.mon_config == val)
-> +	config_val = resctrl_arch_event_config_get(d, evtid);
-> +	if (config_val == INVALID_CONFIG_VALUE) {
-> +		rdt_last_cmd_puts("Invalid event configuration\n");
-
-same here about unneeded print to user space. When this is encountered it is
-a kernel bug.
-
-> +		return;
-> +	}
-> +	if (config_val == val)
->   		return;
->   
-> +	mon_info.d = d;
-> +	mon_info.evtid = evtid;
->   	mon_info.mon_config = val;
->   
->   	/*
-> @@ -1724,7 +1747,8 @@ static void mbm_config_write_domain(struct rdt_resource *r,
->   	 * are scoped at the domain level. Writing any of these MSRs
->   	 * on one CPU is observed by all the CPUs in the domain.
->   	 */
-> -	smp_call_function_any(&d->hdr.cpu_mask, mon_event_config_write,
-> +	smp_call_function_any(&d->hdr.cpu_mask,
-> +			      resctrl_arch_event_config_set,
->   			      &mon_info, 1);
->   
->   	/*
-> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-> index 62f0f002ef41..f017258ebf85 100644
-> --- a/include/linux/resctrl.h
-> +++ b/include/linux/resctrl.h
-> @@ -352,6 +352,10 @@ void resctrl_arch_reset_rmid(struct rdt_resource *r, struct rdt_mon_domain *d,
->    */
->   void resctrl_arch_reset_rmid_all(struct rdt_resource *r, struct rdt_mon_domain *d);
->   
-> +void resctrl_arch_event_config_set(void *info);
-> +unsigned int resctrl_arch_event_config_get(struct rdt_mon_domain *d,
-> +					   enum resctrl_event_id eventid);
+> +	rdtgroup_unassign_cntrs(&rdtgroup_default);
 > +
->   extern unsigned int resctrl_rmid_realloc_threshold;
->   extern unsigned int resctrl_rmid_realloc_limit;
+
+This seems appropriate to be in the "Put everything back to default values"
+section.
+
+>   	rdt_disable_ctx();
+>   
+>   	/*Put everything back to default values. */
+> @@ -3850,6 +3902,16 @@ static int rdtgroup_mkdir_mon(struct kernfs_node *parent_kn,
+>   		goto out_unlock;
+>   	}
+>   
+> +	/*
+> +	 * Assign the counters if ABMC is already enabled.
+> +	 * With the limited number of counters, there can be cases
+> +	 * only on assignment succeed. It is not required to fail
+> +	 * here in that case. Users have the option to modify the
+> +	 * assignments later.
+> +	 */
+> +	if (rdtgroup_assign_cntrs(rdtgrp) < 0)
+> +		rdt_last_cmd_puts("Monitor assignment failed\n");
+> +
+>   	kernfs_activate(rdtgrp->kn);
+>   
+>   	/*
+> @@ -3894,6 +3956,17 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+>   	if (ret)
+>   		goto out_closid_free;
+>   
+> +	/*
+> +	 * Assign the counters if ABMC is already enabled.
+> +	 * With the limited number of counters, there can be cases
+> +	 * only on assignment succeed. It is not required to fail
+> +	 * here in that case. Users have the option to assign the
+> +	 * counter later.
+> +	 */
+> +
+> +	if (rdtgroup_assign_cntrs(rdtgrp) < 0)
+> +		rdt_last_cmd_puts("Monitor assignment failed\n");
+> +
+>   	kernfs_activate(rdtgrp->kn);
+>   
+>   	ret = rdtgroup_init_alloc(rdtgrp);
+> @@ -3989,6 +4062,9 @@ static int rdtgroup_rmdir_mon(struct rdtgroup *rdtgrp, cpumask_var_t tmpmask)
+>   	update_closid_rmid(tmpmask, NULL);
+>   
+>   	rdtgrp->flags = RDT_DELETED;
+> +
+> +	rdtgroup_unassign_cntrs(rdtgrp);
+> +
+>   	free_rmid(rdtgrp->closid, rdtgrp->mon.rmid);
+>   
+>   	/*
+> @@ -4035,6 +4111,8 @@ static int rdtgroup_rmdir_ctrl(struct rdtgroup *rdtgrp, cpumask_var_t tmpmask)
+>   	cpumask_or(tmpmask, tmpmask, &rdtgrp->cpu_mask);
+>   	update_closid_rmid(tmpmask, NULL);
+>   
+> +	rdtgroup_unassign_cntrs(rdtgrp);
+> +
+>   	free_rmid(rdtgrp->closid, rdtgrp->mon.rmid);
+>   	closid_free(rdtgrp->closid);
 >   
 
 Reinette
