@@ -1,84 +1,64 @@
-Return-Path: <linux-kernel+bounces-251153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F114930149
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:24:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBED893014E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F1BA284001
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:24:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4F5283AE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749AF4776A;
-	Fri, 12 Jul 2024 20:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DEC450EE;
+	Fri, 12 Jul 2024 20:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JIeZ24R1"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d73hPJsL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500B84778E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 20:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CE245007;
+	Fri, 12 Jul 2024 20:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720815841; cv=none; b=MMcHrbsdQjWpmXjSyhhqjApn3iiO0r3EZRsT7DqD0fNbbM2dpOU4AHgtDorI24q0dDojwhw7wnGaO4ktynTpBjh4vhgewC1MRwhuubtDa8ZjEWa/qOsqFj1gj9CMso7D3KStHIB0X8zTm3YmtwMXxZddkY1GiQWDAMAv5Me+/90=
+	t=1720816420; cv=none; b=o6vFFh9fz2JdYo7kdBkqzRP3bUxFSS7Iqm6U95rNw5b5gDyo8dlIKHcNlfpBUFKTG6MB5tLwxMlb/Rze+bqwAsPcXziGc2T86lkKbQefhX1naaQTOeTJSoQznHWjkHhTak2pdfMHaUkDfwiHdhZKqgX5N2RO3uq9P0iOGBfCn3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720815841; c=relaxed/simple;
-	bh=UWpkjm+bNJpSBeffNgCexDtJjnqEBWkOkbBoIfzuPfU=;
+	s=arc-20240116; t=1720816420; c=relaxed/simple;
+	bh=IZrFY7jhRqA3akF0qdHbJ7oItv4LQGRvS4/YFZ/3I70=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=naAVnp4zyeYNVlE1+V9Tn5jAsQBnRcHDMdn5LeBBWcTMTvdl2uISJenIPRyOr5fTdjauY5wZfchR/NV278miqHkFzW1bnjNER8IdZbsAkyE+3qkGd8KCwy+MWcwguR4KYM02pEbZnpoysE6cZE1hf4le+9P9gZS/4cGxFH+8CEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JIeZ24R1; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70af4868d3dso2137951b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 13:24:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720815839; x=1721420639; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Hf9lMH8FXC/GAp1YqBmmTVjDYJ9ZMKh92cvFp4a7iII=;
-        b=JIeZ24R196Y28caDGwTyWDp2ZDgxzWT71yAP3qvMiGrN16ZBK+Pq01JX4DEWmpgzCT
-         uIZxa8w97Tz/F8Q0Z8Gb2Y+/xp2plf8+Ax8vm1LH6Urkegz+Cey/QrUuwIQPwgY86e6T
-         t50gZJV2a18qoMv3IYrmoonOeQAqPIgBmIsVE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720815839; x=1721420639;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hf9lMH8FXC/GAp1YqBmmTVjDYJ9ZMKh92cvFp4a7iII=;
-        b=eWZNYIFhSKJyTcPHs7y77zlZt0dv2T/K4rX4RrCkGFpHA39XeB5pFUwGBjQ0dqZdMv
-         4Ryw2fqTJP/xfAVEC5xBVe67vb1AwlD8gnl4z0yoKFQkp5BR0ACjUI0tJtUZfnOEYUya
-         EgqAZYPISNxhs/swAer5zcoCp8ypg6/NIOM1RE+BXuLuwJBJCOf9gE1XtHCsx9qHmsO2
-         uBdW6623Y2o4ZdAXszx0XsJE1MU5whm49XVOKnXswh+C0YVC46Oso5h3WMYg6NkfffW9
-         iKW7BecSsG7C6h3XKwufLr/go258aizGTwWt2Y7jM52SR7R2+VgFRqc9ewiJrCXTOpcf
-         GisA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOd/8WNT4sWsyb4/vfinFGY6YPK+8dAnqSjH8MZt6PMgjkpPMFYdETzi/p/Mvg7+1rpPnOM/hewM2U4IJd+phyE2zVcG7c/TKw9+M7
-X-Gm-Message-State: AOJu0YxlQD2/6IWe4FDuCnq/wUl7VA8CinrP2vZM27MZOzfUcKaVmPpC
-	erQ9O3zJSi2eNyeXDsn51hZ8nQ3NBEpsZ9AeHFrdaD11D2PaeL4J4+4/rugnhQ==
-X-Google-Smtp-Source: AGHT+IG2GTXZu2uRjdFrTSv44X2Ka4Gg2maPyT6oX8YP7inykgDj54rRDX10nXgMIvG0pX0ZIkLKtA==
-X-Received: by 2002:a05:6a00:988:b0:704:31dd:a28a with SMTP id d2e1a72fcca58-70b435854damr15091453b3a.18.1720815839444;
-        Fri, 12 Jul 2024 13:23:59 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:7546:30be:53d8:7f93])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-70b438e538fsm7923889b3a.87.2024.07.12.13.23.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 13:23:58 -0700 (PDT)
-Date: Fri, 12 Jul 2024 13:23:57 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH v3 3/3] tools build: Correct bpf fixdep dependencies
-Message-ID: <ZpGQ3TShk-IGb4b1@google.com>
-References: <20240709204203.1481851-1-briannorris@chromium.org>
- <20240709204203.1481851-4-briannorris@chromium.org>
- <CAEf4Bzb6-DLL966XKyMhe+nmpvdqYVrzfmfkAiDdFHNyD0qGWw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uVomGZtUCo4q8f+8Bv04KNoSLLNpffkN5y4RnA/FNzA8jwYUvzdaabjU0AaJMCobpqBylJcexn3aTw2YpVfKQ7bJD04sagJY003+sPygGpEuO9rfnOoa9nvnxNL2Fx+XjHoPD4bPtqoBiy8GvpbHj466yrHNe59pWhW8fVjDzbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d73hPJsL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9019C32782;
+	Fri, 12 Jul 2024 20:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720816420;
+	bh=IZrFY7jhRqA3akF0qdHbJ7oItv4LQGRvS4/YFZ/3I70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d73hPJsLKNEeECtBzy3M+/XKX2g6xymNy79MJUmnLJ9+C44v0LB48RPy/+/PnRjqn
+	 6u5bU1s0bgJK5lKZ+YzGiO/F4DRMx9qzq0MPaXsP0i1XPGEKJPiFgUAfPTn1AJP6rI
+	 xHf+sqOM0vFYM4s3mqEz/L2IoP1QnTMleIcEw7ItzG7ao3UhP2galLiFf29aJ0MmkJ
+	 S6MJdLSANvyDcGuSpQV9w+6VX92R6TVfxBHPr+CwgJyH4THXL4Eqdhkefk22pgolfx
+	 DIYIOlMaoJ2THXFsovr2bjQ6oDNqxIqTO237W6bXMZ+IOjmX1+MEj0b2fZG0bJmTsc
+	 MfFyEA10n51kQ==
+Date: Fri, 12 Jul 2024 15:33:35 -0500
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@arm.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] tools subcmd: Add non-waitpid
+ check_if_command_finished()
+Message-ID: <ZpGTHzfIeREt5VUO@google.com>
+References: <20240701044236.475098-1-irogers@google.com>
+ <20240701044236.475098-2-irogers@google.com>
+ <ZoTETvgcPdl9EUJV@google.com>
+ <CAP-5=fV4oPEjX2fh3aeBbmBGgYJGCdBnVjTZ2XnCCgnTSa0LTw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,57 +68,95 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bzb6-DLL966XKyMhe+nmpvdqYVrzfmfkAiDdFHNyD0qGWw@mail.gmail.com>
+In-Reply-To: <CAP-5=fV4oPEjX2fh3aeBbmBGgYJGCdBnVjTZ2XnCCgnTSa0LTw@mail.gmail.com>
 
-Hi Andrii,
+Hi Ian,
 
-On Fri, Jul 12, 2024 at 12:38:28PM -0700, Andrii Nakryiko wrote:
-> I almost gave my acked-by and tested-by, but then I noticed that this
-> leaves fixdep, staticobjs and sharedobjs directories as
-> to-be-committed files. Please check, something is off with .gitignore
-> or where those are put:
+On Tue, Jul 02, 2024 at 09:24:50PM -0700, Ian Rogers wrote:
+> On Tue, Jul 2, 2024 at 8:24 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Hi Ian,
+> >
+> > On Sun, Jun 30, 2024 at 09:42:35PM -0700, Ian Rogers wrote:
+> > > Using waitpid can cause stdout/stderr of the child process to be
+> > > lost. Use Linux's /prod/<pid>/status file to determine if the process
+> > > has reached the zombie state. Use the 'status' file rather than 'stat'
+> > > to avoid issues around skipping the process name.
+> > >
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > ---
+> > >  tools/lib/subcmd/run-command.c | 33 +++++++++++++++++++++++++++++++++
+> > >  1 file changed, 33 insertions(+)
+> > >
+> > > diff --git a/tools/lib/subcmd/run-command.c b/tools/lib/subcmd/run-command.c
+> > > index 4e3a557a2f37..ec06683e77a0 100644
+> > > --- a/tools/lib/subcmd/run-command.c
+> > > +++ b/tools/lib/subcmd/run-command.c
+> > > @@ -2,6 +2,7 @@
+> > >  #include <unistd.h>
+> > >  #include <sys/types.h>
+> > >  #include <sys/stat.h>
+> > > +#include <ctype.h>
+> > >  #include <fcntl.h>
+> > >  #include <string.h>
+> > >  #include <linux/string.h>
+> > > @@ -217,8 +218,40 @@ static int wait_or_whine(struct child_process *cmd, bool block)
+> > >
+> > >  int check_if_command_finished(struct child_process *cmd)
+> > >  {
+> > > +#ifdef __linux__
+> >
+> > Is this really necessary?  I don't think we plan to support other OS..
 > 
-> $ cd ~/linux/tools/lib/bpf
-> $ make -j90
-> $ git st
-> On branch master
-> Your branch is ahead of 'bpf-next/master' by 4 commits.
->   (use "git push" to publish your local commits)
-> 
-> Untracked files:
->   (use "git add <file>..." to include in what will be committed)
->         fixdep
->         sharedobjs/
->         staticobjs/
-> 
-> nothing added to commit but untracked files present (use "git add" to track)
-> 
-> 
-> Other than that the changes look good, but we should be leaving
-> uncommitted (and unignored) files around.
+> I don't think it'd be unreasonable to say run "perf report" on
+> Windows, or using wasm inside a web browser. Part of the reason for
+> doing things this way was to keep the WNOHANG logic although this
+> change no longer uses it for __linux__.
 
-Thanks for looking and for the diligence. At first I thought I moved the
-dirs by accident, but that's not the case. The problem is that I'm now
-leaving a 'fixdep' artifact in these dirs (they already had a variety of
-*.o, etc., files, which were already ignored), so the containing dirs
-now show up in the untracked list. I've added a 'fixdep' .gitignore in
-my upcoming v4, as well as proper cleaning (fixdep-clean) for it too.
-
-> On Tue, Jul 9, 2024 at 1:43 PM Brian Norris <briannorris@chromium.org> wrote:
-> > -$(BPF_IN_SHARED): force $(BPF_GENERATED)
-> > +$(SHARED_OBJDIR):
-> > +       $(Q)mkdir -p $@
-> > +
-> > +$(STATIC_OBJDIR):
-> > +       $(Q)mkdir -p $@
-> 
-> I'd probably combine the above two rules into one, but it's minor
-
-Ack. I forgot some Makefile-language details when writing this part.
-I'll update in v4.
-
-I'll probably send v4 next week.
+I'm not sure we are ready to run it on other platforms.  So I think
+it's better simply remove it for now.
 
 Thanks,
-Brian
+Namhyung
+
+
+> > > +     char filename[FILENAME_MAX + 12];
+> > > +     char status_line[256];
+> > > +     FILE *status_file;
+> > > +
+> > > +     /*
+> > > +      * Check by reading /proc/<pid>/status as calling waitpid causes
+> > > +      * stdout/stderr to be closed and data lost.
+> > > +      */
+> > > +     sprintf(filename, "/proc/%d/status", cmd->pid);
+> > > +     status_file = fopen(filename, "r");
+> > > +     if (status_file == NULL) {
+> > > +             /* Open failed assume finish_command was called. */
+> > > +             return true;
+> > > +     }
+> > > +     while (fgets(status_line, sizeof(status_line), status_file) != NULL) {
+> > > +             char *p;
+> > > +
+> > > +             if (strncmp(status_line, "State:", 6))
+> > > +                     continue;
+> > > +
+> > > +             fclose(status_file);
+> > > +             p = status_line + 6;
+> > > +             while (isspace(*p))
+> > > +                     p++;
+> > > +             return *p == 'Z';
+> > > +     }
+> > > +     /* Read failed assume finish_command was called. */
+> > > +     fclose(status_file);
+> > > +     return true;
+> > > +#else
+> > >       wait_or_whine(cmd, /*block=*/false);
+> > >       return cmd->finished;
+> > > +#endif
+> > >  }
+> > >
+> > >  int finish_command(struct child_process *cmd)
+> > > --
+> > > 2.45.2.803.g4e1b14247a-goog
+> > >
 
