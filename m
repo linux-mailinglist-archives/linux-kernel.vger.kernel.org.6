@@ -1,133 +1,113 @@
-Return-Path: <linux-kernel+bounces-250665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B81692FACF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:00:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6148392FAD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 15:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA17C2842AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:00:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208F9284916
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 13:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C96A16F8E8;
-	Fri, 12 Jul 2024 13:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEA613D8BA;
+	Fri, 12 Jul 2024 13:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OZ3wK8U/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hrQGy8xf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE4516F849;
-	Fri, 12 Jul 2024 13:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895DE16F8EF;
+	Fri, 12 Jul 2024 13:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720789202; cv=none; b=Efl7rjuYxLC+yY2m9/c1gMrqBcbxR42yyZjqKoQiLkkob1Ae2XjGkh1K2MF069w3WJJIvinErgz/6XLYVSTJjEkCp64GpIGAjFBVeJ8Ic8U/2QtcZWx9cAotxOmicbEkSvhI0HfgBeefCU5EaTRFggbSn3mOkf6rBz+QLcvA+x8=
+	t=1720789209; cv=none; b=A3sThCHyOqia7xuMpVwj0Z3nRVnTBxB7+UQiNYrWZIBSo3E0SofjkK6V3dsDYRHTYUjcs8lPq65o/olB5W9QbtWGj6AaK7K1VlDVJUbc1QeA+3LH8O6hYaq/bk87G/8KvZ/6K5glZ9KjDR2uAofgu4p1LRIYjIyHlOniFwEPvu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720789202; c=relaxed/simple;
-	bh=idYjcjfqqg4sJhFU7CwSp+sEJTPpFGhm/mbOWBtbF9c=;
+	s=arc-20240116; t=1720789209; c=relaxed/simple;
+	bh=jSLWfMXDwjEp+gRw22pYaQy0XJ5CPA338Dsd4mGvswk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1KS6qNarG/NTmyDwnXINPO5WkIBbCpo0hz+8zS0e4BiIS9arCXKmtemhqkWvo6Ew243YTS30TxWYS9Cch55ORsVdwb35iCSFrVwSiPxCOPO3ahXch4rMxRBDagn31+P5vTqokLdnjZaY8ZWFD1H9irJKfWBIqj7xX1JWPnU6Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OZ3wK8U/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4C40C32782;
-	Fri, 12 Jul 2024 13:00:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720789201;
-	bh=idYjcjfqqg4sJhFU7CwSp+sEJTPpFGhm/mbOWBtbF9c=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=efMYdfWk2+PybVmAM2uu96FmaArYRdbxBFJhYCGFLGu2wcFOFHQFg0J0yhxn4lY3v70Bd4lmnUPCOAJEBAKHWjad06AP9A2CcuBsQYBv644aHgnjc1efes3g/3WZeIMEV0/EiJg6MOM4CKMw6tBP0kCQ+BpnF4+qnxDhB/8C4rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hrQGy8xf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6FBCC32782;
+	Fri, 12 Jul 2024 13:00:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720789209;
+	bh=jSLWfMXDwjEp+gRw22pYaQy0XJ5CPA338Dsd4mGvswk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OZ3wK8U/kQZAIj+uVqIl9gGN9SFQ8WDTj1HSo67l0Q4KCAzo/JUN7ft2gcb/OX9y9
-	 edzGN8Lj/eZULrJvLNAhDkTDahq5LyH1A3rolDWa9dBgc8dFhLb52dYyPSyBkVVXde
-	 q0qy6pSbuMupZOUdmEIioiFaOZtpbhdkEjTmzKT8=
-Date: Fri, 12 Jul 2024 14:59:58 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: nerdopolis <bluescreen_avenger@verizon.net>
-Cc: jirislaby@kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: When /dev/console is a disconnected /dev/ttyS0, TCGETS on
- /dev/console results in EIO (Even if TIOCCONS is called on a PTY)
-Message-ID: <2024071238-underarm-impulsive-dc1b@gregkh>
-References: <8411114.T7Z3S40VBb.ref@nerdopolis2>
- <8411114.T7Z3S40VBb@nerdopolis2>
+	b=hrQGy8xfk/Rwc1Tid+q0DBz6FZJclmQYV/Ghxt2tjMABTmSZqHJawUMgJpOa7SM8v
+	 XETVI9aJobWAZEB0WTWDtn8A+aQpthcxVpFdEDQdL1LUVHRlUPMWNo6P9a2McysXqg
+	 Z1K6Dl5YduRNSChPnLqLs2nhr7Pux8Qdm110W4YibqOS/40JrFdk2qaZ9H3lzKw1ol
+	 CL2HMhtjEiGDirS7Ji/4baVV4JMPhOYgDikBcqJw67noNhdV24igulxyGoi7sVv99Y
+	 6HVSwL5KsE8nas730o7VCqgv2+5lHYN9+R71xC3HIM7nJURolrNT4SIxMWt9C6vA5/
+	 1HekyagRuCgQg==
+Date: Fri, 12 Jul 2024 14:00:03 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.de>, Takashi Iwai <tiwai@suse.com>,
+	Shuah Khan <shuah@kernel.org>, linux-sound@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/alsa: Use card name rather than number in test
+ names
+Message-ID: <bb42afb8-48a7-4daf-b28b-b82bd5c77d57@sirena.org.uk>
+References: <20240711-alsa-kselftest-board-name-v1-1-ab5cf2dbbea6@kernel.org>
+ <7cd921b3-fed9-4b0c-9ba8-381e45ef4218@perex.cz>
+ <b3fdbb63-067b-4ff4-8fd8-1c2455a553a5@sirena.org.uk>
+ <877cdrt3zc.wl-tiwai@suse.de>
+ <e4962ea0-3f03-43b5-b773-68abe1d73cc9@perex.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tSYM6AG5MREuAaH3"
+Content-Disposition: inline
+In-Reply-To: <e4962ea0-3f03-43b5-b773-68abe1d73cc9@perex.cz>
+X-Cookie: Individualists unite!
+
+
+--tSYM6AG5MREuAaH3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8411114.T7Z3S40VBb@nerdopolis2>
 
-On Fri, Jul 12, 2024 at 08:52:15AM -0400, nerdopolis wrote:
-> Hi
-> 
-> Background:--------------------------------------------------------------------
-> This issue becomes evident on VT-less kernels. As when there is no /dev/tty0
-> device, the console defaults to being /dev/ttyS0 instead. Although this can
-> also be replicated if booting a standard kernel with 'console=ttyS0' and ensure
-> nothing is plugged into /dev/ttyS0.
-> 
-> This issue prevents systemd from logging to the console.
-> systemd when logging to /dev/console, long story short it calls isatty() on
-> /dev/console, and when /dev/console is actually /dev/ttyS0, and nothing is
-> connected to /dev/ttyS0, isatty() fails on /dev/console due to an input/output
-> error, causing systemd to not log the console output, because it rejects
-> /dev/console as not being a terminal.
-> 
-> 
-> This is noticed on a VT-less system with Plymouth. Plymouth calls the TIOCCONS
-> ioctl on a pty device it requests, to redirect console output, and in newer
-> versions, it displays the console logs on its own without the assistance of a
-> VT.
-> 
-> This part of it works, Plymouth is able to 'see' what gets written to
-> /dev/console, log output from processes that write to /dev/console directly
-> (for example 'echo hi > /dev/console") do appear in plymouth's
-> /var/log/boot.log, it is just that systemd is not writing to /dev/console
-> because isatty() fails to report /dev/console as a tty device.
-> 
-> The alternate fix in for systemds https://github.com/systemd/systemd/pull/33690[1]
-> is believed to be that when TIOCCONS is called on a PTY, or another terminal
-> device, that trying to call TCGETS on /dev/console should no longer result
-> in an error.
-> 
-> 
-> Replicating the issue:---------------------------------------------------------
-> 
-> This program replicates it:
-> -------------------------------------------------------------------------------
-> #include <stdio.h>
-> #include <fcntl.h>
-> #include <unistd.h>
-> #include <errno.h>
-> #include <string.h>
-> 
-> int main(void)
-> {
->         int fd;
-> 
->         if (getuid() != 0) {
->                 printf("Must be root\n");
->                 return 1;
->         }
-> 
->         fd = open ("/dev/console", O_RDONLY);
->         if (!isatty(fd)) {
->                 printf("err on /dev/console: %s\n", strerror(errno));
->         }
->         return 0;
-> }
-> -------------------------------------------------------------------------------
-> 
-> When the kernel console is /dev/ttyS0 and /dev/ttySO has no device connected,
-> it prints "err on /dev/console: Input/output error"
-> 
-> When I strace it, the relevant line is:
-> ioctl(3</dev/console<char 5:1>>, TCGETS, 0x7f...) = -1 EIO (Input/output error)
+On Fri, Jul 12, 2024 at 11:20:05AM +0200, Jaroslav Kysela wrote:
+> On 12. 07. 24 10:21, Takashi Iwai wrote:
 
-Do you have a proposed kernel change for this that solves this for your
-tests here?
+> > OTOH, longname can be really ugly to read, and it can vary because it
+> > often embeds address or irq numbers in the string.
 
-thanks,
+Capturing that variation is one of the goals - it should mostly be
+stable between runs.
 
-greg k-h
+> > If a general name is the goal, how about using shortname instead?
+
+> > Or use id field, as Jaroslav suggested, but without the card number
+> > suffix; then it's unique among multiple cards.
+
+> I prefer this (use only ID field). This string can be also set in the user
+> space using sysfs/udev, so the administrator may change it if the default is
+> not ideal.
+
+The trouble with the ID field is that it's too short and seems likely to
+create collisions, for example HDA stuff just seems to default to NVidia
+for nVidia cards which seems very likely to create collisions if someone
+has two graphics cards in their system.
+
+--tSYM6AG5MREuAaH3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaRKNIACgkQJNaLcl1U
+h9BjbQf/XNo2rNpuzL+vTJldIG6ZmLJnvm/MnskfeadVXHiWUvTMs7p16ZX2FXn8
+C0curxs+gWgr84gD/0VW0/1Ff7BTh5zzgfc3PnxNB7yfvHmookWwqCUcdtunFqL9
+3kfhDjX8DZHRUq5AW+S5DxybGNbsB6sMY4e0sHZI3xfYv40ZAptB/iptDBJ/Q6rs
+PuFneE4kD/1EOtLV0SQ9tt5BVMff7aS50pN83e4IkNvvOb2RQw49kcf2fP+muRf4
+8qqOotyA7swHp/Zxx7Aj9spvF0mW82w5YN5wtFS5AC9WP3IVJkuuMT2piXJX/lrE
+yg05nHobsyVhNlUQHpok51BjUJCZog==
+=x3Qu
+-----END PGP SIGNATURE-----
+
+--tSYM6AG5MREuAaH3--
 
