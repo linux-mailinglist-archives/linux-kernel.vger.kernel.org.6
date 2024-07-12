@@ -1,151 +1,454 @@
-Return-Path: <linux-kernel+bounces-250414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1232B92F79B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:09:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF9192F78E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3335E1C2109B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00BE51F23DA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B8C146D42;
-	Fri, 12 Jul 2024 09:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08264145B0C;
+	Fri, 12 Jul 2024 09:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="M7SN+q9i";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NrQeQaoA"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UwS9a9JS"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99014143747;
-	Fri, 12 Jul 2024 09:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065852E3E5;
+	Fri, 12 Jul 2024 09:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720775354; cv=none; b=B1XHoXHU/viJxbPN9p7GszhHcMMdEuBa1zQ8p7o868QHbUVvwowATZHEdsnwCudJoNMbl0ivEW/0UgITEK74eyLTbSyTzQHmv34U6xQuYGcMQT04w6Opz7GbioS/fS/HJ4IuxebKZtJwNPEx/0j2nqICyc23C3YxlS6tPh143yQ=
+	t=1720775274; cv=none; b=S21SYI2L7eB8ZFRBJT7ZV19Ic/LCvcaVHnCGYDMJddMh2w/AwsrX/fwR/79GlRisbw6O4icPFdtJTokUurc9C7+qnV0QLo/5x73v/X8kCWTfClh84GLne6H7wgPNet35tkJA/Kual6DV4gES+dxlSbgGnlwmoSJERQvYOfSsD0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720775354; c=relaxed/simple;
-	bh=Dkgox/IQTwaQ+eQxNPJVC2wknfvPEUKKuT06ZCrgfKk=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=rbLnVIMTjxvHHuoiNEfMAumYSywNFoNp7orEJKubLwAuTHsbxztwE/vTmaRV22G82jiH4UNcrSDwsgOFImy2m1jW1kd9MIXUX6ek6rmXwKxi6cLlMWnFULnwGLdupxpY+7eCb/dZK+P5PWt7O1t2DkD9NbpIwMP5aQ+Zzf+lRew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=M7SN+q9i; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NrQeQaoA; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id AF4B4138221C;
-	Fri, 12 Jul 2024 05:09:11 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 12 Jul 2024 05:09:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1720775351;
-	 x=1720861751; bh=sZ7e4XevovcBdrC0s9li43TyJDtZzYkioK9A8LGqM/Y=; b=
-	M7SN+q9i0T1/jB6rkxntX3fgDkaikboa5B4fEQ7f99816KkJDDm+CP8PZpT8ZezN
-	GNUQGwX8pzFBddHKwfg2FfGNMroyt65wjVT3xmfuIHK9WbS9ETLz6G3Tl6PSN+/F
-	Gfumz/LDeEJNUhs/uKhyYOFI8xO/2U2gYlzfwSI9iCp9A1u8FAaz3YdE96uOlsIy
-	C3z1sY56kT3e9DuxQR+jFBJ1IFYSZVRPnixfa4p7PBQmFvT6dCgKuWiOYdwH2RC8
-	FCkIWbjvRk0llcGrJ0HVxt8Kl4gGJsU5QivQRQPATjazMWPswZcZVynMUPFb/PJN
-	uQk5pfumf9/XpeBnVjhcTQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720775351; x=
-	1720861751; bh=sZ7e4XevovcBdrC0s9li43TyJDtZzYkioK9A8LGqM/Y=; b=N
-	rQeQaoAYrmIx4P9f1dJ204CLgUujqrXKFMFrNNLiFFla4i8EB7bhNuKzjgRj3DGO
-	Eym3G3cXIPA9uQzYswhcEucP6Mvp9c5FLUD/cdWl6bl7XVW+IM2TekwG8A4C79S9
-	RKniQ50ZGXAG+CDKWB/rNZdBZS4WCdmBTR/EUR3Rn55HgdUBgbbooTGJE781Y63f
-	S6Uud8LVRJi2zAyBSMhQQqQAgB1U3UpaSfZgH22siiPk6Nybr5f46Z1EhpNLZ6n7
-	L3D7R8EZOD7aNt3qY7lxRGjX9Jaluw6Js9KGMNAtvS0npAU0x/wzA6w3JvX3vwzq
-	2Y/W0ngCQNcaYui6ZdOew==
-X-ME-Sender: <xms:tPKQZsDR-wmYFg7MIczctzGLNXIg6jYekOWPBAT2oOYzOgmMIKfXtA>
-    <xme:tPKQZujqoKOXxeixBmlq_wWrG20-7I5PX6o1IAasYCOnLRcrQWPaioJkPDCSXXEcY
-    0tjiQB1LzzzPzvF32A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeeigddtkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
-    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:tPKQZvnM0POoj8h13xHmxb_HKBiaQZefN_oNtqRHbw4JDgxKnPxd9A>
-    <xmx:tPKQZixofpA8v3Gue5nkhh60aW_mzdzZJE689uqiwWZsm0JkKizC7A>
-    <xmx:tPKQZhSnPYREvuE2yvUVgs7XB7xgq8KM2oeEU38DYPogz8EKybqKvg>
-    <xmx:tPKQZta3spHoTBC_qk6-TiezbpzzI7noO1wvjB0mBLDEKDwWuROD3A>
-    <xmx:t_KQZhwIZzgBoFR5lfyh56NGNRguMKKXxXb63UdfFG80E_XGEKAnPekG>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1B788B6008F; Fri, 12 Jul 2024 05:09:08 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1720775274; c=relaxed/simple;
+	bh=4D+7XgIZ0ndzH3bvLOTcOGfsK9NLDXQNUxed1i/Q3Vs=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=N0tqFtJXFSeGQvEFWxXs/ThteXAselMAV/CU3B9iJgwd9onBHq+/alKdSYp4sch/WgzgNFnkerfCIYkmk08DP4Rx7aYpJMiMr0zT6tg7q+amIxHAxNteVDHZaBVjStvBJuYBCFjzVg8XAr+EH+4VTjcBMPfqLUJAV+arp/ofolM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UwS9a9JS; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 31EBCE0009;
+	Fri, 12 Jul 2024 09:07:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720775263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cWK+hdtT5i1RebZaiDl0mAnVLdiESL3eMzd/5G8jDR4=;
+	b=UwS9a9JSCkcJZ2K8I0QUHnG9Ql4Xf0jaDmQVVfpyKnnRV5NMzOPq+DeDLUkJaQx5ZCt1X6
+	DzsnQPFidej3FD8C84ZoN6Gvy9uA1N4jL0SD8bMkxZDMq7cBzPHRq6W2w/T/5MDGTyi+Zn
+	MSSEs8RmenVpEyO48MA8Ib/bPI5s5+S3HM8E4L0BuePZeRiGSeXsa2FBobwa79MvuMAOT6
+	Khsmu4nXiPS5m5vZ2HAi5Y/tH0FMBNoX3ROGiLPtDwkI9WZoH74WSdnxs1ZEbsdjSXMvLK
+	JaTeHZzZhWl536FuP9RYrnKOs6wWs9utK79fkPk2a0qNID91Da01Sji9P2QSbg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <b8fa2389-e666-4631-a872-d0144fb7b3ac@app.fastmail.com>
-In-Reply-To: 
- <CAK7LNARpWB6Pqa80KDmpdJ_Rf5FZc71_bX9eSy3fFVCAyg8CAg@mail.gmail.com>
-References: <20240704143611.2979589-1-arnd@kernel.org>
- <20240704143611.2979589-2-arnd@kernel.org>
- <CAK7LNARpWB6Pqa80KDmpdJ_Rf5FZc71_bX9eSy3fFVCAyg8CAg@mail.gmail.com>
-Date: Fri, 12 Jul 2024 11:07:34 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Masahiro Yamada" <masahiroy@kernel.org>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: Linux-Arch <linux-arch@vger.kernel.org>,
- "Nathan Chancellor" <nathan@kernel.org>,
- "Nicolas Schier" <nicolas@fjasle.eu>, "Vineet Gupta" <vgupta@kernel.org>,
- "Russell King" <linux@armlinux.org.uk>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, guoren <guoren@kernel.org>,
- "Brian Cain" <bcain@quicinc.com>, "Huacai Chen" <chenhuacai@kernel.org>,
- "WANG Xuerui" <kernel@xen0n.name>, "Dinh Nguyen" <dinguyen@kernel.org>,
- "Jonas Bonn" <jonas@southpole.se>,
- "Stefan Kristiansson" <stefan.kristiansson@saunalahti.fi>,
- "Stafford Horne" <shorne@gmail.com>,
- "Paul Walmsley" <paul.walmsley@sifive.com>,
- "Palmer Dabbelt" <palmer@dabbelt.com>,
- "Albert Ou" <aou@eecs.berkeley.edu>, "Rich Felker" <dalias@libc.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "David S . Miller" <davem@davemloft.net>,
- "Andreas Larsson" <andreas@gaisler.com>,
- "Christian Brauner" <brauner@kernel.org>,
- "Mark Rutland" <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
- "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
- linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 01/17] syscalls: add generic scripts/syscall.tbl
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Date: Fri, 12 Jul 2024 11:07:43 +0200
+From: Kamel BOUHARA <kamel.bouhara@bootlin.com>
+To: Jeff LaBundy <jeff@labundy.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Marco Felsch
+ <m.felsch@pengutronix.de>, catalin.popescu@leica-geosystems.com,
+ mark.satterthwaite@touchnetix.com, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Gregory Clement
+ <gregory.clement@bootlin.com>, bsp-development.geo@leica-geosystems.com
+Subject: Re: [PATCH v16 3/3] Input: Add TouchNetix axiom i2c touchscreen
+ driver
+In-Reply-To: <ZorqmaYfsGFd4HN0@nixie71>
+References: <20240703142520.207066-1-kamel.bouhara@bootlin.com>
+ <20240703142520.207066-4-kamel.bouhara@bootlin.com>
+ <ZorqmaYfsGFd4HN0@nixie71>
+Message-ID: <a38609ed1d2a181287f4758e3272c553@bootlin.com>
+X-Sender: kamel.bouhara@bootlin.com
+Organization: Bootlin
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: kamel.bouhara@bootlin.com
 
-On Fri, Jul 12, 2024, at 10:43, Masahiro Yamada wrote:
-> On Thu, Jul 4, 2024 at 11:36=E2=80=AFPM Arnd Bergmann <arnd@kernel.org=
-> wrote:
->
-> I know this is already written in this way
-> in include/uapi/asm-generic/unistd.h, but
-> the native and compat have the same function name.
->
->
-> Can we simplify it like this?
->
-> 65     common  readv                           sys_readv
-> 66     common  writev                          sys_writev
+Le 2024-07-07 21:20, Jeff LaBundy a écrit :
+> Hi Kamel,
+> 
 
-Good idea. It looks like this came from 5f764d624a89 ("fs:
-remove the compat readv/writev syscalls"), and I'll fix it up
-in my follow-up series, which has a lot of other cleanups
-like this one across architectures.
+Hello Jeff,
 
-Thanks,
+> On Wed, Jul 03, 2024 at 04:25:18PM +0200, Kamel Bouhara wrote:
+>> Add a new driver for the TouchNetix's axiom family of
+>> touchscreen controllers. This driver only supports i2c
+>> and can be later adapted for SPI and USB support.
+>> 
+>> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+>> ---
+> 
+> This is coming together nicely; just a few trailing comments on
+> top of Marco's feedback.
+> 
+>>  MAINTAINERS                                  |   1 +
+>>  drivers/input/touchscreen/Kconfig            |  14 +
+>>  drivers/input/touchscreen/Makefile           |   1 +
+>>  drivers/input/touchscreen/touchnetix_axiom.c | 616 
+>> +++++++++++++++++++
+>>  4 files changed, 632 insertions(+)
+>>  create mode 100644 drivers/input/touchscreen/touchnetix_axiom.c
+>> 
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 2041384d3866..ac6b612bfbba 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -22745,6 +22745,7 @@ M:	Kamel Bouhara <kamel.bouhara@bootlin.com>
+>>  L:	linux-input@vger.kernel.org
+>>  S:	Maintained
+>>  
+>> F:	Documentation/devicetree/bindings/input/touchscreen/touchnetix,ax54a.yaml
+>> +F:	drivers/input/touchscreen/touchnetix_axiom.c
+>> 
+>>  TPM DEVICE DRIVER
+>>  M:	Peter Huewe <peterhuewe@gmx.de>
+>> diff --git a/drivers/input/touchscreen/Kconfig 
+>> b/drivers/input/touchscreen/Kconfig
+>> index c821fe3ee794..1ce8f1c25625 100644
+>> --- a/drivers/input/touchscreen/Kconfig
+>> +++ b/drivers/input/touchscreen/Kconfig
+>> @@ -834,6 +834,20 @@ config TOUCHSCREEN_MIGOR
+>>  	  To compile this driver as a module, choose M here: the
+>>  	  module will be called migor_ts.
+>> 
+>> +config TOUCHSCREEN_TOUCHNETIX_AXIOM
+>> +	tristate "TouchNetix AXIOM based touchscreen controllers"
+>> +	depends on I2C
+>> +	select CRC16
+>> +	select REGMAP_I2C
+>> +	help
+>> +	  Say Y here if you have a axiom touchscreen connected to
+>> +	  your system.
+>> +
+>> +	  If unsure, say N.
+>> +
+>> +	  To compile this driver as a module, choose M here: the
+>> +	  module will be called axiom.
+>> +
+>>  config TOUCHSCREEN_TOUCHRIGHT
+>>  	tristate "Touchright serial touchscreen"
+>>  	select SERIO
+>> diff --git a/drivers/input/touchscreen/Makefile 
+>> b/drivers/input/touchscreen/Makefile
+>> index a81cb5aa21a5..6ce7b804adc7 100644
+>> --- a/drivers/input/touchscreen/Makefile
+>> +++ b/drivers/input/touchscreen/Makefile
+>> @@ -91,6 +91,7 @@ obj-$(CONFIG_TOUCHSCREEN_SUR40)		+= sur40.o
+>>  obj-$(CONFIG_TOUCHSCREEN_SURFACE3_SPI)	+= surface3_spi.o
+>>  obj-$(CONFIG_TOUCHSCREEN_TI_AM335X_TSC)	+= ti_am335x_tsc.o
+>>  obj-$(CONFIG_TOUCHSCREEN_TOUCHIT213)	+= touchit213.o
+>> +obj-$(CONFIG_TOUCHSCREEN_TOUCHNETIX_AXIOM)	+= touchnetix_axiom.o
+>>  obj-$(CONFIG_TOUCHSCREEN_TOUCHRIGHT)	+= touchright.o
+>>  obj-$(CONFIG_TOUCHSCREEN_TOUCHWIN)	+= touchwin.o
+>>  obj-$(CONFIG_TOUCHSCREEN_TS4800)	+= ts4800-ts.o
+>> diff --git a/drivers/input/touchscreen/touchnetix_axiom.c 
+>> b/drivers/input/touchscreen/touchnetix_axiom.c
+>> new file mode 100644
+>> index 000000000000..cea52dafc913
+>> --- /dev/null
+>> +++ b/drivers/input/touchscreen/touchnetix_axiom.c
+>> @@ -0,0 +1,616 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * TouchNetix axiom Touchscreen Driver
+>> + *
+>> + * Copyright (C) 2020-2023 TouchNetix Ltd.
+>> + *
+>> + * Author(s): Bart Prescott <bartp@baasheep.co.uk>
+>> + *            Pedro Torruella <pedro.torruella@touchnetix.com>
+>> + *            Mark Satterthwaite <mark.satterthwaite@touchnetix.com>
+>> + *            Hannah Rossiter <hannah.rossiter@touchnetix.com>
+>> + *            Kamel Bouhara <kamel.bouhara@bootlin.com>
+>> + *
+>> + */
+> 
+> Please include bits.h as well.
+> 
 
-     Arnd
+Ack, thanks !
+
+[...]
+
+>> +/*
+>> + * axiom devices are typically configured to report touches at a rate
+>> + * of 100Hz (10ms) for systems that require polling for reports.
+>> + * When reports are polled, it will be expected to occasionally
+>> + * observe the overflow bit being set in the reports.
+>> + * This indicates that reports are not being read fast enough.
+> 
+> This comment is strange; if reports are not read quickly enough at
+> the default rate, why not set the default rate at the slowest for
+> which the overflow bit is not set?
+> 
+
+The rate has been set to the give a good user experience regardless of
+this overflow bit that isn't even processed here.
+
+>> + */
+>> +#define POLL_INTERVAL_DEFAULT_MS 10
+>> +
+>> +/* Translate usage/page/offset triplet into physical address. */
+>> +static u16 axiom_usage_to_target_address(struct axiom_data *ts, u8 
+>> usage, u8 page,
+>> +					 char offset)
+>> +{
+>> +	/* At the moment the convention is that u31 is always at physical 
+>> address 0x0 */
+>> +	if (!ts->usage_table_populated) {
+>> +		if (usage == AXIOM_DEVINFO_USAGE_ID)
+>> +			return ((page << 8) + offset);
+>> +		else
+>> +			return 0xffff;
+> 
+> Checkpatch normally gripes if an else follows a return; did that not
+> happen here? You should simplify it either way:
+> 
+>         if (...) {
+>                 if (...)
+>                         return ...;
+> 
+>                 return U16_MAX;
+>         }
+> 
+
+Fixed thanks !
+No, checkpatch didn't raised any issue here with "--strict", am I 
+missing something ?
+
+>> +	}
+>> +
+>> +	if (page >= ts->usage_table[usage].num_pages) {
+>> +		dev_err(ts->dev, "Invalid usage table! usage: u%02x, page: %02x, 
+>> offset: %02x\n",
+>> +			usage, page, offset);
+>> +		return 0xffff;
+>> +	}
+>> +
+>> +	return ((ts->usage_table[usage].start_page + page) << 8) + offset;
+>> +}
+>> +
+>> +static int axiom_read(struct axiom_data *ts, u8 usage, u8 page, void 
+>> *buf, u16 len)
+>> +{
+>> +	union axiom_cmd_header cmd_header;
+>> +	int ret;
+> 
+> For consistency, please use 'error' as is done throughout.
+> 
+
+Sure, thanks.
+
+>> +
+>> +	cmd_header.head.target_address =
+>> +		cpu_to_le16(axiom_usage_to_target_address(ts, usage, page, 0));
+>> +	cmd_header.head.length = cpu_to_le16(len | 
+>> AXIOM_CMD_HEADER_READ_MASK);
+>> +
+>> +	ret = regmap_write(ts->regmap, le32_to_cpu(cmd_header.preamble), 0);
+>> +	if (ret) {
+>> +		dev_err(ts->dev, "failed to write preamble, error %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = regmap_raw_read(ts->regmap, 0, buf, len);
+>> +	if (ret) {
+>> +		dev_err(ts->dev, "failed to read target address %04x, error %d\n",
+>> +			cmd_header.head.target_address, ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/*
+>> + * One of the main purposes for reading the usage table is to 
+>> identify
+>> + * which usages reside at which target address.
+>> + * When performing subsequent reads or writes to AXIOM, the target 
+>> address
+>> + * is used to specify which usage is being accessed.
+>> + * Consider the following discovery code which will build up the 
+>> usage table.
+>> + */
+>> +static u32 axiom_populate_usage_table(struct axiom_data *ts)
+>> +{
+>> +	struct axiom_usage_entry *usage_table;
+>> +	u8 *rx_data = ts->rx_buf;
+>> +	u32 max_report_len = 0;
+>> +	u32 usage_id;
+>> +	int error;
+>> +
+>> +	usage_table = ts->usage_table;
+>> +
+>> +	/* Read the second page of usage u31 to get the usage table */
+>> +	error = axiom_read(ts, AXIOM_DEVINFO_USAGE_ID, 1, rx_data,
+>> +			   (AXIOM_U31_BYTES_PER_USAGE * ts->devinfo.num_usages));
+>> +
+>> +	if (error)
+>> +		return error;
+>> +
+>> +	for (usage_id = 0; usage_id < ts->devinfo.num_usages; usage_id++) {
+>> +		u16 offset = (usage_id * AXIOM_U31_BYTES_PER_USAGE);
+>> +		u8 id = rx_data[offset + 0];
+>> +		u8 start_page = rx_data[offset + 1];
+>> +		u8 num_pages = rx_data[offset + 2];
+>> +		u32 max_offset = ((rx_data[offset + 3] & AXIOM_PAGE_OFFSET_MASK) + 
+>> 1) * 2;
+>> +
+>> +		usage_table[id].is_report = !num_pages;
+>> +
+>> +		/* Store the entry into the usage table */
+>> +		usage_table[id].id = id;
+>> +		usage_table[id].start_page = start_page;
+>> +		usage_table[id].num_pages = num_pages;
+>> +
+>> +		dev_dbg(ts->dev, "Usage u%02x Info: %*ph\n", id, 
+>> AXIOM_U31_BYTES_PER_USAGE,
+>> +			&rx_data[offset]);
+>> +
+>> +		/* Identify the max report length the module will receive */
+>> +		if (usage_table[id].is_report && max_offset > max_report_len)
+>> +			max_report_len = max_offset;
+>> +	}
+>> +
+>> +	ts->usage_table_populated = true;
+>> +
+>> +	return max_report_len;
+>> +}
+>> +
+>> +static int axiom_discover(struct axiom_data *ts)
+>> +{
+>> +	int error;
+>> +
+>> +	/*
+>> +	 * Fetch the first page of usage u31 to get the
+>> +	 * device information and the number of usages
+>> +	 */
+>> +	error = axiom_read(ts, AXIOM_DEVINFO_USAGE_ID, 0, &ts->devinfo, 
+>> AXIOM_U31_PAGE0_LENGTH);
+> 
+> It seems a little safer, and more intuitive, to pass 
+> sizeof(ts->devinfo) instead
+> of AXIOM_U31_PAGE0_LENGTH. To that end, devinfo is only 11 bytes in 
+> size, but
+> you're reading 12 bytes. I'm guessing the compiler is padding 
+> axiom_data which is
+> the only reason the existing implementation seems to work.
+> 
+
+OK, I tough this actually could be good to keep this as it help knowing 
+which register/page
+is used to gatter device information here.
+
+I'll however take your suggestion, thanks !
+
+[...]
+
+>> +
+>> +	/* Enables the raw data for up to 4 force channels to be sent to the 
+>> input subsystem */
+>> +	set_bit(EV_MSC, input_dev->evbit);
+>> +	/* Declare that we support "RAW" Miscellaneous events */
+>> +	set_bit(MSC_RAW, input_dev->mscbit);
+> 
+> Neither of these event types are reported; please drop them.
+> 
+
+Fixed.
+
+>> +
+>> +	ts->input_dev = input_dev;
+>> +	input_set_drvdata(ts->input_dev, ts);
+>> +
+>> +	/* Ensure that all reports are initialised to not be present. */
+>> +	for (target = 0; target < AXIOM_U41_MAX_TARGETS; target++)
+>> +		ts->targets[target].state = AXIOM_TARGET_STATE_NOT_PRESENT;
+>> +
+>> +	if (client->irq) {
+>> +		error = devm_request_threaded_irq(dev, client->irq, NULL,
+>> +						  axiom_irq, IRQF_ONESHOT, dev_name(dev), ts);
+>> +		if (error)
+>> +			dev_err_probe(dev, error, "failed to request irq");
+>> +	} else {
+>> +		error = input_setup_polling(input_dev, axiom_i2c_poll);
+>> +		if (error)
+>> +			return dev_err_probe(ts->dev, error, "Unable to set up polling 
+>> mode\n");
+>> +
+>> +		if (!device_property_read_u32(ts->dev, "poll-interval", 
+>> &poll_interval))
+>> +			input_set_poll_interval(input_dev, poll_interval);
+>> +		else
+>> +			input_set_poll_interval(input_dev, POLL_INTERVAL_DEFAULT_MS);
+>> +	}
+>> +
+>> +	error = input_register_device(input_dev);
+>> +	if (error)
+>> +		return dev_err_probe(ts->dev, error, "failed to register input 
+>> device\n");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct i2c_device_id axiom_i2c_id_table[] = {
+>> +	{ "ax54a" },
+>> +	{ },
+> 
+> Please drop the comma after the sentinel as was done below.
+> 
+
+Fixed, thanks.
+
+>> +};
+>> +MODULE_DEVICE_TABLE(i2c, axiom_i2c_id_table);
+>> +
+>> +static const struct of_device_id axiom_i2c_of_match[] = {
+>> +	{ .compatible = "touchnetix,ax54a", },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, axiom_i2c_of_match);
+>> +
+>> +static struct i2c_driver axiom_i2c_driver = {
+>> +	.driver = {
+>> +		   .name = "axiom",
+>> +		   .of_match_table = axiom_i2c_of_match,
+>> +	},
+>> +	.id_table = axiom_i2c_id_table,
+>> +	.probe = axiom_i2c_probe,
+>> +};
+>> +module_i2c_driver(axiom_i2c_driver);
+>> +
+>> +MODULE_AUTHOR("Bart Prescott <bartp@baasheep.co.uk>");
+>> +MODULE_AUTHOR("Pedro Torruella <pedro.torruella@touchnetix.com>");
+>> +MODULE_AUTHOR("Mark Satterthwaite 
+>> <mark.satterthwaite@touchnetix.com>");
+>> +MODULE_AUTHOR("Hannah Rossiter <hannah.rossiter@touchnetix.com>");
+>> +MODULE_AUTHOR("Kamel Bouhara <kamel.bouhara@bootlin.com>");
+>> +MODULE_DESCRIPTION("TouchNetix axiom touchscreen I2C bus driver");
+>> +MODULE_LICENSE("GPL");
+>> --
+>> 2.25.1
+>> 
+> 
+> Kind regards,
+> Jeff LaBundy
+
+Thanks for this review !
+
+--
+Kamel Bouhara, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
