@@ -1,175 +1,88 @@
-Return-Path: <linux-kernel+bounces-251043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8112C93001B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:59:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A659930027
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361E01F24125
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:59:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BF5D1F24CB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE98217BB02;
-	Fri, 12 Jul 2024 17:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A913176FC5;
+	Fri, 12 Jul 2024 18:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="CL5mmEX6"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrpbZEBd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BBA17B4FC;
-	Fri, 12 Jul 2024 17:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA041426C;
+	Fri, 12 Jul 2024 18:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720806972; cv=none; b=Lsr8sCH5XmOgQWOq6i83+GUh3240esKYZF1fuHrs+US3NMrLmEdsepMNmr/xFCMPEy0ktoGRUoO7F5TIGI5gB5ZNVG7uVwSzQsL1OCe6CdlfLAv6+t8KYcIQ8ldi8/dsIIksiqHgHIqEKSOxC/iw0Wl5Xlx/gXR9hzFyVlMqc/s=
+	t=1720807274; cv=none; b=FpGdjNm60+P0VTePmY0szid6zJCHOiMSwivOTzaCsk7FyvfIyuKiRD9zwVYdMtqECAFozc3BNZfUnMdGHZRGbWxawrCRSmDzxQySfgxm6gNAxGT53ZuXL2cqqWW9sqWDv3/GC4AvQL7nj1aUcO2+6aCiU2TQ078IXNDiWqO/bc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720806972; c=relaxed/simple;
-	bh=pyeOyZb4wdVKngAuWvkY1s62ITPe9pKZIYvqLBwFkq4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LpBPw6UVBsVVhTCUaM6DQk0zGc+6jwx+ag02fH6Nwi6e4H+CCYhxxzkNdUG5jIA9UPPtiIM63gybzAuPALYp/Z9RQq5FLd2+RJMe+I5KFL75jpQnlxgpntV1CvZJsuqdjXLREeSqJId56gMB2KUZPmfmiwZr88+m9lI4e3IUfmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=CL5mmEX6; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46CDh1NS012285;
-	Fri, 12 Jul 2024 10:56:04 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=zmDQRbex59fLltI/bnTVP3snw
-	1zkiULM8MbjWF5s9xE=; b=CL5mmEX6369xVokd7NMnaQk61V5bMMsb8ZcnDxu+l
-	EfSG+B8QoNrSQXgc/zDDArh+bCu38WcwG8YEn6/Z6KbSDIePJsf8iKTt3D0USgJs
-	z1STbOCv0K5giO5+MQLHcHitDmEq6edxRc8gc/SiuBrBSr1mpjxMh1pTc+lt1OJl
-	a1p1trLp1sJc9vPTfUxpGnVTFNLHRisDkm+CalaW24ly1JRCSdRzzJoZxf3dhRbe
-	cNgzk9Cf/AXc+Fyz3nYsZageycU9kOx9SNSW31rafGJXXX08Fx604ysKkJ0gE0P6
-	RO80plqWjM5aPDElrd2d73BWnXfdqGejJqMDAe8DCfjlQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 40b5m68wqr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Jul 2024 10:56:04 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 12 Jul 2024 10:56:02 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 12 Jul 2024 10:56:02 -0700
-Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
-	by maili.marvell.com (Postfix) with ESMTP id D21A63F70A1;
-	Fri, 12 Jul 2024 10:55:59 -0700 (PDT)
-From: Geetha sowjanya <gakula@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
-        <edumazet@google.com>, <sgoutham@marvell.com>, <gakula@marvell.com>,
-        <sbhatta@marvell.com>, <hkelam@marvell.com>
-Subject: [net-next PATCH v9 11/11] octeontx2-pf: Implement offload stats ndo for representors
-Date: Fri, 12 Jul 2024 23:25:20 +0530
-Message-ID: <20240712175520.7013-12-gakula@marvell.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240712175520.7013-1-gakula@marvell.com>
-References: <20240712175520.7013-1-gakula@marvell.com>
+	s=arc-20240116; t=1720807274; c=relaxed/simple;
+	bh=G9CJB2XlEibvrQC7CgT9q0D1SmYxN9QvjlXhGDpJbE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e3OfJCrajx8rWjqHrfYcvobZEytI/rqE5+Z/hOPtvb2Lkw0YXstrumr4PnxVZMkIn/vxFKO1Wi0inLXLM+AWItWFR+qmQsDAY1UNmxT7auDiydv95NS+ce4RSjKWr2lMn3mF0Qj119znf1iD6+YuzSiQXVf+4SkAuP6cC/fA58A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrpbZEBd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E03BBC32782;
+	Fri, 12 Jul 2024 18:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720807273;
+	bh=G9CJB2XlEibvrQC7CgT9q0D1SmYxN9QvjlXhGDpJbE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FrpbZEBd2HLOE5ipzLRdK7HiKyYNaVgNFrX9nSlUu1jl+4Di79AlHcYnPZfzmVdLf
+	 dliTSlCWluxrLl+U0AX6fuBHmMn5XyXmUCha73eJvBRWiYz/xDcXnvihr9b7IwJmC9
+	 pVRDnmT8FE9uD2Dp4zjqXJEonyO/4MAGHz+aZS1mvsC/1orfqT4FQXrtVkpdqQQihM
+	 dwM/3HyqlcKER4NX6j56NaA2qy4lywBUclUIS9eIunfVGtnLGEkxSXYpRTTQgE3H0+
+	 qWC4dP4ZusQuObWH8j7llaN9hC1HBgg2xN6NZFLtmvyaGnlGuRprAzyJB1CtLT3CJx
+	 0GnoZc7MJqQhQ==
+Date: Fri, 12 Jul 2024 11:01:13 -0700
+From: Kees Cook <kees@kernel.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Brian Norris <briannorris@chromium.org>,
+	Nathan Chancellor <nathan@kernel.org>, llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v2] bitmap: Switch from inline to __always_inline
+Message-ID: <202407121059.9FC2D0DF@keescook>
+References: <20240711163732.1837271-1-briannorris@chromium.org>
+ <ZpFhv5VSYZ6jnsd4@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-GUID: BGslHD47Dt0EzLd_ClhPEibnhoWgyCYV
-X-Proofpoint-ORIG-GUID: BGslHD47Dt0EzLd_ClhPEibnhoWgyCYV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-12_13,2024-07-11_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpFhv5VSYZ6jnsd4@yury-ThinkPad>
 
-Implement the offload stat ndo by fetching the HW stats
-of rx/tx queues attached to the representor.
+On Fri, Jul 12, 2024 at 10:02:55AM -0700, Yury Norov wrote:
+> Hi Brian,
+> 
+> Thanks for taking over this!
+> 
+> + Kees Cook for GCC
+> [...]
+> But I'm not sure about that and don't know how to check what happens
+> under the compilers' hood. Can compiler gurus please clarify?
 
-Signed-off-by: Geetha sowjanya <gakula@marvell.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
- .../marvell/octeontx2/nic/otx2_common.c       |  2 +
- .../net/ethernet/marvell/octeontx2/nic/rep.c  | 41 +++++++++++++++++++
- 2 files changed, 43 insertions(+)
+I don't know much about GCC internals. I just ask GCC devs nicely to
+help us where they can. :)
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-index 4c11c420399b..b1251f80a569 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-@@ -83,6 +83,7 @@ int otx2_update_rq_stats(struct otx2_nic *pfvf, int qidx)
- 	otx2_nix_rq_op_stats(&rq->stats, pfvf, qidx);
- 	return 1;
- }
-+EXPORT_SYMBOL(otx2_update_rq_stats);
- 
- int otx2_update_sq_stats(struct otx2_nic *pfvf, int qidx)
- {
-@@ -99,6 +100,7 @@ int otx2_update_sq_stats(struct otx2_nic *pfvf, int qidx)
- 	otx2_nix_sq_op_stats(&sq->stats, pfvf, qidx);
- 	return 1;
- }
-+EXPORT_SYMBOL(otx2_update_sq_stats);
- 
- void otx2_get_dev_stats(struct otx2_nic *pfvf)
- {
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-index 6939f213f9f8..d62aabf98833 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-@@ -28,6 +28,45 @@ MODULE_DESCRIPTION(DRV_STRING);
- MODULE_LICENSE("GPL");
- MODULE_DEVICE_TABLE(pci, rvu_rep_id_table);
- 
-+static int
-+rvu_rep_sp_stats64(const struct net_device *dev,
-+		   struct rtnl_link_stats64 *stats)
-+{
-+	struct rep_dev *rep = netdev_priv(dev);
-+	struct otx2_nic *priv = rep->mdev;
-+	struct otx2_rcv_queue *rq;
-+	struct otx2_snd_queue *sq;
-+	u16 qidx = rep->rep_id;
-+
-+	otx2_update_rq_stats(priv, qidx);
-+	rq = &priv->qset.rq[qidx];
-+
-+	otx2_update_sq_stats(priv, qidx);
-+	sq = &priv->qset.sq[qidx];
-+
-+	stats->tx_bytes = sq->stats.bytes;
-+	stats->tx_packets = sq->stats.pkts;
-+	stats->rx_bytes = rq->stats.bytes;
-+	stats->rx_packets = rq->stats.pkts;
-+	return 0;
-+}
-+
-+static bool
-+rvu_rep_has_offload_stats(const struct net_device *dev, int attr_id)
-+{
-+	return attr_id == IFLA_OFFLOAD_XSTATS_CPU_HIT;
-+}
-+
-+static int
-+rvu_rep_get_offload_stats(int attr_id, const struct net_device *dev,
-+			  void *sp)
-+{
-+	if (attr_id == IFLA_OFFLOAD_XSTATS_CPU_HIT)
-+		return rvu_rep_sp_stats64(dev, (struct rtnl_link_stats64 *)sp);
-+
-+	return -EINVAL;
-+}
-+
- static int rvu_rep_dl_port_fn_hw_addr_get(struct devlink_port *port,
- 					  u8 *hw_addr, int *hw_addr_len,
- 					  struct netlink_ext_ack *extack)
-@@ -310,6 +349,8 @@ static const struct net_device_ops rvu_rep_netdev_ops = {
- 	.ndo_start_xmit		= rvu_rep_xmit,
- 	.ndo_get_stats64	= rvu_rep_get_stats64,
- 	.ndo_change_mtu		= rvu_rep_change_mtu,
-+	.ndo_has_offload_stats	= rvu_rep_has_offload_stats,
-+	.ndo_get_offload_stats	= rvu_rep_get_offload_stats,
- };
- 
- static int rvu_rep_napi_init(struct otx2_nic *priv,
+> >   Subject: [PATCH 1/3] bitmap: switch from inline to __always_inline
+
+We always expected them to be inline, and if we need to hit the
+compilers harder with __always_inline, that seems sensible to me.
+
+Reviewed-by: Kees Cook <kees@kernel.org>
+
 -- 
-2.25.1
-
+Kees Cook
 
