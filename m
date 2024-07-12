@@ -1,163 +1,103 @@
-Return-Path: <linux-kernel+bounces-251026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504AA92FFF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A254192FFFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F08671F236F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DE751F23739
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C02176ADB;
-	Fri, 12 Jul 2024 17:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981E6176FA3;
+	Fri, 12 Jul 2024 17:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="GOKiCDZa"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="iUW2bBox"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02332747D;
-	Fri, 12 Jul 2024 17:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80231143C52;
+	Fri, 12 Jul 2024 17:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720806334; cv=none; b=fWZNT8MxR3uQ76T233zQlG78AAdZRBjMkIBmVwYHXVC7i4PArKMpITuEBcSM7xG5tjkAqp6UR9Ot3dcc+siiICIiVOmGwf5iKamgbehQY6SOa0qZL08YAfiM81fmuHCePcoB7K3Xq8McP69CQ7b96XH2J4SXHiRBMlrf4iRjjzQ=
+	t=1720806727; cv=none; b=hzdJXSfzSyZeQFKqDxngHQ1UnAEQnCRtgSYWLG0XN2adWmg/PFoDng/xal6kKQoeNPhuiU5HBnP7C/FquUlVsNTKMSKWxrIyFmfD4oP39NpSV4zH1ryuWqYCSfpdvrrMj6eBZiOZRK7w/QOAp0gc1JeAs7NMhUtR6kBq6D7BEK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720806334; c=relaxed/simple;
-	bh=TeCewhItFSnag4sc4XNBJtcr219/o5hveH/NrYbp2KA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GU4sqPF5YRJSlltrzbeNQ90fwQCmCUjgCgqfSN8uSxGoMC3d+X5W6lI2LXx/mgId7KhRYa0EKY1zipiUAgOaDzHcNtWRULp0oaWqhX0pEdhWM60uwZGWWH3cgn0uChUcnI/bCsD4yQOuKL1r7G0PcouyzIUMbA9pIP6tb010ys8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=GOKiCDZa; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1720806324; x=1721411124; i=j.neuschaefer@gmx.net;
-	bh=tPGCKNuxFDqyixISCoMhBEbanP1o4lTHf1B7ly5Vmm4=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GOKiCDZaHuwtds/+rhAT+fe48IarcS06cg51eJUc1q9BWpgk5YPcGWjKb2eaQa0n
-	 3sxv6m5FFethmaR6RPjXZO14Fz0KmYzCI64tp8+/oUNISMd+1NpXUas9fjTrZtKCG
-	 lsZN7wFKaH/9xJsQGyBt6GiqQbxXwXlaM5wb09MYdVN8P125O1VxBNM7x6Hys47xi
-	 BHCiqoXZQs+q7gakNJ5NngLOBHBFaR09lhbLgSjeIsqoa3ruKxxa9SyAB+Tn9jpV0
-	 vmIf8l8ajWzMJSYL8D5UxihpHcmKUGd/UFdEuZ1NS2F6AxjP7c5tLanKe2r8X6SgA
-	 GNXCD13Eg8SY0j2iAw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([81.173.233.81]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MWRVh-1sqhdH2AUV-00Owur; Fri, 12
- Jul 2024 19:45:24 +0200
-Date: Fri, 12 Jul 2024 19:45:22 +0200
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: linus.walleij@linaro.org, avifishman70@gmail.com, tali.perry1@gmail.com,
-	joel@jms.id.au, venture@google.com, yuenn@google.com,
-	benjaminfair@google.com, linux-gpio@vger.kernel.org,
-	openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/7] pinctrl: nuvoton: npcm8xx: remove unused smb4den
- pin, group, function
-Message-ID: <ZpFrslx57m62SEsg@probook>
-References: <20240711193749.2397471-1-tmaimon77@gmail.com>
- <20240711193749.2397471-5-tmaimon77@gmail.com>
+	s=arc-20240116; t=1720806727; c=relaxed/simple;
+	bh=i6ghiyZud1s7d2jVLaGdpTehfGlJn4BDOTkDfs84v0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hdvfljNvIV+o1cGL5GNEVKa6lnTa+180CWbSclc4g4cRPugwZl2AjE/mXCGBnweLhOP5dNVHMg/1KDA+wtTGD83BKjpGsqj5Ny3idsonG0ULf8SvwJGn7CqL88Vnx6TOBcCyB4muN4Bd5BnqTwF4KWy/DUp7MPdRqXK7kFcB7WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=iUW2bBox; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WLK116sMRzllCRp;
+	Fri, 12 Jul 2024 17:52:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1720806721; x=1723398722; bh=qx2yHKrOtr7nncPx5lDJ1DX9
+	Y1bBWBHCftoh5jHF4Xw=; b=iUW2bBoxhy+jEggy9y9kAl9AlVn1CPOawcy847h6
+	MWX/9rGnjxlQtbUeCKAE4+CfHnzvh1KE+1y8/SRM3wTum/qJF33n9aDmYRoIOW7u
+	7u71dawlsWo4E+VbWDUYvC23tmUujVAGMv/AC9PeZahwCtq3vFMb27wkMKoNHPW9
+	In5pfvM7KuKGDFe45njqgBxS1LdGywskaLgvWkrNNj0rATBtgjUAUyTJy31R/tJn
+	WulihiG0ykDiN/b9qI8CsfrT2t19m8fKjmk+0DwKQep8zpgu5k8bqc3MgTcrlLtP
+	+LfTDzb9K8V+unYXtPGaJjunohFS3XT4AYALTvkLD0Qhdw==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id LtWOsS9hymJ0; Fri, 12 Jul 2024 17:52:01 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WLK0s1LVkzllBd1;
+	Fri, 12 Jul 2024 17:51:56 +0000 (UTC)
+Message-ID: <4062986c-61be-473d-b8bc-b40d9260f301@acm.org>
+Date: Fri, 12 Jul 2024 10:51:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711193749.2397471-5-tmaimon77@gmail.com>
-X-Provags-ID: V03:K1:vwEDLW8CSrIZ9k/KspWiiHdEKMe0tlSqJnPaFjO1HpgkyyZisA+
- FW10ALY01vhA571jR+f7pcE3HqDn/TcShquGb2eYXB2ilfy2ork0NJQwrWEloTsagXMEaAi
- uemv089G25izhe02KuYo4fW7T3FKMt9bX+5vyR56H1Dutx1OSQq6AaDi9GFJakRBSrca2R1
- EofrnSKdpdSnFU08CtzdQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:w4IxSsobjkg=;kH0ARQQHdmtmdsC/ZqbYSHC9sI2
- Ez7XilIu+IJWpFNCihYSLHBSpNoQ6DJsuWJJbYnF6m4P71gR+MMHPP/gTd5l9nDBa2g2NrXQa
- ukZZKZh5CQ90xsKSxiIOSKfU0253tBRMpXxO1qjqHmHZSxD6d9F561B5w115Be9GUSn9C2q2d
- ipMvLJOqb6py3nIRjpu+xp+URd20aegqGZsX7CrVcthWnLCbStDZA+boxC9V4oi5w9KabQsUu
- EmtMnrwxpUkirGKGVACM6gFfAywGCFmbSoV7ZI0+CyL1loyqwHm4TKUcB/VgeFthxFZ+A4stJ
- 2G90FnSU8lbkACQCJb5k78ICk+DCxcSh6vezqGc8gKDQL4UwonkYkxRSjIpLsyOCQ6XtpJr7B
- So4xWvQOZPvxrGwvotXRDJJ4FPy28etd4AcEWmzWb+MmkP37qpXzX0HP55/OyWHPdfGOLonz/
- SEBZbMdtuicmg6hPqzm6yASWCh6volPTfBTS1vnOA903CZ0HbNIyXJKrG4tiQ+V4o9s9aEsGh
- MjMoZ6+E4btgmSS1Dvrfgy6DqbPfej/RR6b/vKhohbcYmkBeu7as4QghosKMMvlRINFsMGvlw
- 2NmaBECl5asEw6wTa1AHb+FEhCalRUiXsTicVDDx/6Dwzq19PWf3nY03/uTjKMDeQLg7br1R3
- WVozDLVrDeGQIp7uOUR7OZSjWEUU0XvSUmuVtoBf7Kbh9b9HlMN02SwfuZj2OIFkoO0q8kbGA
- SdBUicrrIhz0cmLgvcj2SccUGDj6m8Qo4UGNdihPWFUXz3X9xSAxH/KAluVuHE4RHu9wiPS6n
- h7jfkm7csE97N1mOMDLck0ug==
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] scsi: ufs: core: Support Updating UIC Command
+ Timeout
+To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, quic_cang@quicinc.com,
+ quic_nitirawa@quicinc.com, avri.altman@wdc.com, peter.wang@mediatek.com,
+ manivannan.sadhasivam@linaro.org, minwoo.im@samsung.com,
+ adrian.hunter@intel.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <jejb@linux.ibm.com>, Bean Huo <beanhuo@micron.com>,
+ Maramaina Naresh <quic_mnaresh@quicinc.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <cover.1720503791.git.quic_nguyenb@quicinc.com>
+ <6513429b6d3b10829263bf33ace5c5128f106e59.1720503791.git.quic_nguyenb@quicinc.com>
+ <a89910ad-da5b-42c2-8a0f-9f4908fa2c1a@acm.org>
+ <6f6a2608-6f1e-60dd-0dcc-93fa3d61202e@quicinc.com>
+ <91d9bb0f-d9da-6303-c16a-f449b070a4e5@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <91d9bb0f-d9da-6303-c16a-f449b070a4e5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 11, 2024 at 10:37:46PM +0300, Tomer Maimon wrote:
-> Remove unused smb4den pin, group and function on the Nuvoton NPCM8XX BMC
-> SoC.
+On 7/11/24 6:20 PM, Bao D. Nguyen wrote:
+> Maybe I misunderstood your comment. You probably was concerned about the 
+> execution time of param_set_int(val, kp) vs a single assignment 
+> instruction 'uic_cmd_timeout = n;', right? If that's the case, I'll 
+> update the patch.
 
-Does "unused" mean that they are just unused in current board designs,
-or does the hardware functionality actually not exist?
+I'm concerned about the two conversions yielding different results, e.g.
+because of different handling of base prefixes (e.g. 0x) or different
+handling of overflows. This patch would be easier to review if the
+conversion from string to int only happens once.
 
-Best regards, J
+Thanks,
 
->
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
->
-> diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c b/drivers/pinctrl=
-/nuvoton/pinctrl-npcm8xx.c
-> index f342aec3f6ca..396bd07e7c74 100644
-> --- a/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-> +++ b/drivers/pinctrl/nuvoton/pinctrl-npcm8xx.c
-> @@ -438,7 +438,6 @@ static const int smb4_pins[]  =3D { 28, 29 };
->  static const int smb4b_pins[] =3D { 18, 19 };
->  static const int smb4c_pins[] =3D { 20, 21 };
->  static const int smb4d_pins[] =3D { 22, 23 };
-> -static const int smb4den_pins[] =3D { 17 };
->  static const int smb5_pins[]  =3D { 26, 27 };
->  static const int smb5b_pins[] =3D { 13, 12 };
->  static const int smb5c_pins[] =3D { 15, 14 };
-> @@ -700,7 +699,6 @@ struct npcm8xx_pingroup {
->  	NPCM8XX_GRP(smb4b), \
->  	NPCM8XX_GRP(smb4c), \
->  	NPCM8XX_GRP(smb4d), \
-> -	NPCM8XX_GRP(smb4den), \
->  	NPCM8XX_GRP(smb5), \
->  	NPCM8XX_GRP(smb5b), \
->  	NPCM8XX_GRP(smb5c), \
-> @@ -949,7 +947,6 @@ NPCM8XX_SFUNC(smb4);
->  NPCM8XX_SFUNC(smb4b);
->  NPCM8XX_SFUNC(smb4c);
->  NPCM8XX_SFUNC(smb4d);
-> -NPCM8XX_SFUNC(smb4den);
->  NPCM8XX_SFUNC(smb5);
->  NPCM8XX_SFUNC(smb5b);
->  NPCM8XX_SFUNC(smb5c);
-> @@ -1173,7 +1170,6 @@ static struct npcm8xx_func npcm8xx_funcs[] =3D {
->  	NPCM8XX_MKFUNC(smb4b),
->  	NPCM8XX_MKFUNC(smb4c),
->  	NPCM8XX_MKFUNC(smb4d),
-> -	NPCM8XX_MKFUNC(smb4den),
->  	NPCM8XX_MKFUNC(smb5),
->  	NPCM8XX_MKFUNC(smb5b),
->  	NPCM8XX_MKFUNC(smb5c),
-> @@ -1348,7 +1344,7 @@ static const struct npcm8xx_pincfg pincfg[] =3D {
->  	NPCM8XX_PINCFG(14,	gspi, MFSEL1, 24,	smb5c, I2CSEGSEL, 20,	none, NONE,=
- 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
->  	NPCM8XX_PINCFG(15,	gspi, MFSEL1, 24,	smb5c, I2CSEGSEL, 20,	none, NONE,=
- 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
->  	NPCM8XX_PINCFG(16,	lkgpo0, FLOCKR1, 0,	smb7b, I2CSEGSEL, 27,	tp_gpio2b=
-, MFSEL7, 10,	none, NONE, 0,		none, NONE, 0,		SLEW),
-> -	NPCM8XX_PINCFG(17,	pspi, MFSEL3, 13,	cp1gpio5, MFSEL6, 7,	smb4den, I2C=
-SEGSEL, 23,	none, NONE, 0,		none, NONE, 0,		SLEW),
-> +	NPCM8XX_PINCFG(17,	pspi, MFSEL3, 13,	cp1gpio5, MFSEL6, 7,	none, NONE, =
-0,		none, NONE, 0,		none, NONE, 0,		SLEW),
->  	NPCM8XX_PINCFG(18,	pspi, MFSEL3, 13,	smb4b, I2CSEGSEL, 14,	none, NONE,=
- 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
->  	NPCM8XX_PINCFG(19,	pspi, MFSEL3, 13,	smb4b, I2CSEGSEL, 14,	none, NONE,=
- 0,		none, NONE, 0,		none, NONE, 0,		SLEW),
->  	NPCM8XX_PINCFG(20,	hgpio0,	MFSEL2, 24,	smb15, MFSEL3, 8,	smb4c, I2CSEG=
-SEL, 15,	none, NONE, 0,		none, NONE, 0,		SLEW),
-> --
-> 2.34.1
->
+Bart.
+
 
