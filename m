@@ -1,280 +1,202 @@
-Return-Path: <linux-kernel+bounces-250623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA0392FA0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB1392FA14
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:20:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 463721F225D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:18:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D861F22487
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969BD16D9A8;
-	Fri, 12 Jul 2024 12:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6452616D4CD;
+	Fri, 12 Jul 2024 12:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="t8t+6/Ye"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W6PJ6REs"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9471640B;
-	Fri, 12 Jul 2024 12:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC72013D8B2
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 12:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720786703; cv=none; b=PP/7GmGwT8/RC5VUn0e5Xfp6NePsfwkp4No7/b7fwHB8BEt3IMPuu6ghobz38IPugubfDmPIVjotDAQD61FU/k25vmqLA0XdBVDiTDTlQs7/Dn1uAUQLqd4DTnL418S8OIkydcPSe9QD0If0PL7VnMQNDPmRvy48u4L02vvnIlA=
+	t=1720786807; cv=none; b=TYk/W1nEhMIcQftT9SZU2IUujXIMvTgzagO2Wm8BFipDSNQ8kI3CaAq4m6e8yCdoGUNXZUkbqaSFKFwZ3N5j66go0S+wwgUE4CI7s2N4q8ltPB6EedWXfgY9GOEY0lip94SM+UWVdDBqFy3PhYqjS1SGdFVL6cq6oZPQ6n3dH+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720786703; c=relaxed/simple;
-	bh=43rWBxFOy1IaWeBsSN18ZiL0vVYHQa8at9qTbLs2uQ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HbjawyJDYSt2PUlLoett0k19kSbrdggDf5q2sjDTKmD8e4WiWW/4xGZgM+1hkQyss/J9NRSU1GiFzsLynpw4Wy4dWDhLWIAjNA2OuB8JayRnTvXXcht/uMPmOaLFZRndW+8fPaO8jffaJ2lQoEBF6BbYeNRnmdEirybx8Bfu240=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=t8t+6/Ye; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720786685; x=1721391485; i=spasswolf@web.de;
-	bh=aH971ZcYcuKRlw99KTDLXdXUre9wbPrQuEQ7oEy6AM4=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=t8t+6/YeiqvIKqzXD77a6i1LChN/YJw32EpJVAePM7WqRMC1UR+zRtXlCoclu8vQ
-	 A5Vv1I6gqhjJChg9kInuwYFutv1ApWK21c4ni3Xz+tNfUgR0K0ku1FMWM3wLCj1OD
-	 mtu/7zHrKNtK0TjOhavNaBfSDVYWGu9D+xpn7+WnHgL8pdSG7oxmKU/8mBBK14ruG
-	 0kj4RyzKiLC46UzMaOMWsfMo4TC8GpSphp3MKkK1wYI57WwjYFgctXnDK07X9vvol
-	 Z4ATKoAMhWmtYvGMjsvZtBwX8evK/IoGZteeOBoPp1G5+WKxPG24ilIIX1ScSsJGA
-	 mEmavoeocuHE6SscQg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
- (mrweb106 [213.165.67.124]) with ESMTPSA (Nemesis) id
- 1MW9vU-1sr4Fz2U8Y-00Vw7o; Fri, 12 Jul 2024 14:18:05 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: "Liam R . Howlett" <Liam.Howlett@oracle.com>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jiri Olsa <olsajiri@gmail.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Subject: Re: commit 1c29a32ce65f4cd0f1c causes Bad rss-counter state and firefox-esr crash in linux-next-20240613
-Date: Fri, 12 Jul 2024 14:17:59 +0200
-Message-ID: <20240712121800.3049-2-spasswolf@web.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: w5uejhiciolye2ikgsdjim25z7lau7km3tu6t2vby3kuxeshos@osowmu4ecng5
-References: <20240712121800.3049-1-spasswolf@web.de>
+	s=arc-20240116; t=1720786807; c=relaxed/simple;
+	bh=9EPphHnDUG4NA9uzVthgoM502jdfAE9pgOG0c6JM1iM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cD24/BqdbDfcFp7yJL0LMDYI+/JtnfiwxvdJzkjPnT22S6+LE1xtKwrWx4W6ruIYVDDxEb3UHYTaOdCAqGlBId6XWF1siqJEnrrdwqXNEuHcYOtLMzUZuFJb+2U8c792MI3wc4X7HE02ZuRhoDlFVhpEDnbnSCSgBNEt5A/v/0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W6PJ6REs; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so32861861fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 05:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720786804; x=1721391604; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=yAvitaA5/W52S3uPDulQ2iO0iWsi1ypQySbrbzTULVw=;
+        b=W6PJ6REsvEKZzNB3g36OcxZPU5O4+g39M97yA4uzncVYq9RVKB3bWey7bIX+CojWK0
+         +hkR5eHAs0JJkwrD74go1A9n3gveFFEpswqDfVDFa4NV3lNXM0GLKSIhzqZKCCvIj9ic
+         2QM8ueXubRfw/WygX3g0aMNHTHs1vPtLT15aZm5O62T9xMFB9iJgkrtA7pnPlWEHBP+b
+         +TSeu/a8Dpijon9N+3AYcBvkCcKkEhD0v67cqEJH6ZN15U215tiSaNDmw7bI4EpzVDk+
+         EJx1vdEjP1cyhyNwKUm+kjrmUiq0hRAA50Etrcbv21JvJz/MaUqbnZVSM8KzlUTF6ckz
+         wJzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720786804; x=1721391604;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yAvitaA5/W52S3uPDulQ2iO0iWsi1ypQySbrbzTULVw=;
+        b=gb8+Sbwwt7qZXcmFuaP6k7H9OJAHcpTNkP2mcNdKMcTpcRaWgunMUzJWbZDlLZLhK7
+         63JBsLZ/sPq2MYabvG04EESo6hwXEEiJkP0zHvcNLPlwvby26QPX+ktYZ023DB15mE+x
+         zIyDEEH8YbCP8C6yxxhtWeWRrDqq+FIoHCBTzPUgS6PwgZ1M8m9SINzFMu5zffJux55d
+         11QTP4aUnQM2vQuiUQ8aLUrUFMfytOnSgE4MwA+s9HOrzHTeF+mDdeKfAPdphHgUZFPG
+         Lcxhjo2aAgbHIQL3rxmf7qWQfMIlrW7zvxxHoy5eiEugJGCkPt6fqVs7TS5lwMNgmBVL
+         2KUg==
+X-Gm-Message-State: AOJu0YxUosJnRSCZJgWV9A5UKNKNDAnyTzyDBtnEuWoCULvxFxzK5cza
+	eCOTCuYJqF3ui+HfL/3qio1GFN4ytdzx5XOo1JVJHyNwODhPeBRxxFtiPGX8bFE=
+X-Google-Smtp-Source: AGHT+IFas4iCmt9N2Qz4LAG1IBm/XWmInsiV/vp1l/Qxp+N/YOxIJ/vzXeahtzs/C2xTzNQoANZgRA==
+X-Received: by 2002:a05:6512:2245:b0:52c:c9e4:3291 with SMTP id 2adb3069b0e04-52eb99d653amr10339784e87.60.1720786803441;
+        Fri, 12 Jul 2024 05:20:03 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc47sm342739266b.11.2024.07.12.05.20.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 05:20:02 -0700 (PDT)
+Message-ID: <767cfb35-ed52-4d51-b1bb-c69ac5b593b4@linaro.org>
+Date: Fri, 12 Jul 2024 14:20:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lm2S/ia/Jix3RenHRKu3xYElKTHcTZSwP5qZYKgYMUWXoG1ve7T
- 6Q+Wl15ndk9Iw2C+l2yM8lICcRP3yYA2lc3bWmbBB7nKGfuGnC4EVyaaIGiW8wW+qLb431s
- Rl2sMfpOG2n6tRCPEf5CHtL21I9tKfXXn/+reZqi9UR0mgrTvAF2EUxl3PcTDT/75Fp8BwE
- SAurO5IvvitbC23R2lgYg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rIDjLwQxHc0=;4umfiRb0yubOyPWx0dtO+KQlfv5
- KA40BSQ62n4jOdARMgZaJ+c/ZYGeSm4rmwOYxvgg/KPT6oS0UrP+zF3uYBPmXBG1Ev3QVjqcv
- 1EvnqFg6CnIFn1lJIcBCKZhjmRkeGwkZjEXP9FUPZ1mtNXMEvPsYESzLNLNqKFZ6DI/Nrvx1o
- VzKLVhAjTz6R/uuRGaVRfac50h43VoH6gFrdV8Ngv06797bBytrUcfxmlrs10jmtIkuRGoUUc
- 6EqGxLBa6321EUU9GumKx3SRS/LuTICIe1iInRouOguXn6w0prii5RC1NYkzLNxP/lUz4xXQD
- hGDg/1+xWW4Bzl4C+7+hW9Wszy+sg+6z8vB+3IYWx9ZukT/SvmwWSjyanV97EJ5wlscIKyjB6
- +BPzPQfsMl/z7B/q/JiZnPy3oluBoxDmmukgVWnd2AfuHBoIaCq3DsKjwUWsF1bkDz+a4F1lD
- n2KtSSk+bZQw0GFfdGOxPh5pFxkkeQnytfIt+C5hNDXGGRlLa6qNVxd1GBbHQyqxujymz+RsG
- qUNbBoAvF/3mlkQx5GJJzKKkffMGHiGdi9HXfgIT0gBcRgVN8GiYQd7xPTLk5OXXsBCOE6VmR
- zBxQcJIl37QGu6sSHOnM80G+GWkqIZm/Nqfcu+Gbw83RsDNlB9ZMS0ZAEs7Y4m0QY64iZZM2h
- roiMrxOgaMkqijzZzw2Xq8Y5hG6TemIxsLszCruxicijyqzoYCfohTGouMlWMXmaJSGH44y+z
- Kii650jpesv0D8WulrMpxjS+ITEwJjm29R2sbFoLFxwTj5xWERtkMpFfN94sdolwlHlEL8AOZ
- GznLH2Zif+acMLEipRRdrwLQ==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 4/7] soc: qcom: Utilize qcom scmi vendor protocol for bus
+ dvfs
+To: Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
+ cristian.marussi@arm.com, andersson@kernel.org, jassisinghbrar@gmail.com,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, quic_rgottimu@quicinc.com,
+ quic_kshivnan@quicinc.com, conor+dt@kernel.org,
+ Amir Vajid <avajid@quicinc.com>
+References: <20240117173458.2312669-1-quic_sibis@quicinc.com>
+ <20240117173458.2312669-5-quic_sibis@quicinc.com>
+ <7e48e51e-e16a-41b9-800d-960c627b8da6@linaro.org>
+ <d24a3372-8ee5-528d-09ac-86c64f0896e5@quicinc.com>
+ <027b9ba8-20b7-4d20-8128-156398f21902@linaro.org>
+ <854f324d-c9dc-affc-6f6f-0219bcbc1e1b@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <854f324d-c9dc-affc-6f6f-0219bcbc1e1b@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-I did some experiments on the rss counter bug. The next patch is made for =
-linux-next-20240613
-with commit 1c29a32ce65f4cd0f1c0f9 reverted. Then I simply inlined the cod=
-e of do_vmi_unmap()
-and do_vmi_align_munmap() into mmap_region(). This version of the code wor=
-ks fine and does not
-show the rss counter bug.
+On 1.07.2024 10:44 AM, Sibi Sankar wrote:
+> 
+> 
+> On 6/19/24 01:07, Konrad Dybcio wrote:
+>>
+>>
+>> On 2/12/24 11:33, Sibi Sankar wrote:
+>>
+>> [...]
+>>
+>>
+>>>>
+>>>>> +            monitor->mon_type = (of_property_read_bool(monitor_np, "qcom,compute-mon")) ? 1 : 0;
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index f95af72ddc9f..0f020c535c83 100644
-=2D-- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -733,7 +733,6 @@ int vma_expand(struct vma_iterator *vmi, struct vm_are=
-a_struct *vma,
- 	vma_iter_store(vmi, vma);
+BTW: the ternary operator here is unnecessary, but to make it readable,
+please make an enum / #define describing the two, as magic values are
+discouraged
 
- 	vma_complete(&vp, vmi, vma->vm_mm);
--	validate_mm(vma->vm_mm);
- 	return 0;
+>>>>> +            monitor->ipm_ceil = (of_property_read_bool(monitor_np, "qcom,compute-mon")) ? 0 : 20000000;
 
- nomem:
-@@ -2911,6 +2910,8 @@ unsigned long mmap_region(struct file *file, unsigne=
-d long addr,
- 	struct vm_area_struct *next, *prev, *merge;
- 	pgoff_t pglen =3D len >> PAGE_SHIFT;
- 	unsigned long charged =3D 0;
-+	struct vma_munmap_struct vms;
-+	struct ma_state mas_detach;
- 	unsigned long end =3D addr + len;
- 	unsigned long merge_start =3D addr, merge_end =3D end;
- 	bool writable_file_mapping =3D false;
-@@ -2933,12 +2934,46 @@ unsigned long mmap_region(struct file *file, unsig=
-ned long addr,
- 			return -ENOMEM;
- 	}
+Given that you check the same condition here, an if-else block may be
+more readable, perhaps some comment like:
 
--	/* Unmap any existing mapping in the area */
--	error =3D do_vmi_munmap(&vmi, mm, addr, len, uf, false);
--	if (error =3D=3D -EPERM)
--		return error;
--	else if (error)
--		return -ENOMEM;
-+	/* Find the first overlapping VMA */
-+	vma =3D vma_find(&vmi, end);
-+	if (vma) {
-+		struct maple_tree mt_detach;
-+
-+		/*
-+		 * Check if memory is sealed before arch_unmap.
-+		 * Prevent unmapping a sealed VMA.
-+		 * can_modify_mm assumes we have acquired the lock on MM.
-+		 */
-+		if (unlikely(!can_modify_mm(mm, addr, end))) {
-+			return -EPERM;
-+		}
-+
-+		 /* arch_unmap() might do unmaps itself.  */
-+		arch_unmap(mm, addr, end);
-+
-+		mt_init_flags(&mt_detach, vmi.mas.tree->ma_flags & MT_FLAGS_LOCK_MASK);
-+		mt_on_stack(mt_detach);
-+		mas_init(&mas_detach, &mt_detach, 0);
-+
-+		init_vma_munmap(&vms, &vmi, vma, addr, end, uf, false);
-+		error =3D vms_gather_munmap_vmas(&vms, &mas_detach);
-+		if (error) {
-+			validate_mm(mm);
-+			return -ENOMEM;
-+		}
-+
-+		vma =3D NULL;
-+		error =3D vma_iter_clear_gfp(&vmi, addr, end, GFP_KERNEL);
-+		if (error) {
-+			abort_munmap_vmas(&mas_detach);
-+			return -ENOMEM;
-+		}
-+
-+		/* Point of no return */
-+		vms_complete_munmap_vmas(&vms, &mas_detach);
-+	} else {
-+		// TODO
-+	}
+ipm_ceil = 0; /* Always keep a vote, no matter the bus traffic */
 
- 	/*
- 	 * Private writable mapping: check memory availability
+>>>>
+>>>> What does it even mean for a monitor to be a compute mon?
+>>>>
+>>>
+>>> When a monitor is marked compute-mon it means that the table is
+>>> followed religiously irrespective whether the instruction per miss
+>>> count threshold (ipm) is exceeded or not. Equivalent to having
+>>> a cpufreq map -> l3/DDR bw mapping upstream.
 
-The next patch now moves the call to vms_complete_munmap_vmas() towards th=
-e end of
-mmap_region(). This code is also free of the rss counter bug.
+I.. don't really like that this exists as something that requires OS
+intervention, but since it does, I suppose it takes a couple lines of
+code less than adding OPP entries for each and every PSTATE and NUM_SKUs..
 
-commit a4b24bb18dde627792297455befcc465e45be66d
-Author: Bert Karwatzki <spasswolf@web.de>
-Date:   Thu Jun 20 17:02:08 2024 +0200
+>>
+>> I'm sorta puzzled why the OS would even be required to program this, since
+>> L3/DDR/CPU frequencies are known by various stages of boot and secure firmware
+>> too.
+>>
+>> What happens if we omit this? Is the default configuration identical to this?
+>> Or does it need explicit enabling?
+> 
+> CPUCP isn't expected to know the various ranges supported by the memory
+> buses it can vote on and from a sandboxing perspective one would want to
+> control what CPUCP has access to as well. It also can't arrive at the
+> exact values just from the OPP tables we pass on as well. So it doesn't
+> have any default values to start off with. For all these reasons, they
+> need explicit setting up and without it, the algorithm wouldn't function
+> as expected.
 
-    mm: mmap: push back vms_complete_munmap_vmas()
+Ok, I was thinking more of a scenario where XBL/GH would take care of this..
 
-    In order to to debug the rss counter bug we're going to push back
-    vms_complete_munmap_vmas() in mmap_region.
+Throwing in my 5 cents, this could perhaps be moved there in future FW
+designs (the earlier in the chain the better, especially to keep kicking
+out gunyah a viable option), as I don't think Linux is the greatest place
+for storing one-shot configuration data, especially for blocks that already
+run their own firmware..
 
-    Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+I would imagine this could speed up booting as well, if DRAM was appropriately
+scaled during the boot splash stage (unless it already is either scaled or
+pinned to FMAX)
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 0f020c535c83..4fb9dd2e6d6e 100644
-=2D-- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2970,9 +2970,9 @@ unsigned long mmap_region(struct file *file, unsigne=
-d long addr,
- 		}
-
- 		/* Point of no return */
--		vms_complete_munmap_vmas(&vms, &mas_detach);
- 	} else {
--		// TODO
-+		vms.end =3D 0;
-+		vms.nr_pages =3D 0;
- 	}
-
- 	/*
-@@ -3016,6 +3016,11 @@ unsigned long mmap_region(struct file *file, unsign=
-ed long addr,
- 		vma_iter_next_range(&vmi);
- 	}
-
-+	if (vms.end) {
-+		vms_complete_munmap_vmas(&vms, &mas_detach);
-+		vms.end =3D 0; // avoid double unmap below
-+	}
-+
- 	/* Actually expand, if possible */
- 	if (vma &&
- 	    !vma_expand(&vmi, vma, merge_start, merge_end, vm_pgoff, next)) {
-@@ -3026,7 +3031,8 @@ unsigned long mmap_region(struct file *file, unsigne=
-d long addr,
- 	if (vma =3D=3D prev)
- 		vma_iter_set(&vmi, addr);
- cannot_expand:
--
-+	if (vms.end)
-+		vms_complete_munmap_vmas(&vms, &mas_detach);
- 	/*
- 	 * Determine the object being mapped and call the appropriate
- 	 * specific mapper. the address has already been validated, but
-
-The next patch move vms_complete_munmap_vmas() a little further beyond the
-call to vma_expand(). This code contain the rss counter bug.
-
-commit 02d6be2410fa503d008f4cc8dcd1518ca56f8793
-Author: Bert Karwatzki <spasswolf@web.de>
-Date:   Thu Jun 20 20:07:13 2024 +0200
-
-    mm: mmap: push back vms_complete_munmap_vmas()
-
-    This commit actually show the rss counter bug, while the previus does
-    not!
-
-    Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 4fb9dd2e6d6e..c5f4b4b6fb84 100644
-=2D-- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3016,14 +3016,12 @@ unsigned long mmap_region(struct file *file, unsig=
-ned long addr,
- 		vma_iter_next_range(&vmi);
- 	}
-
--	if (vms.end) {
--		vms_complete_munmap_vmas(&vms, &mas_detach);
--		vms.end =3D 0; // avoid double unmap below
--	}
--
- 	/* Actually expand, if possible */
- 	if (vma &&
- 	    !vma_expand(&vmi, vma, merge_start, merge_end, vm_pgoff, next)) {
-+		if (vms.end) {
-+			vms_complete_munmap_vmas(&vms, &mas_detach);
-+		}
- 		khugepaged_enter_vma(vma, vm_flags);
- 		goto expanded;
- 	}
-
-
-So there might be some unwanted interaction between vms_complete_munmap_vm=
-as though
-I've no yet figured out what exactly is happening. Hope this will be helpf=
-ul in
-solving the problem.
-
-Bert Karwatzki
+Konrad
 
 
