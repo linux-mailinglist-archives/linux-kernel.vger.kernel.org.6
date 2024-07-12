@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-251008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F1F92FFB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:24:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC1792FFB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 19:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641E31F23810
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:24:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E74BD1C221E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 17:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AA5171085;
-	Fri, 12 Jul 2024 17:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7A6172BD6;
+	Fri, 12 Jul 2024 17:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYivK8Xm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="LzQ4is3I"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB8F17BCD;
-	Fri, 12 Jul 2024 17:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83B21DFE1
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720805085; cv=none; b=VEhjoYzYsoxCNyo6NWd0MqNsBHPz9NO+XNzRHardo29ZfUWiYBhTcq8hEfxdS86tUch2PJGH+a77M4YgCKUhOU5QEjP7ln13cV/bdqTm+mcaQ9+nCVnr4z8rnS+/2elOh73vZwfLqkqbWwJ6wll52VO2P7pdz0dAQILedlJxvDM=
+	t=1720805100; cv=none; b=L5tihcw+JFvt6R5XW5VmNc6tzmAAw5dHmXKIBP8xw00gFQjHOYu1a2xrho9zwYWj0i9GSPMtk14w+mgUFpXrOd9M4UpT4ysILcfzwpfFW0t/wNSrypYFsyEj2SOMho4443fdWkBrG+uzLI+t0nKqGnjqvG5JR0HcLq6NGXV6i8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720805085; c=relaxed/simple;
-	bh=OJu4VM4Q1azvsXUV3mG/arjvP6QdbSHXfdhgStH8WLs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZsFLN/Ic43fONaQ/5WBlBwIzjqy8xdkRfPoEazRbTE8p6tWch6eF/OvsCPCjmq0K7wE4Kias6CPN3I/aqalAbQEXfpaXZZ/Mfw310C+YE4d4MFrWRzYVRWyRN/dXVgjSa/b/719ZOB+FMnuL1hZf9h3F+FIJJKPfAgy6DUMNq38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYivK8Xm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB81DC32782;
-	Fri, 12 Jul 2024 17:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720805084;
-	bh=OJu4VM4Q1azvsXUV3mG/arjvP6QdbSHXfdhgStH8WLs=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=pYivK8Xm29iWhXe/4lO73xQKwhGrr80KecX+kIf/gKQWlEcR4+iOahnbH5IQivOvI
-	 f4UVAdj2PJHaNyNipeeby3YoP/TwBMC4GMWPYnFl0qXqC3vFju7Omfw80mq6yEwGz/
-	 npn+CDKs/IeuBePQWrTY0bvOYM4bJOYSfThl6nRNmF1SwE4ph/yATcUrofMk1SDFHa
-	 2AUrkWzbhb3B7zWWF6jy+nf6tHUTLID+4lF+qAl7FQQc9yvgTCWuUtAxQWTKOwqYwJ
-	 Jwdp/gDOsZ4R6Bv46Z+P5N8ldOjmXNAsYvUJfL/U0t0+tDZz9E79JZkDYVprruLK4F
-	 EEaCtq28MMg9Q==
-Message-ID: <a6e2d6ea-a377-48f5-9481-764af1766593@kernel.org>
-Date: Fri, 12 Jul 2024 19:24:36 +0200
+	s=arc-20240116; t=1720805100; c=relaxed/simple;
+	bh=oItytILQOCwm+LxnV+klJYRd5+wEjT3G4pzPFdDn7vM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a4SAhRL9jWENrl5TXz+YKzlyfO/SGE6El9c+JiRrXExa5iYa5NKmtilWIFodNnnMzzg2kqRg92wcSgbRdldaYw/SbqWxc4NhjdQBZ3mwAzJ6pjy9aa59w//Q45m5MFgf0jW+7n548Nye7CZ/9GBIo0Bbr3COMBmnH9Q6C0zmaa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=LzQ4is3I; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso15536365e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1720805097; x=1721409897; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/kcUOj+B7ix4wFrjmiIqRB4s9K/GptfFcWjVq2YUd68=;
+        b=LzQ4is3IurDoCi3XW0F4F9lk/YERMzt6QzeJ3GPRsPjE2cXMgaFewe2/YPfHkYG7DG
+         GZt2zEhcIIVDxsxZEjWctCQ1VWGjOGh3O0XpdAKLeSoYyR/Amfp8fO9qvFPrxIcoOCJv
+         imjVXsEz26M2lfPQGK540oY+yg0e8Yg18lJx5uNOb8ZJfMqAkjBfO8nHQJ9292vxqASp
+         qIALyw/2DuYB31gv03kx16mq7Alq8iioCJ4Ac3pHChftZdI1w1N9K18HBpYzblwWCT+i
+         i5gjrRf+0vHhmx4KBV9ygTA4L0pgA4eJyNSyl0YM4im0G9g5Ufdobp5djhBVSgUjvwYe
+         xdGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720805097; x=1721409897;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/kcUOj+B7ix4wFrjmiIqRB4s9K/GptfFcWjVq2YUd68=;
+        b=wkZvDxJ+8rEMdsbYzR8OpIl2qZbZfFQxeM+O2AS1BjLURKsLooEPUd0xdj1Xjto8lb
+         wuBK4JOr0pUBE+ellKxiKLSF/Dc5tHcJ701x6CYQCYeRrgP4h4QDOLvIkU0y4Na6WAfw
+         0BrydEC6ra3n51dtk+W3rPs1kEMbGRkQ9SaOiA3gE6cjnhVv9x3uEilJMXN2cKmWTVr7
+         Gw4puMZzXlYzzGrqKXIGLnumB6VHEm8Um3VKiGs+00T6rNb2ZbyLpk7lmJynQYcGQ8xc
+         6vG3X+HXYYu941d4n2kX2a0clmsvtBXRQak8tutuSWuGZGHmN6pcNLCjnqYTSpR+ZIJY
+         DiOA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9EOItVAG4CIPzZbiAvhaFLthxjuhI0VSLgrjgZh7gQJExLHYDnaQwToMVBnWfklakPWFaCxHFtdoSxAXOZ04/Srw6B1n1V83yp6Eb
+X-Gm-Message-State: AOJu0YyXWZOYWJyQ73GQfleEst3QSGHYtlbw7T9Pn2YQzoiBEgQhqPX2
+	0lxKy0BADORtjr5y7cRSGZG2vZ+ybIb1j1IR8g1ALq9xC0JsvJy2TB1uYKL7sFw=
+X-Google-Smtp-Source: AGHT+IEbwv2aqYJrQ4eYr+eTCvp2ZVYaXErHbWTEnoJWSTMpnS3FoLzus6WA+pYLiP74DOnPbffshw==
+X-Received: by 2002:a05:600c:1505:b0:427:98b4:624b with SMTP id 5b1f17b1804b1-42798b4628bmr39930825e9.24.1720805097322;
+        Fri, 12 Jul 2024 10:24:57 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367fba1b15esm4218403f8f.22.2024.07.12.10.24.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 10:24:56 -0700 (PDT)
+Message-ID: <3ad435b0-c110-4254-9071-b2397cdc7f9e@tuxon.dev>
+Date: Fri, 12 Jul 2024 20:24:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,155 +75,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: display: st,stm32-ltdc: Document stm32mp25
- compatible
-To: Yannick Fertre <yannick.fertre@foss.st.com>,
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
- Philippe Cornu <philippe.cornu@foss.st.com>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240712131624.98898-1-yannick.fertre@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v9 0/9] watchdog: rzg2l_wdt: Add support for RZ/G3S
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240712131624.98898-1-yannick.fertre@foss.st.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: wim@linux-watchdog.org, linux@roeck-us.net, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+ geert+renesas@glider.be, magnus.damm@gmail.com, biju.das.jz@bp.renesas.com,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ claudiu.beznea.uj@bp.renesas.com
+References: <20240531065723.1085423-1-claudiu.beznea.uj@bp.renesas.com>
+ <7f99cb63-0c6b-460e-934b-4e7e8d84bb3a@tuxon.dev>
+ <CAMuHMdXN7xCtjRraTu=3JS6x8GCo7iuS40PVTN_DPvhA-AMqfw@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdXN7xCtjRraTu=3JS6x8GCo7iuS40PVTN_DPvhA-AMqfw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/07/2024 15:16, Yannick Fertre wrote:
-> Add "st,stm32mp25-ltdc" compatible for SOC MP25. This new SOC introduces
-> new clocks (bus, ref & lvds). Bus clock was separated from lcd clock.
-> New sources are possible for lcd clock (lvds / ref).
+Hi, Geert,
+
+On 12.07.2024 20:10, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
-> Signed-off-by: Yannick Fertre <yannick.fertre@foss.st.com>
-> ---
->  .../bindings/display/st,stm32-ltdc.yaml       | 29 +++++++++++++++++--
->  1 file changed, 27 insertions(+), 2 deletions(-)
+> On Fri, Jul 12, 2024 at 5:39 PM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+>> Can you please let me know if there is anything you would like me to
+>> address for this series?
 > 
-> diff --git a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
-> index d6ea4d62a2cf..680669c44b80 100644
-> --- a/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
-> +++ b/Documentation/devicetree/bindings/display/st,stm32-ltdc.yaml
-> @@ -12,7 +12,9 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    const: st,stm32-ltdc
-> +    enum:
-> +      - st,stm32-ltdc
-> +      - st,stm32mp25-ltdc
->  
->    reg:
->      maxItems: 1
-> @@ -24,7 +26,9 @@ properties:
->      minItems: 1
->  
->    clocks:
-> -    maxItems: 1
-> +    minItems: 1
+> Your series was merged in watchdog/master two days ago, and is part
+> of next-20240711 and later.
 
-You miss maxItems
+Didn't noticed, thanks!
 
-> +    items:
-> +      description: Lcd Clock
+And sorry for the noise.
 
-That's not correct and drop... or describe the items like:
-items:
- - description:
+Claudiu
 
->  
->    clock-names:
-
-So clock-names are probably de-synced now...
-
->      items:
-> @@ -42,6 +46,27 @@ properties:
->        - for internal dpi input of the MIPI DSI host controller.
->        Note: These 2 endpoints cannot be activated simultaneously.
->  
-> +
-> +allOf:
-
-This goes after required: block, see example schema
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - st,stm32mp25-ltdc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: bus clock
-> +            - description: reference clock
-> +            - description: lvds clock
-> +        clock-names:
-> +          items:
-> +            - const: bus
-> +            - const: ref
-> +            - const: lvds
-
-else:
-  maxItems for both entries
-
-> +
->  required:
->    - compatible
->    - reg
-
-Best regards,
-Krzysztof
-
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
