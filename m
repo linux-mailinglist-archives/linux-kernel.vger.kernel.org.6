@@ -1,357 +1,129 @@
-Return-Path: <linux-kernel+bounces-250278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB3A92F5FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:12:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3229192F601
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B33E1F23198
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:12:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F8EF1C22927
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34851422D8;
-	Fri, 12 Jul 2024 07:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2EB13DDD5;
+	Fri, 12 Jul 2024 07:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OvnSyAmV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fc7jdzGb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3329C140E38
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B44EAC7
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720768317; cv=none; b=C8/B+mHmAqRZ0wVIlIJRDGORDRcCSHyX0uyBfR40nQjkew1aLF/Vgv34C059pXzxgi5K46IZINcFTi5Q0XR7uPCXz/3rE4ZIuD1T9syLemi1L3Quoq+BdYWjRkViBrmMLMX3KHdECvp7OFdDyURPUkCrnt+mSTUY0XZeIOjQ9eI=
+	t=1720768336; cv=none; b=BXFV+Z0KbT8dgJhjmQZYZp2WEmC33+OUitd613Ic3LkExrlH6vd6gdTYZCSbpCvpyQK2Jlcxoj6z+HHy9tYBJrB0GQQV5AmYR/Pgj+uPrEnCiz/EJuEXIH6Mog69xYhoYbdbWe1crye/pEmNx+trdmWGADhKrhM+lWYuW84zQns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720768317; c=relaxed/simple;
-	bh=0pKCmf10r9yYFdL5aCHngbqydl66XAlUW0u7PNHEr8M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-type; b=lWDJwYFcIcngvSRFhNQqPG3OQ+UvxL2DGKqJ8GdZsfcZS0y7J1QX/6r5gktZfARWXmcLql2Z3HdYYMDHQDNmB2oeeWKMrnnoFAjPp/Zh/EYhONSSE9W+Q/d3lZo14fgtBYYSIVGCu25FF2/zaB4lI1XPIhyOvLt4tFCwOj64sJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OvnSyAmV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720768315;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KUlRxt+SbbdMSATIXk4T5GOnsYlIh198Ikc2D/0smXE=;
-	b=OvnSyAmVbYCm8maZ2ysB/OUCpO9JBgQpktYailA6sND0K0U26kQFFoO6ZtHGn+2/7FdZ/S
-	ym7ERYX5kU8LoqnbMUuhLZUCX9ljhuIFyOF4s9wwib0H+pOD2hN/lGHL3WkkbD0kB8EaQy
-	kMLbQprV83chS0INqGFh3kHPhwntM9o=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-103-6gWCQIfiM4CfTHJ0r_jo4Q-1; Fri,
- 12 Jul 2024 03:11:52 -0400
-X-MC-Unique: 6gWCQIfiM4CfTHJ0r_jo4Q-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 858B319560B3;
-	Fri, 12 Jul 2024 07:11:51 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.45.224.7])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4DDF21955F3B;
-	Fri, 12 Jul 2024 07:11:49 +0000 (UTC)
-From: Jan Stancek <jstancek@redhat.com>
-To: dhowells@redhat.com,
-	dwmw2@infradead.org,
-	zxu@redhat.com,
-	keyrings@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	jstancek@redhat.com
-Subject: [PATCH 3/3] sign-file,extract-cert: use pkcs11 provider for OPENSSL MAJOR >= 3
-Date: Fri, 12 Jul 2024 09:11:16 +0200
-Message-Id: <10c0539a6103f4da2eb19765c83800594ebe2dff.1720728319.git.jstancek@redhat.com>
-In-Reply-To: <cover.1720728319.git.jstancek@redhat.com>
-References: <cover.1720728319.git.jstancek@redhat.com>
+	s=arc-20240116; t=1720768336; c=relaxed/simple;
+	bh=p7bZwNIwfqiebUvE8LelOzg//t5QYg1L+hxJ8UHPRVA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IcsoqKZT9bx1KXosMAa/1Hh/maDQrOqszfGJSOXyXEaOA115L7jJ8Jv6WRJhszkfVvHfc+WtlUpX4/eaEvnXS6JiiFg9rgUcpBpLSJ86BROH9vF3/ECEevux+n+fcrRzkeExhiLu0lmsM7vIHeyW/gHLv1drYD5fA0xR6EDb/uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fc7jdzGb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D8CEC3277B;
+	Fri, 12 Jul 2024 07:12:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720768335;
+	bh=p7bZwNIwfqiebUvE8LelOzg//t5QYg1L+hxJ8UHPRVA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Fc7jdzGbXkGIkBmfh8rfbzLmHt+A/Li6WuKA6UX7ZokTZQ0V2jyk5Bh1ZdXrCCovG
+	 dKsS7uCijcWn6SXG6dueSz3JNyk04WDaqmcaqf/tAn/JoyHmveQWa6ZcLqpF8UlVmv
+	 q6xkR66yHwM+RcEpn5WTCLBLnRKw9HH3alIX2fQL3W7fhdmDR3OhzTlwWQqPu1T6pj
+	 dpS6FNJ3dFu3DEzAtHXHu8odvK0FPFnEcuGmwZH2qhVospArvdqKCXvL8KvfXLk8VA
+	 SIw4kuPnX1c48+mFejaP7aHfJDupOHPGqv3/TrgxYB9uWrpAyhTUaWlR9kpnBkQ17a
+	 DIsARlVSa9SkA==
+Message-ID: <2b5ab848-1ce1-4f5d-bb7f-2286bf76e6cf@kernel.org>
+Date: Fri, 12 Jul 2024 15:12:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/5] Add inline tail support
+To: Wu Bo <bo.wu@vivo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ Wu Bo <wubo.oduw@gmail.com>
+References: <cover.1720515215.git.bo.wu@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <cover.1720515215.git.bo.wu@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-ENGINE API has been deprecated since OpenSSL version 3.0 [1].
-Distros have started dropping support from headers and in future
-it will likely disappear also from library.
+On 2024/7/10 9:33, Wu Bo wrote:
+> The inode in F2FS occupies an entire 4k block. For many small files, this means
+> they consume much more space than their actual size. Therefore, there is
+> significant potential to better utilize the inode block space.
+> 
+> Currently, F2FS has two features to make use of the inode block space: inline
+> data and inline xattr.
+> 
+> Inline data stores file which size is smaller then 3.5k in inode block. However,
+> for slightly larger small files, there still have much waste.
+> For example, a 5k file requires 3 blocks, totaling 12k of space, which is
+> more than twice the size of the file itself!
+> 
+> Additionally, the end of a file often does not occupy an entire block. If we can
+> store the end of the file data within the inode block, we can save an entire
+> block for the file. This is particularly important for small files.
+> 
+> In fact, the current inline data is a special case of inline tail, and
+> inline tail is an extension of inline data.
+> 
+> To verify the benefits of inline tail, I have developed these preliminary codes.
+> To make it simple, inline tail only on small files(<64k). And the layout of
+> an inode block is following:
+> 
+> | inode block     | 4096 |     inline tail enable    |
+> | --------------- | ---- | --------------------------|
+> | inode info      | 360  |                           |
+> | --------------- | ---- | --------------------------|
+> |                 |      | extra info         | 0~36 |
+> |                 |      | **compact_addr[16] | 64   |
+> | addr table[923] | 3692 | reserved           | 4    |
+> |                 |      | **tail data        |      |
+> |                 |      | inline_xattr       | 200  |
+> | --------------- | ---- | --------------------------|
+> | nid table[5]    | 20   |
+> | node footer     | 24   |
+> 
+> I tested inline tail by copying the source code of Linux 6.9.7. The storage
+> space was reduced by approximately 8%. Additionally, due to the reduced IO, the
+> copy time also reduced by around 10%.
 
-It has been superseded by the PROVIDER API, so use it instead
-for OPENSSL MAJOR >= 3.
+Wu Bo,
 
-[1] https://github.com/openssl/openssl/blob/master/README-ENGINES.md
+Thanks for the effort, but can you please change user-space tools as well?
+since this patchset changes layout of inode.
 
-Signed-off-by: Jan Stancek <jstancek@redhat.com>
----
- certs/extract-cert.c | 103 ++++++++++++++++++++++++++++++-------------
- scripts/sign-file.c  |  95 +++++++++++++++++++++++++++------------
- 2 files changed, 140 insertions(+), 58 deletions(-)
+Thanks,
 
-diff --git a/certs/extract-cert.c b/certs/extract-cert.c
-index 61bbe0085671..7d6d468ed612 100644
---- a/certs/extract-cert.c
-+++ b/certs/extract-cert.c
-@@ -21,17 +21,18 @@
- #include <openssl/bio.h>
- #include <openssl/pem.h>
- #include <openssl/err.h>
--#include <openssl/engine.h>
--
-+#if OPENSSL_VERSION_MAJOR >= 3
-+# define USE_PKCS11_PROVIDER
-+# include <openssl/provider.h>
-+# include <openssl/store.h>
-+#else
-+# if !defined(OPENSSL_NO_ENGINE) && !defined(OPENSSL_NO_DEPRECATED_3_0)
-+#  define USE_PKCS11_ENGINE
-+#  include <openssl/engine.h>
-+# endif
-+#endif
- #include "ssl-common.h"
- 
--/*
-- * OpenSSL 3.0 deprecates the OpenSSL's ENGINE API.
-- *
-- * Remove this if/when that API is no longer used
-- */
--#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
--
- #define PKEY_ID_PKCS7 2
- 
- static __attribute__((noreturn))
-@@ -61,6 +62,66 @@ static void write_cert(X509 *x509)
- 		fprintf(stderr, "Extracted cert: %s\n", buf);
- }
- 
-+static X509 *load_cert_pkcs11(const char *cert_src)
-+{
-+	X509 *cert = NULL;
-+#ifdef USE_PKCS11_PROVIDER
-+	OSSL_STORE_CTX *store;
-+
-+	if (!OSSL_PROVIDER_try_load(NULL, "pkcs11", true))
-+		ERR(1, "OSSL_PROVIDER_try_load(pkcs11)");
-+	if (!OSSL_PROVIDER_try_load(NULL, "default", true))
-+		ERR(1, "OSSL_PROVIDER_try_load(default)");
-+
-+	store = OSSL_STORE_open(cert_src, NULL, NULL, NULL, NULL);
-+	ERR(!store, "OSSL_STORE_open");
-+
-+	while (!OSSL_STORE_eof(store)) {
-+		OSSL_STORE_INFO *info = OSSL_STORE_load(store);
-+
-+		if (!info) {
-+			drain_openssl_errors(__LINE__, 0);
-+			continue;
-+		}
-+		if (OSSL_STORE_INFO_get_type(info) == OSSL_STORE_INFO_CERT) {
-+			cert = OSSL_STORE_INFO_get1_CERT(info);
-+			ERR(!cert, "OSSL_STORE_INFO_get1_CERT");
-+		}
-+		OSSL_STORE_INFO_free(info);
-+		if (cert)
-+			break;
-+	}
-+	OSSL_STORE_close(store);
-+#elif defined(USE_PKCS11_ENGINE)
-+		ENGINE *e;
-+		struct {
-+			const char *cert_id;
-+			X509 *cert;
-+		} parms;
-+
-+		parms.cert_id = cert_src;
-+		parms.cert = NULL;
-+
-+		ENGINE_load_builtin_engines();
-+		drain_openssl_errors(__LINE__, 1);
-+		e = ENGINE_by_id("pkcs11");
-+		ERR(!e, "Load PKCS#11 ENGINE");
-+		if (ENGINE_init(e))
-+			drain_openssl_errors(__LINE__, 1);
-+		else
-+			ERR(1, "ENGINE_init");
-+		if (key_pass)
-+			ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0), "Set PKCS#11 PIN");
-+		ENGINE_ctrl_cmd(e, "LOAD_CERT_CTRL", 0, &parms, NULL, 1);
-+		ERR(!parms.cert, "Get X.509 from PKCS#11");
-+		cert = parms.cert;
-+#else
-+		fprintf(stderr, "no pkcs11 engine/provider available\n");
-+		exit(1);
-+#endif
-+	return cert;
-+}
-+
- int main(int argc, char **argv)
- {
- 	char *cert_src;
-@@ -89,28 +150,10 @@ int main(int argc, char **argv)
- 		fclose(f);
- 		exit(0);
- 	} else if (!strncmp(cert_src, "pkcs11:", 7)) {
--		ENGINE *e;
--		struct {
--			const char *cert_id;
--			X509 *cert;
--		} parms;
-+		X509 *cert = load_cert_pkcs11(cert_src);
- 
--		parms.cert_id = cert_src;
--		parms.cert = NULL;
--
--		ENGINE_load_builtin_engines();
--		drain_openssl_errors(__LINE__, 1);
--		e = ENGINE_by_id("pkcs11");
--		ERR(!e, "Load PKCS#11 ENGINE");
--		if (ENGINE_init(e))
--			drain_openssl_errors(__LINE__, 1);
--		else
--			ERR(1, "ENGINE_init");
--		if (key_pass)
--			ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0), "Set PKCS#11 PIN");
--		ENGINE_ctrl_cmd(e, "LOAD_CERT_CTRL", 0, &parms, NULL, 1);
--		ERR(!parms.cert, "Get X.509 from PKCS#11");
--		write_cert(parms.cert);
-+		ERR(!cert, "load_cert_pkcs11 failed");
-+		write_cert(cert);
- 	} else {
- 		BIO *b;
- 		X509 *x509;
-diff --git a/scripts/sign-file.c b/scripts/sign-file.c
-index bb3fdf1a617c..ba413dc69a20 100644
---- a/scripts/sign-file.c
-+++ b/scripts/sign-file.c
-@@ -27,17 +27,18 @@
- #include <openssl/evp.h>
- #include <openssl/pem.h>
- #include <openssl/err.h>
--#include <openssl/engine.h>
--
-+#if OPENSSL_VERSION_MAJOR >= 3
-+# define USE_PKCS11_PROVIDER
-+# include <openssl/provider.h>
-+# include <openssl/store.h>
-+#else
-+# if !defined(OPENSSL_NO_ENGINE) && !defined(OPENSSL_NO_DEPRECATED_3_0)
-+#  define USE_PKCS11_ENGINE
-+#  include <openssl/engine.h>
-+# endif
-+#endif
- #include "ssl-common.h"
- 
--/*
-- * OpenSSL 3.0 deprecates the OpenSSL's ENGINE API.
-- *
-- * Remove this if/when that API is no longer used
-- */
--#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
--
- /*
-  * Use CMS if we have openssl-1.0.0 or newer available - otherwise we have to
-  * assume that it's not available and its header file is missing and that we
-@@ -106,28 +107,66 @@ static int pem_pw_cb(char *buf, int len, int w, void *v)
- 	return pwlen;
- }
- 
--static EVP_PKEY *read_private_key(const char *private_key_name)
-+static EVP_PKEY *read_private_key_pkcs11(const char *private_key_name)
- {
--	EVP_PKEY *private_key;
-+	EVP_PKEY *private_key = NULL;
-+#ifdef USE_PKCS11_PROVIDER
-+	OSSL_STORE_CTX *store;
- 
--	if (!strncmp(private_key_name, "pkcs11:", 7)) {
--		ENGINE *e;
-+	if (!OSSL_PROVIDER_try_load(NULL, "pkcs11", true))
-+		ERR(1, "OSSL_PROVIDER_try_load(pkcs11)");
-+	if (!OSSL_PROVIDER_try_load(NULL, "default", true))
-+		ERR(1, "OSSL_PROVIDER_try_load(default)");
-+
-+	store = OSSL_STORE_open(private_key_name, NULL, NULL, NULL, NULL);
-+	ERR(!store, "OSSL_STORE_open");
- 
--		ENGINE_load_builtin_engines();
-+	while (!OSSL_STORE_eof(store)) {
-+		OSSL_STORE_INFO *info = OSSL_STORE_load(store);
-+
-+		if (!info) {
-+			drain_openssl_errors(__LINE__, 0);
-+			continue;
-+		}
-+		if (OSSL_STORE_INFO_get_type(info) == OSSL_STORE_INFO_PKEY) {
-+			private_key = OSSL_STORE_INFO_get1_PKEY(info);
-+			ERR(!private_key, "OSSL_STORE_INFO_get1_PKEY");
-+		}
-+		OSSL_STORE_INFO_free(info);
-+		if (private_key)
-+			break;
-+	}
-+	OSSL_STORE_close(store);
-+#elif defined(USE_PKCS11_ENGINE)
-+	ENGINE *e;
-+
-+	ENGINE_load_builtin_engines();
-+	drain_openssl_errors(__LINE__, 1);
-+	e = ENGINE_by_id("pkcs11");
-+	ERR(!e, "Load PKCS#11 ENGINE");
-+	if (ENGINE_init(e))
- 		drain_openssl_errors(__LINE__, 1);
--		e = ENGINE_by_id("pkcs11");
--		ERR(!e, "Load PKCS#11 ENGINE");
--		if (ENGINE_init(e))
--			drain_openssl_errors(__LINE__, 1);
--		else
--			ERR(1, "ENGINE_init");
--		if (key_pass)
--			ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0),
--			    "Set PKCS#11 PIN");
--		private_key = ENGINE_load_private_key(e, private_key_name,
--						      NULL, NULL);
--		ERR(!private_key, "%s", private_key_name);
-+	else
-+		ERR(1, "ENGINE_init");
-+	if (key_pass)
-+		ERR(!ENGINE_ctrl_cmd_string(e, "PIN", key_pass, 0),
-+				"Set PKCS#11 PIN");
-+	private_key = ENGINE_load_private_key(e, private_key_name,
-+			NULL, NULL);
-+	ERR(!private_key, "%s", private_key_name);
-+#else
-+	fprintf(stderr, "no pkcs11 engine/provider available\n");
-+	exit(1);
-+#endif
-+	return private_key;
-+}
-+
-+static EVP_PKEY *read_private_key(const char *private_key_name)
-+{
-+	if (!strncmp(private_key_name, "pkcs11:", 7)) {
-+		return read_private_key_pkcs11(private_key_name);
- 	} else {
-+		EVP_PKEY *private_key;
- 		BIO *b;
- 
- 		b = BIO_new_file(private_key_name, "rb");
-@@ -136,9 +175,9 @@ static EVP_PKEY *read_private_key(const char *private_key_name)
- 						      NULL);
- 		ERR(!private_key, "%s", private_key_name);
- 		BIO_free(b);
--	}
- 
--	return private_key;
-+		return private_key;
-+	}
- }
- 
- static X509 *read_x509(const char *x509_name)
--- 
-2.39.3
-
+> 
+> Wu Bo (5):
+>    f2fs: add inline tail mount option
+>    f2fs: add inline tail disk layout definition
+>    f2fs: implement inline tail write & truncate
+>    f2fs: implement inline tail read & fiemap
+>    f2fs: set inline tail flag when create inode
+> 
+>   fs/f2fs/data.c   | 61 ++++++++++++++++++++++++++++++++++++++++++++-
+>   fs/f2fs/f2fs.h   | 44 ++++++++++++++++++++++++++++++++-
+>   fs/f2fs/file.c   | 10 ++++++++
+>   fs/f2fs/inline.c | 64 ++++++++++++++++++++++++++++++++----------------
+>   fs/f2fs/inode.c  |  6 +++++
+>   fs/f2fs/namei.c  |  3 +++
+>   fs/f2fs/node.c   |  6 ++++-
+>   fs/f2fs/super.c  | 15 ++++++++++++
+>   8 files changed, 185 insertions(+), 24 deletions(-)
+> 
 
