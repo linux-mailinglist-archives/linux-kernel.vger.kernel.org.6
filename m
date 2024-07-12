@@ -1,126 +1,229 @@
-Return-Path: <linux-kernel+bounces-250519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F8292F8CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:19:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22AC92F8DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053441F237B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:19:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDD201C23029
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486AF154C1E;
-	Fri, 12 Jul 2024 10:19:44 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCD9149000
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB997158853;
+	Fri, 12 Jul 2024 10:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PVEvXw+z"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2767B156971
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 10:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720779583; cv=none; b=OQF+wvp7hak/KzoXNQIzWUAvFGGhDfzPUKkgZGBHQzyB+UYj/jnmqZxjFORGybeizm+nPv+vcF2WwlL6mr52/QowLTcLfmFcjIC20PK/L9VPV6eZj0GEmstuXhwHn0LaVMni/isSyYXFW0ywT7JmxJFJPlGhnjJgcOvwQe8E4/U=
+	t=1720779733; cv=none; b=eVR9UldAqR8iyWkIc9CWClsl693O247C9OTw3NWtOpbODNEwO563Scvn9SSiQ7UOaMernUR1c1XuWgLLzsPdB61OxorqvVIwdRw+JTZdJuRNAdAHOYkGUgd6EfUhT6Wj+f7tYYsuAKd0n3Jy2nFVJhSGfRJuZ20+8HCG4Wb0hbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720779583; c=relaxed/simple;
-	bh=m8Fo37dbQHXF1VOFOJdFLjATgdftBN4o1j2llJWm8TU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ZCcjqi+d5iSexgAipDXRmhMaH3/qC6uPABwkGZstoOl+DdOpzXsvZm44Yp+08c8EZSrpKthRUByKdFRC0JcDxR6rObyxkJt/mVqj1XxL47MK/jz5LDAkTtdF8xeJwPFfFjpkcdsHhyR9ktqwEwR6LZqnoroSyKQYwn2SbzaN5tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [111.9.175.10])
-	by gateway (Coremail) with SMTP id _____8BxbPA5A5Fmz6YDAA--.10356S3;
-	Fri, 12 Jul 2024 18:19:37 +0800 (CST)
-Received: from [10.136.12.26] (unknown [111.9.175.10])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxBMU2A5FmC8JFAA--.17381S3;
-	Fri, 12 Jul 2024 18:19:35 +0800 (CST)
-Subject: Re: [RFC PATCH 0/4] Add jump table support for objtool on LoongArch
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Huacai Chen <chenhuacai@kernel.org>
-Cc: Xi Ruoyao <xry111@xry111.site>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240712091506.28140-1-yangtiezhu@loongson.cn>
-From: Jinyang He <hejinyang@loongson.cn>
-Message-ID: <307bcd3e-f4fe-8cc0-c557-4069c97c6072@loongson.cn>
-Date: Fri, 12 Jul 2024 18:19:34 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1720779733; c=relaxed/simple;
+	bh=tmKoEeL8UKVYGBSqWtk6NdcyUjOOxhwz9p9GVPL0ENQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GSix5j+rFfuDcNr25vjbRALFqxHywgp6WEpTP7+OXh4VcCzSO49yZKHSYviJdq6qHOvoARzoKX6LkXQOkQzRXWzPWXxiEuGNK9lI5taOA+F4uciXtAhgQK2g+93o6BMic/L+N1LSpYMhP8qZIRZJnyKi4vdKC05sT9+HG9ycqoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PVEvXw+z; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-36798e62aeeso1092208f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 03:22:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720779730; x=1721384530; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ALilg+KON+JtrbVeCssAiCzq42HUqO9B/Chs+vLrqzs=;
+        b=PVEvXw+zaVnc+pYj1MaPh7nKpVd/CgIEtindwHhQGDY7dFmXp37glemoxlren3C5yf
+         vYX2xR8SlX92uStXEhSqsm7qmew7l9WgYvNTsp9yLugiYT9lUrxXN4Q+v5s+kQ+PVJQE
+         6PrM2ZjMjsamG6OWCqajQgyZJeo41S2PTsuvJQs+tj7JzC2lWLzppV1sRQrUPQMaPOQs
+         EI5y98zKlNXts9kLJ3psR6eMqzFDd/RgtkttCSRhaKj+sCh9bQLtUagdFyadb65gFxiu
+         l7xkQsjeXFlDfi5k53RE8f8XA1J32fqDKkzuoVnnZNlA67IV8MtPiPO7l6pKFdhFiLUy
+         30Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720779730; x=1721384530;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ALilg+KON+JtrbVeCssAiCzq42HUqO9B/Chs+vLrqzs=;
+        b=h8zWeewQmgiNvckhSqdPf/55bz8wIyEbmDcDAZinrCU0RzV64QOuZOf/dzF0GG52BY
+         kHrv+8lbTMkTh7TQfb1G8ZG4NVPndCeMWo5/KYrszYC82hNkXAYPQOfpalCA1zA/O5xJ
+         81/WyjNlLkwC3U6aNj87TVxJeZ7QdaeI54rZQecCCODJiYMa/FYhNiAvLdV6NaI0P4fy
+         Hq5eF53VwrEL+g/4pW9fwqKxfPQMDj46nMxqQsS2PxJ1RXJE30Oyp2t4yOqsgGcsAQoK
+         qF5zAYrpZ0CKlBuc2w62T62WKobBsNYc3zN+R3AJXf9V6njutceM00D+oVRe0cM7Di5b
+         98Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZNuQJSmd26cnsl6U/9DmVKL4Tp5urGWCLZxWLdTy2R9OEhteRJNbElgAuPxEY+i759Uuuh1BgJYjjUjviKDKTtlJmtPX7YI3MYSOp
+X-Gm-Message-State: AOJu0YxvjzuQmP8adyIFbaqpQ1aAGHVCQNGG6LriZgkOuumNaQRX651i
+	her5m8dZcttkjMvthZmzFNCFwV6Gk0x0oTnYa8eMP4AqSnpkNWFD96a/Mt/tbZk=
+X-Google-Smtp-Source: AGHT+IHhnXF9CHwuRRW1Jpiy/j9GF8b8bDF/GunMNf0JkzJp9Qyr/tb7ZpPS7I6atPeMGO6ojTcBXQ==
+X-Received: by 2002:a05:6000:4024:b0:365:8547:90b1 with SMTP id ffacd0b85a97d-367cea9629emr8446910f8f.39.1720779730434;
+        Fri, 12 Jul 2024 03:22:10 -0700 (PDT)
+Received: from localhost.localdomain ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde89164sm9911058f8f.63.2024.07.12.03.22.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 03:22:10 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: coresight@lists.linaro.org,
+	suzuki.poulose@arm.com,
+	gankulkarni@os.amperecomputing.com,
+	mike.leach@linaro.org,
+	leo.yan@linux.dev,
+	anshuman.khandual@arm.com
+Cc: James Clark <james.clark@linaro.org>,
+	James Clark <james.clark@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH v5 00/17] coresight: Use per-sink trace ID maps for Perf sessions
+Date: Fri, 12 Jul 2024 11:20:09 +0100
+Message-Id: <20240712102029.3697965-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240712091506.28140-1-yangtiezhu@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:AQAAf8AxBMU2A5FmC8JFAA--.17381S3
-X-CM-SenderInfo: pkhmx0p1dqwqxorr0wxvrqhubq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7KFyDAr4DGry7Kr45Gry8WFX_yoW8uFyfpF
-	W7CrWfKFs8WFnaqwsxJw12gFy5Jr4fG34Utr43try09w4UXr1aqr4xtF9xZ3ZrW395W3y2
-	qr1YgFy7KF4vkacCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zw
-	Z7UUUUU==
 
-Are we always avoid our problems?
+This will allow sessions with more than CORESIGHT_TRACE_IDS_MAX ETMs
+as long as there are fewer than that many ETMs connected to each sink.
 
-1, When text section not support "R_LARCH_32_PCREL", update compiler
-    to add AS_HAS_THIN_ADD_SUB.
-2, When not support jump-table, use "-fno-jump-tables" to avoid it,
-    (and now update compiler to add CC_HAS_ANNOTATE_TABLEJUMP).
-3, When not support relax, use "-mno-relax" to avoid it.
-4, When some where in asm can be backtraced but generate warning,
-    use STACK_FRAME_NON_STANDARD to avoid it.
-5, When the goto-table cannot be handled (I guess the Ruoyao's
-    patch cannot handle goto table), use CONFIG_BPF_JIT_ALWAYS_ON
-    to avoid compile ___bpf_prog_run.
-6, And other $fp warnings not be solved in clang. Do we only care gcc?
+Each sink owns its own trace ID map, and any Perf session connecting to
+that sink will allocate from it, even if the sink is currently in use by
+other users. This is similar to the existing behavior where the dynamic
+trace IDs are constant as long as there is any concurrent Perf session
+active. It's not completely optimal because slightly more IDs will be
+used than necessary, but the optimal solution involves tracking the PIDs
+of each session and allocating ID maps based on the session owner. This
+is difficult to do with the combination of per-thread and per-cpu modes
+and some scheduling issues. The complexity of this isn't likely to worth
+it because even with multiple users they'd just see a difference in the
+ordering of ID allocations rather than hitting any limits (unless the
+hardware does have too many ETMs connected to one sink).
 
-So how to do in the future if compilers have other changed? Do we
-need update compilers (both gcc and clang) again and again? Why
-not just update objtool codes to solves these problems? As many
-RISC arch not support directly find jump table, can we support
-more generic ways to find it?
+Per-thread mode works but only until there are any overlapping IDs, at
+which point Perf will error out. Both per-thread mode and sysfs mode are
+left to future changes, but both can be added on top of this initial
+implementation and only sysfs mode requires further driver changes.
+
+The HW_ID version field hasn't been bumped in order to not break Perf
+which already has an error condition for other values of that field.
+Instead a new minor version has been added which signifies that there
+are new fields but the old fields are backwards compatible.
+
+Changes since v4:
+
+  * Fix compilation failure when TRACE_ID_DEBUG is set
+  * Expand comment about not freeing individual trace IDs in
+    free_event_data()
+
+Changes since v3:
+
+  * Fix issue where trace IDs were overwritten by possibly invalid ones
+    by Perf in unformatted mode. Now the HW_IDs are also used for
+    unformatted mode unless the kernel didn't emit any.
+  * Add a commit to check the OpenCSD version.
+  * Add a commit to not save invalid IDs in the Perf header.
+  * Replace cs_etm_queue's formatted and formatted_set members with a
+    single enum which is easier to use.
+  * Drop CORESIGHT_TRACE_ID_UNUSED_FLAG as it's no longer needed.
+  * Add a commit to print the queue number in the raw dump.
+  * Don't assert on the number of unformatted decoders if decoders == 0.
 
 
-On 2024-07-12 17:15, Tiezhu Yang wrote:
-> This RFC version is based on Linux 6.10-rc7, there are no detailed
-> commit messages for each patch for now and the code are relatively
-> clear and simple.
->
-> This series is tested with the latest upstream gcc applied with patch
-> "LoongArch: Add support to annotate tablejump" [1] which adds a new
-> section discard.tablejump_annotate to record the jump info, it makes
-> life much easier, special thanks to Ruoyao.
->
-> I will address all the review comments and update the commit messages
-> after the merge window.
->
-> [1] https://inbox.sourceware.org/gcc-patches/20240711114415.4420-1-xry111@xry111.site/
->
-> Tiezhu Yang (4):
->    objtool: Check local label in find_jump_table()
->    objtool: Check various types in add_jump_table()
->    objtool/LoongArch: Add support for jump table
->    LoongArch: Remove -fno-jump-tables for objtool
->
->   arch/loongarch/Kconfig                 |  8 +++-
->   arch/loongarch/Makefile                |  6 +--
->   tools/objtool/arch/loongarch/special.c | 54 +++++++++++++++++++++++++-
->   tools/objtool/check.c                  | 36 +++++++++++++++--
->   4 files changed, 94 insertions(+), 10 deletions(-)
->
+Changes since v2:
+
+  * Rebase on coresight-next 6.10-rc2 (b9b25c8496).
+  * Fix double free of csdev if device registration fails.
+  * Fix leak of coresight_trace_id_perf_start() if trace ID allocation
+    fails.
+  * Don't resend HW_ID for sink changes in per-thread mode. The existing
+    CPU field on AUX records can be used to track this instead.
+  * Tidy function doc for coresight_trace_id_release_all()
+  * Drop first two commits now that they are in coresight-next
+  * Add a commit to make the trace ID spinlock local to the map
+
+Changes since V1:
+
+ * Rename coresight_device.perf_id_map to perf_sink_id_map.
+ * Instead of outputting a HW_ID for each reachable ETM, output
+   the sink ID and continue to output only the HW_ID once for
+   each mapping.
+ * Keep the first two Perf patches so that it applies cleanly
+   on coresight-next, although they have been applied on perf-tools-next
+ * Add new *_map() functions to the trace ID public API instead of
+   modifying existing ones.
+ * Collapse "coresight: Pass trace ID map into source enable" into
+   "coresight: Use per-sink trace ID maps for Perf sessions" because the
+   first commit relied on the default map being accessible which is no
+   longer necessary due to the previous bullet point.
+
+James Clark (17):
+  perf: cs-etm: Create decoders after both AUX and HW_ID search passes
+  perf: cs-etm: Allocate queues for all CPUs
+  perf: cs-etm: Move traceid_list to each queue
+  perf: cs-etm: Create decoders based on the trace ID mappings
+  perf: cs-etm: Only save valid trace IDs into files
+  perf: cs-etm: Support version 0.1 of HW_ID packets
+  perf: cs-etm: Print queue number in raw trace dump
+  perf: cs-etm: Add runtime version check for OpenCSD
+  coresight: Remove unused ETM Perf stubs
+  coresight: Clarify comments around the PID of the sink owner
+  coresight: Move struct coresight_trace_id_map to common header
+  coresight: Expose map arguments in trace ID API
+  coresight: Make CPU id map a property of a trace ID map
+  coresight: Use per-sink trace ID maps for Perf sessions
+  coresight: Remove pending trace ID release mechanism
+  coresight: Emit sink ID in the HW_ID packets
+  coresight: Make trace ID map spinlock local to the map
+
+ drivers/hwtracing/coresight/coresight-core.c  |  37 +-
+ drivers/hwtracing/coresight/coresight-dummy.c |   3 +-
+ .../hwtracing/coresight/coresight-etm-perf.c  |  43 +-
+ .../hwtracing/coresight/coresight-etm-perf.h  |  18 -
+ .../coresight/coresight-etm3x-core.c          |   9 +-
+ .../coresight/coresight-etm4x-core.c          |   9 +-
+ drivers/hwtracing/coresight/coresight-priv.h  |   1 +
+ drivers/hwtracing/coresight/coresight-stm.c   |   3 +-
+ drivers/hwtracing/coresight/coresight-sysfs.c |   3 +-
+ .../hwtracing/coresight/coresight-tmc-etr.c   |   5 +-
+ drivers/hwtracing/coresight/coresight-tmc.h   |   5 +-
+ drivers/hwtracing/coresight/coresight-tpdm.c  |   3 +-
+ .../hwtracing/coresight/coresight-trace-id.c  | 138 ++--
+ .../hwtracing/coresight/coresight-trace-id.h  |  70 +-
+ include/linux/coresight-pmu.h                 |  17 +-
+ include/linux/coresight.h                     |  21 +-
+ tools/build/feature/test-libopencsd.c         |   4 +-
+ tools/include/linux/coresight-pmu.h           |  17 +-
+ tools/perf/Makefile.config                    |   2 +-
+ tools/perf/arch/arm/util/cs-etm.c             |  11 +-
+ .../perf/util/cs-etm-decoder/cs-etm-decoder.c |  49 +-
+ .../perf/util/cs-etm-decoder/cs-etm-decoder.h |   3 +-
+ .../util/cs-etm-decoder/cs-etm-min-version.h  |  13 +
+ tools/perf/util/cs-etm.c                      | 625 +++++++++++-------
+ tools/perf/util/cs-etm.h                      |  12 +-
+ 25 files changed, 645 insertions(+), 476 deletions(-)
+ create mode 100644 tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
+
+-- 
+2.34.1
 
 
