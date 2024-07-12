@@ -1,78 +1,62 @@
-Return-Path: <linux-kernel+bounces-250270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7DD92F5DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:00:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F9892F5DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 015401F25BE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:00:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1E831C225C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 07:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDC813DDB9;
-	Fri, 12 Jul 2024 07:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBD3381AD;
+	Fri, 12 Jul 2024 07:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="IIrcofc7"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OS3ctP59"
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34BC13DDBA
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BE979CC
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720767627; cv=none; b=FZBZjcOxzGhQPSacBCuVQD7ZebaOcAfQOWyj4h7CbrOLxBY5AJ+N2F+InrP22pWPkUAcXOKmbzgLJcwnpCFI3ctGc2B42ubhTg1cvRytFd2rejXaZF8tg2xsyzFQceTnWd1wnfRPCVsCVPkLRGeIKJL6HSUY7EUa9EEO6aysSwc=
+	t=1720767749; cv=none; b=kG3VfLkwSYA0pfmp+wfwHdTxTmzZdoZRMfCkqGVD1YVAx8JP9uJ3WWwuAvKOpSACM4iJybLwMIUoNNe+XkvyykD8OXgJD69C4ODKBi+E2zc1IbTfVJk880eO+MtmqliqVJurpCfE+80xKg3HfWZYKgt9fT7hnmkyu3L/TVZ8bgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720767627; c=relaxed/simple;
-	bh=VNcvaiaZUWAnq8epY/ecisXA67PrNtaNo2Mvsz7wHn4=;
+	s=arc-20240116; t=1720767749; c=relaxed/simple;
+	bh=p77ibPwpyIMTmhZbJlwlqhdF37Ko/rEYdXmXnHYHdx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1wM62Ab0ZtgcF16YGRDoYJCC+v3PKx49ObBjGKUVrT5ILGxeKWwJcx3UKMuD0xa8scKS0WrAfdHcCDBbBfMw6H2XnAyZGeNOSK3NQEoXqQSbDDxdOEZ5tqbjdnYaJRd5G1F7gjvk/bIss378Y7tIm4aQ0V5gBVDWCX9+zBEdb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=IIrcofc7; arc=none smtp.client-ip=194.117.254.33
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIDX1NwybDbALruSOzISu8zamnutWr8uQB22bczevzhA7RlnUHOC3oiS5dLVt/eZITogq1yVInMaF8WRT/GoyxedppFzakuoew7VwrxA0Fy2zBfGEnU7krxRlC4Tgs+nJSDk2I5fE7eU7yGg3RK2K93EnvCDJeO2vCdi8uOeS2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OS3ctP59; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=VNcv
-	aiaZUWAnq8epY/ecisXA67PrNtaNo2Mvsz7wHn4=; b=IIrcofc7GHfCOw90lMgZ
-	6W+tK3+Yi5eJKIYT9uayea4J9XmQk3yMbcoSzrgxMeH+1lrekq+6vMeTqNVExINV
-	LE4gcVRjetcLO37+tdDn4+ctHu5x0hmsOHFeb7Wuqmx7xt95bfjdL4Lc/c6vakBK
-	8H6ZR+w29xvEdT8L117wd8BYqCUx+iqxxC7F8kM+uInC3sDGRqis6lDlgBw+7QOr
-	ZEXNqut5zxaqPqgiRsgXU7eq57DJw+oNIsEPLSxbr105LZNNhr3uXkBeyTJHpupG
-	vVED/CnQWtO+S6cgXNumHvy0f5OLtBG1xZB0sU/2YL/YtZ2hrnbjw5HKTCcvAN/5
-	Sw==
-Received: (qmail 1062565 invoked from network); 12 Jul 2024 09:00:24 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2024 09:00:24 +0200
-X-UD-Smtp-Session: l3s3148p1@no30bgcdmrIgAwDPXwmZAIsFIv4n+Dpm
-Date: Fri, 12 Jul 2024 09:00:23 +0200
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=p77i
+	bPwpyIMTmhZbJlwlqhdF37Ko/rEYdXmXnHYHdx0=; b=OS3ctP59cjdol/g9eDix
+	OVpHJ6Yv0vRWv28cvxz6nyCj4Ie2B3UNP21pMWnQF+NVg2+CugZ3MCA50d21cHns
+	K+l5hL0jJWP+NSlGdblc2eJzgHpDB4aUgG9giQveicneX5jomzRbNMn6OwpVnfFx
+	cd+m6lOqP3+3jNle/R0fWO9wiQOUJuqryy2RezL1r1mVyY0FYsJvKu1hWhjCJrsD
+	VNQtIaHD5MT4nY2bZh6CPzXroyCY0PwwU7WYO0NgZh87G7NPjeZDYpTYtV5yXMQw
+	9N2KhSDu3035SY7U8v4RSpvGpGnrm0Tjzkr9ij2L7FNKK0C1xn8DUNDG7/zL/S+N
+	BQ==
+Received: (qmail 1063451 invoked from network); 12 Jul 2024 09:02:25 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2024 09:02:25 +0200
+X-UD-Smtp-Session: l3s3148p1@E8AwdgcdOsAgAwDPXwmZAIsFIv4n+Dpm
+Date: Fri, 12 Jul 2024 09:02:24 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Korsgaard <peter.korsgaard@barco.com>,
-	Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>
-Subject: Re: [PATCH v3 1/3] dt-bindings: i2c: gpio: Add 'settle-time-us'
- property
-Message-ID: <ZpDUhxjIxzxfabFG@shikoro>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andi Shyti <andi.shyti@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the i2c-host tree
+Message-ID: <ZpDVAG2p_v5DsZgY@shikoro>
 Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Korsgaard <peter.korsgaard@barco.com>,
-	Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Christopher Cordahi <christophercordahi@nanometrics.ca>
-References: <20240617120818.81237-1-bastien.curutchet@bootlin.com>
- <20240617120818.81237-2-bastien.curutchet@bootlin.com>
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240712165527.75e4ddc9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,39 +64,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rt7xgI5lf2mVWBld"
+	protocol="application/pgp-signature"; boundary="HnOP2kN/Va0gg94H"
 Content-Disposition: inline
-In-Reply-To: <20240617120818.81237-2-bastien.curutchet@bootlin.com>
+In-Reply-To: <20240712165527.75e4ddc9@canb.auug.org.au>
 
 
---rt7xgI5lf2mVWBld
+--HnOP2kN/Va0gg94H
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 
-$subject should be "mux-gpio" instead of just "gpio". It could be mixed
-up with the i2c-gpio controller driver otherwise.
+> include/linux/i2c.h:583: warning: Function parameter or struct member 'xfer' not described in 'i2c_algorithm'
+> include/linux/i2c.h:583: warning: Function parameter or struct member 'xfer_atomic' not described in 'i2c_algorithm'
+> include/linux/i2c.h:583: warning: Function parameter or struct member 'reg_target' not described in 'i2c_algorithm'
+> include/linux/i2c.h:583: warning: Function parameter or struct member 'unreg_target' not described in 'i2c_algorithm'
+
+Ouch, yes. I will fix this! Thanks. Seems like regular buildbot builds
+do not build docs when they were changed?
 
 
---rt7xgI5lf2mVWBld
+--HnOP2kN/Va0gg94H
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaQ1IcACgkQFA3kzBSg
-KbYU7A//QCNiLS52X9IU0LMHcaXPQU69ox38bTFC/zHgkdEKzvAvULk/tWsSZRRb
-33cGO7TvzAAEHbIQOC1Welp00CdY2+A5fUp2OkLlubdUjIpMbrc7ci9cGD/3qk7i
-VZ4PWmjYDIezW7EMkQOFbwfH9MDRh4rqPiHglvXHCfRqVfEqcM4TB4BBE868PbA4
-fSz5XI7lITGITbhGiQKKiGERqhuUUK3srocwCxApUau60u7CCyPQwpqX1dEtsL2T
-aXC53/f10NklbV1oHzNHiXUBhaaTMKqH4PMl/7MuBxi4rZ4ksVMQm2U6hXhyZswb
-irxDYyz6jJzUENFBNpKafMFGL21294EHXSExuzyxVuf0a+GsdRbwkafJx5QbktcS
-GZHyhx/Xa4ZDl5e6kWh6QEYrSt8yB7H/MlAz5vW20xuzwmb9LJIVyv5+xUMr0Hnf
-HLyFN+MC83TGsCLgtHGcLi4LTT+lk5BV1kHLoxKCX3MoOf1zq2uext9dbgBSFQwK
-lTw3aHiukfNkyHrOWdOWtMC8JTcLKwxB0Rf5+xqnhPpz7EWKtL8fCW58k4CrZsj7
-n+5P1BvV9icc7X8chIHLsUhMAyJdOYqcDlUdaxEtGsQ0oByqTQrM0rofLnSgpMhU
-SnwZsDhhLizap7XuxNNJ+361ktfhovaxPYqfjqejkCiI0XompPg=
-=BK75
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaQ1QAACgkQFA3kzBSg
+KbaJMA/+LwN95UFuDwKlOp9xiKIJ+Z30pKsUJAh87qfQ9t8kq9KMMZBnKZwTerr/
+pyNVl40Qvd+B/Ni9n5pd99KuqMNOtN0hUrtDu6oMEusd1qdzAwWiiyBuXwepwru9
+gUK/bETcVsOGjk8/3WneM6pyW8w/XxmjRmtyFnh9gtp1xj2aM+QsLILTVLBZmZiU
+cwGH9/1wXbOZ0bUVZ4yWxrZqPn1OGzJNjGo7CakCSrJdrxdnDnD3z1rin93Hab7L
+g/RtlHdCqY32glXmcxz5kcOa4LUP1lfp3bRWdHeSxeh7GkpAzggBcI3nnpbzX1iQ
+iEVAdO6Q7nBY/rbHMUYpADF9taVaFYf0IWAlBVKF5NrbbuaWdxxFvYeSI3Wt+/gY
+WA6XOBbMpTTkdFV9pIcvopbAN+SvxxPNgAnko7aFC1/AxLOzQ48XZWJtjS71tQZy
+WJh50++lwSREhkRu703iW/9vMdCZu1EPWs8IHdaS+qqVOPkOaRAen9uQ+2i+Pgts
+Sh6R/K05e8PW9L/sH57XCvpvuN9KmRKzcg13TVaRDrTLmVKQm3itkNoaMuyN8bGV
+2b7ihzSP6/cr/Rp4pz3GgEf5ADRBtDpXJhLUsgf1xf0Ek8x+7H4w3A+0l9qvx0RT
+IoU8mJrKEOKDIH6hLwLs/sgEVGfeqb6eVD8bIr8gj2rPAYwhLKk=
+=VMDB
 -----END PGP SIGNATURE-----
 
---rt7xgI5lf2mVWBld--
+--HnOP2kN/Va0gg94H--
 
