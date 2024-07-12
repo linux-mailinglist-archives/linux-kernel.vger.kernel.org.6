@@ -1,144 +1,247 @@
-Return-Path: <linux-kernel+bounces-250461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 654AD92F81A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:40:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBE692F81E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 11:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8815F1C21F70
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:40:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74D0285052
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 09:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC75314D282;
-	Fri, 12 Jul 2024 09:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDBA156971;
+	Fri, 12 Jul 2024 09:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8YhYKUj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="paLaA0pZ"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9121494BC
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A398C155735
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720777236; cv=none; b=NAc0Mwg6/WAVemxsHHAz7IJUFr9Wl/7KwJKUf1mErQhy/RLNr+QaqRwXg0f86vaUJkiIlY9hisF7dtFeLwwCftV1G2G2Nb4MXTGZC614a0L3O0tJNrNxx0OstDXxu5NeO3V6e4n4fcrmYVaISp7TuiTi5dR4ZZa5gNEhNCBM3C8=
+	t=1720777269; cv=none; b=OBLhMuebUUptSqeaik8ZhjiaKwvsWr276CVeV1PdWzzWCL/9rqwnZsxp0Br4x5lSnRbMuLEkPF5rViKJ9BwymVu8cvdvMrtGdIZ/49EFi1rrTH/MTMQzyq0GpYOLCFGEUtX6fFrIXiKfXb1Ulms+r0GnF/hs6Itkki1Q/I8GZsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720777236; c=relaxed/simple;
-	bh=bdil4uP/Y1K/s8nVUqnOIAceh5fft63Q5jINgGxdLpY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YbgoWKQGNWkL/9pmzS8WygrkAuwvcgFUPZIylSQWRdSGt1yNPWRU+f0F7M+9HN1o2xN9veLEUTVuN/GJ4qZt/mX0tyJH0xyXwuwD5CMv8VzGBpCTFpFhQRstoCt9g2IaiXg0lM2Sf3GOA5TOGembAEekmg8z+fgZSTrV0jYzdv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8YhYKUj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A133FC32782
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:40:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720777235;
-	bh=bdil4uP/Y1K/s8nVUqnOIAceh5fft63Q5jINgGxdLpY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=F8YhYKUjPKxjDUNF8SW6mJfGo7hwe2lVL3NxKCc+qKZ2163AR6A7qhwYNBKljbw2O
-	 a0eoqvfr7UTpW/rUJ7SkmhneHGLwxwuXX6VDdRkQC3RshzdWdrrjhP8D1K3NbEXEb3
-	 3//W2ZrpyIoq9C8p+EjsBCec/JNemFsSyNcRcx4TOFfN4VTmO6OtwjvEakXYjWXjyY
-	 ZNPMxDhZKufB/kvdbyie+7z05o6dCopnLpXRc4BSLfpxwf8UavZGcw1E2wG3i1nyQM
-	 sp0xyX2+8LsTppQbbeOprLRkNYmtUdLo23krMC48evf/SF71zs1Y3jWB2/5wwRRpHQ
-	 Qsp8SyMGrP7zQ==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so3023971a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:40:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW7Q5UL6O1KvbvSTc4/uPtsst59S5VaxTxgYBsWOIJlxzrVZGYtqCMK1Z1YWC3dEwUqiIH9HbImrMFbcC8xFCMTeCE3ZwxSDrN8gwor
-X-Gm-Message-State: AOJu0YxxEqP7dWPEZJb0piec/6dHYvaBc4zZYMLyv0F9sFOrBBKHgA3c
-	VTpmBlkI2BA1/LXMVqRLwrOcxItebEaFefaV9dLYKb8zUa7h3+TOcTfWct3iTJDOKQIeD7NR/ox
-	v8MMvh1d5yEE+zXq/i5xhNSKkQ0Y=
-X-Google-Smtp-Source: AGHT+IENvC5KTbUrIoAa+LJp6jkAzFzcRy/GBh7O8aXK9H4i7J17bzLGyt2VeHNvl3QFh3I+ShXrGe2b+gD96H2r85k=
-X-Received: by 2002:a50:d744:0:b0:57c:a8e5:35f0 with SMTP id
- 4fb4d7f45d1cf-59963bf4683mr1476060a12.2.1720777234300; Fri, 12 Jul 2024
- 02:40:34 -0700 (PDT)
+	s=arc-20240116; t=1720777269; c=relaxed/simple;
+	bh=lP/NXfk3Az1Fxv0p95F6EcTegJ4Jy3/k9NUrssWZaK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RB7qLsThlenlejHD1PRgmyZJyANI9SsHBMIs4tvpLW+FnG+hybVjxhrfuhLeKEq76dUM8GoiaiChrhCzsOZoJoPlo0q/SvD/lQHuuBgd8yaXAnafFln36d8ODmsIUINmgQlecnW1DDcCz/dATgdIWkBPjVN95PQa8hWCAW4OU/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=paLaA0pZ; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4265c2b602aso11968295e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 02:41:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720777266; x=1721382066; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=9cim3kTnG+uAdFS+huiCL6rzqD8JsA5JCt8clCGoh+w=;
+        b=paLaA0pZfzod2lMg2NxTN9UykT/Gq7xi7sTEqlIhS/O8LAb9YDkKYFdJGzTzYRiiNZ
+         KVvQQ8OcgrEdQDZXJdBPmD2N7iQhxjKqBBcDumq6nXtqafjJU7K20f5p0jfS0+vXUspH
+         V0Dp9P/XdSfPuOux32G+MLWrK2hayRBNr5s/IZ1IU2PrR3wTJN9ir7fjGOopUU3G5Jqc
+         W1o/kKg1zvKqE9J+cHQl+jT8DBphw92AvyPYq5Y9ayNviq/FvDqBPnri9L/gy1YQK4mI
+         O3irwixpaAajVgz5mabONe3AXAW4UcWmQ9QRVtAOlI2d0x1xh+WcLY5i8LQLG7bL2qKm
+         2+Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720777266; x=1721382066;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9cim3kTnG+uAdFS+huiCL6rzqD8JsA5JCt8clCGoh+w=;
+        b=QTocKH+BiSA+3nOogImlDffV1q6KyN/ooW3Qow3bcVvTQ7pkfNcQEbYdiw6BUmzwEj
+         5xf6LU8e0qKJfFEu7tvwLvUMBFRLNCygWccqv1yQ4uUhTZcc33OAbpcLgrWmOTXr1zUU
+         Nt1sUL9pDnq4U6/tsC+CabpdCzPUs5w8i9tibq88vc/iMwOQ95Us6YLztjaCcaECHLLV
+         o77/Y7VDiq/LRxZA8ggN0vTchiPtNeJ/v2ttQShhYpMRF18729xn12vt15yxoPNPEo6o
+         cCuwITJycXNWum9XJo2DgOIffupdf6GBKZ1RneccEM9QIfaLX58Ob6f2f5YRRfhTd93S
+         loNg==
+X-Forwarded-Encrypted: i=1; AJvYcCViFYdBzSg1IEMjxwa4fuRbi231yl9hEEdUHtk/tx7xx8eIm0Z2XxJdD+SjDJ93fx+tv4dnm85zQ2naugynPSp5AGWreJ9PVgaNgs4l
+X-Gm-Message-State: AOJu0YyvkzRtEAtAN/EzYePRAj0J1oyh+ind0Uym01wzCxJ5nLDb99ta
+	FDVyvhQhTBjwE4dTU0EDbEZRJj/q8nbrptbucu8QezNf5gvbv/eBLKQZiXffX3w=
+X-Google-Smtp-Source: AGHT+IG41/cUWWFH60QXrnFgYOhb3mS6IQfWyMP/e6KJ2vD98NIDINkh+l1XAFN4MUuyg3E3huUWQQ==
+X-Received: by 2002:a05:600c:460a:b0:426:51d1:63c3 with SMTP id 5b1f17b1804b1-426708fa8e2mr70579945e9.38.1720777266022;
+        Fri, 12 Jul 2024 02:41:06 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f268295sm17098945e9.20.2024.07.12.02.41.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 02:41:05 -0700 (PDT)
+Message-ID: <73038a80-ce58-4967-a258-d6befe23c777@linaro.org>
+Date: Fri, 12 Jul 2024 11:41:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712091506.28140-1-yangtiezhu@loongson.cn> <20240712091506.28140-5-yangtiezhu@loongson.cn>
-In-Reply-To: <20240712091506.28140-5-yangtiezhu@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 12 Jul 2024 17:40:22 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4oi1mpP8JSG1D+8CQVojGtPOpzVybCn8y8mWuMPT=zxQ@mail.gmail.com>
-Message-ID: <CAAhV-H4oi1mpP8JSG1D+8CQVojGtPOpzVybCn8y8mWuMPT=zxQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 4/4] LoongArch: Remove -fno-jump-tables for objtool
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Xi Ruoyao <xry111@xry111.site>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: incomplete-devices: document devices
+ without bindings
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Marek Vasut <marex@denx.de>,
+ Jonathan Cameron <jic23@kernel.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+References: <20240711085930.26252-1-krzysztof.kozlowski@linaro.org>
+ <CAL_Jsq+WdctoTMNoakiY5kh4nDoNx5h522s76LoHyD_yKYvvSg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAL_Jsq+WdctoTMNoakiY5kh4nDoNx5h522s76LoHyD_yKYvvSg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, Tiezhu,
+On 11/07/2024 15:01, Rob Herring wrote:
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - description:
+>> +          Rejected compatibles in Devicetree, but used in ACPI-based devices
+>> +          with non-updatable firmware/ACPI tables (via ACPI PRP0001)
+>> +        enum:
+>> +          - broadcom,bcm5241
+>> +          - ltr,ltrf216a
+>> +
+>> +      - description: Incorrect compatibles used on Macintosh devices
+> 
+> They were correct at the time. Rules/standards evolve though. I would
+> just say 'Legacy" rather than "Incorrect".
 
-On Fri, Jul 12, 2024 at 5:15=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
-> wrote:
->
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->  arch/loongarch/Kconfig  | 8 +++++++-
->  arch/loongarch/Makefile | 6 ++----
->  2 files changed, 9 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index ddc042895d01..57f28450a2ed 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -143,7 +143,7 @@ config LOONGARCH
->         select HAVE_LIVEPATCH
->         select HAVE_MOD_ARCH_SPECIFIC
->         select HAVE_NMI
-> -       select HAVE_OBJTOOL if AS_HAS_EXPLICIT_RELOCS && AS_HAS_THIN_ADD_=
-SUB && !CC_IS_CLANG
-> +       select HAVE_OBJTOOL if TOOLCHAIN_SUPPORTS_OBJTOOL && !CC_IS_CLANG
->         select HAVE_PCI
->         select HAVE_PERF_EVENTS
->         select HAVE_PERF_REGS
-> @@ -276,6 +276,12 @@ config AS_HAS_LBT_EXTENSION
->  config AS_HAS_LVZ_EXTENSION
->         def_bool $(as-instr,hvcl 0)
->
-> +config CC_HAS_ANNOTATE_TABLEJUMP
-> +       def_bool $(cc-option,-mannotate-tablejump)
-> +
-> +config TOOLCHAIN_SUPPORTS_OBJTOOL
-> +       def_bool AS_HAS_EXPLICIT_RELOCS && AS_HAS_THIN_ADD_SUB && CC_HAS_=
-ANNOTATE_TABLEJUMP
-Can AS_HAS_THIN_ADD_SUB be removed now?
+ack
 
-Huacai
+> 
+>> +        enum:
+>> +          - adm1030
+>> +          - bmac+
+>> +          - heathrow-media-bay
+>> +          - keylargo-media-bay
+>> +          - lm87cimt
+>> +          - MAC,adm1030
+>> +          - MAC,ds1775
+>> +          - max6690
+>> +          - ohare-media-bay
+>> +          - ohare-swim3
+>> +          - smu-sat
+>> +          - swim3
+>> +
+>> +      - description: Incorrect compatibles used on other PowerPC devices
+>> +        enum:
+>> +          - 1682m-rng
+>> +          - IBM,lhca
+>> +          - IBM,lhea
+>> +          - IBM,lhea-ethernet
+> 
+>> +          - mpc5200b-fec-phy
+>> +          - mpc5200-serial
+>> +          - mpc5200-sram
+> 
+> Tell Grant he needs to document these. ;) JK
+> 
+>> +          - ohci-bigendian
+>> +          - ohci-le
+>> +          - ohci-littledian
+> 
+> Given the typo, I think we can just drop this one from the driver.
 
-> +
->  menu "Kernel type and options"
->
->  source "kernel/Kconfig.hz"
-> diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-> index 8674e7e24c4a..186c75c80daa 100644
-> --- a/arch/loongarch/Makefile
-> +++ b/arch/loongarch/Makefile
-> @@ -99,10 +99,8 @@ KBUILD_AFLAGS                        +=3D $(call cc-op=
-tion,-mno-relax) $(call cc-option,-Wa$(comma)-mno
->  KBUILD_CFLAGS                  +=3D $(call cc-option,-mno-relax) $(call =
-cc-option,-Wa$(comma)-mno-relax)
->  KBUILD_AFLAGS                  +=3D $(call cc-option,-mthin-add-sub) $(c=
-all cc-option,-Wa$(comma)-mthin-add-sub)
->  KBUILD_CFLAGS                  +=3D $(call cc-option,-mthin-add-sub) $(c=
-all cc-option,-Wa$(comma)-mthin-add-sub)
-> -
-> -ifdef CONFIG_OBJTOOL
-> -KBUILD_CFLAGS                  +=3D -fno-jump-tables
-> -endif
-> +KBUILD_AFLAGS                  +=3D $(call cc-option,-mannotate-tablejum=
-p) $(call cc-option,-Wa$(comma)-mannotate-tablejump)
-> +KBUILD_CFLAGS                  +=3D $(call cc-option,-mannotate-tablejum=
-p) $(call cc-option,-Wa$(comma)-mannotate-tablejump)
->
->  KBUILD_RUSTFLAGS               +=3D --target=3Dloongarch64-unknown-none-=
-softfloat
->  KBUILD_RUSTFLAGS_MODULE                +=3D -Crelocation-model=3Dpic
-> --
-> 2.42.0
->
->
+Sure, I'll send a patch. It could affect some ancient user, though...
+Although I really wonder if any of these PowerPC boxes are still alive.
+
+> 
+>> +
+>> +      - description: Incorrect compatibles used on SPARC devices
+>> +        enum:
+>> +          - bq4802
+>> +          - ds1287
+>> +          - isa-m5819p
+>> +          - isa-m5823p
+>> +          - m5819
+>> +          - sab82532
+>> +          - SUNW,bbc-beep
+>> +          - SUNW,bbc-i2c
+>> +          - SUNW,CS4231
+>> +          - SUNW,ebus-pic16f747-env
+>> +          - SUNW,kt-cwq
+>> +          - SUNW,kt-mau
+>> +          - SUNW,n2-cwq
+>> +          - SUNW,n2-mau
+>> +          - SUNW,niusl
+>> +          - SUNW,smbus-beep
+>> +          - SUNW,sun4v-console
+>> +          - SUNW,sun4v-pci
+>> +          - SUNW,vf-cwq
+>> +          - SUNW,vf-mau
+>> +
+>> +      - description: Incomplete and incorrect compatibles for unknown devices
+>> +        enum:
+>> +          - electra-cf
+>> +          - i2cpcf,8584
+>> +          - virtio,uml
+>> +
+>> +      - description: Linux kernel unit tests and sample code
+>> +        enum:
+>> +          - audio-graph-card2-custom-sample
+>> +          - compat1
+>> +          - compat2
+>> +          - compat3
+>> +          - linux,spi-loopback-test
+>> +          - mailbox-test
+>> +          - regulator-virtual-consumer
+>> +          - unittest-gpio
+>> +          - unittest-pci
+> 
+> We recently added "test" as a vendor prefix and don't complain if
+> "test,.*" compatible is not documented. It's on my todo to change
+> these. So I'd drop the unittest ones.
+
+Ack
+
+Best regards,
+Krzysztof
+
 
