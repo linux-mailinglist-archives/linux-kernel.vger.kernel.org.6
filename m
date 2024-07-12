@@ -1,120 +1,75 @@
-Return-Path: <linux-kernel+bounces-251159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C1A93015E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:52:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4118993015F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 22:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 406B91C2148E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:52:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16B31F22F91
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840B547F6C;
-	Fri, 12 Jul 2024 20:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B4F46542;
+	Fri, 12 Jul 2024 20:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmmL8+uC"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IJtK9LYW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA06D8F6A;
-	Fri, 12 Jul 2024 20:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8299E8F6A
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 20:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720817564; cv=none; b=c5W9RC7qA16wdKJxEvuwAFwifRDz0bqNC1s9cOY5AHfIIIP10a0qQAQTLb2Pv/9Pqif/o8+23U9SCb4h3DmNDj9R9hh52ZrjokK5/PYVG+3SxlGg5BowPoH5uhg9dVn8oJGvxnsimP5qaSYUImHMSXBXD/1ztZ8oy2FT9giPBUo=
+	t=1720817787; cv=none; b=K08R8RvXLrDxR81PsT320BEkBKMt40uAYQ20o//AvqMHmJXJ+L8H9m8TUY8FUoDSiJospX4q967fUHJPhaDObXsGIvin/PU3HuY8PhJF425b8tjnpdSmFchr0kb3MJCdTVGhdrs4DEiTqmcHkm3CvJRdhSn1YelCMeFfvKf1iIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720817564; c=relaxed/simple;
-	bh=Vz026jv5Z1unOsWoMBG5L1EFGzAuxoABHy8IOuHg3BU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UK/ZjlkJunLazegJWjajixG0qT1yKKsyOUPuyQ5NPOp2S2ocQC59e/tRvESNdW1JUCJTNVjzeqgw7/oA/hojS9ghqU19KsMpZ+Wwoo7cbZJpfgQA0JdrTw8iekz/aA6RDuMmGreph+CyA4RUJ2jbHz02pVTVAK+6QmIRVRb2UsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QmmL8+uC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28299C32782;
-	Fri, 12 Jul 2024 20:52:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720817564;
-	bh=Vz026jv5Z1unOsWoMBG5L1EFGzAuxoABHy8IOuHg3BU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QmmL8+uCq7+KjhgbyYmLS/qzapks9jmBvGeLMfZcgGDl6z+bIlGANEOKLlCOrO6ui
-	 phf0gcFUpqXub2CifSKAkttjL6KQvazyzX+7RxuBtIbdy/gm7iLjdC11QTMn/7TkVW
-	 NZrafrjmgFHbfGBFXD9GeJI6S8Ot9imfW3unpFp78ifFSE9jNLxrp7kEP+gUbE0fSi
-	 t0mibGkFKeAQINIp/iTGxVA2St4valIDaasj/7WEt03T0eTwwJInFJ0Qpz5lhQloiF
-	 mHNsEm//lmxKW4cbINVuozrK3EGNShG0f75KxB+9GPgJBiq8TH0cm4CI3Ap4fR1B/H
-	 aO9FQIYGX4OIQ==
-Date: Fri, 12 Jul 2024 22:52:39 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" <linux-ide@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v3 1/1] dt-bindings: ata: ahci-fsl-qoriq: add
- fsl,ls1046a-ahci and fsl,ls1012a-ahci
-Message-ID: <ZpGXl7W4h-sCjeGz@ryzen.lan>
-References: <20240712185740.3819170-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1720817787; c=relaxed/simple;
+	bh=97/k8W97VFXseeyXUb7dFdkjvKl2R3JBWSCRoDDZVIE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=WObIrNuG3KC+NpeyKgg1wTLAxlsJMCUDLjYfO/bIyEXEdLfa3lAv5q6ICT+N5LrPsbr6t5WmBJtj2BREUDlJ7G9Jc04EVYyAsnaAKLrFXgUvJ4cM+qMv3ULI1mh9vevgS7H/+E7EdyD+6JXh7gEOds+15QK0VDILTwdkNl9Ed/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IJtK9LYW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF990C32782;
+	Fri, 12 Jul 2024 20:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1720817787;
+	bh=97/k8W97VFXseeyXUb7dFdkjvKl2R3JBWSCRoDDZVIE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IJtK9LYWV/hyZrVDz/8pb3w3m17cvPtiEdfn3KXR9Uk8G7fgjyulCNuToK+/Drq8y
+	 sLLs/BeNerK8D2suE8g+S/gUXtr5QAerqDxx9OvmBmn5ZRyFShRkOtolhTLTUw1Q3b
+	 0mwcpuyTRAmenQSnxWYgEtI8e5i4KhfwnFiIGujU=
+Date: Fri, 12 Jul 2024 13:56:26 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Hugh Dickins <hughd@google.com>
+Cc: yangge <yangge1116@126.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, 21cnbao@gmail.com, david@redhat.com,
+ baolin.wang@linux.alibaba.com, aneesh.kumar@linux.ibm.com,
+ liuzixing@hygon.cn
+Subject: Re: [PATCH V4] mm/gup: Clear the LRU flag of a page before adding
+ to LRU batch
+Message-Id: <20240712135626.3a7cc4b9e959a1124614aa37@linux-foundation.org>
+In-Reply-To: <503f0df7-91e8-07c1-c4a6-124cad9e65e7@google.com>
+References: <1720075944-27201-1-git-send-email-yangge1116@126.com>
+	<503f0df7-91e8-07c1-c4a6-124cad9e65e7@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712185740.3819170-1-Frank.Li@nxp.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 12, 2024 at 02:57:40PM -0400, Frank Li wrote:
-> Add missing documented compatible strings 'fsl,ls1046a-ahci' and
-> 'fsl,ls1012a-ahci'. Allow 'fsl,ls1012a-ahci' to fallback to
-> 'fsl,ls1043a-ahci'.
-> 
-> Fix below CHECK_DTB warnings
-> arch/arm64/boot/dts/freescale/fsl-ls1012a-qds.dtb: sata@3200000: compatible:0: 'fsl,ls1012a-ahci' is not one of ['fsl,ls1021a-ahci', 'fsl,ls1043a-ahci', 'fsl,ls1028a-ahci', 'fsl,ls1088a-ahci', 'fsl,ls2080a-ahci', 'fsl,lx2160a-ahci']
-> arch/arm64/boot/dts/freescale/fsl-ls1012a-qds.dtb: sata@3200000: compatible: ['fsl,ls1012a-ahci', 'fsl,ls1043a-ahci'] is too long
+On Fri, 12 Jul 2024 01:56:04 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
 
-These lines should have been wrapped to 75 lines IMO.
-I will fixup when applying.
+> I have no objection to it going forward to 6.11-rc, but I do object to
+> the Cc stable, and its current placing in mm-hotfixes-unstable (if that
+> means it's to be rushed into 6.10 final).
 
-> 
-> Fixes: e58e12c5c34c ("dt-bindings: ata: ahci-fsl-qoriq: convert to yaml format")
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v2 to v3
-> - Add rob's review tag
-> - Sort compatible string list
-> - Add fix tag
-> - Add two warnings in commit message.
-> - Add - description: sata controller for ls1012a
-> 
-> Change from v1 to v2
-> - rework commit message to show fix CHECK_DTB warning.
-> ---
->  .../devicetree/bindings/ata/fsl,ahci.yaml     | 20 ++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-> index 162b3bb5427ed..b58ea5a183082 100644
-> --- a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-> +++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
-> @@ -11,13 +11,19 @@ maintainers:
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - fsl,ls1021a-ahci
-> -      - fsl,ls1043a-ahci
-> -      - fsl,ls1028a-ahci
-> -      - fsl,ls1088a-ahci
-> -      - fsl,ls2080a-ahci
-> -      - fsl,lx2160a-ahci
-> +    oneOf:
-> +      - description: sata controller for ls1012a
+No probs, I moved it to mm-unstable and removed cc:stable.
 
-SATA should have been capitalized.
-I will fixup when applying.
+The issue sounds significant so someone might request a -stable
+backport in the future, but the workflow doesn't have a way of
+expressing that.
 
-
-Kind regards,
-Niklas
 
