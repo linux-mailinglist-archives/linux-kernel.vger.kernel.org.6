@@ -1,111 +1,148 @@
-Return-Path: <linux-kernel+bounces-250370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BF692F702
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:37:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4542792F70B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 10:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD0A281FBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:37:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57CC1F21C75
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 08:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399231422C3;
-	Fri, 12 Jul 2024 08:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4FA142633;
+	Fri, 12 Jul 2024 08:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCluSOK8"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z00SDfgO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6174EB5E;
-	Fri, 12 Jul 2024 08:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877BC13DDC2;
+	Fri, 12 Jul 2024 08:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720773425; cv=none; b=ps6AzbkcdKX5UK+JUUyvdcJ4yycmXbeqfZQSVLJI+3z2cRzoHCrAoTRwsnEqZErKBkfAyL/kJ9Jp6lZ3XOOYpbZolVgjXaRlbUsJfw0tZHfC1mGTOHcTWx4RhTrR5lNfSCb1lbe41SPQTM8W/63ahUQpGh9XfJPqBZqbWc952i0=
+	t=1720773485; cv=none; b=rwW85A+vvUSuajC3Lgt3uK5NKhJNskAtwSf37dHKCCkbMerr3fQeKPHQ/8rVa9ztS+qLYcLgFVAo3MyDWG0EofD1IJyx9AE+YPYtdF5NKg+KTRusBU+GOVBk8PQm8BjP491voWw0qxvO2B4uE4wxprx2n41tEONYvaL1D7kmH00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720773425; c=relaxed/simple;
-	bh=u1jwDm6+J9qBbHh2AzVRjr2MkiVFWEb9adHPWot3rtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NjRvToUcqyCqK1olRZVBAkOXGbOj+b/Pesvx1iJ5c3jc+KioVEUJU92W88EQC51si22POf7SIIShEIqwl4B91BXXWiKzBlIIDGXhhi6rQBkE6SgDHA6u/I0YjXhQY9wbWXe0oJtR4DCVBMT324/uVpKgNB1rRyq91MifPK2wMHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BCluSOK8; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-78006198aeeso1112274a12.1;
-        Fri, 12 Jul 2024 01:37:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720773423; x=1721378223; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/K6Rg0AJds2+EOH8gU+mdzqML6uDxTreH95296T/VY=;
-        b=BCluSOK83iFYNxE7zIoKFZsxrmUwg8dsmmTogsaD4Pb6Xh1gGgceGdvPHOh0YQjIWR
-         uSQk6uqqUFaIHAa8d/a37Q85fJWh4vGSYUBklMQPGMl8M+LrtaHnuO58VtYXDGdmK1qR
-         Hk6b4f5L3A43+wpRuaVNuHlh5NGU6mhYuseLGBiTeW9/8Ep2xOGk9FSJjx129L0rVX99
-         mzsatQxlv5dkGJ2+KChRQyOPoo/kS5oyglfUWSuuWmv0uEwr3NRT2qMriKD0S/GzTZgC
-         3d8g79LG4Js/w9kWHUX6TxndEd2AK24u7XE+GZW/SNzUzYqU2W9aju00mZWtjuZqi431
-         iojQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720773423; x=1721378223;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6/K6Rg0AJds2+EOH8gU+mdzqML6uDxTreH95296T/VY=;
-        b=RxggYbny0JBIMODpnNM0i8Mvf3PGOTCojl9SGdqE+CZN22I1ynr66HsPIo4fcGiXMM
-         EKrx/L0lc87HeoCXHm087dKb52XCbOLXxAiHh58LkHYnLA3B2m0pBVMt8U/QJlR0vVGh
-         CkuVQt4cF0anzNT7gax2NgogKO9elf9Tl0Dv/3i4d+uyQKv6J4oR51YXO7Co9gGengA7
-         Itqu7f2EQ9+cjt0ul59jRwmuirA8+IZB6ShCYtTaV51BtWEKdXUGrvPyO0+pFKzuaVt9
-         cKx+9QqshbGb0+tQoGwl904fkwceE+0kp3MSdlJRW69Fz8w8GMMmSoUflmeyz1GrmUyT
-         4fdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFD2Xxl7wupsxSKgngO0wtT8VvzP0OL3PQioztepKy8mSA2slBb409bIZhTpS1MPaBQounCgteUIgY5DWlTzY2raQCPP6/E2WwAuzf/qJ5I3JJ2hFsi0Qy7v+MzCKHrI7ZjUckOKGUNh8WrA==
-X-Gm-Message-State: AOJu0Yx7/mt69v1vAmTwH+0COuoURKxtXf6Tzm2UdDObsyBLF4e6OmL1
-	CqKnicPyL/p++k7GTS6Y5IlWG3azdbx/jCJ/Rs2Aq0/syUPMLKsYYSN51fan
-X-Google-Smtp-Source: AGHT+IGaRh2bvKEOkEB2r8f4cfdEqTjTRug/+2s29ujo+XnLZCxb+IuZW9BGK8xpzVV54cMlFkx+fw==
-X-Received: by 2002:a17:90a:e288:b0:2c8:e189:f94c with SMTP id 98e67ed59e1d1-2cac4d345bamr3230277a91.11.1720773423466;
-        Fri, 12 Jul 2024 01:37:03 -0700 (PDT)
-Received: from bnew-VirtualBox ([2405:201:3020:7812:62ae:9a8b:a942:6b7f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-77d5edcdec1sm5423569a12.6.2024.07.12.01.37.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 01:37:02 -0700 (PDT)
-Date: Fri, 12 Jul 2024 14:06:57 +0530
-From: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/clocksource/qcom: Add missing iounmap() on error
- when reading clock frequency.
-Message-ID: <20240712083657.GA182712@bnew-VirtualBox>
-References: <20240710110813.GA15351@bnew-VirtualBox>
- <2a3561cc-c6b3-4823-b488-fc8ebc53e1a6@linaro.org>
- <20240711054934.GA37910@bnew-VirtualBox>
- <793b70b2-d6c1-4e4b-96a5-8a257837eafb@linaro.org>
- <069282eb-d891-4537-bdc0-85de17b5e61f@linaro.org>
+	s=arc-20240116; t=1720773485; c=relaxed/simple;
+	bh=X4sxkxfa0puHMD2lnMvIKYZ5jErEYw2uVCAwMxYRmSA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g62WBzB/tIRrFwZeOlQaA3YfxRidMhiPporkD6gMh1f3oB5nw9osPoWQMGhqm/7HvUVoZ0LIwdFjCkmuEqRCrlvrJMw5gMWuxy7mtCYp3CKaDM1aJ87mL/5Wa4CDODCPD6jI0K4nqUHz3veoLNwX8Xm23M5c2u3ToBXm9wGo+OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z00SDfgO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1259CC4AF19;
+	Fri, 12 Jul 2024 08:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720773485;
+	bh=X4sxkxfa0puHMD2lnMvIKYZ5jErEYw2uVCAwMxYRmSA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Z00SDfgOaF/iQqYzh+oapqEALLE+nmuOZep5iSxydOBEkfHHQgSTe75kMA5aU8MF7
+	 IYvJE9zmfABY3crLS3SgXhvL7zJBVg9BUYPzoOG3t5gtUt5rh/QW48SX3mywu49yzC
+	 7nkTAvk61IANHwMRYnadNnNflufGcpqNt7gLgHESMd6Cp0cErNHCecHLfcYmILIk5x
+	 k11nqFyEJtapNtJ3INjcX6fM11J2NMbCohzmOWmxMwfo2c+3vw+Xxzuoaqphb3jNzW
+	 CPMWA65qdTbLAHjWXcPptnegF1HnAHNex+NFGj2wpx2cBo4M3asuCWplFDeHCsRDX2
+	 tGoTAA4upFv+g==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ee98947f70so18708511fa.1;
+        Fri, 12 Jul 2024 01:38:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULYYpz4yVqLT8JQCpS2C4/r0Aq5W3+2mQ9C1iAF3BL88ejyoNcLxyT+jR6ZyJnlzmO8maRq4k3HNnaAiOdbn1wN+JIYLrJ9uq33Bd/3s9M2LufWUvnEXaUeU3/ciHGbKBG45lGWuJDa3i1VML4B58CTHfH8DeYY3oq7eyEEiXMWVE0exB5KmrtRzzVJEM6Y5Y92EX5I6H+raQhRKQZsL0/ZUEBTU2l3EAYHJlGqZUU+N2nqiOGI5oJrmTFxEZ8kas6sE3V4g==
+X-Gm-Message-State: AOJu0Ywgf+0+iyK59iAszeRbkE1AQAxl+mSGhfiu5nHpvukGWgRw+2Ze
+	h+dJQz64cI4nmR3CNKB1gaBcgajpsrtsim2xk9kb6gEHvPONlyxteHo3HTu8BwMhvjUp1d+cpR4
+	QHaEg5n7PKZLEAhOR95BRJZtH9ug=
+X-Google-Smtp-Source: AGHT+IFfkbTH0GPwVyglXJ2Er1yvq7AU75kSwOPof9lxDJA6WZS/bfYrYyjHckbhe1dyXepshm4Uwstcj4sDcu5PIlo=
+X-Received: by 2002:a2e:95c6:0:b0:2ee:97b4:8028 with SMTP id
+ 38308e7fff4ca-2eeb30fd369mr67338551fa.31.1720773483308; Fri, 12 Jul 2024
+ 01:38:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <069282eb-d891-4537-bdc0-85de17b5e61f@linaro.org>
+References: <20240704143611.2979589-1-arnd@kernel.org> <20240704143611.2979589-4-arnd@kernel.org>
+In-Reply-To: <20240704143611.2979589-4-arnd@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Fri, 12 Jul 2024 17:37:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS=h6dML-06ox1dje_bxF2+R-Gq7Yw-s73Vi-FW39L9eg@mail.gmail.com>
+Message-ID: <CAK7LNAS=h6dML-06ox1dje_bxF2+R-Gq7Yw-s73Vi-FW39L9eg@mail.gmail.com>
+Subject: Re: [PATCH 03/17] um: don't generate asm/bpf_perf_event.h
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Vineet Gupta <vgupta@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>, Brian Cain <bcain@quicinc.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Christian Brauner <brauner@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-openrisc@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 11, 2024 at 10:13:38AM +0200, Konrad Dybcio wrote:
-> On 11.07.2024 10:11 AM, Konrad Dybcio wrote:
-> > On 11.07.2024 7:49 AM, Ankit Agrawal wrote:
-> >> On Wed, Jul 10, 2024 at 01:54:01PM +0200, Konrad Dybcio wrote:
-> >>> On 10.07.2024 1:08 PM, Ankit Agrawal wrote:
+On Thu, Jul 4, 2024 at 11:37=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> If we start validating the existence of the asm-generic side of
+> generated headers, this one causes a warning:
+>
+> make[3]: *** No rule to make target 'arch/um/include/generated/asm/bpf_pe=
+rf_event.h', needed by 'all'.  Stop.
+>
+> The problem is that the asm-generic header only exists for the uapi
+> variant, but arch/um has no uapi headers and instead uses the x86
+> userspace API.
+>
+> Add a custom file with an explicit redirect to avoid this.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/um/include/asm/Kbuild           | 1 -
+>  arch/um/include/asm/bpf_perf_event.h | 3 +++
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/um/include/asm/bpf_perf_event.h
+>
+> diff --git a/arch/um/include/asm/Kbuild b/arch/um/include/asm/Kbuild
+> index 6fe34779291a..6c583040537c 100644
+> --- a/arch/um/include/asm/Kbuild
+> +++ b/arch/um/include/asm/Kbuild
+> @@ -1,5 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -generic-y +=3D bpf_perf_event.h
+>  generic-y +=3D bug.h
+>  generic-y +=3D compat.h
+>  generic-y +=3D current.h
+> diff --git a/arch/um/include/asm/bpf_perf_event.h b/arch/um/include/asm/b=
+pf_perf_event.h
+> new file mode 100644
+> index 000000000000..0a30420c83de
+> --- /dev/null
+> +++ b/arch/um/include/asm/bpf_perf_event.h
+> @@ -0,0 +1,3 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#include <asm-generic/bpf_perf_event.h>
+> --
+> 2.39.2
+>
 
-[...]
 
-> 
-> We should probably also check if msm_timer_init() succeeds and unmap
-> if that fails.. we can just check the return value of that function
-> and if it's non-zero, call iounmap
+I guess this is a step backward.
 
-Sure. I have updated the patch accordingly. Please find version 2 of the
-patch here: https://lore.kernel.org/linux-arm-msm/20240712082747.GA182658@bnew-VirtualBox/
+Technically, kernel-space asm/*.h files are allowed to
+wrap UAPI <asm-generic/*.h>.
+There is no reason why we ban generic-y for doing this,
+whereas check-in source is allowed.
 
-Thanks!
-Ankit
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
