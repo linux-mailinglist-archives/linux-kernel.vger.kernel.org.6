@@ -1,165 +1,149 @@
-Return-Path: <linux-kernel+bounces-251094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C2393008C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:48:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5095593008E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 20:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6415AB2291B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:48:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F59CB22E7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D32208B6;
-	Fri, 12 Jul 2024 18:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7386208B6;
+	Fri, 12 Jul 2024 18:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WWizCmdg";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="TAkAf+wY"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwgfdLSn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC55168DC;
-	Fri, 12 Jul 2024 18:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1779A2C6B7;
+	Fri, 12 Jul 2024 18:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720810120; cv=none; b=fj9jNE5xfi5tfblnRmnG3Bwc4mUGOxWxZaiYJBOiTdJxfTgHuoL+1eI41IuQpje2XHMoqhMpMJykqwClMD6JEccMA3K8oAiD1ZS88bv0FtnWc4TWR8qcCtKOJfmb7siqljCcxDqQTT2LKw2IU8Rt4cILtffj7ByZczSKshwylmw=
+	t=1720810132; cv=none; b=ewwkjsCQws07JGEuz0itzVC0ch9T/zUCcV4yaTjLLZ2z1bwtrstBzwGrVtfmQkthk6S1xkuoJ+nGovhHG2TDm8E6nEZ3iv6Ty0N28S4v9l+BPtpwM1ryaBueA49PpczGHt/lHvMlDMQzz5o22E9YfQqNciblVHX2UzMF5LAc3nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720810120; c=relaxed/simple;
-	bh=I90yjCY1Dvz00vWK492Gi5cmhk3nFxS7EaeeaQGnepM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OgTY0spe8kw94d1cUhj/DWrNHzzXoiQP1PfgtB6dPY0pH5wDT1P0c+PYa0T3yBaAvqtDXojn80Ez40CjZkbAG470HB/O79KbqhF1iIpB5rVp2s/7V+NLUIzPuKAnBbeX8d++RIeNyaWCdCMlXBi9Sj7TYd7pCv/VXh4+wm6+nks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WWizCmdg; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=TAkAf+wY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8F3BA1FB99;
-	Fri, 12 Jul 2024 18:48:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1720810117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=SOeqvw5RUu5R2ECsxUvsHeLqr92Df8mof2vHJyYk8ck=;
-	b=WWizCmdgDwOZ3Li9l8i/6QvAaBbojwDhTOIiugL56EpkpCJFZeOvm52HquDCIVD09J6et0
-	bwzP+qIPCPvA2Z4wevoc2YGvihTc0jZgGuzJ5CG4g1tp/7Tuq1M/btM719t7Ch73qERz9N
-	jQudax/DocqsN1BIfLoz4EkKaTrYTfY=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=TAkAf+wY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1720810115; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=SOeqvw5RUu5R2ECsxUvsHeLqr92Df8mof2vHJyYk8ck=;
-	b=TAkAf+wYqBmy+VnMlNudZu2fWqvIN9XcTYtzdlvXApedqp8DaN3wSE0xe5+Xox4tsv+AQW
-	K1cizEuft1QqKgtyXtIpKyIbsSOTOuLPFZA1Df3bD0sY1vEmqeMKKh76gP0U/JJj8oyEZ5
-	Wr6JPq6x/5B7UvLv429FDs8wnEBHkXw=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84C5C1373E;
-	Fri, 12 Jul 2024 18:48:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Z64ZIIN6kWY3QwAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Fri, 12 Jul 2024 18:48:35 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 6.10-rc8
-Date: Fri, 12 Jul 2024 20:48:27 +0200
-Message-ID: <cover.1720807949.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1720810132; c=relaxed/simple;
+	bh=gdz48EmSjgoy/izHwN+e2FaoXzRR7IwtCVpXbxR4jNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=kReOD4NpX//EqNVz0+l7MHVv470RjFnyCBCUzfPZk+y+/pCQc0gvsWbJzssXXMqm6tmIYSGNVUYt8xWnN+Otat1yXWKQBBufKAUgpULJX8BWjHtprH2tf+xjBHFhewoZTXwYJctWa6KgCwLTVmwQ9GBiwufOb4fN9V+qQL0Uilw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwgfdLSn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A6DDC32782;
+	Fri, 12 Jul 2024 18:48:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720810131;
+	bh=gdz48EmSjgoy/izHwN+e2FaoXzRR7IwtCVpXbxR4jNQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=MwgfdLSngAJm7yURAc4SXppRMHlTQEY1QwDeu8yJ5QAl+eUNgYr0Kb3ChYE1BlOxa
+	 i16UNmPCS1L3cNiJxB/u8Z83Oa/GdVyRhhUr2uUWLQpv3yPibtSL8ZwR1pvLCMr2JS
+	 QNV+ogiYb0+qDbl5jxOfBv9Ak4QSINyZgSWqRlswxuBusurJDmP9bpOc/oJ1EEpYCX
+	 zIJciBobInXEx8PbnKk2vIoJHINughAaULKb2tF8I4SyO0YKl/XIjYUFS+YNaQ/t2r
+	 EI9Pz3O0A/bqBfHSBb4+4kjPImrdubMa5z3OD2tOfscbnWziKSZTDfM1iUEO2nCL0r
+	 1c9NXyLfziWZA==
+Date: Fri, 12 Jul 2024 13:48:49 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Zhou Shengqing <zhoushengqing@ttyinfo.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, lkp@intel.com,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v4] Subject: PCI: Enable io space 1k granularity for
+ intel cpu root port
+Message-ID: <20240712184849.GA330337@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 8F3BA1FB99
-X-Spamd-Result: default: False [-1.01 / 50.00];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim];
-	FROM_EQ_ENVFROM(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Spam-Flag: NO
-X-Spam-Score: -1.01
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+In-Reply-To: <20240702035649.26039-1-zhoushengqing@ttyinfo.com>
 
-Hi,
+On Tue, Jul 02, 2024 at 03:56:49AM +0000, Zhou Shengqing wrote:
+> This patch add 1k granularity for intel root port bridge. Intel latest
+> server CPU support 1K granularity, And there is an BIOS setup item named
+> "EN1K", but linux doesn't support it. if an IIO has 5 IOU (SPR has 5 IOUs)
+> all are bifurcated 2x8.In a 2P server system,There are 20 P2P bridges
+> present. if keep 4K granularity allocation,it need 20*4=80k io space,
+> exceeding 64k. I test it in a 16*nvidia 4090s system under intel eaglestrem
+> platform. There are six 4090s that cannot be allocated I/O resources.
+> So I applied this patch. And I found a similar implementation in quirks.c,
+> but it only targets the Intel P64H2 platform.
 
-please pull the following branch that fixes a regression in extent map
-shrinker behaviour.
+I think this has potential.  Can you include a more complete citation
+for the Intel spec?  Complete name, document number if available,
+revision, section?  Hopefully it's publically available?
 
-In the past weeks we got reports from users that there are huge latency
-spikes or freezes. This was bisected to newly added shrinker of extent
-maps (it was added to fix a build up of the structures in memory).
+> Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
+> ---
+>  drivers/pci/quirks.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index 568410e64ce6..f30083d51e15 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -2562,6 +2562,36 @@ static void quirk_p64h2_1k_io(struct pci_dev *dev)
+>  }
+>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x1460, quirk_p64h2_1k_io);
+>  
+> +/* Enable 1k I/O space granularity on the intel root port */
+> +static void quirk_intel_rootport_1k_io(struct pci_dev *dev)
+> +{
+> +	struct pci_dev *d = NULL;
+> +	u16 en1k = 0;
+> +	struct pci_dev *root_port = pcie_find_root_port(dev);
+> +
+> +	if (!root_port)
+> +		return;
 
-I'm assuming that the freezes would happen to many users after release
-so I'd like to get it merged now so it's in 6.10.  Although the diff
-size is not small the changes are relatively straightforward, the
-reporters verified the fixes and we did testing on our side.
+This doesn't seem quite right to me.  The point is to set
+dev->io_window_1k when "dev" is a Root Port itself and when the EN1K
+bit is set in a [8086:09a2] device.
 
-Please pull, thanks.
+So I don't think we need to *look* for the Root Port, we just need to
+check that "dev" itself *is* a Root Port, e.g.,
 
-The fixes:
+  if (!pci_is_pcie(dev) || pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT)
+    return;
 
-- adjust behaviour under memory pressure and check lock or scheduling
-  conditions, bail out if needed
+> +	/*
+> +	 * Per intel sever CPU EDS vol2(register) spec,
+> +	 * Intel Memory Map/Intel VT-d configuration space,
+> +	 * IIO MISC Control (IIOMISCCTRL_1_5_0_CFG) — Offset 1C0h
+> +	 * bit 2.
+> +	 * Enable 1K (EN1K):
+> +	 * This bit when set, enables 1K granularity for I/O space decode
+> +	 * in each of the virtual P2P bridges
+> +	 * corresponding to root ports, and DMI ports.
+> +	 */
+> +	while ((d = pci_get_device(PCI_VENDOR_ID_INTEL, 0x09a2, d))) {
 
-- synchronize tracking of the scanning progress so inode ranges are not
-  skipped or work duplicated
+To be safe, "d" (the [8086:09a2] device) should be on the same bus as
+"dev" (with VMD, I think we get Root Ports *below* the VMD bridge,
+which would be a different bus, and they presumably are not influenced
+by the EN1K bit.
 
-- do a delayed iput when scanning a root so evicting an inode does not
-  slow things down in case of lots of dirty data, also fix lockdep
-  warning, a deadlock could happen when writing the dirty data would
-  need to start a transaction
+> +		pci_read_config_word(d, 0x1c0, &en1k);
+> +		if (en1k & 0x4) {
+> +			pci_info(d, "INTEL: System should support 1k io window\n");
 
-----------------------------------------------------------------
-The following changes since commit a56c85fa2d59ab0780514741550edf87989a66e9:
+If we log this, I think it should be with "dev", not "d", since we
+likely will have several Root Ports, and this would lead to several
+identical messages.  Maybe something like this:
 
-  btrfs: fix folio refcount in __alloc_dummy_extent_buffer() (2024-07-04 02:19:10 +0200)
+  pci_info(dev, "1K I/O windows enabled per %s EN1K setting\n", pci_name(d));
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.10-rc7-tag
-
-for you to fetch changes up to 4484940514295b75389f94787f8e179ba6255353:
-
-  btrfs: avoid races when tracking progress for extent map shrinking (2024-07-11 16:50:54 +0200)
-
-----------------------------------------------------------------
-Filipe Manana (3):
-      btrfs: use delayed iput during extent map shrinking
-      btrfs: stop extent map shrinker if reschedule is needed
-      btrfs: avoid races when tracking progress for extent map shrinking
-
- fs/btrfs/disk-io.c           |   2 +
- fs/btrfs/extent_map.c        | 123 +++++++++++++++++++++++++++++++++----------
- fs/btrfs/fs.h                |   1 +
- include/trace/events/btrfs.h |  18 ++++---
- 4 files changed, 107 insertions(+), 37 deletions(-)
+> +			dev->io_window_1k = 1;
+> +		}
+> +	}
+> +}
+> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL,	PCI_ANY_ID,	quirk_intel_rootport_1k_io);
+> +
+>  /*
+>   * Under some circumstances, AER is not linked with extended capabilities.
+>   * Force it to be linked by setting the corresponding control bit in the
+> -- 
+> 2.39.2
+> 
 
