@@ -1,268 +1,254 @@
-Return-Path: <linux-kernel+bounces-250884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65DD092FE1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:05:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1D2192FE22
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 18:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D95A51F2517F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68DEC286821
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77E3178370;
-	Fri, 12 Jul 2024 16:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE4C176224;
+	Fri, 12 Jul 2024 16:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LR+SA9hH"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="qzotOr3C"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011043.outbound.protection.outlook.com [52.101.65.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D38B176ABD
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 16:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720800251; cv=none; b=G8pWhGiG7beECZRrE5wGnGDgeDT3fylr+GFt9B++v8KBVM2+SW2rOaoyjI+Gy6XNxz5cXXHLuVzPbAuSn0mj48VcAwutkx2YQOsv/MjsasYpoH3kW/mk2oqBTW+lq80uqqJrCWQHf4isqzVfRNRWnMFe2CDyQgK5ysd9KoBVh+I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720800251; c=relaxed/simple;
-	bh=NF0ttJPPJHx2bQ6REVEW0ZebK541cG8BKuKiRadWNyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I7ScXBr2uIGLuo8zZzdbBRzuLib/RTRKytFj9y580iqEh578yLWFj4AW4DWsIcrU8bPtLJAWMlsDWzsvZCJ/FnTqUX2VC2p7+r744qF5jD8Qvx0csZ5vni3xDX73hkIycZMK81JuH1X29OGSKFmJ1WNjbam5i9x3J/8Rhi9A4Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LR+SA9hH; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5c7b6c6a581so976285eaf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 09:04:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720800248; x=1721405048; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6TvJj9OS9pLYtOuscI8ghIcPdBvxWYcRECb9BgIFeXA=;
-        b=LR+SA9hHdA7x/xxy9MhsYIXz5RKJ57gGHaBGlhMWcExbf5o2l4eId0ZowoQDVnA/zJ
-         ZtWvAffuQIRCSrPB5zgea8oi9ywOO0HNq5Y7TsD4wlqYVneMafVQjAhav2kknAy2xbld
-         2XgsrlFHNeUAgfByF2z5YoCkhyRGsE4fsH1pGMUkI+nRG5vlhXFYb/H6vI+eWMLyMSaP
-         E15l4jmU9+lUgEik+GSmzDEed80R7DvUiNNFjv3E01DVLEsswIcudASc9OmZRWOoCheh
-         bGhcdU/q0jXPwwG0rt8pk17XSgqZ9VvVLgRFUMoUMnykRnWh3X8SfJA7igKJf/6NGF5u
-         7eAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720800248; x=1721405048;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6TvJj9OS9pLYtOuscI8ghIcPdBvxWYcRECb9BgIFeXA=;
-        b=QKmbvyPSDUtEmW9RrPS6ThnbXj7ZJhD1vmKau+6tBSoiswVTQWn6XivzDBdFONjYMb
-         tQTdDBUJan+oXqUCmr+vZjm14g+oxCrKqq9lLAE0VXTyZq5dwgM7la0m4nsGsySxpJgE
-         DRo/XhfE19+0cm2WmmzMXLv6UO0ffiJP9BxAcBHyFJGMQdXSVJYNWCenqX5hmju3j1Ed
-         gQXZQKIq+RW1+1CgsyDP8EFX82rsIBawwIcWMdLRfK44IbtomtUkt/ZsFuFv/3lY+/M/
-         4aWBXvlEMhx3zShzt8SUNtcJQEdzBCXyk+nNPT6H0C68bRlMTOYDr5CSC02D4Qy3qeBu
-         +hCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ87UJsl3V8VvTzTYo3/Gs0Oz7cjJZ9ppCkRAHzmX9UATgQOGfzTalU0Jrs5nUJxAyhkmwMSIMZ0Ov9zll8Lh98Qv3KWg33F1qdwE1
-X-Gm-Message-State: AOJu0YyybEo451Jki4hrIU0ZgnN154DVa44uUqdPs06aD1O5Kho8x4R7
-	GX8cHf10UNdxN+rRgfca8KezlQqyv/SkSDibAiIS+iSW0lhkfm+78q0437oNK9Q=
-X-Google-Smtp-Source: AGHT+IGr7GtUz90d3Lh/5u99HidVD4eSXHr2INczAl7WDJoabqqvA5RKlDdYHdNqgwfxm7B6k4j9qg==
-X-Received: by 2002:a05:6870:6387:b0:25e:4365:c5d6 with SMTP id 586e51a60fabf-25eae7b880emr9984254fac.20.1720800248273;
-        Fri, 12 Jul 2024 09:04:08 -0700 (PDT)
-Received: from localhost.localdomain (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70374f78d35sm1615131a34.23.2024.07.12.09.04.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 09:04:07 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Kent Gustavsson <kent@minoris.se>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] iio: adc: mcp3911: use devm_regulator_get_enable_read_voltage()
-Date: Fri, 12 Jul 2024 11:03:57 -0500
-Message-ID: <20240712-iio-regulator-refactor-round-3-v1-6-835017bae43d@baylibre.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240712-iio-regulator-refactor-round-3-v1-0-835017bae43d@baylibre.com>
-References: <20240712-iio-regulator-refactor-round-3-v1-0-835017bae43d@baylibre.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DCE178384;
+	Fri, 12 Jul 2024 16:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720800254; cv=fail; b=ggkBGq/4ogyXJZnm7braBSTGMSQmj4lqXMVArdj6iucI8rtZS/ggspqMlA/nc7ru1bqheU57Fr8n8JLma5xn53U3AWGIzv0z4nkFdsFvmGdBAOIQI8cLw62m8EVSFzf7a+33nHGA3BqdG5lyum5Y76b/XScyBK0TlbeewLJyo3A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720800254; c=relaxed/simple;
+	bh=TeMgV7gBaJHtEB1Q2TpmaoqTSxE3B4vt8oKxBhIrnJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KbDHwO/Y8R+xI8ebJNRStBjjo/MchdSleCq9FghwhgfIza3GCiBr4dl6rnPN+t6JGGwARTuQ9pZ6VWMsOEVal8O8lXmeq/XWBAMsXnEaYAwg+s11z3xZDNC95xersyjjI7PA+Jw7jLiE/IVCjLFtGWwlAmUeHxjW8Q8TtGRmUoE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=qzotOr3C; arc=fail smtp.client-ip=52.101.65.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OUE1BVBM0IrcyYbhFoGRS0qEL1X29kvWOCrbr/WBywm70oeMfEL7w6b7RzEpufsk1SEo02ccG3H3wfCTzjGmuT701r0br1JfGuPJ8D9hrDnrBv2PaSqubJg6AXdWbEMDn0Xzjd5vS10cpzO5APpyJvIT6CgE+1x5ruoQz9SSGJUEUulmFkqW2wDAqJiKm8Kj9hkLZ9RtfL/V76BMCJnaFuwn/dDZfEULmA06Hzluhx4mPrJW4j1140lpH3EiZakac7W8d4vzVD1jnV5MIpTUX9DDLAgXHR9UkPU49I28gEVMu4cYphxVrbl8fjwKgdIccC8U+0C8hH3xlubM1WWK4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Raii68rV9vt+Ewcx3OxV5GDmxJUukA/SGptLE+MXwBs=;
+ b=DHK1vMKcZc7+DtLCogO5niFyTxx9FoyOGb8iv1BM2glW6xg8qlD5zheUeAg3TzmFcjYNC1GbhQtKqyEQq65D9HIf9olWia9c/wr8QhVH6jfGm+GxKkjJ35K8PaW1UuqNfiRMsv0TWzEt530cc3JYdv9o026PnzJM3xpMfVN55Qy6jYmfjNQtxW0XpVUM6xGMtPvgaHyjtSk+UhgrBqj0cwEZrih07RNvh1tcerncqR3tpaO0ERaBj+IcXxW4gEGMf+piDefHd43l3J401qbkCJhAXM321NT1ZZKlFO1JA7X7AGGjSqg2mZpns/l32GA28pyf44enXzSzm/5tmcR1nw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Raii68rV9vt+Ewcx3OxV5GDmxJUukA/SGptLE+MXwBs=;
+ b=qzotOr3CfkO4G3iaHUiAP4ImSYRIy0LpfzhXqdL0PNuJNT6144VGIdI/Zrh+rgRyaZwAeuhi6fAfLiPxRGWv3WX5clXX2vUQVpDI7DqJJkb/l9TfHLtUDEcjYTGDN7VMLiaZoGPwZ4lBqrlLnxODKMhLvZyosOnjwiErXCzdX1U=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DU0PR04MB9322.eurprd04.prod.outlook.com (2603:10a6:10:355::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Fri, 12 Jul
+ 2024 16:04:10 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.7762.020; Fri, 12 Jul 2024
+ 16:04:10 +0000
+Date: Fri, 12 Jul 2024 12:04:02 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" <linux-ide@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: ata: ahci-fsl-qoriq: add
+ fsl,ls1046a-ahci and fsl,ls1012a-ahci
+Message-ID: <ZpFT8mdkQTrixIvA@lizhi-Precision-Tower-5810>
+References: <20240712142922.3292722-1-Frank.Li@nxp.com>
+ <ZpFJhk_HgQhGAQMU@ryzen.lan>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpFJhk_HgQhGAQMU@ryzen.lan>
+X-ClientProxiedBy: SJ0PR05CA0027.namprd05.prod.outlook.com
+ (2603:10b6:a03:33b::32) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.14.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU0PR04MB9322:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89e835d7-0c16-400a-b000-08dca28c43f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|366016|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?r1PGrZ7iJILn81M6PYdVSg2LV066Fyg7iIp2UuBUcW9/4p2hN2Gnqp6+vMMG?=
+ =?us-ascii?Q?apd4V1k2vMMERnddqJdrp73aj9sNhJIOhwKeqETW6VItc26c6iG0X3ludDco?=
+ =?us-ascii?Q?kEm/yVozQu7yBHIVe8ILkEydEXuycxKoGqT43pcYQ+hKc6Ff3yvvYmB9Cali?=
+ =?us-ascii?Q?fBZPspmy5KA6PgUxu8CRuieAgMtWniUjLBbH/tN20SvtFIeWmHeqb3G8mALV?=
+ =?us-ascii?Q?G/xio4FHY6+ACf0d9M0zFfxqVNxEDqvfBHUUjTaXZDGCAeEXYOCEUmKQait7?=
+ =?us-ascii?Q?hExCg2TnbvuSviqXvUSmP31YGbD52CXN0zRUXsA+Ce4vLZmbdBi810RaevdR?=
+ =?us-ascii?Q?OZFPjySM8zrKauSldpjmgPMsDCTIsakufhXV3tUewapvZY6Q2OZoMd62AbD2?=
+ =?us-ascii?Q?lGqJXUr84dh9AO40E7foBV7dldLZ/rLAnfwE03Jkl4R0QXpoOAAaavLs4qiM?=
+ =?us-ascii?Q?FhryGulq0rrxS62UXqfP7QisYt99RfVx+QxGaSqIJB+y7McnFn4oamyz2Hmp?=
+ =?us-ascii?Q?NELxbXgVukuqZ/L+rUuafMGOVSQ2i0JiNtvFnBoY5JaLMN645/mnfXgSPnRN?=
+ =?us-ascii?Q?rfWJTlOSzB3R8qKTRu7fqtQ0fni8qdatVtjgFjlY/KLc44gTJmkpjJkuvRUs?=
+ =?us-ascii?Q?dBTk/Po7pEGqBP6ymdr0klMRkG0D9eACr+KdzRkA/y/ydbZnGtBtFEjockIQ?=
+ =?us-ascii?Q?FTEWvGqTOjStiPneqPF/tPEnswB+/krhMhbKUS7c6QtS09r/aHVfnsvhX9X7?=
+ =?us-ascii?Q?vj+aU9M+FGEiM/uQ6+gIBwKMU+fxoxkuVIdaN51hVZC7r4AgRN8Xe6z1lDwl?=
+ =?us-ascii?Q?MMpQCwH1XE9Jo0Nx5OsvXMfuC0knFVwYjO5jkqPpuWcS3EEXvnWICxw6gAdx?=
+ =?us-ascii?Q?PcNotTWjWpqXMna0ZyHla/mm6j1w/b8eu4kTPB33yK/8vlYy/wesltuHkv+P?=
+ =?us-ascii?Q?/iZlxcwuTrYrx8NxOXV2ZOn4Su8SF3mbFqhy2rfgPuHmsy0Sj9mbVgf1/Vmv?=
+ =?us-ascii?Q?1+WEyT2lRS0T+6QpNzmNTnAtB8Ci0waZYV6kZdTxygB7s/LXrUVSc/NiGsFy?=
+ =?us-ascii?Q?gBzOWmZhTn6/XXJOHvXeIgiJF0D+SwLGqCOsqRYTRP3sQkkJqUNHBPCqHuQD?=
+ =?us-ascii?Q?J1x+vKS5bPqj7t03yFz8gIbKetAVF/WRZ3j7T0oGwlirFo2vuuFk2zhhCjoM?=
+ =?us-ascii?Q?KpO+CGsHFfPQqFJspW10h2BlgdytcvRPT7ch1kRikFYAfFOz6nxC9SpihvSD?=
+ =?us-ascii?Q?tCfEeL1lOaDi7T+tOSR1lG9A1gIAMTFGkoB2IkazndGL+z+KyhlKRv+QA1kb?=
+ =?us-ascii?Q?P8f2h4se/wjfd+EBCMJInzOjnQL56sL+nyqMbeqVm+SYzJP3qvY9au1LNZRI?=
+ =?us-ascii?Q?ytvqTuIpV51kzkjvhe9fv8Q7ZUsRCcBv6ccRn0+kLOpzzNL5Tw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Eu8hjH46I0QazvdG0jtIrqb6vjSwH5Zl+m2niyOKPwa3r7oQMUhCvUur52ih?=
+ =?us-ascii?Q?rgV/3yKYfqwasTVuldrExGkVhp/BgGsrqy/ZKaOeJKsvpeui9EnzEVFwoPRV?=
+ =?us-ascii?Q?Zgq7tfcBvqbsgK0/aF8NLyuQgblFYafA1l9w65XE9Z9OXELnhuiMsg0Yp9K2?=
+ =?us-ascii?Q?U6lV6CiRkJamCVRjFwN3SPXPDal4oHTxVFCTZ2i8L2z5ICrd9IIhYUQCVhaY?=
+ =?us-ascii?Q?10C34qHmTsLhmUAoY2nVll1jcrfa+ldEUgY/QtnUKSBya1aIze4Ki6DoShuE?=
+ =?us-ascii?Q?TOvZmzTo35O3pYYcThTKMjZvrzwUsEbui0UnTtS2zTaRmKzDkP7VeR/lRtRk?=
+ =?us-ascii?Q?aPO++p+DMpcE+wAO7EbIfD5e0JtNNQ/urhVN4N4H9fud9NrKfVqE8EAsdy2T?=
+ =?us-ascii?Q?lOKmZ/XbHYqjXPqiAJjAPXdqyMV8JPOg2bWa7ZR+tWFJPKDSmYVotrpeKAMG?=
+ =?us-ascii?Q?K56+fIgTrzqmlU10xkf1ikdeg3xmiOZ1kTaaOjk2+62kJ7Tw3qInraDrA4t/?=
+ =?us-ascii?Q?jN8kW7Pgs6ek3N4sB7BWKZg8LDiy9Fb5c1WaTVyPN19oCQX0Oy40D+o3gxNo?=
+ =?us-ascii?Q?DIeMQO+Vd5KUjV/tBKlkAcnaND3J/RmiLAJ7yvfQmiboa3MW3P880ibt2SMF?=
+ =?us-ascii?Q?bGMqykaT0L0jstvx9b69Ebh+SSfsnbiIyoEJOK41xOey1Pv1IO1+qLW4aJRm?=
+ =?us-ascii?Q?YReHuQyqoRvKcvQVmjVdRf1IZsFoiv6aJ+Y2bnE1/v8IeXbNI/T392XQSs5C?=
+ =?us-ascii?Q?1DndMP1Y7DhtCeIj0aNcw1QWENVeV0b4jNVBaiKc7jVPnVcjsDq1VVDLREqW?=
+ =?us-ascii?Q?se9VhHQ/uS5asGSLSCLSCdiUUfW/CMy8ipG/2KgDimFhFT4Q4gc3VNpBu/CR?=
+ =?us-ascii?Q?7JTcfSJ6/sI0zxhrU8LSHTbwFm2S/7biP+FrAM4RTwopnrx2Wa+VC6qgEoIc?=
+ =?us-ascii?Q?Wp59dCr8yHB33/H6Mul+8OFX/nK7NS4+tv2MvAisUZ6ckVlosPHK/PT75oe2?=
+ =?us-ascii?Q?KbHXxrbXo7BiSbSFYJ4WZa0RHd9P33JTgj02mVjvQjNIRz3DzKNZ7tWEj+jN?=
+ =?us-ascii?Q?eZihaiAA0RFNB2m3xQT3gBApi2LJuBClOmi5mMiudlFVfXCfoQ/QM14rhnU0?=
+ =?us-ascii?Q?sDjnl6Xo/qz1XrXJMvDZ1X6pYUMzSeCdyAtPylf7LtMtjxp7IjiSjCULlBGj?=
+ =?us-ascii?Q?FEKzRFSM8/8VeSJT3i0WAoAfzHwC9wvx7hpmTnJsgZlcxtHifrS9nv8j2MJm?=
+ =?us-ascii?Q?g3aEAoNYwWK338bYFYQLLbFlaF2SBI2Hma08zLzAWF+BakDkzibA6h0ttDfR?=
+ =?us-ascii?Q?9gQ5PQhNPCnEZOcU6422CcciDerhore+IpqmD4cvba+wQwCODulJcSCXuvOJ?=
+ =?us-ascii?Q?iJV0ohl47QJi4FQgDTUEAnUX1TFq5vMOsJofbmWEfj/FCoBSBb1BK11ErIpJ?=
+ =?us-ascii?Q?CS3H6BbBDbsv+bh0hgjANgG40oU7w5aOSVruA1VDEdo69NH81+th3M+p5IJq?=
+ =?us-ascii?Q?V0lpSPECJOLoe66vFvArXxdn7Tdgf/VbAbM/LOhnuVSeio/n6WvYSBndDl38?=
+ =?us-ascii?Q?pGcYgk/eJwf93r5Se3DpHUI6i6kfBV5WPbAigX6U?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89e835d7-0c16-400a-b000-08dca28c43f2
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2024 16:04:10.0066
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DlxY8S1GEE5PDYRuI1lbcjhfe3om6j866NigL42z5tX4bmGaSWbCrePEingT5pqiKOSzotTSFwy+1H3dPdm8Fw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9322
 
-This makes use of the new devm_regulator_get_enable_read_voltage()
-helper function to reduce boilerplate code in the MCP3911 ADC driver.
+On Fri, Jul 12, 2024 at 05:19:34PM +0200, Niklas Cassel wrote:
+> On Fri, Jul 12, 2024 at 10:29:22AM -0400, Frank Li wrote:
+> > Add missing documented compatible strings 'fsl,ls1046a-ahci' and
+> > 'fsl,ls1012a-ahci'. Allow 'fsl,ls1012a-ahci' to fallback to
+> > 'fsl,ls1043a-ahci'.
+> > 
+> > Fix below CHECK_DTB warnings
+> > arch/arm64/boot/dts/freescale/fsl-ls1012a-frwy.dtb: /soc/sata@3200000: failed to match any schema with compatible: ['fsl,ls1012a-ahci', 'fsl,ls1043a-ahci']
+> > 
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> > Change from v1 to v2
+> > - rework commit message to show fix CHECK_DTB warning.
+> > ---
+> >  .../devicetree/bindings/ata/fsl,ahci.yaml     | 19 ++++++++++++-------
+> >  1 file changed, 12 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> > index 162b3bb5427ed..a244bc603549d 100644
+> > --- a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> > +++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> > @@ -11,13 +11,18 @@ maintainers:
+> >  
+> >  properties:
+> >    compatible:
+> > -    enum:
+> > -      - fsl,ls1021a-ahci
+> > -      - fsl,ls1043a-ahci
+> > -      - fsl,ls1028a-ahci
+> > -      - fsl,ls1088a-ahci
+> > -      - fsl,ls2080a-ahci
+> > -      - fsl,lx2160a-ahci
+> > +    oneOf:
+> > +      - items:
+> > +          - const: fsl,ls1012a-ahci
+> > +          - const: fsl,ls1043a-ahci
+> > +      - enum:
+> > +          - fsl,ls1021a-ahci
+> > +          - fsl,ls1043a-ahci
+> > +          - fsl,ls1046a-ahci
+> > +          - fsl,ls1028a-ahci
+> > +          - fsl,ls1088a-ahci
+> > +          - fsl,ls2080a-ahci
+> > +          - fsl,lx2160a-ahci
+> 
+> I think that you should add the following Fixes-tag:
+> Fixes: e58e12c5c34c ("dt-bindings: ata: ahci-fsl-qoriq: convert to yaml format")
 
-The error message is slightly changed since there are fewer error
-return paths.
+I am not sure if need it because e58e12c5c34c still not release yet.
+Needn't backport. You may squash into e58e12c5c34c if you like.
 
-An extra parameter is added to the config callback to avoid adding
-state that is not used outside of the probe() function.
+> 
+> Considering that the commit that your are fixing is only in libata for-6.11,
+> and has thus never been in a released kernel version, perhaps the following
+> patch would be better (if it also solves the warnings):
+> 
+> diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> index 162b3bb5427e..8953b1847305 100644
+> --- a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> +++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> @@ -12,8 +12,10 @@ maintainers:
+>  properties:
+>    compatible:
+>      enum:
+> +      - fsl,ls1012a-ahci
+>        - fsl,ls1021a-ahci
+>        - fsl,ls1043a-ahci
+> +      - fsl,ls1046a-ahci
+>        - fsl,ls1028a-ahci
+>        - fsl,ls1088a-ahci
+>        - fsl,ls2080a-ahci
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/iio/adc/mcp3911.c | 59 +++++++++++++----------------------------------
- 1 file changed, 16 insertions(+), 43 deletions(-)
+driver have not support "fsl,ls1012a-ahci", which have to fall back to
+"fsl,ls1043a-ahci". and DTS already use 
+     compatible = "fsl,ls1012a-ahci", "fsl,ls1046a-ahci".
 
-diff --git a/drivers/iio/adc/mcp3911.c b/drivers/iio/adc/mcp3911.c
-index 7a32e7a1be9d..5076028f541d 100644
---- a/drivers/iio/adc/mcp3911.c
-+++ b/drivers/iio/adc/mcp3911.c
-@@ -103,7 +103,7 @@ struct mcp3911_chip_info {
- 	const struct iio_chan_spec *channels;
- 	unsigned int num_channels;
- 
--	int (*config)(struct mcp3911 *adc);
-+	int (*config)(struct mcp3911 *adc, bool external_vref);
- 	int (*get_osr)(struct mcp3911 *adc, u32 *val);
- 	int (*set_osr)(struct mcp3911 *adc, u32 val);
- 	int (*enable_offset)(struct mcp3911 *adc, bool enable);
-@@ -115,7 +115,6 @@ struct mcp3911_chip_info {
- struct mcp3911 {
- 	struct spi_device *spi;
- 	struct mutex lock;
--	struct regulator *vref;
- 	struct clk *clki;
- 	u32 dev_addr;
- 	struct iio_trigger *trig;
-@@ -385,23 +384,11 @@ static int mcp3911_write_raw(struct iio_dev *indio_dev,
- 	}
- }
- 
--static int mcp3911_calc_scale_table(struct mcp3911 *adc)
-+static int mcp3911_calc_scale_table(u32 vref_mv)
- {
--	struct device *dev = &adc->spi->dev;
--	u32 ref = MCP3911_INT_VREF_MV;
- 	u32 div;
--	int ret;
- 	u64 tmp;
- 
--	if (adc->vref) {
--		ret = regulator_get_voltage(adc->vref);
--		if (ret < 0) {
--			return dev_err_probe(dev, ret, "failed to get vref voltage\n");
--		}
--
--		ref = ret / 1000;
--	}
--
- 	/*
- 	 * For 24-bit Conversion
- 	 * Raw = ((Voltage)/(Vref) * 2^23 * Gain * 1.5
-@@ -412,7 +399,7 @@ static int mcp3911_calc_scale_table(struct mcp3911 *adc)
- 	 */
- 	for (int i = 0; i < MCP3911_NUM_SCALES; i++) {
- 		div = 12582912 * BIT(i);
--		tmp = div_s64((s64)ref * 1000000000LL, div);
-+		tmp = div_s64((s64)vref_mv * 1000000000LL, div);
- 
- 		mcp3911_scale_table[i][0] = 0;
- 		mcp3911_scale_table[i][1] = tmp;
-@@ -544,7 +531,7 @@ static const struct iio_info mcp3911_info = {
- 	.write_raw_get_fmt = mcp3911_write_raw_get_fmt,
- };
- 
--static int mcp3911_config(struct mcp3911 *adc)
-+static int mcp3911_config(struct mcp3911 *adc, bool external_vref)
- {
- 	struct device *dev = &adc->spi->dev;
- 	u32 regval;
-@@ -555,7 +542,7 @@ static int mcp3911_config(struct mcp3911 *adc)
- 		return ret;
- 
- 	regval &= ~MCP3911_CONFIG_VREFEXT;
--	if (adc->vref) {
-+	if (external_vref) {
- 		dev_dbg(dev, "use external voltage reference\n");
- 		regval |= FIELD_PREP(MCP3911_CONFIG_VREFEXT, 1);
- 	} else {
-@@ -610,7 +597,7 @@ static int mcp3911_config(struct mcp3911 *adc)
- 	return mcp3911_write(adc, MCP3911_REG_GAIN, regval, 1);
- }
- 
--static int mcp3910_config(struct mcp3911 *adc)
-+static int mcp3910_config(struct mcp3911 *adc, bool external_vref)
- {
- 	struct device *dev = &adc->spi->dev;
- 	u32 regval;
-@@ -621,7 +608,7 @@ static int mcp3910_config(struct mcp3911 *adc)
- 		return ret;
- 
- 	regval &= ~MCP3910_CONFIG1_VREFEXT;
--	if (adc->vref) {
-+	if (external_vref) {
- 		dev_dbg(dev, "use external voltage reference\n");
- 		regval |= FIELD_PREP(MCP3910_CONFIG1_VREFEXT, 1);
- 	} else {
-@@ -677,11 +664,6 @@ static int mcp3910_config(struct mcp3911 *adc)
- 	return adc->chip->enable_offset(adc, 0);
- }
- 
--static void mcp3911_cleanup_regulator(void *vref)
--{
--	regulator_disable(vref);
--}
--
- static int mcp3911_set_trigger_state(struct iio_trigger *trig, bool enable)
- {
- 	struct mcp3911 *adc = iio_trigger_get_drvdata(trig);
-@@ -704,6 +686,8 @@ static int mcp3911_probe(struct spi_device *spi)
- 	struct device *dev = &spi->dev;
- 	struct iio_dev *indio_dev;
- 	struct mcp3911 *adc;
-+	bool external_vref;
-+	u32 vref_mv;
- 	int ret;
- 
- 	indio_dev = devm_iio_device_alloc(dev, sizeof(*adc));
-@@ -714,23 +698,12 @@ static int mcp3911_probe(struct spi_device *spi)
- 	adc->spi = spi;
- 	adc->chip = spi_get_device_match_data(spi);
- 
--	adc->vref = devm_regulator_get_optional(dev, "vref");
--	if (IS_ERR(adc->vref)) {
--		if (PTR_ERR(adc->vref) == -ENODEV) {
--			adc->vref = NULL;
--		} else {
--			return dev_err_probe(dev, PTR_ERR(adc->vref), "failed to get regulator\n");
--		}
-+	ret = devm_regulator_get_enable_read_voltage(dev, "vref");
-+	if (ret < 0 && ret != -ENODEV)
-+		return dev_err_probe(dev, ret, "failed to get vref voltage\n");
- 
--	} else {
--		ret = regulator_enable(adc->vref);
--		if (ret)
--			return ret;
--
--		ret = devm_add_action_or_reset(dev, mcp3911_cleanup_regulator, adc->vref);
--		if (ret)
--			return ret;
--	}
-+	external_vref = ret != -ENODEV;
-+	vref_mv = external_vref ? ret / 1000 : MCP3911_INT_VREF_MV;
- 
- 	adc->clki = devm_clk_get_enabled(dev, NULL);
- 	if (IS_ERR(adc->clki)) {
-@@ -755,11 +728,11 @@ static int mcp3911_probe(struct spi_device *spi)
- 	}
- 	dev_dbg(dev, "use device address %i\n", adc->dev_addr);
- 
--	ret = adc->chip->config(adc);
-+	ret = adc->chip->config(adc, external_vref);
- 	if (ret)
- 		return ret;
- 
--	ret = mcp3911_calc_scale_table(adc);
-+	ret = mcp3911_calc_scale_table(vref_mv);
- 	if (ret)
- 		return ret;
- 
+It can't fix 1012's warning. Only fix 1046's warning.
+DT team also don't want to remove fsl,ls1012a-ahci in dts file.
 
--- 
-2.43.0
+> 
+> 
+> This assumes that we can get the patch included before 6.11 final is released,
+> but considering that the merge window hasn't even opened yet, that should be
+> doable.
+> 
+> 
+> Thoughts from DT maintainers?
 
+Supposed through ata tree.
+
+> 
+> 
+> 
+> Kind regards,
+> Niklas
 
