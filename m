@@ -1,187 +1,139 @@
-Return-Path: <linux-kernel+bounces-250792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7E992FCDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:51:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A834392FCE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 16:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748F61F2413A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:51:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522321F23E18
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3ED172791;
-	Fri, 12 Jul 2024 14:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF27D173326;
+	Fri, 12 Jul 2024 14:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MdbeuJn7"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iN2zMQck"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7DF16F83D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D8E16F83D
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 14:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720795871; cv=none; b=aW7IVTXTZzwxQLuHtznm/vUN8SaKjhh1cN36tnaVAq5PCeeYC9SqmRkTrp7Vh8RGnCOMEfEdGXcQH/w/uw7GqwDsKHDkxwbLJRqE1miFcyWqv9jIx9rqkOWAJcSdGkY9xwRu5SraIzRgDfyVWowLnHhWoLDcCn9dSz3krJ/F0rI=
+	t=1720795881; cv=none; b=Pktz0xtF9cUXM82XwkwBMPr2MC8QQ1S+IBMExRZXy/44II2spXr6ILfJLH53juwBh3CN2UARwfgR724C4QPwCGGfV3HiggWaxOsScod5EAXxjBv/HJDvXspjBXxCHvYRIlvKDvW1PY2RAbRiCZviEmebz69/ZSiDHGyV4XkcURs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720795871; c=relaxed/simple;
-	bh=5NiK20J7I8uqS12mizskriBLifMOD+BV8PSFC7DJnes=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Y4I+HOZc9a8Dae0o7qqWrk/UbB35BIrp6tTNGSEclFYN6FQV0l5Tw3TTm6LpezAHWjB5lIfidcKUQp9S6q/geHAEdpJjj4qMWcQz169dKtiYl7ZSJ15CHDM8/wac1rnMnwv9TDrWy629M/urIX4qnlQ7SLtq9pXZobdYtXf/wX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MdbeuJn7; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1720795881; c=relaxed/simple;
+	bh=os+eu3Tv4J7dwzpTJ1FV2zX0vhYsARIhlveeUqaBXlY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Qd3IrmVWXMN7o+6d0thM33Zb875f5zMjjAcevfQbVEdEPxKdV4D6fPqYcacDivap8mmmCRXi7OXle/4rmgw9yYO7zUq7N/77/RDB6C55lT1TIi0/KwVp8W8ef5Nco744cc9V6UB8BabY78KvMkTRcoyOybFpfscq7pFrIQHny/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iN2zMQck; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ea3e499b1so2432851e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:51:09 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso254522966b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 07:51:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720795868; x=1721400668; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=25HtwWk42kqkS4TR2mXlafiP+k83HA8zqjAwuDPofEA=;
-        b=MdbeuJn7lMbI5xiM5RA0aNEhdmGuD5ZdWgGb8yIkeNj0g/1zGjUeu2rH54X9LNnwUd
-         MFaO+9y0HLwDgFyyebr8UUxSVrkFXvigllCREer5xKoQ7HMxitzlOAEtmK+bVrB922rG
-         OqveNk4py54tsJ6rHukwhwsC5Lh+wxSOTXTdPIi+VwmzqPP8Hdk6ctFMcTOCw+gPCKxK
-         95YYad7v6SFPndCu45STNoBo4K9CPxml34mK559iypLx6ah/t3Yfxvoc/bQpMdbipKj+
-         pLQQI5QMEtM0hfg04CfagkNToTQlA+3poeiRI42bbaaEBfPwPUDGPFw+7rSFjpp/RixN
-         nk6Q==
+        d=linaro.org; s=google; t=1720795878; x=1721400678; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BnCZYn7QzeqqSyePCYQ6UTzqFFn4iCKE4NhQPzuGH7s=;
+        b=iN2zMQckJSiP2hIEMkYKaC0aiXBSgBwG1TE5sAtUdXp7mddCcPzG96e//Vm04NpK/l
+         JODNTb77HU5affYFRKAasepjjD53hD6slgqRYohpajwvD8wXElReyMDsRjRxI0hBzXUf
+         +ImU6zQN/u5yUiblj8Ryw9k3zbg3Q0MM4pjyXUjNYe5a3eohjDMcUBeHkmAOgtXMV+Na
+         JJFGQW2V/uFPllDk8jL78SE0Viyir7F2g5p7qyvelwmCG6eSo22gDoeSVv5WyXExqqQP
+         hblFjN3G9weE/5WvzeK0vfMmRjnIIgm7SHmJSFpVbPsbVAc1Gh2gODfkZkEXqk/WWHnB
+         5hWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720795868; x=1721400668;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=25HtwWk42kqkS4TR2mXlafiP+k83HA8zqjAwuDPofEA=;
-        b=Nk2nXhmWiOzxSP8I2DvRyFrD+fuayvdEXzGshtnks5jwLa0VfvpcFGXFaApzxjCEmn
-         MhXLVEx2VB8RjpikfUrbBkbWh6qYUT9jOg3bToymVOdEBfQ3iKCV/HifNu9LZ1cUnz0B
-         FrI5gF5JoWxttK6qKmdm3p8DVAnhgmuntVV8rZ4wB0TyeMC9jJOfOrALdaoXGbTM5cxo
-         QWmCKzWwuAVoZRubCEldTIOlmGLfYUDNMJFHj2k4/U+N+8dUGED9Nj21IZb8aFD1H04B
-         hm97mHrquzsK77vCdXVaD/54bW04fxpRDnrI0CP3wiIQPyMRSH0Spamlq9BvASRsvAu3
-         xfrg==
-X-Gm-Message-State: AOJu0YxZSQSA/a9EIc5OQyoFp4h1travhQ8aUxba89CgOAMFpQj/s1ob
-	WS/1Fd5TQXNSrL99NwzN0GWHXJrJym3e0wSFde17GUsXmowY2pKKfvHzAislMxI=
-X-Google-Smtp-Source: AGHT+IExAI372ZjrINFBVM13cZ9IuDW4WAiLLz05CtjBkrQloPpho2sSpSKceRzFEDPAUSXLT0+EyA==
-X-Received: by 2002:a05:6512:3ba8:b0:52c:db75:9640 with SMTP id 2adb3069b0e04-52eb99d20cemr9424739e87.48.1720795867572;
-        Fri, 12 Jul 2024 07:51:07 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:4ac5:b5bb:35db:3edf? ([2a05:6e02:1041:c10:4ac5:b5bb:35db:3edf])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4279f27846bsm25838455e9.25.2024.07.12.07.51.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 07:51:07 -0700 (PDT)
-Message-ID: <91cd05de-4c5d-4242-a381-3b8a4fe6a2a2@linaro.org>
-Date: Fri, 12 Jul 2024 16:51:06 +0200
+        d=1e100.net; s=20230601; t=1720795878; x=1721400678;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BnCZYn7QzeqqSyePCYQ6UTzqFFn4iCKE4NhQPzuGH7s=;
+        b=grzELJAJ99pfOa+xddqpg7UQ7ipw+XeTUV9exW1nQYITa8MZYxXTLIaGxBBbp1NN51
+         h7/yzn02JR7B4ykkb4o6qHGPQDyL1PHCoLaHhtHPWpYXo6tSYvJZBhf29TVNr7w+G7L/
+         q8pk09Cjli3+g7EUqp6LcqaszI+JJwlODgnNlg0B8BhJ+Uq23Wi5xJm3hZY2a+la6gBG
+         xdusoqrWoUb0jqr9I/nY2STE4HafGV8Zno/q+ULsaJNm1TfEm3bZj1TwyvWCabzLECOM
+         pGA68thcpPdPjRm5spsWJ5X6PFCuNvmFQe+UxqP0mz7NAN/HMmBPWqbu4q+C1OOtV0yE
+         HFTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUO4qeYNX5KPRUwm1nPQtIESoUgeuDPgaoxWdkM0Zk1lHivTSaqbVEYqp4fzyogA2CvHtfvLNdqrhRXYoWuGatrbhXSAIqIrt8hzdcu
+X-Gm-Message-State: AOJu0Ywt++AUKdQSU95Hr2j7FcPCJpEIn4qZaoThTAA7tNFVe8nSqvu5
+	HfjMcXyspGPAVdKdxUnnqGyXB5+xGIEpj1WDqMe89eTSImruS8IPGXTKQtUXgnA=
+X-Google-Smtp-Source: AGHT+IHicEksR7Lw9T6Nn6PNHSawUIiaFIluB5vjYIyxtPziXVzeyr0nX7q0WGreJJZGr58T602gbQ==
+X-Received: by 2002:a17:906:46c9:b0:a77:e2b2:8ec with SMTP id a640c23a62f3a-a780b68899dmr755965866b.3.1720795878012;
+        Fri, 12 Jul 2024 07:51:18 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff213sm351406266b.107.2024.07.12.07.51.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 07:51:17 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v4 0/2] dt-bindings: serial: samsung: style and gs101 fixes
+Date: Fri, 12 Jul 2024 15:51:16 +0100
+Message-Id: <20240712-gs101-uart-binding-v4-0-24e9f8d4bdcb@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [GIT PULL][resend] timer drivers for v6.11-rc1
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Chris Packham <chris.packham@alliedtelesis.co.nz>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>, Li kunyu <kunyu@nfschina.com>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAORCkWYC/x3MTQqAIBBA4avErBvwj4SuEi00R5uNhVYE0d2Tl
+ t/ivQcqFaYKY/dAoYsrb7nB9B0sq8uJkEMzKKGMsFJhqlJIPF050HMOnBN6Y6N2yopFD9DCvVD
+ k+59O8/t+eOTYm2QAAAA=
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
+This series started as a single patch [1] (as part of [2]) to fix a few
+issues with the UART on gs101.
 
-Hi Thomas,
+In [3], Rob pointed out that the binding here shouldn't be duplicating
+clock-names all over the place.
 
-please consider pulling the following changes since commit 
-256abd8e550ce977b728be79a74e1729438b4948:
+So now we have a patch to do what Rob suggested, and my original patch to
+address the incorrect number of clocks.
 
-   Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
+The whole series is marked as v4, because patch 2 in this series used to be
+v3 in the original series.
 
-which are available in the Git repository at:
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Will McVicker <willmcvicker@google.com>
+Cc: kernel-team@android.com
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-   https://git.linaro.org/people/daniel.lezcano/linux.git 
-tags/timers-v6.11-rc1
+[1] https://lore.kernel.org/all/20240710-gs101-non-essential-clocks-2-v3-1-5dcb8d040d1c@linaro.org/
+[2] https://lore.kernel.org/all/20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org/
+[3] https://lore.kernel.org/all/20240711212359.GA3023490-robh@kernel.org/
 
-for you to fetch changes up to 4bdc3eaa102b6bedb0800f76f53eca516d5cf20c:
+---
+André Draszik (2):
+      dt-bindings: serial: samsung: avoid duplicating permitted clock-names
+      dt-bindings: serial: samsung: fix maxItems for gs101
 
-   clocksource/drivers/realtek: Add timer driver for rtl-otto platforms 
-(2024-07-12 16:07:06 +0200)
+ .../devicetree/bindings/serial/samsung_uart.yaml   | 69 ++++++++++++++++++----
+ 1 file changed, 56 insertions(+), 13 deletions(-)
+---
+base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
+change-id: 20240712-gs101-uart-binding-b47f3a270c36
 
-
-Thanks
-
-   -- Daniel
-
-----------------------------------------------------------------
-- Remove unnecessary local variables initialization as they will be
-   initialized in the code path anyway right after on the ARM arch
-   timer and the ARM global timer (Li kunyu)
-
-- Fix a race condition in the interrupt leading to a deadlock on the
-   SH CMT driver. Note that this fix was not tested on the platform
-   using this timer but the fix seems reasonable enough to be picked
-   confidently (Niklas Söderlund)
-
-- Increase the rating of the gic-timer and use the configured width
-   clocksource register on the MIPS architecture (Jiaxun Yang)
-
-- Add the DT bindings for the TMU on the Renesas platforms (Geert
-   Uytterhoeven)
-
-- Add the DT bindings for the SOPHGO SG2002 clint on RiscV (Thomas
-   Bonnefille)
-
-- Add the rtl-otto timer driver along with the DT bindings for the
-   Realtek platform (Chris Packham)
-
-----------------------------------------------------------------
-Chris Packham (2):
-       dt-bindings: timer: Add schema for realtek,otto-timer
-       clocksource/drivers/realtek: Add timer driver for rtl-otto platforms
-
-Geert Uytterhoeven (3):
-       dt-bindings: timer: renesas,tmu: Add R-Mobile APE6 support
-       dt-bindings: timer: renesas,tmu: Add RZ/G1 support
-       dt-bindings: timer: renesas,tmu: Add R-Car Gen2 support
-
-Jiaxun Yang (2):
-       clocksource/drivers/mips-gic-timer: Refine rating computation
-       clocksource/drivers/mips-gic-timer: Correct sched_clock width
-
-Li kunyu (2):
-       clocksource/drivers/arm_arch_timer: Remove unnecessary ‘0’ values 
-from irq
-       clocksource/driver/arm_global_timer: Remove unnecessary ‘0’ 
-values from err
-
-Niklas Söderlund (1):
-       clocksource/drivers/sh_cmt: Address race condition for clock events
-
-Thomas Bonnefille (1):
-       dt-bindings: timer: Add SOPHGO SG2002 clint
-
-  .../bindings/timer/realtek,otto-timer.yaml         |  63 +++++
-  .../devicetree/bindings/timer/renesas,tmu.yaml     |  12 +
-  .../devicetree/bindings/timer/sifive,clint.yaml    |   1 +
-  drivers/clocksource/Kconfig                        |  10 +
-  drivers/clocksource/Makefile                       |   1 +
-  drivers/clocksource/arm_arch_timer.c               |   2 +-
-  drivers/clocksource/arm_global_timer.c             |   2 +-
-  drivers/clocksource/mips-gic-timer.c               |  20 +-
-  drivers/clocksource/sh_cmt.c                       |  13 +-
-  drivers/clocksource/timer-rtl-otto.c               | 291 
-+++++++++++++++++++++
-  include/linux/cpuhotplug.h                         |   1 +
-  11 files changed, 405 insertions(+), 11 deletions(-)
-  create mode 100644 
-Documentation/devicetree/bindings/timer/realtek,otto-timer.yaml
-  create mode 100644 drivers/clocksource/timer-rtl-otto.c
-
-
-
-
-
+Best regards,
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+André Draszik <andre.draszik@linaro.org>
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
