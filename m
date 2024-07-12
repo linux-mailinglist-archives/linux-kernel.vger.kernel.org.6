@@ -1,108 +1,102 @@
-Return-Path: <linux-kernel+bounces-250653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A1B92FA9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:48:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB0C92FAA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 14:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB8BE1C22041
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:48:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F5D3B22416
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 12:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CB816F831;
-	Fri, 12 Jul 2024 12:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2072916F83D;
+	Fri, 12 Jul 2024 12:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ll9xEbdL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrvemSii"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2658313A86D;
-	Fri, 12 Jul 2024 12:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5870985C56;
+	Fri, 12 Jul 2024 12:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720788487; cv=none; b=VO+zl09BpS8Vp1qS5srk7bz+qlwecRg7ZGXMOvgv8leX8mL8NVJQi1QZ6PWRAoaZXWBY8+NgevZwR9GrAUSfYzoRjtwLrJkmksIlaPeD/FvO+RvpJnrKfNSBMJNMqg6LITEWrN0PN0Vl9x2R3/zTycGQxxh0vjFXEGCGAdB3izs=
+	t=1720788633; cv=none; b=hAIsyexuQ8cln+Wb5C+RMpJw/MjnxEAiEIgQncRDxGuSwTDfGC+UPtO52gIWar8WuVMQrB4s0YbHi9VQQqBLBeil+E4JMgrY8Nd5S4ZuZBUISdWkxZVuTS4h9tsCGGr3eyDT5qvlrRa9u9jVxVWRj97jdsYEK67ciGQfdZagdWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720788487; c=relaxed/simple;
-	bh=46Q0ZvCymXTxS+vBDw0PBnbHl7pEy8ma/fSI/DbxI/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fbnGP/IWHFRI+c6gm+tam7k7MbKOqrAjo1DQ9rL/THJZZYS9E78+oH4fCURZWUmYpfnv7MhJbtgO2LX9wekAsMr0JklPJX/klzwlLRpNqI04PQaGTfPiS6TvZLGpivyqkvjBDaqQT7DpwpO1+Y5FLcWIww7gq7xVdnrz5ybZwIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ll9xEbdL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93573C32782;
-	Fri, 12 Jul 2024 12:48:06 +0000 (UTC)
+	s=arc-20240116; t=1720788633; c=relaxed/simple;
+	bh=SAaCUedZF3vDz5KGr7sLfUtLuLG9b92/oB0dT/4Ub80=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=MoKD2MUiQPZtzkkBlhrtT+vW6UywnmA6z0U2WXy8EuHtdV6RCCmvHw0elN+m+ZLEinhIkpWn8N5JMBeaDEpP35pnl3dvVfScUtV+HWAgWE/4gY8QP/zSKCQguNp/YqweHNAGfblZlGV5kEWyg3lO5h0en8G8BxeXWqYapnQ+6tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrvemSii; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EAE5EC4AF07;
+	Fri, 12 Jul 2024 12:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720788486;
-	bh=46Q0ZvCymXTxS+vBDw0PBnbHl7pEy8ma/fSI/DbxI/E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ll9xEbdLdzajib1VDz8l2rm/aHWCaDtTEulfWEWYQo7/KnF4Mk0LulGREBZDriOj7
-	 tqdtVLmtASSy0wxOJLX/7osVKGWtSsDYnWMRUKg2rsPo4F/3YWwcK8oeTYu1XjNeNJ
-	 xQUFOOnydeP2jhi2uxXNjafUlDT1q9aUPAlgnP08yDZvZS6SnFn4H78djC3UTtkIBW
-	 Hra2xHCFt+jWrD5PEt3XcAZl7KuDqXEOQ+jQjwlb4+SpaoESHVIsfZuQfdDCG9c0Os
-	 DiVXJLkFJ4BcPQLUNfNWFFzbiuhMwVaaMWmt2x8MDMtnqpLsqQ25Mz/29H/IJivVDs
-	 enAwf8KeDJvow==
-Date: Fri, 12 Jul 2024 06:48:05 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, krzk+dt@kernel.org,
-	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
-	ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
-	biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
-	semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 08/10] dt-bindings: iio: pressure: bmp085: Add
- interrupts for BMP3xx and BMP5xx devices
-Message-ID: <20240712124805.GA461461-robh@kernel.org>
-References: <20240711211558.106327-1-vassilisamir@gmail.com>
- <20240711211558.106327-9-vassilisamir@gmail.com>
+	s=k20201202; t=1720788633;
+	bh=SAaCUedZF3vDz5KGr7sLfUtLuLG9b92/oB0dT/4Ub80=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=LrvemSiiXMIYpJC22VdK22e6278criIQmXeVECfx+S86UjVeOc8rREoNuyLVLVPcJ
+	 Ub8RrisJmcTILlgSAHue6ZPHnrblEJoMxeVBH++O5n0ohZkrUE7bfOFzovYZN6AxaN
+	 ouGZ9o8jypC3fbjrqHwhpXNZFPKDB3LShV9JaLspopuRlcRi5veDtZ6yJ/4evJc52Z
+	 GZUXRhSiPc3Oz+dyeVOtt5SjUXcSDtEOrf6zPiug336nH2f6h5hinu2BKbQ/+DFHdT
+	 qXDlwPdQu8I7z87UWKqXcqmw+Uohs5rpXpMjTxEanp++st2pTKSAbfoERApLHLkwnN
+	 EPvrZ2Ei/CMTA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D8663C43153;
+	Fri, 12 Jul 2024 12:50:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711211558.106327-9-vassilisamir@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net,v2,0/5] Fixes for CPT and RSS configuration
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172078863288.22035.7184629353044546071.git-patchwork-notify@kernel.org>
+Date: Fri, 12 Jul 2024 12:50:32 +0000
+References: <20240710075127.2274582-1-schalla@marvell.com>
+In-Reply-To: <20240710075127.2274582-1-schalla@marvell.com>
+To: Srujana Challa <schalla@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+ davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
+ sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com,
+ jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com,
+ ndabilpuram@marvell.com
 
-On Thu, Jul 11, 2024 at 11:15:56PM +0200, Vasileios Amoiridis wrote:
-> Add interrupt options for BMP3xx and BMP5xx devices as well.
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> ---
->  .../devicetree/bindings/iio/pressure/bmp085.yaml    | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> index 6fda887ee9d4..f06f119963bc 100644
-> --- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> +++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> @@ -48,9 +48,20 @@ properties:
->  
->    interrupts:
->      description:
-> -      interrupt mapping for IRQ (BMP085 only)
-> +      interrupt mapping for IRQ. Supported in BMP085, BMP3xx, BMP5xx
->      maxItems: 1
->  
-> +  interrupt-names:
-> +    maxItems: 1
-> +    items:
-> +      enum:
-> +        - DRDY
-> +
-> +  int-open-drain:
+Hello:
 
-Use the existing 'drive-open-drain' property.
+This series was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-> +    desription:
-> +      set if the interrupt pin should be configured as open drain.
-> +      If not set, defaults to push-pull configuration.
-> +
->  required:
->    - compatible
->    - vddd-supply
-> -- 
-> 2.25.1
+On Wed, 10 Jul 2024 13:21:22 +0530 you wrote:
+> This series of patches fixes various issues related to CPT
+> configuration and RSS configuration.
 > 
+> v1->v2:
+> - Excluded the patch "octeontx2-af: reduce cpt flt interrupt vectors for
+>   cn10kb" to submit it to net-next.
+> - Addressed the review comments.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,v2,1/5] octeontx2-af: replace cpt slot with lf id on reg write
+    https://git.kernel.org/netdev/net/c/bc35e28af789
+  - [net,v2,2/5] octeontx2-af: fix a issue with cpt_lf_alloc mailbox
+    https://git.kernel.org/netdev/net/c/845fe19139ab
+  - [net,v2,3/5] octeontx2-af: fix detection of IP layer
+    https://git.kernel.org/netdev/net/c/404dc0fd6fb0
+  - [net,v2,4/5] octeontx2-af: fix issue with IPv6 ext match for RSS
+    https://git.kernel.org/netdev/net/c/e23ac1095b9e
+  - [net,v2,5/5] octeontx2-af: fix issue with IPv4 match for RSS
+    https://git.kernel.org/netdev/net/c/60795bbf0476
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
