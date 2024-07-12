@@ -1,212 +1,101 @@
-Return-Path: <linux-kernel+bounces-250030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-250031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3840192F335
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:51:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5409892F338
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 02:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7CE1C219E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:51:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 100CC282366
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Jul 2024 00:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD74F3C28;
-	Fri, 12 Jul 2024 00:51:27 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDF74683;
+	Fri, 12 Jul 2024 00:53:15 +0000 (UTC)
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7B4441D;
-	Fri, 12 Jul 2024 00:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7152107;
+	Fri, 12 Jul 2024 00:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720745487; cv=none; b=eEtk6j2/m8TUEo8DpB0YA5mNqOBXqUHEkTP0MK6A/T0w/s8+kMOWGlJ0FemKgXsrizRJbxvqPSSCaP8kxg4uPLWbozk01y8Z5pm9FCFlTvM9jS57ynAd2rNN+maJSbIHKvJvkeeEekYvIpkkhGOltQsQsUi2dnKISOtbIlOCdk8=
+	t=1720745594; cv=none; b=epg05w5YKMphbIzn7gPtQc4DFiP6o7TWyFtI5nlgWO+Opf2VSP+8SWdDgjiEaKgCLar6RwErjU5hp25sRTKNhGVeaQ6Ukq94sy1KuWBzrCx0mE0xTMcN0EtXjiQ/lG42BKwbknyWYVkbOyuFZ11tGGJOuy9cUTySHNplZ7kwQlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720745487; c=relaxed/simple;
-	bh=eIipzsjF9INeb2Be7id72lKKfgyjHErMwuec/jln4qo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cuhk7iX4n+RDNGIAF4n8O1y6H5tTeC4aeJ0+uKVzc504Fcr4gSHWHxd6NwPiWc1HZ6i4I7xWYykDmeE8DS2sXxDjRe6ob/IjXr6lPz3saOIHHsbXAGt2pu5Qc+12ycanStHYqS6ZTjKQ6SkmhgwdxuxrA0wqI4lYAyr5yixgvHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WKtKM4njYz1xtW6;
-	Fri, 12 Jul 2024 08:49:43 +0800 (CST)
-Received: from kwepemf200016.china.huawei.com (unknown [7.202.181.9])
-	by mail.maildlp.com (Postfix) with ESMTPS id 276E61A0188;
-	Fri, 12 Jul 2024 08:51:20 +0800 (CST)
-Received: from [10.108.234.194] (10.108.234.194) by
- kwepemf200016.china.huawei.com (7.202.181.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 12 Jul 2024 08:51:19 +0800
-Message-ID: <39c8b5c1-8c8c-40de-9b09-b28b24cc270d@huawei.com>
-Date: Fri, 12 Jul 2024 08:51:18 +0800
+	s=arc-20240116; t=1720745594; c=relaxed/simple;
+	bh=esKILx7oXVH+jjRLOQGNopM298eecv1k5iwOSWKaOuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBUnhVFqHd5DG2o0AbF/mPd3TDUBXOThXttlXOu6wpBWYO7iSdU+kSrZgK/mWUi/OmnhCxlOjOmG4xfc+DtD0Fhrhcq4+BcB28A3Wy+S8ajWCLrv695Suvvz8QdzTXgSgfBCkytOZO7446pjFyaQGw3N0T0pXUZc7yjVF6wDClg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70b0013cf33so1357555b3a.2;
+        Thu, 11 Jul 2024 17:53:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720745592; x=1721350392;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3F64ug1erdWH11RqFsEoBl4L9EzVwcxDLGQjrawr39g=;
+        b=bzfws86qXgORmhgMxPYgz4lFoh0zt2L1AEUnjKfhKbT434Zwh0L1iYmL32h8vvC+f8
+         /5CfNQ2QmsC0snWqAycmgLjjiQZSTYlYr8TbDLLxE/2gmJa+wtpGgPMJZ3c5AvEsqfch
+         tL9/bVji7ZsW2aIwe+DrQlqZ/TBI3qJk2z12APnHT/1Htg58qjhnEPdSl3lWzsjtlGjd
+         BSlxQsNvulehD9srNgLYlwfq0WIRf3FGi73/PmXVaOJnl4qDzBo5JfymbVm+3aRJNPVC
+         PlbMusY8s/m0pxC75zcDer3jTUvhOYRlHZrPvzZ+vVF9yqaHTBRs2GY+UvaD+P1qVzt+
+         oMSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9tKk3VNr3U2QJZDyajANx4JXQlCdefURwlVB7lMMJzIj9l0Wv7h1PC1B/q6GMFKpLhdFHaO/KxMLg9id5TiCaytG6Vpq9jeWoNfFmYv5aNJ5/4fRiBQk+fhqRucBOBrmF0XnmhW6QEimsy3lzSTDqXXZ9z0+2Mnrw3Fzmz+EohVC0
+X-Gm-Message-State: AOJu0YyiWKmlc1cDTbIi1bgHrJDuy3LDHgbfc+h5/lCJq5/+nZHCfkyr
+	5Ij840x05jkOFc4Mk0gHn8zEPzEVX8OfrLGA8Jm/tX3ajU15WVg=
+X-Google-Smtp-Source: AGHT+IFussQXz48wwMWVN/4l3pJw0+NtMa8T8q2Z3ZRSic2bNioZzHqBuwkkTQVbySy9PLB4tjq1zw==
+X-Received: by 2002:a05:6a00:124a:b0:706:74b7:9d78 with SMTP id d2e1a72fcca58-70b43370ff6mr11955686b3a.0.1720745591477;
+        Thu, 11 Jul 2024 17:53:11 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4389c13asm6287988b3a.21.2024.07.11.17.53.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 17:53:11 -0700 (PDT)
+Date: Thu, 11 Jul 2024 17:53:10 -0700
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+	yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, haoluo@google.com, jolsa@kernel.org,
+	mykolal@fb.com, shuah@kernel.org, sowmini.varadhan@oracle.com,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/bpf:fix a resource leak in main()
+Message-ID: <ZpB-dswNvYJiCRR4@mini-arch>
+References: <20240711071018.2197252-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] ext4: fix fast commit inode enqueueing during a full
- journal commit
-To: Andreas Dilger <adilger@dilger.ca>, Wang Jianjian
-	<wangjianjian0@foxmail.com>
-CC: Luis Henriques <luis.henriques@linux.dev>, Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>, Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-	<linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240711083520.6751-1-luis.henriques@linux.dev>
- <4f9d5881-11e6-4064-ab69-ca6ef81582b3@huawei.com>
- <878qy8nem5.fsf@brahms.olymp>
- <tencent_CF3DC37BEB2026CB2F68408A2B62314E0C08@qq.com>
- <A90C7898-B704-4B2A-BFE6-4A32050763F0@dilger.ca>
-Content-Language: en-US
-From: "wangjianjian (C)" <wangjianjian3@huawei.com>
-In-Reply-To: <A90C7898-B704-4B2A-BFE6-4A32050763F0@dilger.ca>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf200016.china.huawei.com (7.202.181.9)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240711071018.2197252-1-make24@iscas.ac.cn>
 
-On 2024/7/12 3:28, Andreas Dilger wrote:
-> On Jul 11, 2024, at 10:16 AM, Wang Jianjian <wangjianjian0@foxmail.com> wrote:
->> On 2024/7/11 23:16, Luis Henriques wrote:
->>> On Thu, Jul 11 2024, wangjianjian (C) wrote:
->>>
->>>> On 2024/7/11 16:35, Luis Henriques (SUSE) wrote:
->>>>> When a full journal commit is on-going, any fast commit has to be enqueued
->>>>> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
->>>>> is done only once, i.e. if an inode is already queued in a previous fast
->>>>> commit entry it won't be enqueued again.  However, if a full commit starts
->>>>> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
->>>>> be done into FC_Q_STAGING.  And this is not being done in function
->>>>> ext4_fc_track_template().
->>>>> This patch fixes the issue by re-enqueuing an inode into the STAGING queue
->>>>> during the fast commit clean-up callback if it has a tid (i_sync_tid)
->>>>> greater than the one being handled.  The STAGING queue will then be spliced
->>>>> back into MAIN.
->>>>> This bug was found using fstest generic/047.  This test creates several 32k
->>>>> bytes files, sync'ing each of them after it's creation, and then shutting
->>>>> down the filesystem.  Some data may be loss in this operation; for example a
->>>>> file may have it's size truncated to zero.
->>>>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->>>>> ---
->>>>> Hi!
->>>>> v4 of this patch enqueues the inode into STAGING *only* if the current tid
->>>>> is non-zero.  It will be zero when doing an fc commit, and this would mean
->>>>> to always re-enqueue the inode.  This fixes the regressions caught by Ted
->>>>> in v3 with fstests generic/472 generic/496 generic/643.
->>>>> Also, since 2nd patch of v3 has already been merged, I've rebased this patch
->>>>> to be applied on top of it.
->>>>>    fs/ext4/fast_commit.c | 10 ++++++++++
->>>>>    1 file changed, 10 insertions(+)
->>>>> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
->>>>> index 3926a05eceee..facbc8dbbaa2 100644
->>>>> --- a/fs/ext4/fast_commit.c
->>>>> +++ b/fs/ext4/fast_commit.c
->>>>> @@ -1290,6 +1290,16 @@ static void ext4_fc_cleanup(journal_t *journal, int full, tid_t tid)
->>>>>    				       EXT4_STATE_FC_COMMITTING);
->>>>>    		if (tid_geq(tid, iter->i_sync_tid))
->>>>>    			ext4_fc_reset_inode(&iter->vfs_inode);
->>>>> +		} else if (tid) {
->>>>> +			/*
->>>>> +			 * If the tid is valid (i.e. non-zero) re-enqueue the
->>>> one quick question about tid, if one disk is using long time and its tid   get
->>>> wrapped to 0, is it a valid seq? I don't find code handling this situation.
->>> Hmm... OK.  So, to answer to your question, the 'tid' is expected to wrap.
->>> That's why we use:
->>>
->>> 	if (tid_geq(tid, iter->i_sync_tid))
->> Yes, I know this.
->>>
->>> instead of:
->>>
->>> 	if (tid >= iter->i_sync_tid)
->>>
->>> (The second patch in v3 actually fixed a few places where the tid_*()
->>> helpers weren't being used.)
->>>
->>> But your question shows me that my patch is wrong as '0' may actually be a
->>> valid 'tid' value.
->>
->> Actually my question is,  there are some place use '0' to check if a transaction is valid, e.g.
->>
->> In ext4_wait_for_tail_page_commit()
->>
->> 5218         while (1) {
->> 5219                 struct folio *folio = filemap_lock_folio(inode->i_mapping,
->> 5220                                       inode->i_size >> PAGE_SHIFT);
->> 5221                 if (IS_ERR(folio))
->> 5222                         return;
->> 5223                 ret = __ext4_journalled_invalidate_folio(folio, offset,
->> 5224 folio_size(folio) - offset);
->> 5225                 folio_unlock(folio);
->> 5226                 folio_put(folio);
->> 5227                 if (ret != -EBUSY)
->> 5228                         return;
->> 5229                 commit_tid = 0;
->> 5230                 read_lock(&journal->j_state_lock);
->> 5231                 if (journal->j_committing_transaction)
->> 5232                         commit_tid = journal->j_committing_transaction->t_tid;
->> 5233                 read_unlock(&journal->j_state_lock);
->> 5234                 if (commit_tid)
->> 5235                         jbd2_log_wait_commit(journal, commit_tid);
->> 5236         }
->> 5237  We only wait commit if tid is not zero.
->>
->> And in __jbd2_log_wait_for_space()
->>
->> 79                 if (space_left < nblocks) {
->>   80                         int chkpt = journal->j_checkpoint_transactions != NULL;
->>   81                         tid_t tid = 0;
->>   82
->>   83                         if (journal->j_committing_transaction)
->>   84                                 tid = journal->j_committing_transaction->t_tid;
->>   85 spin_unlock(&journal->j_list_lock);
->>   86 write_unlock(&journal->j_state_lock);
->>   87                         if (chkpt) {
->>   88 jbd2_log_do_checkpoint(journal);
->>   89                         } else if (jbd2_cleanup_journal_tail(journal) == 0) {
->>   90                                 /* We were able to recover space; yay! */
->>   91                                 ;
->>   92                         } else if (tid) {
->>   93                                 /*
->>   94                                  * jbd2_journal_commit_transaction() may want
->>   95                                  * to take the checkpoint_mutex if JBD2_FLUSHED
->>   96                                  * is set.  So we need to temporarily drop it.
->>   97                                  */
->>   98 mutex_unlock(&journal->j_checkpoint_mutex);
->>   99                                 jbd2_log_wait_commit(journal, tid);
->> 100 write_lock(&journal->j_state_lock);
->> 101                                 continue;
->> We also only wait commit if tid is not zero.
->>
->> Does it mean all these have bugs if '0' is a valid 'tid' ?
->>
->> But on the other hand, if we don't consider sync and fsync, and default commit interval is 5s,
->>
->> time of tid wrap to 0 is nearly 680 years. However, we can run sync/fsync to make tid to increase
->>
->> more quickly in real world ?
+On 07/11, Ma Ke wrote:
+> The requested resources should be closed before return in main(), otherwise
+>  resource leak will occur. Add a check of cg_fd before close().
 > 
-> The simple solution is that "0" is not a valid sequence.  It looks like
-> this is a bug in jbd2_get_transaction() where it is incrementing the TID:
+> Fixes: 435f90a338ae ("selftests/bpf: add a test case for sock_ops perf-event notification")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  tools/testing/selftests/bpf/test_tcpnotify_user.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
->          transaction->t_tid = journal->j_transaction_sequence++;
-> 
-> it should add a check to handle the wrap-around:
-> 
->          if (unlikely(transaction->t_tid == 0))
->                  transaction->t_tid = journal->j_transaction_sequence++;
-Yes, I had ever thought about this, just curious why nobody encounter 
-problems here.
-> 
-> Cheers, Andreas
-> 
-> 
-> 
-> 
-> 
--- 
-Regards
+> diff --git a/tools/testing/selftests/bpf/test_tcpnotify_user.c b/tools/testing/selftests/bpf/test_tcpnotify_user.c
+> index 595194453ff8..f81c60db586e 100644
+> --- a/tools/testing/selftests/bpf/test_tcpnotify_user.c
+> +++ b/tools/testing/selftests/bpf/test_tcpnotify_user.c
+> @@ -161,7 +161,8 @@ int main(int argc, char **argv)
+>  	error = 0;
+>  err:
+>  	bpf_prog_detach(cg_fd, BPF_CGROUP_SOCK_OPS);
+> -	close(cg_fd);
 
+Worst case that happens here is that we call close(-1) which returns
+EBADFS or something similar. Don't think there is any problem. This
+applies to the rest of that patches that add an extra 'if' check.
 
