@@ -1,114 +1,78 @@
-Return-Path: <linux-kernel+bounces-251624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76B193072E
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 21:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA9393073D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 22:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CDEC282E4B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 857C728376B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 20:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13478143895;
-	Sat, 13 Jul 2024 19:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEE21411F9;
+	Sat, 13 Jul 2024 20:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FRZEC/ag"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kMn0ra6f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251641B7F7;
-	Sat, 13 Jul 2024 19:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE451BF54;
+	Sat, 13 Jul 2024 20:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720899988; cv=none; b=f8Vy1unMN8mhypQpjP6ADtIDojAb7u264s0WhxDh47MoFkym0pQv2xLqbhhR7sSp2Cb/0BohlcdyIYmyUXpb6YHh6y7WKYsL2LSRQPXawtNKbi4MqZWv44FZj/P0BIla1wWoTppdIisa4CErezhfxcF1+7ucnrkiqoy3H8YUmB4=
+	t=1720901196; cv=none; b=XsfhhFHbOdAjfiVLHmY5e+pZXvrOh6tWZgbd27k7EzvkWFSa60Tz7LTVmZNfsA9AuqvFDobyv6XWXyJcOkgvK5iIYuhJ9cyDVHgkeRm6Zu7qbenhfRFxz4PZm+HVZo9CiS12ghCVEgI/PqrnOPyn8rDsJ6HwzS50KTlB0T3vDyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720899988; c=relaxed/simple;
-	bh=BDr8r1aRINaMyd7uhCEuBNNCT90+wpbt7PExvizV4SI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=jS5zfYjrO6iY+Yqd6QJSThnA8oEZPAxAwPl9Cf+ly1J+yCEX0P4bAthVLkYQH9lnnUSY3INCNLKRsNvG7hpBaF4z73hlUwt7iiDHbcVaqqthmmozA1FZHbJkChpTAuvjd4rwureRWOuC6tEfDTon6L5RV4S7y4g0cDGD296Rvow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FRZEC/ag; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720899966; x=1721504766; i=markus.elfring@web.de;
-	bh=3tBJhjM6eFblAsrUfksAZ4Js6i0KWeliNKRgPH6K5hE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=FRZEC/agZLua5gA3+r2SWAmJVrou3sNXbHoIVM7cNZig+UwxJm9JgylGZaqNOw2M
-	 8xcihUXVnnNCT9wcFrZ0kYdoC7I3dv8VS1MsZdCTMQyrEp8NvepPZBMZbogmOyJlO
-	 tJRW818NL64AEcZxfdN9XD+IF8YLE4UzBvb7jRZKAWJO8mIQH9698rwrhzH6I4SF+
-	 iM+MTsV/P99dbK3EPikYLNp0rnelJLnDfDRKiqm4A5gkNXttlkNkPI74sdUEkqC+w
-	 pbiKChtf1nJHhow7vXm9PVjxZmyzgZhRP4E1xi17utiKg86bz10cs28LVdG5VjFOT
-	 +LsrUKtM2bT1tCHCjA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MgANG-1rriRX3RcM-00daM5; Sat, 13
- Jul 2024 21:46:05 +0200
-Message-ID: <553b5dad-6b84-4415-86ab-a44a1182d3f9@web.de>
-Date: Sat, 13 Jul 2024 21:45:53 +0200
+	s=arc-20240116; t=1720901196; c=relaxed/simple;
+	bh=Mcq3RA7WokZr1xc2/lkMJ1vTzQiNMnKB9bMdD6l984o=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=dLQ45FfFM1Erjv2BNNQmGSNc3VSl9SpKuDhGD/bdyj2HlyphtBB6+MsR/6ldp802lLwYsRga+yJPubW9oBtKwjRby5QCqCWOhJrj08ajESuM7p+TR0KKOqiJdr+cVhU7PhMo5i3aiEqhoa+zbuFEDCHNy/4cpf2WEGG2D6HN22c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kMn0ra6f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 242AEC32781;
+	Sat, 13 Jul 2024 20:06:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720901196;
+	bh=Mcq3RA7WokZr1xc2/lkMJ1vTzQiNMnKB9bMdD6l984o=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=kMn0ra6fQDW9wjxzIy2DOo7ahE3hXsJ/n+Lfx73azGd6fYCGYnrJP+Iv/cClPdJ1X
+	 BtbKkMH/ur0z60Pzr9x1bFRjmhvhRI4snnq9vNkOLEBpObXGhyCu6Y7Ov3nSLsKnZ7
+	 uFLZmEgjaupuoNn6gPBHxOXoLKA6w4tBAIOsrdihvFEjKAuHLTvZHOYbPKyiy1Tbp7
+	 EEeYRhRKOQ1UfiUv1AUCAxCyn7spTJynu71kmynv2zaXm8InWbbA4HvhthXVcik5bB
+	 fUrWf2oBFWWuQgDy5JxLSL0hpMHfXs4oA3o5P3NIjrhg4PWsNklQXJU7TzqPc7DOb3
+	 o5javxZCBgjvQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 15683C43468;
+	Sat, 13 Jul 2024 20:06:36 +0000 (UTC)
+Subject: Re: [GIT PULL] smb3 client fix
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAH2r5ms7Q3p_-wPDttT+XCX9a8GvDmC5EdbV_SguK_iriWE_qA@mail.gmail.com>
+References: <CAH2r5ms7Q3p_-wPDttT+XCX9a8GvDmC5EdbV_SguK_iriWE_qA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAH2r5ms7Q3p_-wPDttT+XCX9a8GvDmC5EdbV_SguK_iriWE_qA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc7-smb3-client-fix
+X-PR-Tracked-Commit-Id: d2346e2836318a227057ed41061114cbebee5d2a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d0d0cd38005518533d641e1344537f89cfe95203
+Message-Id: <172090119607.18567.11027341496178265690.pr-tracker-bot@kernel.org>
+Date: Sat, 13 Jul 2024 20:06:36 +0000
+To: Steve French <smfrench@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] NFS: Use seq_putc() in nfs_show_path()
-To: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Anna Schumaker <anna@kernel.org>, Trond Myklebust <trondmy@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Content-Language: en-GB
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ibDaFNA5hp+rfw9RUb/9iufCsgWAqICVCpODfxJR0BtMRw8uTD+
- ikBY3nndU2mraFSldE9BlFvD9ZRx6tP/PJLu4nfGISmnpIX/QqcA1w/VEbEdPQBt9osF5CF
- VBq7q8gqBUm4rFMp4OGWAodv+9Bsq84DNlsxN8G4cawDj8rdxn/HE1prEhvqZPNl/fLdCCx
- QLd+uIoFUi/Iu1D0fTTYg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TTC7OHr1d4Q=;RcXOwpd/G+61VKEDRclqDST/LJk
- pEeAitKXyTe/6CO6HpagPP9yyEsd3Mv7zazDggn4kfR9uHPX3AvSADtcml4ynk1Se+tzp59bk
- hJPtMsjd3TU19nxyjzfJloZsguq29O4bBfh0rey5AvyxmO28w3maPGIXBug3pXC4faHND5pGD
- PL9DOG9VW7RIB61khzPa4W5EnPD935IY/t5R9fTV5DnXAoQ42A85UsmB0tpGouTHMybNYgVnJ
- nxtf8IGYH/nSlNBIljJ8HoPWG90c25Gq6TOqqdaRrdWY+xUrrUqS2V0bKY3gwb7ilZ2uQ5ILJ
- LiWINr3z9lXyZ9NIf5PktkCd+8mmpTmPIV2GgXGtAk8+Y2d7uFW2wbMeBPegpWlW6dsUv7DvC
- 4IO2qMLxW3kv/ySNYC4ETeUzyk07TGicvSr05h0LfajgAOUb4u3aUR2YZsR3hUvgNW+SH1O7+
- A22jChkEfaNGaxVTPl/6OjTxck51UV5RZxUv0tE7ky2Q5g/BaxkAI85vxDmkIJwFLwUAahJMk
- wDCSOQOg5qV0Lpw6Vx0B3Xxehb7zDl55I5n1dxZvlqQS5ZDtggEEZPHbeeIS1X45y+61+5wfj
- Nz+MgT2Lf04OxzYPxjdECxvvhwzK+oS47oWRwgfn1LfmHsD+27c9jcYXGEzxZ9L854/i1B2j1
- l+0QV92WrzJVYF9WFahmBXFq7foI40B6MWmB40gfD6HSqizceBdcXHfY6DVdLncnwyB8Ot62e
- ZqBfQ1on5scaawr4y1XEzM7FH/9oT7uPo1/9eXEkukK92kpImv12+J0cXPtGKvj6KrTAAVKEb
- Hz+uz+ai8DkcbIkRj8R8GMgg==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jul 2024 21:35:37 +0200
+The pull request you sent on Sat, 13 Jul 2024 13:53:39 -0500:
 
-A single slash should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+> git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc7-smb3-client-fix
 
-This issue was transformed by using the Coccinelle software.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d0d0cd38005518533d641e1344537f89cfe95203
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/nfs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you!
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index cbbd4866b0b7..b087720d7811 100644
-=2D-- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -648,7 +648,7 @@ EXPORT_SYMBOL_GPL(nfs_show_devname);
-
- int nfs_show_path(struct seq_file *m, struct dentry *dentry)
- {
--	seq_puts(m, "/");
-+	seq_putc(m, '/');
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(nfs_show_path);
-=2D-
-2.45.2
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
