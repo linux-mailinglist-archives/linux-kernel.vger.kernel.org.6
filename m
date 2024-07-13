@@ -1,426 +1,237 @@
-Return-Path: <linux-kernel+bounces-251596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EAB9306B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D71F59306B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7267F1C232FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:27:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B96F1C22131
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4107A13D240;
-	Sat, 13 Jul 2024 17:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0365313D245;
+	Sat, 13 Jul 2024 17:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hDFwU1yK"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fGDJMryj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1F4BA40;
-	Sat, 13 Jul 2024 17:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720891633; cv=none; b=kYfhoOJjSesucwEnf8RNbNGO4hBNppeYQS8qC/UGBpwDCQB0fvzgwmlcl6s1sZBhsPnqms4cbdOb8Ovp7Weo50WT0VfJMMJwAXKfeGWgSpd5hhggdFZ+UtCeFXMKOLWm1wzd121L3rI5vbDnngNK3WaOSzcylrcQVtYTUyp0+sQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720891633; c=relaxed/simple;
-	bh=Y9N4zsvW8wverBTOJn10UOXQFw1+/0sTYADFjDj3mzg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=YlrrSTrSJ0t81VWoZ3rC4LNSXdtZxuLES3lzNiC3jlCsJFXwMHPxCFecX/FIzX4RNYhgiZ9Fos6XlD+zqsfR27CNCeSLJ0/BnwTjeXy0pSs/Jjeh1fAscKabZSEG+d7TbLkZucMxvkPk/EY2Ptve6xIvuJp0VLmYSILu7REVyMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hDFwU1yK; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46DGRk5R012543;
-	Sat, 13 Jul 2024 17:26:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-type:mime-version:subject:from:in-reply-to:date:cc
-	:content-transfer-encoding:message-id:references:to; s=pp1; bh=C
-	SLDSdcY14vRIETpzgs7gw6TRPx3zqsfbJC50nghrqI=; b=hDFwU1yKiC8cGX7c/
-	sXnLzDClrhKj4RpcvWxgoDn+lGXQ8ZBSoj4pRdgw+XIIgaiBzObXs2OsOocY2OjB
-	q8nqS+aQgPH3DTZ7koWYoLM0ZEXjQAcUsO5dEHMCE3KUiOynGdffAu0hYiu2LrGt
-	gH4w8+Yu8ox3o/nt9dwCCHgH7cMm8k6hpShp1QYkM//jvege30KWHI8pEkKBcMvZ
-	/fZYK5tVmoMPdRTvpp4uCgrNGOT6VcJMYs3qWigseBeIOMxC6b/VZA1TxGiQQ1cs
-	/YfZhhXTDECfL2Wpc+r+EvmXc8CuxLR1BsiTSLbL47+Q7za6m3XhTtT0RfwaKjD4
-	NCUSw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40brr1gcqh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Jul 2024 17:26:55 +0000 (GMT)
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46DHQtrI025847;
-	Sat, 13 Jul 2024 17:26:55 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40brr1gcqe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Jul 2024 17:26:55 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46DFARDC013906;
-	Sat, 13 Jul 2024 17:21:54 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407gn1ck7w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 13 Jul 2024 17:21:54 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46DHLmCP19268070
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 13 Jul 2024 17:21:50 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 80CDF20043;
-	Sat, 13 Jul 2024 17:21:48 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DC39E20040;
-	Sat, 13 Jul 2024 17:21:45 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.43.49.134])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sat, 13 Jul 2024 17:21:45 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A6391757D;
+	Sat, 13 Jul 2024 17:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720891363; cv=fail; b=Ycxz2sDMTs/6GBjGvCOCOX8yio6CS53grx5GAD6jsxutiTiJ0MseerqmTh87hib8NLAL0JsYqv6hK5jut+EdCSIoasPYmwn3xaVMSOMvWxkImd8PMjeg9y5jyb8RfZkmbpsnNtv84bB2CEB5sdYe/Wi2ee/ZCgtJ3dlE0rxfYSk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720891363; c=relaxed/simple;
+	bh=jxYi675vFklr6F9X9IjvLYTEMr2jaE7RlAF1c20AUsI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jG9vTb2QGGsdYY7JUffbIQX27N9kgi7vMJO6rJfL/SgocJC2KHFfRid39aPu3X3tojDLmmdoqUgKQ9XOOyHkptDYrGCXNeOhLeC3XHvXiojdZlsHOR1TLERYFUOqG0nODN0B3TnuUPq59Ft77DLuvhkKPCpATRYre6qM52mswLE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fGDJMryj; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720891361; x=1752427361;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=jxYi675vFklr6F9X9IjvLYTEMr2jaE7RlAF1c20AUsI=;
+  b=fGDJMryj46Q7LQ4REAOMJ0n9w7GrZ4qRoVhHXjWsyXGvyuXKo8B1Id3W
+   TTjeFb1CYDwKLSs9PfW1BiPdZ/U2HSXONaf8GRtZ7vevfec9pp5YlLjUm
+   8CMcT00hVvqNG474p6NeMHFXu7s428vOhiXzlWGdJORoLQNdwgIcDdtGI
+   JRD+NXQ7CZZFnr8i7+7RUm+73STCWK+HyTpADGFo46tZIxxy0joKouO+M
+   TPIiLJ/mTO7V5QEw8cQihdHZ1CE7t9yRnkSTsJ5iJdCn6BcvEho3InocX
+   q38TukyZ5ka0SNEhrVgiMJ/UahRRzuMCZTmzpa66Cj+3aZAhQ/tnhxrNk
+   g==;
+X-CSE-ConnectionGUID: 0MpYmntTTeuDNE2SxiuYlA==
+X-CSE-MsgGUID: UqdZRtdbT9G+gQRwI5szMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11132"; a="18459171"
+X-IronPort-AV: E=Sophos;i="6.09,206,1716274800"; 
+   d="scan'208";a="18459171"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2024 10:22:41 -0700
+X-CSE-ConnectionGUID: tNsjENXFRXCo/o5BT+2seQ==
+X-CSE-MsgGUID: PlFhZ8vgReWED2XBXlJzkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,206,1716274800"; 
+   d="scan'208";a="54040708"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Jul 2024 10:22:41 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sat, 13 Jul 2024 10:22:39 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sat, 13 Jul 2024 10:22:39 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Sat, 13 Jul 2024 10:22:39 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sat, 13 Jul 2024 10:22:39 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cG0d9cHAYkLTjFPIcTMhT3RWGvjDx/WOekAXvC0ItEfEYfoGGHvlxq54S3rQ5s8omSOQWZyc0jYihYxspA4iSa5HlqMimk8QHiR3XC8BpNmHfYrrtvEMWwkOhEce+vVHNQD73y7lIXuudtIi+gzHth6kWf+vyaO8PBHd2Ve2eGdH5ZjoobjPBL/jAqMvc32dHo3hqT+0qLQPxhGDIlchRWLC8yrlxbtv1n20JwdT8d6vVUWyivdJX3tHJFnnKt6t3+bTOiqBmykdVDwD+u7KJh3Bgf/Vfd2AkbZvAHkMz8bRWkU3BsCniJNXnF0lzI1KA0cqTZIySP3yN8qOuj2upg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9Yp3aSdChV3ohEQODcq31rTHPgl3JOt3noN/0TVnPVA=;
+ b=Cf5B0xmPKYxcioZnUoQSExCZ7fJxGCLs2Ump4VcI/1ytZet8zn3Il7eTibc0+QrMuc2tXP6nmlVQ1vFeRBRPkLMV3VLKw1jc5xK8zRHn0UOotAzoz+0eBMk++1tKB2tbwIjcglppA9SYvwlGqBc3/t/tiJjrWj+YMPgsg5p4PKpgJ1SvvakxDJ+Qji2SkQvy8t/7ZEVMM7xVO+wDSuzCv9d6Rf1zPURES9zTYsr1XMvaUngDsN670xAAn6LZc5bJsuLlOxe7x7RQv//UpGV1gf3G9buwcFDqRw//eAaYRKquX/wD/uFvF4DDiyPCfwmaVkpepoY0OgTog+e42xeQwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by PH8PR11MB6997.namprd11.prod.outlook.com (2603:10b6:510:223::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23; Sat, 13 Jul
+ 2024 17:22:37 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.7762.020; Sat, 13 Jul 2024
+ 17:22:36 +0000
+Date: Sat, 13 Jul 2024 10:22:33 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Dan Williams
+	<dan.j.williams@intel.com>, <gregkh@linuxfoundation.org>
+CC: <syzbot+4762dd74e32532cda5ff@syzkaller.appspotmail.com>,
+	<stable@vger.kernel.org>, Ashish Sangwan <a.sangwan@samsung.com>, Namjae Jeon
+	<namjae.jeon@samsung.com>, Dirk Behme <dirk.behme@de.bosch.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>
+Subject: Re: [PATCH] driver core: Fix uevent_show() vs driver detach race
+Message-ID: <6692b7d912e3e_8f74d2945a@dwillia2-xfh.jf.intel.com.notmuch>
+References: <172081332794.577428.9738802016494057132.stgit@dwillia2-xfh.jf.intel.com>
+ <dfcb0456-dd75-4b9f-9cc8-f0658cd9ce29@I-love.SAKURA.ne.jp>
+ <6691c0f8da1dd_8e85329468@dwillia2-xfh.jf.intel.com.notmuch>
+ <0b34da9e-c13f-4fab-a67d-244b0ebba394@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <0b34da9e-c13f-4fab-a67d-244b0ebba394@I-love.SAKURA.ne.jp>
+X-ClientProxiedBy: MW4PR03CA0135.namprd03.prod.outlook.com
+ (2603:10b6:303:8c::20) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH V6 17/18] tools/perf: Update data_type_cmp and
- sort__typeoff_sort function to include var_name in comparison
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <ZpKVROoPC5KBTPAj@google.com>
-Date: Sat, 13 Jul 2024 22:51:33 +0530
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ian Rogers <irogers@google.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        Disha Goel <disgoel@linux.vnet.ibm.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <75010931-82A9-4640-8C55-2062A3726970@linux.vnet.ibm.com>
-References: <20240707144419.92510-1-atrajeev@linux.vnet.ibm.com>
- <20240707144419.92510-18-atrajeev@linux.vnet.ibm.com>
- <ZpGfYVc_ewcsQxWL@google.com>
- <6733E9A7-1118-46A5-8C17-DC22A9C47207@linux.vnet.ibm.com>
- <ZpKVROoPC5KBTPAj@google.com>
-To: Namhyung Kim <namhyung@kernel.org>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ZkfD4AkCbdHAsR3WIBpz1_x5I9wBwy4T
-X-Proofpoint-GUID: NXDc1dseNCeY5ZQYdzBXnyxfW_M6sek_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-13_13,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 spamscore=0 adultscore=0
- malwarescore=0 suspectscore=0 mlxscore=0 priorityscore=1501
- mlxlogscore=999 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2407130131
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|PH8PR11MB6997:EE_
+X-MS-Office365-Filtering-Correlation-Id: 55ac8b85-62ad-4d3a-2a94-08dca3606363
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?lNg6dN1YwQG6dFJWZ9VpuOEoOdUVGVuWHOoIxMx7XZML7f10WZNRhniRfbzQ?=
+ =?us-ascii?Q?Ty4Srv36aKhZRhZm0mLeAqa4w74g2/PloDjzdIojZ8XRHNGD22/1uUfxA9yf?=
+ =?us-ascii?Q?W5fclGr0CDtFAjw6k1bLZccTpiuwhlap7HC2GkcoLX3/3uCBFQHofjX3R1AT?=
+ =?us-ascii?Q?+Ua+e+fFqzqAtKB7KW3w632wZoiuI7Gg0OI59t+Hs1A1kz5ayzAce66rwKja?=
+ =?us-ascii?Q?xRrhaBA1aFtsSyp2wE8Fh70S+uRC+elKM8XNDKTVLUdxMeT/lARHFq+E8oLj?=
+ =?us-ascii?Q?sWtvQkiQRXX4/gqUIc+0Q4QbENailX7Mm4jDJSlvcV2Sk9UMH1sPneQMp5Sx?=
+ =?us-ascii?Q?tYl8t27neePMt3D3eL9dDl5125PGfeuFiSxM449U1p+ZhR6TvomyDINQPjPH?=
+ =?us-ascii?Q?U4ECxDmMMPeu/6Bbg9IvBzsmK0pUf6ke7uu/gGvBdHwd5UE1/wE2AY+OncYq?=
+ =?us-ascii?Q?vGImaDqKHsVmPk6BS9p/qPpX2SeRGSg41Kq1kjnQEWYUulfoYR8pPt9gngaR?=
+ =?us-ascii?Q?qBQVhUAabHdkDI41rauYjfeJHYRpZ0sIiYhv+E1zvpnaanUQHSL7YzfsAFqF?=
+ =?us-ascii?Q?0QG/5fFRRCmZ/JLMK8QB98fY4DtDPUnWtyySBSzMT+bajX+7d6LJUi/V8vvY?=
+ =?us-ascii?Q?XxPTqCIkfKzOkIYnh/Tz3hIkQpX0MnRiZAyUKDzCB0/SpzVrNiRQaZo4z9t9?=
+ =?us-ascii?Q?mhGsBQMiINycSSkUkIKegStWUp4qjcExA6BaqSmSBBczY4mO3c3fW0Kp6aMs?=
+ =?us-ascii?Q?yrYd3AdRpTM/jbYjdmk9+bksr8FegUYDtKHxGl/6yd9QToDRtzII1PEcBTpn?=
+ =?us-ascii?Q?No7U2mULQd952tftdvikklB28HRuNQR8L2QpNokK9vMyHU2Rb3oM5WzAAJ4A?=
+ =?us-ascii?Q?p6fA/5zdXbE4rUOjKzM/yu2HMvlxrzMlGGyO10ffCubNKlo2FxhHkbDLbnF+?=
+ =?us-ascii?Q?Rdf1Td+ShUr4sgVnijlilyRwvvica68g2qXCUlAbIhWEUTHsNqEhsy6sQNLT?=
+ =?us-ascii?Q?QJlYEsu6X5hBFa0cXe3SqFRulSKmvIYoLFL4mg4fifrersEJ0YCgICjh2h42?=
+ =?us-ascii?Q?YF++OBN0EG00HosVWgRALudULUTxbHimQmu7SuobMMfvkqcxuxoaWGHSHl2S?=
+ =?us-ascii?Q?McgmnvzB1un9ycCugwfeqDU5CIYG4YLpaGlnLy4ITtV378gvOmdkmS6raICe?=
+ =?us-ascii?Q?1fvKnmLRZ1JBCi1aqtUXSpZCJuKQZYnEaowQ8yAmSfEVNLp9629Koa75zL4F?=
+ =?us-ascii?Q?z3Q7HZrSSz3nRNqhOFDxpLmA0/c7SnALDRuSpZP43CsXG8RLZ2/p3jkMtn86?=
+ =?us-ascii?Q?0Ibz1RC3IJX4bQiKNOPB2D+w67GeTCqg41n26RaCvSaj1A=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hRDLwxgECi5LWxOBZDJ6iLbqQOpygr++QhrlzJJjiatMMFVp1AJ0QEXcKeIl?=
+ =?us-ascii?Q?4sFeLe2+C54ZvhhO4nZ4L9ju2eikTcV7Z5uGrBkMMEe2Nun1ZYQitQ/4E61A?=
+ =?us-ascii?Q?/PJY3GAAMB6PcFZ7kmrhko/fmxOYuAF7X6psqHr3gSTfqh5GxblF6tO2Y3mW?=
+ =?us-ascii?Q?ZT6dTnkd2RAwgDLnlBiBRbVgwEvS9Jjhdl6SUcX6b1s76fBqLlb6lz2IPtjr?=
+ =?us-ascii?Q?9EZWiidjXR8zp4n4bUv/Cd6jB1LKDro/ujhCxp/J5keJH1Q5lNYgP+4tTjjW?=
+ =?us-ascii?Q?bq19N+m7Xz97bRAJAtLoPhn78jTocd654AJdHoEzQHcdaad2o7eDWCyPZRf2?=
+ =?us-ascii?Q?zc2PYzIOVKmjmEeeUTQtMJsOWZ83sgbRUroT0pDYvkyoLjiU0Lk19XhzMBtn?=
+ =?us-ascii?Q?D5HZ6DgSUwtFSMC50URRuSPSsR5+gZYUTvQkeUpDedTVnlSCPNX07bq9rW5Z?=
+ =?us-ascii?Q?1u8/XAIlQDKEAitrNoFnED034ag5Q/EZN8+Wg1B4HpE1oyBaYf9mlUNBm6GI?=
+ =?us-ascii?Q?DD+OVtobjs9ZdaUtBz/pcLPtkNdDv2nY6CDq6LE5FubL309tyMm4hRVNSD4Y?=
+ =?us-ascii?Q?Zh8rVS9HAUAmqTtSt8ax2wB3uTUygAq9xB1BnXx5VymFYucvk2BNKlxbocr0?=
+ =?us-ascii?Q?9w+na/TTSD/oCPhnHr6nb/ojIz4oUucOGgbqOYjP8XE+uwQfJxc/pNMbO2v1?=
+ =?us-ascii?Q?fovbWsrYn+TwtWGynZmZ4ZV02NnuH+IJFGV2mkAS7u2yOxRDEde02crj8FW3?=
+ =?us-ascii?Q?ud9jlNh7culsrgxYay5XtJqIELqyj3hKMulmsuta2B4hrQ25L1CV0DKcXEgh?=
+ =?us-ascii?Q?x2HJxx9sI3hjdz04w32CvASB6xcLASTPcsTnURhN8snXaQZAvXOp15g1trzb?=
+ =?us-ascii?Q?ORG5TwlNWz5IEmmuOF57DXxc1EYDhrYtK3JmpF0sV29B7Zt6RM441ltKD2qC?=
+ =?us-ascii?Q?/AqTggubcPfxa2vsw1efBXeb4Tg8amPydBGX5FfhBcI/BzgPrjqlTqH6LSF6?=
+ =?us-ascii?Q?kYvXZ1E3tQNSNDeV6PuxpOy4n8ri85WGhBecxa6IUCvLbhkHA1kg5Se+xvzy?=
+ =?us-ascii?Q?NH9xOZzA8SLjwGN1L2XlYz/YyUraebqogQLpiA3/N5+4wJk4mqr0Y2L7f1l0?=
+ =?us-ascii?Q?8Yaes5hFsVr9uTAlEhsqSX+TbrIy7lpit5SVBDDl1b1EB2vXFp3vDw1oSu/6?=
+ =?us-ascii?Q?Gmjf78L5SrmolAidDprwmLXDYkErmc0lX9x8+/w+NzOfzqZN+hlDtnSekJ7/?=
+ =?us-ascii?Q?+2jaRZnZA+8X08c0GJsfSCRGKVzzO/JFs319YwFE2FdSeZ2ZtfCw8g7R9lMW?=
+ =?us-ascii?Q?b2IrGGHUYGJ4RiRPJITP2e8yKmuEFpHBvgzpcXktJdNRy6U+cgxt+KC4Nxg8?=
+ =?us-ascii?Q?Tokvl1/HOdMDVCgNCo2bKZegV7So62hBZdy7E6zjt6WtzQGNMgEeshMH+xUK?=
+ =?us-ascii?Q?GxdKYiXV+5cQj6kPNMWq3HuFoduchEqyQzcCCxEk2VsIAzDDl1Jjv1abBbMc?=
+ =?us-ascii?Q?7U2wyxHjK8tDQh09UoAEBKs/M7EeKGwZr3osuQn3ZrsF6HiLqFFLIuqEW81k?=
+ =?us-ascii?Q?rNEEDaYCYAGSwZZvEEkVd8ARKAavuk5mXqgx08asg/N9OgQeboMTH+mBVX21?=
+ =?us-ascii?Q?ZA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55ac8b85-62ad-4d3a-2a94-08dca3606363
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2024 17:22:36.0900
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LAH8bXzUoyVofuGVgHOsmsnIcGbnILasr0+zDBcR2EF2uvgiSx4LYaBauiJXYulCVi+JfcrZl+WjqE7wrZ/R41LxcsbW9aouDAh+mpIpn40=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6997
+X-OriginatorOrg: intel.com
 
+Tetsuo Handa wrote:
+> On 2024/07/13 8:49, Dan Williams wrote:
+> >>> +	/* Synchronize with dev_uevent() */
+> >>> +	synchronize_rcu();
+> >>> +
+> >>
+> >> this synchronize_rcu(), in order to make sure that
+> >> READ_ONCE(dev->driver) in dev_uevent() observes NULL?
+> > 
+> > No, this synchronize_rcu() is to make sure that if dev_uevent() wins the
+> > race and observes that dev->driver is not NULL that it is still safe to
+> > dereference that result because the 'struct device_driver' object is
+> > still live.
+> 
+> I can't catch what the pair of rcu_read_lock()/rcu_read_unlock() in dev_uevent()
+> and synchronize_rcu() in module_remove_driver() is for.
 
+It is to extend the lifetime of @driver if dev_uevent() observes
+non-NULL @dev->driver.
 
-> On 13 Jul 2024, at 8:25=E2=80=AFPM, Namhyung Kim <namhyung@kernel.org> =
-wrote:
->=20
-> On Sat, Jul 13, 2024 at 11:52:30AM +0530, Athira Rajeev wrote:
->>=20
->>=20
->>> On 13 Jul 2024, at 2:55=E2=80=AFAM, Namhyung Kim =
-<namhyung@kernel.org> wrote:
->>>=20
->>> On Sun, Jul 07, 2024 at 08:14:18PM +0530, Athira Rajeev wrote:
->>>> Currently data_type_cmp() only compares size and type name.
->>>> But in cases where the type name of two data type entries
->>>> is same, but var_name is different, the comparison can't =
-distinguish
->>>> two different types.
->>>>=20
->>>> Consider there is a "long unsigned int" with var_name as "X" and =
-there
->>>> is global variable "long unsigned int". Currently since
->>>> data_type_cmp uses only type_name for comparison ( "long unsigned =
-int"),
->>>> it won't distinguish these as separate entries. Update the
->>>=20
->>> I'm still not sure if it's ok.  It intentionally merges different
->>> instances of the same type together as it's a data 'type' profile.
->>>=20
->>>=20
->>>> functions "data_type_cmp" as well as "sort__typeoff_sort" to
->>>> compare variable names after type name if it exists.
->>>>=20
->>>> Also updated "hist_entry__typeoff_snprintf" to print var_name if
->>>> it is set. With the changes,
->>>>=20
->>>>    11.42%  long unsigned int  long unsigned int +0 =
-(current_stack_pointer)
->>>>    4.68%  struct paca_struct  struct paca_struct +2312 (__current)
->>>>    4.57%  struct paca_struct  struct paca_struct +2354 =
-(irq_soft_mask)
->>>>    2.69%  struct paca_struct  struct paca_struct +2808 (canary)
->>>>    2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
->>>>    2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
->>>>    1.43%  long unsigned int  long unsigned int +0 (no field)
->>>=20
->>> It seems like an output of `perf report -s type,typeoff`.  But I'm
->>> curious how it'd work with -s type only?  I guess it'd have two =
-separate
->>> entries for 'long unsigned int'.  Ideally we can have a single entry
->>> with two different fields.
->>>=20
->>> For example, `perf report -s type,typeoff -H`:
->>>=20
->>> 12.85%     long unsigned int
->>>    11.42%     long unsigned int +0 (current_stack_pointer)
->>>     1.43%     long unsigned int +0 (no field)
->>> ...
->>>=20
->>=20
->> Hi Namhyung,
->>=20
->> Thanks for the comments.
->>=20
->> While printing, the check for field is done only in =
-=E2=80=9Csort__typeoff_sort=E2=80=9D.
->> To summarise,
->> 1. While adding the data type in rb node, if the entry has different =
-field, new entry will be added. So we will have different entries in rb =
-node if field differs.
->> 2. While using sort key to display, for =E2=80=9Ctypeoff=E2=80=9D, we =
-use sort__typeoff_sort . For =E2=80=9Ctype=E2=80=9D, we use =
-=E2=80=9Csort__type_sort=E2=80=9D
->> 3. In =E2=80=9Csort__type_sort=E2=80=9D type_name is used. Hence =
-result will have only single entry
->> 4. In =E2=80=9Csort__typeoff_sort=E2=80=9D we added check for =
-=E2=80=9Cvar_name=E2=80=9D too in this patch. So result will have two =
-entries if field differs
->=20
-> I see.
->=20
->>=20
->> Example:
->>=20
->> Using -H option,
->>=20
->> ./perf report -s type,typeoff -H
->>=20
->>    17.65%     struct paca_struct
->>        4.68%     struct paca_struct +2312 (__current)
->>        4.57%     struct paca_struct +2354 (irq_soft_mask)
->>        2.69%     struct paca_struct +2808 (canary)
->>        2.68%     struct paca_struct +8 (paca_index)
->>        2.24%     struct paca_struct +48 (data_offset)
->>        0.55%     struct paca_struct +2816 =
-(mmiowb_state.nesting_count)
->>        0.18%     struct paca_struct +2818 =
-(mmiowb_state.mmiowb_pending)
->>        0.03%     struct paca_struct +2352 (hsrr_valid)
->>        0.02%     struct paca_struct +2356 (irq_work_pending)
->>        0.00%     struct paca_struct +0 (lppaca_ptr)
->>    12.85%     long unsigned int
->>       11.42%     long unsigned int +0 (current_stack_pointer)
->>        1.43%     long unsigned int +0 (no field)
->>=20
->> As you mentioned, we have single entry with two different fields:
->>=20
->> 12.85%     long unsigned int
->>       11.42%     long unsigned int +0 (current_stack_pointer)
->>        1.43%     long unsigned int +0 (no field)
->>=20
->> With perf report -s type:
->>=20
->>    17.65%  struct paca_struct
->>    12.85%  long unsigned int
->>     1.69%  struct task_struct
->>     1.51%  struct rq
->>     1.49%  struct pt_regs
->>     1.41%  struct vm_fault
->>     1.20%  struct inode
->>     1.15%  struct file
->>     1.08%  struct sd_lb_stats
->>     0.90%  struct security_hook_list
->>     0.86%  struct seq_file
->>     0.79%  struct cfs_rq
->>     0.78%  struct irq_desc
->>     0.72%  long long unsigned int
->>=20
->>=20
->> Where as with perf report -s typeoff:
->>=20
->>    11.42%  long unsigned int +0 (current_stack_pointer)
->>     4.68%  struct paca_struct +2312 (__current)
->>     4.57%  struct paca_struct +2354 (irq_soft_mask)
->>     2.69%  struct paca_struct +2808 (canary)
->>     2.68%  struct paca_struct +8 (paca_index)
->>     2.24%  struct paca_struct +48 (data_offset)
->>     1.43%  long unsigned int +0 (no field)
->>=20
->>=20
->> Namhyung,
->>=20
->> If the above shared result for =E2=80=9Ctype=E2=80=9D and =
-=E2=80=9Ctypeoff=E2=80=9D looks good and other changes are fine, I will =
-post V7 with change for sort cmp to use cmp_null.
->> Please share your response.
->=20
-> Great, it looks all good.  Please send v7.
->=20
-> But I think it's a bit late to add this to the upcoming window.
+> I think that the below race is possible.
+> Please explain how "/* Synchronize with module_remove_driver() */" works.
 
-Ok Namhyung.
-I have posted V7 with suggested changes. Please review the changes. If =
-it is not possible to pick in upcoming window, if it all looks good, =
-please pick it for the next possible window.
+It is for this race:
 
-Thanks for checking and sharing your comments,
-Athira
+Thread1:                                               Thread2:                                              
+dev_uevent(...)                                        delete_module()                                       
+  driver = dev->driver;                                  mod->exit()                                         
+  if (driver)                                              driver_unregister()
+                                                              driver_detach() // <-- @dev->driver marked NULL
+                                                              module_remove_driver()
+                                                         free_module() // <-- @driver object destroyed 
+    add_uevent_var(env, "DRIVER=%s", driver->name); // <-- use after free of @driver 
 
->=20
-> Thanks,
-> Namhyung
->=20
->>=20
->> Thanks
->> Athira
->>=20
->>>>=20
->>>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
->>>> ---
->>>> tools/perf/util/annotate-data.c | 24 ++++++++++++++++++++++--
->>>> tools/perf/util/sort.c          | 23 +++++++++++++++++++++--
->>>> 2 files changed, 43 insertions(+), 4 deletions(-)
->>>>=20
->>>> diff --git a/tools/perf/util/annotate-data.c =
-b/tools/perf/util/annotate-data.c
->>>> index 8d05f3dbddf6..759c6a22e719 100644
->>>> --- a/tools/perf/util/annotate-data.c
->>>> +++ b/tools/perf/util/annotate-data.c
->>>> @@ -167,7 +167,7 @@ static void exit_type_state(struct type_state =
-*state)
->>>> }
->>>>=20
->>>> /*
->>>> - * Compare type name and size to maintain them in a tree.
->>>> + * Compare type name, var_name  and size to maintain them in a =
-tree.
->>>> * I'm not sure if DWARF would have information of a single type in =
-many
->>>> * different places (compilation units).  If not, it could compare =
-the
->>>> * offset of the type entry in the .debug_info section.
->>>> @@ -176,12 +176,32 @@ static int data_type_cmp(const void *_key, =
-const struct rb_node *node)
->>>> {
->>>> const struct annotated_data_type *key =3D _key;
->>>> struct annotated_data_type *type;
->>>> + int64_t ret =3D 0;
->>>>=20
->>>> type =3D rb_entry(node, struct annotated_data_type, node);
->>>>=20
->>>> if (key->self.size !=3D type->self.size)
->>>> return key->self.size - type->self.size;
->>>> - return strcmp(key->self.type_name, type->self.type_name);
->>>> +
->>>> + ret =3D strcmp(key->self.type_name, type->self.type_name);
->>>> + if (ret) {
->>>> + return ret;
->>>> + }
->>>=20
->>> No need for the parentheses.
->> Sure, will fix it
->>=20
->>>=20
->>>> +
->>>> + /*
->>>> +  * Compare var_name if it exists for key and type.
->>>> +  * If both nodes doesn't have var_name, but one of
->>>> +  * them has, return non-zero. This is to indicate nodes
->>>> +  * are not the same if one has var_name, but other doesn't.
->>>> +  */
->>>> + if (key->self.var_name && type->self.var_name) {
->>>> + ret =3D strcmp(key->self.var_name, type->self.var_name);
->>>> + if (ret)
->>>> + return ret;
->>>> + } else if (key->self.var_name || type->self.var_name)
->>>> + return 1;
->>>=20
->>> I think you need to compare the order properly like in cmp_null() in
->>> util/sort.c.  Please see below.
->>>=20
->>>> +
->>>> + return ret;
->>>> }
->>>>=20
->>>> static bool data_type_less(struct rb_node *node_a, const struct =
-rb_node *node_b)
->>>> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
->>>> index cd39ea972193..c6d885060ee7 100644
->>>> --- a/tools/perf/util/sort.c
->>>> +++ b/tools/perf/util/sort.c
->>>> @@ -2267,9 +2267,25 @@ sort__typeoff_sort(struct hist_entry *left, =
-struct hist_entry *right)
->>>> right_type =3D right->mem_type;
->>>> }
->>>>=20
->>>> + /*
->>>> +  * Compare type_name first. Next, ompare var_name if it exists
->>>> +  * for left and right hist_entry. If both entries doesn't have
->>>> +  * var_name, but one of them has, return non-zero. This is to
->>>> +  * indicate entries are not the same if one has var_name, but the
->>>> +  * other doesn't.
->>>> +  * If type_name and var_name is same, use mem_type_off field.
->>>> +  */
->>>> ret =3D strcmp(left_type->self.type_name, =
-right_type->self.type_name);
->>>> if (ret)
->>>> return ret;
->>>> +
->>>> + if (left_type->self.var_name && right_type->self.var_name) {
->>>> + ret =3D strcmp(left_type->self.var_name, =
-right_type->self.var_name);
->>>> + if (ret)
->>>> + return ret;
->>>> + } else if (right_type->self.var_name || left_type->self.var_name)
->>>> + return 1;
->>>=20
->>> } else if (!left_type->self.var_name !=3D =
-!right_type->self.var_name)
->>> return cmp_null(left_type->self.var_name, =
-right_type->self.var_name);
->>>=20
->>> Thanks,
->>> Namhyung
->>>=20
->> Sure, will fix this
->>=20
->> Thanks
->> Athira
->>=20
->>=20
->>>> +
->>>> return left->mem_type_off - right->mem_type_off;
->>>> }
->>>>=20
->>>> @@ -2305,9 +2321,12 @@ static int =
-hist_entry__typeoff_snprintf(struct hist_entry *he, char *bf,
->>>> char buf[4096];
->>>>=20
->>>> buf[0] =3D '\0';
->>>> - if (list_empty(&he_type->self.children))
->>>> + if (list_empty(&he_type->self.children)) {
->>>> snprintf(buf, sizeof(buf), "no field");
->>>> - else
->>>> + if (he_type->self.var_name)
->>>> + strcpy(buf, he_type->self.var_name);
->>>> +
->>>> + } else
->>>> fill_member_name(buf, sizeof(buf), &he_type->self,
->>>> he->mem_type_off, true);
->>>> buf[4095] =3D '\0';
->>>> --=20
->>>> 2.43.0
+If driver_detach() happens before Thread1 reads dev->driver then there
+is no use after free risk.
 
-
+The previous attempt to fix this held the device_lock() over
+dev_uevent() which prevents driver_detach() from even starting, but that
+causes lockdep issues and is even more heavy-handed than the
+synchronize_rcu() delay. RCU makes sure that @driver stays alive between
+reading @dev->driver and reading @driver->name.
 
