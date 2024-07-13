@@ -1,126 +1,161 @@
-Return-Path: <linux-kernel+bounces-251602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF78F9306C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:43:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1509306CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF45284CC8
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:43:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FE331C230AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6598813D518;
-	Sat, 13 Jul 2024 17:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EF613D531;
+	Sat, 13 Jul 2024 17:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQaWdgOZ"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cW23k1hz"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B37413BAE5;
-	Sat, 13 Jul 2024 17:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F2D101D5;
+	Sat, 13 Jul 2024 17:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720892581; cv=none; b=IxM+c8TyOMTcjPdtl1dLcnh8H0xN00uaruxyH/lgFpgx+IVniHBPp2YULLzqAeo3YbHQyhUECliycIOdVryUgB4tb8KnACpBbiKMB5o7bYHvywJJBvqJMa7w70wwz8uM1E7Hai+M90Y9tki2whgVBaMh5McUqDu4jVK1Ia+7Eu4=
+	t=1720893187; cv=none; b=RojmLUsbMV8o7xDk5TkP5g6HDlECDXpTNCQRgjxkQbxIeR9x9X4NJIpdlTYah2zZiz5NvC2H9RYPjEhlQSKnSiHXvuomHIa0oyGpRKUKG3PI2NKeDwLsdkSfxUZd/xEWdDBO4CCCfVeJsiW3ZmuQlLSQmQNL45QU6Ud0bxQG2cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720892581; c=relaxed/simple;
-	bh=p4oMqq1JZ9cfHuD1llsoPAD516HrcGSHzwZqStz7d5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QDwYRBi+VV/3bBXCYRFW0FftXYOIPfsiMky7JLG0lmt6pb+qh6YI5cQj+UrPT2J1up/ZOIz7D+tz9N5dt3HQqVFq1viYlbDLgRCqEUCeKRlf8dzEsVkW7IggfC0GNZWBwQu/ZrRPWVsg4Iln7kbjhyQ+8FVBOBYd7oKH3l0Ot1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQaWdgOZ; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1720893187; c=relaxed/simple;
+	bh=1lvgCU27aV1dz0/qda6JCIq5RcSbyN+LcZfZ1Bxgyks=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=SCCEmRumdTIx1KOXCq2tkI5NtoLMzfVsKxehpi/a/69+MU9KUWm8BhxeJ8Zwmri6TkDlyQ+awnftPmfX7x14i2V6gL545Wk5ScQAgLvn9v0H7lIAyVumwajfkMmoCwOxgQMbhAFyK7sX69zNazq8AQPfgIK3eawuAnfyUbTyI8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cW23k1hz; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d9306100b5so1980245b6e.1;
-        Sat, 13 Jul 2024 10:42:59 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-585e774fd3dso3975711a12.0;
+        Sat, 13 Jul 2024 10:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720892579; x=1721497379; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=95I0f6GWE8lEqcaH7kdli8SkufSlTgLIeZA6k+udEmM=;
-        b=TQaWdgOZUPURXCZ4VeFpRDW+nLeYXAT9UJfvyAlpmb7lHkwSiDhqumhW2choD5KW0F
-         k8MtjO88Nhj63fc+/C/gyNXTTCAYWglwufsZhO83mdme51eeeg30ImJM+lyqLc5+ewjM
-         dj137hnADZADAVF4mc0N9tLRe8FFvgLwufiVhn8Tf+W56T6LG24LXKO/DYlbrN/RNkqX
-         A4q1Yfp73ca+bGqdlaRefgKY4QL82jtdVm/KZO0ocAn+7412a3ufflQyt5pe4eLX1WU/
-         sfqTgnMci+aRrhmpuIl/KbRwHlsb7GycQGfMyJJjKMYlmTbFnMtZw1Ii6YdxRxzqVGyW
-         zBJA==
+        d=gmail.com; s=20230601; t=1720893184; x=1721497984; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=u/RkeX3Xco1WYoGbcnmJXKVnmBdfHSoQjMRfEZfId7s=;
+        b=cW23k1hze1cWe5YWWXFhl9YnPYhcwgdqt0zZr2fT1M/pK8apmwdQRVwZ4It0KWv173
+         9akjS4qiMozNN3WJ/TpfydvzV6fgJ4ltHjN9EA+tGF0R2Qebuq+NfYrCvW1aun9i+icy
+         hpkv48FCrcApt1WX637kLy2JOrdZo5C7YDEKR9CIXY4R77lmwbxSRHeR/rzl5eYOLYAA
+         UWiDrOaKAtfRpE/dmBi3t4uotJR8IknLjD/BGUoZWe4JNIkrm+ON7B+7wazXlEBAzW8I
+         pIqT+1+H1MtdVPQzJaWox+N3MV2rAx8eoz5LaNQ0lfPUxjuMP5CdM7oq7duR0soSo3mO
+         oNPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720892579; x=1721497379;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=95I0f6GWE8lEqcaH7kdli8SkufSlTgLIeZA6k+udEmM=;
-        b=LKk8ZD6leN6eLMNOHW4s1iMsP4/jxKaRo9DtRlFmQSXImebmQfnwNB2lNlqqN3F4qp
-         3s5MMXdDTACfIEklSDJHBOOhclwES7IXaAoOiJcLHzX/vSkLuciYIX3LFcdbEV90rCqr
-         fu313jTWaVD36gExF74/Dw5HyZzkgHg1MTozARnQPDHa5IkLcmgTN6hv/CdKU1iN/wnR
-         uc13n+OZmVZ7bU2nM9oGLi0BeVW8mfAKlfDNnVzITkv/BoghmsKCQzBEz+yY/fx3IBiP
-         60On7tfeZNE4BomXLwMNogTZ6tgDFoLo19o/5wT+BePPTCdggwd0mQ4Vz2XbrJFqzf1W
-         JszQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbSp48R0OISe9KmSj3YyTcfyHanAb6lbb9S9JC1doBEyDs2s6sy0SFHyQqA5WSvS8n625WEwmpC0NjN4f+4W/lOdaUoxwW14AzMrvoptlUELZIeee6X2CMTRY9QNxFsbxufUmyCw==
-X-Gm-Message-State: AOJu0YyizEhvdJnZrkh8lVQeccZgj4qnPQwoi5hNWSXIyl03IL9+OT4u
-	oOhy61mXLJjiG7xIT2dtC/ZNrCJPyWub6tLJEuho8HL5QY4ya+8VfFGydw==
-X-Google-Smtp-Source: AGHT+IHcdM4gB0n7tVsEVJW3HHBfuE6eiec2yU9PD7j+tZS/lt5S9sTVmJ54qss3PaxIgNCtVOYv6w==
-X-Received: by 2002:a05:6808:1795:b0:3d9:2a77:b81b with SMTP id 5614622812f47-3d93c0405fbmr18756154b6e.34.1720892579194;
-        Sat, 13 Jul 2024 10:42:59 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7ec7d0cbsm1471403b3a.137.2024.07.13.10.42.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 10:42:58 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Sat, 13 Jul 2024 07:42:57 -1000
-From: Tejun Heo <tj@kernel.org>
-To: xiujianfeng <xiujianfeng@huawei.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH cgroup/for-6.11] cgroup: Add Michal Koutny as a maintainer
-Message-ID: <ZpK8oaC-tvI92Nc8@slm.duckdns.org>
-References: <Zo8OzWUzDv3rQIiw@slm.duckdns.org>
- <bd583161-edc4-bd43-5a11-7e6707a60f5b@huawei.com>
+        d=1e100.net; s=20230601; t=1720893184; x=1721497984;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u/RkeX3Xco1WYoGbcnmJXKVnmBdfHSoQjMRfEZfId7s=;
+        b=qAfFL8ND9INgj5SXwlphhgb0TF5DoiAKDTKROyuGPYRAqs63XnbP8JBJfDWD4yIQGx
+         oQJx0YWyW9zPuVtq6r4IMzisTP5b4fxzo3PnCot5Xb0ZPur6zLdtEehZoP8LXcIeFSsi
+         7zTKA/OykCvEgP50aMWbM83EolgCrdEOKNqDYb6Gulvbva09/TewRrFnyVVxHnTcl076
+         fQ2ZwMLWbMnZ0GEkTsHkX9aHXrca2YyXgeQz5KlMOVF3fQ2E8gdN1kBBBsRNDRJXhQ7L
+         Z3ESPJiGtcXrPj0WBinAbYJ4Tf9MqQDStE+ADUpbnmfQGMW2BDbhlS5UO/hBcEO+CfG7
+         lBAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYmdR3XZPIeXgVg+ey/Oa9+oe9n5KJCqjnUX88TwBtYiaTj+X6pi5Pe7MeuFFvROb38KMSK//56rkwZUZ9TP0HKf61oMBbWB39rDPD/QuKjRYRHii+oyTthvrm73dGlp7F6xNt4L03MY/L5lLgpJ9tkNyl0yNzZk35VqSARH47
+X-Gm-Message-State: AOJu0YwwuekcnB101wWsybMhKuw4eDkPoRgoi0v2tuoz1jLNmjp1TqwF
+	VqnROSXrizfmD9Rz6ptf09GT3Sad4ZmPqrB+f5a30sxfZ6knHttmQpGcEdy5Cc5ZwKU8eDaga4R
+	LunTzspmQi5t6eUBByvfAIhIoHuQ=
+X-Google-Smtp-Source: AGHT+IFnRZLY1jn1uwzLZcCd+kdfCxCUJnCQb6JbZOgPu4Iq1rLlRaXSIxiKJTwRms6+6Z4kndq6RswVHLrw6BUwsIA=
+X-Received: by 2002:a05:6402:11cb:b0:58e:4088:ed2 with SMTP id
+ 4fb4d7f45d1cf-594baf8d6e7mr11132273a12.16.1720893183431; Sat, 13 Jul 2024
+ 10:53:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bd583161-edc4-bd43-5a11-7e6707a60f5b@huawei.com>
+From: Tim Lewis <elatllat@gmail.com>
+Date: Sat, 13 Jul 2024 13:52:52 -0400
+Message-ID: <CA+3zgmvct7BWib9A7O1ykUf=0nZpdbdpXBdPWOCqfPuyCT3fug@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Niklas Neronin <niklas.neronin@linux.intel.com>, 
+	Mathias Nyman <mathias.nyman@linux.intel.com>, linux-usb@vger.kernel.org, 
+	open list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+The patch
+    usb: xhci: prevent potential failure in handle_tx_event() for
+Transfer events without TRB
+    https://patches.linaro.org/project/linux-usb/patch/20240429140245.3955523-11-mathias.nyman@linux.intel.com/
+causes The Linux kernel
+    6.1.98
+    https://lkml.org/lkml/2024/7/9/645
+to crash when plugging in a USB Seagate drive.
+    https://www.seagate.com/ca/en/products/gaming-drives/pc-gaming/firecuda-gaming-hub/
+This is a regression.
 
-On Sat, Jul 13, 2024 at 05:23:20PM +0800, xiujianfeng wrote:
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index d6c90161c7bf..3dd70792f572 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -5536,6 +5536,7 @@ CONTROL GROUP (CGROUP)
-> >  M:	Tejun Heo <tj@kernel.org>
-> >  M:	Zefan Li <lizefan.x@bytedance.com>
-> >  M:	Johannes Weiner <hannes@cmpxchg.org>
-> > +M:	Michal Koutný <mkoutny@suse.com>
-> >  L:	cgroups@vger.kernel.org
-> >  S:	Maintained
-> >  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git
-> > 
-> 
-> When I use ./scripts/get_maintainer.pl to get the maintainers, I get
-> this info:
-> 
-> UTF-8 "\xFD" does not map to Unicode at ./scripts/get_maintainer.pl line
-> 385, <$maint> line 5656
-> 
-> "Michal Koutn\xFD" <mkoutny@suse.com> (maintainer:CONTROL GROUP (CGROUP))
+Behavior of 6.1.98:
+==============================================================================
+scsi host1: uas_eh_device_reset_handler start
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu:     0-...!: (1 GPs behind) idle=686c/0/0x1 softirq=1841/1841 fqs=610
+(detected by 4, t=5253 jiffies, g=2269, q=225 ncpus=6)
+Task dump for CPU 0:
+task:swapper/0       state:R  running task     stack:0     pid:0
+ppid:0      flags:0x0000000
+8
+Call trace:
+__switch_to+0xe4/0x160
+0xd7f8f808
+rcu: rcu_preempt kthread timer wakeup didn't happen for 4037 jiffies!
+g2269 f0x0 RCU_GP_WAIT_FQS
+(5) ->state=0x402
+rcu:     Possible timer handling issue on cpu=5 timer-softirq=1141
+rcu: rcu_preempt kthread starved for 4043 jiffies! g2269 f0x0
+RCU_GP_WAIT_FQS(5) ->state=0x402 -
+>cpu=5
+rcu:     Unless rcu_preempt kthread gets sufficient CPU time, OOM is
+now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:I stack:0     pid:14    ppid:2      flags:0x00000008
+Call trace:
+__switch_to+0xe4/0x160
+__schedule+0x28c/0x710
+schedule+0x5c/0xd0
+schedule_timeout+0x8c/0x100
+rcu_gp_fqs_loop+0x140/0x4a0
+rcu_gp_kthread+0x13c/0x170
+kthread+0x108/0x10c
+ret_from_fork+0x10/0x20
+rcu: Stack dump where RCU GP kthread last ran:
+Task dump for CPU 5:
+task:kworker/5:1     state:R  running task     stack:0     pid:89
+ppid:2      flags:0x0000000
+8
+Workqueue: events xhci_handle_command_timeout
+Call trace:
+__switch_to+0xe4/0x160
+0x0
 
-Yeah, the same issue triggered w/ doc building in linux-next. I applied from
-email copy and it re-encoded from utf-8 to some iso encoding. I fixed up the
-cgroup tree and it now should have proper utf-8 encoding.
 
-Thanks.
-
--- 
-tejun
+Behavior of 6.1.97 (or 6.1.978 with the patch reverted):
+==============================================================================
+scsi host1: uas_eh_device_reset_handler start
+usb 2-1.4.2.1: reset SuperSpeed USB device number 6 using xhci-hcd
+scsi host1: uas_eh_device_reset_handler success
+sd 1:0:0:0:31251759103 512-byte logical blocks: (16.0 TB/14.6 TiB)
+sd 1:0:0:0:Write Protect is off
+sd 1:0:0:0:Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+sd 1:0:0:0:Preferred minimum I/O size 512 bytes
+sd 1:0:0:0:Optimal transfer size 33553920 bytes
+sdb: sdb1
+sd 1:0:0:0:Attached SCSI disk
+sd 0:0:0:0:tag#6 uas_eh_abort_handler 0 uas-tag 1 inflight: CMD IN
+sd 0:0:0:0:tag#6 CDB: opcode=0x9e, sa=0x10 9e 10 00 00 00 00 00 00 00
+00 00 00 00 20 00 0
+0
+scsi host0: uas_eh_device_reset_handler start
+usb 2-1.4.1: reset SuperSpeed USB device number 5 using xhci-hcd
+scsi host0: uas_eh_device_reset_handler success
+sd 0:0:0:0:31251759103 512-byte logical blocks: (16.0 TB/14.6 TiB)
+sd 0:0:0:0:Write Protect is off
+sd 0:0:0:0:Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+sd 0:0:0:0:Preferred minimum I/O size 512 bytes
+sd 0:0:0:0:Optimal transfer size 33553920 bytes
+sda: sda1
+sd 0:0:0:0:Attached SCSI disk
 
