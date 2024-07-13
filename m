@@ -1,136 +1,212 @@
-Return-Path: <linux-kernel+bounces-251282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAE29302F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:15:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C4E9302F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5B51B2309B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:15:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1051C2158A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:16:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E800DDF59;
-	Sat, 13 Jul 2024 01:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="v0PMbDDV"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5600DDC3;
+	Sat, 13 Jul 2024 01:16:17 +0000 (UTC)
+Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4829748F;
-	Sat, 13 Jul 2024 01:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6D48BFC
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 01:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720833320; cv=none; b=aRg2LDPmuTISGVHexHe5WQYwWrH3j1ttrRSZl8MxbNpJgD3QCKjAbM9Q4Ktl//KoIITmhZj14K+DXwvYdaUyfFvtBaoiFBUH4TosxkcwtllkmkQ1/khNexMtVuaLMYCUJ93R00zvaxCNZBHqVBv/et/g0DfPlHfRhcKxsJF+4+0=
+	t=1720833377; cv=none; b=s9K0VeuvR0FWNnHH65nzoQqq7nmUVYt9I/czUdFKVVIS3aETx5v/hsx7CjB0Q4jgbTJaSVewkWmKUfLYibJ0OxM+C67E4dC8Rk/tiCoySxnbrYRdtHEks2lqXYna9CLO8vQ+p+0Lgy57Kj8+aUHz4KY6nB0axp+fpJ1zGC/69S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720833320; c=relaxed/simple;
-	bh=du3UW8tRNOLxQwkKF7Z6rMUYEyzL+xfjgY6IRpaAueg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBbRUfHyzGl1EBH3bBe0uDUsW9FBDP6I2ok5LjMrAiN6KugEzUZURMUMyHdLUizt0J6XLYu7IaCst5BsupMQ8OnZHYaKyO1TSG4PCX4Kh4YL2C7/NccShOBT1GqQmEFCVBbk/F/PDyK9cQsL3sPpIYg7zD/m6BKJ5qruZuZM230=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=v0PMbDDV; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1720833308;
-	bh=du3UW8tRNOLxQwkKF7Z6rMUYEyzL+xfjgY6IRpaAueg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=v0PMbDDVruenwHGcOXejYi0xAzx7FtGIvgGlfpSrqLC9W5AmiFcfHJ6XHkpr+eJEd
-	 LeFFiVbrfkoNT76Rh3bvESxyFA+KfcdFDhJz7GvHsZYESdPl9Li1BfXQugG3y8OYct
-	 eI/vhj094zqXMwOv0X06/ujF0ntOHVXXk3LCWmlvdUzJnrUZwgVGLkQFWH6k0GzdW+
-	 e0Pq9I5MdkRueTT8LZdNJFZ5mH2fxUb7iBl2nhZNwjuZhU8f8ZdNdkkcsEQBYXPPIT
-	 bkH07WvI/U0fjhDJ+rdPRV523t+Ipy6TiGkZjmfHhJg0DflE3Z7hIYPp/xxltJtept
-	 r6tcUNh/oUTsw==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id 9797260078;
-	Sat, 13 Jul 2024 01:15:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by x201s (Postfix) with ESMTP id 1C01320484A;
-	Sat, 13 Jul 2024 01:14:58 +0000 (UTC)
-Message-ID: <84b4b03d-3ec5-48cc-a889-bbeaaf3ceb0c@fiberby.net>
-Date: Sat, 13 Jul 2024 01:14:57 +0000
+	s=arc-20240116; t=1720833377; c=relaxed/simple;
+	bh=X+ivfQtWEGJGxXtyJ/LDM6OsjIsxqrPwJekvRxUiRAY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vBUzNBuRgtsRXRg3R7ehciZeYfB3CuQjouxX2Q87rSjiFOJpynfSCoc8Ab8ukW4DWvah10UlTTcekCz9l9AbnYKn33mXPpgyVQ9aUTTP1CsJ9amn61kxaTZE7WWIZglH3wwJ4J+Qou6NFnZFo6U/D0fcy56LjguHYoV1AkKhTe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+Received: from localhost (localhost [127.0.0.1])
+	by mail.valinux.co.jp (Postfix) with ESMTP id 732C7A9D4D;
+	Sat, 13 Jul 2024 10:16:13 +0900 (JST)
+X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
+Received: from mail.valinux.co.jp ([127.0.0.1])
+	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id ds3c-C8nsCZY; Sat, 13 Jul 2024 10:16:13 +0900 (JST)
+Received: from localhost.localdomain (p10213112-ipngn20001marunouchi.tokyo.ocn.ne.jp [153.220.101.112])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.valinux.co.jp (Postfix) with ESMTPSA id 2FE97A9D36;
+	Sat, 13 Jul 2024 10:16:13 +0900 (JST)
+From: takakura@valinux.co.jp
+To: palmer@dabbelt.com,
+	bjorn@kernel.org
+Cc: akpm@linux-foundation.org,
+	aou@eecs.berkeley.edu,
+	apatel@ventanamicro.com,
+	arnd@arndb.de,
+	atishp@rivosinc.com,
+	bmeng.cn@gmail.com,
+	conor.dooley@microchip.com,
+	daniel.thompson@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	paul.walmsley@sifive.com,
+	samuel.holland@sifive.com,
+	sfr@canb.auug.org.au,
+	taka@valinux.co.jp,
+	takakura@valinux.co.jp
+Subject: Re: [PATCH] RISC-V: Enable IPI CPU Backtrace
+Date: Sat, 13 Jul 2024 10:15:52 +0900
+Message-Id: <20240713011552.16325-1-takakura@valinux.co.jp>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <mhng-d03b5c09-5fc6-41dd-9257-dfec64492705@palmer-ri-x1c9>
+References: <mhng-d03b5c09-5fc6-41dd-9257-dfec64492705@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 03/10] net/sched: cls_flower: prepare
- fl_{set,dump}_key_flags() for ENC_FLAGS
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
- Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>,
- Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>,
- Simon Horman <horms@kernel.org>, Ratheesh Kannoth <rkannoth@marvell.com>,
- Florian Westphal <fw@strlen.de>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- linux-kernel@vger.kernel.org
-References: <20240709163825.1210046-1-ast@fiberby.net>
- <20240709163825.1210046-4-ast@fiberby.net>
- <20240711185404.2b1c4c00@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
-In-Reply-To: <20240711185404.2b1c4c00@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Jakub,
+Hi Palmer and Björn,
 
-On 7/12/24 1:54 AM, Jakub Kicinski wrote:
-> On Tue,  9 Jul 2024 16:38:17 +0000 Asbjørn Sloth Tønnesen wrote:
->> +	if (NL_REQ_ATTR_CHECK(extack, NULL, tb, fl_mask)) {
-> 
-> Does this work with nest as NULL?
+Thanks for checking the patch! 
 
-It does, but it gives less information:
+On Fri, 12 July 2024, Palmer Dabbelt wrote:
+>On Tue, 16 Apr 2024 22:07:11 PDT (-0700), takakura@valinux.co.jp wrote:
+>> From: Ryo Takakura <takakura@valinux.co.jp>
+>>
+>> Add CPU backtrace feature using IPI on riscv.
+>> Currently, riscv doesn't yet support the feature while other
+>> architectures do. As IPI multiplexing allows to handle
+>> multiple IPIs, I think this feature can also be enabled
+>> on riscv by adding IPI.
+>>
+>> This patch defines arch_trigger_all_cpu_backtrace() which triggers
+>> the IPI for CPU backtrace.
+>> It will be triggered in the events of oops/panic when options
+>> (oops_all_cpu_backtrace/panic_print) are set accordingly.
+>>
+>> Below is the case of oops with the oops_all_cpu_backtrace
+>> enabled.
+>>
+>> $ sysctl kernel.oops_all_cpu_backtrace=1
+>>
+>> triggering oops shows:
+>> [  435.716754] NMI backtrace for cpu 3
+>> [  435.716893] CPU: 3 PID: 621 Comm: in:imklog Tainted: G           OE      6.9.0-rc4 #1
+>> [  435.717086] Hardware name: riscv-virtio,qemu (DT)
+>> [  435.717182] epc : fallback_scalar_usercopy+0x8/0xdc
+>> [  435.717300]  ra : _copy_to_user+0x32/0x58
+>> [  435.717391] epc : ffffffff80c33d88 ra : ffffffff80598e3c sp : ff20000000e83b50
+>> [  435.717544]  gp : ffffffff82066bf0 tp : ff60000091fd7000 t0 : 3363303866660000
+>> [  435.717711]  t1 : 000000000000005b t2 : 3363303866666666 s0 : ff20000000e83b60
+>> [  435.717874]  s1 : 00000000000001af a0 : 00007ff74d3df74f a1 : ff60000082cdc800
+>> [  435.718040]  a2 : 000000000000003c a3 : 0000000000000000 a4 : 0000000000000000
+>> [  435.718196]  a5 : 00ffffffffffffc4 a6 : 0000000000000000 a7 : 0000000000000010
+>> [  435.718333]  s2 : ff60000082cdc800 s3 : ffffffff82066910 s4 : 0000000000001df1
+>> [  435.718475]  s5 : ffffffff8206a5b8 s6 : 00007ff74d3df74f s7 : ffffffff8206a5b0
+>> [  435.718616]  s8 : ff60000082cdc800 s9 : ffffffff81e26208 s10: 000000000000003c
+>> [  435.718760]  s11: ffffffff8206a5ad t3 : ff60000082cdc812 t4 : ff60000082cdc812
+>> [  435.718909]  t5 : ff60000082cdc818 t6 : 0000000000040000
+>> [  435.719019] status: 0000000000040120 badaddr: 0000000000000000 cause: 8000000000000001
+>> [  435.719191] [<ffffffff80c33d88>] fallback_scalar_usercopy+0x8/0xdc
+>> [  435.719330] [<ffffffff80094eee>] syslog_print+0x1f4/0x2b2
+>> [  435.719446] [<ffffffff80095e10>] do_syslog.part.0+0xb0/0x326
+>> [  435.719594] [<ffffffff8009692e>] do_syslog+0x66/0x88
+>> [  435.719816] [<ffffffff803a1a80>] kmsg_read+0x44/0x5c
+>> [  435.720017] [<ffffffff8038ea92>] proc_reg_read+0x7a/0xa8
+>> [  435.720251] [<ffffffff802fae20>] vfs_read+0x94/0x264
+>> [  435.720478] [<ffffffff802fb906>] ksys_read+0x64/0xe4
+>> [  435.720709] [<ffffffff802fb9a6>] __riscv_sys_read+0x20/0x2c
+>> [  435.720880] [<ffffffff80c43ea2>] do_trap_ecall_u+0x60/0x1d4
+>> [  435.721236] [<ffffffff80c4f74c>] ret_from_exception+0x0/0x64
+>>
+>> Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
+>> ---
+>>  arch/riscv/include/asm/irq.h |  3 +++
+>>  arch/riscv/kernel/smp.c      | 16 ++++++++++++++++
+>>  2 files changed, 19 insertions(+)
+>>
+>> diff --git a/arch/riscv/include/asm/irq.h b/arch/riscv/include/asm/irq.h
+>> index 8e10a94430a2..ed8f76879270 100644
+>> --- a/arch/riscv/include/asm/irq.h
+>> +++ b/arch/riscv/include/asm/irq.h
+>> @@ -12,6 +12,9 @@
+>>
+>>  #include <asm-generic/irq.h>
+>>
+>> +void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu);
+>> +#define arch_trigger_cpumask_backtrace arch_trigger_cpumask_backtrace
+>
+>I'm getting a build failure with SMP=n (allnoconfig), the implementation 
+>is in smp.c which isn't built without SMP.
+>
 
-  * struct netlink_ext_ack - netlink extended ACK report struct
-  [..]
-  * @miss_nest: nest missing an attribute (%NULL if missing top level attr)
+Thanks for point it out, I will fix it and send another version!
 
-NL_REQ_ATTR_CHECK() doesn't check the value of nest, it just sets it.
+Sincerely,
+Ryo Takakura
 
-That line originates from Davide's patch and is already in net-next:
-1d17568e74de ("net/sched: cls_flower: add support for matching tunnel control flags")
-
-It was added to that patch, after Jamal requested it.
-https://lore.kernel.org/CAM0EoMkE3kzL28jg-nZiwQ0HnrFtm9HNBJwU1SJk7Z++yHzrMw@mail.gmail.com/
-
-> tb here is corresponding to attrs from tca[TCA_OPTIONS], so IIRC we need
-> to pass tca[TCA_OPTIONS] as nest here. Otherwise the decoder will look
-> for attribute with ID fl_mask at the root level, and the root attrs are
-> from the TCA_ enum.
-> 
-> Looks like Donald covered flower in Documentation/netlink/specs/tc.yaml
-> so you should be able to try to hit this using the Python ynl CLI:
-> https://docs.kernel.org/next/userspace-api/netlink/intro-specs.html#simple-cli
-> But to be honest I'm not 100% sure if the YNL reverse parser works with
-> TC and its "sub-message" polymorphism ;)
-
-After extending the spec to know about the enc_flags keys, I get this:
-
-$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/tc.yaml --do newtfilter --json '{"chain": 0, "family": 
-0, "handle": 4, "ifindex": 22, "info": 262152, "kind": "flower", "options": { "flags": 0, "key-enc-flags": 8, 
-"key-eth-type": 2048}, "parent": 4294967283}'
-Netlink error: Invalid argument
-nl_len = 68 (52) nl_flags = 0x300 nl_type = 2
-         error: -22
-         extack: {'msg': 'Missing flags mask', 'miss-type': 111}
-
-After propagating tca[TCA_OPTIONS] through:
-
-Netlink error: Invalid argument
-nl_len = 76 (60) nl_flags = 0x300 nl_type = 2
-         error: -22
-         extack: {'msg': 'Missing flags mask', 'miss-type': 111, 'miss-nest': 56}
-
-In v4, I have added the propagation as the last patch.
-
--- 
-Best regards
-Asbjørn Sloth Tønnesen
-Network Engineer
-Fiberby - AS42541
+>> +
+>>  void riscv_set_intc_hwnode_fn(struct fwnode_handle *(*fn)(void));
+>>
+>>  struct fwnode_handle *riscv_get_intc_hwnode(void);
+>> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+>> index 45dd4035416e..6e297b9eb641 100644
+>> --- a/arch/riscv/kernel/smp.c
+>> +++ b/arch/riscv/kernel/smp.c
+>> @@ -21,6 +21,7 @@
+>>  #include <linux/delay.h>
+>>  #include <linux/irq.h>
+>>  #include <linux/irq_work.h>
+>> +#include <linux/nmi.h>
+>>
+>>  #include <asm/tlbflush.h>
+>>  #include <asm/cacheflush.h>
+>> @@ -33,6 +34,7 @@ enum ipi_message_type {
+>>  	IPI_CPU_CRASH_STOP,
+>>  	IPI_IRQ_WORK,
+>>  	IPI_TIMER,
+>> +	IPI_CPU_BACKTRACE,
+>>  	IPI_MAX
+>>  };
+>>
+>> @@ -136,6 +138,9 @@ static irqreturn_t handle_IPI(int irq, void *data)
+>>  		tick_receive_broadcast();
+>>  		break;
+>>  #endif
+>> +	case IPI_CPU_BACKTRACE:
+>> +		nmi_cpu_backtrace(get_irq_regs());
+>> +		break;
+>>  	default:
+>>  		pr_warn("CPU%d: unhandled IPI%d\n", smp_processor_id(), ipi);
+>>  		break;
+>> @@ -212,6 +217,7 @@ static const char * const ipi_names[] = {
+>>  	[IPI_CPU_CRASH_STOP]	= "CPU stop (for crash dump) interrupts",
+>>  	[IPI_IRQ_WORK]		= "IRQ work interrupts",
+>>  	[IPI_TIMER]		= "Timer broadcast interrupts",
+>> +	[IPI_CPU_BACKTRACE]     = "CPU backtrace interrupts",
+>>  };
+>>
+>>  void show_ipi_stats(struct seq_file *p, int prec)
+>> @@ -332,3 +338,13 @@ void arch_smp_send_reschedule(int cpu)
+>>  	send_ipi_single(cpu, IPI_RESCHEDULE);
+>>  }
+>>  EXPORT_SYMBOL_GPL(arch_smp_send_reschedule);
+>> +
+>> +static void riscv_backtrace_ipi(cpumask_t *mask)
+>> +{
+>> +	send_ipi_mask(mask, IPI_CPU_BACKTRACE);
+>> +}
+>> +
+>> +void arch_trigger_cpumask_backtrace(const cpumask_t *mask, int exclude_cpu)
+>> +{
+>> +	nmi_trigger_cpumask_backtrace(mask, exclude_cpu, riscv_backtrace_ipi);
+>> +}
 
