@@ -1,114 +1,90 @@
-Return-Path: <linux-kernel+bounces-251649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8925F9307AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 00:20:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E609307B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 00:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148CC281D7C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 22:20:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CAF3282455
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 22:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FAB149E1A;
-	Sat, 13 Jul 2024 22:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EAD14D42C;
+	Sat, 13 Jul 2024 22:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAiU8Jri"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uw4Q4Sjo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9327E1B28D;
-	Sat, 13 Jul 2024 22:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A016229401;
+	Sat, 13 Jul 2024 22:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720909214; cv=none; b=HafUUIf8hI93iFmuPRarOzA8ds2CW8jNTJaGIsIYgujwEJf/jhzRiXfqF+gdY4cHITVE6r6U+D2s5OXOA0LD4HEAujQAmVII6xoVzP8Dzy6E39/ciWhBOVUWjyjtqPnC1VuGht40XuWr98UUyyl1vJL3D8sg8+5/Zw91JzkmPKs=
+	t=1720909831; cv=none; b=lp0/0GpEpf0/RwgiSfgpGI2NzgS68Ejq1cL8EQs//YDLTsmfXyryy6rqNVJEcp7HfVUlNJqg20kOEADP4nMqraFIuInLqKM6+MpbnKfAvLwh7SKk843jL7/AxWniNqsAJPfzRJdnSoLmSyOK/i7oSNFlZg/+hMvJ0/5/XSSxuNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720909214; c=relaxed/simple;
-	bh=vw/5G0b54ZvaP0GyutE3JIwnlU0W7UohrhAliZNnLUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSqCdNZudwwCQhK/9SMihu64Cr+vr1hEavugxS31pzhRWAAv4wx4aXNZDCMv/4Vg/FAqaW94jXsxYe0q2b8Jj086Ntu+3cahvaUnIZXKuF8XxNCYAwALRSeeXzwOW7/cj5zNLsRsW51f74D8cfseLuX5cxj7JZx++qOBrGGHoIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HAiU8Jri; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4279f48bd94so12964285e9.1;
-        Sat, 13 Jul 2024 15:20:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720909211; x=1721514011; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wQt/kYZQs6KDNI+pc5wwQA39rgAHm/rL+vWQvwIIgps=;
-        b=HAiU8Jrim8LhWGLHO1kJZSZCYDhsTOFfFGTZTLyWcwILl0ZRmKKQhsOFRKGs6LuWBb
-         cz69QNe+EI6VpnCSzK3XYuxqnZWWpFslsDU38VnCmbaNACeK54O/0DaYRgqiSnnb5s54
-         eveNR5WhNjnqTRAG5bW4uTnbwLydoyhpCDLO3iLIQhLtRz2kPQxYchYFb1jfHtfUSR01
-         HMF4JMyzM38CgNdPocqCygc49ivLSIZ2EYA0TiABPs8EjDsHeve7/eOn8xgbPeZd8Iuk
-         I8KecWYYzA0GcIda4P3f3YBFIvtQCMf9NnoK63mNg96zV8mIl6MvIn3xLNR1LkJ7Wisi
-         OUXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720909211; x=1721514011;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wQt/kYZQs6KDNI+pc5wwQA39rgAHm/rL+vWQvwIIgps=;
-        b=YzcxWBZcsRDyko8I2r/nL2/713sslhw22N3sJEIvqh7mmKuuvtuX/cYJlyWM2eOni2
-         YRvrR74SCT1GHzj936bUuDmH1JpYDbr9Okj3t4mYjVdYL1fGxA9lKWgfzaPgdQhPvaTC
-         m8TWJHUoi5oSK9lsc0wNqUQVjh5MzGhyviVml72fjetky7YvE96yZ0jYuE8gYBmeLm1o
-         lj8a9AZ/MpNuQS2fjdQ+g95pMx5p4TFwdlqEa0bg11zJkPjLVZVQbgb9CjHRtLkMreV6
-         MucfFuuwWGJo3DoxMV+hgkzyIcdn0P9Qt7F4Er9ZaE3vEpGDTyt6b2370WpEhd4FbLiM
-         xZzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvxJnHrcFQzIKszZOZOkZjtRxoqESfYhby1taUaMEqLPX1ilBhYW0qLRAsHUxAEFeTZjSX8yxBPHN4h1QxWlDv7ngA9vXCmYb3P1Pa
-X-Gm-Message-State: AOJu0Ywjg1sUAkZXgmMV+ZzpdS0wML1ezhAR5r2z0w9RS9dN9jVxfaER
-	vTrEzoDWYInxDEdIYTBbFHtdVMylH7yeTI5qVaCND5sBdtFgv+EP
-X-Google-Smtp-Source: AGHT+IF5/nkTGPBg8GM3heYlmUwdkzyC/ooGwBpJGdwSdEH+6sgUKz8DBkayBk1ouMFillqERc5ziQ==
-X-Received: by 2002:a05:600c:4606:b0:426:6f3e:feef with SMTP id 5b1f17b1804b1-426708f14e2mr109464005e9.29.1720909210798;
-        Sat, 13 Jul 2024 15:20:10 -0700 (PDT)
-Received: from skbuf ([188.25.49.162])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e8e2ecsm34225515e9.21.2024.07.13.15.20.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 15:20:10 -0700 (PDT)
-Date: Sun, 14 Jul 2024 01:20:07 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: netdev@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	UNGLinuxDriver@microchip.com, Russell King <linux@armlinux.org.uk>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 08/12] net: dsa: vsc73xx: Implement the
- tag_8021q VLAN operations
-Message-ID: <20240713222007.gzskwsqmz5puivwz@skbuf>
-References: <20240713211620.1125910-1-paweldembicki@gmail.com>
- <20240713211620.1125910-9-paweldembicki@gmail.com>
+	s=arc-20240116; t=1720909831; c=relaxed/simple;
+	bh=/kxyB3Qgh1/+WecZvn2L0QpS3PENQuiFBDO4kA7IrKQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=sZSv5/PjvLnyLnb5BPWt4WiL+LCnwVT9dIT8b5z4UKerfrL7FXMIOfgjqt1Frag639CFd8zErDLgss+o/p3NOKFeBmijBeruBXnFOwBFYiwvSfxd81qNrHs4vxNLWyUCRkHmXM+PFO78QVvUoODN5uHz7/Q+rniWKjB3Glx6Hl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uw4Q4Sjo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 07B4DC4AF09;
+	Sat, 13 Jul 2024 22:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720909831;
+	bh=/kxyB3Qgh1/+WecZvn2L0QpS3PENQuiFBDO4kA7IrKQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Uw4Q4SjoXKWIMLfvkKqlr9g0N9FIgf48q+7Bk7KrTFRJrUK+bc+c6R/PNP7o63SHs
+	 CArs28OgQOkxWdAhVgcDu/2AOBfQXZ9q8VyDCuihI0vCY/b73KvnQmKtlAifPw9gCJ
+	 We6M76uuuNcIrdX8YRe+Prkcrb07x6TbtD1q7Z/yvhIv6GK6v2Jyfsiph7PlnfPrpO
+	 YFnDoXnvIG0lzrxAhWQipd3UFou4hNKAMvaOZZns5uNp+V/0vdFHMZiKLSO3KJ6Hwa
+	 KbzZXEpP6m9FeS/9Hcm1Q3vuwLaGbwt/fz0OSj/PnoQx7oKEht54/oyIqh+WtTP8tk
+	 5uIZ5iNFKNGZg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E98C3C43168;
+	Sat, 13 Jul 2024 22:30:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240713211620.1125910-9-paweldembicki@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH V2] test/vsock: add install target
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172090983095.21567.16489087258072186235.git-patchwork-notify@kernel.org>
+Date: Sat, 13 Jul 2024 22:30:30 +0000
+References: <20240710122728.45044-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20240710122728.45044-1-peng.fan@oss.nxp.com>
+To: Peng Fan (OSS) <peng.fan@oss.nxp.com>
+Cc: sgarzare@redhat.com, virtualization@lists.linux.dev,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, peng.fan@nxp.com
 
-On Sat, Jul 13, 2024 at 11:16:14PM +0200, Pawel Dembicki wrote:
-> This patch is a simple implementation of 802.1q tagging in the vsc73xx
-> driver. Currently, devices with DSA_TAG_PROTO_NONE are not functional.
-> The VSC73XX family doesn't provide any tag support for external Ethernet
-> ports.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 10 Jul 2024 20:27:28 +0800 you wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> The only option available is VLAN-based tagging, which requires constant
-> hardware VLAN filtering. While the VSC73XX family supports provider
-> bridging, it only supports QinQ without full implementation of 802.1AD.
-> This means it only allows the doubled 0x8100 TPID.
+> Add install target for vsock to make Yocto easy to install the images.
 > 
-> In the simple port mode, QinQ is enabled to preserve forwarding of
-> VLAN-tagged frames.
-> 
-> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
+> 
+> [...]
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+Here is the summary with links:
+  - [V2] test/vsock: add install target
+    https://git.kernel.org/netdev/net-next/c/42ffe242860c
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
