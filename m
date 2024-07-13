@@ -1,93 +1,80 @@
-Return-Path: <linux-kernel+bounces-251480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E331930556
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:05:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9178B930558
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 020411F21B96
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:05:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D651C20B43
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B028861FF8;
-	Sat, 13 Jul 2024 11:05:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0B660263
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 11:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0204E8287F;
+	Sat, 13 Jul 2024 11:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MDTpqaRO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76E4AEC6;
+	Sat, 13 Jul 2024 11:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720868737; cv=none; b=o6GYQHWqE7h7SDQBeNtsBGD3DfmDBWtqnh/k0vrJzl3s91cnq7uN83DS7+8SGGV6SgAEiAcgn1uUgBDJ4s9yOxMh4Y/TWfwHSUJxBt04ef2FxydKNvf4BIgsrVQCM3psHizCu1aSZ4DIVc5qhuorvM+4bhuRVVvyeK2ZEhOFUSI=
+	t=1720868756; cv=none; b=l1mOskc2smIIO2a9EQXzPBR6bd2CgSiZZ1tD4X4O4Bvjdl/iDLMI52Yl6BQEJYWMdZf9VOZ18o+FOgtOOvTXcZUyjv/qQq6s1FaLlIP9BSgMHc5ikUjMUpSy61dERz9SmN13k0HHFS6//GLDJJy/GWHjhxJNEclRi2qoXVg4OY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720868737; c=relaxed/simple;
-	bh=NfDz3riJCs+yz/7Ke3ZKJhU6e5Q313Wy6qLKatzHHB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uLYqC5DaUozWJfyhJKg2O464kJLNCRhLNy9Ve6TgJNruw6NxmHbfk3D8pWQWM7Ifj0ofE3/8MfGU/txbi13qs2dKb3eJfJBamlQfzhLFWGnFU3GvFn4QytCQXDPHeQg0rFm5Q+paXrzqatDH4hdy85RE0Ltv1+ldvRT6igdKvuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAC6B1007;
-	Sat, 13 Jul 2024 04:05:59 -0700 (PDT)
-Received: from [10.57.77.253] (unknown [10.57.77.253])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 963F53F762;
-	Sat, 13 Jul 2024 04:05:33 -0700 (PDT)
-Message-ID: <aed6f61e-49ed-414b-acc1-25f5ed6d4e09@arm.com>
-Date: Sat, 13 Jul 2024 12:05:32 +0100
+	s=arc-20240116; t=1720868756; c=relaxed/simple;
+	bh=/aQEoAtJevZOtnhQxzPJg1RlTHsJoGK/euntEf/HqRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfMgXYoD3TvEiFppgcSkuRndlk7kDRwx8jZGx7dy6/k9+hW5kuY7vUlV3UPZ5B/i6s8F6N7swBNLZ2yQbGsdC460UObcTPT1mi6gB0c09qij3mCu6/YreZct2OfX3mp81btwHlIMl64XBjtiRlMVkKvANgNnx22OiTeOI54kChg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MDTpqaRO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 180FAC32781;
+	Sat, 13 Jul 2024 11:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720868755;
+	bh=/aQEoAtJevZOtnhQxzPJg1RlTHsJoGK/euntEf/HqRo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MDTpqaROuDDJA85T2CmWV2lRTEQ5+ynWicXt09KcKOGIohfPbeK0E7/Hj1OJx2hhm
+	 z+yEaoX5eSJC8hzy9UiYDddQ0z9kf6YI8VnebftV2PAEpnNAt9+VStC96lmqHLPzrJ
+	 Zm0QmI65/r/pFYUVj9n1X2U+fyFhiy011WcX8tFM=
+Date: Sat, 13 Jul 2024 13:05:52 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ashwin Kamat <ashwin.kamat@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, davem@davemloft.net,
+	yoshfuji@linux-ipv6.org, dsahern@kernel.org, kuba@kernel.org,
+	netdev@vger.kernel.org, ajay.kaher@broadcom.com,
+	vasavi.sirnapalli@broadcom.com, tapas.kundu@broadcom.com
+Subject: Re: [PATCH v5.10 0/2] Fix for CVE-2024-36901
+Message-ID: <2024071323-disarray-moody-1e0b@gregkh>
+References: <1720520570-9904-1-git-send-email-ashwin.kamat@broadcom.com>
+ <2024071313-even-unpack-9173@gregkh>
+ <CA+tTbbvb04ZuTY+5pH+Yf5-OKJnx5RqvyjxfDixWhinwvH_hFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory: Avoid PMD-size page cache if needed
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>, Gavin Shan <gshan@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, william.kucharski@oracle.com, david@redhat.com,
- shan.gavin@gmail.com
-References: <20240711104840.200573-1-gshan@redhat.com>
- <ZpBEwEn3swH7IFbI@casper.infradead.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <ZpBEwEn3swH7IFbI@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+tTbbvb04ZuTY+5pH+Yf5-OKJnx5RqvyjxfDixWhinwvH_hFw@mail.gmail.com>
 
-On 11/07/2024 21:46, Matthew Wilcox wrote:
-> On Thu, Jul 11, 2024 at 08:48:40PM +1000, Gavin Shan wrote:
->> +++ b/mm/huge_memory.c
->> @@ -136,7 +136,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->>  
->>  		while (orders) {
->>  			addr = vma->vm_end - (PAGE_SIZE << order);
->> -			if (thp_vma_suitable_order(vma, addr, order))
->> +			if (!(vma->vm_file && order > MAX_PAGECACHE_ORDER) &&
->> +			    thp_vma_suitable_order(vma, addr, order))
->>  				break;
-> 
-> Why does 'orders' even contain potential orders that are larger than
-> MAX_PAGECACHE_ORDER?
-> 
-> We do this at the top:
-> 
->         orders &= vma_is_anonymous(vma) ?
->                         THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
-> 
-> include/linux/huge_mm.h:#define THP_ORDERS_ALL_FILE     (BIT(PMD_ORDER) | BIT(PUD_ORDER))
-> 
-> ... and that seems very wrong.  We support all kinds of orders for
-> files, not just PMD order.  We don't support PUD order at all.
-> 
-> What the hell is going on here?
+On Sat, Jul 13, 2024 at 03:16:15PM +0530, Ashwin Kamat wrote:
+> Hi Greg,
+> The patches get applied to 5.10 stable branch with an offset [i.e Hunk #1
+> succeeded at 240 (offset 19 lines).]
+> To avoid that I sent separate patches to 5.10 and 5.15. Apart from that
+> there is no other difference.
 
-Just to try to justify this a little, it was my perspective when adding (anon)
-mTHP that memory was either anon or file; Anything that populated vma->vm_file
-was file, including shmem, DAX, etc. Before my change THP could install PMD size
-mappings for anon, and PMD or PUD size mappings for file memory (but yes, PUD
-was only really applicable to DAX in practice, I believe).
+That's not what I asked, I asked:
 
-I agree it would be good to clean this up, but I don't think the current code is
-quite as mad as you're implying, Matthew?
+> > Any reason you didn't actually cc: the stable@vger.kernel.org address
+> > for these so we know to pick them up?
 
+That is a requirement to get a patch merged into a stable release,
+right?
+
+thanks,
+
+greg k-h
 
