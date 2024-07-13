@@ -1,220 +1,221 @@
-Return-Path: <linux-kernel+bounces-251506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683B89305A9
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FFB19305AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7294F1C20E1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:58:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2669E282873
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDFC130AC8;
-	Sat, 13 Jul 2024 12:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B61913210F;
+	Sat, 13 Jul 2024 12:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="o9kxFIyO"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="WXgmwa1o"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49634AEC6
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 12:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BDB131E2D
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 12:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720875492; cv=none; b=qkE2NAIYkXZ7vEgxj6TL9YFuNxtjW7wq/w0iI2GghdJK7LMW935ucrOxwpVfbGxsROCbR8J+XTTK7q4mDa6h+DsGVzeHXDnTvKi8ASsuuAN71RCYsJ64D3o31k8n7GgrAxcK/RzyzSmd4JicZtRe5S+kRjY5GOBHm/LLOZAwzJw=
+	t=1720875523; cv=none; b=OFd/ReZ8L1/eAesB3yyGGSBajhtALNEi+9Xoy5dbm+2vq6n3ntJg1BgQ44st3Ojx4CffhWQhh25hmkwVxhTqABxizAbkYyiPI6kGnVeUWQ+xpmO0aQHQ8KRXtGNUlORSq4RACH3DPZ7hArWnVKDMn6FlM1yNnbZ/Acfhjm/mny4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720875492; c=relaxed/simple;
-	bh=gJE4W3enMDiXqsSBoZ6EbLhV++voaNbsAwzzby8tFa8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ukWQ5xv4zG022162yPKS4MlHE5lvFIc+MPTfftR2iwEXBGOHDsNAxXNA7MrtErUka3oSrXXWyQJhhieAVsxWZ3sRW/ofEewjp7oPNXn9rm7zHq6Fjex4HcM3hnSyb6a3sYXlGzzw+1UTmPuItqG5d5zx42OPx01+Te5qo134bUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=o9kxFIyO; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720875481; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ynrMmi6W+olSeq5whEcPJ546MWxiMPRjwUEKXsXjNXk=;
-	b=o9kxFIyOIoboReqQDjsHNlhvMxiu+QLc+mGVppleM7UBYB/6gZtQhlKfdrFWEq7yj4SlJKdY9Lyps5RVIAMMqILeZXTUCdJNyePfUJvrP8YKkEW0eDcQDILiDzMJPJIWJ2SKP4iv0gRjDOHu+HksXMI8h9fPWkDBX5PmqLzNaEo=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0WAR.dHF_1720875480;
-Received: from 30.32.91.177(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WAR.dHF_1720875480)
-          by smtp.aliyun-inc.com;
-          Sat, 13 Jul 2024 20:58:01 +0800
-Message-ID: <b53fa748-9e19-48f9-8ccf-8d2fe408d35d@linux.alibaba.com>
-Date: Sat, 13 Jul 2024 20:57:59 +0800
+	s=arc-20240116; t=1720875523; c=relaxed/simple;
+	bh=WAquGU1sAv0NQOiFQhQCK/WB0bF5GrpFisW+DKCCuOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A7OalIdMxRGFDp1Fuxw/RkPTv/cxsOOLySfgYfvBOrNIRHjUdZGoSxq5FruQfU/5xiYkmjl8sH4KxGbxTm0tbzlKHAdsuM5y/F8dIpiQ0SQAPm3YNKWeNUHiDOaxBQwBnTUrju457rOqV2k6+sKFDaNvpAFWQxzfk5XjNJlWU0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=WXgmwa1o; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58b447c51bfso3650342a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 05:58:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720875520; x=1721480320; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0vmUQWDwVUQYFm+xuW2pF4/BnR+RAgeFcmOR+FIC/lg=;
+        b=WXgmwa1oP4aaIFVrDwU1dm9AFmIkCCTH5qs4U0ICLnvKVecYwtpKUl6uYg2hVN/TsM
+         696sQGQONuSL8kuU5ilI1GTa1m98Sb2R+Z+MU13jYHJQrasc14TrWMGU/hOJHO5lzMoQ
+         3eQTR1WAuOcWT2PW0TPP7Dr3FAmZCuPGZGhul86Ad5ZnHoTn1cn8whjb6MJNoZr1cOAP
+         qiNve6enVxq92gtvJjHYuVUbUnGnYtXdKCaAkb8Shv3d3dKd9aVsinBHKq9ouGWA0tbg
+         nHm9zt23F87krPS/rMGM+mOU3OOiGai9kmCuxLw6PMp5Ss4Ugnjch4BKD8NBYe6LhCNJ
+         6sVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720875520; x=1721480320;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0vmUQWDwVUQYFm+xuW2pF4/BnR+RAgeFcmOR+FIC/lg=;
+        b=I+v/X/xjQKz3uAcPUCQi7qdokY+whndAyngaYCpGy0PaGrpjAC2v1TWoVPaHR9rEBk
+         B+bSyOrWX5rkzIGUTMiZWQHrZdtORO4lKLVDlKuk3OufhGy9rFkWjt+VRTXXG+W4wB2N
+         ygxpbyfIzEV/40gZJt3rmeQgGrHsod+DaeAdrai+we3BWoouDCVG+crDu1STFk28JM8S
+         wRPgQFTLFBOTMMKZ1g0UxDhyhYI7qXBw8qdeuZ5Agnc9ixEe1wyESSHA34XMon0M1yfb
+         TrU8fPGl+Lx2dgE6ZxCgOW32gcaQ3sycLChq1SEUL7/JESGdKjtDERMvwGIcg+1AHIjt
+         xWaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiwWEtKTNHlygthjKOUWAGjwNbG5x06wlhN6Oa/7zw2oYTpSNAKNNL+caW6+3TzRa8QwQdeJkw/V/3aD8EdJuXnNWTY0wGkVaTHQME
+X-Gm-Message-State: AOJu0YyjYhd24A1UwRuu4HiazWqdAzBsPqfllfVI2uxcodRSVIxe2SoD
+	XRwNwZr9Kn3atlNBEShwLwRp9YpUbTdaS+8gqW433NPWi6xiKU7Go9FEjWq7rXo=
+X-Google-Smtp-Source: AGHT+IE8wLD/Rbqxem5MwJOVkSSIYdsvSdPnmm+cu+yuuQej1nhyJW0GbSd3h+h9V0sEUnfR/NKrAg==
+X-Received: by 2002:a05:6402:26c6:b0:595:7640:ee79 with SMTP id 4fb4d7f45d1cf-5957640f148mr10139310a12.17.1720875517634;
+        Sat, 13 Jul 2024 05:58:37 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b255263ecsm740996a12.44.2024.07.13.05.58.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jul 2024 05:58:36 -0700 (PDT)
+Date: Sat, 13 Jul 2024 14:58:35 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Hironori KIKUCHI <kikuchan98@gmail.com>
+Cc: Andre Przywara <andre.przywara@arm.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Aleksandr Shubin <privatesub2@gmail.com>, Cheo Fusi <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 5/5] dt-bindings: pwm: sun20i: Add options to select a
+ clock source and DIV_M
+Message-ID: <e7dvk2g4ymz527tklywy2elka4ndzvftfujobnjmfdepgt3lm5@dzex45st2wya>
+References: <20240531141152.327592-1-kikuchan98@gmail.com>
+ <20240531141152.327592-6-kikuchan98@gmail.com>
+ <851280ad-ac0e-47d1-99e2-4f3b5ea29f2f@kernel.org>
+ <CAG40kxEbMQc-ni0HDVR7rtj48aFu-jz8sYUAO+fdmZSmXWrizw@mail.gmail.com>
+ <da382d43-fa82-44c0-9630-086f59e6efa2@kernel.org>
+ <CAG40kxHKdC=uwyWzsBo1LTAXARDQGs0N4TBdD5nE1zhos48cbg@mail.gmail.com>
+ <20240603010912.44b99988@minigeek.lan>
+ <CAG40kxETZBO1-UBr=rqEu0uWrfOe74k-M12qW7Rg_kX8U32UPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory: Avoid PMD-size page cache if needed
-To: David Hildenbrand <david@redhat.com>, Gavin Shan <gshan@redhat.com>,
- Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, william.kucharski@oracle.com,
- ryan.roberts@arm.com, shan.gavin@gmail.com
-References: <20240711104840.200573-1-gshan@redhat.com>
- <ZpBEwEn3swH7IFbI@casper.infradead.org>
- <f58433ee-7217-4f9e-91ba-c29f95cd56b0@redhat.com>
- <63a0364b-a2e0-48c2-b255-e976112deeb1@redhat.com>
- <df83a218-e2e5-496e-999a-e446a7d0b383@redhat.com>
- <b11d6006-1efb-4329-baa0-75799935e019@linux.alibaba.com>
- <11c95a82-cf13-414b-b489-1dd48255e022@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <11c95a82-cf13-414b-b489-1dd48255e022@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uowver6aitbe3emx"
+Content-Disposition: inline
+In-Reply-To: <CAG40kxETZBO1-UBr=rqEu0uWrfOe74k-M12qW7Rg_kX8U32UPg@mail.gmail.com>
 
 
+--uowver6aitbe3emx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/7/13 12:17, David Hildenbrand wrote:
-> On 13.07.24 06:01, Baolin Wang wrote:
->>
->>
->> On 2024/7/13 09:03, David Hildenbrand wrote:
->>> On 12.07.24 07:39, Gavin Shan wrote:
->>>> On 7/12/24 7:03 AM, David Hildenbrand wrote:
->>>>> On 11.07.24 22:46, Matthew Wilcox wrote:
->>>>>> On Thu, Jul 11, 2024 at 08:48:40PM +1000, Gavin Shan wrote:
->>>>>>> +++ b/mm/huge_memory.c
->>>>>>> @@ -136,7 +136,8 @@ unsigned long __thp_vma_allowable_orders(struct
->>>>>>> vm_area_struct *vma,
->>>>>>>             while (orders) {
->>>>>>>                 addr = vma->vm_end - (PAGE_SIZE << order);
->>>>>>> -            if (thp_vma_suitable_order(vma, addr, order))
->>>>>>> +            if (!(vma->vm_file && order > MAX_PAGECACHE_ORDER) &&
->>>>>>> +                thp_vma_suitable_order(vma, addr, order))
->>>>>>>                     break;
->>>>>>
->>>>>> Why does 'orders' even contain potential orders that are larger than
->>>>>> MAX_PAGECACHE_ORDER?
->>>>>>
->>>>>> We do this at the top:
->>>>>>
->>>>>>            orders &= vma_is_anonymous(vma) ?
->>>>>>                            THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
->>>>>>
->>>>>> include/linux/huge_mm.h:#define THP_ORDERS_ALL_FILE
->>>>>> (BIT(PMD_ORDER) | BIT(PUD_ORDER))
->>>>>>
->>>>>> ... and that seems very wrong.  We support all kinds of orders for
->>>>>> files, not just PMD order.  We don't support PUD order at all.
->>>>>>
->>>>>> What the hell is going on here?
->>>>>
->>>>> yes, that's just absolutely confusing. I mentioned it to Ryan lately
->>>>> that we should clean that up (I wanted to look into that, but am
->>>>> happy if someone else can help).
->>>>>
->>>>> There should likely be different defines for
->>>>>
->>>>> DAX (PMD|PUD)
->>>>>
->>>>> SHMEM (PMD) -- but soon more. Not sure if we want separate ANON_SHMEM
->>>>> for the time being. Hm. But shmem is already handles separately, so
->>>>> maybe we can just ignore shmem here.
->>>>>
->>>>> PAGECACHE (1 .. MAX_PAGECACHE_ORDER)
->>>>>
->>>>> ? But it's still unclear to me.
->>>>>
->>>>> At least DAX must stay special I think, and PAGECACHE should be
->>>>> capped at MAX_PAGECACHE_ORDER.
->>>>>
->>>>
->>>> David, I can help to clean it up. Could you please help to confirm the
->>>> following
->>>
->>> Thanks!
->>>
->>>> changes are exactly what you're suggesting? Hopefully, there are
->>>> nothing I've missed.
->>>> The original issue can be fixed by the changes. With the changes
->>>> applied, madvise(MADV_COLLAPSE)
->>>> returns with errno -22 in the test program.
->>>>
->>>> The fix tag needs to adjusted either.
->>>>
->>>> Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs 
->>>> interface")
->>>>
->>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>>> index 2aa986a5cd1b..45909efb0ef0 100644
->>>> --- a/include/linux/huge_mm.h
->>>> +++ b/include/linux/huge_mm.h
->>>> @@ -74,7 +74,12 @@ extern struct kobj_attribute shmem_enabled_attr;
->>>>     /*
->>>>      * Mask of all large folio orders supported for file THP.
->>>>      */
->>>> -#define THP_ORDERS_ALL_FILE    (BIT(PMD_ORDER) | BIT(PUD_ORDER))
->>>
->>> DAX doesn't have any MAX_PAGECACHE_ORDER restrictions (like hugetlb). So
->>> this should be
->>>
->>> /*
->>>    * FSDAX never splits folios, so the MAX_PAGECACHE_ORDER limit does 
->>> not
->>>    * apply here.
->>>    */
->>> THP_ORDERS_ALL_FILE_DAX ((BIT(PMD_ORDER) | BIT(PUD_ORDER))
->>>
->>> Something like that
->>>
->>>> +#define THP_ORDERS_ALL_FILE_DAX                \
->>>> +       ((BIT(PMD_ORDER) | BIT(PUD_ORDER)) & (BIT(MAX_PAGECACHE_ORDER
->>>> + 1) - 1))
->>>> +#define THP_ORDERS_ALL_FILE_DEFAULT    \
->>>> +       ((BIT(MAX_PAGECACHE_ORDER + 1) - 1) & ~BIT(0))
->>>> +#define THP_ORDERS_ALL_FILE            \
->>>> +       (THP_ORDERS_ALL_FILE_DAX | THP_ORDERS_ALL_FILE_DEFAULT)
->>>
->>> Maybe we can get rid of THP_ORDERS_ALL_FILE (to prevent abuse) and fixup
->>> THP_ORDERS_ALL instead.
->>>
->>>>     /*
->>>>      * Mask of all large folio orders supported for THP.
->>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>> index 2120f7478e55..4690f33afaa6 100644
->>>> --- a/mm/huge_memory.c
->>>> +++ b/mm/huge_memory.c
->>>> @@ -88,9 +88,17 @@ unsigned long __thp_vma_allowable_orders(struct
->>>> vm_area_struct *vma,
->>>>            bool smaps = tva_flags & TVA_SMAPS;
->>>>            bool in_pf = tva_flags & TVA_IN_PF;
->>>>            bool enforce_sysfs = tva_flags & TVA_ENFORCE_SYSFS;
->>>> +       unsigned long supported_orders;
->>>> +
->>>>            /* Check the intersection of requested and supported 
->>>> orders. */
->>>> -       orders &= vma_is_anonymous(vma) ?
->>>> -                       THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
->>>> +       if (vma_is_anonymous(vma))
->>>> +               supported_orders = THP_ORDERS_ALL_ANON;
->>>> +       else if (vma_is_dax(vma))
->>>> +               supported_orders = THP_ORDERS_ALL_FILE_DAX;
->>>> +       else
->>>> +               supported_orders = THP_ORDERS_ALL_FILE_DEFAULT;
->>>
->>> This is what I had in mind.
->>>
->>> But, do we have to special-case shmem as well or will that be handled
->>> correctly?
->>
->> For anonymous shmem, it is now same as anonymous THP, which can utilize
->> THP_ORDERS_ALL_ANON.
->> For tmpfs, we currently only support PMD-sized THP
->> (will support more larger orders in the future). Therefore, I think we
->> can reuse THP_ORDERS_ALL_ANON for shmem now:
->>
->> if (vma_is_anonymous(vma) || shmem_file(vma->vm_file)))
->>     supported_orders = THP_ORDERS_ALL_ANON;
->> ......
->>
-> 
-> 
-> It should be THP_ORDERS_ALL_FILE_DEFAULT (MAX_PAGECACHE_ORDER imitation 
-> applies).
+Hello,
 
-Yes, indeed, I missed MAX_PAGECACHE_ORDER limitation.
+On Mon, Jun 03, 2024 at 05:42:08PM +0900, Hironori KIKUCHI wrote:
+> 2024=E5=B9=B46=E6=9C=883=E6=97=A5(=E6=9C=88) 9:10 Andre Przywara <andre.p=
+rzywara@arm.com>:
+> >
+> > On Sun, 2 Jun 2024 15:15:13 +0900
+> > Hironori KIKUCHI <kikuchan98@gmail.com> wrote:
+> >
+> > > > On 31/05/2024 19:57, Hironori KIKUCHI wrote:
+> > > > >>> ---
+> > > > >>>  .../bindings/pwm/allwinner,sun20i-pwm.yaml    | 19 +++++++++++=
+++++++++
+> > > > >>>  1 file changed, 19 insertions(+)
+> > > > >>>
+> > > > >>> diff --git a/Documentation/devicetree/bindings/pwm/allwinner,su=
+n20i-pwm.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.=
+yaml
+> > > > >>> index b9b6d7e7c87..436a1d344ab 100644
+> > > > >>> --- a/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pw=
+m.yaml
+> > > > >>> +++ b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pw=
+m.yaml
+> > > > >>> @@ -45,6 +45,25 @@ properties:
+> > > > >>>      description: The number of PWM channels configured for thi=
+s instance
+> > > > >>>      enum: [6, 9]
+> > > > >>>
+> > > > >>> +  allwinner,pwm-pair-clock-sources:
+> > > > >>> +    description: The clock source names for each PWM pair
+> > > > >>> +    items:
+> > > > >>> +      enum: [hosc, apb]
+> > > > >>> +    minItems: 1
+> > > > >>> +    maxItems: 8
+> > > > >>
+> > > > >> Missing type... and add 8 of such items to your example to make =
+it complete.
+> > > > >
+> > > > > Thank you. I'll fix it.
+> > > > >
+> > > > >>
+> > > > >>> +
+> > > > >>> +  allwinner,pwm-pair-clock-prescales:
+> > > > >>> +    description: The prescale (DIV_M register) values for each=
+ PWM pair
+> > > > >>> +    $ref: /schemas/types.yaml#/definitions/uint32-matrix
+> > > > >>> +    items:
+> > > > >>> +      items:
+> > > > >>> +        minimum: 0
+> > > > >>> +        maximum: 8
+> > > > >>> +      minItems: 1
+> > > > >>> +      maxItems: 1
+> > > > >>> +    minItems: 1
+> > > > >>> +    maxItems: 8
+> > > > >>
+> > > > >> This does not look like matrix but array.
+> > > > >
+> > > > > I wanted to specify values like this:
+> > > > >
+> > > > >     allwinner,pwm-pair-clock-prescales =3D <0>, <1>, <3>;
+> > > > >     allwinner,pwm-pair-clock-sources =3D "hosc", "apb", "hosc":
+> > > > >
+> > > > > These should correspond to each PWM pair.
+> > > > > This way, I thought we might be able to visually understand the r=
+elationship
+> > > > > between prescalers and sources, like clock-names and clocks.
+> > > > >
+> > > > > Is this notation uncommon, perhaps?
+> > > >
+> > > > It's still an array.
+> > >
+> > > Oh I understood and clear. Thank you.
+
+For clocks there is already a binding to assign a working configuration.
+assigned-clocks, assigned-clock-rates and assigned-clock-parents are the
+relevant properties. If you create a clk from the parent clock selector
+and mdiv, you can stick to the existing bindings.
+
+> > > [...]
+> >
+> > So I understand the problem, but I don't think expressing this in the
+> > devicetree is the right solution. It seems like a tempting pragmatical
+> > approach, but it sounds like the wrong way: this is not a hardware
+> > *description* of any kind, but rather a way to describe a certain user
+> > intention or a configuration. So this looks like a rather embedded
+> > approach to me, where you have a certain fixed register setup in mind,
+> > and want to somehow force this to the hardware.
+> > Another problem with this approach is that it doesn't really cover the
+> > sysfs interface, which is very dynamic by nature.
+>=20
+> ... Indeed. You're right.
+> Now I've realized it was a bad idea.
+> It should be done in sysfs or sysctl perhaps.
+
+I don't think a driver specific knob somewhere is a practical solution.
+
+Best regards
+Uwe
+
+--uowver6aitbe3emx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaSefgACgkQj4D7WH0S
+/k4PpQf+JL1igIDXxEuQOrrhdPtcCKOdnbzUcXc+5O9UEjZtnLuPHQl7QQwJlQlE
+hdaGoTu19JrWCqs6c2NBp7Bfvudj9NxreEMVkZoWwneCx8FlpJ4Ize5UPUSJKM/S
+UQsh2krG6bGultPD95aHLU0y1xAlgosDgBt1LNnBEADuXFsoQDJwalzjsV6pCiNI
+YBk0rdnq2CA1F6821F1qDQxo/0HwaYD8li3/88pPJwk0chy1GghP+rQs14lanT0c
+p5aPUo5lgT9FX0kamw2LKClegbbmGiXVqzdquxyEvZXGVCOs03RMfp87X9TqSYvd
+X6oU4c5oER1lPKnzIbBMXuhAjzFr/Q==
+=09cS
+-----END PGP SIGNATURE-----
+
+--uowver6aitbe3emx--
 
