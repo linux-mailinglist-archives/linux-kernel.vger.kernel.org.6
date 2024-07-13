@@ -1,148 +1,133 @@
-Return-Path: <linux-kernel+bounces-251399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED3B930469
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D6F930446
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:35:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F77F1C22ECD
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:00:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E92B31C21409
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B42856477;
-	Sat, 13 Jul 2024 08:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="kc0mpBhd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bsRddw7N"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9656E49649;
-	Sat, 13 Jul 2024 08:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BE92E639;
+	Sat, 13 Jul 2024 07:35:29 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28B639FC1;
+	Sat, 13 Jul 2024 07:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720857602; cv=none; b=DGGmS8cUso9HcgJFt6cRFHcuXtI5NxZ6SDKW2YK+B4ChjmewCz2fcUzfghNTCUFqSBFF+9Qo9PjkcoxJKUE8VkHKaIOIv8M28S8Pfv+IhwmzFH3LSBNj/hmunb/m2ZC7p8KNIyjOnqJAqK6lR51LHrniCoIDsrt9fk5flhzAYfU=
+	t=1720856128; cv=none; b=rMhrzTcPsrwQzITtOZVO4ehlK1PYAzerJjEqw33l8mEiHxEQvkC2fW6CMwAuSnoT6Rru9uf49qLIhuZrCKL6CTe9ahCGkcMfv0MtxY1RPzgD8VjjROxkTA3qw7RsaCwSSKibmQoUR4dTNC/Ln7yS/Juf4Essnlq1q9E4zvKcsmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720857602; c=relaxed/simple;
-	bh=A+UHp366gIVa2FazCrxKWQvKpSLLcVwnaGhWXwZGtFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lsUSrnnCaHnjU4DMNQBMxsvIJqRAR4ySFG6zZhuEFVZbg38e2I7wCLDZSt0BqkBVt0QMkbCM1xBpRSZTEy3vjSiTOqFnyNzy8+HuJRw3GWIVjQVd/aNPhMEJnAAYw5uCX56Q/FttwZMtCSjeK3HT2j1PIwQNsfFi9KGBZ0pxtlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=kc0mpBhd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bsRddw7N; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 8FE4B138882F;
-	Sat, 13 Jul 2024 03:59:59 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sat, 13 Jul 2024 03:59:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1720857599; x=
-	1720943999; bh=6wVqcF+sq6nvP8sf0sSl8W+Zi+HYxu3wkUISmp2SegA=; b=k
-	c0mpBhddanoFMwvoyLEPzUHC32U1l55zdypLjFRmdwj4/kXLGhADTcmPlGEInIXN
-	gyIgKjJlSszeOqkpB/m6jkY4/SncjNvL/hegWKyZD3uX7hSThpteEAKqzpjxCMOx
-	bCHz6GZlhN0n+l4HaOYtXPxsxIRx4vFDF9gOgkmgzmqiyzDZTBkJVLEPDr+nav9O
-	a0Moe2i3qfmb23ZO9RTqvVPsKzSJ3yjlNU/DN+B4yvw0TMhiOXqNvcjqCJD8wE7n
-	K9KtH3IwEQ2BJddnRfEOvxSjrS4qPUYdzZCnPDU7IIDlp7aSEzVN9Xk+8pM2VYuX
-	6ZwwXGdCOf+5X9oSN10ag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720857599; x=
-	1720943999; bh=6wVqcF+sq6nvP8sf0sSl8W+Zi+HYxu3wkUISmp2SegA=; b=b
-	sRddw7NprbZNoGhfIS1AgDdWLup+cg0IynCXDulroMqmC/dN/VwgpA5LdrcFMjBR
-	YMAx8pjMrJeGJhQuhsFS+tX69+I9k4hf219sg9a8jMLCCldg0NVcRQGl1X22GClZ
-	Y3ROKZ/Bkv1gA7DG210bZv5PsvM3txV/aO/EV9KzlMpr16yxFD9c2LubWtOkFk89
-	H8LGxu5JqgVujIuRNyDNLh1CJgq6yXQ1VSQ9PkEoGtEJiOZK+44cPxoMfhYhhMgT
-	5u2lC/zWb5sJ64sXAFzpZnBK4Wx0CBh4cF075dIFGgrdrkFYos5ReLUoTPk9ErFE
-	grfankpn45sg/bVDtwGnQ==
-X-ME-Sender: <xms:_jOSZpimJqmVh6vaG_OjXRgNpv-4trIEWWrcLo1MoN8G8SoOGuLoJQ>
-    <xme:_jOSZuCaN2vNX0i6e7EmliMqKN9vQdgG_8VQfv_GG6lH46qX7Z-Z8m4L3284PYGz1
-    FysKKJyMWvU00__ybU>
-X-ME-Received: <xmr:_jOSZpGJspl5vWcgr-XHw1tDRdmMgoH54W85Abaejuz_bmsxvjdPB2r7199q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeejgdduvdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtke
-    ertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehl
-    jhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfetfedugfetudeuheetjefhue
-    fggfelleetvdevtefhueeujeefvdegleevhefgnecuvehluhhsthgvrhfuihiivgepuden
-    ucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:_jOSZuRELK2jhbEt2AlsopoNL94cwoJMkFHejJy2XLOsvEF2-BEdgQ>
-    <xmx:_jOSZmzxMfheNs1i6VcBU9GtQkfjTHhCoWnTvs6ljmo-ZkwenZ-gSQ>
-    <xmx:_jOSZk5voUTGBKg4VbykfrPyylPUr8Chy5hCgUZiXZKmvmzre3_uDw>
-    <xmx:_jOSZrwJQvXsboEAz9-3bc7ZAXN7TaEfO5a3AGEq3ZicSTs8APwzng>
-    <xmx:_zOSZtrg6QjuGKTXnGBDJ8Sq1gXr3Di8510VGujoxm-LbTiJjix4YJeV>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 13 Jul 2024 03:59:55 -0400 (EDT)
-From: "Luke D. Jones" <luke@ljones.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: corentin.chary@gmail.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
+	s=arc-20240116; t=1720856128; c=relaxed/simple;
+	bh=+H4Ybg8THbDCJSYLLE9r60UwCZ0jW4g/J7RJ1WodwqQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ruWVwt1VAr2ohHoVvEmjnYE6GZaIyUfZm3gSG5XeLHKU/F51aQ/SFKaXswyb8RZIByJ08JrD1g7lLCOazh+tzPR89Jek/sbiCijV2f9jqLF3okvshO6t+I1c21wj5Qd6huRMiZzUz+2hUIrupunNqZ9SAJozkMfebxjSYegUiVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee566922e2fc23-43c24;
+	Sat, 13 Jul 2024 15:35:14 +0800 (CST)
+X-RM-TRANSID:2ee566922e2fc23-43c24
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain.localdomain (unknown[223.108.79.100])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee866922e2935b-6eecd;
+	Sat, 13 Jul 2024 15:35:14 +0800 (CST)
+X-RM-TRANSID:2ee866922e2935b-6eecd
+From: tangbin <tangbin@cmss.chinamobile.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH 2/2] platform/x86: asus-wmi: don't fail if platform_profile already registered
-Date: Sat, 13 Jul 2024 19:59:40 +1200
-Message-ID: <20240713075940.80073-3-luke@ljones.dev>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240713075940.80073-1-luke@ljones.dev>
-References: <20240713075940.80073-1-luke@ljones.dev>
+	tangbin <tangbin@cmss.chinamobile.com>
+Subject: [PATCH] ASoC: loongson: Remove useless variable definitions
+Date: Sat, 13 Jul 2024 11:34:28 -0400
+Message-Id: <20240713153428.44858-1-tangbin@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.18.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-On some newer laptops it appears that an AMD driver can register a
-platform_profile handler. If this happens then the asus_wmi driver would
-error with -EEXIST when trying to register its own handler leaving the
-user with a possibly unusable system - this is especially true for
-laptops with an MCU that emit a stream of HID packets, some of which can
-be misinterpreted as shutdown signals.
+In the function loongson_pcm_trigger and loongson_pcm_open,
+the 'ret' is useless, so remove it to simplify code.
 
-We can safely continue loading the driver instead of bombing out.
-
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
+Signed-off-by: tangbin <tangbin@cmss.chinamobile.com>
 ---
- drivers/platform/x86/asus-wmi.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ sound/soc/loongson/loongson_dma.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 4c129881ce28..7d87ff68f418 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -3836,8 +3836,13 @@ static int platform_profile_setup(struct asus_wmi *asus)
- 		asus->platform_profile_handler.choices);
+diff --git a/sound/soc/loongson/loongson_dma.c b/sound/soc/loongson/loongson_dma.c
+index 4fcc28681..0238f88bc 100644
+--- a/sound/soc/loongson/loongson_dma.c
++++ b/sound/soc/loongson/loongson_dma.c
+@@ -95,7 +95,6 @@ static int loongson_pcm_trigger(struct snd_soc_component *component,
+ 	struct device *dev = substream->pcm->card->dev;
+ 	void __iomem *order_reg = prtd->dma_data->order_addr;
+ 	u64 val;
+-	int ret = 0;
  
- 	err = platform_profile_register(&asus->platform_profile_handler);
--	if (err)
-+	if (err == -EEXIST) {
-+		pr_warn("%s, a platform_profile handler is already registered\n", __func__);
-+		return 0;
-+	} else if (err) {
-+		pr_err("%s, failed at platform_profile_register: %d\n", __func__, err);
- 		return err;
-+	}
+ 	switch (cmd) {
+ 	case SNDRV_PCM_TRIGGER_START:
+@@ -129,7 +128,7 @@ static int loongson_pcm_trigger(struct snd_soc_component *component,
+ 		return -EINVAL;
+ 	}
  
- 	asus->platform_profile_support = true;
- 	return 0;
-@@ -4713,7 +4718,7 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		throttle_thermal_policy_set_default(asus);
+-	return ret;
++	return 0;
+ }
  
- 	err = platform_profile_setup(asus);
--	if (err)
-+	if (err && err != -EEXIST)
- 		goto fail_platform_profile_setup;
+ static int loongson_pcm_hw_params(struct snd_soc_component *component,
+@@ -230,7 +229,6 @@ static int loongson_pcm_open(struct snd_soc_component *component,
+ 	struct snd_card *card = substream->pcm->card;
+ 	struct loongson_runtime_data *prtd;
+ 	struct loongson_dma_data *dma_data;
+-	int ret;
  
- 	err = asus_wmi_sysfs_init(asus->platform_device);
+ 	/*
+ 	 * For mysterious reasons (and despite what the manual says)
+@@ -252,20 +250,17 @@ static int loongson_pcm_open(struct snd_soc_component *component,
+ 	prtd->dma_desc_arr = dma_alloc_coherent(card->dev, PAGE_SIZE,
+ 						&prtd->dma_desc_arr_phy,
+ 						GFP_KERNEL);
+-	if (!prtd->dma_desc_arr) {
+-		ret = -ENOMEM;
++	if (!prtd->dma_desc_arr)
+ 		goto desc_err;
+-	}
++
+ 	prtd->dma_desc_arr_size = PAGE_SIZE / sizeof(*prtd->dma_desc_arr);
+ 
+ 	prtd->dma_pos_desc = dma_alloc_coherent(card->dev,
+ 						sizeof(*prtd->dma_pos_desc),
+ 						&prtd->dma_pos_desc_phy,
+ 						GFP_KERNEL);
+-	if (!prtd->dma_pos_desc) {
+-		ret = -ENOMEM;
++	if (!prtd->dma_pos_desc)
+ 		goto pos_err;
+-	}
+ 
+ 	dma_data = snd_soc_dai_get_dma_data(snd_soc_rtd_to_cpu(rtd, 0), substream);
+ 	prtd->dma_data = dma_data;
+@@ -279,7 +274,7 @@ static int loongson_pcm_open(struct snd_soc_component *component,
+ desc_err:
+ 	kfree(prtd);
+ 
+-	return ret;
++	return -ENOMEM;
+ }
+ 
+ static int loongson_pcm_close(struct snd_soc_component *component,
 -- 
-2.45.2
+2.18.4
+
+
 
 
