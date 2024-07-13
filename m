@@ -1,245 +1,132 @@
-Return-Path: <linux-kernel+bounces-251308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4ED93033C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 04:19:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8982A930355
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 04:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924531C2154C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:19:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19E63B2115E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCD4182B2;
-	Sat, 13 Jul 2024 02:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C701F17BA7;
+	Sat, 13 Jul 2024 02:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="Du8ojnJ1"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="ifBQmJ7h"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EC4DF53;
-	Sat, 13 Jul 2024 02:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541281755B
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 02:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720837164; cv=none; b=jhbapvSHWZVuzTs7ZvD9aV/DJg1E15h1Bv+kY+Sh5Rl5cH6SZxc3EEnkzf13mjp3rMjONqIcWTqzT4sDwRNYPDXti6f0jw3/AKu3BaSBmJS5Pk3d/G3o4sLaIKdph8VLgh1vSKIG8z+DhviHVLhMTtwCuAbA+CadpCattgGMP5A=
+	t=1720837350; cv=none; b=swB7Y2zZAgGCARddc0JBYQWEgvNmmW/A+XyD5kVazxk7sonBajckTyYkObuYMSI3U1t5KxFu+ae/QdOsMsWwVoEI1bRnhK1/R1cA/Wgz3JWzg2wqJjTJ6k64TGzV/K8amZXAoiU/rC90dYDTXRannoLeWxiV724ftRDkh/jlf4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720837164; c=relaxed/simple;
-	bh=v3mNEqFK0Q6h4padIx+/4n10HpzalQwxOLizi2JEcJk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c1oL55/XX5h0cLtK5ft5KGpAWVkXgWPGAhrkh1v2kqWNL0zuXgaIVRAIU9xXgUFamTDAjl1RMIAy6n9pc5lC77hXycKtOhOu6KPEsbp3AUfv27ZyHa+I3k38zGLvWDczailFpFD1tSNUMDr2lToXXm1s1xZ3Ie2o85R+ryejsqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=Du8ojnJ1; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1720837158;
-	bh=v3mNEqFK0Q6h4padIx+/4n10HpzalQwxOLizi2JEcJk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Du8ojnJ1ANsrtJ9EA7xRjipz+FOSt9c8B5BAxZYZx2uOgqWME8ESJGMxol58vOZ0W
-	 HV9FGOMFUiDEsfkXZogq8p+Dv4v7wfMt9YmZXkgczGY1/AU2WC+7Y4OpIP2bbzblqj
-	 o+moUwWov8UkLD5IFQ6jmLM/0LwpcxqBVXjDQyCV/Rz2vtKYx+F5WJysf8mfhGTHfa
-	 xjuSNoi8AJUU6s0nmcz98eGqfoFxx1Fldmgz7Fz07QXD9MYLVjPByQ9NHaaTWyfmYq
-	 Drqgc9NoGfPoYsyyvmAWxiaOZ/dgABLqGb9SNuZX047D/cSp19fEb527MFcBE9RyFD
-	 FhnmKLHiYehcA==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id 46FCF60079;
-	Sat, 13 Jul 2024 02:19:17 +0000 (UTC)
-Received: by x201s (Postfix, from userid 1000)
-	id 0026E204FDE; Sat, 13 Jul 2024 02:19:12 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: netdev@vger.kernel.org
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	Davide Caratti <dcaratti@redhat.com>,
-	Ilya Maximets <i.maximets@ovn.org>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Ratheesh Kannoth <rkannoth@marvell.com>,
-	Florian Westphal <fw@strlen.de>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4 13/13] net/sched: cls_flower: propagate tca[TCA_OPTIONS] to NL_REQ_ATTR_CHECK
-Date: Sat, 13 Jul 2024 02:19:10 +0000
-Message-ID: <20240713021911.1631517-14-ast@fiberby.net>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240713021911.1631517-1-ast@fiberby.net>
-References: <20240713021911.1631517-1-ast@fiberby.net>
+	s=arc-20240116; t=1720837350; c=relaxed/simple;
+	bh=lXqgkt2H22OrWd0Xr/ds8mNtVYxJTGNWblZs/3ShZU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C4pFM78fT88o8r0TD3xDJn6WwzkHGjmE+L3XZdLfMWWkpP7jXohb4Llv5nM6Upe0R9O0eth0IPre/eE1tF9GAplEhn2X3C7pZaPr8TpJwe3cs90Z3B/nr2IcF3wT62a5pEZmnOLwy0NObWLu376Evgdm9iXS1gP8n3qM2qPssnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=ifBQmJ7h; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a05c755477so165242185a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 19:22:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1720837347; x=1721442147; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KcCJozulqARBvuu4ti/BgXI4cG4IJiyyKAoDsbuvkyI=;
+        b=ifBQmJ7hifOOeiJtURNJ5zcqjDfweQa8HxFZJOFQ7bphSMGl3KOyrVh2X15Jyh/dFo
+         YS0Xxs4ZWN2mzjvamMxvQrt4y1fYCI1Gnj1dGu6OZTTReAwxlYScvJ9SpUjIQXc278Sg
+         eo1XxmdSEi5w86KDVWUVwjJ2LXmyKPFc33eb0y2zi8CxLz4+aOghxvL9uH7Sk+nFBsGY
+         iO4xVLbepcR/8AZBc8PY7pgg2qcoPN85ECUu16Q56ZgSjd14cO465002OVru0w6VN0P8
+         /efj9tPdbZAEKje3Nigm508CxkcFGdRiiZnmb6mlJXgVdz8jPVy4a9dR9V/0gb+QmXfv
+         70tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720837347; x=1721442147;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KcCJozulqARBvuu4ti/BgXI4cG4IJiyyKAoDsbuvkyI=;
+        b=eRA2bfycxocLDq9aL08iI/7RfWbSmVYeh5QRdAs3ZgY6VSKHhxfAgL9RX5zqnNmnIo
+         MYa1SQ957Y1ZmWsPqwsYqEVY/NwU5tSbMDIFv3zWLZeo4T7K1TFyxFnABiPli+Xodke1
+         G69hr4DsWgHAWfpxY3BacscNJp7474iuc/AzxHLfIQXEhqlrh+nLad29yqAGj1qqYlQq
+         0TL1mwAIGAS72gXzxu4oFcycdzrZQBoIFZa2NYooL7poQ4aw3RRU5+UgLguWv8PyuVA4
+         eV+CNoSC2QoF/cGYbKA+Q5ojWcLgRdY1et4Vu+maTKwFu/le/jm0uuudDfCg5toyJZDD
+         llLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjyTNnfrBkbcXUZkeBNe4xyKzH04CF/qG1ZhIU4+L7Xm56+GgkAV5T9u4+t2k+v5sXgEjnrArMcXLTXldOLFGMsm9FBFajcy03i3xl
+X-Gm-Message-State: AOJu0YzzF4pwDp9lHkQIX88jA9XxTAZCAjsG4fZnRIyTCeEdTx0jDldm
+	b9GjFPmp7TuDJKbIUDEsvNTu8wSq6S7gIGQfeYi8HVbrgI6H4J8u3beQXWpMqw==
+X-Google-Smtp-Source: AGHT+IHI0rkfaG2cSk9khBWAyN7byMc87Kw8sb7ZOHvEZC2TVKLMXwflVSRFs9KJYlTz3UJkFFzIZA==
+X-Received: by 2002:ae9:f717:0:b0:79f:f1:2a with SMTP id af79cd13be357-79f19a64fa4mr1324430585a.28.1720837347270;
+        Fri, 12 Jul 2024 19:22:27 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::cad7])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160c63880sm10444485a.72.2024.07.12.19.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 19:22:26 -0700 (PDT)
+Date: Fri, 12 Jul 2024 22:22:24 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Hongyu Xie <xy521521@gmail.com>
+Cc: gregkh@linuxfoundation.org, oneukum@suse.com, brauner@kernel.org,
+	jlayton@kernel.org, xiehongyu1@kylinos.cn, jack@suse.cz,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH next] usb: usbfs: Add reset_resume for usbfs
+Message-ID: <8a16e1c2-fd59-4279-8b36-806a214385b6@rowland.harvard.edu>
+References: <20240711084321.44916-1-xiehongyu1@kylinos.cn>
+ <527927b8-9475-47da-bf2b-7a5d9e81e470@suse.com>
+ <a782c5bc-fc8b-43ad-9c6e-1e6799243364@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a782c5bc-fc8b-43ad-9c6e-1e6799243364@kylinos.cn>
 
-NL_REQ_ATTR_CHECK() is used in fl_set_key_flags() to set
-extended attributes about the origin of an error, this
-patch propagates tca[TCA_OPTIONS] through.
+On Fri, Jul 12, 2024 at 11:10:57AM +0800, Hongyu Xie wrote:
+> From: Hongyu Xie <xiehongyu1@kylinos.cn>
+> 
+> 
+> 
+> On 2024/7/11 16:59, Oliver Neukum wrote:
+> > 
+> > 
+> > On 11.07.24 10:43, Hongyu Xie wrote:
+> > > During hibernation, usb_resume_interface will set needs_binding to 1 if
+> > > the usb_driver has no reset_resume implimentation. The USB interface
+> > > will be rebind after usb_resume_complete.
+> > > 
+> > > Normally, that's fine. But if a USB interface has a matched kernel
+> > > driver, and a userspace driver or application is using this USB
+> > > interface through usbfs during hibernation, usbfs will be
+> > > detatched with the USB interface after resume. And this USB interface
+> > > will be bind with a kernel driver instead of usbfs.
+> > > 
+> > > So add reset_resume to fix this.
+> > 
+> > The device has lost all settings, yet we continue like nothing
+> > changed. That strikes me as a very bad idea. If a device has undergone
+> > a reset user space has not requested, we need to return an error upon
+> > the next interaction.
+> Sorry I don't understand your concern.
+> When will "a reset user space has not requested" happen if there is a
+> reset_resume in usbfs?
 
-Before this patch:
+That's what a reset-resume is: a reset that occurs when the device is 
+resumed, rather than when the driver has requested a reset.
 
-$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/tc.yaml \
-	 --do newtfilter --json '{
-		"chain": 0, "family": 0, "handle": 4, "ifindex": 22,
-		"info": 262152,
-		"kind": "flower",
-		"options": {
-			"flags": 0, "key-enc-flags": 8,
-			"key-eth-type": 2048 },
-		"parent": 4294967283 }'
-Netlink error: Invalid argument
-nl_len = 68 (52) nl_flags = 0x300 nl_type = 2
-        error: -22
-        extack: {'msg': 'Missing flags mask',
-                 'miss-type': 111}
+Alan Stern
 
-After this patch:
-
-[same cmd]
-Netlink error: Invalid argument
-nl_len = 76 (60) nl_flags = 0x300 nl_type = 2
-        error: -22
-        extack: {'msg': 'Missing flags mask',
-                 'miss-type': 111, 'miss-nest': 56}
-
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Asbj√∏rn Sloth T√∏nnesen <ast@fiberby.net>
----
- net/sched/cls_flower.c | 34 ++++++++++++++++++++--------------
- 1 file changed, 20 insertions(+), 14 deletions(-)
-
-diff --git a/net/sched/cls_flower.c b/net/sched/cls_flower.c
-index 38b2df387c1e1..e280c27cb9f9a 100644
---- a/net/sched/cls_flower.c
-+++ b/net/sched/cls_flower.c
-@@ -1171,8 +1171,9 @@ static void fl_set_key_flag(u32 flower_key, u32 flower_mask,
- 	}
- }
- 
--static int fl_set_key_flags(struct nlattr **tb, bool encap, u32 *flags_key,
--			    u32 *flags_mask, struct netlink_ext_ack *extack)
-+static int fl_set_key_flags(struct nlattr *tca_opts, struct nlattr **tb,
-+			    bool encap, u32 *flags_key, u32 *flags_mask,
-+			    struct netlink_ext_ack *extack)
- {
- 	int fl_key, fl_mask;
- 	u32 key, mask;
-@@ -1186,7 +1187,7 @@ static int fl_set_key_flags(struct nlattr **tb, bool encap, u32 *flags_key,
- 	}
- 
- 	/* mask is mandatory for flags */
--	if (NL_REQ_ATTR_CHECK(extack, NULL, tb, fl_mask)) {
-+	if (NL_REQ_ATTR_CHECK(extack, tca_opts, tb, fl_mask)) {
- 		NL_SET_ERR_MSG(extack, "Missing flags mask");
- 		return -EINVAL;
- 	}
-@@ -1865,9 +1866,9 @@ static int fl_set_key_cfm(struct nlattr **tb,
- 	return 0;
- }
- 
--static int fl_set_key(struct net *net, struct nlattr **tb,
--		      struct fl_flow_key *key, struct fl_flow_key *mask,
--		      struct netlink_ext_ack *extack)
-+static int fl_set_key(struct net *net, struct nlattr *tca_opts,
-+		      struct nlattr **tb, struct fl_flow_key *key,
-+		      struct fl_flow_key *mask, struct netlink_ext_ack *extack)
- {
- 	__be16 ethertype;
- 	int ret = 0;
-@@ -2100,14 +2101,16 @@ static int fl_set_key(struct net *net, struct nlattr **tb,
- 		return ret;
- 
- 	if (tb[TCA_FLOWER_KEY_FLAGS]) {
--		ret = fl_set_key_flags(tb, false, &key->control.flags,
-+		ret = fl_set_key_flags(tca_opts, tb, false,
-+				       &key->control.flags,
- 				       &mask->control.flags, extack);
- 		if (ret)
- 			return ret;
- 	}
- 
- 	if (tb[TCA_FLOWER_KEY_ENC_FLAGS])
--		ret = fl_set_key_flags(tb, true, &key->enc_control.flags,
-+		ret = fl_set_key_flags(tca_opts, tb, true,
-+				       &key->enc_control.flags,
- 				       &mask->enc_control.flags, extack);
- 
- 	return ret;
-@@ -2358,6 +2361,7 @@ static int fl_change(struct net *net, struct sk_buff *in_skb,
- {
- 	struct cls_fl_head *head = fl_head_dereference(tp);
- 	bool rtnl_held = !(flags & TCA_ACT_FLAGS_NO_RTNL);
-+	struct nlattr *tca_opts = tca[TCA_OPTIONS];
- 	struct cls_fl_filter *fold = *arg;
- 	bool bound_to_filter = false;
- 	struct cls_fl_filter *fnew;
-@@ -2366,7 +2370,7 @@ static int fl_change(struct net *net, struct sk_buff *in_skb,
- 	bool in_ht;
- 	int err;
- 
--	if (!tca[TCA_OPTIONS]) {
-+	if (!tca_opts) {
- 		err = -EINVAL;
- 		goto errout_fold;
- 	}
-@@ -2384,7 +2388,7 @@ static int fl_change(struct net *net, struct sk_buff *in_skb,
- 	}
- 
- 	err = nla_parse_nested_deprecated(tb, TCA_FLOWER_MAX,
--					  tca[TCA_OPTIONS], fl_policy, NULL);
-+					  tca_opts, fl_policy, NULL);
- 	if (err < 0)
- 		goto errout_tb;
- 
-@@ -2460,7 +2464,7 @@ static int fl_change(struct net *net, struct sk_buff *in_skb,
- 		bound_to_filter = true;
- 	}
- 
--	err = fl_set_key(net, tb, &fnew->key, &mask->key, extack);
-+	err = fl_set_key(net, tca_opts, tb, &fnew->key, &mask->key, extack);
- 	if (err)
- 		goto unbind_filter;
- 
-@@ -2800,18 +2804,19 @@ static void *fl_tmplt_create(struct net *net, struct tcf_chain *chain,
- 			     struct nlattr **tca,
- 			     struct netlink_ext_ack *extack)
- {
-+	struct nlattr *tca_opts = tca[TCA_OPTIONS];
- 	struct fl_flow_tmplt *tmplt;
- 	struct nlattr **tb;
- 	int err;
- 
--	if (!tca[TCA_OPTIONS])
-+	if (!tca_opts)
- 		return ERR_PTR(-EINVAL);
- 
- 	tb = kcalloc(TCA_FLOWER_MAX + 1, sizeof(struct nlattr *), GFP_KERNEL);
- 	if (!tb)
- 		return ERR_PTR(-ENOBUFS);
- 	err = nla_parse_nested_deprecated(tb, TCA_FLOWER_MAX,
--					  tca[TCA_OPTIONS], fl_policy, NULL);
-+					  tca_opts, fl_policy, NULL);
- 	if (err)
- 		goto errout_tb;
- 
-@@ -2821,7 +2826,8 @@ static void *fl_tmplt_create(struct net *net, struct tcf_chain *chain,
- 		goto errout_tb;
- 	}
- 	tmplt->chain = chain;
--	err = fl_set_key(net, tb, &tmplt->dummy_key, &tmplt->mask, extack);
-+	err = fl_set_key(net, tca_opts, tb, &tmplt->dummy_key,
-+			 &tmplt->mask, extack);
- 	if (err)
- 		goto errout_tmplt;
- 
--- 
-2.45.2
-
+> > I am sorry, but this implementation has some fundamental issues.
+> > 
+> >  ††††Regards
+> >  ††††††† Oliver
+> > 
+> Regards
+> Hongyu Xie
 
