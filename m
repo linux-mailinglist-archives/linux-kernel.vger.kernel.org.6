@@ -1,141 +1,132 @@
-Return-Path: <linux-kernel+bounces-251325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF0E93038D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 05:16:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D96DD930396
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 05:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9AC51C20FF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:16:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 148B0B22621
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC0617591;
-	Sat, 13 Jul 2024 03:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553121773A;
+	Sat, 13 Jul 2024 03:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KC4egGVS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MsB3kQ/Y"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879103232
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 03:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4C1175B1
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 03:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720840574; cv=none; b=mVg1Fklj80PqLGJf7ghBioSYgP3K9w4h1vog9KZRLLcAYHAJNxEy3Q/c7WVDv9Jbfrapu9pILahsSOvvyFqa3+2ruOKkO8hztDn7vzdAUaoNeGUGr2hN2TnhoMjPrmSdthpsqXN9MCxsnGM27sKgtIbM4rqqyADwESKS+DXrybg=
+	t=1720841696; cv=none; b=MK3fjAsavmTmCp4kQNB7CjrF3rP4exAoqPB236ziLdSK2CF4ktZktlxDhMI1J83XrmTnpccJwIGJizx0zAJrkaNRFaqs+HrrHIJDdOhHSIPqrGV5k01miWcw6dbrvai9FaaBubRtqUzV/HPc1AtpN/ibDjyOx8BmsR/OOQyHqLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720840574; c=relaxed/simple;
-	bh=EdQQaqDPYROWfoOyq8s5OxdRr4lCnQNCNDowjlLqjLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FeBNyT8wem57tEtyGFbv1OnvjuXE+owp8XqckFqSs5eFajwYx56ZU+y06rejfdquLJsWvDsMjaGGuStQp/RxkBxHxlHz9/naumA9u2I+kccIEktw7i/Kyq4ANFolrk8soBlVIrKjoLUvoh1ZcO5q0he95TrTCuoMqRQF4zVJl40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KC4egGVS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EAF6C32782;
-	Sat, 13 Jul 2024 03:16:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720840574;
-	bh=EdQQaqDPYROWfoOyq8s5OxdRr4lCnQNCNDowjlLqjLQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=KC4egGVSGuT19yJ+cw1Rzt1yLMmwY9xp+rtiAJTLjNj4vHCaxe5Wc0WYv3Y9KUV5m
-	 hRPCqjY4Q26l/8cUTiCpGdWYWH5KK5C/aMJYW4gcet7Fuatxcrvbor5AL6GIeRBqUB
-	 GSXmNcWwHaUEVEssZNF7XuOY7WL1E+k/oHhxTCbVCbLMV3Z/XkBQ5ReiwV5NDxw+64
-	 Qe+ANF2AnXG1zDDvxJ3xa1aXXFZNGEX3xlWA+U41nO7jCZk1ylAKgLW3TWd1gJxC/e
-	 CTuOs6m+lER1Q7W6sZOSo7dLRcQmWr+fXmljXIv2cn0j/B4Vyx9K8eYtRGNg4e5wGy
-	 77BW3b/vOM84w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A4DF4CE09F8; Fri, 12 Jul 2024 20:16:13 -0700 (PDT)
-Date: Fri, 12 Jul 2024 20:16:13 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] nolibc for 6.11-rc1
-Message-ID: <231d9568-37e1-4df2-bd06-ea35303450c6@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <acffd5b1-36a8-4336-9b94-aec50b3d6e5b@t-8ch.de>
- <1678fb84-40f6-4656-ae4e-e31bf5b0ecd9@paulmck-laptop>
+	s=arc-20240116; t=1720841696; c=relaxed/simple;
+	bh=owNlq2Y9PrDO1va5GSFXzi3oRkFi+EBsPRw6UNQjrgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=t6pcwocWc6VAnkRUHSQWZNDyn/FomWLHP5aO2dKWMgSXkEqDpVqVaxliVfRj7+fNs+s+G4CsLBTDZPZuk5hXzjGHh80hsgTNlGVSpOXG37GQujWKY1O0EGt91uymMEJjn8+e4xt+41rlakMWM0XheMRCcVP17oSt+8NL5L0Etb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MsB3kQ/Y; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d9da46ca13so1335259b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 20:34:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720841694; x=1721446494; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qtpF82pGCu7wb84OrfErGjGTloI1qsDbavb4Ik1U9k4=;
+        b=MsB3kQ/YXlwP0YVSrI6zsSTijyDTcg0mezf8vLFyA7PMLj/7T2rQn0cv0BsEFDS5CB
+         jcz5DArLuPnkDDC1e9K2m/nRLokllxgkm8urXlzSwhWpqZWqAfIsyPLVYtob2RqmS4Og
+         mVDLhpGFjcKtGTUiGisvDltlL7JNgNARlh3gql4UAHtvWYcxOT/Ezad9jKcsgackRKl/
+         XeLw5yMbJwxAUxdg9+vynKsvTtMjJsCN155gcWP+Tu6r6xmmfGirK+lF6BEK91ZSfvRw
+         oTg6m5pEuP+N7QbJpKXljzNrMWVc45qQyx2zt2NVtO3viF8oj6FTXY7htJt3MXWUyytv
+         NlAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720841694; x=1721446494;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qtpF82pGCu7wb84OrfErGjGTloI1qsDbavb4Ik1U9k4=;
+        b=uFqiEdPUEd78odktr7835oAgJIGyDEUJUdass2YfhRTKR4FjPBA3jlA3iVze5nI11H
+         RMZLfxcbDWxLfZ/dOQi6BdMTYAUhkK3vrdCFHNZhjKM9Sz3b8ZUEqeETPyfcJHoSmE8F
+         IV2aMjcC36es0W71Lh6obRexhZhQDqwgEIQ+6xikUxZPBFEGKrHrLSGExVlkTCbmQ4hX
+         iXUbBdpG3e6G/2ZP28OvWTrLgv20uezWcgY60gIiD7PWdp685Bjf/2WjWA8UHi0wKrsV
+         WpzvVCHmlX4UIQp3C7yjk8jdNy7umTCN5R3jwDCGVFnLxmaI7/YPXSm24OgOZAHYLAVO
+         zv7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWnPQqK7aoeSYZwHAX+6FJyho1Q6tz6up6oe+GRW4tnNWHtIwMcRqZu5maxlCoUyJY/2tloo0Oamda8yTsw1wc9f25rlxJjfYlOfkVT
+X-Gm-Message-State: AOJu0YytHux+tW94Quy7kiizrhqZAc14wx34+KrygUie7ggqkUa1AoR9
+	FlRGIN7qKmMYZQCmyle4UPFNOsKLNtU7yiRJ3aa7N2A7Df/ykf/M
+X-Google-Smtp-Source: AGHT+IEAQRPKj9vObpjqjTMQ1SxXWHqcDPT6yiLFS2pxj6JuUGMdA2t1ndhQuVrWxaZWwgd/m0HWVw==
+X-Received: by 2002:a05:6808:191d:b0:3d9:b33e:d3e2 with SMTP id 5614622812f47-3d9b33ed905mr14745793b6e.19.1720841694100;
+        Fri, 12 Jul 2024 20:34:54 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:669e:eb9d:e30c:18b4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eba4540sm298199b3a.43.2024.07.12.20.34.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 20:34:53 -0700 (PDT)
+Date: Fri, 12 Jul 2024 20:34:51 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Arnd Bergmann <arnd@arndb.de>, soc@kernel.org
+Cc: Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: pxa: fix build breakage on PXA3xx
+Message-ID: <ZpH12w9vyZZDdzDb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1678fb84-40f6-4656-ae4e-e31bf5b0ecd9@paulmck-laptop>
 
-On Sun, Jun 30, 2024 at 09:06:39AM -0700, Paul E. McKenney wrote:
-> On Sat, Jun 29, 2024 at 01:04:08PM +0200, Thomas Weißschuh wrote:
-> > Hi Paul,
-> > 
-> > The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
-> > 
-> >   Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
-> > 
-> > are available in the Git repository at:
-> > 
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git tags/nolibc-20240629-for-6.11-1
-> > 
-> > for you to fetch changes up to 6ca8f2e20bd1ced8a7cd12b3ae4b1ceca85cfc2b:
-> > 
-> >   selftests: kselftest: also use strerror() on nolibc (2024-06-29 09:44:58 +0200)
-> 
-> Hearing no objections, I have pulled this in so that it will appear
-> in the next -next.  Here are the test results:
-> 
-> make run:
-> 195 test(s): 195 passed,   0 skipped,   0 failed => status: success
-> 
-> make run-user:
-> 195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
-> 
-> So looks good to me!
+Commit 917195d6f829 ("ARM: pxa: consolidate GPIO chip platform data")
+tried to reuse the same instance of platform data for PXA25x and PXA27x
+GPIO controllers by moving it into arch/arm/mach-pxa/devices.c
+Unfortunately this file is built for other PXA variants which resulted
+in the following error:
 
-And please see below for my proposed signed tag.  Please let me know of
-any needed adjustments.
+>> arm-linux-gnueabi-ld: arch/arm/mach-pxa/devices.o:(.data+0x167c): undefined reference to `gpio_set_wake'
 
-							Thanx, Paul
+Fix this by using #ifdef around PXA25x and PXA27x GPIO controller device
+structures and associated data.
 
-----------------------------------------------------------------
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407112039.cyyIQ3Js-lkp@intel.com/
+Fixes: 917195d6f829 ("ARM: pxa: consolidate GPIO chip platform data")
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ arch/arm/mach-pxa/devices.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-tag nolibc.2024.07.12a
-Tagger: Paul E. McKenney <paulmck@kernel.org>
-Date:   Fri Jul 12 16:56:21 2024 -0700
+diff --git a/arch/arm/mach-pxa/devices.c b/arch/arm/mach-pxa/devices.c
+index d050a4c78f97..7695cfce01a1 100644
+--- a/arch/arm/mach-pxa/devices.c
++++ b/arch/arm/mach-pxa/devices.c
+@@ -633,6 +633,7 @@ struct platform_device pxa27x_device_pwm1 = {
+ };
+ #endif /* CONFIG_PXA27x || CONFIG_PXA3xx */
+ 
++#if defined(CONFIG_PXA25x) || defined(CONFIG_PXA27x)
+ const struct software_node pxa2xx_gpiochip_node = {
+ 	.name	= "gpio-pxa",
+ };
+@@ -684,6 +685,7 @@ struct platform_device pxa27x_device_gpio = {
+ 		.platform_data	= &pxa2xx_gpio_info,
+ 	},
+ };
++#endif /* CONFIG_PXA25x || CONFIG_PXA27x */
+ 
+ static struct resource pxa_dma_resource[] = {
+ 	[0] = {
+-- 
+2.45.2.993.g49e7a77208-goog
 
-nolibc updates for v6.11
 
-o	Fix selftest printf format mismatch in expect_str_buf_eq()
-
-o	Stop using brk() and sbrk() when testing against musl, which
-	implements these two functions with ENOMEM.
-
-o	Make tests us -Werror to force failure on compiler warnings.
-
-o	Add limits for the {u,}intmax_t, ulong and {u,}llong types.
-
-o	Implement strtol() and friends.
-
-o	Add facility to skip nolibc-specific tests when running against
-	non-nolibc libraries.
-
-o	Implement strerror().
-
-o	Use strerror() unconditionally, instead of only when running
-	against non-nolibc libraries.
------BEGIN PGP SIGNATURE-----
-
-iQJHBAABCgAxFiEEbK7UrM+RBIrCoViJnr8S83LZ+4wFAmaRxC8THHBhdWxtY2tA
-a2VybmVsLm9yZwAKCRCevxLzctn7jCmDD/9dME6sIhlb7+Bm0V1PXH1YbrqBR8rA
-FRj620xKl2MMrpxxNDiRtv+5mI28fQklVD1wqZUB7tQV3yq6onFnA2C7QGZLn/kl
-9smF6Jxad/ZHYKC4DfuECLLtA/vFutNvpRTrdMUyeTQDaUWZisByzMTSHrvqhHEz
-K98sL81uWIIovSM5mQA+RxMrmydT0ts683jfqXi56NPPOUaYSlERl8KZhvUaM+Rn
-gG+vULwS7d32/EOI1FJ5qyPVVTr7wC0sKueyKPmPcjfFTtNsip4EZFLsjS9lqezW
-m4PM0qCL3XkfgWPek3CIYqd8Y/mjPVYu6m0Mxji3PYboQjZjYON2E8r8EE/fw6Oi
-VLc0etIrycus7uVyBCw4LxJHhdINdpxnQG6Qji4OVilvbKCU+PA3ecepxUVGtlK+
-3ffjanrwv841eGX7/glPElh3Cj9SJackRU5N5hXisJpWc8ode0NxVBI0g7dn6jF5
-sLtZO/JIEof+W+/Hj++3LMQKGi7OrQy0lBe64ENg+l7qhp6Aq3rxjwvZAnTVFtVq
-Dh86Wi3JD7Y6wovB1z9hlaAm1xtigxP7j0Gwr6RwSyPTNCrQvUUPOClfonjkqGN/
-B28gkbOAKBd4gbgt3d8UYGliaeiBuX23KTAR9tU2rnrJOudLeBlewlPyW09jFS98
-jdz8Ay8fuZp+Qw==
-=e/Ia
------END PGP SIGNATURE-----
+-- 
+Dmitry
 
