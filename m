@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-251666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1D59307E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 00:51:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E999307DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 00:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B7042833D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 22:51:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60787B22425
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 22:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CE216D9D5;
-	Sat, 13 Jul 2024 22:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2320E15B107;
+	Sat, 13 Jul 2024 22:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijVlBnrK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EojgsOhp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950D616133E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BF113D881;
 	Sat, 13 Jul 2024 22:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720911031; cv=none; b=rjLnhmcLWJkqEJNwu1s5HZIR1f4XYDu0NzzeSC/mil7Tjk4NbTSjqlELbUK6E18xXKXEmPNxgMyX5ns96P25tMvTs/D298FhzBL3afHEEMQ/ttHVKrfK9EWkw+wjio3zzkvD4HqIwgkN+zFYm5kMN7T5S1LtjevDHlwUAraJw/E=
+	t=1720911030; cv=none; b=iuHBDKBqvNzZzhsnJd9uPmd7abKSpfo953Gc7sZjGqaJWZUkBAl15gr89Z6mqcXyyyL9LvFIaUsD9X8BWtA8S9urHRnS6m34owdjGuCt5N7O3DSIjid3zCuFjf2rhDPG7QlF1Kaf9Le4Q5pWvkRlKKxu5JsB9xDs7A6CRClDCeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720911031; c=relaxed/simple;
-	bh=Sp26K7KbvWIcQM3Bbac4+fi4FVPWvyBhxzNqpYmgA6k=;
+	s=arc-20240116; t=1720911030; c=relaxed/simple;
+	bh=e47nO6hsmSNbPmkiBxViJcHcd37trZNLi5Zkg/LaV78=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=P8dzUh73cz9cudJLmwx/aHYXIpsraAlnReO/a6eCXkH/3Cisj+o/v3VJXMlQUoEhSTBbk9WyQtWlfqv57WEQFCNxwKxsFqAw+lAEKn2yc77BjiYNUrMNzHdLF9ll/5PkPGc2G0zMoSMCnkG4u8+UTAUw7XqM1kt7iNF3/uCx9yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ijVlBnrK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 04668C4AF0C;
+	 In-Reply-To:To:Cc; b=Dah1/xAsaTtq3xntfpIVw63Hfwfvv7TD65MJuapQG9zwv9AIc/kM0js5yHDuL28IRRBM87KPwDE1p9IM+K6t7IZRJyILncc3QO6YGq97+uMGznpxyd88yBT4tVVDW/A/pc/QoDrKi9prFBXYZdjS0648XjQchY4RL2zHk4wn0GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EojgsOhp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0E9DEC4AF10;
 	Sat, 13 Jul 2024 22:50:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1720911030;
-	bh=Sp26K7KbvWIcQM3Bbac4+fi4FVPWvyBhxzNqpYmgA6k=;
+	bh=e47nO6hsmSNbPmkiBxViJcHcd37trZNLi5Zkg/LaV78=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ijVlBnrKYQxHrOrhQyT3A604znag36kND17UaVvIuHwPwcjnAzIL/18koT0mjav5v
-	 xKq80w4En4ZrboXbndMIcvRGdCfvb/UGvBLuKB3CX6Y4uLc/W4lYzhk1/ydSkhTOvU
-	 /NkV9Z1Ne6KyCEqUOTZ0XQhPiNvnS/ewBPN+hd9AcbiTd/mKlPMrXxKPQ3UgpaKtqX
-	 E/BtfCMKUVg2ZyIktNNMKYm/PYbDJIxfhMBlvBQCWGRIU37Y/qcPG+Mix47/ZBOgXz
-	 rbccc8gA6GWdb8U1mh88ljufvP18TJRQLSRSxA7ru3WkNpoxgnAYgZrsdfpnlcj5l0
-	 LG9whD/nb3ZNA==
+	b=EojgsOhpV1zNOsxMFW5FVeqdLQpnMJbsRWbL0/7Pyj/3yFsYN8ztB7d9rEUk0zVwN
+	 S4Ttsoo05WO4gXLdKNAl0cA98ssJL18AZij71IjQ41x86gVRw/r7JGoF2FUer141ob
+	 gH2QYsjRlEIpsRzYgj8E5AnZVQe0v6iDV0W/Bmi/4KO7Qsdm6YmpFAf5PsEix0jAZr
+	 ymApb2F3dDXNX1F6K355SJg0S7J/u//5MEqWya3uqdS2HxKNPDoIcwTxNs9RAY5mKN
+	 KxR5pHhb/iioXCsYhoick4f3EaU4Aapo36LADUfwX+o6dlh8Rziq3kVrQ77r2jyeX+
+	 G/IsAAZPa6aIg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E4E44DAE962;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EC42BDAE961;
 	Sat, 13 Jul 2024 22:50:29 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,38 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: mvpp2: Improve data types and use min()
+Subject: Re: [PATCH net-next] net: ethtool: Monotonically increase the message
+ sequence number
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172091102993.32137.4734670797558697451.git-patchwork-notify@kernel.org>
+ <172091102996.32137.16513833581251462374.git-patchwork-notify@kernel.org>
 Date: Sat, 13 Jul 2024 22:50:29 +0000
-References: <20240711154741.174745-1-thorsten.blum@toblux.com>
-In-Reply-To: <20240711154741.174745-1-thorsten.blum@toblux.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: marcin.s.wojtas@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240711080934.2071869-1-danieller@nvidia.com>
+In-Reply-To: <20240711080934.2071869-1-danieller@nvidia.com>
+To: Danielle Ratson <danieller@nvidia.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, idosch@nvidia.com, petrm@nvidia.com,
+ ecree.xilinx@gmail.com, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 11 Jul 2024 17:47:43 +0200 you wrote:
-> Change the data type of the variable freq in mvpp2_rx_time_coal_set()
-> and mvpp2_tx_time_coal_set() to u32 because port->priv->tclk also has
-> the data type u32.
+On Thu, 11 Jul 2024 11:09:34 +0300 you wrote:
+> Currently, during the module firmware flashing process, unicast
+> notifications are sent from the kernel using the same sequence number,
+> making it impossible for user space to track missed notifications.
 > 
-> Change the data type of the function parameter clk_hz in
-> mvpp2_usec_to_cycles() and mvpp2_cycles_to_usec() to u32 accordingly
-> and remove the following Coccinelle/coccicheck warning reported by
-> do_div.cocci:
+> Monotonically increase the message sequence number, so the order of
+> notifications could be tracked effectively.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next] net: mvpp2: Improve data types and use min()
-    https://git.kernel.org/netdev/net-next/c/f7023b3d697c
+  - [net-next] net: ethtool: Monotonically increase the message sequence number
+    https://git.kernel.org/netdev/net-next/c/275a63c9fe10
 
 You are awesome, thank you!
 -- 
