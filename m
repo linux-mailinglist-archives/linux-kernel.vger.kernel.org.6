@@ -1,101 +1,88 @@
-Return-Path: <linux-kernel+bounces-251513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C6C9305BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 15:22:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D59C9305BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 15:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 167401C20E98
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:22:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409B1282D23
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04AC13247D;
-	Sat, 13 Jul 2024 13:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA4A13213B;
+	Sat, 13 Jul 2024 13:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1ojjmMX"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YChQfbZD"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9596EB46;
-	Sat, 13 Jul 2024 13:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A524A3D
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 13:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720876917; cv=none; b=aDj/+jBKNkIXdCCyHrKIhWBQ6RxP4wLNkpLELCL4CpzSr7LmfbmE9elRBMz/8HZhNdQZtIC8N2am2HC3FU81foAxGKzOsYL08swC+c+bZOHn+mzCm9C4AdZ5LsSkZ/zQRbrdrOFHc4/KhmMEkFEyCrGN5jwlb+53LmTrdqusC5M=
+	t=1720877080; cv=none; b=sbkXGWzP05NARcLOsHiOH7srsC4fqhWv6nnuxCCGG5ox8H89Q+ZfkJgcGWEEqEd7LGwBx4ICZ//yMdsiHJN4Z6N+rbxxbPyOKv/fQK48SwJ/wso7SJyFU7VbcL8eTm4IbXIIUuC+tEELL+YA7CipcSfGTYu9nNlL5axO6KfzaMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720876917; c=relaxed/simple;
-	bh=honn9ygJb4ImAhrWiHlS8o+IFmNJ/zou2TwVBoVwfL0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cph+eGsZleyyBVaU3gyM8V6UDFoxVcymATIna7Yxg7FGup80K9kUITzJ2W1f1Ae9JuFzdgKAV3ck/ygjKkdMzW80kateU/G3aR45A9qMMuLlx5OFNeESwDtFLid+ZAyI1B4sSJwYJLJtffpHUFeRnihSPdiPPYMRtlmY9zYL5r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1ojjmMX; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-25e16380bc9so1504144fac.1;
-        Sat, 13 Jul 2024 06:21:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720876915; x=1721481715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=honn9ygJb4ImAhrWiHlS8o+IFmNJ/zou2TwVBoVwfL0=;
-        b=O1ojjmMXwnrujnV6wO5HWtFxlIvf6tOZH3nsr28q3B5lhIyCWej04+gwB5G3WtLGRt
-         jmc3XynQnCDLcB7qcsrvlJuVkIKgNIB+JL7sElJ3d6TMqmJK2Sr9W5GIve8GaLidbce5
-         gT1PQmwSS6i2XBDdJBY0erpgVZ7cSK+OMpcwqsyTHloAP7dgLMQxXpcwdQ4AlyiRM+4W
-         LreAeEkeN2a4fLfLMTi3FzXJM659U0WLIhgwRCpHQfZCp7RbusVnnbIn9aTCavrAVNe3
-         3hTCb2gtsL1cGl1VvOJ+z50xAKGDYbY9jPkYZK36pInG8E4Sxhhu53mt+k1MzunJJfZu
-         GMzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720876915; x=1721481715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=honn9ygJb4ImAhrWiHlS8o+IFmNJ/zou2TwVBoVwfL0=;
-        b=S8e84P5t+cavvLBP+GYnBtSe6n7HyD+dAmJZNRSCyDFcKv0ZncwIAI158qkQtFUU6x
-         Evw+H/vzEQYfZ35nZNYYNFcy/slH50kTkY3DJz8FHiQ/eQ7S0Vb4bcPftsMvY9GBjGu9
-         b4quBZMTH5uVrPUIAOeNjjHnKg6SgJRtkrnP/tuLFoDIHiEZ1YIQb8JdqKSATdWNLEUj
-         VRiIGoSD+hELqrrZ9VgDJbEX+IgyMgQsSznZBUaDEQRaIcmYwkYvPiF6qcnAsjBIvQkZ
-         e4h1IoCnWRV9vatuMQIj6ucmyRPvHD4Z499KV2Ygrd7PwdTud3rDgNWSm3sLeiF2ecG7
-         W0vg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHYU6+5knaEtR2CuUtMPN1HWQEA1gdR7rD68XFj23QuuTF9oxwTdDSSJw6U+55UopfwOgSkf3Hd+uq97AckB1tBh5guUNIutUTlX6R
-X-Gm-Message-State: AOJu0YyBXhNDeo/UOEByjAqLWoXpEW9QSSGxt6at09DNyh/2RN8ZYq6T
-	84Hy8LEcFViT1zLppuCQaKz1g2LwuwqtHw3egn28XdG62Ou2qL4VM3cu7jfIEKOzoLtLg4NZUMn
-	sqAoXMfA6fmrCqEQapaOgcy/TDOw=
-X-Google-Smtp-Source: AGHT+IFAvefHU5Q7T9cKlpGSPYf9h93Fvyv7BmlSPWk83ViBwMHWwSEI1wgbc1ZTdvhD9LOi2jF45Mu+KmSx6o8i84M=
-X-Received: by 2002:a05:6870:46a9:b0:25c:b512:afb1 with SMTP id
- 586e51a60fabf-25eaec7af32mr11165204fac.52.1720876914875; Sat, 13 Jul 2024
- 06:21:54 -0700 (PDT)
+	s=arc-20240116; t=1720877080; c=relaxed/simple;
+	bh=dZ8U2DGzMfw8Q8ijqGwdM+ed3elaRuDxekat+20SaVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dij6BqmAEEgPbdmQjm0XjUV1RUpHbEzlFgzUvVqgtIKy9/ShVJPzGoJXwZXFXw4RPpVLqYPqGWei7HKmKA8aOkTARc28IFYpDEGkM9439tNaD5c/L7QoEcVjRUTcXmlPQjTQZhioLHy8DiYm9/h5txDEQYLNDBUIXDrTNcuODzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YChQfbZD; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720877069; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=ytypz4bqlRLBeOb2hk6wBu/fHjDnyJ0xf/5Zkw4In5c=;
+	b=YChQfbZDDgwP3/2nBil3FcjcMzmqNLQpkXDA/s3PobfmNKSu+P+2WnsnADOOYPvw1+G8B0igCyuvJ0PTFpUlpmeuUjVyJwx93yNW7mclIYPeP+NXdYJMARTZO14Xknl7VsGo6u1AHDfUVWgvgrcfzRyvICeSQb3eoLmL5dx2BIk=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0WAR0qGo_1720877067;
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WAR0qGo_1720877067)
+          by smtp.aliyun-inc.com;
+          Sat, 13 Jul 2024 21:24:28 +0800
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+To: akpm@linux-foundation.org,
+	hughd@google.com
+Cc: willy@infradead.org,
+	david@redhat.com,
+	21cnbao@gmail.com,
+	ryan.roberts@arm.com,
+	ziy@nvidia.com,
+	ioworker0@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] Some cleanups for shmem
+Date: Sat, 13 Jul 2024 21:24:19 +0800
+Message-Id: <cover.1720755677.git.baolin.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240713021911.1631517-1-ast@fiberby.net> <20240713021911.1631517-11-ast@fiberby.net>
-In-Reply-To: <20240713021911.1631517-11-ast@fiberby.net>
-From: Donald Hunter <donald.hunter@gmail.com>
-Date: Sat, 13 Jul 2024 14:21:43 +0100
-Message-ID: <CAD4GDZwZDv2Z+9-EdS61u7X1YDSRLYmkaj5mLRiSwMPyRG6wPw@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 10/13] doc: netlink: specs: tc: flower: add enc-flags
-To: =?UTF-8?B?QXNiasO4cm4gU2xvdGggVMO4bm5lc2Vu?= <ast@fiberby.net>
-Cc: netdev@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>, 
-	Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, 
-	Simon Horman <horms@kernel.org>, Ratheesh Kannoth <rkannoth@marvell.com>, Florian Westphal <fw@strlen.de>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, 13 Jul 2024 at 03:19, Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby=
-.net> wrote:
->
-> Describe key-enc-flags and key-enc-flags-mask.
->
-> These are defined similarly to key-flags and key-flags-mask.
->
-> Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
+Hi,
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+This series does some cleanups to reuse code, rename functions and simplify
+logic to make code more clear. No functional changes are expected.
+
+Changes from v1:
+ - Add a dummy function in case CONFIG_TRANSPARENT_HUGEPAGE is not
+ enabled, which fixes a building error reported by kernel test robot.
+
+Baolin Wang (3):
+  mm: shmem: simplify the suitable huge orders validation for tmpfs
+  mm: shmem: rename shmem_is_huge() to shmem_huge_global_enabled()
+  mm: shmem: move shmem_huge_global_enabled() into
+    shmem_allowable_huge_orders()
+
+ include/linux/shmem_fs.h | 11 +----
+ mm/huge_memory.c         | 11 ++---
+ mm/shmem.c               | 91 +++++++++++++++++++++-------------------
+ 3 files changed, 53 insertions(+), 60 deletions(-)
+
+-- 
+2.39.3
+
 
