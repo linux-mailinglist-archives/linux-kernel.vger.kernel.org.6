@@ -1,183 +1,135 @@
-Return-Path: <linux-kernel+bounces-251286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853209302FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:21:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55CD930301
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0530A1F226C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:21:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82301C21F52
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9ECFC0B;
-	Sat, 13 Jul 2024 01:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F2B101DB;
+	Sat, 13 Jul 2024 01:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H/8qeVwW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNYcsn+E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2144A921
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 01:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBD2168A9;
+	Sat, 13 Jul 2024 01:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720833663; cv=none; b=QaYpiyeyIoQK8ib/yzvvyGerWhlRYARJ44eCMnjyJOwlyk/5NrElD5Vc2I6tRzxGlHG/pGr2nd1M1S3QI6Jtm1IMDhqt50PaMuVCdaOuhEr3HiCrDyr5N6S1SsW0iM4CG1gwsp667BLiI96LHLq45aUpOQZGKnwQ0b6at6y7MIk=
+	t=1720833727; cv=none; b=iIAENMnm0QBYn3LUEOqEXtjjH5y+sLOmvdp1x/98tHHp9VjuK0KMW98CIh0oQ4Ryd1rA7o2SCBlX0Yj8aZ9HH+TiF9wHf7ndo+gWA8FBE+9KBMWQqAqCqt04lMgW6G0abIdOz2xAD8wEbDW21miSWCW8f97Z98fTNlLEjGOBz2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720833663; c=relaxed/simple;
-	bh=aVyfw7JdPdUtf4GaiIYGi/odljZbAjGNkPFeSDeaUgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K07CTyxUBErifIyS1kiiJ+hMIT/6+yoQ27WP7L6Bl5UYbug5sZ/8vxR+phX+ltqEfoebDUewx6kK3QgjlM6E9nmFJYWkKnDJp3h0oE5gK5aLmPGcakH04QZrnlaRnCt9nNlHF2e5A74VbKJU/FJwD1joLGN+pjJIb1LMcrYRDr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H/8qeVwW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720833660;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/iL0dvijJhywJqZhh6YxHqmlU8neDjGAit2qrbamF7g=;
-	b=H/8qeVwWF+gH9Y4/VjvH19R07AOc5+N2si6P0JSrindelMG0kTaVa7OS+E22NT9BZhWYm9
-	uLWCM9KmCwrT05DKhm96qdH4iYgzeBT7VAeCOJ6uVPo4qvvavRGG6d5CpfXuyIpJs4Hcco
-	92LzPC3A+MEH9Jk1JqjCEt+aks0zPpc=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-519-St2Wgc8gO7O7tlL74o0OpA-1; Fri, 12 Jul 2024 21:20:59 -0400
-X-MC-Unique: St2Wgc8gO7O7tlL74o0OpA-1
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d92b2a96beso2271165b6e.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 18:20:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720833658; x=1721438458;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/iL0dvijJhywJqZhh6YxHqmlU8neDjGAit2qrbamF7g=;
-        b=WpcTi3O/kJiOaDyE+DPQ5+DMAA2I3kkybsJBsn9SURL+Vn1eB+++hBIGXL7TTu4IAx
-         HMvRBKA8XxdQsz0BXgF32V127zrsWCYA5tVsWD/Zz/T2HeN4IrYwciYQ7un24AwrZ+39
-         NM0qSFo0m1fW3y27qpbArV8pCrPYSY3ixUSvevOwRlLcDy07h7L186+U+/W7CtZc9KS/
-         4WhC8TuH9xV41Ihc9Qs83m6iHET1kAUq8kK+vUaO7I2mxkoStf3cOUEZB0P1cRtf4jMl
-         XkRu0lNQnoGqmJVEZvjTjM/csKxpwKOYQdCqXJUf7TE5yZxUxcK4WeNi86pa4PykicBS
-         8ZXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEvahO9Tx5xtHb6WHl67j/YSUcMTz6XK3V+tlad5ltodU8jDy65pyrBCt9kiItQO44wx22rd+cYp/s/mpGNgLP2A6Al5HmNiEEMq5g
-X-Gm-Message-State: AOJu0YwcWclaFoLV/vjM6PS8gfIUahy5xARE9AY7z6KHxiX2P8/+44DR
-	dXn7y5YA/TFgV65mq/XIiXHcK8+RCEQT8QKGg8LpAOzpxwFkZDOsSVpLwW3MLiQJwCQpCcXjwmO
-	9FeHPZ4HvhObttTWCokhYLKg96b0Zoxh8PGWAGQG4UkYeKkU9XRn1RvEdJR3FTIqduURARBsY
-X-Received: by 2002:a05:6808:16a8:b0:3d9:1dfd:d79a with SMTP id 5614622812f47-3d93c014e65mr14870364b6e.20.1720833658628;
-        Fri, 12 Jul 2024 18:20:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHwM1KZ3Ckytuh5q+rnuDDvKzvS9TWQso2ZWcE9TuCoNXLEdoSIGRCCXm3q/1jvM2uAYdKVfg==
-X-Received: by 2002:a05:6808:16a8:b0:3d9:1dfd:d79a with SMTP id 5614622812f47-3d93c014e65mr14870348b6e.20.1720833658226;
-        Fri, 12 Jul 2024 18:20:58 -0700 (PDT)
-Received: from [172.20.2.228] ([4.28.11.157])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-78e34d2c4edsm66714a12.49.2024.07.12.18.20.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 18:20:57 -0700 (PDT)
-Message-ID: <801b3438-92e6-4b34-8238-cce67f1899f1@redhat.com>
-Date: Sat, 13 Jul 2024 03:20:56 +0200
+	s=arc-20240116; t=1720833727; c=relaxed/simple;
+	bh=ZplZcFQQhACVAehHShfXFFQ9wl/eljFn6N761AyGB3g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u7V3Y3rPIupd0ILkdntQcl2IS51iAArIRqolDEZQ8NDp21EwCCTqs2s1Vqd2HmB89nGBMJCDdWCS4hDnFK0mLY+zSTQacU0Kregoc4g8dtVG/535Bpho+7jL+kQ3uB+G1NWoaBqNVG0Mc48u/xzFZQIztbRfGG2e4Y5+SEF/VRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNYcsn+E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D74FC32782;
+	Sat, 13 Jul 2024 01:22:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720833726;
+	bh=ZplZcFQQhACVAehHShfXFFQ9wl/eljFn6N761AyGB3g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dNYcsn+ElWybb9Mc5w+T8YP6HuGeiabalkAPmQOP4SeOLaHk9mpp4Qc7EEVYicH08
+	 /B5sAM0mdlZRqm5FL3vv3quAtKFJxez0kyxzAmpm9veVjb0b+kXPZj624wg8NVcIVG
+	 t07S7hJsly8O2mttMvXz4C6vl+PCIkYGgPTzNsmdZM9C88nJdpv6rEgpOIjus43vYx
+	 NEFIDx7KuuBSnIRk8z0hRyn2dVRAszxDOTNpOhNW3Gn/3SDgs5n2pyXiRQFIT3R1Gt
+	 gFz3pYPbC4AKATE5649HBwEbLFDlRwxbmyLAYbLD0VzkIROaANXqxwYqz4ujdS1skw
+	 89uVzUarPNGUg==
+From: Jakub Kicinski <kuba@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pabeni@redhat.com
+Subject: [GIT PULL] Networking for v6.10-rc8 (follow up)
+Date: Fri, 12 Jul 2024 18:22:05 -0700
+Message-ID: <20240713012205.4143828-1-kuba@kernel.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: huge_memory: use !CONFIG_64BIT to relax huge page
- alignment on 32 bit machines
-To: Yang Shi <yang@os.amperecomputing.com>, corsac@debian.org,
- willy@infradead.org, jirislaby@kernel.org, surenb@google.com,
- riel@surriel.com, cl@linux.com, carnil@debian.org, ben@decadent.org.uk,
- akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240712155855.1130330-1-yang@os.amperecomputing.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240712155855.1130330-1-yang@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 12.07.24 17:58, Yang Shi wrote:
-> Yves-Alexis Perez reported commit 4ef9ad19e176 ("mm: huge_memory: don't
-> force huge page alignment on 32 bit") didn't work for x86_32 [1].  It is
-> because x86_32 uses CONFIG_X86_32 instead of CONFIG_32BIT.
-> 
-> !CONFIG_64BIT should cover all 32 bit machines.
-> 
-> [1] https://lore.kernel.org/linux-mm/CAHbLzkr1LwH3pcTgM+aGQ31ip2bKqiqEQ8=FQB+t2c3dhNKNHA@mail.gmail.com/
-> 
-> Fixes: 4ef9ad19e176 ("mm: huge_memory: don't force huge page alignment on 32 bit")
-> Reported-by: Yves-Alexis Perez <corsac@debian.org>
-> Tested-By: Yves-Alexis Perez <corsac@debian.org>
-> Cc: <stable@vger.kernel.org>    [6.8+]
-> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
-> ---
->   mm/huge_memory.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 2120f7478e55..64f00aedf9af 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -857,7 +857,7 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
->   	loff_t off_align = round_up(off, size);
->   	unsigned long len_pad, ret, off_sub;
->   
-> -	if (IS_ENABLED(CONFIG_32BIT) || in_compat_syscall())
-> +	if (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall())
->   		return 0;
->   
->   	if (off_end <= off_align || (off_end - off_align) < size)
+Hi Linus!
 
-Acked-by: David Hildenbrand <david@redhat.com>
+If you're planning to cut final on Friday please consider pulling
+for the bnxt fix.
 
--- 
-Cheers,
+The following changes since commit 51df8e0cbaefd432f7029dde94e6c7e4e5b19465:
 
-David / dhildenb
+  Merge tag 'net-6.10-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-07-11 09:29:49 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.10-rc8-2
+
+for you to fetch changes up to f7ce5eb2cb7993e4417642ac28713a063123461f:
+
+  bnxt_en: Fix crash in bnxt_get_max_rss_ctx_ring() (2024-07-12 18:00:00 -0700)
+
+----------------------------------------------------------------
+A quick follow up to yesterday's PR. We got a regressions report for
+the bnxt patch as soon as it got to your tree. The ethtool fix is also
+good to have, although it's an older regression.
+
+Current release - regressions:
+
+ - eth: bnxt_en: fix crash in bnxt_get_max_rss_ctx_ring() on older HW
+   when user tries to decrease the ring count
+
+Previous releases - regressions:
+
+ - ethtool: fix RSS setting, accept "no change" setting if the driver
+   doesn't support the new features
+
+ - eth: i40e: remove needless retries of NVM update, don't wait 20min
+   when we know the firmware update won't succeed
+
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+
+----------------------------------------------------------------
+Aleksandr Loktionov (1):
+      i40e: fix: remove needless retries of NVM update
+
+David S. Miller (1):
+      Merge branch 'octeontx2-cpt-rss-cfg-fixes' into main
+
+Kiran Kumar K (1):
+      octeontx2-af: fix issue with IPv6 ext match for RSS
+
+Michael Chan (1):
+      bnxt_en: Fix crash in bnxt_get_max_rss_ctx_ring()
+
+Michal Mazur (1):
+      octeontx2-af: fix detection of IP layer
+
+Nithin Dabilpuram (1):
+      octeontx2-af: replace cpt slot with lf id on reg write
+
+Saeed Mahameed (1):
+      net: ethtool: Fix RSS setting
+
+Satheesh Paul (1):
+      octeontx2-af: fix issue with IPv4 match for RSS
+
+Srujana Challa (1):
+      octeontx2-af: fix a issue with cpt_lf_alloc mailbox
+
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c          |  3 +++
+ drivers/net/ethernet/intel/i40e/i40e_adminq.h      |  4 ----
+ drivers/net/ethernet/marvell/octeontx2/af/mbox.h   |  2 +-
+ drivers/net/ethernet/marvell/octeontx2/af/npc.h    |  8 ++++++--
+ .../net/ethernet/marvell/octeontx2/af/rvu_cpt.c    | 23 +++++++++++++++-------
+ .../net/ethernet/marvell/octeontx2/af/rvu_nix.c    | 12 +++++++----
+ net/ethtool/ioctl.c                                |  3 ++-
+ 7 files changed, 36 insertions(+), 19 deletions(-)
 
