@@ -1,201 +1,184 @@
-Return-Path: <linux-kernel+bounces-251646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF3E930780
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 23:38:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F081F930781
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 23:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC82928272E
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 21:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24BCC1C20CC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 21:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B98148314;
-	Sat, 13 Jul 2024 21:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD245144D27;
+	Sat, 13 Jul 2024 21:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iaG37Zjk"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHHScNDY"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5083715E;
-	Sat, 13 Jul 2024 21:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC4913B5A6
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 21:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720906673; cv=none; b=Oqr4kSX01GC0r+hx9IZ5vjMzJJDels7G1V4KkmuzSbfJ5R1oLF/sbtJhOm8Afrkmfinm0qV0qOlPJsKk+KwckAQJHCxlNo3pHYELHxtaaniWRX3fDQjOu3511GC7729B1Jv3BLc+U6tPedakRGmtwyM2sx6vTDngQsg8wgo9ZuM=
+	t=1720907127; cv=none; b=OxCWtXQmbtYyB3OojELO7jgU0cllDgfTKwneu5f5DCr42XbV0IhQxt0bup2ApS5QBsI1r0oH4fOVh9hMUrkIOZ9mqmnE5amXjo1xxTUxOqK+3Tk4at5DKHf4li/W42evWpC8Loofb2F5gJSlBZ3rrLeqJ4FAjhW34cCYKUQKGCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720906673; c=relaxed/simple;
-	bh=br048+ZCXEeV7hh8d9XnZQzMv7EjLwJDK7Qz+EMEaqo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hWi+ztxSb4VRrXk7roQxrqKz2O5YT3uU8vLqbvoW33y0RKwD5aQuU54gjf87kQsw5+iKpPo5wnom+abC9a5Q916W7EnWEjIA7OGN1iEiutRQwW8IW08GXqRR1o6pfb4fyHObv1ldpE+Ro/aY6c0oj4C1aue3N4LBZOymmVWzszA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iaG37Zjk; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1720907127; c=relaxed/simple;
+	bh=a+dp9grJ0Uex49OGtxpYaJ2AFt2dcdYxhNCSDjUDtv4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WsZEEIMNgxtNnhDfRKWZSKnlUZCVzraSH3UoYpwE+Q++vtpkdBtl/f2Gd3NJ3LT6tvIlNNxARgZNOwwXttUjq33of2xJ4mCMOehUVRvzCWqBYUKRvlGvN1YVprzH2f4tBISJaET4+jcOtjQVJjtG7iNXffoWedA0FzGdFfL5nPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aHHScNDY; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3679f806223so2446714f8f.0;
-        Sat, 13 Jul 2024 14:37:51 -0700 (PDT)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b5eb69e04cso20860476d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 14:45:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720906670; x=1721511470; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jWge+wPKweF2GBCVBIBv2ygG3wKeTixMcFo1aegvcvI=;
-        b=iaG37ZjkG7x67v9JqiZubumxkPiJNT/6GwdOSHMAdBGlhUjVBgA7u7VtGK/BqwC7Nc
-         I6UXryvWltp0zv3UUPuG+9UouUiUdc+XilR62hCR+9BXHqZP82QXxXX8LilP8exXmV36
-         DVEAW9WeBQ/iezwVcjpbzomzRzoOF7HH+7AU3oDzDOUD5YcSYS4v2x9EyGdbG+XnqWo/
-         3sCfhaHUsX5CycCbTI2qOC/4J6PzkU8LEEhH0YO9WaNW4g27hHT9L/yXRYAsNAx5xKnJ
-         2Xx7iRrVfXnhLmGfMZoDpb0QHp0rJFnJYro00K9zEsKGmYD5ivlXuGhOHW4f7PDOr0oS
-         UjKA==
+        d=gmail.com; s=20230601; t=1720907123; x=1721511923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4779INmo7oX2Brk3wPdsCqYd8M38qMXjWNHByl5qIpw=;
+        b=aHHScNDYUbrORMNQUwqubn6uBuBuG54tpeHiFxYOtiiHSCQLL8vILh2ssIvcD+mbLi
+         9hB7xGnYmEFkzT6VQyhiso8S4WH/oaKwH4PE2+LZCfqlwIt7ore8yG1gePuR84Yuyjs2
+         MGn5YJWdUD3pOOuT+ApJLHfzxxdhcAKEXRKe9bwOQve8+Qy6BlKWHpkoUhYMxEkbjoqh
+         bJJ2jz0af1z/2x8tiiRlln5G1q9BgXK5nKGGCoLl4dHhxagW1umjBO7omNEKp1TgmfTj
+         bUSeLYyjudZEp8nGZuB6pGtdRgukdqNzeapexxtlrHCHGuDSAHMhA0PsWKTnKptq3Eci
+         hZqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720906670; x=1721511470;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jWge+wPKweF2GBCVBIBv2ygG3wKeTixMcFo1aegvcvI=;
-        b=gOU7B9vosYTv7ePvkabC6Rf7dHZ9XbgAx9ZMv8jWq98uBc0Ij160f+/7ey6xspPs0Q
-         C9ktw7CEyBhKD0YeEnWlz5RraqCs3ir7zWpS9lMGT2N7DZ4EPEb1ZsSiWk/Ln6JgjaDa
-         IfgRniH75EXcWWv9E+uAPojWybU3qziuqNF9sBlf69BDKK4Krw2vJZ3oMxVgzvvO364P
-         d64V80zgzcU4gbH2qv6p+AXp/VlZ0REQm2Y4Zmy1e8Dnb4CsPuRo5pGml8Y2mp0EWMy2
-         A8+UCHV6ULMS8x33AYVGw9wtL6uKJVBWeV7b62c8AzOTeYvB3A4dXK5S53YGo4ODvDyW
-         lQiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHK2sqKphHPgaAtbKeQ8R2FWSCTcX3yVgYFGCv+BXkcTRTMNtpmoLFIS8qFu4tq3MJAiTTB8yKKspAXMh+U3AqN4j9gLaK8ZoR/ntV9/qcjzaYloYXzQkFDPnWUlt3csRRFdVGa1ee9PDiALQR9BQwrihB7bz33JlBOnGO5WvMxzguBTsPH7Iq7Q8qNX5G4y3878JHuwcxjBffhmiCCY7JOmMbB13XuJCDbZQr5PV6yHULJ8tmb4z0iQ==
-X-Gm-Message-State: AOJu0YwI4dbiFmJDEHiVe3CbUTLfvQEptNzR5uvd+rFpQt886Vu7BPbl
-	JbIgFIuTMeCTTqci84hGfw6+s4aVVGt9dI+5rzr9fDcXF7mdyg77
-X-Google-Smtp-Source: AGHT+IFtFHfQbEmui8gyv0uER4jCDezZch9KaAtTQYCcQnH2LXfnaNOUq0m3eU4lltdgXGU4ehxnsQ==
-X-Received: by 2002:adf:f8d2:0:b0:367:40eb:a3c3 with SMTP id ffacd0b85a97d-36804fec57emr4637223f8f.34.1720906669552;
-        Sat, 13 Jul 2024 14:37:49 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:8180:f721:f9cb:10b2? (2a02-8389-41cf-e200-8180-f721-f9cb-10b2.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:8180:f721:f9cb:10b2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680dab3b41sm2426542f8f.5.2024.07.13.14.37.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Jul 2024 14:37:49 -0700 (PDT)
-Message-ID: <4f996369-2959-4e17-917d-f2de48d22064@gmail.com>
-Date: Sat, 13 Jul 2024 23:37:46 +0200
+        d=1e100.net; s=20230601; t=1720907123; x=1721511923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4779INmo7oX2Brk3wPdsCqYd8M38qMXjWNHByl5qIpw=;
+        b=ialGSwE0Rph7ZAKXOuH5anBSjANcNYw0Ya543ID50bKLnYARV7Sk8ri9CoEBTZLSMe
+         2h10qWbgvbh7yd5rabTDtO+Lbj0J2nmlT9OdLRBOSGr7WsPm4GVAEg/PEvjeIozdmUHx
+         grP8bFg75jiokivsvp/fKckzQUfD04Wz5FY3gIePw5g/aYnW48jbet3yzEnDqRUuC5mZ
+         cM4jtsE/E9MtvYxzX68IEPyb432PAGa6qSLafFWKYxfW87rBhjZA0xvH7Gun1C0Rs2m8
+         ZfwS0JSnTFJJiRme1zQm3hhObcWUVmMfRWjbsPaoAr4IsMbSdEs2Rwkm7/FP8V0cSLrb
+         BaDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPHsdASYdmVFVv1ic8qD8vT4qRXPYg732uL+0HC0ARcm1+OI3A/OubcI36ObDhlIDoMh2Y8Nufjq3izW7Y+A9dUXWupXw78m8RNzEl
+X-Gm-Message-State: AOJu0YwEVqHr0dUU2Ycc4klVRqG7ol//NhibqsbyLuKPwN51Zd8y1dXE
+	O4//+eCsCznlIoCBF0NtCNziAqdgVW5E9iqlUgAtrMVY9gmLmvg/Wikd/JTV2jQh4eVvI6VIQya
+	eMIgiqCYdMbzWbqptZ41Vnqfb5anFUg==
+X-Google-Smtp-Source: AGHT+IECwGe1XPnVjL8bL7fgHx3vmwrkrBhM9n+vGphssGZ6Q8QmFWuPB6qYS/3zcotMT35Kj9aVE9yPMKl7T4oT6/4=
+X-Received: by 2002:a05:6214:2a83:b0:6b7:4319:ad6f with SMTP id
+ 6a1803df08f44-6b74319b2admr142352906d6.36.1720907123486; Sat, 13 Jul 2024
+ 14:45:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] leds: bd2606mvv: use device_for_each_child_node() to
- access device child nodes
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Jonathan Cameron <jic23@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rob Herring <robh@kernel.org>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- Marcin Wojtas <marcin.s.wojtas@gmail.com>,
- Russell King <linux@armlinux.org.uk>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20240706-device_for_each_child_node-available-v1-0-8a3f7615e41c@gmail.com>
- <20240706-device_for_each_child_node-available-v1-3-8a3f7615e41c@gmail.com>
- <20240707175713.4deb559f@jic23-huawei>
- <4cf71de7-dc47-475c-bba0-a9e755f66d49@gmail.com>
- <2cd45260-e737-43e9-9bf6-c267d6f86ad3@gmail.com>
- <20240712230656.67e89eb2@akphone>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240712230656.67e89eb2@akphone>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240702215804.2201271-1-jim.cromie@gmail.com>
+ <ZoR40nWmpEV2Ly_6@bombadil.infradead.org> <CAJfuBxyxamRhOyz8WuL+7=eJkEKSw8jnAWjyAuqU2i7gvg-rsQ@mail.gmail.com>
+ <CALwA+NbUCfEj_DzT5eMQ7_pSNpyp-zBe6PEL2XnMZrb303J4_Q@mail.gmail.com>
+In-Reply-To: <CALwA+NbUCfEj_DzT5eMQ7_pSNpyp-zBe6PEL2XnMZrb303J4_Q@mail.gmail.com>
+From: jim.cromie@gmail.com
+Date: Sat, 13 Jul 2024 15:44:57 -0600
+Message-ID: <CAJfuBxzeYWWV1ikYagFpyFHdAQU4ReYPirksQFHbEzDxhXCfHA@mail.gmail.com>
+Subject: Re: [PATCH v9 00/53] fix CONFIG_DRM_USE_DYNAMIC_DEBUG=y
+To: =?UTF-8?Q?=C5=81ukasz_Bartosik?= <ukaszb@chromium.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, daniel.vetter@ffwll.ch, 
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com, 
+	ville.syrjala@linux.intel.com, jbaron@akamai.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org, 
+	intel-gfx@lists.freedesktop.org, linux@rasmusvillemoes.dk, joe@perches.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/07/2024 23:06, Andreas Kemnade wrote:
-> On Mon, 8 Jul 2024 17:45:43 +0200
-> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-> 
->> On 08/07/2024 10:14, Javier Carrasco wrote:
->> What was the reason for this modification? Apparently, similar drivers
->> do everything in one loop to avoid such issues.
->>
-> The reason for two loops is that we check in the first loop whether
-> broghtness can be individually controlled so we can set max_brightness
-> in the second loop. I had the assumption that max_brightness should be
-> set before registering leds.
-> 
-> Some LEDs share brightness register, in the case where leds are defined
-> with a shared register, we revert to on-off.
-> 
->> Maybe refactoring to have a single loop again (if possible) would be
->> the cleanest solution. Otherwise a get/put mechanism might be
->> necessary.
->>
-> I had no idea how to do it the time I wrote the patch.
-> 
-> Regards,
-> Andreas
+On Fri, Jul 12, 2024 at 9:44=E2=80=AFAM =C5=81ukasz Bartosik <ukaszb@chromi=
+um.org> wrote:
+>
+> On Wed, Jul 3, 2024 at 12:14=E2=80=AFAM <jim.cromie@gmail.com> wrote:
+> >
+> > On Tue, Jul 2, 2024 at 4:01=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.=
+org> wrote:
+> > >
+> > > On Tue, Jul 02, 2024 at 03:56:50PM -0600, Jim Cromie wrote:
+> > > > This fixes dynamic-debug support for DRM.debug, added via classmaps=
+.
+> > > > commit bb2ff6c27bc9 (drm: Disable dynamic debug as broken)
+> > > >
+> > > > CONFIG_DRM_USE_DYNAMIC_DEBUG=3Dy was marked broken because drm.debu=
+g=3Dval
+> > > > was applied when drm.ko was modprobed; too early for the yet-to-loa=
+d
+> > > > drivers, which thus missed the enablement.  My testing with
+> > > > /etc/modprobe.d/ entries and modprobes with dyndbg=3D$querycmd opti=
+ons
+> > > > obscured this omission.
+> > > >
+> > > > The fix is to replace invocations of DECLARE_DYNDBG_CLASSMAP with
+> > > > DYNDBG_CLASSMAP_DEFINE for core, and DYNDBG_CLASSMAP_USE for driver=
+s.
+> > > > The distinction allows dyndbg to also handle the users properly.
+> > > >
+> > > > DRM is the only current classmaps user, and is not really using it,
+> > > > so if you think DRM could benefit from zero-off-cost debugs based o=
+n
+> > > > static-keys, please test.
+> > > >
+> > > > HISTORY
+> > > >
+> > > > 9/4/22  - ee879be38bc8..ace7c4bbb240 commited - classmaps-v1 dyndbg=
+ parts
+> > > > 9/11/22 - 0406faf25fb1..16deeb8e18ca commited - classmaps-v1 drm pa=
+rts
+> > > >
+> > > > https://lore.kernel.org/lkml/Y3XUrOGAV4I7bB3M@kroah.com/
+> > > > greg k-h says:
+> > > > This should go through the drm tree now.  The rest probably should =
+also
+> > > > go that way and not through my tree as well.
+> > >
+> > > Can't this just be defined as a coccinelle smpl patch? Must easier
+> > > to read than 53 patches?
+> > >
+> >
+> > perhaps it could - Im not sure that would be easier to review
+> > than a file-scoped struct declaration or reference per driver
+> >
+> > Also, I did it hoping to solicit more Tested-by:s with drm.debug=3D0x1f=
+f
+> >
+> > Jim
+> >
+>
+> Jim,
+>
+> When testing different combinations of Y/M for TEST_DYNAMIC_DEBUG and
+> TEST_DYNAMIC_DEBUG_SUBMOD in virtme-ng I spotted test failures:
+>
+> When the TEST_DYNAMIC_DEBUG=3DM and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
+> BASIC_TESTS, COMMA_TERMINATOR_TESTS, TEST_PERCENT_SPLITTING,
+> TEST_MOD_SUBMOD selftests passed
+> When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DM -
+> BASIC_TESTS, COMMA_TERMINATOR_TESTS selftests passed, however
+> TEST_PERCENT_SPLITTING selftest fails with ": ./dyndbg_selftest.sh:270
+> check failed expected 1 on =3Dpf, got 0"
+> When the TEST_DYNAMIC_DEBUG=3DY and TEST_DYNAMIC_DEBUG_SUBMOD=3DY -
+> BASIC_TESTS, COMMA_TERMINATOR_TESTS selftests passed, however
+> TEST_PERCENT_SPLITTING selftest fails also with ":
+> ./dyndbg_selftest.sh:270 check failed expected 1 on =3Dpf, got 0"
+>
+> Have I missed something ?
+>
 
-Then we could leave the two loops, and fix them. I am thinking of something
-like this:
+I am not seeing those 2 failures on those 2 configs.
 
- static int bd2606mvv_probe(struct i2c_client *client)
- {
--	struct fwnode_handle *child;
- 	struct device *dev = &client->dev;
- 	struct bd2606mvv_priv *priv;
- 	struct fwnode_handle *led_fwnodes[BD2606_MAX_LEDS] = { 0 };
- 	int active_pairs[BD2606_MAX_LEDS / 2] = { 0 };
- 	int err, reg;
--	int i;
-+	int i, j;
+most of my recent testing has been on x86-defconfig + minimals,
+built and run using/inside virtme-ng
 
- 	if (!dev_fwnode(dev))
- 		return -ENODEV;
-@@ -93,20 +92,18 @@ static int bd2606mvv_probe(struct i2c_client *client)
+the last kernel I installed on this hw was june 16, I will repeat that,
+and report soon if I see the failure outside the vm
 
- 	i2c_set_clientdata(client, priv);
+I'll also send you my script, to maybe speed isolation of the differences.
 
--	device_for_each_child_node(dev, child) {
-+	device_for_each_child_node_scoped(dev, child) {
- 		struct bd2606mvv_led *led;
-
- 		err = fwnode_property_read_u32(child, "reg", &reg);
--		if (err) {
--			fwnode_handle_put(child);
-+		if (err)
- 			return err;
--		}
--		if (reg < 0 || reg >= BD2606_MAX_LEDS || led_fwnodes[reg]) {
--			fwnode_handle_put(child);
-+
-+		if (reg < 0 || reg >= BD2606_MAX_LEDS || led_fwnodes[reg])
- 			return -EINVAL;
--		}
-+
- 		led = &priv->leds[reg];
--		led_fwnodes[reg] = child;
-+		led_fwnodes[reg] = fwnode_handle_get(child);
- 		active_pairs[reg / 2]++;
- 		led->priv = priv;
- 		led->led_no = reg;
-@@ -129,7 +126,8 @@ static int bd2606mvv_probe(struct i2c_client *client)
- 						     &priv->leds[i].ldev,
- 						     &init_data);
- 		if (err < 0) {
--			fwnode_handle_put(child);
-+			for (j = i; j < BD2606_MAX_LEDS; j++)
-+				fwnode_handle_put(led_fwnodes[j]);
- 			return dev_err_probe(dev, err,
- 					     "couldn't register LED %s\n",
- 					     priv->leds[i].ldev.name);
-
-
-
-Thanks to the call to fwnode_get_handle(child), the child nodes get their
-refcount incremented to be used in the second loop, where all child nodes that
-have not been registered are released in case of error.
-
-The first loop becomes a scoped one, keeping the `child` variable from being
-accessed anywhere else.
-
-Any feedback before I send a v2 with this is very welcome.
-
-Best regards,
-Javier Carrasco
+> Thanks,
+> Lukasz
+>
+> > >   Luis
+> > >
 
