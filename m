@@ -1,122 +1,106 @@
-Return-Path: <linux-kernel+bounces-251621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E87930723
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 21:17:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2510B930729
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 21:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 030ED1C21705
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:17:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12516B219E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA21A142645;
-	Sat, 13 Jul 2024 19:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D2113C672;
+	Sat, 13 Jul 2024 19:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lOAKR95T"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bc0mIFIk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F251BC37;
-	Sat, 13 Jul 2024 19:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E25918E20;
+	Sat, 13 Jul 2024 19:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720898221; cv=none; b=qKmOOs0uIc/1IKNio8bNFhhuJo3e1kLB6FqPxE82DYGvbGQgMKVCyfs4MldJK9208nZHDzw4C0KG4uHbL15aeXI6FPr2HgyzJ3zRyQu2sChAgPMTBsdKiXtnlwIoGCUUr13VkxXl3L4uRsisop5p56X2n2oeqthXsMEbIgxlNvc=
+	t=1720899131; cv=none; b=tX1m/ixc6sVQnJYVHB7AZy23cULfFbUBylzawfIOVEmyo28Mhga85qumRyAvGF9dAEaV3bua0diz9Y1hLYsJw6z6VgMvgZfKC6nkj/ZYuWIrOwYtNKgbO3Kj2PuSvgTIRR2ohHjlvTD7eTniAf2FbzNJhvxZGIJBk8fUwk/aKL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720898221; c=relaxed/simple;
-	bh=fIllpoDxxfPmzGlVdFqG2Dd8k9qDQSm8a4VANbMlw/8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=c42yW6EAM1sMwHEhKs1e8m9FtIKFqiZm8AArGRPZ/Oo2jM6F91ZRUIz/1+GBKjjPS3ZUAy7lM4qKdWgFJlgxRJAGKz8wRpXIgYGdQtNjMPRUprl+1oADsIYH7wMRUB1JuZ3uOiRpOR0BqwnEdFgd24cHn+xnXKztUkS7gCrKn1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lOAKR95T; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720898176; x=1721502976; i=markus.elfring@web.de;
-	bh=58QnkHd6/w55w5TERgZr8FgykSb/+JmRwMIOmIkhJT0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=lOAKR95TuMkoPKhSE5sTdhKKXaSqfyy/diHSsgIriaTZT6+f1EMUgjXe0rNRCrOl
-	 PqN3RJh55W5lX+phsUjxM4qwSCBhkr1yxNHLP/vaDUIYj06FWYTxNAH9xDuiADwjB
-	 yIDG0ODLIZ/FSKGVSituzJ56HwBUgY8gQnV5lgtsw/3OO/K7x6X5TLkq56yNTxqEG
-	 Jt0iS8ojFxvgcjTFZZedsvUz9rv8LhHAO1V7EqSZnc3fSi8NJtanGzY5WSsh87Wn8
-	 G6PfLCOA9Zu2mQ7C30fAyI87Mgmr/afvOK5hGkk8G6ZxJJI1K9dQQ9e/3lFaM0mos
-	 jrFfjIlxO5BYDTUU5Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXocY-1sryIV3qma-00VNUQ; Sat, 13
- Jul 2024 21:16:15 +0200
-Message-ID: <ab25204c-5a53-42e1-ab3a-c4f704ebc929@web.de>
-Date: Sat, 13 Jul 2024 21:16:14 +0200
+	s=arc-20240116; t=1720899131; c=relaxed/simple;
+	bh=GsdSioRswa5ZtwiNP4Fqw+tz6HJ1LDN6fkMxS0buikA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GOh2WSPeHL5bYfKUbdfZ/gZtxRiugnIq80eosQOry4Snh4TEEL4Am06MBh/IbAqQOYWLMeEVe63g+dRJ9M/PhSi8h0t+sZtp5eJPazQX+FVtGY8m+mTdNsQBSiLSMjIUpQJFUmZ1EdEzbds+EtKqJ4Fy1cFctsV+xK/RW2UpDek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bc0mIFIk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5AC8C32781;
+	Sat, 13 Jul 2024 19:32:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720899130;
+	bh=GsdSioRswa5ZtwiNP4Fqw+tz6HJ1LDN6fkMxS0buikA=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=bc0mIFIk2NuSGdrG80Dj0ECDoC/ek18aeBhrXsGculeF0LFi/g7XyXY0hB15Rwdyn
+	 /QtXj8JoP7lhrBlgips+SXx1ePAnBfEi1kDGm878gLrfi01ySVdcbeDC3h9BvaC7bM
+	 exaLQ+ao40/yCxoYzIoZYS6gmxqJQQTEyVwN6+v6+r28UxNHgVuUpTfih6yqWDQyfx
+	 Df+X+BjEt7AjtRBsK3pclThskwJoHblPNxvg+symj9qh3bpF612mFrEb/k5L6KJa1C
+	 4+jKfH5RF10hsLJmlUWcGjSEbAuIXQhjT4YMGmHnDpDsOge8MZOxJoLU4G9j4tL3C5
+	 8UKsC1uOv9xfQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 6A711CE09EE; Sat, 13 Jul 2024 12:32:10 -0700 (PDT)
+Date: Sat, 13 Jul 2024 12:32:10 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Rik van Riel <riel@surriel.com>
+Cc: neeraj.upadhyay@kernel.org, linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
+	mingo@kernel.org, peterz@infradead.org, leobras@redhat.com,
+	imran.f.khan@oracle.com
+Subject: Re: [PATCH  2/3] locking/csd_lock: Provide an indication of ongoing
+ CSD-lock stall
+Message-ID: <ed89d87a-027e-4a99-8437-28258fd0f691@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240713165642.GA215331@neeraj.linux>
+ <20240713165846.216174-2-neeraj.upadhyay@kernel.org>
+ <ee33a2c3e32d98b5fc04983745c47f918f9ea2d2.camel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Chuck Lever <chuck.lever@oracle.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
- Olga Kornievskaia <kolga@netapp.com>, Tom Talpey <tom@talpey.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] nfsd: Use seq_putc() in seq_quote_mem()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4U1i3VGg2hW2biQjqwkau4fUlaA5QrRWSFAddPSaI4TxmZ4QO76
- coIgIqYor+kRQck6xu6QazchcZJ29e2lrXW9kjLsnIYqVmoCSMJkgAywYa4Bjf9uh8u07Up
- U6/kWxYIgA/FBZ3mEVRPPZ/7mXfsd+CMyVxFivIsaTJqyM5Wwd0Q83FxCKjdT2dcfUFNu6i
- WJifVuZhz0ky4EXPtMRcA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:S09+jYoUjpE=;61J+iwp2722nWrtNBlXdKcjngN5
- mzrumDrpaVgh7cQCjVk2unTYR7BmNMNg6urfqDXdCWw4dpA8ryHryzfawZOuKDbmCN0Qvz1n5
- Hvxmy+ags+EppEnlazERupHDvS9IH4rVxW6rZFqDCuDMYnccMNhPtp6AAV2TTGczH3OO58iaC
- I3FnGOqfgVZgKqpP++t3WKCl2pi7106T0QXvVanXZLR+cU2Jd7Po+i9gvuTvqi3r7zqoUHOhy
- 9LUQZmYolt0EOapVAusjIE5GX6vNRXRVTXmgkvEZq64SXQaV5+9Ja/vJsvXJeCaNCW+VmD1ej
- NAeuJtNzLoMe2WLKnDg2tRKQVE1lFZhLnPqlrX59VdF/P8EfZJmNXTy22UJ8USUfMxmCVt/I0
- V+licQVZbl2K5Y84VzkJqkVsa68sfX2BLV6zIAnYzJPSMV3pvr1KnMNI69/UjMvwULZudX2CW
- m9JGO3kaTTJGCAUab2vBEdyVl141SmhE/jLvbwobMJJuJE5F8PH5ugHdIu8g2UG1fqF5+DnKv
- dLHhcGmMa2SEOE8M+s+1wqTg6pLJBQtTNfpuMUgJwvdQJOZsgUtkjq2TFINA8BlFhJHY60GTA
- AIFJS0/AEGq71YpZGkiTE5i0CoOVR6Yj3kzVYud1vWn31ZlyK3wwI+QrXm1Nak+lP1Ki4NyzS
- XZ5M9VBmi99kAPHM/QJU8v1uDoHzveI6uA1tq5qIy6RxSUoskTiQmEUPnHqlncOHYY7tXNiEd
- bJuFPhqHIzNbUgg0t7aHAap0uRTRoWjRD4jzmAFpnKGIjL+JMXOFeJuQkmFH25YPZGy9E2QW7
- yrWa1DB/qsEr23uHrGu2o/ow==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ee33a2c3e32d98b5fc04983745c47f918f9ea2d2.camel@surriel.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jul 2024 21:07:09 +0200
+On Sat, Jul 13, 2024 at 01:16:47PM -0400, Rik van Riel wrote:
+> On Sat, 2024-07-13 at 22:28 +0530, neeraj.upadhyay@kernel.org wrote:
+> > 
+> > @@ -228,6 +241,7 @@ static bool
+> > csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
+> >  		cpu = csd_lock_wait_getcpu(csd);
+> >  		pr_alert("csd: CSD lock (#%d) got unstuck on
+> > CPU#%02d, CPU#%02d released the lock.\n",
+> >  			 *bug_id, raw_smp_processor_id(), cpu);
+> > +		atomic_dec(&n_csd_lock_stuck);
+> >  		return true;
+> >  	}
+> >  
+> 
+> So we decrement it when it gets unstuck. Good.
+> 
+> > @@ -251,6 +265,8 @@ static bool
+> > csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
+> >  	pr_alert("csd: %s non-responsive CSD lock (#%d) on CPU#%d,
+> > waiting %lld ns for CPU#%02d %pS(%ps).\n",
+> >  		 firsttime ? "Detected" : "Continued", *bug_id,
+> > raw_smp_processor_id(), (s64)ts_delta,
+> >  		 cpu, csd->func, csd->info);
+> > +	if (firsttime)
+> > +		atomic_dec(&n_csd_lock_stuck);
+> > 
+> 
+> However, I don't see any place where it is incremented when things
+> get stuck, and this line decrements it when a CPU gets stuck for
+> the first time?
+> 
+> Should this be an atomic_inc?
 
-Double quotation characters should be put into a sequence
-around other data.
-Thus use the function =E2=80=9Cseq_putc=E2=80=9D accordingly.
+Good catch, thank you!  I will go get that brown paper bag...
 
-This issue was transformed by using the Coccinelle software.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/nfsd/nfs4state.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index a20c2c9d7d45..1d15165a15cf 100644
-=2D-- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -2636,9 +2636,9 @@ static struct nfs4_client *get_nfsdfs_clp(struct ino=
-de *inode)
-
- static void seq_quote_mem(struct seq_file *m, char *data, int len)
- {
--	seq_puts(m, "\"");
-+	seq_putc(m, '"');
- 	seq_escape_mem(m, data, len, ESCAPE_HEX | ESCAPE_NAP | ESCAPE_APPEND, "\=
-"\\");
--	seq_puts(m, "\"");
-+	seq_putc(m, '"');
- }
-
- static const char *cb_state2str(int state)
-=2D-
-2.45.2
-
+							Thanx, Paul
 
