@@ -1,110 +1,131 @@
-Return-Path: <linux-kernel+bounces-251475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCAD93054C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:57:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F3B93054F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D4D1F21A89
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:57:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 773651C2104D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A122E770F8;
-	Sat, 13 Jul 2024 10:57:06 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F82757E7;
+	Sat, 13 Jul 2024 11:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzcYypRS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D0FF51B;
-	Sat, 13 Jul 2024 10:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4D745C14;
+	Sat, 13 Jul 2024 11:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720868226; cv=none; b=k+yx6f5YVmPjxPcbsb5h6Nw8ZHrJeMmzK29uSnxDZ2CvbC+elNJwUJybeILDjbfQfSxVTEPoRD2sNXeolZi3h5qV/YPiQDa4dJy6s+dZAQyo8xeW7AZqGMlHsvuhDREf23Ek7ouBPn1bAC9NaWXGQHlbCanKtvz5nj7U4f+h8dI=
+	t=1720868422; cv=none; b=DFRnP9AAmZAvEh2VHhYqXXkBL7jpQJz5AdEsotHv7uSV3e6iKEBOUX5Is7NrXiPAmmSkATZJPhCv0m4hmRRJwXHun83LnanhlDJq7tOGm1RaE87e5vo0wbOfbDeuWEdeeusf9jYguDwlmCRafW71/dDb+177eAUFGoYPgPolprY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720868226; c=relaxed/simple;
-	bh=QzVXk7APsQy77nrz5fXBLxvDVTuBB5pTDsN5HIi/ots=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=il275qKJIrvf+ZW3wKZnG8rzfZ6q6Amzae+kVwbsKd5GIM6BXLHGH+pw5jiumu7jWRaANjYZP7FwV7sPKbc5zB0X2quK7bJRsgqSriKxJPAAi9x4FDQ3FADVNn0rtgiUDwM4iaeHFTF3F3jZ5W741S74Wqkgh1F/90SZcbwj7NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WLllR301nz4f3jMJ;
-	Sat, 13 Jul 2024 18:56:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 35E521A016E;
-	Sat, 13 Jul 2024 18:56:59 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCHazl5XZJmoREJAA--.5337S3;
-	Sat, 13 Jul 2024 18:56:59 +0800 (CST)
-Subject: Re: [PATCH -next] blk-cgroup: move congestion_count to struct blkcg
-To: Tejun Heo <tj@kernel.org>, Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: josef@toxicpanda.com, axboe@kernel.dk, lizefan.x@bytedance.com,
- hannes@cmpxchg.org, cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240712085141.3288708-1-xiujianfeng@huawei.com>
- <ZpFlsrNMMUMnT_Lq@slm.duckdns.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <a39656fd-f34c-fa69-7d20-8b86fc1cb0c4@huaweicloud.com>
-Date: Sat, 13 Jul 2024 18:56:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1720868422; c=relaxed/simple;
+	bh=6MwOyZRCjJkxdmlwhPk2vAqrqZ8cTUIQr3o9S8vkzTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C+HoY6LMzTv2SIltkx/pUa2s35NgFJ7fz+QAQlX3zDloHD6zDMro0l0+n7T9iGgGINY0T3DYg+0dbTWvUapt4qQvTDU6c8W8OQB7dGm86DU8y3eZ/HnvIqAnFTeLilRDWBEHjMyr83a7XYe7mQvMdHxb4ROs/oTLUg+uB9QMX2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzcYypRS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880C1C32781;
+	Sat, 13 Jul 2024 11:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720868422;
+	bh=6MwOyZRCjJkxdmlwhPk2vAqrqZ8cTUIQr3o9S8vkzTY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UzcYypRS1WEGzDC889pQIEhzvsfGPfcvplBJise752vDZBLZQaWMulCUxvkhdzEOq
+	 5uaFnEkEfvKqrj2zHcPYnqtzkyy2GrzdnTApothF2r91HJn4EZ4C3I43bQ4V8twPJc
+	 iEDNNt9dmWwUHWwcyG52PF2/EY9Kzp9be/kCb5LDVLJW2i1wfA5R3KOHKaQcN+emVK
+	 AXcH+mDgdNOqX7c+J8SwK4ctHu/IHEbtly22hzpkl6o+fQU1ve+mkTheZ8rakOI8L0
+	 4JGbTQUFbP9hO1/czt2VBxtX5KOiCp9FwlaYYggkG8uqEmzQRUocWaU2wEdV+dbmcc
+	 rY4OqmP50RTog==
+Date: Sat, 13 Jul 2024 12:00:13 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Conor Dooley <conor@kernel.org>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/7] dt-bindings: iio: rename bu27034 file
+Message-ID: <20240713120013.034b4419@jic23-huawei>
+In-Reply-To: <2b66ea94-dd77-4e86-b09b-c00523bdbf75@gmail.com>
+References: <cover.1720176341.git.mazziesaccount@gmail.com>
+	<f83cf0d6f5b0ed391703ea3908ebd65b3f6e5c87.1720176341.git.mazziesaccount@gmail.com>
+	<20240708-eloquent-overdrive-092c7678f913@spud>
+	<2b66ea94-dd77-4e86-b09b-c00523bdbf75@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZpFlsrNMMUMnT_Lq@slm.duckdns.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHazl5XZJmoREJAA--.5337S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruw1kCF47tFy8Wryxtry7Jrb_yoWDJFc_ur
-	Wjv397urWUJr48A3W3Kw15t390k3y5Gry5Jryqq3yUXa4Fyr18Kw1vg3y3Zry8JF40qF9x
-	CF93AayFkrn2gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi, Tejun!
+On Tue, 9 Jul 2024 21:33:02 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-ÔÚ 2024/07/13 1:19, Tejun Heo Ð´µÀ:
-> Hello,
+> On 7/8/24 20:05, Conor Dooley wrote:
+> > On Fri, Jul 05, 2024 at 01:54:26PM +0300, Matti Vaittinen wrote:  
+> >> The BU27034NUC was cancelled before it entered mass production. It was
+> >> replaced by a new variant BU27034ANUC (note, added 'A'). The new
+> >> variant gained a few significant changes, like removal of the 3.rd data
+> >> channel and dropping some of the gain settings. This means that, from
+> >> software point of view these ICs are incompatible. Lux calculation based
+> >> on the data from the sensors needs to be done differently, and on the
+> >> BU27034ANUC the channel 3 data is missing. Also, the gain setting
+> >> differencies matter.
+> >>
+> >> The old sensor should not be out there so the compatible was dropped and
+> >> a new compatible was added for the bu27034anuc. Move the yaml file so
+> >> the file name matches the binding and change the $id.
+> >>
+> >> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> >> ---
+> >> Revision history:
+> >> v1 => v2:
+> >> - New patch
+> >> ---
+> >>   .../iio/light/{rohm,bu27034.yaml => rohm,bu27034anuc.yaml}      | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>   rename Documentation/devicetree/bindings/iio/light/{rohm,bu27034.yaml => rohm,bu27034anuc.yaml} (92%)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml b/Documentation/devicetree/bindings/iio/light/rohm,bu27034anuc.yaml
+> >> similarity index 92%
+> >> rename from Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
+> >> rename to Documentation/devicetree/bindings/iio/light/rohm,bu27034anuc.yaml
+> >> index 535bd18348ac..fc3d826ed8ba 100644
+> >> --- a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
+> >> +++ b/Documentation/devicetree/bindings/iio/light/rohm,bu27034anuc.yaml
+> >> @@ -1,7 +1,7 @@
+> >>   # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> >>   %YAML 1.2
+> >>   ---
+> >> -$id: http://devicetree.org/schemas/iio/light/rohm,bu27034.yaml#
+> >> +$id: http://devicetree.org/schemas/iio/light/rohm,bu27034anuc.yaml#
+> >>   $schema: http://devicetree.org/meta-schemas/core.yaml#  
+> > 
+> > IMO this should be squashed.  
 > 
-> On Fri, Jul 12, 2024 at 08:51:41AM +0000, Xiu Jianfeng wrote:
->> The congestion_count was introduced by commit d09d8df3a294 ("blkcg:
->> add generic throttling mechanism"), but since it is closely related
->> to the blkio subsys, it is not appropriate to put it in the struct
->> cgroup, so move it to struct blkcg.
->>
->> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
->> ---
->> only compiling tested
+> I've no objections to squashing this. The main motivation of having it 
+> as a separate patch was to point out the file rename for reviewers and 
+> ask if it is Ok. Furthermore, if there was a reason not to do the 
+> rename, then this patch could've been just dropped while the rest of the 
+> series could've been applied.
 > 
-> blkcg is per cgroup and blkg is per cgroup-device pair, so the change isn't
-> just moving the field but updating what it means and how it works. The
-> change needs a lot more thinking, justification and testing
-I understand blkcg and blkg, however, maybe I'm being noob, I don't see
-how this patch is related to blkg, the change is that 'congestion_count'
-is moved from cgroup to blkcg. This look quite straightforward to me,
-maybe I'm missing something, can you explain more?
+> Thanks for the review!
+I squashed into previous patch whilst applying.
 
 Thanks,
-Kuai
+
+Jonathan
 
 > 
-> Thanks.
+> Yours,
+> 	-- Matti
 > 
 
 
