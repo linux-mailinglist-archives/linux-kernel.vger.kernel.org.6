@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-251372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE175930424
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:52:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF652930427
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23AAC28384E
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 06:52:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B846283864
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 06:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0462940D;
-	Sat, 13 Jul 2024 06:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFC928DC7;
+	Sat, 13 Jul 2024 06:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Wh+FpMIn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfj3khxG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1021BF54;
-	Sat, 13 Jul 2024 06:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4181AAD7;
+	Sat, 13 Jul 2024 06:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720853565; cv=none; b=VcacDSuMDbDvm1X8AmAFSDbGR+vl6kpVOpOfo6+xrMxhedCRL6Yc9xvcEKnHl7K8cvhuBMKdBIQ7Vc+QpCt4x9zQZbZcUgp43oaGBLVPKhMdHueeshvn76RUZeGtvs9CCOpxfDmMZkfhqlwxARyl32fnYGijkAB0WFaMbzog0hw=
+	t=1720853812; cv=none; b=ZyaJQ4a6QFJQNhhwSI+twB68jSdtWgs+ntj+Tx25uSOblj0kXYYk/sM2sdp6mfMZuIwhdd6DCcxfqXVC13/oRspb+BZpySL3stdsRm/zfYgIKep6RdsPUnfqBc0hqO5yGnz9E8Ag1pfdhH1lge1iDi4fjn8KjKCgKWu3U/uw2u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720853565; c=relaxed/simple;
-	bh=k9Fz/brBJXRmkY77OHcvYUwK69ppymwPr/gyiKMhobo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lc+D+VpKBe5wRdp7Cn5O4nLauQI7qhLh+nyK/geKnQFX2MHbFHUu+BPcKXMsfA1uUcvofS+liPcWdd3BmW4TyPTWqSgk5JeRhwSxmPS0Sksv3xiCEIZe2YbbziPMEXRwK1o6QLBkhkzD4V/fYKNvlAhaln8n6d52dtkWy3tjLV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Wh+FpMIn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DE3C32781;
-	Sat, 13 Jul 2024 06:52:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720853565;
-	bh=k9Fz/brBJXRmkY77OHcvYUwK69ppymwPr/gyiKMhobo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wh+FpMInW8KB+YeUy7oXXOXD6ApMCU4ZAQ+aus/GOWfvFERLzQf/0oKLbG4a4uzOK
-	 qS6QLBiSeB/Zb0zSC9EpQzAGDs23fe09dP6mWj/bBi8bP/yUbLM2qa4HTbH+VEsOSR
-	 2ig0ggvFLVu7p5zlS6ZFt5N9n/5briROnhWnTaBo=
-Date: Sat, 13 Jul 2024 08:52:41 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ashwin Kamat <ashwin.kamat@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, davem@davemloft.net,
-	yoshfuji@linux-ipv6.org, dsahern@kernel.org, kuba@kernel.org,
-	netdev@vger.kernel.org, florian.fainelli@broadcom.com,
-	ajay.kaher@broadcom.com, vasavi.sirnapalli@broadcom.com,
-	tapas.kundu@broadcom.com
-Subject: Re: [PATCH v5.10 0/2] Fix for CVE-2024-36901
-Message-ID: <2024071313-even-unpack-9173@gregkh>
-References: <1720520570-9904-1-git-send-email-ashwin.kamat@broadcom.com>
+	s=arc-20240116; t=1720853812; c=relaxed/simple;
+	bh=AO2zhQ6NY+7j4iOWmqDHqHMD3UBdDyrD45oR3qQTSy4=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bk8QZPLqkyGtg/UB2ZLQUWHTf7wX4pVUCu3pFxkTlDQ8ai45koIxUak0AQqyFncKaO8spYWLTVyasw/gScJOXcmdrVEV7roZq62kGZijblFa/j17M29IFFtKQ2u3Db8twMqGBI1O0bWk5Fj5CnGbsikmhs4aHe10AsuzzIVZajQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hfj3khxG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3524C32781;
+	Sat, 13 Jul 2024 06:56:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720853812;
+	bh=AO2zhQ6NY+7j4iOWmqDHqHMD3UBdDyrD45oR3qQTSy4=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=hfj3khxGFoGoVUta3Ao5Wfonh2XSFrOLKldhTDNITdNTrW66JSTo8HtyL9Alhb1//
+	 ue38vI206xMK7mtjZJr/Ol7P4XobGoltqOF0h/Q1mGr242PG1zSHg3+8rJCpn5Sgk/
+	 ucos8MDaAWQRZfO5eKossFLbGZ/Rh4bF0qHFrHKsg6SROBAHlTgr1CNiE18wwecHDj
+	 hmHvAcxrZvansguJinwtwGMf6IPEzlZ2iUxUhSZu5mzsUX67NidnFEqn3Razawyzrw
+	 mNB0O13FOmfL16/TJMeI2rueXDFuJ2kgaovr7hAPXaCZMHP8+zu2zlEx4pVEI+ggdy
+	 dec3bYJzueI8A==
+Date: Sat, 13 Jul 2024 08:56:48 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the i2c-host tree
+Message-ID: <yogbvwx3rqxpqv33sm7irvrdjvebi4hgcwn2w45s6hodyko3qb@my7kojqeydcr>
+References: <20240712165527.75e4ddc9@canb.auug.org.au>
+ <ZpDVAG2p_v5DsZgY@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,34 +57,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1720520570-9904-1-git-send-email-ashwin.kamat@broadcom.com>
+In-Reply-To: <ZpDVAG2p_v5DsZgY@shikoro>
 
-On Tue, Jul 09, 2024 at 03:52:48PM +0530, Ashwin Kamat wrote:
-> From: Ashwin Dayanand Kamat <ashwin.kamat@broadcom.com>
+On Fri, Jul 12, 2024 at 09:02:24AM GMT, Wolfram Sang wrote:
+> > include/linux/i2c.h:583: warning: Function parameter or struct member 'xfer' not described in 'i2c_algorithm'
+> > include/linux/i2c.h:583: warning: Function parameter or struct member 'xfer_atomic' not described in 'i2c_algorithm'
+> > include/linux/i2c.h:583: warning: Function parameter or struct member 'reg_target' not described in 'i2c_algorithm'
+> > include/linux/i2c.h:583: warning: Function parameter or struct member 'unreg_target' not described in 'i2c_algorithm'
 > 
-> net/ipv6: annotate data-races around cnf.disable_ipv6
->        disable_ipv6 is read locklessly, add appropriate READ_ONCE() and WRITE_ONCE() annotations.
-> 
-> net/ipv6: prevent NULL dereference in ip6_output()
->        Fix for CVE-2024-36901
-> 
-> Ashwin Dayanand Kamat (2):
->        net/ipv6: annotate data-races around cnf.disable_ipv6
->        net/ipv6: prevent NULL dereference in ip6_output()
-> 
->  net/ipv6/addrconf.c   | 9 +++++----
->  net/ipv6/ip6_input.c  | 2 +-
->  net/ipv6/ip6_output.c | 2 +-
->  3 files changed, 7 insertions(+), 6 deletions(-)
-> 
-> --
-> 2.7.4
-> 
+> Ouch, yes. I will fix this! Thanks. Seems like regular buildbot builds
+> do not build docs when they were changed?
 
-Any reason you didn't actually cc: the stable@vger.kernel.org address
-for these so we know to pick them up?
+apparently not, because I received only build success messages.
 
-thanks,
+I will add the docs building in my test flow.
 
-greg k-h
+Thanks Stephen,
+Andi
 
