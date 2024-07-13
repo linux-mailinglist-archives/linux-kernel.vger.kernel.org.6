@@ -1,207 +1,344 @@
-Return-Path: <linux-kernel+bounces-251359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376F99303EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:58:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D4E9303F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC627B210B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 05:58:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29475283940
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 06:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A076E1386C0;
-	Sat, 13 Jul 2024 05:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B511CAB5;
+	Sat, 13 Jul 2024 06:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hq90AX6H"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JqrwByuW"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B817137928;
-	Sat, 13 Jul 2024 05:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82194431;
+	Sat, 13 Jul 2024 06:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720850135; cv=none; b=PR5SevKflYV6lwhy35dMWKTKe4oJorS5dR+7p2JaAaShxHWsvDYVLjC0KfVwKM9gQwja2aIBiCuBZhpJXgF6LZPG+rWf8w7v2rLQLq4vb0WyCPi/dNXsHaRM/19l78T1rf17kqiOBbVe2u7bFfCNYQKlfZVf9R7W7P1ZGVEY2Hs=
+	t=1720850559; cv=none; b=F2WY/zaJfB4U4ZgIWWDZCZOT1+KI3Ui39IOCS4MgmAS8jZEWZFFa3W81y5tLdZfoYxJirmeGucacmr1a+rkRx5N9RvywX0XouVXyMuYFRyfexoeUL1xoL5M7b43mR2btXKicUYUViIDvdGluqMkCh2R44Kfp6DuUwda1GIVruYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720850135; c=relaxed/simple;
-	bh=m61yrLiCo/6Coqan3yroa8I4c7Fp0BM+pnhcB9oQZzk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qloy+OGXieUmx1z8E+vdOVOIznipWbb3yzAe/Cf+GlnR0lx2Gp8SLxiHdUzoetgQeySUeadhp1Kjo6hYf2W5Sgy8A43HlcyO2vZWJJ+pV+pANNHy83ccq+mgZOasBBMk7bL5lGwg1Ue9dxcPkePtxtY0TakghlxGKesF3iQ/vU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hq90AX6H; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eea8ea8bb0so51043771fa.1;
-        Fri, 12 Jul 2024 22:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720850132; x=1721454932; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TJ8lt0WIPJML/L+Gu3zpYCM/DKICydm3DLZEC2BtLFY=;
-        b=hq90AX6HgCNflw1ytD/c4xBC+jF411ILS1ST7lNKX2Nd7Dgi0A4EqR+UotmFN5p25A
-         /SoOFePMEx/dTO15kxXjVCeMMq7Ta8vLCj6jrefbKPcaCB0bHWC9CLMZsPwg2nwhJWEW
-         Le0ACv+e9NEEtTZ60XPc6S/singZya3CgCnuRHx+7dtdJ+WHeF7ZloO+tUl6nyeJIaAd
-         YCA4IN+NB8q9gUip63k+ru+Sug8RmnaTVur5cnWkohSuwK92Coz11kzBVi0gGB3dDRvo
-         vnb1q9DiwWJqZ0JLDhO5JnyoYOaj66nOs/QuCCXWsQzT6SQdDGafXb6nOPaLvp9WFbd5
-         95zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720850132; x=1721454932;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TJ8lt0WIPJML/L+Gu3zpYCM/DKICydm3DLZEC2BtLFY=;
-        b=FmP8aReP8LCN74cd9YqPgUIgVfFHE3n8aGwLLOqWVK5GwS9/MfKqkSPxwbIrhLjERg
-         4/ZrHISK5ybRKoaU4WIq7krZ0bRE4f0oMr3CmbxcdEYnXtQVqDQamLad++6rzBZUbtt3
-         k76QL2yemmK9uNj8ZfLglc5+rvZP2pBTMQoLCwXj5V1m3hlt/dJ+MWyv96c+iz2wSElk
-         rL8xtpOtchaSPobBuWt562PV4R4pdkhl+hQNeUK1sxBeceI3J7EEuQz9MIHpToP74HcB
-         qJvh3tbj19HEejuRJ4CpZHyoXEfftmYjK5WktB+pgYzOsKfQB3LFp6MokHnRDEDZha5X
-         8Y5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVUuHdRIYZGwu0jZeMpk0/qdneUoJonm8PH6NxES/w45cM3uc3HvsptQDD7S3QQyBALYVPvLtoOu8MYj63gakpVqUHPmXW2Y+hrnBwc
-X-Gm-Message-State: AOJu0Yw0g9N5P9cR/RMdO/PKd57woWW685oSPf4mPfdJ7S9pAG+Gev9h
-	6Pm7/vJ71jnjr2r2WI9sU8bui4zK19ntEbkVS1PNEbZTCMh4CHg6EnJv62vC
-X-Google-Smtp-Source: AGHT+IHIGpOuMZbLh4SlGsMLM9NGHFZ017JxrUCmTRcLTgrAKIfbXnMlZNIOjvU18F8Znrn6y84uUQ==
-X-Received: by 2002:a2e:3306:0:b0:2ee:8454:1c25 with SMTP id 38308e7fff4ca-2eeb316b020mr105005701fa.34.1720850131922;
-        Fri, 12 Jul 2024 22:55:31 -0700 (PDT)
-Received: from WBEC325.dom.lan ([2001:470:608f:0:b4ea:33f8:5eca:e7fc])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1ceesm20515666b.126.2024.07.12.22.55.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 22:55:31 -0700 (PDT)
-From: Pawel Dembicki <paweldembicki@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Paolo Abeni <pabeni@redhat.com>,
-	Pawel Dembicki <paweldembicki@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Claudiu Manoil <claudiu.manoil@nxp.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	UNGLinuxDriver@microchip.com,
-	Russell King <linux@armlinux.org.uk>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 12/12] net: dsa: vsc73xx: start treating the BR_LEARNING flag
-Date: Sat, 13 Jul 2024 07:54:40 +0200
-Message-Id: <20240713055443.1112925-13-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240713055443.1112925-1-paweldembicki@gmail.com>
-References: <20240713055443.1112925-1-paweldembicki@gmail.com>
+	s=arc-20240116; t=1720850559; c=relaxed/simple;
+	bh=a4d26h1fXGolR2klraTsu9fuYrpqRqpIvZvq1fdv2zk=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=rX2guw4l6Xw6uitlvuECd7mxZ9jTTncBbRJVRuR1UhU6T1WZeLaKNTSu84ZTe4T9cirVBuWIDpSiD1e+1FaAz2IQqEjt40Id/ZO9u8XBmCQnl+PZ+58rvGJvcZKjphrWVZ+HnGn0WjIRrlyfrqf8fAWTZOkOb627WriLNK8jVj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JqrwByuW; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46D5uBe2007618;
+	Sat, 13 Jul 2024 06:02:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-type:mime-version:subject:from:in-reply-to:date:cc
+	:content-transfer-encoding:message-id:references:to; s=pp1; bh=1
+	owsm3Nc96HFbnopOKzr0f9v0OtnRxlY0y5cAZ8kBjg=; b=JqrwByuW2DGOZphnz
+	hYxsWNi4MZZcWjQodZvC4mhp5YH9vjqUSHcvo/biXNAnMRFC2c0wawUCUa4qX3hZ
+	R/4USIV2ePSMcHPo5LNBqag6qWVaotfivm+bk/nOuSAK5KZ9JR6opVSNQxFK9jzq
+	4YX/YajCCarl5Oxf8OeUDcTLRgm6jmOJp7+tO5DWjMxXljiKRbzOMHMT7rZLQFre
+	45Eupn3CHOPbXh36JZfHht2vsVzvNvmAZQavz/vHYaybPdRaB404a8v4GQlUUTZh
+	Rf/D3swwhzpcmaoQ/XQFW71lUcsTtwE8V8Sj2yNPWl+lISQFsxGRzqmOKOF9f+Lw
+	1QeLw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40bfgr0aqm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 06:02:12 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46D62B1m017649;
+	Sat, 13 Jul 2024 06:02:11 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40bfgr0aqj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 06:02:11 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46D1ZTTh024680;
+	Sat, 13 Jul 2024 06:02:10 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 407g8uth8c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 06:02:10 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46D625Ni54067622
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 13 Jul 2024 06:02:07 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0FAD920040;
+	Sat, 13 Jul 2024 06:02:05 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4AD6620049;
+	Sat, 13 Jul 2024 06:02:01 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.43.47.252])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sat, 13 Jul 2024 06:02:01 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH V6 18/18] tools/perf: Set instruction name to be used with
+ insn-stat when using raw instruction
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <ZpGfvwxGh1ud6SeP@google.com>
+Date: Sat, 13 Jul 2024 11:31:48 +0530
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ian Rogers <irogers@google.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Disha Goel <disgoel@linux.vnet.ibm.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <ABD8FBC0-149E-4C85-BC4A-244347D63A2B@linux.vnet.ibm.com>
+References: <20240707144419.92510-1-atrajeev@linux.vnet.ibm.com>
+ <20240707144419.92510-19-atrajeev@linux.vnet.ibm.com>
+ <ZpGfvwxGh1ud6SeP@google.com>
+To: Namhyung Kim <namhyung@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9Cu7UL6rTTC2Xwbxjbx0dixDec5RkIRK
+X-Proofpoint-ORIG-GUID: nm7Tgq7GlPWlhHpAOzumOgqHbHrfXrUX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-13_02,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407130041
 
-This patch implements .port_pre_bridge_flags() and .port_bridge_flags(),
-which are required for properly treating the BR_LEARNING flag. Also,
-.port_stp_state_set() is tweaked and now disables learning for standalone
-ports.
 
-Disabling learning for standalone ports is required to avoid situations
-where one port sees traffic originating from another, which could cause
-packet drops.
 
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
----
-v3,v2,v1:
-  - resend only
----
-Before patch series split:
-https://patchwork.kernel.org/project/netdevbpf/list/?series=841034&state=%2A&archive=both
-v8:
-  - resend only
-v7:
-  - added 'Acked-by' and 'Reviewed-by' and improve  commit message
-v6:
-  - fix arranging local variables in reverse xmas tree order
-v5:
-  - introduce patch
----
- drivers/net/dsa/vitesse-vsc73xx-core.c | 41 ++++++++++++++++++++++----
- 1 file changed, 35 insertions(+), 6 deletions(-)
+> On 13 Jul 2024, at 2:57=E2=80=AFAM, Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>=20
+> On Sun, Jul 07, 2024 at 08:14:19PM +0530, Athira Rajeev wrote:
+>> Since the "ins.name" is not set while using raw instruction,
+>> perf annotate with insn-stat gives wrong data:
+>>=20
+>> Result from "./perf annotate --data-type --insn-stat":
+>>=20
+>> Annotate Instruction stats
+>> total 615, ok 419 (68.1%), bad 196 (31.9%)
+>>=20
+>>  Name      :  Good   Bad
+>> -----------------------------------------------------------
+>>            :   419   196
+>>=20
+>> Patch sets "dl->ins.name" in arch specific function "check_ppc_insn"
+>> while initialising "struct disasm_line". Also update "ins_find" =
+function
+>> to pass "struct disasm_line" as a parameter so as to set its name =
+field
+>> in arch specific call.
+>>=20
+>> With the patch changes:
+>>=20
+>> Annotate Instruction stats
+>> total 609, ok 446 (73.2%), bad 163 (26.8%)
+>>=20
+>>  Name/opcode:  Good   Bad
+>> -----------------------------------------------------------
+>>  58                  :   323    80
+>>  32                  :    49    43
+>>  34                  :    33    11
+>>  OP_31_XOP_LDX       :     8    20
+>>  40                  :    23     0
+>>  OP_31_XOP_LWARX     :     5     1
+>>  OP_31_XOP_LWZX      :     2     3
+>>  OP_31_XOP_LDARX     :     3     0
+>>  33                  :     0     2
+>>  OP_31_XOP_LBZX      :     0     1
+>>  OP_31_XOP_LWAX      :     0     1
+>>  OP_31_XOP_LHZX      :     0     1
+>>=20
+>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>> ---
+>> .../perf/arch/powerpc/annotate/instructions.c  | 18 =
++++++++++++++++---
+>> tools/perf/builtin-annotate.c                  |  4 ++--
+>> tools/perf/util/annotate.c                     |  2 +-
+>> tools/perf/util/disasm.c                       | 10 +++++-----
+>> tools/perf/util/disasm.h                       |  2 +-
+>> 5 files changed, 24 insertions(+), 12 deletions(-)
+>>=20
+>> diff --git a/tools/perf/arch/powerpc/annotate/instructions.c =
+b/tools/perf/arch/powerpc/annotate/instructions.c
+>> index af1032572bf3..ede9eeade0ab 100644
+>> --- a/tools/perf/arch/powerpc/annotate/instructions.c
+>> +++ b/tools/perf/arch/powerpc/annotate/instructions.c
+>> @@ -189,8 +189,9 @@ static int cmp_offset(const void *a, const void =
+*b)
+>> return (val1->value - val2->value);
+>> }
+>>=20
+>> -static struct ins_ops *check_ppc_insn(u32 raw_insn)
+>> +static struct ins_ops *check_ppc_insn(struct disasm_line *dl)
+>> {
+>> + int raw_insn =3D dl->raw.raw_insn;
+>> int opcode =3D PPC_OP(raw_insn);
+>> int mem_insn_31 =3D PPC_21_30(raw_insn);
+>> struct insn_offset *ret;
+>> @@ -198,19 +199,30 @@ static struct ins_ops *check_ppc_insn(u32 =
+raw_insn)
+>> "OP_31_INSN",
+>> mem_insn_31
+>> };
+>> + char name_insn[32];
+>>=20
+>> /*
+>>  * Instructions with opcode 32 to 63 are memory
+>>  * instructions in powerpc
+>>  */
+>> if ((opcode & 0x20)) {
+>> + /*
+>> +  * Set name in case of raw instruction to
+>> +  * opcode to be used in insn-stat
+>> +  */
+>> + if (!strlen(dl->ins.name)) {
+>> + sprintf(name_insn, "%d", opcode);
+>> + dl->ins.name =3D strdup(name_insn);
+>> + }
+>> return &load_store_ops;
+>> } else if (opcode =3D=3D 31) {
+>> /* Check for memory instructions with opcode 31 */
+>> ret =3D bsearch(&mem_insns_31_opcode, ins_array, =
+ARRAY_SIZE(ins_array), sizeof(ins_array[0]), cmp_offset);
+>> - if (ret !=3D NULL)
+>> + if (ret) {
+>> + if (!strlen(dl->ins.name))
+>> + dl->ins.name =3D strdup(ret->name);
+>> return &load_store_ops;
+>> - else {
+>> + } else {
+>> mem_insns_31_opcode.value =3D PPC_22_30(raw_insn);
+>> ret =3D bsearch(&mem_insns_31_opcode, arithmetic_ins_op_31, =
+ARRAY_SIZE(arithmetic_ins_op_31),
+>> sizeof(arithmetic_ins_op_31[0]), cmp_offset);
+>> diff --git a/tools/perf/builtin-annotate.c =
+b/tools/perf/builtin-annotate.c
+>> index b10b7f005658..68e929d4746e 100644
+>> --- a/tools/perf/builtin-annotate.c
+>> +++ b/tools/perf/builtin-annotate.c
+>> @@ -396,10 +396,10 @@ static void print_annotate_item_stat(struct =
+list_head *head, const char *title)
+>> printf("total %d, ok %d (%.1f%%), bad %d (%.1f%%)\n\n", total,
+>>        total_good, 100.0 * total_good / (total ?: 1),
+>>        total_bad, 100.0 * total_bad / (total ?: 1));
+>> - printf("  %-10s: %5s %5s\n", "Name", "Good", "Bad");
+>> + printf("  %-10s: %5s %5s\n", "Name/opcode", "Good", "Bad");
+>=20
+> It should be "%-20s".
+>=20
+> Thanks,
+> Namhyung
 
-diff --git a/drivers/net/dsa/vitesse-vsc73xx-core.c b/drivers/net/dsa/vitesse-vsc73xx-core.c
-index 07115a9d1869..193752194b66 100644
---- a/drivers/net/dsa/vitesse-vsc73xx-core.c
-+++ b/drivers/net/dsa/vitesse-vsc73xx-core.c
-@@ -1613,6 +1613,31 @@ static int vsc73xx_tag_8021q_vlan_del(struct dsa_switch *ds, int port, u16 vid)
- 	return vsc73xx_update_vlan_table(vsc, port, vid, false);
- }
- 
-+static int vsc73xx_port_pre_bridge_flags(struct dsa_switch *ds, int port,
-+					 struct switchdev_brport_flags flags,
-+					 struct netlink_ext_ack *extack)
-+{
-+	if (flags.mask & ~BR_LEARNING)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int vsc73xx_port_bridge_flags(struct dsa_switch *ds, int port,
-+				     struct switchdev_brport_flags flags,
-+				     struct netlink_ext_ack *extack)
-+{
-+	if (flags.mask & BR_LEARNING) {
-+		u32 val = flags.val & BR_LEARNING ? BIT(port) : 0;
-+		struct vsc73xx *vsc = ds->priv;
-+
-+		return vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
-+					   VSC73XX_LEARNMASK, BIT(port), val);
-+	}
-+
-+	return 0;
-+}
-+
- static void vsc73xx_refresh_fwd_map(struct dsa_switch *ds, int port, u8 state)
- {
- 	struct dsa_port *other_dp, *dp = dsa_to_port(ds, port);
-@@ -1673,19 +1698,21 @@ static void vsc73xx_refresh_fwd_map(struct dsa_switch *ds, int port, u8 state)
- static void vsc73xx_port_stp_state_set(struct dsa_switch *ds, int port,
- 				       u8 state)
- {
-+	struct dsa_port *dp = dsa_to_port(ds, port);
- 	struct vsc73xx *vsc = ds->priv;
--	u32 val;
-+	u32 val = 0;
-+
-+	if (state == BR_STATE_LEARNING || state == BR_STATE_FORWARDING)
-+		val = dp->learning ? BIT(port) : 0;
-+
-+	vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
-+			    VSC73XX_LEARNMASK, BIT(port), val);
- 
- 	val = (state == BR_STATE_BLOCKING || state == BR_STATE_DISABLED) ?
- 	      0 : BIT(port);
- 	vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
- 			    VSC73XX_RECVMASK, BIT(port), val);
- 
--	val = (state == BR_STATE_LEARNING || state == BR_STATE_FORWARDING) ?
--	      BIT(port) : 0;
--	vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
--			    VSC73XX_LEARNMASK, BIT(port), val);
--
- 	/* CPU Port should always forward packets when user ports are forwarding
- 	 * so let's configure it from other ports only.
- 	 */
-@@ -1710,6 +1737,8 @@ static const struct dsa_switch_ops vsc73xx_ds_ops = {
- 	.get_sset_count = vsc73xx_get_sset_count,
- 	.port_enable = vsc73xx_port_enable,
- 	.port_disable = vsc73xx_port_disable,
-+	.port_pre_bridge_flags = vsc73xx_port_pre_bridge_flags,
-+	.port_bridge_flags = vsc73xx_port_bridge_flags,
- 	.port_bridge_join = dsa_tag_8021q_bridge_join,
- 	.port_bridge_leave = dsa_tag_8021q_bridge_leave,
- 	.port_change_mtu = vsc73xx_change_mtu,
--- 
-2.34.1
+Sure, will make this change
+
+Thanks
+Athira
+>=20
+>=20
+>> =
+printf("-----------------------------------------------------------\n");
+>> list_for_each_entry(istat, head, list)
+>> - printf("  %-10s: %5d %5d\n", istat->name, istat->good, istat->bad);
+>> + printf("  %-20s: %5d %5d\n", istat->name, istat->good, istat->bad);
+>> printf("\n");
+>> }
+>>=20
+>> diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+>> index 8db2f32700aa..e1f24dff8042 100644
+>> --- a/tools/perf/util/annotate.c
+>> +++ b/tools/perf/util/annotate.c
+>> @@ -2229,7 +2229,7 @@ static struct annotated_item_stat =
+*annotate_data_stat(struct list_head *head,
+>> return NULL;
+>>=20
+>> istat->name =3D strdup(name);
+>> - if (istat->name =3D=3D NULL) {
+>> + if ((istat->name =3D=3D NULL) || (!strlen(istat->name))) {
+>> free(istat);
+>> return NULL;
+>> }
+>> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+>> index 63681df6482b..cd283c42195c 100644
+>> --- a/tools/perf/util/disasm.c
+>> +++ b/tools/perf/util/disasm.c
+>> @@ -859,7 +859,7 @@ static void ins__sort(struct arch *arch)
+>> qsort(arch->instructions, nmemb, sizeof(struct ins), ins__cmp);
+>> }
+>>=20
+>> -static struct ins_ops *__ins__find(struct arch *arch, const char =
+*name, u32 raw_insn)
+>> +static struct ins_ops *__ins__find(struct arch *arch, const char =
+*name, struct disasm_line *dl)
+>> {
+>> struct ins *ins;
+>> const int nmemb =3D arch->nr_instructions;
+>> @@ -871,7 +871,7 @@ static struct ins_ops *__ins__find(struct arch =
+*arch, const char *name, u32 raw_
+>>  */
+>> struct ins_ops *ops;
+>>=20
+>> - ops =3D check_ppc_insn(raw_insn);
+>> + ops =3D check_ppc_insn(dl);
+>> if (ops)
+>> return ops;
+>> }
+>> @@ -905,9 +905,9 @@ static struct ins_ops *__ins__find(struct arch =
+*arch, const char *name, u32 raw_
+>> return ins ? ins->ops : NULL;
+>> }
+>>=20
+>> -struct ins_ops *ins__find(struct arch *arch, const char *name, u32 =
+raw_insn)
+>> +struct ins_ops *ins__find(struct arch *arch, const char *name, =
+struct disasm_line *dl)
+>> {
+>> - struct ins_ops *ops =3D __ins__find(arch, name, raw_insn);
+>> + struct ins_ops *ops =3D __ins__find(arch, name, dl);
+>>=20
+>> if (!ops && arch->associate_instruction_ops)
+>> ops =3D arch->associate_instruction_ops(arch, name);
+>> @@ -917,7 +917,7 @@ struct ins_ops *ins__find(struct arch *arch, =
+const char *name, u32 raw_insn)
+>>=20
+>> static void disasm_line__init_ins(struct disasm_line *dl, struct arch =
+*arch, struct map_symbol *ms)
+>> {
+>> - dl->ins.ops =3D ins__find(arch, dl->ins.name, dl->raw.raw_insn);
+>> + dl->ins.ops =3D ins__find(arch, dl->ins.name, dl);
+>>=20
+>> if (!dl->ins.ops)
+>> return;
+>> diff --git a/tools/perf/util/disasm.h b/tools/perf/util/disasm.h
+>> index c1bb1e484bfb..f56beedeb9da 100644
+>> --- a/tools/perf/util/disasm.h
+>> +++ b/tools/perf/util/disasm.h
+>> @@ -105,7 +105,7 @@ struct annotate_args {
+>> struct arch *arch__find(const char *name);
+>> bool arch__is(struct arch *arch, const char *name);
+>>=20
+>> -struct ins_ops *ins__find(struct arch *arch, const char *name, u32 =
+raw_insn);
+>> +struct ins_ops *ins__find(struct arch *arch, const char *name, =
+struct disasm_line *dl);
+>> int ins__scnprintf(struct ins *ins, char *bf, size_t size,
+>>    struct ins_operands *ops, int max_ins_name);
+>>=20
+>> --=20
+>> 2.43.0
+
 
 
