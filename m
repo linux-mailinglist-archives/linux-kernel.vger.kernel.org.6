@@ -1,122 +1,243 @@
-Return-Path: <linux-kernel+bounces-251527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F779305DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:17:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83F09305E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:19:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35FD1F21C7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:17:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28FAEB21611
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5098139D1A;
-	Sat, 13 Jul 2024 14:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BC2139CF2;
+	Sat, 13 Jul 2024 14:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ODQfe19G"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZKSRsOO"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC4B139CE3;
-	Sat, 13 Jul 2024 14:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A11213699A;
+	Sat, 13 Jul 2024 14:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720880241; cv=none; b=kv8VfeeDni84Z9e5Nv9p1Iv6AZ0YggQuC/OKYtTnWiJ8j3fOf4i+h1lwRCI+7Kt2eZDIX/VVEJOBARieuOtR/C05r8skOOiuhOXrXCsuO08rX95Q+3g1jkii+Ax4uNAuErIcPPOm0IGE89BDno6pfSujjqXZxByCD18OlUfK5F0=
+	t=1720880356; cv=none; b=apZOgd+hxkjBaXaUgmhw3+Sj8ag1K/gfbWh+G9WMCu+/keSJsCNaEMwgDSCc1BoWhNfe9lAbezAWTDqUvE/HvHTt0cleNQDWzq17ppW+XDRjq3oXG9t4A+kmrs6piGEK1oqq3p5UajrPv20bZV9YpMis71QbMKd5eGXBIHlEsC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720880241; c=relaxed/simple;
-	bh=XyoETu6aCxO/5MMthKlDDfFnCrA8sNj/WjViFMrSVJs=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=Soaq6IwUu5gLgPnWxhcDgdbD3UHFH/3XUDH4q97V2Fi9zOx14HBzHLOY3LjIxefpE5CNeTit4i9DIaDol0PRQ4NbYsnIISP8gqaeWQrnRzxtr93yTx4L45Lq+rTNVNuGS5ELAwHa8qrC1Etsr+0/Ukyt6kgwZGvnDqVQRMSVDac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ODQfe19G; arc=none smtp.client-ip=209.85.219.49
+	s=arc-20240116; t=1720880356; c=relaxed/simple;
+	bh=SkmzsuhgkpcePaJ/TC8Ame2tbCeFuUiI91+wOw2ImJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=No02eovi2+1adZJm1g5zCp4hzfFwmgedw9jXFt64PQjYC84yW0W7yIh0CoQhBJhQVX2z4BkPBbUBPaKV04ydNu69XX7cwsi2N/N3I6NfFu1X09436CquN0TKVwPtLUVOwbUC3NVU4wBbivYGbRTjpqi+qfJAu/9if8UaQvyVnpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZKSRsOO; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b5dc36b896so22902106d6.1;
-        Sat, 13 Jul 2024 07:17:19 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4266f344091so21432225e9.0;
+        Sat, 13 Jul 2024 07:19:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720880239; x=1721485039; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cwx4+UgmNI4p5mIoE1u1cA5r41uObm4Tuy2xvPeTXpU=;
-        b=ODQfe19GHJrOe9LvJqR2cf5BgJNzu+O0d8oAdqmp3sutO6FAOgOyNZ7gubtd0t2Tyb
-         iJKH+ujg6blrQgmGjqK3798ROltlSB+WjzkABJsokA45hb5t7eH7WYMPYAIMRZVHq949
-         Y7jealm6lvgWc9LzmXsGigN48fje0AI+dUCI43gyPnBbwS9S6k6yhaD4IT2ThkbHsrV0
-         p/u3/58S0NP8bomLE9z6nBbS7PA2DbBiJXsZPZYwkvnQCvRm6Ycj1UdRz3DAp5NPBWMF
-         YphFCsgEJH83a+fZMOFapXpmZ0jWhALQR70N00Td/7n1OKYEDt6tGj+u7rpeoB97dYDV
-         yXBA==
+        d=gmail.com; s=20230601; t=1720880353; x=1721485153; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QK6XJAfDfWUOwtihg46UYuTK4YivUBGgsu1R9c4EEMI=;
+        b=PZKSRsOOE7iukA6SdOxWVUoK8riTyNcrafs/kpzp7URBID/cUWqPzTtekZMrDAu5gb
+         F7bykhmQxNXDqgG9p3yAneLXMMFdlkx1XQmkCda7feydhWjj7fIxObyDjon3QFTeEAKu
+         syiAYXxWgdKmgJbO0O8khxyN0pU4n6CMbvKVm6r+6dg0lO8kd7OzA/BYenw7GJ5abbvd
+         6gjzTm1gXqnzYm/2ZAvPSzkIe+iAfu0MAtCU912mimbNPNyCfWrvGlcDIpg4vnrdzbM7
+         tX1MRxCHteD263DgMqBOksbrUY/k29nfNjem8Mjtzmf7EJnF8v6bJ6S7YWDsedFzfHSe
+         3uyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720880239; x=1721485039;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Cwx4+UgmNI4p5mIoE1u1cA5r41uObm4Tuy2xvPeTXpU=;
-        b=a+6cV3w95+fu+ZW2kR4Z25H3jATVSbS2yLg8GmFq0qxol5G4wXdYkLRTCsFgqn5YBs
-         /caqpgRU9z6zIe/J61E3qfG3hczVrIu0XQfihUvrkYgPvREjzVsrnJqM3MbmoXsvM3bz
-         zng5Ja4hso1BDPttg0C5AofmZhVCqQHf3gIZf2oO6/Q4fYtjsUS86iBt5hnm0Zx5hDHX
-         o8rg271fAQLQWcQjEfY1z5z7x9aPwXBzh45JHqQeLwiiJZGAmvZYc4A8vT6sRo9sOJsm
-         /cLz7SltBtptL5OEp0xUpIVGO1LOQgi6ZxZw8MTWk+hJzaJh/HGdbbr/OqKxorkGW6F7
-         mQqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWP3Ys8lFzkop/8ERgWGr9dhujjJfogiqMEltYUq7rt7L5vQsxjfcf7rlxXJGAxBcU3axVRr4m8phTddQduV7PUoAC+voqxbCKZNBznwP+DYPCqG0I2GMowlIS8RHMkwayJzEMo40igz7igxLeDRvMECTfghcp0mGiYlYv
-X-Gm-Message-State: AOJu0YwDftxcDJTZNCd/um6UZIr0snLMnwAR927pZ4CYBDIcgLViOn7V
-	M8O0hGo5vca7LX+seBhfyZBoqZPqO7lEWtjpnm0HlPa5mWovC+xJ
-X-Google-Smtp-Source: AGHT+IH7H5rjgpTeXhkV8ZKuhqf044hmjf8u4JLtx3WTRXGJs2rNHHewoNqxswEH726WJUVDXcGhWQ==
-X-Received: by 2002:ad4:5d6a:0:b0:6b5:2aa3:3a7f with SMTP id 6a1803df08f44-6b754bf4498mr108571386d6.20.1720880238551;
-        Sat, 13 Jul 2024 07:17:18 -0700 (PDT)
-Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b761951610sm5224766d6.27.2024.07.13.07.17.17
+        d=1e100.net; s=20230601; t=1720880353; x=1721485153;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QK6XJAfDfWUOwtihg46UYuTK4YivUBGgsu1R9c4EEMI=;
+        b=nZsx1yn5y8/0b7SLbFa7GPj6WD0//KIxyeISbqqUIs75/lSKqsEq4TT8Fg0hjmbVYv
+         JXC6JW5o2OLyMCYKuDn/339m3qCnFtdq+faP+BDjZ7jDMsKUnopm/reEYPSuIWzaZTW0
+         i1gU+5vn9YE/sSzXXABeUCg1cscAPvPeM0Xp8LTBt0Pmcg4fs+tJySSXJQuvxFh16DY4
+         /71Z5eoQF8IQK9UK5gHakBuy/hOGM9qeW02LboZqWuiacZnfl773ErYbbG/QXFxp0UWh
+         qWbBPUMLzjyUV9JRqsNemSjFlsVQFVpgSLYl9Ju8JpYKMpYzWXJiMQguqy9l4w95AD9i
+         cIjw==
+X-Forwarded-Encrypted: i=1; AJvYcCWi3kjV42Xr+/hbIEKhxTjp+RyTslkYLDgqMPn3h8+8Avc1/ksjy1xiAKMzXEnp8aPrMyL32xtykgqULNju2PAQBkBofzWOzHh8a4QnZ91Wzj7bBnZ/E/sDuD9wd3DSt+diQuQBV/3eGA==
+X-Gm-Message-State: AOJu0Yx2VR5Q40B1YaqLE5hvYiZQmOg/IvlKmqLV+0XuX6lrmTdAg8rJ
+	U62h+id09T+VbJtX5Ma4YiejQIB+0rfmtzMwpv2GmCE4L4ZJvTzC
+X-Google-Smtp-Source: AGHT+IHHjbny9RRu0LAvm/2bN8ShF4nyVd8IAWxQHbDxuBnlmgfzDqGSCcHsli/eQCRJcX+6zgWdJQ==
+X-Received: by 2002:a05:600c:4d0d:b0:426:6326:4cec with SMTP id 5b1f17b1804b1-426707f90d0mr99248565e9.29.1720880353256;
+        Sat, 13 Jul 2024 07:19:13 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e77471sm22288785e9.4.2024.07.13.07.19.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 07:17:17 -0700 (PDT)
-Date: Sat, 13 Jul 2024 10:17:17 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Chengen Du <chengen.du@canonical.com>, 
- willemdebruijn.kernel@gmail.com
-Cc: davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- kaber@trash.net, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Chengen Du <chengen.du@canonical.com>, 
- stable@vger.kernel.org
-Message-ID: <66928c6d9ea62_27541c294c2@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20240713114735.62360-1-chengen.du@canonical.com>
-References: <20240713114735.62360-1-chengen.du@canonical.com>
-Subject: Re: [PATCH net v10] af_packet: Handle outgoing VLAN packets without
- hardware offloading
+        Sat, 13 Jul 2024 07:19:13 -0700 (PDT)
+Date: Sat, 13 Jul 2024 16:19:11 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: leds: sc2731-bltc: convert to YAML
+Message-ID: <ZpKM3yYKJixnRabP@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Chengen Du wrote:
-> The issue initially stems from libpcap. The ethertype will be overwritten
-> as the VLAN TPID if the network interface lacks hardware VLAN offloading.
-> In the outbound packet path, if hardware VLAN offloading is unavailable,
-> the VLAN tag is inserted into the payload but then cleared from the sk_buff
-> struct. Consequently, this can lead to a false negative when checking for
-> the presence of a VLAN tag, causing the packet sniffing outcome to lack
-> VLAN tag information (i.e., TCI-TPID). As a result, the packet capturing
-> tool may be unable to parse packets as expected.
-> 
-> The TCI-TPID is missing because the prb_fill_vlan_info() function does not
-> modify the tp_vlan_tci/tp_vlan_tpid values, as the information is in the
-> payload and not in the sk_buff struct. The skb_vlan_tag_present() function
-> only checks vlan_all in the sk_buff struct. In cooked mode, the L2 header
-> is stripped, preventing the packet capturing tool from determining the
-> correct TCI-TPID value. Additionally, the protocol in SLL is incorrect,
-> which means the packet capturing tool cannot parse the L3 header correctly.
-> 
-> Link: https://github.com/the-tcpdump-group/libpcap/issues/1105
-> Link: https://lore.kernel.org/netdev/20240520070348.26725-1-chengen.du@canonical.com/T/#u
-> Fixes: 393e52e33c6c ("packet: deliver VLAN TCI to userspace")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Chengen Du <chengen.du@canonical.com>
+Convert the Spreadtrum SC2731 breathing light controller bindings
+to DT schema. Adjust filename to match compatible.
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+ .../bindings/leds/leds-sc27xx-bltc.txt        | 43 ----------
+ .../bindings/leds/sprd,sc2731-bltc.yaml       | 84 +++++++++++++++++++
+ 2 files changed, 84 insertions(+), 43 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/sprd,sc2731-bltc.yaml
+
+diff --git a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+deleted file mode 100644
+index df2b4e1c492b..000000000000
+--- a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
++++ /dev/null
+@@ -1,43 +0,0 @@
+-LEDs connected to Spreadtrum SC27XX PMIC breathing light controller
+-
+-The SC27xx breathing light controller supports to 3 outputs:
+-red LED, green LED and blue LED. Each LED can work at normal
+-PWM mode or breath light mode.
+-
+-Required properties:
+-- compatible: Should be "sprd,sc2731-bltc".
+-- #address-cells: Must be 1.
+-- #size-cells: Must be 0.
+-- reg: Specify the controller address.
+-
+-Required child properties:
+-- reg: Port this LED is connected to.
+-
+-Optional child properties:
+-- function: See Documentation/devicetree/bindings/leds/common.txt.
+-- color: See Documentation/devicetree/bindings/leds/common.txt.
+-- label: See Documentation/devicetree/bindings/leds/common.txt (deprecated).
+-
+-Examples:
+-
+-led-controller@200 {
+-	compatible = "sprd,sc2731-bltc";
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-	reg = <0x200>;
+-
+-	led@0 {
+-		color = <LED_COLOR_ID_RED>;
+-		reg = <0x0>;
+-	};
+-
+-	led@1 {
+-		color = <LED_COLOR_ID_GREEN>;
+-		reg = <0x1>;
+-	};
+-
+-	led@2 {
+-		color = <LED_COLOR_ID_BLUE>;
+-		reg = <0x2>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/leds/sprd,sc2731-bltc.yaml b/Documentation/devicetree/bindings/leds/sprd,sc2731-bltc.yaml
+new file mode 100644
+index 000000000000..5853410c7a45
+--- /dev/null
++++ b/Documentation/devicetree/bindings/leds/sprd,sc2731-bltc.yaml
+@@ -0,0 +1,84 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/leds/sprd,sc2731-bltc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum SC2731 PMIC breathing light controller
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++description: |
++  The SC2731 breathing light controller supports up to 3 outputs:
++  red LED, green LED and blue LED. Each LED can work at normal PWM mode
++  or breath light mode.
++
++properties:
++  compatible:
++    const: sprd,sc2731-bltc
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++patternProperties:
++  "^led@[0-2]$":
++    type: object
++    $ref: common.yaml#
++    unevaluatedProperties: false
++
++    properties:
++      reg:
++        minimum: 0
++        maximum: 2
++
++    required:
++      - reg
++
++required:
++  - compatible
++  - reg
++  - '#address-cells'
++  - '#size-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/leds/common.h>
++
++    pmic {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      led-controller@200 {
++        compatible = "sprd,sc2731-bltc";
++        reg = <0x200>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        led@0 {
++          reg = <0x0>;
++          color = <LED_COLOR_ID_RED>;
++        };
++
++        led@1 {
++          reg = <0x1>;
++          color = <LED_COLOR_ID_GREEN>;
++        };
++
++        led@2 {
++          reg = <0x2>;
++          color = <LED_COLOR_ID_BLUE>;
++        };
++      };
++    };
++...
+-- 
+2.34.1
+
 
