@@ -1,211 +1,204 @@
-Return-Path: <linux-kernel+bounces-251393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBD293045A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:48:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5E893045D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A1061F23DC3
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:48:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AA4D1F23F86
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6E14962B;
-	Sat, 13 Jul 2024 07:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="LsHlN0Zm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="STJ83Btb"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29DE44C8C;
+	Sat, 13 Jul 2024 07:52:06 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9FB4655D;
-	Sat, 13 Jul 2024 07:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB58101D5;
+	Sat, 13 Jul 2024 07:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720856882; cv=none; b=UiHdGwHgg+NusKGKCxT7wGNA4choaoYgwU+REWfUKnMKEy4UwNR0ymbl9xQcXkViiwBqrinAknixOnYOYKT/QYmfyQk1LCqYjMdjGiF3BbEPBkIOaKWGOvf4kpNIYyAn/ErzMK1iLd41TueNhaN32FTMu7znNQTCl5UWpjKCpEg=
+	t=1720857126; cv=none; b=ilguLSU0xxxbgGjRhEuL+FpkK+Mget2D5G7BgMxV8P4Hdf4zyzVmVBI+lSJ9Weiel0+q3uYYa3Euy+9EuNLzDHWYFybxe1BrS92l3xyeke0BIXnypeW80hm1K7GY0MxuKypj7w+7pMYrL8c7gJGVazdc5f1JkVp1fGby/kNCXbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720856882; c=relaxed/simple;
-	bh=fzE1tqkAitvT9MWEhAFeNMSVpk428YEAujKOqvz1CLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BKXQBq7RmlOAgHxUdyGsQunBaey7wrr20I+5cUvFixYjYWV+Mnb5d1EiFbn1m9atIeNYDo58k7WyxckmXsT87+i3TS/MJ2sJ83VYUuP8x4NWgyFmPu0i3JqA5FB0DE9rLxF+qnKYZAa/HOVQOxOvEnar4dVyWAspXWaK7Nb7Mbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=LsHlN0Zm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=STJ83Btb; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 7EAF31141FFC;
-	Sat, 13 Jul 2024 03:47:59 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Sat, 13 Jul 2024 03:47:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1720856879; x=
-	1720943279; bh=9HOzQ+ZFXE7l7J8yGreQf7AnqqrREQApYuFf8vOUgZc=; b=L
-	sHlN0ZmukVrdiPtao0dVrvRe9eV451O8mEX/qqzdiw0D2v+k4rmU8c0y+2FhJPqR
-	Iif7mdJDyMPtdmUdx0II9uqHON9rh17TNYION23jTp+GOrbJ3jbrlyfivSNBZuCf
-	br/1J2CqirverxAItgNWhR5m02lHbt/2pT98Lo58OXs6Y1jDpmLGIk+yKVAL4yfr
-	nQJ2HXgVjgqhPQ0Trl1lvksD+8TOgVeYtczi+ZXvIDBXYxH7LJsfBm+UDEsSebuJ
-	YhnmHE74kSbE39Rf5wXDWSf5jk1CisApP7PLZOAyjW+wkQNJCCvzofjzagOAGhdc
-	75T+ghwU0Ei4NWV2d6FMg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720856879; x=
-	1720943279; bh=9HOzQ+ZFXE7l7J8yGreQf7AnqqrREQApYuFf8vOUgZc=; b=S
-	TJ83BtbBqvQ8R9LAxbKo93gU5Y86rnUYjbPC7bs9Igl9E3+eChJRja4CdscbzatT
-	Wby7h8HIhfGoRGvSldYbIZ8fLkE2m0u4KlAE/grS/n/X9ThBauGhfkhYSTaAEcqx
-	ZILG5j0c7L+my1DHasy1pNMnmz/6RN2yWZUfO9mH7sJlA54rIBcLsdBy/YJ57u9r
-	87LXJfK84HynhVYfxrw5b2qTfD7CnRnDi8QprXM80riHISjydIo+wKv+wJvvAi2B
-	/z7Sx+O1x2ONLwBToQK4ebp/ATMePXgFUQhhyNA4/KOcNKx+dajHpbOmZPb5WSWX
-	vBs6U82o8QADnyjhDr/Aw==
-X-ME-Sender: <xms:LjGSZpTLLgEBSm0UebqMbq6_eBJdvDNOPlp6aGQPlmBpXAaiyppHZQ>
-    <xme:LjGSZizCOdhgYo_R8heb_RPOeQKwVtw9aL5zmJ6FZU4FAjyonBPxs6KsD38PhNJSN
-    DoBwIgdz0QDQ80FmF8>
-X-ME-Received: <xmr:LjGSZu2M-xQ-Cb4Tb9E-i7bgasas62YEVPoHRtrHuGcy3m7hlk35OcF-89X1>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeejgdduvdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtke
-    ertdertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehl
-    jhhonhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfetfedugfetudeuheetjefhue
-    fggfelleetvdevtefhueeujeefvdegleevhefgnecuvehluhhsthgvrhfuihiivgeptden
-    ucfrrghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:LjGSZhBbF6XKaGx8FW13b_DQ_VvEfEM_bnDK_WdDB08LSuww5IKQZw>
-    <xmx:LjGSZijqxVUODI3I0YrJeP-vaxqXb1x2_xb5ug-N-bjtrShibUnJAg>
-    <xmx:LjGSZlo_a2Pstf5rCTSfbXaMhcXAEc4DuJSZpUWzLE8o7ZnEDWu0Ow>
-    <xmx:LjGSZthmKpUXUKxFgJX-OsiwVEVJ_t7C6rFQcHnLNROw5jF80i3MlA>
-    <xmx:LzGSZrWKCz4vr2OnIB3Aa46v2Tx0FK0ykRTiaVrlLU8vOqpfJ3dzqJDP>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 13 Jul 2024 03:47:54 -0400 (EDT)
-From: "Luke D. Jones" <luke@ljones.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: corentin.chary@gmail.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH v3 1/1] hid-asus: use hid for brightness control on keyboard
-Date: Sat, 13 Jul 2024 19:47:33 +1200
-Message-ID: <20240713074733.77334-2-luke@ljones.dev>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240713074733.77334-1-luke@ljones.dev>
-References: <20240713074733.77334-1-luke@ljones.dev>
+	s=arc-20240116; t=1720857126; c=relaxed/simple;
+	bh=Eueq+6J+8pin3umzJrmjFs0ReEXfG2QuCgfeH9rPLyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GhVtQ7IOcNzYWd53JwE8Ch+2g4LYbv0+wOINCqbiByhgWgIKJg1+nrC9Id3s+EDg2NpGxYH/5lOHC32xr0vl5+9lB2jJjkEJatSaZLXdfoTsvh2a/bT/CX0CSWeI+wKKstIuwy7QPiEZ2xvpWD0Pwr/kcYUAQEKGHgzeNWTNUUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sSXXm-000000006ly-3V0z;
+	Sat, 13 Jul 2024 07:51:46 +0000
+Date: Sat, 13 Jul 2024 08:51:39 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Aurelien Jarno <aurelien@aurel32.net>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] hwrng: add hwrng support for Rockchip RK3568
+Message-ID: <ZpIyCwnFVbML3hnV@makrotopia.org>
+References: <cover.1720830725.git.daniel@makrotopia.org>
+ <CAGb2v64ajgK_4G_ANFgwxQToEzDjuBgbmozb7CLxJyNDo-MkCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGb2v64ajgK_4G_ANFgwxQToEzDjuBgbmozb7CLxJyNDo-MkCw@mail.gmail.com>
 
-On almost all ASUS ROG series laptops the MCU used for the USB keyboard
-also has a HID packet used for setting the brightness. This is usually
-the same as the WMI method. But in some laptops the WMI method either
-is missing or doesn't work, so we should default to the HID control.
+Hi Chen-Yu,
 
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
----
- drivers/hid/hid-asus.c                     |  7 +++++
- drivers/platform/x86/asus-wmi.c            |  3 +-
- include/linux/platform_data/x86/asus-wmi.h | 36 ++++++++++++++++++++++
- 3 files changed, 45 insertions(+), 1 deletion(-)
+thank you for reviewing and testing.
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 37e6d25593c2..af57a5f03193 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -492,12 +492,19 @@ static void asus_kbd_backlight_work(struct work_struct *work)
-  */
- static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
- {
-+	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
- 	u32 value;
- 	int ret;
- 
- 	if (!IS_ENABLED(CONFIG_ASUS_WMI))
- 		return false;
- 
-+	if (drvdata->quirks & QUIRK_ROG_NKEY_KEYBOARD &&
-+			dmi_check_system(asus_use_hid_led_dmi_ids)) {
-+		hid_info(hdev, "using HID for asus::kbd_backlight\n");
-+		return false;
-+	}
-+
- 	ret = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS,
- 				       ASUS_WMI_DEVID_KBD_BACKLIGHT, 0, &value);
- 	hid_dbg(hdev, "WMI backlight check: rc %d value %x", ret, value);
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 3f9b6285c9a6..799d928c7d3d 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -1681,7 +1681,8 @@ static int asus_wmi_led_init(struct asus_wmi *asus)
- 			goto error;
- 	}
- 
--	if (!kbd_led_read(asus, &led_val, NULL)) {
-+	if (!kbd_led_read(asus, &led_val, NULL) && !dmi_check_system(asus_use_hid_led_dmi_ids)) {
-+		pr_info("using asus-wmi for asus::kbd_backlight\n");
- 		asus->kbd_led_wk = led_val;
- 		asus->kbd_led.name = "asus::kbd_backlight";
- 		asus->kbd_led.flags = LED_BRIGHT_HW_CHANGED;
-diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-index 3eb5cd6773ad..74b32e1d6735 100644
---- a/include/linux/platform_data/x86/asus-wmi.h
-+++ b/include/linux/platform_data/x86/asus-wmi.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/errno.h>
- #include <linux/types.h>
-+#include <linux/dmi.h>
- 
- /* WMI Methods */
- #define ASUS_WMI_METHODID_SPEC	        0x43455053 /* BIOS SPECification */
-@@ -160,4 +161,39 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
- }
- #endif
- 
-+/* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
-+static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Zephyrus"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Strix"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_PRODUCT_FAMILY, "ROG Flow"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "GA403U"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "GU605M"),
-+		},
-+	},
-+	{
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
-+		},
-+	},
-+	{ },
-+};
-+
- #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
--- 
-2.45.2
+On Sat, Jul 13, 2024 at 02:48:39PM +0800, Chen-Yu Tsai wrote:
+> Hi,
+> 
+> On Sat, Jul 13, 2024 at 8:38 AM Daniel Golle <daniel@makrotopia.org> wrote:
+> >
+> > Rockchip SoCs used to have a random number generator as part of their
+> > crypto device.
+> >
+> > However newer Rockchip SoCs like the RK3568 have an independent True
+> > Random Number Generator device. This patchset adds a driver for it and
+> > enables it in the device tree.
+> >
+> 
+> Have you tested any of the later iterations? For me it stopped working
+> at v3. After v3 (including v3), all it spits out is zeros.
 
+I've not examined the actual values it returns, I will do so in future
+iterations.
+
+Alsom, I misread the original rk_rng_write_ctl() function, I will bring
+it back and also improve the comment describing it.
+
+> 
+> > v5 -> v6:
+> >  * Patch 1: unchanged
+> >
+> >  * Patch 2: get rid of #ifdef
+> >    - use if (IS_ENABLED(...)) { ... }instead of #ifdef inside functions
+> >    - use __maybe_unused for functions previously enclosed by #ifdef'ery
+> >
+> >  * Patch 3: unchanged
+> >
+> > v4 -> v5:
+> >  * Patch 1: always use RK3568 name
+> >    - use full RK3568 name in patch description
+> >    - add RK3568 to title in binding
+> >
+> >  * Patch 2: full name and cosmetics
+> >    - also always mention RK3568 as there may be other RNG in other
+> >      (future) Rockchip SoCs
+> >    - remove debug output on successful probe
+> >    - use MODULE_AUTHOR several times instead of single comma-separated
+> >
+> >  * Patch 3: unchanged
+> >
+> > v3 -> v4:
+> >  * Patch 1: minor corrections
+> >    - fix Rokchip -> Rockchip typo
+> >    - change commit title as requested
+> >
+> >  * Patch 2: improved error handling and resource management
+> >    - Always use writel() instead of writel_relaxed()
+> >    - Use pm_runtime_resume_and_get
+> >    - Correctly return error code in rk_rng_read()
+> >    - Make use of devm_reset_control_array_get_exclusive
+> >    - Use devm_pm_runtime_enable and there by get rid of rk_rng_remove()
+> >
+> >  * Patch 3:
+> >    - Move node to conform with ordering by address
+> >
+> > v2 -> v3: patch adopted by Daniel Golle
+> >  * Patch 1: address comments of Krzysztof Kozlowski, add MAINTAINERS
+> >    - improved description
+> >    - meaningful clock-names
+> >    - add entry in MAINTAINERS files
+> >
+> >  * Patch 2: numerous code-style improvements
+> >    - drop misleading rk_rng_write_ctl(), simplify I/O writes
+> 
+> This is probably the culprit. The RNG and RST control registers have
+> enable bits in their top 16 bits. Without those set together with the
+> actual bit values, the writes to the registers have no effect.
+> 
+> Please check all your writel calls against the TRM and add appropriate
+> bitmasks for the upper 16 bits.
+
+The upper 16 bits are apparently used as hardware mask when writing the
+lower 16 bits...
+
+I will send v7 after testing.
+
+
+> 
+> 
+> ChenYu
+> 
+> >    - drop unused TRNG_RNG_DOUT_[1-7] macros
+> >    - handle error handling for pm_runtime_get_sync()
+> >    - use memcpy_fromio() instead of open coding for-loop
+> >    - some minor white-spaces fixes
+> >
+> >  * Patch 3:
+> >    - use clock-names as defined in dt-bindings
+> >
+> > v1 -> v2:
+> >  * Patch 1: fix issues reported by Rob Herring and Krzysztof Kozlowski:
+> >    - Rename rockchip-rng.yaml into rockchip,rk3568-rng.yaml
+> >    - Fix binding title and description
+> >    - Fix compatible property
+> >    - Rename clocks and add the corresponding descriptions
+> >    - Drop reset-names
+> >    - Add a bus definition with #address-cells and #size-cells to the
+> >      example.
+> >
+> >  * Patch 2: fix issue reported by kernel test robot <lkp@intel.com>
+> >    - Do not read the random registers as big endian, looking at the
+> >      RK3568 TRM this is actually not needed. This fixes a sparse
+> >      warning.
+> >
+> >  * Patch 3: unchanged
+> >
+> > Aurelien Jarno (3):
+> >   dt-bindings: rng: Add Rockchip RK3568 TRNG
+> >   hwrng: add hwrng driver for Rockchip RK3568 SoC
+> >   arm64: dts: rockchip: add DT entry for RNG to RK356x
+> >
+> >  .../bindings/rng/rockchip,rk3568-rng.yaml     |  61 +++++
+> >  MAINTAINERS                                   |   7 +
+> >  arch/arm64/boot/dts/rockchip/rk356x.dtsi      |   9 +
+> >  drivers/char/hw_random/Kconfig                |  14 ++
+> >  drivers/char/hw_random/Makefile               |   1 +
+> >  drivers/char/hw_random/rockchip-rng.c         | 220 ++++++++++++++++++
+> >  6 files changed, 312 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml
+> >  create mode 100644 drivers/char/hw_random/rockchip-rng.c
+> >
+> > --
+> > 2.45.2
+> >
 
