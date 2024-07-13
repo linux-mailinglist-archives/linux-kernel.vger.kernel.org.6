@@ -1,132 +1,109 @@
-Return-Path: <linux-kernel+bounces-251327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96DD930396
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 05:35:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D56DF930397
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 05:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 148B0B22621
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:35:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3321C212CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553121773A;
-	Sat, 13 Jul 2024 03:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6DB175BF;
+	Sat, 13 Jul 2024 03:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MsB3kQ/Y"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4C1175B1
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 03:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="SrAjue6k"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C1723DE
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 03:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720841696; cv=none; b=MK3fjAsavmTmCp4kQNB7CjrF3rP4exAoqPB236ziLdSK2CF4ktZktlxDhMI1J83XrmTnpccJwIGJizx0zAJrkaNRFaqs+HrrHIJDdOhHSIPqrGV5k01miWcw6dbrvai9FaaBubRtqUzV/HPc1AtpN/ibDjyOx8BmsR/OOQyHqLE=
+	t=1720841896; cv=none; b=K8ZBry0i19JSLoNxtYzLp5WbDudS0Q94cHRl/Z+fMBO3K8qcm4T3SHmRqNSB50M7riFZlnhmm3keF1RO5ZsOiNU0Gme1nqBxMeXzBtmnVBCQU9tjkjpj+G63TT6Ujt40Vee9ymgNux0JP/mF5gzzfPZBryETGw77+GcLDWWg5WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720841696; c=relaxed/simple;
-	bh=owNlq2Y9PrDO1va5GSFXzi3oRkFi+EBsPRw6UNQjrgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=t6pcwocWc6VAnkRUHSQWZNDyn/FomWLHP5aO2dKWMgSXkEqDpVqVaxliVfRj7+fNs+s+G4CsLBTDZPZuk5hXzjGHh80hsgTNlGVSpOXG37GQujWKY1O0EGt91uymMEJjn8+e4xt+41rlakMWM0XheMRCcVP17oSt+8NL5L0Etb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MsB3kQ/Y; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d9da46ca13so1335259b6e.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 20:34:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720841694; x=1721446494; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qtpF82pGCu7wb84OrfErGjGTloI1qsDbavb4Ik1U9k4=;
-        b=MsB3kQ/YXlwP0YVSrI6zsSTijyDTcg0mezf8vLFyA7PMLj/7T2rQn0cv0BsEFDS5CB
-         jcz5DArLuPnkDDC1e9K2m/nRLokllxgkm8urXlzSwhWpqZWqAfIsyPLVYtob2RqmS4Og
-         mVDLhpGFjcKtGTUiGisvDltlL7JNgNARlh3gql4UAHtvWYcxOT/Ezad9jKcsgackRKl/
-         XeLw5yMbJwxAUxdg9+vynKsvTtMjJsCN155gcWP+Tu6r6xmmfGirK+lF6BEK91ZSfvRw
-         oTg6m5pEuP+N7QbJpKXljzNrMWVc45qQyx2zt2NVtO3viF8oj6FTXY7htJt3MXWUyytv
-         NlAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720841694; x=1721446494;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qtpF82pGCu7wb84OrfErGjGTloI1qsDbavb4Ik1U9k4=;
-        b=uFqiEdPUEd78odktr7835oAgJIGyDEUJUdass2YfhRTKR4FjPBA3jlA3iVze5nI11H
-         RMZLfxcbDWxLfZ/dOQi6BdMTYAUhkK3vrdCFHNZhjKM9Sz3b8ZUEqeETPyfcJHoSmE8F
-         IV2aMjcC36es0W71Lh6obRexhZhQDqwgEIQ+6xikUxZPBFEGKrHrLSGExVlkTCbmQ4hX
-         iXUbBdpG3e6G/2ZP28OvWTrLgv20uezWcgY60gIiD7PWdp685Bjf/2WjWA8UHi0wKrsV
-         WpzvVCHmlX4UIQp3C7yjk8jdNy7umTCN5R3jwDCGVFnLxmaI7/YPXSm24OgOZAHYLAVO
-         zv7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWnPQqK7aoeSYZwHAX+6FJyho1Q6tz6up6oe+GRW4tnNWHtIwMcRqZu5maxlCoUyJY/2tloo0Oamda8yTsw1wc9f25rlxJjfYlOfkVT
-X-Gm-Message-State: AOJu0YytHux+tW94Quy7kiizrhqZAc14wx34+KrygUie7ggqkUa1AoR9
-	FlRGIN7qKmMYZQCmyle4UPFNOsKLNtU7yiRJ3aa7N2A7Df/ykf/M
-X-Google-Smtp-Source: AGHT+IEAQRPKj9vObpjqjTMQ1SxXWHqcDPT6yiLFS2pxj6JuUGMdA2t1ndhQuVrWxaZWwgd/m0HWVw==
-X-Received: by 2002:a05:6808:191d:b0:3d9:b33e:d3e2 with SMTP id 5614622812f47-3d9b33ed905mr14745793b6e.19.1720841694100;
-        Fri, 12 Jul 2024 20:34:54 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:669e:eb9d:e30c:18b4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eba4540sm298199b3a.43.2024.07.12.20.34.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 20:34:53 -0700 (PDT)
-Date: Fri, 12 Jul 2024 20:34:51 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>, soc@kernel.org
-Cc: Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: pxa: fix build breakage on PXA3xx
-Message-ID: <ZpH12w9vyZZDdzDb@google.com>
+	s=arc-20240116; t=1720841896; c=relaxed/simple;
+	bh=kb0nblp8fXsVUi0ddRynguPkLG60RLpS7H8MAz9cjKM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=sle6uOZO3ZcBy7jjnimJFOaghVeOClO7J7rkooY41OzhwkJmJK2rzLeWf4qDA0dR2YWIoqr0iNQWfxPOQaNIAdEugpeKGW9skvTQjyvqlBVCBepEVmq8+5gjGoxqy8MdgoMRbRDQdIjHTG6MDBtX0U4ilPS+TgIxi5/fOBVkGMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=SrAjue6k reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=2FE2xnvxR/iLNMTwXXlYBVpW8aPIqjyFYqmSmT3PNEI=; b=S
+	rAjue6kZt/XSs734WkTE1A9mp0kv7jB5MBIfQ7MsJ2QJ2MnMLyoptJAQwBmVuhLJ
+	qWqc4uONISiSOpHfw9sKTMEuVrzElhY6UwhnI22W7Asfp1/Lqnt/1Karpe4L2dzL
+	SM2tc+xacJuIejal4XmN2Vv0UdRYg8jTHB8GuAjuv4=
+Received: from 00107082$163.com ( [111.35.186.71] ) by
+ ajax-webmail-wmsvr-40-143 (Coremail) ; Sat, 13 Jul 2024 11:36:33 +0800
+ (CST)
+Date: Sat, 13 Jul 2024 11:36:33 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Peter Xu" <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	"Andrew Morton" <akpm@linux-foundation.org>, 
+	"Alex Williamson" <alex.williamson@redhat.com>, 
+	"Jason Gunthorpe" <jgg@nvidia.com>, 
+	"Al Viro" <viro@zeniv.linux.org.uk>, 
+	"Dave Hansen" <dave.hansen@linux.intel.com>, 
+	"Andy Lutomirski" <luto@kernel.org>, 
+	"Peter Zijlstra" <peterz@infradead.org>, 
+	"Thomas Gleixner" <tglx@linutronix.de>, 
+	"Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, 
+	"Kirill A . Shutemov" <kirill@shutemov.name>, x86@kernel.org, 
+	"Yan Zhao" <yan.y.zhao@intel.com>, 
+	"Kevin Tian" <kevin.tian@intel.com>, "Pei Li" <peili.dev@gmail.com>, 
+	"David Hildenbrand" <david@redhat.com>, 
+	"Bert Karwatzki" <spasswolf@web.de>, 
+	"Sergey Senozhatsky" <senozhatsky@chromium.org>
+Subject: Re:[PATCH] mm/x86/pat: Only untrack the pfn range if unmap region
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240712144244.3090089-1-peterx@redhat.com>
+References: <20240712144244.3090089-1-peterx@redhat.com>
+X-NTES-SC: AL_Qu2ZAvSfvk8i5SGebOkXn0oTju85XMCzuv8j3YJeN500tybIyDshVFZ+JEPX18K2Gy2CmTGwahRl2tZTVLVAZKJI9hgEUWQCWE8//0DZVPH6
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Message-ID: <52fcc0ec.10f1.190aa29ee98.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wDXvwBC9pFmqvouAA--.37160W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0gkbqmWXy+UlmwADsL
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Commit 917195d6f829 ("ARM: pxa: consolidate GPIO chip platform data")
-tried to reuse the same instance of platform data for PXA25x and PXA27x
-GPIO controllers by moving it into arch/arm/mach-pxa/devices.c
-Unfortunately this file is built for other PXA variants which resulted
-in the following error:
-
->> arm-linux-gnueabi-ld: arch/arm/mach-pxa/devices.o:(.data+0x167c): undefined reference to `gpio_set_wake'
-
-Fix this by using #ifdef around PXA25x and PXA27x GPIO controller device
-structures and associated data.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407112039.cyyIQ3Js-lkp@intel.com/
-Fixes: 917195d6f829 ("ARM: pxa: consolidate GPIO chip platform data")
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- arch/arm/mach-pxa/devices.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/mach-pxa/devices.c b/arch/arm/mach-pxa/devices.c
-index d050a4c78f97..7695cfce01a1 100644
---- a/arch/arm/mach-pxa/devices.c
-+++ b/arch/arm/mach-pxa/devices.c
-@@ -633,6 +633,7 @@ struct platform_device pxa27x_device_pwm1 = {
- };
- #endif /* CONFIG_PXA27x || CONFIG_PXA3xx */
- 
-+#if defined(CONFIG_PXA25x) || defined(CONFIG_PXA27x)
- const struct software_node pxa2xx_gpiochip_node = {
- 	.name	= "gpio-pxa",
- };
-@@ -684,6 +685,7 @@ struct platform_device pxa27x_device_gpio = {
- 		.platform_data	= &pxa2xx_gpio_info,
- 	},
- };
-+#endif /* CONFIG_PXA25x || CONFIG_PXA27x */
- 
- static struct resource pxa_dma_resource[] = {
- 	[0] = {
--- 
-2.45.2.993.g49e7a77208-goog
-
-
--- 
-Dmitry
+CkhpLAoKQXQgMjAyNC0wNy0xMiAyMjo0Mjo0NCwgIlBldGVyIFh1IiA8cGV0ZXJ4QHJlZGhhdC5j
+b20+IHdyb3RlOgo+Cj5OT1RFOiBJIG1hc3NhZ2VkIHRoZSBjb21taXQgbWVzc2FnZSBjb21wYXJp
+bmcgdG8gdGhlIHJmYyBwb3N0IFsxXSwgdGhlCj5wYXRjaCBpdHNlbGYgaXMgdW50b3VjaGVkLiAg
+QWxzbyByZW1vdmVkIHJmYyB0YWcsIGFuZCBhZGRlZCBtb3JlIHBlb3BsZQo+aW50byB0aGUgbG9v
+cC4gUGxlYXNlIGtpbmRseSBoZWxwIHRlc3QgdGhpcyBwYXRjaCBpZiB5b3UgaGF2ZSBhIHJlcHJv
+ZHVjZXIsCj5hcyBJIGNhbid0IHJlcHJvZHVjZSBpdCBteXNlbGYgZXZlbiB3aXRoIHRoZSBzeXpi
+b3QgcmVwcm9kdWNlciBvbiB0b3Agb2YKPm1tLXVuc3RhYmxlLiAgSW5zdGVhZCBvZiBmdXJ0aGVy
+IGNoZWNrIG9uIHRoZSByZXByb2R1Y2VyLCBJIGRlY2lkZWQgdG8gc2VuZAo+dGhpcyBvdXQgZmly
+c3QgYXMgd2UgaGF2ZSBhIGJ1bmNoIG9mIHJlcHJvZHVjZXJzIG9uIHRoZSBsaXN0IG5vdy4uCj4t
+LS0KPiBtbS9tZW1vcnkuYyB8IDUgKystLS0KPiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
+KCspLCAzIGRlbGV0aW9ucygtKQo+Cj5kaWZmIC0tZ2l0IGEvbW0vbWVtb3J5LmMgYi9tbS9tZW1v
+cnkuYwo+aW5kZXggNGJjZDc5NjE5NTc0Li5mNTdjYzMwNGIzMTggMTAwNjQ0Cj4tLS0gYS9tbS9t
+ZW1vcnkuYwo+KysrIGIvbW0vbWVtb3J5LmMKPkBAIC0xODI3LDkgKzE4MjcsNiBAQCBzdGF0aWMg
+dm9pZCB1bm1hcF9zaW5nbGVfdm1hKHN0cnVjdCBtbXVfZ2F0aGVyICp0bGIsCj4gCWlmICh2bWEt
+PnZtX2ZpbGUpCj4gCQl1cHJvYmVfbXVubWFwKHZtYSwgc3RhcnQsIGVuZCk7Cj4gCj4tCWlmICh1
+bmxpa2VseSh2bWEtPnZtX2ZsYWdzICYgVk1fUEZOTUFQKSkKPi0JCXVudHJhY2tfcGZuKHZtYSwg
+MCwgMCwgbW1fd3JfbG9ja2VkKTsKPi0KPiAJaWYgKHN0YXJ0ICE9IGVuZCkgewo+IAkJaWYgKHVu
+bGlrZWx5KGlzX3ZtX2h1Z2V0bGJfcGFnZSh2bWEpKSkgewo+IAkJCS8qCj5AQCAtMTg5NCw2ICsx
+ODkxLDggQEAgdm9pZCB1bm1hcF92bWFzKHN0cnVjdCBtbXVfZ2F0aGVyICp0bGIsIHN0cnVjdCBt
+YV9zdGF0ZSAqbWFzLAo+IAkJdW5zaWduZWQgbG9uZyBzdGFydCA9IHN0YXJ0X2FkZHI7Cj4gCQl1
+bnNpZ25lZCBsb25nIGVuZCA9IGVuZF9hZGRyOwo+IAkJaHVnZXRsYl96YXBfYmVnaW4odm1hLCAm
+c3RhcnQsICZlbmQpOwo+KwkJaWYgKHVubGlrZWx5KHZtYS0+dm1fZmxhZ3MgJiBWTV9QRk5NQVAp
+KQo+KwkJCXVudHJhY2tfcGZuKHZtYSwgMCwgMCwgbW1fd3JfbG9ja2VkKTsKPiAJCXVubWFwX3Np
+bmdsZV92bWEodGxiLCB2bWEsIHN0YXJ0LCBlbmQsICZkZXRhaWxzLAo+IAkJCQkgbW1fd3JfbG9j
+a2VkKTsKPiAJCWh1Z2V0bGJfemFwX2VuZCh2bWEsICZkZXRhaWxzKTsKPi0tIAo+Mi40NS4wCgpJ
+IGFwcGx5IHRoaXMgcGF0Y2ggb24gNi4xMC4wLXJjNywgYW5kIGNvbmZpcm1lZCB0aGF0IG5vIGtl
+cm5lbCB3YXJuaW5nIHNob3dzIHVwIHdoZW4gSSBzdXNwZW5kIG15IHN5c3RlbSh3aXRoIG52aWRp
+YSBHUFUpLApBZnRlciBzZXZlcmFsIHJvdW5kIG9mIHN1c3BlbmQvcmVzdW1lIGN5Y2xlLCBubyBl
+cnJvci93YXJuaW5nIG9ic2VydmVkIGluIGtlcm5lbCBsb2cuCgpUaGFua3MKRGF2aWQK
 
