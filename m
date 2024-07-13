@@ -1,177 +1,126 @@
-Return-Path: <linux-kernel+bounces-251615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F7793070A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 20:38:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD26930712
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 20:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBAF9B25363
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 18:38:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7DD0B2577F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 18:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A934C13DBB1;
-	Sat, 13 Jul 2024 18:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8CC13E3EF;
+	Sat, 13 Jul 2024 18:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mitaoe.ac.in header.i=@mitaoe.ac.in header.b="D0GjrcNR"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mVaYXeBU"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A811DFC5
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 18:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9913DDDD;
+	Sat, 13 Jul 2024 18:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720895919; cv=none; b=TleHYw34SiAH7EfWlhiVDPbxIGxeYcugw/frIp+BiFwf6yFTKJnIjtT5drB1gcN5z9cPrjKj2Bj0NMVhpvQh5e6vXKI3SY959CGJk5MbihPoR+MP58wfVk/L1lOOuvF9bE1ugp4qfDfd2+XE0PZEEB6/gr01JiGxt93dMhrXEN4=
+	t=1720896305; cv=none; b=QG21428rmpj5aY5o+mgw2o7gICRHfZ3MWB1G6q7xsZfc4Tqp6BgMb6ohlfmWaUV6X4aO2CXwRTf+kMKJxuToArodobCge6dicVPFPgJjE/cmKMiBG9br/HVTG7SQeiI6CkUpFVAFMwHw4FY0EilPdSI1Whtajga0VqsttzdBfF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720895919; c=relaxed/simple;
-	bh=66JM7MTshMlOTzGaZeayzTXOiK9+WXLBxR6p2mbsZ6I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gbYDqE7SsNbAjPPlBUvBY7nNT76nNy7I/5pmT77a6CxNcxNQ7IRVZ2skU4gMIMOmaaFNJj8JWlO3fSnDfqlrkht+r7frfBAdgieVv7mlFskc9YM+8ynEOle2/A6SU7OCusKOgk9QA9+ysPyubT+P/LjlMjSXsO4bhOnXadc3NZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mitaoe.ac.in; spf=fail smtp.mailfrom=mitaoe.ac.in; dkim=pass (2048-bit key) header.d=mitaoe.ac.in header.i=@mitaoe.ac.in header.b=D0GjrcNR; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mitaoe.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mitaoe.ac.in
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fb1ff21748so21107995ad.3
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 11:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mitaoe.ac.in; s=google; t=1720895916; x=1721500716; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LBPw5aAlo17a0qcvw45tKrPGk8ZlsZwPKEwzWdjyf7A=;
-        b=D0GjrcNRTV6QX0uedoc98l5zy3XYNscR7XSsqgs8L6vjZrJyK02Zr+7h4x7i7yb7HB
-         ot+gSwRoGMcLx1YqMlOtjnMJMMxmY6sMyY3+PC0wk16IuOewHawMNaCEWDbfgSHw4L28
-         E3Nuz5cNvBy+8/owVk6QNrgidX+jIwgbuPfcbufgjnOzaqMX8BAvYbNN6SLQfjVSLntT
-         buxOd0rANtz9uyJ6TyGMwIL+1+B4PWyN40z01TfFqq2MwhUjzMcBoi8bQayTndTzotlQ
-         4HeHT3iZwmuqYKKj5+2Nr13e6JFjYK6M2uKxBCA8aAq9NdiLUJi225Fzl1aCPjmpT0kO
-         GdlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720895916; x=1721500716;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LBPw5aAlo17a0qcvw45tKrPGk8ZlsZwPKEwzWdjyf7A=;
-        b=fZT5AlW5Gb7KFdW5O0FNL1NgezlQGL36hHFl5vPGaKJQvoG0XTJAz8orJfoCR2CNaR
-         ALVQGLL83pANInBbFlhprbpdzVy3eW2I40GaEgoVL7CuX8PrOLNglA/6Fqtbtr99PwPz
-         H2rwYYM6dCqWuMVAI/xDAqcnIYcIp9VI58Xgzlc64yB2llthNrpRuonWuEQaiy6vrSBQ
-         a317Oln91D1aT32C350s8Ika5g6/1Hsw9BdCk7Ghf25LyqAaa+KXXDh2d7YxQ2GuUAzq
-         X2a1BFaqKMr7d48l7IXFYe7beYBl2M/SnalkWMoycqUAyTyUKlqB6Lf2UtWQTmAGN43g
-         B+eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpAkRUB8XHR7PR4ix5gK+jKI9mzIYVCF8xxn3YMrwTyf9XeI+OXYyHqfN+ZZ97JtRqDJ4LqXqdO+hquNtxw4hjapdjyWTkw1S0bBCr
-X-Gm-Message-State: AOJu0YwdM72t31Rpkxu9BcFGzUDr96ozZTxSu4t/Wh85JXnqY8ZxAbmW
-	56o9lv65i8RCvOdApXqRIEKPggOTI/+UfLtPYkoaVsYpHn9/gT/SUCDB+occSTk=
-X-Google-Smtp-Source: AGHT+IEAGCPvPUUX0mH+chWYU7b4BUEc+3xxeZoD9yWvB/3c1yEm1dy33ooRnGEm9lyXYu2x1cHGbA==
-X-Received: by 2002:a17:903:228b:b0:1fb:6ea1:5e with SMTP id d9443c01a7336-1fbb6ec1f2emr129417495ad.44.1720895916109;
-        Sat, 13 Jul 2024 11:38:36 -0700 (PDT)
-Received: from localhost.localdomain ([152.58.19.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bc3787csm13061605ad.189.2024.07.13.11.38.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 11:38:35 -0700 (PDT)
-From: mohitpawar@mitaoe.ac.in
-To: pbonzini@redhat.com
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mohit0404 <mohitpawar@mitaoe.ac.in>
-Subject: [PATCH 4/4] Fixed: virt: kvm: kvm_main_c: Resolved seven code indent errors
-Date: Sun, 14 Jul 2024 00:08:13 +0530
-Message-Id: <20240713183813.127677-1-mohitpawar@mitaoe.ac.in>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720896305; c=relaxed/simple;
+	bh=S4VHF1SncDJq0sGOKJ8UmXPy4Jk7J8435o2/pnX922k=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=IS7nP9VrJz+boHd6ubVW8d6PidPH+yWqvzqoy1Mlk/7YZcGXMsx6Zbu7u4OwyBDs8Od7vlfzTSdeUqqHzgEbdzQdnZ/ggrFZe0IftM01M0W3ubpF/OCTv0cIsSKO0mfIYTK0sbWFQ1bT0EV3Z4roYw9gruTOYNgm7QIyqjjddag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mVaYXeBU; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720896295; x=1721501095; i=markus.elfring@web.de;
+	bh=Tl94jXHRVPHxXEsNK8QYCbwg6IcbsePXJwiPZ1IYb2s=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=mVaYXeBUhKnDonClssgvcoZRLq7wEZ4av2RDahQVJ8y428r7TOc2I7GtiA/zhIu1
+	 Kjg5Pn8w3+M0LeFS3pEtBRm37Rg+98/hPJaoBG4eDu8FX099srvss2QyVDRAU+Mq3
+	 OV1CoYIpdrsgjU2IoLwN94U0fDUodrxexRjlGPw8TcRVibtnUP/bZOEUlwpMVvo0K
+	 pGYTysuvouY/TRs0YOZbY2QI13Xyxka0hJjxOxCakNY1Kr4uDET14c/I4zZOsYqmK
+	 /rX5ZfqBhJCKSH5R9FEayfjH7BnXYASlD9cas0l1upH9bLxOB3K/XAescIv4lb0LN
+	 pZS0FfEhxSF1Z5PRJw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MbTGt-1rvppX3qO1-00bN57; Sat, 13
+ Jul 2024 20:44:54 +0200
+Message-ID: <aace3b69-d26d-4f4f-a584-97f1bcb59f29@web.de>
+Date: Sat, 13 Jul 2024 20:44:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, David Howells <dhowells@redhat.com>,
+ Jeff Layton <jlayton@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] netfs: Use seq_putc() in fscache_cookies_seq_show()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JmU/2zR/PKK4sSlgNuBI3f9yIhj/lxOWu4mkHIhjafPLe6M+1rt
+ rl5qyE3nSYsi3evGHgxOrDpIeP6oEqGldhN8Ld4hS9+wBzEpU4Mqty6A5uhZGcYrq0Mot2b
+ vRwe+d0Rgq374vNOCEkxuiTPPmyNXRYRIcRSHaHDCkrF5VbDThNWVLD8TXf1aN35d243Aj9
+ tSbgi4jrNnLl9POykuEWw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jKBRqTA+rHg=;iYl9a6wc/pomO0tBXDvrmEI0a4f
+ cs3p7lv6SpK3XOrTTfTvJ3rL04LziIMKMrTjyOL0sNXi1FlYt00MJ0phhsClms0El9BrjULG4
+ a9KTA98J6a3pqiyZXuHxmVrssvC7hZ4/FrQvSYdpDxmfnM+Uee7KoRzwL2iLqRBQRTpRG4hHX
+ LT5kiyDhNmPQ5u0GM5LokfAFDOfmoUykJ9gVkT9wK1nwSNeyl74p9IKYRie+FzvgQCqur+qq/
+ 15NSnZ6vuzl7VlrSFbBZZwETDmh5NE5xk+vig6WB9qnHtecnn4bcs+zfUii/6XNwCwY3mAP/4
+ mbIovkLekC5GOy5K+PbqELrxaoxAoVnv9jPnOx0oZu1psaiEoP4n+yV24FjuF4MKAKRbGcoQF
+ 2U5Dm21qfIgZsGNTdnWznBC7QTAsh34AooVel5Jmvms1VD2gMWFmEA7GJIIZl5bOjcsF3kG/B
+ spY1Hw0B7OBjKodpv0ZphBC1hp4jCooRW/obXFS8SuYRv2M3UzYHci8GqA+edoGG43qRtl9FC
+ horcYQv//MDKWU2nCuc17f2X3yvlOfPqDF6jyWwMnz+lRg0WPKQXYpdZeQQAC6hYPAzc1dZnh
+ df6H7rwgH1SAiWyvqEMAGCe8Z5skeTyhc9Rhy15lmQC7Ue5GCBTAOWzuQHMtXUh/rwgpDHGJA
+ WMyQ/pR+XpKcOFBTJNLI5olz1kWbq1oaabP0Mi3YbY//q2rTuRN/UjKbR7YBhZJ88fTrH5AuA
+ s/1SMCZ4T2E3MXw/KUYIMAnrKdGnlivqiJlfMaho38Qqmb/XI4lFptF/lr+KeD7sWOHpl8/i5
+ g2FNondHa2GcxnJk0kVzC/eg==
 
-From: Mohit0404 <mohitpawar@mitaoe.ac.in>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 Jul 2024 20:35:35 +0200
 
-Fixed 7 Code Indent ERRORS-
-virt/kvm/kvm_main.c:3347: ERROR: code indent should use tabs where possible
-virt/kvm/kvm_main.c:3377: ERROR: code indent should use tabs where possible
-virt/kvm/kvm_main.c:3432: ERROR: code indent should use tabs where possible
-virt/kvm/kvm_main.c:3598: ERROR: code indent should use tabs where possible
-virt/kvm/kvm_main.c:6006: ERROR: code indent should use tabs where possible
-virt/kvm/kvm_main.c:6007: ERROR: code indent should use tabs where possible
-virt/kvm/kvm_main.c:6337: ERROR: code indent should use tabs where possible
----
- virt/kvm/kvm_main.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+Single characters should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 1192942aef91..4b9090693527 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -130,7 +130,10 @@ static long kvm_vcpu_compat_ioctl(struct file *file, unsigned int ioctl,
-  *   passed to a compat task, let the ioctls fail.
-  */
- static long kvm_no_compat_ioctl(struct file *file, unsigned int ioctl,
--				unsigned long arg) { return -EINVAL; }
-+				unsigned long arg)
-+{
-+	return -EINVAL;
-+}
- 
- static int kvm_no_compat_open(struct inode *inode, struct file *file)
- {
-@@ -3340,7 +3343,7 @@ int kvm_vcpu_read_guest(struct kvm_vcpu *vcpu, gpa_t gpa, void *data, unsigned l
- EXPORT_SYMBOL_GPL(kvm_vcpu_read_guest);
- 
- static int __kvm_read_guest_atomic(struct kvm_memory_slot *slot, gfn_t gfn,
--			           void *data, int offset, unsigned long len)
-+				void *data, int offset, unsigned long len)
- {
- 	int r;
- 	unsigned long addr;
-@@ -3369,8 +3372,8 @@ EXPORT_SYMBOL_GPL(kvm_vcpu_read_guest_atomic);
- 
- /* Copy @len bytes from @data into guest memory at '(@gfn * PAGE_SIZE) + @offset' */
- static int __kvm_write_guest_page(struct kvm *kvm,
--				  struct kvm_memory_slot *memslot, gfn_t gfn,
--			          const void *data, int offset, int len)
-+				struct kvm_memory_slot *memslot, gfn_t gfn,
-+				const void *data, int offset, int len)
- {
- 	int r;
- 	unsigned long addr;
-@@ -3425,7 +3428,7 @@ int kvm_write_guest(struct kvm *kvm, gpa_t gpa, const void *data,
- EXPORT_SYMBOL_GPL(kvm_write_guest);
- 
- int kvm_vcpu_write_guest(struct kvm_vcpu *vcpu, gpa_t gpa, const void *data,
--		         unsigned long len)
-+			unsigned long len)
- {
- 	gfn_t gfn = gpa >> PAGE_SHIFT;
- 	int seg;
-@@ -3590,8 +3593,8 @@ int kvm_clear_guest(struct kvm *kvm, gpa_t gpa, unsigned long len)
- EXPORT_SYMBOL_GPL(kvm_clear_guest);
- 
- void mark_page_dirty_in_slot(struct kvm *kvm,
--			     const struct kvm_memory_slot *memslot,
--		 	     gfn_t gfn)
-+				const struct kvm_memory_slot *memslot,
-+				gfn_t gfn)
- {
- 	struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
- 
-@@ -5999,8 +6002,8 @@ static int kvm_debugfs_open(struct inode *inode, struct file *file,
- 
- 	/*
- 	 * The debugfs files are a reference to the kvm struct which
--        * is still valid when kvm_destroy_vm is called.  kvm_get_kvm_safe
--        * avoids the race between open and the removal of the debugfs directory.
-+	 * is still valid when kvm_destroy_vm is called.  kvm_get_kvm_safe
-+	 * avoids the race between open and the removal of the debugfs directory.
- 	 */
- 	if (!kvm_get_kvm_safe(stat_data->kvm))
- 		return -ENOENT;
-@@ -6330,7 +6333,7 @@ EXPORT_SYMBOL_GPL(kvm_get_running_vcpu);
-  */
- struct kvm_vcpu * __percpu *kvm_get_running_vcpus(void)
- {
--        return &kvm_running_vcpu;
-+	return &kvm_running_vcpu;
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/netfs/fscache_cookie.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/netfs/fscache_cookie.c b/fs/netfs/fscache_cookie.c
+index 4d1e8bf4c615..5e490336b90f 100644
+=2D-- a/fs/netfs/fscache_cookie.c
++++ b/fs/netfs/fscache_cookie.c
+@@ -1134,7 +1134,7 @@ static int fscache_cookies_seq_show(struct seq_file =
+*m, void *v)
+ 	auxlen =3D cookie->aux_len;
+
+ 	if (keylen > 0 || auxlen > 0) {
+-		seq_puts(m, " ");
++		seq_putc(m, ' ');
+ 		p =3D keylen <=3D sizeof(cookie->inline_key) ?
+ 			cookie->inline_key : cookie->key;
+ 		for (; keylen > 0; keylen--)
+@@ -1148,7 +1148,7 @@ static int fscache_cookies_seq_show(struct seq_file =
+*m, void *v)
+ 		}
+ 	}
+
+-	seq_puts(m, "\n");
++	seq_putc(m, '\n');
+ 	return 0;
  }
- 
- #ifdef CONFIG_GUEST_PERF_EVENTS
--- 
-2.34.1
+
+=2D-
+2.45.2
 
 
