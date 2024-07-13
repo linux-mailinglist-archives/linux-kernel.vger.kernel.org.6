@@ -1,125 +1,110 @@
-Return-Path: <linux-kernel+bounces-251474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F56930548
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:55:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCAD93054C
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F371F21A76
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:55:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D4D1F21A89
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635AF745E2;
-	Sat, 13 Jul 2024 10:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZP3nL2AY"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A122E770F8;
+	Sat, 13 Jul 2024 10:57:06 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6E042049;
-	Sat, 13 Jul 2024 10:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D0FF51B;
+	Sat, 13 Jul 2024 10:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720868122; cv=none; b=I3SvIsI03/6nyYIjiJukFILLdaOzDRBHbTZcA3Tt/lByuCeHrcyKfod+exG2DvqjbocwfHi4j53gMe6fHZ+AL5eZar9rt2UjTz7dSwa1YLO82djP30yeHESCdWjoRMXRGWHypl/9FNsu30sMjODOCHhXUMDgvK0ny/ZtS3oQWzo=
+	t=1720868226; cv=none; b=k+yx6f5YVmPjxPcbsb5h6Nw8ZHrJeMmzK29uSnxDZ2CvbC+elNJwUJybeILDjbfQfSxVTEPoRD2sNXeolZi3h5qV/YPiQDa4dJy6s+dZAQyo8xeW7AZqGMlHsvuhDREf23Ek7ouBPn1bAC9NaWXGQHlbCanKtvz5nj7U4f+h8dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720868122; c=relaxed/simple;
-	bh=Mdx3w8q7KQJYWfl/irAVZ9IeK4hNn9RgGyBFy7QYeBw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=owQ6BSu705s/5XVk93brnGTJ48YSYbAocv9HhAg8C7JIeD2vacL8CD2OZJiLJEr21QtZKoRDPyyM2TrOo969coNNKEU0B/TzPaihF0daXRCkgsCCkLVEzG3AEyGFKTDeGYQP8ru1HbFbnXYPnJ2I4N275//YlYLRqMNub28bPGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZP3nL2AY; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720868110; x=1721472910; i=markus.elfring@web.de;
-	bh=DhTEpLlivlrGpySqjjeN3M7w54ILJzJ9uQo+GK+NNOc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ZP3nL2AYNbd5aQpzH8CWfqsWkXs1NppBIXKq3o38WV1s4DrtFovJUy4N3+WeQTqf
-	 iA2QxhIGH9SOYNjotkXOHGH+Fbr8MUzHUOhH7jw6rBS0V7sZtkv3zDAsKRhVW9Hch
-	 vB9YE9ulbmOerKLZWXfMSmwWmcaS0H4eXADIYd5F0UB/163m1eKq4fQk/G26fCN+h
-	 Uxq1ARFy9uABb6yZp50rNIqtCMy3pqXBOiRn05iccTDhhb2fcHWnYVWN1YwjhQwje
-	 M6fsvZU1gUvMe80jl1I1SdG23MkTwbsnQoOEVuLW8Nu8Re8qfJC4R4e5U9lnWBmWw
-	 juW17I1net9lTQcZ1w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTvw0-1ssP1z3dac-00TlLs; Sat, 13
- Jul 2024 12:55:09 +0200
-Message-ID: <2f694a65-218a-48cc-b0e6-fcca6aaf646f@web.de>
-Date: Sat, 13 Jul 2024 12:55:09 +0200
+	s=arc-20240116; t=1720868226; c=relaxed/simple;
+	bh=QzVXk7APsQy77nrz5fXBLxvDVTuBB5pTDsN5HIi/ots=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=il275qKJIrvf+ZW3wKZnG8rzfZ6q6Amzae+kVwbsKd5GIM6BXLHGH+pw5jiumu7jWRaANjYZP7FwV7sPKbc5zB0X2quK7bJRsgqSriKxJPAAi9x4FDQ3FADVNn0rtgiUDwM4iaeHFTF3F3jZ5W741S74Wqkgh1F/90SZcbwj7NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WLllR301nz4f3jMJ;
+	Sat, 13 Jul 2024 18:56:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 35E521A016E;
+	Sat, 13 Jul 2024 18:56:59 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCHazl5XZJmoREJAA--.5337S3;
+	Sat, 13 Jul 2024 18:56:59 +0800 (CST)
+Subject: Re: [PATCH -next] blk-cgroup: move congestion_count to struct blkcg
+To: Tejun Heo <tj@kernel.org>, Xiu Jianfeng <xiujianfeng@huawei.com>
+Cc: josef@toxicpanda.com, axboe@kernel.dk, lizefan.x@bytedance.com,
+ hannes@cmpxchg.org, cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240712085141.3288708-1-xiujianfeng@huawei.com>
+ <ZpFlsrNMMUMnT_Lq@slm.duckdns.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <a39656fd-f34c-fa69-7d20-8b86fc1cb0c4@huaweicloud.com>
+Date: Sat, 13 Jul 2024 18:56:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Vinod Koul <vkoul@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] dmaengine: Use seq_putc() in two functions
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:nWYO7sFfEEhfpedzY7Hgh1tN+t2UM9S+7icVE7Z25wrlc7ESInb
- LzUo48B+8mole+wVkYI0ACBVcCxhBfU/u2I2qVeCNXBe75jrwx+tkOvWEOSaQEQyG6lZtR6
- vXP51rV3nPOK542cxmy29oYtS2hNKY2x1MiaUNY+1N12ro7ZJl50q/90tNFj6zme2n4D7C+
- LdYL1xDNB4PpMJ1BQpW/w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JovllL977LQ=;VfNe0dWfllFPTCFnmjmqvPsXhlt
- tLpHkmnr1SH3dkc69gJeadpIT2GmrolXGjGJIDBZG8dGuel8d2YR6umuCbKUgwPjBMwimzAZS
- cLoDhfCZNgBSltJi/ODFGiPPQq1Da9pEeTEljolR1r1Rr2my+23Bv/vKNlLjFtL6RVfLRTbs2
- HXpsPT43C7smrluMJ6SddneW2rX0p82fvNuE7eyuI/dBET5duHIxSCvAS8PyTdD3DtAUhd3L3
- xdhvQX04gfV0EocyuxX9bzLYZfEDfvyNHOXH/FOyEh1Ha5cYIF6Yzy4bxUF39O/C0GsgBW6Hf
- F3LLRKYus5mvxqgacESpw3OA92OuSASg5fdG2sGUropu8pZFgeHlCcIssxDUdf210Jh2I5d1f
- /diDkFHwLQyJw8Wrg+QCixSRVhWc8dsIqk3HGWn9XwbHN0dZxDfBadoKfYWIJZuux+v7lvw5N
- Ll/W9TQKAKk5OMljhPYttJ2I94tzbg4J/dslzNRg08kEqes8z9a1rCXtHKP13mAXiSGWTZ9my
- WiKYb6ptD+j/op5XIj1vQ39FkwXqUsHl2L594EOSbcYH6vMI1YSI2EWvylGuZ8YS6/W6aJ+ZI
- QJy9rplSz5dUgQRh5jPqtEilO6rRz2a+nmNeEi24YlRkfUVKlZc80QOyCehB/EUZBfqrLp1Vk
- 00eXEb1J2/5Bm2MRWnm34jCOABR3+kOqC7FQHOOGJEGKqwKv9SPXjaNAtpH0lO2rJWb2wXrKd
- bTE4wzIS3BvtYYS+Gxt9SBhVa1TtxkAGek8jaT5ozfOEk+o8VIPMBAecutvpBA9BIZKyNRvqt
- bDmz2HPApnZN3No40oRfvRsA==
+In-Reply-To: <ZpFlsrNMMUMnT_Lq@slm.duckdns.org>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHazl5XZJmoREJAA--.5337S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruw1kCF47tFy8Wryxtry7Jrb_yoWDJFc_ur
+	Wjv397urWUJr48A3W3Kw15t390k3y5Gry5Jryqq3yUXa4Fyr18Kw1vg3y3Zry8JF40qF9x
+	CF93AayFkrn2gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbaxYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jul 2024 12:30:30 +0200
+Hi, Tejun!
 
-Single characters (line breaks) should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+ÔÚ 2024/07/13 1:19, Tejun Heo Ð´µÀ:
+> Hello,
+> 
+> On Fri, Jul 12, 2024 at 08:51:41AM +0000, Xiu Jianfeng wrote:
+>> The congestion_count was introduced by commit d09d8df3a294 ("blkcg:
+>> add generic throttling mechanism"), but since it is closely related
+>> to the blkio subsys, it is not appropriate to put it in the struct
+>> cgroup, so move it to struct blkcg.
+>>
+>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+>> ---
+>> only compiling tested
+> 
+> blkcg is per cgroup and blkg is per cgroup-device pair, so the change isn't
+> just moving the field but updating what it means and how it works. The
+> change needs a lot more thinking, justification and testing
+I understand blkcg and blkg, however, maybe I'm being noob, I don't see
+how this patch is related to blkg, the change is that 'congestion_count'
+is moved from cgroup to blkcg. This look quite straightforward to me,
+maybe I'm missing something, can you explain more?
 
-This issue was transformed by using the Coccinelle software.
+Thanks,
+Kuai
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/dma/dmaengine.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
-index c380a4dda77a..d098de909b1e 100644
-=2D-- a/drivers/dma/dmaengine.c
-+++ b/drivers/dma/dmaengine.c
-@@ -94,7 +94,7 @@ static void dmaengine_dbg_summary_show(struct seq_file *=
-s,
- 				seq_printf(s, " (via router: %s)\n",
- 					dev_name(chan->router->dev));
- 			else
--				seq_puts(s, "\n");
-+				seq_putc(s, '\n');
- 		}
- 	}
- }
-@@ -115,7 +115,7 @@ static int dmaengine_summary_show(struct seq_file *s, =
-void *data)
- 			dmaengine_dbg_summary_show(s, dma_dev);
-
- 		if (!list_is_last(&dma_dev->global_node, &dma_device_list))
--			seq_puts(s, "\n");
-+			seq_putc(s, '\n');
- 	}
- 	mutex_unlock(&dma_list_mutex);
-
-=2D-
-2.45.2
+> 
+> Thanks.
+> 
 
 
