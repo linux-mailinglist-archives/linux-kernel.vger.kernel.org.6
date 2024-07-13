@@ -1,92 +1,136 @@
-Return-Path: <linux-kernel+bounces-251281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018329302F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:14:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFAE29302F7
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB801F2261E
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:14:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5B51B2309B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636C61095B;
-	Sat, 13 Jul 2024 01:14:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E800DDF59;
+	Sat, 13 Jul 2024 01:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="v0PMbDDV"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C39B101C4
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 01:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4829748F;
+	Sat, 13 Jul 2024 01:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720833245; cv=none; b=QZFjzDAFUBO6/ptk4Enq6nDEoiEizi+1CjAHqAhiEbnsuhSHYQlnRKvBQtNED2QFAF/FNouMylN33EBydK+pwBWDRSeAJfca7P6Cy8EfpJsngiDwoi26leH7hYR5QEI3n1a921BgvQ9SFAEvL2UqA4vKatiReHcLjG1X7gxcj2o=
+	t=1720833320; cv=none; b=aRg2LDPmuTISGVHexHe5WQYwWrH3j1ttrRSZl8MxbNpJgD3QCKjAbM9Q4Ktl//KoIITmhZj14K+DXwvYdaUyfFvtBaoiFBUH4TosxkcwtllkmkQ1/khNexMtVuaLMYCUJ93R00zvaxCNZBHqVBv/et/g0DfPlHfRhcKxsJF+4+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720833245; c=relaxed/simple;
-	bh=yLiGAQK6Mk7tGxmkVKJyPaPXikggUr9XMOUFb0JR8w8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eB7z7MVCRfCcSxiLx9LDJ4WKZ4xutRieNk+aE98/FmPN1RhpT47UiH3bjNohBlSqlvH4TX8NJNrJctXfk6dc526XAkHy0AZp9KgDUfU7g26R6CiICv3KW8K7jicEpmu5jBXHAqbx06Tklb/VGLESHGj6QCUGxEpOMKuYDzG4CgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-804825a316bso269517939f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 18:14:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720833242; x=1721438042;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nMt0bLfjQZs0pG0t6pt3o4s1wzf1I7qMKCmPeA1/C1g=;
-        b=ht0/2XqP7gGbysqNVlqPQFv68Tjuzl3SeApKqZWrYdeuCmB7ffjcScB+TpkHu36BZo
-         CBq5L3aDZbPTjT8vrSLNf1veDPl7WdIelA0Xy/4gXzQ4AqdfSEzStjB8XM1HZHw8pKUf
-         0S9vsLIUE6qZ2xefq+hybw+qFoFXSlebQoti1Er/r3b42BmpB/YEPBbqaVOVd6guF0an
-         9VCjl6+TqgNdpxXMg/66GU6TIUQlnKPtGHEXk02RDvXI7Yo7veR7i6z8kej1Zfajb7+B
-         xjVZ6vYYKSUfBYR45o8MvkipZcjiuGIL/SLxmjys8ZS075XNUxfBgcjrZxlF41GVlyGo
-         XgXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcPhXUqJzIxcC3QRhCHwGBL02zzzGh9Z4IKg7UZflTc+xqsZM2lE2Y6bZh4373F1a40fOMQMBaNK0oKw7wk28FHSni/LtiC/haVDrA
-X-Gm-Message-State: AOJu0Yxnd+NbcRqKhduWRZYyLCyjy0AcB0Isqb7dsRhrJUigwOu3Wme+
-	Jgeu+pt7a543IeGHXco1sWhNeHFiLGe8dl8iHUFlXO+0CVMRMcipLQVFWHffY83jVRPVS0qOKcx
-	UZZaaEVFjhPOaT3mdEI2G5Yu6kcN7V5s2B+SRESBvOCMrMkdmTPuGUpg=
-X-Google-Smtp-Source: AGHT+IEJ85sds476jL+rADZpYVHxVK9jM9usxvC/oiB7tlQSNRKkkuf12MtoVE8gxEQ0zXMwgKLp0AQspvwYoG1QLAHijypNfFUg
+	s=arc-20240116; t=1720833320; c=relaxed/simple;
+	bh=du3UW8tRNOLxQwkKF7Z6rMUYEyzL+xfjgY6IRpaAueg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mBbRUfHyzGl1EBH3bBe0uDUsW9FBDP6I2ok5LjMrAiN6KugEzUZURMUMyHdLUizt0J6XLYu7IaCst5BsupMQ8OnZHYaKyO1TSG4PCX4Kh4YL2C7/NccShOBT1GqQmEFCVBbk/F/PDyK9cQsL3sPpIYg7zD/m6BKJ5qruZuZM230=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=v0PMbDDV; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1720833308;
+	bh=du3UW8tRNOLxQwkKF7Z6rMUYEyzL+xfjgY6IRpaAueg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=v0PMbDDVruenwHGcOXejYi0xAzx7FtGIvgGlfpSrqLC9W5AmiFcfHJ6XHkpr+eJEd
+	 LeFFiVbrfkoNT76Rh3bvESxyFA+KfcdFDhJz7GvHsZYESdPl9Li1BfXQugG3y8OYct
+	 eI/vhj094zqXMwOv0X06/ujF0ntOHVXXk3LCWmlvdUzJnrUZwgVGLkQFWH6k0GzdW+
+	 e0Pq9I5MdkRueTT8LZdNJFZ5mH2fxUb7iBl2nhZNwjuZhU8f8ZdNdkkcsEQBYXPPIT
+	 bkH07WvI/U0fjhDJ+rdPRV523t+Ipy6TiGkZjmfHhJg0DflE3Z7hIYPp/xxltJtept
+	 r6tcUNh/oUTsw==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 9797260078;
+	Sat, 13 Jul 2024 01:15:07 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id 1C01320484A;
+	Sat, 13 Jul 2024 01:14:58 +0000 (UTC)
+Message-ID: <84b4b03d-3ec5-48cc-a889-bbeaaf3ceb0c@fiberby.net>
+Date: Sat, 13 Jul 2024 01:14:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6403:b0:7f8:c159:fec2 with SMTP id
- ca18e2360f4ac-800050cc601mr82548439f.4.1720833242330; Fri, 12 Jul 2024
- 18:14:02 -0700 (PDT)
-Date: Fri, 12 Jul 2024 18:14:02 -0700
-In-Reply-To: <0000000000006d415806048a9aee@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000208785061d16b6f0@google.com>
-Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in list_lru_add
-From: syzbot <syzbot+2403e3909382fbdeaf6c@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, kent.overstreet@linux.dev, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com, tangyouling@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 03/10] net/sched: cls_flower: prepare
+ fl_{set,dump}_key_flags() for ENC_FLAGS
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Davide Caratti <dcaratti@redhat.com>,
+ Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>,
+ Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>,
+ Simon Horman <horms@kernel.org>, Ratheesh Kannoth <rkannoth@marvell.com>,
+ Florian Westphal <fw@strlen.de>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ linux-kernel@vger.kernel.org
+References: <20240709163825.1210046-1-ast@fiberby.net>
+ <20240709163825.1210046-4-ast@fiberby.net>
+ <20240711185404.2b1c4c00@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+In-Reply-To: <20240711185404.2b1c4c00@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+Hi Jakub,
 
-commit 86d81ec5f5f05846c7c6e48ffb964b24cba2e669
-Author: Youling Tang <tangyouling@kylinos.cn>
-Date:   Wed Jul 3 07:09:55 2024 +0000
+On 7/12/24 1:54 AM, Jakub Kicinski wrote:
+> On Tue,  9 Jul 2024 16:38:17 +0000 Asbjørn Sloth Tønnesen wrote:
+>> +	if (NL_REQ_ATTR_CHECK(extack, NULL, tb, fl_mask)) {
+> 
+> Does this work with nest as NULL?
 
-    bcachefs: Mark bch_inode_info as SLAB_ACCOUNT
+It does, but it gives less information:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113f4bed980000
-start commit:   43db1e03c086 Merge tag 'for-6.10/dm-fixes-2' of git://git...
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=133f4bed980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=153f4bed980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=2403e3909382fbdeaf6c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=141c864e980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b1da7e980000
+  * struct netlink_ext_ack - netlink extended ACK report struct
+  [..]
+  * @miss_nest: nest missing an attribute (%NULL if missing top level attr)
 
-Reported-by: syzbot+2403e3909382fbdeaf6c@syzkaller.appspotmail.com
-Fixes: 86d81ec5f5f0 ("bcachefs: Mark bch_inode_info as SLAB_ACCOUNT")
+NL_REQ_ATTR_CHECK() doesn't check the value of nest, it just sets it.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+That line originates from Davide's patch and is already in net-next:
+1d17568e74de ("net/sched: cls_flower: add support for matching tunnel control flags")
+
+It was added to that patch, after Jamal requested it.
+https://lore.kernel.org/CAM0EoMkE3kzL28jg-nZiwQ0HnrFtm9HNBJwU1SJk7Z++yHzrMw@mail.gmail.com/
+
+> tb here is corresponding to attrs from tca[TCA_OPTIONS], so IIRC we need
+> to pass tca[TCA_OPTIONS] as nest here. Otherwise the decoder will look
+> for attribute with ID fl_mask at the root level, and the root attrs are
+> from the TCA_ enum.
+> 
+> Looks like Donald covered flower in Documentation/netlink/specs/tc.yaml
+> so you should be able to try to hit this using the Python ynl CLI:
+> https://docs.kernel.org/next/userspace-api/netlink/intro-specs.html#simple-cli
+> But to be honest I'm not 100% sure if the YNL reverse parser works with
+> TC and its "sub-message" polymorphism ;)
+
+After extending the spec to know about the enc_flags keys, I get this:
+
+$ sudo ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/tc.yaml --do newtfilter --json '{"chain": 0, "family": 
+0, "handle": 4, "ifindex": 22, "info": 262152, "kind": "flower", "options": { "flags": 0, "key-enc-flags": 8, 
+"key-eth-type": 2048}, "parent": 4294967283}'
+Netlink error: Invalid argument
+nl_len = 68 (52) nl_flags = 0x300 nl_type = 2
+         error: -22
+         extack: {'msg': 'Missing flags mask', 'miss-type': 111}
+
+After propagating tca[TCA_OPTIONS] through:
+
+Netlink error: Invalid argument
+nl_len = 76 (60) nl_flags = 0x300 nl_type = 2
+         error: -22
+         extack: {'msg': 'Missing flags mask', 'miss-type': 111, 'miss-nest': 56}
+
+In v4, I have added the propagation as the last patch.
+
+-- 
+Best regards
+Asbjørn Sloth Tønnesen
+Network Engineer
+Fiberby - AS42541
 
