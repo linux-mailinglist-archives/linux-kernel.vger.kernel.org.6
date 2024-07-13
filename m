@@ -1,126 +1,108 @@
-Return-Path: <linux-kernel+bounces-251616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD26930712
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 20:45:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F53930717
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 20:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7DD0B2577F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 18:45:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82BC21F2298B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 18:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8CC13E3EF;
-	Sat, 13 Jul 2024 18:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A907C14039D;
+	Sat, 13 Jul 2024 18:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mVaYXeBU"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IR6JIHOy"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F9913DDDD;
-	Sat, 13 Jul 2024 18:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689F91B28D;
+	Sat, 13 Jul 2024 18:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720896305; cv=none; b=QG21428rmpj5aY5o+mgw2o7gICRHfZ3MWB1G6q7xsZfc4Tqp6BgMb6ohlfmWaUV6X4aO2CXwRTf+kMKJxuToArodobCge6dicVPFPgJjE/cmKMiBG9br/HVTG7SQeiI6CkUpFVAFMwHw4FY0EilPdSI1Whtajga0VqsttzdBfF0=
+	t=1720896835; cv=none; b=MyvamXqvgGM7A6HHIAPaRTv8OqIH7LY5bGSuqIlG5NN41Pu6l9S68kaYQmchOnDrep319jLwOlEUeMxEh5QvhOwqE6y5J1tXxJmjyrdS0V4PpOW7dFNdqSxiJ22doqiQ8u8PqPuWrIYyR/XHz4A/6gVBoOdZvQYutk7CetvYuFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720896305; c=relaxed/simple;
-	bh=S4VHF1SncDJq0sGOKJ8UmXPy4Jk7J8435o2/pnX922k=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=IS7nP9VrJz+boHd6ubVW8d6PidPH+yWqvzqoy1Mlk/7YZcGXMsx6Zbu7u4OwyBDs8Od7vlfzTSdeUqqHzgEbdzQdnZ/ggrFZe0IftM01M0W3ubpF/OCTv0cIsSKO0mfIYTK0sbWFQ1bT0EV3Z4roYw9gruTOYNgm7QIyqjjddag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mVaYXeBU; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720896295; x=1721501095; i=markus.elfring@web.de;
-	bh=Tl94jXHRVPHxXEsNK8QYCbwg6IcbsePXJwiPZ1IYb2s=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=mVaYXeBUhKnDonClssgvcoZRLq7wEZ4av2RDahQVJ8y428r7TOc2I7GtiA/zhIu1
-	 Kjg5Pn8w3+M0LeFS3pEtBRm37Rg+98/hPJaoBG4eDu8FX099srvss2QyVDRAU+Mq3
-	 OV1CoYIpdrsgjU2IoLwN94U0fDUodrxexRjlGPw8TcRVibtnUP/bZOEUlwpMVvo0K
-	 pGYTysuvouY/TRs0YOZbY2QI13Xyxka0hJjxOxCakNY1Kr4uDET14c/I4zZOsYqmK
-	 /rX5ZfqBhJCKSH5R9FEayfjH7BnXYASlD9cas0l1upH9bLxOB3K/XAescIv4lb0LN
-	 pZS0FfEhxSF1Z5PRJw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MbTGt-1rvppX3qO1-00bN57; Sat, 13
- Jul 2024 20:44:54 +0200
-Message-ID: <aace3b69-d26d-4f4f-a584-97f1bcb59f29@web.de>
-Date: Sat, 13 Jul 2024 20:44:54 +0200
+	s=arc-20240116; t=1720896835; c=relaxed/simple;
+	bh=MAPCIDnAKoJj9Enx86W8lMyAqDzAwS4mVRe4booRC9I=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=bU4uIY+S18XVovvOA1R9WPUrBAvLlTJioto08wkgnt6FIArRuvF4BDNORcO5QNstHddI+txxd60xn6Gucr8i14hcRoXbBq+4lnyCOO0Siy4eamF/PFHETim/isH6qb7HK4L7OrPSqwL35CW5Tf4ok0gFCvjz8u2Q61S/2OZNA5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IR6JIHOy; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eea7e2b073so38395871fa.0;
+        Sat, 13 Jul 2024 11:53:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720896831; x=1721501631; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=07kIRSYZhfnTUHZwcptPPbWdw4UOJ51SFHtoh3GmK78=;
+        b=IR6JIHOye6qzQr9dNfxPuRcvxuG6+rNJFcKSTUyd4dkSxCYne0xrf9LegGL8vhp2KO
+         W9lUbF4Mls/p5Rjc4Fgvx1hl6YzZdSJ6WVfBS6Wy+X5UJ5b6Ui1QKoBZVwCsNR4ljJqE
+         Nq/R8EG0jNwfmuDwC1foNQSMSJzvG0QqysVirGudof27qOXwWtYGdDRDx3UEJSyHRsz6
+         BpNI9qeyIt1XOH/wCBqOiHCe6wSRCtZb4vCZqQTVf9TdVmOASdzS69SeRD/VG5+uKEwH
+         RKhLZJnBdu+URByUtyrw4PYiCpDZspMkyzcrbzXXfSR+Xe/ioe097DGLDQnHc7CMNSfe
+         U/KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720896831; x=1721501631;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=07kIRSYZhfnTUHZwcptPPbWdw4UOJ51SFHtoh3GmK78=;
+        b=amoCvNnhVO8dSjNP9vxUGIJbLLTJ5jxOXGxIvDX1ElioUkhZQVnmPzZsnSaMI9JstJ
+         yUCbsMj+Zn2V1P0ZXIa9j5x4R1x4q/5lUEpWc+5zVBFwnRK6RFFHvY4WsaGzVTLNehSf
+         Y7SLu8a3ly8Ad3abvjaAw7yaNfd56LoN1DOtjbsG/MMYszmk1rU4N8qKXRTyupZzd3Jb
+         QWSMDy1n9Pnjg0ZeU4+omv3ZbRNNZ1j/JOFF1jfgD5UqmUTPO4pGFHqmwGaVCjhq4wDK
+         Cvx71C2LyenpFOGidTWooF1eSxVHx3KU5Ejra5BSRAnIUg+LBYrdQjnyRnY8E69pF5MN
+         C2mA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgLyx/BXmn7TZ7cUoG8+ewb/cBNCa8PvCkNQGypufBdCrU1uzc6ZluNd+N4Ble0asTbSdKGX1ZoKVqS3AHyvCboknehUI5F8kB3l8Z
+X-Gm-Message-State: AOJu0YzXybrMwoqmAqzOliAX03hHXy25M/gPPDLw/WXlzZvC8gMC1kSV
+	SFIkDcylsoxaLONb8oNFZS+Rs72XYPNi8apCySvV+Clel9uVSPtRQQr8pn14Gp2wFaaPSCnWy0Z
+	NldtheBVur+0ccbmFZtdfAMAp79oG9xLa
+X-Google-Smtp-Source: AGHT+IES26FJ1dV1mqfoCzLnto8Eq5AyIBOYoQHoRVtKr3dxxelL+vHYUJWE2k8Y1nK4IBUqFk2q2t04GwqnRn6my0I=
+X-Received: by 2002:a2e:9d06:0:b0:2ec:5469:9d57 with SMTP id
+ 38308e7fff4ca-2eeb318275cmr92636421fa.41.1720896831089; Sat, 13 Jul 2024
+ 11:53:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- kernel-janitors@vger.kernel.org, David Howells <dhowells@redhat.com>,
- Jeff Layton <jlayton@kernel.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] netfs: Use seq_putc() in fscache_cookies_seq_show()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JmU/2zR/PKK4sSlgNuBI3f9yIhj/lxOWu4mkHIhjafPLe6M+1rt
- rl5qyE3nSYsi3evGHgxOrDpIeP6oEqGldhN8Ld4hS9+wBzEpU4Mqty6A5uhZGcYrq0Mot2b
- vRwe+d0Rgq374vNOCEkxuiTPPmyNXRYRIcRSHaHDCkrF5VbDThNWVLD8TXf1aN35d243Aj9
- tSbgi4jrNnLl9POykuEWw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jKBRqTA+rHg=;iYl9a6wc/pomO0tBXDvrmEI0a4f
- cs3p7lv6SpK3XOrTTfTvJ3rL04LziIMKMrTjyOL0sNXi1FlYt00MJ0phhsClms0El9BrjULG4
- a9KTA98J6a3pqiyZXuHxmVrssvC7hZ4/FrQvSYdpDxmfnM+Uee7KoRzwL2iLqRBQRTpRG4hHX
- LT5kiyDhNmPQ5u0GM5LokfAFDOfmoUykJ9gVkT9wK1nwSNeyl74p9IKYRie+FzvgQCqur+qq/
- 15NSnZ6vuzl7VlrSFbBZZwETDmh5NE5xk+vig6WB9qnHtecnn4bcs+zfUii/6XNwCwY3mAP/4
- mbIovkLekC5GOy5K+PbqELrxaoxAoVnv9jPnOx0oZu1psaiEoP4n+yV24FjuF4MKAKRbGcoQF
- 2U5Dm21qfIgZsGNTdnWznBC7QTAsh34AooVel5Jmvms1VD2gMWFmEA7GJIIZl5bOjcsF3kG/B
- spY1Hw0B7OBjKodpv0ZphBC1hp4jCooRW/obXFS8SuYRv2M3UzYHci8GqA+edoGG43qRtl9FC
- horcYQv//MDKWU2nCuc17f2X3yvlOfPqDF6jyWwMnz+lRg0WPKQXYpdZeQQAC6hYPAzc1dZnh
- df6H7rwgH1SAiWyvqEMAGCe8Z5skeTyhc9Rhy15lmQC7Ue5GCBTAOWzuQHMtXUh/rwgpDHGJA
- WMyQ/pR+XpKcOFBTJNLI5olz1kWbq1oaabP0Mi3YbY//q2rTuRN/UjKbR7YBhZJ88fTrH5AuA
- s/1SMCZ4T2E3MXw/KUYIMAnrKdGnlivqiJlfMaho38Qqmb/XI4lFptF/lr+KeD7sWOHpl8/i5
- g2FNondHa2GcxnJk0kVzC/eg==
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 13 Jul 2024 13:53:39 -0500
+Message-ID: <CAH2r5ms7Q3p_-wPDttT+XCX9a8GvDmC5EdbV_SguK_iriWE_qA@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fix
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 13 Jul 2024 20:35:35 +0200
+Please pull the following changes since commit
+34afb82a3c67f869267a26f593b6f8fc6bf35905:
 
-Single characters should be put into a sequence.
-Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
+  Merge tag '6.10-rc6-smb3-server-fixes' of git://git.samba.org/ksmbd
+(2024-07-09 08:16:18 -0700)
 
-This issue was transformed by using the Coccinelle software.
+are available in the Git repository at:
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- fs/netfs/fscache_cookie.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  git://git.samba.org/sfrench/cifs-2.6.git tags/6.10-rc7-smb3-client-fix
 
-diff --git a/fs/netfs/fscache_cookie.c b/fs/netfs/fscache_cookie.c
-index 4d1e8bf4c615..5e490336b90f 100644
-=2D-- a/fs/netfs/fscache_cookie.c
-+++ b/fs/netfs/fscache_cookie.c
-@@ -1134,7 +1134,7 @@ static int fscache_cookies_seq_show(struct seq_file =
-*m, void *v)
- 	auxlen =3D cookie->aux_len;
+for you to fetch changes up to d2346e2836318a227057ed41061114cbebee5d2a:
 
- 	if (keylen > 0 || auxlen > 0) {
--		seq_puts(m, " ");
-+		seq_putc(m, ' ');
- 		p =3D keylen <=3D sizeof(cookie->inline_key) ?
- 			cookie->inline_key : cookie->key;
- 		for (; keylen > 0; keylen--)
-@@ -1148,7 +1148,7 @@ static int fscache_cookies_seq_show(struct seq_file =
-*m, void *v)
- 		}
- 	}
+  cifs: fix setting SecurityFlags to true (2024-07-13 09:24:27 -0500)
 
--	seq_puts(m, "\n");
-+	seq_putc(m, '\n');
- 	return 0;
- }
+----------------------------------------------------------------
+small cifs SecurityFlags fix, also for stable
 
-=2D-
-2.45.2
+----------------------------------------------------------------
+Steve French (1):
+      cifs: fix setting SecurityFlags to true
 
+ Documentation/admin-guide/cifs/usage.rst | 36
++++++++++++-------------------------
+ fs/smb/client/cifsglob.h                 |  4 ++--
+ 2 files changed, 13 insertions(+), 27 deletions(-)
+
+-- 
+Thanks,
+
+Steve
 
