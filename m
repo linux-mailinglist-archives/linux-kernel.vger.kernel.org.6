@@ -1,163 +1,199 @@
-Return-Path: <linux-kernel+bounces-251264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B8A49302CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:43:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327AA9302CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 186AA1F23496
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:43:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BE3EB23643
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890B417993;
-	Sat, 13 Jul 2024 00:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DF1C13C;
+	Sat, 13 Jul 2024 00:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I+mJg+Gt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IU7EV15N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47221FBF6;
-	Sat, 13 Jul 2024 00:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F4A8F5E;
+	Sat, 13 Jul 2024 00:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720831344; cv=none; b=UxkiIhb0ZCj96qNdr4FDPJYiQJz85Xp+v6eFlPvSNWLU5TwoPsuRYUJa5GmTgYXtzKxhVnfxu6sz8uZfEvpqxeL733QKS6pc/qvEZOXW3oqBnMhtPuQ9OcgYKLUwfFHiRa2OXKFvYMGvyjNoDWVSjl5f7SRpA267Qdqy+wuTId0=
+	t=1720831402; cv=none; b=PZcQW5u7L/02OgAhza6cQxdrN1XAlYiw0n9wrx4R0SNT86U5rqsgZTfmAOPWwoMEAyXAfvBVlzck1IJZMkkgX1quFYADe7K4MHwEEp7fINVNqmVu4X16elxu+dRyktnqkz3uiDvYt51QZ47hEJ41FEaEwXwwOWnpdEybs5Lj8As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720831344; c=relaxed/simple;
-	bh=1ct1zzpZpQ5/mKSr4UvvDbKaJaYWHq6GH4YiIwYrPqQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HzPu9Bv+L1lyfJwx2GkTaLBAEet1zEHERtaCSgWFWK/P2vzvvmgCV4G9zcvxSNoxw/vz1iTk2Y4acNCETrLP5d8UtzBfiAaeAc7zdw5Vb9sZ+rNQa/V4hwTzzOYXj+TIcMqkm0NdWw22nXLe02vWTZK/IV2+BizIiPKyTp55IDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I+mJg+Gt; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720831343; x=1752367343;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=1ct1zzpZpQ5/mKSr4UvvDbKaJaYWHq6GH4YiIwYrPqQ=;
-  b=I+mJg+GtQEjxJlpmoMzFBN4Occ7scMGv/GUKnD6h5crtH1VMtHXiKGk9
-   iVBuKIX3C6SMMJs+lpLDpQLEtC1rt0u1W1GRZ32hBo5zkAe8tDG1oqqDP
-   NdnHcZa1GXom8xR6lRgejBdIhGKhurz72/oj30pcUu2D21BR8aW1Hdg2Y
-   jvex4S4S0vs7eCdgmd6AWGrAmfm2eDapt3vgzTsKTSlye9KF1jF1OkEmF
-   IHmu+iQz0DFU4jmSC+4q/KAx3Bu0UVv8Rcl3plpjfgBJP+sXO4niCG/8c
-   k3kOI8FxRLr6huwxdftKCjiKbUYOIY1OK099gcoeWRmlajcQsDYhqLnqZ
-   Q==;
-X-CSE-ConnectionGUID: T0fqFJbGQNeb0yWtdCp/Ow==
-X-CSE-MsgGUID: EgwM6ntgTnKvXsJdPMtKzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="35833399"
-X-IronPort-AV: E=Sophos;i="6.09,204,1716274800"; 
-   d="scan'208";a="35833399"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 17:42:21 -0700
-X-CSE-ConnectionGUID: qvJHM3tsStqHNqjDqnl7+Q==
-X-CSE-MsgGUID: S5K6mZJnSFG0nvc2NF2Gjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,204,1716274800"; 
-   d="scan'208";a="48955791"
-Received: from skuppusw-desk2.jf.intel.com ([10.165.154.101])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 17:42:21 -0700
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-To: Jithu Joseph <jithu.joseph@intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Ashok Raj <ashok.raj@intel.com>,
-	Tony Luck <tony.luck@intel.com>,
-	linux-trace-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Shankar Ravi V <ravi.v.shankar@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/4] trace: platform/x86/intel/ifs: Add SBAF trace support
-Date: Sat, 13 Jul 2024 00:40:01 +0000
-Message-Id: <20240713004001.535159-5-sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240713004001.535159-1-sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <20240713004001.535159-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+	s=arc-20240116; t=1720831402; c=relaxed/simple;
+	bh=R8JyO3eqqWBetdzBaHSoU9utazIuaOWoUNvGuk9O3GM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Awt1qcHpZnUz8KZZiPA+Iv6sTtA4YAaGgE/lPGp2fJ58rFNBvaFTXk7tpH2xkjvADmAicB6tWB90G6+wO1vRpv/Px8Tfmt9h1LJt0qUe2ITc/TMs2kfBqgn1A3Dz/lhv5gxi3LF3nQO8oFAER90Fgt53SUXvLTB3z3Gm4RmOuUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IU7EV15N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E910DC32782;
+	Sat, 13 Jul 2024 00:43:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720831402;
+	bh=R8JyO3eqqWBetdzBaHSoU9utazIuaOWoUNvGuk9O3GM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IU7EV15NqUZZ1kCxiPvOWkzjimxWfxZ0tJmlJh8H9plJ6HR/hnWONIF0rbWUI/aoV
+	 e3zyHnjLGOyhyyVnu0G2Ir2srvw5x5FQ6gzmcJ7oBipDRlt+tpE1vmtvVa8d3SrUYG
+	 9ramxz/qPe/Z3sqX11a2CvuBLBEJcHobQbTF5UK6a/+V7de/XYYsTelG6xfBN+/kCs
+	 cu2qcMWa1xPh2dpkxMNhlbeuyCcwDoUylr2cF4wzsSL/Z8NJEJpZBNYLPBYh8KzyO7
+	 1avBhd86tS4kfkIisBv9GTz8OiCAkK7v8eHeuq21eInEnAnRovyNkMvDguVaONZS5K
+	 Kp8dUvf2pW+AA==
+Date: Fri, 12 Jul 2024 17:43:21 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jiri Pirko <jiri@resnulli.us>
+Cc: xiujianfeng <xiujianfeng@huawei.com>, <netdev@vger.kernel.org>, Linux
+ kernel mailing list <linux-kernel@vger.kernel.org>, mst@redhat.com,
+ jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
+ virtualization@lists.linux.dev
+Subject: Re: [BUG REPORT] kernel BUG at lib/dynamic_queue_limits.c:99!
+Message-ID: <20240712174321.603b4436@kernel.org>
+In-Reply-To: <8036617e-62f3-17cb-f43a-80531e10e241@huawei.com>
+References: <08227db9-6ed7-4909-838d-ce9a0233fba3@huawei.com>
+	<8036617e-62f3-17cb-f43a-80531e10e241@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Jithu Joseph <jithu.joseph@intel.com>
+CC: virtio_net maintainers and Jiri who added BQL
 
-Add tracing support for the SBAF IFS tests, which may be useful for
-debugging systems that fail these tests. Log details like test content
-batch number, SBAF bundle ID, program index and the exact errors or
-warnings encountered by each HT thread during the test.
-
-Reviewed-by: Ashok Raj <ashok.raj@intel.com>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Signed-off-by: Jithu Joseph <jithu.joseph@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- include/trace/events/intel_ifs.h         | 27 ++++++++++++++++++++++++
- drivers/platform/x86/intel/ifs/runtest.c |  1 +
- 2 files changed, 28 insertions(+)
-
-diff --git a/include/trace/events/intel_ifs.h b/include/trace/events/intel_ifs.h
-index 0d88ebf2c980..70323acde1de 100644
---- a/include/trace/events/intel_ifs.h
-+++ b/include/trace/events/intel_ifs.h
-@@ -35,6 +35,33 @@ TRACE_EVENT(ifs_status,
- 		__entry->status)
- );
- 
-+TRACE_EVENT(ifs_sbaf,
-+
-+	TP_PROTO(int batch, union ifs_sbaf activate, union ifs_sbaf_status status),
-+
-+	TP_ARGS(batch, activate, status),
-+
-+	TP_STRUCT__entry(
-+		__field(	u64,	status	)
-+		__field(	int,	batch	)
-+		__field(	u16,	bundle	)
-+		__field(	u16,	pgm	)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->status	= status.data;
-+		__entry->batch	= batch;
-+		__entry->bundle	= activate.bundle_idx;
-+		__entry->pgm	= activate.pgm_idx;
-+	),
-+
-+	TP_printk("batch: 0x%.2x, bundle_idx: 0x%.4x, pgm_idx: 0x%.4x, status: 0x%.16llx",
-+		__entry->batch,
-+		__entry->bundle,
-+		__entry->pgm,
-+		__entry->status)
-+);
-+
- #endif /* _TRACE_IFS_H */
- 
- /* This part must be outside protection */
-diff --git a/drivers/platform/x86/intel/ifs/runtest.c b/drivers/platform/x86/intel/ifs/runtest.c
-index 2a37f009d0b3..7670fc89153d 100644
---- a/drivers/platform/x86/intel/ifs/runtest.c
-+++ b/drivers/platform/x86/intel/ifs/runtest.c
-@@ -528,6 +528,7 @@ static int dosbaf(void *data)
- 	 */
- 	wrmsrl(MSR_ACTIVATE_SBAF, run_params->activate->data);
- 	rdmsrl(MSR_SBAF_STATUS, status.data);
-+	trace_ifs_sbaf(ifsd->cur_batch, *run_params->activate, status);
- 
- 	/* Pass back the result of the test */
- 	if (cpu == first)
--- 
-2.25.1
+On Fri, 12 Jul 2024 10:12:42 +0800 xiujianfeng wrote:
+> On 2024/7/12 10:08, xiujianfeng wrote:
+> > I found a problem with my QEMU environment, and the log is as follows.
+> > 
+> > After I did the bisect to locate the issue, I found
+> > 8490dd0592e85e0cceefa6b48d66dbdd73df0fb3 is the first bad commit,
+> > however this is a merge commit, and I cannot further confirm which
+> > specific commit caused this issue.  
+> 
+> It's on
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git and
+> the base commit is f477dd6eede3
+> 
+> > 
+> > ------------[ cut here ]------------
+> > kernel BUG at lib/dynamic_queue_limits.c:99!
+> > Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> > CPU: 1 UID: 0 PID: 203 Comm: ip Not tainted
+> > 6.10.0-rc7-next-20240711-12643-gf477dd6eede3 #613
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1
+> > 04/01/2014
+> > RIP: 0010:dql_completed+0x212/0x230
+> > Code: 41 1c 01 48 89 57 58 e9 85 fe ff ff 85 ed 40 0f 95 c5 41 39 d8 0f
+> > 95 c1 40 84 cd 74 05 45 85 e4 78 0a 44 89 d9 e9 67 fe fe
+> > RSP: 0018:ffffc900000f0d70 EFLAGS: 00000213
+> > RAX: 0000000000000000 RBX: ffff88800413b800 RCX: ffff888005925240
+> > RDX: 0000000000000000 RSI: 0000000081df1116 RDI: ffff888003a0d700
+> > RBP: ffff888003a0d600 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: ffff88800a403c90 R12: 0000000000000001
+> > R13: ffffc900000f0db0 R14: ffff888003a0d680 R15: ffff88803cc80000
+> > FS:  00007fcf4229f1c0(0000) GS:ffff88803cc80000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00005596d60d1290 CR3: 00000000093c0000 CR4: 00000000000006f0
+> > Call Trace:
+> >  <IRQ>
+> >  ? die+0x32/0x90
+> >  ? do_trap+0xdc/0x100
+> >  ? dql_completed+0x212/0x230
+> >  ? do_error_trap+0x60/0x80
+> >  ? dql_completed+0x212/0x230
+> >  ? exc_invalid_op+0x4f/0x70
+> >  ? dql_completed+0x212/0x230
+> >  ? asm_exc_invalid_op+0x1a/0x20
+> >  ? dql_completed+0x212/0x230
+> >  __free_old_xmit+0xb2/0x120
+> >  free_old_xmit+0x23/0x70
+> >  ? _raw_spin_trylock+0x46/0x60
+> >  virtnet_poll+0xe0/0x590
+> >  ? update_curr+0xf9/0x1c0
+> >  ? find_held_lock+0x2b/0x80
+> >  __napi_poll+0x25/0x160
+> >  net_rx_action+0x177/0x310
+> >  ? clockevents_program_event+0x53/0x100
+> >  ? lock_release+0xa4/0x1d0
+> >  ? ktime_get+0x76/0x100
+> >  ? lapic_next_event+0x10/0x20
+> >  handle_softirqs+0xd0/0x210
+> >  do_softirq+0x3b/0x60
+> >  </IRQ>
+> >  <TASK>
+> >  __local_bh_enable_ip+0x55/0x70
+> >  virtnet_open+0xac/0x2d0
+> >  __dev_open+0xda/0x190
+> >  __dev_change_flags+0x1b3/0x230
+> >  ? __pfx_stack_trace_consume_entry+0x10/0x10
+> >  ? arch_stack_walk+0x9d/0xf0
+> >  dev_change_flags+0x20/0x60
+> >  do_setlink+0x27e/0x1120
+> >  ? set_track_prepare+0x3b/0x60
+> >  ? rtnl_newlink+0x5a/0xa0
+> >  ? rtnetlink_rcv_msg+0x199/0x4c0
+> >  ? __nla_validate_parse+0x5e/0xed0
+> >  ? netlink_sendmsg+0x1e3/0x420
+> >  ? __sock_sendmsg+0x5e/0x60
+> >  ? ____sys_sendmsg+0x1da/0x210
+> >  ? ___sys_sendmsg+0x7b/0xc0
+> >  ? __sys_sendmsg+0x50/0x90
+> >  ? do_syscall_64+0x4b/0x110
+> >  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> >  __rtnl_newlink+0x50d/0x990
+> >  ? __kmalloc_cache_noprof+0x1a0/0x260
+> >  ? __kmalloc_cache_noprof+0x204/0x260
+> >  ? rtnetlink_rcv_msg+0x14e/0x4c0
+> >  ? rtnl_newlink+0x5a/0xa0
+> >  rtnl_newlink+0x73/0xa0
+> >  rtnetlink_rcv_msg+0x199/0x4c0
+> >  ? find_held_lock+0x2b/0x80
+> >  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+> >  netlink_rcv_skb+0x56/0x100
+> >  ? netlink_unicast+0x69/0x3a0
+> >  netlink_unicast+0x283/0x3a0
+> >  netlink_sendmsg+0x1e3/0x420
+> >  __sock_sendmsg+0x5e/0x60
+> >  ____sys_sendmsg+0x1da/0x210
+> >  ? copy_msghdr_from_user+0x68/0xa0
+> >  ___sys_sendmsg+0x7b/0xc0
+> >  ? stack_depot_save_flags+0x2e/0x8a0
+> >  ? check_bytes_and_report.constprop.0+0x48/0x120
+> >  ? check_object+0xb5/0x3a0
+> >  ? find_held_lock+0x2b/0x80
+> >  __sys_sendmsg+0x50/0x90
+> >  do_syscall_64+0x4b/0x110
+> >  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > RIP: 0033:0x7fcf423c7f03
+> > Code: 64 89 02 48 c7 c0 ff ff ff ff eb b7 66 2e 0f 1f 84 00 00 00 00 00
+> > 90 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 2e 00 00 00 08
+> > RSP: 002b:00007ffcbfa59528 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> > RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fcf423c7f03
+> > RDX: 0000000000000000 RSI: 00007ffcbfa59590 RDI: 0000000000000003
+> > RBP: 0000000066907e78 R08: 0000000000000001 R09: 00007fcf42499be0
+> > R10: 0000000000000076 R11: 0000000000000246 R12: 0000000000000001
+> > R13: 00007ffcbfa59660 R14: 0000000000000000 R15: 00005596d6088020
+> >  </TASK>
+> > Modules linked in:
+> > ---[ end trace 0000000000000000 ]---
+> > RIP: 0010:dql_completed+0x212/0x230
+> > Code: 41 1c 01 48 89 57 58 e9 85 fe ff ff 85 ed 40 0f 95 c5 41 39 d8 0f
+> > 95 c1 40 84 cd 74 05 45 85 e4 78 0a 44 89 d9 e9 67 fe fe
+> > RSP: 0018:ffffc900000f0d70 EFLAGS: 00000213
+> > RAX: 0000000000000000 RBX: ffff88800413b800 RCX: ffff888005925240
+> > RDX: 0000000000000000 RSI: 0000000081df1116 RDI: ffff888003a0d700
+> > RBP: ffff888003a0d600 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: ffff88800a403c90 R12: 0000000000000001
+> > R13: ffffc900000f0db0 R14: ffff888003a0d680 R15: ffff88803cc80000
+> > FS:  00007fcf4229f1c0(0000) GS:ffff88803cc80000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00005596d60d1290 CR3: 00000000093c0000 CR4: 00000000000006f0
+> > Kernel panic - not syncing: Fatal exception in interrupt
+> > Kernel Offset: disabled
+> > ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+> >   
+> 
 
 
