@@ -1,292 +1,116 @@
-Return-Path: <linux-kernel+bounces-251396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E704C930462
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:58:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41370930464
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7571F23CC2
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:58:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF7D41F2383B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23D641C75;
-	Sat, 13 Jul 2024 07:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B4B446A1;
+	Sat, 13 Jul 2024 07:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="iZw8nD0c"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="VdLMYDq3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fsd0kaxa"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2EF33CD1;
-	Sat, 13 Jul 2024 07:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9181BDD3;
+	Sat, 13 Jul 2024 07:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720857515; cv=none; b=FGcKBcxQ5KWz0S6gYRJtMzGQLfIH3ByVaOA70/i9+yj1gSdygZw95KIDFiTBPTv92SoZOFf2kPUfngyAqx3hPq4gihJPTX5I3FxhOj7kTmbKuO3MbgguY043huoSuVEVQU6VrWh9WxCbAashxXNT/V6VYniWV+vzkqr5GHqWwWc=
+	t=1720857593; cv=none; b=gy5sUesREG9XStr6BK92Ya8BgvHAN6oa9tWO6oV9MD1JWIehDqSV6eV3ejfLWO+9vqo5S/jcY9NRzJtrdhd9t10IEK74cA+GmdhoyB7VJB2LPTVa5hVuu6mVubNCZoyZmRtjSPWyHBOLi4lYMgd0RXO4DZwdS2dHYpHkqrwbkII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720857515; c=relaxed/simple;
-	bh=dLrEoyW/iYYmlsFSWVeLRejzeTi6glzi3X89UnmPpwc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NkNBtL2lDBXg8w5K2Z1kDOc78RfygfPVlgesYX4JYFd2mLZ/j68JeyXeIGyhc/cfHRgaUh3Xxh4j8h6AFyjfcahiAySKyBv6CHlD9Azw4jsf/xUv/Zz6xVgO7a/9zqG1+O/BNV4W8zTqxFTrwMLZAHZ/qyD1upn/4KuGeuWeHoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=iZw8nD0c; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=N/zJwrlK/ouWulqBOgVNdt7ra+u3M2oRr6xhbFWikvk=; t=1720857510; x=1721462310; 
-	b=iZw8nD0cJaGQsetBjcmsf734/Rql/4zcEA6C1XYby1N8QxUQt5o1TtHiekUoBcoUM0PcP+aB+d4
-	AKEqE9Zr1cgbv5Wtc6i0tpfkMrA/l6R9PMhYfTJTEP0pUCpSXCHbzbOI8wUXcWDbCTSwsCTYvijVX
-	3U6UJ7zu313Uhqwpr1XDfu5rA9SQcLgPyLwbCMVueagCH/yqSwnFdH7/dO5Xekhr+V6HTXKOFvd8v
-	MXr8txnt5rt/aqe6+wgAqNvGJySckKvh5pf1xXw03QLIXHqo/t76ADyrdzh/2j6x7bgSkdRMXt1OM
-	LdnV0/CsfHXMyIjzwQkdhjtr4qTeRDoLh7Tg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1sSXeE-00000001c2M-0n5u; Sat, 13 Jul 2024 09:58:26 +0200
-Received: from p5b13a475.dip0.t-ipconnect.de ([91.19.164.117] helo=suse-laptop.fritz.box)
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1sSXeD-00000003Mfh-43Da; Sat, 13 Jul 2024 09:58:26 +0200
-Message-ID: <a68b7cd0e3b143f023414feca279deb768d43575.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH v4] sh: Restructure setup code to reserve memory regions
- earlier
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, 
-	ysato@users.sourceforge.jp, dalias@libc.org
-Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
- robh+dt@kernel.org,  kernel@quicinc.com
-Date: Sat, 13 Jul 2024 09:58:25 +0200
-In-Reply-To: <20240711214438.3920702-1-quic_obabatun@quicinc.com>
-References: <20240711214438.3920702-1-quic_obabatun@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1720857593; c=relaxed/simple;
+	bh=lJto82Eqyiw8TSB3TU4mBH5L865OKyP+/4aE8WRQ8gY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ist5/bxxKWrbsCeTMzdb4FuYAjEeoFACzgZrWu7ZFVL+jHGwvxofvo/bdF/QbK25RKM8tgEWBQQk22l7MSC7QhN5GbiQhsctJTWaV02MB34ypUPEE7NYoio9Q9crK8yg4bej37hQOqO23Zs+6dU7UIXuVk6E9qgXDAV6ceBs3ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=VdLMYDq3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fsd0kaxa; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id E2C931141C9F;
+	Sat, 13 Jul 2024 03:59:50 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Sat, 13 Jul 2024 03:59:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm1; t=1720857590; x=1720943990; bh=UyJdcL5I2jTZpZtJ0CTh8
+	z94ivxfbD/L5Kj1mFmwCSc=; b=VdLMYDq3a/9FtqZGr6iiW9Ho+b7i5wmBeN6F7
+	N6CLhGkWdLNRNs4Q4E5RbVXc67LgvUJNOhYnY8s+gzBKqKFhj0eTMbN2EpUQpUEP
+	t9adYXZfmbB1QfBdbNLcVtHX+mfUzTy9ML9RWeScz8Q+kSQGGJouwlMctFDnnJVL
+	12aoKvTEJd6uPAIuB5e34wtqoKFFd6ghZDKeWEEj0XZSRvtB0e2M8ZitOe9m9bxO
+	x33CD8t3BiIbsJIAshflyv4RtyvrpGO4QqrNjYYOGfmdSBHa5bnlbug9bIC1THWC
+	UFLDQ4Df4Kc7rIAOTA5wmlO8pzMg6em9bxX5WOVhqq87vLy9A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720857590; x=1720943990; bh=UyJdcL5I2jTZpZtJ0CTh8z94ivxf
+	bD/L5Kj1mFmwCSc=; b=fsd0kaxa7qkK08Y1iVe9DGzNL0Ru0n8WObQvGXR9G5A4
+	Sl/q4CdJjG0RMGN4BqIICaups5VZt3ICZt/zEZ37xJM0ZBFIaqBqjsNi9DhQNGMI
+	JGIMF+wVHgSaV0t0FKWOiT4eu5pq3vBdm+he+LCNuDIRclvF8U8uGeAAfZXQMr8p
+	lgd7gxQp7WNyomrPe9lLTD5w5aTb+XYLZLI0T1+lIBjYgMnhfOOevbV1L3+vDop2
+	s8hhZhVG4OwxzBlTtPWW0/47hOVzVM+jy7td8LI46+JqtiQvUqOB49na1BndXCha
+	z4cDoyH+baWPIhdRw94npZAAU40jmlkyg5sgCeNG6g==
+X-ME-Sender: <xms:9TOSZjgQd-w6neUBc71acULdpmN55-vuwJLUQSwYDaHf6_Y4PBkG8g>
+    <xme:9TOSZgBU2nLxe-QPZAPiVkrBeXTzYHBGicd_ST925fKJdZI7Oi2syI-Xrfnw-rY94
+    0U-Q1KL-1BOJCEojbs>
+X-ME-Received: <xmr:9TOSZjEcznUv2-30LrA_i62gsF19tsVYIkHtVLiHdWmlra5M5zG1b-xI0Vv8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeejgdduvdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
+    ertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhho
+    nhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfdujedthfduudekffefkeeiffdttd
+    dvhfegudduueffuefhfefggeefteevvdegnecuvehluhhsthgvrhfuihiivgeptdenucfr
+    rghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
+X-ME-Proxy: <xmx:9TOSZgRzJRa-77MFkv3JcSo1LDzK2AuhhWaNT5jIcqoQbWVNNA0LHA>
+    <xmx:9TOSZgxVO8_2UjOXlMwyyIiOv6NvW962xq-gpJtJeE3VYuZd2czvoA>
+    <xmx:9TOSZm6aotoE2sULKboLD0ZtNz6YTEXOu8fdUmHtBah1_Wk9dgTfVA>
+    <xmx:9TOSZlwmAGI2emm_GP_l3pinpyPezHKN-xZQiZLDrtLscds3ejQOWQ>
+    <xmx:9jOSZvq0Fa0CWbQRRswu3yJZRyocfakmzc2WUAiiUlIBLElpXBE9ryMH>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 13 Jul 2024 03:59:46 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: corentin.chary@gmail.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH 0/2] platform/x86: asus-wmi: extra debugging and a fix
+Date: Sat, 13 Jul 2024 19:59:38 +1200
+Message-ID: <20240713075940.80073-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Transfer-Encoding: 8bit
 
-Hi Oreoluwa,
+These are two patches, one of which is a fix to prevent certain situations
+from arising.
 
-review follows below.
+The patch to add extra debug prints has come in extremely useful to find
+causes of issues for users such as when a WMI method is returning a valid
+value but which must be masked.
 
-On Thu, 2024-07-11 at 14:44 -0700, Oreoluwa Babatunde wrote:
-> The unflatten_device_tree() function contains a call to
-> memblock_alloc(). This is a problem because this allocation is done
-> before any of the reserved memory regions are set aside in
-> paging_init().
-> As a result, there is a possibility for memblock to unknowingly allocate
-> from any of the memory regions that are meant to be reserved.
->=20
-> Hence, restructure the setup code to set aside reserved memory
-> regions before any allocations are done using memblock.
->=20
-> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-> ---
-> v4:
-> - Rebase patch ontop of v6.10-rc1 as requested by Maintainer.
-> - Add missing include in arch/sh/kernel/setup.c
->=20
-> v3:
-> https://lore.kernel.org/all/20240520175802.2002183-1-quic_obabatun@quicin=
-c.com/
-> - Instead of moving all of paging_init(), move only the parts
->   that are responsible for setting aside the reserved memory
->   regions.
->=20
-> v2:
-> https://lore.kernel.org/all/20240423233150.74302-1-quic_obabatun@quicinc.=
-com/
-> - Add Rob Herrings Reviewed-by.
-> - cc Andrew Morton to assist with merging this for sh architecture.
->   Similar change made for loongarch and openrisc in v1 have already
->   been merged.
->=20
-> v1:
-> https://lore.kernel.org/all/1707524971-146908-4-git-send-email-quic_obaba=
-tun@quicinc.com/
->  arch/sh/include/asm/setup.h |  1 -
->  arch/sh/kernel/setup.c      | 44 ++++++++++++++++++++++++++++++++++++-
->  arch/sh/mm/init.c           | 44 -------------------------------------
->  3 files changed, 43 insertions(+), 46 deletions(-)
->=20
-> diff --git a/arch/sh/include/asm/setup.h b/arch/sh/include/asm/setup.h
-> index 84bb23a771f3..f8b814fb1c7f 100644
-> --- a/arch/sh/include/asm/setup.h
-> +++ b/arch/sh/include/asm/setup.h
-> @@ -19,7 +19,6 @@
->  #define COMMAND_LINE ((char *) (PARAM+0x100))
-> =20
->  void sh_mv_setup(void);
-> -void check_for_initrd(void);
->  void per_cpu_trap_init(void);
->  void sh_fdt_init(phys_addr_t dt_phys);
-> =20
-> diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
-> index 620e5cf8ae1e..8477491f4ffd 100644
-> --- a/arch/sh/kernel/setup.c
-> +++ b/arch/sh/kernel/setup.c
-> @@ -35,6 +35,7 @@
->  #include <asm/io.h>
->  #include <asm/page.h>
->  #include <asm/elf.h>
-> +#include <asm/kexec.h>
->  #include <asm/sections.h>
->  #include <asm/irq.h>
->  #include <asm/setup.h>
-> @@ -114,7 +115,7 @@ static int __init early_parse_mem(char *p)
->  }
->  early_param("mem", early_parse_mem);
-> =20
-> -void __init check_for_initrd(void)
-> +static void __init check_for_initrd(void)
->  {
->  #ifdef CONFIG_BLK_DEV_INITRD
->  	unsigned long start, end;
-> @@ -172,6 +173,42 @@ void __init check_for_initrd(void)
->  #endif
->  }
+Luke D. Jones (2):
+  platform/x86: asus-wmi: add debug print in more key places
+  platform/x86: asus-wmi: don't fail if platform_profile already
+    registered
 
-Making check_for_initrd() static seems like an unrelated change to me or am
-I missing something? If yes, it should go into a separate patch.
+ drivers/platform/x86/asus-wmi.c | 67 +++++++++++++++++++++++++++------
+ 1 file changed, 55 insertions(+), 12 deletions(-)
 
-> +static void __init early_reserve_mem(void)
-> +{
-> +	unsigned long start_pfn;
-> +	u32 zero_base =3D (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
-> +	u32 start =3D zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
-> +
-> +	/*
-> +	 * Partially used pages are not usable - thus
-> +	 * we are rounding upwards:
-> +	 */
-> +	start_pfn =3D PFN_UP(__pa(_end));
-> +
-> +	/*
-> +	 * Reserve the kernel text and Reserve the bootmem bitmap. We do
-> +	 * this in two steps (first step was init_bootmem()), because
-> +	 * this catches the (definitely buggy) case of us accidentally
-> +	 * initializing the bootmem allocator with an invalid RAM area.
-> +	 */
-> +	memblock_reserve(start, (PFN_PHYS(start_pfn) + PAGE_SIZE - 1) - start);
-> +
-> +	/*
-> +	 * Reserve physical pages below CONFIG_ZERO_PAGE_OFFSET.
-> +	 */
-> +	if (CONFIG_ZERO_PAGE_OFFSET !=3D 0)
-> +		memblock_reserve(zero_base, CONFIG_ZERO_PAGE_OFFSET);
-> +
-> +	/*
-> +	 * Handle additional early reservations
-> +	 */
-> +	check_for_initrd();
-> +	reserve_crashkernel();
-> +
-> +	if (sh_mv.mv_mem_reserve)
-> +		sh_mv.mv_mem_reserve();
-> +}
-> +
->  #ifndef CONFIG_GENERIC_CALIBRATE_DELAY
->  void calibrate_delay(void)
->  {
+-- 
+2.45.2
 
-I'm not really happy with moving early_reserve_mem() from mm/init.c to
-kernel/setup.c. Can't we just leave it where it is while still keeping
-the changes to paging_init()?
-
-> @@ -319,9 +356,14 @@ void __init setup_arch(char **cmdline_p)
-> =20
->  	sh_mv_setup();
-> =20
-> +	sh_mv.mv_mem_init();
-> +
->  	/* Let earlyprintk output early console messages */
->  	sh_early_platform_driver_probe("earlyprintk", 1, 1);
-> =20
-> +	/* set aside reserved memory regions */
-> +	early_reserve_mem();
-> +
->  #ifdef CONFIG_OF_EARLY_FLATTREE
->  #ifdef CONFIG_USE_BUILTIN_DTB
->  	unflatten_and_copy_device_tree();
-> diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-> index bf1b54055316..4559f5bea782 100644
-> --- a/arch/sh/mm/init.c
-> +++ b/arch/sh/mm/init.c
-> @@ -242,55 +242,11 @@ static void __init do_init_bootmem(void)
->  	sparse_init();
->  }
-> =20
-> -static void __init early_reserve_mem(void)
-> -{
-> -	unsigned long start_pfn;
-> -	u32 zero_base =3D (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
-> -	u32 start =3D zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
-> -
-> -	/*
-> -	 * Partially used pages are not usable - thus
-> -	 * we are rounding upwards:
-> -	 */
-> -	start_pfn =3D PFN_UP(__pa(_end));
-> -
-> -	/*
-> -	 * Reserve the kernel text and Reserve the bootmem bitmap. We do
-> -	 * this in two steps (first step was init_bootmem()), because
-> -	 * this catches the (definitely buggy) case of us accidentally
-> -	 * initializing the bootmem allocator with an invalid RAM area.
-> -	 */
-> -	memblock_reserve(start, (PFN_PHYS(start_pfn) + PAGE_SIZE - 1) - start);
-> -
-> -	/*
-> -	 * Reserve physical pages below CONFIG_ZERO_PAGE_OFFSET.
-> -	 */
-> -	if (CONFIG_ZERO_PAGE_OFFSET !=3D 0)
-> -		memblock_reserve(zero_base, CONFIG_ZERO_PAGE_OFFSET);
-> -
-> -	/*
-> -	 * Handle additional early reservations
-> -	 */
-> -	check_for_initrd();
-> -	reserve_crashkernel();
-> -}
-> -
->  void __init paging_init(void)
->  {
->  	unsigned long max_zone_pfns[MAX_NR_ZONES];
->  	unsigned long vaddr, end;
-> =20
-> -	sh_mv.mv_mem_init();
-> -
-> -	early_reserve_mem();
-> -
-> -	/*
-> -	 * Once the early reservations are out of the way, give the
-> -	 * platforms a chance to kick out some memory.
-> -	 */
-> -	if (sh_mv.mv_mem_reserve)
-> -		sh_mv.mv_mem_reserve();
-> -
->  	memblock_enforce_memory_limit(memory_limit);
->  	memblock_allow_resize();
-> =20
-
-Thanks,
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
