@@ -1,86 +1,237 @@
-Return-Path: <linux-kernel+bounces-251423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93FD09304B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:29:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05A29304B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 357471F224B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:29:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91EB4283518
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA724481B1;
-	Sat, 13 Jul 2024 09:29:43 +0000 (UTC)
-Received: from mail78-36.sinamail.sina.com.cn (mail78-36.sinamail.sina.com.cn [219.142.78.36])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9236347A64;
+	Sat, 13 Jul 2024 09:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsBMuy+x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F96F21A0C
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 09:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B582914006;
+	Sat, 13 Jul 2024 09:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720862983; cv=none; b=M0YPNzxbs4JG8XzXZZGV2GWqQPFn7+I5o5gIS+VsnUP9aHnyXUJIUG+fTqoEgY8fFs7ljZBL2FyNNDvb3R7azjf0nJD9PEXzOykshBq3iFAMuY5Jofrgw1FGam9+qlTA/o9vIoEC+EfkEiCufRg3hMem4l1PovnHEmWyDfWcNRQ=
+	t=1720863049; cv=none; b=n7PlhW1TzzjKhJcyzU8fnYEjuhUDqCZPubAtf+4mZY+EIjuZi9RY0sOT1APjj9vDkhJWMwbXOQ72L4ZIr7ZhzNGKZuLAXLTqmHdSSc//Q/9IDGxEpFZHtpSLv8/rshVKXxD+ML4x/f7famxKH0FzW6V94Xso9+m4tddPHnaathI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720862983; c=relaxed/simple;
-	bh=PZJmn/5cFiHK5fj9OM4ccs5HSvEZJ44nxBXL5alYu0M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mSbXZVhxhLi4M6HFipPXXvGiKrys6FBHOEMRskD2ejANUkKVdfoZ9KNCzErXWyne64pECDcv6HRzzsvCyWpp62G2JvVcIb6ufWCTMEjQgu8ZkC5AQPIwBzFD1f1MyFpflCuRH61ZiHhq72vOzn8vjuDHiTOb2iFBGE9KinPvHQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.69.52])
-	by sina.com (10.185.250.24) with ESMTP
-	id 669248FB00000562; Sat, 13 Jul 2024 17:29:33 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 58892810748377
-X-SMAIL-UIID: 16ABC7EA7DE7437AAB096B845AC48BCC-20240713-172933-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+1e811482aa2c70afa9a0@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [io-uring] general protection fault in tomoyo_socket_bind_permission
-Date: Sat, 13 Jul 2024 17:29:25 +0800
-Message-Id: <20240713092925.927-1-hdanton@sina.com>
-In-Reply-To: <0000000000007b7ce6061d1caec0@google.com>
-References: 
+	s=arc-20240116; t=1720863049; c=relaxed/simple;
+	bh=egg7o9yZhEZ4EbCuIXAkxMp7kCxfrjNbsYkBpotkbek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ePOV0UGK2YbPMCdHMS1fQXH1hVElbIhAFWlEnahry7UwaSnxBkWDn9crgghIwsKYKeNgLmBlUG5lZGN6i8gk8iEOrsbDnna2ISZIoDXJgISiwIQJM3hJFmQrr6635zpe+RsGxdNsgsEOoXdQQ63v3B9PLvvXLqxk+V6eId58EBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsBMuy+x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4687C32781;
+	Sat, 13 Jul 2024 09:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720863049;
+	bh=egg7o9yZhEZ4EbCuIXAkxMp7kCxfrjNbsYkBpotkbek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WsBMuy+x6YhhAPf/O+hmHpRhHG0Z5A99e16oKmuvbCV5oYqhaS/Box0aFULcsub9I
+	 b+wcae51nzJgy1ftGuFrkVLkRydctBIgb5mUO9H88MxeLCi0jmg1zQ23/9F9X723bR
+	 tDt/ZvgUdwi0L4ML2wVWunmL8+8M+WCyqcXVrZL4H3YtAYDPjMtFl0Ahg8lAQifMwF
+	 Kaitum+YwaEwKdcbs6j6+L39YcnJJDtTKO28yUgkfn7DMcrPXl4nzYS2cNcM88QsZY
+	 deg0uA4mNs6mWXamXcIrRmRnMgFPtCcERCtN4npChEBHpZSHM0GCiO0uTAIfDCCffJ
+	 3mjlJztHsF/zQ==
+Date: Sat, 13 Jul 2024 12:30:43 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: Re: [PATCH 2/2] dma: Add IOMMU static calls with clear default ops
+Message-ID: <20240713093043.GG1815706@unreal>
+References: <98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org>
+ <f2b699aea8fff5589a674da2a567fd593ed2d386.1720693745.git.leon@kernel.org>
+ <3912d498-5696-4e87-bab0-f35ef7ac6083@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3912d498-5696-4e87-bab0-f35ef7ac6083@linux.microsoft.com>
 
-On Sat, 13 Jul 2024 01:21:23 -0700
-> syzbot found the following issue on:
+On Fri, Jul 12, 2024 at 01:51:36PM -0700, Easwar Hariharan wrote:
+> On 7/11/2024 3:38 AM, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > Most of the IOMMU drivers are using the same DMA operations, which are
+> > default ones implemented in drivers/iomem/dma-iomem.c. So it makes sense
+> > to properly set them as a default with direct call without need to
+> > perform function pointer dereference.
+> > 
+> > During system initialization, the IOMMU driver can set its own DMA and
+> > in such case, the default DMA operations will be overridden.
+> > 
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > ---
+> >  MAINTAINERS               |  1 +
+> >  drivers/iommu/dma-iommu.c | 24 +++++++-------
+> >  include/linux/iommu-dma.h | 50 +++++++++++++++++++++++++++++
+> >  kernel/dma/iommu.h        | 67 +++++++++++++++++++++++++++++++++++++++
+> >  kernel/dma/mapping.c      |  9 +++---
+> >  5 files changed, 134 insertions(+), 17 deletions(-)
+> >  create mode 100644 include/linux/iommu-dma.h
+> >  create mode 100644 kernel/dma/iommu.h
+> > 
 > 
-> HEAD commit:    3fe121b62282 Add linux-next specific files for 20240712
-> git tree:       linux-next
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c2be31980000
+> <snip>
+> > diff --git a/include/linux/iommu-dma.h b/include/linux/iommu-dma.h
+> > new file mode 100644
+> > index 000000000000..b42487bf8f8e
+> > --- /dev/null
+> > +++ b/include/linux/iommu-dma.h
+> > @@ -0,0 +1,50 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (c) 2024, NVIDIA CORPORATION & AFFILIATES. All rights reserved
+> > + *
+> > + * DMA operations that map physical memory through IOMMU.
+> > + */
+> > +#ifndef _LINUX_IOMMU_DMA_H
+> > +#define _LINUX_IOMMU_DMA_H
+> > +
+> > +#include <linux/dma-direction.h>
+> > +
+> > +#ifdef CONFIG_IOMMU_API
+> > +dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
+> > +			      unsigned long offset, size_t size,
+> > +			      enum dma_data_direction dir, unsigned long attrs);
+> > +void iommu_dma_unmap_page(struct device *dev, dma_addr_t dma_handle,
+> > +			  size_t size, enum dma_data_direction dir,
+> > +			  unsigned long attrs);
+> > +int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+> > +		     enum dma_data_direction dir, unsigned long attrs);
+> > +void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
+> > +			enum dma_data_direction dir, unsigned long attrs);
+> > +#else
+> > +static inline dma_addr_t iommu_dma_map_page(struct device *dev,
+> > +					    struct page *page,
+> > +					    unsigned long offset, size_t size,
+> > +					    enum dma_data_direction dir,
+> > +					    unsigned long attrs)
+> > +{
+> > +	return DMA_MAPPING_ERROR;
+> > +}
+> > +static inline void iommu_dma_unmap_page(struct device *dev,
+> > +					dma_addr_t dma_handle, size_t size,
+> > +					enum dma_data_direction dir,
+> > +					unsigned long attrs)
+> > +{
+> > +}
+> > +static inline int iommu_dma_map_sg(struct device *dev, struct scatterlist *sg,
+> > +				   int nents, enum dma_data_direction dir,
+> > +				   unsigned long attrs)
+> > +{
+> > +	return -EINVAL;
+> > +}
+> > +static void iommu_dma_unmap_sg(struct device *dev, struct scatterlist *sg,
+> > +			       int nents, enum dma_data_direction dir,
+> > +			       unsigned long attrs)
+> > +{
+> > +}
+> > +#endif /* CONFIG_IOMMU_API */
+> > +#endif /* _LINUX_IOMMU_DMA_H */
+> > diff --git a/kernel/dma/iommu.h b/kernel/dma/iommu.h
+> > new file mode 100644
+> > index 000000000000..4abaea2dfc49
+> > --- /dev/null
+> > +++ b/kernel/dma/iommu.h
+> > @@ -0,0 +1,67 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (c) 2024, NVIDIA CORPORATION & AFFILIATES. All rights reserved
+> > + *
+> > + * DMA operations that map physical memory through IOMMU.
+> > + */
+> > +#ifndef _KERNEL_DMA_IOMMU_H
+> > +#define _KERNEL_DMA_IOMMU_H
+> > +
+> > +#include <linux/iommu-dma.h>
+> > +
+> > +static inline dma_addr_t dma_iommu_map_page(struct device *dev,
+> > +					    struct page *page, size_t offset,
+> > +					    size_t size,
+> > +					    enum dma_data_direction dir,
+> > +					    unsigned long attrs)
+> > +{
+> > +	const struct dma_map_ops *ops = get_dma_ops(dev);
+> > +
+> > +	if (ops->map_page)
+> > +		return ops->map_page(dev, page, offset, size, dir, attrs);
+> > +
+> > +	return iommu_dma_map_page(dev, page, offset, size, dir, attrs);
+> > +}
+> > +
+> > +static inline void dma_iommu_unmap_page(struct device *dev, dma_addr_t addr,
+> > +					size_t size,
+> > +					enum dma_data_direction dir,
+> > +					unsigned long attrs)
+> > +{
+> > +	const struct dma_map_ops *ops = get_dma_ops(dev);
+> > +
+> > +	if (ops->unmap_page) {
+> > +		ops->unmap_page(dev, addr, size, dir, attrs);
+> > +		return;
+> > +	}
+> > +
+> > +	iommu_dma_unmap_page(dev, addr, size, dir, attrs);
+> > +}
+> > +
+> > +static inline int dma_iommu_map_sg(struct device *dev, struct scatterlist *sg,
+> > +				   int nents, enum dma_data_direction dir,
+> > +				   unsigned long attrs)
+> > +{
+> > +	const struct dma_map_ops *ops = get_dma_ops(dev);
+> > +
+> > +	if (ops->map_sg)
+> > +		return ops->map_sg(dev, sg, nents, dir, attrs);
+> > +
+> > +	return iommu_dma_map_sg(dev, sg, nents, dir, attrs);
+> > +}
+> > +
+> > +static inline void dma_iommu_unmap_sg(struct device *dev,
+> > +				      struct scatterlist *sg, int nents,
+> > +				      enum dma_data_direction dir,
+> > +				      unsigned long attrs)
+> > +{
+> > +	const struct dma_map_ops *ops = get_dma_ops(dev);
+> > +
+> > +	if (ops->unmap_sg) {
+> > +		ops->unmap_sg(dev, sg, nents, dir, attrs);
+> > +		return;
+> > +	}
+> > +
+> > +	iommu_dma_unmap_sg(dev, sg, nents, dir, attrs);
+> > +}
+> 
+> Can we use _dma_iommu_* instead of the transposition pattern we have
+> going on here? Having dma_iommu_* call iommu_dma_* is, I feel, a recipe
+> for confusion when reading the code, especially after a few passes when
+> the eyes start to glaze over.
+> 
+> I think you're going for the typical pattern of iommu_dma* being an
+> internal detail that provides an implementation, but correct me if
+> there's some significance to the current naming scheme.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git  3fe121b62282
+Given the review feedback from Robin and Christoph, I will drop this
+layer anyway.
 
---- x/io_uring/net.c
-+++ y/io_uring/net.c
-@@ -1742,8 +1742,12 @@ int io_bind(struct io_kiocb *req, unsign
- 	struct io_bind *bind = io_kiocb_to_cmd(req, struct io_bind);
- 	struct io_async_msghdr *io = req->async_data;
- 	int ret;
-+	struct socket *sk;
- 
--	ret = __sys_bind_socket(sock_from_file(req->file),  &io->addr, bind->addr_len);
-+	sk = sock_from_file(req->file);
-+	if (!sk)
-+		return -ENOTSOCK;
-+	ret = __sys_bind_socket(sk,  &io->addr, bind->addr_len);
- 	if (ret < 0)
- 		req_set_fail(req);
- 	io_req_set_res(req, ret, 0);
---
+Thanks
+
+> 
+> Thanks,
+> Easwar
 
