@@ -1,271 +1,274 @@
-Return-Path: <linux-kernel+bounces-251324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2D793038B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 05:12:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 775FA930392
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 05:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CECC1F21C49
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00AA51F222EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AE117BCC;
-	Sat, 13 Jul 2024 03:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2474119478;
+	Sat, 13 Jul 2024 03:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="AAMItSQN"
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gIOvkEy2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E681870;
-	Sat, 13 Jul 2024 03:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1451C171AA;
+	Sat, 13 Jul 2024 03:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720840358; cv=none; b=E97RhZaMfgDUr5hq2lXLNLA0g3EdupECsP4gTtxsy++2b99YrbX9G1xD/A4G4ZgoATcPKuc5Xlh+jgWuxelbL7iJRSW487jweKR48jiYqT1nZ/j9uNAivht0A7+0YTwmIJ0PY4my9PMbb3dakBdIY9L20ZHxl9fwoSVz+9ALV4M=
+	t=1720840628; cv=none; b=ow2Hk4f0GCZKpxljVfCPlTvnoHa8R1mKwaBDyoUc0dJRvMfTdlGTwmeYUp6JBtf0XMXV6GPpoAQXeTXIDNsQQiW3WZo/4PgXc3iXYixwAqqc0u3InrPBRq4S5laV1hSv7WJeTc/Ds0OV5frzGhSGgzJyb6UB+vvdegKuH0Y0bYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720840358; c=relaxed/simple;
-	bh=QR27xcWmStjlqSAat08CkaXmphu8Ploeo02GNfppi7E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pLMfxKznW9Krfgk4VuQ1POI1Z9XXbMkmo3rwAHU+CgVlxMLPszQWyd/GUmOsGOwA+55axO0/aCT/c2S9NjOAkf2UZN2K4XNpcgP2enXfh6UJ5/UmRRvkYYRTWcEeUPyYACWvZsk/0H5m0/47fo5WoyrtPoeT5B+DDXuKK+/IhDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=AAMItSQN; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1720840358; x=1752376358;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tgEH/Tv2YiMTlRqR/V3T8vQ21V48oFRfQ0p3PQbjNpc=;
-  b=AAMItSQNlmGCQbyjuIUNhUDOaBa/0kRSnKoA/IAcnN3Zdf/c4c6wxwOI
-   7LlM/nFqYwikP7gwRGu0BJcYrPZAQp9VFNVKfYc84S7GgfduYGcgcr5Lg
-   Jj0eoEOwhvekcjTBH2OhfHgCBdKyueZYZRYSZW8FgpOseJlh5h2dBHlQk
-   I=;
-X-IronPort-AV: E=Sophos;i="6.09,204,1716249600"; 
-   d="scan'208";a="645781367"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2024 03:12:36 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:46744]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.2.113:2525] with esmtp (Farcaster)
- id 7b787d18-0c15-43a1-b3c6-00967d9649a1; Sat, 13 Jul 2024 03:12:34 +0000 (UTC)
-X-Farcaster-Flow-ID: 7b787d18-0c15-43a1-b3c6-00967d9649a1
-Received: from EX19D021UWA001.ant.amazon.com (10.13.139.24) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Sat, 13 Jul 2024 03:12:34 +0000
-Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
- EX19D021UWA001.ant.amazon.com (10.13.139.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Sat, 13 Jul 2024 03:12:33 +0000
-Received: from dev-dsk-apanyaki-2b-4798319e.us-west-2.amazon.com (10.2.90.201)
- by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34
- via Frontend Transport; Sat, 13 Jul 2024 03:12:33 +0000
-From: Andrew Paniakin <apanyaki@amazon.com>
-To: <stable@vger.kernel.org>
-CC: Benjamin Herrenschmidt <benh@amazon.com>, Hazem Mohamed Abuelfotoh
-	<abuehaze@amazon.com>, Paulo Alcantara <pc@manguebit.com>, Paulo Alcantara
-	<pc@cjr.nz>, Steve French <stfrench@microsoft.com>, Andrew Paniakin
-	<apanyaki@amazon.com>, Steve French <sfrench@samba.org>, Ronnie Sahlberg
-	<lsahlber@redhat.com>, Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey
-	<tom@talpey.com>, "open list:COMMON INTERNET FILE SYSTEM CLIENT (CIFS and
- SMB3)" <linux-cifs@vger.kernel.org>, "moderated list:COMMON INTERNET FILE
- SYSTEM CLIENT (CIFS and SMB3)" <samba-technical@lists.samba.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 6.1] cifs: use origin fullpath for automounts
-Date: Sat, 13 Jul 2024 03:11:47 +0000
-Message-ID: <20240713031147.20332-1-apanyaki@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1720840628; c=relaxed/simple;
+	bh=cqXtSMLX0z2oaB34cPC8+RoGJShzn/idNzy5wtgQHMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BoT2cBlID0tR4QbuajndqdM5/urUJDSaR9ySUYVuRRnQnMuOcFAHUYXKDIQpUb7il0IDhOc27XCNnhQWNjfNelwVkflBcUHBOf3DTSBCIpJL1S4/nkuTenczw9Zut9yLprtYp43zBSg9OjRjiWjwcace1rL17mRaOqGG1ePj8R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gIOvkEy2; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720840625; x=1752376625;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cqXtSMLX0z2oaB34cPC8+RoGJShzn/idNzy5wtgQHMU=;
+  b=gIOvkEy2WQh8kI1piXDrzv+D0D9cHWE0R6Z+6i/FZbatUABE2lZkx54s
+   GYjMstaxfGJfqwvpj71WIH5Pdbm2ti0gjh2R3IhthCDhmlIMENMeNaL4m
+   iPdOYnNqpkaZTaSYMsqotsQOtrZPSYFggXnsOCr49GeSlCtn+terlxMZf
+   +P7We4834T5J4LplxUjP/8vSkAF9WhAen+C5RW7s+YsVgCH3K49fdMJ7L
+   qQKQRWyl6TKZwaGrTqEiy+AS1qOMjdE0qzdVTvztW6+MF1AAmC31NE+2O
+   5q+0LD75hfpS7DHBB51p4M0xCixD25cWp+OyBsgHClgf3vN2vS97cOWGx
+   w==;
+X-CSE-ConnectionGUID: 62RgK7Q1Q6isrAVyXfP/yA==
+X-CSE-MsgGUID: sVkdN1nxSNWHIgZCLCj+9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="29688423"
+X-IronPort-AV: E=Sophos;i="6.09,204,1716274800"; 
+   d="scan'208";a="29688423"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 20:17:05 -0700
+X-CSE-ConnectionGUID: SH/MYtNRQEeFLxhQLqofRA==
+X-CSE-MsgGUID: PG09s4KXQjidP0SrBlDbsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,204,1716274800"; 
+   d="scan'208";a="53459510"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 12 Jul 2024 20:17:00 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sSTFp-000bbs-2U;
+	Sat, 13 Jul 2024 03:16:57 +0000
+Date: Sat, 13 Jul 2024 11:16:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/2] media: venus: use device managed APIs for power
+ domains
+Message-ID: <202407131046.zNlz3AxD-lkp@intel.com>
+References: <1720763312-13018-3-git-send-email-quic_dikshita@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1720763312-13018-3-git-send-email-quic_dikshita@quicinc.com>
 
-From: Paulo Alcantara <pc@cjr.nz>
+Hi Dikshita,
 
-commit 7ad54b98fc1f141cfb70cfe2a3d6def5a85169ff upstream.
+kernel test robot noticed the following build errors:
 
-Use TCP_Server_Info::origin_fullpath instead of cifs_tcon::tree_name
-when building source paths for automounts as it will be useful for
-domain-based DFS referrals where the connections and referrals would
-get either re-used from the cache or re-created when chasing the dfs
-link.
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge media-tree/master linus/master v6.10-rc7 next-20240712]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Paulo Alcantara (SUSE) <pc@cjr.nz>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-[apanyaki: backport to v6.1-stable]
-Signed-off-by: Andrew Paniakin <apanyaki@amazon.com>
----
-This patch fixes issue reported in
-https://lore.kernel.org/regressions/ZnMkNzmitQdP9OIC@3c06303d853a.ant.amazon.com
+url:    https://github.com/intel-lab-lkp/linux/commits/Dikshita-Agarwal/PM-domains-add-device-managed-version-of-dev_pm_domain_attach-detach_list/20240712-135151
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/1720763312-13018-3-git-send-email-quic_dikshita%40quicinc.com
+patch subject: [PATCH 2/2] media: venus: use device managed APIs for power domains
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20240713/202407131046.zNlz3AxD-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240713/202407131046.zNlz3AxD-lkp@intel.com/reproduce)
 
-1. The set_dest_addr function gets ip address differntly. In kernel 6.1
-the dns_resolve_server_name_to_ip function returns string instead of
-struct sockaddr, this string needs to be converted with
-cifs_convert_address then.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407131046.zNlz3AxD-lkp@intel.com/
 
-2. There's no tmp.leaf_fullpath field in kernel 6.1, it was introduced
-later in a1c0d00572fc ("cifs: share dfs connections and supers")
+All errors (new ones prefixed by >>):
 
-3. __build_path_from_dentry_optional_prefix and
-dfs_get_automount_devname were added to fs/smb/client/cifsproto.h
-instead of fs/cifs/dfs.h which doesn't exist in 6.1
----
- fs/smb/client/cifs_dfs_ref.c | 34 ++++++++++++++++++++++++++++++++--
- fs/smb/client/cifsproto.h    | 18 ++++++++++++++++++
- fs/smb/client/dir.c          | 21 +++++++++++++++------
- 3 files changed, 65 insertions(+), 8 deletions(-)
+   In file included from drivers/media/platform/qcom/venus/pm_helpers.c:9:
+   In file included from include/linux/iopoll.h:14:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from drivers/media/platform/qcom/venus/pm_helpers.c:9:
+   In file included from include/linux/iopoll.h:14:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from drivers/media/platform/qcom/venus/pm_helpers.c:9:
+   In file included from include/linux/iopoll.h:14:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   In file included from drivers/media/platform/qcom/venus/pm_helpers.c:11:
+   In file included from include/linux/pm_domain.h:11:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:173:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2258:
+   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     501 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     508 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     520 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     529 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/media/platform/qcom/venus/pm_helpers.c:872:8: error: call to undeclared function 'devm_pm_domain_attach_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     872 |         ret = devm_pm_domain_attach_list(dev, &vcodec_data, &core->pmdomains);
+         |               ^
+   drivers/media/platform/qcom/venus/pm_helpers.c:872:8: note: did you mean 'dev_pm_domain_attach_list'?
+   include/linux/pm_domain.h:483:19: note: 'dev_pm_domain_attach_list' declared here
+     483 | static inline int dev_pm_domain_attach_list(struct device *dev,
+         |                   ^
+   17 warnings and 1 error generated.
 
-diff --git a/fs/smb/client/cifs_dfs_ref.c b/fs/smb/client/cifs_dfs_ref.c
-index 020e71fe1454..876f9a43a99d 100644
---- a/fs/smb/client/cifs_dfs_ref.c
-+++ b/fs/smb/client/cifs_dfs_ref.c
-@@ -258,6 +258,31 @@ char *cifs_compose_mount_options(const char *sb_mountdata,
- 	goto compose_mount_options_out;
- }
- 
-+static int set_dest_addr(struct smb3_fs_context *ctx, const char *full_path)
-+{
-+	struct sockaddr *addr = (struct sockaddr *)&ctx->dstaddr;
-+	char *str_addr = NULL;
-+	int rc;
-+
-+	rc = dns_resolve_server_name_to_ip(full_path, &str_addr, NULL);
-+	if (rc < 0)
-+		goto out;
-+
-+	rc = cifs_convert_address(addr, str_addr, strlen(str_addr));
-+	if (!rc) {
-+		cifs_dbg(FYI, "%s: failed to convert ip address\n", __func__);
-+		rc = -EINVAL;
-+		goto out;
-+	}
-+
-+	cifs_set_port(addr, ctx->port);
-+	rc = 0;
-+
-+out:
-+	kfree(str_addr);
-+	return rc;
-+}
-+
- /*
-  * Create a vfsmount that we can automount
-  */
-@@ -295,8 +320,7 @@ static struct vfsmount *cifs_dfs_do_automount(struct path *path)
- 	ctx = smb3_fc2context(fc);
- 
- 	page = alloc_dentry_path();
--	/* always use tree name prefix */
--	full_path = build_path_from_dentry_optional_prefix(mntpt, page, true);
-+	full_path = dfs_get_automount_devname(mntpt, page);
- 	if (IS_ERR(full_path)) {
- 		mnt = ERR_CAST(full_path);
- 		goto out;
-@@ -315,6 +339,12 @@ static struct vfsmount *cifs_dfs_do_automount(struct path *path)
- 		goto out;
- 	}
- 
-+	rc = set_dest_addr(ctx, full_path);
-+	if (rc) {
-+		mnt = ERR_PTR(rc);
-+		goto out;
-+	}
-+
- 	rc = smb3_parse_devname(full_path, ctx);
- 	if (!rc)
- 		mnt = fc_mount(fc);
-diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index f37e4da0fe40..6dbc9afd6728 100644
---- a/fs/smb/client/cifsproto.h
-+++ b/fs/smb/client/cifsproto.h
-@@ -57,8 +57,26 @@ extern void exit_cifs_idmap(void);
- extern int init_cifs_spnego(void);
- extern void exit_cifs_spnego(void);
- extern const char *build_path_from_dentry(struct dentry *, void *);
-+char *__build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
-+					       const char *tree, int tree_len,
-+					       bool prefix);
- extern char *build_path_from_dentry_optional_prefix(struct dentry *direntry,
- 						    void *page, bool prefix);
-+static inline char *dfs_get_automount_devname(struct dentry *dentry, void *page)
-+{
-+	struct cifs_sb_info *cifs_sb = CIFS_SB(dentry->d_sb);
-+	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
-+	struct TCP_Server_Info *server = tcon->ses->server;
-+
-+	if (unlikely(!server->origin_fullpath))
-+		return ERR_PTR(-EREMOTE);
-+
-+	return __build_path_from_dentry_optional_prefix(dentry, page,
-+							server->origin_fullpath,
-+							strlen(server->origin_fullpath),
-+							true);
-+}
-+
- static inline void *alloc_dentry_path(void)
- {
- 	return __getname();
-diff --git a/fs/smb/client/dir.c b/fs/smb/client/dir.c
-index 863c7bc3db86..477302157ab3 100644
---- a/fs/smb/client/dir.c
-+++ b/fs/smb/client/dir.c
-@@ -78,14 +78,13 @@ build_path_from_dentry(struct dentry *direntry, void *page)
- 						      prefix);
- }
- 
--char *
--build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
--				       bool prefix)
-+char *__build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
-+					       const char *tree, int tree_len,
-+					       bool prefix)
- {
- 	int dfsplen;
- 	int pplen = 0;
- 	struct cifs_sb_info *cifs_sb = CIFS_SB(direntry->d_sb);
--	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
- 	char dirsep = CIFS_DIR_SEP(cifs_sb);
- 	char *s;
- 
-@@ -93,7 +92,7 @@ build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
- 		return ERR_PTR(-ENOMEM);
- 
- 	if (prefix)
--		dfsplen = strnlen(tcon->tree_name, MAX_TREE_SIZE + 1);
-+		dfsplen = strnlen(tree, tree_len + 1);
- 	else
- 		dfsplen = 0;
- 
-@@ -123,7 +122,7 @@ build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
- 	}
- 	if (dfsplen) {
- 		s -= dfsplen;
--		memcpy(s, tcon->tree_name, dfsplen);
-+		memcpy(s, tree, dfsplen);
- 		if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) {
- 			int i;
- 			for (i = 0; i < dfsplen; i++) {
-@@ -135,6 +134,16 @@ build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
- 	return s;
- }
- 
-+char *build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
-+					     bool prefix)
-+{
-+	struct cifs_sb_info *cifs_sb = CIFS_SB(direntry->d_sb);
-+	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
-+
-+	return __build_path_from_dentry_optional_prefix(direntry, page, tcon->tree_name,
-+							MAX_TREE_SIZE, prefix);
-+}
-+
- /*
-  * Don't allow path components longer than the server max.
-  * Don't allow the separator character in a path component.
+
+vim +/devm_pm_domain_attach_list +872 drivers/media/platform/qcom/venus/pm_helpers.c
+
+   856	
+   857	static int vcodec_domains_get(struct venus_core *core)
+   858	{
+   859		int ret;
+   860		struct device **opp_virt_dev;
+   861		struct device *dev = core->dev;
+   862		const struct venus_resources *res = core->res;
+   863		struct dev_pm_domain_attach_data vcodec_data = {
+   864			.pd_names = res->vcodec_pmdomains,
+   865			.num_pd_names = res->vcodec_pmdomains_num,
+   866			.pd_flags = PD_FLAG_NO_DEV_LINK,
+   867		};
+   868	
+   869		if (!res->vcodec_pmdomains_num)
+   870			goto skip_pmdomains;
+   871	
+ > 872		ret = devm_pm_domain_attach_list(dev, &vcodec_data, &core->pmdomains);
+   873		if (ret < 0)
+   874			return ret;
+   875	
+   876	skip_pmdomains:
+   877		if (!core->res->opp_pmdomain)
+   878			return 0;
+   879	
+   880		/* Attach the power domain for setting performance state */
+   881		ret = devm_pm_opp_attach_genpd(dev, res->opp_pmdomain, &opp_virt_dev);
+   882		if (ret)
+   883			goto opp_attach_err;
+   884	
+   885		core->opp_pmdomain = *opp_virt_dev;
+   886		core->opp_dl_venus = device_link_add(dev, core->opp_pmdomain,
+   887						     DL_FLAG_RPM_ACTIVE |
+   888						     DL_FLAG_PM_RUNTIME |
+   889						     DL_FLAG_STATELESS);
+   890		if (!core->opp_dl_venus) {
+   891			ret = -ENODEV;
+   892			goto opp_attach_err;
+   893		}
+   894	
+   895		return 0;
+   896	
+   897	opp_attach_err:
+   898		return ret;
+   899	}
+   900	
+
 -- 
-2.40.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
