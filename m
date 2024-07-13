@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-251469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D9593053D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:45:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 020D093053A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D577D1C21042
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:45:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DEA91C210C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F33573501;
-	Sat, 13 Jul 2024 10:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XETdx1qF"
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0262347A53;
-	Sat, 13 Jul 2024 10:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172A86E614;
+	Sat, 13 Jul 2024 10:45:17 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F4947A53
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 10:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720867540; cv=none; b=f8jGuUZ2oVFEu2mgroaV8H5L3t+GPFQUIT3mhCGH6K8nO5zZ7z6oiCo2ed49Ymc8q2LxwrRfEkD+Ul38OLmJylhkvkhSxSONZipDPFoxDZXruH0wtQ9EH4nROSsG0oXCNZOZQAcAMglAtz6I0dx1t64NzxIltc2f+vPeVkET0Wc=
+	t=1720867516; cv=none; b=emLNLWMoJvLZP6FphGWAuMs4CLpupq3ip/ciKaEQkv+DKyNmdvfMrrWIUGuV+Cm0hqE8sPWDa6iNrfaWKrzLYhgwdtyPEr8uWRxaDluEHljFbKw/jxOiX0FHTYUnHOdhfrAJCnWrDtQ2+wX0uVoMqxM27UDmLsKeK2UAmG8CeHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720867540; c=relaxed/simple;
-	bh=0Sgv7iDpBQpLnt5xMwKPbYl7cBdSmNSaz+6GBBDmHeI=;
+	s=arc-20240116; t=1720867516; c=relaxed/simple;
+	bh=3t45zkM63/1IkomnSJE6/sKgKdKkJO+bVQpITtDyKkA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K+8JX8d1+7CuVKF81YAbu8wF1gjxPUmAyA6rc2KJC2bz2kKvA8IccXVkPmVATACQAnEdeKDpePcHhr2865GeGNPvYnJBai3sTg9SLcslAnpiJ/7R0ZXenr3R64R2RucCn2R5CsG2NzJX1CAQjBMTqaRTE0Kdjqmg7Tz2CWkXmE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XETdx1qF; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id SaEtsYZnxYjQzSaEusagth; Sat, 13 Jul 2024 12:44:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720867468;
-	bh=sXFkaELaVcONq/wZ2YavLzkpI2a5TGDA0QnUmOOLdDc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=XETdx1qFiWm2wv1qVsnrg5HRDRXJGt17UQMy9937mb67e9lecYyQBUskcGtQKPZG7
-	 Y/liAE57sG+KkX9LUANzSr7nqSJFcFFk6DoSsxG7dspsZq3L8nb3D+FBeDBCwY9YR8
-	 rn4R/t6I/4W26l/FANDYmX5TNIwQjG2w3vSgpdBndQ8//LGwZrsjMC0RQPS7frY1ET
-	 1TZTG5WcejO8ZEEEzR+8brhjNH8qf47U82ZSyHkSMl3w2flVmyCjFM0Pk9l3p+KRxN
-	 DJJAPeWUWBfQTJOByYnlKWHXehIyzx0q0tYzw9d+jNXRX9np993Lkz8YfUbLnd0lNB
-	 dTuLCip7+3ykQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sat, 13 Jul 2024 12:44:28 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <2c0e9d3c-72be-499d-a52e-779d851b37a9@wanadoo.fr>
-Date: Sat, 13 Jul 2024 12:44:27 +0200
+	 In-Reply-To:Content-Type; b=BlTEVCjYvaE3YZ6Defs/NJc2rp6mIfP5mwGH3e5uQsQBpJNdNnFLza6TNEg6c3emXH5SrvxHLn/oBu1PzQeVpLF6cDwHjhFM7KqvDoIhYbOWadS+HEQhMTHA/MmcPkgdfZTiXu5zoRkzs8UtZglxQBqaW5KAUBiARXgUhLQvaDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A74CC1007;
+	Sat, 13 Jul 2024 03:45:32 -0700 (PDT)
+Received: from [10.57.77.253] (unknown [10.57.77.253])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B97233F762;
+	Sat, 13 Jul 2024 03:45:05 -0700 (PDT)
+Message-ID: <8c32a2fc-252d-406b-9fec-ce5bab0829df@arm.com>
+Date: Sat, 13 Jul 2024 11:45:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,145 +41,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] iio: humidity: Add support for ENS21x
-To: jfelmeden@thegoodpenguin.co.uk
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, jic23@kernel.org,
- krzk+dt@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, robh@kernel.org
-References: <20240710-ens21x-v3-0-4e3fbcf2a7fb@thegoodpenguin.co.uk>
- <20240710-ens21x-v3-2-4e3fbcf2a7fb@thegoodpenguin.co.uk>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240710-ens21x-v3-2-4e3fbcf2a7fb@thegoodpenguin.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Barry Song <baohua@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240711072929.3590000-1-ryan.roberts@arm.com>
+ <20240711072929.3590000-3-ryan.roberts@arm.com>
+ <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
+ <CAK1f24nCDZM8aa9z_ZtgLbdj695JJri01q2HJUJb9pJt2uqy=w@mail.gmail.com>
+ <756c359e-bb8f-481e-a33f-163c729afa31@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <756c359e-bb8f-481e-a33f-163c729afa31@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Le 10/07/2024 à 15:24, Joshua Felmeden a écrit :
-> Add support for ENS210/ENS210A/ENS211/ENS212/ENS213A/ENS215.
+On 13/07/2024 02:08, David Hildenbrand wrote:
+> On 12.07.24 14:22, Lance Yang wrote:
+>> On Fri, Jul 12, 2024 at 11:00 AM Baolin Wang
+>> <baolin.wang@linux.alibaba.com> wrote:
+>>>
+>>>
+>>>
+>>> On 2024/7/11 15:29, Ryan Roberts wrote:
+>>>> Expose 3 new mTHP stats for file (pagecache) folio allocations:
+>>>>
+>>>>     /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_alloc
+>>>>     /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_fallback
+>>>>    
+>>>> /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_fallback_charge
+>>>>
+>>>> This will provide some insight on the sizes of large folios being
+>>>> allocated for file-backed memory, and how often allocation is failing.
+>>>>
+>>>> All non-order-0 (and most order-0) folio allocations are currently done
+>>>> through filemap_alloc_folio(), and folios are charged in a subsequent
+>>>> call to filemap_add_folio(). So count file_fallback when allocation
+>>>> fails in filemap_alloc_folio() and count file_alloc or
+>>>> file_fallback_charge in filemap_add_folio(), based on whether charging
+>>>> succeeded or not. There are some users of filemap_add_folio() that
+>>>> allocate their own order-0 folio by other means, so we would not count
+>>>> an allocation failure in this case, but we also don't care about order-0
+>>>> allocations. This approach feels like it should be good enough and
+>>>> doesn't require any (impractically large) refactoring.
+>>>>
+>>>> The existing mTHP stats interface is reused to provide consistency to
+>>>> users. And because we are reusing the same interface, we can reuse the
+>>>> same infrastructure on the kernel side. The one small wrinkle is that
+>>>> the set of folio sizes supported by the pagecache are not identical to
+>>>> those supported by anon and shmem; pagecache supports order-1, unlike
+>>>> anon and shmem, and the max pagecache order may be less than PMD-size
+>>>> (see arm64 with 64K base pages), again unlike anon and shmem. So we now
+>>>> create a hugepages-*kB directory for the union of the sizes supported by
+>>>> all 3 memory types and populate it with the relevant stats and controls.
+>>>
+>>> Personally, I like the idea that can help analyze the allocation of
+>>> large folios for the page cache.
+>>>
+>>> However, I have a slight concern about the consistency of the interface.
+>>>
+>>> For 64K, the fields layout:
+>>> ├── hugepages-64kB
+>>> │   ├── enabled
+>>> │   ├── shmem_enabled
+>>> │   └── stats
+>>> │       ├── anon_fault_alloc
+>>> │       ├── anon_fault_fallback
+>>> │       ├── anon_fault_fallback_charge
+>>> │       ├── file_alloc
+>>> │       ├── file_fallback
+>>> │       ├── file_fallback_charge
+>>> │       ├── shmem_alloc
+>>> │       ├── shmem_fallback
+>>> │       ├── shmem_fallback_charge
+>>> │       ├── split
+>>> │       ├── split_deferred
+>>> │       ├── split_failed
+>>> │       ├── swpout
+>>> │       └── swpout_fallback
+>>>
+>>> But for 8K (for pagecache), you removed some fields (of course, I
+>>> understand why they are not supported).
+>>>
+>>> ├── hugepages-8kB
+>>> │   └── stats
+>>> │       ├── file_alloc
+>>> │       ├── file_fallback
+>>> │       └── file_fallback_charge
+>>>
+>>> This might not be user-friendly for some user-space parsing tools, as
+>>> they lack certain fields for the same pattern interfaces. Of course,
+>>> this might not be an issue if we have clear documentation describing the
+>>> differences here:)
+>>>
+>>> Another possible approach is to maintain the same field layout to keep
+>>> consistent, but prohibit writing to the fields that are not supported by
+>>> the pagecache, and any stats read from them would be 0.
+>>
+>> I agree that maintaining a uniform field layout, especially at the stats
+>> level, might be necessary ;)
+>>
+>> Keeping a consistent interface could future-proof the design. It allows
+>> for the possibility that features not currently supported for 8kB pages
+>> might be enabled in the future.
 > 
-> The ENS21x is a family of temperature and relative humidity sensors with
-> accuracies tailored to the needs of specific applications.
+> I'll just note that, with shmem/file effectively being disabled for order > 11,
+> we'll also have entries there that are effectively unused.
+
+Indeed, I mentioned that in the commit log :)
+
 > 
-> Signed-off-by: Joshua Felmeden <jfelmeden-tUaQ5FxYRYX4aQPF92CzsNBc4/FLrbF6@public.gmane.org>
-> ---
->   drivers/iio/humidity/Kconfig  |  11 ++
->   drivers/iio/humidity/Makefile |   1 +
->   drivers/iio/humidity/ens21x.c | 346 ++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 358 insertions(+)
+> Good question how we want to deal with that (stats are easy, but what about when
+> we enable something? Maybe we should document that "enabled" is only effective
+> when supported).
 
-Hi,
+The documentation already says "If enabling multiple hugepage sizes, the kernel
+will select the most appropriate enabled size for a given allocation." for anon
+THP (and I've added similar wording for my as-yet-unposted patch to add controls
+for page cache folio sizes). So I think we could easily add dummy *enabled
+controls for all sizes, that can be written to and read back consistently, but
+the kernel just ignores them when deciding what size to use. It would also
+simplify the code that populates the controls.
 
-as kernel test robot complained, there will be a v4.
+Personally though, I'm not convinced of the value of trying to make the controls
+for every size look identical. What's the real value to the user to pretend that
+they can select a size that they cannot? What happens when we inevitably want to
+add some new control in future which only applies to select sizes and there is
+no good way to fake it for the other sizes? Why can't user space just be
+expected to rely on the existance of the files rather than on the existance of
+the directories?
 
-So here are a few nitpicks/questions, in case it helps.
+As always, I'll go with the majority, but just wanted to register my opinion.
 
-...
+Thanks,
+Ryan
 
-> +#include <linux/types.h>
-> +#include <linux/i2c.h>
-> +#include <linux/delay.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/sysfs.h>
-> +#include <linux/crc7.h>
-
-Nitpick: usually, it is prefered to keep #include alphabetically ordered.
-
-...
-
-> +
-> +/* magic constants */
-> +#define ENS21X_CONST_TEMP_SCALE_INT 15 /* integer part of temperature scale (1/64) */
-> +#define ENS21X_CONST_TEMP_SCALE_DEC 625000 /* decimal part of temperature scale */
-> +#define ENS21X_CONST_HUM_SCALE_INT 1 /* integer part of humidity scale (1/512) */
-> +#define ENS21X_CONST_HUM_SCALE_DEC 953125 /* decimal part of humidity scale */
-> +#define ENS21X_CONST_TEMP_OFFSET_INT -17481 /* temperature offset (64 * -273.15) */
-> +#define ENS21X_CONST_TEMP_OFFSET_DEC 600000 /* decimal part of offset */
-> +#define ENS210_CONST_CONVERSION_TIME 130
-> +#define ENS212_CONST_CONVERSION_TIME 32
-> +#define ENS215_CONST_CONVERSION_TIME 132
-
-Datasheet says 130 for ENS213A and ENS215.
-Is it a typo?
-If 132 is intentional, maybe a samll comment explaining why would be 
-welcomed?
-
-...
-
-> +static int ens21x_get_measurement(struct iio_dev *indio_dev, bool temp, int *val)
-> +{
-> +	u32 regval, regval_le;
-> +	int ret, tries;
-> +	struct ens21x_dev *dev_data = iio_priv(indio_dev);
-> +
-> +	/* assert read */
-> +	i2c_smbus_write_byte_data(dev_data->client, ENS21X_REG_SENS_START,
-> +				  temp ? ENS21X_SENS_START_T_START :
-> +					 ENS21X_SENS_START_H_START);
-> +
-> +	/* wait for conversion to be ready */
-> +	switch (dev_data->part_id) {
-> +	case ENS210:
-> +	case ENS210A:
-> +		msleep(ENS210_CONST_CONVERSION_TIME);
-> +		break;
-> +	case ENS211:
-> +	case ENS212:
-> +		msleep(ENS212_CONST_CONVERSION_TIME);
-> +		break;
-> +	case ENS213A:
-> +	case ENS215:
-> +		msleep(ENS215_CONST_CONVERSION_TIME);
-> +		break;
-> +	default:
-> +		dev_err(&dev_data->client->dev, "unrecognised device");
-> +		return -ENODEV;
-> +	}
-> +
-> +	tries = 10;
-> +	while (tries-- > 0) {
-> +		usleep_range(4000, 5000);
-
-We just msleep()'ed the max expected time for the conversion. So, maybe 
-the code could be re-arranged so that this delay is done only if we retry?
-
-> +		ret = i2c_smbus_read_byte_data(dev_data->client,
-> +					       ENS21X_REG_SENS_STAT);
-> +		if (ret < 0)
-> +			continue;
-> +		if (!(ret & (temp ? ENS21X_SENS_STAT_T_ACTIVE :
-> +				    ENS21X_SENS_STAT_H_ACTIVE)))
-> +			break;
-> +	}
-> +	if (tries < 0) {
-> +		dev_err(&indio_dev->dev, "timeout waiting for sensor reading\n");
-> +		return -EIO;
-> +	}
-
-...
-
-> +	indio_dev->name = id->name;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = ens21x_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(ens21x_channels);
-> +	indio_dev->info = &ens21x_info;
-> +
-> +	return devm_iio_device_register(&client->dev, indio_dev);
-> +}
-> +
-> +
-
-Nitpick: unneeded 2nd new line.
-
-> +static const struct of_device_id ens21x_of_match[] = {
-> +	{ .compatible = "sciosense,ens210", .data = (void *)ENS210},
-> +	{ .compatible = "sciosense,ens210a", .data = (void *)ENS210A },
-> +	{ .compatible = "sciosense,ens211", .data = (void *)ENS211},
-
-...
-
-CJ
+> 
+> Hmmmmm
+> 
 
 
