@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-251622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2510B930729
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 21:32:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D5693072C
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 21:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12516B219E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:32:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29241B21AAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D2113C672;
-	Sat, 13 Jul 2024 19:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B93C14388E;
+	Sat, 13 Jul 2024 19:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bc0mIFIk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7lYDktb"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E25918E20;
-	Sat, 13 Jul 2024 19:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F622E403;
+	Sat, 13 Jul 2024 19:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720899131; cv=none; b=tX1m/ixc6sVQnJYVHB7AZy23cULfFbUBylzawfIOVEmyo28Mhga85qumRyAvGF9dAEaV3bua0diz9Y1hLYsJw6z6VgMvgZfKC6nkj/ZYuWIrOwYtNKgbO3Kj2PuSvgTIRR2ohHjlvTD7eTniAf2FbzNJhvxZGIJBk8fUwk/aKL4=
+	t=1720899350; cv=none; b=cv8nshIJGb0rCpm5cvgGXbVhQmTpq7kCrzRr08Pv2ksWTwehmH3UwMH54KMAJdWSbkKmZzoKK93zEOsv1SCaTamRbFzHPXz2m0LD3XVH2age71pZWTZeZ30hqgQDlxDtRiqw6KfeGLCsOBQC15Nfe1MXArqAmRE9a9vrI2SMHeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720899131; c=relaxed/simple;
-	bh=GsdSioRswa5ZtwiNP4Fqw+tz6HJ1LDN6fkMxS0buikA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GOh2WSPeHL5bYfKUbdfZ/gZtxRiugnIq80eosQOry4Snh4TEEL4Am06MBh/IbAqQOYWLMeEVe63g+dRJ9M/PhSi8h0t+sZtp5eJPazQX+FVtGY8m+mTdNsQBSiLSMjIUpQJFUmZ1EdEzbds+EtKqJ4Fy1cFctsV+xK/RW2UpDek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bc0mIFIk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5AC8C32781;
-	Sat, 13 Jul 2024 19:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720899130;
-	bh=GsdSioRswa5ZtwiNP4Fqw+tz6HJ1LDN6fkMxS0buikA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=bc0mIFIk2NuSGdrG80Dj0ECDoC/ek18aeBhrXsGculeF0LFi/g7XyXY0hB15Rwdyn
-	 /QtXj8JoP7lhrBlgips+SXx1ePAnBfEi1kDGm878gLrfi01ySVdcbeDC3h9BvaC7bM
-	 exaLQ+ao40/yCxoYzIoZYS6gmxqJQQTEyVwN6+v6+r28UxNHgVuUpTfih6yqWDQyfx
-	 Df+X+BjEt7AjtRBsK3pclThskwJoHblPNxvg+symj9qh3bpF612mFrEb/k5L6KJa1C
-	 4+jKfH5RF10hsLJmlUWcGjSEbAuIXQhjT4YMGmHnDpDsOge8MZOxJoLU4G9j4tL3C5
-	 8UKsC1uOv9xfQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6A711CE09EE; Sat, 13 Jul 2024 12:32:10 -0700 (PDT)
-Date: Sat, 13 Jul 2024 12:32:10 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Rik van Riel <riel@surriel.com>
-Cc: neeraj.upadhyay@kernel.org, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
-	mingo@kernel.org, peterz@infradead.org, leobras@redhat.com,
-	imran.f.khan@oracle.com
-Subject: Re: [PATCH  2/3] locking/csd_lock: Provide an indication of ongoing
- CSD-lock stall
-Message-ID: <ed89d87a-027e-4a99-8437-28258fd0f691@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240713165642.GA215331@neeraj.linux>
- <20240713165846.216174-2-neeraj.upadhyay@kernel.org>
- <ee33a2c3e32d98b5fc04983745c47f918f9ea2d2.camel@surriel.com>
+	s=arc-20240116; t=1720899350; c=relaxed/simple;
+	bh=JI1tEridxdctNaX89ov4Yc87xBCfYvi+2O/1VIJixwg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XTy9Wz96K49lxx45BjU26/RkwQmkblkU5IcVWo6aoyISrWFNvEjGEFtbO07TkWfc46rNdtjrF/efVahBS26RqV1x9uuj4imyTrgj5MmMGJO6qIhmyJVpIQSDaqvFsm//cxw0gN8sr8/8mD2K7b99U+KT93IyshrcgJySJfvjKOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7lYDktb; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a77ec5d3b0dso407513866b.0;
+        Sat, 13 Jul 2024 12:35:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720899347; x=1721504147; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JI1tEridxdctNaX89ov4Yc87xBCfYvi+2O/1VIJixwg=;
+        b=X7lYDktbFZ5dADn0mEuzssM3k2k9xt6hFcoSMM/3W6LIv9Jnl9AZNV4u1dEFW5uFbb
+         psNmcKJM4DO6LqsMc5mFnfZ1yqN8/jGVVWCyFASliHLYa6axNsGvQDTwf5+x0/4VSCBz
+         LcVsrHoeoT/F6Iddf8xA2tizjUb2OGlg2DTFfCyFN9XCT0vyd893pT91Y0G2CDgn8xfF
+         abMVEWgeKcDH4Coc8tLm7KziX6lB+Xx2kFzpfZ7hZxh+OIrPhYjoMSvvf0mAuNXCY8s+
+         GXB36RYf1cuLCQfnl9SuuG0xClUU5YKrqf43BLEuJ6lRDfOm76Wj+PJapsPX9OkiSZXR
+         Xakg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720899347; x=1721504147;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JI1tEridxdctNaX89ov4Yc87xBCfYvi+2O/1VIJixwg=;
+        b=PxX3x701tr0BD2OT6cB6cx1WHblct8V5tT1mef9Vcib7IyoDasLXxyHhkDzAfWJUHS
+         j3Z7/qFW+IZZsybJSE9OsuDpDYWUvdiLmP/GCHVtXOBllIAcy/8EEXbLGhtRYgqqBWhy
+         rZk10tssneTXzepi4OQCCWDjXPjNaBJ/iYmK9hwO3ukRn2PU5lfjecVH30eS4/Aowpyv
+         kpbgVarHDrfv3Os99z7AqMX7i7KjPZzJI8+/S9P3Ml2ekxpttu/EoYu7lAQh++igC17v
+         jYwsmoITbWg3EXgXGhxTXTc3BMzCJryyHLSfomfETb0cxeYJLGp7jOtVQoiEkTzl8mBm
+         uzqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIUBvQRoxXMIuHPTIh00ZxfbIsTSGKk30iU/ETmLNzaFKQJRCXjKkdZCbt3sMI9YEKbn4LinpwlPMq1kEsXxqfKbOU6Cjh1jSu1K2p0w3IP8C0nLqRSrVUuLN4mmOEaQ60+Dkji40+jxtndi98jpFHWvQFOIizk7wfax3EnSxknFDqgIlSIiVbFNLb
+X-Gm-Message-State: AOJu0YxZvYokUeRAI905rAOogN+L7fSJSSgQjv0oGc7Gg7uasZlbBqV+
+	lrHsfYNtJkZ+UWa2QW7GSYfyTGnNAyRf7KZGLzRcuH1cPhCxmtEE
+X-Google-Smtp-Source: AGHT+IHXffw7T8Mk052bMqhDl0uBwFRitClxFfuNYzi+bLxpKaZn5JcYxOlT6tnDVeUZxPhri5bhSQ==
+X-Received: by 2002:a17:906:dfc3:b0:a75:360a:6cb0 with SMTP id a640c23a62f3a-a780b6b3644mr910156766b.29.1720899346894;
+        Sat, 13 Jul 2024 12:35:46 -0700 (PDT)
+Received: from ?IPv6:2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78? ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1cfbsm72789066b.107.2024.07.13.12.35.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jul 2024 12:35:46 -0700 (PDT)
+Message-ID: <813e0467c323db2eb3bd6997764fcd33b99f6290.camel@gmail.com>
+Subject: Re: [PATCH] arm64: dts: exynos: exynos7885-jackpotlte: Correct RAM
+ amount to 4GB
+From: David Virag <virag.david003@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: phone-devel@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>, Sam Protsenko
+ <semen.protsenko@linaro.org>,  devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Sat, 13 Jul 2024 21:36:20 +0200
+In-Reply-To: <9cac0d59-47cd-423c-bbfb-952981c49b9a@kernel.org>
+References: <20240713180607.147942-3-virag.david003@gmail.com>
+	 <9cac0d59-47cd-423c-bbfb-952981c49b9a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ee33a2c3e32d98b5fc04983745c47f918f9ea2d2.camel@surriel.com>
 
-On Sat, Jul 13, 2024 at 01:16:47PM -0400, Rik van Riel wrote:
-> On Sat, 2024-07-13 at 22:28 +0530, neeraj.upadhyay@kernel.org wrote:
-> > 
-> > @@ -228,6 +241,7 @@ static bool
-> > csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
-> >  		cpu = csd_lock_wait_getcpu(csd);
-> >  		pr_alert("csd: CSD lock (#%d) got unstuck on
-> > CPU#%02d, CPU#%02d released the lock.\n",
-> >  			 *bug_id, raw_smp_processor_id(), cpu);
-> > +		atomic_dec(&n_csd_lock_stuck);
-> >  		return true;
-> >  	}
-> >  
-> 
-> So we decrement it when it gets unstuck. Good.
-> 
-> > @@ -251,6 +265,8 @@ static bool
-> > csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
-> >  	pr_alert("csd: %s non-responsive CSD lock (#%d) on CPU#%d,
-> > waiting %lld ns for CPU#%02d %pS(%ps).\n",
-> >  		 firsttime ? "Detected" : "Continued", *bug_id,
-> > raw_smp_processor_id(), (s64)ts_delta,
-> >  		 cpu, csd->func, csd->info);
-> > +	if (firsttime)
-> > +		atomic_dec(&n_csd_lock_stuck);
-> > 
-> 
-> However, I don't see any place where it is incremented when things
-> get stuck, and this line decrements it when a CPU gets stuck for
-> the first time?
-> 
-> Should this be an atomic_inc?
+On Sat, 2024-07-13 at 20:54 +0200, Krzysztof Kozlowski wrote:
+> On 13/07/2024 19:58, David Virag wrote:
+> > All known jackpotlte variants have 4GB of RAM, let's use it all.
+> > RAM was set to 3GB from a mistake in the vendor provided DTS file.
+>=20
+> Hm, vendor DTS rarely has a mistake of missing 1 GB of RAM, so I
+> assume
+> there was some reason behind it. Trusted apps? Some shared memory for
+> other co-processor?
 
-Good catch, thank you!  I will go get that brown paper bag...
+Honestly I'm not sure, maybe some prototype had 3GB of RAM?
+The stock bootloader does update it to 4GB, but the stock bootloader
+also doesn't even respect the arm64 boot protocol, and doesn't let us
+change the kernel cmdline, so we don't like using it.
 
-							Thanx, Paul
+>=20
+> Anyway, if this works 100% for you, then I am fine with it.
+
+Yup, works perfectly!
+
+>=20
+> It is too late in the cycle for me to pick it up. I will take it
+> after
+> the merge window.
+
+That's fine with me.
+
+>=20
+>=20
+>=20
+>=20
+> Best regards,
+> Krzysztof
+>=20
+
+Best regards,
+David
 
