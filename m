@@ -1,133 +1,79 @@
-Return-Path: <linux-kernel+bounces-251662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3588C9307D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 00:43:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138C69307DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Jul 2024 00:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC2BC283D25
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 22:43:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4F52B21CB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 22:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDD514D6F1;
-	Sat, 13 Jul 2024 22:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB7715572F;
+	Sat, 13 Jul 2024 22:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSAiwTqa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pL2DW2pC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C91A200A0;
-	Sat, 13 Jul 2024 22:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF45044C7B;
+	Sat, 13 Jul 2024 22:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720910594; cv=none; b=tUs+9oWWwmgsIDLy/xJ2QVk4ioAn3kzChJkCYZbSgN57YAdbe8W2EARoxfKaCrvXRE5Fvkm8WQ9vafPrnbWi+F9iprybdekhQhdwJOnCLC257WEACW0ojuteTazFXw/LwHFTekt/yUQSDieaQBemC9DsiY4acn6Nn1K7f839yNY=
+	t=1720910776; cv=none; b=f0jzQ36nw09JhxwMeclOA/gW4+uud6CHQeEXJ7HuQQccD8kCrJ3TPgUVoI8fpBWvsFf9zzWm2qMKzTkQlMQ5J/0Wc4EbYS8Vm4Q0BUAxYA5ZhRK2jdwLqw9uYPMGyW+4mByEc+P4MFKxi1J0Fs7dYO3O/gtbFWaPlBw0ezLgdDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720910594; c=relaxed/simple;
-	bh=hETYkNnlXHQGebeKJD5NwFmWpobQ/5QwmRql7Jb8RvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rLZgD+br2rq2nIhc9H2fJUV3Dgv7j9n6OgddKELvX9oCxy0P9L/8nmLL3PYl8/LSSqURecp0ePIRiS9EvLBrX1tgt8KEdeLC9CTGWlZP2xCGTJzuZGfY37Gzcj2JG0QzS9LSjsIBTUQvzalsp4v5iRYqKRk9wRX1TZha3W0k3Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSAiwTqa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29118C4AF0B;
-	Sat, 13 Jul 2024 22:43:12 +0000 (UTC)
+	s=arc-20240116; t=1720910776; c=relaxed/simple;
+	bh=UwofqbVZqwaGSdtJu7hNgGk0S78WZ1m7zs7Iyxom9Qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=imX1D8q33rOtbS0gy2O0NM3Ej8Wr27CvlnksfHoebUE587j79nL1X3jLuMU1E8zd6ndYSZAL/SRMoj63sdWktSq5D9LJFmcYH9hkprdnw9J5IlASw6J7SH0+C5KVpGUiDUF0HEidATMkxXAfmwWzvbi32EixmgCYMZPDD3HS4aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pL2DW2pC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 048E3C32781;
+	Sat, 13 Jul 2024 22:46:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720910593;
-	bh=hETYkNnlXHQGebeKJD5NwFmWpobQ/5QwmRql7Jb8RvM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aSAiwTqaqkiNLdDSGkqfPw5DOha/6oeu28Hpv1vS6TQWza2jKnabUBMOjzbN0rQwu
-	 ByfGqj61AFA7yuQ4Ymu3aILBWG1y0WicftBuBd+auK/YzoOEN9Zx3Oxn6z0hhY8Sye
-	 yUwwj+g3wg4MSsIN4rCIri4vJTVqG1XESVlxI5ugGArGIAz1b9t1DVnqsjUk3vkmoS
-	 QQsYrZA3qUXPHRnnGhqpinqQSc4XdR5RWLmwt5Q+V20D729sBQ2mi6T/LdQFWg7PO0
-	 knZLS9YKaQDgj7kdN+r2fgcZYooDhrU0hcX21aHR1SFe4oJ31RMz6+VfNHEzJprZuD
-	 Mw+cseU0aDuwg==
-Date: Sun, 14 Jul 2024 00:43:10 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.10-rc8
-Message-ID: <ZpMC_ugpHtY3GrmA@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=k20201202; t=1720910775;
+	bh=UwofqbVZqwaGSdtJu7hNgGk0S78WZ1m7zs7Iyxom9Qs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pL2DW2pCE3ihMNvR25rHszj7M5f4HJPWWvnxIgylzPGwBEAIfxVJOFMyKm5dLAdPG
+	 5VMGjr7OcvpMMrHHLE4Www5hissobknwvO3MQchHspgGI8bZZRYzsfbVhH4lp4tRFf
+	 5UTtnkPws0D72NdvQZPNdPvQncKQ/8NzU/EVMnygMNYVpjkdB0lNrknyVDIt8TUoLf
+	 FY7VhJbnF0TnQirwLD518v3H8EAefwigV6b6tfyCo2YUbwKmjUdL+j4TSSlhuHaVma
+	 J6pNmusLISAIdR0zMfKSi+BjWDGTGRIfOHt0DziphCxPx4qKRq+BZYaRK52LXu5IhK
+	 bv/NEIyxzmYkg==
+Date: Sat, 13 Jul 2024 15:46:14 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, Geliang
+ Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+ <shuah@kernel.org>, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] selftests: mptcp: lib: fix shellcheck errors
+Message-ID: <20240713154614.653f30ce@kernel.org>
+In-Reply-To: <20240712-upstream-net-next-20240712-selftests-mptcp-fix-shellcheck-v1-1-1cb7180db40a@kernel.org>
+References: <20240712-upstream-net-next-20240712-selftests-mptcp-fix-shellcheck-v1-1-1cb7180db40a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zJEu+bkQi7iU23s1"
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 12 Jul 2024 12:00:15 +0200 Matthieu Baerts (NGI0) wrote:
+> It looks like we missed these two errors recently:
+> 
+>   - SC2068: Double quote array expansions to avoid re-splitting elements.
+>   - SC2145: Argument mixes string and array. Use * or separate argument.
+> 
+> Two simple fixes, it is not supposed to change the behaviour as the
+> variable names should not have any spaces in their names. Still, better
+> to fix them to easily spot new issues.
+> 
+> Fixes: f265d3119a29 ("selftests: mptcp: lib: use setup/cleanup_ns helpers")
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
---zJEu+bkQi7iU23s1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
-
-  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.10-rc8
-
-for you to fetch changes up to 3fdd2d21f1c7f0203575b46d2b3fba81292992b6:
-
-  Merge tag 'i2c-host-fixes-6.10-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-07-13 10:50:55 +0200)
-
-----------------------------------------------------------------
-Fixes for the I2C testunit, the Renesas R-Car driver and some
-MAINTAINERS corrections.
-
-----------------------------------------------------------------
-Wolfram Sang (9):
-      i2c: rcar: bring hardware to known state when probing
-      i2c: rcar: clear NO_RXDMA flag after resetting
-      MAINTAINERS: delete entries for Thor Thayer
-      MAINTAINERS: VIRTIO I2C loses a maintainer, gains a reviewer
-      i2c: testunit: correct Kconfig description
-      i2c: mark HostNotify target address as used
-      i2c: rcar: ensure Gen3+ reset does not disturb local targets
-      i2c: testunit: avoid re-issued work after read message
-      Merge tag 'i2c-host-fixes-6.10-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Andi Shyti (1):
-      (Rev.) i2c: testunit: avoid re-issued work after read message
-
- MAINTAINERS                      | 23 +----------------------
- drivers/i2c/Kconfig              |  2 +-
- drivers/i2c/busses/i2c-rcar.c    | 27 +++++++++++++++++++++------
- drivers/i2c/i2c-core-base.c      |  1 +
- drivers/i2c/i2c-slave-testunit.c |  7 +++++++
- 5 files changed, 31 insertions(+), 29 deletions(-)
-
---zJEu+bkQi7iU23s1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaTAv4ACgkQFA3kzBSg
-Kbah8xAAmZtWH8xe4kx0P3VSP/5kv6RrGXWFL43FJRWV/f886VhnOHqmeAwffBsQ
-TVcegfMk6LP6X3lKv2DhNaowVA0xyeIrVfYbqEgrjUGaRJvjokDLXSBpiB6+tbMJ
-1izhs4quXSD0GgnMDD7ito2UZKSMzU4/YNDFVCUIx/bvf+C6u3kJSfrBJz2AvUNR
-t7gm7k6Il7Fm+s12Hlrg7oNASI1jtIyaH1ughg+a7sgwfyzxCsQXFgH4EQCO0HPW
-C1q1P/bDmMko75Ig4yQuVfJJkizDXb/QcPHAjclaLP48TnHaPdi8eTkBPdJWm+jC
-1Cy1CxZRbqqaO0G6ahmkdghRLgdV6EcNJvyGoX1skjE+YddMrpTXkKTxTPJOQM1x
-91YF6jr9gfq8+g76mWM+Yht/vd9Jjajf0f5ZvWvJgdXuP7FyWDg0jAp6Nqbt9Fjd
-EdX8hLkx/E6g8NbXioSmdQ7TgJRE2vxo/74eExNp09ThHwFsWm9w/gjoruExPRGx
-MeE93AyTwAM5Bg9oA7EDVrXEdGmKIX/hVbHHKQf9QC62aJzCKjwNO1zsDxaN+YGc
-FLzuMhyl3YSK4LJpeX7xjavfIwnOs/vU2yI7IYxwe5EP+5YLzWOz6mv70O4Rj4wJ
-zsyjVtWmrEJpCsWPu58nhGf4UAZ4a0YJMwPia1JZ5enz8t8/CPw=
-=wLHB
------END PGP SIGNATURE-----
-
---zJEu+bkQi7iU23s1--
+Speaking of MPTCP tests - I added the connect test to ignored today.
+Too many failures :(
 
