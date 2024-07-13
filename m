@@ -1,165 +1,143 @@
-Return-Path: <linux-kernel+bounces-251268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB459302D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:46:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7219302DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7A981C2258A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:46:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D28E2844BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70FAEACE;
-	Sat, 13 Jul 2024 00:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334ACFC0B;
+	Sat, 13 Jul 2024 00:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="bqX3/N98"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COFWUYvi"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CFB4A39
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 00:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E609DD2F5;
+	Sat, 13 Jul 2024 00:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720831560; cv=none; b=DYSsBygjOsd9gpXMPI8lBx2zP1b7QU7B93MsSg5x7YLOxoCsGu1kHUtzYN1zvb3qn+umafxeGZ2QDCIAqvIrpLvjiV0RbTq7oIYXpI4hFP6sqW60DG9SHA85HQi4YQdBCpr6xB5Go7EtasgRUcQEFpX93Kq5c2TRS9n5lUJ7JuM=
+	t=1720831731; cv=none; b=K8MtGOSAX2RCG7m8qckudoQ2+3+kHvUjkLwiZ1yqV2FiTStHn4Vs4RlcSGTkVgRZSnrNhaJT1wLvXoe6I3XOe2LWz+pI4Uf3OUFkL9S2v7ThT6PCt6iVr5tKirqKDIVoIbhlOOM0fALiqS5UUgnv9fIZHusKLD9dpIKcnU+EG7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720831560; c=relaxed/simple;
-	bh=fIeC+An8Bolk7ryUxH57g7EED4R3JHcxo9Xw3ewYCag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LU6tfjIdbb/kygPCxjVtBzNhj0lNJ9O5ODd8mZnJLSKCASmrySrtF3xwQbu3Qv9D6K79RgwAoc+dG+FCt4CdhSSx+13wmTkPd9NOC6Lc0XVHuS/HbqiQwCJEnfie5pgM7dJgUsXwVfIvy/ArcfmCqIJ2jiuy6u0Z8KMJqPbMn3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=bqX3/N98; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70af5fbf0d5so1703209b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 17:45:58 -0700 (PDT)
+	s=arc-20240116; t=1720831731; c=relaxed/simple;
+	bh=6HsKtFDDgviwQH1b4AdwR89R/oIpdTxW9lu5rBhyzP8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eM7Mxe94Acv9/yUqYrg2ZsygxiH8EYzG3/bJYXwbM2rZ27arJH4TJ5xp1TbxOnNixY+O1s8d/JAGOJeGFKDdZI4o9TdVpwnRCO58Nx8j0aHe8+Dv9G7/p7PjeAduO3aHpAaxRdMNVG/qWI/fmMZLFPvsiTWdLjrExtu+fGEZXCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COFWUYvi; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-59a47d5c22aso1296203a12.1;
+        Fri, 12 Jul 2024 17:48:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1720831558; x=1721436358; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dW4zTFHOtzR/wwPx1Zay5ljlIiuZLQskqd4uueA0+2Y=;
-        b=bqX3/N98t+U/N9aESe4MeB4CFUyQ49wotzpLFJgKHHZGuRJWJlg+fkJZdJm+q4YAa2
-         K2FVaAkxBk6ZfSGIsRdUAMWFydmmuhf3+BgWJqSmBR70LSLPho/4f7kFCRjiJZYKhDRX
-         6qWAYgOP7Dm/En6SKS2fQCsgXRZixxtW6teUQ=
+        d=gmail.com; s=20230601; t=1720831728; x=1721436528; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6HsKtFDDgviwQH1b4AdwR89R/oIpdTxW9lu5rBhyzP8=;
+        b=COFWUYvixkhRX0/u9grV8jo3EjbiesoRyVUOIpGUR6yyZ6QgYFzEQOxNDL6c4lR5HO
+         h/F02hhJjbnM6NS4L8Er0mYx5jaaEUgCFVHd6s0Fk4Kk2U6hYz+LMBYVPA7EYVFgHMks
+         t9qwS8p0Ure20gaDSUoGSxG9rL/6fRv2MK1H9ygDdUAnvanjeLisky+Ltjxmgy7bUWhP
+         DKlkrM9b9f26FvcLcKsxyNe9MqEEWxisGV1HrOyA2GlrGxEFAKc12o8iT5WjJFFHRPDF
+         ijjKPH82nPHK/PTh+yRb+kPbqSZLT00/vvz1pFRAAhGyhv/KTCT/WHgTL0xxjKPFx1xT
+         GZDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720831558; x=1721436358;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dW4zTFHOtzR/wwPx1Zay5ljlIiuZLQskqd4uueA0+2Y=;
-        b=Guz0C44bgJ2X3QyFYKgmyZbopt3GinZyE/OB7Knp680Gu/GQsIdLHhhobj6+lW7rpc
-         Gk393wlFwcMgl28s5zbmJL/MZsu+/MWPg5/yavrClm3mikCPCYseX3QyLUqc9kSDotVW
-         SPKNJ3LYease9S+nZnIx0Y++9JfxeANcIpLJA3rzebwp5mxfyrFFaLeoUCU67+tjrGBH
-         TuLYYFvb/80SI+Y1TP76Tzq5pmu+X0bicI00a8j8fUxbKXaJzONWvoWoIfjw02rHchaF
-         zCwnvh3E2w1m5SL27L61ARzBxS89kk9OYkmluF70SYOZWcXiK732VTQ8AaqhBPzs7LYE
-         UYTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKRF0wKA9clYtxTLSLGcj61J59wHL83NfVJcljxnCnYn3pP3W0k/EG7UNYAolm5r6AuPDvPWu5SGHDeqpXDm9ug1ns96HhHfIxxNPo
-X-Gm-Message-State: AOJu0Yzs1Dh0kbPgXaamm1I5rRLjHfiBvHzAB/5bEhF+2KOhwkuzWWfW
-	uG+eK1dZoQRj7zxaoj+4dFj69l2OWPnuRVHZl0XyDG19iCgDvPbz5afTuLag/4s=
-X-Google-Smtp-Source: AGHT+IHoPtn3Alyl3FZi++726JDLvsj5bOjq0G1Q9EoK3jyg4rB7GE4Kv5UyyYhw1tM2Dc6MPFlM8A==
-X-Received: by 2002:a62:e915:0:b0:705:cc7d:ab7d with SMTP id d2e1a72fcca58-70b6c884c43mr5316300b3a.5.1720831557735;
-        Fri, 12 Jul 2024 17:45:57 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b7eb9e226sm145706b3a.27.2024.07.12.17.45.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 17:45:57 -0700 (PDT)
-Date: Fri, 12 Jul 2024 17:45:54 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Kyle Huey <me@kylehuey.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, netdev@vger.kernel.org, acme@kernel.org,
-	andrii.nakryiko@gmail.com, elver@google.com, khuey@kylehuey.com,
-	mingo@kernel.org, namhyung@kernel.org, peterz@infradead.org,
-	robert@ocallahan.org, yonghong.song@linux.dev,
-	mkarsten@uwaterloo.ca, kuba@kernel.org
-Subject: Re: [bpf?] [net-next ?] [RESEND] possible bpf overflow/output bug
- introduced in 6.10rc1 ?
-Message-ID: <ZpHOQoyEE7Rl1ky8@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Kyle Huey <me@kylehuey.com>, Jiri Olsa <olsajiri@gmail.com>,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, acme@kernel.org, andrii.nakryiko@gmail.com,
-	elver@google.com, khuey@kylehuey.com, mingo@kernel.org,
-	namhyung@kernel.org, peterz@infradead.org, robert@ocallahan.org,
-	yonghong.song@linux.dev, mkarsten@uwaterloo.ca, kuba@kernel.org
-References: <ZpFfocvyF3KHaSzF@LQ3V64L9R2>
- <ZpGrstyKD-PtWyoP@krava>
- <CAP045ApgYjQLVgvPeB0jK4LjfBB+XMo89gdVkZH8XJAdD=a6sg@mail.gmail.com>
- <CAP045ApsNDc-wJSSY0-BC+HMvWErUYk=GAt6P+J_8Q6dcdXj4Q@mail.gmail.com>
- <CAP045AqqfU3g2+-groEHzzdJvO3nyHPM5_faUao5UdbSOtK48A@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1720831728; x=1721436528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6HsKtFDDgviwQH1b4AdwR89R/oIpdTxW9lu5rBhyzP8=;
+        b=DgbB2nuSexdRNCA2F8ApeOVkxVgu5uKrc361EYxXLecxnz3/Y262Gxi2cCosvUEwuj
+         qcUnkVFBPVaq1D/Q5AFTzYN2kV1hYdi/mvXV1aAlnvrtGo4VkAyNdEC7+aHfwHHYlqE3
+         o14bOL2DsjNounFFf/3zfbW/8cu/TnGnbK2o7zFUrBu57QLp8TwDGioCKzl8NOGdz3kf
+         d8Woe0NRnxh03dU1sTzLBWo9L6mIBZ6QVzPx/LUkT6j8/11WXQakg1cW9HCin9n9WIG1
+         3z+qBvbTBZV24Bo326/UcIerNo9WgWFPuGtsGqnENhGPc5vaI85vd7rd2SayRDs73UiO
+         tqoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVctJj1+1zWTaHSF1NeG1apxh+eR/MtBIUHzd9IEmOd5uKb1ApAu4BZB0j0CLD06wAoGzR6dhZbrO/ew2XyprTDx74JiiLVN1eMJO2pXMmmFxlts4DQz2t3bw9tqG9Z1+Zc/faT8Eo5WmEvQDE=
+X-Gm-Message-State: AOJu0YyqvUJLGDvScSLS5v0wy9VEoGAfTJJTYyZB7iYRBofqQJD/Kpy/
+	qN4GHZu8h9N4yoW19eLaFHSpGkEmEPU3cF5eWrQmRid+2GESc3kfzNO1Cxdod9bGKCI2Olon2JS
+	gFHfsSRNJuQxoEJN3jVCNr0YzsXQ=
+X-Google-Smtp-Source: AGHT+IFeeJ3/yWZLz9nMde/4bWSuZg18FBSHV/qNjaFCrj/uBC8/sAe66xVQO4ioF4q/Ni373euOM4ug9j90dYFf/so=
+X-Received: by 2002:a17:906:195a:b0:a77:e48d:bc9 with SMTP id
+ a640c23a62f3a-a780b68a472mr741456766b.16.1720831727888; Fri, 12 Jul 2024
+ 17:48:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP045AqqfU3g2+-groEHzzdJvO3nyHPM5_faUao5UdbSOtK48A@mail.gmail.com>
+References: <20240710225011.275153-1-daniel.almeida@collabora.com>
+ <fe84a028-01a8-4987-b1b7-141fb76d263c@arm.com> <4344B22F-D859-4C64-A351-69FFB5208362@collabora.com>
+ <ZpFDeajsuVONbSYJ@cassiopeiae> <0A0C1EFC-29A1-4D73-8B02-CC1C693D6A7A@collabora.com>
+ <ZpFMmAEdqo1dhj0s@cassiopeiae>
+In-Reply-To: <ZpFMmAEdqo1dhj0s@cassiopeiae>
+From: Dave Airlie <airlied@gmail.com>
+Date: Sat, 13 Jul 2024 10:48:36 +1000
+Message-ID: <CAPM=9twNU3Wm02zCqzipSt4mDU3UUF5AyVycpBkPTGqv7fwPAQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] drm: panthor: add dev_coredumpv support
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, ojeda@kernel.org, lyude@redhat.com, robh@kernel.org, 
+	lina@asahilina.net, mcanal@igalia.com, rust-for-linux@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 12, 2024 at 04:30:31PM -0700, Kyle Huey wrote:
-> Joe, can you test this?
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 8f908f077935..f0d7119585dc 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -9666,6 +9666,8 @@ static inline void
-> perf_event_free_bpf_handler(struct perf_event *event)
->   * Generic event overflow handling, sampling.
->   */
-> 
-> +static bool perf_event_is_tracing(struct perf_event *event);
-> +
->  static int __perf_event_overflow(struct perf_event *event,
->                   int throttle, struct perf_sample_data *data,
->                   struct pt_regs *regs)
-> @@ -9682,7 +9684,9 @@ static int __perf_event_overflow(struct perf_event *event,
-> 
->      ret = __perf_event_account_interrupt(event, throttle);
-> 
-> -    if (event->prog && !bpf_overflow_handler(event, data, regs))
-> +    if (event->prog &&
-> +        !perf_event_is_tracing(event) &&
-> +        !bpf_overflow_handler(event, data, regs))
->          return ret;
-> 
->      /*
-> @@ -10612,6 +10616,11 @@ void perf_event_free_bpf_prog(struct perf_event *event)
-> 
->  #else
-> 
-> +static inline bool perf_event_is_tracing(struct perf_event *event)
-> +{
-> +    return false;
-> +}
-> +
->  static inline void perf_tp_register(void)
->  {
->  }
+On Sat, 13 Jul 2024 at 01:32, Danilo Krummrich <dakr@redhat.com> wrote:
 >
+> On Fri, Jul 12, 2024 at 12:13:15PM -0300, Daniel Almeida wrote:
+> >
+> >
+> > > On 12 Jul 2024, at 11:53, Danilo Krummrich <dakr@redhat.com> wrote:
+> > >
+> > > You could also just define those structures in a C header directly an=
+d use it
+> > > from Rust, can't you?
+> > >
+> >
+> >
+> > Sure, I am open to any approach here. Although this looks a bit reverse=
+d to me.
+> >
+> > i.e.: why should I declare these structs in a separate language and fil=
+e, and then use them in Rust through bindgen? Sounds clunky.
+>
+> The kernel exposes the uAPI as C header files. You just choose to do the
+> implementation in the kernel in Rust.
+>
+> Hence, I'd argue that the uAPI header is the actual source. So, we should
+> generate stuff from those headers and not the other way around I think.
+>
+> >
+> > Right now, they are declared right next to where they are used in the c=
+ode, i.e.: in the same Rust file. And so long as they=E2=80=99re #[repr(C)]=
+ we know that an equivalent C version can generated by cbindgen.
+> >
+>
+> I'm not sure whether it's a good idea to generate uAPI header files in ge=
+neral.
+>
+> How do we ensure that the generated header file are useful for userspace =
+in
+> terms of readability and documentation?
+>
+> How do we (easily) verify that changes in the Rust code don't break the u=
+API by
+> due to leading to changes in the generated header files?
+>
+> Do we have guarantees that future releases of cbindgen can't break anythi=
+ng?
 
-Thank you!
+I think I'm on the uapi should remain in C for now, we define uapi
+types with the kernel types and we have downstream tools to scan and
+parse them to deal with alignments and padding (I know FEX relies on
+it), so I think we should be bindgen from uapi headers into rust for
+now. There might be a future where this changes, but that isn't now
+and I definitely don't want to mix C and rust uapi in one driver.
 
-I've applied the above patch on top of commit 338a93cf4a18 ("net:
-mctp-i2c: invalidate flows immediately on TX errors"), which seems
-to be latest on net-next/main.
-
-I built and booted that kernel on my mlx5 test machine and re-ran
-the same bpftrace invocation:
-
-  bpftrace -e 'tracepoint:napi:napi_poll { @[args->work] = count(); }'
-
-I then scp-ed a 100MiB zero filled file to the target 48 times back
-to back (e.g. scp zeroes target:~/ && scp zeroes target:~/ && ... )
-and the bpftrace output seems reasonable; there are no negative
-numbers and the values output *look* reasonable to me.
-
-The patch seems reasonable, as well, with the major caveat that I've
-only hacked on drivers and networking stuff and know absolutely
-nothing about bpf internals.
-
-All that said:
-
-Tested-by: Joe Damato <jdamato@fastly.com>
+Dave.
 
