@@ -1,88 +1,426 @@
-Return-Path: <linux-kernel+bounces-251593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764389306AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:20:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63EAB9306B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23D061F24014
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:20:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7267F1C232FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF3513C90C;
-	Sat, 13 Jul 2024 17:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4107A13D240;
+	Sat, 13 Jul 2024 17:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ZbriIsec"
-Received: from mail-40135.protonmail.ch (mail-40135.protonmail.ch [185.70.40.135])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hDFwU1yK"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727741757D
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 17:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1F4BA40;
+	Sat, 13 Jul 2024 17:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720891239; cv=none; b=beORFpNnKDFYlpHtw0kGhzmoow1NwoaU1X8hi0JL8slzFUlhs9V9bRx8mgyrIZqjWJnihMyfcSZgttmOjdxjRds9nMTHOCkfG1WEN7dG+GOUTXPLegnTrYBulStuGAfk82v7WBko7ItBqC/jB22Bamowo3PvzS6KnAeK0tkPimY=
+	t=1720891633; cv=none; b=kYfhoOJjSesucwEnf8RNbNGO4hBNppeYQS8qC/UGBpwDCQB0fvzgwmlcl6s1sZBhsPnqms4cbdOb8Ovp7Weo50WT0VfJMMJwAXKfeGWgSpd5hhggdFZ+UtCeFXMKOLWm1wzd121L3rI5vbDnngNK3WaOSzcylrcQVtYTUyp0+sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720891239; c=relaxed/simple;
-	bh=ANQHS9HUmHlYvmKjLH/u/zyALfJtBztdbVB93inesCY=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=USQQvQUxAzKv+4ABFIyxn2UmQSif2rBb9bu+lJ4KsAeyAL82DhWbgN4FN4iHfdJ/dXn0kbb5iiLnWAGFPo5+ieW7kWx07BzCGRAQKExY+X5dZwOPH6d3/ZePzatgEN1ga9HwHzSg3kv+H4Rw2D+EKnlzq2AqZs4G4KN/7iH8YwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZbriIsec; arc=none smtp.client-ip=185.70.40.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=irhr7zf4fvc5vobsx2qwtpj2my.protonmail; t=1720891228; x=1721150428;
-	bh=eJcIiNtsTLDnA2FylVg1vCQcHDpyde2OGog/Rht7LOI=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=ZbriIsectR261a0qO0Pgo+T/m4HnIL6gJjNVJdWrD6UmhU/KdGjR8pIFbC+l96ga+
-	 EbHf0GYn2ixPguXYRk4slJj2fS4YqjZmDdAHXeJdsHqSQuY5ZSXFS7PRbZweEl5EOW
-	 8rVYKZg6KKLq+/67t1ighCiDPsYrnu0nkNptRXKnquuw8SYioRH/rhJbHAfFAOU4fA
-	 h0xOtaucsxkNVidTEpwnfySziOj2YMlPuY4lh3tfkCe9WQxl5k7g7td8OzqyEW4CTc
-	 5LKx1V8P4sXkYhZhSUIdc1b1wJoBQYvysQ94qpegMU9BJ9eJo+jd+Ykg1TQ2RY+nNv
-	 i3W5G53n4dP6w==
-Date: Sat, 13 Jul 2024 17:20:17 +0000
-To: Thomas Zimmermann <tzimmermann@suse.de>
-From: Tj <tj.iam.tj@proton.me>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "1075713@bugs.debian.org" <1075713@bugs.debian.org>
-Subject: Regression: firmware/sysfb.c device path
-Message-ID: <lLyvPFC_APGHNfyGNHRpQy5izBikkaTPOpHooZIT3fFAoJPquSI31ZMueA99XTdr8ysir3X7O7IMdc6za-0m79vr_claeparHhoRouVgHOI=@proton.me>
-Feedback-ID: 113488376:user:proton
-X-Pm-Message-ID: 9cbf234fcfc8491f556759df5cff1f03e8cddffa
+	s=arc-20240116; t=1720891633; c=relaxed/simple;
+	bh=Y9N4zsvW8wverBTOJn10UOXQFw1+/0sTYADFjDj3mzg=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=YlrrSTrSJ0t81VWoZ3rC4LNSXdtZxuLES3lzNiC3jlCsJFXwMHPxCFecX/FIzX4RNYhgiZ9Fos6XlD+zqsfR27CNCeSLJ0/BnwTjeXy0pSs/Jjeh1fAscKabZSEG+d7TbLkZucMxvkPk/EY2Ptve6xIvuJp0VLmYSILu7REVyMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hDFwU1yK; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46DGRk5R012543;
+	Sat, 13 Jul 2024 17:26:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-type:mime-version:subject:from:in-reply-to:date:cc
+	:content-transfer-encoding:message-id:references:to; s=pp1; bh=C
+	SLDSdcY14vRIETpzgs7gw6TRPx3zqsfbJC50nghrqI=; b=hDFwU1yKiC8cGX7c/
+	sXnLzDClrhKj4RpcvWxgoDn+lGXQ8ZBSoj4pRdgw+XIIgaiBzObXs2OsOocY2OjB
+	q8nqS+aQgPH3DTZ7koWYoLM0ZEXjQAcUsO5dEHMCE3KUiOynGdffAu0hYiu2LrGt
+	gH4w8+Yu8ox3o/nt9dwCCHgH7cMm8k6hpShp1QYkM//jvege30KWHI8pEkKBcMvZ
+	/fZYK5tVmoMPdRTvpp4uCgrNGOT6VcJMYs3qWigseBeIOMxC6b/VZA1TxGiQQ1cs
+	/YfZhhXTDECfL2Wpc+r+EvmXc8CuxLR1BsiTSLbL47+Q7za6m3XhTtT0RfwaKjD4
+	NCUSw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40brr1gcqh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 17:26:55 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46DHQtrI025847;
+	Sat, 13 Jul 2024 17:26:55 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40brr1gcqe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 17:26:55 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46DFARDC013906;
+	Sat, 13 Jul 2024 17:21:54 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407gn1ck7w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 17:21:54 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46DHLmCP19268070
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 13 Jul 2024 17:21:50 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 80CDF20043;
+	Sat, 13 Jul 2024 17:21:48 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DC39E20040;
+	Sat, 13 Jul 2024 17:21:45 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.43.49.134])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sat, 13 Jul 2024 17:21:45 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH V6 17/18] tools/perf: Update data_type_cmp and
+ sort__typeoff_sort function to include var_name in comparison
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <ZpKVROoPC5KBTPAj@google.com>
+Date: Sat, 13 Jul 2024 22:51:33 +0530
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ian Rogers <irogers@google.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Disha Goel <disgoel@linux.vnet.ibm.com>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <75010931-82A9-4640-8C55-2062A3726970@linux.vnet.ibm.com>
+References: <20240707144419.92510-1-atrajeev@linux.vnet.ibm.com>
+ <20240707144419.92510-18-atrajeev@linux.vnet.ibm.com>
+ <ZpGfYVc_ewcsQxWL@google.com>
+ <6733E9A7-1118-46A5-8C17-DC22A9C47207@linux.vnet.ibm.com>
+ <ZpKVROoPC5KBTPAj@google.com>
+To: Namhyung Kim <namhyung@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ZkfD4AkCbdHAsR3WIBpz1_x5I9wBwy4T
+X-Proofpoint-GUID: NXDc1dseNCeY5ZQYdzBXnyxfW_M6sek_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-13_13,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1015 spamscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 mlxscore=0 priorityscore=1501
+ mlxlogscore=999 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2407130131
 
-The recent commits to add the parent device path broke Debian's kvm based Q=
-A workers for testing installer ISOs after a kernel upgrade from v6.8.12 to=
- v6.9.7. For the details:
 
-https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D1075713
 
-It took some time to  track it down since the superficial symptom appeared =
-to involve the QXL driver. It turned out however to be the fbdev driver; sp=
-ecifically the change in the parent device path in sysfs reported between t=
-he two kernels:
+> On 13 Jul 2024, at 8:25=E2=80=AFPM, Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>=20
+> On Sat, Jul 13, 2024 at 11:52:30AM +0530, Athira Rajeev wrote:
+>>=20
+>>=20
+>>> On 13 Jul 2024, at 2:55=E2=80=AFAM, Namhyung Kim =
+<namhyung@kernel.org> wrote:
+>>>=20
+>>> On Sun, Jul 07, 2024 at 08:14:18PM +0530, Athira Rajeev wrote:
+>>>> Currently data_type_cmp() only compares size and type name.
+>>>> But in cases where the type name of two data type entries
+>>>> is same, but var_name is different, the comparison can't =
+distinguish
+>>>> two different types.
+>>>>=20
+>>>> Consider there is a "long unsigned int" with var_name as "X" and =
+there
+>>>> is global variable "long unsigned int". Currently since
+>>>> data_type_cmp uses only type_name for comparison ( "long unsigned =
+int"),
+>>>> it won't distinguish these as separate entries. Update the
+>>>=20
+>>> I'm still not sure if it's ok.  It intentionally merges different
+>>> instances of the same type together as it's a data 'type' profile.
+>>>=20
+>>>=20
+>>>> functions "data_type_cmp" as well as "sort__typeoff_sort" to
+>>>> compare variable names after type name if it exists.
+>>>>=20
+>>>> Also updated "hist_entry__typeoff_snprintf" to print var_name if
+>>>> it is set. With the changes,
+>>>>=20
+>>>>    11.42%  long unsigned int  long unsigned int +0 =
+(current_stack_pointer)
+>>>>    4.68%  struct paca_struct  struct paca_struct +2312 (__current)
+>>>>    4.57%  struct paca_struct  struct paca_struct +2354 =
+(irq_soft_mask)
+>>>>    2.69%  struct paca_struct  struct paca_struct +2808 (canary)
+>>>>    2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
+>>>>    2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
+>>>>    1.43%  long unsigned int  long unsigned int +0 (no field)
+>>>=20
+>>> It seems like an output of `perf report -s type,typeoff`.  But I'm
+>>> curious how it'd work with -s type only?  I guess it'd have two =
+separate
+>>> entries for 'long unsigned int'.  Ideally we can have a single entry
+>>> with two different fields.
+>>>=20
+>>> For example, `perf report -s type,typeoff -H`:
+>>>=20
+>>> 12.85%     long unsigned int
+>>>    11.42%     long unsigned int +0 (current_stack_pointer)
+>>>     1.43%     long unsigned int +0 (no field)
+>>> ...
+>>>=20
+>>=20
+>> Hi Namhyung,
+>>=20
+>> Thanks for the comments.
+>>=20
+>> While printing, the check for field is done only in =
+=E2=80=9Csort__typeoff_sort=E2=80=9D.
+>> To summarise,
+>> 1. While adding the data type in rb node, if the entry has different =
+field, new entry will be added. So we will have different entries in rb =
+node if field differs.
+>> 2. While using sort key to display, for =E2=80=9Ctypeoff=E2=80=9D, we =
+use sort__typeoff_sort . For =E2=80=9Ctype=E2=80=9D, we use =
+=E2=80=9Csort__type_sort=E2=80=9D
+>> 3. In =E2=80=9Csort__type_sort=E2=80=9D type_name is used. Hence =
+result will have only single entry
+>> 4. In =E2=80=9Csort__typeoff_sort=E2=80=9D we added check for =
+=E2=80=9Cvar_name=E2=80=9D too in this patch. So result will have two =
+entries if field differs
+>=20
+> I see.
+>=20
+>>=20
+>> Example:
+>>=20
+>> Using -H option,
+>>=20
+>> ./perf report -s type,typeoff -H
+>>=20
+>>    17.65%     struct paca_struct
+>>        4.68%     struct paca_struct +2312 (__current)
+>>        4.57%     struct paca_struct +2354 (irq_soft_mask)
+>>        2.69%     struct paca_struct +2808 (canary)
+>>        2.68%     struct paca_struct +8 (paca_index)
+>>        2.24%     struct paca_struct +48 (data_offset)
+>>        0.55%     struct paca_struct +2816 =
+(mmiowb_state.nesting_count)
+>>        0.18%     struct paca_struct +2818 =
+(mmiowb_state.mmiowb_pending)
+>>        0.03%     struct paca_struct +2352 (hsrr_valid)
+>>        0.02%     struct paca_struct +2356 (irq_work_pending)
+>>        0.00%     struct paca_struct +0 (lppaca_ptr)
+>>    12.85%     long unsigned int
+>>       11.42%     long unsigned int +0 (current_stack_pointer)
+>>        1.43%     long unsigned int +0 (no field)
+>>=20
+>> As you mentioned, we have single entry with two different fields:
+>>=20
+>> 12.85%     long unsigned int
+>>       11.42%     long unsigned int +0 (current_stack_pointer)
+>>        1.43%     long unsigned int +0 (no field)
+>>=20
+>> With perf report -s type:
+>>=20
+>>    17.65%  struct paca_struct
+>>    12.85%  long unsigned int
+>>     1.69%  struct task_struct
+>>     1.51%  struct rq
+>>     1.49%  struct pt_regs
+>>     1.41%  struct vm_fault
+>>     1.20%  struct inode
+>>     1.15%  struct file
+>>     1.08%  struct sd_lb_stats
+>>     0.90%  struct security_hook_list
+>>     0.86%  struct seq_file
+>>     0.79%  struct cfs_rq
+>>     0.78%  struct irq_desc
+>>     0.72%  long long unsigned int
+>>=20
+>>=20
+>> Where as with perf report -s typeoff:
+>>=20
+>>    11.42%  long unsigned int +0 (current_stack_pointer)
+>>     4.68%  struct paca_struct +2312 (__current)
+>>     4.57%  struct paca_struct +2354 (irq_soft_mask)
+>>     2.69%  struct paca_struct +2808 (canary)
+>>     2.68%  struct paca_struct +8 (paca_index)
+>>     2.24%  struct paca_struct +48 (data_offset)
+>>     1.43%  long unsigned int +0 (no field)
+>>=20
+>>=20
+>> Namhyung,
+>>=20
+>> If the above shared result for =E2=80=9Ctype=E2=80=9D and =
+=E2=80=9Ctypeoff=E2=80=9D looks good and other changes are fine, I will =
+post V7 with change for sort cmp to use cmp_null.
+>> Please share your response.
+>=20
+> Great, it looks all good.  Please send v7.
+>=20
+> But I think it's a bit late to add this to the upcoming window.
 
-6.8.12:=20
+Ok Namhyung.
+I have posted V7 with suggested changes. Please review the changes. If =
+it is not possible to pick in upcoming window, if it all looks good, =
+please pick it for the next possible window.
 
-/sys/class/graphics/fb0 -> ../../devices/platform/vesa-framebuffer.0/graphi=
-cs/fb0
+Thanks for checking and sharing your comments,
+Athira
 
-6.9.7:
+>=20
+> Thanks,
+> Namhyung
+>=20
+>>=20
+>> Thanks
+>> Athira
+>>=20
+>>>>=20
+>>>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>>>> ---
+>>>> tools/perf/util/annotate-data.c | 24 ++++++++++++++++++++++--
+>>>> tools/perf/util/sort.c          | 23 +++++++++++++++++++++--
+>>>> 2 files changed, 43 insertions(+), 4 deletions(-)
+>>>>=20
+>>>> diff --git a/tools/perf/util/annotate-data.c =
+b/tools/perf/util/annotate-data.c
+>>>> index 8d05f3dbddf6..759c6a22e719 100644
+>>>> --- a/tools/perf/util/annotate-data.c
+>>>> +++ b/tools/perf/util/annotate-data.c
+>>>> @@ -167,7 +167,7 @@ static void exit_type_state(struct type_state =
+*state)
+>>>> }
+>>>>=20
+>>>> /*
+>>>> - * Compare type name and size to maintain them in a tree.
+>>>> + * Compare type name, var_name  and size to maintain them in a =
+tree.
+>>>> * I'm not sure if DWARF would have information of a single type in =
+many
+>>>> * different places (compilation units).  If not, it could compare =
+the
+>>>> * offset of the type entry in the .debug_info section.
+>>>> @@ -176,12 +176,32 @@ static int data_type_cmp(const void *_key, =
+const struct rb_node *node)
+>>>> {
+>>>> const struct annotated_data_type *key =3D _key;
+>>>> struct annotated_data_type *type;
+>>>> + int64_t ret =3D 0;
+>>>>=20
+>>>> type =3D rb_entry(node, struct annotated_data_type, node);
+>>>>=20
+>>>> if (key->self.size !=3D type->self.size)
+>>>> return key->self.size - type->self.size;
+>>>> - return strcmp(key->self.type_name, type->self.type_name);
+>>>> +
+>>>> + ret =3D strcmp(key->self.type_name, type->self.type_name);
+>>>> + if (ret) {
+>>>> + return ret;
+>>>> + }
+>>>=20
+>>> No need for the parentheses.
+>> Sure, will fix it
+>>=20
+>>>=20
+>>>> +
+>>>> + /*
+>>>> +  * Compare var_name if it exists for key and type.
+>>>> +  * If both nodes doesn't have var_name, but one of
+>>>> +  * them has, return non-zero. This is to indicate nodes
+>>>> +  * are not the same if one has var_name, but other doesn't.
+>>>> +  */
+>>>> + if (key->self.var_name && type->self.var_name) {
+>>>> + ret =3D strcmp(key->self.var_name, type->self.var_name);
+>>>> + if (ret)
+>>>> + return ret;
+>>>> + } else if (key->self.var_name || type->self.var_name)
+>>>> + return 1;
+>>>=20
+>>> I think you need to compare the order properly like in cmp_null() in
+>>> util/sort.c.  Please see below.
+>>>=20
+>>>> +
+>>>> + return ret;
+>>>> }
+>>>>=20
+>>>> static bool data_type_less(struct rb_node *node_a, const struct =
+rb_node *node_b)
+>>>> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+>>>> index cd39ea972193..c6d885060ee7 100644
+>>>> --- a/tools/perf/util/sort.c
+>>>> +++ b/tools/perf/util/sort.c
+>>>> @@ -2267,9 +2267,25 @@ sort__typeoff_sort(struct hist_entry *left, =
+struct hist_entry *right)
+>>>> right_type =3D right->mem_type;
+>>>> }
+>>>>=20
+>>>> + /*
+>>>> +  * Compare type_name first. Next, ompare var_name if it exists
+>>>> +  * for left and right hist_entry. If both entries doesn't have
+>>>> +  * var_name, but one of them has, return non-zero. This is to
+>>>> +  * indicate entries are not the same if one has var_name, but the
+>>>> +  * other doesn't.
+>>>> +  * If type_name and var_name is same, use mem_type_off field.
+>>>> +  */
+>>>> ret =3D strcmp(left_type->self.type_name, =
+right_type->self.type_name);
+>>>> if (ret)
+>>>> return ret;
+>>>> +
+>>>> + if (left_type->self.var_name && right_type->self.var_name) {
+>>>> + ret =3D strcmp(left_type->self.var_name, =
+right_type->self.var_name);
+>>>> + if (ret)
+>>>> + return ret;
+>>>> + } else if (right_type->self.var_name || left_type->self.var_name)
+>>>> + return 1;
+>>>=20
+>>> } else if (!left_type->self.var_name !=3D =
+!right_type->self.var_name)
+>>> return cmp_null(left_type->self.var_name, =
+right_type->self.var_name);
+>>>=20
+>>> Thanks,
+>>> Namhyung
+>>>=20
+>> Sure, will fix this
+>>=20
+>> Thanks
+>> Athira
+>>=20
+>>=20
+>>>> +
+>>>> return left->mem_type_off - right->mem_type_off;
+>>>> }
+>>>>=20
+>>>> @@ -2305,9 +2321,12 @@ static int =
+hist_entry__typeoff_snprintf(struct hist_entry *he, char *bf,
+>>>> char buf[4096];
+>>>>=20
+>>>> buf[0] =3D '\0';
+>>>> - if (list_empty(&he_type->self.children))
+>>>> + if (list_empty(&he_type->self.children)) {
+>>>> snprintf(buf, sizeof(buf), "no field");
+>>>> - else
+>>>> + if (he_type->self.var_name)
+>>>> + strcpy(buf, he_type->self.var_name);
+>>>> +
+>>>> + } else
+>>>> fill_member_name(buf, sizeof(buf), &he_type->self,
+>>>> he->mem_type_off, true);
+>>>> buf[4095] =3D '\0';
+>>>> --=20
+>>>> 2.43.0
 
-/sys/class/graphics/fb0 -> ../../devices/pci0000:00/0000:00:01.0/vesa-frame=
-buffer.0/graphics/fb0
 
-This breaks xserver-xorg-core's libfbdevhw.so because it differentiates cod=
-e-paths based on whether "devices/pci" is matched in the symlink.
-
-See hw/xfree86/fbdevhw/fbdevhw.c::fbdev_open()
-
-https://gitlab.freedesktop.org/xorg/xserver/-/blob/master/hw/xfree86/fbdevh=
-w/fbdevhw.c?ref_type=3Dheads#L381
 
