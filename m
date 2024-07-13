@@ -1,80 +1,116 @@
-Return-Path: <linux-kernel+bounces-251481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9178B930558
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:06:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE1F93055A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D651C20B43
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:06:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397B61F21A95
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0204E8287F;
-	Sat, 13 Jul 2024 11:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MDTpqaRO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF3D12E1C1;
+	Sat, 13 Jul 2024 11:06:17 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C76E4AEC6;
-	Sat, 13 Jul 2024 11:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA10560263;
+	Sat, 13 Jul 2024 11:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720868756; cv=none; b=l1mOskc2smIIO2a9EQXzPBR6bd2CgSiZZ1tD4X4O4Bvjdl/iDLMI52Yl6BQEJYWMdZf9VOZ18o+FOgtOOvTXcZUyjv/qQq6s1FaLlIP9BSgMHc5ikUjMUpSy61dERz9SmN13k0HHFS6//GLDJJy/GWHjhxJNEclRi2qoXVg4OY0=
+	t=1720868776; cv=none; b=k+W3VRPBcyOPjy3dpeq4UsqaCBF1X618Gh82Udb07x0qpxMJ0VlAu+7jOGAMbpspn+vSHA6zMUO9D1hO7guSeu+A2fxX8w9r0DBGomA2JhBq6fouUm+JlxpeLhIYNEwVvQoIO1/ROLjQUdmB0eEyEYH1wfVOLGpE8OZ/hBNyCJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720868756; c=relaxed/simple;
-	bh=/aQEoAtJevZOtnhQxzPJg1RlTHsJoGK/euntEf/HqRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FfMgXYoD3TvEiFppgcSkuRndlk7kDRwx8jZGx7dy6/k9+hW5kuY7vUlV3UPZ5B/i6s8F6N7swBNLZ2yQbGsdC460UObcTPT1mi6gB0c09qij3mCu6/YreZct2OfX3mp81btwHlIMl64XBjtiRlMVkKvANgNnx22OiTeOI54kChg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MDTpqaRO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 180FAC32781;
-	Sat, 13 Jul 2024 11:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720868755;
-	bh=/aQEoAtJevZOtnhQxzPJg1RlTHsJoGK/euntEf/HqRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MDTpqaROuDDJA85T2CmWV2lRTEQ5+ynWicXt09KcKOGIohfPbeK0E7/Hj1OJx2hhm
-	 z+yEaoX5eSJC8hzy9UiYDddQ0z9kf6YI8VnebftV2PAEpnNAt9+VStC96lmqHLPzrJ
-	 Zm0QmI65/r/pFYUVj9n1X2U+fyFhiy011WcX8tFM=
-Date: Sat, 13 Jul 2024 13:05:52 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ashwin Kamat <ashwin.kamat@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, davem@davemloft.net,
-	yoshfuji@linux-ipv6.org, dsahern@kernel.org, kuba@kernel.org,
-	netdev@vger.kernel.org, ajay.kaher@broadcom.com,
-	vasavi.sirnapalli@broadcom.com, tapas.kundu@broadcom.com
-Subject: Re: [PATCH v5.10 0/2] Fix for CVE-2024-36901
-Message-ID: <2024071323-disarray-moody-1e0b@gregkh>
-References: <1720520570-9904-1-git-send-email-ashwin.kamat@broadcom.com>
- <2024071313-even-unpack-9173@gregkh>
- <CA+tTbbvb04ZuTY+5pH+Yf5-OKJnx5RqvyjxfDixWhinwvH_hFw@mail.gmail.com>
+	s=arc-20240116; t=1720868776; c=relaxed/simple;
+	bh=mRhenjtZ8GBircd/QZnMybGcJZi3aKBbUL+eVyT/kmQ=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=R3iZwvbimoN8Vx5PG6D+urtms1n6evhxtJxLLT86a2nWs5rpl60RUk+g9mEK1UyfqcYJFSnMDwyTgBTGU09k7VrN26x2F6KNR7RtC8ifi0lubEo/XbKbjJ5XKUn4rKjg3uONBDtYTKlSgaNn1D1g2kzXRUYHMZdYdViT5rLmqBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WLlxz0PLnz4f3jMl;
+	Sat, 13 Jul 2024 19:05:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id D6CFA1A0170;
+	Sat, 13 Jul 2024 19:06:10 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgA3GzmiX5Jm5q8JAA--.5687S3;
+	Sat, 13 Jul 2024 19:06:10 +0800 (CST)
+Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
+ load
+To: Konstantin Kharlamov <Hi-Angel@yandex.ru>,
+ Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>,
+ linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
+ <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
+ <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
+Date: Sat, 13 Jul 2024 19:06:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+tTbbvb04ZuTY+5pH+Yf5-OKJnx5RqvyjxfDixWhinwvH_hFw@mail.gmail.com>
+In-Reply-To: <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgA3GzmiX5Jm5q8JAA--.5687S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrWDXFy5Ar47Aw17Ww1ftFb_yoWkKrgE9a
+	yYkasYkas8Ars7GF40gr4UZFnrG395WF1UXw18CrWI9ryFvanxCF4kG3s3Xr1fXrZagF9x
+	Jws7Cr1ruw1a9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb38FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CE
+	bIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUr2-eDUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Sat, Jul 13, 2024 at 03:16:15PM +0530, Ashwin Kamat wrote:
-> Hi Greg,
-> The patches get applied to 5.10 stable branch with an offset [i.e Hunk #1
-> succeeded at 240 (offset 19 lines).]
-> To avoid that I sent separate patches to 5.10 and 5.15. Apart from that
-> there is no other difference.
+Hi,
 
-That's not what I asked, I asked:
+在 2024/07/12 20:11, Konstantin Kharlamov 写道:
+> Good news: you diff seems to have fixed the problem! I would have to
+> test more extensively in another environment to be completely sure, but
+> by following the minimal steps-to-reproduce I can no longer reproduce
+> the problem, so it seems to have fixed the problem.
 
-> > Any reason you didn't actually cc: the stable@vger.kernel.org address
-> > for these so we know to pick them up?
+That's good. :)
+> 
+> Bad news: there's a new lockup now 😄 This one seems to happen after
+> the disk is returned back; unless the action of returning back matches
+> accidentally the appearing stacktraces, which still might be possible
+> even though I re-tested multiple times. It's because the traces
+> (below) seems not to always appear. However, even when traces do not
+> appear, IO load on the fio that's running in the background drops to
+> zero, so something seems definitely wrong.
 
-That is a requirement to get a patch merged into a stable release,
-right?
+Ok, I need to investigate more for this. The call stack is not much
+helpful.
 
-thanks,
+At first, can the problem reporduce with raid1/raid10? If not, this is
+probably a raid5 bug.
 
-greg k-h
+The best will be that if I can reporduce this problem myself.
+The problem is that I don't understand the step 4: turning off jbod
+slot's power, is this only possible for a real machine, or can I do
+this in my VM?
+
+Thanks,
+Kuai
+
+
 
