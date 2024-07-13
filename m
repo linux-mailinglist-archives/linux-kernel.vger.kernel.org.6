@@ -1,143 +1,112 @@
-Return-Path: <linux-kernel+bounces-251271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7219302DF
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:49:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2BAC9302E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D28E2844BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E17A1F22555
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334ACFC0B;
-	Sat, 13 Jul 2024 00:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COFWUYvi"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DD6EAF1;
+	Sat, 13 Jul 2024 00:59:10 +0000 (UTC)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E609DD2F5;
-	Sat, 13 Jul 2024 00:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CFB4C8E;
+	Sat, 13 Jul 2024 00:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720831731; cv=none; b=K8MtGOSAX2RCG7m8qckudoQ2+3+kHvUjkLwiZ1yqV2FiTStHn4Vs4RlcSGTkVgRZSnrNhaJT1wLvXoe6I3XOe2LWz+pI4Uf3OUFkL9S2v7ThT6PCt6iVr5tKirqKDIVoIbhlOOM0fALiqS5UUgnv9fIZHusKLD9dpIKcnU+EG7s=
+	t=1720832349; cv=none; b=mZXZH+pZ+HzEsfoHtVwK75BkRGyFhLfa52JuVg9OdDJTC7Rs6itLwrHTT8AGsGrhXIDbaDCJu8jWAQrrW3YYt1F6B9cO7v/JOCDr4yMGTcbaSpgSAwU5BfhaLdIwp7GlpALiK7lfn37c/v1tRFMr3NYLJNxUaBKtzAVOQsLLPeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720831731; c=relaxed/simple;
-	bh=6HsKtFDDgviwQH1b4AdwR89R/oIpdTxW9lu5rBhyzP8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eM7Mxe94Acv9/yUqYrg2ZsygxiH8EYzG3/bJYXwbM2rZ27arJH4TJ5xp1TbxOnNixY+O1s8d/JAGOJeGFKDdZI4o9TdVpwnRCO58Nx8j0aHe8+Dv9G7/p7PjeAduO3aHpAaxRdMNVG/qWI/fmMZLFPvsiTWdLjrExtu+fGEZXCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COFWUYvi; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1720832349; c=relaxed/simple;
+	bh=DtrdLYqQvUWp1rATRcfHif/KLyAI+NavdKK3cI0d2b0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0d68sBwPaLOh0jtZ+BTpxSS8LZahoiGPDp69jEIT+Mniafa6qOY32Gq87wetXlenBLxDdvusp+52CvflEVgiZb7iMWw8RmlTCabaI+PqIUplLsQldd6nk5NRscAQ+Dj6QAyX+k2H0X3xrw+1IMYl8OuPs/zN2TPDe9eiV+CwrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-59a47d5c22aso1296203a12.1;
-        Fri, 12 Jul 2024 17:48:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720831728; x=1721436528; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6HsKtFDDgviwQH1b4AdwR89R/oIpdTxW9lu5rBhyzP8=;
-        b=COFWUYvixkhRX0/u9grV8jo3EjbiesoRyVUOIpGUR6yyZ6QgYFzEQOxNDL6c4lR5HO
-         h/F02hhJjbnM6NS4L8Er0mYx5jaaEUgCFVHd6s0Fk4Kk2U6hYz+LMBYVPA7EYVFgHMks
-         t9qwS8p0Ure20gaDSUoGSxG9rL/6fRv2MK1H9ygDdUAnvanjeLisky+Ltjxmgy7bUWhP
-         DKlkrM9b9f26FvcLcKsxyNe9MqEEWxisGV1HrOyA2GlrGxEFAKc12o8iT5WjJFFHRPDF
-         ijjKPH82nPHK/PTh+yRb+kPbqSZLT00/vvz1pFRAAhGyhv/KTCT/WHgTL0xxjKPFx1xT
-         GZDg==
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fb70169c23so23734205ad.1;
+        Fri, 12 Jul 2024 17:59:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720831728; x=1721436528;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6HsKtFDDgviwQH1b4AdwR89R/oIpdTxW9lu5rBhyzP8=;
-        b=DgbB2nuSexdRNCA2F8ApeOVkxVgu5uKrc361EYxXLecxnz3/Y262Gxi2cCosvUEwuj
-         qcUnkVFBPVaq1D/Q5AFTzYN2kV1hYdi/mvXV1aAlnvrtGo4VkAyNdEC7+aHfwHHYlqE3
-         o14bOL2DsjNounFFf/3zfbW/8cu/TnGnbK2o7zFUrBu57QLp8TwDGioCKzl8NOGdz3kf
-         d8Woe0NRnxh03dU1sTzLBWo9L6mIBZ6QVzPx/LUkT6j8/11WXQakg1cW9HCin9n9WIG1
-         3z+qBvbTBZV24Bo326/UcIerNo9WgWFPuGtsGqnENhGPc5vaI85vd7rd2SayRDs73UiO
-         tqoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVctJj1+1zWTaHSF1NeG1apxh+eR/MtBIUHzd9IEmOd5uKb1ApAu4BZB0j0CLD06wAoGzR6dhZbrO/ew2XyprTDx74JiiLVN1eMJO2pXMmmFxlts4DQz2t3bw9tqG9Z1+Zc/faT8Eo5WmEvQDE=
-X-Gm-Message-State: AOJu0YyqvUJLGDvScSLS5v0wy9VEoGAfTJJTYyZB7iYRBofqQJD/Kpy/
-	qN4GHZu8h9N4yoW19eLaFHSpGkEmEPU3cF5eWrQmRid+2GESc3kfzNO1Cxdod9bGKCI2Olon2JS
-	gFHfsSRNJuQxoEJN3jVCNr0YzsXQ=
-X-Google-Smtp-Source: AGHT+IFeeJ3/yWZLz9nMde/4bWSuZg18FBSHV/qNjaFCrj/uBC8/sAe66xVQO4ioF4q/Ni373euOM4ug9j90dYFf/so=
-X-Received: by 2002:a17:906:195a:b0:a77:e48d:bc9 with SMTP id
- a640c23a62f3a-a780b68a472mr741456766b.16.1720831727888; Fri, 12 Jul 2024
- 17:48:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720832346; x=1721437146;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fObagCVLV5QOrGNzDLRDEtxOlEZx/xK9uTPhQmSYFR4=;
+        b=QqIW7+1IRVmXr3x7vvGI0WfGusEeQuVPmJNuBDASTR3nA/rE71lJKZXX/TqG79lbJA
+         ZveFE9dqbhSfWBNsehrZz00N3oLVKWOrIsXr5DHWwpu2PALoRkva0D4fLyhHn7yToX77
+         n1hqqYhAbxx+EX6mLuRh8u9l/Pp75wv1INmz/ETkgxGQ02MmGd1jknO0dP3rT9DseOgW
+         0wxSE6qtsQ6AO0lz7JOByoJe31Gh8+jeDycV4VlC48IoeK+7EJIL6S7nrY+s5rvftRTV
+         TNwF3iipZojmOpfHzNqcOAr1WLDqtfF7AgNjrKCv+tSLYp9/QAmsuHM710wj/+Vl18Uf
+         TeMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHMcpHERhAJfaWGRPh4ijdu1ukSRgkbr8XdMYSCaeiqPh3Uvf13P8i8Hl+3RayTtgNatkQ+gvL6N+XRuhk2A5U+x/pzapQP7zRoxlu/cDUQWscnN3+uHQNTiVVsmullGFVLJGWFDYJAQoeIjUkn5ynNf8BxnXbvQ3Qy2tRWjHFFTpp+KgkBcx3oFgC4TTUa0xzVoob0u3UTrT/isrcugBKmXM0
+X-Gm-Message-State: AOJu0Ywmij0ppMrpxojtvR7j79GvGxo4ceLKGG2KjY0BWB/ANfmCERyr
+	x+LVvvAhhTTjI/rwgtCDfbQVOI/dJsbDsMzoklviNml2jTb8NoE=
+X-Google-Smtp-Source: AGHT+IHpMYHwlurRaTSXBZOLGL6393z+3iM2RhBoT8I/MqjietVUrz25qYNqvkz4lN15p4xWujmI4A==
+X-Received: by 2002:a17:902:e9cd:b0:1fb:9e80:b4fe with SMTP id d9443c01a7336-1fbb6d35ecfmr82888385ad.39.1720832346401;
+        Fri, 12 Jul 2024 17:59:06 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6ffc8sm522855ad.35.2024.07.12.17.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 17:59:05 -0700 (PDT)
+Date: Fri, 12 Jul 2024 17:59:05 -0700
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: make24@iscas.ac.cn, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eduard Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+	Yonghong Song <yonghong.song@linux.dev>
+Subject: Re: [PATCH] selftests/bpf:fix a resource leak in main()
+Message-ID: <ZpHRWRWXGewydZfe@mini-arch>
+References: <20240711071018.2197252-1-make24@iscas.ac.cn>
+ <c341e275-4fac-4aaa-8117-55b654c5c006@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710225011.275153-1-daniel.almeida@collabora.com>
- <fe84a028-01a8-4987-b1b7-141fb76d263c@arm.com> <4344B22F-D859-4C64-A351-69FFB5208362@collabora.com>
- <ZpFDeajsuVONbSYJ@cassiopeiae> <0A0C1EFC-29A1-4D73-8B02-CC1C693D6A7A@collabora.com>
- <ZpFMmAEdqo1dhj0s@cassiopeiae>
-In-Reply-To: <ZpFMmAEdqo1dhj0s@cassiopeiae>
-From: Dave Airlie <airlied@gmail.com>
-Date: Sat, 13 Jul 2024 10:48:36 +1000
-Message-ID: <CAPM=9twNU3Wm02zCqzipSt4mDU3UUF5AyVycpBkPTGqv7fwPAQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm: panthor: add dev_coredumpv support
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, Steven Price <steven.price@arm.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, ojeda@kernel.org, lyude@redhat.com, robh@kernel.org, 
-	lina@asahilina.net, mcanal@igalia.com, rust-for-linux@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c341e275-4fac-4aaa-8117-55b654c5c006@web.de>
 
-On Sat, 13 Jul 2024 at 01:32, Danilo Krummrich <dakr@redhat.com> wrote:
->
-> On Fri, Jul 12, 2024 at 12:13:15PM -0300, Daniel Almeida wrote:
+On 07/12, Markus Elfring wrote:
+> > The requested resources should be closed before return in main(), otherwise
+> > resource leak will occur. Add a check of cg_fd before close().
 > >
-> >
-> > > On 12 Jul 2024, at 11:53, Danilo Krummrich <dakr@redhat.com> wrote:
-> > >
-> > > You could also just define those structures in a C header directly an=
-d use it
-> > > from Rust, can't you?
-> > >
-> >
-> >
-> > Sure, I am open to any approach here. Although this looks a bit reverse=
-d to me.
-> >
-> > i.e.: why should I declare these structs in a separate language and fil=
-e, and then use them in Rust through bindgen? Sounds clunky.
->
-> The kernel exposes the uAPI as C header files. You just choose to do the
-> implementation in the kernel in Rust.
->
-> Hence, I'd argue that the uAPI header is the actual source. So, we should
-> generate stuff from those headers and not the other way around I think.
->
-> >
-> > Right now, they are declared right next to where they are used in the c=
-ode, i.e.: in the same Rust file. And so long as they=E2=80=99re #[repr(C)]=
- we know that an equivalent C version can generated by cbindgen.
-> >
->
-> I'm not sure whether it's a good idea to generate uAPI header files in ge=
-neral.
->
-> How do we ensure that the generated header file are useful for userspace =
-in
-> terms of readability and documentation?
->
-> How do we (easily) verify that changes in the Rust code don't break the u=
-API by
-> due to leading to changes in the generated header files?
->
-> Do we have guarantees that future releases of cbindgen can't break anythi=
-ng?
+> > Fixes: 435f90a338ae ("selftests/bpf: add a test case for sock_ops perf-event notification")
+> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> 
+> Please reconsider such information once more.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc7#n398
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/researcher-guidelines.rst?h=v6.10-rc7#n5
+> 
+> 
+> How many source code analysis tools should be able to point out that the return value
+> from the call of a function like pthread_create() should get more development attention
+> (also for discussed test functions)?
+> https://elixir.bootlin.com/linux/v6.10-rc7/source/tools/testing/selftests/bpf/test_tcpnotify_user.c#L122
+> 
+> See also:
+> * https://cwe.mitre.org/data/definitions/252.html
+> 
+> * https://wiki.sei.cmu.edu/confluence/display/c/POS54-C.+Detect+and+handle+POSIX+library+errors
 
-I think I'm on the uapi should remain in C for now, we define uapi
-types with the kernel types and we have downstream tools to scan and
-parse them to deal with alignments and padding (I know FEX relies on
-it), so I think we should be bindgen from uapi headers into rust for
-now. There might be a future where this changes, but that isn't now
-and I definitely don't want to mix C and rust uapi in one driver.
-
-Dave.
+We are talking about testing binaries here. We don't have infinite
+amount of time to polish them. If you really want to help, look at
+the flakes on the bpf dashboard and help us weed them out.
 
