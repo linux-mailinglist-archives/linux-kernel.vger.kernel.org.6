@@ -1,94 +1,177 @@
-Return-Path: <linux-kernel+bounces-251542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC51930610
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:58:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E52A9930611
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AEC51F21B53
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:58:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 263ED1C20999
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 15:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA5D13B2B2;
-	Sat, 13 Jul 2024 14:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704E813B59A;
+	Sat, 13 Jul 2024 15:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Zc3fc11Y"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3634NiQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A165913959B;
-	Sat, 13 Jul 2024 14:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9C713B294;
+	Sat, 13 Jul 2024 15:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720882730; cv=none; b=fCYKpzCnkU31CmaezSymUo3JKZHcW6cZ92ALsGsVEK9D04+o5iOLK8hSRAeb8211v+YPLrO0q54jHeRcgqb0D8/7Huh4ZJALPNnoGcK168Os1rpnDY9OhGoHDinfPSx0juAqD+IS366NgdvY03Rc/as0mREZJKPMOg0OrUaXcto=
+	t=1720882805; cv=none; b=hk5EQ5ra6L/5V5rOUlyUOyH7SSLTKLpg0L2bwRLZsFZ7GH3jYgvRpfX/VUOKdlfHcEEAcJBazh0PI9/F3ANz+cgey/QQBxtjS2JZMfOTaFJa3sSpGoNjgVo2T1uSuyYAgpx+6mTo00i6NpvDql7kR6Mnjo4bW+/69ptS2ororD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720882730; c=relaxed/simple;
-	bh=mr63rGoZ1GXBaeNJdLVlCAIpfqWi8KXWB5eOIKxFenQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=cCO/z1Noe0FuTTiy+/gzQq3xArr67J1A4W4G3BbqhFq+p1BdS+0jEBcFh6f8hi41479i6QS9WaJyGlH5bPXnEi31B1kTUM+2dKTR0w5BHCWKDIZ9znjpbXCKvmIsHi0/cC7BIkeYnNVEMD8HMayS+UrAUYdzMjr9e7T+s2Mfu1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Zc3fc11Y; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1720882805; c=relaxed/simple;
+	bh=RgrfZQiJrqZ3DMTm/V2UZOLx5m7zNJX2OyqTUjd2ogk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VuQKG/iPyo5T3oSNUD4sQNvg/o8nmSTHNMVfktYK7TcF4dm6TrPAsh9DNqkwIzSj6NEPQwFmwYVCAtYqw9QAyXHN7PlnNK9fsgBqkNVa+WQKNVyajAXlnoco65xKWe8WF5JVZKN9UMzN+R9CCVIOlSH788NCs/iUtZfHe3+gAiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3634NiQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 404D5C4AF0B;
+	Sat, 13 Jul 2024 15:00:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720882805;
+	bh=RgrfZQiJrqZ3DMTm/V2UZOLx5m7zNJX2OyqTUjd2ogk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m3634NiQFTCS04Dng/3I5pHzi0UHaPWT/e45p0Yi7uyo/1RUTAEC+kpDozoJan3ka
+	 xhKTLShvfAPknxF1UHcP9YMyyoOSH+ritnDq8pUBTL9Pl/5QiRIHBxRKnIJXY4NWVe
+	 FSIPpm8DPhZmwDN5mVQqjOPfeNhnxt9XGXsIwcZsfnNLwZBJ1W0DjB0NE82WF7Z+3S
+	 QGqfn6hAon0uKoqa0jEHycblqvT9++kCGgpKTUEDL8uODLpCHTuLRMFpE1j/E8DwGA
+	 IHjV3Q3btGTXbsWvGtvKPEAmslcggknTOpJA/sqKwy3nElti++w3MM19aw5S8FI45s
+	 E7epEy9Mmaf3w==
+Date: Sat, 13 Jul 2024 09:59:58 -0500
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@arm.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] tools subcmd: Add non-waitpid
+ check_if_command_finished()
+Message-ID: <ZpKWbtXQTXwzGLw-@google.com>
+References: <20240701044236.475098-1-irogers@google.com>
+ <20240701044236.475098-2-irogers@google.com>
+ <ZoTETvgcPdl9EUJV@google.com>
+ <CAP-5=fV4oPEjX2fh3aeBbmBGgYJGCdBnVjTZ2XnCCgnTSa0LTw@mail.gmail.com>
+ <ZpGTHzfIeREt5VUO@google.com>
+ <CAP-5=fXZGTbXZkyW7QLTYU6vZkiiTSvJrBigcN=QYiaP3C9n5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1720882725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G6LUtO9TwGFe+2ljcswYV7qxJzuvjypqub8o20MTOYw=;
-	b=Zc3fc11Y8a+YnyF186vXBF7XCWCGlJxWlKlGXUvZ9T9YWW72ioC9R3+NmSqX1Fq1BdPxl8
-	BK5icxTbqgTEGqeaisDoNO7nm+hDYJJ7bf9pLhCZvElnRjFjn/DT9RvJUxQfrVLtQbaStQ
-	vXAfWzxy+jd/rZW97SKug10FHDClfS1i4cuaGKUgxPi2njzp+QC1cC0ikZfQRcGG0+hUWL
-	ElNKsuUzkYSx2WNQ7FzBUrirM7kz3W67RHGCzJlgUKRLb2Z6ojJRlneBgpS8Nv5zb1uRrr
-	NAoa9HV5JF3McpQt55/JvzPhc2Joy46750TzSR136hLxeTaeyyGg5yCamiVndw==
-Date: Sat, 13 Jul 2024 16:58:45 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Alex Bee <knaerzche@gmail.com>
-Cc: Diederik de Haas <didi.debian@cknow.org>, Heiko Stuebner
- <heiko@sntech.de>, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Johan Jonker <jbx6244@gmail.com>, Chen-Yu Tsai
- <wens@csie.org>
-Subject: Re: [PATCH v3 1/2] arm64: dts: rockchip: Add sdmmc_ext for RK3328
-In-Reply-To: <969642dd-fe5f-4dfd-baac-21e75e30a271@gmail.com>
-References: <20240710132830.14710-1-didi.debian@cknow.org>
- <20240710132830.14710-3-didi.debian@cknow.org>
- <72718d8d02c25993c138567c96340792@manjaro.org> <2735059.JVtD0IzA6d@bagend>
- <969642dd-fe5f-4dfd-baac-21e75e30a271@gmail.com>
-Message-ID: <529bd79969ced12bbb5a3b1c3d5ba53c@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXZGTbXZkyW7QLTYU6vZkiiTSvJrBigcN=QYiaP3C9n5A@mail.gmail.com>
 
-Hello Alex,
-
-On 2024-07-13 16:56, Alex Bee wrote:
-> Am 13.07.24 um 16:35 schrieb Diederik de Haas:
->> Hi Dragan,
->> 
->> Thanks for the reviews!
->> 
->> On Saturday, 13 July 2024 15:45:12 CEST Dragan Simic wrote:
->>> Looking good to me, cross-referencing the RK3328 TRM and the
->>> downstream RK3328 SoC dtsi checks out.  Though, it will remain inert
->>> in our codebase, because no supported boards use it, but that's fine,
->>> we're still improving the correctness of the RK3328 SoC dtsi.
->> Indeed. But it's hard to argue with technically correct ;-)
+On Fri, Jul 12, 2024 at 02:19:58PM -0700, Ian Rogers wrote:
+> On Fri, Jul 12, 2024 at 1:33 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Hi Ian,
+> >
+> > On Tue, Jul 02, 2024 at 09:24:50PM -0700, Ian Rogers wrote:
+> > > On Tue, Jul 2, 2024 at 8:24 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >
+> > > > Hi Ian,
+> > > >
+> > > > On Sun, Jun 30, 2024 at 09:42:35PM -0700, Ian Rogers wrote:
+> > > > > Using waitpid can cause stdout/stderr of the child process to be
+> > > > > lost. Use Linux's /prod/<pid>/status file to determine if the process
+> > > > > has reached the zombie state. Use the 'status' file rather than 'stat'
+> > > > > to avoid issues around skipping the process name.
+> > > > >
+> > > > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > > > ---
+> > > > >  tools/lib/subcmd/run-command.c | 33 +++++++++++++++++++++++++++++++++
+> > > > >  1 file changed, 33 insertions(+)
+> > > > >
+> > > > > diff --git a/tools/lib/subcmd/run-command.c b/tools/lib/subcmd/run-command.c
+> > > > > index 4e3a557a2f37..ec06683e77a0 100644
+> > > > > --- a/tools/lib/subcmd/run-command.c
+> > > > > +++ b/tools/lib/subcmd/run-command.c
+> > > > > @@ -2,6 +2,7 @@
+> > > > >  #include <unistd.h>
+> > > > >  #include <sys/types.h>
+> > > > >  #include <sys/stat.h>
+> > > > > +#include <ctype.h>
+> > > > >  #include <fcntl.h>
+> > > > >  #include <string.h>
+> > > > >  #include <linux/string.h>
+> > > > > @@ -217,8 +218,40 @@ static int wait_or_whine(struct child_process *cmd, bool block)
+> > > > >
+> > > > >  int check_if_command_finished(struct child_process *cmd)
+> > > > >  {
+> > > > > +#ifdef __linux__
+> > > >
+> > > > Is this really necessary?  I don't think we plan to support other OS..
+> > >
+> > > I don't think it'd be unreasonable to say run "perf report" on
+> > > Windows, or using wasm inside a web browser. Part of the reason for
+> > > doing things this way was to keep the WNOHANG logic although this
+> > > change no longer uses it for __linux__.
+> >
+> > I'm not sure we are ready to run it on other platforms.  So I think
+> > it's better simply remove it for now.
 > 
-> FWIW: (upstream supported) ROC-RK3328-PC has sdio wifi connected to 
-> this
-> controller.
+> So in the office hours there was some discussion with a potential new
+> contributor whose development platform is OS/X. It's fairly obvious
+> this code can't work on anything but Linux and using #error feels
+> annoying. The waitpid code is tested and has a known issue, but I
+> think it is better than just breaking anyone not on Linux.
 
-Oh, it does?  Good to hear, so the additions to the RK3328 SoC dtsi
-shouldn't remain inert. :)
+I feel like it's a potential issue and should be handled by the
+potentiall contributor.  Until that happens, we can assume Linux
+and keep the code minimal.
+
+Thanks,
+Namhyung
+
+> >
+> > > > > +     char filename[FILENAME_MAX + 12];
+> > > > > +     char status_line[256];
+> > > > > +     FILE *status_file;
+> > > > > +
+> > > > > +     /*
+> > > > > +      * Check by reading /proc/<pid>/status as calling waitpid causes
+> > > > > +      * stdout/stderr to be closed and data lost.
+> > > > > +      */
+> > > > > +     sprintf(filename, "/proc/%d/status", cmd->pid);
+> > > > > +     status_file = fopen(filename, "r");
+> > > > > +     if (status_file == NULL) {
+> > > > > +             /* Open failed assume finish_command was called. */
+> > > > > +             return true;
+> > > > > +     }
+> > > > > +     while (fgets(status_line, sizeof(status_line), status_file) != NULL) {
+> > > > > +             char *p;
+> > > > > +
+> > > > > +             if (strncmp(status_line, "State:", 6))
+> > > > > +                     continue;
+> > > > > +
+> > > > > +             fclose(status_file);
+> > > > > +             p = status_line + 6;
+> > > > > +             while (isspace(*p))
+> > > > > +                     p++;
+> > > > > +             return *p == 'Z';
+> > > > > +     }
+> > > > > +     /* Read failed assume finish_command was called. */
+> > > > > +     fclose(status_file);
+> > > > > +     return true;
+> > > > > +#else
+> > > > >       wait_or_whine(cmd, /*block=*/false);
+> > > > >       return cmd->finished;
+> > > > > +#endif
+> > > > >  }
+> > > > >
+> > > > >  int finish_command(struct child_process *cmd)
+> > > > > --
+> > > > > 2.45.2.803.g4e1b14247a-goog
+> > > > >
 
