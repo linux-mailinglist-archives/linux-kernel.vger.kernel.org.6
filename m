@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-251478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED42A930553
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA29C930554
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E651282BCE
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:01:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5C0283893
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A98757E7;
-	Sat, 13 Jul 2024 11:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2339A60263;
+	Sat, 13 Jul 2024 11:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVUVj1WW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MHxueTaC"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE81C4C8E;
-	Sat, 13 Jul 2024 11:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2AF1E4A9
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 11:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720868488; cv=none; b=mtvSnp3BW8ihDhcK/eQbxk6rDWuu3LDfQd+xooB46eMMBDybM7Mgf3EChwaGUa+Wbha3xPTglYRGa8hi17ZspCsH9Jbki5Rqj1XZsqDQjoXZvzQqxTDNkicGbG/QTDgADy5nxh+mWQpTfH3ZjMfAgoHxwDK3gC9AZvVeuipBk6Q=
+	t=1720868637; cv=none; b=pk8+Vx94AkpEYMp7n+74NhiZ5oC3yYOJ9azcQrpYKJTnCwMdPsVFJtUTrFzZgUY/TZSWucgzN9b8H1CjxIztVMhllvW0IMXoJJ0FkezIlowjq3NtFbSWJX0xZbwmYdir3SUS0DfcloF6z3uOB4cU1t/qeALcaPIoSPzHAu0b97w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720868488; c=relaxed/simple;
-	bh=bTZS6x4uxYP/7fvFmcxrRe472VptIxL6aaOUTbSBiP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rNfaHZ07+XEQ41AlSAxxwr+7h/2aI7wRQbn0oCTFj5pKV/fNO4G+qbt/7JYzxBkh9XxBrb1ziSCXqi3TGKPeLmWJ0YgT0ocKsFOD+LPb886JgqqBUfxCcAjnQCzNxUvN3aVmyFeXLH8R+TvRp8bQr8GmO6lWse3nr5ji2b7iumE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVUVj1WW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE1A2C32781;
-	Sat, 13 Jul 2024 11:01:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720868488;
-	bh=bTZS6x4uxYP/7fvFmcxrRe472VptIxL6aaOUTbSBiP4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eVUVj1WWcL3xDSRLC0FU4BPiRO2T4in9LHm25ZGt/ej+nXjrETUCLenYj63C2iQCn
-	 p5letp6x27B43JsUprYy4CQGPH1+f+ZecaWkOxidSU9DbQPV77JFBaQE2PZLUH7uDT
-	 6+tE6oOtz4b+fmcX9SMArSLsJ4MBCbTDN1dvVivYsVeElMLrBsjdh1wnVeJ05u8bLz
-	 4cFIQTZMdTCVz06GNvMPvxPTy8AXaccgXKLdng9ftYxkQJQOfZbDBoMynQiMK1WxER
-	 aY3VtCzAuyzfS02S6ZtwFShUgF4E9uHthkE+KnqVuvRbybZMLLyG9o2GOZEqOzDWWJ
-	 D/62ApKoDTCng==
-Date: Sat, 13 Jul 2024 12:01:19 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] ROHM BU27034NUC to ROHM BU27034ANUC
-Message-ID: <20240713120119.7739ed74@jic23-huawei>
-In-Reply-To: <cover.1720176341.git.mazziesaccount@gmail.com>
-References: <cover.1720176341.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720868637; c=relaxed/simple;
+	bh=uD7ddHPNCv9re7jh+GgSVnOkNYW3iWVk5/d0ybro+S0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=USC3nxONqwL4IV63JTdDTqtUKbzzXkF9BD5eVvn8gxT6WVU58KB7l2I5DSfjPunZItK0QJORFtMMm23T3QGE1JcEXHS4stWgANJpquuMYZHwaFlqK2ArRbPhYC2DqchUP/leVnmmPVJsqKeks/4E1KWPyQzSL6M4RlIGqHOytFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MHxueTaC; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id SaWWs33AVt4p9SaWXsZPUe; Sat, 13 Jul 2024 13:02:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720868564;
+	bh=+95BoV2zMSWhEXD4+8PYZ6sPnem7u4o6Qt+9aNjgw34=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=MHxueTaCXcUv0jTgyKWZKCmJIlffD84NUjpqOZ8OqbEnwBJtH5V+rF7Punxk7IET6
+	 ZqMBhWXqQP7kq7CQGxPkxMxlDTdoMR0CBspSjjmGf/++DcXfsHNS2+HMbwXa0v2V59
+	 k3+Qhl31MEpm+YZB5BpEw6XqGoEAsOBETdt7v78+M7xGJnRqaWWRJlYNkrEFaY94OX
+	 08oZW/s3KQPBgz5/xdfz9H6tiH10TWu4gltfYNFEm7SBUunqBcmYGuWWAX+vpmISxc
+	 eQSszVUtEfW64RlVeY1eJ4UbqKI/vOM8JvR1mfrhF6dgVoFiNFlZI7NODVRLzeixJv
+	 Im1okBIi0e6eg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 13 Jul 2024 13:02:44 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] x86/resctrl: Slightly clean-up mbm_config_show()
+Date: Sat, 13 Jul 2024 13:02:32 +0200
+Message-ID: <b2ebc809c8b6c6440d17b12ccf7c2d29aaafd488.1720868538.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 5 Jul 2024 13:53:35 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+'mon_info' is already zeroed in the list_for_each_entry() loop below.
+There is no need to explicitly initialize it here. It just wastes some
+space and cycles.
 
-> As discussed here:
-> https://lore.kernel.org/all/ff8d6d14-6b48-4347-8525-e05eeb9721ff@gmail.com/
-> 
-> The ROHM BU27034NUC was cancelled before it entered mass-production. A
-> replacement was developed and named to BU27034ANUC. (Note the added
-> 'A' in the model name). The BU27034ANUC has several changes that make
-> the old BU27034NUC driver unusable with it. I was told the old BU27034NUC
-> should not be encountered anywhere.
-> 
-> Hence, this series converts the rohm-bu27034.c to support the new
-> BU27034ANUC instead of the obsoleted BU27034NUC. Additionally, the
-> series adds a read-only entry for the HARDWAREGAIN to help understanding
-> what part of the scale is contributed by the gain, and what by the
-> integration time. This is useful when figuring out why some transitions
-> from one 'scale' to other are failing.
-Series applied with that tweak to fix the typo that is getting moved in patch 1
-and to squash the first 2 patches.
+Remove this un-needed code.
 
-Applied for now only to the testing branch of iio.git which will become
-togreg after I can rebase on rc1.
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  74967	   5103	   1880	  81950	  1401e	arch/x86/kernel/cpu/resctrl/rdtgroup.o
 
-Thanks,
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  74903	   5103	   1880	  81886	  13fde	arch/x86/kernel/cpu/resctrl/rdtgroup.o
 
-Jonathan
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Revision history:
-> 	v1 => v2:
-> 		- Split the one large patch to patches 3 - 6 for easier
-> 		  review. (Please let me know if you wish me to squash
-> 		  them to one).
-> 		- Introduce new compatible for the BU27034ANUC and drop
-> 		  the old one.
-> 		- Add styling fixes as suggested by Jonathan
-> 		- Fix the lux calculation coefficient selection logic
-> 	link to v1:
-> 		https://lore.kernel.org/all/cover.1718013518.git.mazziesaccount@gmail.com/
-> 
-> ---
-> 
-> Matti Vaittinen (7):
->   dt-bindings: iio: BU27034 => BU27034ANUC
->   dt-bindings: iio: rename bu27034 file
->   bu27034: ROHM BU27034NUC to BU27034ANUC
->   bu27034: ROHM BU27034NUC to BU27034ANUC drop data2
->   bu27034: ROHM BU27034ANUC correct gains and times
->   bu27034: ROHM BU27034ANUC correct lux calculation
->   iio: bu27034: Add a read only HWARDWAREGAIN
-> 
->  ...ohm,bu27034.yaml => rohm,bu27034anuc.yaml} |  11 +-
->  drivers/iio/light/rohm-bu27034.c              | 343 +++++-------------
->  2 files changed, 89 insertions(+), 265 deletions(-)
->  rename Documentation/devicetree/bindings/iio/light/{rohm,bu27034.yaml => rohm,bu27034anuc.yaml} (66%)
-> 
-> 
-> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+index d7163b764c62..d906a1cd8491 100644
+--- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
++++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+@@ -1596,7 +1596,7 @@ static void mondata_config_read(struct rdt_mon_domain *d, struct mon_config_info
+ 
+ static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid)
+ {
+-	struct mon_config_info mon_info = {0};
++	struct mon_config_info mon_info;
+ 	struct rdt_mon_domain *dom;
+ 	bool sep = false;
+ 
+-- 
+2.45.2
 
 
