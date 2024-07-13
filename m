@@ -1,137 +1,175 @@
-Return-Path: <linux-kernel+bounces-251305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CCB930333
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 04:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70DC6930360
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 04:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C3F61C21278
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:14:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92EA31C2158A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7FD1755B;
-	Sat, 13 Jul 2024 02:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39831862F;
+	Sat, 13 Jul 2024 02:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I13Twe6b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GMA9YB6w"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA63F29401;
-	Sat, 13 Jul 2024 02:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A61F14012;
+	Sat, 13 Jul 2024 02:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720836819; cv=none; b=K5gEB5lOcyHGPyKyeO5I3qk+bVPEVMg8O17MHEwa1zW3EMQTQkWJa/QSR0VvC1zYBluCPsuu1Z4f5oQvTxreQB9VYWshCEigi9z9cs6/FfsSehRoUxgW7v7rpWWX8/2IPzEg5M7s6EbDkTo0nB8jXIa8d2qxA+NufgnZFKEvosM=
+	t=1720838586; cv=none; b=Iqljc9vxBVTr/8ES/6xJCSlPktjFVvRB7mkiZdu8gm136H+/KA3CJ7222OyQxe5TWe9aICGYukXdchOlXqVvMbjtpFT+gXlplF3+/QV+zQDT+wrZb1lljPYohcWbUIYU6f0YvZcigHHiSmIouxfK99oBtUYKdO/FjRfckBuu7Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720836819; c=relaxed/simple;
-	bh=2Em9aXUK4hj994y2DrlM4htA/Mn72IIDxtASYHeCNb4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PJHHo7rHsfK7b7FEP+HfmPLiwlfcPY3hLXG5z8Nh+94tWFCHJsBwY+gW+TAhJvTL46DRRs4kX4uHo9MsDxV/mDUvBfxlnu9twGDT6cDVCAyr5rApXnjSkTfaSGebOT5jD5ONO/wJNTWXEGYKqW1HW7CBag04k74C3OIpyKCYpPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I13Twe6b; arc=none smtp.client-ip=192.198.163.16
+	s=arc-20240116; t=1720838586; c=relaxed/simple;
+	bh=c0cx8eCSqK5HZVrMPn+doc9P2P0lifDncReHUUcAH3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FF4sVGMIbDuT5RihtXZc0QuK9S6/DESWmpi9kkfo65TqJ9W6tpAW5Yd4LaiC883c/eO5rPB8XA1ixu6fsbb27TQrYzZy3OqqY+DgA1OBx5H3MF59oUYEnVVuC9aVk+z4bi4ATHKbeAVklxZP/v3x5acjn/3V0GbYF15eIqwq56o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GMA9YB6w; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720836818; x=1752372818;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2Em9aXUK4hj994y2DrlM4htA/Mn72IIDxtASYHeCNb4=;
-  b=I13Twe6bliP/N1tsoZmV0HhkwLJrismCYuvOWxzry+fmF1Q8GiDXLQHU
-   3xBegFQoKDHwV86wdgc/t3X6Eoh4WhpOBmGw0omtj5LY9DttqxtiwjXSF
-   Ho3aVeuYzInytoDRbrP2hijp3ruZbVFsdchMye+bIRMoo+Cwvky/loXVW
-   iLtbLB/G18kRSwnttotXSWo5VHmqQBXscUGgK0aVmx5kDxBJJw9k5U78d
-   4dS7xDDSI+CiHIUbml1TEmOlJve9mM8HohgeLFJASs0oBE+UEBbO+PiUt
-   WzlUHEBiaxkIdokxU/bQQ9TsNVDGSKnAUtv0GY1YTesiup5i6L45F8rFm
-   w==;
-X-CSE-ConnectionGUID: mdm38AozTt2ruVqvQw6bgg==
-X-CSE-MsgGUID: SavpnTgUTeiB3G46bIwxqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="12531282"
+  t=1720838584; x=1752374584;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=c0cx8eCSqK5HZVrMPn+doc9P2P0lifDncReHUUcAH3k=;
+  b=GMA9YB6wVHdJfVeBxcTr9cc3ROHk1beXrHl/XLfsv7PEJaRjRfwryICb
+   cYUoSnGH1M95qHkGqLh37U2MjVlOTatn1Xz6yl7QI6f9S2gjI20Y4P9at
+   YFXB+1+wgOLsMya+v47xcnis4nJJMRjD1z0ErmcdLa+EE8IjbKPHpU3EH
+   kHW9qxqSWNI3ypkFQEniXDQ6G9W+5hA1NbIkYVl7+Trps6pMb5aiaygiz
+   YwbHxmGprlm0wzxlrAy0L8KW2P1a7pIn3jWMq3s+8JN5guI/BkbNeEJYs
+   ia4mMF3oLgkLWOQY/FSYw+xh3YkYt07fQQU3/LJmoOFQBkVljpEnZA5FK
+   g==;
+X-CSE-ConnectionGUID: e+rVr8cMSEiMRpiPB5IXtA==
+X-CSE-MsgGUID: Sn28/8b8STagTDKTErIknA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="22165437"
 X-IronPort-AV: E=Sophos;i="6.09,204,1716274800"; 
-   d="scan'208";a="12531282"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 19:13:37 -0700
-X-CSE-ConnectionGUID: eMkj99wjQe2+EhROswhplQ==
-X-CSE-MsgGUID: RMdm8jjqShaZtcmnZ6/B0Q==
+   d="scan'208";a="22165437"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 19:43:03 -0700
+X-CSE-ConnectionGUID: oLHqdyb5T2yapw+C1VEJmQ==
+X-CSE-MsgGUID: tWfou8M1SO2MrgcJfikAOg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,204,1716274800"; 
-   d="scan'208";a="53449935"
-Received: from linux-pnp-server-16.sh.intel.com ([10.239.177.152])
-  by fmviesa005.fm.intel.com with ESMTP; 12 Jul 2024 19:13:35 -0700
-From: Yu Ma <yu.ma@intel.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	mjguzik@gmail.com,
-	edumazet@google.com
-Cc: yu.ma@intel.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pan.deng@intel.com,
-	tianyou.li@intel.com,
-	tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: [PATCH v4 3/3] fs/file.c: add fast path in find_next_fd()
-Date: Fri, 12 Jul 2024 22:39:17 -0400
-Message-ID: <20240713023917.3967269-4-yu.ma@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240713023917.3967269-1-yu.ma@intel.com>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240713023917.3967269-1-yu.ma@intel.com>
+   d="scan'208";a="72300665"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 12 Jul 2024 19:43:00 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sSSiu-000bZy-2Q;
+	Sat, 13 Jul 2024 02:42:56 +0000
+Date: Sat, 13 Jul 2024 10:42:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/2] PM: domains: add device managed version of
+ dev_pm_domain_attach|detach_list()
+Message-ID: <202407131034.zV21FEsV-lkp@intel.com>
+References: <1720763312-13018-2-git-send-email-quic_dikshita@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1720763312-13018-2-git-send-email-quic_dikshita@quicinc.com>
 
-Skip 2-levels searching via find_next_zero_bit() when there is free slot in the
-word contains next_fd, as:
-(1) next_fd indicates the lower bound for the first free fd.
-(2) There is fast path inside of find_next_zero_bit() when size<=64 to speed up
-searching.
-(3) After fdt is expanded (the bitmap size doubled for each time of expansion),
-it would never be shrunk. The search size increases but there are few open fds
-available here.
+Hi Dikshita,
 
-This fast path is proposed by Mateusz Guzik <mjguzik@gmail.com>, and agreed by
-Jan Kara <jack@suse.cz>, which is more generic and scalable than previous
-versions. And on top of patch 1 and 2, it improves pts/blogbench-1.1.0 read by
-8% and write by 4% on Intel ICX 160 cores configuration with v6.10-rc7.
+kernel test robot noticed the following build warnings:
 
-Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-Signed-off-by: Yu Ma <yu.ma@intel.com>
----
- fs/file.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.10-rc7 next-20240712]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/fs/file.c b/fs/file.c
-index 1be2a5bcc7c4..a3ce6ba30c8c 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -488,9 +488,20 @@ struct files_struct init_files = {
- 
- static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
- {
-+	unsigned int bitbit = start / BITS_PER_LONG;
-+	unsigned int bit;
-+
-+	/*
-+	 * Try to avoid looking at the second level bitmap
-+	 */
-+	bit = find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_LONG,
-+				 start & (BITS_PER_LONG -1));
-+	if (bit < BITS_PER_LONG) {
-+		return bit + bitbit * BITS_PER_LONG;
-+	}
-+
- 	unsigned int maxfd = fdt->max_fds; /* always multiple of BITS_PER_LONG */
- 	unsigned int maxbit = maxfd / BITS_PER_LONG;
--	unsigned int bitbit = start / BITS_PER_LONG;
- 
- 	bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
- 	if (bitbit >= maxfd)
+url:    https://github.com/intel-lab-lkp/linux/commits/Dikshita-Agarwal/PM-domains-add-device-managed-version-of-dev_pm_domain_attach-detach_list/20240712-135151
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/1720763312-13018-2-git-send-email-quic_dikshita%40quicinc.com
+patch subject: [PATCH 1/2] PM: domains: add device managed version of dev_pm_domain_attach|detach_list()
+config: x86_64-buildonly-randconfig-001-20240713 (https://download.01.org/0day-ci/archive/20240713/202407131034.zV21FEsV-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240713/202407131034.zV21FEsV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407131034.zV21FEsV-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/base/power/common.c:288: warning: Function parameter or struct member '_list' not described in 'devm_pm_domain_detach_list'
+>> drivers/base/power/common.c:288: warning: expecting prototype for dev_pm_domain_detach_list(). Prototype was for devm_pm_domain_detach_list() instead
+>> drivers/base/power/common.c:307: warning: Function parameter or struct member 'dev' not described in 'devm_pm_domain_attach_list'
+>> drivers/base/power/common.c:307: warning: Function parameter or struct member 'data' not described in 'devm_pm_domain_attach_list'
+>> drivers/base/power/common.c:307: warning: Function parameter or struct member 'list' not described in 'devm_pm_domain_attach_list'
+
+
+vim +288 drivers/base/power/common.c
+
+   278	
+   279	/**
+   280	 * dev_pm_domain_detach_list - devres-enabled version of dev_pm_domain_detach_list.
+   281	 * @list: The list of PM domains to detach.
+   282	 *
+   283	 * This function reverse the actions from devm_pm_domain_attach_list().
+   284	 * it will be invoked during the remove phase from drivers implicitly if driver
+   285	 * uses devm_pm_domain_attach_list() to attach the PM domains.
+   286	 */
+   287	void devm_pm_domain_detach_list(void *_list)
+ > 288	{
+   289		struct dev_pm_domain_list *list = _list;
+   290	
+   291		dev_pm_domain_detach_list(list);
+   292	}
+   293	EXPORT_SYMBOL_GPL(devm_pm_domain_detach_list);
+   294	
+   295	/**
+   296	 * devm_pm_domain_attach_list - devres-enabled version of dev_pm_domain_attach_list
+   297	 *
+   298	 * NOTE: this will also handle calling devm_pm_domain_detach_list() for
+   299	 * you during remove phase.
+   300	 *
+   301	 * Returns the number of attached PM domains or a negative error code in case of
+   302	 * a failure.
+   303	 */
+   304	int devm_pm_domain_attach_list(struct device *dev,
+   305				       const struct dev_pm_domain_attach_data *data,
+   306				       struct dev_pm_domain_list **list)
+ > 307	{
+   308		int ret, num_pds = 0;
+   309	
+   310		num_pds = dev_pm_domain_attach_list(dev, data, list);
+   311	
+   312		ret = devm_add_action_or_reset(dev, devm_pm_domain_detach_list, (void *)list);
+   313		if (ret)
+   314			return ret;
+   315	
+   316		return num_pds;
+   317	}
+   318	EXPORT_SYMBOL_GPL(devm_pm_domain_attach_list);
+   319	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
