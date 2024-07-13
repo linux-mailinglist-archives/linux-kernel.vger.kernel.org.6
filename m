@@ -1,114 +1,82 @@
-Return-Path: <linux-kernel+bounces-251413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943349304A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:03:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F13089304A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391641F22F82
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:03:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295C41C214C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0185247F46;
-	Sat, 13 Jul 2024 09:03:04 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F8D4AECE;
+	Sat, 13 Jul 2024 09:08:06 +0000 (UTC)
+Received: from mail115-76.sinamail.sina.com.cn (mail115-76.sinamail.sina.com.cn [218.30.115.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E812032A
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 09:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35D641C77
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 09:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720861383; cv=none; b=QuHPowXlfIE8wI0r7cBVHgVTPLBzeLvna08TqWqqkyaJKJrhFy29Pw9q5tVRHOSI53wp+2CFil5KGyyLA6z0KIEVSjpvwKReGAIheBTn5uJuCAuQws8HQ+5kNOzM4KKWesxmHjYgXC8yL6DvwdYPcDN0oBvaWf/VMyncYpkO0SI=
+	t=1720861686; cv=none; b=OnFEKNzgONSjb/nqNaz0mLcJilxUfKr70W/Yg/ShOb9HvCiyjAV5elqAGJMA9gwOCA++imny0kngWWyyrbidkuLJTwHSfp+xygflZQzzuy62kKuXmW5oBxKvjAZc76uBnI9XxXGFiy+KwBAE43BosF29knPRwbj2Bl/6b0uHCEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720861383; c=relaxed/simple;
-	bh=EVxEHlCMhF9a9eot5+XdClzUPctO/fY4IuVLZ1PL9po=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=vAZVc2oImdCKmquOTAJjvNc72R/JNffd3772CHRsgP+ZfEyO1/Kn829iAVmq5g7GSATbX+sBkX+KfqZIfVC03sQVXRDGI/NRz0macLQuBiYT/+W9kizyqq4dH4JSz1VpF6GJ6ER/BleDdl79PiRoLuU8w+r+jmDpikSBOZ5FNdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WLj7Q2TZ5zQlPP;
-	Sat, 13 Jul 2024 16:58:58 +0800 (CST)
-Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
-	by mail.maildlp.com (Postfix) with ESMTPS id 605BA180088;
-	Sat, 13 Jul 2024 17:02:57 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 13 Jul 2024 17:02:56 +0800
-Subject: Re: [PATCH] ubi: Fix ubi_init() ubiblock_exit() section mismatch
-To: Richard Weinberger <richard@nod.at>
-CC: linux-mtd <linux-mtd@lists.infradead.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, Ben Hutchings <bwh@kernel.org>, kernel test
- robot <lkp@intel.com>
-References: <20240713073519.25325-1-richard@nod.at>
- <3c624cf1-b5a3-f89c-ac6a-0875fcabaf25@huawei.com>
- <1422580650.65606.1720860390692.JavaMail.zimbra@nod.at>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <9a210424-eac1-957e-dd6e-4290924216e3@huawei.com>
-Date: Sat, 13 Jul 2024 17:02:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1720861686; c=relaxed/simple;
+	bh=F97KmSYr6BVNzF7rCK7Sa+kxRwzbEhhAf/TEjNrGfc4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=V4W0lGei9MLLiLjYqph1ou3GmwGvulylBAcLvC7QgT3/LPuQcet17mkY4rq3hCCp1UbQffa3F/yncOYUJOH6Rq7Ptg+FxtVbFxVLaBESzX3CXWOa82ht5bBURBsmLl/tncgHwuw8Md0YpDxC/Gz3frwxbwpvg91N2MrXjP4Tq3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.69.52])
+	by sina.com (10.185.250.22) with ESMTP
+	id 66924354000008D2; Sat, 13 Jul 2024 17:05:26 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9744697602725
+X-SMAIL-UIID: 4677006D4DA542B1862B570227BE2FDA-20240713-170526-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+2403e3909382fbdeaf6c@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in list_lru_add
+Date: Sat, 13 Jul 2024 17:05:18 +0800
+Message-Id: <20240713090518.866-1-hdanton@sina.com>
+In-Reply-To: <0000000000002d320c061d0ff813@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1422580650.65606.1720860390692.JavaMail.zimbra@nod.at>
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm000013.china.huawei.com (7.193.23.81)
 
-在 2024/7/13 16:46, Richard Weinberger 写道:
-> ----- Ursprüngliche Mail -----
->> Von: "chengzhihao1" <chengzhihao1@huawei.com>
->> An: "richard" <richard@nod.at>, "linux-mtd" <linux-mtd@lists.infradead.org>
->> CC: "linux-kernel" <linux-kernel@vger.kernel.org>, "Ben Hutchings" <bwh@kernel.org>, "kernel test robot" <lkp@intel.com>
->> Gesendet: Samstag, 13. Juli 2024 10:16:15
->> Betreff: Re: [PATCH] ubi: Fix ubi_init() ubiblock_exit() section mismatch
+On Fri, 12 Jul 2024 10:11:25 -0700
+> syzbot has found a reproducer for the following issue on:
 > 
->> 在 2024/7/13 15:35, Richard Weinberger 写道:
->>> Since ubiblock_exit() is now called from an init function,
->>> the __exit section no longer makes sense.
->>>
->>> Cc: Ben Hutchings <bwh@kernel.org>
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Closes:
->>> https://lore.kernel.org/oe-kbuild-all/202407131403.wZJpd8n2-lkp@intel.com/
->>> Signed-off-by: Richard Weinberger <richard@nod.at>
->>> ---
->>>    drivers/mtd/ubi/block.c | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> Looks like that you prefer a simpler fix. Feel fine to add
-> 
-> Yes, and Ben sent the patch first. :)
->   
->> Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> 
-> Thanks for the review!
-> And especially thanks for reviewing so many UBI/UBIFS patches,
-> I appreciate your help.
+> HEAD commit:    43db1e03c086 Merge tag 'for-6.10/dm-fixes-2' of git://git...
+> git tree:       upstream
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b1da7e980000
 
-You're welcome.
-BTW, I have two favors to need your help.
-1. Give me some feedbacks about the fsck.ubifs patch series 
-[https://patchwork.ozlabs.org/project/linux-mtd/list/?series=409935], 
-maybe you have started looking at them. I know it is a huge reviewing 
-work, maybe you can start with using, testing or reading the documents.
-2. I reported a 
-BUG[https://lore.kernel.org/linux-ext4/346993f2-87f6-e20f-8f5a-d19f84c1604c@huaweicloud.com/T/#m36825671b018880ca17e4c093a4dbfc1b66d5db8] 
-recently, please let me know if you have a good solution.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  43db1e03c086
 
-> 
-> Thanks,
-> //richard
-> 
-> .
-> 
-
+--- x/mm/list_lru.c
++++ y/mm/list_lru.c
+@@ -55,7 +55,8 @@ list_lru_from_memcg_idx(struct list_lru
+ 	if (list_lru_memcg_aware(lru) && idx >= 0) {
+ 		struct list_lru_memcg *mlru = xa_load(&lru->xa, idx);
+ 
+-		return mlru ? &mlru->node[nid] : NULL;
++		if (mlru)
++			return &mlru->node[nid];
+ 	}
+ 	return &lru->node[nid].lru;
+ }
+--
 
