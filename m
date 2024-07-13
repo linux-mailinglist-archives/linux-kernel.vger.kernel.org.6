@@ -1,109 +1,204 @@
-Return-Path: <linux-kernel+bounces-251328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56DF930397
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 05:38:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AFC93039D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 06:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3321C212CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:38:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF95BB21F62
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 04:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6DB175BF;
-	Sat, 13 Jul 2024 03:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFBA171A7;
+	Sat, 13 Jul 2024 04:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="SrAjue6k"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C1723DE
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 03:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KplZNKmr"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239CA23AD
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 04:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720841896; cv=none; b=K8ZBry0i19JSLoNxtYzLp5WbDudS0Q94cHRl/Z+fMBO3K8qcm4T3SHmRqNSB50M7riFZlnhmm3keF1RO5ZsOiNU0Gme1nqBxMeXzBtmnVBCQU9tjkjpj+G63TT6Ujt40Vee9ymgNux0JP/mF5gzzfPZBryETGw77+GcLDWWg5WU=
+	t=1720843290; cv=none; b=Mx9CRONxgPx8Fe7TT+GiK9/IXiE5gVtwYALUnaYZ6C0xNC7jrZcTvXQylBiP6vUrAqZO9kHPXpC7H5HJda5j25nDwtebABYz6rHeYvwYne4HaBeNYqACpWMEsHBUhOc5OoeRS6K/BCAw6Dreex3wXt5sWHe9Pp3hHSGEpeSnqew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720841896; c=relaxed/simple;
-	bh=kb0nblp8fXsVUi0ddRynguPkLG60RLpS7H8MAz9cjKM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=sle6uOZO3ZcBy7jjnimJFOaghVeOClO7J7rkooY41OzhwkJmJK2rzLeWf4qDA0dR2YWIoqr0iNQWfxPOQaNIAdEugpeKGW9skvTQjyvqlBVCBepEVmq8+5gjGoxqy8MdgoMRbRDQdIjHTG6MDBtX0U4ilPS+TgIxi5/fOBVkGMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=SrAjue6k reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=2FE2xnvxR/iLNMTwXXlYBVpW8aPIqjyFYqmSmT3PNEI=; b=S
-	rAjue6kZt/XSs734WkTE1A9mp0kv7jB5MBIfQ7MsJ2QJ2MnMLyoptJAQwBmVuhLJ
-	qWqc4uONISiSOpHfw9sKTMEuVrzElhY6UwhnI22W7Asfp1/Lqnt/1Karpe4L2dzL
-	SM2tc+xacJuIejal4XmN2Vv0UdRYg8jTHB8GuAjuv4=
-Received: from 00107082$163.com ( [111.35.186.71] ) by
- ajax-webmail-wmsvr-40-143 (Coremail) ; Sat, 13 Jul 2024 11:36:33 +0800
- (CST)
-Date: Sat, 13 Jul 2024 11:36:33 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Peter Xu" <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	"Andrew Morton" <akpm@linux-foundation.org>, 
-	"Alex Williamson" <alex.williamson@redhat.com>, 
-	"Jason Gunthorpe" <jgg@nvidia.com>, 
-	"Al Viro" <viro@zeniv.linux.org.uk>, 
-	"Dave Hansen" <dave.hansen@linux.intel.com>, 
-	"Andy Lutomirski" <luto@kernel.org>, 
-	"Peter Zijlstra" <peterz@infradead.org>, 
-	"Thomas Gleixner" <tglx@linutronix.de>, 
-	"Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, 
-	"Kirill A . Shutemov" <kirill@shutemov.name>, x86@kernel.org, 
-	"Yan Zhao" <yan.y.zhao@intel.com>, 
-	"Kevin Tian" <kevin.tian@intel.com>, "Pei Li" <peili.dev@gmail.com>, 
-	"David Hildenbrand" <david@redhat.com>, 
-	"Bert Karwatzki" <spasswolf@web.de>, 
-	"Sergey Senozhatsky" <senozhatsky@chromium.org>
-Subject: Re:[PATCH] mm/x86/pat: Only untrack the pfn range if unmap region
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20240712144244.3090089-1-peterx@redhat.com>
-References: <20240712144244.3090089-1-peterx@redhat.com>
-X-NTES-SC: AL_Qu2ZAvSfvk8i5SGebOkXn0oTju85XMCzuv8j3YJeN500tybIyDshVFZ+JEPX18K2Gy2CmTGwahRl2tZTVLVAZKJI9hgEUWQCWE8//0DZVPH6
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1720843290; c=relaxed/simple;
+	bh=r8Yhpjr5NboO/zGxXvko/WtS4lAmgEOW3o68UTjGljc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X9ZUfgmG+H/i5L1QqowKR9on+RIFy+RSRPRKoU3dKPF6bCZGLRKZ0LA6wbDwxv7HqTN/i/tyWd4kMk2AD+yIZKR0U3Uwjv3BNOwEY5cg0q09lXyqhIILZ5HK4WfGu0jS2aCuwunYi/VRbNv7aWOzK7FVwNrYF/+7jSuVM0lwjfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KplZNKmr; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720843280; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=l1zz8KU0ZreEJ+A1Pk7yXjuLTLJQY3EYOHYwky64JnU=;
+	b=KplZNKmrG+nXPNI+Wy5ADQ/yOyOQq9vatrxmyfZODjpcC0EDo/Pok5Cwv8IWRRfsmSwxR3lfKTsj09UWDBepPjtJp8Yu0f0K0au2p82QJJ1EBzhq0ZaEdOcnfvaXP81cGWT7AiBNV4itTX9i7BiynwHurcY8XtRYlPTntdf2UCU=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R841e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0WAQ.UFK_1720843278;
+Received: from 30.120.178.44(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WAQ.UFK_1720843278)
+          by smtp.aliyun-inc.com;
+          Sat, 13 Jul 2024 12:01:19 +0800
+Message-ID: <b11d6006-1efb-4329-baa0-75799935e019@linux.alibaba.com>
+Date: Sat, 13 Jul 2024 12:01:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <52fcc0ec.10f1.190aa29ee98.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wDXvwBC9pFmqvouAA--.37160W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0gkbqmWXy+UlmwADsL
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/huge_memory: Avoid PMD-size page cache if needed
+To: David Hildenbrand <david@redhat.com>, Gavin Shan <gshan@redhat.com>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, william.kucharski@oracle.com,
+ ryan.roberts@arm.com, shan.gavin@gmail.com
+References: <20240711104840.200573-1-gshan@redhat.com>
+ <ZpBEwEn3swH7IFbI@casper.infradead.org>
+ <f58433ee-7217-4f9e-91ba-c29f95cd56b0@redhat.com>
+ <63a0364b-a2e0-48c2-b255-e976112deeb1@redhat.com>
+ <df83a218-e2e5-496e-999a-e446a7d0b383@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <df83a218-e2e5-496e-999a-e446a7d0b383@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-CkhpLAoKQXQgMjAyNC0wNy0xMiAyMjo0Mjo0NCwgIlBldGVyIFh1IiA8cGV0ZXJ4QHJlZGhhdC5j
-b20+IHdyb3RlOgo+Cj5OT1RFOiBJIG1hc3NhZ2VkIHRoZSBjb21taXQgbWVzc2FnZSBjb21wYXJp
-bmcgdG8gdGhlIHJmYyBwb3N0IFsxXSwgdGhlCj5wYXRjaCBpdHNlbGYgaXMgdW50b3VjaGVkLiAg
-QWxzbyByZW1vdmVkIHJmYyB0YWcsIGFuZCBhZGRlZCBtb3JlIHBlb3BsZQo+aW50byB0aGUgbG9v
-cC4gUGxlYXNlIGtpbmRseSBoZWxwIHRlc3QgdGhpcyBwYXRjaCBpZiB5b3UgaGF2ZSBhIHJlcHJv
-ZHVjZXIsCj5hcyBJIGNhbid0IHJlcHJvZHVjZSBpdCBteXNlbGYgZXZlbiB3aXRoIHRoZSBzeXpi
-b3QgcmVwcm9kdWNlciBvbiB0b3Agb2YKPm1tLXVuc3RhYmxlLiAgSW5zdGVhZCBvZiBmdXJ0aGVy
-IGNoZWNrIG9uIHRoZSByZXByb2R1Y2VyLCBJIGRlY2lkZWQgdG8gc2VuZAo+dGhpcyBvdXQgZmly
-c3QgYXMgd2UgaGF2ZSBhIGJ1bmNoIG9mIHJlcHJvZHVjZXJzIG9uIHRoZSBsaXN0IG5vdy4uCj4t
-LS0KPiBtbS9tZW1vcnkuYyB8IDUgKystLS0KPiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
-KCspLCAzIGRlbGV0aW9ucygtKQo+Cj5kaWZmIC0tZ2l0IGEvbW0vbWVtb3J5LmMgYi9tbS9tZW1v
-cnkuYwo+aW5kZXggNGJjZDc5NjE5NTc0Li5mNTdjYzMwNGIzMTggMTAwNjQ0Cj4tLS0gYS9tbS9t
-ZW1vcnkuYwo+KysrIGIvbW0vbWVtb3J5LmMKPkBAIC0xODI3LDkgKzE4MjcsNiBAQCBzdGF0aWMg
-dm9pZCB1bm1hcF9zaW5nbGVfdm1hKHN0cnVjdCBtbXVfZ2F0aGVyICp0bGIsCj4gCWlmICh2bWEt
-PnZtX2ZpbGUpCj4gCQl1cHJvYmVfbXVubWFwKHZtYSwgc3RhcnQsIGVuZCk7Cj4gCj4tCWlmICh1
-bmxpa2VseSh2bWEtPnZtX2ZsYWdzICYgVk1fUEZOTUFQKSkKPi0JCXVudHJhY2tfcGZuKHZtYSwg
-MCwgMCwgbW1fd3JfbG9ja2VkKTsKPi0KPiAJaWYgKHN0YXJ0ICE9IGVuZCkgewo+IAkJaWYgKHVu
-bGlrZWx5KGlzX3ZtX2h1Z2V0bGJfcGFnZSh2bWEpKSkgewo+IAkJCS8qCj5AQCAtMTg5NCw2ICsx
-ODkxLDggQEAgdm9pZCB1bm1hcF92bWFzKHN0cnVjdCBtbXVfZ2F0aGVyICp0bGIsIHN0cnVjdCBt
-YV9zdGF0ZSAqbWFzLAo+IAkJdW5zaWduZWQgbG9uZyBzdGFydCA9IHN0YXJ0X2FkZHI7Cj4gCQl1
-bnNpZ25lZCBsb25nIGVuZCA9IGVuZF9hZGRyOwo+IAkJaHVnZXRsYl96YXBfYmVnaW4odm1hLCAm
-c3RhcnQsICZlbmQpOwo+KwkJaWYgKHVubGlrZWx5KHZtYS0+dm1fZmxhZ3MgJiBWTV9QRk5NQVAp
-KQo+KwkJCXVudHJhY2tfcGZuKHZtYSwgMCwgMCwgbW1fd3JfbG9ja2VkKTsKPiAJCXVubWFwX3Np
-bmdsZV92bWEodGxiLCB2bWEsIHN0YXJ0LCBlbmQsICZkZXRhaWxzLAo+IAkJCQkgbW1fd3JfbG9j
-a2VkKTsKPiAJCWh1Z2V0bGJfemFwX2VuZCh2bWEsICZkZXRhaWxzKTsKPi0tIAo+Mi40NS4wCgpJ
-IGFwcGx5IHRoaXMgcGF0Y2ggb24gNi4xMC4wLXJjNywgYW5kIGNvbmZpcm1lZCB0aGF0IG5vIGtl
-cm5lbCB3YXJuaW5nIHNob3dzIHVwIHdoZW4gSSBzdXNwZW5kIG15IHN5c3RlbSh3aXRoIG52aWRp
-YSBHUFUpLApBZnRlciBzZXZlcmFsIHJvdW5kIG9mIHN1c3BlbmQvcmVzdW1lIGN5Y2xlLCBubyBl
-cnJvci93YXJuaW5nIG9ic2VydmVkIGluIGtlcm5lbCBsb2cuCgpUaGFua3MKRGF2aWQK
+
+
+On 2024/7/13 09:03, David Hildenbrand wrote:
+> On 12.07.24 07:39, Gavin Shan wrote:
+>> On 7/12/24 7:03 AM, David Hildenbrand wrote:
+>>> On 11.07.24 22:46, Matthew Wilcox wrote:
+>>>> On Thu, Jul 11, 2024 at 08:48:40PM +1000, Gavin Shan wrote:
+>>>>> +++ b/mm/huge_memory.c
+>>>>> @@ -136,7 +136,8 @@ unsigned long __thp_vma_allowable_orders(struct 
+>>>>> vm_area_struct *vma,
+>>>>>            while (orders) {
+>>>>>                addr = vma->vm_end - (PAGE_SIZE << order);
+>>>>> -            if (thp_vma_suitable_order(vma, addr, order))
+>>>>> +            if (!(vma->vm_file && order > MAX_PAGECACHE_ORDER) &&
+>>>>> +                thp_vma_suitable_order(vma, addr, order))
+>>>>>                    break;
+>>>>
+>>>> Why does 'orders' even contain potential orders that are larger than
+>>>> MAX_PAGECACHE_ORDER?
+>>>>
+>>>> We do this at the top:
+>>>>
+>>>>           orders &= vma_is_anonymous(vma) ?
+>>>>                           THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
+>>>>
+>>>> include/linux/huge_mm.h:#define THP_ORDERS_ALL_FILE     
+>>>> (BIT(PMD_ORDER) | BIT(PUD_ORDER))
+>>>>
+>>>> ... and that seems very wrong.  We support all kinds of orders for
+>>>> files, not just PMD order.  We don't support PUD order at all.
+>>>>
+>>>> What the hell is going on here?
+>>>
+>>> yes, that's just absolutely confusing. I mentioned it to Ryan lately 
+>>> that we should clean that up (I wanted to look into that, but am 
+>>> happy if someone else can help).
+>>>
+>>> There should likely be different defines for
+>>>
+>>> DAX (PMD|PUD)
+>>>
+>>> SHMEM (PMD) -- but soon more. Not sure if we want separate ANON_SHMEM 
+>>> for the time being. Hm. But shmem is already handles separately, so 
+>>> maybe we can just ignore shmem here.
+>>>
+>>> PAGECACHE (1 .. MAX_PAGECACHE_ORDER)
+>>>
+>>> ? But it's still unclear to me.
+>>>
+>>> At least DAX must stay special I think, and PAGECACHE should be 
+>>> capped at MAX_PAGECACHE_ORDER.
+>>>
+>>
+>> David, I can help to clean it up. Could you please help to confirm the 
+>> following
+> 
+> Thanks!
+> 
+>> changes are exactly what you're suggesting? Hopefully, there are 
+>> nothing I've missed.
+>> The original issue can be fixed by the changes. With the changes 
+>> applied, madvise(MADV_COLLAPSE)
+>> returns with errno -22 in the test program.
+>>
+>> The fix tag needs to adjusted either.
+>>
+>> Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs interface")
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 2aa986a5cd1b..45909efb0ef0 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -74,7 +74,12 @@ extern struct kobj_attribute shmem_enabled_attr;
+>>    /*
+>>     * Mask of all large folio orders supported for file THP.
+>>     */
+>> -#define THP_ORDERS_ALL_FILE    (BIT(PMD_ORDER) | BIT(PUD_ORDER))
+> 
+> DAX doesn't have any MAX_PAGECACHE_ORDER restrictions (like hugetlb). So 
+> this should be
+> 
+> /*
+>   * FSDAX never splits folios, so the MAX_PAGECACHE_ORDER limit does not
+>   * apply here.
+>   */
+> THP_ORDERS_ALL_FILE_DAX ((BIT(PMD_ORDER) | BIT(PUD_ORDER))
+> 
+> Something like that
+> 
+>> +#define THP_ORDERS_ALL_FILE_DAX                \
+>> +       ((BIT(PMD_ORDER) | BIT(PUD_ORDER)) & (BIT(MAX_PAGECACHE_ORDER 
+>> + 1) - 1))
+>> +#define THP_ORDERS_ALL_FILE_DEFAULT    \
+>> +       ((BIT(MAX_PAGECACHE_ORDER + 1) - 1) & ~BIT(0))
+>> +#define THP_ORDERS_ALL_FILE            \
+>> +       (THP_ORDERS_ALL_FILE_DAX | THP_ORDERS_ALL_FILE_DEFAULT)
+> 
+> Maybe we can get rid of THP_ORDERS_ALL_FILE (to prevent abuse) and fixup
+> THP_ORDERS_ALL instead.
+> 
+>>    /*
+>>     * Mask of all large folio orders supported for THP.
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 2120f7478e55..4690f33afaa6 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -88,9 +88,17 @@ unsigned long __thp_vma_allowable_orders(struct 
+>> vm_area_struct *vma,
+>>           bool smaps = tva_flags & TVA_SMAPS;
+>>           bool in_pf = tva_flags & TVA_IN_PF;
+>>           bool enforce_sysfs = tva_flags & TVA_ENFORCE_SYSFS;
+>> +       unsigned long supported_orders;
+>> +
+>>           /* Check the intersection of requested and supported orders. */
+>> -       orders &= vma_is_anonymous(vma) ?
+>> -                       THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
+>> +       if (vma_is_anonymous(vma))
+>> +               supported_orders = THP_ORDERS_ALL_ANON;
+>> +       else if (vma_is_dax(vma))
+>> +               supported_orders = THP_ORDERS_ALL_FILE_DAX;
+>> +       else
+>> +               supported_orders = THP_ORDERS_ALL_FILE_DEFAULT;
+> 
+> This is what I had in mind.
+> 
+> But, do we have to special-case shmem as well or will that be handled 
+> correctly?
+
+For anonymous shmem, it is now same as anonymous THP, which can utilize 
+THP_ORDERS_ALL_ANON. For tmpfs, we currently only support PMD-sized THP 
+(will support more larger orders in the future). Therefore, I think we 
+can reuse THP_ORDERS_ALL_ANON for shmem now:
+
+if (vma_is_anonymous(vma) || shmem_file(vma->vm_file)))
+	supported_orders = THP_ORDERS_ALL_ANON;
+......
+
 
