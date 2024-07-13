@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-251548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CEDD93061F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:14:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B88930627
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97EB81F21D32
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 15:14:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33DD5282B27
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 15:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F91613A889;
-	Sat, 13 Jul 2024 15:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 010E813B7B3;
+	Sat, 13 Jul 2024 15:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S9bcQSKj"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="G5IhIY+h"
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419DC54757
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 15:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B8F21A0C;
+	Sat, 13 Jul 2024 15:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.87.146.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720883647; cv=none; b=OzxMuNn16teU5oX1eivpHg9AdnP0Pwe04++LhtQYln/JBXI85Wnd+dF/U0QzO3Pl59B0IoXlK6PCvVZTNiCFIf2ydK14P2zINEA+P/pZhXPGxEWmrGimYLUg4KHjW5S4f3qXuJXxf+LX/Ds1jNopNPsiHYxtuH+9a4JQ5ohTpE8=
+	t=1720884515; cv=none; b=JlqI2AmrMPV3VUx+iMUycY9k35catixBNh/RtGAlb2pdBeZoYd6L3b6PTZtHfq7KvNPMKVMtPeh6Ovj7az9KsblKpTHSvHSTVysuD7/MBO2lqCaXcM6bC/gCm8XGDnG7ei+n1O/5j50iIoNNuH52Ud3ZYlz/Z0VlgF/d/wnXmWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720883647; c=relaxed/simple;
-	bh=0zdSR7l8Y5hdwHCfvdLcTSAk427t9D6VXoB/FLM/PAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eUGsXyugX4CcX2/wQYsjhisUxn8KjU8HcV465qt0m2Bql3jwzPDqEz45oyx040rOtb0v0OyCEXt+EBhG1gWIXjKS3f16v6zvbBFMBmkOdmzJSclrHFKW4J+s9Z1Lf7UPMdg1/M85E4bHGJtFDPyf+tQ0lL6aHJiCLwsMiahsYDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S9bcQSKj; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ea7bdde68so3182788e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 08:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720883644; x=1721488444; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SYfPVmxm0REv9uCaEdee+9qY1y1tGgOQ3u+6wJAJ6So=;
-        b=S9bcQSKjAb3iqv6qARN/wCssAEo9sy3jhN7kOqsxr4ij/kOlePdj96DOygvLy9HKf9
-         4jbKlucik9BF14Y3Q164RPOOcuBZamuwrjnOjLB6ZT3UVLaoh9eCY004sQxFtFjOyrSD
-         2d2PMrQgEm8lpsv2GqyHirZ9y1oeRk12zz7xAOyQ1sI0uPzxUFBkc1A0D5wszIx+4hLU
-         k23B0cmMU7e3Cxs/YTsrFhIgU+b77eoBzl+Y6hl61gDNkk3R32L2+dSOCDMyNZP8J45y
-         HvzHwH7rxIhEyoxrDLAzDZ4krbRXlnG5Husqm/hwAwk1zJGQVvDI9oMZBF/07qPALQho
-         mZWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720883644; x=1721488444;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SYfPVmxm0REv9uCaEdee+9qY1y1tGgOQ3u+6wJAJ6So=;
-        b=Lqv4LAJYa1Vyshx2o1nXeSonJKFrsfq4wEmY+0frXqJX47rxjNGAh3dAPgNVSGReCD
-         7oguRZlHh405sFMgMtDaCQTDm60geR08TOp8FPTAn+bSjtXJ0eNlNJKu8M+YFxC9pKD1
-         dh/4iJzeEVhDfiqKn++kdaT7AhXk/P+CKNiXs4rxn8kFD0DVQCXuOm2LGo5NdYgLv6ey
-         H2Gb0zLTfexY/Xy0HcfluFFVpfR+lK7A4ZbDQYv+00kkc4hNdvikT130o2YW5iJoLW7b
-         ApMeNZS/zu/9fedqjy94+pAMd7T0G5C+6rfZcgE0flBwXkI59eEsSDdnK02W46ySaaG3
-         y2sg==
-X-Forwarded-Encrypted: i=1; AJvYcCV58vAa2FevF93d35/ry3Pb7/jr1XoqCjeeaKpxMOzffnqQwf8V3q9wMNhGYJkC9CMCk7b+hohrfQYzQnhKloruzF6a1msOhcgb5ifJ
-X-Gm-Message-State: AOJu0Ywfy0VIMkDQ/yss8jYy0lgM2O7Nv2KpER+3OC6qY/FoOApX1Gnp
-	IJ8LBjpUuCOkcKsrUiybJSR+oJFi5G2a53Pdbx/ePUsRLB7m7UJcrocNxpvBXFY=
-X-Google-Smtp-Source: AGHT+IEZoAswyQNFfESQdiC11PY4tsA15nguHBt2DDuthdgGYgJGvLQYMpauCZKxWG9fNaC7qkB+AQ==
-X-Received: by 2002:a05:6512:3c85:b0:52b:c0cd:7312 with SMTP id 2adb3069b0e04-52eb99d170amr10472300e87.49.1720883644433;
-        Sat, 13 Jul 2024 08:14:04 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24e2ab1sm218986e87.29.2024.07.13.08.14.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 08:14:04 -0700 (PDT)
-Date: Sat, 13 Jul 2024 18:14:02 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Naina Mehta <quic_nainmeht@quicinc.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@linaro.org, 
-	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] remoteproc: qcom: pas: Add SDX75 remoteproc
- support
-Message-ID: <c2lf35mlot2z646i3jmbpevanhs3cqa2zx3cqjbzzq4w4d5flj@j2l5avnslsot>
-References: <20240709064924.325478-1-quic_nainmeht@quicinc.com>
- <20240709064924.325478-3-quic_nainmeht@quicinc.com>
+	s=arc-20240116; t=1720884515; c=relaxed/simple;
+	bh=uMTAAyeF3I0QRs1D9Thykfo5n67qdtlh32dyUvRJIoo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TdkS5f5a6f1S4FACllYJTJgVNHs9KGUDDRuBhQCHhMq0i/b378n1t2s+kugZjBSwh+ZM6MSHl4lBK0NMBVsYQDeo0h6m7MXwTp3pi1uAnmV9GoIN85flYItb4Lrj212JfP5Zdk/52ouH7lHd8zsbp6g/NxBttTGW8URzrwCIIOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=G5IhIY+h; arc=none smtp.client-ip=194.87.146.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id B866041C8F;
+	Sat, 13 Jul 2024 20:28:29 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1720884510; bh=uMTAAyeF3I0QRs1D9Thykfo5n67qdtlh32dyUvRJIoo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=G5IhIY+hzLUgB2+zZERB6VH7mZHf6LYKbsS1yTvy5+TOQCMHrsm22m9irtp2j5DaO
+	 5uDtlFNZKE1FipkRqOWwazjxPnPfLHrF+VL2ybJOGiDFZBzEmxsN1VwQP8+xBlcavT
+	 uqaDAhtpnQc4Ln0NGw7qd6hAYG40XGJgz/m6yptMgc06Ev1nVFgV6VO92gmKvbzG5a
+	 2NI3ngG1X6fV/ck0590J8Vw41HqaPVfpj+UA3WczTgWIjbFHl/rP9iogEj5XabQiw3
+	 SUE4/TygUdF5wxT9et14Z6HFhlimUJ3kJ85bJNhuW6Vcl+lTM/A1kplXAkCR0St3Bg
+	 VWPH7wADSAkyg==
+From: Nikita Travkin <nikita@trvn.ru>
+Subject: [PATCH RESEND v4 0/2] Add touch-keys support to the Zinitix touch
+ driver
+Date: Sat, 13 Jul 2024 20:28:07 +0500
+Message-Id: <20240713-zinitix-tkey-v4-0-14b7e2d5ace3@trvn.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709064924.325478-3-quic_nainmeht@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Michael Srba <Michael.Srba@seznam.cz>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>, 
+ ~postmarketos/upstreaming@lists.sr.ht, Rob Herring <robh@kernel.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=808; i=nikita@trvn.ru;
+ h=from:subject:message-id; bh=uMTAAyeF3I0QRs1D9Thykfo5n67qdtlh32dyUvRJIoo=;
+ b=owEBbQKS/ZANAwAIAUMc7O4oGb91AcsmYgBmkp0Zc2nj0SsIZOwWjGazismdji9qaqfTRSH6w
+ 3D//V9GTnSJAjMEAAEIAB0WIQTAhK9UUj+qg34uxUdDHOzuKBm/dQUCZpKdGQAKCRBDHOzuKBm/
+ dYSkEACHYHVmvgzOctNOVoOUf7LrEd8yvYB2Y+qyH5992SeG/fS+MBl+o7scaimlMf+E7kWJWNa
+ dZjFvfuKgePllnn19GLKU45cxzqaFXOc8Rz0raHCw1rKr9mmXjOjEG8AHG1DKTy4SD3y/XK0sIk
+ +dmZCBA72qzF5Zn5nvNEy1Qrz1OGw2X7mwD3x8xFVzjlrdrvpmzuPZnI6/TySMLOB4EnRgpS2rj
+ PECmNzisFWR4EX7cueDGbymM0yITHbkqcut3SYCrA0Okd4BtLH0diIf3yWCjePa43Bwp1H1RxZa
+ uIVl6B+1ilR5PBhcv9p5SgIXskNTxi22UyLvElzMEnULaDEKTQ02a/LOOnw+4MUPB3iLI4zHAgJ
+ IKlypNf0WXRrNXsGsYh8C4e1B7P03aAXEEnEX1HxVCptvzjDl+tjkWzYH2GpOlWXp5g15Mt7XeK
+ HIluFh3avJzwdY52Km/l6JtUS37drfxoIa90QBo1xk286V+KGz0XtjoWqSh2Nw1XCPot1l8QDgn
+ wgn7BffUwkBQdg1pa39H/K5hnJhx3Wg54MshbitRawXcH7277tv2dtfmRoLYmpe9QXJSVheYLwd
+ 9v66dM+0CkTlzfYrNFOldXjpunL0KJU+uNRiu41RUWwcHb+flZNzhWdvpQewxV9xyl9PIIQrYGg
+ WnoaGHCDPZ+FhqQ==
+X-Developer-Key: i=nikita@trvn.ru; a=openpgp;
+ fpr=C084AF54523FAA837E2EC547431CECEE2819BF75
 
-On Tue, Jul 09, 2024 at 12:19:21PM GMT, Naina Mehta wrote:
-> Add MPSS Peripheral Authentication Service support for SDX75 platform.
-> 
-> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
+This series adds support for the touch-keys that can be present on some
+touchscreen configurations.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+---
+Changes in v4:
+- The series was partially applied, these patches dropped.
+- Link to v3: https://lore.kernel.org/r/20220106072840.36851-1-nikita@trvn.ru
 
+---
+Nikita Travkin (2):
+      dt-bindings: input: zinitix: Document touch-keys support
+      input: zinitix: Add touchkey support
 
+ .../bindings/input/touchscreen/zinitix,bt400.yaml  | 10 ++++
+ drivers/input/touchscreen/zinitix.c                | 61 ++++++++++++++++++++--
+ 2 files changed, 68 insertions(+), 3 deletions(-)
+---
+base-commit: a734662572708cf062e974f659ae50c24fc1ad17
+change-id: 20230801-zinitix-tkey-5a3023bc304c
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Nikita Travkin <nikita@trvn.ru>
+
 
