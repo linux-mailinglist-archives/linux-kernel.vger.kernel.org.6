@@ -1,163 +1,148 @@
-Return-Path: <linux-kernel+bounces-251306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD219930334
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 04:15:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2A993033B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 04:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 644D32835C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:15:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03A821F2247A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4F2125BA;
-	Sat, 13 Jul 2024 02:15:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B241718030;
+	Sat, 13 Jul 2024 02:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="MVRaxtLh"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96014168B7
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 02:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F02F9DA;
+	Sat, 13 Jul 2024 02:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720836904; cv=none; b=Ai7ut3Pgx0l4SiM/XuUSHIFlVdPUFNtVhKkviI0cskujD7nb00R3k4dzd3LSP2OjtgyMs8Z3KHDYSJan7ldiGb9kOLi+z4fQ0v01MlOkU7GIYTXZs5udd7fRIw9QcFvYSfOTePMk9PxY3ppR52c8l3swlo795XgNti4pVP8/yDE=
+	t=1720837164; cv=none; b=rW1XdYppDPj5p69/PeK9mVWLygH2usqRb1Jk9oHIa/Hsa2wXkSbDx98jOy68/i0Omn1JH62XpwYSXljWeWLunZN58qtTPVL+QNBKMBS8UbIeV6P415jngoPLgc2kpc74OBWmvjL2Nqt2VlaQertCIZtr/ANVMqVTpmouuQpvTjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720836904; c=relaxed/simple;
-	bh=mZjF58qK2WpLCkoES8ZKlJx5azVD6vs8qZQ2WRU0hRk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=T8cPQ5ONGE1z0UYBjhik+ThBPg6aNBamFcWLN+boLeyDThd+mNPhLDV1gi7KO5/ee0ciA+HlWI9uYWdjOXWkmHmhXfQd8+xMuuHbB8xE+8ZXW9jJSbFaium93Dg/26cR/Irz0yyzY9+gTsRGcILw5jrbE9T9V/NlPzGa2mKSyog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-376210a881dso28689615ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 19:15:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720836902; x=1721441702;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B9Kk8CJVUPg3VRcQyUc/7+rXvK/IRtTgNpnGXejXDlE=;
-        b=gnroOvIw9IXPy4m9zsfqPRvTMVMVlphEG/wCeng/Z/m1NEn39Oyo5RGK62d5ai5YKw
-         JWLzvUlAz/tJJTZi2Al6x7bRQmeAzGiqb+HV4pBHG1AVn/BBI3VUjRkdU3V+Jjqx4pze
-         jkTMgLCle8zQjx+1Xzu4M6/D+k5tB7XPL4+8/LZb2wx951hH+5UPqL42Cu5oVbLbaw1H
-         SV1VfubXA72hkID0x0gAuLWLJ3FGrxFDqSndvrVDDc2mjrCU0sVYzFJxswRcn/NLoWBC
-         AbKhsCpqXHfUop1SNkB0AeX59lIVYnu3uyxiiRemji2zA6mYCsp0zhuz9HeZs8SaxXng
-         SZtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTspixsOlbGAKgkax+6wuVRb0iyFO0ZcPjA2jMUr/Coaugj0jbXSwgN8AaBDCR8ftTIdc0vPbDYfjj0LmOWm+B68s3tDaaxq2R0Foz
-X-Gm-Message-State: AOJu0YxL2wXL+4KTMSTVnBXwoSgZBuVhsW8aC5Wu10lm/A7btTD98YLT
-	HREYqwMzb0yl0mkvDin1q1P1MKYuowqbvib0ctm1eg9/EO+r5FKtLuOet99qqVBbzRp7kxbP/B/
-	/0uPHWDy4ccBvDMwUx9oZngsYOEUlb6wbpy7VS9BUEs7iJVifGBpDpN4=
-X-Google-Smtp-Source: AGHT+IFeQNxrS4G/fznoOn96fm+gKOSxCHn6WWbIKrujIh+7mZOSeJn9ia5XCTpmIuM4rbYwUhw4RvbErHJ7vItgQh/+0qv88qSy
+	s=arc-20240116; t=1720837164; c=relaxed/simple;
+	bh=EBZ7aRHtLYYYyPyxQmOao/9I3c3hyd0mmUgKonz52/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BHc/X1/IMZHWNiOSYcV1kRPo1AmuFD6SvGbv/DaUYIvX9wD/fsYn/9YweilnQ4NNYIlDYhiUg23K9ccieQEVtIvMZNygsVUBaEpF/ym3guDDhxY5UgMMBlN4fPtWqwkEgPpvwUrxyFG4CpkenlggeuW57DsHIbFbLuZhArABj9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=MVRaxtLh; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1720837159;
+	bh=EBZ7aRHtLYYYyPyxQmOao/9I3c3hyd0mmUgKonz52/8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MVRaxtLhxRb1jC846dEkURXsI6m25jGvGVDqgccXvSFysjKeB1nSOg8YgE1rib6t+
+	 oJa+VwQES2VGru1jgK0HRTpzNR0KKjPozqDq4ZOrRRXDQoFRt5tYHqfyVNoc23fnpa
+	 /jh0XVlTTakcyNIfBQaPqf4m85QbIJOUKMCzJVyYw3Psqwe131dWnSP1xNpgpBycVu
+	 OyWilq3gv/Yf8A0R6GUspg8koGV7//jgMurrAJTK0xVYQC6nZctwnt+rh4fk+d2NwN
+	 pflW+FqlXTLjl+CiES6bFc9j94NNJSFFDp0JJ5L2k8cd5RkpT/kSt9s0GPpPs8hiFF
+	 e5T6uY35O+gVQ==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id EF70C60083;
+	Sat, 13 Jul 2024 02:19:18 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id 40D522011BC; Sat, 13 Jul 2024 02:19:11 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: netdev@vger.kernel.org
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	Davide Caratti <dcaratti@redhat.com>,
+	Ilya Maximets <i.maximets@ovn.org>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	David Ahern <dsahern@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Ratheesh Kannoth <rkannoth@marvell.com>,
+	Florian Westphal <fw@strlen.de>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v4 00/13] flower: rework TCA_FLOWER_KEY_ENC_FLAGS usage
+Date: Sat, 13 Jul 2024 02:18:57 +0000
+Message-ID: <20240713021911.1631517-1-ast@fiberby.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:874c:0:b0:380:f12f:30d9 with SMTP id
- e9e14a558f8ab-38a585851c9mr2513265ab.2.1720836901620; Fri, 12 Jul 2024
- 19:15:01 -0700 (PDT)
-Date: Fri, 12 Jul 2024 19:15:01 -0700
-In-Reply-To: <20240713014858.1281-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003ce1d3061d17904c@google.com>
-Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in list_lru_add
-From: syzbot <syzbot+2403e3909382fbdeaf6c@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+This series reworks the recently added TCA_FLOWER_KEY_ENC_FLAGS
+attribute, to be more like TCA_FLOWER_KEY_FLAGS, and use the unused
+u32 flags field in FLOW_DISSECTOR_KEY_ENC_CONTROL, instead of adding
+a new flags field as FLOW_DISSECTOR_KEY_ENC_FLAGS.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-general protection fault in list_lru_del
+I have defined the new FLOW_DIS_F_* and TCA_FLOWER_KEY_FLAGS_*
+flags to co-exist with the existing flags, so the meaning
+of the flags field in struct flow_dissector_key_control is not
+depending on the context it is used in. If we run out of bits
+then we can always split them up later, if we really want to.
+Future flags might also be valid in both contexts.
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000002: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
-CPU: 1 PID: 5638 Comm: syz-executor Not tainted 6.10.0-rc7-syzkaller-00141-g43db1e03c086-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:list_lru_del+0x247/0x310 mm/list_lru.c:132
-Code: 1c 00 4d 89 3f 49 8d 7f 08 48 89 f8 48 c1 e8 03 80 3c 28 00 74 05 e8 88 02 1c 00 4d 89 7f 08 48 83 c3 10 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 7b 01 1c 00 48 ff 0b 48 8b 44 24 28
-RSP: 0018:ffffc9000405fbd8 EFLAGS: 00010202
-RAX: 0000000000000002 RBX: 0000000000000010 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffffff8bcaccc0 RDI: ffff88806ced81c0
-RBP: dffffc0000000000 R08: ffffffff8fac686f R09: 1ffffffff1f58d0d
-R10: dffffc0000000000 R11: fffffbfff1f58d0e R12: ffff88801fb75240
-R13: ffff88801fb75200 R14: ffff88801fb75240 R15: ffff88806ced81b8
-FS:  000055555b96b500(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055d5667df000 CR3: 000000007b826000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- inode_lru_list_del fs/inode.c:485 [inline]
- evict_inodes+0x22d/0x690 fs/inode.c:732
- generic_shutdown_super+0x9d/0x2d0 fs/super.c:627
- bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2052
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1267
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x360 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9fb9b76f07
-Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffcfeb94e78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f9fb9b76f07
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffcfeb94f30
-RBP: 00007ffcfeb94f30 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffcfeb95ff0
-R13: 00007f9fb9be3515 R14: 000000000001ce83 R15: 000000000001cd13
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:list_lru_del+0x247/0x310 mm/list_lru.c:132
-Code: 1c 00 4d 89 3f 49 8d 7f 08 48 89 f8 48 c1 e8 03 80 3c 28 00 74 05 e8 88 02 1c 00 4d 89 7f 08 48 83 c3 10 48 89 d8 48 c1 e8 03 <80> 3c 28 00 74 08 48 89 df e8 7b 01 1c 00 48 ff 0b 48 8b 44 24 28
-RSP: 0018:ffffc9000405fbd8 EFLAGS: 00010202
-RAX: 0000000000000002 RBX: 0000000000000010 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffffff8bcaccc0 RDI: ffff88806ced81c0
-RBP: dffffc0000000000 R08: ffffffff8fac686f R09: 1ffffffff1f58d0d
-R10: dffffc0000000000 R11: fffffbfff1f58d0e R12: ffff88801fb75240
-R13: ffff88801fb75200 R14: ffff88801fb75240 R15: ffff88806ced81b8
-FS:  000055555b96b500(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055d5667df000 CR3: 000000007b826000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	1c 00                	sbb    $0x0,%al
-   2:	4d 89 3f             	mov    %r15,(%r15)
-   5:	49 8d 7f 08          	lea    0x8(%r15),%rdi
-   9:	48 89 f8             	mov    %rdi,%rax
-   c:	48 c1 e8 03          	shr    $0x3,%rax
-  10:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1)
-  14:	74 05                	je     0x1b
-  16:	e8 88 02 1c 00       	call   0x1c02a3
-  1b:	4d 89 7f 08          	mov    %r15,0x8(%r15)
-  1f:	48 83 c3 10          	add    $0x10,%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 28 00          	cmpb   $0x0,(%rax,%rbp,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	48 89 df             	mov    %rbx,%rdi
-  33:	e8 7b 01 1c 00       	call   0x1c01b3
-  38:	48 ff 0b             	decq   (%rbx)
-  3b:	48 8b 44 24 28       	mov    0x28(%rsp),%rax
+iproute2 RFC v2 patch:
+https://lore.kernel.org/560bcd549ca8ab24b1ad5abe352580a621f6d426.1720790774.git.dcaratti@redhat.com/
 
+---
+Changelog:
 
-Tested on:
+v4:
+- Define control flags in ynl
+- Describe enc-flags in ynl
+- Propagate tca[TCA_OPTIONS] to NL_REQ_ATTR_CHECK
+  (all 3 requested by Jakub)
+- Link to new iproute2 patch in cover
+- Add Reviewed-By from Davide to patches that haven't changed since v3.
 
-commit:         43db1e03 Merge tag 'for-6.10/dm-fixes-2' of git://git...
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1566ca21980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=2403e3909382fbdeaf6c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16185766980000
+v3: https://lore.kernel.org/20240709163825.1210046-1-ast@fiberby.net/
+- Retitle patch 1 (tunnel flags -> control flags)
+
+v2: https://lore.kernel.org/20240705133348.728901-1-ast@fiberby.net/
+- Refactor flower control flag definitions
+  (requested by Jakub and Alexander)
+- Add Tested-by from Davide Caratti on patch 3-10.
+
+v1: https://lore.kernel.org/20240703104600.455125-1-ast@fiberby.net/
+- Change netlink attribute type from NLA_U32 to NLA_BE32.
+- Ensure that the FLOW_DISSECTOR_KEY_ENC_CONTROL
+  is also masked for non-IP.
+- Fix preexisting typo in kdoc for struct flow_dissector_key_control
+  (all suggested by Davide)
+
+RFC: https://lore.kernel.org/20240611235355.177667-1-ast@fiberby.net/
+
+Asbjørn Sloth Tønnesen (13):
+  net/sched: flower: refactor control flag definitions
+  doc: netlink: specs: tc: describe flower control flags
+  net/sched: flower: define new tunnel flags
+  net/sched: cls_flower: prepare fl_{set,dump}_key_flags() for ENC_FLAGS
+  net/sched: cls_flower: add policy for TCA_FLOWER_KEY_FLAGS
+  flow_dissector: prepare for encapsulated control flags
+  flow_dissector: set encapsulated control flags from tun_flags
+  net/sched: cls_flower: add tunnel flags to fl_{set,dump}_key_flags()
+  net/sched: cls_flower: rework TCA_FLOWER_KEY_ENC_FLAGS usage
+  doc: netlink: specs: tc: flower: add enc-flags
+  flow_dissector: cleanup FLOW_DISSECTOR_KEY_ENC_FLAGS
+  flow_dissector: set encapsulation control flags for non-IP
+  net/sched: cls_flower: propagate tca[TCA_OPTIONS] to NL_REQ_ATTR_CHECK
+
+ Documentation/netlink/specs/tc.yaml |  26 +++++
+ include/net/flow_dissector.h        |  30 ++---
+ include/net/ip_tunnels.h            |  12 --
+ include/uapi/linux/pkt_cls.h        |  11 +-
+ net/core/flow_dissector.c           |  50 +++++----
+ net/sched/cls_flower.c              | 168 ++++++++++++++++------------
+ 6 files changed, 177 insertions(+), 120 deletions(-)
+
+-- 
+2.45.2
 
 
