@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-251595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C82D69306B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:23:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D609306B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:27:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84EA7284E23
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:23:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8C95B24E63
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF1E13C9CB;
-	Sat, 13 Jul 2024 17:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3019B13D2B8;
+	Sat, 13 Jul 2024 17:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mitaoe.ac.in header.i=@mitaoe.ac.in header.b="gQZJhO17"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="InAbALiB"
+Received: from mail-40140.protonmail.ch (mail-40140.protonmail.ch [185.70.40.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5D31757D
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 17:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDC5BA40;
+	Sat, 13 Jul 2024 17:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720891373; cv=none; b=nHMyfy0HlSLApcGoIPvJtncKGeqR5jzaz9/m8oEHgPowPyzi5W8OtAxf4zw82e/N7b3PvxStbInQPsRKHHNjCUGcx0wPPVpkkE/YtPWOzAmDButc5b1FranziYn0/2+i//GOhdjEi0bG0rqP+liGVsDN7ET8O0eb23JC9Q9g9dg=
+	t=1720891667; cv=none; b=D+eENIJ8Dw6Bsc9c10j2hT4wFOnrmc9FtEoot83OtyPkg4y0TWr2EbvSUJXdKt60eDCY83MqDLV9QIDvhcNauflTmYCA46jTAxBR6u0Z1u6hwgHcVksjdPFvy1qTSXCWba45vZo5yZ0ifFNT6f+lxdX2wjcxgDStYCyT+uX/ngQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720891373; c=relaxed/simple;
-	bh=LFtUKNPWDeUKEtI50JpAItQ5h0nXU1L8hRmcUKoA+VE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Izp6PFbmEr5HZn2eauLgOplAmVkd+p8qeRBH1gy2PjULbM3fc2XH47LStyj0/bdjQoX1VlvifrHSaE6Ekch1aMHrVMdw3FNlx7d9tylTkxCWEP3vGwyvG7NNbaIzelFkkx8+ZIfq6200CKwpkdhdSpgP0nuwjxFGFgb0WdDVcpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mitaoe.ac.in; spf=fail smtp.mailfrom=mitaoe.ac.in; dkim=pass (2048-bit key) header.d=mitaoe.ac.in header.i=@mitaoe.ac.in header.b=gQZJhO17; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mitaoe.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mitaoe.ac.in
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fb70169c23so25977205ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 10:22:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mitaoe.ac.in; s=google; t=1720891369; x=1721496169; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6HzW/a9N1AEcgIf6A+5EQUhbObGqQjBzYBZLTCmCokY=;
-        b=gQZJhO17WOGKRzOZkpXZAem4trxUR+DxK4K6kf1n+9aZXaFNVd379N150NJdHkGJ81
-         Xmj6J/ceouYpkV+wGVfA95bByaDCrg3pfev4M4A5XSexU3YpTQcCSy/8svxyzmEualX0
-         L1njlnK34WeW8hMrk5OwH+z6ijYnEsX9RNrUxrTBB9wAdaGB78VVIlkhOI6k+bmD4yTb
-         yxPHWc+BlJA2xa3qOA6OEAemFi5zESMz7uPjI/P1P0QpkFGgMf1fPB6qVUU0tXlHKGYH
-         0/r3JsaecYuKiGyz3fmy9NYRatNHAguhoB74t3tPyF6N77VxBwdLqjhqJ8ZtbvVq2eS0
-         OhYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720891369; x=1721496169;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6HzW/a9N1AEcgIf6A+5EQUhbObGqQjBzYBZLTCmCokY=;
-        b=wemIIA8YdViV+KS+Z1fyXIY5Q9ReAYwFEiEYuf6Cidf6qhsWXRA+/fEoFhrQBo3JUu
-         L2Bl8n0oGV7ziTkGLrAWQUB2QUF+wHnuptrC9mXmx/nVHiSIYofkMjP6X8vBatvNAo7O
-         r878WGJHUx1q0YXGmv1DYfwit9cvhad4ARNcOzXES5+znQIcFDxcvG74KVsiYZJ6KxRc
-         dy77Be/e8pyd1MgyBKaUErgwUL0HvZ6z78uvZvoqII6S6iWpNilZPgwRFWFIT3B90/49
-         GumB9w13/xJas9q2Dl9If03BuwwqTr9AoDveSDAikD/IpNizUduK2uFQ3nMUqlK4rILW
-         sGqw==
-X-Gm-Message-State: AOJu0YzMveozaYY1krW+n4Rj+j/UENhZJgEV2P9CQa5wACLyGm1rHvpy
-	Q7sf1vA030rKlErcuHXVCXNbkLJU3tu0G0Jq7zwQK7a8FnP6S0r69HxlidLGFMU=
-X-Google-Smtp-Source: AGHT+IH2If6imdFWwkNLPOA4ZzF+T5v+gMfoF9fHPEpy5IYhTzOufN+D+dHejfRPJ/32UKKcjAjx0w==
-X-Received: by 2002:a17:903:1205:b0:1fb:4c2e:9803 with SMTP id d9443c01a7336-1fbb6cda8a4mr128712135ad.10.1720891369360;
-        Sat, 13 Jul 2024 10:22:49 -0700 (PDT)
-Received: from localhost.localdomain ([152.58.19.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6ffdesm12969375ad.53.2024.07.13.10.22.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 10:22:48 -0700 (PDT)
-From: mohitpawar@mitaoe.ac.in
-To: bhelgaas@google.com
-Cc: linux-kernel@vger.kernel.org,
-	Mohit0404 <mohitpawar@mitaoe.ac.in>
-Subject: [PATCH] pci: bus.c: Fixed warning related to comments
-Date: Sat, 13 Jul 2024 22:52:42 +0530
-Message-Id: <20240713172242.125555-1-mohitpawar@mitaoe.ac.in>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720891667; c=relaxed/simple;
+	bh=CMbyQCRW3QjSNDtrZLqub2EssK7RoLcv0g/PG0hYges=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=G5MNUbZxOVQIwuPMSXP+5zt2G1OQw8qtX1NCOgDoWfhR36lLk/xN0YnQ0/g9S1PVJOGpeHjCka8B2biOdg7L0pdEitSBAFanqdPQCt2t5zNNy8Yep+vnNUuWGEzo8FxZi909WfEprB3giuF2X6P4KTy70Ce5MnUo/mwhKKHTwoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=InAbALiB; arc=none smtp.client-ip=185.70.40.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1720891657; x=1721150857;
+	bh=3ma9Jn4pZDj6IW33R3W1pBkMWtSx2AXWQvS0vLsnG84=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=InAbALiB3GvY9KTmZVN6QkFs4qtbHoXdZE0JTxl6cltduTF6VBYx3cpBb/T4RYKtU
+	 k4WfMul3/eMSr4nvPTtfucrUy6EEd72Rxv0Ng5J0LtcjmPSgW0hQZHmjJ3Z2xw+IA0
+	 bM+M2YCoCyuhJvuey7w4rDZZmqtuSHk6qd6GO56jaosOzwC/gFvewiJt2mqj+oFT9o
+	 oPftKXE1gyG3N+Dd74Hf0KUalmSszWDI0qGb14PHAOTVrNCRdoUdQUkTHTrUOfUmkj
+	 OjmbxsjA+Q7WVanzLbnSQe0HbpNbsrkpXkNcJYrVcfCto1DGyKuwloGsNtxHFb8lCG
+	 DU4qh2t/rLFxw==
+Date: Sat, 13 Jul 2024 17:27:33 +0000
+To: linux-kernel@vger.kernel.org
+From: "Lin, Meng-Bo" <linmengbo06890@proton.me>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: [PATCH] arm64: dts: qcom: msm8916-samsung-grandmax: Add touchscreen
+Message-ID: <20240713172724.34658-1-linmengbo06890@proton.me>
+Feedback-ID: 112742687:user:proton
+X-Pm-Message-ID: 310e0059fa85ef97870cada5a561fdd7c9440981
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Mohit0404 <mohitpawar@mitaoe.ac.in>
+Grand Max uses an Imagis IST3038 touchscreen that is connected to
+blsp_i2c5. Add it to the device tree.
 
-Fixed multi-line comment style warnings
+Signed-off-by: "Lin, Meng-Bo" <linmengbo06890@proton.me>
 ---
- drivers/pci/bus.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../dts/qcom/msm8916-samsung-grandmax.dts     | 24 ++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-index 826b5016a101..ef1f2a4c09d8 100644
---- a/drivers/pci/bus.c
-+++ b/drivers/pci/bus.c
-@@ -200,7 +200,8 @@ static int pci_bus_alloc_from_region(struct pci_bus *bus, struct resource *res,
- 			continue;
- 
- 		/* We cannot allocate a non-prefetching resource
--		   from a pre-fetching area */
-+		 * from a pre-fetching area
-+		 */
- 		if ((r->flags & IORESOURCE_PREFETCH) &&
- 		    !(res->flags & IORESOURCE_PREFETCH))
- 			continue;
--- 
-2.34.1
+diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-grandmax.dts b/arch/a=
+rm64/boot/dts/qcom/msm8916-samsung-grandmax.dts
+index 135df1739dbd..5806a28b7bec 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916-samsung-grandmax.dts
++++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-grandmax.dts
+@@ -47,12 +47,34 @@ &battery {
+ =09constant-charge-voltage-max-microvolt =3D <4400000>;
+ };
+=20
++&blsp_i2c5 {
++=09status =3D "okay";
++
++=09touchscreen@50 {
++=09=09compatible =3D "imagis,ist3038";
++=09=09reg =3D <0x50>;
++
++=09=09interrupts-extended =3D <&tlmm 13 IRQ_TYPE_EDGE_FALLING>;
++
++=09=09touchscreen-size-x =3D <720>;
++=09=09touchscreen-size-y =3D <1280>;
++
++=09=09vdd-supply =3D <&reg_vdd_tsp_a>;
++=09=09vddio-supply =3D <&pm8916_l6>;
++
++=09=09pinctrl-0 =3D <&ts_int_default>;
++=09=09pinctrl-names =3D "default";
++
++=09=09linux,keycodes =3D <KEY_APPSELECT KEY_BACK>;
++=09};
++};
++
+ &reg_motor_vdd {
+ =09gpio =3D <&tlmm 72 GPIO_ACTIVE_HIGH>;
+ };
+=20
+ &reg_touch_key {
+-=09status =3D "disabled";
++=09status =3D "disabled"; /* Using Imagis touch key*/
+ };
+=20
+ &sound {
+--=20
+2.39.2
+
 
 
