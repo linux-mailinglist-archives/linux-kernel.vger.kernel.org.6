@@ -1,82 +1,84 @@
-Return-Path: <linux-kernel+bounces-251462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BEC93052C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:34:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F2693052E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08AB21C20FF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:34:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE2DCB217AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4503A130AC8;
-	Sat, 13 Jul 2024 10:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C156A132811;
+	Sat, 13 Jul 2024 10:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IF2u+P07"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bKZkd3Lg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8D053389;
-	Sat, 13 Jul 2024 10:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD62745E2;
+	Sat, 13 Jul 2024 10:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720866863; cv=none; b=vD/KvlTdLaG9C2uCG5TcHkR/ZfF9zQQT/MTr88Jc0wzQsTR58FgdIAN5Go4ntuW2v7vtHPTMPlnDNty3sspLE6mDItFWa2qIhzsoAeHAlxapY5b1pxbMCnE9DC+ip45zO57N46yx3iPgHrJg0xzSuCVCDLswvbpzTgB2VECVtkE=
+	t=1720866865; cv=none; b=WG4pAGV1S5DAzfkjRQC4iqTbkJLpC1ngjW7IUeVZTKRIps1Fmdja5AbhJ5QAueXmIMqMr1qopbTGJc7o2ld1NMN/b5u3OCNs3tWKRvh1X12t0zHzEfwM3jBZ4cAIPdSbznA3t5mn37OsMrTfNcHbElTrCYuYhw59Ly1ZZX0JJHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720866863; c=relaxed/simple;
-	bh=ZFb3Vw+/NfiXNX3e2ZwVPTfffIk86eXoQUs0u1dLJKs=;
+	s=arc-20240116; t=1720866865; c=relaxed/simple;
+	bh=eekrq+WPHhfQN52oa909XK53IiDji33oe6Nak6e7ZAY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i/AbfZ27W7gT/nUMVzzJ5ALkMJ++zWj1YBAVPA+DS9FRnBnrQBkCtE1Ths0GbUkXW/xm7+ITW2c9w5ChyTaBXUTlaf0vsuF0haEsxp48k3x7BPP8uhucocYwRvnbQWusc5zVOJg3ACsDgjZ+f1zFmoeGpDkq4N5EINEHT9yKiho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IF2u+P07; arc=none smtp.client-ip=192.198.163.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=EKJ31oOt1xUEbfM92fW97IQZDdPKG/XtsHxUG/lkpU68vhWiS7JctJDwK6BoSdJv2LHf5Kz+HvdK5XGicZ+kdW1aBEIMoKxkWyocBPtIlj8wR0eSkswPFvslDeSxS19mNylROGUEvBkusYtGUvSu+dTlOhaO7uipaFlV/0QLeUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bKZkd3Lg; arc=none smtp.client-ip=192.198.163.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720866861; x=1752402861;
+  t=1720866863; x=1752402863;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=ZFb3Vw+/NfiXNX3e2ZwVPTfffIk86eXoQUs0u1dLJKs=;
-  b=IF2u+P07RZHXhWI+wkXSg6pLnFAYnD4q0vAzuLVvQef1tgJHPOslZw16
-   xPjNAXRbuyik2Raf7MsgOS0Z3yGTA62X60HRk/9XeNfN24vvGI83ViGcb
-   wIJX8FaG7h/pHzRroNR+wi+Jscr3RF6OPYwuTRFFTPddsnOd3UcetGtJj
-   s1eJOtP2tf3j51N61Pt6riurK9uqknB04FQ55viCTwvSg7SCR24M0c7vY
-   6JAhq7HE7aHVVOythh79nWSQuoVvwQpvo7cAilPap2V/uv0LK9aJUVnk9
-   4u5k5RxR5ZYdkXWhU1OuzRQeWavK/azm5i+2IGVkwAEs0rGllJuj3qyBN
-   A==;
-X-CSE-ConnectionGUID: bEZ3IoweS2elBA5ITlU0ZQ==
-X-CSE-MsgGUID: y4dXDZOcT76cwW8+YhLBEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="18178403"
+  bh=eekrq+WPHhfQN52oa909XK53IiDji33oe6Nak6e7ZAY=;
+  b=bKZkd3LgvuBYApYriEyEmif6dGfG5HbXXD3aqo+ig4pc63vVgeOvfFh+
+   EyTgK8y70Va7aDGx79fqZw0WxozXwB4J4+Cs78Shucj8GZIe04fHp6BLW
+   lEC/aWBtphecU8jjnfvB6eNOxAazd7f+mxp2eEx9tqmXALbGu6LRDf+p3
+   E6lWVCEbh5VyTQYv/W67L46JaU39opVxiyO2NLEMrGxmisavdwE94+R3k
+   7Nw8cQaX6Psb8z/QAr+/Awrn+ukFrxb9T7MpGmBrcnRwuQNHS5Ri41PcI
+   NFS67wOl8/zWXBtpgGeKfz/PwMeQiJS/u+j7sDJsvT8VvTvHDortnl+Vj
+   w==;
+X-CSE-ConnectionGUID: nvAwRgteTY+ryWvQGExT+Q==
+X-CSE-MsgGUID: MfWl9tQLSGCSFkXHAApGkw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="28913591"
 X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
-   d="scan'208";a="18178403"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2024 03:34:19 -0700
-X-CSE-ConnectionGUID: qIFVPO+9TQemlVttxrk+UA==
-X-CSE-MsgGUID: 3bcbnXAwR3u/QiMgonZfZg==
+   d="scan'208";a="28913591"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2024 03:34:23 -0700
+X-CSE-ConnectionGUID: qRJeKVu+R4W3DHncw8ww7w==
+X-CSE-MsgGUID: f0vlLECuTcCCaqHpqU4MRA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
-   d="scan'208";a="49231777"
+   d="scan'208";a="54095786"
 Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 13 Jul 2024 03:34:16 -0700
+  by orviesa005.jf.intel.com with ESMTP; 13 Jul 2024 03:34:16 -0700
 Received: from kbuild by 68891e0c336b with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sSa4z-000byp-1i;
+	id 1sSa4z-000byj-1b;
 	Sat, 13 Jul 2024 10:34:13 +0000
 Date: Sat, 13 Jul 2024 18:33:23 +0800
 From: kernel test robot <lkp@intel.com>
-To: Huan Yang <link@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+To: Ravi Bangoria <ravi.bangoria@amd.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	seanjc@google.com, pbonzini@redhat.com, thomas.lendacky@amd.com
 Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	opensource.kernel@vivo.com, Huan Yang <link@vivo.com>
-Subject: Re: [PATCH 1/2] dma-buf: heaps: DMA_HEAP_IOCTL_ALLOC_READ_FILE
- framework
-Message-ID: <202407131825.A44mFGu1-lkp@intel.com>
-References: <20240711074221.459589-2-link@vivo.com>
+	ravi.bangoria@amd.com, hpa@zytor.com, rmk+kernel@armlinux.org.uk,
+	peterz@infradead.org, james.morse@arm.com, lukas.bulwahn@gmail.com,
+	arjan@linux.intel.com, j.granados@samsung.com, sibs@chinatelecom.cn,
+	nik.borisov@suse.com, michael.roth@amd.com, nikunj.dadhania@amd.com,
+	babu.moger@amd.com, x86@kernel.org, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, santosh.shukla@amd.com,
+	ananth.narayan@amd.com, sandipan.das@amd.com, manali.shukla@amd.com,
+	jmattson@google.com
+Subject: Re: [PATCH v2 1/4] x86/split_lock: Move Split and Bus lock code to a
+ dedicated file
+Message-ID: <202407131818.mNFDcgjd-lkp@intel.com>
+References: <20240712093943.1288-2-ravi.bangoria@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,218 +87,258 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240711074221.459589-2-link@vivo.com>
+In-Reply-To: <20240712093943.1288-2-ravi.bangoria@amd.com>
 
-Hi Huan,
+Hi Ravi,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on 523b23f0bee3014a7a752c9bb9f5c54f0eddae88]
+[auto build test ERROR on tip/master]
+[also build test ERROR on next-20240712]
+[cannot apply to tip/x86/core kvm/queue linus/master tip/auto-latest kvm/linux-next v6.10-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Huan-Yang/dma-buf-heaps-DMA_HEAP_IOCTL_ALLOC_READ_FILE-framework/20240711-155902
-base:   523b23f0bee3014a7a752c9bb9f5c54f0eddae88
-patch link:    https://lore.kernel.org/r/20240711074221.459589-2-link%40vivo.com
-patch subject: [PATCH 1/2] dma-buf: heaps: DMA_HEAP_IOCTL_ALLOC_READ_FILE framework
-config: i386-buildonly-randconfig-002-20240713 (https://download.01.org/0day-ci/archive/20240713/202407131825.A44mFGu1-lkp@intel.com/config)
+url:    https://github.com/intel-lab-lkp/linux/commits/Ravi-Bangoria/x86-split_lock-Move-Split-and-Bus-lock-code-to-a-dedicated-file/20240712-175306
+base:   tip/master
+patch link:    https://lore.kernel.org/r/20240712093943.1288-2-ravi.bangoria%40amd.com
+patch subject: [PATCH v2 1/4] x86/split_lock: Move Split and Bus lock code to a dedicated file
+config: i386-buildonly-randconfig-002-20240713 (https://download.01.org/0day-ci/archive/20240713/202407131818.mNFDcgjd-lkp@intel.com/config)
 compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240713/202407131825.A44mFGu1-lkp@intel.com/reproduce)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240713/202407131818.mNFDcgjd-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407131825.A44mFGu1-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407131818.mNFDcgjd-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
->> drivers/dma-buf/dma-heap.c:293:18: warning: format specifies type 'long' but the argument has type 'ssize_t' (aka 'int') [-Wformat]
-     292 |                         pr_err("failed to use buffer kernel_read_file %s, err=%ld, [%ld, %ld], f_sz=%ld\n",
-         |                                                                               ~~~
-         |                                                                               %zd
-     293 |                                pathp, err, start, fsz, fsz);
-         |                                       ^~~
-   include/linux/printk.h:533:33: note: expanded from macro 'pr_err'
-     533 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:490:60: note: expanded from macro 'printk'
-     490 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:462:19: note: expanded from macro 'printk_index_wrap'
-     462 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
->> drivers/dma-buf/dma-heap.c:293:23: warning: format specifies type 'long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-     292 |                         pr_err("failed to use buffer kernel_read_file %s, err=%ld, [%ld, %ld], f_sz=%ld\n",
-         |                                                                                     ~~~
-         |                                                                                     %zu
-     293 |                                pathp, err, start, fsz, fsz);
-         |                                            ^~~~~
-   include/linux/printk.h:533:33: note: expanded from macro 'pr_err'
-     533 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:490:60: note: expanded from macro 'printk'
-     490 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:462:19: note: expanded from macro 'printk_index_wrap'
-     462 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   drivers/dma-buf/dma-heap.c:293:30: warning: format specifies type 'long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-     292 |                         pr_err("failed to use buffer kernel_read_file %s, err=%ld, [%ld, %ld], f_sz=%ld\n",
-         |                                                                                          ~~~
-         |                                                                                          %zu
-     293 |                                pathp, err, start, fsz, fsz);
-         |                                                   ^~~
-   include/linux/printk.h:533:33: note: expanded from macro 'pr_err'
-     533 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:490:60: note: expanded from macro 'printk'
-     490 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:462:19: note: expanded from macro 'printk_index_wrap'
-     462 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   drivers/dma-buf/dma-heap.c:293:35: warning: format specifies type 'long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-     292 |                         pr_err("failed to use buffer kernel_read_file %s, err=%ld, [%ld, %ld], f_sz=%ld\n",
-         |                                                                                                     ~~~
-         |                                                                                                     %zu
-     293 |                                pathp, err, start, fsz, fsz);
-         |                                                        ^~~
-   include/linux/printk.h:533:33: note: expanded from macro 'pr_err'
-     533 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:490:60: note: expanded from macro 'printk'
-     490 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:462:19: note: expanded from macro 'printk_index_wrap'
-     462 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   drivers/dma-buf/dma-heap.c:367:10: warning: format specifies type 'long' but the argument has type 'ssize_t' (aka 'int') [-Wformat]
-     366 |                 pr_err("use kernel_read_file, err=%ld, [%ld, %ld], f_sz=%ld\n",
-         |                                                   ~~~
-         |                                                   %zd
-     367 |                        err, start, (start + size), heap_file->fsz);
-         |                        ^~~
-   include/linux/printk.h:533:33: note: expanded from macro 'pr_err'
-     533 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:490:60: note: expanded from macro 'printk'
-     490 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:462:19: note: expanded from macro 'printk_index_wrap'
-     462 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   drivers/dma-buf/dma-heap.c:367:15: warning: format specifies type 'long' but the argument has type 'ssize_t' (aka 'int') [-Wformat]
-     366 |                 pr_err("use kernel_read_file, err=%ld, [%ld, %ld], f_sz=%ld\n",
-         |                                                         ~~~
-         |                                                         %zd
-     367 |                        err, start, (start + size), heap_file->fsz);
-         |                             ^~~~~
-   include/linux/printk.h:533:33: note: expanded from macro 'pr_err'
-     533 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:490:60: note: expanded from macro 'printk'
-     490 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:462:19: note: expanded from macro 'printk_index_wrap'
-     462 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   drivers/dma-buf/dma-heap.c:367:22: warning: format specifies type 'long' but the argument has type 'ssize_t' (aka 'int') [-Wformat]
-     366 |                 pr_err("use kernel_read_file, err=%ld, [%ld, %ld], f_sz=%ld\n",
-         |                                                              ~~~
-         |                                                              %zd
-     367 |                        err, start, (start + size), heap_file->fsz);
-         |                                    ^~~~~~~~~~~~~~
-   include/linux/printk.h:533:33: note: expanded from macro 'pr_err'
-     533 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:490:60: note: expanded from macro 'printk'
-     490 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
-         |                                                     ~~~    ^~~~~~~~~~~
-   include/linux/printk.h:462:19: note: expanded from macro 'printk_index_wrap'
-     462 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ~~~~    ^~~~~~~~~~~
-   drivers/dma-buf/dma-heap.c:367:38: warning: format specifies type 'long' but the argument has type 'size_t' (aka 'unsigned int') [-Wformat]
-     366 |                 pr_err("use kernel_read_file, err=%ld, [%ld, %ld], f_sz=%ld\n",
-         |                                                                         ~~~
-         |                                                                         %zu
-     367 |                        err, start, (start + size), heap_file->fsz);
-         |                                                    ^~~~~~~~~~~~~~
-   include/linux/printk.h:533:33: note: expanded from macro 'pr_err'
-     533 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                                ~~~     ^~~~~~~~~~~
-   include/linux/printk.h:490:60: note: expanded from macro 'printk'
-     490 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
+>> arch/x86/kernel/cpu/bus_lock.c:219:16: error: no member named 'reported_split_lock' in 'struct task_struct'
+     219 |         if (!current->reported_split_lock)
+         |              ~~~~~~~  ^
+   arch/x86/kernel/cpu/bus_lock.c:222:11: error: no member named 'reported_split_lock' in 'struct task_struct'
+     222 |         current->reported_split_lock = 1;
+         |         ~~~~~~~  ^
+>> arch/x86/kernel/cpu/bus_lock.c:250:6: error: redefinition of 'handle_guest_split_lock'
+     250 | bool handle_guest_split_lock(unsigned long ip)
+         |      ^
+   arch/x86/include/asm/cpu.h:42:20: note: previous definition is here
+      42 | static inline bool handle_guest_split_lock(unsigned long ip)
+         |                    ^
+>> arch/x86/kernel/cpu/bus_lock.c:292:6: error: redefinition of 'handle_user_split_lock'
+     292 | bool handle_user_split_lock(struct pt_regs *regs, long error_code)
+         |      ^
+   arch/x86/include/asm/cpu.h:37:20: note: previous definition is here
+      37 | static inline bool handle_user_split_lock(struct pt_regs *regs, long error_code)
+         |                    ^
+>> arch/x86/kernel/cpu/bus_lock.c:300:6: error: redefinition of 'handle_bus_lock'
+     300 | void handle_bus_lock(struct pt_regs *regs)
+         |      ^
+   arch/x86/include/asm/cpu.h:47:20: note: previous definition is here
+      47 | static inline void handle_bus_lock(struct pt_regs *regs) {}
+         |                    ^
+>> arch/x86/kernel/cpu/bus_lock.c:401:13: error: redefinition of 'sld_setup'
+     401 | void __init sld_setup(struct cpuinfo_x86 *c)
+         |             ^
+   arch/x86/include/asm/cpu.h:36:27: note: previous definition is here
+      36 | static inline void __init sld_setup(struct cpuinfo_x86 *c) {}
+         |                           ^
+   6 errors generated.
 
 
-vim +293 drivers/dma-buf/dma-heap.c
+vim +219 arch/x86/kernel/cpu/bus_lock.c
 
-   239	
-   240	int dma_heap_submit_file_read(struct dma_heap_file_task *heap_ftask)
-   241	{
-   242		struct dma_heap_file_work *heap_fwork = init_file_work(heap_ftask);
-   243		struct page *last = NULL;
-   244		struct dma_heap_file *heap_file = heap_ftask->heap_file;
-   245		size_t start = heap_ftask->roffset;
-   246		struct file *file = heap_file->file;
-   247		size_t fsz = heap_file->fsz;
-   248	
-   249		if (unlikely(!heap_fwork))
-   250			return -ENOMEM;
-   251	
-   252		/**
-   253		 * If file size is not page aligned, direct io can't process the tail.
-   254		 * So, if reach to tail, remain the last page use buffer read.
-   255		 */
-   256		if (heap_file->direct && start + heap_ftask->rsize > fsz) {
-   257			heap_fwork->need_size -= PAGE_SIZE;
-   258			last = heap_ftask->parray[heap_ftask->pindex - 1];
-   259		}
+   213	
+   214	static void split_lock_warn(unsigned long ip)
+   215	{
+   216		struct delayed_work *work;
+   217		int cpu;
+   218	
+ > 219		if (!current->reported_split_lock)
+   220			pr_warn_ratelimited("#AC: %s/%d took a split_lock trap at address: 0x%lx\n",
+   221					    current->comm, current->pid, ip);
+   222		current->reported_split_lock = 1;
+   223	
+   224		if (sysctl_sld_mitigate) {
+   225			/*
+   226			 * misery factor #1:
+   227			 * sleep 10ms before trying to execute split lock.
+   228			 */
+   229			if (msleep_interruptible(10) > 0)
+   230				return;
+   231			/*
+   232			 * Misery factor #2:
+   233			 * only allow one buslocked disabled core at a time.
+   234			 */
+   235			if (down_interruptible(&buslock_sem) == -EINTR)
+   236				return;
+   237			work = &sl_reenable_unlock;
+   238		} else {
+   239			work = &sl_reenable;
+   240		}
+   241	
+   242		cpu = get_cpu();
+   243		schedule_delayed_work_on(cpu, work, 2);
+   244	
+   245		/* Disable split lock detection on this CPU to make progress */
+   246		sld_update_msr(false);
+   247		put_cpu();
+   248	}
+   249	
+ > 250	bool handle_guest_split_lock(unsigned long ip)
+   251	{
+   252		if (sld_state == sld_warn) {
+   253			split_lock_warn(ip);
+   254			return true;
+   255		}
+   256	
+   257		pr_warn_once("#AC: %s/%d %s split_lock trap at address: 0x%lx\n",
+   258			     current->comm, current->pid,
+   259			     sld_state == sld_fatal ? "fatal" : "bogus", ip);
    260	
-   261		spin_lock(&heap_fctl->lock);
-   262		list_add_tail(&heap_fwork->list, &heap_fctl->works);
-   263		spin_unlock(&heap_fctl->lock);
-   264		atomic_inc(&heap_fctl->nr_work);
-   265	
-   266		wake_up(&heap_fctl->threadwq);
+   261		current->thread.error_code = 0;
+   262		current->thread.trap_nr = X86_TRAP_AC;
+   263		force_sig_fault(SIGBUS, BUS_ADRALN, NULL);
+   264		return false;
+   265	}
+   266	EXPORT_SYMBOL_GPL(handle_guest_split_lock);
    267	
-   268		if (last) {
-   269			char *buf, *pathp;
-   270			ssize_t err;
-   271			void *buffer;
-   272	
-   273			buf = kmalloc(PATH_MAX, GFP_KERNEL);
-   274			if (unlikely(!buf))
-   275				return -ENOMEM;
+   268	void bus_lock_init(void)
+   269	{
+   270		u64 val;
+   271	
+   272		if (!boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT))
+   273			return;
+   274	
+   275		rdmsrl(MSR_IA32_DEBUGCTLMSR, val);
    276	
-   277			start = PAGE_ALIGN_DOWN(fsz);
-   278	
-   279			pathp = file_path(file, buf, PATH_MAX);
-   280			if (IS_ERR(pathp)) {
-   281				kfree(buf);
-   282				return PTR_ERR(pathp);
-   283			}
-   284	
-   285			buffer = kmap_local_page(last); // use page's kaddr.
-   286			err = kernel_read_file_from_path(pathp, start, &buffer,
-   287							 fsz - start, &fsz,
-   288							 READING_POLICY);
-   289			kunmap_local(buffer);
-   290			kfree(buf);
-   291			if (err < 0) {
-   292				pr_err("failed to use buffer kernel_read_file %s, err=%ld, [%ld, %ld], f_sz=%ld\n",
- > 293				       pathp, err, start, fsz, fsz);
-   294	
-   295				return err;
-   296			}
-   297		}
-   298	
-   299		heap_ftask->roffset += heap_ftask->rsize;
-   300		heap_ftask->rsize = 0;
-   301		heap_ftask->pindex = 0;
-   302		heap_ftask->rbatch = min_t(size_t,
-   303					   PAGE_ALIGN(fsz) - heap_ftask->roffset,
-   304					   heap_ftask->rbatch);
-   305		return 0;
-   306	}
-   307	
+   277		if ((boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) &&
+   278		    (sld_state == sld_warn || sld_state == sld_fatal)) ||
+   279		    sld_state == sld_off) {
+   280			/*
+   281			 * Warn and fatal are handled by #AC for split lock if #AC for
+   282			 * split lock is supported.
+   283			 */
+   284			val &= ~DEBUGCTLMSR_BUS_LOCK_DETECT;
+   285		} else {
+   286			val |= DEBUGCTLMSR_BUS_LOCK_DETECT;
+   287		}
+   288	
+   289		wrmsrl(MSR_IA32_DEBUGCTLMSR, val);
+   290	}
+   291	
+ > 292	bool handle_user_split_lock(struct pt_regs *regs, long error_code)
+   293	{
+   294		if ((regs->flags & X86_EFLAGS_AC) || sld_state == sld_fatal)
+   295			return false;
+   296		split_lock_warn(regs->ip);
+   297		return true;
+   298	}
+   299	
+ > 300	void handle_bus_lock(struct pt_regs *regs)
+   301	{
+   302		switch (sld_state) {
+   303		case sld_off:
+   304			break;
+   305		case sld_ratelimit:
+   306			/* Enforce no more than bld_ratelimit bus locks/sec. */
+   307			while (!__ratelimit(&bld_ratelimit))
+   308				msleep(20);
+   309			/* Warn on the bus lock. */
+   310			fallthrough;
+   311		case sld_warn:
+   312			pr_warn_ratelimited("#DB: %s/%d took a bus_lock trap at address: 0x%lx\n",
+   313					    current->comm, current->pid, regs->ip);
+   314			break;
+   315		case sld_fatal:
+   316			force_sig_fault(SIGBUS, BUS_ADRALN, NULL);
+   317			break;
+   318		}
+   319	}
+   320	
+   321	/*
+   322	 * CPU models that are known to have the per-core split-lock detection
+   323	 * feature even though they do not enumerate IA32_CORE_CAPABILITIES.
+   324	 */
+   325	static const struct x86_cpu_id split_lock_cpu_ids[] __initconst = {
+   326		X86_MATCH_VFM(INTEL_ICELAKE_X,	0),
+   327		X86_MATCH_VFM(INTEL_ICELAKE_L,	0),
+   328		X86_MATCH_VFM(INTEL_ICELAKE_D,	0),
+   329		{}
+   330	};
+   331	
+   332	static void __init split_lock_setup(struct cpuinfo_x86 *c)
+   333	{
+   334		const struct x86_cpu_id *m;
+   335		u64 ia32_core_caps;
+   336	
+   337		if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
+   338			return;
+   339	
+   340		/* Check for CPUs that have support but do not enumerate it: */
+   341		m = x86_match_cpu(split_lock_cpu_ids);
+   342		if (m)
+   343			goto supported;
+   344	
+   345		if (!cpu_has(c, X86_FEATURE_CORE_CAPABILITIES))
+   346			return;
+   347	
+   348		/*
+   349		 * Not all bits in MSR_IA32_CORE_CAPS are architectural, but
+   350		 * MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT is.  All CPUs that set
+   351		 * it have split lock detection.
+   352		 */
+   353		rdmsrl(MSR_IA32_CORE_CAPS, ia32_core_caps);
+   354		if (ia32_core_caps & MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT)
+   355			goto supported;
+   356	
+   357		/* CPU is not in the model list and does not have the MSR bit: */
+   358		return;
+   359	
+   360	supported:
+   361		cpu_model_supports_sld = true;
+   362		__split_lock_setup();
+   363	}
+   364	
+   365	static void sld_state_show(void)
+   366	{
+   367		if (!boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT) &&
+   368		    !boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT))
+   369			return;
+   370	
+   371		switch (sld_state) {
+   372		case sld_off:
+   373			pr_info("disabled\n");
+   374			break;
+   375		case sld_warn:
+   376			if (boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT)) {
+   377				pr_info("#AC: crashing the kernel on kernel split_locks and warning on user-space split_locks\n");
+   378				if (cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
+   379						      "x86/splitlock", NULL, splitlock_cpu_offline) < 0)
+   380					pr_warn("No splitlock CPU offline handler\n");
+   381			} else if (boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT)) {
+   382				pr_info("#DB: warning on user-space bus_locks\n");
+   383			}
+   384			break;
+   385		case sld_fatal:
+   386			if (boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT)) {
+   387				pr_info("#AC: crashing the kernel on kernel split_locks and sending SIGBUS on user-space split_locks\n");
+   388			} else if (boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT)) {
+   389				pr_info("#DB: sending SIGBUS on user-space bus_locks%s\n",
+   390					boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) ?
+   391					" from non-WB" : "");
+   392			}
+   393			break;
+   394		case sld_ratelimit:
+   395			if (boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT))
+   396				pr_info("#DB: setting system wide bus lock rate limit to %u/sec\n", bld_ratelimit.burst);
+   397			break;
+   398		}
+   399	}
+   400	
+ > 401	void __init sld_setup(struct cpuinfo_x86 *c)
 
 -- 
 0-DAY CI Kernel Test Service
