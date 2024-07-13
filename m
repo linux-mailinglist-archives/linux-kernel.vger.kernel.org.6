@@ -1,63 +1,60 @@
-Return-Path: <linux-kernel+bounces-251587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E15930692
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:02:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B70F2930698
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5F7B1C235D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:02:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8F101C22BDC
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43887142659;
-	Sat, 13 Jul 2024 16:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31BD13C9AE;
+	Sat, 13 Jul 2024 17:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7MLAuAn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b="HJWl8u1s"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863D213B287;
-	Sat, 13 Jul 2024 16:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D36217C73
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 17:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720889981; cv=none; b=Hc6bjOcjuUUjrmYP4/qOgOLLdZ/AI0/tUk1ppIBhzGreeii+2hHrxoEqF893DjoaJEknmV71NMALSpDWhFLhDd77n/d7r0ft3csOGgfrYLKt7oHYwDVEoHTpUOonhN4i70HATIL9CZR5bUsz+gdlZmyQxz7c8v+UJSiLnMm0zng=
+	t=1720890310; cv=none; b=h5gQKkA2H1I/5Z2gfFErntpvJ3HmdLekSXpKJCggILVm6ouoAoPR2I7TCN4/bIyReTCqDhkwzlTLezPeCeooAMgU2L/FQRcHx52rT2QYDNaLHoBR76i5mAYIgQw7WncnlDkjbrxjHtuR83Oqd3rhEZkTEKsOFDRLktzuNAfB+7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720889981; c=relaxed/simple;
-	bh=GLt0F51yTmhEBaXCELRw+d8hd96JhxGIjc0n17/Yv3I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VU+KqG/sEdzEFSua/3zQUeyGauOqNboWr4+JHC+EsufQRh2arWNprgQsUWSsPUVm64YpVridbuGK64xj9Gur/cBDM5q+Ne9vq30y+rY90Kk3T2bZpiGLULTZNImYtb9jdIgzOd/cwylKrlzbq2NYrOZzF4RRkzdnel8X/8X57aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7MLAuAn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFFC0C32786;
-	Sat, 13 Jul 2024 16:59:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720889981;
-	bh=GLt0F51yTmhEBaXCELRw+d8hd96JhxGIjc0n17/Yv3I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V7MLAuAnvCXX7QlIoZtI9Tpdpflj+8SslgEiDYbw1AIZ1Kwfhc5Z8ajOtwUQ0AkKR
-	 xgihewkRHSNVJazZLBsKGPgjev0BJV19it0IjWO4VdfItGIitVbTv4KtECdbIfktAN
-	 ZihTRB+jOJB4vF6mTVWBIufkR59BjxWuWFBlMtcaPcKs8iEdQTAXwrTBN6BuybKRnk
-	 BJ1FXnY/ifiiMv9Fi+6ATJ/x5KcXKADn3+mShFN65F/TvlTFPROVly//fwJz6tV5/3
-	 dPSCLOu40dZC2pfMPAqcmSHQdKkqsVRfBS/J70lnR+bG5Z01yUBg87Nir8cW/CXA2x
-	 TI12pfDpvtUiA==
-From: neeraj.upadhyay@kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: rcu@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	mingo@kernel.org,
-	peterz@infradead.org,
-	paulmck@kernel.org,
-	leobras@redhat.com,
-	imran.f.khan@oracle.com,
-	riel@surriel.com,
-	neeraj.upadhyay@kernel.org
-Subject: [PATCH  3/3] locking/csd-lock: Use backoff for repeated reports of same incident
-Date: Sat, 13 Jul 2024 22:28:46 +0530
-Message-Id: <20240713165846.216174-3-neeraj.upadhyay@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240713165642.GA215331@neeraj.linux>
-References: <20240713165642.GA215331@neeraj.linux>
+	s=arc-20240116; t=1720890310; c=relaxed/simple;
+	bh=pfQ1m0rvUgOjeAPoUcq8dNXwr6uRl7ZE9dTDU0qqP0k=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=OPKbgCITgk3mIFjt805a7Zpj7Q1r3IsvMeCh4733rSNYY77+FmzpXNijtgxjhlM16YcxkALHND7Z0AM8UgYHqGRM2xTyJlrmlIVN9qEzbDERZ21j166BXPLALW4TMEcqSAQJ9GedqPi3eCYRQ/5SftTojQ97rtU5dvE6Mz4sOYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (1024-bit key) header.d=wp.pl header.i=@wp.pl header.b=HJWl8u1s; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 31818 invoked from network); 13 Jul 2024 19:04:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=1024a;
+          t=1720890298; bh=7o8mzc213EEKgCOXqvfrefpkdDjhgWDGYyRAq4cTJo0=;
+          h=From:To:Subject;
+          b=HJWl8u1sD3pJmGVc52Sx9l2fcYEXwnLeEKw2xbnL79KlSIE6uHI51o8enxeYwHcln
+           GjyNW1iDgdPlQXFRz2BisdEehUDqHw87guDH+5v6D6LgWGQAAhJBaDQduNMlZhf+oH
+           eHTI67ralldkeBTmFgnVgoAhGgJVK4T5mFy3nE0w=
+Received: from 83.24.148.52.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.148.52])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <davem@davemloft.net>; 13 Jul 2024 19:04:58 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	olek2@wp.pl,
+	jacob.e.keller@intel.com,
+	horms@kernel.org,
+	u.kleine-koenig@pengutronix.de,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: ethernet: lantiq_etop: remove redundant device name setup
+Date: Sat, 13 Jul 2024 19:04:55 +0200
+Message-Id: <20240713170455.862632-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,80 +62,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-WP-MailID: 49218107f3c7190e7e7ba6215c019b9a
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000B [oSMU]                               
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+The same name is set when allocating the netdevice structure in the
+alloc_etherdev_mq()->alloc_etherrdev_mqs() function. Therefore, there
+is no need to manually set it.
 
-Currently, the CSD-lock diagnostics in CONFIG_CSD_LOCK_WAIT_DEBUG=y
-kernels are emitted at five-second intervals.  Although this has proven
-to be a good time interval for the first diagnostic, if the target CPU
-keeps interrupts disabled for way longer than five seconds, the ratio
-of useful new information to pointless repetition increases considerably.
+This fixes CheckPatch warnings:
+WARNING: Prefer strscpy over strcpy - see: https://github.com/KSPP/linux/issues/88
+	strcpy(dev->name, "eth%d");
 
-Therefore, back off the time period for repeated reports of the same
-incident, increasing linearly with the number of reports and logarithmicly
-with the number of online CPUs.
-
-[ paulmck: Apply Dan Carpenter feedback. ]
-
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Imran Khan <imran.f.khan@oracle.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Leonardo Bras <leobras@redhat.com>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 ---
- kernel/smp.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/lantiq_etop.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/kernel/smp.c b/kernel/smp.c
-index c3e8241e9cbb..80c1173ce369 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -225,7 +225,7 @@ bool csd_lock_is_stuck(void)
-  * the CSD_TYPE_SYNC/ASYNC types provide the destination CPU,
-  * so waiting on other types gets much less information.
-  */
--static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, int *bug_id)
-+static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, int *bug_id, unsigned long *nmessages)
- {
- 	int cpu = -1;
- 	int cpux;
-@@ -248,7 +248,9 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
- 	ts2 = sched_clock();
- 	/* How long since we last checked for a stuck CSD lock.*/
- 	ts_delta = ts2 - *ts1;
--	if (likely(ts_delta <= csd_lock_timeout_ns || csd_lock_timeout_ns == 0))
-+	if (likely(ts_delta <= csd_lock_timeout_ns * (*nmessages + 1) *
-+			       (!*nmessages ? 1 : (ilog2(num_online_cpus()) / 2 + 1)) ||
-+		   csd_lock_timeout_ns == 0))
- 		return false;
- 
- 	firsttime = !*bug_id;
-@@ -265,6 +267,7 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
- 	pr_alert("csd: %s non-responsive CSD lock (#%d) on CPU#%d, waiting %lld ns for CPU#%02d %pS(%ps).\n",
- 		 firsttime ? "Detected" : "Continued", *bug_id, raw_smp_processor_id(), (s64)ts_delta,
- 		 cpu, csd->func, csd->info);
-+	(*nmessages)++;
- 	if (firsttime)
- 		atomic_dec(&n_csd_lock_stuck);
- 	/*
-@@ -305,12 +308,13 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
-  */
- static void __csd_lock_wait(call_single_data_t *csd)
- {
-+	unsigned long nmessages = 0;
- 	int bug_id = 0;
- 	u64 ts0, ts1;
- 
- 	ts1 = ts0 = sched_clock();
- 	for (;;) {
--		if (csd_lock_wait_toolong(csd, ts0, &ts1, &bug_id))
-+		if (csd_lock_wait_toolong(csd, ts0, &ts1, &bug_id, &nmessages))
- 			break;
- 		cpu_relax();
+diff --git a/drivers/net/ethernet/lantiq_etop.c b/drivers/net/ethernet/lantiq_etop.c
+index 0b9982804370..9e6984815386 100644
+--- a/drivers/net/ethernet/lantiq_etop.c
++++ b/drivers/net/ethernet/lantiq_etop.c
+@@ -675,7 +675,6 @@ ltq_etop_probe(struct platform_device *pdev)
+ 		err = -ENOMEM;
+ 		goto err_out;
  	}
+-	strcpy(dev->name, "eth%d");
+ 	dev->netdev_ops = &ltq_eth_netdev_ops;
+ 	dev->ethtool_ops = &ltq_etop_ethtool_ops;
+ 	priv = netdev_priv(dev);
 -- 
-2.40.1
+2.39.2
 
 
