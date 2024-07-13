@@ -1,96 +1,135 @@
-Return-Path: <linux-kernel+bounces-251385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D0393044A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:38:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8195193044C
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03040284967
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:38:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23BBCB21C19
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00813C482;
-	Sat, 13 Jul 2024 07:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5378E3D3AC;
+	Sat, 13 Jul 2024 07:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QUjYSrb/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="UjpwvcZa";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CpPj1n47"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A6228689;
-	Sat, 13 Jul 2024 07:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930E23A8F0;
+	Sat, 13 Jul 2024 07:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720856327; cv=none; b=OBDL27fhqEdexqiFKxaik+f+Ed89Tp5rYN9aBS1UA9dARMAJ2KhUKCVv7UI7lwtXHcJXAWD9+UKPfUpu32JrlbvSFlDGSAsDxe6f21vIswom2HZ22ywtQlSxUWUMfacq5A7uOhyrDAV8GiGLoV95UZKr/dMN/avT5mRcOEqZm2M=
+	t=1720856420; cv=none; b=TUnohBW8DD1dqZ8dQrtEK96B5AWgcZl1vmsNrB34G+GjEJhGCbFEMrSnCkrMGNYo0aiAEkz3uBVo0sov9YNDKJpgZSjF5pz8FYN5C2eOaUiCBP/28NGcYs6N8ZhXETU5GKtk5eSUcq9rlS847pSnWTP6i7kLb5dKEyjCL/W6Shk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720856327; c=relaxed/simple;
-	bh=b3qZup8tC7AcRV250LTAVM9HeDL72SmI2A+S9+twZ1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jXhV10cS1HLxsFWu7AoGUx5SYGSiRwspPEFVB+tVs3cNsqI906zlTYgjaKSmeqJZ/blPD9S1JyxPlABwx6QyHePMDkn0qBaue1xBrbAAJK4SuhUXIMu16ceKDf4LFMhmt4VaX3DXT/PH3SjoD326GGa0drH32m4PGW460W3Bysg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QUjYSrb/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C94D7C32781;
-	Sat, 13 Jul 2024 07:38:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720856326;
-	bh=b3qZup8tC7AcRV250LTAVM9HeDL72SmI2A+S9+twZ1I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=QUjYSrb/Mey7bmU5mIFaWhQj5dMbZzigFyfS8uyVqp6Ri2uIB6t96Vyo7UIvOegPN
-	 hgYBw/O9wlQu/A3JzPVgrTytVw8RGVfZRuBMRpzbDz5oItu9CUrEA7l2DHHrtT7bvE
-	 K8DR6exuUnFiqUHNDWZFkivh0Wd/yc9M4zKF6JGl9fiUftdUZFLASGAEp1FnzUd75s
-	 Zn0YaFQi2pEqEBCklwOpDOe+LPEY3UUuLnkwmkbcZpU9S8qGvGftcOOQzW9Q94fSQf
-	 zZnaZnJDWe9tCxJ0tk288gPHd5K5gypa88yjeeiisxHmd5C8j9hTmDX5wz+AOlMiOv
-	 DIwRBeHMzbgUQ==
-Date: Sat, 13 Jul 2024 09:38:42 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] i2c-host-fixes for v6.10-rc8
-Message-ID: <jxy6dh7o3adkh7bdwakiukrlnb3i3gakl3txx3eijvybdnj2qg@irq36xe2cdwn>
+	s=arc-20240116; t=1720856420; c=relaxed/simple;
+	bh=4hZsywXDA7FoIK301osJ8bMzWKvxqyuwo+s05wF/t8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ck21JPZHdhMJwYcw1RC3hH65s/hWcDE6PLIVOCh6X3TvyA8LPUP5dRqwCfanXBelhQBVqgaLtRDVxULMXCI6NGOTdOADQaZE0rgfQvl4DStg5ymdDitwaZo1M4AwsxCk44cMILtFN+Dhfvlx3ldT5ZwoccDC+PPNyxcbY/8dB6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=UjpwvcZa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CpPj1n47; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 930BE1388831;
+	Sat, 13 Jul 2024 03:40:16 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sat, 13 Jul 2024 03:40:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm1; t=1720856416; x=1720942816; bh=jMyuBQRKOqnVq6xVHyydK
+	/usqhMkFp9sGyVsbSi1+HE=; b=UjpwvcZaeua9TpTu+R3WhvmPnllsI+3xZwj3b
+	HMCbu2lsRxnCdX6YMCoiwypzKR0Fe2rbMgA7cb61ZpoUEXHQsCXUfWNEjlEjbOGn
+	RrpFfrC6CGbL/XX4rwPcKwdl0HCSmyK5cmxXXx6fk86o17t/Bv2gFcP46LlDIL3r
+	Aci3FyDAxRny6/TcSXnHQcfZV3N1lxtJsoWvz0zcwW99oTN4kGOQcaMPpBquHo8A
+	qq1yWDVUrwmpRwMjhmjjfy+W/kO3A1jH9XH8bLzSlja4H4jDEuFWbpBIRxiUNQDd
+	7u+xtr9zT1gdwchNmigkYaugDqBfhIBSRaVQiGegH616v0AlQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720856416; x=1720942816; bh=jMyuBQRKOqnVq6xVHyydK/usqhMk
+	Fp9sGyVsbSi1+HE=; b=CpPj1n477vtZEZBFBoWaVRQSP4HaQowpYk/3WoMHHhIq
+	kUAvD2eJ0PfOE98tKBIa8toz/z+SCZrqq4/yTZcVLL+UxDBd5WdWYgACk970eStI
+	3n6jprXjkPJVPpcn+e/cF1QJXS19uUK1yqge5ZVzh2GFi2pmrDXQBMcd7Cy/FfRu
+	5Gen0pkFABviyFTmk7UFfO8K+8Xpf9fhMw3R9C0y9KGsxolIWoADXWG5/xIOlPOK
+	EjRVGMl34sVC+hg7cFJ9x6zoC+Dg4tAsuAXX673DNuh3u2MRFXt8STHSvbrm3oCs
+	xX60in5slyZD4a3cynQoiWzcad63JZzEsLf/vv6Pwg==
+X-ME-Sender: <xms:Xi-SZs77XKOj8HUlbWchaJod7zwGTYkNIMvuCAAHkBkuIJJ6ciQS9Q>
+    <xme:Xi-SZt5msCbR72iSHZvfAmQT-DGj9S67UDf_vEWRaD3VKzma5U2tqkCOadX8y51K3
+    QNyHE0Hyfgwpw-MYuE>
+X-ME-Received: <xmr:Xi-SZreYj0UCxbEZUx84TXtMXDWkdoS2nMVChwp_QxyPdntGkO56oHBf-orU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeejgdduvdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepfdfnuhhkvgcu
+    ffdrucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenucggtffrrghtth
+    gvrhhnpefgudejtdfhuddukefffeekiefftddtvdfhgeduudeuffeuhfefgfegfeetvedv
+    geenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehluh
+    hkvgeslhhjohhnvghsrdguvghv
+X-ME-Proxy: <xmx:Xi-SZhLc72D-L64XkuIufgcPIBicTJNIi4r9t_baz3GXEsn3Cr0dgg>
+    <xmx:Xi-SZgKktH5McAk8uLzORuMRmKM9n7uihPziWf0b4Y2y1PVa8AWGTA>
+    <xmx:Xi-SZiw9Aq34amaG5eka5ywc85G7ukbUQWpWprs3qHfYe1v-okvvsQ>
+    <xmx:Xi-SZkIlF6x2Kfiy5lVABkFI0xMqv7rQrKvp980QhHT6lcsYW-r7SA>
+    <xmx:YC-SZo_wWDnpWwUxEYFBsnoeo326nXLGLF4HoQBHzrlNValCGsu8FnH8>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 13 Jul 2024 03:40:11 -0400 (EDT)
+From: "Luke D. Jones" <luke@ljones.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: corentin.chary@gmail.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	"Luke D. Jones" <luke@ljones.dev>,
+	Denis Benato <benato.denis96@gmail.com>
+Subject: [PATCH] Fixes: ae834a549ec1 ("platform/x86: asus-wmi: add support variant of TUF RGB")
+Date: Sat, 13 Jul 2024 19:40:05 +1200
+Message-ID: <20240713074005.66254-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Wolfram,
+In kbd_rgb_mode_store the dev_get_drvdata() call was assuming the device
+data was asus_wmi when it was actually led_classdev.
 
-Three fixes from you in this pull request, you definitely don't
-need an introduction to them :-)
+This patch corrects this by making the correct chain of calls to get the
+asus_wmi driver data.
 
-Thanks,
-Andi
+Tested-by: Denis Benato <benato.denis96@gmail.com>
+Signed-off-by: Luke D. Jones <luke@ljones.dev>
+---
+ drivers/platform/x86/asus-wmi.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 799d928c7d3d..2935af013535 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -879,10 +879,14 @@ static ssize_t kbd_rgb_mode_store(struct device *dev,
+ 				 struct device_attribute *attr,
+ 				 const char *buf, size_t count)
+ {
+-	struct asus_wmi *asus = dev_get_drvdata(dev);
+ 	u32 cmd, mode, r, g, b, speed;
++	struct led_classdev *led;
++	struct asus_wmi *asus;
+ 	int err;
+ 
++	led = dev_get_drvdata(dev);
++	asus = container_of(led, struct asus_wmi, kbd_led);
++
+ 	if (sscanf(buf, "%d %d %d %d %d %d", &cmd, &mode, &r, &g, &b, &speed) != 6)
+ 		return -EINVAL;
+ 
+-- 
+2.45.2
 
-  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.10-rc8
-
-for you to fetch changes up to ea5ea84c9d3570dc06e8fc5ee2273eaa584aa3ac:
-
-  i2c: rcar: ensure Gen3+ reset does not disturb local targets (2024-07-12 01:45:08 +0200)
-
-----------------------------------------------------------------
-This tag includes three fixes for the Renesas R-Car driver:
-
- 1. Ensures the device is in a known state after probing.
- 2. Allows clearing the NO_RXDMA flag after a reset.
- 3. Forces a reset before any transfer on Gen3+ platforms to
-    prevent disruption of the configuration during parallel
-    transfers.
-
-----------------------------------------------------------------
-Wolfram Sang (3):
-      i2c: rcar: bring hardware to known state when probing
-      i2c: rcar: clear NO_RXDMA flag after resetting
-      i2c: rcar: ensure Gen3+ reset does not disturb local targets
-
- drivers/i2c/busses/i2c-rcar.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
 
