@@ -1,161 +1,137 @@
-Return-Path: <linux-kernel+bounces-251375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDDCA93042A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:08:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF14C93042D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 350D01F229D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:08:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99A012839F5
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FDF282FE;
-	Sat, 13 Jul 2024 07:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJiJYT3m"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C347A2940D;
+	Sat, 13 Jul 2024 07:09:03 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D68218E20;
-	Sat, 13 Jul 2024 07:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2144F1BDCF;
+	Sat, 13 Jul 2024 07:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720854512; cv=none; b=tXfuBIFYCWZqsaIEQofXKR0sHhgQMnxmev2aY06GebOqnuIfF/LF76+qq+05RrgA2VHESWpCdwp3dp70ac+BQyqrEOAwgZ76AQQo9io7+0rk24/JVW4p/E9BOBFVXoSQvxUqJAmXwQSowL53gBq9JZdQQLYzlujT9iOBBIip20Y=
+	t=1720854543; cv=none; b=N2XS53Jrjx6VVDw9SIUS9jFNAllZ8c31rmV5dJvZHfaBP42CEt1M3/zI17Hzk/uDggbCT9EQKp/QcYmMsgby8boqPHAdfkMbccAmMB2IqoHmepQ+Aon+llfuD43NR47wApv/3y2Lcy2yMy5c/sLfG/M4yim9m7Wp7VIhd2YLtu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720854512; c=relaxed/simple;
-	bh=/2Wna6IN8RYaNi0ktowJREiLpfrmcnCXNbJbNaPmRuY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r1dKBL0gQmYjopOoqhdRlwm0emjs6D0hjNXi5PYtd0lqeGFQJVMbTo2UPVWHkSs6ahEQH5L5aXUWvchUOjkHBichy16I9EfPhiM1Q68ClOz7f45z8ri2PnnwF33XYpK5zey3wxbKoyL3rQWWegj+cBO0A/qWhBfopv1ZUaOwMC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJiJYT3m; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5ce74defe43so109317eaf.2;
-        Sat, 13 Jul 2024 00:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720854509; x=1721459309; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fjlpCsYbCH3cdJRtayFHDpxKbTqwk5kyQNPmsXVKhUc=;
-        b=OJiJYT3mpYsLZn9TlbQLlIiITbT+Oa1Xv4ecnj63YuGzAQFba7zsbvCKRsKthb6a7f
-         LSVBc3B7pBeJgtRa3GIqMM+Oh8t/lybhSP9D4YhiOe/ECVeNZTQ/pMt4TZ33FUsF1xug
-         tQE4GUq/Wl2H4ImNMVmlb62w9eNPcqjV/Ty76nKE3iseE5b3iokcpt9AhdSpySYBhatH
-         xKDGyIqWpYudwT693d70kRUODoIzAGL8QkjyfrprXNHMC/lTjuE8H0E+g1Jz1k7Bd0MZ
-         FUDlCrfQc0cs0JBGAqKeuOpUKYP1BwzYhno76tAHDziz+7eSteEIZNKcg/h4hBXv0h6e
-         kTVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720854509; x=1721459309;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fjlpCsYbCH3cdJRtayFHDpxKbTqwk5kyQNPmsXVKhUc=;
-        b=AxgaEU8J9HRhTW/4h+dj4GTIbU9Bywp+GXDbV6exZyqIXFaPB6ZGuHN6L9zNCw1JTZ
-         U2sS4rnuwblrjrxeFSoINbsNyzI/Fr5Y1N53qDQH1bOYZx0T+IWcH6nZXl7oZXT+AFOI
-         fb8ilC8V7WVwq6u8jV3qDGdBBCB4jqFXFf4LcEnIfdXuDr+SoWvVM2/zdEYdw9002nvy
-         JCGdzt5hXochz8tSr3la65faIHZZC2KyW+GFr4DqwovF0fSNfWlqlgTRXzrHwAk3bYpe
-         KImmUyOjpSbLzbjhxH9TiUOyjii8ilSyWI06wMUi/3B9c42tzxd9cIB/lQFg+ejQfnVQ
-         CXSw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2e5cLJumrhUXAJql2qScFodO8OYn6q+czs25TORhvPu4jPJ/X8hHjbaswIqYttjZ2IEyX3hJqLeI1P3QGxvSuDKrlJDYNyNkNwUyRCnWWPM67J8x3qKnVnVnW/6TkgRVbFMrtuWA3Gw==
-X-Gm-Message-State: AOJu0YxfjwYsVGxz25JgbGtbKU2A/aAcRer72+5DD3suH6nhxJrMwsVT
-	WR8Yn4m0wDuZo//eVTO79NixwPFYChTxhA17iW60D2uefL8KDkSp5icfMS8FMQuo7q7IQ1c+Jhn
-	pD9VuWqrqNQ4PsvARSXcgCzg989I=
-X-Google-Smtp-Source: AGHT+IFWVKyYxz5gy1azAb9yamwL6hAatx9DP1QAZFBlOoFzKR7AUcc67ukMdrKD3FBO1YCxpH6HH13DsqYepYUgQqI=
-X-Received: by 2002:a05:6870:c6a5:b0:258:42bd:d916 with SMTP id
- 586e51a60fabf-25eae7bace2mr12445788fac.14.1720854509337; Sat, 13 Jul 2024
- 00:08:29 -0700 (PDT)
+	s=arc-20240116; t=1720854543; c=relaxed/simple;
+	bh=y0Q0luenHNPv9ogArfuKYJRJke4ovBOGzKAKuOGFQ5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hCenKU6G+xM4iiPANOYQfRbAWKnEv4w5aHtz9Dgwcu7KewB/f+6fy3W4h+OBJwPFGYETQKUPWaujKrJojd/J3z2K8YxgBXNrIDsNmK7fKdBCuQyi7vLkOciXkq1X5/z18fSxt8IFmi/MtX6iSsCfRPlj4vCdYKDS/UiHVUuL8xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WLfhT746xz9sST;
+	Sat, 13 Jul 2024 09:08:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id EcLfv5DIvfXK; Sat, 13 Jul 2024 09:08:57 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WLfhT68YXz9sSS;
+	Sat, 13 Jul 2024 09:08:57 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id BFAF98B76C;
+	Sat, 13 Jul 2024 09:08:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Ht0A52iiwZyr; Sat, 13 Jul 2024 09:08:57 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.195])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B32A58B764;
+	Sat, 13 Jul 2024 09:08:56 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>,
+	Peter Xu <peterx@redhat.com>
+Subject: [PATCH v3 1/5] arch/x86: Drop own definition of pgd,p4d_leaf
+Date: Sat, 13 Jul 2024 09:08:23 +0200
+Message-ID: <c81566e5df160587de50f9095d0ec377114fdba8.1720854135.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712164554.1763-1-linux.amoon@gmail.com>
-In-Reply-To: <20240712164554.1763-1-linux.amoon@gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Sat, 13 Jul 2024 12:38:14 +0530
-Message-ID: <CANAwSgT=eNVEk4qzcpD3wa=vZ=TOuJDM_Cz61SCWOsFK2nRsQA@mail.gmail.com>
-Subject: Re: [PATCH-next v3 1/3] arm64: dts: rockchip: Add missing pinctrl for
- PCIe30x4 node
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: Jonas Karlman <jonas@kwiboo.se>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720854504; l=1436; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=jETqTIBrbMCiSKtThDBVuiOakjqQZl9LJXDhA4Uy90Y=; b=j42rjo6o36t5FwwD7Ik5HJFIbBLA/oCUlT32r6QXUQT1OdEHDQG6EX/TeG2Jo+q73BQzLaMAy OGmrGbcVS1wAtLcieRc2n/Q4O9B0lUFj2TyovGgx73fb20ZcQs3cJV8
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-Hi Jonas,
+From: Oscar Salvador <osalvador@suse.de>
 
-On Fri, 12 Jul 2024 at 22:16, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Add missing pinctrl settings for PCIe 3.0 x4 clock request and wake
-> signals. Each component of PCIe communication have the following control
-> signals: PERST, WAKE, CLKREQ, and REFCLK. These signals work to generate
-> high-speed signals and communicate with other PCIe devices.
-> Used by root complex to endpoint depending on the power state.
->
-> PERST is referred to as a fundamental reset. PERST should be held low
-> until all the power rails in the system and the reference clock are stable.
-> A transition from low to high in this signal usually indicates the
-> beginning of link initialization.
->
-> WAKE signal is an active-low signal that is used to return the PCIe
-> interface to an active state when in a low-power state.
->
-> CLKREQ signal is also an active-low signal and is used to request the
-> reference clock.
->
-> Rename node from 'pcie3' to 'pcie30x4' to align with schematic
-> nomenclature.
->
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
-> V3: use pinctrl local to board
-> V2: Update the commit messge to describe the changs.
->     use pinctl group as its pre define in pinctrl dtsi
-> ---
->  .../arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> index 966bbc582d89..721e87a3a464 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> @@ -338,7 +338,7 @@ &pcie30phy {
->
->  &pcie3x4 {
->         pinctrl-names = "default";
-> -       pinctrl-0 = <&pcie3_rst>;
-> +       pinctrl-0 = <&pcie30x4_pins>;
->         reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
->         vpcie3v3-supply = <&vcc3v3_pcie30>;
->         status = "okay";
-> @@ -377,14 +377,20 @@ pcie2_2_rst: pcie2-2-rst {
->                 };
->         };
->
-> -       pcie3 {
-> -               pcie3_rst: pcie3-rst {
-> -                       rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-> -               };
-> -
-> +       pcie30x4 {
->                 pcie3_vcc3v3_en: pcie3-vcc3v3-en {
->                         rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
->                 };
-> +
-> +               pcie30x4_pins: pcie30x4-pins {
-> +                       rockchip,pins =
-> +                               /* PCIE30X4_CLKREQn_M1_L */
-> +                               <4 RK_PB4 4 &pcfg_pull_up>,
-                            Should -------------^ replace with
-RK_FUNC_GPIO ? since its a gpio controlled?
-> +                               /* PCIE30X4_PERSTn_M1_L */
-> +                               <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>,
-> +                               /* PCIE30X4_WAKEn_M1_L */
-> +                               <4 RK_PB5 4 &pcfg_pull_down>;
-> +               };
->         };
->
-Thanks
--Anand
+We provide generic definitions of pXd_leaf in pgtable.h when the arch
+do not define their own, where the generic pXd_leaf always return false.
+
+Although x86 defines {pgd,p4d}_leaf, they end up being a no-op, so drop them
+and make them fallback to the generic one.
+
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Reviewed-by: Peter Xu <peterx@redhat.com>
+---
+ arch/x86/include/asm/pgtable.h | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 65b8e5bb902c..772f778bac06 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -252,13 +252,6 @@ static inline unsigned long pgd_pfn(pgd_t pgd)
+ 	return (pgd_val(pgd) & PTE_PFN_MASK) >> PAGE_SHIFT;
+ }
+ 
+-#define p4d_leaf p4d_leaf
+-static inline bool p4d_leaf(p4d_t p4d)
+-{
+-	/* No 512 GiB pages yet */
+-	return 0;
+-}
+-
+ #define pte_page(pte)	pfn_to_page(pte_pfn(pte))
+ 
+ #define pmd_leaf pmd_leaf
+@@ -1396,9 +1389,6 @@ static inline bool pgdp_maps_userspace(void *__ptr)
+ 	return (((ptr & ~PAGE_MASK) / sizeof(pgd_t)) < PGD_KERNEL_START);
+ }
+ 
+-#define pgd_leaf	pgd_leaf
+-static inline bool pgd_leaf(pgd_t pgd) { return false; }
+-
+ #ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
+ /*
+  * All top-level MITIGATION_PAGE_TABLE_ISOLATION page tables are order-1 pages
+-- 
+2.44.0
+
 
