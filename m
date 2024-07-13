@@ -1,116 +1,200 @@
-Return-Path: <linux-kernel+bounces-251482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE1F93055A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:06:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585A093055F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397B61F21A95
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:06:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DF01281A84
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF3D12E1C1;
-	Sat, 13 Jul 2024 11:06:17 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0165A12FF8B;
+	Sat, 13 Jul 2024 11:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b="LOToYWnQ"
+Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA10560263;
-	Sat, 13 Jul 2024 11:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440E260263;
+	Sat, 13 Jul 2024 11:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.87.146.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720868776; cv=none; b=k+W3VRPBcyOPjy3dpeq4UsqaCBF1X618Gh82Udb07x0qpxMJ0VlAu+7jOGAMbpspn+vSHA6zMUO9D1hO7guSeu+A2fxX8w9r0DBGomA2JhBq6fouUm+JlxpeLhIYNEwVvQoIO1/ROLjQUdmB0eEyEYH1wfVOLGpE8OZ/hBNyCJc=
+	t=1720868846; cv=none; b=aB+etZbE5ctBWR8e80Ki+JEWuYglzezbCCxa4pU1n7CvtcJFVCR2xp6sAthm2z5qmFVmaPVg9MYLlK+IzPUBiFpJoqBpYgo4lFYF9aVPUR8m3vMbIwyFH/0Zdf6KC8ZF+7OBtjM0x4AuHTgiETlihT38o0nbwwovCnVUKyUmjIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720868776; c=relaxed/simple;
-	bh=mRhenjtZ8GBircd/QZnMybGcJZi3aKBbUL+eVyT/kmQ=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=R3iZwvbimoN8Vx5PG6D+urtms1n6evhxtJxLLT86a2nWs5rpl60RUk+g9mEK1UyfqcYJFSnMDwyTgBTGU09k7VrN26x2F6KNR7RtC8ifi0lubEo/XbKbjJ5XKUn4rKjg3uONBDtYTKlSgaNn1D1g2kzXRUYHMZdYdViT5rLmqBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WLlxz0PLnz4f3jMl;
-	Sat, 13 Jul 2024 19:05:59 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D6CFA1A0170;
-	Sat, 13 Jul 2024 19:06:10 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgA3GzmiX5Jm5q8JAA--.5687S3;
-	Sat, 13 Jul 2024 19:06:10 +0800 (CST)
-Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
- load
-To: Konstantin Kharlamov <Hi-Angel@yandex.ru>,
- Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>,
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yangerkun@huawei.com" <yangerkun@huawei.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
- <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
- <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
-Date: Sat, 13 Jul 2024 19:06:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1720868846; c=relaxed/simple;
+	bh=3mTFMJlpx5m4tXLwWSbFf0lMMLkxSNmyYiSErMFgFGE=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=XjmqU8dtfIVxvUZ0r1JlAidlq+Bi2FMdrAFNLmv1OgPPRi58GMsQ8W5kdlNqiyIO4my5MwCrW+AqRr3GLiLBjHnWc8ztSqxGpooPZfh7aSx+U6jrBrp8LZRntP5TVwqy6/8D7dHOuTR3q4AEfsl/53t9ti6u8kPul2onRtVFRSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru; spf=pass smtp.mailfrom=trvn.ru; dkim=pass (2048-bit key) header.d=trvn.ru header.i=@trvn.ru header.b=LOToYWnQ; arc=none smtp.client-ip=194.87.146.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=trvn.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trvn.ru
+Received: from authenticated-user (box.trvn.ru [194.87.146.52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by box.trvn.ru (Postfix) with ESMTPSA id 36A9642824;
+	Sat, 13 Jul 2024 16:07:16 +0500 (+05)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
+	t=1720868838; bh=3mTFMJlpx5m4tXLwWSbFf0lMMLkxSNmyYiSErMFgFGE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LOToYWnQyIVBCUGlDSfLM2aVnUqMIcnpPKDC0utLRJq9NSogTSLLc5baWWv+w4B2Y
+	 uK1BMCcSD+6KgbFtAy3UC+pWzCwcXDw4YaIZBKxtz5uPaJ2YFAOzsOhhu9WOBE9txv
+	 f0RCTX0G4ObwWYw55sKkAdQL34841hsy6875QkkgN9NCMff29IjC+hvRqNzULXt3LI
+	 CHdTf1jdV49zX1U3w5ITc8n9j0JVQzvSQAhIQY+Uz12PNQJ0Bbaqf+ILyUtZU7UMjD
+	 2qzEpypd02g2AGvLMH5TiGgT7J6ja/aRFC2h+tGNOHg6WkTNuRlM10Hc3eaI9cJy/0
+	 vR64LWzVo3ZyA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Date: Sat, 13 Jul 2024 16:07:13 +0500
+From: Nikita Travkin <nikita@trvn.ru>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
+ <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ =?UTF-8?Q?Adam_S=C5=82abo=C5=84?= <asaillen@protonmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: msm8939-wingtech-wt82918: Add
+ Lenovo Vibe K5 devices
+In-Reply-To: <28e2dc758c8867693a183d758a9dad6a@trvn.ru>
+References: <20240712-msm89xx-wingtech-init-v1-0-64f4aa1870bd@trvn.ru>
+ <20240712-msm89xx-wingtech-init-v1-3-64f4aa1870bd@trvn.ru>
+ <f377a55c-4a74-4555-926d-afb7dd813e00@kernel.org>
+ <28e2dc758c8867693a183d758a9dad6a@trvn.ru>
+Message-ID: <932efd4bd08a2877ee1e7c7409ff1512@trvn.ru>
+X-Sender: nikita@trvn.ru
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgA3GzmiX5Jm5q8JAA--.5687S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWDXFy5Ar47Aw17Ww1ftFb_yoWkKrgE9a
-	yYkasYkas8Ars7GF40gr4UZFnrG395WF1UXw18CrWI9ryFvanxCF4kG3s3Xr1fXrZagF9x
-	Jws7Cr1ruw1a9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb38FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CE
-	bIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUr2-eDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
-
-在 2024/07/12 20:11, Konstantin Kharlamov 写道:
-> Good news: you diff seems to have fixed the problem! I would have to
-> test more extensively in another environment to be completely sure, but
-> by following the minimal steps-to-reproduce I can no longer reproduce
-> the problem, so it seems to have fixed the problem.
-
-That's good. :)
+Nikita Travkin писал(а) 13.07.2024 15:37:
+> Krzysztof Kozlowski писал(а) 13.07.2024 15:02:
+>> On 12/07/2024 18:04, Nikita Travkin wrote:
+>>> From: Adam Słaboń <asaillen@protonmail.com>
+>>>
+>>> This commit introduces multiple hardware variants of Lenovo Vibe K5.
+>>>
+>>> - A6020a40 (msm8929-wingtech-wt82918hd)
+>>> - A6020a46/A6020l36 (msm8939-wingtech-wt82918)
+>>> - A6020a40 S616 H39 (msm8939-wingtech-wt82918hd)
+>>>
+>>> These devices are added with support for many features, notably:
+>>>
+>>> - Basic features like USB, mmc/sd storage, wifi, buttons, leds;
+>>> - Accelerometer;
+>>> - Touchscreen;
+>>> - Sound and modem.
+>>>
+>>> Note that "HD" variant of K5 is based on msm8929 which is a lower bin
+>>> of msm8939 SoC. A simple dtsi is added for this soc along with the new
+>>> devices.
+>>>
+>>> Unfortunately, despite the heavy similarities, the combination of minor
+>>> differences between variants make them incompatible between each other.
+>>>
+>>> Signed-off-by: Adam Słaboń <asaillen@protonmail.com>
+>>> [Nikita: Minor cleanup, commit message]
+>>> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+>>> ---
+>>>  arch/arm64/boot/dts/qcom/Makefile                  |   3 +
+>>>  .../boot/dts/qcom/msm8929-wingtech-wt82918hd.dts   |  17 ++
+>>>  arch/arm64/boot/dts/qcom/msm8929.dtsi              |   5 +
+>>>  .../boot/dts/qcom/msm8939-wingtech-wt82918.dts     |  16 ++
+>>>  .../boot/dts/qcom/msm8939-wingtech-wt82918.dtsi    | 254 +++++++++++++++++++++
+>>>  .../boot/dts/qcom/msm8939-wingtech-wt82918hd.dts   |  16 ++
+>>>  6 files changed, 311 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>>> index fd4c7c41ddc4..48ec781fa1d8 100644
+>>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>>> @@ -58,10 +58,13 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt86518.dtb
+>>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt86528.dtb
+>>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt88047.dtb
+>>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-yiming-uz801v3.dtb
+>>> +dtb-$(CONFIG_ARCH_QCOM)	+= msm8929-wingtech-wt82918hd.dtb
+>>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-huawei-kiwi.dtb
+>>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-longcheer-l9100.dtb
+>>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-samsung-a7.dtb
+>>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-sony-xperia-kanuti-tulip.dtb
+>>> +dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-wingtech-wt82918.dtb
+>>> +dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-wingtech-wt82918hd.dtb
+>>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-motorola-potter.dtb
+>>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-xiaomi-daisy.dtb
+>>>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8953-xiaomi-mido.dtb
+>>> diff --git a/arch/arm64/boot/dts/qcom/msm8929-wingtech-wt82918hd.dts b/arch/arm64/boot/dts/qcom/msm8929-wingtech-wt82918hd.dts
+>>> new file mode 100644
+>>> index 000000000000..f9a358e852f8
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/qcom/msm8929-wingtech-wt82918hd.dts
+>>> @@ -0,0 +1,17 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +
+>>> +/dts-v1/;
+>>> +
+>>> +#include "msm8939-wingtech-wt82918.dtsi"
+>>> +#include "msm8929.dtsi"
+>>> +
+>>> +/ {
+>>> +	model = "Lenovo Vibe K5 (HD) (Wingtech WT82918)";
+>>> +	compatible = "wingtech,wt82918hd", "qcom,msm8929";
+>>> +	chassis-type = "handset";
+>>> +};
+>>> +
+>>> +&touchscreen {
+>>> +	touchscreen-size-x = <720>;
+>>> +	touchscreen-size-y = <1280>;
+>>> +};
+>>> diff --git a/arch/arm64/boot/dts/qcom/msm8929.dtsi b/arch/arm64/boot/dts/qcom/msm8929.dtsi
+>>> new file mode 100644
+>>> index 000000000000..c3d1d1ace2f6
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/qcom/msm8929.dtsi
+>>> @@ -0,0 +1,5 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +
+>>> +&opp_table {
+>>> +	/delete-node/ opp-550000000;
+>>> +};
+>>
+>> That's a very odd SoC DTSI.
+>>
+>> SoCs DTSIs are not meant to be included as complementary, but rather as
+>> full DTSI.
+>>
+>> IOW, this is very confusing code and will confuse everyone reading it.
+>>
 > 
-> Bad news: there's a new lockup now 😄 This one seems to happen after
-> the disk is returned back; unless the action of returning back matches
-> accidentally the appearing stacktraces, which still might be possible
-> even though I re-tested multiple times. It's because the traces
-> (below) seems not to always appear. However, even when traces do not
-> appear, IO load on the fio that's running in the background drops to
-> zero, so something seems definitely wrong.
+> I think Adam wanted to keep the common device dtsi based on msm8939.dtsi to
+> simplify things a bit. I was also a bit unsure if I should change how it's
+> done but decided to keep it as it was. I will rework the v2 so:
+> 
+> - msm8929.dtsi includes msm8939.dtsi
+> - devices .dts include needed soc.dtsi, then include the common.dtsi
+> - common.dtsi doesn't include any soc.dtsi
+> 
 
-Ok, I need to investigate more for this. The call stack is not much
-helpful.
+(...) except gah this makes things quite a bit more complicated since the
+device makes use of the "generic design" msm8939-pm8916.dtsi and duplicating
+that would be quite silly IMO...
 
-At first, can the problem reporduce with raid1/raid10? If not, this is
-probably a raid5 bug.
+I wonder if we can clarify things without making everything too complicated 
+by calling that dtsi "msm8929-opp.dtsi" and keeping it as extension for now,
+then if we find that msm8929 has more differences - we can unfold and refactor
+everything.
 
-The best will be that if I can reporduce this problem myself.
-The problem is that I don't understand the step 4: turning off jbod
-slot's power, is this only possible for a real machine, or can I do
-this in my VM?
+What do you think?
 
-Thanks,
-Kuai
+Nikita
 
-
+> Thanks for the review!
+> Nikita
+> 
+>>
+>> Best regards,
+>> Krzysztof
 
