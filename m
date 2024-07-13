@@ -1,131 +1,114 @@
-Return-Path: <linux-kernel+bounces-251623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D5693072C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 21:36:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76B193072E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 21:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29241B21AAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:35:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CDEC282E4B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B93C14388E;
-	Sat, 13 Jul 2024 19:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13478143895;
+	Sat, 13 Jul 2024 19:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7lYDktb"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FRZEC/ag"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F622E403;
-	Sat, 13 Jul 2024 19:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251641B7F7;
+	Sat, 13 Jul 2024 19:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720899350; cv=none; b=cv8nshIJGb0rCpm5cvgGXbVhQmTpq7kCrzRr08Pv2ksWTwehmH3UwMH54KMAJdWSbkKmZzoKK93zEOsv1SCaTamRbFzHPXz2m0LD3XVH2age71pZWTZeZ30hqgQDlxDtRiqw6KfeGLCsOBQC15Nfe1MXArqAmRE9a9vrI2SMHeI=
+	t=1720899988; cv=none; b=f8Vy1unMN8mhypQpjP6ADtIDojAb7u264s0WhxDh47MoFkym0pQv2xLqbhhR7sSp2Cb/0BohlcdyIYmyUXpb6YHh6y7WKYsL2LSRQPXawtNKbi4MqZWv44FZj/P0BIla1wWoTppdIisa4CErezhfxcF1+7ucnrkiqoy3H8YUmB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720899350; c=relaxed/simple;
-	bh=JI1tEridxdctNaX89ov4Yc87xBCfYvi+2O/1VIJixwg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XTy9Wz96K49lxx45BjU26/RkwQmkblkU5IcVWo6aoyISrWFNvEjGEFtbO07TkWfc46rNdtjrF/efVahBS26RqV1x9uuj4imyTrgj5MmMGJO6qIhmyJVpIQSDaqvFsm//cxw0gN8sr8/8mD2K7b99U+KT93IyshrcgJySJfvjKOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7lYDktb; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a77ec5d3b0dso407513866b.0;
-        Sat, 13 Jul 2024 12:35:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720899347; x=1721504147; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JI1tEridxdctNaX89ov4Yc87xBCfYvi+2O/1VIJixwg=;
-        b=X7lYDktbFZ5dADn0mEuzssM3k2k9xt6hFcoSMM/3W6LIv9Jnl9AZNV4u1dEFW5uFbb
-         psNmcKJM4DO6LqsMc5mFnfZ1yqN8/jGVVWCyFASliHLYa6axNsGvQDTwf5+x0/4VSCBz
-         LcVsrHoeoT/F6Iddf8xA2tizjUb2OGlg2DTFfCyFN9XCT0vyd893pT91Y0G2CDgn8xfF
-         abMVEWgeKcDH4Coc8tLm7KziX6lB+Xx2kFzpfZ7hZxh+OIrPhYjoMSvvf0mAuNXCY8s+
-         GXB36RYf1cuLCQfnl9SuuG0xClUU5YKrqf43BLEuJ6lRDfOm76Wj+PJapsPX9OkiSZXR
-         Xakg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720899347; x=1721504147;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JI1tEridxdctNaX89ov4Yc87xBCfYvi+2O/1VIJixwg=;
-        b=PxX3x701tr0BD2OT6cB6cx1WHblct8V5tT1mef9Vcib7IyoDasLXxyHhkDzAfWJUHS
-         j3Z7/qFW+IZZsybJSE9OsuDpDYWUvdiLmP/GCHVtXOBllIAcy/8EEXbLGhtRYgqqBWhy
-         rZk10tssneTXzepi4OQCCWDjXPjNaBJ/iYmK9hwO3ukRn2PU5lfjecVH30eS4/Aowpyv
-         kpbgVarHDrfv3Os99z7AqMX7i7KjPZzJI8+/S9P3Ml2ekxpttu/EoYu7lAQh++igC17v
-         jYwsmoITbWg3EXgXGhxTXTc3BMzCJryyHLSfomfETb0cxeYJLGp7jOtVQoiEkTzl8mBm
-         uzqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIUBvQRoxXMIuHPTIh00ZxfbIsTSGKk30iU/ETmLNzaFKQJRCXjKkdZCbt3sMI9YEKbn4LinpwlPMq1kEsXxqfKbOU6Cjh1jSu1K2p0w3IP8C0nLqRSrVUuLN4mmOEaQ60+Dkji40+jxtndi98jpFHWvQFOIizk7wfax3EnSxknFDqgIlSIiVbFNLb
-X-Gm-Message-State: AOJu0YxZvYokUeRAI905rAOogN+L7fSJSSgQjv0oGc7Gg7uasZlbBqV+
-	lrHsfYNtJkZ+UWa2QW7GSYfyTGnNAyRf7KZGLzRcuH1cPhCxmtEE
-X-Google-Smtp-Source: AGHT+IHXffw7T8Mk052bMqhDl0uBwFRitClxFfuNYzi+bLxpKaZn5JcYxOlT6tnDVeUZxPhri5bhSQ==
-X-Received: by 2002:a17:906:dfc3:b0:a75:360a:6cb0 with SMTP id a640c23a62f3a-a780b6b3644mr910156766b.29.1720899346894;
-        Sat, 13 Jul 2024 12:35:46 -0700 (PDT)
-Received: from ?IPv6:2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78? ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1cfbsm72789066b.107.2024.07.13.12.35.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 12:35:46 -0700 (PDT)
-Message-ID: <813e0467c323db2eb3bd6997764fcd33b99f6290.camel@gmail.com>
-Subject: Re: [PATCH] arm64: dts: exynos: exynos7885-jackpotlte: Correct RAM
- amount to 4GB
-From: David Virag <virag.david003@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: phone-devel@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, Sam Protsenko
- <semen.protsenko@linaro.org>,  devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Sat, 13 Jul 2024 21:36:20 +0200
-In-Reply-To: <9cac0d59-47cd-423c-bbfb-952981c49b9a@kernel.org>
-References: <20240713180607.147942-3-virag.david003@gmail.com>
-	 <9cac0d59-47cd-423c-bbfb-952981c49b9a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1720899988; c=relaxed/simple;
+	bh=BDr8r1aRINaMyd7uhCEuBNNCT90+wpbt7PExvizV4SI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=jS5zfYjrO6iY+Yqd6QJSThnA8oEZPAxAwPl9Cf+ly1J+yCEX0P4bAthVLkYQH9lnnUSY3INCNLKRsNvG7hpBaF4z73hlUwt7iiDHbcVaqqthmmozA1FZHbJkChpTAuvjd4rwureRWOuC6tEfDTon6L5RV4S7y4g0cDGD296Rvow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FRZEC/ag; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720899966; x=1721504766; i=markus.elfring@web.de;
+	bh=3tBJhjM6eFblAsrUfksAZ4Js6i0KWeliNKRgPH6K5hE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FRZEC/agZLua5gA3+r2SWAmJVrou3sNXbHoIVM7cNZig+UwxJm9JgylGZaqNOw2M
+	 8xcihUXVnnNCT9wcFrZ0kYdoC7I3dv8VS1MsZdCTMQyrEp8NvepPZBMZbogmOyJlO
+	 tJRW818NL64AEcZxfdN9XD+IF8YLE4UzBvb7jRZKAWJO8mIQH9698rwrhzH6I4SF+
+	 iM+MTsV/P99dbK3EPikYLNp0rnelJLnDfDRKiqm4A5gkNXttlkNkPI74sdUEkqC+w
+	 pbiKChtf1nJHhow7vXm9PVjxZmyzgZhRP4E1xi17utiKg86bz10cs28LVdG5VjFOT
+	 +LsrUKtM2bT1tCHCjA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MgANG-1rriRX3RcM-00daM5; Sat, 13
+ Jul 2024 21:46:05 +0200
+Message-ID: <553b5dad-6b84-4415-86ab-a44a1182d3f9@web.de>
+Date: Sat, 13 Jul 2024 21:45:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] NFS: Use seq_putc() in nfs_show_path()
+To: linux-nfs@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Anna Schumaker <anna@kernel.org>, Trond Myklebust <trondmy@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Language: en-GB
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ibDaFNA5hp+rfw9RUb/9iufCsgWAqICVCpODfxJR0BtMRw8uTD+
+ ikBY3nndU2mraFSldE9BlFvD9ZRx6tP/PJLu4nfGISmnpIX/QqcA1w/VEbEdPQBt9osF5CF
+ VBq7q8gqBUm4rFMp4OGWAodv+9Bsq84DNlsxN8G4cawDj8rdxn/HE1prEhvqZPNl/fLdCCx
+ QLd+uIoFUi/Iu1D0fTTYg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TTC7OHr1d4Q=;RcXOwpd/G+61VKEDRclqDST/LJk
+ pEeAitKXyTe/6CO6HpagPP9yyEsd3Mv7zazDggn4kfR9uHPX3AvSADtcml4ynk1Se+tzp59bk
+ hJPtMsjd3TU19nxyjzfJloZsguq29O4bBfh0rey5AvyxmO28w3maPGIXBug3pXC4faHND5pGD
+ PL9DOG9VW7RIB61khzPa4W5EnPD935IY/t5R9fTV5DnXAoQ42A85UsmB0tpGouTHMybNYgVnJ
+ nxtf8IGYH/nSlNBIljJ8HoPWG90c25Gq6TOqqdaRrdWY+xUrrUqS2V0bKY3gwb7ilZ2uQ5ILJ
+ LiWINr3z9lXyZ9NIf5PktkCd+8mmpTmPIV2GgXGtAk8+Y2d7uFW2wbMeBPegpWlW6dsUv7DvC
+ 4IO2qMLxW3kv/ySNYC4ETeUzyk07TGicvSr05h0LfajgAOUb4u3aUR2YZsR3hUvgNW+SH1O7+
+ A22jChkEfaNGaxVTPl/6OjTxck51UV5RZxUv0tE7ky2Q5g/BaxkAI85vxDmkIJwFLwUAahJMk
+ wDCSOQOg5qV0Lpw6Vx0B3Xxehb7zDl55I5n1dxZvlqQS5ZDtggEEZPHbeeIS1X45y+61+5wfj
+ Nz+MgT2Lf04OxzYPxjdECxvvhwzK+oS47oWRwgfn1LfmHsD+27c9jcYXGEzxZ9L854/i1B2j1
+ l+0QV92WrzJVYF9WFahmBXFq7foI40B6MWmB40gfD6HSqizceBdcXHfY6DVdLncnwyB8Ot62e
+ ZqBfQ1on5scaawr4y1XEzM7FH/9oT7uPo1/9eXEkukK92kpImv12+J0cXPtGKvj6KrTAAVKEb
+ Hz+uz+ai8DkcbIkRj8R8GMgg==
 
-On Sat, 2024-07-13 at 20:54 +0200, Krzysztof Kozlowski wrote:
-> On 13/07/2024 19:58, David Virag wrote:
-> > All known jackpotlte variants have 4GB of RAM, let's use it all.
-> > RAM was set to 3GB from a mistake in the vendor provided DTS file.
->=20
-> Hm, vendor DTS rarely has a mistake of missing 1 GB of RAM, so I
-> assume
-> there was some reason behind it. Trusted apps? Some shared memory for
-> other co-processor?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 Jul 2024 21:35:37 +0200
 
-Honestly I'm not sure, maybe some prototype had 3GB of RAM?
-The stock bootloader does update it to 4GB, but the stock bootloader
-also doesn't even respect the arm64 boot protocol, and doesn't let us
-change the kernel cmdline, so we don't like using it.
+A single slash should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
->=20
-> Anyway, if this works 100% for you, then I am fine with it.
+This issue was transformed by using the Coccinelle software.
 
-Yup, works perfectly!
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/nfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->=20
-> It is too late in the cycle for me to pick it up. I will take it
-> after
-> the merge window.
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index cbbd4866b0b7..b087720d7811 100644
+=2D-- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -648,7 +648,7 @@ EXPORT_SYMBOL_GPL(nfs_show_devname);
 
-That's fine with me.
+ int nfs_show_path(struct seq_file *m, struct dentry *dentry)
+ {
+-	seq_puts(m, "/");
++	seq_putc(m, '/');
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(nfs_show_path);
+=2D-
+2.45.2
 
->=20
->=20
->=20
->=20
-> Best regards,
-> Krzysztof
->=20
-
-Best regards,
-David
 
