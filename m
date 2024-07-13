@@ -1,89 +1,110 @@
-Return-Path: <linux-kernel+bounces-251583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5C893068D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:01:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1259930690
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 19:02:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E662B24D6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:01:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51FE4B25100
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 17:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BDA177980;
-	Sat, 13 Jul 2024 16:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5E013C905;
+	Sat, 13 Jul 2024 16:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcqM4Cgm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivG7ua0f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C521176FA3;
-	Sat, 13 Jul 2024 16:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3070513B287;
+	Sat, 13 Jul 2024 16:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720889810; cv=none; b=tFC2AQdFYhq7OqUxl0sVu6IVRSy1H66kR60QzMwpFjTiwMHrclLnqUhdj+Y5FxvqL3fVA28wurFW5UWyKwZiPpUYn3FsQm0kBXl6hI3tTUT7zm6NSo4LzwG6reHJiVNJha8e+nNA+hRrNq1VQCB4qRc5tGOzgllPgD9+WnNPmfg=
+	t=1720889970; cv=none; b=ODyCFYn9qhdtTmUNmKVaUqSDD2YNumlwCgGpR+M+iLHT8yhuNjnbECYpEp+5X5A6GHEfcdKr7xGHuVXrhTLCW15j5Lyd7lIKs3Oxcg3GaDRel5sxUm4jfplyaSWD+oMpIzpPgMEPoaDwLGUuk3L8h/K6PcP0KGl9itkqhkIok+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720889810; c=relaxed/simple;
-	bh=A7IUNAQvKzjSzg3eUpbZWw9RBwbDJgv3zryAMGBKgp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mMovENX4qHOHASJyxYB9zizuvx3+dgoYW9g6V795Uk40YH5lLfQqcsuqeoiaH0KZtN5YkXktslejjdEVyk2FSRhawbEiL9Rc7qrx+eFcfPPUQ7GzGdPOjKJ5c1fGeSm/kLq8yHi6Vsc1uS+JXSlkx/iUrc+QDIlQ0KE+hCbHN8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcqM4Cgm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AF6DC32781;
-	Sat, 13 Jul 2024 16:56:46 +0000 (UTC)
+	s=arc-20240116; t=1720889970; c=relaxed/simple;
+	bh=KYBad74cZVInqYWF85EGV9C9g4LucoMsE/dNGXtFggU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tAbv4iLS/TnftM/3AYyV+P3TsrUPCeC5cpplkFeVKqp3dVTOlgsdOrxSr9rM4pDVGhAOCY/ULwWoLNRUF4OpixBAv2hpg6h01l75e0zjYq9qx/AR43E1gbdVHJLg+KAJSlMS/jp2Lgx9zwkU8whBwsJBuEXJjTxCLMkcusa3Hrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivG7ua0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F9BC32781;
+	Sat, 13 Jul 2024 16:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720889809;
-	bh=A7IUNAQvKzjSzg3eUpbZWw9RBwbDJgv3zryAMGBKgp0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=WcqM4CgmkX7Wt39krTAuaW3llJIBADCbp8EhK524uqQGAcI9tSA2brzTfR/i1q6yB
-	 deVS49c+zVLoTKfI603ulI22OR7Qbil4NQf/630Zt96wWQ3HVh0ja+6EEbEoBf9JTN
-	 LfqXnnobxviEf37y4YTD3lon7t+DUTIRuhuCxxsR+qY6INF02aO0CW68ANXg19mcTL
-	 kUfzBu8lLHMSYg4ACXZkPfAR8wAcCuapYsX1/pvqfVCzZV/T+Y1cU+n+AQru4PscbE
-	 B+WkZDWS+xqL5ZTBniXmZ4q1vEMA0r/H+S7/07QFAMixORWK+sv2pgEo4MOB4ytMKY
-	 KdxEvSkHhEHEg==
-Date: Sat, 13 Jul 2024 22:26:42 +0530
-From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
+	s=k20201202; t=1720889969;
+	bh=KYBad74cZVInqYWF85EGV9C9g4LucoMsE/dNGXtFggU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ivG7ua0fflJ90aOgBFrUgWD74Fli9Tt2UpLfAAa5BmG38tcX1yzE5dT0+R8fu2o8Q
+	 v7wM+vzKoqBt0Gix3uFgjZ7aOkTpjzY2SADh+SlSjjo/H76d+rBGCib/FS4tigubCM
+	 WjRwsOBipxMb78kh8kTzJDo43CN+CRuHfh1uT5tWY/nVC5mbl/vzPVL2/k9HC+okQI
+	 5Kp4jqK99HflrmHzA4iowWdyzZmgEP3lt9rzq0Iss775MaR2/nfT2qEAtss45A3Z29
+	 XHOefIVdkUHIN2fry/uTVYjbq693nsIr8HSmctvU+oT4umRVeY6uyjZBHCwlImIXG5
+	 PSJWPtxTsZwgw==
+From: neeraj.upadhyay@kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: mingo@kernel.org, peterz@infradead.org, paulmck@kernel.org,
-	rostedt@goodmis.org, kernel-team@meta.com, leobras@redhat.com,
-	imran.f.khan@oracle.com, riel@surriel.com, rcu@vger.kernel.org,
+Cc: rcu@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	mingo@kernel.org,
+	peterz@infradead.org,
+	paulmck@kernel.org,
+	leobras@redhat.com,
+	imran.f.khan@oracle.com,
+	riel@surriel.com,
 	neeraj.upadhyay@kernel.org
-Subject: [PATCH 0/3]  CSD-lock diagnostics enhancements
-Message-ID: <20240713165642.GA215331@neeraj.linux>
+Subject: [PATCH  1/3] locking/csd_lock: Print large numbers as negatives
+Date: Sat, 13 Jul 2024 22:28:44 +0530
+Message-Id: <20240713165846.216174-1-neeraj.upadhyay@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240713165642.GA215331@neeraj.linux>
+References: <20240713165642.GA215331@neeraj.linux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+From: "Paul E. McKenney" <paulmck@kernel.org>
 
-This series adds following changes to the CSD-lock diagnostics (rebased on v6.10-rc7):
+The CSD-lock-hold diagnostics from CONFIG_CSD_LOCK_WAIT_DEBUG are
+printed in nanoseconds as unsigned long longs, which is a bit obtuse for
+human readers when timing bugs result in negative CSD-lock hold times.
+Yes, there are some people to whom it is immediately obvious that
+18446744073709551615 is really -1, but for the rest of us...
 
-1.      locking/csd_lock: Print large numbers as negatives.
+Therefore, print these numbers as signed long longs, making the negative
+hold times immediately apparent.
 
-2.      locking/csd_lock: Provide an indication of ongoing CSD-lock stall.
+Reported-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Imran Khan <imran.f.khan@oracle.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Leonardo Bras <leobras@redhat.com>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+---
+ kernel/smp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-3.      locking/csd-lock: Use backoff for repeated reports of same
-        incident.
+diff --git a/kernel/smp.c b/kernel/smp.c
+index f085ebcdf9e7..81f7083a53e2 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -248,8 +248,8 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
+ 	cpu_cur_csd = smp_load_acquire(&per_cpu(cur_csd, cpux)); /* Before func and info. */
+ 	/* How long since this CSD lock was stuck. */
+ 	ts_delta = ts2 - ts0;
+-	pr_alert("csd: %s non-responsive CSD lock (#%d) on CPU#%d, waiting %llu ns for CPU#%02d %pS(%ps).\n",
+-		 firsttime ? "Detected" : "Continued", *bug_id, raw_smp_processor_id(), ts_delta,
++	pr_alert("csd: %s non-responsive CSD lock (#%d) on CPU#%d, waiting %lld ns for CPU#%02d %pS(%ps).\n",
++		 firsttime ? "Detected" : "Continued", *bug_id, raw_smp_processor_id(), (s64)ts_delta,
+ 		 cpu, csd->func, csd->info);
+ 	/*
+ 	 * If the CSD lock is still stuck after 5 minutes, it is unlikely
+-- 
+2.40.1
 
-Once reviewed/acked, current plan is to take this through RCU tree during v6.12 merge window,
-as RCU commit "7d2ba698ad85 rcu: Summarize RCU CPU stall warnings during CSD-lock stalls" [1]
-has dependency on these changes. If there are any concerns with taking these through RCU tree,
-please raise those concerns.
-
-
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/commit/?h=rcustall.13.07.24a&id=7d2ba698ad85984656e9732d87b8e040a23baa55
-
-Thanks
-Neeraj
-
-------------------------------------------------------------------------
-
- include/linux/smp.h |  6 ++++++
- kernel/smp.c        | 30 +++++++++++++++++++++++++-----
- 2 files changed, 31 insertions(+), 5 deletions(-)
 
