@@ -1,895 +1,400 @@
-Return-Path: <linux-kernel+bounces-251563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A12393066D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 18:35:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D09C930674
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 18:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB665B21BAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:35:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD543B21E2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAE913A86A;
-	Sat, 13 Jul 2024 16:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFD413D53B;
+	Sat, 13 Jul 2024 16:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAloDPLl"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rc9n2lgm"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C6113C9AF;
-	Sat, 13 Jul 2024 16:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C2C4963F;
+	Sat, 13 Jul 2024 16:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720888537; cv=none; b=cwW56i7ygoE2L2DpAXtzZvcLy83joH8Dvorrh2EPVrZ8pCM78A/h+6MDjWb5ZGesB1ZdE5ssZknEGO1/9xlQuaYY9sAXBwXaGSByKowqNWeNfValvcQpMCcRPTk6QrgsuZQVjPr1zCCN4yAtjuyge+GDQ1NqEI1HpYDDC9tL28o=
+	t=1720889769; cv=none; b=N+KIryyZgVLYszrOs8UdUPRZRYbiYGA4fXyJKdsr+4b18ILLwgMbMmTNqLyOMW/1kcPcw12vodJDOMNxccwCczbarwnfzg67aBJIZ0qndRy/Grwk3no+MnZ8HVAXpa82cogqPpH+PyOPZ5TthVpqjYuUuLmeGWodZySMYAJdSiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720888537; c=relaxed/simple;
-	bh=vKHze9rMLJEaPqJZTJ+oXh6/w8mfYqkJ6ozoD305Lgg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=excnbh7bLMABWjFlRi6D5A0nOinGoGLkKDHVE/dOzprlFP78KZiYIe537npyjsyOb1+GRNumOizmNhcRbIKK8Rr3JhljAWaA8wiwMooL7xLL/cTY+KuRcKONzODJKQKxM/KIg0K8iyabC31GyMvbjJ91ADJrWDdNcxI49u9PsWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAloDPLl; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so5021953a12.1;
-        Sat, 13 Jul 2024 09:35:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720888533; x=1721493333; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hIRAK4fJdzL0RgGywp1Tl20vyk4tUZoMBwOv0mEzVNg=;
-        b=bAloDPLlMeqtX1Y+d3eL2RyNT+g0bFPh71+sbQtVp9ke7wN0YPFrL0oWxzhAxqXbQX
-         rbM6hRr9/jbXyq/PuRW4VrbucCmQ+LOTkB90hGFSzmbRweXrOvF3N6lWGgcJyuizWQ35
-         OcNXZeReJowczNTLzE3v6sK7RYC/M40i/0aaBCRkWc2o/ueFj9hNkCpWwlHFrhfg6EzD
-         JcWJfQY+kxf9nzrHxZkcaO+nh7W8+aRyEuMEl34LmUWOKQ0cQk+DlrqB7uY81WvT5wPx
-         PPmsBm/v6mSPFoAxmcDvLkqhQRvuHrbEP1mqxc5fCvGymTA7pcC151JdOPwVtcx9NrQk
-         8cSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720888533; x=1721493333;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hIRAK4fJdzL0RgGywp1Tl20vyk4tUZoMBwOv0mEzVNg=;
-        b=RT8t7N2e+e4oaN48qIyQzKVKaPKtjAeqRIkNF4WowNOGDokf2fzSe5fTkjHxK0nj2e
-         fejOen91rkuDI4AEkHg3w5BWYXXZZTFZJk5BMJpZHqowLeE1TklUUpAXZ61DtGXmxX0L
-         8sr8QVHSzhFNEu3c9ft3GP/+48RFykGzTnT2TJQhHku8vFCMatZf8tPP2Zqz+6rppa3m
-         R0BhzQDKkr14p2nLnisNvvAPqXeYKILnDLslmpwIeJugMxifhlrNBnRKUWe4SYJpr6SC
-         jnZsmxXAxlgB99nrq3ECixJ1jj5Mche80dv8FUhrvr3v1Bai++/WRs0G9hBBWqWFKyHy
-         IlrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWo1eW9wcr+4jKyrnE/VA7NY3xLh1cGl9Hi4S7s32Oo9n2KfzfvVkpITpbTFBsddVd+XUzVCuPrVC+gQ8nQtsnJsI5odEl46mIns74oqf5G/UGdWi6pmTmcEQ/3KhnYifh3oYvDTrFy+rrEzBwUGl8EDCY3FpjLz0sisp55fIROEnG7v615/M0DmfXrO2y2zRQhfYiopBG5GuhkPPvqqdZFM9piFmXTFGEyCQ==
-X-Gm-Message-State: AOJu0YzujwCrvpeib6rqXQ3FFVE0WfCMPYNNRTZayBsgf4leWhmTaPrX
-	NxFL3sbYJCqPpDZj2dMnGMo0uWnbk6yzMm1zi7V8M2DyCVBirfHA
-X-Google-Smtp-Source: AGHT+IHwBM383M+z8GqlVeJQwZypi50YOmytldTjhC3WT2+cOlUZGOS9S9PONJ4uzWTarGKNXBmIRw==
-X-Received: by 2002:a50:d4d6:0:b0:595:7779:1f7 with SMTP id 4fb4d7f45d1cf-59960008613mr3991429a12.16.1720888532459;
-        Sat, 13 Jul 2024 09:35:32 -0700 (PDT)
-Received: from localhost.localdomain ([94.120.81.83])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b26f62bd9sm953753a12.94.2024.07.13.09.35.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 09:35:32 -0700 (PDT)
-From: =?UTF-8?q?Mustafa=20Ek=C5=9Fi?= <mustafa.eskieksi@gmail.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com
-Cc: mustafa.eskieksi@gmail.com,
-	jdelvare@suse.com,
-	linux@roeck-us.net,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	pavel@ucw.cz,
-	lee@kernel.org,
-	linux-leds@vger.kernel.org,
-	rishitbansal0@gmail.com,
-	bahaku@elrant.team,
-	carlosmiguelferreira.2003@gmail.com,
-	alviro.iskandar@gnuweeb.org,
-	ammarfaizi2@gnuweeb.org,
-	bedirhan_kurt22@erdogan.edu.tr
-Subject: [PATCH v6] platform/x86: Add wmi driver for Casper Excalibur laptops
-Date: Sat, 13 Jul 2024 19:35:21 +0300
-Message-ID: <20240713163521.21958-2-mustafa.eskieksi@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240713163521.21958-1-mustafa.eskieksi@gmail.com>
-References: <20240713163521.21958-1-mustafa.eskieksi@gmail.com>
+	s=arc-20240116; t=1720889769; c=relaxed/simple;
+	bh=ARUUfZKaa/ju0SpjWyvt4ydyYMS3O92vCLsPI0RZ9Jg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Ybk6go3WYHRtLwHbrC8WkS8NHbveq3HlyKiY33SIBFNDwDLNH3DCBtZ5F0zxAfNIhDgigNUh8vAomSVT8d00OUk+1qgP/DEadO8S3fqx2qohorMHJ+lG5V1vnZs97vrju5rNaHTLGI1J+RH4o6qQkWUcKDLJN4Vvl9j+0rJuKfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rc9n2lgm; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46DFTPlJ021995;
+	Sat, 13 Jul 2024 16:55:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-type
+	:content-transfer-encoding:mime-version; s=pp1; bh=/1Kkiz6GdbEfd
+	gIEGqakVd1VypJoM5XwAbjkEGwtAj4=; b=rc9n2lgmHYMS+LHC45L5WmS522M4u
+	TgnDV610lQ7vGqRG37FHDPItDCi/oT94RpOBMVDj6NW4ZOdOlS+Q4rB5DnWEw/5V
+	3D6v/iUdvAAFKy8bDjUBQPqOEAzCj/rtUfW0JIQZyAqDQrlc3ZJnlzjccbTUIn5P
+	T2t821D8UR66oWDl8wz4aZ78J6Htt/1YHl/mHFfsYEALrzxJ6qGYbb1o93/kqETm
+	xEDFaf/v8V4i1n6qvlYsl6+GZ2SlICWjQZTcyT544NIJKm020J3x7GRki6lqRTV+
+	Avca72MV6rANO3PZrF3nunrIXOEmL1XuQnMOLo57ydkFzWGfAziAAnpIw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40brr10bxw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 16:55:43 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46DGthhb010602;
+	Sat, 13 Jul 2024 16:55:43 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40brr10bxe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 16:55:43 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46DFZVaH010225;
+	Sat, 13 Jul 2024 16:55:41 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40bqxks5m7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 16:55:41 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46DGtab341812414
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 13 Jul 2024 16:55:38 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 253732004B;
+	Sat, 13 Jul 2024 16:55:36 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5271D20040;
+	Sat, 13 Jul 2024 16:55:33 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.43.49.134])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 13 Jul 2024 16:55:33 +0000 (GMT)
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+To: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        irogers@google.com, namhyung@kernel.org, segher@kernel.crashing.org,
+        christophe.leroy@csgroup.eu
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
+        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
+        disgoel@linux.vnet.ibm.com
+Subject: [PATCH V7 00/18] Add data type profiling support for powerpc
+Date: Sat, 13 Jul 2024 22:25:11 +0530
+Message-Id: <20240713165529.59298-1-atrajeev@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.35.1
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: n91al67egD-3zB5PbncaOC9wvYim8ztm
+X-Proofpoint-GUID: bBNQZm1qwov2H_GFv0RvxZ99t98lyHHW
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-13_13,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 bulkscore=0 mlxscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407130127
 
-This wmi driver supports changing Casper Excalibur laptops' keyboard
-backlight brightness and color, reading fan speeds and changing power
-profiles. Multicolor led device is used for backlight, platform_profile
-for power management and hwmon for fan speeds. It supports both old (10th
-gen or older) and new (11th gen or newer) laptops. It uses x86_match_cpu
-to check if the laptop is old or new.
+The patchset from Namhyung added support for data type profiling
+in perf tool. This enabled support to associate PMU samples to data
+types they refer using DWARF debug information. With the upstream
+perf, currently it possible to run perf report or perf annotate to
+view the data type information on x86.
 
-Signed-off-by: Mustafa Ekşi <mustafa.eskieksi@gmail.com>
----
-Changes in v6:
- - Added "rgb" to zone names and changed kbd_zoned_backlight-corners to
-   backlight.
- - Changed led structure to have 3 seperate subleds instead of one rgb
-   subled.
- - Removed led_cache.
- - Removing platform_profile and destroying casper_mutex is managed by
-   devm_add_action_or_reset now.
- - Removed casper_wmi_remove.
- - Reordered some variables.
-Changes in v5:
- - Added mutex_destroy to casper_wmi_probe error handling
- - casper_multicolor_register now sets all leds to CASPER_DEFAULT_COLOR
- - Some minor changes
-Changes in v4:
- - Renamed casper_driver to casper_drv
- - Moved all global variables to casper_drv struct. Devices access
-  casper_drv via wdev's driver_data.
- - Removed struct led_cache, because only its u32 array was used. It is
-   replaced with color_cache.
- - Added mutex_locks in casper_set and casper_query, so they now accept
-   casper_drv instead of wmi_device as argument.
- - Changed endianess conversion in hwmon_read to something sparse doesn't
-   complain about.
- - Moved registrations of multicolor leds and platform profile to their
-   own functions. This makes casper_wmi_probe more readable.
- - Added .no_singleton to wmi_device.
- - Some minor changes.
-Changes in v3:
- - Replaced led_control attribute with multicolor led interface.
- - Added struct led_cache, instead of storing only last color change.
- - Added dmi list to prevent registering platform_profile driver in models
-   that doesn't have this feature.
- - Added a x86_cpu_id to differentiate older laptops that are reporting
-   fan speeds in big-endian. Also newer laptops have a different power
-   profile scheme. I'm using x86_cpu_id because they don't have a
-   difference in model names, only in cpu generations (the official driver
-   download page makes you select your cpu's generation too).
- - Removed hwmon_pwm device in favor of platform_profile driver. It
-   indirectly affects fans' speed but they also affect frequency and
-   power consumption as well.
- - Replaced handwritten masks with GENMASK equivalents.
- - Replaced led_classdev_register with
-   devm_led_classdev_multicolor_register. This should solve the bug
-   where led_classdev remains registered even if casper_wmi_probe
-   returns -ENODEV.
- - Removed select NEW_LEDS and LEDS_CLASS, because it creates recursive
-   dependencies.
- - And some minor changes.
-Changes in v2:
- - Added masks for
- - Changed casper_set and casper_query returns Linux error code rather
-   than acpi_status.
- - replaced complicated bit operations with FIELD_GET.
- - Fixed some indentation and spacing.
- - Broke fan speeds further.
- - Moved module metadata to the end of the file.
----
- MAINTAINERS                       |   6 +
- drivers/platform/x86/Kconfig      |  14 +
- drivers/platform/x86/Makefile     |   1 +
- drivers/platform/x86/casper-wmi.c | 656 ++++++++++++++++++++++++++++++
- 4 files changed, 677 insertions(+)
- create mode 100644 drivers/platform/x86/casper-wmi.c
+Initial patchset posted here had changes need to enable data type
+profiling support for powerpc.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a48ddea7b9b..13844ad3d12 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4907,6 +4907,12 @@ S:	Maintained
- W:	https://wireless.wiki.kernel.org/en/users/Drivers/carl9170
- F:	drivers/net/wireless/ath/carl9170/
- 
-+CASPER EXCALIBUR WMI DRIVER
-+M:	Mustafa Ekşi <mustafa.eskieksi@gmail.com>
-+L:	platform-driver-x86@vger.kernel.org
-+S:	Maintained
-+F:	drivers/platform/x86/casper-wmi.c
-+
- CAVIUM I2C DRIVER
- M:	Robert Richter <rric@kernel.org>
- S:	Odd Fixes
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 665fa952498..7560d90ce75 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1182,6 +1182,20 @@ config SEL3350_PLATFORM
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called sel3350-platform.
- 
-+config CASPER_WMI
-+	tristate "Casper Excalibur Laptop WMI driver"
-+	depends on ACPI_WMI
-+	depends on HWMON
-+	depends on LEDS_CLASS_MULTICOLOR
-+	select ACPI_PLATFORM_PROFILE
-+	help
-+	  Say Y here if you want to support WMI-based fan speed reporting,
-+	  power management and keyboard backlight support on Casper Excalibur
-+	  Laptops.
-+
-+	  To compile this driver as a module, choose M here: the module will
-+	  be called casper-wmi.
-+
- endif # X86_PLATFORM_DEVICES
- 
- config P2SB
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index e1b14294706..639509f9afa 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_MXM_WMI)			+= mxm-wmi.o
- obj-$(CONFIG_NVIDIA_WMI_EC_BACKLIGHT)	+= nvidia-wmi-ec-backlight.o
- obj-$(CONFIG_XIAOMI_WMI)		+= xiaomi-wmi.o
- obj-$(CONFIG_GIGABYTE_WMI)		+= gigabyte-wmi.o
-+obj-$(CONFIG_CASPER_WMI)		+= casper-wmi.o
- 
- # Acer
- obj-$(CONFIG_ACERHDF)		+= acerhdf.o
-diff --git a/drivers/platform/x86/casper-wmi.c b/drivers/platform/x86/casper-wmi.c
-new file mode 100644
-index 00000000000..51981e591ee
---- /dev/null
-+++ b/drivers/platform/x86/casper-wmi.c
-@@ -0,0 +1,656 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+#include <linux/module.h>
-+#include <linux/bits.h>
-+#include <linux/bitops.h>
-+#include <linux/acpi.h>
-+#include <linux/leds.h>
-+#include <linux/slab.h>
-+#include <linux/wmi.h>
-+#include <linux/device.h>
-+#include <linux/hwmon.h>
-+#include <linux/sysfs.h>
-+#include <linux/types.h>
-+#include <acpi/acexcep.h>
-+#include <linux/bitfield.h>
-+#include <linux/platform_profile.h>
-+#include <linux/led-class-multicolor.h>
-+#include <linux/mutex_types.h>
-+#include <linux/err.h>
-+#include <linux/mutex.h>
-+#include <linux/container_of.h>
-+
-+#include <linux/dmi.h>
-+#include <asm/cpu_device_id.h>
-+#include <asm/intel-family.h>
-+
-+#define CASPER_WMI_GUID "644C5791-B7B0-4123-A90B-E93876E0DAAD"
-+
-+#define CASPER_READ 0xfa00
-+#define CASPER_WRITE 0xfb00
-+#define CASPER_GET_HARDWAREINFO 0x0200
-+#define CASPER_SET_LED 0x0100
-+#define CASPER_POWERPLAN 0x0300
-+
-+#define CASPER_KEYBOARD_LED_1 0x03
-+#define CASPER_KEYBOARD_LED_2 0x04
-+#define CASPER_KEYBOARD_LED_3 0x05
-+#define CASPER_ALL_KEYBOARD_LEDS 0x06
-+#define CASPER_CORNER_LEDS 0x07
-+#define CASPER_LED_COUNT 4
-+
-+static const char * const zone_names[CASPER_LED_COUNT] = {
-+	"casper:rgb:kbd_zoned_backlight-right",
-+	"casper:rgb:kbd_zoned_backlight-middle",
-+	"casper:rgb:kbd_zoned_backlight-left",
-+	"casper:rgb:backlight",
-+};
-+
-+#define CASPER_LED_ALPHA GENMASK(31, 24)
-+#define CASPER_LED_RED	 GENMASK(23, 16)
-+#define CASPER_LED_GREEN GENMASK(15, 8)
-+#define CASPER_LED_BLUE  GENMASK(7, 0)
-+#define CASPER_DEFAULT_COLOR (CASPER_LED_RED | CASPER_LED_GREEN | \
-+			      CASPER_LED_BLUE)
-+#define CASPER_FAN_CPU 0
-+#define CASPER_FAN_GPU 1
-+
-+enum casper_power_profile_old {
-+	CASPER_HIGH_PERFORMANCE = 1,
-+	CASPER_GAMING		= 2,
-+	CASPER_TEXT_MODE	= 3,
-+	CASPER_POWERSAVE	= 4
-+};
-+
-+enum casper_power_profile_new {
-+	CASPER_NEW_HIGH_PERFORMANCE	= 0,
-+	CASPER_NEW_GAMING		= 1,
-+	CASPER_NEW_AUDIO		= 2
-+};
-+
-+struct casper_quirk_entry {
-+	bool big_endian_fans;
-+	bool no_power_profiles;
-+	bool new_power_scheme;
-+};
-+
-+struct casper_fourzone_led {
-+	struct led_classdev_mc mc_led;
-+	struct mc_subled *subleds;
-+};
-+
-+struct casper_drv {
-+	struct platform_profile_handler handler;
-+	struct mutex casper_mutex;
-+	struct casper_fourzone_led *leds;
-+	struct wmi_device *wdev;
-+	struct casper_quirk_entry *quirk_applied;
-+};
-+
-+struct casper_wmi_args {
-+	u16 a0, a1;
-+	u32 a2, a3, a4, a5, a6, a7, a8;
-+};
-+
-+enum casper_led_mode {
-+	LED_NORMAL = 0x10,
-+	LED_BLINK = 0x20,
-+	LED_FADE = 0x30,
-+	LED_HEARTBEAT = 0x40,
-+	LED_REPEAT = 0x50,
-+	LED_RANDOM = 0x60
-+};
-+
-+static int casper_set(struct casper_drv *drv, u16 a1, u8 led_id, u32 data)
-+{
-+	struct casper_wmi_args wmi_args;
-+	struct acpi_buffer input;
-+	acpi_status status = 0;
-+	int ret = 0;
-+
-+	wmi_args = (struct casper_wmi_args) {
-+		.a0 = CASPER_WRITE,
-+		.a1 = a1,
-+		.a2 = led_id,
-+		.a3 = data
-+	};
-+
-+	input = (struct acpi_buffer) {
-+		(acpi_size) sizeof(struct casper_wmi_args),
-+		&wmi_args
-+	};
-+
-+	mutex_lock(&drv->casper_mutex);
-+
-+	status = wmidev_block_set(drv->wdev, 0, &input);
-+	if (ACPI_FAILURE(status))
-+		ret = -EIO;
-+
-+	mutex_unlock(&drv->casper_mutex);
-+	return ret;
-+}
-+
-+static int casper_query(struct casper_drv *drv, u16 a1,
-+			struct casper_wmi_args *out)
-+{
-+	struct casper_wmi_args wmi_args;
-+	struct acpi_buffer input;
-+	union acpi_object *obj;
-+	acpi_status status = 0;
-+	int ret = 0;
-+
-+	wmi_args = (struct casper_wmi_args) {
-+		.a0 = CASPER_READ,
-+		.a1 = a1
-+	};
-+	input = (struct acpi_buffer) {
-+		(acpi_size) sizeof(struct casper_wmi_args),
-+		&wmi_args
-+	};
-+
-+	mutex_lock(&drv->casper_mutex);
-+
-+	status = wmidev_block_set(drv->wdev, 0, &input);
-+	if (ACPI_FAILURE(status)) {
-+		ret = -EIO;
-+		goto unlock;
-+	}
-+
-+	obj = wmidev_block_query(drv->wdev, 0);
-+	if (!obj) {
-+		ret = -EIO;
-+		goto unlock;
-+	}
-+
-+	if (obj->type != ACPI_TYPE_BUFFER) { // obj will be 0x10 on failure
-+		ret = -EINVAL;
-+		goto freeobj;
-+	}
-+	if (obj->buffer.length != sizeof(struct casper_wmi_args)) {
-+		ret = -EIO;
-+		goto freeobj;
-+	}
-+
-+	memcpy(out, obj->buffer.pointer, sizeof(struct casper_wmi_args));
-+
-+freeobj:
-+	kfree(obj);
-+unlock:
-+	mutex_unlock(&drv->casper_mutex);
-+	return ret;
-+}
-+
-+static u32 get_zone_color(struct casper_fourzone_led z)
-+{
-+	return  FIELD_PREP(CASPER_LED_RED, z.subleds[0].intensity) |
-+		FIELD_PREP(CASPER_LED_GREEN, z.subleds[1].intensity) |
-+		FIELD_PREP(CASPER_LED_BLUE, z.subleds[2].intensity);
-+}
-+
-+static enum led_brightness get_casper_brightness(struct led_classdev *led_cdev)
-+{
-+	struct casper_drv *drv = dev_get_drvdata(led_cdev->dev->parent);
-+	struct casper_wmi_args hardware_alpha = {0};
-+
-+	if (strcmp(led_cdev->name, zone_names[3]) == 0)
-+		return drv->leds[3].mc_led.led_cdev.brightness;
-+
-+	casper_query(drv, CASPER_GET_HARDWAREINFO, &hardware_alpha);
-+
-+	return hardware_alpha.a6;
-+}
-+
-+static void set_casper_brightness(struct led_classdev *led_cdev,
-+				  enum led_brightness brightness)
-+{
-+	u32 bright_with_mode, bright_prep, led_data, led_data_no_alpha;
-+	struct casper_drv *drv;
-+	u8 zone_to_change;
-+	size_t zone;
-+
-+	drv = dev_get_drvdata(led_cdev->dev->parent);
-+
-+	for (size_t i = 0; i < CASPER_LED_COUNT; i++)
-+		if (strcmp(led_cdev->name, zone_names[i]) == 0)
-+			zone = i;
-+	if (zone == 3)
-+		zone_to_change = CASPER_CORNER_LEDS;
-+	else
-+		zone_to_change = zone + CASPER_KEYBOARD_LED_1;
-+
-+	led_data_no_alpha = get_zone_color(drv->leds[zone]) & ~CASPER_LED_ALPHA;
-+
-+	bright_with_mode = brightness | LED_NORMAL;
-+
-+	bright_prep = FIELD_PREP(CASPER_LED_ALPHA, bright_with_mode);
-+	led_data = bright_prep | led_data_no_alpha;
-+	casper_set(drv, CASPER_SET_LED, zone_to_change, led_data);
-+}
-+
-+static int casper_platform_profile_get(struct platform_profile_handler *pprof,
-+				       enum platform_profile_option *profile)
-+{
-+	struct casper_drv *drv = container_of(pprof, struct casper_drv,
-+					      handler);
-+	struct casper_wmi_args ret_buff = {0};
-+	int ret;
-+
-+	ret = casper_query(drv, CASPER_POWERPLAN, &ret_buff);
-+	if (ret)
-+		return ret;
-+
-+	if (drv->quirk_applied->new_power_scheme) {
-+		switch (ret_buff.a2) {
-+		case CASPER_NEW_HIGH_PERFORMANCE:
-+			*profile = PLATFORM_PROFILE_PERFORMANCE;
-+			break;
-+		case CASPER_NEW_GAMING:
-+			*profile = PLATFORM_PROFILE_BALANCED;
-+			break;
-+		case CASPER_NEW_AUDIO:
-+			*profile = PLATFORM_PROFILE_LOW_POWER;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+		return 0;
-+	}
-+
-+	switch (ret_buff.a2) {
-+	case CASPER_HIGH_PERFORMANCE:
-+		*profile = PLATFORM_PROFILE_PERFORMANCE;
-+		break;
-+	case CASPER_GAMING:
-+		*profile = PLATFORM_PROFILE_BALANCED_PERFORMANCE;
-+		break;
-+	case CASPER_TEXT_MODE:
-+		*profile = PLATFORM_PROFILE_BALANCED;
-+		break;
-+	case CASPER_POWERSAVE:
-+		*profile = PLATFORM_PROFILE_LOW_POWER;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int casper_platform_profile_set(struct platform_profile_handler *pprof,
-+				       enum platform_profile_option profile)
-+{
-+	struct casper_drv *drv = container_of(pprof, struct casper_drv,
-+					      handler);
-+	enum casper_power_profile_old prf_old;
-+	enum casper_power_profile_new prf_new;
-+
-+	if (drv->quirk_applied->new_power_scheme) {
-+
-+		switch (profile) {
-+		case PLATFORM_PROFILE_PERFORMANCE:
-+			prf_new = CASPER_NEW_HIGH_PERFORMANCE;
-+			break;
-+		case PLATFORM_PROFILE_BALANCED:
-+			prf_new = CASPER_NEW_GAMING;
-+			break;
-+		case PLATFORM_PROFILE_LOW_POWER:
-+			prf_new = CASPER_NEW_AUDIO;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+
-+		return casper_set(drv, CASPER_POWERPLAN, prf_new, 0);
-+	}
-+
-+	switch (profile) {
-+	case PLATFORM_PROFILE_PERFORMANCE:
-+		prf_old = CASPER_HIGH_PERFORMANCE;
-+		break;
-+	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
-+		prf_old = CASPER_GAMING;
-+		break;
-+	case PLATFORM_PROFILE_BALANCED:
-+		prf_old = CASPER_TEXT_MODE;
-+		break;
-+	case PLATFORM_PROFILE_LOW_POWER:
-+		prf_old = CASPER_POWERSAVE;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return casper_set(drv, CASPER_POWERPLAN, prf_old, 0);
-+}
-+
-+static umode_t casper_wmi_hwmon_is_visible(const void *drvdata,
-+					   enum hwmon_sensor_types type,
-+					   u32 attr, int channel)
-+{
-+	return 0444;
-+}
-+
-+static int casper_wmi_hwmon_read(struct device *dev,
-+				 enum hwmon_sensor_types type, u32 attr,
-+				 int channel, long *val)
-+{
-+	struct casper_drv *drv = dev_get_drvdata(dev->parent);
-+	struct casper_wmi_args out = { 0 };
-+	int ret;
-+
-+	ret = casper_query(drv, CASPER_GET_HARDWAREINFO, &out);
-+	if (ret)
-+		return ret;
-+
-+	switch (channel) {
-+	case CASPER_FAN_CPU:
-+		if (drv->quirk_applied->big_endian_fans)
-+			*val = be16_to_cpu(*(__be16 *)&out.a4);
-+		else
-+			*val = out.a5;
-+		break;
-+	case CASPER_FAN_GPU:
-+		if (drv->quirk_applied->big_endian_fans)
-+			*val = be16_to_cpu(*(__be16 *)&out.a5);
-+		else
-+			*val = out.a5;
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int casper_wmi_hwmon_read_string(struct device *dev,
-+					enum hwmon_sensor_types type, u32 attr,
-+					int channel, const char **str)
-+{
-+	if (channel == CASPER_FAN_CPU)
-+		*str = "cpu_fan_speed";
-+	else if (channel == CASPER_FAN_GPU)
-+		*str = "gpu_fan_speed";
-+	return 0;
-+}
-+
-+static const struct hwmon_ops casper_wmi_hwmon_ops = {
-+	.is_visible = &casper_wmi_hwmon_is_visible,
-+	.read = &casper_wmi_hwmon_read,
-+	.read_string = &casper_wmi_hwmon_read_string,
-+};
-+
-+static const struct hwmon_channel_info *const casper_wmi_hwmon_info[] = {
-+	HWMON_CHANNEL_INFO(fan,
-+			   HWMON_F_INPUT | HWMON_F_LABEL,
-+			   HWMON_F_INPUT | HWMON_F_LABEL),
-+	NULL
-+};
-+
-+static const struct hwmon_chip_info casper_wmi_hwmon_chip_info = {
-+	.ops = &casper_wmi_hwmon_ops,
-+	.info = casper_wmi_hwmon_info,
-+};
-+
-+static struct casper_quirk_entry gen_older_than_11 = {
-+	.big_endian_fans = true,
-+	.new_power_scheme = false
-+};
-+
-+static struct casper_quirk_entry gen_newer_than_11 = {
-+	.big_endian_fans = false,
-+	.new_power_scheme = true
-+};
-+
-+static const struct x86_cpu_id casper_gen[] = {
-+	X86_MATCH_INTEL_FAM6_MODEL(KABYLAKE, &gen_older_than_11),
-+	X86_MATCH_INTEL_FAM6_MODEL(COMETLAKE, &gen_older_than_11),
-+	X86_MATCH_INTEL_FAM6_MODEL(TIGERLAKE, &gen_newer_than_11),
-+	X86_MATCH_INTEL_FAM6_MODEL(ALDERLAKE, &gen_newer_than_11),
-+	X86_MATCH_INTEL_FAM6_MODEL(RAPTORLAKE, &gen_newer_than_11),
-+	X86_MATCH_INTEL_FAM6_MODEL(METEORLAKE, &gen_newer_than_11),
-+	{}
-+};
-+
-+static struct casper_quirk_entry quirk_no_power_profile = {
-+	.no_power_profiles = true
-+};
-+
-+static struct casper_quirk_entry quirk_has_power_profile = {
-+	.no_power_profiles = false
-+};
-+
-+static const struct dmi_system_id casper_quirks[] = {
-+	{
-+		.ident = "CASPER EXCALIBUR G650",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR,
-+				  "CASPER BILGISAYAR SISTEMLERI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EXCALIBUR G650")
-+		},
-+		.driver_data = &quirk_no_power_profile
-+	},
-+	{
-+		.ident = "CASPER EXCALIBUR G670",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR,
-+				  "CASPER BILGISAYAR SISTEMLERI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EXCALIBUR G670")
-+		},
-+		.driver_data = &quirk_no_power_profile
-+	},
-+	{
-+		.ident = "CASPER EXCALIBUR G750",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR,
-+				  "CASPER BILGISAYAR SISTEMLERI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EXCALIBUR G750")
-+		},
-+		.driver_data = &quirk_no_power_profile
-+	},
-+	{
-+		.ident = "CASPER EXCALIBUR G770",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR,
-+				  "CASPER BILGISAYAR SISTEMLERI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EXCALIBUR G770")
-+		},
-+		.driver_data = &quirk_has_power_profile
-+	},
-+	{
-+		.ident = "CASPER EXCALIBUR G780",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR,
-+				  "CASPER BILGISAYAR SISTEMLERI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EXCALIBUR G780")
-+		},
-+		.driver_data = &quirk_has_power_profile
-+	},
-+	{
-+		.ident = "CASPER EXCALIBUR G870",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR,
-+				  "CASPER BILGISAYAR SISTEMLERI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EXCALIBUR G870")
-+		},
-+		.driver_data = &quirk_has_power_profile
-+	},
-+	{
-+		.ident = "CASPER EXCALIBUR G900",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR,
-+				  "CASPER BILGISAYAR SISTEMLERI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EXCALIBUR G900")
-+		},
-+		.driver_data = &quirk_has_power_profile
-+	},
-+	{
-+		.ident = "CASPER EXCALIBUR G911",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR,
-+				  "CASPER BILGISAYAR SISTEMLERI"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "EXCALIBUR G911")
-+		},
-+		.driver_data = &quirk_has_power_profile
-+	},
-+	{ }
-+};
-+
-+static void casper_pp_remove(void *data)
-+{
-+	platform_profile_remove();
-+}
-+
-+static int casper_platform_profile_register(struct casper_drv *drv)
-+{
-+	int ret = 0;
-+
-+	drv->handler.profile_get = casper_platform_profile_get;
-+	drv->handler.profile_set = casper_platform_profile_set;
-+
-+	set_bit(PLATFORM_PROFILE_LOW_POWER, drv->handler.choices);
-+	set_bit(PLATFORM_PROFILE_BALANCED, drv->handler.choices);
-+	if (!drv->quirk_applied->new_power_scheme)
-+		set_bit(PLATFORM_PROFILE_BALANCED_PERFORMANCE,
-+			drv->handler.choices);
-+	set_bit(PLATFORM_PROFILE_PERFORMANCE, drv->handler.choices);
-+
-+	ret = platform_profile_register(&drv->handler);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_add_action_or_reset(&drv->wdev->dev, casper_pp_remove,
-+				       NULL);
-+	if (ret)
-+		platform_profile_remove();
-+
-+	return ret;
-+}
-+
-+static int casper_multicolor_register(struct casper_drv *drv)
-+{
-+	int ret = 0;
-+
-+	drv->leds = devm_kcalloc(&drv->wdev->dev,
-+		CASPER_LED_COUNT, sizeof(*drv->leds), GFP_KERNEL);
-+	if (!drv->leds)
-+		return -ENOMEM;
-+
-+	for (size_t i = 0; i < CASPER_LED_COUNT; i++) {
-+		drv->leds[i].subleds = devm_kcalloc(&drv->wdev->dev, 3,
-+				sizeof(struct mc_subled), GFP_KERNEL);
-+		if (!drv->leds[i].subleds)
-+			return -ENOMEM;
-+		for (size_t j = 0; j < 3; j++) {
-+			drv->leds[i].subleds[j] = (struct mc_subled) {
-+				.color_index = LED_COLOR_ID_RED + j,
-+				.brightness = 255,
-+				.intensity = 255
-+			};
-+		}
-+		drv->leds[i].mc_led = (struct led_classdev_mc){
-+			.led_cdev = {
-+				.name = zone_names[i],
-+				.brightness = 0,
-+				.max_brightness = 2,
-+				.brightness_set = &set_casper_brightness,
-+				.brightness_get = &get_casper_brightness,
-+				.color = LED_COLOR_ID_MULTI,
-+			},
-+			.num_colors = 3,
-+			.subled_info = drv->leds[i].subleds
-+		};
-+
-+		ret = devm_led_classdev_multicolor_register(&drv->wdev->dev,
-+							&drv->leds[i].mc_led);
-+		if (ret)
-+			return -ENODEV;
-+	}
-+
-+	// Setting leds to the default color
-+	ret = casper_set(drv, CASPER_SET_LED, CASPER_ALL_KEYBOARD_LEDS,
-+			 CASPER_DEFAULT_COLOR);
-+	if (ret)
-+		return ret;
-+
-+	ret = casper_set(drv, CASPER_SET_LED, CASPER_CORNER_LEDS,
-+			 CASPER_DEFAULT_COLOR);
-+	return ret;
-+}
-+
-+static void casper_mutex_destroy(void *data)
-+{
-+	mutex_destroy((struct mutex *)data);
-+}
-+
-+static int casper_wmi_probe(struct wmi_device *wdev, const void *context)
-+{
-+	struct casper_quirk_entry *pp_quirk;
-+	const struct dmi_system_id *dmi_id;
-+	const struct x86_cpu_id *gen_id;
-+	struct device *hwmon_dev;
-+	struct casper_drv *drv;
-+	int ret;
-+
-+	drv = devm_kzalloc(&wdev->dev, sizeof(*drv), GFP_KERNEL);
-+	if (!drv)
-+		return -ENOMEM;
-+
-+	drv->wdev = wdev;
-+	dev_set_drvdata(&wdev->dev, drv);
-+
-+	gen_id = x86_match_cpu(casper_gen);
-+	if (!gen_id)
-+		return -ENODEV;
-+
-+	drv->quirk_applied = (struct casper_quirk_entry *)gen_id->driver_data;
-+
-+	dmi_id = dmi_first_match(casper_quirks);
-+	if (!dmi_id)
-+		return -ENODEV;
-+
-+	pp_quirk = (struct casper_quirk_entry *)dmi_id->driver_data;
-+	drv->quirk_applied->no_power_profiles = pp_quirk->no_power_profiles;
-+
-+	mutex_init(&drv->casper_mutex);
-+	ret = devm_add_action_or_reset(&wdev->dev, casper_mutex_destroy,
-+				       &drv->casper_mutex);
-+	if (ret)
-+		return ret;
-+
-+	ret = casper_multicolor_register(drv);
-+	if (ret)
-+		return ret;
-+
-+	hwmon_dev = devm_hwmon_device_register_with_info(&wdev->dev,
-+						"casper_wmi", wdev,
-+						&casper_wmi_hwmon_chip_info,
-+						NULL);
-+	if (IS_ERR(hwmon_dev))
-+		return PTR_ERR(hwmon_dev);
-+
-+	if (!drv->quirk_applied->no_power_profiles) {
-+		ret = casper_platform_profile_register(drv);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct wmi_device_id casper_wmi_id_table[] = {
-+	{ CASPER_WMI_GUID, NULL },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(wmi, casper_wmi_id_table);
-+
-+static struct wmi_driver casper_drv = {
-+	.driver = {
-+		.name = "casper-wmi",
-+	},
-+	.id_table = casper_wmi_id_table,
-+	.probe = casper_wmi_probe,
-+	.no_singleton = true,
-+};
-+
-+module_wmi_driver(casper_drv);
-+
-+MODULE_AUTHOR("Mustafa Ekşi <mustafa.eskieksi@gmail.com>");
-+MODULE_DESCRIPTION("Casper Excalibur Laptop WMI driver");
-+MODULE_LICENSE("GPL");
+https://lore.kernel.org/all/6e09dc28-4a2e-49d8-a2b5-ffb3396a9952@csgroup.eu/T/
+
+Main change were:
+1. powerpc instruction nmemonic table to associate load/store
+instructions with move_ops which is use to identify if instruction
+is a memory access one.
+2. To get register number and access offset from the given
+instruction, code uses fields from "struct arch" -> objump.
+Added entry for powerpc here.
+3. A get_arch_regnum to return register number from the
+register name string.
+
+But the apporach used in the initial patchset used parsing of
+disassembled code which the current perf tool implementation does.
+
+Example: lwz     r10,0(r9)
+
+This line "lwz r10,0(r9)" is parsed to extract instruction name,
+registers names and offset. Also to find whether there is a memory
+reference in the operands, "memory_ref_char" field of objdump is used.
+For x86, "(" is used as memory_ref_char to tackle instructions of the
+form "mov  (%rax), %rcx".
+
+In case of powerpc, not all instructions using "(" are the only memory
+instructions. Example, above instruction can also be of extended form (X
+form) "lwzx r10,0,r19". Inorder to easy identify the instruction category
+and extract the source/target registers, second patchset added support to use
+raw instruction. With raw instruction, macros are added to extract opcode
+and register fields.
+Link to second patchset:
+https://lore.kernel.org/all/20240506121906.76639-1-atrajeev@linux.vnet.ibm.com/
+
+Example representation using --show-raw-insn in objdump gives result:
+
+38 01 81 e8     ld      r4,312(r1)
+
+Here "38 01 81 e8" is the raw instruction representation. In powerpc,
+this translates to instruction form: "ld RT,DS(RA)" and binary code
+as:
+  _____________________________________
+  | 58 |  RT  |  RA |      DS       | |
+  -------------------------------------
+0    6     11    16              30 31
+
+Second patchset used "objdump" again to read the raw instruction.
+But since there is no need to disassemble and binary code can be read
+directly from the DSO, third patchset (ie this patchset) uses below
+apporach. The apporach preferred in powerpc to parse sample for data
+type profiling in V3 patchset is:
+- Read directly from DSO using dso__data_read_offset
+- If that fails for any case, fallback to using libcapstone
+- If libcapstone is not supported, approach will use objdump
+
+Patchset adds support to pick the opcode and reg fields from this
+raw/binary instruction code. This approach came in from review comment
+by Segher Boessenkool and Christophe for the initial patchset.
+
+Apart from that, instruction tracking is enabled for powerpc and
+support function is added to find variables defined as registers
+Example, in powerpc, below two registers are
+defined to represent variable:
+1. r13: represents local_paca
+register struct paca_struct *local_paca asm("r13");
+
+2. r1: represents stack_pointer
+register void *__stack_pointer asm("r1");
+
+These are handled in this patchset.
+
+- Patch 1 is to rearrange register state type structures to header file
+so that it can referred from other arch specific files
+- Patch 2 is to make instruction tracking as a callback to"struct arch"
+so that it can be implemented by other archs easily and defined in arch
+specific files
+- Patch 3 is to handle state type regs array size for x86 and powerpc
+- Patch 4 adds support to capture and parse raw instruction in powerpc
+using dso__data_read_offset utility
+- Patch 4 also adds logic to support using objdump when doing default "perf
+report" or "perf annotate" since it that needs disassembled instruction.
+- Patch 5 adds disasm_line__parse to parse raw instruction for powerpc
+- Patch 6 update parameters for reg extract functions to use raw
+instruction on powerpc
+- Patch 7 updates ins__find to carry raw_insn and also adds parse
+callback for memory instructions for powerpc
+- Patch 8 add support to identify memory instructions of opcode 31 in
+powerpc
+- Patch 9 adds more instructions to support instruction tracking in powerpc
+- Patch 10 and 11 handles instruction tracking for powerpc.
+- Patch 12, 13 and 14 add support to use libcapstone in powerpc
+- Patch 15 and patch 16 handles support to find global register variables
+- PAtch 17 updates data type compare functions data_type_cmp and
+  sort__typeoff_sort to include var_name along with type_name in
+  comparison.
+- Patch 18 handles insn-stat option for perf annotate
+
+Note:
+- There are remaining unknowns (25%) as seen in annotate Instruction stats
+below.
+- This patchset is not tested on powerpc32. In next step of enhancements
+along with handling remaining unknowns, plan to cover powerpc32 changes
+based on how testing goes.
+
+With the current patchset:
+
+ ./perf record -a -e mem-loads sleep 1
+ ./perf report -s type,typeoff --hierarchy --group --stdio
+ ./perf annotate --data-type --insn-stat
+
+perf annotate logs:
+==================
+
+
+Annotate Instruction stats
+total 609, ok 446 (73.2%), bad 163 (26.8%)
+
+  Name/opcode         :  Good   Bad
+  -----------------------------------------------------------
+  58                  :   323    80
+  32                  :    49    43
+  34                  :    33    11
+  OP_31_XOP_LDX       :     8    20
+  40                  :    23     0
+  OP_31_XOP_LWARX     :     5     1
+  OP_31_XOP_LWZX      :     2     3
+  OP_31_XOP_LDARX     :     3     0
+  33                  :     0     2
+  OP_31_XOP_LBZX      :     0     1
+  OP_31_XOP_LWAX      :     0     1
+  OP_31_XOP_LHZX      :     0     1
+  
+perf report logs:
+=================
+
+  Total Lost Samples: 0
+
+  Samples: 1K of event 'mem-loads'
+  Event count (approx.): 937238
+
+  Overhead  Data Type  Data Type Offset
+ ........  .........  ................
+    48.60%  (unknown)  (unknown) +0 (no field)
+    11.42%  long unsigned int  long unsigned int +0 (current_stack_pointer)
+     4.68%  struct paca_struct  struct paca_struct +2312 (__current)
+     4.57%  struct paca_struct  struct paca_struct +2354 (irq_soft_mask)
+     2.69%  struct paca_struct  struct paca_struct +2808 (canary)
+     2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
+     2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
+     1.43%  long unsigned int  long unsigned int +0 (no field)
+     1.41%  struct vm_fault  struct vm_fault +0 (vma)
+     1.29%  struct task_struct  struct task_struct +276 (flags)
+     1.03%  struct pt_regs  struct pt_regs +264 (user_regs.msr)
+     0.90%  struct security_hook_list  struct security_hook_list +0 (list.next)
+     0.76%  struct irq_desc  struct irq_desc +304 (irq_data.chip)
+     0.76%  struct rq  struct rq +2856 (cpu)
+     0.72%  long long unsigned int  long long unsigned int +0 (no field)
+
+Thanks
+Athira Rajeev
+
+Changelog:
+From v6 -> v7:
+- Addressed review comments from Namhyung
+  Changed format string space to %-20s while printing
+  instruction stats in patch 18.
+  Use cmp_null in patch 17 while comparing var_name to
+  properly sort with correct order.
+
+From v5 -> v6:
+- Addressed review comments from Namhyung
+  Conditionally define TYPE_STATE_MAX_REGS based on arch.
+  Added macro for defining width of the raw codes and spaces
+  in disasm_line__parse_powerpc.
+  Call disasm_line__parse from disasm_line__parse_powerpc
+  for generic code.
+  Renamed symbol__disassemble_dso to symbol__disassemble_raw.
+  Fixed find_data_type_global_reg to correclty free var_types
+  and change indent level.
+  Fixed data_type_cmp and sort__typeoff_sort to include var_name
+  in comparing data type entries.
+  
+From v4 -> v5:
+- Addressed review comments from Namhyung
+  Handle max number of type state regs as 16 for x86 and 32 for
+  powerpc.
+  Added generic support for objdump patch first and DSO read
+  optimisation next
+  combined patch 3 and patch 4 in patchseries V4 to one patch
+  Changed reference for "raw_insn" to use "u32"
+  Splitted "parse" callback patch changes and "ins__find" patch
+  changes into two
+  Instead of making weak function, added get_powerpc_regs to
+  extract register and offset fields for powerpc
+- Addressed complation fail when "dwarf.h" is not present ie
+  elfutils devel is not present. Used includes for #ifdef HAVE_DWARF_SUPPORT
+  when including functions that use Dwarf references. Also
+  conditionally include some of the header files.
+
+From v3->v4:
+- Addressed review comments from Ian by using capston_init from
+  "util/print_insn.c" instead of "open_capston_handle".
+- Addressed review comment from Namhyung by moving "opcode"
+  field from "struct ins" to "struct disasm_line"
+
+From v2->v3:
+- Addressed review comments from Christophe and Namhyung for V2
+- Changed the apporach in powerpc to parse sample for data
+  type profiling as:
+  Read directly from DSO using dso__data_read_offset
+  If that fails for any case, fallback to using libcapstone
+  If libcapstone is not supported, approach will use objdump
+- Include instructions with opcode as 31 and correctly categorize
+  them as memory or arithmetic instructions.
+- Include more instructions for instruction tracking in powerpc
+
+From v1->v2:
+- Addressed suggestion from Christophe Leroy and Segher Boessenkool
+  to use the binary code (raw insn) to fetch opcode, register and
+  offset fields.
+- Added support for instruction tracking in powerpc
+- Find the register defined variables (r13 and r1 which points to
+  local_paca and current_stack_pointer in powerpc)
+
+Athira Rajeev (18):
+  tools/perf: Move the data structures related to register type to
+    header file
+  tools/perf: Add "update_insn_state" callback function to handle arch
+    specific instruction tracking
+  tools/perf: Update TYPE_STATE_MAX_REGS to include max of regs in
+    powerpc
+  tools/perf: Add disasm_line__parse to parse raw instruction for
+    powerpc
+  tools/perf: Add support to capture and parse raw instruction in
+    powerpc using dso__data_read_offset utility
+  tools/perf: Update parameters for reg extract functions to use raw
+    instruction on powerpc
+  tools/perf: Add parse function for memory instructions in powerpc
+  tools/perf: Add support to identify memory instructions of opcode 31
+    in powerpc
+  tools/perf: Add some of the arithmetic instructions to support
+    instruction tracking in powerpc
+  tools/perf: Add more instructions for instruction tracking
+  tools/perf: Update instruction tracking for powerpc
+  tools/perf: Make capstone_init non-static so that it can be used
+    during symbol disassemble
+  tools/perf: Use capstone_init and remove open_capstone_handle from
+    disasm.c
+  tools/perf: Add support to use libcapstone in powerpc
+  tools/perf: Add support to find global register variables using
+    find_data_type_global_reg
+  tools/perf: Add support for global_die to capture name of variable in
+    case of register defined variable
+  tools/perf: Update data_type_cmp and sort__typeoff_sort function to
+    include var_name in comparison
+  tools/perf: Set instruction name to be used with insn-stat when using
+    raw instruction
+
+ tools/include/linux/string.h                  |   2 +
+ tools/lib/string.c                            |  13 +
+ tools/perf/arch/arm64/annotate/instructions.c |   3 +-
+ .../arch/loongarch/annotate/instructions.c    |   6 +-
+ .../perf/arch/powerpc/annotate/instructions.c | 254 ++++++++
+ tools/perf/arch/powerpc/util/dwarf-regs.c     |  53 ++
+ tools/perf/arch/s390/annotate/instructions.c  |   5 +-
+ tools/perf/arch/x86/annotate/instructions.c   | 377 ++++++++++++
+ tools/perf/builtin-annotate.c                 |   4 +-
+ tools/perf/util/annotate-data.c               | 544 ++++--------------
+ tools/perf/util/annotate-data.h               |  83 +++
+ tools/perf/util/annotate.c                    |  29 +-
+ tools/perf/util/annotate.h                    |   6 +-
+ tools/perf/util/disasm.c                      | 468 +++++++++++++--
+ tools/perf/util/disasm.h                      |  19 +-
+ tools/perf/util/dwarf-aux.c                   |   1 +
+ tools/perf/util/dwarf-aux.h                   |   1 +
+ tools/perf/util/include/dwarf-regs.h          |  12 +
+ tools/perf/util/print_insn.c                  |  15 +-
+ tools/perf/util/print_insn.h                  |   5 +
+ tools/perf/util/sort.c                        |  25 +-
+ tools/perf/util/sort.h                        |   1 +
+ 22 files changed, 1421 insertions(+), 505 deletions(-)
+
 -- 
-2.45.2
+2.43.0
 
 
