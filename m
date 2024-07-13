@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-251505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77049305A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:54:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 683B89305A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F01CB214FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7294F1C20E1A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C2F130AC8;
-	Sat, 13 Jul 2024 12:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDFC130AC8;
+	Sat, 13 Jul 2024 12:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hOcZHyJ8"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="o9kxFIyO"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC294AEC6
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 12:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49634AEC6
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 12:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720875260; cv=none; b=ARM3V1UZu9gea0pt3UZjUTNmW07qVc4WjGWgI1ADDYg783JQyJyomqs5mM1svzhE/q4buxL0L720scXYW3nwVqNAppcf1EciN+AArV4hcNcNBOfvRtMzL1FtNivSQNhwhvX/92IkiTvMvRZjL4W6kScNdJhsYK/DHjU7Hm8nGpI=
+	t=1720875492; cv=none; b=qkE2NAIYkXZ7vEgxj6TL9YFuNxtjW7wq/w0iI2GghdJK7LMW935ucrOxwpVfbGxsROCbR8J+XTTK7q4mDa6h+DsGVzeHXDnTvKi8ASsuuAN71RCYsJ64D3o31k8n7GgrAxcK/RzyzSmd4JicZtRe5S+kRjY5GOBHm/LLOZAwzJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720875260; c=relaxed/simple;
-	bh=Dm2ZCQFzCflulnLv9Xj4xWzHEwkM13XkBjwgtQ4GFg4=;
+	s=arc-20240116; t=1720875492; c=relaxed/simple;
+	bh=gJE4W3enMDiXqsSBoZ6EbLhV++voaNbsAwzzby8tFa8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RzwaWDbi/qdehZ/FG4EgLUNhDarYBx82ZC5FxPJ63ko3bxOmj84wtwhvZwlcpcuqG6qR3ls4FIo8AZ2RypnOf4O0/k6SoRurhVzUL2janYycAx9b3KpsdMGQcrLmcvhQG0V1AegUJNgA4FNJXK9CCfDo4uVFZyPwrdSxJ+ozYQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hOcZHyJ8; arc=none smtp.client-ip=115.124.30.132
+	 In-Reply-To:Content-Type; b=ukWQ5xv4zG022162yPKS4MlHE5lvFIc+MPTfftR2iwEXBGOHDsNAxXNA7MrtErUka3oSrXXWyQJhhieAVsxWZ3sRW/ofEewjp7oPNXn9rm7zHq6Fjex4HcM3hnSyb6a3sYXlGzzw+1UTmPuItqG5d5zx42OPx01+Te5qo134bUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=o9kxFIyO; arc=none smtp.client-ip=115.124.30.113
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1720875249; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=U3/MbRKAUT1nHEYQQc4tHTxgsmxngVtkmZqCwxsFAJo=;
-	b=hOcZHyJ8aEHgWtbfXRHZ78SqPlVmltQnhte4xLe43AvW1IYRpLXEdJg8ywWF6QIDlnbcw2gElyUn4x9heZ9FDTYAMA+rryVCaF4zrfq/ZlyxS9fyKFuAjxEg7dS/7jcGAQlg3+BqzqVW6rPXHg3N48yw+JwvVfaCxLjnkEh2sOw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0WAR-9Iw_1720875246;
-Received: from 30.32.91.177(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WAR-9Iw_1720875246)
+	t=1720875481; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=ynrMmi6W+olSeq5whEcPJ546MWxiMPRjwUEKXsXjNXk=;
+	b=o9kxFIyOIoboReqQDjsHNlhvMxiu+QLc+mGVppleM7UBYB/6gZtQhlKfdrFWEq7yj4SlJKdY9Lyps5RVIAMMqILeZXTUCdJNyePfUJvrP8YKkEW0eDcQDILiDzMJPJIWJ2SKP4iv0gRjDOHu+HksXMI8h9fPWkDBX5PmqLzNaEo=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0WAR.dHF_1720875480;
+Received: from 30.32.91.177(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WAR.dHF_1720875480)
           by smtp.aliyun-inc.com;
-          Sat, 13 Jul 2024 20:54:08 +0800
-Message-ID: <b8d1dc3c-ee05-450e-961e-b13dded06a78@linux.alibaba.com>
-Date: Sat, 13 Jul 2024 20:54:06 +0800
+          Sat, 13 Jul 2024 20:58:01 +0800
+Message-ID: <b53fa748-9e19-48f9-8ccf-8d2fe408d35d@linux.alibaba.com>
+Date: Sat, 13 Jul 2024 20:57:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,111 +48,173 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <ioworker0@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240711072929.3590000-1-ryan.roberts@arm.com>
- <20240711072929.3590000-3-ryan.roberts@arm.com>
- <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
- <29f0fc5a-c2b7-4925-9bdb-fd2abe5383ae@arm.com>
+Subject: Re: [PATCH] mm/huge_memory: Avoid PMD-size page cache if needed
+To: David Hildenbrand <david@redhat.com>, Gavin Shan <gshan@redhat.com>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, william.kucharski@oracle.com,
+ ryan.roberts@arm.com, shan.gavin@gmail.com
+References: <20240711104840.200573-1-gshan@redhat.com>
+ <ZpBEwEn3swH7IFbI@casper.infradead.org>
+ <f58433ee-7217-4f9e-91ba-c29f95cd56b0@redhat.com>
+ <63a0364b-a2e0-48c2-b255-e976112deeb1@redhat.com>
+ <df83a218-e2e5-496e-999a-e446a7d0b383@redhat.com>
+ <b11d6006-1efb-4329-baa0-75799935e019@linux.alibaba.com>
+ <11c95a82-cf13-414b-b489-1dd48255e022@redhat.com>
 From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <29f0fc5a-c2b7-4925-9bdb-fd2abe5383ae@arm.com>
+In-Reply-To: <11c95a82-cf13-414b-b489-1dd48255e022@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-On 2024/7/13 19:00, Ryan Roberts wrote:
-> [...]
-> 
->>> +static int thpsize_create(int order, struct kobject *parent)
->>>    {
->>>        unsigned long size = (PAGE_SIZE << order) / SZ_1K;
->>> +    struct thpsize_child *stats;
->>>        struct thpsize *thpsize;
->>>        int ret;
->>>    +    /*
->>> +     * Each child object (currently only "stats" directory) holds a
->>> +     * reference to the top-level thpsize object, so we can drop our ref to
->>> +     * the top-level once stats is setup. Then we just need to drop a
->>> +     * reference on any children to clean everything up. We can't just use
->>> +     * the attr group name for the stats subdirectory because there may be
->>> +     * multiple attribute groups to populate inside stats and overlaying
->>> +     * using the name property isn't supported in that way; each attr group
->>> +     * name, if provided, must be unique in the parent directory.
->>> +     */
->>> +
->>>        thpsize = kzalloc(sizeof(*thpsize), GFP_KERNEL);
->>> -    if (!thpsize)
->>> -        return ERR_PTR(-ENOMEM);
->>> +    if (!thpsize) {
->>> +        ret = -ENOMEM;
->>> +        goto err;
->>> +    }
->>> +    thpsize->order = order;
->>>          ret = kobject_init_and_add(&thpsize->kobj, &thpsize_ktype, parent,
->>>                       "hugepages-%lukB", size);
->>>        if (ret) {
->>>            kfree(thpsize);
->>> -        return ERR_PTR(ret);
->>> +        goto err;
->>>        }
->>>    -    ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
->>> -    if (ret) {
->>> +    stats = kzalloc(sizeof(*stats), GFP_KERNEL);
->>> +    if (!stats) {
->>>            kobject_put(&thpsize->kobj);
->>> -        return ERR_PTR(ret);
->>> +        ret = -ENOMEM;
->>> +        goto err;
->>>        }
->>>    -    ret = sysfs_create_group(&thpsize->kobj, &stats_attr_group);
->>> +    ret = kobject_init_and_add(&stats->kobj, &thpsize_child_ktype,
->>> +                   &thpsize->kobj, "stats");
->>> +    kobject_put(&thpsize->kobj);
->>>        if (ret) {
->>> -        kobject_put(&thpsize->kobj);
->>> -        return ERR_PTR(ret);
->>> +        kfree(stats);
->>> +        goto err;
->>>        }
->>>    -    thpsize->order = order;
->>> -    return thpsize;
->>> +    if (BIT(order) & THP_ORDERS_ALL_ANON) {
->>> +        ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
->>> +        if (ret)
->>> +            goto err_put;
->>> +
->>> +        ret = sysfs_create_group(&stats->kobj, &stats_attr_group);
->>> +        if (ret)
->>> +            goto err_put;
->>> +    }
->>> +
->>> +    if (BIT(order) & PAGECACHE_LARGE_ORDERS) {
->>> +        ret = sysfs_create_group(&stats->kobj, &file_stats_attr_group);
->>> +        if (ret)
->>> +            goto err_put;
->>> +    }
->>> +
->>> +    list_add(&stats->node, &thpsize_child_list);
->>> +    return 0;
->>> +err_put:
+On 2024/7/13 12:17, David Hildenbrand wrote:
+> On 13.07.24 06:01, Baolin Wang wrote:
 >>
->> IIUC, I think you should call 'sysfs_remove_group' to remove the group before
->> putting the kobject.
+>>
+>> On 2024/7/13 09:03, David Hildenbrand wrote:
+>>> On 12.07.24 07:39, Gavin Shan wrote:
+>>>> On 7/12/24 7:03 AM, David Hildenbrand wrote:
+>>>>> On 11.07.24 22:46, Matthew Wilcox wrote:
+>>>>>> On Thu, Jul 11, 2024 at 08:48:40PM +1000, Gavin Shan wrote:
+>>>>>>> +++ b/mm/huge_memory.c
+>>>>>>> @@ -136,7 +136,8 @@ unsigned long __thp_vma_allowable_orders(struct
+>>>>>>> vm_area_struct *vma,
+>>>>>>>             while (orders) {
+>>>>>>>                 addr = vma->vm_end - (PAGE_SIZE << order);
+>>>>>>> -            if (thp_vma_suitable_order(vma, addr, order))
+>>>>>>> +            if (!(vma->vm_file && order > MAX_PAGECACHE_ORDER) &&
+>>>>>>> +                thp_vma_suitable_order(vma, addr, order))
+>>>>>>>                     break;
+>>>>>>
+>>>>>> Why does 'orders' even contain potential orders that are larger than
+>>>>>> MAX_PAGECACHE_ORDER?
+>>>>>>
+>>>>>> We do this at the top:
+>>>>>>
+>>>>>>            orders &= vma_is_anonymous(vma) ?
+>>>>>>                            THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
+>>>>>>
+>>>>>> include/linux/huge_mm.h:#define THP_ORDERS_ALL_FILE
+>>>>>> (BIT(PMD_ORDER) | BIT(PUD_ORDER))
+>>>>>>
+>>>>>> ... and that seems very wrong.  We support all kinds of orders for
+>>>>>> files, not just PMD order.  We don't support PUD order at all.
+>>>>>>
+>>>>>> What the hell is going on here?
+>>>>>
+>>>>> yes, that's just absolutely confusing. I mentioned it to Ryan lately
+>>>>> that we should clean that up (I wanted to look into that, but am
+>>>>> happy if someone else can help).
+>>>>>
+>>>>> There should likely be different defines for
+>>>>>
+>>>>> DAX (PMD|PUD)
+>>>>>
+>>>>> SHMEM (PMD) -- but soon more. Not sure if we want separate ANON_SHMEM
+>>>>> for the time being. Hm. But shmem is already handles separately, so
+>>>>> maybe we can just ignore shmem here.
+>>>>>
+>>>>> PAGECACHE (1 .. MAX_PAGECACHE_ORDER)
+>>>>>
+>>>>> ? But it's still unclear to me.
+>>>>>
+>>>>> At least DAX must stay special I think, and PAGECACHE should be
+>>>>> capped at MAX_PAGECACHE_ORDER.
+>>>>>
+>>>>
+>>>> David, I can help to clean it up. Could you please help to confirm the
+>>>> following
+>>>
+>>> Thanks!
+>>>
+>>>> changes are exactly what you're suggesting? Hopefully, there are
+>>>> nothing I've missed.
+>>>> The original issue can be fixed by the changes. With the changes
+>>>> applied, madvise(MADV_COLLAPSE)
+>>>> returns with errno -22 in the test program.
+>>>>
+>>>> The fix tag needs to adjusted either.
+>>>>
+>>>> Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs 
+>>>> interface")
+>>>>
+>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>>> index 2aa986a5cd1b..45909efb0ef0 100644
+>>>> --- a/include/linux/huge_mm.h
+>>>> +++ b/include/linux/huge_mm.h
+>>>> @@ -74,7 +74,12 @@ extern struct kobj_attribute shmem_enabled_attr;
+>>>>     /*
+>>>>      * Mask of all large folio orders supported for file THP.
+>>>>      */
+>>>> -#define THP_ORDERS_ALL_FILE    (BIT(PMD_ORDER) | BIT(PUD_ORDER))
+>>>
+>>> DAX doesn't have any MAX_PAGECACHE_ORDER restrictions (like hugetlb). So
+>>> this should be
+>>>
+>>> /*
+>>>    * FSDAX never splits folios, so the MAX_PAGECACHE_ORDER limit does 
+>>> not
+>>>    * apply here.
+>>>    */
+>>> THP_ORDERS_ALL_FILE_DAX ((BIT(PMD_ORDER) | BIT(PUD_ORDER))
+>>>
+>>> Something like that
+>>>
+>>>> +#define THP_ORDERS_ALL_FILE_DAX                \
+>>>> +       ((BIT(PMD_ORDER) | BIT(PUD_ORDER)) & (BIT(MAX_PAGECACHE_ORDER
+>>>> + 1) - 1))
+>>>> +#define THP_ORDERS_ALL_FILE_DEFAULT    \
+>>>> +       ((BIT(MAX_PAGECACHE_ORDER + 1) - 1) & ~BIT(0))
+>>>> +#define THP_ORDERS_ALL_FILE            \
+>>>> +       (THP_ORDERS_ALL_FILE_DAX | THP_ORDERS_ALL_FILE_DEFAULT)
+>>>
+>>> Maybe we can get rid of THP_ORDERS_ALL_FILE (to prevent abuse) and fixup
+>>> THP_ORDERS_ALL instead.
+>>>
+>>>>     /*
+>>>>      * Mask of all large folio orders supported for THP.
+>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>> index 2120f7478e55..4690f33afaa6 100644
+>>>> --- a/mm/huge_memory.c
+>>>> +++ b/mm/huge_memory.c
+>>>> @@ -88,9 +88,17 @@ unsigned long __thp_vma_allowable_orders(struct
+>>>> vm_area_struct *vma,
+>>>>            bool smaps = tva_flags & TVA_SMAPS;
+>>>>            bool in_pf = tva_flags & TVA_IN_PF;
+>>>>            bool enforce_sysfs = tva_flags & TVA_ENFORCE_SYSFS;
+>>>> +       unsigned long supported_orders;
+>>>> +
+>>>>            /* Check the intersection of requested and supported 
+>>>> orders. */
+>>>> -       orders &= vma_is_anonymous(vma) ?
+>>>> -                       THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
+>>>> +       if (vma_is_anonymous(vma))
+>>>> +               supported_orders = THP_ORDERS_ALL_ANON;
+>>>> +       else if (vma_is_dax(vma))
+>>>> +               supported_orders = THP_ORDERS_ALL_FILE_DAX;
+>>>> +       else
+>>>> +               supported_orders = THP_ORDERS_ALL_FILE_DEFAULT;
+>>>
+>>> This is what I had in mind.
+>>>
+>>> But, do we have to special-case shmem as well or will that be handled
+>>> correctly?
+>>
+>> For anonymous shmem, it is now same as anonymous THP, which can utilize
+>> THP_ORDERS_ALL_ANON.
+>> For tmpfs, we currently only support PMD-sized THP
+>> (will support more larger orders in the future). Therefore, I think we
+>> can reuse THP_ORDERS_ALL_ANON for shmem now:
+>>
+>> if (vma_is_anonymous(vma) || shmem_file(vma->vm_file)))
+>>     supported_orders = THP_ORDERS_ALL_ANON;
+>> ......
+>>
 > 
-> Are you sure about that? As I understood it, sysfs_create_group() was
-> conceptually modifying the state of the kobj, so when the kobj gets destroyed,
-> all its state is tidied up. __kobject_del() (called on the last kobject_put())
-> calls sysfs_remove_groups() and tidies up the sysfs state as far as I can see?
+> 
+> It should be THP_ORDERS_ALL_FILE_DEFAULT (MAX_PAGECACHE_ORDER imitation 
+> applies).
 
-IIUC, __kobject_del() only removes the ktype defaut groups by 
-'sysfs_remove_groups(kobj, ktype->default_groups)', but your created 
-groups are not added into the ktype->default_groups. That means you 
-should mannuly remove them, or am I miss something?
+Yes, indeed, I missed MAX_PAGECACHE_ORDER limitation.
 
