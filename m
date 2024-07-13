@@ -1,216 +1,122 @@
-Return-Path: <linux-kernel+bounces-251523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C03F9305D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:00:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6C49305D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67C10B21A82
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10981281D90
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EB91386DF;
-	Sat, 13 Jul 2024 14:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959721386DF;
+	Sat, 13 Jul 2024 14:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b="EtD9zI/y"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTxVq6xv"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16F073452
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 14:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862A18BFF;
+	Sat, 13 Jul 2024 14:04:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720879247; cv=none; b=U7ktryK+burJ7ZKwIgN718vUMYt/TaKUcy7VYFtFSqSi44dAgaMREheQTzvM7WckX1seY/yon+ty5aE91q2j1PlITlhnzTEHFpDvraX8NKRLmmTYz+/0i/KmALQh4YSRCIC7wOE1Tb2PI8r5o16S5VVxKGSBnLPQ1lRx3S2Ma1w=
+	t=1720879500; cv=none; b=madqTfU+jMw4IagPrteV35qufz2SbAyt5tPkwtcMvBQct5IcWsOu+6NgO9gEAGXid5Asgv3SPf6O1zsPYTJm9oI+WBN9okwRoRi1GnRL/oda/34ikEJMUOH7RgZN9V7hJDdOf8UK3CKTX9K5eK/rw+TkOTzFn+PburBuEXb7Q8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720879247; c=relaxed/simple;
-	bh=r5lGOjgT5uLqu8REsWqs+Y9CdWQ5tNLhWl74AZ1XqOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bcsJnidJs0o0hp0fNjzdcvw3HSdHW1o1VgwliR1pjhwvCqvubHJ6WkKzRPhUpbTk4yyT8aS7qQOmUBxq7HiyOAyx1DLXVmW8E2YwY8nft7guoelZH7kCVs5//UlWmcjFJV+SRZQtzK+Qc7Y0XMAzhV6MHKy06RBzXD3Q7h+X7+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu; spf=pass smtp.mailfrom=vt.edu; dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b=EtD9zI/y; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vt.edu
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-25e919bec9eso1188618fac.1
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 07:00:45 -0700 (PDT)
+	s=arc-20240116; t=1720879500; c=relaxed/simple;
+	bh=+JjPg/ynR210yfPecduwd0IkUI6e+zEV9+ZDkl3p/gY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ks1elDXHMq9uUwANxd/vQAzVFhlM7+X7L8cNqaMjLGrIk+PSaq9sZLcEOUXMuRa3hTVLLyL5TN5s9zuq1RCxljVxb5U37oOIO4x9jZ5AgSlrGItz+ANaaF6WAPz4vT53EE0IhjSlFjTASfQzSEktxUpz4LQZEM8V4ywRQh54BEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UTxVq6xv; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3d96365dc34so2330369b6e.2;
+        Sat, 13 Jul 2024 07:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vt-edu.20230601.gappssmtp.com; s=20230601; t=1720879245; x=1721484045; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0MB9URCEqqudada+qa1wxvDyMrOj1iFWXQ/v4RlOO34=;
-        b=EtD9zI/ywQLaZm5btQSgGh3rVy1Lp2uF41oDy+mxP3RHXFjLBvCtDcTJg5QOX5bbUY
-         NT7qwR5iIVS56Jw3HPqv9WY4MLHGP0AkyME1naFizIIcLWGFL/KbKk7TrgxWw7MtwEP0
-         m0bi55RdDe2CmRnvPOuC1+FvmFN+stz+Khq5ydZJED/+t27EX4HGmjc5ioT0TpUmtLm1
-         QaVrQe1wlq2Wzq5gYp2iPv5lCU/NhIk8BME9O6A6CCUEskQmM1prpfoPq71EzT8R2gAM
-         LjHzYCd/YWgm+L8Idz0GblY/ozAjJRDUvFPovqZM5u6tG8iloKY4fYHycz/Z5vaODOGS
-         3Liw==
+        d=gmail.com; s=20230601; t=1720879498; x=1721484298; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YL0cATNIDQXNGuBmgfBZv3zmqaEM0VVnU3yAgSMA/do=;
+        b=UTxVq6xvr4ft/PHC5WxUp2LI2RHKiwTWqKGIUwX4wQ6YmH+Clzk6rtSRsN4xDzw/J7
+         /V1BlC8f1LW9cSgOtPPoEgdKzHBfWO2eW4+RDAYPrjS3UsbnviJOVFFj5glRv+RBbf3r
+         UQmT/u5zn+vkfqt90IUabbZn9JKpPEHSXbkzysP/2ClAvFiq9Vno1JOBUnxmM1a1SLG/
+         gRIZs9tvGSyq6pp23b6aqNoxFYMsJKt9AV8j9Sjh+iZNgvGtmVsL3YnYYQGM9+jkhns2
+         b2372thkRrIZoO4FKY5pCkMUrKOzZdr8BZio9Scux1BYfrzy0h1GgmEiCEqp6m6ZpBHp
+         esyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720879245; x=1721484045;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0MB9URCEqqudada+qa1wxvDyMrOj1iFWXQ/v4RlOO34=;
-        b=prOGhcXCD0KrngYId7aGmRE2x62vtqtt7VkbCummmUeqFBdYj7D28Zihithb+zd4Sb
-         nbbHUjVWJH3MuQ6Bz2jPFCULJTxmAnuRR2yaqE/iqKuWbRk/cPYqScekNaU5izBq9hXH
-         t7LsBGL5YQe4a52u2/3OZxkRiZcciQWF7FyWjqbRgRtoQcpBaFDkNfexYWE3oWsGDnhK
-         bVrt+Wv6s/oa7Rx4KOLnPVBLDk6lDAfkwEpQnFt5rFRQLJsvD2lJqXxi7ZuE8oDYXVtV
-         gfPk6aJ+VT5oM82+/PEAdc05k1BbOou6e9GU/J7Y8Dm0hDuPyYWRKH5fy1cYrn7IjESI
-         uNxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqBvVgjK4PexH9FY/NSLVRBQ628kyQuZnqM80N56FkcHVgiYWm0D9BwDcDeTagShTrMVvcHyfl9FDkjkA784ZW+4id3gl29hXWHm4M
-X-Gm-Message-State: AOJu0YxDTY07XnehrCj9D3WSJ/42pIODNelB/1JqVX0kLNcS/yZw7z3o
-	wsUM5KZCnbDH1IhO4NvJqU+S0mwECsIjeMyvtlj204XnoMwPrFA9YPRaQICUEpC/vQdRtJNeZPN
-	e1mQ=
-X-Google-Smtp-Source: AGHT+IE06bXE66ACQQ0PJhjCztRDwyWNUdp2P64UQikCEcfdm9ALzdNjzr0pqNjCPRvNshFct+R/4Q==
-X-Received: by 2002:a05:6870:638d:b0:254:c842:46f0 with SMTP id 586e51a60fabf-25eaec5538dmr11200811fac.59.1720879244572;
-        Sat, 13 Jul 2024 07:00:44 -0700 (PDT)
-Received: from ?IPV6:2603:8080:2300:de:3d70:f8:6869:93de? ([2603:8080:2300:de:3d70:f8:6869:93de])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-26075176419sm247933fac.31.2024.07.13.07.00.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Jul 2024 07:00:43 -0700 (PDT)
-Message-ID: <236c6306-0d7d-462c-a127-0d130230b961@vt.edu>
-Date: Sat, 13 Jul 2024 09:00:42 -0500
+        d=1e100.net; s=20230601; t=1720879498; x=1721484298;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YL0cATNIDQXNGuBmgfBZv3zmqaEM0VVnU3yAgSMA/do=;
+        b=Zl3JrpAV70lKsDUDRzWSIgFrOgoXugOrEZfXu/ltSHpfw8+wH8NnGUYim6Oqt98atL
+         F448y472D2VJlLiXqowMAMJTkszqJ1Y4rIQVO588WtH1Sw159YVr07+fjf37cW+vLZir
+         NsjXefapa6wb8dFWc7FE9v0LUFQTCt9g6rEikdC5GbDoAxudPAfrQDn5xqbv9TBmH0lj
+         2Qec+nTXaOuIDwioMmcGjqSlap4HBD9MaMQjAu0gamvki+8GvC+P1gpxd74ZPR+vIsjA
+         NN8N7pi1jumDc+abB5qW71Kwv+DyUUr92gzDI9qrft2v7a3IPK4L2mWNm0aoDZcZkq5a
+         FmDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeLR8MREP5ZhsBzKns7ABJI+dZghb39f8ueUmaXiSLDRX+up6xIGuKaR78AGfUnr8x82uJK1JYEZinKzhoSYaiWYBrrhdNLgtms49nbum4d2TdB2D5mPEC1G1+9ObiMfIlrIttFiJR
+X-Gm-Message-State: AOJu0YzHobpDK1rWhaveV52OtgsuFNgbxPfRwqRa2gJuk+M1Ij0fOGZk
+	G1jnLCT9ey4NplflwuV5EcLGBbERghNl3FYicEi6Bp7vgARM/eSJ
+X-Google-Smtp-Source: AGHT+IHCGZrhgCeHYGZ0Gh8Ey3ljPsZV3Bz0dMlJmy821JAQdVFJxRmvO0afXBLOfizd2hy3gEbhcg==
+X-Received: by 2002:a05:6808:1b2c:b0:3d9:2e7e:53c4 with SMTP id 5614622812f47-3d93c046573mr18042982b6e.34.1720879498541;
+        Sat, 13 Jul 2024 07:04:58 -0700 (PDT)
+Received: from pipaware.austin.rr.com ([2603:8080:2300:de:3d70:f8:6869:93de])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dab3e0fa9dsm192463b6e.39.2024.07.13.07.04.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jul 2024 07:04:58 -0700 (PDT)
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+To: corbet@lwn.net,
+	sergio.collado@gmail.com,
+	peterz@infradead.org,
+	rdunlap@infradead.org
+Cc: bilbao@vt.edu,
+	jembid@ucm.es,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+Subject: [PATCH v2 0/1] docs: scheduler: Start documenting the EEVDF scheduler
+Date: Sat, 13 Jul 2024 09:04:53 -0500
+Message-ID: <20240713140455.4072847-1-carlos.bilbao.osdev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] docs: scheduler: Start documenting the EEVDF
- scheduler
-To: Randy Dunlap <rdunlap@infradead.org>,
- Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, corbet@lwn.net,
- sergio.collado@gmail.com, peterz@infradead.org
-Cc: jembid@ucm.es, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20240713003213.4008440-1-carlos.bilbao.osdev@gmail.com>
- <20240713003213.4008440-2-carlos.bilbao.osdev@gmail.com>
- <201d597e-e0c7-411b-a29c-dfc3111aa863@infradead.org>
-Content-Language: en-US
-From: Carlos Bilbao <bilbao@vt.edu>
-In-Reply-To: <201d597e-e0c7-411b-a29c-dfc3111aa863@infradead.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hello,
+I was in the process of updating the CFS documentation, as Sergio proposed,
+when I realized we don't have any EEVDF documentation to point to. I have
+started it. I know it isn't a lot of info about EEVDF in the doc, but (1) I
+wanted to get the ball rolling, and (2) I prefer to keep it light until we
+have a solid idea of how EEVDF will actually end up. This could take a
+while. When or if it stops being an option, we can revisit it.
 
-On 7/12/24 23:22, Randy Dunlap wrote:
-> Hi,
-> 
-> On 7/12/24 5:32 PM, Carlos Bilbao wrote:
->> Add some documentation regarding the newly introduced scheduler EEVDF.
->>
->> Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
->> ---
->>  Documentation/scheduler/index.rst            |  1 +
->>  Documentation/scheduler/sched-design-CFS.rst | 10 +++--
->>  Documentation/scheduler/sched-eevdf.rst      | 44 ++++++++++++++++++++
->>  3 files changed, 51 insertions(+), 4 deletions(-)
->>  create mode 100644 Documentation/scheduler/sched-eevdf.rst
->>
->> diff --git a/Documentation/scheduler/index.rst b/Documentation/scheduler/index.rst
->> index 43bd8a145b7a..444a6fef1464 100644
->> --- a/Documentation/scheduler/index.rst
->> +++ b/Documentation/scheduler/index.rst
->> @@ -11,6 +11,7 @@ Scheduler
->>      sched-arch
->>      sched-bwc
->>      sched-deadline
->> +    sched-eevdf
-> 
-> I would have probably put EEVDF just after CFS instead of before it...
-> whatever.
-> 
->>      sched-design-CFS
->>      sched-domains
->>      sched-capacity
->> diff --git a/Documentation/scheduler/sched-design-CFS.rst b/Documentation/scheduler/sched-design-CFS.rst
->> index bc1e507269c6..b703c6dcb3cd 100644
->> --- a/Documentation/scheduler/sched-design-CFS.rst
->> +++ b/Documentation/scheduler/sched-design-CFS.rst
->> @@ -8,10 +8,12 @@ CFS Scheduler
->>  1.  OVERVIEW
->>  ============
->>  
->> -CFS stands for "Completely Fair Scheduler," and is the new "desktop" process
->> -scheduler implemented by Ingo Molnar and merged in Linux 2.6.23.  It is the
->> -replacement for the previous vanilla scheduler's SCHED_OTHER interactivity
->> -code.
->> +CFS stands for "Completely Fair Scheduler," and is the "desktop" process
->> +scheduler implemented by Ingo Molnar and merged in Linux 2.6.23. When
->> +originally merged, it was the replacement for the previous vanilla
->> +scheduler's SCHED_OTHER interactivity code. Nowadays, CFS is making room
->> +for EEVDF, for which documentation can be found in
->> +:ref:`sched_design_EEVDF`.
->>  
->>  80% of CFS's design can be summed up in a single sentence: CFS basically models
->>  an "ideal, precise multi-tasking CPU" on real hardware.
->> diff --git a/Documentation/scheduler/sched-eevdf.rst b/Documentation/scheduler/sched-eevdf.rst
->> new file mode 100644
->> index 000000000000..31ad8f995360
->> --- /dev/null
->> +++ b/Documentation/scheduler/sched-eevdf.rst
->> @@ -0,0 +1,44 @@
->> +.. _sched_design_EEVDF:
->> +
->> +===============
->> +EEVDF Scheduler
->> +===============
->> +
->> +The "Earliest Eligible Virtual Deadline First" (EEVDF) was first introduced
->> +in a scientific publication in 1995 [1]. The Linux kernel began
->> +transitioning to EEVDF in version 6.6 (as a new option in 2024), moving
->> +away from the earlier Completely Fair Scheduler (CFS) in favor of a version
->> +of EEVDF proposed by Peter Zijlstra in 2023 [2-4]. More information
->> +regarding CFS can be found in :ref:`sched_design_CFS`.
->> +
->> +Similarly to CFS, EEVDF aims to distribute CPU time equally among all
->> +runnable tasks with the same priority. To do so, it assigns a virtual run
->> +time to each task, creating a "lag" value that can be used to determine
->> +whether a task has received its fair share of CPU time. In this way, a task
->> +with a positive lag is owed CPU time, while a negative lag means the task
->> +has exceeded its portion. EEVDF picks tasks with lag greater or equal to
->> +zero and calculates a virtual deadline (VD) for each, selecting the task
->> +with the earliest VD to execute next. It's important to note that this
->> +allows latency-sensitive tasks with shorter time slices to be prioritized,
->> +which helps with their responsiveness.
->> +
->> +There are ongoing discussions on how to manage lag, especially for sleeping
->> +tasks; but at the time of writing EEVDF uses a "decaying" mechanism based
->> +on virtual run time (VRT). This prevents tasks from exploiting the system
->> +by sleeping briefly to reset their negative lag: when a task sleeps, it
->> +remains on the run queue but marked for "deferred dequeue," allowing its
->> +lag to decay over VRT. Hence, long-sleeping tasks eventually have their lag
->> +reset. Finally, tasks can preempt others if their VD is earlier, and tasks
->> +can request specific time slices using the new sched_setattr() system call,
->> +which further facilitates the job of latency-sensitive applications.
->> +
->> +4. REFERENCES
->> +=============
-> 
-> Why is this section numbered 4?
-> No other sections here are numbered.
-> 
->> +
->> +[1] https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=805acf7726282721504c8f00575d91ebfd750564
->> +
->> +[2] https://lore.kernel.org/lkml/a79014e6-ea83-b316-1e12-2ae056bda6fa@linux.vnet.ibm.com/
->> +
->> +[3] https://lwn.net/Articles/969062/
->> +
->> +[4] https://lwn.net/Articles/925371/
-> 
-> Other than those 2 comments:
-> 
-> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thank you for reviewing and providing feedback, Randy. I'm sending v2 now.
-
-> 
-> 
-> Thanks.
-> 
+Sergio, if you’d like to update the Spanish translations of CFS and add one
+for this new EEVDF doc, please go for it! ;)
 
 Thanks,
 Carlos
+
+P.S.: Jon, I have triple-checked for compilation warnings, but if you
+      encounter any, please LMK the versions of your tools so I can match
+      them moving forward.
+
+Carlos:
+  docs: scheduler: Start documenting the EEVDF scheduler
+
+---
+Changelog:
+  v2: Move file within scheduler index. Remove incorrect subsection
+      numbering.
+
+---
+ Documentation/scheduler/index.rst            |  1 +
+ Documentation/scheduler/sched-design-CFS.rst | 10 +++--
+ Documentation/scheduler/sched-eevdf.rst      | 44 ++++++++++++++++++++
+ 3 files changed, 51 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/scheduler/sched-eevdf.rst
+
 
