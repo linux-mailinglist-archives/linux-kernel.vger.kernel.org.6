@@ -1,148 +1,123 @@
-Return-Path: <linux-kernel+bounces-251561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8253C930665
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 18:31:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3BA930669
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 18:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97A7D1C20B20
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:31:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 052BE282A0A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 16:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4D213C8E8;
-	Sat, 13 Jul 2024 16:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124C713C8E3;
+	Sat, 13 Jul 2024 16:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ph7Pb9kr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MaDCh1zs"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DE21386DF;
-	Sat, 13 Jul 2024 16:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C409C1E507;
+	Sat, 13 Jul 2024 16:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720888304; cv=none; b=OGKZ3CZeQ6pO2xsyRYMdYbglj14JABBJdCQjEbEbibTQRbL0+xKWPUfNqa1hbHMWV6oKWuFEONw+XNSvs0p/NeizIqsVZsZ2cnd4OTNaHjHVOGUfA5y4/NAfEWASPqPTY4bMZ4j8ICK2fcElX9BOerAeFzxmRLuOp3x0YrsEgzg=
+	t=1720888533; cv=none; b=HLydczJSez5JMV4d7f18OKubH6ju/SIrDZ7ghvu9KiylJJ5FOjnlEOl/S8bcwU0vh1C4np4bRCrofW+GF2EuIKW5CgENM34DptZN5qbqxPTVVfI+1rCdKTTbfr7A/jmYj0AZHYaxwthzg4h/bsRn6XO7/wxwwexwypQIlCpHZDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720888304; c=relaxed/simple;
-	bh=K1p6MLOeYFJkkB/mYrJY/2L1UK9sdhYQYCjNk1tJ2UM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kiHL4VTxSc38i82rkl5P05r5rpiBWFacDveQOUcI24VAXoSchVV2UmfvlohGJYap/l8XLXFBbqtkFkCPn3Tp1/o425kceKpAI5bOBicm/CLm9kunGm/Lcp0bKFv/nBWH7L0CZJYKm7QWAVrPnHgkdvQV2vM4s+dYp1apO8QmBXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ph7Pb9kr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6931C32781;
-	Sat, 13 Jul 2024 16:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720888303;
-	bh=K1p6MLOeYFJkkB/mYrJY/2L1UK9sdhYQYCjNk1tJ2UM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ph7Pb9krgqwoAsG5PA6szWbkaFzoGg+oL3GgEJUD+4AAJwVaFNSGH/hHfY2x3k7qI
-	 lhAAjPPlNt8TjN0oqp2O42H4KA+09ZlUWBg2ZrdP2PHxdJVWP1k5nls8BzIOREJ7Qt
-	 LLHWsRez3JYvbOJuxbTef2EPza8ByFzQwa00eJvud1QyigVASg8NvD2XypS5+fXgp2
-	 6wnkDJsOD/I4LOOmYuWUi8IyxXPqdUfCWV14x0y3kZtNyIv9Gvz0T2WLhfq8Y7KtZ+
-	 Bb+d458tlV+ugAOxPNDswoX/5U7QaG3LR2ubnweduOWfx3Fkjgkc+IGPtB3RnKkLbZ
-	 /7K+x6LnIsYCg==
-Date: Sat, 13 Jul 2024 09:31:43 -0700
-From: Kees Cook <kees@kernel.org>
-To: Roman Kisel <romank@linux.microsoft.com>
-Cc: akpm@linux-foundation.org, apais@linux.microsoft.com, ardb@kernel.org,
-	bigeasy@linutronix.de, brauner@kernel.org, ebiederm@xmission.com,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	nagvijay@microsoft.com, oleg@redhat.com, tandersen@netflix.com,
-	vincent.whitchurch@axis.com, viro@zeniv.linux.org.uk,
-	apais@microsoft.com, benhill@microsoft.com, ssengar@microsoft.com,
-	sunilmut@microsoft.com, vdso@hexbites.dev
-Subject: Re: [PATCH v2 1/1] binfmt_elf, coredump: Log the reason of the
- failed core dumps
-Message-ID: <202407130840.67879B31@keescook>
-References: <20240712215223.605363-1-romank@linux.microsoft.com>
- <20240712215223.605363-2-romank@linux.microsoft.com>
+	s=arc-20240116; t=1720888533; c=relaxed/simple;
+	bh=Gd3IneYqf04MaRo7Ssmcq0qpHfcEl/tbrCJgGq/2e0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NVKEcUMOscbcOQaXRAj4hTU6qKhFeAn/JvRmc2MzbVjB75ej+XtuFbpNAtBNdyRY+rSuUQQ6HtH4RxkJ2skd0LXHNC1VoFyQ1xLEzOnBjhlBeiDJY/B2UP1B3bCpKSSVOhxu6Yz/3jkg8oaPcI4uk05UdEQ1JiaCJq2lBxfV0Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MaDCh1zs; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso30070821fa.3;
+        Sat, 13 Jul 2024 09:35:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720888529; x=1721493329; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N/3nR4der/vxlRqDW7m9SsLUqgipW3siIAQy0+M0Z0M=;
+        b=MaDCh1zs1Z+WpNa3BKvbWRXJjjtshjLSiI2tm07jX87FFlKOU1Z/QSDy3uD0JewQc/
+         OWqmbhA4wtthaL0vdWf1QRD9y62hJwQGIX7vW041AQUjDlMyFnF9kbeqU/cku4HeXrKh
+         MCtu7l7Zow9Cn5awTJ1s4ZgDNNi74tWSLn96U3+vChgGuB4GSWChFA7TF7syOPusPbVz
+         CG/e5TeAfZdLeD2yno0XOtWqV2S8x93HnPZDLtnFVrxXoELuqICGFTHc2ffjZoax2LHN
+         lCMjfx2QNLaqYVWx2iOGoDwkzfXCCeitKh97qAkDdCIy7NNSQJ1KMD0H5Y225cKFZv4B
+         YXBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720888529; x=1721493329;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N/3nR4der/vxlRqDW7m9SsLUqgipW3siIAQy0+M0Z0M=;
+        b=mN80uobD/bumrqQ/BxHEzKSxZC7gG2QcfguQgI3RW+3qiFcUEc8F3PZcrZLxhLcfFs
+         5eB4IxZA7F9E0+qYDDJt8MtWbX8UiLHXzR+TLCCtl/ag4Sgskmny40jQpB0zQBYUPVEG
+         Mw0H1cvyQ4eFcH59t2gWajVuTewQeMk1goykR1fQbyFA4W9IEa48DvgEYbQCBwdUDZEO
+         FEkBmcq6DsDfjkxDSZFmFUA0GN7Wt3LhoAq83sXkSJKgx2UcHwToU65ukhP77BNfgErN
+         tNv+ytnDTAowI3R+tZoQdR15EQMEuyHZlO0DVAB4kDgpDcdHwKQf/W/Qvv3l/9oSpbPW
+         8RRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJDqgmDui92xtILOdduH9F/ugejf3P4WS2fbrh1UxR+4fjQpkjPO2C6Z4+h0RA3NOfFOrJGzYLtSey4aCFDcs4oYbhYkro13WDhosIuEBEapyXBw83MNKegm38x4HT3Rbz6829lPH13PId2yq36G114242fRGnTgMfwiOn1w1aKtX7FcIHlPOM+AQTNV6fsMrP/iBgsLM7mL6QXLmPYL65W2YdrwlEl9x+nA==
+X-Gm-Message-State: AOJu0Yx/sba3Phk5kVBRqQUeYDmMpHPtgAWdC9cSCTlt6BcXNFqSL6eY
+	ZqRW2dKi2IR/ilGCUpQsM8mFBr7mKV/zIhHp+pDpmvqTsPlK2SIc
+X-Google-Smtp-Source: AGHT+IHp7YhShN+wlqKduKSeFSQWJgeyuMGHWcrkDZQoTNzmSsgIZYb4F6zmqODAtHkYbNxN2iLEwg==
+X-Received: by 2002:a2e:b046:0:b0:2ee:83f7:8b32 with SMTP id 38308e7fff4ca-2eeb30dc45amr89959781fa.21.1720888528532;
+        Sat, 13 Jul 2024 09:35:28 -0700 (PDT)
+Received: from localhost.localdomain ([94.120.81.83])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b26f62bd9sm953753a12.94.2024.07.13.09.35.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jul 2024 09:35:28 -0700 (PDT)
+From: =?UTF-8?q?Mustafa=20Ek=C5=9Fi?= <mustafa.eskieksi@gmail.com>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: mustafa.eskieksi@gmail.com,
+	jdelvare@suse.com,
+	linux@roeck-us.net,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	pavel@ucw.cz,
+	lee@kernel.org,
+	linux-leds@vger.kernel.org,
+	rishitbansal0@gmail.com,
+	bahaku@elrant.team,
+	carlosmiguelferreira.2003@gmail.com,
+	alviro.iskandar@gnuweeb.org,
+	ammarfaizi2@gnuweeb.org,
+	bedirhan_kurt22@erdogan.edu.tr
+Subject: [PATCH v6] platform/x86: Add wmi driver for Casper Excalibur laptops
+Date: Sat, 13 Jul 2024 19:35:20 +0300
+Message-ID: <20240713163521.21958-1-mustafa.eskieksi@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712215223.605363-2-romank@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 12, 2024 at 02:50:56PM -0700, Roman Kisel wrote:
-> Missing, failed, or corrupted core dumps might impede crash
-> investigations. To improve reliability of that process and consequently
-> the programs themselves, one needs to trace the path from producing
-> a core dumpfile to analyzing it. That path starts from the core dump file
-> written to the disk by the kernel or to the standard input of a user
-> mode helper program to which the kernel streams the coredump contents.
-> There are cases where the kernel will interrupt writing the core out or
-> produce a truncated/not-well-formed core dump without leaving a note.
-> 
-> Add logging for the core dump collection failure paths to be able to reason
-> what has gone wrong when the core dump is malformed or missing.
-> 
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> ---
->  fs/binfmt_elf.c          |  60 ++++++++++++++++-----
->  fs/coredump.c            | 109 ++++++++++++++++++++++++++++++++-------
->  include/linux/coredump.h |   8 ++-
->  kernel/signal.c          |  22 +++++++-
->  4 files changed, 165 insertions(+), 34 deletions(-)
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index a43897b03ce9..cfe84b9436af 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -1994,8 +1994,11 @@ static int elf_core_dump(struct coredump_params *cprm)
->  	 * Collect all the non-memory information about the process for the
->  	 * notes.  This also sets up the file header.
->  	 */
-> -	if (!fill_note_info(&elf, e_phnum, &info, cprm))
-> +	if (!fill_note_info(&elf, e_phnum, &info, cprm)) {
-> +		pr_err_ratelimited("Error collecting note info, core dump of %s(PID %d) failed\n",
-> +			current->comm, current->pid);
+Hi, I apologize for the delay. I recently saw Carlos's patch and your
+reviews, so I improved my driver according to it and made it ready for
+another version.
 
-A couple things come to mind for me as I scanned through this:
+I didn't include the documentation for the new zoned keyboard backlight
+naming since Carlos is going to do that. However, I changed the naming of
+corner led because it isn't affected when other zones' brightness changes.
+And one last reason to not name it kbd_zoned_backlight is the fact that it
+isn't on the keyboard, it's on the two corners of the laptop. I'm still not
+sure how to name it, so I named it 'backlight'.
+Here's a photo of the laptop: https://imgur.com/a/JEqMiGL
 
-- Do we want to report pid or tgid?
-- Do we want to report the global value or the current pid namespace
-  mapping?
+Mustafa Ekşi (1):
+  platform/x86: Add wmi driver for Casper Excalibur laptops
 
-Because I notice that the existing code:
-
->  			printk(KERN_WARNING "Pid %d(%s) over core_pipe_limit\n",
->  			       task_tgid_vnr(current), current->comm);
-
-Is reporting tgid for current's pid namespace. We should be consistent.
-
-I think all of this might need cleaning up first before adding new
-reports. We should consolidate the reporting into a single function so
-this is easier to extend in the future. Right now the proposed patch is
-hand-building the report, and putting pid/comm in different places (at
-the end, at the beginning, with/without "of", etc), which is really just
-boilerplate repetition.
-
-How about creating:
-
-static void coredump_report_failure(const char *msg)
-{
-	char comm[TASK_COMM_LEN];
-
-	task_get_comm(current, comm);
-
-	pr_warn_ratelimited("coredump: %d(%*pE): %s\n",
-			    task_tgid_vnr(current), strlen(comm), comm, msg);
-}
-
-Then in a new first patch, convert all the existing stuff:
-
-	printk(KERN_WARNING ...)
-	pr_info(...)
-	etc
-
-Since even the existing warnings are inconsistent and don't escape
-newlines, etc. :)
-
-Then in patch 2 use this to add the new warnings?
+ MAINTAINERS                       |   6 +
+ drivers/platform/x86/Kconfig      |  14 +
+ drivers/platform/x86/Makefile     |   1 +
+ drivers/platform/x86/casper-wmi.c | 656 ++++++++++++++++++++++++++++++
+ 4 files changed, 677 insertions(+)
+ create mode 100644 drivers/platform/x86/casper-wmi.c
 
 -- 
-Kees Cook
+2.45.2
+
 
