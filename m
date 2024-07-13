@@ -1,75 +1,125 @@
-Return-Path: <linux-kernel+bounces-251473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CDA0930546
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:52:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F56930548
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBE751C214EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:52:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F371F21A76
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625D67346D;
-	Sat, 13 Jul 2024 10:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635AF745E2;
+	Sat, 13 Jul 2024 10:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHhhXguG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ZP3nL2AY"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59B942049;
-	Sat, 13 Jul 2024 10:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6E042049;
+	Sat, 13 Jul 2024 10:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720867960; cv=none; b=K6rowdRO5SCtuLnaS/rkNbjv0f+s2JXvoNxb1HIqumU25Y2parYdXGgkg+ujbl5lJafEybr/8/K1V1fdGBjeNR8m+n3Vqs2/KExqlAmFUt21168/fukV0h0Tt3xF++oCfGJg2xFHnwwgG0MOEVnaazDE0vGuPIDdndHuEitMjkU=
+	t=1720868122; cv=none; b=I3SvIsI03/6nyYIjiJukFILLdaOzDRBHbTZcA3Tt/lByuCeHrcyKfod+exG2DvqjbocwfHi4j53gMe6fHZ+AL5eZar9rt2UjTz7dSwa1YLO82djP30yeHESCdWjoRMXRGWHypl/9FNsu30sMjODOCHhXUMDgvK0ny/ZtS3oQWzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720867960; c=relaxed/simple;
-	bh=43LhFOxCK58+AQF+OdT4ENdqVuUYcC4IQilexjmq63Y=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mqrTT2trcidV57nV4KUO+gWGYAC6+5wrCH2OxYxGBFPWZzMWF2fEcgOm4Jcp3VbPm9nUXFkZoKD+tOQgPpv8ouWhnqgmgfRcNwaqGvt/jRManqK+z/l2cHY54PTAmMzjOpGISrLDkGpBZbusVJEmBUUv5B9XL/ALgkWUyicM7Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHhhXguG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3558C32781;
-	Sat, 13 Jul 2024 10:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720867960;
-	bh=43LhFOxCK58+AQF+OdT4ENdqVuUYcC4IQilexjmq63Y=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=MHhhXguGZNIf8qXs5Dk3zmNoKO8I7+dY0QlSihXF/qZJcNOYo/JrzGR2ANQ9Sexsc
-	 tF7X0zkeeadUraOHpsESY6PQ59bjW7On09ymuSn3WoSaa1x0SzyBQOITpbJnTxnvP+
-	 Iw+d6fJ3xpJTfLfo1Hgr9wvV+nTAKoW287A5BCJFoULHGf1XXi7r2Kek1gJb50Dase
-	 zcA9MiPrXtu+OQBcddadtpyRov76eNSMFzrCoLC8juySDi83oBBzJKZVhMoO6bLGEw
-	 V9pX8dkv4c+LGgDJHqWOI1MkHN70r/E3NRi8hRTvsp9tGA1eP3QEL/y8b481tLLMdn
-	 ktz6wzg7VIZtw==
-Date: Sat, 13 Jul 2024 12:52:37 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-i2c <linux-i2c@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] i2c-host for v6.11
-Message-ID: <3q4w7de2eoiyhow7f3nzzfv5upkgnzbqrsc2g3kblnoetrb6xx@k4544sbfs5yr>
-References: <yxymqbpeuhq52w3ie5nl5pkoojjuybaeodqtrd6uhe2rkmfhfb@3dqr6vefsdxh>
- <ZpJF39FFqnJfinQn@shikoro>
- <ZpJGNirkEoBFixQP@shikoro>
+	s=arc-20240116; t=1720868122; c=relaxed/simple;
+	bh=Mdx3w8q7KQJYWfl/irAVZ9IeK4hNn9RgGyBFy7QYeBw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=owQ6BSu705s/5XVk93brnGTJ48YSYbAocv9HhAg8C7JIeD2vacL8CD2OZJiLJEr21QtZKoRDPyyM2TrOo969coNNKEU0B/TzPaihF0daXRCkgsCCkLVEzG3AEyGFKTDeGYQP8ru1HbFbnXYPnJ2I4N275//YlYLRqMNub28bPGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ZP3nL2AY; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720868110; x=1721472910; i=markus.elfring@web.de;
+	bh=DhTEpLlivlrGpySqjjeN3M7w54ILJzJ9uQo+GK+NNOc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ZP3nL2AYNbd5aQpzH8CWfqsWkXs1NppBIXKq3o38WV1s4DrtFovJUy4N3+WeQTqf
+	 iA2QxhIGH9SOYNjotkXOHGH+Fbr8MUzHUOhH7jw6rBS0V7sZtkv3zDAsKRhVW9Hch
+	 vB9YE9ulbmOerKLZWXfMSmwWmcaS0H4eXADIYd5F0UB/163m1eKq4fQk/G26fCN+h
+	 Uxq1ARFy9uABb6yZp50rNIqtCMy3pqXBOiRn05iccTDhhb2fcHWnYVWN1YwjhQwje
+	 M6fsvZU1gUvMe80jl1I1SdG23MkTwbsnQoOEVuLW8Nu8Re8qfJC4R4e5U9lnWBmWw
+	 juW17I1net9lTQcZ1w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTvw0-1ssP1z3dac-00TlLs; Sat, 13
+ Jul 2024 12:55:09 +0200
+Message-ID: <2f694a65-218a-48cc-b0e6-fcca6aaf646f@web.de>
+Date: Sat, 13 Jul 2024 12:55:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZpJGNirkEoBFixQP@shikoro>
+User-Agent: Mozilla Thunderbird
+To: dmaengine@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Vinod Koul <vkoul@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] dmaengine: Use seq_putc() in two functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nWYO7sFfEEhfpedzY7Hgh1tN+t2UM9S+7icVE7Z25wrlc7ESInb
+ LzUo48B+8mole+wVkYI0ACBVcCxhBfU/u2I2qVeCNXBe75jrwx+tkOvWEOSaQEQyG6lZtR6
+ vXP51rV3nPOK542cxmy29oYtS2hNKY2x1MiaUNY+1N12ro7ZJl50q/90tNFj6zme2n4D7C+
+ LdYL1xDNB4PpMJ1BQpW/w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JovllL977LQ=;VfNe0dWfllFPTCFnmjmqvPsXhlt
+ tLpHkmnr1SH3dkc69gJeadpIT2GmrolXGjGJIDBZG8dGuel8d2YR6umuCbKUgwPjBMwimzAZS
+ cLoDhfCZNgBSltJi/ODFGiPPQq1Da9pEeTEljolR1r1Rr2my+23Bv/vKNlLjFtL6RVfLRTbs2
+ HXpsPT43C7smrluMJ6SddneW2rX0p82fvNuE7eyuI/dBET5duHIxSCvAS8PyTdD3DtAUhd3L3
+ xdhvQX04gfV0EocyuxX9bzLYZfEDfvyNHOXH/FOyEh1Ha5cYIF6Yzy4bxUF39O/C0GsgBW6Hf
+ F3LLRKYus5mvxqgacESpw3OA92OuSASg5fdG2sGUropu8pZFgeHlCcIssxDUdf210Jh2I5d1f
+ /diDkFHwLQyJw8Wrg+QCixSRVhWc8dsIqk3HGWn9XwbHN0dZxDfBadoKfYWIJZuux+v7lvw5N
+ Ll/W9TQKAKk5OMljhPYttJ2I94tzbg4J/dslzNRg08kEqes8z9a1rCXtHKP13mAXiSGWTZ9my
+ WiKYb6ptD+j/op5XIj1vQ39FkwXqUsHl2L594EOSbcYH6vMI1YSI2EWvylGuZ8YS6/W6aJ+ZI
+ QJy9rplSz5dUgQRh5jPqtEilO6rRz2a+nmNeEi24YlRkfUVKlZc80QOyCehB/EUZBfqrLp1Vk
+ 00eXEb1J2/5Bm2MRWnm34jCOABR3+kOqC7FQHOOGJEGKqwKv9SPXjaNAtpH0lO2rJWb2wXrKd
+ bTE4wzIS3BvtYYS+Gxt9SBhVa1TtxkAGek8jaT5ozfOEk+o8VIPMBAecutvpBA9BIZKyNRvqt
+ bDmz2HPApnZN3No40oRfvRsA==
 
-> > Can these patches be included, too? I think they are good to go.
-> > 
-> > http://patchwork.ozlabs.org/project/linux-i2c/list/?series=410673
-> 
-> Oh, and these:
-> 
-> http://patchwork.ozlabs.org/project/linux-i2c/list/?series=411205
-> 
-> Or shall I take them?
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 Jul 2024 12:30:30 +0200
 
-This was in my backlog, will take them with the requested fix.
+Single characters (line breaks) should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-Andi
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/dma/dmaengine.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index c380a4dda77a..d098de909b1e 100644
+=2D-- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -94,7 +94,7 @@ static void dmaengine_dbg_summary_show(struct seq_file *=
+s,
+ 				seq_printf(s, " (via router: %s)\n",
+ 					dev_name(chan->router->dev));
+ 			else
+-				seq_puts(s, "\n");
++				seq_putc(s, '\n');
+ 		}
+ 	}
+ }
+@@ -115,7 +115,7 @@ static int dmaengine_summary_show(struct seq_file *s, =
+void *data)
+ 			dmaengine_dbg_summary_show(s, dma_dev);
+
+ 		if (!list_is_last(&dma_dev->global_node, &dma_device_list))
+-			seq_puts(s, "\n");
++			seq_putc(s, '\n');
+ 	}
+ 	mutex_unlock(&dma_list_mutex);
+
+=2D-
+2.45.2
+
 
