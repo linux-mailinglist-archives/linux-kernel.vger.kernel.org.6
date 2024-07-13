@@ -1,188 +1,161 @@
-Return-Path: <linux-kernel+bounces-251256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAD29302B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:32:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F14A9302DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 02:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBBFE1C212B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:32:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 421691F244B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 00:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE4AD2FF;
-	Sat, 13 Jul 2024 00:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MG27cJsO"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0E617C6C;
+	Sat, 13 Jul 2024 00:46:13 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D18FCA64;
-	Sat, 13 Jul 2024 00:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB83B17BC9;
+	Sat, 13 Jul 2024 00:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720830743; cv=none; b=QApf3zNOsJ8V43k07LSsvlUjWuy1niuVKH0xuYVJ64y5mqZaQG4Lnwo8Wl24/zf5mdryu0ASlurulQKI9gCOcnXllTGJ7G1/XvZGxDX1/i6LzhPl7LmC+ePagper9RDFr4XysJgNwcHl6OdJ7+7wZyw0vcLRUuwYHCeI4co29wQ=
+	t=1720831573; cv=none; b=JbExBzFpgTlvzFn1RW7pm/0Rrq1cqH027J/HnBuZvig54rf52l6m8oPz0A7tEVvi/TdiU8q/awvDKDSc37HYbquX7gGdenyB2BgfaDGGCBwNh8GO6HV4SUlvGn9ORxTeNsPOuSwn/IVYQZjuQNApCAocUlDRFa9uHlXpVUXycLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720830743; c=relaxed/simple;
-	bh=dm8jkNSRFXWS0JFiWRJPdS8XabcKrrxII3qEXSiH65g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Sodtt4dVa7GTwZPcTQxLXLblKYPHciygujsV+C6WYGflAYTQF9zm6BwrcBEzT0Hr+X7Fhn97CHzBPFGSuGs/xVI27O2X+ofqRiH9zxmBVkZyP7wC3rxQ/9RqrLvy43cn3FA4dO8Qhjy4HROOWnWUuwt7srPoe0Min/yjqWjbDr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MG27cJsO; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-704473c0698so1223625a34.3;
-        Fri, 12 Jul 2024 17:32:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720830740; x=1721435540; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gQV84yWA75dv41YWL05WuZUsml+E7RRrg/6zyWqAS9U=;
-        b=MG27cJsOK8PwO7nEcppV8UZx3kaJ1kyrKAEo41BPwDNyLpGIZeg73usrt/rwy/dxKT
-         5xnw9xX5ZIY2twqSjF9ps9d7zpXpNs8ovLFcmd/FUP/XvYn4/9Z5RPfsMKjE22LTFJ+S
-         ewTplZbqx0YUiIr+XXMXHT+sOhN4dgUnPgDIE2wtAlcZH/r5px+fGUJzdMWAJxz9XyHG
-         m8odPymue8f/h851439/ceOX+5XSxshT4G3sAeIDMBOerCo8swYXQYwT/GnCuuV/PaCs
-         q7vMb2tpdNOQjJXluWJd5ApQQJzqnK6T5lhhkq+nfqL5hjN/tB72b34RMqC+8YTYrg3q
-         xntg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720830740; x=1721435540;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gQV84yWA75dv41YWL05WuZUsml+E7RRrg/6zyWqAS9U=;
-        b=u/1iLKqhukfm4XapwQocD4Cnk/E1vej8VHIqqmMWj6dh5YHTxP2w+z6eGtiGYZl/ER
-         ke0b9Rf+fCyClEjXnHNDuGrMlc6IzBmYUX+JwJEm6p23IBdWmCg6ZBMh1bMXKljX9r/Q
-         QqBbCGpLWxVNQTPsdRQebcLyLF/t2UciK/PnLonB6tqUKwkoH5uauEGF6yneoy6d+XYq
-         eTpqC/5iSodVvJTXV7Pzo0MZUpJcBqstSdVae7lRQ6Gp9S/zPbBZuDTDuGNFGs6BdmRg
-         J+Qs8bVTmT7llp/+LFQayMxbUcPOfQrK436QRkwSfus8QvxgRgJk9iBtVVfPocXxweBr
-         ab/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXEY8/bkPx4tUKoNdoriAswoRHHbgAopkPG1gx2yeKsPD6NtkRQXa4g/hMiR1km7T0G2kUO67Bc9TG+Ym03ElDWvppMhFdLYC+eW2SN5dzG3n8ZEAGSs4D1OPYeJni4CuR2Z0wpAca1
-X-Gm-Message-State: AOJu0YxSLqsfTl9hxM0+fvpTe+OQmsJ01sFG63cFnN+yNLuo53pd0vY1
-	9ovXqZOsR86roQ20rQRzzWNfrFSxGPJdiKPG/pPDsP0jdbDYk5CP
-X-Google-Smtp-Source: AGHT+IEt8wmOCcx1dC/iEZHMgec83vYmnXVBUj8HjaBBRosI7pR9acGqfMTzMS7wFjnbbXT5GnvxrA==
-X-Received: by 2002:a05:6830:314a:b0:703:7827:6a68 with SMTP id 46e09a7af769-70378276b05mr16337584a34.6.1720830740401;
-        Fri, 12 Jul 2024 17:32:20 -0700 (PDT)
-Received: from pipaware.localdomain ([69.219.169.121])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ce776c4c31sm25978eaf.45.2024.07.12.17.32.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 17:32:19 -0700 (PDT)
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-To: corbet@lwn.net,
-	sergio.collado@gmail.com,
-	peterz@infradead.org
-Cc: bilbao@vt.edu,
-	jembid@ucm.es,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-Subject: [PATCH 1/1] docs: scheduler: Start documenting the EEVDF scheduler
-Date: Fri, 12 Jul 2024 19:32:12 -0500
-Message-ID: <20240713003213.4008440-2-carlos.bilbao.osdev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240713003213.4008440-1-carlos.bilbao.osdev@gmail.com>
-References: <20240713003213.4008440-1-carlos.bilbao.osdev@gmail.com>
+	s=arc-20240116; t=1720831573; c=relaxed/simple;
+	bh=gF3dYtJRopNzsiJmALQlPNHh11Zr31c4yEibSp9jEII=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BeuPmaoqfU72jZ0mk/VhAs7mtImoaV62yAumVW7ht5or0OsnCX53kwFJfkqwiYfBKcTx3/UNHvWhB5mGWZqU6eSzmVbYQsE/HrpHenvr98bNSGhQONuyyDex0h/8HA8XTywnK4nmueBU1Uk09KkKh1jPiguHkGBZmlXI/cmfS8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sSQl7-000000005ba-3zH3;
+	Sat, 13 Jul 2024 00:37:06 +0000
+Date: Sat, 13 Jul 2024 01:37:02 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Daniel Golle <daniel@makrotopia.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/3] hwrng: add hwrng support for Rockchip RK3568
+Message-ID: <cover.1720830725.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add some documentation regarding the newly introduced scheduler EEVDF.
+Rockchip SoCs used to have a random number generator as part of their
+crypto device.
 
-Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
----
- Documentation/scheduler/index.rst            |  1 +
- Documentation/scheduler/sched-design-CFS.rst | 10 +++--
- Documentation/scheduler/sched-eevdf.rst      | 44 ++++++++++++++++++++
- 3 files changed, 51 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/scheduler/sched-eevdf.rst
+However newer Rockchip SoCs like the RK3568 have an independent True
+Random Number Generator device. This patchset adds a driver for it and
+enables it in the device tree.
 
-diff --git a/Documentation/scheduler/index.rst b/Documentation/scheduler/index.rst
-index 43bd8a145b7a..444a6fef1464 100644
---- a/Documentation/scheduler/index.rst
-+++ b/Documentation/scheduler/index.rst
-@@ -11,6 +11,7 @@ Scheduler
-     sched-arch
-     sched-bwc
-     sched-deadline
-+    sched-eevdf
-     sched-design-CFS
-     sched-domains
-     sched-capacity
-diff --git a/Documentation/scheduler/sched-design-CFS.rst b/Documentation/scheduler/sched-design-CFS.rst
-index bc1e507269c6..b703c6dcb3cd 100644
---- a/Documentation/scheduler/sched-design-CFS.rst
-+++ b/Documentation/scheduler/sched-design-CFS.rst
-@@ -8,10 +8,12 @@ CFS Scheduler
- 1.  OVERVIEW
- ============
- 
--CFS stands for "Completely Fair Scheduler," and is the new "desktop" process
--scheduler implemented by Ingo Molnar and merged in Linux 2.6.23.  It is the
--replacement for the previous vanilla scheduler's SCHED_OTHER interactivity
--code.
-+CFS stands for "Completely Fair Scheduler," and is the "desktop" process
-+scheduler implemented by Ingo Molnar and merged in Linux 2.6.23. When
-+originally merged, it was the replacement for the previous vanilla
-+scheduler's SCHED_OTHER interactivity code. Nowadays, CFS is making room
-+for EEVDF, for which documentation can be found in
-+:ref:`sched_design_EEVDF`.
- 
- 80% of CFS's design can be summed up in a single sentence: CFS basically models
- an "ideal, precise multi-tasking CPU" on real hardware.
-diff --git a/Documentation/scheduler/sched-eevdf.rst b/Documentation/scheduler/sched-eevdf.rst
-new file mode 100644
-index 000000000000..31ad8f995360
---- /dev/null
-+++ b/Documentation/scheduler/sched-eevdf.rst
-@@ -0,0 +1,44 @@
-+.. _sched_design_EEVDF:
-+
-+===============
-+EEVDF Scheduler
-+===============
-+
-+The "Earliest Eligible Virtual Deadline First" (EEVDF) was first introduced
-+in a scientific publication in 1995 [1]. The Linux kernel began
-+transitioning to EEVDF in version 6.6 (as a new option in 2024), moving
-+away from the earlier Completely Fair Scheduler (CFS) in favor of a version
-+of EEVDF proposed by Peter Zijlstra in 2023 [2-4]. More information
-+regarding CFS can be found in :ref:`sched_design_CFS`.
-+
-+Similarly to CFS, EEVDF aims to distribute CPU time equally among all
-+runnable tasks with the same priority. To do so, it assigns a virtual run
-+time to each task, creating a "lag" value that can be used to determine
-+whether a task has received its fair share of CPU time. In this way, a task
-+with a positive lag is owed CPU time, while a negative lag means the task
-+has exceeded its portion. EEVDF picks tasks with lag greater or equal to
-+zero and calculates a virtual deadline (VD) for each, selecting the task
-+with the earliest VD to execute next. It's important to note that this
-+allows latency-sensitive tasks with shorter time slices to be prioritized,
-+which helps with their responsiveness.
-+
-+There are ongoing discussions on how to manage lag, especially for sleeping
-+tasks; but at the time of writing EEVDF uses a "decaying" mechanism based
-+on virtual run time (VRT). This prevents tasks from exploiting the system
-+by sleeping briefly to reset their negative lag: when a task sleeps, it
-+remains on the run queue but marked for "deferred dequeue," allowing its
-+lag to decay over VRT. Hence, long-sleeping tasks eventually have their lag
-+reset. Finally, tasks can preempt others if their VD is earlier, and tasks
-+can request specific time slices using the new sched_setattr() system call,
-+which further facilitates the job of latency-sensitive applications.
-+
-+4. REFERENCES
-+=============
-+
-+[1] https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=805acf7726282721504c8f00575d91ebfd750564
-+
-+[2] https://lore.kernel.org/lkml/a79014e6-ea83-b316-1e12-2ae056bda6fa@linux.vnet.ibm.com/
-+
-+[3] https://lwn.net/Articles/969062/
-+
-+[4] https://lwn.net/Articles/925371/
+v5 -> v6:
+ * Patch 1: unchanged
+
+ * Patch 2: get rid of #ifdef
+   - use if (IS_ENABLED(...)) { ... }instead of #ifdef inside functions
+   - use __maybe_unused for functions previously enclosed by #ifdef'ery
+
+ * Patch 3: unchanged
+
+v4 -> v5:
+ * Patch 1: always use RK3568 name
+   - use full RK3568 name in patch description
+   - add RK3568 to title in binding
+
+ * Patch 2: full name and cosmetics
+   - also always mention RK3568 as there may be other RNG in other
+     (future) Rockchip SoCs
+   - remove debug output on successful probe
+   - use MODULE_AUTHOR several times instead of single comma-separated
+
+ * Patch 3: unchanged
+
+v3 -> v4:
+ * Patch 1: minor corrections
+   - fix Rokchip -> Rockchip typo
+   - change commit title as requested
+
+ * Patch 2: improved error handling and resource management
+   - Always use writel() instead of writel_relaxed()
+   - Use pm_runtime_resume_and_get
+   - Correctly return error code in rk_rng_read()
+   - Make use of devm_reset_control_array_get_exclusive
+   - Use devm_pm_runtime_enable and there by get rid of rk_rng_remove()
+
+ * Patch 3:
+   - Move node to conform with ordering by address
+
+v2 -> v3: patch adopted by Daniel Golle
+ * Patch 1: address comments of Krzysztof Kozlowski, add MAINTAINERS
+   - improved description
+   - meaningful clock-names
+   - add entry in MAINTAINERS files
+
+ * Patch 2: numerous code-style improvements
+   - drop misleading rk_rng_write_ctl(), simplify I/O writes
+   - drop unused TRNG_RNG_DOUT_[1-7] macros
+   - handle error handling for pm_runtime_get_sync()
+   - use memcpy_fromio() instead of open coding for-loop
+   - some minor white-spaces fixes
+
+ * Patch 3:
+   - use clock-names as defined in dt-bindings
+
+v1 -> v2:
+ * Patch 1: fix issues reported by Rob Herring and Krzysztof Kozlowski:
+   - Rename rockchip-rng.yaml into rockchip,rk3568-rng.yaml
+   - Fix binding title and description
+   - Fix compatible property
+   - Rename clocks and add the corresponding descriptions
+   - Drop reset-names
+   - Add a bus definition with #address-cells and #size-cells to the
+     example.
+
+ * Patch 2: fix issue reported by kernel test robot <lkp@intel.com>
+   - Do not read the random registers as big endian, looking at the
+     RK3568 TRM this is actually not needed. This fixes a sparse
+     warning.
+
+ * Patch 3: unchanged
+
+Aurelien Jarno (3):
+  dt-bindings: rng: Add Rockchip RK3568 TRNG
+  hwrng: add hwrng driver for Rockchip RK3568 SoC
+  arm64: dts: rockchip: add DT entry for RNG to RK356x
+
+ .../bindings/rng/rockchip,rk3568-rng.yaml     |  61 +++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/rockchip/rk356x.dtsi      |   9 +
+ drivers/char/hw_random/Kconfig                |  14 ++
+ drivers/char/hw_random/Makefile               |   1 +
+ drivers/char/hw_random/rockchip-rng.c         | 220 ++++++++++++++++++
+ 6 files changed, 312 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rng/rockchip,rk3568-rng.yaml
+ create mode 100644 drivers/char/hw_random/rockchip-rng.c
+
 -- 
-2.43.0
-
+2.45.2
 
