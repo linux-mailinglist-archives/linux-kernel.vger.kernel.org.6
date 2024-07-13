@@ -1,134 +1,157 @@
-Return-Path: <linux-kernel+bounces-251346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A589303CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:48:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43179303D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2198C1C21997
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 05:48:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A59662834E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 05:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F19F1BDD3;
-	Sat, 13 Jul 2024 05:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BB51CAB5;
+	Sat, 13 Jul 2024 05:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zk3PrVrc"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5844tnU"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5DD4C8E;
-	Sat, 13 Jul 2024 05:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810AA14F70;
+	Sat, 13 Jul 2024 05:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720849695; cv=none; b=BDvSXWhLOEK7EYRim0rvGsOzyJA6Nll6LhQcHtaq21oemB1Lf3aYy6ru2ei7V0KGrupgXMFLV81gtsCERm7eT5gmsgeQn2/qQDe1QtMqLMS5+80V0QXDyBC305gDqiMLtjYnfV3DvybitRY0rr6aeMI3AT+27GD4w9qkIxK5q/8=
+	t=1720850094; cv=none; b=oL5zsD3dTXfmEbs4NSqZakwcxKdU1YOfy9FeZY5JV8C+29hKIIdvPXBeqign2lXREwih/oNwQ4HNyDHSqmllYhBN2PPqcZIXe6x38M+zTRffH3KwM+rTknDzjBfdL8yosbAVM/+K7rCyhbuar0meV+QTUShFOMP9YheTQmrW4ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720849695; c=relaxed/simple;
-	bh=5b7nlYN5UCN9Z2HgLFiZLhBBxSCOHltJ7E6mROeXVOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgEcsH+OuAiXoqJJ9h4vc6EDMUzbfcuiRHGfb+Y5f394RybcmMgHW6ohTmrZSQOduXUK4PDT7Qyj2jWVASXFkRRp6CgwsHa6iv488Qokc0lpa2zfRA/6AWHoQqVvy6lwUAqtr6nxF/m8V8FiDRejuVDhg1czxuYtYSiSTWXjlEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zk3PrVrc; arc=none smtp.client-ip=209.85.167.53
+	s=arc-20240116; t=1720850094; c=relaxed/simple;
+	bh=WyPWoJsqzT8kItOichOJcnipjqxJRXai1rCYuSJbRak=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JVu5m/XEdlPlqWvGBVJoc0Ipt31DQQF1+MwhCGGqW1rDc+MEV7E7KUjPNj/I4GyyzTN0NGZpuUiW5icUUiBglP9uLQzJFqt8HhSVXKVR8zpVGxqctkRhsUOH539WZ8JsvCwcPXOVmOIFWuTFGVilVOCoyR2zBcmbTLSbN3Uhi7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5844tnU; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52ea34ffcdaso2993254e87.1;
-        Fri, 12 Jul 2024 22:48:13 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-585e774fd3dso3554131a12.0;
+        Fri, 12 Jul 2024 22:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720849692; x=1721454492; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5b7nlYN5UCN9Z2HgLFiZLhBBxSCOHltJ7E6mROeXVOU=;
-        b=Zk3PrVrcwsJaS7e4f1GgtsF9vBicmmrbavWeG1fVueuD3RnQCxLrAmXdhXUHNbqVHt
-         vwlCNHMuXvgXfxpmsM7viwJd2h8LczTF4+Ox2MkpAP7VryabaE38hdxoDY2U+stV16/M
-         Gy0n/VuGg3UzVFdaJ0GbmphXBzcK4s8vd/IF+2Fv1WfRZFbHR3tKYCLSzwP2yF7ZsrU4
-         RLpowroNdgsUZqMWK8LoocvZ7usLYvpNfRb9sDa7iFqLF58eYr4PHgKHyS54Z83bqtVw
-         ZI90oAjcg0pqmPbgb+SDGGwEhYK/Ay2RDZ0qj27sPtrfx/wb4TY8o5RBib1OLiFC+rhN
-         4BBA==
+        d=gmail.com; s=20230601; t=1720850090; x=1721454890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hn2L2q1+hFZJXMemazXtNxCxJhPrr1PO0Hw0zjIThmE=;
+        b=G5844tnU6+S4lskauue0y+Aac49JPqCPSSXaMMX9TIPnLiJzTFIJ7W+If71wpH1VZA
+         MSY/2Kyda2xQ/8jNWBNm3YneWcClVgOf95FrIx/5W8BK5lIkHb/GD3b9fUYxrhY34gLH
+         g587K3pI2EYX+qh7RBpl2/GCbfrIkToEjb+Ln7fSda/YwZ79MZrgn4ly7jfjw1gw4day
+         nQkg5f2arzzpVe5Cdw7E3pWnT/DYOVAaDySsxsU+zsemesALtto7FuFDA1fkMTjs0Zzb
+         u06M+USYaeEUmesrKRzXtqeKphP+31/sgxxvIA5m1FFXmYacs1ZSnHGkEx+oH7ic5ULV
+         zKow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720849692; x=1721454492;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5b7nlYN5UCN9Z2HgLFiZLhBBxSCOHltJ7E6mROeXVOU=;
-        b=Qry8SI5z8RLBXLRK2DtyHE1UE4pPBUZV9ZXkztyG5BBC/xHfXU7yQXuNbWvXU79/0u
-         xmabGmvb5Pz4U8yx0C0jGWjvMw2rrlUBQG+QmW/I/vdFj07qDCVUHz4sCBicn11FktNH
-         jQBsjgykY83WbAlFgXHLAekX/2+G5339451/2rGkiSFcI0u0fsu8c2pfzyREQPTm8hHT
-         aszhN/H69xS2iFTFR1Fc4l3CWV7wf/APsAeQSQAiOkfawUvuzHulceIQ8dGaJjeO9nxg
-         GLAmN6SPefp62XM/ncQXYV5N4yTQT5B5evcwZMmWqJvStL2zPILQ61mmDujfjch+WNLz
-         LLcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXi5S3BbFEzBD6D1DsSOoeofTc6j2VabscCh/Pv6cNHKqjnCs5j/A5qb+uR/XQBCd+ixoz2n/V5p0m0J/Im5blliRATfJAPh/cSRDr01mHui9J2Q9yqArRF4f4pEpmovKVugDd1EsZS
-X-Gm-Message-State: AOJu0YybodOo6ItmgDfO1ZSAc/V3ZqgMJ5bLlLYMLe8A9sSfJCDL2tZ4
-	Z8lNYIn6BcKVK4X20M0PBQqKvO2oKzMnQkvxMkuW6tJIsBt/FXaS
-X-Google-Smtp-Source: AGHT+IEXmVJ5cycab+t/oirWg73SKE3O6EhCRHZp3Dkg1QZ13yXiKjC+7g2HMZOaMi4KMOugPPklCA==
-X-Received: by 2002:a05:6512:476:b0:52c:db22:efbf with SMTP id 2adb3069b0e04-52eb999547emr7539072e87.16.1720849691706;
-        Fri, 12 Jul 2024 22:48:11 -0700 (PDT)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed2532789sm80637e87.211.2024.07.12.22.48.10
+        d=1e100.net; s=20230601; t=1720850090; x=1721454890;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hn2L2q1+hFZJXMemazXtNxCxJhPrr1PO0Hw0zjIThmE=;
+        b=D5Q8+Hl1g47DnGsjXOwx1M6YEQPdLywvAtySOWhcu9wghz+G6irIZv5QpcsGP57x/O
+         YXp3qL1vcfVb/tOMtPHKS782t0Pn6Jlb/hDu2lheqB6JnuVv/5PDus7g8r9wjJxW4tUI
+         by3tJ9MpsbjOD2bU6rPDZqzZb8GZQY+tYDRUnLYHtzYiKGhHHFnbt1wd3caQFSaPw9pk
+         hL/7AzQW8E/qwkEB+5Qhs4oDwQvfW5M0DfoAKVkOImu13Uk01VnJ3/ZjxcOQ2iptAVZM
+         AYdmw8Ms1eRq1Mu0KI2tBF+UFwz6PlTUURoGZYnlTvxI1xaplhCJbpAxp38q5pjJi2HC
+         Uz+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWAjioJykabqoVI1k0VwcJX8Hl5mv2eTqEleAU45XzpGyu2IVr6lPAOAdfMdyThQ1CBCUzB43k9rbVPCazzmtNW3lU+050+185q9zJV
+X-Gm-Message-State: AOJu0Yym2Buptwv3fdX5zXE1cH3A6eYDuWOSVrARUvgVJgo9KtsDJCw3
+	g7ZD149+h7Ow+8Mc0+5XcRvd5vjFUpPbFBIpY0T3iUg5DKNsUtOtZziCpMjM
+X-Google-Smtp-Source: AGHT+IFZN9p4Gtd1Oy2CTflmHdKllO8cqgzgQDcVP0nscUijT+iurS9SMsYAJ4EPiqrodb1XT17dgw==
+X-Received: by 2002:a17:906:3951:b0:a79:7ec8:f3f3 with SMTP id a640c23a62f3a-a797ec8fd28mr544862366b.58.1720850090327;
+        Fri, 12 Jul 2024 22:54:50 -0700 (PDT)
+Received: from WBEC325.dom.lan ([2001:470:608f:0:b4ea:33f8:5eca:e7fc])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7f1ceesm20515666b.126.2024.07.12.22.54.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 22:48:10 -0700 (PDT)
-Date: Sat, 13 Jul 2024 07:48:08 +0200
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	Kent Gustavsson <kent@minoris.se>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+        Fri, 12 Jul 2024 22:54:49 -0700 (PDT)
+From: Pawel Dembicki <paweldembicki@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Paolo Abeni <pabeni@redhat.com>,
+	Pawel Dembicki <paweldembicki@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	UNGLinuxDriver@microchip.com,
+	Russell King <linux@armlinux.org.uk>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] iio: adc: mcp3911: use
- devm_regulator_get_enable_read_voltage()
-Message-ID: <ZpIVGIOkjiRSHq_z@gmail.com>
-References: <20240712-iio-regulator-refactor-round-3-v1-0-835017bae43d@baylibre.com>
- <20240712-iio-regulator-refactor-round-3-v1-6-835017bae43d@baylibre.com>
+Subject: [PATCH net-next v3 00/12] net: dsa: vsc73xx: Implement VLAN operations
+Date: Sat, 13 Jul 2024 07:54:28 +0200
+Message-Id: <20240713055443.1112925-1-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="EeqRwliEJAvCJg5+"
-Content-Disposition: inline
-In-Reply-To: <20240712-iio-regulator-refactor-round-3-v1-6-835017bae43d@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
+This patch series is a result of splitting a larger patch series [0],
+where some parts was merged before.
 
---EeqRwliEJAvCJg5+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The first patch implements port state configuration, which is required
+for bridge functionality. STP frames are not forwarded at this moment.
+BPDU frames are only forwarded from/to the PI/SI interface.
+For more information, see chapter 2.7.1 (CPU Forwarding) in the
+datasheet.
 
-On Fri, Jul 12, 2024 at 11:03:57AM -0500, David Lechner wrote:
-> This makes use of the new devm_regulator_get_enable_read_voltage()
-> helper function to reduce boilerplate code in the MCP3911 ADC driver.
->=20
-> The error message is slightly changed since there are fewer error
-> return paths.
->=20
-> An extra parameter is added to the config callback to avoid adding
-> state that is not used outside of the probe() function.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Patches 2, 7-9 and 11 provide a basic implementation of tag_8021q
+functionality with QinQ support, without VLAN filtering in
+the bridge and simple VLAN awareness in VLAN filtering mode.
 
-Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+Patches 3-6 came from Vladimir Oltean. They prepare for making
+tag8021q more common. VSC73XX uses very similar tag recognition,
+and some code from tag_sja1105 could be moved to tag_8021q for
+common use.
 
---EeqRwliEJAvCJg5+
-Content-Type: application/pgp-signature; name="signature.asc"
+Patch 10 is preparation for use tag_8021q bridge functions as generic
+implementation of the 'ds->ops->port_bridge_*()'.
 
------BEGIN PGP SIGNATURE-----
+Patch 12 is required to avoid problem with learning on standalone ports.
 
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmaSFRMACgkQiIBOb1ld
-UjK5KhAAsjjafm/UEOfjYT4bbFoCf4u1ft1ZuatFQ1gMfnFHgvUIRkODsw9dVBGQ
-FSB88H8bPoV4PLS6naEKiAhl/JuPaqsYVf/2b8eZaAIdrNc+MzDr2LdVT7y0aCVo
-hUN/g6uBFwTaftO93pKUNj0H5NHNS/bhL8EkoJvyKSqqFaHaBXxIgFYTXyU2Wg0v
-PvZ/ac5wCQyQ8Xamj3+3QGhtyYKN47IwFbX08RbedTkkaosmNYdqueiwBMUfNgwx
-Q1a5LFO868FJQ4uy4rJQXkGWySggcSheu6wGWhl6VmPT37rZxy6AJhBOvRWn+8Zq
-mW+y/uIq1Svd+NpWMi0UGB8RrcsyENXZRgkeLHZDNDqBskVjMDQpM2yHf83EVQga
-ZhOLvwDuPhNKyFf6xVheChTw9RIBF7Lvlev4briOwsUnxPfpSGLY0zr1VtLj7YOU
-Tr7c3yF/ExCy+lGMww9jMFRqqwlLyyd0VQSzOJ4PaFqSDKPhPGwTpK5YqqhvTzlS
-MX6vUrasT7GPuVRD6K9HIN3QOSn2ASk6vD9PAYGlUsfWiakzP1MyT+ALmxayAY8h
-BlvqjBRy2ZckhLgpOOOjoi2ncPdtXpp/aNfkGWGV6E02FsNsYCzsXI+yy4X8nqEl
-G68WBi36dFJkiiMK29Ll0IB62NqwvprrwIpyKsG6CTBIFZtbDWU=
-=QH85
------END PGP SIGNATURE-----
+[0] https://patchwork.kernel.org/project/netdevbpf/list/?series=841034&state=%2A&archive=both
 
---EeqRwliEJAvCJg5+--
+Pawel Dembicki (8):
+  net: dsa: vsc73xx: add port_stp_state_set function
+  net: dsa: vsc73xx: Add vlan filtering
+  net: dsa: vsc73xx: introduce tag 8021q for vsc73xx
+  net: dsa: vsc73xx: Implement the tag_8021q VLAN operations
+  net: dsa: Define max num of bridges in tag8021q implementation
+  net: dsa: prepare 'dsa_tag_8021q_bridge_join' for standalone use
+  net: dsa: vsc73xx: Add bridge support
+  net: dsa: vsc73xx: start treating the BR_LEARNING flag
+
+Vladimir Oltean (4):
+  net: dsa: tag_sja1105: absorb logic for not overwriting precise info
+    into dsa_8021q_rcv()
+  net: dsa: tag_sja1105: absorb entire sja1105_vlan_rcv() into
+    dsa_8021q_rcv()
+  net: dsa: tag_sja1105: prefer precise source port info on SJA1110 too
+  net: dsa: tag_sja1105: refactor skb->dev assignment to
+    dsa_tag_8021q_find_user()
+
+ drivers/net/dsa/Kconfig                |   2 +-
+ drivers/net/dsa/sja1105/sja1105_main.c |   8 +-
+ drivers/net/dsa/vitesse-vsc73xx-core.c | 726 ++++++++++++++++++++++++-
+ drivers/net/dsa/vitesse-vsc73xx.h      |  37 ++
+ include/linux/dsa/8021q.h              |   8 +-
+ include/net/dsa.h                      |   2 +
+ net/dsa/Kconfig                        |   6 +
+ net/dsa/Makefile                       |   1 +
+ net/dsa/tag_8021q.c                    |  84 ++-
+ net/dsa/tag_8021q.h                    |   7 +-
+ net/dsa/tag_ocelot_8021q.c             |   2 +-
+ net/dsa/tag_sja1105.c                  |  72 +--
+ net/dsa/tag_vsc73xx_8021q.c            |  68 +++
+ 13 files changed, 925 insertions(+), 98 deletions(-)
+ create mode 100644 net/dsa/tag_vsc73xx_8021q.c
+
+-- 
+2.34.1
+
 
