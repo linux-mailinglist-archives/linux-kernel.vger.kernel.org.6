@@ -1,82 +1,79 @@
-Return-Path: <linux-kernel+bounces-251415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F13089304A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3AA39304AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295C41C214C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F39B71C20DFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F8D4AECE;
-	Sat, 13 Jul 2024 09:08:06 +0000 (UTC)
-Received: from mail115-76.sinamail.sina.com.cn (mail115-76.sinamail.sina.com.cn [218.30.115.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50B749628;
+	Sat, 13 Jul 2024 09:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ngn.tf header.i=@ngn.tf header.b="jP9Oj8k3"
+Received: from mail.ngn.tf (ngn.tf [193.106.196.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35D641C77
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 09:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC931BC57;
+	Sat, 13 Jul 2024 09:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.106.196.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720861686; cv=none; b=OnFEKNzgONSjb/nqNaz0mLcJilxUfKr70W/Yg/ShOb9HvCiyjAV5elqAGJMA9gwOCA++imny0kngWWyyrbidkuLJTwHSfp+xygflZQzzuy62kKuXmW5oBxKvjAZc76uBnI9XxXGFiy+KwBAE43BosF29knPRwbj2Bl/6b0uHCEM=
+	t=1720862113; cv=none; b=twt2UnASQfC3zvHTvQXC0Sj9rMrTl3nUaNXvEhUvURR1Y/dmwAFwDad0wY6jMZqVTjRgjQ7BQ/BsJeLpY/nxC9WUDDBKu42shZ87M3aebsfB5RxZ6m0Howw47dU4QhmazIhosfOUr2LKkfU1+BM66aDuriaJSIdeXtarRL1URj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720861686; c=relaxed/simple;
-	bh=F97KmSYr6BVNzF7rCK7Sa+kxRwzbEhhAf/TEjNrGfc4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V4W0lGei9MLLiLjYqph1ou3GmwGvulylBAcLvC7QgT3/LPuQcet17mkY4rq3hCCp1UbQffa3F/yncOYUJOH6Rq7Ptg+FxtVbFxVLaBESzX3CXWOa82ht5bBURBsmLl/tncgHwuw8Md0YpDxC/Gz3frwxbwpvg91N2MrXjP4Tq3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.69.52])
-	by sina.com (10.185.250.22) with ESMTP
-	id 66924354000008D2; Sat, 13 Jul 2024 17:05:26 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9744697602725
-X-SMAIL-UIID: 4677006D4DA542B1862B570227BE2FDA-20240713-170526-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+2403e3909382fbdeaf6c@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in list_lru_add
-Date: Sat, 13 Jul 2024 17:05:18 +0800
-Message-Id: <20240713090518.866-1-hdanton@sina.com>
-In-Reply-To: <0000000000002d320c061d0ff813@google.com>
-References: 
+	s=arc-20240116; t=1720862113; c=relaxed/simple;
+	bh=cXVQENL6ezEh/B8TnMDQ24J2n6O8LNrqU9d5J6TC008=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WCPabPwLfHCUD90nfFXjoYsYaaxB1Cvyp3ccIaeplIBOArqQsO5r055+xbYkEA4VeCw17mF8BPyNCj7oD7UEiR5xRssMWFEPdf+ENCOjEAOansVIbyr3noUMxsm91kQSVxEOchV3fqbGat9us1yy4Rioab9Je4G3C+MZacPx7jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ngn.tf; spf=pass smtp.mailfrom=ngn.tf; dkim=pass (2048-bit key) header.d=ngn.tf header.i=@ngn.tf header.b=jP9Oj8k3; arc=none smtp.client-ip=193.106.196.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ngn.tf
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ngn.tf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ngn.tf; s=mail;
+	t=1720861556; bh=cXVQENL6ezEh/B8TnMDQ24J2n6O8LNrqU9d5J6TC008=;
+	h=From:To:Cc:Subject:References:In-Reply-To;
+	b=jP9Oj8k35UX5FcuG37gd1FW4f/OGF4fqSonMjwyGqyEz9341ad7sRjPl+sYgdVHR2
+	 DBTZguo55T55fZJw3MDVbp+qskevuKmN0/Pd/vsS6k4yLAvIUyiFKo5TJAm4okrsDl
+	 SHznMpXspePp7/PxM6w5hjB/5QxXOLjWYwROXKtcxOoOIjZpaE5QJLTdmCOWjjU1Tj
+	 +h4wSv+zYYSftEzhYA+HiF6FlZty9/ANVgoNNTqF10R5X2dxVNeP64mrDj/KSeUl+u
+	 Aiv5OGHK3hE4f5v9qr8AiS9mAMYNP7/NpBBOXKBMQ2rN5jcCiNFD/qqYDgGqnCaDuh
+	 s5cZMM1kOz5VA==
+Date: Sat, 13 Jul 2024 12:05:32 +0300
+From: ngn <ngn@ngn.tf>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] PCI: shpchp: Remove hpc_ops
+Message-ID: <ZpJDXNtOQWSqG0mi@archbtw>
+References: <abb0f57ee513af545be761988fa9ad5ce5703060.1718949042.git.ngn@ngn.tf>
+ <20240712224425.GA351076@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712224425.GA351076@bhelgaas>
 
-On Fri, 12 Jul 2024 10:11:25 -0700
-> syzbot has found a reproducer for the following issue on:
+On Fri, Jul 12, 2024 at 05:44:25PM -0500, Bjorn Helgaas wrote:
+> On Fri, Jun 21, 2024 at 09:35:00AM +0300, ngn wrote:
+> > fix checpatch warnings and call hpc_ops functions directly, this has been
+> > also done in pciehp with commit 82a9e79ef132
 > 
-> HEAD commit:    43db1e03c086 Merge tag 'for-6.10/dm-fixes-2' of git://git...
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b1da7e980000
+> Trivial changes like checkpatch fixes should be in a separate patch
+> from substantive things.  This helps make both easier to review.
+> 
+> It *might* be worthwhile to remove hpc_ops, although shpchp is pretty
+> old and dusty by now, and it's hard to justify touching things like
+> that because the risk of breaking something is relatively high and the
+> benefit is relatively low.
+> 
+> The fact that shpchp is the only user of hpc_ops does make me a little
+> more sympathetic to the idea of removing it, though.
+> 
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  43db1e03c086
-
---- x/mm/list_lru.c
-+++ y/mm/list_lru.c
-@@ -55,7 +55,8 @@ list_lru_from_memcg_idx(struct list_lru
- 	if (list_lru_memcg_aware(lru) && idx >= 0) {
- 		struct list_lru_memcg *mlru = xa_load(&lru->xa, idx);
- 
--		return mlru ? &mlru->node[nid] : NULL;
-+		if (mlru)
-+			return &mlru->node[nid];
- 	}
- 	return &lru->node[nid].lru;
- }
---
+Thanks for the reply! I'll just remove hpc_ops then, and I'll send a separate
+patch.
 
