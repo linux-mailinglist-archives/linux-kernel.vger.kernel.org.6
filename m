@@ -1,264 +1,119 @@
-Return-Path: <linux-kernel+bounces-251275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD609302EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:03:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2078A9302EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 03:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFEFC28171A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF37A1F21AEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 01:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3483C13C;
-	Sat, 13 Jul 2024 01:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDF6DF53;
+	Sat, 13 Jul 2024 01:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FYUMXs4Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xa1NRRja"
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA8B12B82
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 01:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E998BE5E
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 01:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720832599; cv=none; b=CSFfYr3nNQLZX/3DeI7cMkDPIlA/qWNqELNeWONXWlSZneu98/l9F9SloCHUVJ8lrKL3jiq/97vJvoQk6bR2QJLeU+yaQHEwcwoIkNMx/TD7k6Vn3PCKLcqUYqVhQfksGdc4DazNSebJ0mRQLn8MTsBX1f+l0UMXYj7BCtYpQMY=
+	t=1720832661; cv=none; b=JG+0uia5DUmY7zt+GVOACg5tCiwXxVxQniD6tnC6ljLjXAn0Txcs+4mv3Ca2oZiHzw268CVWwvtQ+BVSVVQGlMp+nAMoIoOqPIdN3tnt+8CjCAsXKg2VDV+emh/PieaDjqht/dsZQ658kgo9GskOAJBN+61Q8RkTYCZttMoyPRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720832599; c=relaxed/simple;
-	bh=5WoRdH/yV3J/ws5z9viDWHgVxEfuwO+31Cj/55Gno3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bIi9h8MeVXdQzd/BEtBrOHxoz1844dKvSGShJOwd6kv8aRg07029kmh5Ky6pwDi/5Mr1N92nBzwJDLP3nv3j7GKkh1asgSGELX4AwnCsfE+kjG9UIGu6+9RrGjmaCNvpjMyGQ+wZS0xAzcGg9Pvz4Yw/Dxiilt8R5JQeFM6xK1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FYUMXs4Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720832596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=njOu1EaTiZGt3EM1QiAOXf7xb5THADxRrRxy/YZCZ1o=;
-	b=FYUMXs4Y5RsOk6ccVN91rvt7UavVJNXTd06i403oMbm6xXDLybtt+x50QEhywSuiXoVj7L
-	5Ak69V5G/l3z0pLjVQU5OFTvFn0dC8EghkW3v0S4i0inA/+uMcVvnFzuyk35WzMOLtCrN8
-	r0IZyDFuBwP+Xci0RUOsPzP/BCGezX4=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-163-KCLNMVJEMV2IMYrN1jO8Fw-1; Fri, 12 Jul 2024 21:03:13 -0400
-X-MC-Unique: KCLNMVJEMV2IMYrN1jO8Fw-1
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1fb0e7529d8so24080755ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 18:03:12 -0700 (PDT)
+	s=arc-20240116; t=1720832661; c=relaxed/simple;
+	bh=RzrD9zGQk8NcYYSGv8KI5yyCUDLRSlNm8Msk9mtdE40=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lQ0eQWyxbc/r6fDJYGowpjQKeL/TheXEINFxjbnYzSEJq5Q2/dcI08jHzr0jPJMeTawv647gB2NTxWapW5VlqQGOotKzS+7fhQr7+6kdcMyD+Oaz4r+FVQ/uG8R2x90qe2zURe5TRPzAGeZn/9mEP26TmL1aYA1VgAhuTMjFxEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xa1NRRja; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3dab2bb288aso163915b6e.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 18:04:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720832659; x=1721437459; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yH7mUDs9iCLcnupWVzAlTv4cUV/drEJ2d5DV9IL4ZtM=;
+        b=Xa1NRRjaTxoeBKJEkLhvQO7ftbVI73MPS/vlOCQEXmgpsCR+I8zhIQyou+9zyx0jU4
+         n9IAMr8LDoW063kfGysm87zI9OQy4s1XmEPfqMk95H37wFVsbWcXY4L/9/g2+GzVmuuc
+         xmznsd8J5xVgsViG68Nvlb/NUgGZ0UFJldmifSUtuYCInkASh+4iFP7tcf/GMF7t6H9F
+         D8ZPJA+42sk9+lwDDqHcWdhVxdCKa6p3mCYfGoyqlMRFUx2Q0CNUD7fmwYIJnnHr/WKE
+         7TA53uct53fBInJpJtDmu4MjDeRsWJD3OZrpziihveWZ+pTyjZz8HVXt5cJ5tCRXALpS
+         tNxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720832592; x=1721437392;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=njOu1EaTiZGt3EM1QiAOXf7xb5THADxRrRxy/YZCZ1o=;
-        b=XhJde9lpPtEzkS1G37/iZ0sx1lUlDXJ9dvq0DXl2cKLGo8+mjzW9Fmymj4sgLlbpeW
-         NlzXnYfWsVUEcilHPZJpVOdJrK1emC//YBQCbvtj24Xg2rFQO8mDm0PfOHnagcj/ugye
-         UqRvVsHpCpUfg3uKBb80CsRDiw6GUkBljGCqZfdJiNyy8HVjt+ev9FkCtVPxAwLZ8DpK
-         Hzl8115WnngBmZ9bvR5CDFTI0UGpts8s4YVMGZsRKOdr/xQX7oyMJ6SRv+OaiwsvcuE9
-         +b3PvM2SNLMB7fQTKfIZQP5tXOvrtb92F18Zz1dg7eKoxXTGMrNiZF7KjlVxGHQ3TI8t
-         nbyg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1AfefbZSuIrLBcQYqZ7uCiOeM6V9nWKK7p5wsqJJQuLplj+njmdqUP08H1lx8QHtZiOFza+Uj/RHyTWEUlKVssbDsT83x6Il3GzjN
-X-Gm-Message-State: AOJu0YzlXJTdHCmBPy/tGqoR6E3GiryYT7JFxqLsgFd3UkPEu2h+bt6s
-	+M7YBw5Vdg6oTWX1mhgtiRCfs5jwjBba80bDagvo+a0W6orIGyDCGhq551709slwMtQ3R/hkTn/
-	VRHbJs4iXp4RO0aWQ6P/pzWYsx0pTQg8aULZ0BrTWIK1OgzEVhyT0AS50dKI+/w==
-X-Received: by 2002:a17:902:e54e:b0:1fb:9cb0:3e46 with SMTP id d9443c01a7336-1fc0b4b6453mr4690175ad.7.1720832591936;
-        Fri, 12 Jul 2024 18:03:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFwvIyu645ginLcnOU79cuOOkLvO6pcECrChF26Gh5N2PEpynwczfyA7mKSNLq2ec+lPeS1Mg==
-X-Received: by 2002:a17:902:e54e:b0:1fb:9cb0:3e46 with SMTP id d9443c01a7336-1fc0b4b6453mr4689775ad.7.1720832591455;
-        Fri, 12 Jul 2024 18:03:11 -0700 (PDT)
-Received: from [172.20.2.228] ([4.28.11.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bb6ffdesm597715ad.53.2024.07.12.18.03.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 18:03:11 -0700 (PDT)
-Message-ID: <df83a218-e2e5-496e-999a-e446a7d0b383@redhat.com>
-Date: Sat, 13 Jul 2024 03:03:10 +0200
+        d=1e100.net; s=20230601; t=1720832659; x=1721437459;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yH7mUDs9iCLcnupWVzAlTv4cUV/drEJ2d5DV9IL4ZtM=;
+        b=b8fRLjb91juYbt+105k4l0jY/pNiZc9nCbyIlFmSKS5csgNFxWuQqQrw1N8aehufXN
+         OHfziZJsBQsirEz/olQ+WfEmv7qP0woCaqlw39EAqohG7nTQohrzH9/nnh11j1LirJEW
+         uM6w4kgG9Esxyf8UUUahhK6ZA57YTOfpv2ff32wn5egi4EAQmTJSpgYot3r1Sj96iQf1
+         jAgREugCfx9g9s+wP8vWy5SKxxHJKvD/PmqXDlY/4gIJ0q7+10oxswQyKB6Mz47t6AaF
+         yaRaIb5oTAy+zUX3MF1rAnEDCVEqy4jjzANDmr2zQwh645bkWaWj4QRyJtq0Exh2+vE4
+         Q3lg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6OrLYwGyeHHWsVHIsNvJeyOb7GgHPpzlaLmiHv1OS1I2zojtADPYR2/T7H8DSZTJ5bc/MmIi52u+1fK6o+Fz76V2NrVFbSQxE2gzz
+X-Gm-Message-State: AOJu0Yyh3+OD76KBgjwLJkpmt7RPCBccSRwX7f4c5XhLf/0mtHfrnCxQ
+	D1UtuV4fKri+8tD+u89WWPYocsDR/JKjwcJgtvTro8Vl98wfNxw83xxWSzB1X+c=
+X-Google-Smtp-Source: AGHT+IGQ/I0WaFhGJFtcL3N/xdoeqsNKfep4fanzD9WvQoCVAUijIIi04JLfIvB+6AR9sfiTtDBmRA==
+X-Received: by 2002:a05:6808:17a5:b0:3d2:23e0:d7aa with SMTP id 5614622812f47-3d93bef8b38mr17705419b6e.13.1720832659290;
+        Fri, 12 Jul 2024 18:04:19 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700::1cb1])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dab3e1d054sm25642b6e.53.2024.07.12.18.04.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 18:04:18 -0700 (PDT)
+Date: Fri, 12 Jul 2024 20:04:16 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Gao Xiang <xiang@kernel.org>
+Cc: Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>, linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] erofs: silence uninitialized variable warning in
+ z_erofs_scan_folio()
+Message-ID: <f78ab50e-ed6d-4275-8dd4-a4159fa565a2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory: Avoid PMD-size page cache if needed
-To: Gavin Shan <gshan@redhat.com>, Matthew Wilcox <willy@infradead.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, william.kucharski@oracle.com,
- ryan.roberts@arm.com, shan.gavin@gmail.com
-References: <20240711104840.200573-1-gshan@redhat.com>
- <ZpBEwEn3swH7IFbI@casper.infradead.org>
- <f58433ee-7217-4f9e-91ba-c29f95cd56b0@redhat.com>
- <63a0364b-a2e0-48c2-b255-e976112deeb1@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <63a0364b-a2e0-48c2-b255-e976112deeb1@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 12.07.24 07:39, Gavin Shan wrote:
-> On 7/12/24 7:03 AM, David Hildenbrand wrote:
->> On 11.07.24 22:46, Matthew Wilcox wrote:
->>> On Thu, Jul 11, 2024 at 08:48:40PM +1000, Gavin Shan wrote:
->>>> +++ b/mm/huge_memory.c
->>>> @@ -136,7 +136,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->>>>            while (orders) {
->>>>                addr = vma->vm_end - (PAGE_SIZE << order);
->>>> -            if (thp_vma_suitable_order(vma, addr, order))
->>>> +            if (!(vma->vm_file && order > MAX_PAGECACHE_ORDER) &&
->>>> +                thp_vma_suitable_order(vma, addr, order))
->>>>                    break;
->>>
->>> Why does 'orders' even contain potential orders that are larger than
->>> MAX_PAGECACHE_ORDER?
->>>
->>> We do this at the top:
->>>
->>>           orders &= vma_is_anonymous(vma) ?
->>>                           THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
->>>
->>> include/linux/huge_mm.h:#define THP_ORDERS_ALL_FILE     (BIT(PMD_ORDER) | BIT(PUD_ORDER))
->>>
->>> ... and that seems very wrong.  We support all kinds of orders for
->>> files, not just PMD order.  We don't support PUD order at all.
->>>
->>> What the hell is going on here?
->>
->> yes, that's just absolutely confusing. I mentioned it to Ryan lately that we should clean that up (I wanted to look into that, but am happy if someone else can help).
->>
->> There should likely be different defines for
->>
->> DAX (PMD|PUD)
->>
->> SHMEM (PMD) -- but soon more. Not sure if we want separate ANON_SHMEM for the time being. Hm. But shmem is already handles separately, so maybe we can just ignore shmem here.
->>
->> PAGECACHE (1 .. MAX_PAGECACHE_ORDER)
->>
->> ? But it's still unclear to me.
->>
->> At least DAX must stay special I think, and PAGECACHE should be capped at MAX_PAGECACHE_ORDER.
->>
-> 
-> David, I can help to clean it up. Could you please help to confirm the following
+Smatch complains that:
 
-Thanks!
+    fs/erofs/zdata.c:1047 z_erofs_scan_folio()
+    error: uninitialized symbol 'err'.
 
-> changes are exactly what you're suggesting? Hopefully, there are nothing I've missed.
-> The original issue can be fixed by the changes. With the changes applied, madvise(MADV_COLLAPSE)
-> returns with errno -22 in the test program.
-> 
-> The fix tag needs to adjusted either.
-> 
-> Fixes: 3485b88390b0 ("mm: thp: introduce multi-size THP sysfs interface")
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 2aa986a5cd1b..45909efb0ef0 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -74,7 +74,12 @@ extern struct kobj_attribute shmem_enabled_attr;
->    /*
->     * Mask of all large folio orders supported for file THP.
->     */
-> -#define THP_ORDERS_ALL_FILE    (BIT(PMD_ORDER) | BIT(PUD_ORDER))
+The issue is if we hit this (!(map->m_flags & EROFS_MAP_MAPPED)) {
+condition then "err" isn't set.  It's inside a loop so we would have to
+hit that condition on every iteration.  Initialize "err" to zero to
+solve this.
 
-DAX doesn't have any MAX_PAGECACHE_ORDER restrictions (like hugetlb). So 
-this should be
+Fixes: 5b9654efb604 ("erofs: teach z_erofs_scan_folios() to handle multi-page folios")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/erofs/zdata.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-/*
-  * FSDAX never splits folios, so the MAX_PAGECACHE_ORDER limit does not
-  * apply here.
-  */
-THP_ORDERS_ALL_FILE_DAX ((BIT(PMD_ORDER) | BIT(PUD_ORDER))
-
-Something like that
-
-> +#define THP_ORDERS_ALL_FILE_DAX                \
-> +       ((BIT(PMD_ORDER) | BIT(PUD_ORDER)) & (BIT(MAX_PAGECACHE_ORDER + 1) - 1))
-> +#define THP_ORDERS_ALL_FILE_DEFAULT    \
-> +       ((BIT(MAX_PAGECACHE_ORDER + 1) - 1) & ~BIT(0))
-> +#define THP_ORDERS_ALL_FILE            \
-> +       (THP_ORDERS_ALL_FILE_DAX | THP_ORDERS_ALL_FILE_DEFAULT)
-
-Maybe we can get rid of THP_ORDERS_ALL_FILE (to prevent abuse) and fixup
-THP_ORDERS_ALL instead.
-
->    
->    /*
->     * Mask of all large folio orders supported for THP.
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 2120f7478e55..4690f33afaa6 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -88,9 +88,17 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->           bool smaps = tva_flags & TVA_SMAPS;
->           bool in_pf = tva_flags & TVA_IN_PF;
->           bool enforce_sysfs = tva_flags & TVA_ENFORCE_SYSFS;
-> +       unsigned long supported_orders;
-> +
->           /* Check the intersection of requested and supported orders. */
-> -       orders &= vma_is_anonymous(vma) ?
-> -                       THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
-> +       if (vma_is_anonymous(vma))
-> +               supported_orders = THP_ORDERS_ALL_ANON;
-> +       else if (vma_is_dax(vma))
-> +               supported_orders = THP_ORDERS_ALL_FILE_DAX;
-> +       else
-> +               supported_orders = THP_ORDERS_ALL_FILE_DEFAULT;
-
-This is what I had in mind.
-
-But, do we have to special-case shmem as well or will that be handled 
-correctly?
-
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index aff3cdf114ad..ac5ffd4674e4 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -962,7 +962,7 @@ static int z_erofs_scan_folio(struct z_erofs_decompress_frontend *f,
+ 	const unsigned int bs = i_blocksize(inode);
+ 	unsigned int end = folio_size(folio), split = 0, cur, pgs;
+ 	bool tight, excl;
+-	int err;
++	int err = 0;
+ 
+ 	tight = (bs == PAGE_SIZE);
+ 	z_erofs_onlinefolio_init(folio);
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
