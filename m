@@ -1,109 +1,148 @@
-Return-Path: <linux-kernel+bounces-251498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEEDC930596
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:35:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE12D930598
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 14:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 582C3283279
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:35:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 646451F21C22
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87ACF130A73;
-	Sat, 13 Jul 2024 12:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA38130AD7;
+	Sat, 13 Jul 2024 12:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W2yhnPsV"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Au7zmn1j"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807C54C8E;
-	Sat, 13 Jul 2024 12:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7B4757E7
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 12:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720874150; cv=none; b=LYojpqSOWq/KFRYvZOo/8jh5J/mOKo/0L6/5/qfNjJoguwrBtK0y4xWv0K/0YpalvtOs8uwjhkqtXyiZnsG6ByeilU/yydD2kZ5erKlZSNgoh0k9fAtDwrd1apwuTv3caBunyInj2wtW9KaWopUqYkcKXXohgudnILdu6xUL5W4=
+	t=1720874260; cv=none; b=eUp2apshOg2geoIgifbL8JobDutCIgMZ0BNV4uSDiaMNTt9QDvquKgMZIEWSu4ccrjic/K2lgWWCl2YjK2nDtTT8Lyh8GLT2ZeRsRiQ6EPwU1+KA4eTAMZ3UVkriYhdOoYWtx/ZbNM2r1NnB1ObVDi9Bw52uxZxnmuQe9RZLi9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720874150; c=relaxed/simple;
-	bh=NpVjYkog+25E4rQygl9YoxSBv9zb0zrBY5hRbqlgJA4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PAWfAH1pmgPGmxo1N7q4P/2j9tOlCkHUc7bbDm7kV9rQD7Z7PTEBTuCOWiJQNBez8qp2THUNM7kOrfE4HcnAXuBK5CfHkfv0Czkz1nIfRIKiayRdQ6xI/nYQKRus3nNSXqyvYI1KER1vFWC/8WaZ38ygulzHHXf0pcDhpMsfwrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W2yhnPsV; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-64b417e1511so27767787b3.3;
-        Sat, 13 Jul 2024 05:35:49 -0700 (PDT)
+	s=arc-20240116; t=1720874260; c=relaxed/simple;
+	bh=ALEtotDXe1wTfhh/A0WxVHMSMACce8epsNr3CJUeDxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UEunY86HoVWmr9rxCAqoJ06yrGD8D022JHpHS6HW0ic5G/HNXe/A7X52CzPQCZtyYS/wHRUC3G5Dh7k9F7h2XdFMSENr3lmZm/XYFJhPbZbtossHKasshMpgUo5w6znM0SS0RreK0H2HDmhUnEmG2hS+ly1YX1I/SQMGA8fbQyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Au7zmn1j; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58b447c5112so3897987a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 05:37:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720874148; x=1721478948; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=owkShcGocUOtbv22a0hw2ZQ7UgHf40jkC06XKxO56x8=;
-        b=W2yhnPsV3XdcZ1TdLL4sXt7QLBKsWeEGOG/fEspezFHeuRtK2hAHXbAkBoANTCT7Ay
-         uxfedI8B0qPmjDZdtpTwL3m3Bw6cpimfJWN23sn6vbv3rmmfNwt4RS+nX96LHxV+npBD
-         L654xsFmd5ZkH4hxbRqx7qvHLiuBrgXo0wiN/T1q0SCq2KEBV0NSIzUQTOL2iYkSkh57
-         xFwOUSXuZaE7J7zaUbzwj4Q1UFbmS7zJUqWPbA9X5FWoO1lkM2jRfRG/GSshV9r7amkT
-         HrFeZlWmTSYvY/OA0+HX0Lccg+geJBBh3fk/U8P/ksaOGhyDXP2eZQ2uQRpdlToOUzY8
-         Dzaw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720874256; x=1721479056; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hQLJcgSqmrEQyTwsPNpqaNNOR1im9T0KFBjj4JZBLIg=;
+        b=Au7zmn1j8g66lAoaIsQl+LLk3PVCuYCfduCv7ay6M0ht4Mb6qgLv2xiX98A2y/NcN0
+         JaHFgYn/HsOY9AVrW/FBEak7ZcCtVXXHpclrTl/WhiGy1q+6RAsERpUDxQvgxAlICP1H
+         ZuyJY4pBZzn9WwdCQZsQXtYxZIrLK0ZnUXiEGVj7K3IGX05pT8B9A3ONLwYQzsirAMFk
+         fH0Km4tBqxqjV0eOsV5/m3RZFqvKiHF/dWjrFOcAwOdetE6+Gxu+xpliW0lfGNGhIfYz
+         6ZolP26B1tFv/Sw2cp37mQh89V7iooo5OR4sBjkyxRDXhQ+R8YLBlKGSgCKxVR8eRk48
+         Rdlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720874148; x=1721478948;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=owkShcGocUOtbv22a0hw2ZQ7UgHf40jkC06XKxO56x8=;
-        b=r3pZQ8XnvWQE30DUkvUJrlZ7Pn0M2pQvgPS5DW+Bq0foFXCmmGw0+yEpU3GDmdstxd
-         XWoK+iHbNp5E9J0i3+s2aZ/LKKgeEpYLpHVPGGK8CVUn8jRUZGq3DRVJKkx4F5KW5SJW
-         lgHJUcPsShA+Gm4SxxLBfwZ6zcRJusEqN4ZN5mir3Ozr1boJ0qVSUuoZSPbwDRLrYPAq
-         R86Vt2vwsbx+DnVbZ5I98Di8lieGaigSlssV57Yb4VEPAnZHz9Sv00eY8hnfaP7cHayr
-         zqZn0Z/XsNsjGnMj5WnNHXGwiMbiaVMfTcCtG3PwcNlOECYX3i+cKNMwTUbp+tB0VaNl
-         +31Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVcYrryUipABBbvNEqQl/lwZSmCmTECX1ixJDLq6dHP7X9OwkhzaVElMlNCm4FfR+0HmbKdXlu7ujrkgtLC0XhtB2gSbFL885FrF4rVh2Ax4tPYxMZkIhJIUIHdpN2prB5gC4jNso1m+A==
-X-Gm-Message-State: AOJu0YwJzOYiRCdo0g/OFNpDKGnPkJZ/7qRlPqQk/WiUN8K3p1Hf87u1
-	bXCqBDLTrG1tya2+5i7ERM3rV4AjfRdIfENRNYVoRDViaNz/b0YR+87k2AmsHwqGWPdYu7Ue20s
-	3BH8xOdlhV+TbCbuoPe5+ZZL3y74=
-X-Google-Smtp-Source: AGHT+IFxVjFQgnzk7U8EbynbAHgLidXGTg+dCuDEWyhjzb0s5oKcsQWA8qjq4FBXiKSC/kd0jB508Atnx1GMKhgcc2I=
-X-Received: by 2002:a81:8d4b:0:b0:63b:d711:e722 with SMTP id
- 00721157ae682-658ee7905a8mr168875407b3.1.1720874148479; Sat, 13 Jul 2024
- 05:35:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720874256; x=1721479056;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hQLJcgSqmrEQyTwsPNpqaNNOR1im9T0KFBjj4JZBLIg=;
+        b=JOuX1b2Qjd5LVEYKluwvmzhVJZhhWv4V5Z16n2u1NNN28mgGxdDtK3zzI/L0xngpSs
+         fIRUluq1CluiY45IUNtAjyWQ5GlTlZRAir2Of2lprXjT9aDKndWZJVjTVfZenCG/zCJd
+         YZRJ4HJ5B+4d9lTC+oXQr6A3eyEz31bCfRL3Lmqpt71x1uGEUGcyJNDBkW+8R6TpUpp1
+         rjj2ZGOv2B12xMbPCGcw2SOJLlTlb3cM7o1pz3sE8kBMuxUxnxhbbm4nfgf4XI3wvhS2
+         3MrVtd/o+djWqbY4pxl/GluXAuzgL8fTMlQwzoMNdpPiYTOkJgJma0HQyZeLJOqigsdY
+         D/ug==
+X-Gm-Message-State: AOJu0YyyD9O11C20GquWxZ0/R6HrElgB1ic4R5oWyq4JcIcLZ9VGEqBr
+	hApg2tW2QYAX3OM6AmYRJAsZOYHkYW9/fTgPEXKRBGvVKUvke6ri/w5CYJHna/s=
+X-Google-Smtp-Source: AGHT+IFoeMrCBWUO2pW01nr/SM+st8eNPSLq69gJBv83LXWhWaXsXistVx+E/nH5md9gax+j+IcniQ==
+X-Received: by 2002:a50:d518:0:b0:585:437c:d7fc with SMTP id 4fb4d7f45d1cf-594bc7c7e61mr8692805a12.32.1720874256509;
+        Sat, 13 Jul 2024 05:37:36 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:3c82:4e3d:25d1:b685])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b2504b8a2sm724185a12.30.2024.07.13.05.37.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jul 2024 05:37:36 -0700 (PDT)
+Date: Sat, 13 Jul 2024 14:37:34 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Hironori KIKUCHI <kikuchan98@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Aleksandr Shubin <privatesub2@gmail.com>, Cheo Fusi <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 2/5] pwm: sun20i: Add support for Allwinner H616 PWM
+Message-ID: <c7iwx6erdqv7uahd47ymlwcid67wbfizkblngv7r3dx7i2i735@ujams5zx6b5b>
+References: <20240531141152.327592-1-kikuchan98@gmail.com>
+ <20240531141152.327592-3-kikuchan98@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711193749.2397471-1-tmaimon77@gmail.com>
-In-Reply-To: <20240711193749.2397471-1-tmaimon77@gmail.com>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Sat, 13 Jul 2024 14:35:37 +0200
-Message-ID: <CAOiHx=kr=_-ra392XH-vR2fG-E5ZVXAutU9OP6xQRrzXSu9ZWg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/7] pinctrl: npcm8xx: pin configuration changes
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: linus.walleij@linaro.org, avifishman70@gmail.com, tali.perry1@gmail.com, 
-	joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rimaol34dtjgodgo"
+Content-Disposition: inline
+In-Reply-To: <20240531141152.327592-3-kikuchan98@gmail.com>
 
-Hi,
 
-On Fri, 12 Jul 2024 at 02:48, Tomer Maimon <tmaimon77@gmail.com> wrote:
->
-> This patch set addresses various pin configuration changes for the
-> Nuvoton NPCM8XX BMC SoC. The patches aim to enhance functionality,
-> remove unused pins, and improve overall pin management.
->
-> Tomer Maimon (7):
->   pinctrl: nuvoton: npcm8xx: clear polarity before set both edge
->   pinctrl: nuvoton: npcm8xx: add gpi35 and gpi36
->   pinctrl: nuvoton: npcm8xx: add pin 250 to DDR pins group
->   pinctrl: nuvoton: npcm8xx: remove unused smb4den pin, group, function
->   pinctrl: nuvoton: npcm8xx: remove unused lpcclk pin, group, function
->   pinctrl: nuvoton: npcm8xx: modify clkrun and serirq pin configuration
->   pinctrl: nuvoton: npcm8xx: modify pins flags
+--rimaol34dtjgodgo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You also need to update
-Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
-for any changes that affect the device tree bindings (e.g.
-adding/removing functions/groups).
+Hello,
 
-Best Regards,
-Jonas
+On Fri, May 31, 2024 at 11:11:34PM +0900, Hironori KIKUCHI wrote:
+> @@ -20,8 +20,17 @@
+>  #include <linux/pwm.h>
+>  #include <linux/reset.h>
+> =20
+> +#define SUN20I_PWM_REG_OFFSET_PER_D1		(0x0080)
+> +#define SUN20I_PWM_REG_OFFSET_PCR_D1		(0x0100 + 0x0000)
+> +#define SUN20I_PWM_REG_OFFSET_PPR_D1		(0x0100 + 0x0004)
+> +#define SUN20I_PWM_REG_OFFSET_PER_H616		(0x0040)
+> +#define SUN20I_PWM_REG_OFFSET_PCR_H616		(0x0060 + 0x0000)
+> +#define SUN20I_PWM_REG_OFFSET_PPR_H616		(0x0060 + 0x0004)
+
+Instead of having a conditional for each register, it would be easier
+to do:
+
+	#define SUN20I_PWM_CHANBASE_D1		0x80
+	#define SUN20I_PWM_CHANBASE_H616	0x40
+
+(maybe with a more suitable name) and then do:
+
+	#define SUN20I_PWM_PER(sun20i_chip)		((sun20i_chip)->chanbase + 0)
+	#define SUN20I_PWM_PCR(sun20i_chip)		((sun20i_chip)->chanbase + 0x20)
+	#define SUN20I_PWM_PPR(sun20i_chip)		((sun20i_chip)->chanbase + 0x24)
+
+I would expect these definitions to appear in the order of register
+addresses, that is below SUN20I_PWM_CLK_CFG. This reduces the size of
+the private data struct, is easier to understnad to a human (I think)
+and I claim this results in more compact code (without having it
+verified).
+
+Best regards
+Uwe
+
+--rimaol34dtjgodgo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaSdQoACgkQj4D7WH0S
+/k6+QAf7BrtLVy5151/xN7lxLwW6Yq2j8mA3JiYPAFPnA54ZPTb1RUd0ybEyztdz
+mwlX1ucMc0CbzENqiyRUw4u6cYqx2kx8pYLCk/A6fDrp4AktR0IqwAHVLXTh89t+
+blf1YDbxgizYv6FrSeYFArjXcb1Tg8CaPRF8fJHNRJ9Aovw8D+n99gwj3OUluEtk
+uqqSyAalJn17RjCWa+z4bdxuR9LBSxD7h9s9ojc/COfkKyYlGi71CUJqKEc/EBmF
+cRERitwx/uRcWsQxHedROjLhuQw450WXZ0CVgcAQBgBRCOd4vaVg5Ld13p91RIvd
+yL0kmYFaFR8bbDKLr6sjPDPDVDoj/w==
+=vciA
+-----END PGP SIGNATURE-----
+
+--rimaol34dtjgodgo--
 
