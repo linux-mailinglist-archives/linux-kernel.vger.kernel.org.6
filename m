@@ -1,171 +1,119 @@
-Return-Path: <linux-kernel+bounces-251460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F014930523
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:25:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8305593052A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344351C212FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CD141F21E51
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 982A647F64;
-	Sat, 13 Jul 2024 10:25:23 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79452E40E;
+	Sat, 13 Jul 2024 10:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="npxuPVds"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943023BBCC
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 10:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A6E45008;
+	Sat, 13 Jul 2024 10:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720866323; cv=none; b=g7E1dFbhKSXPg7Gst9O1BbrE9f0TblAEVfdBBv54kx8aGZtdNKEVpsFh75oLMc0gMFYL/fS37XCOms5kIOwR8mUosdI8FWNDbntJwPlWtDDyFoL6YWWOf4vS1Ecv0WOfe2njq/5uZtiAKV5ZRGp3LXv74BnD3gCPzki1bq+r9gA=
+	t=1720866861; cv=none; b=WCaVltj9/dbZkwidQrJgt7d8TmjSK7gqtIaN4ysfrHtOJXIY5l3R2UYOE0nbIE/f6vBTQ9VIkGJgzH27CsLyRy7gkaKw8t0TAwiLppq3wNR0MPfoImWql5MdFCYK1u5TarP9Me5S4zqxwKLo/YckJTmUKAuqwQ2wDbxcLyMzEWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720866323; c=relaxed/simple;
-	bh=ZBNUzYhY0XyCLJEvMrVXx0hDlxVsefPmd6MFa7SLejI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=E4Khh31UQgFOkHgEFa9D1vvfyBEB1t3lCAnu9+jhuK/PofUcx2J9PRwNMhIOzuAN3yW8Cf/eJ4JsPmMsRknhYmXhQ7lFCiXYWWPpu6BqShP4Nna/0lRJus/4rwSFYXPW10aVNAmrnlU6uyjwXq/R08cmP8kFcOWPepk5ygtYemY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f6827f1acbso297873439f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 03:25:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720866321; x=1721471121;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oZ4FVtwD6Md8at7qAAzb/NnvYsEcHBzv+ZdXzcub+xc=;
-        b=spOYspxsk+inv1i47+G/IrKQ3VrCSPJjORoCSq3IMeDTKe6rldCXzn5+arheOGAa3N
-         tpWKXnJgdIWZDTa1p0kuW1PZwFMn5914PHuFCLwSjjpZ57gWTa2nYBQq5LrNAKKeS84W
-         UE24z3TRXVa3nYI3XjBJmzKlj3pqf6TRDcgCvIrbnkjcf+xcNt27BdmMhoZfj14T6lyK
-         Zy40j6+KBYtZNTliC1cEa3C8lApugjdlFpsOw6XT9/OAfaERJNcAluveIldVwCAdusEU
-         b/aimyTmTUv5bWOao8eb83xQIF5ylAaViyk6uCjV46Y7Osh1iZctSpXPwJLEZ0hGx8Ph
-         i95Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXf3G06/j2ZoQ/+SqP9+aFW2rOa9d9ExBj7oANHGSPzq2w0ZOVQNZkcCBNGsq324zNJZ2WNufzqhryCdlQhMYBJGDQyjYgW6z+qhPV+
-X-Gm-Message-State: AOJu0YxkwlnfKpEHHUZHmu2zG9BDVvC1AAkaN5nUIGrShVMhjUiPXUBy
-	fpyBo3igmnECAR0BJf+hzYDQoAhr+oQ/SsA3uh8/4iJhE7LTmhaqcDDNdHM8bLj+bW5G4Zdp2qJ
-	AZ0tSTx92fwWgihFMPTy+bNR40mrYk7T/wPT0qY0zOsVNMv2suMGgh3U=
-X-Google-Smtp-Source: AGHT+IGIa1b8Rpe7LpguR+rPPNOwgGqCbNVhVz1fWtaPaX/bSYmumq9gwWzmiGNMeHHNoeZdn8sJyX1uExjHLzmqqJhBvWNl3CTs
+	s=arc-20240116; t=1720866861; c=relaxed/simple;
+	bh=wHL89j46c+8SyZizzkw+zjxBFQ6oTMVQToilyEIMIAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhtEg3sL2uNEiF9t9Lu51NIu7rhGdBKrRFZQYBpmE3hcZ5lFv3tnUdbSibkjrbf/riCVSmDJCnlw82W5xnbyaujcot3nM4SvrgymcbR/ZcNGGJwJ7b1VVCbD7hqPTxQF8prcXinKnOnulYDadzSIRMSwXh0ze+LuTd9WScDsS6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=npxuPVds; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720866859; x=1752402859;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wHL89j46c+8SyZizzkw+zjxBFQ6oTMVQToilyEIMIAc=;
+  b=npxuPVdsEr32eKSRHggkvHvKum/wnOpvIIfX1q5GwFOYmtrvmBftzO1o
+   lgyQLeSJu8ddmW0tDgKbfxRBAiqTuPvAKqDr+6+BGVBkuxtvKme56SL8Q
+   vLynCR5AEEDX+xo/GGeV1juYF4shBDg53+AGUqyipTCxadD8cX34BVa6N
+   0xbm1emKNFNkpCcO3d8tyO6u5MnJlol48pYBiv2ssQl+4sk6jou7y8WN4
+   CvPUqSV05ZdS0m09FKQ8PDeeOQMQxkT9IKggKNeTjmzxXx/c3SYrCCKn+
+   TFkrDWFur/FOLm0gAhbai/uMb5zvyHm5cc+gbssxYkavn+4dpNs9Yjz0P
+   g==;
+X-CSE-ConnectionGUID: VLqKP7QdTdyIDffQZJwsLw==
+X-CSE-MsgGUID: DPef+2gwS8KAOmnlCkEPXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="18178397"
+X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
+   d="scan'208";a="18178397"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2024 03:34:18 -0700
+X-CSE-ConnectionGUID: GuJfLMxMTkmRcZ2zqyZASg==
+X-CSE-MsgGUID: AEDThg0lQCm69IC7O2a+LQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
+   d="scan'208";a="49231775"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 13 Jul 2024 03:34:16 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sSa4z-000byf-1V;
+	Sat, 13 Jul 2024 10:34:13 +0000
+Date: Sat, 13 Jul 2024 18:33:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: wangshuaijie@awinic.com, jic23@kernel.org, lars@metafoo.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	waqar.hameed@axis.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, wangshuaijie@awinic.com,
+	liweilei@awinic.com, kangjiajun@awinic.com
+Subject: Re: [PATCH V3 2/2] Add support for Awinic proximity sensor
+Message-ID: <202407131813.fFyF06Pu-lkp@intel.com>
+References: <20240712113200.2468249-3-wangshuaijie@awinic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152f:b0:38b:462b:8dd with SMTP id
- e9e14a558f8ab-38e62268c4bmr4384865ab.3.1720866320786; Sat, 13 Jul 2024
- 03:25:20 -0700 (PDT)
-Date: Sat, 13 Jul 2024 03:25:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c1c0a0061d1e6979@google.com>
-Subject: [syzbot] [kernel?] kernel BUG in binder_inc_ref_for_node
-From: syzbot <syzbot+3dae065ca76952a67257@syzkaller.appspotmail.com>
-To: arve@android.com, brauner@kernel.org, cmllamas@google.com, 
-	gregkh@linuxfoundation.org, joel@joelfernandes.org, 
-	linux-kernel@vger.kernel.org, maco@android.com, surenb@google.com, 
-	syzkaller-bugs@googlegroups.com, tkjos@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712113200.2468249-3-wangshuaijie@awinic.com>
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    82d01fe6ee52 Add linux-next specific files for 20240709
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=106472a5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=95a20e7acf357998
-dashboard link: https://syzkaller.appspot.com/bug?extid=3dae065ca76952a67257
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f2e87e980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16a4869e980000
+[auto build test WARNING on 43db1e03c086ed20cc75808d3f45e780ec4ca26e]
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/12dcacb06142/disk-82d01fe6.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6ef954821378/vmlinux-82d01fe6.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9ebf01d42887/bzImage-82d01fe6.xz
+url:    https://github.com/intel-lab-lkp/linux/commits/wangshuaijie-awinic-com/dt-bindings-iio-Add-YAML-to-Awinic-proximity-sensor/20240712-194024
+base:   43db1e03c086ed20cc75808d3f45e780ec4ca26e
+patch link:    https://lore.kernel.org/r/20240712113200.2468249-3-wangshuaijie%40awinic.com
+patch subject: [PATCH V3 2/2] Add support for Awinic proximity sensor
+config: powerpc-randconfig-r132-20240713 (https://download.01.org/0day-ci/archive/20240713/202407131813.fFyF06Pu-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce: (https://download.01.org/0day-ci/archive/20240713/202407131813.fFyF06Pu-lkp@intel.com/reproduce)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3dae065ca76952a67257@syzkaller.appspotmail.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407131813.fFyF06Pu-lkp@intel.com/
 
-------------[ cut here ]------------
-kernel BUG at drivers/android/binder.c:1175!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 5100 Comm: syz-executor841 Not tainted 6.10.0-rc7-next-20240709-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:binder_get_ref_for_node_olocked drivers/android/binder.c:1175 [inline]
-RIP: 0010:binder_inc_ref_for_node+0xdf7/0xe00 drivers/android/binder.c:1478
-Code: e8 f8 e9 4e fd ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 59 fd ff ff 48 89 df e8 24 e9 e8 f8 e9 4c fd ff ff e8 0a 15 82 f8 90 <0f> 0b 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc900038f75e8 EFLAGS: 00010293
-RAX: ffffffff891176d6 RBX: 0000000000000000 RCX: ffff888077030000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff888021c2e820 R08: ffffffff8911720b R09: 0000000000000000
-R10: ffff88802f1b0330 R11: ffffed1005e36068 R12: 0000000000000000
-R13: dffffc0000000000 R14: ffff88802f1b0428 R15: ffff88802f1b0410
-FS:  000055557b30a380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa59eb210e0 CR3: 000000001fee6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- binder_thread_write drivers/android/binder.c:3946 [inline]
- binder_ioctl_write_read+0xc7b/0x8d60 drivers/android/binder.c:5163
- binder_ioctl+0x43d/0x1c70 drivers/android/binder.c:5449
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa59eaaa1e9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffea9c908d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fa59eaaa1e9
-RDX: 00000000200003c0 RSI: 00000000c0306201 RDI: 0000000000000003
-RBP: 00000000000f4240 R08: 000055557b30b610 R09: 000055557b30b610
-R10: 000055557b30b610 R11: 0000000000000246 R12: 00007fa59eaf80dc
-R13: 00007fa59eaf30a3 R14: 00007ffea9c90900 R15: 00007ffea9c908f0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:binder_get_ref_for_node_olocked drivers/android/binder.c:1175 [inline]
-RIP: 0010:binder_inc_ref_for_node+0xdf7/0xe00 drivers/android/binder.c:1478
-Code: e8 f8 e9 4e fd ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 59 fd ff ff 48 89 df e8 24 e9 e8 f8 e9 4c fd ff ff e8 0a 15 82 f8 90 <0f> 0b 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc900038f75e8 EFLAGS: 00010293
-RAX: ffffffff891176d6 RBX: 0000000000000000 RCX: ffff888077030000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff888021c2e820 R08: ffffffff8911720b R09: 0000000000000000
-R10: ffff88802f1b0330 R11: ffffed1005e36068 R12: 0000000000000000
-R13: dffffc0000000000 R14: ffff88802f1b0428 R15: ffff88802f1b0410
-FS:  000055557b30a380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa59eb210e0 CR3: 000000001fee6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+sparse warnings: (new ones prefixed by >>)
+>> drivers/iio/proximity/aw9610x.c:1056:22: sparse: sparse: symbol 'g_aw9610x_awrw' was not declared. Should it be static?
 
+vim +/g_aw9610x_awrw +1056 drivers/iio/proximity/aw9610x.c
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+  1055	
+> 1056	struct aw_sar_awrw_t g_aw9610x_awrw = {
+  1057		.p_set_awrw_node_fn = aw9610x_awrw_set,
+  1058		.p_get_awrw_node_fn = aw9610x_awrw_get,
+  1059	};
+  1060	
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
