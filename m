@@ -1,346 +1,343 @@
-Return-Path: <linux-kernel+bounces-251463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F2693052E
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:35:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E468930531
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 12:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE2DCB217AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:35:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF8391C20CAD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 10:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C156A132811;
-	Sat, 13 Jul 2024 10:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB906EB7D;
+	Sat, 13 Jul 2024 10:36:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bKZkd3Lg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TzwtEP3o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD62745E2;
-	Sat, 13 Jul 2024 10:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083513BBE1;
+	Sat, 13 Jul 2024 10:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720866865; cv=none; b=WG4pAGV1S5DAzfkjRQC4iqTbkJLpC1ngjW7IUeVZTKRIps1Fmdja5AbhJ5QAueXmIMqMr1qopbTGJc7o2ld1NMN/b5u3OCNs3tWKRvh1X12t0zHzEfwM3jBZ4cAIPdSbznA3t5mn37OsMrTfNcHbElTrCYuYhw59Ly1ZZX0JJHo=
+	t=1720867014; cv=none; b=m583j3BS5a9Ehut5FzvkLx7o2frvEtH6I7WcAWyWTneEeyviwqjICViV++1zxbbvpbT+Rlk13d4tRXjrpZARQ0iwnoR8sZdmrRKYD+vzvNOMTqHSaXp0olBmUg/Qk3ZxKXUcvimsTzT8nDl0RT4gUM2PEsVYRm41zUSA/p5037U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720866865; c=relaxed/simple;
-	bh=eekrq+WPHhfQN52oa909XK53IiDji33oe6Nak6e7ZAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EKJ31oOt1xUEbfM92fW97IQZDdPKG/XtsHxUG/lkpU68vhWiS7JctJDwK6BoSdJv2LHf5Kz+HvdK5XGicZ+kdW1aBEIMoKxkWyocBPtIlj8wR0eSkswPFvslDeSxS19mNylROGUEvBkusYtGUvSu+dTlOhaO7uipaFlV/0QLeUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bKZkd3Lg; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720866863; x=1752402863;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eekrq+WPHhfQN52oa909XK53IiDji33oe6Nak6e7ZAY=;
-  b=bKZkd3LgvuBYApYriEyEmif6dGfG5HbXXD3aqo+ig4pc63vVgeOvfFh+
-   EyTgK8y70Va7aDGx79fqZw0WxozXwB4J4+Cs78Shucj8GZIe04fHp6BLW
-   lEC/aWBtphecU8jjnfvB6eNOxAazd7f+mxp2eEx9tqmXALbGu6LRDf+p3
-   E6lWVCEbh5VyTQYv/W67L46JaU39opVxiyO2NLEMrGxmisavdwE94+R3k
-   7Nw8cQaX6Psb8z/QAr+/Awrn+ukFrxb9T7MpGmBrcnRwuQNHS5Ri41PcI
-   NFS67wOl8/zWXBtpgGeKfz/PwMeQiJS/u+j7sDJsvT8VvTvHDortnl+Vj
-   w==;
-X-CSE-ConnectionGUID: nvAwRgteTY+ryWvQGExT+Q==
-X-CSE-MsgGUID: MfWl9tQLSGCSFkXHAApGkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="28913591"
-X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
-   d="scan'208";a="28913591"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2024 03:34:23 -0700
-X-CSE-ConnectionGUID: qRJeKVu+R4W3DHncw8ww7w==
-X-CSE-MsgGUID: f0vlLECuTcCCaqHpqU4MRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
-   d="scan'208";a="54095786"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 13 Jul 2024 03:34:16 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sSa4z-000byj-1b;
-	Sat, 13 Jul 2024 10:34:13 +0000
-Date: Sat, 13 Jul 2024 18:33:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ravi Bangoria <ravi.bangoria@amd.com>, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	seanjc@google.com, pbonzini@redhat.com, thomas.lendacky@amd.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	ravi.bangoria@amd.com, hpa@zytor.com, rmk+kernel@armlinux.org.uk,
-	peterz@infradead.org, james.morse@arm.com, lukas.bulwahn@gmail.com,
-	arjan@linux.intel.com, j.granados@samsung.com, sibs@chinatelecom.cn,
-	nik.borisov@suse.com, michael.roth@amd.com, nikunj.dadhania@amd.com,
-	babu.moger@amd.com, x86@kernel.org, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, santosh.shukla@amd.com,
-	ananth.narayan@amd.com, sandipan.das@amd.com, manali.shukla@amd.com,
-	jmattson@google.com
-Subject: Re: [PATCH v2 1/4] x86/split_lock: Move Split and Bus lock code to a
- dedicated file
-Message-ID: <202407131818.mNFDcgjd-lkp@intel.com>
-References: <20240712093943.1288-2-ravi.bangoria@amd.com>
+	s=arc-20240116; t=1720867014; c=relaxed/simple;
+	bh=gN98ES3fF03D4wlGhI/C7LubmUn7fkJk0Jap9JMj3MA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HjtZdiKC/9E4IOrbf+2N2A7sA0ykK9A2x5qf9kpba5lgZQcBvQ9By5QGoMrXB7u+xLZhuaGumggYaGLX7hNwDk233RTz4wTketY8fJqWqS+LVlvOdJiVFmx7z1I47+f8UAvcbEY0O4BMs+kqJdQahzPzfdgyZGnNA0rvrFYfYrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TzwtEP3o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10F23C32781;
+	Sat, 13 Jul 2024 10:36:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720867013;
+	bh=gN98ES3fF03D4wlGhI/C7LubmUn7fkJk0Jap9JMj3MA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TzwtEP3o9pUnkpDmEJ9aKdduN3lofW70OPtCg9MmkyHMHMh1x0uvtpnWWfDrsp7pV
+	 IT03Vwvd55zHJ7H5pbENBx72DfScLUS5bzflgnZ0tHH4eNdyet4ZosHdxovvycLP4M
+	 pLquq2EMS53c2skax39hyxqmMEqwb/U5nycXgsS7be5/p375wmeomim05448dh6io/
+	 SjpwepQhTu8BnF9Ddy1sn6OQz8fde4TWyhhjxnqSWZlRZ4/EzrF4QrlGni9RHAE0UK
+	 dfnfy91dNCbgaqsLxNQAI9ItQuHVk+H9s2K3pghf8aBCxWZVWRt6QWKZJ1caVDETZF
+	 TMx9JYNm2Aesg==
+Date: Sat, 13 Jul 2024 11:36:44 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Marius.Cristea@microchip.com, matteomartelli3@gmail.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: adc: add support for pac1921
+Message-ID: <20240713113644.464aa6d0@jic23-huawei>
+In-Reply-To: <20240712-octopus-coerce-52c52e9cfb41@spud>
+References: <20240704-iio-pac1921-v2-0-0deb95a48409@gmail.com>
+	<20240704-iio-pac1921-v2-2-0deb95a48409@gmail.com>
+	<20240707160442.6bab64c9@jic23-huawei>
+	<668bec2a8b23a_6e037017@njaxe.notmuch>
+	<88a54c736e0c39ead34dbde53c813526484d767d.camel@microchip.com>
+	<668f84e2f3e10_2b423707a@njaxe.notmuch>
+	<ea72561a1ab953d3f2a99272c24cf5124c0c72ec.camel@microchip.com>
+	<20240712-octopus-coerce-52c52e9cfb41@spud>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712093943.1288-2-ravi.bangoria@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ravi,
+On Fri, 12 Jul 2024 18:02:54 +0100
+Conor Dooley <conor@kernel.org> wrote:
 
-kernel test robot noticed the following build errors:
+> On Fri, Jul 12, 2024 at 02:41:51PM +0000, Marius.Cristea@microchip.com wr=
+ote:
+> > Hi Matteo,
+> >=20
+> >=20
+> > On Thu, 2024-07-11 at 09:08 +0200, Matteo Martelli wrote: =20
+> > > EXTERNAL EMAIL: Do not click links or open attachments unless you
+> > > know the content is safe
+> > >=20
+> > > Hi Marius,
+> > >=20
+> > > Marius.Cristea@ wrote: =20
+> > > > > I think that the OUT pin might not be used at all in many use
+> > > > > cases
+> > > > > so I would
+> > > > > leave the OUT pin setting as fixed for now and maybe extend it in
+> > > > > the
+> > > > > future
+> > > > > when more use cases arise. I am open to reconsider this though.
+> > > > >  =20
+> > > >=20
+> > > > The OUT functionality could be set from the device tree. =20
+> > >=20
+> > > I think this should to be controlled during runtime since it's a
+> > > configuration
+> > > that changes the device operation mode and so also what measurements
+> > > are
+> > > exposed to the user. An additional DT property could be useful but I
+> > > am not
+> > > sure it would fit in the DT scope.
+> > > Anyway I will leave this for future extensions.
+> > >  =20
+> >=20
+> > I think there are 2 different things here. Setting the configuration at
+> > startup by hard-coding things at probe time or taken those from device
+> > tree (we can add multiple properties here, as long those properties are
+> > documented into the dt-binding file) and the user controlled part at
+> > runtime.
+> > Because there is no standard interface to change the functionality, it
+> > will be easy to startup from the device tree and let the user to do
+> > some minor adjustments and not hardcode configuration.
 
-[auto build test ERROR on tip/master]
-[also build test ERROR on next-20240712]
-[cannot apply to tip/x86/core kvm/queue linus/master tip/auto-latest kvm/linux-next v6.10-rc7]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+There is a quirk here.  If out is wired to an ADC on the SoC for some reason
+then indeed it should be runtime configurable.  If it's wired to some
+types of analog circuitry or a separate thermal monitoring micro controller
+then it 'might' belong in DT because that 'wiring' is not discoverable.
+However, this usecase isn't one anyone has 'yet' asked for so for now
+we have no reason to provide a binding for it.  Also if this wiring
+is the case, we would probably not provide a userspace interface to control
+the pin (smoke might be the result).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ravi-Bangoria/x86-split_lock-Move-Split-and-Bus-lock-code-to-a-dedicated-file/20240712-175306
-base:   tip/master
-patch link:    https://lore.kernel.org/r/20240712093943.1288-2-ravi.bangoria%40amd.com
-patch subject: [PATCH v2 1/4] x86/split_lock: Move Split and Bus lock code to a dedicated file
-config: i386-buildonly-randconfig-002-20240713 (https://download.01.org/0day-ci/archive/20240713/202407131818.mNFDcgjd-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240713/202407131818.mNFDcgjd-lkp@intel.com/reproduce)
+If it's wired to an ADC on the linux running SoC then this is definitely
+a userspace control thing and we've lots of examples on how to do
+that in tree.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407131818.mNFDcgjd-lkp@intel.com/
+> >=20
+> >  =20
+> > > ... =20
+> > > > > > > ---
+> > > > > > > =C2=A0.../ABI/testing/sysfs-bus-iio-adc-pac1921=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 45 +
+> > > > > > > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 7 +
+> > > > > > > =C2=A0drivers/iio/adc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 10 +
+> > > > > > > =C2=A0drivers/iio/adc/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
+> > > > > > > =C2=A0drivers/iio/adc/pac1921.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1038
+> > > > > > > ++++++++++++++++++++
+> > > > > > > =C2=A05 files changed, 1101 insertions(+)
+> > > > > > >=20
+> > > > > > > diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-
+> > > > > > > pac1921
+> > > > > > > b/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1921
+> > > > > > > new file mode 100644
+> > > > > > > index 000000000000..4a32e2d4207b
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-pac1921 =20
+> > > > > > Quite a bit of custom ABI in here.
+> > > > > >=20
+> > > > > > Rule of thumb is that custom ABI is more or less pointless ABI
+> > > > > > for
+> > > > > > 99% of users
+> > > > > > because standard userspace won't use it.=C2=A0 So keep that in =
+mind
+> > > > > > when
+> > > > > > defining it.
+> > > > > >  =20
+> > > > > > > @@ -0,0 +1,45 @@
+> > > > > > > +What:
+> > > > > > > /sys/bus/iio/devices/iio:deviceX/resolution_bits
+> > > > > > > +KernelVersion:=C2=A0=C2=A0=C2=A0=C2=A0 6.10
+> > > > > > > +Contact:=C2=A0=C2=A0 linux-iio@vger.kernel.org
+> > > > > > > +Description:
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ ADC measurement resolution. Can be either 11 bits
+> > > > > > > or
+> > > > > > > 14 bits
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ (default). The driver sets the same resolution
+> > > > > > > for
+> > > > > > > both VBUS and
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ VSENSE measurements even if the hardware could be
+> > > > > > > configured to
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ measure VBUS and VSENSE with different
+> > > > > > > resolutions.
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ This attribute affects the integration time: with
+> > > > > > > 14
+> > > > > > > bits
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ resolution the integration time is increased by a
+> > > > > > > factor of
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ 1.9 (the driver considers a factor of 2). See
+> > > > > > > Table
+> > > > > > > 4-5 in
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ device datasheet for details. =20
+> > > > > >=20
+> > > > > > Is the integration time ever high enough that it matters?
+> > > > > > People tend not to do power measurement 'quickly'.
+> > > > > >=20
+> > > > > > If we are doing it quickly then you'll probably want to be
+> > > > > > providing buffered
+> > > > > > support and that does allow you to 'read' the resolution for a
+> > > > > > part
+> > > > > > where
+> > > > > > it changes for some other reason.=C2=A0=C2=A0 I haven't yet und=
+erstood
+> > > > > > this
+> > > > > > case. =20
+> > > > >=20
+> > > > > I will remove this control and fix the resolution bits to 14
+> > > > > (highest
+> > > > > value),
+> > > > > same as the HW default. =20
+> > > >=20
+> > > > The resolution could be set from the device tree. As default it
+> > > > could
+> > > > be 14 bits like into the hardware. The user could add
+> > > > "microchip,low_resolution_voltage" into the device tree in order to
+> > > > use
+> > > > only 11 bits for voltage samples. =20
+> > >=20
+> > > I think this should be controlled during runtime since it does not
+> > > depend on
+> > > the HW design but more on the user preferences about measurements
+> > > precision.
+> > > As Jonathan pointed out, since custom ABIs should be avoided when
+> > > possible, I
+> > > will leave it out from now until it becomes necessary and fix the
+> > > resolution to
+> > > 14 bits, as the HW default.
+> > >  =20
+> >=20
+> > Set the configuration from the device tree, will avoid custom ABI. The
+> > device tree could be changed also at runtime. =20
+>=20
+> Custom ABI in devicetree is not a replacement for custom ABI in userspace.
+> If things are fixed by the hardware and non-discoverable, then sure add
+> devicetree properties - but if it is things like "the user wants 11-bit
+> mode", then that does not sound suitable for a devicetree property at
+> all.
 
-All errors (new ones prefixed by >>):
+Indeed, resolution doesn't belong in device tree as it has nothing to do
+with physical wiring, but is a policy control.  I have no problem with
+providing a userspace ABI, but so far I've not heard a usecase for
+enabling it at all on this device.  Who runs power measurement that
+needs to be a little bit faster than can be done with 14bit all the time?
 
->> arch/x86/kernel/cpu/bus_lock.c:219:16: error: no member named 'reported_split_lock' in 'struct task_struct'
-     219 |         if (!current->reported_split_lock)
-         |              ~~~~~~~  ^
-   arch/x86/kernel/cpu/bus_lock.c:222:11: error: no member named 'reported_split_lock' in 'struct task_struct'
-     222 |         current->reported_split_lock = 1;
-         |         ~~~~~~~  ^
->> arch/x86/kernel/cpu/bus_lock.c:250:6: error: redefinition of 'handle_guest_split_lock'
-     250 | bool handle_guest_split_lock(unsigned long ip)
-         |      ^
-   arch/x86/include/asm/cpu.h:42:20: note: previous definition is here
-      42 | static inline bool handle_guest_split_lock(unsigned long ip)
-         |                    ^
->> arch/x86/kernel/cpu/bus_lock.c:292:6: error: redefinition of 'handle_user_split_lock'
-     292 | bool handle_user_split_lock(struct pt_regs *regs, long error_code)
-         |      ^
-   arch/x86/include/asm/cpu.h:37:20: note: previous definition is here
-      37 | static inline bool handle_user_split_lock(struct pt_regs *regs, long error_code)
-         |                    ^
->> arch/x86/kernel/cpu/bus_lock.c:300:6: error: redefinition of 'handle_bus_lock'
-     300 | void handle_bus_lock(struct pt_regs *regs)
-         |      ^
-   arch/x86/include/asm/cpu.h:47:20: note: previous definition is here
-      47 | static inline void handle_bus_lock(struct pt_regs *regs) {}
-         |                    ^
->> arch/x86/kernel/cpu/bus_lock.c:401:13: error: redefinition of 'sld_setup'
-     401 | void __init sld_setup(struct cpuinfo_x86 *c)
-         |             ^
-   arch/x86/include/asm/cpu.h:36:27: note: previous definition is here
-      36 | static inline void __init sld_setup(struct cpuinfo_x86 *c) {}
-         |                           ^
-   6 errors generated.
+We have only done resolution control on devices where that resolution is re=
+ally
+changing as a result of some other factor (oversampling ratio or similar)
+so it's been a read only aspect of the ABI.
+
+Note we've been round this resolution question many times and so far
+the number of actual usecases that have materialised is very very small.
+
+Jonathan
 
 
-vim +219 arch/x86/kernel/cpu/bus_lock.c
+> And no, you can't just change the devicetree at runtime like that either
+> as far as I understand - that's gonna cause memory leaks etc and I don't
+> think can be done from userspace without out-of-tree patches anyway.
+>=20
+> Cheers,
+> Conor.
+>=20
+> >  =20
+> > > ... =20
+> > > > > > > +What:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0
+> > > > > > > /sys/bus/iio/devices/iio:devices/filters_en
+> > > > > > > +KernelVersion:=C2=A0=C2=A0=C2=A0=C2=A0 6.10
+> > > > > > > +Contact:=C2=A0=C2=A0 linux-iio@vger.kernel.org
+> > > > > > > +Description:
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ Attribute to enable/disable ADC post filters.
+> > > > > > > Enabled
+> > > > > > > by
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ default.
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ This attribute affects the integration time: with
+> > > > > > > filters
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ enabled the integration time is increased by 50%.
+> > > > > > > See
+> > > > > > > Table 4-5
+> > > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ in device datasheet for details. =20
+> > > > > >=20
+> > > > > > Do we have any idea what this filter is? Datasheet seems very
+> > > > > > vague
+> > > > > > indeed and from
+> > > > > > a control point of view that makes this largely useless. How
+> > > > > > does
+> > > > > > userspace know
+> > > > > > whether to turn it on?
+> > > > > >=20
+> > > > > > We have an existing filter ABI but with so little information
+> > > > > > no
+> > > > > > way to fit this in.
+> > > > > > Gut feeling, leave it on all the time and drop the control
+> > > > > > interface. =20
+> > > > >=20
+> > > > > I will remove this control and leave it on all the time as the HW
+> > > > > default.
+> > > > >  =20
+> > > >=20
+> > > > The filters could be enabled from the device tree. As default it
+> > > > could
+> > > > be disabled.
+> > > > As a small detail here this is a post processing digital filter
+> > > > that
+> > > > could be enabled/disabled inside the PAC module.
+> > > >  =20
+> > >=20
+> > > Same reasoning of the resolution_bits parameter applies here. I will
+> > > fix the
+> > > filters to enabled, as the HW default. If there is any particular
+> > > reason to
+> > > prefer the filters fixed as disabled I will change that.
+> > >  =20
+> > If the user can change the on/off for the filters it doesn't matter
+> > what will be the default behavior. Being a single channel device, the
+> > probability for the user to change the filter behavior during runtime
+> > is minimal, that was the main reason for letting the user to change the
+> > configuration from the device tree and not hardcode it.
+> >  =20
+> > > ... =20
+> > > > Thanks,
+> > > > Marius =20
+> > >=20
+> > > Thanks,
+> > > Matteo =20
+> >=20
+> > Thanks,
+> > Marius =20
 
-   213	
-   214	static void split_lock_warn(unsigned long ip)
-   215	{
-   216		struct delayed_work *work;
-   217		int cpu;
-   218	
- > 219		if (!current->reported_split_lock)
-   220			pr_warn_ratelimited("#AC: %s/%d took a split_lock trap at address: 0x%lx\n",
-   221					    current->comm, current->pid, ip);
-   222		current->reported_split_lock = 1;
-   223	
-   224		if (sysctl_sld_mitigate) {
-   225			/*
-   226			 * misery factor #1:
-   227			 * sleep 10ms before trying to execute split lock.
-   228			 */
-   229			if (msleep_interruptible(10) > 0)
-   230				return;
-   231			/*
-   232			 * Misery factor #2:
-   233			 * only allow one buslocked disabled core at a time.
-   234			 */
-   235			if (down_interruptible(&buslock_sem) == -EINTR)
-   236				return;
-   237			work = &sl_reenable_unlock;
-   238		} else {
-   239			work = &sl_reenable;
-   240		}
-   241	
-   242		cpu = get_cpu();
-   243		schedule_delayed_work_on(cpu, work, 2);
-   244	
-   245		/* Disable split lock detection on this CPU to make progress */
-   246		sld_update_msr(false);
-   247		put_cpu();
-   248	}
-   249	
- > 250	bool handle_guest_split_lock(unsigned long ip)
-   251	{
-   252		if (sld_state == sld_warn) {
-   253			split_lock_warn(ip);
-   254			return true;
-   255		}
-   256	
-   257		pr_warn_once("#AC: %s/%d %s split_lock trap at address: 0x%lx\n",
-   258			     current->comm, current->pid,
-   259			     sld_state == sld_fatal ? "fatal" : "bogus", ip);
-   260	
-   261		current->thread.error_code = 0;
-   262		current->thread.trap_nr = X86_TRAP_AC;
-   263		force_sig_fault(SIGBUS, BUS_ADRALN, NULL);
-   264		return false;
-   265	}
-   266	EXPORT_SYMBOL_GPL(handle_guest_split_lock);
-   267	
-   268	void bus_lock_init(void)
-   269	{
-   270		u64 val;
-   271	
-   272		if (!boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT))
-   273			return;
-   274	
-   275		rdmsrl(MSR_IA32_DEBUGCTLMSR, val);
-   276	
-   277		if ((boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) &&
-   278		    (sld_state == sld_warn || sld_state == sld_fatal)) ||
-   279		    sld_state == sld_off) {
-   280			/*
-   281			 * Warn and fatal are handled by #AC for split lock if #AC for
-   282			 * split lock is supported.
-   283			 */
-   284			val &= ~DEBUGCTLMSR_BUS_LOCK_DETECT;
-   285		} else {
-   286			val |= DEBUGCTLMSR_BUS_LOCK_DETECT;
-   287		}
-   288	
-   289		wrmsrl(MSR_IA32_DEBUGCTLMSR, val);
-   290	}
-   291	
- > 292	bool handle_user_split_lock(struct pt_regs *regs, long error_code)
-   293	{
-   294		if ((regs->flags & X86_EFLAGS_AC) || sld_state == sld_fatal)
-   295			return false;
-   296		split_lock_warn(regs->ip);
-   297		return true;
-   298	}
-   299	
- > 300	void handle_bus_lock(struct pt_regs *regs)
-   301	{
-   302		switch (sld_state) {
-   303		case sld_off:
-   304			break;
-   305		case sld_ratelimit:
-   306			/* Enforce no more than bld_ratelimit bus locks/sec. */
-   307			while (!__ratelimit(&bld_ratelimit))
-   308				msleep(20);
-   309			/* Warn on the bus lock. */
-   310			fallthrough;
-   311		case sld_warn:
-   312			pr_warn_ratelimited("#DB: %s/%d took a bus_lock trap at address: 0x%lx\n",
-   313					    current->comm, current->pid, regs->ip);
-   314			break;
-   315		case sld_fatal:
-   316			force_sig_fault(SIGBUS, BUS_ADRALN, NULL);
-   317			break;
-   318		}
-   319	}
-   320	
-   321	/*
-   322	 * CPU models that are known to have the per-core split-lock detection
-   323	 * feature even though they do not enumerate IA32_CORE_CAPABILITIES.
-   324	 */
-   325	static const struct x86_cpu_id split_lock_cpu_ids[] __initconst = {
-   326		X86_MATCH_VFM(INTEL_ICELAKE_X,	0),
-   327		X86_MATCH_VFM(INTEL_ICELAKE_L,	0),
-   328		X86_MATCH_VFM(INTEL_ICELAKE_D,	0),
-   329		{}
-   330	};
-   331	
-   332	static void __init split_lock_setup(struct cpuinfo_x86 *c)
-   333	{
-   334		const struct x86_cpu_id *m;
-   335		u64 ia32_core_caps;
-   336	
-   337		if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-   338			return;
-   339	
-   340		/* Check for CPUs that have support but do not enumerate it: */
-   341		m = x86_match_cpu(split_lock_cpu_ids);
-   342		if (m)
-   343			goto supported;
-   344	
-   345		if (!cpu_has(c, X86_FEATURE_CORE_CAPABILITIES))
-   346			return;
-   347	
-   348		/*
-   349		 * Not all bits in MSR_IA32_CORE_CAPS are architectural, but
-   350		 * MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT is.  All CPUs that set
-   351		 * it have split lock detection.
-   352		 */
-   353		rdmsrl(MSR_IA32_CORE_CAPS, ia32_core_caps);
-   354		if (ia32_core_caps & MSR_IA32_CORE_CAPS_SPLIT_LOCK_DETECT)
-   355			goto supported;
-   356	
-   357		/* CPU is not in the model list and does not have the MSR bit: */
-   358		return;
-   359	
-   360	supported:
-   361		cpu_model_supports_sld = true;
-   362		__split_lock_setup();
-   363	}
-   364	
-   365	static void sld_state_show(void)
-   366	{
-   367		if (!boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT) &&
-   368		    !boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT))
-   369			return;
-   370	
-   371		switch (sld_state) {
-   372		case sld_off:
-   373			pr_info("disabled\n");
-   374			break;
-   375		case sld_warn:
-   376			if (boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT)) {
-   377				pr_info("#AC: crashing the kernel on kernel split_locks and warning on user-space split_locks\n");
-   378				if (cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-   379						      "x86/splitlock", NULL, splitlock_cpu_offline) < 0)
-   380					pr_warn("No splitlock CPU offline handler\n");
-   381			} else if (boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT)) {
-   382				pr_info("#DB: warning on user-space bus_locks\n");
-   383			}
-   384			break;
-   385		case sld_fatal:
-   386			if (boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT)) {
-   387				pr_info("#AC: crashing the kernel on kernel split_locks and sending SIGBUS on user-space split_locks\n");
-   388			} else if (boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT)) {
-   389				pr_info("#DB: sending SIGBUS on user-space bus_locks%s\n",
-   390					boot_cpu_has(X86_FEATURE_SPLIT_LOCK_DETECT) ?
-   391					" from non-WB" : "");
-   392			}
-   393			break;
-   394		case sld_ratelimit:
-   395			if (boot_cpu_has(X86_FEATURE_BUS_LOCK_DETECT))
-   396				pr_info("#DB: setting system wide bus lock rate limit to %u/sec\n", bld_ratelimit.burst);
-   397			break;
-   398		}
-   399	}
-   400	
- > 401	void __init sld_setup(struct cpuinfo_x86 *c)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
