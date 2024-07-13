@@ -1,151 +1,392 @@
-Return-Path: <linux-kernel+bounces-251368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570C3930416
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:16:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB48793041A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 08:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06EF71F23576
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 06:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4DD1F22509
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 06:23:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FF326AD4;
-	Sat, 13 Jul 2024 06:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFCB200A3;
+	Sat, 13 Jul 2024 06:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NcyTqJn4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I2y/24ji"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFBA1B960;
-	Sat, 13 Jul 2024 06:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147891C28E;
+	Sat, 13 Jul 2024 06:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720851370; cv=none; b=rUGoP5aahfdG3MmdCwOTQ0hKeFXnSTR45qm5dQWLp8sXwLspnewSabFLpwGuTbkxs1JlGbzkuPDXZb4ytsHT7gtljEgd27sxPNGNrdNLlu5BtrrEO6V3qYfqEBeEkeu4L5GX70KnUEZbPbXpLAEvdV9q6Up7aoWq00To1dvpcdY=
+	t=1720851792; cv=none; b=oCZ//qofZyhD5totkO0HAY7k/WaG6QCpW9Qz/iU+M3IaLs6btTKDv6waRz5pwB1701/Y5NFoXqH/6E8K5qgCFp8QVM2+Gq8hv+NbhLe+q3Q26siv1a/em+KqilWY1UtOkmt4MgtKIwfAQkLe1fjjWWWQ/aNjB2AoFUAddkVqlfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720851370; c=relaxed/simple;
-	bh=KN85+gFWkF03HdphdQDW1hlUh8APmU7td3URDxBVy48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hdqJEZCe94Qpp5pqPkFkzROokpHBgvadw4GtGo/hpd/kO8kUkFEc2yzMMDcpuTsbN4f4E+RpzUFcsUUBeImrYViNxkDRpmcgbE55OkZ0pubu5scyq27uI8IMKMaJnXyIzK63hCJmj+SsQrGr2iPo4NoHy8VQ2xTSSVRtBTdTK9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NcyTqJn4; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720851369; x=1752387369;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KN85+gFWkF03HdphdQDW1hlUh8APmU7td3URDxBVy48=;
-  b=NcyTqJn4XI8d8/fAPo8cQl9CNbs0wijANkjyAHDgEfU+FABqeY6XaaJt
-   XgXoOqAs+vV8QW0M9Xb+G9gEYJf+oJcQ5opWZuIksSZ9kxys2nRrq8Aly
-   BG4FVt24+ZwkE2US2jne64E/b7bd6piKEiZUS/UpPBguSOiQYnky799yh
-   PdVx9Q3vH8y+ct/iem/WGJN7hDknuxElGnPsMi/Djo5blBFTd+n0ZZsGL
-   X3qFWaYkUP/FoXOOtr4HEkeMie2MULyfYx4h9Ch54uFXh/Mu5GDrNQ8Ik
-   ab58qCr/viKvzuFSA0J7XWTaXDOuqQj327PcGymjNnIhZ9HAdgA3a7Ain
-   A==;
-X-CSE-ConnectionGUID: Pelzu2pBTjyBEJUjrfeEmg==
-X-CSE-MsgGUID: WRJqBmpnSbeE/mkUm6zxFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11131"; a="12532205"
-X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
-   d="scan'208";a="12532205"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2024 23:16:08 -0700
-X-CSE-ConnectionGUID: F/bBVadJQ4StEAO2fBoYOA==
-X-CSE-MsgGUID: Sjafa8h+T7GCEgWKURv48Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,205,1716274800"; 
-   d="scan'208";a="53683508"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 12 Jul 2024 23:16:06 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sSW39-000blC-1h;
-	Sat, 13 Jul 2024 06:16:03 +0000
-Date: Sat, 13 Jul 2024 14:15:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: wangshuaijie@awinic.com, jic23@kernel.org, lars@metafoo.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	waqar.hameed@axis.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, wangshuaijie@awinic.com,
-	liweilei@awinic.com, kangjiajun@awinic.com
-Subject: Re: [PATCH V3 2/2] Add support for Awinic proximity sensor
-Message-ID: <202407131316.CrET2D2p-lkp@intel.com>
-References: <20240712113200.2468249-3-wangshuaijie@awinic.com>
+	s=arc-20240116; t=1720851792; c=relaxed/simple;
+	bh=SQU0fop5JqjQ+DY5JA2oRLOa4VhNrfr+HcoADIfcSC4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=oZohlUR+Axjj5GC1GMalxitCu5anw11TuNtZi2ykbCyzrt+kKS1DWQtOORxoSKfEDYYYXZxq1j2FsPV7I/Y6qt5qUm25oUX8vSqwqt3X6tiHVIJ+g69AUEw7+FGoZrhiJzjgGt1Pq6Z5550O9bhUiIVsAJs+AVMxYTZXNPsL0/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I2y/24ji; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46D4unkr024792;
+	Sat, 13 Jul 2024 06:22:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-type:mime-version:subject:from:in-reply-to:date:cc
+	:content-transfer-encoding:message-id:references:to; s=pp1; bh=t
+	2RT+W9nQ0Q1oa8EaJ7uTTnfw1rufRnz5AuueoVcfYk=; b=I2y/24jiKPAJmONWK
+	dVOVuCjtlMfPzVMXnH3WW274vvMSkAccEnuHhYFEra317cPSH6IxS2AVdibCOZbN
+	PFSuJN2AA2nsxudIJO2t1XSvHLClKLX+Cr/shDT1iJMfEYtOY02ej4gN0AMO9WVH
+	44ouTYUSLKwR47scjlTwHFMIcQHi/jfjSxGVHjX9Yl+A3RFAPEh4Ic7uqP7Cpbta
+	jgG7itaCG77D0NK9N0XNdbRJrIgU+j4XsxVx8SCdmJ2JAqx9nDJm8WNMDj7nYz9n
+	7a8xUVfGNEZbhfeaf3l8ieXUL5FxeweB4QIFlE0jyl+PxDuX9lNfbnvkUXL92ONE
+	rZC7A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40bfgr0bh4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 06:22:55 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46D6MsvO012143;
+	Sat, 13 Jul 2024 06:22:54 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40bfgr0bh2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 06:22:54 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46D31f9X024600;
+	Sat, 13 Jul 2024 06:22:54 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407hrna9s8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Jul 2024 06:22:54 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46D6Mmd418219456
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 13 Jul 2024 06:22:50 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0FEAB2004E;
+	Sat, 13 Jul 2024 06:22:48 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CEFD720040;
+	Sat, 13 Jul 2024 06:22:43 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.43.47.252])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sat, 13 Jul 2024 06:22:43 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712113200.2468249-3-wangshuaijie@awinic.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH V6 17/18] tools/perf: Update data_type_cmp and
+ sort__typeoff_sort function to include var_name in comparison
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <ZpGfYVc_ewcsQxWL@google.com>
+Date: Sat, 13 Jul 2024 11:52:30 +0530
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ian Rogers <irogers@google.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Disha Goel <disgoel@linux.vnet.ibm.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6733E9A7-1118-46A5-8C17-DC22A9C47207@linux.vnet.ibm.com>
+References: <20240707144419.92510-1-atrajeev@linux.vnet.ibm.com>
+ <20240707144419.92510-18-atrajeev@linux.vnet.ibm.com>
+ <ZpGfYVc_ewcsQxWL@google.com>
+To: Namhyung Kim <namhyung@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: yKQRdhSDi2_DawUQM-7J6uWq869F0nig
+X-Proofpoint-ORIG-GUID: 1_vKXQzd0HBf02d14-9Fk9DRbivNCrSZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-13_02,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 lowpriorityscore=0 clxscore=1015 mlxscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407130041
 
-Hi,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 43db1e03c086ed20cc75808d3f45e780ec4ca26e]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/wangshuaijie-awinic-com/dt-bindings-iio-Add-YAML-to-Awinic-proximity-sensor/20240712-194024
-base:   43db1e03c086ed20cc75808d3f45e780ec4ca26e
-patch link:    https://lore.kernel.org/r/20240712113200.2468249-3-wangshuaijie%40awinic.com
-patch subject: [PATCH V3 2/2] Add support for Awinic proximity sensor
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20240713/202407131316.CrET2D2p-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240713/202407131316.CrET2D2p-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407131316.CrET2D2p-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/iio/proximity/aw9610x.c: In function 'aw9610x_datablock_load':
->> drivers/iio/proximity/aw9610x.c:665:1: warning: the frame size of 1356 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-     665 | }
-         | ^
 
 
-vim +665 drivers/iio/proximity/aw9610x.c
+> On 13 Jul 2024, at 2:55=E2=80=AFAM, Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>=20
+> On Sun, Jul 07, 2024 at 08:14:18PM +0530, Athira Rajeev wrote:
+>> Currently data_type_cmp() only compares size and type name.
+>> But in cases where the type name of two data type entries
+>> is same, but var_name is different, the comparison can't distinguish
+>> two different types.
+>>=20
+>> Consider there is a "long unsigned int" with var_name as "X" and =
+there
+>> is global variable "long unsigned int". Currently since
+>> data_type_cmp uses only type_name for comparison ( "long unsigned =
+int"),
+>> it won't distinguish these as separate entries. Update the
+>=20
+> I'm still not sure if it's ok.  It intentionally merges different
+> instances of the same type together as it's a data 'type' profile.
+>=20
+>=20
+>> functions "data_type_cmp" as well as "sort__typeoff_sort" to
+>> compare variable names after type name if it exists.
+>>=20
+>> Also updated "hist_entry__typeoff_snprintf" to print var_name if
+>> it is set. With the changes,
+>>=20
+>>     11.42%  long unsigned int  long unsigned int +0 =
+(current_stack_pointer)
+>>     4.68%  struct paca_struct  struct paca_struct +2312 (__current)
+>>     4.57%  struct paca_struct  struct paca_struct +2354 =
+(irq_soft_mask)
+>>     2.69%  struct paca_struct  struct paca_struct +2808 (canary)
+>>     2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
+>>     2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
+>>     1.43%  long unsigned int  long unsigned int +0 (no field)
+>=20
+> It seems like an output of `perf report -s type,typeoff`.  But I'm
+> curious how it'd work with -s type only?  I guess it'd have two =
+separate
+> entries for 'long unsigned int'.  Ideally we can have a single entry
+> with two different fields.
+>=20
+> For example, `perf report -s type,typeoff -H`:
+>=20
+>  12.85%     long unsigned int
+>     11.42%     long unsigned int +0 (current_stack_pointer)
+>      1.43%     long unsigned int +0 (no field)
+>  ...
+>=20
 
-   634	
-   635	static void aw9610x_datablock_load(struct aw_sar *p_sar, const char *buf)
-   636	{
-   637		struct aw9610x *aw9610x = p_sar->priv_data;
-   638		unsigned char addr_bytes = aw9610x->aw_i2c_package.addr_bytes;
-   639		unsigned char data_bytes = aw9610x->aw_i2c_package.data_bytes;
-   640		unsigned char reg_num = aw9610x->aw_i2c_package.reg_num;
-   641		unsigned char reg_data[220] = { 0 };
-   642		unsigned int databuf[220] = { 0 };
-   643		unsigned char temp_buf[2] = { 0 };
-   644		unsigned int i;
-   645	
-   646		for (i = 0; i < data_bytes * reg_num; i++) {
-   647			if (reg_num < attr_buf[1]) {
-   648				temp_buf[0] = buf[attr_buf[0] + (addr_bytes + i) * 5];
-   649				temp_buf[1] =
-   650					buf[attr_buf[0] + (addr_bytes + i) * 5 + 1];
-   651			} else if (reg_num >= attr_buf[1] && reg_num < attr_buf[3]) {
-   652				temp_buf[0] = buf[attr_buf[2] + (addr_bytes + i) * 5];
-   653				temp_buf[1] =
-   654					buf[attr_buf[2] + (addr_bytes + i) * 5 + 1];
-   655			} else if (reg_num >= attr_buf[3] && reg_num < attr_buf[5]) {
-   656				temp_buf[0] = buf[attr_buf[4] + (addr_bytes + i) * 5];
-   657				temp_buf[1] =
-   658					buf[attr_buf[4] + (addr_bytes + i) * 5 + 1];
-   659			}
-   660			sscanf(temp_buf, "%02x", &databuf[i]);
-   661			reg_data[i] = (unsigned char)databuf[i];
-   662		}
-   663		aw9610x->aw_i2c_package.p_reg_data = reg_data;
-   664		aw9610x_awrw_write_seq(p_sar);
- > 665	}
-   666	
+Hi Namhyung,
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks for the comments.
+
+While printing, the check for field is done only in =
+=E2=80=9Csort__typeoff_sort=E2=80=9D.
+To summarise,
+1. While adding the data type in rb node, if the entry has different =
+field, new entry will be added. So we will have different entries in rb =
+node if field differs.
+2. While using sort key to display, for =E2=80=9Ctypeoff=E2=80=9D, we =
+use sort__typeoff_sort . For =E2=80=9Ctype=E2=80=9D, we use =
+=E2=80=9Csort__type_sort=E2=80=9D
+3. In =E2=80=9Csort__type_sort=E2=80=9D type_name is used. Hence result =
+will have only single entry
+4. In =E2=80=9Csort__typeoff_sort=E2=80=9D we added check for =
+=E2=80=9Cvar_name=E2=80=9D too in this patch. So result will have two =
+entries if field differs
+
+Example:
+
+Using -H option,
+
+./perf report -s type,typeoff -H
+
+    17.65%     struct paca_struct
+        4.68%     struct paca_struct +2312 (__current)
+        4.57%     struct paca_struct +2354 (irq_soft_mask)
+        2.69%     struct paca_struct +2808 (canary)
+        2.68%     struct paca_struct +8 (paca_index)
+        2.24%     struct paca_struct +48 (data_offset)
+        0.55%     struct paca_struct +2816 (mmiowb_state.nesting_count)
+        0.18%     struct paca_struct +2818 (mmiowb_state.mmiowb_pending)
+        0.03%     struct paca_struct +2352 (hsrr_valid)
+        0.02%     struct paca_struct +2356 (irq_work_pending)
+        0.00%     struct paca_struct +0 (lppaca_ptr)
+    12.85%     long unsigned int
+       11.42%     long unsigned int +0 (current_stack_pointer)
+        1.43%     long unsigned int +0 (no field)
+
+As you mentioned, we have single entry with two different fields:
+
+12.85%     long unsigned int
+       11.42%     long unsigned int +0 (current_stack_pointer)
+        1.43%     long unsigned int +0 (no field)
+
+With perf report -s type:
+
+    17.65%  struct paca_struct
+    12.85%  long unsigned int
+     1.69%  struct task_struct
+     1.51%  struct rq
+     1.49%  struct pt_regs
+     1.41%  struct vm_fault
+     1.20%  struct inode
+     1.15%  struct file
+     1.08%  struct sd_lb_stats
+     0.90%  struct security_hook_list
+     0.86%  struct seq_file
+     0.79%  struct cfs_rq
+     0.78%  struct irq_desc
+     0.72%  long long unsigned int
+
+
+Where as with perf report -s typeoff:
+
+    11.42%  long unsigned int +0 (current_stack_pointer)
+     4.68%  struct paca_struct +2312 (__current)
+     4.57%  struct paca_struct +2354 (irq_soft_mask)
+     2.69%  struct paca_struct +2808 (canary)
+     2.68%  struct paca_struct +8 (paca_index)
+     2.24%  struct paca_struct +48 (data_offset)
+     1.43%  long unsigned int +0 (no field)
+
+
+Namhyung,
+
+If the above shared result for =E2=80=9Ctype=E2=80=9D and =E2=80=9Ctypeoff=
+=E2=80=9D looks good and other changes are fine, I will post V7 with =
+change for sort cmp to use cmp_null.
+Please share your response.
+
+Thanks
+Athira
+
+>>=20
+>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>> ---
+>> tools/perf/util/annotate-data.c | 24 ++++++++++++++++++++++--
+>> tools/perf/util/sort.c          | 23 +++++++++++++++++++++--
+>> 2 files changed, 43 insertions(+), 4 deletions(-)
+>>=20
+>> diff --git a/tools/perf/util/annotate-data.c =
+b/tools/perf/util/annotate-data.c
+>> index 8d05f3dbddf6..759c6a22e719 100644
+>> --- a/tools/perf/util/annotate-data.c
+>> +++ b/tools/perf/util/annotate-data.c
+>> @@ -167,7 +167,7 @@ static void exit_type_state(struct type_state =
+*state)
+>> }
+>>=20
+>> /*
+>> - * Compare type name and size to maintain them in a tree.
+>> + * Compare type name, var_name  and size to maintain them in a tree.
+>>  * I'm not sure if DWARF would have information of a single type in =
+many
+>>  * different places (compilation units).  If not, it could compare =
+the
+>>  * offset of the type entry in the .debug_info section.
+>> @@ -176,12 +176,32 @@ static int data_type_cmp(const void *_key, =
+const struct rb_node *node)
+>> {
+>> const struct annotated_data_type *key =3D _key;
+>> struct annotated_data_type *type;
+>> + int64_t ret =3D 0;
+>>=20
+>> type =3D rb_entry(node, struct annotated_data_type, node);
+>>=20
+>> if (key->self.size !=3D type->self.size)
+>> return key->self.size - type->self.size;
+>> - return strcmp(key->self.type_name, type->self.type_name);
+>> +
+>> + ret =3D strcmp(key->self.type_name, type->self.type_name);
+>> + if (ret) {
+>> + return ret;
+>> + }
+>=20
+> No need for the parentheses.
+Sure, will fix it
+
+>=20
+>> +
+>> + /*
+>> +  * Compare var_name if it exists for key and type.
+>> +  * If both nodes doesn't have var_name, but one of
+>> +  * them has, return non-zero. This is to indicate nodes
+>> +  * are not the same if one has var_name, but other doesn't.
+>> +  */
+>> + if (key->self.var_name && type->self.var_name) {
+>> + ret =3D strcmp(key->self.var_name, type->self.var_name);
+>> + if (ret)
+>> + return ret;
+>> + } else if (key->self.var_name || type->self.var_name)
+>> + return 1;
+>=20
+> I think you need to compare the order properly like in cmp_null() in
+> util/sort.c.  Please see below.
+>=20
+>> +
+>> + return ret;
+>> }
+>>=20
+>> static bool data_type_less(struct rb_node *node_a, const struct =
+rb_node *node_b)
+>> diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+>> index cd39ea972193..c6d885060ee7 100644
+>> --- a/tools/perf/util/sort.c
+>> +++ b/tools/perf/util/sort.c
+>> @@ -2267,9 +2267,25 @@ sort__typeoff_sort(struct hist_entry *left, =
+struct hist_entry *right)
+>> right_type =3D right->mem_type;
+>> }
+>>=20
+>> + /*
+>> +  * Compare type_name first. Next, ompare var_name if it exists
+>> +  * for left and right hist_entry. If both entries doesn't have
+>> +  * var_name, but one of them has, return non-zero. This is to
+>> +  * indicate entries are not the same if one has var_name, but the
+>> +  * other doesn't.
+>> +  * If type_name and var_name is same, use mem_type_off field.
+>> +  */
+>> ret =3D strcmp(left_type->self.type_name, =
+right_type->self.type_name);
+>> if (ret)
+>> return ret;
+>> +
+>> + if (left_type->self.var_name && right_type->self.var_name) {
+>> + ret =3D strcmp(left_type->self.var_name, =
+right_type->self.var_name);
+>> + if (ret)
+>> + return ret;
+>> + } else if (right_type->self.var_name || left_type->self.var_name)
+>> + return 1;
+>=20
+> } else if (!left_type->self.var_name !=3D !right_type->self.var_name)
+> return cmp_null(left_type->self.var_name, right_type->self.var_name);
+>=20
+> Thanks,
+> Namhyung
+>=20
+Sure, will fix this
+
+Thanks
+Athira
+
+
+>> +
+>> return left->mem_type_off - right->mem_type_off;
+>> }
+>>=20
+>> @@ -2305,9 +2321,12 @@ static int hist_entry__typeoff_snprintf(struct =
+hist_entry *he, char *bf,
+>> char buf[4096];
+>>=20
+>> buf[0] =3D '\0';
+>> - if (list_empty(&he_type->self.children))
+>> + if (list_empty(&he_type->self.children)) {
+>> snprintf(buf, sizeof(buf), "no field");
+>> - else
+>> + if (he_type->self.var_name)
+>> + strcpy(buf, he_type->self.var_name);
+>> +
+>> + } else
+>> fill_member_name(buf, sizeof(buf), &he_type->self,
+>>  he->mem_type_off, true);
+>> buf[4095] =3D '\0';
+>> --=20
+>> 2.43.0
+
+
 
