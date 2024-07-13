@@ -1,105 +1,161 @@
-Return-Path: <linux-kernel+bounces-251374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F867930428
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:00:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDCA93042A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 09:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 765801C212EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:00:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 350D01F229D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 07:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB609282FE;
-	Sat, 13 Jul 2024 06:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FDF282FE;
+	Sat, 13 Jul 2024 07:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b="z6mTROYj"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJiJYT3m"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93751AAD7
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 06:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D68218E20;
+	Sat, 13 Jul 2024 07:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720853995; cv=none; b=FhJUQblPK/ZP52q/AK9xwDWeRmz5ULWDsbDfRH/38VNy95rZoGh+sGZtmyTUntr75CS8DXro+WA3gWa1h8VtE/MWIc6k0Ug4WO966njihYRNh7zFPXDc67GMkLKOZUnGm4LqFFg5zwGqMvPjTRA/0wrfCW81+PI53+e2a7tQ4fY=
+	t=1720854512; cv=none; b=tXfuBIFYCWZqsaIEQofXKR0sHhgQMnxmev2aY06GebOqnuIfF/LF76+qq+05RrgA2VHESWpCdwp3dp70ac+BQyqrEOAwgZ76AQQo9io7+0rk24/JVW4p/E9BOBFVXoSQvxUqJAmXwQSowL53gBq9JZdQQLYzlujT9iOBBIip20Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720853995; c=relaxed/simple;
-	bh=7HItEmYBf14Zjd7sslpONJSLfexagtTtV5pcePSw5wg=;
-	h=From:To:cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=u5k6IzcXtEBtk6UIRxVNWIuvnwd2QX3LTo8m2PQ/f0MfH9Q4hA5ss+NJNhSw0xWGKb0PBiGQ70/aisk8PBQxVSQFHStV48ucUVq0EGHwYMZZaVJmwIPlMoAmOqFCRLYQDUsis2QHHdxwWew8meFy1PXjHB4F6GwDyiZu7CzUXnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu; spf=pass smtp.mailfrom=vt.edu; dkim=pass (2048-bit key) header.d=vt-edu.20230601.gappssmtp.com header.i=@vt-edu.20230601.gappssmtp.com header.b=z6mTROYj; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=vt.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vt.edu
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-65f8626780aso3481857b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Jul 2024 23:59:52 -0700 (PDT)
+	s=arc-20240116; t=1720854512; c=relaxed/simple;
+	bh=/2Wna6IN8RYaNi0ktowJREiLpfrmcnCXNbJbNaPmRuY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r1dKBL0gQmYjopOoqhdRlwm0emjs6D0hjNXi5PYtd0lqeGFQJVMbTo2UPVWHkSs6ahEQH5L5aXUWvchUOjkHBichy16I9EfPhiM1Q68ClOz7f45z8ri2PnnwF33XYpK5zey3wxbKoyL3rQWWegj+cBO0A/qWhBfopv1ZUaOwMC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJiJYT3m; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5ce74defe43so109317eaf.2;
+        Sat, 13 Jul 2024 00:08:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vt-edu.20230601.gappssmtp.com; s=20230601; t=1720853992; x=1721458792; darn=vger.kernel.org;
-        h=message-id:date:mime-version:subject:cc:to:from:sender:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ydwtC4/lIE+lT5DSbjYf9dpfd4210bk+luqvaEg9OAo=;
-        b=z6mTROYjzYOFv0KVZJMYjDVTO3o8yAkKyusTnNf+NZ2pcQlxFBOFlOw2yrwr+Q8l8v
-         D0R8zy7bmgwadM9tnaGDy82nf93ObotAWVgBIFuttlbMEGgj6wHKeF5XdTyLqKyBet+M
-         UQpTG4alL1LMv2uNy4x701Y/FwX61Gz6qlm93hWTpbLkomBk102Omf9aKVULt8KDDvxT
-         0Nr06dJ4AJP+2ZtmQNbeyYIEb5WuDmeKN1tlLg60X0zpCsWTpRA9WDwNEX33Wtux5jRu
-         INfCFRVZWmlQn8V9jGZ77XRDwG9E4QD3woob3e+NMSCD275Sggk4TwDGbB4cHf+r/1vI
-         YKpQ==
+        d=gmail.com; s=20230601; t=1720854509; x=1721459309; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjlpCsYbCH3cdJRtayFHDpxKbTqwk5kyQNPmsXVKhUc=;
+        b=OJiJYT3mpYsLZn9TlbQLlIiITbT+Oa1Xv4ecnj63YuGzAQFba7zsbvCKRsKthb6a7f
+         LSVBc3B7pBeJgtRa3GIqMM+Oh8t/lybhSP9D4YhiOe/ECVeNZTQ/pMt4TZ33FUsF1xug
+         tQE4GUq/Wl2H4ImNMVmlb62w9eNPcqjV/Ty76nKE3iseE5b3iokcpt9AhdSpySYBhatH
+         xKDGyIqWpYudwT693d70kRUODoIzAGL8QkjyfrprXNHMC/lTjuE8H0E+g1Jz1k7Bd0MZ
+         FUDlCrfQc0cs0JBGAqKeuOpUKYP1BwzYhno76tAHDziz+7eSteEIZNKcg/h4hBXv0h6e
+         kTVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720853992; x=1721458792;
-        h=message-id:date:mime-version:subject:cc:to:from:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ydwtC4/lIE+lT5DSbjYf9dpfd4210bk+luqvaEg9OAo=;
-        b=LQbUouH6GLU4z55jVX6VhxXw9O9nKd5LIR/ZS8M41XJ7Ug7Vf6WNoWlkJVrBj3dyhL
-         ZwOPOaid5/SED6C01cbv5z1fB8mXku0gTGQ8UaKX0fbu2ybHUT7VKtUuOzSt8p+iFXHW
-         /a7+yPnDfMSQnyPSzPbuOeeSEeHH8+ybKMeLcXpm7QSYa2q8th2iBOOJmY8mVeUpT4ca
-         sjbgcllFktcYHRbNcYCPlSW9CGpwF7JEqj8TlzptCqN2apX8UQWcswxxRvmz46HBs8Qk
-         98tUxLQYguJ21ZFnGBrH64pu+NpkQ7XbWGexVK5kXC+ErVdxOYse3eeDWILMQzf66IST
-         bIrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMMOKCsYfEfECPZfIBiQVNegzhTV+WuVILZ8qkQ3b7M8euM3AiiSrfSKCTIneUzk/UWMt+lyvbEUMYe6FIH5Xtev3Wec/hpSnadiSk
-X-Gm-Message-State: AOJu0YxsYBbHa8zpdt0NCUILIiyowYVaQyNuXJkGtrPjiXEeiaGSKVSH
-	mSc4oyyl8KnbfOo2V89C6ZTdkoqVkNFeahyCJFLvUIpK4OnEIAIkMW2f97o3FPo=
-X-Google-Smtp-Source: AGHT+IHs+EiLAbdnuqJKtCk9/675T+jHZ8SqxZe6dAz5jiepIgQqgaOOIWqQWTLomFaE8j8wY7auoQ==
-X-Received: by 2002:a0d:eec6:0:b0:620:2cfb:7a0e with SMTP id 00721157ae682-658f02f372bmr150576337b3.40.1720853991583;
-        Fri, 12 Jul 2024 23:59:51 -0700 (PDT)
-Received: from turing-police (c-73-31-28-59.hsd1.va.comcast.net. [73.31.28.59])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a160c6f54asm24325085a.121.2024.07.12.23.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 23:59:51 -0700 (PDT)
-Sender: Valdis Kletnieks <valdis@vt.edu>
-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis =?utf-8?Q?Kl=c4=93tnieks?=" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.10.0-pre 07/05/2021 with nmh-1.8+dev
-To: Roman Gushchin <roman.gushchin@linux.dev>
-cc: Johannes Weiner <hannes@cmpxchg.org>,
-    Matthew Wilcox (Oracle) <willy@infradead.org>,
-    Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: fix typo in Kconfig
+        d=1e100.net; s=20230601; t=1720854509; x=1721459309;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fjlpCsYbCH3cdJRtayFHDpxKbTqwk5kyQNPmsXVKhUc=;
+        b=AxgaEU8J9HRhTW/4h+dj4GTIbU9Bywp+GXDbV6exZyqIXFaPB6ZGuHN6L9zNCw1JTZ
+         U2sS4rnuwblrjrxeFSoINbsNyzI/Fr5Y1N53qDQH1bOYZx0T+IWcH6nZXl7oZXT+AFOI
+         fb8ilC8V7WVwq6u8jV3qDGdBBCB4jqFXFf4LcEnIfdXuDr+SoWvVM2/zdEYdw9002nvy
+         JCGdzt5hXochz8tSr3la65faIHZZC2KyW+GFr4DqwovF0fSNfWlqlgTRXzrHwAk3bYpe
+         KImmUyOjpSbLzbjhxH9TiUOyjii8ilSyWI06wMUi/3B9c42tzxd9cIB/lQFg+ejQfnVQ
+         CXSw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2e5cLJumrhUXAJql2qScFodO8OYn6q+czs25TORhvPu4jPJ/X8hHjbaswIqYttjZ2IEyX3hJqLeI1P3QGxvSuDKrlJDYNyNkNwUyRCnWWPM67J8x3qKnVnVnW/6TkgRVbFMrtuWA3Gw==
+X-Gm-Message-State: AOJu0YxfjwYsVGxz25JgbGtbKU2A/aAcRer72+5DD3suH6nhxJrMwsVT
+	WR8Yn4m0wDuZo//eVTO79NixwPFYChTxhA17iW60D2uefL8KDkSp5icfMS8FMQuo7q7IQ1c+Jhn
+	pD9VuWqrqNQ4PsvARSXcgCzg989I=
+X-Google-Smtp-Source: AGHT+IFWVKyYxz5gy1azAb9yamwL6hAatx9DP1QAZFBlOoFzKR7AUcc67ukMdrKD3FBO1YCxpH6HH13DsqYepYUgQqI=
+X-Received: by 2002:a05:6870:c6a5:b0:258:42bd:d916 with SMTP id
+ 586e51a60fabf-25eae7bace2mr12445788fac.14.1720854509337; Sat, 13 Jul 2024
+ 00:08:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Date: Sat, 13 Jul 2024 02:59:50 -0400
-Message-ID: <78656.1720853990@turing-police>
+MIME-Version: 1.0
+References: <20240712164554.1763-1-linux.amoon@gmail.com>
+In-Reply-To: <20240712164554.1763-1-linux.amoon@gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sat, 13 Jul 2024 12:38:14 +0530
+Message-ID: <CANAwSgT=eNVEk4qzcpD3wa=vZ=TOuJDM_Cz61SCWOsFK2nRsQA@mail.gmail.com>
+Subject: Re: [PATCH-next v3 1/3] arm64: dts: rockchip: Add missing pinctrl for
+ PCIe30x4 node
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Jonas Karlman <jonas@kwiboo.se>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Fix typo in Kconfig help
+Hi Jonas,
 
-Fixes: e93d4166b40a8 ("mm: memcg: put cgroup v1-specific code under a config option")
-Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-
-diff --git a/init/Kconfig b/init/Kconfig
-index 1c701db1033e..bd378757d0ac 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -984,7 +984,7 @@ config MEMCG_V1
- 	  going to shrink due to deprecation process. New deployments with v1
- 	  controller are highly discouraged.
- 
--	  San N is unsure.
-+	  Say N if unsure.
- 
- config BLK_CGROUP
- 	bool "IO controller"
-
+On Fri, 12 Jul 2024 at 22:16, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> Add missing pinctrl settings for PCIe 3.0 x4 clock request and wake
+> signals. Each component of PCIe communication have the following control
+> signals: PERST, WAKE, CLKREQ, and REFCLK. These signals work to generate
+> high-speed signals and communicate with other PCIe devices.
+> Used by root complex to endpoint depending on the power state.
+>
+> PERST is referred to as a fundamental reset. PERST should be held low
+> until all the power rails in the system and the reference clock are stable.
+> A transition from low to high in this signal usually indicates the
+> beginning of link initialization.
+>
+> WAKE signal is an active-low signal that is used to return the PCIe
+> interface to an active state when in a low-power state.
+>
+> CLKREQ signal is also an active-low signal and is used to request the
+> reference clock.
+>
+> Rename node from 'pcie3' to 'pcie30x4' to align with schematic
+> nomenclature.
+>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> V3: use pinctrl local to board
+> V2: Update the commit messge to describe the changs.
+>     use pinctl group as its pre define in pinctrl dtsi
+> ---
+>  .../arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> index 966bbc582d89..721e87a3a464 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> @@ -338,7 +338,7 @@ &pcie30phy {
+>
+>  &pcie3x4 {
+>         pinctrl-names = "default";
+> -       pinctrl-0 = <&pcie3_rst>;
+> +       pinctrl-0 = <&pcie30x4_pins>;
+>         reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
+>         vpcie3v3-supply = <&vcc3v3_pcie30>;
+>         status = "okay";
+> @@ -377,14 +377,20 @@ pcie2_2_rst: pcie2-2-rst {
+>                 };
+>         };
+>
+> -       pcie3 {
+> -               pcie3_rst: pcie3-rst {
+> -                       rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+> -               };
+> -
+> +       pcie30x4 {
+>                 pcie3_vcc3v3_en: pcie3-vcc3v3-en {
+>                         rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
+>                 };
+> +
+> +               pcie30x4_pins: pcie30x4-pins {
+> +                       rockchip,pins =
+> +                               /* PCIE30X4_CLKREQn_M1_L */
+> +                               <4 RK_PB4 4 &pcfg_pull_up>,
+                            Should -------------^ replace with
+RK_FUNC_GPIO ? since its a gpio controlled?
+> +                               /* PCIE30X4_PERSTn_M1_L */
+> +                               <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>,
+> +                               /* PCIE30X4_WAKEn_M1_L */
+> +                               <4 RK_PB5 4 &pcfg_pull_down>;
+> +               };
+>         };
+>
+Thanks
+-Anand
 
