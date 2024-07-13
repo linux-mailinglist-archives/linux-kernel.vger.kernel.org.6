@@ -1,119 +1,131 @@
-Return-Path: <linux-kernel+bounces-251606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB369306DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 20:06:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54C09306EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 20:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FBE81C21430
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 18:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A651C22723
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 18:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F9C13D603;
-	Sat, 13 Jul 2024 18:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9407813DDC6;
+	Sat, 13 Jul 2024 18:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mitaoe.ac.in header.i=@mitaoe.ac.in header.b="cHjEbSs8"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iHm2hNhO"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E7F12FB2F
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 18:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E9F49628;
+	Sat, 13 Jul 2024 18:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720894009; cv=none; b=lHPdNh5QyrKYsMrpWqkmg1AMIdSrll9KH1QqR42oSxqVHHrR1isoQK60q/ZViYQXXyL/TooLaveZYI0ogK16D62WZCi4I0OHj/Ecn1GVQEHLB2yw6KQ4VVcTSYRmZPhncweOrx5leafa7aWOc5CAe4P3w0i54PwWbirM4kCDiU8=
+	t=1720894572; cv=none; b=j9mqaAJ4IqmuO7sqoQh28N1FFCG8NIlnFcFByBCuTE2vF+V2UKukdD/ME5VEkccEJkcxLNjxIfT5FBe41APmA5xTdohMu9nEQMhgF5+hNydr61dN9YunxTa2DOaCc43NhpxL/W22iXPhyL35qBIN58aZ/KgyMELWryyUObIxB5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720894009; c=relaxed/simple;
-	bh=19deBKXtIrWdyfdWO2kcSIU8veOmHLYeyK6XrCCAh6U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KKj9JO0BiZ48TNtPP9f6rcgdiTr46NVEWBBKh8B6oT19tH2BeDSADGm0bDBWCrqUtDfR/QDalVqAqu4Fzho2cQ1vcLfVNzom0WwL1tvBWHJivwm+oouufLK6Tr8Pny0vVOMAu5spmqYkI1a8EtB1QEbSx63TJ9rn95JU3TCoOnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mitaoe.ac.in; spf=fail smtp.mailfrom=mitaoe.ac.in; dkim=pass (2048-bit key) header.d=mitaoe.ac.in header.i=@mitaoe.ac.in header.b=cHjEbSs8; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mitaoe.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mitaoe.ac.in
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fb72eb3143so21477525ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 11:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mitaoe.ac.in; s=google; t=1720894006; x=1721498806; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0LO1qAerOan7GyDs+4V1LarTw1zHLMK4oIn44Hbh1CA=;
-        b=cHjEbSs86wa2qU8lwGz/KEHRyDJ25j76c6qy6bMxwXE4BXI0etqZ1SthzzhVP4NHfg
-         CnvvpOIw+xhlWVpyUxQEvowZd6pMcWdQceDYYz+y7J4Da4uO8LysoZBaoQR8NKe//ur3
-         RHTztKjRbbzFjSgjAxm+dN9BYov2/leBWxy68vNs5cB53Aw74+FmTr00Cgj/BMbim85i
-         cLLZj5g1syWVlHppBqilcxbrrilDGxPksAypPNES9/RsNbyUZ5OOEFPUq8VAPwYooYp1
-         snoCkgCI2qD/pn1+KjneEQ+Uk1I/x6Hl+WMz3Vb6ghUD6NKemMw1vubeP5D1E3g2qNdU
-         cPew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720894006; x=1721498806;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0LO1qAerOan7GyDs+4V1LarTw1zHLMK4oIn44Hbh1CA=;
-        b=adscaetudDDJ4jRA679S3MBMjoDwPUJbkonwqC4/7zahiHup+H3+R4gD+FU+Z3xBjo
-         9z8lO0+PUcMdBMZ7U/hdvkAxULz+po0qqoIRgg0hFIZ3UkmGZMV6Oq+mJwNWq3gKx1Q1
-         7yCtFiNG4KaxJ5V+0qh8htYaSrGTbGZbs5vuhgQzDqzJjzQsOM3oEuS39sHObp2Fwl5/
-         16VF1xerF7fswdKgsD5VVwKjUkT6s88A/7JUi61Hhm18cDWbz3PJIZdjz9emKxBEJnRy
-         UIugQAMw6w2baOoxKaq8jnZML0N9zgbS/FehYaCzp69Uf+4jff5uFWER2Ai4CdjC0tAX
-         6EYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUD2vZ1AT0FpES/dMk+j5m/j/ltTDzRVsg89dFYPYeK8fQZqMhNbntJglT2Q0E9HTk3GnkLFus8svQxxMEs/oZMQ3eoZhj06Yo6gFPi
-X-Gm-Message-State: AOJu0Yz7l6i4aTBBob9ETH3gD6KUqJMivCjl5Ou2J1OhZ73SX98e7VFE
-	oGf//UpbLcA34dM9HNBVEFzGB4XK1riFpS09BhsL9wWI+zocRMw6gwJtiAE8bWDe7rz0071/3k5
-	Qh/Y=
-X-Google-Smtp-Source: AGHT+IHbBTEqXXoseVN7R1U+NKeFIwiKbZeWCkN1HC46RG9dLtQrGa969U9Tio6vyZC9WTNl+Lprtw==
-X-Received: by 2002:a17:902:ccc8:b0:1fc:ee5:d581 with SMTP id d9443c01a7336-1fc0ee5d71bmr26008665ad.14.1720894005721;
-        Sat, 13 Jul 2024 11:06:45 -0700 (PDT)
-Received: from localhost.localdomain ([152.58.19.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc0bbc4e68sm12896455ad.119.2024.07.13.11.06.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 11:06:45 -0700 (PDT)
-From: mohitpawar@mitaoe.ac.in
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mohit0404 <mohitpawar@mitaoe.ac.in>
-Subject: [PATCH 3/3] Fixed: fs: file_table_c: Missing blank line warnings
-Date: Sat, 13 Jul 2024 23:36:12 +0530
-Message-Id: <20240713180612.126523-1-mohitpawar@mitaoe.ac.in>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720894572; c=relaxed/simple;
+	bh=abtA1WlSWwOahxLlGsQr5aL7NXMTChi3xnNxf77tIbI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=AWjd/t1LFFDibQgAoH7+GiTAe6dYizClQ37R+wiFkFSqq5384lsbCQ6cwN64u6hcMUDUY9IT3xRNEQRa/Qeb5o4irSlTNus8GEK8abiWnrZoNSLostVGl1jXQaPCtYXFJOqxtKEho9br2bwVFQVTv1ct/hoPhH/soAImbbMAj0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iHm2hNhO; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720894556; x=1721499356; i=markus.elfring@web.de;
+	bh=XttxvoNiaxIVA1/LMbTGUcLFK9uZmow/zywISsYZatY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=iHm2hNhOUpVb+ZGoZ3mw/07/F3/GBi6tzDhiMX1qLbhAOeFimEjsJQzbIrC4BMQH
+	 FLnV15Lp+zALTlUwq789RhCjE9KDY4x3YNglSTj6csX+KMUujY9yYiFh5pQOwJSxR
+	 iHWRufM+4VUxPeovsrlYqqPBbXEtbg+sFuW8OxRYbpQ5UQqBEfsaGh0lWX1fOcE7a
+	 FwN0M4nnt5cm0VnskE52/5Ljnvu4H11LKMXjrxYxYENHT08Q2ktTW+0AGI6xycwaU
+	 7xxJ6b+w/RCcdiTIexFYqgpVZYOZeRVEJAy6UaKnXaEl5qDjsUfnSa332oSdrZEUM
+	 Zye5k2ZDmT19LzbOQA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M4sXt-1sTWMl0LFH-002aAU; Sat, 13
+ Jul 2024 20:15:56 +0200
+Message-ID: <076974ab-4da3-4176-89dc-0514e020c276@web.de>
+Date: Sat, 13 Jul 2024 20:15:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: linux-ext4@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Andreas Dilger <adilger.kernel@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] ext4: Use seq_putc() in two functions
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mA/biMw9x2cevcu9rqUxz7QuOs6YUA30/RlTyHQ7u04jOV6gwQ0
+ Pi9ToAsTYLcmb5p6NJ0jZqSZ/2m68b5Zw8n6zhy6UWh64UGNP+QLDQRwRpD9umHqpTOOGAu
+ AgyzQDoPERafNEiYOLyeGnykIW4zFaA6IhDBe7YbNLdbPWXc0lHiiZbMGe7goOpK7+SFyJj
+ 9soFVFjUNyJrIs4OPu89g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zPKXLfg+ezo=;+G/iDIXEFugqd+cvAYOe9JHg/9t
+ ztwRtOJvuSptQ6kyGgoDbsbmge3hHGHAkgOjUP9HEmS2g9htC9mfiwXrGkWNVfZuLTAFtGAC6
+ 3BGJVzhpeNASgugBWo0TFhcpp3XqkhpfyN1AvfzLNwaD1XteaabrFcbgdrOm0f/Zo50lJFzOz
+ 6qv5N+7g+qwsvJ/j8yFhSRsS/ktcuhoMgNUnCB5f62B+HRFMa/RelrbDR1mIk64799xYb4/Nh
+ 4zLoOQAATYF8DK2klKpbyWVhLwd1ZZ9e06x1Sv0Kh39bv3ifAWCG2Rbp2cWSe2X+eqUP+E3O9
+ TdfgKX2rUvNAu9DpJT3xxrchS4zWK5wwMdTaPQic72ty4OLVnPRuMhDLOxKd5yb64rOrvd+ew
+ Zl1ebvgGlhrygXYQfEJ78x3xFxLdvK2e9awqMLb74k9mXYVX8CZIWp3OLWJbw8y068GeIgxQP
+ npNKw6WvleBmINEbtG14N7t26UEJYfaJt7HkEkxCFjFwq+d6a+OVtgQ3/5Znq5T3upTUSPADQ
+ B30O0f5N1Zsl1zB0FDDPV0BxctmcKIP2YVMQuQnRpWV0jXgr8oc/tiygWCCScBwjUeDeaS99r
+ SABSKx0/tstZdGaMORXolvKxSZz9T083CJzU/KNoNdM1v8ZSYMSCKFnZvDpBrznYmvrLkLiSJ
+ TW8aJiBqlpdLMcS5pnpx+5SvRdZ8R/AFWpBiJzI4cpfW6u+9CQF7UIltBzzJeG1NaD0Ml/g1Z
+ MThP3MUTRWvyURTPlIFe0WebculEXkNn9dTC9+bJnng1PKCPkeoxUGEsORfY2os4FhjxQMWiF
+ nRos11uvaemmWZmqKChBpEng==
 
-From: Mohit0404 <mohitpawar@mitaoe.ac.in>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 13 Jul 2024 17:10:24 +0200
 
-Fixed-
-	WARNING: Missing a blank line after declarations
-	WARNING: Missing a blank line after declarations
----
- fs/file_table.c | 2 ++
- 1 file changed, 2 insertions(+)
+Single characters (line breaks) should be put into a sequence.
+Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D.
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 4f03beed4737..9950293535e4 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -136,6 +136,7 @@ static int __init init_fs_stat_sysctls(void)
- 	register_sysctl_init("fs", fs_stat_sysctls);
- 	if (IS_ENABLED(CONFIG_BINFMT_MISC)) {
- 		struct ctl_table_header *hdr;
-+
- 		hdr = register_sysctl_mount_point("fs/binfmt_misc");
- 		kmemleak_not_leak(hdr);
- 	}
-@@ -384,6 +385,7 @@ struct file *alloc_file_clone(struct file *base, int flags,
- 				const struct file_operations *fops)
- {
- 	struct file *f = alloc_file(&base->f_path, flags, fops);
-+
- 	if (!IS_ERR(f)) {
- 		path_get(&f->f_path);
- 		f->f_mapping = base->f_mapping;
--- 
-2.34.1
+This issue was transformed by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/ext4/mballoc.c | 3 +--
+ fs/ext4/super.c   | 2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+index 9dda9cd68ab2..2008d2d524c9 100644
+=2D-- a/fs/ext4/mballoc.c
++++ b/fs/ext4/mballoc.c
+@@ -3075,8 +3075,7 @@ static int ext4_mb_seq_groups_show(struct seq_file *=
+seq, void *v)
+ 	seq_puts(seq, " ]");
+ 	if (EXT4_MB_GRP_BBITMAP_CORRUPT(&sg.info))
+ 		seq_puts(seq, " Block bitmap corrupted!");
+-	seq_puts(seq, "\n");
+-
++	seq_putc(seq, '\n');
+ 	return 0;
+ }
+
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index e72145c4ae5a..c8a80cec46a1 100644
+=2D-- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3045,7 +3045,7 @@ int ext4_seq_options_show(struct seq_file *seq, void=
+ *offset)
+
+ 	seq_puts(seq, sb_rdonly(sb) ? "ro" : "rw");
+ 	rc =3D _ext4_show_options(seq, sb, 1);
+-	seq_puts(seq, "\n");
++	seq_putc(seq, '\n');
+ 	return rc;
+ }
+
+=2D-
+2.45.2
 
 
