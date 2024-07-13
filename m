@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-251479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-251480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA29C930554
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:04:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E331930556
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 13:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5C0283893
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 020411F21B96
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Jul 2024 11:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2339A60263;
-	Sat, 13 Jul 2024 11:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="MHxueTaC"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2AF1E4A9
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 11:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B028861FF8;
+	Sat, 13 Jul 2024 11:05:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0B660263
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Jul 2024 11:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720868637; cv=none; b=pk8+Vx94AkpEYMp7n+74NhiZ5oC3yYOJ9azcQrpYKJTnCwMdPsVFJtUTrFzZgUY/TZSWucgzN9b8H1CjxIztVMhllvW0IMXoJJ0FkezIlowjq3NtFbSWJX0xZbwmYdir3SUS0DfcloF6z3uOB4cU1t/qeALcaPIoSPzHAu0b97w=
+	t=1720868737; cv=none; b=o6GYQHWqE7h7SDQBeNtsBGD3DfmDBWtqnh/k0vrJzl3s91cnq7uN83DS7+8SGGV6SgAEiAcgn1uUgBDJ4s9yOxMh4Y/TWfwHSUJxBt04ef2FxydKNvf4BIgsrVQCM3psHizCu1aSZ4DIVc5qhuorvM+4bhuRVVvyeK2ZEhOFUSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720868637; c=relaxed/simple;
-	bh=uD7ddHPNCv9re7jh+GgSVnOkNYW3iWVk5/d0ybro+S0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=USC3nxONqwL4IV63JTdDTqtUKbzzXkF9BD5eVvn8gxT6WVU58KB7l2I5DSfjPunZItK0QJORFtMMm23T3QGE1JcEXHS4stWgANJpquuMYZHwaFlqK2ArRbPhYC2DqchUP/leVnmmPVJsqKeks/4E1KWPyQzSL6M4RlIGqHOytFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=MHxueTaC; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id SaWWs33AVt4p9SaWXsZPUe; Sat, 13 Jul 2024 13:02:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1720868564;
-	bh=+95BoV2zMSWhEXD4+8PYZ6sPnem7u4o6Qt+9aNjgw34=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=MHxueTaCXcUv0jTgyKWZKCmJIlffD84NUjpqOZ8OqbEnwBJtH5V+rF7Punxk7IET6
-	 ZqMBhWXqQP7kq7CQGxPkxMxlDTdoMR0CBspSjjmGf/++DcXfsHNS2+HMbwXa0v2V59
-	 k3+Qhl31MEpm+YZB5BpEw6XqGoEAsOBETdt7v78+M7xGJnRqaWWRJlYNkrEFaY94OX
-	 08oZW/s3KQPBgz5/xdfz9H6tiH10TWu4gltfYNFEm7SBUunqBcmYGuWWAX+vpmISxc
-	 eQSszVUtEfW64RlVeY1eJ4UbqKI/vOM8JvR1mfrhF6dgVoFiNFlZI7NODVRLzeixJv
-	 Im1okBIi0e6eg==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 13 Jul 2024 13:02:44 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] x86/resctrl: Slightly clean-up mbm_config_show()
-Date: Sat, 13 Jul 2024 13:02:32 +0200
-Message-ID: <b2ebc809c8b6c6440d17b12ccf7c2d29aaafd488.1720868538.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720868737; c=relaxed/simple;
+	bh=NfDz3riJCs+yz/7Ke3ZKJhU6e5Q313Wy6qLKatzHHB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uLYqC5DaUozWJfyhJKg2O464kJLNCRhLNy9Ve6TgJNruw6NxmHbfk3D8pWQWM7Ifj0ofE3/8MfGU/txbi13qs2dKb3eJfJBamlQfzhLFWGnFU3GvFn4QytCQXDPHeQg0rFm5Q+paXrzqatDH4hdy85RE0Ltv1+ldvRT6igdKvuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EAC6B1007;
+	Sat, 13 Jul 2024 04:05:59 -0700 (PDT)
+Received: from [10.57.77.253] (unknown [10.57.77.253])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 963F53F762;
+	Sat, 13 Jul 2024 04:05:33 -0700 (PDT)
+Message-ID: <aed6f61e-49ed-414b-acc1-25f5ed6d4e09@arm.com>
+Date: Sat, 13 Jul 2024 12:05:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/huge_memory: Avoid PMD-size page cache if needed
+Content-Language: en-GB
+To: Matthew Wilcox <willy@infradead.org>, Gavin Shan <gshan@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ akpm@linux-foundation.org, william.kucharski@oracle.com, david@redhat.com,
+ shan.gavin@gmail.com
+References: <20240711104840.200573-1-gshan@redhat.com>
+ <ZpBEwEn3swH7IFbI@casper.infradead.org>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <ZpBEwEn3swH7IFbI@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-'mon_info' is already zeroed in the list_for_each_entry() loop below.
-There is no need to explicitly initialize it here. It just wastes some
-space and cycles.
+On 11/07/2024 21:46, Matthew Wilcox wrote:
+> On Thu, Jul 11, 2024 at 08:48:40PM +1000, Gavin Shan wrote:
+>> +++ b/mm/huge_memory.c
+>> @@ -136,7 +136,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>>  
+>>  		while (orders) {
+>>  			addr = vma->vm_end - (PAGE_SIZE << order);
+>> -			if (thp_vma_suitable_order(vma, addr, order))
+>> +			if (!(vma->vm_file && order > MAX_PAGECACHE_ORDER) &&
+>> +			    thp_vma_suitable_order(vma, addr, order))
+>>  				break;
+> 
+> Why does 'orders' even contain potential orders that are larger than
+> MAX_PAGECACHE_ORDER?
+> 
+> We do this at the top:
+> 
+>         orders &= vma_is_anonymous(vma) ?
+>                         THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
+> 
+> include/linux/huge_mm.h:#define THP_ORDERS_ALL_FILE     (BIT(PMD_ORDER) | BIT(PUD_ORDER))
+> 
+> ... and that seems very wrong.  We support all kinds of orders for
+> files, not just PMD order.  We don't support PUD order at all.
+> 
+> What the hell is going on here?
 
-Remove this un-needed code.
+Just to try to justify this a little, it was my perspective when adding (anon)
+mTHP that memory was either anon or file; Anything that populated vma->vm_file
+was file, including shmem, DAX, etc. Before my change THP could install PMD size
+mappings for anon, and PMD or PUD size mappings for file memory (but yes, PUD
+was only really applicable to DAX in practice, I believe).
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-  74967	   5103	   1880	  81950	  1401e	arch/x86/kernel/cpu/resctrl/rdtgroup.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  74903	   5103	   1880	  81886	  13fde	arch/x86/kernel/cpu/resctrl/rdtgroup.o
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index d7163b764c62..d906a1cd8491 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1596,7 +1596,7 @@ static void mondata_config_read(struct rdt_mon_domain *d, struct mon_config_info
- 
- static int mbm_config_show(struct seq_file *s, struct rdt_resource *r, u32 evtid)
- {
--	struct mon_config_info mon_info = {0};
-+	struct mon_config_info mon_info;
- 	struct rdt_mon_domain *dom;
- 	bool sep = false;
- 
--- 
-2.45.2
+I agree it would be good to clean this up, but I don't think the current code is
+quite as mad as you're implying, Matthew?
 
 
